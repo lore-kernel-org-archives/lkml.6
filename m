@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E15D5C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87788C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95877218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49AD4218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357946;
-	bh=LKTwQ8m4XvvutyNx2xRviwxEt5AIyu2P3GywypQISQQ=;
+	s=default; t=1548357950;
+	bh=8mFqKPOe7Y+JALyEeWKD1ueQdXzS/jtK9MnOn4Xq6+I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=w9NAqpuqc7RX0LApXir9Ll2tEfsncPMg/OCZPW93Yj6QPUisl6MPpoHa1S24k7BZx
-	 WzW6iUBBWVKWGcankA/nnLbLgNacE9nCFTnvfnwr202NKuQrNyKEViqxWy9hR4jv99
-	 7nsvRkBdKHcIoyuzQ+f2kQ071pzuQomeF7LYhNPM=
+	b=uWpHmAEwQyYRQSGMuSussmSZCY8svduH20yELni5WDmHChzjsCKPmog2wcXQHmmli
+	 TEM47Cj+mzC9/dH8ucHpaxqOm8e//p+EAW/8JgX+gFVtFh11z0eNDRYt3qgck5ehva
+	 vcLciwgUu5nbd5efRBJN8XP4RHJDtixXOpIQs95s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730454AbfAXTZo (ORCPT
+        id S1730459AbfAXTZs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:25:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51320 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:25:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51472 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730429AbfAXTZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:25:38 -0500
+        id S1729373AbfAXTZq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:25:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 83E7A218EA;
-        Thu, 24 Jan 2019 19:25:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96282217D7;
+        Thu, 24 Jan 2019 19:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357937;
-        bh=LKTwQ8m4XvvutyNx2xRviwxEt5AIyu2P3GywypQISQQ=;
+        s=default; t=1548357945;
+        bh=8mFqKPOe7Y+JALyEeWKD1ueQdXzS/jtK9MnOn4Xq6+I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vQJn/ERaWZWFMMxXaT5i+Kqg1VqdgFqSPGmNPQvtdu1WKpldiIjHx5uNcEXIQp8UW
-         3M86H8BxB08FzhqIdPTyU1oXRd6gQ/c4X3wllKBC4whN/OgHrpWwoJPFVt0IIF5rwH
-         GaNgOq1SGN5LXsGyMvcT+sFxFuSOZJTv8FBSxwZs=
+        b=jf/LeGaQS9QnKExIwuojJzBl3FBSv7UNxOB0S568y0p03zqcPmBL29j102o6JG0uM
+         8oOSXRPo47PvEPrbEizPNcJb5Y/beXydpkantljDOvLW8vxm6LmtUq3Bylcgrd7ofQ
+         gaYnGWmsZUwFU+/zATsCz07a4Qbe0++f0jao0Go0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Chao Yu <chao2.yu@samsung.com>,
+        stable@vger.kernel.org, Chao Yu <yuchao0@huawei.com>,
         Jaegeuk Kim <jaegeuk@kernel.org>,
         Ben Hutchings <ben.hutchings@codethink.co.uk>
-Subject: [PATCH 4.4 006/104] f2fs: fix to convert inline directory correctly
-Date:   Thu, 24 Jan 2019 20:18:55 +0100
-Message-Id: <20190124190155.588898961@linuxfoundation.org>
+Subject: [PATCH 4.4 009/104] f2fs: factor out fsync inode entry operations
+Date:   Thu, 24 Jan 2019 20:18:58 +0100
+Message-Id: <20190124190155.892910889@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -65,370 +66,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Chao Yu <chao2.yu@samsung.com>
+From: Chao Yu <yuchao0@huawei.com>
 
-With below serials, we will lose parts of dirents:
+commit 3f8ab270855b0b461995da5dc48dce9461c85d94 upstream.
 
-1) mount f2fs with inline_dentry option
-2) echo 1 > /sys/fs/f2fs/sdX/dir_level
-3) mkdir dir
-4) touch 180 files named [1-180] in dir
-5) touch 181 in dir
-6) echo 3 > /proc/sys/vm/drop_caches
-7) ll dir
+Factor out fsync inode entry operations into {add,del}_fsync_inode.
 
-ls: cannot access 2: No such file or directory
-ls: cannot access 4: No such file or directory
-ls: cannot access 5: No such file or directory
-ls: cannot access 6: No such file or directory
-ls: cannot access 8: No such file or directory
-ls: cannot access 9: No such file or directory
-...
-total 360
-drwxr-xr-x 2 root root 4096 Feb 19 15:12 ./
-drwxr-xr-x 3 root root 4096 Feb 19 15:11 ../
--rw-r--r-- 1 root root    0 Feb 19 15:12 1
--rw-r--r-- 1 root root    0 Feb 19 15:12 10
--rw-r--r-- 1 root root    0 Feb 19 15:12 100
--????????? ? ?    ?       ?            ? 101
--????????? ? ?    ?       ?            ? 102
--????????? ? ?    ?       ?            ? 103
-...
-
-The reason is: when doing the inline dir conversion, we didn't consider
-that directory has hierarchical hash structure which can be configured
-through sysfs interface 'dir_level'.
-
-By default, dir_level of directory inode is 0, it means we have one bucket
-in hash table located in first level, all dirents will be hashed in this
-bucket, so it has no problem for us to do the duplication simply between
-inline dentry page and converted normal dentry page.
-
-However, if we configured dir_level with the value N (greater than 0), it
-will expand the bucket number of first level hash table by 2^N - 1, it
-hashs dirents into different buckets according their hash value, if we
-still move all dirents to first bucket, it makes incorrent locating for
-inline dirents, the result is, although we can iterate all dirents through
-->readdir, we can't stat some of them in ->lookup which based on hash
-table searching.
-
-This patch fixes this issue by rehashing dirents into correct position
-when converting inline directory.
-
-Signed-off-by: Chao Yu <chao2.yu@samsung.com>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-[bwh: Backported to 4.4:
- - Keep using f2fs_crypto functions instead of generic fscrypt API
- - Use remove_dirty_dir_inode() instead of remove_dirty_inode()
- - Adjust context]
 Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/f2fs/dir.c           |   87 +++++++++++++++++++++++---------------------
- fs/f2fs/f2fs.h          |    4 +-
- fs/f2fs/inline.c        |   94 +++++++++++++++++++++++++++++++++++++++++++++++-
- include/linux/f2fs_fs.h |    2 +
- 4 files changed, 144 insertions(+), 43 deletions(-)
+ fs/f2fs/recovery.c |   59 ++++++++++++++++++++++++++++++++++-------------------
+ 1 file changed, 38 insertions(+), 21 deletions(-)
 
---- a/fs/f2fs/dir.c
-+++ b/fs/f2fs/dir.c
-@@ -48,7 +48,6 @@ unsigned char f2fs_filetype_table[F2FS_F
- 	[F2FS_FT_SYMLINK]	= DT_LNK,
- };
- 
--#define S_SHIFT 12
- static unsigned char f2fs_type_by_mode[S_IFMT >> S_SHIFT] = {
- 	[S_IFREG >> S_SHIFT]	= F2FS_FT_REG_FILE,
- 	[S_IFDIR >> S_SHIFT]	= F2FS_FT_DIR,
-@@ -64,6 +63,13 @@ void set_de_type(struct f2fs_dir_entry *
- 	de->file_type = f2fs_type_by_mode[(mode & S_IFMT) >> S_SHIFT];
+--- a/fs/f2fs/recovery.c
++++ b/fs/f2fs/recovery.c
+@@ -67,6 +67,28 @@ static struct fsync_inode_entry *get_fsy
+ 	return NULL;
  }
  
-+unsigned char get_de_type(struct f2fs_dir_entry *de)
++static struct fsync_inode_entry *add_fsync_inode(struct list_head *head,
++							struct inode *inode)
 +{
-+	if (de->file_type < F2FS_FT_MAX)
-+		return f2fs_filetype_table[de->file_type];
-+	return DT_UNKNOWN;
++	struct fsync_inode_entry *entry;
++
++	entry = kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
++	if (!entry)
++		return NULL;
++
++	entry->inode = inode;
++	list_add_tail(&entry->list, head);
++
++	return entry;
 +}
 +
- static unsigned long dir_block_index(unsigned int level,
- 				int dir_level, unsigned int idx)
++static void del_fsync_inode(struct fsync_inode_entry *entry)
++{
++	iput(entry->inode);
++	list_del(&entry->list);
++	kmem_cache_free(fsync_entry_slab, entry);
++}
++
+ static int recover_dentry(struct inode *inode, struct page *ipage)
  {
-@@ -519,11 +525,7 @@ void f2fs_update_dentry(nid_t ino, umode
- 		test_and_set_bit_le(bit_pos + i, (void *)d->bitmap);
- }
- 
--/*
-- * Caller should grab and release a rwsem by calling f2fs_lock_op() and
-- * f2fs_unlock_op().
-- */
--int __f2fs_add_link(struct inode *dir, const struct qstr *name,
-+int f2fs_add_regular_entry(struct inode *dir, const struct qstr *new_name,
- 				struct inode *inode, nid_t ino, umode_t mode)
+ 	struct f2fs_inode *raw_inode = F2FS_INODE(ipage);
+@@ -172,6 +194,7 @@ static int find_fsync_dnodes(struct f2fs
  {
- 	unsigned int bit_pos;
-@@ -536,28 +538,11 @@ int __f2fs_add_link(struct inode *dir, c
- 	struct f2fs_dentry_block *dentry_blk = NULL;
- 	struct f2fs_dentry_ptr d;
+ 	unsigned long long cp_ver = cur_cp_version(F2FS_CKPT(sbi));
+ 	struct curseg_info *curseg;
++	struct inode *inode;
  	struct page *page = NULL;
--	struct f2fs_filename fname;
--	struct qstr new_name;
--	int slots, err;
--
--	err = f2fs_fname_setup_filename(dir, name, 0, &fname);
--	if (err)
--		return err;
--
--	new_name.name = fname_name(&fname);
--	new_name.len = fname_len(&fname);
--
--	if (f2fs_has_inline_dentry(dir)) {
--		err = f2fs_add_inline_entry(dir, &new_name, inode, ino, mode);
--		if (!err || err != -EAGAIN)
--			goto out;
--		else
--			err = 0;
+ 	block_t blkaddr;
+ 	int err = 0;
+@@ -204,27 +227,27 @@ static int find_fsync_dnodes(struct f2fs
+ 					break;
+ 			}
+ 
+-			/* add this fsync inode to the list */
+-			entry = kmem_cache_alloc(fsync_entry_slab, GFP_F2FS_ZERO);
+-			if (!entry) {
+-				err = -ENOMEM;
+-				break;
+-			}
+ 			/*
+ 			 * CP | dnode(F) | inode(DF)
+ 			 * For this case, we should not give up now.
+ 			 */
+-			entry->inode = f2fs_iget(sbi->sb, ino_of_node(page));
+-			if (IS_ERR(entry->inode)) {
+-				err = PTR_ERR(entry->inode);
+-				kmem_cache_free(fsync_entry_slab, entry);
++			inode = f2fs_iget(sbi->sb, ino_of_node(page));
++			if (IS_ERR(inode)) {
++				err = PTR_ERR(inode);
+ 				if (err == -ENOENT) {
+ 					err = 0;
+ 					goto next;
+ 				}
+ 				break;
+ 			}
+-			list_add_tail(&entry->list, head);
++
++			/* add this fsync inode to the list */
++			entry = add_fsync_inode(head, inode);
++			if (!entry) {
++				err = -ENOMEM;
++				iput(inode);
++				break;
++			}
+ 		}
+ 		entry->blkaddr = blkaddr;
+ 
+@@ -248,11 +271,8 @@ static void destroy_fsync_dnodes(struct
+ {
+ 	struct fsync_inode_entry *entry, *tmp;
+ 
+-	list_for_each_entry_safe(entry, tmp, head, list) {
+-		iput(entry->inode);
+-		list_del(&entry->list);
+-		kmem_cache_free(fsync_entry_slab, entry);
 -	}
-+	int slots, err = 0;
- 
- 	level = 0;
--	slots = GET_DENTRY_SLOTS(new_name.len);
--	dentry_hash = f2fs_dentry_hash(&new_name, NULL);
-+	slots = GET_DENTRY_SLOTS(new_name->len);
-+	dentry_hash = f2fs_dentry_hash(new_name, NULL);
- 
- 	current_depth = F2FS_I(dir)->i_current_depth;
- 	if (F2FS_I(dir)->chash == dentry_hash) {
-@@ -566,10 +551,8 @@ int __f2fs_add_link(struct inode *dir, c
- 	}
- 
- start:
--	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH)) {
--		err = -ENOSPC;
--		goto out;
--	}
-+	if (unlikely(current_depth == MAX_DIR_HASH_DEPTH))
-+		return -ENOSPC;
- 
- 	/* Increase the depth, if required */
- 	if (level == current_depth)
-@@ -583,10 +566,8 @@ start:
- 
- 	for (block = bidx; block <= (bidx + nblock - 1); block++) {
- 		dentry_page = get_new_data_page(dir, NULL, block, true);
--		if (IS_ERR(dentry_page)) {
--			err = PTR_ERR(dentry_page);
--			goto out;
--		}
-+		if (IS_ERR(dentry_page))
-+			return PTR_ERR(dentry_page);
- 
- 		dentry_blk = kmap(dentry_page);
- 		bit_pos = room_for_filename(&dentry_blk->dentry_bitmap,
-@@ -606,7 +587,7 @@ add_dentry:
- 
- 	if (inode) {
- 		down_write(&F2FS_I(inode)->i_sem);
--		page = init_inode_metadata(inode, dir, &new_name, NULL);
-+		page = init_inode_metadata(inode, dir, new_name, NULL);
- 		if (IS_ERR(page)) {
- 			err = PTR_ERR(page);
- 			goto fail;
-@@ -616,7 +597,7 @@ add_dentry:
- 	}
- 
- 	make_dentry_ptr(NULL, &d, (void *)dentry_blk, 1);
--	f2fs_update_dentry(ino, mode, &d, &new_name, dentry_hash, bit_pos);
-+	f2fs_update_dentry(ino, mode, &d, new_name, dentry_hash, bit_pos);
- 
- 	set_page_dirty(dentry_page);
- 
-@@ -638,7 +619,34 @@ fail:
- 	}
- 	kunmap(dentry_page);
- 	f2fs_put_page(dentry_page, 1);
--out:
-+
-+	return err;
-+}
-+
-+/*
-+ * Caller should grab and release a rwsem by calling f2fs_lock_op() and
-+ * f2fs_unlock_op().
-+ */
-+int __f2fs_add_link(struct inode *dir, const struct qstr *name,
-+				struct inode *inode, nid_t ino, umode_t mode)
-+{
-+	struct f2fs_filename fname;
-+	struct qstr new_name;
-+	int err;
-+
-+	err = f2fs_fname_setup_filename(dir, name, 0, &fname);
-+	if (err)
-+		return err;
-+
-+	new_name.name = fname_name(&fname);
-+	new_name.len = fname_len(&fname);
-+
-+	err = -EAGAIN;
-+	if (f2fs_has_inline_dentry(dir))
-+		err = f2fs_add_inline_entry(dir, &new_name, inode, ino, mode);
-+	if (err == -EAGAIN)
-+		err = f2fs_add_regular_entry(dir, &new_name, inode, ino, mode);
-+
- 	f2fs_fname_free_filename(&fname);
- 	return err;
++	list_for_each_entry_safe(entry, tmp, head, list)
++		del_fsync_inode(entry);
  }
-@@ -792,10 +800,7 @@ bool f2fs_fill_dentries(struct dir_conte
+ 
+ static int check_index_in_prev_nodes(struct f2fs_sb_info *sbi,
+@@ -509,11 +529,8 @@ static int recover_data(struct f2fs_sb_i
  			break;
+ 		}
  
- 		de = &d->dentry[bit_pos];
--		if (de->file_type < F2FS_FT_MAX)
--			d_type = f2fs_filetype_table[de->file_type];
--		else
--			d_type = DT_UNKNOWN;
-+		d_type = get_de_type(de);
- 
- 		de_name.name = d->filename[bit_pos];
- 		de_name.len = le16_to_cpu(de->name_len);
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -1677,7 +1677,7 @@ struct dentry *f2fs_get_parent(struct de
-  */
- extern unsigned char f2fs_filetype_table[F2FS_FT_MAX];
- void set_de_type(struct f2fs_dir_entry *, umode_t);
--
-+unsigned char get_de_type(struct f2fs_dir_entry *);
- struct f2fs_dir_entry *find_target_dentry(struct f2fs_filename *,
- 			f2fs_hash_t, int *, struct f2fs_dentry_ptr *);
- bool f2fs_fill_dentries(struct dir_context *, struct f2fs_dentry_ptr *,
-@@ -1698,6 +1698,8 @@ void f2fs_set_link(struct inode *, struc
- int update_dent_inode(struct inode *, struct inode *, const struct qstr *);
- void f2fs_update_dentry(nid_t ino, umode_t mode, struct f2fs_dentry_ptr *,
- 			const struct qstr *, f2fs_hash_t , unsigned int);
-+int f2fs_add_regular_entry(struct inode *, const struct qstr *,
-+						struct inode *, nid_t, umode_t);
- int __f2fs_add_link(struct inode *, const struct qstr *, struct inode *, nid_t,
- 			umode_t);
- void f2fs_delete_entry(struct f2fs_dir_entry *, struct page *, struct inode *,
---- a/fs/f2fs/inline.c
-+++ b/fs/f2fs/inline.c
-@@ -367,7 +367,7 @@ int make_empty_inline_dir(struct inode *
-  * NOTE: ipage is grabbed by caller, but if any error occurs, we should
-  * release ipage in this function.
-  */
--static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
-+static int f2fs_move_inline_dirents(struct inode *dir, struct page *ipage,
- 				struct f2fs_inline_dentry *inline_dentry)
- {
- 	struct page *page;
-@@ -428,6 +428,98 @@ out:
- 	return err;
- }
- 
-+static int f2fs_add_inline_entries(struct inode *dir,
-+			struct f2fs_inline_dentry *inline_dentry)
-+{
-+	struct f2fs_dentry_ptr d;
-+	unsigned long bit_pos = 0;
-+	int err = 0;
-+
-+	make_dentry_ptr(NULL, &d, (void *)inline_dentry, 2);
-+
-+	while (bit_pos < d.max) {
-+		struct f2fs_dir_entry *de;
-+		struct qstr new_name;
-+		nid_t ino;
-+		umode_t fake_mode;
-+
-+		if (!test_bit_le(bit_pos, d.bitmap)) {
-+			bit_pos++;
-+			continue;
-+		}
-+
-+		de = &d.dentry[bit_pos];
-+		new_name.name = d.filename[bit_pos];
-+		new_name.len = de->name_len;
-+
-+		ino = le32_to_cpu(de->ino);
-+		fake_mode = get_de_type(de) << S_SHIFT;
-+
-+		err = f2fs_add_regular_entry(dir, &new_name, NULL,
-+							ino, fake_mode);
-+		if (err)
-+			goto punch_dentry_pages;
-+
-+		if (unlikely(!de->name_len))
-+			d.max = -1;
-+
-+		bit_pos += GET_DENTRY_SLOTS(le16_to_cpu(de->name_len));
-+	}
-+	return 0;
-+punch_dentry_pages:
-+	truncate_inode_pages(&dir->i_data, 0);
-+	truncate_blocks(dir, 0, false);
-+	remove_dirty_dir_inode(dir);
-+	return err;
-+}
-+
-+static int f2fs_move_rehashed_dirents(struct inode *dir, struct page *ipage,
-+				struct f2fs_inline_dentry *inline_dentry)
-+{
-+	struct f2fs_inline_dentry *backup_dentry;
-+	int err;
-+
-+	backup_dentry = kmalloc(sizeof(struct f2fs_inline_dentry),
-+							GFP_F2FS_ZERO);
-+	if (!backup_dentry)
-+		return -ENOMEM;
-+
-+	memcpy(backup_dentry, inline_dentry, MAX_INLINE_DATA);
-+	truncate_inline_inode(ipage, 0);
-+
-+	unlock_page(ipage);
-+
-+	err = f2fs_add_inline_entries(dir, backup_dentry);
-+	if (err)
-+		goto recover;
-+
-+	lock_page(ipage);
-+
-+	stat_dec_inline_dir(dir);
-+	clear_inode_flag(F2FS_I(dir), FI_INLINE_DENTRY);
-+	update_inode(dir, ipage);
-+	kfree(backup_dentry);
-+	return 0;
-+recover:
-+	lock_page(ipage);
-+	memcpy(inline_dentry, backup_dentry, MAX_INLINE_DATA);
-+	i_size_write(dir, MAX_INLINE_DATA);
-+	update_inode(dir, ipage);
-+	f2fs_put_page(ipage, 1);
-+
-+	kfree(backup_dentry);
-+	return err;
-+}
-+
-+static int f2fs_convert_inline_dir(struct inode *dir, struct page *ipage,
-+				struct f2fs_inline_dentry *inline_dentry)
-+{
-+	if (!F2FS_I(dir)->i_dir_level)
-+		return f2fs_move_inline_dirents(dir, ipage, inline_dentry);
-+	else
-+		return f2fs_move_rehashed_dirents(dir, ipage, inline_dentry);
-+}
-+
- int f2fs_add_inline_entry(struct inode *dir, const struct qstr *name,
- 			struct inode *inode, nid_t ino, umode_t mode)
- {
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -497,4 +497,6 @@ enum {
- 	F2FS_FT_MAX
- };
- 
-+#define S_SHIFT 12
-+
- #endif  /* _LINUX_F2FS_FS_H */
+-		if (entry->blkaddr == blkaddr) {
+-			iput(entry->inode);
+-			list_del(&entry->list);
+-			kmem_cache_free(fsync_entry_slab, entry);
+-		}
++		if (entry->blkaddr == blkaddr)
++			del_fsync_inode(entry);
+ next:
+ 		/* check next segment */
+ 		blkaddr = next_blkaddr_of_node(page);
 
 
