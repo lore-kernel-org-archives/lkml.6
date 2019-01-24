@@ -2,149 +2,109 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 867A1C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C014C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:23:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 618C22184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:23:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49A2D2184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:23:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="UpO1W59K"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728101AbfAXSXE (ORCPT
+        id S1728182AbfAXSXc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:23:04 -0500
-Received: from mail-io1-f71.google.com ([209.85.166.71]:54262 "EHLO
-        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfAXSXE (ORCPT
+        Thu, 24 Jan 2019 13:23:32 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:45649 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725951AbfAXSXb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:23:04 -0500
-Received: by mail-io1-f71.google.com with SMTP id t133so5369696iof.20
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 10:23:03 -0800 (PST)
+        Thu, 24 Jan 2019 13:23:31 -0500
+Received: by mail-yb1-f195.google.com with SMTP id n78so2743834yba.12
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 10:23:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=FnNHJQWasIH8ZZGAghYWs1cLQc8v0FeaohIo7b3m2Xs=;
+        b=UpO1W59KzBPUdYXozLMYbpPfsOUDVZyeBT4VNzyjJMCY/l6K3zJWWABEBEeRWkuRHU
+         moaYIPc8Ndy6AhIYKdEVPAcsxqb7GKa3Uvi2WaT0YOH/ZgP62bvGHFeDML/RDP+/M4wH
+         LG8Jv5nZSnzZmA3NYAEkC9h0EK2afBSQapanqLiboWqKMgGgh3Qcy4zmk0HnLhhJtDiU
+         AsNi76Rm/cKHHjev068aGpWbJCLD9IJQmZOOC7MVccJiUOfb8f2CO1ZL6Qq+yOtltZXj
+         aKcUuF9GSaNpHjQHFlKd4c2Yb0yTIrcXVKncNb0+y0QwM9zIplkaE+poacFzbo1cYYYF
+         Nz0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=MkjuG0Ckg9P9f+qdSlSIbB3enlHQkanR0iPGk6sH5LU=;
-        b=Yr18te288XG3yScVgri81ziSSqWf/haD67+kX+wBnzo1FEkLwUjLo2B25sscnNotbX
-         bcF78ei0oIri64J0yjeNlcMpvAVurGGd3cp+uL75oSh83j0fsZtfYY/WJs76Psr2N6AU
-         q+oTlg0la4B24WU+VzejnzAc15Ewv5D4pTqqBahWK5Gl87Rc7boJ+DGhLRYJBngD3Kq2
-         zB8gEJt9V04uLimnaEcH0rIzbuz/9GPpQA1vrdltO5s1DVdS0ypO1Cz2+xdc8vLxDLw7
-         wUvXc3FfhPzSWJ2aaozTYc+96HS4Oun8TJhM9CDoGT0J2I6yVA1Vn4OIJgTsg28RbYOK
-         doYw==
-X-Gm-Message-State: AHQUAuavOxldH7a1p3oxPEunUo9O6kHWmkR5P9lkhOasEdeL7PRSCpeK
-        gD6y81sQFtdkX1AyZsAfm+WX3uZ72NQ8KV3839oMnxhj3nvC
-X-Google-Smtp-Source: ALg8bN5VZrAvbc3vq+QUB9+euZAOrSOlZh1pUr1jLeMKAxSl4eJYJFw7JmasVhLpg9/NONiYaAUwZzJhpfCJUO7+WMh5oGEMKu2Y
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=FnNHJQWasIH8ZZGAghYWs1cLQc8v0FeaohIo7b3m2Xs=;
+        b=LpIh/G3XMLEY/n413/CYk2cUluqY0Vc4jq7nxNVa3sAjX2Ef96ez1zEN9WRTd80zXk
+         +y9N6VBHeCTV4vWfhnOV5D8QR/0cOw0eMTo5dSNJo5+dKgGTLl3Etyfx1sh7nvcvJL5i
+         oEgaO+n1nLA2JMl5+XjzNX3/4Y3Vl7TQiDoe5582MS4W2ke4wVoUcnp7ROH6Rt9L6FVu
+         pCzbC/tjVt+5N63xKxNSgiNwP1xrdLiad63G+o7uyDrkB5fLCeeUxLdC+Rnv+LAgzfUJ
+         rdHtCJdWmqs7sdlPRtsGzkzRnRJewq36JHQO9u4k2ibgGrdDjc+9fgnZWpS4oXUnLLZQ
+         WqOw==
+X-Gm-Message-State: AJcUukc4wdOaAcpFkdcBoeLnt94ash6I4l4McaZM6Hwae3W9H7dHa66q
+        GcuOZ7d3lcW3ZHDrjfhSdRYcMA==
+X-Google-Smtp-Source: ALg8bN5o+dJ1DdVVYaOQaqUiMIh5Twn9VNOS+OqJ/LisCgfGjJCP5XKV3liKcS5qsHsEGWbh3oPuPQ==
+X-Received: by 2002:a25:2512:: with SMTP id l18mr7109379ybl.91.1548354210306;
+        Thu, 24 Jan 2019 10:23:30 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:9b5d])
+        by smtp.gmail.com with ESMTPSA id w1sm9523228ywd.49.2019.01.24.10.23.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 10:23:29 -0800 (PST)
+Date:   Thu, 24 Jan 2019 13:23:28 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        Dennis Zhou <dennis@kernel.org>, linux-kernel@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190124182328.GA10820@cmpxchg.org>
+References: <20190123223144.GA10798@chrisdown.name>
+ <20190124082252.GD4087@dhcp22.suse.cz>
+ <20190124160009.GA12436@cmpxchg.org>
+ <20190124170117.GS4087@dhcp22.suse.cz>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:f815:: with SMTP id o21mr6344201ioh.16.1548354183143;
- Thu, 24 Jan 2019 10:23:03 -0800 (PST)
-Date:   Thu, 24 Jan 2019 10:23:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000012a69a0580384d50@google.com>
-Subject: KASAN: global-out-of-bounds Read in validate_nla
-From:   syzbot <syzbot+4157b036c5f4713b1f2f@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, johannes@sipsolutions.net,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124170117.GS4087@dhcp22.suse.cz>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Thu, Jan 24, 2019 at 06:01:17PM +0100, Michal Hocko wrote:
+> On Thu 24-01-19 11:00:10, Johannes Weiner wrote:
+> [...]
+> > We cannot fully eliminate a risk for regression, but it strikes me as
+> > highly unlikely, given the extremely young age of cgroup2-based system
+> > management and surrounding tooling.
+> 
+> I am not really sure what you consider young but this interface is 4.0+
+> IIRC and the cgroup v2 is considered stable since 4.5 unless I
+> missrememeber and that is not a short time period in my book.
 
-syzbot found the following crash on:
+If you read my sentence again, I'm not talking about the kernel but
+the surrounding infrastructure that consumes this data. The risk is
+not dependent on the age of the interface age, but on its adoption.
 
-HEAD commit:    30bac164aca7 Revert "Change mincore() to count "mapped" pa..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b824c0c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
-dashboard link: https://syzkaller.appspot.com/bug?extid=4157b036c5f4713b1f2f
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1137adcf400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16431b18c00000
+> Changing interfaces now represents a non-trivial risk and so far I
+> haven't heard any actual usecase where the current semantic is
+> actually wrong.  Inconsistency on its own is not a sufficient
+> justification IMO.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4157b036c5f4713b1f2f@syzkaller.appspotmail.com
+It can be seen either way, and in isolation it wouldn't be wrong to
+count events on the local level. But we made that decision for the
+entire interface, and this file is the odd one out now. From that
+comprehensive perspective, yes, the behavior is wrong. It really
+confuses people who are trying to use it, because they *do* expect it
+to behave recursively.
 
-audit: type=1800 audit(1548293866.971:30): pid=7616 uid=0 auid=4294967295  
-ses=4294967295 subj==unconfined op=collect_data cause=failed(directio)  
-comm="startpar" name="rmnologin" dev="sda1" ino=2423 res=0
-==================================================================
-BUG: KASAN: global-out-of-bounds in validate_nla+0x12c4/0x1580  
-lib/nlattr.c:169
-Read of size 1 at addr ffffffff88f41fc0 by task syz-executor771/7789
-
-CPU: 1 PID: 7789 Comm: syz-executor771 Not tainted 5.0.0-rc3+ #40
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  print_address_description.cold+0x5/0x20d mm/kasan/report.c:187
-  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-  __asan_report_load1_noabort+0x14/0x20 mm/kasan/generic_report.c:132
-  validate_nla+0x12c4/0x1580 lib/nlattr.c:169
-  nla_validate+0xc1/0x130 lib/nlattr.c:340
-  validate_nla+0x711/0x1580 lib/nlattr.c:247
-  __nla_parse+0x206/0x340 lib/nlattr.c:415
-  nla_parse+0x45/0x60 lib/nlattr.c:439
-  nlmsg_parse include/net/netlink.h:527 [inline]
-  nl80211_dump_wiphy_parse.isra.0.constprop.0+0x133/0x610  
-net/wireless/nl80211.c:2299
-  nl80211_dump_wiphy+0x595/0x760 net/wireless/nl80211.c:2342
-  genl_lock_dumpit+0x6d/0xa0 net/netlink/genetlink.c:481
-  netlink_dump+0x5f2/0x1070 net/netlink/af_netlink.c:2244
-  __netlink_dump_start+0x5b4/0x7e0 net/netlink/af_netlink.c:2352
-  genl_family_rcv_msg+0xeb5/0x11a0 net/netlink/genetlink.c:549
-  genl_rcv_msg+0xca/0x16c net/netlink/genetlink.c:626
-  netlink_rcv_skb+0x17d/0x410 net/netlink/af_netlink.c:2477
-  genl_rcv+0x29/0x40 net/netlink/genetlink.c:637
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x574/0x770 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa05/0xf90 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  ___sys_sendmsg+0x7ec/0x910 net/socket.c:2116
-  __sys_sendmsg+0x112/0x270 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x4400d9
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffd4f4bf478 EFLAGS: 00000246 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 00000000004400d9
-RDX: 0000000000000000 RSI: 0000000020000380 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000006 R09: 00000000004002c8
-R10: 0000000000000008 R11: 0000000000000246 R12: 0000000000401960
-R13: 00000000004019f0 R14: 0000000000000000 R15: 0000000000000000
-
-The buggy address belongs to the variable:
-  nl80211_pmsr_attr_policy+0x60/0x80
-
-Memory state around the buggy address:
-  ffffffff88f41e80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffffffff88f41f00: 00 00 00 00 00 00 00 00 fa fa fa fa 00 00 00 00
-> ffffffff88f41f80: 00 00 00 00 00 00 00 00 fa fa fa fa 00 00 00 00
-                                            ^
-  ffffffff88f42000: 00 00 00 00 00 00 fa fa fa fa fa fa 00 00 00 00
-  ffffffff88f42080: 00 00 fa fa fa fa fa fa 00 00 00 00 fa fa fa fa
-==================================================================
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+I'm really having a hard time believing there are existing cgroup2
+users with specific expectations for the non-recursive behavior...
