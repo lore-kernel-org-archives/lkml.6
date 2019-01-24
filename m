@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DE4AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C89C1C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:47:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC48218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:47:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 959CE218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:47:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548355630;
-	bh=fVYEjti9UQODXR1HfTbddvxoRkePP8HN4HzMOSomcws=;
+	s=default; t=1548355633;
+	bh=JxBQDOhJWmpVF5Pnb3XxA1nWqcEXQknjtwzufY4KTpM=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=VaReuyTOnK1eqgxMGTqiz8Pw9nwHMdabNmSnmYbBR4+X8xkMkf4gUOvgjtSooGt7Z
-	 CaiwS5Yp20+nOskSDW0hbSUyc1+KPZdqLmEeWFuDab6Los8jOGKdHIOZcEWodCZACX
-	 57+XQLAWWSvFV04liBLIBz5IABY5wBPsb1vnPZC8=
+	b=B1KZtcPSRroVqYbOOEDQdgkcx5yD5LzbJwktosb1Hx19I1L7iIULB6dvpU+CXmH3f
+	 8Tx+aokB/vsr8ya/6qtiYyMcgry7Vw4QX2OBWAoTJhAdTYDc2VPUm+U2O4RZ1svytP
+	 ZXApWczphOD0CCwcGXIxhzS95CfNjpNPJhiBwUpA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbfAXSrI (ORCPT
+        id S1728895AbfAXSrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:47:08 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33224 "EHLO
+        Thu, 24 Jan 2019 13:47:12 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:33314 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725913AbfAXSrI (ORCPT
+        with ESMTP id S1725913AbfAXSrL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:47:08 -0500
+        Thu, 24 Jan 2019 13:47:11 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=pPVJQXH0AgdMtLi7n3qW6m542cGqwjd/DzULRf5+RzY=; b=GdQLuMYQevOE
-        ppIqWSv0cPscJhMHI8s8cD3cxWDKCtJhd+8e73fR0ZrNIegdDBJKrLTLy1kc5CBXEfX54Yrx788jC
-        6US/SA3VO4zlqb6Cz/04LJDNz0c40k7wtvRGT2ffWOu+hkkLJHAdo4/s3NL6LlDcWs9NqSjR/rkjX
-        890f8=;
+        List-Archive; bh=Tl1OceKS/YyUV9e7nd6heilEzev1SchcR3LQXIzbBMM=; b=fJoD+hX9T9z5
+        W48IwZhmbK9kuZz69f4OujUx3uftJK742ZkkjJTnrtq6I6LUVbcEx/1yjvcxmwkXL4EdA6pXh9tJT
+        43NgQ2l7y6Qg1rBDuDa4r9fDaW8mbvjmKTVCxrzw25lufjCiPowwg6A8C3HRWtTMyzAkkwWr5BCBI
+        3gbv8=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gmk1p-0006bs-Px; Thu, 24 Jan 2019 18:47:05 +0000
+        id 1gmk1t-0006br-5H; Thu, 24 Jan 2019 18:47:09 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 60DD71121C3A; Thu, 24 Jan 2019 18:47:05 +0000 (GMT)
+        id AFDA81121B6F; Thu, 24 Jan 2019 18:47:03 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: bd70528: Constify regulator_linear_range and regulator_ops" to the regulator tree
+Subject: Applied "regulator: bd718x7: Constify regulator_ops" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190124184705.60DD71121C3A@debutante.sirena.org.uk>
-Date:   Thu, 24 Jan 2019 18:47:05 +0000 (GMT)
+Message-Id: <20190124184703.AFDA81121B6F@debutante.sirena.org.uk>
+Date:   Thu, 24 Jan 2019 18:47:03 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: bd70528: Constify regulator_linear_range and regulator_ops
+   regulator: bd718x7: Constify regulator_ops
 
 has been applied to the regulator tree at
 
@@ -84,86 +84,84 @@ to this mail.
 Thanks,
 Mark
 
-From 08f15f4a348a9e7d3be156126922da8d38731d53 Mon Sep 17 00:00:00 2001
+From 704c5c01ce6e0d322e2c9555490b39c41e729383 Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Thu, 24 Jan 2019 18:02:07 +0800
-Subject: [PATCH] regulator: bd70528: Constify regulator_linear_range and
- regulator_ops
+Date: Thu, 24 Jan 2019 18:02:08 +0800
+Subject: [PATCH] regulator: bd718x7: Constify regulator_ops
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/bd70528-regulator.c | 17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ drivers/regulator/bd718x7-regulator.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/regulator/bd70528-regulator.c b/drivers/regulator/bd70528-regulator.c
-index 0cf261c469b9..72c7f9aa84f3 100644
---- a/drivers/regulator/bd70528-regulator.c
-+++ b/drivers/regulator/bd70528-regulator.c
-@@ -21,22 +21,22 @@
- #define BUCK_RAMPRATE_125MV 1
- #define BUCK_RAMP_MAX 250
- 
--static struct regulator_linear_range bd70528_buck1_volts[] = {
-+static const struct regulator_linear_range bd70528_buck1_volts[] = {
- 	REGULATOR_LINEAR_RANGE(1200000, 0x00, 0x1, 600000),
- 	REGULATOR_LINEAR_RANGE(2750000, 0x2, 0xf, 50000),
- };
--static struct regulator_linear_range bd70528_buck2_volts[] = {
-+static const struct regulator_linear_range bd70528_buck2_volts[] = {
- 	REGULATOR_LINEAR_RANGE(1200000, 0x00, 0x1, 300000),
- 	REGULATOR_LINEAR_RANGE(1550000, 0x2, 0xd, 50000),
- 	REGULATOR_LINEAR_RANGE(3000000, 0xe, 0xf, 300000),
- };
--static struct regulator_linear_range bd70528_buck3_volts[] = {
-+static const struct regulator_linear_range bd70528_buck3_volts[] = {
- 	REGULATOR_LINEAR_RANGE(800000, 0x00, 0xd, 50000),
- 	REGULATOR_LINEAR_RANGE(1800000, 0xe, 0xf, 0),
- };
- 
- /* All LDOs have same voltage ranges */
--static struct regulator_linear_range bd70528_ldo_volts[] = {
-+static const struct regulator_linear_range bd70528_ldo_volts[] = {
- 	REGULATOR_LINEAR_RANGE(1650000, 0x0, 0x07, 50000),
- 	REGULATOR_LINEAR_RANGE(2100000, 0x8, 0x0f, 100000),
- 	REGULATOR_LINEAR_RANGE(2850000, 0x10, 0x19, 50000),
-@@ -83,7 +83,7 @@ static int bd70528_led_set_voltage_sel(struct regulator_dev *rdev,
- 	return -EBUSY;
+diff --git a/drivers/regulator/bd718x7-regulator.c b/drivers/regulator/bd718x7-regulator.c
+index b8dcdc21dc22..ccea133778c8 100644
+--- a/drivers/regulator/bd718x7-regulator.c
++++ b/drivers/regulator/bd718x7-regulator.c
+@@ -79,7 +79,7 @@ static int bd718xx_set_voltage_sel_pickable_restricted(
+ 	return regulator_set_voltage_sel_pickable_regmap(rdev, sel);
  }
  
--static struct regulator_ops bd70528_buck_ops = {
-+static const struct regulator_ops bd70528_buck_ops = {
+-static struct regulator_ops bd718xx_pickable_range_ldo_ops = {
++static const struct regulator_ops bd718xx_pickable_range_ldo_ops = {
  	.enable = regulator_enable_regmap,
  	.disable = regulator_disable_regmap,
  	.is_enabled = regulator_is_enabled_regmap,
-@@ -94,7 +94,7 @@ static struct regulator_ops bd70528_buck_ops = {
- 	.set_ramp_delay = bd70528_set_ramp_delay,
+@@ -88,7 +88,7 @@ static struct regulator_ops bd718xx_pickable_range_ldo_ops = {
+ 	.get_voltage_sel = regulator_get_voltage_sel_pickable_regmap,
  };
  
--static struct regulator_ops bd70528_ldo_ops = {
-+static const struct regulator_ops bd70528_ldo_ops = {
+-static struct regulator_ops bd718xx_pickable_range_buck_ops = {
++static const struct regulator_ops bd718xx_pickable_range_buck_ops = {
  	.enable = regulator_enable_regmap,
  	.disable = regulator_disable_regmap,
  	.is_enabled = regulator_is_enabled_regmap,
-@@ -105,7 +105,7 @@ static struct regulator_ops bd70528_ldo_ops = {
- 	.set_ramp_delay = bd70528_set_ramp_delay,
+@@ -98,7 +98,7 @@ static struct regulator_ops bd718xx_pickable_range_buck_ops = {
+ 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
  };
  
--static struct regulator_ops bd70528_led_ops = {
-+static const struct regulator_ops bd70528_led_ops = {
+-static struct regulator_ops bd718xx_ldo_regulator_ops = {
++static const struct regulator_ops bd718xx_ldo_regulator_ops = {
  	.enable = regulator_enable_regmap,
  	.disable = regulator_disable_regmap,
  	.is_enabled = regulator_is_enabled_regmap,
-@@ -114,8 +114,7 @@ static struct regulator_ops bd70528_led_ops = {
+@@ -107,7 +107,7 @@ static struct regulator_ops bd718xx_ldo_regulator_ops = {
  	.get_voltage_sel = regulator_get_voltage_sel_regmap,
  };
  
--
--static struct regulator_desc bd70528_desc[] = {
-+static const struct regulator_desc bd70528_desc[] = {
- 	{
- 		.name = "buck1",
- 		.of_match = of_match_ptr("BUCK1"),
+-static struct regulator_ops bd718xx_ldo_regulator_nolinear_ops = {
++static const struct regulator_ops bd718xx_ldo_regulator_nolinear_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
+@@ -116,7 +116,7 @@ static struct regulator_ops bd718xx_ldo_regulator_nolinear_ops = {
+ 	.get_voltage_sel = regulator_get_voltage_sel_regmap,
+ };
+ 
+-static struct regulator_ops bd718xx_buck_regulator_ops = {
++static const struct regulator_ops bd718xx_buck_regulator_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
+@@ -126,7 +126,7 @@ static struct regulator_ops bd718xx_buck_regulator_ops = {
+ 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
+ };
+ 
+-static struct regulator_ops bd718xx_buck_regulator_nolinear_ops = {
++static const struct regulator_ops bd718xx_buck_regulator_nolinear_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
+@@ -137,7 +137,7 @@ static struct regulator_ops bd718xx_buck_regulator_nolinear_ops = {
+ 	.set_voltage_time_sel = regulator_set_voltage_time_sel,
+ };
+ 
+-static struct regulator_ops bd718xx_dvs_buck_regulator_ops = {
++static const struct regulator_ops bd718xx_dvs_buck_regulator_ops = {
+ 	.enable = regulator_enable_regmap,
+ 	.disable = regulator_disable_regmap,
+ 	.is_enabled = regulator_is_enabled_regmap,
 -- 
 2.20.1
 
