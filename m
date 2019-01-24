@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83144C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AD75C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53459218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10B5321905
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358669;
-	bh=6s5tlf5TaEsmuRY7VucU/dyJnjMKDGbnxUxDO2QUhXE=;
+	s=default; t=1548358673;
+	bh=Nhdn/I77GRSQlDDjmzBBfDh4BW8F8G35XFo0z+4s9NU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HowIrvpEccra+lE46awu5T88FDqw6VQrqwZdRLdTuiXUsRFLL0Dnzuo2gmGs26I5s
-	 4Uus1MahcY3Vs89o0oLTsb87TwlCV9mgMqX/yEN2RAD7WZQaVZXbZeLZW49GH10TCd
-	 IUKS4rbVTGmT7l3iSa7q0mIRvfEtFO/fnopL2kjI=
+	b=UzTq8BQhwzwtOyvg7kThDCUkF075gL6OWSqZYc6NbOz0Kr5wTJqzA4HfTjuftVrJY
+	 BU8cZXu/SdkR0JBi4PR1lLBEWY2/3p2eiHvg7uVIrEW8WaPqp6Fpjuc9iOZhqyYqgL
+	 fMIT0T1PjxdVGANCgdxa4wGMRwcOyNZl8AD8Q3Yc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731996AbfAXThr (ORCPT
+        id S1732721AbfAXThv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:37:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37792 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:37:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37852 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732179AbfAXThp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:37:45 -0500
+        id S1732179AbfAXThs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:37:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E0EEA21905;
-        Thu, 24 Jan 2019 19:37:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC29821907;
+        Thu, 24 Jan 2019 19:37:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358664;
-        bh=6s5tlf5TaEsmuRY7VucU/dyJnjMKDGbnxUxDO2QUhXE=;
+        s=default; t=1548358667;
+        bh=Nhdn/I77GRSQlDDjmzBBfDh4BW8F8G35XFo0z+4s9NU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LfLu08sDwwEdKFSgMQLB0wrm2VRBWjWM+Cpjdhi4+WEBbUmj6qeBYOmoqD/v5/WsV
-         VE9w33tY56KkO7u9kcdLJuRZcjZe29McPBKx1uSAmTllGimA5EJxUbiLB2lZezmi4r
-         uzz8P0dA+yy6XKZ1pSAGN2TdmJKD1l09lasec/Bc=
+        b=fT+1s/nkL7+qyZokCBjhiktn8nCOW8hsRqct70xFKBqHWYGfjz2/JbcSpxHc+lUb/
+         sJaxwkKsUR4VuHkJg56EESVxTRz7imeCTO+oYA9HOufMKhaQYwO6bqtbqvRCsdKQ8W
+         m0nrSy5zzT7fRA4nnpKrzUpfYsJ+uqptSgoQvnSw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Parvi Kaustubhi <pkaustub@cisco.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
+        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
+        David Sterba <dsterba@suse.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 088/106] IB/usnic: Fix potential deadlock
-Date:   Thu, 24 Jan 2019 20:20:45 +0100
-Message-Id: <20190124190211.683334239@linuxfoundation.org>
+Subject: [PATCH 4.19 062/106] btrfs: fix use-after-free due to race between replace start and cancel
+Date:   Thu, 24 Jan 2019 20:20:19 +0100
+Message-Id: <20190124190210.350884669@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -66,61 +66,173 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8036e90f92aae2784b855a0007ae2d8154d28b3c ]
+[ Upstream commit d189dd70e2556181732598956d808ea53cc8774e ]
 
-Acquiring the rtnl lock while holding usdev_lock could result in a
-deadlock.
+The device replace cancel thread can race with the replace start thread
+and if fs_info::scrubs_running is not yet set, btrfs_scrub_cancel() will
+fail to stop the scrub thread.
 
-For example:
+The scrub thread continues with the scrub for replace which then will
+try to write to the target device and which is already freed by the
+cancel thread.
 
-usnic_ib_query_port()
-| mutex_lock(&us_ibdev->usdev_lock)
- | ib_get_eth_speed()
-  | rtnl_lock()
+scrub_setup_ctx() warns as tgtdev is NULL.
 
-rtnl_lock()
-| usnic_ib_netdevice_event()
- | mutex_lock(&us_ibdev->usdev_lock)
+  struct scrub_ctx *scrub_setup_ctx(struct btrfs_device *dev, int is_dev_replace)
+  {
+  ...
+	  if (is_dev_replace) {
+		  WARN_ON(!fs_info->dev_replace.tgtdev);  <===
+		  sctx->pages_per_wr_bio = SCRUB_PAGES_PER_WR_BIO;
+		  sctx->wr_tgtdev = fs_info->dev_replace.tgtdev;
+		  sctx->flush_all_writes = false;
+	  }
 
-This commit moves the usdev_lock acquisition after the rtnl lock has been
-released.
+  [ 6724.497655] BTRFS info (device sdb): dev_replace from /dev/sdb (devid 1) to /dev/sdc started
+  [ 6753.945017] BTRFS info (device sdb): dev_replace from /dev/sdb (devid 1) to /dev/sdc canceled
+  [ 6852.426700] WARNING: CPU: 0 PID: 4494 at fs/btrfs/scrub.c:622 scrub_setup_ctx.isra.19+0x220/0x230 [btrfs]
+  ...
+  [ 6852.428928] RIP: 0010:scrub_setup_ctx.isra.19+0x220/0x230 [btrfs]
+  ...
+  [ 6852.432970] Call Trace:
+  [ 6852.433202]  btrfs_scrub_dev+0x19b/0x5c0 [btrfs]
+  [ 6852.433471]  btrfs_dev_replace_start+0x48c/0x6a0 [btrfs]
+  [ 6852.433800]  btrfs_dev_replace_by_ioctl+0x3a/0x60 [btrfs]
+  [ 6852.434097]  btrfs_ioctl+0x2476/0x2d20 [btrfs]
+  [ 6852.434365]  ? do_sigaction+0x7d/0x1e0
+  [ 6852.434623]  do_vfs_ioctl+0xa9/0x6c0
+  [ 6852.434865]  ? syscall_trace_enter+0x1c8/0x310
+  [ 6852.435124]  ? syscall_trace_enter+0x1c8/0x310
+  [ 6852.435387]  ksys_ioctl+0x60/0x90
+  [ 6852.435663]  __x64_sys_ioctl+0x16/0x20
+  [ 6852.435907]  do_syscall_64+0x50/0x180
+  [ 6852.436150]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
 
-This is safe to do because usdev_lock is not protecting anything being
-accessed in ib_get_eth_speed(). Hence, the correct order of holding locks
-(rtnl -> usdev_lock) is not violated.
+Further, as the replace thread enters scrub_write_page_to_dev_replace()
+without the target device it panics:
 
-Signed-off-by: Parvi Kaustubhi <pkaustub@cisco.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+  static int scrub_add_page_to_wr_bio(struct scrub_ctx *sctx,
+				      struct scrub_page *spage)
+  {
+  ...
+	bio_set_dev(bio, sbio->dev->bdev); <======
+
+  [ 6929.715145] BUG: unable to handle kernel NULL pointer dereference at 00000000000000a0
+  ..
+  [ 6929.717106] Workqueue: btrfs-scrub btrfs_scrub_helper [btrfs]
+  [ 6929.717420] RIP: 0010:scrub_write_page_to_dev_replace+0xb4/0x260
+  [btrfs]
+  ..
+  [ 6929.721430] Call Trace:
+  [ 6929.721663]  scrub_write_block_to_dev_replace+0x3f/0x60 [btrfs]
+  [ 6929.721975]  scrub_bio_end_io_worker+0x1af/0x490 [btrfs]
+  [ 6929.722277]  normal_work_helper+0xf0/0x4c0 [btrfs]
+  [ 6929.722552]  process_one_work+0x1f4/0x520
+  [ 6929.722805]  ? process_one_work+0x16e/0x520
+  [ 6929.723063]  worker_thread+0x46/0x3d0
+  [ 6929.723313]  kthread+0xf8/0x130
+  [ 6929.723544]  ? process_one_work+0x520/0x520
+  [ 6929.723800]  ? kthread_delayed_work_timer_fn+0x80/0x80
+  [ 6929.724081]  ret_from_fork+0x3a/0x50
+
+Fix this by letting the btrfs_dev_replace_finishing() to do the job of
+cleaning after the cancel, including freeing of the target device.
+btrfs_dev_replace_finishing() is called when btrfs_scub_dev() returns
+along with the scrub return status.
+
+Signed-off-by: Anand Jain <anand.jain@oracle.com>
+Reviewed-by: David Sterba <dsterba@suse.com>
+Signed-off-by: David Sterba <dsterba@suse.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/usnic/usnic_ib_verbs.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ fs/btrfs/dev-replace.c | 63 +++++++++++++++++++++++++++---------------
+ 1 file changed, 41 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
-index 9973ac893635..3db232429630 100644
---- a/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
-+++ b/drivers/infiniband/hw/usnic/usnic_ib_verbs.c
-@@ -334,13 +334,16 @@ int usnic_ib_query_port(struct ib_device *ibdev, u8 port,
- 
- 	usnic_dbg("\n");
- 
--	mutex_lock(&us_ibdev->usdev_lock);
- 	if (ib_get_eth_speed(ibdev, port, &props->active_speed,
--			     &props->active_width)) {
--		mutex_unlock(&us_ibdev->usdev_lock);
-+			     &props->active_width))
- 		return -EINVAL;
+diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
+index b2b283e48439..8fed470bb7e1 100644
+--- a/fs/btrfs/dev-replace.c
++++ b/fs/btrfs/dev-replace.c
+@@ -800,39 +800,58 @@ int btrfs_dev_replace_cancel(struct btrfs_fs_info *fs_info)
+ 	case BTRFS_IOCTL_DEV_REPLACE_STATE_CANCELED:
+ 		result = BTRFS_IOCTL_DEV_REPLACE_RESULT_NOT_STARTED;
+ 		btrfs_dev_replace_write_unlock(dev_replace);
+-		goto leave;
++		break;
+ 	case BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED:
++		result = BTRFS_IOCTL_DEV_REPLACE_RESULT_NO_ERROR;
++		tgt_device = dev_replace->tgtdev;
++		src_device = dev_replace->srcdev;
++		btrfs_dev_replace_write_unlock(dev_replace);
++		btrfs_scrub_cancel(fs_info);
++		/* btrfs_dev_replace_finishing() will handle the cleanup part */
++		btrfs_info_in_rcu(fs_info,
++			"dev_replace from %s (devid %llu) to %s canceled",
++			btrfs_dev_name(src_device), src_device->devid,
++			btrfs_dev_name(tgt_device));
++		break;
+ 	case BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED:
++		/*
++		 * Scrub doing the replace isn't running so we need to do the
++		 * cleanup step of btrfs_dev_replace_finishing() here
++		 */
+ 		result = BTRFS_IOCTL_DEV_REPLACE_RESULT_NO_ERROR;
+ 		tgt_device = dev_replace->tgtdev;
+ 		src_device = dev_replace->srcdev;
+ 		dev_replace->tgtdev = NULL;
+ 		dev_replace->srcdev = NULL;
+-		break;
 -	}
+-	dev_replace->replace_state = BTRFS_IOCTL_DEV_REPLACE_STATE_CANCELED;
+-	dev_replace->time_stopped = ktime_get_real_seconds();
+-	dev_replace->item_needs_writeback = 1;
+-	btrfs_dev_replace_write_unlock(dev_replace);
+-	btrfs_scrub_cancel(fs_info);
++		dev_replace->replace_state =
++				BTRFS_IOCTL_DEV_REPLACE_STATE_CANCELED;
++		dev_replace->time_stopped = ktime_get_real_seconds();
++		dev_replace->item_needs_writeback = 1;
  
-+	/*
-+	 * usdev_lock is acquired after (and not before) ib_get_eth_speed call
-+	 * because acquiring rtnl_lock in ib_get_eth_speed, while holding
-+	 * usdev_lock could lead to a deadlock.
-+	 */
-+	mutex_lock(&us_ibdev->usdev_lock);
- 	/* props being zeroed by the caller, avoid zeroing it here */
+-	trans = btrfs_start_transaction(root, 0);
+-	if (IS_ERR(trans)) {
+-		mutex_unlock(&dev_replace->lock_finishing_cancel_unmount);
+-		return PTR_ERR(trans);
+-	}
+-	ret = btrfs_commit_transaction(trans);
+-	WARN_ON(ret);
++		btrfs_dev_replace_write_unlock(dev_replace);
  
- 	props->lid = 0;
+-	btrfs_info_in_rcu(fs_info,
+-		"dev_replace from %s (devid %llu) to %s canceled",
+-		btrfs_dev_name(src_device), src_device->devid,
+-		btrfs_dev_name(tgt_device));
++		btrfs_scrub_cancel(fs_info);
++
++		trans = btrfs_start_transaction(root, 0);
++		if (IS_ERR(trans)) {
++			mutex_unlock(&dev_replace->lock_finishing_cancel_unmount);
++			return PTR_ERR(trans);
++		}
++		ret = btrfs_commit_transaction(trans);
++		WARN_ON(ret);
+ 
+-	if (tgt_device)
+-		btrfs_destroy_dev_replace_tgtdev(tgt_device);
++		btrfs_info_in_rcu(fs_info,
++		"suspended dev_replace from %s (devid %llu) to %s canceled",
++			btrfs_dev_name(src_device), src_device->devid,
++			btrfs_dev_name(tgt_device));
++
++		if (tgt_device)
++			btrfs_destroy_dev_replace_tgtdev(tgt_device);
++		break;
++	default:
++		result = -EINVAL;
++	}
+ 
+-leave:
+ 	mutex_unlock(&dev_replace->lock_finishing_cancel_unmount);
+ 	return result;
+ }
 -- 
 2.19.1
 
