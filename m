@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 090D4C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B788FC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9C5C217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 84E3D218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:17:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548361038;
-	bh=G17Awbe0DvTqMqV560Y7HGYmDO+rWGfO1frqzgY5AAU=;
+	s=default; t=1548361056;
+	bh=Ne2FtaV4KbKkxAyiDwNkXiY5FV93YdCFhC4nVeScJHQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ox6WGG4XMUFleG/1EU2qcJypoKxKZo8L4INVFoAfeUAIolipP1geKGvsGggNaHoai
-	 z+Gcz4uYIOcYQGqskqbv+MKcPJS1HWl6XYzRYiMEjPVz6unnAkdwWW429eMRxO7kah
-	 bvLzWTVN3HxDPmMQZoro3zwGNw+uEtZnF5FFhkOE=
+	b=MLZBbIOwwGwJbXVMFserJ6yu5DgfmXiZPBYojL5vMM3846OuanYAQKLe+2PNO9yq2
+	 sMxwEVcrZn3EFl0exJz59+48H5vuAzXZbFADcCbJIAWSOGAdQWQNMitYXDw70FVS5/
+	 lTxjAlxNki2XrVKOnCpAmClYJsaMGB1JG8I9n12U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729773AbfAXURR (ORCPT
+        id S1729746AbfAXTXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:17:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48158 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:23:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729812AbfAXTXT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:23:19 -0500
+        id S1729724AbfAXTXB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:23:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C84F218DE;
-        Thu, 24 Jan 2019 19:23:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7093121902;
+        Thu, 24 Jan 2019 19:22:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357798;
-        bh=G17Awbe0DvTqMqV560Y7HGYmDO+rWGfO1frqzgY5AAU=;
+        s=default; t=1548357779;
+        bh=Ne2FtaV4KbKkxAyiDwNkXiY5FV93YdCFhC4nVeScJHQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1P33/sMc/kBP1bRaI+f0wWAfsAgUCmCNuExJ/T8q8VZeZW0SQwVMmxZv5lJqDOBgw
-         Z5nqVffxXNhQKGsz79hn0y0BSZS6453LCA2jMhVsZLxDs8IEPn7HWKLnzC2WgKs2T8
-         bWVQ+rbErBcNpzTRTLsN+W9NlJzG3Ig7CZ7rVHZo=
+        b=aGvpiY3rXoxdh43cd50deULfcz0NBKUk2IMBue5RUQNhnKLQkbxidTs44TLcDhjoW
+         xzosPJBrZSshzh5/Rmcun4fo8wC9TJFb+6s8Jlgw23YY9YWhPiuCb88hRT8EKOwUpS
+         7DjKHcn8IaXtYPBQ+tW2Zj54Bh7z6ZrGO999/kMw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Jonas Danielsson <jonas@orbital-systems.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
+        stable@vger.kernel.org, Breno Leitao <leitao@debian.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 44/52] mmc: atmel-mci: do not assume idle after atmci_request_end
-Date:   Thu, 24 Jan 2019 20:20:08 +0100
-Message-Id: <20190124190150.017222175@linuxfoundation.org>
+Subject: [PATCH 3.18 38/52] powerpc/pseries/cpuidle: Fix preempt warning
+Date:   Thu, 24 Jan 2019 20:20:02 +0100
+Message-Id: <20190124190148.970533273@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -67,66 +66,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ae460c115b7aa50c9a36cf78fced07b27962c9d0 ]
+[ Upstream commit 2b038cbc5fcf12a7ee1cc9bfd5da1e46dacdee87 ]
 
-On our AT91SAM9260 board we use the same sdio bus for wifi and for the
-sd card slot. This caused the atmel-mci to give the following splat on
-the serial console:
+When booting a pseries kernel with PREEMPT enabled, it dumps the
+following warning:
 
-  ------------[ cut here ]------------
-  WARNING: CPU: 0 PID: 538 at drivers/mmc/host/atmel-mci.c:859 atmci_send_command+0x24/0x44
-  Modules linked in:
-  CPU: 0 PID: 538 Comm: mmcqd/0 Not tainted 4.14.76 #14
-  Hardware name: Atmel AT91SAM9
-  [<c000fccc>] (unwind_backtrace) from [<c000d3dc>] (show_stack+0x10/0x14)
-  [<c000d3dc>] (show_stack) from [<c0017644>] (__warn+0xd8/0xf4)
-  [<c0017644>] (__warn) from [<c0017704>] (warn_slowpath_null+0x1c/0x24)
-  [<c0017704>] (warn_slowpath_null) from [<c033bb9c>] (atmci_send_command+0x24/0x44)
-  [<c033bb9c>] (atmci_send_command) from [<c033e984>] (atmci_start_request+0x1f4/0x2dc)
-  [<c033e984>] (atmci_start_request) from [<c033f3b4>] (atmci_request+0xf0/0x164)
-  [<c033f3b4>] (atmci_request) from [<c0327108>] (mmc_start_request+0x280/0x2d0)
-  [<c0327108>] (mmc_start_request) from [<c032800c>] (mmc_start_areq+0x230/0x330)
-  [<c032800c>] (mmc_start_areq) from [<c03366f8>] (mmc_blk_issue_rw_rq+0xc4/0x310)
-  [<c03366f8>] (mmc_blk_issue_rw_rq) from [<c03372c4>] (mmc_blk_issue_rq+0x118/0x5ac)
-  [<c03372c4>] (mmc_blk_issue_rq) from [<c033781c>] (mmc_queue_thread+0xc4/0x118)
-  [<c033781c>] (mmc_queue_thread) from [<c002daf8>] (kthread+0x100/0x118)
-  [<c002daf8>] (kthread) from [<c000a580>] (ret_from_fork+0x14/0x34)
-  ---[ end trace 594371ddfa284bd6 ]---
+   BUG: using smp_processor_id() in preemptible [00000000] code: swapper/0/1
+   caller is pseries_processor_idle_init+0x5c/0x22c
+   CPU: 13 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc3-00090-g12201a0128bc-dirty #828
+   Call Trace:
+   [c000000429437ab0] [c0000000009c8878] dump_stack+0xec/0x164 (unreliable)
+   [c000000429437b00] [c0000000005f2f24] check_preemption_disabled+0x154/0x160
+   [c000000429437b90] [c000000000cab8e8] pseries_processor_idle_init+0x5c/0x22c
+   [c000000429437c10] [c000000000010ed4] do_one_initcall+0x64/0x300
+   [c000000429437ce0] [c000000000c54500] kernel_init_freeable+0x3f0/0x500
+   [c000000429437db0] [c0000000000112dc] kernel_init+0x2c/0x160
+   [c000000429437e20] [c00000000000c1d0] ret_from_kernel_thread+0x5c/0x6c
 
-This is:
-  WARN_ON(host->cmd);
+This happens because the code calls get_lppaca() which calls
+get_paca() and it checks if preemption is disabled through
+check_preemption_disabled().
 
-This was fixed on our board by letting atmci_request_end determine what
-state we are in. Instead of unconditionally setting it to STATE_IDLE on
-STATE_END_REQUEST.
+Preemption should be disabled because the per CPU variable may make no
+sense if there is a preemption (and a CPU switch) after it reads the
+per CPU data and when it is used.
 
-Signed-off-by: Jonas Danielsson <jonas@orbital-systems.com>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+In this device driver specifically, it is not a problem, because this
+code just needs to have access to one lppaca struct, and it does not
+matter if it is the current per CPU lppaca struct or not (i.e. when
+there is a preemption and a CPU migration).
+
+That said, the most appropriate fix seems to be related to avoiding
+the debug_smp_processor_id() call at get_paca(), instead of calling
+preempt_disable() before get_paca().
+
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/atmel-mci.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/cpuidle/cpuidle-pseries.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/mmc/host/atmel-mci.c b/drivers/mmc/host/atmel-mci.c
-index 6423083c5238..bacc0368db6b 100644
---- a/drivers/mmc/host/atmel-mci.c
-+++ b/drivers/mmc/host/atmel-mci.c
-@@ -1838,13 +1838,14 @@ static void atmci_tasklet_func(unsigned long priv)
- 			}
+diff --git a/drivers/cpuidle/cpuidle-pseries.c b/drivers/cpuidle/cpuidle-pseries.c
+index 6f7b01956885..b755d3a54e3c 100644
+--- a/drivers/cpuidle/cpuidle-pseries.c
++++ b/drivers/cpuidle/cpuidle-pseries.c
+@@ -237,7 +237,13 @@ static int pseries_idle_probe(void)
+ 		return -ENODEV;
  
- 			atmci_request_end(host, host->mrq);
--			state = STATE_IDLE;
-+			goto unlock; /* atmci_request_end() sets host->state */
- 			break;
- 		}
- 	} while (state != prev_state);
- 
- 	host->state = state;
- 
-+unlock:
- 	spin_unlock(&host->lock);
- }
- 
+ 	if (firmware_has_feature(FW_FEATURE_SPLPAR)) {
+-		if (lppaca_shared_proc(get_lppaca())) {
++		/*
++		 * Use local_paca instead of get_lppaca() since
++		 * preemption is not disabled, and it is not required in
++		 * fact, since lppaca_ptr does not need to be the value
++		 * associated to the current CPU, it can be from any CPU.
++		 */
++		if (lppaca_shared_proc(local_paca->lppaca_ptr)) {
+ 			cpuidle_state_table = shared_states;
+ 			max_idle_state = ARRAY_SIZE(shared_states);
+ 		} else {
 -- 
 2.19.1
 
