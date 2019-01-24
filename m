@@ -2,156 +2,163 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0758CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:43:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E0CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8FD2218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:43:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56DDF207E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:45:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="YsDbtIYM"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728126AbfAXNnd (ORCPT
+        id S1727889AbfAXNpb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:43:33 -0500
-Received: from mail1.perex.cz ([77.48.224.245]:43750 "EHLO mail1.perex.cz"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726105AbfAXNnc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 08:43:32 -0500
-Received: from mail1.perex.cz (localhost [127.0.0.1])
-        by smtp1.perex.cz (Perex's E-mail Delivery System) with ESMTP id 1E77DA003F;
-        Thu, 24 Jan 2019 14:43:29 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 smtp1.perex.cz 1E77DA003F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=perex.cz; s=default;
-        t=1548337409; bh=LYmA5xJudYFlot/hNQo0nZS2BIExHwWclwCfWvYcZjY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=cYAQoiYuzACFL1KDdNS7D6A/n3NBvPN7lyhJZ17/UGEA6Mj1U6QPHGILBqtR2dt9l
-         1pT6fWKJUabgJ8WOatxZ03L3mwsbSjnNZ3MziHllHWKiS04PZyD76aJaAEMQ4yc3ey
-         AmnCC44Mt0C5YaE/V+ExCLL8yUHDFFxtk/nNTsJM=
-Received: from p50.perex-int.cz (unknown [192.168.100.94])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: perex)
-        by mail1.perex.cz (Perex's E-mail Delivery System) with ESMTPSA;
-        Thu, 24 Jan 2019 14:43:02 +0100 (CET)
-Subject: Re: [RFC PATCH] ALSA: core: Add DMA share buffer support
-To:     Leo Yan <leo.yan@linaro.org>, Takashi Iwai <tiwai@suse.de>
-Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        arnd@arndb.de, keescook@chromium.org, bgoswami@codeaurora.org,
-        sr@denx.de, gustavo@embeddedor.com, philburk@google.com,
-        willy@infradead.org, mchehab+samsung@kernel.org, sboyd@kernel.org,
-        vkoul@kernel.org, Baolin Wang <baolin.wang@linaro.org>,
-        daniel.thompson@linaro.org, mathieu.poirier@linaro.org,
-        srinivas.kandagatla@linaro.org, anna-maria@linutronix.de,
-        corbet@lwn.net, jmiller@neverware.com,
-        ckeepax@opensource.wolfsonmicro.com, joe@perches.com,
-        o-takashi@sakamocchi.jp, colyli@suse.de,
-        linux-kernel@vger.kernel.org
-References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
- <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz>
- <20190118190805.GF6260@sirena.org.uk> <s5hzhrxzrez.wl-tiwai@suse.de>
- <20190121124053.GA12679@sirena.org.uk>
- <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz>
- <20190122202535.GK7579@sirena.org.uk> <s5h4l9z4mbo.wl-tiwai@suse.de>
- <20190123124658.GE15906@leoy-ThinkPad-X240s>
-From:   Jaroslav Kysela <perex@perex.cz>
-Message-ID: <3962daba-f6ed-d706-c618-b791a1ba6b59@perex.cz>
-Date:   Thu, 24 Jan 2019 14:43:02 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.5.2
-MIME-Version: 1.0
-In-Reply-To: <20190123124658.GE15906@leoy-ThinkPad-X240s>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Thu, 24 Jan 2019 08:45:31 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:46658 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727556AbfAXNpb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 08:45:31 -0500
+Received: by mail-ed1-f66.google.com with SMTP id o10so4576974edt.13
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 05:45:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=javigon-com.20150623.gappssmtp.com; s=20150623;
+        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
+         :references;
+        bh=51Kso+9BQIGmO9SNAHGyeQCAmhaCcPXjeucfCxTfrgY=;
+        b=YsDbtIYMLB3H9oMC7iyJMvPPX3wGuwtuDghnWtaSFDswgt5vPfxRpZ3w5r0TA4Xtn8
+         wfJTBH25LHIFc/QBX43S2RED9853WLTlwpTJGzFXcf70bzUYyOY6kszmZqdtqfRpk79M
+         If1jw3XVviL24UKYNM7bAuJoNOHSNpnitTyPWK7dreS/rIuDY/5QuObqb3UjWO5QbTen
+         qR+NvyCOJpHuLd3otm1Z4JduCfcVnn5bq1Gbwo47Vjs6rGNtLGzOL31bU6m3qnpiHm+g
+         hAtsoMERb/iOehU5+Fv2P0Wes+pSqDxSRiAOMTfwhRljGPnY5z0Jrvjw2UbUxE2YkE7z
+         nzEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:message-id:mime-version:subject:date
+         :in-reply-to:cc:to:references;
+        bh=51Kso+9BQIGmO9SNAHGyeQCAmhaCcPXjeucfCxTfrgY=;
+        b=B/jb1jq/6/uJAAgRQkNjSNVDp+SQESJhzZW4836qzKfzGoAb89EchY7rsobnB8rjxn
+         5X9Jeqk9hanEbjTAC5lyuIp+HbZV4oaNdH34rZRkwDZb0mLMeisE3rAl7K8V4M0pgZd3
+         Q6q47yAF4LjkTB22EMUV5KeDv9flLMBB0iUkZAF1fNbEn3Q4vacekXqhhOdgH3zMqyW7
+         wQaKSf4K/uCoE5EzHVWzyPPz+qqh+X6eebThFiteeUEUsFzfsoGLkYp9Kts1OWJxejWE
+         DlX8vzZS6JBU99VUXLYvoL49Yd/laT+ombDffBQPwWA5FZ+0K3cq9kgHDVrsan/OkBWf
+         0dew==
+X-Gm-Message-State: AJcUukf2207vwfXOLmE5WHFSvPuWbK6NXbi53axklkgYH/ItjyZ54uSb
+        5uMdoeauAwV+c6rqQNMqR0sKrw==
+X-Google-Smtp-Source: ALg8bN6ysXM6jVgwIXUkKlOa6MjsBB040IP1/W5MWjbchy4NVtFg5ALRAXOEzPvzjsvRO5qfEsIDcA==
+X-Received: by 2002:a17:906:4749:: with SMTP id j9mr1349595ejs.46.1548337529131;
+        Thu, 24 Jan 2019 05:45:29 -0800 (PST)
+Received: from [192.168.1.85] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
+        by smtp.gmail.com with ESMTPSA id d56sm11220552ede.76.2019.01.24.05.45.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 05:45:28 -0800 (PST)
+From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Message-Id: <9E0FD459-75F2-4EF1-9310-8FCDF6F87604@javigon.com>
+Content-Type: multipart/signed;
+        boundary="Apple-Mail=_1025A3F0-171A-4FE0-A66B-02084B101F92";
+        protocol="application/pgp-signature";
+        micalg=pgp-sha512
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH v1] : Switch to use new generic UUID API
+Date:   Thu, 24 Jan 2019 14:45:27 +0100
+In-Reply-To: <CAHp75Vf4ndBaS6BjAM==7csYB9EYDvjV9jT9C6kioDryzb_HnQ@mail.gmail.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
+        linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+To:     Andy Shevchenko <andy.shevchenko@gmail.com>
+References: <20190110143051.52305-1-andriy.shevchenko@linux.intel.com>
+ <20190121084732.GE18680@lst.de> <20190124121659.GH9224@smile.fi.intel.com>
+ <6D748F08-F9F9-4DFB-84DF-63E97C691013@javigon.com>
+ <CAHp75Vf4ndBaS6BjAM==7csYB9EYDvjV9jT9C6kioDryzb_HnQ@mail.gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Dne 23.1.2019 v 13:46 Leo Yan napsal(a):
-> Hi all,
-> 
-> On Wed, Jan 23, 2019 at 12:58:51PM +0100, Takashi Iwai wrote:
->> On Tue, 22 Jan 2019 21:25:35 +0100,
->> Mark Brown wrote:
->>>
->>> On Mon, Jan 21, 2019 at 03:15:43PM +0100, Jaroslav Kysela wrote:
->>>> Dne 21.1.2019 v 13:40 Mark Brown napsal(a):
->>>
->>>>> It was the bit about adding more extended permission control that I was
->>>>> worried about there, not the initial O_APPEND bit.  Indeed the O_APPEND
->>>>> bit sounds like it might also work from the base buffer sharing point of
->>>>> view, I have to confess I'd not heard of that feature before (it didn't
->>>>> come up in the discussion when Eric raised this in Prague).
->>>
->>>> With permissions, I meant to make possible to restrict the file
->>>> descriptor operations (ioctls) for the depending task (like access to
->>>> the DMA buffer, synchronize it for the non-coherent platforms and maybe
->>>> read/write the actual position, delay etc.). It should be relatively
->>>> easy to implement using the snd_pcm_file structure.
->>>
->>> Right, that's what I understood you to mean.  If you want to have a
->>> policy saying "it's OK to export a PCM file descriptor if it's only got
->>> permissions X and Y" the security module is going to need to know about
->>> the mechanism for setting those permissions.  With dma_buf that's all a
->>> bit easier as there's less new stuff, though I've no real idea how much
->>> of a big deal that actually is.
->>
->> There are many ways to implement such a thing, yeah.  If we'd need an
->> implementation that is done solely in the sound driver layer, I can
->> imagine to introduce either a new ioctl or an open flag (like O_EXCL)
->> to specify the restricted sharing.  That is, a kind of master / slave
->> model where only the master is allowed to manipulate the stream while
->> the slave can mmap, read/write and get status.
->
-> In order to support EXCLUSIVE mode, it is necessary to convert the
-> /dev/snd/ descriptor to an anon_inode:dmabuffer file descriptor.
-> SELinux allows that file descriptor to be passed to the client. It can
-> also be used by the AAudioService.
 
-Okay, so this is probably the only point which we should resolve for the
-already available DMA buffer sharing in ALSA (the O_APPEND flag).
+--Apple-Mail=_1025A3F0-171A-4FE0-A66B-02084B101F92
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain;
+	charset=utf-8
 
-I had another glance to your dma-buf implementation and I see many
-things which might cause problems:
 
-- allow to call dma-buf ioctls only when the audio device is in specific
-state (stream is not running)
+> On 24 Jan 2019, at 14.36, Andy Shevchenko <andy.shevchenko@gmail.com> =
+wrote:
+>=20
+> On Thu, Jan 24, 2019 at 3:19 PM Javier Gonz=C3=A1lez =
+<javier@javigon.com> wrote:
+>>> On 24 Jan 2019, at 13.16, Andy Shevchenko =
+<andriy.shevchenko@linux.intel.com> wrote:
+>>> On Mon, Jan 21, 2019 at 09:47:32AM +0100, Christoph Hellwig wrote:
+>>>> On Thu, Jan 10, 2019 at 04:30:51PM +0200, Andy Shevchenko wrote:
+>>>>> There are new types and helpers that are supposed to be used in =
+new code.
+>>>>>=20
+>>>>> As a preparation to get rid of legacy types and API functions do
+>>>>> the conversion here.
+>>>>=20
+>>>> This seems to miss a "lightnvm" in the subject line.
+>>>>=20
+>>>>> static inline void pblk_setup_uuid(struct pblk *pblk)
+>>>>> {
+>>>>> +   guid_gen((guid_t *)&pblk->instance_uuid);
+>>>>> }
+>>>>=20
+>>>> I think we can just kill this wrapper.
+>>>>=20
+>>>> But more importantly the instance_uuid fied, and the header.uuid =
+one
+>>>> it is copied from should be turned into an actual guid_t, the =
+memcpys
+>>>> and memcmps should also be replaced with the proper UUID API.
+>>>=20
+>>> header.uuid is defined using __u8 type, I'm not sure we can use =
+guid_t there.
+>>=20
+>> We can turn it into a guid_t and bump the minor version.
+>=20
+> It's not so easy. __uXX types are dedicated for external APIs. guid_t
+> is kernel internal type disregard of (still) presence some uapi bits.
+> So, the question is those __uXX types in the driver definition is a
+> simple mistake, (weird) style decision, or what?
+>=20
 
-- as Takashi mentioned, if we return another file-descriptor (dma-buf
-export) to the user space and the server closes the main pcm
-file-descriptor (the client does not) - the result will be a crash (dma
-buffer will be freed, but referenced through the dma-buf interface)
+I would define it as a mistake and I think it is worth fixing it. At the
+moment we are only using this uuid for recovery purposes, to discard
+data from a different pblk instance, so there should not be a big impact
+outside of pblk itself. Am I missing something?
 
-- the attach function calls dma_buf_get(fd), but what if fd points to
-another dma-buf allocation from a different driver? the unexpected
-private data will cause crash - there should be a type checking in the
-dma-buf interface
+Javier
 
-If I look to the dma_buf_fd() implementation:
+--Apple-Mail=_1025A3F0-171A-4FE0-A66B-02084B101F92
+Content-Transfer-Encoding: 7bit
+Content-Disposition: attachment;
+	filename=signature.asc
+Content-Type: application/pgp-signature;
+	name=signature.asc
+Content-Description: Message signed with OpenPGP
 
-  fd = get_unused_fd_flags(flags);
-  fd_install(fd, dmabuf->file);
+-----BEGIN PGP SIGNATURE-----
 
-.. what if we just add one new ioctl to the ALSA's PCM API which will
-return a new anonymous inode descriptor with the restricted access to
-the main PCM device to satisfy the SELinux requirements / security
-policies? It might be more nice and simple solution than to implement
-the full dma-buf interface for the ALSA's PCM devices.
+iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlxJwXcACgkQPEYBfS0l
+eOD18Q/9G+8QUFlvDqzLMAVoElXVRBEmAomFhP/iL5q8MoHqnaGMoOs1b8zaaPqm
+u0ltfJFuhkPBzBJpFMReuHpR0+N1Av+ee3UI02ZDOgqmnsSpnQjrgVyDJihcuRqR
+4XwMmVbE+Wt0Kefmrd7x0RrnOktqMRLUhNsd/IaRoXHvkmOIvcYkr+nO1VDtse7D
+wK12U95x8pWboEs+M7o+z8Uua3awMfGpHDi8mqGrhmTFCyoIDLQWPkwI1C5S5hW/
+TUhMRMeMh5xja57UtcacOHPeWA+TViwygLrLdn3enPlJ4yDukfEjsIIJdGUSAMUc
+kj6s5l1NO54148Puve39cY7qr5yV4yDsXqamn9y4ASpM841jVnPM6a/bDD/4TOFK
+7f0jh7FmhbTTMj1imCSSmXEKy1mYNOrDsZhfR6+AnNCpK9k0uPVKMYYCx/zeidNz
+on9xbCVZ6nRDcl+sNvvph110hS3BXkpEqBCdi2tvUPezRgf6Bl2BnuJBlyKKylFg
+y6nhZUf/Cv5gXrVpamcyTVCkU2NEs5eymu6oNl8U/oeN3MQVMm+z738EH9GwRt5e
+nKWhVEDnUZBjZePUlX99tP3Sgv0cDoQgOO6c2SKOH67MF8VnbvDPoxdddPsZqC7S
+R+m4tZbuQa5EEGlAW3e3wxnNPCvTP1oisEpQ59zOP84+NfrrNyI=
+=UWGy
+-----END PGP SIGNATURE-----
 
-Question: The dma-buf also implements the fencing, but I am not able to
-determine, if this mechanism is used in android [1]. It may allow
-concurrent mmap and synchronize apps - but the sound server should
-manage the access to the DMA buffer anyway. In my opinion, it makes much
-sense for the video-pipes when the hardware does some accelerations
-(encoding/decoding).
-
-					Jaroslav
-
-> [1] https://source.android.com/devices/audio/aaudio
-
--- 
-Jaroslav Kysela <perex@perex.cz>
-Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+--Apple-Mail=_1025A3F0-171A-4FE0-A66B-02084B101F92--
