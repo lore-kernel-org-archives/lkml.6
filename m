@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 271DCC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B654C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E179B21903
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3906218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358472;
-	bh=Mhqg+72LuUMODaKsIQE9WvPTkFdCy5r2ttdz7xuWzNo=;
+	s=default; t=1548358475;
+	bh=IOJNew2MMFPbs/HPOVq9HFwkUb994i3q9N2vRXJCghw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HAPTA+XyCLCSVY65LPa3lcVV4OLPrFm9CSYj8ENLjG95cndVT6qDckMI/865NsbMP
-	 dAmEmE1A3IcP1J5NDcQRyJv1fnpDl0nhwkDwwUzkf5luRAIPSOUZeXAaOPYGMy4N0b
-	 HQvYy3IgTxY3Hff73tHXA5CHyVsCZG1V44edDKsI=
+	b=BkZNsR6l1t4vnsXmRgx8A0ZkoQ4ucoUZjo9Jfr+xboCz6PTNvuUPPpumkURoXIEEb
+	 4c3RkDbdbjsMnYCwNcQY3uDoilA9zNaOJKFE4c6g2omxd5GvkQbDyJTf4n8QEE3sUj
+	 1sajgoJEYMEBNVKbG72+2iJOj+0nCR+60b65z/Fg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732210AbfAXTea (ORCPT
+        id S1732223AbfAXTed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34272 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:34:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34334 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732170AbfAXTe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:28 -0500
+        id S1731456AbfAXTeb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:34:31 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22AAF21906;
-        Thu, 24 Jan 2019 19:34:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61978218FC;
+        Thu, 24 Jan 2019 19:34:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358467;
-        bh=Mhqg+72LuUMODaKsIQE9WvPTkFdCy5r2ttdz7xuWzNo=;
+        s=default; t=1548358470;
+        bh=IOJNew2MMFPbs/HPOVq9HFwkUb994i3q9N2vRXJCghw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oWhrQQkxx0MLSRQ9hUgoS5A4QtdaHkFlGMjDE3FN/TMXNwugEXSykZJGYyZ2TsfAt
-         RCtZ5FyjsmvAmv+hmFKmEV2WFZs9GCkbxuzi9Nrd2o+kRSetEhKMRLqJQUfuSk95I6
-         aeROEmSuW+uhZgIuTgp1lypi+FPilhDngCweQ7qE=
+        b=i3jwW2AeZSSV6l2dmmnDCmN2vlCegZHIgMVlCZUYnAgHnsmFH7VjrFvQSFmz5YHb2
+         3qJQkUlvt28r7t08+KkESkvkxTRPPh4euLpmQfZuTABlJodZ8pmQyBSsLepWxTif1o
+         LO/xO1M6dujwO4yGooiP4VkCAMsMux8FhBDPsMxY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Pirko <jiri@mellanox.com>,
-        Ido Schimmel <idosch@mellanox.com>,
+        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
+        Jiri Pirko <jiri@mellanox.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 002/106] mlxsw: spectrum: Disable lag port TX before removing it
-Date:   Thu, 24 Jan 2019 20:19:19 +0100
-Message-Id: <20190124190206.496986938@linuxfoundation.org>
+Subject: [PATCH 4.19 003/106] mlxsw: spectrum_switchdev: Set PVID correctly during VLAN deletion
+Date:   Thu, 24 Jan 2019 20:19:20 +0100
+Message-Id: <20190124190206.554643056@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -66,41 +65,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jiri Pirko <jiri@mellanox.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit 8adbe212a159d9c78a90fca1d854f6e63452426b ]
+[ Upstream commit 674bed5df4cab8f96d04f7b99608883a48f9226b ]
 
-Make sure that lag port TX is disabled before mlxsw_sp_port_lag_leave()
-is called and prevent from possible EMAD error.
+When a VLAN is deleted from a bridge port we should not change the PVID
+unless the deleted VLAN is the PVID.
 
-Fixes: 0d65fc13042f ("mlxsw: spectrum: Implement LAG port join/leave")
-Signed-off-by: Jiri Pirko <jiri@mellanox.com>
+Fixes: fe9ccc785de5 ("mlxsw: spectrum_switchdev: Don't batch VLAN operations")
 Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Acked-by: Jiri Pirko <jiri@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum.c |    7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
-@@ -4635,12 +4635,15 @@ static int mlxsw_sp_netdevice_port_upper
- 							   lower_dev,
- 							   upper_dev);
- 		} else if (netif_is_lag_master(upper_dev)) {
--			if (info->linking)
-+			if (info->linking) {
- 				err = mlxsw_sp_port_lag_join(mlxsw_sp_port,
- 							     upper_dev);
--			else
-+			} else {
-+				mlxsw_sp_port_lag_tx_en_set(mlxsw_sp_port,
-+							    false);
- 				mlxsw_sp_port_lag_leave(mlxsw_sp_port,
- 							upper_dev);
-+			}
- 		} else if (netif_is_ovs_master(upper_dev)) {
- 			if (info->linking)
- 				err = mlxsw_sp_port_ovs_join(mlxsw_sp_port);
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -1761,7 +1761,7 @@ static void
+ mlxsw_sp_bridge_port_vlan_del(struct mlxsw_sp_port *mlxsw_sp_port,
+ 			      struct mlxsw_sp_bridge_port *bridge_port, u16 vid)
+ {
+-	u16 pvid = mlxsw_sp_port->pvid == vid ? 0 : vid;
++	u16 pvid = mlxsw_sp_port->pvid == vid ? 0 : mlxsw_sp_port->pvid;
+ 	struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan;
+ 
+ 	mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_vid(mlxsw_sp_port, vid);
 
 
