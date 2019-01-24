@@ -6,48 +6,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83BD3C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07FD2C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E24F218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C98C0218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357969;
-	bh=NUq9K7QgvCbJkydf93Li7Io578NbuvQQA+AgezARIEM=;
+	s=default; t=1548357972;
+	bh=wjYHQyz6q4OgKnYf7PPA7p4LbWHOk97e0b/7R1TF2C8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AJ4Oktea978hGS3G7tji8t8+a2BL8iWYe6NMMJJyFJZXAYWcA2J8lkT9gqqPHPiHG
-	 Ng7JumQXMVoy2bEVjio8YD49bjkw9ip33thBatZ2vU5Xx7sHN3aU2uFvmq8YOHceHs
-	 lFu5xG5uFyraxB251+lr8PsY74pybFxNqG8idgpY=
+	b=w+Ujxnu1I/nT/ypAz1x3X/gb+HOx8sAC6Vyv4xGkCRIbYKcfqNdpUDbTdBWAE9OKk
+	 j20W9ngJmcowenUS9Oj8Eis57+vHJuHD+KCHas/PpZ35GHN60qFHgwEUcsqBK3vFpl
+	 2ZyfeS8WY+RueqUoyAV7qqzS9vu4m2x+Hb0k1TsI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730510AbfAXT0H (ORCPT
+        id S1730519AbfAXT0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:26:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51964 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:26:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52042 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728496AbfAXT0G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:26:06 -0500
+        id S1728496AbfAXT0I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:26:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1852E218FD;
-        Thu, 24 Jan 2019 19:26:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A764B217D7;
+        Thu, 24 Jan 2019 19:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357965;
-        bh=NUq9K7QgvCbJkydf93Li7Io578NbuvQQA+AgezARIEM=;
+        s=default; t=1548357968;
+        bh=wjYHQyz6q4OgKnYf7PPA7p4LbWHOk97e0b/7R1TF2C8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iMuhFn2Vm2ermj9CECXYRgEkdIoZobseoKyS0Etn/7fybV3MbGlN3bTiONEdriEKI
-         eebp8NQ8QzppC+2TbfIfrqaP7+NinYUcCK73a/Js1NgBy3xP3BkeI3NixEKTtZ5c+A
-         Bd9Md4q/3L1IAr6DXQ7EFNlzfnPMtadb9EF/XKyo=
+        b=aLXtnZBSibMZFnW5TqcDxXAel67/ejAULZJZ+4F8SXGnMeOye1uvvm4TpJVVSMpf1
+         TzQHLRSeW3eR379LoRT4A7iLPG75CIyffemBGIgiH2H97da3cUOV/UPwctbt369puX
+         Np3zHCGpMyMCUROhcZbONStUedzYTOi/fpM2HP/Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jon Hunter <jonathanh@nvidia.com>,
-        Dmitry Osipenko <digetx@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Lee Jones <lee.jones@linaro.org>
-Subject: [PATCH 4.4 052/104] mfd: tps6586x: Handle interrupts on suspend
-Date:   Thu, 24 Jan 2019 20:19:41 +0100
-Message-Id: <20190124190201.503309172@linuxfoundation.org>
+        stable@vger.kernel.org, YunQiang Su <ysu@wavecomp.com>,
+        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
+        linux-mips@vger.kernel.org, aaro.koskinen@iki.fi
+Subject: [PATCH 4.4 053/104] Disable MSI also when pcie-octeon.pcie_disable on
+Date:   Thu, 24 Jan 2019 20:19:42 +0100
+Message-Id: <20190124190201.606687228@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -66,94 +65,40 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Jonathan Hunter <jonathanh@nvidia.com>
+From: YunQiang Su <ysu@wavecomp.com>
 
-commit ac4ca4b9f4623ba5e1ea7a582f286567c611e027 upstream.
+commit a214720cbf50cd8c3f76bbb9c3f5c283910e9d33 upstream.
 
-The tps6586x driver creates an irqchip that is used by its various child
-devices for managing interrupts. The tps6586x-rtc device is one of its
-children that uses the tps6586x irqchip. When using the tps6586x-rtc as
-a wake-up device from suspend, the following is seen:
+Octeon has an boot-time option to disable pcie.
 
- PM: Syncing filesystems ... done.
- Freezing user space processes ... (elapsed 0.001 seconds) done.
- OOM killer disabled.
- Freezing remaining freezable tasks ... (elapsed 0.000 seconds) done.
- Disabling non-boot CPUs ...
- Entering suspend state LP1
- Enabling non-boot CPUs ...
- CPU1 is up
- tps6586x 3-0034: failed to read interrupt status
- tps6586x 3-0034: failed to read interrupt status
+Since MSI depends on PCI-E, we should also disable MSI also with
+this option is on in order to avoid inadvertently accessing PCIe
+registers.
 
-The reason why the tps6586x interrupt status cannot be read is because
-the tps6586x interrupt is not masked during suspend and when the
-tps6586x-rtc interrupt occurs, to wake-up the device, the interrupt is
-seen before the i2c controller has been resumed in order to read the
-tps6586x interrupt status.
-
-The tps6586x-rtc driver sets it's interrupt as a wake-up source during
-suspend, which gets propagated to the parent tps6586x interrupt.
-However, the tps6586x-rtc driver cannot disable it's interrupt during
-suspend otherwise we would never be woken up and so the tps6586x must
-disable it's interrupt instead.
-
-Prevent the tps6586x interrupt handler from executing on exiting suspend
-before the i2c controller has been resumed by disabling the tps6586x
-interrupt on entering suspend and re-enabling it on resuming from
-suspend.
-
-Cc: stable@vger.kernel.org
-Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
-Reviewed-by: Dmitry Osipenko <digetx@gmail.com>
-Tested-by: Dmitry Osipenko <digetx@gmail.com>
-Acked-by: Thierry Reding <treding@nvidia.com>
-Signed-off-by: Lee Jones <lee.jones@linaro.org>
+Signed-off-by: YunQiang Su <ysu@wavecomp.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: pburton@wavecomp.com
+Cc: linux-mips@vger.kernel.org
+Cc: aaro.koskinen@iki.fi
+Cc: stable@vger.kernel.org # v3.3+
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/mfd/tps6586x.c |   24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
+ arch/mips/pci/msi-octeon.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/mfd/tps6586x.c
-+++ b/drivers/mfd/tps6586x.c
-@@ -594,6 +594,29 @@ static int tps6586x_i2c_remove(struct i2
- 	return 0;
- }
+--- a/arch/mips/pci/msi-octeon.c
++++ b/arch/mips/pci/msi-octeon.c
+@@ -369,7 +369,9 @@ int __init octeon_msi_initialize(void)
+ 	int irq;
+ 	struct irq_chip *msi;
  
-+static int __maybe_unused tps6586x_i2c_suspend(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
-+
-+	if (tps6586x->client->irq)
-+		disable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused tps6586x_i2c_resume(struct device *dev)
-+{
-+	struct tps6586x *tps6586x = dev_get_drvdata(dev);
-+
-+	if (tps6586x->client->irq)
-+		enable_irq(tps6586x->client->irq);
-+
-+	return 0;
-+}
-+
-+static SIMPLE_DEV_PM_OPS(tps6586x_pm_ops, tps6586x_i2c_suspend,
-+			 tps6586x_i2c_resume);
-+
- static const struct i2c_device_id tps6586x_id_table[] = {
- 	{ "tps6586x", 0 },
- 	{ },
-@@ -604,6 +627,7 @@ static struct i2c_driver tps6586x_driver
- 	.driver	= {
- 		.name	= "tps6586x",
- 		.of_match_table = of_match_ptr(tps6586x_of_match),
-+		.pm	= &tps6586x_pm_ops,
- 	},
- 	.probe		= tps6586x_i2c_probe,
- 	.remove		= tps6586x_i2c_remove,
+-	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
++	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_INVALID) {
++		return 0;
++	} else if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
+ 		msi_rcv_reg[0] = CVMX_PEXP_NPEI_MSI_RCV0;
+ 		msi_rcv_reg[1] = CVMX_PEXP_NPEI_MSI_RCV1;
+ 		msi_rcv_reg[2] = CVMX_PEXP_NPEI_MSI_RCV2;
 
 
