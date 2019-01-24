@@ -2,110 +2,176 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 483F3C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99CC7C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:13:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D3192184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:13:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71B14218A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:13:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726315AbfAXJNI convert rfc822-to-8bit (ORCPT
+        id S1726881AbfAXJNK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:13:08 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:44766 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725931AbfAXJNI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:13:08 -0500
-Received: by mail-vs1-f66.google.com with SMTP id u11so3069846vsp.11;
-        Thu, 24 Jan 2019 01:13:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=1ehrP1RXAhBOaf7/Ggy42Orq06tEZtqtdfxRf3rgExY=;
-        b=L17YZ7NIbmFLfHUhEBcYu652W3McnI1TO0VsaTeTBcUFmS/fg4orefpOoTx08ykp+T
-         EwZhROFOkZGnoRpPxxvokGGBZGbgEhY5uJxASYrL1afGGx5m+1tnvPZRCM1po5oeuAPZ
-         rYUJeuTXVDT8Vgla7p2cBt1i5GV5Iy2clERGqaxxpZai/xT9gvvEWXjUI8sOmvBNZdho
-         lZo+9OgGCjTyNybQZUoRHDOWmNOnLrQeMvskl1BBoMhIKSGSSghdPwhWgFAwWOQRZ3Rm
-         Z1mfDQCjgK9z28E1vGMO89IhGzznWMn410l9L/1YT9ROdm4Y9OiP80AFLTAJrbABravc
-         Xavw==
-X-Gm-Message-State: AJcUukfenqm6oXs2gb8xH/Jm5XKVTUZm/4Hc5/Ha1YCrS2SdRG30KxnB
-        eeEOQpn0gvmtHQ7B9wpAY9MdCgApC4SjDQ1Bnwo=
-X-Google-Smtp-Source: ALg8bN6fu95l/gMOq/DT5BcGg41b9+nExgnUVqyIngkzZhzELrIsY8AajxN2tv6YwIUNtxf8WJqPTjHBmnt4wMrdc3M=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr2307162vsj.11.1548321186908;
- Thu, 24 Jan 2019 01:13:06 -0800 (PST)
-MIME-Version: 1.0
-References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
- <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
- <12af2632-491d-0e01-66c9-0ead4f9d985a@cogentembedded.com> <OFC86383C3.5347178A-ON4825838C.00093E95-4825838C.000B9D6F@mxic.com.tw>
-In-Reply-To: <OFC86383C3.5347178A-ON4825838C.00093E95-4825838C.000B9D6F@mxic.com.tw>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Thu, 24 Jan 2019 10:12:54 +0100
-Message-ID: <CAMuHMdU7wOzG4T5DZoNOhmcspTsGQ7Rd6T6fQjB6o0CeZ5yxhg@mail.gmail.com>
-Subject: Re: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller driver
-To:     Mason Yang <masonccyang@mxic.com.tw>
-Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Renesas <linux-renesas-soc@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>, zhengxunli@mxic.com.tw
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
+        Thu, 24 Jan 2019 04:13:10 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38980 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725986AbfAXJNJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:13:09 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 53718B049;
+        Thu, 24 Jan 2019 09:13:07 +0000 (UTC)
+Date:   Thu, 24 Jan 2019 10:13:07 +0100
+Message-ID: <s5hfttibeqk.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] sound fixes for 5.0-rc4
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mason,
+Linus,
 
-On Thu, Jan 24, 2019 at 3:07 AM <masonccyang@mxic.com.tw> wrote:
-> > "Sergei Shtylyov" <sergei.shtylyov@cogentembedded.com>
-> > 2019/01/24 上午 02:04
+please pull sound fixes for v5.0-rc4 from:
 
-> > > +static const struct of_device_id rpc_spi_of_ids[] = {
-> > > +   { .compatible = "renesas,r8a77995-rpc", },
-> >
-> >    Why (if it has no differences with the generic gen3 value below)?
-> > Please remove.
->
-> By Geert's comments in dts,
->
->          rpc: rpc@ee200000 {
->                 compatible = "renesas,r8a7795-rpc", "renesas,rcar-gen3-rpc";
->                 reg = <0 0xee200000 0 0x200>, <0 0x08000000 0 0x4000000>,
->                       <0 0xee208000 0 0x100>;
->
-> I modified it to "renesas,r8a77995-rpc" because this is Soc I developed and validated.
+  git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-5.0-rc4
 
-There's a difference between compatible values in DT and in drivers:
-  - DT should list all compatible values that are applicable, from
-    most-specific to least-specific,
-  - Drivers should match against the least-specific compatible value that
-    is sufficient to get the job done.
-    In this case, that's "renesas,rcar-gen3-rpc".
+The topmost commit is 699390381a7bae2fab01a22f742a17235c44ed8a
 
-The driver will probably have to be extended to match against
-"renesas,r8a77970-rpc" when R-Car V3M support is added, as RPC on V3M
-has an extra register that must be set, and thus cannot be declared
-compatible with "renesas,rcar-gen3-rpc".
+----------------------------------------------------------------
 
-I hope this explanation makes it clearer.
+sound fixes for 5.0-rc4
 
-Gr{oetje,eeting}s,
+A significant amount of fixes at this time, mostly for covering the
+recent ASoC issues.
 
-                        Geert
+- Fixes for the missing ASoC driver initialization with non-deferred
+  probes; these triggered other problems in chain, which resulted in
+  yet more fix commits
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+- DaVinci runtime PM fix; the diff looks large but it's just a code
+  shuffling
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+- Various fixes for ASoC Intel drivers: a regression in HD-A HDMI,
+  Kconfig dependency, machine driver adjustments, PLL fix.
+
+- Other ASoC driver-specific stuff including the trivial fixes
+  caught by static analysis
+
+- Usual HD-audio quirks
+
+----------------------------------------------------------------
+
+Ajit Pandey (1):
+      ASoC: soc-core: defer card probe until all component is added to list
+
+Anthony Wong (1):
+      ALSA: hda - Add mute LED support for HP ProBook 470 G5
+
+Curtis Malainey (1):
+      ASoC: soc-core: fix init platform memory handling
+
+Dan Carpenter (6):
+      ASoC: dma-sh7760: cleanup a debug printk
+      ASoC: pcm512x: Fix a double unlock in pcm512x_digital_mute()
+      ASoC: qdsp6: q6asm-dai: Off by one in of_q6asm_parse_dai_data()
+      ASoC: qdsp6: q6asm-dai: Fix a NULL vs IS_ERR() bug
+      ASoC: qdsp6: q6asm-dai: Fix a small memory leak
+      ALSA: compress: prevent potential divide by zero bugs
+
+Geert Uytterhoeven (1):
+      ASoC: xlnx: Grammar s/the the/the/
+
+Gustavo A. R. Silva (2):
+      ASoC: rt5514-spi: Fix potential NULL pointer dereference
+      ASoC: amd: Fix potential NULL pointer dereference
+
+Kailang Yang (1):
+      ALSA: hda/realtek - Fix typo for ALC225 model
+
+Kangjie Lu (1):
+      ASoC: atom: fix a missing check of snd_pcm_lib_malloc_pages
+
+Mac Chiang (1):
+      ASoC: Intel: Boards: move the codec PLL configuration to _init
+
+Mark Brown (1):
+      ASoC: core: Make snd_soc_find_component() more robust
+
+Maruthi Srinivas Bayyavarapu (1):
+      ASoC: xlnx: change license header format style
+
+Matthias Reichl (1):
+      ASoC: core: Don't defer probe on optional, NULL components
+
+Peter Ujfalusi (1):
+      ASoC: ti: davinci-mcasp: Move context save/restore to runtime_pm callbacks
+
+Rander Wang (1):
+      ASoC: Intel: Haswell/Broadwell: fix setting for .dynamic field
+
+Rohit kumar (2):
+      ASoC: sdm845: set jack only for a specific backend
+      ASoC: soc-core: Hold client_mutex around soc_init_dai_link()
+
+Shuming Fan (2):
+      ASoC: rt5682: Fix recording no sound issue
+      ASoC: rt5682: Fix PLL source register definitions
+
+Silvio Cesare (2):
+      ASoC: dapm: change snprintf to scnprintf for possible overflow
+      ASoC: imx-audmux: change snprintf to scnprintf for possible overflow
+
+Sinan Kaya (1):
+      ASoC: Intel: atom: Make PCI dependency explicit
+
+Takashi Iwai (1):
+      ASoC: intel: skl: Fix display power regression
+
+Yizhuo (1):
+      ASoC: Variable "val" in function rt274_i2c_probe() could be uninitialized
+
+b-ak (1):
+      ASoC: tlv320aic32x4: Kernel OOPS while entering DAPM standby mode
+
+---
+ include/sound/soc.h                           |   6 ++
+ sound/core/compress_offload.c                 |   3 +-
+ sound/pci/hda/patch_conexant.c                |   1 +
+ sound/pci/hda/patch_realtek.c                 |   2 +-
+ sound/soc/amd/raven/acp3x-pcm-dma.c           |   6 +-
+ sound/soc/codecs/hdac_hdmi.c                  | 116 +++-------------------
+ sound/soc/codecs/pcm512x.c                    |  11 +--
+ sound/soc/codecs/rt274.c                      |   5 +-
+ sound/soc/codecs/rt5514-spi.c                 |   2 +
+ sound/soc/codecs/rt5682.c                     |   1 +
+ sound/soc/codecs/rt5682.h                     |  24 ++---
+ sound/soc/codecs/tlv320aic32x4.c              |   4 +
+ sound/soc/fsl/imx-audmux.c                    |  24 ++---
+ sound/soc/intel/Kconfig                       |   2 +-
+ sound/soc/intel/atom/sst-mfld-platform-pcm.c  |   8 +-
+ sound/soc/intel/boards/broadwell.c            |   2 +-
+ sound/soc/intel/boards/glk_rt5682_max98357a.c |  45 ++-------
+ sound/soc/intel/boards/haswell.c              |   2 +-
+ sound/soc/intel/skylake/skl.c                 |  13 +--
+ sound/soc/qcom/qdsp6/q6asm-dai.c              |  17 +++-
+ sound/soc/qcom/sdm845.c                       |  31 ++++--
+ sound/soc/sh/dma-sh7760.c                     |   2 +-
+ sound/soc/soc-core.c                          |  34 +++++--
+ sound/soc/soc-dapm.c                          |  10 +-
+ sound/soc/ti/davinci-mcasp.c                  | 136 ++++++++++++--------------
+ sound/soc/xilinx/Kconfig                      |   2 +-
+ sound/soc/xilinx/xlnx_i2s.c                   |  15 ++-
+ 27 files changed, 227 insertions(+), 297 deletions(-)
+
