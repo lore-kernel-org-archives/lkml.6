@@ -2,272 +2,167 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8B34C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:27:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77C96C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4D621855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:27:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E42421855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 07:30:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbfAXH1U (ORCPT
+        id S1726263AbfAXHao (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 02:27:20 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51012 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726014AbfAXH1T (ORCPT
+        Thu, 24 Jan 2019 02:30:44 -0500
+Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:43293 "EHLO
+        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725986AbfAXHao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 02:27:19 -0500
-Received: from pps.filterd (m0098420.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0O7PVQo069433
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 02:27:18 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q78dpsg07-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 02:27:18 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 24 Jan 2019 07:27:16 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 24 Jan 2019 07:27:11 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0O7RAfT28966922
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Jan 2019 07:27:10 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AD7124C044;
-        Thu, 24 Jan 2019 07:27:10 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 09F784C040;
-        Thu, 24 Jan 2019 07:27:09 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.207.172])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 24 Jan 2019 07:27:08 +0000 (GMT)
-Date:   Thu, 24 Jan 2019 09:27:07 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH RFC 07/24] userfaultfd: wp: add the writeprotect API to
- userfaultfd ioctl
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-8-peterx@redhat.com>
- <20190121104232.GA26461@rapoport-lnx>
- <20190124045551.GD18231@xz-x1>
+        Thu, 24 Jan 2019 02:30:44 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id mZTAgVNXzNR5ymZTDgoZ74; Thu, 24 Jan 2019 08:30:41 +0100
+Subject: Re: [PATCH v9 0/4] Media Device Allocator API
+To:     shuah <shuah@kernel.org>, mchehab@kernel.org, perex@perex.cz,
+        tiwai@suse.com
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <cover.1545154777.git.shuah@kernel.org>
+ <606f731d-11f9-e2d7-aee4-b20abadc4d41@xs4all.nl>
+ <2ebe7776-d24d-79d5-bd38-efba4221b7c2@kernel.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <ecd0647c-4ee7-fe17-4324-4770f1f1dcdc@xs4all.nl>
+Date:   Thu, 24 Jan 2019 08:30:36 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124045551.GD18231@xz-x1>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19012407-0016-0000-0000-00000249AABC
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012407-0017-0000-0000-000032A3ED11
-Message-Id: <20190124072706.GA3179@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901240053
+In-Reply-To: <2ebe7776-d24d-79d5-bd38-efba4221b7c2@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: sv-FI
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfNufD9ni9Xq6iZDIOJpGUcNC1MOpo1YnJMaKP8btqqycCY7S0SJk4209bEVsPHZSgV0qcMxQ+U9UUhBHq+AXfig7SACHLRxIuwW+dvdPDaB7veMEpuJ/
+ /0v5Nq1aW2YulHgtNRKmHlP5E5FOk6ADzdRKJNrfNn6rPJ5pMbK7u6GBexHVTnM8YfwE4YfdZ3vXSiWoKZxNSII8z3r5hd1gzgNbT9sLGiPnJ0UnaTyX5+cv
+ +3aQt1uq9c73uYz5m6pklb1E6nDueTua5i1eB9rqFlIL/ZZA0sZ0Af0ihsasOdmx2kRsmaFpfj6HwHpsPTBXRhfDucbwkuK35NNn6LSTFYsALyEXcVdypf9S
+ n2yd2zjZx0qs/jpPb9f8FLfC4UlkMg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 12:56:15PM +0800, Peter Xu wrote:
-> On Mon, Jan 21, 2019 at 12:42:33PM +0200, Mike Rapoport wrote:
+On 1/24/19 2:35 AM, shuah wrote:
+> On 1/21/19 7:46 AM, Hans Verkuil wrote:
+>> Hi Shuah,
+>>
+>> On 12/18/2018 06:59 PM, shuah@kernel.org wrote:
+>>> From: Shuah Khan <shuah@kernel.org>
+>>>
+>>> Media Device Allocator API to allows multiple drivers share a media device.
+>>> This API solves a very common use-case for media devices where one physical
+>>> device (an USB stick) provides both audio and video. When such media device
+>>> exposes a standard USB Audio class, a proprietary Video class, two or more
+>>> independent drivers will share a single physical USB bridge. In such cases,
+>>> it is necessary to coordinate access to the shared resource.
+>>>
+>>> Using this API, drivers can allocate a media device with the shared struct
+>>> device as the key. Once the media device is allocated by a driver, other
+>>> drivers can get a reference to it. The media device is released when all
+>>> the references are released.
+>>>
+>>> - Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
+>>>    arecord. When analog is streaming, digital and audio user-space
+>>>    applications detect that the tuner is busy and exit. When digital
+>>>    is streaming, analog and audio applications detect that the tuner is
+>>>    busy and exit. When arecord is owns the tuner, digital and analog
+>>>    detect that the tuner is busy and exit.
+>>> - Tested media device allocator API with bind/unbind testing on
+>>>    snd-usb-audio and au0828 drivers to make sure /dev/mediaX is released
+>>>    only when the last driver is unbound.
+>>> - This patch series is tested on 4.20-rc6
+>>> - Addressed review comments from Hans on the RFC v8 (rebased on 4.19)
+>>> - Updated change log to describe the use-case more clearly.
+>>> - No changes to 0001,0002 code since the v7 referenced below.
+>>> - 0003 is a new patch to enable ALSA defines that have been
+>>>    disabled for kernel between 4.9 and 4.19.
+>>> - Minor merge conflict resolution in 0004.
+>>> - Added SPDX to new files.
+>>>
+>>> References:
+>>> https://lkml.org/lkml/2018/11/2/169
+>>> https://www.mail-archive.com/linux-media@vger.kernel.org/msg105854.html
+>>
+>> When I connect my au0828 to my laptop with your v9 patch series applied I get
+>> these warnings:
+>>
+>> [   45.416047] xhci_hcd 0000:39:00.0: xHCI Host Controller
+>> [   45.417882] xhci_hcd 0000:39:00.0: new USB bus registered, assigned bus number 3
+>> [   45.419292] xhci_hcd 0000:39:00.0: hcc params 0x200077c1 hci version 0x110 quirks 0x0000000200009810
+>> [   45.420835] usb usb3: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 5.00
+>> [   45.420893] usb usb3: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+>> [   45.420899] usb usb3: Product: xHCI Host Controller
+>> [   45.420905] usb usb3: Manufacturer: Linux 5.0.0-rc1-zen xhci-hcd
+>> [   45.420911] usb usb3: SerialNumber: 0000:39:00.0
+>> [   45.424290] hub 3-0:1.0: USB hub found
+>> [   45.425274] hub 3-0:1.0: 2 ports detected
+>> [   45.431061] xhci_hcd 0000:39:00.0: xHCI Host Controller
+>> [   45.432436] xhci_hcd 0000:39:00.0: new USB bus registered, assigned bus number 4
+>> [   45.432448] xhci_hcd 0000:39:00.0: Host supports USB 3.1 Enhanced SuperSpeed
+>> [   45.433299] usb usb4: New USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 5.00
+>> [   45.433354] usb usb4: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+>> [   45.433360] usb usb4: Product: xHCI Host Controller
+>> [   45.433365] usb usb4: Manufacturer: Linux 5.0.0-rc1-zen xhci-hcd
+>> [   45.433370] usb usb4: SerialNumber: 0000:39:00.0
+>> [   45.436134] hub 4-0:1.0: USB hub found
+>> [   45.436576] hub 4-0:1.0: 2 ports detected
+>> [   45.750940] usb 3-1: new high-speed USB device number 2 using xhci_hcd
+>> [   45.899927] usb 3-1: New USB device found, idVendor=2040, idProduct=721e, bcdDevice= 0.05
+>> [   45.899949] usb 3-1: New USB device strings: Mfr=1, Product=2, SerialNumber=10
+>> [   45.899960] usb 3-1: Product: WinTV Aero-A
+>> [   45.899970] usb 3-1: Manufacturer: Hauppauge
+>> [   45.899979] usb 3-1: SerialNumber: 4033622430
+>> [   46.053476] au0828: au0828 driver loaded
+>> [   46.053726] WARNING: CPU: 1 PID: 1824 at kernel/module.c:262 module_assert_mutex+0x20/0x30
+>> [   46.053818] Modules linked in: au0828(+) tveeprom dvb_core v4l2_common rfcomm bnep snd_hda_codec_hdmi snd_hda_codec_realtek
+>> snd_hda_codec_generic uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common videodev media btusb btintel bluetooth
+>> snd_soc_skl snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_soc_acpi_intel_match snd_soc_acpi snd_hda_ext_core x86_pkg_temp_thermal
+>> snd_soc_core snd_compress ac97_bus snd_pcm_dmaengine snd_hda_intel iwlmvm snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_timer snd iwlwifi
+>> i915 intel_gtt battery ac pcc_cpufreq thermal
+>> [   46.053853] CPU: 1 PID: 1824 Comm: systemd-udevd Not tainted 5.0.0-rc1-zen #85
+>> [   46.053856] Hardware name: ASUSTeK COMPUTER INC. UX490UA/UX490UA, BIOS UX490UA.312 04/09/2018
+>> [   46.053862] RIP: 0010:module_assert_mutex+0x20/0x30
+>> [   46.053867] Code: 5d c3 e8 f3 68 f5 ff 0f 1f 00 8b 05 d2 5a 7c 01 85 c0 75 01 c3 be ff ff ff ff 48 c7 c7 80 bc 86 82 e8 e4 27 fb ff 85 c0
+>> 75 ea <0f> 0b c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 53 48 89 fb e8 c7
+>> [   46.053871] RSP: 0018:ffffc90002aa3ac8 EFLAGS: 00010246
+>> [   46.053876] RAX: 0000000000000000 RBX: ffffffffa0573abf RCX: 0000000000000000
+>> [   46.053880] RDX: 0000000000000000 RSI: ffffffff8286bc80 RDI: ffff8882a517d570
+>> [   46.053883] RBP: ffff8882880e6000 R08: 0000000000000000 R09: ffff8882b1f5d000
+>> [   46.053886] R10: 0000000000000001 R11: 0000000000000003 R12: ffffffffa0573abf
+>> [   46.053890] R13: ffff8882880e60a0 R14: ffff8882880e6000 R15: ffffffffa0577200
+>> [   46.053894] FS:  00007f0ac7d318c0(0000) GS:ffff8882b6a80000(0000) knlGS:0000000000000000
+>> [   46.053898] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>> [   46.053902] CR2: 0000560d354ed800 CR3: 00000002880f9003 CR4: 00000000003606e0
+>> [   46.053905] Call Trace:
+>> [   46.053910]  find_module+0x9/0x20
+>>
+>> My .config is available upon request.
+>>
 > 
-> [...]
+> Thanks for the config.
 > 
-> > > @@ -1343,7 +1344,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
-> > > 
-> > >  		/* check not compatible vmas */
-> > >  		ret = -EINVAL;
-> > > -		if (!vma_can_userfault(cur))
-> > > +		if (!vma_can_userfault(cur, vm_flags))
-> > >  			goto out_unlock;
-> > > 
-> > >  		/*
-> > > @@ -1371,6 +1372,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
-> > >  			if (end & (vma_hpagesize - 1))
-> > >  				goto out_unlock;
-> > >  		}
-> > > +		if ((vm_flags & VM_UFFD_WP) && !(cur->vm_flags & VM_WRITE))
-> > > +			goto out_unlock;
-> > 
-> > This is problematic for the non-cooperative use-case. Way may still want to
-> > monitor a read-only area because it may eventually become writable, e.g. if
-> > the monitored process runs mprotect().
+> Thanks for finding this. find_module() should be called with
+> module_mutex since 4.15. The media allocator patch was written
+> before that.
 > 
-> Firstly I think I should be able to change it to VM_MAYWRITE which
-> seems to suite more.
+> I didn't realize I don't have CONFIG_DEBUG_MUTEXES=y when I switched
+> to a new system.
 > 
-> Meanwhile, frankly speaking I didn't think a lot about how to nest the
-> usages of uffd-wp and mprotect(), so far I was only considering it as
-> a replacement of mprotect().  But indeed it can happen that the
-> monitored process calls mprotect().  Is there an existing scenario of
-> such usage?
+> I reproduced the problem and re-worked patch 1 and patch 4 in this
+> series. I will resend the v10 for just those two patches tomorrow.
 > 
-> The problem is I'm uncertain about whether this scenario can work
-> after all.  Say, the monitor process A write protected process B's
-> page P, so logically A will definitely receive a message before B
-> writes to page P.  However here if we allow process B to do
-> mprotect(PROT_WRITE) upon page P and grant write permission to it on
-> its own, then A will not be able to capture the write operation at
-> all?  Then I don't know how it can work here... or whether we should
-> fail the mprotect() at least upon uffd-wp ranges?
+> Please let me know if you want me to send the entire series.
 
-The use-case we've discussed a while ago was to use uffd-wp instead of
-soft-dirty for tracking memory changes in CRIU for pre-copy migration.
-Currently, we enable soft-dirty for the migrated process and monitor
-/proc/pid/pagemap between memory dump iterations to see what memory pages
-have been changed.
-With uffd-wp we thought to register all the process memory with uffd-wp and
-then track changes with uffd-wp notifications. Back then it was considered
-only at the very general level without paying much attention to details.
+Please send the entire series. Less chance of mistakes that way.
 
-So my initial thought was that we do register the entire memory with
-uffd-wp. If an area changes from RO to RW at some point, uffd-wp will
-generate notifications to the monitor, it would be able to notice the
-change and the write will continue normally.
+Thanks!
 
-If we are to limit uffd-wp register only to VMAs with VM_WRITE and even
-VM_MAYWRITE, we'd need a way to handle the possible changes of VMA
-protection and an ability to add monitoring for areas that changed from RO
-to RW.
-
-Can't say I have a clear picture in mind at the moment, will continue to
-think about it.
-
-> > Particularity, for using uffd-wp as a replacement for soft-dirty would
-> > require it.
-> > 
-> > > 
-> > >  		/*
-> > >  		 * Check that this vma isn't already owned by a
-> > > @@ -1400,7 +1403,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
-> > >  	do {
-> > >  		cond_resched();
-> > > 
-> > > -		BUG_ON(!vma_can_userfault(vma));
-> > > +		BUG_ON(!vma_can_userfault(vma, vm_flags));
-> > >  		BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
-> > >  		       vma->vm_userfaultfd_ctx.ctx != ctx);
-> > >  		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
-> > > @@ -1535,7 +1538,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
-> > >  		 * provides for more strict behavior to notice
-> > >  		 * unregistration errors.
-> > >  		 */
-> > > -		if (!vma_can_userfault(cur))
-> > > +		if (!vma_can_userfault(cur, cur->vm_flags))
-> > >  			goto out_unlock;
-> > > 
-> > >  		found = true;
-> > > @@ -1549,7 +1552,7 @@ static int userfaultfd_unregister(struct userfaultfd_ctx *ctx,
-> > >  	do {
-> > >  		cond_resched();
-> > > 
-> > > -		BUG_ON(!vma_can_userfault(vma));
-> > > +		BUG_ON(!vma_can_userfault(vma, vma->vm_flags));
-> > >  		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
-> > > 
-> > >  		/*
-> > > @@ -1760,6 +1763,46 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
-> > >  	return ret;
-> > >  }
-> > > 
-> > > +static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
-> > > +				    unsigned long arg)
-> > > +{
-> > > +	int ret;
-> > > +	struct uffdio_writeprotect uffdio_wp;
-> > > +	struct uffdio_writeprotect __user *user_uffdio_wp;
-> > > +	struct userfaultfd_wake_range range;
-> > > +
-> > 
-> > In the non-cooperative mode the userfaultfd_writeprotect() may race with VM
-> > layout changes, pretty much as uffdio_copy() [1]. My solution for uffdio_copy()
-> > was to return -EAGAIN if such race is encountered. I think the same would
-> > apply here.
-> 
-> I tried to understand the problem at [1] but failed... could you help
-> to clarify it a bit more?
-> 
-> I'm quoting some of the discussions from [1] here directly between you
-> and Pavel:
-> 
->   > Since the monitor cannot assume that the process will access all its memory
->   > it has to copy some pages "in the background". A simple monitor may look
->   > like:
->   > 
->   > 	for (;;) {
->   > 		wait_for_uffd_events(timeout);
->   > 		handle_uffd_events();
->   > 		uffd_copy(some not faulted pages);
->   > 	}
->   > 
->   > Then, if the "background" uffd_copy() races with fork, the pages we've
->   > copied may be already present in parent's mappings before the call to
->   > copy_page_range() and may be not.
->   > 
->   > If the pages were not present, uffd_copy'ing them again to the child's
->   > memory would be ok.
->   >
->   > But if uffd_copy() was first to catch mmap_sem, and we would uffd_copy them
->   > again, child process will get memory corruption.
-> 
-> Here I don't understand why the child process will get memory
-> corruption if uffd_copy() caught the mmap_sem first.
-> 
-> If it did it, then IMHO when uffd_copy() copies the page again it'll
-> simply get a -EEXIST showing that the page has already been copied.
-> Could you explain on why there will be a data corruption?
-
-Let's say we do post-copy migration of a process A with CRIU and its page at
-address 0x1000 is already copied. Now it modifies the contents of this
-page. At this point the contents of the page at 0x1000 is different on the
-source and the destination.
-Next, process A forks process B. The CRIU's uffd monitor gets
-UFFD_EVENT_FORK, and starts filling process B memory with UFFDIO_COPY.
-It may happen, that UFFDIO_COPY to 0x1000 of the process B will occur
-*before* fork() completes and it may race with copy_page_range().
-If UFFDIO_COPY wins the race, it will fill the page with the contents from
-the source, although the correct data is what process A set in that page.
-
-Hope it helps.
-
-> Thanks in advance,
-> 
-> >  
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=df2cc96e77011cf7989208b206da9817e0321028
-> >
-> 
-> -- 
-> Peter Xu
-> 
-
--- 
-Sincerely yours,
-Mike.
-
+	Hans
