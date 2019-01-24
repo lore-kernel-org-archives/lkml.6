@@ -7,213 +7,170 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 927FDC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC9EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58CBF21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6D93218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QgFqV6Wz"
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Nr04hESD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727587AbfAXInj (ORCPT
+        id S1727622AbfAXIno (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:43:39 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:43921 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727572AbfAXIni (ORCPT
+        Thu, 24 Jan 2019 03:43:44 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:33084 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727600AbfAXInn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:43:38 -0500
-Received: by mail-oi1-f196.google.com with SMTP id u18so4183236oie.10
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:37 -0800 (PST)
+        Thu, 24 Jan 2019 03:43:43 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p7so5543103wru.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=broadcom.com; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=WdibVqAgbR5ok31tdt/O+WwBRfsYGvLwJnb1/CwmST4=;
-        b=QgFqV6WzKgpjdFy8xOlY7wKGE4wo8hKQpaBCLDmH/VH+sKxK5DMPTb4rAd8AKAHWK/
-         RK6ylLa+fF5AbTabu0OBYUBMzlPS9rxThwEJLAsDzVSbizvyMPYpIsSBMLcTvmBGbwOW
-         KfiOeCIOBSJ8F0mHQVzu1Pqn37n9OJzQHKkNg=
+        bh=wcC/ahQ5gPh5GGtxDUwG3QmvMzNYe68M+L0cnRtfxnA=;
+        b=Nr04hESD3WKZRwFKATaiNJz5yZrxXRW94oywd4/jIsFQTiUzIgZplRxM/B4oSzbrNa
+         eBa5F2fFneULcsuNhDo8I0jC69EYWL+AYtzRsa9N4zBiB+VGTvsZivIHWAu808/P4FzP
+         ow24WLWSkrddwFjhCTo1bacoF/xjnEetDdoTI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=WdibVqAgbR5ok31tdt/O+WwBRfsYGvLwJnb1/CwmST4=;
-        b=nYFE3I7z5pGqx4zNjjpLkdNGMIypgmK/+cs6gLIMtJLQrYWEDJo+wWvJrXE3753CI6
-         dBiK1J651Gxb6D0u3Glu9cDoTIsPbSi6j1+djHWXwVMt3NohQkdptY9waW0IM7Yvy85n
-         tMAFUt965PHxMUNg0SXP3yTcak7ZyRqPXdEnfZsUyfhdssvJzLijF0YphTvuCRooTFor
-         al9rV+VWuQunRvUgYvCk9rfTWiC4+NrmqdBon9O9R1FQriPa/iUej8dRGHWlkq5VvVV6
-         lQ73TqbVO327Rml7Og0c2PIcK2zMM82GXYwq39PFpd08QMmasrNjpuiAC3qqm5VQFHI2
-         HQwg==
-X-Gm-Message-State: AJcUukd3UJztWOlxouT4fU90GY5qtJwXxcewykLhgYParg3A9VZ4XBjj
-        8eG2jH9tjqMloWfa2Va4mxrA0unaxt0=
-X-Google-Smtp-Source: ALg8bN5WTUTxbXqECpaqtk49Xsa9BBGz4bROcF14xIZ8jUbMeMfx6rpDh/r+x6u06GwRcAhWcyi0QQ==
-X-Received: by 2002:a54:4f86:: with SMTP id g6mr533155oiy.205.1548319416724;
-        Thu, 24 Jan 2019 00:43:36 -0800 (PST)
-Received: from mail-oi1-f175.google.com (mail-oi1-f175.google.com. [209.85.167.175])
-        by smtp.gmail.com with ESMTPSA id r1sm8521110oti.44.2019.01.24.00.43.35
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 00:43:36 -0800 (PST)
-Received: by mail-oi1-f175.google.com with SMTP id c206so4242090oib.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:35 -0800 (PST)
-X-Received: by 2002:a54:4486:: with SMTP id v6mr555965oiv.233.1548319415393;
- Thu, 24 Jan 2019 00:43:35 -0800 (PST)
+        bh=wcC/ahQ5gPh5GGtxDUwG3QmvMzNYe68M+L0cnRtfxnA=;
+        b=cjDzIW0HmKGcfd58MWxHud06chYCfP4vSg80qtaURV0fVp+J4JSol9k0mjubFqEG6M
+         OVgHsXoQqU8DUDjhz/8FBTUe5Eqk10KzXV9Uo+IctkdyUDlL8yI2dWs4UAKDV0P23RMm
+         EuQobrFrCzqrXOMLwdEX0l8MPHmew5BNha2j5gtrAbaCN0rKynBva4vo5MsxyMFefeP5
+         LnG06MC+sq7HP1qU2gs+rB9NGbYrW+JCU2+CYnM4B9RRLIiMEhp3ohmQ2YbeITwpmGaF
+         GgEgVSvZg0095wn7SogQL0ii7ISDLROpW2M6AjM6mC4g1AbNSDSeHt1ke2b4h7mNdXMT
+         g0Eg==
+X-Gm-Message-State: AJcUukdpByfH3AHz5lOEM1Ei8lr4Gb92tb0FSUrjkIEi5QgxOqrcJZ6D
+        lP9O+3aNKmI/O6u7YBYGWbWPHR7L+7rF6HzUvXV3Mw==
+X-Google-Smtp-Source: ALg8bN6x2BxQNBWDyBvML0RVKhEpb5CLTfuYY/s0DVIdJrc/fJV0l7oRPQHJdU62bjXa5KRgXAGCN9k6zvu+gB8otQw=
+X-Received: by 2002:adf:e3c8:: with SMTP id k8mr6178425wrm.83.1548319420857;
+ Thu, 24 Jan 2019 00:43:40 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org> <20190117162008.25217-8-stanimir.varbanov@linaro.org>
-In-Reply-To: <20190117162008.25217-8-stanimir.varbanov@linaro.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Thu, 24 Jan 2019 17:43:24 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MVPhpZkCLFhAfPhE83TSpnCjH4Zy4-Mage5s=LkU9_RzA@mail.gmail.com>
-Message-ID: <CAPBb6MVPhpZkCLFhAfPhE83TSpnCjH4Zy4-Mage5s=LkU9_RzA@mail.gmail.com>
-Subject: Re: [PATCH 07/10] venus: helpers: add three more helper functions
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
+References: <1547785403-32268-1-git-send-email-srinath.mannam@broadcom.com>
+ <1547785403-32268-3-git-send-email-srinath.mannam@broadcom.com> <20190118150851.GC25249@google.com>
+In-Reply-To: <20190118150851.GC25249@google.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Thu, 24 Jan 2019 14:13:29 +0530
+Message-ID: <CABe79T4Pk4BtqaeV_hsJb+PXRoz9ToregVtqskcMqAiwtJSyMQ@mail.gmail.com>
+Subject: Re: [PATCH 2/3] PCI: iproc: CRS state check in config request
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 1:21 AM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> This adds three more helper functions:
->  * for internal buffers reallocation, applicable when we are doing
-> dynamic resolution change
->  * for initial buffer processing of capture and output queue buffer
-> types
->
-> All of them will be needed for stateful Codec API support.
->
-> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> ---
->  drivers/media/platform/qcom/venus/helpers.c | 82 +++++++++++++++++++++
->  drivers/media/platform/qcom/venus/helpers.h |  2 +
->  2 files changed, 84 insertions(+)
->
-> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> index f33bbfea3576..637ce7b82d94 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.c
-> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> @@ -322,6 +322,52 @@ int venus_helper_intbufs_free(struct venus_inst *inst)
->  }
->  EXPORT_SYMBOL_GPL(venus_helper_intbufs_free);
->
-> +int venus_helper_intbufs_realloc(struct venus_inst *inst)
+Hi Bjorn,
 
-Does this function actually reallocate buffers? It seems to just free
-what we had previously.
+Thanks for review, please see my comments below inline.
 
-
-> +{
-> +       enum hfi_version ver = inst->core->res->hfi_version;
-> +       struct hfi_buffer_desc bd;
-> +       struct intbuf *buf, *n;
-> +       int ret;
-> +
-> +       list_for_each_entry_safe(buf, n, &inst->internalbufs, list) {
-> +               if (buf->type == HFI_BUFFER_INTERNAL_PERSIST ||
-> +                   buf->type == HFI_BUFFER_INTERNAL_PERSIST_1)
-> +                       continue;
-> +
-> +               memset(&bd, 0, sizeof(bd));
-> +               bd.buffer_size = buf->size;
-> +               bd.buffer_type = buf->type;
-> +               bd.num_buffers = 1;
-> +               bd.device_addr = buf->da;
-> +               bd.response_required = true;
-> +
-> +               ret = hfi_session_unset_buffers(inst, &bd);
-> +
-> +               dma_free_attrs(inst->core->dev, buf->size, buf->va, buf->da,
-> +                              buf->attrs);
-> +
-> +               list_del_init(&buf->list);
-> +               kfree(buf);
-> +       }
-> +
-> +       ret = intbufs_set_buffer(inst, HFI_BUFFER_INTERNAL_SCRATCH(ver));
-> +       if (ret)
-> +               goto err;
-> +
-> +       ret = intbufs_set_buffer(inst, HFI_BUFFER_INTERNAL_SCRATCH_1(ver));
-> +       if (ret)
-> +               goto err;
-> +
-> +       ret = intbufs_set_buffer(inst, HFI_BUFFER_INTERNAL_SCRATCH_2(ver));
-> +       if (ret)
-> +               goto err;
-> +
-> +       return 0;
-> +err:
-> +       return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(venus_helper_intbufs_realloc);
-> +
->  static u32 load_per_instance(struct venus_inst *inst)
->  {
->         u32 mbs;
-> @@ -1050,6 +1096,42 @@ void venus_helper_vb2_stop_streaming(struct vb2_queue *q)
->  }
->  EXPORT_SYMBOL_GPL(venus_helper_vb2_stop_streaming);
+On Fri, Jan 18, 2019 at 8:38 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
 >
-> +int venus_helper_process_initial_cap_bufs(struct venus_inst *inst)
-> +{
-> +       struct v4l2_m2m_ctx *m2m_ctx = inst->m2m_ctx;
-> +       struct v4l2_m2m_buffer *buf, *n;
-> +       int ret;
-> +
-> +       v4l2_m2m_for_each_dst_buf_safe(m2m_ctx, buf, n) {
-> +               ret = session_process_buf(inst, &buf->vb);
-> +               if (ret) {
-> +                       return_buf_error(inst, &buf->vb);
-> +                       return ret;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(venus_helper_process_initial_cap_bufs);
-> +
-> +int venus_helper_process_initial_out_bufs(struct venus_inst *inst)
-> +{
-> +       struct v4l2_m2m_ctx *m2m_ctx = inst->m2m_ctx;
-> +       struct v4l2_m2m_buffer *buf, *n;
-> +       int ret;
-> +
-> +       v4l2_m2m_for_each_src_buf_safe(m2m_ctx, buf, n) {
-> +               ret = session_process_buf(inst, &buf->vb);
-> +               if (ret) {
-> +                       return_buf_error(inst, &buf->vb);
-> +                       return ret;
-> +               }
-> +       }
-> +
-> +       return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(venus_helper_process_initial_out_bufs);
-> +
->  int venus_helper_vb2_start_streaming(struct venus_inst *inst)
->  {
->         struct venus_core *core = inst->core;
-> diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
-> index 24faae5abd93..2ec1c1a8b416 100644
-> --- a/drivers/media/platform/qcom/venus/helpers.h
-> +++ b/drivers/media/platform/qcom/venus/helpers.h
-> @@ -69,4 +69,6 @@ int venus_helper_intbufs_realloc(struct venus_inst *inst);
->  int venus_helper_queue_dpb_bufs(struct venus_inst *inst);
->  int venus_helper_unregister_bufs(struct venus_inst *inst);
->  int venus_helper_load_scale_clocks(struct venus_core *core);
-> +int venus_helper_process_initial_cap_bufs(struct venus_inst *inst);
-> +int venus_helper_process_initial_out_bufs(struct venus_inst *inst);
->  #endif
-> --
-> 2.17.1
+> On Fri, Jan 18, 2019 at 09:53:22AM +0530, Srinath Mannam wrote:
+> > In the current implementation, config read of 0xffff0001 data
+> > is assumed as CRS completion. but sometimes 0xffff0001 can be
+> > a valid data.
+> > IPROC PCIe RC has a register to show config request status flags
+> > like SC, UR, CRS and CA.
+> > So that extra check is added in the code to confirm the CRS
+> > state using this register before reissue config request.
 >
+> s/. but/.  But/  (Sentences start with a capital letter.)
+will change. Thanks.
+>
+> Please wrap this text correctly.  If it's a single paragraph, wrap it so
+> the lines are filled.  It *looks* like it's intended to be separate
+> paragraphs; they should be separated by blank lines.
+will change. Thanks.
+>
+> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
+> > Reviewed-by: Ray Jui <ray.jui@broadcom.com>
+> > ---
+> >  drivers/pci/controller/pcie-iproc.c | 23 +++++++++++++++++++++--
+> >  1 file changed, 21 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
+> > index 13ce80f..ee89d56 100644
+> > --- a/drivers/pci/controller/pcie-iproc.c
+> > +++ b/drivers/pci/controller/pcie-iproc.c
+> > @@ -63,6 +63,10 @@
+> >  #define APB_ERR_EN_SHIFT             0
+> >  #define APB_ERR_EN                   BIT(APB_ERR_EN_SHIFT)
+> >
+> > +#define CFG_RD_SUCCESS                       0
+> > +#define CFG_RD_UR                    1
+> > +#define CFG_RD_CRS                   2
+> > +#define CFG_RD_CA                    3
+> >  #define CFG_RETRY_STATUS             0xffff0001
+> >  #define CFG_RETRY_STATUS_TIMEOUT_US  500000 /* 500 milliseconds */
+> >
+> > @@ -300,6 +304,9 @@ enum iproc_pcie_reg {
+> >       IPROC_PCIE_IARR4,
+> >       IPROC_PCIE_IMAP4,
+> >
+> > +     /* config read status */
+> > +     IPROC_PCIE_CFG_RD_STATUS,
+> > +
+> >       /* link status */
+> >       IPROC_PCIE_LINK_STATUS,
+> >
+> > @@ -370,6 +377,7 @@ static const u16 iproc_pcie_reg_paxb_v2[] = {
+> >       [IPROC_PCIE_IMAP3]              = 0xe08,
+> >       [IPROC_PCIE_IARR4]              = 0xe68,
+> >       [IPROC_PCIE_IMAP4]              = 0xe70,
+> > +     [IPROC_PCIE_CFG_RD_STATUS]      = 0xee0,
+> >       [IPROC_PCIE_LINK_STATUS]        = 0xf0c,
+> >       [IPROC_PCIE_APB_ERR_EN]         = 0xf40,
+> >       [IPROC_PCIE_ORDERING_CFG]       = 0x2000,
+> > @@ -501,10 +509,12 @@ static void __iomem *iproc_pcie_map_ep_cfg_reg(struct iproc_pcie *pcie,
+> >       return (pcie->base + offset);
+> >  }
+> >
+> > -static unsigned int iproc_pcie_cfg_retry(void __iomem *cfg_data_p)
+> > +static unsigned int iproc_pcie_cfg_retry(struct iproc_pcie *pcie,
+> > +                                      void __iomem *cfg_data_p)
+> >  {
+> >       int timeout = CFG_RETRY_STATUS_TIMEOUT_US;
+> >       unsigned int data;
+> > +     u32 status;
+> >
+> >       /*
+> >        * As per PCIe spec r3.1, sec 2.3.2, CRS Software Visibility only
+> > @@ -525,6 +535,15 @@ static unsigned int iproc_pcie_cfg_retry(void __iomem *cfg_data_p)
+> >        */
+> >       data = readl(cfg_data_p);
+> >       while (data == CFG_RETRY_STATUS && timeout--) {
+> > +             /*
+> > +              * CRS state is set in CFG_RD status register
+> > +              * This will handle the case where CFG_RETRY_STATUS is
+> > +              * valid config data.
+> > +              */
+> > +             status = iproc_pcie_read_reg(pcie, IPROC_PCIE_CFG_RD_STATUS);
+> > +             if (status != CFG_RD_CRS)
+> > +                     return data;
+> > +
+> >               udelay(1);
+> >               data = readl(cfg_data_p);
+> >       }
+> > @@ -603,7 +622,7 @@ static int iproc_pcie_config_read(struct pci_bus *bus, unsigned int devfn,
+> >       if (!cfg_data_p)
+> >               return PCIBIOS_DEVICE_NOT_FOUND;
+> >
+> > -     data = iproc_pcie_cfg_retry(cfg_data_p);
+> > +     data = iproc_pcie_cfg_retry(pcie, cfg_data_p);
+> >
+> >       *val = data;
+> >       if (size <= 2)
+> > --
+> > 2.7.4
+> >
