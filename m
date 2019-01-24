@@ -2,132 +2,221 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D002C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:33:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A4AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:52:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AD68218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:33:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="nRNRO1D6"
+	by mail.kernel.org (Postfix) with ESMTP id 14FB92184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 04:52:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727331AbfAXEdC (ORCPT
+        id S1727274AbfAXEwC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 23:33:02 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:35642 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726519AbfAXEdC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 23:33:02 -0500
-Received: by mail-it1-f194.google.com with SMTP id p197so2578166itp.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 20:33:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=IwWvCt7u+at9RudSFzks1IpTk55hx60weblM3U2HHgY=;
-        b=nRNRO1D6U6JggJmn2XAZIAGZQ3XabbINBj9XrPE1Qo0hsQXuiORN9wHpIONhobCg+N
-         LuwOVgBhaKzqyMyaXM3y6N63n+ztaRAdks8DQ9C37o6Tfg2MarQ4Kcy7ks+jlk9yNEoD
-         5MAXZROxniaBUL3zbC3nJ4jx5lCIRJEbDvNTE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=IwWvCt7u+at9RudSFzks1IpTk55hx60weblM3U2HHgY=;
-        b=rvmmkz0RvfJkMPpSU97E2lvB7gDFH2YAPWegrZco01BQbRDhOnSP6Opi/rvTg/RQDb
-         qQqV7bKtOZkonkftK/v+ndtUminPTpDCwOSyAG1dwLCMROv+RjDtUMI+A2Y60c6hyb49
-         LRK8v77+AeeBqr4r1XCV9kfYJLwxCGg1F3T8E264DfkTXT0htQEiXV9p4mrIs30KN/CG
-         eaMzFt2gw34TNNvrFPjKYxp4mtmViXViomAP8ujGq8Fo9HKdfktVGJZ1XAvdbzwTXzo6
-         3NbRtCcY220JZvToU4izOi6Jt5m6BekbA2SOsRR9oyvTKsjmvh9qrZrz6rK5vXjvKnFw
-         XMtQ==
-X-Gm-Message-State: AJcUukeT1fBDUBeQgmbfz6UMbxk7hSzmOWln3OHeAnCrs26A6pG342Ja
-        cT9cXKUGotb56YO40g9ii88I0xlqnkLL335Yu4xrPA==
-X-Google-Smtp-Source: ALg8bN6tIm9vb76003GObzd1cbe7wbFbV35HZnL0Q6sXtLZ6Ao7Hum7bW3EFSz5keMUG2SNsXQNFdHX/GnumP6Y/yNk=
-X-Received: by 2002:a24:385:: with SMTP id e127mr510288ite.32.1548304381613;
- Wed, 23 Jan 2019 20:33:01 -0800 (PST)
+        Wed, 23 Jan 2019 23:52:02 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:36812 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726249AbfAXEwB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 23:52:01 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id DC700C05E74D;
+        Thu, 24 Jan 2019 04:52:00 +0000 (UTC)
+Received: from redhat.com (ovpn-121-100.rdu2.redhat.com [10.10.121.100])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id B57631F8;
+        Thu, 24 Jan 2019 04:51:59 +0000 (UTC)
+Date:   Wed, 23 Jan 2019 23:51:59 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Jason Wang <jasowang@redhat.com>
+Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Subject: Re: [PATCH net-next V4 5/5] vhost: access vq metadata through kernel
+ virtual address
+Message-ID: <20190123234624-mutt-send-email-mst@kernel.org>
+References: <20190123095557.30168-1-jasowang@redhat.com>
+ <20190123095557.30168-6-jasowang@redhat.com>
+ <20190123085821-mutt-send-email-mst@kernel.org>
+ <335ba55b-087f-4b35-6311-540070b9647f@redhat.com>
 MIME-Version: 1.0
-References: <20181215151802.18592-1-jagan@amarulasolutions.com>
- <20181215151802.18592-2-jagan@amarulasolutions.com> <20190107225810.ggmkkbrnkoy2ykx5@penguin>
- <CAL_JsqKTnPVM7Qahy9ejQbPfENpLCdzf5K5uUTcPh8j3EiqWRA@mail.gmail.com>
- <CAMty3ZCyq=tZMt6RC1aYJuEWgYp2zv1LBh+ZUwucE+g4RCoUaQ@mail.gmail.com>
- <CAL_JsqKCw3EV+0_DuMiHh7GRGxv7YogQf-xwp71n9gpc2GzSSQ@mail.gmail.com> <CAMty3ZBtoocXBW5A0astyQPh2y7vG7NtbZ_M0BjSeex2etmGsw@mail.gmail.com>
-In-Reply-To: <CAMty3ZBtoocXBW5A0astyQPh2y7vG7NtbZ_M0BjSeex2etmGsw@mail.gmail.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Thu, 24 Jan 2019 10:02:50 +0530
-Message-ID: <CAMty3ZAYn=jTB_2SKYKO_7WHTCNeazytsDPVxW23DcxO7QUiEA@mail.gmail.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: input: touchscreen: goodix: Document
- AVDD28-supply property
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree <devicetree@vger.kernel.org>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-input@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <335ba55b-087f-4b35-6311-540070b9647f@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 24 Jan 2019 04:52:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ DT ML
+On Thu, Jan 24, 2019 at 12:07:54PM +0800, Jason Wang wrote:
+> 
+> On 2019/1/23 下午10:08, Michael S. Tsirkin wrote:
+> > On Wed, Jan 23, 2019 at 05:55:57PM +0800, Jason Wang wrote:
+> > > It was noticed that the copy_user() friends that was used to access
+> > > virtqueue metdata tends to be very expensive for dataplane
+> > > implementation like vhost since it involves lots of software checks,
+> > > speculation barrier, hardware feature toggling (e.g SMAP). The
+> > > extra cost will be more obvious when transferring small packets since
+> > > the time spent on metadata accessing become more significant.
+> > > 
+> > > This patch tries to eliminate those overheads by accessing them
+> > > through kernel virtual address by vmap(). To make the pages can be
+> > > migrated, instead of pinning them through GUP, we use MMU notifiers to
+> > > invalidate vmaps and re-establish vmaps during each round of metadata
+> > > prefetching if necessary. For devices that doesn't use metadata
+> > > prefetching, the memory accessors fallback to normal copy_user()
+> > > implementation gracefully. The invalidation was synchronized with
+> > > datapath through vq mutex, and in order to avoid hold vq mutex during
+> > > range checking, MMU notifier was teared down when trying to modify vq
+> > > metadata.
+> > > 
+> > > Another thing is kernel lacks efficient solution for tracking dirty
+> > > pages by vmap(), this will lead issues if vhost is using file backed
+> > > memory which needs care of writeback. This patch solves this issue by
+> > > just skipping the vma that is file backed and fallback to normal
+> > > copy_user() friends. This might introduce some overheads for file
+> > > backed users but consider this use case is rare we could do
+> > > optimizations on top.
+> > > 
+> > > Note that this was only done when device IOTLB is not enabled. We
+> > > could use similar method to optimize it in the future.
+> > > 
+> > > Tests shows at most about 22% improvement on TX PPS when using
+> > > virtio-user + vhost_net + xdp1 + TAP on 2.6GHz Broadwell:
+> > > 
+> > >          SMAP on | SMAP off
+> > > Before: 5.0Mpps | 6.6Mpps
+> > > After:  6.1Mpps | 7.4Mpps
+> > > 
+> > > Signed-off-by: Jason Wang <jasowang@redhat.com>
+> > 
+> > So this is the bulk of the change.
+> > Threee things that I need to look into
+> > - Are there any security issues with bypassing the speculation barrier
+> >    that is normally present after access_ok?
+> 
+> 
+> If we can make sure the bypassing was only used in a kthread (vhost), it
+> should be fine I think.
+> 
+> 
+> > - How hard does the special handling for
+> >    file backed storage make testing?
+> 
+> 
+> It's as simple as un-commenting vhost_can_vmap()? Or I can try to hack qemu
+> or dpdk to test this.
+> 
+> 
+> >    On the one hand we could add a module parameter to
+> >    force copy to/from user. on the other that's
+> >    another configuration we need to support.
+> 
+> 
+> That sounds sub-optimal since it leave the choice to users.
+> 
+> 
+> >    But iotlb is not using vmap, so maybe that's enough
+> >    for testing.
+> > - How hard is it to figure out which mode uses which code.
+> > 
+> > 
+> > 
+> > Meanwhile, could you pls post data comparing this last patch with the
+> > below?  This removes the speculation barrier replacing it with a
+> > (useless but at least more lightweight) data dependency.
+> 
+> 
+> SMAP off
+> 
+> Your patch: 7.2MPPs
+> 
+> vmap: 7.4Mpps
+> 
 
-On Tue, Jan 22, 2019 at 7:08 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> On Mon, Jan 21, 2019 at 9:46 PM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Fri, Jan 18, 2019 at 10:01 AM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > On Wed, Jan 9, 2019 at 7:08 PM Rob Herring <robh@kernel.org> wrote:
-> > > >
-> > > > Please CC DT list if you want bindings reviewed.
-> > >
-> > > Sorry I forgot.
-> > >
-> > > >
-> > > > On Wed, Jan 9, 2019 at 1:40 AM Dmitry Torokhov
-> > > > <dmitry.torokhov@gmail.com> wrote:
-> > > > >
-> > > > > On Sat, Dec 15, 2018 at 08:47:59PM +0530, Jagan Teki wrote:
-> > > > > > Most of the Goodix CTP controllers are supply with AVDD28 pin.
-> > > > > > which need to supply for controllers like GT5663 on some boards
-> > > > > > to trigger the power.
-> > > > > >
-> > > > > > So, document the supply property so-that the require boards
-> > > > > > that used on GT5663 can enable it via device tree.
-> > > > > >
-> > > > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > > > ---
-> > > > > >  Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
-> > > > > >  1 file changed, 1 insertion(+)
-> > > > > >
-> > > > > > diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > index f7e95c52f3c7..c4622c983e08 100644
-> > > > > > --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-> > > > > > @@ -23,6 +23,7 @@ Optional properties:
-> > > > > >   - touchscreen-inverted-y  : Y axis is inverted (boolean)
-> > > > > >   - touchscreen-swapped-x-y : X and Y axis are swapped (boolean)
-> > > > > >                               (swapping is done after inverting the axis)
-> > > > > > + - AVDD28-supply     : Analog power supply regulator on AVDD28 pin
-> > > > >
-> > > > > I think we normally use lower case in DT bindings and rarely encode
-> > > > > voltage in the supply name unless we are dealing with several supplies
-> > > > > of the same kind, but I'll let Ron comment on this.
-> > > >
-> > > > Yes on lowercase though there are some exceptions.
-> > > >
-> > > > There's also a AVDD22 supply as well as DVDD12 and VDDIO. So we
-> > > > probably need to keep the voltage, but the binding is incomplete.
-> > >
-> > > What is incomplete here? can you please elaborate.
-> >
-> > You are missing the 3 other supplies the chip has: AVDD22, DVDD12 and VDDIO.
->
-> Though it has other supplies, only AVDD28 is connected in the Host
-> interface design similar like 9. Reference Schematic on Page, 23 in
-> attached manual.
+Sounds more or less as expected. Up to 3% gain with vmap - I think
+that's a bit higher than what we saw previously when we switched from
+get_user to __get_user and that's probably because of all the
+array_index_nospec trickery.
+
+> I don't test SMAP on, since it will be much slow for sure.
+
+Right. So bypassing SMAP remains the main reason to do vmap tricks.
+
+> Thanks
+
+> 
+> > 
+> > Thanks!
+> > 
+> > 
+> > diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+> > index bac939af8dbb..352ee7e14476 100644
+> > --- a/drivers/vhost/vhost.c
+> > +++ b/drivers/vhost/vhost.c
+> > @@ -739,7 +739,7 @@ static int vhost_copy_to_user(struct vhost_virtqueue *vq, void __user *to,
+> >   	int ret;
+> >   	if (!vq->iotlb)
+> > -		return __copy_to_user(to, from, size);
+> > +		return copy_to_user(to, from, size);
+> >   	else {
+> >   		/* This function should be called after iotlb
+> >   		 * prefetch, which means we're sure that all vq
+> > @@ -752,7 +752,7 @@ static int vhost_copy_to_user(struct vhost_virtqueue *vq, void __user *to,
+> >   				     VHOST_ADDR_USED);
+> >   		if (uaddr)
+> > -			return __copy_to_user(uaddr, from, size);
+> > +			return copy_to_user(uaddr, from, size);
+> >   		ret = translate_desc(vq, (u64)(uintptr_t)to, size, vq->iotlb_iov,
+> >   				     ARRAY_SIZE(vq->iotlb_iov),
+> > @@ -774,7 +774,7 @@ static int vhost_copy_from_user(struct vhost_virtqueue *vq, void *to,
+> >   	int ret;
+> >   	if (!vq->iotlb)
+> > -		return __copy_from_user(to, from, size);
+> > +		return copy_from_user(to, from, size);
+> >   	else {
+> >   		/* This function should be called after iotlb
+> >   		 * prefetch, which means we're sure that vq
+> > @@ -787,7 +787,7 @@ static int vhost_copy_from_user(struct vhost_virtqueue *vq, void *to,
+> >   		struct iov_iter f;
+> >   		if (uaddr)
+> > -			return __copy_from_user(to, uaddr, size);
+> > +			return copy_from_user(to, uaddr, size);
+> >   		ret = translate_desc(vq, (u64)(uintptr_t)from, size, vq->iotlb_iov,
+> >   				     ARRAY_SIZE(vq->iotlb_iov),
+> > @@ -855,13 +855,13 @@ static inline void __user *__vhost_get_user(struct vhost_virtqueue *vq,
+> >   ({ \
+> >   	int ret = -EFAULT; \
+> >   	if (!vq->iotlb) { \
+> > -		ret = __put_user(x, ptr); \
+> > +		ret = put_user(x, ptr); \
+> >   	} else { \
+> >   		__typeof__(ptr) to = \
+> >   			(__typeof__(ptr)) __vhost_get_user(vq, ptr,	\
+> >   					  sizeof(*ptr), VHOST_ADDR_USED); \
+> >   		if (to != NULL) \
+> > -			ret = __put_user(x, to); \
+> > +			ret = put_user(x, to); \
+> >   		else \
+> >   			ret = -EFAULT;	\
+> >   	} \
+> > @@ -872,14 +872,14 @@ static inline void __user *__vhost_get_user(struct vhost_virtqueue *vq,
+> >   ({ \
+> >   	int ret; \
+> >   	if (!vq->iotlb) { \
+> > -		ret = __get_user(x, ptr); \
+> > +		ret = get_user(x, ptr); \
+> >   	} else { \
+> >   		__typeof__(ptr) from = \
+> >   			(__typeof__(ptr)) __vhost_get_user(vq, ptr, \
+> >   							   sizeof(*ptr), \
+> >   							   type); \
+> >   		if (from != NULL) \
+> > -			ret = __get_user(x, from); \
+> > +			ret = get_user(x, from); \
+> >   		else \
+> >   			ret = -EFAULT; \
+> >   	} \
