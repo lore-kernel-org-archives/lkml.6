@@ -2,86 +2,93 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC9FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:37:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00150C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:38:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 915F62184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:37:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C1632218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:38:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rwdQRNeh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728756AbfAXQhs (ORCPT
+        id S1728784AbfAXQik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:37:48 -0500
-Received: from foss.arm.com ([217.140.101.70]:60532 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727649AbfAXQhs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:37:48 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 33054A78;
-        Thu, 24 Jan 2019 08:37:48 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 898543F237;
-        Thu, 24 Jan 2019 08:37:46 -0800 (PST)
-Date:   Thu, 24 Jan 2019 16:37:44 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Shijith Thotton <sthotton@marvell.com>
-Cc:     Will Deacon <will.deacon@arm.com>,
-        chenwandun <chenwandun@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "Wangkefeng (Kevin)" <wangkefeng.wang@huawei.com>,
-        "anshuman.khandual@arm.com" <anshuman.khandual@arm.com>,
-        Ganapatrao Kulkarni <gkulkarni@marvell.com>,
-        Jayachandran Chandrasekharan Nair <jnair@marvell.com>
-Subject: Re: [Qestion] Softlockup when send IPI to other CPUs
-Message-ID: <20190124163743.GK253679@arrakis.emea.arm.com>
-References: <95C141B25E7AB14BA042DCCC556C0E6501620A47@dggeml529-mbx.china.huawei.com>
- <20190119235825.GG26876@brain-police>
- <20190121142127.GD29504@arrakis.emea.arm.com>
- <20190122054400.GB6445@brain-police>
- <20190123181530.GA234790@arrakis.emea.arm.com>
- <DM6PR18MB24607427B3B2BEAD80A75780D99A0@DM6PR18MB2460.namprd18.prod.outlook.com>
+        Thu, 24 Jan 2019 11:38:40 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43560 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfAXQik (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:38:40 -0500
+Received: by mail-pf1-f196.google.com with SMTP id w73so3236021pfk.10;
+        Thu, 24 Jan 2019 08:38:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=TWnz2BebD+itGPPRJAiL79afMiIId7AbrdNVBzKwVKU=;
+        b=rwdQRNehLJrUB6NzEvStL38UMdLW4QUfr3LPC/4texP7c6g/ufGtRr7Eq5L4xGavYk
+         XkuZ87ACPed+dxOhWqrrGiPQDwvNEysv40Cb7fISnhnmG6QUrtf9zr1vOySC7KcrISVq
+         43iJfekVkhCj2gRrdaHi1FfU14EGcLi0eRmJa1wr1uAtQOVioOaKKxM+1ag2pG1KE6Lu
+         DxXYLh0SutkprLqxSL4PWkJQh0wBp0onBDwJacvIuMXXrwZ+uKDV4v2Lpp1M87HxH22D
+         yIanzDpBPtLy6p8kEvbZau/alvjdTwcEEksbdxyx1dE9ANVP52YUyuG1zpFMT7QNTYyi
+         KYRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=TWnz2BebD+itGPPRJAiL79afMiIId7AbrdNVBzKwVKU=;
+        b=o6u1z7z+Qus+8B1lXALzxBYcKiJRGBgyXvLLKoUHwCrdVXtZdrAB7kzeMV0vMI0P4c
+         0sIDu2Eyed/atfCVM7zR2+8cf5a7yySEi4rDM1jSOe7PkOMxE27Zno721zUIgTAX5PTa
+         uWFO5wZZ/hyOyG57uW73EDXiJw/r2IAJ/M31vpnaVJApUJNbUim83RR2fIGaXXrg7QG/
+         jcfpfpV8p1oTdOuU1X/yTbpkpDf4piYFu0M/5dXq7ilZDvP/VjosALdrdM+szuoc7EEB
+         LYPlZkhBW5k3dimKF5Da/s0esGWHt9AKBguc0OlKF1Q7GSjb4I0Iyg0q6PGNKw+PQNg5
+         4Vcw==
+X-Gm-Message-State: AJcUukekBj5Lt8aDfPlQ0Q0ksRZPkq/xu7fct+Q1WiUNwBF8lxtw+2wy
+        AsSsCz9wERxv0Qi9aA0q6MoPU/zoTdz4ll0JVBU=
+X-Google-Smtp-Source: ALg8bN5YgUtMMS5NwPaSd6ZiN/0oQTTo/U/o3XC7Og4DkFDSZq3nnRpidfDMZT+tsy3C/VCJzhM4Be0p8MUO33PenYw=
+X-Received: by 2002:a63:3287:: with SMTP id y129mr6555650pgy.337.1548347919934;
+ Thu, 24 Jan 2019 08:38:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <DM6PR18MB24607427B3B2BEAD80A75780D99A0@DM6PR18MB2460.namprd18.prod.outlook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190110143051.52305-1-andriy.shevchenko@linux.intel.com>
+ <20190121084732.GE18680@lst.de> <20190124121659.GH9224@smile.fi.intel.com>
+ <6D748F08-F9F9-4DFB-84DF-63E97C691013@javigon.com> <CAHp75Vf4ndBaS6BjAM==7csYB9EYDvjV9jT9C6kioDryzb_HnQ@mail.gmail.com>
+ <9E0FD459-75F2-4EF1-9310-8FCDF6F87604@javigon.com> <CAHp75Vfd=B-AP=7KNFiDU-qER9BjB0Qw9Lyp+hb8x94NfQiZyA@mail.gmail.com>
+ <5FF168CC-9372-4DE5-BF62-DD3A2EE08384@javigon.com>
+In-Reply-To: <5FF168CC-9372-4DE5-BF62-DD3A2EE08384@javigon.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 24 Jan 2019 18:38:00 +0200
+Message-ID: <CAHp75Ve1BUr1hHWhhHfr0nLCzj0ERbocrn27K_r=mpePYppjtw@mail.gmail.com>
+Subject: Re: [PATCH v1] : Switch to use new generic UUID API
+To:     =?UTF-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Christoph Hellwig <hch@lst.de>,
+        =?UTF-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
+        linux-block@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi  Shijith,
+On Thu, Jan 24, 2019 at 4:36 PM Javier Gonz=C3=A1lez <javier@javigon.com> w=
+rote:
 
-On Thu, Jan 24, 2019 at 07:00:42AM +0000, Shijith Thotton wrote:
-> On 01/23/2019 11:45 PM, Catalin Marinas wrote:
-> > diff --git a/arch/arm64/mm/flush.c b/arch/arm64/mm/flush.c
-> > index 30695a868107..5c9073bace83 100644
-> > --- a/arch/arm64/mm/flush.c
-> > +++ b/arch/arm64/mm/flush.c
-> > @@ -33,7 +33,11 @@ void sync_icache_aliases(void *kaddr, unsigned long len)
-> >   		__clean_dcache_area_pou(kaddr, len);
-> >   		__flush_icache_all();
-> >   	} else {
-> > -		flush_icache_range(addr, addr + len);
-> > +		/*
-> > +		 * Don't issue kick_all_cpus_sync() after I-cache invalidation
-> > +		 * for user mappings.
-> > +		 */
-> > +		__flush_icache_range(addr, addr + len);
-> >   	}
-> >   }
-> 
-> We also faced similar issue with LTP test migrate_pages03 in past and this patch 
-> fixes the issue.
-> 
-> http://lists.infradead.org/pipermail/linux-arm-kernel/2019-January/623574.html
+> It is not pushed anywhere yet, but I have been working on a tool to make
+> a pblk recovery tool to enable FTL repairs if something fails in the
+> kernel recovery path. Here, I use this uuid to identify the
+> instance - is there a way to reconcile guid_t with user space, which
+> currently uses the __u8?
 
-Thanks for confirming. I presume I can add your tested-by.
+For Linux there is util-linux which contains libuuid. There is uuid_t type.
+Unfortunately there is no so called LE (little endian) variant.
+Perhaps someone would need to extend the support for that.
 
--- 
-Catalin
+--=20
+With Best Regards,
+Andy Shevchenko
