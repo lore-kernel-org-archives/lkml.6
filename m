@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9638C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6BB3C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E342218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7522F218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358455;
-	bh=PbuYTl6HP/E5kvEcRqZZ44HQzxnmZmjCFYy5lVRHhF4=;
+	s=default; t=1548358457;
+	bh=D//z4tVhfgdXdjwjxI475XGHx06Dyy+IfUr+QbicNyA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xwB4+c/EwabR8/MLxQVkrSfmIL9J0Mb8hiwrrMUKbpSlQ96ySYIuUhupz8LO9XXVj
-	 UszyHMTo/PMj2MlQuJdbaVKQFDd1ccmNG+yeACvSBuZBidyW+6uzCFnCKFzxIXgI5b
-	 5nt5lb6Ccgx77+akU7+9NT0kHYj4BSaPpbh515W8=
+	b=io4mTJ2xePFOdwWWJ51Po8Rqka+VJbJjWImz82AdoZmzghi2uFt9FdB8azLZCVVOV
+	 WJI0gJCftPZV5I8WiFByRLnyGg1pUXmP/4d3T0Io3+oKmtieX7Ny5nYFbdZpTHuSg/
+	 tGWxfMXNCjEDZ3Z0SzyslQf7iztAhMqtqphNlG1U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732142AbfAXTeN (ORCPT
+        id S1732151AbfAXTeQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33914 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:34:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33964 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732123AbfAXTeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:08 -0500
+        id S1732134AbfAXTeL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:34:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC46A218D4;
-        Thu, 24 Jan 2019 19:34:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6608F21903;
+        Thu, 24 Jan 2019 19:34:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358447;
-        bh=PbuYTl6HP/E5kvEcRqZZ44HQzxnmZmjCFYy5lVRHhF4=;
+        s=default; t=1548358449;
+        bh=D//z4tVhfgdXdjwjxI475XGHx06Dyy+IfUr+QbicNyA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bA/9r3xlIoNx+XsJ+KWJ9F3S0H3goj+TpL9yZXPizJMjxr1nXRFYtsKuze2AtAr0t
-         ShqnF8yvL0Yorf6Wonh6ATQ6+iI0x4P2gfZ5vTPR09gm5ar9een0cqzGAFQa8gbHbT
-         5GfXOfusCMrw6orVrSM72uSYd9n1FPamA+pPgxtg=
+        b=Hksb9c9CBmaMHIefrwtMYO4ibdrymS5DZtBXMU07WCubI0U/qUHjhr3f5weXGVPwa
+         qJhduvXzQZ9QpFvF9P2YOzN68x4mvmqKuCVL9iZStpNrBBtW6vzR3xX6LZeP88Chjz
+         yZWRVu9sjAy/6XZzngVRbYY66O0V4gzeIzkjSgKU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        David Francis <David.Francis@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
         Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 012/106] drm/amd/display: Guard against null stream_state in set_crc_source
-Date:   Thu, 24 Jan 2019 20:19:29 +0100
-Message-Id: <20190124190207.162371320@linuxfoundation.org>
+Subject: [PATCH 4.19 013/106] drm/amdkfd: fix interrupt spin lock
+Date:   Thu, 24 Jan 2019 20:19:30 +0100
+Message-Id: <20190124190207.231156986@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -69,45 +67,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f41a895026b8cb6f765190de7d2e7bc3ccbbd183 ]
+[ Upstream commit 2383a767c0ca06f96534456d8313909017c6c8d0 ]
 
-[Why]
+Vega10 has multiple interrupt rings, so this can be called from multiple
+calles at the same time resulting in:
 
-The igt@kms_plane@pixel-format-pipe tests can create a sequence where
-stream_state is NULL during amdgpu_dm_crtc_set_crc_source which results
-in a null pointer dereference.
+[   71.779334] ================================
+[   71.779406] WARNING: inconsistent lock state
+[   71.779478] 4.19.0-rc1+ #44 Tainted: G        W
+[   71.779565] --------------------------------
+[   71.779637] inconsistent {IN-HARDIRQ-W} -> {HARDIRQ-ON-W} usage.
+[   71.779740] kworker/6:1/120 [HC0[0]:SC0[0]:HE1:SE1] takes:
+[   71.779832] 00000000ad761971 (&(&kfd->interrupt_lock)->rlock){?...},
+at: kgd2kfd_interrupt+0x75/0x100 [amdgpu]
+[   71.780058] {IN-HARDIRQ-W} state was registered at:
+[   71.780115]   _raw_spin_lock+0x2c/0x40
+[   71.780180]   kgd2kfd_interrupt+0x75/0x100 [amdgpu]
+[   71.780248]   amdgpu_irq_callback+0x6c/0x150 [amdgpu]
+[   71.780315]   amdgpu_ih_process+0x88/0x100 [amdgpu]
+[   71.780380]   amdgpu_irq_handler+0x20/0x40 [amdgpu]
+[   71.780409]   __handle_irq_event_percpu+0x49/0x2a0
+[   71.780436]   handle_irq_event_percpu+0x30/0x70
+[   71.780461]   handle_irq_event+0x37/0x60
+[   71.780484]   handle_edge_irq+0x83/0x1b0
+[   71.780506]   handle_irq+0x1f/0x30
+[   71.780526]   do_IRQ+0x53/0x110
+[   71.780544]   ret_from_intr+0x0/0x22
+[   71.780566]   cpuidle_enter_state+0xaa/0x330
+[   71.780591]   do_idle+0x203/0x280
+[   71.780610]   cpu_startup_entry+0x6f/0x80
+[   71.780634]   start_secondary+0x1b0/0x200
+[   71.780657]   secondary_startup_64+0xa4/0xb0
 
-[How]
+Fix this by always using irq save spin locks.
 
-Guard against stream_state being NULL before accessing its fields. This
-doesn't fix the root cause of the issue so a DRM_ERROR is generated
-to still fail the tests.
-
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: David Francis <David.Francis@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Christian König <christian.koenig@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/amd/amdkfd/kfd_device.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
-index 9bfb040352e9..6a6d977ddd7a 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
-@@ -60,6 +60,11 @@ int amdgpu_dm_crtc_set_crc_source(struct drm_crtc *crtc, const char *src_name,
- 		return -EINVAL;
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_device.c b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+index 1427675d0e5a..5aba50f63ac6 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_device.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_device.c
+@@ -661,6 +661,7 @@ void kgd2kfd_interrupt(struct kfd_dev *kfd, const void *ih_ring_entry)
+ {
+ 	uint32_t patched_ihre[KFD_MAX_RING_ENTRY_SIZE];
+ 	bool is_patched = false;
++	unsigned long flags;
+ 
+ 	if (!kfd->init_complete)
+ 		return;
+@@ -670,7 +671,7 @@ void kgd2kfd_interrupt(struct kfd_dev *kfd, const void *ih_ring_entry)
+ 		return;
  	}
  
-+	if (!stream_state) {
-+		DRM_ERROR("No stream state for CRTC%d\n", crtc->index);
-+		return -EINVAL;
-+	}
-+
- 	/* When enabling CRC, we should also disable dithering. */
- 	if (source == AMDGPU_DM_PIPE_CRC_SOURCE_AUTO) {
- 		if (dc_stream_configure_crc(stream_state->ctx->dc,
+-	spin_lock(&kfd->interrupt_lock);
++	spin_lock_irqsave(&kfd->interrupt_lock, flags);
+ 
+ 	if (kfd->interrupts_active
+ 	    && interrupt_is_wanted(kfd, ih_ring_entry,
+@@ -679,7 +680,7 @@ void kgd2kfd_interrupt(struct kfd_dev *kfd, const void *ih_ring_entry)
+ 				     is_patched ? patched_ihre : ih_ring_entry))
+ 		queue_work(kfd->ih_wq, &kfd->interrupt_work);
+ 
+-	spin_unlock(&kfd->interrupt_lock);
++	spin_unlock_irqrestore(&kfd->interrupt_lock, flags);
+ }
+ 
+ int kgd2kfd_quiesce_mm(struct mm_struct *mm)
 -- 
 2.19.1
 
