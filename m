@@ -7,55 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2322DC282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 578AEC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E54FD20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29491217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:45:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359122;
-	bh=bfM/PB3X4q404qFnorvsPKbbDL8U4Mct+1S00ZTOK74=;
+	s=default; t=1548359126;
+	bh=26CKwNzgnZEIMjhQGdnMJaX0uuphZ7fB4VJjhnwhXMQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Khjkz9uvUyn2RC76S2AOM3S8xDgE1SrkMi5ah1HEVyUxnu5nPgZQU/yje4Fwa85mA
-	 2LZa/DUmEn1/lbGg9/Sa2jc6o6HTxGUjFbS1y6t4ShbdBvNwY/ljOZx7POXb8/M232
-	 t9omAebtCbtMHgW3wZGJ5xI7/kgyCETe2V+I5VFc=
+	b=kH6S/0sCweDXo1sF0sBV2NDOSsNKxPfiMGvmcsuzOwzRAMblD+dE7DcQjrkvsZ/kb
+	 LmOZvZrxgSn84p0zR4SMj0fsyOJEiYpAi4XOAs87UW4NSsW+EmZ2aYFnplyfVEnYUZ
+	 3+4z0up5RknT4J2+Zf4Rpcu5Y6ulxUHZx6Xe/Fko=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388156AbfAXTo6 (ORCPT
+        id S2388145AbfAXTo4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:44:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45744 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:44:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731336AbfAXTov (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:44:51 -0500
+        id S2387659AbfAXToq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:44:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAA3620663;
-        Thu, 24 Jan 2019 19:44:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 968B7218D2;
+        Thu, 24 Jan 2019 19:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359090;
-        bh=bfM/PB3X4q404qFnorvsPKbbDL8U4Mct+1S00ZTOK74=;
+        s=default; t=1548359085;
+        bh=26CKwNzgnZEIMjhQGdnMJaX0uuphZ7fB4VJjhnwhXMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GzWJfa89iek1x2eK1c67ngq00hzTtVrsWEl1FwCJNTYvxJIqBc/fuVNnK0e0V/kat
-         yQau7ZYf1qumRk2NuxqWlMTEmF9SyZwMvjw0tTxpUnqA4MMTmuD/S6AHU4/Bhkjbpw
-         zqUNG0Y3/QKkuWvC0MbuR59YjkbKacJBrZhJu9cQ=
+        b=WEk3bG8L5+EV81e9oNM5i7HlPSj+fAeSZzY/rRjHYoDkzT7OrB9NoNYA4wpcitsgP
+         lyZiY5//jpQGXWt1gTYgnNnxRC3ONHWfO2Bw5AF9wIgWPHZ5LHVolUap2TQwUCrpvF
+         BsZqptyy02ov1etAsX5paCXkruRZPs9yWjnS4IpY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Xu <peterx@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Hugh Dickins <hughd@google.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
+        stable@vger.kernel.org, Brian Foster <bfoster@redhat.com>,
+        Jan Kara <jack@suse.cz>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 118/127] userfaultfd: clear flag if remap event not enabled
-Date:   Thu, 24 Jan 2019 20:21:04 +0100
-Message-Id: <20190124190216.970004275@linuxfoundation.org>
+Subject: [PATCH 4.20 116/127] mm/page-writeback.c: dont break integrity writeback on ->writepage() error
+Date:   Thu, 24 Jan 2019 20:21:02 +0100
+Message-Id: <20190124190216.897432128@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -74,57 +68,106 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3cfd22be0ad663248fadfc8f6ffa3e255c394552 ]
+[ Upstream commit 3fa750dcf29e8606e3969d13d8e188cc1c0f511d ]
 
-When the process being tracked does mremap() without
-UFFD_FEATURE_EVENT_REMAP on the corresponding tracking uffd file handle,
-we should not generate the remap event, and at the same time we should
-clear all the uffd flags on the new VMA.  Without this patch, we can still
-have the VM_UFFD_MISSING|VM_UFFD_WP flags on the new VMA even the fault
-handling process does not even know the existance of the VMA.
+write_cache_pages() is used in both background and integrity writeback
+scenarios by various filesystems.  Background writeback is mostly
+concerned with cleaning a certain number of dirty pages based on various
+mm heuristics.  It may not write the full set of dirty pages or wait for
+I/O to complete.  Integrity writeback is responsible for persisting a set
+of dirty pages before the writeback job completes.  For example, an
+fsync() call must perform integrity writeback to ensure data is on disk
+before the call returns.
 
-Link: http://lkml.kernel.org/r/20181211053409.20317-1-peterx@redhat.com
-Signed-off-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Pavel Emelyanov <xemul@virtuozzo.com>
-Cc: Pravin Shedge <pravin.shedge4linux@gmail.com>
+write_cache_pages() unconditionally breaks out of its processing loop in
+the event of a ->writepage() error.  This is fine for background
+writeback, which had no strict requirements and will eventually come
+around again.  This can cause problems for integrity writeback on
+filesystems that might need to clean up state associated with failed page
+writeouts.  For example, XFS performs internal delayed allocation
+accounting before returning a ->writepage() error, where applicable.  If
+the current writeback happens to be associated with an unmount and
+write_cache_pages() completes the writeback prematurely due to error, the
+filesystem is unmounted in an inconsistent state if dirty+delalloc pages
+still exist.
+
+To handle this problem, update write_cache_pages() to always process the
+full set of pages for integrity writeback regardless of ->writepage()
+errors.  Save the first encountered error and return it to the caller once
+complete.  This facilitates XFS (or any other fs that expects integrity
+writeback to process the entire set of dirty pages) to clean up its
+internal state completely in the event of persistent mapping errors.
+Background writeback continues to exit on the first error encountered.
+
+[akpm@linux-foundation.org: fix typo in comment]
+Link: http://lkml.kernel.org/r/20181116134304.32440-1-bfoster@redhat.com
+Signed-off-by: Brian Foster <bfoster@redhat.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/userfaultfd.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ mm/page-writeback.c | 35 +++++++++++++++++++++--------------
+ 1 file changed, 21 insertions(+), 14 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 7a85e609fc27..d8b8323e80f4 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -736,10 +736,18 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
- 	struct userfaultfd_ctx *ctx;
+diff --git a/mm/page-writeback.c b/mm/page-writeback.c
+index 3f690bae6b78..7d1010453fb9 100644
+--- a/mm/page-writeback.c
++++ b/mm/page-writeback.c
+@@ -2154,6 +2154,7 @@ int write_cache_pages(struct address_space *mapping,
+ {
+ 	int ret = 0;
+ 	int done = 0;
++	int error;
+ 	struct pagevec pvec;
+ 	int nr_pages;
+ 	pgoff_t uninitialized_var(writeback_index);
+@@ -2227,25 +2228,31 @@ continue_unlock:
+ 				goto continue_unlock;
  
- 	ctx = vma->vm_userfaultfd_ctx.ctx;
--	if (ctx && (ctx->features & UFFD_FEATURE_EVENT_REMAP)) {
-+
-+	if (!ctx)
-+		return;
-+
-+	if (ctx->features & UFFD_FEATURE_EVENT_REMAP) {
- 		vm_ctx->ctx = ctx;
- 		userfaultfd_ctx_get(ctx);
- 		WRITE_ONCE(ctx->mmap_changing, true);
-+	} else {
-+		/* Drop uffd context if remap feature not enabled */
-+		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
-+		vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
- 	}
- }
+ 			trace_wbc_writepage(wbc, inode_to_bdi(mapping->host));
+-			ret = (*writepage)(page, wbc, data);
+-			if (unlikely(ret)) {
+-				if (ret == AOP_WRITEPAGE_ACTIVATE) {
++			error = (*writepage)(page, wbc, data);
++			if (unlikely(error)) {
++				/*
++				 * Handle errors according to the type of
++				 * writeback. There's no need to continue for
++				 * background writeback. Just push done_index
++				 * past this page so media errors won't choke
++				 * writeout for the entire file. For integrity
++				 * writeback, we must process the entire dirty
++				 * set regardless of errors because the fs may
++				 * still have state to clear for each page. In
++				 * that case we continue processing and return
++				 * the first error.
++				 */
++				if (error == AOP_WRITEPAGE_ACTIVATE) {
+ 					unlock_page(page);
+-					ret = 0;
+-				} else {
+-					/*
+-					 * done_index is set past this page,
+-					 * so media errors will not choke
+-					 * background writeout for the entire
+-					 * file. This has consequences for
+-					 * range_cyclic semantics (ie. it may
+-					 * not be suitable for data integrity
+-					 * writeout).
+-					 */
++					error = 0;
++				} else if (wbc->sync_mode != WB_SYNC_ALL) {
++					ret = error;
+ 					done_index = page->index + 1;
+ 					done = 1;
+ 					break;
+ 				}
++				if (!ret)
++					ret = error;
+ 			}
  
+ 			/*
 -- 
 2.19.1
 
