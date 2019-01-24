@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC8F1C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:16:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C093FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 885A7217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:16:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9128C218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360988;
-	bh=DscCXgPwkb1sQujYrzmP87r7E9gEYw276Ynzq0EM6s4=;
+	s=default; t=1548360991;
+	bh=Ze1Kl1fxkKQSrnFhdNeQvAk5lJOILF1degH+rnpf2D4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RBqVo0yeufPkqhUZUiaBxz4toZ6lLbOEp5iLFBIIT7NoMBY8RbT9l4n492enpwu5Y
-	 YDASA9hj3NUq5K5bLSjxyvYPicRDAejbnsPZybvL677eDKA+bew9roNBcvlv0aMk9h
-	 kqm4NR/wkNKPz3iGbV0sin84hqCKymz5ZdSiZO6Q=
+	b=MGWTOhyZURaNJT+0bPuvyJKwp1U0RHd3G7QnaWGs+wKWN2dDrmd1TNayfCNhEuacG
+	 h6ZSlbU+8sUacEllLkKRcK0Y4GbFcUKozuHIicUb7nHZRbPo6Eg0f5si9rV1MBp+7n
+	 9h2o9plsgz86dszZFfH8SyMoIv1sGCh/ckSVAPrU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729443AbfAXTYA (ORCPT
+        id S1729721AbfAXUQ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:24:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49038 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:16:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729458AbfAXTX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:23:58 -0500
+        id S1729978AbfAXTYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:24:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45322217D7;
-        Thu, 24 Jan 2019 19:23:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0699C217D7;
+        Thu, 24 Jan 2019 19:23:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357837;
-        bh=DscCXgPwkb1sQujYrzmP87r7E9gEYw276Ynzq0EM6s4=;
+        s=default; t=1548357840;
+        bh=Ze1Kl1fxkKQSrnFhdNeQvAk5lJOILF1degH+rnpf2D4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZP6HJwTcNCKTq4fictdk8AQaXZKP3pv9OWgR0K9clm0mGB37OHJlC8dECwbqbGGgY
-         XcamVxRbW4QC8Y/B5RUFEOZmep21bsZNnN/3Ce3m6qd/Ti5tDIoEKs552H2JwS9bmk
-         g30hkNoqef6qZkyQcN0KhhO9tVb6zwhva40gj5EY=
+        b=UNzekUOZg3FLifmNG2t6PSZIIrB+DsjMNgkn8cvAYCLrLirTK1lrvmXrzAfaz6o2c
+         edvi1OolvpQOtyt6sS9bRviRS/YT0DWxBc2hHbZ9Ntxn8KpDVVs6/PRCOyg5V6F/rm
+         QoylA+85EuS6EGXreaB3fA6ErsukYBYQ8sSQ9Ry4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ivan Mironov <mironov.ivan@gmail.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>
-Subject: [PATCH 3.18 32/52] drm/fb-helper: Ignore the value of fb_var_screeninfo.pixclock
-Date:   Thu, 24 Jan 2019 20:19:56 +0100
-Message-Id: <20190124190147.931604411@linuxfoundation.org>
+        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Subject: [PATCH 3.18 33/52] media: vb2: be sure to unlock mutex on errors
+Date:   Thu, 24 Jan 2019 20:19:57 +0100
+Message-Id: <20190124190148.098013082@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -65,81 +65,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ivan Mironov <mironov.ivan@gmail.com>
+From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-commit 66a8d5bfb518f9f12d47e1d2dce1732279f9451e upstream.
+commit c06ef2e9acef4cda1feee2ce055b8086e33d251a upstream.
 
-Strict requirement of pixclock to be zero breaks support of SDL 1.2
-which contains hardcoded table of supported video modes with non-zero
-pixclock values[1].
+As reported by smatch:
+drivers/media/common/videobuf2/videobuf2-core.c: drivers/media/common/videobuf2/videobuf2-core.c:2159 vb2_mmap() warn: inconsistent returns 'mutex:&q->mmap_lock'.
+  Locked on:   line 2148
+  Unlocked on: line 2100
+               line 2108
+               line 2113
+               line 2118
+               line 2156
+               line 2159
 
-To better understand which pixclock values are considered valid and how
-driver should handle these values, I briefly examined few existing fbdev
-drivers and documentation in Documentation/fb/. And it looks like there
-are no strict rules on that and actual behaviour varies:
+There is one error condition that doesn't unlock a mutex.
 
-	* some drivers treat (pixclock == 0) as "use defaults" (uvesafb.c);
-	* some treat (pixclock == 0) as invalid value which leads to
-	  -EINVAL (clps711x-fb.c);
-	* some pass converted pixclock value to hardware (uvesafb.c);
-	* some are trying to find nearest value from predefined table
-          (vga16fb.c, video_gx.c).
-
-Given this, I believe that it should be safe to just ignore this value if
-changing is not supported. It seems that any portable fbdev application
-which was not written only for one specific device working under one
-specific kernel version should not rely on any particular behaviour of
-pixclock anyway.
-
-However, while enabling SDL1 applications to work out of the box when
-there is no /etc/fb.modes with valid settings, this change affects the
-video mode choosing logic in SDL. Depending on current screen
-resolution, contents of /etc/fb.modes and resolution requested by
-application, this may lead to user-visible difference (not always):
-image will be displayed in a right way, but it will be aligned to the
-left instead of center. There is no "right behaviour" here as well, as
-emulated fbdev, opposing to old fbdev drivers, simply ignores any
-requsts of video mode changes with resolutions smaller than current.
-
-The easiest way to reproduce this problem is to install sdl-sopwith[2],
-remove /etc/fb.modes file if it exists, and then try to run sopwith
-from console without X. At least in Fedora 29, sopwith may be simply
-installed from standard repositories.
-
-[1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c, vesa_timings
-[2] http://sdl-sopwith.sourceforge.net/
-
-Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
-Cc: stable@vger.kernel.org
-Fixes: 79e539453b34e ("DRM: i915: add mode setting support")
-Fixes: 771fe6b912fca ("drm/radeon: introduce kernel modesetting for radeon hardware")
-Fixes: 785b93ef8c309 ("drm/kms: move driver specific fb common code to helper functions (v2)")
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20190108072353.28078-3-mironov.ivan@gmail.com
+Fixes: cd26d1c4d1bc ("media: vb2: vb2_mmap: move lock up")
+Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-
 ---
- drivers/gpu/drm/drm_fb_helper.c |    7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/media/v4l2-core/videobuf2-core.c |    3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/drm_fb_helper.c
-+++ b/drivers/gpu/drm/drm_fb_helper.c
-@@ -822,9 +822,14 @@ int drm_fb_helper_check_var(struct fb_va
- 	struct drm_framebuffer *fb = fb_helper->fb;
- 	int depth;
+--- a/drivers/media/v4l2-core/videobuf2-core.c
++++ b/drivers/media/v4l2-core/videobuf2-core.c
+@@ -2501,7 +2501,8 @@ int vb2_mmap(struct vb2_queue *q, struct
+ 	if (length < (vma->vm_end - vma->vm_start)) {
+ 		dprintk(1,
+ 			"MMAP invalid, as it would overflow buffer length\n");
+-		return -EINVAL;
++		ret = -EINVAL;
++		goto unlock;
+ 	}
  
--	if (var->pixclock != 0 || in_dbg_master())
-+	if (in_dbg_master())
- 		return -EINVAL;
- 
-+	if (var->pixclock != 0) {
-+		DRM_DEBUG("fbdev emulation doesn't support changing the pixel clock, value of pixclock is ignored\n");
-+		var->pixclock = 0;
-+	}
-+
- 	/* Need to resize the fb object !!! */
- 	if (var->bits_per_pixel > fb->bits_per_pixel ||
- 	    var->xres > fb->width || var->yres > fb->height ||
+ 	ret = call_memop(vb, mmap, vb->planes[plane].mem_priv, vma);
 
 
