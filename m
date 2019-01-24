@@ -7,54 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB685C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C94B2C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EF09218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9AB5921726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:02:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360159;
-	bh=/DJ1btP262BSjurSao/skZ1aSVhRH6hOe5Tcaly6Qyo=;
+	s=default; t=1548360171;
+	bh=NdM6OF8cyyCtbOGXzKpA9IDd+Rx/1l06tI+O52h5NoA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eNeITIIb0cqjLT9cvxOQtR6UJrDqRGr+cqRf2xOEulrTXX1Rik9KJsVWEUygz4tAo
-	 zE2AEtNeJDJK8sr/K3qPu/Ixv2zetMgR86VQMx3wtDTGjzHYM/eVJXscSQ/vKGkigx
-	 pa6I+NBnhenoQQz0CqCU7mS6cwLTHgmJJqs/Q9U8=
+	b=plnNzLDJJLxoJORQDxN+8MO4ZEC1++r4FU0OhVRAQPNIh+qut6GukHf+MaUx0EViZ
+	 WKZOad9N7Pky6pQFHCtj8au29+0NuD7iTqZQBrwQmhfFFVrywyutxud8qqm6SGFg83
+	 qVkA4yf5ub4XOj4TkLkxzshVhSYJjPJ5875KzV1w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730565AbfAXUCi (ORCPT
+        id S1730891AbfAXUCt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:02:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32802 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:02:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731249AbfAXTdE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:33:04 -0500
+        id S1731913AbfAXTc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:32:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E57F5218E2;
-        Thu, 24 Jan 2019 19:33:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2A91218E2;
+        Thu, 24 Jan 2019 19:32:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358383;
-        bh=/DJ1btP262BSjurSao/skZ1aSVhRH6hOe5Tcaly6Qyo=;
+        s=default; t=1548358378;
+        bh=NdM6OF8cyyCtbOGXzKpA9IDd+Rx/1l06tI+O52h5NoA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tkhuaK/dpqrNXhbDk5m8ZQSUAZgJUBw6K0YUuI7FgtThwNXE9qOA1a+Tacop9dGO3
-         9mhy1euqNhTsl7Z3NoVdXrLmD0Ls3xmEWModHdePwvYYevHFIAj03jwGQloXipTEvY
-         r6q8qEnucGnOLjoGQIxII8dlaBq741GOBkcx2Wwo=
+        b=DDMxeo5dCyRBp40W9VBbImHAJjd7RX3Lp3W9eyOtkY8g827Mft+/OnEuLSZKl8TRI
+         a7vtI7epIjff2mhazuwBKcqqtLdBrFDJdk0tjA7ewbYM2ciQYf5valIurXRGmkz5L3
+         lSQ8LyMyWCAOK0BrKH9qhQ9f5go0OnJPUyJgzkgk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Yiwen Jiang <jiangyiwen@huawei.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Mark Fasheh <mfasheh@versity.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Changwei Ge <ge.changwei@h3c.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org,
+        Yanjiang Jin <yanjiang.jin@hxt-semitech.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 54/63] ocfs2: fix panic due to unrecovered local alloc
-Date:   Thu, 24 Jan 2019 20:20:43 +0100
-Message-Id: <20190124190201.727064455@linuxfoundation.org>
+Subject: [PATCH 4.14 52/63] scsi: smartpqi: call pqi_free_interrupts() in pqi_shutdown()
+Date:   Thu, 24 Jan 2019 20:20:41 +0100
+Message-Id: <20190124190201.577008917@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -73,103 +68,63 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 532e1e54c8140188e192348c790317921cb2dc1c ]
+[ Upstream commit e57b2945aa654e48f85a41e8917793c64ecb9de8 ]
 
-mount.ocfs2 ignore the inconsistent error that journal is clean but
-local alloc is unrecovered.  After mount, local alloc not empty, then
-reserver cluster didn't alloc a new local alloc window, reserveration
-map is empty(ocfs2_reservation_map.m_bitmap_len = 0), that triggered the
-following panic.
+We must free all irqs during shutdown, else kexec's 2nd kernel would hang
+in pqi_wait_for_completion_io() as below:
 
-This issue was reported at
+Call trace:
 
-  https://oss.oracle.com/pipermail/ocfs2-devel/2015-May/010854.html
+ pqi_wait_for_completion_io
+ pqi_submit_raid_request_synchronous.constprop.78+0x23c/0x310 [smartpqi]
+ pqi_configure_events+0xec/0x1f8 [smartpqi]
+ pqi_ctrl_init+0x814/0xca0 [smartpqi]
+ pqi_pci_probe+0x400/0x46c [smartpqi]
+ local_pci_probe+0x48/0xb0
+ pci_device_probe+0x14c/0x1b0
+ really_probe+0x218/0x3fc
+ driver_probe_device+0x70/0x140
+ __driver_attach+0x11c/0x134
+ bus_for_each_dev+0x70/0xc8
+ driver_attach+0x30/0x38
+ bus_add_driver+0x1f0/0x294
+ driver_register+0x74/0x12c
+ __pci_register_driver+0x64/0x70
+ pqi_init+0xd0/0x10000 [smartpqi]
+ do_one_initcall+0x60/0x1d8
+ do_init_module+0x64/0x1f8
+ load_module+0x10ec/0x1350
+ __se_sys_finit_module+0xd4/0x100
+ __arm64_sys_finit_module+0x28/0x34
+ el0_svc_handler+0x104/0x160
+ el0_svc+0x8/0xc
 
-and was advised to fixed during mount.  But this is a very unusual
-inconsistent state, usually journal dirty flag should be cleared at the
-last stage of umount until every other things go right.  We may need do
-further debug to check that.  Any way to avoid possible futher
-corruption, mount should be abort and fsck should be run.
+This happens only in the following combinations:
 
-  (mount.ocfs2,1765,1):ocfs2_load_local_alloc:353 ERROR: Local alloc hasn't been recovered!
-  found = 6518, set = 6518, taken = 8192, off = 15912372
-  ocfs2: Mounting device (202,64) on (node 0, slot 3) with ordered data mode.
-  o2dlm: Joining domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 8 ) 8 nodes
-  ocfs2: Mounting device (202,80) on (node 0, slot 3) with ordered data mode.
-  o2hb: Region 89CEAC63CC4F4D03AC185B44E0EE0F3F (xvdf) is now a quorum device
-  o2net: Accepted connection from node yvwsoa17p (num 7) at 172.22.77.88:7777
-  o2dlm: Node 7 joins domain 64FE421C8C984E6D96ED12C55FEE2435 ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
-  o2dlm: Node 7 joins domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
-  ------------[ cut here ]------------
-  kernel BUG at fs/ocfs2/reservations.c:507!
-  invalid opcode: 0000 [#1] SMP
-  Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4 nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev parport_pc parport xen_netfront fb_sys_fops sysimgblt sysfillrect syscopyarea acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom xen_blkfront pata_acpi ata_generic ata_piix floppy dm_mirror dm_region_hash dm_log dm_mod
-  CPU: 0 PID: 4349 Comm: startWebLogic.s Not tainted 4.1.12-124.19.2.el6uek.x86_64 #2
-  Hardware name: Xen HVM domU, BIOS 4.4.4OVM 09/06/2018
-  task: ffff8803fb04e200 ti: ffff8800ea4d8000 task.ti: ffff8800ea4d8000
-  RIP: 0010:[<ffffffffa05e96a8>]  [<ffffffffa05e96a8>] __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
-  Call Trace:
-    ocfs2_resmap_resv_bits+0x10d/0x400 [ocfs2]
-    ocfs2_claim_local_alloc_bits+0xd0/0x640 [ocfs2]
-    __ocfs2_claim_clusters+0x178/0x360 [ocfs2]
-    ocfs2_claim_clusters+0x1f/0x30 [ocfs2]
-    ocfs2_convert_inline_data_to_extents+0x634/0xa60 [ocfs2]
-    ocfs2_write_begin_nolock+0x1c6/0x1da0 [ocfs2]
-    ocfs2_write_begin+0x13e/0x230 [ocfs2]
-    generic_perform_write+0xbf/0x1c0
-    __generic_file_write_iter+0x19c/0x1d0
-    ocfs2_file_write_iter+0x589/0x1360 [ocfs2]
-    __vfs_write+0xb8/0x110
-    vfs_write+0xa9/0x1b0
-    SyS_write+0x46/0xb0
-    system_call_fastpath+0x18/0xd7
-  Code: ff ff 8b 75 b8 39 75 b0 8b 45 c8 89 45 98 0f 84 e5 fe ff ff 45 8b 74 24 18 41 8b 54 24 1c e9 56 fc ff ff 85 c0 0f 85 48 ff ff ff <0f> 0b 48 8b 05 cf c3 de ff 48 ba 00 00 00 00 00 00 00 10 48 85
-  RIP   __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
-   RSP <ffff8800ea4db668>
-  ---[ end trace 566f07529f2edf3c ]---
-  Kernel panic - not syncing: Fatal exception
-  Kernel Offset: disabled
+1. smartpqi is built as module, not built-in;
+2. We have a disk connected to smartpqi card;
+3. Both kexec's 1st and 2nd kernels use this disk as Rootfs' mount point.
 
-Link: http://lkml.kernel.org/r/20181121020023.3034-2-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Acked-by: Joseph Qi <jiangqi903@gmail.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Changwei Ge <ge.changwei@h3c.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Yanjiang Jin <yanjiang.jin@hxt-semitech.com>
+Acked-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/localalloc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ drivers/scsi/smartpqi/smartpqi_init.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index fe0d1f9571bb..5d53d0d63d19 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -345,13 +345,18 @@ int ocfs2_load_local_alloc(struct ocfs2_super *osb)
- 	if (num_used
- 	    || alloc->id1.bitmap1.i_used
- 	    || alloc->id1.bitmap1.i_total
--	    || la->la_bm_off)
--		mlog(ML_ERROR, "Local alloc hasn't been recovered!\n"
-+	    || la->la_bm_off) {
-+		mlog(ML_ERROR, "inconsistent detected, clean journal with"
-+		     " unrecovered local alloc, please run fsck.ocfs2!\n"
- 		     "found = %u, set = %u, taken = %u, off = %u\n",
- 		     num_used, le32_to_cpu(alloc->id1.bitmap1.i_used),
- 		     le32_to_cpu(alloc->id1.bitmap1.i_total),
- 		     OCFS2_LOCAL_ALLOC(alloc)->la_bm_off);
- 
-+		status = -EINVAL;
-+		goto bail;
-+	}
-+
- 	osb->local_alloc_bh = alloc_bh;
- 	osb->local_alloc_state = OCFS2_LA_ENABLED;
- 
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index b662f58203ac..bc15999f1c7c 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -6703,6 +6703,7 @@ static void pqi_shutdown(struct pci_dev *pci_dev)
+ 	 * storage.
+ 	 */
+ 	rc = pqi_flush_cache(ctrl_info, SHUTDOWN);
++	pqi_free_interrupts(ctrl_info);
+ 	pqi_reset(ctrl_info);
+ 	if (rc == 0)
+ 		return;
 -- 
 2.19.1
 
