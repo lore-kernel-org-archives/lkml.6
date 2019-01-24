@@ -2,101 +2,132 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8BAC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:17:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C2D3C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:18:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B26E321872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:17:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67C7C21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:18:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ICz8KRqC"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="yNHjIS0R"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728277AbfAXORh (ORCPT
+        id S1728298AbfAXOSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 09:17:37 -0500
-Received: from mail-eopbgr710076.outbound.protection.outlook.com ([40.107.71.76]:41826
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727790AbfAXORg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 09:17:36 -0500
+        Thu, 24 Jan 2019 09:18:24 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:36205 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727562AbfAXOSX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 09:18:23 -0500
+Received: by mail-qt1-f195.google.com with SMTP id t13so6674017qtn.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 06:18:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=70NT/Omb0GFUCY7JQcG1oLfsO0GBfFlnwiWP1cu9+fQ=;
- b=ICz8KRqCYAdQkpf53W7XK97aWOLmcJJCTiPMGnRk3qVjn/2Bf7VSD2SSfcDlATo9Y7EJF6JxfsMO+mfLb2oe8/zwvLH0AuMOyLIKP/yEQ51WRyRuohDD5//52OB4yGZBCzDnEBpAJIIOUR1DrEasF+IVNOBxxR+2tcm6kKsk+WM=
-Received: from DM6PR12MB2844.namprd12.prod.outlook.com (20.176.117.96) by
- DM6PR12MB3227.namprd12.prod.outlook.com (20.179.105.95) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.16; Thu, 24 Jan 2019 14:17:35 +0000
-Received: from DM6PR12MB2844.namprd12.prod.outlook.com
- ([fe80::c40:929a:abab:308d]) by DM6PR12MB2844.namprd12.prod.outlook.com
- ([fe80::c40:929a:abab:308d%3]) with mapi id 15.20.1537.031; Thu, 24 Jan 2019
- 14:17:35 +0000
-From:   "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>
-To:     "joro@8bytes.org" <joro@8bytes.org>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>
-Subject: Re: [PATCH v3] iommu: amd: Fix IOMMU page flush when detach device
- from a domain
-Thread-Topic: [PATCH v3] iommu: amd: Fix IOMMU page flush when detach device
- from a domain
-Thread-Index: AQHUs5ueti9jdxud0kGP04WcL8K6sKW+dkKAgAABlgA=
-Date:   Thu, 24 Jan 2019 14:17:34 +0000
-Message-ID: <c965ccfb-1a98-1fc2-5980-2d7f17688e54@amd.com>
-References: <20190124041619.1974-1-Suravee.Suthikulpanit@amd.com>
- <20190124141145.GM32526@8bytes.org>
-In-Reply-To: <20190124141145.GM32526@8bytes.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.3
-x-originating-ip: [165.204.53.123]
-x-clientproxiedby: BYAPR02CA0059.namprd02.prod.outlook.com
- (2603:10b6:a03:54::36) To DM6PR12MB2844.namprd12.prod.outlook.com
- (2603:10b6:5:45::32)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Suravee.Suthikulpanit@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM6PR12MB3227;20:6J9egMVChhlcmNzl7HXF39FYdiP4+2Gnpg/qv60FplAKardu86E4DoEfk+P04E+MNIIdFwx/wbofn4hKe2Jd4ZtAq9PdmMr0ZSNZf7sFER5er2E207G49MBmnYuuyq+EwUS2UbzY4GYiMDQ3ww9hUfAO1+JSfI4W3i1UVltscsjvfvdwh/Caxw+GPEkl8jEv5rNnw98RaajGmBZSA15bNHUKM6DFYJqDzCSnsxj84/vJOhAwNGuYzPYmMPHMGTM9
-x-ms-office365-filtering-correlation-id: 291813b9-d956-476f-fbea-08d68206af8e
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(5600110)(711020)(4605077)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM6PR12MB3227;
-x-ms-traffictypediagnostic: DM6PR12MB3227:
-x-microsoft-antispam-prvs: <DM6PR12MB3227349C7DEA9BD0E2A5463CF39A0@DM6PR12MB3227.namprd12.prod.outlook.com>
-x-forefront-prvs: 0927AA37C7
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(376002)(396003)(346002)(189003)(199004)(8676002)(68736007)(31686004)(64126003)(486006)(2616005)(86362001)(6246003)(31696002)(65956001)(66066001)(25786009)(53936002)(65806001)(4326008)(6512007)(476003)(8936002)(65826007)(7736002)(106356001)(105586002)(6916009)(2351001)(1730700003)(81156014)(2501003)(81166006)(6486002)(76176011)(4744005)(36756003)(99286004)(3846002)(71200400001)(446003)(72206003)(6116002)(54906003)(186003)(316002)(11346002)(52116002)(97736004)(58126008)(53546011)(386003)(6506007)(305945005)(229853002)(2906002)(5640700003)(14454004)(256004)(71190400001)(478600001)(6436002)(26005)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:DM6PR12MB3227;H:DM6PR12MB2844.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: CKx/xn4gSH/ZyEIwFBh2xnv5ujgIQxpYgxgs1dZC+hG103LslCRmS0OFIpqUoNvA/ETdtzDN3tTF0Plth3jJeRWYkZ3jH9CL/AK7Um3xxUVIUO7fFV5Ohjd0lczx5H9yyBL1I4CzdGWOlBsojMDd/6xwjxu/B4cKnk35KbFnmo9Kyw4VNxOHisFHzJwgPZ1+2Wpr80PA6UhvpoWkE20WQpHhVQfV1w2A5T+sPWLa5bogA1Q0XfPB+mcxfLGNRlzzUv/+TQyZI5O3mtcKX8IkNkxybXz84BqDLx7TJXCFtAZ56qnwpMihin/Rm2+N0/fYfWt2+swmafHBYgWuwGudSAGcG3WmnNk2Cc18AUNL5wDv/ZtG7l8ayHH2jgfvzD5TcVfVQzjq7VQ7udiE1+mhIFNfEQSrQDC6aeYVbr5rw3Y=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <3EA1A9C074374641ACC3E802C57BA269@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Skgo5z9eJrMNa3iKEaytgJwZNUVdVDbHbeZE63F3NTM=;
+        b=yNHjIS0RUjmjSVgNCZuEmnai/AWXdZdxhVo5KnKrxFp3CLCpxQ1O/FHQSPzhDnoCz+
+         4km35tLrGopa6q5oXvRlY9UWTkOCCM309D5pLu1ZCsr7UlXnSwIpkajKcWmHXZC7QbH6
+         ZlcC6Xh4DNGrDG8F2yWbCFEPwCpVqkWh0/AQU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Skgo5z9eJrMNa3iKEaytgJwZNUVdVDbHbeZE63F3NTM=;
+        b=Kg8thEabEpA+fh23XH8x9mCAs6gCuU2Ysq89xNsy3/lZ41Es+1YkLSmXpWk2y6+lDj
+         mIhYUPUhLDKCHUHsCGzK4crcAQwMZKg3AODW5KyjhWB4esvnS3BV/5rJ8+rve7NCMQg8
+         f/uMOdLFoF+ZiyAajhWl14T6xPYUGZXth11194ccy7tlGCtBfzziJmqlPEMhheTnvwQn
+         rXo7HGOTJ02TSIUIP4iE0CVVlnYQqr1OtBWE4s6LD0BzUB53NLp5kPMNJGGZojObdCbp
+         ODytmwnquDUumfD0FT7a+zvCNC4AgZIR6tGir7HaxNGS3pCisXWl2pT36aZ25TKm7LlL
+         NH6g==
+X-Gm-Message-State: AJcUukeBI1Tum4bLMCi3oEyQsKGqX02mWWDIuADiJpg4Nw8mXnEBiV4L
+        quN+UjXrtgCBfoVO9NNQm7s8Tw==
+X-Google-Smtp-Source: ALg8bN6H+RibSIYE5wCeIFQjFIrYx+ErfTeIQamXHGqjBXY088xzCNCHQGFWRafEGYms1bySHwklJQ==
+X-Received: by 2002:a0c:d0a8:: with SMTP id z37mr6326530qvg.86.1548339502151;
+        Thu, 24 Jan 2019 06:18:22 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id r24sm76718067qtr.2.2019.01.24.06.18.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 06:18:20 -0800 (PST)
+Date:   Thu, 24 Jan 2019 09:18:20 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Karim Yaghmour <karim.yaghmour@opersys.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
+        atish patra <atishp04@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Manoj Rao <linux@manojrajarao.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>, rostedt@goodmis.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        yhs@fb.com
+Subject: Re: [RFC] Provide in-kernel headers for making it easy to extend the
+ kernel
+Message-ID: <20190124141820.GA75378@google.com>
+References: <20190119103606.GA17400@kroah.com>
+ <8BD4CB7A-944C-4EC5-A198-1D85C9EE28D6@zytor.com>
+ <20190120161003.GB23827@google.com>
+ <A40C22DF-B43F-44BA-8148-FC0881087315@zytor.com>
+ <20190121014553.GD23827@google.com>
+ <BC774ED4-C0FC-4AA6-9BAF-36930A661D9B@zytor.com>
+ <20190122133901.GA189736@google.com>
+ <117d2f96-b0e9-2376-69b7-836fa0c52539@opersys.com>
+ <CAKOZuesWgo3CZj49aUChX_-dpijCrVLxgVZChyLLmOWXCLQf-Q@mail.gmail.com>
+ <20190124023216.GA75730@google.com>
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 291813b9-d956-476f-fbea-08d68206af8e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Jan 2019 14:17:31.9953
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB3227
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124023216.GA75730@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sm9lcmcsDQoNCk9uIDEvMjQvMTkgOToxMSBQTSwgam9yb0A4Ynl0ZXMub3JnIHdyb3RlOg0KPiBP
-biBUaHUsIEphbiAyNCwgMjAxOSBhdCAwNDoxNjo0NUFNICswMDAwLCBTdXRoaWt1bHBhbml0LCBT
-dXJhdmVlIHdyb3RlOg0KPj4gICBkcml2ZXJzL2lvbW11L2FtZF9pb21tdS5jIHwgMTUgKysrKysr
-KysrKystLS0tDQo+PiAgIDEgZmlsZSBjaGFuZ2VkLCAxMSBpbnNlcnRpb25zKCspLCA0IGRlbGV0
-aW9ucygtKQ0KPiANCj4gQXBwbGllZCwgdGhhbmtzIFN1cmF2ZWUuDQo+IA0KDQpUaGFua3MuIEFs
-c28sIHNob3VsZCB0aGlzIGFsc28gYmFjay1wb3J0ZWQgdG8gc3RhYmxlIHRyZWUgYXMgd2VsbD8N
-Cg0KU3VyYXZlZQ0K
+On Wed, Jan 23, 2019 at 09:32:16PM -0500, Joel Fernandes wrote:
+> On Wed, Jan 23, 2019 at 02:37:47PM -0800, Daniel Colascione wrote:
+> > On Wed, Jan 23, 2019 at 1:29 PM Karim Yaghmour
+> > <karim.yaghmour@opersys.com> wrote:
+> [...]
+> > > Personally I advocated a more aggressive approach with Joel in private:
+> > > just put the darn headers straight into the kernel image, it's the
+> > > *only* artifact we're sure will follow the Android device whatever
+> > > happens to it (like built-in ftrace).
+> > 
+> > I was thinking along similar lines. Ordinarily, we make loadable
+> > kernel modules. What we kind of want here is a non-loadable kernel
+> > module --- or a non-loadable section in the kernel image proper. I'm
+> > not familiar with early-stage kernel loader operation: I know it's
+> > possible to crease discardable sections in the kernel image, but can
+> > we create sections that are never slurped into memory in the first
+> > place? If not, maybe loading and immediately discarding the header
+> > section is good enough.
+> 
+> I am happy to see if I can shrink it down further. Especially using xz and
+> stripping all comments period. I am optimistic this can be brought down
+> further to a point where it would make sense to everyone to build it into the
+> kernel. Lets see.
+> 
+> Last time I stripped comments, it went down by ~40%. What I haven't tried is
+> doing this *with* xz compression. I am also open to brainstorming what else
+> can be stripped.
+
+Removing comments (/* */) with xz compression brings it down to 3.3MB.
+
+thanks,
+
+ - Joel
+
