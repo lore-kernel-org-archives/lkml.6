@@ -2,191 +2,60 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63015C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:24:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44B39C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24288218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:24:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=innovation.ch header.i=@innovation.ch header.b="cVlHkod3"
+	by mail.kernel.org (Postfix) with ESMTP id 1951B21855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:24:37 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727299AbfAXIYb (ORCPT
+        id S1727420AbfAXIYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:24:31 -0500
-Received: from chill.innovation.ch ([216.218.245.220]:40962 "EHLO
-        chill.innovation.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfAXIYb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:24:31 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by chill.innovation.ch (Postfix) with ESMTP id 478836400C4;
-        Thu, 24 Jan 2019 00:24:30 -0800 (PST)
-X-Virus-Scanned: amavisd-new at 
-Received: from chill.innovation.ch ([127.0.0.1])
-        by localhost (chill.innovation.ch [127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id IvZJJ0PDwDyg; Thu, 24 Jan 2019 00:24:28 -0800 (PST)
-From:   =?UTF-8?q?Ronald=20Tschal=C3=A4r?= <ronald@innovation.ch>
-DKIM-Filter: OpenDKIM Filter v2.10.3 chill.innovation.ch 1FE25640073
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=innovation.ch;
-        s=default; t=1548318268;
-        bh=Q6XCpHNZx8YfCQ1oZIjEXDdmXyR60jkNIrt1vLRVF64=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cVlHkod3f6pes83FbAvFgYtqHDEAxAJ4DZ4CLSpkX8AVzwRZzWlms507nayWutv0s
-         n+WhWlgAthRTsySseUn4aYiDWgVhm4pxrl8/tA9Y/qk0O3gkNrxzLBsFzJmThJ9Fab
-         2kakvM/WBqYhpso2aKYnfdqthUmU66lvM04bIu731V2ZHqVTyKkyE9ytNm6LiTSmld
-         ojRu0x0V6SD/1a5r0bPrrtSui0fRhwUm3UKx74PS7sgxSL991y4ysOXkBciOatrkvv
-         J+XvwrJJMMZ7ITk0zBC87glilyVWRa1VkEUTMif/4VbpQvu24NP8TiYBpk29mUJMhf
-         WSSFNKirMTysA==
-To:     Andrzej Hajda <a.hajda@samsung.com>,
-        Inki Dae <inki.dae@samsung.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Lukas Wunner <lukas@wunner.de>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] drm/bridge: sil_sii8620: make remote control optional.
-Date:   Thu, 24 Jan 2019 00:24:23 -0800
-Message-Id: <20190124082423.23139-1-ronald@innovation.ch>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124072125.GA28127@innovation.ch>
-References: <20190124072125.GA28127@innovation.ch>
+        Thu, 24 Jan 2019 03:24:35 -0500
+Received: from 8bytes.org ([81.169.241.247]:59428 "EHLO theia.8bytes.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725939AbfAXIYe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 03:24:34 -0500
+Received: by theia.8bytes.org (Postfix, from userid 1000)
+        id E26703C8; Thu, 24 Jan 2019 09:24:31 +0100 (CET)
+Date:   Thu, 24 Jan 2019 09:24:31 +0100
+From:   Joerg Roedel <joro@8bytes.org>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
+        Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
+Subject: Re: [PATCH 1/5] swiotlb: Introduce swiotlb_max_mapping_size()
+Message-ID: <20190124082431.GH32526@8bytes.org>
+References: <20190123163049.24863-1-joro@8bytes.org>
+ <20190123163049.24863-2-joro@8bytes.org>
+ <20190123212813.GB9032@lst.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190123212813.GB9032@lst.de>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-commit d6abe6df706c (drm/bridge: sil_sii8620: do not have a dependency
-of RC_CORE) changed the driver to select both RC_CORE and INPUT.
-However, this causes problems with other drivers, in particular an input
-driver that depends on MFD_INTEL_LPSS_PCI (to be added in a separate
-commit):
+On Wed, Jan 23, 2019 at 10:28:13PM +0100, Christoph Hellwig wrote:
+> On Wed, Jan 23, 2019 at 05:30:45PM +0100, Joerg Roedel wrote:
+> > +extern size_t swiotlb_max_mapping_size(struct device *dev);
+> 
+> No need for the extern keyword on function declarations in headers.
 
-  drivers/clk/Kconfig:9:error: recursive dependency detected!
-  drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
-  drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
-  drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
-  drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
-  drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
-  drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
-  drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
-  drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
+Right, but all other function declarations in that header file have
+'extern' too, so I added it also for that one.
 
-According to the docs and general consensus, select should only be used
-for non user-visible symbols, but both RC_CORE and INPUT are
-user-visible. Furthermore almost all other references to INPUT
-throughout the kernel config are depends, not selects. For this reason
-the first part of this change reverts commit d6abe6df706c.
+Regards,
 
-In order to address the original reason for commit d6abe6df706c, namely
-that not all boards use the remote controller functionality and hence
-should not need have to deal with RC_CORE, the second part of this
-change now makes the remote control support in the driver optional and
-contingent on RC_CORE being defined. And with this the hard dependency
-on INPUT also goes away as that is only needed if RC_CORE is defined
-(which in turn already depends on INPUT).
-
-CC: Inki Dae <inki.dae@samsung.com>
-CC: Andrzej Hajda <a.hajda@samsung.com>
-CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
----
-Changes in v2:
- - completely remove dependencies on both RC_CORE and INPUT in Kconfig,
- - make remote control functionality in driver contingent on RC_CORE
-   being defined
-
- drivers/gpu/drm/bridge/Kconfig       |  2 --
- drivers/gpu/drm/bridge/sil-sii8620.c | 17 +++++++++++++++++
- 2 files changed, 17 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index 2fee47b0d50b..a11198a36005 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -85,8 +85,6 @@ config DRM_SIL_SII8620
- 	depends on OF
- 	select DRM_KMS_HELPER
- 	imply EXTCON
--	select INPUT
--	select RC_CORE
- 	help
- 	  Silicon Image SII8620 HDMI/MHL bridge chip driver.
- 
-diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
-index 0cc293a6ac24..dee47752791e 100644
---- a/drivers/gpu/drm/bridge/sil-sii8620.c
-+++ b/drivers/gpu/drm/bridge/sil-sii8620.c
-@@ -66,7 +66,9 @@ enum sii8620_mt_state {
- struct sii8620 {
- 	struct drm_bridge bridge;
- 	struct device *dev;
-+#if IS_ENABLED(CONFIG_RC_CORE)
- 	struct rc_dev *rc_dev;
-+#endif
- 	struct clk *clk_xtal;
- 	struct gpio_desc *gpio_reset;
- 	struct gpio_desc *gpio_int;
-@@ -1756,6 +1758,7 @@ static void sii8620_send_features(struct sii8620 *ctx)
- 	sii8620_write_buf(ctx, REG_MDT_XMIT_WRITE_PORT, buf, ARRAY_SIZE(buf));
- }
- 
-+#if IS_ENABLED(CONFIG_RC_CORE)
- static bool sii8620_rcp_consume(struct sii8620 *ctx, u8 scancode)
- {
- 	bool pressed = !(scancode & MHL_RCP_KEY_RELEASED_MASK);
-@@ -1774,6 +1777,12 @@ static bool sii8620_rcp_consume(struct sii8620 *ctx, u8 scancode)
- 
- 	return true;
- }
-+#else
-+static bool sii8620_rcp_consume(struct sii8620 *ctx, u8 scancode)
-+{
-+	return false;
-+}
-+#endif
- 
- static void sii8620_msc_mr_set_int(struct sii8620 *ctx)
- {
-@@ -2097,6 +2106,7 @@ static void sii8620_cable_in(struct sii8620 *ctx)
- 	enable_irq(to_i2c_client(ctx->dev)->irq);
- }
- 
-+#if IS_ENABLED(CONFIG_RC_CORE)
- static void sii8620_init_rcp_input_dev(struct sii8620 *ctx)
- {
- 	struct rc_dev *rc_dev;
-@@ -2126,6 +2136,11 @@ static void sii8620_init_rcp_input_dev(struct sii8620 *ctx)
- 	}
- 	ctx->rc_dev = rc_dev;
- }
-+#else
-+static void sii8620_init_rcp_input_dev(struct sii8620 *ctx)
-+{
-+}
-+#endif
- 
- static void sii8620_cable_out(struct sii8620 *ctx)
- {
-@@ -2214,9 +2229,11 @@ static int sii8620_attach(struct drm_bridge *bridge)
- 
- static void sii8620_detach(struct drm_bridge *bridge)
- {
-+#if IS_ENABLED(CONFIG_RC_CORE)
- 	struct sii8620 *ctx = bridge_to_sii8620(bridge);
- 
- 	rc_unregister_device(ctx->rc_dev);
-+#endif
- }
- 
- static int sii8620_is_packing_required(struct sii8620 *ctx,
--- 
-2.20.1
-
+	Joerg
