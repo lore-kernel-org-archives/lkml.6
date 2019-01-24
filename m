@@ -7,49 +7,54 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 418EEC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE617C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 120A6217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF136217D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359616;
-	bh=ITfGltPSW1MCBXn6Yper8sfocVjpbWbv2zhYkL33lQc=;
+	s=default; t=1548359618;
+	bh=L2mEQFH3u4FfyQbUy/JC3Uu3J1BIgkhaenD4TKJZRRk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zLgu0EqP1JPSkPbGs3baqKZaMYon3sQOa5xyU4tGflwKQfemLPK5Lu1Rzz+IRAXso
-	 UHL4HeT4pfdE+5MHgoU3dsLx+gNnLWlot1p1xp8TO9vJiSED/ALoROv+DeNNNwSfV5
-	 U6YKcaob7y09S+NSFEkX/qc4eQtLXthoethai75s=
+	b=I+U/MT+c8WKswKZ0h7nr85qqVkmzbfT+CMcEuQIR1auFX7IHtHoms01ToSvZPJDA5
+	 QXLyRigJlQjDvdhgWfkH3mTXVGtcKHBwsBoaBu6vkUoquTeaDN/LJSw7ktgZ6SZ/qD
+	 HhdqsmQYla45To3EbUOe9D0DdW4Fm5Ua4O7ju/90=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732772AbfAXTiH (ORCPT
+        id S1732095AbfAXTxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:38:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38204 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:53:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730445AbfAXTiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:38:04 -0500
+        id S1732764AbfAXTiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:38:07 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F14E121907;
-        Thu, 24 Jan 2019 19:38:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6D0AB21903;
+        Thu, 24 Jan 2019 19:38:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358683;
-        bh=ITfGltPSW1MCBXn6Yper8sfocVjpbWbv2zhYkL33lQc=;
+        s=default; t=1548358686;
+        bh=L2mEQFH3u4FfyQbUy/JC3Uu3J1BIgkhaenD4TKJZRRk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WSkzPORroWtRLzr7E+6x+i1eFukhP/MTwN9UfQDYV8VaEPafOTwlyVqW4FmmLVO3b
-         S0QssBb52iaPHALtkFW7hT2DwKr2oSgvkKjRmDVWQ6epU0HarIS1eXrSJ4GskoJBOi
-         vwvQi1w2o9PuB5/p7AEpVK2I5FU2tk+ZLZsCKkfw=
+        b=J87qIefPFtf+PP2I0fHxSmXWxkPFceBFXqCP+Yd9xS7oNbOvlB7JZf5QfoPdoCjGW
+         BnDkZKXH11GHyjv7SBL//KJoCuzdGLFZ/KjSTiz+Ebfeu413hH+l/1ZkNqUeWgDWIn
+         eUCL8V/6vDkL3I7DyYUPb5xZnIjaUKN13gwW03Sw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Zorro Lang <zlang@redhat.com>,
-        Eric Sandeen <sandeen@redhat.com>,
-        Eric Sandeen <sandeen@sandeen.net>,
-        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Mark Fasheh <mfasheh@versity.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 094/106] iomap: dont search past page end in iomap_is_partially_uptodate
-Date:   Thu, 24 Jan 2019 20:20:51 +0100
-Message-Id: <20190124190211.970761331@linuxfoundation.org>
+Subject: [PATCH 4.19 095/106] ocfs2: fix panic due to unrecovered local alloc
+Date:   Thu, 24 Jan 2019 20:20:52 +0100
+Message-Id: <20190124190212.020650463@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -68,76 +73,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3cc31fa65d85610574c0f6a474e89f4c419923d5 ]
+[ Upstream commit 532e1e54c8140188e192348c790317921cb2dc1c ]
 
-iomap_is_partially_uptodate() is intended to check wither blocks within
-the selected range of a not-uptodate page are uptodate; if the range we
-care about is up to date, it's an optimization.
+mount.ocfs2 ignore the inconsistent error that journal is clean but
+local alloc is unrecovered.  After mount, local alloc not empty, then
+reserver cluster didn't alloc a new local alloc window, reserveration
+map is empty(ocfs2_reservation_map.m_bitmap_len = 0), that triggered the
+following panic.
 
-However, the iomap implementation continues to check all blocks up to
-from+count, which is beyond the page, and can even be well beyond the
-iop->uptodate bitmap.
+This issue was reported at
 
-I think the worst that will happen is that we may eventually find a zero
-bit and return "not partially uptodate" when it would have otherwise
-returned true, and skip the optimization.  Still, it's clearly an invalid
-memory access that must be fixed.
+  https://oss.oracle.com/pipermail/ocfs2-devel/2015-May/010854.html
 
-So: fix this by limiting the search to within the page as is done in the
-non-iomap variant, block_is_partially_uptodate().
+and was advised to fixed during mount.  But this is a very unusual
+inconsistent state, usually journal dirty flag should be cleared at the
+last stage of umount until every other things go right.  We may need do
+further debug to check that.  Any way to avoid possible futher
+corruption, mount should be abort and fsck should be run.
 
-Zorro noticed thiswhen KASAN went off for 512 byte blocks on a 64k
-page system:
+  (mount.ocfs2,1765,1):ocfs2_load_local_alloc:353 ERROR: Local alloc hasn't been recovered!
+  found = 6518, set = 6518, taken = 8192, off = 15912372
+  ocfs2: Mounting device (202,64) on (node 0, slot 3) with ordered data mode.
+  o2dlm: Joining domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 8 ) 8 nodes
+  ocfs2: Mounting device (202,80) on (node 0, slot 3) with ordered data mode.
+  o2hb: Region 89CEAC63CC4F4D03AC185B44E0EE0F3F (xvdf) is now a quorum device
+  o2net: Accepted connection from node yvwsoa17p (num 7) at 172.22.77.88:7777
+  o2dlm: Node 7 joins domain 64FE421C8C984E6D96ED12C55FEE2435 ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
+  o2dlm: Node 7 joins domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
+  ------------[ cut here ]------------
+  kernel BUG at fs/ocfs2/reservations.c:507!
+  invalid opcode: 0000 [#1] SMP
+  Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4 nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev parport_pc parport xen_netfront fb_sys_fops sysimgblt sysfillrect syscopyarea acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom xen_blkfront pata_acpi ata_generic ata_piix floppy dm_mirror dm_region_hash dm_log dm_mod
+  CPU: 0 PID: 4349 Comm: startWebLogic.s Not tainted 4.1.12-124.19.2.el6uek.x86_64 #2
+  Hardware name: Xen HVM domU, BIOS 4.4.4OVM 09/06/2018
+  task: ffff8803fb04e200 ti: ffff8800ea4d8000 task.ti: ffff8800ea4d8000
+  RIP: 0010:[<ffffffffa05e96a8>]  [<ffffffffa05e96a8>] __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
+  Call Trace:
+    ocfs2_resmap_resv_bits+0x10d/0x400 [ocfs2]
+    ocfs2_claim_local_alloc_bits+0xd0/0x640 [ocfs2]
+    __ocfs2_claim_clusters+0x178/0x360 [ocfs2]
+    ocfs2_claim_clusters+0x1f/0x30 [ocfs2]
+    ocfs2_convert_inline_data_to_extents+0x634/0xa60 [ocfs2]
+    ocfs2_write_begin_nolock+0x1c6/0x1da0 [ocfs2]
+    ocfs2_write_begin+0x13e/0x230 [ocfs2]
+    generic_perform_write+0xbf/0x1c0
+    __generic_file_write_iter+0x19c/0x1d0
+    ocfs2_file_write_iter+0x589/0x1360 [ocfs2]
+    __vfs_write+0xb8/0x110
+    vfs_write+0xa9/0x1b0
+    SyS_write+0x46/0xb0
+    system_call_fastpath+0x18/0xd7
+  Code: ff ff 8b 75 b8 39 75 b0 8b 45 c8 89 45 98 0f 84 e5 fe ff ff 45 8b 74 24 18 41 8b 54 24 1c e9 56 fc ff ff 85 c0 0f 85 48 ff ff ff <0f> 0b 48 8b 05 cf c3 de ff 48 ba 00 00 00 00 00 00 00 10 48 85
+  RIP   __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
+   RSP <ffff8800ea4db668>
+  ---[ end trace 566f07529f2edf3c ]---
+  Kernel panic - not syncing: Fatal exception
+  Kernel Offset: disabled
 
- BUG: KASAN: slab-out-of-bounds in iomap_is_partially_uptodate+0x1a0/0x1e0
- Read of size 8 at addr ffff800120c3a318 by task fsstress/22337
-
-Reported-by: Zorro Lang <zlang@redhat.com>
-Signed-off-by: Eric Sandeen <sandeen@redhat.com>
-Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
-Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
-Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Link: http://lkml.kernel.org/r/20181121020023.3034-2-junxiao.bi@oracle.com
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Acked-by: Joseph Qi <jiangqi903@gmail.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Changwei Ge <ge.changwei@h3c.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/iomap.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ fs/ocfs2/localalloc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/fs/iomap.c b/fs/iomap.c
-index ec15cf2ec696..e57fb1e534c5 100644
---- a/fs/iomap.c
-+++ b/fs/iomap.c
-@@ -488,16 +488,29 @@ done:
- }
- EXPORT_SYMBOL_GPL(iomap_readpages);
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index 7642b6712c39..30208233f65b 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -345,13 +345,18 @@ int ocfs2_load_local_alloc(struct ocfs2_super *osb)
+ 	if (num_used
+ 	    || alloc->id1.bitmap1.i_used
+ 	    || alloc->id1.bitmap1.i_total
+-	    || la->la_bm_off)
+-		mlog(ML_ERROR, "Local alloc hasn't been recovered!\n"
++	    || la->la_bm_off) {
++		mlog(ML_ERROR, "inconsistent detected, clean journal with"
++		     " unrecovered local alloc, please run fsck.ocfs2!\n"
+ 		     "found = %u, set = %u, taken = %u, off = %u\n",
+ 		     num_used, le32_to_cpu(alloc->id1.bitmap1.i_used),
+ 		     le32_to_cpu(alloc->id1.bitmap1.i_total),
+ 		     OCFS2_LOCAL_ALLOC(alloc)->la_bm_off);
  
-+/*
-+ * iomap_is_partially_uptodate checks whether blocks within a page are
-+ * uptodate or not.
-+ *
-+ * Returns true if all blocks which correspond to a file portion
-+ * we want to read within the page are uptodate.
-+ */
- int
- iomap_is_partially_uptodate(struct page *page, unsigned long from,
- 		unsigned long count)
- {
- 	struct iomap_page *iop = to_iomap_page(page);
- 	struct inode *inode = page->mapping->host;
--	unsigned first = from >> inode->i_blkbits;
--	unsigned last = (from + count - 1) >> inode->i_blkbits;
-+	unsigned len, first, last;
- 	unsigned i;
++		status = -EINVAL;
++		goto bail;
++	}
++
+ 	osb->local_alloc_bh = alloc_bh;
+ 	osb->local_alloc_state = OCFS2_LA_ENABLED;
  
-+	/* Limit range to one page */
-+	len = min_t(unsigned, PAGE_SIZE - from, count);
-+
-+	/* First and last blocks in range within page */
-+	first = from >> inode->i_blkbits;
-+	last = (from + len - 1) >> inode->i_blkbits;
-+
- 	if (iop) {
- 		for (i = first; i <= last; i++)
- 			if (!test_bit(i, iop->uptodate))
 -- 
 2.19.1
 
