@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1109C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9638C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABBFE218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E342218D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358452;
-	bh=WSJwXx6BTAMG/s2tca4E7XdSQrqGWdTIedUaSRrfWj0=;
+	s=default; t=1548358455;
+	bh=PbuYTl6HP/E5kvEcRqZZ44HQzxnmZmjCFYy5lVRHhF4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jkk8Zw3Wbq1vXKFm6NW2dq1SbbE57goxMX/NWAWeK+nYH62QzmqLnkHjwtYm0a5VF
-	 xoKShYzL6+oHF/2p/hlJMVlv8IxBuOi0ijCWiJW4oZjFeVDOLfCbGVfbOwIZWYSGW5
-	 WO6VpIk4wxf4no2e+/I8EFU4Xwa9OoecR4Zc/PYo=
+	b=xwB4+c/EwabR8/MLxQVkrSfmIL9J0Mb8hiwrrMUKbpSlQ96ySYIuUhupz8LO9XXVj
+	 UszyHMTo/PMj2MlQuJdbaVKQFDd1ccmNG+yeACvSBuZBidyW+6uzCFnCKFzxIXgI5b
+	 5nt5lb6Ccgx77+akU7+9NT0kHYj4BSaPpbh515W8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732133AbfAXTeJ (ORCPT
+        id S1732142AbfAXTeN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33874 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:34:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33914 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731427AbfAXTeF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:05 -0500
+        id S1732123AbfAXTeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:34:08 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1C1921903;
-        Thu, 24 Jan 2019 19:34:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC46A218D4;
+        Thu, 24 Jan 2019 19:34:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358444;
-        bh=WSJwXx6BTAMG/s2tca4E7XdSQrqGWdTIedUaSRrfWj0=;
+        s=default; t=1548358447;
+        bh=PbuYTl6HP/E5kvEcRqZZ44HQzxnmZmjCFYy5lVRHhF4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ex+FZK5VE9GUtBbETc/i1eDNKqvkv878qG6Ac2iE+qWrJv81oxQa4W1stVLmFAgca
-         RPwiIeogdbvQ3zaN5XVUIbTpaxKjV3SOLN0hlHZtiwl+4U/sa9bxQIF67ioWB0EhEx
-         y73ymhqJM/1oAQpFK4Mzaha/tSKJNHdFQs0HZSeo=
+        b=bA/9r3xlIoNx+XsJ+KWJ9F3S0H3goj+TpL9yZXPizJMjxr1nXRFYtsKuze2AtAr0t
+         ShqnF8yvL0Yorf6Wonh6ATQ6+iI0x4P2gfZ5vTPR09gm5ar9een0cqzGAFQa8gbHbT
+         5GfXOfusCMrw6orVrSM72uSYd9n1FPamA+pPgxtg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
+        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
+        David Francis <David.Francis@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 011/106] gpio: pl061: Move irq_chip definition inside struct pl061
-Date:   Thu, 24 Jan 2019 20:19:28 +0100
-Message-Id: <20190124190207.098072084@linuxfoundation.org>
+Subject: [PATCH 4.19 012/106] drm/amd/display: Guard against null stream_state in set_crc_source
+Date:   Thu, 24 Jan 2019 20:19:29 +0100
+Message-Id: <20190124190207.162371320@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,84 +69,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ed8dce4c6f726b7f3c6bf40859b92a9e32f189c1 ]
+[ Upstream commit f41a895026b8cb6f765190de7d2e7bc3ccbbd183 ]
 
-Keeping the irq_chip definition static will make it shared with multiple
-giochips in the system. This practice is considered to be bad and now we
-will get the below warning from gpiolib core:
+[Why]
 
-"detected irqchip that is shared with multiple gpiochips: please fix the
-driver."
+The igt@kms_plane@pixel-format-pipe tests can create a sequence where
+stream_state is NULL during amdgpu_dm_crtc_set_crc_source which results
+in a null pointer dereference.
 
-Hence, move the irq_chip definition from static to `struct pl061` for
-using a unique irq_chip for each gpiochip.
+[How]
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Guard against stream_state being NULL before accessing its fields. This
+doesn't fix the root cause of the issue so a DRM_ERROR is generated
+to still fail the tests.
+
+Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+Reviewed-by: David Francis <David.Francis@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-pl061.c | 21 ++++++++++-----------
- 1 file changed, 10 insertions(+), 11 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
-index 2afd9de84a0d..dc42571e6fdc 100644
---- a/drivers/gpio/gpio-pl061.c
-+++ b/drivers/gpio/gpio-pl061.c
-@@ -54,6 +54,7 @@ struct pl061 {
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
+index 9bfb040352e9..6a6d977ddd7a 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_crc.c
+@@ -60,6 +60,11 @@ int amdgpu_dm_crtc_set_crc_source(struct drm_crtc *crtc, const char *src_name,
+ 		return -EINVAL;
+ 	}
  
- 	void __iomem		*base;
- 	struct gpio_chip	gc;
-+	struct irq_chip		irq_chip;
- 	int			parent_irq;
- 
- #ifdef CONFIG_PM
-@@ -281,15 +282,6 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
- 	return irq_set_irq_wake(pl061->parent_irq, state);
- }
- 
--static struct irq_chip pl061_irqchip = {
--	.name		= "pl061",
--	.irq_ack	= pl061_irq_ack,
--	.irq_mask	= pl061_irq_mask,
--	.irq_unmask	= pl061_irq_unmask,
--	.irq_set_type	= pl061_irq_type,
--	.irq_set_wake	= pl061_irq_set_wake,
--};
--
- static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- {
- 	struct device *dev = &adev->dev;
-@@ -328,6 +320,13 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	/*
- 	 * irq_chip support
- 	 */
-+	pl061->irq_chip.name = dev_name(dev);
-+	pl061->irq_chip.irq_ack	= pl061_irq_ack;
-+	pl061->irq_chip.irq_mask = pl061_irq_mask;
-+	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
-+	pl061->irq_chip.irq_set_type = pl061_irq_type;
-+	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
++	if (!stream_state) {
++		DRM_ERROR("No stream state for CRTC%d\n", crtc->index);
++		return -EINVAL;
++	}
 +
- 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
- 	irq = adev->irq[0];
- 	if (irq < 0) {
-@@ -336,14 +335,14 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
- 	}
- 	pl061->parent_irq = irq;
- 
--	ret = gpiochip_irqchip_add(&pl061->gc, &pl061_irqchip,
-+	ret = gpiochip_irqchip_add(&pl061->gc, &pl061->irq_chip,
- 				   0, handle_bad_irq,
- 				   IRQ_TYPE_NONE);
- 	if (ret) {
- 		dev_info(&adev->dev, "could not add irqchip\n");
- 		return ret;
- 	}
--	gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
-+	gpiochip_set_chained_irqchip(&pl061->gc, &pl061->irq_chip,
- 				     irq, pl061_irq_handler);
- 
- 	amba_set_drvdata(adev, pl061);
+ 	/* When enabling CRC, we should also disable dithering. */
+ 	if (source == AMDGPU_DM_PIPE_CRC_SOURCE_AUTO) {
+ 		if (dc_stream_configure_crc(stream_state->ctx->dc,
 -- 
 2.19.1
 
