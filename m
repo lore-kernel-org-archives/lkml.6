@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAAAFC282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8426FC282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B4E421872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4EDFA21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bJyVysG5"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Z95LNSPQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727451AbfAXDDJ (ORCPT
+        id S1727474AbfAXDDR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 22:03:09 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52904 "EHLO
+        Wed, 23 Jan 2019 22:03:17 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52892 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727301AbfAXDCr (ORCPT
+        with ESMTP id S1727287AbfAXDCo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 22:02:47 -0500
+        Wed, 23 Jan 2019 22:02:44 -0500
 Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 004FC23D;
-        Thu, 24 Jan 2019 04:02:43 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 688892F5;
+        Thu, 24 Jan 2019 04:02:42 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548298965;
-        bh=Z9YyvXe8h7O+MZFwd3GSpNK5/KhnYqDwT/dXV6zErbQ=;
+        s=mail; t=1548298963;
+        bh=gDgqOLOAlTTlDqkJPzJ/gWei3MxDhHhHiJ/8lWc3gRs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJyVysG5pFscKZ3o5ocFUkWEI3RflgypqmDmeK0Tyah/Pim46xqFV8D7EtWqLkTW3
-         XMHdFZDyEqNM9K9A+A5Qg5rbDjdqQKU2njyJAHCr0coXOL9yLn1kxsI9edCCl9+Iwh
-         9QeVg7wzz60znNOl9E46ulos4qjISTdB+y3p+LIY=
+        b=Z95LNSPQE1Eo3wllPRwDv7N1UsmCc3bAze4X0gfiIF1zFsMjJ2RrZAuMX8wIcn5uN
+         vH4KOL8Pnx5meovlDfIGOVWbLgVizSnW6QAFuybnvWqAH5zO9HbRbGWjB/HV2D0ZiE
+         0EWmf01un3cBlQlMD/elP5KsHtAT+WtcPdHyLzRw=
 From:   Paul Elder <paul.elder@ideasonboard.com>
 To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
 Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
         stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
         gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 3/6] usb: gadget: uvc: package setup and data for control OUT requests
-Date:   Wed, 23 Jan 2019 22:02:25 -0500
-Message-Id: <20190124030228.19840-4-paul.elder@ideasonboard.com>
+Subject: [PATCH v7 2/6] usb: gadget: uvc: enqueue usb request in setup handler for control OUT
+Date:   Wed, 23 Jan 2019 22:02:24 -0500
+Message-Id: <20190124030228.19840-3-paul.elder@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124030228.19840-1-paul.elder@ideasonboard.com>
 References: <20190124030228.19840-1-paul.elder@ideasonboard.com>
@@ -52,23 +52,19 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since "usb: gadget: uvc: enqueue uvc_request_data in setup handler
-for control OUT requests" it is no longer necessary for userspace to
-call ioctl UVCIOC_SEND_RESPONSE in response to receiving a
-UVC_EVENT_SETUP from the uvc function driver for a control OUT request.
+Currently, for uvc class-specific control IN and OUT requests, in the
+setup handler a UVC_EVENT_SETUP with the setup control is enqueued to
+userspace. In response to this, the uvc function driver expects
+userspace to call ioctl UVCIOC_SEND_RESPONSE containing uvc request
+data.
 
-This change means that for control OUT userspace will receive a
-UVC_EVENT_SETUP and not do anything with it. This is a waste of a pair
-of context switches, so we put the setup and data stage data into a
-single UVC_EVENT_DATA to give to userspace. Previously struct
-uvc_request_data had 60 bytes allocated for data, and since uvc data at
-most is 34 bytes in UVC 1.1 and 48 bytes in UVC 1.5, we can afford to
-cut out 8 bytes to store the setup control.
-
-Since the setup control is discarded after the handling of the setup
-stage, it must be saved in struct uvc_device during the setup handler in
-order for the data stage handler to be able to read it and send it to
-userspace.
+In the case of control IN this is fine, but for control OUT it causes a
+problem. Since the host sends data immediately after the setup stage
+completes, it is possible that the empty uvc request data is not
+enqueued in time for the UDC driver to put the data stage data into
+(this causes some UDC drivers, such as MUSB, to reply with a STALL).
+This problem is remedied by having the setup handler enqueue the empty
+uvc request data, instead of waiting for userspace to do it.
 
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
@@ -80,58 +76,71 @@ No change from v3
 No change from v2
 No change from v1
 
- drivers/usb/gadget/function/f_uvc.c | 3 +++
- drivers/usb/gadget/function/uvc.h   | 1 +
- include/uapi/linux/usb/g_uvc.h      | 3 ++-
- 3 files changed, 6 insertions(+), 1 deletion(-)
+ drivers/usb/gadget/function/f_uvc.c    | 25 +++++++++++++++++++------
+ drivers/usb/gadget/function/uvc_v4l2.c |  7 +++++++
+ 2 files changed, 26 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/usb/gadget/function/f_uvc.c b/drivers/usb/gadget/function/f_uvc.c
-index f571623cc6e4..6303ed346af9 100644
+index 4134117b5f81..f571623cc6e4 100644
 --- a/drivers/usb/gadget/function/f_uvc.c
 +++ b/drivers/usb/gadget/function/f_uvc.c
-@@ -215,6 +215,8 @@ uvc_function_ep0_complete(struct usb_ep *ep, struct usb_request *req)
- 		v4l2_event.type = UVC_EVENT_DATA;
- 		uvc_event->data.length = req->actual;
- 		memcpy(&uvc_event->data.data, req->buf, req->actual);
-+		memcpy(&uvc_event->data.setup, &uvc->control_setup,
-+		       sizeof(uvc_event->data.setup));
- 		v4l2_event_queue(&uvc->vdev, &v4l2_event);
- 	}
- }
-@@ -238,6 +240,7 @@ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- 	 */
+@@ -223,8 +223,6 @@ static int
+ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
+ {
+ 	struct uvc_device *uvc = to_uvc(f);
+-	struct v4l2_event v4l2_event;
+-	struct uvc_event *uvc_event = (void *)&v4l2_event.u.data;
+ 
+ 	if ((ctrl->bRequestType & USB_TYPE_MASK) != USB_TYPE_CLASS) {
+ 		uvcg_info(f, "invalid request type\n");
+@@ -241,10 +239,25 @@ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
  	uvc->event_setup_out = !(ctrl->bRequestType & USB_DIR_IN);
  	uvc->event_length = le16_to_cpu(ctrl->wLength);
-+	memcpy(&uvc->control_setup, ctrl, sizeof(uvc->control_setup));
  
- 	if (uvc->event_setup_out) {
- 		struct usb_request *req = uvc->control_req;
-diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
-index 671020c8a836..1d89b1df4ba0 100644
---- a/drivers/usb/gadget/function/uvc.h
-+++ b/drivers/usb/gadget/function/uvc.h
-@@ -163,6 +163,7 @@ struct uvc_device {
- 	unsigned int control_intf;
- 	struct usb_ep *control_ep;
- 	struct usb_request *control_req;
-+	struct usb_ctrlrequest control_setup;
- 	void *control_buf;
+-	memset(&v4l2_event, 0, sizeof(v4l2_event));
+-	v4l2_event.type = UVC_EVENT_SETUP;
+-	memcpy(&uvc_event->req, ctrl, sizeof(uvc_event->req));
+-	v4l2_event_queue(&uvc->vdev, &v4l2_event);
++	if (uvc->event_setup_out) {
++		struct usb_request *req = uvc->control_req;
++
++		/*
++		 * Enqueue the request immediately for control OUT as the
++		 * host will start the data stage straight away.
++		 */
++		req->length = uvc->event_length;
++		req->zero = 0;
++		usb_ep_queue(f->config->cdev->gadget->ep0, req, GFP_KERNEL);
++	} else {
++		struct v4l2_event v4l2_event;
++		struct uvc_event *uvc_event = (void *)&v4l2_event.u.data;
++
++		memset(&v4l2_event, 0, sizeof(v4l2_event));
++		v4l2_event.type = UVC_EVENT_SETUP;
++		memcpy(&uvc_event->req, ctrl, sizeof(uvc_event->req));
++		v4l2_event_queue(&uvc->vdev, &v4l2_event);
++	}
  
- 	unsigned int streaming_intf;
-diff --git a/include/uapi/linux/usb/g_uvc.h b/include/uapi/linux/usb/g_uvc.h
-index 6698c3263ae8..10fbb4382925 100644
---- a/include/uapi/linux/usb/g_uvc.h
-+++ b/include/uapi/linux/usb/g_uvc.h
-@@ -24,7 +24,8 @@
+ 	return 0;
+ }
+diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
+index 7816ea9886e1..ac48f49d9f10 100644
+--- a/drivers/usb/gadget/function/uvc_v4l2.c
++++ b/drivers/usb/gadget/function/uvc_v4l2.c
+@@ -35,6 +35,13 @@ uvc_send_response(struct uvc_device *uvc, struct uvc_request_data *data)
+ 	struct usb_composite_dev *cdev = uvc->func.config->cdev;
+ 	struct usb_request *req = uvc->control_req;
  
- struct uvc_request_data {
- 	__s32 length;
--	__u8 data[60];
-+	struct usb_ctrlrequest setup;
-+	__u8 data[52];
- };
++	/*
++	 * For control OUT transfers the request has been enqueued synchronously
++	 * by the setup handler, there's nothing to be done here.
++	 */
++	if (uvc->event_setup_out)
++		return 0;
++
+ 	if (data->length < 0)
+ 		return usb_ep_set_halt(cdev->gadget->ep0);
  
- struct uvc_event {
 -- 
 2.20.1
 
