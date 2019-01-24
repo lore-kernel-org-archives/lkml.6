@@ -5,66 +5,68 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,TVD_PH_SUBJ_META1,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18088C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 136FCC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D82E021855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:20:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D047B21855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:20:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PLBgtPhG"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tiBUhlcq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726405AbfAXIUv (ORCPT
+        id S1727304AbfAXIUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:20:51 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46129 "EHLO
+        Thu, 24 Jan 2019 03:20:55 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41635 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725939AbfAXIUu (ORCPT
+        with ESMTP id S1725939AbfAXIUw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:20:50 -0500
-Received: by mail-pf1-f194.google.com with SMTP id c73so2603629pfe.13;
-        Thu, 24 Jan 2019 00:20:50 -0800 (PST)
+        Thu, 24 Jan 2019 03:20:52 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b7so2618323pfi.8;
+        Thu, 24 Jan 2019 00:20:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=m7+0rLgas8mzKJJDakwIpFKNN1Y9X2cNHTlvkHgqjDc=;
-        b=PLBgtPhGwJGVwlxb2DfqY3kneg7JBOwmuAh9J5fxzTJU16jjwtBJgbaMoqqxoOZQXT
-         n6rUnurQ8SjG6arRIrE1xJnVgH4WxLzWGEy0Vyo5oD6sAUHn/IR8eAk98zNY1EJyGZN+
-         U6tJMehaOcqgRLtfCEAR9pFi1zclg+VRd2BOOQUxKtmj7PDLvmaG7T6+2s2fWoBtK91a
-         l8BDrtaeF+lZ7dntY7L/1N5J31zbnfXwKWGLllAQX6/D8d7Z2G5u3DkNMmDN4eXqFQDr
-         V6TQHXurfySjsT6sd46QNJgQ7WfN9CgLq3WmrG6yZp3vgjFt903dQeJa+CUCx0njPLZd
-         Xycw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=gsj6j3spPPJ0/iJPDuKxehm5TMJ8UMH8zK4n1PWs5II=;
+        b=tiBUhlcqaGhEy9jYu0LIfgEuPmfuktdg+4ZCfp2/mdmnmLmSK5IMHlk/X8qm3h1v4c
+         HUNiw2WWSeJvPaZXK7o5sz/SzM0jJh234DFxqx0WW6hWc6WDRqxuHi95HHCUzSvMLta+
+         7uH+TPoeg0C/iBigq3gyHimDhPtAZH0Jl//J3TsigmtyyszlEv1Kf/F5SAoWlOL/2wVh
+         +sbpZ5p58slMK72sFVXUW8+lYGcWKu2QYrshQcxL6RCmG+gQvqMsDHN5qdqPGkDmF7nX
+         lqrKWI+rvdYjyPpzlnuQaP07aCwf9dTJnQtvx81bN1U4wQL3T8wsmM6knD4MlTntu8ff
+         b0yg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=m7+0rLgas8mzKJJDakwIpFKNN1Y9X2cNHTlvkHgqjDc=;
-        b=rqW3EIwLUa/jVCEal1/vkuNrRm0RjAhb6HXG0oLPsnPaLjzIw80E61jZFjN5aoafst
-         58IZ2DJSVx/cOZpxCXDEsQuPcmpOeSbOnYjmLJM4ai0V+PNTlFEwgZBukj/U+qz3RLNQ
-         OPM9TcbseFP1HUSmbTweTLGWl2RzzICwOSI4x+t8xYM9NuOOr0CSssrHe/2YLdG0/6wh
-         hyR6yw6cT6rqbA0e1GvwHxaES+D4xayvi/tL8nX0E/EbpfdZHOw/F5Lpb0aIa9yklodW
-         g/Y5CwEdjwWImoQPkRoO62H1rJuhjN+d7yrUWClFlt85xEaY6Frg7KAdNgZaWbZ4pYPf
-         TY6g==
-X-Gm-Message-State: AJcUukeiIMWaXmS4wqPa1O/zI7HHk0ant3M/r78JqV3zegkxBXgHS0AH
-        1kpIpS6yXNB9vdRsJSKf2XxilYCi
-X-Google-Smtp-Source: ALg8bN6WTg32Sjq0WtiIzmpaSokJrOft3k9VEVSdBXCfbf+l+OKHytuLoT2xdwl3+LhakWWAXqBGCA==
-X-Received: by 2002:a62:81c1:: with SMTP id t184mr5698027pfd.40.1548318049685;
-        Thu, 24 Jan 2019 00:20:49 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=gsj6j3spPPJ0/iJPDuKxehm5TMJ8UMH8zK4n1PWs5II=;
+        b=dyV8S0QiR0c1uXi0iUEK1U5BmH0V/repGf1Jc88WkZpZUDtIBmgQPUAGU716bofgz9
+         DN1i+owsi7N8PX2JMlOc7GbJFmQUERJ/LTzkPCkpleKs7Vy4BrUB5kyXKQrrsRrrl524
+         4tkGZggNHMGP95on3zxe5qBeWgi951/iUjzEYCqT4C79rpdBm6IC6fVNHegeTzwrR3v2
+         zaReAlYu4wUaGPoTJJh7PtjEEuaaYIHgre8lXl322ZX1LXTPZJpGuvoLXMT0qNBGmkYr
+         hccNgv4v/6TLaPRQnTcDu5K31PY2TefbRl6nkk8G46vcvai3wa/OTOYNbc95MF6gSMc6
+         e/2g==
+X-Gm-Message-State: AJcUukcll5rc/344lR6vcgjTqQFq7/ANiTRX7UrSKhPS5phyfgErd9wq
+        SNueRUzYf9+YfjN9pLuhjqM=
+X-Google-Smtp-Source: ALg8bN4Ml8wZ8ScftKN9ySLGpez6woEOUD6OMRwrLcrPA5C3P4sj2RjB3/zyqWiJgAJiUGcEVb4+pA==
+X-Received: by 2002:a62:5c1:: with SMTP id 184mr5454459pff.165.1548318051701;
+        Thu, 24 Jan 2019 00:20:51 -0800 (PST)
 Received: from localhost.localdomain ([147.46.240.179])
-        by smtp.gmail.com with ESMTPSA id 125sm31623378pfd.124.2019.01.24.00.20.47
+        by smtp.gmail.com with ESMTPSA id 125sm31623378pfd.124.2019.01.24.00.20.49
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 24 Jan 2019 00:20:48 -0800 (PST)
+        Thu, 24 Jan 2019 00:20:50 -0800 (PST)
 From:   SeongJae Park <sj38.park@gmail.com>
 To:     corbet@lwn.net
 Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
         SeongJae Park <sj38.park@gmail.com>
-Subject: [PATCH 1/5] Documentation/kr: Update Korean translation to delete reference to the kernel-mentors mailing list
-Date:   Thu, 24 Jan 2019 17:20:28 +0900
-Message-Id: <20190124082032.32327-1-sj38.park@gmail.com>
+Subject: [PATCH 2/5] Documentation/process/howto/kr: Update Korean translation to remove outdated info about bugzilla mailing lists
+Date:   Thu, 24 Jan 2019 17:20:29 +0900
+Message-Id: <20190124082032.32327-2-sj38.park@gmail.com>
 X-Mailer: git-send-email 2.10.0
+In-Reply-To: <20190124082032.32327-1-sj38.park@gmail.com>
+References: <20190124082032.32327-1-sj38.park@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
@@ -75,31 +77,34 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Translate this commit to Korean:
 
-  bc0ef4a7e4c3 ("Documentation: Delete reference to the kernel-mentors mailing list")
+  bcd3cf0855c5 ("Documentation/process/howto: Remove outdated info about bugzilla mailing lists")
 
 Signed-off-by: SeongJae Park <sj38.park@gmail.com>
 ---
- Documentation/translations/ko_KR/howto.rst | 7 -------
- 1 file changed, 7 deletions(-)
+ Documentation/translations/ko_KR/howto.rst | 10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
 diff --git a/Documentation/translations/ko_KR/howto.rst b/Documentation/translations/ko_KR/howto.rst
-index a8197e0..c8b0612 100644
+index c8b0612..e88c426 100644
 --- a/Documentation/translations/ko_KR/howto.rst
 +++ b/Documentation/translations/ko_KR/howto.rst
-@@ -220,13 +220,6 @@ ReST 마크업을 사용하는 문서들은 Documentation/output 에 생성된
- 가지고 있지 않다면 다음에 무엇을 해야할지에 관한 방향을 배울 수 있을
- 것이다.
+@@ -370,15 +370,7 @@ https://bugzilla.kernel.org 는 리눅스 커널 개발자들이 커널의 버
+ 다른 사람들의 버그들을 수정하기 위하여 시간을 낭비하지 않기 때문이다.
  
--여러분들이 이미 커널 트리에 반영하길 원하는 코드 묶음을 가지고 있지만
--올바른 포맷으로 포장하는데 도움이 필요하다면 그러한 문제를 돕기 위해
--만들어진 kernel-mentors 프로젝트가 있다. 그곳은 메일링 리스트이며
--다음에서 참조할 수 있다.
+ 이미 보고된 버그 리포트들을 가지고 작업하기 위해서 https://bugzilla.kernel.org
+-를 참조하라. 여러분이 앞으로 생겨날 버그 리포트들의 조언자가 되길 원한다면
+-bugme-new 메일링 리스트나(새로운 버그 리포트들만이 이곳에서 메일로 전해진다)
+-bugme-janitor 메일링 리스트(bugzilla에 모든 변화들이 여기서 메일로 전해진다)
+-에 등록하면 된다.
 -
--         https://selenic.com/mailman/listinfo/kernel-mentors
+-      https://lists.linux-foundation.org/mailman/listinfo/bugme-new
 -
- 리눅스 커널 코드에 실제 변경을 하기 전에 반드시 그 코드가 어떻게
- 동작하는지 이해하고 있어야 한다. 코드를 분석하기 위하여 특정한 툴의
- 도움을 빌려서라도 코드를 직접 읽는 것보다 좋은 것은 없다(대부분의
+-      https://lists.linux-foundation.org/mailman/listinfo/bugme-janitors
+-
++를 참조하라.
+ 
+ 
+ 메일링 리스트들
 -- 
 2.10.0
 
