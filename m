@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF37C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A9D1C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8748321903
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E8A121903
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358580;
-	bh=2E92/kreHV0XRMsXRgTxzJftHPwawZhe4ITcr1D033c=;
+	s=default; t=1548358583;
+	bh=12yG1pMBCM8jK2XCeat15E3IU7kc2DGSs8rw2ZU1cbY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qiJcEu8SjUUhHq1AKHIzbNWNRa/r6G/tmw3jXzk25VWgUY4DHxCDtWEruQ6MdjIZv
-	 oX6XO2X7+JjGZ9sWe48m5+KUsQaSv+rEO/5vANIKeC/aVBMZJqBVBGS05F+lz8OxNj
-	 6iNmsXRjPyTgqs/aoZvsXBG8BMQldHmB4LkiPxRA=
+	b=ltOeqcMKihK578MeXiP7jR27RLllpblQXrxEzNLwS+CmN2S+kyHfl2GDfKuTR+tmZ
+	 nWO64bMmAadg6JfW34IjKgUT/L3o02fim0NHP1lrDZRlhiiqHjiNvMUJMmRHBblnFo
+	 4y7BQvqcCgsLEEL3TWWuvbDcrNDblsuQKvH9l/eg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730798AbfAXTgS (ORCPT
+        id S1732507AbfAXTgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:36:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36276 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:36:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730329AbfAXTgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:36:15 -0500
+        id S1732095AbfAXTgS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:36:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2F7D21903;
-        Thu, 24 Jan 2019 19:36:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2BA021906;
+        Thu, 24 Jan 2019 19:36:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358574;
-        bh=2E92/kreHV0XRMsXRgTxzJftHPwawZhe4ITcr1D033c=;
+        s=default; t=1548358577;
+        bh=12yG1pMBCM8jK2XCeat15E3IU7kc2DGSs8rw2ZU1cbY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Q9GfUxWkHGE3OTSRabL1gXoS6D1bG9bTVdmspE4M4HoJXUBwRWEtrFO6dOoirKTs9
-         vXABRTYz5HYkHR2OdE8JNyNDU8sU9aUImCzS/b9a95VHdqL4N9S0bv79yaVhtpiz34
-         MORhc2foH+XPalDaYUNrYE0fCKiHQBpCrmaJ51wU=
+        b=Es2xOMphr2e2kHpZdZyJAQ70x9pMXupqD7l5I7+nfZgvy3MAgv8FIUVHPKjv93f/v
+         zMUkNHTkAjs8Q75r9sr19BbxXKBrUkq1sjt37A6HvFSOT+97slo5xhabZ0uWwLz0Eu
+         NEtthxfQCWrD9GN8pwvv7xPvVO7b3c77nNK2ELbU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Jiong Wang <jiong.wang@netronome.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 055/106] arm64: Fix minor issues with the dcache_by_line_op macro
-Date:   Thu, 24 Jan 2019 20:20:12 +0100
-Message-Id: <20190124190209.938493470@linuxfoundation.org>
+Subject: [PATCH 4.19 056/106] bpf: relax verifier restriction on BPF_MOV | BPF_ALU
+Date:   Thu, 24 Jan 2019 20:20:13 +0100
+Message-Id: <20190124190209.997712420@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,112 +66,171 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 33309ecda0070506c49182530abe7728850ebe78 ]
+[ Upstream commit e434b8cdf788568ba65a0a0fd9f3cb41f3ca1803 ]
 
-The dcache_by_line_op macro suffers from a couple of small problems:
+Currently, the destination register is marked as unknown for 32-bit
+sub-register move (BPF_MOV | BPF_ALU) whenever the source register type is
+SCALAR_VALUE.
 
-First, the GAS directives that are currently being used rely on
-assembler behavior that is not documented, and probably not guaranteed
-to produce the correct behavior going forward. As a result, we end up
-with some undefined symbols in cache.o:
+This is too conservative that some valid cases will be rejected.
+Especially, this may turn a constant scalar value into unknown value that
+could break some assumptions of verifier.
 
-$ nm arch/arm64/mm/cache.o
-         ...
-         U civac
-         ...
-         U cvac
-         U cvap
-         U cvau
+For example, test_l4lb_noinline.c has the following C code:
 
-This is due to the fact that the comparisons used to select the
-operation type in the dcache_by_line_op macro are comparing symbols
-not strings, and even though it seems that GAS is doing the right
-thing here (undefined symbols by the same name are equal to each
-other), it seems unwise to rely on this.
+    struct real_definition *dst
 
-Second, when patching in a DC CVAP instruction on CPUs that support it,
-the fallback path consists of a DC CVAU instruction which may be
-affected by CPU errata that require ARM64_WORKAROUND_CLEAN_CACHE.
+1:  if (!get_packet_dst(&dst, &pckt, vip_info, is_ipv6))
+2:    return TC_ACT_SHOT;
+3:
+4:  if (dst->flags & F_IPV6) {
 
-Solve these issues by unrolling the various maintenance routines and
-using the conditional directives that are documented as operating on
-strings. To avoid the complexity of nested alternatives, we move the
-DC CVAP patching to __clean_dcache_area_pop, falling back to a branch
-to __clean_dcache_area_poc if DCPOP is not supported by the CPU.
+get_packet_dst is responsible for initializing "dst" into valid pointer and
+return true (1), otherwise return false (0). The compiled instruction
+sequence using alu32 will be:
 
-Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Suggested-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+  412: (54) (u32) r7 &= (u32) 1
+  413: (bc) (u32) r0 = (u32) r7
+  414: (95) exit
+
+insn 413, a BPF_MOV | BPF_ALU, however will turn r0 into unknown value even
+r7 contains SCALAR_VALUE 1.
+
+This causes trouble when verifier is walking the code path that hasn't
+initialized "dst" inside get_packet_dst, for which case 0 is returned and
+we would then expect verifier concluding line 1 in the above C code pass
+the "if" check, therefore would skip fall through path starting at line 4.
+Now, because r0 returned from callee has became unknown value, so verifier
+won't skip analyzing path starting at line 4 and "dst->flags" requires
+dereferencing the pointer "dst" which actually hasn't be initialized for
+this path.
+
+This patch relaxed the code marking sub-register move destination. For a
+SCALAR_VALUE, it is safe to just copy the value from source then truncate
+it into 32-bit.
+
+A unit test also included to demonstrate this issue. This test will fail
+before this patch.
+
+This relaxation could let verifier skipping more paths for conditional
+comparison against immediate. It also let verifier recording a more
+accurate/strict value for one register at one state, if this state end up
+with going through exit without rejection and it is used for state
+comparison later, then it is possible an inaccurate/permissive value is
+better. So the real impact on verifier processed insn number is complex.
+But in all, without this fix, valid program could be rejected.
+
+>From real benchmarking on kernel selftests and Cilium bpf tests, there is
+no impact on processed instruction number when tests ares compiled with
+default compilation options. There is slightly improvements when they are
+compiled with -mattr=+alu32 after this patch.
+
+Also, test_xdp_noinline/-mattr=+alu32 now passed verification. It is
+rejected before this fix.
+
+Insn processed before/after this patch:
+
+                        default     -mattr=+alu32
+
+Kernel selftest
+
+===
+test_xdp.o              371/371      369/369
+test_l4lb.o             6345/6345    5623/5623
+test_xdp_noinline.o     2971/2971    rejected/2727
+test_tcp_estates.o      429/429      430/430
+
+Cilium bpf
+===
+bpf_lb-DLB_L3.o:        2085/2085     1685/1687
+bpf_lb-DLB_L4.o:        2287/2287     1986/1982
+bpf_lb-DUNKNOWN.o:      690/690       622/622
+bpf_lxc.o:              95033/95033   N/A
+bpf_netdev.o:           7245/7245     N/A
+bpf_overlay.o:          2898/2898     3085/2947
+
+NOTE:
+  - bpf_lxc.o and bpf_netdev.o compiled by -mattr=+alu32 are rejected by
+    verifier due to another issue inside verifier on supporting alu32
+    binary.
+  - Each cilium bpf program could generate several processed insn number,
+    above number is sum of them.
+
+v1->v2:
+ - Restrict the change on SCALAR_VALUE.
+ - Update benchmark numbers on Cilium bpf tests.
+
+Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/assembler.h | 30 ++++++++++++++++++------------
- arch/arm64/mm/cache.S              |  3 +++
- 2 files changed, 21 insertions(+), 12 deletions(-)
+ kernel/bpf/verifier.c                       | 16 ++++++++++++----
+ tools/testing/selftests/bpf/test_verifier.c | 13 +++++++++++++
+ 2 files changed, 25 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
-index 0bcc98dbba56..f90f5d83b228 100644
---- a/arch/arm64/include/asm/assembler.h
-+++ b/arch/arm64/include/asm/assembler.h
-@@ -378,27 +378,33 @@ alternative_endif
-  * 	size:		size of the region
-  * 	Corrupts:	kaddr, size, tmp1, tmp2
-  */
-+	.macro __dcache_op_workaround_clean_cache, op, kaddr
-+alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
-+	dc	\op, \kaddr
-+alternative_else
-+	dc	civac, \kaddr
-+alternative_endif
-+	.endm
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 89cea3ed535d..341806668f03 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -3285,12 +3285,15 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
+ 			return err;
+ 
+ 		if (BPF_SRC(insn->code) == BPF_X) {
++			struct bpf_reg_state *src_reg = regs + insn->src_reg;
++			struct bpf_reg_state *dst_reg = regs + insn->dst_reg;
 +
- 	.macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
- 	dcache_line_size \tmp1, \tmp2
- 	add	\size, \kaddr, \size
- 	sub	\tmp2, \tmp1, #1
- 	bic	\kaddr, \kaddr, \tmp2
- 9998:
--	.if	(\op == cvau || \op == cvac)
--alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
--	dc	\op, \kaddr
--alternative_else
--	dc	civac, \kaddr
--alternative_endif
--	.elseif	(\op == cvap)
--alternative_if ARM64_HAS_DCPOP
--	sys 3, c7, c12, 1, \kaddr	// dc cvap
--alternative_else
--	dc	cvac, \kaddr
--alternative_endif
-+	.ifc	\op, cvau
-+	__dcache_op_workaround_clean_cache \op, \kaddr
-+	.else
-+	.ifc	\op, cvac
-+	__dcache_op_workaround_clean_cache \op, \kaddr
-+	.else
-+	.ifc	\op, cvap
-+	sys	3, c7, c12, 1, \kaddr	// dc cvap
- 	.else
- 	dc	\op, \kaddr
- 	.endif
-+	.endif
-+	.endif
- 	add	\kaddr, \kaddr, \tmp1
- 	cmp	\kaddr, \size
- 	b.lo	9998b
-diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
-index 0c22ede52f90..a194fd0e837f 100644
---- a/arch/arm64/mm/cache.S
-+++ b/arch/arm64/mm/cache.S
-@@ -212,6 +212,9 @@ ENDPROC(__dma_clean_area)
-  *	- size    - size in question
-  */
- ENTRY(__clean_dcache_area_pop)
-+	alternative_if_not ARM64_HAS_DCPOP
-+	b	__clean_dcache_area_poc
-+	alternative_else_nop_endif
- 	dcache_by_line_op cvap, sy, x0, x1, x2, x3
- 	ret
- ENDPIPROC(__clean_dcache_area_pop)
+ 			if (BPF_CLASS(insn->code) == BPF_ALU64) {
+ 				/* case: R1 = R2
+ 				 * copy register state to dest reg
+ 				 */
+-				regs[insn->dst_reg] = regs[insn->src_reg];
+-				regs[insn->dst_reg].live |= REG_LIVE_WRITTEN;
++				*dst_reg = *src_reg;
++				dst_reg->live |= REG_LIVE_WRITTEN;
+ 			} else {
+ 				/* R1 = (u32) R2 */
+ 				if (is_pointer_value(env, insn->src_reg)) {
+@@ -3298,9 +3301,14 @@ static int check_alu_op(struct bpf_verifier_env *env, struct bpf_insn *insn)
+ 						"R%d partial copy of pointer\n",
+ 						insn->src_reg);
+ 					return -EACCES;
++				} else if (src_reg->type == SCALAR_VALUE) {
++					*dst_reg = *src_reg;
++					dst_reg->live |= REG_LIVE_WRITTEN;
++				} else {
++					mark_reg_unknown(env, regs,
++							 insn->dst_reg);
+ 				}
+-				mark_reg_unknown(env, regs, insn->dst_reg);
+-				coerce_reg_to_size(&regs[insn->dst_reg], 4);
++				coerce_reg_to_size(dst_reg, 4);
+ 			}
+ 		} else {
+ 			/* case: R = imm
+diff --git a/tools/testing/selftests/bpf/test_verifier.c b/tools/testing/selftests/bpf/test_verifier.c
+index e436b67f2426..9db5a7378f40 100644
+--- a/tools/testing/selftests/bpf/test_verifier.c
++++ b/tools/testing/selftests/bpf/test_verifier.c
+@@ -2748,6 +2748,19 @@ static struct bpf_test tests[] = {
+ 		.result_unpriv = REJECT,
+ 		.result = ACCEPT,
+ 	},
++	{
++		"alu32: mov u32 const",
++		.insns = {
++			BPF_MOV32_IMM(BPF_REG_7, 0),
++			BPF_ALU32_IMM(BPF_AND, BPF_REG_7, 1),
++			BPF_MOV32_REG(BPF_REG_0, BPF_REG_7),
++			BPF_JMP_IMM(BPF_JEQ, BPF_REG_0, 0, 1),
++			BPF_LDX_MEM(BPF_DW, BPF_REG_0, BPF_REG_7, 0),
++			BPF_EXIT_INSN(),
++		},
++		.result = ACCEPT,
++		.retval = 0,
++	},
+ 	{
+ 		"unpriv: partial copy of pointer",
+ 		.insns = {
 -- 
 2.19.1
 
