@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBE6C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D7B1C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5BEE8218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0730218D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358153;
-	bh=1ZpQdfhcKXFwvQ45eIz7uNJXWe4qCv6DaSgY8rfJMEk=;
+	s=default; t=1548358157;
+	bh=pohT3oIV2LkH3aC6Tz+EfJARSP2u+QsDAtN97YpzyWY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=w/WKK1IA+Oc/E1sQJZRX4fLTNAn/X+78pybiVtfIo+wdFvmObv0MEbhWwL7RWPUqs
-	 luBAVUsx3oaOD0ySrkeGDdCZoCTD8PXWrwTK6BRHc/qM1rXxBQnHHqsvdidEVuTEKv
-	 2UiIvxvZQFCLlM+AwcSUhdELpBYNcDQVbWE+cbP0=
+	b=D6l9A6VvAKbE0mi9bz7A2Cy+kcu/Fq2O+tFdEJndaDLsC+SjnNE9WZfqej+9YtJPV
+	 ZL9O3HopHSprcOAnx4dQzN/VsHhPBTXPjOwFnW1nA26hcJuswRT1p+ETP0+kD5VVuI
+	 4h8hO198x8DzIzotAh57ZF/BXkhVeScX3+13mm34=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731117AbfAXT3M (ORCPT
+        id S1731127AbfAXT3Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56140 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:29:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56262 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730650AbfAXT3I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:08 -0500
+        id S1731115AbfAXT3M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 64044218D4;
-        Thu, 24 Jan 2019 19:29:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9DADE218D4;
+        Thu, 24 Jan 2019 19:29:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358146;
-        bh=1ZpQdfhcKXFwvQ45eIz7uNJXWe4qCv6DaSgY8rfJMEk=;
+        s=default; t=1548358152;
+        bh=pohT3oIV2LkH3aC6Tz+EfJARSP2u+QsDAtN97YpzyWY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gTUf4BnH7eFtfNMh1TTLdkjwQpzf+UDueakHrG+njoNKbkiw5XKynAE7l/z8kThxk
-         Dp1pelTC3y9YrDSCUqppoQfDigZmCsbSWFS7kDQAxfP/hOyuvXzGbVrJjEQ5Z6jAK3
-         WPoee0sCvQPsDsGo8xUcipkTMVTKP9fTeUeedZpA=
+        b=iFsVdepwjI0XSlqQSHmeRPVopBysbU7fORGkk8FuxeYV9wN0o/D0jsw4ffJlAJP81
+         ksiH1hTVL1ZD93pvXy1IBsqBk6vju+KueZVTHQwVy57DaXy/yFWGo//Do8so40uY9S
+         rjB39ro27UqnXf09SmeHSRbTv+mzmQyv54YiOxPU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Will Deacon <will.deacon@arm.com>,
+        stable@vger.kernel.org, Anna Schumaker <schumaker.anna@gmail.com>,
+        Chuck Lever <chuck.lever@oracle.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Jason Gunthorpe <jgg@mellanox.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 10/39] arm64: perf: set suppress_bind_attrs flag to true
-Date:   Thu, 24 Jan 2019 20:20:13 +0100
-Message-Id: <20190124190448.597139968@linuxfoundation.org>
+Subject: [PATCH 4.9 12/39] rxe: IB_WR_REG_MR does not capture MRs iova field
+Date:   Thu, 24 Jan 2019 20:20:15 +0100
+Message-Id: <20190124190448.664312135@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -67,69 +68,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 81e9fa8bab381f8b6eb04df7cdf0f71994099bd4 ]
+[ Upstream commit b024dd0eba6e6d568f69d63c5e3153aba94c23e3 ]
 
-The armv8_pmuv3 driver doesn't have a remove function, and when the test
-'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled, the following Call trace
-can be seen.
+FRWR memory registration is done with a series of calls and WRs.
+1. ULP invokes ib_dma_map_sg()
+2. ULP invokes ib_map_mr_sg()
+3. ULP posts an IB_WR_REG_MR on the Send queue
 
-[    1.424287] Failed to register pmu: armv8_pmuv3, reason -17
-[    1.424870] WARNING: CPU: 0 PID: 1 at ../kernel/events/core.c:11771 perf_event_sysfs_init+0x98/0xdc
-[    1.425220] Modules linked in:
-[    1.425531] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc7-next-20181012-00003-ge7a97b1ad77b-dirty #35
-[    1.425951] Hardware name: linux,dummy-virt (DT)
-[    1.426212] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    1.426458] pc : perf_event_sysfs_init+0x98/0xdc
-[    1.426720] lr : perf_event_sysfs_init+0x98/0xdc
-[    1.426908] sp : ffff00000804bd50
-[    1.427077] x29: ffff00000804bd50 x28: ffff00000934e078
-[    1.427429] x27: ffff000009546000 x26: 0000000000000007
-[    1.427757] x25: ffff000009280710 x24: 00000000ffffffef
-[    1.428086] x23: ffff000009408000 x22: 0000000000000000
-[    1.428415] x21: ffff000009136008 x20: ffff000009408730
-[    1.428744] x19: ffff80007b20b400 x18: 000000000000000a
-[    1.429075] x17: 0000000000000000 x16: 0000000000000000
-[    1.429418] x15: 0000000000000400 x14: 2e79726f74636572
-[    1.429748] x13: 696420656d617320 x12: 656874206e692065
-[    1.430060] x11: 6d616e20656d6173 x10: 2065687420687469
-[    1.430335] x9 : ffff00000804bd50 x8 : 206e6f7361657220
-[    1.430610] x7 : 2c3376756d705f38 x6 : ffff00000954d7ce
-[    1.430880] x5 : 0000000000000000 x4 : 0000000000000000
-[    1.431226] x3 : 0000000000000000 x2 : ffffffffffffffff
-[    1.431554] x1 : 4d151327adc50b00 x0 : 0000000000000000
-[    1.431868] Call trace:
-[    1.432102]  perf_event_sysfs_init+0x98/0xdc
-[    1.432382]  do_one_initcall+0x6c/0x1a8
-[    1.432637]  kernel_init_freeable+0x1bc/0x280
-[    1.432905]  kernel_init+0x18/0x160
-[    1.433115]  ret_from_fork+0x10/0x18
-[    1.433297] ---[ end trace 27fd415390eb9883 ]---
+Step 2 generates an iova. It is permissible for ULPs to change this
+iova (with certain restrictions) between steps 2 and 3.
 
-Rework to set suppress_bind_attrs flag to avoid removing the device when
-CONFIG_DEBUG_TEST_DRIVER_REMOVE=y, since there's no real reason to
-remove the armv8_pmuv3 driver.
+rxe_map_mr_sg captures the MR's iova but later when rxe processes the
+REG_MR WR, it ignores the MR's iova field. If a ULP alters the MR's iova
+after step 2 but before step 3, rxe never captures that change.
 
-Cc: Arnd Bergmann <arnd@arndb.de>
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+When the remote sends an RDMA Read targeting that MR, rxe looks up the
+R_key, but the altered iova does not match the iova stored in the MR,
+causing the RDMA Read request to fail.
+
+Reported-by: Anna Schumaker <schumaker.anna@gmail.com>
+Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
+Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/perf_event.c | 1 +
+ drivers/infiniband/sw/rxe/rxe_req.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
-index 199a23f058d5..0770d6d1c37f 100644
---- a/arch/arm64/kernel/perf_event.c
-+++ b/arch/arm64/kernel/perf_event.c
-@@ -1114,6 +1114,7 @@ static struct platform_driver armv8_pmu_driver = {
- 	.driver		= {
- 		.name	= ARMV8_PMU_PDEV_NAME,
- 		.of_match_table = armv8_pmu_of_device_ids,
-+		.suppress_bind_attrs = true,
- 	},
- 	.probe		= armv8_pmu_device_probe,
- };
+diff --git a/drivers/infiniband/sw/rxe/rxe_req.c b/drivers/infiniband/sw/rxe/rxe_req.c
+index 47219ebd8ff2..0f9fe2ca2a91 100644
+--- a/drivers/infiniband/sw/rxe/rxe_req.c
++++ b/drivers/infiniband/sw/rxe/rxe_req.c
+@@ -643,6 +643,7 @@ next_wqe:
+ 			rmr->access = wqe->wr.wr.reg.access;
+ 			rmr->lkey = wqe->wr.wr.reg.key;
+ 			rmr->rkey = wqe->wr.wr.reg.key;
++			rmr->iova = wqe->wr.wr.reg.mr->iova;
+ 			wqe->state = wqe_state_done;
+ 			wqe->status = IB_WC_SUCCESS;
+ 		} else {
 -- 
 2.19.1
 
