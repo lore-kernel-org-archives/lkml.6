@@ -2,64 +2,66 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E6BEC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1CEC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D050218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27EC921902
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358214;
-	bh=LllID3vLfiVoGe2KVWNe5iphRFkujxUTRx4LzA0bXL8=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=GbnSMVAKEioFvlZ9nvD5VIYoGGxBU7kpe2P1evpgDxKMaVzbwrMUPdmWtxDP/e9Bk
-	 GVlDSzLlc0ImQK+sLHiX5hKJN2cdDekOO8UMft7OGvS3fb9VL1KsFWDZUXOpaY4Ogb
-	 obh9T276GloktxMZTwqUVF6uVlXc2zk2GKS5i1Y8=
+	s=default; t=1548358223;
+	bh=kuhezP/6rykqzGh+AmbShLvun3l5FwFJODWLm+JRClY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=qCZAJihBa17tb4dnpYH/Nwu/C/cTaXSocV0b/VlbxFC8LEwLV2jw1uU8f05Q3xuBe
+	 7BsPwgA9CkNmnWxz9aIh+R9a0lKnh889vfXyqydw40MzJdyOMNDOTl0lVjOH/4SCyd
+	 FJU7uv0Gh1QkKGBpmxAcCxsKjvgOgsAxJ87bFulw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731361AbfAXTaN (ORCPT
+        id S1731398AbfAXTaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:30:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57630 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:30:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731341AbfAXTaL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:30:11 -0500
+        id S1731377AbfAXTaU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:30:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2662218E2;
-        Thu, 24 Jan 2019 19:30:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04C49218F0;
+        Thu, 24 Jan 2019 19:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358210;
-        bh=LllID3vLfiVoGe2KVWNe5iphRFkujxUTRx4LzA0bXL8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=luNVGKqbesxhwGdIB+S4pjqX+tTRc2ImGZRdS5brj/6OI6wGG6U4R5YJR0pRYiXGP
-         gdF6qmSGPhrdAt2cdDg3btck1vRiW6jskznEeCNqW34QMxf7hNlfVLvCrtfnYsHLO6
-         M+Yo715G8Z7bj6Wghhea4FkWGR82mcnqxJOkumVk=
+        s=default; t=1548358218;
+        bh=kuhezP/6rykqzGh+AmbShLvun3l5FwFJODWLm+JRClY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=V1KiIaphNt3MVHVLLatvq40RpmkFC8T3CSmanIruZc5e0orOeDXGjG51yTPofXCAw
+         GVxw1RjsgPvGpJP+SVWdjUmUi05uI9Fb0NZ1bAmKKQIQFL5i3a9VIT+sOfgkNYvA51
+         x69/1Xmkh7F4CuVonRYea7aZ5MeGxMdtYERWCDUQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: [PATCH 4.9 00/39] 4.9.153-stable review
-Date:   Thu, 24 Jan 2019 20:20:03 +0100
-Message-Id: <20190124190448.232316246@linuxfoundation.org>
+        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Mark Fasheh <mfasheh@versity.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 35/39] ocfs2: fix panic due to unrecovered local alloc
+Date:   Thu, 24 Jan 2019 20:20:38 +0100
+Message-Id: <20190124190449.560445416@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
+In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
+References: <20190124190448.232316246@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
-X-KernelTest-Patch: http://kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.153-rc1.gz
-X-KernelTest-Tree: git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-X-KernelTest-Branch: linux-4.9.y
-X-KernelTest-Patches: git://git.kernel.org/pub/scm/linux/kernel/git/stable/stable-queue.git
-X-KernelTest-Version: 4.9.153-rc1
-X-KernelTest-Deadline: 2019-01-26T19:04+00:00
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,197 +69,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is the start of the stable review cycle for the 4.9.153 release.
-There are 39 patches in this series, all will be posted as a response
-to this one.  If anyone has any issues with these being applied, please
-let me know.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Responses should be made by Sat Jan 26 19:04:38 UTC 2019.
-Anything received after that time might be too late.
+------------------
 
-The whole patch series can be found in one patch at:
-	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.153-rc1.gz
-or in the git tree and branch at:
-	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
-and the diffstat can be found below.
+[ Upstream commit 532e1e54c8140188e192348c790317921cb2dc1c ]
 
-thanks,
+mount.ocfs2 ignore the inconsistent error that journal is clean but
+local alloc is unrecovered.  After mount, local alloc not empty, then
+reserver cluster didn't alloc a new local alloc window, reserveration
+map is empty(ocfs2_reservation_map.m_bitmap_len = 0), that triggered the
+following panic.
 
-greg k-h
+This issue was reported at
 
--------------
-Pseudo-Shortlog of commits:
+  https://oss.oracle.com/pipermail/ocfs2-devel/2015-May/010854.html
 
-Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-    Linux 4.9.153-rc1
+and was advised to fixed during mount.  But this is a very unusual
+inconsistent state, usually journal dirty flag should be cleared at the
+last stage of umount until every other things go right.  We may need do
+further debug to check that.  Any way to avoid possible futher
+corruption, mount should be abort and fsck should be run.
 
-Dave Airlie <airlied@redhat.com>
-    locking/qspinlock: Pull in asm/byteorder.h to ensure correct endianness
+  (mount.ocfs2,1765,1):ocfs2_load_local_alloc:353 ERROR: Local alloc hasn't been recovered!
+  found = 6518, set = 6518, taken = 8192, off = 15912372
+  ocfs2: Mounting device (202,64) on (node 0, slot 3) with ordered data mode.
+  o2dlm: Joining domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 8 ) 8 nodes
+  ocfs2: Mounting device (202,80) on (node 0, slot 3) with ordered data mode.
+  o2hb: Region 89CEAC63CC4F4D03AC185B44E0EE0F3F (xvdf) is now a quorum device
+  o2net: Accepted connection from node yvwsoa17p (num 7) at 172.22.77.88:7777
+  o2dlm: Node 7 joins domain 64FE421C8C984E6D96ED12C55FEE2435 ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
+  o2dlm: Node 7 joins domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
+  ------------[ cut here ]------------
+  kernel BUG at fs/ocfs2/reservations.c:507!
+  invalid opcode: 0000 [#1] SMP
+  Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4 nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev parport_pc parport xen_netfront fb_sys_fops sysimgblt sysfillrect syscopyarea acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom xen_blkfront pata_acpi ata_generic ata_piix floppy dm_mirror dm_region_hash dm_log dm_mod
+  CPU: 0 PID: 4349 Comm: startWebLogic.s Not tainted 4.1.12-124.19.2.el6uek.x86_64 #2
+  Hardware name: Xen HVM domU, BIOS 4.4.4OVM 09/06/2018
+  task: ffff8803fb04e200 ti: ffff8800ea4d8000 task.ti: ffff8800ea4d8000
+  RIP: 0010:[<ffffffffa05e96a8>]  [<ffffffffa05e96a8>] __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
+  Call Trace:
+    ocfs2_resmap_resv_bits+0x10d/0x400 [ocfs2]
+    ocfs2_claim_local_alloc_bits+0xd0/0x640 [ocfs2]
+    __ocfs2_claim_clusters+0x178/0x360 [ocfs2]
+    ocfs2_claim_clusters+0x1f/0x30 [ocfs2]
+    ocfs2_convert_inline_data_to_extents+0x634/0xa60 [ocfs2]
+    ocfs2_write_begin_nolock+0x1c6/0x1da0 [ocfs2]
+    ocfs2_write_begin+0x13e/0x230 [ocfs2]
+    generic_perform_write+0xbf/0x1c0
+    __generic_file_write_iter+0x19c/0x1d0
+    ocfs2_file_write_iter+0x589/0x1360 [ocfs2]
+    __vfs_write+0xb8/0x110
+    vfs_write+0xa9/0x1b0
+    SyS_write+0x46/0xb0
+    system_call_fastpath+0x18/0xd7
+  Code: ff ff 8b 75 b8 39 75 b0 8b 45 c8 89 45 98 0f 84 e5 fe ff ff 45 8b 74 24 18 41 8b 54 24 1c e9 56 fc ff ff 85 c0 0f 85 48 ff ff ff <0f> 0b 48 8b 05 cf c3 de ff 48 ba 00 00 00 00 00 00 00 10 48 85
+  RIP   __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
+   RSP <ffff8800ea4db668>
+  ---[ end trace 566f07529f2edf3c ]---
+  Kernel panic - not syncing: Fatal exception
+  Kernel Offset: disabled
 
-Corey Minyard <cminyard@mvista.com>
-    ipmi:ssif: Fix handling of multi-part return messages
+Link: http://lkml.kernel.org/r/20181121020023.3034-2-junxiao.bi@oracle.com
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Acked-by: Joseph Qi <jiangqi903@gmail.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Changwei Ge <ge.changwei@h3c.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/ocfs2/localalloc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-Michal Hocko <mhocko@suse.com>
-    mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index fe0d1f9571bb..5d53d0d63d19 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -345,13 +345,18 @@ int ocfs2_load_local_alloc(struct ocfs2_super *osb)
+ 	if (num_used
+ 	    || alloc->id1.bitmap1.i_used
+ 	    || alloc->id1.bitmap1.i_total
+-	    || la->la_bm_off)
+-		mlog(ML_ERROR, "Local alloc hasn't been recovered!\n"
++	    || la->la_bm_off) {
++		mlog(ML_ERROR, "inconsistent detected, clean journal with"
++		     " unrecovered local alloc, please run fsck.ocfs2!\n"
+ 		     "found = %u, set = %u, taken = %u, off = %u\n",
+ 		     num_used, le32_to_cpu(alloc->id1.bitmap1.i_used),
+ 		     le32_to_cpu(alloc->id1.bitmap1.i_total),
+ 		     OCFS2_LOCAL_ALLOC(alloc)->la_bm_off);
+ 
++		status = -EINVAL;
++		goto bail;
++	}
++
+ 	osb->local_alloc_bh = alloc_bh;
+ 	osb->local_alloc_state = OCFS2_LA_ENABLED;
+ 
+-- 
+2.19.1
 
-Brian Foster <bfoster@redhat.com>
-    mm/page-writeback.c: don't break integrity writeback on ->writepage() error
-
-Junxiao Bi <junxiao.bi@oracle.com>
-    ocfs2: fix panic due to unrecovered local alloc
-
-Qian Cai <cai@lca.pw>
-    scsi: megaraid: fix out-of-bound array accesses
-
-Kevin Barnett <kevin.barnett@microsemi.com>
-    scsi: smartpqi: correct lun reset issues
-
-Daniel Vetter <daniel.vetter@ffwll.ch>
-    sysfs: Disable lockdep for driver bind/unbind files
-
-Takashi Sakamoto <o-takashi@sakamocchi.jp>
-    ALSA: bebob: fix model-id of unit for Apogee Ensemble
-
-Nikos Tsironis <ntsironis@arrikto.com>
-    dm snapshot: Fix excessive memory usage and workqueue stalls
-
-Arnaldo Carvalho de Melo <acme@redhat.com>
-    tools lib subcmd: Don't add the kernel sources to the include path
-
-Nikos Tsironis <ntsironis@arrikto.com>
-    dm kcopyd: Fix bug causing workqueue stalls
-
-Arnaldo Carvalho de Melo <acme@redhat.com>
-    perf parse-events: Fix unchecked usage of strncpy()
-
-Arnaldo Carvalho de Melo <acme@redhat.com>
-    perf svghelper: Fix unchecked usage of strncpy()
-
-Adrian Hunter <adrian.hunter@intel.com>
-    perf intel-pt: Fix error with config term "pt=0"
-
-Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-    tty/serial: do not free trasnmit buffer page under port lock
-
-Jonas Danielsson <jonas@orbital-systems.com>
-    mmc: atmel-mci: do not assume idle after atmci_request_end
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    kconfig: fix memory leak when EOF is encountered in quotation
-
-Masahiro Yamada <yamada.masahiro@socionext.com>
-    kconfig: fix file name and line number of warn_ignored_character()
-
-Lucas Stach <l.stach@pengutronix.de>
-    clk: imx6q: reset exclusive gates on init
-
-David Disseldorp <ddiss@suse.de>
-    scsi: target: use consistent left-aligned ASCII INQUIRY data
-
-yupeng <yupeng0921@gmail.com>
-    net: call sk_dst_reset when set SO_DONTROUTE
-
-Nathan Chancellor <natechancellor@gmail.com>
-    media: firewire: Fix app_info parameter type in avc_ca{,_app}_info
-
-Breno Leitao <leitao@debian.org>
-    powerpc/pseries/cpuidle: Fix preempt warning
-
-Breno Leitao <leitao@debian.org>
-    powerpc/xmon: Fix invocation inside lock region
-
-Joel Fernandes (Google) <joel@joelfernandes.org>
-    pstore/ram: Do not treat empty buffers as valid
-
-Daniel Santos <daniel.santos@pobox.com>
-    jffs2: Fix use of uninitialized delayed_work, lockdep breakage
-
-Chuck Lever <chuck.lever@oracle.com>
-    rxe: IB_WR_REG_MR does not capture MR's iova field
-
-Ondrej Mosnacek <omosnace@redhat.com>
-    selinux: always allow mounting submounts
-
-Anders Roxell <anders.roxell@linaro.org>
-    arm64: perf: set suppress_bind_attrs flag to true
-
-Maciej W. Rozycki <macro@linux-mips.org>
-    MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur
-
-Takashi Sakamoto <o-takashi@sakamocchi.jp>
-    ALSA: oxfw: add support for APOGEE duet FireWire
-
-Anders Roxell <anders.roxell@linaro.org>
-    serial: set suppress_bind_attrs flag only if builtin
-
-Anders Roxell <anders.roxell@linaro.org>
-    writeback: don't decrement wb->refcnt if !wb->bdi
-
-Miroslav Lichvar <mlichvar@redhat.com>
-    e1000e: allow non-monotonic SYSTIM readings
-
-João Paulo Rechi Vita <jprvita@gmail.com>
-    platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
-
-David Ahern <dsahern@gmail.com>
-    ipv6: Take rcu_read_lock in __inet6_bind for mapped addresses
-
-David Ahern <dsahern@gmail.com>
-    ipv6: Consider sk_bound_dev_if when binding a socket to a v4 mapped address
-
-Kai-Heng Feng <kai.heng.feng@canonical.com>
-    r8169: Add support for new Realtek Ethernet
-
-
--------------
-
-Diffstat:
-
- Documentation/filesystems/proc.txt          |  4 +++-
- Makefile                                    |  4 ++--
- arch/arm64/kernel/perf_event.c              |  1 +
- arch/mips/Kconfig                           |  3 +++
- arch/mips/sibyte/common/Makefile            |  1 +
- arch/mips/sibyte/common/dma.c               | 14 ++++++++++++
- arch/powerpc/xmon/xmon.c                    | 18 +++++++++++----
- drivers/base/bus.c                          |  7 ++++--
- drivers/char/ipmi/ipmi_ssif.c               | 25 ++++++++++++++-------
- drivers/clk/imx/clk-imx6q.c                 |  6 ++++-
- drivers/cpuidle/cpuidle-pseries.c           |  8 ++++++-
- drivers/infiniband/sw/rxe/rxe_req.c         |  1 +
- drivers/md/dm-kcopyd.c                      | 19 +++++++++++-----
- drivers/md/dm-snap.c                        | 22 ++++++++++++++++++
- drivers/media/firewire/firedtv-avc.c        |  6 +++--
- drivers/media/firewire/firedtv.h            |  6 +++--
- drivers/mmc/host/atmel-mci.c                |  3 ++-
- drivers/net/ethernet/intel/e1000e/ptp.c     | 13 ++++++++---
- drivers/net/ethernet/realtek/r8169.c        |  2 ++
- drivers/platform/x86/asus-wmi.c             |  3 ++-
- drivers/scsi/megaraid/megaraid_sas_fp.c     |  2 +-
- drivers/scsi/megaraid/megaraid_sas_fusion.c |  2 +-
- drivers/scsi/smartpqi/smartpqi_init.c       |  3 +++
- drivers/target/target_core_spc.c            | 17 +++++++++-----
- drivers/tty/serial/amba-pl011.c             |  2 ++
- drivers/tty/serial/pic32_uart.c             |  1 +
- drivers/tty/serial/serial_core.c            | 22 +++++++++++++-----
- drivers/tty/serial/xilinx_uartps.c          |  1 +
- fs/jffs2/super.c                            |  3 ++-
- fs/ocfs2/localalloc.c                       |  9 ++++++--
- fs/pstore/ram_core.c                        |  5 +++++
- include/asm-generic/qspinlock_types.h       |  2 ++
- include/linux/backing-dev-defs.h            |  8 +++++++
- mm/page-writeback.c                         | 35 +++++++++++++++++------------
- net/core/sock.c                             |  1 +
- net/ipv6/af_inet6.c                         | 14 +++++++++++-
- scripts/kconfig/zconf.l                     |  4 +++-
- security/selinux/hooks.c                    |  2 +-
- sound/firewire/Kconfig                      |  1 +
- sound/firewire/bebob/bebob.c                |  2 +-
- sound/firewire/oxfw/oxfw.c                  |  8 +++++++
- tools/lib/subcmd/Makefile                   |  2 --
- tools/perf/arch/x86/util/intel-pt.c         | 11 +++++++++
- tools/perf/util/parse-events.c              |  2 +-
- tools/perf/util/svghelper.c                 |  2 +-
- 45 files changed, 256 insertions(+), 71 deletions(-)
 
 
