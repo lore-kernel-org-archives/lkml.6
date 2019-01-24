@@ -4,50 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C250C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C658C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB85A21726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D54A721726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359590;
-	bh=yKC0w4sLyyLOO/ObXToOBhAYOnOlwP/WChDE9yTT5sk=;
+	s=default; t=1548359595;
+	bh=8mUeAH0g1bwskRR2/crrTuROJFiagOBI89wM59ixyyk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vh27aBGjk224VU1jS1QEmZo4ja5nYW9XbX8aUM4bfOrTaL2VFcwDPajROGPvHkBIP
-	 NykcfmHcBM212NO7jzFIXAi31gCTtaWuzrbuBO7x42XcbYupXZKuI/1Qlwb/GTpnm2
-	 XjlHRfDCJ1s+jzGs/u6gmHk/W1wg9FszdZpVuTs4=
+	b=FC7w5cvQDfIyoIdmnUNm4bC0Gm0+fW98wY32IEuw48VArF2TF2VLd3+iI8KB4lk6I
+	 dSSTDmD/uGU4bUrcaQVMiRLpwMAA6j2c/0FEmxQbZ9GQDTLwGiaPLE8wNoO2HgnpXd
+	 IZitQtg/tL6ZGggYZ+T1h/lOgKTIwt3bHDHgv7fM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732844AbfAXTib (ORCPT
+        id S1732821AbfAXTiX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:38:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38610 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:38:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38502 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732833AbfAXTi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:38:26 -0500
+        id S1732806AbfAXTiU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:38:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E566B21904;
-        Thu, 24 Jan 2019 19:38:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 20201218FC;
+        Thu, 24 Jan 2019 19:38:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358705;
-        bh=yKC0w4sLyyLOO/ObXToOBhAYOnOlwP/WChDE9yTT5sk=;
+        s=default; t=1548358699;
+        bh=8mUeAH0g1bwskRR2/crrTuROJFiagOBI89wM59ixyyk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JMGmYxPgQ/Hl0QRpbfaPg57lEH36MEQeQpLbPsmHFOa7U+FD7+0Ok6ZyrBdLth1yg
-         4TeasVLdqgVf0OfQ9kkuJshHnkIx2EeVnvk7xjOKWyLNEhfgXaRqzsZhTzp298AWzS
-         HLyyQOC7Lu0V/QQ1pjNvJdg4tA2u5eGx1maRv2QU=
+        b=Z7A8N3a/f1Ya6ox4bHA/A8bPTfEoxqTJZTJHRvvJ9JHco4RroqO8P5L6V5NBijw25
+         3DudzxUyrtRcxfExXRLor9enP7T3NpdltN4tRlJKImckg7G7vEDy0stBJfN9iWdVIZ
+         M4c7vnHO5gVr/695TdAMnfkbnZLG51PBFlMYToVA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Jiri Olsa <jolsa@redhat.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 065/106] perf intel-pt: Fix error with config term "pt=0"
-Date:   Thu, 24 Jan 2019 20:20:22 +0100
-Message-Id: <20190124190210.557511975@linuxfoundation.org>
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Paul Oppenheimer <bepvte@gmail.com>,
+        William Kucharski <william.kucharski@oracle.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 099/106] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
+Date:   Thu, 24 Jan 2019 20:20:56 +0100
+Message-Id: <20190124190212.235786354@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -66,68 +74,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 1c6f709b9f96366cc47af23c05ecec9b8c0c392d ]
+[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
 
-Users should never use 'pt=0', but if they do it may give a meaningless
-error:
+Patch series "THP eligibility reporting via proc".
 
-	$ perf record -e intel_pt/pt=0/u uname
-	Error:
-	The sys_perf_event_open() syscall returned with 22 (Invalid argument) for
-	event (intel_pt/pt=0/u).
+This series of three patches aims at making THP eligibility reporting much
+more robust and long term sustainable.  The trigger for the change is a
+regression report [2] and the long follow up discussion.  In short the
+specific application didn't have good API to query whether a particular
+mapping can be backed by THP so it has used VMA flags to workaround that.
+These flags represent a deep internal state of VMAs and as such they
+should be used by userspace with a great deal of caution.
 
-Fix that by forcing 'pt=1'.
+A similar has happened for [3] when users complained that VM_MIXEDMAP is
+no longer set on DAX mappings.  Again a lack of a proper API led to an
+abuse.
 
-Committer testing:
+The first patch in the series tries to emphasise that that the semantic of
+flags might change and any application consuming those should be really
+careful.
 
-  # perf record -e intel_pt/pt=0/u uname
-  Error:
-  The sys_perf_event_open() syscall returned with 22 (Invalid argument) for event (intel_pt/pt=0/u).
-  /bin/dmesg | grep -i perf may provide additional information.
+The remaining two patches provide a more suitable interface to address [2]
+and provide a consistent API to query the THP status both for each VMA and
+process wide as well.  [1]
 
-  # perf record -e intel_pt/pt=0/u uname
-  pt=0 doesn't make sense, forcing pt=1
-  Linux
-  [ perf record: Woken up 1 times to write data ]
-  [ perf record: Captured and wrote 0.020 MB perf.data ]
-  #
+http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
+http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/b7c5b4e5-9497-10e5-fd43-5f3e4a0fe51d@intel.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+This patch (of 3):
+
+Even though vma flags exported via /proc/<pid>/smaps are explicitly
+documented to be not guaranteed for future compatibility the warning
+doesn't go far enough because it doesn't mention semantic changes to those
+flags.  And they are important as well because these flags are a deep
+implementation internal to the MM code and the semantic might change at
+any time.
+
+Let's consider two recent examples:
+http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+: mean time certain customer of ours started poking into /proc/<pid>/smaps
+: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+: flags, the application just fails to start complaining that DAX support is
+: missing in the kernel.
+
+http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+: introduced a regression in that userspace cannot always determine the set
+: of vmas where thp is ineligible.
+: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+: to determine if a vma is eligible to be backed by hugepages.
+: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+: be disabled and emit "nh" as a flag for the corresponding vmas as part of
+: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+: flag and "nh" is not emitted.
+: This causes smaps parsing libraries to assume a vma is eligible for thp
+: and ends up puzzling the user on why its memory is not backed by thp.
+
+In both cases userspace was relying on a semantic of a specific VMA flag.
+The primary reason why that happened is a lack of a proper interface.
+While this has been worked on and it will be fixed properly, it seems that
+our wording could see some refinement and be more vocal about semantic
+aspect of these flags as well.
+
+Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Jan Kara <jack@suse.cz>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Paul Oppenheimer <bepvte@gmail.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/x86/util/intel-pt.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ Documentation/filesystems/proc.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/x86/util/intel-pt.c b/tools/perf/arch/x86/util/intel-pt.c
-index db0ba8caf5a2..ba8ecaf52200 100644
---- a/tools/perf/arch/x86/util/intel-pt.c
-+++ b/tools/perf/arch/x86/util/intel-pt.c
-@@ -524,10 +524,21 @@ static int intel_pt_validate_config(struct perf_pmu *intel_pt_pmu,
- 				    struct perf_evsel *evsel)
- {
- 	int err;
-+	char c;
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 22b4b00dee31..06ac6dda9b34 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -496,7 +496,9 @@ manner. The codes are the following:
  
- 	if (!evsel)
- 		return 0;
+ Note that there is no guarantee that every flag and associated mnemonic will
+ be present in all further kernel releases. Things get changed, the flags may
+-be vanished or the reverse -- new added.
++be vanished or the reverse -- new added. Interpretation of their meaning
++might change in future as well. So each consumer of these flags has to
++follow each specific kernel version for the exact semantic.
  
-+	/*
-+	 * If supported, force pass-through config term (pt=1) even if user
-+	 * sets pt=0, which avoids senseless kernel errors.
-+	 */
-+	if (perf_pmu__scan_file(intel_pt_pmu, "format/pt", "%c", &c) == 1 &&
-+	    !(evsel->attr.config & 1)) {
-+		pr_warning("pt=0 doesn't make sense, forcing pt=1\n");
-+		evsel->attr.config |= 1;
-+	}
-+
- 	err = intel_pt_val_config_term(intel_pt_pmu, "caps/cycle_thresholds",
- 				       "cyc_thresh", "caps/psb_cyc",
- 				       evsel->attr.config);
+ This file is only present if the CONFIG_MMU kernel configuration option is
+ enabled.
 -- 
 2.19.1
 
