@@ -2,85 +2,128 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8AABC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:26:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E322C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:27:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1612218AD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:26:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6814C218AD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:27:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727808AbfAXM0g (ORCPT
+        id S1727850AbfAXM06 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:26:36 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:40000 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfAXM0g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:26:36 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 4A9E5805A2; Thu, 24 Jan 2019 13:26:28 +0100 (CET)
-Date:   Thu, 24 Jan 2019 13:26:33 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Yangtao Li <tiny.windzz@gmail.com>
-Cc:     rjw@rjwysocki.net, len.brown@intel.com, gregkh@linuxfoundation.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PM / wakeup: fix comment of pm_wakeup_dev_event()
-Message-ID: <20190124122633.GA24847@amd>
-References: <20190123162201.26366-1-tiny.windzz@gmail.com>
+        Thu, 24 Jan 2019 07:26:58 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:55852 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726105AbfAXM05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 07:26:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24FACEBD;
+        Thu, 24 Jan 2019 04:26:57 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 10B133F237;
+        Thu, 24 Jan 2019 04:26:54 -0800 (PST)
+Date:   Thu, 24 Jan 2019 12:26:52 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Andrey Smirnov <andrew.smirnov@gmail.com>
+Cc:     Bjorn Helgaas <bhelgaas@google.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Chris Healy <cphealy@gmail.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org
+Subject: Re: [PATCH v5 0/4] PCIE support for i.MX8MQ
+Message-ID: <20190124122652.GB23362@e107981-ln.cambridge.arm.com>
+References: <20190112215601.9535-1-andrew.smirnov@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="tThc/1wpZn/ma/RB"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190123162201.26366-1-tiny.windzz@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190112215601.9535-1-andrew.smirnov@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jan 12, 2019 at 01:55:57PM -0800, Andrey Smirnov wrote:
+> Everyone:
+> 
+> This series contains changes I made in order to enable support of PCIE
+> IP block on i.MX8MQ SoCs.
+> 
+> Changes since [v4]:
+> 
+>  - Collected Reviewed-by from Lucas
+> 
+>  - Replaced ((ARM || ARM64) && COMPILE_TEST) with COMPILE_TEST as per
+>    suggestion from Rob
+> 
+> Changes since [v3]:
+> 
+>  - Based on feedback from NXP, DIRECT_SPEED_CHANGE quirk was expanded
+>    to cover both i.MX7 and i.MX8MQ
+> 
+>  - Code setting device type in GPR12 moved to a standalone function
+> 
+>  - Explicit "fsl,controller-id" binding was dropped, replaced by using
+>    controller physical address to determine logical ID
+> 
+>  - Dropped Reviewed-by from Lucas for patch 4/4 due to the change
+>    above (haven't heard explicit "yea" for it from him)
+> 
+> Changes since [v2], [fixes]:
+> 
+>  - Incorporated [patch] introducing drvdata
+> 
+>  - i.MX6 PHY operation gating converted to a single patch and to use a
+>    dedicated flag instead of doing explicit variant check
+> 
+>  - Kconfig entry changed to use ARM64 && ARCH_MXC
+> 
+>  - Dropped FALLTHROUGH annotations
+> 
+> Changes since [v1]:
+> 
+>  - Driver changed to use single "fsl,controller-id" property to
+>    distinguish between two intances of PCIE IP block
+> 
+>  - All code pertaining to L1SS was dropped to simplify the patch
+> 
+>  - Documented additions to DT bindings
+> 
+> Feedback is welcome!
+> 
+> Thanks,
+> Andrey Smirnov
+> 
+> [v4] https://lore.kernel.org/linux-arm-kernel/20190104165335.13205-1-andrew.smirnov@gmail.com
+> [v3] https://lore.kernel.org/linux-arm-kernel/20181218040702.29231-1-andrew.smirnov@gmail.com
+> [patch] https://patchwork.kernel.org/patch/10712261/
+> [fixes] https://lore.kernel.org/linux-arm-kernel/20181216230916.22982-1-andrew.smirnov@gmail.com
+> [v2] https://lore.kernel.org/linux-arm-kernel/20181206073545.10967-1-andrew.smirnov@gmail.com
+> [v1] https://lore.kernel.org/linux-arm-kernel/20181117181225.10737-1-andrew.smirnov@gmail.com/
+> 
+> Andrey Smirnov (4):
+>   PCI: imx6: introduce drvdata
+>   PCI: imx6: Mark PHY functions as i.MX6 specific
+>   PCI: imx6: Convert DIRECT_SPEED_CHANGE quirk code to use a flag
+>   PCI: imx6: Add support for i.MX8MQ
+> 
+>  .../bindings/pci/fsl,imx6q-pcie.txt           |   3 +-
+>  drivers/pci/controller/dwc/Kconfig            |   4 +-
+>  drivers/pci/controller/dwc/pci-imx6.c         | 150 +++++++++++++++---
+>  3 files changed, 133 insertions(+), 24 deletions(-)
 
---tThc/1wpZn/ma/RB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Please read this:
 
-On Wed 2019-01-23 11:22:01, Yangtao Li wrote:
-> This brings the kernel doc in line with the function signature.
->=20
-> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+https://lore.kernel.org/linux-pci/20171026223701.GA25649@bhelgaas-glaptop.roam.corp.google.com/
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+reformat the patches, repost and I will merge them.
 
-> @@ -783,7 +783,7 @@ void pm_wakeup_ws_event(struct wakeup_source *ws, uns=
-igned int msec, bool hard)
->  EXPORT_SYMBOL_GPL(pm_wakeup_ws_event);
-> =20
->  /**
-> - * pm_wakeup_event - Notify the PM core of a wakeup event.
-> + * pm_wakeup_dev_event - Notify the PM core of a wakeup event.
->   * @dev: Device the wakeup event is related to.
->   * @msec: Anticipated event processing time (in milliseconds).
->   * @hard: If set, abort suspends in progress and wake up from suspend-to=
--idle.
-
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---tThc/1wpZn/ma/RB
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlxJrvkACgkQMOfwapXb+vJA9wCaAlwptI3DbN0d7LGOmjY8d3aM
-2EoAn3N/XMDMdrC+7D96VjzY5un9RApl
-=187Q
------END PGP SIGNATURE-----
-
---tThc/1wpZn/ma/RB--
+Thanks,
+Lorenzo
