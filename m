@@ -2,134 +2,286 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA73C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:46:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45976C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C9C4207E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:46:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CEC0207E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:47:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="fRprE/gK"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="peIbEjvB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728162AbfAXNqt (ORCPT
+        id S1728176AbfAXNrU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:46:49 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:35776 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727522AbfAXNqt (ORCPT
+        Thu, 24 Jan 2019 08:47:20 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:38702 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727799AbfAXNrU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 08:46:49 -0500
-Received: by mail-qk1-f194.google.com with SMTP id w204so3230269qka.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 05:46:48 -0800 (PST)
+        Thu, 24 Jan 2019 08:47:20 -0500
+Received: by mail-pf1-f194.google.com with SMTP id q1so3013638pfi.5
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 05:47:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Nc4HdoDza9fmJvgOuCX0hf9NbkYW81xcyB/LVKlSf6g=;
-        b=fRprE/gK6raxN94sfNaL/fwVOH1gmmU3cObXHZ4uPbq2fDIMp6+xijYerjbXCVKmaq
-         I7jqYlDZQGoz3PHvFfq6GYWI60hsxr7QDphZqahmoAuxiG0typaYQx7rxrZ1vol0+h6Z
-         MeKhdynucvIraruaKaobKiKRr9nfkv+TgQoNI=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7APLEfGUyr7yurxye093lKwqBsnqEuz+LXHUBxtflBY=;
+        b=peIbEjvBJRZwcGMYxSvdlJNKZVGUl869qwixNSs9Pp5T+I0RxGmB73ITEJu2nGKi0G
+         f7n+6hLv3Y1I4yE68F8ir7wtFm+d8Uc/VtXJyNzI4q/cyjYLLlG/gWHoPKJXwCky0w62
+         x8YMTATcC4326ZGzTvsT3U0UTtJcBRlajPNPliaW9OrFh0upCY2MzhI3e/3tEF9tudGp
+         YyH6I3eVLxnk8fOxUPpMU3a92TqQYrnKzO26+rmK4SGFb9/jSh7dICl0r8wqeHzeDAiV
+         d/+QXm7McN/Vtx4LWLO+TlntZce2U77cZK5IfEBwF2j2oASS3Zmxij3dMysfd63otFz/
+         NLag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Nc4HdoDza9fmJvgOuCX0hf9NbkYW81xcyB/LVKlSf6g=;
-        b=eZHwSaVZowCRG59xafQ33tz8npHjPNLSxC7Hd6P01xaAkIFbvMx53MZbBdB26ZwqVR
-         iuiSAQ2sFjWlqvXBv+mM7YBzt5bh6zF8L+JZmUg4FLb7FVMq0TQ9vOX2J2ERz9cRkZRw
-         RS78LeL1rKuuqXZD9Ggo3mF++5iOym02Bt6I0Irgbg6bApzK0KrjHBIXMjeGd17xs5NN
-         nx/pJVLSQlBKHJnrEecQPTJo2xbT+aMF8TVEkL9Mh4p9Es6QbRcp7EHSLIlTXOYGOlYf
-         w/QvgZBePik2rS5TPPvL0rqgxSHTn6xJVz5gJKvsVlA8WZpMTYqJEWnTa7lD4VAqsFOT
-         +SQA==
-X-Gm-Message-State: AJcUukf4kSK7uk7lpTfZE9X2yoekHLVM+CxgsizxbeGBS/9EijVJ/R6f
-        loDiSM+yUcv/Ms28KIrjueRDow==
-X-Google-Smtp-Source: ALg8bN4Znnz6SmACt+1aYYICBNEky7vOUqgnRY4tlyv+jM83Z3cO9/LUhFO7giAq/lna4lOSyOtveQ==
-X-Received: by 2002:a37:dcc1:: with SMTP id v184mr5714294qki.212.1548337608061;
-        Thu, 24 Jan 2019 05:46:48 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id 70sm47999337qkc.52.2019.01.24.05.46.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 05:46:46 -0800 (PST)
-Date:   Thu, 24 Jan 2019 08:46:46 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Todd Kjos <tkjos@google.com>,
-        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
-        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
-        jack@suse.cz, jrdr.linux@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com,
-        Arve =?iso-8859-1?B?SGr4bm5lduVn?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: possible deadlock in __do_page_fault
-Message-ID: <20190124134646.GA53008@google.com>
-References: <201901230201.x0N214eq043832@www262.sakura.ne.jp>
- <20190123155751.GA168927@google.com>
- <201901240152.x0O1qUUU069046@www262.sakura.ne.jp>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7APLEfGUyr7yurxye093lKwqBsnqEuz+LXHUBxtflBY=;
+        b=cXjurHv69QshzRTJTueldzMX9HG9j8kcXnPnm/iu6Xk1mLJ4bJQo4k7tg5B6dzBcHE
+         XkmTBEb3m3UZryoLd3dbcmqybqW4/P1QB8T6YbgHN0FE3l3bZUPsWzcnbmb+Zv9eWGjz
+         uRtZmstvm5wtB/fkvHuunNb86jYwCKqTHUbCGGi3mC0d8NQ9PguYDW4ktD+CNRucpi8e
+         brx77BFMLUKNEhHFn7fOsAEITDTm/KKZt18I6sp8wVywB3i/cb33Sdgf3QEd727UcI2k
+         /0dSjXPIANSJe7dpTxXq/jsZuL1TtbdKPL4QU+wejkB/FOIt+4IRlNkU32WD57zLJT+D
+         d4dA==
+X-Gm-Message-State: AJcUukdahup2sSqiwR+6KikHjHE7yKTucrcxvoPvkjtjoLbN4ve+E0dj
+        3WPYumLXx8UIDwj5usUZs9B8xGOS4W1WQTsF8FU=
+X-Google-Smtp-Source: ALg8bN4gfxYOHuPiI/IMhetjhiehzR3iuuURGPe4s3hfboC0GQRmH2tqmuEj94WCKsIUSS39VWgtsiQk3iRj+6jhU/Q=
+X-Received: by 2002:a62:34c6:: with SMTP id b189mr6703996pfa.229.1548337639166;
+ Thu, 24 Jan 2019 05:47:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <201901240152.x0O1qUUU069046@www262.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1548348038-69560-1-git-send-email-peng.hao2@zte.com.cn> <1548348038-69560-3-git-send-email-peng.hao2@zte.com.cn>
+In-Reply-To: <1548348038-69560-3-git-send-email-peng.hao2@zte.com.cn>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Thu, 24 Jan 2019 15:47:08 +0200
+Message-ID: <CAHp75VfxSe8oO2OJ=yOKyTHXih4i7ivao533dg6P1QUbjrDAdQ@mail.gmail.com>
+Subject: Re: [PATCH V4 2/6] misc/pvpanic: Add pvpanic driver framework
+To:     Peng Hao <peng.hao2@zte.com.cn>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 10:52:30AM +0900, Tetsuo Handa wrote:
-> Joel Fernandes wrote:
-> > > Anyway, I need your checks regarding whether this approach is waiting for
-> > > completion at all locations which need to wait for completion.
-> > 
-> > I think you are waiting in unwanted locations. The only location you need to
-> > wait in is ashmem_pin_unpin.
-> > 
-> > So, to my eyes all that is needed to fix this bug is:
-> > 
-> > 1. Delete the range from the ashmem_lru_list
-> > 2. Release the ashmem_mutex
-> > 3. fallocate the range.
-> > 4. Do the completion so that any waiting pin/unpin can proceed.
-> > 
-> > Could you clarify why you feel you need to wait for completion at those other
-> > locations?
-> 
-> Because I don't know how ashmem works.
+On Thu, Jan 24, 2019 at 10:17 AM Peng Hao <peng.hao2@zte.com.cn> wrote:
+>
+> Add pvpanic driver framework. Follow-up patches will split the original
+> pvpanic acpi/of driver as the two separate files and modify code to
+> adapt the framework.
+>
 
-You sound like you're almost there though.
+This one has run-time bisectability issues.
 
-> > Note that once a range is unpinned, it is open sesame and userspace cannot
-> > really expect consistent data from such range till it is pinned again.
-> 
-> Then, I'm tempted to eliminate shrinker and LRU list (like a draft patch shown
-> below). I think this is not equivalent to current code because this shrinks
-> upon only range_alloc() time and I don't know whether it is OK to temporarily
-> release ashmem_mutex during range_alloc() at "Case #4" of ashmem_pin(), but
-> can't we go this direction? 
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  drivers/misc/pvpanic/pvpanic.c | 158 +++++++----------------------------------
+>  1 file changed, 27 insertions(+), 131 deletions(-)
+>
+> diff --git a/drivers/misc/pvpanic/pvpanic.c b/drivers/misc/pvpanic/pvpanic.c
+> index 595ac06..f44a884 100644
+> --- a/drivers/misc/pvpanic/pvpanic.c
+> +++ b/drivers/misc/pvpanic/pvpanic.c
+> @@ -8,11 +8,9 @@
+>
+>  #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+>
+> -#include <linux/acpi.h>
+> +#include <linux/io.h>
+>  #include <linux/kernel.h>
+>  #include <linux/module.h>
+> -#include <linux/of.h>
+> -#include <linux/of_address.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/types.h>
+>
+> @@ -43,59 +41,25 @@
+>         .priority = 1, /* let this called before broken drm_fb_helper */
+>  };
+>
+> -#ifdef CONFIG_ACPI
+> -static int pvpanic_add(struct acpi_device *device);
+> -static int pvpanic_remove(struct acpi_device *device);
+> -
+> -static const struct acpi_device_id pvpanic_device_ids[] = {
+> -       { "QEMU0001", 0 },
+> -       { "", 0 }
+> -};
+> -MODULE_DEVICE_TABLE(acpi, pvpanic_device_ids);
+> -
+> -static struct acpi_driver pvpanic_driver = {
+> -       .name =         "pvpanic",
+> -       .class =        "QEMU",
+> -       .ids =          pvpanic_device_ids,
+> -       .ops =          {
+> -                               .add =          pvpanic_add,
+> -                               .remove =       pvpanic_remove,
+> -                       },
+> -       .owner =        THIS_MODULE,
+> -};
+> -
+> -static acpi_status
+> -pvpanic_walk_resources(struct acpi_resource *res, void *context)
+> +static int pvpanic_platform_probe(struct platform_device *pdev)
+>  {
+> -       struct resource r;
+> -
+> -       if (acpi_dev_resource_io(res, &r)) {
+> -               base = ioport_map(r.start, resource_size(&r));
+> -               return AE_OK;
+> -       } else if (acpi_dev_resource_memory(res, &r)) {
+> -               base = ioremap(r.start, resource_size(&r));
+> -               return AE_OK;
+> -       }
+> -
+> -       return AE_ERROR;
+> -}
+> -
+> -static int pvpanic_add(struct acpi_device *device)
+> -{
+> -       int ret;
+> -
+> -       ret = acpi_bus_get_status(device);
+> -       if (ret < 0)
+> -               return ret;
+> -
+> -       if (!device->status.enabled || !device->status.functional)
+> -               return -ENODEV;
+> -
+> -       acpi_walk_resources(device->handle, METHOD_NAME__CRS,
+> -                           pvpanic_walk_resources, NULL);
+> -
+> -       if (!base)
+> -               return -ENODEV;
+> +       struct device *dev = &pdev->dev;
+> +       struct resource *res;
+> +
+> +       res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +       if (res) {
+> +               base = devm_ioremap_resource(dev, res);
+> +               if (IS_ERR(base))
+> +                       return -ENODEV;
+> +       } else {
+> +               res = platform_get_resource(pdev, IORESOURCE_IO, 0);
+> +               if (!res)
+> +                       return -ENODEV;
+> +
+> +               base = ioport_map(res->start, resource_size(res));
+> +               if (!base)
+> +                       return -ENODEV;
+> +       }
+>
+>         atomic_notifier_chain_register(&panic_notifier_list,
+>                                        &pvpanic_panic_nb);
+> @@ -103,90 +67,22 @@ static int pvpanic_add(struct acpi_device *device)
+>         return 0;
+>  }
+>
+> -static int pvpanic_remove(struct acpi_device *device)
+> +static int pvpanic_platform_remove(struct platform_device *pdev)
+>  {
+> -
+>         atomic_notifier_chain_unregister(&panic_notifier_list,
+>                                          &pvpanic_panic_nb);
+> -       iounmap(base);
+> -
+> -       return 0;
+> -}
+> -
+> -static int pvpanic_register_acpi_driver(void)
+> -{
+> -       return acpi_bus_register_driver(&pvpanic_driver);
+> -}
+> -
+> -static void pvpanic_unregister_acpi_driver(void)
+> -{
+> -       acpi_bus_unregister_driver(&pvpanic_driver);
+> -}
+> -#else
+> -static int pvpanic_register_acpi_driver(void)
+> -{
+> -       return -ENODEV;
+> -}
+>
+> -static void pvpanic_unregister_acpi_driver(void) {}
+> -#endif
+> -
+> -static int pvpanic_mmio_probe(struct platform_device *pdev)
+> -{
+> -       struct resource *mem;
+> -
+> -       mem = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> -       if (!mem)
+> -               return -EINVAL;
+> -
+> -       base = devm_ioremap_resource(&pdev->dev, mem);
+> -       if (IS_ERR(base))
+> -               return PTR_ERR(base);
+> -
+> -       atomic_notifier_chain_register(&panic_notifier_list,
+> -                                      &pvpanic_panic_nb);
+> -
+> -       return 0;
+> -}
+> -
+> -static int pvpanic_mmio_remove(struct platform_device *pdev)
+> -{
+> -
+> -       atomic_notifier_chain_unregister(&panic_notifier_list,
+> -                                        &pvpanic_panic_nb);
+> +       iounmap(base);
+>
+>         return 0;
+>  }
+>
+> -static const struct of_device_id pvpanic_mmio_match[] = {
+> -       { .compatible = "qemu,pvpanic-mmio", },
+> -       {}
+> -};
+> -
+> -static struct platform_driver pvpanic_mmio_driver = {
+> +static struct platform_driver pvpanic_driver = {
+> +       .probe = pvpanic_platform_probe,
+> +       .remove = pvpanic_platform_remove,
+>         .driver = {
+> -               .name = "pvpanic-mmio",
+> -               .of_match_table = pvpanic_mmio_match,
+> -       },
+> -       .probe = pvpanic_mmio_probe,
+> -       .remove = pvpanic_mmio_remove,
+> +               .name = "pvpanic",
+> +       }
+>  };
+>
+> -static int __init pvpanic_mmio_init(void)
+> -{
+> -       if (acpi_disabled)
+> -               return platform_driver_register(&pvpanic_mmio_driver);
+> -       else
+> -               return pvpanic_register_acpi_driver();
+> -}
+> -
+> -static void __exit pvpanic_mmio_exit(void)
+> -{
+> -       if (acpi_disabled)
+> -               platform_driver_unregister(&pvpanic_mmio_driver);
+> -       else
+> -               pvpanic_unregister_acpi_driver();
+> -}
+> -
+> -module_init(pvpanic_mmio_init);
+> -module_exit(pvpanic_mmio_exit);
+> +module_platform_driver(pvpanic_driver);
+> --
+> 1.8.3.1
+>
 
-No, the point of the shrinker is to do a lazy free. We cannot free things
-during unpin since it can be pinned again and we need to find that range by
-going through the list. We also cannot get rid of any lists. Since if
-something is re-pinned, we need to find it and find out if it was purged. We
-also need the list for knowing what was unpinned so the shrinker works.
 
-By the way, all this may be going away quite soon (the whole driver) as I
-said, so just give it a little bit of time.
-
-I am happy to fix it soon if that's not the case (which I should know soon -
-like a couple of weeks) but I'd like to hold off till then.
-
-> By the way, why not to check range_alloc() failure before calling range_shrink() ?
-
-That would be a nice thing to do. Send a patch?
-
-thanks,
-
- - Joel
-
+-- 
+With Best Regards,
+Andy Shevchenko
