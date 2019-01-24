@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 850DCC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2A5FC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53F96218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73BBC21855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360496;
-	bh=K6tWsAJo28J3/ctHQZ236k4tScu3KiRH7aXd6OK9J0E=;
+	s=default; t=1548360505;
+	bh=D+XuWGxgIefC4gOwHSyW/4nIZinCTljF3U2bb2XGAU8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DP5Y8YErAPi8EfUGYOg0LXfwPueoMiPouBjofu4TtIQj0UYQNDTzNebxAb5xRo9GY
-	 xY3G6nJ44mkRuSqSep23JudcPB7A8nZa4aiEZ98RDfwIJyHQDEV0WHgiH8wPxc0+Zh
-	 8CH+ynO6yQv0ivMUhgQIqB/JO0W7GHYRmn0CTjIA=
+	b=Ix7xwov1Y31RH7veFIxnKYE63I8xWTzXdoMOgUQnEVDgDPGPKdnJtD4Yp+KTa4l6D
+	 hXCzqAV0B4ILhst6pdvsn5J2fxmwu1nSe6Rn3FXn/O2Ls4X/3ELWKquQzbTuHWGHXa
+	 a2iCNM510pgO3uFHlGK+tYOl+Z6UKoda0X6LNuoo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731151AbfAXT3W (ORCPT
+        id S1729781AbfAXUIX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56340 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:08:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731121AbfAXT3Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:16 -0500
+        id S1731115AbfAXT3S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4E02F218F0;
-        Thu, 24 Jan 2019 19:29:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03A1C218FC;
+        Thu, 24 Jan 2019 19:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358154;
-        bh=K6tWsAJo28J3/ctHQZ236k4tScu3KiRH7aXd6OK9J0E=;
+        s=default; t=1548358157;
+        bh=D+XuWGxgIefC4gOwHSyW/4nIZinCTljF3U2bb2XGAU8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bWwCfmMmOpegu0eyh3IhSAmux/nNwsmzjVQaczXAMeL6r5+QopWDDtL0e3Q5bzbld
-         0QnJYkqJ/JsJZyiP16vGMdVx3fzwyELyBNa3aQuH5vquuneP78BVHWA7N6vBD8+QXR
-         weM8A6xPIPmU/WrDLXvLKgEnBVboPD2Jg+9X4EYo=
+        b=fXxXHsxIU8qrKqxFbsC64PkCshnJpt4BP12fdYsYxGHuy7tJaU7Kp0Tw2h1oWSI7d
+         XkfRJChfBkRV6Ox84MbsSk6EV3ABa+5Y/kECk4KUmBlUwJ+RvyEy8u92C0tHcPmlWu
+         F1Q6KW7cwB9S2a3/E7Q6UIeQLLcQ9asb9jhUAz/U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Santos <daniel.santos@pobox.com>,
-        Hou Tao <houtao1@huawei.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        stable@vger.kernel.org,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
+        Kees Cook <keescook@chromium.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 13/39] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
-Date:   Thu, 24 Jan 2019 20:20:16 +0100
-Message-Id: <20190124190448.704190038@linuxfoundation.org>
+Subject: [PATCH 4.9 14/39] pstore/ram: Do not treat empty buffers as valid
+Date:   Thu, 24 Jan 2019 20:20:17 +0100
+Message-Id: <20190124190448.738679948@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -67,67 +67,49 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
+[ Upstream commit 30696378f68a9e3dad6bfe55938b112e72af00c2 ]
 
-jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
-is defined then a write buffer is available and has been initialized.
-However, this does is not the case when the mtd device has no
-out-of-band buffer:
+The ramoops backend currently calls persistent_ram_save_old() even
+if a buffer is empty. While this appears to work, it is does not seem
+like the right thing to do and could lead to future bugs so lets avoid
+that. It also prevents misleading prints in the logs which claim the
+buffer is valid.
 
-int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
-{
-        if (!c->mtd->oobsize)
-                return 0;
-...
+I got something like:
 
-The resulting call to cancel_delayed_work_sync passing a uninitialized
-(but zeroed) delayed_work struct forces lockdep to become disabled.
+	found existing buffer, size 0, start 0
 
-[   90.050639] overlayfs: upper fs does not support tmpfile.
-[   90.652264] INFO: trying to register non-static key.
-[   90.662171] the code is fine but needs lockdep annotation.
-[   90.673090] turning off the locking correctness validator.
-[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
-[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
-[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
-[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
-[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
-[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
-[   90.780033]         ...
-[   90.784902] Call Trace:
-[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
-[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
-[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
-[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
-[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
-[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
-[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
-[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
-[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
-[   90.875067] [<80014424>] syscall_common+0x34/0x58
+When I was expecting:
 
-Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
-Reviewed-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+	no valid data in buffer (sig = ...)
+
+This bails out early (and reports with pr_debug()), since it's an
+acceptable state.
+
+Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
+Co-developed-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Kees Cook <keescook@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jffs2/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ fs/pstore/ram_core.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 79b0de846f21..226640563df3 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
+index ecdb3baa1283..11e558efd61e 100644
+--- a/fs/pstore/ram_core.c
++++ b/fs/pstore/ram_core.c
+@@ -488,6 +488,11 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
+ 	sig ^= PERSISTENT_RAM_SIG;
  
- #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
--	cancel_delayed_work_sync(&c->wbuf_dwork);
-+	if (jffs2_is_writebuffered(c))
-+		cancel_delayed_work_sync(&c->wbuf_dwork);
- #endif
- 
- 	mutex_lock(&c->alloc_sem);
+ 	if (prz->buffer->sig == sig) {
++		if (buffer_size(prz) == 0) {
++			pr_debug("found existing empty buffer\n");
++			return 0;
++		}
++
+ 		if (buffer_size(prz) > prz->buffer_size ||
+ 		    buffer_start(prz) > buffer_size(prz))
+ 			pr_info("found existing invalid buffer, size %zu, start %zu\n",
 -- 
 2.19.1
 
