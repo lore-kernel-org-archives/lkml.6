@@ -2,50 +2,54 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A592C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA76BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38C3C20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4917218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359081;
-	bh=FCfmeWfhaef0x9zhqbT72OKy0Vdoou6+m/96PsFY6EU=;
+	s=default; t=1548359084;
+	bh=aqrjrh3vkfg2ehDT8Mqr8uZRo513rab+qqJsNK9soY0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lZHhzf2qrmNx0XgaQtrtXYUZebU3V8rIPNDjkrlhPPn7HSDxRBMYIlmwe/DmbOfFz
-	 Ha09UkWH/ilY4E0v5zlxwKt75nLcO4svYc6i/D5LyNqxiL1FMWQ8nKU/lzlgpKe0SD
-	 IKwKfhrteDq5H2xKqsPWGU1opwKdgpI6fqwFqAiA=
+	b=hV/KG7PdVb7g/zg7og0uGhHBwTBa8ZUfcf8s1o4N+pQ2dCNyNlAx4qcgUvLylvZ6h
+	 lrOP6QgwCpjxpLk3Ih717OukyVu60op/tBtkPEsIq8pLDRNHzbAPhe5h2sV+l/6w/0
+	 /O06Rzsc9wckDZUQkP3vMlLGGtG4RDOydC3NyO9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388090AbfAXToi (ORCPT
+        id S2388116AbfAXTom (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:44:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45402 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:44:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45512 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733296AbfAXToe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:44:34 -0500
+        id S1733296AbfAXTok (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:44:40 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 60414218D4;
-        Thu, 24 Jan 2019 19:44:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C1C2218D2;
+        Thu, 24 Jan 2019 19:44:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359073;
-        bh=FCfmeWfhaef0x9zhqbT72OKy0Vdoou6+m/96PsFY6EU=;
+        s=default; t=1548359079;
+        bh=aqrjrh3vkfg2ehDT8Mqr8uZRo513rab+qqJsNK9soY0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=De7qaSlewy8dXuYKFTMDZL453Fkc1ND6C5Ygf22WDiGSdrnOJnx9F81v5QccAvrT+
-         gOPvPH4L4yRLMThzXnnOq+TKNXcOT7+okbjZgQcDJstPpKdbsGbb1XJMFp4Scb+uCt
-         zr6lV2gYFk9teOD7NCq+I6XnTwbriEsKGVmbo2tA=
+        b=RUYTJ+1Hzy66gNhK8BJSB638uDngBiGX4qOSbdR2rLmXPEMZMd4SqMRbyIRrL1y2e
+         uS+fAO2VETMgi/CLFCxjQEaDWMdufkKZFzxs75O3MN6JOFzRf90zusJe5zvu91GVVA
+         OMOzXXfFXy2c7ahvMZh/dbmIgQeuOtIvEFljCrdc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.20 127/127] ipmi:ssif: Fix handling of multi-part return messages
-Date:   Thu, 24 Jan 2019 20:21:13 +0100
-Message-Id: <20190124190217.316773561@linuxfoundation.org>
+        stable@vger.kernel.org, Zorro Lang <zlang@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 114/127] iomap: dont search past page end in iomap_is_partially_uptodate
+Date:   Thu, 24 Jan 2019 20:21:00 +0100
+Message-Id: <20190124190216.814097492@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -64,95 +68,78 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corey Minyard <cminyard@mvista.com>
+[ Upstream commit 3cc31fa65d85610574c0f6a474e89f4c419923d5 ]
 
-commit 7d6380cd40f7993f75c4bde5b36f6019237e8719 upstream.
+iomap_is_partially_uptodate() is intended to check wither blocks within
+the selected range of a not-uptodate page are uptodate; if the range we
+care about is up to date, it's an optimization.
 
-The block number was not being compared right, it was off by one
-when checking the response.
+However, the iomap implementation continues to check all blocks up to
+from+count, which is beyond the page, and can even be well beyond the
+iop->uptodate bitmap.
 
-Some statistics wouldn't be incremented properly in some cases.
+I think the worst that will happen is that we may eventually find a zero
+bit and return "not partially uptodate" when it would have otherwise
+returned true, and skip the optimization.  Still, it's clearly an invalid
+memory access that must be fixed.
 
-Check to see if that middle-part messages always have 31 bytes of
-data.
+So: fix this by limiting the search to within the page as is done in the
+non-iomap variant, block_is_partially_uptodate().
 
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: stable@vger.kernel.org # 4.4
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Zorro noticed thiswhen KASAN went off for 512 byte blocks on a 64k
+page system:
 
+ BUG: KASAN: slab-out-of-bounds in iomap_is_partially_uptodate+0x1a0/0x1e0
+ Read of size 8 at addr ffff800120c3a318 by task fsstress/22337
+
+Reported-by: Zorro Lang <zlang@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_ssif.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ fs/iomap.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -632,8 +632,9 @@ static void msg_done_handler(struct ssif
+diff --git a/fs/iomap.c b/fs/iomap.c
+index d6bc98ae8d35..ce837d962d47 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -492,16 +492,29 @@ done:
+ }
+ EXPORT_SYMBOL_GPL(iomap_readpages);
  
- 		/* Remove the multi-part read marker. */
- 		len -= 2;
-+		data += 2;
- 		for (i = 0; i < len; i++)
--			ssif_info->data[i] = data[i+2];
-+			ssif_info->data[i] = data[i];
- 		ssif_info->multi_len = len;
- 		ssif_info->multi_pos = 1;
++/*
++ * iomap_is_partially_uptodate checks whether blocks within a page are
++ * uptodate or not.
++ *
++ * Returns true if all blocks which correspond to a file portion
++ * we want to read within the page are uptodate.
++ */
+ int
+ iomap_is_partially_uptodate(struct page *page, unsigned long from,
+ 		unsigned long count)
+ {
+ 	struct iomap_page *iop = to_iomap_page(page);
+ 	struct inode *inode = page->mapping->host;
+-	unsigned first = from >> inode->i_blkbits;
+-	unsigned last = (from + count - 1) >> inode->i_blkbits;
++	unsigned len, first, last;
+ 	unsigned i;
  
-@@ -661,8 +662,19 @@ static void msg_done_handler(struct ssif
- 		}
- 
- 		blocknum = data[0];
-+		len--;
-+		data++;
++	/* Limit range to one page */
++	len = min_t(unsigned, PAGE_SIZE - from, count);
 +
-+		if (blocknum != 0xff && len != 31) {
-+		    /* All blocks but the last must have 31 data bytes. */
-+			result = -EIO;
-+			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-+				pr_info("Received middle message <31\n");
- 
--		if (ssif_info->multi_len + len - 1 > IPMI_MAX_MSG_LENGTH) {
-+			goto continue_op;
-+		}
++	/* First and last blocks in range within page */
++	first = from >> inode->i_blkbits;
++	last = (from + len - 1) >> inode->i_blkbits;
 +
-+		if (ssif_info->multi_len + len > IPMI_MAX_MSG_LENGTH) {
- 			/* Received message too big, abort the operation. */
- 			result = -E2BIG;
- 			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-@@ -671,16 +683,14 @@ static void msg_done_handler(struct ssif
- 			goto continue_op;
- 		}
- 
--		/* Remove the blocknum from the data. */
--		len--;
- 		for (i = 0; i < len; i++)
--			ssif_info->data[i + ssif_info->multi_len] = data[i + 1];
-+			ssif_info->data[i + ssif_info->multi_len] = data[i];
- 		ssif_info->multi_len += len;
- 		if (blocknum == 0xff) {
- 			/* End of read */
- 			len = ssif_info->multi_len;
- 			data = ssif_info->data;
--		} else if (blocknum + 1 != ssif_info->multi_pos) {
-+		} else if (blocknum != ssif_info->multi_pos) {
- 			/*
- 			 * Out of sequence block, just abort.  Block
- 			 * numbers start at zero for the second block,
-@@ -707,6 +717,7 @@ static void msg_done_handler(struct ssif
- 		}
- 	}
- 
-+ continue_op:
- 	if (result < 0) {
- 		ssif_inc_stat(ssif_info, receive_errors);
- 	} else {
-@@ -714,8 +725,6 @@ static void msg_done_handler(struct ssif
- 		ssif_inc_stat(ssif_info, received_message_parts);
- 	}
- 
--
-- continue_op:
- 	if (ssif_info->ssif_debug & SSIF_DEBUG_STATE)
- 		pr_info("DONE 1: state = %d, result=%d\n",
- 			ssif_info->ssif_state, result);
+ 	if (iop) {
+ 		for (i = first; i <= last; i++)
+ 			if (!test_bit(i, iop->uptodate))
+-- 
+2.19.1
+
 
 
