@@ -2,111 +2,108 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EF73C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:10:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38168C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:11:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 500DB218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F4024218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:11:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sjHD5/jD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728916AbfAXTKv (ORCPT
+        id S1729130AbfAXTLb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:10:51 -0500
-Received: from mga05.intel.com ([192.55.52.43]:58623 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbfAXTKu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:10:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 11:10:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,518,1539673200"; 
-   d="scan'208";a="132815711"
-Received: from ray.jf.intel.com (HELO [10.7.201.19]) ([10.7.201.19])
-  by orsmga001.jf.intel.com with ESMTP; 24 Jan 2019 11:10:50 -0800
-Subject: Re: [RFC PATCH] x86, numa: always initialize all possible nodes
-To:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org
-Cc:     Pingfan Liu <kernelfans@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Tony Luck <tony.luck@intel.com>, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-References: <20190114082416.30939-1-mhocko@kernel.org>
- <20190124141727.GN4087@dhcp22.suse.cz>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <3a7a3cf2-b7d9-719e-85b0-352be49a6d0f@intel.com>
-Date:   Thu, 24 Jan 2019 11:10:50 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 24 Jan 2019 14:11:31 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:37350 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfAXTLa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:11:30 -0500
+Received: by mail-yw1-f68.google.com with SMTP id h193so2889607ywc.4;
+        Thu, 24 Jan 2019 11:11:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=d/ux42QXwpRUza44sta0d7SF/mVsaFv0K/CkDPesSNE=;
+        b=sjHD5/jD9eouUf91CKmtYR2JqVGW6Y5YTXXpD9YEsqqg7wCOwMDhAXzgTYWisiDD3o
+         diJVqk6dkU949VplQN/9mjwsbJBoOBViYefjQVFPZJnBarM0LYhBZDuQcLAi65fFCaqS
+         m0wTqI0hdOlvwP2K1IOaFmkXq0h8hICeWlVufIZCesV5eeRXtLRPtvshx1/ms4qaBZ1+
+         Wxx7tt7HkrqkMCRbCDy6x0QHlyinihAIpZFdWAetDYVTDkY3gXqXjMafkMzqOshSjbIz
+         XDqsOZrtwPf0Vwi1mn533o/HA2jhErWmtbrWjn3EYs+MlUNVRrTRC6jDo9JFBzTk9u5K
+         Q8Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=d/ux42QXwpRUza44sta0d7SF/mVsaFv0K/CkDPesSNE=;
+        b=mKkLl51y7iVyp+xTKwZyTkunAH28NlAgcb92YfF/EgViEYednysAt0FS8qbYm4cyPt
+         /9PHFL0ZKg7CYwt1GEZje6S9iM1fXMVf9N8eXgM/VA/XPucAE85yFOEeIY7JWaykppFr
+         uwxrQA/gUm0/a/SFKTIMPN3/d5sYPJADxWfAyBDKHsC005T3ycwFFxE3/i1AsMJXNwhe
+         QbXTDYz68ZeNLGq2y8KQ/Jo9Yeqj1W7hRYooAq2fJ87PjBhJMPfOJpPg6hMwn3MEw90E
+         z+IF08dcHqgmd7OuSULRVH25E7BIBjChZlWYbgBTPDm93AJih2zKpiGe//WEihwCOUT5
+         6DSw==
+X-Gm-Message-State: AJcUukd+3Wvjl9Fkwz2NFltUoFfYZGXPF48TNyM4GeRVIz+x0aqLObHH
+        1U9REB8D8EwvjyxS785ysdDi3VNY8j2KvTSpvjU=
+X-Google-Smtp-Source: ALg8bN53D2wtFUNnLcXcUWsHoudBl/sspydis5x3f8q3+Yc8OpzBgh2rxSD0SCdNbb7YFGihHT+nrdFo5UY/OdVcgv8=
+X-Received: by 2002:a81:e30b:: with SMTP id q11mr7868266ywl.490.1548357089730;
+ Thu, 24 Jan 2019 11:11:29 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190124141727.GN4087@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CA+ToGPEQgJ=0eFgbS2C9BexG=Js27vUWikEHqyLE6qs3viE-5g@mail.gmail.com>
+ <20190124084245.GK32526@8bytes.org>
+In-Reply-To: <20190124084245.GK32526@8bytes.org>
+From:   Diego Viola <diego.viola@gmail.com>
+Date:   Thu, 24 Jan 2019 17:11:18 -0200
+Message-ID: <CA+ToGPGoC720eCxFWva5ZK0buk_GEt7axJxcZ0EKeskxP2W9bw@mail.gmail.com>
+Subject: Re: Nested KVM is broken on a AMD Ryzen 5 2400G
+To:     Joerg Roedel <joro@8bytes.org>
+Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/24/19 6:17 AM, Michal Hocko wrote:
-> and nr_cpus set to 4. The underlying reason is tha the device is bound
-> to node 2 which doesn't have any memory and init_cpu_to_node only
-> initializes memory-less nodes for possible cpus which nr_cpus restrics.
-> This in turn means that proper zonelists are not allocated and the page
-> allocator blows up.
+Hi Joerg,
 
-This looks OK to me.
+On Thu, Jan 24, 2019 at 6:42 AM Joerg Roedel <joro@8bytes.org> wrote:
+>
+> Hi Diego,
+>
+> thanks for the report!
 
-Could we add a few DEBUG_VM checks that *look* for these invalid
-zonelists?  Or, would our existing list debugging have caught this?
+You're welcome, many thanks for your quick reply.
 
-Basically, is this bug also a sign that we need better debugging around
-this?
+>
+> On Thu, Jan 24, 2019 at 01:57:31AM -0200, Diego Viola wrote:
+> > [10499.577192] WARNING: CPU: 2 PID: 3487 at arch/x86/kvm/mmu.c:2066
+> > nonpaging_update_pte+0x5/0x10 [kvm]
+>
+> Seems like the nested-paging emulation got broken somewhere in the past.
+> Can you try to load the KVM module in the guest with 'npt=0' and see if
+> it works then?
+
+I tried this and snapcraft is still timing out on the guest:
+
+diego@diego-Standard-PC-i440FX-PIIX-1996:~/mysnaps/hello$ snapcraft
+Launching a VM.
+start failed: timed out waiting for instance to respond
+Stopping snapcraft-my-snap-name /^C
+Aborted!
+diego@diego-Standard-PC-i440FX-PIIX-1996:~/mysnaps/hello$
+
+That said, I no longer see the dmesg stack trace on the host. Should I
+try a more recent kernel on the guest?
+
+>
+> Thanks,
+>
+>         Joerg
+
+Regards,
+Diego
