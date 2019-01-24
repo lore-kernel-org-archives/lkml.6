@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CC5FC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65CD7C282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:55:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF29421726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 33A4721726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:55:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359695;
-	bh=E0UjCQ/9pL0zPHUH24atg127IlZt8OoHVNBOrIaSFMw=;
+	s=default; t=1548359710;
+	bh=oK19j8EEmDksPpDEkB/knGXordcxvCfMMnwB5PYWRpc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CVdI9rsUHAF+1E1/CcqOek9nae7xuJe2CCJDliKB7GIVaQPgxkmrOWBcUYTbIjQv2
-	 JF4MuYyRZc/gFrOHSPK350bjWIzcmXrXwAzvL6eKUztlp56ayAJDIyQcBvvUPUiU8P
-	 4CGoRn1fO2LdcYIjGfSp/wKXNbSvBeIZrskbuVfY=
+	b=y9L5/6cguMTr8QQ4rk8f9Cnylr6aDubr/kcNoXqO9FFqYE5uTAZLK+1ZYnf+Nfetu
+	 kCGiGa3LF3bgLHtMabfylkVlpx7uhZAshnZaEoiU4owr/Nipl04q9uiUbPITZQnJjN
+	 6EkPZJs0t9LRnGGm1TnuAbgLlAPQwlc7t26o/mEI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732718AbfAXTyx (ORCPT
+        id S1730253AbfAXTg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:54:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37094 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:36:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36872 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731887AbfAXThI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:37:08 -0500
+        id S1730938AbfAXTgz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:36:55 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77069218FC;
-        Thu, 24 Jan 2019 19:37:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96FEB218FC;
+        Thu, 24 Jan 2019 19:36:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358628;
-        bh=E0UjCQ/9pL0zPHUH24atg127IlZt8OoHVNBOrIaSFMw=;
+        s=default; t=1548358614;
+        bh=oK19j8EEmDksPpDEkB/knGXordcxvCfMMnwB5PYWRpc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XEdWMcRDDDGs7wDLRE+Kj+4XbpgF8ag05/pPdrzJ4hhyqR5l03dIaH3fRlE/Zi8fS
-         o7KFwA/R5P7660vLEp5QlSdfHKgHwf8VmlJNsp1kpddiD1Nyf7ge1KYRVVISnwlHNj
-         7sHf4aiMzSrVn/cLokbogN8G6RD53afG4S1bY8zo=
+        b=C8gV5YVNAiKqFIW7X+l/luGizv1ZrUJSX/6Eh4K+V47q7y5EFSpTgPLwWktioCEL8
+         k+gY1AwBjRw4eGYJW5oAStTlDkQJROAxeEcherzN3rKIutG77Wcg258ztgkkDp3JiR
+         rZnTIJ0GfdS4k9PjeFFar9NNc95g5un9u7r0HFRQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michael Petlan <mpetlan@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 076/106] perf stat: Avoid segfaults caused by negated options
-Date:   Thu, 24 Jan 2019 20:20:33 +0100
-Message-Id: <20190124190211.090290441@linuxfoundation.org>
+Subject: [PATCH 4.19 071/106] netfilter: ipt_CLUSTERIP: remove wrong WARN_ON_ONCE in netns exit routine
+Date:   Thu, 24 Jan 2019 20:20:28 +0100
+Message-Id: <20190124190210.844807296@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -66,59 +66,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 51433ead1460fb3f46e1c34f68bb22fd2dd0f5d0 ]
+[ Upstream commit b12f7bad5ad3724d19754390a3e80928525c0769 ]
 
-Some 'perf stat' options do not make sense to be negated (event,
-cgroup), some do not have negated path implemented (metrics). Due to
-that, it is better to disable the "no-" prefix for them, since
-otherwise, the later opt-parsing segfaults.
+When network namespace is destroyed, both clusterip_tg_destroy() and
+clusterip_net_exit() are called. and clusterip_net_exit() is called
+before clusterip_tg_destroy().
+Hence cleanup check code in clusterip_net_exit() doesn't make sense.
 
-Before:
+test commands:
+   %ip netns add vm1
+   %ip netns exec vm1 bash
+   %ip link set lo up
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	-j CLUSTERIP --new --hashmode sourceip \
+	--clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
+   %exit
+   %ip netns del vm1
 
-  $ perf stat --no-metrics -- ls
-  Segmentation fault (core dumped)
+splat looks like:
+[  341.184508] WARNING: CPU: 1 PID: 87 at net/ipv4/netfilter/ipt_CLUSTERIP.c:840 clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
+[  341.184850] Modules linked in: ipt_CLUSTERIP nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 xt_tcpudp iptable_filter bpfilter ip_tables x_tables
+[  341.184850] CPU: 1 PID: 87 Comm: kworker/u4:2 Not tainted 4.19.0-rc5+ #16
+[  341.227509] Workqueue: netns cleanup_net
+[  341.227509] RIP: 0010:clusterip_net_exit+0x319/0x380 [ipt_CLUSTERIP]
+[  341.227509] Code: 0f 85 7f fe ff ff 48 c7 c2 80 64 2c c0 be a8 02 00 00 48 c7 c7 a0 63 2c c0 c6 05 18 6e 00 00 01 e8 bc 38 ff f5 e9 5b fe ff ff <0f> 0b e9 33 ff ff ff e8 4b 90 50 f6 e9 2d fe ff ff 48 89 df e8 de
+[  341.227509] RSP: 0018:ffff88011086f408 EFLAGS: 00010202
+[  341.227509] RAX: dffffc0000000000 RBX: 1ffff1002210de85 RCX: 0000000000000000
+[  341.227509] RDX: 1ffff1002210de85 RSI: ffff880110813be8 RDI: ffffed002210de58
+[  341.227509] RBP: ffff88011086f4d0 R08: 0000000000000000 R09: 0000000000000000
+[  341.227509] R10: 0000000000000000 R11: 0000000000000000 R12: 1ffff1002210de81
+[  341.227509] R13: ffff880110625a48 R14: ffff880114cec8c8 R15: 0000000000000014
+[  341.227509] FS:  0000000000000000(0000) GS:ffff880116600000(0000) knlGS:0000000000000000
+[  341.227509] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  341.227509] CR2: 00007f11fd38e000 CR3: 000000013ca16000 CR4: 00000000001006e0
+[  341.227509] Call Trace:
+[  341.227509]  ? __clusterip_config_find+0x460/0x460 [ipt_CLUSTERIP]
+[  341.227509]  ? default_device_exit+0x1ca/0x270
+[  341.227509]  ? remove_proc_entry+0x1cd/0x390
+[  341.227509]  ? dev_change_net_namespace+0xd00/0xd00
+[  341.227509]  ? __init_waitqueue_head+0x130/0x130
+[  341.227509]  ops_exit_list.isra.10+0x94/0x140
+[  341.227509]  cleanup_net+0x45b/0x900
+[ ... ]
 
-After:
-
-  $ perf stat --no-metrics -- ls
-   Error: option `no-metrics' isn't available
-   Usage: perf stat [<options>] [<command>]
-
-Signed-off-by: Michael Petlan <mpetlan@redhat.com>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-LPU-Reference: 1485912065.62416880.1544457604340.JavaMail.zimbra@redhat.com
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: 613d0776d3fe ("netfilter: exit_net cleanup check added")
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/builtin-stat.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/perf/builtin-stat.c b/tools/perf/builtin-stat.c
-index d097b5b47eb8..40720150ccd8 100644
---- a/tools/perf/builtin-stat.c
-+++ b/tools/perf/builtin-stat.c
-@@ -1961,7 +1961,7 @@ static int parse_metric_groups(const struct option *opt,
- 	return metricgroup__parse_groups(opt, str, &metric_events);
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index e40e6795bd20..33491cb6b9d1 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -838,7 +838,6 @@ static void clusterip_net_exit(struct net *net)
+ 	cn->procdir = NULL;
+ #endif
+ 	nf_unregister_net_hook(net, &cip_arp_ops);
+-	WARN_ON_ONCE(!list_empty(&cn->configs));
  }
  
--static const struct option stat_options[] = {
-+static struct option stat_options[] = {
- 	OPT_BOOLEAN('T', "transaction", &transaction_run,
- 		    "hardware transaction statistics"),
- 	OPT_CALLBACK('e', "event", &evsel_list, "event",
-@@ -2847,6 +2847,12 @@ int cmd_stat(int argc, const char **argv)
- 		return -ENOMEM;
- 
- 	parse_events__shrink_config_terms();
-+
-+	/* String-parsing callback-based options would segfault when negated */
-+	set_option_flag(stat_options, 'e', "event", PARSE_OPT_NONEG);
-+	set_option_flag(stat_options, 'M', "metrics", PARSE_OPT_NONEG);
-+	set_option_flag(stat_options, 'G', "cgroup", PARSE_OPT_NONEG);
-+
- 	argc = parse_options_subcommand(argc, argv, stat_options, stat_subcommands,
- 					(const char **) stat_usage,
- 					PARSE_OPT_STOP_AT_NON_OPTION);
+ static struct pernet_operations clusterip_net_ops = {
 -- 
 2.19.1
 
