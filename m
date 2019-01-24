@@ -2,110 +2,136 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC6B0C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 866BBC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95920218D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:26:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54F6E218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 21:31:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OxmPsvKr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727963AbfAXV0Y (ORCPT
+        id S1727755AbfAXVbr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 16:26:24 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:36572 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfAXV0Y (ORCPT
+        Thu, 24 Jan 2019 16:31:47 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:35860 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725974AbfAXVbr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 16:26:24 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x23so6120205oix.3;
-        Thu, 24 Jan 2019 13:26:23 -0800 (PST)
+        Thu, 24 Jan 2019 16:31:47 -0500
+Received: by mail-pg1-f194.google.com with SMTP id n2so3248948pgm.3;
+        Thu, 24 Jan 2019 13:31:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Zg1hiDWSkdoKlKrGhoKh9p3u2gfeR+FlyP1bDnEdRyo=;
+        b=OxmPsvKrcATLdb75kGcN89Pt9J1rYxKvSAOzOcp6itjXYpXUOb0QkuXe1L9+s+ljop
+         ORQWxtLBo4D3NDNVHhNGfrXiqm3gNQAIdPZucM2e5oiLKR5rqiZo9wvZbe0Yz1DZlh0d
+         JDVnSGc4HhbPm30CwwF8YpZ++XBncC+8XKjfiIHiKqjL2S4UM3B1GGeLBw4A+mU0yc83
+         2WnjWwdyKxSqOHBG7aNhVZz8gG1llpgNNfFrpcOgmt5PjM4UCtcbfn/kuRTW4/ktZWgP
+         6rWRysngy2A+QcIaK8IUYwwFrRawNiUmfIo1em+28gnw9TWOL4DgIX485etC8s5sGT+1
+         Xovw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3BKASeLMZBaJ/TSA8g4AVbiUtB0M/I+YsAh4EUI6f1I=;
-        b=mDtGIznVqujHLrgFv5n+7AyN5AubPd3qnXa+qSLCYmp0zzvpxKZWx4ahzJWfcG1d2p
-         BxJ4ACl3yaIDL2T+bvHqWvUBet4fJol6Q4DwJ9W4bv2EgSMhNnE1f/tth9zxwlQQ+4oE
-         Kl0r2p8MwQr5u/kcrOS830UlZDZmaf/Rk33fUa+Oo3HqNi59JPD2itaQ39tCXAZLY0Zr
-         DTsFUlsWGq2DXlB2c+cEjCgexOragOK742bQyypeGwLYZ6TIgj76beeRGZRi2MDG5XMA
-         iUalQOSe3p2RP+WGFF13QxgvQc3gV6kOwUmXTRLmpihwck8yyGv+foFm7fuslMcvpo3u
-         DzYw==
-X-Gm-Message-State: AJcUukerRzh2GAGduKjuMY0STW1N8gXROmUXczutRcKaQTFd0iTpNFGa
-        QssSBU1Gm69iinqS7y1RDvirnEO3gXV4rz+x0wA=
-X-Google-Smtp-Source: ALg8bN7I3dzDDE37T4ya0I4Yuv8D8lZBMBAURA28lB6dUyh12DiW6fMx2EYsyoDEAfqqSDW+YjKTTsdBaZHHFjc0U1s=
-X-Received: by 2002:aca:5117:: with SMTP id f23mr2405614oib.72.1548365182672;
- Thu, 24 Jan 2019 13:26:22 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Zg1hiDWSkdoKlKrGhoKh9p3u2gfeR+FlyP1bDnEdRyo=;
+        b=p5YYh/3TxJS1Oxnu3Bp79RK6Jo1aHLw1uSjtKYLx5LaJsVAkimmD2QpCr2NnnDFjLM
+         70YPzkta9bfZdCaLygfOz29bg12tzu2WCMQnDzvHNJbH8Zd5AIxDWchhftyxHvq/Mc96
+         FihTjovTW0ko4Qs5M0DFIk6lUa7vEZ+JPSPALLYR122ejFPBELhLJc2SU5taFgK+jYiL
+         Zi6TAQ9gwQ6JPC+mE7XYap0DDDWXZPFj/FCsgmKeX2MuLLtccuTTz6t0OqX851+GR7wX
+         eNXPNg1ATV6SDkY0FKlPGStSE2ziEgHQoXozavbuDkbn0ZFPMP7WukX+GzVdqTswitDE
+         5jwg==
+X-Gm-Message-State: AJcUukelqbK9kj5GRZPpkTikYtjom2UaatVm52MEOdEwZTfCF9oTj4ve
+        O/rfW6HTsNER/aRaO6N4dtTnWHue
+X-Google-Smtp-Source: ALg8bN4XMel72nu9y7LmKOyyccDL+hLvH54p/9NkgsoBTukVY6nfsoGQa/OZ5/hT6JhrJ6W71curTA==
+X-Received: by 2002:a63:1e56:: with SMTP id p22mr7465945pgm.126.1548365506207;
+        Thu, 24 Jan 2019 13:31:46 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id z9sm56728900pfd.99.2019.01.24.13.31.39
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 13:31:45 -0800 (PST)
+Subject: Re: [PATCH V2 1/4] i2c: tegra: Sort all the include headers
+ alphabetically
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <e896f4af-1c20-3188-f1f8-253ce4893a50@gmail.com>
+Date:   Fri, 25 Jan 2019 00:31:34 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20181212220922.18759-1-paul@crapouillou.net>
-In-Reply-To: <20181212220922.18759-1-paul@crapouillou.net>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Thu, 24 Jan 2019 22:26:11 +0100
-Message-ID: <CA+7wUszMOvGoPSVOKP7F_KHxgJvjBGT7oJmn5EO62hGGTQK4KA@mail.gmail.com>
-Subject: Re: [PATCH v8 00/26] Ingenic TCU patchset v8
-To:     Paul Cercueil <paul@crapouillou.net>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>,
-        PrasannaKumar Muralidharan <prasannatsmkumar@gmail.com>,
-        linux-pwm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        linux-watchdog@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-clk@vger.kernel.org, od@zcrc.me
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Paul,
+24.01.2019 23:51, Sowjanya Komatineni пишет:
+> This patch sorts all the include headers alphabetically for the
+> I2C tegra driver
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V2] : Added this in V2 to sort the headers in tegra I2C
+> 
+>  drivers/i2c/busses/i2c-tegra.c | 21 ++++++++++-----------
+>  1 file changed, 10 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index e417ebf7628c..ef854be4c837 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -6,24 +6,23 @@
+>   * Author: Colin Cross <ccross@android.com>
+>   */
+>  
+> -#include <linux/kernel.h>
+> -#include <linux/init.h>
+> -#include <linux/platform_device.h>
+> +#include <asm/unaligned.h>
 
-On Wed, Dec 12, 2018 at 11:09 PM Paul Cercueil <paul@crapouillou.net> wrote:
->
-> Hi,
->
-> Here's the version 8 and hopefully final version of my patchset, which
-> adds support for the Timer/Counter Unit found in JZ47xx SoCs from
-> Ingenic.
+What about to clean up the includes as well? Seems <asm/unaligned.h> is not needed by the code.
 
-I can no longer boot my MIPS Creator CI20 with this series (merged
-opendingux/for-upstream-timer-v8).
+>  #include <linux/clk.h>
+> +#include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+> -#include <linux/io.h>
+> +#include <linux/init.h>
+>  #include <linux/interrupt.h>
+> -#include <linux/delay.h>
+> -#include <linux/slab.h>
+> -#include <linux/of_device.h>
+> +#include <linux/io.h>
+> +#include <linux/iopoll.h>
+> +#include <linux/kernel.h>
+>  #include <linux/module.h>
+> -#include <linux/reset.h>
+> +#include <linux/of_device.h>
+>  #include <linux/pinctrl/consumer.h>
+> +#include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> -#include <linux/iopoll.h>
+> -
+> -#include <asm/unaligned.h>
+> +#include <linux/reset.h>
+> +#include <linux/slab.h>
+>  
+>  #define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
+>  #define BYTES_PER_FIFO_WORD 4
+> 
 
-Using screen+ttyUSB, I can see messages stopping at:
-
-...
-[  OK  ] Started Cgroup management daemon.
-         Starting Regular background program processing daemon...
-[  OK  ] Started Regular background program processing daemon.
-         Starting System Logging Service...
-         Starting Provide limited super user privileges to specific users...
-         Starting Restore /etc/resolv.conf if the system cras...s shut down....
-         Starting WPA supplicant...
-         Starting D-Bus System Message Bus...
-[  OK  ] Started D-Bus System Message Bus.
-
-Nothing really stands out in the error messages. Could you suggest
-things to try out to get into a bootable state ?
-
-
-> The big change is that the timer driver has been simplified. The code to
-> dynamically update the system timer or clocksource to a new channel has
-> been removed. Now, the system timer and clocksource are provided as
-> children nodes in the devicetree, and the TCU channel to use for these
-> is deduced from their respective memory resource. The PWM driver will
-> also deduce from its memory resources whether a given PWM channel can be
-> used, or is reserved for the system timers.
->
-> Kind regards,
-> - Paul Cercueil
->
