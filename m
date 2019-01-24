@@ -4,56 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 860C3C41518
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 367E0C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5287D21902
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 081F221903
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358257;
-	bh=f54sOHdMMSxC9fkhWdNsJaqFiBVwmf2Gh8atZqTx17A=;
+	s=default; t=1548358265;
+	bh=VkcrIsgp7s+FViqzoIcfDhXYSZ0hNzbNZjpxmUi+1Vs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1WK6dBWhPCLlHoZ368hIAZmP5JV126mCPI5z7rbCa7XsOIBVEtlypbEhN/vwTHLHh
-	 laSeSjjKEOwNAG0ki3x98oQTZAsPC/FV8+7bAEo/xCXHQyDzd3cc0nDc7nROFJyeYk
-	 2HPRGp1D7eq/shiH3/aTcj7E/k+QFndng35tXpqQ=
+	b=PJDZVJJc+TpwwEN5dAisK/ktG/+Mmms6fXGlZShuWjfb0ggw/jCAnRg3hds7v9HT7
+	 vgZgVmIbjvYbxnGLJli2/M9mYAHmeCg2rN8GvCIDlx8x/0QLQfGZIS+Vh58B9Cykzz
+	 PgMuC2L3PsRDZZAaoHMMOxWRWDaLIliaiyNbmmHc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731472AbfAXTaz (ORCPT
+        id S1730825AbfAXTbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:30:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58482 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:31:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730557AbfAXTax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:30:53 -0500
+        id S1731512AbfAXTbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:31:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 172FC218D4;
-        Thu, 24 Jan 2019 19:30:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6F6A218D4;
+        Thu, 24 Jan 2019 19:30:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358251;
-        bh=f54sOHdMMSxC9fkhWdNsJaqFiBVwmf2Gh8atZqTx17A=;
+        s=default; t=1548358260;
+        bh=VkcrIsgp7s+FViqzoIcfDhXYSZ0hNzbNZjpxmUi+1Vs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aPq1nuzSvHhahCdV3Ghq7hJjJlSeIMv6WSU9BnLCoS/b4KqJiZEBBeEAIiiuiTQCL
-         wtsmtIoNzf51VrsA3WjVPSPVN4VGBUXQHdadWvUpkm77Em+6FZu8eOmZ6uBFY6bUje
-         1yi8DDDUWn8f1kBoDYZKDY+QcXQQxeOsRtyjgazU=
+        b=V+zgFfI3LtqOC4Q2BECJeCIeLcA0y9FxW5jo3CSqF3SEtdCmCanGFzv+ZMwRIxzWW
+         LVTXQYgWbzij9DxKVYTzgvpEjA1ybDc8Z4sIgIgKRxHbiH8Qg9e18nTYRKMx3SYOaa
+         C3cc43rKoap9rOei/3kFPKxau1f6vJLXmVmSplFQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Carroll <david.carroll@microsemi.com>,
-        Scott Teel <scott.teel@microsemi.com>,
-        Kevin Barnett <kevin.barnett@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 33/39] scsi: smartpqi: correct lun reset issues
-Date:   Thu, 24 Jan 2019 20:20:36 +0100
-Message-Id: <20190124190449.449508559@linuxfoundation.org>
+Subject: [PATCH 4.14 10/63] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
+Date:   Thu, 24 Jan 2019 20:19:59 +0100
+Message-Id: <20190124190156.203479785@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
-References: <20190124190448.232316246@linuxfoundation.org>
+In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
+References: <20190124190155.176570028@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -65,78 +63,133 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+4.14-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit 2ba55c9851d74eb015a554ef69ddf2ef061d5780 ]
+[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
 
-Problem:
-The Linux kernel takes a logical volume offline after a LUN reset.  This is
-generally accompanied by this message in the dmesg output:
+In the past, Asus firmwares would change the panel backlight directly
+through the EC when the display off hotkey (Fn+F7) was pressed, and
+only notify the OS of such change, with 0x33 when the LCD was ON and
+0x34 when the LCD was OFF. These are currently mapped to
+KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
 
-Device offlined - not ready after error recovery
+Most recently the EC on Asus most machines lost ability to toggle the
+LCD backlight directly, but unless the OS informs the firmware it is
+going to handle the display toggle hotkey events, the firmware still
+tries change the brightness through the EC, to no effect. The end result
+is a long list (at Endless we counted 11) of Asus laptop models where
+the display toggle hotkey does not perform any action. Our firmware
+engineers contacts at Asus were surprised that there were still machines
+out there with the old behavior.
 
-Root Cause:
-The root cause is a "quirk" in the timeout handling in the Linux SCSI
-layer. The Linux kernel places a 30-second timeout on most media access
-commands (reads and writes) that it send to device drivers.  When a media
-access command times out, the Linux kernel goes into error recovery mode
-for the LUN that was the target of the command that timed out. Every
-command that timed out is kept on a list inside of the Linux kernel to be
-retried later. The kernel attempts to recover the command(s) that timed out
-by issuing a LUN reset followed by a TEST UNIT READY. If the LUN reset and
-TEST UNIT READY commands are successful, the kernel retries the command(s)
-that timed out.
+Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
+tells the firmware that it should let the OS handle the display toggle
+event, in which case it will simply notify the OS of a key press with
+0x35, as shown by the DSDT excerpts bellow.
 
-Each SCSI command issued by the kernel has a result field associated with
-it. This field indicates the final result of the command (success or
-error). When a command times out, the kernel places a value in this result
-field indicating that the command timed out.
+ Scope (_SB)
+ {
+     (...)
 
-The "quirk" is that after the LUN reset and TEST UNIT READY commands are
-completed, the kernel checks each command on the timed-out command list
-before retrying it. If the result field is still "timed out", the kernel
-treats that command as not having been successfully recovered for a
-retry. If the number of commands that are in this state are greater than
-two, the kernel takes the LUN offline.
+     Device (ATKD)
+     {
+         (...)
 
-Fix:
-When our RAIDStack receives a LUN reset, it simply waits until all
-outstanding commands complete. Generally, all of these outstanding commands
-complete successfully. Therefore, the fix in the smartpqi driver is to
-always set the command result field to indicate success when a request
-completes successfully. This normally isn’t necessary because the result
-field is always initialized to success when the command is submitted to the
-driver. So when the command completes successfully, the result field is
-left untouched. But in this case, the kernel changes the result field
-behind the driver’s back and then expects the field to be changed by the
-driver as the commands that timed-out complete.
+         Name (_WDG, Buffer (0x28)
+         {
+             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
+             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
+             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
+             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
+             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
+         })
+         Method (WMNB, 3, Serialized)
+         {
+             CreateDWordField (Arg2, Zero, IIA0)
+             CreateDWordField (Arg2, 0x04, IIA1)
+             Local0 = (Arg1 & 0xFFFFFFFF)
 
-Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
-Reviewed-by: Scott Teel <scott.teel@microsemi.com>
-Signed-off-by: Kevin Barnett <kevin.barnett@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+             (...)
+
+             If ((Local0 == 0x53564544))
+             {
+                 (...)
+
+                 If ((IIA0 == 0x00050011))
+                 {
+                     If ((IIA1 == 0x02))
+                     {
+                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
+                         ^^PCI0.SBRG.EC0.BLCT = One
+                     }
+
+                     Return (One)
+                 }
+             }
+             (...)
+         }
+         (...)
+     }
+     (...)
+ }
+ (...)
+
+ Scope (_SB.PCI0.SBRG.EC0)
+ {
+     (...)
+
+     Name (BLCT, Zero)
+
+     (...)
+
+     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
+     {
+         If ((BLCT == Zero))
+         {
+             Local0 = One
+             Local0 = RPIN (0x72)
+             Local0 ^= One
+             SPIN (0x72, Local0)
+             If (ATKP)
+             {
+                 Local0 = (0x34 - Local0)
+                 ^^^^ATKD.IANE (Local0)
+             }
+         }
+         ElseIf ((BLCT == One))
+         {
+             If (ATKP)
+             {
+                 ^^^^ATKD.IANE (0x35)
+             }
+         }
+     }
+     (...)
+ }
+
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/platform/x86/asus-wmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 96a343ec8313..b2b969990a5d 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -2523,6 +2523,9 @@ static unsigned int pqi_process_io_intr(struct pqi_ctrl_info *ctrl_info,
- 		switch (response->header.iu_type) {
- 		case PQI_RESPONSE_IU_RAID_PATH_IO_SUCCESS:
- 		case PQI_RESPONSE_IU_AIO_PATH_IO_SUCCESS:
-+			if (io_request->scmd)
-+				io_request->scmd->result = 0;
-+			/* fall through */
- 		case PQI_RESPONSE_IU_GENERAL_MANAGEMENT:
- 			break;
- 		case PQI_RESPONSE_IU_TASK_MANAGEMENT:
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 7440f650e81a..3f662cd774d7 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -2147,7 +2147,8 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 		err = asus_wmi_backlight_init(asus);
+ 		if (err && err != -ENODEV)
+ 			goto fail_backlight;
+-	}
++	} else
++		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
+ 
+ 	status = wmi_install_notify_handler(asus->driver->event_guid,
+ 					    asus_wmi_notify, asus);
 -- 
 2.19.1
 
