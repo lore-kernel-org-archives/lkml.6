@@ -2,132 +2,223 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2ABE8C282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:14:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5717CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:14:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1385217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:14:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ndufresne-ca.20150623.gappssmtp.com header.i=@ndufresne-ca.20150623.gappssmtp.com header.b="P5KXRuLH"
+	by mail.kernel.org (Postfix) with ESMTP id 1ECC9217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:14:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548360874;
+	bh=XIeUqVM5p8g4aC07INKeBC/MbFCEGYvOeb1kgCq2C8Q=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=E2Wtd5vxMMPoJccroZ2b+UckQa+ep2FGRumfJkFrl/CU79LKTh/aaFEYYPTX9TSTU
+	 jrca6JqiQVqv5qwsk5CTfxoTQGFWWr1/6HPIpLCXuIrIhFPJ2B6aI10OVNAyBaO5PD
+	 aUmQl0WBFyJrpiZIr2U1nbH+QiwsHhUXzNtLldrU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730463AbfAXUOX (ORCPT
+        id S1730342AbfAXUOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:14:23 -0500
-Received: from mail-qt1-f194.google.com ([209.85.160.194]:41019 "EHLO
-        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730195AbfAXUOV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:14:21 -0500
-Received: by mail-qt1-f194.google.com with SMTP id l12so8199213qtf.8
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:14:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ndufresne-ca.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=/eLWF2nBpm4xYIb4J+nXrGXHgxha/99iWqDqjCF/hxo=;
-        b=P5KXRuLHrM1JXw/KPqJrZ56CtTGz/p65b9igENNu130Zl7tjMfvMNqltUxMSlxRza0
-         A2gG722/oO9+UCYEzggDE7D7sMKNbuWnhag25c3hWzGWc/DpuB6GydkuIgZk/X5YfYop
-         WNw8zqLVLOAUNBIEW/TeLEwKu5GA59cQ6M9AQDKWlT/3zobTCt6XB20VQ7uOOlFPSwbX
-         h7WynjvTiOwquXraaQH8r6i+1tMiAAZ0WluRqvRbfANEVShwbktHlB8nIMZaFBkqtJbW
-         uXgQEdFrpktsoZtkuKBVajv/8Xcdw2ORyNxgUsBeJbj9UzJLnGQtFJHsES7alvWXazvn
-         6qtQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=/eLWF2nBpm4xYIb4J+nXrGXHgxha/99iWqDqjCF/hxo=;
-        b=rOlC4ZVWVdSkmwxHq/VrXRj94cj3L+RWepQtcTvV0tCYE233ZZOYEr5QjTSjtT4+uW
-         FPQtYkgzYddXHKwI8cIlkoz0EJ30idPg0pPtytUUObplrBEN1CDFm63/C7qn9qLJs3Or
-         eDj3V+wq3aXRZ3eji1/iPsrrBkfMMJKNUq4nJE5ZAsTXz/RHVfak61UGoLnuj/+fzSXK
-         Nshmt6L4oWbg87zaOy1SX05NMiMbALNkxH+CJGGsMqaYBVKZ7WuN2x64wG9AcV+PhxZx
-         T6ouRs85VUBPW78aMSwSsVk8hGOvKkeDsaaxIJ8O9U01cZJu6iep0/IYpB5UMd8ESTlH
-         N0TQ==
-X-Gm-Message-State: AJcUukenfXD24vXD3z5c7grh+JU4q0N1nnSTXQjDblkOdLA1q0WMONJO
-        PdsubgxKzaAHt+mqTlFzdT/Vlw==
-X-Google-Smtp-Source: ALg8bN7sCPqhhuhQLqnV3zzkNz/+DQAxZbBpMvkozYAsPmK1x1StShsRhRfWSdDb8EAnlV+Z0zpdvw==
-X-Received: by 2002:aed:2f82:: with SMTP id m2mr8375505qtd.4.1548360860574;
-        Thu, 24 Jan 2019 12:14:20 -0800 (PST)
-Received: from skullcanyon ([192.222.193.21])
-        by smtp.gmail.com with ESMTPSA id r24sm77410788qtr.2.2019.01.24.12.14.18
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 12:14:19 -0800 (PST)
-Message-ID: <0452db20a894c1c4cce263b7e07ba274a58aa8fa.camel@ndufresne.ca>
-Subject: Re: [PATCH v2 2/2] media: docs-rst: Document memory-to-memory video
- encoder interface
-From:   Nicolas Dufresne <nicolas@ndufresne.ca>
-To:     Hans Verkuil <hverkuil@xs4all.nl>, Tomasz Figa <tfiga@chromium.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?Q?Pawe=C5=82_O=C5=9Bciak?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Date:   Thu, 24 Jan 2019 15:14:18 -0500
-In-Reply-To: <75334288-69af-6680-fbe7-2dd5ef2462ea@xs4all.nl>
-References: <20181022144901.113852-1-tfiga@chromium.org>
-         <20181022144901.113852-3-tfiga@chromium.org>
-         <4cd223f0-b09c-da07-f26c-3b3f7a8868d7@xs4all.nl>
-         <CAAFQd5DthE3vL+gycEBgm+aF0YhRncrfBVBNLLF4g+oKhBHEWQ@mail.gmail.com>
-         <75334288-69af-6680-fbe7-2dd5ef2462ea@xs4all.nl>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
-Mime-Version: 1.0
+        Thu, 24 Jan 2019 15:14:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729459AbfAXTZN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:25:13 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24B94217D7;
+        Thu, 24 Jan 2019 19:25:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548357912;
+        bh=XIeUqVM5p8g4aC07INKeBC/MbFCEGYvOeb1kgCq2C8Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=YaV8MQSdDDc+GIC6ziaIDY+ZZxUIeOJfmoKI/yT7EkgAXrDPG1OTyBrXXvdGGrL8/
+         92/nF9mF0ZWzn1ux44+jN8uC17sXiQqJh0wR2e+9ywOkEXbPkDIYWBOpCmST9x9yZw
+         I0wjDKDxV8R+/eJcpMuSI7eGKdxYAX4ElxsdwdXE=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Wen Xu <wen.xu@gatech.edu>,
+        Chao Yu <yuchao0@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <alexander.levin@microsoft.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 031/104] f2fs: fix to do sanity check with reserved blkaddr of inline inode
+Date:   Thu, 24 Jan 2019 20:19:20 +0100
+Message-Id: <20190124190158.490213285@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
+References: <20190124190154.968308875@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Le mercredi 23 janvier 2019 à 14:04 +0100, Hans Verkuil a écrit :
-> > > Does this return the same set of formats as in the 'Querying Capabilities' phase?
-> > > 
-> > 
-> > It's actually an interesting question. At this point we wouldn't have
-> > the OUTPUT resolution set yet, so that would be the same set as in the
-> > initial query. If we set the resolution (with some arbitrary
-> > pixelformat), it may become a subset...
-> 
-> But doesn't setting the capture format also set the resolution?
-> 
-> To quote from the text above:
-> 
-> "The encoder will derive a new ``OUTPUT`` format from the ``CAPTURE`` format
->  being set, including resolution, colorimetry parameters, etc."
-> 
-> So you set the capture format with a resolution (you know that), then
-> ENUM_FMT will return the subset for that codec and resolution.
-> 
-> But see also the comment at the end of this email.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-I'm thinking that the fact that there is no "unset" value for pixel
-format creates a certain ambiguity. Maybe we could create a new pixel
-format, and all CODEC driver could have that set by default ? Then we
-can just fail STREAMON if that format is set.
+------------------
 
-That being said, in GStreamer, I have split each elements per CODEC,
-and now only enumerate the information "per-codec". That makes me think
-this "global" enumeration was just a miss-use of the API / me learning
-to use it. Not having to implement this rather complex thing in the
-driver would be nice. Notably, the new Amlogic driver does not have
-this "Querying Capabilities" phase, and with latest GStreamer works
-just fine.
+From: Chao Yu <yuchao0@huawei.com>
 
-Nicolas
+commit 4dbe38dc386910c668c75ae616b99b823b59f3eb upstream.
+
+As Wen Xu reported in bugzilla, after image was injected with random data
+by fuzzing, inline inode would contain invalid reserved blkaddr, then
+during inline conversion, we will encounter illegal memory accessing
+reported by KASAN, the root cause of this is when writing out converted
+inline page, we will use invalid reserved blkaddr to update sit bitmap,
+result in accessing memory beyond sit bitmap boundary.
+
+In order to fix this issue, let's do sanity check with reserved block
+address of inline inode to avoid above condition.
+
+https://bugzilla.kernel.org/show_bug.cgi?id=200179
+
+[ 1428.846352] BUG: KASAN: use-after-free in update_sit_entry+0x80/0x7f0
+[ 1428.846618] Read of size 4 at addr ffff880194483540 by task a.out/2741
+
+[ 1428.846855] CPU: 0 PID: 2741 Comm: a.out Tainted: G        W         4.17.0+ #1
+[ 1428.846858] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+[ 1428.846860] Call Trace:
+[ 1428.846868]  dump_stack+0x71/0xab
+[ 1428.846875]  print_address_description+0x6b/0x290
+[ 1428.846881]  kasan_report+0x28e/0x390
+[ 1428.846888]  ? update_sit_entry+0x80/0x7f0
+[ 1428.846898]  update_sit_entry+0x80/0x7f0
+[ 1428.846906]  f2fs_allocate_data_block+0x6db/0xc70
+[ 1428.846914]  ? f2fs_get_node_info+0x14f/0x590
+[ 1428.846920]  do_write_page+0xc8/0x150
+[ 1428.846928]  f2fs_outplace_write_data+0xfe/0x210
+[ 1428.846935]  ? f2fs_do_write_node_page+0x170/0x170
+[ 1428.846941]  ? radix_tree_tag_clear+0xff/0x130
+[ 1428.846946]  ? __mod_node_page_state+0x22/0xa0
+[ 1428.846951]  ? inc_zone_page_state+0x54/0x100
+[ 1428.846956]  ? __test_set_page_writeback+0x336/0x5d0
+[ 1428.846964]  f2fs_convert_inline_page+0x407/0x6d0
+[ 1428.846971]  ? f2fs_read_inline_data+0x3b0/0x3b0
+[ 1428.846978]  ? __get_node_page+0x335/0x6b0
+[ 1428.846987]  f2fs_convert_inline_inode+0x41b/0x500
+[ 1428.846994]  ? f2fs_convert_inline_page+0x6d0/0x6d0
+[ 1428.847000]  ? kasan_unpoison_shadow+0x31/0x40
+[ 1428.847005]  ? kasan_kmalloc+0xa6/0xd0
+[ 1428.847024]  f2fs_file_mmap+0x79/0xc0
+[ 1428.847029]  mmap_region+0x58b/0x880
+[ 1428.847037]  ? arch_get_unmapped_area+0x370/0x370
+[ 1428.847042]  do_mmap+0x55b/0x7a0
+[ 1428.847048]  vm_mmap_pgoff+0x16f/0x1c0
+[ 1428.847055]  ? vma_is_stack_for_current+0x50/0x50
+[ 1428.847062]  ? __fsnotify_update_child_dentry_flags.part.1+0x160/0x160
+[ 1428.847068]  ? do_sys_open+0x206/0x2a0
+[ 1428.847073]  ? __fget+0xb4/0x100
+[ 1428.847079]  ksys_mmap_pgoff+0x278/0x360
+[ 1428.847085]  ? find_mergeable_anon_vma+0x50/0x50
+[ 1428.847091]  do_syscall_64+0x73/0x160
+[ 1428.847098]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+[ 1428.847102] RIP: 0033:0x7fb1430766ba
+[ 1428.847103] Code: 89 f5 41 54 49 89 fc 55 53 74 35 49 63 e8 48 63 da 4d 89 f9 49 89 e8 4d 63 d6 48 89 da 4c 89 ee 4c 89 e7 b8 09 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 56 5b 5d 41 5c 41 5d 41 5e 41 5f c3 0f 1f 00
+[ 1428.847162] RSP: 002b:00007ffc651d9388 EFLAGS: 00000246 ORIG_RAX: 0000000000000009
+[ 1428.847167] RAX: ffffffffffffffda RBX: 0000000000000001 RCX: 00007fb1430766ba
+[ 1428.847170] RDX: 0000000000000001 RSI: 0000000000001000 RDI: 0000000000000000
+[ 1428.847173] RBP: 0000000000000003 R08: 0000000000000003 R09: 0000000000000000
+[ 1428.847176] R10: 0000000000008002 R11: 0000000000000246 R12: 0000000000000000
+[ 1428.847179] R13: 0000000000001000 R14: 0000000000008002 R15: 0000000000000000
+
+[ 1428.847252] Allocated by task 2683:
+[ 1428.847372]  kasan_kmalloc+0xa6/0xd0
+[ 1428.847380]  kmem_cache_alloc+0xc8/0x1e0
+[ 1428.847385]  getname_flags+0x73/0x2b0
+[ 1428.847390]  user_path_at_empty+0x1d/0x40
+[ 1428.847395]  vfs_statx+0xc1/0x150
+[ 1428.847401]  __do_sys_newlstat+0x7e/0xd0
+[ 1428.847405]  do_syscall_64+0x73/0x160
+[ 1428.847411]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[ 1428.847466] Freed by task 2683:
+[ 1428.847566]  __kasan_slab_free+0x137/0x190
+[ 1428.847571]  kmem_cache_free+0x85/0x1e0
+[ 1428.847575]  filename_lookup+0x191/0x280
+[ 1428.847580]  vfs_statx+0xc1/0x150
+[ 1428.847585]  __do_sys_newlstat+0x7e/0xd0
+[ 1428.847590]  do_syscall_64+0x73/0x160
+[ 1428.847596]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+
+[ 1428.847648] The buggy address belongs to the object at ffff880194483300
+                which belongs to the cache names_cache of size 4096
+[ 1428.847946] The buggy address is located 576 bytes inside of
+                4096-byte region [ffff880194483300, ffff880194484300)
+[ 1428.848234] The buggy address belongs to the page:
+[ 1428.848366] page:ffffea0006512000 count:1 mapcount:0 mapping:ffff8801f3586380 index:0x0 compound_mapcount: 0
+[ 1428.848606] flags: 0x17fff8000008100(slab|head)
+[ 1428.848737] raw: 017fff8000008100 dead000000000100 dead000000000200 ffff8801f3586380
+[ 1428.848931] raw: 0000000000000000 0000000000070007 00000001ffffffff 0000000000000000
+[ 1428.849122] page dumped because: kasan: bad access detected
+
+[ 1428.849305] Memory state around the buggy address:
+[ 1428.849436]  ffff880194483400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.849620]  ffff880194483480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.849804] >ffff880194483500: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.849985]                                            ^
+[ 1428.850120]  ffff880194483580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.850303]  ffff880194483600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+[ 1428.850498] ==================================================================
+
+Reported-by: Wen Xu <wen.xu@gatech.edu>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <alexander.levin@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+[bwh: Backported to 4.4: adjust context]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+---
+ fs/f2fs/inline.c |   21 +++++++++++++++++++++
+ 1 file changed, 21 insertions(+)
+
+--- a/fs/f2fs/inline.c
++++ b/fs/f2fs/inline.c
+@@ -127,6 +127,16 @@ int f2fs_convert_inline_page(struct dnod
+ 	if (err)
+ 		return err;
+ 
++	if (unlikely(dn->data_blkaddr != NEW_ADDR)) {
++		f2fs_put_dnode(dn);
++		set_sbi_flag(fio.sbi, SBI_NEED_FSCK);
++		f2fs_msg(fio.sbi->sb, KERN_WARNING,
++			"%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, "
++			"run fsck to fix.",
++			__func__, dn->inode->i_ino, dn->data_blkaddr);
++		return -EINVAL;
++	}
++
+ 	f2fs_wait_on_page_writeback(page, DATA);
+ 
+ 	if (PageUptodate(page))
+@@ -386,6 +396,17 @@ static int f2fs_move_inline_dirents(stru
+ 	if (err)
+ 		goto out;
+ 
++	if (unlikely(dn.data_blkaddr != NEW_ADDR)) {
++		f2fs_put_dnode(&dn);
++		set_sbi_flag(F2FS_P_SB(page), SBI_NEED_FSCK);
++		f2fs_msg(F2FS_P_SB(page)->sb, KERN_WARNING,
++			"%s: corrupted inline inode ino=%lx, i_addr[0]:0x%x, "
++			"run fsck to fix.",
++			__func__, dir->i_ino, dn.data_blkaddr);
++		err = -EINVAL;
++		goto out;
++	}
++
+ 	f2fs_wait_on_page_writeback(page, DATA);
+ 	zero_user_segment(page, MAX_INLINE_DATA, PAGE_CACHE_SIZE);
+ 
+
 
