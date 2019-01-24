@@ -7,55 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3586BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 418EEC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05A5C21726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 120A6217D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:53:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359611;
-	bh=9sUUDAQbNaNMnWoHs+JxnZvhk4tK10wNsw+8bMXxJ4I=;
+	s=default; t=1548359616;
+	bh=ITfGltPSW1MCBXn6Yper8sfocVjpbWbv2zhYkL33lQc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EujSODIsMtt8dASQZG96UTM8lY+I0+4GnqJwEnFe5or9x9CsDxVzAFniBfPRToImL
-	 hVWtw1e4oDDEnZaJtrdrJBgsfjBBpBnJDJ8VNrK+QrByX/21XpPPcbS2O/0C2GjcH/
-	 DK4LKl+Ku73sXAjg5y/5D3xZMr3wWFchMmkxUpFg=
+	b=zLgu0EqP1JPSkPbGs3baqKZaMYon3sQOa5xyU4tGflwKQfemLPK5Lu1Rzz+IRAXso
+	 UHL4HeT4pfdE+5MHgoU3dsLx+gNnLWlot1p1xp8TO9vJiSED/ALoROv+DeNNNwSfV5
+	 U6YKcaob7y09S+NSFEkX/qc4eQtLXthoethai75s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730953AbfAXTx2 (ORCPT
+        id S1732772AbfAXTiH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:53:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38410 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:38:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732241AbfAXTiO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:38:14 -0500
+        id S1730445AbfAXTiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:38:04 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5F5F121904;
-        Thu, 24 Jan 2019 19:38:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F14E121907;
+        Thu, 24 Jan 2019 19:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358693;
-        bh=9sUUDAQbNaNMnWoHs+JxnZvhk4tK10wNsw+8bMXxJ4I=;
+        s=default; t=1548358683;
+        bh=ITfGltPSW1MCBXn6Yper8sfocVjpbWbv2zhYkL33lQc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sZjX4fdTaWBVIyrNaPHsgUEm3TWithFWzHcseXtO89LszxawAnRiiV5Ha/FWTzF1u
-         T9oVl8DzwhBB2WlWXGxVZvewcB4pgqIYFiaRTuAK5iCY32opadLFD0VX8n7EledKJy
-         xTNEQsXArvJKfMGI2RaePHJg/16CZ/tD8lmrfbM0=
+        b=WSkzPORroWtRLzr7E+6x+i1eFukhP/MTwN9UfQDYV8VaEPafOTwlyVqW4FmmLVO3b
+         S0QssBb52iaPHALtkFW7hT2DwKr2oSgvkKjRmDVWQ6epU0HarIS1eXrSJ4GskoJBOi
+         vwvQi1w2o9PuB5/p7AEpVK2I5FU2tk+ZLZsCKkfw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Peter Xu <peterx@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        "Kirill A. Shutemov" <kirill@shutemov.name>,
-        Hugh Dickins <hughd@google.com>,
-        Pavel Emelyanov <xemul@virtuozzo.com>,
-        Pravin Shedge <pravin.shedge4linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+        stable@vger.kernel.org, Zorro Lang <zlang@redhat.com>,
+        Eric Sandeen <sandeen@redhat.com>,
+        Eric Sandeen <sandeen@sandeen.net>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 098/106] userfaultfd: clear flag if remap event not enabled
-Date:   Thu, 24 Jan 2019 20:20:55 +0100
-Message-Id: <20190124190212.192261567@linuxfoundation.org>
+Subject: [PATCH 4.19 094/106] iomap: dont search past page end in iomap_is_partially_uptodate
+Date:   Thu, 24 Jan 2019 20:20:51 +0100
+Message-Id: <20190124190211.970761331@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -74,57 +68,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 3cfd22be0ad663248fadfc8f6ffa3e255c394552 ]
+[ Upstream commit 3cc31fa65d85610574c0f6a474e89f4c419923d5 ]
 
-When the process being tracked does mremap() without
-UFFD_FEATURE_EVENT_REMAP on the corresponding tracking uffd file handle,
-we should not generate the remap event, and at the same time we should
-clear all the uffd flags on the new VMA.  Without this patch, we can still
-have the VM_UFFD_MISSING|VM_UFFD_WP flags on the new VMA even the fault
-handling process does not even know the existance of the VMA.
+iomap_is_partially_uptodate() is intended to check wither blocks within
+the selected range of a not-uptodate page are uptodate; if the range we
+care about is up to date, it's an optimization.
 
-Link: http://lkml.kernel.org/r/20181211053409.20317-1-peterx@redhat.com
-Signed-off-by: Peter Xu <peterx@redhat.com>
-Reviewed-by: Andrea Arcangeli <aarcange@redhat.com>
-Acked-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Reviewed-by: William Kucharski <william.kucharski@oracle.com>
-Cc: Andrea Arcangeli <aarcange@redhat.com>
-Cc: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Cc: Kirill A. Shutemov <kirill@shutemov.name>
-Cc: Hugh Dickins <hughd@google.com>
-Cc: Pavel Emelyanov <xemul@virtuozzo.com>
-Cc: Pravin Shedge <pravin.shedge4linux@gmail.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+However, the iomap implementation continues to check all blocks up to
+from+count, which is beyond the page, and can even be well beyond the
+iop->uptodate bitmap.
+
+I think the worst that will happen is that we may eventually find a zero
+bit and return "not partially uptodate" when it would have otherwise
+returned true, and skip the optimization.  Still, it's clearly an invalid
+memory access that must be fixed.
+
+So: fix this by limiting the search to within the page as is done in the
+non-iomap variant, block_is_partially_uptodate().
+
+Zorro noticed thiswhen KASAN went off for 512 byte blocks on a 64k
+page system:
+
+ BUG: KASAN: slab-out-of-bounds in iomap_is_partially_uptodate+0x1a0/0x1e0
+ Read of size 8 at addr ffff800120c3a318 by task fsstress/22337
+
+Reported-by: Zorro Lang <zlang@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@redhat.com>
+Signed-off-by: Eric Sandeen <sandeen@sandeen.net>
+Reviewed-by: Darrick J. Wong <darrick.wong@oracle.com>
+Signed-off-by: Darrick J. Wong <darrick.wong@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/userfaultfd.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ fs/iomap.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 7a85e609fc27..d8b8323e80f4 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -736,10 +736,18 @@ void mremap_userfaultfd_prep(struct vm_area_struct *vma,
- 	struct userfaultfd_ctx *ctx;
- 
- 	ctx = vma->vm_userfaultfd_ctx.ctx;
--	if (ctx && (ctx->features & UFFD_FEATURE_EVENT_REMAP)) {
-+
-+	if (!ctx)
-+		return;
-+
-+	if (ctx->features & UFFD_FEATURE_EVENT_REMAP) {
- 		vm_ctx->ctx = ctx;
- 		userfaultfd_ctx_get(ctx);
- 		WRITE_ONCE(ctx->mmap_changing, true);
-+	} else {
-+		/* Drop uffd context if remap feature not enabled */
-+		vma->vm_userfaultfd_ctx = NULL_VM_UFFD_CTX;
-+		vma->vm_flags &= ~(VM_UFFD_WP | VM_UFFD_MISSING);
- 	}
+diff --git a/fs/iomap.c b/fs/iomap.c
+index ec15cf2ec696..e57fb1e534c5 100644
+--- a/fs/iomap.c
++++ b/fs/iomap.c
+@@ -488,16 +488,29 @@ done:
  }
+ EXPORT_SYMBOL_GPL(iomap_readpages);
  
++/*
++ * iomap_is_partially_uptodate checks whether blocks within a page are
++ * uptodate or not.
++ *
++ * Returns true if all blocks which correspond to a file portion
++ * we want to read within the page are uptodate.
++ */
+ int
+ iomap_is_partially_uptodate(struct page *page, unsigned long from,
+ 		unsigned long count)
+ {
+ 	struct iomap_page *iop = to_iomap_page(page);
+ 	struct inode *inode = page->mapping->host;
+-	unsigned first = from >> inode->i_blkbits;
+-	unsigned last = (from + count - 1) >> inode->i_blkbits;
++	unsigned len, first, last;
+ 	unsigned i;
+ 
++	/* Limit range to one page */
++	len = min_t(unsigned, PAGE_SIZE - from, count);
++
++	/* First and last blocks in range within page */
++	first = from >> inode->i_blkbits;
++	last = (from + len - 1) >> inode->i_blkbits;
++
+ 	if (iop) {
+ 		for (i = first; i <= last; i++)
+ 			if (!test_bit(i, iop->uptodate))
 -- 
 2.19.1
 
