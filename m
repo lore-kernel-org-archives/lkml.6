@@ -2,51 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F45CC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D4EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E1FA218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A12A9218E2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358194;
-	bh=sbstmgA5gGQnBgZ5bozlWBgIhzJViSOCoslVRk0dkug=;
+	s=default; t=1548358197;
+	bh=8ZbJEhk1vvJoWgcK0ypMV6ZSJFWZkLy9T5rk89taAEE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DJPnU6w1J5uYF+WrdCYIBlszTYiH7pGPP4W1yX2iiKevFr6CFoLC6NZvrEU8KXRzy
-	 wxl6yrvbV+jkSNUnvySj1yoYNCBjbByFdsAIIeuO42p04UhIylhNATpbGTrr212QkK
-	 CVeZ5l0HXRc2FdDPtSlVYcnkWbUjtxYWhxyjTCVE=
+	b=kGrqjKh/euigXCXGX8gR2SZLH4fjDBOtHJN45r/LFq3ANM+tPoInN0GZGraodaHUo
+	 AU5tmNCKU3Ev6ouu7XyINx+paABdivojTbi0ZTlUT4sf3pkv+Ecr88y/OvtwrGqhVM
+	 wwCazksE4OXM0gNFkdJna3FYwQH+sXV/YEaF9A48=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731290AbfAXT3x (ORCPT
+        id S1731298AbfAXT34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57192 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:29:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57252 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730032AbfAXT3u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:50 -0500
+        id S1730558AbfAXT3x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:53 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E2ACA218E2;
-        Thu, 24 Jan 2019 19:29:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2F024218D4;
+        Thu, 24 Jan 2019 19:29:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358189;
-        bh=sbstmgA5gGQnBgZ5bozlWBgIhzJViSOCoslVRk0dkug=;
+        s=default; t=1548358192;
+        bh=8ZbJEhk1vvJoWgcK0ypMV6ZSJFWZkLy9T5rk89taAEE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JNO3EtE7Ku1wBP0N1mleQBCq7qU8R1KZld5lWdYGE+lFXcm2qlBUmH+t+aRvSadWy
-         Ueny6XrYBcsAPLYH0Co4QYCF7EoUjd+BKaQV5xb1/IqrRuqL4/tQf6/wjWbYi26ngm
-         CpDNB0SjUNRs2Tq+HZ6TtgODCDTgGS/4HYHedP4M=
+        b=R5YR+qsuTNLZs+o/vCwkVnD0LaN2wquzfIZCCC9F1EJHr6RcBgVUxqv+Xouxa/BtG
+         GnwT2iz3WQy8GnNsi9vMLiOR5S3ZIADSK5EiiUXKCZOcQSshFib8oVLyBO2+Ybnee7
+         LoYj0ESrF/c9nYKpy+gCgyeVC0EEui/zNJ/xSE3A=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.9 03/39] ipv6: Take rcu_read_lock in __inet6_bind for mapped addresses
-Date:   Thu, 24 Jan 2019 20:20:06 +0100
-Message-Id: <20190124190448.351697285@linuxfoundation.org>
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 04/39] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
+Date:   Thu, 24 Jan 2019 20:20:07 +0100
+Message-Id: <20190124190448.386339810@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -65,44 +67,131 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
 
-[ Upstream commit d4a7e9bb74b5aaf07b89f6531c080b1130bdf019 ]
+In the past, Asus firmwares would change the panel backlight directly
+through the EC when the display off hotkey (Fn+F7) was pressed, and
+only notify the OS of such change, with 0x33 when the LCD was ON and
+0x34 when the LCD was OFF. These are currently mapped to
+KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
 
-I realized the last patch calls dev_get_by_index_rcu in a branch not
-holding the rcu lock. Add the calls to rcu_read_lock and rcu_read_unlock.
+Most recently the EC on Asus most machines lost ability to toggle the
+LCD backlight directly, but unless the OS informs the firmware it is
+going to handle the display toggle hotkey events, the firmware still
+tries change the brightness through the EC, to no effect. The end result
+is a long list (at Endless we counted 11) of Asus laptop models where
+the display toggle hotkey does not perform any action. Our firmware
+engineers contacts at Asus were surprised that there were still machines
+out there with the old behavior.
 
-Fixes: ec90ad334986 ("ipv6: Consider sk_bound_dev_if when binding a socket to a v4 mapped address")
-Signed-off-by: David Ahern <dsahern@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
+tells the firmware that it should let the OS handle the display toggle
+event, in which case it will simply notify the OS of a key press with
+0x35, as shown by the DSDT excerpts bellow.
+
+ Scope (_SB)
+ {
+     (...)
+
+     Device (ATKD)
+     {
+         (...)
+
+         Name (_WDG, Buffer (0x28)
+         {
+             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
+             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
+             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
+             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
+             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
+         })
+         Method (WMNB, 3, Serialized)
+         {
+             CreateDWordField (Arg2, Zero, IIA0)
+             CreateDWordField (Arg2, 0x04, IIA1)
+             Local0 = (Arg1 & 0xFFFFFFFF)
+
+             (...)
+
+             If ((Local0 == 0x53564544))
+             {
+                 (...)
+
+                 If ((IIA0 == 0x00050011))
+                 {
+                     If ((IIA1 == 0x02))
+                     {
+                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
+                         ^^PCI0.SBRG.EC0.BLCT = One
+                     }
+
+                     Return (One)
+                 }
+             }
+             (...)
+         }
+         (...)
+     }
+     (...)
+ }
+ (...)
+
+ Scope (_SB.PCI0.SBRG.EC0)
+ {
+     (...)
+
+     Name (BLCT, Zero)
+
+     (...)
+
+     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
+     {
+         If ((BLCT == Zero))
+         {
+             Local0 = One
+             Local0 = RPIN (0x72)
+             Local0 ^= One
+             SPIN (0x72, Local0)
+             If (ATKP)
+             {
+                 Local0 = (0x34 - Local0)
+                 ^^^^ATKD.IANE (Local0)
+             }
+         }
+         ElseIf ((BLCT == One))
+         {
+             If (ATKP)
+             {
+                 ^^^^ATKD.IANE (0x35)
+             }
+         }
+     }
+     (...)
+ }
+
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/af_inet6.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/platform/x86/asus-wmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -317,17 +317,20 @@ int inet6_bind(struct socket *sock, stru
- 			goto out;
- 		}
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index ed277685da1d..10bd13b30178 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -2154,7 +2154,8 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 		err = asus_wmi_backlight_init(asus);
+ 		if (err && err != -ENODEV)
+ 			goto fail_backlight;
+-	}
++	} else
++		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
  
-+		rcu_read_lock();
- 		if (sk->sk_bound_dev_if) {
- 			dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
- 			if (!dev) {
- 				err = -ENODEV;
--				goto out;
-+				goto out_unlock;
- 			}
- 		}
- 
- 		/* Reproduce AF_INET checks to make the bindings consistent */
- 		v4addr = addr->sin6_addr.s6_addr32[3];
- 		chk_addr_ret = inet_addr_type_dev_table(net, dev, v4addr);
-+		rcu_read_unlock();
-+
- 		if (!net->ipv4.sysctl_ip_nonlocal_bind &&
- 		    !(inet->freebind || inet->transparent) &&
- 		    v4addr != htonl(INADDR_ANY) &&
+ 	status = wmi_install_notify_handler(asus->driver->event_guid,
+ 					    asus_wmi_notify, asus);
+-- 
+2.19.1
+
 
 
