@@ -2,128 +2,140 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45939C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10795C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:12:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08BBE207E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:11:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VrW4JPf/"
+	by mail.kernel.org (Postfix) with ESMTP id DED9421855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:12:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728043AbfAXNLr (ORCPT
+        id S1728079AbfAXNMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:11:47 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38319 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbfAXNLr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 08:11:47 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so5177604lja.5
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 05:11:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=M5kM16zyd/EiORNWuO/i8/IoR4fv7qnZKxV0scf9zO0=;
-        b=VrW4JPf/trBoEUxZFLak6MnFQ8yOzjvXFGiMb9sx4ubbFBi75cuglw5eeLfxqPelMv
-         YDQn+65yjQci49S3NHEXhk0euqnRBJOmnh4MkX8rwNcftqwRL6HMR8JioMqEn77rhbdB
-         Usa/rr9JJXzLGo+AIYKstriVHWDkesqk60pIM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=M5kM16zyd/EiORNWuO/i8/IoR4fv7qnZKxV0scf9zO0=;
-        b=XJJZYbQ+w5S/tA5yg1cKYBeKhPwxgcRxAZlG9o1qkfCHMWZMhKrWvCn2buIgCWyDOo
-         ouQkIPkpQt1h8SAEUAg6kdsz90PIzrfywMk32+6k/ARfRY2MGKFx9xT6BMOxk+1BCXuC
-         BNZZupFbpU9oHpcnJPPcEjIrwRxKdjSqwqwEt7uMdxkASSdEhoARQMLIqR+miM0u6hht
-         3bad/R0aYyVQFtfvdtllmogz5uQVweTvnR2Zo6obOa4AmVOn+JLiZOeITqlBSY7vTTwQ
-         hdrFc+wy7NRgDcwAWIhBZJI70yiu139HOcTdaJM5zfwbR+8N3SERDTloCq19ZUgTkUUr
-         jmYA==
-X-Gm-Message-State: AJcUukcEg/BNWdK2EJ0F4RE4pwE8gRw97oFfdYgLFVT9vvI2VWVYcOwT
-        etdJuiAJrA1Xif7Zo5ueWm9LLr1987I=
-X-Google-Smtp-Source: ALg8bN6/8ayVgXcnEBPQ8Fuz4g3lfP7Kq2EuzDauja88HlWUbwnFuy8qiW726xfHyP5pgA9VqBr7Gg==
-X-Received: by 2002:a2e:a0d5:: with SMTP id f21-v6mr5576293ljm.98.1548335503991;
-        Thu, 24 Jan 2019 05:11:43 -0800 (PST)
-Received: from localhost ([195.238.92.223])
-        by smtp.gmail.com with ESMTPSA id 18-v6sm982144ljg.83.2019.01.24.05.11.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 05:11:42 -0800 (PST)
-From:   Igor Opaniuk <igor.opaniuk@linaro.org>
-To:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        tee-dev@lists.linaro.org
-Cc:     jerome.forissier@linaro.org, jens.wiklander@linaro.org,
-        prime.zeng@hisilicon.com, sumit.garg@linaro.org
-Subject: [PATCH 1/1] tee: add cancellation support to client interface
-Date:   Thu, 24 Jan 2019 15:11:41 +0200
-Message-Id: <1548335501-7868-1-git-send-email-igor.opaniuk@linaro.org>
-X-Mailer: git-send-email 2.7.4
+        Thu, 24 Jan 2019 08:12:19 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53234 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727798AbfAXNMS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 08:12:18 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id EC6AE796E5;
+        Thu, 24 Jan 2019 13:12:17 +0000 (UTC)
+Received: from vitty.brq.redhat.com.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DDD5B6CDB0;
+        Thu, 24 Jan 2019 13:12:14 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Maya Nakamura <m.maya.nakamura@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        driverdev-devel@linuxdriverproject.org, haiyangz@microsoft.com,
+        marcelo.cerri@canonical.com, lorenzo.pieralisi@arm.com,
+        bhelgaas@google.com, linux-pci@vger.kernel.org, kys@microsoft.com,
+        sthemmin@microsoft.com, olaf@aepfle.de, apw@canonical.com,
+        jasowang@redhat.com, mikelley@microsoft.com,
+        Alexander.Levin@microsoft.com
+Subject: Re: [PATCH 1/2] PCI: hv: Replace hv_vp_set with hv_vpset
+In-Reply-To: <87ffdc2eb0642301516378feb1416cf7450bf6c1.1548232616.git.m.maya.nakamura@gmail.com>
+References: <cover.1548232616.git.m.maya.nakamura@gmail.com> <87ffdc2eb0642301516378feb1416cf7450bf6c1.1548232616.git.m.maya.nakamura@gmail.com>
+Date:   Thu, 24 Jan 2019 14:12:13 +0100
+Message-ID: <87sgxi19oy.fsf@vitty.brq.redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 24 Jan 2019 13:12:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support of cancellation request to the TEE kernel internal
-client interface. Can be used by software TPM drivers, that leverage
-TEE under the hood (for instance in TPM2.0 mobile profile), for requesting
-cancellation of time-consuming operations (RSA key-pair generation etc.).
+Maya Nakamura <m.maya.nakamura@gmail.com> writes:
 
-Signed-off-by: Igor Opaniuk <igor.opaniuk@linaro.org>
----
- drivers/tee/tee_core.c  | 12 ++++++++++++
- include/linux/tee_drv.h | 14 ++++++++++++++
- 2 files changed, 26 insertions(+)
+> Remove a duplicate definition of VP set (hv_vp_set) and use the common
+> definition (hv_vpset) that is used in other places.
+>
+> Signed-off-by: Maya Nakamura <m.maya.nakamura@gmail.com>
+> ---
+>  drivers/pci/controller/pci-hyperv.c | 25 ++++++++++++-------------
+>  1 file changed, 12 insertions(+), 13 deletions(-)
+>
+> diff --git a/drivers/pci/controller/pci-hyperv.c b/drivers/pci/controller/pci-hyperv.c
+> index 9ba4d12c179c..da8b58d8630d 100644
+> --- a/drivers/pci/controller/pci-hyperv.c
+> +++ b/drivers/pci/controller/pci-hyperv.c
+> @@ -393,12 +393,6 @@ struct hv_interrupt_entry {
+>  
+>  #define HV_VP_SET_BANK_COUNT_MAX	5 /* current implementation limit */
+>  
+> -struct hv_vp_set {
+> -	u64	format;			/* 0 (HvGenericSetSparse4k) */
+> -	u64	valid_banks;
+> -	u64	masks[HV_VP_SET_BANK_COUNT_MAX];
+> -};
+> -
+>  /*
+>   * flags for hv_device_interrupt_target.flags
+>   */
+> @@ -410,7 +404,7 @@ struct hv_device_interrupt_target {
+>  	u32	flags;
+>  	union {
+>  		u64		 vp_mask;
+> -		struct hv_vp_set vp_set;
+> +		struct hv_vpset vp_set;
+>  	};
+>  };
+>  
+> @@ -460,12 +454,16 @@ struct hv_pcibus_device {
+>  	struct msi_controller msi_chip;
+>  	struct irq_domain *irq_domain;
+>  
+> -	/* hypercall arg, must not cross page boundary */
+> -	struct retarget_msi_interrupt retarget_msi_interrupt_params;
+> -
+>  	spinlock_t retarget_msi_interrupt_lock;
+>  
+>  	struct workqueue_struct *wq;
+> +
+> +	/* hypercall arg, must not cross page boundary */
+> +	struct retarget_msi_interrupt retarget_msi_interrupt_params;
+> +
+> +	/*
+> +	 * Don't put anything here: retarget_msi_interrupt_params must be last
+> +	 */
 
-diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-index 7b2bb4c..aba71a8 100644
---- a/drivers/tee/tee_core.c
-+++ b/drivers/tee/tee_core.c
-@@ -1027,6 +1027,18 @@ int tee_client_invoke_func(struct tee_context *ctx,
- }
- EXPORT_SYMBOL_GPL(tee_client_invoke_func);
- 
-+int tee_client_cancel_req(struct tee_context *ctx,
-+			  u32 cancel_id,
-+			  u32 session)
-+{
-+
-+	if (!ctx->teedev->desc->ops->cancel_req)
-+		return -EINVAL;
-+	return ctx->teedev->desc->ops->cancel_req(ctx, cancel_id,
-+						  session);
-+}
-+EXPORT_SYMBOL_GPL(tee_client_cancel_req);
-+
- static int __init tee_init(void)
- {
- 	int rc;
-diff --git a/include/linux/tee_drv.h b/include/linux/tee_drv.h
-index 6cfe058..62a0b56 100644
---- a/include/linux/tee_drv.h
-+++ b/include/linux/tee_drv.h
-@@ -526,6 +526,20 @@ int tee_client_invoke_func(struct tee_context *ctx,
- 			   struct tee_ioctl_invoke_arg *arg,
- 			   struct tee_param *param);
- 
-+/**
-+ * tee_client_cancel_req() - Request cancellation of the previous open-session
-+ * or invoke-command operations in a Trusted Application
-+ * @ctx:       TEE Context
-+ * @arg:       Unique cancel request id
-+ * @param:     Session id
-+ *
-+ * Returns < 0 on error else see @arg->ret for result.
-+ */
-+int tee_client_cancel_req(struct tee_context *ctx,
-+			  u32 cancel_id,
-+			  u32 session);
-+
-+
- static inline bool tee_param_is_memref(struct tee_param *param)
- {
- 	switch (param->attr & TEE_IOCTL_PARAM_ATTR_TYPE_MASK) {
+
+This change seems to be unrelated and not anyhow described in the commit
+message - or did I miss something?
+
+>  };
+>  
+>  /*
+> @@ -955,12 +953,13 @@ static void hv_irq_unmask(struct irq_data *data)
+>  		 */
+>  		params->int_target.flags |=
+>  			HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET;
+> -		params->int_target.vp_set.valid_banks =
+> +		params->int_target.vp_set.valid_bank_mask =
+>  			(1ull << HV_VP_SET_BANK_COUNT_MAX) - 1;
+>  
+>  		/*
+>  		 * var-sized hypercall, var-size starts after vp_mask (thus
+> -		 * vp_set.format does not count, but vp_set.valid_banks does).
+> +		 * vp_set.format does not count, but vp_set.valid_bank_mask
+> +		 * does).
+>  		 */
+>  		var_size = 1 + HV_VP_SET_BANK_COUNT_MAX;
+>  
+> @@ -974,7 +973,7 @@ static void hv_irq_unmask(struct irq_data *data)
+>  				goto exit_unlock;
+>  			}
+>  
+> -			params->int_target.vp_set.masks[cpu_vmbus / 64] |=
+> +			params->int_target.vp_set.bank_contents[cpu_vmbus / 64]	|=
+>  				(1ULL << (cpu_vmbus & 63));
+>  		}
+>  	} else {
+
 -- 
-2.7.4
-
+Vitaly
