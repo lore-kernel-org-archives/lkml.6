@@ -2,129 +2,158 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4398EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46934C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:36:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3C3A218D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:34:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12511218D2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:36:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727811AbfAXUe3 (ORCPT
+        id S1727689AbfAXUgy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:34:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43950 "EHLO mx1.redhat.com"
+        Thu, 24 Jan 2019 15:36:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38932 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726259AbfAXUe2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:34:28 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1726630AbfAXUgx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 15:36:53 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 18AD9AB43E;
-        Thu, 24 Jan 2019 20:34:28 +0000 (UTC)
-Received: from redhat.com (ovpn-121-100.rdu2.redhat.com [10.10.121.100])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 3B4681001F4A;
-        Thu, 24 Jan 2019 20:34:26 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 15:34:25 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Stefano Stabellini <sstabellini@kernel.org>
-Cc:     Peng Fan <peng.fan@nxp.com>,
-        "hch@infradead.org" <hch@infradead.org>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        "bjorn.andersson@linaro.org" <bjorn.andersson@linaro.org>,
-        "jliang@xilinx.com" <jliang@xilinx.com>
-Subject: Re: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
-Message-ID: <20190124145849-mutt-send-email-mst@kernel.org>
-References: <20190121050056.14325-1-peng.fan@nxp.com>
- <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260>
- <20190123071232.GA20526@infradead.org>
- <alpine.DEB.2.10.1901230935280.17936@sstabellini-ThinkPad-X260>
- <20190123211405.GA4971@infradead.org>
- <alpine.DEB.2.10.1901231427010.17936@sstabellini-ThinkPad-X260>
- <AM0PR04MB4481BE680ACB40E78456DA64889A0@AM0PR04MB4481.eurprd04.prod.outlook.com>
- <alpine.DEB.2.10.1901241110290.17936@sstabellini-ThinkPad-X260>
+        by mx1.redhat.com (Postfix) with ESMTPS id 54E5B7DCE7;
+        Thu, 24 Jan 2019 20:36:52 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-23.phx2.redhat.com [10.3.112.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7EA8260851;
+        Thu, 24 Jan 2019 20:36:40 +0000 (UTC)
+Date:   Thu, 24 Jan 2019 15:36:37 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Paul Moore <paul@paul-moore.com>
+Cc:     containers@lists.linux-foundation.org, linux-api@vger.kernel.org,
+        linux-audit@redhat.com, linux-kernel@vger.kernel.org,
+        ebiederm@xmission.com, luto@kernel.org, dhowells@redhat.com,
+        viro@zeniv.linux.org.uk, simo@redhat.com,
+        Eric Paris <eparis@parisplace.org>,
+        Serge Hallyn <serge@hallyn.com>
+Subject: Re: [PATCH ghak90 (was ghak32) V4 01/10] audit: collect audit task
+ parameters
+Message-ID: <20190124203637.2gve6epwwd4kdgbm@madcap2.tricolour.ca>
+References: <cover.1533065887.git.rgb@redhat.com>
+ <8e617ab568df28a66dfbe3284452de186b42fb0f.1533065887.git.rgb@redhat.com>
+ <CAHC9VhQFqs1SyvximK+8XJG5Fk3p9WsWhEV5sY6kksN9tc6eKw@mail.gmail.com>
+ <20181101220724.ggkqyf5kjv7lhabx@madcap2.tricolour.ca>
+ <CAHC9VhRU-Qss41CnV3mE32tXmZ3FQpy++t4yPUkh9CjuAzxYCA@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <alpine.DEB.2.10.1901241110290.17936@sstabellini-ThinkPad-X260>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Thu, 24 Jan 2019 20:34:28 +0000 (UTC)
+In-Reply-To: <CAHC9VhRU-Qss41CnV3mE32tXmZ3FQpy++t4yPUkh9CjuAzxYCA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Thu, 24 Jan 2019 20:36:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 11:14:53AM -0800, Stefano Stabellini wrote:
-> On Thu, 24 Jan 2019, Peng Fan wrote:
-> > Hi stefano,
-> > 
-> > > -----Original Message-----
-> > > From: Stefano Stabellini [mailto:sstabellini@kernel.org]
-> > > Sent: 2019年1月24日 7:44
-> > > To: hch@infradead.org
-> > > Cc: Stefano Stabellini <sstabellini@kernel.org>; Peng Fan
-> > > <peng.fan@nxp.com>; mst@redhat.com; jasowang@redhat.com;
-> > > xen-devel@lists.xenproject.org; linux-remoteproc@vger.kernel.org;
-> > > linux-kernel@vger.kernel.org; virtualization@lists.linux-foundation.org;
-> > > luto@kernel.org; jgross@suse.com; boris.ostrovsky@oracle.com;
-> > > bjorn.andersson@linaro.org; jliang@xilinx.com
-> > > Subject: Re: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
-> > > 
-> > > On Wed, 23 Jan 2019, hch@infradead.org wrote:
-> > > > On Wed, Jan 23, 2019 at 01:04:33PM -0800, Stefano Stabellini wrote:
-> > > > > If vring_use_dma_api is actually supposed to return true when
-> > > > > dma_dev->dma_mem is set, then both Peng's patch and the patch I
-> > > > > wrote are not fixing the real issue here.
-> > > > >
-> > > > > I don't know enough about remoteproc to know where the problem
-> > > > > actually lies though.
+On 2019-01-03 15:10, Paul Moore wrote:
+> On Thu, Nov 1, 2018 at 6:07 PM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > On 2018-10-19 19:15, Paul Moore wrote:
+> > > On Sun, Aug 5, 2018 at 4:32 AM Richard Guy Briggs <rgb@redhat.com> wrote:
+> > > > The audit-related parameters in struct task_struct should ideally be
+> > > > collected together and accessed through a standard audit API.
 > > > >
-> > > > The problem is the following:
+> > > > Collect the existing loginuid, sessionid and audit_context together in a
+> > > > new struct audit_task_info called "audit" in struct task_struct.
 > > > >
-> > > > Devices can declare a specific memory region that they want to use
-> > > > when the driver calls dma_alloc_coherent for the device, this is done
-> > > > using the shared-dma-pool DT attribute, which comes in two variants
-> > > > that would be a little to much to explain here.
+> > > > Use kmem_cache to manage this pool of memory.
+> > > > Un-inline audit_free() to be able to always recover that memory.
 > > > >
-> > > > remoteproc makes use of that because apparently the device can only
-> > > > communicate using that region.  But it then feeds back memory obtained
-> > > > with dma_alloc_coherent into the virtio code.  For that it calls
-> > > > vmalloc_to_page on the dma_alloc_coherent, which is a huge no-go for
-> > > > the ĐMA API and only worked accidentally on a few platform, and
-> > > > apparently arm64 just changed a few internals that made it stop
-> > > > working for remoteproc.
+> > > > See: https://github.com/linux-audit/audit-kernel/issues/81
 > > > >
-> > > > The right answer is to not use the DMA API to allocate memory from a
-> > > > device-speficic region, but to tie the driver directly into the DT
-> > > > reserved memory API in a way that allows it to easilt obtain a struct
-> > > > device for it.
-> > > 
-> > > If I understand correctly, Peng should be able to reproduce the problem on
-> > > native Linux without any Xen involvement simply by forcing
-> > > vring_use_dma_api to return true. Peng, can you confirm?
-> > 
-> > It is another issue without xen involvement, 
-> > There is an thread talking this: https://patchwork.kernel.org/patch/10742923/
-> > 
-> > Without xen, vring_use_dma_api will return false.
-> > With xen, if vring_use_dma_api returns true, it will dma_map_xx and trigger dump.
+> > > > Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+> > > > ---
+> > > >  include/linux/audit.h | 34 ++++++++++++++++++++++++----------
+> > > >  include/linux/sched.h |  5 +----
+> > > >  init/init_task.c      |  3 +--
+> > > >  init/main.c           |  2 ++
+> > > >  kernel/auditsc.c      | 51 ++++++++++++++++++++++++++++++++++++++++++---------
+> > > >  kernel/fork.c         |  4 +++-
+> > > >  6 files changed, 73 insertions(+), 26 deletions(-)
+> > >
+> > > ...
+> > >
+> > > > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > > > index 87bf02d..e117272 100644
+> > > > --- a/include/linux/sched.h
+> > > > +++ b/include/linux/sched.h
+> > > > @@ -873,10 +872,8 @@ struct task_struct {
+> > > >
+> > > >         struct callback_head            *task_works;
+> > > >
+> > > > -       struct audit_context            *audit_context;
+> > > >  #ifdef CONFIG_AUDITSYSCALL
+> > > > -       kuid_t                          loginuid;
+> > > > -       unsigned int                    sessionid;
+> > > > +       struct audit_task_info          *audit;
+> > > >  #endif
+> > > >         struct seccomp                  seccomp;
+> > >
+> > > Prior to this patch audit_context was available regardless of
+> > > CONFIG_AUDITSYSCALL, after this patch the corresponding audit_context
+> > > is only available when CONFIG_AUDITSYSCALL is defined.
+> >
+> > This was intentional since audit_context is not used when AUDITSYSCALL is
+> > disabled.  audit_alloc() was stubbed in that case to return 0.  audit_context()
+> > returned NULL.
+> >
+> > The fact that audit_context was still present in struct task_struct was an
+> > oversight in the two patches already accepted:
+> >         ("audit: use inline function to get audit context")
+> >         ("audit: use inline function to get audit context")
+> > that failed to hide or remove it from struct task_struct when it was no longer
+> > relevant.
 > 
-> It is true that for Xen on ARM DomUs it is not necessary today to return
-> true from vring_use_dma_api. However, returning true from
-> vring_use_dma_api should not break Linux. When the rpmesg issue is
-> fixed, this problem should also go away without any need for additional
-> changes on the xen side I think.
+> Okay, in that case let's pull this out and fix this separately from
+> the audit container ID patchset.
 
-Let less systems bypass the standard virtio logic (using feature bit
-to figure out bypassing DMA API), the better.
+Ok, that should be addressed by ghak104.
+
+> > On further digging, loginuid and sessionid (and audit_log_session_info) should
+> > be part of CONFIG_AUDIT scope and not CONFIG_AUDITSYSCALL since it is used in
+> > CONFIG_CHANGE, ANOM_LINK, FEATURE_CHANGE(, INTEGRITY_RULE), none of which are
+> > otherwise dependent on AUDITSYSCALL.
+> 
+> This looks like something else we should fix independently from this patchset.
+
+Ok, this should be addressed by ghak105.
+
+> > Looking ahead, contid should be treated like loginuid and sessionid, which are
+> > currently only available when syscall auditting is.
+> 
+> That seems reasonable.  Eventually it would be great if we got rid of
+> CONFIG_AUDITSYSCALL, but that is a separate issue, and something that
+> is going to require work from the different arch/ABI folks to ensure
+> everything is working properly.
+
+So I'll plan to rebase on ghak104 and ghak105 once they are upstreamed.
+I'll address the locking issues in the netns list and audit_sig_cid...
+
+> > Converting records from standalone to syscall and checking audit_dummy_context
+> > changes the nature of CONFIG_AUDIT/!CONFIG_AUDITSYSCALL separation.
+> > eg: ANOM_LINK accompanied by PATH record (which needed CWD addition to be
+> > complete anyways)
+
+This has been addressed in ghak105, moving ANOM_LINK to auditsc.
+
+> paul moore
+
+- RGB
+
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
