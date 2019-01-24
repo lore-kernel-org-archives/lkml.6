@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 027C9C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B619C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C77FB218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11ACA20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358756;
-	bh=ZmW6LaPcbhqsowCPZgoz8tatIrUdr9DgR1eJ7zWUaBE=;
+	s=default; t=1548358762;
+	bh=18iHws/v8K023HUUZlASxlDZdJ12BEE8wHwLRJukZL4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TAYZDsJjHvVKxVx/y91wG1jCqjpxLFt9vsnTZQrQzvcw1m760YQ49tXFT3Qeqlb3i
-	 /0pg+QfDAwx40DjvPYT7PFbJpQUm6aUke/bWhiR0jpHtR/6wHlcPvwo6yPFaYPM0b/
-	 WuvEMgW6QECo1MkFnPKBQ7S4dIKrtFXH8xaMW6Gk=
+	b=Bm+r8OogssiQxaEv1Gk8SQzr4/b7QCMfU/rhUiFDrOx243rBLaTzbe4WbiBMvVJZ1
+	 KY6wqTXUnTUsktSVrInAWDzXLqm5bweTtpNLzn6EY7YzvyuxRekoRaazfqnuPlEZuc
+	 vXA42B1jdiByJoFodSoezLcKcSGvv4QjXzsMfdoA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732639AbfAXTjP (ORCPT
+        id S1733039AbfAXTjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:39:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39336 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:39:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39362 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733001AbfAXTjM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:39:12 -0500
+        id S1729654AbfAXTjO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1AA5218D0;
-        Thu, 24 Jan 2019 19:39:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4942F20663;
+        Thu, 24 Jan 2019 19:39:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358751;
-        bh=ZmW6LaPcbhqsowCPZgoz8tatIrUdr9DgR1eJ7zWUaBE=;
+        s=default; t=1548358753;
+        bh=18iHws/v8K023HUUZlASxlDZdJ12BEE8wHwLRJukZL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dfu80UMe59/6kzA0Fw4RyUMkTVbKjKg5tsJKg9fZILRlj47pu6sNw+xSlBsDPgqPq
-         2iEpIPOsD9JNUxoS4FDn5tlTylr7bEZOcPvV4uHBwwxwKfLLLjNv9WQwg2Dr7o65m7
-         V+cimfWdz/WHEa8V2EXhNhJ7S/ibfaiy3gf/2R5E=
+        b=xQC71huz++Cq5EZ5EQnF7e785r5G8JX64IxLiKy0F0jsQv2H0gWxgza+BicQDjr19
+         WqWbY0c9TbuUEGhRis23uTJRG+aKbnelrny/kIx+aMN+QWj/J8p7eIGNdFznRL5+Z7
+         guYSI0A3eqWeRliPKVFT7sub4KPJLxmcUey3Ue5o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Yi Chen <yiche@redhat.com>,
-        Stefano Brivio <sbrivio@redhat.com>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        stable@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 014/127] netfilter: ipset: Allow matching on destination MAC address for mac and ipmac sets
-Date:   Thu, 24 Jan 2019 20:19:20 +0100
-Message-Id: <20190124190212.772985889@linuxfoundation.org>
+Subject: [PATCH 4.20 015/127] gpio: pl061: Move irq_chip definition inside struct pl061
+Date:   Thu, 24 Jan 2019 20:19:21 +0100
+Message-Id: <20190124190212.819891794@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,132 +67,84 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 8cc4ccf58379935f3ad456cc34e61c4e4c921d0e ]
+[ Upstream commit ed8dce4c6f726b7f3c6bf40859b92a9e32f189c1 ]
 
-There doesn't seem to be any reason to restrict MAC address
-matching to source MAC addresses in set types bitmap:ipmac,
-hash:ipmac and hash:mac. With this patch, and this setup:
+Keeping the irq_chip definition static will make it shared with multiple
+giochips in the system. This practice is considered to be bad and now we
+will get the below warning from gpiolib core:
 
-  ip netns add A
-  ip link add veth1 type veth peer name veth2 netns A
-  ip addr add 192.0.2.1/24 dev veth1
-  ip -net A addr add 192.0.2.2/24 dev veth2
-  ip link set veth1 up
-  ip -net A link set veth2 up
+"detected irqchip that is shared with multiple gpiochips: please fix the
+driver."
 
-  ip netns exec A ipset create test hash:mac
-  dst=$(ip netns exec A cat /sys/class/net/veth2/address)
-  ip netns exec A ipset add test ${dst}
-  ip netns exec A iptables -P INPUT DROP
-  ip netns exec A iptables -I INPUT -m set --match-set test dst -j ACCEPT
+Hence, move the irq_chip definition from static to `struct pl061` for
+using a unique irq_chip for each gpiochip.
 
-ipset will match packets based on destination MAC address:
-
-  # ping -c1 192.0.2.2 >/dev/null
-  # echo $?
-  0
-
-Reported-by: Yi Chen <yiche@redhat.com>
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_bitmap_ipmac.c | 10 +++++-----
- net/netfilter/ipset/ip_set_hash_ipmac.c   | 16 ++++++++++------
- net/netfilter/ipset/ip_set_hash_mac.c     | 10 +++++-----
- 3 files changed, 20 insertions(+), 16 deletions(-)
+ drivers/gpio/gpio-pl061.c | 21 ++++++++++-----------
+ 1 file changed, 10 insertions(+), 11 deletions(-)
 
-diff --git a/net/netfilter/ipset/ip_set_bitmap_ipmac.c b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-index c00b6a2e8e3c..13ade5782847 100644
---- a/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-+++ b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
-@@ -219,10 +219,6 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
- 	u32 ip;
+diff --git a/drivers/gpio/gpio-pl061.c b/drivers/gpio/gpio-pl061.c
+index 2afd9de84a0d..dc42571e6fdc 100644
+--- a/drivers/gpio/gpio-pl061.c
++++ b/drivers/gpio/gpio-pl061.c
+@@ -54,6 +54,7 @@ struct pl061 {
  
--	/* MAC can be src only */
--	if (!(opt->flags & IPSET_DIM_TWO_SRC))
--		return 0;
--
- 	ip = ntohl(ip4addr(skb, opt->flags & IPSET_DIM_ONE_SRC));
- 	if (ip < map->first_ip || ip > map->last_ip)
- 		return -IPSET_ERR_BITMAP_RANGE;
-@@ -233,7 +229,11 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
- 		return -EINVAL;
+ 	void __iomem		*base;
+ 	struct gpio_chip	gc;
++	struct irq_chip		irq_chip;
+ 	int			parent_irq;
  
- 	e.id = ip_to_id(map, ip);
--	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
-+
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
- 
- 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
+ #ifdef CONFIG_PM
+@@ -281,15 +282,6 @@ static int pl061_irq_set_wake(struct irq_data *d, unsigned int state)
+ 	return irq_set_irq_wake(pl061->parent_irq, state);
  }
-diff --git a/net/netfilter/ipset/ip_set_hash_ipmac.c b/net/netfilter/ipset/ip_set_hash_ipmac.c
-index 1ab5ed2f6839..fd87de3ed55b 100644
---- a/net/netfilter/ipset/ip_set_hash_ipmac.c
-+++ b/net/netfilter/ipset/ip_set_hash_ipmac.c
-@@ -103,7 +103,11 @@ hash_ipmac4_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
- 		return -EINVAL;
  
--	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
-+
- 	if (ether_addr_equal(e.ether, invalid_ether))
- 		return -EINVAL;
- 
-@@ -211,15 +215,15 @@ hash_ipmac6_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	};
- 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
- 
--	 /* MAC can be src only */
--	if (!(opt->flags & IPSET_DIM_TWO_SRC))
--		return 0;
+-static struct irq_chip pl061_irqchip = {
+-	.name		= "pl061",
+-	.irq_ack	= pl061_irq_ack,
+-	.irq_mask	= pl061_irq_mask,
+-	.irq_unmask	= pl061_irq_unmask,
+-	.irq_set_type	= pl061_irq_type,
+-	.irq_set_wake	= pl061_irq_set_wake,
+-};
 -
- 	if (skb_mac_header(skb) < skb->head ||
- 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
- 		return -EINVAL;
- 
--	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
+ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ {
+ 	struct device *dev = &adev->dev;
+@@ -328,6 +320,13 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	/*
+ 	 * irq_chip support
+ 	 */
++	pl061->irq_chip.name = dev_name(dev);
++	pl061->irq_chip.irq_ack	= pl061_irq_ack;
++	pl061->irq_chip.irq_mask = pl061_irq_mask;
++	pl061->irq_chip.irq_unmask = pl061_irq_unmask;
++	pl061->irq_chip.irq_set_type = pl061_irq_type;
++	pl061->irq_chip.irq_set_wake = pl061_irq_set_wake;
 +
- 	if (ether_addr_equal(e.ether, invalid_ether))
- 		return -EINVAL;
+ 	writeb(0, pl061->base + GPIOIE); /* disable irqs */
+ 	irq = adev->irq[0];
+ 	if (irq < 0) {
+@@ -336,14 +335,14 @@ static int pl061_probe(struct amba_device *adev, const struct amba_id *id)
+ 	}
+ 	pl061->parent_irq = irq;
  
-diff --git a/net/netfilter/ipset/ip_set_hash_mac.c b/net/netfilter/ipset/ip_set_hash_mac.c
-index f9d5a2a1e3d0..4fe5f243d0a3 100644
---- a/net/netfilter/ipset/ip_set_hash_mac.c
-+++ b/net/netfilter/ipset/ip_set_hash_mac.c
-@@ -81,15 +81,15 @@ hash_mac4_kadt(struct ip_set *set, const struct sk_buff *skb,
- 	struct hash_mac4_elem e = { { .foo[0] = 0, .foo[1] = 0 } };
- 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+-	ret = gpiochip_irqchip_add(&pl061->gc, &pl061_irqchip,
++	ret = gpiochip_irqchip_add(&pl061->gc, &pl061->irq_chip,
+ 				   0, handle_bad_irq,
+ 				   IRQ_TYPE_NONE);
+ 	if (ret) {
+ 		dev_info(&adev->dev, "could not add irqchip\n");
+ 		return ret;
+ 	}
+-	gpiochip_set_chained_irqchip(&pl061->gc, &pl061_irqchip,
++	gpiochip_set_chained_irqchip(&pl061->gc, &pl061->irq_chip,
+ 				     irq, pl061_irq_handler);
  
--	 /* MAC can be src only */
--	if (!(opt->flags & IPSET_DIM_ONE_SRC))
--		return 0;
--
- 	if (skb_mac_header(skb) < skb->head ||
- 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
- 		return -EINVAL;
- 
--	ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	if (opt->flags & IPSET_DIM_ONE_SRC)
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
-+	else
-+		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
-+
- 	if (is_zero_ether_addr(e.ether))
- 		return -EINVAL;
- 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
+ 	amba_set_drvdata(adev, pl061);
 -- 
 2.19.1
 
