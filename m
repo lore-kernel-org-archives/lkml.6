@@ -2,122 +2,99 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4C0C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:09:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C74AC282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:10:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1349621872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:09:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 39DA621872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:10:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JdGD3Z7o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727330AbfAXIJV (ORCPT
+        id S1727349AbfAXIKQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:09:21 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:51269 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727254AbfAXIJT (ORCPT
+        Thu, 24 Jan 2019 03:10:16 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:56696 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726199AbfAXIKP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:09:19 -0500
-Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gma4Z-0007uU-Qr; Thu, 24 Jan 2019 09:09:15 +0100
-Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gma4Y-0004Fb-Hv; Thu, 24 Jan 2019 09:09:14 +0100
-Date:   Thu, 24 Jan 2019 09:09:14 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 3/9] irq/irq_sim: provide irq_sim_get_type()
-Message-ID: <20190124080914.knftob7s4hpgz27n@pengutronix.de>
-References: <20190123141538.29408-1-brgl@bgdev.pl>
- <20190123141538.29408-4-brgl@bgdev.pl>
- <20190123191824.btuaq4s5rvc236n3@pengutronix.de>
- <CAMRc=Me58SFJOMxie5aTkOAHRqS7bjdOSAaZSY8wjPK7tntTfQ@mail.gmail.com>
+        Thu, 24 Jan 2019 03:10:15 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0O8A49h099682;
+        Thu, 24 Jan 2019 02:10:04 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548317404;
+        bh=nmlwrTBXW64ZPlXQdFP+YjWL0kWaAkTKk/ABJsJIwo8=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To;
+        b=JdGD3Z7o/8/efEp3z4ON9lSGHxmQgXpgeBAR5o5wSK7U6QEmwHX3qLcywh2u0djD9
+         0nM3TVSm2ezDKcFc6DIOhYqhOdXP77pX8r1GFobgfwwO8OY4i88gcAU/XzsylXj1bR
+         aJyG7tXwZtYR2M7pt0xq8T5PAmXy8F+QWmEn/4Pk=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0O8A4C0106863
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 24 Jan 2019 02:10:04 -0600
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 24
+ Jan 2019 02:10:04 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Thu, 24 Jan 2019 02:10:04 -0600
+Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0O8A1tY006223;
+        Thu, 24 Jan 2019 02:10:02 -0600
+Subject: Re: [PATCH v3 0/2] Support for eMMC in AM65x-evm
+To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <nm@ti.com>,
+        <t-kristo@ti.com>
+References: <20190117094424.7683-1-faiz_abbas@ti.com>
+From:   Faiz Abbas <faiz_abbas@ti.com>
+Message-ID: <d75a123b-9e97-a3d1-1e3c-41ef6942dffb@ti.com>
+Date:   Thu, 24 Jan 2019 13:43:01 +0530
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=Me58SFJOMxie5aTkOAHRqS7bjdOSAaZSY8wjPK7tntTfQ@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20190117094424.7683-1-faiz_abbas@ti.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 08:46:56AM +0100, Bartosz Golaszewski wrote:
-> śr., 23 sty 2019 o 20:18 Uwe Kleine-König
-> <u.kleine-koenig@pengutronix.de> napisał(a):
-> >
-> > Hello Bartosz,
-> >
-> > On Wed, Jan 23, 2019 at 03:15:32PM +0100, Bartosz Golaszewski wrote:
-> > > Provide a helper that allows users to retrieve the configured flow type
-> > > of dummy interrupts. That allows certain users to decide whether an irq
-> > > needs to be fired depending on its edge/level/... configuration.
-> >
-> > You don't talk about the .set_type callback here; is this intended?
-> >
-> > I wonder how you think this should be used. Assume the mockup-driver is
-> > directed to pull up a certain line, does it do something like that:
-> >
-> >         def mockup_setval(self, val):
-> >                 irqtype = irq_sim_get_type(...)
-> >                 if irqtype == LEVEL_HIGH:
-> >                         if val:
-> >                                 fire_irq()
-> >
-> >                 else if irqtype == EDGE_RISING:
-> >                         if val and not prev_val:
-> >                                 fire_irq()
-> >
-> >                 else if irqtype == LEVEL_LOW:
-> >                         if not val:
-> >                                 fire_irq()
-> >
-> >                 else if irqtype == EDGE_FALLING:
-> >                         if not val and prev_val:
-> >                                 fire_irq()
-> >
-> > I wonder if that logic should be done in the same place as where the irq
-> > type is stored. Otherwise that .type member is only a data store
-> > provided by the irq simulator. So I suggest to either move the variable
-> > that mirrors the current level of the line into the irq simulator, or
-> > keep the irqtype variable in the mockup driver. Both approaches would
-> > make it unnecessary to provide an accessor function for the type member.
-> >
+Hi,
+
+On 17/01/19 3:14 PM, Faiz Abbas wrote:
+> The following patches add eMMC support on TI's AM65x-evm.
 > 
-> Yeah, might be better to go back to my previous idea of adding
-> irq_sim_fire_edge(), but maybe it should be irq_sim_fire_type()
-> instead, so that irq_sim_fire() fires unconditionally and
-> irq_sim_fire_type() would fire only if the passed flag is the same as
-> the one previously configured by the set_type() callback.
+> v3:
+>  1. Fixed patch titles to only include eMMC
+>  2. Added dma-coherent to the sdhci0 node.
+> 
+> v2:
+>  1. The SD card node is under debug for some usecases.
+>     Only upstreaming eMMC support for now.
+>  2. Rebased to latest mainline.
+>  3. Removed status = "disabled" from dtsi patch
+>  4. Fixed node name to not include '_'s
+> 
+> Faiz Abbas (2):
+>   arm64: dts: ti: k3-am654: Add Support for eMMC host controller
+>   arm64: dts: ti: k3-am654-base-board: Add eMMC Support
+> 
+>  arch/arm64/boot/dts/ti/k3-am65-main.dtsi      | 14 +++++++++++
+>  .../arm64/boot/dts/ti/k3-am654-base-board.dts | 25 +++++++++++++++++++
+>  2 files changed, 39 insertions(+)
+> 
 
-How (if at all) do you intend to support level sensitive irqs with this
-interface? It probably works (but I didn't thought it through
-completely), but firing a LEVEL_HIGH sensitive irq on
+Gentle ping.
 
-	irq_sim_fire_type(EDGE_RISING)
-
-might look at least surprising and needs proper comments and thoughts.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Thanks,
+Faiz
