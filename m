@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0EAC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AB71C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF92621900
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D073521900
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358014;
-	bh=9rDsIYY0S6cANqyiqqpsQYZjfuQgDjNIfUbMq/xngy0=;
+	s=default; t=1548358017;
+	bh=ziQRS75mjYTrS7W881bUv2+h2J1YM/+1RAceC0+w/XA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VNrIuTnD3hoNunWA2VCZLY7kCbcBi26q68L3N7+e/vi30uGmMwzMISsQWxajxtEgo
-	 gLbTfToIytj5xnDPN3acqwa3dIw/F6TQTsFh0VkmyAK1JZZ9Qgk5j3P2t81wlPh8/H
-	 W93VmQB/Z9XeyvLHhG3Q51ZMl9EfyVTAXXg5zNB0=
+	b=LibFPI5PVj/5a+mZciX+bSoB2SP+J7qFe6TKFsPNYqttGAZyXdvAFpe0GC4WAj3Ns
+	 G5FVGIU9qDN3L6TD7dRENRvO22ZwVEWPRRIHg07ed7YwjydLLi7ts61avz7tQ7Qe88
+	 yRHHkEkU9n1j0jmfSvkumjpfeiTd63yy5apOAEac=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730644AbfAXT0x (ORCPT
+        id S1730659AbfAXT04 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:26:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52906 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:26:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730626AbfAXT0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:26:49 -0500
+        id S1729218AbfAXT0y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:26:54 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D4A2218FC;
-        Thu, 24 Jan 2019 19:26:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F9F5218FE;
+        Thu, 24 Jan 2019 19:26:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358007;
-        bh=9rDsIYY0S6cANqyiqqpsQYZjfuQgDjNIfUbMq/xngy0=;
+        s=default; t=1548358013;
+        bh=ziQRS75mjYTrS7W881bUv2+h2J1YM/+1RAceC0+w/XA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bQcb/76MFvWpd2LfuQKP2tW+3AOcZpYa5Irx7Hae81w/ZyBMq8PK9lGJw9MAXVqlb
-         +cyxXzNkCSKzhUXqAC3bmx8xeyNRjjW7wSH5+XwAGckxoo5XuR8Ml3g+C/WRlHsXT/
-         whxLQQ2iEa8PwcplzSD+nCzVJj4axXGkkevaLobk=
+        b=mpH1jeJHAnAegocuPyKvw8fkbuJRxtDZEw3y3/SfI7dK0pA3J+fyUKwggd5EfGqiu
+         wZLJ5u76uVUvA+ir4NfHnxugm4QIOI9K2V+IIIq9jMfXZWBu3wh9M1KdlKS+XXoTyl
+         PNsgI1udVbiiyfYaSmikK3dFwYNnBS7cqHRwOBqg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        syzbot+06e771a754829716a327@syzkaller.appspotmail.com,
-        Ying Xue <ying.xue@windriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 065/104] tipc: fix uninit-value in tipc_nl_compat_name_table_dump
-Date:   Thu, 24 Jan 2019 20:19:54 +0100
-Message-Id: <20190124190202.800331839@linuxfoundation.org>
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 4.4 067/104] block/loop: Use global lock for ioctl() operation.
+Date:   Thu, 24 Jan 2019 20:19:56 +0100
+Message-Id: <20190124190202.957235281@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -66,100 +66,195 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ying Xue <ying.xue@windriver.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 974cb0e3e7c963ced06c4e32c5b2884173fa5e01 upstream.
+commit 310ca162d779efee8a2dc3731439680f3e9c1e86 upstream.
 
-syzbot reported:
+syzbot is reporting NULL pointer dereference [1] which is caused by
+race condition between ioctl(loop_fd, LOOP_CLR_FD, 0) versus
+ioctl(other_loop_fd, LOOP_SET_FD, loop_fd) due to traversing other
+loop devices at loop_validate_file() without holding corresponding
+lo->lo_ctl_mutex locks.
 
-BUG: KMSAN: uninit-value in __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
-BUG: KMSAN: uninit-value in __fswab32 include/uapi/linux/swab.h:59 [inline]
-BUG: KMSAN: uninit-value in tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
-CPU: 0 PID: 6290 Comm: syz-executor848 Not tainted 4.19.0-rc8+ #70
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
-Call Trace:
- __dump_stack lib/dump_stack.c:77 [inline]
- dump_stack+0x306/0x460 lib/dump_stack.c:113
- kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
- __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
- __arch_swab32 arch/x86/include/uapi/asm/swab.h:10 [inline]
- __fswab32 include/uapi/linux/swab.h:59 [inline]
- tipc_nl_compat_name_table_dump+0x4a8/0xba0 net/tipc/netlink_compat.c:826
- __tipc_nl_compat_dumpit+0x59e/0xdb0 net/tipc/netlink_compat.c:205
- tipc_nl_compat_dumpit+0x63a/0x820 net/tipc/netlink_compat.c:270
- tipc_nl_compat_handle net/tipc/netlink_compat.c:1151 [inline]
- tipc_nl_compat_recv+0x1402/0x2760 net/tipc/netlink_compat.c:1210
- genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
- genl_rcv_msg+0x185c/0x1a20 net/netlink/genetlink.c:626
- netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2454
- genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
- netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
- netlink_unicast+0x166d/0x1720 net/netlink/af_netlink.c:1343
- netlink_sendmsg+0x1391/0x1420 net/netlink/af_netlink.c:1908
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
-RIP: 0033:0x440179
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007ffecec49318 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440179
-RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
-R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401a00
-R13: 0000000000401a90 R14: 0000000000000000 R15: 0000000000000000
+Since ioctl() request on loop devices is not frequent operation, we don't
+need fine grained locking. Let's use global lock in order to allow safe
+traversal at loop_validate_file().
 
-Uninit was created at:
- kmsan_save_stack_with_flags mm/kmsan/kmsan.c:255 [inline]
- kmsan_internal_poison_shadow+0xc8/0x1d0 mm/kmsan/kmsan.c:180
- kmsan_kmalloc+0xa4/0x120 mm/kmsan/kmsan_hooks.c:104
- kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:113
- slab_post_alloc_hook mm/slab.h:446 [inline]
- slab_alloc_node mm/slub.c:2727 [inline]
- __kmalloc_node_track_caller+0xb43/0x1400 mm/slub.c:4360
- __kmalloc_reserve net/core/skbuff.c:138 [inline]
- __alloc_skb+0x422/0xe90 net/core/skbuff.c:206
- alloc_skb include/linux/skbuff.h:996 [inline]
- netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
- netlink_sendmsg+0xcaf/0x1420 net/netlink/af_netlink.c:1883
- sock_sendmsg_nosec net/socket.c:621 [inline]
- sock_sendmsg net/socket.c:631 [inline]
- ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
- __sys_sendmsg net/socket.c:2154 [inline]
- __do_sys_sendmsg net/socket.c:2163 [inline]
- __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
- __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
- do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
- entry_SYSCALL_64_after_hwframe+0x63/0xe7
+Note that syzbot is also reporting circular locking dependency between
+bdev->bd_mutex and lo->lo_ctl_mutex [2] which is caused by calling
+blkdev_reread_part() with lock held. This patch does not address it.
 
-We cannot take for granted the thing that the length of data contained
-in TLV is longer than the size of struct tipc_name_table_query in
-tipc_nl_compat_name_table_dump().
+[1] https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
+[2] https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d15889
 
-Reported-by: syzbot+06e771a754829716a327@syzkaller.appspotmail.com
-Signed-off-by: Ying Xue <ying.xue@windriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/tipc/netlink_compat.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/block/loop.c |   42 +++++++++++++++++++++---------------------
+ drivers/block/loop.h |    1 -
+ 2 files changed, 21 insertions(+), 22 deletions(-)
 
---- a/net/tipc/netlink_compat.c
-+++ b/net/tipc/netlink_compat.c
-@@ -785,6 +785,8 @@ static int tipc_nl_compat_name_table_dum
- 	};
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -82,6 +82,7 @@
  
- 	ntq = (struct tipc_name_table_query *)TLV_DATA(msg->req);
-+	if (TLV_GET_DATA_LEN(msg->req) < sizeof(struct tipc_name_table_query))
-+		return -EINVAL;
+ static DEFINE_IDR(loop_index_idr);
+ static DEFINE_MUTEX(loop_index_mutex);
++static DEFINE_MUTEX(loop_ctl_mutex);
  
- 	depth = ntohl(ntq->depth);
+ static int max_part;
+ static int part_shift;
+@@ -1044,7 +1045,7 @@ static int loop_clr_fd(struct loop_devic
+ 	 */
+ 	if (atomic_read(&lo->lo_refcnt) > 1) {
+ 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+-		mutex_unlock(&lo->lo_ctl_mutex);
++		mutex_unlock(&loop_ctl_mutex);
+ 		return 0;
+ 	}
  
+@@ -1093,12 +1094,12 @@ static int loop_clr_fd(struct loop_devic
+ 	if (!part_shift)
+ 		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
+ 	loop_unprepare_queue(lo);
+-	mutex_unlock(&lo->lo_ctl_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ 	/*
+-	 * Need not hold lo_ctl_mutex to fput backing file.
+-	 * Calling fput holding lo_ctl_mutex triggers a circular
++	 * Need not hold loop_ctl_mutex to fput backing file.
++	 * Calling fput holding loop_ctl_mutex triggers a circular
+ 	 * lock dependency possibility warning as fput can take
+-	 * bd_mutex which is usually taken before lo_ctl_mutex.
++	 * bd_mutex which is usually taken before loop_ctl_mutex.
+ 	 */
+ 	fput(filp);
+ 	return 0;
+@@ -1361,7 +1362,7 @@ static int lo_ioctl(struct block_device
+ 	struct loop_device *lo = bdev->bd_disk->private_data;
+ 	int err;
+ 
+-	mutex_lock_nested(&lo->lo_ctl_mutex, 1);
++	mutex_lock_nested(&loop_ctl_mutex, 1);
+ 	switch (cmd) {
+ 	case LOOP_SET_FD:
+ 		err = loop_set_fd(lo, mode, bdev, arg);
+@@ -1370,7 +1371,7 @@ static int lo_ioctl(struct block_device
+ 		err = loop_change_fd(lo, bdev, arg);
+ 		break;
+ 	case LOOP_CLR_FD:
+-		/* loop_clr_fd would have unlocked lo_ctl_mutex on success */
++		/* loop_clr_fd would have unlocked loop_ctl_mutex on success */
+ 		err = loop_clr_fd(lo);
+ 		if (!err)
+ 			goto out_unlocked;
+@@ -1406,7 +1407,7 @@ static int lo_ioctl(struct block_device
+ 	default:
+ 		err = lo->ioctl ? lo->ioctl(lo, cmd, arg) : -EINVAL;
+ 	}
+-	mutex_unlock(&lo->lo_ctl_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ 
+ out_unlocked:
+ 	return err;
+@@ -1539,16 +1540,16 @@ static int lo_compat_ioctl(struct block_
+ 
+ 	switch(cmd) {
+ 	case LOOP_SET_STATUS:
+-		mutex_lock(&lo->lo_ctl_mutex);
++		mutex_lock(&loop_ctl_mutex);
+ 		err = loop_set_status_compat(
+ 			lo, (const struct compat_loop_info __user *) arg);
+-		mutex_unlock(&lo->lo_ctl_mutex);
++		mutex_unlock(&loop_ctl_mutex);
+ 		break;
+ 	case LOOP_GET_STATUS:
+-		mutex_lock(&lo->lo_ctl_mutex);
++		mutex_lock(&loop_ctl_mutex);
+ 		err = loop_get_status_compat(
+ 			lo, (struct compat_loop_info __user *) arg);
+-		mutex_unlock(&lo->lo_ctl_mutex);
++		mutex_unlock(&loop_ctl_mutex);
+ 		break;
+ 	case LOOP_SET_CAPACITY:
+ 	case LOOP_CLR_FD:
+@@ -1592,7 +1593,7 @@ static void __lo_release(struct loop_dev
+ 	if (atomic_dec_return(&lo->lo_refcnt))
+ 		return;
+ 
+-	mutex_lock(&lo->lo_ctl_mutex);
++	mutex_lock(&loop_ctl_mutex);
+ 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
+ 		/*
+ 		 * In autoclear mode, stop the loop thread
+@@ -1609,7 +1610,7 @@ static void __lo_release(struct loop_dev
+ 		loop_flush(lo);
+ 	}
+ 
+-	mutex_unlock(&lo->lo_ctl_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ }
+ 
+ static void lo_release(struct gendisk *disk, fmode_t mode)
+@@ -1655,10 +1656,10 @@ static int unregister_transfer_cb(int id
+ 	struct loop_device *lo = ptr;
+ 	struct loop_func_table *xfer = data;
+ 
+-	mutex_lock(&lo->lo_ctl_mutex);
++	mutex_lock(&loop_ctl_mutex);
+ 	if (lo->lo_encryption == xfer)
+ 		loop_release_xfer(lo);
+-	mutex_unlock(&lo->lo_ctl_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ 	return 0;
+ }
+ 
+@@ -1820,7 +1821,6 @@ static int loop_add(struct loop_device *
+ 	if (!part_shift)
+ 		disk->flags |= GENHD_FL_NO_PART_SCAN;
+ 	disk->flags |= GENHD_FL_EXT_DEVT;
+-	mutex_init(&lo->lo_ctl_mutex);
+ 	atomic_set(&lo->lo_refcnt, 0);
+ 	lo->lo_number		= i;
+ 	spin_lock_init(&lo->lo_lock);
+@@ -1933,19 +1933,19 @@ static long loop_control_ioctl(struct fi
+ 		ret = loop_lookup(&lo, parm);
+ 		if (ret < 0)
+ 			break;
+-		mutex_lock(&lo->lo_ctl_mutex);
++		mutex_lock(&loop_ctl_mutex);
+ 		if (lo->lo_state != Lo_unbound) {
+ 			ret = -EBUSY;
+-			mutex_unlock(&lo->lo_ctl_mutex);
++			mutex_unlock(&loop_ctl_mutex);
+ 			break;
+ 		}
+ 		if (atomic_read(&lo->lo_refcnt) > 0) {
+ 			ret = -EBUSY;
+-			mutex_unlock(&lo->lo_ctl_mutex);
++			mutex_unlock(&loop_ctl_mutex);
+ 			break;
+ 		}
+ 		lo->lo_disk->private_data = NULL;
+-		mutex_unlock(&lo->lo_ctl_mutex);
++		mutex_unlock(&loop_ctl_mutex);
+ 		idr_remove(&loop_index_idr, lo->lo_number);
+ 		loop_remove(lo);
+ 		break;
+--- a/drivers/block/loop.h
++++ b/drivers/block/loop.h
+@@ -55,7 +55,6 @@ struct loop_device {
+ 
+ 	spinlock_t		lo_lock;
+ 	int			lo_state;
+-	struct mutex		lo_ctl_mutex;
+ 	struct kthread_worker	worker;
+ 	struct task_struct	*worker_task;
+ 	bool			use_dio;
 
 
