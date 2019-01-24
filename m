@@ -7,54 +7,55 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E87ACC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC3EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A64AC218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A3DB218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357823;
-	bh=YOTFKRdU2naVg5TxAh6cetTQ7Mg2xeYw03LIcu1/UnM=;
+	s=default; t=1548357827;
+	bh=es1kGYUi5YkG26NoCDTRQRGvum8FVGF3ufKnbiHN9C8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wqNVTe1SijAeBuArcX8YT2FqMegET5wUzwJHeH34y2fGsKYau3iQMnjJSuEWvzBW8
-	 VDAheCdybxL1RjQKqMobFunWDpM+yPbBvOhhYLETFgU3t+cZDtyaqGxFECM2ep6pK9
-	 VtHSneMlufDZEY1mibzbiqKUo5mENjgszrjjprco=
+	b=uwCCH0qN/le1f56u3MqQypx7GqXeinUvbveYVOr2izQIF4SwV51ISKOCYFh4oBH/C
+	 Zfj8eWKydoI6w9/kQMVLtIyq8v3J4IaNuBWHXmbbBCB240KP0mbcu/wPwsWHwr8DAV
+	 wcu0z+yEUoM/CsT2atucY0FJbJCqHPHT/YKsJobE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbfAXTXk (ORCPT
+        id S1729920AbfAXTXp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:23:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48556 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:23:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48656 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729887AbfAXTXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:23:39 -0500
+        id S1729881AbfAXTXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:23:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AFCF7218D9;
-        Thu, 24 Jan 2019 19:23:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C36E8218D2;
+        Thu, 24 Jan 2019 19:23:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357818;
-        bh=YOTFKRdU2naVg5TxAh6cetTQ7Mg2xeYw03LIcu1/UnM=;
+        s=default; t=1548357821;
+        bh=es1kGYUi5YkG26NoCDTRQRGvum8FVGF3ufKnbiHN9C8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0A/97/YzFzfAOQMiUaGWoCzNEgvadaRu2q3CVf26E48d9npNoxo5ntTSbMk+CIZn3
-         mk+sG81b/fgoIp67aXXUOyG+gCepDKhN75vF9nUMcEAr/1Z6aBdQpm2sau4dN3gvt6
-         GHJmEG0JemNi6zrsSWlaXKkb4tXVHdTgKsXmQpWs=
+        b=iHb15a8e/g1BdDDT/a6UO7vxGjlqrjQDVS4Bdlv7AtgW9kGrzoYthgVheF56UtXr+
+         HMKGHHyepl6aGrgdc7WHcEsDrtBre7gUU4Uj5wRPvk1SjXwhYQpx+l3QSsWrbNE0pe
+         BuJLgZcAU5S5l+ZsN9DtNXi1P8o8Snqb6brFKvZE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
-        Yiwen Jiang <jiangyiwen@huawei.com>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Mark Fasheh <mfasheh@versity.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Changwei Ge <ge.changwei@h3c.com>,
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Paul Oppenheimer <bepvte@gmail.com>,
+        William Kucharski <william.kucharski@oracle.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 51/52] ocfs2: fix panic due to unrecovered local alloc
-Date:   Thu, 24 Jan 2019 20:20:15 +0100
-Message-Id: <20190124190151.202813200@linuxfoundation.org>
+Subject: [PATCH 3.18 52/52] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
+Date:   Thu, 24 Jan 2019 20:20:16 +0100
+Message-Id: <20190124190151.415280487@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -73,103 +74,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 532e1e54c8140188e192348c790317921cb2dc1c ]
+[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
 
-mount.ocfs2 ignore the inconsistent error that journal is clean but
-local alloc is unrecovered.  After mount, local alloc not empty, then
-reserver cluster didn't alloc a new local alloc window, reserveration
-map is empty(ocfs2_reservation_map.m_bitmap_len = 0), that triggered the
-following panic.
+Patch series "THP eligibility reporting via proc".
 
-This issue was reported at
+This series of three patches aims at making THP eligibility reporting much
+more robust and long term sustainable.  The trigger for the change is a
+regression report [2] and the long follow up discussion.  In short the
+specific application didn't have good API to query whether a particular
+mapping can be backed by THP so it has used VMA flags to workaround that.
+These flags represent a deep internal state of VMAs and as such they
+should be used by userspace with a great deal of caution.
 
-  https://oss.oracle.com/pipermail/ocfs2-devel/2015-May/010854.html
+A similar has happened for [3] when users complained that VM_MIXEDMAP is
+no longer set on DAX mappings.  Again a lack of a proper API led to an
+abuse.
 
-and was advised to fixed during mount.  But this is a very unusual
-inconsistent state, usually journal dirty flag should be cleared at the
-last stage of umount until every other things go right.  We may need do
-further debug to check that.  Any way to avoid possible futher
-corruption, mount should be abort and fsck should be run.
+The first patch in the series tries to emphasise that that the semantic of
+flags might change and any application consuming those should be really
+careful.
 
-  (mount.ocfs2,1765,1):ocfs2_load_local_alloc:353 ERROR: Local alloc hasn't been recovered!
-  found = 6518, set = 6518, taken = 8192, off = 15912372
-  ocfs2: Mounting device (202,64) on (node 0, slot 3) with ordered data mode.
-  o2dlm: Joining domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 8 ) 8 nodes
-  ocfs2: Mounting device (202,80) on (node 0, slot 3) with ordered data mode.
-  o2hb: Region 89CEAC63CC4F4D03AC185B44E0EE0F3F (xvdf) is now a quorum device
-  o2net: Accepted connection from node yvwsoa17p (num 7) at 172.22.77.88:7777
-  o2dlm: Node 7 joins domain 64FE421C8C984E6D96ED12C55FEE2435 ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
-  o2dlm: Node 7 joins domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
-  ------------[ cut here ]------------
-  kernel BUG at fs/ocfs2/reservations.c:507!
-  invalid opcode: 0000 [#1] SMP
-  Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4 nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev parport_pc parport xen_netfront fb_sys_fops sysimgblt sysfillrect syscopyarea acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom xen_blkfront pata_acpi ata_generic ata_piix floppy dm_mirror dm_region_hash dm_log dm_mod
-  CPU: 0 PID: 4349 Comm: startWebLogic.s Not tainted 4.1.12-124.19.2.el6uek.x86_64 #2
-  Hardware name: Xen HVM domU, BIOS 4.4.4OVM 09/06/2018
-  task: ffff8803fb04e200 ti: ffff8800ea4d8000 task.ti: ffff8800ea4d8000
-  RIP: 0010:[<ffffffffa05e96a8>]  [<ffffffffa05e96a8>] __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
-  Call Trace:
-    ocfs2_resmap_resv_bits+0x10d/0x400 [ocfs2]
-    ocfs2_claim_local_alloc_bits+0xd0/0x640 [ocfs2]
-    __ocfs2_claim_clusters+0x178/0x360 [ocfs2]
-    ocfs2_claim_clusters+0x1f/0x30 [ocfs2]
-    ocfs2_convert_inline_data_to_extents+0x634/0xa60 [ocfs2]
-    ocfs2_write_begin_nolock+0x1c6/0x1da0 [ocfs2]
-    ocfs2_write_begin+0x13e/0x230 [ocfs2]
-    generic_perform_write+0xbf/0x1c0
-    __generic_file_write_iter+0x19c/0x1d0
-    ocfs2_file_write_iter+0x589/0x1360 [ocfs2]
-    __vfs_write+0xb8/0x110
-    vfs_write+0xa9/0x1b0
-    SyS_write+0x46/0xb0
-    system_call_fastpath+0x18/0xd7
-  Code: ff ff 8b 75 b8 39 75 b0 8b 45 c8 89 45 98 0f 84 e5 fe ff ff 45 8b 74 24 18 41 8b 54 24 1c e9 56 fc ff ff 85 c0 0f 85 48 ff ff ff <0f> 0b 48 8b 05 cf c3 de ff 48 ba 00 00 00 00 00 00 00 10 48 85
-  RIP   __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
-   RSP <ffff8800ea4db668>
-  ---[ end trace 566f07529f2edf3c ]---
-  Kernel panic - not syncing: Fatal exception
-  Kernel Offset: disabled
+The remaining two patches provide a more suitable interface to address [2]
+and provide a consistent API to query the THP status both for each VMA and
+process wide as well.  [1]
 
-Link: http://lkml.kernel.org/r/20181121020023.3034-2-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Acked-by: Joseph Qi <jiangqi903@gmail.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Changwei Ge <ge.changwei@h3c.com>
+http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
+http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+
+This patch (of 3):
+
+Even though vma flags exported via /proc/<pid>/smaps are explicitly
+documented to be not guaranteed for future compatibility the warning
+doesn't go far enough because it doesn't mention semantic changes to those
+flags.  And they are important as well because these flags are a deep
+implementation internal to the MM code and the semantic might change at
+any time.
+
+Let's consider two recent examples:
+http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+: mean time certain customer of ours started poking into /proc/<pid>/smaps
+: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+: flags, the application just fails to start complaining that DAX support is
+: missing in the kernel.
+
+http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+: introduced a regression in that userspace cannot always determine the set
+: of vmas where thp is ineligible.
+: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+: to determine if a vma is eligible to be backed by hugepages.
+: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+: be disabled and emit "nh" as a flag for the corresponding vmas as part of
+: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+: flag and "nh" is not emitted.
+: This causes smaps parsing libraries to assume a vma is eligible for thp
+: and ends up puzzling the user on why its memory is not backed by thp.
+
+In both cases userspace was relying on a semantic of a specific VMA flag.
+The primary reason why that happened is a lack of a proper interface.
+While this has been worked on and it will be fixed properly, it seems that
+our wording could see some refinement and be more vocal about semantic
+aspect of these flags as well.
+
+Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Jan Kara <jack@suse.cz>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Paul Oppenheimer <bepvte@gmail.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/localalloc.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ Documentation/filesystems/proc.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
-index 044013455621..12675bb5304a 100644
---- a/fs/ocfs2/localalloc.c
-+++ b/fs/ocfs2/localalloc.c
-@@ -345,13 +345,18 @@ int ocfs2_load_local_alloc(struct ocfs2_super *osb)
- 	if (num_used
- 	    || alloc->id1.bitmap1.i_used
- 	    || alloc->id1.bitmap1.i_total
--	    || la->la_bm_off)
--		mlog(ML_ERROR, "Local alloc hasn't been recovered!\n"
-+	    || la->la_bm_off) {
-+		mlog(ML_ERROR, "inconsistent detected, clean journal with"
-+		     " unrecovered local alloc, please run fsck.ocfs2!\n"
- 		     "found = %u, set = %u, taken = %u, off = %u\n",
- 		     num_used, le32_to_cpu(alloc->id1.bitmap1.i_used),
- 		     le32_to_cpu(alloc->id1.bitmap1.i_total),
- 		     OCFS2_LOCAL_ALLOC(alloc)->la_bm_off);
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index 04b23a83ce68..3172a2465ff2 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -439,7 +439,9 @@ manner. The codes are the following:
  
-+		status = -EINVAL;
-+		goto bail;
-+	}
-+
- 	osb->local_alloc_bh = alloc_bh;
- 	osb->local_alloc_state = OCFS2_LA_ENABLED;
+ Note that there is no guarantee that every flag and associated mnemonic will
+ be present in all further kernel releases. Things get changed, the flags may
+-be vanished or the reverse -- new added.
++be vanished or the reverse -- new added. Interpretation of their meaning
++might change in future as well. So each consumer of these flags has to
++follow each specific kernel version for the exact semantic.
  
+ This file is only present if the CONFIG_MMU kernel configuration option is
+ enabled.
 -- 
 2.19.1
 
