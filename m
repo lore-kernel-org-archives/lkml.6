@@ -2,271 +2,200 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19542C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 06:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A72C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 06:58:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF7F621855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 06:56:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B40BF2184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 06:58:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kTy4ncyA"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HO3TH/bc";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="O9z6VRYk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfAXG4S (ORCPT
+        id S1726233AbfAXG6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 01:56:18 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:46919 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725287AbfAXG4S (ORCPT
+        Thu, 24 Jan 2019 01:58:19 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:59166 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725287AbfAXG6T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 01:56:18 -0500
-Received: by mail-pl1-f193.google.com with SMTP id t13so2439670ply.13
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 22:56:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=+RFbdHFgEH9SLSSrBYPvGf832hxvm9jHcDGhBdjy9HY=;
-        b=kTy4ncyAktWp80Ar13m0aoynhcSkfPRvCQk+TtLNgFZty4NK71vzNMBRHRTDyGHfW7
-         bGFJeBbN7DZE6EWIHIazlIErUPH4xx9ipp69s/fJ9ddMuHLSWl4aNa4JGjHsaCIZqeSa
-         6xYb63OvgP+DUyGMwUE43ch7z5ZJS7eHB4PHQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=+RFbdHFgEH9SLSSrBYPvGf832hxvm9jHcDGhBdjy9HY=;
-        b=cA9C1j8NCJlTF9JrUQuGqIg+cmRzhQXoT85UXlQ/EjsCE+khUMLLGNPyZyYRDHgdFo
-         3WTX1TdVBcqerEAXXLeuN72JiIjm+hcuZvjccyebqO4FT/+LL2AVv8sgefMRFq+nvRcz
-         b2Tl4vDlR2KGw8iRq89SulTsp5nhm9esve7/tBt00qiSZR3x5nEI/qsIR38gYkiP+O5V
-         awh/4ZrYOAgnGllGPGovMwyclXJQ9kYHN0czipe3KVkV7rBf4YkxbI/WV1vEe+ZCg3T3
-         D2VEPpFI+9mD1L9CYzfgXFEDnMuUuzb3nXS6jiFD5xjjP4XCXksSAQTRhcBNCPWOZmr8
-         Awog==
-X-Gm-Message-State: AJcUukcdFagvIx0AsPHDzZ8jf7CLYZF742wPfc62y1xc2DFHk7j1e8Ws
-        uh3D7mDRcAEnZQ6TCGsN4+GlEg==
-X-Google-Smtp-Source: ALg8bN5gsvhWPP4njhp5pLoBixnddvRVT9RaaToJhkOaGeSDbMfwlP8MBPV2O1PbsYVIOV5pRuvLMQ==
-X-Received: by 2002:a17:902:8641:: with SMTP id y1mr5389626plt.159.1548312977564;
-        Wed, 23 Jan 2019 22:56:17 -0800 (PST)
-Received: from localhost ([122.172.102.63])
-        by smtp.gmail.com with ESMTPSA id f64sm67588884pfh.0.2019.01.23.22.56.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 22:56:16 -0800 (PST)
-Date:   Thu, 24 Jan 2019 12:26:14 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Xiongfeng Wang <wangxiongfeng2@huawei.com>,
-        George Cherian <george.cherian@cavium.com>,
-        Prashanth Prakash <pprakash@codeaurora.org>
-Cc:     robert.moore@intel.com, lenb@kernel.org, rjw@rjwysocki.net,
-        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, guohanjun@huawei.com
-Subject: Re: [RFC PATCH] cpufreq / cppc: Work around for Hisilicon CPPC
- cpufreq
-Message-ID: <20190124065614.gnnwd6lhbyjiph2e@vireshk-i7>
-References: <1547722811-18052-1-git-send-email-wangxiongfeng2@huawei.com>
+        Thu, 24 Jan 2019 01:58:19 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 5C23860854; Thu, 24 Jan 2019 06:58:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548313098;
+        bh=njDRlprMxI0qLtIk0ZEqPrhYxG6uwkZe42WtrF39QV0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=HO3TH/bcP/JnsYvRvhbEm8/lEJ1ZqnUZXzGJGmjThIwACY6bd7eQx1z8GzYRihHgB
+         LQFZywm9ZM8OPe/ZDjMyVfxDUeZnFrMv2T6patkWqESqlxQ1EeYcsdQciWQY1M9tyD
+         OU7/0z7b3G4SYoJQ12ZHBb0mvXQrG0syo3uquSeM=
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: vivek.gautam@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id DDCE460860;
+        Thu, 24 Jan 2019 06:58:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548313097;
+        bh=njDRlprMxI0qLtIk0ZEqPrhYxG6uwkZe42WtrF39QV0=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=O9z6VRYk9mxWxwwugE8ZwtNVR+zUJ0afRWwIRtDoyL16rsFp6leYt+YLH1FU86N+x
+         kL+Ib1bv9xJflgsu39xGQMqYQXYKUZ8ouFcVaY3bKZpK4ONNkWLmezHX+TwGjJla8f
+         qYpoiyH0ml6K0UR5fRappESj2/5Eb8yzNTxN/B7A=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org DDCE460860
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vivek.gautam@codeaurora.org
+Received: by mail-ed1-f41.google.com with SMTP id d39so3662154edb.12;
+        Wed, 23 Jan 2019 22:58:16 -0800 (PST)
+X-Gm-Message-State: AJcUukd8QXZNhdvUfvBqpf9fkkKk/4wryqSGU17lzZTsUMSfZtNsvKv2
+        /7GqbHeUEu+fWhDMlfNo32W+O5WEnIMvalC5eJs=
+X-Google-Smtp-Source: ALg8bN4Rngo8jKcGaqdsIFNBJAKiARrqQ8SFIAU1vP7LvvTsNtxDoXCQvQm/uxcLce0ZqySSV3i2tN1/FjIsEv93M3w=
+X-Received: by 2002:a05:6402:3d1:: with SMTP id t17mr5651101edw.21.1548313095461;
+ Wed, 23 Jan 2019 22:58:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547722811-18052-1-git-send-email-wangxiongfeng2@huawei.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <20190121055335.15430-1-vivek.gautam@codeaurora.org>
+ <CAKv+Gu8P-5hxZ8+OV_xSZteTvCLw-Sc-=KJM1i=3aWajcS9bUw@mail.gmail.com>
+ <CAFp+6iEp-bzMrZz8cFUciTFKm7TwAoLdYpsSTD73kDfCRh60bA@mail.gmail.com>
+ <CAKv+Gu9z_mGwdZYMKPfM_g2MZwrCF5=f4WAdn_R6wJ1A9xSZ_Q@mail.gmail.com>
+ <dbba5a8a-70c0-dd01-713c-081eb412e2d7@arm.com> <CAKv+Gu8K5f0va9q4FYk9x1puoOTDjZ0c25qokm2izSVAwd1gmQ@mail.gmail.com>
+ <964779d6-c676-3379-bf1e-cde0dd82d63d@arm.com> <CAKv+Gu_Oz-QEFnq9KiOBHQrC8o+0ykkEZBm0vCWfYDfFB8QTcQ@mail.gmail.com>
+In-Reply-To: <CAKv+Gu_Oz-QEFnq9KiOBHQrC8o+0ykkEZBm0vCWfYDfFB8QTcQ@mail.gmail.com>
+From:   Vivek Gautam <vivek.gautam@codeaurora.org>
+Date:   Thu, 24 Jan 2019 12:28:02 +0530
+X-Gmail-Original-Message-ID: <CAFp+6iESSKZsG06j9RJDn3n84zNT=b962sEyPwfyW1u5DGu-+A@mail.gmail.com>
+Message-ID: <CAFp+6iESSKZsG06j9RJDn3n84zNT=b962sEyPwfyW1u5DGu-+A@mail.gmail.com>
+Subject: Re: [PATCH 0/3] iommu/arm-smmu: Add support to use Last level cache
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc:     Robin Murphy <robin.murphy@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Joerg Roedel <joro@8bytes.org>,
+        "list@263.net:IOMMU DRIVERS" <iommu@lists.linux-foundation.org>,
+        pdaly@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Jordan Crouse <jcrouse@codeaurora.org>, pratikp@codeaurora.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+George/Prashanth.
+On Mon, Jan 21, 2019 at 7:55 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+>
+> On Mon, 21 Jan 2019 at 14:56, Robin Murphy <robin.murphy@arm.com> wrote:
+> >
+> > On 21/01/2019 13:36, Ard Biesheuvel wrote:
+> > > On Mon, 21 Jan 2019 at 14:25, Robin Murphy <robin.murphy@arm.com> wrote:
+> > >>
+> > >> On 21/01/2019 10:50, Ard Biesheuvel wrote:
+> > >>> On Mon, 21 Jan 2019 at 11:17, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+> > >>>>
+> > >>>> Hi,
+> > >>>>
+> > >>>>
+> > >>>> On Mon, Jan 21, 2019 at 12:56 PM Ard Biesheuvel
+> > >>>> <ard.biesheuvel@linaro.org> wrote:
+> > >>>>>
+> > >>>>> On Mon, 21 Jan 2019 at 06:54, Vivek Gautam <vivek.gautam@codeaurora.org> wrote:
+> > >>>>>>
+> > >>>>>> Qualcomm SoCs have an additional level of cache called as
+> > >>>>>> System cache, aka. Last level cache (LLC). This cache sits right
+> > >>>>>> before the DDR, and is tightly coupled with the memory controller.
+> > >>>>>> The clients using this cache request their slices from this
+> > >>>>>> system cache, make it active, and can then start using it.
+> > >>>>>> For these clients with smmu, to start using the system cache for
+> > >>>>>> buffers and, related page tables [1], memory attributes need to be
+> > >>>>>> set accordingly. This series add the required support.
+> > >>>>>>
+> > >>>>>
+> > >>>>> Does this actually improve performance on reads from a device? The
+> > >>>>> non-cache coherent DMA routines perform an unconditional D-cache
+> > >>>>> invalidate by VA to the PoC before reading from the buffers filled by
+> > >>>>> the device, and I would expect the PoC to be defined as lying beyond
+> > >>>>> the LLC to still guarantee the architected behavior.
+> > >>>>
+> > >>>> We have seen performance improvements when running Manhattan
+> > >>>> GFXBench benchmarks.
+> > >>>>
+> > >>>
+> > >>> Ah ok, that makes sense, since in that case, the data flow is mostly
+> > >>> to the device, not from the device.
+> > >>>
+> > >>>> As for the PoC, from my knowledge on sdm845 the system cache, aka
+> > >>>> Last level cache (LLC) lies beyond the point of coherency.
+> > >>>> Non-cache coherent buffers will not be cached to system cache also, and
+> > >>>> no additional software cache maintenance ops are required for system cache.
+> > >>>> Pratik can add more if I am missing something.
+> > >>>>
+> > >>>> To take care of the memory attributes from DMA APIs side, we can add a
+> > >>>> DMA_ATTR definition to take care of any dma non-coherent APIs calls.
+> > >>>>
+> > >>>
+> > >>> So does the device use the correct inner non-cacheable, outer
+> > >>> writeback cacheable attributes if the SMMU is in pass-through?
+> > >>>
+> > >>> We have been looking into another use case where the fact that the
+> > >>> SMMU overrides memory attributes is causing issues (WC mappings used
+> > >>> by the radeon and amdgpu driver). So if the SMMU would honour the
+> > >>> existing attributes, would you still need the SMMU changes?
+> > >>
+> > >> Even if we could force a stage 2 mapping with the weakest pagetable
+> > >> attributes (such that combining would work), there would still need to
+> > >> be a way to set the TCR attributes appropriately if this behaviour is
+> > >> wanted for the SMMU's own table walks as well.
+> > >>
+> > >
+> > > Isn't that just a matter of implementing support for SMMUs that lack
+> > > the 'dma-coherent' attribute?
+> >
+> > Not quite - in general they need INC-ONC attributes in case there
+> > actually is something in the architectural outer-cacheable domain.
+>
+> But is it a problem to use INC-ONC attributes for the SMMU PTW on this
+> chip? AIUI, the reason for the SMMU changes is to avoid the
+> performance hit of snooping, which is more expensive than cache
+> maintenance of SMMU page tables. So are you saying the by-VA cache
+> maintenance is not relayed to this system cache, resulting in page
+> table updates to be invisible to masters using INC-ONC attributes?
 
-Guys please see if you have any objections to this patch. I am not
-very familiar with this stuff and it would be good to get some
-feedback from you guys.
+The reason for this SMMU changes is that the non-coherent devices
+can't access the inner caches at all. But they have a way to allocate
+and lookup in system cache.
 
-@Rafael: Do you have any comments on this ?
+CPU will by default make use of system cache when the inner-cacheable
+and outer-cacheable memory attribute is set.
 
-On 17-01-19, 19:00, Xiongfeng Wang wrote:
-> Hisilicon chips do not support delivered performance counter register
-> and reference performance counter register. But the platform can
-> calculate the real performance using its own method. This patch provide
-> a workaround for this problem, and other platforms can also use this
-> workaround framework. We reuse the desired performance register to
-> store the real performance calculated by the platform. After the
-> platform finished the frequency adjust, it gets the real performance and
-> writes it into desired performance register. OS can use it to calculate
-> the real frequency.
-> 
-> Signed-off-by: Xiongfeng Wang <wangxiongfeng2@huawei.com>
-> ---
->  drivers/acpi/cppc_acpi.c       | 29 ++++++++++++++++++++
->  drivers/cpufreq/Kconfig.arm    |  7 +++++
->  drivers/cpufreq/cppc_cpufreq.c | 62 ++++++++++++++++++++++++++++++++++++++++++
->  include/acpi/cppc_acpi.h       |  4 +++
->  4 files changed, 102 insertions(+)
-> 
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index 217a782..0cdaf7e 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1050,6 +1050,35 @@ static int cpc_write(int cpu, struct cpc_register_resource *reg_res, u64 val)
->  	return ret_val;
->  }
->  
-> +#ifdef CONFIG_HISILICON_CPPC_CPUFREQ_WORKAROUND
-> +/*
-> + * We reuse the desired performance register to store the real performance
-> + * calculated by the platform.
-> + */
-> +u64 hisi_cppc_get_real_perf(unsigned int cpunum)
-> +{
-> +	int pcc_ss_id = per_cpu(cpu_pcc_subspace_idx, cpunum);
-> +	struct cpc_desc *cpc_desc = per_cpu(cpc_desc_ptr, cpunum);
-> +	struct cpc_register_resource *desired_reg;
-> +	u64 desired_perf;
-> +	int ret;
-> +
-> +	/*
-> +	 * Make sure the platform has finished the frequency adjust
-> +	 * and wrote the real performance in desired performance register
-> +	 */
-> +	ret = check_pcc_chan(pcc_ss_id, false);
-> +	if (ret)
-> +		return 0;
-> +
-> +	desired_reg = &cpc_desc->cpc_regs[DESIRED_PERF];
-> +	cpc_read(cpunum, desired_reg, &desired_perf);
-> +
-> +	return desired_perf;
-> +}
-> +EXPORT_SYMBOL_GPL(hisi_cppc_get_real_perf);
-> +#endif
-> +
->  /**
->   * cppc_get_perf_caps - Get a CPUs performance capabilities.
->   * @cpunum: CPU from which to get capabilities info.
-> diff --git a/drivers/cpufreq/Kconfig.arm b/drivers/cpufreq/Kconfig.arm
-> index 688f102..236bd07 100644
-> --- a/drivers/cpufreq/Kconfig.arm
-> +++ b/drivers/cpufreq/Kconfig.arm
-> @@ -18,6 +18,13 @@ config ACPI_CPPC_CPUFREQ
->  
->  	  If in doubt, say N.
->  
-> +config HISILICON_CPPC_CPUFREQ_WORKAROUND
-> +	bool "Workaround for Hisilicon CPPC Cpufreq"
-> +	default y
-> +	depends on ACPI_CPPC_CPUFREQ && ARM64
-> +	help
-> +	  This option enables a workaround for Hisilicon CPPC Cpufreq.
-> +
->  config ARM_ARMADA_37XX_CPUFREQ
->  	tristate "Armada 37xx CPUFreq support"
->  	depends on ARCH_MVEBU && CPUFREQ_DT
-> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
-> index fd25c21c..b910e84 100644
-> --- a/drivers/cpufreq/cppc_cpufreq.c
-> +++ b/drivers/cpufreq/cppc_cpufreq.c
-> @@ -33,6 +33,13 @@
->  /* Offest in the DMI processor structure for the max frequency */
->  #define DMI_PROCESSOR_MAX_SPEED  0x14
->  
-> +struct cppc_get_rate_workaround_info {
-> +	char oem_id[ACPI_OEM_ID_SIZE +1];
-> +	char oem_table_id[ACPI_OEM_TABLE_ID_SIZE + 1];
-> +	u32 oem_revision;
-> +	unsigned int (*get)(unsigned int cpu);
-> +};
-> +
->  /*
->   * These structs contain information parsed from per CPU
->   * ACPI _CPC structures.
-> @@ -357,6 +364,59 @@ static unsigned int cppc_cpufreq_get_rate(unsigned int cpunum)
->  	.name = "cppc_cpufreq",
->  };
->  
-> +#ifdef CONFIG_HISILICON_CPPC_CPUFREQ_WORKAROUND
-> +/*
-> + * When the platform does not support delivered performance counter or
-> + * reference performance counter, it can calculate the performance using the
-> + * platform specific mechanism. We reuse the desired performance register to
-> + * store the real performance calculated by the platform.
-> + */
-> +static unsigned int hisi_cppc_cpufreq_get_rate(unsigned int cpunum)
-> +{
-> +	struct cppc_cpudata *cpu = all_cpu_data[cpunum];
-> +	u64 desired_perf = hisi_cppc_get_real_perf(cpunum);
-> +
-> +	return cppc_cpufreq_perf_to_khz(cpu, desired_perf);
-> +}
-> +#endif
-> +
-> +static struct cppc_get_rate_workaround_info wa_info[] = {
-> +#ifdef CONFIG_HISILICON_CPPC_CPUFREQ_WORKAROUND
-> +	{
-> +		.oem_id		= "HISI  ",
-> +		.oem_table_id	= "HIP07   ",
-> +		.oem_revision	= 0,
-> +		.get = hisi_cppc_cpufreq_get_rate,
-> +	},
-> +	{
+So for SMMU page tables to be visible to PTW,
+-- For IO coherent clients, the CPU cache maintenance operations are not
+required for buffers marked Normal Cached to achieve a coherent view of
+memory. However, client-specific cache maintenance may still be
+required for devices
+with local caches (for example, compute DSP local L1 or L2).
+-- For non-IO coherent clients, the CPU cache maintenance operations (cleans
+and/or invalidates) are required at buffer handoff points for buffers marked as
+Normal Cached in any CPU page table in order to observe the latest updates.
 
-This should be:
 
-        }, {
+Regards
+Vivek
 
-> +		.oem_id		= "HISI  ",
-> +		.oem_table_id	= "HIP08   ",
-> +		.oem_revision	= 0,
-> +		.get = hisi_cppc_cpufreq_get_rate,
-> +	},
-> +#endif
-> +	{},
-> +};
-> +
-> +static void cppc_check_get_rate_workaround(struct cpufreq_driver *cppc_cpufreq_driver)
-> +{
-> +	struct acpi_table_header *tbl;
-> +	acpi_status status = AE_OK;
-> +	int i;
-> +
-> +	status = acpi_get_table(ACPI_SIG_PCCT, 0, &tbl);
-> +	if (ACPI_FAILURE(status) || !tbl)
-> +		return;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(wa_info) - 1; i++) {
-> +		if (!memcmp(wa_info[i].oem_id, tbl->oem_id, ACPI_OEM_ID_SIZE) &&
-> +		    !memcmp(wa_info[i].oem_table_id, tbl->oem_table_id, ACPI_OEM_TABLE_ID_SIZE) &&
-> +		    wa_info[i].oem_revision == tbl->oem_revision) {
-> +			cppc_cpufreq_driver->get = wa_info[i].get;
-> +			return;
-> +		}
-> +	}
-> +}
->  static int __init cppc_cpufreq_init(void)
->  {
->  	int i, ret = 0;
-> @@ -386,6 +446,8 @@ static int __init cppc_cpufreq_init(void)
->  		goto out;
->  	}
->  
-> +	cppc_check_get_rate_workaround(&cppc_cpufreq_driver);
-> +
->  	ret = cpufreq_register_driver(&cppc_cpufreq_driver);
->  	if (ret)
->  		goto out;
-> diff --git a/include/acpi/cppc_acpi.h b/include/acpi/cppc_acpi.h
-> index 4f34734..be7400b 100644
-> --- a/include/acpi/cppc_acpi.h
-> +++ b/include/acpi/cppc_acpi.h
-> @@ -146,4 +146,8 @@ struct cppc_cpudata {
->  extern int cpc_read_ffh(int cpunum, struct cpc_reg *reg, u64 *val);
->  extern int cpc_write_ffh(int cpunum, struct cpc_reg *reg, u64 val);
->  
-> +#ifdef CONFIG_HISILICON_CPPC_CPUFREQ_WORKAROUND
-> +u64 hisi_cppc_get_real_perf(unsigned int cpunum);
-> +#endif
-> +
->  #endif /* _CPPC_ACPI_H*/
-> -- 
-> 1.7.12.4
+>
+> > The
+> > case of the outer cacheablility being not that but a hint to control
+> > non-CPU traffic through some not-quite-transparent cache behind the PoC
+> > definitely stays wrapped up in qcom-specific magic ;)
+> >
+>
+> I'm not surprised ...
+
+
 
 -- 
-viresh
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
