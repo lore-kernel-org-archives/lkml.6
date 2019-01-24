@@ -2,94 +2,198 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6CCBC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:34:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4CA0C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:40:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71960218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:34:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A17FB218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:40:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="wH2JxgIp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728471AbfAXPeh (ORCPT
+        id S1728383AbfAXPkJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:34:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35136 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727649AbfAXPeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:34:37 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 64EAC142BF1;
-        Thu, 24 Jan 2019 15:34:36 +0000 (UTC)
-Received: from redhat.com (unknown [10.20.6.236])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id E25A661370;
-        Thu, 24 Jan 2019 15:34:33 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 10:34:32 -0500
-From:   Jerome Glisse <jglisse@redhat.com>
-To:     Peter Xu <peterx@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH RFC 04/24] mm: gup: allow VM_FAULT_RETRY for multiple
- times
-Message-ID: <20190124153431.GB5030@redhat.com>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-5-peterx@redhat.com>
- <20190121162455.GC3711@redhat.com>
- <20190124070503.GJ18231@xz-x1>
+        Thu, 24 Jan 2019 10:40:09 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41819 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728010AbfAXPkJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:40:09 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so3160150pfi.8
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 07:40:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=Kvcm2rf3PnvwAJLlzy4NG1cEBif+VzMcdOyrVNaAe9w=;
+        b=wH2JxgIpE8HiDPooEp4PJM52SbBsUY9bzKB/7VdwZunFn2cAXiAP2Poo6kHiuWnm63
+         kxZ0aP1SOfTFzuuAXJumunDaSjq/kqLQKhjeMnoakRzt8k1+8oDjh0XtcWyk+I5skobs
+         TCL5ktoU7+F3AZ0/+wwgLp7QmB3PmZEAg5GazhGla0Zks/O1hPsYiosR4zfqxb239AEJ
+         XbExXrscFAAu1oAkYgQUVsPZXA/euVuF4QIYhadHRQnwOHTkpgmxOEJyjGiXuS6fmqAW
+         gSNZxoQQUqXYBvfysRW99OhBjwDztYIjeU9vZLoFkTEQPNKwtaco/cMeRrSi/Yo5hZBL
+         UEqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=Kvcm2rf3PnvwAJLlzy4NG1cEBif+VzMcdOyrVNaAe9w=;
+        b=G8sfv8aR7dYekqywrsLfJkYrmI6GVw9QlK3dNfkrBOQZ/bacW9HwP0aS75xcCxu7f9
+         I6gaPYxtL1dRYOWF5XWdNS++8dYGyBpNsxEaaGtdTOfjYtJ1NwNLfGTjRdzoeE4ei/S2
+         zUIK1dGKbOLDuFGBpk8wgbbvSLj+OiBTjjsLnjINr3z631+ah8eMzM1xtvU0OW1+ABHr
+         3blWRoG2+aNXsJi67su59zDX1vrW2ctKRnNi6pKdSB7/DtqBEdvvevDoD3ZQY6yR+d7D
+         1VIxPQdGcg6iKOknClUoHT7D/3m2783X9Quk53NUCsjX3lzBYYFC5aRLjDBq/1wSp18U
+         XRFw==
+X-Gm-Message-State: AJcUukeaj2EA2bBxysFJwHpjaBVt+Abgi1Cer89saFzB4Y+GC8/Inwne
+        Xn+1ptGfwl6smsFCfw0ToXYGQOyapXA=
+X-Google-Smtp-Source: ALg8bN62WhVsM78UPbM6c43vJnOa/5C4fAVKQl3EWz+4raUFJiLVXpIdYlt5+HMA2bZiPXDpb6AvDw==
+X-Received: by 2002:a62:109b:: with SMTP id 27mr6810112pfq.227.1548344407270;
+        Thu, 24 Jan 2019 07:40:07 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id g136sm29782374pfb.154.2019.01.24.07.40.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 07:40:05 -0800 (PST)
+Subject: Re: LTP case read_all_proc fails on qemux86-64 since 5.0-rc1
+To:     He Zhe <zhe.he@windriver.com>
+Cc:     davem@davemloft.net, linux-ide@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <316b80da-0811-f9e6-dd42-41ddbb7eb8a0@windriver.com>
+ <C1903094-A3C8-4273-9869-72D400180E51@kernel.dk>
+ <11b1b3ee-a94b-dd5e-3ba6-df3efa239c7f@kernel.dk>
+ <adb69f96-8825-ef14-3e02-98c046f72ecb@windriver.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <31660451-9ab4-43b8-b468-ae7b9a8d2279@kernel.dk>
+Date:   Thu, 24 Jan 2019 08:40:03 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <adb69f96-8825-ef14-3e02-98c046f72ecb@windriver.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190124070503.GJ18231@xz-x1>
-User-Agent: Mutt/1.10.0 (2018-05-17)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Thu, 24 Jan 2019 15:34:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 03:05:03PM +0800, Peter Xu wrote:
-> On Mon, Jan 21, 2019 at 11:24:55AM -0500, Jerome Glisse wrote:
-> > On Mon, Jan 21, 2019 at 03:57:02PM +0800, Peter Xu wrote:
-> > > This is the gup counterpart of the change that allows the VM_FAULT_RETRY
-> > > to happen for more than once.
-> > > 
-> > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > 
-> > So it would be nice to add a comment in the code and in the commit message
-> > about possible fault starvation (mostly due to previous patch changes) as
-> > if some one experience that and try to bisect it might overlook the commit.
-> > 
-> > Otherwise:
-> > 
-> > Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
+On 1/24/19 1:23 AM, He Zhe wrote:
 > 
-> Jerome, can I still keep this r-b if I'm going to fix the starvation
-> issue you mentioned in previous patch about lock page?
 > 
+> On 1/24/19 12:05 AM, Jens Axboe wrote:
+>> On 1/22/19 8:39 PM, Jens Axboe wrote:
+>>> On Jan 22, 2019, at 8:13 PM, He Zhe <zhe.he@windriver.com> wrote:
+>>>> LTP case read_all_proc(read_all -d /proc -q -r 10) often, but not every time, fails with the following call traces, since 600335205b8d "ide: convert to blk-mq"(5.0-rc1) till now(5.0-rc3).
+>>>>
+>>>> qemu-system-x86_64 -drive file=rootfs.ext4,if=virtio,format=raw -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-pci,rng=rng0 -nographic -m 16192 -smp cpus=12 -cpu core2duo -enable-kvm -serial mon:stdio -serial null -kernel bzImage -append 'root=/dev/vda rw highres=off console=ttyS0 mem=16192M'
+>>>>
+>>>> tst_test.c:1085: INFO: Timeout per run is 0h 05m 00s
+>>>> [   47.080156] Warning: /proc/ide/hd?/settings interface is obsolete, and will be removed soon!
+>>>> [   47.085330] ------------[ cut here ]------------
+>>>> [   47.085810] kernel BUG at block/blk-mq.c:767!
+>>>> [   47.086498] invalid opcode: 0000 [#1] PREEMPT SMP PTI
+>>>> [   47.087022] CPU: 5 PID: 146 Comm: kworker/5:1H Not tainted 5.0.0-rc3 #1
+>>>> [   47.087858] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+>>>> [   47.088992] Workqueue: kblockd blk_mq_run_work_fn
+>>>> [   47.089469] RIP: 0010:blk_mq_add_to_requeue_list+0xc1/0xd0
+>>>> [   47.090035] Code: 48 8d 53 48 49 8b 8c 24 b8 04 00 00 48 89 51 08 48 89 4b 48 49 8d 8c 24 b8 04 00 00 48 89 4b 50 49 89 94 24 b8 04 00 008
+>>>> [   47.091930] RSP: 0018:ffff9e1ea4b43e40 EFLAGS: 00010002
+>>>> [   47.092458] RAX: ffff9e1ea13c0048 RBX: ffff9e1ea13c0000 RCX: 0000000000000006
+>>>> [   47.093181] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9e1ea13c0000
+>>>> [   47.093906] RBP: ffff9e1ea4b43e68 R08: ffffeb5bcf630680 R09: 0000000000000000
+>>>> [   47.094626] R10: 0000000000000001 R11: 0000000000000012 R12: ffff9e1ea1033a40
+>>>> [   47.095347] R13: ffff9e1ea13a8d00 R14: ffff9e1ea13a9000 R15: 0000000000000046
+>>>> [   47.096071] FS:  0000000000000000(0000) GS:ffff9e1ea4b40000(0000) knlGS:0000000000000000
+>>>> [   47.096898] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> [   47.097477] CR2: 0000003fda41fda0 CR3: 00000003d8e6a000 CR4: 00000000000006e0
+>>>> [   47.098203] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>> [   47.098929] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>> [   47.099650] Call Trace:
+>>>> [   47.099910]  <IRQ>
+>>>> [   47.100128]  blk_mq_requeue_request+0x58/0x60
+>>>> [   47.100576]  ide_requeue_and_plug+0x20/0x50
+>>>> [   47.101014]  ide_intr+0x21a/0x230
+>>>> [   47.101362]  ? idecd_open+0xc0/0xc0
+>>>> [   47.101735]  __handle_irq_event_percpu+0x43/0x1e0
+>>>> [   47.102214]  handle_irq_event_percpu+0x32/0x80
+>>>> [   47.102668]  handle_irq_event+0x39/0x60
+>>>> [   47.103074]  handle_edge_irq+0xe8/0x1c0
+>>>> [   47.103470]  handle_irq+0x20/0x30
+>>>> [   47.103819]  do_IRQ+0x46/0xe0
+>>>> [   47.104128]  common_interrupt+0xf/0xf
+>>>> [   47.104505]  </IRQ>
+>>>> [   47.104731] RIP: 0010:ide_output_data+0xbc/0x100
+>>>> [   47.105201] Code: 74 22 8d 41 ff 85 c9 74 24 49 8d 54 40 02 41 0f b7 00 66 41 89 01 49 83 c0 02 49 39 d0 75 ef 5b 41 5c 5d c3 4c 89 c6 445
+>>>> [   47.107092] RSP: 0018:ffffbd508059bb18 EFLAGS: 00010246 ORIG_RAX: ffffffffffffffdd
+>>>> [   47.107862] RAX: ffff9e1ea13a8800 RBX: ffff9e1ea13a9000 RCX: 0000000000000000
+>>>> [   47.108581] RDX: 0000000000000170 RSI: ffff9e1ea13c012c RDI: 0000000000000000
+>>>> [   47.109293] RBP: ffffbd508059bb28 R08: ffff9e1ea13c0120 R09: 0000000000000170
+>>>> [   47.110016] R10: 000000000000000d R11: 000000000000000c R12: ffff9e1ea13a8800
+>>>> [   47.110731] R13: 000000000000000c R14: ffff9e1ea13c0000 R15: 0000000000007530
+>>>> [   47.111446]  ide_transfer_pc+0x216/0x310
+>>>> [   47.111848]  ? __const_udelay+0x3d/0x40
+>>>> [   47.112236]  ? ide_execute_command+0x85/0xb0
+>>>> [   47.112668]  ? ide_pc_intr+0x3f0/0x3f0
+>>>> [   47.113051]  ? ide_check_atapi_device+0x110/0x110
+>>>> [   47.113524]  ide_issue_pc+0x178/0x240
+>>>> [   47.113901]  ide_cd_do_request+0x15c/0x350
+>>>> [   47.114314]  ide_queue_rq+0x180/0x6b0
+>>>> [   47.114686]  ? blk_mq_get_driver_tag+0xa1/0x110
+>>>> [   47.115153]  blk_mq_dispatch_rq_list+0x90/0x550
+>>>> [   47.115606]  ? __queue_delayed_work+0x63/0x90
+>>>> [   47.116054]  ? deadline_fifo_request+0x41/0x90
+>>>> [   47.116506]  blk_mq_do_dispatch_sched+0x80/0x100
+>>>> [   47.116976]  blk_mq_sched_dispatch_requests+0xfc/0x170
+>>>> [   47.117491]  __blk_mq_run_hw_queue+0x6f/0xd0
+>>>> [   47.117941]  blk_mq_run_work_fn+0x1b/0x20
+>>>> [   47.118342]  process_one_work+0x14c/0x450
+>>>> [   47.118747]  worker_thread+0x4a/0x440
+>>>> [   47.119125]  kthread+0x105/0x140
+>>>> [   47.119456]  ? process_one_work+0x450/0x450
+>>>> [   47.119880]  ? kthread_park+0x90/0x90
+>>>> [   47.120251]  ret_from_fork+0x35/0x40
+>>>> [   47.120619] Modules linked in:
+>>>> [   47.120952] ---[ end trace 4562f716e88fdefe ]---
+>>>> [   47.121423] RIP: 0010:blk_mq_add_to_requeue_list+0xc1/0xd0
+>>>> [   47.121981] Code: 48 8d 53 48 49 8b 8c 24 b8 04 00 00 48 89 51 08 48 89 4b 48 49 8d 8c 24 b8 04 00 00 48 89 4b 50 49 89 94 24 b8 04 00 008
+>>>> [   47.123851] RSP: 0018:ffff9e1ea4b43e40 EFLAGS: 00010002
+>>>> [   47.124393] RAX: ffff9e1ea13c0048 RBX: ffff9e1ea13c0000 RCX: 0000000000000006
+>>>> [   47.125108] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9e1ea13c0000
+>>>> [   47.125819] RBP: ffff9e1ea4b43e68 R08: ffffeb5bcf630680 R09: 0000000000000000
+>>>> [   47.126539] R10: 0000000000000001 R11: 0000000000000012 R12: ffff9e1ea1033a40
+>>>> [   47.127262] R13: ffff9e1ea13a8d00 R14: ffff9e1ea13a9000 R15: 0000000000000046
+>>>> [   47.127988] FS:  0000000000000000(0000) GS:ffff9e1ea4b40000(0000) knlGS:0000000000000000
+>>>> [   47.128793] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>> [   47.129385] CR2: 0000003fda41fda0 CR3: 00000003d8e6a000 CR4: 00000000000006e0
+>>>> [   47.130104] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>> [   47.130823] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>> [   47.131547] Kernel panic - not syncing: Fatal exception in interrupt
+>>>> [   47.132609] Kernel Offset: 0x7c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>>>> [   47.133679] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+>>>> [   47.134432] ------------[ cut here ]-----------
+>>> Iâ€™ll take a look at this, thanks for the report.
+>> I can't reproduce this, unfortunately. But I'm guessing it might be related
+>> to a race with the requeue and request handling in IDE. Can you try with
+>> the below patch?
+> 
+> Thanks for attention, but this patch doesn't help.
 
-No please, i still want to review properly the oneline ie making sure
-that it will not change any of the existing use of FAULT_FLAG_TRIED
-I am finishing a bunch of patches myself so i am bit short on time right
-now to take a deeper look but i will try to do that in next few days :)
+OK, thanks for trying.
 
-In anycase i will review again your next posting.
+> From what I reached, to reproduce it, we need to use legacy CONFIG_IDE
+> and friends where "ide: convert to blk-mq" sits, not CONFIG_ATA and so
+> on.  I can reproduce it with qemux86-64 with "-drive ... if=ide" or
+> "-drive ... if=virtio".
 
-Cheers,
-Jérôme
+Yes of course, I am trying to reproduce with the legacy stack. Just not
+having any luck doing it, even thousands of read_all iterations on /proc
+with IO to the IDE drives is still not doing it. From your trace, it
+looks like ide-cd causing it, which would mean a cdrom of some sort.
+
+I'll try again!
+
+-- 
+Jens Axboe
+
