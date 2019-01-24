@@ -7,41 +7,41 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9BACC282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:02:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25812C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 917D921872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:02:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E80CD21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:03:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gPXc14X5"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="DLTiKGka"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727423AbfAXDC5 (ORCPT
+        id S1727399AbfAXDCy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 22:02:57 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:52938 "EHLO
+        Wed, 23 Jan 2019 22:02:54 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52924 "EHLO
         perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727342AbfAXDCw (ORCPT
+        with ESMTP id S1727252AbfAXDCu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 22:02:52 -0500
+        Wed, 23 Jan 2019 22:02:50 -0500
 Received: from localhost.localdomain (unknown [96.44.9.117])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A433823D;
-        Thu, 24 Jan 2019 04:02:48 +0100 (CET)
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1B5122F5;
+        Thu, 24 Jan 2019 04:02:47 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1548298969;
-        bh=pvTulY8PyOJgbb2q7UKgbyj6XlrVByBxyEzxK2Jb4bg=;
+        s=mail; t=1548298968;
+        bh=jK9l6KTbRd/p2CLZjYqss5k9r6Xs5TVksT3qoRQaUbA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gPXc14X5Ylf+hfOdyHoI/MsBHPKZWcI+i0iO8l2Q/J88wPlN+uaHoCl+LrGp+47XZ
-         uFNeCH6IpQDs++X6P+2q6H0hg7jkFHQ0cmJz3+mINBHvOnKFxxg2VjNfxX246xQM4K
-         /2Y99MVBfXkDRmr651RjC4hyfa5+evPJEpl4o2no=
+        b=DLTiKGkaqBzTpO2S/LFs1cSuEOE3E109/tAp1vEeMr1fSpQ04DEj9YjAJJG5mBE4v
+         qLIZxAANU3tceHJl9SvkwLHgwAPmmMCfwgWo9RKVWgrXFOrl5jGrtEY9Al98M+t2vR
+         w6nGlz3JmavKU5JQr/dRUDEji+U+6HV51hxLrS+c=
 From:   Paul Elder <paul.elder@ideasonboard.com>
 To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
 Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
         stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
         gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH v7 6/6] usb: gadget: uvc: allow ioctl to send response in status stage
-Date:   Wed, 23 Jan 2019 22:02:28 -0500
-Message-Id: <20190124030228.19840-7-paul.elder@ideasonboard.com>
+Subject: [PATCH v7 5/6] usb: musb: gadget: implement optional explicit status stage
+Date:   Wed, 23 Jan 2019 22:02:27 -0500
+Message-Id: <20190124030228.19840-6-paul.elder@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124030228.19840-1-paul.elder@ideasonboard.com>
 References: <20190124030228.19840-1-paul.elder@ideasonboard.com>
@@ -52,142 +52,139 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We now have a mechanism to signal the UDC driver to reply to a control
-OUT request with STALL or ACK, and we have packaged the setup stage data
-and the data stage data of a control OUT request into a single
-UVC_EVENT_DATA for userspace to consume. After telling the UDC to delay
-the status stage, the ioctl UVCIOC_SEND_RESPONSE should be called to
-notify the UDC driver to reply with STALL or ACK, for control OUT
-requests. In the case of a control IN request, the ioctl sends the UVC
-data as before.
-
-This means that the completion handler will also be called for the
-status stage, so make the UVC gadget driver aware of if the
-completion handler is called for the status stage, and do nothing (as
-opposed to giving userspace the UVC data again).
+Implement the mechanism for optional explicit status stage for the MUSB
+driver. This allows a function driver to specify what to reply for the
+status stage. The functionality for an implicit status stage is
+retained.
 
 Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+v1 Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+v1 Acked-by: Bin Liu <b-liu@ti.com>
 ---
-No change from v6
+Changes from v6:
+
+- check that the request queued for the status stage of a control
+  OUT request has zero length
 
 Changes from v5:
 
-- add event_status flag and use to keep track of whether or not the
-  gadget is in the status stage or not
-- do nothing if the completion handler is called during the status stage
+- giveback usb request to gadget driver after enqueueing for the status
+  stage
 
-No change from v4
+Changes from v4:
+
+- call usb_gadget_control_complete before usb_gadget_giveback_request
+- set musb ep0 state to statusin in ep0_send_ack
+- make sure to not double-write musb register in ep0_rxstate, since
+  musb_g_ep0_giveback will take care of writing them
+
 No change from v3
 
 Changes from v2:
-- calling usb_ep_set_halt in uvc_send_response if data->length < 0 is
-  now common for both IN and OUT transfers so make that check common
-- remove now unnecessary field setting for the usb_request to be queued
-  for the status stage
+- update call to usb_gadget_control_complete to include status
+- since sending STALL from the function driver is now done with
+  usb_ep_set_halt, there is no need for the internal ep0_send_response to
+  take a stall/ack parameter; remove the parameter and make the function
+  only send ack, and remove checking for the status reply in the
+  usb_request for the status stage
 
 Changes from v1:
-- remove usb_ep_delay_status call from the old proposed API
-- changed portions of uvc_send_response to match v2 API
-- remove UDC warning that send_response is not implemented
+- obvious change to implement v2 mechanism laid out by 4/6 of this
+  series (send_response, and musb_g_ep0_send_response function has
+  been removed, call to usb_gadget_control_complete has been added)
+- ep0_send_response's ack argument has been changed from stall
+- last_packet flag in ep0_rxstate has been removed, since it is equal to
+  req != NULL
 
- drivers/usb/gadget/function/f_uvc.c    | 11 +++++++++--
- drivers/usb/gadget/function/uvc.h      |  1 +
- drivers/usb/gadget/function/uvc_v4l2.c | 24 ++++++++++++++++++------
- 3 files changed, 28 insertions(+), 8 deletions(-)
+ drivers/usb/musb/musb_gadget.c     |  2 ++
+ drivers/usb/musb/musb_gadget_ep0.c | 36 ++++++++++++++++++++++++++++--
+ 2 files changed, 36 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/gadget/function/f_uvc.c b/drivers/usb/gadget/function/f_uvc.c
-index 6303ed346af9..dd3a06e28435 100644
---- a/drivers/usb/gadget/function/f_uvc.c
-+++ b/drivers/usb/gadget/function/f_uvc.c
-@@ -208,15 +208,19 @@ uvc_function_ep0_complete(struct usb_ep *ep, struct usb_request *req)
- 	struct v4l2_event v4l2_event;
- 	struct uvc_event *uvc_event = (void *)&v4l2_event.u.data;
+diff --git a/drivers/usb/musb/musb_gadget.c b/drivers/usb/musb/musb_gadget.c
+index ffe462a657b1..2a36bebf955d 100644
+--- a/drivers/usb/musb/musb_gadget.c
++++ b/drivers/usb/musb/musb_gadget.c
+@@ -144,6 +144,8 @@ __acquires(ep->musb->lock)
+ 		unmap_dma_buffer(req, musb);
  
--	if (uvc->event_setup_out) {
--		uvc->event_setup_out = 0;
-+	if (uvc->event_status) {
-+		uvc->event_status = 0;
-+		return;
-+	}
- 
-+	if (uvc->event_setup_out) {
- 		memset(&v4l2_event, 0, sizeof(v4l2_event));
- 		v4l2_event.type = UVC_EVENT_DATA;
- 		uvc_event->data.length = req->actual;
- 		memcpy(&uvc_event->data.data, req->buf, req->actual);
- 		memcpy(&uvc_event->data.setup, &uvc->control_setup,
- 		       sizeof(uvc_event->data.setup));
-+
- 		v4l2_event_queue(&uvc->vdev, &v4l2_event);
- 	}
+ 	trace_musb_req_gb(req);
++	if (req->ep->end_point.address == 0)
++		usb_gadget_control_complete(&musb->g, &req->request);
+ 	usb_gadget_giveback_request(&req->ep->end_point, &req->request);
+ 	spin_lock(&musb->lock);
+ 	ep->busy = busy;
+diff --git a/drivers/usb/musb/musb_gadget_ep0.c b/drivers/usb/musb/musb_gadget_ep0.c
+index 91a5027b5c1f..e6531ebe789e 100644
+--- a/drivers/usb/musb/musb_gadget_ep0.c
++++ b/drivers/usb/musb/musb_gadget_ep0.c
+@@ -458,6 +458,25 @@ __acquires(musb->lock)
+ 	return handled;
  }
-@@ -242,6 +246,8 @@ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- 	uvc->event_length = le16_to_cpu(ctrl->wLength);
- 	memcpy(&uvc->control_setup, ctrl, sizeof(uvc->control_setup));
  
-+	uvc->event_status = 0;
++static int ep0_send_ack(struct musb *musb)
++{
++	void __iomem *regs = musb->control_ep->regs;
++	u16 csr;
 +
- 	if (uvc->event_setup_out) {
- 		struct usb_request *req = uvc->control_req;
- 
-@@ -251,6 +257,7 @@ uvc_function_setup(struct usb_function *f, const struct usb_ctrlrequest *ctrl)
- 		 */
- 		req->length = uvc->event_length;
- 		req->zero = 0;
-+		req->explicit_status = 1;
- 		usb_ep_queue(f->config->cdev->gadget->ep0, req, GFP_KERNEL);
- 	} else {
- 		struct v4l2_event v4l2_event;
-diff --git a/drivers/usb/gadget/function/uvc.h b/drivers/usb/gadget/function/uvc.h
-index 1d89b1df4ba0..5754548d94c5 100644
---- a/drivers/usb/gadget/function/uvc.h
-+++ b/drivers/usb/gadget/function/uvc.h
-@@ -171,6 +171,7 @@ struct uvc_device {
- 	/* Events */
- 	unsigned int event_length;
- 	unsigned int event_setup_out : 1;
-+	unsigned int event_status : 1;
- };
- 
- static inline struct uvc_device *to_uvc(struct usb_function *f)
-diff --git a/drivers/usb/gadget/function/uvc_v4l2.c b/drivers/usb/gadget/function/uvc_v4l2.c
-index ac48f49d9f10..338811c612c5 100644
---- a/drivers/usb/gadget/function/uvc_v4l2.c
-+++ b/drivers/usb/gadget/function/uvc_v4l2.c
-@@ -35,15 +35,27 @@ uvc_send_response(struct uvc_device *uvc, struct uvc_request_data *data)
- 	struct usb_composite_dev *cdev = uvc->func.config->cdev;
- 	struct usb_request *req = uvc->control_req;
- 
-+	if (data->length < 0)
-+		return usb_ep_set_halt(cdev->gadget->ep0);
++	if (musb->ep0_state != MUSB_EP0_STAGE_RX &&
++	    musb->ep0_state != MUSB_EP0_STAGE_STATUSIN)
++		return -EINVAL;
 +
- 	/*
- 	 * For control OUT transfers the request has been enqueued synchronously
--	 * by the setup handler, there's nothing to be done here.
-+	 * by the setup handler, we just need to tell the UDC whether to ACK or
-+	 * STALL the control transfer.
- 	 */
--	if (uvc->event_setup_out)
--		return 0;
--
--	if (data->length < 0)
--		return usb_ep_set_halt(cdev->gadget->ep0);
-+	if (uvc->event_setup_out) {
-+		/*
-+		 * The length field carries the control request status.
-+		 * Negative values signal a STALL and zero values an ACK.
-+		 * Positive values are not valid as there is no data to send
-+		 * back in the status stage.
-+		 */
-+		if (data->length > 0)
-+			return -EINVAL;
++	csr = MUSB_CSR0_P_DATAEND | MUSB_CSR0_P_SVDRXPKTRDY;
 +
-+		uvc->event_status = 1;
-+		return usb_ep_queue(cdev->gadget->ep0, req, GFP_KERNEL);
-+	}
++	musb_ep_select(musb->mregs, 0);
++	musb_writew(regs, MUSB_CSR0, csr);
++
++	musb->ep0_state = MUSB_EP0_STAGE_STATUSIN;
++
++	return 0;
++}
++
+ /* we have an ep0out data packet
+  * Context:  caller holds controller lock
+  */
+@@ -504,12 +523,15 @@ static void ep0_rxstate(struct musb *musb)
+ 	if (req) {
+ 		musb->ackpend = csr;
+ 		musb_g_ep0_giveback(musb, req);
++		if (req->explicit_status)
++			return;
+ 		if (!musb->ackpend)
+ 			return;
+ 		musb->ackpend = 0;
++	} else {
++		musb_ep_select(musb->mregs, 0);
++		musb_writew(regs, MUSB_CSR0, csr);
+ 	}
+-	musb_ep_select(musb->mregs, 0);
+-	musb_writew(regs, MUSB_CSR0, csr);
+ }
  
- 	req->length = min_t(unsigned int, uvc->event_length, data->length);
- 	req->zero = data->length < uvc->event_length;
+ /*
+@@ -937,6 +959,7 @@ musb_g_ep0_queue(struct usb_ep *e, struct usb_request *r, gfp_t gfp_flags)
+ 	case MUSB_EP0_STAGE_RX:		/* control-OUT data */
+ 	case MUSB_EP0_STAGE_TX:		/* control-IN data */
+ 	case MUSB_EP0_STAGE_ACKWAIT:	/* zero-length data */
++	case MUSB_EP0_STAGE_STATUSIN:
+ 		status = 0;
+ 		break;
+ 	default:
+@@ -978,6 +1001,15 @@ musb_g_ep0_queue(struct usb_ep *e, struct usb_request *r, gfp_t gfp_flags)
+ 	} else if (musb->ackpend) {
+ 		musb_writew(regs, MUSB_CSR0, musb->ackpend);
+ 		musb->ackpend = 0;
++
++	/* status stage of OUT with data, issue IN status, then giveback */
++	} else if (musb->ep0_state == MUSB_EP0_STAGE_STATUSIN) {
++		if (req->request.length)
++			status = -EINVAL;
++		else {
++			status = ep0_send_ack(musb);
++			musb_g_ep0_giveback(ep->musb, r);
++		}
+ 	}
+ 
+ cleanup:
 -- 
 2.20.1
 
