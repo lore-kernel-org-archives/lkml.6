@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E51C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC53C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7313F218D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44F2D217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357837;
-	bh=Ne2G34osE46w3sZtLiGkHa1sN9665fUyXn460EEMUUY=;
+	s=default; t=1548357844;
+	bh=YUvnAihcms6DTIkevkfZuTRr3rDgWlxdN5XuQVnXtSs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UQS/XMfR2OB4roiLyjdogG+bQeFHnmLm56tuPWz3+KkArL59jezYGh8R6Pj3Ibgks
-	 0z+8v8TXirQVrkgq1pWCbX4pFoYdHro5jEuhDl0EMCp24ytXWpbmeqY1pt4UrK2vs8
-	 Ap3BiEPhKOamGnGQ3Xx/ID3OJ5KIfr+jY76Ig5LE=
+	b=ZXh4R3TQpQsbxA52OYALP+RVibsRZLBiR8LB1knU6/SokbMqjXKVqUoGBRZeTVq7i
+	 DSVaaOq8nVnOsWN8GKfATkMzKXIw8UTyhHQDD0sTt2qspcoYmlzdZd8VpECffIwYog
+	 QFU+/VfZpCn/cO2grEaNcBFY56s1Bt8jhcxn1HkY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729965AbfAXTX4 (ORCPT
+        id S1729990AbfAXTYC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:23:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48908 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:24:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48968 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729943AbfAXTXx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:23:53 -0500
+        id S1729461AbfAXTX4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:23:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E715F217D4;
-        Thu, 24 Jan 2019 19:23:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91806218EA;
+        Thu, 24 Jan 2019 19:23:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357832;
-        bh=Ne2G34osE46w3sZtLiGkHa1sN9665fUyXn460EEMUUY=;
+        s=default; t=1548357835;
+        bh=YUvnAihcms6DTIkevkfZuTRr3rDgWlxdN5XuQVnXtSs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DgaTMr2nNS0XVqPxZNgZno+ylqW1tUUeIR/iwgSq6aBIpo9RGmqnG70ah1ScBY6Hn
-         qpc5ZhpvqSq1xlhjFuOMmN+C+1HATbG9KlBKW9MNwgRiRnSABmnriHKTQHRVtFtdN0
-         PJ9lR1+Usg1JTtT/p3HYCT7uTuhEWYMhQksuKDcM=
+        b=u6AZHpp3iYo61e1Z++PQzE3Jizux8b+MOzItBlrmalobEWXvbTUm5UwuAIksQetN/
+         P9oTL4RultovVq7aQglcGDor1Ek0obdl20GQP90QahQGHSG5wFwgnMrxHJtnnQ7bvx
+         8hYWMuM/QC2bOYtG7I0K4iQqgr0pyUUb3rvc/12E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 3.18 30/52] sctp: allocate sctp_sockaddr_entry with kzalloc
-Date:   Thu, 24 Jan 2019 20:19:54 +0100
-Message-Id: <20190124190147.565784191@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>,
+        Jan Kara <jack@suse.cz>, Jens Axboe <axboe@kernel.dk>
+Subject: [PATCH 3.18 31/52] block/loop: Use global lock for ioctl() operation.
+Date:   Thu, 24 Jan 2019 20:19:55 +0100
+Message-Id: <20190124190147.778778015@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -69,74 +67,208 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-commit 400b8b9a2a17918f8ce00786f596f530e7f30d50 upstream.
+commit 310ca162d779efee8a2dc3731439680f3e9c1e86 upstream.
 
-The similar issue as fixed in Commit 4a2eb0c37b47 ("sctp: initialize
-sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event") also exists
-in sctp_inetaddr_event, as Alexander noticed.
+syzbot is reporting NULL pointer dereference [1] which is caused by
+race condition between ioctl(loop_fd, LOOP_CLR_FD, 0) versus
+ioctl(other_loop_fd, LOOP_SET_FD, loop_fd) due to traversing other
+loop devices at loop_validate_file() without holding corresponding
+lo->lo_ctl_mutex locks.
 
-To fix it, allocate sctp_sockaddr_entry with kzalloc for both sctp
-ipv4 and ipv6 addresses, as does in sctp_v4/6_copy_addrlist().
+Since ioctl() request on loop devices is not frequent operation, we don't
+need fine grained locking. Let's use global lock in order to allow safe
+traversal at loop_validate_file().
 
-Reported-by: Alexander Potapenko <glider@google.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Reported-by: syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Note that syzbot is also reporting circular locking dependency between
+bdev->bd_mutex and lo->lo_ctl_mutex [2] which is caused by calling
+blkdev_reread_part() with lock held. This patch does not address it.
+
+[1] https://syzkaller.appspot.com/bug?id=f3cfe26e785d85f9ee259f385515291d21bd80a3
+[2] https://syzkaller.appspot.com/bug?id=bf154052f0eea4bc7712499e4569505907d15889
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+bf89c128e05dd6c62523@syzkaller.appspotmail.com>
+Reviewed-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jan Kara <jack@suse.cz>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sctp/ipv6.c     |    5 +----
- net/sctp/protocol.c |    4 +---
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ drivers/block/loop.c |   47 ++++++++++++++++++++++++-----------------------
+ drivers/block/loop.h |    1 -
+ 2 files changed, 24 insertions(+), 24 deletions(-)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -97,11 +97,9 @@ static int sctp_inet6addr_event(struct n
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -81,6 +81,7 @@
  
- 	switch (ev) {
- 	case NETDEV_UP:
--		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
-+		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v6.sin6_family = AF_INET6;
--			addr->a.v6.sin6_port = 0;
--			addr->a.v6.sin6_flowinfo = 0;
- 			addr->a.v6.sin6_addr = ifa->addr;
- 			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
- 			addr->valid = 1;
-@@ -411,7 +409,6 @@ static void sctp_v6_copy_addrlist(struct
- 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v6.sin6_family = AF_INET6;
--			addr->a.v6.sin6_port = 0;
- 			addr->a.v6.sin6_addr = ifp->addr;
- 			addr->a.v6.sin6_scope_id = dev->ifindex;
- 			addr->valid = 1;
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -149,7 +149,6 @@ static void sctp_v4_copy_addrlist(struct
- 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v4.sin_family = AF_INET;
--			addr->a.v4.sin_port = 0;
- 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
- 			addr->valid = 1;
- 			INIT_LIST_HEAD(&addr->list);
-@@ -755,10 +754,9 @@ static int sctp_inetaddr_event(struct no
+ static DEFINE_IDR(loop_index_idr);
+ static DEFINE_MUTEX(loop_index_mutex);
++static DEFINE_MUTEX(loop_ctl_mutex);
  
- 	switch (ev) {
- 	case NETDEV_UP:
--		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
-+		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v4.sin_family = AF_INET;
--			addr->a.v4.sin_port = 0;
- 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
- 			addr->valid = 1;
- 			spin_lock_bh(&net->sctp.local_addr_lock);
+ static int max_part;
+ static int part_shift;
+@@ -1012,7 +1013,7 @@ static int loop_clr_fd(struct loop_devic
+ 	 */
+ 	if (lo->lo_refcnt > 1) {
+ 		lo->lo_flags |= LO_FLAGS_AUTOCLEAR;
+-		mutex_unlock(&lo->lo_ctl_mutex);
++		mutex_unlock(&loop_ctl_mutex);
+ 		return 0;
+ 	}
+ 
+@@ -1061,12 +1062,12 @@ static int loop_clr_fd(struct loop_devic
+ 	lo->lo_flags = 0;
+ 	if (!part_shift)
+ 		lo->lo_disk->flags |= GENHD_FL_NO_PART_SCAN;
+-	mutex_unlock(&lo->lo_ctl_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ 	/*
+-	 * Need not hold lo_ctl_mutex to fput backing file.
+-	 * Calling fput holding lo_ctl_mutex triggers a circular
++	 * Need not hold loop_ctl_mutex to fput backing file.
++	 * Calling fput holding loop_ctl_mutex triggers a circular
+ 	 * lock dependency possibility warning as fput can take
+-	 * bd_mutex which is usually taken before lo_ctl_mutex.
++	 * bd_mutex which is usually taken before loop_ctl_mutex.
+ 	 */
+ 	fput(filp);
+ 	return 0;
+@@ -1300,7 +1301,7 @@ static int lo_ioctl(struct block_device
+ 	struct loop_device *lo = bdev->bd_disk->private_data;
+ 	int err;
+ 
+-	mutex_lock_nested(&lo->lo_ctl_mutex, 1);
++	mutex_lock_nested(&loop_ctl_mutex, 1);
+ 	switch (cmd) {
+ 	case LOOP_SET_FD:
+ 		err = loop_set_fd(lo, mode, bdev, arg);
+@@ -1309,7 +1310,7 @@ static int lo_ioctl(struct block_device
+ 		err = loop_change_fd(lo, bdev, arg);
+ 		break;
+ 	case LOOP_CLR_FD:
+-		/* loop_clr_fd would have unlocked lo_ctl_mutex on success */
++		/* loop_clr_fd would have unlocked loop_ctl_mutex on success */
+ 		err = loop_clr_fd(lo);
+ 		if (!err)
+ 			goto out_unlocked;
+@@ -1340,7 +1341,7 @@ static int lo_ioctl(struct block_device
+ 	default:
+ 		err = lo->ioctl ? lo->ioctl(lo, cmd, arg) : -EINVAL;
+ 	}
+-	mutex_unlock(&lo->lo_ctl_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ 
+ out_unlocked:
+ 	return err;
+@@ -1473,16 +1474,16 @@ static int lo_compat_ioctl(struct block_
+ 
+ 	switch(cmd) {
+ 	case LOOP_SET_STATUS:
+-		mutex_lock(&lo->lo_ctl_mutex);
++		mutex_lock(&loop_ctl_mutex);
+ 		err = loop_set_status_compat(
+ 			lo, (const struct compat_loop_info __user *) arg);
+-		mutex_unlock(&lo->lo_ctl_mutex);
++		mutex_unlock(&loop_ctl_mutex);
+ 		break;
+ 	case LOOP_GET_STATUS:
+-		mutex_lock(&lo->lo_ctl_mutex);
++		mutex_lock(&loop_ctl_mutex);
+ 		err = loop_get_status_compat(
+ 			lo, (struct compat_loop_info __user *) arg);
+-		mutex_unlock(&lo->lo_ctl_mutex);
++		mutex_unlock(&loop_ctl_mutex);
+ 		break;
+ 	case LOOP_SET_CAPACITY:
+ 	case LOOP_CLR_FD:
+@@ -1513,9 +1514,9 @@ static int lo_open(struct block_device *
+ 		goto out;
+ 	}
+ 
+-	mutex_lock(&lo->lo_ctl_mutex);
++	mutex_lock(&loop_ctl_mutex);
+ 	lo->lo_refcnt++;
+-	mutex_unlock(&lo->lo_ctl_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ out:
+ 	mutex_unlock(&loop_index_mutex);
+ 	return err;
+@@ -1525,7 +1526,7 @@ static void __lo_release(struct loop_dev
+ {
+ 	int err;
+ 
+-	mutex_lock(&lo->lo_ctl_mutex);
++	mutex_lock(&loop_ctl_mutex);
+ 
+ 	if (--lo->lo_refcnt)
+ 		goto out;
+@@ -1547,7 +1548,7 @@ static void __lo_release(struct loop_dev
+ 	}
+ 
+ out:
+-	mutex_unlock(&lo->lo_ctl_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ }
+ 
+ static void lo_release(struct gendisk *disk, fmode_t mode)
+@@ -1593,10 +1594,10 @@ static int unregister_transfer_cb(int id
+ 	struct loop_device *lo = ptr;
+ 	struct loop_func_table *xfer = data;
+ 
+-	mutex_lock(&lo->lo_ctl_mutex);
++	mutex_lock(&loop_ctl_mutex);
+ 	if (lo->lo_encryption == xfer)
+ 		loop_release_xfer(lo);
+-	mutex_unlock(&lo->lo_ctl_mutex);
++	mutex_unlock(&loop_ctl_mutex);
+ 	return 0;
+ }
+ 
+@@ -1677,7 +1678,7 @@ static int loop_add(struct loop_device *
+ 	if (!part_shift)
+ 		disk->flags |= GENHD_FL_NO_PART_SCAN;
+ 	disk->flags |= GENHD_FL_EXT_DEVT;
+-	mutex_init(&lo->lo_ctl_mutex);
++	mutex_init(&loop_ctl_mutex);
+ 	lo->lo_number		= i;
+ 	lo->lo_thread		= NULL;
+ 	init_waitqueue_head(&lo->lo_event);
+@@ -1789,19 +1790,19 @@ static long loop_control_ioctl(struct fi
+ 		ret = loop_lookup(&lo, parm);
+ 		if (ret < 0)
+ 			break;
+-		mutex_lock(&lo->lo_ctl_mutex);
++		mutex_lock(&loop_ctl_mutex);
+ 		if (lo->lo_state != Lo_unbound) {
+ 			ret = -EBUSY;
+-			mutex_unlock(&lo->lo_ctl_mutex);
++			mutex_unlock(&loop_ctl_mutex);
+ 			break;
+ 		}
+ 		if (lo->lo_refcnt > 0) {
+ 			ret = -EBUSY;
+-			mutex_unlock(&lo->lo_ctl_mutex);
++			mutex_unlock(&loop_ctl_mutex);
+ 			break;
+ 		}
+ 		lo->lo_disk->private_data = NULL;
+-		mutex_unlock(&lo->lo_ctl_mutex);
++		mutex_unlock(&loop_ctl_mutex);
+ 		idr_remove(&loop_index_idr, lo->lo_number);
+ 		loop_remove(lo);
+ 		break;
+--- a/drivers/block/loop.h
++++ b/drivers/block/loop.h
+@@ -55,7 +55,6 @@ struct loop_device {
+ 	struct bio_list		lo_bio_list;
+ 	unsigned int		lo_bio_count;
+ 	int			lo_state;
+-	struct mutex		lo_ctl_mutex;
+ 	struct task_struct	*lo_thread;
+ 	wait_queue_head_t	lo_event;
+ 	/* wait queue for incoming requests */
 
 
