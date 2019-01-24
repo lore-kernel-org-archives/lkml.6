@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF56C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F4EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 725AB218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81292218FD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357999;
-	bh=EC1Y8kfB2s9Y0ympO8Dh2+xya5tjrA7Rs+sDZjWqFuk=;
+	s=default; t=1548358002;
+	bh=ylduL/TFs5TfxLS3IJ39gTXRytn8ae5gmYonEFoLV/I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oHtwWEfDyv2kBNDFiPCYSCKd0O+1ToFrA094NtLn+rXHNEx4taQ8WcIse6Kpshx/x
-	 2FrFZEO1pBDYvRXFuHUgVA5nLsSpXy1aQgIVBPtXnLZV2/1XQPjPWz7i0PEVUYzJfB
-	 Vwhtsh/f/8qvBhMjjEMOa/zTtIGiC0gGE2640vxA=
+	b=o/UhXG21LjeaygIeeIV4YQgfm21flcpxMkUIY9S+kpF0Jg8088eP0257uyCW68wBu
+	 l5IOqafFUE1JIm9rb4KsFzWdMAIlnYXKIdaN4fb+59FakD7rF4NozMYC0lDo8KRRVB
+	 c4bPsTwKeMWgL/XY8LWHvpzRQcrQ/6OfnH/GBCT0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730601AbfAXT0i (ORCPT
+        id S1730612AbfAXT0k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:26:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52560 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:26:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52682 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730570AbfAXT0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:26:31 -0500
+        id S1729813AbfAXT0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:26:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EECCA217D7;
-        Thu, 24 Jan 2019 19:26:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 734DB217D7;
+        Thu, 24 Jan 2019 19:26:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357990;
-        bh=EC1Y8kfB2s9Y0ympO8Dh2+xya5tjrA7Rs+sDZjWqFuk=;
+        s=default; t=1548357995;
+        bh=ylduL/TFs5TfxLS3IJ39gTXRytn8ae5gmYonEFoLV/I=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jL5eTTdurdSbjZH+V9uJNsIWkJoGo0OAHNejGjeLnvYDBdfgVQh71UlOoDC1/W98v
-         F3+3sXhf9JQV6SXmbYcgnv//9tWdkH6L2klMXu0lJ1MuMVTsZ72OooJKgCuL/hZ6q+
-         reB85yy6On24ct9L5zsb0qsEZxKuYyJ+d5sU+pZE=
+        b=T4Heyh8k9aPpxC2S25Vipt2i7ohxTPEyZ708LCwPptIoVU9nLeiMreo1OlZbYiXfy
+         Zd88TPhFaow8XWBeCvPKs92FvrSDpzXRBfKcMVrW9YJlGzyip9QwPAHP2c9CcBncl6
+         uJ2rzjPL8m3OR0PDtiy4pZ+NKCynVwU7AtgCY7Vk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com,
-        "J. Bruce Fields" <bfields@redhat.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
-Subject: [PATCH 4.4 059/104] sunrpc: handle ENOMEM in rpcb_getport_async
-Date:   Thu, 24 Jan 2019 20:19:48 +0100
-Message-Id: <20190124190202.192333101@linuxfoundation.org>
+        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
+        Xin Long <lucien.xin@gmail.com>,
+        syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com,
+        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
+        Neil Horman <nhorman@tuxdriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 061/104] sctp: allocate sctp_sockaddr_entry with kzalloc
+Date:   Thu, 24 Jan 2019 20:19:50 +0100
+Message-Id: <20190124190202.383611757@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -67,44 +69,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: J. Bruce Fields <bfields@redhat.com>
+From: Xin Long <lucien.xin@gmail.com>
 
-commit 81c88b18de1f11f70c97f28ced8d642c00bb3955 upstream.
+commit 400b8b9a2a17918f8ce00786f596f530e7f30d50 upstream.
 
-If we ignore the error we'll hit a null dereference a little later.
+The similar issue as fixed in Commit 4a2eb0c37b47 ("sctp: initialize
+sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event") also exists
+in sctp_inetaddr_event, as Alexander noticed.
 
-Reported-by: syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+To fix it, allocate sctp_sockaddr_entry with kzalloc for both sctp
+ipv4 and ipv6 addresses, as does in sctp_v4/6_copy_addrlist().
+
+Reported-by: Alexander Potapenko <glider@google.com>
+Signed-off-by: Xin Long <lucien.xin@gmail.com>
+Reported-by: syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com
+Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sunrpc/rpcb_clnt.c |    8 ++++++++
- 1 file changed, 8 insertions(+)
+ net/sctp/ipv6.c     |    5 +----
+ net/sctp/protocol.c |    4 +---
+ 2 files changed, 2 insertions(+), 7 deletions(-)
 
---- a/net/sunrpc/rpcb_clnt.c
-+++ b/net/sunrpc/rpcb_clnt.c
-@@ -772,6 +772,12 @@ void rpcb_getport_async(struct rpc_task
- 	case RPCBVERS_3:
- 		map->r_netid = xprt->address_strings[RPC_DISPLAY_NETID];
- 		map->r_addr = rpc_sockaddr2uaddr(sap, GFP_ATOMIC);
-+		if (!map->r_addr) {
-+			status = -ENOMEM;
-+			dprintk("RPC: %5u %s: no memory available\n",
-+				task->tk_pid, __func__);
-+			goto bailout_free_args;
-+		}
- 		map->r_owner = "";
- 		break;
- 	case RPCBVERS_2:
-@@ -794,6 +800,8 @@ void rpcb_getport_async(struct rpc_task
- 	rpc_put_task(child);
- 	return;
+--- a/net/sctp/ipv6.c
++++ b/net/sctp/ipv6.c
+@@ -97,11 +97,9 @@ static int sctp_inet6addr_event(struct n
  
-+bailout_free_args:
-+	kfree(map);
- bailout_release_client:
- 	rpc_release_client(rpcb_clnt);
- bailout_nofree:
+ 	switch (ev) {
+ 	case NETDEV_UP:
+-		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
++		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v6.sin6_family = AF_INET6;
+-			addr->a.v6.sin6_port = 0;
+-			addr->a.v6.sin6_flowinfo = 0;
+ 			addr->a.v6.sin6_addr = ifa->addr;
+ 			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
+ 			addr->valid = 1;
+@@ -412,7 +410,6 @@ static void sctp_v6_copy_addrlist(struct
+ 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v6.sin6_family = AF_INET6;
+-			addr->a.v6.sin6_port = 0;
+ 			addr->a.v6.sin6_addr = ifp->addr;
+ 			addr->a.v6.sin6_scope_id = dev->ifindex;
+ 			addr->valid = 1;
+--- a/net/sctp/protocol.c
++++ b/net/sctp/protocol.c
+@@ -151,7 +151,6 @@ static void sctp_v4_copy_addrlist(struct
+ 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v4.sin_family = AF_INET;
+-			addr->a.v4.sin_port = 0;
+ 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
+ 			addr->valid = 1;
+ 			INIT_LIST_HEAD(&addr->list);
+@@ -775,10 +774,9 @@ static int sctp_inetaddr_event(struct no
+ 
+ 	switch (ev) {
+ 	case NETDEV_UP:
+-		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
++		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
+ 		if (addr) {
+ 			addr->a.v4.sin_family = AF_INET;
+-			addr->a.v4.sin_port = 0;
+ 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
+ 			addr->valid = 1;
+ 			spin_lock_bh(&net->sctp.local_addr_lock);
 
 
