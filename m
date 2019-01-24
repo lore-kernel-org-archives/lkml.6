@@ -2,57 +2,52 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFC49C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CF98C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B401C218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F064020663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358912;
-	bh=3LSD+jy00K+F887vewligMLRqo1iyhJhblEjjAsNqIU=;
+	s=default; t=1548358915;
+	bh=UTQ9QzF9u3Kip6womoBwhlOmx/O1QJpriRFLZvn3YIg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=h1dmajzEkjiO83yiBoV+eKvZBvBSvp905psJvbCUS6BY8iwtqSOdmk48Dn2PghG7P
-	 71yvMKZxb6qA3+pKUjZK7NYwxgLfWzAM69wJqq9+cCmDGoI7QiWvDvCioYA+ZtQ1vB
-	 cQji8tk5Bzf94WBNVA4GN0w6Aoepd4A6ZV4j/zp8=
+	b=O/YmNMlKiyhPQfg86YzUp8nHD/MztpfkkdiRmnSao38jje+veNV1PmC1AvIELvmLV
+	 MT7nJ1IpEmPXXcM9jYHExCoVbGSD4nd21KCGIKO3FhpHDLGaWHpnb6BfWxb8R674o9
+	 2oVLyyOb9oq23cwRk6lstvirnxKPIdOroQkyrbQw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387663AbfAXTlu (ORCPT
+        id S2387678AbfAXTlw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:41:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42082 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:41:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42190 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387643AbfAXTlq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:41:46 -0500
+        id S2387661AbfAXTlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:41:51 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6027620663;
-        Thu, 24 Jan 2019 19:41:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A380720663;
+        Thu, 24 Jan 2019 19:41:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358904;
-        bh=3LSD+jy00K+F887vewligMLRqo1iyhJhblEjjAsNqIU=;
+        s=default; t=1548358910;
+        bh=UTQ9QzF9u3Kip6womoBwhlOmx/O1QJpriRFLZvn3YIg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Wd7tND6U/TvXIebJz2+f/gJOhAc5wr9yzOZeH8as0kcWtj5C1Z2n832jjSmngbPhZ
-         Z9YBi0MqyylkGFBmLF7NHw8PkGDV86Rt+edy7+MKsJttCsnCDsTjrM74/wd1V9xm7q
-         dTtPptcTgWMtHvmVHvH/jI6DSnGAo0jgrd6wOgxY=
+        b=IKKL6uw1JsHUyPqCPqIMWCH9Q5FodglaJgZcpC0a28hUMVTNyjifJ93CugTYeURe3
+         2GsTp2BaeBPTSPfjQc2/jI1ZpR3bLDj3M71vw0UhZybqBjT0hgrhVItLECEuKrWqcg
+         B5FI2SXfZY8VXnb1dDyILulNW23uK/bkI9Gul6+U=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Nicholas Bellinger <nab@linux-iscsi.org>,
-        Mike Christie <mchristi@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        David Disseldorp <ddiss@suse.de>,
-        Hannes Reinecke <hare@suse.de>,
-        Bart Van Assche <bvanassche@acm.org>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 066/127] scsi: target/core: Make sure that target_wait_for_sess_cmds() waits long enough
-Date:   Thu, 24 Jan 2019 20:20:12 +0100
-Message-Id: <20190124190214.945747128@linuxfoundation.org>
+Subject: [PATCH 4.20 068/127] arm64: kasan: Increase stack size for KASAN_EXTRA
+Date:   Thu, 24 Jan 2019 20:20:14 +0100
+Message-Id: <20190124190215.067686211@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -71,220 +66,76 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ad669505c4e9db9af9faeb5c51aa399326a80d91 ]
+[ Upstream commit 6e8830674ea77f57d57a33cca09083b117a71f41 ]
 
-A session must only be released after all code that accesses the session
-structure has finished. Make sure that this is the case by introducing a
-new command counter per session that is only decremented after the
-.release_cmd() callback has finished. This patch fixes the following crash:
+If the kernel is configured with KASAN_EXTRA, the stack size is
+increased significantly due to setting the GCC -fstack-reuse option to
+"none" [1]. As a result, it can trigger a stack overrun quite often with
+32k stack size compiled using GCC 8. For example, this reproducer
 
-BUG: KASAN: use-after-free in do_raw_spin_lock+0x1c/0x130
-Read of size 4 at addr ffff8801534b16e4 by task rmdir/14805
-CPU: 16 PID: 14805 Comm: rmdir Not tainted 4.18.0-rc2-dbg+ #5
-Call Trace:
-dump_stack+0xa4/0xf5
-print_address_description+0x6f/0x270
-kasan_report+0x241/0x360
-__asan_load4+0x78/0x80
-do_raw_spin_lock+0x1c/0x130
-_raw_spin_lock_irqsave+0x52/0x60
-srpt_set_ch_state+0x27/0x70 [ib_srpt]
-srpt_disconnect_ch+0x1b/0xc0 [ib_srpt]
-srpt_close_session+0xa8/0x260 [ib_srpt]
-target_shutdown_sessions+0x170/0x180 [target_core_mod]
-core_tpg_del_initiator_node_acl+0xf3/0x200 [target_core_mod]
-target_fabric_nacl_base_release+0x25/0x30 [target_core_mod]
-config_item_release+0x9c/0x110 [configfs]
-config_item_put+0x26/0x30 [configfs]
-configfs_rmdir+0x3b8/0x510 [configfs]
-vfs_rmdir+0xb3/0x1e0
-do_rmdir+0x262/0x2c0
-do_syscall_64+0x77/0x230
-entry_SYSCALL_64_after_hwframe+0x49/0xbe
+  https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise06.c
 
-Cc: Nicholas Bellinger <nab@linux-iscsi.org>
-Cc: Mike Christie <mchristi@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: David Disseldorp <ddiss@suse.de>
-Cc: Hannes Reinecke <hare@suse.de>
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+can trigger a "corrupted stack end detected inside scheduler" very
+reliably with CONFIG_SCHED_STACK_END_CHECK enabled. There are other
+reports at:
+
+  https://lore.kernel.org/lkml/1542144497.12945.29.camel@gmx.us/
+  https://lore.kernel.org/lkml/721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us/
+
+There are just too many functions that could have a large stack with
+KASAN_EXTRA due to large local variables that have been called over and
+over again without being able to reuse the stacks. Some noticiable ones
+are,
+
+size
+7536 shrink_inactive_list
+7440 shrink_page_list
+6560 fscache_stats_show
+3920 jbd2_journal_commit_transaction
+3216 try_to_unmap_one
+3072 migrate_page_move_mapping
+3584 migrate_misplaced_transhuge_page
+3920 ip_vs_lblcr_schedule
+4304 lpfc_nvme_info_show
+3888 lpfc_debugfs_nvmestat_data.constprop
+
+There are other 49 functions over 2k in size while compiling kernel with
+"-Wframe-larger-than=" on this machine. Hence, it is too much work to
+change Makefiles for each object to compile without
+-fsanitize-address-use-after-scope individually.
+
+[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
+
+Signed-off-by: Qian Cai <cai@lca.pw>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/target/target_core_transport.c | 35 ++++++++++++++++++--------
- drivers/target/target_core_xcopy.c     |  6 ++++-
- include/target/target_core_base.h      |  1 +
- include/target/target_core_fabric.h    |  2 +-
- 4 files changed, 32 insertions(+), 12 deletions(-)
+ arch/arm64/include/asm/memory.h | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/target/target_core_transport.c b/drivers/target/target_core_transport.c
-index 2cfd61d62e97..ffa5b9f771b5 100644
---- a/drivers/target/target_core_transport.c
-+++ b/drivers/target/target_core_transport.c
-@@ -224,19 +224,28 @@ void transport_subsystem_check_init(void)
- 	sub_api_initialized = 1;
- }
- 
-+static void target_release_sess_cmd_refcnt(struct percpu_ref *ref)
-+{
-+	struct se_session *sess = container_of(ref, typeof(*sess), cmd_count);
-+
-+	wake_up(&sess->cmd_list_wq);
-+}
-+
- /**
-  * transport_init_session - initialize a session object
-  * @se_sess: Session object pointer.
-  *
-  * The caller must have zero-initialized @se_sess before calling this function.
+diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
+index f0a5c9531e8b..778af0b7f7fd 100644
+--- a/arch/arm64/include/asm/memory.h
++++ b/arch/arm64/include/asm/memory.h
+@@ -67,12 +67,17 @@
+ /*
+  * KASAN requires 1/8th of the kernel virtual address space for the shadow
+  * region. KASAN can bloat the stack significantly, so double the (minimum)
+- * stack size when KASAN is in use.
++ * stack size when KASAN is in use, and then double it again if KASAN_EXTRA is
++ * on.
   */
--void transport_init_session(struct se_session *se_sess)
-+int transport_init_session(struct se_session *se_sess)
- {
- 	INIT_LIST_HEAD(&se_sess->sess_list);
- 	INIT_LIST_HEAD(&se_sess->sess_acl_list);
- 	INIT_LIST_HEAD(&se_sess->sess_cmd_list);
- 	spin_lock_init(&se_sess->sess_cmd_lock);
- 	init_waitqueue_head(&se_sess->cmd_list_wq);
-+	return percpu_ref_init(&se_sess->cmd_count,
-+			       target_release_sess_cmd_refcnt, 0, GFP_KERNEL);
- }
- EXPORT_SYMBOL(transport_init_session);
- 
-@@ -247,6 +256,7 @@ EXPORT_SYMBOL(transport_init_session);
- struct se_session *transport_alloc_session(enum target_prot_op sup_prot_ops)
- {
- 	struct se_session *se_sess;
-+	int ret;
- 
- 	se_sess = kmem_cache_zalloc(se_sess_cache, GFP_KERNEL);
- 	if (!se_sess) {
-@@ -254,7 +264,11 @@ struct se_session *transport_alloc_session(enum target_prot_op sup_prot_ops)
- 				" se_sess_cache\n");
- 		return ERR_PTR(-ENOMEM);
- 	}
--	transport_init_session(se_sess);
-+	ret = transport_init_session(se_sess);
-+	if (ret < 0) {
-+		kfree(se_sess);
-+		return ERR_PTR(ret);
-+	}
- 	se_sess->sup_prot_ops = sup_prot_ops;
- 
- 	return se_sess;
-@@ -581,6 +595,7 @@ void transport_free_session(struct se_session *se_sess)
- 		sbitmap_queue_free(&se_sess->sess_tag_pool);
- 		kvfree(se_sess->sess_cmd_map);
- 	}
-+	percpu_ref_exit(&se_sess->cmd_count);
- 	kmem_cache_free(se_sess_cache, se_sess);
- }
- EXPORT_SYMBOL(transport_free_session);
-@@ -2719,6 +2734,7 @@ int target_get_sess_cmd(struct se_cmd *se_cmd, bool ack_kref)
- 	}
- 	se_cmd->transport_state |= CMD_T_PRE_EXECUTE;
- 	list_add_tail(&se_cmd->se_cmd_list, &se_sess->sess_cmd_list);
-+	percpu_ref_get(&se_sess->cmd_count);
- out:
- 	spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
- 
-@@ -2749,8 +2765,6 @@ static void target_release_cmd_kref(struct kref *kref)
- 	if (se_sess) {
- 		spin_lock_irqsave(&se_sess->sess_cmd_lock, flags);
- 		list_del_init(&se_cmd->se_cmd_list);
--		if (se_sess->sess_tearing_down && list_empty(&se_sess->sess_cmd_list))
--			wake_up(&se_sess->cmd_list_wq);
- 		spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
- 	}
- 
-@@ -2758,6 +2772,8 @@ static void target_release_cmd_kref(struct kref *kref)
- 	se_cmd->se_tfo->release_cmd(se_cmd);
- 	if (compl)
- 		complete(compl);
-+
-+	percpu_ref_put(&se_sess->cmd_count);
- }
- 
- /**
-@@ -2886,6 +2902,8 @@ void target_sess_cmd_list_set_waiting(struct se_session *se_sess)
- 	spin_lock_irqsave(&se_sess->sess_cmd_lock, flags);
- 	se_sess->sess_tearing_down = 1;
- 	spin_unlock_irqrestore(&se_sess->sess_cmd_lock, flags);
-+
-+	percpu_ref_kill(&se_sess->cmd_count);
- }
- EXPORT_SYMBOL(target_sess_cmd_list_set_waiting);
- 
-@@ -2900,17 +2918,14 @@ void target_wait_for_sess_cmds(struct se_session *se_sess)
- 
- 	WARN_ON_ONCE(!se_sess->sess_tearing_down);
- 
--	spin_lock_irq(&se_sess->sess_cmd_lock);
- 	do {
--		ret = wait_event_lock_irq_timeout(
--				se_sess->cmd_list_wq,
--				list_empty(&se_sess->sess_cmd_list),
--				se_sess->sess_cmd_lock, 180 * HZ);
-+		ret = wait_event_timeout(se_sess->cmd_list_wq,
-+				percpu_ref_is_zero(&se_sess->cmd_count),
-+				180 * HZ);
- 		list_for_each_entry(cmd, &se_sess->sess_cmd_list, se_cmd_list)
- 			target_show_cmd("session shutdown: still waiting for ",
- 					cmd);
- 	} while (ret <= 0);
--	spin_unlock_irq(&se_sess->sess_cmd_lock);
- }
- EXPORT_SYMBOL(target_wait_for_sess_cmds);
- 
-diff --git a/drivers/target/target_core_xcopy.c b/drivers/target/target_core_xcopy.c
-index 70adcfdca8d1..124495f953fa 100644
---- a/drivers/target/target_core_xcopy.c
-+++ b/drivers/target/target_core_xcopy.c
-@@ -479,6 +479,8 @@ static const struct target_core_fabric_ops xcopy_pt_tfo = {
- 
- int target_xcopy_setup_pt(void)
- {
-+	int ret;
-+
- 	xcopy_wq = alloc_workqueue("xcopy_wq", WQ_MEM_RECLAIM, 0);
- 	if (!xcopy_wq) {
- 		pr_err("Unable to allocate xcopy_wq\n");
-@@ -496,7 +498,9 @@ int target_xcopy_setup_pt(void)
- 	INIT_LIST_HEAD(&xcopy_pt_nacl.acl_list);
- 	INIT_LIST_HEAD(&xcopy_pt_nacl.acl_sess_list);
- 	memset(&xcopy_pt_sess, 0, sizeof(struct se_session));
--	transport_init_session(&xcopy_pt_sess);
-+	ret = transport_init_session(&xcopy_pt_sess);
-+	if (ret < 0)
-+		return ret;
- 
- 	xcopy_pt_nacl.se_tpg = &xcopy_pt_tpg;
- 	xcopy_pt_nacl.nacl_sess = &xcopy_pt_sess;
-diff --git a/include/target/target_core_base.h b/include/target/target_core_base.h
-index e3bdb0550a59..d9fd4eac58c2 100644
---- a/include/target/target_core_base.h
-+++ b/include/target/target_core_base.h
-@@ -601,6 +601,7 @@ struct se_session {
- 	struct se_node_acl	*se_node_acl;
- 	struct se_portal_group *se_tpg;
- 	void			*fabric_sess_ptr;
-+	struct percpu_ref	cmd_count;
- 	struct list_head	sess_list;
- 	struct list_head	sess_acl_list;
- 	struct list_head	sess_cmd_list;
-diff --git a/include/target/target_core_fabric.h b/include/target/target_core_fabric.h
-index f4147b398431..eb9d0923c55c 100644
---- a/include/target/target_core_fabric.h
-+++ b/include/target/target_core_fabric.h
-@@ -116,7 +116,7 @@ struct se_session *target_setup_session(struct se_portal_group *,
- 				struct se_session *, void *));
- void target_remove_session(struct se_session *);
- 
--void transport_init_session(struct se_session *);
-+int transport_init_session(struct se_session *se_sess);
- struct se_session *transport_alloc_session(enum target_prot_op);
- int transport_alloc_session_tags(struct se_session *, unsigned int,
- 		unsigned int);
+ #ifdef CONFIG_KASAN
+ #define KASAN_SHADOW_SCALE_SHIFT 3
+ #define KASAN_SHADOW_SIZE	(UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
++#ifdef CONFIG_KASAN_EXTRA
++#define KASAN_THREAD_SHIFT	2
++#else
+ #define KASAN_THREAD_SHIFT	1
++#endif /* CONFIG_KASAN_EXTRA */
+ #else
+ #define KASAN_SHADOW_SIZE	(0)
+ #define KASAN_THREAD_SHIFT	0
 -- 
 2.19.1
 
