@@ -4,51 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17783C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98F81C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D841E217D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6794B217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:56:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359770;
-	bh=uYKYFhhxP8sPwZhLsxOVWmIxuKJmedH0SR9lsisN6q0=;
+	s=default; t=1548359778;
+	bh=GiX/CDUocU0jWULkqWBYKTSP+wwSmdKGKNUnuXz1wi8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DdK9bNA30A7AxoopnAJJOeDED+YPHhwvg44OBVFDgQ8bwbMoe47DxNhDh+KurvFYA
-	 LMJXpNjiMNP2A77Rgw6gkHEr+Y2kfeJHXTc4UboUYvlTJjuU8nzPy/EnSyTDgLIuyn
-	 aE29U3OIPGs85Uh/OJD5gbfusYMESCFye5+TC8EU=
+	b=OOjGuQa1ia3Tm47EKxynVi1AFMYlAJGh1ppRe3q/Y49EUdVi+y1soPj8IP9U58TUj
+	 Oba+VADm3ifyKW8/qJDWwAQOTpwOW75DPxKw2qVXFx/t3Z5joBYBO3WEo3ee2pU0CZ
+	 Q2GO9nGxXn5ekF+qapudcXRMHUEpUea2B0lfNHJo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731074AbfAXT4J (ORCPT
+        id S1732066AbfAXTgI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:56:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36220 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:36:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36036 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732461AbfAXTgM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:36:12 -0500
+        id S1732439AbfAXTgB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:36:01 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 656BA218FC;
-        Thu, 24 Jan 2019 19:36:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAC5C218FC;
+        Thu, 24 Jan 2019 19:35:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358571;
-        bh=uYKYFhhxP8sPwZhLsxOVWmIxuKJmedH0SR9lsisN6q0=;
+        s=default; t=1548358560;
+        bh=GiX/CDUocU0jWULkqWBYKTSP+wwSmdKGKNUnuXz1wi8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ref4MQkB/wvDMY9btXku+ppXdN2MoUiJrC+6LPKj1Pquk6GciePpWK1zxkb1P0XnA
-         u7fw6fbJNIJ1BLl+dl3n7VIhGWhl983+B2oBWdyRleinKQbE01rapMe/erbBjswAnQ
-         SJq4nvDIHlQ02FpV9fdbYzsri0vqj8kxmG8qi6iM=
+        b=tzsaX5Sm2etqdEyeCMtcPqwnkSt5G13u+JTgBN2FM7nshIlscf7zjnDDal4jgGJcS
+         Sgk3ahTfsybfvFNE/hY3sQivnpysekhQNHj9GWMPY5Gw1RtAhspGpBQychL4CfpJmY
+         DfJuF4VP6r5l94ISlr++t/a6+61BDSwLMuCgjwzM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Lucas Stach <l.stach@pengutronix.de>,
-        Dong Aisheng <Aisheng.dong@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
+        stable@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
+        Christoph Hellwig <hch@lst.de>,
+        "Bryant G. Ly" <bly@catalogicsoftware.com>,
+        Lee Duncan <lduncan@suse.com>, Hannes Reinecke <hare@suse.com>,
+        Roman Bolshakov <r.bolshakov@yadro.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 054/106] clk: imx6q: reset exclusive gates on init
-Date:   Thu, 24 Jan 2019 20:20:11 +0100
-Message-Id: <20190124190209.864469393@linuxfoundation.org>
+Subject: [PATCH 4.19 050/106] scsi: target: use consistent left-aligned ASCII INQUIRY data
+Date:   Thu, 24 Jan 2019 20:20:07 +0100
+Message-Id: <20190124190209.608113141@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,42 +70,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f7542d817733f461258fd3a47d77da35b2d9fc81 ]
+[ Upstream commit 0de263577de5d5e052be5f4f93334e63cc8a7f0b ]
 
-The exclusive gates may be set up in the wrong way by software running
-before the clock driver comes up. In that case the exclusive setup is
-locked in its initial state, as the complementary function can't be
-activated without disabling the initial setup first.
+spc5r17.pdf specifies:
 
-To avoid this lock situation, reset the exclusive gates to the off
-state and allow the kernel to provide the proper setup.
+  4.3.1 ASCII data field requirements
+  ASCII data fields shall contain only ASCII printable characters (i.e.,
+  code values 20h to 7Eh) and may be terminated with one or more ASCII null
+  (00h) characters.  ASCII data fields described as being left-aligned
+  shall have any unused bytes at the end of the field (i.e., highest
+  offset) and the unused bytes shall be filled with ASCII space characters
+  (20h).
 
-Signed-off-by: Lucas Stach <l.stach@pengutronix.de>
-Reviewed-by: Dong Aisheng <Aisheng.dong@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+LIO currently space-pads the T10 VENDOR IDENTIFICATION and PRODUCT
+IDENTIFICATION fields in the standard INQUIRY data. However, the PRODUCT
+REVISION LEVEL field in the standard INQUIRY data as well as the T10 VENDOR
+IDENTIFICATION field in the INQUIRY Device Identification VPD Page are
+zero-terminated/zero-padded.
+
+Fix this inconsistency by using space-padding for all of the above fields.
+
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Bryant G. Ly <bly@catalogicsoftware.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Roman Bolshakov <r.bolshakov@yadro.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6q.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/target/target_core_spc.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6q.c b/drivers/clk/imx/clk-imx6q.c
-index 8c7c2fcb8d94..c509324f6338 100644
---- a/drivers/clk/imx/clk-imx6q.c
-+++ b/drivers/clk/imx/clk-imx6q.c
-@@ -508,8 +508,12 @@ static void __init imx6q_clocks_init(struct device_node *ccm_node)
- 	 * lvds1_gate and lvds2_gate are pseudo-gates.  Both can be
- 	 * independently configured as clock inputs or outputs.  We treat
- 	 * the "output_enable" bit as a gate, even though it's really just
--	 * enabling clock output.
-+	 * enabling clock output. Initially the gate bits are cleared, as
-+	 * otherwise the exclusive configuration gets locked in the setup done
-+	 * by software running before the clock driver, with no way to change
-+	 * it.
- 	 */
-+	writel(readl(base + 0x160) & ~0x3c00, base + 0x160);
- 	clk[IMX6QDL_CLK_LVDS1_GATE] = imx_clk_gate_exclusive("lvds1_gate", "lvds1_sel", base + 0x160, 10, BIT(12));
- 	clk[IMX6QDL_CLK_LVDS2_GATE] = imx_clk_gate_exclusive("lvds2_gate", "lvds2_sel", base + 0x160, 11, BIT(13));
+diff --git a/drivers/target/target_core_spc.c b/drivers/target/target_core_spc.c
+index cb0461a10808..93424db5f002 100644
+--- a/drivers/target/target_core_spc.c
++++ b/drivers/target/target_core_spc.c
+@@ -108,12 +108,17 @@ spc_emulate_inquiry_std(struct se_cmd *cmd, unsigned char *buf)
  
+ 	buf[7] = 0x2; /* CmdQue=1 */
+ 
+-	memcpy(&buf[8], "LIO-ORG ", 8);
+-	memset(&buf[16], 0x20, 16);
++	/*
++	 * ASCII data fields described as being left-aligned shall have any
++	 * unused bytes at the end of the field (i.e., highest offset) and the
++	 * unused bytes shall be filled with ASCII space characters (20h).
++	 */
++	memset(&buf[8], 0x20, 8 + 16 + 4);
++	memcpy(&buf[8], "LIO-ORG", sizeof("LIO-ORG") - 1);
+ 	memcpy(&buf[16], dev->t10_wwn.model,
+-	       min_t(size_t, strlen(dev->t10_wwn.model), 16));
++	       strnlen(dev->t10_wwn.model, 16));
+ 	memcpy(&buf[32], dev->t10_wwn.revision,
+-	       min_t(size_t, strlen(dev->t10_wwn.revision), 4));
++	       strnlen(dev->t10_wwn.revision, 4));
+ 	buf[4] = 31; /* Set additional length to 31 */
+ 
+ 	return 0;
+@@ -251,7 +256,9 @@ check_t10_vend_desc:
+ 	buf[off] = 0x2; /* ASCII */
+ 	buf[off+1] = 0x1; /* T10 Vendor ID */
+ 	buf[off+2] = 0x0;
+-	memcpy(&buf[off+4], "LIO-ORG", 8);
++	/* left align Vendor ID and pad with spaces */
++	memset(&buf[off+4], 0x20, 8);
++	memcpy(&buf[off+4], "LIO-ORG", sizeof("LIO-ORG") - 1);
+ 	/* Extra Byte for NULL Terminator */
+ 	id_len++;
+ 	/* Identifier Length */
 -- 
 2.19.1
 
