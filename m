@@ -4,51 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5ADBC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF161C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AAED218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 931A2218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358109;
-	bh=J4J6fR29ijZdjGKccshRLqiWg3eL0uAyaiWP2bCPb3w=;
+	s=default; t=1548358113;
+	bh=ZixB52nzgRjEyb0a/se8YIxFRQP/ZeT5sOhLpzarWKM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2XnYRsYYUxWAmyZVuY7h5ewXwHyDOjc0cjmx7V4DyGwR8U7sl4X8BeBgmJcyzCSrp
-	 b75708WzBbQN2AAxMlYyJ7oJetUJ9f0kSFeWYqZ4ZZKnecjv3lHhfXapGE4wDjq4yW
-	 jKFpEQHHB0VjYoAP9cACpaOPYBTm088Mpx4t4PmE=
+	b=rdJc6pp3y/8fxszBYj9+10gJddlUr6RrDQSY6xvEHYsc5Odgc1YnD6qqTiVwCaoBY
+	 VzFuHJhSYFBBt4uKTRDMHXcJqMA7CLWvZk3YpiL91QE8HIhM2BN8eiHncQudYtKvjQ
+	 rCpT3Hp6GDd2LgpmhZVB1eVSosrxbCjjGIYX1JuI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730981AbfAXT22 (ORCPT
+        id S1730994AbfAXT2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:28:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55044 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:28:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55102 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730525AbfAXT2Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:28:24 -0500
+        id S1730974AbfAXT21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:28:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C4F8F218FC;
-        Thu, 24 Jan 2019 19:28:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3822C21901;
+        Thu, 24 Jan 2019 19:28:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358103;
-        bh=J4J6fR29ijZdjGKccshRLqiWg3eL0uAyaiWP2bCPb3w=;
+        s=default; t=1548358105;
+        bh=ZixB52nzgRjEyb0a/se8YIxFRQP/ZeT5sOhLpzarWKM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IdrrR20UfRYFKzYb+a3qaZKtvL8oumaY8XILXew/U9u0iFX12RU4Bkgsxrv4iskOc
-         iBwKAVQMXR3+fC2Vo7AZMa9E3Da4nBQfpNsp9TyVGCgX5asTvYFz43BM29IyNHorHo
-         JJrgo3dZrSMm2ZUCEY/bGPdvBz/4t74xVULQ8RLU=
+        b=gI8MoznLIjOfkOFCQVHY1OOi2Mz2wUB7R1cb6/U0+exoZEyoR1iN97cShoiNv+Ewp
+         xVHUgSAmD9gpn/PefYZu32rxjP0HnV1dbLG1RdEMKSQNUTdV0RjnABDhiCPCMYcP/c
+         ZvmkUbIS+bAIo8rkrhGg6YT8aRu7vOqxYvTz6W5o=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
-        Sumit Saxena <sumit.saxena@broadcom.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        stable@vger.kernel.org, Junxiao Bi <junxiao.bi@oracle.com>,
+        Yiwen Jiang <jiangyiwen@huawei.com>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Mark Fasheh <mfasheh@versity.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Changwei Ge <ge.changwei@h3c.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 099/104] scsi: megaraid: fix out-of-bound array accesses
-Date:   Thu, 24 Jan 2019 20:20:28 +0100
-Message-Id: <20190124190205.559076003@linuxfoundation.org>
+Subject: [PATCH 4.4 100/104] ocfs2: fix panic due to unrecovered local alloc
+Date:   Thu, 24 Jan 2019 20:20:29 +0100
+Message-Id: <20190124190205.621719706@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -67,118 +73,103 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit c7a082e4242fd8cd21a441071e622f87c16bdacc ]
+[ Upstream commit 532e1e54c8140188e192348c790317921cb2dc1c ]
 
-UBSAN reported those with MegaRAID SAS-3 3108,
+mount.ocfs2 ignore the inconsistent error that journal is clean but
+local alloc is unrecovered.  After mount, local alloc not empty, then
+reserver cluster didn't alloc a new local alloc window, reserveration
+map is empty(ocfs2_reservation_map.m_bitmap_len = 0), that triggered the
+following panic.
 
-[   77.467308] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
-[   77.475402] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
-[   77.481677] CPU: 16 PID: 333 Comm: kworker/16:1 Not tainted 4.20.0-rc5+ #1
-[   77.488556] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-[   77.495791] Workqueue: events work_for_cpu_fn
-[   77.500154] Call trace:
-[   77.502610]  dump_backtrace+0x0/0x2c8
-[   77.506279]  show_stack+0x24/0x30
-[   77.509604]  dump_stack+0x118/0x19c
-[   77.513098]  ubsan_epilogue+0x14/0x60
-[   77.516765]  __ubsan_handle_out_of_bounds+0xfc/0x13c
-[   77.521767]  mr_update_load_balance_params+0x150/0x158 [megaraid_sas]
-[   77.528230]  MR_ValidateMapInfo+0x2cc/0x10d0 [megaraid_sas]
-[   77.533825]  megasas_get_map_info+0x244/0x2f0 [megaraid_sas]
-[   77.539505]  megasas_init_adapter_fusion+0x9b0/0xf48 [megaraid_sas]
-[   77.545794]  megasas_init_fw+0x1ab4/0x3518 [megaraid_sas]
-[   77.551212]  megasas_probe_one+0x2c4/0xbe0 [megaraid_sas]
-[   77.556614]  local_pci_probe+0x7c/0xf0
-[   77.560365]  work_for_cpu_fn+0x34/0x50
-[   77.564118]  process_one_work+0x61c/0xf08
-[   77.568129]  worker_thread+0x534/0xa70
-[   77.571882]  kthread+0x1c8/0x1d0
-[   77.575114]  ret_from_fork+0x10/0x1c
+This issue was reported at
 
-[   89.240332] UBSAN: Undefined behaviour in drivers/scsi/megaraid/megaraid_sas_fp.c:117:32
-[   89.248426] index 255 is out of range for type 'MR_LD_SPAN_MAP [1]'
-[   89.254700] CPU: 16 PID: 95 Comm: kworker/u130:0 Not tainted 4.20.0-rc5+ #1
-[   89.261665] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-[   89.268903] Workqueue: events_unbound async_run_entry_fn
-[   89.274222] Call trace:
-[   89.276680]  dump_backtrace+0x0/0x2c8
-[   89.280348]  show_stack+0x24/0x30
-[   89.283671]  dump_stack+0x118/0x19c
-[   89.287167]  ubsan_epilogue+0x14/0x60
-[   89.290835]  __ubsan_handle_out_of_bounds+0xfc/0x13c
-[   89.295828]  MR_LdRaidGet+0x50/0x58 [megaraid_sas]
-[   89.300638]  megasas_build_io_fusion+0xbb8/0xd90 [megaraid_sas]
-[   89.306576]  megasas_build_and_issue_cmd_fusion+0x138/0x460 [megaraid_sas]
-[   89.313468]  megasas_queue_command+0x398/0x3d0 [megaraid_sas]
-[   89.319222]  scsi_dispatch_cmd+0x1dc/0x8a8
-[   89.323321]  scsi_request_fn+0x8e8/0xdd0
-[   89.327249]  __blk_run_queue+0xc4/0x158
-[   89.331090]  blk_execute_rq_nowait+0xf4/0x158
-[   89.335449]  blk_execute_rq+0xdc/0x158
-[   89.339202]  __scsi_execute+0x130/0x258
-[   89.343041]  scsi_probe_and_add_lun+0x2fc/0x1488
-[   89.347661]  __scsi_scan_target+0x1cc/0x8c8
-[   89.351848]  scsi_scan_channel.part.3+0x8c/0xc0
-[   89.356382]  scsi_scan_host_selected+0x130/0x1f0
-[   89.361002]  do_scsi_scan_host+0xd8/0xf0
-[   89.364927]  do_scan_async+0x9c/0x320
-[   89.368594]  async_run_entry_fn+0x138/0x420
-[   89.372780]  process_one_work+0x61c/0xf08
-[   89.376793]  worker_thread+0x13c/0xa70
-[   89.380546]  kthread+0x1c8/0x1d0
-[   89.383778]  ret_from_fork+0x10/0x1c
+  https://oss.oracle.com/pipermail/ocfs2-devel/2015-May/010854.html
 
-This is because when populating Driver Map using firmware raid map, all
-non-existing VDs set their ldTgtIdToLd to 0xff, so it can be skipped later.
+and was advised to fixed during mount.  But this is a very unusual
+inconsistent state, usually journal dirty flag should be cleared at the
+last stage of umount until every other things go right.  We may need do
+further debug to check that.  Any way to avoid possible futher
+corruption, mount should be abort and fsck should be run.
 
->From drivers/scsi/megaraid/megaraid_sas_base.c ,
-memset(instance->ld_ids, 0xff, MEGASAS_MAX_LD_IDS);
+  (mount.ocfs2,1765,1):ocfs2_load_local_alloc:353 ERROR: Local alloc hasn't been recovered!
+  found = 6518, set = 6518, taken = 8192, off = 15912372
+  ocfs2: Mounting device (202,64) on (node 0, slot 3) with ordered data mode.
+  o2dlm: Joining domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 8 ) 8 nodes
+  ocfs2: Mounting device (202,80) on (node 0, slot 3) with ordered data mode.
+  o2hb: Region 89CEAC63CC4F4D03AC185B44E0EE0F3F (xvdf) is now a quorum device
+  o2net: Accepted connection from node yvwsoa17p (num 7) at 172.22.77.88:7777
+  o2dlm: Node 7 joins domain 64FE421C8C984E6D96ED12C55FEE2435 ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
+  o2dlm: Node 7 joins domain 89CEAC63CC4F4D03AC185B44E0EE0F3F ( 0 1 2 3 4 5 6 7 8 ) 9 nodes
+  ------------[ cut here ]------------
+  kernel BUG at fs/ocfs2/reservations.c:507!
+  invalid opcode: 0000 [#1] SMP
+  Modules linked in: ocfs2 rpcsec_gss_krb5 auth_rpcgss nfsv4 nfs fscache lockd grace ocfs2_dlmfs ocfs2_stack_o2cb ocfs2_dlm ocfs2_nodemanager ocfs2_stackglue configfs sunrpc ipt_REJECT nf_reject_ipv4 nf_conntrack_ipv4 nf_defrag_ipv4 iptable_filter ip_tables ip6t_REJECT nf_reject_ipv6 nf_conntrack_ipv6 nf_defrag_ipv6 xt_state nf_conntrack ip6table_filter ip6_tables ib_ipoib rdma_ucm ib_ucm ib_uverbs ib_umad rdma_cm ib_cm iw_cm ib_sa ib_mad ib_core ib_addr ipv6 ovmapi ppdev parport_pc parport xen_netfront fb_sys_fops sysimgblt sysfillrect syscopyarea acpi_cpufreq pcspkr i2c_piix4 i2c_core sg ext4 jbd2 mbcache2 sr_mod cdrom xen_blkfront pata_acpi ata_generic ata_piix floppy dm_mirror dm_region_hash dm_log dm_mod
+  CPU: 0 PID: 4349 Comm: startWebLogic.s Not tainted 4.1.12-124.19.2.el6uek.x86_64 #2
+  Hardware name: Xen HVM domU, BIOS 4.4.4OVM 09/06/2018
+  task: ffff8803fb04e200 ti: ffff8800ea4d8000 task.ti: ffff8800ea4d8000
+  RIP: 0010:[<ffffffffa05e96a8>]  [<ffffffffa05e96a8>] __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
+  Call Trace:
+    ocfs2_resmap_resv_bits+0x10d/0x400 [ocfs2]
+    ocfs2_claim_local_alloc_bits+0xd0/0x640 [ocfs2]
+    __ocfs2_claim_clusters+0x178/0x360 [ocfs2]
+    ocfs2_claim_clusters+0x1f/0x30 [ocfs2]
+    ocfs2_convert_inline_data_to_extents+0x634/0xa60 [ocfs2]
+    ocfs2_write_begin_nolock+0x1c6/0x1da0 [ocfs2]
+    ocfs2_write_begin+0x13e/0x230 [ocfs2]
+    generic_perform_write+0xbf/0x1c0
+    __generic_file_write_iter+0x19c/0x1d0
+    ocfs2_file_write_iter+0x589/0x1360 [ocfs2]
+    __vfs_write+0xb8/0x110
+    vfs_write+0xa9/0x1b0
+    SyS_write+0x46/0xb0
+    system_call_fastpath+0x18/0xd7
+  Code: ff ff 8b 75 b8 39 75 b0 8b 45 c8 89 45 98 0f 84 e5 fe ff ff 45 8b 74 24 18 41 8b 54 24 1c e9 56 fc ff ff 85 c0 0f 85 48 ff ff ff <0f> 0b 48 8b 05 cf c3 de ff 48 ba 00 00 00 00 00 00 00 10 48 85
+  RIP   __ocfs2_resv_find_window+0x498/0x760 [ocfs2]
+   RSP <ffff8800ea4db668>
+  ---[ end trace 566f07529f2edf3c ]---
+  Kernel panic - not syncing: Fatal exception
+  Kernel Offset: disabled
 
->From drivers/scsi/megaraid/megaraid_sas_fp.c ,
-/* For non existing VDs, iterate to next VD*/
-if (ld >= (MAX_LOGICAL_DRIVES_EXT - 1))
-	continue;
-
-However, there are a few places that failed to skip those non-existing VDs
-due to off-by-one errors. Then, those 0xff leaked into MR_LdRaidGet(0xff,
-map) and triggered the out-of-bound accesses.
-
-Fixes: 51087a8617fe ("megaraid_sas : Extended VD support")
-Signed-off-by: Qian Cai <cai@lca.pw>
-Acked-by: Sumit Saxena <sumit.saxena@broadcom.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Link: http://lkml.kernel.org/r/20181121020023.3034-2-junxiao.bi@oracle.com
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Acked-by: Joseph Qi <jiangqi903@gmail.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Changwei Ge <ge.changwei@h3c.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/megaraid/megaraid_sas_fp.c     | 2 +-
- drivers/scsi/megaraid/megaraid_sas_fusion.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ fs/ocfs2/localalloc.c | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fp.c b/drivers/scsi/megaraid/megaraid_sas_fp.c
-index 741509b35617..14f32c114c55 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fp.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fp.c
-@@ -1273,7 +1273,7 @@ void mr_update_load_balance_params(struct MR_DRV_RAID_MAP_ALL *drv_map,
+diff --git a/fs/ocfs2/localalloc.c b/fs/ocfs2/localalloc.c
+index 0a4457fb0711..85111d740c9d 100644
+--- a/fs/ocfs2/localalloc.c
++++ b/fs/ocfs2/localalloc.c
+@@ -345,13 +345,18 @@ int ocfs2_load_local_alloc(struct ocfs2_super *osb)
+ 	if (num_used
+ 	    || alloc->id1.bitmap1.i_used
+ 	    || alloc->id1.bitmap1.i_total
+-	    || la->la_bm_off)
+-		mlog(ML_ERROR, "Local alloc hasn't been recovered!\n"
++	    || la->la_bm_off) {
++		mlog(ML_ERROR, "inconsistent detected, clean journal with"
++		     " unrecovered local alloc, please run fsck.ocfs2!\n"
+ 		     "found = %u, set = %u, taken = %u, off = %u\n",
+ 		     num_used, le32_to_cpu(alloc->id1.bitmap1.i_used),
+ 		     le32_to_cpu(alloc->id1.bitmap1.i_total),
+ 		     OCFS2_LOCAL_ALLOC(alloc)->la_bm_off);
  
- 	for (ldCount = 0; ldCount < MAX_LOGICAL_DRIVES_EXT; ldCount++) {
- 		ld = MR_TargetIdToLdGet(ldCount, drv_map);
--		if (ld >= MAX_LOGICAL_DRIVES_EXT) {
-+		if (ld >= MAX_LOGICAL_DRIVES_EXT - 1) {
- 			lbInfo[ldCount].loadBalanceFlag = 0;
- 			continue;
- 		}
-diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-index 213944ed64d9..3d3bfa814093 100644
---- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
-+++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
-@@ -1758,7 +1758,7 @@ static void megasas_build_ld_nonrw_fusion(struct megasas_instance *instance,
- 		device_id < instance->fw_supported_vd_count)) {
++		status = -EINVAL;
++		goto bail;
++	}
++
+ 	osb->local_alloc_bh = alloc_bh;
+ 	osb->local_alloc_state = OCFS2_LA_ENABLED;
  
- 		ld = MR_TargetIdToLdGet(device_id, local_map_ptr);
--		if (ld >= instance->fw_supported_vd_count)
-+		if (ld >= instance->fw_supported_vd_count - 1)
- 			fp_possible = 0;
- 
- 		raid = MR_LdRaidGet(ld, local_map_ptr);
 -- 
 2.19.1
 
