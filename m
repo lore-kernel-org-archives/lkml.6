@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2685EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:22:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93B89C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:22:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F1B218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:22:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56A55218CD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:22:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357753;
-	bh=4x0b693j+PTi0Kp3mc1oGSrBCN+7vt0QBWIw20ZqKGE=;
+	s=default; t=1548357756;
+	bh=aUQcYbay/d5fMnMTTCJdigzmbFp/rvn44U228bkp9os=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aLvNVhd+lThnCTS1oZWpkibQIgr3UG6el2ad64julgpj0yltxwdYNHWCgmJa2ML7y
-	 5DQFNhyjFxrlJnvuS31KnENntInoy4rTSpFmSBr5BVuVAxzHNQHXj2c0oyRP1q0iHg
-	 5BLLtf6hgl1J40ADMqMM9X8wxi/0pYsB2JYJD+78=
+	b=XdFmNjTuZf7+soF4kxzAQ7fWaIYyzX3aMegcOpZrfQh3l5QjCDwHi/n273BTIjrLY
+	 9tSK4XspKHTMONtqWpOaZ7Dw1XfpsqZ0wAfTa9OOXsfDBmg/cxIYL6p4XXyhV0QRjF
+	 7F3kYF14QqYvyDPuBh3AlI5AXEVWBv6obXjkHQ3s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729572AbfAXTWb (ORCPT
+        id S1729588AbfAXTWe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:22:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47048 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:22:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47144 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729547AbfAXTW0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:22:26 -0500
+        id S1729573AbfAXTWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:22:32 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B289218D2;
-        Thu, 24 Jan 2019 19:22:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AFC30218CD;
+        Thu, 24 Jan 2019 19:22:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357745;
-        bh=4x0b693j+PTi0Kp3mc1oGSrBCN+7vt0QBWIw20ZqKGE=;
+        s=default; t=1548357751;
+        bh=aUQcYbay/d5fMnMTTCJdigzmbFp/rvn44U228bkp9os=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=c9sUktQfZa/YkW/+BKg7OpOZ4sHPKvuWRVSIKeB3gK+PidRjrmTZb0oNgXGbkbmNL
-         HMappBmRc1DTwrtI6tFamOvuwh3ITPKJMCOsOOcGnEYbTETXNtpv/ZkAT153L5jq5e
-         7c5aUMPrq3OKFi66K4/lVjarQrgTn7DDWrZNz6NM=
+        b=pbVHcnNt0yAPhdHmAvR9Ixnkx/A148Jk9/0/0mL7KrCEPK5w1sbecmAgNY+XznwHk
+         uSSZmvAujqCTNdO255I+WsErG5H6shGPL4DRJRTLEoQVlcdF4HzeFQwvT7Dva/6mZ5
+         jjK/ip8cmgv7vyBt3egbjdQfShWoSdrIs+AgjABA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniele Palmas <dnlplm@gmail.com>
-Subject: [PATCH 3.18 04/52] usb: cdc-acm: send ZLP for Telit 3G Intel based modems
-Date:   Thu, 24 Jan 2019 20:19:28 +0100
-Message-Id: <20190124190141.627204569@linuxfoundation.org>
+        stable@vger.kernel.org, Icenowy Zheng <icenowy@aosc.io>,
+        Alan Stern <stern@rowland.harvard.edu>
+Subject: [PATCH 3.18 06/52] USB: storage: add quirk for SMI SM3350
+Date:   Thu, 24 Jan 2019 20:19:30 +0100
+Message-Id: <20190124190141.994586529@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -64,36 +65,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Daniele Palmas <dnlplm@gmail.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-commit 34aabf918717dd14e05051896aaecd3b16b53d95 upstream.
+commit 0a99cc4b8ee83885ab9f097a3737d1ab28455ac0 upstream.
 
-Telit 3G Intel based modems require zero packet to be sent if
-out data size is equal to the endpoint max packet size.
+The SMI SM3350 USB-UFS bridge controller cannot handle long sense request
+correctly and will make the chip refuse to do read/write when requested
+long sense.
 
-Signed-off-by: Daniele Palmas <dnlplm@gmail.com>
+Add a bad sense quirk for it.
+
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
 Cc: stable <stable@vger.kernel.org>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/usb/class/cdc-acm.c |    7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/usb/storage/unusual_devs.h |   12 ++++++++++++
+ 1 file changed, 12 insertions(+)
 
---- a/drivers/usb/class/cdc-acm.c
-+++ b/drivers/usb/class/cdc-acm.c
-@@ -1904,6 +1904,13 @@ static const struct usb_device_id acm_id
- 	.driver_info = IGNORE_DEVICE,
- 	},
+--- a/drivers/usb/storage/unusual_devs.h
++++ b/drivers/usb/storage/unusual_devs.h
+@@ -1393,6 +1393,18 @@ UNUSUAL_DEV(  0x0d49, 0x7310, 0x0000, 0x
+ 		US_FL_SANE_SENSE),
  
-+	{ USB_DEVICE(0x1bc7, 0x0021), /* Telit 3G ACM only composition */
-+	.driver_info = SEND_ZERO_PACKET,
-+	},
-+	{ USB_DEVICE(0x1bc7, 0x0023), /* Telit 3G ACM + ECM composition */
-+	.driver_info = SEND_ZERO_PACKET,
-+	},
+ /*
++ * Reported by Icenowy Zheng <icenowy@aosc.io>
++ * The SMI SM3350 USB-UFS bridge controller will enter a wrong state
++ * that do not process read/write command if a long sense is requested,
++ * so force to use 18-byte sense.
++ */
++UNUSUAL_DEV(  0x090c, 0x3350, 0x0000, 0xffff,
++		"SMI",
++		"SM3350 UFS-to-USB-Mass-Storage bridge",
++		USB_SC_DEVICE, USB_PR_DEVICE, NULL,
++		US_FL_BAD_SENSE ),
 +
- 	/* control interfaces without any protocol set */
- 	{ USB_INTERFACE_INFO(USB_CLASS_COMM, USB_CDC_SUBCLASS_ACM,
- 		USB_CDC_PROTO_NONE) },
++/*
+  * Pete Zaitcev <zaitcev@yahoo.com>, bz#164688.
+  * The device blatantly ignores LUN and returns 1 in GetMaxLUN.
+  */
 
 
