@@ -2,168 +2,152 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB668C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:58:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7100AC282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:00:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A87CE218B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:58:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="qgiyViNK"
+	by mail.kernel.org (Postfix) with ESMTP id 498C121872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:00:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbfAXP6p (ORCPT
+        id S1728764AbfAXQAP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:58:45 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:57910 "EHLO pegase1.c-s.fr"
+        Thu, 24 Jan 2019 11:00:15 -0500
+Received: from foss.arm.com ([217.140.101.70]:59710 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727649AbfAXP6o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:58:44 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43lmzP1VDRz9v0B9;
-        Thu, 24 Jan 2019 16:58:41 +0100 (CET)
-Authentication-Results: localhost; dkim=pass
-        reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=qgiyViNK; dkim-adsp=pass;
-        dkim-atps=neutral
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id Mgc1uuGNV8-q; Thu, 24 Jan 2019 16:58:41 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43lmzP064pz9v0B6;
-        Thu, 24 Jan 2019 16:58:41 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548345521; bh=ssyC1duNx4bdJMAAoq9xbUOfPZYMyfEtKvK1EJUeh5k=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=qgiyViNK7Xs4K8iZzdY7m2TdvEdZHh67H9GSrcSGTDupERs+0equL7n+r9bytJvpk
-         CikwgtMqNxMv32fQthBOjs4yutswUinkX3cenZSiEbOV0m5MejEFHFtVS+UCZ8utaX
-         q023CENUtTei995Tqw/lrVMhAk8+J0zKHN6W/hoI=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 8A3198B85E;
-        Thu, 24 Jan 2019 16:58:42 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id dwa_Gkl4usaG; Thu, 24 Jan 2019 16:58:42 +0100 (CET)
-Received: from PO15451 (unknown [192.168.4.90])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 0F9448B850;
-        Thu, 24 Jan 2019 16:58:42 +0100 (CET)
-Subject: Re: [PATCH v13 00/10] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-To:     Michael Ellerman <mpe@ellerman.id.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc:     linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Mike Rapoport <rppt@linux.ibm.com>
-References: <cover.1547195976.git.christophe.leroy@c-s.fr>
- <2e700e1c-5bd9-652e-b535-68a89dd703a1@c-s.fr>
- <87y37ax3ru.fsf@concordia.ellerman.id.au>
- <9b4dab64-6a6b-a599-4676-bf891473ada7@c-s.fr>
- <c5b86b5b-1f38-39bf-0458-3c6572b3b35c@c-s.fr>
-Message-ID: <89049465-643f-b383-82e2-360dc9660d09@c-s.fr>
-Date:   Thu, 24 Jan 2019 16:58:41 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1727848AbfAXQAP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:00:15 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E975BEBD;
+        Thu, 24 Jan 2019 08:00:13 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0183B3F5AF;
+        Thu, 24 Jan 2019 08:00:10 -0800 (PST)
+Date:   Thu, 24 Jan 2019 16:00:08 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 09/16] sched/cpufreq: uclamp: Add utilization clamping
+ for RT tasks
+Message-ID: <20190124160008.x43eucgtyc62w3l3@e110439-lin>
+References: <20190115101513.2822-1-patrick.bellasi@arm.com>
+ <20190115101513.2822-10-patrick.bellasi@arm.com>
+ <20190123104944.GX27931@hirez.programming.kicks-ass.net>
+ <20190123144011.iid3avb63r5v4r2c@e110439-lin>
+ <20190123201146.GH17749@hirez.programming.kicks-ass.net>
+ <20190124123009.2yulcf25ld66popd@e110439-lin>
+ <20190124123835.nliwk2onvrhe5aqf@e110439-lin>
+ <20190124151212.GO13777@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
-In-Reply-To: <c5b86b5b-1f38-39bf-0458-3c6572b3b35c@c-s.fr>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: fr
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124151212.GO13777@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Le 24/01/2019 à 16:01, Christophe Leroy a écrit :
+On 24-Jan 16:12, Peter Zijlstra wrote:
+> On Thu, Jan 24, 2019 at 12:38:35PM +0000, Patrick Bellasi wrote:
+> > On 24-Jan 12:30, Patrick Bellasi wrote:
+> > > On 23-Jan 21:11, Peter Zijlstra wrote:
+> > > > On Wed, Jan 23, 2019 at 02:40:11PM +0000, Patrick Bellasi wrote:
+> > > > > On 23-Jan 11:49, Peter Zijlstra wrote:
+> > > > > > On Tue, Jan 15, 2019 at 10:15:06AM +0000, Patrick Bellasi wrote:
+> > 
+> > [...]
+> > 
+> > > > I'm thikning that if we haz a single bit, say:
+> > > > 
+> > > >   struct uclamp_se {
+> > > > 	...
+> > > > 	unsigned int	changed : 1;
+> > > >   };
+> > > > 
+> > > > We can update uclamp_se::value and set uclamp_se::changed, and then the
+> > > > next enqueue will (unlikely) test-and-clear changed and recompute the
+> > > > bucket_id.
+> > > 
+> > > This mean will lazy update the "requested" bucket_id by deferring its
+> > > computation at enqueue time. Which saves us a copy of the bucket_id,
+> > > i.e. we will have only the "effective" value updated at enqueue time.
+> > > 
+> > > But...
+> > > 
+> > > > Would that not be simpler?
+> > > 
+> > > ... although being simpler it does not fully exploit the slow-path,
+> > > a syscall which is usually running from a different process context
+> > > (system management software).
+> > > 
+> > > It also fits better for lazy updates but, in the cgroup case, where we
+> > > wanna enforce an update ASAP for RUNNABLE tasks, we will still have to
+> > > do the updates from the slow-path.
+> > > 
+> > > Will look better into this simplification while working on v7, perhaps
+> > > the linear mapping can really help in that too.
+> > 
+> > Actually, I forgot to mention that:
+> > 
+> >     uclamp_se::effective::{
+> >         value, bucket_id
+> >     }
+> > 
+> > will be still required to proper support the cgroup delegation model,
+> > where a child group could be restricted by the parent but we want to
+> > keep track of the original "requested" value for when the parent
+> > should relax the restriction.
+> > 
+> > Thus, since effective values are already there, why not using them
+> > also to pre-compute the new requested bucket_id from the slow path?
 > 
-> 
-> Le 24/01/2019 à 10:43, Christophe Leroy a écrit :
->>
->>
->> On 01/24/2019 01:06 AM, Michael Ellerman wrote:
->>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
->>>> Le 12/01/2019 à 10:55, Christophe Leroy a écrit :
->>>>> The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK 
->>>>> which
->>>>> moves the thread_info into task_struct.
->>>>>
->>>>> Moving thread_info into task_struct has the following advantages:
->>>>> - It protects thread_info from corruption in the case of stack
->>>>> overflows.
->>>>> - Its address is harder to determine if stack addresses are
->>>>> leaked, making a number of attacks more difficult.
->>>>
->>>> I ran null_syscall and context_switch benchmark selftests and the 
->>>> result
->>>> is surprising. There is slight degradation in context_switch and a
->>>> significant one on null_syscall:
->>>>
->>>> Without the serie:
->>>>
->>>> ~# chrt -f 98 ./context_switch --no-altivec --no-vector --no-fp
->>>> 55542
->>>> 55562
->>>> 55564
->>>> 55562
->>>> 55568
->>>> ...
->>>>
->>>> ~# ./null_syscall
->>>>      2546.71 ns     336.17 cycles
->>>>
->>>>
->>>> With the serie:
->>>>
->>>> ~# chrt -f 98 ./context_switch --no-altivec --no-vector --no-fp
->>>> 55138
->>>> 55142
->>>> 55152
->>>> 55144
->>>> 55142
->>>>
->>>> ~# ./null_syscall
->>>>      3479.54 ns     459.30 cycles
->>>>
->>>> So 0,8% less context switches per second and 37% more time for one 
->>>> syscall ?
->>>>
->>>> Any idea ?
->>>
->>> What platform is that on?
->>
->> It is on the 8xx
+> Well, we need the orig_value; but I'm still not sure why you need more
+> bucket_id's. Also, retaining orig_value is already required for the
+> system limits, there's nothing cgroup-y about this afaict.
 
-On the 83xx, I have a slight improvment:
+Sure, the "effective" values are just a very convenient way (IMHO) to
+know exactly which value/bucket_id is currently in use by a task while
+keeping them well separated from the "requested" values.
 
-Without the serie:
+So, you propose to add "orig_value"... but the end effect will be the
+same... it's just that if we look at uclamp_se you have two dual
+information:
 
-root@vgoippro:~# ./null_syscall
-     921.44 ns     307.15 cycles
+ A) whatever a task or cgroup "request" is always in:
 
-With the serie:
+   uclamp_se::value
+   uclamp_se::bucket_id
 
-root@vgoippro:~# ./null_syscall
-     918.78 ns     306.26 cycles
+ B) whatever a task or cgroup "gets" is always in:
 
-Christophe
+   uclamp_se::effective::value
+   uclamp_se::effective::bucket_id
 
->>
->>>
->>> On 64-bit we have to turn one mtmsrd into two and that's obviously a
->>> slow down. But I don't see that you've done anything similar in 32-bit
->>> code.
->>>
->>> I assume it's patch 8 that causes the slow down?
->>
->> I have not digged into it yet, but why patch 8 ?
->>
-> 
-> The increase of null_syscall duration happens with patch 5 when we 
-> activate CONFIG_THREAD_INFO_IN_TASK.
-> 
+I find this partitioning useful and easy to use:
+
+ 1) the slow-path updates only data in A
+
+ 2) the fast-path updates only data in B
+    by composing A data in uclamp_effective_get() @enqueue time.
+
+-- 
+#include <best/regards.h>
+
+Patrick Bellasi
