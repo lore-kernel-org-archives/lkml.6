@@ -2,110 +2,89 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE62CC41518
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B21FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BC8C218C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548345085;
-	bh=RLB9RNlhOM/NiplUKHKYmnmvZACGRQI0IrxwPzUW1yg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=uG8auLib8huGgVhpqMXu2miGqmhVEgIOaG+Gbz/bXU5x9FZQJpi+shhoMSn4XzAZN
-	 kW2GHNqK74NxgJEdnuY0GnFY61ipMBQ5UHLvOfOdpCM7znCKnCeJIAasUCRj3CmTwu
-	 e7pTkXOWcwT9Kvm68L05MX65tXzi8YUAEQUCmcfc=
+	by mail.kernel.org (Postfix) with ESMTP id F1F65218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:51:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hhqVK5Z1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728623AbfAXPvY (ORCPT
+        id S1728683AbfAXPvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:51:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58834 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727566AbfAXPvX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:51:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6AF6AB009;
-        Thu, 24 Jan 2019 15:51:22 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 16:51:21 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Chris Down <chris@chrisdown.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com
-Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
-Message-ID: <20190124155121.GQ4087@dhcp22.suse.cz>
-References: <20190123223144.GA10798@chrisdown.name>
- <20190124082252.GD4087@dhcp22.suse.cz>
- <20190124152122.GG50184@devbig004.ftw2.facebook.com>
+        Thu, 24 Jan 2019 10:51:43 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:54220 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727755AbfAXPvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:51:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=i1fezm4aBAKQY2KkkwCINvHF/gqTkX8n99ORGJ5P5kI=; b=hhqVK5Z1Qkpkf+JCQhgiJc0HpF
+        K5HnjrCwz5qBdiaJLOJTvPrCi9CIZjx8M+PbPUU1ycy0oKCwZzOTGvoEv88TXIUlu7xMy4IfXp2pA
+        xseyOm+P4pg92J+Rpvv4LoJeuSTZFSUirj94H1RPeXhJh2xvYHxVIAmlTiX8LjxtIeH8=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gmhI1-0001Rz-9A; Thu, 24 Jan 2019 16:51:37 +0100
+Date:   Thu, 24 Jan 2019 16:51:37 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
+        antoine.tenart@bootlin.com, maxime.chevallier@bootlin.com
+Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Russell King <rmk+kernel@arm.linux.org.uk>
+Subject: Re: [PATCH net] net: mvpp2: fix condition for setting up link
+ interrupt
+Message-ID: <20190124155137.GD482@lunn.ch>
+References: <20190124131803.14038-1-tbogendoerfer@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124152122.GG50184@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190124131803.14038-1-tbogendoerfer@suse.de>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 24-01-19 07:21:22, Tejun Heo wrote:
-> Hello, Michal.
-> 
-> On Thu, Jan 24, 2019 at 09:22:52AM +0100, Michal Hocko wrote:
-> > I do not think we can do that for two reasons. It breaks the existing
-> > semantic userspace might depend on and more importantly this is not a
-> > correct behavior IMO.
-> 
-> This is a valid concern but I'll come back to this later.
-> 
-> > You have to realize that stats are hierarchical because that is how we
-> > account. Events represent a way to inform that something has happened at
-> > the specific level of the tree though. If you do not setup low/high/max
-> 
-> This isn't true.  e.g. cgroup.events's populated event is
-> hierarchical.  Everything in cgroup should be hierarchical by default.
-> 
-> > limit then you simply cannot expect to be informed those get hit because
-> > they cannot by definition. Or put it other way, if you are waiting for
-> > those events you really want to know the (sub)tree they happened and if
-> > you propagate the event up the hierarchy you have hard time to tell that
-> > (you would basically have to exclude all but the lowest one and that is
-> > an awkward semantic at best.
-> 
-> I don't think it's a good idea to argue this for each piece of
-> information.  Again, everything should be hierarchical unless there
-> are clear and strong reasons against;
+On Thu, Jan 24, 2019 at 02:18:03PM +0100, Thomas Bogendoerfer wrote:
+> Set up link interrupt if connection is handled by phylink otherwise
+> link state change detection for in-band-status doesn't work.
 
-And I would argue that cgroups.events with its populated event is a
-different thing because that is inherently a hierarchical property.  If
-you compare that to low, min, max and oom those are events very specific
-to the particular level of the hierarchy because it is an action at that
-level that the event informs about. E.g. max event down the hierarchy is
-a completely different thing from the upper level.  That sounds like a
-pretty solid reason to differentiate here.
+Hi Thomas
 
-> otherwise, we end up with random
-> mix of hierarchical and flat behaviors, something that we want to
-> avoid the most - remember .use_hierarchy?.
-> 
-> > Maybe we want to document this better but I do not see we are going to
-> > change the behavior.
-> 
-> I beg you to reconsider.  This was a clear oversight and the cgroup2
-> usage is still relatively limited.  We sure can add local-specific
-> counters if needed but must not mix local and hierarchical counters
-> without a clear way to tell what's what.
+Please ensure the maintainers of the driver are at least on Cc:
 
-If you really have a usecase for hierarchical events then I think the
-only way without breaking existing userspace is to add a new set of
-events. But I still believe that the current behavior makes a lot of
-sense.
--- 
-Michal Hocko
-SUSE Labs
+Thanks
+	Andrew
+
+> 
+> Fixes: 4bb043262878 ("net: mvpp2: phylink support")
+> Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> ---
+>  drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> index 16066c2d5b3a..0fbfe1945a69 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -3405,7 +3405,7 @@ static int mvpp2_open(struct net_device *dev)
+>  		valid = true;
+>  	}
+>  
+> -	if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
+> +	if (priv->hw_version == MVPP22 && port->link_irq && port->phylink) {
+>  		err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
+>  				  dev->name, port);
+>  		if (err) {
+> -- 
+> 2.16.4
+> 
