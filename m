@@ -7,170 +7,158 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EAC9EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95907C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6D93218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BACB21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:43:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="Nr04hESD"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FfTdq+XQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727622AbfAXIno (ORCPT
+        id S1727644AbfAXInr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:43:44 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:33084 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727600AbfAXInn (ORCPT
+        Thu, 24 Jan 2019 03:43:47 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:36982 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727628AbfAXInp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:43:43 -0500
-Received: by mail-wr1-f68.google.com with SMTP id p7so5543103wru.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:41 -0800 (PST)
+        Thu, 24 Jan 2019 03:43:45 -0500
+Received: by mail-oi1-f196.google.com with SMTP id y23so4211153oia.4
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=wcC/ahQ5gPh5GGtxDUwG3QmvMzNYe68M+L0cnRtfxnA=;
-        b=Nr04hESD3WKZRwFKATaiNJz5yZrxXRW94oywd4/jIsFQTiUzIgZplRxM/B4oSzbrNa
-         eBa5F2fFneULcsuNhDo8I0jC69EYWL+AYtzRsa9N4zBiB+VGTvsZivIHWAu808/P4FzP
-         ow24WLWSkrddwFjhCTo1bacoF/xjnEetDdoTI=
+        bh=0IHbjA+eWfsPVp3mqIPGqB0gvsgYr2/M02Hhjj1xngA=;
+        b=FfTdq+XQZ4NWG8TH7qepr9aYPo7mEkzskhdaaPadSV4OuaP6Sy6C+jpk2Xb2g5ZfPv
+         rqklvjpgb4jyY5+dyTb7m24XRZPuEXdYWReal2+c9kd3utZCVsOmiMIma9T9IiwDtHR4
+         Ie9he1TDbYp9RI3dS+vVsQy5vvvOSujgpf7sU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=wcC/ahQ5gPh5GGtxDUwG3QmvMzNYe68M+L0cnRtfxnA=;
-        b=cjDzIW0HmKGcfd58MWxHud06chYCfP4vSg80qtaURV0fVp+J4JSol9k0mjubFqEG6M
-         OVgHsXoQqU8DUDjhz/8FBTUe5Eqk10KzXV9Uo+IctkdyUDlL8yI2dWs4UAKDV0P23RMm
-         EuQobrFrCzqrXOMLwdEX0l8MPHmew5BNha2j5gtrAbaCN0rKynBva4vo5MsxyMFefeP5
-         LnG06MC+sq7HP1qU2gs+rB9NGbYrW+JCU2+CYnM4B9RRLIiMEhp3ohmQ2YbeITwpmGaF
-         GgEgVSvZg0095wn7SogQL0ii7ISDLROpW2M6AjM6mC4g1AbNSDSeHt1ke2b4h7mNdXMT
-         g0Eg==
-X-Gm-Message-State: AJcUukdpByfH3AHz5lOEM1Ei8lr4Gb92tb0FSUrjkIEi5QgxOqrcJZ6D
-        lP9O+3aNKmI/O6u7YBYGWbWPHR7L+7rF6HzUvXV3Mw==
-X-Google-Smtp-Source: ALg8bN6x2BxQNBWDyBvML0RVKhEpb5CLTfuYY/s0DVIdJrc/fJV0l7oRPQHJdU62bjXa5KRgXAGCN9k6zvu+gB8otQw=
-X-Received: by 2002:adf:e3c8:: with SMTP id k8mr6178425wrm.83.1548319420857;
- Thu, 24 Jan 2019 00:43:40 -0800 (PST)
+        bh=0IHbjA+eWfsPVp3mqIPGqB0gvsgYr2/M02Hhjj1xngA=;
+        b=UX8nv0t/DJ4tdzKshOln0J6sF9sK3cLkgQrx3QoZErx+gq6A4O37qADWHdlgRdsqWw
+         vPA1zYj3dxp706BAbdrj3CkSvCuUr487yZjzugH6AP83mMffaqw8Bqu4ta3kw3qi8FXF
+         j4rWSoceuPsIVD8Pw2d8dLY56NB3V6AO5JadjA0PQFwM1KHUwxcG83Wp/O7t4WL3Swgv
+         a/SR+0MDX/4FjzY6KoieFQPA7BZpGmc/LTnIZh453vrq0CPixmxJ6TAl/Jc1I4hM5XSP
+         ZwuFsPOc2yqPoatC2BLmzUm1uln6QroSLQfvCZd4gTeEefzmBb2FjOZyIze0tKO/fkTc
+         lR5w==
+X-Gm-Message-State: AJcUuke+OBav3lajEG1VCF+FL0NXhuMIazpMlmj/IxCuJBrj4P7ZirV/
+        i9BH4QgPGLBEY/plzJuQfl3OV5iy4lA=
+X-Google-Smtp-Source: ALg8bN7sdapplUGwennUI0zvCldkGmAT+CvYvyj6+ERQ1+V3fFnXGEk5fsI6ki/IZovP9P8O8ReddQ==
+X-Received: by 2002:aca:53cd:: with SMTP id h196mr562870oib.355.1548319424528;
+        Thu, 24 Jan 2019 00:43:44 -0800 (PST)
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com. [209.85.210.53])
+        by smtp.gmail.com with ESMTPSA id 30sm8969477ots.52.2019.01.24.00.43.43
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 00:43:43 -0800 (PST)
+Received: by mail-ot1-f53.google.com with SMTP id u16so4540142otk.8
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 00:43:43 -0800 (PST)
+X-Received: by 2002:a05:6830:165a:: with SMTP id h26mr3906261otr.299.1548319423408;
+ Thu, 24 Jan 2019 00:43:43 -0800 (PST)
 MIME-Version: 1.0
-References: <1547785403-32268-1-git-send-email-srinath.mannam@broadcom.com>
- <1547785403-32268-3-git-send-email-srinath.mannam@broadcom.com> <20190118150851.GC25249@google.com>
-In-Reply-To: <20190118150851.GC25249@google.com>
-From:   Srinath Mannam <srinath.mannam@broadcom.com>
-Date:   Thu, 24 Jan 2019 14:13:29 +0530
-Message-ID: <CABe79T4Pk4BtqaeV_hsJb+PXRoz9ToregVtqskcMqAiwtJSyMQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] PCI: iproc: CRS state check in config request
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Ray Jui <rjui@broadcom.com>,
-        Scott Branden <sbranden@broadcom.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org> <20190117162008.25217-10-stanimir.varbanov@linaro.org>
+In-Reply-To: <20190117162008.25217-10-stanimir.varbanov@linaro.org>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Thu, 24 Jan 2019 17:43:31 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MUumC2BmWar3yUmVT8vz8x-Nr_tuMc=1VSJvmQYGdPudw@mail.gmail.com>
+Message-ID: <CAPBb6MUumC2BmWar3yUmVT8vz8x-Nr_tuMc=1VSJvmQYGdPudw@mail.gmail.com>
+Subject: Re: [PATCH 09/10] venus: vdec: allow bigger sizeimage set by clients
+To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Bjorn,
+On Fri, Jan 18, 2019 at 1:21 AM Stanimir Varbanov
+<stanimir.varbanov@linaro.org> wrote:
+>
+> In most of the cases the client will know better what could be
+> the maximum size for compressed data buffers. Change the driver
+> to permit the user to set bigger size for the compressed buffer
+> but make reasonable sanitation.
+>
+> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+> ---
+>  drivers/media/platform/qcom/venus/vdec.c | 18 +++++++++++++-----
+>  1 file changed, 13 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index 282de21cf2e1..7a9370df7515 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -142,6 +142,7 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+>         struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+>         struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
+>         const struct venus_format *fmt;
+> +       u32 szimage;
+>
+>         memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
+>         memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
+> @@ -170,14 +171,18 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
+>         pixmp->num_planes = fmt->num_planes;
+>         pixmp->flags = 0;
+>
+> -       pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
+> -                                                    pixmp->width,
+> -                                                    pixmp->height);
+> +       szimage = venus_helper_get_framesz(pixmp->pixelformat, pixmp->width,
+> +                                          pixmp->height);
+>
+> -       if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+> +       if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+> +               pfmt[0].sizeimage = szimage;
+>                 pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
+> -       else
+> +       } else {
+> +               pfmt[0].sizeimage = clamp_t(u32, pfmt[0].sizeimage, 0, SZ_4M);
+> +               if (szimage > pfmt[0].sizeimage)
+> +                       pfmt[0].sizeimage = szimage;
 
-Thanks for review, please see my comments below inline.
+pfmt[0].sizeimage = max(clamp_t(u32, pfmt[0].sizeimage, 0, SZ_4M),
+                                        szimage)?
 
-On Fri, Jan 18, 2019 at 8:38 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>                 pfmt[0].bytesperline = 0;
+> +       }
 >
-> On Fri, Jan 18, 2019 at 09:53:22AM +0530, Srinath Mannam wrote:
-> > In the current implementation, config read of 0xffff0001 data
-> > is assumed as CRS completion. but sometimes 0xffff0001 can be
-> > a valid data.
-> > IPROC PCIe RC has a register to show config request status flags
-> > like SC, UR, CRS and CA.
-> > So that extra check is added in the code to confirm the CRS
-> > state using this register before reissue config request.
+>         return fmt;
+>  }
+> @@ -275,6 +280,7 @@ static int vdec_s_fmt(struct file *file, void *fh, struct v4l2_format *f)
+>                 inst->ycbcr_enc = pixmp->ycbcr_enc;
+>                 inst->quantization = pixmp->quantization;
+>                 inst->xfer_func = pixmp->xfer_func;
+> +               inst->input_buf_size = pixmp->plane_fmt[0].sizeimage;
+>         }
 >
-> s/. but/.  But/  (Sentences start with a capital letter.)
-will change. Thanks.
+>         memset(&format, 0, sizeof(format));
+> @@ -737,6 +743,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
+>                 sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
+>                                                     inst->out_width,
+>                                                     inst->out_height);
+> +               if (inst->input_buf_size > sizes[0])
+> +                       sizes[0] = inst->input_buf_size;
+
+               sizes[0] = max(venus_helper_get_framesz(inst->fmt_out->pixfmt,
+                                                   inst->out_width,
+                                                 inst->out_height),
+                                      inst->input_buf_size)?
+
+
+
+>                 inst->input_buf_size = sizes[0];
+>                 *num_buffers = max(*num_buffers, in_num);
+>                 inst->num_input_bufs = *num_buffers;
+> --
+> 2.17.1
 >
-> Please wrap this text correctly.  If it's a single paragraph, wrap it so
-> the lines are filled.  It *looks* like it's intended to be separate
-> paragraphs; they should be separated by blank lines.
-will change. Thanks.
->
-> > Signed-off-by: Srinath Mannam <srinath.mannam@broadcom.com>
-> > Reviewed-by: Ray Jui <ray.jui@broadcom.com>
-> > ---
-> >  drivers/pci/controller/pcie-iproc.c | 23 +++++++++++++++++++++--
-> >  1 file changed, 21 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/pci/controller/pcie-iproc.c b/drivers/pci/controller/pcie-iproc.c
-> > index 13ce80f..ee89d56 100644
-> > --- a/drivers/pci/controller/pcie-iproc.c
-> > +++ b/drivers/pci/controller/pcie-iproc.c
-> > @@ -63,6 +63,10 @@
-> >  #define APB_ERR_EN_SHIFT             0
-> >  #define APB_ERR_EN                   BIT(APB_ERR_EN_SHIFT)
-> >
-> > +#define CFG_RD_SUCCESS                       0
-> > +#define CFG_RD_UR                    1
-> > +#define CFG_RD_CRS                   2
-> > +#define CFG_RD_CA                    3
-> >  #define CFG_RETRY_STATUS             0xffff0001
-> >  #define CFG_RETRY_STATUS_TIMEOUT_US  500000 /* 500 milliseconds */
-> >
-> > @@ -300,6 +304,9 @@ enum iproc_pcie_reg {
-> >       IPROC_PCIE_IARR4,
-> >       IPROC_PCIE_IMAP4,
-> >
-> > +     /* config read status */
-> > +     IPROC_PCIE_CFG_RD_STATUS,
-> > +
-> >       /* link status */
-> >       IPROC_PCIE_LINK_STATUS,
-> >
-> > @@ -370,6 +377,7 @@ static const u16 iproc_pcie_reg_paxb_v2[] = {
-> >       [IPROC_PCIE_IMAP3]              = 0xe08,
-> >       [IPROC_PCIE_IARR4]              = 0xe68,
-> >       [IPROC_PCIE_IMAP4]              = 0xe70,
-> > +     [IPROC_PCIE_CFG_RD_STATUS]      = 0xee0,
-> >       [IPROC_PCIE_LINK_STATUS]        = 0xf0c,
-> >       [IPROC_PCIE_APB_ERR_EN]         = 0xf40,
-> >       [IPROC_PCIE_ORDERING_CFG]       = 0x2000,
-> > @@ -501,10 +509,12 @@ static void __iomem *iproc_pcie_map_ep_cfg_reg(struct iproc_pcie *pcie,
-> >       return (pcie->base + offset);
-> >  }
-> >
-> > -static unsigned int iproc_pcie_cfg_retry(void __iomem *cfg_data_p)
-> > +static unsigned int iproc_pcie_cfg_retry(struct iproc_pcie *pcie,
-> > +                                      void __iomem *cfg_data_p)
-> >  {
-> >       int timeout = CFG_RETRY_STATUS_TIMEOUT_US;
-> >       unsigned int data;
-> > +     u32 status;
-> >
-> >       /*
-> >        * As per PCIe spec r3.1, sec 2.3.2, CRS Software Visibility only
-> > @@ -525,6 +535,15 @@ static unsigned int iproc_pcie_cfg_retry(void __iomem *cfg_data_p)
-> >        */
-> >       data = readl(cfg_data_p);
-> >       while (data == CFG_RETRY_STATUS && timeout--) {
-> > +             /*
-> > +              * CRS state is set in CFG_RD status register
-> > +              * This will handle the case where CFG_RETRY_STATUS is
-> > +              * valid config data.
-> > +              */
-> > +             status = iproc_pcie_read_reg(pcie, IPROC_PCIE_CFG_RD_STATUS);
-> > +             if (status != CFG_RD_CRS)
-> > +                     return data;
-> > +
-> >               udelay(1);
-> >               data = readl(cfg_data_p);
-> >       }
-> > @@ -603,7 +622,7 @@ static int iproc_pcie_config_read(struct pci_bus *bus, unsigned int devfn,
-> >       if (!cfg_data_p)
-> >               return PCIBIOS_DEVICE_NOT_FOUND;
-> >
-> > -     data = iproc_pcie_cfg_retry(cfg_data_p);
-> > +     data = iproc_pcie_cfg_retry(pcie, cfg_data_p);
-> >
-> >       *val = data;
-> >       if (size <= 2)
-> > --
-> > 2.7.4
-> >
