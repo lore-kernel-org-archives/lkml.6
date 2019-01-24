@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E4BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:27:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CC06C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:27:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AFC121855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:27:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBCB721855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:27:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="x+Utd+c4"
+	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="YwC+gPeE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727893AbfAXL1q (ORCPT
+        id S1727908AbfAXL15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:27:46 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41278 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbfAXL1p (ORCPT
+        Thu, 24 Jan 2019 06:27:57 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36273 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727573AbfAXL14 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:27:45 -0500
-Received: by mail-lf1-f68.google.com with SMTP id c16so4024398lfj.8
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 03:27:43 -0800 (PST)
+        Thu, 24 Jan 2019 06:27:56 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so4911701ljk.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 03:27:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
         h=subject:to:cc:references:from:organization:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=VrZZaCNJA5LxCq/2HDw9sOlVtJiJiEbnl+FPXNsPEw8=;
-        b=x+Utd+c4Vcgp+tlgdQ5vG1UZ7Mixr6id7Ysyj0LD5JIhz4B2x5lithWgqdRKu7fA3S
-         EPRSf87H7q21xTC02SMkosLB2jQ0R56ooILHlgNswzppUMn6r4AToKrbdtsqHpBOpe6b
-         kzIz3RlPvpGK5E80PVQfp9mjbYvPyk76xG9edAaTaZjrXRs3YXtsoCLvG6RRHQEVg/IU
-         8ryZsubsp/cjkdgQKvreYYPhZlbM5J2fqW0kJzPvooet5DCjGOGbDvhy7qtA9f/SBz5X
-         sopOoEsjUfMGMytAlwmzTJQDsJlLAhTYYsA53Lya9wcmVvjtPGbNTK+QccxzrSs6zluC
-         wu8w==
+        bh=sqsKNfj0zIZK0melRUAJR/+EvjCvXfGevQiQAproUKY=;
+        b=YwC+gPeEMfWNjmADUF3CKdLXY58On46py1lQWDDBuOiCk8ltpQHxC3HfHKfh/x0tbf
+         rJI6pXPraZBTSeyWPSaolI+AOwE5H0mYLXEiJfH60DZoiEz3P2tuq/O9sTFzct37bDoH
+         vxCulieLIqFHUN3MLpm5eUXnT1b88BsLAu0JLMOLH3SGl5azSAIXlNaupES8T0cargDO
+         nJjWB+pnqUtfm+O4/kpJQaTEr1pPrUer84OOFMJEzKtUtRo32r3dkBB1iQh6v53o1XkU
+         6XRZ5in0yBZMEl0zLczxdisjzdC6LbGdzh7tjWazFUSmMud954nhpiDoZYeRPs062QHf
+         9p9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:organization
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=VrZZaCNJA5LxCq/2HDw9sOlVtJiJiEbnl+FPXNsPEw8=;
-        b=edEliiwS6q2PS85U3bJPRaejLtETYPiJS90J55isHyFX5+UUgL6dBJgLqFAt6Dyu5P
-         uAdMoUqkzqrtsO3RbNWpJOo4up/8UoYbhHh5cqEwXNs7SSURdtuy19rQ3hJHw5Dc87j6
-         u7Agcn5ZKCFHZAll+RRO0IsmwE4Qr5G0X5P4a6vWNWVvofvhfkBA7IcyXEdgbytxCe4U
-         JxALR2HQPHjlnWyDMxiR93wpzu24h3YEncI1wkyxOrAvnI3sFa1m/+BddrqQrE9zd+oW
-         4WCMpwiCKm4NTqt+5kb1hLia5FWvrvrq66k4QRAocKK661hdrRPvw/2voVIKG+0RsBsa
-         dlfg==
-X-Gm-Message-State: AJcUukdyebGzykQ8LgvOsBlNB7XN4YmrTaOsBF+Rt5yZjM+MMVA6A8dD
-        VQLG4+UzP451MZKpu0lThZUpRw==
-X-Google-Smtp-Source: ALg8bN40dyzhz2BmPaNw9DhHDY/jtYrDqoLHqB4qs3h2So+nVC3xn2/wxhAfSYTbjfT8+gp3+p6BMA==
-X-Received: by 2002:a19:7d42:: with SMTP id y63mr5012602lfc.47.1548329262921;
-        Thu, 24 Jan 2019 03:27:42 -0800 (PST)
+        bh=sqsKNfj0zIZK0melRUAJR/+EvjCvXfGevQiQAproUKY=;
+        b=bGS1DQ2N3bu8r68KvSJJxO7wRbN7KB2A+2e2M1G7cWxLaw6PDTwasU0wOIK/JE5PMF
+         X8V6hKppJbx6gzkaFfkBUv2PxsU+6PpsanXNehn0ST8piMRdySscuP4VwHZhUBpQBKht
+         XjYocRZ/KgHnB7c2oIgD03IK7m1T3hC9w/+tQgqIASzM9MKSm7WgVrZdfbFRTGm2T3JW
+         0c524PWnxmSXN0QG5/hp6oQ7jTWhNR1ca2nuwVc98cc2Wj3Iy5ekIA1p916XcfeIAL6J
+         QRkM3tySuUUVvUQtvU9r+QqQHOEeXCdWcVmxndp1YgPxMgX2OtbfAmHFJER2lepX+W9m
+         dpmw==
+X-Gm-Message-State: AJcUukdcRy0KiUwqUPl5ZGe56HcMBa3MxzXsno24mPlSAzUuQr290hRi
+        LTP4xcNnVBJfjqFS7mhFtxD3Sw==
+X-Google-Smtp-Source: ALg8bN4cPKsXZqmnqldTf1UdquuCSvMZ4Azbo3rQxTkQInpAZUNDFdygX0VOvJx7f63MUicMgQCZcQ==
+X-Received: by 2002:a2e:12d0:: with SMTP id 77-v6mr5156608ljs.132.1548329274317;
+        Thu, 24 Jan 2019 03:27:54 -0800 (PST)
 Received: from wasted.cogentembedded.com ([31.173.84.179])
-        by smtp.gmail.com with ESMTPSA id s3-v6sm963489lje.73.2019.01.24.03.27.41
+        by smtp.gmail.com with ESMTPSA id w202sm910470lff.31.2019.01.24.03.27.53
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 03:27:41 -0800 (PST)
+        Thu, 24 Jan 2019 03:27:53 -0800 (PST)
 Subject: Re: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
  driver
 To:     masonccyang@mxic.com.tw
@@ -72,8 +72,8 @@ References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
  <OFC86383C3.5347178A-ON4825838C.00093E95-4825838C.000B9D6F@mxic.com.tw>
 From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 Organization: Cogent Embedded
-Message-ID: <1c47e6ba-66ac-49c5-1dc5-a441f5a8b42c@cogentembedded.com>
-Date:   Thu, 24 Jan 2019 14:27:40 +0300
+Message-ID: <25ce4224-54fd-d52e-8512-a3845cfe7682@cogentembedded.com>
+Date:   Thu, 24 Jan 2019 14:27:52 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
  Thunderbird/52.2.1
 MIME-Version: 1.0
@@ -133,7 +133,7 @@ On 01/24/2019 05:06 AM, masonccyang@mxic.com.tw wrote:
 > 
 > Do you patch your spi-mem.c ?
 
-   What do yuo mean? The only extra patch I have to apply now to renesas.git repo's devel
+   What do you mean? The only extra patch I have to apply now to renesas.git repo's devel
 branch is "mtd: devices: m25p80: Use the spi-mem dirmap API"...
 
 > both dirmap_create() in your rpc driver and spi-mem layer should handle it well.
