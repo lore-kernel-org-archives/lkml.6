@@ -2,222 +2,122 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61C3DC282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:09:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C4C0C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:09:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31CEE218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:09:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="y0XdQUUO"
+	by mail.kernel.org (Postfix) with ESMTP id 1349621872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:09:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727222AbfAXIJK (ORCPT
+        id S1727330AbfAXIJV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:09:10 -0500
-Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:56736 "EHLO
-        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726045AbfAXIJJ (ORCPT
+        Thu, 24 Jan 2019 03:09:21 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:51269 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727254AbfAXIJT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:09:09 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 60BF7A6E92;
-        Thu, 24 Jan 2019 09:09:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
-        s=20151024; t=1548317344; i=@fjfi.cvut.cz;
-        bh=vXtDFTy/YAvoJ5lh7cd6HtyiIOgRAa0xnysx6IWY5WY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=y0XdQUUON1EBD2GxfSa7xJg613/pYE9sMz+4Qaa4YVRIPUH3Sbrb1H648Em7uBxJH
-         24Pq6r9OvDPtKOcAHNfxjbflf+bD1lKOzrz747ejOl1wDm1niLXmVI1DndDrbqbb6d
-         jNd9Cy2Ze+wu+HmmU3DCYvhE+7dasJg4m+p2UhRo=
-X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
-Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
-        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
-        with ESMTP id 1OMtFca_CkIw; Thu, 24 Jan 2019 09:08:57 +0100 (CET)
-Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 4B966B068E;
-        Tue, 22 Jan 2019 23:32:39 +0100 (CET)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 4B966B068E
-Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
-        id 310E06004E; Tue, 22 Jan 2019 23:32:39 +0100 (CET)
-From:   David Kozub <zub@linux.fjfi.cvut.cz>
-To:     Jens Axboe <axboe@kernel.dk>,
-        Jonathan Derrick <jonathan.derrick@intel.com>,
-        Scott Bauer <sbauer@plzdonthack.me>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>,
-        David Kozub <zub@linux.fjfi.cvut.cz>
-Subject: [PATCH v3 16/16] block: sed-opal: rename next to execute_steps
-Date:   Tue, 22 Jan 2019 23:31:47 +0100
-Message-Id: <1548196307-12987-17-git-send-email-zub@linux.fjfi.cvut.cz>
-X-Mailer: git-send-email 1.8.3.1
-In-Reply-To: <1548196307-12987-1-git-send-email-zub@linux.fjfi.cvut.cz>
-References: <1548196307-12987-1-git-send-email-zub@linux.fjfi.cvut.cz>
+        Thu, 24 Jan 2019 03:09:19 -0500
+Received: from pty.hi.pengutronix.de ([2001:67c:670:100:1d::c5])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gma4Z-0007uU-Qr; Thu, 24 Jan 2019 09:09:15 +0100
+Received: from ukl by pty.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gma4Y-0004Fb-Hv; Thu, 24 Jan 2019 09:09:14 +0100
+Date:   Thu, 24 Jan 2019 09:09:14 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 3/9] irq/irq_sim: provide irq_sim_get_type()
+Message-ID: <20190124080914.knftob7s4hpgz27n@pengutronix.de>
+References: <20190123141538.29408-1-brgl@bgdev.pl>
+ <20190123141538.29408-4-brgl@bgdev.pl>
+ <20190123191824.btuaq4s5rvc236n3@pengutronix.de>
+ <CAMRc=Me58SFJOMxie5aTkOAHRqS7bjdOSAaZSY8wjPK7tntTfQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=Me58SFJOMxie5aTkOAHRqS7bjdOSAaZSY8wjPK7tntTfQ@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c5
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the function is responsible for executing the individual steps supplied
-in the steps argument, execute_steps is a more descriptive name than the
-rather generic next.
+On Thu, Jan 24, 2019 at 08:46:56AM +0100, Bartosz Golaszewski wrote:
+> śr., 23 sty 2019 o 20:18 Uwe Kleine-König
+> <u.kleine-koenig@pengutronix.de> napisał(a):
+> >
+> > Hello Bartosz,
+> >
+> > On Wed, Jan 23, 2019 at 03:15:32PM +0100, Bartosz Golaszewski wrote:
+> > > Provide a helper that allows users to retrieve the configured flow type
+> > > of dummy interrupts. That allows certain users to decide whether an irq
+> > > needs to be fired depending on its edge/level/... configuration.
+> >
+> > You don't talk about the .set_type callback here; is this intended?
+> >
+> > I wonder how you think this should be used. Assume the mockup-driver is
+> > directed to pull up a certain line, does it do something like that:
+> >
+> >         def mockup_setval(self, val):
+> >                 irqtype = irq_sim_get_type(...)
+> >                 if irqtype == LEVEL_HIGH:
+> >                         if val:
+> >                                 fire_irq()
+> >
+> >                 else if irqtype == EDGE_RISING:
+> >                         if val and not prev_val:
+> >                                 fire_irq()
+> >
+> >                 else if irqtype == LEVEL_LOW:
+> >                         if not val:
+> >                                 fire_irq()
+> >
+> >                 else if irqtype == EDGE_FALLING:
+> >                         if not val and prev_val:
+> >                                 fire_irq()
+> >
+> > I wonder if that logic should be done in the same place as where the irq
+> > type is stored. Otherwise that .type member is only a data store
+> > provided by the irq simulator. So I suggest to either move the variable
+> > that mirrors the current level of the line into the irq simulator, or
+> > keep the irqtype variable in the mockup driver. Both approaches would
+> > make it unnecessary to provide an accessor function for the type member.
+> >
+> 
+> Yeah, might be better to go back to my previous idea of adding
+> irq_sim_fire_edge(), but maybe it should be irq_sim_fire_type()
+> instead, so that irq_sim_fire() fires unconditionally and
+> irq_sim_fire_type() would fire only if the passed flag is the same as
+> the one previously configured by the set_type() callback.
 
-Signed-off-by: David Kozub <zub@linux.fjfi.cvut.cz>
----
- block/sed-opal.c | 37 +++++++++++++++++++------------------
- 1 file changed, 19 insertions(+), 18 deletions(-)
+How (if at all) do you intend to support level sensitive irqs with this
+interface? It probably works (but I didn't thought it through
+completely), but firing a LEVEL_HIGH sensitive irq on
 
-diff --git a/block/sed-opal.c b/block/sed-opal.c
-index 3362741dd198..c09149dd5e0a 100644
---- a/block/sed-opal.c
-+++ b/block/sed-opal.c
-@@ -401,8 +401,8 @@ static int execute_step(struct opal_dev *dev,
- 	return error;
- }
- 
--static int next(struct opal_dev *dev, const struct opal_step *steps,
--		size_t n_steps)
-+static int execute_steps(struct opal_dev *dev,
-+			 const struct opal_step *steps, size_t n_steps)
- {
- 	size_t state;
- 	int error;
-@@ -2034,7 +2034,7 @@ static int opal_secure_erase_locking_range(struct opal_dev *dev,
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, erase_steps, ARRAY_SIZE(erase_steps));
-+	ret = execute_steps(dev, erase_steps, ARRAY_SIZE(erase_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2051,7 +2051,7 @@ static int opal_erase_locking_range(struct opal_dev *dev,
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, erase_steps, ARRAY_SIZE(erase_steps));
-+	ret = execute_steps(dev, erase_steps, ARRAY_SIZE(erase_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2077,7 +2077,7 @@ static int opal_enable_disable_shadow_mbr(struct opal_dev *dev,
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
-+	ret = execute_steps(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2099,7 +2099,7 @@ static int opal_mbr_status(struct opal_dev *dev, struct opal_mbr_data *opal_mbr)
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
-+	ret = execute_steps(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2122,7 +2122,7 @@ static int opal_write_shadow_mbr(struct opal_dev *dev,
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
-+	ret = execute_steps(dev, mbr_steps, ARRAY_SIZE(mbr_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2174,7 +2174,7 @@ static int opal_add_user_to_lr(struct opal_dev *dev,
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, steps, ARRAY_SIZE(steps));
-+	ret = execute_steps(dev, steps, ARRAY_SIZE(steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2189,7 +2189,7 @@ static int opal_reverttper(struct opal_dev *dev, struct opal_key *opal)
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, revert_steps, ARRAY_SIZE(revert_steps));
-+	ret = execute_steps(dev, revert_steps, ARRAY_SIZE(revert_steps));
- 	mutex_unlock(&dev->dev_lock);
- 
- 	/*
-@@ -2217,10 +2217,11 @@ static int __opal_lock_unlock(struct opal_dev *dev,
- 	};
- 
- 	if (lk_unlk->session.sum)
--		return next(dev, unlock_sum_steps,
--			    ARRAY_SIZE(unlock_sum_steps));
-+		return execute_steps(dev, unlock_sum_steps,
-+				     ARRAY_SIZE(unlock_sum_steps));
- 	else
--		return next(dev, unlock_steps, ARRAY_SIZE(unlock_steps));
-+		return execute_steps(dev, unlock_steps,
-+				     ARRAY_SIZE(unlock_steps));
- }
- 
- static int __opal_set_mbr_done(struct opal_dev *dev, struct opal_key *key)
-@@ -2232,7 +2233,7 @@ static int __opal_set_mbr_done(struct opal_dev *dev, struct opal_key *key)
- 		{ end_opal_session, }
- 	};
- 
--	return next(dev, mbrdone_step, ARRAY_SIZE(mbrdone_step));
-+	return execute_steps(dev, mbrdone_step, ARRAY_SIZE(mbrdone_step));
- }
- 
- static int opal_lock_unlock(struct opal_dev *dev,
-@@ -2267,7 +2268,7 @@ static int opal_take_ownership(struct opal_dev *dev, struct opal_key *opal)
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, owner_steps, ARRAY_SIZE(owner_steps));
-+	ret = execute_steps(dev, owner_steps, ARRAY_SIZE(owner_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2288,7 +2289,7 @@ static int opal_activate_lsp(struct opal_dev *dev,
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, active_steps, ARRAY_SIZE(active_steps));
-+	ret = execute_steps(dev, active_steps, ARRAY_SIZE(active_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2305,7 +2306,7 @@ static int opal_setup_locking_range(struct opal_dev *dev,
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, lr_steps, ARRAY_SIZE(lr_steps));
-+	ret = execute_steps(dev, lr_steps, ARRAY_SIZE(lr_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2327,7 +2328,7 @@ static int opal_set_new_pw(struct opal_dev *dev, struct opal_new_pw *opal_pw)
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, pw_steps, ARRAY_SIZE(pw_steps));
-+	ret = execute_steps(dev, pw_steps, ARRAY_SIZE(pw_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
-@@ -2351,7 +2352,7 @@ static int opal_activate_user(struct opal_dev *dev,
- 
- 	mutex_lock(&dev->dev_lock);
- 	setup_opal_dev(dev);
--	ret = next(dev, act_steps, ARRAY_SIZE(act_steps));
-+	ret = execute_steps(dev, act_steps, ARRAY_SIZE(act_steps));
- 	mutex_unlock(&dev->dev_lock);
- 	return ret;
- }
+	irq_sim_fire_type(EDGE_RISING)
+
+might look at least surprising and needs proper comments and thoughts.
+
+Best regards
+Uwe
+
 -- 
-2.20.1
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
