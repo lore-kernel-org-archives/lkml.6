@@ -2,53 +2,52 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04EAFC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B586AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B400520663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86D2320663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:47:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359213;
-	bh=ZMVYay6AfAjWdt0NIt3bCLt1lJfS42IlGb0WPH2+5pA=;
+	s=default; t=1548359222;
+	bh=UafiIns+SFp5xoOBXZ2H6f3h5mpWCC8Spt3nXpB3rf8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TMQMfQNIh8I+9FmsrkLiZ4JrRnIRwEcV9Gf9vAKmXYDpJyFSG58kPxB2vxVKQuGzH
-	 SrdK4urhWvyTGYyurluu6JvTNP0sMSIGFibPz7LpZpS62my+jVWKKWmIycbwTsUr31
-	 e94SHltn/aFkLhIhYtz3Ml8st8HQZMcq/KFC4b5Q=
+	b=blsPNjyw42+rXojBUkAftOY2GMo7X5qeUl5FZtAwlNKt2iqAAkp0qcdDHOb2ilhd4
+	 d0KHYuJUGIBu+4ZXo8/uuKUwZlfprK1ppkq0Lck6qP55t+5EPRRXW6zO1rD4KhvFdC
+	 dxdv8hvrjtzA6WvohxhCbwSoMttKxHvn+jZhgj48=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387923AbfAXTqw (ORCPT
+        id S1732922AbfAXTrB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:46:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44140 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:47:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43988 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387942AbfAXTna (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:43:30 -0500
+        id S1733232AbfAXTnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:43:22 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B40EB20663;
-        Thu, 24 Jan 2019 19:43:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E17D420663;
+        Thu, 24 Jan 2019 19:43:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359009;
-        bh=ZMVYay6AfAjWdt0NIt3bCLt1lJfS42IlGb0WPH2+5pA=;
+        s=default; t=1548359001;
+        bh=UafiIns+SFp5xoOBXZ2H6f3h5mpWCC8Spt3nXpB3rf8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qrNRNGA6c8+hw2JsC6Ux/FWej8rx16xIRTzqnH7IFCpQvNReh8N9RIxazfxqC2C6G
-         DKGAq5v2ihHrZmhJuL1Qz7oy9oQa2GolHoE6/n0qUXXRQq3wfFlkCNDwPXw5lz4TXd
-         2MJKbFnJJNkLFZoJlGoAcncl7Onxw1UhuRQxu3Nc=
+        b=D751QrQIJ2KRfF6a41F9682eBasAD/jybRbrlSgUIj+Dlconz9tWNOI4JziLN3b13
+         PXW+hdUDO8ZWJ23KQMZvyYGSRtgYV0JL0wIXCahsuDy/kyoWhvOg7lRHTrSmzOAcFS
+         AILrCyiK9COTm/vot1WPjJrotH98txTKljVFUgvA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Raghuram Hegde <raghuram.hegde@intel.com>,
-        Chethan T N <chethan.tumkur.narayan@intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
+        stable@vger.kernel.org, Yangtao Li <tiny.windzz@gmail.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 103/127] Bluetooth: btusb: Add support for Intel bluetooth device 8087:0029
-Date:   Thu, 24 Jan 2019 20:20:49 +0100
-Message-Id: <20190124190216.389354127@linuxfoundation.org>
+Subject: [PATCH 4.20 101/127] clocksource/drivers/integrator-ap: Add missing of_node_put()
+Date:   Thu, 24 Jan 2019 20:20:47 +0100
+Message-Id: <20190124190216.315996980@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,162 +66,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2da711bcebe81209a9f2f90e145600eb1bae2b71 ]
+[ Upstream commit 5eb73c831171115d3b4347e1e7124a5a35d8086c ]
 
-Include the new USB product ID for Intel Bluetooth device 22260
-family(CcPeak)
+The function of_find_node_by_path() acquires a reference to the node
+returned by it and that reference needs to be dropped by its caller.
 
-The /sys/kernel/debug/usb/devices portion for this device is:
+integrator_ap_timer_init_of() doesn't do that.  The pri_node and the
+sec_node are used as an identifier to compare against the current
+node, so we can directly drop the refcount after getting the node from
+the path as it is not used as pointer.
 
-T:  Bus=01 Lev=01 Prnt=01 Port=02 Cnt=02 Dev#=  2 Spd=12   MxCh= 0
-D:  Ver= 2.00 Cls=e0(wlcon) Sub=01 Prot=01 MxPS=64 #Cfgs=  1
-P:  Vendor=8087 ProdID=0029 Rev= 0.01
-C:* #Ifs= 2 Cfg#= 1 Atr=e0 MxPwr=100mA
-I:* If#= 0 Alt= 0 #EPs= 3 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=81(I) Atr=03(Int.) MxPS=  64 Ivl=1ms
-E:  Ad=02(O) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-E:  Ad=82(I) Atr=02(Bulk) MxPS=  64 Ivl=0ms
-I:* If#= 1 Alt= 0 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   0 Ivl=1ms
-I:  If#= 1 Alt= 1 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=   9 Ivl=1ms
-I:  If#= 1 Alt= 2 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  17 Ivl=1ms
-I:  If#= 1 Alt= 3 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  25 Ivl=1ms
-I:  If#= 1 Alt= 4 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  33 Ivl=1ms
-I:  If#= 1 Alt= 5 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  49 Ivl=1ms
-I:  If#= 1 Alt= 6 #EPs= 2 Cls=e0(wlcon) Sub=01 Prot=01 Driver=btusb
-E:  Ad=03(O) Atr=01(Isoc) MxPS=  63 Ivl=1ms
-E:  Ad=83(I) Atr=01(Isoc) MxPS=  63 Ivl=1ms
+By dropping the refcount right after getting it, a single variable is
+needed instead of two.
 
-Signed-off-by: Raghuram Hegde <raghuram.hegde@intel.com>
-Signed-off-by: Chethan T N <chethan.tumkur.narayan@intel.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+Fix this by use a single variable and drop the refcount right after
+of_find_node_by_path().
+
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/bluetooth/btusb.c | 72 ++++++++++++++++++++-------------------
- 1 file changed, 37 insertions(+), 35 deletions(-)
+ drivers/clocksource/timer-integrator-ap.c | 25 +++++++++++++++--------
+ 1 file changed, 16 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-index 7439a7eb50ac..05c8a7ed859c 100644
---- a/drivers/bluetooth/btusb.c
-+++ b/drivers/bluetooth/btusb.c
-@@ -344,6 +344,7 @@ static const struct usb_device_id blacklist_table[] = {
- 	/* Intel Bluetooth devices */
- 	{ USB_DEVICE(0x8087, 0x0025), .driver_info = BTUSB_INTEL_NEW },
- 	{ USB_DEVICE(0x8087, 0x0026), .driver_info = BTUSB_INTEL_NEW },
-+	{ USB_DEVICE(0x8087, 0x0029), .driver_info = BTUSB_INTEL_NEW },
- 	{ USB_DEVICE(0x8087, 0x07da), .driver_info = BTUSB_CSR },
- 	{ USB_DEVICE(0x8087, 0x07dc), .driver_info = BTUSB_INTEL },
- 	{ USB_DEVICE(0x8087, 0x0a2a), .driver_info = BTUSB_INTEL },
-@@ -2055,6 +2056,35 @@ static int btusb_send_frame_intel(struct hci_dev *hdev, struct sk_buff *skb)
- 	return -EILSEQ;
- }
+diff --git a/drivers/clocksource/timer-integrator-ap.c b/drivers/clocksource/timer-integrator-ap.c
+index 76e526f58620..19fb7de4b928 100644
+--- a/drivers/clocksource/timer-integrator-ap.c
++++ b/drivers/clocksource/timer-integrator-ap.c
+@@ -181,8 +181,7 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
+ 	int irq;
+ 	struct clk *clk;
+ 	unsigned long rate;
+-	struct device_node *pri_node;
+-	struct device_node *sec_node;
++	struct device_node *alias_node;
  
-+static bool btusb_setup_intel_new_get_fw_name(struct intel_version *ver,
-+					     struct intel_boot_params *params,
-+					     char *fw_name, size_t len,
-+					     const char *suffix)
-+{
-+	switch (ver->hw_variant) {
-+	case 0x0b:	/* SfP */
-+	case 0x0c:	/* WsP */
-+		snprintf(fw_name, len, "intel/ibt-%u-%u.%s",
-+			le16_to_cpu(ver->hw_variant),
-+			le16_to_cpu(params->dev_revid),
-+			suffix);
-+		break;
-+	case 0x11:	/* JfP */
-+	case 0x12:	/* ThP */
-+	case 0x13:	/* HrP */
-+	case 0x14:	/* CcP */
-+		snprintf(fw_name, len, "intel/ibt-%u-%u-%u.%s",
-+			le16_to_cpu(ver->hw_variant),
-+			le16_to_cpu(ver->hw_revision),
-+			le16_to_cpu(ver->fw_revision),
-+			suffix);
-+		break;
-+	default:
-+		return false;
-+	}
-+	return true;
-+}
+ 	base = of_io_request_and_map(node, 0, "integrator-timer");
+ 	if (IS_ERR(base))
+@@ -204,7 +203,18 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
+ 		return err;
+ 	}
+ 
+-	pri_node = of_find_node_by_path(path);
++	alias_node = of_find_node_by_path(path);
 +
- static int btusb_setup_intel_new(struct hci_dev *hdev)
- {
- 	struct btusb_data *data = hci_get_drvdata(hdev);
-@@ -2106,7 +2136,7 @@ static int btusb_setup_intel_new(struct hci_dev *hdev)
- 	case 0x11:	/* JfP */
- 	case 0x12:	/* ThP */
- 	case 0x13:	/* HrP */
--	case 0x14:	/* QnJ, IcP */
-+	case 0x14:	/* CcP */
- 		break;
- 	default:
- 		bt_dev_err(hdev, "Unsupported Intel hardware variant (%u)",
-@@ -2190,23 +2220,9 @@ static int btusb_setup_intel_new(struct hci_dev *hdev)
- 	 * ibt-<hw_variant>-<hw_revision>-<fw_revision>.sfi.
- 	 *
- 	 */
--	switch (ver.hw_variant) {
--	case 0x0b:	/* SfP */
--	case 0x0c:	/* WsP */
--		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u.sfi",
--			 le16_to_cpu(ver.hw_variant),
--			 le16_to_cpu(params.dev_revid));
--		break;
--	case 0x11:	/* JfP */
--	case 0x12:	/* ThP */
--	case 0x13:	/* HrP */
--	case 0x14:	/* QnJ, IcP */
--		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u-%u.sfi",
--			 le16_to_cpu(ver.hw_variant),
--			 le16_to_cpu(ver.hw_revision),
--			 le16_to_cpu(ver.fw_revision));
--		break;
--	default:
-+	err = btusb_setup_intel_new_get_fw_name(&ver, &params, fwname,
-+						sizeof(fwname), "sfi");
-+	if (!err) {
- 		bt_dev_err(hdev, "Unsupported Intel firmware naming");
- 		return -EINVAL;
++	/*
++	 * The pointer is used as an identifier not as a pointer, we
++	 * can drop the refcount on the of__node immediately after
++	 * getting it.
++	 */
++	of_node_put(alias_node);
++
++	if (node == alias_node)
++		/* The primary timer lacks IRQ, use as clocksource */
++		return integrator_clocksource_init(rate, base);
+ 
+ 	err = of_property_read_string(of_aliases,
+ 				"arm,timer-secondary", &path);
+@@ -213,14 +223,11 @@ static int __init integrator_ap_timer_init_of(struct device_node *node)
+ 		return err;
  	}
-@@ -2222,23 +2238,9 @@ static int btusb_setup_intel_new(struct hci_dev *hdev)
- 	/* Save the DDC file name for later use to apply once the firmware
- 	 * downloading is done.
- 	 */
--	switch (ver.hw_variant) {
--	case 0x0b:	/* SfP */
--	case 0x0c:	/* WsP */
--		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u.ddc",
--			 le16_to_cpu(ver.hw_variant),
--			 le16_to_cpu(params.dev_revid));
--		break;
--	case 0x11:	/* JfP */
--	case 0x12:	/* ThP */
--	case 0x13:	/* HrP */
--	case 0x14:	/* QnJ, IcP */
--		snprintf(fwname, sizeof(fwname), "intel/ibt-%u-%u-%u.ddc",
--			 le16_to_cpu(ver.hw_variant),
--			 le16_to_cpu(ver.hw_revision),
--			 le16_to_cpu(ver.fw_revision));
--		break;
--	default:
-+	err = btusb_setup_intel_new_get_fw_name(&ver, &params, fwname,
-+						sizeof(fwname), "ddc");
-+	if (!err) {
- 		bt_dev_err(hdev, "Unsupported Intel firmware naming");
- 		return -EINVAL;
- 	}
+ 
++	alias_node = of_find_node_by_path(path);
+ 
+-	sec_node = of_find_node_by_path(path);
+-
+-	if (node == pri_node)
+-		/* The primary timer lacks IRQ, use as clocksource */
+-		return integrator_clocksource_init(rate, base);
++	of_node_put(alias_node);
+ 
+-	if (node == sec_node) {
++	if (node == alias_node) {
+ 		/* The secondary timer will drive the clock event */
+ 		irq = irq_of_parse_and_map(node, 0);
+ 		return integrator_clockevent_init(rate, base, irq);
 -- 
 2.19.1
 
