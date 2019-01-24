@@ -4,51 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B9AEC282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D618FC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B5AD21906
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A74AD21907
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:37:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358641;
-	bh=IuQENAwQCJScWEvnGRBc8wiLDBkf0YbhfVXeTO31Xz0=;
+	s=default; t=1548358643;
+	bh=FSa1+Eoj8XIixFBnOhZ9bZqjuH7btg4WpW+ELM7yBms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ChmzKxpjc2t+2bmedvXLeIAg1NffMIu/0NAWwmsSwvReoIEYuC+ILXGv16AfXrENE
-	 eGeEcOtPAzotKQmPhyGLrS9kZRKNvy7numXo0cHzB/qg+7e7gaJNg5jc9KT1/mZqB7
-	 uWAJu8VIp2rzU3FYcvzVccu+RVwU/zIrJFnIcg1g=
+	b=AWiLRu1YB+TczP+sqOI3VrVOA1PW1s9SHfNGSJ9CV2oWgHSKtHVNVqoyHOsgSwhzC
+	 BtrEgztDUM56mD7vJQvIyRc/ZqOhN383LV26GVcng27k555/k2rIJkBDmwW/tTVJcL
+	 p1jzmQJ6RAgsxjvJJaz1PiMtOBNlt/9IMt9foU28=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732627AbfAXThT (ORCPT
+        id S1732635AbfAXThW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:37:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37242 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:37:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732607AbfAXThQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:37:16 -0500
+        id S1732621AbfAXThT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:37:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 613AA218FC;
-        Thu, 24 Jan 2019 19:37:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFBF521903;
+        Thu, 24 Jan 2019 19:37:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358635;
-        bh=IuQENAwQCJScWEvnGRBc8wiLDBkf0YbhfVXeTO31Xz0=;
+        s=default; t=1548358638;
+        bh=FSa1+Eoj8XIixFBnOhZ9bZqjuH7btg4WpW+ELM7yBms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zsK2/HrAAzcyJUT5lnW6Go9IDGzxeQdgP7k7ce7On74FEbmdMAF+hrYr/CfQrO1Pe
-         PFg7/tV0ivBZlOVTUMPpdRHw+rj+oIn6DQv0+7aHvrZjx19OLI2eapwMiF4N7h8Dd0
-         IwB+Wj2wRLyAe3RI8Xoxr2JItyLNDxCi1133CGa4=
+        b=J6h++4URo6wqFqav/1DCKThF7CjXykSBHfa4540ZK98Gi8Yb2GgSWNz+y3WvWJJYW
+         YKnN5rZwDzcWrPYvhZKpQ7A4aKQBNmEE8fF5By8wJkXXg+y5uqNzmCVmCJWnejCPP5
+         2Lv1oT/FECZWz9sJ5RBTbf8N/jzxhp4JpkzcDVgg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Hans van Kranenburg <hans.van.kranenburg@mendix.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org, Leo Yan <leo.yan@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Robert Walker <robert.walker@arm.com>,
+        coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 061/106] btrfs: alloc_chunk: fix more DUP stripe size handling
-Date:   Thu, 24 Jan 2019 20:20:18 +0100
-Message-Id: <20190124190210.297276953@linuxfoundation.org>
+Subject: [PATCH 4.19 079/106] perf cs-etm: Correct packets swapping in cs_etm__flush()
+Date:   Thu, 24 Jan 2019 20:20:36 +0100
+Message-Id: <20190124190211.230208232@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,93 +73,59 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit baf92114c7e6dd6124aa3d506e4bc4b694da3bc3 ]
+[ Upstream commit 43fd56669c28cd354e9228bdb58e4bca1c1a8b66 ]
 
-Commit 92e222df7b "btrfs: alloc_chunk: fix DUP stripe size handling"
-fixed calculating the stripe_size for a new DUP chunk.
+The structure cs_etm_queue uses 'prev_packet' to point to previous
+packet, this can be used to combine with new coming packet to generate
+samples.
 
-However, the same calculation reappears a bit later, and that one was
-not changed yet. The resulting bug that is exposed is that the newly
-allocated device extents ('stripes') can have a few MiB overlap with the
-next thing stored after them, which is another device extent or the end
-of the disk.
+In function cs_etm__flush() it swaps packets only when the flag
+'etm->synth_opts.last_branch' is true, this means that it will not swap
+packets if without option '--itrace=il' to generate last branch entries;
+thus for this case the 'prev_packet' doesn't point to the correct
+previous packet and the stale packet still will be used to generate
+sequential sample.  Thus if dump trace with 'perf script' command we can
+see the incorrect flow with the stale packet's address info.
 
-The scenario in which this can happen is:
-* The block device for the filesystem is less than 10GiB in size.
-* The amount of contiguous free unallocated disk space chosen to use for
-  chunk allocation is 20% of the total device size, or a few MiB more or
-  less.
+This patch corrects packets swapping in cs_etm__flush(); except using
+the flag 'etm->synth_opts.last_branch' it also checks the another flag
+'etm->sample_branches', if any flag is true then it swaps packets so can
+save correct content to 'prev_packet'.  Finally this can fix the wrong
+program flow dumping issue.
 
-An example:
-- The filesystem device is 7880MiB (max_chunk_size gets set to 788MiB)
-- There's 1578MiB unallocated raw disk space left in one contiguous
-  piece.
+The patch has a minor refactoring to use 'etm->synth_opts.last_branch'
+instead of 'etmq->etm->synth_opts.last_branch' for condition checking,
+this is consistent with that is done in cs_etm__sample().
 
-In this case stripe_size is first calculated as 789MiB, (half of
-1578MiB).
-
-Since 789MiB (stripe_size * data_stripes) > 788MiB (max_chunk_size), we
-enter the if block. Now stripe_size value is immediately overwritten
-while calculating an adjusted value based on max_chunk_size, which ends
-up as 788MiB.
-
-Next, the value is rounded up to a 16MiB boundary, 800MiB, which is
-actually more than the value we had before. However, the last comparison
-fails to detect this, because it's comparing the value with the total
-amount of free space, which is about twice the size of stripe_size.
-
-In the example above, this means that the resulting raw disk space being
-allocated is 1600MiB, while only a gap of 1578MiB has been found. The
-second device extent object for this DUP chunk will overlap for 22MiB
-with whatever comes next.
-
-The underlying problem here is that the stripe_size is reused all the
-time for different things. So, when entering the code in the if block,
-stripe_size is immediately overwritten with something else. If later we
-decide we want to have the previous value back, then the logic to
-compute it was copy pasted in again.
-
-With this change, the value in stripe_size is not unnecessarily
-destroyed, so the duplicated calculation is not needed any more.
-
-Signed-off-by: Hans van Kranenburg <hans.van.kranenburg@mendix.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Mike Leach <mike.leach@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Robert Walker <robert.walker@arm.com>
+Cc: coresight@lists.linaro.org
+Cc: linux-arm-kernel@lists.infradead.org
+Link: http://lkml.kernel.org/r/1544513908-16805-2-git-send-email-leo.yan@linaro.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/volumes.c | 16 +++++++---------
- 1 file changed, 7 insertions(+), 9 deletions(-)
+ tools/perf/util/cs-etm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
-index dbb893d0ae81..0ee1cd4b56fb 100644
---- a/fs/btrfs/volumes.c
-+++ b/fs/btrfs/volumes.c
-@@ -4768,19 +4768,17 @@ static int __btrfs_alloc_chunk(struct btrfs_trans_handle *trans,
- 	/*
- 	 * Use the number of data stripes to figure out how big this chunk
- 	 * is really going to be in terms of logical address space,
--	 * and compare that answer with the max chunk size
-+	 * and compare that answer with the max chunk size. If it's higher,
-+	 * we try to reduce stripe_size.
- 	 */
- 	if (stripe_size * data_stripes > max_chunk_size) {
--		stripe_size = div_u64(max_chunk_size, data_stripes);
--
--		/* bump the answer up to a 16MB boundary */
--		stripe_size = round_up(stripe_size, SZ_16M);
--
- 		/*
--		 * But don't go higher than the limits we found while searching
--		 * for free extents
-+		 * Reduce stripe_size, round it up to a 16MB boundary again and
-+		 * then use it, unless it ends up being even bigger than the
-+		 * previous value we had already.
- 		 */
--		stripe_size = min(devices_info[ndevs - 1].max_avail,
-+		stripe_size = min(round_up(div_u64(max_chunk_size,
-+						   data_stripes), SZ_16M),
- 				  stripe_size);
+diff --git a/tools/perf/util/cs-etm.c b/tools/perf/util/cs-etm.c
+index ca577658e890..7b5e15cc6b71 100644
+--- a/tools/perf/util/cs-etm.c
++++ b/tools/perf/util/cs-etm.c
+@@ -1005,7 +1005,7 @@ static int cs_etm__flush(struct cs_etm_queue *etmq)
  	}
  
+ swap_packet:
+-	if (etmq->etm->synth_opts.last_branch) {
++	if (etm->sample_branches || etm->synth_opts.last_branch) {
+ 		/*
+ 		 * Swap PACKET with PREV_PACKET: PACKET becomes PREV_PACKET for
+ 		 * the next incoming packet.
 -- 
 2.19.1
 
