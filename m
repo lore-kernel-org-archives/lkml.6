@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B221C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BE6C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:21:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD592218D2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5314C218D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:21:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357707;
-	bh=iHaz1p91subLBAb+XnN/Uod3Ss283URs6Ow8kz3OnY4=;
+	s=default; t=1548357710;
+	bh=gCc16URaJbATQGp8LMNcfi7Ov4iIQY0LK0flg5uKtVM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vd2SSxJOkciAelv2sn0gKLu76u6EyQrwb66SC1E5IQ3pqJ8Vg8qVttjK2EUh9iTuX
-	 iNauNpa+pMZFs4gQTYEjYQdhDHOIhxTC9TOXzmi4WAjmO4CTVwqTVIWzollMCJRrfz
-	 J9VKX5EUh89UTOkGMPq/4CwOv9+wqz9I/I4Rc3Ac=
+	b=hLfx0ue99vV4TYOWjVHet5xMG+eaGLQHHRm5pDQfO2PuAhkR4GhwSrRTbGkFHWrBw
+	 BpoGLkeUUZPPZ+CQSDTKb2GmBW7mQnlTCF9mTK+V5Eo9kOL6uE2yzXD1DjR4sRBoRb
+	 IpBpRqa0b/WuVVHrcTc6Pu2brZ+4kCE0BTlU64Zw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729250AbfAXTVr (ORCPT
+        id S1729279AbfAXTVs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:21:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46060 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:21:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46134 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726049AbfAXTVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:21:44 -0500
+        id S1728947AbfAXTVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:21:46 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE6CC218D3;
-        Thu, 24 Jan 2019 19:21:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 80342218D0;
+        Thu, 24 Jan 2019 19:21:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357703;
-        bh=iHaz1p91subLBAb+XnN/Uod3Ss283URs6Ow8kz3OnY4=;
+        s=default; t=1548357705;
+        bh=gCc16URaJbATQGp8LMNcfi7Ov4iIQY0LK0flg5uKtVM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=q4MnWShIbJsdfv/n9OVkDIhG8pBQfdeS4ypbqyXCszY5SPiF5A940yS4K0iNzKito
-         c0MeKlVUpdKKSK6En8lzhvbrMYgkQSSgX3ZqzAEni61kr2rMygiwqQhfasPby8wEEn
-         L5wzGPTQTGvcv8ymur3v0H10NebkqBIM+Lzsi72E=
+        b=1nUGndONI4Ylw1ArIr/zrif6O9fJxtcGpENtduCzQLMk3EEpmVDkmzWm8gVheWNgI
+         8QakOhYKFsldDKMOt8Rnz65EYN3IOc/P5NNHffHLcCCDHXMZFgnPHKBoyYgFDAOzrk
+         L5b3Xyzo3H7i4vzjvJt7+SyqVbhaglNYGuUQp8G8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vasily Averin <vvs@virtuozzo.com>,
-        "J. Bruce Fields" <bfields@redhat.com>
-Subject: [PATCH 3.18 11/52] sunrpc: use-after-free in svc_process_common()
-Date:   Thu, 24 Jan 2019 20:19:35 +0100
-Message-Id: <20190124190142.850196716@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 3.18 12/52] tty/ldsem: Wake up readers after timed out down_write()
+Date:   Thu, 24 Jan 2019 20:19:36 +0100
+Message-Id: <20190124190143.008345547@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -65,147 +67,58 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Vasily Averin <vvs@virtuozzo.com>
+From: Dmitry Safonov <dima@arista.com>
 
-commit d4b09acf924b84bae77cad090a9d108e70b43643 upstream.
+commit 231f8fd0cca078bd4396dd7e380db813ac5736e2 upstream.
 
-if node have NFSv41+ mounts inside several net namespaces
-it can lead to use-after-free in svc_process_common()
+ldsem_down_read() will sleep if there is pending writer in the queue.
+If the writer times out, readers in the queue should be woken up,
+otherwise they may miss a chance to acquire the semaphore until the last
+active reader will do ldsem_up_read().
 
-svc_process_common()
-        /* Setup reply header */
-        rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp); <<< HERE
+There was a couple of reports where there was one active reader and
+other readers soft locked up:
+  Showing all locks held in the system:
+  2 locks held by khungtaskd/17:
+   #0:  (rcu_read_lock){......}, at: watchdog+0x124/0x6d1
+   #1:  (tasklist_lock){.+.+..}, at: debug_show_all_locks+0x72/0x2d3
+  2 locks held by askfirst/123:
+   #0:  (&tty->ldisc_sem){.+.+.+}, at: ldsem_down_read+0x46/0x58
+   #1:  (&ldata->atomic_read_lock){+.+...}, at: n_tty_read+0x115/0xbe4
 
-svc_process_common() can use incorrect rqstp->rq_xprt,
-its caller function bc_svc_process() takes it from serv->sv_bc_xprt.
-The problem is that serv is global structure but sv_bc_xprt
-is assigned per-netnamespace.
+Prevent readers wait for active readers to release ldisc semaphore.
 
-According to Trond, the whole "let's set up rqstp->rq_xprt
-for the back channel" is nothing but a giant hack in order
-to work around the fact that svc_process_common() uses it
-to find the xpt_ops, and perform a couple of (meaningless
-for the back channel) tests of xpt_flags.
-
-All we really need in svc_process_common() is to be able to run
-rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr()
-
-Bruce J Fields points that this xpo_prep_reply_hdr() call
-is an awfully roundabout way just to do "svc_putnl(resv, 0);"
-in the tcp case.
-
-This patch does not initialiuze rqstp->rq_xprt in bc_svc_process(),
-now it calls svc_process_common() with rqstp->rq_xprt = NULL.
-
-To adjust reply header svc_process_common() just check
-rqstp->rq_prot and calls svc_tcp_prep_reply_hdr() for tcp case.
-
-To handle rqstp->rq_xprt = NULL case in functions called from
-svc_process_common() patch intruduces net namespace pointer
-svc_rqst->rq_bc_net and adjust SVC_NET() definition.
-Some other function was also adopted to properly handle described case.
-
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Link: lkml.kernel.org/r/20171121132855.ajdv4k6swzhvktl6@wfg-t540p.sh.intel.com
+Link: lkml.kernel.org/r/20180907045041.GF1110@shao2-debian
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: stable@vger.kernel.org
-Fixes: 23c20ecd4475 ("NFS: callback up - users counting cleanup")
-Signed-off-by: J. Bruce Fields <bfields@redhat.com>
-v2: - added lost extern svc_tcp_prep_reply_hdr()
-    - context changes in svc_process_common()
-    - dropped trace_svc_process() changes
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
----
- include/linux/sunrpc/svc.h |    5 ++++-
- net/sunrpc/svc.c           |   10 +++++++---
- net/sunrpc/svc_xprt.c      |    5 +++--
- net/sunrpc/svcsock.c       |    2 +-
- 4 files changed, 15 insertions(+), 7 deletions(-)
 
---- a/include/linux/sunrpc/svc.h
-+++ b/include/linux/sunrpc/svc.h
-@@ -281,9 +281,12 @@ struct svc_rqst {
- 						 * to prevent encrypting page
- 						 * cache pages */
- 	struct task_struct	*rq_task;	/* service thread */
-+	struct net		*rq_bc_net;	/* pointer to backchannel's
-+						 * net namespace
-+						 */
- };
- 
--#define SVC_NET(svc_rqst)	(svc_rqst->rq_xprt->xpt_net)
-+#define SVC_NET(rqst) (rqst->rq_xprt ? rqst->rq_xprt->xpt_net : rqst->rq_bc_net)
- 
- /*
-  * Rigorous type checking on sockaddr type conversions
---- a/net/sunrpc/svc.c
-+++ b/net/sunrpc/svc.c
-@@ -1061,6 +1061,8 @@ void svc_printk(struct svc_rqst *rqstp,
- static __printf(2,3) void svc_printk(struct svc_rqst *rqstp, const char *fmt, ...) {}
- #endif
- 
-+extern void svc_tcp_prep_reply_hdr(struct svc_rqst *);
+---
+ drivers/tty/tty_ldsem.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+--- a/drivers/tty/tty_ldsem.c
++++ b/drivers/tty/tty_ldsem.c
+@@ -306,6 +306,16 @@ down_write_failed(struct ld_semaphore *s
+ 	if (!locked)
+ 		ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
+ 	list_del(&waiter.list);
 +
- /*
-  * Common routine for processing the RPC request.
-  */
-@@ -1090,7 +1092,8 @@ svc_process_common(struct svc_rqst *rqst
- 	rqstp->rq_dropme = false;
- 
- 	/* Setup reply header */
--	rqstp->rq_xprt->xpt_ops->xpo_prep_reply_hdr(rqstp);
-+	if (rqstp->rq_prot == IPPROTO_TCP)
-+		svc_tcp_prep_reply_hdr(rqstp);
- 
- 	svc_putu32(resv, rqstp->rq_xid);
- 
-@@ -1137,7 +1140,8 @@ svc_process_common(struct svc_rqst *rqst
- 	case SVC_DENIED:
- 		goto err_bad_auth;
- 	case SVC_CLOSE:
--		if (test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
-+		if (rqstp->rq_xprt &&
-+		    test_bit(XPT_TEMP, &rqstp->rq_xprt->xpt_flags))
- 			svc_close_xprt(rqstp->rq_xprt);
- 	case SVC_DROP:
- 		goto dropit;
-@@ -1347,10 +1351,10 @@ bc_svc_process(struct svc_serv *serv, st
- 	struct kvec	*resv = &rqstp->rq_res.head[0];
- 
- 	/* Build the svc_rqst used by the common processing routine */
--	rqstp->rq_xprt = serv->sv_bc_xprt;
- 	rqstp->rq_xid = req->rq_xid;
- 	rqstp->rq_prot = req->rq_xprt->prot;
- 	rqstp->rq_server = serv;
-+	rqstp->rq_bc_net = req->rq_xprt->xprt_net;
- 
- 	rqstp->rq_addrlen = sizeof(req->rq_xprt->addr);
- 	memcpy(&rqstp->rq_addr, &req->rq_xprt->addr, rqstp->rq_addrlen);
---- a/net/sunrpc/svc_xprt.c
-+++ b/net/sunrpc/svc_xprt.c
-@@ -438,10 +438,11 @@ static struct svc_xprt *svc_xprt_dequeue
-  */
- void svc_reserve(struct svc_rqst *rqstp, int space)
- {
-+	struct svc_xprt *xprt = rqstp->rq_xprt;
++	/*
++	 * In case of timeout, wake up every reader who gave the right of way
++	 * to writer. Prevent separation readers into two groups:
++	 * one that helds semaphore and another that sleeps.
++	 * (in case of no contention with a writer)
++	 */
++	if (!locked && list_empty(&sem->write_wait))
++		__ldsem_wake_readers(sem);
 +
- 	space += rqstp->rq_res.head[0].iov_len;
+ 	raw_spin_unlock_irq(&sem->wait_lock);
  
--	if (space < rqstp->rq_reserved) {
--		struct svc_xprt *xprt = rqstp->rq_xprt;
-+	if (xprt && space < rqstp->rq_reserved) {
- 		atomic_sub((rqstp->rq_reserved - space), &xprt->xpt_reserved);
- 		rqstp->rq_reserved = space;
- 
---- a/net/sunrpc/svcsock.c
-+++ b/net/sunrpc/svcsock.c
-@@ -1212,7 +1212,7 @@ static int svc_tcp_sendto(struct svc_rqs
- /*
-  * Setup response header. TCP has a 4B record length field.
-  */
--static void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
-+void svc_tcp_prep_reply_hdr(struct svc_rqst *rqstp)
- {
- 	struct kvec *resv = &rqstp->rq_res.head[0];
- 
+ 	__set_task_state(tsk, TASK_RUNNING);
 
 
