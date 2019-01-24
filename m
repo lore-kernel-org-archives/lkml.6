@@ -2,92 +2,157 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E61C4C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AB9DC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:06:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA44B21855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:06:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 081E921855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:06:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360401;
-	bh=SiFF3tBoRE/gVXArRvjeZt80ncSFeTkio+VHeLAf0uw=;
+	s=default; t=1548360412;
+	bh=/6bSmZRmU5XBdQkov0x7CGBHi24RuIKxJNWisy6fIeA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dl4hs61jQkkb4W2Olv2ICAJUfHlU9aYIROJ3EEsLXlDUpOQDh3UmuLknU024AL1gt
-	 NUWzWEIvuRjSCZwHsV8YlcURcO5tK1gWwYdF4AxNvJ9GreucV3rruPCO1N8KKFUK0d
-	 Bg+iUxpIb2lo17w1oRe3fPuwWMNT7wehRPItlaps=
+	b=PUobDuuYS8y3XvefV4+QttGKoTqJSe/rwvKRXf4QeeAiGasXqziPtJGmlvM1YMhyg
+	 Y4fwSXzKwUD1bV71pVgaW3ixE3qLKX0B++eOPAHXjXvTSVuFS/2x6GWsQjrbQqS5tX
+	 eE4pnh5LjDIv1gBjWQ0MUMV1mpcv5gmFBklBK0Vo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfAXUGe (ORCPT
+        id S1731070AbfAXUGt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:06:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58744 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:06:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731535AbfAXTbF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:31:05 -0500
-Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.121.135.10])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
+        id S1730954AbfAXTa1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:30:27 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 13FB421902;
-        Thu, 24 Jan 2019 19:31:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FF89218D4;
+        Thu, 24 Jan 2019 19:30:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358264;
-        bh=SiFF3tBoRE/gVXArRvjeZt80ncSFeTkio+VHeLAf0uw=;
+        s=default; t=1548358226;
+        bh=/6bSmZRmU5XBdQkov0x7CGBHi24RuIKxJNWisy6fIeA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=knA6azSW9Ys9HLEbn6KW4KCV4Bhszm8hFGOXo//0JW5z3zp8SR3YfrBltRJCYD3YF
-         BpJON9y+5Xro880RzzLRKMSJxoHtE4euf7Pu/kIw0ovlnf2qhZbGjHYf+PDNBaY6gd
-         MyAkYxUJbT7BGf7FWAvPpMdg5gZeWxyIngaE+H8k=
-From:   Sinan Kaya <okaya@kernel.org>
-To:     linux-next@vger.kernel.org
-Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        platform-driver-x86@vger.kernel.org (open list:X86 PLATFORM DRIVERS),
-        linux-kernel@vger.kernel.org (open list)
-Subject: [for next][PATCH v3 2/2] platform/x86: Fix unmet dependency warning for SAMSUNG_Q10
-Date:   Thu, 24 Jan 2019 19:31:01 +0000
-Message-Id: <20190124193101.24519-2-okaya@kernel.org>
-X-Mailer: git-send-email 2.19.0
-In-Reply-To: <20190124193101.24519-1-okaya@kernel.org>
-References: <20190124193101.24519-1-okaya@kernel.org>
+        b=EQxd6eR7b45DZSw4cSBIJ0jMAAy9YRtir59Rt1d/aRfSV8RbS5t7Vc6HuOOojvmuB
+         l39VzNQe+g3nv1LIS1UZyOD86F8jEK3V7yOxqyeiGxZX4wj+KlqXQ/gX/4Z2BxoEiF
+         so/F0tJd9zK7cMN047gRVC7QEGUV17qzZ4YsVKvo=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.9 38/39] ipmi:ssif: Fix handling of multi-part return messages
+Date:   Thu, 24 Jan 2019 20:20:41 +0100
+Message-Id: <20190124190449.721717915@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
+References: <20190124190448.232316246@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add BACKLIGHT_LCD_SUPPORT for SAMSUNG_Q10 to fix the
-warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-SAMSUNG_Q10 selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
-depends on BACKLIGHT_LCD_SUPPORT.
+------------------
 
-Copy BACKLIGHT_LCD_SUPPORT dependency into SAMSUNG_Q10 to fix:
+From: Corey Minyard <cminyard@mvista.com>
 
-WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
-  Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
-  Selected by [y]:
-  - SAMSUNG_Q10 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y]
+commit 7d6380cd40f7993f75c4bde5b36f6019237e8719 upstream.
 
-Signed-off-by: Sinan Kaya <okaya@kernel.org>
+The block number was not being compared right, it was off by one
+when checking the response.
+
+Some statistics wouldn't be incremented properly in some cases.
+
+Check to see if that middle-part messages always have 31 bytes of
+data.
+
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
+Cc: stable@vger.kernel.org # 4.4
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- drivers/platform/x86/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/char/ipmi/ipmi_ssif.c |   25 +++++++++++++++++--------
+ 1 file changed, 17 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 11810591840d..b5e9db85e881 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1129,6 +1129,7 @@ config INTEL_OAKTRAIL
- config SAMSUNG_Q10
- 	tristate "Samsung Q10 Extras"
- 	depends on ACPI
-+	depends on BACKLIGHT_LCD_SUPPORT
- 	select BACKLIGHT_CLASS_DEVICE
- 	---help---
- 	  This driver provides support for backlight control on Samsung Q10
--- 
-2.19.0
+--- a/drivers/char/ipmi/ipmi_ssif.c
++++ b/drivers/char/ipmi/ipmi_ssif.c
+@@ -641,8 +641,9 @@ static void msg_done_handler(struct ssif
+ 
+ 		/* Remove the multi-part read marker. */
+ 		len -= 2;
++		data += 2;
+ 		for (i = 0; i < len; i++)
+-			ssif_info->data[i] = data[i+2];
++			ssif_info->data[i] = data[i];
+ 		ssif_info->multi_len = len;
+ 		ssif_info->multi_pos = 1;
+ 
+@@ -670,8 +671,19 @@ static void msg_done_handler(struct ssif
+ 		}
+ 
+ 		blocknum = data[0];
++		len--;
++		data++;
++
++		if (blocknum != 0xff && len != 31) {
++		    /* All blocks but the last must have 31 data bytes. */
++			result = -EIO;
++			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
++				pr_info("Received middle message <31\n");
+ 
+-		if (ssif_info->multi_len + len - 1 > IPMI_MAX_MSG_LENGTH) {
++			goto continue_op;
++		}
++
++		if (ssif_info->multi_len + len > IPMI_MAX_MSG_LENGTH) {
+ 			/* Received message too big, abort the operation. */
+ 			result = -E2BIG;
+ 			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
+@@ -680,16 +692,14 @@ static void msg_done_handler(struct ssif
+ 			goto continue_op;
+ 		}
+ 
+-		/* Remove the blocknum from the data. */
+-		len--;
+ 		for (i = 0; i < len; i++)
+-			ssif_info->data[i + ssif_info->multi_len] = data[i + 1];
++			ssif_info->data[i + ssif_info->multi_len] = data[i];
+ 		ssif_info->multi_len += len;
+ 		if (blocknum == 0xff) {
+ 			/* End of read */
+ 			len = ssif_info->multi_len;
+ 			data = ssif_info->data;
+-		} else if (blocknum + 1 != ssif_info->multi_pos) {
++		} else if (blocknum != ssif_info->multi_pos) {
+ 			/*
+ 			 * Out of sequence block, just abort.  Block
+ 			 * numbers start at zero for the second block,
+@@ -717,6 +727,7 @@ static void msg_done_handler(struct ssif
+ 		}
+ 	}
+ 
++ continue_op:
+ 	if (result < 0) {
+ 		ssif_inc_stat(ssif_info, receive_errors);
+ 	} else {
+@@ -724,8 +735,6 @@ static void msg_done_handler(struct ssif
+ 		ssif_inc_stat(ssif_info, received_message_parts);
+ 	}
+ 
+-
+- continue_op:
+ 	if (ssif_info->ssif_debug & SSIF_DEBUG_STATE)
+ 		pr_info(PFX "DONE 1: state = %d, result=%d.\n",
+ 			ssif_info->ssif_state, result);
+
 
