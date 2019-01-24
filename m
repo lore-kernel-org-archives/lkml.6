@@ -2,55 +2,56 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86DF3C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 847FCC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CF31218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 522B8218FF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357848;
-	bh=ywRLR8CGI6P/wVOvFUHyNdPufQF0y7LeDpfIl2BFqw0=;
+	s=default; t=1548357851;
+	bh=3BaXdNCT1fVIMiYhxm7S6M0xfl8C9LDgBruj+ADoWTA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=I6lUVq48UoMLoxhg+Ln69cHbWTHkpnJKejBC9UCiAXSkgkAW/O2QXfrokQAIHO8gZ
-	 vQRjWhf1Vk1lzo5nknx8psLWtiHNs6B/GC1uxYByV+QKt2YAzGpKtdHmrdX5qNbJK2
-	 CACIjGxDIlOEBb8ATNwbfOmzWwWiGeO17M6suPPA=
+	b=0NTMarSQYVo4Rn09Xdrs/Y5ek8yToufr6MBck1YixjLWr9omktdmX8b9hch+33l95
+	 vAeE1SPE7w/bE0w7k7t6xAyP6Xp/u9giwvCPA+DqsHkPXURRgpsHYUiF+BbmmqbpG7
+	 ga2V5ofxiLNAdlEPO4DWK+Ey+5rK6F5y1Ja86NnU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730009AbfAXTYG (ORCPT
+        id S1730021AbfAXTYJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:24:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49104 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:24:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728796AbfAXTYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:24:04 -0500
+        id S1730004AbfAXTYG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:24:06 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1E04218EA;
-        Thu, 24 Jan 2019 19:24:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 69D4F217D7;
+        Thu, 24 Jan 2019 19:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357843;
-        bh=ywRLR8CGI6P/wVOvFUHyNdPufQF0y7LeDpfIl2BFqw0=;
+        s=default; t=1548357845;
+        bh=3BaXdNCT1fVIMiYhxm7S6M0xfl8C9LDgBruj+ADoWTA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0my7aXyX5OiT+kUxxai6pJglFtCPRdgFHI6yikh7OEN40fB9/RGtTcXVsLum+lwWS
-         lkMSD2EUsVLgRE5KxQmxusK1vwGdw5zIxUEIX/gy2+XeCLGpGPOuwCWzbdsWZv8QEq
-         4bbuEPJq4ToZxG4hnzaE3NeCTELTnmNWYR+cVN9Y=
+        b=f/mmZt4CDoOt9LhIbsEMgZhVWOhSKfLJKY25+Wa8EJJoZ93g3VStHd37sP6jwDYqh
+         RL/G1/xaaxDIDoflKrZ9VqUqobsX8raqrHP8uKfhaPQCGQhEvHnhx48e2NwKvqs00C
+         iUOKrUKEfYDeC1EWnl0p2hnCX9IEdZ4+MDChMLOo=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vlad Tsyrklevich <vlad@tsyrklevich.net>,
-        Kees Cook <keescook@chromium.org>, security@kernel.org,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH 3.18 24/52] omap2fb: Fix stack memory disclosure
-Date:   Thu, 24 Jan 2019 20:19:48 +0100
-Message-Id: <20190124190145.908747506@linuxfoundation.org>
+        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel test robot <rong.a.chen@intel.com>,
+        Dmitry Safonov <dima@arista.com>
+Subject: [PATCH 4.4 001/104] tty/ldsem: Wake up readers after timed out down_write()
+Date:   Thu, 24 Jan 2019 20:18:50 +0100
+Message-Id: <20190124190155.074369771@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
-References: <20190124190140.879495253@linuxfoundation.org>
+In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
+References: <20190124190154.968308875@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,45 +63,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-3.18-stable review patch.  If anyone has any objections, please let me know.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Vlad Tsyrklevich <vlad@tsyrklevich.net>
+From: Dmitry Safonov <dima@arista.com>
 
-commit a01421e4484327fe44f8e126793ed5a48a221e24 upstream.
+commit 231f8fd0cca078bd4396dd7e380db813ac5736e2 upstream.
 
-Using [1] for static analysis I found that the OMAPFB_QUERY_PLANE,
-OMAPFB_GET_COLOR_KEY, OMAPFB_GET_DISPLAY_INFO, and OMAPFB_GET_VRAM_INFO
-cases could all leak uninitialized stack memory--either due to
-uninitialized padding or 'reserved' fields.
+ldsem_down_read() will sleep if there is pending writer in the queue.
+If the writer times out, readers in the queue should be woken up,
+otherwise they may miss a chance to acquire the semaphore until the last
+active reader will do ldsem_up_read().
 
-Fix them by clearing the shared union used to store copied out data.
+There was a couple of reports where there was one active reader and
+other readers soft locked up:
+  Showing all locks held in the system:
+  2 locks held by khungtaskd/17:
+   #0:  (rcu_read_lock){......}, at: watchdog+0x124/0x6d1
+   #1:  (tasklist_lock){.+.+..}, at: debug_show_all_locks+0x72/0x2d3
+  2 locks held by askfirst/123:
+   #0:  (&tty->ldisc_sem){.+.+.+}, at: ldsem_down_read+0x46/0x58
+   #1:  (&ldata->atomic_read_lock){+.+...}, at: n_tty_read+0x115/0xbe4
 
-[1] https://github.com/vlad902/kernel-uninitialized-memory-checker
+Prevent readers wait for active readers to release ldisc semaphore.
 
-Signed-off-by: Vlad Tsyrklevich <vlad@tsyrklevich.net>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Fixes: b39a982ddecf ("OMAP: DSS2: omapfb driver")
-Cc: security@kernel.org
-[b.zolnierkie: prefix patch subject with "omap2fb: "]
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Link: lkml.kernel.org/r/20171121132855.ajdv4k6swzhvktl6@wfg-t540p.sh.intel.com
+Link: lkml.kernel.org/r/20180907045041.GF1110@shao2-debian
+Cc: Jiri Slaby <jslaby@suse.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: stable@vger.kernel.org
+Reported-by: kernel test robot <rong.a.chen@intel.com>
+Signed-off-by: Dmitry Safonov <dima@arista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c |    2 ++
- 1 file changed, 2 insertions(+)
+ drivers/tty/tty_ldsem.c |   10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
---- a/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-+++ b/drivers/video/fbdev/omap2/omapfb/omapfb-ioctl.c
-@@ -606,6 +606,8 @@ int omapfb_ioctl(struct fb_info *fbi, un
- 
- 	int r = 0;
- 
-+	memset(&p, 0, sizeof(p));
+--- a/drivers/tty/tty_ldsem.c
++++ b/drivers/tty/tty_ldsem.c
+@@ -307,6 +307,16 @@ down_write_failed(struct ld_semaphore *s
+ 	if (!locked)
+ 		ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
+ 	list_del(&waiter.list);
 +
- 	switch (cmd) {
- 	case OMAPFB_SYNC_GFX:
- 		DBG("ioctl SYNC_GFX\n");
++	/*
++	 * In case of timeout, wake up every reader who gave the right of way
++	 * to writer. Prevent separation readers into two groups:
++	 * one that helds semaphore and another that sleeps.
++	 * (in case of no contention with a writer)
++	 */
++	if (!locked && list_empty(&sem->write_wait))
++		__ldsem_wake_readers(sem);
++
+ 	raw_spin_unlock_irq(&sem->wait_lock);
+ 
+ 	__set_task_state(tsk, TASK_RUNNING);
 
 
