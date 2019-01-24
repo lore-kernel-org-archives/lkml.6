@@ -2,211 +2,136 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A4B9C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C67ACC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51CBD21726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dpw7+jl4"
+	by mail.kernel.org (Postfix) with ESMTP id 9514321726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:54:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548359674;
+	bh=TvCDfCsIeYtuapI3wGNY0umnt6SfAFv7Dm8Du15TsiQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=VsaMLR7LrpGJvowDa6I1qP9T8Ti6F3i9S3kJ9/jWryqvcfcbtpCVUfhE4LL6LdNC5
+	 uB9uYo/WE7sQXsPL+PPB8cdhM8m49dn1z2K6rB6aw0acNEnj6+NigNdcUSiYJy6l2X
+	 BV59n6dLAZRdfC+HWB6tqJJxUbhYmDr/MGwcE1Yw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729075AbfAXTy1 (ORCPT
+        id S1732643AbfAXTh0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:54:27 -0500
-Received: from mail-wm1-f49.google.com ([209.85.128.49]:55592 "EHLO
-        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732645AbfAXTh2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:37:28 -0500
-Received: by mail-wm1-f49.google.com with SMTP id y139so4388520wmc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 11:37:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=F77LLiWdG5UAnrt5MtSo0Z/X5hMmQ7CkyynL6JQDJQA=;
-        b=Dpw7+jl4MUa2tdGHr9jDCaAPVvFr7Thb3V970TXiWgYcsKk89cjZssOoVYSYHmFmrr
-         BcEj/U/NmjIUbLtGqQaqVNfJBCycR7827luDX9mbdWZSChGgLd0Xv3Pn+lF08L6NPyR5
-         JpTCWEn3Xj17S9orODiZfaYb5e4lFZAJ18JdDukYfhmAkrB03BHGv+c3mGd9RjVzw8xm
-         SUilLHQl1xZPD4b+cMi/2ofu8N/aBPZSvUlB5aFEzTa/43Tw06TNMRzonKBahc6C3hGb
-         4IT3ITOILxzqelD2nMIAliBh0BBGj0uSvfYGxmOoMmySNfMEv7t4Nn93xaKFo12Ghc43
-         Nt7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=F77LLiWdG5UAnrt5MtSo0Z/X5hMmQ7CkyynL6JQDJQA=;
-        b=a5lxGzCJ8Ev2LlhlA0QNNxGf5SWQsdyUF4631WYgKXqSe7lFwbmqeXWEpFctPFS6P/
-         MwS9lxhJ6J2PvSTUK1URqk6tJfelbPljNpGEZztmosAZUzplHZyCvEfbJGCmVimUn9KU
-         VUKcVm3PT+8LmjhXR4RWZtW7XKTAgqgmbkAXqUzBgHgLtjKf7S60l5rAgbszwAhvGxNC
-         +YI5FjZc6q4cUNOGNTD+bcpwr4+EcIk9dsRwACGPPhGHVSBno2vTvH2iQ2iR6EUxS+EH
-         T/4u8EmSdPsphNrxxhbPhNauSwDnZkFVduhoA2ZvGqOWShvslpCHSETeOLqp7NNw0nzv
-         iGQA==
-X-Gm-Message-State: AJcUuke67GE+T4Zx5mN06K26F3TXvOiDPG7nV9O17uzU1yKV8XsxE719
-        H/ZBiXOW1XihoHNusJjMO/n+O0wn
-X-Google-Smtp-Source: ALg8bN63HKutsye3xfok0020KbMTixLH7jykFzw3B3jqfD3LBDpASo5EpFR2NlehyW30K0WpUEXdTQ==
-X-Received: by 2002:a1c:2944:: with SMTP id p65mr3931485wmp.20.1548358645258;
-        Thu, 24 Jan 2019 11:37:25 -0800 (PST)
-Received: from ?IPv6:2003:ea:8bf1:e200:888:905:a584:f245? (p200300EA8BF1E20008880905A584F245.dip0.t-ipconnect.de. [2003:ea:8bf1:e200:888:905:a584:f245])
-        by smtp.googlemail.com with ESMTPSA id u204sm100341424wmu.30.2019.01.24.11.37.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 11:37:24 -0800 (PST)
-Subject: Re: Fix 80d20d35af1e ("nohz: Fix local_timer_softirq_pending()") may
- have revealed another problem
-To:     Frederic Weisbecker <frederic@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <67ce38dc-1f00-55c6-f9ae-2dec00172cf6@gmail.com>
- <alpine.DEB.2.21.1808241000340.1668@nanos.tec.linutronix.de>
- <20180824143056.GC2730@lerouge>
- <d8fd3322-e982-2c9c-85e3-9b1770357520@gmail.com>
- <20180828022545.GA25943@lerouge>
- <alpine.DEB.2.21.1809271805190.8118@nanos.tec.linutronix.de>
- <20180928131855.GB8795@lerouge>
- <c472b6bf-e4af-d807-e63f-75211ce295bd@gmail.com>
- <20181227065321.GA3749@lerouge>
- <e838fa7f-f43f-7b3c-aae6-edb4f6734964@gmail.com>
- <20190116062408.GA26169@lenoir>
-From:   Heiner Kallweit <hkallweit1@gmail.com>
-Message-ID: <f60567f7-fa7e-f424-12e6-b3df7a24c0be@gmail.com>
-Date:   Thu, 24 Jan 2019 20:37:20 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 24 Jan 2019 14:37:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37432 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731092AbfAXThY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:37:24 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 75BE0218FC;
+        Thu, 24 Jan 2019 19:37:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358644;
+        bh=TvCDfCsIeYtuapI3wGNY0umnt6SfAFv7Dm8Du15TsiQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=M7ibDxnGY5oagFKwKFEZzooV5PnGSC3a3QSP+lmxTTDb+u2sww8xTjIM6tb1/6xH/
+         z9U0+jQOHQleD4eJDCWa4cFmQ4Ram2vqTsX4QCP4SH/xa3Z7K6tk618+5QInzSpnhy
+         g+qEEfwMW4MfzHduGC7z7qJz+6W4zjTZwiBl5Gng=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 081/106] perf tools: Add missing open_memstream() prototype for systems lacking it
+Date:   Thu, 24 Jan 2019 20:20:38 +0100
+Message-Id: <20190124190211.326902572@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
+References: <20190124190206.342411005@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-In-Reply-To: <20190116062408.GA26169@lenoir>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16.01.2019 07:24, Frederic Weisbecker wrote:
-> On Fri, Dec 28, 2018 at 12:11:12AM +0100, Heiner Kallweit wrote:
->>
->> # tracer: nop
->> #
->> #                              _-----=> irqs-off
->> #                             / _----=> need-resched
->> #                            | / _---=> hardirq/softirq
->> #                            || / _--=> preempt-depth
->> #                            ||| /     delay
->> #           TASK-PID   CPU#  ||||    TIMESTAMP  FUNCTION
->> #              | |       |   ||||       |         |
->>           <idle>-0     [001] d.h2  1479.099092: softirq_raise: vec=1 [action=TIMER]
->>           <idle>-0     [001] d.h2  1479.099098: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.099106: softirq_raise: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.099114: softirq_entry: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.099120: softirq_exit: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.099121: softirq_entry: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.099134: softirq_exit: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.099135: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.099141: softirq_exit: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.100094: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.100109: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.100116: softirq_exit: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.101091: softirq_raise: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.101113: softirq_entry: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.101118: softirq_exit: vec=1 [action=TIMER]
->>           <idle>-0     [001] d.h2  1479.102094: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.102114: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.102121: softirq_exit: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.103091: softirq_raise: vec=1 [action=TIMER]
->>           <idle>-0     [001] d.h2  1479.103097: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.103105: softirq_raise: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.103114: softirq_entry: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.103118: softirq_exit: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.103119: softirq_entry: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.103131: softirq_exit: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.103132: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.103138: softirq_exit: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.105092: softirq_raise: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.105115: softirq_entry: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.105119: softirq_exit: vec=1 [action=TIMER]
->>           <idle>-0     [001] d.h2  1479.106092: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.106112: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] .Ns2  1479.106144: softirq_exit: vec=9 [action=RCU]
->>          cpuhp/1-13    [001] d..2  1479.106279: timer_cancel: timer=0000000009a25653
->>           <idle>-0     [001] d.h2  1479.106965: softirq_raise: vec=1 [action=TIMER]
->>           <idle>-0     [001] d.h2  1479.106969: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.106974: softirq_raise: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.106981: softirq_entry: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.106984: softirq_exit: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.106985: softirq_entry: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.106994: softirq_exit: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.106995: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.106999: softirq_exit: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.107996: softirq_raise: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.108010: softirq_entry: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.108014: softirq_exit: vec=1 [action=TIMER]
->>           <idle>-0     [001] d.h2  1479.109009: softirq_raise: vec=1 [action=TIMER]
->>           <idle>-0     [001] d.h2  1479.109013: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.109024: softirq_entry: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.109028: softirq_exit: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.109028: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.109033: softirq_exit: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.110013: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.110033: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] ..s2  1479.110040: softirq_exit: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.111011: softirq_raise: vec=1 [action=TIMER]
->>           <idle>-0     [001] d.h2  1479.111017: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] d.h2  1479.111026: softirq_raise: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.111035: softirq_entry: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.111040: softirq_exit: vec=1 [action=TIMER]
->>           <idle>-0     [001] ..s2  1479.111040: softirq_entry: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.111052: softirq_exit: vec=7 [action=SCHED]
->>           <idle>-0     [001] ..s2  1479.111052: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] .Ns2  1479.111079: softirq_exit: vec=9 [action=RCU]
->>          cpuhp/1-13    [001] dNh2  1479.112930: softirq_raise: vec=1 [action=TIMER]
->>          cpuhp/1-13    [001] dNh2  1479.112935: softirq_raise: vec=9 [action=RCU]
->>           <idle>-0     [001] d..1  1479.113077: <stack trace>
->>  => can_stop_idle_tick.isra.14
->>  => tick_nohz_get_sleep_length
->>  => menu_select
->>  => cpuidle_select
->>  => do_idle
->>  => cpu_startup_entry
->>  => start_secondary
->>  => secondary_startup_64
->>           <idle>-0     [001] .Ns2  1479.113110: softirq_entry: vec=1 [action=TIMER]
->>           <idle>-0     [001] .Ns2  1479.113114: softirq_exit: vec=1 [action=TIMER]
->>           <idle>-0     [001] .Ns2  1479.113115: softirq_entry: vec=9 [action=RCU]
->>           <idle>-0     [001] .Ns2  1479.113139: softirq_exit: vec=9 [action=RCU]
-> 
-> 
-> So, I'm being very doubtful now actually.
-> 
-> First of all, I realize my patch only fixes things halfway. Only softirq raised from
-> hardirqs are going to be handled after ksoftirqd is parked. If it's raised outside
-> interrupts, the softirq is going to be ignored. If other smpboot kthreads, following
-> ksoftirqd parking, raise softirqs from their park() callback we should at least warn
-> that we are ignoring that.
-> 
-> Also, I'm still not sure if you're running threaded IRQs. Very likely not as
-> the softirqs in your traces are executed in idle, which means from an IRQ interrupting
-> idle. You haven't passed "threadirqs" in your kernel parameters, right?
-> In any case we need to figure out why your softirqs raised at 1479.112930 and
-> 1479.112935 don't get handled.
-> 
-> Finally I don't understand why you have so many timer softirqs and yet no timer traces
-> at all, I turned them on in the script I gave you. So something weird is happening with
-> the timers code. At best we are wasting lots of CPU cycles with those empty softirqs, at
-> worst we are miscalculating some expiration somewhere, possibly ignoring a timer.
-> 
-> So I'll need to cook up an updated debug patch for you to trigger if you don't
-> mind.
-> 
-Hi Frederic,
-is the update debug patch still to come?
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-> Thanks.
-> 
-Heiner
+------------------
+
+[ Upstream commit d7a8c4a6a055097a67ccfa3ca7c9ff1b64603a70 ]
+
+There are systems such as the Android NDK API level 24 has the
+open_memstream() function but doesn't provide a prototype, adding noise
+to the build:
+
+  builtin-timechart.c: In function 'cat_backtrace':
+  builtin-timechart.c:486:2: warning: implicit declaration of function 'open_memstream' [-Wimplicit-function-declaration]
+    FILE *f = open_memstream(&p, &p_len);
+    ^
+  builtin-timechart.c:486:2: warning: nested extern declaration of 'open_memstream' [-Wnested-externs]
+  builtin-timechart.c:486:12: warning: initialization makes pointer from integer without a cast
+    FILE *f = open_memstream(&p, &p_len);
+              ^
+
+Define a LACKS_OPEN_MEMSTREAM_PROTOTYPE define so that code needing that
+can get a prototype.
+
+Checked in the bionic git repo to be available since level 23:
+
+https://android.googlesource.com/platform/bionic/+/master/libc/include/stdio.h#241
+
+  FILE* open_memstream(char** __ptr, size_t* __size_ptr) __INTRODUCED_IN(23);
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Link: https://lkml.kernel.org/n/tip-343ashae97e5bq6vizusyfno@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/perf/Makefile.config     | 1 +
+ tools/perf/builtin-timechart.c | 4 ++++
+ 2 files changed, 5 insertions(+)
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index ff7a753cc487..f00ea77f5f08 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -295,6 +295,7 @@ ifndef NO_BIONIC
+   ifeq ($(feature-bionic), 1)
+     BIONIC := 1
+     CFLAGS += -DLACKS_SIGQUEUE_PROTOTYPE
++    CFLAGS += -DLACKS_OPEN_MEMSTREAM_PROTOTYPE
+     EXTLIBS := $(filter-out -lrt,$(EXTLIBS))
+     EXTLIBS := $(filter-out -lpthread,$(EXTLIBS))
+   endif
+diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
+index a827919c6263..775b99833e51 100644
+--- a/tools/perf/builtin-timechart.c
++++ b/tools/perf/builtin-timechart.c
+@@ -43,6 +43,10 @@
+ #include "util/data.h"
+ #include "util/debug.h"
+ 
++#ifdef LACKS_OPEN_MEMSTREAM_PROTOTYPE
++FILE *open_memstream(char **ptr, size_t *sizeloc);
++#endif
++
+ #define SUPPORT_OLD_POWER_EVENTS 1
+ #define PWR_EVENT_EXIT -1
+ 
+-- 
+2.19.1
+
+
+
