@@ -2,102 +2,139 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB86C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D89DC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56C0021872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DC5DD20811
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:26:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YIifzmPE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727869AbfAXLZW (ORCPT
+        id S1727867AbfAXL01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:25:22 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:56232 "EHLO
-        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727785AbfAXLZL (ORCPT
+        Thu, 24 Jan 2019 06:26:27 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:38978 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727617AbfAXL00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:25:11 -0500
-Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
- by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id be190ba80cdf9948; Thu, 24 Jan 2019 12:25:09 +0100
-From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Lukas Wunner <lukas@wunner.de>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 2/6] driver core: Reorder actions in __device_links_no_driver()
-Date:   Thu, 24 Jan 2019 12:16:43 +0100
-Message-ID: <1613403.ZNkCsVQxPT@aspire.rjw.lan>
-In-Reply-To: <2493187.oiOpCWJBV7@aspire.rjw.lan>
-References: <2493187.oiOpCWJBV7@aspire.rjw.lan>
+        Thu, 24 Jan 2019 06:26:26 -0500
+Received: by mail-it1-f196.google.com with SMTP id a6so3863270itl.4
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 03:26:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=wYYDIZC0ZN9AMXQL3vOyxwdVx9TvTCIi6QQpdmvhI+4=;
+        b=YIifzmPEIpkCk/CFNx0FQasSOzULmpRwmmbHtG9bdFFTqd7hPxDKOAhkYWOshfMG9U
+         5iLJVXV/qbSb6l2jK7MhsghJsMJVvHTcGUktnsFJQIF/+/10c8vRnsRzCAKZHHDqsF1N
+         6GjY2eEtXbAew9VwFbewbQms/uGqSHoDtQQmE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=wYYDIZC0ZN9AMXQL3vOyxwdVx9TvTCIi6QQpdmvhI+4=;
+        b=H2/twtE50SlEomehV6VR0spKEr4AEreuIcdHpR6x8YkuS8bmUWd44qNEVswbbzdFae
+         WoXES8OZ4Z4n309iRxTN0n/fEVOIPqxvIrZtlE1wy98zdG4gza4eWNj31Uejgq4Kwjvx
+         u7V8N9XGelrGu7HVcYjcAho8vH/WL1Hb5Mh7mEq8AEg7pS6tCXZLZa+Vec+GwZvBn7sN
+         VDXBvTDM0ASXrB+LfYEjqum0R5SkVJNItTecfoAbezwJnoV4gBfveRf8EkinYojjy/9r
+         eaYvU+lD2rKGc5rhM8P++8REZSrLWy/7hinvhIOeomku+qd8Tw9HPHmfjaTZ7RBepUi/
+         37hQ==
+X-Gm-Message-State: AJcUukfLB15W1BgxajDezQqXANYhOxXUqOxwTE/bxzATuB6DzUw+OslS
+        Hs2H4S85c4iZI6WCVVDJvn9VlUKLpjqCEJThsvFLvA==
+X-Google-Smtp-Source: ALg8bN5Qirvee4cj0+G+OHBW4ZJWfWnzhIaOdLarAZ+wKU1LOI4NQw6yzf2KnVatfnJc5KOYvnIO+D4XRuts4eo59E8=
+X-Received: by 2002:a02:183:: with SMTP id 3mr4017791jak.130.1548329185953;
+ Thu, 24 Jan 2019 03:26:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
+ <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
+ <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net> <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
+ <CADnq5_O1uxCrSksfF127AZTfbmdukxmqGdh2Ee0zM6CqgG_Mhg@mail.gmail.com>
+ <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
+ <20190123071521.GB20526@infradead.org> <CAKv+Gu8+77uZHJ6ZYjGNcKQL8C3cT5Ree+TcTVmkQXAHV-ADyg@mail.gmail.com>
+ <20190123164428.GA9367@infradead.org> <CAKv+Gu-9vEKu8mG-o+-4M1ZcgZmTTJVfEdNS9R27AFX8P5sqyQ@mail.gmail.com>
+ <20190124091316.GA22796@infradead.org> <bb559f74-4b1e-d5ee-74fb-b5dcd4a128cb@amd.com>
+ <CAKv+Gu_3LurSN-6w1WijPfpJpc+Pgu0YTnwTfMrXMF3-AKAnJA@mail.gmail.com>
+ <953e5e5f-5d47-d6df-40df-c8c94db5447f@amd.com> <CAKv+Gu9umPEmB+wh54NOTYcQ14oxf7rwVAXgCqo7V2A+VwkqPA@mail.gmail.com>
+ <57590a48-4629-e2a1-8673-ce9eb2ec210b@amd.com>
+In-Reply-To: <57590a48-4629-e2a1-8673-ce9eb2ec210b@amd.com>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Thu, 24 Jan 2019 12:26:14 +0100
+Message-ID: <CAKv+Gu_2f0FaJ+Th7H48u4GrPX=MM9xw0fFjdwhfRrr1nhgEkA@mail.gmail.com>
+Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
+ devices on non-x86
+To:     "Koenig, Christian" <Christian.Koenig@amd.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Alex Deucher <alexdeucher@gmail.com>,
+        =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        David Airlie <airlied@linux.ie>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        Sean Paul <sean@poorly.run>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+On Thu, 24 Jan 2019 at 12:23, Koenig, Christian
+<Christian.Koenig@amd.com> wrote:
+>
+> Am 24.01.19 um 10:59 schrieb Ard Biesheuvel:
+> > [SNIP]
+> > This is *exactly* my point the whole time.
+> >
+> > The current code has
+> >
+> > static inline bool drm_arch_can_wc_memory(void)
+> > {
+> > #if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
+> >     return false;
+> >
+> > which means the optimization is disabled *unless the system is
+> > non-cache coherent*
+> >
+> > So if you have reports that the optimization works on some PowerPC, it
+> > must be non-cache coherent PowerPC, because that is the only place
+> > where it is enabled in the first place.
+> >
+> >> The only problematic here actually seems to be ARM, so you should
+> >> probably just add an "#ifdef .._ARM return false;".
+> >>
+> > ARM/arm64 does not have a Kconfig symbol like
+> > CONFIG_NOT_COHERENT_CACHE, so we can only disable it everywhere. If
+> > there are non-coherent ARM systems that are currently working in the
+> > same way as those non-coherent PowerPC systems, we will break them by
+> > doing this.
+>
+> Summing the things I've read so far for ARM up I actually think it
+> depends on a runtime configuration and not on compile time one.
+>
+> So the whole idea of providing the device to the drm_*_can_wc_memory()
+> function isn't so far fetched.
+>
 
-All links to suppliers have to be either "available" or in the
-"supplier unbind in progress" state after __device_links_no_driver()
-and the kref_put() may not actually delete them, so change the state
-of each link in __device_links_no_driver() before attempting to drop
-it.
+Thank you.
 
-While at it, update the kernedoc comment of __device_links_no_driver()
-to reflect what happens more accurately.
+> But for now I do prefer working and slightly slower system over broken
+> one, so I think we should just disable this on ARM for now.
+>
 
-Fixes: ead18c23c263 ("driver core: Introduce device links reference counting")
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
----
- drivers/base/core.c |   13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+Again, this is not about non-cache coherent being slower without the
+optimization, it is about non-cache coherent likely not working *at
+all* unless the optimization is enabled.
 
-Index: linux-pm/drivers/base/core.c
-===================================================================
---- linux-pm.orig/drivers/base/core.c
-+++ linux-pm/drivers/base/core.c
-@@ -500,11 +500,11 @@ void device_links_driver_bound(struct de
-  * __device_links_no_driver - Update links of a device without a driver.
-  * @dev: Device without a drvier.
-  *
-- * Delete all non-persistent links from this device to any suppliers.
-+ * Drop references to non-persistent links from this device to any suppliers.
-  *
-- * Persistent links stay around, but their status is changed to "available",
-- * unless they already are in the "supplier unbind in progress" state in which
-- * case they need not be updated.
-+ * Links with DL_FLAG_AUTOREMOVE_CONSUMER unset stay around, but their status is
-+ * changed to "available", unless they already are in the "supplier unbind in
-+ * progress" state in which case they need not be updated.
-  *
-  * Links with the DL_FLAG_STATELESS flag set are ignored.
-  */
-@@ -516,10 +516,11 @@ static void __device_links_no_driver(str
- 		if (link->flags & DL_FLAG_STATELESS)
- 			continue;
- 
-+		if (link->status != DL_STATE_SUPPLIER_UNBIND)
-+			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
-+
- 		if (link->flags & DL_FLAG_AUTOREMOVE_CONSUMER)
- 			kref_put(&link->kref, __device_link_del);
--		else if (link->status != DL_STATE_SUPPLIER_UNBIND)
--			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
- 	}
- 
- 	dev->links.status = DL_DEV_NO_DRIVER;
-
+Otherwise, the driver will vmap() DMA pages with cacheable attributes,
+while the non-cache coherent device uses uncached attributes, breaking
+coherency.
