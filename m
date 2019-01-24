@@ -7,74 +7,73 @@ X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CC42C282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:18:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B31C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:19:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43457217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:18:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F126217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:19:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Gpw1Psz9"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PoVJYaGN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727159AbfAXBS4 (ORCPT
+        id S1727170AbfAXBTu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 20:18:56 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:39961 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727126AbfAXBS4 (ORCPT
+        Wed, 23 Jan 2019 20:19:50 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:47098 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726786AbfAXBTt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 20:18:56 -0500
-Received: by mail-lj1-f196.google.com with SMTP id n18-v6so3716746lji.7
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:18:55 -0800 (PST)
+        Wed, 23 Jan 2019 20:19:49 -0500
+Received: by mail-lf1-f68.google.com with SMTP id f5so3030730lfc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:19:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=evCDAp72O4n58O/GYaPYVCYBTU2Nnw9Zuy1bZqRgCwI=;
-        b=Gpw1Psz9joOTqRIRt0682kzqaFSdd8ieMvU8GgXx7FyJqXwM5OaDiSQYveKz3KNpZ5
-         dESCk+hG3yMs5xSTKrDyI0YZJion2a4RYFK54YgN5/dMC5d8gQ1atMh9mR5pcsXU3zSn
-         HJ2RRR+CIztCEs9racH7J7t+zq01oYmi10pzA=
+        bh=sYOSbofglNAJWY1LRY85s+aLYj+xUOL7/6KVkUK+Pzw=;
+        b=PoVJYaGNEN/zJ/WXkOQ9cB6ZJJWR45k0RsxtgpejetNq9FcuMaAcmZ7ZUViEZkm12u
+         OhxyhkZtntz5lBG5RNKP6LuWQb9yXjYNODug+3WMF/1bg/4e+3DxjQnDDoQoSFVkJdY0
+         BCQQNuH6U1vdU1GOUjaQE5bRE3RETyWDRTIjw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=evCDAp72O4n58O/GYaPYVCYBTU2Nnw9Zuy1bZqRgCwI=;
-        b=SXEd2GKPQ8UDajIM+DWBjETi110YGvau8NITi1mJ+Kb88P3TGuXooQRiigxRyviGAc
-         18EjIXAMXzp/l5rLUlUHZa0Iu0QpYKkc8074tqoChc0aE2Lr92iXcv1Vgh8I0jgljOP3
-         YsWOPlw15am6MD3JgevnhQ6R6PuFLDp92CYeIrMtjiBzHjpCLBaCcvnBuKm8YX0U/BSr
-         qfrZUqHIM/nPKmsTVHpFx/AXUly1tFiUdU9cjUnbJgh79P5I0cZVaXKLYJfePUXSB581
-         8NfmsAjTKdkS/djEXyuVpqA9W8PWpisX3HLzR/gjLjrwqWxPWuGEebvjhewxY5Voqokr
-         2xZw==
-X-Gm-Message-State: AJcUukeDI/z2lpsQnRcMAlKZyM5knNz4adInGuLy5epRWTzFe4yTkiDL
-        1AC1EbvisJ85moS5vmnuBaRb4uGBtIE=
-X-Google-Smtp-Source: ALg8bN5F5qoRmO1z5y7IsRH5qT4Tf7V+MmZWVv5PIbvkG0HoQMogyp9GzRpSGZprB1Amp3/jcWZueg==
-X-Received: by 2002:a2e:5816:: with SMTP id m22-v6mr3605046ljb.177.1548292734033;
-        Wed, 23 Jan 2019 17:18:54 -0800 (PST)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id r29-v6sm747954ljd.44.2019.01.23.17.18.53
+        bh=sYOSbofglNAJWY1LRY85s+aLYj+xUOL7/6KVkUK+Pzw=;
+        b=UhvpRBlreRCdyhqeRM2Ol5Ly3buLUtfwtc2Ruy8wHMQo2+syh6lLiZFYst6La4uR83
+         CFivVaCbvVP1GrI8ArZagEg/DvHQwfHcS+l+O+x6+RdH7EgrONUnN2mQ0jUZmAZF5cZ/
+         os5j5AkgzI9WYBUdZOzkrzV3UX0MpZJ/nBQg4HY/3Ntr+MA4cRK3rdMc9a/QzYtVch4Q
+         nNwtrJwEYYTqiqeKn7kX7KNsX8yLDNgDQnycyhFcP8x2Enw2uvKqcqeMYhRWW6W827La
+         zoabLxK74l7xSfzILYLk7qLVejTA6+ToFrIonb+yKk757TRnKDzD/nVek37rzzgEDRHN
+         YvNA==
+X-Gm-Message-State: AJcUukdsqRSkUjy54Im0uQb+tJrAL9EnmxiWJJnMWu/s0iPXYW5XQcyb
+        JUDydeX/97RRIpLFE6BkV0EJ4vYe8/Q=
+X-Google-Smtp-Source: ALg8bN5ZHexTQhADLOsUda0ADSXH7QHk04ICvbF3qOfvp3YvE5XevWn5081dVFDkUoCOxneet2kgyw==
+X-Received: by 2002:a19:ee08:: with SMTP id g8mr3583943lfb.72.1548292787667;
+        Wed, 23 Jan 2019 17:19:47 -0800 (PST)
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com. [209.85.167.46])
+        by smtp.gmail.com with ESMTPSA id 85-v6sm778581lja.16.2019.01.23.17.19.46
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 17:18:53 -0800 (PST)
-Received: by mail-lf1-f41.google.com with SMTP id i26so3092311lfc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:18:53 -0800 (PST)
-X-Received: by 2002:a19:d381:: with SMTP id k123mr3476475lfg.101.1548292243283;
- Wed, 23 Jan 2019 17:10:43 -0800 (PST)
+        Wed, 23 Jan 2019 17:19:46 -0800 (PST)
+Received: by mail-lf1-f46.google.com with SMTP id f5so3030691lfc.13
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:19:46 -0800 (PST)
+X-Received: by 2002:a19:a9d2:: with SMTP id s201mr3639684lfe.154.1548292785963;
+ Wed, 23 Jan 2019 17:19:45 -0800 (PST)
 MIME-Version: 1.0
-References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org> <1548138816-1149-2-git-send-email-alokc@codeaurora.org>
-In-Reply-To: <1548138816-1149-2-git-send-email-alokc@codeaurora.org>
+References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org> <1548138816-1149-4-git-send-email-alokc@codeaurora.org>
+In-Reply-To: <1548138816-1149-4-git-send-email-alokc@codeaurora.org>
 From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 23 Jan 2019 17:10:07 -0800
-X-Gmail-Original-Message-ID: <CAE=gft5+OJCHTVszSW2Tt9HX3UA-LuTzK95Q4-R3v=DUqff9OA@mail.gmail.com>
-Message-ID: <CAE=gft5+OJCHTVszSW2Tt9HX3UA-LuTzK95Q4-R3v=DUqff9OA@mail.gmail.com>
-Subject: Re: [PATCH 1/6] dt-bindings: soc: qcom: Add interconnect binding for
- GENI QUP
+Date:   Wed, 23 Jan 2019 17:19:09 -0800
+X-Gmail-Original-Message-ID: <CAE=gft6dT0HXzrmberdGg2nS-hp1M68mzbxJyEBOmdrh5x1p1w@mail.gmail.com>
+Message-ID: <CAE=gft6dT0HXzrmberdGg2nS-hp1M68mzbxJyEBOmdrh5x1p1w@mail.gmail.com>
+Subject: Re: [PATCH 3/6] i2c: i2c-qcom-geni: Add interconnect support
 To:     Alok Chauhan <alokc@codeaurora.org>
 Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
         devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
         linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, Andy Gross <andy.gross@linaro.org>,
+        linux-serial@vger.kernel.org,
+        Karthikeyan Ramasubramanian <kramasub@codeaurora.org>,
+        Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
         Georgi Djakov <georgi.djakov@linaro.org>,
         Doug Anderson <dianders@chromium.org>,
         Stephen Boyd <swboyd@chromium.org>,
@@ -87,23 +86,33 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Mon, Jan 21, 2019 at 10:34 PM Alok Chauhan <alokc@codeaurora.org> wrote:
 >
-> Add documentation for the interconnect and interconnect-names bindings
-> for the GENI QUP as detailed by bindings/interconnect/interconnect.txt.
+> Get the interconnect paths for I2C based Serial Engine device
+> and vote accordingly based on maximum supported I2C frequency.
 >
 > Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
 > ---
->  Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt | 10 ++++++++++
->  1 file changed, 10 insertions(+)
+>  drivers/i2c/busses/i2c-qcom-geni.c | 13 +++++++++++++
+>  1 file changed, 13 insertions(+)
 >
-> diff --git a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
-> index dab7ca9..44d7e02 100644
-> --- a/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
-> +++ b/Documentation/devicetree/bindings/soc/qcom/qcom,geni-se.txt
-> @@ -17,6 +17,12 @@ Required properties if child node exists:
->  - #address-cells:      Must be <1> for Serial Engine Address
->  - #size-cells:                 Must be <1> for Serial Engine Address Size
->  - ranges:              Must be present
-> +- interconnects:       phandle to a interconnect provider. Please refer
-> +                       ../interconnect/interconnect.txt for details.
+> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
+> index db075bc..e8fe63a 100644
+> --- a/drivers/i2c/busses/i2c-qcom-geni.c
+> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
+> @@ -14,6 +14,7 @@
+>  #include <linux/pm_runtime.h>
+>  #include <linux/qcom-geni-se.h>
+>  #include <linux/spinlock.h>
+> +#include <linux/interconnect.h>
+>
+>  #define SE_I2C_TX_TRANS_LEN            0x26c
+>  #define SE_I2C_RX_TRANS_LEN            0x270
+> @@ -508,6 +509,15 @@ static int geni_i2c_probe(struct platform_device *pdev)
+>                 return ret;
+>         }
+>
+> +       /* Set the bus quota to a reasonable value */
+> +       gi2c->se.avg_bw = Bps_to_icc(1000);
+> +       gi2c->se.peak_bw = Bps_to_icc(76800000);
 
-This path to the interconnect documentation is not correct.
+Can you compute a real bandwidth based on the i2c bus speed, rather
+than some max vote?
