@@ -4,57 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDFDC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 574A9C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 769A5218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27731218D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359053;
-	bh=tzSxricLIu1w/cd4mlrkb+yFGj6B+Zeo7fuR7WEfjAg=;
+	s=default; t=1548359057;
+	bh=jQVN8oIcdutVJmGD/I2ZG23mrpHTfCjldO6Jy3NqPzw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=LF4/CxbB36jzJPQGW7ny/DEXG6q/w336PA7+kaCoHn44XymCI21goxbXJinMYmNOb
-	 Zpd+FjfrO1fII9pmi1LNdAP2SlcOQ5ujHNMOOFyoIPmNzgOcBllJ6TIC95PQric3Xp
-	 0qp6vWKZ3NV+Ur15zV/vmzBt4y6d/R/dyxZBRg6k=
+	b=boxqqHPpXdiS/EF2vC6JfWwDPZ8DU2Q69j+VY5XHWOiP96D4rDLSNVNn4GY7FLIFe
+	 zz0H8RUvPlNTb1awXYjNLtFYb46EH03ckiw2xtJDe09G3f4PInb5y1/XHf1MrNuUcV
+	 H0l/RpK0IAGXjgSScXCkOgmfZoKYk3A2+Acw++3A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388050AbfAXToL (ORCPT
+        id S2388062AbfAXToP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:44:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44866 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:44:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44946 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733294AbfAXToI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:44:08 -0500
+        id S2387518AbfAXToL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:44:11 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BA612218D9;
-        Thu, 24 Jan 2019 19:44:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9C179218D4;
+        Thu, 24 Jan 2019 19:44:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359047;
-        bh=tzSxricLIu1w/cd4mlrkb+yFGj6B+Zeo7fuR7WEfjAg=;
+        s=default; t=1548359050;
+        bh=jQVN8oIcdutVJmGD/I2ZG23mrpHTfCjldO6Jy3NqPzw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yBYihuOCLp/4gymk0AuwWpQDoJ7cmKmTb0jPYAdtnhcss7CgZQD7eUVA+nt/YEL/Y
-         Xp6V1DsEKmFFKPM63vw0Wx+uUOBkaevLRUrGIWuQm2M9SU4Ty7GiQxgXvPB6B3ySqP
-         UFTedNvuQY6dCrQxlxVggxpvrWORHltuQDzi88+E=
+        b=uf/DIrLeGqihwR9c6BDdviUlK1DyFjM2R4MbwpDZmwImmhQmymJU8QM+LEkoX4IrL
+         DL0qsvz9JwzySFhlo/WMT7RRUcZ7Ie2SY7KUj9oBhAOTOoxPRJCvGPv8Mlnyds/T5O
+         Z9le8DEGaOQgYyN+mLNuG9tAoJ1UfpoQh43bpdHE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        stable@vger.kernel.org, Minas Harutyunyan <hminas@synopsys.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 081/127] tty/serial: do not free trasnmit buffer page under port lock
-Date:   Thu, 24 Jan 2019 20:20:27 +0100
-Message-Id: <20190124190215.561583313@linuxfoundation.org>
+Subject: [PATCH 4.20 072/127] usb: dwc2: Fix disable all EPs on disconnect
+Date:   Thu, 24 Jan 2019 20:20:18 +0100
+Message-Id: <20190124190215.232243775@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -73,112 +66,153 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d72402145ace0697a6a9e8e75a3de5bf3375f78d ]
+[ Upstream commit 4fe4f9fecc36956fd53c8edf96dd0c691ef98ff9 ]
 
-LKP has hit yet another circular locking dependency between uart
-console drivers and debugobjects [1]:
+Disabling all EP's allow to reset EP's to initial state.
+Introduced new function dwc2_hsotg_ep_disable_lock() which
+before calling dwc2_hsotg_ep_disable() function acquire
+hsotg->lock and release on exiting.
+>From dwc2_hsotg_ep_disable() function removed acquiring
+hsotg->lock.
+In dwc2_hsotg_core_init_disconnected() function when USB
+reset interrupt asserted disabling all ep’s by
+dwc2_hsotg_ep_disable() function.
+This updates eliminating sparse imbalance warnings.
 
-     CPU0                                    CPU1
+Reverted changes in dwc2_hostg_disconnect() function.
+Introduced new function dwc2_hsotg_ep_disable_lock().
+Changed dwc2_hsotg_ep_ops. Now disable point to
+dwc2_hsotg_ep_disable_lock() function.
+In functions dwc2_hsotg_udc_stop() and dwc2_hsotg_suspend()
+dwc2_hsotg_ep_disable() function replaced by
+dwc2_hsotg_ep_disable_lock() function.
+In dwc2_hsotg_ep_disable() function removed acquiring
+of hsotg->lock.
 
-                                            rhltable_init()
-                                             __init_work()
-                                              debug_object_init
-     uart_shutdown()                          /* db->lock */
-      /* uart_port->lock */                    debug_print_object()
-       free_page()                              printk()
-                                                 call_console_drivers()
-        debug_check_no_obj_freed()                /* uart_port->lock */
-         /* db->lock */
-          debug_print_object()
-
-So there are two dependency chains:
-	uart_port->lock -> db->lock
-And
-	db->lock -> uart_port->lock
-
-This particular circular locking dependency can be addressed in several
-ways:
-
-a) One way would be to move debug_print_object() out of db->lock scope
-   and, thus, break the db->lock -> uart_port->lock chain.
-b) Another one would be to free() transmit buffer page out of db->lock
-   in UART code; which is what this patch does.
-
-It makes sense to apply a) and b) independently: there are too many things
-going on behind free(), none of which depend on uart_port->lock.
-
-The patch fixes transmit buffer page free() in uart_shutdown() and,
-additionally, in uart_port_startup() (as was suggested by Dmitry Safonov).
-
-[1] https://lore.kernel.org/lkml/20181211091154.GL23332@shao2-debian/T/#u
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Dmitry Safonov <dima@arista.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Fixes: dccf1bad4be7 ("usb: dwc2: Disable all EP's on disconnect")
+Signed-off-by: Minas Harutyunyan <hminas@synopsys.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/serial_core.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ drivers/usb/dwc2/gadget.c | 41 ++++++++++++++++++++++-----------------
+ 1 file changed, 23 insertions(+), 18 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index c439a5a1e6c0..d4cca5bdaf1c 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -205,10 +205,15 @@ static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
- 	if (!state->xmit.buf) {
- 		state->xmit.buf = (unsigned char *) page;
- 		uart_circ_clear(&state->xmit);
-+		uart_port_unlock(uport, flags);
- 	} else {
-+		uart_port_unlock(uport, flags);
-+		/*
-+		 * Do not free() the page under the port lock, see
-+		 * uart_shutdown().
-+		 */
- 		free_page(page);
- 	}
--	uart_port_unlock(uport, flags);
- 
- 	retval = uport->ops->startup(uport);
- 	if (retval == 0) {
-@@ -268,6 +273,7 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
- 	struct uart_port *uport = uart_port_check(state);
- 	struct tty_port *port = &state->port;
- 	unsigned long flags = 0;
-+	char *xmit_buf = NULL;
- 
- 	/*
- 	 * Set the TTY IO error marker
-@@ -298,14 +304,18 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
- 	tty_port_set_suspended(port, 0);
- 
- 	/*
--	 * Free the transmit buffer page.
-+	 * Do not free() the transmit buffer page under the port lock since
-+	 * this can create various circular locking scenarios. For instance,
-+	 * console driver may need to allocate/free a debug object, which
-+	 * can endup in printk() recursion.
- 	 */
- 	uart_port_lock(state, flags);
--	if (state->xmit.buf) {
--		free_page((unsigned long)state->xmit.buf);
--		state->xmit.buf = NULL;
--	}
-+	xmit_buf = state->xmit.buf;
-+	state->xmit.buf = NULL;
- 	uart_port_unlock(uport, flags);
-+
-+	if (xmit_buf)
-+		free_page((unsigned long)xmit_buf);
+diff --git a/drivers/usb/dwc2/gadget.c b/drivers/usb/dwc2/gadget.c
+index 2d6d2c8244de..a00a56b4ae79 100644
+--- a/drivers/usb/dwc2/gadget.c
++++ b/drivers/usb/dwc2/gadget.c
+@@ -3165,8 +3165,6 @@ static void kill_all_requests(struct dwc2_hsotg *hsotg,
+ 		dwc2_hsotg_txfifo_flush(hsotg, ep->fifo_index);
  }
  
+-static int dwc2_hsotg_ep_disable(struct usb_ep *ep);
+-
  /**
+  * dwc2_hsotg_disconnect - disconnect service
+  * @hsotg: The device state.
+@@ -3188,9 +3186,11 @@ void dwc2_hsotg_disconnect(struct dwc2_hsotg *hsotg)
+ 	/* all endpoints should be shutdown */
+ 	for (ep = 0; ep < hsotg->num_of_eps; ep++) {
+ 		if (hsotg->eps_in[ep])
+-			dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
++			kill_all_requests(hsotg, hsotg->eps_in[ep],
++					  -ESHUTDOWN);
+ 		if (hsotg->eps_out[ep])
+-			dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
++			kill_all_requests(hsotg, hsotg->eps_out[ep],
++					  -ESHUTDOWN);
+ 	}
+ 
+ 	call_gadget(hsotg, disconnect);
+@@ -3234,6 +3234,7 @@ static void dwc2_hsotg_irq_fifoempty(struct dwc2_hsotg *hsotg, bool periodic)
+ 			GINTSTS_PTXFEMP |  \
+ 			GINTSTS_RXFLVL)
+ 
++static int dwc2_hsotg_ep_disable(struct usb_ep *ep);
+ /**
+  * dwc2_hsotg_core_init - issue softreset to the core
+  * @hsotg: The device state
+@@ -4069,10 +4070,8 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep)
+ 	struct dwc2_hsotg *hsotg = hs_ep->parent;
+ 	int dir_in = hs_ep->dir_in;
+ 	int index = hs_ep->index;
+-	unsigned long flags;
+ 	u32 epctrl_reg;
+ 	u32 ctrl;
+-	int locked;
+ 
+ 	dev_dbg(hsotg->dev, "%s(ep %p)\n", __func__, ep);
+ 
+@@ -4088,10 +4087,6 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep)
+ 
+ 	epctrl_reg = dir_in ? DIEPCTL(index) : DOEPCTL(index);
+ 
+-	locked = spin_is_locked(&hsotg->lock);
+-	if (!locked)
+-		spin_lock_irqsave(&hsotg->lock, flags);
+-
+ 	ctrl = dwc2_readl(hsotg, epctrl_reg);
+ 
+ 	if (ctrl & DXEPCTL_EPENA)
+@@ -4114,12 +4109,22 @@ static int dwc2_hsotg_ep_disable(struct usb_ep *ep)
+ 	hs_ep->fifo_index = 0;
+ 	hs_ep->fifo_size = 0;
+ 
+-	if (!locked)
+-		spin_unlock_irqrestore(&hsotg->lock, flags);
+-
+ 	return 0;
+ }
+ 
++static int dwc2_hsotg_ep_disable_lock(struct usb_ep *ep)
++{
++	struct dwc2_hsotg_ep *hs_ep = our_ep(ep);
++	struct dwc2_hsotg *hsotg = hs_ep->parent;
++	unsigned long flags;
++	int ret;
++
++	spin_lock_irqsave(&hsotg->lock, flags);
++	ret = dwc2_hsotg_ep_disable(ep);
++	spin_unlock_irqrestore(&hsotg->lock, flags);
++	return ret;
++}
++
+ /**
+  * on_list - check request is on the given endpoint
+  * @ep: The endpoint to check.
+@@ -4267,7 +4272,7 @@ static int dwc2_hsotg_ep_sethalt_lock(struct usb_ep *ep, int value)
+ 
+ static const struct usb_ep_ops dwc2_hsotg_ep_ops = {
+ 	.enable		= dwc2_hsotg_ep_enable,
+-	.disable	= dwc2_hsotg_ep_disable,
++	.disable	= dwc2_hsotg_ep_disable_lock,
+ 	.alloc_request	= dwc2_hsotg_ep_alloc_request,
+ 	.free_request	= dwc2_hsotg_ep_free_request,
+ 	.queue		= dwc2_hsotg_ep_queue_lock,
+@@ -4407,9 +4412,9 @@ static int dwc2_hsotg_udc_stop(struct usb_gadget *gadget)
+ 	/* all endpoints should be shutdown */
+ 	for (ep = 1; ep < hsotg->num_of_eps; ep++) {
+ 		if (hsotg->eps_in[ep])
+-			dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
++			dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);
+ 		if (hsotg->eps_out[ep])
+-			dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
++			dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);
+ 	}
+ 
+ 	spin_lock_irqsave(&hsotg->lock, flags);
+@@ -4857,9 +4862,9 @@ int dwc2_hsotg_suspend(struct dwc2_hsotg *hsotg)
+ 
+ 		for (ep = 0; ep < hsotg->num_of_eps; ep++) {
+ 			if (hsotg->eps_in[ep])
+-				dwc2_hsotg_ep_disable(&hsotg->eps_in[ep]->ep);
++				dwc2_hsotg_ep_disable_lock(&hsotg->eps_in[ep]->ep);
+ 			if (hsotg->eps_out[ep])
+-				dwc2_hsotg_ep_disable(&hsotg->eps_out[ep]->ep);
++				dwc2_hsotg_ep_disable_lock(&hsotg->eps_out[ep]->ep);
+ 		}
+ 	}
+ 
 -- 
 2.19.1
 
