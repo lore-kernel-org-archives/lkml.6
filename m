@@ -2,118 +2,177 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A9765C282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:21:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5A72C282C2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72A48217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:21:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e7epFr8B"
+	by mail.kernel.org (Postfix) with ESMTP id 908FC218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:35:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548293724;
+	bh=ev/exwtuHwwFeCgjgebDr9RHikcLHX3heTKcHztuoiI=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=2KfDcUoGqu/efNGnUMRZ4Xe/rnXuvEg9AR5bheT/vLOf2PYb8k4ZOkJToeBVT1fRZ
+	 BfvWtj0D+882HkzoCRC76PahNDPpina5hotmNBefFNt9CGu6RdXNsR0ZBAc0I84+3F
+	 m5JENcnAu91mXA/imAE0ZVMyWc8rBuZtH4aOmmeU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726997AbfAXBVe (ORCPT
+        id S1726823AbfAXBfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 20:21:34 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39464 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726322AbfAXBVd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 20:21:33 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t9-v6so3720887ljh.6
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:21:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iTHhqoL0KpN75j2es1CQvn5vBD0ICFGfp92qRcNHM9U=;
-        b=e7epFr8B3O/8owaemu6RyOVfVtS1rdFOJliBIJgaj2jWzJYqEEQUSro2bgA/hxqSS2
-         BZ4jwFoT6Com5CuAUG8etmSoBWTg3AjhVmtjwkYysh+3l/3C8XMZsMrzxdH41cJMrT/s
-         OHrEpr7ixplaEiIwcUOaWpaONtHTSbUrXWhrM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iTHhqoL0KpN75j2es1CQvn5vBD0ICFGfp92qRcNHM9U=;
-        b=jvgql8CcuzuuihvAzPRqhEmSCyPcrRpcF43ADZHuvRMZxPct1zB3SrN7ZME8hh6qPD
-         HjqL97zpjh5Q/JH2yDr/Ed2s325Xo53S6pFPOmxnyuiaHnRzJ28+Vfma5KsJpKZqIeCy
-         bp+kR+54YarS41YFt6+TE6zn0oUoRSB/3eQhFakVWUC9w5ovHKw93ram+SYH6jM5Dyub
-         IvGlK0hqGappwjN3g83WErdQ1A4ITi/4f1OC5/fxXI1AAsja1Fwqzhc0g4yk/BWdhToD
-         R3PRBqNgVPlvydSLNALNJk/qbLUI1sFZvdVeEjHOxtEks+XisPBeBclp6JdoqwNkjfm3
-         mPSQ==
-X-Gm-Message-State: AJcUukfeMbdxOYRqFaxN4VjUkNac8jisI4dG9e5k5F31Xw3CRZ5I5Aa+
-        jXkPEIeOSpcrJZoTrUFQS9+VEZRUW/Y=
-X-Google-Smtp-Source: ALg8bN5DJVHuPCtj4on40f6o6/PIyjdtIa80BripZMHsmGP4/PzpBJQadakct6ATrZBT/BE8YCG3aQ==
-X-Received: by 2002:a2e:908b:: with SMTP id l11-v6mr3731585ljg.150.1548292890048;
-        Wed, 23 Jan 2019 17:21:30 -0800 (PST)
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com. [209.85.208.170])
-        by smtp.gmail.com with ESMTPSA id h203sm733796lfe.44.2019.01.23.17.21.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Jan 2019 17:21:29 -0800 (PST)
-Received: by mail-lj1-f170.google.com with SMTP id k15-v6so3717436ljc.8
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:21:29 -0800 (PST)
-X-Received: by 2002:a2e:990e:: with SMTP id v14-v6mr3810694lji.60.1548292888859;
- Wed, 23 Jan 2019 17:21:28 -0800 (PST)
+        Wed, 23 Jan 2019 20:35:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45440 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726236AbfAXBfW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 20:35:22 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 373D4218A1;
+        Thu, 24 Jan 2019 01:35:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548293721;
+        bh=ev/exwtuHwwFeCgjgebDr9RHikcLHX3heTKcHztuoiI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=g/Q+daEAJhknu7ojakBKnUbyHlA1Dnfa7f4udobkE+s7ohlRCq6Wt62FNJUTtgvlM
+         uc4IpiXdAN8qtq2ZhoRacY4hlUcaK7nui2w/OK8Br83++t82cv46SEvJ1BuMB856pV
+         cPOs4TH+imQww+aoreM+0EoR0OZGmcMYVLktaFMU=
+Subject: Re: [PATCH v9 0/4] Media Device Allocator API
+To:     Hans Verkuil <hverkuil@xs4all.nl>, mchehab@kernel.org,
+        perex@perex.cz, tiwai@suse.com
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, shuah <shuah@kernel.org>
+References: <cover.1545154777.git.shuah@kernel.org>
+ <606f731d-11f9-e2d7-aee4-b20abadc4d41@xs4all.nl>
+From:   shuah <shuah@kernel.org>
+Message-ID: <2ebe7776-d24d-79d5-bd38-efba4221b7c2@kernel.org>
+Date:   Wed, 23 Jan 2019 18:35:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1548138816-1149-1-git-send-email-alokc@codeaurora.org> <1548138816-1149-5-git-send-email-alokc@codeaurora.org>
-In-Reply-To: <1548138816-1149-5-git-send-email-alokc@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Wed, 23 Jan 2019 17:20:52 -0800
-X-Gmail-Original-Message-ID: <CAE=gft7+=k-KcN9pk1fRR8RuGkdskkJPzn70FFZjOhAyr_-9aQ@mail.gmail.com>
-Message-ID: <CAE=gft7+=k-KcN9pk1fRR8RuGkdskkJPzn70FFZjOhAyr_-9aQ@mail.gmail.com>
-Subject: Re: [PATCH 4/6] spi: spi-geni-qcom: Add interconnect support
-To:     Alok Chauhan <alokc@codeaurora.org>
-Cc:     linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        linux-i2c@vger.kernel.org, linux-spi@vger.kernel.org,
-        linux-serial@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Georgi Djakov <georgi.djakov@linaro.org>,
-        Doug Anderson <dianders@chromium.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <606f731d-11f9-e2d7-aee4-b20abadc4d41@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 10:34 PM Alok Chauhan <alokc@codeaurora.org> wrote:
->
-> Get the interconnect paths for SPI based Serial Engine device
-> and vote accordingly based on maximum supported SPI frequency.
->
-> Signed-off-by: Alok Chauhan <alokc@codeaurora.org>
-> ---
->  drivers/spi/spi-geni-qcom.c | 20 +++++++++++++++++++-
->  1 file changed, 19 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/spi/spi-geni-qcom.c b/drivers/spi/spi-geni-qcom.c
-> index fdb7cb88..7bbbe9d 100644
-> --- a/drivers/spi/spi-geni-qcom.c
-> +++ b/drivers/spi/spi-geni-qcom.c
-> @@ -12,6 +12,7 @@
->  #include <linux/qcom-geni-se.h>
->  #include <linux/spi/spi.h>
->  #include <linux/spinlock.h>
-> +#include <linux/interconnect.h>
+On 1/21/19 7:46 AM, Hans Verkuil wrote:
+> Hi Shuah,
+> 
+> On 12/18/2018 06:59 PM, shuah@kernel.org wrote:
+>> From: Shuah Khan <shuah@kernel.org>
+>>
+>> Media Device Allocator API to allows multiple drivers share a media device.
+>> This API solves a very common use-case for media devices where one physical
+>> device (an USB stick) provides both audio and video. When such media device
+>> exposes a standard USB Audio class, a proprietary Video class, two or more
+>> independent drivers will share a single physical USB bridge. In such cases,
+>> it is necessary to coordinate access to the shared resource.
+>>
+>> Using this API, drivers can allocate a media device with the shared struct
+>> device as the key. Once the media device is allocated by a driver, other
+>> drivers can get a reference to it. The media device is released when all
+>> the references are released.
+>>
+>> - Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
+>>    arecord. When analog is streaming, digital and audio user-space
+>>    applications detect that the tuner is busy and exit. When digital
+>>    is streaming, analog and audio applications detect that the tuner is
+>>    busy and exit. When arecord is owns the tuner, digital and analog
+>>    detect that the tuner is busy and exit.
+>> - Tested media device allocator API with bind/unbind testing on
+>>    snd-usb-audio and au0828 drivers to make sure /dev/mediaX is released
+>>    only when the last driver is unbound.
+>> - This patch series is tested on 4.20-rc6
+>> - Addressed review comments from Hans on the RFC v8 (rebased on 4.19)
+>> - Updated change log to describe the use-case more clearly.
+>> - No changes to 0001,0002 code since the v7 referenced below.
+>> - 0003 is a new patch to enable ALSA defines that have been
+>>    disabled for kernel between 4.9 and 4.19.
+>> - Minor merge conflict resolution in 0004.
+>> - Added SPDX to new files.
+>>
+>> References:
+>> https://lkml.org/lkml/2018/11/2/169
+>> https://www.mail-archive.com/linux-media@vger.kernel.org/msg105854.html
+> 
+> When I connect my au0828 to my laptop with your v9 patch series applied I get
+> these warnings:
+> 
+> [   45.416047] xhci_hcd 0000:39:00.0: xHCI Host Controller
+> [   45.417882] xhci_hcd 0000:39:00.0: new USB bus registered, assigned bus number 3
+> [   45.419292] xhci_hcd 0000:39:00.0: hcc params 0x200077c1 hci version 0x110 quirks 0x0000000200009810
+> [   45.420835] usb usb3: New USB device found, idVendor=1d6b, idProduct=0002, bcdDevice= 5.00
+> [   45.420893] usb usb3: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+> [   45.420899] usb usb3: Product: xHCI Host Controller
+> [   45.420905] usb usb3: Manufacturer: Linux 5.0.0-rc1-zen xhci-hcd
+> [   45.420911] usb usb3: SerialNumber: 0000:39:00.0
+> [   45.424290] hub 3-0:1.0: USB hub found
+> [   45.425274] hub 3-0:1.0: 2 ports detected
+> [   45.431061] xhci_hcd 0000:39:00.0: xHCI Host Controller
+> [   45.432436] xhci_hcd 0000:39:00.0: new USB bus registered, assigned bus number 4
+> [   45.432448] xhci_hcd 0000:39:00.0: Host supports USB 3.1 Enhanced SuperSpeed
+> [   45.433299] usb usb4: New USB device found, idVendor=1d6b, idProduct=0003, bcdDevice= 5.00
+> [   45.433354] usb usb4: New USB device strings: Mfr=3, Product=2, SerialNumber=1
+> [   45.433360] usb usb4: Product: xHCI Host Controller
+> [   45.433365] usb usb4: Manufacturer: Linux 5.0.0-rc1-zen xhci-hcd
+> [   45.433370] usb usb4: SerialNumber: 0000:39:00.0
+> [   45.436134] hub 4-0:1.0: USB hub found
+> [   45.436576] hub 4-0:1.0: 2 ports detected
+> [   45.750940] usb 3-1: new high-speed USB device number 2 using xhci_hcd
+> [   45.899927] usb 3-1: New USB device found, idVendor=2040, idProduct=721e, bcdDevice= 0.05
+> [   45.899949] usb 3-1: New USB device strings: Mfr=1, Product=2, SerialNumber=10
+> [   45.899960] usb 3-1: Product: WinTV Aero-A
+> [   45.899970] usb 3-1: Manufacturer: Hauppauge
+> [   45.899979] usb 3-1: SerialNumber: 4033622430
+> [   46.053476] au0828: au0828 driver loaded
+> [   46.053726] WARNING: CPU: 1 PID: 1824 at kernel/module.c:262 module_assert_mutex+0x20/0x30
+> [   46.053818] Modules linked in: au0828(+) tveeprom dvb_core v4l2_common rfcomm bnep snd_hda_codec_hdmi snd_hda_codec_realtek
+> snd_hda_codec_generic uvcvideo videobuf2_vmalloc videobuf2_memops videobuf2_v4l2 videobuf2_common videodev media btusb btintel bluetooth
+> snd_soc_skl snd_soc_skl_ipc snd_soc_sst_ipc snd_soc_sst_dsp snd_soc_acpi_intel_match snd_soc_acpi snd_hda_ext_core x86_pkg_temp_thermal
+> snd_soc_core snd_compress ac97_bus snd_pcm_dmaengine snd_hda_intel iwlmvm snd_hda_codec snd_hda_core snd_hwdep snd_pcm snd_timer snd iwlwifi
+> i915 intel_gtt battery ac pcc_cpufreq thermal
+> [   46.053853] CPU: 1 PID: 1824 Comm: systemd-udevd Not tainted 5.0.0-rc1-zen #85
+> [   46.053856] Hardware name: ASUSTeK COMPUTER INC. UX490UA/UX490UA, BIOS UX490UA.312 04/09/2018
+> [   46.053862] RIP: 0010:module_assert_mutex+0x20/0x30
+> [   46.053867] Code: 5d c3 e8 f3 68 f5 ff 0f 1f 00 8b 05 d2 5a 7c 01 85 c0 75 01 c3 be ff ff ff ff 48 c7 c7 80 bc 86 82 e8 e4 27 fb ff 85 c0
+> 75 ea <0f> 0b c3 66 66 2e 0f 1f 84 00 00 00 00 00 66 90 53 48 89 fb e8 c7
+> [   46.053871] RSP: 0018:ffffc90002aa3ac8 EFLAGS: 00010246
+> [   46.053876] RAX: 0000000000000000 RBX: ffffffffa0573abf RCX: 0000000000000000
+> [   46.053880] RDX: 0000000000000000 RSI: ffffffff8286bc80 RDI: ffff8882a517d570
+> [   46.053883] RBP: ffff8882880e6000 R08: 0000000000000000 R09: ffff8882b1f5d000
+> [   46.053886] R10: 0000000000000001 R11: 0000000000000003 R12: ffffffffa0573abf
+> [   46.053890] R13: ffff8882880e60a0 R14: ffff8882880e6000 R15: ffffffffa0577200
+> [   46.053894] FS:  00007f0ac7d318c0(0000) GS:ffff8882b6a80000(0000) knlGS:0000000000000000
+> [   46.053898] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [   46.053902] CR2: 0000560d354ed800 CR3: 00000002880f9003 CR4: 00000000003606e0
+> [   46.053905] Call Trace:
+> [   46.053910]  find_module+0x9/0x20
+> 
+> My .config is available upon request.
+> 
 
-Sorted includes please, as mentioned by others.
+Thanks for the config.
 
->
->  /* SPI SE specific registers and respective register fields */
->  #define SE_SPI_CPHA            0x224
-> @@ -589,6 +590,15 @@ static int spi_geni_probe(struct platform_device *pdev)
->         spin_lock_init(&mas->lock);
->         pm_runtime_enable(&pdev->dev);
->
-> +       /* Set the bus quota to a reasonable value */
-> +       mas->se.avg_bw = Bps_to_icc(2500);
-> +       mas->se.peak_bw = Bps_to_icc(200000000);
+Thanks for finding this. find_module() should be called with
+module_mutex since 4.15. The media allocator patch was written
+before that.
 
-Like the i2c case, can we compute real value based on clock speed?
+I didn't realize I don't have CONFIG_DEBUG_MUTEXES=y when I switched
+to a new system.
+
+I reproduced the problem and re-worked patch 1 and patch 4 in this
+series. I will resend the v10 for just those two patches tomorrow.
+
+Please let me know if you want me to send the entire series.
+
+thanks,
+-- Shuah
+
+
+
+
