@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB421C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A47EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADA5F218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED88D20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359062;
-	bh=Q0Ae1N+x7l3zGqXQEx3RftmXUjQZ/bLHFXDsh9WTGEQ=;
+	s=default; t=1548359067;
+	bh=xZ0faOyjv00fXjkjO45uCs6U9Z61rP7CImTBMNzGXjk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BkL8FFcNM6dOLKEXYwXJ24zI3Q5mLilJzzjTqHjRVL8dpFndv+9Wxo0BzVnB2rPry
-	 a5Xq3wY5o6CMEjziJdeDmE794ylEzAOcP30uZZnhrt6Gl299RkFK4Vw14pTjAuDH6J
-	 40zekROrbH3HX13h6kE0uRbTSe4Q9AE0BDt5BsM4=
+	b=17gdEGJ+BR2BJjmwCXOWurB71fmxPtEuXfBMPdxJVtxSlAIOj0yQmZV8t9xk/4G2N
+	 2cvKAjyLF6hI7YO/PRw3w7sdlmRAwAKpugVGjC3309T+i9sVa384eScr4rgCZnFfaP
+	 nqXTvoym+Gs9fistu2VSq1mQPqSPoUdxNDBbsMrw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388074AbfAXToV (ORCPT
+        id S2388085AbfAXToZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:44:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45072 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:44:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45162 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388065AbfAXToR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:44:17 -0500
+        id S1733182AbfAXToX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:44:23 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B83620663;
-        Thu, 24 Jan 2019 19:44:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 86B9320663;
+        Thu, 24 Jan 2019 19:44:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359056;
-        bh=Q0Ae1N+x7l3zGqXQEx3RftmXUjQZ/bLHFXDsh9WTGEQ=;
+        s=default; t=1548359062;
+        bh=xZ0faOyjv00fXjkjO45uCs6U9Z61rP7CImTBMNzGXjk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PUA7CEvWjMdKqK3Xl0ptbA2hZLfEcNJKO52OOu9tFIUzOcysnviYXTYz0bXtnXop+
-         e27Y5tiQZkk+yQq6ycuif1yKb+wUS29CkZ5VqHPw+p+30N3p+lKfxIhSDmzg/lwfLH
-         mxO/VryhbVcgjMZ28KlkfkWNjrb8C+T0C+uK+82o=
+        b=J8pvt3T8Qs+9V15esvoxajkIgB6I302DrQ99QZkHTX2MQaLTdQuhjV58j+dTSGxp6
+         0Km553e1VADUbkgEvRnuw4KCqZbSDr2krj/fAeQ9UcwaShQBzSXDG3uy2dZVwAQqEk
+         AqMbWJHZ0sMNCgbrMTmK/nrcqdRmeopO+UkGDtTI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>,
-        Harry Wentland <Harry.Wentland@amd.com>,
-        Leo Li <sunpeng.li@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>
-Subject: [PATCH 4.20 121/127] drm/amd/display: Fix disabled cursor on top screen edge
-Date:   Thu, 24 Jan 2019 20:21:07 +0100
-Message-Id: <20190124190217.079914320@linuxfoundation.org>
+        stable@vger.kernel.org, Yang Yingliang <yangyingliang@huawei.com>,
+        Corey Minyard <cminyard@mvista.com>
+Subject: [PATCH 4.20 123/127] ipmi: fix use-after-free of user->release_barrier.rda
+Date:   Thu, 24 Jan 2019 20:21:09 +0100
+Message-Id: <20190124190217.154463533@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,55 +65,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
+From: Yang Yingliang <yangyingliang@huawei.com>
 
-commit ae1cf20df7a9c60ff5ef41c3315c33c1a5fafd77 upstream.
+commit 77f8269606bf95fcb232ee86f6da80886f1dfae8 upstream.
 
-[Why]
-The cursor vanishes when touching the top of edge of the screen for
-Raven on Linux.
+When we do the following test, we got oops in ipmi_msghandler driver
+while((1))
+do
+	service ipmievd restart & service ipmievd restart
+done
 
-This occurs because the cursor height is not taken into account when
-deciding to disable the cursor.
+---------------------------------------------------------------
+[  294.230186] Unable to handle kernel paging request at virtual address 0000803fea6ea008
+[  294.230188] Mem abort info:
+[  294.230190]   ESR = 0x96000004
+[  294.230191]   Exception class = DABT (current EL), IL = 32 bits
+[  294.230193]   SET = 0, FnV = 0
+[  294.230194]   EA = 0, S1PTW = 0
+[  294.230195] Data abort info:
+[  294.230196]   ISV = 0, ISS = 0x00000004
+[  294.230197]   CM = 0, WnR = 0
+[  294.230199] user pgtable: 4k pages, 48-bit VAs, pgdp = 00000000a1c1b75a
+[  294.230201] [0000803fea6ea008] pgd=0000000000000000
+[  294.230204] Internal error: Oops: 96000004 [#1] SMP
+[  294.235211] Modules linked in: nls_utf8 isofs rpcrdma ib_iser ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_umad rdma_cm ib_cm iw_cm dm_mirror dm_region_hash dm_log dm_mod aes_ce_blk crypto_simd cryptd aes_ce_cipher ghash_ce sha2_ce ses sha256_arm64 sha1_ce hibmc_drm hisi_sas_v2_hw enclosure sg hisi_sas_main sbsa_gwdt ip_tables mlx5_ib ib_uverbs marvell ib_core mlx5_core ixgbe ipmi_si mdio hns_dsaf ipmi_devintf ipmi_msghandler hns_enet_drv hns_mdio
+[  294.277745] CPU: 3 PID: 0 Comm: swapper/3 Kdump: loaded Not tainted 5.0.0-rc2+ #113
+[  294.285511] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.37 11/21/2017
+[  294.292835] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[  294.297695] pc : __srcu_read_lock+0x38/0x58
+[  294.301940] lr : acquire_ipmi_user+0x2c/0x70 [ipmi_msghandler]
+[  294.307853] sp : ffff00001001bc80
+[  294.311208] x29: ffff00001001bc80 x28: ffff0000117e5000
+[  294.316594] x27: 0000000000000000 x26: dead000000000100
+[  294.321980] x25: dead000000000200 x24: ffff803f6bd06800
+[  294.327366] x23: 0000000000000000 x22: 0000000000000000
+[  294.332752] x21: ffff00001001bd04 x20: ffff80df33d19018
+[  294.338137] x19: ffff80df33d19018 x18: 0000000000000000
+[  294.343523] x17: 0000000000000000 x16: 0000000000000000
+[  294.348908] x15: 0000000000000000 x14: 0000000000000002
+[  294.354293] x13: 0000000000000000 x12: 0000000000000000
+[  294.359679] x11: 0000000000000000 x10: 0000000000100000
+[  294.365065] x9 : 0000000000000000 x8 : 0000000000000004
+[  294.370451] x7 : 0000000000000000 x6 : ffff80df34558678
+[  294.375836] x5 : 000000000000000c x4 : 0000000000000000
+[  294.381221] x3 : 0000000000000001 x2 : 0000803fea6ea000
+[  294.386607] x1 : 0000803fea6ea008 x0 : 0000000000000001
+[  294.391994] Process swapper/3 (pid: 0, stack limit = 0x0000000083087293)
+[  294.398791] Call trace:
+[  294.401266]  __srcu_read_lock+0x38/0x58
+[  294.405154]  acquire_ipmi_user+0x2c/0x70 [ipmi_msghandler]
+[  294.410716]  deliver_response+0x80/0xf8 [ipmi_msghandler]
+[  294.416189]  deliver_local_response+0x28/0x68 [ipmi_msghandler]
+[  294.422193]  handle_one_recv_msg+0x158/0xcf8 [ipmi_msghandler]
+[  294.432050]  handle_new_recv_msgs+0xc0/0x210 [ipmi_msghandler]
+[  294.441984]  smi_recv_tasklet+0x8c/0x158 [ipmi_msghandler]
+[  294.451618]  tasklet_action_common.isra.5+0x88/0x138
+[  294.460661]  tasklet_action+0x2c/0x38
+[  294.468191]  __do_softirq+0x120/0x2f8
+[  294.475561]  irq_exit+0x134/0x140
+[  294.482445]  __handle_domain_irq+0x6c/0xc0
+[  294.489954]  gic_handle_irq+0xb8/0x178
+[  294.497037]  el1_irq+0xb0/0x140
+[  294.503381]  arch_cpu_idle+0x34/0x1a8
+[  294.510096]  do_idle+0x1d4/0x290
+[  294.516322]  cpu_startup_entry+0x28/0x30
+[  294.523230]  secondary_start_kernel+0x184/0x1d0
+[  294.530657] Code: d538d082 d2800023 8b010c81 8b020021 (c85f7c25)
+[  294.539746] ---[ end trace 8a7a880dee570b29 ]---
+[  294.547341] Kernel panic - not syncing: Fatal exception in interrupt
+[  294.556837] SMP: stopping secondary CPUs
+[  294.563996] Kernel Offset: disabled
+[  294.570515] CPU features: 0x002,21006008
+[  294.577638] Memory Limit: none
+[  294.587178] Starting crashdump kernel...
+[  294.594314] Bye!
 
-[How]
-Factor in the cursor height into the cursor calculations - and mimic
-the existing x position calculations.
+Because the user->release_barrier.rda is freed in ipmi_destroy_user(), but
+the refcount is not zero, when acquire_ipmi_user() uses user->release_barrier.rda
+in __srcu_read_lock(), it causes oops.
+Fix this by calling cleanup_srcu_struct() when the refcount is zero.
 
-Fixes: 94a4ffd1d40b ("drm/amd/display: fix PIP bugs on Dal3")
-
-Signed-off-by: Nicholas Kazlauskas <nicholas.kazlauskas@amd.com>
-Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Fixes: e86ee2d44b44 ("ipmi: Rework locking and shutdown for hot remove")
+Cc: stable@vger.kernel.org # 4.18
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+Signed-off-by: Corey Minyard <cminyard@mvista.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp.c  |    2 +-
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubp.c |    2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ drivers/char/ipmi/ipmi_msghandler.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_dpp.c
-@@ -463,7 +463,7 @@ void dpp1_set_cursor_position(
- 	if (src_y_offset >= (int)param->viewport.height)
- 		cur_en = 0;  /* not visible beyond bottom edge*/
+--- a/drivers/char/ipmi/ipmi_msghandler.c
++++ b/drivers/char/ipmi/ipmi_msghandler.c
+@@ -1183,6 +1183,7 @@ EXPORT_SYMBOL(ipmi_get_smi_info);
+ static void free_user(struct kref *ref)
+ {
+ 	struct ipmi_user *user = container_of(ref, struct ipmi_user, refcount);
++	cleanup_srcu_struct(&user->release_barrier);
+ 	kfree(user);
+ }
  
--	if (src_y_offset < 0)
-+	if (src_y_offset + (int)height <= 0)
- 		cur_en = 0;  /* not visible beyond top edge*/
+@@ -1259,7 +1260,6 @@ int ipmi_destroy_user(struct ipmi_user *
+ {
+ 	_ipmi_destroy_user(user);
  
- 	REG_UPDATE(CURSOR0_CONTROL,
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubp.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hubp.c
-@@ -1134,7 +1134,7 @@ void hubp1_cursor_set_position(
- 	if (src_y_offset >= (int)param->viewport.height)
- 		cur_en = 0;  /* not visible beyond bottom edge*/
+-	cleanup_srcu_struct(&user->release_barrier);
+ 	kref_put(&user->refcount, free_user);
  
--	if (src_y_offset < 0) //+ (int)hubp->curs_attr.height
-+	if (src_y_offset + (int)hubp->curs_attr.height <= 0)
- 		cur_en = 0;  /* not visible beyond top edge*/
- 
- 	if (cur_en && REG_READ(CURSOR_SURFACE_ADDRESS) == 0)
+ 	return 0;
 
 
