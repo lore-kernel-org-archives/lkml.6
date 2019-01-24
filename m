@@ -2,52 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42B1AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAF37C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 114F421905
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8748321903
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:36:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358576;
-	bh=7ztoFz+yTIgIiaByKok51CqSe+1UBYfyd6XyjTlX1pc=;
+	s=default; t=1548358580;
+	bh=2E92/kreHV0XRMsXRgTxzJftHPwawZhe4ITcr1D033c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=y5aW4/vHnoDWIuUjpyZMZOHTtajqKbhpPh30fAbZx5g5JWLHo3sBzlHgOuOt7oph2
-	 ugXAw35dn3Wl79AwZ7xxP317VDDaQtZwxrPStLjRhNIMjR6i4q3WShRR9T30wVavVU
-	 AKbJoWevDtLJJ31TUaiiNxWoMX1onsqGrySKnwgs=
+	b=qiJcEu8SjUUhHq1AKHIzbNWNRa/r6G/tmw3jXzk25VWgUY4DHxCDtWEruQ6MdjIZv
+	 oX6XO2X7+JjGZ9sWe48m5+KUsQaSv+rEO/5vANIKeC/aVBMZJqBVBGS05F+lz8OxNj
+	 6iNmsXRjPyTgqs/aoZvsXBG8BMQldHmB4LkiPxRA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729868AbfAXTgN (ORCPT
+        id S1730798AbfAXTgS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:36:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36186 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:36:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36276 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732477AbfAXTgJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:36:09 -0500
+        id S1730329AbfAXTgP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:36:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41EFC218FC;
-        Thu, 24 Jan 2019 19:36:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2F7D21903;
+        Thu, 24 Jan 2019 19:36:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358568;
-        bh=7ztoFz+yTIgIiaByKok51CqSe+1UBYfyd6XyjTlX1pc=;
+        s=default; t=1548358574;
+        bh=2E92/kreHV0XRMsXRgTxzJftHPwawZhe4ITcr1D033c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t3hwHA2fPZKhClfkqjoDXi2CZCh2T6BFZKD9LW5oihVfwRUgsdijNmY5QVfQ/n7+7
-         TDhlT332xuMk1gHdOUyZHibGV06TShEgrZDBsDq0utqR6wZc/0LDge89LMKvKdGXe9
-         jI9ZXi/WcH6AgPHPv0UW00CiOrh04aQPsoDIzHZI=
+        b=Q9GfUxWkHGE3OTSRabL1gXoS6D1bG9bTVdmspE4M4HoJXUBwRWEtrFO6dOoirKTs9
+         vXABRTYz5HYkHR2OdE8JNyNDU8sU9aUImCzS/b9a95VHdqL4N9S0bv79yaVhtpiz34
+         MORhc2foH+XPalDaYUNrYE0fCKiHQBpCrmaJ51wU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Qian Cai <cai@lca.pw>,
+        stable@vger.kernel.org, Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Robin Murphy <robin.murphy@arm.com>,
         Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 053/106] arm64: kasan: Increase stack size for KASAN_EXTRA
-Date:   Thu, 24 Jan 2019 20:20:10 +0100
-Message-Id: <20190124190209.801341683@linuxfoundation.org>
+Subject: [PATCH 4.19 055/106] arm64: Fix minor issues with the dcache_by_line_op macro
+Date:   Thu, 24 Jan 2019 20:20:12 +0100
+Message-Id: <20190124190209.938493470@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -66,76 +67,112 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 6e8830674ea77f57d57a33cca09083b117a71f41 ]
+[ Upstream commit 33309ecda0070506c49182530abe7728850ebe78 ]
 
-If the kernel is configured with KASAN_EXTRA, the stack size is
-increased significantly due to setting the GCC -fstack-reuse option to
-"none" [1]. As a result, it can trigger a stack overrun quite often with
-32k stack size compiled using GCC 8. For example, this reproducer
+The dcache_by_line_op macro suffers from a couple of small problems:
 
-  https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/madvise/madvise06.c
+First, the GAS directives that are currently being used rely on
+assembler behavior that is not documented, and probably not guaranteed
+to produce the correct behavior going forward. As a result, we end up
+with some undefined symbols in cache.o:
 
-can trigger a "corrupted stack end detected inside scheduler" very
-reliably with CONFIG_SCHED_STACK_END_CHECK enabled. There are other
-reports at:
+$ nm arch/arm64/mm/cache.o
+         ...
+         U civac
+         ...
+         U cvac
+         U cvap
+         U cvau
 
-  https://lore.kernel.org/lkml/1542144497.12945.29.camel@gmx.us/
-  https://lore.kernel.org/lkml/721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us/
+This is due to the fact that the comparisons used to select the
+operation type in the dcache_by_line_op macro are comparing symbols
+not strings, and even though it seems that GAS is doing the right
+thing here (undefined symbols by the same name are equal to each
+other), it seems unwise to rely on this.
 
-There are just too many functions that could have a large stack with
-KASAN_EXTRA due to large local variables that have been called over and
-over again without being able to reuse the stacks. Some noticiable ones
-are,
+Second, when patching in a DC CVAP instruction on CPUs that support it,
+the fallback path consists of a DC CVAU instruction which may be
+affected by CPU errata that require ARM64_WORKAROUND_CLEAN_CACHE.
 
-size
-7536 shrink_inactive_list
-7440 shrink_page_list
-6560 fscache_stats_show
-3920 jbd2_journal_commit_transaction
-3216 try_to_unmap_one
-3072 migrate_page_move_mapping
-3584 migrate_misplaced_transhuge_page
-3920 ip_vs_lblcr_schedule
-4304 lpfc_nvme_info_show
-3888 lpfc_debugfs_nvmestat_data.constprop
+Solve these issues by unrolling the various maintenance routines and
+using the conditional directives that are documented as operating on
+strings. To avoid the complexity of nested alternatives, we move the
+DC CVAP patching to __clean_dcache_area_pop, falling back to a branch
+to __clean_dcache_area_poc if DCPOP is not supported by the CPU.
 
-There are other 49 functions over 2k in size while compiling kernel with
-"-Wframe-larger-than=" on this machine. Hence, it is too much work to
-change Makefiles for each object to compile without
--fsanitize-address-use-after-scope individually.
-
-[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=81715#c23
-
-Signed-off-by: Qian Cai <cai@lca.pw>
+Reported-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Suggested-by: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/memory.h | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/arm64/include/asm/assembler.h | 30 ++++++++++++++++++------------
+ arch/arm64/mm/cache.S              |  3 +++
+ 2 files changed, 21 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index b96442960aea..56562ff01076 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -76,12 +76,17 @@
- /*
-  * KASAN requires 1/8th of the kernel virtual address space for the shadow
-  * region. KASAN can bloat the stack significantly, so double the (minimum)
-- * stack size when KASAN is in use.
-+ * stack size when KASAN is in use, and then double it again if KASAN_EXTRA is
-+ * on.
+diff --git a/arch/arm64/include/asm/assembler.h b/arch/arm64/include/asm/assembler.h
+index 0bcc98dbba56..f90f5d83b228 100644
+--- a/arch/arm64/include/asm/assembler.h
++++ b/arch/arm64/include/asm/assembler.h
+@@ -378,27 +378,33 @@ alternative_endif
+  * 	size:		size of the region
+  * 	Corrupts:	kaddr, size, tmp1, tmp2
   */
- #ifdef CONFIG_KASAN
- #define KASAN_SHADOW_SCALE_SHIFT 3
- #define KASAN_SHADOW_SIZE	(UL(1) << (VA_BITS - KASAN_SHADOW_SCALE_SHIFT))
-+#ifdef CONFIG_KASAN_EXTRA
-+#define KASAN_THREAD_SHIFT	2
-+#else
- #define KASAN_THREAD_SHIFT	1
-+#endif /* CONFIG_KASAN_EXTRA */
- #else
- #define KASAN_SHADOW_SIZE	(0)
- #define KASAN_THREAD_SHIFT	0
++	.macro __dcache_op_workaround_clean_cache, op, kaddr
++alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
++	dc	\op, \kaddr
++alternative_else
++	dc	civac, \kaddr
++alternative_endif
++	.endm
++
+ 	.macro dcache_by_line_op op, domain, kaddr, size, tmp1, tmp2
+ 	dcache_line_size \tmp1, \tmp2
+ 	add	\size, \kaddr, \size
+ 	sub	\tmp2, \tmp1, #1
+ 	bic	\kaddr, \kaddr, \tmp2
+ 9998:
+-	.if	(\op == cvau || \op == cvac)
+-alternative_if_not ARM64_WORKAROUND_CLEAN_CACHE
+-	dc	\op, \kaddr
+-alternative_else
+-	dc	civac, \kaddr
+-alternative_endif
+-	.elseif	(\op == cvap)
+-alternative_if ARM64_HAS_DCPOP
+-	sys 3, c7, c12, 1, \kaddr	// dc cvap
+-alternative_else
+-	dc	cvac, \kaddr
+-alternative_endif
++	.ifc	\op, cvau
++	__dcache_op_workaround_clean_cache \op, \kaddr
++	.else
++	.ifc	\op, cvac
++	__dcache_op_workaround_clean_cache \op, \kaddr
++	.else
++	.ifc	\op, cvap
++	sys	3, c7, c12, 1, \kaddr	// dc cvap
+ 	.else
+ 	dc	\op, \kaddr
+ 	.endif
++	.endif
++	.endif
+ 	add	\kaddr, \kaddr, \tmp1
+ 	cmp	\kaddr, \size
+ 	b.lo	9998b
+diff --git a/arch/arm64/mm/cache.S b/arch/arm64/mm/cache.S
+index 0c22ede52f90..a194fd0e837f 100644
+--- a/arch/arm64/mm/cache.S
++++ b/arch/arm64/mm/cache.S
+@@ -212,6 +212,9 @@ ENDPROC(__dma_clean_area)
+  *	- size    - size in question
+  */
+ ENTRY(__clean_dcache_area_pop)
++	alternative_if_not ARM64_HAS_DCPOP
++	b	__clean_dcache_area_poc
++	alternative_else_nop_endif
+ 	dcache_by_line_op cvap, sy, x0, x1, x2, x3
+ 	ret
+ ENDPIPROC(__clean_dcache_area_pop)
 -- 
 2.19.1
 
