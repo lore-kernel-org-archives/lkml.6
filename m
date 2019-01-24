@@ -2,121 +2,100 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFA25C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:57:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E0F1C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C086320811
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:57:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gm/udZKd"
+	by mail.kernel.org (Postfix) with ESMTP id 015A020811
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:59:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727709AbfAXL5G (ORCPT
+        id S1727749AbfAXL7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:57:06 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36979 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726105AbfAXL5F (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:57:05 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t18-v6so4977994ljd.4
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 03:57:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=Bmx4BpgKe71+rZZ26lOw3fLZEJYFgz55uetEcgrI96E=;
-        b=Gm/udZKdWmDsapkf31oi+rV/xrSnCemE9Em+1d3nPz1T325PqUA8UYAq4tZbBsrndL
-         QauifVztJj6FXXJ+kqfoCiP+BOIGeFgkA2ClQgXEYVjM+51aCj26rt6kI+qjmgEMj8mH
-         7kNRJu+XgTdpEjgsi8TquvDhssPTtjqI+6mkp0ryHr33B+38Ph7eiiuB0VoO7ilDBW6A
-         dPxXAOlSwtMniFo02J4cswekKCffWYNCkEaE0j3gmJhRvfqBtZRVCZykn9U+oQXTT0d2
-         qwMJxoMY+UUyCDxldf+FQkFYc+nEGeUnLjSvGgfLbrl1nF9whzNr64O+Vo18f2Xz9MwS
-         fH0g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=Bmx4BpgKe71+rZZ26lOw3fLZEJYFgz55uetEcgrI96E=;
-        b=iEXJRz4DyzaP4ShWVI/MCaufCc3jQ/K8gyr9iAxXaYX/x4zFMyV4Cz7lfWFKZHsJCm
-         LptuhM9BYKhTiBUPxXauaCSaicH9PZ/HjuIPKxR/jbRXgbDwtbP4cNoZ0Dnj1lKho5BY
-         sYcy8EOTsAVUNCmfWS1VWBMBj/H9twxfiDb8jJJrKDNuNAv8zPQDOnMWkLaExteeoVtg
-         6IsYdbvyIcUsF5dEG86a2B7PvKaoIvgfUa2CBvUGWStF4y6ZPTIjSQ8eKUzeLjXe2jmq
-         70KYvM3C4kfKUIaHRledcyTHzZ30njrgB8lG6KHEj5V3iljc4BuGauH94Dtc/skRmN0Z
-         GRig==
-X-Gm-Message-State: AJcUukeGtj6ZZ4lp2cjPgQ5GGXovOOzfcQphxfCOqiyS8eJ+Yh16TH1b
-        XygJk3Yd0d2gyKh7B/aMbxo=
-X-Google-Smtp-Source: ALg8bN6UtOSdiZ6kpnXzV6MiFQ4RAnSAEkzBdbiMYt5qilFhIXuba1TyBeLy6M1MsF0orf+FsOvosA==
-X-Received: by 2002:a2e:b04f:: with SMTP id d15-v6mr5355706ljl.3.1548331023688;
-        Thu, 24 Jan 2019 03:57:03 -0800 (PST)
-Received: from pc636.semobile.internal ([37.139.158.167])
-        by smtp.gmail.com with ESMTPSA id w202sm920226lff.31.2019.01.24.03.57.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 03:57:03 -0800 (PST)
-From:   "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Subject: [PATCH v1 1/2] mm/vmalloc: fix kernel BUG at mm/vmalloc.c:512!
-Date:   Thu, 24 Jan 2019 12:56:47 +0100
-Message-Id: <20190124115648.9433-2-urezki@gmail.com>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20190124115648.9433-1-urezki@gmail.com>
-References: <20190124115648.9433-1-urezki@gmail.com>
+        Thu, 24 Jan 2019 06:59:17 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2744 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727409AbfAXL7R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 06:59:17 -0500
+Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 321CCF99A6169F84D543;
+        Thu, 24 Jan 2019 19:59:15 +0800 (CST)
+Received: from localhost (10.206.48.115) by DGGEMS410-HUB.china.huawei.com
+ (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Thu, 24 Jan 2019
+ 19:59:14 +0800
+Date:   Thu, 24 Jan 2019 11:59:02 +0000
+From:   Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To:     Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+CC:     Olof Johansson <olof@lixom.net>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
+        "Dave Airlie" <airlied@redhat.com>, Arnd Bergmann <arnd@arndb.de>,
+        <ogabbay@habana.ai>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+        <fbarrat@linux.ibm.com>, <linux-accelerators@lists.ozlabs.org>
+Subject: Re: [PATCH 00/15] Habana Labs kernel driver
+Message-ID: <20190124115902.000016cf@huawei.com>
+In-Reply-To: <ba543301-9953-4dcd-f744-2aa66746a874@au1.ibm.com>
+References: <20190123000057.31477-1-oded.gabbay@gmail.com>
+        <CAOesGMjU0tjJwAqCADaAv6XrCGbjB8G2oT=4LxOgSQBHO7Gptw@mail.gmail.com>
+        <ba543301-9953-4dcd-f744-2aa66746a874@au1.ibm.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; i686-w64-mingw32)
+MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.206.48.115]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-One of the vmalloc stress test case triggers the kernel BUG():
+On Thu, 24 Jan 2019 12:03:06 +1100
+Andrew Donnellan <andrew.donnellan@au1.ibm.com> wrote:
 
-<snip>
-[60.562151] ------------[ cut here ]------------
-[60.562154] kernel BUG at mm/vmalloc.c:512!
-[60.562206] invalid opcode: 0000 [#1] PREEMPT SMP PTI
-[60.562247] CPU: 0 PID: 430 Comm: vmalloc_test/0 Not tainted 4.20.0+ #161
-[60.562293] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.10.2-1 04/01/2014
-[60.562351] RIP: 0010:alloc_vmap_area+0x36f/0x390
-<snip>
+> On 24/1/19 8:52 am, Olof Johansson wrote:
+> > But, I think the largest question I have (for a broader audience) is:
+> > 
+> > I predict that we will see a handful of these kind of devices over the
+> > upcoming future -- definitely from ML accelerators but maybe also for
+> > other kinds of processing, where there's a command-based, buffer-based
+> > setup sending workloads to an offload engine and getting results back.
+> > While the first waves will all look different due to design trade-offs
+> > made in isolation, I think it makes sense to group them in one bucket
+> > instead of merging them through drivers/misc, if nothing else to
+> > encourage more cross-collaboration over time. First steps in figuring
+> > out long-term suitable frameworks is to get a survey of a few
+> > non-shared implementations.
+> > 
+> > So, I'd like to propose a drivers/accel drivers subtree, and I'd be
+> > happy to bootstrap it with a small group (@Dave Airlie: I think your
+> > input from GPU land be very useful, want to join in?). Individual
+> > drivers maintained by existing maintainers, of course.
+> > 
+> > I think it might make sense to move the CAPI/OpenCAPI drivers over as
+> > well -- not necessarily to change those drivers, but to group them
+> > with the rest as more show up.  
+> 
+> For cxl/ocxl, I have no objection to moving to this new subtree if 
+> that's what we all agree to do. (what do people do about UAPI headers in 
+> this situation? keep them where they are in misc/?)
+> 
+> If we do go ahead and set up this new subtree, perhaps we can use the 
+> mailing list I set up at linux-accelerators@lists.ozlabs.org but we 
+> haven't really started using...
+> 
+Assuming the concensus falls behind this...
 
-it can happen due to big align request resulting in overflowing
-of calculated address, i.e. it becomes 0 after ALIGN()'s fixup.
+I'll push this for the CCIX drivers as well as those start to turn up.
 
-Fix it by checking if calculated address is within vstart/vend
-range.
+This particularly driver had passed me by until this email so great
+to get the heads up via that list!
 
-Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
----
- mm/vmalloc.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+Sounds like a good plan in general to me.
 
-diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-index 1c512fff8a56..fb4fb5fcee74 100644
---- a/mm/vmalloc.c
-+++ b/mm/vmalloc.c
-@@ -498,7 +498,11 @@ static struct vmap_area *alloc_vmap_area(unsigned long size,
- 	}
- 
- found:
--	if (addr + size > vend)
-+	/*
-+	 * Check also calculated address against the vstart,
-+	 * because it can be 0 because of big align request.
-+	 */
-+	if (addr + size > vend || addr < vstart)
- 		goto overflow;
- 
- 	va->va_start = addr;
--- 
-2.11.0
+Jonathan
+
 
