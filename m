@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8995C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:38:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3E22C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB98020663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:38:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81FBB20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358739;
-	bh=T0JkHzOT9kFITCr1eVCKAMkKPDhmYpi3PPW5vj7QViw=;
+	s=default; t=1548358748;
+	bh=/EWCgWSjTn/Ss7NZaIIKPldGBBjbsncShtDYnEpS+yo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xNihraxQriGfc0WyEnG1OThznVnrbkxWbIMeEyNTQ87ZKnaX6uZXh/X7Yh+UoaOqP
-	 bSgBIOC/Ly84KZ0TCxhlpyaKGxeS4KapsXJtS2KeeKpcw4zO29AcBysyUnuXNC/SqL
-	 A6utyufA30yyXPfvWqnvZ/9O8tL5tZ1+bfOLBl+Y=
+	b=cqX56cG95Z09MsnzIp0q32Td2UVz3GxvCjN5m0a/LP1JzdsmyRq+qr65X0If5REnd
+	 e7L+0BILXWNBg0rRDNsY28/eR5QiyvX6s9DpWS0k57j+4KAIEB5sykkdpEn47FHSzJ
+	 i/MbYtSIci2Y+eqSKDaEvYHmGFbEr8Yv/9Dlbugg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730114AbfAXTi6 (ORCPT
+        id S1732982AbfAXTjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:38:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39044 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:39:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730960AbfAXTiy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:38:54 -0500
+        id S1732958AbfAXTjD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 289C520663;
-        Thu, 24 Jan 2019 19:38:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B1BBD218D0;
+        Thu, 24 Jan 2019 19:39:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358732;
-        bh=T0JkHzOT9kFITCr1eVCKAMkKPDhmYpi3PPW5vj7QViw=;
+        s=default; t=1548358743;
+        bh=/EWCgWSjTn/Ss7NZaIIKPldGBBjbsncShtDYnEpS+yo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Pekfdsut7Xwsd9Fwa4AuZ6xlQZAy2EFGKyy8mL6Dvs+7yuLqtLPhrAVP9pqR9SbTV
-         x/aKKjtjT6DrOfrS1ySFFn0ISJfM9WNPNXfu3GFNGpRDmuszLg0gqPpabqVLmODICK
-         y8zXZA7092eSKYTx6fMcmZujMlfjc2aFpWC6EUZI=
+        b=XG3FRLRI5r1oma9eDkNs7DX72kCoRmr4VXWBX5R+lkNy0Hb2ltCeBV5sjLko5/eXI
+         ll2BJ3GfyjiwB1nPBlFDEqjY+V229eJJBAkjzAWkmYM10ggMyyY9isI1vtmLSCmRP/
+         yjqP1P1Oo/jATYcuQOnHfXMMihIvT7GYOLeoofFk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>,
-        Tejun Heo <tj@kernel.org>,
-        "Paul E. McKenney" <paulmck@linux.vnet.ibm.com>
-Subject: [PATCH 4.19 106/106] ipmi: Dont initialize anything in the core until something uses it
-Date:   Thu, 24 Jan 2019 20:21:03 +0100
-Message-Id: <20190124190212.605588251@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.20 011/127] octeontx2-af: Fix a resource leak in an error handling path in cgx_probe()
+Date:   Thu, 24 Jan 2019 20:19:17 +0100
+Message-Id: <20190124190212.611485311@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
-References: <20190124190206.342411005@linuxfoundation.org>
+In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
+References: <20190124190211.984305387@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -61,256 +61,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.19-stable review patch.  If anyone has any objections, please let me know.
+4.20-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-From: Corey Minyard <cminyard@mvista.com>
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 
-commit 913a89f009d98c85a902d718cd54bb32ab11d167 upstream.
+[ Upstream commit 1492623e837fe7ca6296f7f5411328307e242771 ]
 
-The IPMI driver was recently modified to use SRCU, but it turns out
-this uses a chunk of percpu memory, even if IPMI is never used.
+If an error occurs after the call to 'pci_alloc_irq_vectors()', we must
+call 'pci_free_irq_vectors()' in order to avoid a	resource leak.
 
-So modify thing to on initialize on the first use.  There was already
-code to sort of handle this for handling init races, so piggy back
-on top of that, and simplify it in the process.
+The same sequence is already in place in the corresponding 'cgx_remove()'
+function.
 
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Reported-by: Tejun Heo <tj@kernel.org>
-Cc: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Reviewed-by: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
-Cc: stable@vger.kernel.org # 4.18
+Fixes: 1463f382f58d ("octeontx2-af: Add support for CGX link management")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/char/ipmi/ipmi_msghandler.c |  144 ++++++++++++++++++++----------------
- 1 file changed, 80 insertions(+), 64 deletions(-)
+ drivers/net/ethernet/marvell/octeontx2/af/cgx.c |    4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
---- a/drivers/char/ipmi/ipmi_msghandler.c
-+++ b/drivers/char/ipmi/ipmi_msghandler.c
-@@ -62,7 +62,8 @@ static void ipmi_debug_msg(const char *t
- { }
- #endif
+--- a/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/cgx.c
+@@ -668,7 +668,7 @@ static int cgx_probe(struct pci_dev *pde
+ 	if (!cgx->reg_base) {
+ 		dev_err(dev, "CGX: Cannot map CSR memory space, aborting\n");
+ 		err = -ENOMEM;
+-		goto err_release_regions;
++		goto err_free_irq_vectors;
+ 	}
  
--static int initialized;
-+static bool initialized;
-+static bool drvregistered;
- 
- enum ipmi_panic_event_op {
- 	IPMI_SEND_PANIC_EVENT_NONE,
-@@ -612,7 +613,7 @@ static DEFINE_MUTEX(ipmidriver_mutex);
- 
- static LIST_HEAD(ipmi_interfaces);
- static DEFINE_MUTEX(ipmi_interfaces_mutex);
--DEFINE_STATIC_SRCU(ipmi_interfaces_srcu);
-+struct srcu_struct ipmi_interfaces_srcu;
- 
- /*
-  * List of watchers that want to know when smi's are added and deleted.
-@@ -720,7 +721,15 @@ struct watcher_entry {
- int ipmi_smi_watcher_register(struct ipmi_smi_watcher *watcher)
- {
- 	struct ipmi_smi *intf;
--	int index;
-+	int index, rv;
-+
-+	/*
-+	 * Make sure the driver is actually initialized, this handles
-+	 * problems with initialization order.
-+	 */
-+	rv = ipmi_init_msghandler();
-+	if (rv)
-+		return rv;
- 
- 	mutex_lock(&smi_watchers_mutex);
- 
-@@ -1076,7 +1085,7 @@ int ipmi_create_user(unsigned int
- {
- 	unsigned long flags;
- 	struct ipmi_user *new_user;
--	int           rv = 0, index;
-+	int           rv, index;
- 	struct ipmi_smi *intf;
- 
- 	/*
-@@ -1094,18 +1103,9 @@ int ipmi_create_user(unsigned int
- 	 * Make sure the driver is actually initialized, this handles
- 	 * problems with initialization order.
- 	 */
--	if (!initialized) {
--		rv = ipmi_init_msghandler();
--		if (rv)
--			return rv;
--
--		/*
--		 * The init code doesn't return an error if it was turned
--		 * off, but it won't initialize.  Check that.
--		 */
--		if (!initialized)
--			return -ENODEV;
--	}
-+	rv = ipmi_init_msghandler();
-+	if (rv)
-+		return rv;
- 
- 	new_user = kmalloc(sizeof(*new_user), GFP_KERNEL);
- 	if (!new_user)
-@@ -3304,17 +3304,9 @@ int ipmi_register_smi(const struct ipmi_
- 	 * Make sure the driver is actually initialized, this handles
- 	 * problems with initialization order.
- 	 */
--	if (!initialized) {
--		rv = ipmi_init_msghandler();
--		if (rv)
--			return rv;
--		/*
--		 * The init code doesn't return an error if it was turned
--		 * off, but it won't initialize.  Check that.
--		 */
--		if (!initialized)
--			return -ENODEV;
--	}
-+	rv = ipmi_init_msghandler();
-+	if (rv)
-+		return rv;
- 
- 	intf = kzalloc(sizeof(*intf), GFP_KERNEL);
- 	if (!intf)
-@@ -5030,6 +5022,22 @@ static int panic_event(struct notifier_b
- 	return NOTIFY_DONE;
- }
- 
-+/* Must be called with ipmi_interfaces_mutex held. */
-+static int ipmi_register_driver(void)
-+{
-+	int rv;
-+
-+	if (drvregistered)
-+		return 0;
-+
-+	rv = driver_register(&ipmidriver.driver);
-+	if (rv)
-+		pr_err("Could not register IPMI driver\n");
-+	else
-+		drvregistered = true;
-+	return rv;
-+}
-+
- static struct notifier_block panic_block = {
- 	.notifier_call	= panic_event,
- 	.next		= NULL,
-@@ -5040,66 +5048,74 @@ static int ipmi_init_msghandler(void)
- {
- 	int rv;
- 
-+	mutex_lock(&ipmi_interfaces_mutex);
-+	rv = ipmi_register_driver();
-+	if (rv)
-+		goto out;
- 	if (initialized)
--		return 0;
--
--	rv = driver_register(&ipmidriver.driver);
--	if (rv) {
--		pr_err(PFX "Could not register IPMI driver\n");
--		return rv;
--	}
-+		goto out;
- 
--	pr_info("ipmi message handler version " IPMI_DRIVER_VERSION "\n");
-+	init_srcu_struct(&ipmi_interfaces_srcu);
- 
- 	timer_setup(&ipmi_timer, ipmi_timeout, 0);
- 	mod_timer(&ipmi_timer, jiffies + IPMI_TIMEOUT_JIFFIES);
- 
- 	atomic_notifier_chain_register(&panic_notifier_list, &panic_block);
- 
--	initialized = 1;
-+	initialized = true;
- 
--	return 0;
-+out:
-+	mutex_unlock(&ipmi_interfaces_mutex);
-+	return rv;
- }
- 
- static int __init ipmi_init_msghandler_mod(void)
- {
--	ipmi_init_msghandler();
--	return 0;
-+	int rv;
-+
-+	pr_info("version " IPMI_DRIVER_VERSION "\n");
-+
-+	mutex_lock(&ipmi_interfaces_mutex);
-+	rv = ipmi_register_driver();
-+	mutex_unlock(&ipmi_interfaces_mutex);
-+
-+	return rv;
- }
- 
- static void __exit cleanup_ipmi(void)
- {
- 	int count;
- 
--	if (!initialized)
--		return;
--
--	atomic_notifier_chain_unregister(&panic_notifier_list, &panic_block);
--
--	/*
--	 * This can't be called if any interfaces exist, so no worry
--	 * about shutting down the interfaces.
--	 */
-+	if (initialized) {
-+		atomic_notifier_chain_unregister(&panic_notifier_list,
-+						 &panic_block);
- 
--	/*
--	 * Tell the timer to stop, then wait for it to stop.  This
--	 * avoids problems with race conditions removing the timer
--	 * here.
--	 */
--	atomic_inc(&stop_operation);
--	del_timer_sync(&ipmi_timer);
-+		/*
-+		 * This can't be called if any interfaces exist, so no worry
-+		 * about shutting down the interfaces.
-+		 */
- 
--	driver_unregister(&ipmidriver.driver);
-+		/*
-+		 * Tell the timer to stop, then wait for it to stop.  This
-+		 * avoids problems with race conditions removing the timer
-+		 * here.
-+		 */
-+		atomic_inc(&stop_operation);
-+		del_timer_sync(&ipmi_timer);
- 
--	initialized = 0;
-+		initialized = false;
- 
--	/* Check for buffer leaks. */
--	count = atomic_read(&smi_msg_inuse_count);
--	if (count != 0)
--		pr_warn(PFX "SMI message count %d at exit\n", count);
--	count = atomic_read(&recv_msg_inuse_count);
--	if (count != 0)
--		pr_warn(PFX "recv message count %d at exit\n", count);
-+		/* Check for buffer leaks. */
-+		count = atomic_read(&smi_msg_inuse_count);
-+		if (count != 0)
-+			pr_warn(PFX "SMI message count %d at exit\n", count);
-+		count = atomic_read(&recv_msg_inuse_count);
-+		if (count != 0)
-+			pr_warn(PFX "recv message count %d at exit\n", count);
-+		cleanup_srcu_struct(&ipmi_interfaces_srcu);
-+	}
-+	if (drvregistered)
-+		driver_unregister(&ipmidriver.driver);
- }
- module_exit(cleanup_ipmi);
- 
+ 	nvec = CGX_NVEC;
+@@ -693,6 +693,8 @@ static int cgx_probe(struct pci_dev *pde
+ err_release_lmac:
+ 	cgx_lmac_exit(cgx);
+ 	list_del(&cgx->cgx_list);
++err_free_irq_vectors:
++	pci_free_irq_vectors(pdev);
+ err_release_regions:
+ 	pci_release_regions(pdev);
+ err_disable_device:
 
 
