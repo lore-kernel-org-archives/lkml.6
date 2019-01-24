@@ -6,67 +6,68 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E68DC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1792BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:06:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16781218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:06:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D68AC2082C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:06:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dPyeg2EV"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CS7kgrUH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729236AbfAXSGM (ORCPT
+        id S1729262AbfAXSGo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:06:12 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:51926 "EHLO
+        Thu, 24 Jan 2019 13:06:44 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37466 "EHLO
         mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727919AbfAXSGL (ORCPT
+        with ESMTP id S1727919AbfAXSGn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:06:11 -0500
-Received: by mail-wm1-f66.google.com with SMTP id b11so4184332wmj.1;
-        Thu, 24 Jan 2019 10:06:09 -0800 (PST)
+        Thu, 24 Jan 2019 13:06:43 -0500
+Received: by mail-wm1-f66.google.com with SMTP id g67so4060585wmd.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 10:06:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=fzySAr5RT4bnc+X0cIqdAC5wUwa0PpgnGMBYPkgYA/4=;
-        b=dPyeg2EVQTinioQfR/mLB8s01tLSf+kTCNj+8NP7Xt8ebWj/QGwtjSEYpBwp1knC6e
-         0xUiDhYlsRpxbGPoqxBV75Gx5UnrTOxiWvCrTWe0JtuvtBO92ksYqYUw3JyaUHGf5KPE
-         ZXCoGQQStwygaTEqlJS0U4J+iSznzTjSoNcaEDNSbLhsabJgMFgjmOT6zsfFJQuvKYd1
-         18laPsC0NTnbT6Kwlr/RY+06B7QBy9IB60ljzLm+guFWN4bsDrzt3ntmbLMDgRceZmNt
-         i76Cw/4tpiVeEG/6B8gs5UzpaVjXkMN6UQa6SzUU42Z5iIqhL922DLmGUw8NTRuhl9C2
-         +k3A==
+        bh=h10FJU/LDKIiygA4ZR/kepjWUNDP2RdpzJ7y01UnlpM=;
+        b=CS7kgrUHY4rmjQNIS2zazMNxwB/8WmpADn724tbFQ8wxv3RAVbINlyVXewjEKCGFNR
+         99k2Qywh5xZv7cTP+XO1a86WGjFm/yp9nIkLnem+rkTP64xKrVx2VYScOWf7mIR3RNb6
+         dSubqsY06Jl8WsTKQpM0cvhbroO8/cBMXkeLvN3qap4BVdmOHMRehb/WSgAQmgCBjVKa
+         EpVgIU0w+dkf3ICQ7/IlnTkzxKWPlxhkm/5RablWVBudm0l975mWcoAeWhR8HbHSk4VC
+         QxAg8NaoeJqF6T/scCmTk26qmZez8ZZP96FnGyFKxYGKOBDc4zrOp71MX73SirUEHFRn
+         m/GQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :mime-version:content-transfer-encoding;
-        bh=fzySAr5RT4bnc+X0cIqdAC5wUwa0PpgnGMBYPkgYA/4=;
-        b=KK+JJXb6CzDi7KdR0iQ2TpNV3+4de9/0ObEQSGAaht0xis1CV+JbyYMCwvuC2tPLWG
-         i5DiHtvtLb6B9a07SQEcSqYk0efcHg+ZftmSLsBINUSXe9q4KMNTLiWKTRZbQ57h3e88
-         QwLlukV0l9e3ALHSLY2QNQMFx2CSX7scvqrnsrcYSW6vlrJ8KLPSKcnfPVjjpv+wNX8I
-         H82B78qL/BiSlqLgMWU8SQmDqhpx9t2GWLHA64pf1Z2DVwDKLcYGZ6Hsm+ZfrDbDVW89
-         n/W1AGkjMEEuWDxjqQbrjJXrlUMUKAB1kptjr6ZbGMQfXgXtHx8zwH1bMa8D4kqAA3HX
-         1IPw==
-X-Gm-Message-State: AJcUukf6YHTD+1P4EuIY6O/RAFLGU3Vu6pD4yIMAcCbeRM++BEZgHwvz
-        ++1HwZTKk1K482zuPrtJLe8=
-X-Google-Smtp-Source: ALg8bN77KcK4bSCuWNqKuz/e5P9VrDnsCT0Lu79tQgIkxqQH9Z6Y4v8kU/UQYdT9SvY8HsnbuLqWtg==
-X-Received: by 2002:a1c:7706:: with SMTP id t6mr3500992wmi.57.1548353169107;
-        Thu, 24 Jan 2019 10:06:09 -0800 (PST)
+        bh=h10FJU/LDKIiygA4ZR/kepjWUNDP2RdpzJ7y01UnlpM=;
+        b=lI65P/XaOwUCSKTEAHLBZwC+TWyUjfYqOjLDOZvO4epY0gpSmEXqbRPVnhib32bHVi
+         KhDqKcza7M/iqNxtOhgE4xp6cvu3zqD8Op52uMtCs3bm/vHfF45z2VLEw9xFUAD8VrB0
+         ZJpiSkFF8umlJH4WrFlawQ/kP9ArYcqBzXt/n40p+XV6G7hmPSITRdWIXchwh8xxNOaZ
+         vO4LIUHIFh6YUSF8oYbDHYmFl9eqs9381IdSpVXYufCYUcx7HFQjhG83ageYDllnuomT
+         J0vUEiymJLDI1FyLCJm8bufItMDnHHauXhhHctBmJskXh4sM6BJga7bosLxPBg75VGRL
+         HeRQ==
+X-Gm-Message-State: AJcUukceqnZlV2v7yijU66+aUhfQTmjGWJDD4//ITyJfHBujuHJ01k4L
+        J+kbAbes182tYpi4BOvLK3M=
+X-Google-Smtp-Source: ALg8bN6MBUARb5An6fav7kpfx1zpshf52hX3zwluDRLTRw9JJRUdgiRHQ97SuzvpE9tT8Uu23qn6Mg==
+X-Received: by 2002:a1c:7306:: with SMTP id d6mr3582126wmb.98.1548353201537;
+        Thu, 24 Jan 2019 10:06:41 -0800 (PST)
 Received: from macbookpro.malat.net (bru31-1-78-225-224-134.fbx.proxad.net. [78.225.224.134])
-        by smtp.gmail.com with ESMTPSA id f10sm25380660wmb.35.2019.01.24.10.06.08
+        by smtp.gmail.com with ESMTPSA id m15sm86331564wrr.95.2019.01.24.10.06.40
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 10:06:08 -0800 (PST)
+        Thu, 24 Jan 2019 10:06:40 -0800 (PST)
 Received: by macbookpro.malat.net (Postfix, from userid 1000)
-        id 277A71143573; Thu, 24 Jan 2019 19:06:07 +0100 (CET)
+        id 3A6B71143573; Thu, 24 Jan 2019 19:06:39 +0100 (CET)
 From:   Mathieu Malaterre <malat@debian.org>
-To:     Johannes Berg <johannes@sipsolutions.net>
+To:     Mark Brown <broonie@kernel.org>
 Cc:     Mathieu Malaterre <malat@debian.org>,
-        Johannes Berg <johannes.berg@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org,
+        Dimitris Papastamos <dp@opensource.wolfsonmicro.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH] mac80211: Remove attribute packed from struct 'action'
-Date:   Thu, 24 Jan 2019 19:05:35 +0100
-Message-Id: <20190124180535.20216-1-malat@debian.org>
+Subject: [PATCH] regmap: Remove attribute packed from struct 'regcache_rbtree_node'
+Date:   Thu, 24 Jan 2019 19:06:24 +0100
+Message-Id: <20190124180624.20557-1-malat@debian.org>
 X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -75,58 +76,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During refactor in commit 9e478066eae4 ("mac80211: fix MU-MIMO
-follow-MAC mode") a new struct 'action' was declared with packed
-attribute as:
-
-  struct {
-          struct ieee80211_hdr_3addr hdr;
-          u8 category;
-          u8 action_code;
-  } __packed action;
-
-But since struct 'ieee80211_hdr_3addr' is declared with an aligned
-keyword as:
-
-  struct ieee80211_hdr {
-  	__le16 frame_control;
-  	__le16 duration_id;
-  	u8 addr1[ETH_ALEN];
-  	u8 addr2[ETH_ALEN];
-  	u8 addr3[ETH_ALEN];
-  	__le16 seq_ctrl;
-  	u8 addr4[ETH_ALEN];
-  } __packed __aligned(2);
+On one hand commit 28644c809f44 ("regmap: Add the rbtree cache support")
+added 'regcache_rbtree_node' as packed structure, while on the other hand
+commit e977145aeaad ("[RBTREE] Add explicit alignment to sizeof(long)
+for struct rb_node.") declared struct 'rb_node' as aligned.
 
 Solve the ambiguity of placing aligned structure in a packed one by
 removing the packed attribute from struct. This seems to be the behavior
-of gcc anyway, since the following is still compiling:
-
-  BUILD_BUG_ON(sizeof(action) != IEEE80211_MIN_ACTION_SIZE + 1);
+of gcc anyway.
 
 This removes the following warning (W=1):
 
-  net/mac80211/rx.c:234:2: warning: alignment 1 of 'struct <anonymous>' is less than 2 [-Wpacked-not-aligned]
+  drivers/base/regmap/regcache-rbtree.c:36:1: warning: alignment 1 of 'struct regcache_rbtree_node' is less than 4 [-Wpacked-not-aligned]
 
-Cc: Johannes Berg <johannes.berg@intel.com>
+Cc: Dimitris Papastamos <dp@opensource.wolfsonmicro.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
 Signed-off-by: Mathieu Malaterre <malat@debian.org>
 ---
- net/mac80211/rx.c | 2 +-
+ drivers/base/regmap/regcache-rbtree.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 45aad3d3108c..709359650149 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -231,7 +231,7 @@ static void ieee80211_handle_mu_mimo_mon(struct ieee80211_sub_if_data *sdata,
- 		struct ieee80211_hdr_3addr hdr;
- 		u8 category;
- 		u8 action_code;
--	} __packed action;
-+	} action;
+diff --git a/drivers/base/regmap/regcache-rbtree.c b/drivers/base/regmap/regcache-rbtree.c
+index 2e8f0144f9ab..9cbb4b0cd01b 100644
+--- a/drivers/base/regmap/regcache-rbtree.c
++++ b/drivers/base/regmap/regcache-rbtree.c
+@@ -33,7 +33,7 @@ struct regcache_rbtree_node {
+ 	unsigned int blklen;
+ 	/* the actual rbtree node holding this block */
+ 	struct rb_node node;
+-} __attribute__ ((packed));
++};
  
- 	if (!sdata)
- 		return;
+ struct regcache_rbtree_ctx {
+ 	struct rb_root root;
 -- 
 2.19.2
 
