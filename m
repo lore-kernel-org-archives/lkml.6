@@ -2,151 +2,77 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71BC1C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4948C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:42:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C1BA21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:41:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="5QwRa3Gt"
+	by mail.kernel.org (Postfix) with ESMTP id A0CA4218C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:42:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548351757;
+	bh=Ny57Pd+6hDS11hFAY+DHm8+kgWx38C3y5WyiA8xVhh4=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=v5vbXWCOdYdUagHb6oWeCKnQMWYAFJpKPjUP9FmIV6BYVnn7HyPvpvpAZux/IfnJF
+	 8v3V/IhtbgJ+zFi9MXG2FMPknQP6e70HS0aonNiCYmqxYlo8ymUhq9CWAQtGvC8VUg
+	 2cJ92Hwusaf2ZesJnN8c5D7scALCP5UU4mNmbpeI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729027AbfAXRlX (ORCPT
+        id S1729112AbfAXRmg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:41:23 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:41046 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728650AbfAXRlX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:41:23 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0OHXWi5185043;
-        Thu, 24 Jan 2019 17:41:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=content-type :
- mime-version : subject : from : in-reply-to : date : cc :
- content-transfer-encoding : message-id : references : to;
- s=corp-2018-07-02; bh=k3ume3oPMucZxc50uD1wUaUMiTZP8hd8oaIq8gz7DDQ=;
- b=5QwRa3GtCNxeGgwRB0yxAIF7T8hQ4hoPsNxEY53NDD/SBp/BE3q1j/C6r/EG9pTdsnd2
- OwtuBkeJdzoIllbv02leX8mHq1MmsqN0AKMcJKhQx3TBnHnXkzHCisHuzcQvI8v9/Ibj
- xppQPR/mQnhuqL4omQBnY0+bG6q/oehupEOQqLmLO0P1IG+p1Ku7pr7ZNKXkGmH911OL
- Q+J9xCrtNzF2tQ5J5sBVI7hHigiLfU9OY78QjXQDrnPLOaVljIDNnYLxwTTMfeotlCv9
- a5Qsau+/bMWW7NAe5j4IsdFacCYQ+nh7/NHyi08up5TQbd2giIkBbUhWr++puPvxn83d gA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2q3vhs167k-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Jan 2019 17:41:18 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0OHfD3o023603
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 24 Jan 2019 17:41:13 GMT
-Received: from abhmp0004.oracle.com (abhmp0004.oracle.com [141.146.116.10])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0OHfDZB022725;
-        Thu, 24 Jan 2019 17:41:13 GMT
-Received: from [192.168.14.112] (/109.67.235.233)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Thu, 24 Jan 2019 09:41:12 -0800
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 11.1 \(3445.4.7\))
-Subject: Re: [PATCH] x86/kvm/hyper-v: tweak HYPERV_CPUID_ENLIGHTMENT_INFO
-From:   Liran Alon <liran.alon@oracle.com>
-In-Reply-To: <8736pigdkm.fsf@vitty.brq.redhat.com>
-Date:   Thu, 24 Jan 2019 19:41:08 +0200
-Cc:     kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
-        =?utf-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
-        linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <3CBF9845-3A41-4FB2-91A0-CD3D56614D9C@oracle.com>
-References: <20190124171516.23626-1-vkuznets@redhat.com>
- <805B7B08-734E-4A96-AF98-D33065C59105@oracle.com>
- <8736pigdkm.fsf@vitty.brq.redhat.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-X-Mailer: Apple Mail (2.3445.4.7)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9146 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901240123
+        Thu, 24 Jan 2019 12:42:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60804 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728300AbfAXRmf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 12:42:35 -0500
+Received: from [10.84.151.11] (unknown [167.220.149.11])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 468D821855;
+        Thu, 24 Jan 2019 17:42:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548351755;
+        bh=Ny57Pd+6hDS11hFAY+DHm8+kgWx38C3y5WyiA8xVhh4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=kFPDH/W96Z3PIob5J/eCb/tF2izeAZAHaJDjhK5S7+Bd13bsMcFnJ+luoQdFFlrGx
+         H0woERZA8tjsN9HJAYtTMwFHeHQcAKudzY0gWh6K3q1tmUI5NM/O9mYg4UCU/d5uui
+         YhMFJg6nwJqNt0uotqGF2qRK3Y7tlaFDkdAibB2U=
+Subject: Re: [for next][PATCH 2/2] x86/Kconfig: Select PCI_LOCKLESS_CONFIG if
+ PCI is enabled
+To:     "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc:     linux-next@vger.kernel.org, linux-acpi@vger.kernel.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+References: <20190121231958.28255-1-okaya@kernel.org>
+ <20190121231958.28255-2-okaya@kernel.org>
+ <37767989.Gns3VtERSa@aspire.rjw.lan>
+From:   Sinan Kaya <okaya@kernel.org>
+Message-ID: <cd9774f9-ba35-23ae-7083-6645c7a526c7@kernel.org>
+Date:   Thu, 24 Jan 2019 12:42:32 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <37767989.Gns3VtERSa@aspire.rjw.lan>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 1/24/2019 5:51 AM, Rafael J. Wysocki wrote:
+>>
+> Is anyone taking this or should I?
+> 
+> 
+> 
 
+This got applied:
 
-> On 24 Jan 2019, at 19:39, Vitaly Kuznetsov <vkuznets@redhat.com> =
-wrote:
->=20
-> Liran Alon <liran.alon@oracle.com> writes:
->=20
->>> On 24 Jan 2019, at 19:15, Vitaly Kuznetsov <vkuznets@redhat.com> =
-wrote:
->>>=20
->>> We shouldn't probably be suggesting using Enlightened VMCS when it's =
-not
->>> enabled (not supported from guest's point of view). System reset =
-through
->>> synthetic MSR is not recommended neither by genuine Hyper-V nor my =
-QEMU.
->>>=20
->>> Windows seems to be fine either way but let's be consistent.
->>>=20
->>> Fixes: 2bc39970e932 ("x86/kvm/hyper-v: Introduce =
-KVM_GET_SUPPORTED_HV_CPUID")
->>> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
->>> ---
->>> arch/x86/kvm/hyperv.c | 4 ++--
->>> 1 file changed, 2 insertions(+), 2 deletions(-)
->>>=20
->>> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
->>> index ac44a681f065..4730fcaa70cf 100644
->>> --- a/arch/x86/kvm/hyperv.c
->>> +++ b/arch/x86/kvm/hyperv.c
->>> @@ -1847,11 +1847,11 @@ int kvm_vcpu_ioctl_get_hv_cpuid(struct =
-kvm_vcpu *vcpu, struct kvm_cpuid2 *cpuid,
->>> 		case HYPERV_CPUID_ENLIGHTMENT_INFO:
->>> 			ent->eax |=3D =
-HV_X64_REMOTE_TLB_FLUSH_RECOMMENDED;
->>> 			ent->eax |=3D HV_X64_APIC_ACCESS_RECOMMENDED;
->>> -			ent->eax |=3D HV_X64_SYSTEM_RESET_RECOMMENDED;
->>> 			ent->eax |=3D HV_X64_RELAXED_TIMING_RECOMMENDED;
->>> 			ent->eax |=3D HV_X64_CLUSTER_IPI_RECOMMENDED;
->>> 			ent->eax |=3D =
-HV_X64_EX_PROCESSOR_MASKS_RECOMMENDED;
->>> -			ent->eax |=3D =
-HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
->>> +			if (evmcs_ver)
->>> +				ent->eax |=3D =
-HV_X64_ENLIGHTENED_VMCS_RECOMMENDED;
->>>=20
->>> 			/*
->>> 			 * Default number of spinlock retry attempts, =
-matches
->>> --=20
->>> 2.20.1
->>>=20
->>=20
->> Seems to me that there are 2 unrelated separated patches here. Why =
-not
->> split them?
->=20
-> They seem to be too small :-) No problem, I'll split them up in v2.
-
-I don=E2=80=99t think in general that it matters how small they are.
-Separating to small logical patches allows better bisect, easier review =
-and better revert resolution. So better overall. :)
-
->=20
->> For content itself: Reviewed-by: Liran Alon <liran.alon@oracle.com>
->>=20
->=20
-> Thanks!
->=20
-> --=20
-> Vitaly
-
+https://git.kernel.org/tip/625210cfa6c0c26ea422f655bf68288176f174e6
