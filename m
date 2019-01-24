@@ -2,69 +2,42 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14A5AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:45:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E9EAC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:50:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8D40218AD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:45:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bjAWQyMy"
+	by mail.kernel.org (Postfix) with ESMTP id 66993217D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 12:50:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727960AbfAXMpg (ORCPT
+        id S1727749AbfAXMu0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 07:45:36 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:38659 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726014AbfAXMpd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 07:45:33 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a8so4196829lfk.5
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 04:45:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UVf1u1bMHpoQIEvtOx2yyfgG4CbBfs3I9VI/LP9BasM=;
-        b=bjAWQyMyAn4VcBFh3wcFsgaOuywUkYHSu+LoBoWC6LnnptyHWwOTjy85Wylo58m41f
-         mI7kQiZrLwkDfi/aCeBK6+xdHEuVV3/EAql3T6gQnfwQCEhzuh/IrpivSYgJ6WuuWneO
-         yKvBs2ZRoHjkh9mq5WqYePo/Z9UEZWXA910yE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=UVf1u1bMHpoQIEvtOx2yyfgG4CbBfs3I9VI/LP9BasM=;
-        b=dulLC4QTtOL8i8PzD7V6JE61Al+rFWbLbJtrGCJLgTtobs3Vxo9YpqFRMcGMkJ9JXL
-         1S7Vyt2MCS6GKoD/oPRm1pEQo8Wcmqk5hsN1/hoThXO+NIevBtURaIlqRF7mGkcBLHuf
-         afSC80L0ogfQgdQaACtiGvcD9AxnP+rMjRZxNqp7CA2wnDDzvetobUbHrCdiJXiTdsPF
-         lWnDytCQTds9YhVV2Hdyun8syGMexY43BlLgbC/oaIrBbRPZu7BDkUEjgqE/9SlzLv3p
-         dNWY2oN+cVBCLscUGoDn7rYtnZdl2+iqibON94CgDDVSPKmP313XDC5zKGY8EisJOSgf
-         plGA==
-X-Gm-Message-State: AJcUukduPqsuGEjVkipV2AHVL6+ZfIksWFE5G4vj04FAiOWegoWjYxDH
-        qb2Wv/gPR1s5IhDTGyof4rDr5g==
-X-Google-Smtp-Source: ALg8bN72gdOYskRBxuFW74QpFP+BwcW9A9OOAU82OK/2aOF8wvkVFH+ZsrPwU1esck/zIcj/v2AW1w==
-X-Received: by 2002:a19:3b45:: with SMTP id i66mr5415300lfa.28.1548333931532;
-        Thu, 24 Jan 2019 04:45:31 -0800 (PST)
-Received: from centauri.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id o14-v6sm982829lji.70.2019.01.24.04.45.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 04:45:30 -0800 (PST)
-From:   Niklas Cassel <niklas.cassel@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Niklas Cassel <niklas.cassel@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        Thu, 24 Jan 2019 07:50:26 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:37056 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726014AbfAXMu0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 07:50:26 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 3517520798; Thu, 24 Jan 2019 13:50:23 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B846920654;
+        Thu, 24 Jan 2019 13:50:22 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH RESEND] arm64: dts: msm8916: remove bogus argument to the cpu clock
-Date:   Thu, 24 Jan 2019 13:45:08 +0100
-Message-Id: <20190124124508.6541-1-niklas.cassel@linaro.org>
+Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Subject: [PATCH v2] Revert "media: cedrus: Allow using the current dst buffer as reference"
+Date:   Thu, 24 Jan 2019 13:49:45 +0100
+Message-Id: <20190124124945.25322-1-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -73,59 +46,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The apcs node has #clock-cells = <0>, which means that those who
-references it should specify 0 arguments.
+This reverts commit cf20ae1535eb690a87c29b9cc7af51881384e967.
 
-The apcs reference in the cpu node incorrectly specifies an argument,
-remove this bogus argument.
+The vb2_find_timestamp helper was modified to allow finding buffers
+regardless of their current state in the queue. This means that we
+no longer have to take particular care of references to the current
+capture buffer.
 
-Fixes: 65afdf458360 ("arm64: dts: qcom: msm8916: Add CPU frequency scaling support")
-Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/media/sunxi/cedrus/cedrus_dec.c   | 13 -------------
+ drivers/staging/media/sunxi/cedrus/cedrus_dec.h   |  2 --
+ drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c | 10 ++++------
+ 3 files changed, 4 insertions(+), 21 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index d302d8d639a1..e4bfd47178b1 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -111,7 +111,7 @@
- 			next-level-cache = <&L2_0>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SPC>;
--			clocks = <&apcs 0>;
-+			clocks = <&apcs>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>;
- 		};
-@@ -123,7 +123,7 @@
- 			next-level-cache = <&L2_0>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SPC>;
--			clocks = <&apcs 0>;
-+			clocks = <&apcs>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>;
- 		};
-@@ -135,7 +135,7 @@
- 			next-level-cache = <&L2_0>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SPC>;
--			clocks = <&apcs 0>;
-+			clocks = <&apcs>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>;
- 		};
-@@ -147,7 +147,7 @@
- 			next-level-cache = <&L2_0>;
- 			enable-method = "psci";
- 			cpu-idle-states = <&CPU_SPC>;
--			clocks = <&apcs 0>;
-+			clocks = <&apcs>;
- 			operating-points-v2 = <&cpu_opp_table>;
- 			#cooling-cells = <2>;
- 		};
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+index 2c295286766c..443fb037e1cf 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+@@ -22,19 +22,6 @@
+ #include "cedrus_dec.h"
+ #include "cedrus_hw.h"
+ 
+-int cedrus_reference_index_find(struct vb2_queue *queue,
+-				struct vb2_buffer *vb2_buf, u64 timestamp)
+-{
+-	/*
+-	 * Allow using the current capture buffer as reference, which can occur
+-	 * for field-coded pictures.
+-	 */
+-	if (vb2_buf->timestamp == timestamp)
+-		return vb2_buf->index;
+-	else
+-		return vb2_find_timestamp(queue, timestamp, 0);
+-}
+-
+ void cedrus_device_run(void *priv)
+ {
+ 	struct cedrus_ctx *ctx = priv;
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+index 8d0fc248220f..d1ae7903677b 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+@@ -16,8 +16,6 @@
+ #ifndef _CEDRUS_DEC_H_
+ #define _CEDRUS_DEC_H_
+ 
+-int cedrus_reference_index_find(struct vb2_queue *queue,
+-				struct vb2_buffer *vb2_buf, u64 timestamp);
+ void cedrus_device_run(void *priv);
+ 
+ #endif
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+index 81c66a8aa1ac..cb45fda9aaeb 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+@@ -10,7 +10,6 @@
+ #include <media/videobuf2-dma-contig.h>
+ 
+ #include "cedrus.h"
+-#include "cedrus_dec.h"
+ #include "cedrus_hw.h"
+ #include "cedrus_regs.h"
+ 
+@@ -160,8 +159,8 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+ 	cedrus_write(dev, VE_DEC_MPEG_PICBOUNDSIZE, reg);
+ 
+ 	/* Forward and backward prediction reference buffers. */
+-	forward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+-						  slice_params->forward_ref_ts);
++	forward_idx = vb2_find_timestamp(cap_q,
++					 slice_params->forward_ref_ts, 0);
+ 
+ 	fwd_luma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 0);
+ 	fwd_chroma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 1);
+@@ -169,9 +168,8 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+ 	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_LUMA_ADDR, fwd_luma_addr);
+ 	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_CHROMA_ADDR, fwd_chroma_addr);
+ 
+-	backward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+-						   slice_params->backward_ref_ts);
+-
++	backward_idx = vb2_find_timestamp(cap_q,
++					  slice_params->backward_ref_ts, 0);
+ 	bwd_luma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 0);
+ 	bwd_chroma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 1);
+ 
 -- 
-2.19.1
+2.20.1
 
