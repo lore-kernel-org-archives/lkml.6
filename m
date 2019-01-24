@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA7BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1655C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B9C120663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9111B20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359347;
-	bh=RALH6NGWe02Ci51V/cFc8rmlI791r5bMJRB8qTNn47c=;
+	s=default; t=1548359357;
+	bh=2ZsPHUaXym3MPjXKtlaQnhUw8BdmQ76Kiis1P+OCEnM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f7JwAZUy3sqlW3SRYMkz7Sxpad193jgzjqiyjQEey1fYWqdibtZN27I1+2bnSxcAQ
-	 rJhFuKqbMwyeZOmxWtEyBmdmO1eC6rJBm/u69O5WFRTatj/+PJfCCOT8JaBuFayAkG
-	 sdDj3Ymd/pVwWCHy0A4V4c3L6gZbhMB3dK1qc4GY=
+	b=0VDlOJ2LpkWLoGSDMN7Jt8N4t/MZ48gPgfC0gmlU0E/Tpq+2GdCN1P5a0eNb7pg2R
+	 fJq5qZkWHsvujQEM+sHuHgWPZA8SXp5h9KFYScOlQnSuVhfoT9NylZ8cu6ECfNuWED
+	 TFVNUutipJ9CA3T5NDs7eOU7Xgz332bpfzyWDkH0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732795AbfAXTlc (ORCPT
+        id S1732554AbfAXTtQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:41:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41764 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:49:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41598 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732286AbfAXTl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:41:27 -0500
+        id S1732866AbfAXTlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:41:19 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B804F218D0;
-        Thu, 24 Jan 2019 19:41:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6EE8120663;
+        Thu, 24 Jan 2019 19:41:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358887;
-        bh=RALH6NGWe02Ci51V/cFc8rmlI791r5bMJRB8qTNn47c=;
+        s=default; t=1548358877;
+        bh=2ZsPHUaXym3MPjXKtlaQnhUw8BdmQ76Kiis1P+OCEnM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=B0m0EDDzdUKDkI6h+CuJguUwXjiDIhwDh6ICK7wl8uOa1+cZ6e4svnHzpvxmitPwB
-         4bRNg905HWrEMaeoPXfMHWF9ZuD684SEIrjO/eyERv6poyne6t2Ik8YoUXAoIsjthj
-         NO0S4n5FjJ+UtiL2CxCmyXOQHKaT4lWnru6h846Y=
+        b=2SyJgUDcwhgBQkTE+5YvbUzdGgci6/v226v+hBz98OMmZ2kWNEZCjWeHAZ8iSoStH
+         2W1kazzkC/cADVX2WyuSGaR2CNt4+kEk5QZigpyv7NyT5IyYqu42xsOvIyTczy0MR4
+         ifXA9yaY96uQUCMRnPck7kqmWCEMBdPJcHvw+bO8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Suzuki Poulose <suzuki.poulose@arm.com>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Mike Leach <mike.leach@linaro.org>,
-        Robert Walker <robert.walker@arm.com>,
-        Leo Yan <leo.yan@linaro.org>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 061/127] coresight: tmc: Fix bad register address for CLAIM
-Date:   Thu, 24 Jan 2019 20:20:07 +0100
-Message-Id: <20190124190214.765290802@linuxfoundation.org>
+        stable@vger.kernel.org, Nick Desaulniers <ndesaulniers@google.com>,
+        Peter Smith <peter.smith@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 058/127] arm64: relocatable: fix inconsistencies in linker script and options
+Date:   Thu, 24 Jan 2019 20:20:04 +0100
+Message-Id: <20190124190214.648699474@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,90 +68,98 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 323ed1e0f60b35df55763356d4973a18d5eaea15 ]
+[ Upstream commit 3bbd3db86470c701091fb1d67f1fab6621debf50 ]
 
-Commit 4d3ebd3658d8 ("coreisght: tmc: Claim device before use") uses
-CLAIM tag to validate if the device is available, it needs to pass
-the device base address to access related registers.
+readelf complains about the section layout of vmlinux when building
+with CONFIG_RELOCATABLE=y (for KASLR):
 
-In the function tmc_etb_disable_hw() it wrongly passes the driver data
-pointer as register base address, thus it's easily to produce the kernel
-warning info like below:
+  readelf: Warning: [21]: Link field (0) should index a symtab section.
+  readelf: Warning: [21]: Info field (0) should index a relocatable section.
 
-[   83.579898] WARNING: CPU: 4 PID: 2970 at drivers/hwtracing/coresight/coresight.c:207 coresight_disclaim_device_unlocked+0x44/0x80
-[   83.591448] Modules linked in:
-[   83.594485] CPU: 4 PID: 2970 Comm: uname Not tainted 4.19.0-rc6-00417-g721b509 #110
-[   83.602067] Hardware name: ARM Juno development board (r2) (DT)
-[   83.607932] pstate: 80000085 (Nzcv daIf -PAN -UAO)
-[   83.612681] pc : coresight_disclaim_device_unlocked+0x44/0x80
-[   83.618375] lr : coresight_disclaim_device_unlocked+0x44/0x80
-[   83.624064] sp : ffff00000fe3ba20
-[   83.627347] x29: ffff00000fe3ba20 x28: ffff80002d430dc0
-[   83.632618] x27: ffff800033177c00 x26: ffff80002eb44480
-[   83.637889] x25: 0000000000000001 x24: ffff800033c72600
-[   83.643160] x23: ffff0000099b11f8 x22: ffff0000099b11c8
-[   83.648430] x21: 0000000000000002 x20: ffff800033a90418
-[   83.653701] x19: ffff0000099b11c8 x18: 0000000000000000
-[   83.658971] x17: 0000000000000000 x16: 0000000000000000
-[   83.664241] x15: 0000000000000000 x14: 0000000000000000
-[   83.669511] x13: 0000000000000000 x12: 0000000000000000
-[   83.674782] x11: 0000000000000000 x10: 0000000000000000
-[   83.680052] x9 : 0000000000000000 x8 : 0000000000000001
-[   83.685322] x7 : 0000000000010000 x6 : ffff800033ebab18
-[   83.690593] x5 : ffff800033ebab18 x4 : ffff800033e6c698
-[   83.695862] x3 : 0000000000000001 x2 : 0000000000000000
-[   83.701133] x1 : 0000000000000000 x0 : 0000000000000001
-[   83.706404] Call trace:
-[   83.708830]  coresight_disclaim_device_unlocked+0x44/0x80
-[   83.714180]  coresight_disclaim_device+0x34/0x48
-[   83.718756]  tmc_disable_etf_sink+0xc4/0xf0
-[   83.722902]  coresight_disable_path_from+0xc8/0x240
-[   83.727735]  coresight_disable_path+0x24/0x30
-[   83.732053]  etm_event_stop+0x130/0x170
-[   83.735854]  etm_event_del+0x24/0x30
-[   83.739399]  event_sched_out.isra.51+0xcc/0x1e8
-[   83.743887]  group_sched_out.part.53+0x44/0xb0
-[   83.748291]  ctx_sched_out+0x298/0x2b8
-[   83.752005]  task_ctx_sched_out+0x74/0xa8
-[   83.755980]  perf_event_exit_task+0x140/0x418
-[   83.760298]  do_exit+0x3f4/0xcf0
-[   83.763497]  do_group_exit+0x5c/0xc0
-[   83.767041]  __arm64_sys_exit_group+0x24/0x28
-[   83.771359]  el0_svc_common+0x110/0x178
-[   83.775160]  el0_svc_handler+0x94/0xe8
-[   83.778875]  el0_svc+0x8/0xc
-[   83.781728] ---[ end trace 02d8d8eac46db9e5 ]---
+Also, it seems that our use of '-pie -shared' is contradictory, and
+thus ambiguous. In general, the way KASLR is wired up at the moment
+is highly tailored to how ld.bfd happens to implement (and conflate)
+PIE executables and shared libraries, so given the current effort to
+support other toolchains, let's fix some of these issues as well.
 
-This patch is to fix this bug by using 'drvdata->base' as the
-register base address for CLAIM related operation.
+- Drop the -pie linker argument and just leave -shared. In ld.bfd,
+  the differences between them are unclear (except for the ELF type
+  of the produced image [0]) but lld chokes on seeing both at the
+  same time.
 
-Fixes: 4d3ebd3658d8 ("coreisght: tmc: Claim device before use")
-Cc: Suzuki Poulose <suzuki.poulose@arm.com>
-Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: Mike Leach <mike.leach@linaro.org>
-Cc: Robert Walker <robert.walker@arm.com>
-Signed-off-by: Leo Yan <leo.yan@linaro.org>
-Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+- Rename the .rela output section to .rela.dyn, as is customary for
+  shared libraries and PIE executables, so that it is not misidentified
+  by readelf as a static relocation section (producing the warnings
+  above).
+
+- Pass the -z notext and -z norelro options to explicitly instruct the
+  linker to permit text relocations, and to omit the RELRO program
+  header (which requires a certain section layout that we don't adhere
+  to in the kernel). These are the defaults for current versions of
+  ld.bfd.
+
+- Discard .eh_frame and .gnu.hash sections to avoid them from being
+  emitted between .head.text and .text, screwing up the section layout.
+
+These changes only affect the ELF image, and produce the same binary
+image.
+
+[0] b9dce7f1ba01 ("arm64: kernel: force ET_DYN ELF type for ...")
+
+Cc: Nick Desaulniers <ndesaulniers@google.com>
+Cc: Peter Smith <peter.smith@linaro.org>
+Tested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwtracing/coresight/coresight-tmc-etf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/Makefile             | 2 +-
+ arch/arm64/kernel/vmlinux.lds.S | 9 +++++----
+ 2 files changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-index 53fc83b72a49..5864ac55e275 100644
---- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
-+++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
-@@ -86,7 +86,7 @@ static void __tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
+diff --git a/arch/arm64/Makefile b/arch/arm64/Makefile
+index 6cb9fc7e9382..8978f60779c4 100644
+--- a/arch/arm64/Makefile
++++ b/arch/arm64/Makefile
+@@ -18,7 +18,7 @@ ifeq ($(CONFIG_RELOCATABLE), y)
+ # Pass --no-apply-dynamic-relocs to restore pre-binutils-2.27 behaviour
+ # for relative relocs, since this leads to better Image compression
+ # with the relocation offsets always being zero.
+-LDFLAGS_vmlinux		+= -pie -shared -Bsymbolic \
++LDFLAGS_vmlinux		+= -shared -Bsymbolic -z notext -z norelro \
+ 			$(call ld-option, --no-apply-dynamic-relocs)
+ endif
  
- static void tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
- {
--	coresight_disclaim_device(drvdata);
-+	coresight_disclaim_device(drvdata->base);
- 	__tmc_etb_disable_hw(drvdata);
- }
+diff --git a/arch/arm64/kernel/vmlinux.lds.S b/arch/arm64/kernel/vmlinux.lds.S
+index 03b00007553d..7fa008374907 100644
+--- a/arch/arm64/kernel/vmlinux.lds.S
++++ b/arch/arm64/kernel/vmlinux.lds.S
+@@ -99,7 +99,8 @@ SECTIONS
+ 		*(.discard)
+ 		*(.discard.*)
+ 		*(.interp .dynamic)
+-		*(.dynsym .dynstr .hash)
++		*(.dynsym .dynstr .hash .gnu.hash)
++		*(.eh_frame)
+ 	}
  
+ 	. = KIMAGE_VADDR + TEXT_OFFSET;
+@@ -192,12 +193,12 @@ SECTIONS
+ 
+ 	PERCPU_SECTION(L1_CACHE_BYTES)
+ 
+-	.rela : ALIGN(8) {
++	.rela.dyn : ALIGN(8) {
+ 		*(.rela .rela*)
+ 	}
+ 
+-	__rela_offset	= ABSOLUTE(ADDR(.rela) - KIMAGE_VADDR);
+-	__rela_size	= SIZEOF(.rela);
++	__rela_offset	= ABSOLUTE(ADDR(.rela.dyn) - KIMAGE_VADDR);
++	__rela_size	= SIZEOF(.rela.dyn);
+ 
+ 	. = ALIGN(SEGMENT_ALIGN);
+ 	__initdata_end = .;
 -- 
 2.19.1
 
