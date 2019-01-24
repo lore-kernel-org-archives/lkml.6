@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87BE6C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:21:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA02CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:21:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5314C218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:21:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B034218D3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357710;
-	bh=gCc16URaJbATQGp8LMNcfi7Ov4iIQY0LK0flg5uKtVM=;
+	s=default; t=1548357714;
+	bh=+05Nbiekxv0icwZNsWa4FCGdcWSwz4Q8VFkeX/vzrus=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hLfx0ue99vV4TYOWjVHet5xMG+eaGLQHHRm5pDQfO2PuAhkR4GhwSrRTbGkFHWrBw
-	 BpoGLkeUUZPPZ+CQSDTKb2GmBW7mQnlTCF9mTK+V5Eo9kOL6uE2yzXD1DjR4sRBoRb
-	 IpBpRqa0b/WuVVHrcTc6Pu2brZ+4kCE0BTlU64Zw=
+	b=vMztdKcfc4UknDQBIb7xf93Ylg5aSyq/BJyA0/AQyZbRGFwl0MzF+aWfDDbtYZkQ+
+	 pWslcVhtxW2O0DzjZ9O5W0E6J5yI3NFoyluSyqHH7ia5iaxO/b7TO7lNXGadwrqJKn
+	 1OxtL/tyNZl2L5YYWnFnZ5aIU4XX81WRYCo9k6sA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729279AbfAXTVs (ORCPT
+        id S1729319AbfAXTVw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:21:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46134 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:21:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46216 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728947AbfAXTVq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:21:46 -0500
+        id S1728947AbfAXTVu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:21:50 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80342218D0;
-        Thu, 24 Jan 2019 19:21:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA775218D2;
+        Thu, 24 Jan 2019 19:21:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357705;
-        bh=gCc16URaJbATQGp8LMNcfi7Ov4iIQY0LK0flg5uKtVM=;
+        s=default; t=1548357709;
+        bh=+05Nbiekxv0icwZNsWa4FCGdcWSwz4Q8VFkeX/vzrus=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1nUGndONI4Ylw1ArIr/zrif6O9fJxtcGpENtduCzQLMk3EEpmVDkmzWm8gVheWNgI
-         8QakOhYKFsldDKMOt8Rnz65EYN3IOc/P5NNHffHLcCCDHXMZFgnPHKBoyYgFDAOzrk
-         L5b3Xyzo3H7i4vzjvJt7+SyqVbhaglNYGuUQp8G8=
+        b=NphKX65ZvvRM7jJwo5P45irYcJMG0hpta6CRPJqeYNfMu6BlNE6elz4ZLRnYlj1hF
+         McOMLPiuecKL5Mukat3agIUQ9Q+uIlm4plPszSAcFxm52C76MJAtz20+OOOBHRQPIV
+         PA+M/PX6imWCpgC9dzhJWwDz3wG20Sf3mKxKhXUM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jiri Slaby <jslaby@suse.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel test robot <rong.a.chen@intel.com>,
-        Dmitry Safonov <dima@arista.com>
-Subject: [PATCH 3.18 12/52] tty/ldsem: Wake up readers after timed out down_write()
-Date:   Thu, 24 Jan 2019 20:19:36 +0100
-Message-Id: <20190124190143.008345547@linuxfoundation.org>
+        stable@vger.kernel.org, Muyu Yu <ieatmuttonchuan@gmail.com>,
+        Marcus Meissner <meissner@suse.de>,
+        Michal Kubecek <mkubecek@suse.cz>,
+        Oliver Hartkopp <socketcan@hartkopp.net>,
+        Marc Kleine-Budde <mkl@pengutronix.de>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 3.18 13/52] can: gw: ensure DLC boundaries after CAN frame modification
+Date:   Thu, 24 Jan 2019 20:19:37 +0100
+Message-Id: <20190124190143.198472146@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -67,58 +69,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dmitry Safonov <dima@arista.com>
+From: Oliver Hartkopp <socketcan@hartkopp.net>
 
-commit 231f8fd0cca078bd4396dd7e380db813ac5736e2 upstream.
+commit 0aaa81377c5a01f686bcdb8c7a6929a7bf330c68 upstream.
 
-ldsem_down_read() will sleep if there is pending writer in the queue.
-If the writer times out, readers in the queue should be woken up,
-otherwise they may miss a chance to acquire the semaphore until the last
-active reader will do ldsem_up_read().
+Muyu Yu provided a POC where user root with CAP_NET_ADMIN can create a CAN
+frame modification rule that makes the data length code a higher value than
+the available CAN frame data size. In combination with a configured checksum
+calculation where the result is stored relatively to the end of the data
+(e.g. cgw_csum_xor_rel) the tail of the skb (e.g. frag_list pointer in
+skb_shared_info) can be rewritten which finally can cause a system crash.
 
-There was a couple of reports where there was one active reader and
-other readers soft locked up:
-  Showing all locks held in the system:
-  2 locks held by khungtaskd/17:
-   #0:  (rcu_read_lock){......}, at: watchdog+0x124/0x6d1
-   #1:  (tasklist_lock){.+.+..}, at: debug_show_all_locks+0x72/0x2d3
-  2 locks held by askfirst/123:
-   #0:  (&tty->ldisc_sem){.+.+.+}, at: ldsem_down_read+0x46/0x58
-   #1:  (&ldata->atomic_read_lock){+.+...}, at: n_tty_read+0x115/0xbe4
+Michael Kubecek suggested to drop frames that have a DLC exceeding the
+available space after the modification process and provided a patch that can
+handle CAN FD frames too. Within this patch we also limit the length for the
+checksum calculations to the maximum of Classic CAN data length (8).
 
-Prevent readers wait for active readers to release ldisc semaphore.
+CAN frames that are dropped by these additional checks are counted with the
+CGW_DELETED counter which indicates misconfigurations in can-gw rules.
 
-Link: lkml.kernel.org/r/20171121132855.ajdv4k6swzhvktl6@wfg-t540p.sh.intel.com
-Link: lkml.kernel.org/r/20180907045041.GF1110@shao2-debian
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: stable@vger.kernel.org
-Reported-by: kernel test robot <rong.a.chen@intel.com>
-Signed-off-by: Dmitry Safonov <dima@arista.com>
+This fixes CVE-2019-3701.
+
+Reported-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Reported-by: Marcus Meissner <meissner@suse.de>
+Suggested-by: Michal Kubecek <mkubecek@suse.cz>
+Tested-by: Muyu Yu <ieatmuttonchuan@gmail.com>
+Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
+Cc: linux-stable <stable@vger.kernel.org> # >= v3.2
+Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- drivers/tty/tty_ldsem.c |   10 ++++++++++
- 1 file changed, 10 insertions(+)
+ net/can/gw.c |   30 +++++++++++++++++++++++++++---
+ 1 file changed, 27 insertions(+), 3 deletions(-)
 
---- a/drivers/tty/tty_ldsem.c
-+++ b/drivers/tty/tty_ldsem.c
-@@ -306,6 +306,16 @@ down_write_failed(struct ld_semaphore *s
- 	if (!locked)
- 		ldsem_atomic_update(-LDSEM_WAIT_BIAS, sem);
- 	list_del(&waiter.list);
-+
-+	/*
-+	 * In case of timeout, wake up every reader who gave the right of way
-+	 * to writer. Prevent separation readers into two groups:
-+	 * one that helds semaphore and another that sleeps.
-+	 * (in case of no contention with a writer)
-+	 */
-+	if (!locked && list_empty(&sem->write_wait))
-+		__ldsem_wake_readers(sem);
-+
- 	raw_spin_unlock_irq(&sem->wait_lock);
+--- a/net/can/gw.c
++++ b/net/can/gw.c
+@@ -417,13 +417,29 @@ static void can_can_gw_rcv(struct sk_buf
+ 	while (modidx < MAX_MODFUNCTIONS && gwj->mod.modfunc[modidx])
+ 		(*gwj->mod.modfunc[modidx++])(cf, &gwj->mod);
  
- 	__set_task_state(tsk, TASK_RUNNING);
+-	/* check for checksum updates when the CAN frame has been modified */
++	/* Has the CAN frame been modified? */
+ 	if (modidx) {
+-		if (gwj->mod.csumfunc.crc8)
++		/* get available space for the processed CAN frame type */
++		int max_len = nskb->len - offsetof(struct can_frame, data);
++
++		/* dlc may have changed, make sure it fits to the CAN frame */
++		if (cf->can_dlc > max_len)
++			goto out_delete;
++
++		/* check for checksum updates in classic CAN length only */
++		if (gwj->mod.csumfunc.crc8) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
++
+ 			(*gwj->mod.csumfunc.crc8)(cf, &gwj->mod.csum.crc8);
++		}
++
++		if (gwj->mod.csumfunc.xor) {
++			if (cf->can_dlc > 8)
++				goto out_delete;
+ 
+-		if (gwj->mod.csumfunc.xor)
+ 			(*gwj->mod.csumfunc.xor)(cf, &gwj->mod.csum.xor);
++		}
+ 	}
+ 
+ 	/* clear the skb timestamp if not configured the other way */
+@@ -435,6 +451,14 @@ static void can_can_gw_rcv(struct sk_buf
+ 		gwj->dropped_frames++;
+ 	else
+ 		gwj->handled_frames++;
++
++	return;
++
++ out_delete:
++	/* delete frame due to misconfiguration */
++	gwj->deleted_frames++;
++	kfree_skb(nskb);
++	return;
+ }
+ 
+ static inline int cgw_register_filter(struct cgw_job *gwj)
 
 
