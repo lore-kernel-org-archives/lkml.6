@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EBF9C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70235C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE27C2184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CF912184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:30:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="R7WNJlIV"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="qYV6/qqB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727588AbfAXIap (ORCPT
+        id S1727358AbfAXIav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:30:45 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:60098 "EHLO
+        Thu, 24 Jan 2019 03:30:51 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:60108 "EHLO
         fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726212AbfAXIan (ORCPT
+        with ESMTP id S1727572AbfAXIao (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:30:43 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0O8UaL6105748;
-        Thu, 24 Jan 2019 02:30:36 -0600
+        Thu, 24 Jan 2019 03:30:44 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0O8UdtK105758;
+        Thu, 24 Jan 2019 02:30:39 -0600
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548318636;
-        bh=7o28m+/NAIlkSFG9m4hVjE2FfGGUC44quTmybqP8VWs=;
+        s=ti-com-17Q1; t=1548318639;
+        bh=XnfyeGW1v4D2eDSHApIAzFhxoc97wNFzDGMLYwbE8AA=;
         h=From:To:CC:Subject:Date:In-Reply-To:References;
-        b=R7WNJlIVYjc//BqL/Cdm/8oIuvZ18miyLIyIHsP3fdBbejqVRBGsBls5m8YyDiZII
-         GzAocrFEM15EGSK/oz+YQhIyolVXGs5UGvdZr6iamVp/F4KtSXiZpquYTqrosA74qG
-         ebPjR5XyB9jlk0jfZ5RVNYGbBN7FjpfJNcFT4M0o=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0O8UZDJ121658
+        b=qYV6/qqBVU4mNSDUcDoz+6pw+Cka+Od55yRoNYrx3snR583MA18l9EVPck2w18Kuo
+         l1buNn7RUoBVggtsNPYBDDKr8hgR9zuoZsT009fCDesJELAVEtqYpKgwreg7Et6uCO
+         tyRL2ViwNfx5nDdzlHQYF9pimpNKi+fbt4XLs5hw=
+Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0O8UdIB127939
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Jan 2019 02:30:36 -0600
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+        Thu, 24 Jan 2019 02:30:39 -0600
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 24
- Jan 2019 02:30:35 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_0,
+ Jan 2019 02:30:38 -0600
+Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_0,
  cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 24 Jan 2019 02:30:35 -0600
+ Thu, 24 Jan 2019 02:30:39 -0600
 Received: from a0393678ub.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0O8UTbZ012320;
-        Thu, 24 Jan 2019 02:30:32 -0600
+        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0O8UTba012320;
+        Thu, 24 Jan 2019 02:30:36 -0600
 From:   Kishon Vijay Abraham I <kishon@ti.com>
 To:     Kishon Vijay Abraham I <kishon@ti.com>,
         Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
@@ -57,9 +57,9 @@ CC:     Bjorn Helgaas <bhelgaas@google.com>,
         <linux-omap@vger.kernel.org>, <linux-pci@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         Sekhar Nori <nsekhar@ti.com>
-Subject: [PATCH v3 1/3] dt-bindings: PCI: dra7xx: Add SoC specific compatible strings
-Date:   Thu, 24 Jan 2019 13:59:55 +0530
-Message-ID: <20190124082957.29077-2-kishon@ti.com>
+Subject: [PATCH v3 2/3] dt-bindings: PCI: dra7xx: Add properties to enable x2 lane in dra7
+Date:   Thu, 24 Jan 2019 13:59:56 +0530
+Message-ID: <20190124082957.29077-3-kishon@ti.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190124082957.29077-1-kishon@ti.com>
 References: <20190124082957.29077-1-kishon@ti.com>
@@ -71,36 +71,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add new compatible strings for dra74x SoC (also used by dra76x) and
-dra72x. This can be used to perform SoC specific configuration
-(like configuring PCIe in x2 lane mode).
+Add syscon properties required for configuring PCIe in x2 lane mode.
 
 Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sekhar Nori <nsekhar@ti.com>
-Acked-by: Rob Herring <robh@kernel.org>
 ---
- Documentation/devicetree/bindings/pci/ti-pci.txt | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ Documentation/devicetree/bindings/pci/ti-pci.txt | 3 +++
+ 1 file changed, 3 insertions(+)
 
 diff --git a/Documentation/devicetree/bindings/pci/ti-pci.txt b/Documentation/devicetree/bindings/pci/ti-pci.txt
-index 452fe48c4fdd..e03d23631f5b 100644
+index e03d23631f5b..d5cbfe6b0d89 100644
 --- a/Documentation/devicetree/bindings/pci/ti-pci.txt
 +++ b/Documentation/devicetree/bindings/pci/ti-pci.txt
-@@ -1,8 +1,12 @@
- TI PCI Controllers
+@@ -13,6 +13,9 @@ PCIe DesignWare Controller
+  - ti,hwmods : Name of the hwmod associated to the pcie, "pcie<X>",
+ 	       where <X> is the instance number of the pcie from the HW spec.
+  - num-lanes as specified in ../designware-pcie.txt
++ - ti,syscon-lane-sel : phandle/offset pair. Phandle to the system control
++			module and the register offset to specify lane
++			selection.
  
- PCIe DesignWare Controller
-- - compatible: Should be "ti,dra7-pcie" for RC
--	       Should be "ti,dra7-pcie-ep" for EP
-+ - compatible: Should be "ti,dra7-pcie" for RC (deprecated)
-+	       Should be "ti,dra7-pcie-ep" for EP (deprecated)
-+	       Should be "ti,dra746-pcie-rc" for dra74x/dra76 in RC mode
-+	       Should be "ti,dra746-pcie-ep" for dra74x/dra76 in EP mode
-+	       Should be "ti,dra726-pcie-rc" for dra72x in RC mode
-+	       Should be "ti,dra726-pcie-ep" for dra72x in EP mode
-  - phys : list of PHY specifiers (used by generic PHY framework)
-  - phy-names : must be "pcie-phy0", "pcie-phy1", "pcie-phyN".. based on the
- 	       number of PHYs as specified in *phys* property.
+ HOST MODE
+ =========
 -- 
 2.17.1
 
