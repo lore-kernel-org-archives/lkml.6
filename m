@@ -2,338 +2,70 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UPPERCASE_75_100,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4678FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43AFAC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:17:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08519218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:16:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="s0mWRPU6"
+	by mail.kernel.org (Postfix) with ESMTP id 1D3B1218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:17:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728602AbfAXQQ3 (ORCPT
+        id S1728607AbfAXQRi convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:16:29 -0500
-Received: from onstation.org ([52.200.56.107]:51798 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727955AbfAXQQ3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:16:29 -0500
-Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id A740311;
-        Thu, 24 Jan 2019 16:16:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1548346587;
-        bh=hbRc7imZTP48zn2c5tp4cp7b2U74iYCgs7BWO7s8Tpo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=s0mWRPU6AlayG9nwf+7CZtyBv92UXMz/NBkJcwQe8gDSkK+C9FF1tZIzMrw0wAjoH
-         cCwQV8DWTUihFWT8jez9oJybxD+27jjxqZ/NLJkEt7adnGUXQkbVma1tzLT550KcW6
-         +XCzAnuEKnI3l5z00Z3KtIndu9kKATbW10X6WjQ4=
-From:   Brian Masney <masneyb@onstation.org>
-To:     linux@armlinux.org.uk
-Cc:     linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] ARM: hammerhead_defconfig: new defconfig for LG Nexus 5 phone
-Date:   Thu, 24 Jan 2019 11:16:21 -0500
-Message-Id: <20190124161621.24185-1-masneyb@onstation.org>
-X-Mailer: git-send-email 2.17.2
+        Thu, 24 Jan 2019 11:17:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:35946 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727749AbfAXQRh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:17:37 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AC06CB04D;
+        Thu, 24 Jan 2019 16:17:36 +0000 (UTC)
+Date:   Thu, 24 Jan 2019 17:17:36 +0100
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     Andrew Lunn <andrew@lunn.ch>, antoine.tenart@bootlin.com,
+        maxime.chevallier@bootlin.com,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: mvpp2: fix condition for setting up link
+ interrupt
+Message-Id: <20190124171736.595c0414b5098699b6198903@suse.de>
+In-Reply-To: <20190124160741.jady3r2e4dme7c4m@e5254000004ec.dyn.armlinux.org.uk>
+References: <20190124131803.14038-1-tbogendoerfer@suse.de>
+        <20190124155137.GD482@lunn.ch>
+        <20190124160741.jady3r2e4dme7c4m@e5254000004ec.dyn.armlinux.org.uk>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Introduce hammerhead_defconfig for the LG Nexus 5 phone. Includes
-options for USG OTG, WiFi, charger, serial console, gyroscope,
-accelerometer, magnetometer, temperature, and pressure sensors.
+On Thu, 24 Jan 2019 16:07:41 +0000
+Russell King - ARM Linux admin <linux@armlinux.org.uk> wrote:
 
-The necessary options for the display are also included, however the
-necessary device tree changes, plus a minor driver change have not been
-submitted upstream yet.
+> On Thu, Jan 24, 2019 at 04:51:37PM +0100, Andrew Lunn wrote:
+> > On Thu, Jan 24, 2019 at 02:18:03PM +0100, Thomas Bogendoerfer wrote:
+> > > Set up link interrupt if connection is handled by phylink otherwise
+> > > link state change detection for in-band-status doesn't work.
+> > 
+> > Hi Thomas
+> > 
+> > Please ensure the maintainers of the driver are at least on Cc:
+> 
+> ... and other interested parties!
 
-Signed-off-by: Brian Masney <masneyb@onstation.org>
----
-See https://masneyb.github.io/nexus-5-upstream/ for more details about
-the work that I've done so far porting the upstream kernel to this phone.
+sorry about missing maintainers, but how could I find "other interested
+parties" ? /me thought that's handled by sending to mailinglists, which I did...
 
- arch/arm/configs/hammerhead_defconfig | 263 ++++++++++++++++++++++++++
- 1 file changed, 263 insertions(+)
- create mode 100644 arch/arm/configs/hammerhead_defconfig
+Thomas.
 
-diff --git a/arch/arm/configs/hammerhead_defconfig b/arch/arm/configs/hammerhead_defconfig
-new file mode 100644
-index 000000000000..46681e1e8aba
---- /dev/null
-+++ b/arch/arm/configs/hammerhead_defconfig
-@@ -0,0 +1,263 @@
-+# CONFIG_SWAP is not set
-+CONFIG_SYSVIPC=y
-+CONFIG_POSIX_MQUEUE=y
-+CONFIG_GENERIC_IRQ_DEBUGFS=y
-+CONFIG_NO_HZ_IDLE=y
-+CONFIG_HIGH_RES_TIMERS=y
-+CONFIG_TASKSTATS=y
-+CONFIG_TASK_DELAY_ACCT=y
-+CONFIG_IKCONFIG=y
-+CONFIG_IKCONFIG_PROC=y
-+CONFIG_CGROUPS=y
-+CONFIG_MEMCG=y
-+CONFIG_BLK_CGROUP=y
-+CONFIG_DEBUG_BLK_CGROUP=y
-+CONFIG_CGROUP_SCHED=y
-+CONFIG_CFS_BANDWIDTH=y
-+CONFIG_CGROUP_PIDS=y
-+CONFIG_CGROUP_FREEZER=y
-+CONFIG_CPUSETS=y
-+CONFIG_CGROUP_DEVICE=y
-+CONFIG_CGROUP_CPUACCT=y
-+CONFIG_CGROUP_DEBUG=y
-+CONFIG_NAMESPACES=y
-+CONFIG_USER_NS=y
-+CONFIG_BLK_DEV_INITRD=y
-+# CONFIG_RD_BZIP2 is not set
-+# CONFIG_RD_LZMA is not set
-+# CONFIG_RD_XZ is not set
-+# CONFIG_RD_LZO is not set
-+# CONFIG_RD_LZ4 is not set
-+CONFIG_SYSCTL_SYSCALL=y
-+CONFIG_EMBEDDED=y
-+CONFIG_ARCH_QCOM=y
-+CONFIG_ARCH_MSM8974=y
-+CONFIG_SMP=y
-+# CONFIG_SMP_ON_UP is not set
-+CONFIG_SCHED_MC=y
-+CONFIG_HIGHMEM=y
-+# CONFIG_ARM_MODULE_PLTS is not set
-+CONFIG_SECCOMP=y
-+CONFIG_ARM_APPENDED_DTB=y
-+CONFIG_CPU_FREQ=y
-+CONFIG_CPUFREQ_DT=y
-+CONFIG_VFP=y
-+CONFIG_NEON=y
-+CONFIG_KERNEL_MODE_NEON=y
-+CONFIG_MODULES=y
-+CONFIG_CMA=y
-+CONFIG_CMA_DEBUG=y
-+CONFIG_NET=y
-+CONFIG_PACKET=y
-+CONFIG_UNIX=y
-+CONFIG_NET_KEY=y
-+CONFIG_INET=y
-+# CONFIG_INET_XFRM_MODE_TRANSPORT is not set
-+# CONFIG_INET_XFRM_MODE_TUNNEL is not set
-+# CONFIG_INET_XFRM_MODE_BEET is not set
-+# CONFIG_INET_DIAG is not set
-+# CONFIG_IPV6 is not set
-+CONFIG_NETFILTER=y
-+CONFIG_BRIDGE_NETFILTER=y
-+CONFIG_NF_CONNTRACK=y
-+CONFIG_NETFILTER_XT_MATCH_ADDRTYPE=y
-+CONFIG_NETFILTER_XT_MATCH_CONNTRACK=y
-+CONFIG_IP_NF_IPTABLES=y
-+CONFIG_IP_NF_FILTER=y
-+CONFIG_IP_NF_NAT=y
-+CONFIG_IP_NF_TARGET_MASQUERADE=y
-+CONFIG_BRIDGE=y
-+CONFIG_QRTR=y
-+CONFIG_QRTR_SMD=y
-+CONFIG_BT=m
-+CONFIG_BT_HCIUART=m
-+CONFIG_BT_HCIUART_BCM=y
-+CONFIG_CFG80211=y
-+CONFIG_CFG80211_WEXT=y
-+CONFIG_MAC80211=y
-+CONFIG_RFKILL=y
-+CONFIG_DEVTMPFS=y
-+CONFIG_DMA_CMA=y
-+CONFIG_CMA_SIZE_MBYTES=256
-+CONFIG_BLK_DEV_RAM=y
-+CONFIG_BLK_DEV_RAM_COUNT=2
-+CONFIG_SCSI=y
-+CONFIG_BLK_DEV_SD=y
-+CONFIG_MD=y
-+CONFIG_BLK_DEV_DM=y
-+CONFIG_DM_CRYPT=y
-+CONFIG_DM_THIN_PROVISIONING=y
-+CONFIG_NETDEVICES=y
-+CONFIG_MACVLAN=y
-+CONFIG_IPVLAN=y
-+CONFIG_VXLAN=y
-+CONFIG_VETH=y
-+# CONFIG_ETHERNET is not set
-+CONFIG_USB_USBNET=y
-+CONFIG_USB_NET_RNDIS_HOST=y
-+# CONFIG_WLAN_VENDOR_ADMTEK is not set
-+CONFIG_WCN36XX=m
-+# CONFIG_WLAN_VENDOR_ATMEL is not set
-+CONFIG_BRCMFMAC=m
-+# CONFIG_WLAN_VENDOR_CISCO is not set
-+# CONFIG_WLAN_VENDOR_INTEL is not set
-+# CONFIG_WLAN_VENDOR_INTERSIL is not set
-+# CONFIG_WLAN_VENDOR_MARVELL is not set
-+# CONFIG_WLAN_VENDOR_MEDIATEK is not set
-+# CONFIG_WLAN_VENDOR_RALINK is not set
-+# CONFIG_WLAN_VENDOR_REALTEK is not set
-+# CONFIG_WLAN_VENDOR_RSI is not set
-+# CONFIG_WLAN_VENDOR_ST is not set
-+# CONFIG_WLAN_VENDOR_TI is not set
-+# CONFIG_WLAN_VENDOR_ZYDAS is not set
-+# CONFIG_WLAN_VENDOR_QUANTENNA is not set
-+CONFIG_INPUT_EVDEV=y
-+# CONFIG_KEYBOARD_ATKBD is not set
-+CONFIG_KEYBOARD_GPIO=y
-+# CONFIG_INPUT_MOUSE is not set
-+CONFIG_INPUT_TOUCHSCREEN=y
-+CONFIG_INPUT_MISC=y
-+CONFIG_INPUT_PM8941_PWRKEY=y
-+CONFIG_INPUT_UINPUT=y
-+CONFIG_RMI4_CORE=y
-+CONFIG_RMI4_I2C=y
-+CONFIG_RMI4_F12=y
-+CONFIG_SERIO_LIBPS2=y
-+CONFIG_SERIAL_MSM=y
-+CONFIG_SERIAL_MSM_CONSOLE=y
-+CONFIG_SERIAL_DEV_BUS=y
-+CONFIG_HW_RANDOM=y
-+# CONFIG_I2C_COMPAT is not set
-+CONFIG_I2C_CHARDEV=y
-+CONFIG_I2C_MUX=y
-+CONFIG_I2C_QUP=y
-+CONFIG_SPI=y
-+CONFIG_SPI_QUP=y
-+CONFIG_SPI_SPIDEV=y
-+CONFIG_SPMI=y
-+CONFIG_PINCTRL_MSM8X74=y
-+CONFIG_PINCTRL_QCOM_SPMI_PMIC=y
-+CONFIG_GPIOLIB=y
-+CONFIG_GPIO_SYSFS=y
-+CONFIG_POWER_RESET=y
-+CONFIG_POWER_RESET_MSM=y
-+CONFIG_POWER_SUPPLY=y
-+CONFIG_CHARGER_QCOM_SMBB=y
-+CONFIG_CHARGER_BQ24190=y
-+CONFIG_THERMAL=y
-+CONFIG_QCOM_TSENS=y
-+CONFIG_QCOM_SPMI_TEMP_ALARM=y
-+CONFIG_MFD_SPMI_PMIC=y
-+CONFIG_REGULATOR_DEBUG=y
-+CONFIG_REGULATOR_FIXED_VOLTAGE=y
-+CONFIG_REGULATOR_GPIO=y
-+CONFIG_REGULATOR_QCOM_SMD_RPM=y
-+CONFIG_REGULATOR_QCOM_SPMI=y
-+CONFIG_REGULATOR_VCTRL=y
-+CONFIG_MEDIA_SUPPORT=y
-+CONFIG_MEDIA_CAMERA_SUPPORT=y
-+CONFIG_MEDIA_CONTROLLER=y
-+CONFIG_VIDEO_V4L2_SUBDEV_API=y
-+CONFIG_V4L_PLATFORM_DRIVERS=y
-+CONFIG_V4L_MEM2MEM_DRIVERS=y
-+# CONFIG_MEDIA_SUBDRV_AUTOSELECT is not set
-+CONFIG_VIDEO_MT9T112=y
-+CONFIG_DRM=y
-+# CONFIG_DRM_MSM_DSI_14NM_PHY is not set
-+# CONFIG_DRM_MSM_DSI_10NM_PHY is not set
-+CONFIG_DRM_PANEL_SIMPLE=y
-+CONFIG_DRM_ANALOGIX_ANX78XX=y
-+CONFIG_BACKLIGHT_LCD_SUPPORT=y
-+# CONFIG_LCD_CLASS_DEVICE is not set
-+CONFIG_BACKLIGHT_CLASS_DEVICE=y
-+# CONFIG_BACKLIGHT_GENERIC is not set
-+CONFIG_BACKLIGHT_PM8941_WLED=y
-+CONFIG_BACKLIGHT_LM3630A=y
-+CONFIG_FRAMEBUFFER_CONSOLE=y
-+CONFIG_SOUND=y
-+CONFIG_SND=y
-+# CONFIG_SND_SUPPORT_OLD_API is not set
-+# CONFIG_SND_DRIVERS is not set
-+# CONFIG_SND_ARM is not set
-+# CONFIG_SND_SPI is not set
-+# CONFIG_SND_USB is not set
-+CONFIG_SND_SOC=y
-+CONFIG_SND_SOC_QCOM=y
-+CONFIG_SND_SOC_PCM1789_I2C=y
-+CONFIG_SND_SOC_TDA7419=y
-+CONFIG_HID_A4TECH=y
-+CONFIG_USB=y
-+CONFIG_USB_OTG=y
-+CONFIG_USB_EHCI_HCD=y
-+CONFIG_USB_STORAGE=y
-+CONFIG_USB_DWC3=y
-+CONFIG_USB_CHIPIDEA=y
-+CONFIG_USB_CHIPIDEA_UDC=y
-+CONFIG_USB_CHIPIDEA_HOST=y
-+CONFIG_USB_GADGET=y
-+CONFIG_U_SERIAL_CONSOLE=y
-+CONFIG_USB_CONFIGFS=y
-+CONFIG_USB_CONFIGFS_SERIAL=y
-+CONFIG_USB_CONFIGFS_ECM=y
-+CONFIG_USB_CONFIGFS_ECM_SUBSET=y
-+CONFIG_USB_CONFIGFS_RNDIS=y
-+CONFIG_USB_CONFIGFS_F_FS=y
-+CONFIG_USB_ETH=y
-+CONFIG_MMC=y
-+CONFIG_MMC_ARMMMCI=y
-+CONFIG_MMC_SDHCI=y
-+CONFIG_MMC_SDHCI_PLTFM=y
-+CONFIG_MMC_SDHCI_MSM=y
-+CONFIG_NEW_LEDS=y
-+CONFIG_LEDS_CLASS=y
-+CONFIG_RTC_CLASS=y
-+CONFIG_RTC_DRV_PM8XXX=y
-+CONFIG_DMADEVICES=y
-+CONFIG_QCOM_BAM_DMA=y
-+CONFIG_COMMON_CLK_QCOM=y
-+CONFIG_QCOM_CLK_SMD_RPM=y
-+CONFIG_MSM_MMCC_8974=y
-+CONFIG_SPMI_PMIC_CLKDIV=y
-+CONFIG_HWSPINLOCK=y
-+CONFIG_HWSPINLOCK_QCOM=y
-+CONFIG_MAILBOX=y
-+CONFIG_QCOM_APCS_IPC=y
-+CONFIG_IOMMU_IO_PGTABLE_ARMV7S=y
-+CONFIG_QCOM_IOMMU=y
-+CONFIG_REMOTEPROC=y
-+CONFIG_QCOM_SYSMON=y
-+CONFIG_RPMSG_CHAR=y
-+CONFIG_RPMSG_QCOM_GLINK_RPM=y
-+CONFIG_RPMSG_QCOM_GLINK_SMEM=y
-+CONFIG_RPMSG_QCOM_SMD=y
-+CONFIG_QCOM_PM=y
-+CONFIG_QCOM_RMTFS_MEM=y
-+CONFIG_QCOM_SMEM=y
-+CONFIG_QCOM_SMD_RPM=y
-+CONFIG_QCOM_SMP2P=y
-+CONFIG_QCOM_SMSM=y
-+CONFIG_EXTCON_QCOM_SPMI_MISC=y
-+CONFIG_IIO=y
-+CONFIG_QCOM_SPMI_IADC=y
-+CONFIG_QCOM_SPMI_VADC=y
-+CONFIG_INV_MPU6050_I2C=y
-+CONFIG_TSL2772=y
-+CONFIG_AK8975=y
-+CONFIG_BMP280=y
-+CONFIG_PWM=y
-+CONFIG_PHY_QCOM_USB_HS=y
-+CONFIG_DAX=y
-+CONFIG_QCOM_QFPROM=y
-+CONFIG_SLIMBUS=y
-+CONFIG_SLIM_QCOM_CTRL=y
-+CONFIG_EXT4_FS=y
-+CONFIG_OVERLAY_FS=y
-+# CONFIG_MISC_FILESYSTEMS is not set
-+CONFIG_CRYPTO_AUTHENC=y
-+CONFIG_CRYPTO_ECHAINIV=y
-+CONFIG_CRYPTO_DEV_VIRTIO=y
-+CONFIG_PRINTK_TIME=y
-+CONFIG_DEBUG_FS=y
-+CONFIG_MAGIC_SYSRQ=y
-+# CONFIG_FTRACE is not set
-+# CONFIG_RUNTIME_TESTING_MENU is not set
 -- 
-2.17.2
-
+SUSE Linux GmbH
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
