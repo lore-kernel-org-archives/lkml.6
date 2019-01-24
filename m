@@ -2,79 +2,166 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34019C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:21:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B98BEC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:22:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0971C21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:21:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 934E721872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:22:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727783AbfAXLVq (ORCPT
+        id S1727803AbfAXLWA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:21:46 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:40583 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727720AbfAXLVp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:21:45 -0500
-Received: by mail-lf1-f68.google.com with SMTP id v5so4003644lfe.7
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 03:21:44 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=f+uMpjpOJpDChU3YkiVtXO2LCX2H/Hke280SCz0e38o=;
-        b=EbHvSmbJiGsg89H06hrN6J2JWOREzCYDI05vleN+r+dH9U2TVZFDGsl8mBam/S4mvU
-         3v8VOTWVW3sHLJDH7/zR1P4elEKOd25Vzh2OJ4GjsBxyJKkyCNlCTWCrkjh9N84dmMm1
-         L2VG9V3k/lE3Ryvrc6r+2m+o9fH+oDC9eRlnoGZX2jVaTmumCsFO/zvAtJNkOQrh3g0i
-         7cXDFk6L5V1l1nitXgx7FEUgyuhNLshYywSzffl7zVx2k9YIER39r+/sJffE0UrRMna9
-         KswS63zkjVu4GI/Za96ervFKIgN7r1wyy2sxcRLp7hZtvXg+bO71IziTfbo3qk3TjjcY
-         enbA==
-X-Gm-Message-State: AJcUukeXHZGbDXdh39W8XqiPJLYzzTSPLytEB5yhEU3GWQZW5jWGtbZi
-        +YXw+LQoSpjjPTear7q3sva7DLj8
-X-Google-Smtp-Source: ALg8bN4PdkT0cMkRFUuOUjInyKCc0YHoVDyyCSXF6I2dfZK+iOJtsT1kUUgqP7i/HmMnRcsUVycXgw==
-X-Received: by 2002:a19:910d:: with SMTP id t13mr4837034lfd.98.1548328903683;
-        Thu, 24 Jan 2019 03:21:43 -0800 (PST)
-Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id a62sm917627lfa.37.2019.01.24.03.21.42
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 03:21:43 -0800 (PST)
-Date:   Thu, 24 Jan 2019 13:21:40 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Marek Vasut <marek.vasut+renesas@gmail.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] regulator: bd70528: Constify regulator_linear_range
- and regulator_ops
-Message-ID: <20190124112140.GG2559@localhost.localdomain>
-References: <20190124100209.12275-1-axel.lin@ingics.com>
+        Thu, 24 Jan 2019 06:22:00 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:54976 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727535AbfAXLV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 06:21:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5B2B0A78;
+        Thu, 24 Jan 2019 03:21:59 -0800 (PST)
+Received: from e110439-lin (e110439-lin.cambridge.arm.com [10.1.194.43])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 663383F237;
+        Thu, 24 Jan 2019 03:21:56 -0800 (PST)
+Date:   Thu, 24 Jan 2019 11:21:53 +0000
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
+        Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v6 05/16] sched/core: uclamp: Update CPU's refcount on
+ clamp changes
+Message-ID: <20190124112153.pwdsbxjynq6chmvl@e110439-lin>
+References: <20190121154412.fak2t2iquj3aixtu@e110439-lin>
+ <20190122093704.GM27931@hirez.programming.kicks-ass.net>
+ <20190122104305.6vjx37muqsxm536t@e110439-lin>
+ <20190122132817.GG13777@hirez.programming.kicks-ass.net>
+ <20190122140115.twtx646vewm757ca@e110439-lin>
+ <20190122145742.GQ27931@hirez.programming.kicks-ass.net>
+ <20190122153315.dhjl67sgpu74hmqv@e110439-lin>
+ <20190123091634.GT27931@hirez.programming.kicks-ass.net>
+ <20190123141426.5samtr4hl6okdypu@e110439-lin>
+ <20190123185940.GF17749@hirez.programming.kicks-ass.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124100209.12275-1-axel.lin@ingics.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20190123185940.GF17749@hirez.programming.kicks-ass.net>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks Axel,
+On 23-Jan 19:59, Peter Zijlstra wrote:
+> On Wed, Jan 23, 2019 at 02:14:26PM +0000, Patrick Bellasi wrote:
+> 
+> > > > Consider also that the uclamp_task_update_active() added by this patch
+> > > > not only has lower overhead but it will be use also by cgroups where
+> > > > we want to force update all the tasks on a cgroup's clamp change.
+> > > 
+> > > I haven't gotten that far; but I would prefer not to have two different
+> > > 'change' paths in __sched_setscheduler().
+> > 
+> > Yes, I agree that two paths in __sched_setscheduler() could be
+> > confusing. Still we have to consider that here we are adding
+> > "not class specific" attributes.
+> 
+> But that change thing is not class specific; the whole:
+> 
+> 
+> 	rq = task_rq_lock(p, &rf);
+> 	queued = task_on_rq_queued(p);
+> 	running = task_current(rq, p);
+> 	if (queued)
+> 		dequeue_task(rq, p, queue_flags);
+> 	if (running)
+> 		put_prev_task(rq, p);
+> 
+> 
+> 	/* @p is in it's invariant state; frob it's state */
+> 
+> 
+> 	if (queued)
+> 		enqueue_task(rq, p, queue_flags);
+> 	if (running)
+> 		set_curr_task(rq, p);
+> 	task_rq_unlock(rq, p, &rf);
+> 
+> 
+> pattern is all over the place; it is just because C sucks that that
 
-On Thu, Jan 24, 2019 at 06:02:07PM +0800, Axel Lin wrote:
-> Signed-off-by: Axel Lin <axel.lin@ingics.com>
-> ---
->  drivers/regulator/bd70528-regulator.c | 17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
+Yes, understand, don't want to enter a language war :)
 
-This looks good to me =)
+> isn't more explicitly shared (do_set_cpus_allowed(), rt_mutex_setprio(),
+> set_user_nice(), __sched_setscheduler(), sched_setnuma(),
+> sched_move_task()).
+> 
+> This is _the_ pattern for changing state and is not class specific at
+> all.
+
+Right, that pattern is not "class specific" true and I should have not
+used that term to begin with.
+
+What I was trying to point out is that all the calls above directly
+affect the current scheduling decision and "requires" a
+dequeue/enqueue pattern.
+
+When a task-specific uclamp value is changed for a task, instead, a
+dequeue/enqueue is not needed. As long as we are doing a lazy update,
+that sounds just like not necessary overhead.
+
+However, there could still be value in keeping code consistent and if
+you prefer it this way what should I do?
+
+---8<---
+    __sched_setscheduler()
+        ...
+        if (policy < 0)
+            policy = oldpolicy = p->policy;
+        ...
+        if (unlikely(policy == p->policy)) {
+            ...
+            if (uclamp_changed())         // Force dequeue/enqueue
+                goto change;
+        }
+    change:
+        ...
+
+        if (queued)
+	    dequeue_task(rq, p, queue_flags);
+	if (running)
+	    put_prev_task(rq, p);
+
+        __setscheduler_uclamp();
+	__setscheduler(rq, p, attr, pi);
+
+	if (queued)
+	    enqueue_task(rq, p, queue_flags);
+	if (running)
+	    set_curr_task(rq, p);
+        ...
+---8<---
+
+Could be something like that ok with you?
+
+Not sure about side-effects on p->prio(): for CFS seems to be reset to
+NORMAL in this case :/
 
 -- 
-Matti Vaittinen
-ROHM Semiconductors
+#include <best/regards.h>
 
-~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
+Patrick Bellasi
