@@ -2,49 +2,52 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC9BAC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0662AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A1F521903
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C197821906
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358418;
-	bh=APJiXyr/57/GXeg4pbgBlSQzLJVn0FYUGe2zg4h9ph0=;
+	s=default; t=1548358426;
+	bh=dEp4ex5zqmDhz5XjKOdq0Gtu8OSTv8YfcTVDKC9A08k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gSzqNZwh4MzIgAhSTdLRBgIRbCRAMHu49x2YgtC8p1AypuBVZtXwyd2Jto024gDvp
-	 /aJrl4NlXFqmTi/KvW+L7IGPB9t5rcdD/G43kA6AB7wh55hfbR66Am15G9I9WheNqY
-	 Ce+qgkZtxsntuzXXWLSQ1SrZ6JGH5ERITEAANSx0=
+	b=LKs2FtwLSBy55sgCKm9rDQqy2OsmMCHXRVj8gvgFXRrrKhcbQAxS01/mLas0rPUxt
+	 VG9Ct02OjkBNT5HMO2REHpgVRl8VWHOCc10mJdOTQKFRz7eL2+Msc37h97oB2RNRN7
+	 /62C4Fxzn/71n5DolMR4qkItFeJxrC+0p8/bjXTc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731356AbfAXTdh (ORCPT
+        id S1732069AbfAXTdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:33:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33324 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:33:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732034AbfAXTdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:33:32 -0500
+        id S1730937AbfAXTdl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:41 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FFE0218D4;
-        Thu, 24 Jan 2019 19:33:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F00E921903;
+        Thu, 24 Jan 2019 19:33:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358411;
-        bh=APJiXyr/57/GXeg4pbgBlSQzLJVn0FYUGe2zg4h9ph0=;
+        s=default; t=1548358420;
+        bh=dEp4ex5zqmDhz5XjKOdq0Gtu8OSTv8YfcTVDKC9A08k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=03q6z/EcGZ0egXDMRAAXFin2xjH0pfd/GU4OYBNT4MPKlFs/tdvMmxQutFwgWgp5T
-         z5jGDe6DQ9N2sqAi2T2zyNw3j3v90TvrfySYn6YXlT2RFCcXQI21joKZtu7iMjlQ+t
-         ripFaP8CtDxHc/bz1GakRwMcrhnbFdihrK+MSvVU=
+        b=hSsVouLNaoA3p7W/BLP5kx9SJzutbUqA+MyjFVf8WXLVrzkv3Bm7MY1uJiCQwcF1c
+         aswB8cYup4syo9N+ufTDrm/vyM36bra1KRTr3hiDwdyB7IVP+fLGoCL/POkZOyEzwh
+         aFYL7slbcDzJFI96snfheivUb3/ZQR+Ew8czZG2Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Corey Minyard <cminyard@mvista.com>
-Subject: [PATCH 4.14 63/63] ipmi:ssif: Fix handling of multi-part return messages
-Date:   Thu, 24 Jan 2019 20:20:52 +0100
-Message-Id: <20190124190202.594178211@linuxfoundation.org>
+        stable@vger.kernel.org, Taehee Yoo <ap420073@gmail.com>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 41/63] netfilter: ipt_CLUSTERIP: check MAC address when duplicate config is set
+Date:   Thu, 24 Jan 2019 20:20:30 +0100
+Message-Id: <20190124190200.044879515@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -63,95 +66,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Corey Minyard <cminyard@mvista.com>
+[ Upstream commit 06aa151ad1fc74a49b45336672515774a678d78d ]
 
-commit 7d6380cd40f7993f75c4bde5b36f6019237e8719 upstream.
+If same destination IP address config is already existing, that config is
+just used. MAC address also should be same.
+However, there is no MAC address checking routine.
+So that MAC address checking routine is added.
 
-The block number was not being compared right, it was off by one
-when checking the response.
+test commands:
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	   -j CLUSTERIP --new --hashmode sourceip \
+	   --clustermac 01:00:5e:00:00:20 --total-nodes 2 --local-node 1
+   %iptables -A INPUT -p tcp -i lo -d 192.168.0.5 --dport 80 \
+	   -j CLUSTERIP --new --hashmode sourceip \
+	   --clustermac 01:00:5e:00:00:21 --total-nodes 2 --local-node 1
 
-Some statistics wouldn't be incremented properly in some cases.
+After this patch, above commands are disallowed.
 
-Check to see if that middle-part messages always have 31 bytes of
-data.
-
-Signed-off-by: Corey Minyard <cminyard@mvista.com>
-Cc: stable@vger.kernel.org # 4.4
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Signed-off-by: Taehee Yoo <ap420073@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/char/ipmi/ipmi_ssif.c |   25 +++++++++++++++++--------
- 1 file changed, 17 insertions(+), 8 deletions(-)
+ net/ipv4/netfilter/ipt_CLUSTERIP.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
---- a/drivers/char/ipmi/ipmi_ssif.c
-+++ b/drivers/char/ipmi/ipmi_ssif.c
-@@ -645,8 +645,9 @@ static void msg_done_handler(struct ssif
- 
- 		/* Remove the multi-part read marker. */
- 		len -= 2;
-+		data += 2;
- 		for (i = 0; i < len; i++)
--			ssif_info->data[i] = data[i+2];
-+			ssif_info->data[i] = data[i];
- 		ssif_info->multi_len = len;
- 		ssif_info->multi_pos = 1;
- 
-@@ -674,8 +675,19 @@ static void msg_done_handler(struct ssif
+diff --git a/net/ipv4/netfilter/ipt_CLUSTERIP.c b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+index cc7c9d67ac19..45f21489f515 100644
+--- a/net/ipv4/netfilter/ipt_CLUSTERIP.c
++++ b/net/ipv4/netfilter/ipt_CLUSTERIP.c
+@@ -492,7 +492,8 @@ static int clusterip_tg_check(const struct xt_tgchk_param *par)
+ 			if (IS_ERR(config))
+ 				return PTR_ERR(config);
  		}
+-	}
++	} else if (memcmp(&config->clustermac, &cipinfo->clustermac, ETH_ALEN))
++		return -EINVAL;
  
- 		blocknum = data[0];
-+		len--;
-+		data++;
-+
-+		if (blocknum != 0xff && len != 31) {
-+		    /* All blocks but the last must have 31 data bytes. */
-+			result = -EIO;
-+			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-+				pr_info("Received middle message <31\n");
- 
--		if (ssif_info->multi_len + len - 1 > IPMI_MAX_MSG_LENGTH) {
-+			goto continue_op;
-+		}
-+
-+		if (ssif_info->multi_len + len > IPMI_MAX_MSG_LENGTH) {
- 			/* Received message too big, abort the operation. */
- 			result = -E2BIG;
- 			if (ssif_info->ssif_debug & SSIF_DEBUG_MSG)
-@@ -684,16 +696,14 @@ static void msg_done_handler(struct ssif
- 			goto continue_op;
- 		}
- 
--		/* Remove the blocknum from the data. */
--		len--;
- 		for (i = 0; i < len; i++)
--			ssif_info->data[i + ssif_info->multi_len] = data[i + 1];
-+			ssif_info->data[i + ssif_info->multi_len] = data[i];
- 		ssif_info->multi_len += len;
- 		if (blocknum == 0xff) {
- 			/* End of read */
- 			len = ssif_info->multi_len;
- 			data = ssif_info->data;
--		} else if (blocknum + 1 != ssif_info->multi_pos) {
-+		} else if (blocknum != ssif_info->multi_pos) {
- 			/*
- 			 * Out of sequence block, just abort.  Block
- 			 * numbers start at zero for the second block,
-@@ -721,6 +731,7 @@ static void msg_done_handler(struct ssif
- 		}
- 	}
- 
-+ continue_op:
- 	if (result < 0) {
- 		ssif_inc_stat(ssif_info, receive_errors);
- 	} else {
-@@ -728,8 +739,6 @@ static void msg_done_handler(struct ssif
- 		ssif_inc_stat(ssif_info, received_message_parts);
- 	}
- 
--
-- continue_op:
- 	if (ssif_info->ssif_debug & SSIF_DEBUG_STATE)
- 		pr_info(PFX "DONE 1: state = %d, result=%d.\n",
- 			ssif_info->ssif_state, result);
+ 	ret = nf_ct_netns_get(par->net, par->family);
+ 	if (ret < 0) {
+-- 
+2.19.1
+
 
 
