@@ -3,99 +3,131 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3000C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:55:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 240A6C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:56:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC8DF218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:55:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E72E321872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:56:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727462AbfAXJzV (ORCPT
+        id S1727170AbfAXJ43 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:55:21 -0500
-Received: from mga04.intel.com ([192.55.52.120]:62197 "EHLO mga04.intel.com"
+        Thu, 24 Jan 2019 04:56:29 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59357 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726061AbfAXJzV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:55:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 01:55:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,515,1539673200"; 
-   d="scan'208";a="112274699"
-Received: from shao2-debian.sh.intel.com (HELO [10.239.13.107]) ([10.239.13.107])
-  by orsmga008.jf.intel.com with ESMTP; 24 Jan 2019 01:55:19 -0800
-Subject: Re: [kbuild-all] proc.c:undefined reference to `strcmp'
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        kbuild test robot <lkp@intel.com>
-Cc:     Olof Johansson <olof@lixom.net>, kbuild-all@01.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <201901221835.KyE294P1%fengguang.wu@intel.com>
- <CAMuHMdXmMM8xgGn23YkVHbrYe5108yqfM1Rrx8PJ9RmFNjOqTg@mail.gmail.com>
-From:   Rong Chen <rong.a.chen@intel.com>
-Message-ID: <37a97697-f812-7db4-f48b-47fbccbc160b@intel.com>
-Date:   Thu, 24 Jan 2019 17:55:42 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1725287AbfAXJ42 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:56:28 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5639F2084E; Thu, 24 Jan 2019 10:56:26 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 01A7320798;
+        Thu, 24 Jan 2019 10:56:15 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Tomasz Figa <tfiga@chromium.org>
+Subject: [PATCH] Revert "media: cedrus: Allow using the current dst buffer as reference"
+Date:   Thu, 24 Jan 2019 10:55:42 +0100
+Message-Id: <20190124095542.22321-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <CAMuHMdXmMM8xgGn23YkVHbrYe5108yqfM1Rrx8PJ9RmFNjOqTg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+This reverts commit cf20ae1535eb690a87c29b9cc7af51881384e967.
 
-On 1/22/19 7:44 PM, Geert Uytterhoeven wrote:
-> On Tue, Jan 22, 2019 at 11:11 AM kbuild test robot <lkp@intel.com> wrote:
->> It's probably a bug fix that unveils the link errors.
->>
->> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
->> head:   47bfa6d9dc8c060bf56554a465c9031e286d2f80
->> commit: 35004f2e55807a1a1491db24ab512dd2f770a130 lib/genalloc.c: include vmalloc.h
->> date:   2 weeks ago
->> config: m68k-allmodconfig (attached as .config)
->> compiler: m68k-linux-gnu-gcc (Debian 8.2.0-11) 8.2.0
->> reproduce:
->>          wget https://raw.githubusercontent.com/intel/lkp-tests/master/sbin/make.cross -O ~/bin/make.cross
->>          chmod +x ~/bin/make.cross
->>          git checkout 35004f2e55807a1a1491db24ab512dd2f770a130
->>          # save the attached .config to linux build tree
->>          GCC_VERSION=8.2.0 make.cross ARCH=m68k
->>
->> All errors (new ones prefixed by >>):
->>
->>     m68k-linux-gnu-ld: block/partitions/ldm.o: in function `ldm_partition':
->>     ldm.c:(.text+0x1900): undefined reference to `strcmp'
->>     m68k-linux-gnu-ld: ldm.c:(.text+0x1964): undefined reference to `strcmp'
->>     m68k-linux-gnu-ld: drivers/rtc/proc.o: in function `is_rtc_hctosys':
->>>> proc.c:(.text+0x18c): undefined reference to `strcmp'
->>     m68k-linux-gnu-ld: drivers/watchdog/watchdog_pretimeout.o: in function `watchdog_register_governor':
->>     watchdog_pretimeout.c:(.text+0x142): undefined reference to `strcmp'
->>     m68k-linux-gnu-ld: drivers/devfreq/devfreq.o: in function `try_then_request_governor':
->>     devfreq.c:(.text+0x9c6): undefined reference to `strcmp'
-> I guess this bisection is a false positive. Have you just upgraded to gcc 8?
+The vb2_find_timestamp helper was modified to allow finding buffers
+regardless of their current state in the queue. This means that we
+no longer have to take particular care of references to the current
+capture buffer.
+---
+ drivers/staging/media/sunxi/cedrus/cedrus_dec.c   | 13 -------------
+ drivers/staging/media/sunxi/cedrus/cedrus_dec.h   |  2 --
+ drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c | 10 ++++------
+ 3 files changed, 4 insertions(+), 21 deletions(-)
 
-yes, we upgraded to gcc 8 recently.
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+index 2c295286766c..443fb037e1cf 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+@@ -22,19 +22,6 @@
+ #include "cedrus_dec.h"
+ #include "cedrus_hw.h"
+ 
+-int cedrus_reference_index_find(struct vb2_queue *queue,
+-				struct vb2_buffer *vb2_buf, u64 timestamp)
+-{
+-	/*
+-	 * Allow using the current capture buffer as reference, which can occur
+-	 * for field-coded pictures.
+-	 */
+-	if (vb2_buf->timestamp == timestamp)
+-		return vb2_buf->index;
+-	else
+-		return vb2_find_timestamp(queue, timestamp, 0);
+-}
+-
+ void cedrus_device_run(void *priv)
+ {
+ 	struct cedrus_ctx *ctx = priv;
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+index 8d0fc248220f..d1ae7903677b 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.h
+@@ -16,8 +16,6 @@
+ #ifndef _CEDRUS_DEC_H_
+ #define _CEDRUS_DEC_H_
+ 
+-int cedrus_reference_index_find(struct vb2_queue *queue,
+-				struct vb2_buffer *vb2_buf, u64 timestamp);
+ void cedrus_device_run(void *priv);
+ 
+ #endif
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+index 81c66a8aa1ac..cb45fda9aaeb 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_mpeg2.c
+@@ -10,7 +10,6 @@
+ #include <media/videobuf2-dma-contig.h>
+ 
+ #include "cedrus.h"
+-#include "cedrus_dec.h"
+ #include "cedrus_hw.h"
+ #include "cedrus_regs.h"
+ 
+@@ -160,8 +159,8 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+ 	cedrus_write(dev, VE_DEC_MPEG_PICBOUNDSIZE, reg);
+ 
+ 	/* Forward and backward prediction reference buffers. */
+-	forward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+-						  slice_params->forward_ref_ts);
++	forward_idx = vb2_find_timestamp(cap_q,
++					 slice_params->forward_ref_ts, 0);
+ 
+ 	fwd_luma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 0);
+ 	fwd_chroma_addr = cedrus_dst_buf_addr(ctx, forward_idx, 1);
+@@ -169,9 +168,8 @@ static void cedrus_mpeg2_setup(struct cedrus_ctx *ctx, struct cedrus_run *run)
+ 	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_LUMA_ADDR, fwd_luma_addr);
+ 	cedrus_write(dev, VE_DEC_MPEG_FWD_REF_CHROMA_ADDR, fwd_chroma_addr);
+ 
+-	backward_idx = cedrus_reference_index_find(cap_q, &run->dst->vb2_buf,
+-						   slice_params->backward_ref_ts);
+-
++	backward_idx = vb2_find_timestamp(cap_q,
++					  slice_params->backward_ref_ts, 0);
+ 	bwd_luma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 0);
+ 	bwd_chroma_addr = cedrus_dst_buf_addr(ctx, backward_idx, 1);
+ 
+-- 
+2.20.1
 
-
-> Gcc 8 replaces the strncmp() in is_rtc_hctosys() to strcmp().
-> Will be fixed in v5.1 by
-> https://git.kernel.org/pub/scm/linux/kernel/git/geert/linux-m68k.git/commit/?h=for-v5.1&id=28713169d879b67be2ef2f84dcf54905de238294
-
-Thanks for your explanation. we'll blacklist it.
-
-Best Regards,
-Rong Chen
-
-
->
-> Gr{oetje,eeting}s,
->
->                          Geert
->
