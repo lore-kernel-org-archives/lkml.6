@@ -2,128 +2,112 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4710BC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:49:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 875BFC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1EB69218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:49:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 59991218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548348585;
+	bh=euAT9CB/Jdcpg0WuU2GpjY2q9AlvQzDaF+N18wlJhoY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=YVeXenQ3b8QUZBP/kwQywx6sqSNGw1RxUv+C+xGDjADD/Rkjgpz/TVHxRw5CkqIMd
+	 D3tfhjOaXbFg9pWXuX4OI5YM0X5uRGVzfBtAK/gbK/IV8QjviSvl2M0lhC1LHDod9I
+	 kshc6pvGPBgLTzuN3Xvd5PSKsSCuidVl2HG0JwJw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728653AbfAXQtJ (ORCPT
+        id S1728861AbfAXQtn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:49:09 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:58720 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfAXQtI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:49:08 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gmiBd-0006ir-Vi; Thu, 24 Jan 2019 16:49:06 +0000
-Subject: Re: [PATCH] fpga: mgr: altera-ps-spi: make array dummy static,
- shrinks object size
-From:   Colin Ian King <colin.king@canonical.com>
-To:     Alan Tull <atull@kernel.org>, Moritz Fischer <mdf@kernel.org>,
-        linux-fpga@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181129231016.4580-1-colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <580295c8-9779-3246-fced-1538b9e66f68@canonical.com>
-Date:   Thu, 24 Jan 2019 16:49:04 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 24 Jan 2019 11:49:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44320 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726252AbfAXQtn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:49:43 -0500
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 323EA218CD;
+        Thu, 24 Jan 2019 16:49:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548348582;
+        bh=euAT9CB/Jdcpg0WuU2GpjY2q9AlvQzDaF+N18wlJhoY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=CXPqDrDAEdHKYPZ0e0HEGObhHTh89VEsu8gMhmKqbkxi2F1Ob9TftcMuklwMarhAI
+         HREhfOGxqHkqYLjRCK/ZvJSh4pESwyWucddWdBKwnx2JPZT2y/uqGuXHPuB4KSybij
+         XqaaR6GPMUKLz1p0drCko7t5aED8EbpwwbGJvwQM=
+Received: by mail-qt1-f170.google.com with SMTP id r14so7408614qtp.1;
+        Thu, 24 Jan 2019 08:49:42 -0800 (PST)
+X-Gm-Message-State: AJcUukcw5+EP2Fj/71NgXU2Qf3JLzoLmq3c84w9iez7Vg0HP8JsgMeeZ
+        wkFGwfIHl85gB2pKMlEC6KVJVRoOJA95ZI/X1Q==
+X-Google-Smtp-Source: ALg8bN7DMKRMSNuqqnBARNM7y3WTRvbM7dqCswmp/jMCw+JeOX3Hg6Q3URy4O5KzqZiNUfr6YwN9MzWjq+BfUHTBIdQ=
+X-Received: by 2002:a0c:e2ca:: with SMTP id t10mr6945862qvl.77.1548348581340;
+ Thu, 24 Jan 2019 08:49:41 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181129231016.4580-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181029094245.7886-1-manivannan.sadhasivam@linaro.org>
+ <20181029094245.7886-7-manivannan.sadhasivam@linaro.org> <20181221023708.GC3233@Mani-XPS-13-9360>
+ <9f4f05cb-f326-a4e3-e306-cfbf64b629b4@xilinx.com>
+In-Reply-To: <9f4f05cb-f326-a4e3-e306-cfbf64b629b4@xilinx.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 24 Jan 2019 10:49:30 -0600
+X-Gmail-Original-Message-ID: <CAL_Jsq+zfV66EZHX7psh2=r-=wDrmLLcr5PWtSzuKRNOdMR-Dw@mail.gmail.com>
+Message-ID: <CAL_Jsq+zfV66EZHX7psh2=r-=wDrmLLcr5PWtSzuKRNOdMR-Dw@mail.gmail.com>
+Subject: Re: [PATCH v3 6/7] arm64: dts: xilinx: ultra96: Standardize LED
+ labels and triggers
+To:     Michal Simek <michal.simek@xilinx.com>
+Cc:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        Linux LED Subsystem <linux-leds@vger.kernel.org>,
+        devicetree@vger.kernel.org,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>, koen.kooi@linaro.org,
+        Nicolas Dechesne <nicolas.dechesne@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping?
+On Fri, Dec 21, 2018 at 12:51 AM Michal Simek <michal.simek@xilinx.com> wrote:
+>
+> On 21. 12. 18 3:37, Manivannan Sadhasivam wrote:
+> > On Mon, Oct 29, 2018 at 03:12:44PM +0530, Manivannan Sadhasivam wrote:
+> >> For all 96Boards, the following standard is used for onboard LEDs.
+> >>
+> >> green:user1  default-trigger: heartbeat
+> >> green:user2  default-trigger: mmc0/disk-activity(onboard-storage)
+> >> green:user3  default-trigger: mmc1 (SD-card)
+> >> green:user4  default-trigger: none, panic-indicator
+> >> yellow:wlan  default-trigger: phy0tx
+> >> blue:bt      default-trigger: hci0-power
+> >>
+> >> So lets adopt the same for Ultra96, which is one of the 96Boards
+> >> CE and AI platform. Since the WLAN and BT LEDs are hardwired onboard,
+> >> consolidate only User LEDs.
+> >>
+> >
+> > Hello,
+> >
+> > Any update on this patch?
+>
+> I am still waiting for reaction from Rob.
+> We are keep trying to keep backward compatibility and this patch is
+> breaking it that's why I want to know DT guys reaction on this change.
 
-On 29/11/2018 23:10, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the const array dummy on the stack but instead
-> make it static. Makes the object code smaller by 26 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    7371	   2032	      0	   9403	   24bb	drivers/fpga/altera-ps-spi.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    7281	   2096	      0	   9377	   24a1	drivers/fpga/altera-ps-spi.o
-> 
-> (gcc version 8.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/fpga/altera-ps-spi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/fpga/altera-ps-spi.c b/drivers/fpga/altera-ps-spi.c
-> index 8c18beec6b57..678d0115f840 100644
-> --- a/drivers/fpga/altera-ps-spi.c
-> +++ b/drivers/fpga/altera-ps-spi.c
-> @@ -205,7 +205,7 @@ static int altera_ps_write_complete(struct fpga_manager *mgr,
->  				    struct fpga_image_info *info)
->  {
->  	struct altera_ps_conf *conf = mgr->priv;
-> -	const char dummy[] = {0};
-> +	static const char dummy[] = {0};
->  	int ret;
->  
->  	if (gpiod_get_value_cansleep(conf->status)) {
-> 
+dts changes and backwards compatibility are ultimately up to the
+platform maintainers. Your users can yell at you if they care. I only
+ask that changes that break compatibility are documented as doing so.
 
+Personally, I'm in favor of this change. I'd rather seem uniformity
+across boards and this is just a dev board and LED functions won't
+affect booting.
+
+Rob
