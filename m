@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72BD8C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5FAC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4279E217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E384217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:48:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359291;
-	bh=xesPcy0E1uOsRdaWfiWv8BXJxZFsV67cpmoYymFOSxE=;
+	s=default; t=1548359294;
+	bh=EnJKoThZKVq2F7uNjGda6Mlw82sJKlDx7JqCRa5V9lM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=VpKTpfTUwL5isOByTFfhrZQsYRIoOmw7jkzmFLRRvpYEx0LRA0N1vFXHMp32vmcVU
-	 Y9+rwMhqDRLcEZi5Bohz6w6DVZcQJqGa6AgqGbsJt39UnAzRvjTvsBzz8fXMcIb8/J
-	 RJtYRMis35qDAWtzntwafDOT6kdzfa/RkrUbYl7k=
+	b=LTZ9caIRIuTb885o7JBvhmbFVt3h5kPS/S4oRtpEHZLcjIqhSyJid9SBIHYkcvVh+
+	 G/sk2klYb5djGw6HLtn5CSSGqbdAP/B+AQXIndPMqupfojoib7DywISdh9p5gQrZva
+	 nnZ0KJlKqPdVI39ZLif/GLft6vdUiGnAh6Y0G4Js=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387755AbfAXTmT (ORCPT
+        id S1733284AbfAXTsN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:42:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42692 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:48:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42754 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732959AbfAXTmP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:15 -0500
+        id S2387749AbfAXTmS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:42:18 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 162B3218A2;
-        Thu, 24 Jan 2019 19:42:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B92E7218D9;
+        Thu, 24 Jan 2019 19:42:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358934;
-        bh=xesPcy0E1uOsRdaWfiWv8BXJxZFsV67cpmoYymFOSxE=;
+        s=default; t=1548358937;
+        bh=EnJKoThZKVq2F7uNjGda6Mlw82sJKlDx7JqCRa5V9lM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zxWIc9lIk7CK+HLkR4ex83FYtBmgOyuF2gWoKgjCcm9bG86Nj6AHZ4vxZAfwIK0xw
-         Yq2kxOUxJm68Bibt4q47J/hCmgm4V2nbAx4vrK2EYI1f+1pzO7SiPMTWI2CFVEEtD+
-         w5JYwmMG3l9yHxybQ698lA/kBpbuk1AbeT0+QS3Y=
+        b=wHL7XykTQBzEYYoN7yPsEWYrVcxhHB09e088gHVQJnFx9SCT6TtYaRtP5usIEVd/0
+         JZfiknw2nygOl1m0i+2fO7fBnAKa/1IEdGrre2l1DdSR9Sqqse6Z/Tu1bXvzqEFrn7
+         YoXuNC0Q3fPfjZDyKtiLCfx+eb8XZtrZJRXOA0k4=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ondrej Mosnacek <omosnace@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
+        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 043/127] selinux: always allow mounting submounts
-Date:   Thu, 24 Jan 2019 20:19:49 +0100
-Message-Id: <20190124190214.099401722@linuxfoundation.org>
+Subject: [PATCH 4.20 034/127] arm64: perf: set suppress_bind_attrs flag to true
+Date:   Thu, 24 Jan 2019 20:19:40 +0100
+Message-Id: <20190124190213.750195235@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -66,66 +67,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 2cbdcb882f97a45f7475c67ac6257bbc16277dfe ]
+[ Upstream commit 81e9fa8bab381f8b6eb04df7cdf0f71994099bd4 ]
 
-If a superblock has the MS_SUBMOUNT flag set, we should always allow
-mounting it. These mounts are done automatically by the kernel either as
-part of mounting some parent mount (e.g. debugfs always mounts tracefs
-under "tracing" for compatibility) or they are mounted automatically as
-needed on subdirectory accesses (e.g. NFS crossmnt mounts). Since such
-automounts are either an implicit consequence of the parent mount (which
-is already checked) or they can happen during regular accesses (where it
-doesn't make sense to check against the current task's context), the
-mount permission check should be skipped for them.
+The armv8_pmuv3 driver doesn't have a remove function, and when the test
+'CONFIG_DEBUG_TEST_DRIVER_REMOVE=y' is enabled, the following Call trace
+can be seen.
 
-Without this patch, attempts to access contents of an automounted
-directory can cause unexpected SELinux denials.
+[    1.424287] Failed to register pmu: armv8_pmuv3, reason -17
+[    1.424870] WARNING: CPU: 0 PID: 1 at ../kernel/events/core.c:11771 perf_event_sysfs_init+0x98/0xdc
+[    1.425220] Modules linked in:
+[    1.425531] CPU: 0 PID: 1 Comm: swapper/0 Tainted: G        W         4.19.0-rc7-next-20181012-00003-ge7a97b1ad77b-dirty #35
+[    1.425951] Hardware name: linux,dummy-virt (DT)
+[    1.426212] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    1.426458] pc : perf_event_sysfs_init+0x98/0xdc
+[    1.426720] lr : perf_event_sysfs_init+0x98/0xdc
+[    1.426908] sp : ffff00000804bd50
+[    1.427077] x29: ffff00000804bd50 x28: ffff00000934e078
+[    1.427429] x27: ffff000009546000 x26: 0000000000000007
+[    1.427757] x25: ffff000009280710 x24: 00000000ffffffef
+[    1.428086] x23: ffff000009408000 x22: 0000000000000000
+[    1.428415] x21: ffff000009136008 x20: ffff000009408730
+[    1.428744] x19: ffff80007b20b400 x18: 000000000000000a
+[    1.429075] x17: 0000000000000000 x16: 0000000000000000
+[    1.429418] x15: 0000000000000400 x14: 2e79726f74636572
+[    1.429748] x13: 696420656d617320 x12: 656874206e692065
+[    1.430060] x11: 6d616e20656d6173 x10: 2065687420687469
+[    1.430335] x9 : ffff00000804bd50 x8 : 206e6f7361657220
+[    1.430610] x7 : 2c3376756d705f38 x6 : ffff00000954d7ce
+[    1.430880] x5 : 0000000000000000 x4 : 0000000000000000
+[    1.431226] x3 : 0000000000000000 x2 : ffffffffffffffff
+[    1.431554] x1 : 4d151327adc50b00 x0 : 0000000000000000
+[    1.431868] Call trace:
+[    1.432102]  perf_event_sysfs_init+0x98/0xdc
+[    1.432382]  do_one_initcall+0x6c/0x1a8
+[    1.432637]  kernel_init_freeable+0x1bc/0x280
+[    1.432905]  kernel_init+0x18/0x160
+[    1.433115]  ret_from_fork+0x10/0x18
+[    1.433297] ---[ end trace 27fd415390eb9883 ]---
 
-In the current kernel tree, the MS_SUBMOUNT flag is set only via
-vfs_submount(), which is called only from the following places:
- - AFS, when automounting special "symlinks" referencing other cells
- - CIFS, when automounting "referrals"
- - NFS, when automounting subtrees
- - debugfs, when automounting tracefs
+Rework to set suppress_bind_attrs flag to avoid removing the device when
+CONFIG_DEBUG_TEST_DRIVER_REMOVE=y, since there's no real reason to
+remove the armv8_pmuv3 driver.
 
-In all cases the submounts are meant to be transparent to the user and
-it makes sense that if mounting the master is allowed, then so should be
-the automounts. Note that CAP_SYS_ADMIN capability checking is already
-skipped for (SB_KERNMOUNT|SB_SUBMOUNT) in:
- - sget_userns() in fs/super.c:
-	if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) &&
-	    !(type->fs_flags & FS_USERNS_MOUNT) &&
-	    !capable(CAP_SYS_ADMIN))
-		return ERR_PTR(-EPERM);
- - sget() in fs/super.c:
-        /* Ensure the requestor has permissions over the target filesystem */
-        if (!(flags & (SB_KERNMOUNT|SB_SUBMOUNT)) && !ns_capable(user_ns, CAP_SYS_ADMIN))
-                return ERR_PTR(-EPERM);
-
-Verified internally on patched RHEL 7.6 with a reproducer using
-NFS+httpd and selinux-tesuite.
-
-Fixes: 93faccbbfa95 ("fs: Better permission checking for submounts")
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-Signed-off-by: Paul Moore <paul@paul-moore.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/selinux/hooks.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/kernel/perf_event.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index a67459eb62d5..0f27db6d94a9 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -2934,7 +2934,7 @@ static int selinux_sb_kern_mount(struct super_block *sb, int flags, void *data)
- 		return rc;
- 
- 	/* Allow all mounts performed by the kernel */
--	if (flags & MS_KERNMOUNT)
-+	if (flags & (MS_KERNMOUNT | MS_SUBMOUNT))
- 		return 0;
- 
- 	ad.type = LSM_AUDIT_DATA_DENTRY;
+diff --git a/arch/arm64/kernel/perf_event.c b/arch/arm64/kernel/perf_event.c
+index e213f8e867f6..8a91ac067d44 100644
+--- a/arch/arm64/kernel/perf_event.c
++++ b/arch/arm64/kernel/perf_event.c
+@@ -1274,6 +1274,7 @@ static struct platform_driver armv8_pmu_driver = {
+ 	.driver		= {
+ 		.name	= ARMV8_PMU_PDEV_NAME,
+ 		.of_match_table = armv8_pmu_of_device_ids,
++		.suppress_bind_attrs = true,
+ 	},
+ 	.probe		= armv8_pmu_device_probe,
+ };
 -- 
 2.19.1
 
