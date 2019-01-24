@@ -2,126 +2,166 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=FAKE_REPLY_C,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 637D6C282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 00:25:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EDEC7C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 00:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E816218A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 00:25:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C106D217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 00:31:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727078AbfAXAZQ (ORCPT
+        id S1726763AbfAXAa6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 19:25:16 -0500
-Received: from nautica.notk.org ([91.121.71.147]:48134 "EHLO nautica.notk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726078AbfAXAZP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 19:25:15 -0500
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id E96C1C009; Thu, 24 Jan 2019 01:25:10 +0100 (CET)
-Date:   Thu, 24 Jan 2019 01:24:55 +0100
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Jiri Kosina <jikos@kernel.org>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Josh Snyder <joshs@netflix.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-Message-ID: <20190124002455.GA23181@nautica>
+        Wed, 23 Jan 2019 19:30:58 -0500
+Received: from 59-120-53-16.HINET-IP.hinet.net ([59.120.53.16]:40333 "EHLO
+        ATCSQR.andestech.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726168AbfAXAa6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 19:30:58 -0500
+Received: from mail.andestech.com (atcpcs16.andestech.com [10.0.1.222])
+        by ATCSQR.andestech.com with ESMTP id x0O0WMwG060590;
+        Thu, 24 Jan 2019 08:32:22 +0800 (GMT-8)
+        (envelope-from vincentc@andestech.com)
+Received: from andestech.com (10.0.15.65) by ATCPCS16.andestech.com
+ (10.0.1.222) with Microsoft SMTP Server id 14.3.123.3; Thu, 24 Jan 2019
+ 08:30:12 +0800
+Date:   Thu, 24 Jan 2019 08:30:09 +0800
+From:   Vincent Chen <vincentc@andestech.com>
+To:     Palmer Dabbelt <palmer@sifive.com>
+CC:     "linux@roeck-us.net" <linux@roeck-us.net>,
+        "aou@eecs.berkeley.edu" <aou@eecs.berkeley.edu>,
+        "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>
+Subject: Re: [PATCH] RISC-V: Add _TIF_NEED_RESCHED check for kernel thread
+ when CONFIG_PREEMPT=y
+Message-ID: <20190124003008.GA31546@andestech.com>
+References: <20190103054555.GA30904@roeck-us.net>
+ <mhng-fd3c9beb-34ce-40c5-92ce-0a7d76d877aa@palmer-si-x1c4>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1901240009560.6626@cbobk.fhfr.pm>
- <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <mhng-fd3c9beb-34ce-40c5-92ce-0a7d76d877aa@palmer-si-x1c4>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Originating-IP: [10.0.15.65]
+X-DNSRBL: 
+X-MAIL: ATCSQR.andestech.com x0O0WMwG060590
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus Torvalds wrote on Thu, Jan 24, 2019:
-> I've reverted the 'let's try to just remove the code' part in my tree.
-> But I didn't apply the two other patches yet. Any final comments
-> before that should happen?
-
-I mentionned when sending the updated version that just checking file
-permission might not be enough, e.g. a git tree is full of read-only
-objects that someone might want to preload and think we might really
-want to check both despite the overhead in the denied case.
-
-Josh agreed and I meant to send a new version since nothing was
-happening but work priorities got the better of me, and I was kind of
-waiting for the ltp testcases[1] as well because aside from the few
-tests I ran by hand I'm not sure the few hours of ltp/xfstests Jiri ran
-did much but this is probably going to be a chicken-or-egg problem..
-
-[1] https://github.com/linux-test-project/ltp/issues/461
-
-Jiri Kosina wrote on Thu, Jan 24, 2019:
-> On Thu, 24 Jan 2019, Linus Torvalds wrote:
+On Wed, Jan 23, 2019 at 02:58:51AM +0800, Palmer Dabbelt wrote:
+> On Wed, 02 Jan 2019 21:45:55 PST (-0800), linux@roeck-us.net wrote:
+> > On Thu, Jan 03, 2019 at 11:32:33AM +0800, Vincent Chen wrote:
+> >> The cond_resched() can be used to yield the CPU resource if
+> >> CONFIG_PREEMPT is not defined. Otherwise, cond_resched() is a dummy
+> >> function. In order to avoid kernel thread occupying entire CPU,
+> >> when CONFIG_PREEMPT=y, the kernel thread needs to follow the
+> >> rescheduling mechanism like a user thread.
+> >>
+> >> Signed-off-by: Vincent Chen <vincentc@andestech.com>
+> >
+> > This patch seems to do the trick. I no longer see a problem with
+> > CONFIG_PREEMPT=y and the various lock torture tests enabled, as
+> > previously reported.
+> >
+> > Nice catch and fix.
+> >
+> > Tested-by: Guenter Roeck <linux@roeck-us.net>
+> >
+> > Guenter
+> >
+> >> ---
+> >>  arch/riscv/kernel/asm-offsets.c |    1 +
+> >>  arch/riscv/kernel/entry.S       |   18 +++++++++++++++++-
+> >>  2 files changed, 18 insertions(+), 1 deletions(-)
+> >>
+> >> diff --git a/arch/riscv/kernel/asm-offsets.c b/arch/riscv/kernel/asm-offsets.c
+> >> index 6a92a2f..dac9834 100644
+> >> --- a/arch/riscv/kernel/asm-offsets.c
+> >> +++ b/arch/riscv/kernel/asm-offsets.c
+> >> @@ -39,6 +39,7 @@ void asm_offsets(void)
+> >>  	OFFSET(TASK_STACK, task_struct, stack);
+> >>  	OFFSET(TASK_TI, task_struct, thread_info);
+> >>  	OFFSET(TASK_TI_FLAGS, task_struct, thread_info.flags);
+> >> +	OFFSET(TASK_TI_PREEMPT_COUNT, task_struct, thread_info.preempt_count);
+> >>  	OFFSET(TASK_TI_KERNEL_SP, task_struct, thread_info.kernel_sp);
+> >>  	OFFSET(TASK_TI_USER_SP, task_struct, thread_info.user_sp);
+> >>  	OFFSET(TASK_TI_CPU, task_struct, thread_info.cpu);
+> >> diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+> >> index 13d4826..728b72d 100644
+> >> --- a/arch/riscv/kernel/entry.S
+> >> +++ b/arch/riscv/kernel/entry.S
+> >> @@ -144,6 +144,10 @@ _save_context:
+> >>  	REG_L x2,  PT_SP(sp)
+> >>  	.endm
+> >>
+> >> +#if !IS_ENABLED(CONFIG_PREEMPT)
+> >> +#define resume_kernel restore_all
+> >> +#endif
+> >> +
 > 
-> > Side note: the inode_permission() addition to can_do_mincore() in that
-> > patch 0002, seems to be questionable. We do
-> > 
-> > +static inline bool can_do_mincore(struct vm_area_struct *vma)
-> > +{
-> > +       return vma_is_anonymous(vma)
-> > +               || (vma->vm_file && (vma->vm_file->f_mode & FMODE_WRITE))
-> > +               || inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0;
-> > +}
-> > 
-> > note how it tests whether vma->vm_file is NULL for the FMODE_WRITE
-> > test, but not for the inode_permission() test.
-> > 
-> > So either we test unnecessarily in the second line, or we don't
-> > properly test it in the third one.
-> > 
-> > I think the "test vm_file" thing may be unnecessary, because a
-> > non-anonymous mapping should always have a file pointer and an inode.
-> > But I could  imagine some odd case (vdso mapping, anyone?) that
-> > doesn't have a vm_file, but also isn't anonymous.
+> I don't like preprocessor stuff if we can avoid it, are you OK if I squash in 
+> the following diff:
 > 
-> Hmm, good point.
+>     diff --git a/arch/riscv/kernel/entry.S b/arch/riscv/kernel/entry.S
+>     index cfbad2f689c3..fd9b57c8b4ce 100644
+>     --- a/arch/riscv/kernel/entry.S
+>     +++ b/arch/riscv/kernel/entry.S
+>     @@ -145,7 +145,7 @@ _save_context:
+>      	.endm
+>     
+>      #if !IS_ENABLED(CONFIG_PREEMPT)
+>     -#define resume_kernel restore_all
+>     +.set resume_kernel, restore_all
+>      #endif
+>     
+>      ENTRY(handle_exception)
 > 
-> So dropping the 'vma->vm_file' test and checking whether given vma is 
-> special mapping should hopefully provide the desired semantics, shouldn't 
-> it?
+> I think that should do the same thing, but at link time instead of in the 
+> preprocessor -- that makes it a bit less likely to bit us in the future.
+> 
+> >>  ENTRY(handle_exception)
+> >>  	SAVE_ALL
+> >>
+> >> @@ -228,7 +232,7 @@ ret_from_exception:
+> >>  	REG_L s0, PT_SSTATUS(sp)
+> >>  	csrc sstatus, SR_SIE
+> >>  	andi s0, s0, SR_SPP
+> >> -	bnez s0, restore_all
+> >> +	bnez s0, resume_kernel
+> >>
+> >>  resume_userspace:
+> >>  	/* Interrupts must be disabled here so flags are checked atomically */
+> >> @@ -250,6 +254,18 @@ restore_all:
+> >>  	RESTORE_ALL
+> >>  	sret
+> >>
+> >> +#if IS_ENABLED(CONFIG_PREEMPT)
+> >> +resume_kernel:
+> >> +	REG_L s0, TASK_TI_PREEMPT_COUNT(tp)
+> >> +	bnez s0, restore_all
+> >> +need_resched:
+> >> +	REG_L s0, TASK_TI_FLAGS(tp)
+> >> +	andi s0, s0, _TIF_NEED_RESCHED
+> >> +	beqz s0, restore_all
+> >> +	call preempt_schedule_irq
+> >> +	j need_resched
+> >> +#endif
+> >> +
+> >>  work_pending:
+> >>  	/* Enter slow path for supplementary processing */
+> >>  	la ra, ret_from_exception
+> 
+> I'm just going to assume you're OK with the squash and drop this into my plans 
+> for the next RC, let me know if that's not OK.
+>
+> Thanks for fixing this!
 
-I think it's probably better to keep this simple, if we're going to
-check something before accessing vm_file we might as well directly check
-it.
+  OK, it's fine for me.
 
-I was thinking of something along the lines of:
-	return vma_is_anonymous(vma) || (vma->vm_file &&
-			(inode_owner_or_capable(file_inode(vma->vm_file))
-			 || inode_permission(file_inode(vma->vm_file), MAY_WRITE) == 0));
-
-I dropped the first f_mode check because none of the known mincore users
-open the files read-write, and the check is redundant with
-inode_permission() so while it would probably be an optimisation in some
-cases I do not think it is useful in practice.
-On the other hand, I have no idea how expensive the inode_permission and
-owner checks really are - do they try to refresh attributes on a
-networked filesystem or would it trust the cache or is it fs dependant?
-
-Honestly this is more a case of "the people who's be interested in
-seeing this have no idea what they're doing" than lack of interest.. I
-wouldn't mind if there were tests doing mincore on a bunch of special
-files/mappings but I just tried on a few regular files by hand, this
-isn't proper coverage; I'll try to take more time to test various
-mappings today (JST).
-
-
-Thanks,
--- 
-Dominique
+  Vincent
