@@ -2,110 +2,90 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2943FC282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:02:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29CEAC282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3DC421872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:02:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECB69218A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 03:02:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="Dxlr7Uh8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727237AbfAXDCi (ORCPT
+        id S1727326AbfAXDCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 22:02:38 -0500
-Received: from mout.gmx.net ([212.227.17.22]:60221 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726864AbfAXDCi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 22:02:38 -0500
-Received: from localhost.localdomain ([218.18.229.179]) by mail.gmx.com
- (mrgmx103 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0MCL6r-1guzkI0aIr-0097nx; Thu, 24 Jan 2019 04:02:35 +0100
-From:   Chengguang Xu <cgxu519@gmx.com>
-To:     adobriyan@gmail.com, akpm@linux-foundation.org
-Cc:     linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Chengguang Xu <cgxu519@gmx.com>
-Subject: [PATCH 2/2] proc: code cleanup for proc_setup_thread_self()
-Date:   Thu, 24 Jan 2019 11:01:50 +0800
-Message-Id: <20190124030150.8472-2-cgxu519@gmx.com>
+        Wed, 23 Jan 2019 22:02:48 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:52884 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727252AbfAXDCn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 22:02:43 -0500
+Received: from localhost.localdomain (unknown [96.44.9.117])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id D45252F4;
+        Thu, 24 Jan 2019 04:02:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1548298962;
+        bh=VjKrHTmb5cEJmKf1BZYTq4g9kl+oCzQPLLfe1Y43/qA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Dxlr7Uh8uicM43ZQ5p3tgbIyPhUhRlwynaFs/bOn9bXabwPvDbIzFakJEP4Shg6iF
+         myjvmUKuVDu/ye4uZyEha6ZZlIV1VImOOTi/O4bGaZ7Pt2raoehVwR1TyaIb3cvFt/
+         wRiZ7jcFQqs7jJxOy1+4lOuOnKo//elV9c3ZP494=
+From:   Paul Elder <paul.elder@ideasonboard.com>
+To:     laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com
+Cc:     Paul Elder <paul.elder@ideasonboard.com>, b-liu@ti.com,
+        stern@rowland.harvard.edu, rogerq@ti.com, balbi@kernel.org,
+        gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v7 1/6] usb: uvc: include videodev2.h in g_uvc.h
+Date:   Wed, 23 Jan 2019 22:02:23 -0500
+Message-Id: <20190124030228.19840-2-paul.elder@ideasonboard.com>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124030150.8472-1-cgxu519@gmx.com>
-References: <20190124030150.8472-1-cgxu519@gmx.com>
+In-Reply-To: <20190124030228.19840-1-paul.elder@ideasonboard.com>
+References: <20190124030228.19840-1-paul.elder@ideasonboard.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:Gpau29f7AOcimbau3zLEJ0aZFY5WvThJ2/VStMTdj5lgB80KDSQ
- zHMmtErOQHtz3i59j7/RxrMLNMoviccssqWmRXezMnQMT0wx5wrGq5OhflpUH9vMyK48zRF
- dfLwNJEWXRRdtYBG+vTkM/0IWkW+XBSjGp7dSO9ssooKjXCvSr0zbYBuvs0hWYosT5kdi+e
- oYq1psl8Kjvqz1Y7/TE7w==
-X-UI-Out-Filterresults: notjunk:1;V03:K0:3rCGPSGjReI=:u8TvCPexPUVez+VdTLSBpV
- SUh4HlMnIaV49t9PRos0/Qlhn2K1sQSyC0ZGoI8n5WHzjr7akWvxkJsElQWjgMbpeZONlA8a7
- SKIo+hNeCQNUJuht6uZQ+Ze3Vm2LsNjXo0OB9XILGzq715uTMP4oj3upHtInUr+cquZNI+P6J
- iieJ6BbNmegdUzBeenw124GaLm44sgRnzVFsHu22A0e270WIKeEKi+83T+eNms3rrGfsZXxGg
- QyYEuH00hPaB+VeQopS1DeP0ILGftH/lNHmEOIxV4mEr6nh6lFqy3kYpPxL/hnpI6HFrvp5Cy
- 7plDqBrbLCL1cjacXJX3Kupee+KcJxUCrFbleEfDrQYjaUEvdulSV18ic78jPovXvlcHR+7q/
- 8VWD3WQdtV93IT1pSfAiqqexnvv4NUMGNJ8chbreLBO+790+fK0tUKSemyxEx8WEysePvReNc
- r70oNkvirI7uOVQ/IgN851ZpXanfJJiscHcHfPt6aL0wwFZOLvah1IgbYy/z1XjUuf9YOF2g4
- V4cdfXANPmPvZSfhwX12H0lJ12bgEZF7XHzCKR7EgHRo9HH/2v5kJ18NPmQB9jVMaSz82cvEp
- BqThSL1gPfp57qQL0Zxst5A29SDV+r1tGgSzCgNS4B45mMfGXz9wrx3InTNJP6opGeImioTJb
- S84M0+xO9WHz4r7TW60/We/qkoOwqLt1/2pAUu9pgl7+FTERThfSNGaiJIEWIc9g7EfE8LF5y
- ToeBmvnGEgCfqS0QtMR3BggilbFPFyE3912992UupUKeeut7sYIlR2LFPSth+w3rdNZPERuSM
- ShS17BqHj/ep/NvBvdFiM+Q/LqKpXVlLInZDp4p093ZoTsSOJuMnHqzmjb2skWj2TtMHtDXsU
- Lyp+FcSwvND/0APcKsYxo775dTrzMEe6DaIfzJ9RIB/yIKnTdufbGi/tyjfPZA
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary ERR_PTR()/PTR_ERR() cast in
-proc_setup_thread_self().
+V4L2_EVENT_PRIVATE_START is used in g_uvc.h but is defined in
+videodev2.h, which is not included and causes a compiler warning:
 
-Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+linux/usb/g_uvc.h:15:28: error: ‘V4L2_EVENT_PRIVATE_START’ undeclared here (not in a function)
+ #define UVC_EVENT_FIRST   (V4L2_EVENT_PRIVATE_START + 0)
+
+Include videodev2.h in g_uvc.h.
+
+Signed-off-by: Paul Elder <paul.elder@ideasonboard.com>
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 ---
- fs/proc/thread_self.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+No change from v6
+No change from v5
+No change from v4
+No change from v3
+No change from v2
+No change from v1
 
-diff --git a/fs/proc/thread_self.c b/fs/proc/thread_self.c
-index b905010ca9eb..f61ae53533f5 100644
---- a/fs/proc/thread_self.c
-+++ b/fs/proc/thread_self.c
-@@ -38,6 +38,7 @@ int proc_setup_thread_self(struct super_block *s)
- 	struct inode *root_inode = d_inode(s->s_root);
- 	struct pid_namespace *ns = proc_pid_ns(root_inode);
- 	struct dentry *thread_self;
-+	int ret = -ENOMEM;
+ include/uapi/linux/usb/g_uvc.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/include/uapi/linux/usb/g_uvc.h b/include/uapi/linux/usb/g_uvc.h
+index 3c9ee3020cbb..6698c3263ae8 100644
+--- a/include/uapi/linux/usb/g_uvc.h
++++ b/include/uapi/linux/usb/g_uvc.h
+@@ -11,6 +11,7 @@
+ #include <linux/ioctl.h>
+ #include <linux/types.h>
+ #include <linux/usb/ch9.h>
++#include <linux/videodev2.h>
  
- 	inode_lock(root_inode);
- 	thread_self = d_alloc_name(s->s_root, "thread-self");
-@@ -51,20 +52,19 @@ int proc_setup_thread_self(struct super_block *s)
- 			inode->i_gid = GLOBAL_ROOT_GID;
- 			inode->i_op = &proc_thread_self_inode_operations;
- 			d_add(thread_self, inode);
-+			ret = 0;
- 		} else {
- 			dput(thread_self);
--			thread_self = ERR_PTR(-ENOMEM);
- 		}
--	} else {
--		thread_self = ERR_PTR(-ENOMEM);
- 	}
- 	inode_unlock(root_inode);
--	if (IS_ERR(thread_self)) {
-+
-+	if (ret)
- 		pr_err("proc_fill_super: can't allocate /proc/thread_self\n");
--		return PTR_ERR(thread_self);
--	}
--	ns->proc_thread_self = thread_self;
--	return 0;
-+	else
-+		ns->proc_thread_self = thread_self;
-+
-+	return ret;
- }
- 
- void __init proc_thread_self_init(void)
+ #define UVC_EVENT_FIRST			(V4L2_EVENT_PRIVATE_START + 0)
+ #define UVC_EVENT_CONNECT		(V4L2_EVENT_PRIVATE_START + 0)
 -- 
 2.20.1
 
