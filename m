@@ -2,104 +2,108 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48348C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B01BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:29:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD2C218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:28:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9C60218B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:29:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548347352;
+	bh=oUVkLvLzOCg4mEZy4XJotoHmEuKxUxZKCX02acgwcTY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=n92IbsJN+pBmzyI5arWJB+Av2+n+Ci/QF6CMpi+rEu/eMq0ZlicoPN/vXQqfowTSG
+	 /Up7ZMpQDN7oDCg/d2Ia9Quysb/vkdxSWSyWNMX4qydEalaA8T2NuUXj69b+3ad2wM
+	 NauBZXkMJpiEc/bjdoNqsqAM2uNpMb/GjOKjN1SM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbfAXQ2g (ORCPT
+        id S1728492AbfAXQ3K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:28:36 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34237 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbfAXQ2f (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:28:35 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j10so2882744pga.1;
-        Thu, 24 Jan 2019 08:28:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=AXDIJV8/uIkS5fqUSWQGfeAHFwe0mqlsrnCb+5YhwAw=;
-        b=YKtTIez83EZrWBTBa9FMhav9bEuud3yrJjJBUwXf5LAaIrcb/c9mF0ajWQW/wg3RBx
-         IVTJK5fA6bGzB7cvKMLt4LY457QRPCaPORX5e8wFjoNOUjdTtjKY16GbHOl0VnZftLP5
-         3jw8/vUKGccVzRA5GPsXUK6jSI4ni7KNsR0kZVCUOETMknwNx+TKfnFrCY08R6rF7g5a
-         zTEosc/UzP7QkLQadWakGyF24f9gi/bM1iQWrMoOVxkeIyLixGV/09sN4CzEaGjYX1kR
-         iP/gW/h+4D1onzGWTz+bchs1tcm+aNIWTK5Z/aDZw3FJhkkfTyMuPubOiXrMrcu3NURW
-         jIiA==
-X-Gm-Message-State: AJcUukdeqIsLpLJ6xdpGwnvNlbkuYx11isryqNv5DcQnBLGIo8A4cFgV
-        hh5f03+819hkeXykR/8cJ4o=
-X-Google-Smtp-Source: ALg8bN777GIVe99apnnFQiT5bVL4EukzunU+krQCAYSskKXa3VnPv+F8FQaj4u0w4cixQSiBUNALNA==
-X-Received: by 2002:a62:7f93:: with SMTP id a141mr7188472pfd.96.1548347314512;
-        Thu, 24 Jan 2019 08:28:34 -0800 (PST)
-Received: from ?IPv6:2620:15c:2cd:203:5cdc:422c:7b28:ebb5? ([2620:15c:2cd:203:5cdc:422c:7b28:ebb5])
-        by smtp.gmail.com with ESMTPSA id g11sm27045537pfo.139.2019.01.24.08.28.33
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 08:28:33 -0800 (PST)
-Message-ID: <1548347312.9266.98.camel@acm.org>
-Subject: Re: [PATCH] blk-mq: fix the cmd_flag_name array
-From:   Bart Van Assche <bvanassche@acm.org>
-To:     Jens Axboe <axboe@kernel.dk>, Jeff Moyer <jmoyer@redhat.com>,
-        Jianchao Wang <jianchao.w.wang@oracle.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Thu, 24 Jan 2019 08:28:32 -0800
-In-Reply-To: <c3bde1b4-73ea-9120-0e6c-f9f57c0bbb24@kernel.dk>
-References: <1548325735-1760-1-git-send-email-jianchao.w.wang@oracle.com>
-         <x49h8dygkih.fsf@segfault.boston.devel.redhat.com>
-         <c3bde1b4-73ea-9120-0e6c-f9f57c0bbb24@kernel.dk>
-Content-Type: text/plain; charset="UTF-7"
-X-Mailer: Evolution 3.26.2-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Thu, 24 Jan 2019 11:29:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37290 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727573AbfAXQ3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:29:09 -0500
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E83B8218B0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 16:29:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548347349;
+        bh=oUVkLvLzOCg4mEZy4XJotoHmEuKxUxZKCX02acgwcTY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=P4es8OP+UCdHqmu1o15vUOfWECMW/MB+WNtMEdgk8tYYg7rTw779C/fnVmLrOZU1A
+         /pqIwqoyzHEcdL+QGZ/TMd5MYThOlIHk7T00Yzd8cGaEPrjDy3EIzgOvuAkJunGsX5
+         S4IEqSlTSbk9ikXaV/pOIT2+aoCuctL1cbSaOBSg=
+Received: by mail-qt1-f169.google.com with SMTP id p17so7262689qtl.5
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:29:08 -0800 (PST)
+X-Gm-Message-State: AJcUukcSU6cz9pV7/Ii795/m17KTLQj2zg9jTQg9Pv3TmF7qm39Jot1+
+        dSIUfZ92+rhR1GEc3oMde0fq3k2DHvc0ZJ6JZA==
+X-Google-Smtp-Source: ALg8bN5iVp3AYNN5zaaTrmaDZq9BJXh0wqoJQzSpqg/3e/KijRnVqWVxlC1YR2U2Q+yyFqyypLOYSYdKxBxgky6Gvqc=
+X-Received: by 2002:a0c:e2ca:: with SMTP id t10mr6866647qvl.77.1548347348122;
+ Thu, 24 Jan 2019 08:29:08 -0800 (PST)
+MIME-Version: 1.0
+References: <20190124121703.2337-1-abrodkin@synopsys.com>
+In-Reply-To: <20190124121703.2337-1-abrodkin@synopsys.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Thu, 24 Jan 2019 10:28:57 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqLfe0YN9ytYfE=quuqSpNgavGhr5rDc42SirrUfYXO66g@mail.gmail.com>
+Message-ID: <CAL_JsqLfe0YN9ytYfE=quuqSpNgavGhr5rDc42SirrUfYXO66g@mail.gmail.com>
+Subject: Re: [PATCH v2] ARC: [scripted] fix node name and address spelling
+To:     Alexey Brodkin <alexey.brodkin@synopsys.com>
+Cc:     arcml <linux-snps-arc@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Vineet Gupta <vineet.gupta1@synopsys.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 2019-01-24 at 09:22 -0700, Jens Axboe wrote:
-+AD4 On 1/24/19 8:09 AM, Jeff Moyer wrote:
-+AD4 +AD4 Jianchao Wang +ADw-jianchao.w.wang+AEA-oracle.com+AD4 writes:
-+AD4 +AD4 
-+AD4 +AD4 +AD4 Swap REQ+AF8-NOWAIT and REQ+AF8-NOUNMAP and add REQ+AF8-HIPRI.
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 Signed-off-by: Jianchao Wang +ADw-jianchao.w.wang+AEA-oracle.com+AD4
-+AD4 +AD4 +AD4 ---
-+AD4 +AD4 +AD4  block/blk-mq-debugfs.c +AHw 3 +-+--
-+AD4 +AD4 +AD4  1 file changed, 2 insertions(+-), 1 deletion(-)
-+AD4 +AD4 +AD4 
-+AD4 +AD4 +AD4 diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-+AD4 +AD4 +AD4 index 90d6876..f812083 100644
-+AD4 +AD4 +AD4 --- a/block/blk-mq-debugfs.c
-+AD4 +AD4 +AD4 +-+-+- b/block/blk-mq-debugfs.c
-+AD4 +AD4 +AD4 +AEAAQA -308,8 +-308,9 +AEAAQA static const char +ACo-const cmd+AF8-flag+AF8-name+AFsAXQ +AD0 +AHs
-+AD4 +AD4 +AD4  	CMD+AF8-FLAG+AF8-NAME(PREFLUSH),
-+AD4 +AD4 +AD4  	CMD+AF8-FLAG+AF8-NAME(RAHEAD),
-+AD4 +AD4 +AD4  	CMD+AF8-FLAG+AF8-NAME(BACKGROUND),
-+AD4 +AD4 +AD4 -	CMD+AF8-FLAG+AF8-NAME(NOUNMAP),
-+AD4 +AD4 +AD4  	CMD+AF8-FLAG+AF8-NAME(NOWAIT),
-+AD4 +AD4 +AD4 +-	CMD+AF8-FLAG+AF8-NAME(NOUNMAP),
-+AD4 +AD4 +AD4 +-	CMD+AF8-FLAG+AF8-NAME(HIPRI),
-+AD4 +AD4 +AD4  +AH0AOw
-+AD4 +AD4 +AD4  +ACM-undef CMD+AF8-FLAG+AF8-NAME
-+AD4 +AD4 
-+AD4 +AD4 Acked-by: Jeff Moyer +ADw-jmoyer+AEA-redhat.com+AD4
-+AD4 +AD4 
-+AD4 +AD4 You might consider also adding a comment above the req+AF8-flag+AF8-bits enum
-+AD4 +AD4 noting that modifications also need to be propagated to cmd+AF8-flag+AF8-name.
-+AD4 
-+AD4 Agree... These things are notoriously difficult to keep in sync, this
-+AD4 isn't the first time we've had a fixup. Not sure if that situation
-+AD4 is improvable, but at least a comment might help.
+On Thu, Jan 24, 2019 at 6:17 AM Alexey Brodkin
+<alexey.brodkin@synopsys.com> wrote:
+>
+> From: Alexey Brodkin <alexey.brodkin@synopsys.com>
+>
+> 1. Remove "0x" prefix from unit-address of node names
+> ----------------------->8------------------------
+> sed -i 's/@0x/@/g' arch/arc/boot/dts/*.dts*
+> ----------------------->8------------------------
+>
+> 2. Make all hex addresses lowercase:
+> ----------------------->8------------------------
+> sed -i 's/@\([0-9A-Za-z]*\)/@\L\1/g' arch/arc/boot/dts/*.dts*
+> sed -i 's/0x\([0-9A-Za-z]*\)/0x\L\1/g' arch/arc/boot/dts/*.dts*
+> ----------------------->8------------------------
+>
+> Inspired by [1] and the like.
+>
+> [1] http://kisskb.ellerman.id.au/kisskb/buildresult/13612017/
+>
+> Signed-off-by: Alexey Brodkin <abrodkin@synopsys.com>
+> Cc: Rob Herring <robh+dt@kernel.org>
+> ---
+>
+> Changes v1 -> v2:
+>
+>  * Convert all hex addresses to lower-case [Rob]
+>
+>  arch/arc/boot/dts/abilis_tb100.dtsi    | 58 ++++++++++++++++----------------
+>  arch/arc/boot/dts/abilis_tb100_dvk.dts | 14 ++++----
+>  arch/arc/boot/dts/abilis_tb101.dtsi    | 58 ++++++++++++++++----------------
+>  arch/arc/boot/dts/abilis_tb101_dvk.dts | 14 ++++----
+>  arch/arc/boot/dts/abilis_tb10x.dtsi    | 60 +++++++++++++++++-----------------
+>  arch/arc/boot/dts/axc001.dtsi          |  6 ++--
+>  arch/arc/boot/dts/axc003.dtsi          | 16 ++++-----
+>  arch/arc/boot/dts/axc003_idu.dtsi      | 16 ++++-----
+>  arch/arc/boot/dts/axs10x_mb.dtsi       | 22 ++++++-------
+>  arch/arc/boot/dts/hsdk.dts             |  4 +--
+>  arch/arc/boot/dts/vdk_axc003.dtsi      |  4 +--
+>  arch/arc/boot/dts/vdk_axc003_idu.dtsi  |  4 +--
+>  arch/arc/boot/dts/vdk_axs10x_mb.dtsi   | 18 +++++-----
+>  13 files changed, 147 insertions(+), 147 deletions(-)
 
-How about making the build system derive the CMD+AF8-FLAG+AF8-NAME() declarations
-from the include/linux/blk+ACo header files? It's not that hard to do that e.g.
-with the help of sed. The output of sed could be written into a .h file and
-that file could be +ACM-included from blk-mq-debugfs.c.
-
-Bart.
+Reviewed-by: Rob Herring <robh@kernel.org>
