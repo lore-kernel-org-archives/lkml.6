@@ -2,106 +2,77 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09CE0C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:31:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09083C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:31:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC01820854
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:31:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=cogentembedded-com.20150623.gappssmtp.com header.i=@cogentembedded-com.20150623.gappssmtp.com header.b="2CxCUcPF"
+	by mail.kernel.org (Postfix) with ESMTP id C970420854
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:31:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727757AbfAXLbQ (ORCPT
+        id S1727814AbfAXLbk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:31:16 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42823 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727409AbfAXLbQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 06:31:16 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l15-v6so4907338lja.9
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 03:31:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cogentembedded-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=3q4le4/TDaFX3wPtwOqzOy+gn8GWmVxn53VsdlZ8AYw=;
-        b=2CxCUcPFzUtq7TC3691irl0caDkDC9KSiLx/NjweWFQct6ORSaDO6gSd3rr5T56F7d
-         bdKgophnUrcJGaebXSWwgpcz4q5VPburqn4vbEYEl56IPGuv/FgakePczI4yfXgX+3Rh
-         BjSuD811gb/FXY2ZqAuVE47PTVvUZnYdJRmq8qX/BWY6MYcR3U64sRyvczvL2arP44EC
-         La3WEgCeiO/Hcy2XWd5GdpHqXxfr5axxD1z5uW6LefyPZW5+keA4aGYMaFDc6m6lTeR5
-         Q0zjc5clmgzKMn+Nl7AdwlNHePt2OpuNEZFBioYiCIXHNClNHsOlRheA5sTDHnaWgMRA
-         +SRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=3q4le4/TDaFX3wPtwOqzOy+gn8GWmVxn53VsdlZ8AYw=;
-        b=JhogoDB6z98fs8U+RG6TRkWu0aSFErhmZcpy85IDQyYaNiGpE/yK0WaQSMEwhgPgcJ
-         cC9dmCXU2HoXFgqeDHpGQx+9mfwHAKD8/ch4R+lTBhZDuwKT/aQImha/EnBj/rUL8+yK
-         ys7aFoZRbOuMsqNBjGtkLgrVut2C1+wZkli+AlDTa9li4Upw3O452gbtHU9+/k46X7XR
-         57m3Qd6VlseV49Ns9hLoo7UkZhIc85P3SgyLR+5wOWa2KbFkU3sGmGTET1dtxi0RSnIJ
-         L+YHV6Q5JL4sSvXX1QcEJFupXbFBJ7OzHG8UAPn1oi2VJR4wqOrL4euOg3jFqp4hMKOo
-         I95Q==
-X-Gm-Message-State: AJcUukeTf3Ol3SD8YRHihKKKIzjclhMCFQAo9/kCFEykDqc51Ko2MGmk
-        1ZASPzouSVmVfueBy4l3Qv1BJQ==
-X-Google-Smtp-Source: ALg8bN6SYyOvtXojOMfv2wWgLLdmOYKE106CRU/b70GYC7qoDBuclYQyv0neY+umecJ7r6onOKLhGg==
-X-Received: by 2002:a2e:5dd9:: with SMTP id v86-v6mr5244148lje.86.1548329473782;
-        Thu, 24 Jan 2019 03:31:13 -0800 (PST)
-Received: from wasted.cogentembedded.com ([31.173.84.179])
-        by smtp.gmail.com with ESMTPSA id i13-v6sm942307ljg.82.2019.01.24.03.31.12
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 03:31:12 -0800 (PST)
-Subject: Re: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     Marek Vasut <marek.vasut@gmail.com>
-Cc:     masonccyang@mxic.com.tw, bbrezillon@kernel.org, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, zhengxunli@mxic.com.tw
-References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
- <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
- <bb63b646-b549-dc3b-a604-17ba156e735c@gmail.com>
- <OF767ACC95.EECC73BE-ON4825838C.000BD6A3-4825838C.000D23A6@mxic.com.tw>
-From:   Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
-Organization: Cogent Embedded
-Message-ID: <93e1f97e-7afd-4a3e-b059-9f66390efa56@cogentembedded.com>
-Date:   Thu, 24 Jan 2019 14:31:11 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 24 Jan 2019 06:31:40 -0500
+Received: from mga18.intel.com ([134.134.136.126]:42211 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726014AbfAXLbj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 06:31:39 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 03:31:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,515,1539673200"; 
+   d="scan'208";a="140923416"
+Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.66.172])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Jan 2019 03:31:35 -0800
+From:   Jani Nikula <jani.nikula@linux.intel.com>
+To:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Intel Graphics <intel-gfx@lists.freedesktop.org>,
+        DRI <dri-devel@lists.freedesktop.org>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Weinan Li <weinan.z.li@intel.com>,
+        Zhenyu Wang <zhenyuw@linux.intel.com>
+Subject: Re: linux-next: Fixes tag needs some work in the drm-intel-fixes tree
+In-Reply-To: <20190124221949.4c89542a@canb.auug.org.au>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20190124221949.4c89542a@canb.auug.org.au>
+Date:   Thu, 24 Jan 2019 13:33:17 +0200
+Message-ID: <87munq1e9u.fsf@intel.com>
 MIME-Version: 1.0
-In-Reply-To: <OF767ACC95.EECC73BE-ON4825838C.000BD6A3-4825838C.000D23A6@mxic.com.tw>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-MW
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/24/2019 05:23 AM, masonccyang@mxic.com.tw wrote:
+On Thu, 24 Jan 2019, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> Hi all,
+>
+> In commit
+>
+>   0f7555121609 ("drm/i915/gvt: release shadow batch buffer and wa_ctx before destroy one workload")
+>
+> Fixes tag
+>
+>   Fixes: 0cce2823ed37 ("drm/i915/gvt/kvmgt:Refine error handling for prepare_execlist_workload")
+>
+> has these problem(s):
+>
+>   - Subject does not match target commit subject
+>
+> Just some whitespace.
 
->> [...]
->>
->> > +module_platform_driver(rpc_spi_driver);
->>
->> RPC is not a SPI controller, it's a SPI and HF controller.
->>
->> Also, how difficult will it be to add the HF support ?
-> 
-> One of my customers needs RPC SPI driver for our company's Octal-Flash,MX25UW51245G.
-> We don't have HF product and hope you could understanding.
+Thanks for the report. The commit being referenced seems to be the right
+one, though, so I don't think I'm going to force push to fix this.
 
-   I'm looking into the HF support (we have a driver internally).
+BR,
+Jani.
 
-> 
-> thanks & best regards,
-> Mason
-
-MBR, Sergei
+-- 
+Jani Nikula, Intel Open Source Graphics Center
