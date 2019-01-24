@@ -2,224 +2,174 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57767C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32785C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25389218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360678;
-	bh=Fkj8NOCb7LGhy+xJx+Yj4HaNAHrbrAjeVsnikerNdGU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=z1kpDZjWNJPGHsa/nM82kXwOEZKiUdMMyVA9wWkeFDvcLtXMqY6bBxwapDYMbNGdt
-	 +55AglkSl/GbXAs44DVV57ZQ7lXBu07ThiSdjgKaR1v2zuk7jUzcibmQlXPdQ4zCTs
-	 loD7sUAtw4ormufVEBbxJ2HpgXnIUq1tkkpbTlv4=
+	by mail.kernel.org (Postfix) with ESMTP id E6433218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WouYq4kx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730696AbfAXT1H (ORCPT
+        id S1730751AbfAXULX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:27:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53224 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730687AbfAXT1D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:27:03 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB439218FC;
-        Thu, 24 Jan 2019 19:27:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358022;
-        bh=Fkj8NOCb7LGhy+xJx+Yj4HaNAHrbrAjeVsnikerNdGU=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iXVqRXQlkDq8uSj0GrHW2oIPBYTcwKQZWep0uPTu0uBUTf8slOmSD4iTPqbCnBTcs
-         ciI/b8w0F9MT9cYOkEOPu7hySgkM41xeukkvgDfxyIPzWYEa/gH4BUfp502U+dnP2T
-         mfGlWndflOuHEOjmQotRGFlwup7TyPmQ/HFOqKXc=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.4 069/104] loop: Get rid of loop_index_mutex
-Date:   Thu, 24 Jan 2019 20:19:58 +0100
-Message-Id: <20190124190203.205948981@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
-References: <20190124190154.968308875@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        Thu, 24 Jan 2019 15:11:23 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:39646 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729568AbfAXULV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 15:11:21 -0500
+Received: by mail-lj1-f195.google.com with SMTP id t9-v6so6392343ljh.6
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:11:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=HG5FNm/40qWdHQsWrUQRMWT/agpt5B2Q6/gk2f7JfZE=;
+        b=WouYq4kx3ch3DRkgzhCmjF4AiZ+q05wfeAxbg9N/kksxRerTzVHL3tson1EUF0cfd2
+         Het0ejVSUjEIFk5p4kdG9qx4UIdhV+IC+uRnfavg89BDbOC3ok21PFqXyRFYOo5+fOZM
+         0LVImucOuepsNtdqEy25Qo28R1SkvAG7GbjS3J3ZFj/0/3EPyZvR+oSxPv+2yizNKhjj
+         CxTQTDUqwCY/kT+9e4A+oAdCeJ4IOTzO67vpXN4oy3YCPVBngLvfS82dBjMKLiEET4AP
+         0BYY+0oEc0EMiVuBZQgjNnWbmc5PrGzkJP5DKRf7/fnDT1BPzAp+MH5BbH4SWDCx2rxm
+         b/3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=HG5FNm/40qWdHQsWrUQRMWT/agpt5B2Q6/gk2f7JfZE=;
+        b=ADPCm3rwsJ5HquwVXwr/028a+nu3Gq8w6Ki8OI8ECXeZlq30BQ58cvKm7CRgNzQnAu
+         OHWL0u2Tx41B8TpWAuz9wzOQa8C9t7mT1G7gSa0+HWH5lTp/0gxFa7S746kjquHngFGi
+         hcpuDbXQcENTNgBLzt0215x9rwpx2oQR57p4NT8+P8tjSwvneaORAiLT9WIP63pVerCj
+         WQgMWn/hpqUgD+uL7sE8miM4tlxyjU6rzHcyyeHa2t9J5RAOdFTcwyeX4SkR9TfWJRt/
+         xd84NxTxR2MJJ1KKdNYvLgCn2btXrO7YNElmfCCSqRScWobZfeQtxPThj43vlJ2c07kw
+         r+wg==
+X-Gm-Message-State: AJcUukcFfih9bq70bGZxT68pvZioitisH0eHYAGh7dAksTkpQa63djYZ
+        vzlQAPLuiAUr1eP2mXxLPJg6QLIIt9CLNw6WTZaRLw==
+X-Google-Smtp-Source: ALg8bN5iyDfUFaULY+MEuCxsUhn6+b26/wDUddQ77zFqokyiY6uRCisCg5+1tQkI0s8DnTvQqNTyEV7IsD9pKp0xnUI=
+X-Received: by 2002:a2e:9395:: with SMTP id g21-v6mr6401932ljh.78.1548360679132;
+ Thu, 24 Jan 2019 12:11:19 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181117010748.24347-1-rajatja@google.com> <20190123205725.239661-1-rajatja@google.com>
+ <20190123205725.239661-3-rajatja@google.com> <D868735A-05A4-405A-9101-8D59F4208B9E@holtmann.org>
+In-Reply-To: <D868735A-05A4-405A-9101-8D59F4208B9E@holtmann.org>
+From:   Rajat Jain <rajatja@google.com>
+Date:   Thu, 24 Jan 2019 12:10:42 -0800
+Message-ID: <CACK8Z6HSEXJSSFryusJVS632d1WwAUt1rW0Q2QTBO-375mMS+Q@mail.gmail.com>
+Subject: Re: [PATCH v5 3/4] Bluetooth: Allow driver specific cmd timeout handling
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Alex Hung <alex.hung@canonical.com>,
+        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-usb@vger.kernel.org, netdev <netdev@vger.kernel.org>,
+        Rajat Jain <rajatxjain@gmail.com>,
+        Dmitry Torokhov <dtor@google.com>,
+        Raghuram Hegde <raghuram.hegde@intel.com>,
+        chethan.tumkur.narayan@intel.com,
+        "Ghorai, Sukumar" <sukumar.ghorai@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.4-stable review patch.  If anyone has any objections, please let me know.
+Hi Marcel,
 
-------------------
+On Thu, Jan 24, 2019 at 1:36 AM Marcel Holtmann <marcel@holtmann.org> wrote=
+:
+>
+> Hi Rajat,
+>
+> > Add a hook to allow the BT driver to do device or command specific
+> > handling in case of timeouts. This is to be used by Intel driver to
+> > reset the device after certain number of timeouts.
+> >
+> > Signed-off-by: Rajat Jain <rajatja@google.com>
+> > ---
+> > v5: Drop the quirk, and rename the hook function to cmd_timeout()
+> > v4: same as v1
+> > v3: same as v1
+> > v2: same as v1
+> >
+> > include/net/bluetooth/hci_core.h |  1 +
+> > net/bluetooth/hci_core.c         | 10 ++++++++--
+> > 2 files changed, 9 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/h=
+ci_core.h
+> > index e5ea633ea368..624d5f2b1f36 100644
+> > --- a/include/net/bluetooth/hci_core.h
+> > +++ b/include/net/bluetooth/hci_core.h
+> > @@ -437,6 +437,7 @@ struct hci_dev {
+> >       int (*post_init)(struct hci_dev *hdev);
+> >       int (*set_diag)(struct hci_dev *hdev, bool enable);
+> >       int (*set_bdaddr)(struct hci_dev *hdev, const bdaddr_t *bdaddr);
+> > +     void (*cmd_timeout)(struct hci_dev *hdev, struct hci_command_hdr =
+*cmd);
+> > };
+> >
+> > #define HCI_PHY_HANDLE(handle)        (handle & 0xff)
+> > diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+> > index 7352fe85674b..c6917f57581a 100644
+> > --- a/net/bluetooth/hci_core.c
+> > +++ b/net/bluetooth/hci_core.c
+> > @@ -2568,16 +2568,22 @@ static void hci_cmd_timeout(struct work_struct =
+*work)
+> > {
+> >       struct hci_dev *hdev =3D container_of(work, struct hci_dev,
+> >                                           cmd_timer.work);
+> > +     struct hci_command_hdr *sent =3D NULL;
+> >
+> >       if (hdev->sent_cmd) {
+> > -             struct hci_command_hdr *sent =3D (void *) hdev->sent_cmd-=
+>data;
+> > -             u16 opcode =3D __le16_to_cpu(sent->opcode);
+> > +             u16 opcode;
+> > +
+> > +             sent =3D (void *) hdev->sent_cmd->data;
+> > +             opcode =3D __le16_to_cpu(sent->opcode);
+> >
+> >               bt_dev_err(hdev, "command 0x%4.4x tx timeout", opcode);
+> >       } else {
+> >               bt_dev_err(hdev, "command tx timeout");
+> >       }
+> >
+> > +     if (hdev->cmd_timeout)
+> > +             hdev->cmd_timeout(hdev, sent);
+> > +
+>
+> drop the sent parameter. You are not using it and if at some point in the=
+ future you might want to use it, then we add it and fix up all users.
 
-From: Jan Kara <jack@suse.cz>
+Sure, will do.
 
-commit 0a42e99b58a208839626465af194cfe640ef9493 upstream.
+>
+> And frankly, I would move the hdev->cmd_timeout call into the hdev->sent_=
+cmd block since I do not even know if it makes sense to deal with the fallb=
+ack case where hdev->sent_cmd is not available. Unless you have that kind o=
+f error case, but that is only possible if you have external injection of H=
+CI commands.
 
-Now that loop_ctl_mutex is global, just get rid of loop_index_mutex as
-there is no good reason to keep these two separate and it just
-complicates the locking.
+Ummm ... my preference would be to keep it outside the block so that
+the hook is always invoked in any timeout, to be consistent (whether
+externally injected or not). Let me know if that is OK. I plan to send
+out an iteration keeping it outside, but I'll be happy to move it in
+if you feel strongly about it.
 
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Thanks,
 
----
- drivers/block/loop.c |   39 ++++++++++++++++++++-------------------
- 1 file changed, 20 insertions(+), 19 deletions(-)
+Rajat
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -81,7 +81,6 @@
- #include <asm/uaccess.h>
- 
- static DEFINE_IDR(loop_index_idr);
--static DEFINE_MUTEX(loop_index_mutex);
- static DEFINE_MUTEX(loop_ctl_mutex);
- 
- static int max_part;
-@@ -1571,9 +1570,11 @@ static int lo_compat_ioctl(struct block_
- static int lo_open(struct block_device *bdev, fmode_t mode)
- {
- 	struct loop_device *lo;
--	int err = 0;
-+	int err;
- 
--	mutex_lock(&loop_index_mutex);
-+	err = mutex_lock_killable(&loop_ctl_mutex);
-+	if (err)
-+		return err;
- 	lo = bdev->bd_disk->private_data;
- 	if (!lo) {
- 		err = -ENXIO;
-@@ -1582,7 +1583,7 @@ static int lo_open(struct block_device *
- 
- 	atomic_inc(&lo->lo_refcnt);
- out:
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 	return err;
- }
- 
-@@ -1591,12 +1592,11 @@ static void lo_release(struct gendisk *d
- 	struct loop_device *lo;
- 	int err;
- 
--	mutex_lock(&loop_index_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	lo = disk->private_data;
- 	if (atomic_dec_return(&lo->lo_refcnt))
--		goto unlock_index;
-+		goto out_unlock;
- 
--	mutex_lock(&loop_ctl_mutex);
- 	if (lo->lo_flags & LO_FLAGS_AUTOCLEAR) {
- 		/*
- 		 * In autoclear mode, stop the loop thread
-@@ -1604,7 +1604,7 @@ static void lo_release(struct gendisk *d
- 		 */
- 		err = loop_clr_fd(lo);
- 		if (!err)
--			goto unlock_index;
-+			return;
- 	} else {
- 		/*
- 		 * Otherwise keep thread (if running) and config,
-@@ -1613,9 +1613,8 @@ static void lo_release(struct gendisk *d
- 		loop_flush(lo);
- 	}
- 
-+out_unlock:
- 	mutex_unlock(&loop_ctl_mutex);
--unlock_index:
--	mutex_unlock(&loop_index_mutex);
- }
- 
- static const struct block_device_operations lo_fops = {
-@@ -1897,7 +1896,7 @@ static struct kobject *loop_probe(dev_t
- 	struct kobject *kobj;
- 	int err;
- 
--	mutex_lock(&loop_index_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	err = loop_lookup(&lo, MINOR(dev) >> part_shift);
- 	if (err < 0)
- 		err = loop_add(&lo, MINOR(dev) >> part_shift);
-@@ -1905,7 +1904,7 @@ static struct kobject *loop_probe(dev_t
- 		kobj = NULL;
- 	else
- 		kobj = get_disk(lo->lo_disk);
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	*part = 0;
- 	return kobj;
-@@ -1915,9 +1914,13 @@ static long loop_control_ioctl(struct fi
- 			       unsigned long parm)
- {
- 	struct loop_device *lo;
--	int ret = -ENOSYS;
-+	int ret;
-+
-+	ret = mutex_lock_killable(&loop_ctl_mutex);
-+	if (ret)
-+		return ret;
- 
--	mutex_lock(&loop_index_mutex);
-+	ret = -ENOSYS;
- 	switch (cmd) {
- 	case LOOP_CTL_ADD:
- 		ret = loop_lookup(&lo, parm);
-@@ -1931,7 +1934,6 @@ static long loop_control_ioctl(struct fi
- 		ret = loop_lookup(&lo, parm);
- 		if (ret < 0)
- 			break;
--		mutex_lock(&loop_ctl_mutex);
- 		if (lo->lo_state != Lo_unbound) {
- 			ret = -EBUSY;
- 			mutex_unlock(&loop_ctl_mutex);
-@@ -1943,7 +1945,6 @@ static long loop_control_ioctl(struct fi
- 			break;
- 		}
- 		lo->lo_disk->private_data = NULL;
--		mutex_unlock(&loop_ctl_mutex);
- 		idr_remove(&loop_index_idr, lo->lo_number);
- 		loop_remove(lo);
- 		break;
-@@ -1953,7 +1954,7 @@ static long loop_control_ioctl(struct fi
- 			break;
- 		ret = loop_add(&lo, -1);
- 	}
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	return ret;
- }
-@@ -2036,10 +2037,10 @@ static int __init loop_init(void)
- 				  THIS_MODULE, loop_probe, NULL, NULL);
- 
- 	/* pre-create number of devices given by config or max_loop */
--	mutex_lock(&loop_index_mutex);
-+	mutex_lock(&loop_ctl_mutex);
- 	for (i = 0; i < nr; i++)
- 		loop_add(&lo, i);
--	mutex_unlock(&loop_index_mutex);
-+	mutex_unlock(&loop_ctl_mutex);
- 
- 	printk(KERN_INFO "loop: module loaded\n");
- 	return 0;
-
-
+>
+> Regards
+>
+> Marcel
+>
