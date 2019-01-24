@@ -2,103 +2,91 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C234AC282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 02:10:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BCAC282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 02:15:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 88229218A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 02:10:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9DAB21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 02:15:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="mGm3dThw"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727058AbfAXCKI (ORCPT
+        id S1727136AbfAXCPj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 21:10:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56458 "EHLO mail.kernel.org"
+        Wed, 23 Jan 2019 21:15:39 -0500
+Received: from m50-112.126.com ([123.125.50.112]:55419 "EHLO m50-112.126.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726249AbfAXCKH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 21:10:07 -0500
-Received: from vmware.local.home (cpe-66-24-58-225.stny.res.rr.com [66.24.58.225])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E0A3217D7;
-        Thu, 24 Jan 2019 02:10:05 +0000 (UTC)
-Date:   Wed, 23 Jan 2019 21:09:56 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Andreas Ziegler <andreas.ziegler@fau.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] tracing: uprobes: Re-enable $comm support for
- uprobe events
-Message-ID: <20190123210956.0178b890@vmware.local.home>
-In-Reply-To: <20190124104322.29e62ee0024c77a40110d569@kernel.org>
-References: <154778663676.19927.12774448308165809570.stgit@devbox>
-        <154778666570.19927.5960654930869453736.stgit@devbox>
-        <20190123034005.2b49e4fe@vmware.local.home>
-        <20190124104322.29e62ee0024c77a40110d569@kernel.org>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        id S1726249AbfAXCPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 21:15:39 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=MOhb/KxrNV+Kz08mu0
+        ABo+to0TLS8Vf608VGSzEtxZ8=; b=mGm3dThwL13Qx1D6bhh1ySRk0GZOcYHshU
+        QjyULT1PhonRCyisaPuTut7dFscP9yox9MpEvxSFeNdfJ55hVsg+hmvhabh4fqlZ
+        hhvD2k9G/L5XkqhRPNpU28Lr2rhBV2m6B/PqP+QSAQFbmStYWTuLCoo7jRt+dty/
+        bLt0wnJME=
+Received: from pek-zhang3-d1.corp.ad.wrs.com (unknown [60.247.85.82])
+        by smtp6 (Coremail) with SMTP id j9KowACHOLWyH0lc1f_FAQ--.86S2;
+        Thu, 24 Jan 2019 10:15:20 +0800 (CST)
+From:   Zhaolong Zhang <zhangzl2013@126.com>
+To:     jon.maloy@ericsson.com, ying.xue@windriver.com,
+        davem@davemloft.net, zhangzl2013@126.com
+Cc:     netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] tipc: remove dead code in struct tipc_topsrv
+Date:   Thu, 24 Jan 2019 10:06:41 +0800
+Message-Id: <1548295601-23063-1-git-send-email-zhangzl2013@126.com>
+X-Mailer: git-send-email 1.9.1
+X-CM-TRANSID: j9KowACHOLWyH0lc1f_FAQ--.86S2
+X-Coremail-Antispam: 1Uf129KBjvdXoWruFykAF4xCw1DuryfuF1kGrg_yoWDZwcEk3
+        4xtF4xCr48Ww4vvws8Gw43Xa4kJw4rJF10gr10vryqgwsIqr18Ars5XryDWFW5uw4xC3W5
+        uw1DWrnIywsrGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+        9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbApntUUUUU==
+X-Originating-IP: [60.247.85.82]
+X-CM-SenderInfo: x2kd0wt2osiiat6rjloofrz/1tbi6xlGz1pD7mM2CAAAsR
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 10:43:22 +0900
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+max_rcvbuf_size is no longer used since commit "414574a0af36".
 
-> > >  kernel/trace/trace_uprobe.c |   15 +++++++++++++--
-> > >  1 file changed, 13 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> > > index 3a1d5ab6b4ba..b07e498ccbc6 100644
-> > > --- a/kernel/trace/trace_uprobe.c
-> > > +++ b/kernel/trace/trace_uprobe.c
-> > > @@ -156,7 +156,10 @@ fetch_store_string(unsigned long addr, void *dest, void *base)
-> > >  	if (unlikely(!maxlen))
-> > >  		return -ENOMEM;
-> > >  
-> > > -	ret = strncpy_from_user(dst, src, maxlen);
-> > > +	if (addr == (unsigned long)current->comm)
-> > > +		ret = strlcpy(dst, current->comm, maxlen);  
-> > 
-> > As user space (although only root) defines the size of the event being
-> > stored, and we could trick addr to be current->comm (although
-> > difficult), we could possibly leak data if maxlen is > TASK_COMM_LEN. I
-> > would feel better if we tested maxlen against TASK_COMM_LEN in this
-> > case.
-> > 
-> > 	if (maxlen > TASK_COMM_LEN)
-> > 		maxlen = TASK_COMM_LEN;
-> > 
-> > Or if we don't think it can happen, add a WARN_ON(maxlen >
-> > TASK_COMM_LEN).  
-> 
-> Hmm, I thought current->comm is null terminated, isn't it?
+Signed-off-by: Zhaolong Zhang <zhangzl2013@126.com>
+---
+ net/tipc/topsrv.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-Yes it is. I was thinking it was a memcpy (I blame conference fatigue ;-)
+diff --git a/net/tipc/topsrv.c b/net/tipc/topsrv.c
+index efb16f6..4b1c083 100644
+--- a/net/tipc/topsrv.c
++++ b/net/tipc/topsrv.c
+@@ -60,7 +60,6 @@
+  * @awork: accept work item
+  * @rcv_wq: receive workqueue
+  * @send_wq: send workqueue
+- * @max_rcvbuf_size: maximum permitted receive message length
+  * @listener: topsrv listener socket
+  * @name: server name
+  */
+@@ -72,7 +71,6 @@ struct tipc_topsrv {
+ 	struct work_struct awork;
+ 	struct workqueue_struct *rcv_wq;
+ 	struct workqueue_struct *send_wq;
+-	int max_rcvbuf_size;
+ 	struct socket *listener;
+ 	char name[TIPC_SERVER_NAME_LEN];
+ };
+@@ -648,7 +646,6 @@ int tipc_topsrv_start(struct net *net)
+ 		return -ENOMEM;
+ 
+ 	srv->net = net;
+-	srv->max_rcvbuf_size = sizeof(struct tipc_subscr);
+ 	INIT_WORK(&srv->awork, tipc_topsrv_accept);
+ 
+ 	strscpy(srv->name, name, sizeof(srv->name));
+-- 
+1.9.1
 
-> Anyway, if user can specify current->comm, he must be able to specify 
-> current->comm + TASK_COMM_LEN too by kprobe_events.
-> Moreover, it can leak any data in kernel...
-
-But this is for uprobes, which I why I was concerned.
-
-> 
-> And also, maxlen is calculated by fetch_store_strlen, right before
-> this has been called.
-> 
-> I rather concern the case that if we have shorter size of maxlen than
-> current->comm. Would we better show "(fault)" or tail-cut name ?
-> (of course this is very difficult to happen, since the length is
-> already checked.)
-
-Actually, it would still be OK, as strlcpy does guarantee to be nul
-terminated as long as it's greater than zero.
-
-Hmm, strlcpy doesn't pad the rest if what is written is shorter than
-what is allocated. Could that leak data?
-
--- Steve
