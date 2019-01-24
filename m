@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476E2C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2ECDC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FE621726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8162B217D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:51:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359484;
-	bh=N+gZrzsjyPMXtS56vSTjam4JHbsiEQf6n7/aDRG0F5M=;
+	s=default; t=1548359491;
+	bh=b9uCeGOSvAoSTjWwQTFCxFuYxeyK85GAcHkKVwZpGwE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KUXHnHMNbEoMX7NlF1nDadptCXdpKkj0RmAgYvDRN+Zjux9VIyz/ZUvWiDyEtisW1
-	 09aflaIyiZ9tzoqRPTjzfYtVTYECTD0DsZumX6/uooCRiSyCwUZSHTZQqX/CMVN2U2
-	 V4EBbopPnspBRu2GF2/478fkj/TH9kmqiiuHDvjY=
+	b=inowlX4YXQcAprjJl4zAB04rdjpy0z9PEraKRf8d7PK7ELSLTkHBe8KuLC+JzXt21
+	 bpvEovfs7CufB0CLOTCgJfLJluXXg3wTiy77vsdzkcF0SZbXKcDGkUV1YTcs0kB3g0
+	 p2VxZzMixjhCON49wqOrHvdOoHy9n1ApYbmGGUyo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733146AbfAXTjv (ORCPT
+        id S1733125AbfAXTjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:39:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39978 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:39:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39836 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730688AbfAXTjt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:39:49 -0500
+        id S1733112AbfAXTjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 692C4218D3;
-        Thu, 24 Jan 2019 19:39:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE76D20663;
+        Thu, 24 Jan 2019 19:39:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358788;
-        bh=N+gZrzsjyPMXtS56vSTjam4JHbsiEQf6n7/aDRG0F5M=;
+        s=default; t=1548358780;
+        bh=b9uCeGOSvAoSTjWwQTFCxFuYxeyK85GAcHkKVwZpGwE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X8pzJAoJxDjzX31ZeItRv/bviNFkuT8B4FsNAei48+y/ew9vKDZl64AFLNi3AbeBU
-         xRXLj3tc80WyxYz8SlmWLa1Uomc34Sy3VM6F7MYqji9t7YIvejvN04aqK8/ELV8OP2
-         gBOFA+oGzmO29vbJQY7eXI3ismMCfoQTHPZ3d2hU=
+        b=OM1V/0nzIVInuMcpRhk8b25iQfcUvBo7LH0a80vOKHQF0PZzRE52TiTb1bu7YQiOs
+         +BWMQGlJXMVnX6NV4r7UkLO3PKFl9yh71sK5Dg1I4yTb2QBGnJ/W1PTR01neSRcPUr
+         C9y5FbzDwp9J0fxlIrf684CV8/8Mf0esdrZpX0OU=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Anders Roxell <anders.roxell@linaro.org>,
+        stable@vger.kernel.org, Badhri Jagan Sridharan <badhri@google.com>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 026/127] writeback: dont decrement wb->refcnt if !wb->bdi
-Date:   Thu, 24 Jan 2019 20:19:32 +0100
-Message-Id: <20190124190213.384298987@linuxfoundation.org>
+Subject: [PATCH 4.20 023/127] usb: typec: tcpm: Do not disconnect link for self powered devices
+Date:   Thu, 24 Jan 2019 20:19:29 +0100
+Message-Id: <20190124190213.237986938@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -66,47 +66,114 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 347a28b586802d09604a149c1a1f6de5dccbe6fa ]
+[ Upstream commit 23b5f73266e59a598c1e5dd435d87651b5a7626b ]
 
-This happened while running in qemu-system-aarch64, the AMBA PL011 UART
-driver when enabling CONFIG_DEBUG_TEST_DRIVER_REMOVE.
-arch_initcall(pl011_init) came before subsys_initcall(default_bdi_init),
-devtmpfs' handle_remove() crashes because the reference count is a NULL
-pointer only because wb->bdi hasn't been initialized yet.
+During HARD_RESET the data link is disconnected.
+For self powered device, the spec is advising against doing that.
 
-Rework so that wb_put have an extra check if wb->bdi before decrement
-wb->refcnt and also add a WARN_ON_ONCE to get a warning if it happens again
-in other drivers.
+>From USB_PD_R3_0
+7.1.5 Response to Hard Resets
+Device operation during and after a Hard Reset is defined as follows:
+Self-powered devices Should Not disconnect from USB during a Hard Reset
+(see Section 9.1.2).
+Bus powered devices will disconnect from USB during a Hard Reset due to the
+loss of their power source.
 
-Fixes: 52ebea749aae ("writeback: make backing_dev_info host cgroup-specific bdi_writebacks")
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Tackle this by letting TCPM know whether the device is self or bus powered.
+
+This overcomes unnecessary port disconnections from hard reset.
+Also, speeds up the enumeration time when connected to Type-A ports.
+
+Signed-off-by: Badhri Jagan Sridharan <badhri@google.com>
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+---------
+Version history:
+V3:
+Rebase on top of usb-next
+
+V2:
+Based on feedback from heikki.krogerus@linux.intel.com
+- self_powered added to the struct tcpm_port which is populated from
+  a. "connector" node of the device tree in tcpm_fw_get_caps()
+  b. "self_powered" node of the tcpc_config in tcpm_copy_caps
+
+Based on feedbase from linux@roeck-us.net
+- Code was refactored
+- SRC_HARD_RESET_VBUS_OFF sets the link state to false based
+  on self_powered flag
+
+V1 located here:
+https://lkml.org/lkml/2018/9/13/94
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/backing-dev-defs.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/usb/typec/tcpm/tcpm.c | 12 ++++++++++--
+ include/linux/usb/tcpm.h      |  1 +
+ 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/backing-dev-defs.h b/include/linux/backing-dev-defs.h
-index 9a6bc0951cfa..c31157135598 100644
---- a/include/linux/backing-dev-defs.h
-+++ b/include/linux/backing-dev-defs.h
-@@ -258,6 +258,14 @@ static inline void wb_get(struct bdi_writeback *wb)
-  */
- static inline void wb_put(struct bdi_writeback *wb)
- {
-+	if (WARN_ON_ONCE(!wb->bdi)) {
-+		/*
-+		 * A driver bug might cause a file to be removed before bdi was
-+		 * initialized.
-+		 */
-+		return;
-+	}
+diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
+index dbbd71f754d0..ba6e5cdaed2c 100644
+--- a/drivers/usb/typec/tcpm/tcpm.c
++++ b/drivers/usb/typec/tcpm/tcpm.c
+@@ -317,6 +317,9 @@ struct tcpm_port {
+ 	/* Deadline in jiffies to exit src_try_wait state */
+ 	unsigned long max_wait;
+ 
++	/* port belongs to a self powered device */
++	bool self_powered;
 +
- 	if (wb != &wb->bdi->wb)
- 		percpu_ref_put(&wb->refcnt);
+ #ifdef CONFIG_DEBUG_FS
+ 	struct dentry *dentry;
+ 	struct mutex logbuffer_lock;	/* log buffer access lock */
+@@ -3254,7 +3257,8 @@ static void run_state_machine(struct tcpm_port *port)
+ 	case SRC_HARD_RESET_VBUS_OFF:
+ 		tcpm_set_vconn(port, true);
+ 		tcpm_set_vbus(port, false);
+-		tcpm_set_roles(port, false, TYPEC_SOURCE, TYPEC_HOST);
++		tcpm_set_roles(port, port->self_powered, TYPEC_SOURCE,
++			       TYPEC_HOST);
+ 		tcpm_set_state(port, SRC_HARD_RESET_VBUS_ON, PD_T_SRC_RECOVER);
+ 		break;
+ 	case SRC_HARD_RESET_VBUS_ON:
+@@ -3267,7 +3271,8 @@ static void run_state_machine(struct tcpm_port *port)
+ 		memset(&port->pps_data, 0, sizeof(port->pps_data));
+ 		tcpm_set_vconn(port, false);
+ 		tcpm_set_charge(port, false);
+-		tcpm_set_roles(port, false, TYPEC_SINK, TYPEC_DEVICE);
++		tcpm_set_roles(port, port->self_powered, TYPEC_SINK,
++			       TYPEC_DEVICE);
+ 		/*
+ 		 * VBUS may or may not toggle, depending on the adapter.
+ 		 * If it doesn't toggle, transition to SNK_HARD_RESET_SINK_ON
+@@ -4412,6 +4417,8 @@ sink:
+ 		return -EINVAL;
+ 	port->operating_snk_mw = mw / 1000;
+ 
++	port->self_powered = fwnode_property_read_bool(fwnode, "self-powered");
++
+ 	return 0;
  }
+ 
+@@ -4720,6 +4727,7 @@ static int tcpm_copy_caps(struct tcpm_port *port,
+ 	port->typec_caps.prefer_role = tcfg->default_role;
+ 	port->typec_caps.type = tcfg->type;
+ 	port->typec_caps.data = tcfg->data;
++	port->self_powered = port->tcpc->config->self_powered;
+ 
+ 	return 0;
+ }
+diff --git a/include/linux/usb/tcpm.h b/include/linux/usb/tcpm.h
+index 7e7fbfb84e8e..50c74a77db55 100644
+--- a/include/linux/usb/tcpm.h
++++ b/include/linux/usb/tcpm.h
+@@ -89,6 +89,7 @@ struct tcpc_config {
+ 	enum typec_port_data data;
+ 	enum typec_role default_role;
+ 	bool try_role_hw;	/* try.{src,snk} implemented in hardware */
++	bool self_powered;	/* port belongs to a self powered device */
+ 
+ 	const struct typec_altmode_desc *alt_modes;
+ };
 -- 
 2.19.1
 
