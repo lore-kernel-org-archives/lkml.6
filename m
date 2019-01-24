@@ -2,51 +2,54 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A39B4C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C30C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 734AE218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A343B21902
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358236;
-	bh=fYitXcVpVGKVuGrYeTnAWqgCHhahTJoFZ5LTFudv4gs=;
+	s=default; t=1548358240;
+	bh=yFh+DiAZwKNMePUIa1XgeEpiMgd2WKmnx59HJ8Ai4fM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=djFwwLWdibraGXg/BG6n6/0DE6TqbiOXLLWHhdo6jzkgWnaTbLGfOu7QM/CzQDmQt
-	 KZGLb81NCWgHk9okOaJH9lSzwYMG1JZ+wlq9nxAYkgeg4OBVToVI6IMX11ttpNweJy
-	 Fk8jf5nZ8z1Dk8urtTo6+i6ojP/Du021C5CqclGc=
+	b=u0ewCmXhgZnzu4FotPkrz2BFkEjCphiEcQwUTLTvlYwF67FhWOSSNbXvFv0S+i/ui
+	 sd51Wb8wRYdhc7l7dKClT4R1xrokLyg8XNrGKCH6j+lgiJ2NZO30AcUknCS2vYkulw
+	 TbEERwry/10tfe/NyfLSJnFEms3Hjuv97Ay6vPcw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731430AbfAXTad (ORCPT
+        id S1730761AbfAXTah (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:30:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58050 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:30:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730703AbfAXTaa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:30:30 -0500
+        id S1730703AbfAXTaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:30:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16558218E2;
-        Thu, 24 Jan 2019 19:30:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B51A21902;
+        Thu, 24 Jan 2019 19:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358229;
-        bh=fYitXcVpVGKVuGrYeTnAWqgCHhahTJoFZ5LTFudv4gs=;
+        s=default; t=1548358234;
+        bh=yFh+DiAZwKNMePUIa1XgeEpiMgd2WKmnx59HJ8Ai4fM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yKPG9wPqbM+VFqFxyDi/IvZjELC12NijGtLnpAhBAdQwXAhraTdpZ9UCJzM59sU3H
-         q2r4ifZWKcTALuGOQ8SYQzy8yn1IyY6mfkR5N//WWeuFlm80vDklCLpbH8TTm/Nuzz
-         Vc4jLVhCqt+ZKQAed7WBTtHtIgfBpA/5eduyI6Kc=
+        b=rlL/uepMGiiDl41MLazQaYcp/bXutuFEndVTI3WqtGA1llmVbUTjzySSxMb5KH5K+
+         W4a2gaknwt9T7TUNjv4MeT5FU2tcQLCHutWp7RJPZTAgD7KcJ9iUM6McsWGlnwi6Cv
+         Nhy3KcSz00mi2nGXlZ89lfDqLk8h8C03pX/VJXYE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Dave Airlie <airlied@redhat.com>,
-        Will Deacon <will.deacon@arm.com>
-Subject: [PATCH 4.9 39/39] locking/qspinlock: Pull in asm/byteorder.h to ensure correct endianness
-Date:   Thu, 24 Jan 2019 20:20:42 +0100
-Message-Id: <20190124190449.768201183@linuxfoundation.org>
+        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 27/39] perf parse-events: Fix unchecked usage of strncpy()
+Date:   Thu, 24 Jan 2019 20:20:30 +0100
+Message-Id: <20190124190449.214766775@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -65,49 +68,56 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Dave Airlie <airlied@redhat.com>
+[ Upstream commit bd8d57fb7e25e9fcf67a9eef5fa13aabe2016e07 ]
 
-This commit is not required upstream, but is required for the 4.9.y
-stable series.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-Upstream commit 101110f6271c ("Kbuild: always define endianess in
-kconfig.h") ensures that either __LITTLE_ENDIAN or __BIG_ENDIAN is
-defined to reflect the endianness of the target CPU architecture
-regardless of whether or not <asm/byteorder.h> has been #included. The
-upstream definition of 'struct qspinlock' relies on this property.
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-Unfortunately, the 4.9.y stable series does not provide this guarantee,
-so the 'spin_unlock()' routine can erroneously treat the underlying
-lockword as big-endian on little-endian architectures using native
-qspinlock (i.e. x86_64 without PV) if the caller has not included
-<asm/byteorder.h>. This can lead to hangs such as the one in
-'i915_gem_request()' reported via bugzilla:
+  util/parse-events.c: In function 'print_symbol_events':
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2508:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  In function 'print_symbol_events.constprop',
+      inlined from 'print_events' at util/parse-events.c:2511:2:
+  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
+      strncpy(name, syms->symbol, MAX_NAME_LEN);
+      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  cc1: all warnings being treated as errors
 
-  https://bugzilla.kernel.org/show_bug.cgi?id=202063
-
-Fix the issue by ensuring that <asm/byteorder.h> is #included in
-<asm/qspinlock_types.h>, where 'struct qspinlock' is defined.
-
-Cc: <stable@vger.kernel.org> # 4.9
-Signed-off-by: Dave Airlie <airlied@redhat.com>
-[will: wrote commit message]
-Signed-off-by: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
+Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/asm-generic/qspinlock_types.h |    2 ++
- 1 file changed, 2 insertions(+)
+ tools/perf/util/parse-events.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/include/asm-generic/qspinlock_types.h
-+++ b/include/asm-generic/qspinlock_types.h
-@@ -18,6 +18,8 @@
- #ifndef __ASM_GENERIC_QSPINLOCK_TYPES_H
- #define __ASM_GENERIC_QSPINLOCK_TYPES_H
+diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
+index 415a9c38d9f0..14f111a10650 100644
+--- a/tools/perf/util/parse-events.c
++++ b/tools/perf/util/parse-events.c
+@@ -2225,7 +2225,7 @@ restart:
+ 		if (!name_only && strlen(syms->alias))
+ 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
+ 		else
+-			strncpy(name, syms->symbol, MAX_NAME_LEN);
++			strlcpy(name, syms->symbol, MAX_NAME_LEN);
  
-+#include <asm/byteorder.h>
-+
- /*
-  * Including atomic.h with PARAVIRT on will cause compilation errors because
-  * of recursive header file incluson via paravirt_types.h. So don't include
+ 		evt_list[evt_i] = strdup(name);
+ 		if (evt_list[evt_i] == NULL)
+-- 
+2.19.1
+
 
 
