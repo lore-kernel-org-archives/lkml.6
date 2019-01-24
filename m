@@ -2,190 +2,152 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B45A7C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0368AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 784B421855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD7EC21855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:01:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="odtwtirQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XfrK273v"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728272AbfAXOAv (ORCPT
+        id S1728327AbfAXOBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 09:00:51 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33657 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728225AbfAXOAt (ORCPT
+        Thu, 24 Jan 2019 09:01:53 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:50379 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727799AbfAXOBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 09:00:49 -0500
-Received: by mail-wr1-f66.google.com with SMTP id p7so6628522wru.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 06:00:47 -0800 (PST)
+        Thu, 24 Jan 2019 09:01:52 -0500
+Received: by mail-wm1-f68.google.com with SMTP id n190so3262755wmd.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 06:01:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iI4CRWe2LKTfCV7bVfyN+5k3FytPSzrn9R+fO7Dhq9g=;
-        b=odtwtirQcCV+PtR+Iu7d8wJH5w2mp3qy1VMrMw9NrybybUHnybw2fRzweMy3HGhBjh
-         fqJFKRooGCuZ6ukniGdrLdVh0T8H59l8TTga+aFW2EkS1GM4nRUBYLbgA3Zc3PMmNV2R
-         aVV2KaT2KrJhwSAw+pkEiaHGyWAP5SmUGIfIoSJED5G6/TXdfuLP42jGk3bowdfag4dW
-         bGkShaYczEQHlQtE15tUtexd6xhcwf/VEYi56vYQXTr/MNBf7rvJ5btShTOiuay0475c
-         4H+Rb280Mb4pvelDuZRWuZkWKWGg1WhTToOo9Tf6yjFRYoZN+V/mM4ivSiPKx8JkeS3N
-         qzAA==
+         :cc:content-transfer-encoding;
+        bh=Zly3uJj3nfd6LGkHaexN+XCtlqBu6G31R9osIiXcn5Y=;
+        b=XfrK273vOJhFqVOf+1SgApy2Ctx3xStj+i54ORpCNbe8b7lmTkF4tOKmiZ6lis2+hC
+         LsTHR17+hOdKX0h1SuhMnDFRP9jkCIzMZoNFEf4sreZzv+0czlzetDK6E0F7Cgho/7FG
+         d42/ZluW2dpJ6LyFMJjupX6yO8G3OWftd4S17aIPb1zUH49AUqlHJD8gdPwwSDnxRT+t
+         B5csQ74gc2Yp8mzwCzyF74+uiPxyDAQcc0PFDznl8O2KAodX0FadGK3CsZLDa3UuUKyD
+         J40QmN9Xi/eudPMhRf/EX2ZJRI4j5gFambT3MdTajwP/5QsRQKHXcwnC+rCjzuki15PU
+         BD0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iI4CRWe2LKTfCV7bVfyN+5k3FytPSzrn9R+fO7Dhq9g=;
-        b=sJaedCQ8yMkIhCevpyQXP31fzOIc89eU/7rzHRs1RnPrY2mMBUEcCFmuhX+WfaBdqR
-         MRmur8e6M+KaS9wAiLve+Ra8rw2fPH8M4vqqoNUt+WanKbBJvS/a9Rcif2vuFTTEVWgd
-         RP6b2w80IAXNalWbCiy4OBgiAfyE68WxHwJYWuM8QjK1CXoKdCbOwrQsL/1Sxs8hMt2q
-         PexVJgZeMFv8zra3ztc0mO7TZu/dRvfJmVPNZOgnrh3/2I8NE197kfaqeazzeDRbQjFn
-         ONOpusm0cujPgR3MkzYvbL+Cv8pvhxoLrbyKBJI6V4J8rPQ0aamOYFxYG5Ixpd2NkZ4g
-         KduA==
-X-Gm-Message-State: AJcUukeow6KnqgfQsV5BSVn0z5vgVLeaJyb3SHGm9AW/Tizlhn6veEGT
-        I8bIbF1v7Sdxm24vgHst5/PI7i2U/A4ZEWK76ao=
-X-Google-Smtp-Source: ALg8bN7WuDb1pFVDTPRgRARPfvKiBIP3SSVdNtfMPwjBUDBOPHmSSOcSzc4gA94Th3uuaH/P3/yVtqJA/8ycAa4mHGs=
-X-Received: by 2002:adf:8506:: with SMTP id 6mr7608882wrh.128.1548338446976;
- Thu, 24 Jan 2019 06:00:46 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Zly3uJj3nfd6LGkHaexN+XCtlqBu6G31R9osIiXcn5Y=;
+        b=lQ4ojPfwMAEgmofU3baxjXWQ0jNij4LxOVh1fQSbVAsd/GHGKjenWvv8we7fQzAQDS
+         Z0EzXDzhMICGd5A3dp0RCztM/IkOA9B+YFnRVfla/AnTCOJfrUSWnXKx9oPwUEaZ1Ixa
+         8pgf2wZnBm/eqaAQT90zxiB5CmbR2uOJe1Xqxw4RKa9Jgd8BdBR2uJCK1obhtMSgKBRi
+         IRQaExUMMJxsfuNoZwEh31K3cbA3jFr+pJHajcYy56LPahtFCpYvLahF6D/ZA782IlHb
+         uzJfVrnvscnjZURJmeUyjPr+Rlea0BOFhd7/3xLTF1HEWBIpFdZRr2DS96Ltu8mqlbs1
+         63+A==
+X-Gm-Message-State: AJcUukdU4zUr0AkIP1w96RZsvCoJ42QGNScAJaGL3w26339MZxZKueEv
+        E/W43kBLPgKVvi71CqpQVhAngqytZJNgV8daI2Y=
+X-Google-Smtp-Source: ALg8bN4yXpHJwSOtUBiqISJ2R6T42zvZijTklQrw9xVkchJxEkh4WkGurfcpm+rih+t/nm+kp2hUROmX7VwwqDnwDH0=
+X-Received: by 2002:a1c:c87:: with SMTP id 129mr2653509wmm.116.1548338509915;
+ Thu, 24 Jan 2019 06:01:49 -0800 (PST)
 MIME-Version: 1.0
-References: <850b6aee-0040-c333-b125-45211c18ada5@daenzer.net>
- <CAKv+Gu99zHqcQtj6TiOXAr3Qa6WWhKem+DHVA_mAQ0-Bc0Vbqw@mail.gmail.com>
- <047667fd-17be-1c37-5d2a-26768cfd6ab8@daenzer.net> <CAKv+Gu_VBd8agHASc5RS0eCgyXP64Lt_i4yPuBjKwGQ+5Lpd5Q@mail.gmail.com>
- <CADnq5_O1uxCrSksfF127AZTfbmdukxmqGdh2Ee0zM6CqgG_Mhg@mail.gmail.com>
- <CAKv+Gu-4uYh_HD_5Ry_L80Nf5zpRhT4oJYhhG5_8g3gSzBs2tg@mail.gmail.com>
- <20190123071521.GB20526@infradead.org> <CAKv+Gu8+77uZHJ6ZYjGNcKQL8C3cT5Ree+TcTVmkQXAHV-ADyg@mail.gmail.com>
- <20190123164428.GA9367@infradead.org> <CAKv+Gu-9vEKu8mG-o+-4M1ZcgZmTTJVfEdNS9R27AFX8P5sqyQ@mail.gmail.com>
- <20190124091316.GA22796@infradead.org> <bb559f74-4b1e-d5ee-74fb-b5dcd4a128cb@amd.com>
- <CAKv+Gu_3LurSN-6w1WijPfpJpc+Pgu0YTnwTfMrXMF3-AKAnJA@mail.gmail.com>
- <953e5e5f-5d47-d6df-40df-c8c94db5447f@amd.com> <CAKv+Gu9umPEmB+wh54NOTYcQ14oxf7rwVAXgCqo7V2A+VwkqPA@mail.gmail.com>
- <57590a48-4629-e2a1-8673-ce9eb2ec210b@amd.com> <CAKv+Gu_2f0FaJ+Th7H48u4GrPX=MM9xw0fFjdwhfRrr1nhgEkA@mail.gmail.com>
- <40ad3ae7-9970-0cb9-d35c-05e128f83820@amd.com> <CAKv+Gu_D4FC05Rz3Oxm_dTWLaGt+a3EDecbsrge1eHY7gFXEYg@mail.gmail.com>
- <CADnq5_PCCj1dgYTnJoWdFp45X8GMwdT34sMtWH7p6Ms1_SncOQ@mail.gmail.com> <CAKv+Gu9Ch_+2wUirmPb1-dXGzWbF2XoH-b6DrtkBNEXpx5obPA@mail.gmail.com>
-In-Reply-To: <CAKv+Gu9Ch_+2wUirmPb1-dXGzWbF2XoH-b6DrtkBNEXpx5obPA@mail.gmail.com>
+References: <20190124120658.30288-1-ard.biesheuvel@linaro.org>
+ <3cca35a9-c71c-a100-b29d-31ba0d1d10b1@amd.com> <CAKv+Gu9OG3O4+4F2nioaQ-3U-1kwRBr5KVj-1gD1ZEsUx_Ud5A@mail.gmail.com>
+In-Reply-To: <CAKv+Gu9OG3O4+4F2nioaQ-3U-1kwRBr5KVj-1gD1ZEsUx_Ud5A@mail.gmail.com>
 From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Thu, 24 Jan 2019 09:00:34 -0500
-Message-ID: <CADnq5_OL-Zga6-E0f-m6w+PGTJKb16PMwOPgF-yzugbvWS3fvQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] drm: disable WC optimization for cache coherent
- devices on non-x86
+Date:   Thu, 24 Jan 2019 09:01:37 -0500
+Message-ID: <CADnq5_PETD6umm9Df7OZ9BdaV5MZutmhN+HTAnVkcRLg5=TNWw@mail.gmail.com>
+Subject: Re: [PATCH] drm: enable uncached DMA optimization for ARM and arm64
 To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
 Cc:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        =?UTF-8?Q?Michel_D=C3=A4nzer?= <michel@daenzer.net>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Carsten Haitzler <Carsten.Haitzler@arm.com>,
         David Airlie <airlied@linux.ie>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+        "Daenzer, Michel" <Michel.Daenzer@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Hellwig <hch@infradead.org>,
         "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Michael Ellerman <mpe@ellerman.id.au>,
         "Deucher, Alexander" <Alexander.Deucher@amd.com>,
         Sean Paul <sean@poorly.run>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Robin Murphy <robin.murphy@arm.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 8:57 AM Ard Biesheuvel
+On Thu, Jan 24, 2019 at 9:00 AM Ard Biesheuvel
 <ard.biesheuvel@linaro.org> wrote:
 >
-> On Thu, 24 Jan 2019 at 14:54, Alex Deucher <alexdeucher@gmail.com> wrote:
+> On Thu, 24 Jan 2019 at 13:31, Koenig, Christian
+> <Christian.Koenig@amd.com> wrote:
 > >
-> > On Thu, Jan 24, 2019 at 6:45 AM Ard Biesheuvel
-> > <ard.biesheuvel@linaro.org> wrote:
+> > Am 24.01.19 um 13:06 schrieb Ard Biesheuvel:
+> > > The DRM driver stack is designed to work with cache coherent devices
+> > > only, but permits an optimization to be enabled in some cases, where
+> > > for some buffers, both the CPU and the GPU use uncached mappings,
+> > > removing the need for DMA snooping and allocation in the CPU caches.
 > > >
-> > > On Thu, 24 Jan 2019 at 12:37, Koenig, Christian
-> > > <Christian.Koenig@amd.com> wrote:
-> > > >
-> > > > Am 24.01.19 um 12:26 schrieb Ard Biesheuvel:
-> > > > > On Thu, 24 Jan 2019 at 12:23, Koenig, Christian
-> > > > > <Christian.Koenig@amd.com> wrote:
-> > > > >> Am 24.01.19 um 10:59 schrieb Ard Biesheuvel:
-> > > > >>> [SNIP]
-> > > > >>> This is *exactly* my point the whole time.
-> > > > >>>
-> > > > >>> The current code has
-> > > > >>>
-> > > > >>> static inline bool drm_arch_can_wc_memory(void)
-> > > > >>> {
-> > > > >>> #if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
-> > > > >>>      return false;
-> > > > >>>
-> > > > >>> which means the optimization is disabled *unless the system is
-> > > > >>> non-cache coherent*
-> > > > >>>
-> > > > >>> So if you have reports that the optimization works on some PowerPC, it
-> > > > >>> must be non-cache coherent PowerPC, because that is the only place
-> > > > >>> where it is enabled in the first place.
-> > > > >>>
-> > > > >>>> The only problematic here actually seems to be ARM, so you should
-> > > > >>>> probably just add an "#ifdef .._ARM return false;".
-> > > > >>>>
-> > > > >>> ARM/arm64 does not have a Kconfig symbol like
-> > > > >>> CONFIG_NOT_COHERENT_CACHE, so we can only disable it everywhere. If
-> > > > >>> there are non-coherent ARM systems that are currently working in the
-> > > > >>> same way as those non-coherent PowerPC systems, we will break them by
-> > > > >>> doing this.
-> > > > >> Summing the things I've read so far for ARM up I actually think it
-> > > > >> depends on a runtime configuration and not on compile time one.
-> > > > >>
-> > > > >> So the whole idea of providing the device to the drm_*_can_wc_memory()
-> > > > >> function isn't so far fetched.
-> > > > >>
-> > > > > Thank you.
-> > > > >
-> > > > >> But for now I do prefer working and slightly slower system over broken
-> > > > >> one, so I think we should just disable this on ARM for now.
-> > > > >>
-> > > > > Again, this is not about non-cache coherent being slower without the
-> > > > > optimization, it is about non-cache coherent likely not working *at
-> > > > > all* unless the optimization is enabled.
-> > > >
-> > > > As Michel tried to explain this CAN'T happen. The optimization is a
-> > > > purely optional request from userspace.
-> > > >
+> > > The use of uncached GPU mappings relies on the correct implementation
+> > > of the PCIe NoSnoop TLP attribute by the platform, otherwise the GPU
+> > > will use cached mappings nonetheless. On x86 platforms, this does not
+> > > seem to matter, as uncached CPU mappings will snoop the caches in any
+> > > case. However, on ARM and arm64, enabling this optimization on a
+> > > platform where NoSnoop is ignored results in loss of coherency, which
+> > > breaks correct operation of the device. Since we have no way of
+> > > detecting whether NoSnoop works or not, just disable this
+> > > optimization entirely for ARM and arm64.
 > > >
-> > > Right.
-> > >
-> > > So in that case, we can assume that the following test
-> > >
-> > > static inline bool drm_arch_can_wc_memory(void)
-> > > {
-> > > #if defined(CONFIG_PPC) && !defined(CONFIG_NOT_COHERENT_CACHE)
-> > >     return false;
-> > >
-> > > is bogus, and it was just unnecessary caution on the part of the
-> > > author to disregard non-cache coherent devices.
-> > > Unfortunately, those commits have no log messages whatsoever, so it is
-> > > difficult to infer the intent retroactively.
-> > >
-> > > > > Otherwise, the driver will vmap() DMA pages with cacheable attributes,
-> > > > > while the non-cache coherent device uses uncached attributes, breaking
-> > > > > coherency.
-> > > >
-> > > > Again this is mandated by the userspace APIs anyway. E.g. we can't
-> > > > vmap() pages in any other way or our userspace APIs would break.
-> > > >
-> > >
-> > > OK,
-> > >
-> > > So let's just disable this for all ARM and arm64 then, given that
-> > > non-cache coherent is not supported in any case
+> > > Cc: Christian Koenig <christian.koenig@amd.com>
+> > > Cc: Alex Deucher <alexander.deucher@amd.com>
+> > > Cc: David Zhou <David1.Zhou@amd.com>
+> > > Cc: Huang Rui <ray.huang@amd.com>
+> > > Cc: Junwei Zhang <Jerry.Zhang@amd.com>
+> > > Cc: Michel Daenzer <michel.daenzer@amd.com>
+> > > Cc: David Airlie <airlied@linux.ie>
+> > > Cc: Daniel Vetter <daniel@ffwll.ch>
+> > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> > > Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+> > > Cc: Sean Paul <sean@poorly.run>
+> > > Cc: Michael Ellerman <mpe@ellerman.id.au>
+> > > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+> > > Cc: Will Deacon <will.deacon@arm.com>
+> > > Cc: Christoph Hellwig <hch@infradead.org>
+> > > Cc: Robin Murphy <robin.murphy@arm.com>
+> > > Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>
+> > > Cc: dri-devel <dri-devel@lists.freedesktop.org>
+> > > Reported-by: Carsten Haitzler <Carsten.Haitzler@arm.com>
+> > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 > >
-> > So I think we are back to this patch:
-> > https://patchwork.kernel.org/patch/10739023/
+> > The subject line should probably read "disable uncached...".
 > >
 >
-> Apart from the fact that the issue has nothing to do with write-combining, yes.
+> Ugh, of course ...
+>
+> > With that fixed the patch is Reviewed-by: Christian K=C3=B6nig
+> > <christian.koenig@amd.com>.
+> >
 
-Your patch has a better description.  Let's go with that.
+Same:
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
 
-Alex
+>
+> Thanks.
+> _______________________________________________
+> amd-gfx mailing list
+> amd-gfx@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
