@@ -2,455 +2,107 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D354EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70F8FC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C94A21855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WAbWRb5o"
+	by mail.kernel.org (Postfix) with ESMTP id 41A4E218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548343589;
+	bh=RAVPF7k8ET3FvZZPo+8OAFQs6/P1bn+R68cQ2w3zA1w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=HWcUxem7HCjgcrkqT+JDiCW0rUcEZp3awQSUK3zFPlU+0j/54jrOcfVOH3MBwcnwH
+	 ICe/i0nOZxrqYDe7Sk8wfUxySnx4qYAcjxj1y+CQi3WRzmIXXEe1s8F8m2LmopCioF
+	 agjIJOUNvBq8d06J4gjIsTaHv/OS3P0xcviBDnXQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728737AbfAXP0R (ORCPT
+        id S1728746AbfAXP01 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:26:17 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:33149 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728648AbfAXPZw (ORCPT
+        Thu, 24 Jan 2019 10:26:27 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:41559 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728383AbfAXP00 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:25:52 -0500
-Received: by mail-wm1-f66.google.com with SMTP id r24so2616620wmh.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 07:25:50 -0800 (PST)
+        Thu, 24 Jan 2019 10:26:26 -0500
+Received: by mail-yb1-f194.google.com with SMTP id y63so2502010ybc.8;
+        Thu, 24 Jan 2019 07:26:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HBoSjW/9C2BJWOWwi68QsUaCxo6aNQtRfwlrGXtdlvs=;
-        b=WAbWRb5opunKVJHV2gvmr3SMyt9rlZ5menzvqdoDe5vTpvrbueGwR+iAM9KLAJfbmn
-         18mJmVVUnvuzAoXAIRg1nCcVMvUsMeMFcKoljyDiGBjzSrTJJ1lIvbKJ7SJJ6ofLZkc0
-         wnZrjYLvfbl0lOwrp7p6GC2iA35W7MkuOWRyU=
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0FVwBJEbGSCpbztzTtTWXO0usmZDa4dlEKlgDqHqCvA=;
+        b=B8AqbH/hEr7vFeOCysJs7BMVx3i84OMajQGOlflkd98UzHDo0h0ijKJXNfYwVy/+rX
+         Sk+Vt6Dr5Y34f+gGZc/qAst6tHczDauakCVy22pKxBWFPjnRi98SE+HtVUrHJd55h52K
+         0MYyAKhMTfDpiE0TA8a+yMIS9z5W3XZvjehss3rxSDOa7bcsV/4+OEbzUtbRbGcVECRS
+         KkbsuU7HI4rfxZHi6XMwtb7ZSiBJxYmU8OavhKWqCZrasgWtKk2+Jn3WXKUMV+De1AF/
+         5MaGD7gCkbvlm0ZeGhPqUZRSewl4Zxu8Ot0PweRe1VZYsFW4t01Vm5qkGSPvqUUrMw3Z
+         ucZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HBoSjW/9C2BJWOWwi68QsUaCxo6aNQtRfwlrGXtdlvs=;
-        b=F0tG8nAIdxRbdMShxtJTbQXqiZkvx0nsGdViocgkEYP4dIO/djQllb+/RpFUqeyR9Z
-         djvKKELgahmGVoiKBPTl/lo44bEPV2b/6csg7NZe45x1LzwERjgFJ0mFNShPwPk10cYP
-         MSY7dLkyqscUeLgfbDZ05AGgMQRKe4wiPwj/753eRw4R7/wiOgnJA2iXxokEKW8UIKgZ
-         9KmhnVArDIVLr/7mJqbK4bBWm8+BN2keDYuKSxNMX7mQgdwj3WVzjX7RN/HsLL4V+ITN
-         DKorU0nCRJrs8aN4IpWAw5aM4SqY2Z2oeuz85VuH+HTmxBLjuBAuSS12m4BoFiGB3Cda
-         iVUw==
-X-Gm-Message-State: AJcUukcXB8xjkRxoYhlucY6FCvd8MN4KGsoyJW+1kQvrNQ8wSCAoyeca
-        r82rxJVKz0AfOmpzgbxzUYQjrA==
-X-Google-Smtp-Source: ALg8bN5urnWKjk2w83dRbV+JHXTVwAJuN6qSheFFB/iCDpBym5M37AMGUq30H4aJMetOds0TE6KMIA==
-X-Received: by 2002:a1c:3c06:: with SMTP id j6mr2863882wma.27.1548343549819;
-        Thu, 24 Jan 2019 07:25:49 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id z12sm80371157wrh.35.2019.01.24.07.25.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 24 Jan 2019 07:25:49 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     robh+dt@kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de
-Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, bjorn.andersson@linaro.org,
-        bkumar@qti.qualcomm.com, linux-arm-msm@vger.kernel.org,
-        thierry.escande@linaro.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 2/5] misc: fastrpc: Add Qualcomm fastrpc basic driver model
-Date:   Thu, 24 Jan 2019 15:24:09 +0000
-Message-Id: <20190124152412.10503-3-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124152412.10503-1-srinivas.kandagatla@linaro.org>
-References: <20190124152412.10503-1-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0FVwBJEbGSCpbztzTtTWXO0usmZDa4dlEKlgDqHqCvA=;
+        b=Y3KgFPKzi36Nf7qrXSFjuTw0CYRxhxp0Wz2XzwPySQiCmVI4o2rQ9RC7SfWLWUFufg
+         W39k6LxbMZhU5k8RKCdUjjhx+08vhj1DyH0LeP9DCkVLKM7srCnseloo6/bgTKbqNDgv
+         kFU7yYQc624+JjYPZXhAlMb9ZzmVE6NPymabUwjzhleQFpcvt2eiUholSZ58ZGZ2di/S
+         sHETMYzhAmaYa/VCgUAXUJ6OzmITXHAhRqX5Lx9c1Jv1utS4Vi4enu8A+sckWJdWV2Mi
+         5+Ba+U5Hlhv3eAzEvPpq0Z2PNHxup2h/bXTkVuQH+OKuOR4jDdMjpNr+VrY4N6hQzcFc
+         akXg==
+X-Gm-Message-State: AJcUukf7NM0ry7tTU8ud+UYmsAvfAfrN9EHMNf7yIxlaRmG1+uY6ED97
+        Hk4DEnhpAlxiv9KSwcVt+Ag=
+X-Google-Smtp-Source: ALg8bN5RIixGhsIJ0wAcoHbOMQ2cwooi2Ogb+KCPOXMW5eLsfCi5Mbh+Fnly54u97IggKlN9liVXUw==
+X-Received: by 2002:a25:8145:: with SMTP id j5mr5725088ybm.472.1548343585841;
+        Thu, 24 Jan 2019 07:26:25 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::4:a8a7])
+        by smtp.gmail.com with ESMTPSA id z2sm8461867ywe.32.2019.01.24.07.26.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 07:26:24 -0800 (PST)
+Date:   Thu, 24 Jan 2019 07:26:23 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Roman Gushchin <guroan@gmail.com>
+Cc:     Oleg Nesterov <oleg@redhat.com>, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v6 0/7] freezer for cgroup v2
+Message-ID: <20190124152623.GH50184@devbig004.ftw2.facebook.com>
+References: <20181222000307.28231-1-guro@fb.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181222000307.28231-1-guro@fb.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds basic driver model for qualcomm fastrpc.
-Each DSP rpmsg channel is represented as fastrpc channel context and
-is exposed as a character driver for userspace interface.
-Each compute context bank is represented as fastrpc-session-context,
-which are dynamically managed by the channel context char device.
+On Fri, Dec 21, 2018 at 04:03:00PM -0800, Roman Gushchin wrote:
+> This patchset implements freezer for cgroup v2.
+> 
+> It provides similar functionality as v1 freezer, but the interface
+> conforms to the cgroup v2 interface design principles, and it
+> provides a better user experience: tasks can be killed, ptrace works,
+> there is no separate controller, which has to be enabled, etc.
+> 
+> Patches (1), (2) and (3) are some preparational work, patch (4) contains
+> the implementation, patch (5) is a small cgroup kselftest fix,
+> patch (6) covers freezer adds 6 new kselftests to cover the freezer
+> functionality. Patch (7) adds corresponding docs.
+> 
+> v6->v5:
+>   - reverted to clear TIF_SIGPENDING with additional checks before schedule(),
+>   as proposed by Oleg Nesterov
+>   - made cgroup v2 freezer working with the system freezer (by using
+>   freezable_schedule())
+>   - make freezer working with SIGSTOPped and PTRACEd tasks
+>   - added tests to cover freezing a cgroup with SIGSTOPped and PTRACEd tasks
 
-Co-developed-by: Thierry Escande <thierry.escande@linaro.org>
-Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- drivers/misc/Kconfig   |  10 ++
- drivers/misc/Makefile  |   1 +
- drivers/misc/fastrpc.c | 323 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 334 insertions(+)
- create mode 100644 drivers/misc/fastrpc.c
+Oleg, ping?
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index f417b06e11c5..7e0726253755 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -295,6 +295,16 @@ config QCOM_COINCELL
- 	  to maintain PMIC register and RTC state in the absence of
- 	  external power.
- 
-+config QCOM_FASTRPC
-+	tristate "Qualcomm FastRPC"
-+	depends on ARCH_QCOM || COMPILE_TEST
-+	depends on RPMSG
-+	help
-+	  Provides a communication mechanism that allows for clients to
-+	  make remote method invocations across processor boundary to
-+	  applications DSP processor. Say M if you want to enable this
-+	  module.
-+
- config SGI_GRU
- 	tristate "SGI GRU driver"
- 	depends on X86_UV && SMP
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index e39ccbbc1b3a..623d002c59ce 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_TIFM_CORE)       	+= tifm_core.o
- obj-$(CONFIG_TIFM_7XX1)       	+= tifm_7xx1.o
- obj-$(CONFIG_PHANTOM)		+= phantom.o
- obj-$(CONFIG_QCOM_COINCELL)	+= qcom-coincell.o
-+obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
- obj-$(CONFIG_SENSORS_BH1770)	+= bh1770glc.o
- obj-$(CONFIG_SENSORS_APDS990X)	+= apds990x.o
- obj-$(CONFIG_SGI_IOC4)		+= ioc4.o
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-new file mode 100644
-index 000000000000..d744a93eb922
---- /dev/null
-+++ b/drivers/misc/fastrpc.c
-@@ -0,0 +1,323 @@
-+// SPDX-License-Identifier: GPL-2.0
-+// Copyright (c) 2011-2018, The Linux Foundation. All rights reserved.
-+// Copyright (c) 2018, Linaro Limited
-+
-+#include <linux/device.h>
-+#include <linux/dma-mapping.h>
-+#include <linux/idr.h>
-+#include <linux/list.h>
-+#include <linux/miscdevice.h>
-+#include <linux/module.h>
-+#include <linux/of_address.h>
-+#include <linux/of.h>
-+#include <linux/of_platform.h>
-+#include <linux/rpmsg.h>
-+#include <linux/scatterlist.h>
-+#include <linux/slab.h>
-+
-+#define ADSP_DOMAIN_ID (0)
-+#define MDSP_DOMAIN_ID (1)
-+#define SDSP_DOMAIN_ID (2)
-+#define CDSP_DOMAIN_ID (3)
-+#define FASTRPC_DEV_MAX		4 /* adsp, mdsp, slpi, cdsp*/
-+#define FASTRPC_MAX_SESSIONS	9 /*8 compute, 1 cpz*/
-+#define FASTRPC_CTX_MAX (256)
-+#define FASTRPC_CTXID_MASK (0xFF0)
-+#define FASTRPC_DEVICE_NAME	"fastrpc"
-+
-+#define miscdev_to_cctx(d) container_of(d, struct fastrpc_channel_ctx, miscdev)
-+
-+static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
-+						"sdsp", "cdsp"};
-+
-+struct fastrpc_session_ctx {
-+	struct device *dev;
-+	int sid;
-+	bool used;
-+	bool valid;
-+};
-+
-+struct fastrpc_channel_ctx {
-+	int domain_id;
-+	int sesscount;
-+	struct rpmsg_device *rpdev;
-+	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
-+	spinlock_t lock;
-+	struct idr ctx_idr;
-+	struct list_head users;
-+	struct miscdevice miscdev;
-+};
-+
-+struct fastrpc_user {
-+	struct list_head user;
-+	struct list_head maps;
-+	struct list_head pending;
-+
-+	struct fastrpc_channel_ctx *cctx;
-+	struct fastrpc_session_ctx *sctx;
-+
-+	int tgid;
-+	int pd;
-+	/* Lock for lists */
-+	spinlock_t lock;
-+	/* lock for allocations */
-+	struct mutex mutex;
-+};
-+
-+static struct fastrpc_session_ctx *fastrpc_session_alloc(
-+					struct fastrpc_channel_ctx *cctx)
-+{
-+	struct fastrpc_session_ctx *session = NULL;
-+	int i;
-+
-+	spin_lock(&cctx->lock);
-+	for (i = 0; i < cctx->sesscount; i++) {
-+		if (!cctx->session[i].used && cctx->session[i].valid) {
-+			cctx->session[i].used = true;
-+			session = &cctx->session[i];
-+			break;
-+		}
-+	}
-+	spin_unlock(&cctx->lock);
-+
-+	return session;
-+}
-+
-+static void fastrpc_session_free(struct fastrpc_channel_ctx *cctx,
-+				 struct fastrpc_session_ctx *session)
-+{
-+	spin_lock(&cctx->lock);
-+	session->used = false;
-+	spin_unlock(&cctx->lock);
-+}
-+
-+static int fastrpc_device_release(struct inode *inode, struct file *file)
-+{
-+	struct fastrpc_user *fl = (struct fastrpc_user *)file->private_data;
-+	struct fastrpc_channel_ctx *cctx = fl->cctx;
-+
-+	spin_lock(&cctx->lock);
-+	list_del(&fl->user);
-+	spin_unlock(&cctx->lock);
-+
-+	fastrpc_session_free(fl->cctx, fl->sctx);
-+
-+	mutex_destroy(&fl->mutex);
-+	kfree(fl);
-+	file->private_data = NULL;
-+
-+	return 0;
-+}
-+
-+static int fastrpc_device_open(struct inode *inode, struct file *filp)
-+{
-+	struct fastrpc_channel_ctx *cctx = miscdev_to_cctx(filp->private_data);
-+	struct fastrpc_user *fl = NULL;
-+
-+	fl = kzalloc(sizeof(*fl), GFP_KERNEL);
-+	if (!fl)
-+		return -ENOMEM;
-+
-+	filp->private_data = fl;
-+	spin_lock_init(&fl->lock);
-+	mutex_init(&fl->mutex);
-+	INIT_LIST_HEAD(&fl->pending);
-+	INIT_LIST_HEAD(&fl->maps);
-+	INIT_LIST_HEAD(&fl->user);
-+	fl->tgid = current->tgid;
-+	fl->cctx = cctx;
-+	spin_lock(&cctx->lock);
-+	list_add_tail(&fl->user, &cctx->users);
-+	spin_unlock(&cctx->lock);
-+	fl->sctx = fastrpc_session_alloc(cctx);
-+
-+	return 0;
-+}
-+
-+static const struct file_operations fastrpc_fops = {
-+	.open = fastrpc_device_open,
-+	.release = fastrpc_device_release,
-+};
-+
-+static int fastrpc_cb_probe(struct platform_device *pdev)
-+{
-+	struct fastrpc_channel_ctx *cctx;
-+	struct fastrpc_session_ctx *sess;
-+	struct device *dev = &pdev->dev;
-+	int i, sessions = 0;
-+
-+	cctx = dev_get_drvdata(dev->parent);
-+	if (!cctx)
-+		return -EINVAL;
-+
-+	of_property_read_u32(dev->of_node, "qcom,nsessions", &sessions);
-+
-+	spin_lock(&cctx->lock);
-+	sess = &cctx->session[cctx->sesscount];
-+	sess->used = false;
-+	sess->valid = true;
-+	sess->dev = dev;
-+	dev_set_drvdata(dev, sess);
-+
-+	if (of_property_read_u32(dev->of_node, "reg", &sess->sid))
-+		dev_info(dev, "FastRPC Session ID not specified in DT\n");
-+
-+	if (sessions > 0) {
-+		struct fastrpc_session_ctx *dup_sess;
-+
-+		for (i = 1; i < sessions; i++) {
-+			if (cctx->sesscount++ >= FASTRPC_MAX_SESSIONS)
-+				break;
-+			dup_sess = &cctx->session[cctx->sesscount];
-+			memcpy(dup_sess, sess, sizeof(*dup_sess));
-+		}
-+	}
-+	cctx->sesscount++;
-+	spin_unlock(&cctx->lock);
-+	dma_set_mask(dev, DMA_BIT_MASK(32));
-+
-+	return 0;
-+}
-+
-+static int fastrpc_cb_remove(struct platform_device *pdev)
-+{
-+	struct fastrpc_channel_ctx *cctx = dev_get_drvdata(pdev->dev.parent);
-+	struct fastrpc_session_ctx *sess = dev_get_drvdata(&pdev->dev);
-+	int i;
-+
-+	spin_lock(&cctx->lock);
-+	for (i = 1; i < FASTRPC_MAX_SESSIONS; i++) {
-+		if (cctx->session[i].sid == sess->sid) {
-+			cctx->session[i].valid = false;
-+			cctx->sesscount--;
-+		}
-+	}
-+	spin_unlock(&cctx->lock);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id fastrpc_match_table[] = {
-+	{ .compatible = "qcom,fastrpc-compute-cb", },
-+	{}
-+};
-+
-+static struct platform_driver fastrpc_cb_driver = {
-+	.probe = fastrpc_cb_probe,
-+	.remove = fastrpc_cb_remove,
-+	.driver = {
-+		.name = "qcom,fastrpc-cb",
-+		.of_match_table = fastrpc_match_table,
-+		.suppress_bind_attrs = true,
-+	},
-+};
-+
-+static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
-+{
-+	struct device *rdev = &rpdev->dev;
-+	struct fastrpc_channel_ctx *data;
-+	int i, err, domain_id = 0;
-+	const char *domain;
-+
-+	data = devm_kzalloc(rdev, sizeof(*data), GFP_KERNEL);
-+	if (!data)
-+		return -ENOMEM;
-+
-+	err = of_property_read_string(rdev->of_node, "label", &domain);
-+	if (err) {
-+		dev_info(rdev, "FastRPC Domain not specified in DT\n");
-+		return err;
-+	}
-+
-+	for (i = 0; i < CDSP_DOMAIN_ID; i++) {
-+		if (!strcmp(domains[i], domain)) {
-+			domain_id = i;
-+			break;
-+		}
-+	}
-+
-+	if (domain_id > CDSP_DOMAIN_ID) {
-+		dev_info(rdev, "FastRPC Invalid Domain ID %d\n", domain_id);
-+		return -EINVAL;
-+	}
-+
-+	data->miscdev.minor = MISC_DYNAMIC_MINOR;
-+	data->miscdev.name = kasprintf(GFP_KERNEL, "fastrpc-%s",
-+				domains[domain_id]);
-+	data->miscdev.fops = &fastrpc_fops;
-+	err = misc_register(&data->miscdev);
-+	if (err)
-+		return err;
-+
-+	dev_set_drvdata(&rpdev->dev, data);
-+	dma_set_mask_and_coherent(rdev, DMA_BIT_MASK(32));
-+	INIT_LIST_HEAD(&data->users);
-+	spin_lock_init(&data->lock);
-+	idr_init(&data->ctx_idr);
-+	data->domain_id = domain_id;
-+	data->rpdev = rpdev;
-+
-+	return of_platform_populate(rdev->of_node, NULL, NULL, rdev);
-+}
-+
-+static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
-+{
-+	struct fastrpc_channel_ctx *cctx = dev_get_drvdata(&rpdev->dev);
-+
-+	misc_deregister(&cctx->miscdev);
-+	of_platform_depopulate(&rpdev->dev);
-+	kfree(cctx);
-+}
-+
-+static int fastrpc_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
-+				  int len, void *priv, u32 addr)
-+{
-+	return 0;
-+}
-+
-+static const struct of_device_id fastrpc_rpmsg_of_match[] = {
-+	{ .compatible = "qcom,fastrpc" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, fastrpc_rpmsg_of_match);
-+
-+static struct rpmsg_driver fastrpc_driver = {
-+	.probe = fastrpc_rpmsg_probe,
-+	.remove = fastrpc_rpmsg_remove,
-+	.callback = fastrpc_rpmsg_callback,
-+	.drv = {
-+		.name = "qcom,fastrpc",
-+		.of_match_table = fastrpc_rpmsg_of_match,
-+	},
-+};
-+
-+static int fastrpc_init(void)
-+{
-+	int ret;
-+
-+	ret = platform_driver_register(&fastrpc_cb_driver);
-+	if (ret < 0) {
-+		pr_err("fastrpc: failed to register cb driver\n");
-+		return ret;
-+	}
-+
-+	ret = register_rpmsg_driver(&fastrpc_driver);
-+	if (ret < 0) {
-+		pr_err("fastrpc: failed to register rpmsg driver\n");
-+		platform_driver_unregister(&fastrpc_cb_driver);
-+		return ret;
-+	}
-+
-+	return 0;
-+}
-+module_init(fastrpc_init);
-+
-+static void fastrpc_exit(void)
-+{
-+	platform_driver_unregister(&fastrpc_cb_driver);
-+	unregister_rpmsg_driver(&fastrpc_driver);
-+}
-+module_exit(fastrpc_exit);
-+
-+MODULE_ALIAS("fastrpc:fastrpc");
-+MODULE_LICENSE("GPL v2");
+Thanks.
+
 -- 
-2.20.1
-
+tejun
