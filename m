@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FF95C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8D7CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A09721909
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7BF55218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:35:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358536;
-	bh=ap/1FXivhVVlvG/MLOwLRGWojSf2YCs2zp7NONk5n5I=;
+	s=default; t=1548358540;
+	bh=GFNailqLAL6YA6Vhyq+qQo/ndqxtWrUCVRecfpGZyuQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iyVgeN7lOScTqkkPWlyC/KFKDElMP0WWYzg+T7NKYdI5880GZiF8nDSFUBOlGEaK0
-	 43rXEK/3uPRBV4IY8FAFSBiZiY3PG8ONY6dGj/4k6BNd/tB7AjlomPRyR9M9RRkX49
-	 SA5dulBukBaRim2NLOZ9bHefRNCD5/RkjEfZh3qE=
+	b=Me555CUNxv+IYqIUrt1kPUOhDKQPpEq2V8MwqZjvzQsvJaZT/D9bYcBTJdX6pdkrl
+	 Y9FJPBumNboq1Ocd53mIoexODo74RylwGPao3/BN9piBpRc5aLmKGo3iIcE+zvTSny
+	 qeI8a9LJedvHbatFDrP7oVVgpTzZZ8oTT8cn7U8M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730528AbfAXTfe (ORCPT
+        id S1732389AbfAXTfi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:35:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35500 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:35:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35554 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732366AbfAXTfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:35:32 -0500
+        id S1730900AbfAXTfg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:35:36 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6860A21906;
-        Thu, 24 Jan 2019 19:35:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1EE6921903;
+        Thu, 24 Jan 2019 19:35:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358531;
-        bh=ap/1FXivhVVlvG/MLOwLRGWojSf2YCs2zp7NONk5n5I=;
+        s=default; t=1548358534;
+        bh=GFNailqLAL6YA6Vhyq+qQo/ndqxtWrUCVRecfpGZyuQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mQV/k7VYktj8JxoDC7ER8l3093YkBJ3YHW2o3Jcik5qixZWzRx46CNQyARZwMPy5g
-         95+H7JJeAKjU0CP2ddBVH2JU9ibO0oYljjEFMzKhi2AzOT9L/O41BToREak8BHgUSr
-         AojdR5FNkqnFAlpAs3sUB3CS4iKSFzs6YYPynGDk=
+        b=ioT5SPZbDeKR8MAGO17xv4NNPoHi0J1J3LMGjIAxxdHg7iT1MikM4CXwOJ28wMGOA
+         uTV91boDRHGvTqKkKEKA1dDpFusnRScf4YVjZhBU3MSkyTRxY2nbLF/r1dcj6uO2mB
+         wQCyOzqLgYiZs91lUw8c+2mn/49Om5EacFRolvtg=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        "Joel Fernandes (Google)" <joel@joelfernandes.org>,
-        Kees Cook <keescook@chromium.org>,
+        stable@vger.kernel.org, Daniel Axtens <dja@axtens.net>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 041/106] pstore/ram: Do not treat empty buffers as valid
-Date:   Thu, 24 Jan 2019 20:19:58 +0100
-Message-Id: <20190124190209.049178443@linuxfoundation.org>
+Subject: [PATCH 4.19 042/106] media: uvcvideo: Refactor teardown of uvc on USB disconnect
+Date:   Thu, 24 Jan 2019 20:19:59 +0100
+Message-Id: <20190124190209.123689375@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,49 +67,183 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 30696378f68a9e3dad6bfe55938b112e72af00c2 ]
+[ Upstream commit 10e1fdb95809ed21406f53b5b4f064673a1b9ceb ]
 
-The ramoops backend currently calls persistent_ram_save_old() even
-if a buffer is empty. While this appears to work, it is does not seem
-like the right thing to do and could lead to future bugs so lets avoid
-that. It also prevents misleading prints in the logs which claim the
-buffer is valid.
+Currently, disconnecting a USB webcam while it is in use prints out a
+number of warnings, such as:
 
-I got something like:
+WARNING: CPU: 2 PID: 3118 at /build/linux-ezBi1T/linux-4.8.0/fs/sysfs/group.c:237 sysfs_remove_group+0x8b/0x90
+sysfs group ffffffffa7cd0780 not found for kobject 'event13'
 
-	found existing buffer, size 0, start 0
+This has been noticed before. [0]
 
-When I was expecting:
+This is because of the order in which things are torn down.
 
-	no valid data in buffer (sig = ...)
+If there are no streams active during a USB disconnect:
 
-This bails out early (and reports with pr_debug()), since it's an
-acceptable state.
+ - uvc_disconnect() is invoked via device_del() through the bus
+   notifier mechanism.
 
-Signed-off-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-Co-developed-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Kees Cook <keescook@chromium.org>
+ - this calls uvc_unregister_video().
+
+ - uvc_unregister_video() unregisters the video device for each
+   stream,
+
+ - because there are no streams open, it calls uvc_delete()
+
+ - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+   input device.
+
+ - uvc_delete() calls media_device_unregister(), which cleans up the
+   media device
+
+ - uvc_delete(), uvc_unregister_video() and uvc_disconnect() all
+   return, and we end up back in device_del().
+
+ - device_del() then cleans up the sysfs folder for the camera with
+   dpm_sysfs_remove(). Because uvc_status_cleanup() and
+   media_device_unregister() have already been called, this all works
+   nicely.
+
+If, on the other hand, there *are* streams active during a USB disconnect:
+
+ - uvc_disconnect() is invoked
+
+ - this calls uvc_unregister_video()
+
+ - uvc_unregister_video() unregisters the video device for each
+   stream,
+
+ - uvc_unregister_video() and uvc_disconnect() return, and we end up
+   back in device_del().
+
+ - device_del() then cleans up the sysfs folder for the camera with
+   dpm_sysfs_remove(). Because the status input device and the media
+   device are children of the USB device, this also deletes their
+   sysfs folders.
+
+ - Sometime later, the final stream is closed, invoking uvc_release().
+
+ - uvc_release() calls uvc_delete()
+
+ - uvc_delete() calls uvc_status_cleanup(), which cleans up the status
+   input device. Because the sysfs directory has already been removed,
+   this causes a WARNing.
+
+ - uvc_delete() calls media_device_unregister(), which cleans up the
+   media device. Because the sysfs directory has already been removed,
+   this causes another WARNing.
+
+To fix this, we need to make sure the devices are always unregistered
+before the end of uvc_disconnect(). To this, move the unregistration
+into the disconnect path:
+
+ - split uvc_status_cleanup() into two parts, one on disconnect that
+   unregisters and one on delete that frees.
+
+ - move v4l2_device_unregister() and media_device_unregister() into
+   the disconnect path.
+
+[0]: https://lkml.org/lkml/2016/12/8/657
+
+[Renamed uvc_input_cleanup() to uvc_input_unregister()]
+
+Signed-off-by: Daniel Axtens <dja@axtens.net>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/pstore/ram_core.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/media/usb/uvc/uvc_driver.c | 13 +++++++++----
+ drivers/media/usb/uvc/uvc_status.c | 12 ++++++++----
+ drivers/media/usb/uvc/uvcvideo.h   |  1 +
+ 3 files changed, 18 insertions(+), 8 deletions(-)
 
-diff --git a/fs/pstore/ram_core.c b/fs/pstore/ram_core.c
-index 0792595ebcfb..3c777ec80d47 100644
---- a/fs/pstore/ram_core.c
-+++ b/fs/pstore/ram_core.c
-@@ -496,6 +496,11 @@ static int persistent_ram_post_init(struct persistent_ram_zone *prz, u32 sig,
- 	sig ^= PERSISTENT_RAM_SIG;
+diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+index d46dc432456c..361abbc00486 100644
+--- a/drivers/media/usb/uvc/uvc_driver.c
++++ b/drivers/media/usb/uvc/uvc_driver.c
+@@ -1824,11 +1824,7 @@ static void uvc_delete(struct kref *kref)
+ 	usb_put_intf(dev->intf);
+ 	usb_put_dev(dev->udev);
  
- 	if (prz->buffer->sig == sig) {
-+		if (buffer_size(prz) == 0) {
-+			pr_debug("found existing empty buffer\n");
-+			return 0;
-+		}
+-	if (dev->vdev.dev)
+-		v4l2_device_unregister(&dev->vdev);
+ #ifdef CONFIG_MEDIA_CONTROLLER
+-	if (media_devnode_is_registered(dev->mdev.devnode))
+-		media_device_unregister(&dev->mdev);
+ 	media_device_cleanup(&dev->mdev);
+ #endif
+ 
+@@ -1885,6 +1881,15 @@ static void uvc_unregister_video(struct uvc_device *dev)
+ 
+ 		uvc_debugfs_cleanup_stream(stream);
+ 	}
 +
- 		if (buffer_size(prz) > prz->buffer_size ||
- 		    buffer_start(prz) > buffer_size(prz))
- 			pr_info("found existing invalid buffer, size %zu, start %zu\n",
++	uvc_status_unregister(dev);
++
++	if (dev->vdev.dev)
++		v4l2_device_unregister(&dev->vdev);
++#ifdef CONFIG_MEDIA_CONTROLLER
++	if (media_devnode_is_registered(dev->mdev.devnode))
++		media_device_unregister(&dev->mdev);
++#endif
+ }
+ 
+ int uvc_register_video_device(struct uvc_device *dev,
+diff --git a/drivers/media/usb/uvc/uvc_status.c b/drivers/media/usb/uvc/uvc_status.c
+index 0722dc684378..883e4cab45e7 100644
+--- a/drivers/media/usb/uvc/uvc_status.c
++++ b/drivers/media/usb/uvc/uvc_status.c
+@@ -54,7 +54,7 @@ error:
+ 	return ret;
+ }
+ 
+-static void uvc_input_cleanup(struct uvc_device *dev)
++static void uvc_input_unregister(struct uvc_device *dev)
+ {
+ 	if (dev->input)
+ 		input_unregister_device(dev->input);
+@@ -71,7 +71,7 @@ static void uvc_input_report_key(struct uvc_device *dev, unsigned int code,
+ 
+ #else
+ #define uvc_input_init(dev)
+-#define uvc_input_cleanup(dev)
++#define uvc_input_unregister(dev)
+ #define uvc_input_report_key(dev, code, value)
+ #endif /* CONFIG_USB_VIDEO_CLASS_INPUT_EVDEV */
+ 
+@@ -292,12 +292,16 @@ int uvc_status_init(struct uvc_device *dev)
+ 	return 0;
+ }
+ 
+-void uvc_status_cleanup(struct uvc_device *dev)
++void uvc_status_unregister(struct uvc_device *dev)
+ {
+ 	usb_kill_urb(dev->int_urb);
++	uvc_input_unregister(dev);
++}
++
++void uvc_status_cleanup(struct uvc_device *dev)
++{
+ 	usb_free_urb(dev->int_urb);
+ 	kfree(dev->status);
+-	uvc_input_cleanup(dev);
+ }
+ 
+ int uvc_status_start(struct uvc_device *dev, gfp_t flags)
+diff --git a/drivers/media/usb/uvc/uvcvideo.h b/drivers/media/usb/uvc/uvcvideo.h
+index e5f5d84f1d1d..a738486fd9d6 100644
+--- a/drivers/media/usb/uvc/uvcvideo.h
++++ b/drivers/media/usb/uvc/uvcvideo.h
+@@ -750,6 +750,7 @@ int uvc_register_video_device(struct uvc_device *dev,
+ 
+ /* Status */
+ int uvc_status_init(struct uvc_device *dev);
++void uvc_status_unregister(struct uvc_device *dev);
+ void uvc_status_cleanup(struct uvc_device *dev);
+ int uvc_status_start(struct uvc_device *dev, gfp_t flags);
+ void uvc_status_stop(struct uvc_device *dev);
 -- 
 2.19.1
 
