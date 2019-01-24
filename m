@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06EB0C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 492C1C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C892921726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17E6321726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359919;
-	bh=AeuhT7JyfmwqzqXoaKhh61L0A+q3XgrKdrgjjP8vyhs=;
+	s=default; t=1548359925;
+	bh=QWQhJrBg3GfOgtqP+7LGnYk7iaTh3jVgL4phztkXn1A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Qn7GrmzenccVYXqBFESGruj/ewdlRsUA0YpFYCRKeBH6wOwh7y92LVLh5oyuCUmM4
-	 AGU8LlAfsE9a+RL9zwZxsUeSsFJWyDeIUXNC8VUoZlzeHUSG/g5YV7lv6acgRCeFeJ
-	 xq6NMriRpLYKunFDrUi4L7jBAax8xDDqfyG8/PJY=
+	b=wzIvyKQyW0D0pjHVU5mQRlnIdb1Z+1GqJchT4yC6+GAGaqgMG9QY7TJ0HDlVrs14m
+	 VsHV926S25OIsqL4rZh5LG4PzD5TTfIDoxwVFIgV4YObosDqk6kpq46RkSwx2X7u1/
+	 baUu1QPaMp1Osc0fk/VqPSFnSV/vhF+S/IStJEQE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731395AbfAXT6i (ORCPT
+        id S1732173AbfAXTeW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:58:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34212 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:34:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34074 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730158AbfAXTeZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:25 -0500
+        id S1732149AbfAXTeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:34:17 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6B744218D4;
-        Thu, 24 Jan 2019 19:34:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A2A4221905;
+        Thu, 24 Jan 2019 19:34:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358464;
-        bh=AeuhT7JyfmwqzqXoaKhh61L0A+q3XgrKdrgjjP8vyhs=;
+        s=default; t=1548358456;
+        bh=QWQhJrBg3GfOgtqP+7LGnYk7iaTh3jVgL4phztkXn1A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=je3UVxyyQRWvV75jM0XdINW42B2GD85U7nKZ6eNgs9kGkRL4KDmKJC+kZFdWgJ+N7
-         GXpxUiF7v0yBfYpGQn/bu02MXk0ipRb5sb9c5uBM52J2/8eakUDmrORHoqaq9O2WgI
-         i4uSxhiN8uQPDhQfd7qnYZphhF13TVfIB+NrrwtM=
+        b=ctnpsYNIkFGIQC64+K0VUndR5gU/5I2y/K1i9yLngSLQrEoTCq5ZL1uK403jAPfLZ
+         BJZ8sbjUEQqi1uUHm8JSVIcoSMqL4yvPgXyr4msK+3k83WKeKRvtN7NKeoUSPUKFwY
+         ROW6YZAFxHtlRZ6EwalBRyVd0lgiIALZmLhv1bvk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 018/106] selftests/bpf: enable (uncomment) all tests in test_libbpf.sh
-Date:   Thu, 24 Jan 2019 20:19:35 +0100
-Message-Id: <20190124190207.527931483@linuxfoundation.org>
+Subject: [PATCH 4.19 015/106] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
+Date:   Thu, 24 Jan 2019 20:19:32 +0100
+Message-Id: <20190124190207.343578384@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -68,102 +67,129 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f96afa767baffba7645f5e10998f5178948bb9aa ]
+[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
 
-libbpf is now able to load successfully test_l4lb_noinline.o and
-samples/bpf/tracex3_kern.o.
+In the past, Asus firmwares would change the panel backlight directly
+through the EC when the display off hotkey (Fn+F7) was pressed, and
+only notify the OS of such change, with 0x33 when the LCD was ON and
+0x34 when the LCD was OFF. These are currently mapped to
+KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
 
-For the test_l4lb_noinline, uncomment related tests from test_libbpf.c
-and remove the associated "TODO".
+Most recently the EC on Asus most machines lost ability to toggle the
+LCD backlight directly, but unless the OS informs the firmware it is
+going to handle the display toggle hotkey events, the firmware still
+tries change the brightness through the EC, to no effect. The end result
+is a long list (at Endless we counted 11) of Asus laptop models where
+the display toggle hotkey does not perform any action. Our firmware
+engineers contacts at Asus were surprised that there were still machines
+out there with the old behavior.
 
-For tracex3_kern.o, instead of loading a program from samples/bpf/ that
-might not have been compiled at this stage, try loading a program from
-BPF selftests. Since this test case is about loading a program compiled
-without the "-target bpf" flag, change the Makefile to compile one
-program accordingly (instead of passing the flag for compiling all
-programs).
+Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
+tells the firmware that it should let the OS handle the display toggle
+event, in which case it will simply notify the OS of a key press with
+0x35, as shown by the DSDT excerpts bellow.
 
-Regarding test_xdp_noinline.o: in its current shape the program fails to
-load because it provides no version section, but the loader needs one.
-The test was added to make sure that libbpf could load XDP programs even
-if they do not provide a version number in a dedicated section. But
-libbpf is already capable of doing that: in our case loading fails
-because the loader does not know that this is an XDP program (it does
-not need to, since it does not attach the program). So trying to load
-test_xdp_noinline.o does not bring much here: just delete this subtest.
+ Scope (_SB)
+ {
+     (...)
 
-For the record, the error message obtained with tracex3_kern.o was
-fixed by commit e3d91b0ca523 ("tools/libbpf: handle issues with bpf ELF
-objects containing .eh_frames")
+     Device (ATKD)
+     {
+         (...)
 
-I have not been abled to reproduce the "libbpf: incorrect bpf_call
-opcode" error for test_l4lb_noinline.o, even with the version of libbpf
-present at the time when test_libbpf.sh and test_libbpf_open.c were
-created.
+         Name (_WDG, Buffer (0x28)
+         {
+             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
+             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
+             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
+             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
+             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
+         })
+         Method (WMNB, 3, Serialized)
+         {
+             CreateDWordField (Arg2, Zero, IIA0)
+             CreateDWordField (Arg2, 0x04, IIA1)
+             Local0 = (Arg1 & 0xFFFFFFFF)
 
-RFC -> v1:
-- Compile test_xdp without the "-target bpf" flag, and try to load it
-  instead of ../../samples/bpf/tracex3_kern.o.
-- Delete test_xdp_noinline.o subtest.
+             (...)
 
-Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+             If ((Local0 == 0x53564544))
+             {
+                 (...)
+
+                 If ((IIA0 == 0x00050011))
+                 {
+                     If ((IIA1 == 0x02))
+                     {
+                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
+                         ^^PCI0.SBRG.EC0.BLCT = One
+                     }
+
+                     Return (One)
+                 }
+             }
+             (...)
+         }
+         (...)
+     }
+     (...)
+ }
+ (...)
+
+ Scope (_SB.PCI0.SBRG.EC0)
+ {
+     (...)
+
+     Name (BLCT, Zero)
+
+     (...)
+
+     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
+     {
+         If ((BLCT == Zero))
+         {
+             Local0 = One
+             Local0 = RPIN (0x72)
+             Local0 ^= One
+             SPIN (0x72, Local0)
+             If (ATKP)
+             {
+                 Local0 = (0x34 - Local0)
+                 ^^^^ATKD.IANE (Local0)
+             }
+         }
+         ElseIf ((BLCT == One))
+         {
+             If (ATKP)
+             {
+                 ^^^^ATKD.IANE (0x35)
+             }
+         }
+     }
+     (...)
+ }
+
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/Makefile       | 10 ++++++++++
- tools/testing/selftests/bpf/test_libbpf.sh | 14 ++++----------
- 2 files changed, 14 insertions(+), 10 deletions(-)
+ drivers/platform/x86/asus-wmi.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index fff7fb1285fc..f3f874ba186b 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -124,6 +124,16 @@ endif
- endif
- endif
+diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
+index 2d6e272315a8..db3556dc90d1 100644
+--- a/drivers/platform/x86/asus-wmi.c
++++ b/drivers/platform/x86/asus-wmi.c
+@@ -2231,7 +2231,8 @@ static int asus_wmi_add(struct platform_device *pdev)
+ 		err = asus_wmi_backlight_init(asus);
+ 		if (err && err != -ENODEV)
+ 			goto fail_backlight;
+-	}
++	} else
++		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
  
-+# Have one program compiled without "-target bpf" to test whether libbpf loads
-+# it successfully
-+$(OUTPUT)/test_xdp.o: test_xdp.c
-+	$(CLANG) $(CLANG_FLAGS) \
-+		-O2 -emit-llvm -c $< -o - | \
-+	$(LLC) -march=bpf -mcpu=$(CPU) $(LLC_FLAGS) -filetype=obj -o $@
-+ifeq ($(DWARF2BTF),y)
-+	$(BTF_PAHOLE) -J $@
-+endif
-+
- $(OUTPUT)/%.o: %.c
- 	$(CLANG) $(CLANG_FLAGS) \
- 		 -O2 -target bpf -emit-llvm -c $< -o - |      \
-diff --git a/tools/testing/selftests/bpf/test_libbpf.sh b/tools/testing/selftests/bpf/test_libbpf.sh
-index d97dc914cd49..8b1bc96d8e0c 100755
---- a/tools/testing/selftests/bpf/test_libbpf.sh
-+++ b/tools/testing/selftests/bpf/test_libbpf.sh
-@@ -33,17 +33,11 @@ trap exit_handler 0 2 3 6 9
- 
- libbpf_open_file test_l4lb.o
- 
--# TODO: fix libbpf to load noinline functions
--# [warning] libbpf: incorrect bpf_call opcode
--#libbpf_open_file test_l4lb_noinline.o
-+# Load a program with BPF-to-BPF calls
-+libbpf_open_file test_l4lb_noinline.o
- 
--# TODO: fix test_xdp_meta.c to load with libbpf
--# [warning] libbpf: test_xdp_meta.o doesn't provide kernel version
--#libbpf_open_file test_xdp_meta.o
--
--# TODO: fix libbpf to handle .eh_frame
--# [warning] libbpf: relocation failed: no section(10)
--#libbpf_open_file ../../../../samples/bpf/tracex3_kern.o
-+# Load a program compiled without the "-target bpf" flag
-+libbpf_open_file test_xdp.o
- 
- # Success
- exit 0
+ 	status = wmi_install_notify_handler(asus->driver->event_guid,
+ 					    asus_wmi_notify, asus);
 -- 
 2.19.1
 
