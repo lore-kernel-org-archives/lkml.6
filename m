@@ -2,163 +2,122 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E0CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BA38C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:46:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56DDF207E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:45:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="YsDbtIYM"
+	by mail.kernel.org (Postfix) with ESMTP id 68B40207E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:46:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727889AbfAXNpb (ORCPT
+        id S1728035AbfAXNqQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:45:31 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46658 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727556AbfAXNpb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 08:45:31 -0500
-Received: by mail-ed1-f66.google.com with SMTP id o10so4576974edt.13
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 05:45:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=51Kso+9BQIGmO9SNAHGyeQCAmhaCcPXjeucfCxTfrgY=;
-        b=YsDbtIYMLB3H9oMC7iyJMvPPX3wGuwtuDghnWtaSFDswgt5vPfxRpZ3w5r0TA4Xtn8
-         wfJTBH25LHIFc/QBX43S2RED9853WLTlwpTJGzFXcf70bzUYyOY6kszmZqdtqfRpk79M
-         If1jw3XVviL24UKYNM7bAuJoNOHSNpnitTyPWK7dreS/rIuDY/5QuObqb3UjWO5QbTen
-         qR+NvyCOJpHuLd3otm1Z4JduCfcVnn5bq1Gbwo47Vjs6rGNtLGzOL31bU6m3qnpiHm+g
-         hAtsoMERb/iOehU5+Fv2P0Wes+pSqDxSRiAOMTfwhRljGPnY5z0Jrvjw2UbUxE2YkE7z
-         nzEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=51Kso+9BQIGmO9SNAHGyeQCAmhaCcPXjeucfCxTfrgY=;
-        b=B/jb1jq/6/uJAAgRQkNjSNVDp+SQESJhzZW4836qzKfzGoAb89EchY7rsobnB8rjxn
-         5X9Jeqk9hanEbjTAC5lyuIp+HbZV4oaNdH34rZRkwDZb0mLMeisE3rAl7K8V4M0pgZd3
-         Q6q47yAF4LjkTB22EMUV5KeDv9flLMBB0iUkZAF1fNbEn3Q4vacekXqhhOdgH3zMqyW7
-         wQaKSf4K/uCoE5EzHVWzyPPz+qqh+X6eebThFiteeUEUsFzfsoGLkYp9Kts1OWJxejWE
-         DlX8vzZS6JBU99VUXLYvoL49Yd/laT+ombDffBQPwWA5FZ+0K3cq9kgHDVrsan/OkBWf
-         0dew==
-X-Gm-Message-State: AJcUukf2207vwfXOLmE5WHFSvPuWbK6NXbi53axklkgYH/ItjyZ54uSb
-        5uMdoeauAwV+c6rqQNMqR0sKrw==
-X-Google-Smtp-Source: ALg8bN6ysXM6jVgwIXUkKlOa6MjsBB040IP1/W5MWjbchy4NVtFg5ALRAXOEzPvzjsvRO5qfEsIDcA==
-X-Received: by 2002:a17:906:4749:: with SMTP id j9mr1349595ejs.46.1548337529131;
-        Thu, 24 Jan 2019 05:45:29 -0800 (PST)
-Received: from [192.168.1.85] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id d56sm11220552ede.76.2019.01.24.05.45.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 05:45:28 -0800 (PST)
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <9E0FD459-75F2-4EF1-9310-8FCDF6F87604@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_1025A3F0-171A-4FE0-A66B-02084B101F92";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v1] : Switch to use new generic UUID API
-Date:   Thu, 24 Jan 2019 14:45:27 +0100
-In-Reply-To: <CAHp75Vf4ndBaS6BjAM==7csYB9EYDvjV9jT9C6kioDryzb_HnQ@mail.gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20190110143051.52305-1-andriy.shevchenko@linux.intel.com>
- <20190121084732.GE18680@lst.de> <20190124121659.GH9224@smile.fi.intel.com>
- <6D748F08-F9F9-4DFB-84DF-63E97C691013@javigon.com>
- <CAHp75Vf4ndBaS6BjAM==7csYB9EYDvjV9jT9C6kioDryzb_HnQ@mail.gmail.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Thu, 24 Jan 2019 08:46:16 -0500
+Received: from foss.arm.com ([217.140.101.70]:56840 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727522AbfAXNqQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 08:46:16 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id F124BA78;
+        Thu, 24 Jan 2019 05:46:15 -0800 (PST)
+Received: from localhost (e113682-lin.copenhagen.arm.com [10.32.144.41])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8A89D3F5C1;
+        Thu, 24 Jan 2019 05:46:15 -0800 (PST)
+From:   Christoffer Dall <christoffer.dall@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
+        Andre Przywara <andre.przywara@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>
+Subject: [PATCH] clocksource/arm_arch_timer: Store physical timer IRQ number for KVM on VHE
+Date:   Thu, 24 Jan 2019 14:46:12 +0100
+Message-Id: <20190124134612.7487-1-christoffer.dall@arm.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Andre Przywara <andre.przywara@arm.com>
 
---Apple-Mail=_1025A3F0-171A-4FE0-A66B-02084B101F92
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+A host running in VHE mode gets the EL2 physical timer as its time
+source (accessed using the EL1 sysreg accessors, which get re-directed
+to the EL2 sysregs by VHE).
 
+The EL1 physical timer remains unused by the host kernel, allowing us to
+pass that on directly to a KVM guest and saves us from emulating this
+timer for the guest on VHE systems.
 
-> On 24 Jan 2019, at 14.36, Andy Shevchenko <andy.shevchenko@gmail.com> =
-wrote:
->=20
-> On Thu, Jan 24, 2019 at 3:19 PM Javier Gonz=C3=A1lez =
-<javier@javigon.com> wrote:
->>> On 24 Jan 2019, at 13.16, Andy Shevchenko =
-<andriy.shevchenko@linux.intel.com> wrote:
->>> On Mon, Jan 21, 2019 at 09:47:32AM +0100, Christoph Hellwig wrote:
->>>> On Thu, Jan 10, 2019 at 04:30:51PM +0200, Andy Shevchenko wrote:
->>>>> There are new types and helpers that are supposed to be used in =
-new code.
->>>>>=20
->>>>> As a preparation to get rid of legacy types and API functions do
->>>>> the conversion here.
->>>>=20
->>>> This seems to miss a "lightnvm" in the subject line.
->>>>=20
->>>>> static inline void pblk_setup_uuid(struct pblk *pblk)
->>>>> {
->>>>> +   guid_gen((guid_t *)&pblk->instance_uuid);
->>>>> }
->>>>=20
->>>> I think we can just kill this wrapper.
->>>>=20
->>>> But more importantly the instance_uuid fied, and the header.uuid =
-one
->>>> it is copied from should be turned into an actual guid_t, the =
-memcpys
->>>> and memcmps should also be replaced with the proper UUID API.
->>>=20
->>> header.uuid is defined using __u8 type, I'm not sure we can use =
-guid_t there.
->>=20
->> We can turn it into a guid_t and bump the minor version.
->=20
-> It's not so easy. __uXX types are dedicated for external APIs. guid_t
-> is kernel internal type disregard of (still) presence some uapi bits.
-> So, the question is those __uXX types in the driver definition is a
-> simple mistake, (weird) style decision, or what?
->=20
+Store the EL1 Physical Timer's IRQ number in
+struct arch_timer_kvm_info on VHE systems to allow KVM to use it.
 
-I would define it as a mistake and I think it is worth fixing it. At the
-moment we are only using this uuid for recovery purposes, to discard
-data from a different pblk instance, so there should not be a big impact
-outside of pblk itself. Am I missing something?
+Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Christoffer Dall <christoffer.dall@arm.com>
+---
+Patches in preparation for nested virtualization on KVM/Arm depend on this
+change, so we would like to merge this via the kvmarm tree or have a stable
+branch including this patch.
 
-Javier
+Please let us know your preference.  Thanks.
 
---Apple-Mail=_1025A3F0-171A-4FE0-A66B-02084B101F92
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
+ drivers/clocksource/arm_arch_timer.c | 11 +++++++++--
+ include/clocksource/arm_arch_timer.h |  1 +
+ 2 files changed, 10 insertions(+), 2 deletions(-)
 
------BEGIN PGP SIGNATURE-----
+diff --git a/drivers/clocksource/arm_arch_timer.c b/drivers/clocksource/arm_arch_timer.c
+index 9a7d4dc00b6e..b9243e2328b4 100644
+--- a/drivers/clocksource/arm_arch_timer.c
++++ b/drivers/clocksource/arm_arch_timer.c
+@@ -1206,6 +1206,13 @@ static enum arch_timer_ppi_nr __init arch_timer_select_ppi(void)
+ 	return ARCH_TIMER_PHYS_SECURE_PPI;
+ }
+ 
++static void __init arch_timer_populate_kvm_info(void)
++{
++	arch_timer_kvm_info.virtual_irq = arch_timer_ppi[ARCH_TIMER_VIRT_PPI];
++	if (is_kernel_in_hyp_mode())
++		arch_timer_kvm_info.physical_irq = arch_timer_ppi[ARCH_TIMER_PHYS_NONSECURE_PPI];
++}
++
+ static int __init arch_timer_of_init(struct device_node *np)
+ {
+ 	int i, ret;
+@@ -1220,7 +1227,7 @@ static int __init arch_timer_of_init(struct device_node *np)
+ 	for (i = ARCH_TIMER_PHYS_SECURE_PPI; i < ARCH_TIMER_MAX_TIMER_PPI; i++)
+ 		arch_timer_ppi[i] = irq_of_parse_and_map(np, i);
+ 
+-	arch_timer_kvm_info.virtual_irq = arch_timer_ppi[ARCH_TIMER_VIRT_PPI];
++	arch_timer_populate_kvm_info();
+ 
+ 	rate = arch_timer_get_cntfrq();
+ 	arch_timer_of_configure_rate(rate, np);
+@@ -1550,7 +1557,7 @@ static int __init arch_timer_acpi_init(struct acpi_table_header *table)
+ 	arch_timer_ppi[ARCH_TIMER_HYP_PPI] =
+ 		acpi_gtdt_map_ppi(ARCH_TIMER_HYP_PPI);
+ 
+-	arch_timer_kvm_info.virtual_irq = arch_timer_ppi[ARCH_TIMER_VIRT_PPI];
++	arch_timer_populate_kvm_info();
+ 
+ 	/*
+ 	 * When probing via ACPI, we have no mechanism to override the sysreg
+diff --git a/include/clocksource/arm_arch_timer.h b/include/clocksource/arm_arch_timer.h
+index 349e5957c949..702967d996bb 100644
+--- a/include/clocksource/arm_arch_timer.h
++++ b/include/clocksource/arm_arch_timer.h
+@@ -74,6 +74,7 @@ enum arch_timer_spi_nr {
+ struct arch_timer_kvm_info {
+ 	struct timecounter timecounter;
+ 	int virtual_irq;
++	int physical_irq;
+ };
+ 
+ struct arch_timer_mem_frame {
+-- 
+2.18.0
 
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlxJwXcACgkQPEYBfS0l
-eOD18Q/9G+8QUFlvDqzLMAVoElXVRBEmAomFhP/iL5q8MoHqnaGMoOs1b8zaaPqm
-u0ltfJFuhkPBzBJpFMReuHpR0+N1Av+ee3UI02ZDOgqmnsSpnQjrgVyDJihcuRqR
-4XwMmVbE+Wt0Kefmrd7x0RrnOktqMRLUhNsd/IaRoXHvkmOIvcYkr+nO1VDtse7D
-wK12U95x8pWboEs+M7o+z8Uua3awMfGpHDi8mqGrhmTFCyoIDLQWPkwI1C5S5hW/
-TUhMRMeMh5xja57UtcacOHPeWA+TViwygLrLdn3enPlJ4yDukfEjsIIJdGUSAMUc
-kj6s5l1NO54148Puve39cY7qr5yV4yDsXqamn9y4ASpM841jVnPM6a/bDD/4TOFK
-7f0jh7FmhbTTMj1imCSSmXEKy1mYNOrDsZhfR6+AnNCpK9k0uPVKMYYCx/zeidNz
-on9xbCVZ6nRDcl+sNvvph110hS3BXkpEqBCdi2tvUPezRgf6Bl2BnuJBlyKKylFg
-y6nhZUf/Cv5gXrVpamcyTVCkU2NEs5eymu6oNl8U/oeN3MQVMm+z738EH9GwRt5e
-nKWhVEDnUZBjZePUlX99tP3Sgv0cDoQgOO6c2SKOH67MF8VnbvDPoxdddPsZqC7S
-R+m4tZbuQa5EEGlAW3e3wxnNPCvTP1oisEpQ59zOP84+NfrrNyI=
-=UWGy
------END PGP SIGNATURE-----
-
---Apple-Mail=_1025A3F0-171A-4FE0-A66B-02084B101F92--
