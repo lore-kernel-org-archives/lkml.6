@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5C7AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBDB7C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 753B6218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B894B218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360666;
-	bh=aWkewOkDqlm5URrkXnxKnyYkIZhKZhIaaD02jo/SPVo=;
+	s=default; t=1548360670;
+	bh=nMm7cQdjaL+QIf+8GL2t/uWhO5vbZJxEC+65+cQHm1o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=O5FU9O0wWSgI5QySRE8j4fkyL3kcLi0NGwj3LfAxCHam7K/3qZZJ89SD+ZXHOZynq
-	 aLeR+JxeWySTzzOiqgKko+NmddrYe487DFUN+WzujWJEDbdSf0kFVuEIB4P9GHhZaw
-	 Z6oh8Dq5Wv4v6KAbS4V0eVeP5vlfQfVYsBwa61P8=
+	b=EnS8emt+pbe86G0EGV95L4AYcpavn1feFjKLuiIqKL50ch5QX5Mkhu6NbQ70lbCus
+	 5uabZ7JSr2gaER89t4SQWrhi9qjBx4sKNzu7LcTzPXgWL/8I8TLui8FrznUHgIR8dU
+	 7Yt0v75hOxTcl5G91DedCczD4JPPaWmhllBRjKOQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730732AbfAXT1R (ORCPT
+        id S1730516AbfAXULJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:27:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53436 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 15:11:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53494 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730717AbfAXT1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:27:12 -0500
+        id S1730167AbfAXT1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:27:14 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C8140218FE;
-        Thu, 24 Jan 2019 19:27:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 708FE218FC;
+        Thu, 24 Jan 2019 19:27:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358031;
-        bh=aWkewOkDqlm5URrkXnxKnyYkIZhKZhIaaD02jo/SPVo=;
+        s=default; t=1548358033;
+        bh=nMm7cQdjaL+QIf+8GL2t/uWhO5vbZJxEC+65+cQHm1o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KMsNbrzUsL5snHRUCwmaDo64WbhSx686nzx9eDZU8em4RyPaJH+d8CTrdM9Alsa8U
-         eYmJBjsA6c/cPhVQqkaqfkXWWLNefTbj6/oSt4fUdRrJ7y7vm6WrC7tigNfRgSpBLC
-         UvOnJkwJX1n3TC/nzqh8JlKt1CVSpJhL8unfiHsc=
+        b=BM/GIbNNZnbaN4TTIBzX/IlG5yYbvx4djfdFP9ucqpCUk+BMwBi8kAp6DDbcXodSH
+         /j2zlrJ1Ra8RsRid3Iop1uCa2BU88+9UFHMd57rG9OCA5HqE74F/Iooqb6aRiTRjr5
+         /g9J37jurcxyDxfdhfR6penXNi1uMQyW+W4+U9/w=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Subject: [PATCH 4.4 072/104] media: vb2: be sure to unlock mutex on errors
-Date:   Thu, 24 Jan 2019 20:20:01 +0100
-Message-Id: <20190124190203.483890742@linuxfoundation.org>
+        stable@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Heiner Kallweit <hkallweit1@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 073/104] r8169: Add support for new Realtek Ethernet
+Date:   Thu, 24 Jan 2019 20:20:02 +0100
+Message-Id: <20190124190203.582446352@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -65,42 +67,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-commit c06ef2e9acef4cda1feee2ce055b8086e33d251a upstream.
+[ Upstream commit 36352991835ce99e46b4441dd0eb6980f9a83e8f ]
 
-As reported by smatch:
-drivers/media/common/videobuf2/videobuf2-core.c: drivers/media/common/videobuf2/videobuf2-core.c:2159 vb2_mmap() warn: inconsistent returns 'mutex:&q->mmap_lock'.
-  Locked on:   line 2148
-  Unlocked on: line 2100
-               line 2108
-               line 2113
-               line 2118
-               line 2156
-               line 2159
+There are two new Realtek Ethernet devices which are re-branded r8168h.
+Add the IDs to to support them.
 
-There is one error condition that doesn't unlock a mutex.
-
-Fixes: cd26d1c4d1bc ("media: vb2: vb2_mmap: move lock up")
-Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Reviewed-by: Heiner Kallweit <hkallweit1@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- drivers/media/v4l2-core/videobuf2-core.c |    3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/realtek/r8169.c |    2 ++
+ 1 file changed, 2 insertions(+)
 
---- a/drivers/media/v4l2-core/videobuf2-core.c
-+++ b/drivers/media/v4l2-core/videobuf2-core.c
-@@ -2003,7 +2003,8 @@ int vb2_mmap(struct vb2_queue *q, struct
- 	if (length < (vma->vm_end - vma->vm_start)) {
- 		dprintk(1,
- 			"MMAP invalid, as it would overflow buffer length\n");
--		return -EINVAL;
-+		ret = -EINVAL;
-+		goto unlock;
- 	}
+--- a/drivers/net/ethernet/realtek/r8169.c
++++ b/drivers/net/ethernet/realtek/r8169.c
+@@ -324,6 +324,8 @@ enum cfg_version {
+ };
  
- 	ret = call_memop(vb, mmap, vb->planes[plane].mem_priv, vma);
+ static const struct pci_device_id rtl8169_pci_tbl[] = {
++	{ PCI_VDEVICE(REALTEK,	0x2502), RTL_CFG_1 },
++	{ PCI_VDEVICE(REALTEK,	0x2600), RTL_CFG_1 },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8129), 0, 0, RTL_CFG_0 },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8136), 0, 0, RTL_CFG_2 },
+ 	{ PCI_DEVICE(PCI_VENDOR_ID_REALTEK,	0x8161), 0, 0, RTL_CFG_1 },
 
 
