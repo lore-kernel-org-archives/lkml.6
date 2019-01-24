@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFCA4C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67ABFC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE702218D3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 30CCE218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358787;
-	bh=b6e2GRsrS+U6yzJYPI94tC62sIVjfYLhH9Ei/3ZHOtA=;
+	s=default; t=1548358795;
+	bh=H2I+h6vd5XwXzZIfTXg4VHGQXdrRWo1Mkx5m+gnSjqc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=H4Dwa/0EppHyPDnYfQewTSVmfc3Fw2WwlCH1o9Nep3c5WoFYuNS2wwPmf/4Swve7+
-	 10MOCfl0o1TFNEuP7lnlDmKUF5N6XTNohT7n3WY9revQUIXA3h6x+bw+vdF6nfaUvO
-	 85asHsmBeUMbN3WXKP2xj+1x8V9hpychSMIbV3PM=
+	b=1eOrIFVEY8M51szZvRmWjg6xGM3AFvMqj8r8LJ9EnjuTvt728XDpWnog4agT2TF9m
+	 Nhnb4FV3FYDsiLfA5vQ8NI1WMlCj1EQt0nKmfs93KKS7UQAE3eJFgGfcV79f6QyZm/
+	 MRJ27JayY1dVanlrMmI6op8lH/0VxDCAoP4aUhZE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733138AbfAXTjq (ORCPT
+        id S1733156AbfAXTjx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:39:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39866 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:39:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730688AbfAXTjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:39:44 -0500
+        id S1733139AbfAXTjr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FFAB218D0;
-        Thu, 24 Jan 2019 19:39:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE30620663;
+        Thu, 24 Jan 2019 19:39:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358783;
-        bh=b6e2GRsrS+U6yzJYPI94tC62sIVjfYLhH9Ei/3ZHOtA=;
+        s=default; t=1548358786;
+        bh=H2I+h6vd5XwXzZIfTXg4VHGQXdrRWo1Mkx5m+gnSjqc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JkPlo1VACG7TyBXsUoFMIsSTcd4h0y1TB+aIlnct9zvwqbiwY+nXC6EmwD6oslxcf
-         1EsH1fVZfQWN6vJFi6X0GmmFchT61NF7jSErtPc8mFUx4ndSYp3Zp3dpGViXVOcptm
-         IuKYmANRT7KwAHftfj3p6t9YVwRuOcUpY9qqGgpo=
+        b=M01UAdFwKGwxxI7KqnLpsDSH8J6jnrR1LEqP/8dztZkMIw1lBpvopCz+zggV8snFq
+         mOu7w6jA+jcK9MFJ6+cBD+S0lehi1C61BGaTgKwAdXBOtSDqrtYLgRSij60op0sOEw
+         I7sMsIVMlAUo9WZwSKvSx0UBXaELjSD///28mmCc=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Jesper Dangaard Brouer <brouer@redhat.com>,
-        Quentin Monnet <quentin.monnet@netronome.com>,
-        Jakub Kicinski <jakub.kicinski@netronome.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
+        stable@vger.kernel.org, Alan Tull <atull@kernel.org>,
+        Frank Rowand <frank.rowand@sony.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 024/127] selftests/bpf: enable (uncomment) all tests in test_libbpf.sh
-Date:   Thu, 24 Jan 2019 20:19:30 +0100
-Message-Id: <20190124190213.288623036@linuxfoundation.org>
+Subject: [PATCH 4.20 025/127] of: overlay: add missing of_node_put() after add new node to changeset
+Date:   Thu, 24 Jan 2019 20:19:31 +0100
+Message-Id: <20190124190213.336776217@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,102 +66,66 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit f96afa767baffba7645f5e10998f5178948bb9aa ]
+[ Upstream commit 7c528e457d53c75107d5aa56892316d265c778de ]
 
-libbpf is now able to load successfully test_l4lb_noinline.o and
-samples/bpf/tracex3_kern.o.
+The refcount of a newly added overlay node decrements to one
+(instead of zero) when the overlay changeset is destroyed.  This
+change will cause the final decrement be to zero.
 
-For the test_l4lb_noinline, uncomment related tests from test_libbpf.c
-and remove the associated "TODO".
+After applying this patch, new validation warnings will be
+reported from the devicetree unittest during boot due to
+a pre-existing devicetree bug.  The warnings will be similar to:
 
-For tracex3_kern.o, instead of loading a program from samples/bpf/ that
-might not have been compiled at this stage, try loading a program from
-BPF selftests. Since this test case is about loading a program compiled
-without the "-target bpf" flag, change the Makefile to compile one
-program accordingly (instead of passing the flag for compiling all
-programs).
+  OF: ERROR: memory leak before free overlay changeset,  /testcase-data/overlay-node/test-bus/test-unittest4
 
-Regarding test_xdp_noinline.o: in its current shape the program fails to
-load because it provides no version section, but the loader needs one.
-The test was added to make sure that libbpf could load XDP programs even
-if they do not provide a version number in a dedicated section. But
-libbpf is already capable of doing that: in our case loading fails
-because the loader does not know that this is an XDP program (it does
-not need to, since it does not attach the program). So trying to load
-test_xdp_noinline.o does not bring much here: just delete this subtest.
+This pre-existing devicetree bug will also trigger a WARN_ONCE() from
+refcount_sub_and_test_checked() when an overlay changeset is
+destroyed without having first been applied.  This scenario occurs
+when an error in the overlay is detected during the overlay changeset
+creation:
 
-For the record, the error message obtained with tracex3_kern.o was
-fixed by commit e3d91b0ca523 ("tools/libbpf: handle issues with bpf ELF
-objects containing .eh_frames")
+  WARNING: CPU: 0 PID: 1 at lib/refcount.c:187 refcount_sub_and_test_checked+0xa8/0xbc
+  refcount_t: underflow; use-after-free.
 
-I have not been abled to reproduce the "libbpf: incorrect bpf_call
-opcode" error for test_l4lb_noinline.o, even with the version of libbpf
-present at the time when test_libbpf.sh and test_libbpf_open.c were
-created.
+  (unwind_backtrace) from (show_stack+0x10/0x14)
+  (show_stack) from (dump_stack+0x6c/0x8c)
+  (dump_stack) from (__warn+0xdc/0x104)
+  (__warn) from (warn_slowpath_fmt+0x44/0x6c)
+  (warn_slowpath_fmt) from (refcount_sub_and_test_checked+0xa8/0xbc)
+  (refcount_sub_and_test_checked) from (kobject_put+0x24/0x208)
+  (kobject_put) from (of_changeset_destroy+0x2c/0xb4)
+  (of_changeset_destroy) from (free_overlay_changeset+0x1c/0x9c)
+  (free_overlay_changeset) from (of_overlay_remove+0x284/0x2cc)
+  (of_overlay_remove) from (of_unittest_apply_revert_overlay_check.constprop.4+0xf8/0x1e8)
+  (of_unittest_apply_revert_overlay_check.constprop.4) from (of_unittest_overlay+0x960/0xed8)
+  (of_unittest_overlay) from (of_unittest+0x1cc4/0x2138)
+  (of_unittest) from (do_one_initcall+0x4c/0x28c)
+  (do_one_initcall) from (kernel_init_freeable+0x29c/0x378)
+  (kernel_init_freeable) from (kernel_init+0x8/0x110)
+  (kernel_init) from (ret_from_fork+0x14/0x2c)
 
-RFC -> v1:
-- Compile test_xdp without the "-target bpf" flag, and try to load it
-  instead of ../../samples/bpf/tracex3_kern.o.
-- Delete test_xdp_noinline.o subtest.
-
-Cc: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Quentin Monnet <quentin.monnet@netronome.com>
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Acked-by: Jesper Dangaard Brouer <brouer@redhat.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Tested-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/Makefile       | 10 ++++++++++
- tools/testing/selftests/bpf/test_libbpf.sh | 14 ++++----------
- 2 files changed, 14 insertions(+), 10 deletions(-)
+ drivers/of/overlay.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index e39dfb4e7970..ecd79b7fb107 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -135,6 +135,16 @@ endif
- endif
- endif
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 42b1f73ac5f6..1e058196f23f 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -378,7 +378,9 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 		if (ret)
+ 			return ret;
  
-+# Have one program compiled without "-target bpf" to test whether libbpf loads
-+# it successfully
-+$(OUTPUT)/test_xdp.o: test_xdp.c
-+	$(CLANG) $(CLANG_FLAGS) \
-+		-O2 -emit-llvm -c $< -o - | \
-+	$(LLC) -march=bpf -mcpu=$(CPU) $(LLC_FLAGS) -filetype=obj -o $@
-+ifeq ($(DWARF2BTF),y)
-+	$(BTF_PAHOLE) -J $@
-+endif
-+
- $(OUTPUT)/%.o: %.c
- 	$(CLANG) $(CLANG_FLAGS) \
- 		 -O2 -target bpf -emit-llvm -c $< -o - |      \
-diff --git a/tools/testing/selftests/bpf/test_libbpf.sh b/tools/testing/selftests/bpf/test_libbpf.sh
-index 156d89f1edcc..2989b2e2d856 100755
---- a/tools/testing/selftests/bpf/test_libbpf.sh
-+++ b/tools/testing/selftests/bpf/test_libbpf.sh
-@@ -33,17 +33,11 @@ trap exit_handler 0 2 3 6 9
+-		return build_changeset_next_level(ovcs, tchild, node);
++		ret = build_changeset_next_level(ovcs, tchild, node);
++		of_node_put(tchild);
++		return ret;
+ 	}
  
- libbpf_open_file test_l4lb.o
- 
--# TODO: fix libbpf to load noinline functions
--# [warning] libbpf: incorrect bpf_call opcode
--#libbpf_open_file test_l4lb_noinline.o
-+# Load a program with BPF-to-BPF calls
-+libbpf_open_file test_l4lb_noinline.o
- 
--# TODO: fix test_xdp_meta.c to load with libbpf
--# [warning] libbpf: test_xdp_meta.o doesn't provide kernel version
--#libbpf_open_file test_xdp_meta.o
--
--# TODO: fix libbpf to handle .eh_frame
--# [warning] libbpf: relocation failed: no section(10)
--#libbpf_open_file ../../../../samples/bpf/tracex3_kern.o
-+# Load a program compiled without the "-target bpf" flag
-+libbpf_open_file test_xdp.o
- 
- # Success
- exit 0
+ 	if (node->phandle && tchild->phandle)
 -- 
 2.19.1
 
