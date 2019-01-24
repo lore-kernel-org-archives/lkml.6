@@ -2,174 +2,160 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32785C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8CA0C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6433218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="WouYq4kx"
+	by mail.kernel.org (Postfix) with ESMTP id A60CD218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:11:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548360701;
+	bh=sH8+P2rS7qBhffjY+RSbX9L6lweEDgblbHHOXGotPDU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=oz/5ky3zd2aViu4ftqZqBtNzZOcqTUUhDanCsUWxhJv44ns54k5JapiSwVZd9MuyY
+	 wS6MVVnoQMt28aMTWuyxAfBezOjpSFr2TNQgwnQfMV8BryPyeh7zeGgGo676KKqddR
+	 Y4lO6nFvXrWX74e/Grl/230vfe6mOdRKmwsn0jaA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730751AbfAXULX (ORCPT
+        id S1729931AbfAXULj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:11:23 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:39646 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729568AbfAXULV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:11:21 -0500
-Received: by mail-lj1-f195.google.com with SMTP id t9-v6so6392343ljh.6
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:11:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=HG5FNm/40qWdHQsWrUQRMWT/agpt5B2Q6/gk2f7JfZE=;
-        b=WouYq4kx3ch3DRkgzhCmjF4AiZ+q05wfeAxbg9N/kksxRerTzVHL3tson1EUF0cfd2
-         Het0ejVSUjEIFk5p4kdG9qx4UIdhV+IC+uRnfavg89BDbOC3ok21PFqXyRFYOo5+fOZM
-         0LVImucOuepsNtdqEy25Qo28R1SkvAG7GbjS3J3ZFj/0/3EPyZvR+oSxPv+2yizNKhjj
-         CxTQTDUqwCY/kT+9e4A+oAdCeJ4IOTzO67vpXN4oy3YCPVBngLvfS82dBjMKLiEET4AP
-         0BYY+0oEc0EMiVuBZQgjNnWbmc5PrGzkJP5DKRf7/fnDT1BPzAp+MH5BbH4SWDCx2rxm
-         b/3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=HG5FNm/40qWdHQsWrUQRMWT/agpt5B2Q6/gk2f7JfZE=;
-        b=ADPCm3rwsJ5HquwVXwr/028a+nu3Gq8w6Ki8OI8ECXeZlq30BQ58cvKm7CRgNzQnAu
-         OHWL0u2Tx41B8TpWAuz9wzOQa8C9t7mT1G7gSa0+HWH5lTp/0gxFa7S746kjquHngFGi
-         hcpuDbXQcENTNgBLzt0215x9rwpx2oQR57p4NT8+P8tjSwvneaORAiLT9WIP63pVerCj
-         WQgMWn/hpqUgD+uL7sE8miM4tlxyjU6rzHcyyeHa2t9J5RAOdFTcwyeX4SkR9TfWJRt/
-         xd84NxTxR2MJJ1KKdNYvLgCn2btXrO7YNElmfCCSqRScWobZfeQtxPThj43vlJ2c07kw
-         r+wg==
-X-Gm-Message-State: AJcUukcFfih9bq70bGZxT68pvZioitisH0eHYAGh7dAksTkpQa63djYZ
-        vzlQAPLuiAUr1eP2mXxLPJg6QLIIt9CLNw6WTZaRLw==
-X-Google-Smtp-Source: ALg8bN5iyDfUFaULY+MEuCxsUhn6+b26/wDUddQ77zFqokyiY6uRCisCg5+1tQkI0s8DnTvQqNTyEV7IsD9pKp0xnUI=
-X-Received: by 2002:a2e:9395:: with SMTP id g21-v6mr6401932ljh.78.1548360679132;
- Thu, 24 Jan 2019 12:11:19 -0800 (PST)
+        Thu, 24 Jan 2019 15:11:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730157AbfAXT0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:26:51 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1AEAE218FC;
+        Thu, 24 Jan 2019 19:26:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358010;
+        bh=sH8+P2rS7qBhffjY+RSbX9L6lweEDgblbHHOXGotPDU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=j4OxV/LTL8CU19lPzDnf8v2M2DXzt4WLMKsidgnMRYsGfi2aYAkSDCSiWFtVkiO/n
+         hW5RQJChZlaRF4g8KI/RYcBGviWbDrtjj95NZ1n6Zv/NviVMeqVvxklqTmgGi+X8CA
+         LqhI7mW/rJSX/yCYNPT6vxJd4St4O+ObRkzmXmq0=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org,
+        syzbot+bca0dc46634781f08b38@syzkaller.appspotmail.com,
+        syzbot+6bdb590321a7ae40c1a6@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 066/104] tipc: fix uninit-value in tipc_nl_compat_doit
+Date:   Thu, 24 Jan 2019 20:19:55 +0100
+Message-Id: <20190124190202.864160820@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
+References: <20190124190154.968308875@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-References: <20181117010748.24347-1-rajatja@google.com> <20190123205725.239661-1-rajatja@google.com>
- <20190123205725.239661-3-rajatja@google.com> <D868735A-05A4-405A-9101-8D59F4208B9E@holtmann.org>
-In-Reply-To: <D868735A-05A4-405A-9101-8D59F4208B9E@holtmann.org>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Thu, 24 Jan 2019 12:10:42 -0800
-Message-ID: <CACK8Z6HSEXJSSFryusJVS632d1WwAUt1rW0Q2QTBO-375mMS+Q@mail.gmail.com>
-Subject: Re: [PATCH v5 3/4] Bluetooth: Allow driver specific cmd timeout handling
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Dmitry Torokhov <dtor@chromium.org>,
-        Alex Hung <alex.hung@canonical.com>,
-        Bluez mailing list <linux-bluetooth@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-usb@vger.kernel.org, netdev <netdev@vger.kernel.org>,
-        Rajat Jain <rajatxjain@gmail.com>,
-        Dmitry Torokhov <dtor@google.com>,
-        Raghuram Hegde <raghuram.hegde@intel.com>,
-        chethan.tumkur.narayan@intel.com,
-        "Ghorai, Sukumar" <sukumar.ghorai@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marcel,
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-On Thu, Jan 24, 2019 at 1:36 AM Marcel Holtmann <marcel@holtmann.org> wrote=
-:
->
-> Hi Rajat,
->
-> > Add a hook to allow the BT driver to do device or command specific
-> > handling in case of timeouts. This is to be used by Intel driver to
-> > reset the device after certain number of timeouts.
-> >
-> > Signed-off-by: Rajat Jain <rajatja@google.com>
-> > ---
-> > v5: Drop the quirk, and rename the hook function to cmd_timeout()
-> > v4: same as v1
-> > v3: same as v1
-> > v2: same as v1
-> >
-> > include/net/bluetooth/hci_core.h |  1 +
-> > net/bluetooth/hci_core.c         | 10 ++++++++--
-> > 2 files changed, 9 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/h=
-ci_core.h
-> > index e5ea633ea368..624d5f2b1f36 100644
-> > --- a/include/net/bluetooth/hci_core.h
-> > +++ b/include/net/bluetooth/hci_core.h
-> > @@ -437,6 +437,7 @@ struct hci_dev {
-> >       int (*post_init)(struct hci_dev *hdev);
-> >       int (*set_diag)(struct hci_dev *hdev, bool enable);
-> >       int (*set_bdaddr)(struct hci_dev *hdev, const bdaddr_t *bdaddr);
-> > +     void (*cmd_timeout)(struct hci_dev *hdev, struct hci_command_hdr =
-*cmd);
-> > };
-> >
-> > #define HCI_PHY_HANDLE(handle)        (handle & 0xff)
-> > diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
-> > index 7352fe85674b..c6917f57581a 100644
-> > --- a/net/bluetooth/hci_core.c
-> > +++ b/net/bluetooth/hci_core.c
-> > @@ -2568,16 +2568,22 @@ static void hci_cmd_timeout(struct work_struct =
-*work)
-> > {
-> >       struct hci_dev *hdev =3D container_of(work, struct hci_dev,
-> >                                           cmd_timer.work);
-> > +     struct hci_command_hdr *sent =3D NULL;
-> >
-> >       if (hdev->sent_cmd) {
-> > -             struct hci_command_hdr *sent =3D (void *) hdev->sent_cmd-=
->data;
-> > -             u16 opcode =3D __le16_to_cpu(sent->opcode);
-> > +             u16 opcode;
-> > +
-> > +             sent =3D (void *) hdev->sent_cmd->data;
-> > +             opcode =3D __le16_to_cpu(sent->opcode);
-> >
-> >               bt_dev_err(hdev, "command 0x%4.4x tx timeout", opcode);
-> >       } else {
-> >               bt_dev_err(hdev, "command tx timeout");
-> >       }
-> >
-> > +     if (hdev->cmd_timeout)
-> > +             hdev->cmd_timeout(hdev, sent);
-> > +
->
-> drop the sent parameter. You are not using it and if at some point in the=
- future you might want to use it, then we add it and fix up all users.
+------------------
 
-Sure, will do.
+From: Ying Xue <ying.xue@windriver.com>
 
->
-> And frankly, I would move the hdev->cmd_timeout call into the hdev->sent_=
-cmd block since I do not even know if it makes sense to deal with the fallb=
-ack case where hdev->sent_cmd is not available. Unless you have that kind o=
-f error case, but that is only possible if you have external injection of H=
-CI commands.
+commit 2753ca5d9009c180dbfd4c802c80983b4b6108d1 upstream.
 
-Ummm ... my preference would be to keep it outside the block so that
-the hook is always invoked in any timeout, to be consistent (whether
-externally injected or not). Let me know if that is OK. I plan to send
-out an iteration keeping it outside, but I'll be happy to move it in
-if you feel strongly about it.
+BUG: KMSAN: uninit-value in tipc_nl_compat_doit+0x404/0xa10 net/tipc/netlink_compat.c:335
+CPU: 0 PID: 4514 Comm: syz-executor485 Not tainted 4.16.0+ #87
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:17 [inline]
+ dump_stack+0x185/0x1d0 lib/dump_stack.c:53
+ kmsan_report+0x142/0x240 mm/kmsan/kmsan.c:1067
+ __msan_warning_32+0x6c/0xb0 mm/kmsan/kmsan_instr.c:683
+ tipc_nl_compat_doit+0x404/0xa10 net/tipc/netlink_compat.c:335
+ tipc_nl_compat_recv+0x164b/0x2700 net/tipc/netlink_compat.c:1153
+ genl_family_rcv_msg net/netlink/genetlink.c:599 [inline]
+ genl_rcv_msg+0x1686/0x1810 net/netlink/genetlink.c:624
+ netlink_rcv_skb+0x378/0x600 net/netlink/af_netlink.c:2447
+ genl_rcv+0x63/0x80 net/netlink/genetlink.c:635
+ netlink_unicast_kernel net/netlink/af_netlink.c:1311 [inline]
+ netlink_unicast+0x166b/0x1740 net/netlink/af_netlink.c:1337
+ netlink_sendmsg+0x1048/0x1310 net/netlink/af_netlink.c:1900
+ sock_sendmsg_nosec net/socket.c:630 [inline]
+ sock_sendmsg net/socket.c:640 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+ __sys_sendmsg net/socket.c:2080 [inline]
+ SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+ SyS_sendmsg+0x54/0x80 net/socket.c:2087
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+RIP: 0033:0x43fda9
+RSP: 002b:00007ffd0c184ba8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 000000000043fda9
+RDX: 0000000000000000 RSI: 0000000020023000 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 00000000004002c8 R09: 00000000004002c8
+R10: 00000000004002c8 R11: 0000000000000213 R12: 00000000004016d0
+R13: 0000000000401760 R14: 0000000000000000 R15: 0000000000000000
 
-Thanks,
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:278 [inline]
+ kmsan_internal_poison_shadow+0xb8/0x1b0 mm/kmsan/kmsan.c:188
+ kmsan_kmalloc+0x94/0x100 mm/kmsan/kmsan.c:314
+ kmsan_slab_alloc+0x11/0x20 mm/kmsan/kmsan.c:321
+ slab_post_alloc_hook mm/slab.h:445 [inline]
+ slab_alloc_node mm/slub.c:2737 [inline]
+ __kmalloc_node_track_caller+0xaed/0x11c0 mm/slub.c:4369
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x2cf/0x9f0 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:984 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1183 [inline]
+ netlink_sendmsg+0x9a6/0x1310 net/netlink/af_netlink.c:1875
+ sock_sendmsg_nosec net/socket.c:630 [inline]
+ sock_sendmsg net/socket.c:640 [inline]
+ ___sys_sendmsg+0xec0/0x1310 net/socket.c:2046
+ __sys_sendmsg net/socket.c:2080 [inline]
+ SYSC_sendmsg+0x2a3/0x3d0 net/socket.c:2091
+ SyS_sendmsg+0x54/0x80 net/socket.c:2087
+ do_syscall_64+0x309/0x430 arch/x86/entry/common.c:287
+ entry_SYSCALL_64_after_hwframe+0x3d/0xa2
 
-Rajat
+In tipc_nl_compat_recv(), when the len variable returned by
+nlmsg_attrlen() is 0, the message is still treated as a valid one,
+which is obviously unresonable. When len is zero, it means the
+message not only doesn't contain any valid TLV payload, but also
+TLV header is not included. Under this stituation, tlv_type field
+in TLV header is still accessed in tipc_nl_compat_dumpit() or
+tipc_nl_compat_doit(), but the field space is obviously illegal.
+Of course, it is not initialized.
 
->
-> Regards
->
-> Marcel
->
+Reported-by: syzbot+bca0dc46634781f08b38@syzkaller.appspotmail.com
+Reported-by: syzbot+6bdb590321a7ae40c1a6@syzkaller.appspotmail.com
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
+---
+ net/tipc/netlink_compat.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -1165,7 +1165,7 @@ static int tipc_nl_compat_recv(struct sk
+ 	}
+ 
+ 	len = nlmsg_attrlen(req_nlh, GENL_HDRLEN + TIPC_GENL_HDRLEN);
+-	if (len && !TLV_OK(msg.req, len)) {
++	if (!len || !TLV_OK(msg.req, len)) {
+ 		msg.rep = tipc_get_err_tlv(TIPC_CFG_NOT_SUPPORTED);
+ 		err = -EOPNOTSUPP;
+ 		goto send;
+
+
