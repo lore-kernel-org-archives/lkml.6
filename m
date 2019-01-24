@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35EC6C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD8EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03D0A218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:40:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE13F218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:41:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358853;
-	bh=YvR4T+gE9ArdDFCwfhGv5otiSE1rAfnQY6iG1AMKZUY=;
+	s=default; t=1548358862;
+	bh=sFhsmsbN2ApyQtYzGngc6dsRKYaGeUq1b+hfqvVG+9Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YapSYs5bZcPKD3TB+UQ11XB/uVbif4a0sNsM8lcfHMLebHASqSHjbAtAlD/Q5Upx6
-	 U8b3sMQcimCqccFkNzYgyBITjkLvTZy/aXE1Ercaryu4YsHZPGAelr8oPgKYNkS1BO
-	 XHoHAZp9ulDNpkytSmHPHIaySKDGO46CqUzTArqs=
+	b=GXu4wjLCxufnPLadlPRd5EmjETX5IlWVzaAkOz6iRiNtubaSOT+tYKlHHt6P/b71d
+	 dClgXtyfFvSipEGDk7iczTDvhmVV0AtCrWo5lwUtXqF47aBj3jqbFBgXl4GUvzzGxY
+	 yXesQOURhdCU9pJS4UrtXZMwUWDaaBTGgxUl0BDw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387404AbfAXTkv (ORCPT
+        id S2387507AbfAXTlB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:40:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40928 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:41:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41212 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387470AbfAXTkq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:40:46 -0500
+        id S1732934AbfAXTk5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:40:57 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2F0BD218D0;
-        Thu, 24 Jan 2019 19:40:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 23F7F218D0;
+        Thu, 24 Jan 2019 19:40:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358845;
-        bh=YvR4T+gE9ArdDFCwfhGv5otiSE1rAfnQY6iG1AMKZUY=;
+        s=default; t=1548358856;
+        bh=sFhsmsbN2ApyQtYzGngc6dsRKYaGeUq1b+hfqvVG+9Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I3jkwJYnmRLHzPB+pY/fAULDnXuATjnjxYoQdm3LVPuKiSaKSIyMB9Jb7X0mJmrll
-         pDQ5YMz1RSDuqEX4awPDx/YeUhbmQTcaRlZfyWnEgNtRE7pQ7hvCyFKydYcz+vKeQ5
-         8/kLIBmYaTLE1re6/93PVfp7b6db53H1zgYISUuw=
+        b=UQGq4E7wCfdbicSleYNtEHwE17oZhTokVPGAvOhAMpjmDEpnlnRxT5AA5BpZdOeZQ
+         VOFd6W/Afv+abfJchRi9D/3Tf7aSWAby8wJDGTcslz2ZWw988GekduoSwQnd8TKNBs
+         jCkgNBb72X0f0XAbCwMGiBZ9JKrgrHmeE7rQPHg8=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, Daniel Santos <daniel.santos@pobox.com>,
+        Hou Tao <houtao1@huawei.com>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 047/127] net: ethernet: ave: Set initial wol state to disabled
-Date:   Thu, 24 Jan 2019 20:19:53 +0100
-Message-Id: <20190124190214.243564069@linuxfoundation.org>
+Subject: [PATCH 4.20 051/127] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
+Date:   Thu, 24 Jan 2019 20:19:57 +0100
+Message-Id: <20190124190214.390537869@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,52 +67,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7200f2e3c9e267d29e2bfa075794339032e0b98e ]
+[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
 
-If wol state of phy hardware is enabled after reset, phy_ethtool_get_wol()
-returns that wol.wolopts is true.
+jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
+is defined then a write buffer is available and has been initialized.
+However, this does is not the case when the mtd device has no
+out-of-band buffer:
 
-However, since net_device.wol_enabled is zero and this doesn't apply wol
-state until calling ethtool_set_wol(), so mdio_bus_phy_may_suspend()
-returns true, that is, it's in a state where phy can suspend even though
-wol state is enabled.
+int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
+{
+        if (!c->mtd->oobsize)
+                return 0;
+...
 
-In this inconsistency, phy_suspend() returns -EBUSY, and at last,
-suspend sequence fails with the following message:
+The resulting call to cancel_delayed_work_sync passing a uninitialized
+(but zeroed) delayed_work struct forces lockdep to become disabled.
 
-    dpm_run_callback(): mdio_bus_phy_suspend+0x0/0x58 returns -16
-    PM: Device 65000000.ethernet-ffffffff:01 failed to suspend: error -16
-    PM: Some devices failed to suspend, or early wake event detected
+[   90.050639] overlayfs: upper fs does not support tmpfile.
+[   90.652264] INFO: trying to register non-static key.
+[   90.662171] the code is fine but needs lockdep annotation.
+[   90.673090] turning off the locking correctness validator.
+[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
+[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
+[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
+[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
+[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
+[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
+[   90.780033]         ...
+[   90.784902] Call Trace:
+[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
+[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
+[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
+[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
+[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
+[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
+[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
+[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
+[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
+[   90.875067] [<80014424>] syscall_common+0x34/0x58
 
-In order to fix the above issue, this patch forces to set initial wol state
-to disabled as default.
-
-Signed-off-by: Kunihiko Hayashi <hayashi.kunihiko@socionext.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
+Reviewed-by: Hou Tao <houtao1@huawei.com>
+Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/socionext/sni_ave.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/jffs2/super.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/socionext/sni_ave.c b/drivers/net/ethernet/socionext/sni_ave.c
-index 7c7cd9d94bcc..3d0114ba2bfe 100644
---- a/drivers/net/ethernet/socionext/sni_ave.c
-+++ b/drivers/net/ethernet/socionext/sni_ave.c
-@@ -1210,9 +1210,13 @@ static int ave_init(struct net_device *ndev)
+diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
+index 902a7dd10e5c..bb6ae387469f 100644
+--- a/fs/jffs2/super.c
++++ b/fs/jffs2/super.c
+@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
+ 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
  
- 	priv->phydev = phydev;
+ #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
+-	cancel_delayed_work_sync(&c->wbuf_dwork);
++	if (jffs2_is_writebuffered(c))
++		cancel_delayed_work_sync(&c->wbuf_dwork);
+ #endif
  
--	phy_ethtool_get_wol(phydev, &wol);
-+	ave_ethtool_get_wol(ndev, &wol);
- 	device_set_wakeup_capable(&ndev->dev, !!wol.supported);
- 
-+	/* set wol initial state disabled */
-+	wol.wolopts = 0;
-+	ave_ethtool_set_wol(ndev, &wol);
-+
- 	if (!phy_interface_is_rgmii(phydev))
- 		phy_set_max_speed(phydev, SPEED_100);
- 
+ 	mutex_lock(&c->alloc_sem);
 -- 
 2.19.1
 
