@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB80C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D354EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6B0021855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C94A21855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:26:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TFT0BDiR"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="WAbWRb5o"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728719AbfAXP0I (ORCPT
+        id S1728737AbfAXP0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:26:08 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:37978 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728456AbfAXPZ4 (ORCPT
+        Thu, 24 Jan 2019 10:26:17 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:33149 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728648AbfAXPZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:25:56 -0500
-Received: by mail-wr1-f68.google.com with SMTP id v13so6907186wrw.5
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 07:25:55 -0800 (PST)
+        Thu, 24 Jan 2019 10:25:52 -0500
+Received: by mail-wm1-f66.google.com with SMTP id r24so2616620wmh.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 07:25:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=bQ8pes4GHsiZiw2vkcdeL7hOjU0R14hDMazyZN4Ugo0=;
-        b=TFT0BDiRPa78ZhWtS1dr0Jl1dbtXqHiVtMu6Lcz1K1SrEgTl1PMraFr+GsQn//6MNx
-         EBKUOsZUmAK+tNy21KrMJPEee0o2GcHoI6qf8KIWov0KDSRnmXpenUGf5bfIooD9lnTW
-         7Oi7RjJTod85JqKFedwyp8fGVZbNfpGrdeNRw=
+        bh=HBoSjW/9C2BJWOWwi68QsUaCxo6aNQtRfwlrGXtdlvs=;
+        b=WAbWRb5opunKVJHV2gvmr3SMyt9rlZ5menzvqdoDe5vTpvrbueGwR+iAM9KLAJfbmn
+         18mJmVVUnvuzAoXAIRg1nCcVMvUsMeMFcKoljyDiGBjzSrTJJ1lIvbKJ7SJJ6ofLZkc0
+         wnZrjYLvfbl0lOwrp7p6GC2iA35W7MkuOWRyU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=bQ8pes4GHsiZiw2vkcdeL7hOjU0R14hDMazyZN4Ugo0=;
-        b=DSPmLtHrmlV9xUz1tGBJgobv5uEE1dB0HYWMnCYlRtkAT0SIX8dIDXs1v5AUETLY74
-         vmyWO/bZYDsyOR+cTznmqE6LquqUVHp7KVsmR96IhCpWW/e4V44F8xJp+AucnUN2+PvL
-         C7fj75/5+oqbhYiL6iDSir5Ii5eoSmHXz2eLZqa/6dMwUxb/xx6Xt6prJD+Fub5LhQBl
-         EebInw+8u1wp6OzdmyRd18XEkgAPSCfXFN9oOPjWAvzTNQiILGGirP8bP5jADSf1v+an
-         6np87Z7rxuHddtJ/2HiafMZhb9hSX20ljsmWXboDLXilN3IQIhX0tsVQjlFYwmPMX8yZ
-         +YSg==
-X-Gm-Message-State: AJcUukeXb2BRO0KNXbvQF/rga92Xn8WF8cQVhDG+SsaitnWrkj9jgylB
-        Fict50zcrNoCPJJYDlrwhiGRiQ==
-X-Google-Smtp-Source: ALg8bN4OGlOobNiDMpze5YPu+JShdpurIX4/yBkEwotqBfVnXcZQKjDB4RAnehmnj8xNokjoEHjg1Q==
-X-Received: by 2002:adf:e9d1:: with SMTP id l17mr7187069wrn.73.1548343554339;
-        Thu, 24 Jan 2019 07:25:54 -0800 (PST)
+        bh=HBoSjW/9C2BJWOWwi68QsUaCxo6aNQtRfwlrGXtdlvs=;
+        b=F0tG8nAIdxRbdMShxtJTbQXqiZkvx0nsGdViocgkEYP4dIO/djQllb+/RpFUqeyR9Z
+         djvKKELgahmGVoiKBPTl/lo44bEPV2b/6csg7NZe45x1LzwERjgFJ0mFNShPwPk10cYP
+         MSY7dLkyqscUeLgfbDZ05AGgMQRKe4wiPwj/753eRw4R7/wiOgnJA2iXxokEKW8UIKgZ
+         9KmhnVArDIVLr/7mJqbK4bBWm8+BN2keDYuKSxNMX7mQgdwj3WVzjX7RN/HsLL4V+ITN
+         DKorU0nCRJrs8aN4IpWAw5aM4SqY2Z2oeuz85VuH+HTmxBLjuBAuSS12m4BoFiGB3Cda
+         iVUw==
+X-Gm-Message-State: AJcUukcXB8xjkRxoYhlucY6FCvd8MN4KGsoyJW+1kQvrNQ8wSCAoyeca
+        r82rxJVKz0AfOmpzgbxzUYQjrA==
+X-Google-Smtp-Source: ALg8bN5urnWKjk2w83dRbV+JHXTVwAJuN6qSheFFB/iCDpBym5M37AMGUq30H4aJMetOds0TE6KMIA==
+X-Received: by 2002:a1c:3c06:: with SMTP id j6mr2863882wma.27.1548343549819;
+        Thu, 24 Jan 2019 07:25:49 -0800 (PST)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id z12sm80371157wrh.35.2019.01.24.07.25.53
+        by smtp.gmail.com with ESMTPSA id z12sm80371157wrh.35.2019.01.24.07.25.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 24 Jan 2019 07:25:53 -0800 (PST)
+        Thu, 24 Jan 2019 07:25:49 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     robh+dt@kernel.org, gregkh@linuxfoundation.org, arnd@arndb.de
 Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
@@ -60,9 +60,9 @@ Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
         bkumar@qti.qualcomm.com, linux-arm-msm@vger.kernel.org,
         thierry.escande@linaro.org,
         Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [PATCH v4 5/5] misc: fastrpc: Add support for dmabuf exporter
-Date:   Thu, 24 Jan 2019 15:24:12 +0000
-Message-Id: <20190124152412.10503-6-srinivas.kandagatla@linaro.org>
+Subject: [PATCH v4 2/5] misc: fastrpc: Add Qualcomm fastrpc basic driver model
+Date:   Thu, 24 Jan 2019 15:24:09 +0000
+Message-Id: <20190124152412.10503-3-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124152412.10503-1-srinivas.kandagatla@linaro.org>
 References: <20190124152412.10503-1-srinivas.kandagatla@linaro.org>
@@ -73,267 +73,384 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-User process can involve dealing with big buffer sizes, and also passing
-buffers from one compute context bank to other compute context bank for
-complex dsp algorithms.
-
-This patch adds support to fastrpc to make it a proper dmabuf exporter
-to avoid making copies of buffers.
+This patch adds basic driver model for qualcomm fastrpc.
+Each DSP rpmsg channel is represented as fastrpc channel context and
+is exposed as a character driver for userspace interface.
+Each compute context bank is represented as fastrpc-session-context,
+which are dynamically managed by the channel context char device.
 
 Co-developed-by: Thierry Escande <thierry.escande@linaro.org>
 Signed-off-by: Thierry Escande <thierry.escande@linaro.org>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/misc/fastrpc.c      | 179 ++++++++++++++++++++++++++++++++++++
- include/uapi/misc/fastrpc.h |   8 ++
- 2 files changed, 187 insertions(+)
+ drivers/misc/Kconfig   |  10 ++
+ drivers/misc/Makefile  |   1 +
+ drivers/misc/fastrpc.c | 323 +++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 334 insertions(+)
+ create mode 100644 drivers/misc/fastrpc.c
 
-diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
-index b9972f1be9f4..77700ebf87c7 100644
---- a/drivers/misc/fastrpc.c
-+++ b/drivers/misc/fastrpc.c
-@@ -106,10 +106,20 @@ struct fastrpc_invoke_rsp {
+diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+index f417b06e11c5..7e0726253755 100644
+--- a/drivers/misc/Kconfig
++++ b/drivers/misc/Kconfig
+@@ -295,6 +295,16 @@ config QCOM_COINCELL
+ 	  to maintain PMIC register and RTC state in the absence of
+ 	  external power.
  
- struct fastrpc_buf {
- 	struct fastrpc_user *fl;
-+	struct dma_buf *dmabuf;
- 	struct device *dev;
- 	void *virt;
- 	u64 phys;
- 	u64 size;
-+	/* Lock for dma buf attachments */
-+	struct mutex lock;
-+	struct list_head attachments;
++config QCOM_FASTRPC
++	tristate "Qualcomm FastRPC"
++	depends on ARCH_QCOM || COMPILE_TEST
++	depends on RPMSG
++	help
++	  Provides a communication mechanism that allows for clients to
++	  make remote method invocations across processor boundary to
++	  applications DSP processor. Say M if you want to enable this
++	  module.
++
+ config SGI_GRU
+ 	tristate "SGI GRU driver"
+ 	depends on X86_UV && SMP
+diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+index e39ccbbc1b3a..623d002c59ce 100644
+--- a/drivers/misc/Makefile
++++ b/drivers/misc/Makefile
+@@ -18,6 +18,7 @@ obj-$(CONFIG_TIFM_CORE)       	+= tifm_core.o
+ obj-$(CONFIG_TIFM_7XX1)       	+= tifm_7xx1.o
+ obj-$(CONFIG_PHANTOM)		+= phantom.o
+ obj-$(CONFIG_QCOM_COINCELL)	+= qcom-coincell.o
++obj-$(CONFIG_QCOM_FASTRPC)	+= fastrpc.o
+ obj-$(CONFIG_SENSORS_BH1770)	+= bh1770glc.o
+ obj-$(CONFIG_SENSORS_APDS990X)	+= apds990x.o
+ obj-$(CONFIG_SGI_IOC4)		+= ioc4.o
+diff --git a/drivers/misc/fastrpc.c b/drivers/misc/fastrpc.c
+new file mode 100644
+index 000000000000..d744a93eb922
+--- /dev/null
++++ b/drivers/misc/fastrpc.c
+@@ -0,0 +1,323 @@
++// SPDX-License-Identifier: GPL-2.0
++// Copyright (c) 2011-2018, The Linux Foundation. All rights reserved.
++// Copyright (c) 2018, Linaro Limited
++
++#include <linux/device.h>
++#include <linux/dma-mapping.h>
++#include <linux/idr.h>
++#include <linux/list.h>
++#include <linux/miscdevice.h>
++#include <linux/module.h>
++#include <linux/of_address.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/rpmsg.h>
++#include <linux/scatterlist.h>
++#include <linux/slab.h>
++
++#define ADSP_DOMAIN_ID (0)
++#define MDSP_DOMAIN_ID (1)
++#define SDSP_DOMAIN_ID (2)
++#define CDSP_DOMAIN_ID (3)
++#define FASTRPC_DEV_MAX		4 /* adsp, mdsp, slpi, cdsp*/
++#define FASTRPC_MAX_SESSIONS	9 /*8 compute, 1 cpz*/
++#define FASTRPC_CTX_MAX (256)
++#define FASTRPC_CTXID_MASK (0xFF0)
++#define FASTRPC_DEVICE_NAME	"fastrpc"
++
++#define miscdev_to_cctx(d) container_of(d, struct fastrpc_channel_ctx, miscdev)
++
++static const char *domains[FASTRPC_DEV_MAX] = { "adsp", "mdsp",
++						"sdsp", "cdsp"};
++
++struct fastrpc_session_ctx {
++	struct device *dev;
++	int sid;
++	bool used;
++	bool valid;
 +};
 +
-+struct fastrpc_dma_buf_attachment {
-+	struct device *dev;
-+	struct sg_table sgt;
-+	struct list_head node;
- };
- 
- struct fastrpc_map {
-@@ -246,6 +256,9 @@ static int fastrpc_buf_alloc(struct fastrpc_user *fl, struct device *dev,
- 	if (!buf)
- 		return -ENOMEM;
- 
-+	INIT_LIST_HEAD(&buf->attachments);
-+	mutex_init(&buf->lock);
++struct fastrpc_channel_ctx {
++	int domain_id;
++	int sesscount;
++	struct rpmsg_device *rpdev;
++	struct fastrpc_session_ctx session[FASTRPC_MAX_SESSIONS];
++	spinlock_t lock;
++	struct idr ctx_idr;
++	struct list_head users;
++	struct miscdevice miscdev;
++};
 +
- 	buf->fl = fl;
- 	buf->virt = NULL;
- 	buf->phys = 0;
-@@ -351,6 +364,110 @@ fastrpc_context_alloc(struct fastrpc_user *user, u32 kernel, u32 sc,
- 	return ERR_PTR(ret);
- }
- 
-+static struct sg_table *
-+fastrpc_map_dma_buf(struct dma_buf_attachment *attachment,
-+		    enum dma_data_direction dir)
++struct fastrpc_user {
++	struct list_head user;
++	struct list_head maps;
++	struct list_head pending;
++
++	struct fastrpc_channel_ctx *cctx;
++	struct fastrpc_session_ctx *sctx;
++
++	int tgid;
++	int pd;
++	/* Lock for lists */
++	spinlock_t lock;
++	/* lock for allocations */
++	struct mutex mutex;
++};
++
++static struct fastrpc_session_ctx *fastrpc_session_alloc(
++					struct fastrpc_channel_ctx *cctx)
 +{
-+	struct fastrpc_dma_buf_attachment *a = attachment->priv;
-+	struct sg_table *table;
++	struct fastrpc_session_ctx *session = NULL;
++	int i;
 +
-+	table = &a->sgt;
++	spin_lock(&cctx->lock);
++	for (i = 0; i < cctx->sesscount; i++) {
++		if (!cctx->session[i].used && cctx->session[i].valid) {
++			cctx->session[i].used = true;
++			session = &cctx->session[i];
++			break;
++		}
++	}
++	spin_unlock(&cctx->lock);
 +
-+	if (!dma_map_sg(attachment->dev, table->sgl, table->nents, dir))
-+		return ERR_PTR(-ENOMEM);
-+
-+	return table;
++	return session;
 +}
 +
-+static void fastrpc_unmap_dma_buf(struct dma_buf_attachment *attach,
-+				  struct sg_table *table,
-+				  enum dma_data_direction dir)
++static void fastrpc_session_free(struct fastrpc_channel_ctx *cctx,
++				 struct fastrpc_session_ctx *session)
 +{
++	spin_lock(&cctx->lock);
++	session->used = false;
++	spin_unlock(&cctx->lock);
 +}
 +
-+static void fastrpc_release(struct dma_buf *dmabuf)
++static int fastrpc_device_release(struct inode *inode, struct file *file)
 +{
-+	struct fastrpc_buf *buffer = dmabuf->priv;
++	struct fastrpc_user *fl = (struct fastrpc_user *)file->private_data;
++	struct fastrpc_channel_ctx *cctx = fl->cctx;
 +
-+	fastrpc_buf_free(buffer);
++	spin_lock(&cctx->lock);
++	list_del(&fl->user);
++	spin_unlock(&cctx->lock);
++
++	fastrpc_session_free(fl->cctx, fl->sctx);
++
++	mutex_destroy(&fl->mutex);
++	kfree(fl);
++	file->private_data = NULL;
++
++	return 0;
 +}
 +
-+static int fastrpc_dma_buf_attach(struct dma_buf *dmabuf,
-+				  struct dma_buf_attachment *attachment)
++static int fastrpc_device_open(struct inode *inode, struct file *filp)
 +{
-+	struct fastrpc_dma_buf_attachment *a;
-+	struct fastrpc_buf *buffer = dmabuf->priv;
-+	int ret;
++	struct fastrpc_channel_ctx *cctx = miscdev_to_cctx(filp->private_data);
++	struct fastrpc_user *fl = NULL;
 +
-+	a = kzalloc(sizeof(*a), GFP_KERNEL);
-+	if (!a)
++	fl = kzalloc(sizeof(*fl), GFP_KERNEL);
++	if (!fl)
 +		return -ENOMEM;
 +
-+	ret = dma_get_sgtable(buffer->dev, &a->sgt, buffer->virt,
-+			      FASTRPC_PHYS(buffer->phys), buffer->size);
-+	if (ret < 0) {
-+		dev_err(buffer->dev, "failed to get scatterlist from DMA API\n");
++	filp->private_data = fl;
++	spin_lock_init(&fl->lock);
++	mutex_init(&fl->mutex);
++	INIT_LIST_HEAD(&fl->pending);
++	INIT_LIST_HEAD(&fl->maps);
++	INIT_LIST_HEAD(&fl->user);
++	fl->tgid = current->tgid;
++	fl->cctx = cctx;
++	spin_lock(&cctx->lock);
++	list_add_tail(&fl->user, &cctx->users);
++	spin_unlock(&cctx->lock);
++	fl->sctx = fastrpc_session_alloc(cctx);
++
++	return 0;
++}
++
++static const struct file_operations fastrpc_fops = {
++	.open = fastrpc_device_open,
++	.release = fastrpc_device_release,
++};
++
++static int fastrpc_cb_probe(struct platform_device *pdev)
++{
++	struct fastrpc_channel_ctx *cctx;
++	struct fastrpc_session_ctx *sess;
++	struct device *dev = &pdev->dev;
++	int i, sessions = 0;
++
++	cctx = dev_get_drvdata(dev->parent);
++	if (!cctx)
++		return -EINVAL;
++
++	of_property_read_u32(dev->of_node, "qcom,nsessions", &sessions);
++
++	spin_lock(&cctx->lock);
++	sess = &cctx->session[cctx->sesscount];
++	sess->used = false;
++	sess->valid = true;
++	sess->dev = dev;
++	dev_set_drvdata(dev, sess);
++
++	if (of_property_read_u32(dev->of_node, "reg", &sess->sid))
++		dev_info(dev, "FastRPC Session ID not specified in DT\n");
++
++	if (sessions > 0) {
++		struct fastrpc_session_ctx *dup_sess;
++
++		for (i = 1; i < sessions; i++) {
++			if (cctx->sesscount++ >= FASTRPC_MAX_SESSIONS)
++				break;
++			dup_sess = &cctx->session[cctx->sesscount];
++			memcpy(dup_sess, sess, sizeof(*dup_sess));
++		}
++	}
++	cctx->sesscount++;
++	spin_unlock(&cctx->lock);
++	dma_set_mask(dev, DMA_BIT_MASK(32));
++
++	return 0;
++}
++
++static int fastrpc_cb_remove(struct platform_device *pdev)
++{
++	struct fastrpc_channel_ctx *cctx = dev_get_drvdata(pdev->dev.parent);
++	struct fastrpc_session_ctx *sess = dev_get_drvdata(&pdev->dev);
++	int i;
++
++	spin_lock(&cctx->lock);
++	for (i = 1; i < FASTRPC_MAX_SESSIONS; i++) {
++		if (cctx->session[i].sid == sess->sid) {
++			cctx->session[i].valid = false;
++			cctx->sesscount--;
++		}
++	}
++	spin_unlock(&cctx->lock);
++
++	return 0;
++}
++
++static const struct of_device_id fastrpc_match_table[] = {
++	{ .compatible = "qcom,fastrpc-compute-cb", },
++	{}
++};
++
++static struct platform_driver fastrpc_cb_driver = {
++	.probe = fastrpc_cb_probe,
++	.remove = fastrpc_cb_remove,
++	.driver = {
++		.name = "qcom,fastrpc-cb",
++		.of_match_table = fastrpc_match_table,
++		.suppress_bind_attrs = true,
++	},
++};
++
++static int fastrpc_rpmsg_probe(struct rpmsg_device *rpdev)
++{
++	struct device *rdev = &rpdev->dev;
++	struct fastrpc_channel_ctx *data;
++	int i, err, domain_id = 0;
++	const char *domain;
++
++	data = devm_kzalloc(rdev, sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	err = of_property_read_string(rdev->of_node, "label", &domain);
++	if (err) {
++		dev_info(rdev, "FastRPC Domain not specified in DT\n");
++		return err;
++	}
++
++	for (i = 0; i < CDSP_DOMAIN_ID; i++) {
++		if (!strcmp(domains[i], domain)) {
++			domain_id = i;
++			break;
++		}
++	}
++
++	if (domain_id > CDSP_DOMAIN_ID) {
++		dev_info(rdev, "FastRPC Invalid Domain ID %d\n", domain_id);
 +		return -EINVAL;
 +	}
 +
-+	a->dev = attachment->dev;
-+	INIT_LIST_HEAD(&a->node);
-+	attachment->priv = a;
-+
-+	mutex_lock(&buffer->lock);
-+	list_add(&a->node, &buffer->attachments);
-+	mutex_unlock(&buffer->lock);
-+
-+	return 0;
-+}
-+
-+static void fastrpc_dma_buf_detatch(struct dma_buf *dmabuf,
-+				    struct dma_buf_attachment *attachment)
-+{
-+	struct fastrpc_dma_buf_attachment *a = attachment->priv;
-+	struct fastrpc_buf *buffer = dmabuf->priv;
-+
-+	mutex_lock(&buffer->lock);
-+	list_del(&a->node);
-+	mutex_unlock(&buffer->lock);
-+	kfree(a);
-+}
-+
-+static void *fastrpc_kmap(struct dma_buf *dmabuf, unsigned long pgnum)
-+{
-+	struct fastrpc_buf *buf = dmabuf->priv;
-+
-+	return buf->virt ? buf->virt + pgnum * PAGE_SIZE : NULL;
-+}
-+
-+static void *fastrpc_vmap(struct dma_buf *dmabuf)
-+{
-+	struct fastrpc_buf *buf = dmabuf->priv;
-+
-+	return buf->virt;
-+}
-+
-+static int fastrpc_mmap(struct dma_buf *dmabuf,
-+			struct vm_area_struct *vma)
-+{
-+	struct fastrpc_buf *buf = dmabuf->priv;
-+	size_t size = vma->vm_end - vma->vm_start;
-+
-+	return dma_mmap_coherent(buf->dev, vma, buf->virt,
-+				 FASTRPC_PHYS(buf->phys), size);
-+}
-+
-+static const struct dma_buf_ops fastrpc_dma_buf_ops = {
-+	.attach = fastrpc_dma_buf_attach,
-+	.detach = fastrpc_dma_buf_detatch,
-+	.map_dma_buf = fastrpc_map_dma_buf,
-+	.unmap_dma_buf = fastrpc_unmap_dma_buf,
-+	.mmap = fastrpc_mmap,
-+	.map = fastrpc_kmap,
-+	.vmap = fastrpc_vmap,
-+	.release = fastrpc_release,
-+};
-+
- static int fastrpc_map_create(struct fastrpc_user *fl, int fd,
- 			      u64 len, struct fastrpc_map **ppmap)
- {
-@@ -869,6 +986,62 @@ static int fastrpc_device_open(struct inode *inode, struct file *filp)
- 	return 0;
- }
- 
-+static int fastrpc_dmabuf_free(struct fastrpc_user *fl, char __user *argp)
-+{
-+	struct dma_buf *buf;
-+	int info;
-+
-+	if (copy_from_user(&info, argp, sizeof(info)))
-+		return -EFAULT;
-+
-+	buf = dma_buf_get(info);
-+	if (IS_ERR_OR_NULL(buf))
-+		return -EINVAL;
-+	/*
-+	 * one for the last get and other for the ALLOC_DMA_BUFF ioctl
-+	 */
-+	dma_buf_put(buf);
-+	dma_buf_put(buf);
-+
-+	return 0;
-+}
-+
-+static int fastrpc_dmabuf_alloc(struct fastrpc_user *fl, char __user *argp)
-+{
-+	struct fastrpc_alloc_dma_buf bp;
-+	DEFINE_DMA_BUF_EXPORT_INFO(exp_info);
-+	struct fastrpc_buf *buf = NULL;
-+	int err;
-+
-+	if (copy_from_user(&bp, argp, sizeof(bp)))
-+		return -EFAULT;
-+
-+	err = fastrpc_buf_alloc(fl, fl->sctx->dev, bp.size, &buf);
++	data->miscdev.minor = MISC_DYNAMIC_MINOR;
++	data->miscdev.name = kasprintf(GFP_KERNEL, "fastrpc-%s",
++				domains[domain_id]);
++	data->miscdev.fops = &fastrpc_fops;
++	err = misc_register(&data->miscdev);
 +	if (err)
 +		return err;
-+	exp_info.ops = &fastrpc_dma_buf_ops;
-+	exp_info.size = bp.size;
-+	exp_info.flags = O_RDWR;
-+	exp_info.priv = buf;
-+	buf->dmabuf = dma_buf_export(&exp_info);
-+	if (IS_ERR(buf->dmabuf))
-+		return PTR_ERR(buf->dmabuf);
 +
-+	get_dma_buf(buf->dmabuf);
-+	bp.fd = dma_buf_fd(buf->dmabuf, O_ACCMODE);
-+	if (bp.fd < 0) {
-+		dma_buf_put(buf->dmabuf);
-+		return -EINVAL;
++	dev_set_drvdata(&rpdev->dev, data);
++	dma_set_mask_and_coherent(rdev, DMA_BIT_MASK(32));
++	INIT_LIST_HEAD(&data->users);
++	spin_lock_init(&data->lock);
++	idr_init(&data->ctx_idr);
++	data->domain_id = domain_id;
++	data->rpdev = rpdev;
++
++	return of_platform_populate(rdev->of_node, NULL, NULL, rdev);
++}
++
++static void fastrpc_rpmsg_remove(struct rpmsg_device *rpdev)
++{
++	struct fastrpc_channel_ctx *cctx = dev_get_drvdata(&rpdev->dev);
++
++	misc_deregister(&cctx->miscdev);
++	of_platform_depopulate(&rpdev->dev);
++	kfree(cctx);
++}
++
++static int fastrpc_rpmsg_callback(struct rpmsg_device *rpdev, void *data,
++				  int len, void *priv, u32 addr)
++{
++	return 0;
++}
++
++static const struct of_device_id fastrpc_rpmsg_of_match[] = {
++	{ .compatible = "qcom,fastrpc" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, fastrpc_rpmsg_of_match);
++
++static struct rpmsg_driver fastrpc_driver = {
++	.probe = fastrpc_rpmsg_probe,
++	.remove = fastrpc_rpmsg_remove,
++	.callback = fastrpc_rpmsg_callback,
++	.drv = {
++		.name = "qcom,fastrpc",
++		.of_match_table = fastrpc_rpmsg_of_match,
++	},
++};
++
++static int fastrpc_init(void)
++{
++	int ret;
++
++	ret = platform_driver_register(&fastrpc_cb_driver);
++	if (ret < 0) {
++		pr_err("fastrpc: failed to register cb driver\n");
++		return ret;
 +	}
 +
-+	if (copy_to_user(argp, &bp, sizeof(bp))) {
-+		dma_buf_put(buf->dmabuf);
-+		return -EFAULT;
++	ret = register_rpmsg_driver(&fastrpc_driver);
++	if (ret < 0) {
++		pr_err("fastrpc: failed to register rpmsg driver\n");
++		platform_driver_unregister(&fastrpc_cb_driver);
++		return ret;
 +	}
 +
 +	return 0;
 +}
++module_init(fastrpc_init);
 +
- static int fastrpc_init_attach(struct fastrpc_user *fl)
- {
- 	struct fastrpc_invoke_args args[1];
-@@ -931,6 +1104,12 @@ static long fastrpc_device_ioctl(struct file *file, unsigned int cmd,
- 	case FASTRPC_IOCTL_INIT_CREATE:
- 		err = fastrpc_init_create_process(fl, argp);
- 		break;
-+	case FASTRPC_IOCTL_FREE_DMA_BUFF:
-+		err = fastrpc_dmabuf_free(fl, argp);
-+		break;
-+	case FASTRPC_IOCTL_ALLOC_DMA_BUFF:
-+		err = fastrpc_dmabuf_alloc(fl, argp);
-+		break;
- 	default:
- 		err = -ENOTTY;
- 		dev_err(fl->sctx->dev, "bad ioctl: %d\n", cmd);
-diff --git a/include/uapi/misc/fastrpc.h b/include/uapi/misc/fastrpc.h
-index 32d191c3b7bc..6d701af9fc42 100644
---- a/include/uapi/misc/fastrpc.h
-+++ b/include/uapi/misc/fastrpc.h
-@@ -5,6 +5,8 @@
- 
- #include <linux/types.h>
- 
-+#define FASTRPC_IOCTL_ALLOC_DMA_BUFF	_IOWR('R', 1, struct fastrpc_alloc_dma_buf)
-+#define FASTRPC_IOCTL_FREE_DMA_BUFF	_IOWR('R', 2, __u32)
- #define FASTRPC_IOCTL_INVOKE		_IOWR('R', 3, struct fastrpc_invoke)
- #define FASTRPC_IOCTL_INIT_ATTACH	_IO('R', 4)
- #define FASTRPC_IOCTL_INIT_CREATE	_IOWR('R', 5, struct fastrpc_init_create)
-@@ -30,4 +32,10 @@ struct fastrpc_init_create {
- 	__u64 file;	/* pointer to elf file */
- };
- 
-+struct fastrpc_alloc_dma_buf {
-+	__s32 fd;	/* fd */
-+	__u32 flags;	/* flags to map with */
-+	__u64 size;	/* size */
-+};
++static void fastrpc_exit(void)
++{
++	platform_driver_unregister(&fastrpc_cb_driver);
++	unregister_rpmsg_driver(&fastrpc_driver);
++}
++module_exit(fastrpc_exit);
 +
- #endif /* __QCOM_FASTRPC_H__ */
++MODULE_ALIAS("fastrpc:fastrpc");
++MODULE_LICENSE("GPL v2");
 -- 
 2.20.1
 
