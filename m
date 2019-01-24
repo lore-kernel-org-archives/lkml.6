@@ -2,162 +2,240 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C200BC282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:36:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BDD2CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:37:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF912184B
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:36:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="drx0wM4m"
+	by mail.kernel.org (Postfix) with ESMTP id 8D40E2184B
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:37:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728338AbfAXOgv (ORCPT
+        id S1728381AbfAXOhc convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 09:36:51 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:34217 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728036AbfAXOgv (ORCPT
+        Thu, 24 Jan 2019 09:37:32 -0500
+Received: from kozue.soulik.info ([108.61.200.231]:56550 "EHLO
+        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727649AbfAXOhc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 09:36:51 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b3so4778665ede.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 06:36:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=XeARhplmILrmFnACznjH58BJN5nRjFOsozYGY0quCIE=;
-        b=drx0wM4maaDf1HG7Z+juTsEgFBaToJfuoDytGiuY+PWU2rnKCDpzjEXua7n7Missy+
-         jdzKMl+/j5d+uQ0aIIlg9DHEMAH+y8OmGEWrcLAB8Hwjk6qToO94gb46e4dKwkeSrbq7
-         r4YryffEbagU5eOvsc3JfJVRYR6PeZPix2IOXu6BE5x8cAqrrFUxPto5bAlTw1zRExRD
-         u/dBJL3hkoiadwBxAfrUQdmYzUSrUdGkXD5gm9vo+UymD+LXPFPegcojkmKHhrXGVobN
-         /ISgoHbkuIic9ACIncCqMAL85xmrGVJJ81zPjZOcKzhgsDkWV1xHnMdNdPy6jwyCe7FN
-         VG4g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=XeARhplmILrmFnACznjH58BJN5nRjFOsozYGY0quCIE=;
-        b=o3O91z+UFDzOKtWxRYAi6cy5h6kWuG2C3nUI8JayD44oWUdAibNb14VLG/Pwyn+ImZ
-         BLr/nOn6yrzvsvfZrGCxS49M8CDNKe6uy8TSlHX3K02du8fDOm9rMuGJCUUbxvJtA/yS
-         M1p97sMSRawJFM/FDlmnRFjyPo1piK94BIJfRqIUpYHc9aS8YhY5YfuU/IrEKleHux0S
-         wAvPtnwU0YRj34l6/lzeHMr9jlJ2VGwvs8tqZlvGYh/2YJBh4+MVyxu6/95C+GFVGVVR
-         UWIO+a+l+aQ08QsXU5myxpuysz0LcIlN8aXUPVGVm3oFaMQtFqJOop53GsB4Zv6SIYWc
-         tmXw==
-X-Gm-Message-State: AJcUukdbniLdrlmepiunniFtVQ2f4M095GBjKF26Sc/dI4VMjWYsS029
-        CMTyhCfEVfTv7XLmHQQPeUNEbA==
-X-Google-Smtp-Source: ALg8bN6YkB4d6JlzaAgHfTCloMq+fZ8W6iKlFmvABsbovARTxc/rupNn1Z3W/CJRaUlydwGRKV3qeA==
-X-Received: by 2002:a50:ad0b:: with SMTP id y11mr6689419edc.113.1548340609385;
-        Thu, 24 Jan 2019 06:36:49 -0800 (PST)
-Received: from [192.168.1.85] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id m10sm122172eja.38.2019.01.24.06.36.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 06:36:48 -0800 (PST)
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <5FF168CC-9372-4DE5-BF62-DD3A2EE08384@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_8F20AE3E-B846-4392-AAED-51816256F513";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH v1] : Switch to use new generic UUID API
-Date:   Thu, 24 Jan 2019 15:36:47 +0100
-In-Reply-To: <CAHp75Vfd=B-AP=7KNFiDU-qER9BjB0Qw9Lyp+hb8x94NfQiZyA@mail.gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Christoph Hellwig <hch@lst.de>,
-        =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-References: <20190110143051.52305-1-andriy.shevchenko@linux.intel.com>
- <20190121084732.GE18680@lst.de> <20190124121659.GH9224@smile.fi.intel.com>
- <6D748F08-F9F9-4DFB-84DF-63E97C691013@javigon.com>
- <CAHp75Vf4ndBaS6BjAM==7csYB9EYDvjV9jT9C6kioDryzb_HnQ@mail.gmail.com>
- <9E0FD459-75F2-4EF1-9310-8FCDF6F87604@javigon.com>
- <CAHp75Vfd=B-AP=7KNFiDU-qER9BjB0Qw9Lyp+hb8x94NfQiZyA@mail.gmail.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Thu, 24 Jan 2019 09:37:32 -0500
+Received: from [192.168.0.49] (unknown [192.168.0.49])
+        by kozue.soulik.info (Postfix) with ESMTPSA id A2464100D3B;
+        Thu, 24 Jan 2019 23:38:31 +0900 (JST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (1.0)
+Subject: Re: [PATCH v2 1/2] media: uapi: Add H264 low-level decoder API compound controls.
+From:   Ayaka <ayaka@soulik.info>
+X-Mailer: iPad Mail (16A404)
+In-Reply-To: <20190124142353.hnhd5kez6wrwcyrn@flea>
+Date:   Thu, 24 Jan 2019 22:37:23 +0800
+Cc:     tfiga@chromium.org, acourbot@chromium.org, hans.verkuil@cisco.com,
+        sakari.ailus@linux.intel.com,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
+        linux-kernel@vger.kernel.org,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, posciak@chromium.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Guenter Roeck <groeck@chromium.org>,
+        nicolas.dufresne@collabora.com,
+        linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <2C346EE9-7066-497C-BDE2-D4ED0BC3E8CF@soulik.info>
+References: <20181115145650.9827-1-maxime.ripard@bootlin.com> <20181115145650.9827-2-maxime.ripard@bootlin.com> <20190108095228.GA5161@misaki.sumomo.pri> <20190117110130.lvmwqmn6wd5eeoxi@flea> <e589088d-560c-a4e2-c339-27b45a0caa6a@soulik.info> <20190124142353.hnhd5kez6wrwcyrn@flea>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---Apple-Mail=_8F20AE3E-B846-4392-AAED-51816256F513
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
 
+Sent from my iPad
 
-> On 24 Jan 2019, at 15.13, Andy Shevchenko <andy.shevchenko@gmail.com> =
-wrote:
->=20
-> On Thu, Jan 24, 2019 at 3:45 PM Javier Gonz=C3=A1lez =
-<javier@javigon.com> wrote:
->>> On 24 Jan 2019, at 14.36, Andy Shevchenko =
-<andy.shevchenko@gmail.com> wrote:
->>> On Thu, Jan 24, 2019 at 3:19 PM Javier Gonz=C3=A1lez =
-<javier@javigon.com> wrote:
->>>>> On 24 Jan 2019, at 13.16, Andy Shevchenko =
-<andriy.shevchenko@linux.intel.com> wrote:
->=20
->>>>> header.uuid is defined using __u8 type, I'm not sure we can use =
-guid_t there.
->>>>=20
->>>> We can turn it into a guid_t and bump the minor version.
->>>=20
->>> It's not so easy. __uXX types are dedicated for external APIs. =
-guid_t
->>> is kernel internal type disregard of (still) presence some uapi =
-bits.
->>> So, the question is those __uXX types in the driver definition is a
->>> simple mistake, (weird) style decision, or what?
->>=20
->> I would define it as a mistake and I think it is worth fixing it. At =
-the
->> moment we are only using this uuid for recovery purposes, to discard
->> data from a different pblk instance,
->=20
-> Does this come from outside of the kernel in any mean (user space,
-> data from device, etc)?
-> It sounds to me like it does. In this case there is no mistake and we
-> may not use guid_t there.
+> On Jan 24, 2019, at 10:23 PM, Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> 
+> Hi!
+> 
+> On Sun, Jan 20, 2019 at 08:48:32PM +0800, ayaka wrote:
+>>>>> +struct v4l2_ctrl_h264_scaling_matrix {
+>>>>> +    __u8 scaling_list_4x4[6][16];
+>>>>> +    __u8 scaling_list_8x8[6][64];
+>>>>> +};
+>>>> I wonder which decoder want this.
+>>> I'm not sure I follow you, scaling lists are an important part of the
+>>> decoding process, so all of them?
+>> 
+>> Not actually, when the scaling list is in the sequence(a flag for it), we
+>> need to tell the decoder a scaling table.
+> 
+> Right, that's why the scaling list has a control of its own.
+> 
+>> But the initial state of that table is known, so for some decoder,
+>> it would have a internal table.
+> 
+> That control is optional, so you can just ignore that setting in that
+> case
+> 
+>> And for some decoder, it wants in the Z order while the others
+>> won't.
+> 
+> We're designing a generic API here, so it doesn't matter. Some will
+I know, I just wonder whether the other driver request it
+> have to convert it internally in the drivers for the Z order, while
+> others will be able to use it as is.
+> 
+>>>>> +struct v4l2_ctrl_h264_slice_param {
+>>>>> +    /* Size in bytes, including header */
+>>>>> +    __u32 size;
+>>>>> +    /* Offset in bits to slice_data() from the beginning of this slice. */
+>>>>> +    __u32 header_bit_size;
+>>>>> +
+>>>>> +    __u16 first_mb_in_slice;
+>>>>> +    __u8 slice_type;
+>>>>> +    __u8 pic_parameter_set_id;
+>>>>> +    __u8 colour_plane_id;
+>>>>> +    __u16 frame_num;
+>>>>> +    __u16 idr_pic_id;
+>>>>> +    __u16 pic_order_cnt_lsb;
+>>>>> +    __s32 delta_pic_order_cnt_bottom;
+>>>>> +    __s32 delta_pic_order_cnt0;
+>>>>> +    __s32 delta_pic_order_cnt1;
+>>>>> +    __u8 redundant_pic_cnt;
+>>>>> +
+>>>>> +    struct v4l2_h264_pred_weight_table pred_weight_table;
+>>>>> +    /* Size in bits of dec_ref_pic_marking() syntax element. */
+>>>>> +    __u32 dec_ref_pic_marking_bit_size;
+>>>>> +    /* Size in bits of pic order count syntax. */
+>>>>> +    __u32 pic_order_cnt_bit_size;
+>>>>> +
+>>>>> +    __u8 cabac_init_idc;
+>>>>> +    __s8 slice_qp_delta;
+>>>>> +    __s8 slice_qs_delta;
+>>>>> +    __u8 disable_deblocking_filter_idc;
+>>>>> +    __s8 slice_alpha_c0_offset_div2;
+>>>>> +    __s8 slice_beta_offset_div2;
+>>>>> +    __u32 slice_group_change_cycle;
+>>>>> +
+>>>>> +    __u8 num_ref_idx_l0_active_minus1;
+>>>>> +    __u8 num_ref_idx_l1_active_minus1;
+>>>>> +    /*  Entries on each list are indices
+>>>>> +     *  into v4l2_ctrl_h264_decode_param.dpb[]. */
+>>>>> +    __u8 ref_pic_list0[32];
+>>>>> +    __u8 ref_pic_list1[32];
+>>>>> +
+>>>>> +    __u8 flags;
+>>>>> +};
+>>>>> +
+>>>> We need some addtional properties or the Rockchip won't work.
+>>>> 1. u16 idr_pic_id for identifies IDR (instantaneous decoding refresh)
+>>>> picture
+>>> idr_pic_id is already there
+>> Sorry for miss that.
+>>> 
+>>>> 2. u16 ref_pic_mk_len for length of decoded reference picture marking bits
+>>>> 3. u8 poc_length for length of picture order count field in stream
+>>>> 
+>>>> The last two are used for the hardware to skip a part stream.
+>>> I'm not sure what you mean here, those parameters are not in the
+>>> bitstream, what do you want to use them for?
+>> 
+>> Or Rockchip's decoder won't work. Their decoder can't find the data part
+>> without skip some segments in slice data.
+>> 
+>> I should say something more about the stateless decoder, it is hard to
+>> define what a stateless decoder will do, some would like to parse more
+>> information but some won't. You even have no idea on what it would
+>> accelerate. OK, I should say for those ISO H serial codec, it would be more
+>> simple but for those VPx serial, the decoders design is a mess.
+> 
+> Can't you use header_bit_size in that case to skip over the the parts
+> of the slice you don't care about and go to the data?
+> 
+No, the decoder request extra size of those two segment of h.264 bitstream
+>>>>> +#define V4L2_H264_DPB_ENTRY_FLAG_VALID        0x01
+>>>>> +#define V4L2_H264_DPB_ENTRY_FLAG_ACTIVE        0x02
+>>>>> +#define V4L2_H264_DPB_ENTRY_FLAG_LONG_TERM    0x04
+>>>>> +
+>>>>> +struct v4l2_h264_dpb_entry {
+>>>>> +    __u32 tag;
+>>>>> +    __u16 frame_num;
+>>>>> +    __u16 pic_num;
+>>>> Although the long term reference would use picture order count
+>>>> and short term for frame num, but only one of them is used
+>>>> for a entry of a dpb.
+>>>> 
+>>>> Besides, for a frame picture frame_num = pic_num * 2,
+>>>> and frame_num = pic_num * 2 + 1 for a filed.
+>>> 
+>>> I'm not sure what is your point?
+>> 
+>> I found I was wrong at the last email.
+>> 
+>> But stateless hardware decoder usually don't care about whether it is long
+>> term or short term, as the real dpb updating or management work are not done
+>> by the the driver or device and decoding job would only use the two list(or
+>> one list for slice P) for reference pictures. So those flag for long term or
+>> status can be removed as well.
+> 
+> I'll remove the LONG_TERM flag then. We do need the other two for the
+> Allwinner driver though.
+> 
+I would ask Paulk and check the manual and vendor library later.
+Even there are two register fields, it don’t mean they would be used and required at the same times.
+Because it don’t follow ISO manual.
+>> And I agree above with my last mail, so I would suggest to keep a property
+>> as index for both frame_num and pic_num, as only one of them would be used
+>> for a picture decoding once time.
+> 
+> I'd really prefer to keep everything that is in the bitstream defined
+> here. We don't want to cover the usual cases, but all of them even the
+> one that haven't been designed yet, so we should be really
+> conservative.
+As I mention in the other mail, a stateless decoder or encoder like means the device won’t track the previous result. But you have no idea on what data the device would need to process this picture. It is hard to define a standard structure for it.
+As you see, even allwinner doesn’t obey all the standard the IOS document said.
+In my original suggestion, I would just to add more reservation fields then future driver can use it.
+> 
+>>>>> +    /* Note that field is indicated by v4l2_buffer.field */
+>>>>> +    __s32 top_field_order_cnt;
+>>>>> +    __s32 bottom_field_order_cnt;
+>>>>> +    __u8 flags; /* V4L2_H264_DPB_ENTRY_FLAG_* */
+>>>>> +};
+>>>>> +
+>>>>> +struct v4l2_ctrl_h264_decode_param {
+>>>>> +    __u32 num_slices;
+>>>>> +    __u8 idr_pic_flag;
+>>>>> +    __u8 nal_ref_idc;
+>>>>> +    __s32 top_field_order_cnt;
+>>>>> +    __s32 bottom_field_order_cnt;
+>>>>> +    __u8 ref_pic_list_p0[32];
+>>>>> +    __u8 ref_pic_list_b0[32];
+>>>>> +    __u8 ref_pic_list_b1[32];
+>>>> 
+>>>> I would prefer to keep only two list, list0 and list 1.
+>>> 
+>>> I'm not even sure why this is needed in the first place
+>>> anymore. It's not part of the bitstream, and it seems to come from
+>>> ChromeOS' Rockchip driver that uses it though. Do you know why?
+>> 
+>> You see the P frame would use only a list and B for two list. So for
+>> the parameter of a picture, two lists are max. I would suggest only
+>> keep two arrays here and rename them as list0 and list1, it would
+>> reduce the conflict.
+> 
+> Right, but those lists are already in v4l2_ctrl_h264_slice_param (with
+> the construct you are suggesting). I'm not sure about why the
+> redundancy is needed. Alex, Tomasz, do you have any idea why this was
+> needed at some point?
+> 
+I may be wrong or forget.
+> Thanks!
+> Maxime
+> 
+> -- 
+> Maxime Ripard, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
-pblk manages the metadata layout without involvement of the device or
-user space, so no, no dependency at this moment.
-
-It is not pushed anywhere yet, but I have been working on a tool to make
-a pblk recovery tool to enable FTL repairs if something fails in the
-kernel recovery path. Here, I use this uuid to identify the
-instance - is there a way to reconcile guid_t with user space, which
-currently uses the __u8?
-
-Javier
-
---Apple-Mail=_8F20AE3E-B846-4392-AAED-51816256F513
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlxJzX8ACgkQPEYBfS0l
-eOB3dxAAiXDnOPZ4wqH5rh2S9wMRLTw2ioFU1O7OxDFKVFi+7ZYXQe743ldv88YM
-1rinFBaOoKpiwP+pRH94xtLv/LlSd3qEvZtdB2yl8CfNc+sUTts3tzUqeuuWzLZw
-7/PrdT7jwN2HYuiiSRtE4M4r8Oe8wimjsXX7Gvt6gePH+aD8WScxxtI0zo+XFVbc
-i2eYWINUlO2E000LmHJthFW2H5ao5sJ9D0ow2FUyuMUirJHgOyO39+BW87kpwS1z
-U6dJuAJd0t/nwfrMHDKdUabegi2tbozeE91X0pTtCSE6km54tnPRGSWJtFUmL+r0
-tY7nRExPOWGEwJAGKgJu6bub9XLLWXQtKPLdjakCMZ6QcrXIYo5NW2bknfbimHFO
-kNdVYgQD9No/7n5oRvUbVJ8hv5QC4Fl2o/2OlWK/d0nFZE4Ya4hn5HjCWsu6fBYf
-Hd13i+KLsPkEjlvxuLZmw5BfaDdyl3VWJDGiR0flXEIQ2irEV3a9gOqMtDmA1QrD
-PPEMm8csOunYAZQ0bjL2JbPRONmQmjc/Fup6jA5Mi6CT0gW1tyrXhy0hIyG7XNdF
-MPz53Z724qQuskIinDH7tnf+oKS0NPA7UsShU8LWQeu+c9r+fYa99vmqkPpzew3z
-tiVa/yhIkEB9xz9Qq283zIvGbxpA+cyrN+16Hwx8gPq5xzUdpBg=
-=l6d2
------END PGP SIGNATURE-----
-
---Apple-Mail=_8F20AE3E-B846-4392-AAED-51816256F513--
