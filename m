@@ -2,53 +2,51 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBF7C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA96C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBF46218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE91D218FE
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358052;
-	bh=5w1D3Ymi8glZakObHcArKutMVCXvR4By2hwXnGIhd2Q=;
+	s=default; t=1548358055;
+	bh=f1/4BFbMhFV0Mu19A01TEbB83DJ5me2KCGiGOaZ/gaw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=egPqzyiticTegNk2+MfcIsVJYSsmYs0pXGp1pOH3BOeLt0ZoWTbdULCdULIaq16jx
-	 xDXLBDogMMwnWLXPGhSi52F/3QND8BYguUppaDaSbMPPrVbu2Ane76dADYhyQQOSHc
-	 ECQjVRE0xyzBL6cM87ZqiSisVAXXqP2NcCHkk/14=
+	b=idQLpvPGwc+m4kjXZKGrbIydFarvl4oXBp5/0PMSy/8s8PBjBqdVwA/324ilfmFF3
+	 Fy9YhM8HJv2NdiLwYKGBEatzbDeXuw+zykXVcitZQpZ9FpRYaySxPkappVio3diRuX
+	 yn0/m8+4Ou0TVkmPTh67NNjTivNzTQ7HFTCnhGUc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730774AbfAXT1b (ORCPT
+        id S1730786AbfAXT1e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:27:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53666 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:27:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53724 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730757AbfAXT10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:27:26 -0500
+        id S1728243AbfAXT12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:27:28 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 77E05218FC;
-        Thu, 24 Jan 2019 19:27:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 290D4218FC;
+        Thu, 24 Jan 2019 19:27:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358045;
-        bh=5w1D3Ymi8glZakObHcArKutMVCXvR4By2hwXnGIhd2Q=;
+        s=default; t=1548358047;
+        bh=f1/4BFbMhFV0Mu19A01TEbB83DJ5me2KCGiGOaZ/gaw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AYcvX/SK9OAzTKa7vRDzL+EBHBf/Vy3DYf5/zEJe0ihAUi3DPTVfdVOk8gAiLRTWF
-         Yzce6hs4lmbQst+nbLEhsJh9POOnurplP/XPIzB6A+D2LAZXUCGWKicUeLykvL2CmF
-         /Q6vnkBM0gBGA9vZ3ShbfTUKuLeuorI29r/iqr9I=
+        b=thU1PmeKHj3w1LKkALgpPDTvUKvaUHalG/zNrkIEX8BmrjK1QjNS1dlPcFuBOo+2Y
+         TwuwH5GdCeiVHsgmF5g4Lmd95setYb9wei9g6HSkfe9X7E7AW6Bftm2nstFEuca5Ow
+         LtimpGgN5bOTBzVQ68qART1fCWTPai0aTfKHM4kI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 077/104] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
-Date:   Thu, 24 Jan 2019 20:20:06 +0100
-Message-Id: <20190124190203.900527311@linuxfoundation.org>
+        stable@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+        syzbot <syzkaller@googlegroups.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.4 042/104] ipv6: fix kernel-infoleak in ipv6_local_error()
+Date:   Thu, 24 Jan 2019 20:19:31 +0100
+Message-Id: <20190124190200.065026833@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -67,131 +65,105 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
+From: Eric Dumazet <edumazet@google.com>
 
-In the past, Asus firmwares would change the panel backlight directly
-through the EC when the display off hotkey (Fn+F7) was pressed, and
-only notify the OS of such change, with 0x33 when the LCD was ON and
-0x34 when the LCD was OFF. These are currently mapped to
-KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
+[ Upstream commit 7d033c9f6a7fd3821af75620a0257db87c2b552a ]
 
-Most recently the EC on Asus most machines lost ability to toggle the
-LCD backlight directly, but unless the OS informs the firmware it is
-going to handle the display toggle hotkey events, the firmware still
-tries change the brightness through the EC, to no effect. The end result
-is a long list (at Endless we counted 11) of Asus laptop models where
-the display toggle hotkey does not perform any action. Our firmware
-engineers contacts at Asus were surprised that there were still machines
-out there with the old behavior.
+This patch makes sure the flow label in the IPv6 header
+forged in ipv6_local_error() is initialized.
 
-Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
-tells the firmware that it should let the OS handle the display toggle
-event, in which case it will simply notify the OS of a key press with
-0x35, as shown by the DSDT excerpts bellow.
+BUG: KMSAN: kernel-infoleak in _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+CPU: 1 PID: 24675 Comm: syz-executor1 Not tainted 4.20.0-rc7+ #4
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x173/0x1d0 lib/dump_stack.c:113
+ kmsan_report+0x12e/0x2a0 mm/kmsan/kmsan.c:613
+ kmsan_internal_check_memory+0x455/0xb00 mm/kmsan/kmsan.c:675
+ kmsan_copy_to_user+0xab/0xc0 mm/kmsan/kmsan_hooks.c:601
+ _copy_to_user+0x16b/0x1f0 lib/usercopy.c:32
+ copy_to_user include/linux/uaccess.h:177 [inline]
+ move_addr_to_user+0x2e9/0x4f0 net/socket.c:227
+ ___sys_recvmsg+0x5d7/0x1140 net/socket.c:2284
+ __sys_recvmsg net/socket.c:2327 [inline]
+ __do_sys_recvmsg net/socket.c:2337 [inline]
+ __se_sys_recvmsg+0x2fa/0x450 net/socket.c:2334
+ __x64_sys_recvmsg+0x4a/0x70 net/socket.c:2334
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x457ec9
+Code: 6d b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 3b b7 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f8750c06c78 EFLAGS: 00000246 ORIG_RAX: 000000000000002f
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457ec9
+RDX: 0000000000002000 RSI: 0000000020000400 RDI: 0000000000000005
+RBP: 000000000073bf00 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f8750c076d4
+R13: 00000000004c4a60 R14: 00000000004d8140 R15: 00000000ffffffff
 
- Scope (_SB)
- {
-     (...)
+Uninit was stored to memory at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
+ kmsan_save_stack mm/kmsan/kmsan.c:219 [inline]
+ kmsan_internal_chain_origin+0x134/0x230 mm/kmsan/kmsan.c:439
+ __msan_chain_origin+0x70/0xe0 mm/kmsan/kmsan_instr.c:200
+ ipv6_recv_error+0x1e3f/0x1eb0 net/ipv6/datagram.c:475
+ udpv6_recvmsg+0x398/0x2ab0 net/ipv6/udp.c:335
+ inet_recvmsg+0x4fb/0x600 net/ipv4/af_inet.c:830
+ sock_recvmsg_nosec net/socket.c:794 [inline]
+ sock_recvmsg+0x1d1/0x230 net/socket.c:801
+ ___sys_recvmsg+0x4d5/0x1140 net/socket.c:2278
+ __sys_recvmsg net/socket.c:2327 [inline]
+ __do_sys_recvmsg net/socket.c:2337 [inline]
+ __se_sys_recvmsg+0x2fa/0x450 net/socket.c:2334
+ __x64_sys_recvmsg+0x4a/0x70 net/socket.c:2334
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-     Device (ATKD)
-     {
-         (...)
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:204 [inline]
+ kmsan_internal_poison_shadow+0x92/0x150 mm/kmsan/kmsan.c:158
+ kmsan_kmalloc+0xa6/0x130 mm/kmsan/kmsan_hooks.c:176
+ kmsan_slab_alloc+0xe/0x10 mm/kmsan/kmsan_hooks.c:185
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2759 [inline]
+ __kmalloc_node_track_caller+0xe18/0x1030 mm/slub.c:4383
+ __kmalloc_reserve net/core/skbuff.c:137 [inline]
+ __alloc_skb+0x309/0xa20 net/core/skbuff.c:205
+ alloc_skb include/linux/skbuff.h:998 [inline]
+ ipv6_local_error+0x1a7/0x9e0 net/ipv6/datagram.c:334
+ __ip6_append_data+0x129f/0x4fd0 net/ipv6/ip6_output.c:1311
+ ip6_make_skb+0x6cc/0xcf0 net/ipv6/ip6_output.c:1775
+ udpv6_sendmsg+0x3f8e/0x45d0 net/ipv6/udp.c:1384
+ inet_sendmsg+0x54a/0x720 net/ipv4/af_inet.c:798
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ __sys_sendto+0x8c4/0xac0 net/socket.c:1788
+ __do_sys_sendto net/socket.c:1800 [inline]
+ __se_sys_sendto+0x107/0x130 net/socket.c:1796
+ __x64_sys_sendto+0x6e/0x90 net/socket.c:1796
+ do_syscall_64+0xbc/0xf0 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
 
-         Name (_WDG, Buffer (0x28)
-         {
-             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
-             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
-             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
-             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
-             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
-         })
-         Method (WMNB, 3, Serialized)
-         {
-             CreateDWordField (Arg2, Zero, IIA0)
-             CreateDWordField (Arg2, 0x04, IIA1)
-             Local0 = (Arg1 & 0xFFFFFFFF)
+Bytes 4-7 of 28 are uninitialized
+Memory access of size 28 starts at ffff8881937bfce0
+Data copied to user address 0000000020000000
 
-             (...)
-
-             If ((Local0 == 0x53564544))
-             {
-                 (...)
-
-                 If ((IIA0 == 0x00050011))
-                 {
-                     If ((IIA1 == 0x02))
-                     {
-                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
-                         ^^PCI0.SBRG.EC0.BLCT = One
-                     }
-
-                     Return (One)
-                 }
-             }
-             (...)
-         }
-         (...)
-     }
-     (...)
- }
- (...)
-
- Scope (_SB.PCI0.SBRG.EC0)
- {
-     (...)
-
-     Name (BLCT, Zero)
-
-     (...)
-
-     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
-     {
-         If ((BLCT == Zero))
-         {
-             Local0 = One
-             Local0 = RPIN (0x72)
-             Local0 ^= One
-             SPIN (0x72, Local0)
-             If (ATKP)
-             {
-                 Local0 = (0x34 - Local0)
-                 ^^^^ATKD.IANE (Local0)
-             }
-         }
-         ElseIf ((BLCT == One))
-         {
-             If (ATKP)
-             {
-                 ^^^^ATKD.IANE (0x35)
-             }
-         }
-     }
-     (...)
- }
-
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Eric Dumazet <edumazet@google.com>
+Reported-by: syzbot <syzkaller@googlegroups.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/platform/x86/asus-wmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/ipv6/datagram.c |    1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index f96f7b865267..7c1defaef3f5 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -2084,7 +2084,8 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		err = asus_wmi_backlight_init(asus);
- 		if (err && err != -ENODEV)
- 			goto fail_backlight;
--	}
-+	} else
-+		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
+--- a/net/ipv6/datagram.c
++++ b/net/ipv6/datagram.c
+@@ -290,6 +290,7 @@ void ipv6_local_error(struct sock *sk, i
+ 	skb_reset_network_header(skb);
+ 	iph = ipv6_hdr(skb);
+ 	iph->daddr = fl6->daddr;
++	ip6_flow_hdr(iph, 0, 0);
  
- 	status = wmi_install_notify_handler(asus->driver->event_guid,
- 					    asus_wmi_notify, asus);
--- 
-2.19.1
-
+ 	serr = SKB_EXT_ERR(skb);
+ 	serr->ee.ee_errno = err;
 
 
