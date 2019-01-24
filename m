@@ -2,94 +2,102 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01ED8C282C5
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C780C41518
 	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEC952184C
+	by mail.kernel.org (Postfix) with ESMTP id F0D81218A2
 	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:37:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="g11UTlqG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726107AbfAXFg4 (ORCPT
+        id S1726233AbfAXFg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 00:36:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53062 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725287AbfAXFg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 00:36:56 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 83321356E5;
-        Thu, 24 Jan 2019 05:36:55 +0000 (UTC)
-Received: from xz-x1 (dhcp-14-116.nay.redhat.com [10.66.14.116])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B30775D6A6;
-        Thu, 24 Jan 2019 05:36:49 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 13:36:47 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Jerome Glisse <jglisse@redhat.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Pavel Emelyanov <xemul@parallels.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH RFC 20/24] userfaultfd: wp: don't wake up when doing
- write protect
-Message-ID: <20190124053647.GG18231@xz-x1>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-21-peterx@redhat.com>
- <20190121111039.GB26461@rapoport-lnx>
+        Thu, 24 Jan 2019 00:36:59 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:45574 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725287AbfAXFg5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 00:36:57 -0500
+Received: by mail-wr1-f65.google.com with SMTP id t6so5008203wrr.12
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 21:36:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qcZH7cC6exfKxobfl1ESzgn6ZuhKgr3b9rR3EXyUKz0=;
+        b=g11UTlqGHb4re09Bz6qphfUusi21Oo9FJmq7u1jrmiBI+r74qLgd6V00Bk5Z1Rlsij
+         Bre3tMOtIwglov+QtWRZQZS0gTOhE7mBWFTKjjOZ7++FObDeke6r4ZKEDMoja9tthEPr
+         yQ3gVLKkk3PYG5XthY6KDnINSsFEa3qH6I8l8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qcZH7cC6exfKxobfl1ESzgn6ZuhKgr3b9rR3EXyUKz0=;
+        b=ulSr26m6g62USOtnMaEuq46L3UrDeuWnsTOFoGwbEhL51Ky08IbfYbneH+e5QfexBO
+         hQQwJ9efZu4MLL2kJFTIiyeMV1HlOATANCYtX1zfU0AunyRpLswD8UBT4dj5arCQqgQP
+         fOR39HYDTA+6VzibqtH/OlSpqjyRv1uYQ2Y9CwjGSnQtF+gAd5DJ/Pim9LYpFdd1QjYP
+         Fi9S6Rf2Q5wePuOa5D34Ni19qEOYvBsQXVME48JJcS4rxlWUFO3tsD11yrctb6uY4KoQ
+         1D0yPUxCHJQB8N9o5AcFOWt9AGmB1PoX+dcrGK1VJPWbBPqgPoJ+CeRDQwADZAf/242N
+         pdog==
+X-Gm-Message-State: AJcUukeJ0jAlGT0kGlYTCtZW1Ss58fKsu5/kxvrQCy2kK75hDdZiVUc1
+        +glpLyXsjOB079s04vizuMipDmSjNegUvzjB7uw3bQ==
+X-Google-Smtp-Source: ALg8bN5XwwfwWAn8am9FawfFKsVmG1HXntlLk3XWIua/NbW5xyrom/V7kEXWUHTdHbceMlspy5/TcB8rw/0bzfcUaeo=
+X-Received: by 2002:adf:e3c8:: with SMTP id k8mr5543499wrm.83.1548308216235;
+ Wed, 23 Jan 2019 21:36:56 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190121111039.GB26461@rapoport-lnx>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 24 Jan 2019 05:36:56 +0000 (UTC)
+References: <1547785403-32268-1-git-send-email-srinath.mannam@broadcom.com> <20190118144149.GA25249@google.com>
+In-Reply-To: <20190118144149.GA25249@google.com>
+From:   Srinath Mannam <srinath.mannam@broadcom.com>
+Date:   Thu, 24 Jan 2019 11:06:44 +0530
+Message-ID: <CABe79T6=2uf1SrpDEm9s3smDkcR0JB-Gq8VwDF4yL8zBL6w0zw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Add IPROC PCIe new features
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Ray Jui <rjui@broadcom.com>,
+        Scott Branden <sbranden@broadcom.com>,
+        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
+        linux-pci@vger.kernel.org, iommu@lists.linux-foundation.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 01:10:39PM +0200, Mike Rapoport wrote:
-> On Mon, Jan 21, 2019 at 03:57:18PM +0800, Peter Xu wrote:
-> > It does not make sense to try to wake up any waiting thread when we're
-> > write-protecting a memory region.  Only wake up when resolving a write
-> > protected page fault.
-> 
-> Probably it would be better to make it default to wake up only when
-> requested explicitly?
+Hi Bjorn,
 
-Yes, I think that's what this series does?
+Thank you for the review. I will address your comments in the next patchset.
 
-Now when we do UFFDIO_WRITEPROTECT with !WP and !DONTWAKE then we'll
-first resolve the page fault, then wake up the process properly.  And
-we request that explicity using !WP and DONTWAKE.
+Regards,
+Srinath.
 
-Or did I misunderstood the question?
-
-> Then we can simply disallow _DONTWAKE for uffd_wp and only use
-> UFFDIO_WRITEPROTECT_MODE_WP as possible mode.
-
-I'd admit I don't know the major usage of DONTWAKE (and I'd be glad to
-know...), however since we have this flag for both UFFDIO_COPY and
-UFFDIO_ZEROCOPY, then it seems sane to have DONTWAKE for WRITEPROTECT
-too?  Or is there any other explicit reason to omit it?
-
-Thanks!
-
--- 
-Peter Xu
+On Fri, Jan 18, 2019 at 8:11 PM Bjorn Helgaas <helgaas@kernel.org> wrote:
+>
+> On Fri, Jan 18, 2019 at 09:53:20AM +0530, Srinath Mannam wrote:
+> > Add changes related to IPROC PCIe RC IP new features.
+> >
+> > This patch set is based on Linux-5.0-rc2.
+> >
+> > Srinath Mannam (3):
+> >   PCI: iproc: Add feature to set order mode
+>
+> Since this apparently refers to a PCIe feature, the subject should use the
+> exact terminology used in the PCIe spec.
+>
+> >   PCI: iproc: CRS state check in config request
+>
+> This subject should start with a verb, not "CRS".
+>
+> >   PCI: iproc: Add PCIe 32bit outbound memory configuration
+> >
+> >  drivers/pci/controller/pcie-iproc.c | 172 +++++++++++++++++++++++++++++++++++-
+> >  drivers/pci/controller/pcie-iproc.h |  16 ++++
+> >  2 files changed, 184 insertions(+), 4 deletions(-)
+> >
+> > --
+> > 2.7.4
+> >
