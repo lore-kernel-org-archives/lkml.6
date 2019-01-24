@@ -2,192 +2,72 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A196C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:10:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E71DC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:11:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1271E207E0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:10:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B424207E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:11:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="usbGqsri"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727945AbfAXNKj (ORCPT
+        id S1727998AbfAXNLY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:10:39 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37276 "EHLO mail.bootlin.com"
+        Thu, 24 Jan 2019 08:11:24 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:53927 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726105AbfAXNKi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 08:10:38 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2B14D209B6; Thu, 24 Jan 2019 14:10:35 +0100 (CET)
-Received: from aptenodytes (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AB8DC20654;
-        Thu, 24 Jan 2019 14:10:24 +0100 (CET)
-Message-ID: <4f25de5bbcb7bf196fe4925f54e3335b50670bd2.camel@bootlin.com>
-Subject: Re: [PATCH v2 2/2] media: cedrus: Add HEVC/H.265 decoding support
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Date:   Thu, 24 Jan 2019 14:10:25 +0100
-In-Reply-To: <20181127082119.xdemdwgclai7kj3r@flea>
-References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com>
-         <20181123130209.11696-3-paul.kocialkowski@bootlin.com>
-         <20181127082119.xdemdwgclai7kj3r@flea>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        id S1726105AbfAXNLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 08:11:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=dpKYsHR9R3erJG/f2VUvutmnTg12Ktx8h74zMmPZFZg=; b=usbGqsriSNH0Bf5EuCCtxIp6Jg
+        z6127v/Zv7cNAJUSpvpabVgKyWIDNzhJWr16EtoPcC+sMx/Cy9icRL7os6lDiWdbow+B/4Bgl/zic
+        SgblcN85QcPnH9J3JIx+Shya6l+pbL2VUBq5ybQVy8h00OQP4p+BpFVzGhz/f1eGA8R0=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gmems-0007c8-HE; Thu, 24 Jan 2019 14:11:18 +0100
+Date:   Thu, 24 Jan 2019 14:11:18 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     davem@davemloft.net, sd@queasysnail.net, f.fainelli@gmail.com,
+        hkallweit1@gmail.com, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+        alexandre.belloni@bootlin.com, quentin.schulz@bootlin.com,
+        allan.nielsen@microchip.com
+Subject: Re: [PATCH net-next 02/10] net: macsec: convert to SPDX
+Message-ID: <20190124131118.GA28903@lunn.ch>
+References: <20190123155638.13852-1-antoine.tenart@bootlin.com>
+ <20190123155638.13852-3-antoine.tenart@bootlin.com>
+ <20190123170306.GG5310@lunn.ch>
+ <20190124085456.GB3662@kwain>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124085456.GB3662@kwain>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+> That's right, I'll fix it in v2. In such cases, the license text takes
+> precedence over the MODULE_LICENSE() definition ?
+ 
+Hi Antoine
 
-On Tue, 2018-11-27 at 09:21 +0100, Maxime Ripard wrote:
-> Hi!
-> 
-> On Fri, Nov 23, 2018 at 02:02:09PM +0100, Paul Kocialkowski wrote:
-> > This introduces support for HEVC/H.265 to the Cedrus VPU driver, with
-> > both uni-directional and bi-directional prediction modes supported.
-> > 
-> > Field-coded (interlaced) pictures, custom quantization matrices and
-> > 10-bit output are not supported at this point.
-> > 
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> 
-> Output from checkpatch:
-> total: 0 errors, 68 warnings, 14 checks, 999 lines checked
+IANAL
 
-Looks like many of the "line over 80 chars" are due to macros. I don't
-think it would be a good idea to break them down or to change the
-macros names since they are directly inherited from the bitstream
-elements.
+I've also not seen any real discussion about this. But when i recently
+proposed patches to cleanup similar issues in drivers/net/phy, i gave
+the license text precedence, since it is a lot easier for a human to
+understand, and it is likely a human made the error....
 
-What do you think?
 
-> > +/*
-> > + * Note: Neighbor info buffer size is apparently doubled for H6, which may be
-> > + * related to 10 bit H265 support.
-> > + */
-> > +#define CEDRUS_H265_NEIGHBOR_INFO_BUF_SIZE	(397 * SZ_1K)
-> > +#define CEDRUS_H265_ENTRY_POINTS_BUF_SIZE	(4 * SZ_1K)
-> > +#define CEDRUS_H265_MV_COL_BUF_UNIT_CTB_SIZE	160
-> 
-> Having some information on where this is coming from would be useful.
-
-Yes, definitely.
-
-> > +static void cedrus_h265_sram_write_data(struct cedrus_dev *dev, u32 *data,
-> 
-> Since the data pointer is pretty much an opaque structure, you should
-> have a void pointer here, that would avoid the type casting you're
-> doing when calling that function.
-
-Sure, that would make more sense.
-
-[...]
-
-> > +	/* Output frame. */
-> > +
-> > +	output_pic_list_index = V4L2_HEVC_DPB_ENTRIES_NUM_MAX;
-> > +	pic_order_cnt[0] = pic_order_cnt[1] = slice_params->slice_pic_order_cnt;
-> > +	mv_col_buf_addr[0] = cedrus_h265_frame_info_mv_col_buf_addr(ctx,
-> > +		run->dst->vb2_buf.index, 0) - PHYS_OFFSET;
-> > +	mv_col_buf_addr[1] = cedrus_h265_frame_info_mv_col_buf_addr(ctx,
-> > +		run->dst->vb2_buf.index, 1) - PHYS_OFFSET;
-> > +	dst_luma_addr = cedrus_dst_buf_addr(ctx, run->dst->vb2_buf.index, 0) -
-> > +			PHYS_OFFSET;
-> > +	dst_chroma_addr = cedrus_dst_buf_addr(ctx, run->dst->vb2_buf.index, 1) -
-> > +			PHYS_OFFSET;
-> > +
-> > +	cedrus_h265_frame_info_write_single(dev, output_pic_list_index,
-> > +					    slice_params->pic_struct != 0,
-> > +					    pic_order_cnt, mv_col_buf_addr,
-> > +					    dst_luma_addr, dst_chroma_addr);
-> 
-> You can only pass the run and slice_params pointers to that function.
-
-The point is to make it independent from the context, so that the same
-function can be called with either the slice_params or the dpb info.
-I don't think making two variants or even two wrappers would bring any
-significant benefit.
-
-> > +
-> > +	cedrus_write(dev, VE_DEC_H265_OUTPUT_FRAME_IDX, output_pic_list_index);
-> > +
-> > +	/* Reference picture list 0 (for P/B frames). */
-> > +	if (slice_params->slice_type != V4L2_HEVC_SLICE_TYPE_I) {
-> > +		cedrus_h265_ref_pic_list_write(dev, slice_params->ref_idx_l0,
-> > +			slice_params->num_ref_idx_l0_active_minus1 + 1,
-> > +			slice_params->dpb, slice_params->num_active_dpb_entries,
-> > +			VE_DEC_H265_SRAM_OFFSET_REF_PIC_LIST0);
-> > +
-> 
-> slice_params is enough.
-
-The rationale is similar to the one above: being able to use the same
-helper with either L0 or L1, which implies passing the relevant
-elements directly.
-
-> > +		if (pps->weighted_pred_flag || pps->weighted_bipred_flag)
-> > +			cedrus_h265_pred_weight_write(dev,
-> > +				pred_weight_table->delta_luma_weight_l0,
-> > +				pred_weight_table->luma_offset_l0,
-> > +				pred_weight_table->delta_chroma_weight_l0,
-> > +				pred_weight_table->chroma_offset_l0,
-> > +				slice_params->num_ref_idx_l0_active_minus1 + 1,
-> > +				VE_DEC_H265_SRAM_OFFSET_PRED_WEIGHT_LUMA_L0,
-> > +				VE_DEC_H265_SRAM_OFFSET_PRED_WEIGHT_CHROMA_L0);
-> 
-> Ditto, that function should only take the pred_weight_table and
-> slice_params pointers
-
-And same rational as well.
-
-> > +	}
-> > +
-> > +	/* Reference picture list 1 (for B frames). */
-> > +	if (slice_params->slice_type == V4L2_HEVC_SLICE_TYPE_B) {
-> > +		cedrus_h265_ref_pic_list_write(dev, slice_params->ref_idx_l1,
-> > +			slice_params->num_ref_idx_l1_active_minus1 + 1,
-> > +			slice_params->dpb,
-> > +			slice_params->num_active_dpb_entries,
-> > +			VE_DEC_H265_SRAM_OFFSET_REF_PIC_LIST1);
-> > +
-> > +		if (pps->weighted_bipred_flag)
-> > +			cedrus_h265_pred_weight_write(dev,
-> > +				pred_weight_table->delta_luma_weight_l1,
-> > +				pred_weight_table->luma_offset_l1,
-> > +				pred_weight_table->delta_chroma_weight_l1,
-> > +				pred_weight_table->chroma_offset_l1,
-> > +				slice_params->num_ref_idx_l1_active_minus1 + 1,
-> > +				VE_DEC_H265_SRAM_OFFSET_PRED_WEIGHT_LUMA_L1,
-> > +				VE_DEC_H265_SRAM_OFFSET_PRED_WEIGHT_CHROMA_L1);
-> > +	}
-> 
-> Ditto
-> 
-> Looks good otherwise, thanks!
-
-Thanks for the review!
-
-Cheers,
-
-Paul
-
--- 
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
+	    Andrew
