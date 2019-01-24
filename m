@@ -5,31 +5,31 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AED3C282C0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:17:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B835C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A377217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:17:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12BCA217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:18:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfAXBRg (ORCPT
+        id S1727113AbfAXBSd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 20:17:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54042 "EHLO mx1.redhat.com"
+        Wed, 23 Jan 2019 20:18:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:56188 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726309AbfAXBRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 20:17:35 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        id S1726236AbfAXBSd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 20:18:33 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B0DADC05D3E7;
-        Thu, 24 Jan 2019 01:17:34 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4F4AA1556B;
+        Thu, 24 Jan 2019 01:18:32 +0000 (UTC)
 Received: from [10.36.112.12] (unknown [10.36.112.12])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5A9A167E71;
-        Thu, 24 Jan 2019 01:17:30 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 26E7D5D6A6;
+        Thu, 24 Jan 2019 01:18:27 +0000 (UTC)
 Subject: Re: [RFC PATCH] kvm: x86/vmx: Use kzalloc for cached_vmcs12
-To:     Tom Roeder <tmroeder@google.com>
-Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+To:     Tom Roeder <tmroeder@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         Liran Alon <liran.alon@oracle.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
@@ -38,9 +38,8 @@ Cc:     Sean Christopherson <sean.j.christopherson@intel.com>,
         syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
 References: <6f79d9be-fa76-3a06-2612-f44f3a18ece7@redhat.com>
  <20190114234728.49239-1-tmroeder@google.com>
- <20190115024304.GD5141@linux.intel.com>
- <2177074d-f610-0d86-7399-e63ba851346c@redhat.com>
- <20190123182540.GA160275@google.com>
+ <20190115024304.GD5141@linux.intel.com> <20190115175111.GB68985@google.com>
+ <20190123183322.GB160275@google.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -98,55 +97,32 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
  S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
  uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <f71e9472-0670-fb25-ab9d-3725ce9cde10@redhat.com>
-Date:   Thu, 24 Jan 2019 02:17:27 +0100
+Message-ID: <7abea144-772d-bb3a-bd7d-a9117305c2fb@redhat.com>
+Date:   Thu, 24 Jan 2019 02:18:26 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20190123182540.GA160275@google.com>
+In-Reply-To: <20190123183322.GB160275@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 24 Jan 2019 01:17:34 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 24 Jan 2019 01:18:32 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/01/19 19:25, Tom Roeder wrote:
-> On Tue, Jan 15, 2019 at 11:15:51AM +0100, Paolo Bonzini wrote:
->> On 15/01/19 03:43, Sean Christopherson wrote:
->>>> -	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
->>>> +	vmx->nested.cached_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
->>>>  	if (!vmx->nested.cached_vmcs12)
->>>>  		goto out_cached_vmcs12;
->>> Obviously not your code, but why do we allocate VMCS12_SIZE instead of
->>> sizeof(struct vmcs12)?  I get why we require userspace to reserve the
->>> full 4k, but I don't understand why KVM needs to allocate the reserved
->>> bytes internally.
->>
->> It's just cleaner and shorter code to copy everything in and out,
->> instead of having to explicitly zero the slack.
+On 23/01/19 19:33, Tom Roeder wrote:
 > 
-> Could you please clarify? I don't see code that copies everything in and
-> out, but it depends on what you mean by "everything". In the context of
-> this email exchange, I assumed that "everything" was "all 4k
-> (VMCS12_SIZE)".
+> Even in vmx_set_nested_state, there are about 30 lines of code in
+> between enter_vmx_operation and copy_from_user, and there are a couple
+> of cases that cause vmx_set_nested_state to return with an error. So if
+> we want to fix this by handling all the error paths, I think it might be
+> cleanest to convert vmx_set_nested_state to use goto error handling,
+> since that would allow us to clear the allocated memory in one place.
 
-I was thinking of vmx_get_nested_state, but actually it only copies
-sizeof(*vmcs12).  However, that is the place where we should copy 4k out
-of it, including the zeroes.  Otherwise, our userspace clients (which
-doesn't know sizeof(*vmcs12) could leak uninitialized data of their own.
+I prefer to have kzalloc, and change vmx_get_nested_state to copy the
+whole page including the trailing zeroes.
 
 Paolo
-
-> But it looks to me like the code doesn't copy 4k in and out, but rather
-> only ever copies sizeof(struct vmcs12) in and out. The copy_from_user
-> and copy_to_user cases in nested.c use sizeof(*vmcs12), which is
-> sizeof(struct vmcs12).
-> 
-> So maybe can switch to allocating sizeof(struct vmcs12). Is this
-> correct, or is there some other reason to allocate the larger size?
-> 
-
