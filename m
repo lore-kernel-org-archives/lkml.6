@@ -2,123 +2,168 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FSL_HELO_FAKE,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95925C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 457BAC282C6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:45:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6368521872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:44:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08C0221872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:45:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEOxuN9k"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="fIViX1cz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728590AbfAXPo1 (ORCPT
+        id S1728698AbfAXPpq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:44:27 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:37788 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbfAXPo0 (ORCPT
+        Thu, 24 Jan 2019 10:45:46 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:60050 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728456AbfAXPpm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:44:26 -0500
-Received: by mail-wm1-f68.google.com with SMTP id g67so3548002wmd.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 07:44:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=JeyLhzrsCRzzO/4nbb0LJSQxILVpgC++VcQqugacalc=;
-        b=DEOxuN9kV3A3qQ3ere0UjnfgT3DE1Gc4z/52Qty46F/mbpPja2OkXvtPJ15RK9/h4Z
-         AG1fdkKf/GjCRaBidO9BLWwcoq0uiTV69J0KR0rF67QR9zxgGVEl8fu6s/ZmtKnnIdF4
-         AysPfOHY+/MwlcB6UOzADtS69SDUYTsxDxOfHBj/FjnS7WmNetq8ae17VvRdpd/JEWtE
-         M58OhgBYmckFYuVXQTEEhpm8w6TIefPA5S3r3KeUuXclMeqJ07pU1vJWK7tdTp7sIeAv
-         xYgGq49/NBPkUl4l+LdwVBwp+o6pvUfh2w9zBQW67xZu6rn/j500BV8xdubxQqHTauSM
-         oQPw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=JeyLhzrsCRzzO/4nbb0LJSQxILVpgC++VcQqugacalc=;
-        b=twekOdboep908h8e5de5qIQIgDuUrOYeS/p8s5bh3AYpMD9r3CIJtanHSCWnFCsPIw
-         /hesYDvbpVSiQTI1afBap2tw2ugq2aL2Sur2/9BhWE5So2HlVMlN5M6S8ccs6IK6Ldzh
-         +wxWJnq7dnvwbpMLcT3mASpdlEUPTaVTA7AazIssYrIDY9ucJA4vfYUemvvTtKn2tovO
-         lJjVDsOwv7/3P9XphLneTUXTI1ZD9soUX/qpt1m4n4BAme1tHfmbAL4cceRfMf7eFKhh
-         t3iRpkh/6ZHMGw0moeXPkTB+WTDhA7MgsmQA/X6tmPfjfMQsEo+OKRUBtFuuVDY5wzSf
-         eX7Q==
-X-Gm-Message-State: AJcUukcM8ZahlKLufK0H1V2XtT0GIN899FyU1V2PJM0+/GfK3XvzMW2n
-        o0kPoin07YrKIK/Zh71qAxI=
-X-Google-Smtp-Source: ALg8bN7upuyKWCD/cTB9FAkdcEyU6dlTStUcg49cEAv640NugO83fRipoQ9X2YGpIogSFxA7BbHmeQ==
-X-Received: by 2002:a1c:bbd6:: with SMTP id l205mr2979576wmf.97.1548344665032;
-        Thu, 24 Jan 2019 07:44:25 -0800 (PST)
-Received: from gmail.com (79.108.96.12.dyn.user.ono.com. [79.108.96.12])
-        by smtp.gmail.com with ESMTPSA id k128sm80898610wmd.37.2019.01.24.07.44.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 07:44:24 -0800 (PST)
-Date:   Thu, 24 Jan 2019 16:44:20 +0100
-From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-To:     Krzysztof Kozlowski <krzk@kernel.org>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Martin Sebor <msebor@gcc.gnu.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] lib/crc32.c: mark crc32_le_base/__crc32c_le_base aliases as
- __pure
-Message-ID: <20190124154420.GA11471@gmail.com>
+        Thu, 24 Jan 2019 10:45:42 -0500
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190124154541euoutp022ba40f006fb826d554081de2f0da138e~801azW95U1683616836euoutp02z
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 15:45:41 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190124154541euoutp022ba40f006fb826d554081de2f0da138e~801azW95U1683616836euoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548344741;
+        bh=PY8DpUrIo0Jx0XrM9G1AyZ811SfA+Y4/vcYC6ZiNijg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=fIViX1czGuHmzso6xjzJ7p32VyiSfvw/QeO7lwYlRI97xUcOpW6c1bWEOhZmy6IbU
+         /3zAKHOIxQF+8m1NkW0nuPXS4kiXGOh9XMUqzzJTzaBHuBn5sdl3B/Mze3ur2pIRwW
+         sXxhFKQNcI01lYAMU94r77KwjBmLCg4jV9q9Y35Q=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190124154540eucas1p1edcb3f904130471f947ed46a31733e33~801aGU5KO0096200962eucas1p1y;
+        Thu, 24 Jan 2019 15:45:40 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges3new.samsung.com (EUCPMTA) with SMTP id 4A.31.04806.4ADD94C5; Thu, 24
+        Jan 2019 15:45:40 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+        20190124154539eucas1p16fb97dd0cab2c18d82113c511cd8a1ca~801ZTiw1k2703127031eucas1p1k;
+        Thu, 24 Jan 2019 15:45:39 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190124154539eusmtrp1149f35d549662f84bb8c31d048036083~801ZE9i7f0583405834eusmtrp1Z;
+        Thu, 24 Jan 2019 15:45:39 +0000 (GMT)
+X-AuditID: cbfec7f5-34dff700000012c6-ea-5c49dda4aa55
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 4B.9F.04128.3ADD94C5; Thu, 24
+        Jan 2019 15:45:39 +0000 (GMT)
+Received: from AMDC3218.DIGITAL.local (unknown [106.120.51.18]) by
+        eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190124154538eusmtip2a1448bd55629f1a887da46e9b0cb2fab~801YXIhgu2617026170eusmtip2q;
+        Thu, 24 Jan 2019 15:45:38 +0000 (GMT)
+From:   Kamil Konieczny <k.konieczny@partner.samsung.com>
+To:     k.konieczny@partner.samsung.com
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: [PATCH v3 2/3] dt-bindings: crypto: document Exynos5433 SlimSSS
+Date:   Thu, 24 Jan 2019 16:45:20 +0100
+Message-Id: <20190124154521.13589-3-k.konieczny@partner.samsung.com>
+X-Mailer: git-send-email 2.20.0
+In-Reply-To: <20190124154521.13589-1-k.konieczny@partner.samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: elm/2
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrNKsWRmVeSWpSXmKPExsWy7djPc7pL7nrGGLzazmGxccZ6Vos551tY
+        LOYfOcdq0f1KxqJv339Gi/PnN7Bb3L/3k8ni8q45bBZrj9xlt1h6/SKTReveI+wO3B5r5q1h
+        9Niy8iaTx7YDqh6bVnWyeRx8t4fJo2/LKkaPz5vkAtijuGxSUnMyy1KL9O0SuDLmdaxhKWgT
+        qDj/YAtzA+Mm3i5GTg4JAROJM/t2s3QxcnEICaxglDh8pIUdwvnCKPH5zCqozGdGiY0fW9lh
+        Wh7MmcoMkVjOKLHy9hNGuJbb7/8xglSxCZhLPNp+hgnEFhFQlph8bzpYB7NAB7PE2yOzwUYJ
+        C3hIfNyxmhXEZhFQlbh6aQOQzcHBK+Ai8flYAMQ2eYlpq7vA5nAKuErsndDMAmLzCghKnJz5
+        BMxmBqpp3jobbL6EwC52iXtHnzBCNLtI7Hq/ngXCFpZ4dXwL1AsyEqcn90DFyyV2b33GDtHc
+        wigxd/IiJoiEtcTh4xfBDmIW0JRYv0sfIuwo8WtPDyNIWEKAT+LGW0GIG/gkJm0D+REkzCvR
+        0SYEUa0rMe//GVYIW1qi6/86KNtD4vrcRYwTGBVnIflmFpJvZiHsXcDIvIpRPLW0ODc9tdg4
+        L7Vcrzgxt7g0L10vOT93EyMwSZ3+d/zrDsZ9f5IOMQpwMCrx8HYc8owRYk0sK67MPcQowcGs
+        JMLretEtRog3JbGyKrUoP76oNCe1+BCjNAeLkjhvNcODaCGB9MSS1OzU1ILUIpgsEwenVAPj
+        WoYpXOw+qsKhjV91fnOsbQrI2VFetNiqbL4jz6u2gqJFM/zVM+ZpNj9/rekd49GTw1vtqZoa
+        vTTK5d2XOacTp38I0mhaXRKc/Xij6YfcJy6+slKPvmX3lF550/XjWKmp5bULxfev3pQwULh7
+        cr2z1pqb12Yf0bl539/HxnNxgN4J9+PHj79UYinOSDTUYi4qTgQAEcKLh04DAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrJIsWRmVeSWpSXmKPExsVy+t/xe7qL73rGGCz9LmKxccZ6Vos551tY
+        LOYfOcdq0f1KxqJv339Gi/PnN7Bb3L/3k8ni8q45bBZrj9xlt1h6/SKTReveI+wO3B5r5q1h
+        9Niy8iaTx7YDqh6bVnWyeRx8t4fJo2/LKkaPz5vkAtij9GyK8ktLUhUy8otLbJWiDS2M9Awt
+        LfSMTCz1DI3NY62MTJX07WxSUnMyy1KL9O0S9DLmdaxhKWgTqDj/YAtzA+Mm3i5GTg4JAROJ
+        B3OmMncxcnEICSxllDi0vpsFIiEt0Xh6NROELSzx51oXG0TRJ0aJ6XOegCXYBMwlHm0/A2aL
+        CChLTL43HWwSs8AEZom2JWsYQRLCAh4SH3esZgWxWQRUJa5e2gBkc3DwCrhIfD4WALFAXmLa
+        6i6wOZwCrhJ7JzSDHSEEVDL32yw2EJtXQFDi5MwnYHFmoPrmrbOZJzAKzEKSmoUktYCRaRWj
+        SGppcW56brGRXnFibnFpXrpecn7uJkZgNG079nPLDsaud8GHGAU4GJV4eDsOecYIsSaWFVfm
+        HmKU4GBWEuF1vegWI8SbklhZlVqUH19UmpNafIjRFOiHicxSosn5wEjPK4k3NDU0t7A0NDc2
+        NzazUBLnPW9QGSUkkJ5YkpqdmlqQWgTTx8TBKdXA2H6wqPaK5rzZTTufflyQ3tZd9E6aQaP1
+        4D+dkFv1x4x0o2K3rZ5Q5vbYQMH24iI3BZOAUmXjXY/Sr7sprUt5P+tCKn/wYoa/tkJvptdr
+        H8rYkF4juj486+2tTRNu/tSSF6vc++vc8abuuYopbgfy3+eIFL3Z1P5gc0ToM/tgMaZJiveF
+        Jhi7KLEUZyQaajEXFScCAJd7s+C8AgAA
+X-CMS-MailID: 20190124154539eucas1p16fb97dd0cab2c18d82113c511cd8a1ca
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190124154539eucas1p16fb97dd0cab2c18d82113c511cd8a1ca
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190124154539eucas1p16fb97dd0cab2c18d82113c511cd8a1ca
+References: <20190124154521.13589-1-k.konieczny@partner.samsung.com>
+        <CGME20190124154539eucas1p16fb97dd0cab2c18d82113c511cd8a1ca@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The upcoming GCC 9 release extends the -Wmissing-attributes warnings
-(enabled by -Wall) to C and aliases: it warns when particular function
-attributes are missing in the aliases but not in their target.
+Document DT bindings for crypto Samsung Exynos5433 SlimSSS (Slim Security
+SubSystem) IP.
 
-In particular, it triggers here because crc32_le_base/__crc32c_le_base
-aren't __pure while their target crc32_le/__crc32c_le are.
-
-These aliases are used by architectures as a fallback in accelerated
-versions of CRC32. See commit 9784d82db3eb ("lib/crc32: make core crc32()
-routines weak so they can be overridden").
-
-Therefore, being fallbacks, it is likely that even if the aliases
-were called from C, there wouldn't be any optimizations possible.
-Currently, the only user is arm64, which calls this from asm.
-
-Still, marking the aliases as __pure makes sense and is a good idea
-for documentation purposes and possible future optimizations,
-which also silences the warning.
-
-Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Kamil Konieczny <k.konieczny@partner.samsung.com>
 ---
-I am picking this up through the compiler-attributes tree
-and putting it into -next along with the other cleanup
-for -Wmissing-attributes (unless some other maintainer wants it).
+ .../devicetree/bindings/crypto/samsung-sss.txt     | 14 +++++++++++---
+ 1 file changed, 11 insertions(+), 3 deletions(-)
 
- lib/crc32.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/lib/crc32.c b/lib/crc32.c
-index 45b1d67a1767..4a20455d1f61 100644
---- a/lib/crc32.c
-+++ b/lib/crc32.c
-@@ -206,8 +206,8 @@ u32 __pure __weak __crc32c_le(u32 crc, unsigned char const *p, size_t len)
- EXPORT_SYMBOL(crc32_le);
- EXPORT_SYMBOL(__crc32c_le);
+diff --git a/Documentation/devicetree/bindings/crypto/samsung-sss.txt b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+index 7a5ca56683cc..d9af679d38ab 100644
+--- a/Documentation/devicetree/bindings/crypto/samsung-sss.txt
++++ b/Documentation/devicetree/bindings/crypto/samsung-sss.txt
+@@ -1,4 +1,4 @@
+-Samsung SoC SSS (Security SubSystem) module
++Samsung SoC SSS (Security SubSystem) and SlimSSS module
  
--u32 crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
--u32 __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
-+u32 __pure crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
-+u32 __pure __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
+ The SSS module in S5PV210 SoC supports the following:
+ -- Feeder (FeedCtrl)
+@@ -15,6 +15,12 @@ supports the following also:
+ -- True Random Number Generator (TRNG)
+ -- Secure Key Manager
  
- /*
-  * This multiplies the polynomials x and y modulo the given modulus.
++Exynos5433 has both SSS and SlimSSS module.
++SlimSSS in Exynos5433 supports:
++-- Feeder (FeedCtrl)
++-- Advanced Encryption Standard (AES)
++-- SHA-1/SHA-256/HMAC (SHA-1/SHA-256)
++
+ Required properties:
+ 
+ - compatible : Should contain entries for this and backward compatible
+@@ -22,11 +28,13 @@ Required properties:
+   - "samsung,s5pv210-secss" for S5PV210 SoC.
+   - "samsung,exynos4210-secss" for Exynos4210, Exynos4212, Exynos4412, Exynos5250,
+ 		Exynos5260 and Exynos5420 SoCs.
++  - "samsung,exynos5433-slim-sss" for Exynos5433 SoCs.
+ - reg : Offset and length of the register set for the module
+ - interrupts : interrupt specifiers of SSS module interrupts (one feed
+ 		control interrupt).
+ 
+ - clocks : list of clock phandle and specifier pairs for all clocks  listed in
+ 		clock-names property.
+-- clock-names : list of device clock input names; should contain one entry
+-		"secss".
++- clock-names : list of device clock input names; should contain "pclk" and
++		"aclk" for slim-sss in Exynos5433, and one entry "secss" for
++		other compatibles.
 -- 
-2.17.1
+2.20.0
 
