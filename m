@@ -3,26 +3,26 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA67C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EB86C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC51320811
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56C0021872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 11:25:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727904AbfAXLZX (ORCPT
+        id S1727869AbfAXLZW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 06:25:23 -0500
-Received: from cloudserver094114.home.pl ([79.96.170.134]:54394 "EHLO
+        Thu, 24 Jan 2019 06:25:22 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:56232 "EHLO
         cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727725AbfAXLZL (ORCPT
+        with ESMTP id S1727785AbfAXLZL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 Jan 2019 06:25:11 -0500
 Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
  by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
- id ff6a9fe905b7b406; Thu, 24 Jan 2019 12:25:08 +0100
+ id be190ba80cdf9948; Thu, 24 Jan 2019 12:25:09 +0100
 From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
@@ -36,9 +36,9 @@ Cc:     LKML <linux-kernel@vger.kernel.org>,
         Linus Walleij <linus.walleij@linaro.org>,
         Thierry Reding <thierry.reding@gmail.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Subject: [PATCH 3/6] driver core: Avoid careless re-use of existing device links
-Date:   Thu, 24 Jan 2019 12:18:13 +0100
-Message-ID: <6509496.77sr7CZjzZ@aspire.rjw.lan>
+Subject: [PATCH 2/6] driver core: Reorder actions in __device_links_no_driver()
+Date:   Thu, 24 Jan 2019 12:16:43 +0100
+Message-ID: <1613403.ZNkCsVQxPT@aspire.rjw.lan>
 In-Reply-To: <2493187.oiOpCWJBV7@aspire.rjw.lan>
 References: <2493187.oiOpCWJBV7@aspire.rjw.lan>
 MIME-Version: 1.0
@@ -51,69 +51,53 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-After commit ead18c23c263 ("driver core: Introduce device links
-reference counting"), if there is a link between the given supplier
-and the given consumer already, device_link_add() will refcount it
-and return it unconditionally.  However, if the flags passed to
-it on the second (or any subsequent) attempt to create a device
-link between the same consumer-supplier pair are not compatible with
-the existing link's flags, that is incorrect.
+All links to suppliers have to be either "available" or in the
+"supplier unbind in progress" state after __device_links_no_driver()
+and the kref_put() may not actually delete them, so change the state
+of each link in __device_links_no_driver() before attempting to drop
+it.
 
-First off, if the existing link is stateless and the next caller of
-device_link_add() for the same consumer-supplier pair wants a
-stateful one, or the other way around, the existing link cannot be
-returned, because it will not match the expected behavior, so make
-device_link_add() dump the stack and return NULL in that case.
-
-Moreover, if the DL_FLAG_AUTOREMOVE_CONSUMER flag is passed to
-device_link_add(), its caller will expect its reference to the link
-to be dropped automatically on consumer driver removal, which will
-not happen if that flag is not set in the link's flags (and
-analogously for DL_FLAG_AUTOREMOVE_SUPPLIER).  For this reason, make
-device_link_add() update the existing link's flags accordingly
-before returning it to the caller.
+While at it, update the kernedoc comment of __device_links_no_driver()
+to reflect what happens more accurately.
 
 Fixes: ead18c23c263 ("driver core: Introduce device links reference counting")
 Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 ---
- drivers/base/core.c |   23 ++++++++++++++++++++---
- 1 file changed, 20 insertions(+), 3 deletions(-)
+ drivers/base/core.c |   13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
 Index: linux-pm/drivers/base/core.c
 ===================================================================
 --- linux-pm.orig/drivers/base/core.c
 +++ linux-pm/drivers/base/core.c
-@@ -222,12 +222,29 @@ struct device_link *device_link_add(stru
- 		goto out;
+@@ -500,11 +500,11 @@ void device_links_driver_bound(struct de
+  * __device_links_no_driver - Update links of a device without a driver.
+  * @dev: Device without a drvier.
+  *
+- * Delete all non-persistent links from this device to any suppliers.
++ * Drop references to non-persistent links from this device to any suppliers.
+  *
+- * Persistent links stay around, but their status is changed to "available",
+- * unless they already are in the "supplier unbind in progress" state in which
+- * case they need not be updated.
++ * Links with DL_FLAG_AUTOREMOVE_CONSUMER unset stay around, but their status is
++ * changed to "available", unless they already are in the "supplier unbind in
++ * progress" state in which case they need not be updated.
+  *
+  * Links with the DL_FLAG_STATELESS flag set are ignored.
+  */
+@@ -516,10 +516,11 @@ static void __device_links_no_driver(str
+ 		if (link->flags & DL_FLAG_STATELESS)
+ 			continue;
+ 
++		if (link->status != DL_STATE_SUPPLIER_UNBIND)
++			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
++
+ 		if (link->flags & DL_FLAG_AUTOREMOVE_CONSUMER)
+ 			kref_put(&link->kref, __device_link_del);
+-		else if (link->status != DL_STATE_SUPPLIER_UNBIND)
+-			WRITE_ONCE(link->status, DL_STATE_AVAILABLE);
  	}
  
--	list_for_each_entry(link, &supplier->links.consumers, s_node)
--		if (link->consumer == consumer) {
--			kref_get(&link->kref);
-+	list_for_each_entry(link, &supplier->links.consumers, s_node) {
-+		if (link->consumer != consumer)
-+			continue;
-+
-+		/*
-+		 * Don't return a stateless link if the caller wants a stateful
-+		 * one and vice versa.
-+		 */
-+		if (WARN_ON((flags & DL_FLAG_STATELESS) != (link->flags & DL_FLAG_STATELESS))) {
-+			link = NULL;
- 			goto out;
- 		}
- 
-+		if (flags & DL_FLAG_AUTOREMOVE_CONSUMER)
-+			link->flags |= DL_FLAG_AUTOREMOVE_CONSUMER;
-+
-+		if (flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
-+			link->flags |= DL_FLAG_AUTOREMOVE_SUPPLIER;
-+
-+		kref_get(&link->kref);
-+		goto out;
-+	}
-+
- 	link = kzalloc(sizeof(*link), GFP_KERNEL);
- 	if (!link)
- 		goto out;
+ 	dev->links.status = DL_DEV_NO_DRIVER;
 
