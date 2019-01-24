@@ -2,141 +2,131 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AEEACC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:25:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C573BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:29:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86BCC21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:25:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64478218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:29:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="dsb9rcnJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728299AbfAXSZY (ORCPT
+        id S1726381AbfAXS3G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:25:24 -0500
-Received: from foss.arm.com ([217.140.101.70]:33946 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725909AbfAXSZY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:25:24 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DB75FA78;
-        Thu, 24 Jan 2019 10:25:23 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54AC93F237;
-        Thu, 24 Jan 2019 10:25:21 -0800 (PST)
-Subject: Re: [PATCH v5 2/4] perf: add arm64 smmuv3 pmu driver
-To:     Andrew Murray <andrew.murray@arm.com>,
-        Shameerali Kolothum Thodi 
-        <shameerali.kolothum.thodi@huawei.com>
-Cc:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
-        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>,
-        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
-        "pabba@codeaurora.org" <pabba@codeaurora.org>,
-        John Garry <john.garry@huawei.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
-        Linuxarm <linuxarm@huawei.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-References: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
- <20181130154751.28580-3-shameerali.kolothum.thodi@huawei.com>
- <20190122162351.GE8120@e119886-lin.cambridge.arm.com>
- <5FC3163CFD30C246ABAA99954A238FA83929855B@lhreml524-mbs.china.huawei.com>
- <20190123121406.GH8120@e119886-lin.cambridge.arm.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <f83054eb-3fe3-0041-7a9f-6f7e58cea5c8@arm.com>
-Date:   Thu, 24 Jan 2019 18:25:19 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 24 Jan 2019 13:29:06 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42612 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfAXS3G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 13:29:06 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d72so3010489pga.9
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 10:29:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9DU8U467Azc8NhODbOHC7Pcr961WNWCYdIkODh9QfjI=;
+        b=dsb9rcnJZdAxOzhjs+vV4uqr8LJ9VZ7RYlqvga3k9j8fKlbdTHcAPg6WNCcpolvDYc
+         sl+v+XuR/qrfF9hUOwbtVqKTz8Ncc2JQKPTx2zFz3C/zqMRG5xKJDOAcAgBtvlagkJl8
+         D86OPYCyujB4ySflRAXoGZFJxQAzcBsgOm+Ik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=9DU8U467Azc8NhODbOHC7Pcr961WNWCYdIkODh9QfjI=;
+        b=unxgeuAnZ7soxB4GWJXREh2UhJiiqNw72j1dsYZE0w3SKaV6c4wzBYrhVhuaIc4n9d
+         BE54QupWuJHICsp2kQ3++DoFapGWbbeK2g1gFsYU68UbejO26JpBSzbilLgZ96L++nP2
+         eAvafTaizkZOqa7+wzUjg2gK0B2BRD5TaK9LUXMy4RND20FaIcwWoof+m1cwgHRNx4ZH
+         ITZAGmMag4GfvIhuVM00lgL5PSuQN+brJCLivOKBxa+d+LOJRVGwTS84rZADL5PaJkBl
+         QOTw7bvyLjgmuzrzAU80lllhjE2ZIjD8+R85Rg5cWf9fksqvyOWgOz1TCUd4Ml6d34gs
+         0b2A==
+X-Gm-Message-State: AJcUukfEvH/o8ImI+Jq9MHRBa0Q7uRbERBLGjowUPeDnj9j6q4cC2tx2
+        G5epSWasAOO7MpYGMkP26yZHKmEYMVM=
+X-Google-Smtp-Source: ALg8bN7yB7JU+BewfKgrsaOJFdksuYngvHh0oJJ+unc6LMu/bzFMxeGQ3KrZirvv8dHE5DH9otbKxA==
+X-Received: by 2002:a62:4886:: with SMTP id q6mr7806004pfi.182.1548354545413;
+        Thu, 24 Jan 2019 10:29:05 -0800 (PST)
+Received: from localhost.localdomain ([115.97.179.75])
+        by smtp.gmail.com with ESMTPSA id d25sm31803995pfe.40.2019.01.24.10.29.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 10:29:04 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Sam Ravnborg <sam@ravnborg.org>
+Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-amarula@amarulasolutions.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v8 1/2] dt-bindings: panel: Add Sitronix ST7701 panel documentation
+Date:   Thu, 24 Jan 2019 23:58:43 +0530
+Message-Id: <20190124182844.28961-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-In-Reply-To: <20190123121406.GH8120@e119886-lin.cambridge.arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 23/01/2019 12:14, Andrew Murray wrote:
-[...]
->>>> +static inline void smmu_pmu_counter_set_value(struct smmu_pmu
->>> *smmu_pmu,
->>>> +					      u32 idx, u64 value)
->>>> +{
->>>> +	if (smmu_pmu->counter_mask & BIT(32))
->>>> +		writeq(value, smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx,
->>> 8));
->>>> +	else
->>>> +		writel(value, smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx,
->>> 4));
->>>
->>> The arm64 IO macros use __force u32 and so it's probably OK to provide a 64
->>> bit
->>> value to writel. But you could use something like lower_32_bits for clarity.
->>
->> Yes, macro uses __force u32. I will change it to make it more clear though.
+Techstar TS8550B MIPI DSI panel is 480x854, 2-lane MIPI DSI LCD panel
+with inbuilt ST7701 chip.
 
-To be pedantic, the first cast which the value actually undergoes is to 
-(__u32) ;)
+The default regulator names in ST7701 chip is renamed in Techstar TS8550B
+so, add specific binding names for them.
 
-Ultimately, __raw_writel() takes a u32, so in that sense it's never a 
-problem to pass a u64, since unsigned truncation is well-defined in the 
-C standard. The casting involved in the I/O accessors is mostly about 
-going to an endian-specific type and back again.
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+Changes for v8, v7:
+- collect Rob Ack
+Changes for v6:
+- none
 
-[...]
->>>> +static void smmu_pmu_event_start(struct perf_event *event, int flags)
->>>> +{
->>>> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
->>>> +	struct hw_perf_event *hwc = &event->hw;
->>>> +	int idx = hwc->idx;
->>>> +	u32 filter_span, filter_sid;
->>>> +	u32 evtyper;
->>>> +
->>>> +	hwc->state = 0;
->>>> +
->>>> +	smmu_pmu_set_period(smmu_pmu, hwc);
->>>> +
->>>> +	smmu_pmu_get_event_filter(event, &filter_span, &filter_sid);
->>>> +
->>>> +	evtyper = get_event(event) |
->>>> +		  filter_span << SMMU_PMCG_SID_SPAN_SHIFT;
->>>> +
->>>> +	smmu_pmu_set_evtyper(smmu_pmu, idx, evtyper);
->>>> +	smmu_pmu_set_smr(smmu_pmu, idx, filter_sid);
->>>> +	smmu_pmu_interrupt_enable(smmu_pmu, idx);
->>>> +	smmu_pmu_counter_enable(smmu_pmu, idx);
->>>> +}
->>>> +
->>>> +static void smmu_pmu_event_stop(struct perf_event *event, int flags)
->>>> +{
->>>> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
->>>> +	struct hw_perf_event *hwc = &event->hw;
->>>> +	int idx = hwc->idx;
->>>> +
->>>> +	if (hwc->state & PERF_HES_STOPPED)
->>>> +		return;
->>>> +
->>>> +	smmu_pmu_counter_disable(smmu_pmu, idx);
->>>
->>> Is it intentional not to call smmu_pmu_interrupt_disable here?
->>
->> Yes, it is. Earlier patch had the interrupt toggling and Robin pointed out that
->> it is not really needed as counters are anyway stopped and explicitly disabling
->> may not solve the spurious interrupt case as well.
->>
-> 
-> Ah apologies for not seeing that in earlier reviews.
+ .../display/panel/sitronix,st7701.txt         | 30 +++++++++++++++++++
+ 1 file changed, 30 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
 
-Hmm, I didn't exactly mean "keep enabling it every time an event is 
-restarted and never disable it anywhere", though. I was thinking more 
-along the lines of enabling in event_add() and disabling in event_del() 
-(i.e. effectively tying it to allocation and deallocation of the counter).
+diff --git a/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
+new file mode 100644
+index 000000000000..ccd17597f1f6
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/sitronix,st7701.txt
+@@ -0,0 +1,30 @@
++Sitronix ST7701 based LCD panels
++
++ST7701 designed for small and medium sizes of TFT LCD display, is
++capable of supporting up to 480RGBX864 in resolution. It provides
++several system interfaces like MIPI/RGB/SPI.
++
++Techstar TS8550B is 480x854, 2-lane MIPI DSI LCD panel which has
++inbuilt ST7701 chip.
++
++Required properties:
++- compatible: must be "sitronix,st7701" and one of
++  * "techstar,ts8550b"
++- reset-gpios: a GPIO phandle for the reset pin
++
++Required properties for techstar,ts8550b:
++- reg: DSI virtual channel used by that screen
++- VCC-supply: analog regulator for MIPI circuit
++- IOVCC-supply: I/O system regulator
++
++Optional properties:
++- backlight: phandle for the backlight control.
++
++panel@0 {
++	compatible = "techstar,ts8550b", "sitronix,st7701";
++	reg = <0>;
++	VCC-supply = <&reg_dldo2>;
++	IOVCC-supply = <&reg_dldo2>;
++	reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
++	backlight = <&backlight>;
++};
+-- 
+2.18.0.321.gffc6fa0e3
 
-Robin.
