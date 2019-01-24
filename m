@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D72C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98269C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9B78218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 650A8218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358459;
-	bh=QqyLUIR3VOSOUntySMAF3NQXlQd8iGKBNxgxZQA9Tpo=;
+	s=default; t=1548358465;
+	bh=TgsYqxTFFKD4VOwNcW5nY5wyDUimn46h2vyWE8N1o8g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1Lb9eEeLkSFm92RHm01CTonEqAPjyyAbvhKFqfTPO0NZjGw7eCBEON3GVQOdcg9AN
-	 6+p2vLXcYuem41pZUc1rJARs9CWX/pZIoU9YCKH2FWeDUXQf8vO1HJYdhImLOwChte
-	 NiNZ7NRDHkxM21fKH/Tvem89VmPrLOEjMrWeKW08=
+	b=yr1E4h3NBCfDK6g2fnNMriby73N48HzCuD90DBWEnn9ieB9kUfDduc1oGbHBhnEbY
+	 THoW09/TcK/08cOGTmO3CKJHEBQABg6uiCY7UXVeBL+1sXnA9u+yITIIdbEawwI/IA
+	 mfjvMg5HN/sekZfYqG/qVJ+FYC2R3RYxG7/oZrIo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbfAXTeR (ORCPT
+        id S1732183AbfAXTeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34014 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:34:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732141AbfAXTeO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:14 -0500
+        id S1730158AbfAXTeU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:34:20 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E99B5218D4;
-        Thu, 24 Jan 2019 19:34:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4FFE218D4;
+        Thu, 24 Jan 2019 19:34:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358453;
-        bh=QqyLUIR3VOSOUntySMAF3NQXlQd8iGKBNxgxZQA9Tpo=;
+        s=default; t=1548358459;
+        bh=TgsYqxTFFKD4VOwNcW5nY5wyDUimn46h2vyWE8N1o8g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Mv6PgiPhoA/JUG8uNaJBUfnMf1BfANT0QIl+KASRGYhCfDLvFee6qphc78Q8OGxMR
-         x3vSlULkOE/P1mt2A74HLOVV4QNa2HbBY97kzaCkQ/6JzZC7QVMG7hC9gPq3HI21+r
-         eM0metRB/oORWEZkNnP0Mu6AUr1ujg76o2jWobF0=
+        b=Vek6coVF+cxcYuVZWJGz/Gl7b9jCrwlNQ1IklaTMIzE/Hg5hx3464uj9zVZ/Ie/cA
+         4QCdzFTDcU9/742jgcQpN4jZTN5cnovhjDB2Q4yWXbgkuAQJkcxNWQI+poL+Ls+xgs
+         ch8d6bd7ssGOoBoJObAop3nsh/9E1vaPH+gVtSsY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Shannon Nelson <shannon.nelson@oracle.com>,
-        Andrew Bowers <andrewx.bowers@intel.com>,
+        stable@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 014/106] ixgbe: allow IPsec Tx offload in VEPA mode
-Date:   Thu, 24 Jan 2019 20:19:31 +0100
-Message-Id: <20190124190207.290690444@linuxfoundation.org>
+Subject: [PATCH 4.19 016/106] e1000e: allow non-monotonic SYSTIM readings
+Date:   Thu, 24 Jan 2019 20:19:33 +0100
+Message-Id: <20190124190207.407950286@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,53 +69,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7fa57ca443cffe81ce8416b57966bfb0370678a1 ]
+[ Upstream commit e1f65b0d70e9e5c80e15105cd96fa00174d7c436 ]
 
-When it's possible that the PF might end up trying to send a
-packet to one of its own VFs, we have to forbid IPsec offload
-because the device drops the packets into a black hole.
-See commit 47b6f50077e6 ("ixgbe: disallow IPsec Tx offload
-when in SR-IOV mode") for more info.
+It seems with some NICs supported by the e1000e driver a SYSTIM reading
+may occasionally be few microseconds before the previous reading and if
+enabled also pass e1000e_sanitize_systim() without reaching the maximum
+number of rereads, even if the function is modified to check three
+consecutive readings (i.e. it doesn't look like a double read error).
+This causes an underflow in the timecounter and the PHC time jumps hours
+ahead.
 
-This really is only necessary when the device is in the default
-VEB mode.  If instead the device is running in VEPA mode,
-the packets will go through the encryption engine and out the
-MAC/PHY as normal, and get "hairpinned" as needed by the switch.
+This was observed on 82574, I217 and I219. The fastest way to reproduce
+it is to run a program that continuously calls the PTP_SYS_OFFSET ioctl
+on the PHC.
 
-So let's not block IPsec offload when in VEPA mode.  To get
-there with the ixgbe device, use the handy 'bridge' command:
-	bridge link set dev eth1 hwmode vepa
+Modify e1000e_phc_gettime() to use timecounter_cyc2time() instead of
+timecounter_read() in order to allow non-monotonic SYSTIM readings and
+prevent the PHC from jumping.
 
-Signed-off-by: Shannon Nelson <shannon.nelson@oracle.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
+Acked-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/intel/e1000e/ptp.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-index add124e0381d..b27f7a968820 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_ipsec.c
-@@ -4,6 +4,7 @@
- #include "ixgbe.h"
- #include <net/xfrm.h>
- #include <crypto/aead.h>
-+#include <linux/if_bridge.h>
+diff --git a/drivers/net/ethernet/intel/e1000e/ptp.c b/drivers/net/ethernet/intel/e1000e/ptp.c
+index 37c76945ad9b..e1f821edbc21 100644
+--- a/drivers/net/ethernet/intel/e1000e/ptp.c
++++ b/drivers/net/ethernet/intel/e1000e/ptp.c
+@@ -173,10 +173,14 @@ static int e1000e_phc_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
+ 	struct e1000_adapter *adapter = container_of(ptp, struct e1000_adapter,
+ 						     ptp_clock_info);
+ 	unsigned long flags;
+-	u64 ns;
++	u64 cycles, ns;
  
- /**
-  * ixgbe_ipsec_set_tx_sa - set the Tx SA registers
-@@ -676,7 +677,8 @@ static int ixgbe_ipsec_add_sa(struct xfrm_state *xs)
- 	} else {
- 		struct tx_sa tsa;
+ 	spin_lock_irqsave(&adapter->systim_lock, flags);
+-	ns = timecounter_read(&adapter->tc);
++
++	/* Use timecounter_cyc2time() to allow non-monotonic SYSTIM readings */
++	cycles = adapter->cc.read(&adapter->cc);
++	ns = timecounter_cyc2time(&adapter->tc, cycles);
++
+ 	spin_unlock_irqrestore(&adapter->systim_lock, flags);
  
--		if (adapter->num_vfs)
-+		if (adapter->num_vfs &&
-+		    adapter->bridge_mode != BRIDGE_MODE_VEPA)
- 			return -EOPNOTSUPP;
+ 	*ts = ns_to_timespec64(ns);
+@@ -232,9 +236,12 @@ static void e1000e_systim_overflow_work(struct work_struct *work)
+ 						     systim_overflow_work.work);
+ 	struct e1000_hw *hw = &adapter->hw;
+ 	struct timespec64 ts;
++	u64 ns;
  
- 		/* find the first unused index */
+-	adapter->ptp_clock_info.gettime64(&adapter->ptp_clock_info, &ts);
++	/* Update the timecounter */
++	ns = timecounter_read(&adapter->tc);
+ 
++	ts = ns_to_timespec64(ns);
+ 	e_dbg("SYSTIM overflow check at %lld.%09lu\n",
+ 	      (long long) ts.tv_sec, ts.tv_nsec);
+ 
 -- 
 2.19.1
 
