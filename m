@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 026BFC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06446C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6721218D0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA5A621726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ljfkEW3e"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="jl0+3mCU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732144AbfAXUAL (ORCPT
+        id S1730072AbfAXUAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:00:11 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:45355 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732233AbfAXUAI (ORCPT
+        Thu, 24 Jan 2019 15:00:16 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:47076 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732233AbfAXUAN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:00:08 -0500
-Received: by mail-pl1-f196.google.com with SMTP id a14so3359870plm.12
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:00:08 -0800 (PST)
+        Thu, 24 Jan 2019 15:00:13 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w7so3111231pgp.13
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:00:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=8q97sbmpzgiJ0X8sY10lWWdB/Eo6/FNKaSHSF4bAxYo=;
-        b=ljfkEW3e5CkcbpUDcCUm2KymfdIdH5kLxFLVfaeP2gMsoJoDHICvERjswSxoPmFqPM
-         EFFj75rodXEVTPCimGazX3Tiiry2kz0RKcHQ5WOlhmK0fkvy2mUJ8HLT2plqiTUEDqKV
-         itBRjaeY3H2t/oBCydXgFmvS6jX5rEqdIxJm4=
+        bh=EEGBFedCv0eGIwFBpPqp7aDi2x6OUg3hp3DvnJn01c8=;
+        b=jl0+3mCU+nCI7YGq+itsqShkC/SfgVti3hEQ1ulSvukcgTB3ChDjHL1au/xyTtFmei
+         gQYNExKO3Imrr0vQPZTTFzsBWG6MQKp50I0UaMarYeGQsx7pcN3ZG13p/jAWqjEKAxqo
+         po5DR55psBPduQb+2DpXUqolNrzeewmlxyKzE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=8q97sbmpzgiJ0X8sY10lWWdB/Eo6/FNKaSHSF4bAxYo=;
-        b=FaXXVzFtIQboaJvifWSzDsx0qs9RmsTYroMrL/B0O78Oh+CbTHjLzzT9Ucx26gOqy7
-         oeHTCkVvdOOQ/F0sqlmDEBDeoqSWOgkTM38g+l2IxazpkCDqoOImFRJpKFq+c6EQhGJ3
-         tvVG0RQv0O8+lHxjQOtxKpOTGGwNcwDM//XvCrb2ERco+TJmVK4Q9A9BXF+gZBb17LWt
-         0pihJWMxl/PONGIZCblnT9gjTpvd8c72Dfe/pZKU0wtiNXPFGD9CcAYS2cljlgtbVTS7
-         E6m38hNWJuF3S6ppvS0j+oluz+REIHM8C4NfDlSETYJWmFFtyc/RJDSbOGkHOKhb6mcJ
-         Y/EQ==
-X-Gm-Message-State: AJcUukcYVd5fAAFONfmyE1B9jkbGkYDUZaEf8hRrO3TWSIBZn346kvVF
-        mF/AKacHq6iTL8rDEYvnh9nuXw==
-X-Google-Smtp-Source: ALg8bN4JB1sFbrT1QGetXTKGwn0uHo8a4Ub5bRDOtZZpisg2qwYQ4vbkWFp9Gite9nop0n4WrX0J2g==
-X-Received: by 2002:a17:902:3283:: with SMTP id z3mr8014727plb.76.1548360007757;
-        Thu, 24 Jan 2019 12:00:07 -0800 (PST)
+        bh=EEGBFedCv0eGIwFBpPqp7aDi2x6OUg3hp3DvnJn01c8=;
+        b=qBtuGq2jnWJr5AFVIBU/q9C9N0+y+VugCh4dpGUL5F4SMvIkAEX10rpKe8EusYu08P
+         mOHXhPvueO5e3ari86XyTW+RG3hnD5RhkUTLYcEsnt+vHsnQdchcVz0WfiEqHz4HzNTE
+         ZRMiEM+bNgp/rfMpjG35WPIROXVUAc4JKQaS3Q0ULGSUYxBUN7xnPiolr0NR0U+hDhKQ
+         y94W58/BBOPbPzLZLZgdQHEC5GY3csq8V5uT75tsx7XA862cKxhrID2iCbgMH36MMUnn
+         DYQ3KcvEoWGOTMn4KDYOpENAO6E7JCTroEz7CK+dw4J5L1GJ5ns8D0WZ/hZExIJ3ZvOh
+         RKUg==
+X-Gm-Message-State: AJcUukchPtDJxeOozg8M2D4rnTkl3MXMwsmi03br8VcvgKQYrdfjXQiL
+        mkmgUFfjJxmrJV2sA3uR+sIWrQ==
+X-Google-Smtp-Source: ALg8bN4X3/hdgvk+W8P6tImZrbs+xvmgwlVFgfOK7unjfkPgCq8ckI457VZI6BJ2wPT55mSjYoPRvw==
+X-Received: by 2002:a62:3943:: with SMTP id g64mr7995857pfa.114.1548360012725;
+        Thu, 24 Jan 2019 12:00:12 -0800 (PST)
 Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.00.02
+        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.00.07
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 12:00:07 -0800 (PST)
+        Thu, 24 Jan 2019 12:00:12 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 09/22] drm/sun4i: sun6i_mipi_dsi: Enable burst mode HBP, HSA_HSE
-Date:   Fri, 25 Jan 2019 01:28:47 +0530
-Message-Id: <20190124195900.22620-10-jagan@amarulasolutions.com>
+Subject: [PATCH v6 10/22] clk: sunxi-ng: Add check for minimal rate to NKM PLLs
+Date:   Fri, 25 Jan 2019 01:28:48 +0530
+Message-Id: <20190124195900.22620-11-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
 References: <20190124195900.22620-1-jagan@amarulasolutions.com>
@@ -79,47 +79,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Horizontal back porch, sync active and sync end bits are
-needed to disable for burst mode panel operations.
+Some NKM PLLs doesn't work well when their output clock rate is set below
+certain rate.
 
-So, disable them via dsi base control register.
+So, add support for minimal rate for relevant PLLs.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Acked-by: Stephen Boyd <sboyd@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu_nkm.c | 5 +++++
+ drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
+ 2 files changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index a2ad9fa7f8d5..3d7c03161954 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -549,12 +549,17 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 	u16 hbp, hfp, hsa, hblk, vblk;
- 	size_t bytes;
- 	u8 *buffer;
-+	u32 val = 0;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nkm.c
+index 841840e35e61..096ff4f4839a 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.c
++++ b/drivers/clk/sunxi-ng/ccu_nkm.c
+@@ -125,6 +125,11 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mux_internal *mux,
+ 	if (nkm->common.features & CCU_FEATURE_FIXED_POSTDIV)
+ 		rate *= nkm->fixed_post_div;
  
- 	/* Do all timing calculations up front to allocate buffer space */
- 
- 	if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
- 		hbp = hfp = hsa = vblk = 0;
- 		hblk = (mode->hdisplay * Bpp);
++	if (rate < nkm->min_rate) {
++		rate = nkm->min_rate;
++		return rate;
++	}
 +
-+		regmap_read(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, &val);
-+		val |= SUN6I_DSI_BASIC_CTL_HBP_DIS;
-+		val |= SUN6I_DSI_BASIC_CTL_HSA_HSE_DIS;
- 		goto alloc_buf;
- 	}
+ 	ccu_nkm_find_best(*parent_rate, rate, &_nkm);
  
-@@ -603,7 +608,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 	if (WARN_ON(!buffer))
- 		return;
+ 	rate = *parent_rate * _nkm.n * _nkm.k / _nkm.m;
+diff --git a/drivers/clk/sunxi-ng/ccu_nkm.h b/drivers/clk/sunxi-ng/ccu_nkm.h
+index cc6efb70a102..ff5bd00f429f 100644
+--- a/drivers/clk/sunxi-ng/ccu_nkm.h
++++ b/drivers/clk/sunxi-ng/ccu_nkm.h
+@@ -35,6 +35,7 @@ struct ccu_nkm {
+ 	struct ccu_mux_internal	mux;
  
--	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, 0);
-+	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, val);
+ 	unsigned int		fixed_post_div;
++	unsigned int		min_rate;
  
- 	regmap_write(dsi->regs, SUN6I_DSI_SYNC_HSS_REG,
- 		     sun6i_dsi_build_sync_pkt(MIPI_DSI_H_SYNC_START,
+ 	struct ccu_common	common;
+ };
 -- 
 2.18.0.321.gffc6fa0e3
 
