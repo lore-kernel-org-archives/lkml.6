@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E456C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1481C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D37D2218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8320A218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:28:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358077;
-	bh=rP5SsR3gsHH6Id3hmyYAO/yQnT7DLHKfQMCL+kc5odI=;
+	s=default; t=1548358080;
+	bh=OQx3F/WlbRfkgK6s5YVXihIbrWbE+wANmVbwprnWGzk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=If9hXD9jYEKgiq0MaF9ks96yy30k3/lzlpk2keqB3AAB/nTUaVsV2ANg8+n+rRiPS
-	 TNkoaK4IVHAast70tV03miOwr8uv4+QQQsL07YDJZe6+vzyt+aTr8+iaQma8LMqyQB
-	 KEZ0KQbjvP+gtA6O51aTm0uXOucqrUqyAM8zsvzI=
+	b=J7EOcEqoVJ+s8iYcJIe3WOuVtKP3ALr97AWRwa03AWOikMIOLYnIuJJCUdrbGir9h
+	 LTE7toNrVIvWEOIL4TppwEtbwpRSQp1mE7LtG5b22YXmGKaMos9t6bwG1Xh8r5hMhy
+	 +V9p/hGB0dqL5jJTgs4uFZOVdCn6prlsU0PgxsyI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730853AbfAXT1y (ORCPT
+        id S1730859AbfAXT17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:27:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54152 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:27:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54274 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730828AbfAXT1u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:27:50 -0500
+        id S1728590AbfAXT14 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:27:56 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 132B3218FC;
-        Thu, 24 Jan 2019 19:27:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9AAF218A6;
+        Thu, 24 Jan 2019 19:27:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358069;
-        bh=rP5SsR3gsHH6Id3hmyYAO/yQnT7DLHKfQMCL+kc5odI=;
+        s=default; t=1548358075;
+        bh=OQx3F/WlbRfkgK6s5YVXihIbrWbE+wANmVbwprnWGzk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b07P8O5GsRdBnlJhIGxhSWM5+6B0pmYqJXq/HvasGKnRIEBScjdWWnS9/P2ZzHzJu
-         dkZCPmL6AQsSu52Edfo3etoUq4TqsVo7d2k/GxIM6z0EM2SrPdoaW3eOGm7c40h6QL
-         K2r8y6+H6IgTk0M5GWOxlzgohXM4tuhIzmgz9x1E=
+        b=X3OCE/wLKG0HoQ2ABSz4CGM3mejwgbaaHMunbe82nqeSH3ThKVUYdd+kW4HQ6Cabf
+         mWOP5fr+XjwJzuMDzbIoo6YJTwy8QRUOui1mDnhnqhVhY3p982AiF+jC9Aw+mNkMnv
+         5LKfJ7vlcXx1ZbTs5DiOG/ItMlnFvyB8vpl1P6+Q=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, "Maciej W. Rozycki" <macro@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        stable@vger.kernel.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.4 080/104] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur and BigSur
-Date:   Thu, 24 Jan 2019 20:20:09 +0100
-Message-Id: <20190124190204.078440607@linuxfoundation.org>
+Subject: [PATCH 4.4 090/104] kconfig: fix memory leak when EOF is encountered in quotation
+Date:   Thu, 24 Jan 2019 20:20:19 +0100
+Message-Id: <20190124190204.820592412@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -68,153 +66,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit e4849aff1e169b86c561738daf8ff020e9de1011 ]
+[ Upstream commit fbac5977d81cb2b2b7e37b11c459055d9585273c ]
 
-The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip
-DRAM controller that supports memory amounts of up to 16GiB, and due to
-how the address decoder has been wired in the SOC any memory beyond 1GiB
-is actually mapped starting from 4GiB physical up, that is beyond the
-32-bit addressable limit[1].  Consequently if the maximum amount of
-memory has been installed, then it will span up to 19GiB.
+An unterminated string literal followed by new line is passed to the
+parser (with "multi-line strings not supported" warning shown), then
+handled properly there.
 
-Many of the evaluation boards we support that are based on one of these
-SOCs have their memory soldered and the amount present fits in the
-32-bit address range.  The BCM91250A SWARM board however has actual DIMM
-slots and accepts, depending on the peripherals revision of the SOC, up
-to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].
-I believe this is also the case with the BCM91250C2 LittleSur board.
-This means that up to either 3GiB or 7GiB of memory requires 64-bit
-addressing to access.
+On the other hand, an unterminated string literal at end of file is
+never passed to the parser, then results in memory leak.
 
-I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead,
-accepts at least as much memory, although I have no documentation or
-actual hardware available to verify that.
+[Test Code]
 
-Both systems have PCI slots installed for use by any PCI option boards,
-including ones that only support 32-bit addressing (additionally the
-32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits
-addressing to 32-bits), and there is no IOMMU available.  Therefore for
-PCI DMA to work in the presence of memory beyond enable swiotlb for the
-affected systems.
+  ----------(Kconfig begin)----------
+  source "Kconfig.inc"
 
-All the other SOC onchip DMA devices use 40-bit addressing and therefore
-can address the whole memory, so only enable swiotlb if PCI support and
-support for DMA beyond 4GiB have been both enabled in the configuration
-of the kernel.
+  config A
+          bool "a"
+  -----------(Kconfig end)-----------
 
-This shows up as follows:
+  --------(Kconfig.inc begin)--------
+  config B
+          bool "b\No new line at end of file
+  ---------(Kconfig.inc end)---------
 
-Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
-Board type: SiByte BCM91250A (SWARM)
-Determined physical RAM map:
- memory: 000000000fe7fe00 @ 0000000000000000 (usable)
- memory: 000000001ffffe00 @ 0000000080000000 (usable)
- memory: 000000000ffffe00 @ 00000000c0000000 (usable)
- memory: 0000000087fffe00 @ 0000000100000000 (usable)
-software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
+[Summary from Valgrind]
 
-in the bootstrap log and removes failures like these:
+  Before the fix:
 
-defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi0: Receive buffer allocation failed
-fddi0: Adapter open failed!
-IP-Config: Failed to open fddi0
-defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi1: Receive buffer allocation failed
-fddi1: Adapter open failed!
-IP-Config: Failed to open fddi1
+    LEAK SUMMARY:
+       definitely lost: 16 bytes in 1 blocks
+       ...
 
-when memory beyond 4GiB is handed out to devices that can only do 32-bit
-addressing.
+  After the fix:
 
-This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need
-DMA32.").
+    LEAK SUMMARY:
+       definitely lost: 0 bytes in 0 blocks
+       ...
 
-References:
+Eliminate the memory leak path by handling this case. Of course, such
+a Kconfig file is wrong already, so I will add an error message later.
 
-[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R,
-    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview",
-    "Memory Map", pp. 34-38
-
-[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom
-    Corporation, 18 May 2004, Section 3: "Physical Description",
-    "Supported DRAM", p. 23
-
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-[paul.burton@mips.com: Remove GPL text from dma.c; SPDX tag covers it]
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Patchwork: https://patchwork.linux-mips.org/patch/21108/
-References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
-Cc: linux-kernel@vger.kernel.org
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/Kconfig                |  3 +++
- arch/mips/sibyte/common/Makefile |  1 +
- arch/mips/sibyte/common/dma.c    | 14 ++++++++++++++
- 3 files changed, 18 insertions(+)
- create mode 100644 arch/mips/sibyte/common/dma.c
+ scripts/kconfig/zconf.l | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 3a908cc81317..333ea0389adb 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -760,6 +760,7 @@ config SIBYTE_SWARM
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+diff --git a/scripts/kconfig/zconf.l b/scripts/kconfig/zconf.l
+index 6534dc5ac803..0c7800112ff5 100644
+--- a/scripts/kconfig/zconf.l
++++ b/scripts/kconfig/zconf.l
+@@ -191,6 +191,8 @@ n	[A-Za-z0-9_-]
+ 	}
+ 	<<EOF>>	{
+ 		BEGIN(INITIAL);
++		yylval.string = text;
++		return T_WORD_QUOTE;
+ 	}
+ }
  
- config SIBYTE_LITTLESUR
- 	bool "Sibyte BCM91250C2-LittleSur"
-@@ -782,6 +783,7 @@ config SIBYTE_SENTOSA
- 	select SYS_HAS_CPU_SB1
- 	select SYS_SUPPORTS_BIG_ENDIAN
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SIBYTE_BIGSUR
- 	bool "Sibyte BCM91480B-BigSur"
-@@ -795,6 +797,7 @@ config SIBYTE_BIGSUR
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SNI_RM
- 	bool "SNI RM200/300/400"
-diff --git a/arch/mips/sibyte/common/Makefile b/arch/mips/sibyte/common/Makefile
-index b3d6bf23a662..3ef3fb658136 100644
---- a/arch/mips/sibyte/common/Makefile
-+++ b/arch/mips/sibyte/common/Makefile
-@@ -1,4 +1,5 @@
- obj-y := cfe.o
-+obj-$(CONFIG_SWIOTLB)			+= dma.o
- obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
- obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
- obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
-diff --git a/arch/mips/sibyte/common/dma.c b/arch/mips/sibyte/common/dma.c
-new file mode 100644
-index 000000000000..eb47a94f3583
---- /dev/null
-+++ b/arch/mips/sibyte/common/dma.c
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ *	DMA support for Broadcom SiByte platforms.
-+ *
-+ *	Copyright (c) 2018  Maciej W. Rozycki
-+ */
-+
-+#include <linux/swiotlb.h>
-+#include <asm/bootinfo.h>
-+
-+void __init plat_swiotlb_setup(void)
-+{
-+	swiotlb_init(1);
-+}
 -- 
 2.19.1
 
