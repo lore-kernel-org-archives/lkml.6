@@ -2,49 +2,49 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 631B5C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:00:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB215C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:00:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3495021872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:00:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE48B21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 13:00:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728203AbfAXNAn (ORCPT
+        id S1728223AbfAXNAu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 08:00:43 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:43016 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728061AbfAXNAS (ORCPT
+        Thu, 24 Jan 2019 08:00:50 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:58952 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728033AbfAXNAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 24 Jan 2019 08:00:18 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0OCsxLM010176
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0OCt0Rs143539
         for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:00:17 -0500
-Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q7avc1j36-1
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7cm240c7-1
         (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:00:15 -0500
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:00:17 -0500
 Received: from localhost
-        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
         for <linux-kernel@vger.kernel.org> from <mimu@linux.ibm.com>;
-        Thu, 24 Jan 2019 12:59:58 -0000
+        Thu, 24 Jan 2019 13:00:15 -0000
 Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
         (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 24 Jan 2019 12:59:56 -0000
+        Thu, 24 Jan 2019 13:00:11 -0000
 Received: from d06av21.portsmouth.uk.ibm.com (d06av21.portsmouth.uk.ibm.com [9.149.105.232])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0OCxs2u6619578
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0OD09vB44826636
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Jan 2019 12:59:54 GMT
+        Thu, 24 Jan 2019 13:00:09 GMT
 Received: from d06av21.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 74A685204F;
-        Thu, 24 Jan 2019 12:59:54 +0000 (GMT)
+        by IMSVA (Postfix) with ESMTP id 55B2652051;
+        Thu, 24 Jan 2019 13:00:09 +0000 (GMT)
 Received: from s38lp84.lnxne.boe (unknown [9.152.108.100])
-        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 20A6E52051;
-        Thu, 24 Jan 2019 12:59:54 +0000 (GMT)
+        by d06av21.portsmouth.uk.ibm.com (Postfix) with ESMTP id 02DBF5205A;
+        Thu, 24 Jan 2019 13:00:08 +0000 (GMT)
 From:   Michael Mueller <mimu@linux.ibm.com>
 To:     KVM Mailing List <kvm@vger.kernel.org>
 Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
@@ -58,191 +58,231 @@ Cc:     Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
         Halil Pasic <pasic@linux.ibm.com>,
         Pierre Morel <pmorel@linux.ibm.com>,
         Michael Mueller <mimu@linux.ibm.com>
-Subject: [PATCH v6 00/13] KVM: s390: make use of the GIB
-Date:   Thu, 24 Jan 2019 13:59:26 +0100
+Subject: [PATCH v6 11/13] KVM: s390: add functions to (un)register GISC with GISA
+Date:   Thu, 24 Jan 2019 13:59:37 +0100
 X-Mailer: git-send-email 2.13.4
+In-Reply-To: <20190124125939.130763-1-mimu@linux.ibm.com>
+References: <20190124125939.130763-1-mimu@linux.ibm.com>
 X-TM-AS-GCONF: 00
-x-cbid: 19012412-0012-0000-0000-000002EC5DB8
+x-cbid: 19012413-0008-0000-0000-000002B565B6
 X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012412-0013-0000-0000-000021239156
-Message-Id: <20190124125939.130763-1-mimu@linux.ibm.com>
+x-cbparentid: 19012413-0009-0000-0000-000022219A00
+Message-Id: <20190124125939.130763-12-mimu@linux.ibm.com>
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_07:,,
  signatures=0
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
  malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
  clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ mlxlogscore=932 adultscore=0 classifier=spam adjust=0 reason=mlx
  scancount=1 engine=8.0.1-1810050000 definitions=main-1901240095
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Guest Information Area (GIB) and its mechanics is part of
-the AIV facility. It provides hardware support to process
-Adapter Interruptions (AI) for pagable storage mode guests. 
+Add the Interruption Alert Mask (IAM) to the architecture specific
+kvm struct. This mask in the GISA is used to define for which ISC
+a GIB alert will be issued.
 
-Whenever a guest cannot process an AI because none of its
-vcpus is running in SIE context, a GIB alert interruption is
-sent to and handled by the host program to dispatch a vcpu of
-the respective guest.
+The functions kvm_s390_gisc_register() and kvm_s390_gisc_unregister()
+are used to (un)register a GISC (guest ISC) with a virtual machine and
+its GISA.
 
-Eventually, the AI is handled by the guest.
+Upon successful completion, kvm_s390_gisc_register() returns the
+ISC to be used for GIB alert interruptions. A negative return code
+indicates an error during registration.
 
-v5->v6:
-  Futher significant change was introduced with this version
-  now:
+Theses functions will be used by other adapter types like AP and PCI to
+request pass-through interruption support.
 
-  a) During the alert list processing now a hrtimer is
-     started to kick an idle vcpu with open I/O interrupt
-     mask. It then is restarted to monitor the interruption
-     consumption and when the IPM is clean (no relevant
-     ISCs pending anymore) atomically restores the IAM
-     and don't restarts or if new ISCs arrive kick other
-     idle vcpus.
+Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+---
+ arch/s390/include/asm/kvm_host.h |  13 +++++
+ arch/s390/kvm/interrupt.c        | 117 +++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 130 insertions(+)
 
-  patches 1/13 to 7/13:
-     prepare the existing Interruption and GISA code for
-     the introduction of the GIB code.
-  patches 8/13 to 10/13:
-     kept from v5.
-  patch 11/13:
-     Some comments added.
-  patch 12/13:
-     Significatly changed due to the hrtimer control.
-  patch 13/13:
-     Basically kept from v5 except for a slight reordering
-     that shortens the patch.
-
-v4->v5:
-  Between these two versions some significant change was
-  introduced:
-
-  a) During IPM look-up, the IAM gets atomically restored
-     if the IPM is clean. (The main strategy is: As soon no
-     airqs are pending anymore, get prepared for new ones
-     arriving).
-
-  b) Kick a set of vcpus in WAIT state, that will be able
-     to handle all ISCs in IPM if possible. The main loop
-     that processes the GIB alert list is unchanged.
-
-  patches 1/15 to 6/15:
-     prepare the existing Interruption and GISA code for
-     the introduction of the GIB code.
-  patches 7/15 to 9/15:
-     kept from v4. 
-  patch 10/15:
-     restores the IAM in get_ipm() when clean on request
-     with additional parameter irq_flags
-  patch 12/15:
-     modifies kvm_s390_deliver_pending_interrupts() such
-     that the IAM is not restored during the deliverable_irqs()
-     test as we are about to enter the SIE. Restoring the
-     IAM would trigger the alert mechanism unnecessarily
-     on SIE entry.
-  patch 13/15:
-     process_gib_alert_list() now triggers a minimal set
-     of idle vcpus capable the handle all pending ISCs.
-  patch 14/15:
-     the wiring is logical similar to v4 but uses different
-     routines
-  patch 15/15: 
-     kept from v4. 
-
-v3->v4:
-  The central change of v4 is that the metric "vcpus_in_sie"
-  has been dropped. A least agressive IAM restore strategy
-  is being followed now. The consequence is that potentially
-  more GAL interruptions are to be handled by the host program.
-  The assuption as made that as soon the first vcpu is trying
-  to go into wait state, this could be the last vcpu being
-  open for I/O interruptions. Thus, to not loose the initiative
-  to deliver I/O interruptions as soon as possible, the IAM
-  is restored. Adding better heuristics can be done in future.
-
-  I expect this to be the last version of the series.
+diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+index 7077762ab460..2cfff617cb21 100644
+--- a/arch/s390/include/asm/kvm_host.h
++++ b/arch/s390/include/asm/kvm_host.h
+@@ -781,6 +781,9 @@ struct kvm_s390_gisa {
+ 			u8  reserved03[11];
+ 			u32 airq_count;
+ 		} g1;
++		struct {
++			u64 word[4];
++		} u64;
+ 	};
+ };
  
-  patch 01/12: Kernel msg now printed when FLIC fails
-               to register during arch inititialization.
-  patch 03/12: Commit message slightly changed with the
-  	       hint that gib initialization is called
-	       by last patch of this serias.
-  patch 09/12: IAM now restored during kvm_s390_handle_wait()
-  patch 10/12: gib destroy case now handled upon unsuccessful
-  	       arch inititialization.
-
-All other patches are unchanged.
-
-v2->v3:
-  patch 01/12: Fixes a resource dealocation issue upon
-  	       unsuccessful exit from kvm_arch_init().
-	       It is relevant for patch 11/12 as well. 
-  patch 08/12: The function process_gib_alert_list() has
-               been rewritten to reduce the number of GAL
-	       interruptions on the host for many guest
-	       scenarios.
-  patch 10/12: The IAM is now never cleared before SIE entry.
-               It will be cleared by millicode as soon the
-	       first guest interruption is made pending and
-	       not directly processed in SIE. The IAM gets
-	       restored as soon a vm is idle, i.e. no vcpu
-	       of that guest is in SIE context anymore.
-  patch 11/12: now integrates with new patch 01/12
-  patch 12/12: This patch is just experimental and shall not
-               be part of the final series.
-
-The first patch of series v2: "leave AIs in IPM of GISA
-during vcpu_pre_run()" has been dropped.
-
-All other patches are unchanged.
-
-v1->v2:
-  patch 01/12: New patch. Tt can go also standalone without the
-  	       rest of the GIB series presented here but is a
-	       requirement 
-  patch 03/12: kvm_s390_gib_init() now has a return code
-  patch 06/12: unlink_gib_alert_list() now uses cmpxchg() instead
-    	       of atomic_xchg()
-  patch 08/12: New patch. Foctors out __find_vcpu_for_floating_irq()
-  patch 09/12: process_gib_alert_list() has been simplified
-               the GISA clear/destroy cases have been removed
-  patch 11/12: kvm_s390_gisa_clear/destroy() now clear the IAM
-               and process the alert list directly
-	       The IAM now gets restored in vcpu_post_run() only if
-	       the GISA is not in alert list
-  patch 12/12: during kvm_arch_init() now the return code of
-    	       kvm_s390_gib_init() is honored.
-
-All other patches are unchanged.
-
-Michael Mueller (13):
-  KVM: s390: drop obsolete else path
-  KVM: s390: make bitmap declaration consitent
-  KVM: s390: move bitmap idle_mask into arch struct top level
-  KVM: s390: coding style kvm_s390_gisa_init/clear()
-  KVM: s390: use pending_irqs_no_gisa() where appropriate
-  KVM: s390: remove kvm_s390_ from gisa static inline functions
-  KVM: s390: introduce struct kvm_s390_gisa_interrupt
-  s390/cio: add function chsc_sgib()
-  KVM: s390: add the GIB and its related life-cyle functions
-  KVM: s390: add kvm reference to struct sie_page2
-  KVM: s390: add functions to (un)register GISC with GISA
-  KVM: s390: add gib_alert_irq_handler()
-  KVM: s390: start using the GIB
-
- arch/s390/include/asm/cio.h      |   1 +
- arch/s390/include/asm/irq.h      |   1 +
- arch/s390/include/asm/isc.h      |   1 +
- arch/s390/include/asm/kvm_host.h |  36 +++-
- arch/s390/kernel/irq.c           |   1 +
- arch/s390/kvm/interrupt.c        | 422 +++++++++++++++++++++++++++++++++++----
- arch/s390/kvm/kvm-s390.c         |  13 +-
- arch/s390/kvm/kvm-s390.h         |   4 +-
- drivers/s390/cio/chsc.c          |  37 ++++
- drivers/s390/cio/chsc.h          |   1 +
- 10 files changed, 472 insertions(+), 45 deletions(-)
-
+@@ -813,8 +816,15 @@ struct kvm_s390_vsie {
+ 	struct page *pages[KVM_MAX_VCPUS];
+ };
+ 
++struct kvm_s390_gisa_iam {
++	u8 mask;
++	spinlock_t ref_lock;
++	u32 ref_count[MAX_ISC + 1];
++};
++
+ struct kvm_s390_gisa_interrupt {
+ 	struct kvm_s390_gisa *origin;
++	struct kvm_s390_gisa_iam alert;
+ };
+ 
+ struct kvm_arch{
+@@ -885,6 +895,9 @@ void kvm_arch_crypto_set_masks(struct kvm *kvm, unsigned long *apm,
+ extern int sie64a(struct kvm_s390_sie_block *, u64 *);
+ extern char sie_exit;
+ 
++extern int kvm_s390_gisc_register(struct kvm *kvm, u32 gisc);
++extern int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc);
++
+ static inline void kvm_arch_hardware_disable(void) {}
+ static inline void kvm_arch_check_processor_compat(void *rtn) {}
+ static inline void kvm_arch_sync_events(struct kvm *kvm) {}
+diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+index 5efcd9e2cf8f..6bc9dab6d352 100644
+--- a/arch/s390/kvm/interrupt.c
++++ b/arch/s390/kvm/interrupt.c
+@@ -222,6 +222,33 @@ static inline u8 int_word_to_isc(u32 int_word)
+  */
+ #define IPM_BIT_OFFSET (offsetof(struct kvm_s390_gisa, ipm) * BITS_PER_BYTE)
+ 
++/**
++ * gisa_set_iam - change the GISA interruption alert mask
++ *
++ * @gisa: gisa to operate on
++ * @iam: new IAM value to use
++ *
++ * Change the IAM atomically with the next alert address and the IPM
++ * of the GISA if the GISA is not part of the GIB alert list. All three
++ * fields are located in the first long word of the GISA.
++ *
++ * Returns: 0 on success
++ *          -EBUSY in case the gisa is part of the alert list
++ */
++static inline int gisa_set_iam(struct kvm_s390_gisa *gisa, u8 iam)
++{
++	u64 word, _word;
++
++	do {
++		word = READ_ONCE(gisa->u64.word[0]);
++		if ((u64)gisa != word >> 32)
++			return -EBUSY;
++		_word = (word & ~0xffUL) | iam;
++	} while (cmpxchg(&gisa->u64.word[0], word, _word) != word);
++
++	return 0;
++}
++
+ static inline void gisa_set_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
+ {
+ 	set_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
+@@ -2911,6 +2938,8 @@ void kvm_s390_gisa_init(struct kvm *kvm)
+ 	if (!css_general_characteristics.aiv)
+ 		return;
+ 	gi->origin = &kvm->arch.sie_page2->gisa;
++	gi->alert.mask = 0;
++	spin_lock_init(&gi->alert.ref_lock);
+ 	kvm_s390_gisa_clear(kvm);
+ 	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", gi->origin);
+ }
+@@ -2920,6 +2949,94 @@ void kvm_s390_gisa_destroy(struct kvm *kvm)
+ 	kvm->arch.gisa_int.origin = NULL;
+ }
+ 
++/**
++ * kvm_s390_gisc_register - register a guest ISC
++ *
++ * @kvm:  the kernel vm to work with
++ * @gisc: the guest interruption sub class to register
++ *
++ * The function extends the vm specific alert mask to use.
++ * The effectve IAM mask in the GISA is updated as well
++ * in case the GISA is not part of the GIB alert list.
++ * It will be updated latest when the IAM gets restored
++ * by gisa_get_ipm_or_restore_iam().
++ *
++ * Returns: the nonspecific ISC (NISC) the gib alert mechanism
++ *          has registered with the channel subsystem.
++ *          -ENODEV in case the vm uses no GISA
++ *          -ERANGE in case the guest ISC is invalid
++ */
++int kvm_s390_gisc_register(struct kvm *kvm, u32 gisc)
++{
++	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
++	u8 alert_mask;
++
++	if (!gi->origin)
++		return -ENODEV;
++	if (gisc > MAX_ISC)
++		return -ERANGE;
++
++	spin_lock(&gi->alert.ref_lock);
++	if (gi->alert.ref_count[gisc] == 0) {
++		alert_mask = gi->alert.mask | 0x80 >> gisc;
++		WRITE_ONCE(gi->alert.mask, alert_mask);
++	}
++	gi->alert.ref_count[gisc]++;
++	if (gi->alert.ref_count[gisc] == 1)
++		gisa_set_iam(gi->origin, alert_mask);
++	spin_unlock(&gi->alert.ref_lock);
++
++	return gib->nisc;
++}
++EXPORT_SYMBOL_GPL(kvm_s390_gisc_register);
++
++/**
++ * kvm_s390_gisc_unregister - unregister a guest ISC
++ *
++ * @kvm:  the kernel vm to work with
++ * @gisc: the guest interruption sub class to register
++ *
++ * The function reduces the vm specific alert mask to use.
++ * The effectve IAM mask in the GISA is updated as well
++ * in case the GISA is not part of the GIB alert list.
++ * It will be updated latest when the IAM gets restored
++ * by gisa_get_ipm_or_restore_iam().
++ *
++ * Returns: the nonspecific ISC (NISC) the gib alert mechanism
++ *          has registered with the channel subsystem.
++ *          -ENODEV in case the vm uses no GISA
++ *          -ERANGE in case the guest ISC is invalid
++ *          -EINVAL in case the guest ISC is not registered
++ */
++int kvm_s390_gisc_unregister(struct kvm *kvm, u32 gisc)
++{
++	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
++	u8 alert_mask;
++	int rc = 0;
++
++	if (!gi->origin)
++		return -ENODEV;
++	if (gisc > MAX_ISC)
++		return -ERANGE;
++
++	spin_lock(&gi->alert.ref_lock);
++	if (gi->alert.ref_count[gisc] == 0) {
++		rc = -EINVAL;
++		goto out;
++	}
++	gi->alert.ref_count[gisc]--;
++	if (gi->alert.ref_count[gisc] == 0) {
++		alert_mask = gi->alert.mask & ~(0x80 >> gisc);
++		WRITE_ONCE(gi->alert.mask, alert_mask);
++		gisa_set_iam(gi->origin, alert_mask);
++	}
++out:
++	spin_unlock(&gi->alert.ref_lock);
++
++	return rc;
++}
++EXPORT_SYMBOL_GPL(kvm_s390_gisc_unregister);
++
+ void kvm_s390_gib_destroy(void)
+ {
+ 	if (!gib)
 -- 
 2.13.4
 
