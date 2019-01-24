@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05655C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C28DBC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8066218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 928B821902
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358030;
-	bh=qKn0W9CHfFclbT+CDQtmpQykHNQfgRS7Zfno8xp5VMU=;
+	s=default; t=1548358033;
+	bh=MWTPzwzu2cIqs6pM1vyI6eNtnfxZXe3YUXZHg2ENpX4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zqIiSN/LEJIJ5j9fBUayHgA+iyxeCKump5iwVIajvJ2ZBwMhz+nsn3RD0G+JDJQlx
-	 dMBU2YKoVJ5dtACRX7lMF94C7sN9KtHe0/tw/i1eZJfPo8i2SXRR8hFAJUq2f6+3Hd
-	 rd7ml3xPVf0U0My0udLLsI0A+j8EC06pvdeKaRrg=
+	b=Q35Es8I9HL1vFJdWXmpU2joxOTdISO0HFcFsqOUj4FmDJQ7/kWUvZirLzD/SIJg7Y
+	 8h7XD3rEmYRk2E0pvFgCw4KJKxnV75DwVqg8B8NpqSTWtwi1jDY+6Zw/dxQBL1FiGO
+	 7Jq2tp3+UJSWTs2UvN8NgvF60nyjzwVkgMtiDieQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730707AbfAXT1I (ORCPT
+        id S1730716AbfAXT1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:27:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53314 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:27:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53360 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730316AbfAXT1G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:27:06 -0500
+        id S1730167AbfAXT1J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:27:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E1B23218A6;
-        Thu, 24 Jan 2019 19:27:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 89A7B218A6;
+        Thu, 24 Jan 2019 19:27:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358025;
-        bh=qKn0W9CHfFclbT+CDQtmpQykHNQfgRS7Zfno8xp5VMU=;
+        s=default; t=1548358028;
+        bh=MWTPzwzu2cIqs6pM1vyI6eNtnfxZXe3YUXZHg2ENpX4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Iq6XfCnFuXzGTAhTQHEE3JHn7lGd0/MbttI8oDX0L+vzAh3B2Fb3A9JvnG3Vub1M6
-         zMBrjgGWJ6PbP6aFqQyarcPfk9ExRQTXKnqavitMUjSAt+rFuHaPnANWYatxmMYm9Y
-         UgRTRlFnXE8yeyaDVtsaADzzB3hJ4GZFBK0darxE=
+        b=VHiXNKMKukNRzPw537xUef6PcTssbvFWGjQVmzlA6GduzqaOX2cvxv0A0L5Wo0Xmk
+         Zps/mTjqtMWD55iHnF/reNrCI7Z426/9pe6ptg/rxLjgWk3qnKFAlwxrcyBx8t/32Z
+         ngrgkJCZBTC0hBJuteOe0lBLnKRWOSxfpNul1/AE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>,
-        Ming Lei <ming.lei@redhat.com>, Jan Kara <jack@suse.cz>,
-        Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Jens Axboe <axboe@kernel.dk>
-Subject: [PATCH 4.4 070/104] loop: Fix double mutex_unlock(&loop_ctl_mutex) in loop_control_ioctl()
-Date:   Thu, 24 Jan 2019 20:19:59 +0100
-Message-Id: <20190124190203.322027635@linuxfoundation.org>
+        stable@vger.kernel.org, Ivan Mironov <mironov.ivan@gmail.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: [PATCH 4.4 071/104] drm/fb-helper: Ignore the value of fb_var_screeninfo.pixclock
+Date:   Thu, 24 Jan 2019 20:20:00 +0100
+Message-Id: <20190124190203.397459343@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -68,40 +65,81 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Ivan Mironov <mironov.ivan@gmail.com>
 
-commit 628bd85947091830a8c4872adfd5ed1d515a9cf2 upstream.
+commit 66a8d5bfb518f9f12d47e1d2dce1732279f9451e upstream.
 
-Commit 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex") forgot to
-remove mutex_unlock(&loop_ctl_mutex) from loop_control_ioctl() when
-replacing loop_index_mutex with loop_ctl_mutex.
+Strict requirement of pixclock to be zero breaks support of SDL 1.2
+which contains hardcoded table of supported video modes with non-zero
+pixclock values[1].
 
-Fixes: 0a42e99b58a20883 ("loop: Get rid of loop_index_mutex")
-Reported-by: syzbot <syzbot+c0138741c2290fc5e63f@syzkaller.appspotmail.com>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Reviewed-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+To better understand which pixclock values are considered valid and how
+driver should handle these values, I briefly examined few existing fbdev
+drivers and documentation in Documentation/fb/. And it looks like there
+are no strict rules on that and actual behaviour varies:
+
+	* some drivers treat (pixclock == 0) as "use defaults" (uvesafb.c);
+	* some treat (pixclock == 0) as invalid value which leads to
+	  -EINVAL (clps711x-fb.c);
+	* some pass converted pixclock value to hardware (uvesafb.c);
+	* some are trying to find nearest value from predefined table
+          (vga16fb.c, video_gx.c).
+
+Given this, I believe that it should be safe to just ignore this value if
+changing is not supported. It seems that any portable fbdev application
+which was not written only for one specific device working under one
+specific kernel version should not rely on any particular behaviour of
+pixclock anyway.
+
+However, while enabling SDL1 applications to work out of the box when
+there is no /etc/fb.modes with valid settings, this change affects the
+video mode choosing logic in SDL. Depending on current screen
+resolution, contents of /etc/fb.modes and resolution requested by
+application, this may lead to user-visible difference (not always):
+image will be displayed in a right way, but it will be aligned to the
+left instead of center. There is no "right behaviour" here as well, as
+emulated fbdev, opposing to old fbdev drivers, simply ignores any
+requsts of video mode changes with resolutions smaller than current.
+
+The easiest way to reproduce this problem is to install sdl-sopwith[2],
+remove /etc/fb.modes file if it exists, and then try to run sopwith
+from console without X. At least in Fedora 29, sopwith may be simply
+installed from standard repositories.
+
+[1] SDL 1.2.15 source code, src/video/fbcon/SDL_fbvideo.c, vesa_timings
+[2] http://sdl-sopwith.sourceforge.net/
+
+Signed-off-by: Ivan Mironov <mironov.ivan@gmail.com>
+Cc: stable@vger.kernel.org
+Fixes: 79e539453b34e ("DRM: i915: add mode setting support")
+Fixes: 771fe6b912fca ("drm/radeon: introduce kernel modesetting for radeon hardware")
+Fixes: 785b93ef8c309 ("drm/kms: move driver specific fb common code to helper functions (v2)")
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20190108072353.28078-3-mironov.ivan@gmail.com
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
----
- drivers/block/loop.c |    2 --
- 1 file changed, 2 deletions(-)
 
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1936,12 +1936,10 @@ static long loop_control_ioctl(struct fi
- 			break;
- 		if (lo->lo_state != Lo_unbound) {
- 			ret = -EBUSY;
--			mutex_unlock(&loop_ctl_mutex);
- 			break;
- 		}
- 		if (atomic_read(&lo->lo_refcnt) > 0) {
- 			ret = -EBUSY;
--			mutex_unlock(&loop_ctl_mutex);
- 			break;
- 		}
- 		lo->lo_disk->private_data = NULL;
+---
+ drivers/gpu/drm/drm_fb_helper.c |    7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+--- a/drivers/gpu/drm/drm_fb_helper.c
++++ b/drivers/gpu/drm/drm_fb_helper.c
+@@ -1109,9 +1109,14 @@ int drm_fb_helper_check_var(struct fb_va
+ 	struct drm_framebuffer *fb = fb_helper->fb;
+ 	int depth;
+ 
+-	if (var->pixclock != 0 || in_dbg_master())
++	if (in_dbg_master())
+ 		return -EINVAL;
+ 
++	if (var->pixclock != 0) {
++		DRM_DEBUG("fbdev emulation doesn't support changing the pixel clock, value of pixclock is ignored\n");
++		var->pixclock = 0;
++	}
++
+ 	/* Need to resize the fb object !!! */
+ 	if (var->bits_per_pixel > fb->bits_per_pixel ||
+ 	    var->xres > fb->width || var->yres > fb->height ||
 
 
