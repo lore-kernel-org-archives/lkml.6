@@ -2,90 +2,106 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F140C282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B822C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:52:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 198192085A
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:51:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E704B218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:52:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727440AbfAXJvx (ORCPT
+        id S1727445AbfAXJw5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:51:53 -0500
-Received: from 8bytes.org ([81.169.241.247]:59494 "EHLO theia.8bytes.org"
+        Thu, 24 Jan 2019 04:52:57 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59119 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725939AbfAXJvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:51:53 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 276D048C; Thu, 24 Jan 2019 10:51:51 +0100 (CET)
-Date:   Thu, 24 Jan 2019 10:51:51 +0100
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     "Michael S . Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jfehlig@suse.com,
-        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
-Subject: Re: [PATCH 5/5] virtio-blk: Consider virtio_max_dma_size() for
- maximum segment size
-Message-ID: <20190124095150.GL32526@8bytes.org>
-References: <20190123163049.24863-1-joro@8bytes.org>
- <20190123163049.24863-6-joro@8bytes.org>
- <20190123213139.GD9032@lst.de>
- <20190124084011.GJ32526@8bytes.org>
- <20190124084221.GB19441@lst.de>
+        id S1725287AbfAXJw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:52:57 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CD6DC2084E; Thu, 24 Jan 2019 10:52:54 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5C68520654;
+        Thu, 24 Jan 2019 10:52:44 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        linux-sunxi@googlegroups.com
+Cc:     Pawel Osciak <pawel@osciak.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Pawel Osciak <posciak@chromium.org>
+Subject: [PATCH 1/2] media: vb2: Keep dma-buf buffers mapped until they are freed
+Date:   Thu, 24 Jan 2019 10:51:55 +0100
+Message-Id: <20190124095156.21898-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124084221.GB19441@lst.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 09:42:21AM +0100, Christoph Hellwig wrote:
-> Yes.  But more importantly it would fix the limit for all other block
-> drivers that set large segment sizes when running over swiotlb.
+From: Pawel Osciak <posciak@chromium.org>
 
-True, so it would be something like the diff below? I havn't worked on
-the block layer, so I don't know if that needs additional checks for
-->dev or anything.
+When using vb2 for video decoding, dequeued capture buffers may still
+be accessed by the hardware: this is the case when they are used as
+reference frames for decoding subsequent frames.
 
-diff --git a/block/blk-settings.c b/block/blk-settings.c
-index 3e7038e475ee..9a927280c904 100644
---- a/block/blk-settings.c
-+++ b/block/blk-settings.c
-@@ -1,6 +1,7 @@
- /*
-  * Functions related to setting various queue properties from drivers
-  */
-+#include <linux/dma-mapping.h>
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/init.h>
-@@ -303,13 +304,17 @@ EXPORT_SYMBOL_GPL(blk_queue_max_discard_segments);
-  **/
- void blk_queue_max_segment_size(struct request_queue *q, unsigned int max_size)
- {
-+	unsigned int dma_max_size;
+When the buffer is imported with dma-buf, it needs to be mapped before
+access. Until now, it was mapped when queuing and unmapped when
+dequeuing, which doesn't work for access as a reference frames.
+
+One way to solve this would be to map the buffer again when it is
+needed as a reference, but the mapping/unmapping operations can
+seriously impact performance. As a result, map the buffer once (when it
+is first needed when queued) and keep it mapped until it is freed.
+
+Signed-off-by: Pawel Osciak <posciak@chromium.org>
+Reviewed-on: https://chromium-review.googlesource.com/334103
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+[Paul: Updated for mainline and changed commit message]
+---
+ drivers/media/common/videobuf2/videobuf2-core.c | 11 +++--------
+ 1 file changed, 3 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+index 70e8c3366f9c..ce9294a635cc 100644
+--- a/drivers/media/common/videobuf2/videobuf2-core.c
++++ b/drivers/media/common/videobuf2/videobuf2-core.c
+@@ -1196,6 +1196,9 @@ static int __prepare_dmabuf(struct vb2_buffer *vb)
+ 	 * userspace knows sooner rather than later if the dma-buf map fails.
+ 	 */
+ 	for (plane = 0; plane < vb->num_planes; ++plane) {
++		if (vb->planes[plane].dbuf_mapped)
++			continue;
 +
- 	if (max_size < PAGE_SIZE) {
- 		max_size = PAGE_SIZE;
- 		printk(KERN_INFO "%s: set to minimum %d\n",
- 		       __func__, max_size);
- 	}
+ 		ret = call_memop(vb, map_dmabuf, vb->planes[plane].mem_priv);
+ 		if (ret) {
+ 			dprintk(1, "failed to map dmabuf for plane %d\n",
+@@ -1758,14 +1761,6 @@ static void __vb2_dqbuf(struct vb2_buffer *vb)
  
--	q->limits.max_segment_size = max_size;
-+	dma_max_size = dma_max_mapping_size(q->backing_dev_info->dev);
-+
-+	q->limits.max_segment_size = min(max_size, dma_max_size);
+ 	vb->state = VB2_BUF_STATE_DEQUEUED;
+ 
+-	/* unmap DMABUF buffer */
+-	if (q->memory == VB2_MEMORY_DMABUF)
+-		for (i = 0; i < vb->num_planes; ++i) {
+-			if (!vb->planes[i].dbuf_mapped)
+-				continue;
+-			call_void_memop(vb, unmap_dmabuf, vb->planes[i].mem_priv);
+-			vb->planes[i].dbuf_mapped = 0;
+-		}
+ 	call_void_bufop(q, init_buffer, vb);
  }
- EXPORT_SYMBOL(blk_queue_max_segment_size);
  
+-- 
+2.20.1
+
