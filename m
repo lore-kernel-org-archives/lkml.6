@@ -2,105 +2,135 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A65C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78BE4C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:53:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FACC21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:49:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EA9C21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 05:53:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="X+EkbOMo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726251AbfAXFtM (ORCPT
+        id S1726308AbfAXFx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 00:49:12 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:50512 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725290AbfAXFtM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 00:49:12 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id E824089BF63EEAB668D2;
-        Thu, 24 Jan 2019 13:49:07 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id x0O5n1F8028796;
-        Thu, 24 Jan 2019 13:49:01 +0800 (GMT-8)
-        (envelope-from zhang.run@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2019012413493064-23886391 ;
-          Thu, 24 Jan 2019 13:49:30 +0800 
-From:   Zhang Run <zhang.run@zte.com.cn>
-To:     davem@davemloft.net
-Cc:     marcel.ziswiler@toradex.com, lynxis@fe80.eu,
-        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
-        wang.yi59@zte.com.cn, Zhang Run <zhang.run@zte.com.cn>
-Subject: [PATCH] net: usb: asix: ax88772_bind return error when hw_reset fail
-Date:   Thu, 24 Jan 2019 13:48:49 +0800
-Message-Id: <1548308929-7727-1-git-send-email-zhang.run@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2019-01-24 13:49:30,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2019-01-24 13:48:50,
-        Serialize complete at 2019-01-24 13:48:50
-X-MAIL: mse01.zte.com.cn x0O5n1F8028796
+        Thu, 24 Jan 2019 00:53:29 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:35718 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbfAXFx2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 00:53:28 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20190124055324epoutp0235d8b6407347eed4ebbd24f0be151c8c~8swSuHsya0556605566epoutp02Q
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 05:53:24 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20190124055324epoutp0235d8b6407347eed4ebbd24f0be151c8c~8swSuHsya0556605566epoutp02Q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548309204;
+        bh=f59kY+0fGmAWVVQQHo2ewJS3XTCZ4zKdROZwXBjwwOw=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=X+EkbOMou/vsdj9k0axxTiu4Nxr+/4GdfO4kuS/A9RcQy9HQbPfp+LbLHG2b1zKJW
+         LIpcan7LIxpms4LCO7pnd3L6K0PN+AIKbnb+YtWuqS1knf8pQChfC06qtj5R2br+a9
+         0cAiHeIxKtz+WwpKakqlsQYqEB0JQFP9zur8RN2E=
+Received: from epsmges1p3.samsung.com (unknown [182.195.40.155]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190124055316epcas1p1e7cf78c33e85562ea6e8c9045a1b462e~8swLJm5jo1022810228epcas1p14;
+        Thu, 24 Jan 2019 05:53:16 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+        44.BB.04069.7C2594C5; Thu, 24 Jan 2019 14:53:11 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20190124055310epcas1p4fd68081d1dc863a53d2be6017b0c2d2a~8swFqOYXk1469414694epcas1p4J;
+        Thu, 24 Jan 2019 05:53:10 +0000 (GMT)
+Received: from epsmgms1p2new.samsung.com (unknown [182.195.42.42]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190124055310epsmtrp16818b84be6feda0aa5b57425926b48bf~8swFpehNw2913129131epsmtrp15;
+        Thu, 24 Jan 2019 05:53:10 +0000 (GMT)
+X-AuditID: b6c32a37-989ff70000000fe5-2b-5c4952c73c00
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+        epsmgms1p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        8E.11.03601.6C2594C5; Thu, 24 Jan 2019 14:53:10 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+        20190124055310epsmtip28e5688612c352ecb5708b6aca93d3653~8swFc8y8k1958219582epsmtip2Z;
+        Thu, 24 Jan 2019 05:53:10 +0000 (GMT)
+Subject: Re: linux-next: build warning after merge of the extcon tree
+To:     Stephen Rothwell <sfr@canb.auug.org.au>
+Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Vijai Kumar K <vijaikumar.kanagarajan@gmail.com>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <fc9bc070-dfc1-8708-8c8d-56e6838b6c7a@samsung.com>
+Date:   Thu, 24 Jan 2019 14:53:09 +0900
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20190124144713.4330ec34@canb.auug.org.au>
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupik+LIzCtJLcpLzFFi42LZdlhTT/d4kGeMQVsXh8XlXXPYLA4ubGO0
+        2Lr3KrvFy/3TWR1YPBpv3GDz2DnrLrvH501yAcxR2TYZqYkpqUUKqXnJ+SmZeem2St7B8c7x
+        pmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QNuUFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnFJbZK
+        qQUpOQWWBXrFibnFpXnpesn5uVaGBgZGpkCFCdkZ7T3T2QvmslS8+XeOsYFxHXMXIyeHhICJ
+        xOxpSxm7GLk4hAR2MEpMurqNCcL5xCgx9etCsCohgW+MEpN/SsJ0LPq6A6poL6PEk31roJz3
+        jBIndr4C6xAWcJW4030fyObgEBHQljjwWwCkhllgBaPE1a/7mEBq2AS0JPa/uMEGYvMLKEpc
+        /fGYEcTmFbCTeNe1lQXEZhFQlTh2dRk7iC0qECHRcX81G0SNoMTJmU9YQOZzCphLrL6jABJm
+        FhCXuPVkPhOELS/RvHU21Jtn2CS2PBGEsF0ktk17xARhC0u8Or6FHcKWknjZ3wZlV0usPHmE
+        DeRmCYEORokt+y+wQiSMJfYvncwEspdZQFNi/S59iF18Eu++9rCChCUEeCU62oQgqpUlLj+4
+        C7VKUmJxeycbhO0hsXrOK9YJjIqzkDwzC8kHs5B8MAth2QJGllWMYqkFxbnpqcWGBcbIcb2J
+        EZwOtcx3MG4453OIUYCDUYmHl6PQI0aINbGsuDL3EKMEB7OSCK/rRbcYId6UxMqq1KL8+KLS
+        nNTiQ4ymwLCeyCwlmpwPTNV5JfGGpkbGxsYWJoZmpoaGSuK86x2cY4QE0hNLUrNTUwtSi2D6
+        mDg4pRoYme1vXFzc/+BJovql6SVTnkWqzH8+51ZvtIW9+yvPhKf+ymKTf6ioSDPtclGZGuvx
+        o+vStwotoUMb5XNa5lm/jHkZNXu2y7oop4/dU59WPz0Wq2rjzmW28L7p+3WaMsXfd345t/a2
+        2cyz1m5+1tt4rd3/Xs238HVz3XTd/H3ivbsXWiU65rPUKbEUZyQaajEXFScCALEn+vadAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsWy7bCSvO6xIM8Ygwsr5Swu75rDZnFwYRuj
+        xda9V9ktXu6fzurA4tF44wabx85Zd9k9Pm+SC2CO4rJJSc3JLEst0rdL4Mpo75nOXjCXpeLN
+        v3OMDYzrmLsYOTkkBEwkFn3dwQRiCwnsZpT4e7cEIi4pMe3iUaAaDiBbWOLw4eIuRi6gkreM
+        Ekd6T7KB1AgLuErc6b4PViMioC1x4LcASA2zwApGid4zJ9ghGroYJVYte8QC0sAmoCWx/8UN
+        sGZ+AUWJqz8eM4LYvAJ2Eu+6toLVsAioShy7uowdxBYViJA4+3IdVI2gxMmZT1hAlnEKmEus
+        vqMAYjILqEusnycEUsEsIC5x68l8JghbXqJ562zmCYzCs5A0z0LomIWkYxaSjgWMLKsYJVML
+        inPTc4sNC4zyUsv1ihNzi0vz0vWS83M3MYKjQktrB+OJE/GHGAU4GJV4eDkKPWKEWBPLiitz
+        DzFKcDArifC6XnSLEeJNSaysSi3Kjy8qzUktPsQozcGiJM4rn38sUkggPbEkNTs1tSC1CCbL
+        xMEp1cC42rJLL8VO7OHq3o6LrbH5C/KW5bEW3F3DmHPnVL7jisb1/wsuW/fpFTH3Nzf1ux/U
+        ufNG0tPP/KPyPc3HHAsUUouDpvRxOYrp3RL6+junIaY9Q3/9zx0fi50vrrq4Rbo0TX7aiW9v
+        y2Ns+GQ2NX5cFJI0zSThQaHE4qeL0zvN1LVzWNfPdVNiKc5INNRiLipOBADvk5qzhgIAAA==
+X-CMS-MailID: 20190124055310epcas1p4fd68081d1dc863a53d2be6017b0c2d2a
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190124034729epcas5p4a890f486e03e78432e58a773d7d20633
+References: <CGME20190124034729epcas5p4a890f486e03e78432e58a773d7d20633@epcas5p4.samsung.com>
+        <20190124144713.4330ec34@canb.auug.org.au>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The ax88772_bind() should return error code immediately when the PHY
-was not reset properly through ax88772a_hw_reset().
-Otherwise, The asix_get_phyid() will block when get the PHY 
-Identifier from the PHYSID1 MII registers through asix_mdio_read() 
-due to the PHY isn't ready. Furthermore, it will produce a lot of 
-error message cause system crash.As follows:
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
- reg index 0x0000: -71
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to send
- software reset: ffffffb9
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
- reg index 0x0000: -71
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to enable
- software MII access
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to read
- reg index 0x0000: -71
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
- reg index 0x0000: -71
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to enable
- software MII access
-asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to read
- reg index 0x0000: -71
-... 
+Hi Stephen,
 
-Signed-off-by: Zhang Run <zhang.run@zte.com.cn>
-Reviewed-by: Yang Wei <yang.wei9@zte.com.cn>
----
- drivers/net/usb/asix_devices.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+Thanks for the test and report. I'll fix it.
 
-diff --git a/drivers/net/usb/asix_devices.c b/drivers/net/usb/asix_devices.c
-index b654f05..3d93993 100644
---- a/drivers/net/usb/asix_devices.c
-+++ b/drivers/net/usb/asix_devices.c
-@@ -739,8 +739,13 @@ static int ax88772_bind(struct usbnet *dev, struct usb_interface *intf)
- 	asix_read_cmd(dev, AX_CMD_STATMNGSTS_REG, 0, 0, 1, &chipcode, 0);
- 	chipcode &= AX_CHIPCODE_MASK;
- 
--	(chipcode == AX_AX88772_CHIPCODE) ? ax88772_hw_reset(dev, 0) :
--					    ax88772a_hw_reset(dev, 0);
-+	ret = (chipcode == AX_AX88772_CHIPCODE) ? ax88772_hw_reset(dev, 0) :
-+						  ax88772a_hw_reset(dev, 0);
-+
-+	if (ret < 0) {
-+		netdev_dbg(dev->net, "Failed to reset AX88772: %d\n", ret);
-+		return ret;
-+	}
- 
- 	/* Read PHYID register *AFTER* the PHY was reset properly */
- 	phyid = asix_get_phyid(dev);
+On 19. 1. 24. 오후 12:47, Stephen Rothwell wrote:
+> Hi Chanwoo,
+> 
+> After merging the extcon tree, today's linux-next build (x86_64
+> allmodconfig) produced this warning:
+> 
+> WARNING: modpost: missing MODULE_LICENSE() in drivers/extcon/extcon-ptn5150.o
+> see include/linux/module.h for more information
+> 
+> Introduced by commit
+> 
+>   58963276749e ("extcon: Add support for ptn5150 extcon driver")
+> 
+
+
 -- 
-2.7.4
-
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
