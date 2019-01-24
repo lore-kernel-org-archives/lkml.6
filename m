@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA11FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DA6C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9D47218F0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35AA5218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358932;
-	bh=+J7yFX+hkyxoeehimW7Xq5c5zY0r/LSTBvZDXqbSpxE=;
+	s=default; t=1548358943;
+	bh=kdFyAp5g3lGGkCspYJb13cx2eWwfPUhO5UoRLys4JII=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RlXlud8l1nnPXV7b1qWiWkL3wT1WFC7qnv7EUrR0DJnveDECOnU4KdumrJNmoSr2d
-	 pCxawcqIL2cKQd7tDLwfqRZ4sx9V4MWBlL8krc/OucqgyWOuK0Ve88QxMNeWFhLLiN
-	 MPfKhvbI6yC/KMv4QWyJ9pR9SDyrmbVeAT3I4sto=
+	b=0xYdpQzoWHbSdiMAStygso4ek3KMp2evC9Rx1ue+Bhn5u6Qdvxz3EqWZf5+bhfEdh
+	 9AZdilwp269tNLP4+JTH9iuYn8PC6JwPdAuCCOpsyfuC/n4X7tLqv++dEdLPJledQy
+	 Oi9XdS4L2oZmGkuvJW5fIEFk6oPI17NPwpY3DDfY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387743AbfAXTmL (ORCPT
+        id S2387765AbfAXTmV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:42:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42598 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:42:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42648 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733246AbfAXTmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:42:09 -0500
+        id S2387741AbfAXTmM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:42:12 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 526BE218A2;
-        Thu, 24 Jan 2019 19:42:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F28B3218D9;
+        Thu, 24 Jan 2019 19:42:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358928;
-        bh=+J7yFX+hkyxoeehimW7Xq5c5zY0r/LSTBvZDXqbSpxE=;
+        s=default; t=1548358931;
+        bh=kdFyAp5g3lGGkCspYJb13cx2eWwfPUhO5UoRLys4JII=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yG9ogYyr14IFkxVdYkDBr7EyIcfjcZCCdYb61MOJZi/+ppUOoeAFHJfN1Q48FrDqx
-         /geD9Edmxao7GPKMOI5fqJEpCgEKKLRi9VF6TFhkCACTl9xdk6kRMZCo10ZIZdcc5M
-         01RABRZKHTtrt63La836CN9s0x3bAZoq4F9j918w=
+        b=rWzPwKthlfj0ArMj85i8Cwa4EO8dKFY6Mh4Aul1hS5ZEY3et18xK1irAu+/am85CF
+         FzgUHoCHPWOlbNCx4C10KDDULO3v25wBC1V32yWfX46Ciw65VoF8Ru0Truzw9KNBjx
+         M2P5MYO/e6hV6pJXV+1s4fBsNBWMfIxYy9HqNIyQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>,
-        Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 041/127] usb: gadget: udc: renesas_usb3: add a safety connection way for forced_b_device
-Date:   Thu, 24 Jan 2019 20:19:47 +0100
-Message-Id: <20190124190214.028104617@linuxfoundation.org>
+        stable@vger.kernel.org, Anatolij Gustschin <agust@denx.de>,
+        Alan Tull <atull@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 042/127] fpga: altera-cvp: fix probing for multiple FPGAs on the bus
+Date:   Thu, 24 Jan 2019 20:19:48 +0100
+Message-Id: <20190124190214.063749243@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,88 +65,108 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit ceb94bc52c437463f0903e61060a94a2226fb672 ]
+[ Upstream commit 30522a951f9d02f261d0697c35cb42205b1fae17 ]
 
-This patch adds a safety connection way for "forced_b_device" with
-"workaround_for_vbus" like below:
+Currently registering CvP managers works only for first probed CvP
+device, for all other devices it is refused due to duplicated chkcfg
+sysfs entry:
 
-< Example for R-Car E3 Ebisu >
- # modprobe <any usb gadget driver>
- # echo 1 > /sys/kernel/debug/ee020000.usb/b_device
- (connect a usb cable to host side.)
- # echo 2 > /sys/kernel/debug/ee020000.usb/b_device
+fpga_manager fpga3: Altera CvP FPGA Manager @0000:0c:00.0 registered
+sysfs: cannot create duplicate filename '/bus/pci/drivers/altera-cvp/chkcfg'
+CPU: 0 PID: 3808 Comm: bash Tainted: G           O      4.19.0-custom+ #5
+Call Trace:
+  dump_stack+0x46/0x5b
+  sysfs_warn_dup+0x53/0x60
+  sysfs_add_file_mode_ns+0x16d/0x180
+  sysfs_create_file_ns+0x51/0x60
+  altera_cvp_probe+0x16f/0x2a0 [altera_cvp]
+  local_pci_probe+0x3f/0xa0
+  ? pci_match_device+0xb1/0xf0
+  pci_device_probe+0x116/0x170
+  really_probe+0x21b/0x2c0
+  driver_probe_device+0x4b/0xe0
+  bind_store+0xcb/0x130
+  kernfs_fop_write+0xfd/0x180
+  __vfs_write+0x21/0x150
+  ? selinux_file_permission+0xdc/0x130
+  vfs_write+0xa8/0x1a0
+  ? find_vma+0xd/0x60
+  ksys_write+0x3d/0x90
+  do_syscall_64+0x44/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  ...
+ altera-cvp 0000:0c:00.0: Can't create sysfs chkcfg file
+ fpga_manager fpga3: fpga_mgr_unregister Altera CvP FPGA Manager @0000:0c:00.0
 
-Previous code should have connected a usb cable before the "b_device"
-is set to 1 on the Ebisu board. However, if xHCI driver on the board
-is probed, it causes some troubles:
- - Conflicts USB VBUS/signals between the board and another host.
- - "Cannot enable. Maybe the USB cable is bad?" might happen on
-   both the board and another host with a usb hub.
- - Cannot enumerate a usb gadget correctly because an interruption
-   of VBUS change happens unexpectedly.
+Move chkcfg creation to module init as suggested by Alan.
 
-Reported-by: Kazuya Mizuguchi <kazuya.mizuguchi.ks@renesas.com>
-Signed-off-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
+Acked-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/gadget/udc/renesas_usb3.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ drivers/fpga/altera-cvp.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/usb/gadget/udc/renesas_usb3.c b/drivers/usb/gadget/udc/renesas_usb3.c
-index cdffbd1e0316..6e34f9594159 100644
---- a/drivers/usb/gadget/udc/renesas_usb3.c
-+++ b/drivers/usb/gadget/udc/renesas_usb3.c
-@@ -358,6 +358,7 @@ struct renesas_usb3 {
- 	bool extcon_host;		/* check id and set EXTCON_USB_HOST */
- 	bool extcon_usb;		/* check vbus and set EXTCON_USB */
- 	bool forced_b_device;
-+	bool start_to_connect;
- };
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 610a1558e0ed..d9fa7d4bf11f 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -466,14 +466,6 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 	if (ret)
+ 		goto err_unmap;
  
- #define gadget_to_renesas_usb3(_gadget)	\
-@@ -476,7 +477,8 @@ static void usb3_init_axi_bridge(struct renesas_usb3 *usb3)
- static void usb3_init_epc_registers(struct renesas_usb3 *usb3)
- {
- 	usb3_write(usb3, ~0, USB3_USB_INT_STA_1);
--	usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
-+	if (!usb3->workaround_for_vbus)
-+		usb3_enable_irq_1(usb3, USB_INT_1_VBUS_CNG);
+-	ret = driver_create_file(&altera_cvp_driver.driver,
+-				 &driver_attr_chkcfg);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Can't create sysfs chkcfg file\n");
+-		fpga_mgr_unregister(mgr);
+-		goto err_unmap;
+-	}
+-
+ 	return 0;
+ 
+ err_unmap:
+@@ -491,7 +483,6 @@ static void altera_cvp_remove(struct pci_dev *pdev)
+ 	struct altera_cvp_conf *conf = mgr->priv;
+ 	u16 cmd;
+ 
+-	driver_remove_file(&altera_cvp_driver.driver, &driver_attr_chkcfg);
+ 	fpga_mgr_unregister(mgr);
+ 	pci_iounmap(pdev, conf->map);
+ 	pci_release_region(pdev, CVP_BAR);
+@@ -500,7 +491,30 @@ static void altera_cvp_remove(struct pci_dev *pdev)
+ 	pci_write_config_word(pdev, PCI_COMMAND, cmd);
  }
  
- static bool usb3_wakeup_usb2_phy(struct renesas_usb3 *usb3)
-@@ -700,8 +702,7 @@ static void usb3_mode_config(struct renesas_usb3 *usb3, bool host, bool a_dev)
- 	usb3_set_mode_by_role_sw(usb3, host);
- 	usb3_vbus_out(usb3, a_dev);
- 	/* for A-Peripheral or forced B-device mode */
--	if ((!host && a_dev) ||
--	    (usb3->workaround_for_vbus && usb3->forced_b_device))
-+	if ((!host && a_dev) || usb3->start_to_connect)
- 		usb3_connect(usb3);
- 	spin_unlock_irqrestore(&usb3->lock, flags);
- }
-@@ -2432,7 +2433,11 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
- 	if (copy_from_user(&buf, ubuf, min_t(size_t, sizeof(buf) - 1, count)))
- 		return -EFAULT;
+-module_pci_driver(altera_cvp_driver);
++static int __init altera_cvp_init(void)
++{
++	int ret;
++
++	ret = pci_register_driver(&altera_cvp_driver);
++	if (ret)
++		return ret;
++
++	ret = driver_create_file(&altera_cvp_driver.driver,
++				 &driver_attr_chkcfg);
++	if (ret)
++		pr_warn("Can't create sysfs chkcfg file\n");
++
++	return 0;
++}
++
++static void __exit altera_cvp_exit(void)
++{
++	driver_remove_file(&altera_cvp_driver.driver, &driver_attr_chkcfg);
++	pci_unregister_driver(&altera_cvp_driver);
++}
++
++module_init(altera_cvp_init);
++module_exit(altera_cvp_exit);
  
--	if (!strncmp(buf, "1", 1))
-+	usb3->start_to_connect = false;
-+	if (usb3->workaround_for_vbus && usb3->forced_b_device &&
-+	    !strncmp(buf, "2", 1))
-+		usb3->start_to_connect = true;
-+	else if (!strncmp(buf, "1", 1))
- 		usb3->forced_b_device = true;
- 	else
- 		usb3->forced_b_device = false;
-@@ -2440,7 +2445,7 @@ static ssize_t renesas_usb3_b_device_write(struct file *file,
- 	if (usb3->workaround_for_vbus)
- 		usb3_disconnect(usb3);
- 
--	/* Let this driver call usb3_connect() anyway */
-+	/* Let this driver call usb3_connect() if needed */
- 	usb3_check_id(usb3);
- 
- 	return count;
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Anatolij Gustschin <agust@denx.de>");
 -- 
 2.19.1
 
