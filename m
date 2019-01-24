@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83C37C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A687C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53F4E20663
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69A7320663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358779;
-	bh=2AohmcapwSy+Ra0GrwKgeNvC57eG9SuX6CVpvfPEuK8=;
+	s=default; t=1548358783;
+	bh=1zVr9yVFuEKfhwUN+BuiHUEs0Km+TODmAUd3dD1JZa0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qmR1amt3RP9uDVqwEgsMJX4fgaiCPu++lHSeVhMYZvN9FztxkF0JTSXYOw2clS76d
-	 Rrv1Q5cdXNxN4WcB0gpvRwTzjAwS9sZhxzlDf/fy3H8ZWQQ8uWqyobQH9/xHZREiHe
-	 fwjwudjUf1PFSCr2zzGnsKgA2gqIAtOV4K5kjQhs=
+	b=sqs2Q4UysQZpy6RcopUklcoAo+pypuosS2QuUorYYn+uVzljpnKhDcmB9fUuWtLiI
+	 00Hl2Ik6P5xfOtEqKzwfLQSDfxNLP6Wu7kN5dPjBjyglClnamP06VG1HOUd4sT+VCD
+	 gx2uklRv/zkJIyby+1S3E8RHU8+vg8CSmAoUdDxc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733103AbfAXTjh (ORCPT
+        id S1730790AbfAXTjl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:39:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39732 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:39:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39786 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733091AbfAXTjf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:39:35 -0500
+        id S1733098AbfAXTji (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:39:38 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E6EA520663;
-        Thu, 24 Jan 2019 19:39:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9721E218D0;
+        Thu, 24 Jan 2019 19:39:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358774;
-        bh=2AohmcapwSy+Ra0GrwKgeNvC57eG9SuX6CVpvfPEuK8=;
+        s=default; t=1548358777;
+        bh=1zVr9yVFuEKfhwUN+BuiHUEs0Km+TODmAUd3dD1JZa0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NiWcu6aR4PgWpeXzP+O6ctPV4A5wn2Fhax0E525UMmndh2wxXkVvehENvoWfta3tA
-         rJeZzor8hE2VcRWLpQb86GPcJ4vv5CR3Z9rFBVBDWCKgTLpTQscdsEs9vhVWCHaWKy
-         WWUZgrVAPE6qjrnaM3a6gUjzBM3tcPADUjIrL9aM=
+        b=XIM2vHT6ZpeGIoopbguUYQNM9gL+uZc70XJoe2MJgzAA3J13R0+VSd/+2OJwyJg/D
+         Rjegogg7mJSvIzS77Dhc60B/2zF/9m/YAN72PyV3iI/1L2tRJlbXaaQTzk/jNEPMDp
+         Wvz3QIDofGqKjVsiWhBO6Pu9ShL4dK0+BmwwpVhk=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Richard Cochran <richardcochran@gmail.com>,
+        Miroslav Lichvar <mlichvar@redhat.com>,
+        Jacob Keller <jacob.e.keller@intel.com>,
+        Aaron Brown <aaron.f.brown@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 021/127] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
-Date:   Thu, 24 Jan 2019 20:19:27 +0100
-Message-Id: <20190124190213.130063641@linuxfoundation.org>
+Subject: [PATCH 4.20 022/127] e1000e: allow non-monotonic SYSTIM readings
+Date:   Thu, 24 Jan 2019 20:19:28 +0100
+Message-Id: <20190124190213.183374500@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -67,129 +69,69 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
+[ Upstream commit e1f65b0d70e9e5c80e15105cd96fa00174d7c436 ]
 
-In the past, Asus firmwares would change the panel backlight directly
-through the EC when the display off hotkey (Fn+F7) was pressed, and
-only notify the OS of such change, with 0x33 when the LCD was ON and
-0x34 when the LCD was OFF. These are currently mapped to
-KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
+It seems with some NICs supported by the e1000e driver a SYSTIM reading
+may occasionally be few microseconds before the previous reading and if
+enabled also pass e1000e_sanitize_systim() without reaching the maximum
+number of rereads, even if the function is modified to check three
+consecutive readings (i.e. it doesn't look like a double read error).
+This causes an underflow in the timecounter and the PHC time jumps hours
+ahead.
 
-Most recently the EC on Asus most machines lost ability to toggle the
-LCD backlight directly, but unless the OS informs the firmware it is
-going to handle the display toggle hotkey events, the firmware still
-tries change the brightness through the EC, to no effect. The end result
-is a long list (at Endless we counted 11) of Asus laptop models where
-the display toggle hotkey does not perform any action. Our firmware
-engineers contacts at Asus were surprised that there were still machines
-out there with the old behavior.
+This was observed on 82574, I217 and I219. The fastest way to reproduce
+it is to run a program that continuously calls the PTP_SYS_OFFSET ioctl
+on the PHC.
 
-Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
-tells the firmware that it should let the OS handle the display toggle
-event, in which case it will simply notify the OS of a key press with
-0x35, as shown by the DSDT excerpts bellow.
+Modify e1000e_phc_gettime() to use timecounter_cyc2time() instead of
+timecounter_read() in order to allow non-monotonic SYSTIM readings and
+prevent the PHC from jumping.
 
- Scope (_SB)
- {
-     (...)
-
-     Device (ATKD)
-     {
-         (...)
-
-         Name (_WDG, Buffer (0x28)
-         {
-             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
-             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
-             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
-             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
-             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
-         })
-         Method (WMNB, 3, Serialized)
-         {
-             CreateDWordField (Arg2, Zero, IIA0)
-             CreateDWordField (Arg2, 0x04, IIA1)
-             Local0 = (Arg1 & 0xFFFFFFFF)
-
-             (...)
-
-             If ((Local0 == 0x53564544))
-             {
-                 (...)
-
-                 If ((IIA0 == 0x00050011))
-                 {
-                     If ((IIA1 == 0x02))
-                     {
-                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
-                         ^^PCI0.SBRG.EC0.BLCT = One
-                     }
-
-                     Return (One)
-                 }
-             }
-             (...)
-         }
-         (...)
-     }
-     (...)
- }
- (...)
-
- Scope (_SB.PCI0.SBRG.EC0)
- {
-     (...)
-
-     Name (BLCT, Zero)
-
-     (...)
-
-     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
-     {
-         If ((BLCT == Zero))
-         {
-             Local0 = One
-             Local0 = RPIN (0x72)
-             Local0 ^= One
-             SPIN (0x72, Local0)
-             If (ATKP)
-             {
-                 Local0 = (0x34 - Local0)
-                 ^^^^ATKD.IANE (Local0)
-             }
-         }
-         ElseIf ((BLCT == One))
-         {
-             If (ATKP)
-             {
-                 ^^^^ATKD.IANE (0x35)
-             }
-         }
-     }
-     (...)
- }
-
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
+Acked-by: Jacob Keller <jacob.e.keller@intel.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/asus-wmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/intel/e1000e/ptp.c | 13 ++++++++++---
+ 1 file changed, 10 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index c285a16675ee..37b5de541270 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -2131,7 +2131,8 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		err = asus_wmi_backlight_init(asus);
- 		if (err && err != -ENODEV)
- 			goto fail_backlight;
--	}
-+	} else
-+		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
+diff --git a/drivers/net/ethernet/intel/e1000e/ptp.c b/drivers/net/ethernet/intel/e1000e/ptp.c
+index 37c76945ad9b..e1f821edbc21 100644
+--- a/drivers/net/ethernet/intel/e1000e/ptp.c
++++ b/drivers/net/ethernet/intel/e1000e/ptp.c
+@@ -173,10 +173,14 @@ static int e1000e_phc_gettime(struct ptp_clock_info *ptp, struct timespec64 *ts)
+ 	struct e1000_adapter *adapter = container_of(ptp, struct e1000_adapter,
+ 						     ptp_clock_info);
+ 	unsigned long flags;
+-	u64 ns;
++	u64 cycles, ns;
  
- 	status = wmi_install_notify_handler(asus->driver->event_guid,
- 					    asus_wmi_notify, asus);
+ 	spin_lock_irqsave(&adapter->systim_lock, flags);
+-	ns = timecounter_read(&adapter->tc);
++
++	/* Use timecounter_cyc2time() to allow non-monotonic SYSTIM readings */
++	cycles = adapter->cc.read(&adapter->cc);
++	ns = timecounter_cyc2time(&adapter->tc, cycles);
++
+ 	spin_unlock_irqrestore(&adapter->systim_lock, flags);
+ 
+ 	*ts = ns_to_timespec64(ns);
+@@ -232,9 +236,12 @@ static void e1000e_systim_overflow_work(struct work_struct *work)
+ 						     systim_overflow_work.work);
+ 	struct e1000_hw *hw = &adapter->hw;
+ 	struct timespec64 ts;
++	u64 ns;
+ 
+-	adapter->ptp_clock_info.gettime64(&adapter->ptp_clock_info, &ts);
++	/* Update the timecounter */
++	ns = timecounter_read(&adapter->tc);
+ 
++	ts = ns_to_timespec64(ns);
+ 	e_dbg("SYSTIM overflow check at %lld.%09lu\n",
+ 	      (long long) ts.tv_sec, ts.tv_nsec);
+ 
 -- 
 2.19.1
 
