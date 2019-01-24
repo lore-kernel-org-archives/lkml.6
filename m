@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56F23C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 645C9C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 179EF218FE
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3012E218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:27:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358059;
-	bh=t4GXZGSKgsjam+XzK0DgQOJATIfKkKet/TTtIXgTxYw=;
+	s=default; t=1548358066;
+	bh=DLvlEiuI5vpcZvbEdA8M1nW09adoOW0Jzqu50juQV6o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=WNyv/ywvSYDKh91hVgbVXtmJICNPKJJ7bz0+IDrEu0O/niioddTy4fOldxnBNC1B7
-	 h1De6FYaYNq1J85dD5iyA2YDGMTU7/TOEGCsdlTQ+/2SByO4X4Jql4KsNkLiYyIIAz
-	 gKCzjoV80SemCyIQjW9XKid+9PxIc3C6/liAJ7/I=
+	b=F1b+QYCYp3cfo6DDdF94lsz/40Z/vXVT+8udPnblEZB0w7NMngzQTop68hmY/+82b
+	 Qg6hA5jQDNGpwZhetFBGEK00BHhzAs/ZG1JLC+Qf/1PxAPsmXWpTryHLdsbMxHyRFX
+	 1Nx2tZ49KXRz9T4f2D0bri6ICWTZtdYo9/V6AQiU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729924AbfAXT1i (ORCPT
+        id S1730816AbfAXT1p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:27:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53828 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:27:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54000 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730783AbfAXT1d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:27:33 -0500
+        id S1730264AbfAXT1m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:27:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F9F6218A6;
-        Thu, 24 Jan 2019 19:27:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0C0321901;
+        Thu, 24 Jan 2019 19:27:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358052;
-        bh=t4GXZGSKgsjam+XzK0DgQOJATIfKkKet/TTtIXgTxYw=;
+        s=default; t=1548358061;
+        bh=DLvlEiuI5vpcZvbEdA8M1nW09adoOW0Jzqu50juQV6o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=swVbZV7bDrC+W4b5H4cF9AJoxIWzrCrzSWDF8Bh9UQdIkTNx+ZJT6hDpCDXCzIcyH
-         pvvWCjrg48168MI+lNoo4itSgz7Q4qyRw2Q4pOzDsTqCXqxiJNGPtaBGD8oatxIcQh
-         Pjfu0uo+IeZ7iNDBmXRQafNGhqPbdjKkPNfZOcI0=
+        b=yRrOvGDY8tjVZqotB7Svj95+UD9E2S6RCrxNjKpkOb19LyFm/mCzWb1aEpIg/nTXe
+         RLL3YMdC98zyIleMhcE4oQAQp4/BWneklrPEVrw03qjU+AOpIHsfED5aaO4Wq46T1f
+         gKolqhoPZ2MNq+Kbu+IYOwmY2x6QT4m9zEFOaCGQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, JianJhen Chen <kchen@synology.com>,
-        JinLin Chen <jlchen@synology.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 043/104] net: bridge: fix a bug on using a neighbour cache entry without checking its state
-Date:   Thu, 24 Jan 2019 20:19:32 +0100
-Message-Id: <20190124190200.217302179@linuxfoundation.org>
+        stable@vger.kernel.org, Harsh Jain <harsh@chelsio.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>
+Subject: [PATCH 4.4 046/104] crypto: authencesn - Avoid twice completion call in decrypt path
+Date:   Thu, 24 Jan 2019 20:19:35 +0100
+Message-Id: <20190124190200.627649246@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -65,41 +65,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: JianJhen Chen <kchen@synology.com>
+From: Harsh Jain <harsh@chelsio.com>
 
-[ Upstream commit 4c84edc11b76590859b1e45dd676074c59602dc4 ]
+commit a7773363624b034ab198c738661253d20a8055c2 upstream.
 
-When handling DNAT'ed packets on a bridge device, the neighbour cache entry
-from lookup was used without checking its state. It means that a cache entry
-in the NUD_STALE state will be used directly instead of entering the NUD_DELAY
-state to confirm the reachability of the neighbor.
+Authencesn template in decrypt path unconditionally calls aead_request_complete
+after ahash_verify which leads to following kernel panic in after decryption.
 
-This problem becomes worse after commit 2724680bceee ("neigh: Keep neighbour
-cache entries if number of them is small enough."), since all neighbour cache
-entries in the NUD_STALE state will be kept in the neighbour table as long as
-the number of cache entries does not exceed the value specified in gc_thresh1.
+[  338.539800] BUG: unable to handle kernel NULL pointer dereference at 0000000000000004
+[  338.548372] PGD 0 P4D 0
+[  338.551157] Oops: 0000 [#1] SMP PTI
+[  338.554919] CPU: 0 PID: 0 Comm: swapper/0 Kdump: loaded Tainted: G        W I       4.19.7+ #13
+[  338.564431] Hardware name: Supermicro X8ST3/X8ST3, BIOS 2.0        07/29/10
+[  338.572212] RIP: 0010:esp_input_done2+0x350/0x410 [esp4]
+[  338.578030] Code: ff 0f b6 68 10 48 8b 83 c8 00 00 00 e9 8e fe ff ff 8b 04 25 04 00 00 00 83 e8 01 48 98 48 8b 3c c5 10 00 00 00 e9 f7 fd ff ff <8b> 04 25 04 00 00 00 83 e8 01 48 98 4c 8b 24 c5 10 00 00 00 e9 3b
+[  338.598547] RSP: 0018:ffff911c97803c00 EFLAGS: 00010246
+[  338.604268] RAX: 0000000000000002 RBX: ffff911c4469ee00 RCX: 0000000000000000
+[  338.612090] RDX: 0000000000000000 RSI: 0000000000000130 RDI: ffff911b87c20400
+[  338.619874] RBP: 0000000000000000 R08: ffff911b87c20498 R09: 000000000000000a
+[  338.627610] R10: 0000000000000001 R11: 0000000000000004 R12: 0000000000000000
+[  338.635402] R13: ffff911c89590000 R14: ffff911c91730000 R15: 0000000000000000
+[  338.643234] FS:  0000000000000000(0000) GS:ffff911c97800000(0000) knlGS:0000000000000000
+[  338.652047] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[  338.658299] CR2: 0000000000000004 CR3: 00000001ec20a000 CR4: 00000000000006f0
+[  338.666382] Call Trace:
+[  338.669051]  <IRQ>
+[  338.671254]  esp_input_done+0x12/0x20 [esp4]
+[  338.675922]  chcr_handle_resp+0x3b5/0x790 [chcr]
+[  338.680949]  cpl_fw6_pld_handler+0x37/0x60 [chcr]
+[  338.686080]  chcr_uld_rx_handler+0x22/0x50 [chcr]
+[  338.691233]  uldrx_handler+0x8c/0xc0 [cxgb4]
+[  338.695923]  process_responses+0x2f0/0x5d0 [cxgb4]
+[  338.701177]  ? bitmap_find_next_zero_area_off+0x3a/0x90
+[  338.706882]  ? matrix_alloc_area.constprop.7+0x60/0x90
+[  338.712517]  ? apic_update_irq_cfg+0x82/0xf0
+[  338.717177]  napi_rx_handler+0x14/0xe0 [cxgb4]
+[  338.722015]  net_rx_action+0x2aa/0x3e0
+[  338.726136]  __do_softirq+0xcb/0x280
+[  338.730054]  irq_exit+0xde/0xf0
+[  338.733504]  do_IRQ+0x54/0xd0
+[  338.736745]  common_interrupt+0xf/0xf
 
-This commit validates the state of a neighbour cache entry before using
-the entry.
-
-Signed-off-by: JianJhen Chen <kchen@synology.com>
-Reviewed-by: JinLin Chen <jlchen@synology.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 104880a6b470 ("crypto: authencesn - Convert to new AEAD...")
+Signed-off-by: Harsh Jain <harsh@chelsio.com>
+Cc: stable@vger.kernel.org
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+
 ---
- net/bridge/br_netfilter_hooks.c |    2 +-
+ crypto/authencesn.c |    2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
---- a/net/bridge/br_netfilter_hooks.c
-+++ b/net/bridge/br_netfilter_hooks.c
-@@ -267,7 +267,7 @@ int br_nf_pre_routing_finish_bridge(stru
- 		struct nf_bridge_info *nf_bridge = nf_bridge_info_get(skb);
- 		int ret;
+--- a/crypto/authencesn.c
++++ b/crypto/authencesn.c
+@@ -276,7 +276,7 @@ static void authenc_esn_verify_ahash_don
+ 	struct aead_request *req = areq->data;
  
--		if (neigh->hh.hh_len) {
-+		if ((neigh->nud_state & NUD_CONNECTED) && neigh->hh.hh_len) {
- 			neigh_hh_bridge(&neigh->hh, skb);
- 			skb->dev = nf_bridge->physindev;
- 			ret = br_handle_frame_finish(net, sk, skb);
+ 	err = err ?: crypto_authenc_esn_decrypt_tail(req, 0);
+-	aead_request_complete(req, err);
++	authenc_esn_request_complete(req, err);
+ }
+ 
+ static int crypto_authenc_esn_decrypt(struct aead_request *req)
 
 
