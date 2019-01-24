@@ -4,54 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A30FC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3EF2C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A639218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92BC3218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:33:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358397;
-	bh=IZd+rWVFhfmTDWUPhHtjUtuWgakP+kYh2HLd0bScYuA=;
+	s=default; t=1548358400;
+	bh=HeNFY3w1NbxZym8f7Wxqq6z7CcLL4PXbW+YrOIchl4w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tBJA9FFk5whAUv3R14KtiCgl+iKcm89G/N+EOpcHGSpijkUG/vY0DKG+UxYVsUvK6
-	 vT/NagKif4SmcMWk5k5kHuiCcrC004LoR3xvHEx5ElVpXVaJnYJnsNE3XIG2V424yb
-	 p6yMVbANiwM51ytcPSEUERtraqEbSulkU1pHJ/BE=
+	b=FaUg4U7Mb/3RlV8cWZlOC5qXewCVlz5z367vKlRimvfdgK6tFq5PfiwOJCd9Uej8v
+	 k8D+S7oESVKe1EhHQmOHb99sl0DeSRToOFtjI3IYSqgNp8Oy3rOvgsCfRmyEHNp5Zt
+	 6ZzUjMlxV8Pm+4aGSiJyoRZPrJLXzjc/y7JR8k3M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731315AbfAXTdP (ORCPT
+        id S1731983AbfAXTdS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:33:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32996 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:33:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730946AbfAXTdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:33:12 -0500
+        id S1731282AbfAXTdP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:15 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EACEA218D4;
-        Thu, 24 Jan 2019 19:33:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7D891218FC;
+        Thu, 24 Jan 2019 19:33:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358391;
-        bh=IZd+rWVFhfmTDWUPhHtjUtuWgakP+kYh2HLd0bScYuA=;
+        s=default; t=1548358394;
+        bh=HeNFY3w1NbxZym8f7Wxqq6z7CcLL4PXbW+YrOIchl4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cOzkKrAiVhpYqALtFOfOPScOlKfaWpJVe7+CFGFx6KnqxFuSG/kbSPlb4sFFRSMpz
-         AJVGasb8vPVg0I8n+OkYGgfVkkC6UZKb+u8/76esjtXfVZjmAQCt9RFdXA+l91TfGy
-         1QlRgNWft02fgLOXtX6YGbV6lKbe3NsptxK14iyI=
+        b=wbWXSV/VxwZl9MIkkBSX2REwJNLPZm/mXsNim7uyb2lEMKBvaSf8pVawVWkbijdWt
+         Jj0/k8o5N8jx8HnWFxI4WeuVyMLsZXm0x5uf0nta0xuGphPr63sX5DYdDvh4B4xCPL
+         Ev0Yes6052GqjMbS/vcI0137m9mnxddBeGVFrgok=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Aaron Lu <aaron.lu@intel.com>,
+        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
+        Jan Kara <jack@suse.cz>,
+        Dan Williams <dan.j.williams@intel.com>,
+        David Rientjes <rientjes@google.com>,
+        Mike Rapoport <rppt@linux.ibm.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Paul Oppenheimer <bepvte@gmail.com>,
+        William Kucharski <william.kucharski@oracle.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Vasily Averin <vvs@virtuozzo.com>,
-        Huang Ying <ying.huang@intel.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 56/63] mm/swap: use nr_node_ids for avail_lists in swap_info_struct
-Date:   Thu, 24 Jan 2019 20:20:45 +0100
-Message-Id: <20190124190201.924268856@linuxfoundation.org>
+Subject: [PATCH 4.14 57/63] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
+Date:   Thu, 24 Jan 2019 20:20:46 +0100
+Message-Id: <20190124190202.007449938@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -70,93 +74,104 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 66f71da9dd38af17dc17209cdde7987d4679a699 ]
+[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
 
-Since a2468cc9bfdf ("swap: choose swap device according to numa node"),
-avail_lists field of swap_info_struct is changed to an array with
-MAX_NUMNODES elements.  This made swap_info_struct size increased to 40KiB
-and needs an order-4 page to hold it.
+Patch series "THP eligibility reporting via proc".
 
-This is not optimal in that:
-1 Most systems have way less than MAX_NUMNODES(1024) nodes so it
-  is a waste of memory;
-2 It could cause swapon failure if the swap device is swapped on
-  after system has been running for a while, due to no order-4
-  page is available as pointed out by Vasily Averin.
+This series of three patches aims at making THP eligibility reporting much
+more robust and long term sustainable.  The trigger for the change is a
+regression report [2] and the long follow up discussion.  In short the
+specific application didn't have good API to query whether a particular
+mapping can be backed by THP so it has used VMA flags to workaround that.
+These flags represent a deep internal state of VMAs and as such they
+should be used by userspace with a great deal of caution.
 
-Solve the above two issues by using nr_node_ids(which is the actual
-possible node number the running system has) for avail_lists instead of
-MAX_NUMNODES.
+A similar has happened for [3] when users complained that VM_MIXEDMAP is
+no longer set on DAX mappings.  Again a lack of a proper API led to an
+abuse.
 
-nr_node_ids is unknown at compile time so can't be directly used when
-declaring this array.  What I did here is to declare avail_lists as zero
-element array and allocate space for it when allocating space for
-swap_info_struct.  The reason why keep using array but not pointer is
-plist_for_each_entry needs the field to be part of the struct, so pointer
-will not work.
+The first patch in the series tries to emphasise that that the semantic of
+flags might change and any application consuming those should be really
+careful.
 
-This patch is on top of Vasily Averin's fix commit.  I think the use of
-kvzalloc for swap_info_struct is still needed in case nr_node_ids is
-really big on some systems.
+The remaining two patches provide a more suitable interface to address [2]
+and provide a consistent API to query the THP status both for each VMA and
+process wide as well.  [1]
 
-Link: http://lkml.kernel.org/r/20181115083847.GA11129@intel.com
-Signed-off-by: Aaron Lu <aaron.lu@intel.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Vasily Averin <vvs@virtuozzo.com>
-Cc: Huang Ying <ying.huang@intel.com>
+http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
+http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+
+This patch (of 3):
+
+Even though vma flags exported via /proc/<pid>/smaps are explicitly
+documented to be not guaranteed for future compatibility the warning
+doesn't go far enough because it doesn't mention semantic changes to those
+flags.  And they are important as well because these flags are a deep
+implementation internal to the MM code and the semantic might change at
+any time.
+
+Let's consider two recent examples:
+http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
+: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
+: mean time certain customer of ours started poking into /proc/<pid>/smaps
+: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
+: flags, the application just fails to start complaining that DAX support is
+: missing in the kernel.
+
+http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
+: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
+: introduced a regression in that userspace cannot always determine the set
+: of vmas where thp is ineligible.
+: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
+: to determine if a vma is eligible to be backed by hugepages.
+: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
+: be disabled and emit "nh" as a flag for the corresponding vmas as part of
+: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
+: flag and "nh" is not emitted.
+: This causes smaps parsing libraries to assume a vma is eligible for thp
+: and ends up puzzling the user on why its memory is not backed by thp.
+
+In both cases userspace was relying on a semantic of a specific VMA flag.
+The primary reason why that happened is a lack of a proper interface.
+While this has been worked on and it will be fixed properly, it seems that
+our wording could see some refinement and be more vocal about semantic
+aspect of these flags as well.
+
+Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
+Signed-off-by: Michal Hocko <mhocko@suse.com>
+Acked-by: Jan Kara <jack@suse.cz>
+Acked-by: Dan Williams <dan.j.williams@intel.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Paul Oppenheimer <bepvte@gmail.com>
+Cc: William Kucharski <william.kucharski@oracle.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/swap.h | 11 ++++++++++-
- mm/swapfile.c        |  3 ++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+ Documentation/filesystems/proc.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index f02fb5db8914..4fd1ab9565ba 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -231,7 +231,6 @@ struct swap_info_struct {
- 	unsigned long	flags;		/* SWP_USED etc: see above */
- 	signed short	prio;		/* swap priority of this type */
- 	struct plist_node list;		/* entry in swap_active_head */
--	struct plist_node avail_lists[MAX_NUMNODES];/* entry in swap_avail_heads */
- 	signed char	type;		/* strange name for an index */
- 	unsigned int	max;		/* extent of the swap_map */
- 	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
-@@ -272,6 +271,16 @@ struct swap_info_struct {
- 					 */
- 	struct work_struct discard_work; /* discard worker */
- 	struct swap_cluster_list discard_clusters; /* discard clusters list */
-+	struct plist_node avail_lists[0]; /*
-+					   * entries in swap_avail_heads, one
-+					   * entry per node.
-+					   * Must be last as the number of the
-+					   * array is nr_node_ids, which is not
-+					   * a fixed value so have to allocate
-+					   * dynamically.
-+					   * And it has to be an array so that
-+					   * plist_for_each_* can work.
-+					   */
- };
+diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
+index adba21b5ada7..4cee34ce496e 100644
+--- a/Documentation/filesystems/proc.txt
++++ b/Documentation/filesystems/proc.txt
+@@ -494,7 +494,9 @@ manner. The codes are the following:
  
- #ifdef CONFIG_64BIT
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index af3c4c5a0b4e..4f9e522643a2 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2830,8 +2830,9 @@ static struct swap_info_struct *alloc_swap_info(void)
- 	struct swap_info_struct *p;
- 	unsigned int type;
- 	int i;
-+	int size = sizeof(*p) + nr_node_ids * sizeof(struct plist_node);
+ Note that there is no guarantee that every flag and associated mnemonic will
+ be present in all further kernel releases. Things get changed, the flags may
+-be vanished or the reverse -- new added.
++be vanished or the reverse -- new added. Interpretation of their meaning
++might change in future as well. So each consumer of these flags has to
++follow each specific kernel version for the exact semantic.
  
--	p = kvzalloc(sizeof(*p), GFP_KERNEL);
-+	p = kvzalloc(size, GFP_KERNEL);
- 	if (!p)
- 		return ERR_PTR(-ENOMEM);
- 
+ This file is only present if the CONFIG_MMU kernel configuration option is
+ enabled.
 -- 
 2.19.1
 
