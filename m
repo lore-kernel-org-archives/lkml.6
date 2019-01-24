@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 492C1C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16EC6C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E6321726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:58:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DAABD21726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:59:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359925;
-	bh=QWQhJrBg3GfOgtqP+7LGnYk7iaTh3jVgL4phztkXn1A=;
+	s=default; t=1548359945;
+	bh=xL5QQG38wnqRaqZx2x7W3WwnQY0f25HWU6jyZIz+Hvo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wzIvyKQyW0D0pjHVU5mQRlnIdb1Z+1GqJchT4yC6+GAGaqgMG9QY7TJ0HDlVrs14m
-	 VsHV926S25OIsqL4rZh5LG4PzD5TTfIDoxwVFIgV4YObosDqk6kpq46RkSwx2X7u1/
-	 baUu1QPaMp1Osc0fk/VqPSFnSV/vhF+S/IStJEQE=
+	b=vJvuHcDSpI9Vpu5gcyGJD9Os5bpSe+x+ot+3E9HDytUYcOBHH6mpXQeKKAviayrFE
+	 qvExumVP+KfAoYNRQ5CQleraB2JvTvQhPei20AV2E7Z1yuoGXSHK1wMITWSF74+A8O
+	 R9bzyaXr03l+DU33oBW5VVk6mnaFTpvE0fXU1mfA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732173AbfAXTeW (ORCPT
+        id S1732108AbfAXTeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34074 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:34:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732149AbfAXTeR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:17 -0500
+        id S1730799AbfAXTeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:34:02 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A2A4221905;
-        Thu, 24 Jan 2019 19:34:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D2B3218FC;
+        Thu, 24 Jan 2019 19:34:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358456;
-        bh=QWQhJrBg3GfOgtqP+7LGnYk7iaTh3jVgL4phztkXn1A=;
+        s=default; t=1548358441;
+        bh=xL5QQG38wnqRaqZx2x7W3WwnQY0f25HWU6jyZIz+Hvo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ctnpsYNIkFGIQC64+K0VUndR5gU/5I2y/K1i9yLngSLQrEoTCq5ZL1uK403jAPfLZ
-         BJZ8sbjUEQqi1uUHm8JSVIcoSMqL4yvPgXyr4msK+3k83WKeKRvtN7NKeoUSPUKFwY
-         ROW6YZAFxHtlRZ6EwalBRyVd0lgiIALZmLhv1bvk=
+        b=ix0ZH2HKVxmVJbtXS9Fz+zU3r1yR7iJwSkwqCJPfJ3fs4hR8rQGPUPeKudm6YxINl
+         DoUqkDdfvNvaJhpYvNmWo/IGACtaK9QIbcOZz0OB3GXL5JMPFuktiOf6827TLjE7Dn
+         zvxR7qmfOnz1f70i6C28z0QCJXqpX9YGlQo+KQIQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        stable@vger.kernel.org, Yi Chen <yiche@redhat.com>,
+        Stefano Brivio <sbrivio@redhat.com>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 015/106] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
-Date:   Thu, 24 Jan 2019 20:19:32 +0100
-Message-Id: <20190124190207.343578384@linuxfoundation.org>
+Subject: [PATCH 4.19 010/106] netfilter: ipset: Allow matching on destination MAC address for mac and ipmac sets
+Date:   Thu, 24 Jan 2019 20:19:27 +0100
+Message-Id: <20190124190207.030164150@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,129 +67,132 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
+[ Upstream commit 8cc4ccf58379935f3ad456cc34e61c4e4c921d0e ]
 
-In the past, Asus firmwares would change the panel backlight directly
-through the EC when the display off hotkey (Fn+F7) was pressed, and
-only notify the OS of such change, with 0x33 when the LCD was ON and
-0x34 when the LCD was OFF. These are currently mapped to
-KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
+There doesn't seem to be any reason to restrict MAC address
+matching to source MAC addresses in set types bitmap:ipmac,
+hash:ipmac and hash:mac. With this patch, and this setup:
 
-Most recently the EC on Asus most machines lost ability to toggle the
-LCD backlight directly, but unless the OS informs the firmware it is
-going to handle the display toggle hotkey events, the firmware still
-tries change the brightness through the EC, to no effect. The end result
-is a long list (at Endless we counted 11) of Asus laptop models where
-the display toggle hotkey does not perform any action. Our firmware
-engineers contacts at Asus were surprised that there were still machines
-out there with the old behavior.
+  ip netns add A
+  ip link add veth1 type veth peer name veth2 netns A
+  ip addr add 192.0.2.1/24 dev veth1
+  ip -net A addr add 192.0.2.2/24 dev veth2
+  ip link set veth1 up
+  ip -net A link set veth2 up
 
-Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
-tells the firmware that it should let the OS handle the display toggle
-event, in which case it will simply notify the OS of a key press with
-0x35, as shown by the DSDT excerpts bellow.
+  ip netns exec A ipset create test hash:mac
+  dst=$(ip netns exec A cat /sys/class/net/veth2/address)
+  ip netns exec A ipset add test ${dst}
+  ip netns exec A iptables -P INPUT DROP
+  ip netns exec A iptables -I INPUT -m set --match-set test dst -j ACCEPT
 
- Scope (_SB)
- {
-     (...)
+ipset will match packets based on destination MAC address:
 
-     Device (ATKD)
-     {
-         (...)
+  # ping -c1 192.0.2.2 >/dev/null
+  # echo $?
+  0
 
-         Name (_WDG, Buffer (0x28)
-         {
-             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
-             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
-             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
-             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
-             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
-         })
-         Method (WMNB, 3, Serialized)
-         {
-             CreateDWordField (Arg2, Zero, IIA0)
-             CreateDWordField (Arg2, 0x04, IIA1)
-             Local0 = (Arg1 & 0xFFFFFFFF)
-
-             (...)
-
-             If ((Local0 == 0x53564544))
-             {
-                 (...)
-
-                 If ((IIA0 == 0x00050011))
-                 {
-                     If ((IIA1 == 0x02))
-                     {
-                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
-                         ^^PCI0.SBRG.EC0.BLCT = One
-                     }
-
-                     Return (One)
-                 }
-             }
-             (...)
-         }
-         (...)
-     }
-     (...)
- }
- (...)
-
- Scope (_SB.PCI0.SBRG.EC0)
- {
-     (...)
-
-     Name (BLCT, Zero)
-
-     (...)
-
-     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
-     {
-         If ((BLCT == Zero))
-         {
-             Local0 = One
-             Local0 = RPIN (0x72)
-             Local0 ^= One
-             SPIN (0x72, Local0)
-             If (ATKP)
-             {
-                 Local0 = (0x34 - Local0)
-                 ^^^^ATKD.IANE (Local0)
-             }
-         }
-         ElseIf ((BLCT == One))
-         {
-             If (ATKP)
-             {
-                 ^^^^ATKD.IANE (0x35)
-             }
-         }
-     }
-     (...)
- }
-
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reported-by: Yi Chen <yiche@redhat.com>
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/asus-wmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/netfilter/ipset/ip_set_bitmap_ipmac.c | 10 +++++-----
+ net/netfilter/ipset/ip_set_hash_ipmac.c   | 16 ++++++++++------
+ net/netfilter/ipset/ip_set_hash_mac.c     | 10 +++++-----
+ 3 files changed, 20 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 2d6e272315a8..db3556dc90d1 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -2231,7 +2231,8 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		err = asus_wmi_backlight_init(asus);
- 		if (err && err != -ENODEV)
- 			goto fail_backlight;
--	}
-+	} else
-+		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
+diff --git a/net/netfilter/ipset/ip_set_bitmap_ipmac.c b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
+index c00b6a2e8e3c..13ade5782847 100644
+--- a/net/netfilter/ipset/ip_set_bitmap_ipmac.c
++++ b/net/netfilter/ipset/ip_set_bitmap_ipmac.c
+@@ -219,10 +219,6 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 	u32 ip;
  
- 	status = wmi_install_notify_handler(asus->driver->event_guid,
- 					    asus_wmi_notify, asus);
+-	/* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_TWO_SRC))
+-		return 0;
+-
+ 	ip = ntohl(ip4addr(skb, opt->flags & IPSET_DIM_ONE_SRC));
+ 	if (ip < map->first_ip || ip > map->last_ip)
+ 		return -IPSET_ERR_BITMAP_RANGE;
+@@ -233,7 +229,11 @@ bitmap_ipmac_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 		return -EINVAL;
+ 
+ 	e.id = ip_to_id(map, ip);
+-	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
++
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
+ 
+ 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
+ }
+diff --git a/net/netfilter/ipset/ip_set_hash_ipmac.c b/net/netfilter/ipset/ip_set_hash_ipmac.c
+index 1ab5ed2f6839..fd87de3ed55b 100644
+--- a/net/netfilter/ipset/ip_set_hash_ipmac.c
++++ b/net/netfilter/ipset/ip_set_hash_ipmac.c
+@@ -103,7 +103,11 @@ hash_ipmac4_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
+ 
+-	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
++
+ 	if (ether_addr_equal(e.ether, invalid_ether))
+ 		return -EINVAL;
+ 
+@@ -211,15 +215,15 @@ hash_ipmac6_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	};
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 
+-	 /* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_TWO_SRC))
+-		return 0;
+-
+ 	if (skb_mac_header(skb) < skb->head ||
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
+ 
+-	memcpy(e.ether, eth_hdr(skb)->h_source, ETH_ALEN);
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
++
+ 	if (ether_addr_equal(e.ether, invalid_ether))
+ 		return -EINVAL;
+ 
+diff --git a/net/netfilter/ipset/ip_set_hash_mac.c b/net/netfilter/ipset/ip_set_hash_mac.c
+index f9d5a2a1e3d0..4fe5f243d0a3 100644
+--- a/net/netfilter/ipset/ip_set_hash_mac.c
++++ b/net/netfilter/ipset/ip_set_hash_mac.c
+@@ -81,15 +81,15 @@ hash_mac4_kadt(struct ip_set *set, const struct sk_buff *skb,
+ 	struct hash_mac4_elem e = { { .foo[0] = 0, .foo[1] = 0 } };
+ 	struct ip_set_ext ext = IP_SET_INIT_KEXT(skb, opt, set);
+ 
+-	 /* MAC can be src only */
+-	if (!(opt->flags & IPSET_DIM_ONE_SRC))
+-		return 0;
+-
+ 	if (skb_mac_header(skb) < skb->head ||
+ 	    (skb_mac_header(skb) + ETH_HLEN) > skb->data)
+ 		return -EINVAL;
+ 
+-	ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	if (opt->flags & IPSET_DIM_ONE_SRC)
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_source);
++	else
++		ether_addr_copy(e.ether, eth_hdr(skb)->h_dest);
++
+ 	if (is_zero_ether_addr(e.ether))
+ 		return -EINVAL;
+ 	return adtfn(set, &e, &ext, &opt->ext, opt->cmdflags);
 -- 
 2.19.1
 
