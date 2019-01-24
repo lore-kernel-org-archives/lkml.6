@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1903DC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:22:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B28ECC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:22:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2C8B218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DA57218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:22:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357744;
-	bh=oPbKVK7vUWjaLBtF3RNKIvL6OKZ8rt8Gs0wEeSuTnWM=;
+	s=default; t=1548357748;
+	bh=a14qR+tSyUmAZB8Hes5ZG8UI+b7hFXx4EuOWBHHwg8Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GYApUpXaiddCk597LRIrwfVhZy7ZrnWFiihZkay8LJoIgTXIpdW33R+PRPfQwqamd
-	 S/V9BWAbnn/tdwT82uWB+qWv6FkBGqWjE7MR2mEN9zV8RwRbyoSCj1IzdI88co5KH2
-	 oX5ag9WAttpgRYZNMTiF1KMbrzgsWizPHIeRm8mA=
+	b=VjbbHr75dUq4PmkT0HMH/dPEmGYGnUmLpML8WrAhnwky3AhI6zZ7EfJazDanbalMp
+	 ZduMx7KT13iRce2teGURaoAkppLGnAq7W1cfJNlc4nT0WgNdS7U0VXrwIPCpQR3FJf
+	 XN3F6s5UVuVHCN0J1J+6Ts0O8Vcl2SD5ag9pbRQo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729537AbfAXTWX (ORCPT
+        id S1729553AbfAXTW0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:22:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46916 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:22:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729512AbfAXTWV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:22:21 -0500
+        id S1729538AbfAXTWY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:22:24 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 106A7218CD;
-        Thu, 24 Jan 2019 19:22:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B7D46218D2;
+        Thu, 24 Jan 2019 19:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357740;
-        bh=oPbKVK7vUWjaLBtF3RNKIvL6OKZ8rt8Gs0wEeSuTnWM=;
+        s=default; t=1548357743;
+        bh=a14qR+tSyUmAZB8Hes5ZG8UI+b7hFXx4EuOWBHHwg8Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SrUyhYdhaqKZ9rkvZlFpiF9h0hbzkrgsYr8wntiW+JAQP4mjYJ7mp0q03EcZDvYQs
-         g3Evk078zWqi/V3LOB9sObN8DfLQRWkv441/iFpHi2+swSkeMTRftVSbaxvH5YjS84
-         hoVSwlV7j0XB/YCx6G+GOvCZnpptTq2jlJ11wfMA=
+        b=Ik3ade38CITuR3ooYycHvRnlC3j/SAYjSkgFEpfCwhKFt71iRCRQCBmXsBVW7KjX5
+         O4ttkkLicc+6q035JyyMc4qVu4bmxCJPk03UChE/ssgthf+rpnFeyUat3WoRP7ECQT
+         UIJOy1v28ELhQiHN/m6WnUAVnS7lPTDe/7XWvgw0=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, YunQiang Su <ysu@wavecomp.com>,
-        Paul Burton <paul.burton@mips.com>, pburton@wavecomp.com,
-        linux-mips@vger.kernel.org, aaro.koskinen@iki.fi
-Subject: [PATCH 3.18 23/52] Disable MSI also when pcie-octeon.pcie_disable on
-Date:   Thu, 24 Jan 2019 20:19:47 +0100
-Message-Id: <20190124190145.185246294@linuxfoundation.org>
+        stable@vger.kernel.org, Ross Lagerwall <ross.lagerwall@citrix.com>,
+        Steve French <stfrench@microsoft.com>
+Subject: [PATCH 3.18 03/52] cifs: Fix potential OOB access of lock element array
+Date:   Thu, 24 Jan 2019 20:19:27 +0100
+Message-Id: <20190124190141.499552432@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -65,40 +64,65 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: YunQiang Su <ysu@wavecomp.com>
+From: Ross Lagerwall <ross.lagerwall@citrix.com>
 
-commit a214720cbf50cd8c3f76bbb9c3f5c283910e9d33 upstream.
+commit b9a74cde94957d82003fb9f7ab4777938ca851cd upstream.
 
-Octeon has an boot-time option to disable pcie.
+If maxBuf is small but non-zero, it could result in a zero sized lock
+element array which we would then try and access OOB.
 
-Since MSI depends on PCI-E, we should also disable MSI also with
-this option is on in order to avoid inadvertently accessing PCIe
-registers.
-
-Signed-off-by: YunQiang Su <ysu@wavecomp.com>
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: pburton@wavecomp.com
-Cc: linux-mips@vger.kernel.org
-Cc: aaro.koskinen@iki.fi
-Cc: stable@vger.kernel.org # v3.3+
+Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
+CC: Stable <stable@vger.kernel.org>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- arch/mips/pci/msi-octeon.c |    4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ fs/cifs/file.c     |    8 ++++----
+ fs/cifs/smb2file.c |    4 ++--
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
---- a/arch/mips/pci/msi-octeon.c
-+++ b/arch/mips/pci/msi-octeon.c
-@@ -369,7 +369,9 @@ int __init octeon_msi_initialize(void)
- 	int irq;
- 	struct irq_chip *msi;
+--- a/fs/cifs/file.c
++++ b/fs/cifs/file.c
+@@ -1067,10 +1067,10 @@ cifs_push_mandatory_locks(struct cifsFil
  
--	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
-+	if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_INVALID) {
-+		return 0;
-+	} else if (octeon_dma_bar_type == OCTEON_DMA_BAR_TYPE_PCIE) {
- 		msi_rcv_reg[0] = CVMX_PEXP_NPEI_MSI_RCV0;
- 		msi_rcv_reg[1] = CVMX_PEXP_NPEI_MSI_RCV1;
- 		msi_rcv_reg[2] = CVMX_PEXP_NPEI_MSI_RCV2;
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf) {
++	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE))) {
+ 		free_xid(xid);
+ 		return -EINVAL;
+ 	}
+@@ -1404,10 +1404,10 @@ cifs_unlock_range(struct cifsFileInfo *c
+ 
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf)
++	if (max_buf < (sizeof(struct smb_hdr) + sizeof(LOCKING_ANDX_RANGE)))
+ 		return -EINVAL;
+ 
+ 	max_num = (max_buf - sizeof(struct smb_hdr)) /
+--- a/fs/cifs/smb2file.c
++++ b/fs/cifs/smb2file.c
+@@ -104,10 +104,10 @@ smb2_unlock_range(struct cifsFileInfo *c
+ 
+ 	/*
+ 	 * Accessing maxBuf is racy with cifs_reconnect - need to store value
+-	 * and check it for zero before using.
++	 * and check it before using.
+ 	 */
+ 	max_buf = tcon->ses->server->maxBuf;
+-	if (!max_buf)
++	if (max_buf < sizeof(struct smb2_lock_element))
+ 		return -EINVAL;
+ 
+ 	max_num = max_buf / sizeof(struct smb2_lock_element);
 
 
