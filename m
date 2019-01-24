@@ -7,50 +7,48 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F4EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03BA5C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81292218FD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9D84218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:26:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358002;
-	bh=ylduL/TFs5TfxLS3IJ39gTXRytn8ae5gmYonEFoLV/I=;
+	s=default; t=1548358006;
+	bh=yCeTCy+GaLAYkaymCKSJuiONgH71avmQpFAGxbN6SBQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=o/UhXG21LjeaygIeeIV4YQgfm21flcpxMkUIY9S+kpF0Jg8088eP0257uyCW68wBu
-	 l5IOqafFUE1JIm9rb4KsFzWdMAIlnYXKIdaN4fb+59FakD7rF4NozMYC0lDo8KRRVB
-	 c4bPsTwKeMWgL/XY8LWHvpzRQcrQ/6OfnH/GBCT0=
+	b=DovrJQ5+eGe/Y/OfhCm8qvYrvGLn0JXA8jym2EofGTdh1/DGxMHBOBvv8lGBtAVBJ
+	 t+5n1bOeTYeMBn0bEFTQ8wQVgrUROyiD0LjDMYAMyp251rWYQWqT7w2UvWJWRfGklD
+	 bKzjPyJjmQL2h7vAscjuOVaw2Iyt+/Plck6B7J2c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730612AbfAXT0k (ORCPT
+        id S1730621AbfAXT0p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:26:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52682 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:26:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52802 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729813AbfAXT0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:26:36 -0500
+        id S1729813AbfAXT0n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:26:43 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 734DB217D7;
-        Thu, 24 Jan 2019 19:26:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 66815218FC;
+        Thu, 24 Jan 2019 19:26:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357995;
-        bh=ylduL/TFs5TfxLS3IJ39gTXRytn8ae5gmYonEFoLV/I=;
+        s=default; t=1548358001;
+        bh=yCeTCy+GaLAYkaymCKSJuiONgH71avmQpFAGxbN6SBQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T4Heyh8k9aPpxC2S25Vipt2i7ohxTPEyZ708LCwPptIoVU9nLeiMreo1OlZbYiXfy
-         Zd88TPhFaow8XWBeCvPKs92FvrSDpzXRBfKcMVrW9YJlGzyip9QwPAHP2c9CcBncl6
-         uJ2rzjPL8m3OR0PDtiy4pZ+NKCynVwU7AtgCY7Vk=
+        b=L9o/l8IMI4uiPlOq3FGt4fI7jTYBPNE8jeAlKjl5TuIGkKLA/mHpr6Nfw7wDxyAHB
+         myq8rZvjpleCx0QJJ2+FDRKV1ngFJc2QQOMpeNF4s0c4tcv21FJLK/L8xaQXRCv4E0
+         JshG3WhBehunmYwYG6RoaJ0/g2ifodOErawVvGZY=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Alexander Potapenko <glider@google.com>,
-        Xin Long <lucien.xin@gmail.com>,
-        syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com,
-        Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>,
-        Neil Horman <nhorman@tuxdriver.com>,
+        stable@vger.kernel.org,
+        syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com,
+        Ying Xue <ying.xue@windriver.com>,
         "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 061/104] sctp: allocate sctp_sockaddr_entry with kzalloc
-Date:   Thu, 24 Jan 2019 20:19:50 +0100
-Message-Id: <20190124190202.383611757@linuxfoundation.org>
+Subject: [PATCH 4.4 063/104] tipc: fix uninit-value in tipc_nl_compat_bearer_enable
+Date:   Thu, 24 Jan 2019 20:19:52 +0100
+Message-Id: <20190124190202.598221590@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -69,74 +67,189 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Xin Long <lucien.xin@gmail.com>
+From: Ying Xue <ying.xue@windriver.com>
 
-commit 400b8b9a2a17918f8ce00786f596f530e7f30d50 upstream.
+commit 0762216c0ad2a2fccd63890648eca491f2c83d9a upstream.
 
-The similar issue as fixed in Commit 4a2eb0c37b47 ("sctp: initialize
-sin6_flowinfo for ipv6 addrs in sctp_inet6addr_event") also exists
-in sctp_inetaddr_event, as Alexander noticed.
+syzbot reported:
 
-To fix it, allocate sctp_sockaddr_entry with kzalloc for both sctp
-ipv4 and ipv6 addresses, as does in sctp_v4/6_copy_addrlist().
+BUG: KMSAN: uninit-value in strlen+0x3b/0xa0 lib/string.c:484
+CPU: 1 PID: 6371 Comm: syz-executor652 Not tainted 4.19.0-rc8+ #70
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 01/01/2011
+Call Trace:
+ __dump_stack lib/dump_stack.c:77 [inline]
+ dump_stack+0x306/0x460 lib/dump_stack.c:113
+ kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
+ __msan_warning+0x7c/0xe0 mm/kmsan/kmsan_instr.c:500
+ strlen+0x3b/0xa0 lib/string.c:484
+ nla_put_string include/net/netlink.h:1011 [inline]
+ tipc_nl_compat_bearer_enable+0x238/0x7b0 net/tipc/netlink_compat.c:389
+ __tipc_nl_compat_doit net/tipc/netlink_compat.c:311 [inline]
+ tipc_nl_compat_doit+0x39f/0xae0 net/tipc/netlink_compat.c:344
+ tipc_nl_compat_recv+0x147c/0x2760 net/tipc/netlink_compat.c:1107
+ genl_family_rcv_msg net/netlink/genetlink.c:601 [inline]
+ genl_rcv_msg+0x185c/0x1a20 net/netlink/genetlink.c:626
+ netlink_rcv_skb+0x394/0x640 net/netlink/af_netlink.c:2454
+ genl_rcv+0x63/0x80 net/netlink/genetlink.c:637
+ netlink_unicast_kernel net/netlink/af_netlink.c:1317 [inline]
+ netlink_unicast+0x166d/0x1720 net/netlink/af_netlink.c:1343
+ netlink_sendmsg+0x1391/0x1420 net/netlink/af_netlink.c:1908
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+RIP: 0033:0x440179
+Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007fffef7beee8 EFLAGS: 00000213 ORIG_RAX: 000000000000002e
+RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440179
+RDX: 0000000000000000 RSI: 0000000020000100 RDI: 0000000000000003
+RBP: 00000000006ca018 R08: 0000000000000000 R09: 00000000004002c8
+R10: 0000000000000000 R11: 0000000000000213 R12: 0000000000401a00
+R13: 0000000000401a90 R14: 0000000000000000 R15: 0000000000000000
 
-Reported-by: Alexander Potapenko <glider@google.com>
-Signed-off-by: Xin Long <lucien.xin@gmail.com>
-Reported-by: syzbot+ae0c70c0c2d40c51bb92@syzkaller.appspotmail.com
-Acked-by: Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-Acked-by: Neil Horman <nhorman@tuxdriver.com>
+Uninit was created at:
+ kmsan_save_stack_with_flags mm/kmsan/kmsan.c:255 [inline]
+ kmsan_internal_poison_shadow+0xc8/0x1d0 mm/kmsan/kmsan.c:180
+ kmsan_kmalloc+0xa4/0x120 mm/kmsan/kmsan_hooks.c:104
+ kmsan_slab_alloc+0x10/0x20 mm/kmsan/kmsan_hooks.c:113
+ slab_post_alloc_hook mm/slab.h:446 [inline]
+ slab_alloc_node mm/slub.c:2727 [inline]
+ __kmalloc_node_track_caller+0xb43/0x1400 mm/slub.c:4360
+ __kmalloc_reserve net/core/skbuff.c:138 [inline]
+ __alloc_skb+0x422/0xe90 net/core/skbuff.c:206
+ alloc_skb include/linux/skbuff.h:996 [inline]
+ netlink_alloc_large_skb net/netlink/af_netlink.c:1189 [inline]
+ netlink_sendmsg+0xcaf/0x1420 net/netlink/af_netlink.c:1883
+ sock_sendmsg_nosec net/socket.c:621 [inline]
+ sock_sendmsg net/socket.c:631 [inline]
+ ___sys_sendmsg+0xe47/0x1200 net/socket.c:2116
+ __sys_sendmsg net/socket.c:2154 [inline]
+ __do_sys_sendmsg net/socket.c:2163 [inline]
+ __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
+ __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+ do_syscall_64+0xbe/0x100 arch/x86/entry/common.c:291
+ entry_SYSCALL_64_after_hwframe+0x63/0xe7
+
+The root cause is that we don't validate whether bear name is a valid
+string in tipc_nl_compat_bearer_enable().
+
+Meanwhile, we also fix the same issue in the following functions:
+tipc_nl_compat_bearer_disable()
+tipc_nl_compat_link_stat_dump()
+tipc_nl_compat_media_set()
+tipc_nl_compat_bearer_set()
+
+Reported-by: syzbot+b33d5cae0efd35dbfe77@syzkaller.appspotmail.com
+Signed-off-by: Ying Xue <ying.xue@windriver.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ---
- net/sctp/ipv6.c     |    5 +----
- net/sctp/protocol.c |    4 +---
- 2 files changed, 2 insertions(+), 7 deletions(-)
+ net/tipc/netlink_compat.c |   26 ++++++++++++++++++++++++++
+ 1 file changed, 26 insertions(+)
 
---- a/net/sctp/ipv6.c
-+++ b/net/sctp/ipv6.c
-@@ -97,11 +97,9 @@ static int sctp_inet6addr_event(struct n
+--- a/net/tipc/netlink_compat.c
++++ b/net/tipc/netlink_compat.c
+@@ -374,6 +374,7 @@ static int tipc_nl_compat_bearer_enable(
+ 	struct nlattr *prop;
+ 	struct nlattr *bearer;
+ 	struct tipc_bearer_config *b;
++	int len;
  
- 	switch (ev) {
- 	case NETDEV_UP:
--		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
-+		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v6.sin6_family = AF_INET6;
--			addr->a.v6.sin6_port = 0;
--			addr->a.v6.sin6_flowinfo = 0;
- 			addr->a.v6.sin6_addr = ifa->addr;
- 			addr->a.v6.sin6_scope_id = ifa->idev->dev->ifindex;
- 			addr->valid = 1;
-@@ -412,7 +410,6 @@ static void sctp_v6_copy_addrlist(struct
- 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v6.sin6_family = AF_INET6;
--			addr->a.v6.sin6_port = 0;
- 			addr->a.v6.sin6_addr = ifp->addr;
- 			addr->a.v6.sin6_scope_id = dev->ifindex;
- 			addr->valid = 1;
---- a/net/sctp/protocol.c
-+++ b/net/sctp/protocol.c
-@@ -151,7 +151,6 @@ static void sctp_v4_copy_addrlist(struct
- 		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v4.sin_family = AF_INET;
--			addr->a.v4.sin_port = 0;
- 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
- 			addr->valid = 1;
- 			INIT_LIST_HEAD(&addr->list);
-@@ -775,10 +774,9 @@ static int sctp_inetaddr_event(struct no
+ 	b = (struct tipc_bearer_config *)TLV_DATA(msg->req);
  
- 	switch (ev) {
- 	case NETDEV_UP:
--		addr = kmalloc(sizeof(struct sctp_sockaddr_entry), GFP_ATOMIC);
-+		addr = kzalloc(sizeof(*addr), GFP_ATOMIC);
- 		if (addr) {
- 			addr->a.v4.sin_family = AF_INET;
--			addr->a.v4.sin_port = 0;
- 			addr->a.v4.sin_addr.s_addr = ifa->ifa_local;
- 			addr->valid = 1;
- 			spin_lock_bh(&net->sctp.local_addr_lock);
+@@ -381,6 +382,10 @@ static int tipc_nl_compat_bearer_enable(
+ 	if (!bearer)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
++	if (!string_is_valid(b->name, len))
++		return -EINVAL;
++
+ 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, b->name))
+ 		return -EMSGSIZE;
+ 
+@@ -406,6 +411,7 @@ static int tipc_nl_compat_bearer_disable
+ {
+ 	char *name;
+ 	struct nlattr *bearer;
++	int len;
+ 
+ 	name = (char *)TLV_DATA(msg->req);
+ 
+@@ -413,6 +419,10 @@ static int tipc_nl_compat_bearer_disable
+ 	if (!bearer)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_BEARER_NAME);
++	if (!string_is_valid(name, len))
++		return -EINVAL;
++
+ 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, name))
+ 		return -EMSGSIZE;
+ 
+@@ -472,6 +482,7 @@ static int tipc_nl_compat_link_stat_dump
+ 	struct nlattr *link[TIPC_NLA_LINK_MAX + 1];
+ 	struct nlattr *prop[TIPC_NLA_PROP_MAX + 1];
+ 	struct nlattr *stats[TIPC_NLA_STATS_MAX + 1];
++	int len;
+ 
+ 	nla_parse_nested(link, TIPC_NLA_LINK_MAX, attrs[TIPC_NLA_LINK], NULL);
+ 
+@@ -482,6 +493,11 @@ static int tipc_nl_compat_link_stat_dump
+ 			 NULL);
+ 
+ 	name = (char *)TLV_DATA(msg->req);
++
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_LINK_NAME);
++	if (!string_is_valid(name, len))
++		return -EINVAL;
++
+ 	if (strcmp(name, nla_data(link[TIPC_NLA_LINK_NAME])) != 0)
+ 		return 0;
+ 
+@@ -615,6 +631,7 @@ static int tipc_nl_compat_media_set(stru
+ 	struct nlattr *prop;
+ 	struct nlattr *media;
+ 	struct tipc_link_config *lc;
++	int len;
+ 
+ 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
+ 
+@@ -622,6 +639,10 @@ static int tipc_nl_compat_media_set(stru
+ 	if (!media)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_MEDIA_NAME);
++	if (!string_is_valid(lc->name, len))
++		return -EINVAL;
++
+ 	if (nla_put_string(skb, TIPC_NLA_MEDIA_NAME, lc->name))
+ 		return -EMSGSIZE;
+ 
+@@ -642,6 +663,7 @@ static int tipc_nl_compat_bearer_set(str
+ 	struct nlattr *prop;
+ 	struct nlattr *bearer;
+ 	struct tipc_link_config *lc;
++	int len;
+ 
+ 	lc = (struct tipc_link_config *)TLV_DATA(msg->req);
+ 
+@@ -649,6 +671,10 @@ static int tipc_nl_compat_bearer_set(str
+ 	if (!bearer)
+ 		return -EMSGSIZE;
+ 
++	len = min_t(int, TLV_GET_DATA_LEN(msg->req), TIPC_MAX_MEDIA_NAME);
++	if (!string_is_valid(lc->name, len))
++		return -EINVAL;
++
+ 	if (nla_put_string(skb, TIPC_NLA_BEARER_NAME, lc->name))
+ 		return -EMSGSIZE;
+ 
 
 
