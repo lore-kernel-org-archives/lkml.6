@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A82C282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A707EC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 104A4218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72AF7218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:43:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358999;
-	bh=LSpWjKUPIDxHB4LUBKOw+Vp3Ou9ZwSQD0YgLzqCh2cU=;
+	s=default; t=1548359001;
+	bh=ytUfLWPiG2ZwE4XxryGoEKKk0BBaRyNJszTNJOtnoz0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ycgcLDdD7qMtiXEX1G7GeFFeVlx2sR+WxFFsRup8ft7+bjRTvEQnQBpqeF6SEvD9j
-	 DV+IJEDxnSQOHpFDiEB4mSigeGiQTyU6oDayAfCqg9WnagJ8wfCcveWNI30mbh5Mc+
-	 V6W7TcRWVcXmnXW/KtmodTz8stlViCLG70waSNg0=
+	b=d3Id31Uc4Eu2KNzKDn2EeDH9RrwF28IW1UrwqNoDdiU8Mh+ft25cAvSHmRtWWlGtR
+	 LYXTb00zncosBbYwAmOBJFfa15zKz+q0bg2WCay59Gzcc9hawsHtg1c4vgpEoUFiYJ
+	 zC/EcVTU99pQdAwStbeFn8ieZJBz2oyQtwxwm9WU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733084AbfAXTnQ (ORCPT
+        id S2387603AbfAXTnU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:43:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43780 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:43:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387566AbfAXTnO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:43:14 -0500
+        id S2387918AbfAXTnQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:43:16 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1820E20663;
-        Thu, 24 Jan 2019 19:43:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB2CB20663;
+        Thu, 24 Jan 2019 19:43:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358993;
-        bh=LSpWjKUPIDxHB4LUBKOw+Vp3Ou9ZwSQD0YgLzqCh2cU=;
+        s=default; t=1548358996;
+        bh=ytUfLWPiG2ZwE4XxryGoEKKk0BBaRyNJszTNJOtnoz0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0DYrzgsjz5DOMS+hlPi+y8HVtcpOdhoBEkBa/GDRLbF5uglifmxuFeiD2/irE2uBg
-         Lucvvg2TnCOXHf5bqfbKyQ4WguNc+/jzUnArh7xJ19U/pQTtGxdXUROOIvGI+eNrKw
-         uXbKJWJS2H4zuTEGLZ5Goo5KYtB9akIntAWpGOwc=
+        b=NHZm2XbIZIQXE9f+zNXJ49qNm4achbQ3WtHU5VlwfEcZ6qqGhYBbh/zJQ0xsCPSHa
+         b6T2qSa90pTH2Y2lGXcEM2ztb1Vyzsmt2c1tGMMGZ+W1dUhlLI/22LcwBPr9bq9RJo
+         +oV93lm4Nr7vX3rS9DZhV5dcuj9GZhC9fuM2S7Ls=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -47,9 +47,9 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Namhyung Kim <namhyung@kernel.org>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 098/127] perf tools: Add missing sigqueue() prototype for systems lacking it
-Date:   Thu, 24 Jan 2019 20:20:44 +0100
-Message-Id: <20190124190216.200467274@linuxfoundation.org>
+Subject: [PATCH 4.20 099/127] perf tools: Add missing open_memstream() prototype for systems lacking it
+Date:   Thu, 24 Jan 2019 20:20:45 +0100
+Message-Id: <20190124190216.240227421@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,64 +68,67 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 748fe0889c1ff12d378946bd5326e8ee8eacf5cf ]
+[ Upstream commit d7a8c4a6a055097a67ccfa3ca7c9ff1b64603a70 ]
 
 There are systems such as the Android NDK API level 24 has the
-sigqueue() function but doesn't provide a prototype, adding noise to the
-build:
+open_memstream() function but doesn't provide a prototype, adding noise
+to the build:
 
-  util/evlist.c: In function 'perf_evlist__prepare_workload':
-  util/evlist.c:1494:4: warning: implicit declaration of function 'sigqueue' [-Wimplicit-function-declaration]
-      if (sigqueue(getppid(), SIGUSR1, val))
-      ^
-  util/evlist.c:1494:4: warning: nested extern declaration of 'sigqueue' [-Wnested-externs]
+  builtin-timechart.c: In function 'cat_backtrace':
+  builtin-timechart.c:486:2: warning: implicit declaration of function 'open_memstream' [-Wimplicit-function-declaration]
+    FILE *f = open_memstream(&p, &p_len);
+    ^
+  builtin-timechart.c:486:2: warning: nested extern declaration of 'open_memstream' [-Wnested-externs]
+  builtin-timechart.c:486:12: warning: initialization makes pointer from integer without a cast
+    FILE *f = open_memstream(&p, &p_len);
+              ^
 
-Define a LACKS_SIGQUEUE_PROTOTYPE define so that code needing that can
-get a prototype.
+Define a LACKS_OPEN_MEMSTREAM_PROTOTYPE define so that code needing that
+can get a prototype.
 
 Checked in the bionic git repo to be available since level 23:
 
-https://android.googlesource.com/platform/bionic/+/master/libc/include/signal.h#123
+https://android.googlesource.com/platform/bionic/+/master/libc/include/stdio.h#241
 
-  int sigqueue(pid_t __pid, int __signal, const union sigval __value) __INTRODUCED_IN(23);
+  FILE* open_memstream(char** __ptr, size_t* __size_ptr) __INTRODUCED_IN(23);
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-lmhpev1uni9kdrv7j29glyov@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-343ashae97e5bq6vizusyfno@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/Makefile.config | 1 +
- tools/perf/util/evlist.c   | 4 ++++
+ tools/perf/Makefile.config     | 1 +
+ tools/perf/builtin-timechart.c | 4 ++++
  2 files changed, 5 insertions(+)
 
 diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index a0e8c23f9125..e106e7ce6933 100644
+index e106e7ce6933..acbb657f7ce2 100644
 --- a/tools/perf/Makefile.config
 +++ b/tools/perf/Makefile.config
-@@ -294,6 +294,7 @@ ifndef NO_BIONIC
-   $(call feature_check,bionic)
+@@ -295,6 +295,7 @@ ifndef NO_BIONIC
    ifeq ($(feature-bionic), 1)
      BIONIC := 1
-+    CFLAGS += -DLACKS_SIGQUEUE_PROTOTYPE
+     CFLAGS += -DLACKS_SIGQUEUE_PROTOTYPE
++    CFLAGS += -DLACKS_OPEN_MEMSTREAM_PROTOTYPE
      EXTLIBS := $(filter-out -lrt,$(EXTLIBS))
      EXTLIBS := $(filter-out -lpthread,$(EXTLIBS))
    endif
-diff --git a/tools/perf/util/evlist.c b/tools/perf/util/evlist.c
-index 668d2a9ef0f4..8a806b0758b0 100644
---- a/tools/perf/util/evlist.c
-+++ b/tools/perf/util/evlist.c
-@@ -34,6 +34,10 @@
- #include <linux/log2.h>
- #include <linux/err.h>
+diff --git a/tools/perf/builtin-timechart.c b/tools/perf/builtin-timechart.c
+index a827919c6263..775b99833e51 100644
+--- a/tools/perf/builtin-timechart.c
++++ b/tools/perf/builtin-timechart.c
+@@ -43,6 +43,10 @@
+ #include "util/data.h"
+ #include "util/debug.h"
  
-+#ifdef LACKS_SIGQUEUE_PROTOTYPE
-+int sigqueue(pid_t pid, int sig, const union sigval value);
++#ifdef LACKS_OPEN_MEMSTREAM_PROTOTYPE
++FILE *open_memstream(char **ptr, size_t *sizeloc);
 +#endif
 +
- #define FD(e, x, y) (*(int *)xyarray__entry(e->fd, x, y))
- #define SID(e, x, y) xyarray__entry(e->sample_id, x, y)
+ #define SUPPORT_OLD_POWER_EVENTS 1
+ #define PWR_EVENT_EXIT -1
  
 -- 
 2.19.1
