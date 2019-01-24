@@ -7,47 +7,51 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74619C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14CDCC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43244218D9
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D42C7218D9
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357790;
-	bh=Q1QB6hfkGAwbub2K18FkHDu++t4VpkIAVcb7U2shydo=;
+	s=default; t=1548357792;
+	bh=4y5Kc1CUFSkEA3XC0AKOF42pJnzC4x0yffTAnuMFG0Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=QSjtfm0Z7fk205RpKCycISYOOvUY/BsJLCvyYmHMBpzkMtxf/Q1t80oVdZY7x/wqI
-	 vVp016AA+/1Y/JLUKVuzrZwnTmu3y+wdSTYIaguNxLjHNKsXArvfJ6BcHpcB+dhrWk
-	 iL/LvsEiLMOz93+wVQOIwqoNUAdJjigCVkk5V93o=
+	b=Suea/jcfNwdEHyUKXpYeKmijFprWsKYX9j4DK/MZP3w2GApmUNcMWNQMRonzPKxwG
+	 RK3xVLrT1DvX9zmx9SbctffceZBV+vajNj059gL3w8/XIxfU2BOXDt1LhAxjc5y0lb
+	 9DjTEUO8ifgDhPqQKv0J1i+W5Qyu20tcuhzSqMb0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729777AbfAXTXI (ORCPT
+        id S1729792AbfAXTXL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:23:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47816 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:23:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729758AbfAXTXF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:23:05 -0500
+        id S1729771AbfAXTXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:23:09 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE013218CD;
-        Thu, 24 Jan 2019 19:23:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 792CE218CD;
+        Thu, 24 Jan 2019 19:23:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357785;
-        bh=Q1QB6hfkGAwbub2K18FkHDu++t4VpkIAVcb7U2shydo=;
+        s=default; t=1548357788;
+        bh=4y5Kc1CUFSkEA3XC0AKOF42pJnzC4x0yffTAnuMFG0Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TUraUyP1cKK1fdeKu4i4oSvwfQSXICTaSlBWemjWoqq99LP3+YdaUiDZbsd5q5Jqu
-         2R7fuZh6g2/xj9ccDV1JCcKzEeFBLFvCbT9LIDxASVhlDZ+XU2ThF2m36B+vEL+8p3
-         0JMDB+Lrl+6HsEd/lTRN9iwt1XvwMkwhhpWYGGSw=
+        b=Ar3sOSxeWyXjtftuEr90fgcQ3MuKUeLSLG3hywYAiu+k7bhfNOi7nUctn1nHXUl/i
+         YXQDcnD/7TE9bs7ItF7uKEGNrwNRhhoz5lnF8wjYtoOwt0TrcpJ4cqlqaACxnqoMks
+         WhACVvqQlCzhtRlBn0jl2g4OE9vXT4fTFcJvMmNs=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, yupeng <yupeng0921@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
+        stable@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
+        Christoph Hellwig <hch@lst.de>,
+        "Bryant G. Ly" <bly@catalogicsoftware.com>,
+        Lee Duncan <lduncan@suse.com>, Hannes Reinecke <hare@suse.com>,
+        Roman Bolshakov <r.bolshakov@yadro.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 40/52] net: call sk_dst_reset when set SO_DONTROUTE
-Date:   Thu, 24 Jan 2019 20:20:04 +0100
-Message-Id: <20190124190149.291976085@linuxfoundation.org>
+Subject: [PATCH 3.18 41/52] scsi: target: use consistent left-aligned ASCII INQUIRY data
+Date:   Thu, 24 Jan 2019 20:20:05 +0100
+Message-Id: <20190124190149.430550736@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -66,63 +70,75 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0fbe82e628c817e292ff588cd5847fc935e025f2 ]
+[ Upstream commit 0de263577de5d5e052be5f4f93334e63cc8a7f0b ]
 
-after set SO_DONTROUTE to 1, the IP layer should not route packets if
-the dest IP address is not in link scope. But if the socket has cached
-the dst_entry, such packets would be routed until the sk_dst_cache
-expires. So we should clean the sk_dst_cache when a user set
-SO_DONTROUTE option. Below are server/client python scripts which
-could reprodue this issue:
+spc5r17.pdf specifies:
 
-server side code:
+  4.3.1 ASCII data field requirements
+  ASCII data fields shall contain only ASCII printable characters (i.e.,
+  code values 20h to 7Eh) and may be terminated with one or more ASCII null
+  (00h) characters.  ASCII data fields described as being left-aligned
+  shall have any unused bytes at the end of the field (i.e., highest
+  offset) and the unused bytes shall be filled with ASCII space characters
+  (20h).
 
-==========================================================================
-import socket
-import struct
-import time
+LIO currently space-pads the T10 VENDOR IDENTIFICATION and PRODUCT
+IDENTIFICATION fields in the standard INQUIRY data. However, the PRODUCT
+REVISION LEVEL field in the standard INQUIRY data as well as the T10 VENDOR
+IDENTIFICATION field in the INQUIRY Device Identification VPD Page are
+zero-terminated/zero-padded.
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('0.0.0.0', 9000))
-s.listen(1)
-sock, addr = s.accept()
-sock.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, struct.pack('i', 1))
-while True:
-    sock.send(b'foo')
-    time.sleep(1)
-==========================================================================
+Fix this inconsistency by using space-padding for all of the above fields.
 
-client side code:
-==========================================================================
-import socket
-import time
-
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.connect(('server_address', 9000))
-while True:
-    data = s.recv(1024)
-    print(data)
-==========================================================================
-
-Signed-off-by: yupeng <yupeng0921@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: David Disseldorp <ddiss@suse.de>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Bryant G. Ly <bly@catalogicsoftware.com>
+Reviewed-by: Lee Duncan <lduncan@suse.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Reviewed-by: Roman Bolshakov <r.bolshakov@yadro.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/core/sock.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/target/target_core_spc.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/net/core/sock.c b/net/core/sock.c
-index 91ee0eb70fcf..039f101e7807 100644
---- a/net/core/sock.c
-+++ b/net/core/sock.c
-@@ -720,6 +720,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
- 		break;
- 	case SO_DONTROUTE:
- 		sock_valbool_flag(sk, SOCK_LOCALROUTE, valbool);
-+		sk_dst_reset(sk);
- 		break;
- 	case SO_BROADCAST:
- 		sock_valbool_flag(sk, SOCK_BROADCAST, valbool);
+diff --git a/drivers/target/target_core_spc.c b/drivers/target/target_core_spc.c
+index 614005b6b08b..3ab264d4fb1f 100644
+--- a/drivers/target/target_core_spc.c
++++ b/drivers/target/target_core_spc.c
+@@ -112,12 +112,17 @@ spc_emulate_inquiry_std(struct se_cmd *cmd, unsigned char *buf)
+ 
+ 	buf[7] = 0x2; /* CmdQue=1 */
+ 
+-	memcpy(&buf[8], "LIO-ORG ", 8);
+-	memset(&buf[16], 0x20, 16);
++	/*
++	 * ASCII data fields described as being left-aligned shall have any
++	 * unused bytes at the end of the field (i.e., highest offset) and the
++	 * unused bytes shall be filled with ASCII space characters (20h).
++	 */
++	memset(&buf[8], 0x20, 8 + 16 + 4);
++	memcpy(&buf[8], "LIO-ORG", sizeof("LIO-ORG") - 1);
+ 	memcpy(&buf[16], dev->t10_wwn.model,
+-	       min_t(size_t, strlen(dev->t10_wwn.model), 16));
++	       strnlen(dev->t10_wwn.model, 16));
+ 	memcpy(&buf[32], dev->t10_wwn.revision,
+-	       min_t(size_t, strlen(dev->t10_wwn.revision), 4));
++	       strnlen(dev->t10_wwn.revision, 4));
+ 	buf[4] = 31; /* Set additional length to 31 */
+ 
+ 	return 0;
+@@ -257,7 +262,9 @@ check_t10_vend_desc:
+ 	buf[off] = 0x2; /* ASCII */
+ 	buf[off+1] = 0x1; /* T10 Vendor ID */
+ 	buf[off+2] = 0x0;
+-	memcpy(&buf[off+4], "LIO-ORG", 8);
++	/* left align Vendor ID and pad with spaces */
++	memset(&buf[off+4], 0x20, 8);
++	memcpy(&buf[off+4], "LIO-ORG", sizeof("LIO-ORG") - 1);
+ 	/* Extra Byte for NULL Terminator */
+ 	id_len++;
+ 	/* Identifier Length */
 -- 
 2.19.1
 
