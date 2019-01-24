@@ -2,110 +2,155 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DATE_IN_PAST_12_24,
-	DKIMWL_WL_HIGH,DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FF5C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F138C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC5CB218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548323948;
-	bh=7q0fCv7qaV5KabZDyE7wOITOXU/L+ASfEPQtFvkuL/E=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=GjpEBXX/GBFftZPfn4ieEHwqOvn1TPLf5dx+9uwWMphS0PxSTo2bcDjflBSb8MbtF
-	 00q3//8N4bHc+aaLouilwyA/kMNoVx9Mks68iazMOzTrWS7vS1jK/Xc5fnaBWVJ9MM
-	 XRNMWhUh0GQPKaE23BD1+d1nbILEoEj1bNdr9Xto=
+	by mail.kernel.org (Postfix) with ESMTP id 5FE4D2084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:59:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PboRJuOZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727790AbfAXJ7H (ORCPT
+        id S1727801AbfAXJ7K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:59:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49484 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726199AbfAXJ6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:58:11 -0500
-Received: from earth.universe (dyndsl-037-138-185-084.ewe-ip-backbone.de [37.138.185.84])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 08C88218AC;
-        Thu, 24 Jan 2019 09:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548323890;
-        bh=7q0fCv7qaV5KabZDyE7wOITOXU/L+ASfEPQtFvkuL/E=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=GJTEREcsf+z3J0Ka8KsGWqb6Fag9WNq5Ggm79osoonsUcgM1yUgVXW4M2w3VZiu9e
-         GljPcYxrwppYWmXQOs9PZ2Tra29wkM+VfjOiTadeDMAM4mceKuGVUP+Q88Z97QE/Mh
-         pEr/rQJNt+5Vuns4/acABKcSNVz0mMB5V6oW+/44=
-Received: by earth.universe (Postfix, from userid 1000)
-        id CC8FE3C08EB; Wed, 23 Jan 2019 21:56:27 +0100 (CET)
-Date:   Wed, 23 Jan 2019 21:56:27 +0100
-From:   Sebastian Reichel <sre@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, x86@kernel.org,
-        linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Pavel Machek <pavel@ucw.cz>
-Subject: Re: [PATCH v5 2/7] x86, olpc: Use a correct version when making up a
- battery node
-Message-ID: <20190123205627.nbddtfuy6qdo2bgb@earth.universe>
-References: <20190110174005.1202564-1-lkundrak@v3.sk>
- <20190110174005.1202564-3-lkundrak@v3.sk>
+        Thu, 24 Jan 2019 04:59:10 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37300 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727513AbfAXJ7G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 04:59:06 -0500
+Received: by mail-wr1-f67.google.com with SMTP id s12so5747773wrt.4
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 01:59:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=iRSEopFd+AHR1Xrk3tr3l3cIpLaGxkm3eJb/szQtbWI=;
+        b=PboRJuOZ7vQb7QTOTDCTpv+pdmQBiIvhFX69bWZQASbvtwPj+0Cgp5+Bkzr+QIigOz
+         GeDM62Ic9Yq0OHjy38jFXIyFVOIfqLxzSOQ1RpIoswzCtoH0zaDdxCarGgCXbZj6D9jo
+         +Nvj0uwqZcz3og7JbEYsnbPmMlcdpIcm2XSAQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=iRSEopFd+AHR1Xrk3tr3l3cIpLaGxkm3eJb/szQtbWI=;
+        b=VVBlmuKQx/Z6uwIJihtRWoSXjvxMgUE3dVdeaAkoWdgHVQfXnpAK1TEBzmQnhEjvDg
+         c9VFht9l7SxTUv132FubE3c1usXUD6vYTK270qoKZXabagBjsaFsdqqOnUF8IA3rESjH
+         gaSf4mpPBDcMf1dXSs30MfMQFoVwVnpysagjaWv5oNs3IyjDalet/KUccPYqGTpmrvn+
+         kfJBvWx3ui/lZ3zfoKsu1kFB4wxvDQX3AkOIjH2QXW4gUJtJiAPbR+kXtW76FSKY+G1f
+         VQrl6jUQix+k857ZZ+BZJZKkzkkQzIqpgAHeCDKgVD5MZfKW8CKSibh5sKfg3TfuF4Er
+         W7Lg==
+X-Gm-Message-State: AJcUukc+FkKJ7quUFz8YcH2DJjnC6TbslCzyk1gDJbyQefr6Mtu72XC6
+        KQJSCQ01GCHgHaKy7+T3LafAEA==
+X-Google-Smtp-Source: ALg8bN54V/MwJB+4mFIs+zTyjSrnLqnnGoJWaz1N+qDWbPm4NSW6wbRXfU4xLAEX960Tc7kJSr8XrQ==
+X-Received: by 2002:adf:b6a1:: with SMTP id j33mr6456628wre.55.1548323944084;
+        Thu, 24 Jan 2019 01:59:04 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id x3sm97679856wrd.19.2019.01.24.01.59.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 01:59:03 -0800 (PST)
+Subject: Re: [PATCH 08/10] venus: vdec_ctrls: get real minimum buffers for
+ capture
+To:     Alexandre Courbot <acourbot@chromium.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+ <20190117162008.25217-9-stanimir.varbanov@linaro.org>
+ <CAPBb6MWJXWLcGh3dbejiYzyqT6OB1_FN6zrcZFO5DbxqXSAWjQ@mail.gmail.com>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <c9ce287b-e064-9fbe-6ee0-176253e0de84@linaro.org>
+Date:   Thu, 24 Jan 2019 11:59:01 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="lpmyezh6u4iltf3f"
-Content-Disposition: inline
-In-Reply-To: <20190110174005.1202564-3-lkundrak@v3.sk>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAPBb6MWJXWLcGh3dbejiYzyqT6OB1_FN6zrcZFO5DbxqXSAWjQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Alex,
 
---lpmyezh6u4iltf3f
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks for the comments!
 
-Hi,
+On 1/24/19 10:43 AM, Alexandre Courbot wrote:
+> On Fri, Jan 18, 2019 at 1:21 AM Stanimir Varbanov
+> <stanimir.varbanov@linaro.org> wrote:
+>>
+>> Until now we returned num_output_bufs set during reqbuf but
+>> that could be wrong when we implement stateful Codec API. So
+>> get the minimum buffers for capture from HFI. This is supposed
+>> to be called after stream header parsing, i.e. after dequeue
+>> v4l2 event for change resolution.
+>>
+>> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
+>> ---
+>>  drivers/media/platform/qcom/venus/vdec_ctrls.c | 7 ++++++-
+>>  1 file changed, 6 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/venus/vdec_ctrls.c b/drivers/media/platform/qcom/venus/vdec_ctrls.c
+>> index f4604b0cd57e..e1da87bf52bc 100644
+>> --- a/drivers/media/platform/qcom/venus/vdec_ctrls.c
+>> +++ b/drivers/media/platform/qcom/venus/vdec_ctrls.c
+>> @@ -16,6 +16,7 @@
+>>  #include <media/v4l2-ctrls.h>
+>>
+>>  #include "core.h"
+>> +#include "helpers.h"
+>>  #include "vdec.h"
+>>
+>>  static int vdec_op_s_ctrl(struct v4l2_ctrl *ctrl)
+>> @@ -47,7 +48,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+>>  {
+>>         struct venus_inst *inst = ctrl_to_inst(ctrl);
+>>         struct vdec_controls *ctr = &inst->controls.dec;
+>> +       struct hfi_buffer_requirements bufreq;
+>>         union hfi_get_property hprop;
+>> +       enum hfi_version ver = inst->core->res->hfi_version;
+>>         u32 ptype = HFI_PROPERTY_PARAM_PROFILE_LEVEL_CURRENT;
+>>         int ret;
+>>
+>> @@ -71,7 +74,9 @@ static int vdec_op_g_volatile_ctrl(struct v4l2_ctrl *ctrl)
+>>                 ctrl->val = ctr->post_loop_deb_mode;
+>>                 break;
+>>         case V4L2_CID_MIN_BUFFERS_FOR_CAPTURE:
+>> -               ctrl->val = inst->num_output_bufs;
+>> +               ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
+>> +               if (!ret)
+>> +                       ctrl->val = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
+> 
+> What happens if venus_helper_get_bufreq() returns an error? It seems
+> that we just happily continue with whatever the previous value of
+> ctrl->val was. It seems like we do the same with other controls as
+> well.
 
-On Thu, Jan 10, 2019 at 06:40:00PM +0100, Lubomir Rintel wrote:
-> The XO-1 and XO-1.5 batteries apparently differ in an ability to report
-> ambient temperature. Add a different compatible string to the 1.5
-> battery.
->=20
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
->=20
-> ---
+I agree that this is wrong, I think no-one userspace client used that
+g_ctrls controls :)
 
-I either need an Acked-by from the x86 platform maintainers, that I
-can queue this through power-supply or a pull request for an immutable
-branch (probably the better idea).
+> 
+> I think you can fix this globally by initializing ret to 0 at the
+> beginning of the function, and then returning ret instead of 0 at the
+> end. That way all errors would be propagated. Of course please check
+> that this is relevant for other controls following this scheme before
+> doing so. :)
+> 
 
--- Sebastian
+yes, I will do!
 
---lpmyezh6u4iltf3f
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAlxI1PsACgkQ2O7X88g7
-+pqrZw/+Md3qBkUZYZAqMNoEDlok7+li3OlE4r+BFb0HQl72BLWRv373gEtloWfK
-leEggi0wgJSrx/0vt6ZJxKnFPBKRI26V2LIuWNfM5mj/BqQGykdBENbkcYG6bE3D
-uDCIuRqRxSDNJOhIDVr3CFMaLcW470Wc2Q1YAQA01sfmCFTSHuyj/2nmJmL+AcMN
-9u7jEb//Y4hhcaLtuAG/UFcqC68Yey5epxHVxoN940XJyIUEx3EScRbbpNf1ZFWy
-IcSLJeAQTKY9j6n/OB1E8b6ZJxp5ZVQqeuaGu5+3PBqDpYcVL8+wIGhP4n7CvOGK
-7ZJCGLEChqRs2gUJhi17Rg/LgGBGl8myEnEYVKaeyy8Kh6g9a8jb9Q49R6AxISUH
-pv9wi9nwL2/EPyqbg4UWNubKYXkSZKA/tFRetAofTvoJvF+FI3t/d3z+G6vv0W6M
-OH9IzFZyKu419q6j64g37fBB4NPG3+pZu4FYEzhUfRpRQgYL5cHoH6ZwM+NpKdUM
-FUlQvIhmTRsNzZCsfztIz4GOlTTdaZCEyt4jWt8dZcrm6Wle648jQblrjquSLapk
-lkg+H1b6r/dzpf7gwoUQvU0tSUaZ+U0hpstSYL6lE/akmkXsuLMMkMA6qRHs+MPX
-TgUvS/D9dqPutkHvLBV3HgMuDLu0VK2sDNA6DeLzsC7xP0SK6ak=
-=UlIM
------END PGP SIGNATURE-----
-
---lpmyezh6u4iltf3f--
+-- 
+regards,
+Stan
