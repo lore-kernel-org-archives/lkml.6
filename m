@@ -2,84 +2,100 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D79E6C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:48:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95AC1C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6A3E218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:48:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 585DF218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:50:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L7HzvY8q"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gqdvP77Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728376AbfAXPse (ORCPT
+        id S1728536AbfAXPuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:48:34 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:33815 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727755AbfAXPsd (ORCPT
+        Thu, 24 Jan 2019 10:50:11 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:38841 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727566AbfAXPuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:48:33 -0500
-Received: by mail-qk1-f195.google.com with SMTP id q8so3521829qke.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 07:48:33 -0800 (PST)
+        Thu, 24 Jan 2019 10:50:11 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so7001292wrw.5;
+        Thu, 24 Jan 2019 07:50:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
-        bh=zuDB9aQP50Nzs83T+/xEPO8GsYbx96PZ87iyfN9P8Hw=;
-        b=L7HzvY8qUL6w9l9T3M0oOShIxhqF9QABTaat8QUseNi1x6rYu9Ea+C/632y/+YtQr0
-         otlGQNGqlih4rySwaxBT6+ItqZnYQiHQ9xrB3R8BpyVB5NqHT1ZYy5xjymy1h7oBI9//
-         D7XR0qeT9xTTmNMpngr99IIB7dukAW+AccqwniFq5w+wYqrwdbo8SkGn0MhgVePIQGOF
-         kTiwCJ+HY9Vn6XyZVlhGvzhM2CQSm159oOnHj1J+xPeAM2piq3Ds/76HHjru9o5C1yKz
-         jw6ndbOqIolKf49/lgSDOK2FQGoFqx60S7xmyUBcEgOGTki0V0CdOhRGf5OKy2Ssq+Ah
-         io5A==
+        h=from:to:cc:subject:date:message-id;
+        bh=4X40eqBy8zRByT/AnMwBLP8L5L8LaP3v1vVVNpWhtQU=;
+        b=gqdvP77QsenVirYhf3WMNRImTAIt/fWTPa4MnUHWzm6nmNXbw76G36Any92rNYhd6g
+         mPcI26WsHfHVLTFIcj2MxjANxVfKIW2OZMVGFcUHdkypyMWQ0ud2DHHZdfISZ31kWU4t
+         rTzlsYxSE7frrXcW92hksReoHpN2yYnzETAzrFgVRTASGAOXWEGp07bYtk3KgkogsmDL
+         X1FomYoPOkkveEsFFT02/7+B6CdT+3/XLndelGGXhpQLyUsh1MEQT4+s8STHDCHnK/4K
+         xelVVVGBNt/UZjc11IU/UQ29oSTN0VUxvRNdlvyoKJ3+YC6BBp/5x7Y8Qp3XYywt3GLv
+         ESYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to;
-        bh=zuDB9aQP50Nzs83T+/xEPO8GsYbx96PZ87iyfN9P8Hw=;
-        b=g0+iLfPUA7jzKoeWNXho6ug4fT5wrIHsMk5Td5B2khuZp+fqmhv8MqXJmEJl+SK4k0
-         c6TqfrXx4kU+umEJ5eC1lrCPndsKwW692U9M9SlqCxdSs8XJMalF0uI727X5ijuVlr4V
-         3E+vqNZolB773XWnZDsT8NmCj85gvIYqdtvg2OPf2/s7M1XFinTpe1T1yPcQ53HINERf
-         o+1R6zGBKhSkBzUwvV9tcisoPFOYBNZQlO/AvdQn9m1Rg2DvQZ92PPB6qhHxmJOZ0G9a
-         54xrOpFf6AcirXK/e2++GdWQqqpLeiYtFsVv8lYGRRgcN7AOBqDO2RjIXUCTAiG7dvD7
-         QurQ==
-X-Gm-Message-State: AJcUukcCkqG9JimogZ98DYhBWm8yCu41+Bk+jbEuoUrSC9fKgdXMdd7o
-        rS3BC17dCfs36Lk9wo0s1c/Xg1MJ83c63V2nYVmDig==
-X-Google-Smtp-Source: ALg8bN7J7Sbn2/W8SzOEVnz49IFaZwORGUnt89GF2RhNGrg98PkwsKShxA3PqbrQEiIotY9OlA8NebsU0S/FA27K8mU=
-X-Received: by 2002:a37:a315:: with SMTP id m21mr6139827qke.152.1548344912516;
- Thu, 24 Jan 2019 07:48:32 -0800 (PST)
-MIME-Version: 1.0
-References: <CADfvbxqC1+XoSsn0sEDqFE16tN1Pq46-QDAaCu=AXJdZeY3rDQ@mail.gmail.com>
-In-Reply-To: <CADfvbxqC1+XoSsn0sEDqFE16tN1Pq46-QDAaCu=AXJdZeY3rDQ@mail.gmail.com>
-From:   robert shteynfeld <robert.shteynfeld@gmail.com>
-Date:   Thu, 24 Jan 2019 10:48:21 -0500
-Message-ID: <CADfvbxoFH50nhOamBQhpXskHo0fJP1cuRfcFFY+pR9SbHC1dpg@mail.gmail.com>
-Subject: Fwd: kernel panic due to https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2830bf6f05fb3e05bc4743274b806c821807a684
-To:     linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=4X40eqBy8zRByT/AnMwBLP8L5L8LaP3v1vVVNpWhtQU=;
+        b=iCfMr5k3MckWxI6j6hfROckEim9kJc5pKWAfqzfXvgNT/Y2zhESxnFmIIPbJgkx+zs
+         QeVOR6hoE7IthaiYfhUCZj4R62ykbvS2v0qVFHeLyFaSQAdrC49pMQOcpWSkc9tiXrkp
+         Zln8qfPUSXI8jBLV3H5umxcTX9YN07nwFxQM5mz12ciWnKSmdw9nf8+1svs3n6Zoy/TG
+         u5TGtWPPGpjWBqqRhLyP+SBRGm8MCK2kd17dsoJZFs4pRNrY7oI9IY4MG6besEfD3q5B
+         uj+/0sY1cQnIPSXh8HHzi6CYlbBh9/k6pUmtT3GOPJn0s0HuyDZCqDLCXOqydHfuOead
+         aM+A==
+X-Gm-Message-State: AJcUukeF6pHfC1C2o0w2VSWdwxby+VvVRhMm+4HlVxyU9AMonJIJ7Qbm
+        r7OSEpgdPk2mMomMTZv6ChQ=
+X-Google-Smtp-Source: AHgI3IaYpG2qCgYU2S4kuO7xXEyxptWcFXleGZnRzNoNmb85C3fVN6SfFPHAx242Dz0/Z70+Wut5kQ==
+X-Received: by 2002:adf:f3c6:: with SMTP id g6mr3526321wrp.111.1548345009384;
+        Thu, 24 Jan 2019 07:50:09 -0800 (PST)
+Received: from orange.brq.redhat.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id f15sm94701721wrt.10.2019.01.24.07.50.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 07:50:08 -0800 (PST)
+From:   Ilya Dryomov <idryomov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ceph-devel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] Ceph fixes for 5.0-rc4
+Date:   Thu, 24 Jan 2019 16:49:58 +0100
+Message-Id: <20190124154958.8067-1-idryomov@gmail.com>
+X-Mailer: git-send-email 2.14.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
----------- Forwarded message ---------
-From: robert shteynfeld <robert.shteynfeld@gmail.com>
-Date: Thu, Jan 24, 2019 at 9:21 AM
-Subject: kernel panic due to
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2830bf6f05fb3e05bc4743274b806c821807a684
-To: <zaslonko@linux.ibm.com>, <torvalds@linux-foundation.org>
-Cc: <linux-kernel@vger.kernel.org>
+Hi Linus,
 
+The following changes since commit 49a57857aeea06ca831043acbb0fa5e0f50602fd:
 
-Hi,
+  Linux 5.0-rc3 (2019-01-21 13:14:44 +1300)
 
-It looks like the above commit is causing an early kernel panic during
-boot on my system starting with kernel 4.19.13.  Here's the redhat bug
-regarding this: https://bugzilla.redhat.com/show_bug.cgi?id=1666948.
+are available in the Git repository at:
 
-Cheers,
+  https://github.com/ceph/ceph-client.git tags/ceph-for-5.0-rc4
 
-Robert
+for you to fetch changes up to 74827ee29565f86e2a64495a5e3e58d3371d74ee:
+
+  ceph: quota: cleanup license mess (2019-01-21 14:53:23 +0100)
+
+----------------------------------------------------------------
+A fix for a potential use-after-free, a patch to close a (mostly benign)
+race in the messenger and a licence clarification for quota.c.
+
+----------------------------------------------------------------
+Ilya Dryomov (1):
+      libceph: avoid KEEPALIVE_PENDING races in ceph_con_keepalive()
+
+Thomas Gleixner (1):
+      ceph: quota: cleanup license mess
+
+Yan, Zheng (1):
+      ceph: clear inode pointer when snap realm gets dropped by its inode
+
+ fs/ceph/caps.c       |  2 ++
+ fs/ceph/quota.c      | 13 -------------
+ net/ceph/messenger.c |  5 +++--
+ 3 files changed, 5 insertions(+), 15 deletions(-)
