@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68D78C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA7BC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38EE521726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B9C120663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:49:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359343;
-	bh=l6eetHva6rSM6XmcxHyycmfiHRFANRRa7OkmeWbvBMY=;
+	s=default; t=1548359347;
+	bh=RALH6NGWe02Ci51V/cFc8rmlI791r5bMJRB8qTNn47c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FQxMasG1aH2P2pPhO4pokuKYfrIlUTDnihcUpmpS83xPfZrNSkn8sHjZLCCCcPv9I
-	 fClIDXnTs5ZYacE6TGnrEgGrpXPps79ge5mBjZgSxmmElP3OiSu61VbAvr4WuxQQ5r
-	 LwcuVbqUiXU5QAYah5iAKV1ptz1eK8N7SQ63l9Zg=
+	b=f7JwAZUy3sqlW3SRYMkz7Sxpad193jgzjqiyjQEey1fYWqdibtZN27I1+2bnSxcAQ
+	 rJhFuKqbMwyeZOmxWtEyBmdmO1eC6rJBm/u69O5WFRTatj/+PJfCCOT8JaBuFayAkG
+	 sdDj3Ymd/pVwWCHy0A4V4c3L6gZbhMB3dK1qc4GY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387599AbfAXTlf (ORCPT
+        id S1732795AbfAXTlc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:41:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41820 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:41:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387583AbfAXTlb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:41:31 -0500
+        id S1732286AbfAXTl1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:41:27 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5804320663;
-        Thu, 24 Jan 2019 19:41:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B804F218D0;
+        Thu, 24 Jan 2019 19:41:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358889;
-        bh=l6eetHva6rSM6XmcxHyycmfiHRFANRRa7OkmeWbvBMY=;
+        s=default; t=1548358887;
+        bh=RALH6NGWe02Ci51V/cFc8rmlI791r5bMJRB8qTNn47c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O320T9z74EnEObgDug9wb3E/1etQgCqRP4Rc+7uetNrsznzIeYHw0aGKsqBXzAKJQ
-         /o6gipR5v0nJRnvBsXt8fZ1nDhfwhv0VfGrGVU8sokLbAr+ceosEYt9YOwzg65wUAt
-         A7jUheJYvoDTsdYVQi6V5TqVCLeQuXvihuPF9pAY=
+        b=B0m0EDDzdUKDkI6h+CuJguUwXjiDIhwDh6ICK7wl8uOa1+cZ6e4svnHzpvxmitPwB
+         4bRNg905HWrEMaeoPXfMHWF9ZuD684SEIrjO/eyERv6poyne6t2Ik8YoUXAoIsjthj
+         NO0S4n5FjJ+UtiL2CxCmyXOQHKaT4lWnru6h846Y=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 062/127] media: venus: core: Set dma maximum segment size
-Date:   Thu, 24 Jan 2019 20:20:08 +0100
-Message-Id: <20190124190214.804812024@linuxfoundation.org>
+        stable@vger.kernel.org, Suzuki Poulose <suzuki.poulose@arm.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Mike Leach <mike.leach@linaro.org>,
+        Robert Walker <robert.walker@arm.com>,
+        Leo Yan <leo.yan@linaro.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.20 061/127] coresight: tmc: Fix bad register address for CLAIM
+Date:   Thu, 24 Jan 2019 20:20:07 +0100
+Message-Id: <20190124190214.765290802@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -68,92 +68,90 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit de2563bce7a157f5296bab94f3843d7d64fb14b4 ]
+[ Upstream commit 323ed1e0f60b35df55763356d4973a18d5eaea15 ]
 
-Turning on CONFIG_DMA_API_DEBUG_SG results in the following error:
+Commit 4d3ebd3658d8 ("coreisght: tmc: Claim device before use") uses
+CLAIM tag to validate if the device is available, it needs to pass
+the device base address to access related registers.
 
-[  460.308650] ------------[ cut here ]------------
-[  460.313490] qcom-venus aa00000.video-codec: DMA-API: mapping sg segment longer than device claims to support [len=4194304] [max=65536]
-[  460.326017] WARNING: CPU: 3 PID: 3555 at src/kernel/dma/debug.c:1301 debug_dma_map_sg+0x174/0x254
-[  460.338888] Modules linked in: venus_dec venus_enc videobuf2_dma_sg videobuf2_memops hci_uart btqca bluetooth venus_core v4l2_mem2mem videobuf2_v4l2 videobuf2_common ath10k_snoc ath10k_core ath lzo lzo_compress zramjoydev
-[  460.375811] CPU: 3 PID: 3555 Comm: V4L2DecoderThre Tainted: G        W         4.19.1 #82
-[  460.384223] Hardware name: Google Cheza (rev1) (DT)
-[  460.389251] pstate: 60400009 (nZCv daif +PAN -UAO)
-[  460.394191] pc : debug_dma_map_sg+0x174/0x254
-[  460.398680] lr : debug_dma_map_sg+0x174/0x254
-[  460.403162] sp : ffffff80200c37d0
-[  460.406583] x29: ffffff80200c3830 x28: 0000000000010000
-[  460.412056] x27: 00000000ffffffff x26: ffffffc0f785ea80
-[  460.417532] x25: 0000000000000000 x24: ffffffc0f4ea1290
-[  460.423001] x23: ffffffc09e700300 x22: ffffffc0f4ea1290
-[  460.428470] x21: ffffff8009037000 x20: 0000000000000001
-[  460.433936] x19: ffffff80091b0000 x18: 0000000000000000
-[  460.439411] x17: 0000000000000000 x16: 000000000000f251
-[  460.444885] x15: 0000000000000006 x14: 0720072007200720
-[  460.450354] x13: ffffff800af536e0 x12: 0000000000000000
-[  460.455822] x11: 0000000000000000 x10: 0000000000000000
-[  460.461288] x9 : 537944d9c6c48d00 x8 : 537944d9c6c48d00
-[  460.466758] x7 : 0000000000000000 x6 : ffffffc0f8d98f80
-[  460.472230] x5 : 0000000000000000 x4 : 0000000000000000
-[  460.477703] x3 : 000000000000008a x2 : ffffffc0fdb13948
-[  460.483170] x1 : ffffffc0fdb0b0b0 x0 : 000000000000007a
-[  460.488640] Call trace:
-[  460.491165]  debug_dma_map_sg+0x174/0x254
-[  460.495307]  vb2_dma_sg_alloc+0x260/0x2dc [videobuf2_dma_sg]
-[  460.501150]  __vb2_queue_alloc+0x164/0x374 [videobuf2_common]
-[  460.507076]  vb2_core_reqbufs+0xfc/0x23c [videobuf2_common]
-[  460.512815]  vb2_reqbufs+0x44/0x5c [videobuf2_v4l2]
-[  460.517853]  v4l2_m2m_reqbufs+0x44/0x78 [v4l2_mem2mem]
-[  460.523144]  v4l2_m2m_ioctl_reqbufs+0x1c/0x28 [v4l2_mem2mem]
-[  460.528976]  v4l_reqbufs+0x30/0x40
-[  460.532480]  __video_do_ioctl+0x36c/0x454
-[  460.536610]  video_usercopy+0x25c/0x51c
-[  460.540572]  video_ioctl2+0x38/0x48
-[  460.544176]  v4l2_ioctl+0x60/0x74
-[  460.547602]  do_video_ioctl+0x948/0x3520
-[  460.551648]  v4l2_compat_ioctl32+0x60/0x98
-[  460.555872]  __arm64_compat_sys_ioctl+0x134/0x20c
-[  460.560718]  el0_svc_common+0x9c/0xe4
-[  460.564498]  el0_svc_compat_handler+0x2c/0x38
-[  460.568982]  el0_svc_compat+0x8/0x18
-[  460.572672] ---[ end trace ce209b87b2f3af88 ]---
+In the function tmc_etb_disable_hw() it wrongly passes the driver data
+pointer as register base address, thus it's easily to produce the kernel
+warning info like below:
 
->From above warning one would deduce that the sg segment will overflow
-the device's capacity. In reality, the hardware can accommodate larger
-sg segments.
-So, initialize the max segment size properly to weed out this warning.
+[   83.579898] WARNING: CPU: 4 PID: 2970 at drivers/hwtracing/coresight/coresight.c:207 coresight_disclaim_device_unlocked+0x44/0x80
+[   83.591448] Modules linked in:
+[   83.594485] CPU: 4 PID: 2970 Comm: uname Not tainted 4.19.0-rc6-00417-g721b509 #110
+[   83.602067] Hardware name: ARM Juno development board (r2) (DT)
+[   83.607932] pstate: 80000085 (Nzcv daIf -PAN -UAO)
+[   83.612681] pc : coresight_disclaim_device_unlocked+0x44/0x80
+[   83.618375] lr : coresight_disclaim_device_unlocked+0x44/0x80
+[   83.624064] sp : ffff00000fe3ba20
+[   83.627347] x29: ffff00000fe3ba20 x28: ffff80002d430dc0
+[   83.632618] x27: ffff800033177c00 x26: ffff80002eb44480
+[   83.637889] x25: 0000000000000001 x24: ffff800033c72600
+[   83.643160] x23: ffff0000099b11f8 x22: ffff0000099b11c8
+[   83.648430] x21: 0000000000000002 x20: ffff800033a90418
+[   83.653701] x19: ffff0000099b11c8 x18: 0000000000000000
+[   83.658971] x17: 0000000000000000 x16: 0000000000000000
+[   83.664241] x15: 0000000000000000 x14: 0000000000000000
+[   83.669511] x13: 0000000000000000 x12: 0000000000000000
+[   83.674782] x11: 0000000000000000 x10: 0000000000000000
+[   83.680052] x9 : 0000000000000000 x8 : 0000000000000001
+[   83.685322] x7 : 0000000000010000 x6 : ffff800033ebab18
+[   83.690593] x5 : ffff800033ebab18 x4 : ffff800033e6c698
+[   83.695862] x3 : 0000000000000001 x2 : 0000000000000000
+[   83.701133] x1 : 0000000000000000 x0 : 0000000000000001
+[   83.706404] Call trace:
+[   83.708830]  coresight_disclaim_device_unlocked+0x44/0x80
+[   83.714180]  coresight_disclaim_device+0x34/0x48
+[   83.718756]  tmc_disable_etf_sink+0xc4/0xf0
+[   83.722902]  coresight_disable_path_from+0xc8/0x240
+[   83.727735]  coresight_disable_path+0x24/0x30
+[   83.732053]  etm_event_stop+0x130/0x170
+[   83.735854]  etm_event_del+0x24/0x30
+[   83.739399]  event_sched_out.isra.51+0xcc/0x1e8
+[   83.743887]  group_sched_out.part.53+0x44/0xb0
+[   83.748291]  ctx_sched_out+0x298/0x2b8
+[   83.752005]  task_ctx_sched_out+0x74/0xa8
+[   83.755980]  perf_event_exit_task+0x140/0x418
+[   83.760298]  do_exit+0x3f4/0xcf0
+[   83.763497]  do_group_exit+0x5c/0xc0
+[   83.767041]  __arm64_sys_exit_group+0x24/0x28
+[   83.771359]  el0_svc_common+0x110/0x178
+[   83.775160]  el0_svc_handler+0x94/0xe8
+[   83.778875]  el0_svc+0x8/0xc
+[   83.781728] ---[ end trace 02d8d8eac46db9e5 ]---
 
-Based on a similar patch sent by Sean Paul for mdss:
-https://patchwork.kernel.org/patch/10671457/
+This patch is to fix this bug by using 'drvdata->base' as the
+register base address for CLAIM related operation.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Acked-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Fixes: 4d3ebd3658d8 ("coreisght: tmc: Claim device before use")
+Cc: Suzuki Poulose <suzuki.poulose@arm.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Mike Leach <mike.leach@linaro.org>
+Cc: Robert Walker <robert.walker@arm.com>
+Signed-off-by: Leo Yan <leo.yan@linaro.org>
+Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Signed-off-by: Mathieu Poirier <mathieu.poirier@linaro.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/platform/qcom/venus/core.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/hwtracing/coresight/coresight-tmc-etf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index bb6add9d340e..5b8350e87e75 100644
---- a/drivers/media/platform/qcom/venus/core.c
-+++ b/drivers/media/platform/qcom/venus/core.c
-@@ -264,6 +264,14 @@ static int venus_probe(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
+diff --git a/drivers/hwtracing/coresight/coresight-tmc-etf.c b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+index 53fc83b72a49..5864ac55e275 100644
+--- a/drivers/hwtracing/coresight/coresight-tmc-etf.c
++++ b/drivers/hwtracing/coresight/coresight-tmc-etf.c
+@@ -86,7 +86,7 @@ static void __tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
  
-+	if (!dev->dma_parms) {
-+		dev->dma_parms = devm_kzalloc(dev, sizeof(*dev->dma_parms),
-+					      GFP_KERNEL);
-+		if (!dev->dma_parms)
-+			return -ENOMEM;
-+	}
-+	dma_set_max_seg_size(dev, DMA_BIT_MASK(32));
-+
- 	INIT_LIST_HEAD(&core->instances);
- 	mutex_init(&core->lock);
- 	INIT_DELAYED_WORK(&core->work, venus_sys_error_handler);
+ static void tmc_etb_disable_hw(struct tmc_drvdata *drvdata)
+ {
+-	coresight_disclaim_device(drvdata);
++	coresight_disclaim_device(drvdata->base);
+ 	__tmc_etb_disable_hw(drvdata);
+ }
+ 
 -- 
 2.19.1
 
