@@ -2,97 +2,161 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C918DC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DAEC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:31:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F9792184B
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:28:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWptCaMC"
+	by mail.kernel.org (Postfix) with ESMTP id 2E6E1218AE
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 14:31:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728346AbfAXO2H (ORCPT
+        id S1728291AbfAXObo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 09:28:07 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43765 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728036AbfAXO2G (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 09:28:06 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so3052408pfk.10;
-        Thu, 24 Jan 2019 06:28:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=ISfaXsr2H24qrZQzKQBAmGRhlucCPOZ3M80vrtSDgLY=;
-        b=mWptCaMCN7bd8aR6Hwbj9k8Ot4wLMsQQRTtZnQFmunq+TaS6LbT2kuexHlxbhLTewz
-         FlC7tJ7/Klj0q7Bq7X6hrbgm0gKeL5nGh5ovSsXg441qmJOgvFBsKHOVy2ULAO+XxV/Q
-         v/WpOHQS/bY/F73PFLtCuR3+PDFIAyQqyGP/yGeUgUVqdMyE67sPY699sYYB6LiZ8iQ/
-         /5JMurrqK2IOEF1I21pR6zm9sjddCK02MBAFvrEhX/dVJGP7atnSIcOJajLoJoc1ujdj
-         9LSFwNUQaFX2OWXQI/wWkiZCEqXloPRefUdZIWPeBR+HaDcUlfWc2K1lVFGyjjw1wmtN
-         rMmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=ISfaXsr2H24qrZQzKQBAmGRhlucCPOZ3M80vrtSDgLY=;
-        b=CKkHbZcFOkAhHba67MrWA5GK/VvvZ6oU0un8ncYA2ZXn/9aMwTz/wAFMTOtmhE20t8
-         /I1hjhsjRNbZmC69oSAv5/ai+eAsOV4sO2sxAM6o8TUoLg+hzWU3GHZbhVmy50Yr+CPV
-         QmAwAHdhnEhLUQ2/3VUPsHKP7gGp93kWHsxHe25q9Y4b5PiCsaaZgKli2y6XCCe1/AG9
-         dcFD0MdzqzUfnXRU9ImIEyOECSFs8A21bo5p1DpE5zjVhRuUneoGHJXCKK1dsDOfN/sl
-         hoQD+wUb1gsWg+NTNefVFz5HqnZT4CEEjohwCVkvsVVJmz8zsESHcllQ6pwFVJFsg5TD
-         zfFg==
-X-Gm-Message-State: AJcUukcfz0bdO9m1X5tzgKEvM6eOQ7Yec7oP18BiU9KZMKQglZyjuxs7
-        fvQQ/QtUVZ/bsFCo6vEM1U2PNTyF
-X-Google-Smtp-Source: ALg8bN7/6q3RmJ7eQcrEWoU43XoPDofZ25C2M1aQCdRWyM5UBkKQ6hAZufqoOVIVRjaNLhx87DaCcQ==
-X-Received: by 2002:a62:d148:: with SMTP id t8mr6859659pfl.52.1548340085746;
-        Thu, 24 Jan 2019 06:28:05 -0800 (PST)
-Received: from bhar12345-VirtualBox ([103.110.42.32])
-        by smtp.gmail.com with ESMTPSA id o66sm37705825pgo.75.2019.01.24.06.28.04
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Thu, 24 Jan 2019 06:28:05 -0800 (PST)
-Date:   Thu, 24 Jan 2019 19:58:00 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] drivers: iio: industrialio-core: add check when kzalloc fails
-Message-ID: <20190124142755.GA31059@bhar.linux>
+        Thu, 24 Jan 2019 09:31:44 -0500
+Received: from mga04.intel.com ([192.55.52.120]:20048 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727755AbfAXObn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 09:31:43 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 06:31:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,516,1539673200"; 
+   d="scan'208";a="128556334"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga002.jf.intel.com with ESMTP; 24 Jan 2019 06:31:39 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id 839AF12A; Thu, 24 Jan 2019 16:31:38 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Matias Bjorling <mb@lightnvm.io>,
+        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        Christoph Hellwig <hch@lst.de>, linux-kernel@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Subject: [PATCH v2] lightnvm: pblk: Switch to use new generic UUID API
+Date:   Thu, 24 Jan 2019 16:31:37 +0200
+Message-Id: <20190124143137.13880-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-add code to handle the case when kzalloc fails to allocate memory to dev
+There are new types and helpers that are supposed to be used in new code.
 
-Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
+As a preparation to get rid of legacy types and API functions do
+the conversion here.
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- drivers/iio/industrialio-core.c | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-index 4f5cd9f..93caa6b 100644
---- a/drivers/iio/industrialio-core.c
-+++ b/drivers/iio/industrialio-core.c
-@@ -1475,6 +1475,8 @@ struct iio_dev *iio_device_alloc(int sizeof_priv)
+v2:
+- convert instance_uuid to guid_t and get rid of pblk_setup_uuid()
+- fix subject line to show subsystem
+
+ drivers/lightnvm/pblk-core.c     |  4 ++--
+ drivers/lightnvm/pblk-init.c     |  2 +-
+ drivers/lightnvm/pblk-recovery.c |  8 +++++---
+ drivers/lightnvm/pblk.h          | 10 +---------
+ 4 files changed, 9 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/lightnvm/pblk-core.c b/drivers/lightnvm/pblk-core.c
+index 1ff165351180..189339965957 100644
+--- a/drivers/lightnvm/pblk-core.c
++++ b/drivers/lightnvm/pblk-core.c
+@@ -1065,7 +1065,7 @@ static int pblk_line_init_metadata(struct pblk *pblk, struct pblk_line *line,
+ 	bitmap_set(line->lun_bitmap, 0, lm->lun_bitmap_len);
+ 
+ 	smeta_buf->header.identifier = cpu_to_le32(PBLK_MAGIC);
+-	memcpy(smeta_buf->header.uuid, pblk->instance_uuid, 16);
++	guid_copy((guid_t *)&smeta_buf->header.uuid, &pblk->instance_uuid);
+ 	smeta_buf->header.id = cpu_to_le32(line->id);
+ 	smeta_buf->header.type = cpu_to_le16(line->type);
+ 	smeta_buf->header.version_major = SMETA_VERSION_MAJOR;
+@@ -1874,7 +1874,7 @@ void pblk_line_close_meta(struct pblk *pblk, struct pblk_line *line)
+ 
+ 	if (le32_to_cpu(emeta_buf->header.identifier) != PBLK_MAGIC) {
+ 		emeta_buf->header.identifier = cpu_to_le32(PBLK_MAGIC);
+-		memcpy(emeta_buf->header.uuid, pblk->instance_uuid, 16);
++		guid_copy((guid_t *)&emeta_buf->header.uuid, &pblk->instance_uuid);
+ 		emeta_buf->header.id = cpu_to_le32(line->id);
+ 		emeta_buf->header.type = cpu_to_le16(line->type);
+ 		emeta_buf->header.version_major = EMETA_VERSION_MAJOR;
+diff --git a/drivers/lightnvm/pblk-init.c b/drivers/lightnvm/pblk-init.c
+index f9a3e47b6a93..5768333d103f 100644
+--- a/drivers/lightnvm/pblk-init.c
++++ b/drivers/lightnvm/pblk-init.c
+@@ -130,7 +130,7 @@ static int pblk_l2p_recover(struct pblk *pblk, bool factory_init)
+ 	struct pblk_line *line = NULL;
+ 
+ 	if (factory_init) {
+-		pblk_setup_uuid(pblk);
++		guid_gen(&pblk->instance_uuid);
+ 	} else {
+ 		line = pblk_recov_l2p(pblk);
+ 		if (IS_ERR(line)) {
+diff --git a/drivers/lightnvm/pblk-recovery.c b/drivers/lightnvm/pblk-recovery.c
+index 5ee20da7bdb3..6761d2afa4d0 100644
+--- a/drivers/lightnvm/pblk-recovery.c
++++ b/drivers/lightnvm/pblk-recovery.c
+@@ -703,11 +703,13 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
+ 
+ 		/* The first valid instance uuid is used for initialization */
+ 		if (!valid_uuid) {
+-			memcpy(pblk->instance_uuid, smeta_buf->header.uuid, 16);
++			guid_copy(&pblk->instance_uuid,
++				  (guid_t *)&smeta_buf->header.uuid);
+ 			valid_uuid = 1;
  		}
- 		dev_set_name(&dev->dev, "iio:device%d", dev->id);
- 		INIT_LIST_HEAD(&dev->buffer_list);
-+	} else {
-+		return NULL;
+ 
+-		if (memcmp(pblk->instance_uuid, smeta_buf->header.uuid, 16)) {
++		if (!guid_equal(&pblk->instance_uuid,
++				(guid_t *)&smeta_buf->header.uuid)) {
+ 			pblk_debug(pblk, "ignore line %u due to uuid mismatch\n",
+ 					i);
+ 			continue;
+@@ -737,7 +739,7 @@ struct pblk_line *pblk_recov_l2p(struct pblk *pblk)
  	}
  
- 	return dev;
+ 	if (!found_lines) {
+-		pblk_setup_uuid(pblk);
++		guid_gen(&pblk->instance_uuid);
+ 
+ 		spin_lock(&l_mg->free_lock);
+ 		WARN_ON_ONCE(!test_and_clear_bit(meta_line,
+diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
+index 85e38ed62f85..12bf02df4204 100644
+--- a/drivers/lightnvm/pblk.h
++++ b/drivers/lightnvm/pblk.h
+@@ -646,7 +646,7 @@ struct pblk {
+ 
+ 	int sec_per_write;
+ 
+-	unsigned char instance_uuid[16];
++	guid_t instance_uuid;
+ 
+ 	/* Persistent write amplification counters, 4kb sector I/Os */
+ 	atomic64_t user_wa;		/* Sectors written by user */
+@@ -1360,14 +1360,6 @@ static inline unsigned int pblk_get_secs(struct bio *bio)
+ 	return  bio->bi_iter.bi_size / PBLK_EXPOSED_PAGE_SIZE;
+ }
+ 
+-static inline void pblk_setup_uuid(struct pblk *pblk)
+-{
+-	uuid_le uuid;
+-
+-	uuid_le_gen(&uuid);
+-	memcpy(pblk->instance_uuid, uuid.b, 16);
+-}
+-
+ static inline char *pblk_disk_name(struct pblk *pblk)
+ {
+ 	struct gendisk *disk = pblk->disk;
 -- 
-2.7.4
+2.20.1
 
