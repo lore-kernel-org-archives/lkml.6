@@ -2,132 +2,90 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E92C2C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D53F2C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:22:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B889D2184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:21:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VVUaoGeM";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="iZD/Fa20"
+	by mail.kernel.org (Postfix) with ESMTP id A2F9721872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 18:22:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548354152;
+	bh=dgd4MLRhgS7sjOwwgjVTMbOh3xyNoB00wMC+ZZVqkzI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=d0sVaRQMJNcn/Cv5o82JddsMcxJ3HEprwHlFEbD9y5FVahzzSY0CxmX2GHgymWBhQ
+	 QZRZCQvMxsXY2B/dtAmeJ++StzmnW2Z+5YF1QO4l+2HZDi8js+0A3/Q75txaCLlGhP
+	 kyQoX5Lc+161jPfm3XqjiDapLcga4GDtgWBLgfBA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727779AbfAXSVl (ORCPT
+        id S1727664AbfAXSWa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 13:21:41 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33064 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725974AbfAXSVk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 13:21:40 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 527F6606FC; Thu, 24 Jan 2019 18:21:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548354099;
-        bh=b5YLJe50/fmev2XJ1PYLgvvqRlTFqRtx/AOY0iQvDbs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=VVUaoGeMRWLN4VcHM/E4dp3SSMFQKFqOXpa4SHkwSuB/3wMXwh5mYUMtZyS1ynFCo
-         0GrIDmicV2pLFXlGr7nKl7UQtduqZaZcE5FmHzZkQBLoQ3D6LCTP+m4GMtJ2xy+uGo
-         GsqMhIMzSLho5j14gNt6+lYozxAL4e29TbPpZHwY=
-Received: from [192.168.1.101] (unknown [157.45.230.70])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Thu, 24 Jan 2019 13:22:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47806 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725974AbfAXSWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 13:22:30 -0500
+Received: from gmail.com (unknown [104.132.1.77])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 76910606FC;
-        Thu, 24 Jan 2019 18:21:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548354098;
-        bh=b5YLJe50/fmev2XJ1PYLgvvqRlTFqRtx/AOY0iQvDbs=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=iZD/Fa20u5cFzhQqLWM4kzgBZZJUjLVpF/wDhVwzU2dZ+/DaCbqDc22EpQGk9mk+f
-         54Jeihfc1aAJx/4Lx3NfquYR7oHAFac21R2yKzTT9lTBaWKf+saqX2A5X+bS14wxHC
-         4TxxUk2o0y0mHol92fM8K1M+mpmti5ivmQ70D/Kc=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 76910606FC
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCHv4 1/4] arm64: dts: qcom: sdm845: Add Coresight support
-To:     Suzuki K Poulose <suzuki.poulose@arm.com>, robh+dt@kernel.org,
-        mathieu.poirier@linaro.org, leo.yan@linaro.org,
-        alexander.shishkin@linux.intel.com, andy.gross@linaro.org,
-        david.brown@linaro.org, vivek.gautam@codeaurora.org,
-        dianders@chromium.org, sboyd@kernel.org,
-        bjorn.andersson@linaro.org, devicetree@vger.kernel.org,
-        mark.rutland@arm.com
-Cc:     rnayak@codeaurora.org, sibis@codeaurora.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, John.Horley@arm.com
-References: <cover.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <ad16cfb9b6f5efb85149458d5f5a1abf43fa027c.1548133311.git.saiprakash.ranjan@codeaurora.org>
- <1bd39862-0725-70ce-6535-fdb59569f683@arm.com>
- <75ed74af-6946-b86d-092e-42dc16e55308@codeaurora.org>
- <91a90daa-9e14-2d2e-e633-2ddfdc0955bf@arm.com>
- <3906faf1-abbd-9c28-ad55-ed3800f06352@codeaurora.org>
- <c03b63bf-aca8-ea46-70ad-ee4558f0319e@arm.com>
- <5b54c6e0-7d22-ecee-486f-31333f49f84a@codeaurora.org>
- <18b70426-60fe-4871-6388-6e09fd5feb37@arm.com>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <de6e021a-4f9a-8e2e-dff0-1e7c61ad8b2b@codeaurora.org>
-Date:   Thu, 24 Jan 2019 23:51:28 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        by mail.kernel.org (Postfix) with ESMTPSA id A16202184C;
+        Thu, 24 Jan 2019 18:22:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548354149;
+        bh=dgd4MLRhgS7sjOwwgjVTMbOh3xyNoB00wMC+ZZVqkzI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=PV2BA+gI9eyiSXiMmyUtCImdil5lE+jj9m5Dmsd+efIZUuYFFq/+CIiRBc8JFF1lN
+         WcBFoUOPUXsXXwcp0irgQ9ZjYak0LZ2z8H4wNYjM3iXLkGtOgpyDyqJk3azBN+gvpS
+         uWz1rZkuq7RmZNlj5UOlJpqcG5Q/cLKDbdGj9G/8=
+Date:   Thu, 24 Jan 2019 10:22:28 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [RFC/RFT PATCH 00/15] crypto: improved skcipher, aead, and hash
+ tests
+Message-ID: <20190124182226.GA10448@gmail.com>
+References: <20190123224926.250525-1-ebiggers@kernel.org>
+ <20190124084818.GA650@sol.localdomain>
+ <CAKv+Gu9zridWAYO3cR_KAAbupWfLd+FAMmcgAMuYE5Lgxoek-w@mail.gmail.com>
+ <20190124092359.hvizqdi2ptjdsot7@gondor.apana.org.au>
 MIME-Version: 1.0
-In-Reply-To: <18b70426-60fe-4871-6388-6e09fd5feb37@arm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124092359.hvizqdi2ptjdsot7@gondor.apana.org.au>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Suzuki,
-
-On 1/24/2019 4:49 PM, Suzuki K Poulose wrote:
-> Hi Sai,
+On Thu, Jan 24, 2019 at 05:23:59PM +0800, Herbert Xu wrote:
+> On Thu, Jan 24, 2019 at 09:50:35AM +0100, Ard Biesheuvel wrote:
+> >
+> > Thanks for yet another round of cleanup
+> > 
+> > I'll look into these, but I'd like to clarify one thing first.
+> > 
+> > IIUC, you are trying to deal with the case where a single scatterlist
+> > element describes a range that strides two pages, and I wonder if that
+> > is a valid use of scatterlists in the first place.
+> > 
+> > Herbert?
 > 
-> 
-> That looks fine with me. But as Mathieu said, this needs to be a separate
-> patch. But before all that please could you provide me the PIDR4 value for
-> the Kryo A75 and A55 please ?
+> Yes it is valid.  IIRC the network stack may generate such a
+> scatterlist.
 > 
 
-Sure.
+Also it can easily happen with kmalloced buffers, e.g.
 
-PIDR4 value is 0x4.
+	buf = kmalloc(10000, GFP_KERNEL);
 
-I get it now. So we are looking for JEP106 identification(PIDR1[7:4] and
-PIDR2[2:0]) and continuation code(PIDR4[3:0]).
+	[...]
 
- From ARM Coresight Spec:
+	sg_init_one(&sg, buf, 10000);
 
-DES_0, PIDR1 bits[7:4] JEP106 identification code bits[3:0].
-DES_1, PIDR2 bits[2:0] JEP106 identification code bits[6:4].
-DES_2, PIDR4 bits[3:0] JEP106 continuation code.
-
-For SDM845(A75 based):
-
-*0xB_B8_03* does indicate that the JEP106 identification
-code is 0x3B and continuation code is 0x4 which is of ARM and not
-QCOM(JEP106 ID is 0x70) which is expected.
-
-And the other values of PIDR0[0:7] and PIDR1[3:0] are *Implementation
-defined part numbers* and can be different from ARM A75/A55.
-
-I think this clears up case for SDM845.
-
-As for MSM8996, it is not based on any ARM derivative and hence the
-JEP106 ID is of QCOM(0x70) from the value of pid = *0xF_02_11*
-based on PIDR1[7:4] and PIDR2[2:0]. This clears this as well.
-
-Please correct me if I am wrong and also let me know if I can
-continue with PID addition to table.
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
+- Eric
