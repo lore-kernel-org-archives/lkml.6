@@ -2,52 +2,56 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D23D8C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC317C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 98F0C218FC
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81EE7218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:32:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358324;
-	bh=hgc4FITbBXxNtnKb+M16q4wP2/XYQ4YORtQ/mKewXb8=;
+	s=default; t=1548358328;
+	bh=75jnzXolcdvNQvnAd+WMnuoNGwMTmOigzhQNEuGAKrM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fkebWNI/+HpiWxdqGUIr5Gt3yDZ/Ewitvn+3IB6awSUTHxByU5OZfs3mRu8L26JJa
-	 M3BMv4jqTBrkhMHd9Mk9KvE6LL9u8Sz5OW0Vbz66Pep4kPPLugBy9XiEyYMvq2rRJz
-	 /dlkO41OJRBOcc2v75TwcF/7b2xuSrK7/u+LkhR8=
+	b=HzfiABuLc2JoEeHBcR0Felfc9r/sesAFqRed1ZKK3FGvV3dCoDQnHp6idw2hCF2eh
+	 05OivCB3hsDX6cAn6wQ8XdrWlFkEyXkrBkG9V7W2Z5sLP/5rBGemp0mwix4j6fXLGx
+	 pS8uQL6biQ0kjXvwUa7YZK/rlkjkb7mSelVl3NYA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731313AbfAXTcC (ORCPT
+        id S1731770AbfAXTcH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:32:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59862 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:32:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731732AbfAXTb7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:31:59 -0500
+        id S1730712AbfAXTcD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:32:03 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFCD4218E2;
-        Thu, 24 Jan 2019 19:31:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC0EB21909;
+        Thu, 24 Jan 2019 19:32:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358319;
-        bh=hgc4FITbBXxNtnKb+M16q4wP2/XYQ4YORtQ/mKewXb8=;
+        s=default; t=1548358322;
+        bh=75jnzXolcdvNQvnAd+WMnuoNGwMTmOigzhQNEuGAKrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eHuOWSlWnJUWN0xF3RCp0JTf+Cr7+g/uRvNSDjmZwjI/YyH3Yxsw2HTPtBP5qhw+s
-         Qq3hvDtVzpgeBOp74og2u+YjHoHbuFLHsItlAfQPIEALlVaSiZX+xO1RCBpOtCFQ9l
-         qSIBG96whWSl/GwYXVDMn17tFhzEtCRubRdG90C8=
+        b=c2MlNB8t9+1VahnC3DX8czP2IFta3Pzy9b359JWpUsJxxBsnbmKkwIHh/X3po9yOW
+         BQGTHZRB7joA5+wCpdXKI8v3KROkoHlBNVeTu4PJMaMFtWXL3pHDrKRhZDUPDOTUAi
+         p4gLBy6U4Wak5eUp9b9zNbKmgTtM5gWKIqEQGX2k=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Ido Schimmel <idosch@mellanox.com>,
-        Jiri Pirko <jiri@mellanox.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.14 03/63] mlxsw: spectrum_switchdev: Set PVID correctly during VLAN deletion
-Date:   Thu, 24 Jan 2019 20:19:52 +0100
-Message-Id: <20190124190155.525395635@linuxfoundation.org>
+        stable@vger.kernel.org, Shuah Khan <shuah@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>,
+        linux-kselftest@vger.kernel.org,
+        "Dmitry V. Levin" <ldv@altlinux.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.14 30/63] selftests: do not macro-expand failed assertion expressions
+Date:   Thu, 24 Jan 2019 20:20:19 +0100
+Message-Id: <20190124190158.517260683@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
 References: <20190124190155.176570028@linuxfoundation.org>
@@ -66,32 +70,243 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Ido Schimmel <idosch@mellanox.com>
+[ Upstream commit b708a3cc9600390ccaa2b68a88087dd265154b2b ]
 
-[ Upstream commit 674bed5df4cab8f96d04f7b99608883a48f9226b ]
+I've stumbled over the current macro-expand behaviour of the test
+harness:
 
-When a VLAN is deleted from a bridge port we should not change the PVID
-unless the deleted VLAN is the PVID.
+$ gcc -Wall -xc - <<'__EOF__'
+TEST(macro) {
+	int status = 0;
+	ASSERT_TRUE(WIFSIGNALED(status));
+}
+TEST_HARNESS_MAIN
+__EOF__
+$ ./a.out
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.macro
+<stdin>:4:global.macro:Expected 0 (0) != (((signed char) (((status) & 0x7f) + 1) >> 1) > 0) (0)
+global.macro: Test terminated by assertion
+[     FAIL ] global.macro
+[==========] 0 / 1 tests passed.
+[  FAILED  ]
 
-Fixes: fe9ccc785de5 ("mlxsw: spectrum_switchdev: Don't batch VLAN operations")
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Acked-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+With this change the output of the same test looks much more
+comprehensible:
+
+[==========] Running 1 tests from 1 test cases.
+[ RUN      ] global.macro
+<stdin>:4:global.macro:Expected 0 (0) != WIFSIGNALED(status) (0)
+global.macro: Test terminated by assertion
+[     FAIL ] global.macro
+[==========] 0 / 1 tests passed.
+[  FAILED  ]
+
+The issue is very similar to the bug fixed in glibc assert(3)
+three years ago:
+https://sourceware.org/bugzilla/show_bug.cgi?id=18604
+
+Cc: Shuah Khan <shuah@kernel.org>
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Andy Lutomirski <luto@amacapital.net>
+Cc: Will Drewry <wad@chromium.org>
+Cc: linux-kselftest@vger.kernel.org
+Signed-off-by: Dmitry V. Levin <ldv@altlinux.org>
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/kselftest_harness.h | 42 ++++++++++-----------
+ 1 file changed, 21 insertions(+), 21 deletions(-)
 
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
-@@ -1424,7 +1424,7 @@ static void
- mlxsw_sp_bridge_port_vlan_del(struct mlxsw_sp_port *mlxsw_sp_port,
- 			      struct mlxsw_sp_bridge_port *bridge_port, u16 vid)
- {
--	u16 pvid = mlxsw_sp_port->pvid == vid ? 0 : vid;
-+	u16 pvid = mlxsw_sp_port->pvid == vid ? 0 : mlxsw_sp_port->pvid;
- 	struct mlxsw_sp_port_vlan *mlxsw_sp_port_vlan;
+diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
+index e81bd28bdd89..8f32d699d6c5 100644
+--- a/tools/testing/selftests/kselftest_harness.h
++++ b/tools/testing/selftests/kselftest_harness.h
+@@ -330,7 +330,7 @@
+  * ASSERT_EQ(expected, measured): expected == measured
+  */
+ #define ASSERT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 1)
++	__EXPECT(expected, #expected, seen, #seen, ==, 1)
  
- 	mlxsw_sp_port_vlan = mlxsw_sp_port_vlan_find_by_vid(mlxsw_sp_port, vid);
+ /**
+  * ASSERT_NE(expected, seen)
+@@ -341,7 +341,7 @@
+  * ASSERT_NE(expected, measured): expected != measured
+  */
+ #define ASSERT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 1)
++	__EXPECT(expected, #expected, seen, #seen, !=, 1)
+ 
+ /**
+  * ASSERT_LT(expected, seen)
+@@ -352,7 +352,7 @@
+  * ASSERT_LT(expected, measured): expected < measured
+  */
+ #define ASSERT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 1)
++	__EXPECT(expected, #expected, seen, #seen, <, 1)
+ 
+ /**
+  * ASSERT_LE(expected, seen)
+@@ -363,7 +363,7 @@
+  * ASSERT_LE(expected, measured): expected <= measured
+  */
+ #define ASSERT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 1)
++	__EXPECT(expected, #expected, seen, #seen, <=, 1)
+ 
+ /**
+  * ASSERT_GT(expected, seen)
+@@ -374,7 +374,7 @@
+  * ASSERT_GT(expected, measured): expected > measured
+  */
+ #define ASSERT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 1)
++	__EXPECT(expected, #expected, seen, #seen, >, 1)
+ 
+ /**
+  * ASSERT_GE(expected, seen)
+@@ -385,7 +385,7 @@
+  * ASSERT_GE(expected, measured): expected >= measured
+  */
+ #define ASSERT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 1)
++	__EXPECT(expected, #expected, seen, #seen, >=, 1)
+ 
+ /**
+  * ASSERT_NULL(seen)
+@@ -395,7 +395,7 @@
+  * ASSERT_NULL(measured): NULL == measured
+  */
+ #define ASSERT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 1)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_TRUE(seen)
+@@ -405,7 +405,7 @@
+  * ASSERT_TRUE(measured): measured != 0
+  */
+ #define ASSERT_TRUE(seen) \
+-	ASSERT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 1)
+ 
+ /**
+  * ASSERT_FALSE(seen)
+@@ -415,7 +415,7 @@
+  * ASSERT_FALSE(measured): measured == 0
+  */
+ #define ASSERT_FALSE(seen) \
+-	ASSERT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 1)
+ 
+ /**
+  * ASSERT_STREQ(expected, seen)
+@@ -448,7 +448,7 @@
+  * EXPECT_EQ(expected, measured): expected == measured
+  */
+ #define EXPECT_EQ(expected, seen) \
+-	__EXPECT(expected, seen, ==, 0)
++	__EXPECT(expected, #expected, seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_NE(expected, seen)
+@@ -459,7 +459,7 @@
+  * EXPECT_NE(expected, measured): expected != measured
+  */
+ #define EXPECT_NE(expected, seen) \
+-	__EXPECT(expected, seen, !=, 0)
++	__EXPECT(expected, #expected, seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_LT(expected, seen)
+@@ -470,7 +470,7 @@
+  * EXPECT_LT(expected, measured): expected < measured
+  */
+ #define EXPECT_LT(expected, seen) \
+-	__EXPECT(expected, seen, <, 0)
++	__EXPECT(expected, #expected, seen, #seen, <, 0)
+ 
+ /**
+  * EXPECT_LE(expected, seen)
+@@ -481,7 +481,7 @@
+  * EXPECT_LE(expected, measured): expected <= measured
+  */
+ #define EXPECT_LE(expected, seen) \
+-	__EXPECT(expected, seen, <=, 0)
++	__EXPECT(expected, #expected, seen, #seen, <=, 0)
+ 
+ /**
+  * EXPECT_GT(expected, seen)
+@@ -492,7 +492,7 @@
+  * EXPECT_GT(expected, measured): expected > measured
+  */
+ #define EXPECT_GT(expected, seen) \
+-	__EXPECT(expected, seen, >, 0)
++	__EXPECT(expected, #expected, seen, #seen, >, 0)
+ 
+ /**
+  * EXPECT_GE(expected, seen)
+@@ -503,7 +503,7 @@
+  * EXPECT_GE(expected, measured): expected >= measured
+  */
+ #define EXPECT_GE(expected, seen) \
+-	__EXPECT(expected, seen, >=, 0)
++	__EXPECT(expected, #expected, seen, #seen, >=, 0)
+ 
+ /**
+  * EXPECT_NULL(seen)
+@@ -513,7 +513,7 @@
+  * EXPECT_NULL(measured): NULL == measured
+  */
+ #define EXPECT_NULL(seen) \
+-	__EXPECT(NULL, seen, ==, 0)
++	__EXPECT(NULL, "NULL", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_TRUE(seen)
+@@ -523,7 +523,7 @@
+  * EXPECT_TRUE(measured): 0 != measured
+  */
+ #define EXPECT_TRUE(seen) \
+-	EXPECT_NE(0, seen)
++	__EXPECT(0, "0", seen, #seen, !=, 0)
+ 
+ /**
+  * EXPECT_FALSE(seen)
+@@ -533,7 +533,7 @@
+  * EXPECT_FALSE(measured): 0 == measured
+  */
+ #define EXPECT_FALSE(seen) \
+-	EXPECT_EQ(0, seen)
++	__EXPECT(0, "0", seen, #seen, ==, 0)
+ 
+ /**
+  * EXPECT_STREQ(expected, seen)
+@@ -573,7 +573,7 @@
+ 	if (_metadata->passed && _metadata->step < 255) \
+ 		_metadata->step++;
+ 
+-#define __EXPECT(_expected, _seen, _t, _assert) do { \
++#define __EXPECT(_expected, _expected_str, _seen, _seen_str, _t, _assert) do { \
+ 	/* Avoid multiple evaluation of the cases */ \
+ 	__typeof__(_expected) __exp = (_expected); \
+ 	__typeof__(_seen) __seen = (_seen); \
+@@ -582,8 +582,8 @@
+ 		unsigned long long __exp_print = (uintptr_t)__exp; \
+ 		unsigned long long __seen_print = (uintptr_t)__seen; \
+ 		__TH_LOG("Expected %s (%llu) %s %s (%llu)", \
+-			 #_expected, __exp_print, #_t, \
+-			 #_seen, __seen_print); \
++			 _expected_str, __exp_print, #_t, \
++			 _seen_str, __seen_print); \
+ 		_metadata->passed = 0; \
+ 		/* Ensure the optional handler is triggered */ \
+ 		_metadata->trigger = 1; \
+-- 
+2.19.1
+
 
 
