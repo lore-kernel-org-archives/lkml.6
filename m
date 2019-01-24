@@ -2,138 +2,156 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5365AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F17CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DA23218D4
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DFCE6218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548358253;
+	bh=lrCc7xM+GrzBwpCvrrEcucAjTPbp2lj6+fu8s7IUegE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=nMSO3bThubtJcuO+eRj+98Yn+chbw2Ltu310tIVc6jxpkouUHXldXLZPoRNDE/UPN
+	 FIYbI+D6XdHpUMQuaM9DQuIJXk0G7BPfpRe5hVu6D9JZvRSIUDlFuYDkCQsXqN2XNw
+	 GGAcRn+hYOkMt9u+4ilU78azFyIG97EqffVEMKKE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730999AbfAXTar (ORCPT
+        id S1731443AbfAXTau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:30:47 -0500
-Received: from mga04.intel.com ([192.55.52.120]:48320 "EHLO mga04.intel.com"
+        Thu, 24 Jan 2019 14:30:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731486AbfAXTam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:30:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 11:30:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,518,1539673200"; 
-   d="scan'208";a="112404822"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by orsmga008.jf.intel.com with ESMTP; 24 Jan 2019 11:30:41 -0800
-Subject: [PATCH] MAINTAINERS: Update filesystem-dax and NVDIMM entries
-From:   Dan Williams <dan.j.williams@intel.com>
+        id S1731505AbfAXTar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:30:47 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6271C218D4;
+        Thu, 24 Jan 2019 19:30:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358245;
+        bh=lrCc7xM+GrzBwpCvrrEcucAjTPbp2lj6+fu8s7IUegE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=DYifNinDH5+AFPFZgsESqTY4x/8gdXs9AReyfL2nEuTfbRXBqFb2pD7d9uiYqIpx9
+         dGbioN9SJ5UTp5oEQp7BasYC9/eD4fc0RQHNE2zE1ZnzXBXGFbnzHDL4YcgFDKBwO5
+         BewVtiQIe/1VRrTnJ5KcEXmSbbPz28uw0TLa2skA=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-nvdimm@lists.01.org
-Date:   Thu, 24 Jan 2019 11:17:59 -0800
-Message-ID: <154835747897.2884847.389054528444820204.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Takashi Iwai <tiwai@suse.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.9 31/39] ALSA: bebob: fix model-id of unit for Apogee Ensemble
+Date:   Thu, 24 Jan 2019 20:20:34 +0100
+Message-Id: <20190124190449.358802494@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
+References: <20190124190448.232316246@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ross has moved on to other areas.
+4.9-stable review patch.  If anyone has any objections, please let me know.
 
-Matthew and Jan are trusted reviewers for DAX.
+------------------
 
-Dan is now coordinating filesystem-dax pull requests.
+[ Upstream commit 644b2e97405b0b74845e1d3c2b4fe4c34858062b ]
 
-Ira and Keith are now involved with the NVDIMM and Device-DAX
-sub-systems.
+This commit fixes hard-coded model-id for an unit of Apogee Ensemble with
+a correct value. This unit uses DM1500 ASIC produced ArchWave AG (formerly
+known as BridgeCo AG).
 
-The linux-nvdimm mailing hosts a patchwork instance for both DAX and
-NVDIMM patches.
+I note that this model supports three modes in the number of data channels
+in tx/rx streams; 8 ch pairs, 10 ch pairs, 18 ch pairs. The mode is
+switched by Vendor-dependent AV/C command, like:
 
-Cc: Jan Kara <jack@suse.cz>
-Cc: Ira Weiny <ira.weiny@intel.com>
-Cc: Ross Zwisler <zwisler@kernel.org>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+$ cd linux-firewire-utils
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0600000000 (8ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0601000000 (10ch pairs)
+$ ./firewire-request /dev/fw1 fcp 0x00ff000003dbeb0602000000 (18ch pairs)
+
+When switching between different mode, the unit disappears from IEEE 1394
+bus, then appears on the bus with different combination of stream formats.
+In a mode of 18 ch pairs, available sampling rate is up to 96.0 kHz, else
+up to 192.0 kHz.
+
+$ ./hinawa-config-rom-printer /dev/fw1
+{ 'bus-info': { 'adj': False,
+                'bmc': True,
+                'chip_ID': 21474898341,
+                'cmc': True,
+                'cyc_clk_acc': 100,
+                'generation': 2,
+                'imc': True,
+                'isc': True,
+                'link_spd': 2,
+                'max_ROM': 1,
+                'max_rec': 512,
+                'name': '1394',
+                'node_vendor_ID': 987,
+                'pmc': False},
+  'root-directory': [ ['HARDWARE_VERSION', 19],
+                      [ 'NODE_CAPABILITIES',
+                        { 'addressing': {'64': True, 'fix': True, 'prv': False},
+                          'misc': {'int': False, 'ms': False, 'spt': True},
+                          'state': { 'atn': False,
+                                     'ded': False,
+                                     'drq': True,
+                                     'elo': False,
+                                     'init': False,
+                                     'lst': True,
+                                     'off': False},
+                          'testing': {'bas': False, 'ext': False}}],
+                      ['VENDOR', 987],
+                      ['DESCRIPTOR', 'Apogee Electronics'],
+                      ['MODEL', 126702],
+                      ['DESCRIPTOR', 'Ensemble'],
+                      ['VERSION', 5297],
+                      [ 'UNIT',
+                        [ ['SPECIFIER_ID', 41005],
+                          ['VERSION', 65537],
+                          ['MODEL', 126702],
+                          ['DESCRIPTOR', 'Ensemble']]],
+                      [ 'DEPENDENT_INFO',
+                        [ ['SPECIFIER_ID', 2037],
+                          ['VERSION', 1],
+                          [(58, 'IMMEDIATE'), 16777159],
+                          [(59, 'IMMEDIATE'), 1048576],
+                          [(60, 'IMMEDIATE'), 16777159],
+                          [(61, 'IMMEDIATE'), 6291456]]]]}
+
+Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- MAINTAINERS |   17 ++++++++---------
- 1 file changed, 8 insertions(+), 9 deletions(-)
+ sound/firewire/bebob/bebob.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 51029a425dbe..5f43ee438a74 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -4535,10 +4535,11 @@ S:	Maintained
- F:	drivers/i2c/busses/i2c-diolan-u2c.c
- 
- FILESYSTEM DIRECT ACCESS (DAX)
--M:	Matthew Wilcox <willy@infradead.org>
--M:	Ross Zwisler <zwisler@kernel.org>
--M:	Jan Kara <jack@suse.cz>
-+M:	Dan Williams <dan.j.williams@intel.com>
-+R:	Matthew Wilcox <willy@infradead.org>
-+R:	Jan Kara <jack@suse.cz>
- L:	linux-fsdevel@vger.kernel.org
-+L:	linux-nvdimm@lists.01.org
- S:	Supported
- F:	fs/dax.c
- F:	include/linux/dax.h
-@@ -4546,9 +4547,9 @@ F:	include/trace/events/fs_dax.h
- 
- DEVICE DIRECT ACCESS (DAX)
- M:	Dan Williams <dan.j.williams@intel.com>
--M:	Dave Jiang <dave.jiang@intel.com>
--M:	Ross Zwisler <zwisler@kernel.org>
- M:	Vishal Verma <vishal.l.verma@intel.com>
-+M:	Keith Busch <keith.busch@intel.com>
-+M:	Dave Jiang <dave.jiang@intel.com>
- L:	linux-nvdimm@lists.01.org
- S:	Supported
- F:	drivers/dax/
-@@ -8641,7 +8642,6 @@ S:	Maintained
- F:	tools/lib/lockdep/
- 
- LIBNVDIMM BLK: MMIO-APERTURE DRIVER
--M:	Ross Zwisler <zwisler@kernel.org>
- M:	Dan Williams <dan.j.williams@intel.com>
- M:	Vishal Verma <vishal.l.verma@intel.com>
- M:	Dave Jiang <dave.jiang@intel.com>
-@@ -8654,7 +8654,6 @@ F:	drivers/nvdimm/region_devs.c
- LIBNVDIMM BTT: BLOCK TRANSLATION TABLE
- M:	Vishal Verma <vishal.l.verma@intel.com>
- M:	Dan Williams <dan.j.williams@intel.com>
--M:	Ross Zwisler <zwisler@kernel.org>
- M:	Dave Jiang <dave.jiang@intel.com>
- L:	linux-nvdimm@lists.01.org
- Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
-@@ -8662,7 +8661,6 @@ S:	Supported
- F:	drivers/nvdimm/btt*
- 
- LIBNVDIMM PMEM: PERSISTENT MEMORY DRIVER
--M:	Ross Zwisler <zwisler@kernel.org>
- M:	Dan Williams <dan.j.williams@intel.com>
- M:	Vishal Verma <vishal.l.verma@intel.com>
- M:	Dave Jiang <dave.jiang@intel.com>
-@@ -8681,9 +8679,10 @@ F:	Documentation/devicetree/bindings/pmem/pmem-region.txt
- 
- LIBNVDIMM: NON-VOLATILE MEMORY DEVICE SUBSYSTEM
- M:	Dan Williams <dan.j.williams@intel.com>
--M:	Ross Zwisler <zwisler@kernel.org>
- M:	Vishal Verma <vishal.l.verma@intel.com>
- M:	Dave Jiang <dave.jiang@intel.com>
-+M:	Keith Busch <keith.busch@intel.com>
-+M:	Ira Weiny <ira.weiny@intel.com>
- L:	linux-nvdimm@lists.01.org
- Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
- T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git
+diff --git a/sound/firewire/bebob/bebob.c b/sound/firewire/bebob/bebob.c
+index d0dfa822266b..3b4eaffe4a7f 100644
+--- a/sound/firewire/bebob/bebob.c
++++ b/sound/firewire/bebob/bebob.c
+@@ -434,7 +434,7 @@ static const struct ieee1394_device_id bebob_id_table[] = {
+ 	/* Apogee Electronics, DA/AD/DD-16X (X-FireWire card) */
+ 	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00010048, &spec_normal),
+ 	/* Apogee Electronics, Ensemble */
+-	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x00001eee, &spec_normal),
++	SND_BEBOB_DEV_ENTRY(VEN_APOGEE, 0x01eeee, &spec_normal),
+ 	/* ESI, Quatafire610 */
+ 	SND_BEBOB_DEV_ENTRY(VEN_ESI, 0x00010064, &spec_normal),
+ 	/* AcousticReality, eARMasterOne */
+-- 
+2.19.1
+
+
 
