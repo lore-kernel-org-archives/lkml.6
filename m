@@ -2,165 +2,128 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1F6C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:26:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62E6DC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:26:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 657F02184C
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:26:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E7902184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:26:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729014AbfAXR0G (ORCPT
+        id S1729036AbfAXR0U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:26:06 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:37924 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728610AbfAXR0G (ORCPT
+        Thu, 24 Jan 2019 12:26:20 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:59372 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728610AbfAXR0U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:26:06 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0OHGutS029174
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:26:05 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7f3at1v3-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:26:04 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Thu, 24 Jan 2019 17:25:59 -0000
-Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 24 Jan 2019 17:25:56 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0OHPtLW65732742
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Jan 2019 17:25:55 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BFB5DA4054;
-        Thu, 24 Jan 2019 17:25:55 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1F10FA405C;
-        Thu, 24 Jan 2019 17:25:55 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.8.102])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 24 Jan 2019 17:25:55 +0000 (GMT)
-Date:   Thu, 24 Jan 2019 19:25:53 +0200
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v14 02/12] powerpc/irq: use memblock functions returning
- virtual address
-References: <cover.1548346225.git.christophe.leroy@c-s.fr>
- <1c8e658c094022a15e4b9f5ef5c191caab3c0dff.1548346225.git.christophe.leroy@c-s.fr>
- <20190124165153.GB5531@lakrids.cambridge.arm.com>
+        Thu, 24 Jan 2019 12:26:20 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gmile-0005gx-IL; Thu, 24 Jan 2019 17:26:18 +0000
+Subject: Re: [PATCH] drm/nouveau/bios/dp: make array vsoff static, shrinks
+ object size
+From:   Colin Ian King <colin.king@canonical.com>
+To:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180904152333.21640-1-colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <2d84fcfa-67af-ec76-5821-162004113bf3@canonical.com>
+Date:   Thu, 24 Jan 2019 17:26:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124165153.GB5531@lakrids.cambridge.arm.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 19012417-0008-0000-0000-000002B58564
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012417-0009-0000-0000-00002221BAE8
-Message-Id: <20190124172553.GE13790@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901240121
+In-Reply-To: <20180904152333.21640-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 04:51:53PM +0000, Mark Rutland wrote:
-> On Thu, Jan 24, 2019 at 04:19:33PM +0000, Christophe Leroy wrote:
-> > Since only the virtual address of allocated blocks is used,
-> > lets use functions returning directly virtual address.
-> > 
-> > Those functions have the advantage of also zeroing the block.
-> > 
-> > Suggested-by: Mike Rapoport <rppt@linux.ibm.com>
-> > Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-> > Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-> 
-> [...]
-> 
-> > +static void *__init alloc_stack(void)
-> > +{
-> > +	void *ptr = memblock_alloc(THREAD_SIZE, THREAD_SIZE);
-> > +
-> > +	if (!ptr)
-> > +		panic("cannot allocate stacks");
-> > +
-> > +	return ptr;
-> > +}
-> 
-> I believe memblock_alloc() will panic() if it cannot allocate memory,
-> since that goes:
-> 
->  memblock_alloc()
->  -> memblock_alloc_try_nid()
->     -> panic()
-> 
-> So you can get rid of the panic() here, or if you want a custom panic
-> message, you can use memblock_alloc_nopanic().
+ping?
 
-As we've already discussed it in [1], I'm working on removing the
-_nopanic() versions and dropping the panic() calls from memblock_alloc()
-and friends.
-
-I've posted v2 of the patches earlier this week [2].
- 
-> [...]
-
-[1] https://lore.kernel.org/lkml/20190108143428.GB14063@rapoport-lnx/ 
-[2] https://lore.kernel.org/lkml/1548057848-15136-1-git-send-email-rppt@linux.ibm.com/
-
-> >  static void *__init alloc_stack(unsigned long limit, int cpu)
-> >  {
-> > -	unsigned long pa;
-> > +	void *ptr;
-> >  
-> >  	BUILD_BUG_ON(STACK_INT_FRAME_SIZE % 16);
-> >  
-> > -	pa = memblock_alloc_base_nid(THREAD_SIZE, THREAD_SIZE, limit,
-> > -					early_cpu_to_node(cpu), MEMBLOCK_NONE);
-> > -	if (!pa) {
-> > -		pa = memblock_alloc_base(THREAD_SIZE, THREAD_SIZE, limit);
-> > -		if (!pa)
-> > -			panic("cannot allocate stacks");
-> > -	}
-> > +	ptr = memblock_alloc_try_nid(THREAD_SIZE, THREAD_SIZE,
-> > +				     MEMBLOCK_LOW_LIMIT, limit,
-> > +				     early_cpu_to_node(cpu));
-> > +	if (!ptr)
-> > +		panic("cannot allocate stacks");
+On 04/09/2018 16:23, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> The same applies here -- memblock_alloc_try_nid() will panic itself
-> rather than returning NULL.
+> Don't populate the array vsoff on the stack but instead make it
+> static. Makes the object code smaller by 67 bytes:
 > 
-> Otherwise, this looks like a nice cleanup. With the panics removed (or
-> using the _nopanic() allocators), feel free to add:
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    5753	    112	      0	   5865	   16e9	.../nouveau/nvkm/subdev/bios/dp.o
 > 
-> Acked-by: Mark Rutland <mark.rutland@arm.com>
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    5622	    176	      0	   5798	   16a6	.../nouveau/nvkm/subdev/bios/dp.o
 > 
-> Thanks,
-> Mark.
+> (gcc version 8.2.0 x86_64)
 > 
-
--- 
-Sincerely yours,
-Mike.
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c
+> index 3133b28f849c..b099d1209be8 100644
+> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c
+> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/bios/dp.c
+> @@ -212,7 +212,7 @@ nvbios_dpcfg_match(struct nvkm_bios *bios, u16 outp, u8 pc, u8 vs, u8 pe,
+>  	u16 data;
+>  
+>  	if (*ver >= 0x30) {
+> -		const u8 vsoff[] = { 0, 4, 7, 9 };
+> +		static const u8 vsoff[] = { 0, 4, 7, 9 };
+>  		idx = (pc * 10) + vsoff[vs] + pe;
+>  		if (*ver >= 0x40 && *ver <= 0x41 && *hdr >= 0x12)
+>  			idx += nvbios_rd08(bios, outp + 0x11) * 40;
+> 
 
