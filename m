@@ -4,57 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839D9C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AFB3C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5003F21855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E16621855
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:05:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548360340;
-	bh=gRcq5uV881kV2+apWS+rKLEHuknJnaaGrwawnJkKRJc=;
+	s=default; t=1548360345;
+	bh=oeoXVnkKrpItnAZXH70HLIqFZv+2PoFxG1vbCYws/uQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AiZrSNfP+8uue1rBrsrvQL9y0Ml/EAwY18Gqp1foPavld2iJXxKmeWctarR28xWAT
-	 UAWSR5xyFlqC9dYcceGn5vn0nG6nj+pQu79Bf0/yPFwQ5msJ9DBoGFG2HVKOsRMCgU
-	 fR87yAqvwYnK/5UR2E/WMwvXHHl5Q7t+k2juqwuM=
+	b=V5OwOdwP+VKV35p4cD3pkI+CiJa6C2lJkzGtIC71/lKsJsUP+CeQaPNiC8T0REqoA
+	 fd7XfikDTwdbBnkXBdycwiAWsWUxofiYo22JlS7S/qsBoSLn+JdkyXwzlk/a71Gwck
+	 VkgP9L4dqNcvY5J6+37Wr9OrEMWuNSXVF58P8lSo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731523AbfAXTbC (ORCPT
+        id S1731494AbfAXTbA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:31:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58542 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:31:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58420 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731458AbfAXTaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:30:55 -0500
+        id S1731509AbfAXTat (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:30:49 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89140218E2;
-        Thu, 24 Jan 2019 19:30:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EDB83218E2;
+        Thu, 24 Jan 2019 19:30:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358254;
-        bh=gRcq5uV881kV2+apWS+rKLEHuknJnaaGrwawnJkKRJc=;
+        s=default; t=1548358248;
+        bh=oeoXVnkKrpItnAZXH70HLIqFZv+2PoFxG1vbCYws/uQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WB54WlS6PDYPPI50Sk0W7CeCciCL/Q+f1tNG43GVoH9OxvT2K+LQY8svlbtKiqEua
-         f+u8GOKA4SsvPxar8R1HedceiMlZA0ki0yBfnCOCJtTBrB5SG9g8OLpvgL9yRew7wU
-         gRPVpMWmaK33VKllN0VpdSPRM2cY66IJAtsa1VK8=
+        b=wigGp7iCSFxSqnqDxVqexZgEvL0iIe7cUDFF9wLcVAVTjrP5L6G9N9lHErulOl9QN
+         iMxb6i+BrV0YjcodHMh+7SwuAb2juhSy9EdkE2M6oCoSFDNiQfI8ZWigzgMiUsmLKv
+         E1F2spUXz7fbP7K+vmTN4jNWko55Hi3nvMvYWSaw=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         stable@vger.kernel.org,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Petr Mladek <pmladek@suse.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Waiman Long <longman@redhat.com>,
-        Dmitry Safonov <dima@arista.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Ramalingam C <ramalingam.c@intel.com>,
+        Arend van Spriel <aspriel@gmail.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Bartosz Golaszewski <brgl@bgdev.pl>,
+        Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Joe Perches <joe@perches.com>,
+        Daniel Vetter <daniel.vetter@intel.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 24/39] tty/serial: do not free trasnmit buffer page under port lock
-Date:   Thu, 24 Jan 2019 20:20:27 +0100
-Message-Id: <20190124190449.100953795@linuxfoundation.org>
+Subject: [PATCH 4.9 32/39] sysfs: Disable lockdep for driver bind/unbind files
+Date:   Thu, 24 Jan 2019 20:20:35 +0100
+Message-Id: <20190124190449.404129827@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -73,112 +75,172 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d72402145ace0697a6a9e8e75a3de5bf3375f78d ]
+[ Upstream commit 4f4b374332ec0ae9c738ff8ec9bed5cd97ff9adc ]
 
-LKP has hit yet another circular locking dependency between uart
-console drivers and debugobjects [1]:
+This is the much more correct fix for my earlier attempt at:
 
-     CPU0                                    CPU1
+https://lkml.org/lkml/2018/12/10/118
 
-                                            rhltable_init()
-                                             __init_work()
-                                              debug_object_init
-     uart_shutdown()                          /* db->lock */
-      /* uart_port->lock */                    debug_print_object()
-       free_page()                              printk()
-                                                 call_console_drivers()
-        debug_check_no_obj_freed()                /* uart_port->lock */
-         /* db->lock */
-          debug_print_object()
+Short recap:
 
-So there are two dependency chains:
-	uart_port->lock -> db->lock
-And
-	db->lock -> uart_port->lock
+- There's not actually a locking issue, it's just lockdep being a bit
+  too eager to complain about a possible deadlock.
 
-This particular circular locking dependency can be addressed in several
-ways:
+- Contrary to what I claimed the real problem is recursion on
+  kn->count. Greg pointed me at sysfs_break_active_protection(), used
+  by the scsi subsystem to allow a sysfs file to unbind itself. That
+  would be a real deadlock, which isn't what's happening here. Also,
+  breaking the active protection means we'd need to manually handle
+  all the lifetime fun.
 
-a) One way would be to move debug_print_object() out of db->lock scope
-   and, thus, break the db->lock -> uart_port->lock chain.
-b) Another one would be to free() transmit buffer page out of db->lock
-   in UART code; which is what this patch does.
+- With Rafael we discussed the task_work approach, which kinda works,
+  but has two downsides: It's a functional change for a lockdep
+  annotation issue, and it won't work for the bind file (which needs
+  to get the errno from the driver load function back to userspace).
 
-It makes sense to apply a) and b) independently: there are too many things
-going on behind free(), none of which depend on uart_port->lock.
+- Greg also asked why this never showed up: To hit this you need to
+  unregister a 2nd driver from the unload code of your first driver. I
+  guess only gpus do that. The bug has always been there, but only
+  with a recent patch series did we add more locks so that lockdep
+  built a chain from unbinding the snd-hda driver to the
+  acpi_video_unregister call.
 
-The patch fixes transmit buffer page free() in uart_shutdown() and,
-additionally, in uart_port_startup() (as was suggested by Dmitry Safonov).
+Full lockdep splat:
 
-[1] https://lore.kernel.org/lkml/20181211091154.GL23332@shao2-debian/T/#u
-Signed-off-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Jiri Slaby <jslaby@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Waiman Long <longman@redhat.com>
-Cc: Dmitry Safonov <dima@arista.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>
+[12301.898799] ============================================
+[12301.898805] WARNING: possible recursive locking detected
+[12301.898811] 4.20.0-rc7+ #84 Not tainted
+[12301.898815] --------------------------------------------
+[12301.898821] bash/5297 is trying to acquire lock:
+[12301.898826] 00000000f61c6093 (kn->count#39){++++}, at: kernfs_remove_by_name_ns+0x3b/0x80
+[12301.898841] but task is already holding lock:
+[12301.898847] 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
+[12301.898856] other info that might help us debug this:
+[12301.898862]  Possible unsafe locking scenario:
+[12301.898867]        CPU0
+[12301.898870]        ----
+[12301.898874]   lock(kn->count#39);
+[12301.898879]   lock(kn->count#39);
+[12301.898883] *** DEADLOCK ***
+[12301.898891]  May be due to missing lock nesting notation
+[12301.898899] 5 locks held by bash/5297:
+[12301.898903]  #0: 00000000cd800e54 (sb_writers#4){.+.+}, at: vfs_write+0x17f/0x1b0
+[12301.898915]  #1: 000000000465e7c2 (&of->mutex){+.+.}, at: kernfs_fop_write+0xd3/0x190
+[12301.898925]  #2: 000000005f634021 (kn->count#39){++++}, at: kernfs_fop_write+0xdc/0x190
+[12301.898936]  #3: 00000000414ef7ac (&dev->mutex){....}, at: device_release_driver_internal+0x34/0x240
+[12301.898950]  #4: 000000003218fbdf (register_count_mutex){+.+.}, at: acpi_video_unregister+0xe/0x40
+[12301.898960] stack backtrace:
+[12301.898968] CPU: 1 PID: 5297 Comm: bash Not tainted 4.20.0-rc7+ #84
+[12301.898974] Hardware name: Hewlett-Packard HP EliteBook 8460p/161C, BIOS 68SCF Ver. F.01 03/11/2011
+[12301.898982] Call Trace:
+[12301.898989]  dump_stack+0x67/0x9b
+[12301.898997]  __lock_acquire+0x6ad/0x1410
+[12301.899003]  ? kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899010]  ? find_held_lock+0x2d/0x90
+[12301.899017]  ? mutex_spin_on_owner+0xe4/0x150
+[12301.899023]  ? find_held_lock+0x2d/0x90
+[12301.899030]  ? lock_acquire+0x90/0x180
+[12301.899036]  lock_acquire+0x90/0x180
+[12301.899042]  ? kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899049]  __kernfs_remove+0x296/0x310
+[12301.899055]  ? kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899060]  ? kernfs_name_hash+0xd/0x80
+[12301.899066]  ? kernfs_find_ns+0x6c/0x100
+[12301.899073]  kernfs_remove_by_name_ns+0x3b/0x80
+[12301.899080]  bus_remove_driver+0x92/0xa0
+[12301.899085]  acpi_video_unregister+0x24/0x40
+[12301.899127]  i915_driver_unload+0x42/0x130 [i915]
+[12301.899160]  i915_pci_remove+0x19/0x30 [i915]
+[12301.899169]  pci_device_remove+0x36/0xb0
+[12301.899176]  device_release_driver_internal+0x185/0x240
+[12301.899183]  unbind_store+0xaf/0x180
+[12301.899189]  kernfs_fop_write+0x104/0x190
+[12301.899195]  __vfs_write+0x31/0x180
+[12301.899203]  ? rcu_read_lock_sched_held+0x6f/0x80
+[12301.899209]  ? rcu_sync_lockdep_assert+0x29/0x50
+[12301.899216]  ? __sb_start_write+0x13c/0x1a0
+[12301.899221]  ? vfs_write+0x17f/0x1b0
+[12301.899227]  vfs_write+0xb9/0x1b0
+[12301.899233]  ksys_write+0x50/0xc0
+[12301.899239]  do_syscall_64+0x4b/0x180
+[12301.899247]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+[12301.899253] RIP: 0033:0x7f452ac7f7a4
+[12301.899259] Code: 00 f7 d8 64 89 02 48 c7 c0 ff ff ff ff eb b7 0f 1f 80 00 00 00 00 8b 05 aa f0 2c 00 48 63 ff 85 c0 75 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 f3 c3 66 90 55 53 48 89 d5 48 89 f3 48 83
+[12301.899273] RSP: 002b:00007ffceafa6918 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+[12301.899282] RAX: ffffffffffffffda RBX: 000000000000000d RCX: 00007f452ac7f7a4
+[12301.899288] RDX: 000000000000000d RSI: 00005612a1abf7c0 RDI: 0000000000000001
+[12301.899295] RBP: 00005612a1abf7c0 R08: 000000000000000a R09: 00005612a1c46730
+[12301.899301] R10: 000000000000000a R11: 0000000000000246 R12: 000000000000000d
+[12301.899308] R13: 0000000000000001 R14: 00007f452af4a740 R15: 000000000000000d
+
+Looking around I've noticed that usb and i2c already handle similar
+recursion problems, where a sysfs file can unbind the same type of
+sysfs somewhere else in the hierarchy. Relevant commits are:
+
+commit 356c05d58af05d582e634b54b40050c73609617b
+Author: Alan Stern <stern@rowland.harvard.edu>
+Date:   Mon May 14 13:30:03 2012 -0400
+
+    sysfs: get rid of some lockdep false positives
+
+commit e9b526fe704812364bca07edd15eadeba163ebfb
+Author: Alexander Sverdlin <alexander.sverdlin@nsn.com>
+Date:   Fri May 17 14:56:35 2013 +0200
+
+    i2c: suppress lockdep warning on delete_device
+
+Implement the same trick for driver bind/unbind.
+
+v2: Put the macro into bus.c (Greg).
+
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Cc: Ramalingam C <ramalingam.c@intel.com>
+Cc: Arend van Spriel <aspriel@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc: Vivek Gautam <vivek.gautam@codeaurora.org>
+Cc: Joe Perches <joe@perches.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@intel.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/serial_core.c | 22 ++++++++++++++++------
- 1 file changed, 16 insertions(+), 6 deletions(-)
+ drivers/base/bus.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/tty/serial/serial_core.c b/drivers/tty/serial/serial_core.c
-index 53e6db8b0330..bcfdaf6ddbb2 100644
---- a/drivers/tty/serial/serial_core.c
-+++ b/drivers/tty/serial/serial_core.c
-@@ -195,10 +195,15 @@ static int uart_port_startup(struct tty_struct *tty, struct uart_state *state,
- 	if (!state->xmit.buf) {
- 		state->xmit.buf = (unsigned char *) page;
- 		uart_circ_clear(&state->xmit);
-+		uart_port_unlock(uport, flags);
- 	} else {
-+		uart_port_unlock(uport, flags);
-+		/*
-+		 * Do not free() the page under the port lock, see
-+		 * uart_shutdown().
-+		 */
- 		free_page(page);
- 	}
--	uart_port_unlock(uport, flags);
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index e32a74eb28a3..a7ae9a0e8a78 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -33,6 +33,9 @@ static struct kset *system_kset;
  
- 	retval = uport->ops->startup(uport);
- 	if (retval == 0) {
-@@ -258,6 +263,7 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
- 	struct uart_port *uport = uart_port_check(state);
- 	struct tty_port *port = &state->port;
- 	unsigned long flags = 0;
-+	char *xmit_buf = NULL;
+ #define to_drv_attr(_attr) container_of(_attr, struct driver_attribute, attr)
  
- 	/*
- 	 * Set the TTY IO error marker
-@@ -288,14 +294,18 @@ static void uart_shutdown(struct tty_struct *tty, struct uart_state *state)
- 	tty_port_set_suspended(port, 0);
++#define DRIVER_ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store) \
++	struct driver_attribute driver_attr_##_name =		\
++		__ATTR_IGNORE_LOCKDEP(_name, _mode, _show, _store)
  
- 	/*
--	 * Free the transmit buffer page.
-+	 * Do not free() the transmit buffer page under the port lock since
-+	 * this can create various circular locking scenarios. For instance,
-+	 * console driver may need to allocate/free a debug object, which
-+	 * can endup in printk() recursion.
- 	 */
- 	uart_port_lock(state, flags);
--	if (state->xmit.buf) {
--		free_page((unsigned long)state->xmit.buf);
--		state->xmit.buf = NULL;
--	}
-+	xmit_buf = state->xmit.buf;
-+	state->xmit.buf = NULL;
- 	uart_port_unlock(uport, flags);
-+
-+	if (xmit_buf)
-+		free_page((unsigned long)xmit_buf);
+ static int __must_check bus_rescan_devices_helper(struct device *dev,
+ 						void *data);
+@@ -197,7 +200,7 @@ static ssize_t unbind_store(struct device_driver *drv, const char *buf,
+ 	bus_put(bus);
+ 	return err;
  }
+-static DRIVER_ATTR_WO(unbind);
++static DRIVER_ATTR_IGNORE_LOCKDEP(unbind, S_IWUSR, NULL, unbind_store);
  
- /**
+ /*
+  * Manually attach a device to a driver.
+@@ -233,7 +236,7 @@ static ssize_t bind_store(struct device_driver *drv, const char *buf,
+ 	bus_put(bus);
+ 	return err;
+ }
+-static DRIVER_ATTR_WO(bind);
++static DRIVER_ATTR_IGNORE_LOCKDEP(bind, S_IWUSR, NULL, bind_store);
+ 
+ static ssize_t show_drivers_autoprobe(struct bus_type *bus, char *buf)
+ {
 -- 
 2.19.1
 
