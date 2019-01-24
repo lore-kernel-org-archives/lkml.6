@@ -2,93 +2,191 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8928AC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63015C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:24:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4953B21855
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:22:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548318176;
-	bh=GKtscrhwgZwFqpJxB95gDikExqvZQe/REF96cj8HGME=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=C5j2hO1JgeEcG+qhTq46YpHrLQ5W8x2wLyLZLf9I6h21sPAkK526hIz2xQgYc+h4t
-	 H4S4WL6jBZlHDMjPBMMrQyHCcDoXllBOXK9xn4b3JVV/OQ3QoMmWBmtNwcLcqbztWx
-	 bRWYQCzHZuxCThQGDrfDEYopt6EOSWUhBoPFc/uc=
+	by mail.kernel.org (Postfix) with ESMTP id 24288218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:24:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=innovation.ch header.i=@innovation.ch header.b="cVlHkod3"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727069AbfAXIWy (ORCPT
+        id S1727299AbfAXIYb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:22:54 -0500
-Received: from mx2.suse.de ([195.135.220.15]:59346 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725939AbfAXIWy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:22:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E258FB011;
-        Thu, 24 Jan 2019 08:22:52 +0000 (UTC)
-Date:   Thu, 24 Jan 2019 09:22:52 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Chris Down <chris@chrisdown.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
-        Dennis Zhou <dennis@kernel.org>, linux-kernel@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org, kernel-team@fb.com
-Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
-Message-ID: <20190124082252.GD4087@dhcp22.suse.cz>
-References: <20190123223144.GA10798@chrisdown.name>
+        Thu, 24 Jan 2019 03:24:31 -0500
+Received: from chill.innovation.ch ([216.218.245.220]:40962 "EHLO
+        chill.innovation.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725939AbfAXIYb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 03:24:31 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by chill.innovation.ch (Postfix) with ESMTP id 478836400C4;
+        Thu, 24 Jan 2019 00:24:30 -0800 (PST)
+X-Virus-Scanned: amavisd-new at 
+Received: from chill.innovation.ch ([127.0.0.1])
+        by localhost (chill.innovation.ch [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id IvZJJ0PDwDyg; Thu, 24 Jan 2019 00:24:28 -0800 (PST)
+From:   =?UTF-8?q?Ronald=20Tschal=C3=A4r?= <ronald@innovation.ch>
+DKIM-Filter: OpenDKIM Filter v2.10.3 chill.innovation.ch 1FE25640073
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=innovation.ch;
+        s=default; t=1548318268;
+        bh=Q6XCpHNZx8YfCQ1oZIjEXDdmXyR60jkNIrt1vLRVF64=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cVlHkod3f6pes83FbAvFgYtqHDEAxAJ4DZ4CLSpkX8AVzwRZzWlms507nayWutv0s
+         n+WhWlgAthRTsySseUn4aYiDWgVhm4pxrl8/tA9Y/qk0O3gkNrxzLBsFzJmThJ9Fab
+         2kakvM/WBqYhpso2aKYnfdqthUmU66lvM04bIu731V2ZHqVTyKkyE9ytNm6LiTSmld
+         ojRu0x0V6SD/1a5r0bPrrtSui0fRhwUm3UKx74PS7sgxSL991y4ysOXkBciOatrkvv
+         J+XvwrJJMMZ7ITk0zBC87glilyVWRa1VkEUTMif/4VbpQvu24NP8TiYBpk29mUJMhf
+         WSSFNKirMTysA==
+To:     Andrzej Hajda <a.hajda@samsung.com>,
+        Inki Dae <inki.dae@samsung.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Lukas Wunner <lukas@wunner.de>, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v2] drm/bridge: sil_sii8620: make remote control optional.
+Date:   Thu, 24 Jan 2019 00:24:23 -0800
+Message-Id: <20190124082423.23139-1-ronald@innovation.ch>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124072125.GA28127@innovation.ch>
+References: <20190124072125.GA28127@innovation.ch>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190123223144.GA10798@chrisdown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 23-01-19 17:31:44, Chris Down wrote:
-> memory.stat and other files already consider subtrees in their output,
-> and we should too in order to not present an inconsistent interface.
-> 
-> The current situation is fairly confusing, because people interacting
-> with cgroups expect hierarchical behaviour in the vein of memory.stat,
-> cgroup.events, and other files. For example, this causes confusion when
-> debugging reclaim events under low, as currently these always read "0"
-> at non-leaf memcg nodes, which frequently causes people to misdiagnose
-> breach behaviour. The same confusion applies to other counters in this
-> file when debugging issues.
-> 
-> Aggregation is done at write time instead of at read-time since these
-> counters aren't hot (unlike memory.stat which is per-page, so it does it
-> at read time), and it makes sense to bundle this with the file
-> notifications.
+commit d6abe6df706c (drm/bridge: sil_sii8620: do not have a dependency
+of RC_CORE) changed the driver to select both RC_CORE and INPUT.
+However, this causes problems with other drivers, in particular an input
+driver that depends on MFD_INTEL_LPSS_PCI (to be added in a separate
+commit):
 
-I do not think we can do that for two reasons. It breaks the existing
-semantic userspace might depend on and more importantly this is not a
-correct behavior IMO.
+  drivers/clk/Kconfig:9:error: recursive dependency detected!
+  drivers/clk/Kconfig:9:        symbol COMMON_CLK is selected by MFD_INTEL_LPSS
+  drivers/mfd/Kconfig:566:      symbol MFD_INTEL_LPSS is selected by MFD_INTEL_LPSS_PCI
+  drivers/mfd/Kconfig:580:      symbol MFD_INTEL_LPSS_PCI is implied by KEYBOARD_APPLESPI
+  drivers/input/keyboard/Kconfig:73:    symbol KEYBOARD_APPLESPI depends on INPUT
+  drivers/input/Kconfig:8:      symbol INPUT is selected by DRM_SIL_SII8620
+  drivers/gpu/drm/bridge/Kconfig:83:    symbol DRM_SIL_SII8620 depends on DRM_BRIDGE
+  drivers/gpu/drm/bridge/Kconfig:1:     symbol DRM_BRIDGE is selected by DRM_PL111
+  drivers/gpu/drm/pl111/Kconfig:1:      symbol DRM_PL111 depends on COMMON_CLK
 
-You have to realize that stats are hierarchical because that is how we
-account. Events represent a way to inform that something has happened at
-the specific level of the tree though. If you do not setup low/high/max
-limit then you simply cannot expect to be informed those get hit because
-they cannot by definition. Or put it other way, if you are waiting for
-those events you really want to know the (sub)tree they happened and if
-you propagate the event up the hierarchy you have hard time to tell that
-(you would basically have to exclude all but the lowest one and that is
-an awkward semantic at best.
+According to the docs and general consensus, select should only be used
+for non user-visible symbols, but both RC_CORE and INPUT are
+user-visible. Furthermore almost all other references to INPUT
+throughout the kernel config are depends, not selects. For this reason
+the first part of this change reverts commit d6abe6df706c.
 
-Maybe we want to document this better but I do not see we are going to
-change the behavior.
+In order to address the original reason for commit d6abe6df706c, namely
+that not all boards use the remote controller functionality and hence
+should not need have to deal with RC_CORE, the second part of this
+change now makes the remote control support in the driver optional and
+contingent on RC_CORE being defined. And with this the hard dependency
+on INPUT also goes away as that is only needed if RC_CORE is defined
+(which in turn already depends on INPUT).
 
-> Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+CC: Inki Dae <inki.dae@samsung.com>
+CC: Andrzej Hajda <a.hajda@samsung.com>
+CC: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+CC: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Ronald Tschalär <ronald@innovation.ch>
+---
+Changes in v2:
+ - completely remove dependencies on both RC_CORE and INPUT in Kconfig,
+ - make remote control functionality in driver contingent on RC_CORE
+   being defined
 
-btw. I do not see this patch posted anywhere yet it already comes with
-an ack. Have I just missed a previous version?
+ drivers/gpu/drm/bridge/Kconfig       |  2 --
+ drivers/gpu/drm/bridge/sil-sii8620.c | 17 +++++++++++++++++
+ 2 files changed, 17 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
+index 2fee47b0d50b..a11198a36005 100644
+--- a/drivers/gpu/drm/bridge/Kconfig
++++ b/drivers/gpu/drm/bridge/Kconfig
+@@ -85,8 +85,6 @@ config DRM_SIL_SII8620
+ 	depends on OF
+ 	select DRM_KMS_HELPER
+ 	imply EXTCON
+-	select INPUT
+-	select RC_CORE
+ 	help
+ 	  Silicon Image SII8620 HDMI/MHL bridge chip driver.
+ 
+diff --git a/drivers/gpu/drm/bridge/sil-sii8620.c b/drivers/gpu/drm/bridge/sil-sii8620.c
+index 0cc293a6ac24..dee47752791e 100644
+--- a/drivers/gpu/drm/bridge/sil-sii8620.c
++++ b/drivers/gpu/drm/bridge/sil-sii8620.c
+@@ -66,7 +66,9 @@ enum sii8620_mt_state {
+ struct sii8620 {
+ 	struct drm_bridge bridge;
+ 	struct device *dev;
++#if IS_ENABLED(CONFIG_RC_CORE)
+ 	struct rc_dev *rc_dev;
++#endif
+ 	struct clk *clk_xtal;
+ 	struct gpio_desc *gpio_reset;
+ 	struct gpio_desc *gpio_int;
+@@ -1756,6 +1758,7 @@ static void sii8620_send_features(struct sii8620 *ctx)
+ 	sii8620_write_buf(ctx, REG_MDT_XMIT_WRITE_PORT, buf, ARRAY_SIZE(buf));
+ }
+ 
++#if IS_ENABLED(CONFIG_RC_CORE)
+ static bool sii8620_rcp_consume(struct sii8620 *ctx, u8 scancode)
+ {
+ 	bool pressed = !(scancode & MHL_RCP_KEY_RELEASED_MASK);
+@@ -1774,6 +1777,12 @@ static bool sii8620_rcp_consume(struct sii8620 *ctx, u8 scancode)
+ 
+ 	return true;
+ }
++#else
++static bool sii8620_rcp_consume(struct sii8620 *ctx, u8 scancode)
++{
++	return false;
++}
++#endif
+ 
+ static void sii8620_msc_mr_set_int(struct sii8620 *ctx)
+ {
+@@ -2097,6 +2106,7 @@ static void sii8620_cable_in(struct sii8620 *ctx)
+ 	enable_irq(to_i2c_client(ctx->dev)->irq);
+ }
+ 
++#if IS_ENABLED(CONFIG_RC_CORE)
+ static void sii8620_init_rcp_input_dev(struct sii8620 *ctx)
+ {
+ 	struct rc_dev *rc_dev;
+@@ -2126,6 +2136,11 @@ static void sii8620_init_rcp_input_dev(struct sii8620 *ctx)
+ 	}
+ 	ctx->rc_dev = rc_dev;
+ }
++#else
++static void sii8620_init_rcp_input_dev(struct sii8620 *ctx)
++{
++}
++#endif
+ 
+ static void sii8620_cable_out(struct sii8620 *ctx)
+ {
+@@ -2214,9 +2229,11 @@ static int sii8620_attach(struct drm_bridge *bridge)
+ 
+ static void sii8620_detach(struct drm_bridge *bridge)
+ {
++#if IS_ENABLED(CONFIG_RC_CORE)
+ 	struct sii8620 *ctx = bridge_to_sii8620(bridge);
+ 
+ 	rc_unregister_device(ctx->rc_dev);
++#endif
+ }
+ 
+ static int sii8620_is_packing_required(struct sii8620 *ctx,
 -- 
-Michal Hocko
-SUSE Labs
+2.20.1
+
