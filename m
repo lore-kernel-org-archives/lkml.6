@@ -2,115 +2,92 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3982EC282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E5AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:53:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09D0B218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:53:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="GJQucvAC"
+	by mail.kernel.org (Postfix) with ESMTP id 25A28218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:53:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548352419;
+	bh=L7djGP8cqnlHynGq84ONY74rM6TdaKbww/YpUW+NGgM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=q8OUPazgjdUV+Z6bF+d1Fcc1wdzXvmdyk2iAMokT2ivt+uwS9aupVErkQQaAtZgid
+	 9RWQw2P2ogtNEUPm1vGLKGyG3wMcwzPpXM8vryvsTAiWZouG4zvDaaYqdyc+0Igib9
+	 cWx0azGWLURRksuW9iZu5ZlSFOmpGPmpmTonhGZ4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729081AbfAXRxe (ORCPT
+        id S1729138AbfAXRxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:53:34 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:36429 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727765AbfAXRxd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:53:33 -0500
-Received: by mail-pg1-f193.google.com with SMTP id n2so2983935pgm.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 09:53:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WbsXHLYVuaSSki/5gBqN9dEz8c1gbFJZDIVccUSbq1o=;
-        b=GJQucvACT94g+OmxNwrimLVxF9hx/p8FuwbEf5GkEcQMZDKqXdcwnyzauzN6u9aq4A
-         qbjnD1ql3Zznl7t4N1m3D9bxsg2IxPgevjqgdRR/iI8SYO9x2/uc+MrqzdDXPsikKyGL
-         60VirQn1DS49BkuwbVqtR/YEem/1a9gHOfb/Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=WbsXHLYVuaSSki/5gBqN9dEz8c1gbFJZDIVccUSbq1o=;
-        b=sCRLlqBzNwFwVgDXOJbGJI+nuLZM0UdHA5gQzB0OG955qUX5d1ioAXmUsBQwo1y1Kd
-         51NRO/QbI5QY06biJx7SOFufvbr/E3Y+QxoJPuAPoBCzVwC2TndnsOOu3wFJrhuBLenw
-         tq6f64/lCX5XjCBUPnR3YtiOvWz4SZ7ARflYsMxhkEKPVebXU0fdp3c2MUN1vpsyTgnK
-         GkcPH9VLh+dIBISAXe9QZBY7dzdX0j0j90Rw4OP3xYCRd43tGeMD0+NzAhqAE5QNQc0y
-         GvWmLDq3np5uVJmx4pcysfXRaSw/Zukt63hIGvXh7hxm/0fPMAKgBl0lv5998487Q+d4
-         kI3Q==
-X-Gm-Message-State: AJcUuke2vUZ1FuOTYQvXdwRFIeMDCyYPWkuwjU/bfTvtyzb1hCRu97em
-        qM6Eok8yIstCmTE1qVZwyNOLABp4348=
-X-Google-Smtp-Source: ALg8bN5naYAcJ/Pi4m1FbHpyWwDfbl1lgEGaHg3wMUMF5Pk2fjN76mKZ/Cw/+jjLmS2IRI4NfE4p/Q==
-X-Received: by 2002:aa7:824f:: with SMTP id e15mr7290447pfn.192.1548352412780;
-        Thu, 24 Jan 2019 09:53:32 -0800 (PST)
-Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id r187sm77989332pfc.63.2019.01.24.09.53.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 09:53:32 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH] arm64: dts: allwinner: a64-amarula-relic: Add STLM75 sensor
-Date:   Thu, 24 Jan 2019 23:22:54 +0530
-Message-Id: <20190124175254.27650-1-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+        Thu, 24 Jan 2019 12:53:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35038 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727664AbfAXRxf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 12:53:35 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EA22A218A6;
+        Thu, 24 Jan 2019 17:53:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548352414;
+        bh=L7djGP8cqnlHynGq84ONY74rM6TdaKbww/YpUW+NGgM=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=WryrZT0n7Po3tduuYrWuC5ebSLSnsWjeyzeCUKFt1Lnk5IE53fU7orlB7oxmKcQPT
+         cp2m8T8L676yoISWRqrNr5eMMTIFsxof+OSydS94z5bqd+9w0KA0LeMJjDeeSC4T7s
+         erMUtU6Av3K92HXV5QNWwOksrK0x6iHT2752URto=
+Date:   Thu, 24 Jan 2019 18:53:31 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Paul Menzel <pmenzel@molgen.mpg.de>
+Cc:     stable@vger.kernel.org, openipmi-developer@lists.sourceforge.net,
+        LKML <linux-kernel@vger.kernel.org>, it+lkml@molgen.mpg.de
+Subject: Re: [PATCH v2] ipmi:pci: Blacklist a Realtek "IPMI" device
+Message-ID: <20190124175331.GC7484@kroah.com>
+References: <8520014d-6805-ce87-143d-fffbeb94d11d@molgen.mpg.de>
+ <78de72f8-e218-f91f-97b2-768ff5a920e4@acm.org>
+ <9ca94005-e2e4-cd5a-67bd-30c3d8680281@molgen.mpg.de>
+ <fe18b975-a577-8b09-c1cc-488356fc60a7@molgen.mpg.de>
+ <20190123163211.GA31955@kroah.com>
+ <cc8b4831-73bf-5f18-ebaa-e0fa6c3d5366@molgen.mpg.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc8b4831-73bf-5f18-ebaa-e0fa6c3d5366@molgen.mpg.de>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amarula A64 Relic has STLM75 sensor for digital temperature
-and thermal watchdog.
+On Wed, Jan 23, 2019 at 05:44:57PM +0100, Paul Menzel wrote:
+> From: Corey Minyard <cminyard@mvista.com>
+> Date: Thu, 15 Feb 2018 16:58:26 -0600
+> 
+> [ upstream commit bc48fa1b9d3b04106055b27078da824cd209865a ]
+> 
+> Realtek has some sort of "Virtual" IPMI device on the PCI bus as a
+> KCS controller, but whatever it is, it's not one.  Ignore it if seen.
+> 
+> Reported-by: Chris Chiu <chiu@endlessm.com>
+> Signed-off-by: Corey Minyard <cminyard@mvista.com>
+> Tested-by: Daniel Drake <drake@endlessm.com>
+> 
+> [ Commit 13d0b35c (ipmi_si: Move PCI setup to another file) from Linux
+>   4.15-rc1 has not been back ported, so the PCI code is still in
+>   `drivers/char/ipmi/ipmi_si_intf.c`, requiring to apply the commit
+>   manually.
+> 
+>   This fixes a 100 s boot delay on the HP EliteDesk 705 G4 MT with Linux
+>   4.14.94. ]
+> 
+> Signed-off-by: Paul Menzel <pmenzel@molgen.mpg.de>
+> ---
+> 
+> v2: Use tabs. Sorry for messing that up.
 
-Add support for it.
+That worked, thanks.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
-Note: the respective driver change is already in mainline
-https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=2e9a41bbc1079776dabe42ed8113b086b99ae56c
-
- .../dts/allwinner/sun50i-a64-amarula-relic.dts    | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-index 6cb2b7f0c817..5d942543d978 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-@@ -34,6 +34,21 @@
- 	status = "okay";
- };
- 
-+&i2c0 {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c0_pins>;
-+	status = "okay";
-+
-+	temp@48 {
-+		compatible = "st,stlm75";
-+		reg = <0x48>;
-+	};
-+};
-+
-+&i2c0_pins {
-+	bias-pull-up;
-+};
-+
- &mmc1 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&mmc1_pins>;
--- 
-2.18.0.321.gffc6fa0e3
-
+greg k-h
