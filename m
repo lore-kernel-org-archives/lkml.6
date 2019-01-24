@@ -2,196 +2,90 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 367E0C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E0DC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081F221903
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F14A9218FC
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:31:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358265;
-	bh=VkcrIsgp7s+FViqzoIcfDhXYSZ0hNzbNZjpxmUi+1Vs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PJDZVJJc+TpwwEN5dAisK/ktG/+Mmms6fXGlZShuWjfb0ggw/jCAnRg3hds7v9HT7
-	 vgZgVmIbjvYbxnGLJli2/M9mYAHmeCg2rN8GvCIDlx8x/0QLQfGZIS+Vh58B9Cykzz
-	 PgMuC2L3PsRDZZAaoHMMOxWRWDaLIliaiyNbmmHc=
+	s=default; t=1548358270;
+	bh=q/rmUp/Johlcll5Aly+YbPPv64UY8DXVoEoBdBQlVJA=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=INoA7zAAtluO2cGJHE9dZNwuWEYI0sg+GqBzY+LbGWcD0qRzHewpIzx9H2bIaRaRo
+	 a+qsIZTRCCU4KlNy5vlUNI4guwkUDq+Pd7yMflU7r9joMpaVTHwoWdv8dlssGRTfTm
+	 cZUYpePZAFNLcRvLgyUnMC1g9O8dWWpuNR9n/yP4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730825AbfAXTbD (ORCPT
+        id S1731563AbfAXTbI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:31:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58674 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:31:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58734 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731512AbfAXTbB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:31:01 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1731458AbfAXTbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:31:04 -0500
+Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.121.135.10])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6F6A218D4;
-        Thu, 24 Jan 2019 19:30:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12956218FC;
+        Thu, 24 Jan 2019 19:31:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358260;
-        bh=VkcrIsgp7s+FViqzoIcfDhXYSZ0hNzbNZjpxmUi+1Vs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V+zgFfI3LtqOC4Q2BECJeCIeLcA0y9FxW5jo3CSqF3SEtdCmCanGFzv+ZMwRIxzWW
-         LVTXQYgWbzij9DxKVYTzgvpEjA1ybDc8Z4sIgIgKRxHbiH8Qg9e18nTYRKMx3SYOaa
-         C3cc43rKoap9rOei/3kFPKxau1f6vJLXmVmSplFQ=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 10/63] platform/x86: asus-wmi: Tell the EC the OS will handle the display off hotkey
-Date:   Thu, 24 Jan 2019 20:19:59 +0100
-Message-Id: <20190124190156.203479785@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
-References: <20190124190155.176570028@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+        s=default; t=1548358263;
+        bh=q/rmUp/Johlcll5Aly+YbPPv64UY8DXVoEoBdBQlVJA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=fM5m4UbuvNJONDVpQVTTS84ZVFmA9pv0BzP5jnpgXrmBsnCPSxKV8qRAfQXGDLTLC
+         YgeArgHMWuCrqiE6IL2omoEjGQUcGE1X6qtXqJaSr7fiIZfnEJKiu9DBZvslMz7KYc
+         aZndwBwycM6xxscrcCncdkt71xUD/oB8+f/80X9k=
+From:   Sinan Kaya <okaya@kernel.org>
+To:     linux-next@vger.kernel.org
+Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        platform-driver-x86@vger.kernel.org (open list:X86 PLATFORM DRIVERS),
+        linux-kernel@vger.kernel.org (open list)
+Subject: [for next][PATCH v3 1/2] platform/x86: Fix unmet dependency warning for ACPI_CMPC
+Date:   Thu, 24 Jan 2019 19:31:00 +0000
+Message-Id: <20190124193101.24519-1-okaya@kernel.org>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+Add BACKLIGHT_LCD_SUPPORT for ACPI_CMPC to fix the
+warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
 
-------------------
+ACPI_CMPC selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
+depends on BACKLIGHT_LCD_SUPPORT.
 
-[ Upstream commit 78f3ac76d9e5219589718b9e4733bee21627b3f5 ]
+Copy BACKLIGHT_LCD_SUPPORT dependency into ACPI_CMPC to fix
 
-In the past, Asus firmwares would change the panel backlight directly
-through the EC when the display off hotkey (Fn+F7) was pressed, and
-only notify the OS of such change, with 0x33 when the LCD was ON and
-0x34 when the LCD was OFF. These are currently mapped to
-KEY_DISPLAYTOGGLE and KEY_DISPLAY_OFF, respectively.
+WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
+  Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
+  Selected by [y]:
+  - ACPI_CMPC [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y] && INPUT [=y] && (RFKILL [=n] || RFKILL [=n]=n)
 
-Most recently the EC on Asus most machines lost ability to toggle the
-LCD backlight directly, but unless the OS informs the firmware it is
-going to handle the display toggle hotkey events, the firmware still
-tries change the brightness through the EC, to no effect. The end result
-is a long list (at Endless we counted 11) of Asus laptop models where
-the display toggle hotkey does not perform any action. Our firmware
-engineers contacts at Asus were surprised that there were still machines
-out there with the old behavior.
-
-Calling WMNB(ASUS_WMI_DEVID_BACKLIGHT==0x00050011, 2) on the _WDG device
-tells the firmware that it should let the OS handle the display toggle
-event, in which case it will simply notify the OS of a key press with
-0x35, as shown by the DSDT excerpts bellow.
-
- Scope (_SB)
- {
-     (...)
-
-     Device (ATKD)
-     {
-         (...)
-
-         Name (_WDG, Buffer (0x28)
-         {
-             /* 0000 */  0xD0, 0x5E, 0x84, 0x97, 0x6D, 0x4E, 0xDE, 0x11,
-             /* 0008 */  0x8A, 0x39, 0x08, 0x00, 0x20, 0x0C, 0x9A, 0x66,
-             /* 0010 */  0x4E, 0x42, 0x01, 0x02, 0x35, 0xBB, 0x3C, 0x0B,
-             /* 0018 */  0xC2, 0xE3, 0xED, 0x45, 0x91, 0xC2, 0x4C, 0x5A,
-             /* 0020 */  0x6D, 0x19, 0x5D, 0x1C, 0xFF, 0x00, 0x01, 0x08
-         })
-         Method (WMNB, 3, Serialized)
-         {
-             CreateDWordField (Arg2, Zero, IIA0)
-             CreateDWordField (Arg2, 0x04, IIA1)
-             Local0 = (Arg1 & 0xFFFFFFFF)
-
-             (...)
-
-             If ((Local0 == 0x53564544))
-             {
-                 (...)
-
-                 If ((IIA0 == 0x00050011))
-                 {
-                     If ((IIA1 == 0x02))
-                     {
-                         ^^PCI0.SBRG.EC0.SPIN (0x72, One)
-                         ^^PCI0.SBRG.EC0.BLCT = One
-                     }
-
-                     Return (One)
-                 }
-             }
-             (...)
-         }
-         (...)
-     }
-     (...)
- }
- (...)
-
- Scope (_SB.PCI0.SBRG.EC0)
- {
-     (...)
-
-     Name (BLCT, Zero)
-
-     (...)
-
-     Method (_Q10, 0, NotSerialized)  // _Qxx: EC Query
-     {
-         If ((BLCT == Zero))
-         {
-             Local0 = One
-             Local0 = RPIN (0x72)
-             Local0 ^= One
-             SPIN (0x72, Local0)
-             If (ATKP)
-             {
-                 Local0 = (0x34 - Local0)
-                 ^^^^ATKD.IANE (Local0)
-             }
-         }
-         ElseIf ((BLCT == One))
-         {
-             If (ATKP)
-             {
-                 ^^^^ATKD.IANE (0x35)
-             }
-         }
-     }
-     (...)
- }
-
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
- drivers/platform/x86/asus-wmi.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/platform/x86/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/platform/x86/asus-wmi.c b/drivers/platform/x86/asus-wmi.c
-index 7440f650e81a..3f662cd774d7 100644
---- a/drivers/platform/x86/asus-wmi.c
-+++ b/drivers/platform/x86/asus-wmi.c
-@@ -2147,7 +2147,8 @@ static int asus_wmi_add(struct platform_device *pdev)
- 		err = asus_wmi_backlight_init(asus);
- 		if (err && err != -ENODEV)
- 			goto fail_backlight;
--	}
-+	} else
-+		err = asus_wmi_set_devstate(ASUS_WMI_DEVID_BACKLIGHT, 2, NULL);
- 
- 	status = wmi_install_notify_handler(asus->driver->event_guid,
- 					    asus_wmi_notify, asus);
+diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
+index 5e2109c54c7c..11810591840d 100644
+--- a/drivers/platform/x86/Kconfig
++++ b/drivers/platform/x86/Kconfig
+@@ -905,6 +905,7 @@ config TOSHIBA_WMI
+ config ACPI_CMPC
+ 	tristate "CMPC Laptop Extras"
+ 	depends on ACPI && INPUT
++	depends on BACKLIGHT_LCD_SUPPORT
+ 	depends on RFKILL || RFKILL=n
+ 	select BACKLIGHT_CLASS_DEVICE
+ 	help
 -- 
-2.19.1
-
-
+2.19.0
 
