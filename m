@@ -2,142 +2,331 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C63C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:51:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA778C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF1E7218A6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:51:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="Bwfpm3Zv"
+	by mail.kernel.org (Postfix) with ESMTP id 8EE2D218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:52:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729098AbfAXRvj (ORCPT
+        id S1729132AbfAXRv7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:51:39 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:33169 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728130AbfAXRvi (ORCPT
+        Thu, 24 Jan 2019 12:51:59 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50858 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727765AbfAXRv7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:51:38 -0500
-Received: by mail-yb1-f193.google.com with SMTP id m132so995478ybf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 09:51:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=poorly.run; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bhk8H9tazTUscD/pxPfOSKpqlrE97YOeNeJgS+fpIpw=;
-        b=Bwfpm3ZvwJBNuoiQOO512dya0Ca50Djnh5X9DJiWj83E9HxSlv1LCeDvKljt1uhBct
-         7vajrVVNi8zB60BrG1eGiyAhOi440TbPQ/gpPg+bD7fUoi13OP4NhutH2s2dVGP8PUM5
-         K6baWaBtBSpPLwuSZW2wAxu8NdqD761dlA6MNfiSoj7ZYxNVWaouuAiVkersDvC9hb/9
-         OKOsqfIz9gDAY/lmgaxaZVN+3EUKCnxIcLolGxeHq2/tx/OCmzWq8tzlYyukFscdkMdC
-         1O6AeS1MyjwhS78BnO6L6bRpCMaczqAoDuaPHOIpBUu6X/y5cOxaixw7+SxUC6Dc2Oxu
-         2JMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bhk8H9tazTUscD/pxPfOSKpqlrE97YOeNeJgS+fpIpw=;
-        b=Zl4mIT4QwnMS5EdlpVT9V/Yg5CAYxALKONSzYCDV8w/harvQeD5FsX4aYzdbUlxfOa
-         s3m+DUrVPiT3F1VNbkbSqG/Ks5KCz5aLLCbuD2gIdUeIL4LqI4MLBLLHwCvAEZ9qOGgm
-         gWVQa8HKsfig35y76oUm8IX2uDtuzqdFVRIzaSrIMlYFV1gykVhkPOEzrosRBREclzay
-         gqMwOYHfm3xkxwhZeNqWvFBede4IFXinfLxkYQBj3wfbund9ZzcCnVd6pzTyFPqd6KtR
-         W4pUyEWa33Bb6SMsVHDyeUdNIh57xMqwWMc0pSKqp4S/z4uobsQHE0Mbl2yy7g/O3/x9
-         Y8HQ==
-X-Gm-Message-State: AJcUuke0noHWGdAM+CoGIPDcupzsk21szGVcbq23WSfvINOGGKqcmRaS
-        4RfJgHeV4z7BSQ73Cj2m05syKw==
-X-Google-Smtp-Source: ALg8bN7CWju7aKZ7fzyERIxUfdeueYjXNLIun0IiJMw/M1NCSMhfQSVZ9dbu1BMnnxaLRoFOR/Hukg==
-X-Received: by 2002:a5b:b8e:: with SMTP id l14mr7239501ybq.208.1548352297839;
-        Thu, 24 Jan 2019 09:51:37 -0800 (PST)
-Received: from localhost ([2620:0:1013:11:89c6:2139:5435:371d])
-        by smtp.gmail.com with ESMTPSA id x132sm18418801ywx.27.2019.01.24.09.51.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 09:51:37 -0800 (PST)
-Date:   Thu, 24 Jan 2019 12:51:36 -0500
-From:   Sean Paul <sean@poorly.run>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     Ezequiel Garcia <ezequiel@collabora.com>,
-        Heiko Stuebner <heiko@sntech.de>,
-        padovan Gustavo <gustavo.padovan@collabora.com>,
-        maxime.ripard@bootlin.com, seanpaul@chromium.org,
-        hl@rock-chips.com, briannorris@chromium.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        nickey.yang@rock-chips.com
-Subject: Re: [PATCH v4 RESEND] drm/panel: add Kingdisplay kd097d04 panel
- driver
-Message-ID: <20190124175136.GP114153@art_vandelay>
-References: <20181030091528.28211-1-heiko@sntech.de>
- <fa732d7c529c28135b2c9a1ccf902d4658a53682.camel@collabora.com>
- <20190124161812.GA10550@ulmo>
+        Thu, 24 Jan 2019 12:51:59 -0500
+Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0OHjg44103598
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:51:58 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7f56ag3k-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:51:56 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Thu, 24 Jan 2019 17:51:51 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Thu, 24 Jan 2019 17:51:48 -0000
+Received: from d06av23.portsmouth.uk.ibm.com (d06av23.portsmouth.uk.ibm.com [9.149.105.59])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0OHplXj66125944
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 24 Jan 2019 17:51:47 GMT
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3BA84A404D;
+        Thu, 24 Jan 2019 17:51:47 +0000 (GMT)
+Received: from d06av23.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 50777A4040;
+        Thu, 24 Jan 2019 17:51:46 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.8.102])
+        by d06av23.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Thu, 24 Jan 2019 17:51:46 +0000 (GMT)
+Date:   Thu, 24 Jan 2019 19:51:44 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, Pingfan Liu <kernelfans@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Tony Luck <tony.luck@intel.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] x86, numa: always initialize all possible nodes
+References: <20190114082416.30939-1-mhocko@kernel.org>
+ <20190124141727.GN4087@dhcp22.suse.cz>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124161812.GA10550@ulmo>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190124141727.GN4087@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19012417-4275-0000-0000-00000303B0FC
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012417-4276-0000-0000-00003811EA16
+Message-Id: <20190124175144.GF13790@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901240123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 05:18:12PM +0100, Thierry Reding wrote:
-> On Thu, Jan 24, 2019 at 12:01:55PM -0300, Ezequiel Garcia wrote:
-> > On Tue, 2018-10-30 at 10:15 +0100, Heiko Stuebner wrote:
-> > > From: Nickey Yang <nickey.yang@rock-chips.com>
-> > > 
-> > > Support Kingdisplay kd097d04 9.7" 1536x2048 TFT LCD panel,
-> > > it is a MIPI dual-DSI panel.
-> > > 
-> > > v4-resend:
-> > > - Thierry noted missing dt-bindings for v4 but forgot that he
-> > >   already had applied them one kernel release back in
-> > >   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=ebc950fdff6d5f9250cd5a5a348af97f7d8508df
-> > > v4:
-> > > - address Philipp's comments
-> > >   - real range for usleep_range and
-> > >   - poweroff ordering in kingdisplay_panel_prepare
-> > >   - return value beautification in panel_probe
-> > > - update author naming for full name
-> > > v3:
-> > > - address Thierry's comments
-> > >   - error handling for init dsi writes in init
-> > >   - unconditionally remove the panel
-> > >   - don't use drm_panel_detach
-> > >   - a bit of variable signednes wiggling
-> > > - I did talk to ChromeOS people and the delays really should be as short
-> > >   as possible, so dropped the 100ms from the delay comments
-> > > v2:
-> > > - update timing + cmds from chromeos kernel
-> > > - new backlight API including switch to devm_of_find_backlight
-> > > - fix most of Sean Paul's comments
-> > >   enable/prepare tracking seems something all panels do
-> > > - document origins of the init sequence
-> > > - lanes per dsi interface to 4 (two interfaces). Matches how tegra
-> > >   and pending rockchip dual-dsi handle (dual-)dsi lanes
-> > > - spdx header instead of license boilerplate
-> > > 
-> > > Signed-off-by: Nickey Yang <nickey.yang@rock-chips.com>
-> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On Thu, Jan 24, 2019 at 03:17:27PM +0100, Michal Hocko wrote:
+> a friendly ping for this. Does anybody see any problem with this
+> approach?
+
+FWIW, it looks fine to me.
+
+It'd just be nice to have a few more words in the changelog about *how* the
+x86 init was reworked ;-)
+ 
+> On Mon 14-01-19 09:24:16, Michal Hocko wrote:
+> > From: Michal Hocko <mhocko@suse.com>
 > > 
-> > Hm, this v4 patch has been stalling here for *four full months*.
+> > Pingfan Liu has reported the following splat
+> > [    5.772742] BUG: unable to handle kernel paging request at 0000000000002088
+> > [    5.773618] PGD 0 P4D 0
+> > [    5.773618] Oops: 0000 [#1] SMP NOPTI
+> > [    5.773618] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc1+ #3
+> > [    5.773618] Hardware name: Dell Inc. PowerEdge R7425/02MJ3T, BIOS 1.4.3 06/29/2018
+> > [    5.773618] RIP: 0010:__alloc_pages_nodemask+0xe2/0x2a0
+> > [    5.773618] Code: 00 00 44 89 ea 80 ca 80 41 83 f8 01 44 0f 44 ea 89 da c1 ea 08 83 e2 01 88 54 24 20 48 8b 54 24 08 48 85 d2 0f 85 46 01 00 00 <3b> 77 08 0f 82 3d 01 00 00 48 89 f8 44 89 ea 48 89
+> > e1 44 89 e6 89
+> > [    5.773618] RSP: 0018:ffffaa600005fb20 EFLAGS: 00010246
+> > [    5.773618] RAX: 0000000000000000 RBX: 00000000006012c0 RCX: 0000000000000000
+> > [    5.773618] RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000002080
+> > [    5.773618] RBP: 00000000006012c0 R08: 0000000000000000 R09: 0000000000000002
+> > [    5.773618] R10: 00000000006080c0 R11: 0000000000000002 R12: 0000000000000000
+> > [    5.773618] R13: 0000000000000001 R14: 0000000000000000 R15: 0000000000000002
+> > [    5.773618] FS:  0000000000000000(0000) GS:ffff8c69afe00000(0000) knlGS:0000000000000000
+> > [    5.773618] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [    5.773618] CR2: 0000000000002088 CR3: 000000087e00a000 CR4: 00000000003406e0
+> > [    5.773618] Call Trace:
+> > [    5.773618]  new_slab+0xa9/0x570
+> > [    5.773618]  ___slab_alloc+0x375/0x540
+> > [    5.773618]  ? pinctrl_bind_pins+0x2b/0x2a0
+> > [    5.773618]  __slab_alloc+0x1c/0x38
+> > [    5.773618]  __kmalloc_node_track_caller+0xc8/0x270
+> > [    5.773618]  ? pinctrl_bind_pins+0x2b/0x2a0
+> > [    5.773618]  devm_kmalloc+0x28/0x60
+> > [    5.773618]  pinctrl_bind_pins+0x2b/0x2a0
+> > [    5.773618]  really_probe+0x73/0x420
+> > [    5.773618]  driver_probe_device+0x115/0x130
+> > [    5.773618]  __driver_attach+0x103/0x110
+> > [    5.773618]  ? driver_probe_device+0x130/0x130
+> > [    5.773618]  bus_for_each_dev+0x67/0xc0
+> > [    5.773618]  ? klist_add_tail+0x3b/0x70
+> > [    5.773618]  bus_add_driver+0x41/0x260
+> > [    5.773618]  ? pcie_port_setup+0x4d/0x4d
+> > [    5.773618]  driver_register+0x5b/0xe0
+> > [    5.773618]  ? pcie_port_setup+0x4d/0x4d
+> > [    5.773618]  do_one_initcall+0x4e/0x1d4
+> > [    5.773618]  ? init_setup+0x25/0x28
+> > [    5.773618]  kernel_init_freeable+0x1c1/0x26e
+> > [    5.773618]  ? loglevel+0x5b/0x5b
+> > [    5.773618]  ? rest_init+0xb0/0xb0
+> > [    5.773618]  kernel_init+0xa/0x110
+> > [    5.773618]  ret_from_fork+0x22/0x40
+> > [    5.773618] Modules linked in:
+> > [    5.773618] CR2: 0000000000002088
+> > [    5.773618] ---[ end trace 1030c9120a03d081 ]---
 > > 
-> > Which deity do we need to pray to get this one moving? ;-)
+> > with his AMD machine with the following topology
+> >   NUMA node0 CPU(s):     0,8,16,24
+> >   NUMA node1 CPU(s):     2,10,18,26
+> >   NUMA node2 CPU(s):     4,12,20,28
+> >   NUMA node3 CPU(s):     6,14,22,30
+> >   NUMA node4 CPU(s):     1,9,17,25
+> >   NUMA node5 CPU(s):     3,11,19,27
+> >   NUMA node6 CPU(s):     5,13,21,29
+> >   NUMA node7 CPU(s):     7,15,23,31
 > > 
-> > Seriously, can someone please apply this?
+> > [    0.007418] Early memory node ranges
+> > [    0.007419]   node   1: [mem 0x0000000000001000-0x000000000008efff]
+> > [    0.007420]   node   1: [mem 0x0000000000090000-0x000000000009ffff]
+> > [    0.007422]   node   1: [mem 0x0000000000100000-0x000000005c3d6fff]
+> > [    0.007422]   node   1: [mem 0x00000000643df000-0x0000000068ff7fff]
+> > [    0.007423]   node   1: [mem 0x000000006c528000-0x000000006fffffff]
+> > [    0.007424]   node   1: [mem 0x0000000100000000-0x000000047fffffff]
+> > [    0.007425]   node   5: [mem 0x0000000480000000-0x000000087effffff]
+> > 
+> > and nr_cpus set to 4. The underlying reason is tha the device is bound
+> > to node 2 which doesn't have any memory and init_cpu_to_node only
+> > initializes memory-less nodes for possible cpus which nr_cpus restrics.
+> > This in turn means that proper zonelists are not allocated and the page
+> > allocator blows up.
+> > 
+> > Fix the issue by reworking how x86 initializes the memory less nodes.
+> > The current implementation is hacked into the workflow and it doesn't
+> > allow any flexibility. There is init_memory_less_node called for each
+> > offline node that has a CPU as already mentioned above. This will make
+> > sure that we will have a new online node without any memory. Much later
+> > on we build a zone list for this node and things seem to work, except
+> > they do not (e.g. due to nr_cpus). Not to mention that it doesn't really
+> > make much sense to consider an empty node as online because we just
+> > consider this node whenever we want to iterate nodes to use and empty
+> > node is obviously not the best candidate. This is all just too fragile.
+> > 
+> > Reported-by: Pingfan Liu <kernelfans@gmail.com>
+> > Tested-by: Pingfan Liu <kernelfans@gmail.com>
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> > 
+> > Hi,
+> > I am sending this as an RFC because I am not sure this is the proper way
+> > to go myself. I am especially not sure about other architectures
+> > supporting memoryless nodes (ppc and ia64 AFAICS or are there more?).
+> > 
+> > I would appreciate a help with those architectures because I couldn't
+> > really grasp how the memoryless nodes are really initialized there. E.g.
+> > ppc only seem to call setup_node_data for online nodes but I couldn't
+> > find any special treatment for nodes without any memory.
+> > 
+> > Any further help, comments are appreaciated!
+> > 
+> >  arch/x86/mm/numa.c | 27 +++------------------------
+> >  mm/page_alloc.c    | 15 +++++++++------
+> >  2 files changed, 12 insertions(+), 30 deletions(-)
+> > 
+> > diff --git a/arch/x86/mm/numa.c b/arch/x86/mm/numa.c
+> > index 1308f5408bf7..b3621ee4dfe8 100644
+> > --- a/arch/x86/mm/numa.c
+> > +++ b/arch/x86/mm/numa.c
+> > @@ -216,8 +216,6 @@ static void __init alloc_node_data(int nid)
+> >  
+> >  	node_data[nid] = nd;
+> >  	memset(NODE_DATA(nid), 0, sizeof(pg_data_t));
+> > -
+> > -	node_set_online(nid);
+> >  }
+> >  
+> >  /**
+> > @@ -570,7 +568,7 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+> >  		return -EINVAL;
+> >  
+> >  	/* Finally register nodes. */
+> > -	for_each_node_mask(nid, node_possible_map) {
+> > +	for_each_node_mask(nid, numa_nodes_parsed) {
+> >  		u64 start = PFN_PHYS(max_pfn);
+> >  		u64 end = 0;
+> >  
+> > @@ -581,9 +579,6 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+> >  			end = max(mi->blk[i].end, end);
+> >  		}
+> >  
+> > -		if (start >= end)
+> > -			continue;
+> > -
+> >  		/*
+> >  		 * Don't confuse VM with a node that doesn't have the
+> >  		 * minimum amount of memory:
+> > @@ -592,6 +587,8 @@ static int __init numa_register_memblks(struct numa_meminfo *mi)
+> >  			continue;
+> >  
+> >  		alloc_node_data(nid);
+> > +		if (end)
+> > +			node_set_online(nid);
+> >  	}
+> >  
+> >  	/* Dump memblock with node info and return. */
+> > @@ -721,21 +718,6 @@ void __init x86_numa_init(void)
+> >  	numa_init(dummy_numa_init);
+> >  }
+> >  
+> > -static void __init init_memory_less_node(int nid)
+> > -{
+> > -	unsigned long zones_size[MAX_NR_ZONES] = {0};
+> > -	unsigned long zholes_size[MAX_NR_ZONES] = {0};
+> > -
+> > -	/* Allocate and initialize node data. Memory-less node is now online.*/
+> > -	alloc_node_data(nid);
+> > -	free_area_init_node(nid, zones_size, 0, zholes_size);
+> > -
+> > -	/*
+> > -	 * All zonelists will be built later in start_kernel() after per cpu
+> > -	 * areas are initialized.
+> > -	 */
+> > -}
+> > -
+> >  /*
+> >   * Setup early cpu_to_node.
+> >   *
+> > @@ -763,9 +745,6 @@ void __init init_cpu_to_node(void)
+> >  		if (node == NUMA_NO_NODE)
+> >  			continue;
+> >  
+> > -		if (!node_online(node))
+> > -			init_memory_less_node(node);
+> > -
+> >  		numa_set_node(cpu, node);
+> >  	}
+> >  }
+> > diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> > index 2ec9cc407216..2e097f336126 100644
+> > --- a/mm/page_alloc.c
+> > +++ b/mm/page_alloc.c
+> > @@ -5361,10 +5361,11 @@ static void __build_all_zonelists(void *data)
+> >  	if (self && !node_online(self->node_id)) {
+> >  		build_zonelists(self);
+> >  	} else {
+> > -		for_each_online_node(nid) {
+> > +		for_each_node(nid) {
+> >  			pg_data_t *pgdat = NODE_DATA(nid);
+> >  
+> > -			build_zonelists(pgdat);
+> > +			if (pgdat)
+> > +				build_zonelists(pgdat);
+> >  		}
+> >  
+> >  #ifdef CONFIG_HAVE_MEMORYLESS_NODES
+> > @@ -6644,10 +6645,8 @@ static unsigned long __init find_min_pfn_for_node(int nid)
+> >  	for_each_mem_pfn_range(i, nid, &start_pfn, NULL, NULL)
+> >  		min_pfn = min(min_pfn, start_pfn);
+> >  
+> > -	if (min_pfn == ULONG_MAX) {
+> > -		pr_warn("Could not find start_pfn for node %d\n", nid);
+> > +	if (min_pfn == ULONG_MAX)
+> >  		return 0;
+> > -	}
+> >  
+> >  	return min_pfn;
+> >  }
+> > @@ -6991,8 +6990,12 @@ void __init free_area_init_nodes(unsigned long *max_zone_pfn)
+> >  	mminit_verify_pageflags_layout();
+> >  	setup_nr_node_ids();
+> >  	zero_resv_unavail();
+> > -	for_each_online_node(nid) {
+> > +	for_each_node(nid) {
+> >  		pg_data_t *pgdat = NODE_DATA(nid);
+> > +
+> > +		if (!pgdat)
+> > +			continue;
+> > +
+> >  		free_area_init_node(nid, NULL,
+> >  				find_min_pfn_for_node(nid), NULL);
+> >  
+> > -- 
+> > 2.20.1
+> > 
 > 
-> If you care about this driver, perhaps you'd like to review and provide
-> a Reviewed-by?
-
-Looks good to me,
-
-Reviewed-by: Sean Paul <sean@poorly.run>
-
+> -- 
+> Michal Hocko
+> SUSE Labs
 > 
-> Thierry
-
-
 
 -- 
-Sean Paul, Software Engineer, Google / Chromium OS
+Sincerely yours,
+Mike.
+
