@@ -2,122 +2,138 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5C30C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5365AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A343B21902
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358240;
-	bh=yFh+DiAZwKNMePUIa1XgeEpiMgd2WKmnx59HJ8Ai4fM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u0ewCmXhgZnzu4FotPkrz2BFkEjCphiEcQwUTLTvlYwF67FhWOSSNbXvFv0S+i/ui
-	 sd51Wb8wRYdhc7l7dKClT4R1xrokLyg8XNrGKCH6j+lgiJ2NZO30AcUknCS2vYkulw
-	 TbEERwry/10tfe/NyfLSJnFEms3Hjuv97Ay6vPcw=
+	by mail.kernel.org (Postfix) with ESMTP id 2DA23218D4
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:30:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730761AbfAXTah (ORCPT
+        id S1730999AbfAXTar (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:30:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58182 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:30:47 -0500
+Received: from mga04.intel.com ([192.55.52.120]:48320 "EHLO mga04.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730703AbfAXTaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:30:35 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B51A21902;
-        Thu, 24 Jan 2019 19:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358234;
-        bh=yFh+DiAZwKNMePUIa1XgeEpiMgd2WKmnx59HJ8Ai4fM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rlL/uepMGiiDl41MLazQaYcp/bXutuFEndVTI3WqtGA1llmVbUTjzySSxMb5KH5K+
-         W4a2gaknwt9T7TUNjv4MeT5FU2tcQLCHutWp7RJPZTAgD7KcJ9iUM6McsWGlnwi6Cv
-         Nhy3KcSz00mi2nGXlZ89lfDqLk8h8C03pX/VJXYE=
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+        id S1731486AbfAXTam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:30:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 11:30:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,518,1539673200"; 
+   d="scan'208";a="112404822"
+Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
+  by orsmga008.jf.intel.com with ESMTP; 24 Jan 2019 11:30:41 -0800
+Subject: [PATCH] MAINTAINERS: Update filesystem-dax and NVDIMM entries
+From:   Dan Williams <dan.j.williams@intel.com>
 To:     linux-kernel@vger.kernel.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 27/39] perf parse-events: Fix unchecked usage of strncpy()
-Date:   Thu, 24 Jan 2019 20:20:30 +0100
-Message-Id: <20190124190449.214766775@linuxfoundation.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
-References: <20190124190448.232316246@linuxfoundation.org>
-User-Agent: quilt/0.65
-X-stable: review
-X-Patchwork-Hint: ignore
+Cc:     Jan Kara <jack@suse.cz>, Ira Weiny <ira.weiny@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Keith Busch <keith.busch@intel.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-nvdimm@lists.01.org
+Date:   Thu, 24 Jan 2019 11:17:59 -0800
+Message-ID: <154835747897.2884847.389054528444820204.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: StGit/0.18-2-gc94f
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.9-stable review patch.  If anyone has any objections, please let me know.
+Ross has moved on to other areas.
 
-------------------
+Matthew and Jan are trusted reviewers for DAX.
 
-[ Upstream commit bd8d57fb7e25e9fcf67a9eef5fa13aabe2016e07 ]
+Dan is now coordinating filesystem-dax pull requests.
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+Ira and Keith are now involved with the NVDIMM and Device-DAX
+sub-systems.
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+The linux-nvdimm mailing hosts a patchwork instance for both DAX and
+NVDIMM patches.
 
-  util/parse-events.c: In function 'print_symbol_events':
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2508:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  In function 'print_symbol_events.constprop',
-      inlined from 'print_events' at util/parse-events.c:2511:2:
-  util/parse-events.c:2465:4: error: 'strncpy' specified bound 100 equals destination size [-Werror=stringop-truncation]
-      strncpy(name, syms->symbol, MAX_NAME_LEN);
-      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 947b4ad1d198 ("perf list: Fix max event string size")
-Link: https://lkml.kernel.org/n/tip-b663e33bm6x8hrkie4uxh7u2@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Cc: Jan Kara <jack@suse.cz>
+Cc: Ira Weiny <ira.weiny@intel.com>
+Cc: Ross Zwisler <zwisler@kernel.org>
+Cc: Keith Busch <keith.busch@intel.com>
+Cc: Matthew Wilcox <willy@infradead.org>
+Signed-off-by: Dan Williams <dan.j.williams@intel.com>
 ---
- tools/perf/util/parse-events.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ MAINTAINERS |   17 ++++++++---------
+ 1 file changed, 8 insertions(+), 9 deletions(-)
 
-diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-events.c
-index 415a9c38d9f0..14f111a10650 100644
---- a/tools/perf/util/parse-events.c
-+++ b/tools/perf/util/parse-events.c
-@@ -2225,7 +2225,7 @@ restart:
- 		if (!name_only && strlen(syms->alias))
- 			snprintf(name, MAX_NAME_LEN, "%s OR %s", syms->symbol, syms->alias);
- 		else
--			strncpy(name, syms->symbol, MAX_NAME_LEN);
-+			strlcpy(name, syms->symbol, MAX_NAME_LEN);
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 51029a425dbe..5f43ee438a74 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -4535,10 +4535,11 @@ S:	Maintained
+ F:	drivers/i2c/busses/i2c-diolan-u2c.c
  
- 		evt_list[evt_i] = strdup(name);
- 		if (evt_list[evt_i] == NULL)
--- 
-2.19.1
-
-
+ FILESYSTEM DIRECT ACCESS (DAX)
+-M:	Matthew Wilcox <willy@infradead.org>
+-M:	Ross Zwisler <zwisler@kernel.org>
+-M:	Jan Kara <jack@suse.cz>
++M:	Dan Williams <dan.j.williams@intel.com>
++R:	Matthew Wilcox <willy@infradead.org>
++R:	Jan Kara <jack@suse.cz>
+ L:	linux-fsdevel@vger.kernel.org
++L:	linux-nvdimm@lists.01.org
+ S:	Supported
+ F:	fs/dax.c
+ F:	include/linux/dax.h
+@@ -4546,9 +4547,9 @@ F:	include/trace/events/fs_dax.h
+ 
+ DEVICE DIRECT ACCESS (DAX)
+ M:	Dan Williams <dan.j.williams@intel.com>
+-M:	Dave Jiang <dave.jiang@intel.com>
+-M:	Ross Zwisler <zwisler@kernel.org>
+ M:	Vishal Verma <vishal.l.verma@intel.com>
++M:	Keith Busch <keith.busch@intel.com>
++M:	Dave Jiang <dave.jiang@intel.com>
+ L:	linux-nvdimm@lists.01.org
+ S:	Supported
+ F:	drivers/dax/
+@@ -8641,7 +8642,6 @@ S:	Maintained
+ F:	tools/lib/lockdep/
+ 
+ LIBNVDIMM BLK: MMIO-APERTURE DRIVER
+-M:	Ross Zwisler <zwisler@kernel.org>
+ M:	Dan Williams <dan.j.williams@intel.com>
+ M:	Vishal Verma <vishal.l.verma@intel.com>
+ M:	Dave Jiang <dave.jiang@intel.com>
+@@ -8654,7 +8654,6 @@ F:	drivers/nvdimm/region_devs.c
+ LIBNVDIMM BTT: BLOCK TRANSLATION TABLE
+ M:	Vishal Verma <vishal.l.verma@intel.com>
+ M:	Dan Williams <dan.j.williams@intel.com>
+-M:	Ross Zwisler <zwisler@kernel.org>
+ M:	Dave Jiang <dave.jiang@intel.com>
+ L:	linux-nvdimm@lists.01.org
+ Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
+@@ -8662,7 +8661,6 @@ S:	Supported
+ F:	drivers/nvdimm/btt*
+ 
+ LIBNVDIMM PMEM: PERSISTENT MEMORY DRIVER
+-M:	Ross Zwisler <zwisler@kernel.org>
+ M:	Dan Williams <dan.j.williams@intel.com>
+ M:	Vishal Verma <vishal.l.verma@intel.com>
+ M:	Dave Jiang <dave.jiang@intel.com>
+@@ -8681,9 +8679,10 @@ F:	Documentation/devicetree/bindings/pmem/pmem-region.txt
+ 
+ LIBNVDIMM: NON-VOLATILE MEMORY DEVICE SUBSYSTEM
+ M:	Dan Williams <dan.j.williams@intel.com>
+-M:	Ross Zwisler <zwisler@kernel.org>
+ M:	Vishal Verma <vishal.l.verma@intel.com>
+ M:	Dave Jiang <dave.jiang@intel.com>
++M:	Keith Busch <keith.busch@intel.com>
++M:	Ira Weiny <ira.weiny@intel.com>
+ L:	linux-nvdimm@lists.01.org
+ Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
+ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git
 
