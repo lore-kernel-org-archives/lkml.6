@@ -2,76 +2,83 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40562C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:15:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF981C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:16:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 028FB218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:15:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X3PSMAHb"
+	by mail.kernel.org (Postfix) with ESMTP id 82271218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:16:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728478AbfAXQPk (ORCPT
+        id S1728534AbfAXQQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:15:40 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:54264 "EHLO vps0.lunn.ch"
+        Thu, 24 Jan 2019 11:16:20 -0500
+Received: from muru.com ([72.249.23.125]:35104 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727658AbfAXQPj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:15:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=rpTWy4V5hOfZl0Z6Q3iTnTMvdBi/wlLMW6IJVwwGTf4=; b=X3PSMAHbKwrOC9cPHJQyh5TRHt
-        7Vmvy/SmdQowVxTmu+VfVlLDkOq1fYMKtH0wYMcj6o2djEAHpJuZZODHHKSNjxn2RqPCmZuQ3IvoN
-        9PtR/VIbQdtRFvDyOTTfttZgtmIILYQcKLV4xGBWUHipBOn0hdsH+Zty+Ct7HwMPnLwY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gmhfD-0001lX-Hs; Thu, 24 Jan 2019 17:15:35 +0100
-Date:   Thu, 24 Jan 2019 17:15:35 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        antoine.tenart@bootlin.com, maxime.chevallier@bootlin.com,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        id S1727573AbfAXQQU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:16:20 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 3CC7180C3;
+        Thu, 24 Jan 2019 16:16:27 +0000 (UTC)
+Date:   Thu, 24 Jan 2019 08:16:16 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Felix Brack <fb@ltec.ch>
+Cc:     linux-omap@vger.kernel.org, devicetree@vger.kernel.org,
+        bcousson@baylibre.com, mpfj@newflow.co.uk, mark.rutland@arm.com,
+        robh+dt@kernel.org, linux@armlinux.org.uk,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: mvpp2: fix condition for setting up link
- interrupt
-Message-ID: <20190124161535.GH482@lunn.ch>
-References: <20190124131803.14038-1-tbogendoerfer@suse.de>
- <20190124155137.GD482@lunn.ch>
- <20190124160741.jady3r2e4dme7c4m@e5254000004ec.dyn.armlinux.org.uk>
+Subject: Re: [PATCH: linux-next] ARM: dts: am33xx: Remove unnecessary
+ properties
+Message-ID: <20190124161616.GN5720@atomide.com>
+References: <20181218143931.4151-1-fb@ltec.ch>
+ <31a68b35-8b78-8fee-3dd9-5beb3c386247@ltec.ch>
+ <20190121171320.GE5544@atomide.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124160741.jady3r2e4dme7c4m@e5254000004ec.dyn.armlinux.org.uk>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190121171320.GE5544@atomide.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 04:07:41PM +0000, Russell King - ARM Linux admin wrote:
-> On Thu, Jan 24, 2019 at 04:51:37PM +0100, Andrew Lunn wrote:
-> > On Thu, Jan 24, 2019 at 02:18:03PM +0100, Thomas Bogendoerfer wrote:
-> > > Set up link interrupt if connection is handled by phylink otherwise
-> > > link state change detection for in-band-status doesn't work.
+* Tony Lindgren <tony@atomide.com> [190121 17:13]:
+> * Felix Brack <fb@ltec.ch> [190119 17:38]:
+> > Hi Tony,
+> > On 18.12.18 15:39, Felix Brack wrote:
+> > > Remove the unnecessary properties #address-cells and #size-cells
+> > > of node pinmux as there are no child-nodes with property reg.
+> > > 
+> > > Signed-off-by: Felix Brack <fb@ltec.ch>
+> > > ---
+> > >   arch/arm/boot/dts/am33xx-l4.dtsi | 2 --
+> > >   1 file changed, 2 deletions(-)
+> > > 
+> > > diff --git a/arch/arm/boot/dts/am33xx-l4.dtsi b/arch/arm/boot/dts/am33xx-l4.dtsi
+> > > index 7b818d9d2eab..e957370f8aec 100644
+> > > --- a/arch/arm/boot/dts/am33xx-l4.dtsi
+> > > +++ b/arch/arm/boot/dts/am33xx-l4.dtsi
+> > > @@ -288,8 +288,6 @@
+> > >   				am33xx_pinmux: pinmux@800 {
+> > >   					compatible = "pinctrl-single";
+> > >   					reg = <0x800 0x238>;
+> > > -					#address-cells = <1>;
+> > > -					#size-cells = <0>;
+> > >   					#pinctrl-cells = <1>;
+> > >   					pinctrl-single,register-width = <32>;
+> > >   					pinctrl-single,function-mask = <0x7f>;
+> > > 
 > > 
-> > Hi Thomas
-> > 
-> > Please ensure the maintainers of the driver are at least on Cc:
+> > Just a gentle ping. BTW: the patch applies not just to linux-next correctly
+> > but now also to linux.
 > 
-> ... and other interested parties!
+> Sorry I'm still struggling with pending regressions for
+> the -rc cycle.. I should get to applying patches for next
+> merge window this week though.
 
-Hi Russell
+Applying into omap-for-v5.1/dt finally today thanks.
 
-get_maintainer.pl does not list you, so it can be hard to know who
-those other interested parties are. I have local knowledge, so added
-you :-)
-
-      Andrew
+Tony
