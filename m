@@ -2,128 +2,102 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA9CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:54:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FDE5C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:56:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19800218B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:54:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 57EF5218CD
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:56:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="YKWa4jgi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728934AbfAXQyb (ORCPT
+        id S1728340AbfAXQ4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:54:31 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:58849 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727658AbfAXQya (ORCPT
+        Thu, 24 Jan 2019 11:56:38 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:40657 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727443AbfAXQ4h (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:54:30 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212])
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gmiGr-0007cr-4h; Thu, 24 Jan 2019 16:54:29 +0000
-Subject: Re: [PATCH] HID: elan: Make array buf static, shrinks object size
-From:   Colin Ian King <colin.king@canonical.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20180926084150.17514-1-colin.king@canonical.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <11666348-f50a-719f-89d6-d90b0a1ea8f7@canonical.com>
-Date:   Thu, 24 Jan 2019 16:54:28 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 24 Jan 2019 11:56:37 -0500
+Received: by mail-yw1-f65.google.com with SMTP id g194so2685744ywe.7
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:56:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chrisdown.name; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/n5RO3ynJj5/bNE9tmIzk4EgTVnmQBOVPbiCNZWucCY=;
+        b=YKWa4jgiYZ79VkYeO8kCZgz1L1IMeQnAHkMW+GVd2NfaNUXvRA6B7g/3RPcFoQVc6O
+         0tvrfJrA8IDHOdaGmgsDJ8trxGoio6EUvlkDrQBuR0wQIpBM/6QhLqHCdRbvUJlt9tTd
+         PZ7QeIDKBV9N5XPgf+MVl1Ix8wDc2uxHANCMk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/n5RO3ynJj5/bNE9tmIzk4EgTVnmQBOVPbiCNZWucCY=;
+        b=sic550JQ6aQ26jndwdSgUyiR06zu66ss4DK5yU+EP4qtAuSTe1ivNw/GDhOTMrROq/
+         rxcxUdcSUf0qHRRX8JsGvSZRWOQIk8b8IuPguekxHRqKbwLGUNPkhsmXO+SGS9CEI6Uo
+         kYhMPPbbYMHAKawLas4NDsDQbIQDgTZ/vjgBuik+7n3wZCwBRVp3tepwXB05xLCBD+9c
+         i6wONP84Tpt3h8C7gschfOKi+AI4KWRk5wwdAA4ew+3R+H8dBESvH5EaA6emX2pkIBNV
+         CgfsvEynhalouw2ioztLSfX0Wc67Ed4iQLU5g9Pp4EN5LQ8cMl8CK2xR90f90dagGR7h
+         +jZQ==
+X-Gm-Message-State: AJcUukefsmLf9ctDFj42x26lmkKwEylOMlvbHPbyz63qtIcknAw0oANK
+        T3vBHSArwDuB6IIUVy44xpQ5ZAK6kzoh8Q==
+X-Google-Smtp-Source: ALg8bN5e7Z+JldJoN/Hhx7DEKL55g8txj4wDHl1/WoeTBZfLIH2ZnDu/pegPTziiRcUN8+jdwXnnwA==
+X-Received: by 2002:a81:1492:: with SMTP id 140mr7035640ywu.333.1548348996097;
+        Thu, 24 Jan 2019 08:56:36 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:d7cc])
+        by smtp.gmail.com with ESMTPSA id n2sm10876374ywe.37.2019.01.24.08.56.35
+        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
+        Thu, 24 Jan 2019 08:56:35 -0800 (PST)
+Date:   Thu, 24 Jan 2019 11:56:34 -0500
+From:   Chris Down <chris@chrisdown.name>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH] mm: Move maxable seq_file logic into a single place
+Message-ID: <20190124165634.GA13549@chrisdown.name>
+References: <20190124061718.GA15486@chrisdown.name>
+ <20190124160935.GB12436@cmpxchg.org>
 MIME-Version: 1.0
-In-Reply-To: <20180926084150.17514-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20190124160935.GB12436@cmpxchg.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ping?
+Johannes Weiner writes:
+>I think this increases complexity more than it saves LOC,
+>unfortunately.
+>
+>The current situation is a bit repetitive, but much more obviously
+>correct. And we're not planning on adding many more of those memcg
+>interface files, so I this doesn't seem to be an improvement re:
+>maintainability and future extensibility of the code.
 
-On 26/09/2018 09:41, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Don't populate the array buf on the stack but instead make it
-> static. Makes the object code smaller by 43 bytes:
-> 
-> Before:
->    text	   data	    bss	    dec	    hex	filename
->    7769	   1520	      0	   9289	   2449	drivers/hid/hid-elan.o
-> 
-> After:
->    text	   data	    bss	    dec	    hex	filename
->    7662	   1584	      0	   9246	   241e	drivers/hid/hid-elan.o
-> 
-> (gcc version 8.2.0 x86_64)
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/hid/hid-elan.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/hid/hid-elan.c b/drivers/hid/hid-elan.c
-> index 07e26c3567eb..05377eec2cb2 100644
-> --- a/drivers/hid/hid-elan.c
-> +++ b/drivers/hid/hid-elan.c
-> @@ -393,7 +393,7 @@ static int elan_start_multitouch(struct hid_device *hdev)
->  	 * This byte sequence will enable multitouch mode and disable
->  	 * mouse emulation
->  	 */
-> -	const unsigned char buf[] = { 0x0D, 0x00, 0x03, 0x21, 0x00 };
-> +	static const unsigned char buf[] = { 0x0D, 0x00, 0x03, 0x21, 0x00 };
->  	unsigned char *dmabuf = kmemdup(buf, sizeof(buf), GFP_KERNEL);
->  
->  	if (!dmabuf)
-> 
+Hmm, my main goal in the patch was not really reduction of LOC, but more around 
+centralising logic so that it's clear where these functions are unique and 
+where they are completely the same. My initial reaction upon reading these was 
+mostly to feel like I'm missing something due to the large amount of similarity 
+between them, wondering if the change in mem_cgroup/page_counter access is 
+really the only thing to look at, so my goal was primarily to reduce confusion 
+(although of course this is subjective, I can also see your point about how 
+having "memory.low" and the like without context can also be confusing).
 
+I think using a macro is not ideal, but unfortunately without it a lot of the 
+complexity can't really be abstracted easily.
+
+If not this, what would you think about a patch that adds two new functions:
+
+1. mem_cgroup_from_seq
+2. mem_cgroup_write_max_or_val
+
+This won't be able to reduce as much of the overlap as the macro, but it still 
+will centralise a lot of the logic.
