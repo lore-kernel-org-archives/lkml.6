@@ -7,46 +7,50 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A759DC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7938C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BE3121905
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F14821906
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358490;
-	bh=msHuJtA5NLI7SP1HLT8+AwSODS6DKXzx8P82El5OTGw=;
+	s=default; t=1548358492;
+	bh=EW6em8OWyjk1H6XPADN+rpW4ZTTXrL1tUG0Bko97ZGo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zn+2HNVXqp5/r2Nr3dntyMUfiZhmGZb7DQMv8NZHb+JLRn+C0mraeS9akkNW5raf5
-	 1Z4GMLQg9uyu+RDbEyjtv3E98yXKIbguTUAI4CjVY2yHLooY4mvmi6d+xOvwuo/gxg
-	 iOyiqy39cLzoG2Cyt0QXdQLRYqZLGsGNMSh489a0=
+	b=XKT/L69FFZv48lUMuBYrWr2sATdjrETBvL1wP0Mscd/wa/UUHzyzo4FPLpcco4IPr
+	 NHf0ZSGxT93WpwYr8Yvq0mGFTEleCkkJ7PkXFIYjxOww/+BLgtD8OTmn9lS3kifjBp
+	 QLw/pLgw0qxDPJ26dTQmbRG7A+xXxKoa4pFShz+w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732261AbfAXTes (ORCPT
+        id S1730337AbfAXTev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34582 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:34:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731090AbfAXTep (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:34:45 -0500
+        id S1730296AbfAXTer (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:34:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB8D2218D4;
-        Thu, 24 Jan 2019 19:34:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6728D218FC;
+        Thu, 24 Jan 2019 19:34:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358484;
-        bh=msHuJtA5NLI7SP1HLT8+AwSODS6DKXzx8P82El5OTGw=;
+        s=default; t=1548358486;
+        bh=EW6em8OWyjk1H6XPADN+rpW4ZTTXrL1tUG0Bko97ZGo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WZG3ONuYW0da2eXxHJKoE+6Pu9kxfKqpdt3SXSq4Hyu8LijJVVYjE53bcWhCmf9vQ
-         jakyxdtiQ5cR47QCJKXW4mNFKonNJQApaqQGu8hUnm2Fd9MCVuOKDPRYEz6Jufu6DZ
-         LG2rAK4hqOu3i/UIqInx/W5OZpUkve2X1xJCnWxM=
+        b=JVP9kFhYLnvQiOA1ITaIS+FkJAu+8CMipSPrlYKWl4A0oR8g1vNQhv0a4wc/QeCWj
+         GS34dR4Sj6/cG3CdrulA5fsAe4t373IJFL02+GFdM7qszWevQmN/FlDwnCtuXvyA/w
+         zruc6qm5AHUYUpsZJiwEDReRNCiEBkUcWMBoprEM=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.19 008/106] ipv6: Take rcu_read_lock in __inet6_bind for mapped addresses
-Date:   Thu, 24 Jan 2019 20:19:25 +0100
-Message-Id: <20190124190206.924370525@linuxfoundation.org>
+        stable@vger.kernel.org, Paolo Abeni <pabeni@redhat.com>,
+        Nikolay Aleksandrov <nikolay@cumulusnetworks.com>,
+        Roopa Prabhu <roopa@cumulusnetworks.com>,
+        Eric Dumazet <edumazet@google.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Matteo Croce <mcroce@redhat.com>
+Subject: [PATCH 4.19 009/106] net: clear skb->tstamp in bridge forwarding path
+Date:   Thu, 24 Jan 2019 20:19:26 +0100
+Message-Id: <20190124190206.974635854@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -65,44 +69,39 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: David Ahern <dsahern@gmail.com>
+From: Paolo Abeni <pabeni@redhat.com>
 
-[ Upstream commit d4a7e9bb74b5aaf07b89f6531c080b1130bdf019 ]
+[ Upstream commit 41d1c8839e5f8cb781cc635f12791decee8271b7 ]
 
-I realized the last patch calls dev_get_by_index_rcu in a branch not
-holding the rcu lock. Add the calls to rcu_read_lock and rcu_read_unlock.
+Matteo reported forwarding issues inside the linux bridge,
+if the enslaved interfaces use the fq qdisc.
 
-Fixes: ec90ad334986 ("ipv6: Consider sk_bound_dev_if when binding a socket to a v4 mapped address")
-Signed-off-by: David Ahern <dsahern@gmail.com>
+Similar to commit 8203e2d844d3 ("net: clear skb->tstamp in
+forwarding paths"), we need to clear the tstamp field in
+the bridge forwarding path.
+
+Fixes: 80b14dee2bea ("net: Add a new socket option for a future transmit time.")
+Fixes: fb420d5d91c1 ("tcp/fq: move back to CLOCK_MONOTONIC")
+Reported-and-tested-by: Matteo Croce <mcroce@redhat.com>
+Signed-off-by: Paolo Abeni <pabeni@redhat.com>
+Acked-by: Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Acked-by: Roopa Prabhu <roopa@cumulusnetworks.com>
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- net/ipv6/af_inet6.c |    5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ net/bridge/br_forward.c |    1 +
+ 1 file changed, 1 insertion(+)
 
---- a/net/ipv6/af_inet6.c
-+++ b/net/ipv6/af_inet6.c
-@@ -320,17 +320,20 @@ static int __inet6_bind(struct sock *sk,
- 			goto out;
- 		}
+--- a/net/bridge/br_forward.c
++++ b/net/bridge/br_forward.c
+@@ -65,6 +65,7 @@ EXPORT_SYMBOL_GPL(br_dev_queue_push_xmit
  
-+		rcu_read_lock();
- 		if (sk->sk_bound_dev_if) {
- 			dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
- 			if (!dev) {
- 				err = -ENODEV;
--				goto out;
-+				goto out_unlock;
- 			}
- 		}
- 
- 		/* Reproduce AF_INET checks to make the bindings consistent */
- 		v4addr = addr->sin6_addr.s6_addr32[3];
- 		chk_addr_ret = inet_addr_type_dev_table(net, dev, v4addr);
-+		rcu_read_unlock();
-+
- 		if (!inet_can_nonlocal_bind(net, inet) &&
- 		    v4addr != htonl(INADDR_ANY) &&
- 		    chk_addr_ret != RTN_LOCAL &&
+ int br_forward_finish(struct net *net, struct sock *sk, struct sk_buff *skb)
+ {
++	skb->tstamp = 0;
+ 	return NF_HOOK(NFPROTO_BRIDGE, NF_BR_POST_ROUTING,
+ 		       net, sk, skb, NULL, skb->dev,
+ 		       br_dev_queue_push_xmit);
 
 
