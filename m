@@ -2,99 +2,108 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C74AC282C6
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:10:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF51C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:10:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39DA621872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:10:18 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="JdGD3Z7o"
+	by mail.kernel.org (Postfix) with ESMTP id 4B021218A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 08:10:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548317430;
+	bh=mVuhrQqk7Q0zWlxIFBTAwmH57rC+LNUGq0bYNV+P8nY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Q178CWSN4DtfqQH9D7vRjxFpq32RAf1XfVZgY+8ZWGsUw3U+WE/Ndqj1vQnHM+uZo
+	 z8kmI+M1KeAIYbf/qfWi5Bvd5PhCYFTEyDX9Igd77eFzwkyWdjpTn2h8dqrXk3BySD
+	 sIsa9GReJUvdpAZRyY0CUdzrPhQIaPKh+Qq8naRM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727349AbfAXIKQ (ORCPT
+        id S1727409AbfAXIK2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 03:10:16 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:56696 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726199AbfAXIKP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 03:10:15 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0O8A49h099682;
-        Thu, 24 Jan 2019 02:10:04 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548317404;
-        bh=nmlwrTBXW64ZPlXQdFP+YjWL0kWaAkTKk/ABJsJIwo8=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=JdGD3Z7o/8/efEp3z4ON9lSGHxmQgXpgeBAR5o5wSK7U6QEmwHX3qLcywh2u0djD9
-         0nM3TVSm2ezDKcFc6DIOhYqhOdXP77pX8r1GFobgfwwO8OY4i88gcAU/XzsylXj1bR
-         aJyG7tXwZtYR2M7pt0xq8T5PAmXy8F+QWmEn/4Pk=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0O8A4C0106863
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 24 Jan 2019 02:10:04 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Thu, 24
- Jan 2019 02:10:04 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Thu, 24 Jan 2019 02:10:04 -0600
-Received: from [172.24.190.215] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0O8A1tY006223;
-        Thu, 24 Jan 2019 02:10:02 -0600
-Subject: Re: [PATCH v3 0/2] Support for eMMC in AM65x-evm
-To:     <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-CC:     <mark.rutland@arm.com>, <robh+dt@kernel.org>, <nm@ti.com>,
-        <t-kristo@ti.com>
-References: <20190117094424.7683-1-faiz_abbas@ti.com>
-From:   Faiz Abbas <faiz_abbas@ti.com>
-Message-ID: <d75a123b-9e97-a3d1-1e3c-41ef6942dffb@ti.com>
-Date:   Thu, 24 Jan 2019 13:43:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 24 Jan 2019 03:10:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54386 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726046AbfAXIK2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 03:10:28 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8738621872;
+        Thu, 24 Jan 2019 08:10:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548317427;
+        bh=mVuhrQqk7Q0zWlxIFBTAwmH57rC+LNUGq0bYNV+P8nY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=ZEkD/omuTC/6WRsTLYnibk+sJ8XC+aSzvbF+D1UtelBBhWFwJCz4p3BgG898PP/WK
+         EQqKpEKsH1ZCIh3xFKyM4r1WaPA8pegt/aOxYMcbdJRPPz7va8v2Z7lHYQ/DD8I6Zc
+         TL6esem5HPhSos0hjBMX2YhzVQlPCdBuq/WP6cMI=
+Date:   Thu, 24 Jan 2019 09:10:24 +0100
+From:   Greg KH <gregkh@linuxfoundation.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Edwin Zimmerman <edwin@211mainstreet.net>, dev@openvswitch.org,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Network Development <netdev@vger.kernel.org>,
+        intel-gfx@lists.freedesktop.org, linux-usb@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>, Linux-MM <linux-mm@kvack.org>,
+        linux-security-module <linux-security-module@vger.kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        intel-wired-lan@lists.osuosl.org,
+        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+        xen-devel <xen-devel@lists.xenproject.org>,
+        Laura Abbott <labbott@redhat.com>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>,
+        Alexander Popov <alex.popov@linux.com>
+Subject: Re: [Intel-gfx] [PATCH 1/3] treewide: Lift switch variables out of
+ switches
+Message-ID: <20190124081024.GA1108@kroah.com>
+References: <20190123110349.35882-1-keescook@chromium.org>
+ <20190123110349.35882-2-keescook@chromium.org>
+ <20190123115829.GA31385@kroah.com>
+ <874l9z31c5.fsf@intel.com>
+ <000001d4b32a$845e06e0$8d1a14a0$@211mainstreet.net>
+ <87va2f1int.fsf@intel.com>
+ <CAGXu5jJUxHtFq0rBJ9FwzMcZDWnusPUauC_=MaOz7H0_PF25jQ@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190117094424.7683-1-faiz_abbas@ti.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGXu5jJUxHtFq0rBJ9FwzMcZDWnusPUauC_=MaOz7H0_PF25jQ@mail.gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, Jan 24, 2019 at 07:55:51AM +1300, Kees Cook wrote:
+> On Thu, Jan 24, 2019 at 4:44 AM Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> >
+> > On Wed, 23 Jan 2019, Edwin Zimmerman <edwin@211mainstreet.net> wrote:
+> > > On Wed, 23 Jan 2019, Jani Nikula <jani.nikula@linux.intel.com> wrote:
+> > >> On Wed, 23 Jan 2019, Greg KH <gregkh@linuxfoundation.org> wrote:
+> > >> > On Wed, Jan 23, 2019 at 03:03:47AM -0800, Kees Cook wrote:
+> > >> >> Variables declared in a switch statement before any case statements
+> > >> >> cannot be initialized, so move all instances out of the switches.
+> > >> >> After this, future always-initialized stack variables will work
+> > >> >> and not throw warnings like this:
+> > >> >>
+> > >> >> fs/fcntl.c: In function ‘send_sigio_to_task’:
+> > >> >> fs/fcntl.c:738:13: warning: statement will never be executed [-Wswitch-unreachable]
+> > >> >>    siginfo_t si;
+> > >> >>              ^~
+> > >> >
+> > >> > That's a pain, so this means we can't have any new variables in { }
+> > >> > scope except for at the top of a function?
+> 
+> Just in case this wasn't clear: no, it's just the switch statement
+> before the first "case". I cannot imagine how bad it would be if we
+> couldn't have block-scoped variables! Heh. :)
 
-On 17/01/19 3:14 PM, Faiz Abbas wrote:
-> The following patches add eMMC support on TI's AM65x-evm.
-> 
-> v3:
->  1. Fixed patch titles to only include eMMC
->  2. Added dma-coherent to the sdhci0 node.
-> 
-> v2:
->  1. The SD card node is under debug for some usecases.
->     Only upstreaming eMMC support for now.
->  2. Rebased to latest mainline.
->  3. Removed status = "disabled" from dtsi patch
->  4. Fixed node name to not include '_'s
-> 
-> Faiz Abbas (2):
->   arm64: dts: ti: k3-am654: Add Support for eMMC host controller
->   arm64: dts: ti: k3-am654-base-board: Add eMMC Support
-> 
->  arch/arm64/boot/dts/ti/k3-am65-main.dtsi      | 14 +++++++++++
->  .../arm64/boot/dts/ti/k3-am654-base-board.dts | 25 +++++++++++++++++++
->  2 files changed, 39 insertions(+)
-> 
+Sorry, it was not clear at first glance.  So no more objection from me
+for this change.
 
-Gentle ping.
-
-Thanks,
-Faiz
+greg k-h
