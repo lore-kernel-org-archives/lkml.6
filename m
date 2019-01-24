@@ -2,98 +2,173 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5082AC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DFBB4C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13C6021726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vDButwXS"
+	by mail.kernel.org (Postfix) with ESMTP id AE2C3218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548359862;
+	bh=2Pe2JjmXp9pcDXPHu88GgRVYF1s5aIXpw20rFTIncHM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=uq8nk8vXP4fqYzoybydg66QIFQWhdv49FSSEVJnNf++ZbCJGkaHTx6m/w5hqQo3Td
+	 sfLyF2mtjl5p0YlJzpfdfzPSZAXYyIh8iMY1RfpVljtcEac8lIGe78eb4Jdsji9fX1
+	 GPXV5HG9j0kgCfnlv66RnmzqNU/+F23FzEwEQ+xY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731806AbfAXT5V (ORCPT
+        id S1731724AbfAXT5l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:57:21 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:37722 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728923AbfAXT5S (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:57:18 -0500
-Received: by mail-lj1-f196.google.com with SMTP id t18-v6so6370736ljd.4
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 11:57:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=JD5WRLDcyAIMKxtCkk72zkUgX48bEbI0nw5VReqxjFY=;
-        b=vDButwXSbNg6LN2JfKODmPTvWqBUH/hROLPmZT2BObig5V1lfFe1c/EJPhKxcFxz6J
-         j7BXF2Ut4zwo4DPt6Vgd89UrUioHHyUMZOfiouBUDVBbXAjjL6Jofy3oAdCaINE8ekm2
-         jnJS/Z328QfjfuZ9nZaBfKqNKF28ogtnhnf9NXRYhVxR/VAhtGvKX+WkgUEhCU1MtJBH
-         prm5etQ83i5zgeO/rnP8W46R1h4BOxsr7x7RDWnt8Vh78L2Zxx4UtpYu/gOtfozi8L+O
-         AdFMXfT8qUeNkECD0FjGANlb4pQ/q1a7AJiTccoc1kAsqBIlKW6LLVHS7y1uu7KPUkbf
-         0UFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=JD5WRLDcyAIMKxtCkk72zkUgX48bEbI0nw5VReqxjFY=;
-        b=WFR7n8/GjzzvE9YsDTbySEutgMOrj7rnqTqwUV9dfsjaj2Ti+uOt6ZVcZ4MGUdR3i2
-         y0JGrWefl8rG7ncXif5bxQZjRglPIp67HbOvvuBDYS29cKUviE41OZejWSOMpTDENLUL
-         cCzlrOCVfAMnSuLpUQF8UeU9wh3f3QhoShX5aDl0uhZDTHh7iinzGMcUfp6AooI+MCCD
-         RicibEeVr8PVeJNU9nJWycFTOQO1bdJg9zhuExVynq5z56ZILbG3OjPgb5PL3Znnmfj/
-         pkFxxTY5/BHdtjS9sv2pe4RXZZ/vHwVMj14pKDU726edlJ3BNY0nkar3CIczUanWxAs0
-         tvOg==
-X-Gm-Message-State: AJcUukcvWGSerCXwproB1A8C+P32Rkxj0Zxn/gHlRDrd/Zsgvj+j3/9a
-        9s8XQ0IapE1aMCYVnH+6kG8kUPY8bIg=
-X-Google-Smtp-Source: ALg8bN7REACZr8pisrCGjZjVbabj6lu2tvwdUhe7qc0XAOtddAAjC04IRlhfCnerUd3fP4HxzHT9zQ==
-X-Received: by 2002:a2e:910d:: with SMTP id m13-v6mr6566399ljg.187.1548359835993;
-        Thu, 24 Jan 2019 11:57:15 -0800 (PST)
-Received: from localhost ([2a02:a311:825b:e300:2c63:f9e2:fcfa:cc46])
-        by smtp.gmail.com with ESMTPSA id q3sm1079583lff.42.2019.01.24.11.57.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 11:57:15 -0800 (PST)
-Date:   Thu, 24 Jan 2019 20:57:19 +0000
-From:   Cezary Kierzyk <virdipravum.n008d3v@gmail.com>
+        Thu, 24 Jan 2019 14:57:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34894 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730408AbfAXTfE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:35:04 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D4FAD21905;
+        Thu, 24 Jan 2019 19:35:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358503;
+        bh=2Pe2JjmXp9pcDXPHu88GgRVYF1s5aIXpw20rFTIncHM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aUMKsRQeH0ucqJwrXtUw4fA9rCZxS1viVao086i3+GjLc0vYogvehwFMV+/h9+YUy
+         zWfyB6eRWfCB1dJ6vLAMwoT155FWkiliy4odLLkkLAjDdh4ldUV778qHO1JW/hIBUk
+         joC0C9dsUwgduXjzAAbg8pCmW1BBOJVqiRRwYtDU=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     gregkh@linuxfoundation.org
-Subject: [PATCH] staging: rtlwifi: replace ---help--- with help in Kconfig
-Message-ID: <20190124205719.GA10685@pravumPC>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, Anatolij Gustschin <agust@denx.de>,
+        Alan Tull <atull@kernel.org>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.19 032/106] fpga: altera-cvp: fix probing for multiple FPGAs on the bus
+Date:   Thu, 24 Jan 2019 20:19:49 +0100
+Message-Id: <20190124190208.422606880@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
+References: <20190124190206.342411005@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch fixes the checkpatch.pl warning:
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
-WARNING: prefer 'help' over '---help---' for new help texts
+------------------
 
-Signed-off-by: Cezary Kierzyk <virdipravum.n008d3v@gmail.com>
+[ Upstream commit 30522a951f9d02f261d0697c35cb42205b1fae17 ]
+
+Currently registering CvP managers works only for first probed CvP
+device, for all other devices it is refused due to duplicated chkcfg
+sysfs entry:
+
+fpga_manager fpga3: Altera CvP FPGA Manager @0000:0c:00.0 registered
+sysfs: cannot create duplicate filename '/bus/pci/drivers/altera-cvp/chkcfg'
+CPU: 0 PID: 3808 Comm: bash Tainted: G           O      4.19.0-custom+ #5
+Call Trace:
+  dump_stack+0x46/0x5b
+  sysfs_warn_dup+0x53/0x60
+  sysfs_add_file_mode_ns+0x16d/0x180
+  sysfs_create_file_ns+0x51/0x60
+  altera_cvp_probe+0x16f/0x2a0 [altera_cvp]
+  local_pci_probe+0x3f/0xa0
+  ? pci_match_device+0xb1/0xf0
+  pci_device_probe+0x116/0x170
+  really_probe+0x21b/0x2c0
+  driver_probe_device+0x4b/0xe0
+  bind_store+0xcb/0x130
+  kernfs_fop_write+0xfd/0x180
+  __vfs_write+0x21/0x150
+  ? selinux_file_permission+0xdc/0x130
+  vfs_write+0xa8/0x1a0
+  ? find_vma+0xd/0x60
+  ksys_write+0x3d/0x90
+  do_syscall_64+0x44/0xf0
+  entry_SYSCALL_64_after_hwframe+0x44/0xa9
+  ...
+ altera-cvp 0000:0c:00.0: Can't create sysfs chkcfg file
+ fpga_manager fpga3: fpga_mgr_unregister Altera CvP FPGA Manager @0000:0c:00.0
+
+Move chkcfg creation to module init as suggested by Alan.
+
+Signed-off-by: Anatolij Gustschin <agust@denx.de>
+Acked-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/rtlwifi/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/fpga/altera-cvp.c | 34 ++++++++++++++++++++++++----------
+ 1 file changed, 24 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/staging/rtlwifi/Kconfig b/drivers/staging/rtlwifi/Kconfig
-index 7b4276f5c41f..28286a87a601 100644
---- a/drivers/staging/rtlwifi/Kconfig
-+++ b/drivers/staging/rtlwifi/Kconfig
-@@ -2,7 +2,7 @@ config R8822BE
- 	tristate "Realtek RTL8822BE Wireless Network Adapter"
- 	depends on PCI && MAC80211 && m
- 	select FW_LOADER
--	---help---
-+	help
- 	This is the staging driver for Realtek RTL8822BE 802.11ac PCIe
- 	wireless network adapters.
+diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
+index 7fa793672a7a..68e4b2b98c8f 100644
+--- a/drivers/fpga/altera-cvp.c
++++ b/drivers/fpga/altera-cvp.c
+@@ -468,14 +468,6 @@ static int altera_cvp_probe(struct pci_dev *pdev,
+ 		goto err_unmap;
+ 	}
  
+-	ret = driver_create_file(&altera_cvp_driver.driver,
+-				 &driver_attr_chkcfg);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Can't create sysfs chkcfg file\n");
+-		fpga_mgr_unregister(mgr);
+-		goto err_unmap;
+-	}
+-
+ 	return 0;
+ 
+ err_unmap:
+@@ -493,7 +485,6 @@ static void altera_cvp_remove(struct pci_dev *pdev)
+ 	struct altera_cvp_conf *conf = mgr->priv;
+ 	u16 cmd;
+ 
+-	driver_remove_file(&altera_cvp_driver.driver, &driver_attr_chkcfg);
+ 	fpga_mgr_unregister(mgr);
+ 	pci_iounmap(pdev, conf->map);
+ 	pci_release_region(pdev, CVP_BAR);
+@@ -502,7 +493,30 @@ static void altera_cvp_remove(struct pci_dev *pdev)
+ 	pci_write_config_word(pdev, PCI_COMMAND, cmd);
+ }
+ 
+-module_pci_driver(altera_cvp_driver);
++static int __init altera_cvp_init(void)
++{
++	int ret;
++
++	ret = pci_register_driver(&altera_cvp_driver);
++	if (ret)
++		return ret;
++
++	ret = driver_create_file(&altera_cvp_driver.driver,
++				 &driver_attr_chkcfg);
++	if (ret)
++		pr_warn("Can't create sysfs chkcfg file\n");
++
++	return 0;
++}
++
++static void __exit altera_cvp_exit(void)
++{
++	driver_remove_file(&altera_cvp_driver.driver, &driver_attr_chkcfg);
++	pci_unregister_driver(&altera_cvp_driver);
++}
++
++module_init(altera_cvp_init);
++module_exit(altera_cvp_exit);
+ 
+ MODULE_LICENSE("GPL v2");
+ MODULE_AUTHOR("Anatolij Gustschin <agust@denx.de>");
 -- 
-2.20.1
+2.19.1
+
+
 
