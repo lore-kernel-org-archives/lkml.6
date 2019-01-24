@@ -7,48 +7,50 @@ X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14280C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85005C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F8F21726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47FCF21726
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:57:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359823;
-	bh=bZSC9h0L6KLAwtV6UcjTMgQVHJ4a80+v6Dot0EoX/WQ=;
+	s=default; t=1548359827;
+	bh=DrpaDdQVLzTUxxBpbcL1jpN+olDD6dlEP35XDnDdrwg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ubWBRdnWb3NowbSal7srJ1asdpJBaVZnQ+z/HTL5QzcRSN+Xbv54AfX787k6o3RsO
-	 dcRF2yQb3X7BT9MEqX7L1+m6Kb1obrwv+1/wLz6ZkcK/ZteyT7ot2QrB+p9fWR8qv4
-	 hp9dCA1seW06VL7hRz8WhVCpJt/kH0BHqgLZX+BE=
+	b=J56Ju4/j2Mrgo3sqTgvpiFCue7x7uFHA/ISJnta4vq7Z4xx5l/Ma73pjHTrAyvFWU
+	 ycan2fXLjzPmcaPv0qlS7pbEgu98NuzbgPG/2Ty5Rz/Kvs4OAmUtzhIL1Gr8vFHfWe
+	 ETtemselpo2MqjmG7BaQLWXATTHVCGAMWRbTjCDA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732356AbfAXTfa (ORCPT
+        id S1731885AbfAXT5E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:35:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35370 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:57:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731311AbfAXTf1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:35:27 -0500
+        id S1732349AbfAXTfa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:35:30 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22AFE218FC;
-        Thu, 24 Jan 2019 19:35:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B48BB21903;
+        Thu, 24 Jan 2019 19:35:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358526;
-        bh=bZSC9h0L6KLAwtV6UcjTMgQVHJ4a80+v6Dot0EoX/WQ=;
+        s=default; t=1548358529;
+        bh=DrpaDdQVLzTUxxBpbcL1jpN+olDD6dlEP35XDnDdrwg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JBvpcoMlsSJFIyRMD0QNm0o6Z2SdiE6/hJzi727SAgJ2aa2cSECpfUzWIp9M8xzEy
-         omHhazTzu5xUB/ayYLFE9AC4SulT4Yi039AyMFLVeRGG5XNjEbqnZ9x04ekSXcYfdE
-         7MhUJkFA46y+VhG1SeXlHFRvHisO1vfOdq1zgsUQ=
+        b=cmhn9VqzTIQCpyONfnHx0yiB+8FnzWMdo2BM5gAOcz+gfrm+DvGaGM8jeRBleUHM0
+         orrQq0B6L5wv1u9l7Oa2j5n/uOR2N5iuZ2UZIGf33KohQiM5sT31bqfNjtxFTuNTs1
+         fJPP5D9dj8j/+ebfZn8quoA/lPALIZu28dRNZ3TE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Daniel Santos <daniel.santos@pobox.com>,
-        Hou Tao <houtao1@huawei.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
+        stable@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Dong Aisheng <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.19 039/106] jffs2: Fix use of uninitialized delayed_work, lockdep breakage
-Date:   Thu, 24 Jan 2019 20:19:56 +0100
-Message-Id: <20190124190208.907158059@linuxfoundation.org>
+Subject: [PATCH 4.19 040/106] clk: imx: make mux parent strings const
+Date:   Thu, 24 Jan 2019 20:19:57 +0100
+Message-Id: <20190124190208.980544060@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
 References: <20190124190206.342411005@linuxfoundation.org>
@@ -67,67 +69,125 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit a788c5272769ddbcdbab297cf386413eeac04463 ]
+[ Upstream commit 9e5ef7a57ca75a1b9411c46caeeb6881124284a3 ]
 
-jffs2_sync_fs makes the assumption that if CONFIG_JFFS2_FS_WRITEBUFFER
-is defined then a write buffer is available and has been initialized.
-However, this does is not the case when the mtd device has no
-out-of-band buffer:
+As the commit 2893c379461a ("clk: make strings in parent name arrays
+const"), let's make the parent strings const, otherwise we may meet
+the following warning when compiling:
 
-int jffs2_nand_flash_setup(struct jffs2_sb_info *c)
-{
-        if (!c->mtd->oobsize)
-                return 0;
+drivers/clk/imx/clk-imx7ulp.c: In function 'imx7ulp_clocks_init':
+drivers/clk/imx/clk-imx7ulp.c:73:35: warning: passing argument 5 of
+	'imx_clk_mux_flags' discards 'const' qualifier from pointer target type
+
+  clks[IMX7ULP_CLK_APLL_PRE_SEL] = imx_clk_mux_flags("apll_pre_sel", base + 0x508, 0,
+	1, pll_pre_sels, ARRAY_SIZE(pll_pre_sels), CLK_SET_PARENT_GATE);
+                                   ^
+In file included from drivers/clk/imx/clk-imx7ulp.c:23:0:
+drivers/clk/imx/clk.h:200:27: note: expected 'const char **' but argument is
+ of type 'const char * const*'
 ...
 
-The resulting call to cancel_delayed_work_sync passing a uninitialized
-(but zeroed) delayed_work struct forces lockdep to become disabled.
-
-[   90.050639] overlayfs: upper fs does not support tmpfile.
-[   90.652264] INFO: trying to register non-static key.
-[   90.662171] the code is fine but needs lockdep annotation.
-[   90.673090] turning off the locking correctness validator.
-[   90.684021] CPU: 0 PID: 1762 Comm: mount_root Not tainted 4.14.63 #0
-[   90.696672] Stack : 00000000 00000000 80d8f6a2 00000038 805f0000 80444600 8fe364f4 805dfbe7
-[   90.713349]         80563a30 000006e2 8068370c 00000001 00000000 00000001 8e2fdc48 ffffffff
-[   90.730020]         00000000 00000000 80d90000 00000000 00000106 00000000 6465746e 312e3420
-[   90.746690]         6b636f6c 03bf0000 f8000000 20676e69 00000000 80000000 00000000 8e2c2a90
-[   90.763362]         80d90000 00000001 00000000 8e2c2a90 00000003 80260dc0 08052098 80680000
-[   90.780033]         ...
-[   90.784902] Call Trace:
-[   90.789793] [<8000f0d8>] show_stack+0xb8/0x148
-[   90.798659] [<8005a000>] register_lock_class+0x270/0x55c
-[   90.809247] [<8005cb64>] __lock_acquire+0x13c/0xf7c
-[   90.818964] [<8005e314>] lock_acquire+0x194/0x1dc
-[   90.828345] [<8003f27c>] flush_work+0x200/0x24c
-[   90.837374] [<80041dfc>] __cancel_work_timer+0x158/0x210
-[   90.847958] [<801a8770>] jffs2_sync_fs+0x20/0x54
-[   90.857173] [<80125cf4>] iterate_supers+0xf4/0x120
-[   90.866729] [<80158fc4>] sys_sync+0x44/0x9c
-[   90.875067] [<80014424>] syscall_common+0x34/0x58
-
-Signed-off-by: Daniel Santos <daniel.santos@pobox.com>
-Reviewed-by: Hou Tao <houtao1@huawei.com>
-Signed-off-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/jffs2/super.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-busy.c      |  2 +-
+ drivers/clk/imx/clk-fixup-mux.c |  2 +-
+ drivers/clk/imx/clk.h           | 18 +++++++++++-------
+ 3 files changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/fs/jffs2/super.c b/fs/jffs2/super.c
-index 902a7dd10e5c..bb6ae387469f 100644
---- a/fs/jffs2/super.c
-+++ b/fs/jffs2/super.c
-@@ -101,7 +101,8 @@ static int jffs2_sync_fs(struct super_block *sb, int wait)
- 	struct jffs2_sb_info *c = JFFS2_SB_INFO(sb);
+diff --git a/drivers/clk/imx/clk-busy.c b/drivers/clk/imx/clk-busy.c
+index 99036527eb0d..e695622c5aa5 100644
+--- a/drivers/clk/imx/clk-busy.c
++++ b/drivers/clk/imx/clk-busy.c
+@@ -154,7 +154,7 @@ static const struct clk_ops clk_busy_mux_ops = {
  
- #ifdef CONFIG_JFFS2_FS_WRITEBUFFER
--	cancel_delayed_work_sync(&c->wbuf_dwork);
-+	if (jffs2_is_writebuffered(c))
-+		cancel_delayed_work_sync(&c->wbuf_dwork);
- #endif
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents)
++			     const char * const *parent_names, int num_parents)
+ {
+ 	struct clk_busy_mux *busy;
+ 	struct clk *clk;
+diff --git a/drivers/clk/imx/clk-fixup-mux.c b/drivers/clk/imx/clk-fixup-mux.c
+index c9b327e0a8dd..44817c1b0b88 100644
+--- a/drivers/clk/imx/clk-fixup-mux.c
++++ b/drivers/clk/imx/clk-fixup-mux.c
+@@ -70,7 +70,7 @@ static const struct clk_ops clk_fixup_mux_ops = {
+ };
  
- 	mutex_lock(&c->alloc_sem);
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val))
+ {
+ 	struct clk_fixup_mux *fixup_mux;
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 8076ec040f37..e65c1115d978 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -63,14 +63,14 @@ struct clk *imx_clk_busy_divider(const char *name, const char *parent_name,
+ 
+ struct clk *imx_clk_busy_mux(const char *name, void __iomem *reg, u8 shift,
+ 			     u8 width, void __iomem *busy_reg, u8 busy_shift,
+-			     const char **parent_names, int num_parents);
++			     const char * const *parent_names, int num_parents);
+ 
+ struct clk *imx_clk_fixup_divider(const char *name, const char *parent,
+ 				  void __iomem *reg, u8 shift, u8 width,
+ 				  void (*fixup)(u32 *val));
+ 
+ struct clk *imx_clk_fixup_mux(const char *name, void __iomem *reg,
+-			      u8 shift, u8 width, const char **parents,
++			      u8 shift, u8 width, const char * const *parents,
+ 			      int num_parents, void (*fixup)(u32 *val));
+ 
+ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+@@ -79,7 +79,8 @@ static inline struct clk *imx_clk_fixed(const char *name, int rate)
+ }
+ 
+ static inline struct clk *imx_clk_mux_ldb(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_SET_RATE_PARENT, reg,
+@@ -192,7 +193,8 @@ static inline struct clk *imx_clk_gate4(const char *name, const char *parent,
+ }
+ 
+ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT, reg, shift,
+@@ -200,7 +202,8 @@ static inline struct clk *imx_clk_mux(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+-		u8 shift, u8 width, const char **parents, int num_parents)
++			u8 shift, u8 width, const char * const *parents,
++			int num_parents)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			CLK_SET_RATE_NO_REPARENT | CLK_OPS_PARENT_ENABLE,
+@@ -208,8 +211,9 @@ static inline struct clk *imx_clk_mux2(const char *name, void __iomem *reg,
+ }
+ 
+ static inline struct clk *imx_clk_mux_flags(const char *name,
+-		void __iomem *reg, u8 shift, u8 width, const char **parents,
+-		int num_parents, unsigned long flags)
++			void __iomem *reg, u8 shift, u8 width,
++			const char * const *parents, int num_parents,
++			unsigned long flags)
+ {
+ 	return clk_register_mux(NULL, name, parents, num_parents,
+ 			flags | CLK_SET_RATE_NO_REPARENT, reg, shift, width, 0,
 -- 
 2.19.1
 
