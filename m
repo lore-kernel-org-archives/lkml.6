@@ -2,103 +2,248 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E95C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:53:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E97E9C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:53:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7DEB218B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:53:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA969218AF
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:53:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728774AbfAXPxG (ORCPT
+        id S1728802AbfAXPxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:53:06 -0500
-Received: from mga07.intel.com ([134.134.136.100]:50673 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727755AbfAXPxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:53:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 07:53:05 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,517,1539673200"; 
-   d="scan'208";a="140990603"
-Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
-  by fmsmga001.fm.intel.com with ESMTP; 24 Jan 2019 07:53:03 -0800
-Subject: Re: kernel: xhci_hcd 0000:00:14.0: ERROR unknown event type 37 -
- Kernel 4.19.13
-To:     Nathan Royce <nroycea+kernel@gmail.com>
-Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
-        Alan Stern <stern@rowland.harvard.edu>,
-        gregkh@linuxfoundation.org
-References: <CALaQ_hoq+QfxGTi5aggfm6RehsiZOvmYk-Mz-Geu3TLdNrRXcg@mail.gmail.com>
- <824caf1d-f5db-a439-fc77-deda67df5bfc@linux.intel.com>
- <CALaQ_hp4XoEbT7qYG58fbrODbHvOFS7-GQZcEoPw4CPDNZZ+6w@mail.gmail.com>
-From:   Mathias Nyman <mathias.nyman@linux.intel.com>
-Message-ID: <d65b37ba-c32f-a8d9-01a9-7dd54d354936@linux.intel.com>
-Date:   Thu, 24 Jan 2019 17:57:19 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 24 Jan 2019 10:53:37 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32838 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728778AbfAXPxg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:53:36 -0500
+Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id B3D5DFE0D93A23F1005A;
+        Thu, 24 Jan 2019 15:53:34 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.140)
+ by smtpsuk.huawei.com (10.201.108.45) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Thu, 24 Jan 2019 15:53:25 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
+        <david.safford@ge.com>, <monty.wiseman@ge.com>,
+        <matthewgarrett@google.com>
+CC:     <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>
+Subject: [PATCH v8 3/7] tpm: rename and export tpm2_digest and tpm2_algorithms
+Date:   Thu, 24 Jan 2019 16:49:06 +0100
+Message-ID: <20190124154910.29948-4-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190124154910.29948-1-roberto.sassu@huawei.com>
+References: <20190124154910.29948-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <CALaQ_hp4XoEbT7qYG58fbrODbHvOFS7-GQZcEoPw4CPDNZZ+6w@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.140]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10.01.2019 00:11, Nathan Royce wrote:
-> Wow, my system got wrecked (exaggeration) during this latest stretch...
-> Pulseaudio was stretched to the limit and beyond and was forced to
-> restart. Anything that was producing audio had to be restarted to get
-> it back.
-> This time was much like the first time and went from timestamp
-> 573100.060927 (line 1) to 572506.604155 (line 11069), where 100%
-> (literally) of it was that event 37 in the journal, no other kernel
-> log entries except for the systemd-hostnamed audit before it all went
-> down.
-> And as usual, it was my USB TV tuner (tvheadend really) giving the
-> Poll Timeout log entries.
-> Those same uploaded trace files will be updated with the latest bugout.
-> 
+Rename tpm2_* to tpm_* and move the definitions to include/linux/tpm.h so
+that these can be used by other kernel subsystems (e.g. IMA).
 
-Hi.
+Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
+Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Acked-by: Mimi Zohar <zohar@linux.ibm.com>
+---
+ drivers/char/tpm/tpm-interface.c |  2 +-
+ drivers/char/tpm/tpm.h           | 13 +------------
+ drivers/char/tpm/tpm1-cmd.c      |  2 +-
+ drivers/char/tpm/tpm2-cmd.c      | 18 +++++++++---------
+ include/linux/tpm.h              | 18 ++++++++++++++++++
+ include/linux/tpm_eventlog.h     |  9 ++-------
+ 6 files changed, 32 insertions(+), 30 deletions(-)
 
-Finally had a chance to look at this. Sorry about the delay.
-
-Logs show event ring is full:
-
-573047.104801: xhci_handle_event: EVENT: TRB 0000000000000000 status 'Event Ring Full Error' len 0 slot 0 ep 0 type 'Host Controller Event' flags e:C
-
-It's filled with 0 length short transfer events due to a the following loop:
-
-1. Class driver asks for 58658 bytes from device (queues BULK IN URB)
-2. short transfer event, xhci interrupts, saying we got less than 58658 bytes.
-    We actually got 0 bytes.
-3. return URB with zero bytes to class driver
-4. Class driver immediately queues a new URB, asking for 58658 bytes (see step 1)
-
-Last 6ms before event ring is full this looped 255 times.
-
-one cycle of the loop in log:
-
-573047.104748: xhci_handle_event: EVENT: TRB 000000020b267770 status 'Short Packet' len 58658 slot 4 ep 7 type 'Transfer Event' flags e:C
-573047.104749: xhci_handle_transfer: BULK: Buffer 000000001de20000 length 58658 TD size 0 intr 0 type 'Normal' flags b:i:I:c:s:I:e:c
-573047.104749: xhci_inc_deq: BULK 0000000002f14758: enq 0x000000020b267860(0x000000020b267000) deq 0x000000020b267780(0x000000020b267000) segs 2 stream 0 free_trbs 495 bounce 512 cycle 0
-573047.104752: xhci_urb_giveback: ep3in-bulk: urb 000000000bdcbe77 pipe 3225519232 slot 4 length 0/58658 sgs 0/0 stream 0 flags 00010200
-573047.104758: xhci_urb_enqueue: ep3in-bulk: urb 000000000bdcbe77 pipe 3225519232 slot 4 length 0/58658 sgs 0/0 stream 0 flags 00010200
-573047.104758: xhci_queue_trb: BULK: Buffer 000000001de20000 length 58658 TD size 0 intr 0 type 'Normal' flags b:i:I:c:s:I:e:C
-573047.104759: xhci_inc_enq: BULK 0000000002f14758: enq 0x000000020b267870(0x000000020b267000) deq 0x000000020b267780(0x000000020b267000) segs 2 stream 0 free_trbs 494 bounce 512 cycle 0
-573047.104759: xhci_inc_deq: EVENT 0000000022f906c2: enq 0x000000020b317000(0x000000020b317000) deq 0x000000020b3178d0(0x000000020b317000) segs 1 stream 0 free_trbs 254 bounce 0 cycle 1
-
-I'll continue digging into this
-
--Mathias  
-
-
-
+diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+index 7b80919228be..96c8261d0f04 100644
+--- a/drivers/char/tpm/tpm-interface.c
++++ b/drivers/char/tpm/tpm-interface.c
+@@ -488,7 +488,7 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
+ int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
+ {
+ 	int rc;
+-	struct tpm2_digest *digest_list;
++	struct tpm_digest *digest_list;
+ 	int i;
+ 
+ 	chip = tpm_find_get_ops(chip);
+diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+index 6b94306ab7c5..e961e5c5d197 100644
+--- a/drivers/char/tpm/tpm.h
++++ b/drivers/char/tpm/tpm.h
+@@ -122,17 +122,6 @@ enum tpm2_return_codes {
+ 	TPM2_RC_RETRY		= 0x0922,
+ };
+ 
+-enum tpm2_algorithms {
+-	TPM2_ALG_ERROR		= 0x0000,
+-	TPM2_ALG_SHA1		= 0x0004,
+-	TPM2_ALG_KEYEDHASH	= 0x0008,
+-	TPM2_ALG_SHA256		= 0x000B,
+-	TPM2_ALG_SHA384		= 0x000C,
+-	TPM2_ALG_SHA512		= 0x000D,
+-	TPM2_ALG_NULL		= 0x0010,
+-	TPM2_ALG_SM3_256	= 0x0012,
+-};
+-
+ enum tpm2_command_codes {
+ 	TPM2_CC_FIRST		        = 0x011F,
+ 	TPM2_CC_HIERARCHY_CONTROL       = 0x0121,
+@@ -561,7 +550,7 @@ static inline u32 tpm2_rc_value(u32 rc)
+ int tpm2_get_timeouts(struct tpm_chip *chip);
+ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
+ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+-		    struct tpm2_digest *digests);
++		    struct tpm_digest *digests);
+ int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
+ void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
+ 			    unsigned int flags);
+diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
+index 0874743ca96d..ec4f197bae0a 100644
+--- a/drivers/char/tpm/tpm1-cmd.c
++++ b/drivers/char/tpm/tpm1-cmd.c
+@@ -716,7 +716,7 @@ int tpm1_auto_startup(struct tpm_chip *chip)
+ 		goto out;
+ 	}
+ 
+-	chip->allocated_banks[0] = TPM2_ALG_SHA1;
++	chip->allocated_banks[0] = TPM_ALG_SHA1;
+ 	chip->nr_allocated_banks = 1;
+ 
+ 	return rc;
+diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+index 158c34721c8a..db8e05c8dad3 100644
+--- a/drivers/char/tpm/tpm2-cmd.c
++++ b/drivers/char/tpm/tpm2-cmd.c
+@@ -33,11 +33,11 @@ struct tpm2_hash {
+ };
+ 
+ static struct tpm2_hash tpm2_hash_map[] = {
+-	{HASH_ALGO_SHA1, TPM2_ALG_SHA1},
+-	{HASH_ALGO_SHA256, TPM2_ALG_SHA256},
+-	{HASH_ALGO_SHA384, TPM2_ALG_SHA384},
+-	{HASH_ALGO_SHA512, TPM2_ALG_SHA512},
+-	{HASH_ALGO_SM3_256, TPM2_ALG_SM3_256},
++	{HASH_ALGO_SHA1, TPM_ALG_SHA1},
++	{HASH_ALGO_SHA256, TPM_ALG_SHA256},
++	{HASH_ALGO_SHA384, TPM_ALG_SHA384},
++	{HASH_ALGO_SHA512, TPM_ALG_SHA512},
++	{HASH_ALGO_SM3_256, TPM_ALG_SM3_256},
+ };
+ 
+ int tpm2_get_timeouts(struct tpm_chip *chip)
+@@ -192,7 +192,7 @@ int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf)
+ 	pcr_select[pcr_idx >> 3] = 1 << (pcr_idx & 0x7);
+ 
+ 	tpm_buf_append_u32(&buf, 1);
+-	tpm_buf_append_u16(&buf, TPM2_ALG_SHA1);
++	tpm_buf_append_u16(&buf, TPM_ALG_SHA1);
+ 	tpm_buf_append_u8(&buf, TPM2_PCR_SELECT_MIN);
+ 	tpm_buf_append(&buf, (const unsigned char *)pcr_select,
+ 		       sizeof(pcr_select));
+@@ -226,7 +226,7 @@ struct tpm2_null_auth_area {
+  * Return: Same as with tpm_transmit_cmd.
+  */
+ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
+-		    struct tpm2_digest *digests)
++		    struct tpm_digest *digests)
+ {
+ 	struct tpm_buf buf;
+ 	struct tpm2_null_auth_area auth_area;
+@@ -449,7 +449,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 
+ 	/* public */
+ 	tpm_buf_append_u16(&buf, 14 + options->policydigest_len);
+-	tpm_buf_append_u16(&buf, TPM2_ALG_KEYEDHASH);
++	tpm_buf_append_u16(&buf, TPM_ALG_KEYEDHASH);
+ 	tpm_buf_append_u16(&buf, hash);
+ 
+ 	/* policy */
+@@ -464,7 +464,7 @@ int tpm2_seal_trusted(struct tpm_chip *chip,
+ 	}
+ 
+ 	/* public parameters */
+-	tpm_buf_append_u16(&buf, TPM2_ALG_NULL);
++	tpm_buf_append_u16(&buf, TPM_ALG_NULL);
+ 	tpm_buf_append_u16(&buf, 0);
+ 
+ 	/* outside info */
+diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+index b49a55cf775f..330c0a481581 100644
+--- a/include/linux/tpm.h
++++ b/include/linux/tpm.h
+@@ -22,12 +22,30 @@
+ #ifndef __LINUX_TPM_H__
+ #define __LINUX_TPM_H__
+ 
++#include <crypto/hash_info.h>
++
+ #define TPM_DIGEST_SIZE 20	/* Max TPM v1.2 PCR size */
+ 
+ struct tpm_chip;
+ struct trusted_key_payload;
+ struct trusted_key_options;
+ 
++enum tpm_algorithms {
++	TPM_ALG_ERROR		= 0x0000,
++	TPM_ALG_SHA1		= 0x0004,
++	TPM_ALG_KEYEDHASH	= 0x0008,
++	TPM_ALG_SHA256		= 0x000B,
++	TPM_ALG_SHA384		= 0x000C,
++	TPM_ALG_SHA512		= 0x000D,
++	TPM_ALG_NULL		= 0x0010,
++	TPM_ALG_SM3_256		= 0x0012,
++};
++
++struct tpm_digest {
++	u16 alg_id;
++	u8 digest[SHA512_DIGEST_SIZE];
++} __packed;
++
+ enum TPM_OPS_FLAGS {
+ 	TPM_OPS_AUTO_STARTUP = BIT(0),
+ };
+diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
+index f47342361e87..81519f163211 100644
+--- a/include/linux/tpm_eventlog.h
++++ b/include/linux/tpm_eventlog.h
+@@ -3,7 +3,7 @@
+ #ifndef __LINUX_TPM_EVENTLOG_H__
+ #define __LINUX_TPM_EVENTLOG_H__
+ 
+-#include <crypto/hash_info.h>
++#include <linux/tpm.h>
+ 
+ #define TCG_EVENT_NAME_LEN_MAX	255
+ #define MAX_TEXT_EVENT		1000	/* Max event string length */
+@@ -105,16 +105,11 @@ struct tcg_event_field {
+ 	u8 event[0];
+ } __packed;
+ 
+-struct tpm2_digest {
+-	u16 alg_id;
+-	u8 digest[SHA512_DIGEST_SIZE];
+-} __packed;
+-
+ struct tcg_pcr_event2_head {
+ 	u32 pcr_idx;
+ 	u32 event_type;
+ 	u32 count;
+-	struct tpm2_digest digests[];
++	struct tpm_digest digests[];
+ } __packed;
+ 
+ #endif
+-- 
+2.17.1
 
