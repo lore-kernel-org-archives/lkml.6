@@ -4,50 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDFECC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07411C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92F07217D7
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7B2F20663
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:46:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548359188;
-	bh=5XogNCR5hXArckQfEckV0c9OUx+oa1z7+HPBu9Ygmmw=;
+	s=default; t=1548359204;
+	bh=7CLx201FXot8WPX2wRnO5k/NX3TLsxnzf15j46Yn5ms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BVIb3lb7MzeMXETr+2moth8FaWhHEwNjQ8i34JQLbsB5tSTphJHCZI6WKoXq5u4wG
-	 e7jhL/+zUDRRRHTVZr0S3x740v25dUvSWTUiUfO0pEv4iIp2J0dewuUu3+2ePvXwko
-	 cBbh1TuU3rNVwzPXwy/GHAwPIzfx0u5gRr+oAAmE=
+	b=rbvXCAdf94ioNJdd6PwCJwmFAEjvHDUXhUU68UyqRElgQtCfwcv4+8HsGG7fvPlk0
+	 1jXFMSS5BhuLWUhUIKObXLaQT1uKp8A6qeA2oL5kkOdn7eIg8pddM7vA9dhrXnTv9x
+	 uAGo2t+i3IczIs/7K6TRVy6knltSga/zF8Qbtiz8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387884AbfAXTq0 (ORCPT
+        id S2387886AbfAXTqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:46:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44736 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:46:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388018AbfAXToC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:44:02 -0500
+        id S1733262AbfAXTnm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:43:42 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 09D0C218D2;
-        Thu, 24 Jan 2019 19:44:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF4A3218D9;
+        Thu, 24 Jan 2019 19:43:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548359041;
-        bh=5XogNCR5hXArckQfEckV0c9OUx+oa1z7+HPBu9Ygmmw=;
+        s=default; t=1548359021;
+        bh=7CLx201FXot8WPX2wRnO5k/NX3TLsxnzf15j46Yn5ms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o18/i18vxYFfTPEnM82gc2aXU4ngK5DhVqBivP0AqLQWueuHbSNyPdP7UM+QHb7oB
-         3RABJRzNIEyCB4YjizIZEUjgU1Um8HstICb07VxFDswQ+hwYDarv5E2YM36PPaxmGJ
-         wG0ShRSnjgz3j8lXjB2ufwaEiXmFCfWZ5cb0n2dQ=
+        b=C8+PlOA5AG1T7wRrvg/BpPCWd4Sl6lIuJe2j6c3rHPoDIhGzG5pngxz1y8d2Bz5MR
+         IfRWdwZ0lw7vYkchEYxwbJwKIkCXPiitq4YTuFU4uldlAGD7i8u1hlJheMKAxlblut
+         G4kIqE7WNxf+8z6egVaZ4whJPOxZAeC2dN4nWiAQ=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Anand Jain <anand.jain@oracle.com>,
-        David Sterba <dsterba@suse.com>,
+        stable@vger.kernel.org,
+        =?UTF-8?q?Stephan=20G=C3=BCnther?= <moepi@moepi.net>,
+        Matt Corallo <linux@bluematt.me>,
+        Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.20 079/127] btrfs: fix use-after-free due to race between replace start and cancel
-Date:   Thu, 24 Jan 2019 20:20:25 +0100
-Message-Id: <20190124190215.481301753@linuxfoundation.org>
+Subject: [PATCH 4.20 107/127] scsi: mpt3sas: fix memory ordering on 64bit writes
+Date:   Thu, 24 Jan 2019 20:20:53 +0100
+Message-Id: <20190124190216.540220850@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
 References: <20190124190211.984305387@linuxfoundation.org>
@@ -66,173 +69,54 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit d189dd70e2556181732598956d808ea53cc8774e ]
+[ Upstream commit 23c3828aa2f84edec7020c7397a22931e7a879e1 ]
 
-The device replace cancel thread can race with the replace start thread
-and if fs_info::scrubs_running is not yet set, btrfs_scrub_cancel() will
-fail to stop the scrub thread.
+With commit 09c2f95ad404 ("scsi: mpt3sas: Swap I/O memory read value back
+to cpu endianness"), 64bit writes in _base_writeq() were rewritten to use
+__raw_writeq() instad of writeq().
 
-The scrub thread continues with the scrub for replace which then will
-try to write to the target device and which is already freed by the
-cancel thread.
+This introduced a bug apparent on powerpc64 systems such as the Raptor
+Talos II that causes the HBA to drop from the PCIe bus under heavy load and
+being reinitialized after a couple of seconds.
 
-scrub_setup_ctx() warns as tgtdev is NULL.
+It can easily be triggered on affacted systems by using something like
 
-  struct scrub_ctx *scrub_setup_ctx(struct btrfs_device *dev, int is_dev_replace)
-  {
-  ...
-	  if (is_dev_replace) {
-		  WARN_ON(!fs_info->dev_replace.tgtdev);  <===
-		  sctx->pages_per_wr_bio = SCRUB_PAGES_PER_WR_BIO;
-		  sctx->wr_tgtdev = fs_info->dev_replace.tgtdev;
-		  sctx->flush_all_writes = false;
-	  }
+  fio --name=random-write --iodepth=4 --rw=randwrite --bs=4k --direct=0 \
+    --size=128M --numjobs=64 --end_fsync=1
+  fio --name=random-write --iodepth=4 --rw=randwrite --bs=64k --direct=0 \
+    --size=128M --numjobs=64 --end_fsync=1
 
-  [ 6724.497655] BTRFS info (device sdb): dev_replace from /dev/sdb (devid 1) to /dev/sdc started
-  [ 6753.945017] BTRFS info (device sdb): dev_replace from /dev/sdb (devid 1) to /dev/sdc canceled
-  [ 6852.426700] WARNING: CPU: 0 PID: 4494 at fs/btrfs/scrub.c:622 scrub_setup_ctx.isra.19+0x220/0x230 [btrfs]
-  ...
-  [ 6852.428928] RIP: 0010:scrub_setup_ctx.isra.19+0x220/0x230 [btrfs]
-  ...
-  [ 6852.432970] Call Trace:
-  [ 6852.433202]  btrfs_scrub_dev+0x19b/0x5c0 [btrfs]
-  [ 6852.433471]  btrfs_dev_replace_start+0x48c/0x6a0 [btrfs]
-  [ 6852.433800]  btrfs_dev_replace_by_ioctl+0x3a/0x60 [btrfs]
-  [ 6852.434097]  btrfs_ioctl+0x2476/0x2d20 [btrfs]
-  [ 6852.434365]  ? do_sigaction+0x7d/0x1e0
-  [ 6852.434623]  do_vfs_ioctl+0xa9/0x6c0
-  [ 6852.434865]  ? syscall_trace_enter+0x1c8/0x310
-  [ 6852.435124]  ? syscall_trace_enter+0x1c8/0x310
-  [ 6852.435387]  ksys_ioctl+0x60/0x90
-  [ 6852.435663]  __x64_sys_ioctl+0x16/0x20
-  [ 6852.435907]  do_syscall_64+0x50/0x180
-  [ 6852.436150]  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+a couple of times. In my case I tested it on both a ZFS raidz2 and a btrfs
+raid6 using LSI 9300-8i and 9400-8i controllers.
 
-Further, as the replace thread enters scrub_write_page_to_dev_replace()
-without the target device it panics:
+The fix consists in resembling the write ordering of writeq() by adding a
+mandatory write memory barrier before device access and a compiler barrier
+afterwards. The additional MMIO barrier is superfluous.
 
-  static int scrub_add_page_to_wr_bio(struct scrub_ctx *sctx,
-				      struct scrub_page *spage)
-  {
-  ...
-	bio_set_dev(bio, sbio->dev->bdev); <======
-
-  [ 6929.715145] BUG: unable to handle kernel NULL pointer dereference at 00000000000000a0
-  ..
-  [ 6929.717106] Workqueue: btrfs-scrub btrfs_scrub_helper [btrfs]
-  [ 6929.717420] RIP: 0010:scrub_write_page_to_dev_replace+0xb4/0x260
-  [btrfs]
-  ..
-  [ 6929.721430] Call Trace:
-  [ 6929.721663]  scrub_write_block_to_dev_replace+0x3f/0x60 [btrfs]
-  [ 6929.721975]  scrub_bio_end_io_worker+0x1af/0x490 [btrfs]
-  [ 6929.722277]  normal_work_helper+0xf0/0x4c0 [btrfs]
-  [ 6929.722552]  process_one_work+0x1f4/0x520
-  [ 6929.722805]  ? process_one_work+0x16e/0x520
-  [ 6929.723063]  worker_thread+0x46/0x3d0
-  [ 6929.723313]  kthread+0xf8/0x130
-  [ 6929.723544]  ? process_one_work+0x520/0x520
-  [ 6929.723800]  ? kthread_delayed_work_timer_fn+0x80/0x80
-  [ 6929.724081]  ret_from_fork+0x3a/0x50
-
-Fix this by letting the btrfs_dev_replace_finishing() to do the job of
-cleaning after the cancel, including freeing of the target device.
-btrfs_dev_replace_finishing() is called when btrfs_scub_dev() returns
-along with the scrub return status.
-
-Signed-off-by: Anand Jain <anand.jain@oracle.com>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
+Signed-off-by: Stephan Günther <moepi@moepi.net>
+Reported-by: Matt Corallo <linux@bluematt.me>
+Acked-by: Sreekanth Reddy <Sreekanth.Reddy@broadcom.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/btrfs/dev-replace.c | 63 +++++++++++++++++++++++++++---------------
- 1 file changed, 41 insertions(+), 22 deletions(-)
+ drivers/scsi/mpt3sas/mpt3sas_base.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-index 329d3afcf304..65e4b8637638 100644
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -797,39 +797,58 @@ int btrfs_dev_replace_cancel(struct btrfs_fs_info *fs_info)
- 	case BTRFS_IOCTL_DEV_REPLACE_STATE_CANCELED:
- 		result = BTRFS_IOCTL_DEV_REPLACE_RESULT_NOT_STARTED;
- 		btrfs_dev_replace_write_unlock(dev_replace);
--		goto leave;
-+		break;
- 	case BTRFS_IOCTL_DEV_REPLACE_STATE_STARTED:
-+		result = BTRFS_IOCTL_DEV_REPLACE_RESULT_NO_ERROR;
-+		tgt_device = dev_replace->tgtdev;
-+		src_device = dev_replace->srcdev;
-+		btrfs_dev_replace_write_unlock(dev_replace);
-+		btrfs_scrub_cancel(fs_info);
-+		/* btrfs_dev_replace_finishing() will handle the cleanup part */
-+		btrfs_info_in_rcu(fs_info,
-+			"dev_replace from %s (devid %llu) to %s canceled",
-+			btrfs_dev_name(src_device), src_device->devid,
-+			btrfs_dev_name(tgt_device));
-+		break;
- 	case BTRFS_IOCTL_DEV_REPLACE_STATE_SUSPENDED:
-+		/*
-+		 * Scrub doing the replace isn't running so we need to do the
-+		 * cleanup step of btrfs_dev_replace_finishing() here
-+		 */
- 		result = BTRFS_IOCTL_DEV_REPLACE_RESULT_NO_ERROR;
- 		tgt_device = dev_replace->tgtdev;
- 		src_device = dev_replace->srcdev;
- 		dev_replace->tgtdev = NULL;
- 		dev_replace->srcdev = NULL;
--		break;
--	}
--	dev_replace->replace_state = BTRFS_IOCTL_DEV_REPLACE_STATE_CANCELED;
--	dev_replace->time_stopped = ktime_get_real_seconds();
--	dev_replace->item_needs_writeback = 1;
--	btrfs_dev_replace_write_unlock(dev_replace);
--	btrfs_scrub_cancel(fs_info);
-+		dev_replace->replace_state =
-+				BTRFS_IOCTL_DEV_REPLACE_STATE_CANCELED;
-+		dev_replace->time_stopped = ktime_get_real_seconds();
-+		dev_replace->item_needs_writeback = 1;
- 
--	trans = btrfs_start_transaction(root, 0);
--	if (IS_ERR(trans)) {
--		mutex_unlock(&dev_replace->lock_finishing_cancel_unmount);
--		return PTR_ERR(trans);
--	}
--	ret = btrfs_commit_transaction(trans);
--	WARN_ON(ret);
-+		btrfs_dev_replace_write_unlock(dev_replace);
- 
--	btrfs_info_in_rcu(fs_info,
--		"dev_replace from %s (devid %llu) to %s canceled",
--		btrfs_dev_name(src_device), src_device->devid,
--		btrfs_dev_name(tgt_device));
-+		btrfs_scrub_cancel(fs_info);
-+
-+		trans = btrfs_start_transaction(root, 0);
-+		if (IS_ERR(trans)) {
-+			mutex_unlock(&dev_replace->lock_finishing_cancel_unmount);
-+			return PTR_ERR(trans);
-+		}
-+		ret = btrfs_commit_transaction(trans);
-+		WARN_ON(ret);
- 
--	if (tgt_device)
--		btrfs_destroy_dev_replace_tgtdev(tgt_device);
-+		btrfs_info_in_rcu(fs_info,
-+		"suspended dev_replace from %s (devid %llu) to %s canceled",
-+			btrfs_dev_name(src_device), src_device->devid,
-+			btrfs_dev_name(tgt_device));
-+
-+		if (tgt_device)
-+			btrfs_destroy_dev_replace_tgtdev(tgt_device);
-+		break;
-+	default:
-+		result = -EINVAL;
-+	}
- 
--leave:
- 	mutex_unlock(&dev_replace->lock_finishing_cancel_unmount);
- 	return result;
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_base.c b/drivers/scsi/mpt3sas/mpt3sas_base.c
+index 2500377d0723..bfd826deabbe 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_base.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_base.c
+@@ -3319,8 +3319,9 @@ _base_mpi_ep_writeq(__u64 b, volatile void __iomem *addr,
+ static inline void
+ _base_writeq(__u64 b, volatile void __iomem *addr, spinlock_t *writeq_lock)
+ {
++	wmb();
+ 	__raw_writeq(b, addr);
+-	mmiowb();
++	barrier();
  }
+ #else
+ static inline void
 -- 
 2.19.1
 
