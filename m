@@ -2,160 +2,213 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E10E3C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AB5C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:19:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B07E3218A2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:18:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6820F218A2
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:19:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aWD3gGH5"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="EIVe1xMf"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728422AbfAXQSR (ORCPT
+        id S1728153AbfAXQTb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:18:17 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35085 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727573AbfAXQSQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:18:16 -0500
-Received: by mail-wr1-f65.google.com with SMTP id 96so7143952wrb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 08:18:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=sYJTsT1RU7rp0EKLZakMYovq4zo9XGQWDwMfwBAoYJ0=;
-        b=aWD3gGH5jLW4lpZHPE3UJi7CepRnoc9cd7EA/Cp6wTGVldfjpA3WRMLoetfKxHggn5
-         HZCrphImG2MedkTVB6iSrGFCZ9DvG0ic+X11RZchpzRJtjuhx4S5vZEG1IV8so7rPp4a
-         zqVy+DFkrntbCDHBZQEEBEgacmaWJJbBQpqJOWWjWkFri8+8CXHotybFYIaI8ozhi2y1
-         uwJHC+SXhX9Sz9PNm7xdWC5kJhbgWxg9z6CBPuHfa9Y0S756SClbW1/1cSWU035oqTCz
-         LzXpxvv/Rm484kbzeg5rQoFR47Z763QJ6/oY4li2cI8qsY64+U2IuKbYPD34uuSYxdgu
-         QWBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=sYJTsT1RU7rp0EKLZakMYovq4zo9XGQWDwMfwBAoYJ0=;
-        b=MOOvue0ZkYXlNYSocm3IU6M5emKzeYOsSGXPa9zvsCafCx1lj05KUQ4njywu0m0irN
-         N/zxQ/dGmF438g8QI7yzGj/Z22TFb0il13TFFZUb30BI78svB+Mc9KfoA7+TR+C9pIBZ
-         Tc7z9mSdEJbFj28k+jN3Wrw2deu5SkuEowkWi0BVkpzBJuSgCWPkbG5tLxhMp6wd1ZWc
-         ztWoqUEeJEXXTsNKniJlZDoArY6ihBcXVz9/rFv4wraKL0ArFmcwcaIPYRFXOVE2SDTv
-         q2pnD05e52A/Kvn2effAdzurcBwjq3X+O9ergG4zUAveQ1+bifytdCE10rvKfNPe/HFW
-         Cv8A==
-X-Gm-Message-State: AJcUukfyfPpcoLSClkoNu8MCPc0RsgX1CVzmjJjeU4pHd6KozMZ1gZEG
-        vR1SXMY7vUuEr+gPB1Qev5g=
-X-Google-Smtp-Source: ALg8bN6A09hT1y9GIvgt9Feh1t+ed7rDbHVhBPWzGdi41zyZmOV93k9aBDmXg28ReRD1G6cBdQ6oiA==
-X-Received: by 2002:a5d:5443:: with SMTP id w3mr7354699wrv.4.1548346694601;
-        Thu, 24 Jan 2019 08:18:14 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id y34sm269123096wrd.68.2019.01.24.08.18.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 08:18:13 -0800 (PST)
-Date:   Thu, 24 Jan 2019 17:18:12 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Ezequiel Garcia <ezequiel@collabora.com>
-Cc:     Heiko Stuebner <heiko@sntech.de>,
-        padovan Gustavo <gustavo.padovan@collabora.com>,
-        maxime.ripard@bootlin.com, seanpaul@chromium.org,
-        hl@rock-chips.com, briannorris@chromium.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        nickey.yang@rock-chips.com
-Subject: Re: [PATCH v4 RESEND] drm/panel: add Kingdisplay kd097d04 panel
- driver
-Message-ID: <20190124161812.GA10550@ulmo>
-References: <20181030091528.28211-1-heiko@sntech.de>
- <fa732d7c529c28135b2c9a1ccf902d4658a53682.camel@collabora.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="UugvWAfsgieZRqgk"
-Content-Disposition: inline
-In-Reply-To: <fa732d7c529c28135b2c9a1ccf902d4658a53682.camel@collabora.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Thu, 24 Jan 2019 11:19:31 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:19692 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727573AbfAXQTb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:19:31 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43lnRN349Jz9v01b;
+        Thu, 24 Jan 2019 17:19:28 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=EIVe1xMf; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id Kp8bzUNHSQgH; Thu, 24 Jan 2019 17:19:28 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43lnRN201Lz9v01Z;
+        Thu, 24 Jan 2019 17:19:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548346768; bh=retXMGoJf5+Snvw80CvH+Mt3LY2P4cdu1x5KvfxzCzY=;
+        h=From:Subject:To:Cc:Date:From;
+        b=EIVe1xMfGDwg8lKzz5Se/lAsCCczbhXhys4PN+cvSdBOCE3rVzFuwQX/KkD4pp4zH
+         9awg8jITGgglrGgyQm4gH7rfTrlgEcd8x4UVfW8XRaQHxTgkN42y05wUBUcWzQ38ck
+         ioBD8FCH7Fq6vFoqghdwCFduOKYKwmuuiNMmj9z8=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id C85BB8B850;
+        Thu, 24 Jan 2019 17:19:29 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id jbVoNQcQvSZi; Thu, 24 Jan 2019 17:19:29 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (unknown [192.168.4.90])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 62A918B863;
+        Thu, 24 Jan 2019 17:19:29 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 1206372D88; Thu, 24 Jan 2019 16:19:28 +0000 (UTC)
+Message-Id: <cover.1548346225.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH v14 00/12] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        Mark Rutland <mark.rutland@arm.com>
+Date:   Thu, 24 Jan 2019 16:19:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+The purpose of this serie is to activate CONFIG_THREAD_INFO_IN_TASK which
+moves the thread_info into task_struct.
 
---UugvWAfsgieZRqgk
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Moving thread_info into task_struct has the following advantages:
+- It protects thread_info from corruption in the case of stack
+overflows.
+- Its address is harder to determine if stack addresses are
+leaked, making a number of attacks more difficult.
 
-On Thu, Jan 24, 2019 at 12:01:55PM -0300, Ezequiel Garcia wrote:
-> On Tue, 2018-10-30 at 10:15 +0100, Heiko Stuebner wrote:
-> > From: Nickey Yang <nickey.yang@rock-chips.com>
-> >=20
-> > Support Kingdisplay kd097d04 9.7" 1536x2048 TFT LCD panel,
-> > it is a MIPI dual-DSI panel.
-> >=20
-> > v4-resend:
-> > - Thierry noted missing dt-bindings for v4 but forgot that he
-> >   already had applied them one kernel release back in
-> >   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/co=
-mmit/?id=3Debc950fdff6d5f9250cd5a5a348af97f7d8508df
-> > v4:
-> > - address Philipp's comments
-> >   - real range for usleep_range and
-> >   - poweroff ordering in kingdisplay_panel_prepare
-> >   - return value beautification in panel_probe
-> > - update author naming for full name
-> > v3:
-> > - address Thierry's comments
-> >   - error handling for init dsi writes in init
-> >   - unconditionally remove the panel
-> >   - don't use drm_panel_detach
-> >   - a bit of variable signednes wiggling
-> > - I did talk to ChromeOS people and the delays really should be as short
-> >   as possible, so dropped the 100ms from the delay comments
-> > v2:
-> > - update timing + cmds from chromeos kernel
-> > - new backlight API including switch to devm_of_find_backlight
-> > - fix most of Sean Paul's comments
-> >   enable/prepare tracking seems something all panels do
-> > - document origins of the init sequence
-> > - lanes per dsi interface to 4 (two interfaces). Matches how tegra
-> >   and pending rockchip dual-dsi handle (dual-)dsi lanes
-> > - spdx header instead of license boilerplate
-> >=20
-> > Signed-off-by: Nickey Yang <nickey.yang@rock-chips.com>
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->=20
-> Hm, this v4 patch has been stalling here for *four full months*.
->=20
-> Which deity do we need to pray to get this one moving? ;-)
->=20
-> Seriously, can someone please apply this?
+Added Mark Rutland in copy as he did the work on arm64 and may have recommendations for us.
 
-If you care about this driver, perhaps you'd like to review and provide
-a Reviewed-by?
+Changes in v14 (ie since v13):
+ - Added in front a fixup patch which conflicts with this serie
+ - Added a patch for using try_get_task_stack()/put_task_stack() in stack walkers.
+ - Fixed compilation failure in the preparation patch (by moving the modification
+ of klp_init_thread_info() to the following patch)
 
-Thierry
+Changes since v12:
+ - Patch 1: Taken comment from Mike (re-introduced the 'panic' in case memblock allocation fails in setup_64.c
+ - Patch 1: Added alloc_stack() function in setup_32.c to also panic in case of allocation failure.
 
---UugvWAfsgieZRqgk
-Content-Type: application/pgp-signature; name="signature.asc"
+Changes since v11:
+ - Rebased on 81775f5563fa ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+ - Added a first patch to change memblock allocs to functions returning virtual addrs. This removes
+   the memset() which were the only remaining stuff in irq_ctx_init() and exc_lvl_ctx_init() at the end.
+ - dropping irq_ctx_init() and exc_lvl_ctx_init() in patch 5 (powerpc: Activate CONFIG_THREAD_INFO_IN_TASK)
+ - A few cosmetic changes in commit log and code.
 
------BEGIN PGP SIGNATURE-----
+Changes since v10:
+ - Rebased on 21622a0d2023 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+  ==> Fixed conflict in setup_32.S
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxJ5UEACgkQ3SOs138+
-s6EmExAAvc4oBTHIAOuiXuzeqfnnUZG1Gq+FK8pHDzW9mf6uRe5l21LRZwQMdIgQ
-NKYEr33uMEmDCBZOHKpNlcifAl3Ki2qRvWWlZnVnxiwXR1Sjz3mqNfW45Gxwcfeb
-sESMjjC5OCF/2xVvVkMQmEaVTWBhFi8jomAAGw5Shkvl//7MIrBzNGf4cT5kEbJF
-xD3U7++XbZMX0psPTo+p5fWx7ol3/C4C1GMmeGdf4WzDacqCHAUDbExdiI+4VT41
-OSQ90q/lhABL4uZKm4qc1ZC0WcUsqITwfv2Z9w9o8x6CBB3mZxgj0EjivOUN7NK+
-C5GLqoQ7IZ4BLKCpA6yqDN1Rbr6c4H98b5kYkFFX1NMvgDe5QkwwxLtEMyHGxTwj
-i86X0H9jXpgfT38Zyf9zVFzgrkItziqGe/uM7gNiSJG6isOFrNMdoDfJY+vkHNkF
-GZQ1GyWLC4p/nQ79arFu8WNfmonzxbcOTEQFp8rQWXQ6ajzSfADmqDJiQYOSdoVZ
-cXFSJXzH7ZpjnvfBBOF+FVEp919c7fZlYy5M4Z3DF5oIOJa+WM+FkyrQeXj6FQrc
-UnPkpIPxsUxiLS0CU9N7zOUXTkVEUE0JZTyErvohdYEwtCKW9VzlGfFma9m9hE9F
-hKCvVieZrAXkBQjRfQVwM0OA9EZEQ2DpLviq4vwdW5/74eMVjWA=
-=GTB1
------END PGP SIGNATURE-----
+Changes since v9:
+ - Rebased on 183cbf93be88 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+  ==> Fixed conflict on xmon
 
---UugvWAfsgieZRqgk--
+Changes since v8:
+ - Rebased on e589b79e40d9 ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+  ==> Main impact was conflicts due to commit 9a8dd708d547 ("memblock: rename memblock_alloc{_nid,_try_nid} to memblock_phys_alloc*")
+
+Changes since v7:
+ - Rebased on fb6c6ce7907d ("Automatic merge of branches 'master', 'next' and 'fixes' into merge")
+
+Changes since v6:
+ - Fixed validate_sp() to exclude NULL sp in 'regain entire stack space' patch (early crash with CONFIG_KMEMLEAK)
+
+Changes since v5:
+ - Fixed livepatch_sp setup by using end_of_stack() instead of hardcoding
+ - Fixed PPC_BPF_LOAD_CPU() macro
+
+Changes since v4:
+ - Fixed a build failure on 32bits SMP when include/generated/asm-offsets.h is not
+ already existing, was due to spaces instead of a tab in the Makefile
+
+Changes since RFC v3: (based on Nick's review)
+ - Renamed task_size.h to task_size_user64.h to better relate to what it contains.
+ - Handling of the isolation of thread_info cpu field inside CONFIG_SMP #ifdefs moved to a separate patch.
+ - Removed CURRENT_THREAD_INFO macro completely.
+ - Added a guard in asm/smp.h to avoid build failure before _TASK_CPU is defined.
+ - Added a patch at the end to rename 'tp' pointers to 'sp' pointers
+ - Renamed 'tp' into 'sp' pointers in preparation patch when relevant
+ - Fixed a few commit logs
+ - Fixed checkpatch report.
+
+Changes since RFC v2:
+ - Removed the modification of names in asm-offsets
+ - Created a rule in arch/powerpc/Makefile to append the offset of current->cpu in CFLAGS
+ - Modified asm/smp.h to use the offset set in CFLAGS
+ - Squashed the renaming of THREAD_INFO to TASK_STACK in the preparation patch
+ - Moved the modification of current_pt_regs in the patch activating CONFIG_THREAD_INFO_IN_TASK
+
+Changes since RFC v1:
+ - Removed the first patch which was modifying header inclusion order in timer
+ - Modified some names in asm-offsets to avoid conflicts when including asm-offsets in C files
+ - Modified asm/smp.h to avoid having to include linux/sched.h (using asm-offsets instead)
+ - Moved some changes from the activation patch to the preparation patch.
+
+Christophe Leroy (12):
+  powerpc/32: Fix CONFIG_VIRT_CPU_ACCOUNTING_NATIVE for 40x/booke
+  powerpc/irq: use memblock functions returning virtual address
+  book3s/64: avoid circular header inclusion in mmu-hash.h
+  powerpc: Only use task_struct 'cpu' field on SMP
+  powerpc: prep stack walkers for THREAD_INFO_IN_TASK
+  powerpc: Prepare for moving thread_info into task_struct
+  powerpc: Activate CONFIG_THREAD_INFO_IN_TASK
+  powerpc: regain entire stack space
+  powerpc: 'current_set' is now a table of task_struct pointers
+  powerpc/32: Remove CURRENT_THREAD_INFO and rename TI_CPU
+  powerpc/64: Remove CURRENT_THREAD_INFO
+  powerpc: clean stack pointers naming
+
+ arch/powerpc/Kconfig                           |   1 +
+ arch/powerpc/Makefile                          |   7 ++
+ arch/powerpc/include/asm/asm-prototypes.h      |   4 +-
+ arch/powerpc/include/asm/book3s/64/mmu-hash.h  |   2 +-
+ arch/powerpc/include/asm/exception-64s.h       |   4 +-
+ arch/powerpc/include/asm/irq.h                 |  18 ++--
+ arch/powerpc/include/asm/livepatch.h           |   6 +-
+ arch/powerpc/include/asm/processor.h           |  39 +--------
+ arch/powerpc/include/asm/ptrace.h              |   2 +-
+ arch/powerpc/include/asm/reg.h                 |   2 +-
+ arch/powerpc/include/asm/smp.h                 |  17 +++-
+ arch/powerpc/include/asm/task_size_user64.h    |  42 +++++++++
+ arch/powerpc/include/asm/thread_info.h         |  19 -----
+ arch/powerpc/kernel/asm-offsets.c              |  10 ++-
+ arch/powerpc/kernel/entry_32.S                 |  75 ++++++----------
+ arch/powerpc/kernel/entry_64.S                 |  12 +--
+ arch/powerpc/kernel/epapr_hcalls.S             |   5 +-
+ arch/powerpc/kernel/exceptions-64e.S           |  13 +--
+ arch/powerpc/kernel/exceptions-64s.S           |   2 +-
+ arch/powerpc/kernel/head_32.S                  |  14 +--
+ arch/powerpc/kernel/head_40x.S                 |   4 +-
+ arch/powerpc/kernel/head_44x.S                 |   8 +-
+ arch/powerpc/kernel/head_64.S                  |   1 +
+ arch/powerpc/kernel/head_8xx.S                 |   2 +-
+ arch/powerpc/kernel/head_booke.h               |  12 +--
+ arch/powerpc/kernel/head_fsl_booke.S           |  16 ++--
+ arch/powerpc/kernel/idle_6xx.S                 |   8 +-
+ arch/powerpc/kernel/idle_book3e.S              |   2 +-
+ arch/powerpc/kernel/idle_e500.S                |   8 +-
+ arch/powerpc/kernel/idle_power4.S              |   2 +-
+ arch/powerpc/kernel/irq.c                      | 114 +++----------------------
+ arch/powerpc/kernel/kgdb.c                     |  28 ------
+ arch/powerpc/kernel/machine_kexec_64.c         |   6 +-
+ arch/powerpc/kernel/misc_32.S                  |  17 ++--
+ arch/powerpc/kernel/process.c                  |  63 ++++++++------
+ arch/powerpc/kernel/setup-common.c             |   2 +-
+ arch/powerpc/kernel/setup_32.c                 |  25 +++---
+ arch/powerpc/kernel/setup_64.c                 |  51 +++--------
+ arch/powerpc/kernel/smp.c                      |  16 ++--
+ arch/powerpc/kernel/stacktrace.c               |  29 ++++++-
+ arch/powerpc/kernel/trace/ftrace_64_mprofile.S |   6 +-
+ arch/powerpc/kvm/book3s_hv_hmi.c               |   1 +
+ arch/powerpc/mm/hash_low_32.S                  |  14 ++-
+ arch/powerpc/net/bpf_jit32.h                   |   5 +-
+ arch/powerpc/sysdev/6xx-suspend.S              |   5 +-
+ arch/powerpc/xmon/xmon.c                       |   2 +-
+ 46 files changed, 300 insertions(+), 441 deletions(-)
+ create mode 100644 arch/powerpc/include/asm/task_size_user64.h
+
+-- 
+2.13.3
+
