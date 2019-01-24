@@ -2,108 +2,129 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE9DBC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5501C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC87121872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EV/jzKWs"
+	by mail.kernel.org (Postfix) with ESMTP id 5B666218A6
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:08:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548360539;
+	bh=VmYbwt50EZ4Tf2rLp5MAQcEyVoFgj9MxiMiydlScaNE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=SE4H3aURjcVXtUknICQJ+LyEuAzKLGBlDGWoh6pujCOWLDmEFlxcdSxZJM8OAe7zQ
+	 ftxS2lSG+pvjZeTfle3b5nsRq7dqiv/4PIannBp61B3p4NY8LwTF8rv9f4CBeHMSbo
+	 rop5zCSJvsc5awsZnaXXCraYna4GmBnTIcPdoY3c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730465AbfAXUIv (ORCPT
+        id S1730614AbfAXUI5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:08:51 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33205 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726038AbfAXUIs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:08:48 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z11so3159186pgu.0;
-        Thu, 24 Jan 2019 12:08:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=k2UNI+y5cpAGw1jlqd4+C7gsDdBuWa6hZAk4Nv/vaK4=;
-        b=EV/jzKWsdRDcQLxTLksGoetxIEDdJxS+66UugLyOIKNmACMoigZP4fEstWeK5gE6dc
-         VV9q2bWAQLDo8E0sxQRwa//k2Y4oc3GMpyZEFu5h/WzCD1+AXqdnQXJHwySUskZ+HvfZ
-         8bcYylcLB34isrlwDDYtecOJ2zm8lL47KSPNH+Xe51b1U7BZUx/mGVAF4/3cOP6Ap1un
-         g7Dh7PF9hXVhMcG0ekDT2hVpWeSEXci957Tls51Mik+7queWXSuTRmGAEZntIUjnUoQ7
-         T3AL9SaLJZj3hYIIFtVrqkYjRGWzurxHX0xpv7hOcAYB2QlNNr8CLCKXBWp3Vw62DMpc
-         slXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=k2UNI+y5cpAGw1jlqd4+C7gsDdBuWa6hZAk4Nv/vaK4=;
-        b=rUBn4VJZBA1Ae8Hhzr1G4jXA9Y02NLDYQ8RazcINUuB6GIjcm0Q1lpr2JgFv3t6kLo
-         3imdl2LzIngJFoIez6sRzpRTBv951DtfdzLVbOKso96OesLSQxp7z4wBs7o6uIQFPM2N
-         XSssjaoGdIGjjKEdpzl9tEUz/yzxvc2YZGbbXVOXuwRBTdqeSQCVGLmEtyId3URvr7Hv
-         lgqFF5L4Mcuxrwy6H27BQeRNSoQctaKd+XQU2bLbojY0wRqbMVqWEwE0KAbcuWFD8Q69
-         c8QuClZVZjebr4y/AmXFASy1SKHLdCJlMZwSWept0/t+CabGxl3ubdxugBtF/nyMRRPq
-         aUHA==
-X-Gm-Message-State: AJcUukcD8c2ZEdjdNHPgqVdbeTNEmBtfpwJb8sqmKnKzUOq5e/HAhXn3
-        FqcdC3DnLtkVsqT7INUFxnFNTsFD
-X-Google-Smtp-Source: ALg8bN7JCr/4Wy/68XUom9P7Zs/71bnIhPg3yuQBeZYzf8zDgFAdRawGDlWHXLDq/ewYrMFJ5ROr9w==
-X-Received: by 2002:a63:c141:: with SMTP id p1mr7262280pgi.424.1548360527564;
-        Thu, 24 Jan 2019 12:08:47 -0800 (PST)
-Received: from fainelli-desktop.igp.broadcom.net ([192.19.223.250])
-        by smtp.gmail.com with ESMTPSA id y71sm41434831pfi.123.2019.01.24.12.08.45
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 12:08:46 -0800 (PST)
-From:   Florian Fainelli <f.fainelli@gmail.com>
+        Thu, 24 Jan 2019 15:08:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731055AbfAXT2x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:28:53 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AB67B218D4;
+        Thu, 24 Jan 2019 19:28:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548358133;
+        bh=VmYbwt50EZ4Tf2rLp5MAQcEyVoFgj9MxiMiydlScaNE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Kfr6LWdgTokbh0nlifypIHWlYSqMaYeJLoE1suQrpocYf/3ic0J0mKRA0rNPhslvz
+         EV68/NQ50UX37uvpalyW0QTE/F/ayCsL+ohuUg09H6USrpPFon5VfGx4c1NX7KZjcI
+         Ms5GIr6nuf8rxRKZ2+OMwrgkcqKWvFYKifASPJ8A=
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
-Cc:     vivien.didelot@gmail.com, Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED
-        DEVICE TREE)
-Subject: [PATCH] of: Make of_node_name_eq() case insensitive
-Date:   Thu, 24 Jan 2019 12:08:25 -0800
-Message-Id: <20190124200825.2611-1-f.fainelli@gmail.com>
-X-Mailer: git-send-email 2.17.1
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        stable@vger.kernel.org, yupeng <yupeng0921@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 4.4 086/104] net: call sk_dst_reset when set SO_DONTROUTE
+Date:   Thu, 24 Jan 2019 20:20:15 +0100
+Message-Id: <20190124190204.477016743@linuxfoundation.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
+References: <20190124190154.968308875@linuxfoundation.org>
+User-Agent: quilt/0.65
+X-stable: review
+X-Patchwork-Hint: ignore
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since c32569e358ad ("regulator: Use of_node_name_eq for node name
-comparisons") Vivien reported the mc13892-regulator complaining about
-not being able to find regulators.
+4.4-stable review patch.  If anyone has any objections, please let me know.
 
-This is because prior to that commit we used of_node_cmp() to compare
-the regulator array passed from mc13892_regulators down to
-mc13xxx_parse_regulators_dt() and they are all defined in uppercase
-letters by the MC13892_*_DEFINE* macros, whereas they are defined as
-lowercase in the DTS.
+------------------
 
-Fix this by use strncasecmp() since that makes sure the comparison is
-case insensitive like what of_node_cmp() did.
+[ Upstream commit 0fbe82e628c817e292ff588cd5847fc935e025f2 ]
 
-Reported-by: Vivien Didelot <vivien.didelot@gmail.com>
-Fixes: c32569e358ad ("regulator: Use of_node_name_eq for node name comparisons")
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+after set SO_DONTROUTE to 1, the IP layer should not route packets if
+the dest IP address is not in link scope. But if the socket has cached
+the dst_entry, such packets would be routed until the sk_dst_cache
+expires. So we should clean the sk_dst_cache when a user set
+SO_DONTROUTE option. Below are server/client python scripts which
+could reprodue this issue:
+
+server side code:
+
+==========================================================================
+import socket
+import struct
+import time
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(('0.0.0.0', 9000))
+s.listen(1)
+sock, addr = s.accept()
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_DONTROUTE, struct.pack('i', 1))
+while True:
+    sock.send(b'foo')
+    time.sleep(1)
+==========================================================================
+
+client side code:
+==========================================================================
+import socket
+import time
+
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.connect(('server_address', 9000))
+while True:
+    data = s.recv(1024)
+    print(data)
+==========================================================================
+
+Signed-off-by: yupeng <yupeng0921@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/of/base.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ net/core/sock.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 5226e898476e..ff47c86277cb 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -66,7 +66,8 @@ bool of_node_name_eq(const struct device_node *np, const char *name)
- 	node_name = kbasename(np->full_name);
- 	len = strchrnul(node_name, '@') - node_name;
- 
--	return (strlen(name) == len) && (strncmp(node_name, name, len) == 0);
-+	return (strlen(name) == len) &&
-+		(strncasecmp(node_name, name, len) == 0);
- }
- EXPORT_SYMBOL(of_node_name_eq);
- 
+diff --git a/net/core/sock.c b/net/core/sock.c
+index 9fb1c073d0c4..8aa4a5f89572 100644
+--- a/net/core/sock.c
++++ b/net/core/sock.c
+@@ -732,6 +732,7 @@ int sock_setsockopt(struct socket *sock, int level, int optname,
+ 		break;
+ 	case SO_DONTROUTE:
+ 		sock_valbool_flag(sk, SOCK_LOCALROUTE, valbool);
++		sk_dst_reset(sk);
+ 		break;
+ 	case SO_BROADCAST:
+ 		sock_valbool_flag(sk, SOCK_BROADCAST, valbool);
 -- 
-2.17.1
+2.19.1
+
+
 
