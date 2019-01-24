@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC54CC282C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 00:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23111C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 00:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96161218A1
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 00:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EFBF218A1
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 00:52:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727139AbfAXAv7 (ORCPT
+        id S1727176AbfAXAwE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 19:51:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37604 "EHLO mx1.suse.de"
+        Wed, 23 Jan 2019 19:52:04 -0500
+Received: from mx2.suse.de ([195.135.220.15]:37624 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726235AbfAXAv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 19:51:56 -0500
+        id S1727146AbfAXAv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 23 Jan 2019 19:51:59 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 0F58CAFCB;
-        Thu, 24 Jan 2019 00:51:55 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 9F3F9AFCB;
+        Thu, 24 Jan 2019 00:51:58 +0000 (UTC)
 From:   Tony Jones <tonyj@suse.de>
 To:     linux-kernel@vger.kernel.org
 Cc:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
@@ -30,10 +30,10 @@ Cc:     Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
         Arnaldo Carvalho de Melo <acme@kernel.org>,
         Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
         linux-perf-users@vger.kernel.org, Tony Jones <tonyj@suse.de>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: [PATCH 3/6] perf script python: remove explicit shebang from setup.py
-Date:   Wed, 23 Jan 2019 16:52:26 -0800
-Message-Id: <20190124005229.16146-4-tonyj@suse.de>
+        Jiri Olsa <jolsa@redhat.com>
+Subject: [PATCH 4/6] perf script python: remove explicit shebang from tests/attr.c
+Date:   Wed, 23 Jan 2019 16:52:27 -0800
+Message-Id: <20190124005229.16146-5-tonyj@suse.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124005229.16146-1-tonyj@suse.de>
 References: <20190124005229.16146-1-tonyj@suse.de>
@@ -44,28 +44,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Makefile.perf invokes setup.py via an explicit invocation of python
-(PYTHON_WORD) so there is therefore no need for an explicit shebang.
+tests/attr.c invokes attr.py via an explicit invocation of Python ($PYTHON)
+so there is therefore no need for an explicit shebang.
 
 Also most distros follow pep-0394 which recommends that /usr/bin/python
 refer only to v2 and so may not exist on the system (if PYTHON=python3).
 
 Signed-off-By: Tony Jones <tonyj@suse.de>
-Cc: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc:  Jiri Olsa <jolsa@redhat.com>
 ---
- tools/perf/util/setup.py | 2 --
- 1 file changed, 2 deletions(-)
+ tools/perf/tests/attr.py | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/tools/perf/util/setup.py b/tools/perf/util/setup.py
-index 64d1f36dee99..d3ffc18424b5 100644
---- a/tools/perf/util/setup.py
-+++ b/tools/perf/util/setup.py
-@@ -1,5 +1,3 @@
--#!/usr/bin/python
--
- from os import getenv
- from subprocess import Popen, PIPE
- from re import sub
+diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
+index 44090a9a19f3..3e07eee33b10 100644
+--- a/tools/perf/tests/attr.py
++++ b/tools/perf/tests/attr.py
+@@ -1,4 +1,3 @@
+-#! /usr/bin/python
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ import os
 -- 
 2.20.1
 
