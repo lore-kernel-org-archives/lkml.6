@@ -4,55 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED1D4C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03A46C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B96B821726
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7A94218D0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 20:00:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="eVLx2Scb"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Af2f5X94"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732547AbfAXUAh (ORCPT
+        id S1732564AbfAXUAm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 15:00:37 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:38735 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732359AbfAXUAe (ORCPT
+        Thu, 24 Jan 2019 15:00:42 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:35726 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732550AbfAXUAk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 15:00:34 -0500
-Received: by mail-pg1-f196.google.com with SMTP id g189so3133416pgc.5
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:00:33 -0800 (PST)
+        Thu, 24 Jan 2019 15:00:40 -0500
+Received: by mail-pg1-f193.google.com with SMTP id s198so3138559pgs.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 12:00:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=tfGb6WOVY/NDozRdyqo5VBI3IXqzYkAU2KTM1oN3JpM=;
-        b=eVLx2Scb54qXLYKHQhAIy8GjghcY+WNLEcnq1+AwxpJbrX8t7UoCTNy9dWt9tXhIYC
-         gu059x4BEqGJQn8NorjkQMj23JRjWw+JCt3C2VXhPiRDDdJaCUGQQkk+9IaSd+gWT2js
-         d7DZW1hYeQ+yJT5ibGVIxU0TAYY8+uKGnvd1E=
+        bh=nTC/8lptSez4amD4f7Lu7tHja/dD9UCt2oa1EGJJvZM=;
+        b=Af2f5X94ZBjtQ11n/A5b7Aw/KB8nKICv//dxt5sSlx4I30G3uZ6MUD5W24gW6+MyOb
+         rXLTNErf6wqgAIJEmNvz2PDAjAElEvZT8X42vm/rfRayCsRNZqOCgsbY+OzFauuqps0M
+         ANN2ieL0X6tqmqcDZCAxOPhg9KKfyz1DKM3Wo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=tfGb6WOVY/NDozRdyqo5VBI3IXqzYkAU2KTM1oN3JpM=;
-        b=m1U6THdf/PtlCO4EvfDfU/1jmo7G+Z7kIzZzrEYYVx4buyNVmSkQL3nog+uEr+5szY
-         f5mMtaEXb2EY5DPbS00npbVjs/xbE98a8lnosP54NW+6gkauIgTDUijCIAMeCu7ZWaDR
-         xEiTwTsNXj2kTb4C2iiSFZGTE01aSbe0h1kvImQWe/idUEvlPBdUG7jxwVLRAxQWY5VT
-         OPxgENlA08iQUDAw1O6EWgh1w5FKMju6DxjaYzPR4JU3wrDxlK0EV28IrTMQXTSmUGWS
-         UeptYA3jJMdOlH96Yh+JrvNKM/42Zv/RWdFrpjY+8m6df2Nohgcg6vTc1eazqlQmBE8O
-         a2Og==
-X-Gm-Message-State: AJcUukfWZWVLFSf9Mr4UFMdAoXGAiXGtfGoDbr5xpCxOuPxKbk0A1SdP
-        zUKj2xsl/zQAF3Cg/DEWEfGRyA==
-X-Google-Smtp-Source: ALg8bN5zmYWSAPZjYomfF7mFoGKlUGobeKyjO/hE41V45BdXSRRWP3tXd9FVoYY6eSB/NMn3NEw4Pg==
-X-Received: by 2002:a63:5455:: with SMTP id e21mr7255476pgm.316.1548360033058;
-        Thu, 24 Jan 2019 12:00:33 -0800 (PST)
+        bh=nTC/8lptSez4amD4f7Lu7tHja/dD9UCt2oa1EGJJvZM=;
+        b=PV+yyaPxQVr1DdetMnGctabiySz9ashtPfbBozFN4HxVXKS3EszZ5hGL8GWqki/chB
+         2bQeVgGOpYCFHJTq/R1Io2664cM+cOkMFYV9HsUNmADnhgLYo9upOTv8/y7gFBOSVWI+
+         oTT3BATXJaNdykTAxdE9ezcKPziVkVh6ISGLpwv/uzOQBjBbTgc10nQpPogwnZGDUz7t
+         8tNRX/JgmKbgAxH3t/wnvc9icEddvwnUBDnxHc9olKjdr5ZvG3Oh6+L16tjo3jrv8gpn
+         MFKNUwgefRq+2LSJf2dlBTOoR8M/mebOvFioqvtZwuaDz6/mu1GuxEfCCgX6LRCLiTJQ
+         1YFg==
+X-Gm-Message-State: AJcUukdjzgYvKVeb4Fe1SPFXqtg6D/f+MY6oGkUK/TwwX2X9vfogaTNO
+        2CgR8uHJacN9LQO+1szZ2/Do7A==
+X-Google-Smtp-Source: ALg8bN5Vnh9E8n1JL6NCQVZJYWVrp5QTLTb669TJdzflI6wU5Y4q2w+OWRkRtXGBm23GM8DGZD7FNw==
+X-Received: by 2002:a62:32c4:: with SMTP id y187mr8155312pfy.195.1548360039513;
+        Thu, 24 Jan 2019 12:00:39 -0800 (PST)
 Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.00.27
+        by smtp.gmail.com with ESMTPSA id x11sm61637003pfe.72.2019.01.24.12.00.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 12:00:32 -0800 (PST)
+        Thu, 24 Jan 2019 12:00:38 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         David Airlie <airlied@linux.ie>,
@@ -66,9 +66,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Michael Trimarchi <michael@amarulasolutions.com>,
         linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v6 14/22] dt-bindings: sun6i-dsi: Add A64 DSI compatible (w/ A31 fallback)
-Date:   Fri, 25 Jan 2019 01:28:52 +0530
-Message-Id: <20190124195900.22620-15-jagan@amarulasolutions.com>
+Subject: [PATCH v6 15/22] dt-bindings: sun6i-dsi: Add A64 DPHY compatible (w/ A31 fallback)
+Date:   Fri, 25 Jan 2019 01:28:53 +0530
+Message-Id: <20190124195900.22620-16-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190124195900.22620-1-jagan@amarulasolutions.com>
 References: <20190124195900.22620-1-jagan@amarulasolutions.com>
@@ -79,13 +79,10 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The MIPI DSI controller in Allwinner A64 is similar to A33.
+The MIPI DSI PHY controller on Allwinner A64 is similar
+on the one on A31.
 
-But unlike A33, A64 doesn't have DSI_SCLK gating which eventually
-set the mod clock rate for the controller.
-
-So, use the DSI_DPHY gating for the similar purpose of mod clock
-so-that the controller can operate properly.
+Add A64 compatible and append A31 compatible as fallback.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 Reviewed-by: Rob Herring <robh@kernel.org>
@@ -94,17 +91,17 @@ Reviewed-by: Rob Herring <robh@kernel.org>
  1 file changed, 1 insertion(+)
 
 diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-index 69e233e8fad1..dbda2e567760 100644
+index dbda2e567760..9c553637c72b 100644
 --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
 +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
-@@ -12,6 +12,7 @@ The DSI Encoder generates the DSI signal from the TCON's.
+@@ -40,6 +40,7 @@ D-PHY
  Required properties:
    - compatible: value must be one of:
-     * allwinner,sun6i-a31-mipi-dsi
-+    * "allwinner,sun50i-a64-mipi-dsi", "allwinner,sun6i-a31-mipi-dsi"
+     * allwinner,sun6i-a31-mipi-dphy
++    * "allwinner,sun50i-a64-mipi-dphy", "allwinner,sun6i-a31-mipi-dphy"
    - reg: base address and size of memory-mapped region
-   - interrupts: interrupt associated to this IP
    - clocks: phandles to the clocks feeding the DSI encoder
+     * bus: the DSI interface clock
 -- 
 2.18.0.321.gffc6fa0e3
 
