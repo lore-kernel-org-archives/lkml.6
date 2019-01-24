@@ -7,50 +7,47 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3570DC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC58CC282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBF84218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC245217D7
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:24:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357881;
-	bh=WOSuobdXF7+8VoLH6xFvH5VC+16Jj+FKf+fSJRmIMyY=;
+	s=default; t=1548357883;
+	bh=ae2EPSmIspwwbYq2ZTwzE7LmjDUa2QCNWhjmL7RjaLU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Hpqgvt8BhCC7T5oEh0wFaDz2Bt4+3VtD3IryZK8GizUwQKUT4zbZQ9S8aOHUwxLGP
-	 26V2swiYXl9BXDmRstW7a45AmOB7YNSRo+g5/PVSw9Iy1yjNh7lDkJwPuzEJMYaPC0
-	 cCxUDbtaVPHxg/2PwjsEUN40/UW4bG9j5unSBD9Y=
+	b=NQ3urr3O1PbKMsQz/CNpY2abDmRfDRexPtPGDYSc/YkOh0+xGbAp72b6KQqXYtU0o
+	 MVHf/IO4Avt7w52x4SAtdiTKNWijcxEHGjN8piZdBQaEfbdYy01avJx9AMeBZnGPoc
+	 Hx3KLSRC+4LOd1L4VYnqCARGOoWraElIP8MMc5r8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730177AbfAXTYj (ORCPT
+        id S1730192AbfAXTYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:24:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49896 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:24:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730162AbfAXTYg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:24:36 -0500
+        id S1729664AbfAXTYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:24:39 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45FEC218EA;
-        Thu, 24 Jan 2019 19:24:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED89D218D2;
+        Thu, 24 Jan 2019 19:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357875;
-        bh=WOSuobdXF7+8VoLH6xFvH5VC+16Jj+FKf+fSJRmIMyY=;
+        s=default; t=1548357878;
+        bh=ae2EPSmIspwwbYq2ZTwzE7LmjDUa2QCNWhjmL7RjaLU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UTIzZ6wq1wD1zByu4enD17zmjANy3u6i8FroQmlLU1VWveUhS93hC5bQxw7w+wn7X
-         lr7tUuIDK9tCdNbPrTxGAdNDOKgK6rzlNDS46twCUl4kau01eJFOinXvtCyMdfIBQG
-         /vWGuke4hbZSaQYmxAmd2JAVff1zufesd4Un2hIo=
+        b=TljzDFUQLMl1cpkQ+RPmPBsA6NC9sk6Ys/UXwAaoe+3rqh59Cb/F3NPdu++i3Rzny
+         cuhW+BEP8aBsDbh6dxvwtug8bOTYqehOJ3n6qW6H9ixPeO3Qwln0arPyGDPk4TwHgz
+         0DsQS8nwg8JF1ye+Av0JUVcOaCG7mTQ1KClwcNKE=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Muyu Yu <ieatmuttonchuan@gmail.com>,
-        Marcus Meissner <meissner@suse.de>,
-        Michal Kubecek <mkubecek@suse.cz>,
-        Oliver Hartkopp <socketcan@hartkopp.net>,
-        Marc Kleine-Budde <mkl@pengutronix.de>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH 4.4 002/104] can: gw: ensure DLC boundaries after CAN frame modification
-Date:   Thu, 24 Jan 2019 20:18:51 +0100
-Message-Id: <20190124190155.166309765@linuxfoundation.org>
+        stable@vger.kernel.org, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Chao Yu <yuchao0@huawei.com>,
+        Ben Hutchings <ben.hutchings@codethink.co.uk>
+Subject: [PATCH 4.4 020/104] f2fs: fix race condition in between free nid allocator/initializer
+Date:   Thu, 24 Jan 2019 20:19:09 +0100
+Message-Id: <20190124190157.168928312@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190154.968308875@linuxfoundation.org>
 References: <20190124190154.968308875@linuxfoundation.org>
@@ -69,91 +66,137 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-From: Oliver Hartkopp <socketcan@hartkopp.net>
+From: Chao Yu <yuchao0@huawei.com>
 
-commit 0aaa81377c5a01f686bcdb8c7a6929a7bf330c68 upstream.
+commit 30a61ddf8117c26ac5b295e1233eaa9629a94ca3 upstream.
 
-Muyu Yu provided a POC where user root with CAP_NET_ADMIN can create a CAN
-frame modification rule that makes the data length code a higher value than
-the available CAN frame data size. In combination with a configured checksum
-calculation where the result is stored relatively to the end of the data
-(e.g. cgw_csum_xor_rel) the tail of the skb (e.g. frag_list pointer in
-skb_shared_info) can be rewritten which finally can cause a system crash.
+In below concurrent case, allocated nid can be loaded into free nid cache
+and be allocated again.
 
-Michael Kubecek suggested to drop frames that have a DLC exceeding the
-available space after the modification process and provided a patch that can
-handle CAN FD frames too. Within this patch we also limit the length for the
-checksum calculations to the maximum of Classic CAN data length (8).
+Thread A				Thread B
+- f2fs_create
+ - f2fs_new_inode
+  - alloc_nid
+   - __insert_nid_to_list(ALLOC_NID_LIST)
+					- f2fs_balance_fs_bg
+					 - build_free_nids
+					  - __build_free_nids
+					   - scan_nat_page
+					    - add_free_nid
+					     - __lookup_nat_cache
+ - f2fs_add_link
+  - init_inode_metadata
+   - new_inode_page
+    - new_node_page
+     - set_node_addr
+ - alloc_nid_done
+  - __remove_nid_from_list(ALLOC_NID_LIST)
+					     - __insert_nid_to_list(FREE_NID_LIST)
 
-CAN frames that are dropped by these additional checks are counted with the
-CGW_DELETED counter which indicates misconfigurations in can-gw rules.
+This patch makes nat cache lookup and free nid list operation being atomical
+to avoid this race condition.
 
-This fixes CVE-2019-3701.
-
-Reported-by: Muyu Yu <ieatmuttonchuan@gmail.com>
-Reported-by: Marcus Meissner <meissner@suse.de>
-Suggested-by: Michal Kubecek <mkubecek@suse.cz>
-Tested-by: Muyu Yu <ieatmuttonchuan@gmail.com>
-Tested-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Signed-off-by: Oliver Hartkopp <socketcan@hartkopp.net>
-Cc: linux-stable <stable@vger.kernel.org> # >= v3.2
-Signed-off-by: Marc Kleine-Budde <mkl@pengutronix.de>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+[bwh: Backported to 4.4:
+ - add_free_nid() returns 0 in case of any error (except low memory)
+ - Tree/list addition has not been moved into __insert_nid_to_list()]
+Signed-off-by: Ben Hutchings <ben.hutchings@codethink.co.uk>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-
 ---
- net/can/gw.c |   30 +++++++++++++++++++++++++++---
- 1 file changed, 27 insertions(+), 3 deletions(-)
+ fs/f2fs/node.c |   62 +++++++++++++++++++++++++++++++++++++++------------------
+ 1 file changed, 43 insertions(+), 19 deletions(-)
 
---- a/net/can/gw.c
-+++ b/net/can/gw.c
-@@ -418,13 +418,29 @@ static void can_can_gw_rcv(struct sk_buf
- 	while (modidx < MAX_MODFUNCTIONS && gwj->mod.modfunc[modidx])
- 		(*gwj->mod.modfunc[modidx++])(cf, &gwj->mod);
+--- a/fs/f2fs/node.c
++++ b/fs/f2fs/node.c
+@@ -1428,8 +1428,9 @@ static void __del_from_free_nid_list(str
+ static int add_free_nid(struct f2fs_sb_info *sbi, nid_t nid, bool build)
+ {
+ 	struct f2fs_nm_info *nm_i = NM_I(sbi);
+-	struct free_nid *i;
++	struct free_nid *i, *e;
+ 	struct nat_entry *ne;
++	int err = -EINVAL;
  
--	/* check for checksum updates when the CAN frame has been modified */
-+	/* Has the CAN frame been modified? */
- 	if (modidx) {
--		if (gwj->mod.csumfunc.crc8)
-+		/* get available space for the processed CAN frame type */
-+		int max_len = nskb->len - offsetof(struct can_frame, data);
-+
-+		/* dlc may have changed, make sure it fits to the CAN frame */
-+		if (cf->can_dlc > max_len)
-+			goto out_delete;
-+
-+		/* check for checksum updates in classic CAN length only */
-+		if (gwj->mod.csumfunc.crc8) {
-+			if (cf->can_dlc > 8)
-+				goto out_delete;
-+
- 			(*gwj->mod.csumfunc.crc8)(cf, &gwj->mod.csum.crc8);
-+		}
-+
-+		if (gwj->mod.csumfunc.xor) {
-+			if (cf->can_dlc > 8)
-+				goto out_delete;
+ 	if (!available_free_memory(sbi, FREE_NIDS))
+ 		return -1;
+@@ -1438,35 +1439,58 @@ static int add_free_nid(struct f2fs_sb_i
+ 	if (unlikely(nid == 0))
+ 		return 0;
  
--		if (gwj->mod.csumfunc.xor)
- 			(*gwj->mod.csumfunc.xor)(cf, &gwj->mod.csum.xor);
-+		}
+-	if (build) {
+-		/* do not add allocated nids */
+-		ne = __lookup_nat_cache(nm_i, nid);
+-		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
+-				nat_get_blkaddr(ne) != NULL_ADDR))
+-			return 0;
+-	}
+-
+ 	i = f2fs_kmem_cache_alloc(free_nid_slab, GFP_NOFS);
+ 	i->nid = nid;
+ 	i->state = NID_NEW;
+ 
+-	if (radix_tree_preload(GFP_NOFS)) {
+-		kmem_cache_free(free_nid_slab, i);
+-		return 0;
+-	}
++	if (radix_tree_preload(GFP_NOFS))
++		goto err;
+ 
+ 	spin_lock(&nm_i->free_nid_list_lock);
+-	if (radix_tree_insert(&nm_i->free_nid_root, i->nid, i)) {
+-		spin_unlock(&nm_i->free_nid_list_lock);
+-		radix_tree_preload_end();
+-		kmem_cache_free(free_nid_slab, i);
+-		return 0;
++
++	if (build) {
++		/*
++		 *   Thread A             Thread B
++		 *  - f2fs_create
++		 *   - f2fs_new_inode
++		 *    - alloc_nid
++		 *     - __insert_nid_to_list(ALLOC_NID_LIST)
++		 *                     - f2fs_balance_fs_bg
++		 *                      - build_free_nids
++		 *                       - __build_free_nids
++		 *                        - scan_nat_page
++		 *                         - add_free_nid
++		 *                          - __lookup_nat_cache
++		 *  - f2fs_add_link
++		 *   - init_inode_metadata
++		 *    - new_inode_page
++		 *     - new_node_page
++		 *      - set_node_addr
++		 *  - alloc_nid_done
++		 *   - __remove_nid_from_list(ALLOC_NID_LIST)
++		 *                         - __insert_nid_to_list(FREE_NID_LIST)
++		 */
++		ne = __lookup_nat_cache(nm_i, nid);
++		if (ne && (!get_nat_flag(ne, IS_CHECKPOINTED) ||
++				nat_get_blkaddr(ne) != NULL_ADDR))
++			goto err_out;
++
++		e = __lookup_free_nid_list(nm_i, nid);
++		if (e)
++			goto err_out;
  	}
- 
- 	/* clear the skb timestamp if not configured the other way */
-@@ -436,6 +452,14 @@ static void can_can_gw_rcv(struct sk_buf
- 		gwj->dropped_frames++;
- 	else
- 		gwj->handled_frames++;
-+
-+	return;
-+
-+ out_delete:
-+	/* delete frame due to misconfiguration */
-+	gwj->deleted_frames++;
-+	kfree_skb(nskb);
-+	return;
++	if (radix_tree_insert(&nm_i->free_nid_root, i->nid, i))
++		goto err_out;
++	err = 0;
+ 	list_add_tail(&i->list, &nm_i->free_nid_list);
+ 	nm_i->fcnt++;
++err_out:
+ 	spin_unlock(&nm_i->free_nid_list_lock);
+ 	radix_tree_preload_end();
+-	return 1;
++err:
++	if (err)
++		kmem_cache_free(free_nid_slab, i);
++	return !err;
  }
  
- static inline int cgw_register_filter(struct cgw_job *gwj)
+ static void remove_free_nid(struct f2fs_nm_info *nm_i, nid_t nid)
 
 
