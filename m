@@ -2,137 +2,128 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 395FFC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:54:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA9CC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:54:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C632218AF
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:54:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="kxFPPTsC"
+	by mail.kernel.org (Postfix) with ESMTP id 19800218B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 16:54:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728905AbfAXQyC (ORCPT
+        id S1728934AbfAXQyb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 11:54:02 -0500
-Received: from cock.li ([185.100.85.212]:52380 "EHLO cock.li"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727709AbfAXQyC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 11:54:02 -0500
+        Thu, 24 Jan 2019 11:54:31 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:58849 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727658AbfAXQya (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 11:54:30 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212])
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gmiGr-0007cr-4h; Thu, 24 Jan 2019 16:54:29 +0000
+Subject: Re: [PATCH] HID: elan: Make array buf static, shrinks object size
+From:   Colin Ian King <colin.king@canonical.com>
+To:     Jiri Kosina <jikos@kernel.org>,
+        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        linux-input@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20180926084150.17514-1-colin.king@canonical.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=colin.king@canonical.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <11666348-f50a-719f-89d6-d90b0a1ea8f7@canonical.com>
+Date:   Thu, 24 Jan 2019 16:54:28 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1548348839; bh=j+q1NjqRgkdeBIHexjF7fhyzGhND/YanDXQAtXmShH8=;
-        h=Date:From:To:Cc:Subject:From;
-        b=kxFPPTsCKGVpV/dFvK2sq4XbpOx0Fagbfohc5WLH35v8b6VaLyUwZR29ffCI6u/HC
-         DYz1SYKTos+UUUCUqGvWwyFdUyy8Zva7+rdEnK4+OtKprKOz176/cUS18ZOHr4wDLs
-         t1/8j2qAElq4GWpt76d4CATFiY4VUflXC4WjulXlKT5VYSRggDsyv1CaqOZ3ZNyS/7
-         zpLZhemxWgACaUL4EEqfQ5m7v6nY8Hb+LMTVHS8PRESAbVBqWzAMXGXy/zWrbMAvxf
-         69JncV3ej/6hOSRea6PmkSXapKwemyFcgfdQvF5yfvKzOxicevyzKx22Wy2EqI/PeT
-         NXR+14PEySacQ==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
+In-Reply-To: <20180926084150.17514-1-colin.king@canonical.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-Date:   Thu, 24 Jan 2019 16:53:58 +0000
-From:   linuxgpletc@redchan.it
-To:     Boris Lukashev <blukashev@sempervictus.com>
-Cc:     Ivan Ivanov <qmastery16@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: GRSec is vital to Linux security
-Message-ID: <7bdd68b2223ea30da821b37a68d940a7@redchan.it>
-X-Sender: linuxgpletc@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is ample standing to sue. GRSec made it's "access agreement" 
-public,
-which included terms to prevent redistribution (if you redistribute, we
-punish you). Which is a direct violation of the "no additional 
-restrictive terms"
-clause in the GPL.
+ping?
 
-Why won't anyone bring a copyright lawsuit?
-
-Are they happy that GRSec gets to use their code, and prevent anyone 
-from
-freeing the derivative work? The whole point of the GPL is that 
-derivative
-works be under the same terms.
-
-Bradly Spengler has violated this understanding, he thinks that his code
-doesn't need to be under the same terms. The code which is simply a
-derivative work of the linux kernel.
-
-There is a valid, actionable case here.
-
-Any of the programmers / copyright owners who's code he modified can sue 
-him.
-He is violating their terms of use of their software.
-He is in the USA. It's not difficult. Just SUE.
-
-Just because VMWare does things one doesn't like doesn't mean you cannot 
-sue
-Bradly Spengler.
-
-Another thing is, the "Free software" legal "representation" is trash.
-The SFConservancy was run for the longest time by a non-lawyer BKuhn.
-
-He advised "clients" to WAIT it out! And then.. guess what they have 
-waiting years?
-No case because the statute of limitations had been passed.
-
-That's how that baby-faced moron has "helped" the free software legal 
-cause.
-
-You guys need to hire real IP lawyers, not bullshit pretenders.
-And if Bradly is making money, and enough of it, you might have profits 
-you could target.
-
-I kinda think that the "Free software legal" teams exist only to diffuse 
-valid suits,
-and stymie the guys who actually wrote the code and retained their 
-copyrights.
-
-Pure legal malpractice by any accounting.
-
-On 2019-01-24 16:25, Boris Lukashev wrote:
-> You've never heard of VMware, I take it? Its a proprietary half Linux
-> which beats GPL suits with strong arm tactics and technicalities.
-> Unlike grsec, they don't distribute any source, because it's proof of
-> theft... Grsecs back port work is also public, since they're public
-> upstream patches or mailing list patches, the GCC plugins are the real
-> magic... Those aren't as GPL as the kernel, rap is patented, respectre
-> likely will be as well. The critical code changes they need (per CPU
-> PGD, for one) will not be accepted as Linus has "said so." Those code
-> bits are out there...
+On 26/09/2018 09:41, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> Also, doesn't matter if their patch leaks for the most part (4.4 just
-> did get leaked a few weeks back), as I wrote before, nobody really has
-> the time or skill available to maintain at their level of quality...
-> Linux might be free, but it's not something that should be run in
-> production when there's data or resource at stake.
+> Don't populate the array buf on the stack but instead make it
+> static. Makes the object code smaller by 43 bytes:
 > 
-> Is the thought process that they should open up their commercial
-> stable code for free to all? Because RHEL has the same "don't leak"
-> policy on RHEL sources too... VMware even goes so far as to blatantly
-> claim not to use Linux. How about Google's internal Linux?
+> Before:
+>    text	   data	    bss	    dec	    hex	filename
+>    7769	   1520	      0	   9289	   2449	drivers/hid/hid-elan.o
 > 
-> GPL is dead (has been for 20y), build the strongest defenses you can
-> with whatever code you can get and prove, because your adversaries
-> won't care about which license clause their tooling adheres to.
+> After:
+>    text	   data	    bss	    dec	    hex	filename
+>    7662	   1584	      0	   9246	   241e	drivers/hid/hid-elan.o
 > 
-> Boris Lukashev
-> Systems Architect
-> Semper Victus
+> (gcc version 8.2.0 x86_64)
 > 
-> -------- Original Message --------
-> From: linuxgpletc@redchan.it
-> Sent: Wednesday, January 23, 2019 05:35 PM
-> To: bruce@perens.com
-> Subject: Re: GRSec is vital to Linux security
-> CC:
-> moglen@columbia.edu,bkuhn@sfconservancy.org,compliance@sfconservancy.org,blukashev@sempervictus.com,tcallawa@redhat.com,torvalds@osdl.org
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> ---
+>  drivers/hid/hid-elan.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/hid/hid-elan.c b/drivers/hid/hid-elan.c
+> index 07e26c3567eb..05377eec2cb2 100644
+> --- a/drivers/hid/hid-elan.c
+> +++ b/drivers/hid/hid-elan.c
+> @@ -393,7 +393,7 @@ static int elan_start_multitouch(struct hid_device *hdev)
+>  	 * This byte sequence will enable multitouch mode and disable
+>  	 * mouse emulation
+>  	 */
+> -	const unsigned char buf[] = { 0x0D, 0x00, 0x03, 0x21, 0x00 };
+> +	static const unsigned char buf[] = { 0x0D, 0x00, 0x03, 0x21, 0x00 };
+>  	unsigned char *dmabuf = kmemdup(buf, sizeof(buf), GFP_KERNEL);
+>  
+>  	if (!dmabuf)
+> 
+
