@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34486C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:57:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F12D5C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:57:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF6E0218CD
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:57:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE4D52184C
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 17:57:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548352634;
-	bh=STRek1vGlRlm9WWDGBgDNPmpj0OCNt5iVQqgOEFvnjc=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=Q3iV3P6sp9OGsH6PhR7tuyEyejJhfoJxPUhWp7tKHCzqVktHzACqmpaDgQlUwKpjJ
-	 i/5Y6PAAlc7RJItxy0R9Qm7MnYaxOB7fE+mTmmejTAaUDNTpkP0QXSFBi7cAS8ixOB
-	 LcxY8NoR2bJiJJQsrspYCN9fSc4do/6pJz3ZJvGs=
+	s=default; t=1548352637;
+	bh=Mmikw7mc3Aeoj9wCjHnnbDSKLveuAC5HoWVPExUg/JU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=pOMjQyWBIB8h15ZodzVDzvkK6mULZZK7pKC1sMoCe+Qv17rGNNzcWwq3234bYvgOE
+	 i5p+RsA66qxsFu7jO0fTUUfVBWo6NpVxoKCB5UDgWCLnAEFLAP2dbqYRhQ4+lRo/LZ
+	 oQDQNg2Oa+olo5yISNia+WiUWyd9TFn91DtOWrjU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728974AbfAXR5M (ORCPT
+        id S1729134AbfAXR5Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 12:57:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36412 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 12:57:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36424 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbfAXR5L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 12:57:11 -0500
+        id S1726252AbfAXR5M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 12:57:12 -0500
 Received: from sinanubuntu1604.mkjiurmyylmellclgttazegk5f.bx.internal.cloudapp.net (unknown [40.121.135.10])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C5E72184C;
-        Thu, 24 Jan 2019 17:57:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E24B218AF;
+        Thu, 24 Jan 2019 17:57:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548352631;
-        bh=STRek1vGlRlm9WWDGBgDNPmpj0OCNt5iVQqgOEFvnjc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=KhGubvJ7+eeMF2g+4AbQrcadLd1bBmTmKfZ8HzBvKjhU1cpXGAPnhojaqbamLZkDl
-         5wUg89rMu4YVKxBeUF3PS3z2XIZOklc0WuJ8hWUirc71daYvXEJeyar9oEdK19xM+E
-         w+WHQOwbedA+08GG3ZHqg7Tq3aAMGQNp51BLGLOU=
+        s=default; t=1548352632;
+        bh=Mmikw7mc3Aeoj9wCjHnnbDSKLveuAC5HoWVPExUg/JU=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ZYCfhEe+DAM+4YYhrq5DDIqYXKwkPfNmt/KhMiCvvwnWrEowlGL7ka3vlRM3mA6U+
+         ZAqy9fvL3RtIdtfpZq22rSbgUwZin9VMjHaiifglYVB/vB8asCed6CYeiH29RA2NmF
+         eYvUdMA3XQvWKXQytCiD+6o3A+xlvJsZLkjCvdrw=
 From:   Sinan Kaya <okaya@kernel.org>
 To:     linux-next@vger.kernel.org
 Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
@@ -45,10 +45,12 @@ Cc:     linux-acpi@vger.kernel.org, Sinan Kaya <okaya@kernel.org>,
         Andy Shevchenko <andy@infradead.org>,
         platform-driver-x86@vger.kernel.org (open list:X86 PLATFORM DRIVERS),
         linux-kernel@vger.kernel.org (open list)
-Subject: [for next][PATCH v2 1/2] platform/x86: Fix unmet dependency warning for ACPI_CMPC
-Date:   Thu, 24 Jan 2019 17:57:01 +0000
-Message-Id: <20190124175702.4801-1-okaya@kernel.org>
+Subject: [for next][PATCH v2 2/2] platform/x86: Fix unmet dependency warning for SAMSUNG_Q10
+Date:   Thu, 24 Jan 2019 17:57:02 +0000
+Message-Id: <20190124175702.4801-2-okaya@kernel.org>
 X-Mailer: git-send-email 2.19.0
+In-Reply-To: <20190124175702.4801-1-okaya@kernel.org>
+References: <20190124175702.4801-1-okaya@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,18 +58,18 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add BACKLIGHT_LCD_SUPPORT for ACPI_CMPC to fix the
+Add BACKLIGHT_LCD_SUPPORT for SAMSUNG_Q10 to fix the
 warning: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE.
 
-ACPI_CMPC selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
+SAMSUNG_Q10 selects BACKLIGHT_CLASS_DEVICE but BACKLIGHT_CLASS_DEVICE
 depends on BACKLIGHT_LCD_SUPPORT.
 
-Copy BACKLIGHT_LCD_SUPPORT dependency into ACPI_CMPC to fix
+Copy BACKLIGHT_LCD_SUPPORT dependency into SAMSUNG_Q10 to fix:
 
 WARNING: unmet direct dependencies detected for BACKLIGHT_CLASS_DEVICE
   Depends on [n]: HAS_IOMEM [=y] && BACKLIGHT_LCD_SUPPORT [=n]
   Selected by [y]:
-  - ACPI_CMPC [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y] && INPUT [=y] && (RFKILL [=n] || RFKILL [=n]=n)
+  - SAMSUNG_Q10 [=y] && X86 [=y] && X86_PLATFORM_DEVICES [=y] && ACPI [=y]
 
 Signed-off-by: Sinan Kaya <okaya@kernel.org>
 ---
@@ -75,18 +77,18 @@ Signed-off-by: Sinan Kaya <okaya@kernel.org>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 5e2109c54c7c..b84c2c5b6684 100644
+index b84c2c5b6684..129e37c296a7 100644
 --- a/drivers/platform/x86/Kconfig
 +++ b/drivers/platform/x86/Kconfig
-@@ -904,7 +904,7 @@ config TOSHIBA_WMI
+@@ -1127,7 +1127,7 @@ config INTEL_OAKTRAIL
  
- config ACPI_CMPC
- 	tristate "CMPC Laptop Extras"
--	depends on ACPI && INPUT
-+	depends on ACPI && INPUT && BACKLIGHT_LCD_SUPPORT
- 	depends on RFKILL || RFKILL=n
+ config SAMSUNG_Q10
+ 	tristate "Samsung Q10 Extras"
+-	depends on ACPI
++	depends on ACPI && BACKLIGHT_LCD_SUPPORT
  	select BACKLIGHT_CLASS_DEVICE
- 	help
+ 	---help---
+ 	  This driver provides support for backlight control on Samsung Q10
 -- 
 2.19.0
 
