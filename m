@@ -2,56 +2,50 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CD5EC282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9A10C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B99A218E2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACD33218F0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:29:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358176;
-	bh=0TvAFuxmLScwzkVoLj6itgXLuqcvNEVwEN6pL8jQ+to=;
+	s=default; t=1548358179;
+	bh=yOErm59sZM1jEDsbiiyc8NZYFhPU6gbmJWwnIKNDoTo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s67xjJBMge/hQwuoAvPOP1U7nbFKimHJC61rMUK6SvAlQ14RbYDNKX5jbJ4g9dXSu
-	 BtBeFwwqL8Va3vnA8eLkR6VhnKFUKjGF8Fe3A0ZDDV+fQpjQThtZ4gaqK3bLC1Ijeh
-	 Se+0gSbMt0KXJk1s+eRV4HGooHG527OGpmz5LeKU=
+	b=eCTVnLLSBLJtmDw4DDOmHbOFcBxxuOFoIe31rBiU8tTsDLT2G8D0x+vxi6DFmBB1y
+	 i+yZqyBZngeHiAX2O1jAfcvF6yg0T2GnPLpbbXg5MEsAC9E/sWkq1m4qMfKCzT67xT
+	 f1m5MpApROnLniL3eiozqWzSwBKDkWn9Qv6Rr8QE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731220AbfAXT3f (ORCPT
+        id S1731232AbfAXT3i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:29:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56730 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:29:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56826 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730514AbfAXT3c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:29:32 -0500
+        id S1730514AbfAXT3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:29:35 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16A77218E2;
-        Thu, 24 Jan 2019 19:29:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 801AD218E2;
+        Thu, 24 Jan 2019 19:29:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358171;
-        bh=0TvAFuxmLScwzkVoLj6itgXLuqcvNEVwEN6pL8jQ+to=;
+        s=default; t=1548358175;
+        bh=yOErm59sZM1jEDsbiiyc8NZYFhPU6gbmJWwnIKNDoTo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VX62/A2xYAZs78+nC7lNnU+Yclh+WmGXdG7zDYccaryroxe0yQgDvkTvz399W6aQ6
-         xGkUc1h2ycrlTuFN5oA3ZVdDuguAGnnuR8vOc9rxWsaKLHnDiIWQZ/GsI1xvDZuigq
-         QpQ4aYJaAynmlR/sjzL6ZkazoierQG8h1gi91jQo=
+        b=U0HtN4X5spwOjL8Vqk+f7h+vwWz89SBJ/2fKSVnv3HJ1ahaBwEonzSlCNHkPH1vow
+         rabF9QbIMNYuCcB0lJlElkF+mEyHhM+enYMTiUqTP9GkYNVwYGoBtoq+12d8dFoPHP
+         2JW/LGOFEVFfJoWq2i0dSk8QGbIVj6A4HNkLF2YI=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, David Disseldorp <ddiss@suse.de>,
-        Christoph Hellwig <hch@lst.de>,
-        "Bryant G. Ly" <bly@catalogicsoftware.com>,
-        Lee Duncan <lduncan@suse.com>, Hannes Reinecke <hare@suse.com>,
-        Roman Bolshakov <r.bolshakov@yadro.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.9 19/39] scsi: target: use consistent left-aligned ASCII INQUIRY data
-Date:   Thu, 24 Jan 2019 20:20:22 +0100
-Message-Id: <20190124190448.923307908@linuxfoundation.org>
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.9 02/39] ipv6: Consider sk_bound_dev_if when binding a socket to a v4 mapped address
+Date:   Thu, 24 Jan 2019 20:20:05 +0100
+Message-Id: <20190124190448.317122717@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190448.232316246@linuxfoundation.org>
 References: <20190124190448.232316246@linuxfoundation.org>
@@ -70,77 +64,51 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 0de263577de5d5e052be5f4f93334e63cc8a7f0b ]
+From: David Ahern <dsahern@gmail.com>
 
-spc5r17.pdf specifies:
+[ Upstream commit ec90ad334986fa5856d11dd272f7f22fa86c55c4 ]
 
-  4.3.1 ASCII data field requirements
-  ASCII data fields shall contain only ASCII printable characters (i.e.,
-  code values 20h to 7Eh) and may be terminated with one or more ASCII null
-  (00h) characters.  ASCII data fields described as being left-aligned
-  shall have any unused bytes at the end of the field (i.e., highest
-  offset) and the unused bytes shall be filled with ASCII space characters
-  (20h).
+Similar to c5ee066333eb ("ipv6: Consider sk_bound_dev_if when binding a
+socket to an address"), binding a socket to v4 mapped addresses needs to
+consider if the socket is bound to a device.
 
-LIO currently space-pads the T10 VENDOR IDENTIFICATION and PRODUCT
-IDENTIFICATION fields in the standard INQUIRY data. However, the PRODUCT
-REVISION LEVEL field in the standard INQUIRY data as well as the T10 VENDOR
-IDENTIFICATION field in the INQUIRY Device Identification VPD Page are
-zero-terminated/zero-padded.
+This problem also exists from the beginning of git history.
 
-Fix this inconsistency by using space-padding for all of the above fields.
-
-Signed-off-by: David Disseldorp <ddiss@suse.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Reviewed-by: Bryant G. Ly <bly@catalogicsoftware.com>
-Reviewed-by: Lee Duncan <lduncan@suse.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Reviewed-by: Roman Bolshakov <r.bolshakov@yadro.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/target/target_core_spc.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ net/ipv6/af_inet6.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/target/target_core_spc.c b/drivers/target/target_core_spc.c
-index 2a91ed3ef380..37d7d57cf2c6 100644
---- a/drivers/target/target_core_spc.c
-+++ b/drivers/target/target_core_spc.c
-@@ -108,12 +108,17 @@ spc_emulate_inquiry_std(struct se_cmd *cmd, unsigned char *buf)
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -306,6 +306,7 @@ int inet6_bind(struct socket *sock, stru
  
- 	buf[7] = 0x2; /* CmdQue=1 */
+ 	/* Check if the address belongs to the host. */
+ 	if (addr_type == IPV6_ADDR_MAPPED) {
++		struct net_device *dev = NULL;
+ 		int chk_addr_ret;
  
--	memcpy(&buf[8], "LIO-ORG ", 8);
--	memset(&buf[16], 0x20, 16);
-+	/*
-+	 * ASCII data fields described as being left-aligned shall have any
-+	 * unused bytes at the end of the field (i.e., highest offset) and the
-+	 * unused bytes shall be filled with ASCII space characters (20h).
-+	 */
-+	memset(&buf[8], 0x20, 8 + 16 + 4);
-+	memcpy(&buf[8], "LIO-ORG", sizeof("LIO-ORG") - 1);
- 	memcpy(&buf[16], dev->t10_wwn.model,
--	       min_t(size_t, strlen(dev->t10_wwn.model), 16));
-+	       strnlen(dev->t10_wwn.model, 16));
- 	memcpy(&buf[32], dev->t10_wwn.revision,
--	       min_t(size_t, strlen(dev->t10_wwn.revision), 4));
-+	       strnlen(dev->t10_wwn.revision, 4));
- 	buf[4] = 31; /* Set additional length to 31 */
+ 		/* Binding to v4-mapped address on a v6-only socket
+@@ -316,9 +317,17 @@ int inet6_bind(struct socket *sock, stru
+ 			goto out;
+ 		}
  
- 	return 0;
-@@ -251,7 +256,9 @@ check_t10_vend_desc:
- 	buf[off] = 0x2; /* ASCII */
- 	buf[off+1] = 0x1; /* T10 Vendor ID */
- 	buf[off+2] = 0x0;
--	memcpy(&buf[off+4], "LIO-ORG", 8);
-+	/* left align Vendor ID and pad with spaces */
-+	memset(&buf[off+4], 0x20, 8);
-+	memcpy(&buf[off+4], "LIO-ORG", sizeof("LIO-ORG") - 1);
- 	/* Extra Byte for NULL Terminator */
- 	id_len++;
- 	/* Identifier Length */
--- 
-2.19.1
-
++		if (sk->sk_bound_dev_if) {
++			dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
++			if (!dev) {
++				err = -ENODEV;
++				goto out;
++			}
++		}
++
+ 		/* Reproduce AF_INET checks to make the bindings consistent */
+ 		v4addr = addr->sin6_addr.s6_addr32[3];
+-		chk_addr_ret = inet_addr_type(net, v4addr);
++		chk_addr_ret = inet_addr_type_dev_table(net, dev, v4addr);
+ 		if (!net->ipv4.sysctl_ip_nonlocal_bind &&
+ 		    !(inet->freebind || inet->transparent) &&
+ 		    v4addr != htonl(INADDR_ANY) &&
 
 
