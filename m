@@ -2,96 +2,79 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5814CC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:39:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D41B7C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 25ADB21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:39:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF69621872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 10:40:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727538AbfAXKjZ (ORCPT
+        id S1727574AbfAXKkZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 05:39:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35622 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725986AbfAXKjZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 05:39:25 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 04F0112E3;
-        Thu, 24 Jan 2019 10:39:25 +0000 (UTC)
-Received: from krava (ovpn-204-178.brq.redhat.com [10.40.204.178])
-        by smtp.corp.redhat.com (Postfix) with SMTP id F363B6B8FB;
-        Thu, 24 Jan 2019 10:39:22 +0000 (UTC)
+        Thu, 24 Jan 2019 05:40:25 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:49385 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726034AbfAXKkY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 05:40:24 -0500
+Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id dbbc36c8b17a10fc; Thu, 24 Jan 2019 11:40:22 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Yangtao Li <tiny.windzz@gmail.com>
+Cc:     daniel.lezcano@linaro.org, linux-pm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] cpuidle: use BIT() for idle state flags and remove CPUIDLE_DRIVER_FLAGS_MASK
 Date:   Thu, 24 Jan 2019 11:39:22 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Tony Jones <tonyj@suse.de>
-Cc:     linux-kernel@vger.kernel.org,
-        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
-        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
-        linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH 0/6] Fix issues with Python3 scripting
-Message-ID: <20190124103922.GB13852@krava>
-References: <20190124005229.16146-1-tonyj@suse.de>
+Message-ID: <11142952.kgryYQbe4O@aspire.rjw.lan>
+In-Reply-To: <20190115172210.19793-1-tiny.windzz@gmail.com>
+References: <20190115172210.19793-1-tiny.windzz@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124005229.16146-1-tonyj@suse.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Thu, 24 Jan 2019 10:39:25 +0000 (UTC)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 04:52:23PM -0800, Tony Jones wrote:
-> Seeteena posted, earlier this week, some patches to add Python3 support
-> to scripts/python/*.py.  Unfortunately there were some issues with these
-> patches (such as: https://lkml.org/lkml/2019/1/17/351)
+On Tuesday, January 15, 2019 6:22:10 PM CET Yangtao Li wrote:
+> Use BIT() macro to do a small tidy-up. The CPUIDLE_DRIVER_FLAGS_MASK
+>  is not being used, so remove it.
 > 
-> Since I already had a tested set of patches in openSUSE:Factory and 
-> SLE15-SP1 and was about to submit them, Seeteena and I that agreed I 
-> should post my patches not involving scripts/python/*.py and Seeteena 
-> will later resubmit the patches for scripts/python/*.py incorporating 
-> my review feedback under a joint signed-off-by.
+> Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+> ---
+>  include/linux/cpuidle.h | 8 +++-----
+>  1 file changed, 3 insertions(+), 5 deletions(-)
 > 
-> It should be noted that the use of "from __future__ import print_function" 
-> (see: https://lkml.org/lkml/2019/1/16/641) and "except as" (see change to:
-> tests/attr.py) implies Python2 >= 2.6 as the necessary support has not 
-> been backported to prior versions.  I am not sure if it's worth detecting 
-> <2.6 at build time or whether it's sufficiently old as to be a non-issue?
+> diff --git a/include/linux/cpuidle.h b/include/linux/cpuidle.h
+> index 4dff74f48d4b..3b39472324a3 100644
+> --- a/include/linux/cpuidle.h
+> +++ b/include/linux/cpuidle.h
+> @@ -69,11 +69,9 @@ struct cpuidle_state {
+>  
+>  /* Idle State Flags */
+>  #define CPUIDLE_FLAG_NONE       (0x00)
+> -#define CPUIDLE_FLAG_POLLING	(0x01) /* polling state */
+> -#define CPUIDLE_FLAG_COUPLED	(0x02) /* state applies to multiple cpus */
+> -#define CPUIDLE_FLAG_TIMER_STOP (0x04)  /* timer is stopped on this state */
+> -
+> -#define CPUIDLE_DRIVER_FLAGS_MASK (0xFFFF0000)
+> +#define CPUIDLE_FLAG_POLLING	BIT(0) /* polling state */
+> +#define CPUIDLE_FLAG_COUPLED	BIT(1) /* state applies to multiple cpus */
+> +#define CPUIDLE_FLAG_TIMER_STOP BIT(2) /* timer is stopped on this state */
+>  
+>  struct cpuidle_device_kobj;
+>  struct cpuidle_state_kobj;
 > 
-> The shebang changes were driven mostly by our build process as it scans
-> all files within an rpm and the shebangs would result in a rpm requires
-> on the python2 binary when BuildRequires was python3-devel. I think they 
-> make sense to apply upstream but understand totally if it's prefered we 
-> keep them local.
-> 
-> These changes have been tested with PYTHON=python2 (v2.7) and 
-> PYTHON=python3 (v3.6) on latest openSUSE Tumbleweed.  I did notice that 
 
-please try latest code from Arnaldo, we just had fix in that area
+Applied, even though I'm not a big fan of conversions from open-coded
+values (as long as they are correct) to BIT(), unless you are going to
+add a new flag and want to use BIT() for that, because that doesn't really
+matter and only makes the lives of 'git blame' users harder.
 
-> test #18 "'import perf' in python" is failing on my system without these 
-> changes. I'll look at it further but didn't want to hold up Seeteena's 
-> resubmit.
-> 
-> Tony Jones (6):
->   perf script python: Add trace_context extension module to sys,modules
->   perf script python: Use PyBytes for attr in trace-event-python
->   perf script python: remove explicit shebang from setup.py
->   perf script python: remove explicit shebang from tests/attr.c
->   perf script python: remove explicit shebang from Python scripts
->   perf script python: add Python3 support to tests/attr.py
+However, in this particular case, the removal of the unused symbol is
+legitimate IMO.
 
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-
-thanks,
-jirka
