@@ -2,448 +2,355 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=CHARSET_FARAWAY_HEADER,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E93C2C282C2
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3CB7C282C0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:52:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9897D21872
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:45:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chrisdown.name header.i=@chrisdown.name header.b="ML8W41+v"
+	by mail.kernel.org (Postfix) with ESMTP id ADDCA21872
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 01:52:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727132AbfAXBo7 (ORCPT
+        id S1726784AbfAXBwe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 23 Jan 2019 20:44:59 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:43436 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726366AbfAXBo7 (ORCPT
+        Wed, 23 Jan 2019 20:52:34 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:50788 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726236AbfAXBwe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 23 Jan 2019 20:44:59 -0500
-Received: by mail-yw1-f68.google.com with SMTP id n21so1757181ywd.10
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Jan 2019 17:44:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chrisdown.name; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=CoZRAvS6SN4pkwlzDcBw2DviWevrAqcBqOlAzSeAjrc=;
-        b=ML8W41+vMN4Jp7loiCVrod3sw4EAOfakMmvSGHcKBde395wrrPOsngLbT9RS6BwUWW
-         9+ipX3p7UrpUHiFqXwIqpXTpbfp7cAaOHfV/YJV1Sf0K1l2wNWHL6x2z+Hu1p6yXJ+sK
-         SVDUBCSCjOLZijo6/HGlr6FtMW3Av2PRajLoc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=CoZRAvS6SN4pkwlzDcBw2DviWevrAqcBqOlAzSeAjrc=;
-        b=sjZ5Tt6z/QTI9JqzJI+KqYLz1TlErL5w4n77cbHT2agPkEkaF0RsQfvTbZlbVSCz/j
-         6OJF0wyXPRhP5dp6Mksxd3YlP1v+y4+fA0uHwdK42b+6Y2A7ituC7JKGWuAhH/5ZCJYp
-         HBSHWKTCHjBzsH0ZFd8+e3ed3+DeuPssr08OhvdQyDrlx6/Sj7P7G4h8BWlYEiF7y/6e
-         yZEdw8/ayCSVNZ5ZvTHhoqlt8WYaXox2Au5sTToThLZG+Hb78tVkQoMKQDdkvI5uoUGi
-         kU52Tz/cdwllr8zXY/khl7HM3bqeG5lS+VhrfMjb6liNoygqtuCTNj9GwIi/fiLHToRq
-         UbPg==
-X-Gm-Message-State: AJcUukeFrfowbWJYtOlTLO0ljckoEq5uTBhyGfcY2UIeDeiYkGmg0+Vy
-        apj+5SvopQQ5E1wAwAyrBdcfEQ==
-X-Google-Smtp-Source: ALg8bN4itWYdUMtB66/xqHwFPLXe1tO7Rw5eaGl/lB0z0wS8QqLVK0l9hzw6GVi/QqvcXUNK59UbnQ==
-X-Received: by 2002:a81:29cc:: with SMTP id p195mr4576649ywp.407.1548294297310;
-        Wed, 23 Jan 2019 17:44:57 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::4:a24b])
-        by smtp.gmail.com with ESMTPSA id l140sm9711971ywe.77.2019.01.23.17.44.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 23 Jan 2019 17:44:56 -0800 (PST)
-Date:   Wed, 23 Jan 2019 20:44:55 -0500
-From:   Chris Down <chris@chrisdown.name>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com
-Subject: [PATCH] mm: Proportional memory.{low,min} reclaim
-Message-ID: <20190124014455.GA6396@chrisdown.name>
+        Wed, 23 Jan 2019 20:52:34 -0500
+Received: from fsav404.sakura.ne.jp (fsav404.sakura.ne.jp [133.242.250.103])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0O1qUNe069051;
+        Thu, 24 Jan 2019 10:52:31 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav404.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp);
+ Thu, 24 Jan 2019 10:52:30 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav404.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0O1qUPr069047;
+        Thu, 24 Jan 2019 10:52:30 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: (from i-love@localhost)
+        by www262.sakura.ne.jp (8.15.2/8.15.2/Submit) id x0O1qUUU069046;
+        Thu, 24 Jan 2019 10:52:30 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Message-Id: <201901240152.x0O1qUUU069046@www262.sakura.ne.jp>
+X-Authentication-Warning: www262.sakura.ne.jp: i-love set sender to penguin-kernel@i-love.sakura.ne.jp using -f
+Subject: Re: possible deadlock in =?ISO-2022-JP?B?X19kb19wYWdlX2ZhdWx0?=
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Todd Kjos <tkjos@google.com>,
+        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
+        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
+        jack@suse.cz, jrdr.linux@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        syzkaller-bugs@googlegroups.com,
+        Arve =?UTF-8?B?SGrDuG5uZXbDpWc=?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Date:   Thu, 24 Jan 2019 10:52:30 +0900
+References: <201901230201.x0N214eq043832@www262.sakura.ne.jp> <20190123155751.GA168927@google.com>
+In-Reply-To: <20190123155751.GA168927@google.com>
+Content-Type: text/plain; charset="ISO-2022-JP"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cgroup v2 introduces two memory protection thresholds: memory.low
-(best-effort) and memory.min (hard protection). While they generally do
-what they say on the tin, there is a limitation in their implementation
-that makes them difficult to use effectively: that cliff behaviour often
-manifests when they become eligible for reclaim. This patch implements
-more intuitive and usable behaviour, where we gradually mount more
-reclaim pressure as cgroups further and further exceed their protection
-thresholds.
+Joel Fernandes wrote:
+> > Anyway, I need your checks regarding whether this approach is waiting for
+> > completion at all locations which need to wait for completion.
+> 
+> I think you are waiting in unwanted locations. The only location you need to
+> wait in is ashmem_pin_unpin.
+> 
+> So, to my eyes all that is needed to fix this bug is:
+> 
+> 1. Delete the range from the ashmem_lru_list
+> 2. Release the ashmem_mutex
+> 3. fallocate the range.
+> 4. Do the completion so that any waiting pin/unpin can proceed.
+> 
+> Could you clarify why you feel you need to wait for completion at those other
+> locations?
 
-This cliff edge behaviour happens because we only choose whether or not
-to reclaim based on whether the memcg is within its protection limits
-(see the use of mem_cgroup_protected in shrink_node), but we don't vary
-our reclaim behaviour based on this information. Imagine the following
-timeline, with the numbers the lruvec size in this zone:
+Because I don't know how ashmem works.
 
-1. memory.low=1000000, memory.current=999999. 0 pages may be scanned.
-2. memory.low=1000000, memory.current=1000000. 0 pages may be scanned.
-3. memory.low=1000000, memory.current=1000001. 1000001* pages may be
-   scanned. (?!)
+> 
+> Note that once a range is unpinned, it is open sesame and userspace cannot
+> really expect consistent data from such range till it is pinned again.
 
-* Of course, we won't usually scan all available pages in the zone even
-  without this patch because of scan control priority, over-reclaim
-  protection, etc. However, as shown by the tests at the end, these
-  techniques don't sufficiently throttle such an extreme change in
-  input, so cliff-like behaviour isn't really averted by their existence
-  alone.
+Then, I'm tempted to eliminate shrinker and LRU list (like a draft patch shown
+below). I think this is not equivalent to current code because this shrinks
+upon only range_alloc() time and I don't know whether it is OK to temporarily
+release ashmem_mutex during range_alloc() at "Case #4" of ashmem_pin(), but
+can't we go this direction? 
 
-Here's an example of how this plays out in practice. At Facebook, we are
-trying to protect various workloads from "system" software, like
-configuration management tools, metric collectors, etc (see this[0] case
-study). In order to find a suitable memory.low value, we start by
-determining the expected memory range within which the workload will be
-comfortable operating. This isn't an exact science -- memory usage
-deemed "comfortable" will vary over time due to user behaviour,
-differences in composition of work, etc, etc. As such we need to
-ballpark memory.low, but doing this is currently problematic:
+By the way, why not to check range_alloc() failure before calling range_shrink() ?
 
-1. If we end up setting it too low for the workload, it won't have *any*
-   effect (see discussion above). The group will receive the full weight
-   of reclaim and won't have any priority while competing with the less
-   important system software, as if we had no memory.low configured at
-   all.
-
-2. Because of this behaviour, we end up erring on the side of setting it
-   too high, such that the comfort range is reliably covered. However,
-   protected memory is completely unavailable to the rest of the system,
-   so we might cause undue memory and IO pressure there when we *know*
-   we have some elasticity in the workload.
-
-3. Even if we get the value totally right, smack in the middle of the
-   comfort zone, we get extreme jumps between no pressure and full
-   pressure that cause unpredictable pressure spikes in the workload due
-   to the current binary reclaim behaviour.
-
-With this patch, we can set it to our ballpark estimation without too
-much worry. Any undesirable behaviour, such as too much or too little
-reclaim pressure on the workload or system will be proportional to how
-far our estimation is off. This means we can set memory.low much more
-conservatively and thus waste less resources *without* the risk of the
-workload falling off a cliff if we overshoot.
-
-As a more abstract technical description, this unintuitive behaviour
-results in having to give high-priority workloads a large protection
-buffer on top of their expected usage to function reliably, as otherwise
-we have abrupt periods of dramatically increased memory pressure which
-hamper performance.  Having to set these thresholds so high wastes
-resources and generally works against the principle of work
-conservation. In addition, having proportional memory reclaim behaviour
-has other benefits. Most notably, before this patch it's basically
-mandatory to set memory.low to a higher than desirable value because
-otherwise as soon as you exceed memory.low, all protection is lost, and
-all pages are eligible to scan again. By contrast, having a gradual ramp
-in reclaim pressure means that you now still get some protection when
-thresholds are exceeded, which means that one can now be more
-comfortable setting memory.low to lower values without worrying that all
-protection will be lost. This is important because workingset size is
-really hard to know exactly, especially with variable workloads, so at
-least getting *some* protection if your workingset size grows larger
-than you expect increases user confidence in setting memory.low without
-a huge buffer on top being needed.
-
-Thanks a lot to Johannes Weiner and Tejun Heo for their advice and
-assistance in thinking about how to make this work better.
-
-In testing these changes, I intended to verify that:
-
-1. Changes in page scanning become gradual and proportional instead of
-   binary.
-
-   To test this, I experimented stepping further and further down
-   memory.low protection on a workload that floats around 19G workingset
-   when under memory.low protection, watching page scan rates for the
-   workload cgroup:
-
-   +------------+-----------------+--------------------+--------------+
-   | memory.low | test (pgscan/s) | control (pgscan/s) | % of control |
-   +------------+-----------------+--------------------+--------------+
-   |        21G |               0 |                  0 | N/A          |
-   |        17G |             867 |               3799 | 23%          |
-   |        12G |            1203 |               3543 | 34%          |
-   |         8G |            2534 |               3979 | 64%          |
-   |         4G |            3980 |               4147 | 96%          |
-   |          0 |            3799 |               3980 | 95%          |
-   +------------+-----------------+--------------------+--------------+
-
-   As you can see, the test kernel (with a kernel containing this patch)
-   ramps up page scanning significantly more gradually than the control
-   kernel (without this patch).
-
-2. More gradual ramp up in reclaim aggression doesn't result in
-   premature OOMs.
-
-   To test this, I wrote a script that slowly increments the number of
-   pages held by stress(1)'s --vm-keep mode until a production system
-   entered severe overall memory contention. This script runs in a
-   highly protected slice taking up the majority of available system
-   memory. Watching vmstat revealed that page scanning continued
-   essentially nominally between test and control, without causing
-   forward reclaim progress to become arrested.
-
-[0]: https://facebookmicrosites.github.io/cgroup2/docs/overview.html#case-study-the-fbtax2-project
-
-Signed-off-by: Chris Down <chris@chrisdown.name>
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: Dennis Zhou <dennis@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Cc: cgroups@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: kernel-team@fb.com
 ---
- Documentation/admin-guide/cgroup-v2.rst | 20 +++++--
- include/linux/memcontrol.h              | 17 ++++++
- mm/memcontrol.c                         |  5 ++
- mm/vmscan.c                             | 76 +++++++++++++++++++++++--
- 4 files changed, 106 insertions(+), 12 deletions(-)
+ drivers/staging/android/ashmem.c | 154 +++++--------------------------
+ 1 file changed, 21 insertions(+), 133 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index 7bf3f129c68b..8ed408166890 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -606,8 +606,8 @@ on an IO device and is an example of this type.
- Protections
- -----------
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index 90a8a9f1ac7d..90668eebf35b 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -53,7 +53,6 @@ struct ashmem_area {
  
--A cgroup is protected to be allocated upto the configured amount of
--the resource if the usages of all its ancestors are under their
-+A cgroup is protected upto the configured amount of the resource
-+as long as the usages of all its ancestors are under their
- protected levels.  Protections can be hard guarantees or best effort
- soft boundaries.  Protections can also be over-committed in which case
- only upto the amount available to the parent is protected among
-@@ -1020,7 +1020,10 @@ PAGE_SIZE multiple when read back.
- 	is within its effective min boundary, the cgroup's memory
- 	won't be reclaimed under any conditions. If there is no
- 	unprotected reclaimable memory available, OOM killer
--	is invoked.
-+	is invoked. Above the effective min boundary (or
-+	effective low boundary if it is higher), pages are reclaimed
-+	proportionally to the overage, reducing reclaim pressure for
-+	smaller overages.
+ /**
+  * struct ashmem_range - A range of unpinned/evictable pages
+- * @lru:	         The entry in the LRU list
+  * @unpinned:	         The entry in its area's unpinned list
+  * @asma:	         The associated anonymous shared memory area.
+  * @pgstart:	         The starting page (inclusive)
+@@ -64,7 +63,6 @@ struct ashmem_area {
+  * It is protected by 'ashmem_mutex'
+  */
+ struct ashmem_range {
+-	struct list_head lru;
+ 	struct list_head unpinned;
+ 	struct ashmem_area *asma;
+ 	size_t pgstart;
+@@ -72,15 +70,8 @@ struct ashmem_range {
+ 	unsigned int purged;
+ };
  
-        Effective min boundary is limited by memory.min values of
- 	all ancestor cgroups. If there is memory.min overcommitment
-@@ -1042,7 +1045,10 @@ PAGE_SIZE multiple when read back.
- 	Best-effort memory protection.  If the memory usage of a
- 	cgroup is within its effective low boundary, the cgroup's
- 	memory won't be reclaimed unless memory can be reclaimed
--	from unprotected cgroups.
-+	from unprotected cgroups.  Above the effective low boundary (or
-+	effective min boundary if it is higher), pages are reclaimed
-+	proportionally to the overage, reducing reclaim pressure for
-+	smaller overages.
+-/* LRU list of unpinned pages, protected by ashmem_mutex */
+-static LIST_HEAD(ashmem_lru_list);
+-
+-/*
+- * long lru_count - The count of pages on our LRU list.
+- *
+- * This is protected by ashmem_mutex.
+- */
+-static unsigned long lru_count;
++static atomic_t ashmem_purge_inflight = ATOMIC_INIT(0);
++static DECLARE_WAIT_QUEUE_HEAD(ashmem_purge_wait);
  
- 	Effective low boundary is limited by memory.low values of
- 	all ancestor cgroups. If there is memory.low overcommitment
-@@ -2283,8 +2289,10 @@ system performance due to overreclaim, to the point where the feature
- becomes self-defeating.
- 
- The memory.low boundary on the other hand is a top-down allocated
--reserve.  A cgroup enjoys reclaim protection when it's within its low,
--which makes delegation of subtrees possible.
-+reserve.  A cgroup enjoys reclaim protection when it's within its
-+effective low, which makes delegation of subtrees possible. It also
-+enjoys having reclaim pressure proportional to its overage when
-+above its effective low.
- 
- The original high boundary, the hard limit, is defined as a strict
- limit that can not budge, even if the OOM killer has to be called.
-diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-index b0eb29ea0d9c..290cfbfd60cd 100644
---- a/include/linux/memcontrol.h
-+++ b/include/linux/memcontrol.h
-@@ -333,6 +333,11 @@ static inline bool mem_cgroup_disabled(void)
- 	return !cgroup_subsys_enabled(memory_cgrp_subsys);
+ /*
+  * ashmem_mutex - protects the list of and each individual ashmem_area
+@@ -97,7 +88,7 @@ static inline unsigned long range_size(struct ashmem_range *range)
+ 	return range->pgend - range->pgstart + 1;
  }
  
-+static inline unsigned long mem_cgroup_protection(struct mem_cgroup *memcg)
-+{
-+	return max(READ_ONCE(memcg->memory.emin), READ_ONCE(memcg->memory.elow));
-+}
-+
- enum mem_cgroup_protection mem_cgroup_protected(struct mem_cgroup *root,
- 						struct mem_cgroup *memcg);
- 
-@@ -526,6 +531,8 @@ void mem_cgroup_handle_over_high(void);
- 
- unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg);
- 
-+unsigned long mem_cgroup_size(struct mem_cgroup *memcg);
-+
- void mem_cgroup_print_oom_context(struct mem_cgroup *memcg,
- 				struct task_struct *p);
- 
-@@ -819,6 +826,11 @@ static inline void memcg_memory_event_mm(struct mm_struct *mm,
+-static inline bool range_on_lru(struct ashmem_range *range)
++static inline bool range_not_purged(struct ashmem_range *range)
  {
+ 	return range->purged == ASHMEM_NOT_PURGED;
  }
+@@ -133,32 +124,6 @@ static inline bool range_before_page(struct ashmem_range *range, size_t page)
  
-+static inline unsigned long mem_cgroup_protection(struct mem_cgroup *memcg)
-+{
-+	return 0;
-+}
-+
- static inline enum mem_cgroup_protection mem_cgroup_protected(
- 	struct mem_cgroup *root, struct mem_cgroup *memcg)
- {
-@@ -971,6 +983,11 @@ static inline unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
+ #define PROT_MASK		(PROT_EXEC | PROT_READ | PROT_WRITE)
+ 
+-/**
+- * lru_add() - Adds a range of memory to the LRU list
+- * @range:     The memory range being added.
+- *
+- * The range is first added to the end (tail) of the LRU list.
+- * After this, the size of the range is added to @lru_count
+- */
+-static inline void lru_add(struct ashmem_range *range)
+-{
+-	list_add_tail(&range->lru, &ashmem_lru_list);
+-	lru_count += range_size(range);
+-}
+-
+-/**
+- * lru_del() - Removes a range of memory from the LRU list
+- * @range:     The memory range being removed
+- *
+- * The range is first deleted from the LRU list.
+- * After this, the size of the range is removed from @lru_count
+- */
+-static inline void lru_del(struct ashmem_range *range)
+-{
+-	list_del(&range->lru);
+-	lru_count -= range_size(range);
+-}
+-
+ /**
+  * range_alloc() - Allocates and initializes a new ashmem_range structure
+  * @asma:	   The associated ashmem_area
+@@ -188,9 +153,23 @@ static int range_alloc(struct ashmem_area *asma,
+ 
+ 	list_add_tail(&range->unpinned, &prev_range->unpinned);
+ 
+-	if (range_on_lru(range))
+-		lru_add(range);
++	if (range_not_purged(range)) {
++		loff_t start = range->pgstart * PAGE_SIZE;
++		loff_t end = (range->pgend + 1) * PAGE_SIZE;
++		struct file *f = range->asma->file;
+ 
++		get_file(f);
++		atomic_inc(&ashmem_purge_inflight);
++		range->purged = ASHMEM_WAS_PURGED;
++		mutex_unlock(&ashmem_mutex);
++		f->f_op->fallocate(f,
++				   FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
++				   start, end - start);
++		fput(f);
++		if (atomic_dec_and_test(&ashmem_purge_inflight))
++			wake_up(&ashmem_purge_wait);
++		mutex_lock(&ashmem_mutex);
++	}
  	return 0;
  }
  
-+static inline unsigned long mem_cgroup_size(struct mem_cgroup *memcg)
-+{
-+	return 0;
-+}
-+
- static inline void
- mem_cgroup_print_oom_context(struct mem_cgroup *memcg, struct task_struct *p)
+@@ -201,8 +180,6 @@ static int range_alloc(struct ashmem_area *asma,
+ static void range_del(struct ashmem_range *range)
  {
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index 18f4aefbe0bf..1d2b2aaf124d 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -1377,6 +1377,11 @@ unsigned long mem_cgroup_get_max(struct mem_cgroup *memcg)
- 	return max;
+ 	list_del(&range->unpinned);
+-	if (range_on_lru(range))
+-		lru_del(range);
+ 	kmem_cache_free(ashmem_range_cachep, range);
  }
  
-+unsigned long mem_cgroup_size(struct mem_cgroup *memcg)
-+{
-+	return page_counter_read(&memcg->memory);
-+}
-+
- static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 				     int order)
+@@ -214,20 +191,12 @@ static void range_del(struct ashmem_range *range)
+  *
+  * This does not modify the data inside the existing range in any way - It
+  * simply shrinks the boundaries of the range.
+- *
+- * Theoretically, with a little tweaking, this could eventually be changed
+- * to range_resize, and expand the lru_count if the new range is larger.
+  */
+ static inline void range_shrink(struct ashmem_range *range,
+ 				size_t start, size_t end)
  {
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a714c4f800e9..638c3655dc4b 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2445,17 +2445,74 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 	*lru_pages = 0;
- 	for_each_evictable_lru(lru) {
- 		int file = is_file_lru(lru);
--		unsigned long size;
-+		unsigned long lruvec_size;
- 		unsigned long scan;
-+		unsigned long protection;
-+
-+		lruvec_size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
-+		protection = mem_cgroup_protection(memcg);
-+
-+		if (protection > 0) {
-+			/*
-+			 * Scale a cgroup's reclaim pressure by proportioning its current
-+			 * usage to its memory.low or memory.min setting.
-+			 *
-+			 * This is important, as otherwise scanning aggression becomes
-+			 * extremely binary -- from nothing as we approach the memory
-+			 * protection threshold, to totally nominal as we exceed it. This
-+			 * results in requiring setting extremely liberal protection
-+			 * thresholds. It also means we simply get no protection at all if
-+			 * we set it too low, which is not ideal.
-+			 */
-+			unsigned long cgroup_size = mem_cgroup_size(memcg);
-+			unsigned long baseline = 0;
-+
-+			/*
-+			 * During the reclaim first pass, we only consider cgroups in
-+			 * excess of their protection setting, but if that doesn't produce
-+			 * free pages, we come back for a second pass where we reclaim from
-+			 * all groups.
-+			 *
-+			 * To maintain fairness in both cases, the first pass targets
-+			 * groups in proportion to their overage, and the second pass
-+			 * targets groups in proportion to their protection utilization.
-+			 *
-+			 * So on the first pass, a group whose size is 130% of its
-+			 * protection will be targeted at 30% of its size. On the second
-+			 * pass, a group whose size is at 40% of its protection will be
-+			 * targeted at 40% of its size.
-+			 */
-+			if (!sc->memcg_low_reclaim)
-+				baseline = lruvec_size;
-+			scan = lruvec_size * cgroup_size / protection - baseline;
-+
-+			/*
-+			 * Don't allow the scan target to exceed the lruvec size, which
-+			 * otherwise could happen if we have >200% overage in the normal
-+			 * case, or >100% overage when sc->memcg_low_reclaim is set.
-+			 *
-+			 * This is important because other cgroups without memory.low have
-+			 * their scan target initially set to their lruvec size, so
-+			 * allowing values >100% of the lruvec size here could result in
-+			 * penalising cgroups with memory.low set even *more* than their
-+			 * peers in some cases in the case of large overages.
-+			 *
-+			 * Also, minimally target SWAP_CLUSTER_MAX pages to keep reclaim
-+			 * moving forwards.
-+			 */
-+			scan = clamp(scan, SWAP_CLUSTER_MAX, lruvec_size);
-+		} else {
-+			scan = lruvec_size;
-+		}
-+
-+		scan >>= sc->priority;
+-	size_t pre = range_size(range);
+-
+ 	range->pgstart = start;
+ 	range->pgend = end;
+-
+-	if (range_on_lru(range))
+-		lru_count -= pre - range_size(range);
+ }
  
--		size = lruvec_lru_size(lruvec, lru, sc->reclaim_idx);
--		scan = size >> sc->priority;
- 		/*
- 		 * If the cgroup's already been deleted, make sure to
- 		 * scrape out the remaining cache.
- 		 */
- 		if (!scan && !mem_cgroup_online(memcg))
--			scan = min(size, SWAP_CLUSTER_MAX);
-+			scan = min(lruvec_size, SWAP_CLUSTER_MAX);
+ /**
+@@ -421,72 +390,6 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+ 	return ret;
+ }
  
- 		switch (scan_balance) {
- 		case SCAN_EQUAL:
-@@ -2475,7 +2532,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 		case SCAN_ANON:
- 			/* Scan one type exclusively */
- 			if ((scan_balance == SCAN_FILE) != file) {
--				size = 0;
-+				lruvec_size = 0;
- 				scan = 0;
- 			}
- 			break;
-@@ -2484,7 +2541,7 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 			BUG();
- 		}
+-/*
+- * ashmem_shrink - our cache shrinker, called from mm/vmscan.c
+- *
+- * 'nr_to_scan' is the number of objects to scan for freeing.
+- *
+- * 'gfp_mask' is the mask of the allocation that got us into this mess.
+- *
+- * Return value is the number of objects freed or -1 if we cannot
+- * proceed without risk of deadlock (due to gfp_mask).
+- *
+- * We approximate LRU via least-recently-unpinned, jettisoning unpinned partial
+- * chunks of ashmem regions LRU-wise one-at-a-time until we hit 'nr_to_scan'
+- * pages freed.
+- */
+-static unsigned long
+-ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+-{
+-	struct ashmem_range *range, *next;
+-	unsigned long freed = 0;
+-
+-	/* We might recurse into filesystem code, so bail out if necessary */
+-	if (!(sc->gfp_mask & __GFP_FS))
+-		return SHRINK_STOP;
+-
+-	if (!mutex_trylock(&ashmem_mutex))
+-		return -1;
+-
+-	list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
+-		loff_t start = range->pgstart * PAGE_SIZE;
+-		loff_t end = (range->pgend + 1) * PAGE_SIZE;
+-
+-		range->asma->file->f_op->fallocate(range->asma->file,
+-				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+-				start, end - start);
+-		range->purged = ASHMEM_WAS_PURGED;
+-		lru_del(range);
+-
+-		freed += range_size(range);
+-		if (--sc->nr_to_scan <= 0)
+-			break;
+-	}
+-	mutex_unlock(&ashmem_mutex);
+-	return freed;
+-}
+-
+-static unsigned long
+-ashmem_shrink_count(struct shrinker *shrink, struct shrink_control *sc)
+-{
+-	/*
+-	 * note that lru_count is count of pages on the lru, not a count of
+-	 * objects on the list. This means the scan function needs to return the
+-	 * number of pages freed, not the number of objects scanned.
+-	 */
+-	return lru_count;
+-}
+-
+-static struct shrinker ashmem_shrinker = {
+-	.count_objects = ashmem_shrink_count,
+-	.scan_objects = ashmem_shrink_scan,
+-	/*
+-	 * XXX (dchinner): I wish people would comment on why they need on
+-	 * significant changes to the default value here
+-	 */
+-	.seeks = DEFAULT_SEEKS * 4,
+-};
+-
+ static int set_prot_mask(struct ashmem_area *asma, unsigned long prot)
+ {
+ 	int ret = 0;
+@@ -713,6 +616,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
+ 		return -EFAULT;
  
--		*lru_pages += size;
-+		*lru_pages += lruvec_size;
- 		nr[lru] = scan;
+ 	mutex_lock(&ashmem_mutex);
++	wait_event(ashmem_purge_wait, !atomic_read(&ashmem_purge_inflight));
+ 
+ 	if (!asma->file)
+ 		goto out_unlock;
+@@ -787,15 +691,7 @@ static long ashmem_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
+ 		ret = ashmem_pin_unpin(asma, cmd, (void __user *)arg);
+ 		break;
+ 	case ASHMEM_PURGE_ALL_CACHES:
+-		ret = -EPERM;
+-		if (capable(CAP_SYS_ADMIN)) {
+-			struct shrink_control sc = {
+-				.gfp_mask = GFP_KERNEL,
+-				.nr_to_scan = LONG_MAX,
+-			};
+-			ret = ashmem_shrink_count(&ashmem_shrinker, &sc);
+-			ashmem_shrink_scan(&ashmem_shrinker, &sc);
+-		}
++		ret = capable(CAP_SYS_ADMIN) ? 0 : -EPERM;
+ 		break;
  	}
- }
-@@ -2745,6 +2802,13 @@ static bool shrink_node(pg_data_t *pgdat, struct scan_control *sc)
- 				memcg_memory_event(memcg, MEMCG_LOW);
- 				break;
- 			case MEMCG_PROT_NONE:
-+				/*
-+				 * All protection thresholds breached. We may
-+				 * still choose to vary the scan pressure
-+				 * applied based on by how much the cgroup in
-+				 * question has exceeded its protection
-+				 * thresholds (see get_scan_count).
-+				 */
- 				break;
- 			}
  
+@@ -883,18 +779,10 @@ static int __init ashmem_init(void)
+ 		goto out_free2;
+ 	}
+ 
+-	ret = register_shrinker(&ashmem_shrinker);
+-	if (ret) {
+-		pr_err("failed to register shrinker!\n");
+-		goto out_demisc;
+-	}
+-
+ 	pr_info("initialized\n");
+ 
+ 	return 0;
+ 
+-out_demisc:
+-	misc_deregister(&ashmem_misc);
+ out_free2:
+ 	kmem_cache_destroy(ashmem_range_cachep);
+ out_free1:
 -- 
-2.20.1
-
+2.17.1
