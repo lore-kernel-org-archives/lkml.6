@@ -2,60 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BC3EC282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46C9AC282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A3DB218EA
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0B415218EA
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:23:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548357827;
-	bh=es1kGYUi5YkG26NoCDTRQRGvum8FVGF3ufKnbiHN9C8=;
+	s=default; t=1548357831;
+	bh=tsmT8+X3R4NJweE+OmLQnCrOnHivqtbX/n1dkmDT9BY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uwCCH0qN/le1f56u3MqQypx7GqXeinUvbveYVOr2izQIF4SwV51ISKOCYFh4oBH/C
-	 Zfj8eWKydoI6w9/kQMVLtIyq8v3J4IaNuBWHXmbbBCB240KP0mbcu/wPwsWHwr8DAV
-	 wcu0z+yEUoM/CsT2atucY0FJbJCqHPHT/YKsJobE=
+	b=xfivECtq0XoFJO/a0EkT36E6uOO8XmPxruReIRHgROYK8NqfC6V4N0vnC5i+VC39S
+	 /iNwPtj5FJjN0DqtWT6IOfhK66RA5sNPDNiKPWqFBUkUKj0L/XIwuPCulrfD2Q0Rzk
+	 9lVsYf1SO3gfy2BiOtHFs+rO700ygFa34Ff/iglY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729920AbfAXTXp (ORCPT
+        id S1729481AbfAXTXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:23:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48656 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:23:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48780 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729881AbfAXTXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:23:42 -0500
+        id S1729881AbfAXTXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:23:48 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C36E8218D2;
-        Thu, 24 Jan 2019 19:23:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C7C0F218D2;
+        Thu, 24 Jan 2019 19:23:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548357821;
-        bh=es1kGYUi5YkG26NoCDTRQRGvum8FVGF3ufKnbiHN9C8=;
+        s=default; t=1548357827;
+        bh=tsmT8+X3R4NJweE+OmLQnCrOnHivqtbX/n1dkmDT9BY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iHb15a8e/g1BdDDT/a6UO7vxGjlqrjQDVS4Bdlv7AtgW9kGrzoYthgVheF56UtXr+
-         HMKGHHyepl6aGrgdc7WHcEsDrtBre7gUU4Uj5wRPvk1SjXwhYQpx+l3QSsWrbNE0pe
-         BuJLgZcAU5S5l+ZsN9DtNXi1P8o8Snqb6brFKvZE=
+        b=lN84BfuCf2+l1rEFG5yKjE7rtUWQr5PL1/bAUEmvPW4S8/9TS+IXseg5BaOTrOxNA
+         Tq+Jq9zmas5c29lxafUGXRMJre0pGOlaF3FiGxtP6sInTn2Ej6XE1TYZ/IBOLvahlE
+         gNE4TXQ0WuYsKT9X6Jv8xBtgtMcnsUny0voyukcA=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Michal Hocko <mhocko@suse.com>,
-        Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        David Rientjes <rientjes@google.com>,
-        Mike Rapoport <rppt@linux.ibm.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Paul Oppenheimer <bepvte@gmail.com>,
-        William Kucharski <william.kucharski@oracle.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 3.18 52/52] mm, proc: be more verbose about unstable VMA flags in /proc/<pid>/smaps
-Date:   Thu, 24 Jan 2019 20:20:16 +0100
-Message-Id: <20190124190151.415280487@linuxfoundation.org>
+        stable@vger.kernel.org,
+        syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com,
+        "J. Bruce Fields" <bfields@redhat.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>
+Subject: [PATCH 3.18 28/52] sunrpc: handle ENOMEM in rpcb_getport_async
+Date:   Thu, 24 Jan 2019 20:19:52 +0100
+Message-Id: <20190124190147.196162321@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
 References: <20190124190140.879495253@linuxfoundation.org>
@@ -74,106 +67,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 ------------------
 
-[ Upstream commit 7550c6079846a24f30d15ac75a941c8515dbedfb ]
+From: J. Bruce Fields <bfields@redhat.com>
 
-Patch series "THP eligibility reporting via proc".
+commit 81c88b18de1f11f70c97f28ced8d642c00bb3955 upstream.
 
-This series of three patches aims at making THP eligibility reporting much
-more robust and long term sustainable.  The trigger for the change is a
-regression report [2] and the long follow up discussion.  In short the
-specific application didn't have good API to query whether a particular
-mapping can be backed by THP so it has used VMA flags to workaround that.
-These flags represent a deep internal state of VMAs and as such they
-should be used by userspace with a great deal of caution.
+If we ignore the error we'll hit a null dereference a little later.
 
-A similar has happened for [3] when users complained that VM_MIXEDMAP is
-no longer set on DAX mappings.  Again a lack of a proper API led to an
-abuse.
+Reported-by: syzbot+4b98281f2401ab849f4b@syzkaller.appspotmail.com
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
-The first patch in the series tries to emphasise that that the semantic of
-flags might change and any application consuming those should be really
-careful.
-
-The remaining two patches provide a more suitable interface to address [2]
-and provide a consistent API to query the THP status both for each VMA and
-process wide as well.  [1]
-
-http://lkml.kernel.org/r/20181120103515.25280-1-mhocko@kernel.org [2]
-http://lkml.kernel.org/r/http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-[3] http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-
-This patch (of 3):
-
-Even though vma flags exported via /proc/<pid>/smaps are explicitly
-documented to be not guaranteed for future compatibility the warning
-doesn't go far enough because it doesn't mention semantic changes to those
-flags.  And they are important as well because these flags are a deep
-implementation internal to the MM code and the semantic might change at
-any time.
-
-Let's consider two recent examples:
-http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
-: commit e1fb4a086495 "dax: remove VM_MIXEDMAP for fsdax and device dax" has
-: removed VM_MIXEDMAP flag from DAX VMAs. Now our testing shows that in the
-: mean time certain customer of ours started poking into /proc/<pid>/smaps
-: and looks at VMA flags there and if VM_MIXEDMAP is missing among the VMA
-: flags, the application just fails to start complaining that DAX support is
-: missing in the kernel.
-
-http://lkml.kernel.org/r/alpine.DEB.2.21.1809241054050.224429@chino.kir.corp.google.com
-: Commit 1860033237d4 ("mm: make PR_SET_THP_DISABLE immediately active")
-: introduced a regression in that userspace cannot always determine the set
-: of vmas where thp is ineligible.
-: Userspace relies on the "nh" flag being emitted as part of /proc/pid/smaps
-: to determine if a vma is eligible to be backed by hugepages.
-: Previous to this commit, prctl(PR_SET_THP_DISABLE, 1) would cause thp to
-: be disabled and emit "nh" as a flag for the corresponding vmas as part of
-: /proc/pid/smaps.  After the commit, thp is disabled by means of an mm
-: flag and "nh" is not emitted.
-: This causes smaps parsing libraries to assume a vma is eligible for thp
-: and ends up puzzling the user on why its memory is not backed by thp.
-
-In both cases userspace was relying on a semantic of a specific VMA flag.
-The primary reason why that happened is a lack of a proper interface.
-While this has been worked on and it will be fixed properly, it seems that
-our wording could see some refinement and be more vocal about semantic
-aspect of these flags as well.
-
-Link: http://lkml.kernel.org/r/20181211143641.3503-2-mhocko@kernel.org
-Signed-off-by: Michal Hocko <mhocko@suse.com>
-Acked-by: Jan Kara <jack@suse.cz>
-Acked-by: Dan Williams <dan.j.williams@intel.com>
-Acked-by: David Rientjes <rientjes@google.com>
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Paul Oppenheimer <bepvte@gmail.com>
-Cc: William Kucharski <william.kucharski@oracle.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/filesystems/proc.txt | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ net/sunrpc/rpcb_clnt.c |    8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/Documentation/filesystems/proc.txt b/Documentation/filesystems/proc.txt
-index 04b23a83ce68..3172a2465ff2 100644
---- a/Documentation/filesystems/proc.txt
-+++ b/Documentation/filesystems/proc.txt
-@@ -439,7 +439,9 @@ manner. The codes are the following:
+--- a/net/sunrpc/rpcb_clnt.c
++++ b/net/sunrpc/rpcb_clnt.c
+@@ -772,6 +772,12 @@ void rpcb_getport_async(struct rpc_task
+ 	case RPCBVERS_3:
+ 		map->r_netid = xprt->address_strings[RPC_DISPLAY_NETID];
+ 		map->r_addr = rpc_sockaddr2uaddr(sap, GFP_ATOMIC);
++		if (!map->r_addr) {
++			status = -ENOMEM;
++			dprintk("RPC: %5u %s: no memory available\n",
++				task->tk_pid, __func__);
++			goto bailout_free_args;
++		}
+ 		map->r_owner = "";
+ 		break;
+ 	case RPCBVERS_2:
+@@ -794,6 +800,8 @@ void rpcb_getport_async(struct rpc_task
+ 	rpc_put_task(child);
+ 	return;
  
- Note that there is no guarantee that every flag and associated mnemonic will
- be present in all further kernel releases. Things get changed, the flags may
--be vanished or the reverse -- new added.
-+be vanished or the reverse -- new added. Interpretation of their meaning
-+might change in future as well. So each consumer of these flags has to
-+follow each specific kernel version for the exact semantic.
- 
- This file is only present if the CONFIG_MMU kernel configuration option is
- enabled.
--- 
-2.19.1
-
++bailout_free_args:
++	kfree(map);
+ bailout_release_client:
+ 	rpc_release_client(rpcb_clnt);
+ bailout_nofree:
 
 
