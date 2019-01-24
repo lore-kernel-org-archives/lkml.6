@@ -2,174 +2,103 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5046C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:53:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0E95C282C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C16DC218B0
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:53:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7DEB218B0
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 15:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728759AbfAXPxB (ORCPT
+        id S1728774AbfAXPxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 10:53:01 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32837 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727955AbfAXPxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 10:53:01 -0500
-Received: from lhreml704-cah.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 3B100A36F965ED81CEED;
-        Thu, 24 Jan 2019 15:52:59 +0000 (GMT)
-Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.140)
- by smtpsuk.huawei.com (10.201.108.45) with Microsoft SMTP Server (TLS) id
- 14.3.408.0; Thu, 24 Jan 2019 15:52:50 +0000
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-To:     <jarkko.sakkinen@linux.intel.com>, <zohar@linux.ibm.com>,
-        <david.safford@ge.com>, <monty.wiseman@ge.com>,
-        <matthewgarrett@google.com>
-CC:     <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <keyrings@vger.kernel.org>,
-        <silviu.vlasceanu@huawei.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>
-Subject: [PATCH v8 2/7] tpm: add _head suffix to tcg_efi_specid_event and tcg_pcr_event2
-Date:   Thu, 24 Jan 2019 16:49:05 +0100
-Message-ID: <20190124154910.29948-3-roberto.sassu@huawei.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190124154910.29948-1-roberto.sassu@huawei.com>
-References: <20190124154910.29948-1-roberto.sassu@huawei.com>
+        Thu, 24 Jan 2019 10:53:06 -0500
+Received: from mga07.intel.com ([134.134.136.100]:50673 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727755AbfAXPxF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 10:53:05 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 24 Jan 2019 07:53:05 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,517,1539673200"; 
+   d="scan'208";a="140990603"
+Received: from mattu-haswell.fi.intel.com (HELO [10.237.72.164]) ([10.237.72.164])
+  by fmsmga001.fm.intel.com with ESMTP; 24 Jan 2019 07:53:03 -0800
+Subject: Re: kernel: xhci_hcd 0000:00:14.0: ERROR unknown event type 37 -
+ Kernel 4.19.13
+To:     Nathan Royce <nroycea+kernel@gmail.com>
+Cc:     linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+        Alan Stern <stern@rowland.harvard.edu>,
+        gregkh@linuxfoundation.org
+References: <CALaQ_hoq+QfxGTi5aggfm6RehsiZOvmYk-Mz-Geu3TLdNrRXcg@mail.gmail.com>
+ <824caf1d-f5db-a439-fc77-deda67df5bfc@linux.intel.com>
+ <CALaQ_hp4XoEbT7qYG58fbrODbHvOFS7-GQZcEoPw4CPDNZZ+6w@mail.gmail.com>
+From:   Mathias Nyman <mathias.nyman@linux.intel.com>
+Message-ID: <d65b37ba-c32f-a8d9-01a9-7dd54d354936@linux.intel.com>
+Date:   Thu, 24 Jan 2019 17:57:19 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.204.65.140]
-X-CFilter-Loop: Reflected
+In-Reply-To: <CALaQ_hp4XoEbT7qYG58fbrODbHvOFS7-GQZcEoPw4CPDNZZ+6w@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-TCG defines two structures, TCG_EfiSpecIDEventStruct and TCG_PCR_EVENT2,
-which contain variable-sized arrays in the middle of the definition.
+On 10.01.2019 00:11, Nathan Royce wrote:
+> Wow, my system got wrecked (exaggeration) during this latest stretch...
+> Pulseaudio was stretched to the limit and beyond and was forced to
+> restart. Anything that was producing audio had to be restarted to get
+> it back.
+> This time was much like the first time and went from timestamp
+> 573100.060927 (line 1) to 572506.604155 (line 11069), where 100%
+> (literally) of it was that event 37 in the journal, no other kernel
+> log entries except for the systemd-hostnamed audit before it all went
+> down.
+> And as usual, it was my USB TV tuner (tvheadend really) giving the
+> Poll Timeout log entries.
+> Those same uploaded trace files will be updated with the latest bugout.
+> 
 
-Since these structures are not suitable for type casting, this patch
-removes structure members after the variable-sized arrays and adds the
-_head suffix to the structure name, to indicate that the renamed structures
-do not contain all fields defined by TCG.
+Hi.
 
-Lastly, given that variable-sized arrays are now in the last position, and
-given that the size of the arrays cannot be determined in advance, this
-patch also sets the size of those arrays to zero and removes the definition
-of TPM2_ACTIVE_PCR_BANKS.
+Finally had a chance to look at this. Sorry about the delay.
 
-Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Tested-by: Nayna Jain <nayna@linux.ibm.com>
----
- drivers/char/tpm/eventlog/tpm2.c | 12 ++++++------
- include/linux/tpm_eventlog.h     | 12 ++++--------
- 2 files changed, 10 insertions(+), 14 deletions(-)
+Logs show event ring is full:
 
-diff --git a/drivers/char/tpm/eventlog/tpm2.c b/drivers/char/tpm/eventlog/tpm2.c
-index 1b8fa9de2cac..d8b77133a83a 100644
---- a/drivers/char/tpm/eventlog/tpm2.c
-+++ b/drivers/char/tpm/eventlog/tpm2.c
-@@ -37,10 +37,10 @@
-  *
-  * Returns size of the event. If it is an invalid event, returns 0.
-  */
--static int calc_tpm2_event_size(struct tcg_pcr_event2 *event,
-+static int calc_tpm2_event_size(struct tcg_pcr_event2_head *event,
- 				struct tcg_pcr_event *event_header)
- {
--	struct tcg_efi_specid_event *efispecid;
-+	struct tcg_efi_specid_event_head *efispecid;
- 	struct tcg_event_field *event_field;
- 	void *marker;
- 	void *marker_start;
-@@ -55,7 +55,7 @@ static int calc_tpm2_event_size(struct tcg_pcr_event2 *event,
- 	marker = marker + sizeof(event->pcr_idx) + sizeof(event->event_type)
- 		+ sizeof(event->count);
- 
--	efispecid = (struct tcg_efi_specid_event *)event_header->event;
-+	efispecid = (struct tcg_efi_specid_event_head *)event_header->event;
- 
- 	/* Check if event is malformed. */
- 	if (event->count > efispecid->num_algs)
-@@ -95,7 +95,7 @@ static void *tpm2_bios_measurements_start(struct seq_file *m, loff_t *pos)
- 	void *addr = log->bios_event_log;
- 	void *limit = log->bios_event_log_end;
- 	struct tcg_pcr_event *event_header;
--	struct tcg_pcr_event2 *event;
-+	struct tcg_pcr_event2_head *event;
- 	size_t size;
- 	int i;
- 
-@@ -136,7 +136,7 @@ static void *tpm2_bios_measurements_next(struct seq_file *m, void *v,
- 					 loff_t *pos)
- {
- 	struct tcg_pcr_event *event_header;
--	struct tcg_pcr_event2 *event;
-+	struct tcg_pcr_event2_head *event;
- 	struct tpm_chip *chip = m->private;
- 	struct tpm_bios_log *log = &chip->log;
- 	void *limit = log->bios_event_log_end;
-@@ -180,7 +180,7 @@ static int tpm2_binary_bios_measurements_show(struct seq_file *m, void *v)
- 	struct tpm_chip *chip = m->private;
- 	struct tpm_bios_log *log = &chip->log;
- 	struct tcg_pcr_event *event_header = log->bios_event_log;
--	struct tcg_pcr_event2 *event = v;
-+	struct tcg_pcr_event2_head *event = v;
- 	void *temp_ptr;
- 	size_t size;
- 
-diff --git a/include/linux/tpm_eventlog.h b/include/linux/tpm_eventlog.h
-index 20d9da77fc11..f47342361e87 100644
---- a/include/linux/tpm_eventlog.h
-+++ b/include/linux/tpm_eventlog.h
-@@ -8,7 +8,6 @@
- #define TCG_EVENT_NAME_LEN_MAX	255
- #define MAX_TEXT_EVENT		1000	/* Max event string length */
- #define ACPI_TCPA_SIG		"TCPA"	/* 0x41504354 /'TCPA' */
--#define TPM2_ACTIVE_PCR_BANKS	3
- 
- #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_1_2 0x1
- #define EFI_TCG2_EVENT_LOG_FORMAT_TCG_2   0x2
-@@ -82,7 +81,7 @@ struct tcg_efi_specid_event_algs {
- 	u16 digest_size;
- } __packed;
- 
--struct tcg_efi_specid_event {
-+struct tcg_efi_specid_event_head {
- 	u8 signature[16];
- 	u32 platform_class;
- 	u8 spec_version_minor;
-@@ -90,9 +89,7 @@ struct tcg_efi_specid_event {
- 	u8 spec_errata;
- 	u8 uintnsize;
- 	u32 num_algs;
--	struct tcg_efi_specid_event_algs digest_sizes[TPM2_ACTIVE_PCR_BANKS];
--	u8 vendor_info_size;
--	u8 vendor_info[0];
-+	struct tcg_efi_specid_event_algs digest_sizes[];
- } __packed;
- 
- struct tcg_pcr_event {
-@@ -113,12 +110,11 @@ struct tpm2_digest {
- 	u8 digest[SHA512_DIGEST_SIZE];
- } __packed;
- 
--struct tcg_pcr_event2 {
-+struct tcg_pcr_event2_head {
- 	u32 pcr_idx;
- 	u32 event_type;
- 	u32 count;
--	struct tpm2_digest digests[TPM2_ACTIVE_PCR_BANKS];
--	struct tcg_event_field event;
-+	struct tpm2_digest digests[];
- } __packed;
- 
- #endif
--- 
-2.17.1
+573047.104801: xhci_handle_event: EVENT: TRB 0000000000000000 status 'Event Ring Full Error' len 0 slot 0 ep 0 type 'Host Controller Event' flags e:C
+
+It's filled with 0 length short transfer events due to a the following loop:
+
+1. Class driver asks for 58658 bytes from device (queues BULK IN URB)
+2. short transfer event, xhci interrupts, saying we got less than 58658 bytes.
+    We actually got 0 bytes.
+3. return URB with zero bytes to class driver
+4. Class driver immediately queues a new URB, asking for 58658 bytes (see step 1)
+
+Last 6ms before event ring is full this looped 255 times.
+
+one cycle of the loop in log:
+
+573047.104748: xhci_handle_event: EVENT: TRB 000000020b267770 status 'Short Packet' len 58658 slot 4 ep 7 type 'Transfer Event' flags e:C
+573047.104749: xhci_handle_transfer: BULK: Buffer 000000001de20000 length 58658 TD size 0 intr 0 type 'Normal' flags b:i:I:c:s:I:e:c
+573047.104749: xhci_inc_deq: BULK 0000000002f14758: enq 0x000000020b267860(0x000000020b267000) deq 0x000000020b267780(0x000000020b267000) segs 2 stream 0 free_trbs 495 bounce 512 cycle 0
+573047.104752: xhci_urb_giveback: ep3in-bulk: urb 000000000bdcbe77 pipe 3225519232 slot 4 length 0/58658 sgs 0/0 stream 0 flags 00010200
+573047.104758: xhci_urb_enqueue: ep3in-bulk: urb 000000000bdcbe77 pipe 3225519232 slot 4 length 0/58658 sgs 0/0 stream 0 flags 00010200
+573047.104758: xhci_queue_trb: BULK: Buffer 000000001de20000 length 58658 TD size 0 intr 0 type 'Normal' flags b:i:I:c:s:I:e:C
+573047.104759: xhci_inc_enq: BULK 0000000002f14758: enq 0x000000020b267870(0x000000020b267000) deq 0x000000020b267780(0x000000020b267000) segs 2 stream 0 free_trbs 494 bounce 512 cycle 0
+573047.104759: xhci_inc_deq: EVENT 0000000022f906c2: enq 0x000000020b317000(0x000000020b317000) deq 0x000000020b3178d0(0x000000020b317000) segs 1 stream 0 free_trbs 254 bounce 0 cycle 1
+
+I'll continue digging into this
+
+-Mathias  
+
+
+
 
