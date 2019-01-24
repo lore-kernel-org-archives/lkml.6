@@ -2,135 +2,164 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1F74C282C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F24C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70DEE20854
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:07:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 853E720854
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 09:08:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eLwzymyw"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tMBWENLG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727574AbfAXJHN (ORCPT
+        id S1727591AbfAXJII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 04:07:13 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33241 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727513AbfAXJHK (ORCPT
+        Thu, 24 Jan 2019 04:08:08 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:52150 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727209AbfAXJII (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 04:07:10 -0500
-Received: by mail-oi1-f196.google.com with SMTP id c206so4288133oib.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 01:07:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=kcuJ7o6GNo8x17v/dH/5G6NdXueyDstuYD8Zc4S9Y7s=;
-        b=eLwzymywGD+CIk/31TbpTyWXUjDdnn811AZrBe5if7mUFts3Hx2POFLLXiqOvzu0XS
-         iqI1nzMkWWSVMGrpr3r6HUmz4woqu0H14TEtWeU3SaT53N9gvYLeTEyPrOjj4FLCF3kx
-         EwmvkfGOt2tORe2Lt/T3s5TKFolFWT1TqfDJ8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=kcuJ7o6GNo8x17v/dH/5G6NdXueyDstuYD8Zc4S9Y7s=;
-        b=IosdS+FjKF95NnSascvMD+aYJGRqtXA7IcgOzorexn+6GB/H0K04rzDQNYSNumMFCI
-         bmWRIppbexFldMCdeceplo164N9p3D8Usn/DJkciUpoLpaP6qcjxn0Evd9/x8LpPFamD
-         uy4GdedIz8w1YNK+fHX0gVnfdSt0Nuw/O09orrmYuzRKftR4nhftPlZOwAUdgKHqQpaq
-         FzYdsuXOB2J6Flx4FuFrbLzklSZ9D+YNf6sdA3DJ0vYqBhRcv+6JaQ5wYwWtH86xiQVN
-         1OxNE1KQn7Gcn8NvUJLnAfFyXwrVxY0J19UdNt+sqJVHCE5TIM6A+8/v9/OMylKaclFE
-         /TaA==
-X-Gm-Message-State: AHQUAuZ531yS+b3D0vX7Cm4kTjLxIaaw6lRsD935Bb0JbtZBfAXYq6Ty
-        i3ZUdzSbEZYNObK4tQ3c8c1vg8eI2qA=
-X-Google-Smtp-Source: ALg8bN69KkV1dQU2s1yTKF53KfBgFj6WHTSFlYJzh94j0EaGxJjWcGKzcmjOQv4kZzDMzRsSIc7F9w==
-X-Received: by 2002:a54:458c:: with SMTP id z12mr605186oib.293.1548320828944;
-        Thu, 24 Jan 2019 01:07:08 -0800 (PST)
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
-        by smtp.gmail.com with ESMTPSA id k11sm11604915oib.35.2019.01.24.01.07.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 01:07:07 -0800 (PST)
-Received: by mail-oi1-f177.google.com with SMTP id a77so4250880oii.5
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 01:07:06 -0800 (PST)
-X-Received: by 2002:aca:c2c3:: with SMTP id s186mr604655oif.173.1548320826474;
- Thu, 24 Jan 2019 01:07:06 -0800 (PST)
+        Thu, 24 Jan 2019 04:08:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=NGUIZKzm8nhFzhx4M2SE2hiHdtuCjlwzvin7gesdf/g=; b=tMBWENLG0/ZqwAqGnogCZajU8
+        WDYM4nTBHbnjLYCsSZWl/V+d9cJni+q2HKMR3Duf5jPYt8if1mXPZPUZBCbBJZgFjUUSRnTsoSi8r
+        Qrf9KAOJ3TvhxGRyRN2tygm6BF6hTnAckvwl5DVt+y9axY6TaZuipO071xfrW/Eu3gHpHZ+/r7IIk
+        LUM1uhS4W0O0UGZV4+9wo2FLWsVq56b25MS4Gh+SxCZSKn284KSzPOj4kNLZE1qztXJ4NYF5hpJQg
+        UBCvc676bvOlNn/pepivh86nFbZ1U7Hda0Bk2zkzln+Xkwd8qf8rIujpS8To71Ty08sFzPomBoVUY
+        PXWoN3dcQ==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gmazN-0007cd-4k; Thu, 24 Jan 2019 09:07:57 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 39C5C20726151; Thu, 24 Jan 2019 10:07:55 +0100 (CET)
+Date:   Thu, 24 Jan 2019 10:07:55 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     Patrick Bellasi <patrick.bellasi@arm.com>
+Cc:     Vincent Guittot <vincent.guittot@linaro.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <Morten.Rasmussen@arm.com>,
+        Paul Turner <pjt@google.com>, Ben Segall <bsegall@google.com>,
+        Thara Gopinath <thara.gopinath@linaro.org>,
+        pkondeti@codeaurora.org, Quentin Perret <quentin.perret@arm.com>,
+        Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Subject: Re: [PATCH v7 2/2] sched/fair: update scale invariance of PELT
+Message-ID: <20190124090755.GC13536@hirez.programming.kicks-ass.net>
+References: <1542711308-25256-1-git-send-email-vincent.guittot@linaro.org>
+ <1542711308-25256-3-git-send-email-vincent.guittot@linaro.org>
+ <CAKfTPtD=sV3zJiZMfCFi92_f6j-jTO9D5RsEBAXHVa6VN3Urwg@mail.gmail.com>
+ <20181128100241.GA2131@hirez.programming.kicks-ass.net>
+ <20181128115336.GB23094@e110439-lin>
+ <20181129125348.GL2131@hirez.programming.kicks-ass.net>
+ <20181129151316.GG23094@e110439-lin>
 MIME-Version: 1.0
-References: <20181022144901.113852-1-tfiga@chromium.org> <20181022144901.113852-2-tfiga@chromium.org>
- <cf0fc2fc-72c6-dbca-68f7-a349879a3a14@xs4all.nl> <CAAFQd5AORjMjHdavdr3zM13BnyFnKnEb-0aKNjvwbB_xJEnxgQ@mail.gmail.com>
- <9b7c1385-d482-6e92-2222-2daa835dbc91@xs4all.nl> <CAAFQd5DwjLt8UeDohzrMausaLGnOStvrmp5p7frYbG1hbGjx3Q@mail.gmail.com>
-In-Reply-To: <CAAFQd5DwjLt8UeDohzrMausaLGnOStvrmp5p7frYbG1hbGjx3Q@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Thu, 24 Jan 2019 18:06:54 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5BPJv3cbJOWrziEjz_yE32DhfZv9vb-pG1Ltx-KS2=PQg@mail.gmail.com>
-Message-ID: <CAAFQd5BPJv3cbJOWrziEjz_yE32DhfZv9vb-pG1Ltx-KS2=PQg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] media: docs-rst: Document memory-to-memory video
- decoder interface
-To:     Hans Verkuil <hverkuil@xs4all.nl>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
-        <tiffany.lin@mediatek.com>,
-        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
-        <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Nicolas Dufresne <nicolas@ndufresne.ca>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181129151316.GG23094@e110439-lin>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 2:27 PM Tomasz Figa <tfiga@chromium.org> wrote:
->
-> On Tue, Jan 22, 2019 at 11:47 PM Hans Verkuil <hverkuil@xs4all.nl> wrote:
-> >
-> > On 01/22/19 11:02, Tomasz Figa wrote:
-[snip]
-> > >>> +   one ``CAPTURE`` buffer, the following cases are defined:
-> > >>> +
-> > >>> +   * one ``OUTPUT`` buffer generates multiple ``CAPTURE`` buffers: the same
-> > >>> +     ``OUTPUT`` timestamp will be copied to multiple ``CAPTURE`` buffers,
-> > >>> +
-> > >>> +   * multiple ``OUTPUT`` buffers generate one ``CAPTURE`` buffer: timestamp of
-> > >>> +     the ``OUTPUT`` buffer queued last will be copied,
-> > >>> +
-> > >>> +   * the decoding order differs from the display order (i.e. the
-> > >>> +     ``CAPTURE`` buffers are out-of-order compared to the ``OUTPUT`` buffers):
-> > >>> +     ``CAPTURE`` timestamps will not retain the order of ``OUTPUT`` timestamps
-> > >>> +     and thus monotonicity of the timestamps cannot be guaranteed.
-> >
-> > I think this last point should be rewritten. The timestamp is just a value that
-> > is copied, there are no monotonicity requirements for m2m devices in general.
-> >
->
-> Actually I just realized the last point might not even be achievable
-> for some of the decoders (s5p-mfc, mtk-vcodec), as they don't report
-> which frame originates from which bitstream buffer and the driver just
-> picks the most recently consumed OUTPUT buffer to copy the timestamp
-> from. (s5p-mfc actually "forgets" to set the timestamp in some cases
-> too...)
->
-> I need to think a bit more about this.
 
-Actually I misread the code. Both s5p-mfc and mtk-vcodec seem to
-correctly match the buffers.
+Sorry; trying to get back to this and re-reading the old conversations.
 
-Best regards,
-Tomasz
+On Thu, Nov 29, 2018 at 03:13:16PM +0000, Patrick Bellasi wrote:
+> On 29-Nov 13:53, Peter Zijlstra wrote:
+> > On Wed, Nov 28, 2018 at 11:53:36AM +0000, Patrick Bellasi wrote:
+> > 
+> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> > > index ac855b2f4774..93e0cf5d8a76 100644
+> > > --- a/kernel/sched/fair.c
+> > > +++ b/kernel/sched/fair.c
+> > > @@ -3661,6 +3661,10 @@ util_est_dequeue(struct cfs_rq *cfs_rq, struct task_struct *p, bool task_sleep)
+> > >  	if (!task_sleep)
+> > >  		return;
+> > > 
+> > > +	/* Skip samples which do not represent an actual utilization */
+> > > +	if (unlikely(task_util(p) > capacity_of(task_cpu(p))))
+> > > +		return;
+> > > +
+> > >  	/*
+> > >  	 * If the PELT values haven't changed since enqueue time,
+> > >  	 * skip the util_est update.
+> > 
+> > Would you not want something like:
+> > 
+> > 	min(task_util(p), capacity_of(task_cpu(p)))
+> > 
+> > And is this the only place where we need this?
+> 
+> Mmm... even this could be an over-estimation:
+> 
+> I've just posted an example in my last reply to Vincent, end of:
+> 
+>    Message-ID: <20181129150020.GF23094@e110439-lin>
+>    https://lore.kernel.org/lkml/20181129150020.GF23094@e110439-lin/
+
+In particular this bit:
+
+ | Seems we agree that, when there is no idle time:
+ | - the two 15% tasks will be overestimated
+ | - their utilization will reach 50% after a while
+
+Right?
+
+> > OTOH, if the task is always running, it will be always running
+> > irrespective of where it runs.
+> 
+> That's not what I'm concerned about. I'm concerned about small tasks
+> which are running on limited capacity (e.g. due to thermal capping)
+> without idle time. In this case, the new "utilization" signal could
+> overestimate the real task needs.
+> 
+> > Not storing these samples seems weird though; this is the exact
+> > condition you want to record -- the task is very active, if we skip
+> > these, we'll come back at a low frequency on the next wakeup.
+> 
+> When there is not idle time, we don't know if the reported
+> utilization, above the cpu capacity, is due to the task being bigger...
+> or just the new utilization signal converging towards:
+> 
+>     100% / RUNNABLE_TASKS_COUNT
+
+So if I'm not mistaken we then have 3 cases:
+
+ 1) runnable == util <= capacity
+
+    no contention, idle
+
+ 2) runnable == util > capacity
+
+    no contention, no idle
+
+ 3) runnable > util
+
+    contention, no idle
+
+For 1) we can use: 'util'
+For 2) we can use: 'capacity'
+For 3) we can use: 'util * capacity >> 10'
+
+(note that 2 is a special case of 3 when u=1)
+
+This should work right?
+
+Now, instead of doing complicated things like that, you instead figure
+that when there's no idle there's also no dequeue happening and we can
+simply short-cut by skipping the entire thing, forgetting everything
+about 2,3.
+
+Did I get that right?
+
+
