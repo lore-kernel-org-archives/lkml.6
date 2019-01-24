@@ -2,55 +2,53 @@ Return-Path: <SRS0=jJS3=QA=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 277C9C282C5
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C66E8C282C5
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE2EB21903
-	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BED121903
+	for <linux-kernel@archiver.kernel.org>; Thu, 24 Jan 2019 19:34:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548358442;
-	bh=q8gvVrYg/+Iq88f/k0SIPMx8MYtOKWuAnhJJbWk8s5g=;
+	s=default; t=1548358448;
+	bh=M3MKFXynSVpgp1jlmAN5oSjucudCY795nchNp7AyWmw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=a3/UEXqiEhV64p2b4AdnMwgwppCO5BYcWeUquDOvYwWW2VMKXK6QWB5Laby2EaSj6
-	 9CeoT8vGYlRy8iFDFT5wlX4wPwefV2l0bdtL/1z6IJvYaiKUwW+rUYvMpgDosoMKXw
-	 PkB4GFgTj+XlvL1m78PE5MXOCPKTmtgXosTP4yMM=
+	b=klvfE5R8Dqx16Hgios9rS1enREs3UwWGrxqvoPPrpNr4Nv0O+pRQo6TkaniseBMP5
+	 Y1aP4XpO7b8dtGQVZaU/6Y+q1egmxCi7ilPmb6SqHdd0jlWKeGbWTSZovvomAcTBhK
+	 e1jHG8W9aekh5fGrSxG+JphWCPvdy2nWiD35GDfg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732104AbfAXTeA (ORCPT
+        id S1732120AbfAXTeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 14:34:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33734 "EHLO mail.kernel.org"
+        Thu, 24 Jan 2019 14:34:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731678AbfAXTd4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 14:33:56 -0500
+        id S1732094AbfAXTd7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 14:33:59 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 34CF221905;
-        Thu, 24 Jan 2019 19:33:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D2A5D218FC;
+        Thu, 24 Jan 2019 19:33:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548358435;
-        bh=q8gvVrYg/+Iq88f/k0SIPMx8MYtOKWuAnhJJbWk8s5g=;
+        s=default; t=1548358438;
+        bh=M3MKFXynSVpgp1jlmAN5oSjucudCY795nchNp7AyWmw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nMZDCR9A55/lCDs4ASw6zxS/Snou/4LELaxMmIUMW7tDzRpnFO5y7LT+BxG3rxSMu
-         AJxXi00INMjxzPVveyqPCMDxNutR9wDFSa7zHVJXf2zNVJl2hixYnp1qVz0jbewwbf
-         COJaTrj2FeexMMCjCw5CSD5xqbLOV5OgKQoDCvIw=
+        b=i+s490xX08uxwWBQ0OPCl3h6dB8YidqZ5zfcbVug9VquFRFQqKmJ4xoYnGm0Vmlza
+         fh45/4v2FCnod/lrVqFpNGcL1tGIfRT1kW2Wwl0quzdruU3XLRgZh+Jf+hJMhxbM7M
+         DV2I53b61P3uRaKyngUiXHNq5qsm0ETc3sQLub2E=
 From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        stable@vger.kernel.org, Johannes Thumshirn <jthumshirn@suse.de>,
-        David Sterba <dsterba@suse.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 4.14 36/63] btrfs: improve error handling of btrfs_add_link
-Date:   Thu, 24 Jan 2019 20:20:25 +0100
-Message-Id: <20190124190159.306977550@linuxfoundation.org>
+        stable@vger.kernel.org, David Ahern <dsahern@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Subject: [PATCH 4.19 001/106] ipv6: Consider sk_bound_dev_if when binding a socket to a v4 mapped address
+Date:   Thu, 24 Jan 2019 20:19:18 +0100
+Message-Id: <20190124190206.423050149@linuxfoundation.org>
 X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190124190155.176570028@linuxfoundation.org>
-References: <20190124190155.176570028@linuxfoundation.org>
+In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
+References: <20190124190206.342411005@linuxfoundation.org>
 User-Agent: quilt/0.65
 X-stable: review
 X-Patchwork-Hint: ignore
@@ -62,60 +60,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-4.14-stable review patch.  If anyone has any objections, please let me know.
+4.19-stable review patch.  If anyone has any objections, please let me know.
 
 ------------------
 
-[ Upstream commit 1690dd41e0cb1dade80850ed8a3eb0121b96d22f ]
+From: David Ahern <dsahern@gmail.com>
 
-In the error handling block, err holds the return value of either
-btrfs_del_root_ref() or btrfs_del_inode_ref() but it hasn't been checked
-since it's introduction with commit fe66a05a0679 (Btrfs: improve error
-handling for btrfs_insert_dir_item callers) in 2012.
+[ Upstream commit ec90ad334986fa5856d11dd272f7f22fa86c55c4 ]
 
-If the error handling in the error handling fails, there's not much left
-to do and the abort either happened earlier in the callees or is
-necessary here.
+Similar to c5ee066333eb ("ipv6: Consider sk_bound_dev_if when binding a
+socket to an address"), binding a socket to v4 mapped addresses needs to
+consider if the socket is bound to a device.
 
-So if one of btrfs_del_root_ref() or btrfs_del_inode_ref() failed, abort
-the transaction, but still return the original code of the failure
-stored in 'ret' as this will be reported to the user.
+This problem also exists from the beginning of git history.
 
-Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
-Reviewed-by: David Sterba <dsterba@suse.com>
-Signed-off-by: David Sterba <dsterba@suse.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: David Ahern <dsahern@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- fs/btrfs/inode.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ net/ipv6/af_inet6.c |   11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index 909f7ea92e0b..7e288510fd2c 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -6594,14 +6594,19 @@ fail_dir_item:
- 		err = btrfs_del_root_ref(trans, fs_info, key.objectid,
- 					 root->root_key.objectid, parent_ino,
- 					 &local_index, name, name_len);
--
-+		if (err)
-+			btrfs_abort_transaction(trans, err);
- 	} else if (add_backref) {
- 		u64 local_index;
- 		int err;
+--- a/net/ipv6/af_inet6.c
++++ b/net/ipv6/af_inet6.c
+@@ -309,6 +309,7 @@ static int __inet6_bind(struct sock *sk,
  
- 		err = btrfs_del_inode_ref(trans, root, name, name_len,
- 					  ino, parent_ino, &local_index);
-+		if (err)
-+			btrfs_abort_transaction(trans, err);
- 	}
+ 	/* Check if the address belongs to the host. */
+ 	if (addr_type == IPV6_ADDR_MAPPED) {
++		struct net_device *dev = NULL;
+ 		int chk_addr_ret;
+ 
+ 		/* Binding to v4-mapped address on a v6-only socket
+@@ -319,9 +320,17 @@ static int __inet6_bind(struct sock *sk,
+ 			goto out;
+ 		}
+ 
++		if (sk->sk_bound_dev_if) {
++			dev = dev_get_by_index_rcu(net, sk->sk_bound_dev_if);
++			if (!dev) {
++				err = -ENODEV;
++				goto out;
++			}
++		}
 +
-+	/* Return the original error code */
- 	return ret;
- }
- 
--- 
-2.19.1
-
+ 		/* Reproduce AF_INET checks to make the bindings consistent */
+ 		v4addr = addr->sin6_addr.s6_addr32[3];
+-		chk_addr_ret = inet_addr_type(net, v4addr);
++		chk_addr_ret = inet_addr_type_dev_table(net, dev, v4addr);
+ 		if (!inet_can_nonlocal_bind(net, inet) &&
+ 		    v4addr != htonl(INADDR_ANY) &&
+ 		    chk_addr_ret != RTN_LOCAL &&
 
 
