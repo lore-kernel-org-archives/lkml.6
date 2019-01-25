@@ -2,123 +2,100 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D44EC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:14:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78B73C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D7A02184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:14:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40BD72184B
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:16:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Cgsgy0JV"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VdI4iTQV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729338AbfAYKOY (ORCPT
+        id S1729124AbfAYKP6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:14:24 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:36577 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729322AbfAYKOW (ORCPT
+        Fri, 25 Jan 2019 05:15:58 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53857 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727959AbfAYKP6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:14:22 -0500
-Received: by mail-io1-f65.google.com with SMTP id m19so7319405ioh.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:14:22 -0800 (PST)
+        Fri, 25 Jan 2019 05:15:58 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d15so6189609wmb.3;
+        Fri, 25 Jan 2019 02:15:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ybYySaWp3VheozYVb6z2iodDGYG/Wy4EhVxSQUTx5n0=;
-        b=Cgsgy0JVanMD+xP7DzrHcvdgl/FdFTNd+Gk4DKVZj27Wyi7R6YKyJs5DiZXvez7CP0
-         t7RkpOgdHTvpfEzWRlBTe2ti1kcu+6Hg3tAJLhRRtcCPcwgNF4kRb1JYBUqaj3ndrVc6
-         2BIK+CqvREISZiNmOb7Q95Fbo9n/sfPx79hMw=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1Ke2IPsE03IyucB6vV/gx6p370HSOpPiyyMFC8AjOCc=;
+        b=VdI4iTQVfqaVp+98mSKz/Pb0FtLfGaTtlzhaZ4MRfQtP8euGJAkHMP4R4U4m26XrGq
+         DgjBbcsfPQIPh3iKYUSvy4r6Yt/75lL9SaGVLeZ022IkWcqtSGqGMkckHPa+KcbcJQvB
+         de104w/S5N8NwTruFndz+twNW6a262lInk/u3BUy1o7WqbuyJLoReRvexeZhfHyAIoXl
+         maH8RwKn8TycrXLKK9+qBvOVWs6RIkeiasF+y/I82mqxcvQbx3SOMTe7slxgSifTyOJj
+         QB9EOWv2GEcZHm6zZPVHm+vYgMptobx9vRcEtaEx42Qzk3qwHNHCzbaTAyy1NjpYK5NN
+         KADw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ybYySaWp3VheozYVb6z2iodDGYG/Wy4EhVxSQUTx5n0=;
-        b=DxIlu9y+fpipiRWRut3dSOmnfZsc+cyWiRifJjIzhAA74PBqYhCmf9PNOpnPsE0HdG
-         UsxMJngkTfQuQW+nnuEfc+hEsspleSOYI5uQ1092PphvK7tBhBK1aXr75BpPw66AWP+F
-         fhA1XzaJ8ICWJ+LFpuCN0yDCOwAxHRwICZsWMEdOyVyd9ZS1o3lY5Qp2zh20ruugsBkv
-         /v7booLbUwnVJryibiCPZHmsN9FQvdF4rKpRUvuMZx/43aLLFrHXpeIf0jWlsQmBivl+
-         rgDEWdGlE7ccRL7Jqo0pDkKafTcJzEhVTcVq41YWGJzDcbyyQJm/aBxr4Z3KmR8KlG2A
-         SLBA==
-X-Gm-Message-State: AHQUAua+raGnRjL7gPKXtkQcdHw+aitmfdGj6Qp/anIvSXr4eJTDC9F2
-        oyAXBN/me+uxBbPm6lFOdMPmHT/MI7bqlzfMsFmxPA==
-X-Google-Smtp-Source: ALg8bN40e5csdb5ObhITF5I6xhc+q/Tof9H1rEqEgRPgYzM8TZhbAOKQ43z3DXojhwx3+PsxB8am9m5CteaFgWenvs0=
-X-Received: by 2002:a5d:8410:: with SMTP id i16mr6135241ion.173.1548411261601;
- Fri, 25 Jan 2019 02:14:21 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=1Ke2IPsE03IyucB6vV/gx6p370HSOpPiyyMFC8AjOCc=;
+        b=YEp5nlhYCOR0A0gXq+uSYTs/+7d/XSROJYflEHHVOftn7T9qIDQUcCDCJAH+oUPKNA
+         y/eqaZ80qFKpVxDBzdpT71ALCrrizK+HEU3cYdhrejiWPADeuPx3Uaqg2W7n58ncvOQU
+         yDvv//bxMTIt48BImOl73ni/8Gw8GjSqo6gD2+HT/3fD5pNHOGP8DSxYWTOf20Qbb6/U
+         BnJ2Ct1vlYtwX9WNyMUPLyNOjdY4pLylEdDVQ+fOmC1UZfhX8ON4qcgMsgINY1SCAvSQ
+         C5nnew5XhXg+u5hibnH8/EV7uNcMCbuG3AByDP47IfTKk38h+xEXaZojhcF2XpMG91bo
+         4lZg==
+X-Gm-Message-State: AJcUukd8R2JkaO7QVN5tQHXPR6MjWuyXYeD5a4sFoehW/tQ+EX59C+dE
+        iDghiNxDl28y3fADTSboho4=
+X-Google-Smtp-Source: ALg8bN6A6mUkjCApnYO0pNAZi4QxMg4VoQP1GhhM9x5ESEh3UNqBCj4+liobXPoEf796VtLGMltjXQ==
+X-Received: by 2002:a1c:de57:: with SMTP id v84mr6166649wmg.55.1548411356136;
+        Fri, 25 Jan 2019 02:15:56 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id e16sm182548401wrn.72.2019.01.25.02.15.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 02:15:55 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     Jon Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] reset: Don't WARN if trying to get a used reset control
+Date:   Fri, 25 Jan 2019 11:15:54 +0100
+Message-Id: <20190125101554.5947-1-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20190124154420.GA11471@gmail.com>
-In-Reply-To: <20190124154420.GA11471@gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 25 Jan 2019 11:14:10 +0100
-Message-ID: <CAKv+Gu9VqsYyihueavFg3FCbESf1rLHnQkX+=U0L+W6BzE4V+A@mail.gmail.com>
-Subject: Re: [PATCH] lib/crc32.c: mark crc32_le_base/__crc32c_le_base aliases
- as __pure
-To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc:     Krzysztof Kozlowski <krzk@kernel.org>,
-        Laura Abbott <labbott@redhat.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Martin Sebor <msebor@gcc.gnu.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 at 16:44, Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> The upcoming GCC 9 release extends the -Wmissing-attributes warnings
-> (enabled by -Wall) to C and aliases: it warns when particular function
-> attributes are missing in the aliases but not in their target.
->
-> In particular, it triggers here because crc32_le_base/__crc32c_le_base
-> aren't __pure while their target crc32_le/__crc32c_le are.
->
-> These aliases are used by architectures as a fallback in accelerated
-> versions of CRC32. See commit 9784d82db3eb ("lib/crc32: make core crc32()
-> routines weak so they can be overridden").
->
-> Therefore, being fallbacks, it is likely that even if the aliases
-> were called from C, there wouldn't be any optimizations possible.
-> Currently, the only user is arm64, which calls this from asm.
->
-> Still, marking the aliases as __pure makes sense and is a good idea
-> for documentation purposes and possible future optimizations,
-> which also silences the warning.
->
-> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+When requesting a reset control for exclusive use that's already in use,
+an -EBUSY error code is returned. Users can react accordingly when they
+receive that error code, so there is no need to loudly complain.
 
-> ---
-> I am picking this up through the compiler-attributes tree
-> and putting it into -next along with the other cleanup
-> for -Wmissing-attributes (unless some other maintainer wants it).
->
->  lib/crc32.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/lib/crc32.c b/lib/crc32.c
-> index 45b1d67a1767..4a20455d1f61 100644
-> --- a/lib/crc32.c
-> +++ b/lib/crc32.c
-> @@ -206,8 +206,8 @@ u32 __pure __weak __crc32c_le(u32 crc, unsigned char const *p, size_t len)
->  EXPORT_SYMBOL(crc32_le);
->  EXPORT_SYMBOL(__crc32c_le);
->
-> -u32 crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
-> -u32 __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
-> +u32 __pure crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
-> +u32 __pure __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
->
->  /*
->   * This multiplies the polynomials x and y modulo the given modulus.
-> --
-> 2.17.1
->
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/reset/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 9582efb70025..6b452f010b66 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -416,7 +416,7 @@ static struct reset_control *__reset_control_get_internal(
+ 
+ 	list_for_each_entry(rstc, &rcdev->reset_control_head, list) {
+ 		if (rstc->id == index) {
+-			if (WARN_ON(!rstc->shared || !shared))
++			if (!rstc->shared || !shared)
+ 				return ERR_PTR(-EBUSY);
+ 
+ 			kref_get(&rstc->refcnt);
+-- 
+2.19.1
+
