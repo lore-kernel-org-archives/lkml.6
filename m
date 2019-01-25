@@ -2,62 +2,116 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83507C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:27:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B394C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:30:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E30120881
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:27:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 526DF20881
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:30:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfAYO1S (ORCPT
+        id S1726647AbfAYOak (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:27:18 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48064 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbfAYO1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:27:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B355DEBD;
-        Fri, 25 Jan 2019 06:27:16 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 16B4B3F589;
-        Fri, 25 Jan 2019 06:27:14 -0800 (PST)
-Date:   Fri, 25 Jan 2019 14:27:12 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Julien Thierry <julien.thierry@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        mingo@redhat.com, peterz@infradead.org, will.deacon@arm.com,
-        james.morse@arm.com, hpa@zytor.com, valentin.schneider@arm.com
-Subject: Re: [PATCH v3 0/4] uaccess: Add unsafe accessors for arm64
-Message-ID: <20190125142711.GD25901@arrakis.emea.arm.com>
-References: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
+        Fri, 25 Jan 2019 09:30:40 -0500
+Received: from mga07.intel.com ([134.134.136.100]:21748 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726216AbfAYOak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 09:30:40 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 06:30:39 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,521,1539673200"; 
+   d="scan'208";a="269876213"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orsmga004.jf.intel.com with ESMTP; 25 Jan 2019 06:30:37 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+        id D25DC33A; Fri, 25 Jan 2019 16:30:36 +0200 (EET)
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Borislav Petkov <bp@suse.de>, Thomas Tai <thomas.tai@oracle.com>,
+        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Tyler Baicar <tbaicar@codeaurora.org>
+Subject: [PATCH v2] ras: Use consistent types for UUIDs
+Date:   Fri, 25 Jan 2019 16:30:35 +0200
+Message-Id: <20190125143035.81589-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1547560709-56207-1-git-send-email-julien.thierry@arm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Julien,
+The commit
 
-On Tue, Jan 15, 2019 at 01:58:25PM +0000, Julien Thierry wrote:
-> Julien Thierry (4):
->   arm64: uaccess: Cleanup get/put_user()
->   arm64: uaccess: Implement unsafe accessors
->   uaccess: Check no rescheduling function is called in unsafe region
->   arm64: uaccess: Implement user_access_region_active
+  297b64c74385 ("ras: acpi / apei: generate trace event for unrecognized CPER section")
 
-I queued the first two patches for 5.1. It would be nice to upstream the
-other two but patch 3 needs an ack from (or merged by) the scheduler
-folk.
+brought inconsistency in UUID types which are used across the RAS subsystem.
 
-Thanks.
+Fix this by moving to use guid_t everywhere.
 
+Cc: Tyler Baicar <tbaicar@codeaurora.org>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+---
+
+v2:
+- resend on top of tip:ras/core
+
+ drivers/ras/ras.c       | 2 +-
+ include/ras/ras_event.h | 8 ++++----
+ 2 files changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
+index 3f38907320dc..95540ea8dd9d 100644
+--- a/drivers/ras/ras.c
++++ b/drivers/ras/ras.c
+@@ -14,7 +14,7 @@
+ #define TRACE_INCLUDE_PATH ../../include/ras
+ #include <ras/ras_event.h>
+ 
+-void log_non_standard_event(const uuid_le *sec_type, const uuid_le *fru_id,
++void log_non_standard_event(const guid_t *sec_type, const guid_t *fru_id,
+ 			    const char *fru_text, const u8 sev, const u8 *err,
+ 			    const u32 len)
+ {
+diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
+index a0794632fd01..36c5c5e38c1d 100644
+--- a/include/ras/ras_event.h
++++ b/include/ras/ras_event.h
+@@ -27,7 +27,7 @@
+ TRACE_EVENT(extlog_mem_event,
+ 	TP_PROTO(struct cper_sec_mem_err *mem,
+ 		 u32 err_seq,
+-		 const uuid_le *fru_id,
++		 const guid_t *fru_id,
+ 		 const char *fru_text,
+ 		 u8 sev),
+ 
+@@ -39,7 +39,7 @@ TRACE_EVENT(extlog_mem_event,
+ 		__field(u8, sev)
+ 		__field(u64, pa)
+ 		__field(u8, pa_mask_lsb)
+-		__field_struct(uuid_le, fru_id)
++		__field_struct(guid_t, fru_id)
+ 		__string(fru_text, fru_text)
+ 		__field_struct(struct cper_mem_err_compact, data)
+ 	),
+@@ -218,8 +218,8 @@ TRACE_EVENT(arm_event,
+  */
+ TRACE_EVENT(non_standard_event,
+ 
+-	TP_PROTO(const uuid_le *sec_type,
+-		 const uuid_le *fru_id,
++	TP_PROTO(const guid_t *sec_type,
++		 const guid_t *fru_id,
+ 		 const char *fru_text,
+ 		 const u8 sev,
+ 		 const u8 *err,
 -- 
-Catalin
+2.20.1
+
