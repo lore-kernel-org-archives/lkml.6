@@ -2,147 +2,286 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBDAC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:18:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 90CDCC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:19:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF1CB218A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E201218A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:19:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbfAYLSP (ORCPT
+        id S1727043AbfAYLTI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:18:15 -0500
-Received: from vmicros1.altlinux.org ([194.107.17.57]:35680 "EHLO
-        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfAYLSO (ORCPT
+        Fri, 25 Jan 2019 06:19:08 -0500
+Received: from cloudserver094114.home.pl ([79.96.170.134]:53039 "EHLO
+        cloudserver094114.home.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfAYLTI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:18:14 -0500
-Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
-        by vmicros1.altlinux.org (Postfix) with ESMTP id 66ECF72CC61;
-        Fri, 25 Jan 2019 14:18:11 +0300 (MSK)
-Received: from altlinux.org (sole.flsd.net [185.75.180.6])
-        by imap.altlinux.org (Postfix) with ESMTPSA id 4B4354A4A16;
-        Fri, 25 Jan 2019 14:18:11 +0300 (MSK)
-Date:   Fri, 25 Jan 2019 14:18:09 +0300
-From:   Vitaly Chikunov <vt@altlinux.org>
-To:     Herbert Xu <herbert@gondor.apana.org.au>
-Cc:     David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH v3] akcipher: Introduce verify_rsa/verify for public
- key algorithms
-Message-ID: <20190125111808.slyoptlns53t7fiw@altlinux.org>
-Mail-Followup-To: Herbert Xu <herbert@gondor.apana.org.au>,
-        David Howells <dhowells@redhat.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190118205846.20309-1-vt@altlinux.org>
- <20190125100929.zxmqbsibnnikh7tv@gondor.apana.org.au>
+        Fri, 25 Jan 2019 06:19:08 -0500
+Received: from 79.184.255.239.ipv4.supernova.orange.pl (79.184.255.239) (HELO aspire.rjw.lan)
+ by serwer1319399.home.pl (79.96.170.134) with SMTP (IdeaSmtpServer 0.83.183)
+ id badf1de1758215dc; Fri, 25 Jan 2019 12:19:04 +0100
+From:   "Rafael J. Wysocki" <rjw@rjwysocki.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Linux PM <linux-pm@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Lukas Wunner <lukas@wunner.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Subject: [PATCH v2 5/6] driver core: Fix handling of runtime PM flags in device_link_add()
+Date:   Fri, 25 Jan 2019 12:18:03 +0100
+Message-ID: <2208291.Uxpfu9YhsE@aspire.rjw.lan>
+In-Reply-To: <1665211.FOmLsISsVf@aspire.rjw.lan>
+References: <2493187.oiOpCWJBV7@aspire.rjw.lan> <1665211.FOmLsISsVf@aspire.rjw.lan>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=koi8-r
-Content-Disposition: inline
-In-Reply-To: <20190125100929.zxmqbsibnnikh7tv@gondor.apana.org.au>
-User-Agent: NeoMutt/20171215-106-ac61c7
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 06:09:29PM +0800, Herbert Xu wrote:
-> On Fri, Jan 18, 2019 at 11:58:46PM +0300, Vitaly Chikunov wrote:
-> > Previous akcipher .verify() just `decrypts' (using RSA encrypt which is
-> > using public key) signature to uncover message hash, which was then
-> > compared in upper level public_key_verify_signature() with the expected
-> > hash value, which itself was never passed into verify().
-> > 
-> > This approach was incompatible with EC-DSA family of algorithms,
-> > because, to verify a signature EC-DSA algorithm also needs a hash value
-> > as input; then it's used (together with a signature divided into halves
-> > `r||s') to produce a witness value, which is then compared with `r' to
-> > determine if the signature is correct. Thus, for EC-DSA, nor
-> > requirements of .verify() itself, nor its output expectations in
-> > public_key_verify_signature() wasn't sufficient.
-> > 
-> > Make improved .verify() call which gets hash value as parameter and
-> > produce complete signature check without any output besides status.
-> > 
-> > RSA-centric drivers have replaced verify() with verify_rsa() which
-> > have old semantic and which they still should implement (if they want
-> > pkcs1pad to work). If akcipher have .verify_rsa() callback, it will be
-> > used for a partial verification, which then is finished in
-> > crypto_akcipher_verify().
-> > 
-> > Now for the top level verification only crypto_akcipher_verify() needs
-> > to be called.
-> > 
-> > For pkcs1pad crypto_akcipher_verify_rsa() is introduced which directly
-> > calls .verify_rsa() for its backend. Without this api PKCS1 can not be
-> > implemented.
-> > 
-> > Tested on x86_64.
-> > 
-> > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
-> 
-> Thanks for working on this!
-> 
-> We have been here before.  We changed the AEAD interface in a way
-> that is not dissimilar to what you want to do here.
-> 
-> So I think the basic plan should be:
+From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 
-While time goes, I got another simpler idea how we should settle this:
+After commit ead18c23c263 ("driver core: Introduce device links
+reference counting"), if if there is a link between the given supplier
+and the given consumer already, device_link_add() will refcount it
+and return it unconditionally without updating its flags.  It is
+possible, however, that the second (or any subsequent) caller of
+device_link_add() for the same consumer-supplier pair will pass
+DL_FLAG_PM_RUNTIME, possibly along with DL_FLAG_RPM_ACTIVE, in flags
+to it and the existing link may not behave as expected then.
 
-1. Since we are know that by nature RSA sign/verify is just encrypt/decrypt,
-and since sign/verify calls should not be used directly by any normal
-users:
-- Remove sign/verify calls from all existing RSA backends.
+First, if DL_FLAG_PM_RUNTIME is not set in the existing link's flags
+at all, it needs to be set like during the original initialization of
+the link.
 
-2. pkcs1pad should use encrypt/decrypt API for its low level purposes
-(instead of sign/verify API, which now would be not implemented by them),
-and provide sign (same as before) and new verify (returning only status).
+Second, if DL_FLAG_RPM_ACTIVE is passed to device_link_add() in flags
+(in addition to DL_FLAG_PM_RUNTIME), the existing link should to be
+updated to reflect the "active" runtime PM configuration of the
+consumer-supplier pair and extra care must be taken here to avoid
+possible destructive races with runtime PM of the consumer.
 
-Thus, we avoid verify_rsa call altogether while remaining its
-functionality, and skipping conversion step.
+To that end, redefine the rpm_active field in struct device_link
+as a refcount, initialize it to 1 and make rpm_resume() (for the
+consumer) and device_link_add() increment it whenever they acquire
+a runtime PM reference on the supplier device.  Accordingly, make
+rpm_suspend() (for the consumer) and pm_runtime_clean_up_links()
+decrement it and drop runtime PM references to the supplier
+device in a loop until rpm_active becones 1 again.
 
-> 1) Implement new top-level verify, alongside existing verify_rsa.
-> 2) For existing drivers implement a wrapper over verify_rsa.
-> 3) Convert *all* existing users to the new verify API.
-> 4) Remove top-level verify_rsa API.
-> 5) Convert existing drivers over to verify API.
-> 6) Remove verify_rsa completely.
-> 
-> > +int crypto_akcipher_verify(struct akcipher_request *req,
-> > +			   const unsigned char *digest, unsigned int digest_len)
-> 
-> We should not add new fields outside of akcipher_request.  So
-> these fields need to go inside it.  However, I think we don't
-> actually need two new fields.  They could both go into the src
-> scatterlist.  All we need is a new field, say textlen to indicate
-> where the text stops and where the hash starts.  We could also
-> overlay textlen over dstlen as it would now be unused for verify.
+Fixes: ead18c23c263 ("driver core: Introduce device links reference counting")
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+---
 
-Well, if we allowed to reuse dst* fields why not just put digest over
-dst scatterlist? That would be much simpler.
+I have overlooked the fact that rpm_put_suppliers() doesn't even look
+at the DL_FLAG_PM_RUNTIME link flag and only checks rpm_active for each
+link in the list, so updating rpm_active for existing links from
+device_link_add() is unsafe, regardless of whether or not DL_FLAG_PM_RUNTIME
+is set in their flags.  Of course, this means that the previous version of
+this patch was incorrect.
 
-Thanks,
+I also was kind of unhappy with returning NULL to the callers of
+device_link_add() who passed DL_FLAG_RPM_ACTIVE in flags, but the link
+(with DL_FLAG_PM_RUNTIME set) had been there already.
 
+So, here's a v2 of just this patch (the other patches in the series don't
+change).
 
-> The advantage of having it in one scatterlist is that for those
-> users that already have the two pieces together could simply provide
-> a single SG element (I don't know how likely that is in practice
-> though).
-> 
-> For others you would simply tack on an extra SG element.
-> 
-> Thanks,
-> -- 
-> Email: Herbert Xu <herbert@gondor.apana.org.au>
-> Home Page: http://gondor.apana.org.au/~herbert/
-> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+-> v2:
+  * Redefine rpm_active in struct device_link as a refcount.
+  * Rework the code to use the refcount instead of the bool properly.
+  * Make device_link_add() increment rpm_active for existing links.
+
+Admittedly, turning rpm_active into a refcount theoretically increases the
+overhead of using device links in runtime PM, so it is a concession of sorts,
+but I didn't see any other way to make this work.
+
+---
+ drivers/base/core.c          |   45 ++++++++++++++++++++++++++++---------------
+ drivers/base/power/runtime.c |   26 ++++++++++--------------
+ include/linux/device.h       |    2 -
+ 3 files changed, 42 insertions(+), 31 deletions(-)
+
+Index: linux-pm/drivers/base/core.c
+===================================================================
+--- linux-pm.orig/drivers/base/core.c
++++ linux-pm/drivers/base/core.c
+@@ -165,6 +165,19 @@ void device_pm_move_to_tail(struct devic
+ 	device_links_read_unlock(idx);
+ }
+ 
++static void device_link_rpm_prepare(struct device *consumer,
++				    struct device *supplier)
++{
++	pm_runtime_new_link(consumer);
++	/*
++	 * If the link is being added by the consumer driver at probe time,
++	 * balance the decrementation of the supplier's runtime PM usage counter
++	 * after consumer probe in driver_probe_device().
++	 */
++	if (consumer->links.status == DL_DEV_PROBING)
++		pm_runtime_get_noresume(supplier);
++}
++
+ /**
+  * device_link_add - Create a link between two devices.
+  * @consumer: Consumer end of the link.
+@@ -202,7 +215,6 @@ struct device_link *device_link_add(stru
+ 				    struct device *supplier, u32 flags)
+ {
+ 	struct device_link *link;
+-	bool rpm_put_supplier = false;
+ 
+ 	if (!consumer || !supplier ||
+ 	    (flags & DL_FLAG_STATELESS &&
+@@ -214,7 +226,6 @@ struct device_link *device_link_add(stru
+ 			pm_runtime_put_noidle(supplier);
+ 			return NULL;
+ 		}
+-		rpm_put_supplier = true;
+ 	}
+ 
+ 	device_links_write_lock();
+@@ -250,6 +261,15 @@ struct device_link *device_link_add(stru
+ 		if (flags & DL_FLAG_AUTOREMOVE_SUPPLIER)
+ 			link->flags |= DL_FLAG_AUTOREMOVE_SUPPLIER;
+ 
++		if (flags & DL_FLAG_PM_RUNTIME) {
++			if (!(link->flags & DL_FLAG_PM_RUNTIME)) {
++				device_link_rpm_prepare(consumer, supplier);
++				link->flags |= DL_FLAG_PM_RUNTIME;
++			}
++			if (flags & DL_FLAG_RPM_ACTIVE)
++				refcount_inc(&link->rpm_active);
++		}
++
+ 		kref_get(&link->kref);
+ 		goto out;
+ 	}
+@@ -258,20 +278,15 @@ struct device_link *device_link_add(stru
+ 	if (!link)
+ 		goto out;
+ 
++	refcount_set(&link->rpm_active, 1);
++
+ 	if (flags & DL_FLAG_PM_RUNTIME) {
+-		if (flags & DL_FLAG_RPM_ACTIVE) {
+-			link->rpm_active = true;
+-			rpm_put_supplier = false;
+-		}
+-		pm_runtime_new_link(consumer);
+-		/*
+-		 * If the link is being added by the consumer driver at probe
+-		 * time, balance the decrementation of the supplier's runtime PM
+-		 * usage counter after consumer probe in driver_probe_device().
+-		 */
+-		if (consumer->links.status == DL_DEV_PROBING)
+-			pm_runtime_get_noresume(supplier);
++		if (flags & DL_FLAG_RPM_ACTIVE)
++			refcount_inc(&link->rpm_active);
++
++		device_link_rpm_prepare(consumer, supplier);
+ 	}
++
+ 	get_device(supplier);
+ 	link->supplier = supplier;
+ 	INIT_LIST_HEAD(&link->s_node);
+@@ -334,7 +349,7 @@ struct device_link *device_link_add(stru
+ 	device_pm_unlock();
+ 	device_links_write_unlock();
+ 
+-	if (rpm_put_supplier)
++	if ((flags & DL_FLAG_PM_RUNTIME && flags & DL_FLAG_RPM_ACTIVE) && !link)
+ 		pm_runtime_put(supplier);
+ 
+ 	return link;
+Index: linux-pm/include/linux/device.h
+===================================================================
+--- linux-pm.orig/include/linux/device.h
++++ linux-pm/include/linux/device.h
+@@ -853,7 +853,7 @@ struct device_link {
+ 	struct list_head c_node;
+ 	enum device_link_state status;
+ 	u32 flags;
+-	bool rpm_active;
++	refcount_t rpm_active;
+ 	struct kref kref;
+ #ifdef CONFIG_SRCU
+ 	struct rcu_head rcu_head;
+Index: linux-pm/drivers/base/power/runtime.c
+===================================================================
+--- linux-pm.orig/drivers/base/power/runtime.c
++++ linux-pm/drivers/base/power/runtime.c
+@@ -271,11 +271,8 @@ static int rpm_get_suppliers(struct devi
+ 	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node) {
+ 		int retval;
+ 
+-		if (!(link->flags & DL_FLAG_PM_RUNTIME))
+-			continue;
+-
+-		if (READ_ONCE(link->status) == DL_STATE_SUPPLIER_UNBIND ||
+-		    link->rpm_active)
++		if (!(link->flags & DL_FLAG_PM_RUNTIME) ||
++		    READ_ONCE(link->status) == DL_STATE_SUPPLIER_UNBIND)
+ 			continue;
+ 
+ 		retval = pm_runtime_get_sync(link->supplier);
+@@ -284,7 +281,7 @@ static int rpm_get_suppliers(struct devi
+ 			pm_runtime_put_noidle(link->supplier);
+ 			return retval;
+ 		}
+-		link->rpm_active = true;
++		refcount_inc(&link->rpm_active);
+ 	}
+ 	return 0;
+ }
+@@ -293,12 +290,13 @@ static void rpm_put_suppliers(struct dev
+ {
+ 	struct device_link *link;
+ 
+-	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node)
+-		if (link->rpm_active &&
+-		    READ_ONCE(link->status) != DL_STATE_SUPPLIER_UNBIND) {
++	list_for_each_entry_rcu(link, &dev->links.suppliers, c_node) {
++		if (READ_ONCE(link->status) == DL_STATE_SUPPLIER_UNBIND)
++			continue;
++
++		while (refcount_dec_not_one(&link->rpm_active))
+ 			pm_runtime_put(link->supplier);
+-			link->rpm_active = false;
+-		}
++	}
+ }
+ 
+ /**
+@@ -1551,7 +1549,7 @@ void pm_runtime_remove(struct device *de
+  *
+  * Check links from this device to any consumers and if any of them have active
+  * runtime PM references to the device, drop the usage counter of the device
+- * (once per link).
++ * (as many times as needed).
+  *
+  * Links with the DL_FLAG_STATELESS flag set are ignored.
+  *
+@@ -1573,10 +1571,8 @@ void pm_runtime_clean_up_links(struct de
+ 		if (link->flags & DL_FLAG_STATELESS)
+ 			continue;
+ 
+-		if (link->rpm_active) {
++		while (refcount_dec_not_one(&link->rpm_active))
+ 			pm_runtime_put_noidle(dev);
+-			link->rpm_active = false;
+-		}
+ 	}
+ 
+ 	device_links_read_unlock(idx);
+
