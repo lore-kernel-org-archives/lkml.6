@@ -2,102 +2,99 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6439C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:35:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8195BC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF6B9218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:35:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RFCiLUVC"
+	by mail.kernel.org (Postfix) with ESMTP id 4B12C218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:37:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548401829;
+	bh=kiYamaLSuGBcP32tmUPMuRMgE9E4VGPMNK+Mu+YCKMo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=np1Ii5CYWgtiQJMhjJxtzxJYFOlh+XksbmjHFSjvSmq7cB6wWugJE5QOpbMEKFWdH
+	 aqIHiVkhsLxnG9YHXeXYL2Iy4xub4iYgse0a4mnR4tx8UMWDARyb0Eo7Cg2QBEjAmQ
+	 iV3Z4cwjPPl6SWtWwV15EnX7iSuMIwF/vfLrohMA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728423AbfAYHfS (ORCPT
+        id S1728192AbfAYHhH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 02:35:18 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:44452 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbfAYHfR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 02:35:17 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u6so4331096pfh.11
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 23:35:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=YI9Veq3ms10uJW7naXHqB+q3hvo6IiJdtihTlWyl+v0=;
-        b=RFCiLUVCVCui01cmeylL0bc9Xxe12QraO88mjQYExdJrVxGElhOJptk0dqyO+hz8yx
-         tJ6+SXfygpiG7MbKf9cE/KemaVkD4g2A59B714a/z1fnVMA6sifVtT3gQBQZaO1u7cJx
-         8Uy+yS99f65M8aXm5Aj43BdO1rALZyhU3QzaOUxhyey3nEZ6EHTsy113hZxaqTeQ4BbG
-         SJRvwXp44j9pJ8KOxgSW9KWPFpZWDSrbvqp60S75i/Gm88FfV8WHJ0UuO4ll+sG5wL8D
-         SQV6rhoE5t35zSPEldYOmUzikPySi3j/3RaOdw/t1wy2VcLHBo3zsNvp9iiIAWHbDRnT
-         KB+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=YI9Veq3ms10uJW7naXHqB+q3hvo6IiJdtihTlWyl+v0=;
-        b=Lg93JYcW8U8NGLYDTN2YotMzHwnDH/wPj6/KL1gXtYfNEyxCo7FcMGVVs+k6j0+DXi
-         GTUstG6nHTKI319F6RvFp5FE6qVFh/rzTVrdaRaiOmY0mzz+iqJ81TlUI7bZ1qmfHoAU
-         9Prn0oFajSC0jyF0oM7yzj+Bw4sL5qQz8e8dgb/7ksrg7jZ6pPRAclkKE8nSUO23HXlE
-         7taUTyM7Phrvlf3u6XxcnL75s1xNmRNT9EyfT5AlkCy+uwxw3VUhttcOEnmOgzQF9ELV
-         9XuisnTuj8bHp5IIU4Fq9fnrndZYN0ZPaQmI63Gd/zo7IYs29koHxh7Eet8lq4lsQb0n
-         riWQ==
-X-Gm-Message-State: AJcUukfBUhFEp2ecN9Tp54Myly14k8UeRkZZf6nDjDaeCQbeTikOw4L9
-        31Is+33k2LpKIDOXB6c3Uok=
-X-Google-Smtp-Source: ALg8bN5cwso/1EwdUfOy/HwGG60U9ks9SouhVevBUhxUP5ddCLuabXNYcwoAhZhFGwbfPvUnR+t5JA==
-X-Received: by 2002:a63:3703:: with SMTP id e3mr8848216pga.348.1548401717261;
-        Thu, 24 Jan 2019 23:35:17 -0800 (PST)
-Received: from localhost ([43.224.245.181])
-        by smtp.gmail.com with ESMTPSA id i193sm79592299pgc.22.2019.01.24.23.35.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 23:35:16 -0800 (PST)
-From:   Geliang Tang <geliangtang@gmail.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <yuchao0@huawei.com>,
-        Jiri Kosina <trivial@kernel.org>
-Cc:     Geliang Tang <geliangtang@gmail.com>,
-        linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] f2fs: fix typos in code comments
-Date:   Fri, 25 Jan 2019 15:35:01 +0800
-Message-Id: <19c7195d323e7c6a4b03c1e584d070e60458b71f.1548401310.git.geliangtang@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 25 Jan 2019 02:37:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42808 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726271AbfAYHhH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 02:37:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E4689ACD2;
+        Fri, 25 Jan 2019 07:37:05 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 08:37:04 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     robert shteynfeld <robert.shteynfeld@gmail.com>,
+        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Bob Picco <bob.picco@oracle.com>
+Subject: Re: kernel panic due to
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2830bf6f05fb3e05bc4743274b806c821807a684
+Message-ID: <20190125073704.GC3560@dhcp22.suse.cz>
+References: <CADfvbxqC1+XoSsn0sEDqFE16tN1Pq46-QDAaCu=AXJdZeY3rDQ@mail.gmail.com>
+ <CAHk-=wh-1wB_X2MG0vW5e755rWJ5pBN8yyXLo2syOdcMV6qYoQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh-1wB_X2MG0vW5e755rWJ5pBN8yyXLo2syOdcMV6qYoQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-lengh -> length
+On Fri 25-01-19 17:48:32, Linus Torvalds wrote:
+> [ Just adding a lot of other people to the cc ]
+> 
+> Robert, could you add a dmesg of a successful boot to that bugzilla,
+> or just as an attachement in email to this group of people..
+> 
+> This looks to be with the Fedora kernel config. Two people reporting
+> it, it looks like similar machines.
+> 
+> I assume it's some odd memory sizing detail that happens to trigger a
+> particular case.
 
-Signed-off-by: Geliang Tang <geliangtang@gmail.com>
----
- include/linux/f2fs_fs.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Quite possible.
 
-diff --git a/include/linux/f2fs_fs.h b/include/linux/f2fs_fs.h
-index d7711048ef93..624b8a47d3c6 100644
---- a/include/linux/f2fs_fs.h
-+++ b/include/linux/f2fs_fs.h
-@@ -186,7 +186,7 @@ struct f2fs_orphan_block {
- struct f2fs_extent {
- 	__le32 fofs;		/* start file offset of the extent */
- 	__le32 blk;		/* start block address of the extent */
--	__le32 len;		/* lengh of the extent */
-+	__le32 len;		/* length of the extent */
- } __packed;
- 
- #define F2FS_NAME_LEN		255
-@@ -511,7 +511,7 @@ typedef __le32	f2fs_hash_t;
- struct f2fs_dir_entry {
- 	__le32 hash_code;	/* hash code of file name */
- 	__le32 ino;		/* inode number */
--	__le16 name_len;	/* lengh of file name */
-+	__le16 name_len;	/* length of file name */
- 	__u8 file_type;		/* file type */
- } __packed;
- 
+> I absolutely *hate* those "let's lazily clear 'struct page' array"
+> patches. They've caused problems before, and I'm not convinced the
+> pain has been worth it. Maybe we should revert them (again) and
+> promise to never ever take things like that again? Andrew?
+
+The performance numbers were pretty dramatic on the other hand. This was
+especially seen for very large NVDIMMs initialization when a userspace
+was timing out without these applied.
+
+I am certainly not very happy about regressions which we still do see. I
+was worried about that early when reviewing these patches because it is
+really hard to find all those weird places which simply happened to work
+even when broken before. E.g. unitialized struct pages were simply
+with zeroed and that means that they seemed to belong to node zero and
+zone DMA and nothing really blown up. With the poisoning in place we
+have an explicit VM_BUG_ON and Fedora kernels do enable VM debugging so
+those problems are visible.
+
+I still think we should chase after those issue and fix them regardless.
+Lazy initialization revert will not solve those problems. It will just
+paper over them.
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
