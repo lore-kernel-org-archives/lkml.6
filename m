@@ -2,211 +2,221 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C8CEC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:09:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AECCCC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA65F2184C
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:09:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6409C218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:16:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="SvzpZ+Yr"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="FZzIT2+M";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="AsloyTI0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729342AbfAYUJz (ORCPT
+        id S1727736AbfAYUQO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 15:09:55 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:48250 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729140AbfAYUJx (ORCPT
+        Fri, 25 Jan 2019 15:16:14 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:37290 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726030AbfAYUQO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 15:09:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1548446990; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=+qtoQrEMsAxuCO3NFkxjd0qE3pGAyDjYjSr5X5AQomU=;
-        b=SvzpZ+YrLwDU/8idZFd9XE2y+I8ykRhIIFsDMsuHr8D/iBSf9UeH8mJvQ5N6y+rZuPyeR0
-        mMyl+ZNOLpFse+vQnR6j0OFKzp1oaXU/qis8IxOKa/UwyeWxxdfJAd6CtwwlfZf59xhl/0
-        9pUyYHcaFDNx5KBCfB/MpHo+dAUrQsE=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 3/3] MIPS: qi_lb60: Move MMC configuration to devicetree
-Date:   Fri, 25 Jan 2019 17:09:27 -0300
-Message-Id: <20190125200927.21045-3-paul@crapouillou.net>
-In-Reply-To: <20190125200927.21045-1-paul@crapouillou.net>
-References: <20190125200927.21045-1-paul@crapouillou.net>
+        Fri, 25 Jan 2019 15:16:14 -0500
+Received: from pps.filterd (m0044012.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0PKEr62003387;
+        Fri, 25 Jan 2019 12:16:12 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=1HQ66HyqKo3gpnXUMpTtZ9cJ5lycP8J1PcB28jRyhe8=;
+ b=FZzIT2+MzTCvgIOPRQcwzcyyYq4wJzZSc1+WtSHi+3sYWBLgiuMHf3NcTXteE05A4kFk
+ m8cy49WWblEvQ669CF3r4MEZJwK4gKhQecR2/3gdVfRW1gdHk8lwRpEUMAOGtJ6vnLdQ
+ wUOs97i+IkTcK8kCGX/y8SniCuSihhLSMGk= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q86rpgjfp-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 25 Jan 2019 12:16:11 -0800
+Received: from prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) by
+ prn-hub04.TheFacebook.com (2620:10d:c081:35::128) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Fri, 25 Jan 2019 12:16:10 -0800
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-mbx03.TheFacebook.com (2620:10d:c081:6::17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Fri, 25 Jan 2019 12:16:10 -0800
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Fri, 25 Jan 2019 12:16:10 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1HQ66HyqKo3gpnXUMpTtZ9cJ5lycP8J1PcB28jRyhe8=;
+ b=AsloyTI0bbeqXpPbjIl3UZfvfuFici8oWDFLW1psh2eoypACIBUpVTUFqieFCIfFF+cui4YsMl/6GkBBjZlecEFN5NINPexTD376dyOuxnWaWSdTOT+FTuCdch7V/108k+vOlxNsjpsaeKQP2J9RVt3BlXnPnd/N60hVjEj9vB4=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
+ MWHPR15MB1568.namprd15.prod.outlook.com (10.173.235.141) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.21; Fri, 25 Jan 2019 20:16:09 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::ec0e:4a05:81f8:7df9]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::ec0e:4a05:81f8:7df9%4]) with mapi id 15.20.1558.021; Fri, 25 Jan 2019
+ 20:16:09 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+CC:     lkml <linux-kernel@vger.kernel.org>
+Subject: Re: perf/x86/intel/uncore
+Thread-Topic: perf/x86/intel/uncore
+Thread-Index: AQHUtN9mTaQDMPjjHkuN91Z74fJpgaXAabGAgAACLQA=
+Date:   Fri, 25 Jan 2019 20:16:08 +0000
+Message-ID: <5350E02A-6457-41A8-8F33-AF67BFDAEE3E@fb.com>
+References: <E44A3BE5-E45A-4D88-818C-02E6E6342060@fb.com>
+ <2f74c906-6d13-ff18-f967-100e82343f2f@linux.intel.com>
+In-Reply-To: <2f74c906-6d13-ff18-f967-100e82343f2f@linux.intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.102.3)
+x-originating-ip: [2620:10d:c090:200::6:7f1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1568;20:h0zAM3S76NqSiIaXdK3vRckMOL1FdaIGmjtd08b8J6q+VbuhVPE49+QLzYiaawIsHznmzIEAMBbLW3yjCFzjYIZ54bIrZYft6IXNyS89FH2eWt6BdVYqSTaYVyFrLL2wpBE+tm8a/4oE8YMIP1ALrIpYljhYwx6MYN8AUkBOLHo=
+x-ms-office365-filtering-correlation-id: 1dfcb91c-b2b0-44c9-668f-08d68301f1a6
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1568;
+x-ms-traffictypediagnostic: MWHPR15MB1568:
+x-microsoft-antispam-prvs: <MWHPR15MB1568EFC3D61DBCE3C4ECA2A0B39B0@MWHPR15MB1568.namprd15.prod.outlook.com>
+x-forefront-prvs: 0928072091
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(39860400002)(396003)(376002)(366004)(136003)(199004)(189003)(68736007)(6916009)(6116002)(36756003)(53546011)(6506007)(186003)(478600001)(102836004)(14454004)(53936002)(256004)(4326008)(6486002)(97736004)(6436002)(229853002)(6246003)(6512007)(25786009)(2906002)(8936002)(50226002)(71190400001)(81156014)(57306001)(86362001)(316002)(8676002)(81166006)(83716004)(71200400001)(76176011)(99286004)(46003)(11346002)(446003)(305945005)(476003)(33656002)(2616005)(106356001)(105586002)(82746002)(486006)(7736002)(21314003)(505234006);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1568;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: lclLEk+KLv3Jw9WDiOcKnWJbyIzVKdoqTFcp8kyzYYX+OenrDQDlU/9bxGp2YMqobXBFBFjZ16LrOiFcvX2FHILz4hzm8+VtfQq8HCmmSd4aj94e1R8BCoWICyMFtrdh0nuVLoGSJyTVUqCYxzjNscWTh7AjUoKNcC8PftoXo/WzKEZoc9nN6LeSUVUbHXVFoc/oASngbMYrWTrk06zTxFHH56MWnOwXkBv9wuh6IQrAvnK24HfALSBcRCbKE+MPl6nIzkaDbQoUwVBW6XL0VOJhrYsJI2knovkI7PHuryEHSje5hSlYoYOjLBugpQupvtArJ/Hs2DMgx3u44YVajesTrUWqdMvrAhmw9jxzaaFM42QSpJPvCCXWGSvbeacSqI5sbXIxzM1BGslhlHy3UFKlreHfzuqFKu1ltVpiqW4=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F3269951BF92204FBF63AE899AEF0E1D@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1dfcb91c-b2b0-44c9-668f-08d68301f1a6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2019 20:16:08.9332
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1568
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-25_12:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Move the MMC configuration from the board C file to devicetree.
+Thanks Kan!
 
-The 'power' GPIO was removed and instead the vmmc regulator is used,
-to follow the changes introduced in the jz4740-mmc driver.
+> On Jan 25, 2019, at 12:08 PM, Liang, Kan <kan.liang@linux.intel.com> wrot=
+e:
+>=20
+>=20
+>=20
+> On 1/25/2019 1:54 PM, Song Liu wrote:
+>> Hi,
+>> We are debugging an issue that skx_pci_uncores cannot be registered on
+>> 8-socket system with Xeon Platinum 8176 CPUs. After poking around for a
+>> while, I found it is caused by snbep_pci2phy_map_init() couldn't find
+>> a unbox_dev:
+>>   ubox_dev =3D pci_get_device(PCI_VENDOR_ID_INTEL, devid, ubox_dev);
+>>   unbox_dev =3D=3D NULL
+>>   ...
+>> The same kernel (Linus' master) works fine on some single socket SKX
+>> systems.
+>> I am not sure what to check next. And I am not sure whether this is
+>> specific to this system (HPE Superdome Flex).
+>=20
+> Could you please share the offset 0xC0 and 0xD4 of the PCI configuration =
+space for each device which PCI ID is 0x2014?
+>=20
+> snbep_pci2phy_map_init() tries to build a mapping from BUS# to Socket ID.
+> CPUNODEID (0xc0) discloses the Node ID of current BUS.
+> GIDNIDMAP (0xd4) discloses the mapping between Socket ID and Node ID.
+>=20
+> Here is an example from a 4 socket SKX.
+> BUS    CPUNODEID(bit2:0)    GIDNIDMAP
+> 0x0    0x0            0x688
+> 0x40    0x1            0x688
+> 0x80    0x2            0x688
+> 0xC0    0x3            0x688
+>=20
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- arch/mips/boot/dts/ingenic/qi_lb60.dts | 33 +++++++++++++++++++++++++++++++++
- arch/mips/jz4740/board-qi_lb60.c       | 32 --------------------------------
- 2 files changed, 33 insertions(+), 32 deletions(-)
+Here is the data I get:
 
-diff --git a/arch/mips/boot/dts/ingenic/qi_lb60.dts b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-index 76aaf8982554..cc26650562c2 100644
---- a/arch/mips/boot/dts/ingenic/qi_lb60.dts
-+++ b/arch/mips/boot/dts/ingenic/qi_lb60.dts
-@@ -2,6 +2,7 @@
- /dts-v1/;
- 
- #include "jz4740.dtsi"
-+#include <dt-bindings/gpio/gpio.h>
- 
- / {
- 	compatible = "qi,lb60", "ingenic,jz4740";
-@@ -9,6 +10,15 @@
- 	chosen {
- 		stdout-path = &uart0;
- 	};
-+
-+	mmc_power: fixedregulator {
-+		compatible = "regulator-fixed";
-+		regulator-name = "mmc_vcc";
-+		gpio = <&gpd 2 0>;
-+
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+	};
- };
- 
- &ext {
-@@ -30,4 +40,27 @@
- 		groups = "uart0-data";
- 		bias-disable;
- 	};
-+
-+	pins_mmc: mmc {
-+		mmc {
-+			function = "mmc";
-+			groups = "mmc-1bit", "mmc-4bit";
-+			bias-disable;
-+		};
-+
-+		mmc-gpios {
-+			pins = "PD0", "PD2";
-+			bias-disable;
-+		};
-+	};
-+};
-+
-+&mmc {
-+	bus-width = <4>;
-+	max-frequency = <24000000>;
-+	cd-gpios = <&gpd 0 GPIO_ACTIVE_HIGH>;
-+	vmmc-supply = <&mmc_power>;
-+
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pins_mmc>;
- };
-diff --git a/arch/mips/jz4740/board-qi_lb60.c b/arch/mips/jz4740/board-qi_lb60.c
-index 6718efb400f4..8e4c7ac6ac02 100644
---- a/arch/mips/jz4740/board-qi_lb60.c
-+++ b/arch/mips/jz4740/board-qi_lb60.c
-@@ -33,7 +33,6 @@
- 
- #include <asm/mach-jz4740/gpio.h>
- #include <asm/mach-jz4740/jz4740_fb.h>
--#include <asm/mach-jz4740/jz4740_mmc.h>
- 
- #include <linux/regulator/fixed.h>
- #include <linux/regulator/machine.h>
-@@ -382,19 +381,6 @@ static struct platform_device qi_lb60_gpio_keys = {
- 	}
- };
- 
--static struct jz4740_mmc_platform_data qi_lb60_mmc_pdata = {
--	/* Intentionally left blank */
--};
--
--static struct gpiod_lookup_table qi_lb60_mmc_gpio_table = {
--	.dev_id = "jz4740-mmc.0",
--	.table = {
--		GPIO_LOOKUP("GPIOD", 0, "cd", GPIO_ACTIVE_HIGH),
--		GPIO_LOOKUP("GPIOD", 2, "power", GPIO_ACTIVE_LOW),
--		{ },
--	},
--};
--
- /* beeper */
- static struct pwm_lookup qi_lb60_pwm_lookup[] = {
- 	PWM_LOOKUP("jz4740-pwm", 4, "pwm-beeper", NULL, 0,
-@@ -445,7 +431,6 @@ static struct gpiod_lookup_table qi_lb60_audio_gpio_table = {
- static struct platform_device *jz_platform_devices[] __initdata = {
- 	&jz4740_udc_device,
- 	&jz4740_udc_xceiv_device,
--	&jz4740_mmc_device,
- 	&jz4740_nand_device,
- 	&qi_lb60_keypad,
- 	&qi_lb60_spigpio_device,
-@@ -455,17 +440,12 @@ static struct platform_device *jz_platform_devices[] __initdata = {
- 	&jz4740_codec_device,
- 	&jz4740_adc_device,
- 	&jz4740_pwm_device,
--	&jz4740_dma_device,
- 	&qi_lb60_gpio_keys,
- 	&qi_lb60_pwm_beeper,
- 	&qi_lb60_charger_device,
- 	&qi_lb60_audio_device,
- };
- 
--static unsigned long pin_cfg_bias_disable[] = {
--	    PIN_CONFIG_BIAS_DISABLE,
--};
--
- static struct pinctrl_map pin_map[] __initdata = {
- 	/* NAND pin configuration */
- 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-nand",
-@@ -477,16 +457,6 @@ static struct pinctrl_map pin_map[] __initdata = {
- 	PIN_MAP_MUX_GROUP("jz4740-fb", PINCTRL_STATE_SLEEP,
- 			"10010000.jz4740-pinctrl", "lcd", "lcd-no-pins"),
- 
--	/* MMC pin configuration */
--	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-mmc.0",
--			"10010000.jz4740-pinctrl", "mmc", "mmc-1bit"),
--	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-mmc.0",
--			"10010000.jz4740-pinctrl", "mmc", "mmc-4bit"),
--	PIN_MAP_CONFIGS_PIN_DEFAULT("jz4740-mmc.0",
--			"10010000.jz4740-pinctrl", "PD0", pin_cfg_bias_disable),
--	PIN_MAP_CONFIGS_PIN_DEFAULT("jz4740-mmc.0",
--			"10010000.jz4740-pinctrl", "PD2", pin_cfg_bias_disable),
--
- 	/* PWM pin configuration */
- 	PIN_MAP_MUX_GROUP_DEFAULT("jz4740-pwm",
- 			"10010000.jz4740-pinctrl", "pwm4", "pwm4"),
-@@ -498,12 +468,10 @@ static int __init qi_lb60_init_platform_devices(void)
- 	jz4740_framebuffer_device.dev.platform_data = &qi_lb60_fb_pdata;
- 	jz4740_nand_device.dev.platform_data = &qi_lb60_nand_pdata;
- 	jz4740_adc_device.dev.platform_data = &qi_lb60_battery_pdata;
--	jz4740_mmc_device.dev.platform_data = &qi_lb60_mmc_pdata;
- 
- 	gpiod_add_lookup_table(&qi_lb60_audio_gpio_table);
- 	gpiod_add_lookup_table(&qi_lb60_nand_gpio_table);
- 	gpiod_add_lookup_table(&qi_lb60_spigpio_gpio_table);
--	gpiod_add_lookup_table(&qi_lb60_mmc_gpio_table);
- 
- 	spi_register_board_info(qi_lb60_spi_board_info,
- 				ARRAY_SIZE(qi_lb60_spi_board_info));
--- 
-2.11.0
+# lspci -xxx | grep "86 80 14 20" -A 15 -B 1 | grep -e "86 80 14 20" -e c0:=
+ -e d0: -e Intel
+0000:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers=
+ (rev 04)
+00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+c0: 00 a0 00 00 2f 00 00 80 01 00 02 00 2f 2f 2f 20
+d0: 02 00 00 00 88 d6 b6 00 01 00 00 00 00 00 00 00
+
+0001:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers=
+ (rev 04)
+00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+c0: 01 80 00 00 1f 00 00 80 01 00 02 00 1f 1f 1f 10
+d0: 02 00 00 00 88 46 92 00 01 00 00 00 00 00 00 00
+
+0002:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers=
+ (rev 04)
+00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+c0: 02 e0 00 00 8f 00 00 80 01 00 02 00 8f 8f 8f 80
+d0: 02 00 00 00 88 f6 ff 00 01 00 00 00 00 00 00 00
+
+0003:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers=
+ (rev 04)
+00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+c0: 03 c0 00 00 4f 00 00 80 01 00 02 00 4f 4f 4f 40
+d0: 02 00 00 00 88 66 db 00 01 00 00 00 00 00 00 00
+
+0004:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers=
+ (rev 04)
+00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+c0: a0 b4 00 00 2f 00 00 80 01 00 02 00 2f 2f 2f 20
+d0: 02 00 00 00 6d 8b 68 00 01 00 00 00 00 00 00 00
+
+0005:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers=
+ (rev 04)
+00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+c0: 81 90 00 00 1f 00 00 80 01 00 02 00 1f 1f 1f 10
+d0: 02 00 00 00 24 89 68 00 01 00 00 00 00 00 00 00
+
+0006:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers=
+ (rev 04)
+00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+c0: e2 fc 00 00 8f 00 00 80 01 00 02 00 8f 8f 8f 80
+d0: 02 00 00 00 ff 8f 68 00 01 00 00 00 00 00 00 00
+
+0007:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers=
+ (rev 04)
+00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+c0: c3 d8 00 00 4f 00 00 80 01 00 02 00 4f 4f 4f 40
+d0: 02 00 00 00 b6 8d 68 00 01 00 00 00 00 00 00 00
+
+Song
+>=20
+>> One thing I noticed is that the PCI configuration space shows
+>> subsystem vendor ID of 0x1590 instead of 0x8086:
+>> 0000:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Regist=
+ers (rev 04)
+>> 00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+>> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>> 20: 00 00 00 00 00 00 00 00 00 00 00 00 90 15 14 20   << subsystem vendo=
+r
+>> 30: 00 00 00 00 40 00 00 00 00 00 00 00 00 00 00 00
+>> But I don't think that is the problem as the code search with PCI_ANY_ID=
+.
+>>=20
+>=20
+> It looks for the device with PCI ID 0x2014.
+>=20
+>=20
+> Thanks,
+> Kan
 
