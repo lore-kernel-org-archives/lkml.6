@@ -2,128 +2,144 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 048D1C282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 01:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1130BC282C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 01:21:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C101E218D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 01:20:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D2E61218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 01:21:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wlt9/t3J"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iXGtMnti"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728268AbfAYBUM (ORCPT
+        id S1728323AbfAYBVJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 20:20:12 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:46887 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726015AbfAYBUL (ORCPT
+        Thu, 24 Jan 2019 20:21:09 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:36540 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfAYBVI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 20:20:11 -0500
-Received: by mail-pg1-f194.google.com with SMTP id w7so3448982pgp.13;
-        Thu, 24 Jan 2019 17:20:11 -0800 (PST)
+        Thu, 24 Jan 2019 20:21:08 -0500
+Received: by mail-ed1-f67.google.com with SMTP id f23so6133945edb.3;
+        Thu, 24 Jan 2019 17:21:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nKiwnk5Rh0auXyU95dhs5g89Dyq0dht87Z5qnVX942k=;
-        b=Wlt9/t3JYDNyp7pVifdMKeaY39WlKfPC2NxYuyzrhyNw52CVLQX2sU8UpvdR2k4LRk
-         eK8Atw/249waCMtFUvJvMiGZum+Z+e1KEkBHY7VAUlmRfi+g8Ni9m60aqRyIkEFSW1uC
-         D/cjAPKCKf70hhuz1T5g/CEzj5ARyj/Sy+1TZwIR9FvAL1jOGrzGVw9+Pp3/4+kXlyhM
-         MoXam51DLMkcjoB5M1roJlhjGl1ELrYnuOCrHtvVyqpfXQrHGyPGaXxgOCvmgYnOtBqD
-         zKT8ErSfrxcN/ypT5mD3/bCYJ0JtXQW55syega2RTacSlPv8oX9YxY8XDU61fTuGSkhJ
-         eMZA==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=u7Jk9Z17dFrCt7kIv0knTupUrZ6oToI0kGJABgTRWXk=;
+        b=iXGtMntihgvs2zdUkCGM5Nl7t7GZeGSdXQkD/uuntDpx9HIF70UXQQydPrhbk5osWw
+         Kem9fKm6W6pdYxx7yTDsKlTAJaXkkHUBONdhLXtf/bLCs0jp0gYx75Y6EtK78WkTVlV3
+         YaIALBRN2DQqVo4xhqDDFuZsYGs89WWLaac3PCMXQ/xBTiki/1JecwwLsjMRjOAKWlmU
+         LvsyJheIoUY1pb5uWHWj1OAKDvr0HHQURniyEyl2mc/5ncZp7xpyIwjZOb8PdLSKfm36
+         zVX8hn0W7RK+jWbHNX7J5voV0vQXFcsvgCE/6EgkIKU0EfQlv3Xu7g5vtGxDcc37TwBJ
+         OvDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nKiwnk5Rh0auXyU95dhs5g89Dyq0dht87Z5qnVX942k=;
-        b=tXpOKG5lEThmwwTXLatJa+5mrS7RObZ97VADiS8kEseHWWiQUXcKmjCw3c480/Iw9g
-         WISo4AtSX8Vf2QfZ1cr/naRbgAu1XWeb+QIMNfvi/+7FJnaOEIgdQshSRbO4ihFLqlHd
-         mDoEe58PQpVJMf49pLUP/n18W+gGTEKi42K4AbnjNQQ/kJx4vzTzkBsYlIhTY6XARrTx
-         OFT8SGgqy1BNxeHQcGytDImeVibzpwL2WMBpl+wLuZSxeUw0unsZegdDuhRpX30IZLWC
-         zLLNJ4pphR6m16JGPvD7h5ijNqC1jYQRAqpjOKIr1uYnJf+S+yHAuX5VNmR51C+wOkjc
-         kvCA==
-X-Gm-Message-State: AJcUukc9QT9hGhKqLIkGIwTNgIi1Ky+gE4wQKJrupZQdlGE+TLkENk7E
-        0b0AniLmTnxRDJ0oJDQiBI3tDD9x
-X-Google-Smtp-Source: ALg8bN63f6hqc6Rg2B3gcLkJLNMyr+aoVarxK/gobmp+Li9+w+jbpTJFCg+50za7ywE2eyrriaKunw==
-X-Received: by 2002:a63:9a09:: with SMTP id o9mr7770627pge.94.1548379210163;
-        Thu, 24 Jan 2019 17:20:10 -0800 (PST)
-Received: from [10.0.2.15] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
-        by smtp.gmail.com with ESMTPSA id 184sm32957162pfe.106.2019.01.24.17.20.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 17:20:09 -0800 (PST)
-Subject: Re: [PATCH] of: Make of_node_name_eq() case insensitive
-To:     Frank Rowand <frowand.list@gmail.com>, linux-kernel@vger.kernel.org
-Cc:     vivien.didelot@gmail.com, Rob Herring <robh+dt@kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
-        <devicetree@vger.kernel.org>
-References: <20190124200825.2611-1-f.fainelli@gmail.com>
- <1a19b5f3-1387-0e6d-2d84-1b61079b4efb@gmail.com>
-From:   Florian Fainelli <f.fainelli@gmail.com>
-Message-ID: <3e63d0c3-cb92-5caa-c0db-a04ef8fb5393@gmail.com>
-Date:   Thu, 24 Jan 2019 17:20:07 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=u7Jk9Z17dFrCt7kIv0knTupUrZ6oToI0kGJABgTRWXk=;
+        b=hJCeU/2LXz1xjEo3Odj/+qbDF3cdxXBHAC6Nce8fC91TJyc/3ww68Aqq8vwa89FU7X
+         tsqZ5E8SSergKaR+8MdY+iZ9qJKzlEGdIqusNjAvoXBvH382yyLH7A7jtMUHZByK6087
+         bN5aaT6h3oZQH0ZTO4WOG9x0meqcaE/zFVX9SW5mXxJNUuiEII9dSSn8hTzaGbUUFk7F
+         p+R2WY6QibR7nYeKbpKghiJ+598PQG6CNbY45I7PoFb2NagEXpe2zH+EL4J4K3mxGQj4
+         kwjZi5vm35/iLIMk79Rj5dVorJ3Z0K3RJH6Pq57EcMupd6D/xfNNJLwt2xEUoVQDgHsH
+         T+ZA==
+X-Gm-Message-State: AJcUukfXGnBBrdG8rrOGYVFGvTabGeEkcRNCL5EmRYUzq3+gklMBSmEN
+        IBRgQlR7Fc9Z/fAx0Gxz0HaEftDKj5mo2g==
+X-Google-Smtp-Source: ALg8bN54qOxbSVHuW4PlJLCZlmQYXlZpto39Z1eRfvhkO3S3PPrdBBS0w6aJnUiThkZcgYPYswo2/Q==
+X-Received: by 2002:a50:9b1d:: with SMTP id o29mr8260414edi.246.1548379266426;
+        Thu, 24 Jan 2019 17:21:06 -0800 (PST)
+Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
+        by smtp.gmail.com with ESMTPSA id n10sm11155842edq.33.2019.01.24.17.21.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 17:21:05 -0800 (PST)
+Date:   Thu, 24 Jan 2019 18:21:03 -0700
+From:   Nathan Chancellor <natechancellor@gmail.com>
+To:     ndesaulniers@google.com
+Cc:     airlied@linux.ie, daniel@ffwll.ch, stable@vger.kernel.org,
+        S@google.com, Shirish <Shirish.S@amd.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        James Y Knight <jyknight@google.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        Michel =?iso-8859-1?Q?D=E4nzer?= <michel.daenzer@amd.com>,
+        Tony Cheng <Tony.Cheng@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] drm/amd/display: add -msse2 to prevent Clang from
+ emitting libcalls to undefined SW FP routines
+Message-ID: <20190125012103.GA20106@archlinux-ryzen>
+References: <20190125005304.183322-1-ndesaulniers@google.com>
 MIME-Version: 1.0
-In-Reply-To: <1a19b5f3-1387-0e6d-2d84-1b61079b4efb@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125005304.183322-1-ndesaulniers@google.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 1/24/19 3:45 PM, Frank Rowand wrote:
-> On 1/24/19 12:08 PM, Florian Fainelli wrote:
->> Since c32569e358ad ("regulator: Use of_node_name_eq for node name
->> comparisons") Vivien reported the mc13892-regulator complaining about
->> not being able to find regulators.
->>
->> This is because prior to that commit we used of_node_cmp() to compare
->> the regulator array passed from mc13892_regulators down to
->> mc13xxx_parse_regulators_dt() and they are all defined in uppercase
->> letters by the MC13892_*_DEFINE* macros, whereas they are defined as
->> lowercase in the DTS.
->>
->> Fix this by use strncasecmp() since that makes sure the comparison is
->> case insensitive like what of_node_cmp() did.
->>
->> Reported-by: Vivien Didelot <vivien.didelot@gmail.com>
->> Fixes: c32569e358ad ("regulator: Use of_node_name_eq for node name comparisons")
->> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
->> ---
->>  drivers/of/base.c | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/of/base.c b/drivers/of/base.c
->> index 5226e898476e..ff47c86277cb 100644
->> --- a/drivers/of/base.c
->> +++ b/drivers/of/base.c
->> @@ -66,7 +66,8 @@ bool of_node_name_eq(const struct device_node *np, const char *name)
->>  	node_name = kbasename(np->full_name);
->>  	len = strchrnul(node_name, '@') - node_name;
->>  
->> -	return (strlen(name) == len) && (strncmp(node_name, name, len) == 0);
->> +	return (strlen(name) == len) &&
->> +		(strncasecmp(node_name, name, len) == 0);
->>  }
->>  EXPORT_SYMBOL(of_node_name_eq);
->>  
->>
+On Thu, Jan 24, 2019 at 04:52:59PM -0800, ndesaulniers@google.com wrote:
+> arch/x86/Makefile disables SSE and SSE2 for the whole kernel.  The
+> AMDGPU drivers modified in this patch re-enable SSE but not SSE2.  Turn
+> on SSE2 to support emitting double precision floating point instructions
+> rather than calls to non-existent (usually available from gcc_s or
+> compiler_rt) floating point helper routines.
 > 
-> Node names are case sensitive.  Please fix mc13xxx_parse_regulators_dt() to
-> properly handle case instead of changing of_node_name_eq().
+> Link: https://gcc.gnu.org/onlinedocs/gccint/Soft-float-library-routines.html
+> Link: https://github.com/ClangBuiltLinux/linux/issues/327
+> Cc: stable@vger.kernel.org # 4.19
+> Reported-by: S, Shirish <Shirish.S@amd.com>
+> Reported-by: Matthias Kaehlcke <mka@google.com>
+> Suggested-by: James Y Knight <jyknight@google.com>
+> Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+> Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+> Tested-by: Guenter Roeck <linux@roeck-us.net>
 
-Fair enough, should we issue a warning if np->full_name contains upper
-case while name does not (and vice versa) to help troubleshoot cases
-like the one we found with Vivien?
--- 
-Florian
+Tested-by: Nathan Chancellor <natechancellor@gmail.com>
+
+> ---
+>  drivers/gpu/drm/amd/display/dc/calcs/Makefile | 2 +-
+>  drivers/gpu/drm/amd/display/dc/dml/Makefile   | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/display/dc/calcs/Makefile b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+> index 95f332ee3e7e..dc85a3c088af 100644
+> --- a/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+> +++ b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+> @@ -30,7 +30,7 @@ else ifneq ($(call cc-option, -mstack-alignment=16),)
+>  	cc_stack_align := -mstack-alignment=16
+>  endif
+>  
+> -calcs_ccflags := -mhard-float -msse $(cc_stack_align)
+> +calcs_ccflags := -mhard-float -msse -msse2 $(cc_stack_align)
+>  
+>  CFLAGS_dcn_calcs.o := $(calcs_ccflags)
+>  CFLAGS_dcn_calc_auto.o := $(calcs_ccflags)
+> diff --git a/drivers/gpu/drm/amd/display/dc/dml/Makefile b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+> index d97ca6528f9d..33c7d7588712 100644
+> --- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
+> +++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+> @@ -30,7 +30,7 @@ else ifneq ($(call cc-option, -mstack-alignment=16),)
+>  	cc_stack_align := -mstack-alignment=16
+>  endif
+>  
+> -dml_ccflags := -mhard-float -msse $(cc_stack_align)
+> +dml_ccflags := -mhard-float -msse -msse2 $(cc_stack_align)
+>  
+>  CFLAGS_display_mode_lib.o := $(dml_ccflags)
+>  CFLAGS_display_pipe_clocks.o := $(dml_ccflags)
+> -- 
+> 2.20.1.321.g9e740568ce-goog
+> 
