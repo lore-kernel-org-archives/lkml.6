@@ -5,68 +5,68 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DE1C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:25:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DAFC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 466EC218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:25:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5EEE217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PtM12YcI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIuUDY9u"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727665AbfAYLZe (ORCPT
+        id S1726804AbfAYLaS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:25:34 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:35347 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfAYLZd (ORCPT
+        Fri, 25 Jan 2019 06:30:18 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34824 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfAYLaS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:25:33 -0500
-Received: by mail-wr1-f68.google.com with SMTP id 96so9923564wrb.2;
-        Fri, 25 Jan 2019 03:25:32 -0800 (PST)
+        Fri, 25 Jan 2019 06:30:18 -0500
+Received: by mail-wr1-f65.google.com with SMTP id 96so9939524wrb.2;
+        Fri, 25 Jan 2019 03:30:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=73PhPzZvbQ2Ilmb4WfNnZ6RVNfBIrtWaxQPD7Xifscc=;
-        b=PtM12YcIP31FBY9DbFODt9rpmV434nV3o2v7y5VTHnwjA/TKsk6c4MZX4uva28LHd/
-         nWjic1fNXYc9BVieOv7ntmFnT1a4wZvBEZLbevkdyc1DD0p3530wCnpZd0/oDzvRQsio
-         JEsviqAb5OmM5b37Di0lNaI1nHXhRsrlCNavOW6lbCZOmBtfOTce2j5g488L/yfOuV9b
-         vDcmXsYs7ASQ8a0n1Mi9wK0appnxCMB8qrvVM6KaMV6pQfdCmjrfZpujZOMh7kqH8dK4
-         EOUfPwjY5B7+fotIH3uWimeWUo8msKTFqqBIJgRG7TwNvlL7JhkyLpvc4e/NJp3/uvPN
-         2CIw==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Cni3YG26TUwTwn0/m/XP6xKVhkAi6RTA9FiGH4/p6co=;
+        b=MIuUDY9uOKx7OMT9UzYZeUU5ybjdNCSeISFo7H2Jpjrlkj9q1mM3rsckl/yMWSY4Ys
+         rCEk5P7E/EQi3GCyR8h71klsoPmwQin7tVmGY8V/hWI6FUG5M1nBxufqxjKxxAD5A6fJ
+         DOGg2J/LsvVlBoFpNdjBwQdK2E7PUhbCizhct/kIQYpeKLk0oQ4qM/3cySQ08GVkFOvt
+         jewV5jH4hKc/7i5wUalp94DRz9dvqteVtuaxkZvm0voN/PUooEW2OjlNMKdhu060zawN
+         4Xw77Q40BHhmSQhlkJVWtn7wCzmV2LJsHAP1915pV5evYwZwO8zyGN6yr3ic49tFx4Ni
+         /DIA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=73PhPzZvbQ2Ilmb4WfNnZ6RVNfBIrtWaxQPD7Xifscc=;
-        b=SgXfRowSWy3c6vP78jN7oOMg5P8nL84dbWe+SvKXUZ0anFHJYCxhtATFdElhQ7d1Q0
-         2S0SHTnVYgGzi3/SWIw5WRMSg5vhuoDj18SWHdNijDQiJ2fdXdV304O3u+VS4phxErMV
-         STzKc3xmggJ5HcjpJRwGNdyy62yrK07dgGit2ds4v14Sla9bItnWCbOOWKeF8qJPbxTl
-         hkBOr1T3R1niXieVasRQsL97mQO563cK8zTB8mF+qEWo+6yFhvbwNcPWPaM3D+emLT43
-         jnfmX7eN7sZqDzGcTyVPffP4ic7R5I4G54BimGZD47UrW1L4XYZlvWCgJ2kGQ/IhKqTN
-         4NOw==
-X-Gm-Message-State: AJcUukf46CUTimcYFVDOar9hE98wVJhdLRug49XMxxZU1ckEiSorl4dc
-        WUJmLevR4oyc2jUjFAbmdQNmnPIOnPM=
-X-Google-Smtp-Source: ALg8bN5416i1O8yVPd9Q0i16l0dIuld6v/0Yk3LEG933+Jy2E5FBbOxeS+ZCCBuWADsdRFOS47az+A==
-X-Received: by 2002:a5d:6a42:: with SMTP id t2mr11931024wrw.50.1548415531220;
-        Fri, 25 Jan 2019 03:25:31 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Cni3YG26TUwTwn0/m/XP6xKVhkAi6RTA9FiGH4/p6co=;
+        b=FJW+NDiE9M0g2Ls6IH1fj1hoEzLyOlQPDGTdUDtPrdlBxbJfy8L1mFXTjrEJws0Ggt
+         a8hDuMb/CYTO3dhP964dNV0/m3Wa2QEVgBfqWBjgjQZqmIl4pf/gH8ZVOiNwMY7hy5DM
+         m9qPPjuKxlAWj8AMJbP5xmYjHX9gbKfajV/Bt4XxyYPb6Goju+lGvAKjCyym71ceUaJ3
+         s7gGl99bpL+8VsF0ZpX7Lq1rgGe5gabdfFbCAImmz2FTXFfsKNyFQgru6b/bk+Yss6Y6
+         DQqRjWeQIpKO2X+K0M9ppmuw0/cITmNvWqjLqD4yMhPchNgDvn0kIFT5cIyF81xiVY3X
+         /UKQ==
+X-Gm-Message-State: AJcUukcsAp/5bB31aiMUeLMztmfxUDegQaJc2gCOPOZBqdH5Gl3wiJrA
+        hQBq6C0toPMbvZWo43lZq9M=
+X-Google-Smtp-Source: ALg8bN6j5um3WSEr6GlxyxGSeBxIvenxOhvBwAymC2DpOto297RNA2N2awwMXXLvr0kHnXgHwHvatg==
+X-Received: by 2002:adf:ebd0:: with SMTP id v16mr11690083wrn.109.1548415815745;
+        Fri, 25 Jan 2019 03:30:15 -0800 (PST)
 Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id n11sm40781313wrw.60.2019.01.25.03.25.30
+        by smtp.gmail.com with ESMTPSA id w16sm127162070wrp.1.2019.01.25.03.30.14
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 03:25:30 -0800 (PST)
+        Fri, 25 Jan 2019 03:30:14 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Jonathan Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/5] phy: tegra: xusb: Parse dual-role mode property
-Date:   Fri, 25 Jan 2019 12:25:23 +0100
-Message-Id: <20190125112525.10697-3-thierry.reding@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rob Herring <robh+dt@kernel.org>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH 1/6] dt-bindings: usb: xhci-tegra: Add Tegra186 support
+Date:   Fri, 25 Jan 2019 12:30:08 +0100
+Message-Id: <20190125113013.11447-1-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190125112525.10697-1-thierry.reding@gmail.com>
-References: <20190125112525.10697-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -76,78 +76,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thierry Reding <treding@nvidia.com>
 
-The device tree bindings document the "mode" property of "ports"
-subnodes, but the driver was not parsing the property. In preparation
-for adding role switching, parse the property at probe time.
-
-Based on work by JC Kuo <jckuo@nvidia.com>.
+Extend the bindings to cover the set of features found in Tegra186.
 
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/phy/tegra/xusb.c | 21 +++++++++++++++++++++
- drivers/phy/tegra/xusb.h |  3 +++
- 2 files changed, 24 insertions(+)
+ .../devicetree/bindings/usb/nvidia,tegra124-xusb.txt          | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-index e3bc60cfe6a1..57a2d08ef6da 100644
---- a/drivers/phy/tegra/xusb.c
-+++ b/drivers/phy/tegra/xusb.c
-@@ -546,13 +546,34 @@ static void tegra_xusb_port_unregister(struct tegra_xusb_port *port)
- 	device_unregister(&port->dev);
- }
- 
-+static const char *const modes[] = {
-+	[USB_DR_MODE_UNKNOWN] = "",
-+	[USB_DR_MODE_HOST] = "host",
-+	[USB_DR_MODE_PERIPHERAL] = "peripheral",
-+	[USB_DR_MODE_OTG] = "otg",
-+};
+diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+index 4156c3e181c5..5bfcc0b4d6b9 100644
+--- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
++++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
+@@ -10,6 +10,7 @@ Required properties:
+   - Tegra124: "nvidia,tegra124-xusb"
+   - Tegra132: "nvidia,tegra132-xusb", "nvidia,tegra124-xusb"
+   - Tegra210: "nvidia,tegra210-xusb"
++  - Tegra186: "nvidia,tegra186-xusb"
+ - reg: Must contain the base and length of the xHCI host registers, XUSB FPCI
+   registers and XUSB IPFS registers.
+ - reg-names: Must contain the following entries:
+@@ -59,6 +60,8 @@ For Tegra210:
+ - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
+ - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
+ - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
 +
- static int tegra_xusb_usb2_port_parse_dt(struct tegra_xusb_usb2_port *usb2)
- {
- 	struct tegra_xusb_port *port = &usb2->base;
- 	struct device_node *np = port->dev.of_node;
-+	const char *mode;
++For Tegra210 and Tegra186:
+ - power-domains: A list of PM domain specifiers that reference each power-domain
+   used by the xHCI controller. This list must comprise of a specifier for the
+   XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
+@@ -78,6 +81,7 @@ Optional properties:
+   - Tegra132: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
+   - Tegra210: usb2-0, usb2-1, usb2-2, usb2-3, hsic-0, usb3-0, usb3-1, usb3-2,
+               usb3-3
++  - Tegra186: usb2-0, usb2-1, usb2-2, hsic-0, usb3-0, usb3-1, usb3-2
  
- 	usb2->internal = of_property_read_bool(np, "nvidia,internal");
- 
-+	if (!of_property_read_string(np, "mode", &mode)) {
-+		int err = match_string(modes, ARRAY_SIZE(modes), mode);
-+		if (err < 0) {
-+			dev_err(&port->dev, "invalid value %s for \"mode\"\n",
-+				mode);
-+			usb2->mode = USB_DR_MODE_UNKNOWN;
-+		} else {
-+			usb2->mode = err;
-+		}
-+	} else {
-+		usb2->mode = USB_DR_MODE_HOST;
-+	}
-+
- 	usb2->supply = devm_regulator_get(&port->dev, "vbus");
- 	return PTR_ERR_OR_ZERO(usb2->supply);
- }
-diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-index b49dbc36efa3..bb60fc09c752 100644
---- a/drivers/phy/tegra/xusb.h
-+++ b/drivers/phy/tegra/xusb.h
-@@ -19,6 +19,8 @@
- #include <linux/mutex.h>
- #include <linux/workqueue.h>
- 
-+#include <linux/usb/otg.h>
-+
- /* legacy entry points for backwards-compatibility */
- int tegra_xusb_padctl_legacy_probe(struct platform_device *pdev);
- int tegra_xusb_padctl_legacy_remove(struct platform_device *pdev);
-@@ -271,6 +273,7 @@ struct tegra_xusb_usb2_port {
- 	struct tegra_xusb_port base;
- 
- 	struct regulator *supply;
-+	enum usb_dr_mode mode;
- 	bool internal;
- };
- 
+ Example:
+ --------
 -- 
 2.19.1
 
