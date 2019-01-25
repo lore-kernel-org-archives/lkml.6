@@ -2,399 +2,145 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B74C282C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:30:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE21C282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:44:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6EFC218D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:30:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAB9D218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:44:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727845AbfAYA3k (ORCPT
+        id S1728043AbfAYAoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 19:29:40 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:38380 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726259AbfAYA3k (ORCPT
+        Thu, 24 Jan 2019 19:44:04 -0500
+Received: from mail-io1-f72.google.com ([209.85.166.72]:54356 "EHLO
+        mail-io1-f72.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfAYAoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 19:29:40 -0500
-Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0P0NuHi048137
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 19:29:38 -0500
-Received: from e12.ny.us.ibm.com (e12.ny.us.ibm.com [129.33.205.202])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7mc3j726-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 19:29:37 -0500
-Received: from localhost
-        by e12.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tyreld@linux.vnet.ibm.com>;
-        Fri, 25 Jan 2019 00:29:37 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e12.ny.us.ibm.com (146.89.104.199) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 25 Jan 2019 00:29:33 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0P0TWAD23855194
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jan 2019 00:29:32 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id C1E28AE05F;
-        Fri, 25 Jan 2019 00:29:32 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7C9F1AE060;
-        Fri, 25 Jan 2019 00:29:31 +0000 (GMT)
-Received: from oc6857751186.ibm.com (unknown [9.85.148.194])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Jan 2019 00:29:31 +0000 (GMT)
-Subject: Re: [RFC 5/6] powerpc/pci/hotplug: Use common drcinfo parsing
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>
-Cc:     Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Juliet Kim <minkim@us.ibm.com>,
-        Paul Mackerras <paulus@samba.org>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
- <20181214205120.16435.46952.stgit@powerkvm6.aus.stglabs.ibm.com>
- <20190115002857.GG33971@google.com>
-From:   Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Date:   Thu, 24 Jan 2019 16:29:30 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 24 Jan 2019 19:44:04 -0500
+Received: by mail-io1-f72.google.com with SMTP id f24so6195999ioh.21
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 16:44:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:date:in-reply-to:message-id:subject
+         :from:to;
+        bh=2wL56CPe+WBqG2DpDy9FEFgamKsm/3KnzxUr5iyEZNQ=;
+        b=bhvrBuB59hmVFl22B8hyN8xyHLy6Dg0O/+vPOmu2GK/W/RQ2DGIdIuMPVJ+JBX2qUh
+         h4Rx0b8+D2nDx04IYIcZGoWAkecoAWi8bmwq/LLttF+ZRGL+kovbtYos49rozmOufgQq
+         E7+hyepUBTVw2SObvd/f5UtMkgMb00RxIUAtSt3hOuG4yaPu2YE1cKEaxCz14TK6sQFW
+         lqGhVdYOmxi3YTHig/Fwv66YopDg8XpAMvViI3EfLyp12XUAkEEwA9Mnr5kgfUlWaYlm
+         07JcgbBu6x/xB/u7nK3H8INhebRqBqW5kKWyAUSX9mBYnzqNQ7nKjiCIr+gOnbpHpWRa
+         B0ew==
+X-Gm-Message-State: AJcUukfTlF2aqpoT2Q+Ly4PKJ59+p58IrsDLM6gKnMeqrh1pgOUxU6zR
+        GAy9KPYln9QgI1T+TWF+z38Ov4UQjvkgJshjGbUF3ZVxTnh/
+X-Google-Smtp-Source: AHgI3Ib5UpzuZQLt94+ser7Jcjf0fs9sS2SKwez8S/VMHsPrMlh+fsiSZreNIsgX1TOpSMleR/kciDOY2cC+zTMZzb0+7XBH8G53
 MIME-Version: 1.0
-In-Reply-To: <20190115002857.GG33971@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012500-0060-0000-0000-000002FFEEA8
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010471; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01151315; UDB=6.00600060; IPR=6.00931655;
- MB=3.00025277; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-25 00:29:35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012500-0061-0000-0000-0000480CCEC3
-Message-Id: <d49202ed-7886-8dd1-1f9e-801512b49827@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901250001
+X-Received: by 2002:a6b:d11a:: with SMTP id l26mr7370140iob.34.1548377043057;
+ Thu, 24 Jan 2019 16:44:03 -0800 (PST)
+Date:   Thu, 24 Jan 2019 16:44:03 -0800
+In-Reply-To: <0000000000000cf22a058011d494@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000a1440c05803d9f9b@google.com>
+Subject: Re: general protection fault in nf_ct_gre_keymap_flush
+From:   syzbot <syzbot+fcee88b2d87f0539dfe9@syzkaller.appspotmail.com>
+To:     coreteam@netfilter.org, davem@davemloft.net, fw@strlen.de,
+        kadlec@blackhole.kfki.hu, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, netfilter-devel@vger.kernel.org,
+        pablo@netfilter.org, syzkaller-bugs@googlegroups.com,
+        xiyou.wangcong@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/14/2019 04:28 PM, Bjorn Helgaas wrote:
-> On Fri, Dec 14, 2018 at 02:51:31PM -0600, Michael Bringmann wrote:
->> The implementation of the pseries-specific drc info properties
->> is currently implemented in pseries-specific and non-pseries-specific
->> files.  This patch set uses a new implementation of the device-tree
->> parsing code for the properties.
->>
->> This patch refactors parsing of the pseries-specific drc-info properties
->> out of rpaphp_core.c to use the common parser.  In the case where an
->> architecture does not use these properties, an __weak copy of the
->> function is provided with dummy return values.  Changes include creating
->> appropriate callback functions and passing callback-specific data
->> blocks into arch_find_drc_match.  All functions that were used just
->> to support the previous parsing implementation have been moved.
->>
->> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
-> 
-> This is fine with me.  Any rpaphp_core.c maintainers want to comment?
-> Tyrel?
+syzbot has found a reproducer for the following crash on:
 
-It greatly simplifies the code in rpaphp_core.c, and as far as I can tell the
-refactoring maintains the existing functionality.
+HEAD commit:    755d01d17697 Add linux-next specific files for 20190124
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=128f88c4c00000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=35842b82e8cde424
+dashboard link: https://syzkaller.appspot.com/bug?extid=fcee88b2d87f0539dfe9
+compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13e5f517400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17da1cef400000
 
-Acked-by: Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+fcee88b2d87f0539dfe9@syzkaller.appspotmail.com
 
-> 
-> $ ./scripts/get_maintainer.pl -f drivers/pci/hotplug/rpaphp_core.c
-> Tyrel Datwyler <tyreld@linux.vnet.ibm.com> (supporter:IBM Power PCI Hotplug Driver for RPA-compliant...)
-> Benjamin Herrenschmidt <benh@kernel.crashing.org> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
-> Paul Mackerras <paulus@samba.org> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
-> Michael Ellerman <mpe@ellerman.id.au> (supporter:LINUX FOR POWERPC (32-BIT AND 64-BIT))
-> 
->> ---
->>  drivers/pci/hotplug/rpaphp_core.c |  232 ++++---------------------------------
->>  1 file changed, 28 insertions(+), 204 deletions(-)
->>
->> diff --git a/drivers/pci/hotplug/rpaphp_core.c b/drivers/pci/hotplug/rpaphp_core.c
->> index bcd5d35..9ad7384 100644
->> --- a/drivers/pci/hotplug/rpaphp_core.c
->> +++ b/drivers/pci/hotplug/rpaphp_core.c
->> @@ -154,182 +154,18 @@ static enum pci_bus_speed get_max_bus_speed(struct slot *slot)
->>  	return speed;
->>  }
->>  
->> -static int get_children_props(struct device_node *dn, const int **drc_indexes,
->> -		const int **drc_names, const int **drc_types,
->> -		const int **drc_power_domains)
->> -{
->> -	const int *indexes, *names, *types, *domains;
->> -
->> -	indexes = of_get_property(dn, "ibm,drc-indexes", NULL);
->> -	names = of_get_property(dn, "ibm,drc-names", NULL);
->> -	types = of_get_property(dn, "ibm,drc-types", NULL);
->> -	domains = of_get_property(dn, "ibm,drc-power-domains", NULL);
->> -
->> -	if (!indexes || !names || !types || !domains) {
->> -		/* Slot does not have dynamically-removable children */
->> -		return -EINVAL;
->> -	}
->> -	if (drc_indexes)
->> -		*drc_indexes = indexes;
->> -	if (drc_names)
->> -		/* &drc_names[1] contains NULL terminated slot names */
->> -		*drc_names = names;
->> -	if (drc_types)
->> -		/* &drc_types[1] contains NULL terminated slot types */
->> -		*drc_types = types;
->> -	if (drc_power_domains)
->> -		*drc_power_domains = domains;
->> -
->> -	return 0;
->> -}
->> -
->> -
->>  /* Verify the existence of 'drc_name' and/or 'drc_type' within the
->> - * current node.  First obtain it's my-drc-index property.  Next,
->> - * obtain the DRC info from it's parent.  Use the my-drc-index for
->> - * correlation, and obtain/validate the requested properties.
->> + * current node.
->>   */
->>  
->> -static int rpaphp_check_drc_props_v1(struct device_node *dn, char *drc_name,
->> -				char *drc_type, unsigned int my_index)
->> -{
->> -	char *name_tmp, *type_tmp;
->> -	const int *indexes, *names;
->> -	const int *types, *domains;
->> -	int i, rc;
->> -
->> -	rc = get_children_props(dn->parent, &indexes, &names, &types, &domains);
->> -	if (rc < 0) {
->> -		return -EINVAL;
->> -	}
->> -
->> -	name_tmp = (char *) &names[1];
->> -	type_tmp = (char *) &types[1];
->> -
->> -	/* Iterate through parent properties, looking for my-drc-index */
->> -	for (i = 0; i < be32_to_cpu(indexes[0]); i++) {
->> -		if ((unsigned int) indexes[i + 1] == my_index)
->> -			break;
->> -
->> -		name_tmp += (strlen(name_tmp) + 1);
->> -		type_tmp += (strlen(type_tmp) + 1);
->> -	}
->> -
->> -	if (((drc_name == NULL) || (drc_name && !strcmp(drc_name, name_tmp))) &&
->> -	    ((drc_type == NULL) || (drc_type && !strcmp(drc_type, type_tmp))))
->> -		return 0;
->> -
->> -	return -EINVAL;
->> -}
->> -
->> -static int rpaphp_check_drc_props_v2(struct device_node *dn, char *drc_name,
->> -				char *drc_type, unsigned int my_index)
->> -{
->> -	struct property *info;
->> -	unsigned int entries;
->> -	struct of_drc_info drc;
->> -	const __be32 *value;
->> -	char cell_drc_name[MAX_DRC_NAME_LEN];
->> -	int j, fndit;
->> -
->> -	info = of_find_property(dn->parent, "ibm,drc-info", NULL);
->> -	if (info == NULL)
->> -		return -EINVAL;
->> -
->> -	value = of_prop_next_u32(info, NULL, &entries);
->> -	if (!value)
->> -		return -EINVAL;
->> -
->> -	for (j = 0; j < entries; j++) {
->> -		of_read_drc_info_cell(&info, &value, &drc);
->> -
->> -		/* Should now know end of current entry */
->> -
->> -		if (my_index > drc.last_drc_index)
->> -			continue;
->> -
->> -		fndit = 1;
->> -		break;
->> -	}
->> -	/* Found it */
->> -
->> -	if (fndit)
->> -		sprintf(cell_drc_name, "%s%d", drc.drc_name_prefix, 
->> -			my_index);
->> -
->> -	if (((drc_name == NULL) ||
->> -	     (drc_name && !strcmp(drc_name, cell_drc_name))) &&
->> -	    ((drc_type == NULL) ||
->> -	     (drc_type && !strcmp(drc_type, drc.drc_type))))
->> -		return 0;
->> -
->> -	return -EINVAL;
->> -}
->> -
->>  int rpaphp_check_drc_props(struct device_node *dn, char *drc_name,
->>  			char *drc_type)
->>  {
->> -	const unsigned int *my_index;
->> -
->> -	my_index = of_get_property(dn, "ibm,my-drc-index", NULL);
->> -	if (!my_index) {
->> -		/* Node isn't DLPAR/hotplug capable */
->> -		return -EINVAL;
->> -	}
->> -
->> -	if (firmware_has_feature(FW_FEATURE_DRC_INFO))
->> -		return rpaphp_check_drc_props_v2(dn, drc_name, drc_type,
->> -						*my_index);
->> -	else
->> -		return rpaphp_check_drc_props_v1(dn, drc_name, drc_type,
->> -						*my_index);
->> +	return arch_find_drc_match(dn, NULL, drc_type, drc_name,
->> +				true, false, NULL);
->>  }
->>  EXPORT_SYMBOL_GPL(rpaphp_check_drc_props);
->>  
->> -
->> -static int is_php_type(char *drc_type)
->> -{
->> -	unsigned long value;
->> -	char *endptr;
->> -
->> -	/* PCI Hotplug nodes have an integer for drc_type */
->> -	value = simple_strtoul(drc_type, &endptr, 10);
->> -	if (endptr == drc_type)
->> -		return 0;
->> -
->> -	return 1;
->> -}
->> -
->> -/**
->> - * is_php_dn() - return 1 if this is a hotpluggable pci slot, else 0
->> - * @dn: target &device_node
->> - * @indexes: passed to get_children_props()
->> - * @names: passed to get_children_props()
->> - * @types: returned from get_children_props()
->> - * @power_domains:
->> - *
->> - * This routine will return true only if the device node is
->> - * a hotpluggable slot. This routine will return false
->> - * for built-in pci slots (even when the built-in slots are
->> - * dlparable.)
->> - */
->> -static int is_php_dn(struct device_node *dn, const int **indexes,
->> -		const int **names, const int **types, const int **power_domains)
->> -{
->> -	const int *drc_types;
->> -	int rc;
->> -
->> -	rc = get_children_props(dn, indexes, names, &drc_types, power_domains);
->> -	if (rc < 0)
->> -		return 0;
->> -
->> -	if (!is_php_type((char *) &drc_types[1]))
->> -		return 0;
->> -
->> -	*types = drc_types;
->> -	return 1;
->> -}
->> -
->>  /**
->>   * rpaphp_add_slot -- declare a hotplug slot to the hotplug subsystem.
->>   * @dn: device node of slot
->> @@ -346,54 +182,42 @@ static int is_php_dn(struct device_node *dn, const int **indexes,
->>   *
->>   * To remove a slot, it suffices to call rpaphp_deregister_slot().
->>   */
->> -int rpaphp_add_slot(struct device_node *dn)
->> +
->> +static int rpaphp_add_slot_cb(struct device_node *dn,
->> +			u32 drc_index, char *drc_name, char *drc_type,
->> +			u32 drc_power_domain, void *data)
->>  {
->>  	struct slot *slot;
->>  	int retval = 0;
->> -	int i;
->> -	const int *indexes, *names, *types, *power_domains;
->> -	char *name, *type;
->> -
->> -	if (!dn->name || strcmp(dn->name, "pci"))
->> -		return 0;
->> -
->> -	/* If this is not a hotplug slot, return without doing anything. */
->> -	if (!is_php_dn(dn, &indexes, &names, &types, &power_domains))
->> -		return 0;
->> -
->> -	dbg("Entry %s: dn=%pOF\n", __func__, dn);
->>  
->> -	/* register PCI devices */
->> -	name = (char *) &names[1];
->> -	type = (char *) &types[1];
->> -	for (i = 0; i < be32_to_cpu(indexes[0]); i++) {
->> -		int index;
->> +	slot = alloc_slot_struct(dn, drc_index, drc_name, drc_power_domain);
->> +	if (!slot)
->> +		return -ENOMEM;
->>  
->> -		index = be32_to_cpu(indexes[i + 1]);
->> -		slot = alloc_slot_struct(dn, index, name,
->> -					 be32_to_cpu(power_domains[i + 1]));
->> -		if (!slot)
->> -			return -ENOMEM;
->> +	slot->type = simple_strtoul(drc_type, NULL, 10);
->> +	if (retval)
->> +		return -EINVAL;
->>  
->> -		slot->type = simple_strtoul(type, NULL, 10);
->> +	dbg("Found drc-index:0x%x drc-name:%s drc-type:%s\n",
->> +		drc_index, drc_name, drc_type);
->>  
->> -		dbg("Found drc-index:0x%x drc-name:%s drc-type:%s\n",
->> -				index, name, type);
->> +	retval = rpaphp_enable_slot(slot);
->> +	if (!retval)
->> +		retval = rpaphp_register_slot(slot);
->>  
->> -		retval = rpaphp_enable_slot(slot);
->> -		if (!retval)
->> -			retval = rpaphp_register_slot(slot);
->> +	if (retval)
->> +		dealloc_slot_struct(slot);
->>  
->> -		if (retval)
->> -			dealloc_slot_struct(slot);
->> +	return retval;
->> +}
->>  
->> -		name += strlen(name) + 1;
->> -		type += strlen(type) + 1;
->> -	}
->> -	dbg("%s - Exit: rc[%d]\n", __func__, retval);
->> +int rpaphp_add_slot(struct device_node *dn)
->> +{
->> +	if (!dn->name || strcmp(dn->name, "pci"))
->> +		return 0;
->>  
->> -	/* XXX FIXME: reports a failure only if last entry in loop failed */
->> -	return retval;
->> +	return arch_find_drc_match(dn, rpaphp_add_slot_cb,
->> +			NULL, NULL, false, true, NULL);
->>  }
->>  EXPORT_SYMBOL_GPL(rpaphp_add_slot);
->>  
->>
+kasan: CONFIG_KASAN_INLINE enabled
+kasan: GPF could be caused by NULL-ptr deref or user memory access
+general protection fault: 0000 [#1] PREEMPT SMP KASAN
+CPU: 0 PID: 7374 Comm: syz-executor189 Not tainted 5.0.0-rc3-next-20190124  
+#19
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+RIP: 0010:nf_ct_gre_keymap_flush+0xb9/0x2f0  
+net/netfilter/nf_conntrack_proto_gre.c:65
+Code: 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 0f 85 2b 02 00 00 4c 8b bb f8 16  
+00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 fc 01 00 00 4c 3b bd 68 ff ff ff 4d 8b 27 0f 84
+RSP: 0018:ffff88808a6e7698 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8880930082c0 RCX: 0000000000000000
+RDX: 1ffffffff146e05a RSI: 0000000000000004 RDI: ffff88808a6e7600
+RBP: ffff88808a6e7748 R08: 1ffff110114dcec0 R09: ffffed10114dcec1
+R10: ffffed10114dcec0 R11: 0000000000000003 R12: dffffc0000000000
+R13: ffff88808a6e7858 R14: ffff8880930099b8 R15: 0000000000000000
+FS:  00007febe4d2d700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007febe4d2cdb8 CR3: 00000000901a3000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+  nf_conntrack_proto_pernet_fini+0x16/0x1a  
+net/netfilter/nf_conntrack_proto.c:617
+  nf_conntrack_cleanup_net_list+0x204/0x330  
+net/netfilter/nf_conntrack_core.c:2183
+  nf_conntrack_cleanup_net+0x1c5/0x270 net/netfilter/nf_conntrack_core.c:2156
+  nf_conntrack_pernet_init net/netfilter/nf_conntrack_standalone.c:1122  
+[inline]
+  nf_conntrack_pernet_init+0xc3f/0xf00  
+net/netfilter/nf_conntrack_standalone.c:1091
+  ops_init+0x109/0x5d0 net/core/net_namespace.c:129
+  setup_net+0x38f/0x940 net/core/net_namespace.c:314
+  copy_net_ns+0x2ae/0x4b0 net/core/net_namespace.c:437
+  create_new_namespaces+0x4ce/0x930 kernel/nsproxy.c:107
+  unshare_nsproxy_namespaces+0xc2/0x200 kernel/nsproxy.c:206
+  ksys_unshare+0x6d7/0xfb0 kernel/fork.c:2550
+  __do_sys_unshare kernel/fork.c:2618 [inline]
+  __se_sys_unshare kernel/fork.c:2616 [inline]
+  __x64_sys_unshare+0x31/0x40 kernel/fork.c:2616
+  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x449009
+Code: e8 6c 14 03 00 48 83 c4 18 c3 0f 1f 80 00 00 00 00 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb 05 fc ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007febe4d2ccf8 EFLAGS: 00000246 ORIG_RAX: 0000000000000110
+RAX: ffffffffffffffda RBX: 00000000006e59f8 RCX: 0000000000449009
+RDX: 0000000000449009 RSI: 0000000000449009 RDI: 0000000040000000
+RBP: 00000000006e59f0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00000000006e59fc
+R13: 00007ffeec84fdaf R14: 00007febe4d2d9c0 R15: 0000000000000001
+Modules linked in:
+---[ end trace e72b60d04a028cfc ]---
+RIP: 0010:nf_ct_gre_keymap_flush+0xb9/0x2f0  
+net/netfilter/nf_conntrack_proto_gre.c:65
+Code: 4c 89 f0 48 c1 e8 03 42 80 3c 20 00 0f 85 2b 02 00 00 4c 8b bb f8 16  
+00 00 48 b8 00 00 00 00 00 fc ff df 4c 89 f9 48 c1 e9 03 <80> 3c 01 00 0f  
+85 fc 01 00 00 4c 3b bd 68 ff ff ff 4d 8b 27 0f 84
+RSP: 0018:ffff88808a6e7698 EFLAGS: 00010246
+RAX: dffffc0000000000 RBX: ffff8880930082c0 RCX: 0000000000000000
+RDX: 1ffffffff146e05a RSI: 0000000000000004 RDI: ffff88808a6e7600
+RBP: ffff88808a6e7748 R08: 1ffff110114dcec0 R09: ffffed10114dcec1
+R10: ffffed10114dcec0 R11: 0000000000000003 R12: dffffc0000000000
+R13: ffff88808a6e7858 R14: ffff8880930099b8 R15: 0000000000000000
+FS:  00007febe4d2d700(0000) GS:ffff8880ae600000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007febe4d2cdb8 CR3: 00000000901a3000 CR4: 00000000001406f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
