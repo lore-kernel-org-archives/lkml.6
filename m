@@ -2,137 +2,136 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BEFDC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B414C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7405F21855
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:56:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA2D3218A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:01:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J5v8ulnp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbfAYW40 (ORCPT
+        id S1729479AbfAYXBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 17:56:26 -0500
-Received: from mga18.intel.com ([134.134.136.126]:19240 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbfAYW4Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 17:56:25 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 14:56:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,523,1539673200"; 
-   d="scan'208";a="111149118"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.14])
-  by orsmga006.jf.intel.com with ESMTP; 25 Jan 2019 14:56:25 -0800
-Date:   Fri, 25 Jan 2019 14:56:25 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, mst@redhat.com,
-        yu-cheng.yu@intel.com, yi.z.zhang@intel.com, hjl.tools@gmail.com,
-        Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Subject: Re: [PATCH v2 6/7] KVM:VMX: Load Guest CET via VMCS when CET is
- enabled in Guest
-Message-ID: <20190125225625.GF21849@linux.intel.com>
-References: <20190122205909.24165-1-weijiang.yang@intel.com>
- <20190122205909.24165-7-weijiang.yang@intel.com>
+        Fri, 25 Jan 2019 18:01:16 -0500
+Received: from mail-qt1-f173.google.com ([209.85.160.173]:45328 "EHLO
+        mail-qt1-f173.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726059AbfAYXBP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 18:01:15 -0500
+Received: by mail-qt1-f173.google.com with SMTP id e5so12466514qtr.12;
+        Fri, 25 Jan 2019 15:01:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LQ3TSHY/tjHemp3CH3mJzmYLQhcm7KH/eUlFg+inIu8=;
+        b=J5v8ulnpd1/mgVf75a4kesT5Bh6LMGC68iP1lHvFJl7aSvCZ554rFjaSNlNahgzN1H
+         cewYpAGcAAYepHFqY6MQQfEHpmHITkgLLz9TvzyZl5BUPLI7OKnValGzQz18sA29Qwta
+         0NZF5ua5xKtemnLztK5ERiD+iaFJfQG2wA6zS7zTqdfPZIbC0jjzTFpIZ7vKyT4sC8iS
+         UsZm7Cm1ykvnK7ujx5sG+0g//VEgc3t0ebtlXLarwo18/2t03YjQ3Ypi1GTmCJXF9CCn
+         mGDf7NW095WPeiJ/LRXA6fEjJWNgEJ4LhpCFODojzSFmWgcyH5leoO6mwiwtUjZJoQya
+         IZDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LQ3TSHY/tjHemp3CH3mJzmYLQhcm7KH/eUlFg+inIu8=;
+        b=Jvb2hZkysVYY3vo7/DbWckOOI7fFm7N8eMYHkfqHjAevI9/Nl9iyo2t41cKX/KCFhg
+         84JKtMBZHcqTdKPX7ylk5qKTefbCRvj7XOioHO1HV6VrPX+Z5wdYGN1L0A0s221MrQ1Q
+         SqqmKQwaxUX2akWNr8M5XVxFvnpOIX0Z2R83CW4gh0SI2+UfjxBri+9a8Cjr0u7FBqWF
+         vtvcrnSLLXnJMO+21C6dmTbd2tLBmcTeJR5JR+2/w9xANpdNwonkqX+Fn0pBHEqnFR6N
+         gY0IrcM6ypNLxhvEHDhgY4E2AlmjtFKl1DUaLWOQRVlFRibca4M9Kf5DdmXbaf8nj+Ma
+         +dyQ==
+X-Gm-Message-State: AJcUukf2F42GQRr95MWNzOukNcSdzsKO75nf4cjzItGv+wxqxyTDbjJA
+        Lmm/3rtkZ2sSEb4YX+UR1FESoD1TGD5lQ5q2xR4=
+X-Google-Smtp-Source: ALg8bN7j6qrGbNdLsFo+n+rO/7i2dhn8HV3CyhaXo/CRDhVUKa4ikJye3G6QSatHODzAliLVqMLt3KZbuus01TB3h5w=
+X-Received: by 2002:ac8:4611:: with SMTP id p17mr13224608qtn.263.1548457274285;
+ Fri, 25 Jan 2019 15:01:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122205909.24165-7-weijiang.yang@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <20190125024634.14580-1-yuehaibing@huawei.com>
+In-Reply-To: <20190125024634.14580-1-yuehaibing@huawei.com>
+From:   Song Liu <liu.song.a23@gmail.com>
+Date:   Fri, 25 Jan 2019 15:01:02 -0800
+Message-ID: <CAPhsuW7_ESxRbM5amk02VmS4=vUORJvD_R3m41=_Cc-kUZQGqw@mail.gmail.com>
+Subject: Re: [PATCH -next] selftests: bpf: remove duplicated include
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, shuah@kernel.org,
+        open list <linux-kernel@vger.kernel.org>,
+        linux-kselftest@vger.kernel.org,
+        Networking <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 04:59:08AM +0800, Yang Weijiang wrote:
-> "Load Guest CET state" bit controls whether guest CET states
-> will be loaded on Guest entry. Before doing that, KVM needs
-> to check if CET feature is exposed to Guest.
-> 
-> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
+On Thu, Jan 24, 2019 at 6:49 PM YueHaibing <yuehaibing@huawei.com> wrote:
+>
+> Remove duplicated include.
+>
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+
+Acked-by: Song Liu <songliubraving@fb.com>
+
+Thanks!
+
 > ---
->  arch/x86/kvm/vmx.c | 33 +++++++++++++++++++++++++++++++++
->  1 file changed, 33 insertions(+)
-> 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 68c0e5e41cb1..9c8cecac80ea 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -55,6 +55,7 @@
->  #include <asm/mmu_context.h>
->  #include <asm/spec-ctrl.h>
->  #include <asm/mshyperv.h>
-> +#include <asm/cet.h>
->  
->  #include "trace.h"
->  #include "pmu.h"
-> @@ -4065,6 +4066,18 @@ static inline bool vmx_feature_control_msr_valid(struct kvm_vcpu *vcpu,
->  	return !(val & ~valid_bits);
+>  tools/testing/selftests/bpf/test_flow_dissector.c | 2 --
+>  tools/testing/selftests/bpf/test_maps.c           | 1 -
+>  tools/testing/selftests/bpf/test_sockmap.c        | 1 -
+>  3 files changed, 4 deletions(-)
+>
+> diff --git a/tools/testing/selftests/bpf/test_flow_dissector.c b/tools/testing/selftests/bpf/test_flow_dissector.c
+> index 12b784a..01f0c63 100644
+> --- a/tools/testing/selftests/bpf/test_flow_dissector.c
+> +++ b/tools/testing/selftests/bpf/test_flow_dissector.c
+> @@ -16,7 +16,6 @@
+>  #include <errno.h>
+>  #include <linux/if_packet.h>
+>  #include <linux/if_ether.h>
+> -#include <linux/if_packet.h>
+>  #include <linux/ipv6.h>
+>  #include <netinet/ip.h>
+>  #include <netinet/in.h>
+> @@ -25,7 +24,6 @@
+>  #include <stdbool.h>
+>  #include <stdlib.h>
+>  #include <stdio.h>
+> -#include <stdlib.h>
+>  #include <string.h>
+>  #include <sys/ioctl.h>
+>  #include <sys/socket.h>
+> diff --git a/tools/testing/selftests/bpf/test_maps.c b/tools/testing/selftests/bpf/test_maps.c
+> index e2b9eee..1dfef77 100644
+> --- a/tools/testing/selftests/bpf/test_maps.c
+> +++ b/tools/testing/selftests/bpf/test_maps.c
+> @@ -633,7 +633,6 @@ static void test_stackmap(int task, void *data)
+>         close(fd);
 >  }
->  
-> +static int vmx_guest_cet_cap(struct kvm_vcpu *vcpu)
-> +{
-> +	struct kvm_cpuid_entry2 *best;
-> +	int r = 0;
-> +
-> +	best = kvm_find_cpuid_entry(vcpu, 7, 0);
-> +	if (best && best->function == 0x7)
-> +		r = (best->ecx & bit(X86_FEATURE_SHSTK)) |
-> +		    (best->edx & bit(X86_FEATURE_IBT)) ? 1 : 0;
-> +	return r;
-> +}
-> +
->  static int vmx_get_msr_feature(struct kvm_msr_entry *msr)
->  {
->  	switch (msr->index) {
-> @@ -5409,6 +5422,26 @@ static int vmx_set_cr4(struct kvm_vcpu *vcpu, unsigned long cr4)
->  			return 1;
->  	}
->  
-> +	/*
-> +	 * To enable Guest CET, first check if Guest CET feature is
-> +	 * available, if it's not available but its CR4.CET is being set,
-> +	 * return a fault to Guest; then check if Host CET is enabled and
-> +	 * CR4.CET is toggled, if they are, then enable loading CET state
-
-Comment doesn't match the code.  Comment says "toggled", code is just
-looking at "enabled".
-
-> +	 * bit in entry control, otherwise, clear the bit to
-> +	 * disable guest CET state loading.
-
-What happens to CET state if the control is clear?  Is host state
-retained but inaccessible?
-
-> +	 */
-> +	if (vmx_guest_cet_cap(vcpu)) {
-
-Why not?
-
-	if (guest_cpuid_has(vcpu, X86_FEATURE_SHSTK) ||
-	    guest_cpuid_has(vcpu, X86_FEATURE_IBT)) {
-
-> +		if (hw_cr4 & cr4 & X86_CR4_CET) {
-> +			vmcs_set_bits(VM_ENTRY_CONTROLS,
-> +				      VM_ENTRY_LOAD_GUEST_CET_STATE);
-> +		} else {
-> +			vmcs_clear_bits(VM_ENTRY_CONTROLS,
-> +					VM_ENTRY_LOAD_GUEST_CET_STATE);
-> +		}
-> +	} else if (cr4 & X86_CR4_CET) {
-> +		return 1;
-> +	}
-> +
->  	if (to_vmx(vcpu)->nested.vmxon && !nested_cr4_valid(vcpu, cr4))
->  		return 1;
->  
-> -- 
-> 2.17.1
-> 
+>
+> -#include <sys/socket.h>
+>  #include <sys/ioctl.h>
+>  #include <arpa/inet.h>
+>  #include <sys/select.h>
+> diff --git a/tools/testing/selftests/bpf/test_sockmap.c b/tools/testing/selftests/bpf/test_sockmap.c
+> index e85a771..3845144 100644
+> --- a/tools/testing/selftests/bpf/test_sockmap.c
+> +++ b/tools/testing/selftests/bpf/test_sockmap.c
+> @@ -10,7 +10,6 @@
+>  #include <unistd.h>
+>  #include <string.h>
+>  #include <errno.h>
+> -#include <sys/ioctl.h>
+>  #include <stdbool.h>
+>  #include <signal.h>
+>  #include <fcntl.h>
+> --
+> 2.7.0
+>
+>
