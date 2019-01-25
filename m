@@ -2,179 +2,230 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29C22C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F73C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:29:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDE93218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:20:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA02221872
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:29:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="jiQ16i7O"
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="ab2BnOS7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727876AbfAYUUr (ORCPT
+        id S1727078AbfAYU2t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 15:20:47 -0500
-Received: from nat-hk.nvidia.com ([203.18.50.4]:17381 "EHLO nat-hk.nvidia.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726030AbfAYUUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 15:20:47 -0500
-Received: from hkpgpgate102.nvidia.com (Not Verified[10.18.92.100]) by nat-hk.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c4b6f990000>; Sat, 26 Jan 2019 04:20:41 +0800
-Received: from HKMAIL101.nvidia.com ([10.18.16.10])
-  by hkpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 25 Jan 2019 12:20:40 -0800
-X-PGP-Universal: processed;
-        by hkpgpgate102.nvidia.com on Fri, 25 Jan 2019 12:20:40 -0800
-Received: from HKMAIL103.nvidia.com (10.18.16.12) by HKMAIL101.nvidia.com
- (10.18.16.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 25 Jan
- 2019 20:20:39 +0000
-Received: from NAM01-SN1-obe.outbound.protection.outlook.com (104.47.32.53) by
- HKMAIL103.nvidia.com (10.18.16.12) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Fri, 25 Jan 2019 20:20:39 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB3303.namprd12.prod.outlook.com (20.179.93.224) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.18; Fri, 25 Jan 2019 20:20:36 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::e4f9:9814:247a:d064]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::e4f9:9814:247a:d064%5]) with mapi id 15.20.1558.021; Fri, 25 Jan 2019
- 20:20:36 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V2 2/4] i2c: tegra: Update I2C transfer using buffer
-Thread-Topic: [PATCH V2 2/4] i2c: tegra: Update I2C transfer using buffer
-Thread-Index: AQHUtCaqSMUv+qypUUWuTCZ/iDn5aKXAZ3CAgAAFD2A=
-Date:   Fri, 25 Jan 2019 20:20:36 +0000
-Message-ID: <BYAPR12MB33982FC612F99AC5CAE29EDBC29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
- <1548363113-25969-2-git-send-email-skomatineni@nvidia.com>
- <185da588-1080-1589-46b6-5b63dff681eb@gmail.com>
-In-Reply-To: <185da588-1080-1589-46b6-5b63dff681eb@gmail.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [216.228.112.22]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB3303;6:wHNjsrCp1X1NXdHKeTvBJYYPfMLVMm5CrjfDR9T97vhxJ0LZtz9vvTitfmbDPGx28YG6Xh+mbkBqTxlpLtQkFFzb6crKNBzX+OA7ZS+PQRpExXLbRrXfApNZwdY3lP2Ya3teYeTsH8/d2JRH2nal6Lfac4RcubiLn++aO1ju98BtB6DsXfGeFwipj1yAZMWCV+cuICEyBGF9zoZt+5otFOLV7bDw0OCrBLqh65/W4KXnqnsvfwht1uVYeWwTidcRGfpDMfPQrTJMttO1KMtcMbCgPwFTMP7xlzC19GgWtSrAqU/l1H0KCHqmzD9/Y1al/GRNA0lGK7B0AtOwo7EMEE+OAX0Fx8qCFLmlI3W31W10nIN0VXMBSpM/OFHNvKJrKc63Wk0RmR5NzDnwPUjupQBC0k++6/MNAIy3n4qdyXVngdueDhn4d/MEvm8vT99PelT3oqCYC2l9+FYygFoDlw==;5:spajCiSA5DvhyrQPr0hAkIN5AXyqU7brca2CEJ7o/g9cMZI2FeVtvo89NCpX3fQ99g2WzXzE5yH7oyFcNnPK/9umDJzedbWHv9+D5QP+5PyEw/1do8YD1L24NB3LWif8tZpDZh2t7vnztychdnF4natn4eXZG10E2BWBvlR4oC+e/Tl9HBiN1xaiNODozBMSsOUDhKvjhF9zubalWaQVqg==;7:lZG5hpCHFwUIDJKucKR/CTd3QPjZUJbf1UMUKrIbcFmnTgdcASob1w/7DhGVBOUPK/5Zw7oYvkCAanOoZJJQnLp0t8v2y7xgH5BIR1SlH6pn/19SNJzZqU5V9P0i6P1supkeVUcC89QsfPP62TiK9Q==
-x-ms-office365-filtering-correlation-id: 277f94bc-a9df-45bd-f1cc-08d683029113
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3303;
-x-ms-traffictypediagnostic: BYAPR12MB3303:
-x-microsoft-antispam-prvs: <BYAPR12MB3303B44CC28B5EF9A6358BE6C29B0@BYAPR12MB3303.namprd12.prod.outlook.com>
-x-forefront-prvs: 0928072091
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(346002)(396003)(136003)(39860400002)(376002)(199004)(189003)(86362001)(74316002)(9686003)(446003)(68736007)(105586002)(486006)(3846002)(476003)(99286004)(106356001)(11346002)(81166006)(8676002)(6246003)(305945005)(6116002)(71200400001)(81156014)(53936002)(7736002)(71190400001)(478600001)(8936002)(6636002)(256004)(14444005)(97736004)(316002)(2501003)(186003)(15650500001)(26005)(7696005)(66066001)(102836004)(25786009)(33656002)(14454004)(55016002)(2906002)(6436002)(39060400002)(76176011)(4326008)(54906003)(110136005)(6506007)(229853002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3303;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: SCkW2qyKnRqHz7QG+a6Av5KX7ge6N/ExBfpZwcGdMOByn47WvpQHE4VnIFE08GlBuk3J8ZSl9PvhrXiVlT/V2PhSsuAlTsUY3GB4xRCYwynBdaLaVMZhwcopERf1Z2u6bKfk/68Re9ZLXMpqlH75ZvdLpIUDaupOCmedISwY9+xTZ11llx/ERt0bs0HV+AMU5nu4P4TVo6iySCkuJ6zjN5ApBi10qx4rygqUbbO5QD4it0xBnRILkcbOWyhdp7amCHudJcIphxJta2bf9kF9EjIQsEO2/9T1AvrUJooqf4pid06RZLINdO4aW8mL3amKyYGgzS/z3tuMUZVWHzbAAKitAQDXOVxCin4YmwOtykv22G5P7gOS7gdcG8VJiAxOaRh4xpiGF/qoErkU7psT0wk0CSGceOwVn2JLaoAtcgA=
+        Fri, 25 Jan 2019 15:28:49 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:41855 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726044AbfAYU2t (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 15:28:49 -0500
+Received: by mail-qk1-f195.google.com with SMTP id 189so6155891qkj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 12:28:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rloHtCzsoeLaTQKYgrEGKieu6LvAn6lHlK+PiRSdvck=;
+        b=ab2BnOS7dEcTEbQ6bG45KiicHHApZnLV/eV9bhB6IjqeGxJ93YwBctmScADULqSTGZ
+         mQHZ/4CckO3xXV6sEDGim4X4bGY/i/j07oAiEtIAOMPc9xiEKinUBCUB3uD1ho8inGBz
+         OtdXZHFGXeobUwhGcduGykc9L/hpcWFZwQEXU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rloHtCzsoeLaTQKYgrEGKieu6LvAn6lHlK+PiRSdvck=;
+        b=eiI4s5Y7RK7yyo/isLM9eD0PFGo90k7umDCmY99Dof0kd4KcsgKkTrgcH+taew1PAO
+         5s9rBt3cdTYLfw+zzvX06YgEFnXOl7bKywGbnjk0+slJPc7gODzo+EuB4pEz1NU3FxXA
+         vlXi2Vz9z1pliOcMyXpn4Nz/DEopaS0Hivap5tptk8OPwEkolz4a8UYCOAfCUcuWLIKN
+         3noMjPE4gG+2EFNy/puKZFP9XU+9nBQIisZb/8ev+c1kN5vdua1HnHWWuE12Q5/svDnH
+         kbZX7SL3B0+gXTPZu9S8L24Dzh0zSyGf1DjyqC+Tbf+ClTpqCCmZ77eOTGQN4NMr4R+2
+         nFbw==
+X-Gm-Message-State: AJcUukfyyyJ5AXYER33RDsvQ05DzuI7yZh3yhBF/S+VeNwTXonrguD/B
+        9aamrdpK7RBaWw64DwL/jH+T0A==
+X-Google-Smtp-Source: ALg8bN6FZf8Zn8ICgt+YYNOYtJShBXgGr3V+FayYAaSnq60ThavCLwOyf2+fPY0WFZNZ/mMfhPiTgg==
+X-Received: by 2002:a05:620a:1435:: with SMTP id k21mr10678200qkj.83.1548448127212;
+        Fri, 25 Jan 2019 12:28:47 -0800 (PST)
+Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
+        by smtp.gmail.com with ESMTPSA id w15sm82990902qta.16.2019.01.25.12.28.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 12:28:46 -0800 (PST)
+Date:   Fri, 25 Jan 2019 15:28:45 -0500
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     hpa@zytor.com
+Cc:     Karim Yaghmour <karim.yaghmour@opersys.com>,
+        Daniel Colascione <dancol@google.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Christoph Hellwig <hch@infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
+        atish patra <atishp04@gmail.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
+        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Manoj Rao <linux@manojrajarao.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+        Randy Dunlap <rdunlap@infradead.org>, rostedt@goodmis.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
+        yhs@fb.com
+Subject: Re: [RFC] Provide in-kernel headers for making it easy to extend the
+ kernel
+Message-ID: <20190125202845.GA235983@google.com>
+References: <20190120161003.GB23827@google.com>
+ <A40C22DF-B43F-44BA-8148-FC0881087315@zytor.com>
+ <20190121014553.GD23827@google.com>
+ <BC774ED4-C0FC-4AA6-9BAF-36930A661D9B@zytor.com>
+ <20190122133901.GA189736@google.com>
+ <117d2f96-b0e9-2376-69b7-836fa0c52539@opersys.com>
+ <CAKOZuesWgo3CZj49aUChX_-dpijCrVLxgVZChyLLmOWXCLQf-Q@mail.gmail.com>
+ <6f82d99a-d877-aeae-3e63-95dff260c445@opersys.com>
+ <20190124205929.GA141510@google.com>
+ <50511D3D-7193-4B1C-952E-CCC37FA71388@zytor.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 277f94bc-a9df-45bd-f1cc-08d683029113
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2019 20:20:36.5029
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3303
-X-OriginatorOrg: Nvidia.com
-Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548447641; bh=/m+4AhnMEXMX1Law/seU2NX3TayvoFOGbe/G9ZFdNZk=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=jiQ16i7OmGja9cXfGEHw2Qx8nZplIFwFsZqR1RuOmcvOCWcMfOXZkP/jcgwB5Fkt7
-         I27nDs3naGljkwWpUxE19va1u6BexJv6xpGjIVwSFktbSaFERp886MKr2ZHjuOtRLu
-         BSBqqJS6ogqqDEP0kBFepujD9CurAuU1dGpcuWjDv6dHc/HovsFL5R45VDYLTS3L7y
-         yi+GXEu6ik+ZcOHPiJOOLj8EDyWY0XjkwYOAg+xyVd53uDmhCIXHkkp1h3CFgs+r0o
-         887dB0rzbo4lUvSH/y2VyAHoCD9tCzu+02EukZCIFj18FPaiiIMlz7b2NjrrqJsEOt
-         U025uK1gjojmA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <50511D3D-7193-4B1C-952E-CCC37FA71388@zytor.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gPiBUaGlzIHBhdGNoIHByZXBhcmVzIHRoZSBidWZmZXIgd2l0aCB0aGUgbWVzc2FnZSBi
-eXRlcyB0byBiZSANCj4gPiB0cmFuc21pdHRlZCBhbG9uZyB3aXRoIHRoZSBwYWNrZXQgaGVhZGVy
-IGluZm9ybWF0aW9uIGFuZCB0aGVuIHBlcmZvcm1zIA0KPiA+IGkyYyB0cmFuc2ZlciBpbiBQSU8g
-bW9kZS4NCj4gPiANCj4gPiBTaWduZWQtb2ZmLWJ5OiBTb3dqYW55YSBLb21hdGluZW5pIDxza29t
-YXRpbmVuaUBudmlkaWEuY29tPg0KPiA+IC0tLQ0KPiA+ICBbVjJdIDogRE1BIHN1cHBvcnQgY2hh
-bmdlcyBpbmNsdWRlIHByZXBhcmluZyBidWZmZXIgd2l0aCBtZXNzYWdlIGJ5dGVzIGFuZA0KPiA+
-IAlhbmQgaGVhZGVyIGJlZm9yZSBzZW5kaW5nIHRoZW0gdGhyb3VnaCBETUEuIFNvIHNwbGl0dGVk
-IHRoZSB3aG9sZQ0KPiA+IAljaGFuZ2UgaW50byAyIHNlcGVyYXRlIHBhdGNoZXMgaW4gdGhpcyBz
-ZXJpZXMuDQo+ID4gDQo+ID4gIGRyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyB8IDk3IA0K
-PiA+ICsrKysrKysrKysrKysrKysrKysrKysrKysrKysrLS0tLS0tLS0tLS0tLQ0KPiA+ICAxIGZp
-bGUgY2hhbmdlZCwgNjggaW5zZXJ0aW9ucygrKSwgMjkgZGVsZXRpb25zKC0pDQo+ID4gDQo+ID4g
-ZGlmZiAtLWdpdCBhL2RyaXZlcnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyANCj4gPiBiL2RyaXZl
-cnMvaTJjL2J1c3Nlcy9pMmMtdGVncmEuYyBpbmRleCBlZjg1NGJlNGM4MzcuLjEzYmNlMTQxMWRk
-YyANCj4gPiAxMDA2NDQNCj4gPiAtLS0gYS9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMN
-Cj4gPiArKysgYi9kcml2ZXJzL2kyYy9idXNzZXMvaTJjLXRlZ3JhLmMNCj4gPiBAQCAtMTE3LDYg
-KzExNyw5IEBADQo+ID4gICNkZWZpbmUgSTJDX01TVF9GSUZPX1NUQVRVU19UWF9NQVNLCQkweGZm
-MDAwMA0KPiA+ICAjZGVmaW5lIEkyQ19NU1RfRklGT19TVEFUVVNfVFhfU0hJRlQJCTE2DQo+ID4g
-IA0KPiA+ICsvKiBQYWNrZXQgaGVhZGVyIHNpemUgaW4gYnl0ZXMgKi8NCj4gPiArI2RlZmluZSBJ
-MkNfUEFDS0VUX0hFQURFUl9TSVpFCQkJMTINCj4gPiArDQo+ID4gIC8qDQo+ID4gICAqIG1zZ19l
-bmRfdHlwZTogVGhlIGJ1cyBjb250cm9sIHdoaWNoIG5lZWQgdG8gYmUgc2VuZCBhdCBlbmQgb2Yg
-dHJhbnNmZXIuDQo+ID4gICAqIEBNU0dfRU5EX1NUT1A6IFNlbmQgc3RvcCBwdWxzZSBhdCBlbmQg
-b2YgdHJhbnNmZXIuDQo+ID4gQEAgLTY3NywzNSArNjgwLDY5IEBAIHN0YXRpYyBpcnFyZXR1cm5f
-dCB0ZWdyYV9pMmNfaXNyKGludCBpcnEsIHZvaWQgKmRldl9pZCkNCj4gPiAgCXJldHVybiBJUlFf
-SEFORExFRDsNCj4gPiAgfQ0KPiA+ICANCj4gPiArc3RhdGljIGludCB0ZWdyYV9pMmNfc3RhcnRf
-cGlvX3hmZXIoc3RydWN0IHRlZ3JhX2kyY19kZXYgKmkyY19kZXYpIHsNCj4gPiArCXUzMiAqYnVm
-ZmVyID0gKHUzMiAqKWkyY19kZXYtPm1zZ19idWY7DQo+ID4gKwl1bnNpZ25lZCBsb25nIGZsYWdz
-Ow0KPiA+ICsJdTMyIGludF9tYXNrOw0KPiA+ICsNCj4gPiArCXNwaW5fbG9ja19pcnFzYXZlKCZp
-MmNfZGV2LT54ZmVyX2xvY2ssIGZsYWdzKTsNCj4gPiArDQo+ID4gKwlpbnRfbWFzayA9IEkyQ19J
-TlRfTk9fQUNLIHwgSTJDX0lOVF9BUkJJVFJBVElPTl9MT1NUOw0KPiA+ICsJdGVncmFfaTJjX3Vu
-bWFza19pcnEoaTJjX2RldiwgaW50X21hc2spOw0KPiA+ICsNCj4gPiArCWkyY193cml0ZWwoaTJj
-X2RldiwgKihidWZmZXIrKyksIEkyQ19UWF9GSUZPKTsNCj4gPiArCWkyY193cml0ZWwoaTJjX2Rl
-diwgKihidWZmZXIrKyksIEkyQ19UWF9GSUZPKTsNCj4gPiArCWkyY193cml0ZWwoaTJjX2Rldiwg
-KihidWZmZXIrKyksIEkyQ19UWF9GSUZPKTsNCj4gPiArDQo+ID4gKwlpMmNfZGV2LT5tc2dfYnVm
-ID0gKHU4ICopIGJ1ZmZlcjsNCj4gPiArDQo+ID4gKwlpZiAoIWkyY19kZXYtPm1zZ19yZWFkKQ0K
-PiA+ICsJCXRlZ3JhX2kyY19maWxsX3R4X2ZpZm8oaTJjX2Rldik7DQo+ID4gKw0KPiA+ICsJaWYg
-KGkyY19kZXYtPmh3LT5oYXNfcGVyX3BrdF94ZmVyX2NvbXBsZXRlX2lycSkNCj4gPiArCQlpbnRf
-bWFzayB8PSBJMkNfSU5UX1BBQ0tFVF9YRkVSX0NPTVBMRVRFOw0KPiA+ICsJaWYgKGkyY19kZXYt
-Pm1zZ19yZWFkKQ0KPiA+ICsJCWludF9tYXNrIHw9IEkyQ19JTlRfUlhfRklGT19EQVRBX1JFUTsN
-Cj4gPiArCWVsc2UgaWYgKGkyY19kZXYtPm1zZ19idWZfcmVtYWluaW5nKQ0KPiA+ICsJCWludF9t
-YXNrIHw9IEkyQ19JTlRfVFhfRklGT19EQVRBX1JFUTsNCj4gPiArDQo+ID4gKwl0ZWdyYV9pMmNf
-dW5tYXNrX2lycShpMmNfZGV2LCBpbnRfbWFzayk7DQo+ID4gKwlzcGluX3VubG9ja19pcnFyZXN0
-b3JlKCZpMmNfZGV2LT54ZmVyX2xvY2ssIGZsYWdzKTsNCj4gPiArCWRldl9kYmcoaTJjX2Rldi0+
-ZGV2LCAidW5tYXNrZWQgaXJxOiAlMDJ4XG4iLA0KPiA+ICsJCWkyY19yZWFkbChpMmNfZGV2LCBJ
-MkNfSU5UX01BU0spKTsNCj4gPiArDQo+ID4gKwlyZXR1cm4gMDsNCj4gPiArfQ0KPiA+ICsNCj4g
-PiAgc3RhdGljIGludCB0ZWdyYV9pMmNfeGZlcl9tc2coc3RydWN0IHRlZ3JhX2kyY19kZXYgKmky
-Y19kZXYsDQo+ID4gIAlzdHJ1Y3QgaTJjX21zZyAqbXNnLCBlbnVtIG1zZ19lbmRfdHlwZSBlbmRf
-c3RhdGUpICB7DQo+ID4gIAl1MzIgcGFja2V0X2hlYWRlcjsNCj4gPiAgCXUzMiBpbnRfbWFzazsN
-Cj4gPiAgCXVuc2lnbmVkIGxvbmcgdGltZV9sZWZ0Ow0KPiA+IC0JdW5zaWduZWQgbG9uZyBmbGFn
-czsNCj4gPiArCXUzMiAqYnVmZmVyOw0KPiA+ICsJaW50IHJldCA9IDA7DQo+ID4gKw0KPiA+ICsJ
-YnVmZmVyID0ga21hbGxvYyhBTElHTihtc2ctPmxlbiwgQllURVNfUEVSX0ZJRk9fV09SRCkgKw0K
-PiA+ICsJCQkJCUkyQ19QQUNLRVRfSEVBREVSX1NJWkUsIEdGUF9LRVJORUwpOw0KPiA+ICsJaWYg
-KCFidWZmZXIpDQo+ID4gKwkJcmV0dXJuIC1FTk9NRU07DQo+DQo+IElzbid0IGl0IHBvc3NpYmxl
-IHRvIGF2b2lkICJidWZmZXIiIGFsbG9jYXRpb24gLyBjb3B5aW5nIG92ZXJoZWFkIGFuZCBrZWVw
-IGNvZGUgYXMtaXMgZm9yIHRoZSBQSU8gbW9kZT8NCj4NCg0KS2VlcGluZyBQSU8gbW9kZSBjb2Rl
-IGFzIGlzIGFuZCBhZGRpbmcgRE1BIG1vZGUgd2lsbCBoYXZlIHJlZHVuZGFudCBjb2RlIGZvciBo
-ZWFkZXIgZ2VuZXJhdGlvbiBhbmQgbXNnIGNvbXBsZXRlIHRpbWVvdXQgc2VjdGlvbnMuDQpBbHNv
-IGluIGV4aXN0aW5nIFBJTyBtb2RlIGltcGxlbWVudGF0aW9uLCBUWCBGSUZPIGlzIGZpbGxlZCBh
-cyBzb29uIGFzIHRoZSB3b3JkIGlzIHJlYWR5IGJ1dCBmb3IgRE1BIG1vZGUgbmVlZCB0byBwdXQg
-YWxsIG1zZyBieXRlcyBhbG9uZyB3aXRoIGhlYWRlciB0b2dldGhlciB0byBzZW5kIHRocnUgRE1B
-Lg0KU28gY3JlYXRlZCBjb21tb24gYnVmZmVyIHRvIHBlcmZvcm0gUElPL0RNQSB0byByZWR1Y2Ug
-cmVkdW5kYW5jeS4NCg==
+On Fri, Jan 25, 2019 at 11:00:25AM -0800, hpa@zytor.com wrote:
+> On January 24, 2019 12:59:29 PM PST, Joel Fernandes <joel@joelfernandes.org> wrote:
+> >On Thu, Jan 24, 2019 at 07:57:26PM +0100, Karim Yaghmour wrote:
+> >> 
+> >> On 1/23/19 11:37 PM, Daniel Colascione wrote:
+> >[..]
+> >> > > Personally I advocated a more aggressive approach with Joel in
+> >private:
+> >> > > just put the darn headers straight into the kernel image, it's
+> >the
+> >> > > *only* artifact we're sure will follow the Android device
+> >whatever
+> >> > > happens to it (like built-in ftrace).
+> >> > 
+> >> > I was thinking along similar lines. Ordinarily, we make loadable
+> >> > kernel modules. What we kind of want here is a non-loadable kernel
+> >> > module --- or a non-loadable section in the kernel image proper.
+> >I'm
+> >> > not familiar with early-stage kernel loader operation: I know it's
+> >> > possible to crease discardable sections in the kernel image, but
+> >can
+> >> > we create sections that are never slurped into memory in the first
+> >> > place? If not, maybe loading and immediately discarding the header
+> >> > section is good enough.
+> >> 
+> >> Interesting. Maybe just append it to the image but have it not loaded
+> >and
+> >> have a kernel parameter than enables a "/proc/kheaders" driver to
+> >know where
+> >> the fetch the appended headers from storage at runtime. There would
+> >be no
+> >> RAM loading whatsoever of the headers, just some sort of
+> >> "kheaders=/dev/foobar:offset:size" parameter. If you turn the option
+> >on, you
+> >> get a fatter kernel image size to store on permanent storage, but no
+> >impact
+> >> on what's loaded at boot time.
+> >
+> >Embedding anything into the kernel image does impact boot time though
+> >because
+> >it increase the time spent by bootloader. A module OTOH would not have
+> >such
+> >overhead.
+> >
+> >Also a kernel can be booted in any number of ways other than mass
+> >storage so
+> >it is not a generic Linux-wide solution to have a kheaders= option like
+> >that.
+> >If the option is forgotten, then the running system can't use the
+> >feature.
+> >The other issue is it requires a kernel command line option /
+> >bootloader
+> >changes for that which adds more configuration burden, which not be
+> >needed
+> >with a module.
+> >
+> >> > Would such a thing really do better than LZMA? LZMA already has
+> >very
+> >> > clever techniques for eliminating long-range redundancies in
+> >> > compressible text, including redundancies at the sub-byte level. I
+> >can
+> >> > certainly understand the benefit of stripping comments, since
+> >removing
+> >> > comments really does decrease the total amount of information the
+> >> > compressor has to preserve, but I'm not sure how much the encoding
+> >> > scheme you propose below would help, since it reminds me of the
+> >> > encoding scheme that LZMA would discover automatically.
+> >> 
+> >> I'm no compression algorithm expert. If you say LZMA would do the
+> >> same/better than what I suggested then I have no reason to contest
+> >that. My
+> >> goal is to see the headers as part of the kernel image that's
+> >distributed on
+> >> devices so that they don't have to be chased around. I'm just trying
+> >to make
+> >> it as palatable as possible.
+> >
+> >I believe LZMA is really good at that sort of thing too.
+> >
+> >Also at 3.3MB of module size, I think we are really good size-wise. But
+> >Dan
+> >is helping look at possibly reducing further if he gets time. Many
+> >modules in
+> >my experience are much bigger. amdgpu.ko on my Linux machine is 6.1MB.
+> >
+> >I really think making it a module is the best way to make sure this is
+> >bundled with the kernel on the widest number of Android and other Linux
+> >systems, without incurring boot time overhead, or any other command
+> >line
+> >configuration burden.
+> >
+> >I spoke to so many people at LPC personally with other kernel
+> >contributors,
+> >and many folks told me one word - MODULE :D.  Even though I hesitated
+> >at
+> >first, now it seems the right solution.
+> >
+> >If no one seriously objects, I'll clean this up and post a v2 and with
+> >the
+> >RFC tag taken off. Thank you!
+> >
+> > - Joel
+> 
+> So let me throw in a different notion.
+> 
+> A kernel module really is nothing other than a kernel build system artifact stored in the filesystem.
+> 
+> I really don't at any reason whatsoever why this is direct from just producing an archive and putting it in the module directory, except that the latter is far simpler.
+> 
+> I see literally *no* problem, social or technical, you are solvin by actually making it a kernel ELF object.
+
+I think you may not be seeing the point being made here, Hans. A module can
+be in any number of locations. The work to do the search of the modules is
+already done by modprobe. Diverse userspaces already know how to look for and
+load modules - whether its Android or some other user space. Modules are
+universal and integrated well within the kernel's ecosystem even though the
+Linux systems are so diverse.
+
+Also, as I was saying before - there is an option to build it into the kernel
+too with this proposal, if you hate modules so much.
+
+This is exactly why /proc/config.gz is so popular and used widely by people
+debugging the kernel. Same with /proc/kallsysms. So if we had it your way,
+then you might as well make those non-ELF artifacts right?
+
+You can look at it as a convenince option. Making things more convenient for
+users is solving problems, I'm sorry you don't see it that way.
+
+thanks,
+
+ - Joel
+
