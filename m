@@ -2,169 +2,128 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEBDC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:19:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40585C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D3AB2083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:19:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="hYmFchma"
+	by mail.kernel.org (Postfix) with ESMTP id 086E9218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:24:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548437069;
+	bh=P1u4LwreJrrBgNUr1qX7iaU4fv75Dta1x9DXP10ItA4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=siDLd51YXN7aWmUEMrm7D/wd6CYDUHdx++z6hw5MQwWYBq1pTFXRPCqeAhS6ixVL1
+	 U6YAZSFtefuZ+9SqqkiafmgzuQb2dx74S5fWccwTQECbM/5gndIw/HS7kyGetCFZtw
+	 TKG4311DjjUP04P6hN43H7LGrKbSLb9H5E1+t/30=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729059AbfAYRTX (ORCPT
+        id S1728937AbfAYRYV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:19:23 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:37072 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfAYRTX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:19:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=3sjfNLszyjWDC/jo15UgIwGUs42l1MlpSXqlFMM/Vzo=;
-        b=hYmFchmaiCYj4Wp8ld9rF7bGNoMG51G0cQhPkSCJjRL30Wh3rZkpKE3U+9iy0lnx9/7H0G+k52Q8LnmcDxSklLyKuj8wmY8In3C7TPDItZHMOHb2TBQXqSEOYvTCe76jdXJyYO6+glNtVtDmlxjyonXrmMA62c8fcgBB+2/evKSbLYe/FngcyLO54O4liMSwpJgRkaToEUDBx4i8eDO8dBaQVrK7E53S+Gi/tMGP6sPzEQdRogAC/ptI/iZNKUb/EGu6zBGdo7Y6FMQbAkErgFK/QJQgTYb8uSEVadcHQFU0+BrqEG3NqZ1cocBjbbNks+oDDi+H97gv4VGKaoxwQw==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:50359 helo=[192.168.10.176])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1gn58S-0002TC-Ht; Fri, 25 Jan 2019 18:19:20 +0100
-Subject: Re: [PATCH v3 16/23] drm/qxl: implement prime kmap/kunmap
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@redhat.com>
-References: <20190118122020.27596-1-kraxel@redhat.com>
- <20190118122020.27596-17-kraxel@redhat.com>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <ba5088e7-fc42-8918-fb26-94c299caa9f9@tronnes.org>
-Date:   Fri, 25 Jan 2019 18:19:16 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 25 Jan 2019 12:24:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46668 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726321AbfAYRYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 12:24:20 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 67261ACEF;
+        Fri, 25 Jan 2019 17:24:18 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 18:24:16 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Johannes Weiner <hannes@cmpxchg.org>
+Cc:     akpm@linux-foundation.org, mm-commits@vger.kernel.org,
+        penguin-kernel@i-love.sakura.ne.jp, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: + memcg-do-not-report-racy-no-eligible-oom-tasks.patch added to
+ -mm tree
+Message-ID: <20190125172416.GB20411@dhcp22.suse.cz>
+References: <20190109190306.rATpT%akpm@linux-foundation.org>
+ <20190125165624.GA17719@cmpxchg.org>
 MIME-Version: 1.0
-In-Reply-To: <20190118122020.27596-17-kraxel@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125165624.GA17719@cmpxchg.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-Den 18.01.2019 13.20, skrev Gerd Hoffmann:
-> Generic fbdev emulation needs this.  Also: We must keep track of the
-> number of mappings now, so we don't unmap early in case two users want a
-> kmap of the same bo.  Add a sanity check to destroy callback to make
-> sure kmap/kunmap is balanced.
+On Fri 25-01-19 11:56:24, Johannes Weiner wrote:
+> On Wed, Jan 09, 2019 at 11:03:06AM -0800, akpm@linux-foundation.org wrote:
+> > 
+> > The patch titled
+> >      Subject: memcg: do not report racy no-eligible OOM tasks
+> > has been added to the -mm tree.  Its filename is
+> >      memcg-do-not-report-racy-no-eligible-oom-tasks.patch
+> > 
+> > This patch should soon appear at
+> >     http://ozlabs.org/~akpm/mmots/broken-out/memcg-do-not-report-racy-no-eligible-oom-tasks.patch
+> > and later at
+> >     http://ozlabs.org/~akpm/mmotm/broken-out/memcg-do-not-report-racy-no-eligible-oom-tasks.patch
+> > 
+> > Before you just go and hit "reply", please:
+> >    a) Consider who else should be cc'ed
+> >    b) Prefer to cc a suitable mailing list as well
+> >    c) Ideally: find the original patch on the mailing list and do a
+> >       reply-to-all to that, adding suitable additional cc's
+> > 
+> > *** Remember to use Documentation/process/submit-checklist.rst when testing your code ***
+> > 
+> > The -mm tree is included into linux-next and is updated
+> > there every 3-4 working days
+> > 
+> > ------------------------------------------------------
+> > From: Michal Hocko <mhocko@suse.com>
+> > Subject: memcg: do not report racy no-eligible OOM tasks
+> > 
+> > Tetsuo has reported [1] that a single process group memcg might easily
+> > swamp the log with no-eligible oom victim reports due to race between the
+> > memcg charge and oom_reaper
+> > 
+> > Thread 1		Thread2				oom_reaper
+> > try_charge		try_charge
+> > 			  mem_cgroup_out_of_memory
+> > 			    mutex_lock(oom_lock)
+> >   mem_cgroup_out_of_memory
+> >     mutex_lock(oom_lock)
+> > 			      out_of_memory
+> > 			        select_bad_process
+> > 				oom_kill_process(current)
+> > 				  wake_oom_reaper
+> > 							  oom_reap_task
+> > 							  MMF_OOM_SKIP->victim
+> > 			    mutex_unlock(oom_lock)
+> >     out_of_memory
+> >       select_bad_process # no task
+> > 
+> > If Thread1 didn't race it would bail out from try_charge and force the
+> > charge.  We can achieve the same by checking tsk_is_oom_victim inside the
+> > oom_lock and therefore close the race.
+> > 
+> > [1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
+> > Link: http://lkml.kernel.org/r/20190107143802.16847-3-mhocko@kernel.org
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> > Cc: Johannes Weiner <hannes@cmpxchg.org>
+> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 > 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> ---
-
-Just a note: You catch the one-to-many kmap type of unbalance, but not
-the one-too-many kunmap situation.
-
-Acked-by: Noralf Trønnes <noralf@tronnes.org>
-
-
->  drivers/gpu/drm/qxl/qxl_drv.h    |  1 +
->  drivers/gpu/drm/qxl/qxl_object.c |  6 ++++++
->  drivers/gpu/drm/qxl/qxl_prime.c  | 17 +++++++++++++----
->  3 files changed, 20 insertions(+), 4 deletions(-)
+> It looks like this problem is happening in production systems:
 > 
-> diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
-> index 43c6df9cf9..8c3af1cdbe 100644
-> --- a/drivers/gpu/drm/qxl/qxl_drv.h
-> +++ b/drivers/gpu/drm/qxl/qxl_drv.h
-> @@ -84,6 +84,7 @@ struct qxl_bo {
->  	struct ttm_bo_kmap_obj		kmap;
->  	unsigned int pin_count;
->  	void				*kptr;
-> +	unsigned int                    map_count;
->  	int                             type;
->  
->  	/* Constant after initialization */
-> diff --git a/drivers/gpu/drm/qxl/qxl_object.c b/drivers/gpu/drm/qxl/qxl_object.c
-> index 024c8dd317..4928fa6029 100644
-> --- a/drivers/gpu/drm/qxl/qxl_object.c
-> +++ b/drivers/gpu/drm/qxl/qxl_object.c
-> @@ -36,6 +36,7 @@ static void qxl_ttm_bo_destroy(struct ttm_buffer_object *tbo)
->  	qdev = (struct qxl_device *)bo->gem_base.dev->dev_private;
->  
->  	qxl_surface_evict(qdev, bo, false);
-> +	WARN_ON_ONCE(bo->map_count > 0);
->  	mutex_lock(&qdev->gem.mutex);
->  	list_del_init(&bo->list);
->  	mutex_unlock(&qdev->gem.mutex);
-> @@ -131,6 +132,7 @@ int qxl_bo_kmap(struct qxl_bo *bo, void **ptr)
->  	if (bo->kptr) {
->  		if (ptr)
->  			*ptr = bo->kptr;
-> +		bo->map_count++;
->  		return 0;
->  	}
->  	r = ttm_bo_kmap(&bo->tbo, 0, bo->tbo.num_pages, &bo->kmap);
-> @@ -139,6 +141,7 @@ int qxl_bo_kmap(struct qxl_bo *bo, void **ptr)
->  	bo->kptr = ttm_kmap_obj_virtual(&bo->kmap, &is_iomem);
->  	if (ptr)
->  		*ptr = bo->kptr;
-> +	bo->map_count = 1;
->  	return 0;
->  }
->  
-> @@ -180,6 +183,9 @@ void qxl_bo_kunmap(struct qxl_bo *bo)
->  {
->  	if (bo->kptr == NULL)
->  		return;
-> +	bo->map_count--;
-> +	if (bo->map_count > 0)
-> +		return;
->  	bo->kptr = NULL;
->  	ttm_bo_kunmap(&bo->kmap);
->  }
-> diff --git a/drivers/gpu/drm/qxl/qxl_prime.c b/drivers/gpu/drm/qxl/qxl_prime.c
-> index a55dece118..708378844c 100644
-> --- a/drivers/gpu/drm/qxl/qxl_prime.c
-> +++ b/drivers/gpu/drm/qxl/qxl_prime.c
-> @@ -22,7 +22,7 @@
->   * Authors: Andreas Pokorny
->   */
->  
-> -#include "qxl_drv.h"
-> +#include "qxl_object.h"
->  
->  /* Empty Implementations as there should not be any other driver for a virtual
->   * device that might share buffers with qxl */
-> @@ -54,13 +54,22 @@ struct drm_gem_object *qxl_gem_prime_import_sg_table(
->  
->  void *qxl_gem_prime_vmap(struct drm_gem_object *obj)
->  {
-> -	WARN_ONCE(1, "not implemented");
-> -	return ERR_PTR(-ENOSYS);
-> +	struct qxl_bo *bo = gem_to_qxl_bo(obj);
-> +	void *ptr;
-> +	int ret;
-> +
-> +	ret = qxl_bo_kmap(bo, &ptr);
-> +	if (ret < 0)
-> +		return ERR_PTR(ret);
-> +
-> +	return ptr;
->  }
->  
->  void qxl_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
->  {
-> -	WARN_ONCE(1, "not implemented");
-> +	struct qxl_bo *bo = gem_to_qxl_bo(obj);
-> +
-> +	qxl_bo_kunmap(bo);
->  }
->  
->  int qxl_gem_prime_mmap(struct drm_gem_object *obj,
+> https://www.spinics.net/lists/cgroups/msg21268.html
 > 
+> where the threads don't exit because they are trapped writing out the
+> oom messages to a slow console (running the reproducer from this email
+> thread triggers the oom flooding).
+> 
+> So IMO we should put this into 5.0 and add:
+
+Please note that Tetsuo has found out that this will not work with the
+CLONE_VM without CLONE_SIGHAND cases and his http://lkml.kernel.org/r/01370f70-e1f6-ebe4-b95e-0df21a0bc15e@i-love.sakura.ne.jp
+should handle this case as well. I've only had objections to the
+changelog but other than that the patch looked sensible to me.
+-- 
+Michal Hocko
+SUSE Labs
