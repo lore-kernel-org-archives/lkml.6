@@ -2,43 +2,43 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 765B9C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 971A9C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:19:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44336218FC
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:19:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5F70B20844
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:19:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548458347;
-	bh=llgp6iB9umQMtijPU5ndOBm56cNGSCkZgnCSDL4fGkk=;
+	s=default; t=1548458351;
+	bh=LIWhYQfKvUtn/hwKJTdmaKQzWd9pRhRMfNSwKP93gn8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YCf219TOwzBo4xhZWsC5DlkhjZc5JbRhl6lo4+wAF38ppfFZUaNCIfC09tNpqsKp8
-	 oz5zl7cNuJFkLC3N6sS8VM5Y/BjcOUJ6VfWdJTexBEwOVJKEzmyNJtpEb+GcGGV/JZ
-	 jjluw2H6zDUQ+k6u69lXz10TuZVf4ByTnRjM3Cb4=
+	b=divx2hmspw6xfrXm46AfW+L9Y176xyE+naciyEFLavVcymlP8qpAoFuEeL4R3Sdj6
+	 kUsBnrVvhZCrDIAQmiNria/UNntfP7Pt7spYUvQ28HMJDBCBsQndmuaGgeK6m99xOQ
+	 VRKxRyu6Z+Mvq7xoxvQxKVhcW6YSB5rFAqXOZ4fw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729724AbfAYXTG (ORCPT
+        id S1729765AbfAYXTK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 18:19:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47578 "EHLO mail.kernel.org"
+        Fri, 25 Jan 2019 18:19:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47650 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729685AbfAYXTE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 18:19:04 -0500
+        id S1729728AbfAYXTH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 18:19:07 -0500
 Received: from quaco.cust.in.nbox.cz (unknown [95.82.135.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C075C20844;
-        Fri, 25 Jan 2019 23:19:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6C4D218D0;
+        Fri, 25 Jan 2019 23:19:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548458343;
-        bh=llgp6iB9umQMtijPU5ndOBm56cNGSCkZgnCSDL4fGkk=;
+        s=default; t=1548458347;
+        bh=LIWhYQfKvUtn/hwKJTdmaKQzWd9pRhRMfNSwKP93gn8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rUSsUJI94MwIX3vGdHxIBDrD+QbA3PODJXxlydYYVY5Li28EGY4+6mPFvOQmIdiCF
-         6oz+zxhimokQHNrpQRbl4BAld1zXmWfljGca/SGz34ofsxO1Eb0uC/5SGvjo6jvJ7p
-         s8BIsJtCe6NuTwoII58t+3v1tDosOHsojX3IKIGw=
+        b=WFddVwXeaHXuvNVF94YG9gSEQHPCU6DpLjSEGeof4F4sZdqlQQkfEN4Vgt+yEWZOt
+         rXkehGLQGDnRCWs2pW9PcrydbPGvHiC+ACr1m24fw/HMspxzJGkomZpZ8ajq0bBqWa
+         IAcssjapH4qCZGbQvBH1BELVmoTJIVtPeugXeM1U=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -47,9 +47,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 06/29] perf symbols: Remove some unnecessary includes from symbol.h
-Date:   Sat, 26 Jan 2019 00:18:20 +0100
-Message-Id: <20190125231843.2895-7-acme@kernel.org>
+Subject: [PATCH 08/29] perf comm: Remove needless headers from comm.h
+Date:   Sat, 26 Jan 2019 00:18:22 +0100
+Message-Id: <20190125231843.2895-9-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190125231843.2895-1-acme@kernel.org>
 References: <20190125231843.2895-1-acme@kernel.org>
@@ -62,76 +62,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-And fixup the fallout in places like annotation and jitdump that were
-using things like dirname() but weren't including libgen.h, etc.
+There we don't need rbtree, only in comm.c, also ditch perf.h, not
+needed at all.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-7ji9igrauh6ylt3p6i03bjlf@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-vr1jnwwujh99skrgldtimpmu@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/annotate.c |  1 +
- tools/perf/util/jitdump.c  |  1 +
- tools/perf/util/symbol.h   | 10 ++++------
- 3 files changed, 6 insertions(+), 6 deletions(-)
+ tools/perf/util/comm.c | 1 +
+ tools/perf/util/comm.h | 4 ++--
+ 2 files changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/annotate.c b/tools/perf/util/annotate.c
-index 70de8f6b3aee..3d79add5f7ae 100644
---- a/tools/perf/util/annotate.c
-+++ b/tools/perf/util/annotate.c
-@@ -9,6 +9,7 @@
- 
- #include <errno.h>
- #include <inttypes.h>
-+#include <libgen.h>
- #include "util.h"
- #include "ui/ui.h"
- #include "sort.h"
-diff --git a/tools/perf/util/jitdump.c b/tools/perf/util/jitdump.c
-index bf249552a9b0..eda28d3570bc 100644
---- a/tools/perf/util/jitdump.c
-+++ b/tools/perf/util/jitdump.c
-@@ -2,6 +2,7 @@
- #include <sys/sysmacros.h>
- #include <sys/types.h>
- #include <errno.h>
-+#include <libgen.h>
+diff --git a/tools/perf/util/comm.c b/tools/perf/util/comm.c
+index 31279a7bd919..1066de92af12 100644
+--- a/tools/perf/util/comm.c
++++ b/tools/perf/util/comm.c
+@@ -6,6 +6,7 @@
  #include <stdio.h>
- #include <stdlib.h>
  #include <string.h>
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index 956d9916e364..2162a5d9b3ac 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -5,16 +5,10 @@
- #include <linux/types.h>
- #include <stdbool.h>
- #include <stdint.h>
--#include "map.h"
+ #include <linux/refcount.h>
++#include <linux/rbtree.h>
+ #include "rwsem.h"
+ 
+ struct comm_str {
+diff --git a/tools/perf/util/comm.h b/tools/perf/util/comm.h
+index 3e5c438fe85e..f35d8fbfa2dd 100644
+--- a/tools/perf/util/comm.h
++++ b/tools/perf/util/comm.h
+@@ -2,9 +2,9 @@
+ #ifndef __PERF_COMM_H
+ #define __PERF_COMM_H
+ 
 -#include "../perf.h"
+-#include <linux/rbtree.h>
  #include <linux/list.h>
- #include <linux/rbtree.h>
- #include <stdio.h>
--#include <byteswap.h>
--#include <libgen.h>
- #include "branch.h"
--#include "build-id.h"
--#include "event.h"
- #include "path.h"
- #include "symbol_conf.h"
++#include <linux/types.h>
++#include <stdbool.h>
  
-@@ -26,6 +20,10 @@
+ struct comm_str;
  
- #include "dso.h"
- 
-+struct map;
-+struct map_groups;
-+struct option;
-+
- /*
-  * libelf 0.8.x and earlier do not support ELF_C_READ_MMAP;
-  * for newer versions we can use mmap to reduce memory usage:
 -- 
 2.20.1
 
