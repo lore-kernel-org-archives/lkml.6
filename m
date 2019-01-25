@@ -2,116 +2,77 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B394C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10FFEC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:30:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 526DF20881
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:30:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3F0D218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:30:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548426648;
+	bh=t9mzlbKxUhp4Q4SILCrwQd3WO53MmwSKzCQqv1I8R80=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=wVi2j8/6tQRr/0i+4ov35oxsxM/i1MLD8N8+FWXJL/RUJY+74lp+K6LSPaNU2sMlG
+	 e/3lx1vrRpbHldUzmbUEn8WrW/RT8qlBMuPD5gq6Zvw0QyY4V0Q7FBlu2fgQKJTsS5
+	 OEWmtmneRM+VSPcFIl83ZY5JRo7il6s3dGvTiaUg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbfAYOak (ORCPT
+        id S1726917AbfAYOar (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:30:40 -0500
-Received: from mga07.intel.com ([134.134.136.100]:21748 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726216AbfAYOak (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:30:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 06:30:39 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,521,1539673200"; 
-   d="scan'208";a="269876213"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga004.jf.intel.com with ESMTP; 25 Jan 2019 06:30:37 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id D25DC33A; Fri, 25 Jan 2019 16:30:36 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Borislav Petkov <bp@suse.de>, Thomas Tai <thomas.tai@oracle.com>,
-        linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Tyler Baicar <tbaicar@codeaurora.org>
-Subject: [PATCH v2] ras: Use consistent types for UUIDs
-Date:   Fri, 25 Jan 2019 16:30:35 +0200
-Message-Id: <20190125143035.81589-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 25 Jan 2019 09:30:47 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36972 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726141AbfAYOaq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 09:30:46 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 90CE8AEF3;
+        Fri, 25 Jan 2019 14:30:45 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 15:30:44 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     akpm@linux-foundation.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        keith.busch@intel.com, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, mgorman@suse.de
+Subject: Re: [PATCH v7 2/3] mm: Move buddy list manipulations into helpers
+Message-ID: <20190125143044.GO3560@dhcp22.suse.cz>
+References: <154690326478.676627.103843791978176914.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154690327612.676627.7469591833063917773.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154690327612.676627.7469591833063917773.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The commit
+On Mon 07-01-19 15:21:16, Dan Williams wrote:
+> In preparation for runtime randomization of the zone lists, take all
+> (well, most of) the list_*() functions in the buddy allocator and put
+> them in helper functions. Provide a common control point for injecting
+> additional behavior when freeing pages.
 
-  297b64c74385 ("ras: acpi / apei: generate trace event for unrecognized CPER section")
+Looks good in general and it actually makes the code more readable.
+One nit below
 
-brought inconsistency in UUID types which are used across the RAS subsystem.
+[...]
+> +static inline void rmv_page_order(struct page *page)
+> +{
+> +	__ClearPageBuddy(page);
+> +	set_page_private(page, 0);
+> +}
+> +
 
-Fix this by moving to use guid_t everywhere.
+I guess we do not really need this helper and simply squash it to its
+only user.
 
-Cc: Tyler Baicar <tbaicar@codeaurora.org>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
+Acked-by: Michal Hocko <mhocko@suse.com>
 
-v2:
-- resend on top of tip:ras/core
-
- drivers/ras/ras.c       | 2 +-
- include/ras/ras_event.h | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
-index 3f38907320dc..95540ea8dd9d 100644
---- a/drivers/ras/ras.c
-+++ b/drivers/ras/ras.c
-@@ -14,7 +14,7 @@
- #define TRACE_INCLUDE_PATH ../../include/ras
- #include <ras/ras_event.h>
- 
--void log_non_standard_event(const uuid_le *sec_type, const uuid_le *fru_id,
-+void log_non_standard_event(const guid_t *sec_type, const guid_t *fru_id,
- 			    const char *fru_text, const u8 sev, const u8 *err,
- 			    const u32 len)
- {
-diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-index a0794632fd01..36c5c5e38c1d 100644
---- a/include/ras/ras_event.h
-+++ b/include/ras/ras_event.h
-@@ -27,7 +27,7 @@
- TRACE_EVENT(extlog_mem_event,
- 	TP_PROTO(struct cper_sec_mem_err *mem,
- 		 u32 err_seq,
--		 const uuid_le *fru_id,
-+		 const guid_t *fru_id,
- 		 const char *fru_text,
- 		 u8 sev),
- 
-@@ -39,7 +39,7 @@ TRACE_EVENT(extlog_mem_event,
- 		__field(u8, sev)
- 		__field(u64, pa)
- 		__field(u8, pa_mask_lsb)
--		__field_struct(uuid_le, fru_id)
-+		__field_struct(guid_t, fru_id)
- 		__string(fru_text, fru_text)
- 		__field_struct(struct cper_mem_err_compact, data)
- 	),
-@@ -218,8 +218,8 @@ TRACE_EVENT(arm_event,
-  */
- TRACE_EVENT(non_standard_event,
- 
--	TP_PROTO(const uuid_le *sec_type,
--		 const uuid_le *fru_id,
-+	TP_PROTO(const guid_t *sec_type,
-+		 const guid_t *fru_id,
- 		 const char *fru_text,
- 		 const u8 sev,
- 		 const u8 *err,
 -- 
-2.20.1
-
+Michal Hocko
+SUSE Labs
