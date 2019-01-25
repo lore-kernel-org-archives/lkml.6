@@ -2,54 +2,54 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DEEAC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:21:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59128C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:21:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17E9520844
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:21:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2891C218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:21:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548458504;
-	bh=zbn/XTCCCYr+0adgv3saSouWtg8xNOeG1GerXFY4VZY=;
+	s=default; t=1548458512;
+	bh=x/2n9lyZH0o03VkjBCQZlt1DfbsFdVjR8yhhlqquiW4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Nf08PbthcIQKc85hKXiYyopYmHQdbBnrBwlt4II9KezC9elnY3M1CDozoAaGYJl3p
-	 gGUg4TxyYRo57DiBUczatHKM6SSl26vk8UHfe7N0sOU+jesuTKQjGJA011BFJ58a1U
-	 RIxiFfxS7szCRMAr14HStmDJmI85qcUdpsUgjfEE=
+	b=D06KGP6AJeO3Abfw973yY+AcCyKgPzqNzMxG8gTYtUQvWmrK23x2ipinP9oS0PoY3
+	 R82FtjkZk2mXmHuUHhQLV/Kd48WUq2EXxOsOkPdKj83C7p8VdhB81hvJwbgJLTaX31
+	 7yEunlZldsB5Am9MAYuXoKJHilbCllPrvZ0P3l5E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729910AbfAYXVl (ORCPT
+        id S1729743AbfAYXTJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 18:21:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47742 "EHLO mail.kernel.org"
+        Fri, 25 Jan 2019 18:19:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47616 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729767AbfAYXTP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 18:19:15 -0500
+        id S1729694AbfAYXTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 18:19:06 -0500
 Received: from quaco.cust.in.nbox.cz (unknown [95.82.135.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3EA3218FC;
-        Fri, 25 Jan 2019 23:19:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B3082218FF;
+        Fri, 25 Jan 2019 23:19:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548458353;
-        bh=zbn/XTCCCYr+0adgv3saSouWtg8xNOeG1GerXFY4VZY=;
+        s=default; t=1548458345;
+        bh=x/2n9lyZH0o03VkjBCQZlt1DfbsFdVjR8yhhlqquiW4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aj1H2dEjU4xwiD4TVhUpozm2VES8FDGk3YPbzwWaAGc0EfK5TQg9wPe7+VbgCK+Zk
-         vCeNJp6M+mziqm9cEN12vv91zbuYAbezJWtwmR5yZP3SAT2ByPi8hwKBaDm2CBiynU
-         LXloij9XXDWr/SJE3SyzqhI1t4WXeEHUWTg8hYBw=
+        b=pOlUOTD/YFJpacDkBns4tGB0mvXM7KUKJu+P5bunONL0ZFnX7sYnK/hDBF+lhxK+M
+         7GTFZs0gY73zv72VxcnEF2BReJCAiEw4XalV9iIQxLejp04AyfiHM5nA3RlDcb1TWb
+         6S1iO5PD4d1NygGvgbsFdUxXlQNk3CygI0FI/Yzk=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         linux-perf-users@vger.kernel.org,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Davidlohr Bueso <dbueso@suse.de>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 11/29] perf machine: Use cached rbtrees
-Date:   Sat, 26 Jan 2019 00:18:25 +0100
-Message-Id: <20190125231843.2895-12-acme@kernel.org>
+Subject: [PATCH 07/29] perf namespaces: Remove namespaces.h from .h headers
+Date:   Sat, 26 Jan 2019 00:18:21 +0100
+Message-Id: <20190125231843.2895-8-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190125231843.2895-1-acme@kernel.org>
 References: <20190125231843.2895-1-acme@kernel.org>
@@ -60,349 +60,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Davidlohr Bueso <dave@stgolabs.net>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-At the cost of an extra pointer, we can avoid the O(logN) cost of
-finding the first element in the tree (smallest node), which is
-something required for nearly every operation dealing with
-machine->guests and threads->entries.
+There we need just forward declarations, so remove it and add it just on
+the .c files that actually touch the struct definitions.
 
-The conversion is straightforward, however, it's worth noticing that the
-rb_erase_init() calls have been replaced by rb_erase_cached() which has
-no _init() flavor, however, the node is explicitly cleared next anyway,
-which was redundant until now.
-
-Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20181206191819.30182-3-dave@stgolabs.net
+Link: https://lkml.kernel.org/n/tip-wsjxzt99p83jubt6hu0med0f@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-report.c |  3 ++-
- tools/perf/util/build-id.c  | 12 ++++++---
- tools/perf/util/machine.c   | 53 ++++++++++++++++++++++---------------
- tools/perf/util/machine.h   | 12 ++++-----
- tools/perf/util/rb_resort.h |  6 ++---
- 5 files changed, 50 insertions(+), 36 deletions(-)
+ tools/perf/builtin-probe.c    | 1 +
+ tools/perf/util/build-id.c    | 1 +
+ tools/perf/util/build-id.h    | 3 ++-
+ tools/perf/util/dso.c         | 1 +
+ tools/perf/util/dso.h         | 2 +-
+ tools/perf/util/probe-event.c | 1 +
+ tools/perf/util/probe-event.h | 5 +++--
+ tools/perf/util/probe-file.c  | 1 +
+ tools/perf/util/thread.h      | 1 +
+ tools/perf/util/util.c        | 1 +
+ 10 files changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 794a0de5ac1d..c9ceaf88759c 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -753,7 +753,8 @@ static int tasks_print(struct report *rep, FILE *fp)
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		struct threads *threads = &machine->threads[i];
+diff --git a/tools/perf/builtin-probe.c b/tools/perf/builtin-probe.c
+index 99de91698de1..46d3c2deeb40 100644
+--- a/tools/perf/builtin-probe.c
++++ b/tools/perf/builtin-probe.c
+@@ -32,6 +32,7 @@
  
--		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
-+		for (nd = rb_first_cached(&threads->entries); nd;
-+		     nd = rb_next(nd)) {
- 			task = tasks + itask++;
- 
- 			task->thread = rb_entry(nd, struct thread, rb_node);
+ #include "perf.h"
+ #include "builtin.h"
++#include "namespaces.h"
+ #include "util/util.h"
+ #include "util/strlist.h"
+ #include "util/strfilter.h"
 diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index 07ef7fad689c..2ff802068f06 100644
+index 04b1d53e4bf9..07ef7fad689c 100644
 --- a/tools/perf/util/build-id.c
 +++ b/tools/perf/util/build-id.c
-@@ -364,7 +364,8 @@ int perf_session__write_buildid_table(struct perf_session *session,
- 	if (err)
- 		return err;
+@@ -15,6 +15,7 @@
+ #include <sys/types.h>
+ #include "build-id.h"
+ #include "event.h"
++#include "namespaces.h"
+ #include "symbol.h"
+ #include "thread.h"
+ #include <linux/kernel.h>
+diff --git a/tools/perf/util/build-id.h b/tools/perf/util/build-id.h
+index f0c565164a97..93668f38f1ed 100644
+--- a/tools/perf/util/build-id.h
++++ b/tools/perf/util/build-id.h
+@@ -6,9 +6,10 @@
+ #define SBUILD_ID_SIZE	(BUILD_ID_SIZE * 2 + 1)
  
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		err = machine__write_buildid_table(pos, fd);
- 		if (err)
-@@ -397,7 +398,8 @@ int dsos__hit_all(struct perf_session *session)
- 	if (err)
- 		return err;
+ #include "tool.h"
+-#include "namespaces.h"
+ #include <linux/types.h>
  
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
++struct nsinfo;
++
+ extern struct perf_tool build_id__mark_dso_hit_ops;
+ struct dso;
+ struct feat_fd;
+diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+index 62c8cf622607..8cbbb5be4a0b 100644
+--- a/tools/perf/util/dso.c
++++ b/tools/perf/util/dso.c
+@@ -9,6 +9,7 @@
+ #include <errno.h>
+ #include <fcntl.h>
+ #include "compress.h"
++#include "namespaces.h"
+ #include "path.h"
+ #include "symbol.h"
+ #include "srcline.h"
+diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+index 56001b82d448..2de54c0b26b2 100644
+--- a/tools/perf/util/dso.h
++++ b/tools/perf/util/dso.h
+@@ -10,9 +10,9 @@
+ #include <stdio.h>
+ #include "rwsem.h"
+ #include <linux/bitops.h>
+-#include "namespaces.h"
+ #include "build-id.h"
  
- 		err = machine__hit_all_dsos(pos);
-@@ -850,7 +852,8 @@ int perf_session__cache_build_ids(struct perf_session *session)
++struct machine;
+ struct map;
  
- 	ret = machine__cache_build_ids(&session->machines.host);
+ enum dso_binary_type {
+diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
+index 18a59fba97ff..736787a18b9e 100644
+--- a/tools/perf/util/probe-event.c
++++ b/tools/perf/util/probe-event.c
+@@ -35,6 +35,7 @@
  
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret |= machine__cache_build_ids(pos);
- 	}
-@@ -867,7 +870,8 @@ bool perf_session__read_build_ids(struct perf_session *session, bool with_hits)
- 	struct rb_node *nd;
- 	bool ret = machine__read_build_ids(&session->machines.host, with_hits);
+ #include "util.h"
+ #include "event.h"
++#include "namespaces.h"
+ #include "strlist.h"
+ #include "strfilter.h"
+ #include "debug.h"
+diff --git a/tools/perf/util/probe-event.h b/tools/perf/util/probe-event.h
+index 15a98c3a2a2f..05c8d571a901 100644
+--- a/tools/perf/util/probe-event.h
++++ b/tools/perf/util/probe-event.h
+@@ -4,8 +4,9 @@
  
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret |= machine__read_build_ids(pos, with_hits);
- 	}
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index ae85106bb5bf..66f019fdc510 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -42,7 +42,7 @@ static void machine__threads_init(struct machine *machine)
+ #include <linux/compiler.h>
+ #include <stdbool.h>
+-#include "intlist.h"
+-#include "namespaces.h"
++
++struct intlist;
++struct nsinfo;
  
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		struct threads *threads = &machine->threads[i];
--		threads->entries = RB_ROOT;
-+		threads->entries = RB_ROOT_CACHED;
- 		init_rwsem(&threads->lock);
- 		threads->nr = 0;
- 		INIT_LIST_HEAD(&threads->dead);
-@@ -180,7 +180,7 @@ void machine__delete_threads(struct machine *machine)
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		struct threads *threads = &machine->threads[i];
- 		down_write(&threads->lock);
--		nd = rb_first(&threads->entries);
-+		nd = rb_first_cached(&threads->entries);
- 		while (nd) {
- 			struct thread *t = rb_entry(nd, struct thread, rb_node);
+ /* Probe related configurations */
+ struct probe_conf {
+diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
+index 0b1195cad0e5..4062bc4412a9 100644
+--- a/tools/perf/util/probe-file.c
++++ b/tools/perf/util/probe-file.c
+@@ -20,6 +20,7 @@
+ #include <sys/types.h>
+ #include <sys/uio.h>
+ #include <unistd.h>
++#include "namespaces.h"
+ #include "util.h"
+ #include "event.h"
+ #include "strlist.h"
+diff --git a/tools/perf/util/thread.h b/tools/perf/util/thread.h
+index 712dd48cc0ca..f3c939150f90 100644
+--- a/tools/perf/util/thread.h
++++ b/tools/perf/util/thread.h
+@@ -13,6 +13,7 @@
+ #include <intlist.h>
+ #include "rwsem.h"
  
-@@ -223,7 +223,7 @@ void machine__delete(struct machine *machine)
- void machines__init(struct machines *machines)
- {
- 	machine__init(&machines->host, "", HOST_KERNEL_ID);
--	machines->guests = RB_ROOT;
-+	machines->guests = RB_ROOT_CACHED;
- }
++struct namespaces_event;
+ struct thread_stack;
+ struct unwind_libunwind_ops;
  
- void machines__exit(struct machines *machines)
-@@ -235,9 +235,10 @@ void machines__exit(struct machines *machines)
- struct machine *machines__add(struct machines *machines, pid_t pid,
- 			      const char *root_dir)
- {
--	struct rb_node **p = &machines->guests.rb_node;
-+	struct rb_node **p = &machines->guests.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
- 	struct machine *pos, *machine = malloc(sizeof(*machine));
-+	bool leftmost = true;
- 
- 	if (machine == NULL)
- 		return NULL;
-@@ -252,12 +253,14 @@ struct machine *machines__add(struct machines *machines, pid_t pid,
- 		pos = rb_entry(parent, struct machine, rb_node);
- 		if (pid < pos->pid)
- 			p = &(*p)->rb_left;
--		else
-+		else {
- 			p = &(*p)->rb_right;
-+			leftmost = false;
-+		}
- 	}
- 
- 	rb_link_node(&machine->rb_node, parent, p);
--	rb_insert_color(&machine->rb_node, &machines->guests);
-+	rb_insert_color_cached(&machine->rb_node, &machines->guests, leftmost);
- 
- 	return machine;
- }
-@@ -268,7 +271,7 @@ void machines__set_comm_exec(struct machines *machines, bool comm_exec)
- 
- 	machines->host.comm_exec = comm_exec;
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *machine = rb_entry(nd, struct machine, rb_node);
- 
- 		machine->comm_exec = comm_exec;
-@@ -277,7 +280,7 @@ void machines__set_comm_exec(struct machines *machines, bool comm_exec)
- 
- struct machine *machines__find(struct machines *machines, pid_t pid)
- {
--	struct rb_node **p = &machines->guests.rb_node;
-+	struct rb_node **p = &machines->guests.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
- 	struct machine *machine;
- 	struct machine *default_machine = NULL;
-@@ -340,7 +343,7 @@ void machines__process_guests(struct machines *machines,
- {
- 	struct rb_node *nd;
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		process(pos, data);
- 	}
-@@ -353,7 +356,8 @@ void machines__set_id_hdr_size(struct machines *machines, u16 id_hdr_size)
- 
- 	machines->host.id_hdr_size = id_hdr_size;
- 
--	for (node = rb_first(&machines->guests); node; node = rb_next(node)) {
-+	for (node = rb_first_cached(&machines->guests); node;
-+	     node = rb_next(node)) {
- 		machine = rb_entry(node, struct machine, rb_node);
- 		machine->id_hdr_size = id_hdr_size;
- 	}
-@@ -466,9 +470,10 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 						  pid_t pid, pid_t tid,
- 						  bool create)
- {
--	struct rb_node **p = &threads->entries.rb_node;
-+	struct rb_node **p = &threads->entries.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
- 	struct thread *th;
-+	bool leftmost = true;
- 
- 	th = threads__get_last_match(threads, machine, pid, tid);
- 	if (th)
-@@ -486,8 +491,10 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 
- 		if (tid < th->tid)
- 			p = &(*p)->rb_left;
--		else
-+		else {
- 			p = &(*p)->rb_right;
-+			leftmost = false;
-+		}
- 	}
- 
- 	if (!create)
-@@ -496,7 +503,7 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 	th = thread__new(pid, tid);
- 	if (th != NULL) {
- 		rb_link_node(&th->rb_node, parent, p);
--		rb_insert_color(&th->rb_node, &threads->entries);
-+		rb_insert_color_cached(&th->rb_node, &threads->entries, leftmost);
- 
- 		/*
- 		 * We have to initialize map_groups separately
-@@ -507,7 +514,7 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 		 * leader and that would screwed the rb tree.
- 		 */
- 		if (thread__init_map_groups(th, machine)) {
--			rb_erase_init(&th->rb_node, &threads->entries);
-+			rb_erase_cached(&th->rb_node, &threads->entries);
- 			RB_CLEAR_NODE(&th->rb_node);
- 			thread__put(th);
- 			return NULL;
-@@ -798,7 +805,7 @@ size_t machines__fprintf_dsos(struct machines *machines, FILE *fp)
- 	struct rb_node *nd;
- 	size_t ret = __dsos__fprintf(&machines->host.dsos.head, fp);
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret += __dsos__fprintf(&pos->dsos.head, fp);
- 	}
-@@ -818,7 +825,7 @@ size_t machines__fprintf_dsos_buildid(struct machines *machines, FILE *fp,
- 	struct rb_node *nd;
- 	size_t ret = machine__fprintf_dsos_buildid(&machines->host, fp, skip, parm);
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret += machine__fprintf_dsos_buildid(pos, fp, skip, parm);
- 	}
-@@ -858,7 +865,8 @@ size_t machine__fprintf(struct machine *machine, FILE *fp)
- 
- 		ret = fprintf(fp, "Threads: %u\n", threads->nr);
- 
--		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
-+		for (nd = rb_first_cached(&threads->entries); nd;
-+		     nd = rb_next(nd)) {
- 			struct thread *pos = rb_entry(nd, struct thread, rb_node);
- 
- 			ret += thread__fprintf(pos, fp);
-@@ -1161,7 +1169,7 @@ int machines__create_guest_kernel_maps(struct machines *machines)
- 
- void machines__destroy_kernel_maps(struct machines *machines)
- {
--	struct rb_node *next = rb_first(&machines->guests);
-+	struct rb_node *next = rb_first_cached(&machines->guests);
- 
- 	machine__destroy_kernel_maps(&machines->host);
- 
-@@ -1169,7 +1177,7 @@ void machines__destroy_kernel_maps(struct machines *machines)
- 		struct machine *pos = rb_entry(next, struct machine, rb_node);
- 
- 		next = rb_next(&pos->rb_node);
--		rb_erase(&pos->rb_node, &machines->guests);
-+		rb_erase_cached(&pos->rb_node, &machines->guests);
- 		machine__delete(pos);
- 	}
- }
-@@ -1734,7 +1742,7 @@ static void __machine__remove_thread(struct machine *machine, struct thread *th,
- 	BUG_ON(refcount_read(&th->refcnt) == 0);
- 	if (lock)
- 		down_write(&threads->lock);
--	rb_erase_init(&th->rb_node, &threads->entries);
-+	rb_erase_cached(&th->rb_node, &threads->entries);
- 	RB_CLEAR_NODE(&th->rb_node);
- 	--threads->nr;
- 	/*
-@@ -2511,7 +2519,8 @@ int machine__for_each_thread(struct machine *machine,
- 
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		threads = &machine->threads[i];
--		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
-+		for (nd = rb_first_cached(&threads->entries); nd;
-+		     nd = rb_next(nd)) {
- 			thread = rb_entry(nd, struct thread, rb_node);
- 			rc = fn(thread, priv);
- 			if (rc != 0)
-@@ -2538,7 +2547,7 @@ int machines__for_each_thread(struct machines *machines,
- 	if (rc != 0)
- 		return rc;
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *machine = rb_entry(nd, struct machine, rb_node);
- 
- 		rc = machine__for_each_thread(machine, fn, priv);
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index 4ecd380ce1b4..e2f3df45410a 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -29,11 +29,11 @@ struct vdso_info;
- #define THREADS__TABLE_SIZE	(1 << THREADS__TABLE_BITS)
- 
- struct threads {
--	struct rb_root	  entries;
--	struct rw_semaphore lock;
--	unsigned int	  nr;
--	struct list_head  dead;
--	struct thread	  *last_match;
-+	struct rb_root_cached  entries;
-+	struct rw_semaphore    lock;
-+	unsigned int	       nr;
-+	struct list_head       dead;
-+	struct thread	       *last_match;
- };
- 
- struct machine {
-@@ -140,7 +140,7 @@ typedef void (*machine__process_t)(struct machine *machine, void *data);
- 
- struct machines {
- 	struct machine host;
--	struct rb_root guests;
-+	struct rb_root_cached guests;
- };
- 
- void machines__init(struct machines *machines);
-diff --git a/tools/perf/util/rb_resort.h b/tools/perf/util/rb_resort.h
-index a920f702a74d..f272e181d3d6 100644
---- a/tools/perf/util/rb_resort.h
-+++ b/tools/perf/util/rb_resort.h
-@@ -144,8 +144,8 @@ struct __name##_sorted *__name = __name##_sorted__new
- 				  __ilist->rblist.nr_entries)
- 
- /* For 'struct machine->threads' */
--#define DECLARE_RESORT_RB_MACHINE_THREADS(__name, __machine, hash_bucket)	\
--	DECLARE_RESORT_RB(__name)(&__machine->threads[hash_bucket].entries,	\
--				  __machine->threads[hash_bucket].nr)
-+#define DECLARE_RESORT_RB_MACHINE_THREADS(__name, __machine, hash_bucket)    \
-+ DECLARE_RESORT_RB(__name)(&__machine->threads[hash_bucket].entries.rb_root, \
-+			   __machine->threads[hash_bucket].nr)
- 
- #endif /* _PERF_RESORT_RB_H_ */
+diff --git a/tools/perf/util/util.c b/tools/perf/util/util.c
+index 093352e93d50..320b0fef249a 100644
+--- a/tools/perf/util/util.c
++++ b/tools/perf/util/util.c
+@@ -2,6 +2,7 @@
+ #include "../perf.h"
+ #include "util.h"
+ #include "debug.h"
++#include "namespaces.h"
+ #include <api/fs/fs.h>
+ #include <sys/mman.h>
+ #include <sys/stat.h>
 -- 
 2.20.1
 
