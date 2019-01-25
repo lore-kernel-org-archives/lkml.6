@@ -2,127 +2,121 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08057C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6A54C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:57:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5E2B218D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:47:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 804A7218D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:57:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PeB9KQe5"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vGfx4zWd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726607AbfAYFrc (ORCPT
+        id S1726735AbfAYF5D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 00:47:32 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:37010 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfAYFrb (ORCPT
+        Fri, 25 Jan 2019 00:57:03 -0500
+Received: from mail-yw1-f67.google.com ([209.85.161.67]:43797 "EHLO
+        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726097AbfAYF5D (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 00:47:31 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s13so7530233otq.4
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 21:47:30 -0800 (PST)
+        Fri, 25 Jan 2019 00:57:03 -0500
+Received: by mail-yw1-f67.google.com with SMTP id n21so3458833ywd.10;
+        Thu, 24 Jan 2019 21:57:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=r/ayRG9HGZ+VCVHSNU+R3SZYPNToHrif8kI5gbhyYmA=;
-        b=PeB9KQe5RwjogXmolZGzrOSdaUwuiIa9SPMZ7uZR+p33VADVt/hmBKe7Gvk83yL2ps
-         49mwfprMmrthLCKeOvKBpdrC9meRNiU+SMpabshT6Jk6QBShp7Qz4WCh3omz1umo/bOM
-         UUw/EsYDPjvu71fArpbatP5mhqWQO8GH011SQ=
+        bh=oIq5VzwbevlyF+FQ7R0JLZtfms9gCxDV+ruYNPlLjHw=;
+        b=vGfx4zWdd8JZhq/FjnbKasft/97BhsFUkAUT7F+lzWu2V9yf1mxvqXSoVmymS9ySwN
+         d5nOZTuSTB2ic6CuLJs1G7O4fphspSFIR6A7TmQb9HejyGHwgfl6tMGCfJMoeGZi+9iS
+         N11Wtdq8VQ2dKnhePfHzRIW2eflPxI3dWCX+BPxD21U+Ker754ZeXbivrcYegul+TKu4
+         oAKQ+Jym1Bd0F1JQkeHT3MMnvtJ5ZFrP30rXw1pw55wKafLVkM9bCDBvAe41p5nvS9ga
+         6yOMdQYaDVFovCS9XNxIGb4N8agNe8PatQfre7JbC2QglffJ0KzkDkxrUjMSH9qKT739
+         x1Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=r/ayRG9HGZ+VCVHSNU+R3SZYPNToHrif8kI5gbhyYmA=;
-        b=NBfF3nujOxpiQrr3KzAi2wQohIMgD9s3vI6U/hfUvhvvFPh4bVaFlC8GFUwkBwAzGA
-         PS7IUGfsGG/H4thmEDOjLaG1B7cxPCgIX4hWhRztnSSWZkv+AG5hx6fZGWyIkUQuqhg2
-         uru9ianL/cHZPsG0A4Zt+tvcpgDET4KdJbhm67BtM1/yAf3xnuJ3HdYP7g6JrxzbVZ/h
-         xoJIhTpfi7Lgm7Dc4jGDt/xhX/Q+5azBGTNBA6aJxdbVTm58LOhTTcyXBaGIhn4O8auM
-         Z0/e6XfzBPYVhNkL9ncelX24C1cP5e6lXkiAI78thv0GaCaGseut5nj67YRoXwo1CHlv
-         +ZJw==
-X-Gm-Message-State: AJcUukcVtlICowhCYSeduKGJyC5JLrwaR8KlvoDGhsdkiTR6j6kUnRJH
-        Fl/5oK0aWyk0jUZ5BswuXfTUScPcV0KMAA==
-X-Google-Smtp-Source: ALg8bN5eF/S2D4MnO5aAUBTw8VMHmQu7FXuTJoQFSsid/7MEvcZvCiDoiFQgXTWDWjGjfYdqftTSiQ==
-X-Received: by 2002:a9d:6143:: with SMTP id c3mr6949656otk.227.1548395250496;
-        Thu, 24 Jan 2019 21:47:30 -0800 (PST)
-Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com. [209.85.167.170])
-        by smtp.gmail.com with ESMTPSA id a1sm763787oto.71.2019.01.24.21.47.29
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 21:47:29 -0800 (PST)
-Received: by mail-oi1-f170.google.com with SMTP id x202so6847993oif.13
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 21:47:29 -0800 (PST)
-X-Received: by 2002:aca:ad14:: with SMTP id w20mr441640oie.3.1548395249401;
- Thu, 24 Jan 2019 21:47:29 -0800 (PST)
+        bh=oIq5VzwbevlyF+FQ7R0JLZtfms9gCxDV+ruYNPlLjHw=;
+        b=OL7qJZpdotuEnLFA/jp0+m/U/zwaz7pfyiCJNS3/N5DdDbWF12KFZo4uMGzA2BgtF5
+         Gze317kfVfvEOoXK+eKGRzzJN62CjIed4GPe+dY46Hai2jIJ/iaCxcMeo+o4z0ob7/UM
+         XibW0H91rOmZego1iR66QhRXRos47vpFQOdCYHrUkRoywyOEqpvOl51nFF9N+nScQNtK
+         80PJrBl6dGFJazaoeziLgqHQKl3KHoZNoN9tskIhmtOkF1IYwxXCw18r9CqdwvIP/qeZ
+         8mdBH8B68XU/R9ibA4gFE7AgU/DCsjHAJDMS4yTzwk/3Ce7Cz7w+jAPEWdYVUilMrroi
+         4VIA==
+X-Gm-Message-State: AJcUukeWP5smaRvf0hMo3m5YC1SXREaMphZVsujAFWWLI5PUdoFVc0ym
+        WUZXFmEoYJYbXc89ZlEthLbV2/Y5C0biMBaY1U4=
+X-Google-Smtp-Source: ALg8bN6p1JA8l9f7GAFoEaIoKcU2Zp214QnwcUXzAKBUiEzDBNzoN73UC8tsffxbqgfJyyeR9H8ubZ2u3zU8C9qduvM=
+X-Received: by 2002:a81:4411:: with SMTP id r17mr9442063ywa.16.1548395821488;
+ Thu, 24 Jan 2019 21:57:01 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <20190117162008.25217-8-stanimir.varbanov@linaro.org> <CAPBb6MVPhpZkCLFhAfPhE83TSpnCjH4Zy4-Mage5s=LkU9_RzA@mail.gmail.com>
- <47e2feac-3dbe-280d-0523-2226225a6733@linaro.org>
-In-Reply-To: <47e2feac-3dbe-280d-0523-2226225a6733@linaro.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Fri, 25 Jan 2019 14:47:17 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MU+oV3gX=EmdVawnVBEtfs4roNxYVee0d2PLNKxb31F7A@mail.gmail.com>
-Message-ID: <CAPBb6MU+oV3gX=EmdVawnVBEtfs4roNxYVee0d2PLNKxb31F7A@mail.gmail.com>
-Subject: Re: [PATCH 07/10] venus: helpers: add three more helper functions
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
+References: <1548381414-20561-1-git-send-email-justinpopo6@gmail.com> <ac0a8ff6-92f5-09ef-932b-aba6378f1f47@gmail.com>
+In-Reply-To: <ac0a8ff6-92f5-09ef-932b-aba6378f1f47@gmail.com>
+From:   Justin Chen <justinpopo6@gmail.com>
+Date:   Thu, 24 Jan 2019 21:56:50 -0800
+Message-ID: <CAJx26kWg=9FQonEWRQ2OjQWEStRQ_p8OOgperFp+9E_UdQGYNQ@mail.gmail.com>
+Subject: Re: [PATCH] iio: adc: ti-ads7950: inconsistency with spi msg
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-iio@vger.kernel.org, jic23@kernel.org, knaack.h@gmx.de,
+        lars@metafoo.de, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 5:54 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Hi Alex,
->
-> Thanks for the review!
->
-> On 1/24/19 10:43 AM, Alexandre Courbot wrote:
-> > On Fri, Jan 18, 2019 at 1:21 AM Stanimir Varbanov
-> > <stanimir.varbanov@linaro.org> wrote:
-> >>
-> >> This adds three more helper functions:
-> >>  * for internal buffers reallocation, applicable when we are doing
-> >> dynamic resolution change
-> >>  * for initial buffer processing of capture and output queue buffer
-> >> types
-> >>
-> >> All of them will be needed for stateful Codec API support.
-> >>
-> >> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
-> >> ---
-> >>  drivers/media/platform/qcom/venus/helpers.c | 82 +++++++++++++++++++++
-> >>  drivers/media/platform/qcom/venus/helpers.h |  2 +
-> >>  2 files changed, 84 insertions(+)
-> >>
-> >> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
-> >> index f33bbfea3576..637ce7b82d94 100644
-> >> --- a/drivers/media/platform/qcom/venus/helpers.c
-> >> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> >> @@ -322,6 +322,52 @@ int venus_helper_intbufs_free(struct venus_inst *inst)
-> >>  }
-> >>  EXPORT_SYMBOL_GPL(venus_helper_intbufs_free);
-> >>
-> >> +int venus_helper_intbufs_realloc(struct venus_inst *inst)
-> >
-> > Does this function actually reallocate buffers? It seems to just free
-> > what we had previously.
->
-> The function free all internal buffers except PERSIST. After that the
-> buffers are allocated in intbufs_set_buffer function (I know that the
-> function name is misleading).
+Hello Florian
 
-Yeah, that's what I felt - do you think you can fix this for clarity?
+
+On Thu, Jan 24, 2019 at 8:30 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
+>
+>
+> Hi Justin,
+>
+> On 1/24/19 5:56 PM, justinpopo6@gmail.com wrote:
+> > From: Justin Chen <justinpopo6@gmail.com>
+> >
+> > To read a channel we require 3 cycles to send, process, and receive
+> > the data. The transfer buffer for the third transaction is left blank.
+> > This leaves it up to the SPI driver to decide what to do.
+> >
+> > In one particular case, if the tx buffer is not set the spi driver
+> > sets it to 0xff. This puts the ADC in a alarm programming state,
+> > therefore the following read to a channel becomes erroneous.
+> >
+> > Instead of leaving us to the mercy of the SPI driver, we send the
+> > ADC cmd on the third transaction to prevent inconsistent behavior.
+>
+> Do you think this warrants a Fixes: tag?
+>
+This was an issue when the driver was introduced. Should I tag that
+commit the introduced the driver?
+> >
+> > Signed-off-by: Justin Chen <justinpopo6@gmail.com>
+> > ---
+> >  drivers/iio/adc/ti-ads7950.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
+> > index 0ad6359..5453e10 100644
+> > --- a/drivers/iio/adc/ti-ads7950.c
+> > +++ b/drivers/iio/adc/ti-ads7950.c
+> > @@ -422,6 +422,7 @@ static int ti_ads7950_probe(struct spi_device *spi)
+> >       st->scan_single_xfer[1].tx_buf = &st->single_tx;
+> >       st->scan_single_xfer[1].len = 2;
+> >       st->scan_single_xfer[1].cs_change = 1;
+> > +     st->scan_single_xfer[2].rx_buf = &st->single_tx;
+>
+> Should this be st->scan_single_xfer[2].tx_buf?
+>
+Oh yes. Good catch. Careless mistake! v2 incoming.
+> >       st->scan_single_xfer[2].rx_buf = &st->single_rx;
+> >       st->scan_single_xfer[2].len = 2;
+> >
+> >
+>
+> --
+> Florian
