@@ -2,419 +2,267 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E6CC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:15:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF936C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:20:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD0EC217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 689AB21908
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:20:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="O/zuzgM4"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ev4AggLa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729455AbfAYWPK (ORCPT
+        id S1729414AbfAYWUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 17:15:10 -0500
-Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34396 "EHLO
-        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726284AbfAYWPJ (ORCPT
+        Fri, 25 Jan 2019 17:20:55 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44088 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfAYWUy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 17:15:09 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1611D8EE27B;
-        Fri, 25 Jan 2019 14:15:09 -0800 (PST)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
-        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 2vh97xCyH_3N; Fri, 25 Jan 2019 14:15:08 -0800 (PST)
-Received: from [153.66.254.194] (unknown [50.35.68.20])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 484848EE22B;
-        Fri, 25 Jan 2019 14:15:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
-        s=20151216; t=1548454508;
-        bh=HGJE7hmR/FYgOj/iPrABPHg/m1JgdceKWzEdAfZFmbc=;
-        h=Subject:From:To:Cc:Date:From;
-        b=O/zuzgM4xES0SlFSj3RVIzCp7UFCUyVWxdQLqXNMgosj0CMrwQMdD387pNcMBR7H3
-         MzOMZg7IdzjmCiFdT8mKVJXxQbUHJLJhSDCT0g/+gifT72NLfS8Jv+xOlHBdTPVTP7
-         QIDV/wtV55VfJVmXrolzDb0vxO1SnHmRtvHg7VKo=
-Message-ID: <1548454506.3212.26.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 5.0-rc3
-From:   James Bottomley <James.Bottomley@HansenPartnership.com>
-To:     Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Date:   Fri, 25 Jan 2019 14:15:06 -0800
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.26.6 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Fri, 25 Jan 2019 17:20:54 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so4740975pgr.11
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 14:20:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=H7OdGAb0UO9zth+XRVtpGEySdnfFI42zRIH9L9/H4OU=;
+        b=ev4AggLarxI4iiv64lFv2obHKviFVARRyEEaQxCG3iz9e++aLiKGAEaAliAmfFPsnX
+         fVNES1lxAYc9akE4zGmBqf4cnti2F/C3izKG9XS9JOE/5JhzsifU+aymA0DayKLRH5/x
+         bMb2KW+Ft3FmaOlsjl3U5B/zrNTkbZ9rxfKq8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=H7OdGAb0UO9zth+XRVtpGEySdnfFI42zRIH9L9/H4OU=;
+        b=RFdnFIS5MZaMJt/ZPX+Xa7+KLjj/OXjiTSpaiL7f52Xh1XbGVndrWZ+9mR7TRGBc3N
+         0hWOl2fBggY/1oIP8BbeGVj5nBRGAJtUg40sBGfQfn08mjZqhaFHPtU5/KWsbm29Iiho
+         xaJ17SfJUKigewoPAs7pVYpypJ7BGYwZ08O+ynHa5Zun569XBGezWAhq0qXFnPOcyvZ3
+         IAxioq8TC8MJfxnwsPmD4hazVv4RkHSkcEYucLhHr3bMoYJ6p3dq89plbrrG+Jn5GoOU
+         jIqxocxmoz1dqXIadqI/9MmessCmzgULehVCJOeimlGZc92lGoH+iVY2m9TZKVoB09kX
+         VlxA==
+X-Gm-Message-State: AJcUukeQfg4aBDZj9Z9s5oTaHLpmgBO6XtXLvdhqbFUi5op3K7OKRQeu
+        uaK4VoWKwTLYVnYo1Up5o4Jdvw==
+X-Google-Smtp-Source: ALg8bN4Di+JhpuYJiihP2S+o4T3AuftcL6lyCaTdmJonf0A53puTBJEVmege5d2uO4sfXiCMGBLgOg==
+X-Received: by 2002:a65:590b:: with SMTP id f11mr11668956pgu.60.1548454853630;
+        Fri, 25 Jan 2019 14:20:53 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id y6sm39152229pfd.104.2019.01.25.14.20.52
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 14:20:52 -0800 (PST)
+Date:   Fri, 25 Jan 2019 14:20:51 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Amit Kucheria <amit.kucheria@linaro.org>
+Cc:     linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        bjorn.andersson@linaro.org, edubezval@gmail.com,
+        andy.gross@linaro.org, tdas@codeaurora.org, swboyd@chromium.org,
+        dianders@chromium.org, David Brown <david.brown@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 1/1] arm64: dts: sdm845: wireup the thermal trip
+ points to cpufreq
+Message-ID: <20190125222051.GF81583@google.com>
+References: <cover.1548093127.git.amit.kucheria@linaro.org>
+ <6a21a9ee7663e1b32d8ea81ac5e51d187aed25fb.1548093127.git.amit.kucheria@linaro.org>
+ <20190123021251.GJ261387@google.com>
+ <20190124233528.GA81583@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190124233528.GA81583@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Six fixes, all of which appear to have user visible consequences.  The
-DMA one is a regression fix from the merge window and of the others,
-four are driver specific and one specific to the target code.
+On Thu, Jan 24, 2019 at 03:35:28PM -0800, Matthias Kaehlcke wrote:
+> On Tue, Jan 22, 2019 at 06:12:51PM -0800, Matthias Kaehlcke wrote:
+> > Hi Amit,
+> > 
+> > On Mon, Jan 21, 2019 at 11:38:34PM +0530, Amit Kucheria wrote:
+> > > Since all cpus in the big and little clusters, respectively, are in the
+> > > same frequency domain, use all of them for mitigation in the
+> > > cooling-map. We end up with two cooling devices - one each for the big
+> > > and little clusters.
+> > > 
+> > > We throttle lightly at the first trip point, just removing the boost
+> > > frequency. At the next trip point we allow ourselves to be throttled to
+> > > any extent.
+> > > 
+> > > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > > ---
+> > >  arch/arm64/boot/dts/qcom/sdm845.dtsi | 225 +++++++++++++++++++++++++--
+> > >  1 file changed, 209 insertions(+), 16 deletions(-)
+> > > 
+> > > diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > index c27cbd3bcb0a..878f661d16eb 100644
+> > > --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> > > @@ -13,6 +13,7 @@
+> > >  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+> > >  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> > >  #include <dt-bindings/clock/qcom,gcc-sdm845.h>
+> > > +#include <dt-bindings/thermal/thermal.h>
+> > >  
+> > >  / {
+> > >  	interrupt-parent = <&intc>;
+> > > @@ -99,6 +100,7 @@
+> > >  			compatible = "qcom,kryo385";
+> > >  			reg = <0x0 0x0>;
+> > >  			enable-method = "psci";
+> > > +			#cooling-cells = <2>;
+> > >  			next-level-cache = <&L2_0>;
+> > >  			L2_0: l2-cache {
+> > >  				compatible = "cache";
+> > > @@ -114,6 +116,7 @@
+> > >  			compatible = "qcom,kryo385";
+> > >  			reg = <0x0 0x100>;
+> > >  			enable-method = "psci";
+> > > +			#cooling-cells = <2>;
+> > >  			next-level-cache = <&L2_100>;
+> > >  			L2_100: l2-cache {
+> > >  				compatible = "cache";
+> > > @@ -126,6 +129,7 @@
+> > >  			compatible = "qcom,kryo385";
+> > >  			reg = <0x0 0x200>;
+> > >  			enable-method = "psci";
+> > > +			#cooling-cells = <2>;
+> > >  			next-level-cache = <&L2_200>;
+> > >  			L2_200: l2-cache {
+> > >  				compatible = "cache";
+> > > @@ -138,6 +142,7 @@
+> > >  			compatible = "qcom,kryo385";
+> > >  			reg = <0x0 0x300>;
+> > >  			enable-method = "psci";
+> > > +			#cooling-cells = <2>;
+> > >  			next-level-cache = <&L2_300>;
+> > >  			L2_300: l2-cache {
+> > >  				compatible = "cache";
+> > > @@ -150,6 +155,7 @@
+> > >  			compatible = "qcom,kryo385";
+> > >  			reg = <0x0 0x400>;
+> > >  			enable-method = "psci";
+> > > +			#cooling-cells = <2>;
+> > >  			next-level-cache = <&L2_400>;
+> > >  			L2_400: l2-cache {
+> > >  				compatible = "cache";
+> > > @@ -162,6 +168,7 @@
+> > >  			compatible = "qcom,kryo385";
+> > >  			reg = <0x0 0x500>;
+> > >  			enable-method = "psci";
+> > > +			#cooling-cells = <2>;
+> > >  			next-level-cache = <&L2_500>;
+> > >  			L2_500: l2-cache {
+> > >  				compatible = "cache";
+> > > @@ -174,6 +181,7 @@
+> > >  			compatible = "qcom,kryo385";
+> > >  			reg = <0x0 0x600>;
+> > >  			enable-method = "psci";
+> > > +			#cooling-cells = <2>;
+> > >  			next-level-cache = <&L2_600>;
+> > >  			L2_600: l2-cache {
+> > >  				compatible = "cache";
+> > > @@ -186,6 +194,7 @@
+> > >  			compatible = "qcom,kryo385";
+> > >  			reg = <0x0 0x700>;
+> > >  			enable-method = "psci";
+> > > +			#cooling-cells = <2>;
+> > >  			next-level-cache = <&L2_700>;
+> > >  			L2_700: l2-cache {
+> > >  				compatible = "cache";
+> > > @@ -1691,18 +1700,41 @@
+> > >  			thermal-sensors = <&tsens0 1>;
+> > >  
+> > >  			trips {
+> > > -				cpu_alert0: trip0 {
+> > > +				cpu0_alert1: trip-point@0 {
+> > >  					temperature = <75000>;
+> > 
+> > In my observations a 'switch on/threshold' temperature of 75 degrees
+> > leads to aggressive throttling with IPA when the temperature is above
+> > this threshold:
+> > 
+> > [  716.760804] cpu_cooling_ratelimit: 31 callbacks suppressed
+> > [  716.760836] cpu cpu4: Cooling state set to 10. New max freq = 1920000
+> > [  716.773390] power_allocator_ratelimit: 15 callbacks suppressed
+> > [  716.773405] thermal thermal_zone5: Controlling power: control_temp=95000 last_temp=73500, curr_temp=75200 total_requested_power=39025 total_granted_power=18654
+> > [  749.609336] cpu_cooling_ratelimit: 45 callbacks suppressed
+> > [  749.609371] cpu cpu4: Cooling state set to 11. New max freq = 1843200
+> > [  749.624300] power_allocator_ratelimit: 24 callbacks suppressed
+> > [  749.624323] thermal thermal_zone5: Controlling power: control_temp=95000 last_temp=70800, curr_temp=77200 total_requested_power=40136 total_granted_power=17402
+> > [  780.152633] cpu_cooling_ratelimit: 41 callbacks suppressed
+> > [  780.152666] cpu cpu4: Cooling state set to 11. New max freq = 1843200
+> > [  780.165247] power_allocator_ratelimit: 21 callbacks suppressed
+> > [  780.165261] thermal thermal_zone5: Controlling power: control_temp=95000 last_temp=64800, curr_temp=76900 total_requested_power=39719 total_granted_power=1759
+> > 
+> > (the logs come from a local patch in our tree:
+> > https://chromium.googlesource.com/chromiumos/third_party/kernel/+/ec1c501a8093fed44a6697a5913ef2765f518e1f)
+> > 
+> > At this point I don't have a clear idea what would be a reasonable
+> > value for the 'switch on/threshold' temperature, but probably it
+> > should to be higher than 75 degrees, at least with IPA. If there is
+> > no reasonable common configuration for different thermal governors I
+> > guess we'll have to target a commonly used governor and systems
+> > using other 'incompatible' governors need to override the config in
+> > their <board>.dtsi.
+> 
+> On my system I don't see a significant delta in core temperatures for
+> 'threshold' temperatures of 80, 85 or 90°C. However Dhrystone
+> performance goes up by ~8% when changing the trip point from 80 to
+> 85°C. For a switch from 85 to 90°C I see a ~2% performance delta. For
+> all trip points the average core temperatures are ~80°C (silver) and
+> ~85°C (gold). Interestingly I observed the highest average
+> temperatures with the trip point at 80°C (repeated measurements were
+> taken for different temperatures).
+> 
+> Supposedly LMH throttling is disabled in the firmware I used for
+> these tests, however data suggests that it is still active
+> (temperature doesn't rise beyond 95°C, even without throttling in
+> Linux; Dhrystone performance drops when raising the temperature beyond
+> 95°C with a heat gun. I will do some more testing when I get my hands
+> on a FW that effectively disables LMH (or raises the threshold to
+> something like 105°C).
+> 
+> From the data collected so far I'd suggest a 'threshold' temperature
+> of 90°C or if that seems to high 85°C. Behavior might be different
+> with other thermal governors or without LMH throttling..
 
-The patch is available here:
+Some more data from measurements with different trips points, for the
+IPA and the Fair Share governors, LMH throttling was enabled:
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
+			IPA
+	Dhrystone	Temp Silver	Temp Gold
+75	6M		78.4		84.9
+80	6.21M		81.4		89.8
+85	6.74M		81.7		88.2
+90	6.88M		79.4		84.6
 
-The short changelog is:
+			Fair Share
+	Dhrystone	Temp Silver	Temp Gold
+75	6.63M		80.1		88.5
+80	6.71M		80.1		88.5
+85	6.77M		81.1		87.8
+90	7.12M		81.2		87.8
 
-Christoph Hellwig (1):
-      scsi: communicate max segment size to the DMA mapping code
+Within this range the 'threshold' temperature doesn't seem to have a
+large impact on the average CPU temperature. There is a bit of
+fluctuation between individual measurements, I wouldn't be surprised
+if the outliers of Temp Gold for 75 and 90°C converged more with the
+other values with some more measurements.
 
-Ewan D. Milne (2):
-      scsi: lpfc: nvmet: avoid hang / use-after-free when destroying targetport
-      scsi: lpfc: nvme: avoid hang / use-after-free when destroying localport
+I learned how to effectively disable LMH throttling, however with that
+it was fairly easy to have the CPUs overheat, even with throttling in
+Linux. If it is feasible at all to run with LMH disabled some more
+actions will be needed (e.g. attaching a heatsink or interrupt support
+for thermal sensors instead of polling, ...).
 
-Marc Gonzalez (1):
-      scsi: ufs: Use explicit access size in ufshcd_dump_regs
+Cheers
 
-Varun Prakash (1):
-      scsi: csiostor: fix NULL pointer dereference in csio_vport_set_state()
-
-Xiubo Li (1):
-      scsi: tcmu: fix use after free
-
-And the diffstat:
-
- drivers/ata/pata_macio.c          |  9 ++++-----
- drivers/ata/sata_inic162x.c       | 22 +++++++++-------------
- drivers/firewire/sbp2.c           |  5 +----
- drivers/scsi/aacraid/linit.c      |  9 ++++-----
- drivers/scsi/csiostor/csio_attr.c |  2 +-
- drivers/scsi/lpfc/lpfc_nvme.c     | 16 +++++++++-------
- drivers/scsi/lpfc/lpfc_nvme.h     |  2 +-
- drivers/scsi/lpfc/lpfc_nvmet.c    |  8 +++++---
- drivers/scsi/lpfc/lpfc_nvmet.h    |  2 +-
- drivers/scsi/scsi_lib.c           |  4 ++--
- drivers/scsi/ufs/ufshcd.c         | 10 ++++++++--
- drivers/target/target_core_user.c |  3 ++-
- 12 files changed, 47 insertions(+), 45 deletions(-)
-
-With full diff below.
-
-James
-
----
-
-diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
-index 8cc9c429ad95..9e7fc302430f 100644
---- a/drivers/ata/pata_macio.c
-+++ b/drivers/ata/pata_macio.c
-@@ -915,6 +915,10 @@ static struct scsi_host_template pata_macio_sht = {
- 	.sg_tablesize		= MAX_DCMDS,
- 	/* We may not need that strict one */
- 	.dma_boundary		= ATA_DMA_BOUNDARY,
-+	/* Not sure what the real max is but we know it's less than 64K, let's
-+	 * use 64K minus 256
-+	 */
-+	.max_segment_size	= MAX_DBDMA_SEG,
- 	.slave_configure	= pata_macio_slave_config,
- };
- 
-@@ -1044,11 +1048,6 @@ static int pata_macio_common_init(struct pata_macio_priv *priv,
- 	/* Make sure we have sane initial timings in the cache */
- 	pata_macio_default_timings(priv);
- 
--	/* Not sure what the real max is but we know it's less than 64K, let's
--	 * use 64K minus 256
--	 */
--	dma_set_max_seg_size(priv->dev, MAX_DBDMA_SEG);
--
- 	/* Allocate libata host for 1 port */
- 	memset(&pinfo, 0, sizeof(struct ata_port_info));
- 	pmac_macio_calc_timing_masks(priv, &pinfo);
-diff --git a/drivers/ata/sata_inic162x.c b/drivers/ata/sata_inic162x.c
-index e0bcf9b2dab0..174e84ce4379 100644
---- a/drivers/ata/sata_inic162x.c
-+++ b/drivers/ata/sata_inic162x.c
-@@ -245,8 +245,15 @@ struct inic_port_priv {
- 
- static struct scsi_host_template inic_sht = {
- 	ATA_BASE_SHT(DRV_NAME),
--	.sg_tablesize	= LIBATA_MAX_PRD,	/* maybe it can be larger? */
--	.dma_boundary	= INIC_DMA_BOUNDARY,
-+	.sg_tablesize		= LIBATA_MAX_PRD, /* maybe it can be larger? */
-+
-+	/*
-+	 * This controller is braindamaged.  dma_boundary is 0xffff like others
-+	 * but it will lock up the whole machine HARD if 65536 byte PRD entry
-+	 * is fed.  Reduce maximum segment size.
-+	 */
-+	.dma_boundary		= INIC_DMA_BOUNDARY,
-+	.max_segment_size	= 65536 - 512,
- };
- 
- static const int scr_map[] = {
-@@ -868,17 +875,6 @@ static int inic_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		return rc;
- 	}
- 
--	/*
--	 * This controller is braindamaged.  dma_boundary is 0xffff
--	 * like others but it will lock up the whole machine HARD if
--	 * 65536 byte PRD entry is fed. Reduce maximum segment size.
--	 */
--	rc = dma_set_max_seg_size(&pdev->dev, 65536 - 512);
--	if (rc) {
--		dev_err(&pdev->dev, "failed to set the maximum segment size\n");
--		return rc;
--	}
--
- 	rc = init_controller(hpriv->mmio_base, hpriv->cached_hctl);
- 	if (rc) {
- 		dev_err(&pdev->dev, "failed to initialize controller\n");
-diff --git a/drivers/firewire/sbp2.c b/drivers/firewire/sbp2.c
-index 09b845e90114..a785ffd5af89 100644
---- a/drivers/firewire/sbp2.c
-+++ b/drivers/firewire/sbp2.c
-@@ -1144,10 +1144,6 @@ static int sbp2_probe(struct fw_unit *unit, const struct ieee1394_device_id *id)
- 	if (device->is_local)
- 		return -ENODEV;
- 
--	if (dma_get_max_seg_size(device->card->device) > SBP2_MAX_SEG_SIZE)
--		WARN_ON(dma_set_max_seg_size(device->card->device,
--					     SBP2_MAX_SEG_SIZE));
--
- 	shost = scsi_host_alloc(&scsi_driver_template, sizeof(*tgt));
- 	if (shost == NULL)
- 		return -ENOMEM;
-@@ -1610,6 +1606,7 @@ static struct scsi_host_template scsi_driver_template = {
- 	.eh_abort_handler	= sbp2_scsi_abort,
- 	.this_id		= -1,
- 	.sg_tablesize		= SG_ALL,
-+	.max_segment_size	= SBP2_MAX_SEG_SIZE,
- 	.can_queue		= 1,
- 	.sdev_attrs		= sbp2_scsi_sysfs_attrs,
- };
-diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
-index 634ddb90e7aa..7e56a11836c1 100644
---- a/drivers/scsi/aacraid/linit.c
-+++ b/drivers/scsi/aacraid/linit.c
-@@ -1747,11 +1747,10 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
- 		shost->max_sectors = (shost->sg_tablesize * 8) + 112;
- 	}
- 
--	error = dma_set_max_seg_size(&pdev->dev,
--		(aac->adapter_info.options & AAC_OPT_NEW_COMM) ?
--			(shost->max_sectors << 9) : 65536);
--	if (error)
--		goto out_deinit;
-+	if (aac->adapter_info.options & AAC_OPT_NEW_COMM)
-+		shost->max_segment_size = shost->max_sectors << 9;
-+	else
-+		shost->max_segment_size = 65536;
- 
- 	/*
- 	 * Firmware printf works only with older firmware.
-diff --git a/drivers/scsi/csiostor/csio_attr.c b/drivers/scsi/csiostor/csio_attr.c
-index 8a004036e3d7..9bd2bd8dc2be 100644
---- a/drivers/scsi/csiostor/csio_attr.c
-+++ b/drivers/scsi/csiostor/csio_attr.c
-@@ -594,12 +594,12 @@ csio_vport_create(struct fc_vport *fc_vport, bool disable)
- 	}
- 
- 	fc_vport_set_state(fc_vport, FC_VPORT_INITIALIZING);
-+	ln->fc_vport = fc_vport;
- 
- 	if (csio_fcoe_alloc_vnp(hw, ln))
- 		goto error;
- 
- 	*(struct csio_lnode **)fc_vport->dd_data = ln;
--	ln->fc_vport = fc_vport;
- 	if (!fc_vport->node_name)
- 		fc_vport->node_name = wwn_to_u64(csio_ln_wwnn(ln));
- 	if (!fc_vport->port_name)
-diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
-index 4c66b19e6199..8c9f79042228 100644
---- a/drivers/scsi/lpfc/lpfc_nvme.c
-+++ b/drivers/scsi/lpfc/lpfc_nvme.c
-@@ -297,7 +297,8 @@ lpfc_nvme_localport_delete(struct nvme_fc_local_port *localport)
- 			 lport);
- 
- 	/* release any threads waiting for the unreg to complete */
--	complete(&lport->lport_unreg_done);
-+	if (lport->vport->localport)
-+		complete(lport->lport_unreg_cmp);
- }
- 
- /* lpfc_nvme_remoteport_delete
-@@ -2545,7 +2546,8 @@ lpfc_nvme_create_localport(struct lpfc_vport *vport)
-  */
- void
- lpfc_nvme_lport_unreg_wait(struct lpfc_vport *vport,
--			   struct lpfc_nvme_lport *lport)
-+			   struct lpfc_nvme_lport *lport,
-+			   struct completion *lport_unreg_cmp)
- {
- #if (IS_ENABLED(CONFIG_NVME_FC))
- 	u32 wait_tmo;
-@@ -2557,8 +2559,7 @@ lpfc_nvme_lport_unreg_wait(struct lpfc_vport *vport,
- 	 */
- 	wait_tmo = msecs_to_jiffies(LPFC_NVME_WAIT_TMO * 1000);
- 	while (true) {
--		ret = wait_for_completion_timeout(&lport->lport_unreg_done,
--						  wait_tmo);
-+		ret = wait_for_completion_timeout(lport_unreg_cmp, wait_tmo);
- 		if (unlikely(!ret)) {
- 			lpfc_printf_vlog(vport, KERN_ERR, LOG_NVME_IOERR,
- 					 "6176 Lport %p Localport %p wait "
-@@ -2592,12 +2593,12 @@ lpfc_nvme_destroy_localport(struct lpfc_vport *vport)
- 	struct lpfc_nvme_lport *lport;
- 	struct lpfc_nvme_ctrl_stat *cstat;
- 	int ret;
-+	DECLARE_COMPLETION_ONSTACK(lport_unreg_cmp);
- 
- 	if (vport->nvmei_support == 0)
- 		return;
- 
- 	localport = vport->localport;
--	vport->localport = NULL;
- 	lport = (struct lpfc_nvme_lport *)localport->private;
- 	cstat = lport->cstat;
- 
-@@ -2608,13 +2609,14 @@ lpfc_nvme_destroy_localport(struct lpfc_vport *vport)
- 	/* lport's rport list is clear.  Unregister
- 	 * lport and release resources.
- 	 */
--	init_completion(&lport->lport_unreg_done);
-+	lport->lport_unreg_cmp = &lport_unreg_cmp;
- 	ret = nvme_fc_unregister_localport(localport);
- 
- 	/* Wait for completion.  This either blocks
- 	 * indefinitely or succeeds
- 	 */
--	lpfc_nvme_lport_unreg_wait(vport, lport);
-+	lpfc_nvme_lport_unreg_wait(vport, lport, &lport_unreg_cmp);
-+	vport->localport = NULL;
- 	kfree(cstat);
- 
- 	/* Regardless of the unregister upcall response, clear
-diff --git a/drivers/scsi/lpfc/lpfc_nvme.h b/drivers/scsi/lpfc/lpfc_nvme.h
-index cfd4719be25c..b234d0298994 100644
---- a/drivers/scsi/lpfc/lpfc_nvme.h
-+++ b/drivers/scsi/lpfc/lpfc_nvme.h
-@@ -50,7 +50,7 @@ struct lpfc_nvme_ctrl_stat {
- /* Declare nvme-based local and remote port definitions. */
- struct lpfc_nvme_lport {
- 	struct lpfc_vport *vport;
--	struct completion lport_unreg_done;
-+	struct completion *lport_unreg_cmp;
- 	/* Add stats counters here */
- 	struct lpfc_nvme_ctrl_stat *cstat;
- 	atomic_t fc4NvmeLsRequests;
-diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
-index 6245f442d784..95fee83090eb 100644
---- a/drivers/scsi/lpfc/lpfc_nvmet.c
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.c
-@@ -1003,7 +1003,8 @@ lpfc_nvmet_targetport_delete(struct nvmet_fc_target_port *targetport)
- 	struct lpfc_nvmet_tgtport *tport = targetport->private;
- 
- 	/* release any threads waiting for the unreg to complete */
--	complete(&tport->tport_unreg_done);
-+	if (tport->phba->targetport)
-+		complete(tport->tport_unreg_cmp);
- }
- 
- static void
-@@ -1692,6 +1693,7 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
- 	struct lpfc_nvmet_tgtport *tgtp;
- 	struct lpfc_queue *wq;
- 	uint32_t qidx;
-+	DECLARE_COMPLETION_ONSTACK(tport_unreg_cmp);
- 
- 	if (phba->nvmet_support == 0)
- 		return;
-@@ -1701,9 +1703,9 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
- 			wq = phba->sli4_hba.nvme_wq[qidx];
- 			lpfc_nvmet_wqfull_flush(phba, wq, NULL);
- 		}
--		init_completion(&tgtp->tport_unreg_done);
-+		tgtp->tport_unreg_cmp = &tport_unreg_cmp;
- 		nvmet_fc_unregister_targetport(phba->targetport);
--		wait_for_completion_timeout(&tgtp->tport_unreg_done, 5);
-+		wait_for_completion_timeout(&tport_unreg_cmp, 5);
- 		lpfc_nvmet_cleanup_io_context(phba);
- 	}
- 	phba->targetport = NULL;
-diff --git a/drivers/scsi/lpfc/lpfc_nvmet.h b/drivers/scsi/lpfc/lpfc_nvmet.h
-index 1aaff63f1f41..0ec1082ce7ef 100644
---- a/drivers/scsi/lpfc/lpfc_nvmet.h
-+++ b/drivers/scsi/lpfc/lpfc_nvmet.h
-@@ -34,7 +34,7 @@
- /* Used for NVME Target */
- struct lpfc_nvmet_tgtport {
- 	struct lpfc_hba *phba;
--	struct completion tport_unreg_done;
-+	struct completion *tport_unreg_cmp;
- 
- 	/* Stats counters - lpfc_nvmet_unsol_ls_buffer */
- 	atomic_t rcv_ls_req_in;
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index b13cc9288ba0..6d65ac584eba 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1842,8 +1842,8 @@ void __scsi_init_queue(struct Scsi_Host *shost, struct request_queue *q)
- 	blk_queue_segment_boundary(q, shost->dma_boundary);
- 	dma_set_seg_boundary(dev, shost->dma_boundary);
- 
--	blk_queue_max_segment_size(q,
--		min(shost->max_segment_size, dma_get_max_seg_size(dev)));
-+	blk_queue_max_segment_size(q, shost->max_segment_size);
-+	dma_set_max_seg_size(dev, shost->max_segment_size);
- 
- 	/*
- 	 * Set a reasonable default alignment:  The larger of 32-byte (dword),
-diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
-index 71334aaf1447..2ddf24466a62 100644
---- a/drivers/scsi/ufs/ufshcd.c
-+++ b/drivers/scsi/ufs/ufshcd.c
-@@ -108,13 +108,19 @@
- int ufshcd_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
- 		     const char *prefix)
- {
--	u8 *regs;
-+	u32 *regs;
-+	size_t pos;
-+
-+	if (offset % 4 != 0 || len % 4 != 0) /* keep readl happy */
-+		return -EINVAL;
- 
- 	regs = kzalloc(len, GFP_KERNEL);
- 	if (!regs)
- 		return -ENOMEM;
- 
--	memcpy_fromio(regs, hba->mmio_base + offset, len);
-+	for (pos = 0; pos < len; pos += 4)
-+		regs[pos / 4] = ufshcd_readl(hba, offset + pos);
-+
- 	ufshcd_hex_dump(prefix, regs, len);
- 	kfree(regs);
- 
-diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
-index c34c88ef3319..5831e0eecea1 100644
---- a/drivers/target/target_core_user.c
-+++ b/drivers/target/target_core_user.c
-@@ -1317,12 +1317,13 @@ static int tcmu_check_expired_cmd(int id, void *p, void *data)
- 		 * target_complete_cmd will translate this to LUN COMM FAILURE
- 		 */
- 		scsi_status = SAM_STAT_CHECK_CONDITION;
-+		list_del_init(&cmd->queue_entry);
- 	} else {
-+		list_del_init(&cmd->queue_entry);
- 		idr_remove(&udev->commands, id);
- 		tcmu_free_cmd(cmd);
- 		scsi_status = SAM_STAT_TASK_SET_FULL;
- 	}
--	list_del_init(&cmd->queue_entry);
- 
- 	pr_debug("Timing out cmd %u on dev %s that is %s.\n",
- 		 id, udev->name, is_running ? "inflight" : "queued");
+Matthias
