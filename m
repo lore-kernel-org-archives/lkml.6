@@ -2,198 +2,206 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A86C1C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:33:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2037CC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67B34218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:33:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7BEB218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:33:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HW/FZfVF"
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="DFN6RsSF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbfAYPdP (ORCPT
+        id S1728550AbfAYPdg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:33:15 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:55388 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfAYPdP (ORCPT
+        Fri, 25 Jan 2019 10:33:36 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:51385 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726256AbfAYPdg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:33:15 -0500
-Received: by mail-wm1-f68.google.com with SMTP id y139so7099783wmc.5;
-        Fri, 25 Jan 2019 07:33:13 -0800 (PST)
+        Fri, 25 Jan 2019 10:33:36 -0500
+Received: by mail-it1-f194.google.com with SMTP id w18so11092629ite.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 07:33:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=h3VBD3AyS3XUCFvZP1JqLnQZHYTESsfjg1Vt0LYAF2A=;
-        b=HW/FZfVFJ7O8sHfPCbVYTzCPrpQCrLACLj29ds8qRNZdlLcdqiiFBL8WNA/rjoTPGT
-         18yCscv6tQwFB93MUM+ZYMauIxmDBCQuuvHVz+kbHcLWAsM97iSFnnwcbK/0T/eBUQ0U
-         MqDhdrTlSbnGPG3EsA6WVcEUyKzyxLoChf5A1GqJSJlaxCkjKlrElN0qtNKmeFOa5zCs
-         I9iXaYIgIq4aIkNmji0rcQyZIHcOdOnamp+lwZKdTa3ueYUUz/5YFcU/HozwnXCrhpRv
-         d8dBIWlms/Z2Zvnks1RSiq36guSl5GTZxqLz6s2h7Uaedzgpv7sfyff2hKNRqQO3qaSd
-         TCjQ==
+        d=lixom-net.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VnxuO0zInriS8uytZ7mXwH/xwkftDEWcb8plf38/ch4=;
+        b=DFN6RsSFdzmY0p8mcPBtIBSBEenEbBgV3a1c4lpyy16qx4dtd+plvsJeVYu3gJCbjj
+         zeLrguWqEZlSQQrYGFaszAuWAxwY83UbN6T1HcY7Aq+J6eM6FHNJDKIxMdymTy0H7oqu
+         4eqPOENDHQ9N5jXtx4GFF9G1QgGEYTvf1iHb2YMQ0If+8yin5nWmF0Eb2i9fdRjDMCd5
+         C+qbbnTgIa4ykU0BVzfRJPGlkB957ILuBvf/hfPdgxKhzU0a05rkhdTqMi0pxfHjgAk6
+         mT3TkzeajB8HH7wSa8YGxsjK8zyfdimWG+uiHjmVO3T/lB1hZsHoQtPykNelxB2lOWJh
+         8fTg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=h3VBD3AyS3XUCFvZP1JqLnQZHYTESsfjg1Vt0LYAF2A=;
-        b=l72RKz39Mcg8gQJIgIOy4k5ONDCy4T9CZexwOxX5WBUXwk8g0ByzWYVBAi6iRZtygr
-         L5nbNCrX89XQsjmCFz36h+wFYgWlbmk4asl06Wr5MKbW8d5M4krAmKQP221ljuTWtdom
-         y9XJDUIgtjMIhlVLjSTCjpPM9BsQof4FeBYXaRjSyXJqZMI9GpYQ7aJ6iPhnKhSxm8pE
-         hdHhjdqZISYtj45IodDD6PE+aVdK72nnlGgviLOSGTy5GyhXtwm/DgfA7uLkDR0SU0J9
-         BMWxtyIfj2EQuWQBum5zporLZ5tYzksiWTuJjtEBysvk+GKZAp8X3cpak9iMBpOhENMp
-         jrGA==
-X-Gm-Message-State: AJcUukdLR7EFGa1PhKD6EbTT3mKfAfzLBn1Kfyy8HdiE5S3eRb7yp1q4
-        iDuyC7YA7VPm2rxSmmKCWFnT7GX1qyU=
-X-Google-Smtp-Source: ALg8bN6wT0l03jFtghwc0ivrt/e/c0dXUjusC5YQFZbhaSAUBnJmetvT3qLQx6+6LeSFidDNTzkRoA==
-X-Received: by 2002:a1c:5984:: with SMTP id n126mr7062143wmb.62.1548430392495;
-        Fri, 25 Jan 2019 07:33:12 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id p12sm65357093wmi.5.2019.01.25.07.33.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 07:33:11 -0800 (PST)
-Date:   Fri, 25 Jan 2019 16:33:10 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Andrew Lunn <andrew@lunn.ch>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] r8169: Load MAC address from device tree if present
-Message-ID: <20190125153310.GA30990@ulmo>
-References: <20190125101814.6262-1-thierry.reding@gmail.com>
- <20190125145711.GF12962@lunn.ch>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VnxuO0zInriS8uytZ7mXwH/xwkftDEWcb8plf38/ch4=;
+        b=TXfn7JOT5n6Ye8xyVa7eLXJ72raNvCjgI/xBytg2QVuKKSTHANSddHySWCk9a17U83
+         qyMBbIzP8AD94Qdkn9wNhQn1w7DNosVG6u1pnJFfUbhP33eIS1P0KLfilceIwN0MyDNK
+         aN56mEihpVkthGRRB5Sm3MY9+iYjXtXpOsjFQnDJPIgsoi3ZaKM4hi8JDDuR/zDv97VV
+         8ECN1LH+e6LhWCguDrNc2PitUzkk2SeT4Lo69PCPPw3iY4J89BYc3BHUxdBpJIfK9Mxv
+         O/nTf9AVCgCS5QosEdLmIJvRNGyDUqoLqAW++5+842v9aoyMTCzGgqlRDcvPQu5UN7kR
+         rQtA==
+X-Gm-Message-State: AJcUukdjIcapfrmJuquTUnQAxcuqOgxl725hkf64e8Y2ismDTbbBS7PP
+        NC+FR9qaoBCgCD4BrVZFcVq2UNC3CMJszFh1T6+iyQ==
+X-Google-Smtp-Source: ALg8bN5a8v09r0nJgCDim5fnuhErJaS2P4mj/Kj77NZNLRZkK03VdiH138TnTg69dL99F53+SM3bUdS7HerP9QtDy9Y=
+X-Received: by 2002:a24:2104:: with SMTP id e4mr4164119ita.59.1548430414712;
+ Fri, 25 Jan 2019 07:33:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PEIAKu/WMn1b1Hv9"
-Content-Disposition: inline
-In-Reply-To: <20190125145711.GF12962@lunn.ch>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAPM=9tznaiw+a7rWqfdMMO6Aj3GtsO9vetd=3n9d+bGLW0U8Cg@mail.gmail.com>
+ <20190125073745.GD11891@kroah.com>
+In-Reply-To: <20190125073745.GD11891@kroah.com>
+From:   Olof Johansson <olof@lixom.net>
+Date:   Fri, 25 Jan 2019 07:33:23 -0800
+Message-ID: <CAOesGMgJUeUMoRXZ98=J8bpfCuZOOMo5pwpVXZX-o-y1dAQsHA@mail.gmail.com>
+Subject: Re: [PATCH 00/15] Habana Labs kernel driver
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Dave Airlie <airlied@gmail.com>,
+        Oded Gabbay <oded.gabbay@gmail.com>,
+        Jerome Glisse <jglisse@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>, ogabbay@habana.ai
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
---PEIAKu/WMn1b1Hv9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, Jan 24, 2019 at 11:37 PM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
+>
+> On Thu, Jan 24, 2019 at 07:57:11AM +1000, Dave Airlie wrote:
+> > On Wed, 23 Jan 2019 at 10:01, Oded Gabbay <oded.gabbay@gmail.com> wrote:
+> > >
+> > > Hello,
+> > >
+> > > For those who don't know me, my name is Oded Gabbay (Kernel Maintainer
+> > > for AMD's amdkfd driver, worked at RedHat's Desktop group) and I work at
+> > > Habana Labs since its inception two and a half years ago.
+> >
+> > Hey Oded,
+> >
+> > So this creates a driver with a userspace facing API via ioctls.
+> > Although this isn't a "GPU" driver we have a rule in the graphics
+> > drivers are for accelerators that we don't merge userspace API with an
+> > appropriate userspace user.
+> >
+> > https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
+> >
+> > I see nothing in these accelerator drivers that make me think we
+> > should be treating them different.
+>
+> I understand that this is your position on when you accept drivers into
+> the DRM layer, as you need to interact with common interfaces and a
+> massive userspace stack at the same time.  And that's wonderful, it
+> allows you to be able to move both sides of that stack forward without
+> removing support for devices that worked on older kernels.
+>
+> But, that's not really the case with this new driver at all.  We add new
+> driver subsystems, and individual drivers, with loads of new ioctls, in
+> every new kernel release.  We don't impose on all of them the "your
+> userspace code must be open" rule, so why is this new driver somehow
+> different from them?
+>
+> Yes, there is the fun legal issue of "derivative works" when talking
+> about a userspace program that is written to only interact with a
+> specific kernel driver using a custom api like this one has, and how the
+> license of the kernel side (GPLv2) affects the userspace side
+> (whatever), but that is something that I leave up to the lawyers who
+> like discussing and enforcing such things.
+>
+> When evaluating this driver (note, I saw it for a few revisions before
+> Oded posted it here), all I did was try to make sure that it fit in
+> properly with the kernel apis and methods of operations.  Given that
+> there are no in-kernel drivers for this type of device, and that it
+> really is a pretty small shim layer around the hardware, which means
+> that userspace does a lot of the heavy lifting, it is going to be a
+> very hardware-specific user/kernel api, and that shows.
 
-On Fri, Jan 25, 2019 at 03:57:11PM +0100, Andrew Lunn wrote:
-> On Fri, Jan 25, 2019 at 11:18:14AM +0100, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > If the system was booted using a device tree and if the device tree
-> > contains a MAC address, use it instead of reading one from the EEPROM.
-> > This is useful in situations where the EEPROM isn't properly programmed
-> > or where the firmware wants to override the existing MAC address.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
-> > ---
-> > Based on net-next.
-> >=20
-> >  drivers/net/ethernet/realtek/r8169.c | 35 +++++++++++++++++-----------
-> >  1 file changed, 22 insertions(+), 13 deletions(-)
-> >=20
-> > diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/etherne=
-t/realtek/r8169.c
-> > index f574b6b557f9..fd9edd643ca5 100644
-> > --- a/drivers/net/ethernet/realtek/r8169.c
-> > +++ b/drivers/net/ethernet/realtek/r8169.c
-> > @@ -6957,6 +6957,21 @@ static int rtl_alloc_irq(struct rtl8169_private =
-*tp)
-> >  	return pci_alloc_irq_vectors(tp->pci_dev, 1, 1, flags);
-> >  }
-> > =20
-> > +static void rtl_read_mac_address(struct rtl8169_private *tp,
-> > +				 u8 mac_addr[ETH_ALEN])
-> > +{
-> > +	/* Get MAC address */
-> > +	switch (tp->mac_version) {
-> > +	case RTL_GIGA_MAC_VER_35 ... RTL_GIGA_MAC_VER_38:
-> > +	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_51:
-> > +		*(u32 *)&mac_addr[0] =3D rtl_eri_read(tp, 0xe0, ERIAR_EXGMAC);
-> > +		*(u16 *)&mac_addr[4] =3D rtl_eri_read(tp, 0xe4, ERIAR_EXGMAC);
-> > +		break;
-> > +	default:
-> > +		break;
-> > +	}
-> > +}
-> > +
-> >  DECLARE_RTL_COND(rtl_link_list_ready_cond)
-> >  {
-> >  	return RTL_R8(tp, MCU) & LINK_LIST_RDY;
-> > @@ -7148,6 +7163,7 @@ static int rtl_get_ether_clk(struct rtl8169_priva=
-te *tp)
-> >  static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_=
-id *ent)
-> >  {
-> >  	const struct rtl_cfg_info *cfg =3D rtl_cfg_infos + ent->driver_data;
-> > +	u8 mac_addr[ETH_ALEN] __aligned(4);
->=20
-> Hi Thierry
->=20
-> Maybe now would be a good time to cleanup this __aligned(4), pointer
-> aliasing, etc?
+I brought this up because there are sort of, if you squint, three-ish
+of these already (the OpenCAPI/CAPI ones and now this). Also,
+Jonathan's comment about CCIX pieces coming as well.
 
-Are you proposing that I rewrite rtl_read_mac_address() to manually
-extract bytes from each register read? Something along these lines:
+I've talked to a handful of vendors in this space and more or less all
+of them hope that drivers/misc is still a suitable home for their
+driver by the time it's ready to post, and I know that if we keep them
+there, it'll only be one or two more drivers until we have this
+discussion anyway.
 
-	value =3D rtl_eri_read(tp, 0xe0, ERIAR_EXGMAC);
-	mac_addr[0] =3D (value >>  0) & 0xff;
-	mac_addr[1] =3D (value >>  8) & 0xff;
-	mac_addr[2] =3D (value >> 16) & 0xff;
-	mac_addr[3] =3D (value >> 24) & 0xff;
+That's really why I brought it up now, to get a clear stance on "Yeah,
+we know these are all slightly different today, and we're willing to
+give them a predictable home for the first while as we figure out
+together how things should look". Keep in mind, this space is also
+currently a bit of a gold rush, with many people working hard to get
+to market with near-zero talk between them.
 
-	value =3D rtl_eri_read(tp, 0xe4 ERIAR_EXGMAC);
-	mac_addr[4] =3D (value >>  0) & 0xff;
-	mac_addr[5] =3D (value >>  8) & 0xff;
+> Sidenote, this could have almost just been a UIO driver, which would
+> have put _ALL_ of the logic in userspace.  At least this way we have a
+> chance for the kernel code to be sane and not try to inflict problems on
+> the rest of the system.
 
-Looks like maybe that should be a separate patch?
+Yeah, and sharing hardware when you have userspace drivers tends to
+need a bunch of synchronization and coordination which leads to taller
+(closed?) stacks there. Having resource arbitration and sharing
+assisted by the kernel is usually the right thing, and we should
+encourage that.
 
->=20
-> > +	/* get MAC address */
-> > +	if (eth_platform_get_mac_address(&pdev->dev, mac_addr))
-> > +		rtl_read_mac_address(tp, mac_addr);
-> > +
->=20
-> Maybe that could be made more readable with:
->=20
->       err =3D eth_platform_get_mac_address(&pdev->dev, mac_addr);
->       if (err)
->       	 	rtl_read_mac_address(tp, mac_addr);
+> Going forward, it would be wonderful if we could come up with a unified
+> api for how to interact with these types of hardware accelerators, but
+> given the newness of this industry, and the vastly different ways people
+> are trying to solve the problem, that is going to take a few attempts,
+> and many years before we can get there.  Until then, taking drivers like
+> this into the kernel tree makes sense as that way all of our users will
+> be able to use that hardware, and better yet, the rest of us can learn
+> more about how this stuff works so that we can help out with that api
+> generation when it happens.
 
-I was following the same pattern that other drivers were, but I can
-change to the above if you prefer.
+Exactly my viewpoint as well, combined with not pushing vendors
+towards nvidia models by default even if they start out separate, and
+having a chance to find inroads with them on engineering levels when
+they come to us with the drivers.
 
-Thanks,
-Thierry
+Absolutely best chance for success is _always_ when we can engage with
+the vendor engineers as peers, instead of going up and down the
+corporate charts first (you often need to do a bit of both, but having
+allies in engineering makes it much easier).
 
---PEIAKu/WMn1b1Hv9
-Content-Type: application/pgp-signature; name="signature.asc"
+> So for now, I have no objection to taking this type of driver into the
+> tree.  Yes, it would be wonderful if we had an open userspace program to
+> drive it so that we could actually test and make changes to the api over
+> time, but I think that is something that the submitting company needs to
+> realize will be better for them to do, as for right now, all of that
+> testing and changes are their responsibility.
 
------BEGIN PGP SIGNATURE-----
+I do think having requirements of being able to exercise the hardware
+is really valuable, and we should consider what a requirement for that
+would look like. For the Habana case that could be a separate
+low-level library and a test workload on top. For FPGA cases it could
+be a well-known reference bitstream with the vendor reference
+control/communication path + similar low-level pieces.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxLLDEACgkQ3SOs138+
-s6FADQ//bIJRLjuvqMg1gqSqCK/Lze06PFPhtnRYtXQyAqo3YqblXqbgyyUWxg5Z
-UivTex/Jou2z7nHnfc0v5l3zmqG1TzovaLh6F8H2JBZXrIALm2xnycI6kdv+R8EP
-0+pAS7J0sDHxUmygDeLiLT1ufDvoOnMyPKEAVThPexEX9VqlJze1cqG7ecV8BcBv
-k1HSzZckrgPn/rOD8s2yBFU8cjs3fW61yyxR6ME6g3pjz/1gew2uiG+bytOjmuYp
-44K3woMqjoO9PTUqdmpaKIeTNnVcwQwzwZzLC78TUA/kRnD75Ny7rmOKf4UvyazL
-SD6YDW8J2iGdhyrS+ZZL9sV+RNbHFxC7lDidple8ZCBo0QJXl3kaZKwnqbqbHau2
-xGOF2RXYD8PZMfwcOXzQpfgn9hsqEk6veq0tLS8CNm6CPBknGYu2iySZiohZesQ0
-ftb/RMCk6ecRw0vAH2RZlXpBNKx9lgeUTSjtfdBXapyp5CeFT1HMBxjCb1SxHKoN
-mpRCcEHDBBQJTcIQssADZQWYUsA3wwEKJqKsN94xMqdVWnkSnQbgGTkCsscl3SJJ
-pu5k2YPf1c1xs3iVhY3QZUjspYg0WZTlFDommfbaL0RkuY2Y4qrW9OF1z2X+XC9K
-Nhvf/poV/3syJTsNfClsK08Cnb2GdqfGyBGlG599L7C+pvS/aEQ=
-=bENl
------END PGP SIGNATURE-----
+> As for what directory the code should live in, I suggested "misc" as
+> there was no other universal location, and I hate to see new subsystems
+> be created with only one driver, as that's pretty sad.  But it's just a
+> name/location, I have no dog in the fight, so I really don't care where
+> it ends up in the tree, just as long as it gets merged somewhere :)
 
---PEIAKu/WMn1b1Hv9--
+I'm usually one to push back against new subsystems too, especially
+when I see a framework proposal with just one driver. In this case,
+given that we all know more vendors will come along, I think it makes
+sense to take the discussion and establish structure now. This should
+give some clarity to those who are out there that we haven't seen yet,
+and give them a chance to prepare for things such as the low-level
+userspace pieces mentioned above.
+
+So I think setting this up now is the right thing to do, we know there
+will be more material here and having a common aggregation of it makes
+sense.
+
+
+-Olof
