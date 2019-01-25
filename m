@@ -5,68 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10DAFC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B353CC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5EEE217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85889218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MIuUDY9u"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u9hDWa+A"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726804AbfAYLaS (ORCPT
+        id S1727809AbfAYLaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:30:18 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34824 "EHLO
+        Fri, 25 Jan 2019 06:30:22 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:44421 "EHLO
         mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfAYLaS (ORCPT
+        with ESMTP id S1726122AbfAYLaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:30:18 -0500
-Received: by mail-wr1-f65.google.com with SMTP id 96so9939524wrb.2;
-        Fri, 25 Jan 2019 03:30:16 -0800 (PST)
+        Fri, 25 Jan 2019 06:30:20 -0500
+Received: by mail-wr1-f65.google.com with SMTP id z5so9880101wrt.11;
+        Fri, 25 Jan 2019 03:30:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Cni3YG26TUwTwn0/m/XP6xKVhkAi6RTA9FiGH4/p6co=;
-        b=MIuUDY9uOKx7OMT9UzYZeUU5ybjdNCSeISFo7H2Jpjrlkj9q1mM3rsckl/yMWSY4Ys
-         rCEk5P7E/EQi3GCyR8h71klsoPmwQin7tVmGY8V/hWI6FUG5M1nBxufqxjKxxAD5A6fJ
-         DOGg2J/LsvVlBoFpNdjBwQdK2E7PUhbCizhct/kIQYpeKLk0oQ4qM/3cySQ08GVkFOvt
-         jewV5jH4hKc/7i5wUalp94DRz9dvqteVtuaxkZvm0voN/PUooEW2OjlNMKdhu060zawN
-         4Xw77Q40BHhmSQhlkJVWtn7wCzmV2LJsHAP1915pV5evYwZwO8zyGN6yr3ic49tFx4Ni
-         /DIA==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=Q06YcEO7r7oiNXtCNtDcZmxkFfAsBt1uDq63g/LTR2k=;
+        b=u9hDWa+A9ZSeDhwxO2PJYVUeabsCCIk5+sY7lohHO0Aw5SOas+5g0LZAlWcKmL0wTS
+         0z5Do/JuAE+N+Nxnr6ODfZn0rpKGxxPfdNmbs5h+OsAUnAZBdKNlGQ6yY/k9u7AvcDkl
+         tAhYHbYC5TK8IWpWUD2VpKszbE6nAv/oxJWaa9iLIwsV7a9uadlLAmXaUXOUdcGz8jXQ
+         Hnlo/n8bZoaApFvfXH5CV9a6Bp8Pjp0S5sHWmCfXeRz/HVXTrCS9mTFu5H2drqer/PFl
+         cqf7WM6i7jHDNtcKm/KdYxDPAEYLhkYqem5P10gNXjAZ3Ia5QctXERbxnxiGovI2xILl
+         b9Uw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=Cni3YG26TUwTwn0/m/XP6xKVhkAi6RTA9FiGH4/p6co=;
-        b=FJW+NDiE9M0g2Ls6IH1fj1hoEzLyOlQPDGTdUDtPrdlBxbJfy8L1mFXTjrEJws0Ggt
-         a8hDuMb/CYTO3dhP964dNV0/m3Wa2QEVgBfqWBjgjQZqmIl4pf/gH8ZVOiNwMY7hy5DM
-         m9qPPjuKxlAWj8AMJbP5xmYjHX9gbKfajV/Bt4XxyYPb6Goju+lGvAKjCyym71ceUaJ3
-         s7gGl99bpL+8VsF0ZpX7Lq1rgGe5gabdfFbCAImmz2FTXFfsKNyFQgru6b/bk+Yss6Y6
-         DQqRjWeQIpKO2X+K0M9ppmuw0/cITmNvWqjLqD4yMhPchNgDvn0kIFT5cIyF81xiVY3X
-         /UKQ==
-X-Gm-Message-State: AJcUukcsAp/5bB31aiMUeLMztmfxUDegQaJc2gCOPOZBqdH5Gl3wiJrA
-        hQBq6C0toPMbvZWo43lZq9M=
-X-Google-Smtp-Source: ALg8bN6j5um3WSEr6GlxyxGSeBxIvenxOhvBwAymC2DpOto297RNA2N2awwMXXLvr0kHnXgHwHvatg==
-X-Received: by 2002:adf:ebd0:: with SMTP id v16mr11690083wrn.109.1548415815745;
-        Fri, 25 Jan 2019 03:30:15 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=Q06YcEO7r7oiNXtCNtDcZmxkFfAsBt1uDq63g/LTR2k=;
+        b=Eu/k7grOMfrLmqWg9HJLbl+i2647nwD9DP7E9vgi2QD0WLVDSRaGbQl73oCMZ9jeNd
+         XHL0Kse4UAKwIcGtz8w9l7uIRjXNI/uGb4BZEW/NJtj/sAg29qQPlwR9kYIHcNtTQ9gl
+         x01Fvfq2AdSF3mbnhrtZe97zM5NMWQhdOYnEHC9S6N4zEZIpgnp+YeyCDovxOOITBMHJ
+         A1A1+DEg6ku4zLvh7SY2I8XtF7tHDyu44h3lOIn6HiiRUUU1HcgXdBMPHWc+26ObyPw2
+         dkRIMwbfLLsP5sglZRjmP5mHuGQy+OY0PGn4VsKTUR382fem+uL83tw3EVwffPBczlsS
+         5ZjQ==
+X-Gm-Message-State: AJcUuke8q0LIc8/rQAo8LGr90rVonQcFetpp2FIj0aWm6Ru7Tpay67ZA
+        72j/GdHDA7XXmdaMCr3g/RWzhwcYJGs=
+X-Google-Smtp-Source: ALg8bN7VKasZeS/QWhcrDQihl6Hci1HQF2F2uJbnE21PVShB0UmtdHIryhVr35QCI+QBwBjdossPqQ==
+X-Received: by 2002:adf:a357:: with SMTP id d23mr11621314wrb.195.1548415817320;
+        Fri, 25 Jan 2019 03:30:17 -0800 (PST)
 Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id w16sm127162070wrp.1.2019.01.25.03.30.14
+        by smtp.gmail.com with ESMTPSA id a12sm114926161wro.18.2019.01.25.03.30.16
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 03:30:14 -0800 (PST)
+        Fri, 25 Jan 2019 03:30:16 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rob Herring <robh+dt@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mathias Nyman <mathias.nyman@intel.com>,
         Jon Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
         linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH 1/6] dt-bindings: usb: xhci-tegra: Add Tegra186 support
-Date:   Fri, 25 Jan 2019 12:30:08 +0100
-Message-Id: <20190125113013.11447-1-thierry.reding@gmail.com>
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 2/6] usb: host: xhci-tegra: Selectively program IPFS
+Date:   Fri, 25 Jan 2019 12:30:09 +0100
+Message-Id: <20190125113013.11447-2-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190125113013.11447-1-thierry.reding@gmail.com>
+References: <20190125113013.11447-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -74,44 +76,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+From: JC Kuo <jckuo@nvidia.com>
 
-Extend the bindings to cover the set of features found in Tegra186.
+Starting with Tegra186, the XUSB controller no longer has the IPFS
+wrapper. This commit adds a "has_ipfs" field to struct tegra_xusb_soc
+that can be used to declare the existence of the IPFS wrapper.
 
+For the existing chips (i.e. Tegra124 and Tegra210), the new field is
+set to true. A future patch adding support for Tegra186 will set it to
+false.
+
+Signed-off-by: JC Kuo <jckuo@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- .../devicetree/bindings/usb/nvidia,tegra124-xusb.txt          | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/usb/host/xhci-tegra.c | 43 +++++++++++++++++++++--------------
+ 1 file changed, 26 insertions(+), 17 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
-index 4156c3e181c5..5bfcc0b4d6b9 100644
---- a/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
-+++ b/Documentation/devicetree/bindings/usb/nvidia,tegra124-xusb.txt
-@@ -10,6 +10,7 @@ Required properties:
-   - Tegra124: "nvidia,tegra124-xusb"
-   - Tegra132: "nvidia,tegra132-xusb", "nvidia,tegra124-xusb"
-   - Tegra210: "nvidia,tegra210-xusb"
-+  - Tegra186: "nvidia,tegra186-xusb"
- - reg: Must contain the base and length of the xHCI host registers, XUSB FPCI
-   registers and XUSB IPFS registers.
- - reg-names: Must contain the following entries:
-@@ -59,6 +60,8 @@ For Tegra210:
- - avdd-pll-uerefe-supply: PLLE reference PLL power supply. Must supply 1.05 V.
- - dvdd-pex-pll-supply: PCIe/USB3 PLL power supply. Must supply 1.05 V.
- - hvdd-pex-pll-e-supply: High-voltage PLLE power supply. Must supply 1.8 V.
-+
-+For Tegra210 and Tegra186:
- - power-domains: A list of PM domain specifiers that reference each power-domain
-   used by the xHCI controller. This list must comprise of a specifier for the
-   XUSBA and XUSBC power-domains. See ../power/power_domain.txt and
-@@ -78,6 +81,7 @@ Optional properties:
-   - Tegra132: usb2-0, usb2-1, usb2-2, hsic-0, hsic-1, usb3-0, usb3-1
-   - Tegra210: usb2-0, usb2-1, usb2-2, usb2-3, hsic-0, usb3-0, usb3-1, usb3-2,
-               usb3-3
-+  - Tegra186: usb2-0, usb2-1, usb2-2, hsic-0, usb3-0, usb3-1, usb3-2
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 938ff06c0349..49e033f953a2 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -161,6 +161,7 @@ struct tegra_xusb_soc {
+ 	} ports;
  
- Example:
- --------
+ 	bool scale_ss_clock;
++	bool has_ipfs;
+ };
+ 
+ struct tegra_xusb {
+@@ -637,16 +638,18 @@ static irqreturn_t tegra_xusb_mbox_thread(int irq, void *data)
+ 	return IRQ_HANDLED;
+ }
+ 
+-static void tegra_xusb_ipfs_config(struct tegra_xusb *tegra,
+-				   struct resource *regs)
++static void tegra_xusb_config(struct tegra_xusb *tegra,
++			      struct resource *regs)
+ {
+ 	u32 value;
+ 
+-	value = ipfs_readl(tegra, IPFS_XUSB_HOST_CONFIGURATION_0);
+-	value |= IPFS_EN_FPCI;
+-	ipfs_writel(tegra, value, IPFS_XUSB_HOST_CONFIGURATION_0);
++	if (tegra->soc->has_ipfs) {
++		value = ipfs_readl(tegra, IPFS_XUSB_HOST_CONFIGURATION_0);
++		value |= IPFS_EN_FPCI;
++		ipfs_writel(tegra, value, IPFS_XUSB_HOST_CONFIGURATION_0);
+ 
+-	usleep_range(10, 20);
++		usleep_range(10, 20);
++	}
+ 
+ 	/* Program BAR0 space */
+ 	value = fpci_readl(tegra, XUSB_CFG_4);
+@@ -661,13 +664,15 @@ static void tegra_xusb_ipfs_config(struct tegra_xusb *tegra,
+ 	value |= XUSB_IO_SPACE_EN | XUSB_MEM_SPACE_EN | XUSB_BUS_MASTER_EN;
+ 	fpci_writel(tegra, value, XUSB_CFG_1);
+ 
+-	/* Enable interrupt assertion */
+-	value = ipfs_readl(tegra, IPFS_XUSB_HOST_INTR_MASK_0);
+-	value |= IPFS_IP_INT_MASK;
+-	ipfs_writel(tegra, value, IPFS_XUSB_HOST_INTR_MASK_0);
++	if (tegra->soc->has_ipfs) {
++		/* Enable interrupt assertion */
++		value = ipfs_readl(tegra, IPFS_XUSB_HOST_INTR_MASK_0);
++		value |= IPFS_IP_INT_MASK;
++		ipfs_writel(tegra, value, IPFS_XUSB_HOST_INTR_MASK_0);
+ 
+-	/* Set hysteresis */
+-	ipfs_writel(tegra, 0x80, IPFS_XUSB_HOST_CLKGATE_HYSTERESIS_0);
++		/* Set hysteresis */
++		ipfs_writel(tegra, 0x80, IPFS_XUSB_HOST_CLKGATE_HYSTERESIS_0);
++	}
+ }
+ 
+ static int tegra_xusb_clk_enable(struct tegra_xusb *tegra)
+@@ -1015,10 +1020,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 	if (IS_ERR(tegra->fpci_base))
+ 		return PTR_ERR(tegra->fpci_base);
+ 
+-	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
+-	tegra->ipfs_base = devm_ioremap_resource(&pdev->dev, res);
+-	if (IS_ERR(tegra->ipfs_base))
+-		return PTR_ERR(tegra->ipfs_base);
++	if (tegra->soc->has_ipfs) {
++		res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
++		tegra->ipfs_base = devm_ioremap_resource(&pdev->dev, res);
++		if (IS_ERR(tegra->ipfs_base))
++			return PTR_ERR(tegra->ipfs_base);
++	}
+ 
+ 	tegra->xhci_irq = platform_get_irq(pdev, 0);
+ 	if (tegra->xhci_irq < 0)
+@@ -1208,7 +1215,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
+ 		goto disable_rpm;
+ 	}
+ 
+-	tegra_xusb_ipfs_config(tegra, regs);
++	tegra_xusb_config(tegra, regs);
+ 
+ 	err = tegra_xusb_load_firmware(tegra);
+ 	if (err < 0) {
+@@ -1380,6 +1387,7 @@ static const struct tegra_xusb_soc tegra124_soc = {
+ 		.usb3 = { .offset = 0, .count = 2, },
+ 	},
+ 	.scale_ss_clock = true,
++	.has_ipfs = true,
+ };
+ MODULE_FIRMWARE("nvidia/tegra124/xusb.bin");
+ 
+@@ -1411,6 +1419,7 @@ static const struct tegra_xusb_soc tegra210_soc = {
+ 		.usb3 = { .offset = 0, .count = 4, },
+ 	},
+ 	.scale_ss_clock = false,
++	.has_ipfs = true,
+ };
+ MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
+ 
 -- 
 2.19.1
 
