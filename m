@@ -2,56 +2,82 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42180C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:06:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA57C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 139E4218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:06:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F41FE218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:08:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="kdzOFXN5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfAYGGs (ORCPT
+        id S1726937AbfAYGIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 01:06:48 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:38106 "EHLO
-        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726100AbfAYGGs (ORCPT
+        Fri, 25 Jan 2019 01:08:37 -0500
+Received: from conuserg-12.nifty.com ([210.131.2.79]:31719 "EHLO
+        conuserg-12.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfAYGIg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 01:06:48 -0500
-Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
-        (using TLSv1 with cipher AES256-SHA (256/256 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 711E8141BD80B;
-        Thu, 24 Jan 2019 22:06:47 -0800 (PST)
-Date:   Thu, 24 Jan 2019 22:06:46 -0800 (PST)
-Message-Id: <20190124.220646.661427217866464628.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        Fri, 25 Jan 2019 01:08:36 -0500
+X-Greylist: delayed 8276 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Jan 2019 01:08:35 EST
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-12.nifty.com with ESMTP id x0P67sVU012319;
+        Fri, 25 Jan 2019 15:07:54 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-12.nifty.com x0P67sVU012319
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548396474;
+        bh=gv+6Ws9f6VGzifMs3BOTay8m5/soowYJG26BjthdvwU=;
+        h=From:To:Cc:Subject:Date:From;
+        b=kdzOFXN5I2JQ8HD/qMU6QzH0przQefrFUd97ofzZm0nGpzufXiBv4Hf2ZcYOm86r0
+         n6gLc3AqkAkf+vvn0GZREEBg7W3Kp2Pg7PB9VezogbwxnQ27h+Xa1L1dgpkqwNTr7G
+         DSzabC1Q9jxNS2BB3E3RhcFZ92bAlIEG+M1TAhK2WwGkZz65o/oIEtE55BST3KkCIe
+         xayw5sbilUDRH/9vU1hV2t3Ol7MGQ3RqJxWaOLumRr4AtB85LiaUolcls8QXWWeXYL
+         sidRquS7e8DbqD9DQzT2TKIDix3mzIt0LedJ8sgHoS/EkjIJioBxmy7yshttDpQCSb
+         HMSCqi4S3TFiQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        "David S. Miller" <davem@davemloft.net>,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] net: amd8111e: clean up two minor indentation issues
-From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20190122143755.32527-1-colin.king@canonical.com>
-References: <20190122143755.32527-1-colin.king@canonical.com>
-X-Mailer: Mew version 6.8 on Emacs 26.1
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 24 Jan 2019 22:06:47 -0800 (PST)
+Subject: [PATCH] crypto: bcm: remove -I. header search path and unused macro define
+Date:   Fri, 25 Jan 2019 15:07:48 +0900
+Message-Id: <1548396469-13395-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 22 Jan 2019 14:37:55 +0000
+The header search path -I. in kernel Makefiles is very suspicious;
+it allows the compiler to search for headers in the top of $(srctree),
+where obviously no header file exists.
 
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Two statements are incorrecly indented, fix these by removing a space.
-> 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+'git grep BCMDRIVER' has no hit. So, this macro is not referenced.
 
-Applied.
+I was able to build this driver without the extra compiler options.
+
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/crypto/bcm/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/crypto/bcm/Makefile b/drivers/crypto/bcm/Makefile
+index 13cb80e..7469e19 100644
+--- a/drivers/crypto/bcm/Makefile
++++ b/drivers/crypto/bcm/Makefile
+@@ -11,5 +11,3 @@
+ obj-$(CONFIG_CRYPTO_DEV_BCM_SPU) := bcm_crypto_spu.o
+ 
+ bcm_crypto_spu-objs :=  util.o spu.o spu2.o cipher.o
+-
+-ccflags-y += -I. -DBCMDRIVER
+-- 
+2.7.4
+
