@@ -2,284 +2,1181 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE80EC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:45:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D38C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69C2D218A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:45:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E189218A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:47:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="ZMKuCP5l"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a26s60PX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbfAYVpW (ORCPT
+        id S1729395AbfAYVrc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 16:45:22 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35706 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfAYVpW (ORCPT
+        Fri, 25 Jan 2019 16:47:32 -0500
+Received: from mail-vs1-f68.google.com ([209.85.217.68]:37708 "EHLO
+        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfAYVrb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 16:45:22 -0500
-Received: by mail-lj1-f196.google.com with SMTP id x85-v6so9603280ljb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 13:45:20 -0800 (PST)
+        Fri, 25 Jan 2019 16:47:31 -0500
+Received: by mail-vs1-f68.google.com with SMTP id n13so6578111vsk.4
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 13:47:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=PVKXefqp1XO0YcKL7WbWdvaIaPAfg36kkU6v4A//xCU=;
-        b=ZMKuCP5l1t9OW+rN1PEHyE1NSESWLPC3amFbFoPa8Jq79q3OXLN3EZrlDP6Lmy7UzC
-         7X0yAfeAtOl35Cm3Lplo+Tz+ziQVBHswyMNMp1kLNTn/Zi67HA9zzljkEwBByN+EhKH9
-         vG6TKUPlFYNmBe7joL+KQd6Ife7vAOo8ln3sPULMq1W+KztK9wubRpVwGt4J+rfIjh0S
-         ft9Lyll5re7XA3hBt6H0PpjyMpmMf+5rtQsSYPmjzVh0s7C7PSt59MPmo5ufdaEjicDY
-         JgAljUe+izBBkomYC7CVMnNx3IPFq/X34S85zO5zEzBpfzRz318PTmbPqXAZfMIwzJ/s
-         OR+Q==
+        bh=Jqmy6aa4+MA4QXasoblpNAcACNONxvmpBQ0qhs3rtFU=;
+        b=a26s60PXsp4Hxo0uJggOJEFUxxnFi/uRafvpy55dlUuzYHcitvMyYqy3qBtelKCrUH
+         JB9noOHzdjWbr5dmEFcfSNu5PCB7J6QB1OB18+mC4FxjQAtuqWaEXiENoy2XWCAOo4lB
+         wM2G0AYsiZqu/Hdxzh43LkAgV6Ke7vJtKnFZnkgosy7PDUojjqGiVvymu00mlLT0Npuw
+         dPhm47n8niUAD1wPwmutI/PccNPRq2KfMQXa5hBOof9VSLk6wNk3nkFCboEbWcMvRBRv
+         Bji8a7nCt6uiBxutRwdI/GFF5Let2iEU1C/U0Cph9tfCG48J6y3GYbOCLx9BelEaZN8g
+         Al8g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=PVKXefqp1XO0YcKL7WbWdvaIaPAfg36kkU6v4A//xCU=;
-        b=ODd4X1U0rlQcZgua05xzvnZR1Y+Msu6ItRkdEAwYa2INUqQQnEOdo6cgdNxVM5BT2D
-         t3sYOycoTGHLRhFSmmI3ikz9fQzPdhQwwNMxVm87+9EXfttgJv7Ph8b4p4r0ufvLtR1D
-         0D92cTHGiq4rA+1MJNQtuAmNebKn9CahC5Xph2KoWBIboUKWZzMgZOLAWUf4iNdMdyP7
-         gcqaaOY0gBTY0WKTOSjgB8B6CCyks5VBptNNfPSE1bKsBcxGwhdTSMtLqHyMHHX+7NjK
-         ETbLLCPFoNJ2i/ELvcBp4Pp1DVAK9TpI2TTIWy0VtO4qXOFYcS8XNddLE6mJpFIF9q6O
-         +Z/A==
-X-Gm-Message-State: AJcUukfiGrtLELPkTsMJcayoolxuR6rHHueYQ93d7otw2dGw55zsq0Zk
-        c/nrHnf2nFVyLBgESgmwFpeuv80aRYxYMzYDPmie
-X-Google-Smtp-Source: ALg8bN4iULNr1C/p8nDhaM3gey2CLmItT/uyRxagkVk6R80zgaZKzM5Qe4bxTZKVog0SLdtTDqlJJhYKg3VjHQUNONk=
-X-Received: by 2002:a2e:3308:: with SMTP id d8-v6mr10001104ljc.38.1548452719221;
- Fri, 25 Jan 2019 13:45:19 -0800 (PST)
+        bh=Jqmy6aa4+MA4QXasoblpNAcACNONxvmpBQ0qhs3rtFU=;
+        b=kZpN7KnHoLE1vJXm37pTeONhwb/Hhaz7E4vzON3iGVJtx3i+bOuiktf3rnk57mCON0
+         pHbsG8igT48MAtyfpzLHuEd7TonJ60tU536LK/A3bguj5aK+BlN1XlGcEQ858sw0l8nx
+         fBGwWj42LY+ojS9SHamBONkrOXdKXuktXCkRghS9ng6+jAeHL/StrEYtTPGguu4Z3HPg
+         jbuys0a2e2fkunF9BekODlUjQ3XNEjmCPjJ2Qhr3cma70uyXVCnHAA991apSjIynJaeq
+         Um0L1yTI5ek93OsMovHY2mF3q3rdg0f4Pvxd1qeLr7z/BUTalDWRxqd2sYpdZZtc22be
+         KNuQ==
+X-Gm-Message-State: AJcUukfhqmakhRi/uU6tigJJsxxrsaYEtpSbwaKlte/sFn8fFbfjp8Ib
+        0yazvh0acFcjC6NYoTEYe8AN9R72zGSCCQ1OdKvhOXcMK7g=
+X-Google-Smtp-Source: ALg8bN5+7J1znH3BhuCJx4dIc64xGfgXvRWNjF0YkZTgvZ0d8C7dZosY7tXEunRSU9wUzoy47MV4AoPXVrHh7Gg5BfY=
+X-Received: by 2002:a67:2c13:: with SMTP id s19mr5301188vss.172.1548452848968;
+ Fri, 25 Jan 2019 13:47:28 -0800 (PST)
 MIME-Version: 1.0
-References: <cover.1548196083.git.rgb@redhat.com> <397a8b086e6aa9eb797f1538901e95462822ecb0.1548196083.git.rgb@redhat.com>
-In-Reply-To: <397a8b086e6aa9eb797f1538901e95462822ecb0.1548196083.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 25 Jan 2019 16:45:07 -0500
-Message-ID: <CAHC9VhQ14FtJAMxjmrGNu2-AkJe6ELjHnaEHjULLHjwo2FDhkQ@mail.gmail.com>
-Subject: Re: [PATCH ghak100 V2 2/2] audit: ignore fcaps on umount
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     linux-fsdevel@vger.kernel.org, viro@zeniv.linux.org.uk,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>, Eric Paris <eparis@redhat.com>
+References: <20190123000057.31477-1-oded.gabbay@gmail.com> <20190123000057.31477-6-oded.gabbay@gmail.com>
+ <20190123122827.GC4747@rapoport-lnx>
+In-Reply-To: <20190123122827.GC4747@rapoport-lnx>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Fri, 25 Jan 2019 23:47:03 +0200
+Message-ID: <CAFCwf10C0XxT4fHZ9eE0o48kFS7Cxcn9FgTfAzWOHOM=Vrk=Fg@mail.gmail.com>
+Subject: Re: [PATCH 05/15] habanalabs: add command buffer module
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        ogabbay@habana.ai
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 1:35 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> Don't fetch fcaps when umount2 is called to avoid a process hang while
-> it waits for the missing resource to (possibly never) re-appear.
+On Wed, Jan 23, 2019 at 2:28 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
 >
-> Note the comment above user_path_mountpoint_at():
->  * A umount is a special case for path walking. We're not actually interested
->  * in the inode in this situation, and ESTALE errors can be a problem.  We
->  * simply want track down the dentry and vfsmount attached at the mountpoint
->  * and avoid revalidating the last component.
+> On Wed, Jan 23, 2019 at 02:00:47AM +0200, Oded Gabbay wrote:
+> > This patch adds the CB module, which allows the user to create and
+> > destroy CBs and to map them to the user's process address-space.
 >
-> This can happen on ceph, cifs, 9p, lustre, fuse (gluster) or NFS.
+> Can you please spell "command buffer" at least first time it's mentioned?
+fixed
 >
-> Please see the github issue tracker
-> https://github.com/linux-audit/audit-kernel/issues/100
+> > A command buffer is a memory blocks that reside in DMA-able address-space
+> > and is physically contiguous so it can be accessed by the device without
+> > MMU translation. The command buffer memory is allocated using the
+> > coherent DMA API.
+> >
+> > When creating a new CB, the IOCTL returns a handle of it, and the
+> > user-space process needs to use that handle to mmap the buffer to get a VA
+> > in the user's address-space.
+> >
+> > Before destroying (freeing) a CB, the user must unmap the CB's VA using the
+> > CB handle.
+> >
+> > Each CB has a reference counter, which tracks its usage in command
+> > submissions and also its mmaps (only a single mmap is allowed).
+> >
+> > The driver maintains a pool of pre-allocated CBs in order to reduce
+> > latency during command submissions. In case the pool is empty, the driver
+> > will go to the slow-path of allocating a new CB, i.e. calling
+> > dma_alloc_coherent.
+> >
+> > Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
+> > ---
+> >  drivers/misc/habanalabs/Makefile           |   3 +-
+> >  drivers/misc/habanalabs/command_buffer.c   | 414 +++++++++++++++++++++
+> >  drivers/misc/habanalabs/device.c           |  43 ++-
+> >  drivers/misc/habanalabs/goya/goya.c        |  28 ++
+> >  drivers/misc/habanalabs/habanalabs.h       |  95 ++++-
+> >  drivers/misc/habanalabs/habanalabs_drv.c   |   2 +
+> >  drivers/misc/habanalabs/habanalabs_ioctl.c | 102 +++++
+> >  include/uapi/misc/habanalabs.h             |  62 +++
+> >  8 files changed, 746 insertions(+), 3 deletions(-)
+> >  create mode 100644 drivers/misc/habanalabs/command_buffer.c
+> >  create mode 100644 drivers/misc/habanalabs/habanalabs_ioctl.c
+> >  create mode 100644 include/uapi/misc/habanalabs.h
+> >
+> > diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
+> > index 3ffbadc2ca01..2530c9b78ca4 100644
+> > --- a/drivers/misc/habanalabs/Makefile
+> > +++ b/drivers/misc/habanalabs/Makefile
+> > @@ -4,7 +4,8 @@
+> >
+> >  obj-m        := habanalabs.o
+> >
+> > -habanalabs-y := habanalabs_drv.o device.o context.o asid.o
+> > +habanalabs-y := habanalabs_drv.o device.o context.o asid.o habanalabs_ioctl.o \
+> > +             command_buffer.o
+> >
+> >  include $(src)/goya/Makefile
+> >  habanalabs-y += $(HL_GOYA_FILES)
+> > diff --git a/drivers/misc/habanalabs/command_buffer.c b/drivers/misc/habanalabs/command_buffer.c
+> > new file mode 100644
+> > index 000000000000..535ed6cc5bda
+> > --- /dev/null
+> > +++ b/drivers/misc/habanalabs/command_buffer.c
+> > @@ -0,0 +1,414 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +/*
+> > + * Copyright 2016-2018 HabanaLabs, Ltd.
+> > + * All Rights Reserved.
+> > + */
+> > +
+> > +#include <uapi/misc/habanalabs.h>
+> > +#include "habanalabs.h"
+> > +
+> > +#include <linux/dma-mapping.h>
+> > +
+> > +static void cb_fini(struct hl_device *hdev, struct hl_cb *cb)
+> > +{
+> > +     hdev->asic_funcs->dma_free_coherent(hdev, cb->size,
+> > +                     (void *) cb->kernel_address, cb->bus_address);
 >
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  fs/namei.c            |  2 +-
->  fs/namespace.c        |  2 ++
->  include/linux/audit.h | 15 ++++++++++-----
->  include/linux/namei.h |  3 +++
->  kernel/audit.c        | 10 +++++++++-
->  kernel/audit.h        |  2 +-
->  kernel/auditsc.c      |  6 +++---
->  7 files changed, 29 insertions(+), 11 deletions(-)
+> As it seems, ASIC specific dma_free_coherent is a shortcut for a generic
+> dma_free_coherent. Why not use it directly?
 >
-> diff --git a/fs/namei.c b/fs/namei.c
-> index 914178cdbe94..87d7710a2e1d 100644
-> --- a/fs/namei.c
-> +++ b/fs/namei.c
-> @@ -2720,7 +2720,7 @@ int user_path_at_empty(int dfd, const char __user *name, unsigned flags,
->         if (unlikely(error == -ESTALE))
->                 error = path_mountpoint(&nd, flags | LOOKUP_REVAL, path);
->         if (likely(!error))
-> -               audit_inode(name, path->dentry, 0);
-> +               audit_inode(name, path->dentry, flags & LOOKUP_NO_EVAL);
->         restore_nameidata();
->         putname(name);
->         return error;
-> diff --git a/fs/namespace.c b/fs/namespace.c
-> index a677b59efd74..e5de0e372df2 100644
-> --- a/fs/namespace.c
-> +++ b/fs/namespace.c
-> @@ -1640,6 +1640,8 @@ int ksys_umount(char __user *name, int flags)
->         if (!(flags & UMOUNT_NOFOLLOW))
->                 lookup_flags |= LOOKUP_FOLLOW;
->
-> +       lookup_flags |= LOOKUP_NO_EVAL;
-> +
->         retval = user_path_mountpoint_at(AT_FDCWD, name, lookup_flags, &path);
->         if (retval)
->                 goto out;
-> diff --git a/include/linux/audit.h b/include/linux/audit.h
-> index a625c29a2ea2..5d914b534536 100644
-> --- a/include/linux/audit.h
-> +++ b/include/linux/audit.h
-> @@ -25,6 +25,7 @@
->
->  #include <linux/sched.h>
->  #include <linux/ptrace.h>
-> +#include <linux/namei.h>  /* LOOKUP_* */
->  #include <uapi/linux/audit.h>
->
->  #define AUDIT_INO_UNSET ((unsigned long)-1)
-> @@ -225,6 +226,7 @@ extern void __audit_syscall_entry(int major, unsigned long a0, unsigned long a1,
->
->  #define AUDIT_INODE_PARENT     1       /* dentry represents the parent */
->  #define AUDIT_INODE_HIDDEN     2       /* audit record should be hidden */
-> +#define AUDIT_INODE_NOEVAL     4       /* audit record incomplete */
->  extern void __audit_inode(struct filename *name, const struct dentry *dentry,
->                                 unsigned int flags);
->  extern void __audit_file(const struct file *);
-> @@ -285,12 +287,15 @@ static inline void audit_getname(struct filename *name)
->  }
->  static inline void audit_inode(struct filename *name,
->                                 const struct dentry *dentry,
-> -                               unsigned int parent) {
-> +                               unsigned int flags) {
->         if (unlikely(!audit_dummy_context())) {
-> -               unsigned int flags = 0;
-> -               if (parent)
-> -                       flags |= AUDIT_INODE_PARENT;
-> -               __audit_inode(name, dentry, flags);
-> +               unsigned int aflags = 0;
-> +
-> +               if (flags & LOOKUP_PARENT)
-> +                       aflags |= AUDIT_INODE_PARENT;
-> +               if (flags & LOOKUP_NO_EVAL)
-> +                       aflags |= AUDIT_INODE_NOEVAL;
-> +               __audit_inode(name, dentry, aflags);
->         }
->  }
->  static inline void audit_file(struct file *file)
-> diff --git a/include/linux/namei.h b/include/linux/namei.h
-> index a78606e8e3df..9138b4471dbf 100644
-> --- a/include/linux/namei.h
-> +++ b/include/linux/namei.h
-> @@ -24,6 +24,8 @@
->   *  - internal "there are more path components" flag
->   *  - dentry cache is untrusted; force a real lookup
->   *  - suppress terminal automount
-> + *  - skip revalidation
-> + *  - don't fetch xattrs on audit_inode
->   */
->  #define LOOKUP_FOLLOW          0x0001
->  #define LOOKUP_DIRECTORY       0x0002
-> @@ -33,6 +35,7 @@
->  #define LOOKUP_REVAL           0x0020
->  #define LOOKUP_RCU             0x0040
->  #define LOOKUP_NO_REVAL                0x0080
-> +#define LOOKUP_NO_EVAL         0x0100
->
->  /*
->   * Intent data
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index ca55ccb46b76..45d5131943eb 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2081,6 +2081,10 @@ void audit_log_cap(struct audit_buffer *ab, char *prefix, kernel_cap_t *cap)
->
->  static void audit_log_fcaps(struct audit_buffer *ab, struct audit_names *name)
->  {
-> +       if (name->fcap_ver == -1) {
-> +               audit_log_format(ab, " cap_fe=? cap_fver=? cap_fp=? cap_fi=?");
-> +               return;
-> +       }
->         audit_log_cap(ab, "cap_fp", &name->fcap.permitted);
->         audit_log_cap(ab, "cap_fi", &name->fcap.inheritable);
->         audit_log_format(ab, " cap_fe=%d cap_fver=%x",
-> @@ -2111,7 +2115,7 @@ static inline int audit_copy_fcaps(struct audit_names *name,
->
->  /* Copy inode data into an audit_names. */
->  void audit_copy_inode(struct audit_names *name, const struct dentry *dentry,
-> -                     struct inode *inode)
-> +                     struct inode *inode, unsigned int flags)
->  {
->         name->ino   = inode->i_ino;
->         name->dev   = inode->i_sb->s_dev;
-> @@ -2120,6 +2124,10 @@ void audit_copy_inode(struct audit_names *name, const struct dentry *dentry,
->         name->gid   = inode->i_gid;
->         name->rdev  = inode->i_rdev;
->         security_inode_getsecid(inode, &name->osid);
-> +       if (flags & AUDIT_INODE_NOEVAL) {
-> +               name->fcap_ver = -1;
-> +               return;
-> +       }
+As I explained in a previous patch review, there is a different
+implementation when I'm working with a simulator.
 
-I'm not in love with the -1 sentinel, especially without a cast in
-front of it (style nit I suppose), but I love the idea of adding
-another flag to audit_names even more.  Since it looks like the
-version portion of cpu_vfs_cap_data.magic_etc is limited to eight bits
-I suppose we could break up fcap_ver and use some of the 32 bits for
-our own flags.  Not sure I like that option any more than the others.
+> > +     kfree(cb);
+> > +}
+> > +
+> > +static void cb_do_release(struct hl_device *hdev, struct hl_cb *cb)
+> > +{
+> > +     if (cb->is_pool) {
+> > +             spin_lock(&hdev->cb_pool_lock);
+> > +             list_add(&cb->pool_list, &hdev->cb_pool);
+> > +             spin_unlock(&hdev->cb_pool_lock);
+> > +     } else {
+> > +             cb_fini(hdev, cb);
+> > +     }
+> > +}
+> > +
+> > +static void cb_release(struct kref *ref)
+> > +{
+> > +     struct hl_device *hdev;
+> > +     struct hl_cb *cb;
+> > +
+> > +     cb = container_of(ref, struct hl_cb, refcount);
+> > +     hdev = cb->hdev;
+> > +
+> > +     cb_do_release(hdev, cb);
+> > +}
+> > +
+> > +static struct hl_cb *hl_cb_alloc(struct hl_device *hdev, u32 cb_size,
+> > +                                     int ctx_id)
+> > +{
+> > +     struct hl_cb *cb;
+> > +     void *p;
+> > +
+> > +     if (ctx_id == HL_KERNEL_ASID_ID)
+> > +             cb = kzalloc(sizeof(*cb), GFP_ATOMIC);
+>
+> The GFP_ATOMIC should be used when the caller cannot tolerate reclaim or
+> sleep and it does not seem to be the case here.
+>
+Yes, I can see why this is misleading. The call of this function from
+latency-sensitive code comes in a much later patch (command
+submission).
+In short, due to H/W limitations, I must copy the CB of the user to a
+kernel allocated CB (in case of an external queue) and this must be
+done during command submission. Hence the GFP_ATOMIC flag in all
+memory allocations in this function.
+I will add a comment in this patch explaining this.
 
-I'm also beginning to wonder why we don't just include the fcaps
-version info in the audit_cap_data struct; I can't think of a reason
-why you would ever want to know one without the other.  Thoughts?
+btw, we solved this problem in future ASICs.
 
->         audit_copy_fcaps(name, dentry);
->  }
+> > +     else
+> > +             cb = kzalloc(sizeof(*cb), GFP_KERNEL);
+> > +
+> > +     if (!cb)
+> > +             return NULL;
+> > +
+> > +     if (ctx_id == HL_KERNEL_ASID_ID)
+> > +             p = hdev->asic_funcs->dma_alloc_coherent(hdev, cb_size,
+> > +                                             &cb->bus_address, GFP_ATOMIC);
 >
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index 6ffb70575082..25ab276be8e5 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -214,7 +214,7 @@ struct audit_context {
+> GFP_KERNEL?
+Same explanation as above.
 >
->  extern void audit_copy_inode(struct audit_names *name,
->                              const struct dentry *dentry,
-> -                            struct inode *inode);
-> +                            struct inode *inode, unsigned int flags);
->  extern void audit_log_cap(struct audit_buffer *ab, char *prefix,
->                           kernel_cap_t *cap);
->  extern void audit_log_name(struct audit_context *context,
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 3d05d5fc6240..9a1257afc4d4 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -1853,7 +1853,7 @@ void __audit_inode(struct filename *name, const struct dentry *dentry,
->                 n->type = AUDIT_TYPE_NORMAL;
->         }
->         handle_path(dentry);
-> -       audit_copy_inode(n, dentry, inode);
-> +       audit_copy_inode(n, dentry, inode, flags & AUDIT_INODE_NOEVAL);
->  }
+> > +     else
+> > +             p = hdev->asic_funcs->dma_alloc_coherent(hdev, cb_size,
+> > +                                             &cb->bus_address,
+> > +                                             GFP_USER | __GFP_ZERO);
+> > +     if (!p) {
+> > +             dev_err(hdev->dev,
+> > +                     "failed to allocate %d of dma memory for CB\n",
+> > +                     cb_size);
+> > +             kfree(cb);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     cb->kernel_address = (u64) p;
+> > +     cb->size = cb_size;
+> > +
+> > +     return cb;
+> > +}
+> > +
+> > +int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr,
+> > +                     u32 cb_size, u64 *handle, int ctx_id)
+> > +{
+> > +     struct hl_cb *cb;
+> > +     bool alloc_new_cb = true;
+> > +     int rc;
+> > +
+> > +     if (hdev->disabled) {
+> > +             dev_warn_ratelimited(hdev->dev,
+> > +                     "Device is disabled !!! Can't create new CBs\n");
+> > +             rc = -EBUSY;
+> > +             goto out_err;
+> > +     }
+> > +
+> > +     /* Minimum allocation must be PAGE SIZE */
+> > +     if (cb_size < PAGE_SIZE)
+> > +             cb_size = PAGE_SIZE;
+> > +
+> > +     if (ctx_id == HL_KERNEL_ASID_ID &&
+> > +                     cb_size <= hdev->asic_prop.cb_pool_cb_size) {
+> > +
+> > +             spin_lock(&hdev->cb_pool_lock);
+> > +             if (!list_empty(&hdev->cb_pool)) {
+> > +                     cb = list_first_entry(&hdev->cb_pool, typeof(*cb),
+> > +                                     pool_list);
+> > +                     list_del(&cb->pool_list);
+> > +                     spin_unlock(&hdev->cb_pool_lock);
+> > +                     alloc_new_cb = false;
+> > +             } else {
+> > +                     spin_unlock(&hdev->cb_pool_lock);
+> > +                     dev_warn_once(hdev->dev, "CB pool is empty\n");
 >
->  void __audit_file(const struct file *file)
-> @@ -1952,7 +1952,7 @@ void __audit_inode_child(struct inode *parent,
->                 n = audit_alloc_name(context, AUDIT_TYPE_PARENT);
->                 if (!n)
->                         return;
-> -               audit_copy_inode(n, NULL, parent);
-> +               audit_copy_inode(n, NULL, parent, 0);
->         }
+> Isn't it going to be a false alarm when you allocate the cb for the first
+> time?
+Why ?
+The cb_pool list holds a list of available CBs. See hl_cb_pool_init()
+- it adds newly allocated CBs to this pool list.
+
+if (!list_empty(&hdev->cb_pool)) {       -  this checks whether the
+pool is not empty so we can take an available CB from it. If the list
+is empty (hence the pool is empty), we print the warning.
+
 >
->         if (!found_child) {
-> @@ -1971,7 +1971,7 @@ void __audit_inode_child(struct inode *parent,
->         }
+> > +             }
+> > +     }
+> > +
+> > +     if (alloc_new_cb) {
+> > +             cb = hl_cb_alloc(hdev, cb_size, ctx_id);
+> > +             if (!cb) {
+> > +                     rc = -ENOMEM;
+> > +                     goto out_err;
+> > +             }
+> > +     }
+> > +
+> > +     cb->hdev = hdev;
+> > +     cb->ctx_id = ctx_id;
+> > +
+> > +     spin_lock(&mgr->cb_lock);
+> > +     rc = idr_alloc(&mgr->cb_handles, cb, 1, 0, GFP_ATOMIC);
 >
->         if (inode)
-> -               audit_copy_inode(found_child, dentry, inode);
-> +               audit_copy_inode(found_child, dentry, inode, 0);
->         else
->                 found_child->ino = AUDIT_INO_UNSET;
->  }
+> It seems the ID will remain dangling if the cb is reused.
+
+I'm not sure what you mean by this comment. Reused by whom ? in how
+fashion it is reused ?
+
+>
+> > +     spin_unlock(&mgr->cb_lock);
+> > +
+> > +     if (rc < 0) {
+> > +             dev_err(hdev->dev, "Failed to allocate IDR for a new CB\n");
+> > +             goto release_cb;
+> > +     }
+> > +
+> > +     cb->id = rc;
+> > +
+> > +     kref_init(&cb->refcount);
+> > +     spin_lock_init(&cb->lock);
+> > +
+> > +     /*
+> > +      * idr is 32-bit so we can safely OR it with a mask that is above
+> > +      * 32 bit
+> > +      */
+> > +     *handle = cb->id | HL_MMAP_CB_MASK;
+> > +     *handle <<= PAGE_SHIFT;
+> > +
+> > +     return 0;
+> > +
+> > +release_cb:
+> > +     cb_do_release(hdev, cb);
+> > +out_err:
+> > +     *handle = 0;
+> > +
+> > +     return rc;
+> > +}
+> > +
+> > +int hl_cb_destroy(struct hl_device *hdev, struct hl_cb_mgr *mgr, u64 cb_handle)
+> > +{
+> > +     struct hl_cb *cb;
+> > +     u32 handle;
+> > +     int rc = 0;
+> > +
+> > +     /*
+> > +      * handle was given to user to do mmap, I need to shift it back to
+> > +      * how the idr module gave it to me
+> > +      */
+> > +     cb_handle >>= PAGE_SHIFT;
+> > +     handle = (u32) cb_handle;
+> > +
+> > +     spin_lock(&mgr->cb_lock);
+> > +
+> > +     cb = idr_find(&mgr->cb_handles, handle);
+> > +     if (cb) {
+> > +             idr_remove(&mgr->cb_handles, handle);
+> > +             spin_unlock(&mgr->cb_lock);
+> > +             kref_put(&cb->refcount, cb_release);
+> > +     } else {
+> > +             spin_unlock(&mgr->cb_lock);
+> > +             dev_err(hdev->dev,
+> > +                     "CB destroy failed, no match to handle 0x%x\n", handle);
+> > +             rc = -EINVAL;
+> > +     }
+> > +
+> > +     return rc;
+> > +}
+> > +
+> > +int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data)
+> > +{
+> > +     union hl_cb_args *args = data;
+> > +     struct hl_device *hdev = hpriv->hdev;
+> > +     u64 handle;
+> > +     int rc;
+> > +
+> > +     switch (args->in.op) {
+> > +     case HL_CB_OP_CREATE:
+> > +             rc = hl_cb_create(hdev, &hpriv->cb_mgr, args->in.cb_size,
+> > +                                     &handle, hpriv->ctx->asid);
+> > +             memset(args, 0, sizeof(*args));
+> > +             args->out.cb_handle = handle;
+> > +             break;
+> > +     case HL_CB_OP_DESTROY:
+> > +             rc = hl_cb_destroy(hdev, &hpriv->cb_mgr,
+> > +                                     args->in.cb_handle);
+> > +             memset(args, 0, sizeof(*args));
+> > +             break;
+> > +     default:
+> > +             rc = -EINVAL;
+> > +             break;
+> > +     }
+> > +
+> > +     return rc;
+> > +}
+> > +
+> > +static void cb_vm_close(struct vm_area_struct *vma)
+> > +{
+> > +     struct hl_cb *cb = (struct hl_cb *) vma->vm_private_data;
+> > +
+> > +     hl_cb_put(cb);
+> > +
+> > +     spin_lock(&cb->lock);
+> > +     cb->mmap = false;
+> > +     cb->vm_start = 0;
+> > +     cb->vm_end = 0;
+> > +     spin_unlock(&cb->lock);
+> > +
+> > +     vma->vm_private_data = NULL;
+> > +}
+> > +
+> > +static const struct vm_operations_struct cb_vm_ops = {
+> > +     .close = cb_vm_close
+> > +};
+> > +
+> > +int hl_cb_mmap(struct hl_fpriv *hpriv, struct vm_area_struct *vma)
+> > +{
+> > +     struct hl_device *hdev = hpriv->hdev;
+> > +     struct hl_cb *cb;
+> > +     phys_addr_t address;
+> > +     u32 handle;
+> > +     int rc;
+> > +
+> > +     handle = vma->vm_pgoff;
+> > +
+> > +     /* reference was taken here */
+> > +     cb = hl_cb_get(hdev, &hpriv->cb_mgr, handle);
+> > +     if (!cb) {
+> > +             dev_err(hdev->dev,
+> > +                     "CB mmap failed, no match to handle %d\n", handle);
+> > +             goto err_out;
+>
+> why no simply return -EINVAL?
+>
+fixed
+> > +     }
+> > +
+> > +     /* Validation check */
+> > +     if (vma->vm_end - vma->vm_start != cb->size) {
+> > +             dev_err(hdev->dev,
+> > +                     "CB mmap failed, mmap size 0x%lx != 0x%x cb size\n",
+> > +                     vma->vm_end - vma->vm_start, cb->size);
+> > +             goto put_cb;
+> > +     }
+> > +
+> > +     spin_lock(&cb->lock);
+> > +
+> > +     if (cb->mmap) {
+> > +             dev_err(hdev->dev,
+> > +                     "CB mmap failed, CB already mmaped to user\n");
+> > +             goto release_lock;
+> > +     }
+> > +
+> > +     cb->mmap = true;
+> > +
+> > +     spin_unlock(&cb->lock);
+> > +
+> > +     vma->vm_ops = &cb_vm_ops;
+> > +
+> > +     /*
+> > +      * Note: We're transferring the cb reference to
+> > +      * vma->vm_private_data here.
+> > +      */
+> > +
+> > +     vma->vm_private_data = cb;
+> > +
+> > +     /* Calculate address for CB */
+> > +     address = virt_to_phys((void *) cb->kernel_address);
+> > +
+> > +     rc = hdev->asic_funcs->cb_mmap(hdev, vma, cb->kernel_address,
+> > +                                     address, cb->size);
+> > +
+> > +     if (rc) {
+> > +             spin_lock(&cb->lock);
+> > +             cb->mmap = false;
+> > +             goto release_lock;
+> > +     }
+> > +
+> > +     cb->vm_start = vma->vm_start;
+> > +     cb->vm_end = vma->vm_end;
+> > +
+> > +     return 0;
+> > +
+> > +release_lock:
+> > +     spin_unlock(&cb->lock);
+> > +put_cb:
+> > +     hl_cb_put(cb);
+> > +err_out:
+> > +     return -EINVAL;
+> > +}
+> > +
+> > +struct hl_cb *hl_cb_get(struct hl_device *hdev, struct hl_cb_mgr *mgr,
+> > +                     u32 handle)
+> > +{
+> > +     struct hl_cb *cb;
+> > +
+> > +     spin_lock(&mgr->cb_lock);
+> > +     cb = idr_find(&mgr->cb_handles, handle);
+> > +
+> > +     if (!cb) {
+> > +             spin_unlock(&mgr->cb_lock);
+> > +             dev_warn(hdev->dev,
+> > +                     "CB get failed, no match to handle %d\n", handle);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     kref_get(&cb->refcount);
+> > +
+> > +     spin_unlock(&mgr->cb_lock);
+> > +
+> > +     return cb;
+> > +
+> > +}
+> > +
+> > +void hl_cb_put(struct hl_cb *cb)
+> > +{
+> > +     kref_put(&cb->refcount, cb_release);
+> > +}
+> > +
+> > +void hl_cb_mgr_init(struct hl_cb_mgr *mgr)
+> > +{
+> > +     spin_lock_init(&mgr->cb_lock);
+> > +     idr_init(&mgr->cb_handles);
+> > +}
+> > +
+> > +void hl_cb_mgr_fini(struct hl_device *hdev, struct hl_cb_mgr *mgr)
+> > +{
+> > +     struct hl_cb *cb;
+> > +     struct idr *idp;
+> > +     u32 id;
+> > +
+> > +     idp = &mgr->cb_handles;
+> > +
+> > +     idr_for_each_entry(idp, cb, id) {
+> > +             if (kref_put(&cb->refcount, cb_release) != 1)
+> > +                     dev_err(hdev->dev,
+> > +                             "CB %d for CTX ID %d is still alive\n",
+> > +                             id, cb->ctx_id);
+> > +     }
+> > +
+> > +     idr_destroy(&mgr->cb_handles);
+> > +}
+> > +
+> > +struct hl_cb *hl_cb_kernel_create(struct hl_device *hdev, u32 cb_size)
+> > +{
+> > +     u64 cb_handle;
+> > +     struct hl_cb *cb;
+> > +     int rc;
+> > +
+> > +     rc = hl_cb_create(hdev, &hdev->kernel_cb_mgr, cb_size, &cb_handle,
+> > +                     HL_KERNEL_ASID_ID);
+> > +     if (rc) {
+> > +             dev_err(hdev->dev, "Failed to allocate CB for KMD %d\n", rc);
+> > +             return NULL;
+> > +     }
+> > +
+> > +     cb_handle >>= PAGE_SHIFT;
+> > +     cb = hl_cb_get(hdev, &hdev->kernel_cb_mgr, (u32) cb_handle);
+> > +     /* hl_cb_get should never fail here so use kernel WARN */
+> > +     WARN(!cb, "Kernel CB handle invalid 0x%x\n", (u32) cb_handle);
+> > +     if (!cb)
+> > +             goto destroy_cb;
+> > +
+> > +     return cb;
+> > +
+> > +destroy_cb:
+> > +     hl_cb_destroy(hdev, &hdev->kernel_cb_mgr, cb_handle << PAGE_SHIFT);
+> > +
+> > +     return NULL;
+> > +}
+> > +
+> > +int hl_cb_pool_init(struct hl_device *hdev)
+> > +{
+> > +     struct hl_cb *cb;
+> > +     int i;
+> > +
+> > +     INIT_LIST_HEAD(&hdev->cb_pool);
+> > +     spin_lock_init(&hdev->cb_pool_lock);
+> > +
+> > +     for (i = 0 ; i < hdev->asic_prop.cb_pool_cb_cnt ; i++) {
+> > +             cb = hl_cb_alloc(hdev, hdev->asic_prop.cb_pool_cb_size,
+> > +                             HL_KERNEL_ASID_ID);
+> > +             if (cb) {
+> > +                     cb->is_pool = true;
+> > +                     list_add(&cb->pool_list, &hdev->cb_pool);
+> > +             } else {
+> > +                     hl_cb_pool_fini(hdev);
+> > +                     return -ENOMEM;
+> > +             }
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +int hl_cb_pool_fini(struct hl_device *hdev)
+> > +{
+> > +     struct hl_cb *cb, *tmp;
+> > +
+> > +     list_for_each_entry_safe(cb, tmp, &hdev->cb_pool, pool_list) {
+> > +             list_del(&cb->pool_list);
+> > +             cb_fini(hdev, cb);
+> > +     }
+> > +
+> > +     return 0;
+> > +}
+> > diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
+> > index 84ce9fcb52da..0bd86a7d34db 100644
+> > --- a/drivers/misc/habanalabs/device.c
+> > +++ b/drivers/misc/habanalabs/device.c
+> > @@ -53,6 +53,7 @@ static int hl_device_release(struct inode *inode, struct file *filp)
+> >  {
+> >       struct hl_fpriv *hpriv = filp->private_data;
+> >
+> > +     hl_cb_mgr_fini(hpriv->hdev, &hpriv->cb_mgr);
+> >       hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
+> >
+> >       filp->private_data = NULL;
+> > @@ -62,10 +63,34 @@ static int hl_device_release(struct inode *inode, struct file *filp)
+> >       return 0;
+> >  }
+> >
+> > +/**
+> > + * hl_mmap - mmap function for habanalabs device
+> > + *
+> > + * @*filp: pointer to file structure
+> > + * @*vma: pointer to vm_area_struct of the process
+> > + *
+> > + * Called when process does an mmap on habanalabs device. Call the device's mmap
+> > + * function at the end of the common code.
+> > + */
+> > +static int hl_mmap(struct file *filp, struct vm_area_struct *vma)
+> > +{
+> > +     struct hl_fpriv *hpriv = filp->private_data;
+> > +
+> > +     if ((vma->vm_pgoff & HL_MMAP_CB_MASK) == HL_MMAP_CB_MASK) {
+> > +             vma->vm_pgoff ^= HL_MMAP_CB_MASK;
+> > +             return hl_cb_mmap(hpriv, vma);
+> > +     }
+> > +
+> > +     return hpriv->hdev->asic_funcs->mmap(hpriv, vma);
+> > +}
+> > +
+> >  static const struct file_operations hl_ops = {
+> >       .owner = THIS_MODULE,
+> >       .open = hl_device_open,
+> > -     .release = hl_device_release
+> > +     .release = hl_device_release,
+> > +     .mmap = hl_mmap,
+> > +     .unlocked_ioctl = hl_ioctl,
+> > +     .compat_ioctl = hl_ioctl
+> >  };
+> >
+> >  /**
+> > @@ -145,6 +170,8 @@ static int device_early_init(struct hl_device *hdev)
+> >       if (rc)
+> >               goto early_fini;
+> >
+> > +     hl_cb_mgr_init(&hdev->kernel_cb_mgr);
+> > +
+> >       mutex_init(&hdev->device_open);
+> >       atomic_set(&hdev->fd_open_cnt, 0);
+> >
+> > @@ -166,6 +193,8 @@ static int device_early_init(struct hl_device *hdev)
+> >  static void device_early_fini(struct hl_device *hdev)
+> >  {
+> >
+> > +     hl_cb_mgr_fini(hdev, &hdev->kernel_cb_mgr);
+> > +
+> >       hl_asid_fini(hdev);
+> >
+> >       if (hdev->asic_funcs->early_fini)
+> > @@ -280,11 +309,21 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
+> >               goto free_ctx;
+> >       }
+> >
+> > +     rc = hl_cb_pool_init(hdev);
+> > +     if (rc) {
+> > +             dev_err(hdev->dev, "failed to initialize CB pool\n");
+> > +             goto release_ctx;
+> > +     }
+> > +
+> >       dev_notice(hdev->dev,
+> >               "Successfully added device to habanalabs driver\n");
+> >
+> >       return 0;
+> >
+> > +release_ctx:
+> > +     if (hl_ctx_put(hdev->kernel_ctx) != 1)
+> > +             dev_err(hdev->dev,
+> > +                     "kernel ctx is still alive on initialization failure\n");
+> >  free_ctx:
+> >       kfree(hdev->kernel_ctx);
+> >  sw_fini:
+> > @@ -321,6 +360,8 @@ void hl_device_fini(struct hl_device *hdev)
+> >       /* Mark device as disabled */
+> >       hdev->disabled = true;
+> >
+> > +     hl_cb_pool_fini(hdev);
+> > +
+> >       /* Release kernel context */
+> >       if ((hdev->kernel_ctx) && (hl_ctx_put(hdev->kernel_ctx) != 1))
+> >               dev_err(hdev->dev, "kernel ctx is still alive\n");
+> > diff --git a/drivers/misc/habanalabs/goya/goya.c b/drivers/misc/habanalabs/goya/goya.c
+> > index b2952296b890..341ac085af82 100644
+> > --- a/drivers/misc/habanalabs/goya/goya.c
+> > +++ b/drivers/misc/habanalabs/goya/goya.c
+> > @@ -92,6 +92,9 @@
+> >
+> >  #define GOYA_MAX_INITIATORS          20
+> >
+> > +#define GOYA_CB_POOL_CB_CNT          512
+> > +#define GOYA_CB_POOL_CB_SIZE         0x20000         /* 128KB */
+> > +
+> >  static void goya_get_fixed_properties(struct hl_device *hdev)
+> >  {
+> >       struct asic_fixed_properties *prop = &hdev->asic_prop;
+> > @@ -119,6 +122,8 @@ static void goya_get_fixed_properties(struct hl_device *hdev)
+> >       prop->tpc_enabled_mask = TPC_ENABLED_MASK;
+> >
+> >       prop->high_pll = PLL_HIGH_DEFAULT;
+> > +     prop->cb_pool_cb_cnt = GOYA_CB_POOL_CB_CNT;
+> > +     prop->cb_pool_cb_size = GOYA_CB_POOL_CB_SIZE;
+> >  }
+> >
+> >  /**
+> > @@ -598,6 +603,27 @@ int goya_resume(struct hl_device *hdev)
+> >       return 0;
+> >  }
+> >
+> > +int goya_mmap(struct hl_fpriv *hpriv, struct vm_area_struct *vma)
+> > +{
+> > +     return -EINVAL;
+> > +}
+> > +
+> > +int goya_cb_mmap(struct hl_device *hdev, struct vm_area_struct *vma,
+> > +             u64 kaddress, phys_addr_t paddress, u32 size)
+> > +{
+> > +     int rc;
+> > +
+> > +     vma->vm_flags |= VM_IO | VM_PFNMAP | VM_DONTEXPAND | VM_DONTDUMP |
+> > +                     VM_DONTCOPY | VM_NORESERVE;
+> > +
+> > +     rc = remap_pfn_range(vma, vma->vm_start, paddress >> PAGE_SHIFT,
+> > +                             size, vma->vm_page_prot);
+> > +     if (rc)
+> > +             dev_err(hdev->dev, "remap_pfn_range error %d", rc);
+> > +
+> > +     return rc;
+> > +}
+> > +
+> >  void *goya_dma_alloc_coherent(struct hl_device *hdev, size_t size,
+> >                                       dma_addr_t *dma_handle, gfp_t flags)
+> >  {
+> > @@ -617,6 +643,8 @@ static const struct hl_asic_funcs goya_funcs = {
+> >       .sw_fini = goya_sw_fini,
+> >       .suspend = goya_suspend,
+> >       .resume = goya_resume,
+> > +     .mmap = goya_mmap,
+> > +     .cb_mmap = goya_cb_mmap,
+> >       .dma_alloc_coherent = goya_dma_alloc_coherent,
+> >       .dma_free_coherent = goya_dma_free_coherent,
+> >  };
+> > diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
+> > index d003a6af2131..6ad476df65b0 100644
+> > --- a/drivers/misc/habanalabs/habanalabs.h
+> > +++ b/drivers/misc/habanalabs/habanalabs.h
+> > @@ -21,10 +21,12 @@
+> >
+> >  #define HL_NAME                              "habanalabs"
+> >
+> > +#define HL_MMAP_CB_MASK                      (0x8000000000000000ull >> PAGE_SHIFT)
+> > +
+> >  #define HL_MAX_QUEUES                        128
+> >
+> >  struct hl_device;
+> > -
+> > +struct hl_fpriv;
+> >
+> >
+> >
+> > @@ -53,6 +55,8 @@ struct hl_device;
+> >   * @max_asid: maximum number of open contexts (ASIDs).
+> >   * @completion_queues_count: number of completion queues.
+> >   * @high_pll: high PLL frequency used by the device.
+> > + * @cb_pool_cb_cnt: number of CBs in the CB pool.
+> > + * @cb_pool_cb_size: size of each CB in the CB pool.
+> >   * @tpc_enabled_mask: which TPCs are enabled.
+> >   */
+> >  struct asic_fixed_properties {
+> > @@ -73,11 +77,68 @@ struct asic_fixed_properties {
+> >       u32                     sram_size;
+> >       u32                     max_asid;
+> >       u32                     high_pll;
+> > +     u32                     cb_pool_cb_cnt;
+> > +     u32                     cb_pool_cb_size;
+> >       u8                      completion_queues_count;
+> >       u8                      tpc_enabled_mask;
+> >  };
+> >
+> >
+> > +
+> > +
+> > +
+> > +
+> > +/*
+> > + * Command Buffers
+> > + */
+> > +
+> > +/**
+> > + * struct hl_cb_mgr - describes a Command Buffer Manager.
+> > + * @cb_lock: protects cb_handles.
+> > + * @cb_handles: an idr to hold all command buffer handles.
+> > + */
+> > +struct hl_cb_mgr {
+> > +     spinlock_t              cb_lock;
+> > +     struct idr              cb_handles; /* protected by cb_lock */
+> > +};
+> > +
+> > +/**
+> > + * struct hl_cb - describes a Command Buffer.
+> > + * @refcount: reference counter for usage of the CB.
+> > + * @hdev: pointer to device this CB belongs to.
+> > + * @lock: spinlock to protect mmap/cs flows.
+> > + * @pool_list: node in pool list of command buffers.
+> > + * @kernel_address: Holds the CB's kernel virtual address.
+> > + * @bus_address: Holds the CB's DMA address.
+> > + * @vm_start: Holds the CB's user start virtual address (when mmaped).
+> > + * @vm_end: Holds the CB's user end virtual address (when mmaped).
+> > + * @size: holds the CB's size.
+> > + * @id: the CB's ID.
+> > + * @ctx_id: holds the ID of the owner's context.
+> > + * @mmap: true if the CB is currently mmaped to user.
+> > + * @is_pool: true if CB was acquired from the pool, false otherwise.
+> > + */
+> > +struct hl_cb {
+> > +     struct kref             refcount;
+> > +     struct hl_device        *hdev;
+> > +     spinlock_t              lock;
+> > +     struct list_head        pool_list;
+> > +     u64                     kernel_address;
+> > +     dma_addr_t              bus_address;
+> > +     u64                     vm_start;
+> > +     u64                     vm_end;
+> > +     u32                     size;
+> > +     u32                     id;
+> > +     u32                     ctx_id;
+> > +     u8                      mmap;
+> > +     u8                      is_pool;
+> > +};
+> > +
+> > +
+> > +
+> > +
+> > +
+> > +
+> >  #define HL_QUEUE_LENGTH                      256
+> >
+> >
+> > @@ -109,6 +170,8 @@ enum hl_asic_type {
+> >   * @sw_fini: tears down driver state, does not configure H/W.
+> >   * @suspend: handles IP specific H/W or SW changes for suspend.
+> >   * @resume: handles IP specific H/W or SW changes for resume.
+> > + * @mmap: mmap function, does nothing.
+> > + * @cb_mmap: maps a CB.
+> >   * @dma_alloc_coherent: DMA allocate coherent memory.
+> >   * @dma_free_coherent: free DMA allocation.
+> >   */
+> > @@ -119,6 +182,9 @@ struct hl_asic_funcs {
+> >       int (*sw_fini)(struct hl_device *hdev);
+> >       int (*suspend)(struct hl_device *hdev);
+> >       int (*resume)(struct hl_device *hdev);
+> > +     int (*mmap)(struct hl_fpriv *hpriv, struct vm_area_struct *vma);
+> > +     int (*cb_mmap)(struct hl_device *hdev, struct vm_area_struct *vma,
+> > +                     u64 kaddress, phys_addr_t paddress, u32 size);
+> >       void* (*dma_alloc_coherent)(struct hl_device *hdev, size_t size,
+> >                                       dma_addr_t *dma_handle, gfp_t flag);
+> >       void (*dma_free_coherent)(struct hl_device *hdev, size_t size,
+> > @@ -175,6 +241,7 @@ struct hl_ctx_mgr {
+> >   * @taskpid: current process ID.
+> >   * @ctx: current executing context.
+> >   * @ctx_mgr: context manager to handle multiple context for this FD.
+> > + * @cb_mgr: command buffer manager to handle multiple buffers for this FD.
+> >   * @refcount: number of related contexts.
+> >   */
+> >  struct hl_fpriv {
+> > @@ -183,6 +250,7 @@ struct hl_fpriv {
+> >       struct pid              *taskpid;
+> >       struct hl_ctx           *ctx; /* TODO: remove for multiple ctx */
+> >       struct hl_ctx_mgr       ctx_mgr;
+> > +     struct hl_cb_mgr        cb_mgr;
+> >       struct kref             refcount;
+> >  };
+> >
+> > @@ -239,6 +307,7 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+> >   * @asic_name: ASIC specific nmae.
+> >   * @asic_type: ASIC specific type.
+> >   * @kernel_ctx: KMD context structure.
+> > + * @kernel_cb_mgr: command buffer manager for creating/destroying/handling CGs.
+> >   * @dma_pool: DMA pool for small allocations.
+> >   * @cpu_accessible_dma_mem: KMD <-> ArmCP shared memory CPU address.
+> >   * @cpu_accessible_dma_address: KMD <-> ArmCP shared memory DMA address.
+> > @@ -249,6 +318,8 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
+> >   * @asic_prop: ASIC specific immutable properties.
+> >   * @asic_funcs: ASIC specific functions.
+> >   * @asic_specific: ASIC specific information to use only from ASIC files.
+> > + * @cb_pool: list of preallocated CBs.
+> > + * @cb_pool_lock: protects the CB pool.
+> >   * @user_ctx: current user context executing.
+> >   * @fd_open_cnt: number of open context executing.
+> >   * @major: habanalabs KMD major.
+> > @@ -264,6 +335,7 @@ struct hl_device {
+> >       char                            asic_name[16];
+> >       enum hl_asic_type               asic_type;
+> >       struct hl_ctx                   *kernel_ctx;
+> > +     struct hl_cb_mgr                kernel_cb_mgr;
+> >       struct dma_pool                 *dma_pool;
+> >       void                            *cpu_accessible_dma_mem;
+> >       dma_addr_t                      cpu_accessible_dma_address;
+> > @@ -275,6 +347,10 @@ struct hl_device {
+> >       struct asic_fixed_properties    asic_prop;
+> >       const struct hl_asic_funcs      *asic_funcs;
+> >       void                            *asic_specific;
+> > +
+> > +     struct list_head                cb_pool;
+> > +     spinlock_t                      cb_pool_lock;
+> > +
+> >       /* TODO: The following fields should be moved for multi-context */
+> >       struct hl_ctx                   *user_ctx;
+> >       atomic_t                        fd_open_cnt;
+> > @@ -345,6 +421,23 @@ int hl_device_resume(struct hl_device *hdev);
+> >  void hl_hpriv_get(struct hl_fpriv *hpriv);
+> >  void hl_hpriv_put(struct hl_fpriv *hpriv);
+> >
+> > +int hl_cb_create(struct hl_device *hdev, struct hl_cb_mgr *mgr, u32 cb_size,
+> > +             u64 *handle, int ctx_id);
+> > +int hl_cb_destroy(struct hl_device *hdev, struct hl_cb_mgr *mgr, u64 cb_handle);
+> > +int hl_cb_mmap(struct hl_fpriv *hpriv, struct vm_area_struct *vma);
+> > +struct hl_cb *hl_cb_get(struct hl_device *hdev,      struct hl_cb_mgr *mgr,
+> > +                     u32 handle);
+> > +void hl_cb_put(struct hl_cb *cb);
+> > +void hl_cb_mgr_init(struct hl_cb_mgr *mgr);
+> > +void hl_cb_mgr_fini(struct hl_device *hdev, struct hl_cb_mgr *mgr);
+> > +struct hl_cb *hl_cb_kernel_create(struct hl_device *hdev, u32 cb_size);
+> > +int hl_cb_pool_init(struct hl_device *hdev);
+> > +int hl_cb_pool_fini(struct hl_device *hdev);
+> > +
+> >  void goya_set_asic_funcs(struct hl_device *hdev);
+> >
+> > +/* IOCTLs */
+> > +long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg);
+> > +int hl_cb_ioctl(struct hl_fpriv *hpriv, void *data);
+> > +
+> >  #endif /* HABANALABSP_H_ */
+> > diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
+> > index 0646da83eb53..5c312dd3aa50 100644
+> > --- a/drivers/misc/habanalabs/habanalabs_drv.c
+> > +++ b/drivers/misc/habanalabs/habanalabs_drv.c
+> > @@ -123,6 +123,7 @@ int hl_device_open(struct inode *inode, struct file *filp)
+> >       kref_init(&hpriv->refcount);
+> >       nonseekable_open(inode, filp);
+> >
+> > +     hl_cb_mgr_init(&hpriv->cb_mgr);
+> >       hl_ctx_mgr_init(&hpriv->ctx_mgr);
+> >
+> >       rc = hl_ctx_create(hdev, hpriv);
+> > @@ -138,6 +139,7 @@ int hl_device_open(struct inode *inode, struct file *filp)
+> >  out_err:
+> >       filp->private_data = NULL;
+> >       hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
+> > +     hl_cb_mgr_fini(hpriv->hdev, &hpriv->cb_mgr);
+> >       kfree(hpriv);
+> >
+> >  close_device:
+> > diff --git a/drivers/misc/habanalabs/habanalabs_ioctl.c b/drivers/misc/habanalabs/habanalabs_ioctl.c
+> > new file mode 100644
+> > index 000000000000..fa2287569e0e
+> > --- /dev/null
+> > +++ b/drivers/misc/habanalabs/habanalabs_ioctl.c
+> > @@ -0,0 +1,102 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +
+> > +/*
+> > + * Copyright 2016-2018 HabanaLabs, Ltd.
+> > + * All Rights Reserved.
+> > + */
+> > +
+> > +#include <uapi/misc/habanalabs.h>
+> > +#include "habanalabs.h"
+> > +
+> > +#include <linux/fs.h>
+> > +#include <linux/uaccess.h>
+> > +#include <linux/cred.h>
+> > +
+> > +#define HL_IOCTL_DEF(ioctl, _func) \
+> > +     [_IOC_NR(ioctl)] = {.cmd = ioctl, .func = _func}
+> > +
+> > +static const struct hl_ioctl_desc hl_ioctls[] = {
+> > +     HL_IOCTL_DEF(HL_IOCTL_CB, hl_cb_ioctl)
+> > +};
+> > +
+> > +#define HL_CORE_IOCTL_COUNT  ARRAY_SIZE(hl_ioctls)
+> > +
+> > +long hl_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+> > +{
+> > +     struct hl_fpriv *hpriv = filep->private_data;
+> > +     struct hl_device *hdev = hpriv->hdev;
+> > +     hl_ioctl_t *func;
+> > +     const struct hl_ioctl_desc *ioctl = NULL;
+> > +     unsigned int nr = _IOC_NR(cmd);
+> > +     char stack_kdata[128];
+> > +     char *kdata = NULL;
+> > +     unsigned int usize, asize;
+> > +     int retcode = -EINVAL;
+> > +
+> > +     if (nr >= HL_CORE_IOCTL_COUNT)
+>
+>         nr > HL_CORE_IOCTL_COUNT, isn't it?
+>
+> > +             goto err_i1;
+>
+> err_i1 is not very meaningfull. Maybe invalid_ioctl?
+Changed to out_err as this is used from other places in this function
+>
+> > +
+> > +     if ((nr >= HL_COMMAND_START) && (nr < HL_COMMAND_END)) {
+>
+> The HL_COMMAND_{START,END} do not seem to be defined.
+They are defined in uapi/misc/habanalabs.h
+
+> Besides, this check seem to be overlapped with
+>
+>         if (nr > HL_CORE_IOCTL_COUNT)
+
+Correct, removed the first if   (HL_CORE_IOCTL_COUNT)
+>
+> > +             u32 hl_size;
+> > +
+> > +             ioctl = &hl_ioctls[nr];
+> > +
+> > +             hl_size = _IOC_SIZE(ioctl->cmd);
+> > +             usize = asize = _IOC_SIZE(cmd);
+> > +             if (hl_size > asize)
+> > +                     asize = hl_size;
+> > +
+> > +             cmd = ioctl->cmd;
+> > +     } else {
+> > +             goto err_i1;
+> > +     }
+> > +
+> > +     /* Do not trust userspace, use our own definition */
+> > +     func = ioctl->func;
+> > +
+> > +     if (unlikely(!func)) {
+> > +             dev_dbg(hdev->dev, "no function\n");
+> > +             retcode = -EINVAL;
+> > +             goto err_i1;
+> > +     }
+> > +
+> > +     if (cmd & (IOC_IN | IOC_OUT)) {
+> > +             if (asize <= sizeof(stack_kdata)) {
+> > +                     kdata = stack_kdata;
+> > +             } else {
+> > +                     kdata = kmalloc(asize, GFP_KERNEL);
+> > +                     if (!kdata) {
+> > +                             retcode = -ENOMEM;
+> > +                             goto err_i1;
+> > +                     }
+> > +             }
+> > +             if (asize > usize)
+> > +                     memset(kdata + usize, 0, asize - usize);
+>
+> Just init stack_kdata to 0 and use kzalloc instead of malloc.
+fixed
+>
+> > +     }
+> > +
+> > +     if (cmd & IOC_IN) {
+> > +             if (copy_from_user(kdata, (void __user *)arg, usize)) {
+> > +                     retcode = -EFAULT;
+> > +                     goto err_i1;
+> > +             }
+> > +     } else if (cmd & IOC_OUT) {
+> > +             memset(kdata, 0, usize);
+> > +     }
+> > +
+> > +     retcode = func(hpriv, kdata);
+> > +
+> > +     if (cmd & IOC_OUT)
+> > +             if (copy_to_user((void __user *)arg, kdata, usize))
+> > +                     retcode = -EFAULT;
+> > +
+> > +err_i1:
+> > +     if (!ioctl)
+> > +             dev_dbg(hdev->dev,
+> > +                     "invalid ioctl: pid=%d, cmd=0x%02x, nr=0x%02x\n",
+> > +                       task_pid_nr(current), cmd, nr);
+>
+> I think this can move right after the 'nr' sanity check and there you can
+> simple return -EINVAL after dev_dbg().
+But you reach here from many different places and I want to print the
+ioctl information for each case.
+I think the real mistake here is if(!ioctl). This should actually be
+if (ioctl) because only then it is relevant for most of the places in
+this function that has an error.
+And I'll add a dedicated print if the nr is not correct.
+>
+> > +
+> > +     if (kdata != stack_kdata)
+> > +             kfree(kdata);
+> > +
+> > +     return retcode;
+> > +}
+> > diff --git a/include/uapi/misc/habanalabs.h b/include/uapi/misc/habanalabs.h
+> > new file mode 100644
+> > index 000000000000..b3f9213d4709
+> > --- /dev/null
+> > +++ b/include/uapi/misc/habanalabs.h
+> > @@ -0,0 +1,62 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note
+> > + *
+> > + * Copyright 2016-2018 HabanaLabs, Ltd.
+> > + * All Rights Reserved.
+> > + *
+> > + * Author: Oded Gabbay <oded.gabbay@gmail.com>
+> > + *
+> > + */
+> > +
+> > +#ifndef HABANALABS_H_
+> > +#define HABANALABS_H_
+> > +
+> > +#include <linux/types.h>
+> > +#include <linux/ioctl.h>
+> > +
+> > +/* Opcode to create a new command buffer */
+> > +#define HL_CB_OP_CREATE              0
+> > +/* Opcode to destroy previously created command buffer */
+> > +#define HL_CB_OP_DESTROY     1
+> > +
+> > +struct hl_cb_in {
+> > +     /* Handle of CB or 0 if we want to create one */
+> > +     __u64 cb_handle;
+> > +     /* HL_CB_OP_* */
+> > +     __u32 op;
+> > +     /* Size of CB. Minimum requested size must be PAGE_SIZE */
+> > +     __u32 cb_size;
+> > +     /* Context ID - Currently not in use */
+> > +     __u32 ctx_id;
+> > +     __u32 pad;
+> > +};
+> > +
+> > +struct hl_cb_out {
+> > +     /* Handle of CB */
+> > +     __u64 cb_handle;
+> > +};
+> > +
+> > +union hl_cb_args {
+> > +     struct hl_cb_in in;
+> > +     struct hl_cb_out out;
+> > +};
+> > +
+> > +/*
+> > + * Command Buffer
+> > + * - Request a Command Buffer
+> > + * - Destroy a Command Buffer
+> > + *
+> > + * The command buffers are memory blocks that reside in DMA-able address
+> > + * space and are physically contiguous so they can be accessed by the device
+> > + * directly. They are allocated using the coherent DMA API.
+> > + *
+> > + * When creating a new CB, the IOCTL returns a handle of it, and the user-space
+> > + * process needs to use that handle to mmap the buffer so it can access them.
+> > + *
+> > + */
+> > +#define HL_IOCTL_CB          \
+> > +             _IOWR('H', 0x02, union hl_cb_args)
+> > +
+> > +#define HL_COMMAND_START     0x02
+> > +#define HL_COMMAND_END               0x03
+> > +
+> > +#endif /* HABANALABS_H_ */
+> > --
+> > 2.17.1
+> >
+>
 > --
-> 1.8.3.1
+> Sincerely yours,
+> Mike.
 >
-
-
--- 
-paul moore
-www.paul-moore.com
