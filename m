@@ -2,70 +2,116 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A48DC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:46:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81B82C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:46:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 717EB218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58B8E218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:46:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726897AbfAYKqW (ORCPT
+        id S1727558AbfAYKql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:46:22 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:44416 "EHLO
-        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfAYKqW (ORCPT
+        Fri, 25 Jan 2019 05:46:41 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35592 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfAYKqk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:46:22 -0500
-Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
-        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gmz06-0005d4-9D; Fri, 25 Jan 2019 18:46:18 +0800
-Received: from herbert by gondobar with local (Exim 4.89)
-        (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gmz04-00024F-PO; Fri, 25 Jan 2019 18:46:16 +0800
-Date:   Fri, 25 Jan 2019 18:46:16 +0800
-From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/7] bug fixes and cleanups
-Message-ID: <20190125104616.siliqra75iskpadu@gondor.apana.org.au>
-References: <20190115134318.28712-1-gilad@benyossef.com>
+        Fri, 25 Jan 2019 05:46:40 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t200so6231623wmt.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:46:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=vgcYcXElp2D9+8LvroyhCZE4sigZ9M+hQE82VSfBbfM=;
+        b=oUrq4XKsL3PgjrvdPgh4+zJ1syjp5OXY5JI7/akvaxWdSQjTpbJvnpYnAqZEDYfDiw
+         XIxr4SBi7rAHVGQ41jeDE4I/PTUqj5nFoDfR306BAR3WiIywUxmikQGGPRf5SAUcMcpb
+         tsMxhx3/l7SmAAhOlDdZodff1WoEGzLrpgHyTTFBNydtXiZikrJPUUL9zpODgmkgNOdM
+         IweoZk0EHI5v1FB2GXX6aqbbi4U+T+VL/9QhNaXUcmufILOnx++zV01+tOb7wHwb+DuI
+         7PmM3UTPePvXidsHzFT6iUuwh1+XnoC6YEJSC+QxDDStxkrTIV7gnQEJbadzIenzRoYo
+         ziUg==
+X-Gm-Message-State: AJcUukdhkgFBWmTJZh5KvT0andkR0HMeUsHkrxKXW5yWcPXHha41hG+s
+        BY+DGFqugcmCIp8IIYMtmoyvzeZUHiQ=
+X-Google-Smtp-Source: ALg8bN5PdKmAco1p7qqhv2hoX1dNf6dxq4gQNgjZQgHoWicCJBrBmsf78X0CjrKz81QoZ11PMi1fTg==
+X-Received: by 2002:a1c:f509:: with SMTP id t9mr6724937wmh.76.1548413198042;
+        Fri, 25 Jan 2019 02:46:38 -0800 (PST)
+Received: from [10.200.153.26] (ovpn-brq.redhat.com. [213.175.37.11])
+        by smtp.gmail.com with ESMTPSA id q12sm38602793wmf.2.2019.01.25.02.46.36
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 02:46:37 -0800 (PST)
+Subject: Re: [PATCH] lib/crc32.c: mark crc32_le_base/__crc32c_le_base aliases
+ as __pure
+To:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Martin Sebor <msebor@gcc.gnu.org>, linux-kernel@vger.kernel.org
+References: <20190124154420.GA11471@gmail.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <29e55819-2246-f79a-9ca0-291d975981b6@redhat.com>
+Date:   Fri, 25 Jan 2019 11:46:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190115134318.28712-1-gilad@benyossef.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20190124154420.GA11471@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 15, 2019 at 03:43:10PM +0200, Gilad Ben-Yossef wrote:
-> Assorted bug fixes and cleanups
+On 1/24/19 7:44 AM, Miguel Ojeda wrote:
+> The upcoming GCC 9 release extends the -Wmissing-attributes warnings
+> (enabled by -Wall) to C and aliases: it warns when particular function
+> attributes are missing in the aliases but not in their target.
 > 
-> Gilad Ben-Yossef (3):
->   crypto: ccree: unmap buffer before copying IV
->   crypto: ccree: shared irq lines are not a bug
->   crypto: ccree: don't copy zero size ciphertext
+> In particular, it triggers here because crc32_le_base/__crc32c_le_base
+> aren't __pure while their target crc32_le/__crc32c_le are.
 > 
-> Hadar Gat (4):
->   crypto: ccree: improve error handling
->   crypto: ccree: add error message
->   crypto: ccree: fix free of unallocated mlli buffer
->   crypto: ccree: remove legacy leftover
+> These aliases are used by architectures as a fallback in accelerated
+> versions of CRC32. See commit 9784d82db3eb ("lib/crc32: make core crc32()
+> routines weak so they can be overridden").
 > 
->  drivers/crypto/ccree/cc_buffer_mgr.c | 87 ++++++++++++++--------------
->  drivers/crypto/ccree/cc_cipher.c     |  6 +-
->  drivers/crypto/ccree/cc_driver.c     |  6 +-
->  drivers/crypto/ccree/cc_driver.h     |  2 -
->  4 files changed, 50 insertions(+), 51 deletions(-)
+> Therefore, being fallbacks, it is likely that even if the aliases
+> were called from C, there wouldn't be any optimizations possible.
+> Currently, the only user is arm64, which calls this from asm.
+> 
+> Still, marking the aliases as __pure makes sense and is a good idea
+> for documentation purposes and possible future optimizations,
+> which also silences the warning.
+> 
+> Signed-off-by: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+> ---
+> I am picking this up through the compiler-attributes tree
+> and putting it into -next along with the other cleanup
+> for -Wmissing-attributes (unless some other maintainer wants it).
+> 
+>   lib/crc32.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/lib/crc32.c b/lib/crc32.c
+> index 45b1d67a1767..4a20455d1f61 100644
+> --- a/lib/crc32.c
+> +++ b/lib/crc32.c
+> @@ -206,8 +206,8 @@ u32 __pure __weak __crc32c_le(u32 crc, unsigned char const *p, size_t len)
+>   EXPORT_SYMBOL(crc32_le);
+>   EXPORT_SYMBOL(__crc32c_le);
+>   
+> -u32 crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
+> -u32 __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
+> +u32 __pure crc32_le_base(u32, unsigned char const *, size_t) __alias(crc32_le);
+> +u32 __pure __crc32c_le_base(u32, unsigned char const *, size_t) __alias(__crc32c_le);
+>   
+>   /*
+>    * This multiplies the polynomials x and y modulo the given modulus.
+> 
 
-All applied.  Thanks.
--- 
-Email: Herbert Xu <herbert@gondor.apana.org.au>
-Home Page: http://gondor.apana.org.au/~herbert/
-PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+
+Tested-by: Laura Abbott <labbott@redhat.com>
