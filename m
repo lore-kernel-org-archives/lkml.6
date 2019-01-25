@@ -3,46 +3,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88B0AC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:05:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87794C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:06:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEEF2184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:05:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40FE4218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:06:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbfAYLFy (ORCPT
+        id S1728536AbfAYLGT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:05:54 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:38920 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfAYLFy (ORCPT
+        Fri, 25 Jan 2019 06:06:19 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40783 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726216AbfAYLGS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:05:54 -0500
-Received: by mail-lj1-f195.google.com with SMTP id t9-v6so8016070ljh.6;
-        Fri, 25 Jan 2019 03:05:51 -0800 (PST)
+        Fri, 25 Jan 2019 06:06:18 -0500
+Received: by mail-lj1-f196.google.com with SMTP id n18-v6so8018148lji.7;
+        Fri, 25 Jan 2019 03:06:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition:user-agent;
-        bh=eeAkvdjHz/IYMeZ/si32jYNxNyUBf3SoOkoV0GhbSwo=;
-        b=hn/An7pqzSo63a+3RnoriMmd3gl+YJc1YETSrkiFvdAqsTg7USa7o/L6hAu4osB/OQ
-         iWtXOzpRGqG7AqGHdnKGP8YLEOW4U+Aj1XkGqkKqdd8LB0stn1iT5KY3zq8M7sQXWzt3
-         r18Hlq8E008Bs/MuDRX4Ffqb1d/5iveX52BN+wXXWpiDz4skONWJEt64lTrO347YJnHo
-         WamiZAWV7hkV34wCC8HsM+UVHTelmVDrqDWclqiNOFUpVo9av55LOZtLoJU0TNUYPNPS
-         FHCRWtZKKVo/R90hu/3BhaszefdN2TDcdUSsPgqIxmtpogv601rl9HgMBkcEC83uVDtd
-         FugQ==
-X-Gm-Message-State: AJcUukeqL5mtncu4GJhsrdjVaYxJtp8zQsAvwcmSRuMWGOLlt39AfLLC
-        yWg04oiGloHF5H2vldv9nXo=
-X-Google-Smtp-Source: ALg8bN75jXpom7/txGiquCArVivjdMPTVAAvzNIpdgNwRItVRrnWmMtpx80fytIQM3oUI8379bg/Pw==
-X-Received: by 2002:a2e:93d7:: with SMTP id p23-v6mr8708878ljh.22.1548414350307;
-        Fri, 25 Jan 2019 03:05:50 -0800 (PST)
+        bh=KtGRLSlybk/ArwAYPv0BpoOW/gPFXT0VAT6IXkSvFIs=;
+        b=rXMbIHoQKOSQDWUFg2UEq8wPq/gQnXa+s0KnhO8bLP4+mut361o9lAtFr9O/qSNQk8
+         fUMF47fL9SkH+sIcJgJMN0yukimXWu43uEx7ZVAvIYG05K5/3lamR1Bq+oB0UTJzhxDS
+         X3731p4bzT0Xe48MkhU5Y3PdW0rCH57xtpdCcguaFdtHk4tsQhtahDdUxc+KzSWFVJJV
+         xYj9boc0cN1j2Uj8cb7E/fnT/aawhbHf0mbVPnpG3Lrg7m9YvU1252F2/C76hMfk0Cg6
+         MGW0eicDF8Tds6nzorG1cTDCondFAFGk5PWh98TwZs7eRtWO+Om9N+I45R2Ccj8e4j3O
+         wCxQ==
+X-Gm-Message-State: AJcUukcVMzb6sheBDaDjX1EQbWCUnpKxIxfb7OA2VTPP4WryPtRdMHSN
+        1BKQ8DoUgEYlv4xBSuQS6P0=
+X-Google-Smtp-Source: ALg8bN5JUHgctHC4NOEXrRv6rsjlhzvvwgVPLICeeZZjL6RJ+Lz/3hB+8zMaU6RsR9rO2Hlb2W4jFg==
+X-Received: by 2002:a2e:9059:: with SMTP id n25-v6mr8360825ljg.155.1548414373819;
+        Fri, 25 Jan 2019 03:06:13 -0800 (PST)
 Received: from localhost.localdomain ([213.255.186.46])
-        by smtp.gmail.com with ESMTPSA id w16-v6sm1489472ljw.11.2019.01.25.03.05.48
+        by smtp.gmail.com with ESMTPSA id d24-v6sm1435542ljg.2.2019.01.25.03.06.12
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 03:05:49 -0800 (PST)
-Date:   Fri, 25 Jan 2019 13:05:36 +0200
+        Fri, 25 Jan 2019 03:06:13 -0800 (PST)
+Date:   Fri, 25 Jan 2019 13:06:00 +0200
 From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
 Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
@@ -56,9 +56,9 @@ Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
         linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
         linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
         linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM bd70528
- RTC
-Message-ID: <20190125110536.GA29321@localhost.localdomain>
+Subject: [RFC PATCH v2 09/10] power: supply: Initial support for ROHM BD70528
+ PMIC charger block
+Message-ID: <20190125110600.GA29332@localhost.localdomain>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -68,509 +68,720 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Support RTC block in ROHM bd70528 power management IC. Support
-getting and setting the time and date as well as arming an alarm
-which can also be used to wake the PMIC from standby state.
-
-HW supports wake interrupt only for the next 24 hours (sec, minute
-and hour information only) so we limit also the alarm interrupt to
-this 24 hours for the sake of consistency.
+ROHM BD70528 PMIC includes battery charger block. Support charger
+staus queries and doing few basic settings like input current limit
+and charging current.
 
 Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/rtc/Kconfig       |   8 +
- drivers/rtc/Makefile      |   1 +
- drivers/rtc/rtc-bd70528.c | 451 ++++++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 460 insertions(+)
- create mode 100644 drivers/rtc/rtc-bd70528.c
+ drivers/power/supply/Kconfig           |   9 +
+ drivers/power/supply/Makefile          |   1 +
+ drivers/power/supply/bd70528-charger.c | 670 +++++++++++++++++++++++++++++++++
+ 3 files changed, 680 insertions(+)
+ create mode 100644 drivers/power/supply/bd70528-charger.c
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 225b0b8516f3..df6211cbd83f 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -487,6 +487,14 @@ config RTC_DRV_M41T80_WDT
- 	help
- 	  If you say Y here you will get support for the
- 	  watchdog timer in the ST M41T60 and M41T80 RTC chips series.
-+config RTC_DRV_BD70528
-+	tristate "ROHM BD70528 PMIC RTC"
-+	help
-+	  If you say Y here you will get support for the RTC
-+	  on ROHM BD70528 Power Management IC.
-+
-+	  This driver can also be built as a module. If so, the module
-+	  will be called rtc-bd70528.
+diff --git a/drivers/power/supply/Kconfig b/drivers/power/supply/Kconfig
+index e901b9879e7e..903c97a67bf0 100644
+--- a/drivers/power/supply/Kconfig
++++ b/drivers/power/supply/Kconfig
+@@ -660,4 +660,13 @@ config FUEL_GAUGE_SC27XX
+ 	 Say Y here to enable support for fuel gauge with SC27XX
+ 	 PMIC chips.
  
- config RTC_DRV_BQ32K
- 	tristate "TI BQ32000"
-diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
-index df022d820bee..740b13840913 100644
---- a/drivers/rtc/Makefile
-+++ b/drivers/rtc/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_RTC_DRV_ASM9260)	+= rtc-asm9260.o
- obj-$(CONFIG_RTC_DRV_AT91RM9200)+= rtc-at91rm9200.o
- obj-$(CONFIG_RTC_DRV_AT91SAM9)	+= rtc-at91sam9.o
- obj-$(CONFIG_RTC_DRV_AU1XXX)	+= rtc-au1xxx.o
-+obj-$(CONFIG_RTC_DRV_BD70528)	+= rtc-bd70528.o
- obj-$(CONFIG_RTC_DRV_BQ32K)	+= rtc-bq32k.o
- obj-$(CONFIG_RTC_DRV_BQ4802)	+= rtc-bq4802.o
- obj-$(CONFIG_RTC_DRV_BRCMSTB)	+= rtc-brcmstb-waketimer.o
-diff --git a/drivers/rtc/rtc-bd70528.c b/drivers/rtc/rtc-bd70528.c
++config CHARGER_BD70528
++	tristate "ROHM bd70528 charger driver"
++	depends on MFD_ROHM_BD70528
++	default n
++	help
++	 Say Y here to enable support for getting battery status
++	 information and altering charger configurations from charger
++	 block of the ROHM BD70528 Power Management IC.
++
+ endif # POWER_SUPPLY
+diff --git a/drivers/power/supply/Makefile b/drivers/power/supply/Makefile
+index b731c2a9b695..c60387b04bfa 100644
+--- a/drivers/power/supply/Makefile
++++ b/drivers/power/supply/Makefile
+@@ -87,3 +87,4 @@ obj-$(CONFIG_AXP288_CHARGER)	+= axp288_charger.o
+ obj-$(CONFIG_CHARGER_CROS_USBPD)	+= cros_usbpd-charger.o
+ obj-$(CONFIG_CHARGER_SC2731)	+= sc2731_charger.o
+ obj-$(CONFIG_FUEL_GAUGE_SC27XX)	+= sc27xx_fuel_gauge.o
++obj-$(CONFIG_CHARGER_BD70528)	+= bd70528-charger.o
+diff --git a/drivers/power/supply/bd70528-charger.c b/drivers/power/supply/bd70528-charger.c
 new file mode 100644
-index 000000000000..250fb218c784
+index 000000000000..ede8744bd6b1
 --- /dev/null
-+++ b/drivers/rtc/rtc-bd70528.c
-@@ -0,0 +1,451 @@
++++ b/drivers/power/supply/bd70528-charger.c
+@@ -0,0 +1,670 @@
 +// SPDX-License-Identifier: GPL-2.0-or-later
 +//
 +// Copyright (C) 2018 ROHM Semiconductors
 +//
-+// RTC driver for ROHM BD70528 PMIC
++// power-supply driver for ROHM BD70528 PMIC
 +
-+#include <linux/bcd.h>
++#include <linux/kernel.h>
++#include <linux/interrupt.h>
 +#include <linux/mfd/rohm-bd70528.h>
 +#include <linux/module.h>
-+#include <linux/of.h>
 +#include <linux/platform_device.h>
-+#include <linux/regmap.h>
-+#include <linux/rtc.h>
++#include <linux/power_supply.h>
++
++#define CHG_STAT_SUSPEND	0x0
++#define CHG_STAT_TRICKLE	0x1
++#define CHG_STAT_FAST		0x3
++#define CHG_STAT_TOPOFF		0xe
++#define CHG_STAT_DONE		0xf
++#define CHG_STAT_OTP_TRICKLE	0x10
++#define CHG_STAT_OTP_FAST	0x11
++#define CHG_STAT_OTP_DONE	0x12
++#define CHG_STAT_TSD_TRICKLE	0x20
++#define CHG_STAT_TSD_FAST	0x21
++#define CHG_STAT_TSD_TOPOFF	0x22
++#define CHG_STAT_BAT_ERR	0x7f
++
++static const char *bd70528_charger_model = "BD70528";
++static const char *bd70528_charger_manufacturer = "ROHM Semiconductors";
++
++#define BD_ERR_IRQ_HND(_name_, _wrn_)					\
++static irqreturn_t bd0528_##_name_##_interrupt(int irq, void *arg)	\
++{									\
++	struct power_supply *psy = (struct power_supply *)arg;		\
++									\
++	power_supply_changed(psy);					\
++	dev_err(&psy->dev, (_wrn_));					\
++									\
++	return IRQ_HANDLED;						\
++}
++
++#define BD_INFO_IRQ_HND(_name_, _wrn_)					\
++static irqreturn_t bd0528_##_name_##_interrupt(int irq, void *arg)	\
++{									\
++	struct power_supply *psy = (struct power_supply *)arg;		\
++									\
++	power_supply_changed(psy);					\
++	dev_dbg(&psy->dev, (_wrn_));					\
++									\
++	return IRQ_HANDLED;						\
++}
++
++#define BD_IRQ_HND(_name_) bd0528_##_name_##_interrupt
++
++BD_ERR_IRQ_HND(BAT_OV_DET, "Battery overvoltage detected\n");
++BD_ERR_IRQ_HND(DBAT_DET, "Dead battery detected\n");
++BD_ERR_IRQ_HND(COLD_DET, "Battery cold\n");
++BD_ERR_IRQ_HND(HOT_DET, "Battery hot\n");
++BD_ERR_IRQ_HND(CHG_TSD, "Charger thermal shutdown\n");
++BD_ERR_IRQ_HND(DCIN2_OV_DET, "DCIN2 overvoltage detected\n");
++
++BD_INFO_IRQ_HND(BAT_OV_RES, "Battery voltage back to normal\n");
++BD_INFO_IRQ_HND(COLD_RES, "Battery temperature back to normal\n");
++BD_INFO_IRQ_HND(HOT_RES, "Battery temperature back to normal\n");
++BD_INFO_IRQ_HND(BAT_RMV, "Battery removed\n");
++BD_INFO_IRQ_HND(BAT_DET, "Battery detected\n");
++BD_INFO_IRQ_HND(DCIN2_OV_RES, "DCIN2 voltage back to normal\n");
++BD_INFO_IRQ_HND(DCIN2_RMV, "DCIN2 removed\n");
++BD_INFO_IRQ_HND(DCIN2_DET, "DCIN2 detected\n");
++BD_INFO_IRQ_HND(DCIN1_RMV, "DCIN1 removed\n");
++BD_INFO_IRQ_HND(DCIN1_DET, "DCIN1 detected\n");
++
++struct irq_name_pair {
++	const char *n;
++	irqreturn_t (*h)(int irq, void *arg);
++};
++
++static int bd70528_get_irqs(struct platform_device *pdev,
++			    struct bd70528 *bd70528)
++{
++	int irq, i, ret;
++	unsigned int mask;
++	struct irq_name_pair bd70528_chg_irqs[] = {
++		{ .n = "bd70528-bat-ov-res", .h = BD_IRQ_HND(BAT_OV_RES) },
++		{ .n = "bd70528-bat-ov-det", .h = BD_IRQ_HND(BAT_OV_DET) },
++		{ .n = "bd70528-bat-dead", .h = BD_IRQ_HND(DBAT_DET) },
++		{ .n = "bd70528-bat-warmed", .h = BD_IRQ_HND(COLD_RES) },
++		{ .n = "bd70528-bat-cold", .h = BD_IRQ_HND(COLD_DET) },
++		{ .n = "bd70528-bat-cooled", .h = BD_IRQ_HND(HOT_RES) },
++		{ .n = "bd70528-bat-hot", .h = BD_IRQ_HND(HOT_DET) },
++		{ .n = "bd70528-chg-tshd", .h = BD_IRQ_HND(CHG_TSD) },
++		{ .n = "bd70528-bat-removed", .h = BD_IRQ_HND(BAT_RMV) },
++		{ .n = "bd70528-bat-detected", .h = BD_IRQ_HND(BAT_DET) },
++		{ .n = "bd70528-dcin2-ov-res", .h = BD_IRQ_HND(DCIN2_OV_RES) },
++		{ .n = "bd70528-dcin2-ov-det", .h = BD_IRQ_HND(DCIN2_OV_DET) },
++		{ .n = "bd70528-dcin2-removed", .h = BD_IRQ_HND(DCIN2_RMV) },
++		{ .n = "bd70528-dcin2-detected", .h = BD_IRQ_HND(DCIN2_DET) },
++		{ .n = "bd70528-dcin1-removed", .h = BD_IRQ_HND(DCIN1_RMV) },
++		{ .n = "bd70528-dcin1-detected", .h = BD_IRQ_HND(DCIN1_DET) },
++	};
++
++	for (i = 0; i < ARRAY_SIZE(bd70528_chg_irqs); i++) {
++		irq = platform_get_irq_byname(pdev, bd70528_chg_irqs[i].n);
++		if (irq < 0) {
++			dev_err(&pdev->dev, "Bad IRQ information for %s (%d)\n",
++				bd70528_chg_irqs[i].n, irq);
++			return irq;
++		}
++		ret = devm_request_threaded_irq(&pdev->dev, irq, NULL,
++						bd70528_chg_irqs[i].h,
++						IRQF_ONESHOT,
++						bd70528_chg_irqs[i].n, bd70528);
++
++		if (ret)
++			return ret;
++	}
++	/*
++	 * BD70528 irq controller is not touching the main mask register.
++	 * So enable the charger block interrupts at main level. We can just
++	 * leave them enabled as irq-controller should disable irqs
++	 * from sub-registers when IRQ is disabled or freed.
++	 */
++	mask = BD70528_REG_INT_BAT1_MASK | BD70528_REG_INT_BAT2_MASK;
++	ret = regmap_update_bits(bd70528->chip.regmap,
++				 BD70528_REG_INT_MAIN_MASK, mask, 0);
++	if (ret)
++		dev_err(&pdev->dev, "Failed to enable charger IRQs\n");
++
++	return ret;
++}
++
++static int bd70528_get_charger_status(struct bd70528 *bd70528, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_CHG_CURR_STAT, &v);
++	if (ret) {
++		dev_err(bd70528->chip.dev, "Charger state read failure %d\n",
++			ret);
++		return ret;
++	}
++
++	switch (v & BD70528_MASK_CHG_STAT) {
++	case CHG_STAT_SUSPEND:
++	/* Maybe we should check the CHG_TTRI_EN? */
++	case CHG_STAT_OTP_TRICKLE:
++	case CHG_STAT_OTP_FAST:
++	case CHG_STAT_OTP_DONE:
++	case CHG_STAT_TSD_TRICKLE:
++	case CHG_STAT_TSD_FAST:
++	case CHG_STAT_TSD_TOPOFF:
++	case CHG_STAT_BAT_ERR:
++		*val = POWER_SUPPLY_STATUS_NOT_CHARGING;
++		break;
++	case CHG_STAT_DONE:
++		*val = POWER_SUPPLY_STATUS_FULL;
++		break;
++	case CHG_STAT_TRICKLE:
++	case CHG_STAT_FAST:
++	case CHG_STAT_TOPOFF:
++		*val = POWER_SUPPLY_STATUS_CHARGING;
++		break;
++	default:
++		*val = POWER_SUPPLY_STATUS_UNKNOWN;
++		break;
++	}
++
++	return 0;
++}
++
++static int bd70528_get_charge_type(struct bd70528 *bd70528, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_CHG_CURR_STAT, &v);
++	if (ret) {
++		dev_err(bd70528->chip.dev, "Charger state read failure %d\n",
++			ret);
++		return ret;
++	}
++
++	switch (v & BD70528_MASK_CHG_STAT) {
++	case CHG_STAT_TRICKLE:
++		*val = POWER_SUPPLY_CHARGE_TYPE_TRICKLE;
++		break;
++	case CHG_STAT_FAST:
++	case CHG_STAT_TOPOFF:
++		*val = POWER_SUPPLY_CHARGE_TYPE_FAST;
++		break;
++	case CHG_STAT_DONE:
++	case CHG_STAT_SUSPEND:
++	/* Maybe we should check the CHG_TTRI_EN? */
++	case CHG_STAT_OTP_TRICKLE:
++	case CHG_STAT_OTP_FAST:
++	case CHG_STAT_OTP_DONE:
++	case CHG_STAT_TSD_TRICKLE:
++	case CHG_STAT_TSD_FAST:
++	case CHG_STAT_TSD_TOPOFF:
++	case CHG_STAT_BAT_ERR:
++		*val = POWER_SUPPLY_CHARGE_TYPE_NONE;
++		break;
++	default:
++		*val = POWER_SUPPLY_CHARGE_TYPE_UNKNOWN;
++		break;
++	}
++
++	return 0;
++}
++
++static int bd70528_get_battery_health(struct bd70528 *bd70528, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_CHG_BAT_STAT, &v);
++	if (ret) {
++		dev_err(bd70528->chip.dev, "Battery state read failure %d\n",
++			ret);
++		return ret;
++	}
++	/* No battery? */
++	if (!(v & BD70528_MASK_CHG_BAT_DETECT))
++		*val = POWER_SUPPLY_HEALTH_DEAD;
++	else if (v & BD70528_MASK_CHG_BAT_OVERVOLT)
++		*val = POWER_SUPPLY_HEALTH_OVERVOLTAGE;
++	else if (v & BD70528_MASK_CHG_BAT_TIMER)
++		*val = POWER_SUPPLY_HEALTH_SAFETY_TIMER_EXPIRE;
++	else
++		*val = POWER_SUPPLY_HEALTH_GOOD;
++
++	return 0;
++}
++
++static int bd70528_get_online(struct bd70528 *bd70528, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_CHG_IN_STAT, &v);
++	if (ret) {
++		dev_err(bd70528->chip.dev, "DC1 IN state read failure %d\n",
++			ret);
++		return ret;
++	}
++
++	*val = (v & BD70528_MASK_CHG_DCIN1_UVLO) ? 1 : 0;
++
++	return 0;
++}
++
++static int bd70528_get_present(struct bd70528 *bd70528, int *val)
++{
++	int ret;
++	unsigned int v;
++
++	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_CHG_BAT_STAT, &v);
++	if (ret) {
++		dev_err(bd70528->chip.dev, "Battery state read failure %d\n",
++			ret);
++		return ret;
++	}
++
++	*val = (v & BD70528_MASK_CHG_BAT_DETECT) ? 1 : 0;
++
++	return 0;
++}
++
++struct linear_range {
++	int min;
++	int step;
++	int vals;
++	int low_sel;
++};
++
++struct linear_range current_limit_ranges[] = {
++	{
++		.min = 5,
++		.step = 1,
++		.vals = 36,
++		.low_sel = 0,
++	},
++	{
++		.min = 40,
++		.step = 5,
++		.vals = 5,
++		.low_sel = 0x23,
++	},
++	{
++		.min = 60,
++		.step = 20,
++		.vals = 8,
++		.low_sel = 0x27,
++	},
++	{
++		.min = 200,
++		.step = 50,
++		.vals = 7,
++		.low_sel = 0x2e,
++	}
++};
 +
 +/*
-+ * We read regs RTC_SEC => RTC_YEAR
-+ * this struct is ordered according to chip registers.
-+ * Keep it u8 only to avoid padding issues.
++ * BD70528 would support setting and getting own charge current/
++ * voltage for low temperatures. The driver currently only reads
++ * the charge current at room temperature. We do set both though.
 + */
-+struct bd70528_rtc_day {
-+	u8 sec;
-+	u8 min;
-+	u8 hour;
++struct linear_range warm_charge_curr[] = {
++	{
++		.min = 10,
++		.step = 10,
++		.vals = 20,
++		.low_sel = 0,
++	},
++	{
++		.min = 200,
++		.step = 25,
++		.vals = 13,
++		.low_sel = 0x13,
++	},
 +};
 +
-+struct bd70528_rtc_data {
-+	struct bd70528_rtc_day time;
-+	u8 week;
-+	u8 day;
-+	u8 month;
-+	u8 year;
-+};
++/*
++ * Cold charge current selectors are identical to warm charge current
++ * selectors. The difference is that only smaller currents are available
++ * at cold charge range.
++ */
++#define MAX_COLD_CHG_CURR_SEL 0x15
++#define MAX_WARM_CHG_CURR_SEL 0x1f
++#define MIN_CHG_CURR_SEL 0x0
 +
-+struct bd70528_rtc_wake {
-+	struct bd70528_rtc_day time;
-+	u8 ctrl;
-+};
-+
-+struct bd70528_rtc_alm {
-+	struct bd70528_rtc_data data;
-+	u8 alm_mask;
-+	u8 alm_repeat;
-+};
-+
-+struct bd70528_rtc {
-+	struct bd70528 *mfd;
-+	struct device *dev;
-+};
-+
-+static int bd70528_set_wake(struct bd70528 *bd70528,
-+			    int enable, int *old_state)
++static int find_value_for_selector_low(struct linear_range *r, int selectors,
++				       unsigned int sel, unsigned int *val)
 +{
-+	int ret;
-+	unsigned int ctrl_reg;
++	int i;
 +
-+	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WAKE_EN, &ctrl_reg);
-+	if (ret)
-+		return ret;
-+
-+	if (old_state) {
-+		if (ctrl_reg & BD70528_MASK_WAKE_EN)
-+			*old_state |= BD70528_WAKE_STATE_BIT;
-+		else
-+			*old_state &= ~BD70528_WAKE_STATE_BIT;
-+
-+		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
++	for (i = 0; i < selectors; i++) {
++		if (r[i].low_sel <= sel && r[i].low_sel + r[i].vals >= sel) {
++			*val = r[i].min + (sel - r[i].low_sel) * r[i].step;
 +			return 0;
++		}
++
 +	}
-+
-+	if (enable)
-+		ctrl_reg |= BD70528_MASK_WAKE_EN;
-+	else
-+		ctrl_reg &= ~BD70528_MASK_WAKE_EN;
-+
-+	return regmap_write(bd70528->chip.regmap, BD70528_REG_WAKE_EN,
-+			    ctrl_reg);
++	return -EINVAL;
 +}
 +
-+static int bd70528_set_elapsed_tmr(struct bd70528 *bd70528,
-+				   int enable, int *old_state)
++/*
++ * For BD70528 voltage/current limits we happily accept any value which
++ * belongs the range. We could check if value matching the selector is
++ * desired by computing the range min + (sel - sel_low) * range step - but
++ * I guess it is enough if we use voltage/current which is closest (below)
++ * the requested?
++ */
++static int find_selector_for_value_low(struct linear_range *r, int selectors,
++				       unsigned int val, unsigned int *sel,
++				       bool *found)
 +{
-+	int ret;
-+	unsigned int ctrl_reg;
++	int i;
++	int ret = -EINVAL;
 +
-+	/*
-+	 * TBD
-+	 * What is the purpose of elapsed timer ?
-+	 * Is the timeout registers counting down, or is the disable - re-enable
-+	 * going to restart the elapsed-time counting? If counting is restarted
-+	 * the timeout should be decreased by the amount of time that has
-+	 * elapsed since starting the timer. Maybe we should store the monotonic
-+	 * clock value when timer is started so that if RTC is set while timer
-+	 * is armed we could do the compensation. This is a hack if RTC/system
-+	 * clk are drifting. OTOH, RTC controlled via I2C is in any case
-+	 * inaccurate...
-+	 */
-+	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_ELAPSED_TIMER_EN,
-+			  &ctrl_reg);
-+	if (ret)
-+		return ret;
-+
-+	if (old_state) {
-+		if (ctrl_reg & BD70528_MASK_ELAPSED_TIMER_EN)
-+			*old_state |= BD70528_ELAPSED_STATE_BIT;
-+		else
-+			*old_state &= ~BD70528_ELAPSED_STATE_BIT;
-+
-+		if ((!enable) == (!(*old_state & BD70528_ELAPSED_STATE_BIT)))
-+			return 0;
++	*found = false;
++	for (i = 0; i < selectors; i++) {
++		if (r[i].min <= val) {
++			if (r[i].min + r[i].step * r[i].vals >= val) {
++				*found = true;
++				*sel = r[i].low_sel + (val - r[i].min) /
++				       r[i].step;
++				ret = 0;
++				break;
++			}
++			/*
++			 * If the range max is smaller than requested
++			 * we can set the max supported value from range
++			 */
++			*sel = r[i].low_sel + r[i].vals;
++			ret = 0;
++		}
 +	}
-+
-+	if (enable)
-+		ctrl_reg |= BD70528_MASK_ELAPSED_TIMER_EN;
-+	else
-+		ctrl_reg &= ~BD70528_MASK_ELAPSED_TIMER_EN;
-+
-+	return regmap_write(bd70528->chip.regmap, BD70528_REG_ELAPSED_TIMER_EN,
-+			    ctrl_reg);
++	return ret;
 +}
 +
-+static int bd70528_set_rtc_based_timers(struct bd70528_rtc *r, int new_state,
-+							int *old_state)
++static int get_charge_current(struct bd70528 *bd70528, int *ma)
 +{
++	unsigned int sel;
 +	int ret;
 +
-+	ret = r->mfd->wdt_set(r->mfd, new_state & BD70528_WDT_STATE_BIT,
-+			       old_state);
++	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_CHG_CHG_CURR_WARM,
++			  &sel);
 +	if (ret) {
-+		dev_err(r->dev,
-+			"Failed to disable WDG for RTC setting (%d)\n", ret);
++		dev_err(bd70528->chip.dev,
++			"Charge current reading failed (%d)\n", ret);
 +		return ret;
 +	}
-+	ret = bd70528_set_elapsed_tmr(r->mfd,
-+				      new_state & BD70528_ELAPSED_STATE_BIT,
-+				      old_state);
++
++	sel &= BD70528_MASK_CHG_CHG_CURR;
++
++	ret = find_value_for_selector_low(&warm_charge_curr[0],
++					  ARRAY_SIZE(warm_charge_curr), sel,
++					  ma);
 +	if (ret) {
-+		dev_err(r->dev,
-+			"Failed to disable 'elapsed timer' for RTC setting\n");
-+		return ret;
-+	}
-+	ret = bd70528_set_wake(r->mfd, new_state & BD70528_WAKE_STATE_BIT,
-+			       old_state);
-+	if (ret) {
-+		dev_err(r->dev,
-+			"Failed to disable 'wake timer' for RTC setting\n");
-+		return ret;
++		dev_err(bd70528->chip.dev,
++			"Unknown charge current value 0x%x\n",
++			sel);
 +	}
 +
 +	return ret;
 +}
 +
-+static int bd70528_re_enable_rtc_based_timers(struct bd70528_rtc *r,
-+							int old_state)
++static int get_current_limit(struct bd70528 *bd70528, int *ma)
 +{
++	unsigned int sel;
 +	int ret;
 +
-+	ret = bd70528_set_rtc_based_timers(r, old_state, NULL);
-+	mutex_unlock(&r->mfd->rtc_timer_lock);
++	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_CHG_DCIN_ILIM,
++			  &sel);
 +
-+	return ret;
-+}
-+
-+static int bd70528_disable_rtc_based_timers(struct bd70528_rtc *r,
-+							int *old_state)
-+{
-+	mutex_lock(&r->mfd->rtc_timer_lock);
-+
-+	return bd70528_set_rtc_based_timers(r, 0, old_state);
-+}
-+
-+static inline void tmday2rtc(struct rtc_time *t, struct bd70528_rtc_day *d)
-+{
-+	d->sec &= ~BD70528_MASK_RTC_SEC;
-+	d->min &= ~BD70528_MASK_RTC_MINUTE;
-+	d->hour &= ~BD70528_MASK_RTC_HOUR;
-+	d->sec |= bin2bcd(t->tm_sec);
-+	d->min |= bin2bcd(t->tm_min);
-+	d->hour |= bin2bcd(t->tm_hour);
-+}
-+
-+static inline void tm2rtc(struct rtc_time *t, struct bd70528_rtc_data *r)
-+{
-+	r->day &= ~BD70528_MASK_RTC_DAY;
-+	r->week &= ~BD70528_MASK_RTC_WEEK;
-+	r->month &= ~BD70528_MASK_RTC_MONTH;
-+	/*
-+	 * PM and 24H bits are not used by Wake - thus we clear them
-+	 * here and not in tmday2rtc() which is also used by wake.
-+	 */
-+	r->time.hour &= ~(BD70528_MASK_RTC_HOUR_PM | BD70528_MASK_RTC_HOUR_24H);
-+
-+	tmday2rtc(t, &r->time);
-+	/*
-+	 * We do always set time in 24H mode.
-+	 */
-+	r->time.hour |= BD70528_MASK_RTC_HOUR_24H;
-+	r->day |= bin2bcd(t->tm_mday);
-+	r->week |= bin2bcd(t->tm_wday);
-+	r->month |= bin2bcd(t->tm_mon + 1);
-+	r->year = bin2bcd(t->tm_year-100);
-+}
-+
-+static inline void rtc2tm(struct bd70528_rtc_data *r, struct rtc_time *t)
-+{
-+	t->tm_sec = bcd2bin(r->time.sec & BD70528_MASK_RTC_SEC);
-+	t->tm_min = bcd2bin(r->time.min & BD70528_MASK_RTC_MINUTE);
-+	t->tm_hour = bcd2bin(r->time.hour & BD70528_MASK_RTC_HOUR);
-+	/*
-+	 * If RTC is in 12H mode, then bit BD70528_MASK_RTC_HOUR_PM
-+	 * is not BCD value but tells whether it is AM or PM
-+	 */
-+	if (!(r->time.hour & BD70528_MASK_RTC_HOUR_24H)) {
-+		t->tm_hour %= 12;
-+		if (r->time.hour & BD70528_MASK_RTC_HOUR_PM)
-+			t->tm_hour += 12;
-+	}
-+	t->tm_mday = bcd2bin(r->day & BD70528_MASK_RTC_DAY);
-+	t->tm_mon = bcd2bin(r->month & BD70528_MASK_RTC_MONTH) - 1;
-+	t->tm_year = 100 + bcd2bin(r->year & BD70528_MASK_RTC_YEAR);
-+	t->tm_wday = bcd2bin(r->week & BD70528_MASK_RTC_WEEK);
-+}
-+
-+static int bd70528_set_alarm(struct device *dev, struct rtc_wkalrm *a)
-+{
-+	struct bd70528_rtc_wake wake;
-+	struct bd70528_rtc_alm alm;
-+	int ret;
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+	struct bd70528 *bd70528 = r->mfd;
-+
-+	ret = regmap_bulk_read(bd70528->chip.regmap, BD70528_REG_RTC_WAKE_START,
-+			       &wake, sizeof(wake));
 +	if (ret) {
-+		dev_err(dev, "Failed to read wake regs\n");
++		dev_err(bd70528->chip.dev,
++			"Input current limit reading failed (%d)\n", ret);
 +		return ret;
 +	}
 +
-+	ret = regmap_bulk_read(bd70528->chip.regmap, BD70528_REG_RTC_ALM_START,
-+			       &alm, sizeof(alm));
++	sel &= BD70528_MASK_CHG_DCIN_ILIM;
++
++	ret = find_value_for_selector_low(&current_limit_ranges[0],
++					  ARRAY_SIZE(current_limit_ranges), sel,
++					  ma);
++
 +	if (ret) {
-+		dev_err(dev, "Failed to read alarm regs\n");
-+		return ret;
++		/* Unspecified values mean 500 mA */
++		*ma = 500;
 +	}
-+
-+	tm2rtc(&a->time, &alm.data);
-+	tmday2rtc(&a->time, &wake.time);
-+
-+	if (a->enabled) {
-+		alm.alm_mask &= ~BD70528_MASK_ALM_EN;
-+		wake.ctrl |= BD70528_MASK_WAKE_EN;
-+	} else {
-+		alm.alm_mask |= BD70528_MASK_ALM_EN;
-+		wake.ctrl &= ~BD70528_MASK_WAKE_EN;
-+	}
-+
-+	ret = regmap_bulk_write(bd70528->chip.regmap,
-+				BD70528_REG_RTC_WAKE_START, &wake,
-+				sizeof(wake));
-+	if (ret) {
-+		dev_err(dev, "Failed to set wake time\n");
-+		return ret;
-+	}
-+	ret = regmap_bulk_write(bd70528->chip.regmap, BD70528_REG_RTC_ALM_START,
-+				&alm, sizeof(alm));
-+	if (ret)
-+		dev_err(dev, "Failed to set alarm time\n");
-+
-+	return ret;
-+}
-+
-+static int bd70528_read_alarm(struct device *dev, struct rtc_wkalrm *a)
-+{
-+	struct bd70528_rtc_alm alm;
-+	int ret;
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+	struct bd70528 *bd70528 = r->mfd;
-+
-+	ret = regmap_bulk_read(bd70528->chip.regmap, BD70528_REG_RTC_ALM_START,
-+			  &alm, sizeof(alm));
-+	if (ret) {
-+		dev_err(dev, "Failed to read alarm regs\n");
-+		return ret;
-+	}
-+
-+	rtc2tm(&alm.data, &a->time);
-+	a->time.tm_mday = -1;
-+	a->time.tm_mon = -1;
-+	a->time.tm_year = -1;
-+	if (alm.alm_mask & BD70528_MASK_ALM_EN)
-+		a->enabled = 0;
-+	else
-+		a->enabled = 1;
-+
-+	a->pending = 0;
-+
 +	return 0;
 +}
 +
-+static int bd70528_set_time(struct device *dev, struct rtc_time *t)
-+{
-+	int ret, old_states;
-+	struct bd70528_rtc_data rtc_data;
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+	struct bd70528 *bd70528 = r->mfd;
-+
-+	ret = bd70528_disable_rtc_based_timers(r, &old_states);
-+
-+	ret = regmap_bulk_read(bd70528->chip.regmap,
-+			       BD70528_REG_RTC_START, &rtc_data,
-+			       sizeof(rtc_data));
-+
-+	tm2rtc(t, &rtc_data);
-+
-+	ret = regmap_bulk_write(bd70528->chip.regmap,
-+				BD70528_REG_RTC_START, &rtc_data,
-+				sizeof(rtc_data));
-+
-+	ret = bd70528_re_enable_rtc_based_timers(r, old_states);
-+
-+	return 0;
-+}
-+static int bd70528_get_time(struct device *dev, struct rtc_time *t)
-+{
-+	struct bd70528_rtc *r = dev_get_drvdata(dev);
-+	struct bd70528 *bd70528 = r->mfd;
-+	struct bd70528_rtc_data rtc_data;
-+	int ret;
-+
-+	/* read the RTC date and time registers all at once */
-+	ret = regmap_bulk_read(bd70528->chip.regmap,
-+			       BD70528_REG_RTC_START, &rtc_data,
-+			       sizeof(rtc_data));
-+	if (ret) {
-+		dev_err(dev, "Failed to read RTC time (err %d)\n", ret);
-+		return ret;
-+	}
-+
-+	rtc2tm(&rtc_data, t);
-+
-+	return 0;
-+}
-+
-+static const struct rtc_class_ops bd70528_rtc_ops = {
-+	.read_time	= bd70528_get_time,
-+	.set_time	= bd70528_set_time,
-+	.read_alarm	= bd70528_read_alarm,
-+	.set_alarm	= bd70528_set_alarm,
++static enum power_supply_property bd70528_charger_props[] = {
++	POWER_SUPPLY_PROP_STATUS,
++	POWER_SUPPLY_PROP_CHARGE_TYPE,
++	POWER_SUPPLY_PROP_HEALTH,
++	POWER_SUPPLY_PROP_PRESENT,
++	POWER_SUPPLY_PROP_ONLINE,
++	POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT,
++	POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT,
++	POWER_SUPPLY_PROP_MODEL_NAME,
++	POWER_SUPPLY_PROP_MANUFACTURER,
 +};
 +
-+static irqreturn_t alm_hndlr(int irq, void *data)
++static int bd70528_charger_get_property(struct power_supply *psy,
++					enum power_supply_property psp,
++					union power_supply_propval *val)
 +{
-+	struct rtc_device *rtc = data;
++	struct bd70528 *bd70528 = power_supply_get_drvdata(psy);
++	int ret = 0;
 +
-+	rtc_update_irq(rtc, 1, RTC_IRQF | RTC_AF | RTC_PF);
-+	return IRQ_HANDLED;
++	switch (psp) {
++	case POWER_SUPPLY_PROP_STATUS:
++		return bd70528_get_charger_status(bd70528, &val->intval);
++	case POWER_SUPPLY_PROP_CHARGE_TYPE:
++		return bd70528_get_charge_type(bd70528, &val->intval);
++	case POWER_SUPPLY_PROP_HEALTH:
++		return bd70528_get_battery_health(bd70528, &val->intval);
++	case POWER_SUPPLY_PROP_PRESENT:
++		return bd70528_get_present(bd70528, &val->intval);
++	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
++		ret = get_current_limit(bd70528, &val->intval);
++		val->intval *= 1000;
++		return ret;
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
++		ret = get_charge_current(bd70528, &val->intval);
++		val->intval *= 1000;
++		return ret;
++	case POWER_SUPPLY_PROP_ONLINE:
++		return bd70528_get_online(bd70528, &val->intval);
++	case POWER_SUPPLY_PROP_MODEL_NAME:
++		val->strval = bd70528_charger_model;
++		return 0;
++	case POWER_SUPPLY_PROP_MANUFACTURER:
++		val->strval = bd70528_charger_manufacturer;
++		return 0;
++	default:
++		break;
++	}
++
++	return -EINVAL;
 +}
 +
-+static int bd70528_probe(struct platform_device *pdev)
++static int bd70528_prop_is_writable(struct power_supply *psy,
++				    enum power_supply_property psp)
 +{
-+	struct bd70528_rtc *bd_rtc;
-+	struct bd70528 *mfd;
-+	int ret;
-+	struct rtc_device *rtc;
-+	int irq;
-+	unsigned int hr;
++	switch (psp) {
++	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
++		return 1;
++	default:
++		break;
++	}
++	return 0;
++}
 +
-+	mfd = dev_get_drvdata(pdev->dev.parent);
-+	if (!mfd) {
++
++
++static int set_charge_current(struct bd70528 *bd70528, int ma)
++{
++	unsigned int reg;
++	int ret = 0, tmpret;
++	bool found;
++
++	if (ma > 500) {
++		dev_warn(bd70528->chip.dev,
++			 "Requested charge current %u exceed maximum (500mA)\n",
++			 ma);
++		reg = MAX_WARM_CHG_CURR_SEL;
++		goto set;
++	}
++	if (ma < 10) {
++		dev_err(bd70528->chip.dev,
++			"Requested charge current %u smaller than min (10mA)\n",
++			 ma);
++		reg = MIN_CHG_CURR_SEL;
++		ret = -EINVAL;
++		goto set;
++	}
++
++	ret = find_selector_for_value_low(&warm_charge_curr[0],
++					  ARRAY_SIZE(warm_charge_curr), ma,
++					  &reg, &found);
++
++	if (!found) {
++		/* There was a gap in supported values and we hit it */
++		dev_warn(bd70528->chip.dev,
++			 "Unsupported charge current %u mA\n", ma);
++	}
++set:
++
++	tmpret = regmap_update_bits(bd70528->chip.regmap,
++				    BD70528_REG_CHG_CHG_CURR_WARM,
++				    BD70528_MASK_CHG_CHG_CURR, reg);
++	if (tmpret)
++		dev_err(bd70528->chip.dev,
++			"Charge current write failure (%d)\n", tmpret);
++
++	if (reg > MAX_COLD_CHG_CURR_SEL)
++		reg = MAX_COLD_CHG_CURR_SEL;
++
++	if (!tmpret)
++		tmpret = regmap_update_bits(bd70528->chip.regmap,
++					    BD70528_REG_CHG_CHG_CURR_COLD,
++					    BD70528_MASK_CHG_CHG_CURR, reg);
++
++	if (!ret)
++		ret = tmpret;
++
++	return ret;
++}
++
++#define MAX_CURR_LIMIT_SEL 0x34
++#define MIN_CURR_LIMIT_SEL 0x0
++
++static int set_current_limit(struct bd70528 *bd70528, int ma)
++{
++	unsigned int reg;
++	int ret = 0, tmpret;
++	bool found;
++
++	if (ma > 500) {
++		dev_warn(bd70528->chip.dev,
++			 "Requested current limit %u exceed maximum (500mA)\n",
++			 ma);
++		reg = MAX_CURR_LIMIT_SEL;
++		goto set;
++	}
++	if (ma < 5) {
++		dev_err(bd70528->chip.dev,
++			"Requested current limit %u smaller than min (5mA)\n",
++			ma);
++		reg = MIN_CURR_LIMIT_SEL;
++		ret = -EINVAL;
++		goto set;
++	}
++
++	ret = find_selector_for_value_low(&current_limit_ranges[0],
++					  ARRAY_SIZE(current_limit_ranges), ma,
++					  &reg, &found);
++	if (!found) {
++		/* There was a gap in supported values and we hit it ?*/
++		dev_warn(bd70528->chip.dev, "Unsupported current limit %umA\n",
++			 ma);
++	}
++
++set:
++	tmpret = regmap_update_bits(bd70528->chip.regmap,
++				    BD70528_REG_CHG_DCIN_ILIM,
++				    BD70528_MASK_CHG_DCIN_ILIM, reg);
++
++	if (!ret)
++		ret = tmpret;
++
++	return ret;
++}
++
++static int bd70528_charger_set_property(struct power_supply *psy,
++					enum power_supply_property psp,
++					const union power_supply_propval *val)
++{
++	struct bd70528 *bd70528 = power_supply_get_drvdata(psy);
++
++	switch (psp) {
++	case POWER_SUPPLY_PROP_INPUT_CURRENT_LIMIT:
++		return set_current_limit(bd70528, val->intval / 1000);
++	case POWER_SUPPLY_PROP_CONSTANT_CHARGE_CURRENT:
++		return set_charge_current(bd70528, val->intval / 1000);
++	default:
++		break;
++	}
++	return -EINVAL;
++}
++
++static const struct power_supply_desc bd70528_charger_desc = {
++	.name		= "bd70528-charger",
++	.type		= POWER_SUPPLY_TYPE_BATTERY,
++	.properties	= bd70528_charger_props,
++	.num_properties	= ARRAY_SIZE(bd70528_charger_props),
++	.get_property	= bd70528_charger_get_property,
++	.set_property	= bd70528_charger_set_property,
++	.property_is_writeable	= bd70528_prop_is_writable,
++};
++
++static int bd70528_power_probe(struct platform_device *pdev)
++{
++	struct bd70528 *bd70528, *tmp;
++	struct power_supply *psy;
++	struct power_supply_config cfg = {};
++
++	tmp = dev_get_drvdata(pdev->dev.parent);
++	if (!tmp) {
 +		dev_err(&pdev->dev, "No MFD driver data\n");
 +		return -EINVAL;
 +	}
-+	bd_rtc = devm_kzalloc(&pdev->dev, sizeof(*bd_rtc), GFP_KERNEL);
-+	if (!bd_rtc)
++	bd70528 = devm_kzalloc(&pdev->dev, sizeof(*bd70528), GFP_KERNEL);
++	if (!bd70528)
 +		return -ENOMEM;
++	*bd70528 = *tmp;
++	bd70528->chip.dev = &pdev->dev;
 +
-+	bd_rtc->mfd = mfd;
-+	bd_rtc->dev = &pdev->dev;
++	platform_set_drvdata(pdev, bd70528);
++	cfg.drv_data = bd70528;
++	cfg.of_node = pdev->dev.parent->of_node;
 +
-+	irq = platform_get_irq_byname(pdev, "bd70528-rtc-alm");
-+
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "Failed to get irq\n");
-+		return irq;
++	psy = devm_power_supply_register(&pdev->dev, &bd70528_charger_desc,
++					 &cfg);
++	if (IS_ERR(psy)) {
++		dev_err(&pdev->dev, "failed: power supply register\n");
++		return PTR_ERR(psy);
 +	}
 +
-+	platform_set_drvdata(pdev, bd_rtc);
-+
-+	ret = regmap_read(mfd->chip.regmap, BD70528_REG_RTC_HOUR, &hr);
-+
-+	if (ret) {
-+		dev_err(&pdev->dev, "Failed to reag RTC clock\n");
-+		return ret;
-+	}
-+
-+	if (!(hr & BD70528_MASK_RTC_HOUR_24H)) {
-+		struct rtc_time t;
-+
-+		ret = bd70528_get_time(&pdev->dev, &t);
-+		if (ret)
-+			return ret;
-+
-+		ret = bd70528_set_time(&pdev->dev, &t);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	if (ret) {
-+		dev_err(&pdev->dev, "Setting 24H clock for RTC failed\n");
-+		return ret;
-+	}
-+
-+	device_set_wakeup_capable(&pdev->dev, true);
-+	device_wakeup_enable(&pdev->dev);
-+	rtc = devm_rtc_device_register(&pdev->dev, "bd70528-rtc",
-+				       &bd70528_rtc_ops, THIS_MODULE);
-+	if (IS_ERR(rtc)) {
-+		dev_err(&pdev->dev, "Registering RTC failed\n");
-+		return PTR_ERR(rtc);
-+	}
-+
-+	ret = devm_request_threaded_irq(&pdev->dev, irq, NULL, &alm_hndlr,
-+					IRQF_ONESHOT, "bd70528-rtc", rtc);
-+
-+	/*
-+	 *  BD70528 irq controller is not touching the main mask register.
-+	 *  So enable the RTC block interrupts at main level. We can just
-+	 *  leave them enabled as irq-controller should disable irqs
-+	 *  from sub-registers when IRQ is disabled or freed.
-+	 */
-+	ret = regmap_update_bits(mfd->chip.regmap,
-+				 BD70528_REG_INT_MAIN_MASK,
-+				 BD70528_INT_RTC_MASK, 0);
-+
-+	if (ret)
-+		dev_err(&pdev->dev, "Failed to enable RTC interrupts\n");
-+
-+	return ret;
++	return bd70528_get_irqs(pdev, bd70528);
 +}
 +
-+static struct platform_driver bd70528_rtc = {
++static struct platform_driver bd70528_power = {
 +	.driver = {
-+		.name = "bd70528-rtc"
++		.name = "bd70528-power"
 +	},
-+	.probe = bd70528_probe,
++	.probe = bd70528_power_probe,
 +};
 +
-+module_platform_driver(bd70528_rtc);
++module_platform_driver(bd70528_power);
 +
 +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
-+MODULE_DESCRIPTION("BD70528 RTC driver");
++MODULE_DESCRIPTION("BD70528 power-supply driver");
 +MODULE_LICENSE("GPL");
 -- 
 2.14.3
