@@ -2,127 +2,169 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCE7C282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:10:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15574C282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:13:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A93E6218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:10:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD7B1217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:13:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="nX48F4Nk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727461AbfAYAK3 (ORCPT
+        id S1728451AbfAYANC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 19:10:29 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:50566 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726015AbfAYAK3 (ORCPT
+        Thu, 24 Jan 2019 19:13:02 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:32815 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727743AbfAYANB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 19:10:29 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0P04CDQ050912
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 19:10:28 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7mk5gkcd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 19:10:27 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <tyreld@linux.vnet.ibm.com>;
-        Fri, 25 Jan 2019 00:10:26 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 25 Jan 2019 00:10:23 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0P0AMAc13828324
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 25 Jan 2019 00:10:22 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 495F6AE060;
-        Fri, 25 Jan 2019 00:10:22 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 468FBAE063;
-        Fri, 25 Jan 2019 00:10:21 +0000 (GMT)
-Received: from oc6857751186.ibm.com (unknown [9.85.148.194])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Jan 2019 00:10:21 +0000 (GMT)
-Subject: Re: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific
- drc info
-To:     Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Juliet Kim <minkim@us.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
- <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com>
-From:   Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-Date:   Thu, 24 Jan 2019 16:10:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 24 Jan 2019 19:13:01 -0500
+Received: by mail-pl1-f196.google.com with SMTP id z23so3675622plo.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 16:13:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=B2qbOwfaABSqBpeERv2H4hCD0lY4pVpTYgc+0fjiL7s=;
+        b=nX48F4NkkfAdPI+Jh1GDRQ/ZLXRwonHLYlRA6rT+ZqK50TIcoKhNL1d84LG5smC4Au
+         2WRLewodvMWdCw6U9fuO+EHtXB9brR6+dYfvrc7lSTI2qVd/JMaRXfHYBFIXPyV1nFtU
+         m5xP/C0K7vT4qoQEJG4/KwAnPzt+ycQscRevQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=B2qbOwfaABSqBpeERv2H4hCD0lY4pVpTYgc+0fjiL7s=;
+        b=Vs8cwrrPB5VvaqP2npJFiSz/7gKL+gMJ3Va6BqpXIpYXEwBM7PuFcC6AzLqhJBMZtn
+         CN0kURYkq82egdpILT+/hjRY1H7CcN5+osz0zJBrLnd06iXoM8moCua2PTkkOBxBtDVP
+         2mRGm7T+kLbeaflsL1lgnUopMHXR4X/Z7s829zZ+aixUbiT7t1ufAeSup3Xp7cU2GHrn
+         InAv0bxsAUov7SgbpqmMAK1xwNrNBeMi84yk8SBRfna7FqD/12sFkovwvcHvDXEBoJMi
+         cge9FLow1Fsl723uwrwIDCxO8qp4rS7zoKRs+OW4FfMHl4VImpVyUs0Uc9l+JXZyROoB
+         3k9g==
+X-Gm-Message-State: AJcUukex1bwWFbrH4/9nrHyrMYa+nMrp4++Gr/ur+jn8sAGHAaybNwGi
+        ECACv0744k2KPLflSRkeYDusrQ==
+X-Google-Smtp-Source: ALg8bN7d3d+1eD3qzuGZ+x5YCQncngun3uHDkFjWHaIRMdyKU/t8VsGIXFsRqI97RnxvBd7V5GklbA==
+X-Received: by 2002:a17:902:780c:: with SMTP id p12mr8452972pll.197.1548375181020;
+        Thu, 24 Jan 2019 16:13:01 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id a4sm24702452pgv.70.2019.01.24.16.13.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 16:13:00 -0800 (PST)
+Date:   Thu, 24 Jan 2019 16:12:59 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 2/3] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+Message-ID: <20190125001259.GB81583@google.com>
+References: <20190124120808.8275-1-bgodavar@codeaurora.org>
+ <20190124120808.8275-3-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-In-Reply-To: <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012500-2213-0000-0000-000003444F7A
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010471; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01151309; UDB=6.00600056; IPR=6.00931649;
- MB=3.00025277; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-25 00:10:24
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012500-2214-0000-0000-00005D1A86A4
-Message-Id: <05aba638-f683-e7d5-ac69-053f24e3c49d@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-24_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=891 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901250000
+Content-Disposition: inline
+In-Reply-To: <20190124120808.8275-3-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/14/2018 12:50 PM, Michael Bringmann wrote:
-> Define interface to acquire arch-specific drc info to match against
-> hotpluggable devices.  The current implementation exposes several
-> pseries-specific dynamic memory properties in generic kernel code.
-> This patch set provides an interface to pull that code out of the
-> generic kernel.
+Hi Balakrishna,
+
+On Thu, Jan 24, 2019 at 05:38:07PM +0530, Balakrishna Godavarthi wrote:
+> This patch will help to stop frame reassembly errors while changing
+> the baudrate. This is because host send a change baudrate request
+> command to the chip with 115200 bps, Whereas chip will change their
+> UART clocks to the enable for new baudrate and sends the response
+> for the change request command with newer baudrate, On host side
+> we are still operating in 115200 bps which results of reading garbage
+> data. Here we are pulling RTS line, so that chip we will wait to send data
+> to host until host change its baudrate.
 > 
-> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
 > ---
->  include/linux/topology.h |    9 +++++++++
->  1 file changed, 9 insertions(+)
+> Changes in v9:
+>  * disabled flow control while setting the baudrate of HOST and chip.
+> ---
+>  drivers/bluetooth/hci_qca.c | 24 +++++++++++++-----------
+>  1 file changed, 13 insertions(+), 11 deletions(-)
 > 
-> diff --git a/include/linux/topology.h b/include/linux/topology.h
-> index cb0775e..df97f5f 100644
-> --- a/include/linux/topology.h
-> +++ b/include/linux/topology.h
-> @@ -44,6 +44,15 @@
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index c08f4d105e73..6b5bcd44e24c 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -964,7 +964,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+>  	struct qca_data *qca = hu->priv;
+>  	struct sk_buff *skb;
+> -	struct qca_serdev *qcadev;
+>  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
 >  
->  int arch_update_cpu_topology(void);
-
-On another note a kern doc comment for this function would also be nice.
-
--Tyrel
-
+>  	if (baudrate > QCA_BAUDRATE_3200000)
+> @@ -978,13 +977,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>  		return -ENOMEM;
+>  	}
 >  
-> +int arch_find_drc_match(struct device_node *dn,
-> +			bool (*usercb)(struct device_node *dn,
-> +				u32 drc_index, char *drc_name,
-> +				char *drc_type, u32 drc_power_domain,
-> +				void *data),
-> +			char *opt_drc_type, char *opt_drc_name,
-> +			bool match_drc_index, bool ck_php_type,
-> +			void *data);
+> -	/* Disabling hardware flow control is mandatory while
+> -	 * sending change baudrate request to wcn3990 SoC.
+> -	 */
+> -	qcadev = serdev_device_get_drvdata(hu->serdev);
+> -	if (qcadev->btsoc_type == QCA_WCN3990)
+> -		hci_uart_set_flow_control(hu, true);
+> -
+>  	/* Assign commands to change baudrate and packet type. */
+>  	skb_put_data(skb, cmd, sizeof(cmd));
+>  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+> @@ -1000,9 +992,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, uint8_t baudrate)
+>  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+>  	set_current_state(TASK_RUNNING);
+>  
+> -	if (qcadev->btsoc_type == QCA_WCN3990)
+> -		hci_uart_set_flow_control(hu, false);
+> -
+>  	return 0;
+>  }
+>  
+> @@ -1089,6 +1078,7 @@ static int qca_check_speeds(struct hci_uart *hu)
+>  static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  {
+>  	unsigned int speed, qca_baudrate;
+> +	struct qca_serdev *qcadev;
+>  	int ret;
+>  
+>  	if (speed_type == QCA_INIT_SPEED) {
+> @@ -1100,6 +1090,15 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
+>  		if (!speed)
+>  			return 0;
+>  
+> +		/* Deassert RTS while changing the baudrate of chip and host.
+> +		 * This will prevent chip from transmitting its response with
+> +		 * the new baudrate while the host port is still operating at
+> +		 * the old speed.
+> +		 */
+
+It is not necessarily evident which action deasserts RTS, I suggest to
+rephrase it to something like:
+
+"Disable flow control for wcn3990 to deassert RTS while ... "
+
+> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+> +		if (qcadev->btsoc_type == QCA_WCN3990)
+> +			hci_uart_set_flow_control(hu, true);
 > +
->  /* Conform to ACPI 2.0 SLIT distance definitions */
->  #define LOCAL_DISTANCE		10
->  #define REMOTE_DISTANCE		20
-> 
+>  		qca_baudrate = qca_get_baudrate_value(speed);
+>  		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
+>  		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
 
+flow control should be re-enabled in the error path.
+
+Cheers
+
+Matthias
