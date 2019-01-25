@@ -2,357 +2,386 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47F51C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:37:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F2DC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:39:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E519D218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:37:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548430632;
-	bh=WTVDi/PB3xLNt7l/YZyaVEZXiBx0YrQ/sGrZGmRvf10=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=V38quHDX9NbUGuSrljneP/hw8ejOhp/MylFwQO4YfQULVfdK6PbtKOEhdc+mPS9o6
-	 eXuptDubKaCzOPEAXc/Tj2HfBgfga95r5wvf9vgP8coJmZHn06XKvKGiCOkghazoKT
-	 AVbFWb2OZ9fn9Rx4NBk926Y5SAt0zZhyJCpEVCrQ=
+	by mail.kernel.org (Postfix) with ESMTP id 20706218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:39:22 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfAYPhK (ORCPT
+        id S1726921AbfAYPjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:37:10 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46748 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726216AbfAYPhJ (ORCPT
+        Fri, 25 Jan 2019 10:39:20 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:49116 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726238AbfAYPjU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:37:09 -0500
-Received: by mail-oi1-f196.google.com with SMTP id x202so7915969oif.13;
-        Fri, 25 Jan 2019 07:37:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=piC1pI0n8RM3iCIPW9v6F3PrYho09Mz7hNs7RwQczIE=;
-        b=q99t1h+zKY1nLNAor9bM87kiUpWwcsEk7VctVdFKQkBYi1GbAAVCznel/PLdokD6jA
-         9OXY2lKPYc4lbiHTe4l78bumgYQi2DU+LVjbfF7TLELX6DSk/u4NZAJ8ayxmmk4SiB8w
-         cdHSojQORnNOCofrirGEI45vLbzImd22H3ib3iYswfsAI/TahvAZdd6yYdb1bg2CBLNn
-         /JPL86MrXNp/PlgAO/asq9abwfEElNMWypT5QtJ/PW9htp8G3ADsN5HNQy4OiQQie14D
-         krHuYcdvE8LhFj2TXhrJhC72NWt8SNlRUdmDz64UPYOoHEvgTwGjtPFrHGUH8oqPLNww
-         2YlA==
-X-Gm-Message-State: AHQUAuZiKeOfOp69rVJgKop9FN8rgRbKIUihwntQNDlGHKaBPyN6zhjc
-        Xq3MNWc0W1/kJVV7PcM/tysJU30=
-X-Google-Smtp-Source: AHgI3IYlSgGfezxBYGtHvUUrU/M3kgMKZL7QeXPHDCCd00zmQGJVDyXUAoao5HXcxq2ENg05xgXafA==
-X-Received: by 2002:aca:6995:: with SMTP id e143mr1542305oic.283.1548430628027;
-        Fri, 25 Jan 2019 07:37:08 -0800 (PST)
-Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
-        by smtp.googlemail.com with ESMTPSA id w5sm1259009oif.48.2019.01.25.07.37.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 07:37:07 -0800 (PST)
-From:   Rob Herring <robh@kernel.org>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: [PATCH 1/2] regulator: mc13xxx: Use lowercase regulator names to match the DT
-Date:   Fri, 25 Jan 2019 09:37:04 -0600
-Message-Id: <20190125153705.29921-1-robh@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        Fri, 25 Jan 2019 10:39:20 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id ED6F1634C7B;
+        Fri, 25 Jan 2019 17:38:42 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gn3Z5-0001Uk-W7; Fri, 25 Jan 2019 17:38:44 +0200
+Date:   Fri, 25 Jan 2019 17:38:43 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     mchehab@kernel.org, perex@perex.cz, tiwai@suse.com,
+        hverkuil@xs4all.nl, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v10 1/4] media: Media Device Allocator API
+Message-ID: <20190125153843.onbq7uiwpjp3b2y7@valkosipuli.retiisi.org.uk>
+References: <cover.1548360791.git.shuah@kernel.org>
+ <df3aae79629e5c0ab5a57dfaf5e2d815a134cd2d.1548360791.git.shuah@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df3aae79629e5c0ab5a57dfaf5e2d815a134cd2d.1548360791.git.shuah@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since c32569e358ad ("regulator: Use of_node_name_eq for node name
-comparisons") Vivien reported the mc13892-regulator complaining about
-not being able to find regulators.
+Hi Shuah,
 
-This is because prior to that commit we used of_node_cmp() to compare
-the regulator array passed from mc13892_regulators down to
-mc13xxx_parse_regulators_dt() and they are all defined in uppercase
-letters by the MC13892_*_DEFINE* macros, whereas they are defined as
-lowercase in the DTS.
+On Thu, Jan 24, 2019 at 01:32:38PM -0700, Shuah Khan wrote:
+> Media Device Allocator API to allows multiple drivers share a media device.
+> This API solves a very common use-case for media devices where one physical
+> device (an USB stick) provides both audio and video. When such media device
+> exposes a standard USB Audio class, a proprietary Video class, two or more
+> independent drivers will share a single physical USB bridge. In such cases,
+> it is necessary to coordinate access to the shared resource.
+> 
+> Using this API, drivers can allocate a media device with the shared struct
+> device as the key. Once the media device is allocated by a driver, other
+> drivers can get a reference to it. The media device is released when all
+> the references are released.
 
-Fix this by using a lowercase regulator name to match the DT node name.
+Are there real, non-USB devices that could use the same API?
 
-Fixes: c32569e358ad ("regulator: Use of_node_name_eq for node name comparisons")
-Reported-by: Vivien Didelot <vivien.didelot@gmail.com>
-Reported-by: Florian Fainelli <f.fainelli@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>
-Cc: Mark Brown <broonie@kernel.org>
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- drivers/regulator/mc13783-regulator.c | 78 +++++++++++++--------------
- drivers/regulator/mc13892-regulator.c | 64 +++++++++++-----------
- drivers/regulator/mc13xxx.h           | 20 +++----
- 3 files changed, 81 insertions(+), 81 deletions(-)
+> 
+> Signed-off-by: Shuah Khan <shuah@kernel.org>
+> ---
+>  Documentation/media/kapi/mc-core.rst |  41 ++++++++
+>  drivers/media/Makefile               |   4 +
+>  drivers/media/media-dev-allocator.c  | 144 +++++++++++++++++++++++++++
+>  include/media/media-dev-allocator.h  |  53 ++++++++++
+>  4 files changed, 242 insertions(+)
+>  create mode 100644 drivers/media/media-dev-allocator.c
+>  create mode 100644 include/media/media-dev-allocator.h
+> 
+> diff --git a/Documentation/media/kapi/mc-core.rst b/Documentation/media/kapi/mc-core.rst
+> index 0bcfeadbc52d..07f2a6a90af2 100644
+> --- a/Documentation/media/kapi/mc-core.rst
+> +++ b/Documentation/media/kapi/mc-core.rst
+> @@ -259,6 +259,45 @@ Subsystems should facilitate link validation by providing subsystem specific
+>  helper functions to provide easy access for commonly needed information, and
+>  in the end provide a way to use driver-specific callbacks.
+>  
+> +Media Controller Device Allocator API
+> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+> +
+> +When the media device belongs to more than one driver, the shared media
+> +device is allocated with the shared struct device as the key for look ups.
+> +
+> +The shared media device should stay in registered state until the last
+> +driver unregisters it. In addition, the media device should be released when
+> +all the references are released. Each driver gets a reference to the media
+> +device during probe, when it allocates the media device. If media device is
+> +already allocated, the allocate API bumps up the refcount and returns the
+> +existing media device. The driver puts the reference back in its disconnect
+> +routine when it calls :c:func:`media_device_delete()`.
+> +
+> +The media device is unregistered and cleaned up from the kref put handler to
+> +ensure that the media device stays in registered state until the last driver
+> +unregisters the media device.
+> +
+> +**Driver Usage**
+> +
+> +Drivers should use the appropriate media-core routines to manage the shared
+> +media device life-time handling the two states:
+> +1. allocate -> register -> delete
+> +2. get reference to already registered device -> delete
+> +
+> +call :c:func:`media_device_delete()` routine to make sure the shared media
+> +device delete is handled correctly.
+> +
+> +**driver probe:**
+> +Call :c:func:`media_device_usb_allocate()` to allocate or get a reference
+> +Call :c:func:`media_device_register()`, if media devnode isn't registered
+> +
+> +**driver disconnect:**
+> +Call :c:func:`media_device_delete()` to free the media_device. Freeing is
+> +handled by the kref put handler.
+> +
+> +API Definitions
+> +^^^^^^^^^^^^^^^
+> +
+>  .. kernel-doc:: include/media/media-device.h
+>  
+>  .. kernel-doc:: include/media/media-devnode.h
+> @@ -266,3 +305,5 @@ in the end provide a way to use driver-specific callbacks.
+>  .. kernel-doc:: include/media/media-entity.h
+>  
+>  .. kernel-doc:: include/media/media-request.h
+> +
+> +.. kernel-doc:: include/media/media-dev-allocator.h
+> diff --git a/drivers/media/Makefile b/drivers/media/Makefile
+> index 985d35ec6b29..1d7653318af6 100644
+> --- a/drivers/media/Makefile
+> +++ b/drivers/media/Makefile
+> @@ -6,6 +6,10 @@
+>  media-objs	:= media-device.o media-devnode.o media-entity.o \
+>  		   media-request.o
+>  
+> +ifeq ($(CONFIG_USB),y)
+> +	media-objs += media-dev-allocator.o
+> +endif
+> +
+>  #
+>  # I2C drivers should come before other drivers, otherwise they'll fail
+>  # when compiled as builtin drivers
+> diff --git a/drivers/media/media-dev-allocator.c b/drivers/media/media-dev-allocator.c
+> new file mode 100644
+> index 000000000000..4606456c1e86
+> --- /dev/null
+> +++ b/drivers/media/media-dev-allocator.c
+> @@ -0,0 +1,144 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
 
-diff --git a/drivers/regulator/mc13783-regulator.c b/drivers/regulator/mc13783-regulator.c
-index 8fd1adc9c9a9..887a1d1726ad 100644
---- a/drivers/regulator/mc13783-regulator.c
-+++ b/drivers/regulator/mc13783-regulator.c
-@@ -228,67 +228,67 @@ static const unsigned int mc13783_pwgtdrv_val[] = {
- 
- static struct regulator_ops mc13783_gpo_regulator_ops;
- 
--#define MC13783_DEFINE(prefix, name, reg, vsel_reg, voltages)	\
--	MC13xxx_DEFINE(MC13783_REG_, name, reg, vsel_reg, voltages, \
-+#define MC13783_DEFINE(prefix, name, node, reg, vsel_reg, voltages)	\
-+	MC13xxx_DEFINE(MC13783_REG_, name, node, reg, vsel_reg, voltages, \
- 			mc13xxx_regulator_ops)
- 
--#define MC13783_FIXED_DEFINE(prefix, name, reg, voltages)		\
--	MC13xxx_FIXED_DEFINE(MC13783_REG_, name, reg, voltages, \
-+#define MC13783_FIXED_DEFINE(prefix, name, node, reg, voltages)		\
-+	MC13xxx_FIXED_DEFINE(MC13783_REG_, name, node, reg, voltages,	\
- 			mc13xxx_fixed_regulator_ops)
- 
--#define MC13783_GPO_DEFINE(prefix, name, reg, voltages)		\
--	MC13xxx_GPO_DEFINE(MC13783_REG_, name, reg, voltages, \
-+#define MC13783_GPO_DEFINE(prefix, name, node, reg, voltages)		\
-+	MC13xxx_GPO_DEFINE(MC13783_REG_, name, node, reg, voltages,	\
- 			mc13783_gpo_regulator_ops)
- 
--#define MC13783_DEFINE_SW(_name, _reg, _vsel_reg, _voltages)		\
--	MC13783_DEFINE(REG, _name, _reg, _vsel_reg, _voltages)
--#define MC13783_DEFINE_REGU(_name, _reg, _vsel_reg, _voltages)		\
--	MC13783_DEFINE(REG, _name, _reg, _vsel_reg, _voltages)
-+#define MC13783_DEFINE_SW(_name, _node, _reg, _vsel_reg, _voltages)	\
-+	MC13783_DEFINE(REG, _name, _node, _reg, _vsel_reg, _voltages)
-+#define MC13783_DEFINE_REGU(_name, _node, _reg, _vsel_reg, _voltages)	\
-+	MC13783_DEFINE(REG, _name, _node, _reg, _vsel_reg, _voltages)
- 
- static struct mc13xxx_regulator mc13783_regulators[] = {
--	MC13783_DEFINE_SW(SW1A, SWITCHERS0, SWITCHERS0, mc13783_sw1x_val),
--	MC13783_DEFINE_SW(SW1B, SWITCHERS1, SWITCHERS1, mc13783_sw1x_val),
--	MC13783_DEFINE_SW(SW2A, SWITCHERS2, SWITCHERS2, mc13783_sw2x_val),
--	MC13783_DEFINE_SW(SW2B, SWITCHERS3, SWITCHERS3, mc13783_sw2x_val),
--	MC13783_DEFINE_SW(SW3, SWITCHERS5, SWITCHERS5, mc13783_sw3_val),
--
--	MC13783_FIXED_DEFINE(REG, VAUDIO, REGULATORMODE0, mc13783_vaudio_val),
--	MC13783_FIXED_DEFINE(REG, VIOHI, REGULATORMODE0, mc13783_viohi_val),
--	MC13783_DEFINE_REGU(VIOLO, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_SW(SW1A, sw1a, SWITCHERS0, SWITCHERS0, mc13783_sw1x_val),
-+	MC13783_DEFINE_SW(SW1B, sw1b, SWITCHERS1, SWITCHERS1, mc13783_sw1x_val),
-+	MC13783_DEFINE_SW(SW2A, sw2a, SWITCHERS2, SWITCHERS2, mc13783_sw2x_val),
-+	MC13783_DEFINE_SW(SW2B, sw2b, SWITCHERS3, SWITCHERS3, mc13783_sw2x_val),
-+	MC13783_DEFINE_SW(SW3, sw3, SWITCHERS5, SWITCHERS5, mc13783_sw3_val),
-+
-+	MC13783_FIXED_DEFINE(REG, VAUDIO, vaudio, REGULATORMODE0, mc13783_vaudio_val),
-+	MC13783_FIXED_DEFINE(REG, VIOHI, viohi, REGULATORMODE0, mc13783_viohi_val),
-+	MC13783_DEFINE_REGU(VIOLO, violo, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_violo_val),
--	MC13783_DEFINE_REGU(VDIG, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VDIG, vdig, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vdig_val),
--	MC13783_DEFINE_REGU(VGEN, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VGEN, vgen, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vgen_val),
--	MC13783_DEFINE_REGU(VRFDIG, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VRFDIG, vrfdig, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vrfdig_val),
--	MC13783_DEFINE_REGU(VRFREF, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VRFREF, vrfref, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vrfref_val),
--	MC13783_DEFINE_REGU(VRFCP, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VRFCP, vrfcp, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vrfcp_val),
--	MC13783_DEFINE_REGU(VSIM, REGULATORMODE1, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VSIM, vsim, REGULATORMODE1, REGULATORSETTING0,
- 			    mc13783_vsim_val),
--	MC13783_DEFINE_REGU(VESIM, REGULATORMODE1, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VESIM, vesim, REGULATORMODE1, REGULATORSETTING0,
- 			    mc13783_vesim_val),
--	MC13783_DEFINE_REGU(VCAM, REGULATORMODE1, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VCAM, vcam, REGULATORMODE1, REGULATORSETTING0,
- 			    mc13783_vcam_val),
--	MC13783_FIXED_DEFINE(REG, VRFBG, REGULATORMODE1, mc13783_vrfbg_val),
--	MC13783_DEFINE_REGU(VVIB, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_FIXED_DEFINE(REG, VRFBG, vrfbg, REGULATORMODE1, mc13783_vrfbg_val),
-+	MC13783_DEFINE_REGU(VVIB, vvib, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vvib_val),
--	MC13783_DEFINE_REGU(VRF1, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_DEFINE_REGU(VRF1, vrf1, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vrf_val),
--	MC13783_DEFINE_REGU(VRF2, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_DEFINE_REGU(VRF2, vrf2, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vrf_val),
--	MC13783_DEFINE_REGU(VMMC1, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_DEFINE_REGU(VMMC1, vmmc1, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vmmc_val),
--	MC13783_DEFINE_REGU(VMMC2, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_DEFINE_REGU(VMMC2, vmmc2, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vmmc_val),
--	MC13783_GPO_DEFINE(REG, GPO1, POWERMISC, mc13783_gpo_val),
--	MC13783_GPO_DEFINE(REG, GPO2, POWERMISC, mc13783_gpo_val),
--	MC13783_GPO_DEFINE(REG, GPO3, POWERMISC, mc13783_gpo_val),
--	MC13783_GPO_DEFINE(REG, GPO4, POWERMISC, mc13783_gpo_val),
--	MC13783_GPO_DEFINE(REG, PWGT1SPI, POWERMISC, mc13783_pwgtdrv_val),
--	MC13783_GPO_DEFINE(REG, PWGT2SPI, POWERMISC, mc13783_pwgtdrv_val),
-+	MC13783_GPO_DEFINE(REG, GPO1, gpo1, POWERMISC, mc13783_gpo_val),
-+	MC13783_GPO_DEFINE(REG, GPO2, gpo1, POWERMISC, mc13783_gpo_val),
-+	MC13783_GPO_DEFINE(REG, GPO3, gpo1, POWERMISC, mc13783_gpo_val),
-+	MC13783_GPO_DEFINE(REG, GPO4, gpo1, POWERMISC, mc13783_gpo_val),
-+	MC13783_GPO_DEFINE(REG, PWGT1SPI, pwgt1spi, POWERMISC, mc13783_pwgtdrv_val),
-+	MC13783_GPO_DEFINE(REG, PWGT2SPI, pwgt2spi, POWERMISC, mc13783_pwgtdrv_val),
- };
- 
- static int mc13783_powermisc_rmw(struct mc13xxx_regulator_priv *priv, u32 mask,
-diff --git a/drivers/regulator/mc13892-regulator.c b/drivers/regulator/mc13892-regulator.c
-index f3fba1cc1379..b55894980066 100644
---- a/drivers/regulator/mc13892-regulator.c
-+++ b/drivers/regulator/mc13892-regulator.c
-@@ -246,57 +246,57 @@ static struct regulator_ops mc13892_gpo_regulator_ops;
- static struct regulator_ops mc13892_sw_regulator_ops;
- 
- 
--#define MC13892_FIXED_DEFINE(name, reg, voltages)		\
--	MC13xxx_FIXED_DEFINE(MC13892_, name, reg, voltages,	\
-+#define MC13892_FIXED_DEFINE(name, node, reg, voltages)			\
-+	MC13xxx_FIXED_DEFINE(MC13892_, name, node, reg, voltages,	\
- 			mc13xxx_fixed_regulator_ops)
- 
--#define MC13892_GPO_DEFINE(name, reg, voltages)			\
--	MC13xxx_GPO_DEFINE(MC13892_, name, reg, voltages,	\
-+#define MC13892_GPO_DEFINE(name, node, reg, voltages)			\
-+	MC13xxx_GPO_DEFINE(MC13892_, name, node, reg, voltages,		\
- 			mc13892_gpo_regulator_ops)
- 
--#define MC13892_SW_DEFINE(name, reg, vsel_reg, voltages)	\
--	MC13xxx_DEFINE(MC13892_, name, reg, vsel_reg, voltages, \
-+#define MC13892_SW_DEFINE(name, node, reg, vsel_reg, voltages)		\
-+	MC13xxx_DEFINE(MC13892_, name, node, reg, vsel_reg, voltages,	\
- 			mc13892_sw_regulator_ops)
- 
--#define MC13892_DEFINE_REGU(name, reg, vsel_reg, voltages)	\
--	MC13xxx_DEFINE(MC13892_, name, reg, vsel_reg, voltages, \
-+#define MC13892_DEFINE_REGU(name, node, reg, vsel_reg, voltages)	\
-+	MC13xxx_DEFINE(MC13892_, name, node, reg, vsel_reg, voltages, \
- 			mc13xxx_regulator_ops)
- 
- static struct mc13xxx_regulator mc13892_regulators[] = {
--	MC13892_DEFINE_REGU(VCOINCELL, POWERCTL0, POWERCTL0, mc13892_vcoincell),
--	MC13892_SW_DEFINE(SW1, SWITCHERS0, SWITCHERS0, mc13892_sw1),
--	MC13892_SW_DEFINE(SW2, SWITCHERS1, SWITCHERS1, mc13892_sw),
--	MC13892_SW_DEFINE(SW3, SWITCHERS2, SWITCHERS2, mc13892_sw),
--	MC13892_SW_DEFINE(SW4, SWITCHERS3, SWITCHERS3, mc13892_sw),
--	MC13892_FIXED_DEFINE(SWBST, SWITCHERS5, mc13892_swbst),
--	MC13892_FIXED_DEFINE(VIOHI, REGULATORMODE0, mc13892_viohi),
--	MC13892_DEFINE_REGU(VPLL, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VCOINCELL, vcoincell, POWERCTL0, POWERCTL0, mc13892_vcoincell),
-+	MC13892_SW_DEFINE(SW1, sw1, SWITCHERS0, SWITCHERS0, mc13892_sw1),
-+	MC13892_SW_DEFINE(SW2, sw2, SWITCHERS1, SWITCHERS1, mc13892_sw),
-+	MC13892_SW_DEFINE(SW3, sw3, SWITCHERS2, SWITCHERS2, mc13892_sw),
-+	MC13892_SW_DEFINE(SW4, sw4, SWITCHERS3, SWITCHERS3, mc13892_sw),
-+	MC13892_FIXED_DEFINE(SWBST, swbst, SWITCHERS5, mc13892_swbst),
-+	MC13892_FIXED_DEFINE(VIOHI, viohi, REGULATORMODE0, mc13892_viohi),
-+	MC13892_DEFINE_REGU(VPLL, vpll, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vpll),
--	MC13892_DEFINE_REGU(VDIG, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VDIG, vdig, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vdig),
--	MC13892_DEFINE_REGU(VSD, REGULATORMODE1, REGULATORSETTING1,
-+	MC13892_DEFINE_REGU(VSD, vsd, REGULATORMODE1, REGULATORSETTING1,
- 		mc13892_vsd),
--	MC13892_DEFINE_REGU(VUSB2, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VUSB2, vusb2, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vusb2),
--	MC13892_DEFINE_REGU(VVIDEO, REGULATORMODE1, REGULATORSETTING1,
-+	MC13892_DEFINE_REGU(VVIDEO, vvideo, REGULATORMODE1, REGULATORSETTING1,
- 		mc13892_vvideo),
--	MC13892_DEFINE_REGU(VAUDIO, REGULATORMODE1, REGULATORSETTING1,
-+	MC13892_DEFINE_REGU(VAUDIO, vaudio, REGULATORMODE1, REGULATORSETTING1,
- 		mc13892_vaudio),
--	MC13892_DEFINE_REGU(VCAM, REGULATORMODE1, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VCAM, vcam, REGULATORMODE1, REGULATORSETTING0,
- 		mc13892_vcam),
--	MC13892_DEFINE_REGU(VGEN1, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VGEN1, vgen1, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vgen1),
--	MC13892_DEFINE_REGU(VGEN2, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VGEN2, vgen2, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vgen2),
--	MC13892_DEFINE_REGU(VGEN3, REGULATORMODE1, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VGEN3, vgen3, REGULATORMODE1, REGULATORSETTING0,
- 		mc13892_vgen3),
--	MC13892_FIXED_DEFINE(VUSB, USB1, mc13892_vusb),
--	MC13892_GPO_DEFINE(GPO1, POWERMISC, mc13892_gpo),
--	MC13892_GPO_DEFINE(GPO2, POWERMISC, mc13892_gpo),
--	MC13892_GPO_DEFINE(GPO3, POWERMISC, mc13892_gpo),
--	MC13892_GPO_DEFINE(GPO4, POWERMISC, mc13892_gpo),
--	MC13892_GPO_DEFINE(PWGT1SPI, POWERMISC, mc13892_pwgtdrv),
--	MC13892_GPO_DEFINE(PWGT2SPI, POWERMISC, mc13892_pwgtdrv),
-+	MC13892_FIXED_DEFINE(VUSB, vusb, USB1, mc13892_vusb),
-+	MC13892_GPO_DEFINE(GPO1, gpo1, POWERMISC, mc13892_gpo),
-+	MC13892_GPO_DEFINE(GPO2, gpo2, POWERMISC, mc13892_gpo),
-+	MC13892_GPO_DEFINE(GPO3, gpo3, POWERMISC, mc13892_gpo),
-+	MC13892_GPO_DEFINE(GPO4, gpo4, POWERMISC, mc13892_gpo),
-+	MC13892_GPO_DEFINE(PWGT1SPI, pwgt1spi, POWERMISC, mc13892_pwgtdrv),
-+	MC13892_GPO_DEFINE(PWGT2SPI, pwgt2spi, POWERMISC, mc13892_pwgtdrv),
- };
- 
- static int mc13892_powermisc_rmw(struct mc13xxx_regulator_priv *priv, u32 mask,
-diff --git a/drivers/regulator/mc13xxx.h b/drivers/regulator/mc13xxx.h
-index 2ab9bfd93b4e..a602b08d4c9e 100644
---- a/drivers/regulator/mc13xxx.h
-+++ b/drivers/regulator/mc13xxx.h
-@@ -56,10 +56,10 @@ static inline struct mc13xxx_regulator_init_data *mc13xxx_parse_regulators_dt(
- extern struct regulator_ops mc13xxx_regulator_ops;
- extern struct regulator_ops mc13xxx_fixed_regulator_ops;
- 
--#define MC13xxx_DEFINE(prefix, _name, _reg, _vsel_reg, _voltages, _ops)	\
-+#define MC13xxx_DEFINE(prefix, _name, _node, _reg, _vsel_reg, _voltages, _ops)	\
- 	[prefix ## _name] = {				\
- 		.desc = {						\
--			.name = #_name,					\
-+			.name = #_node,					\
- 			.n_voltages = ARRAY_SIZE(_voltages),		\
- 			.volt_table =  _voltages,			\
- 			.ops = &_ops,			\
-@@ -74,10 +74,10 @@ extern struct regulator_ops mc13xxx_fixed_regulator_ops;
- 		.vsel_mask = prefix ## _vsel_reg ## _ ## _name ## VSEL_M,\
- 	}
- 
--#define MC13xxx_FIXED_DEFINE(prefix, _name, _reg, _voltages, _ops)	\
-+#define MC13xxx_FIXED_DEFINE(prefix, _name, _node, _reg, _voltages, _ops)	\
- 	[prefix ## _name] = {				\
- 		.desc = {						\
--			.name = #_name,					\
-+			.name = #_node,					\
- 			.n_voltages = ARRAY_SIZE(_voltages),		\
- 			.volt_table =  _voltages,			\
- 			.ops = &_ops,		\
-@@ -89,10 +89,10 @@ extern struct regulator_ops mc13xxx_fixed_regulator_ops;
- 		.enable_bit = prefix ## _reg ## _ ## _name ## EN,	\
- 	}
- 
--#define MC13xxx_GPO_DEFINE(prefix, _name, _reg,  _voltages, _ops)	\
-+#define MC13xxx_GPO_DEFINE(prefix, _name, _node, _reg,  _voltages, _ops)	\
- 	[prefix ## _name] = {				\
- 		.desc = {						\
--			.name = #_name,					\
-+			.name = #_node,					\
- 			.n_voltages = ARRAY_SIZE(_voltages),		\
- 			.volt_table =  _voltages,			\
- 			.ops = &_ops,		\
-@@ -104,9 +104,9 @@ extern struct regulator_ops mc13xxx_fixed_regulator_ops;
- 		.enable_bit = prefix ## _reg ## _ ## _name ## EN,	\
- 	}
- 
--#define MC13xxx_DEFINE_SW(_name, _reg, _vsel_reg, _voltages, ops)	\
--	MC13xxx_DEFINE(SW, _name, _reg, _vsel_reg, _voltages, ops)
--#define MC13xxx_DEFINE_REGU(_name, _reg, _vsel_reg, _voltages, ops)	\
--	MC13xxx_DEFINE(REGU, _name, _reg, _vsel_reg, _voltages, ops)
-+#define MC13xxx_DEFINE_SW(_name, _node, _reg, _vsel_reg, _voltages, ops) \
-+	MC13xxx_DEFINE(SW, _name, _node, _reg, _vsel_reg, _voltages, ops)
-+#define MC13xxx_DEFINE_REGU(_name, _node, _reg, _vsel_reg, _voltages, ops) \
-+	MC13xxx_DEFINE(REGU, _name, _node, _reg, _vsel_reg, _voltages, ops)
- 
- #endif
+GPL-2.0+
+
+> +/*
+> + * media-dev-allocator.c - Media Controller Device Allocator API
+> + *
+> + * Copyright (c) 2018 Shuah Khan <shuah@kernel.org>
+> + *
+> + * Credits: Suggested by Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> + */
+> +
+> +/*
+> + * This file adds a global refcounted Media Controller Device Instance API.
+> + * A system wide global media device list is managed and each media device
+> + * includes a kref count. The last put on the media device releases the media
+> + * device instance.
+> + *
+> + */
+> +
+> +#include <linux/kref.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/usb.h>
+> +
+> +#include <media/media-device.h>
+> +
+> +static LIST_HEAD(media_device_list);
+> +static DEFINE_MUTEX(media_device_lock);
+> +
+> +struct media_device_instance {
+> +	struct media_device mdev;
+> +	struct module *owner;
+> +	struct list_head list;
+> +	struct kref refcount;
+> +};
+> +
+> +static inline struct media_device_instance *
+> +to_media_device_instance(struct media_device *mdev)
+> +{
+> +	return container_of(mdev, struct media_device_instance, mdev);
+> +}
+> +
+> +static void media_device_instance_release(struct kref *kref)
+> +{
+> +	struct media_device_instance *mdi =
+> +		container_of(kref, struct media_device_instance, refcount);
+> +
+> +	dev_dbg(mdi->mdev.dev, "%s: mdev=%p\n", __func__, &mdi->mdev);
+> +
+> +	mutex_lock(&media_device_lock);
+> +
+> +	media_device_unregister(&mdi->mdev);
+> +	media_device_cleanup(&mdi->mdev);
+
+This is a problem, albeit not really more of a problem than it is in a
+driver. The refcounting changes can be made here instead. I'll take this
+into account in the media device refcounting series I'm planning to start
+working on again; would you be perhaps able to help testing with this
+device once I have patches in that shape? I have no access to the hardware.
+
+> +
+> +	list_del(&mdi->list);
+> +	mutex_unlock(&media_device_lock);
+> +
+> +	kfree(mdi);
+> +}
+> +
+> +/* Callers should hold media_device_lock when calling this function */
+> +static struct media_device *__media_device_get(struct device *dev,
+> +						const char *module_name,
+> +						struct module *modp)
+> +{
+> +	struct media_device_instance *mdi;
+> +
+> +	list_for_each_entry(mdi, &media_device_list, list) {
+> +
+> +		if (mdi->mdev.dev != dev)
+> +			continue;
+> +
+> +		kref_get(&mdi->refcount);
+> +
+> +		/* get module reference for the media_device owner */
+> +		if (modp != mdi->owner && !try_module_get(mdi->owner))
+> +			dev_err(dev, "%s: try_module_get() error\n", __func__);
+> +		dev_dbg(dev, "%s: get mdev=%p module_name %s\n",
+> +			__func__, &mdi->mdev, module_name);
+> +		return &mdi->mdev;
+> +	}
+> +
+> +	mdi = kzalloc(sizeof(*mdi), GFP_KERNEL);
+> +	if (!mdi)
+> +		return NULL;
+> +
+> +	mdi->owner = modp;
+> +	kref_init(&mdi->refcount);
+> +	list_add_tail(&mdi->list, &media_device_list);
+> +
+> +	dev_dbg(dev, "%s: alloc mdev=%p module_name %s\n", __func__,
+> +		&mdi->mdev, module_name);
+> +	return &mdi->mdev;
+> +}
+> +
+> +#if IS_ENABLED(CONFIG_USB)
+
+You already compile the file only if CONFIG_USB is enabled. I think you
+could remove this.
+
+> +struct media_device *media_device_usb_allocate(struct usb_device *udev,
+> +					       const char *module_name)
+
+I'd like to suggest working based on usb_interface instead of usb_device
+here: that object already exists and you can find out the device based on
+it. It seems all callers of this function already have the usb_interface
+around.
+
+> +{
+> +	struct media_device *mdev;
+> +	struct module *modptr;
+> +
+> +	mutex_lock(&module_mutex);
+> +	modptr = find_module(module_name);
+> +	mutex_unlock(&module_mutex);
+> +
+> +	mutex_lock(&media_device_lock);
+> +	mdev = __media_device_get(&udev->dev, module_name, modptr);
+> +	if (!mdev) {
+> +		mutex_unlock(&media_device_lock);
+> +		return ERR_PTR(-ENOMEM);
+> +	}
+> +
+> +	/* check if media device is already initialized */
+> +	if (!mdev->dev)
+> +		__media_device_usb_init(mdev, udev, udev->product,
+> +					module_name);
+> +	mutex_unlock(&media_device_lock);
+> +	return mdev;
+> +}
+> +EXPORT_SYMBOL_GPL(media_device_usb_allocate);
+> +#endif
+> +
+> +void media_device_delete(struct media_device *mdev, const char *module_name)
+
+Same here. The use of the module name seems a bit hackish to me, albeit I
+suppose it'd work, too.
+
+> +{
+> +	struct media_device_instance *mdi = to_media_device_instance(mdev);
+> +	struct module *modptr;
+> +
+> +	dev_dbg(mdi->mdev.dev, "%s: mdev=%p module_name %s\n",
+> +		__func__, &mdi->mdev, module_name);
+> +
+> +	mutex_lock(&module_mutex);
+> +	modptr = find_module(module_name);
+> +	mutex_unlock(&module_mutex);
+> +
+> +	mutex_lock(&media_device_lock);
+> +	/* put module reference if media_device owner is not THIS_MODULE */
+> +	if (mdi->owner != modptr) {
+> +		module_put(mdi->owner);
+> +		dev_dbg(mdi->mdev.dev,
+> +			"%s decremented owner module reference\n", __func__);
+> +	}
+> +	mutex_unlock(&media_device_lock);
+> +	kref_put(&mdi->refcount, media_device_instance_release);
+> +}
+> +EXPORT_SYMBOL_GPL(media_device_delete);
+> diff --git a/include/media/media-dev-allocator.h b/include/media/media-dev-allocator.h
+> new file mode 100644
+> index 000000000000..9164795e911c
+> --- /dev/null
+> +++ b/include/media/media-dev-allocator.h
+> @@ -0,0 +1,53 @@
+> +/* SPDX-License-Identifier: GPL-2.0+ */
+> +/*
+> + * media-dev-allocator.h - Media Controller Device Allocator API
+> + *
+> + * Copyright (c) 2018 Shuah Khan <shuah@kernel.org>
+> + *
+> + * Credits: Suggested by Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+> + */
+> +
+> +/*
+> + * This file adds a global ref-counted Media Controller Device Instance API.
+> + * A system wide global media device list is managed and each media device
+> + * includes a kref count. The last put on the media device releases the media
+> + * device instance.
+> + */
+> +
+> +#ifndef _MEDIA_DEV_ALLOCTOR_H
+> +#define _MEDIA_DEV_ALLOCTOR_H
+> +
+> +struct usb_device;
+> +
+> +#if defined(CONFIG_MEDIA_CONTROLLER) && defined(CONFIG_USB)
+> +/**
+> + * media_device_usb_allocate() - Allocate and return struct &media device
+> + *
+> + * @udev:		struct &usb_device pointer
+> + * @module_name:	should be filled with %KBUILD_MODNAME
+> + *
+> + * This interface should be called to allocate a Media Device when multiple
+> + * drivers share usb_device and the media device. This interface allocates
+> + * &media_device structure and calls media_device_usb_init() to initialize
+> + * it.
+> + *
+> + */
+> +struct media_device *media_device_usb_allocate(struct usb_device *udev,
+> +					       char *module_name);
+> +/**
+> + * media_device_delete() - Release media device. Calls kref_put().
+> + *
+> + * @mdev:		struct &media_device pointer
+> + * @module_name:	should be filled with %KBUILD_MODNAME
+> + *
+> + * This interface should be called to put Media Device Instance kref.
+> + */
+> +void media_device_delete(struct media_device *mdev, char *module_name);
+> +#else
+> +static inline struct media_device *media_device_usb_allocate(
+> +			struct usb_device *udev, char *module_name)
+> +			{ return NULL; }
+> +static inline void media_device_delete(
+> +			struct media_device *mdev, char *module_name) { }
+> +#endif /* CONFIG_MEDIA_CONTROLLER */
+> +#endif
+
 -- 
-2.19.1
+Regards,
 
+Sakari Ailus
