@@ -2,485 +2,248 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E717C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:33:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26BF1C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:34:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F21AE2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:33:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E45022083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:34:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PhArihwg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729350AbfAYSdq (ORCPT
+        id S1729399AbfAYSeD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:33:46 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53770 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfAYSdq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:33:46 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C5FBE89AF6
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 18:33:45 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-23.phx2.redhat.com [10.3.112.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7A32E6048C;
-        Fri, 25 Jan 2019 18:33:39 +0000 (UTC)
-Date:   Fri, 25 Jan 2019 13:33:36 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>
-Subject: Re: [PATCH ghak105 V1 2/2] audit: remove audit_context when CONFIG_
- AUDIT and not AUDITSYSCALL
-Message-ID: <20190125183336.d4xlpdefz7uazqac@madcap2.tricolour.ca>
-References: <cover.1548192740.git.rgb@redhat.com>
- <4d76e05b2ff7a2c881e87d9a1f31536283f969b1.1548192740.git.rgb@redhat.com>
+        Fri, 25 Jan 2019 13:34:03 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:33843 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfAYSeD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 13:34:03 -0500
+Received: by mail-pf1-f196.google.com with SMTP id h3so5146046pfg.1
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 10:34:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
+        bh=YSXIhlACBPNanY0z1rRjRgGH8qycYkYP+u6kVh8Za4I=;
+        b=PhArihwgFRf5bKIMMCT9pP0EZ4yfnlNpRTVoHLBDT+Dv8Sjvc64xuKwslilL7vFv8w
+         +WjnykHQ4dso/7lubq40sGpVJg2YP+M1GKY7SpJNH6ATsHxR4iEUeBTtzdP5xXVzBlZd
+         jiQwK5IXIZrGfWjXInuA/poXFgZW6j7EfCVtw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition;
+        bh=YSXIhlACBPNanY0z1rRjRgGH8qycYkYP+u6kVh8Za4I=;
+        b=oqLjO0uaAYNQ2TjbqhcscY01evlnUhVAU54GmoM+RN7tQF646nLEBnbAzaC1lWsiUW
+         WariP6Ldbv2lV4FzNRqYknKW1+k0MXjm8RUS9eyiRMFQwiRUEuO1UNmgXL7lMdkd5rNR
+         5ItIMR73AbhQpJRBdvl0Pek2HfNb6FiNpzJGeIxbJyvYj42MxU/58cH6+lOO4FV6Sr7Q
+         AADezqEQ7/UuU1fGe4L5JNWySjd1rar1+AEv/GmZmWLZxXRsBbdCe1y79h1cgooEXWeg
+         TFgaQ4dEncmhc0zdXWgQa6ZxnNaeWOQX+/pFIkKKYCIq2Xymck062AKEQ4sd/SqUlolj
+         YAQA==
+X-Gm-Message-State: AJcUukfho270v7JInKVNbheVn78C+Yf0nJdTiiU8A32AIfySrnx0PC/d
+        qA2sTIk+xv0iSO8ll802mI4XqQ==
+X-Google-Smtp-Source: ALg8bN4r4ocBpmtwMt2IbnWx1IZkta9SxD6aZWrVnq59kX/xpSqRa/9sgik0WTASIbTN73qDcJU9+w==
+X-Received: by 2002:a63:9041:: with SMTP id a62mr10671669pge.163.1548441241970;
+        Fri, 25 Jan 2019 10:34:01 -0800 (PST)
+Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
+        by smtp.gmail.com with ESMTPSA id y9sm32454717pfi.74.2019.01.25.10.34.00
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 10:34:00 -0800 (PST)
+Date:   Fri, 25 Jan 2019 10:33:59 -0800
+From:   Kees Cook <keescook@chromium.org>
+To:     Colin Ian King <colin.king@canonical.com>
+Cc:     Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org, kernel-janitors@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/seccomp: Enhance per-arch ptrace syscall skip tests
+Message-ID: <20190125183359.GA8524@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <4d76e05b2ff7a2c881e87d9a1f31536283f969b1.1548192740.git.rgb@redhat.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 25 Jan 2019 18:33:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-22 17:07, Richard Guy Briggs wrote:
-> Remove audit_context from struct task_struct and struct audit_buffer
-> when CONFIG_AUDIT is enabled but CONFIG_AUDITSYSCALL is not.
-> 
-> Also, audit_log_name() (and supporting inode and fcaps functions) should
-> have been put back in auditsc.c when soft and hard link logging was
-> normalized since it is only used by syscall auditing.
-> 
-> See github issue https://github.com/linux-audit/audit-kernel/issues/105
-> 
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
-> ---
->  include/linux/sched.h |   2 +-
->  kernel/audit.c        | 155 +++-----------------------------------------------
->  kernel/audit.h        |   9 ---
->  kernel/auditsc.c      | 148 +++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 157 insertions(+), 157 deletions(-)
-> 
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index f9788bb122c5..a3a5c657cae9 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -885,8 +885,8 @@ struct task_struct {
->  
->  	struct callback_head		*task_works;
->  
-> -	struct audit_context		*audit_context;
->  #ifdef CONFIG_AUDIT
-> +	struct audit_context		*audit_context;
+Passing EPERM during syscall skipping was confusing since the test wasn't
+actually exercising the errno evaluation -- it was just passing a literal
+"1" (EPERM). Instead, expand the tests to check both direct value returns
+(positive, 45000 in this case), and errno values (negative, -ESRCH in this
+case) to check both fake success and fake failure during syscall skipping.
 
-This isn't quite right...  audit_context should be wrapped with
-CONFIG_AUDITSYSCALL.
+Reported-by: Colin Ian King <colin.king@canonical.com>
+Fixes: a33b2d0359a0 ("selftests/seccomp: Add tests for basic ptrace actions")
+Cc: stable@vger.kernel.org
+Signed-off-by: Kees Cook <keescook@chromium.org>
+---
+Colin, does this end up working on s390? Based on your bug report, I
+suspect the positive value tests will fail, but the errno tests will
+pass. If that's true, I think something is wrong in the s390 handling.
+(And it may just be that the ptrace code to rewrite syscalls on s390
+in the test is wrong...) But splitting these tests up should tell us more.
+---
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 72 +++++++++++++++----
+ 1 file changed, 57 insertions(+), 15 deletions(-)
 
->  	kuid_t				loginuid;
->  	unsigned int			sessionid;
->  #endif
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index dc375857c59b..79bc49e5162a 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -205,7 +205,9 @@ struct audit_net {
->   * use simultaneously. */
->  struct audit_buffer {
->  	struct sk_buff       *skb;	/* formatted skb ready to send */
-> +#ifdef CONFIG_AUDITSYSCALL
->  	struct audit_context *ctx;	/* NULL or associated context */
-> +#endif
->  	gfp_t		     gfp_mask;
->  };
->  
-> @@ -1695,7 +1697,9 @@ static struct audit_buffer *audit_buffer_alloc(struct audit_context *ctx,
->  	if (!nlmsg_put(ab->skb, 0, 0, type, 0, 0))
->  		goto err;
->  
-> +#ifdef CONFIG_AUDITSYSCALL
->  	ab->ctx = ctx;
-> +#endif
->  	ab->gfp_mask = gfp_mask;
->  
->  	return ab;
-> @@ -1808,7 +1812,11 @@ struct audit_buffer *audit_log_start(struct audit_context *ctx, gfp_t gfp_mask,
->  		return NULL;
->  	}
->  
-> +#ifdef CONFIG_AUDITSYSCALL
->  	audit_get_stamp(ab->ctx, &t, &serial);
-> +#else
-> +	audit_get_stamp(NULL, &t, &serial);
-> +#endif
->  	audit_log_format(ab, "audit(%llu.%03lu:%u): ",
->  			 (unsigned long long)t.tv_sec, t.tv_nsec/1000000, serial);
->  
-> @@ -2066,153 +2074,6 @@ void audit_log_key(struct audit_buffer *ab, char *key)
->  		audit_log_format(ab, "(null)");
->  }
->  
-> -void audit_log_cap(struct audit_buffer *ab, char *prefix, kernel_cap_t *cap)
-> -{
-> -	int i;
-> -
-> -	if (cap_isclear(*cap)) {
-> -		audit_log_format(ab, " %s=0", prefix);
-> -		return;
-> -	}
-> -	audit_log_format(ab, " %s=", prefix);
-> -	CAP_FOR_EACH_U32(i)
-> -		audit_log_format(ab, "%08x", cap->cap[CAP_LAST_U32 - i]);
-> -}
-> -
-> -static void audit_log_fcaps(struct audit_buffer *ab, struct audit_names *name)
-> -{
-> -	audit_log_cap(ab, "cap_fp", &name->fcap.permitted);
-> -	audit_log_cap(ab, "cap_fi", &name->fcap.inheritable);
-> -	audit_log_format(ab, " cap_fe=%d cap_fver=%x",
-> -			 name->fcap.fE, name->fcap_ver);
-> -}
-> -
-> -static inline int audit_copy_fcaps(struct audit_names *name,
-> -				   const struct dentry *dentry)
-> -{
-> -	struct cpu_vfs_cap_data caps;
-> -	int rc;
-> -
-> -	if (!dentry)
-> -		return 0;
-> -
-> -	rc = get_vfs_caps_from_disk(dentry, &caps);
-> -	if (rc)
-> -		return rc;
-> -
-> -	name->fcap.permitted = caps.permitted;
-> -	name->fcap.inheritable = caps.inheritable;
-> -	name->fcap.fE = !!(caps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
-> -	name->fcap_ver = (caps.magic_etc & VFS_CAP_REVISION_MASK) >>
-> -				VFS_CAP_REVISION_SHIFT;
-> -
-> -	return 0;
-> -}
-> -
-> -/* Copy inode data into an audit_names. */
-> -void audit_copy_inode(struct audit_names *name, const struct dentry *dentry,
-> -		      struct inode *inode)
-> -{
-> -	name->ino   = inode->i_ino;
-> -	name->dev   = inode->i_sb->s_dev;
-> -	name->mode  = inode->i_mode;
-> -	name->uid   = inode->i_uid;
-> -	name->gid   = inode->i_gid;
-> -	name->rdev  = inode->i_rdev;
-> -	security_inode_getsecid(inode, &name->osid);
-> -	audit_copy_fcaps(name, dentry);
-> -}
-> -
-> -/**
-> - * audit_log_name - produce AUDIT_PATH record from struct audit_names
-> - * @context: audit_context for the task
-> - * @n: audit_names structure with reportable details
-> - * @path: optional path to report instead of audit_names->name
-> - * @record_num: record number to report when handling a list of names
-> - * @call_panic: optional pointer to int that will be updated if secid fails
-> - */
-> -void audit_log_name(struct audit_context *context, struct audit_names *n,
-> -		    const struct path *path, int record_num, int *call_panic)
-> -{
-> -	struct audit_buffer *ab;
-> -	ab = audit_log_start(context, GFP_KERNEL, AUDIT_PATH);
-> -	if (!ab)
-> -		return;
-> -
-> -	audit_log_format(ab, "item=%d", record_num);
-> -
-> -	if (path)
-> -		audit_log_d_path(ab, " name=", path);
-> -	else if (n->name) {
-> -		switch (n->name_len) {
-> -		case AUDIT_NAME_FULL:
-> -			/* log the full path */
-> -			audit_log_format(ab, " name=");
-> -			audit_log_untrustedstring(ab, n->name->name);
-> -			break;
-> -		case 0:
-> -			/* name was specified as a relative path and the
-> -			 * directory component is the cwd */
-> -			audit_log_d_path(ab, " name=", &context->pwd);
-> -			break;
-> -		default:
-> -			/* log the name's directory component */
-> -			audit_log_format(ab, " name=");
-> -			audit_log_n_untrustedstring(ab, n->name->name,
-> -						    n->name_len);
-> -		}
-> -	} else
-> -		audit_log_format(ab, " name=(null)");
-> -
-> -	if (n->ino != AUDIT_INO_UNSET)
-> -		audit_log_format(ab, " inode=%lu"
-> -				 " dev=%02x:%02x mode=%#ho"
-> -				 " ouid=%u ogid=%u rdev=%02x:%02x",
-> -				 n->ino,
-> -				 MAJOR(n->dev),
-> -				 MINOR(n->dev),
-> -				 n->mode,
-> -				 from_kuid(&init_user_ns, n->uid),
-> -				 from_kgid(&init_user_ns, n->gid),
-> -				 MAJOR(n->rdev),
-> -				 MINOR(n->rdev));
-> -	if (n->osid != 0) {
-> -		char *ctx = NULL;
-> -		u32 len;
-> -		if (security_secid_to_secctx(
-> -			n->osid, &ctx, &len)) {
-> -			audit_log_format(ab, " osid=%u", n->osid);
-> -			if (call_panic)
-> -				*call_panic = 2;
-> -		} else {
-> -			audit_log_format(ab, " obj=%s", ctx);
-> -			security_release_secctx(ctx, len);
-> -		}
-> -	}
-> -
-> -	/* log the audit_names record type */
-> -	switch(n->type) {
-> -	case AUDIT_TYPE_NORMAL:
-> -		audit_log_format(ab, " nametype=NORMAL");
-> -		break;
-> -	case AUDIT_TYPE_PARENT:
-> -		audit_log_format(ab, " nametype=PARENT");
-> -		break;
-> -	case AUDIT_TYPE_CHILD_DELETE:
-> -		audit_log_format(ab, " nametype=DELETE");
-> -		break;
-> -	case AUDIT_TYPE_CHILD_CREATE:
-> -		audit_log_format(ab, " nametype=CREATE");
-> -		break;
-> -	default:
-> -		audit_log_format(ab, " nametype=UNKNOWN");
-> -		break;
-> -	}
-> -
-> -	audit_log_fcaps(ab, n);
-> -	audit_log_end(ab);
-> -}
-> -
->  int audit_log_task_context(struct audit_buffer *ab)
->  {
->  	char *ctx = NULL;
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index 22ef49b76daa..13210cc52100 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -212,15 +212,6 @@ struct audit_context {
->  
->  extern void audit_log_session_info(struct audit_buffer *ab);
->  
-> -extern void audit_copy_inode(struct audit_names *name,
-> -			     const struct dentry *dentry,
-> -			     struct inode *inode);
-> -extern void audit_log_cap(struct audit_buffer *ab, char *prefix,
-> -			  kernel_cap_t *cap);
-> -extern void audit_log_name(struct audit_context *context,
-> -			   struct audit_names *n, const struct path *path,
-> -			   int record_num, int *call_panic);
-> -
->  extern int auditd_test_task(struct task_struct *task);
->  
->  #define AUDIT_INODE_BUCKETS	32
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index 572d247957fb..e8f257fbddaf 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -1136,6 +1136,27 @@ static void audit_log_execve_info(struct audit_context *context,
->  	kfree(buf_head);
->  }
->  
-> +void audit_log_cap(struct audit_buffer *ab, char *prefix, kernel_cap_t *cap)
-> +{
-> +	int i;
-> +
-> +	if (cap_isclear(*cap)) {
-> +		audit_log_format(ab, " %s=0", prefix);
-> +		return;
-> +	}
-> +	audit_log_format(ab, " %s=", prefix);
-> +	CAP_FOR_EACH_U32(i)
-> +		audit_log_format(ab, "%08x", cap->cap[CAP_LAST_U32 - i]);
-> +}
-> +
-> +static void audit_log_fcaps(struct audit_buffer *ab, struct audit_names *name)
-> +{
-> +	audit_log_cap(ab, "cap_fp", &name->fcap.permitted);
-> +	audit_log_cap(ab, "cap_fi", &name->fcap.inheritable);
-> +	audit_log_format(ab, " cap_fe=%d cap_fver=%x",
-> +			 name->fcap.fE, name->fcap_ver);
-> +}
-> +
->  static void show_special(struct audit_context *context, int *call_panic)
->  {
->  	struct audit_buffer *ab;
-> @@ -1258,6 +1279,97 @@ static inline int audit_proctitle_rtrim(char *proctitle, int len)
->  	return len;
->  }
->  
-> +/*
-> + * audit_log_name - produce AUDIT_PATH record from struct audit_names
-> + * @context: audit_context for the task
-> + * @n: audit_names structure with reportable details
-> + * @path: optional path to report instead of audit_names->name
-> + * @record_num: record number to report when handling a list of names
-> + * @call_panic: optional pointer to int that will be updated if secid fails
-> + */
-> +static void audit_log_name(struct audit_context *context, struct audit_names *n,
-> +		    const struct path *path, int record_num, int *call_panic)
-> +{
-> +	struct audit_buffer *ab;
-> +
-> +	ab = audit_log_start(context, GFP_KERNEL, AUDIT_PATH);
-> +	if (!ab)
-> +		return;
-> +
-> +	audit_log_format(ab, "item=%d", record_num);
-> +
-> +	if (path)
-> +		audit_log_d_path(ab, " name=", path);
-> +	else if (n->name) {
-> +		switch (n->name_len) {
-> +		case AUDIT_NAME_FULL:
-> +			/* log the full path */
-> +			audit_log_format(ab, " name=");
-> +			audit_log_untrustedstring(ab, n->name->name);
-> +			break;
-> +		case 0:
-> +			/* name was specified as a relative path and the
-> +			 * directory component is the cwd
-> +			 */
-> +			audit_log_d_path(ab, " name=", &context->pwd);
-> +			break;
-> +		default:
-> +			/* log the name's directory component */
-> +			audit_log_format(ab, " name=");
-> +			audit_log_n_untrustedstring(ab, n->name->name,
-> +						    n->name_len);
-> +		}
-> +	} else
-> +		audit_log_format(ab, " name=(null)");
-> +
-> +	if (n->ino != AUDIT_INO_UNSET)
-> +		audit_log_format(ab, " inode=%lu dev=%02x:%02x mode=%#ho ouid=%u ogid=%u rdev=%02x:%02x",
-> +				 n->ino,
-> +				 MAJOR(n->dev),
-> +				 MINOR(n->dev),
-> +				 n->mode,
-> +				 from_kuid(&init_user_ns, n->uid),
-> +				 from_kgid(&init_user_ns, n->gid),
-> +				 MAJOR(n->rdev),
-> +				 MINOR(n->rdev));
-> +	if (n->osid != 0) {
-> +		char *ctx = NULL;
-> +		u32 len;
-> +
-> +		if (security_secid_to_secctx(
-> +			n->osid, &ctx, &len)) {
-> +			audit_log_format(ab, " osid=%u", n->osid);
-> +			if (call_panic)
-> +				*call_panic = 2;
-> +		} else {
-> +			audit_log_format(ab, " obj=%s", ctx);
-> +			security_release_secctx(ctx, len);
-> +		}
-> +	}
-> +
-> +	/* log the audit_names record type */
-> +	switch (n->type) {
-> +	case AUDIT_TYPE_NORMAL:
-> +		audit_log_format(ab, " nametype=NORMAL");
-> +		break;
-> +	case AUDIT_TYPE_PARENT:
-> +		audit_log_format(ab, " nametype=PARENT");
-> +		break;
-> +	case AUDIT_TYPE_CHILD_DELETE:
-> +		audit_log_format(ab, " nametype=DELETE");
-> +		break;
-> +	case AUDIT_TYPE_CHILD_CREATE:
-> +		audit_log_format(ab, " nametype=CREATE");
-> +		break;
-> +	default:
-> +		audit_log_format(ab, " nametype=UNKNOWN");
-> +		break;
-> +	}
-> +
-> +	audit_log_fcaps(ab, n);
-> +	audit_log_end(ab);
-> +}
-> +
->  static void audit_log_proctitle(void)
->  {
->  	int res;
-> @@ -1750,6 +1862,42 @@ void __audit_getname(struct filename *name)
->  		get_fs_pwd(current->fs, &context->pwd);
->  }
->  
-> +static inline int audit_copy_fcaps(struct audit_names *name,
-> +				   const struct dentry *dentry)
-> +{
-> +	struct cpu_vfs_cap_data caps;
-> +	int rc;
-> +
-> +	if (!dentry)
-> +		return 0;
-> +
-> +	rc = get_vfs_caps_from_disk(dentry, &caps);
-> +	if (rc)
-> +		return rc;
-> +
-> +	name->fcap.permitted = caps.permitted;
-> +	name->fcap.inheritable = caps.inheritable;
-> +	name->fcap.fE = !!(caps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
-> +	name->fcap_ver = (caps.magic_etc & VFS_CAP_REVISION_MASK) >>
-> +				VFS_CAP_REVISION_SHIFT;
-> +
-> +	return 0;
-> +}
-> +
-> +/* Copy inode data into an audit_names. */
-> +void audit_copy_inode(struct audit_names *name, const struct dentry *dentry,
-> +		      struct inode *inode)
-> +{
-> +	name->ino   = inode->i_ino;
-> +	name->dev   = inode->i_sb->s_dev;
-> +	name->mode  = inode->i_mode;
-> +	name->uid   = inode->i_uid;
-> +	name->gid   = inode->i_gid;
-> +	name->rdev  = inode->i_rdev;
-> +	security_inode_getsecid(inode, &name->osid);
-> +	audit_copy_fcaps(name, dentry);
-> +}
-> +
->  /**
->   * __audit_inode - store the inode and device from a lookup
->   * @name: name being audited
-> -- 
-> 1.8.3.1
-> 
-> --
-> Linux-audit mailing list
-> Linux-audit@redhat.com
-> https://www.redhat.com/mailman/listinfo/linux-audit
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 496a9a8c773a..7e632b465ab4 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -1608,7 +1608,16 @@ TEST_F(TRACE_poke, getpid_runs_normally)
+ #ifdef SYSCALL_NUM_RET_SHARE_REG
+ # define EXPECT_SYSCALL_RETURN(val, action)	EXPECT_EQ(-1, action)
+ #else
+-# define EXPECT_SYSCALL_RETURN(val, action)	EXPECT_EQ(val, action)
++# define EXPECT_SYSCALL_RETURN(val, action)		\
++	do {						\
++		errno = 0;				\
++		if (val < 0) {				\
++			EXPECT_EQ(-1, action);		\
++			EXPECT_EQ(-(val), errno);	\
++		} else {				\
++			EXPECT_EQ(val, action);		\
++		}					\
++	} while (0)
+ #endif
+ 
+ /* Use PTRACE_GETREGS and PTRACE_SETREGS when available. This is useful for
+@@ -1647,7 +1656,7 @@ int get_syscall(struct __test_metadata *_metadata, pid_t tracee)
+ 
+ /* Architecture-specific syscall changing routine. */
+ void change_syscall(struct __test_metadata *_metadata,
+-		    pid_t tracee, int syscall)
++		    pid_t tracee, int syscall, int result)
+ {
+ 	int ret;
+ 	ARCH_REGS regs;
+@@ -1706,7 +1715,7 @@ void change_syscall(struct __test_metadata *_metadata,
+ #ifdef SYSCALL_NUM_RET_SHARE_REG
+ 		TH_LOG("Can't modify syscall return on this architecture");
+ #else
+-		regs.SYSCALL_RET = EPERM;
++		regs.SYSCALL_RET = result;
+ #endif
+ 
+ #ifdef HAVE_GETREGS
+@@ -1734,14 +1743,19 @@ void tracer_syscall(struct __test_metadata *_metadata, pid_t tracee,
+ 	case 0x1002:
+ 		/* change getpid to getppid. */
+ 		EXPECT_EQ(__NR_getpid, get_syscall(_metadata, tracee));
+-		change_syscall(_metadata, tracee, __NR_getppid);
++		change_syscall(_metadata, tracee, __NR_getppid, 0);
+ 		break;
+ 	case 0x1003:
+-		/* skip gettid. */
++		/* skip gettid with valid return code. */
+ 		EXPECT_EQ(__NR_gettid, get_syscall(_metadata, tracee));
+-		change_syscall(_metadata, tracee, -1);
++		change_syscall(_metadata, tracee, -1, 45000);
+ 		break;
+ 	case 0x1004:
++		/* skip openat with error. */
++		EXPECT_EQ(__NR_openat, get_syscall(_metadata, tracee));
++		change_syscall(_metadata, tracee, -1, -ESRCH);
++		break;
++	case 0x1005:
+ 		/* do nothing (allow getppid) */
+ 		EXPECT_EQ(__NR_getppid, get_syscall(_metadata, tracee));
+ 		break;
+@@ -1774,9 +1788,11 @@ void tracer_ptrace(struct __test_metadata *_metadata, pid_t tracee,
+ 	nr = get_syscall(_metadata, tracee);
+ 
+ 	if (nr == __NR_getpid)
+-		change_syscall(_metadata, tracee, __NR_getppid);
++		change_syscall(_metadata, tracee, __NR_getppid, 0);
++	if (nr == __NR_gettid)
++		change_syscall(_metadata, tracee, -1, 45000);
+ 	if (nr == __NR_openat)
+-		change_syscall(_metadata, tracee, -1);
++		change_syscall(_metadata, tracee, -1, -ESRCH);
+ }
+ 
+ FIXTURE_DATA(TRACE_syscall) {
+@@ -1793,8 +1809,10 @@ FIXTURE_SETUP(TRACE_syscall)
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1002),
+ 		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_gettid, 0, 1),
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1003),
+-		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
++		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_openat, 0, 1),
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1004),
++		BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
++		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1005),
+ 		BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
+ 	};
+ 
+@@ -1842,15 +1860,26 @@ TEST_F(TRACE_syscall, ptrace_syscall_redirected)
+ 	EXPECT_NE(self->mypid, syscall(__NR_getpid));
+ }
+ 
+-TEST_F(TRACE_syscall, ptrace_syscall_dropped)
++TEST_F(TRACE_syscall, ptrace_syscall_errno)
++{
++	/* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
++	teardown_trace_fixture(_metadata, self->tracer);
++	self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
++					   true);
++
++	/* Tracer should skip the open syscall, resulting in ESRCH. */
++	EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
++}
++
++TEST_F(TRACE_syscall, ptrace_syscall_faked)
+ {
+ 	/* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
+ 	teardown_trace_fixture(_metadata, self->tracer);
+ 	self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
+ 					   true);
+ 
+-	/* Tracer should skip the open syscall, resulting in EPERM. */
+-	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_openat));
++	/* Tracer should skip the gettid syscall, resulting fake pid. */
++	EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
+ }
+ 
+ TEST_F(TRACE_syscall, syscall_allowed)
+@@ -1883,7 +1912,21 @@ TEST_F(TRACE_syscall, syscall_redirected)
+ 	EXPECT_NE(self->mypid, syscall(__NR_getpid));
+ }
+ 
+-TEST_F(TRACE_syscall, syscall_dropped)
++TEST_F(TRACE_syscall, syscall_errno)
++{
++	long ret;
++
++	ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
++	ASSERT_EQ(0, ret);
++
++	ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &self->prog, 0, 0);
++	ASSERT_EQ(0, ret);
++
++	/* openat has been skipped and an errno return. */
++	EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
++}
++
++TEST_F(TRACE_syscall, syscall_faked)
+ {
+ 	long ret;
+ 
+@@ -1894,8 +1937,7 @@ TEST_F(TRACE_syscall, syscall_dropped)
+ 	ASSERT_EQ(0, ret);
+ 
+ 	/* gettid has been skipped and an altered return value stored. */
+-	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_gettid));
+-	EXPECT_NE(self->mytid, syscall(__NR_gettid));
++	EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
+ }
+ 
+ TEST_F(TRACE_syscall, skip_after_RET_TRACE)
+-- 
+2.17.1
 
-- RGB
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+-- 
+Kees Cook
