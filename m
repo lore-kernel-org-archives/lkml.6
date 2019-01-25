@@ -2,103 +2,978 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE45CC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:11:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A094DC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACE8B218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:11:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=maine.edu header.i=@maine.edu header.b="gFVoNGd5"
+	by mail.kernel.org (Postfix) with ESMTP id 50DDB218A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:14:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728383AbfAYPLc (ORCPT
+        id S1726991AbfAYPN6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:11:32 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:33300 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbfAYPLb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:11:31 -0500
-Received: by mail-qk1-f194.google.com with SMTP id d15so5595749qkj.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 07:11:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=maine.edu; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=I++XVxfiKjXV6KkxGWgqivb89xppHHENKhtBr0XDFgY=;
-        b=gFVoNGd5AbqmS6Tvr7f58/xDGG0qBJlMcWiLVmAi71MThfb0Tdt9SJoTNijv/Z341a
-         qjyolpauxzWfvhu6hgRkCewwUHYFY3fJT0ZL3BTG7QBsbiUcVLditZ8ON5z95Z6UzQ60
-         aQaFOa4Mltbm0X7tHbtv2zBfV5RbHlCgp2MVQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=I++XVxfiKjXV6KkxGWgqivb89xppHHENKhtBr0XDFgY=;
-        b=VIaSVOhlHX12fzc8j4TVFGO7aPBYLKYJ1nWXuLdcGbH92PPEZmJS5QiHSs1uvZPS9U
-         XdcC4W33JzJBxg88h6G2MUw35zJ+bJLv+j2J+r8Xw3Vp+yHkLekBc5dD/lIADZpr9jOX
-         L8RkhDIGqmH0ZEytYAJl5QpWV6G9nI5CYEcnWsZVlqLjORX9PWt63SWbNw3CN5dupqKb
-         RnQo8XRm5SPRqasT+pOfV4YXaYTi8cagj9bF4ZtZ+FkylUjM7ZSitMWYecUNPgCl4Sh3
-         LQu/XjIxe2P3OjwKMeduNzLwmoWghZltX/5XfYajbFwRJ2ogt5uQuUIYOTgOyZQc8Bkq
-         xX5A==
-X-Gm-Message-State: AJcUukflqyVRqQUCfypkVVG/ancf9LbhMFH5M7i9ztP+l8iMUzMBVClq
-        nu5nw1GuIE5BrwEvrjNTnw6NZg==
-X-Google-Smtp-Source: ALg8bN7rT8LvDWPMxjzpkoGrws6pbPAyONaxyR6ej2Ej8sEubYBODxRjSZ1PCIvgq328sG812NZ9tg==
-X-Received: by 2002:ae9:ddc3:: with SMTP id r186mr10075337qkf.163.1548429090658;
-        Fri, 25 Jan 2019 07:11:30 -0800 (PST)
-Received: from macbook-air (weaver.eece.maine.edu. [130.111.218.23])
-        by smtp.gmail.com with ESMTPSA id x49sm98323625qta.89.2019.01.25.07.11.29
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 07:11:29 -0800 (PST)
-From:   Vince Weaver <vincent.weaver@maine.edu>
-X-Google-Original-From: Vince Weaver <vince@maine.edu>
-Date:   Fri, 25 Jan 2019 10:11:28 -0500 (EST)
-X-X-Sender: vince@macbook-air
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-cc:     lkml <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Andi Kleen <ak@linux.intel.com>, eranian@google.com,
-        vincent.weaver@maine.edu,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: System crash with perf_fuzzer (kernel: 5.0.0-rc3)
-In-Reply-To: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com>
-Message-ID: <alpine.DEB.2.21.1901251008310.32202@macbook-air>
-References: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 25 Jan 2019 10:13:58 -0500
+Received: from foss.arm.com ([217.140.101.70]:48792 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726111AbfAYPN5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:13:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 85ABEA78;
+        Fri, 25 Jan 2019 07:13:56 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D5E663F5AF;
+        Fri, 25 Jan 2019 07:13:53 -0800 (PST)
+Subject: Re: [PATCH v5 2/4] perf: add arm64 smmuv3 pmu driver
+To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        lorenzo.pieralisi@arm.com
+Cc:     jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, guohanjun@huawei.com, john.garry@huawei.com,
+        pabba@codeaurora.org, vkilari@codeaurora.org,
+        rruigrok@codeaurora.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxarm@huawei.com, neil.m.leeder@gmail.com
+References: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
+ <20181130154751.28580-3-shameerali.kolothum.thodi@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <a6ca4028-d0b9-80cd-f610-45a2179f60a4@arm.com>
+Date:   Fri, 25 Jan 2019 15:13:52 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <20181130154751.28580-3-shameerali.kolothum.thodi@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Jan 2019, Ravi Bangoria wrote:
-
-> I'm seeing a system crash while running perf_fuzzer with upstream kernel
-> on an Intel machine. I hit the crash twice (out of which I don't have log
-> of first crash so don't know if the reason is same for both the crashes).
-> I've attached my .config with the mail.
->                   type = PERF_TYPE_HARDWARE;
-
-
-
->   ========
+On 30/11/2018 15:47, Shameer Kolothum wrote:
+> From: Neil Leeder <nleeder@codeaurora.org>
 > 
-> And, I'm running fuzzer in a loop with *root*. (Let me know if running
-> as root is harmful ;-) ).
+> Adds a new driver to support the SMMUv3 PMU and add it into the
+> perf events framework.
+> 
+> Each SMMU node may have multiple PMUs associated with it, each of
+> which may support different events.
+> 
+> SMMUv3 PMCG devices are named as smmuv3_pmcg_<phys_addr_page> where
+> <phys_addr_page> is the physical page address of the SMMU PMCG
+> wrapped to 4K boundary. For example, the PMCG at 0xff88840000 is
+> named smmuv3_pmcg_ff88840
+> 
+> Filtering by stream id is done by specifying filtering parameters
+> with the event. options are:
+>     filter_enable    - 0 = no filtering, 1 = filtering enabled
+>     filter_span      - 0 = exact match, 1 = pattern match
+>     filter_stream_id - pattern to filter against
+> 
+> Example: perf stat -e smmuv3_pmcg_ff88840/transaction,filter_enable=1,
+>                         filter_span=1,filter_stream_id=0x42/ -a netperf
+> 
+> Applies filter pattern 0x42 to transaction events, which means events
+> matching stream ids 0x42 & 0x43 are counted as only upper StreamID
+> bits are required to match the given filter. Further filtering
+> information is available in the SMMU documentation.
+> 
+> SMMU events are not attributable to a CPU, so task mode and sampling
+> are not supported.
+> 
+> Signed-off-by: Neil Leeder <nleeder@codeaurora.org>
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> ---
+>   drivers/perf/Kconfig          |   9 +
+>   drivers/perf/Makefile         |   1 +
+>   drivers/perf/arm_smmuv3_pmu.c | 778 ++++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 788 insertions(+)
+>   create mode 100644 drivers/perf/arm_smmuv3_pmu.c
+> 
+> diff --git a/drivers/perf/Kconfig b/drivers/perf/Kconfig
+> index 08ebaf7..92be6a3 100644
+> --- a/drivers/perf/Kconfig
+> +++ b/drivers/perf/Kconfig
+> @@ -52,6 +52,15 @@ config ARM_PMU_ACPI
+>   	depends on ARM_PMU && ACPI
+>   	def_bool y
+>   
+> +config ARM_SMMU_V3_PMU
+> +	 bool "ARM SMMUv3 Performance Monitors Extension"
+> +	 depends on ARM64 && ACPI && ARM_SMMU_V3
+> +	   help
+> +	   Provides support for the SMMU version 3 performance monitor unit (PMU)
+> +	   on ARM-based systems.
+> +	   Adds the SMMU PMU into the perf events subsystem for
+> +	   monitoring SMMU performance events.
+> +
+>   config ARM_DSU_PMU
+>   	tristate "ARM DynamIQ Shared Unit (DSU) PMU"
+>   	depends on ARM64
+> diff --git a/drivers/perf/Makefile b/drivers/perf/Makefile
+> index b3902bd..f10a932 100644
+> --- a/drivers/perf/Makefile
+> +++ b/drivers/perf/Makefile
+> @@ -4,6 +4,7 @@ obj-$(CONFIG_ARM_CCN) += arm-ccn.o
+>   obj-$(CONFIG_ARM_DSU_PMU) += arm_dsu_pmu.o
+>   obj-$(CONFIG_ARM_PMU) += arm_pmu.o arm_pmu_platform.o
+>   obj-$(CONFIG_ARM_PMU_ACPI) += arm_pmu_acpi.o
+> +obj-$(CONFIG_ARM_SMMU_V3_PMU) += arm_smmuv3_pmu.o
+>   obj-$(CONFIG_HISI_PMU) += hisilicon/
+>   obj-$(CONFIG_QCOM_L2_PMU)	+= qcom_l2_pmu.o
+>   obj-$(CONFIG_QCOM_L3_PMU) += qcom_l3_pmu.o
+> diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
+> new file mode 100644
+> index 0000000..fb9dcd8
+> --- /dev/null
+> +++ b/drivers/perf/arm_smmuv3_pmu.c
+> @@ -0,0 +1,778 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * This driver adds support for perf events to use the Performance
+> + * Monitor Counter Groups (PMCG) associated with an SMMUv3 node
+> + * to monitor that node.
+> + *
+> + * SMMUv3 PMCG devices are named as smmuv3_pmcg_<phys_addr_page> where
+> + * <phys_addr_page> is the physical page address of the SMMU PMCG wrapped
+> + * to 4K boundary. For example, the PMCG at 0xff88840000 is named
+> + * smmuv3_pmcg_ff88840
+> + *
+> + * Filtering by stream id is done by specifying filtering parameters
+> + * with the event. options are:
+> + *   filter_enable    - 0 = no filtering, 1 = filtering enabled
+> + *   filter_span      - 0 = exact match, 1 = pattern match
+> + *   filter_stream_id - pattern to filter against
+> + *
+> + * To match a partial StreamID where the X most-significant bits must match
+> + * but the Y least-significant bits might differ, STREAMID is programmed
+> + * with a value that contains:
+> + *  STREAMID[Y - 1] == 0.
+> + *  STREAMID[Y - 2:0] == 1 (where Y > 1).
+> + * The remainder of implemented bits of STREAMID (X bits, from bit Y upwards)
+> + * contain a value to match from the corresponding bits of event StreamID.
+> + *
+> + * Example: perf stat -e smmuv3_pmcg_ff88840/transaction,filter_enable=1,
+> + *                    filter_span=1,filter_stream_id=0x42/ -a netperf
+> + * Applies filter pattern 0x42 to transaction events, which means events
+> + * matching stream ids 0x42 and 0x43 are counted. Further filtering
+> + * information is available in the SMMU documentation.
+> + *
+> + * SMMU events are not attributable to a CPU, so task mode and sampling
+> + * are not supported.
+> + */
+> +
+> +#include <linux/acpi.h>
+> +#include <linux/bitfield.h>
+> +#include <linux/bitops.h>
+> +#include <linux/cpuhotplug.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/device.h>
+> +#include <linux/errno.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/irq.h>
+> +#include <linux/kernel.h>
+> +#include <linux/list.h>
+> +#include <linux/msi.h>
+> +#include <linux/perf_event.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/smp.h>
+> +#include <linux/sysfs.h>
+> +#include <linux/types.h>
+> +
+> +#define SMMU_PMCG_EVCNTR0               0x0
+> +#define SMMU_PMCG_EVCNTR(n, stride)     (SMMU_PMCG_EVCNTR0 + (n) * (stride))
+> +#define SMMU_PMCG_EVTYPER0              0x400
+> +#define SMMU_PMCG_EVTYPER(n)            (SMMU_PMCG_EVTYPER0 + (n) * 4)
+> +#define SMMU_PMCG_SID_SPAN_SHIFT        29
+> +#define SMMU_PMCG_SID_SPAN_MASK         GENMASK(29, 29)
 
+Surely just:
 
-There's a known issue related to Intel BTS events that you can trigger 
-with the perf_fuzzer, even as a normal user.  I reported it a few months 
-ago but I don't think it ever got resolved.  The traces you get look 
-similar to some that you posted.
+#define SMMU_PMCG_SID_SPAN	BIT(29)
 
-It's hard to track down as it doesn't seem to be a simple issue, but 
-rather it looks like the BTS event handling is stomping over memory it 
-shouldn't somehow.
+(or maybe even SMMU_PMCG_EVTYPER_SID_SPAN for clarity)?
 
-Vince
+> +#define SMMU_PMCG_SMR0                  0xA00
+> +#define SMMU_PMCG_SMR(n)                (SMMU_PMCG_SMR0 + (n) * 4)
+> +#define SMMU_PMCG_CNTENSET0             0xC00
+> +#define SMMU_PMCG_CNTENCLR0             0xC20
+> +#define SMMU_PMCG_INTENSET0             0xC40
+> +#define SMMU_PMCG_INTENCLR0             0xC60
+> +#define SMMU_PMCG_OVSCLR0               0xC80
+> +#define SMMU_PMCG_OVSSET0               0xCC0
+> +#define SMMU_PMCG_CFGR                  0xE00
+> +#define SMMU_PMCG_CFGR_RELOC_CTRS       BIT(20)
+> +#define SMMU_PMCG_CFGR_SID_FILTER_TYPE  BIT(23)
+> +#define SMMU_PMCG_CFGR_SIZE_MASK        GENMASK(13, 8)
+> +#define SMMU_PMCG_CFGR_NCTR_MASK        GENMASK(5, 0)
+
+Nit: as long as we use the bitfield accessors consistently, these _MASK 
+suffixes are a bit of a waste of space IMO.
+
+> +#define SMMU_PMCG_CR                    0xE04
+> +#define SMMU_PMCG_CR_ENABLE             BIT(0)
+> +#define SMMU_PMCG_CEID0                 0xE20
+> +#define SMMU_PMCG_CEID1                 0xE28
+> +#define SMMU_PMCG_IRQ_CTRL              0xE50
+> +#define SMMU_PMCG_IRQ_CTRL_IRQEN        BIT(0)
+> +#define SMMU_PMCG_IRQ_CFG0              0xE58
+> +
+> +#define SMMU_DEFAULT_FILTER_SPAN        1
+> +#define SMMU_DEFAULT_FILTER_STREAM_ID   GENMASK(31, 0)
+> +
+> +#define SMMU_MAX_COUNTERS               64
+> +#define SMMU_ARCH_MAX_EVENT_ID          0x7F
+> +#define SMMU_IMPDEF_MAX_EVENT_ID        0xFFFF
+> +#define SMMU_ARCH_MAX_EVENTS            (SMMU_ARCH_MAX_EVENT_ID + 1)
+
+Do we really need two definitions of effectively the same thing?
+
+> +
+> +#define SMMU_PA_SHIFT                   12
+> +
+> +static int cpuhp_state_num;
+> +
+> +struct smmu_pmu {
+> +	bool sid_filter_global;
+> +	struct hlist_node node;
+> +	struct perf_event *events[SMMU_MAX_COUNTERS];
+> +	DECLARE_BITMAP(used_counters, SMMU_MAX_COUNTERS);
+> +	DECLARE_BITMAP(supported_events, SMMU_ARCH_MAX_EVENTS);
+> +	unsigned int irq;
+> +	unsigned int on_cpu;
+> +	struct pmu pmu;
+> +	unsigned int num_counters;
+> +	struct device *dev;
+> +	void __iomem *reg_base;
+> +	void __iomem *reloc_base;
+> +	u64 counter_present_mask;
+> +	u64 counter_mask;
+> +};
+> +
+> +#define to_smmu_pmu(p) (container_of(p, struct smmu_pmu, pmu))
+> +
+> +#define SMMU_PMU_EVENT_ATTR_EXTRACTOR(_name, _config, _start, _end)        \
+> +	static inline u32 get_##_name(struct perf_event *event)            \
+> +	{                                                                  \
+> +		return FIELD_GET(GENMASK_ULL(_end, _start),                \
+> +				 event->attr._config);                     \
+> +	}                                                                  \
+> +
+> +SMMU_PMU_EVENT_ATTR_EXTRACTOR(event, config, 0, 15);
+> +SMMU_PMU_EVENT_ATTR_EXTRACTOR(filter_stream_id, config1, 0, 31);
+> +SMMU_PMU_EVENT_ATTR_EXTRACTOR(filter_span, config1, 32, 32);
+> +SMMU_PMU_EVENT_ATTR_EXTRACTOR(filter_enable, config1, 33, 33);
+> +
+> +static inline void smmu_pmu_enable(struct pmu *pmu)
+> +{
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(pmu);
+> +
+> +	writel(SMMU_PMCG_CR_ENABLE, smmu_pmu->reg_base + SMMU_PMCG_CR);
+> +	writel(SMMU_PMCG_IRQ_CTRL_IRQEN,
+> +	       smmu_pmu->reg_base + SMMU_PMCG_IRQ_CTRL);
+> +}
+> +
+> +static inline void smmu_pmu_disable(struct pmu *pmu)
+> +{
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(pmu);
+> +
+> +	writel(0, smmu_pmu->reg_base + SMMU_PMCG_CR);
+> +	writel(0, smmu_pmu->reg_base + SMMU_PMCG_IRQ_CTRL);
+> +}
+> +
+> +static inline void smmu_pmu_counter_set_value(struct smmu_pmu *smmu_pmu,
+> +					      u32 idx, u64 value)
+> +{
+> +	if (smmu_pmu->counter_mask & BIT(32))
+> +		writeq(value, smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx, 8));
+> +	else
+> +		writel(value, smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx, 4));
+> +}
+> +
+> +static inline u64 smmu_pmu_counter_get_value(struct smmu_pmu *smmu_pmu, u32 idx)
+> +{
+> +	u64 value;
+> +
+> +	if (smmu_pmu->counter_mask & BIT(32))
+> +		value = readq(smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx, 8));
+> +	else
+> +		value = readl(smmu_pmu->reloc_base + SMMU_PMCG_EVCNTR(idx, 4));
+> +
+> +	return value;
+> +}
+> +
+> +static inline void smmu_pmu_counter_enable(struct smmu_pmu *smmu_pmu, u32 idx)
+> +{
+> +	writeq(BIT(idx), smmu_pmu->reg_base + SMMU_PMCG_CNTENSET0);
+> +}
+> +
+> +static inline void smmu_pmu_counter_disable(struct smmu_pmu *smmu_pmu, u32 idx)
+> +{
+> +	writeq(BIT(idx), smmu_pmu->reg_base + SMMU_PMCG_CNTENCLR0);
+> +}
+> +
+> +static inline void smmu_pmu_interrupt_enable(struct smmu_pmu *smmu_pmu, u32 idx)
+> +{
+> +	writeq(BIT(idx), smmu_pmu->reg_base + SMMU_PMCG_INTENSET0);
+> +}
+> +
+> +static inline void smmu_pmu_interrupt_disable(struct smmu_pmu *smmu_pmu,
+> +					      u32 idx)
+> +{
+> +	writeq(BIT(idx), smmu_pmu->reg_base + SMMU_PMCG_INTENCLR0);
+> +}
+> +
+> +static inline void smmu_pmu_set_evtyper(struct smmu_pmu *smmu_pmu, u32 idx,
+> +					u32 val)
+> +{
+> +	writel(val, smmu_pmu->reg_base + SMMU_PMCG_EVTYPER(idx));
+> +}
+> +
+> +static inline void smmu_pmu_set_smr(struct smmu_pmu *smmu_pmu, u32 idx, u32 val)
+> +{
+> +	writel(val, smmu_pmu->reg_base + SMMU_PMCG_SMR(idx));
+> +}
+> +
+> +static void smmu_pmu_event_update(struct perf_event *event)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
+> +	u64 delta, prev, now;
+> +	u32 idx = hwc->idx;
+> +
+> +	do {
+> +		prev = local64_read(&hwc->prev_count);
+> +		now = smmu_pmu_counter_get_value(smmu_pmu, idx);
+> +	} while (local64_cmpxchg(&hwc->prev_count, prev, now) != prev);
+> +
+> +	/* handle overflow. */
+> +	delta = now - prev;
+> +	delta &= smmu_pmu->counter_mask;
+> +
+> +	local64_add(delta, &event->count);
+> +}
+> +
+> +static void smmu_pmu_set_period(struct smmu_pmu *smmu_pmu,
+> +				struct hw_perf_event *hwc)
+> +{
+> +	u32 idx = hwc->idx;
+> +	u64 new;
+> +
+> +	/*
+> +	 * We limit the max period to half the max counter value of the counter
+> +	 * size, so that even in the case of extreme interrupt latency the
+> +	 * counter will (hopefully) not wrap past its initial value.
+> +	 */
+> +	new = smmu_pmu->counter_mask >> 1;
+> +
+> +	local64_set(&hwc->prev_count, new);
+> +	smmu_pmu_counter_set_value(smmu_pmu, idx, new);
+> +}
+> +
+> +static void smmu_pmu_get_event_filter(struct perf_event *event, u32 *span,
+> +				      u32 *stream_id)
+
+It might just be me, but those u32s seem a little non-obvious given that 
+they're both actually communicating boolean values.
+
+> +{
+> +	bool filter_en = !!get_filter_enable(event);
+> +
+> +	*span = filter_en ? get_filter_span(event) : SMMU_DEFAULT_FILTER_SPAN;
+> +	*stream_id = filter_en ? get_filter_stream_id(event) :
+> +				 SMMU_DEFAULT_FILTER_STREAM_ID;
+> +}
+> +
+> +static bool smmu_pmu_event_filter_valid(struct smmu_pmu *smmu_pmu,
+> +				  struct perf_event *event, int idx)
+> +{
+> +	u32 filter_span, filter_sid;
+> +	u32 curr_span, curr_sid;
+> +
+> +	if (!idx  || !smmu_pmu->sid_filter_global)
+> +		return true;
+
+Consider this sequence on an initially-empty PMCG with global filtering:
+
+  - add event A with filter X
+  - add event B with filter X
+  - delete event A
+  - add event C with filter Y
+
+event B is suddenly filtered by Y. Oops.
+
+> +	smmu_pmu_get_event_filter(event, &filter_span, &filter_sid);
+> +
+> +	/* Read the current global filter setting */
+> +	curr_span = FIELD_GET(SMMU_PMCG_SID_SPAN_MASK,
+> +			      readl(smmu_pmu->reg_base + SMMU_PMCG_EVTYPER0));
+> +	curr_sid = readl(smmu_pmu->reg_base + SMMU_PMCG_SMR0);
+
+The solution to the above problem will likely help avoid this slightly 
+yucky reading back of register state, too.
+
+> +
+> +	if (filter_span != curr_span || filter_sid != curr_sid)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> +static int smmu_pmu_get_event_idx(struct smmu_pmu *smmu_pmu,
+> +				  struct perf_event *event)
+> +{
+> +	unsigned int idx;
+> +	unsigned int num_ctrs = smmu_pmu->num_counters;
+> +
+> +	idx = find_first_zero_bit(smmu_pmu->used_counters, num_ctrs);
+> +	if (idx == num_ctrs)
+> +		/* The counters are all in use. */
+> +		return -EAGAIN;
+> +
+> +	if (!smmu_pmu_event_filter_valid(smmu_pmu, event, idx))
+> +		return -EAGAIN;
+> +
+> +	set_bit(idx, smmu_pmu->used_counters);
+> +
+> +	return idx;
+> +}
+> +
+> +/*
+> + * Implementation of abstract pmu functionality required by
+> + * the core perf events code.
+> + */
+> +
+> +static int smmu_pmu_event_init(struct perf_event *event)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
+> +	struct device *dev = smmu_pmu->dev;
+> +	struct perf_event *sibling;
+> +	u32 event_id;
+> +
+> +	if (event->attr.type != event->pmu->type)
+> +		return -ENOENT;
+> +
+> +	if (hwc->sample_period) {
+> +		dev_dbg(dev, "Sampling not supported\n");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	if (event->cpu < 0) {
+> +		dev_dbg(dev, "Per-task mode not supported\n");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	/* We cannot filter accurately so we just don't allow it. */
+> +	if (event->attr.exclude_user || event->attr.exclude_kernel ||
+> +	    event->attr.exclude_hv || event->attr.exclude_idle) {
+> +		dev_dbg(dev, "Can't exclude execution levels\n");
+> +		return -EOPNOTSUPP;
+> +	}
+> +
+> +	/* Verify specified event is supported on this PMU */
+> +	event_id = get_event(event);
+
+Given what this does...
+
+> +	if (((event_id <= SMMU_ARCH_MAX_EVENT_ID) &&
+> +	    (!test_bit(event_id, smmu_pmu->supported_events))) ||
+> +	    (event_id > SMMU_IMPDEF_MAX_EVENT_ID)) {
+
+...how can this last condition ever be true? On which note, event_id 
+could also be a u16 here, which might aid clarity even more.
+
+Really, both MAX_EVENT_ID definitions seem redundant.
+
+> +		dev_dbg(dev, "Invalid event %d for this PMU\n", event_id);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Don't allow groups with mixed PMUs, except for s/w events */
+> +	if (event->group_leader->pmu != event->pmu &&
+> +	    !is_software_event(event->group_leader)) {
+> +		dev_dbg(dev, "Can't create mixed PMU group\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	list_for_each_entry(sibling, &event->group_leader->sibling_list,
+> +			    sibling_list)
+
+Maybe consider the for_each_sibling_event() helper?
+
+> +		if (sibling->pmu != event->pmu &&
+> +		    !is_software_event(sibling)) {
+> +			dev_dbg(dev, "Can't create mixed PMU group\n");
+> +			return -EINVAL;
+> +		}
+> +
+> +	/* Ensure all events in a group are on the same cpu */
+> +	if ((event->group_leader != event) &&
+> +	    (event->cpu != event->group_leader->cpu)) {
+> +		dev_dbg(dev, "Can't create group on CPUs %d and %d\n",
+> +			event->cpu, event->group_leader->cpu);
+> +		return -EINVAL;
+> +	}
+
+Is this really necessary? At this point, event->cpu might not have the 
+value that we're just about to force it to, and AFAICS perf_event_open() 
+will eventually bail out if they don't end up matching anyway.
+
+> +
+> +	hwc->idx = -1;
+> +
+> +	/*
+> +	 * Ensure all events are on the same cpu so all events are in the
+> +	 * same cpu context, to avoid races on pmu_enable etc.
+> +	 */
+> +	event->cpu = smmu_pmu->on_cpu;
+> +
+> +	return 0;
+> +}
+> +
+> +static void smmu_pmu_event_start(struct perf_event *event, int flags)
+> +{
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	int idx = hwc->idx;
+> +	u32 filter_span, filter_sid;
+> +	u32 evtyper;
+> +
+> +	hwc->state = 0;
+> +
+> +	smmu_pmu_set_period(smmu_pmu, hwc);
+> +
+> +	smmu_pmu_get_event_filter(event, &filter_span, &filter_sid);
+> +
+> +	evtyper = get_event(event) |
+> +		  filter_span << SMMU_PMCG_SID_SPAN_SHIFT;
+> +
+> +	smmu_pmu_set_evtyper(smmu_pmu, idx, evtyper);
+> +	smmu_pmu_set_smr(smmu_pmu, idx, filter_sid);
+
+Careful, SMRn and EVTYPERn.FILTER_SID_SPAN are RES0 for n > 0 with 
+global filtering, so we shouldn't *always* be writing to them.
+
+> +	smmu_pmu_interrupt_enable(smmu_pmu, idx);
+> +	smmu_pmu_counter_enable(smmu_pmu, idx);
+> +}
+> +
+> +static void smmu_pmu_event_stop(struct perf_event *event, int flags)
+> +{
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	int idx = hwc->idx;
+> +
+> +	if (hwc->state & PERF_HES_STOPPED)
+> +		return;
+> +
+> +	smmu_pmu_counter_disable(smmu_pmu, idx);
+> +
+> +	if (flags & PERF_EF_UPDATE)
+> +		smmu_pmu_event_update(event);
+> +	hwc->state |= PERF_HES_STOPPED | PERF_HES_UPTODATE;
+> +}
+> +
+> +static int smmu_pmu_event_add(struct perf_event *event, int flags)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	int idx;
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
+> +
+> +	idx = smmu_pmu_get_event_idx(smmu_pmu, event);
+> +	if (idx < 0)
+> +		return idx;
+> +
+> +	hwc->idx = idx;
+> +	hwc->state = PERF_HES_STOPPED | PERF_HES_UPTODATE;
+> +	smmu_pmu->events[idx] = event;
+> +	local64_set(&hwc->prev_count, 0);
+> +
+> +	if (flags & PERF_EF_START)
+> +		smmu_pmu_event_start(event, flags);
+> +
+> +	/* Propagate changes to the userspace mapping. */
+> +	perf_event_update_userpage(event);
+> +
+> +	return 0;
+> +}
+> +
+> +static void smmu_pmu_event_del(struct perf_event *event, int flags)
+> +{
+> +	struct hw_perf_event *hwc = &event->hw;
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(event->pmu);
+> +	int idx = hwc->idx;
+> +
+> +	smmu_pmu_event_stop(event, flags | PERF_EF_UPDATE);
+> +	smmu_pmu->events[idx] = NULL;
+> +	clear_bit(idx, smmu_pmu->used_counters);
+> +
+> +	perf_event_update_userpage(event);
+> +}
+> +
+> +static void smmu_pmu_event_read(struct perf_event *event)
+> +{
+> +	smmu_pmu_event_update(event);
+> +}
+> +
+> +/* cpumask */
+> +
+> +static ssize_t smmu_pmu_cpumask_show(struct device *dev,
+> +				     struct device_attribute *attr,
+> +				     char *buf)
+> +{
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(dev_get_drvdata(dev));
+> +
+> +	return cpumap_print_to_pagebuf(true, buf, cpumask_of(smmu_pmu->on_cpu));
+> +}
+> +
+> +static struct device_attribute smmu_pmu_cpumask_attr =
+> +		__ATTR(cpumask, 0444, smmu_pmu_cpumask_show, NULL);
+> +
+> +static struct attribute *smmu_pmu_cpumask_attrs[] = {
+> +	&smmu_pmu_cpumask_attr.attr,
+> +	NULL
+> +};
+> +
+> +static struct attribute_group smmu_pmu_cpumask_group = {
+> +	.attrs = smmu_pmu_cpumask_attrs,
+> +};
+> +
+> +/* Events */
+> +
+> +ssize_t smmu_pmu_event_show(struct device *dev,
+> +			    struct device_attribute *attr, char *page)
+> +{
+> +	struct perf_pmu_events_attr *pmu_attr;
+> +
+> +	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr);
+> +
+> +	return sprintf(page, "event=0x%02llx\n", pmu_attr->id);
+> +}
+> +
+> +#define SMMU_EVENT_ATTR(_name, _id)					  \
+> +	(&((struct perf_pmu_events_attr[]) {				  \
+> +		{ .attr = __ATTR(_name, 0444, smmu_pmu_event_show, NULL), \
+> +		  .id = _id, }						  \
+> +	})[0].attr.attr)
+> +
+> +static struct attribute *smmu_pmu_events[] = {
+> +	SMMU_EVENT_ATTR(cycles, 0),
+> +	SMMU_EVENT_ATTR(transaction, 1),
+> +	SMMU_EVENT_ATTR(tlb_miss, 2),
+> +	SMMU_EVENT_ATTR(config_cache_miss, 3),
+> +	SMMU_EVENT_ATTR(trans_table_walk_access, 4),
+> +	SMMU_EVENT_ATTR(config_struct_access, 5),
+> +	SMMU_EVENT_ATTR(pcie_ats_trans_rq, 6),
+> +	SMMU_EVENT_ATTR(pcie_ats_trans_passed, 7),
+> +	NULL
+> +};
+> +
+> +static umode_t smmu_pmu_event_is_visible(struct kobject *kobj,
+> +					 struct attribute *attr, int unused)
+> +{
+> +	struct device *dev = kobj_to_dev(kobj);
+> +	struct smmu_pmu *smmu_pmu = to_smmu_pmu(dev_get_drvdata(dev));
+> +	struct perf_pmu_events_attr *pmu_attr;
+> +
+> +	pmu_attr = container_of(attr, struct perf_pmu_events_attr, attr.attr);
+> +
+> +	if (test_bit(pmu_attr->id, smmu_pmu->supported_events))
+> +		return attr->mode;
+> +
+> +	return 0;
+> +}
+> +static struct attribute_group smmu_pmu_events_group = {
+> +	.name = "events",
+> +	.attrs = smmu_pmu_events,
+> +	.is_visible = smmu_pmu_event_is_visible,
+> +};
+> +
+> +/* Formats */
+> +PMU_FORMAT_ATTR(event,		   "config:0-15");
+> +PMU_FORMAT_ATTR(filter_stream_id,  "config1:0-31");
+> +PMU_FORMAT_ATTR(filter_span,	   "config1:32");
+> +PMU_FORMAT_ATTR(filter_enable,	   "config1:33");
+> +
+> +static struct attribute *smmu_pmu_formats[] = {
+> +	&format_attr_event.attr,
+> +	&format_attr_filter_stream_id.attr,
+> +	&format_attr_filter_span.attr,
+> +	&format_attr_filter_enable.attr,
+> +	NULL
+> +};
+> +
+> +static struct attribute_group smmu_pmu_format_group = {
+> +	.name = "format",
+> +	.attrs = smmu_pmu_formats,
+> +};
+> +
+> +static const struct attribute_group *smmu_pmu_attr_grps[] = {
+> +	&smmu_pmu_cpumask_group,
+> +	&smmu_pmu_events_group,
+> +	&smmu_pmu_format_group,
+> +	NULL
+> +};
+> +
+> +/*
+> + * Generic device handlers
+> + */
+> +
+> +static int smmu_pmu_offline_cpu(unsigned int cpu, struct hlist_node *node)
+> +{
+> +	struct smmu_pmu *smmu_pmu;
+> +	unsigned int target;
+> +
+> +	smmu_pmu = hlist_entry_safe(node, struct smmu_pmu, node);
+> +	if (cpu != smmu_pmu->on_cpu)
+> +		return 0;
+> +
+> +	target = cpumask_any_but(cpu_online_mask, cpu);
+> +	if (target >= nr_cpu_ids)
+> +		return 0;
+> +
+> +	perf_pmu_migrate_context(&smmu_pmu->pmu, cpu, target);
+> +	smmu_pmu->on_cpu = target;
+> +	WARN_ON(irq_set_affinity(smmu_pmu->irq, cpumask_of(target)));
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t smmu_pmu_handle_irq(int irq_num, void *data)
+> +{
+> +	struct smmu_pmu *smmu_pmu = data;
+> +	u64 ovsr;
+> +	unsigned int idx;
+> +
+> +	ovsr = readq(smmu_pmu->reloc_base + SMMU_PMCG_OVSSET0);
+> +	if (!ovsr)
+> +		return IRQ_NONE;
+> +
+> +	writeq(ovsr, smmu_pmu->reloc_base + SMMU_PMCG_OVSCLR0);
+> +
+> +	for_each_set_bit(idx, (unsigned long *)&ovsr, smmu_pmu->num_counters) {
+> +		struct perf_event *event = smmu_pmu->events[idx];
+> +		struct hw_perf_event *hwc;
+> +
+> +		if (WARN_ON_ONCE(!event))
+> +			continue;
+> +
+> +		smmu_pmu_event_update(event);
+> +		hwc = &event->hw;
+> +
+> +		smmu_pmu_set_period(smmu_pmu, hwc);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int smmu_pmu_setup_irq(struct smmu_pmu *pmu)
+> +{
+> +	unsigned long flags = IRQF_NOBALANCING | IRQF_SHARED | IRQF_NO_THREAD;
+> +	int irq, ret = -ENXIO;
+> +
+> +	irq = pmu->irq;
+> +	if (irq)
+> +		ret = devm_request_irq(pmu->dev, irq, smmu_pmu_handle_irq,
+> +				       flags, "smmuv3-pmu", pmu);
+> +	return ret;
+> +}
+> +
+> +static void smmu_pmu_reset(struct smmu_pmu *smmu_pmu)
+> +{
+> +	smmu_pmu_disable(&smmu_pmu->pmu);
+> +
+> +	/* Disable counter and interrupt */
+> +	writeq_relaxed(smmu_pmu->counter_present_mask,
+> +		       smmu_pmu->reg_base + SMMU_PMCG_CNTENCLR0);
+> +	writeq_relaxed(smmu_pmu->counter_present_mask,
+> +		       smmu_pmu->reg_base + SMMU_PMCG_INTENCLR0);
+
+I suppose if we really wanted to save on register-poking in 
+event_add/event_del, we *could* permanently enable the per-counter 
+interrupts here and just rely on enable/disable/event_start/event_stop 
+naturally preventing anything unexpected. That's a little non-obvious, 
+though, so unless there proves to be some concrete benefit I'm inclined 
+to stick with the logically-straightforward approach suggested yesterday.
+
+> +	writeq_relaxed(smmu_pmu->counter_present_mask,
+> +		       smmu_pmu->reloc_base + SMMU_PMCG_OVSCLR0);
+> +}
+> +
+> +static int smmu_pmu_probe(struct platform_device *pdev)
+> +{
+> +	struct smmu_pmu *smmu_pmu;
+> +	struct resource *res_0, *res_1;
+> +	u32 cfgr, reg_size;
+> +	u64 ceid_64[2];
+> +	int irq, err;
+> +	char *name;
+> +	struct device *dev = &pdev->dev;
+> +
+> +	smmu_pmu = devm_kzalloc(dev, sizeof(*smmu_pmu), GFP_KERNEL);
+> +	if (!smmu_pmu)
+> +		return -ENOMEM;
+> +
+> +	smmu_pmu->dev = dev;
+> +	platform_set_drvdata(pdev, smmu_pmu);
+> +
+> +	smmu_pmu->pmu = (struct pmu) {
+> +		.task_ctx_nr    = perf_invalid_context,
+> +		.pmu_enable	= smmu_pmu_enable,
+> +		.pmu_disable	= smmu_pmu_disable,
+> +		.event_init	= smmu_pmu_event_init,
+> +		.add		= smmu_pmu_event_add,
+> +		.del		= smmu_pmu_event_del,
+> +		.start		= smmu_pmu_event_start,
+> +		.stop		= smmu_pmu_event_stop,
+> +		.read		= smmu_pmu_event_read,
+> +		.attr_groups	= smmu_pmu_attr_grps,
+> +	};
+> +
+> +	res_0 = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> +	smmu_pmu->reg_base = devm_ioremap_resource(dev, res_0);
+> +	if (IS_ERR(smmu_pmu->reg_base))
+> +		return PTR_ERR(smmu_pmu->reg_base);
+> +
+> +	cfgr = readl_relaxed(smmu_pmu->reg_base + SMMU_PMCG_CFGR);
+> +
+> +	/* Determine if page 1 is present */
+> +	if (cfgr & SMMU_PMCG_CFGR_RELOC_CTRS) {
+> +		res_1 = platform_get_resource(pdev, IORESOURCE_MEM, 1);
+> +		smmu_pmu->reloc_base = devm_ioremap_resource(dev, res_1);
+> +		if (IS_ERR(smmu_pmu->reloc_base))
+> +			return PTR_ERR(smmu_pmu->reloc_base);
+> +	} else {
+> +		smmu_pmu->reloc_base = smmu_pmu->reg_base;
+> +	}
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq > 0)
+> +		smmu_pmu->irq = irq;
+> +
+> +	ceid_64[0] = readq_relaxed(smmu_pmu->reg_base + SMMU_PMCG_CEID0);
+> +	ceid_64[1] = readq_relaxed(smmu_pmu->reg_base + SMMU_PMCG_CEID1);
+> +	bitmap_from_arr32(smmu_pmu->supported_events, (u32 *)ceid_64,
+> +			  SMMU_ARCH_MAX_EVENTS);
+> +
+> +	smmu_pmu->num_counters = FIELD_GET(SMMU_PMCG_CFGR_NCTR_MASK, cfgr) + 1;
+> +	smmu_pmu->counter_present_mask = GENMASK(smmu_pmu->num_counters - 1, 0);
+
+GENMASK_ULL() for consistency?
+
+Although it looks like we now only ever use counter_present_mask in the 
+reset routine anyway, so maybe we could just dynamically generate it 
+there instead of storing it.
+
+Robin.
+
+> +
+> +	smmu_pmu->sid_filter_global = !!(cfgr & SMMU_PMCG_CFGR_SID_FILTER_TYPE);
+> +
+> +	reg_size = FIELD_GET(SMMU_PMCG_CFGR_SIZE_MASK, cfgr);
+> +	smmu_pmu->counter_mask = GENMASK_ULL(reg_size, 0);
+> +
+> +	smmu_pmu_reset(smmu_pmu);
+> +
+> +	err = smmu_pmu_setup_irq(smmu_pmu);
+> +	if (err) {
+> +		dev_err(dev, "Setup irq failed, PMU @%pa\n", &res_0->start);
+> +		return err;
+> +	}
+> +
+> +	name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "smmuv3_pmcg_%llx",
+> +			      (res_0->start) >> SMMU_PA_SHIFT);
+> +	if (!name) {
+> +		dev_err(dev, "Create name failed, PMU @%pa\n", &res_0->start);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* Pick one CPU to be the preferred one to use */
+> +	smmu_pmu->on_cpu = get_cpu();
+> +	WARN_ON(irq_set_affinity(smmu_pmu->irq, cpumask_of(smmu_pmu->on_cpu)));
+> +
+> +	err = cpuhp_state_add_instance_nocalls(cpuhp_state_num,
+> +					       &smmu_pmu->node);
+> +	if (err) {
+> +		dev_err(dev, "Error %d registering hotplug, PMU @%pa\n",
+> +			err, &res_0->start);
+> +		goto out_cpuhp_err;
+> +	}
+> +
+> +	err = perf_pmu_register(&smmu_pmu->pmu, name, -1);
+> +	if (err) {
+> +		dev_err(dev, "Error %d registering PMU @%pa\n",
+> +			err, &res_0->start);
+> +		goto out_unregister;
+> +	}
+> +
+> +	put_cpu();
+> +	dev_info(dev, "Registered PMU @ %pa using %d counters with %s filter settings\n",
+> +		 &res_0->start, smmu_pmu->num_counters,
+> +		 smmu_pmu->sid_filter_global ? "Global(Counter0)" :
+> +		 "Individual");
+> +
+> +	return 0;
+> +
+> +out_unregister:
+> +	cpuhp_state_remove_instance_nocalls(cpuhp_state_num, &smmu_pmu->node);
+> +out_cpuhp_err:
+> +	put_cpu();
+> +	return err;
+> +}
+> +
+> +static int smmu_pmu_remove(struct platform_device *pdev)
+> +{
+> +	struct smmu_pmu *smmu_pmu = platform_get_drvdata(pdev);
+> +
+> +	perf_pmu_unregister(&smmu_pmu->pmu);
+> +	cpuhp_state_remove_instance_nocalls(cpuhp_state_num, &smmu_pmu->node);
+> +
+> +	return 0;
+> +}
+> +
+> +static void smmu_pmu_shutdown(struct platform_device *pdev)
+> +{
+> +	struct smmu_pmu *smmu_pmu = platform_get_drvdata(pdev);
+> +
+> +	smmu_pmu_disable(&smmu_pmu->pmu);
+> +}
+> +
+> +static struct platform_driver smmu_pmu_driver = {
+> +	.driver = {
+> +		.name = "arm-smmu-v3-pmu",
+> +	},
+> +	.probe = smmu_pmu_probe,
+> +	.remove = smmu_pmu_remove,
+> +	.shutdown = smmu_pmu_shutdown,
+> +};
+> +
+> +static int __init arm_smmu_pmu_init(void)
+> +{
+> +	cpuhp_state_num = cpuhp_setup_state_multi(CPUHP_AP_ONLINE_DYN,
+> +				      "perf/arm/pmcg:online",
+> +				      NULL,
+> +				      smmu_pmu_offline_cpu);
+> +	if (cpuhp_state_num < 0)
+> +		return cpuhp_state_num;
+> +
+> +	return platform_driver_register(&smmu_pmu_driver);
+> +}
+> +module_init(arm_smmu_pmu_init);
+> +
+> +static void __exit arm_smmu_pmu_exit(void)
+> +{
+> +	platform_driver_unregister(&smmu_pmu_driver);
+> +	cpuhp_remove_multi_state(cpuhp_state_num);
+> +}
+> +
+> +module_exit(arm_smmu_pmu_exit);
+> +
+> +MODULE_DESCRIPTION("PMU driver for ARM SMMUv3 Performance Monitors Extension");
+> +MODULE_AUTHOR("Neil Leeder <nleeder@codeaurora.org>");
+> +MODULE_AUTHOR("Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>");
+> +MODULE_LICENSE("GPL v2");
+> 
