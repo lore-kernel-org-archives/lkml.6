@@ -2,157 +2,122 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 476C3C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:17:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C62C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:18:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16B8521919
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:17:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 410D821919
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:18:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtiE7QN0"
+	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="MSSEySbN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbfAYIRO (ORCPT
+        id S1728810AbfAYIR7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 03:17:14 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:43871 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfAYIRN (ORCPT
+        Fri, 25 Jan 2019 03:17:59 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:46354 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726735AbfAYIR7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 03:17:13 -0500
-Received: by mail-ot1-f68.google.com with SMTP id a11so7751357otr.10;
-        Fri, 25 Jan 2019 00:17:12 -0800 (PST)
+        Fri, 25 Jan 2019 03:17:59 -0500
+Received: by mail-lf1-f65.google.com with SMTP id f5so6267958lfc.13
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 00:17:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=51rjv/rE8IVdsNp/pu/SqvKcr4yosm/xU7bN7sHEyl4=;
-        b=XtiE7QN0siN9qE83S4VaURtlrAfecWQIQJ7yuon0UZGNZtoDpA6NO+z4QWaZBeG5oG
-         t5Tygns5ugebqZ+HxiZ9GkpaUh5hK11hh913ttR6dcdU6IukAInViFyZGzQpJJC1YKfs
-         0zuNwC7KRf3pk+L9QGpznBoKsioWvuBfKoFWCYa05PER79+c4apqOJUwOyWORWOgqVrz
-         AaoqbL1NDxAq7/kM14pHwrTp6PIBcdMtFRjPe65AA2l0GAykLmAok4g6HN2hm8oo2RCf
-         dy1rtQQmCgWD5unj2GIBfXAxZiCOchvHSOPgX/hXxadXOzYcZo7U0DQ7npKGeuvFUxmW
-         qlAg==
+        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9jiQno4UhpYBqTa//0Ls70fFfjYDxFXuvNUqs9ZqpgM=;
+        b=MSSEySbN5UO6m87vMtYZyqZQFMhszrz4L99zNl5hfZLuSPCxNIcU6L+x3ZDiUsM5+R
+         xXlApON/eAxmUmgJ+jKLuIss3hqZY0WsRFGlmUha9uJS1YtpK1S73Hc0ayYZj3SNuKNP
+         Od1TrmnsZ3ah2QGqnnbmUWE2Df/pRZtiO4+ZW6cUQlO9zfvgj1zHjwtWouhfJUngGmn+
+         nB+x3RHfAtOHGOl5wLQ0lO6a5EZc94HJFILh/3mfPH48dZ85kKd8q1gakl9+p0Rn9gAq
+         g+Hn8Zrx1rUNTN1l09o8vcmkY3RAGK4Tf3eMze890SZmUbckntS2oUMFqDjVcurD+kBn
+         zabQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=51rjv/rE8IVdsNp/pu/SqvKcr4yosm/xU7bN7sHEyl4=;
-        b=GI8EZkF9YRxHw6gjI7xpCjN9cbbPMSTucH3vK6VYLOdz2n6mUwfPWsAbXTTdT2s7pI
-         Wq6pdzV9gd4vH4FwhdkFmCJ2QVbTzZc5AKwMxPRqfs7fPBH+MbtopyQAI/JfbLybvJLn
-         zXWk7D/F8ZmZB5gp0r2pDBZ4h+T/wP0CmQXCvqgEOGgVZ97F5uKEZP3VIeKV6ZT9w2hM
-         EkC3YQO+OMGexkfc50mdiFBE1NzTXClZ+zL/Jmtvxs01KQCwCHXTrZnAz0QUlPFiwd0o
-         D9pDM/bgm0ypWl/zsSjbKPPQsaKnPnav8NPFF/vdBLUfgTpjXd+BEmxPpwD3SFtxQu23
-         x1pA==
-X-Gm-Message-State: AJcUukfsc9H6uSY2eeZrad/dMXxi2uYZQw95AcOQrM9ztAJaudizhMkH
-        xaqMRRk+gWE9U1TTF9ctkamRNALEUWqdIzHGRHM=
-X-Google-Smtp-Source: ALg8bN6K74jiOvlxVvF3zxoNHdbOXAUeOPysoSzVE83lWk89ux31aGyqlfQuY0OFys36+JmXzzesuWhuWkEn7Qxnhj4=
-X-Received: by 2002:a9d:4d17:: with SMTP id n23mr7190739otf.66.1548404232067;
- Fri, 25 Jan 2019 00:17:12 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9jiQno4UhpYBqTa//0Ls70fFfjYDxFXuvNUqs9ZqpgM=;
+        b=XrJFkoEWCCt+nAfWWdfYrNKCMRBkh2Zc/T0V0t+JqHrDlqzFyrPlLTGvItgRqlpa7i
+         Dk2NkPSHdj3amGT89HmCCtl1p/Y4ILefF9E5NqFgvnGnjIY/xMXtNzahLHq07BDNqAi7
+         ZqG3UOmFlTxA6w4R4SXXSH+EY05Ko7L6S5Ski7ZEtF2AxMJEnbfHzej/3SWq6+7HCUgL
+         KZd/Fa2SY2pG9WQvx8x2vclIlNbACObbgsWUrICDfHyIwP8ksV4HbBUgDHZAnBRddaZX
+         ijgKdKS701ouusFyhFU8tB1gGMU8rWxa/aAzUgJW5Sl8weLJmG7MvTdd8GEGzuZZiZ1l
+         IM3Q==
+X-Gm-Message-State: AJcUukd9ySTMPwQRx4ubI1fguziyqddhINhYCMcJi+Q3dw4UjACRxaWn
+        3W3iHsx5WQPzDjxWZBhtVQNgMPMyo7g=
+X-Google-Smtp-Source: ALg8bN7s9/hh6YJu10Qia8w6IQ+areeNtAS9ETVh4HZHOP9szGp9pljunMcfDJFTcGro58SAhkCYcw==
+X-Received: by 2002:a19:1cb:: with SMTP id 194mr7925460lfb.61.1548404276489;
+        Fri, 25 Jan 2019 00:17:56 -0800 (PST)
+Received: from [192.168.0.36] (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
+        by smtp.googlemail.com with ESMTPSA id b25-v6sm1413706lji.94.2019.01.25.00.17.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 00:17:55 -0800 (PST)
+Subject: Re: [PATCH] lightnvm: pblk: fix TRACE_INCLUDE_PATH
+To:     Hans Holmberg <hans.ml.holmberg@owltronix.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1548401030-28860-1-git-send-email-yamada.masahiro@socionext.com>
+ <CANr-nt0=gw90vBLA_FMjmD7duNVYJcGmcqfk9HiQpdKxHV-A+g@mail.gmail.com>
+From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
+Message-ID: <17453c37-72ee-11e1-979d-e60a034d94e3@lightnvm.io>
+Date:   Fri, 25 Jan 2019 09:17:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181206091052.7644-1-mircea.caprioru@analog.com>
- <20181208152954.596529f8@archlinux> <154475156267.19322.6284056396098102605@swboyd.mtv.corp.google.com>
- <20181216100741.4e362a17@archlinux> <154836968107.136743.11352935762099070131@swboyd.mtv.corp.google.com>
-In-Reply-To: <154836968107.136743.11352935762099070131@swboyd.mtv.corp.google.com>
-From:   Alexandru Ardelean <ardeleanalex@gmail.com>
-Date:   Fri, 25 Jan 2019 10:16:59 +0200
-Message-ID: <CA+U=DsqcGqBVnNhx+aYm7Z=igyLMdXt+2x6LTe_GWsp+=ZaWiQ@mail.gmail.com>
-Subject: Re: [PATCH 1/2] staging: iio: adc: ad7192: Add clock for external
- clock reference
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Jonathan Cameron <jic23@kernel.org>,
-        Mircea Caprioru <mircea.caprioru@analog.com>,
-        Michael.Hennerich@analog.com, knaack.h@gmx.de, lars@metafoo.de,
-        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org, Rob Herring <robh+dt@kernel.org>,
-        linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANr-nt0=gw90vBLA_FMjmD7duNVYJcGmcqfk9HiQpdKxHV-A+g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 12:41 AM Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Jonathan Cameron (2018-12-16 02:07:41)
-> > Rob, Clk experts, questions for you below.
-> >
-> > Jonathan
-> >
-> >
-> > On Thu, 13 Dec 2018 17:39:22 -0800
-> > Stephen Boyd <sboyd@kernel.org> wrote:
-> >
-> > > Quoting Jonathan Cameron (2018-12-08 07:29:54)
-> > > > On Thu, 6 Dec 2018 11:10:51 +0200
-> > > > Mircea Caprioru <mircea.caprioru@analog.com> wrote:
-> > > >
-> > > > > This patch adds a clock to the state structure of ad7192 for getting the
-> > > > > external clock frequency. This modifications is in accordance with clock
-> > > > > framework dt bindings documentation.
-> > > > >
-> > > > > Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
-> > > >
-> > > > +cc Rob and the clk list for advise on how to do the binding for this one.
-> > > >
-> > > > It is basically 2 pins, you can put a clock in on one of them or connect
-> > > > a crystal across them.  The driver has to set a register to say which is
-> > > > the case.
-> > > >
-> > > > Current proposal is two optional clocks (fall back to internal oscillator)
-> > > > but that doesn't seem to be commonly done, so I'm wondering if there
-> > > > is a 'standard' way to handle this sort of thing.
-> > > >
-> > >
-> > > I'm not sure I fully understand, but I think perhaps
-> > > assigned-clock-parents would work? Or does that not work because either
-> > > way some parent is assigned, either the crystal or the optional clk that
-> > > isn't a crystal?
-> > >
-> > My concern is they aren't really separate clock inputs.   They are just different
-> > ways of providing the same fundamental clock.  So I think we may want to just
-> > provide a single clock and have another dt binding to say what it is.
-> >
-> > So lots of ways we could do it, but I'm not sure what the right one to
-> > go with is!
-> >
->
-> Sorry for getting back to this so late. Is the datasheet public for this
-> device? If so, any link to it?
->
+On 1/25/19 9:01 AM, Hans Holmberg wrote:
+> On Fri, Jan 25, 2019 at 8:35 AM Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+>>
+>> As the comment block in include/trace/define_trace.h says,
+>> TRACE_INCLUDE_PATH should be a relative path to the define_trace.h
+>>
+>> ../../drivers/lightnvm is the correct relative path.
+>>
+>> ../../../drivers/lightnvm is working by coincidence because the top
+>> Makefile adds -I$(srctree)/arch/$(SRCARCH)/include as a header
+>> search path, but we should not rely on it.
+> 
+> Nice catch, thanks!
+> 
+> Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+> 
+>>
+>> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+>> ---
+>>
+>>   drivers/lightnvm/pblk-trace.h | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/lightnvm/pblk-trace.h b/drivers/lightnvm/pblk-trace.h
+>> index 679e5c45..9534503 100644
+>> --- a/drivers/lightnvm/pblk-trace.h
+>> +++ b/drivers/lightnvm/pblk-trace.h
+>> @@ -139,7 +139,7 @@ TRACE_EVENT(pblk_state,
+>>   /* This part must be outside protection */
+>>
+>>   #undef TRACE_INCLUDE_PATH
+>> -#define TRACE_INCLUDE_PATH ../../../drivers/lightnvm
+>> +#define TRACE_INCLUDE_PATH ../../drivers/lightnvm
+>>   #undef TRACE_INCLUDE_FILE
+>>   #define TRACE_INCLUDE_FILE pblk-trace
+>>   #include <trace/define_trace.h>
+>> --
+>> 2.7.4
+>>
 
-Hey,
-Link is http://analog.com/ad7192 and that should resolve to the proper
-page, where the datasheet is available.
-[ General info: most [if not all] datasheets from Analog Devices can
-be found by concatenating "http://analog.com/ + "<part name>" ]
-
-But more directly, the link to the PDF is:
-https://www.analog.com/media/en/technical-documentation/data-sheets/AD7192.pdf
-Page 10 provides some description of the pins, page 20 the mode
-register for the clock, and page 32 a general description of the
-clock.
-If you search for MCLK1 or MCLK2 you should navigate pretty quick
-through the doc.
-
-The clock circuitry [the 2 pins] is common for all chips this driver
-supports [AD7190/2/3/5].
-
-Thanks
-Alex
-
-> If it's two pins, and sometimes one pin is connected and other times two
-> pins are connected but a register needs to be set if the pins are
-> connected in one configuration or the other I would say your plan for a
-> DT property indicating how the pins are configured sounds good. Usually
-> the hardware can figure these things out itself so I find this sort of
-> odd, but if this is how it is then there's not much that we can do.
->
-> It sounds like there aren't two different clk inputs to the device.
-> Given that information specifying two optional clks is incorrect because
-> there is only one 'slot' is the external clk source.
->
+Thanks Masahiro-san. Applied for 5.1.
