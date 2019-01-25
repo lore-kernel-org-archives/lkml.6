@@ -2,118 +2,95 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A3D0C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:44:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 314B0C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4EC9217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:44:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEB8D218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:44:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aOjK09Mw"
+	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="Y3+mNld/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728975AbfAYSoS (ORCPT
+        id S1729202AbfAYSo3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:44:18 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39781 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfAYSoK (ORCPT
+        Fri, 25 Jan 2019 13:44:29 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:57757 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfAYSo2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:44:10 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t9-v6so9196041ljh.6;
-        Fri, 25 Jan 2019 10:44:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=pPz/f03XiBmSQ9/ft6p1O4l+O9E5ZDQ8xc0Zl8VFB+M=;
-        b=aOjK09MwHDbgBw8YwXuHbzS5cLeeaXVCqCpRcj90UGu0pwGTpOEVMC1jGVYRVDkWhE
-         77vPAXk3GxdVJduc0CWxji1beGVdALHLZtIq2mp1o8Z4OslgAuDNIxWjE7I3LE+Kl2Dh
-         ZIKwkoiTUE13Gzsk0o/eEfb4bPOsw7mum/PVUO4cHN/mqVbh5OMkIMknWDDcMHYcunzw
-         UfeRmGBaSzzulKigjKNbfo5IE7XPebPrCFmCK3VeVti5gqzBgVz6kx/pvwnPG8gZKj4K
-         +zROaqO7hBlyDXKlUm8E38Q/ZTzPu+l68lBi5jQGnb6LtyXsObXXE2SYQ1mvEYax6T8F
-         q+tQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=pPz/f03XiBmSQ9/ft6p1O4l+O9E5ZDQ8xc0Zl8VFB+M=;
-        b=HpiVHKCOZwchrVimbFBJUND0JOszO71YNTwiS65e5iq+tKEw5utucsS8te7+wORd+M
-         FIPEdtMnKBNJKokwuHUX7Zjsd23DQFjZAa9IqW4pYadROtHj4PLD17w7+H2ZzsdLY/Iq
-         HGbcyVLJpxupM/8+5UDf0Dkx0qSFIu7FUMV9YMR0HDmYAXzGl2XlJfIwb0XX1jdTgYxK
-         +YVCkgS9fL1Eh50ZHlbTYktc7XhPPN5aQL/5hk6bnOJW9uEfD4yxdSYUvbfNHVroho4e
-         splTvcqs3zTNuJfj2ILF0M3cthkI4opcU2L1hK9ieoEllPjRfyZfLmATewZRY8yeV0zM
-         CLNg==
-X-Gm-Message-State: AJcUukevqP7pQDDEnKF8AvPmg63dCi42uHiPvpzs7BE5Rjx6PZVZMu1L
-        M9ypj5jsYiTGNBwXiOtM9b8=
-X-Google-Smtp-Source: ALg8bN5ONvEF2McEFyyWMWorzsp0QLtnQJIgZHoEZh6HLPAbukTpm6/SvNml2Gpsho6dW0g17V71zQ==
-X-Received: by 2002:a2e:2c02:: with SMTP id s2-v6mr9450366ljs.118.1548441847572;
-        Fri, 25 Jan 2019 10:44:07 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:6921:1f1d:2918:d853])
-        by smtp.googlemail.com with ESMTPSA id f18sm1715432lfk.18.2019.01.25.10.44.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 10:44:06 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     dmitry.torokhov@gmail.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        pawel.mikolaj.chmiel@gmail.com, xc-racer2@live.ca,
-        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 3/3] input: dt-bindings: Add binding for bma150 sensor
-Date:   Fri, 25 Jan 2019 19:44:00 +0100
-Message-Id: <20190125184400.17669-4-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190125184400.17669-1-pawel.mikolaj.chmiel@gmail.com>
-References: <20190125184400.17669-1-pawel.mikolaj.chmiel@gmail.com>
+        Fri, 25 Jan 2019 13:44:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=xoK0S/04v1rNSscREKgCB+tF3/1xDyMXedZE++gdUio=;
+        b=Y3+mNld/YDXIDSLzADA6b03HqlZVCTuS0ZA/ZWYZTl5pp/8kUBtcntMFTSPfygRSZkxXgDhBpTA0rzOPo4+UXfvDswmagkHI23PHDAm6wdoR/WrmoPfitb28d8S/o2Nr3C6T30W32UQ499sudiGL1jL+TKE72zCDl2swidzfwdv1iy8HzTfEY5CIl8XSVGo1vOB3UHRr7xlVz15Dmuxf/hZi6e28IgnDi+rQRfeTYshnBN7PKFxJ+ZySwffK4Ot33vMtdIo4YFg6QvXVWutCQiLtAxv7QkvMwifutQ8/F7PcN1s4tPqSiwwo3WpK6mYLOi14PDbcVnaP6PBtC2CuaQ==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:51443 helo=[192.168.10.176])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gn6Sn-0000QB-Uo; Fri, 25 Jan 2019 19:44:26 +0100
+Subject: Re: [PATCH v3 18/23] drm/qxl: remove dead qxl fbdev emulation code
+To:     Sam Ravnborg <sam@ravnborg.org>
+Cc:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org,
+        David Airlie <airlied@linux.ie>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>
+References: <20190118122020.27596-1-kraxel@redhat.com>
+ <20190118122020.27596-19-kraxel@redhat.com>
+ <e5a15f7e-b3f1-b609-4a0f-bd66ea711951@tronnes.org>
+ <20190125181009.GA8230@ravnborg.org>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <076761d5-f4d7-bf06-45ae-06361b284076@tronnes.org>
+Date:   Fri, 25 Jan 2019 19:44:21 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+In-Reply-To: <20190125181009.GA8230@ravnborg.org>
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jonathan Bakker <xc-racer2@live.ca>
 
-Add device tree bindings for Bosch BMA150 Accelerometer Sensor
 
-Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- .../bindings/input/bosch,bma150.txt           | 20 +++++++++++++++++++
- 1 file changed, 20 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/input/bosch,bma150.txt
+Den 25.01.2019 19.10, skrev Sam Ravnborg:
+> Hi Noralf.
+> 
+>>> Lovely diffstat, thanks to the new generic fbdev emulation.
+>>>
+>>>  drm/qxl/Makefile   |    2
+>>>  drm/qxl/qxl_draw.c |  232 ----------------------------------------
+>>>  drm/qxl/qxl_drv.h  |   21 ---
+>>>  drm/qxl/qxl_fb.c   |  300 -----------------------------------------------------
+>>>
+>>> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+>>> ---
+>>>  drivers/gpu/drm/qxl/qxl_drv.h  |  21 ---
+>>>  drivers/gpu/drm/qxl/qxl_draw.c | 232 -------------------------------
+>>>  drivers/gpu/drm/qxl/qxl_fb.c   | 300 -----------------------------------------
+>>>  drivers/gpu/drm/qxl/Makefile   |   2 +-
+>>>  4 files changed, 1 insertion(+), 554 deletions(-)
+>>>  delete mode 100644 drivers/gpu/drm/qxl/qxl_fb.c
+>>>
+>>
+>> Nice!
+>>
+>> Acked-by: Noralf Trønnes <noralf@tronnes.org>
+> It must be a very satisfying experience to see such benefits
+> of the many hours of works you have put into the genric
+> fbdev emulation code.
 
-diff --git a/Documentation/devicetree/bindings/input/bosch,bma150.txt b/Documentation/devicetree/bindings/input/bosch,bma150.txt
-new file mode 100644
-index 000000000000..290c60e38c70
---- /dev/null
-+++ b/Documentation/devicetree/bindings/input/bosch,bma150.txt
-@@ -0,0 +1,20 @@
-+* Bosch BMA150 Accelerometer Sensor
-+
-+Also works for the SMB380 and BMA023 accelerometers
-+
-+Required properties:
-+- compatible : Should be "bosch,bma150"
-+- reg : The I2C address of the sensor
-+
-+Optional properties:
-+- interrupt-parent : should be the phandle for the interrupt controller
-+- interrupts : Interrupt mapping for IRQ.  If not present device will be polled
-+
-+Example:
-+
-+bma150@38 {
-+	compatible = "bosch,bma150";
-+	reg = <0x38>;
-+	interrupt-parent = <&gph0>;
-+	interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
-+};
--- 
-2.17.1
+Indeed and having more users of the code increases the chance of
+detecting any bugs lurking underneath the surface.
 
+> Well done, and indeed a nice patch from Gerd.
+> 
+> 	Sam
+> 
