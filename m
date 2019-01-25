@@ -7,128 +7,117 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD1CC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7358FC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:25:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D41A2133D
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:24:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3FD2B2133D
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:25:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ef1pDDYS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YupNbHs7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727097AbfAYGY2 (ORCPT
+        id S1727366AbfAYGZR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 01:24:28 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:33833 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbfAYGY1 (ORCPT
+        Fri, 25 Jan 2019 01:25:17 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45609 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726021AbfAYGZR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 01:24:27 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so6150595lfc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 22:24:26 -0800 (PST)
+        Fri, 25 Jan 2019 01:25:17 -0500
+Received: by mail-lf1-f67.google.com with SMTP id b20so6101417lfa.12
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 22:25:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=w9H0PZn0OolgP7kJc7bV76uoKOIASZFoEKdhk7G9bBk=;
-        b=ef1pDDYSKyrj1erjXfMRwQ4zhAIgmRtb1F9M5tlxxKSVhLW29fgSSAg0cvRjSAt4eq
-         ISzDFaYnevqUWJ44Fqp1geuq6YHoKJEiTJFxHeE3UGJ/uRMuP61YgOChbdvFwfRx90z0
-         J8mi/RFim70I55KL0tiFI0q657AfRlZfx/ERMWp7ZUlh6DsUY7sKpCN7nImUaWUFmoUB
-         aM7mPzJd2AEujN1ivrlfZIwEjFW1vo2BOjqaV6IMV/1rX44n4z7w91vWS6NSaAzwEX54
-         X4WDAk+bXaeuyS6aU58BfbGzRmA/d+cChU0BZQEXqGGuqX6Z1y/q8Zg+tlnvgOExryY1
-         7yqQ==
+        bh=aWkGNsj9H+PPXdmDM8jphreLemaKpKVhG6fjRtFnO8Q=;
+        b=YupNbHs7iQOuXsIbeTOXEVnZWfkYovxF20NQ9awvZDPy3o8iS3gw202JHD+bqIdggi
+         UC14YfN4ZrjI7wuEC4DsSOrSczpv/7Y3Wf4HmgUgvtwNLvJKceDaTs8OI5dH73FH9cQD
+         LY6TE4NtmLMKmcOTYdiuV4C8EDCAetO1QZCN9xqdK/xdCRgoQ6YoFfk4NseNKYsX3tLi
+         Qc0/b7DsS7n+1jljKTJNoyZYK+mwbbZMW5CEsPWDVwNh7AN1d5Ycmr9yKEvU94TgPNyk
+         JdQSXkO376pFgoEgPwv5M9iT0TLyDJytBSp3tnVR7+XNKX8CyRS3SRRnWZJuLkvJ1pKJ
+         fUgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=w9H0PZn0OolgP7kJc7bV76uoKOIASZFoEKdhk7G9bBk=;
-        b=PhoM8d3RL1RxVJEG77EVRiGr5fhxWNztncG+PoPd28RQweErprm3s4Nz1vmqEaS28C
-         f/9kgjPRHEXVeo3TF0r81TF/+wue5Em449ig5n5jEnOrlZMlDdzno6LK79jPdBm5lBzF
-         ZPT1zpNBQVPenHZCVniUHEgE0O3dDqJmPeFo5VN+9dSyCJv2GXm80R82qMprUWEFiu0h
-         7ya0HkmtVPVVNIv04AT6qA3OS8Xh5ViiJc3cI8k4mX9tzocMsbRZVZ9Tk/C2RgauZ/pH
-         dQMmwYPnohz7XXqWaYovnR1irLYV/y6Ibbdro6G2EeCE333rmA3aRoQXLsIpHqoQUWPL
-         BixQ==
-X-Gm-Message-State: AJcUukezSUm3/kikkh+rdSlXYx0PrkGrDmtX1U3YTJTXl/EiVCj3sR9p
-        kvZohe79ooctNhjNb37O9Lp2o9HemBUcElgPVRE=
-X-Google-Smtp-Source: ALg8bN4/c2BufFVRM0EfReatatcnmTcHehlYAGb5rddAFsXXWUnAVKBofZHpJCmih2EhMvrwnV0BKWGHlw6p0Seg/Zw=
-X-Received: by 2002:a19:7111:: with SMTP id m17mr7456686lfc.64.1548397465269;
- Thu, 24 Jan 2019 22:24:25 -0800 (PST)
+        bh=aWkGNsj9H+PPXdmDM8jphreLemaKpKVhG6fjRtFnO8Q=;
+        b=bkvpVEsf1rykPccNnVu2spax88OMiZIqK8xYCxBg5bUKvcfOHrG59dXvewoV+uvB8j
+         7mZuvnhrX7Gz/P64hrQ9ImqcSk91CKt+r/N3GIilSocy7azVD+lJr9WoqWVBe25W4/HA
+         0gtFP9NDliheZVGg5mpEs0YXjk88UIKd+HGeEH8ZsRAQBC6Tt7X4mJWInMeZnSytPZm0
+         p9aQ6p8qgyY16ZOwHet9yht5i6CeXKO7LCn8otjd59ahlCGhSNRJ5HZXVTwnh5SekNVG
+         YUK+HVRIpEQz2zTxoMWZ1950KWEgXlcrRhQqWxdvVxx0k/JVlakHrDmAoFmYfO9z04Bv
+         R+WQ==
+X-Gm-Message-State: AJcUukdfPDYwgiP1cmc4gnHIhVQxDo2ElARdroHZ5tnYJbYSEgvZ3lSt
+        BCdZrYbI+rTD6WJy+4bwVVuHkMiwnCBdgEKR1ic=
+X-Google-Smtp-Source: ALg8bN4TGwzzV9+rDqN6jqokcuS2worneigqBlgltDsQYW2kgwnVOXojAkAzi6U2DdppgszxXxvosU25VS4BiX6F4FQ=
+X-Received: by 2002:a19:7dc2:: with SMTP id y185mr7847121lfc.27.1548397514916;
+ Thu, 24 Jan 2019 22:25:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20190111150801.GA2714@jordon-HP-15-Notebook-PC>
-In-Reply-To: <20190111150801.GA2714@jordon-HP-15-Notebook-PC>
+References: <20190111150834.GA2744@jordon-HP-15-Notebook-PC>
+In-Reply-To: <20190111150834.GA2744@jordon-HP-15-Notebook-PC>
 From:   Souptick Joarder <jrdr.linux@gmail.com>
-Date:   Fri, 25 Jan 2019 11:54:13 +0530
-Message-ID: <CAFqt6zZx9qxx_Xv=n-PY45OvS7E8ZBq+ZqaeEKfsaCirwaASSg@mail.gmail.com>
-Subject: Re: [PATCH 2/9] arch/arm/mm/dma-mapping.c: Convert to use vm_insert_range
+Date:   Fri, 25 Jan 2019 11:55:03 +0530
+Message-ID: <CAFqt6zYLDrC7CtLawWUAQPyB_M+5H8BikDR6LOm+v0qaq1GvZw@mail.gmail.com>
+Subject: Re: [PATCH 3/9] drivers/firewire/core-iso.c: Convert to use vm_insert_range_buggy
 To:     Andrew Morton <akpm@linux-foundation.org>,
         Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
+        Michal Hocko <mhocko@suse.com>, stefanr@s5r6.in-berlin.de,
         Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
-        Kees Cook <keescook@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>
+        robin.murphy@arm.com
 Cc:     linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 11, 2019 at 8:33 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
+On Fri, Jan 11, 2019 at 8:34 PM Souptick Joarder <jrdr.linux@gmail.com> wrote:
 >
-> Convert to use vm_insert_range() to map range of kernel
-> memory to user vma.
+> Convert to use vm_insert_range_buggy to map range of kernel memory
+> to user vma.
+>
+> This driver has ignored vm_pgoff and mapped the entire pages. We
+> could later "fix" these drivers to behave according to the normal
+> vm_pgoff offsetting simply by removing the _buggy suffix on the
+> function name and if that causes regressions, it gives us an easy
+> way to revert.
 >
 > Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
 
 Any comment on this patch ?
 
 > ---
->  arch/arm/mm/dma-mapping.c | 22 ++++++----------------
->  1 file changed, 6 insertions(+), 16 deletions(-)
+>  drivers/firewire/core-iso.c | 15 ++-------------
+>  1 file changed, 2 insertions(+), 13 deletions(-)
 >
-> diff --git a/arch/arm/mm/dma-mapping.c b/arch/arm/mm/dma-mapping.c
-> index 78de138..5334391 100644
-> --- a/arch/arm/mm/dma-mapping.c
-> +++ b/arch/arm/mm/dma-mapping.c
-> @@ -1582,31 +1582,21 @@ static int __arm_iommu_mmap_attrs(struct device *dev, struct vm_area_struct *vma
->                     void *cpu_addr, dma_addr_t dma_addr, size_t size,
->                     unsigned long attrs)
+> diff --git a/drivers/firewire/core-iso.c b/drivers/firewire/core-iso.c
+> index 35e784c..99a6582 100644
+> --- a/drivers/firewire/core-iso.c
+> +++ b/drivers/firewire/core-iso.c
+> @@ -107,19 +107,8 @@ int fw_iso_buffer_init(struct fw_iso_buffer *buffer, struct fw_card *card,
+>  int fw_iso_buffer_map_vma(struct fw_iso_buffer *buffer,
+>                           struct vm_area_struct *vma)
 >  {
-> -       unsigned long uaddr = vma->vm_start;
-> -       unsigned long usize = vma->vm_end - vma->vm_start;
->         struct page **pages = __iommu_get_pages(cpu_addr, attrs);
->         unsigned long nr_pages = PAGE_ALIGN(size) >> PAGE_SHIFT;
-> -       unsigned long off = vma->vm_pgoff;
-> +       int err;
->
->         if (!pages)
->                 return -ENXIO;
->
-> -       if (off >= nr_pages || (usize >> PAGE_SHIFT) > nr_pages - off)
-> +       if (vma->vm_pgoff >= nr_pages)
->                 return -ENXIO;
->
-> -       pages += off;
+> -       unsigned long uaddr;
+> -       int i, err;
 > -
-> -       do {
-> -               int ret = vm_insert_page(vma, uaddr, *pages++);
-> -               if (ret) {
-> -                       pr_err("Remapping memory failed: %d\n", ret);
-> -                       return ret;
-> -               }
+> -       uaddr = vma->vm_start;
+> -       for (i = 0; i < buffer->page_count; i++) {
+> -               err = vm_insert_page(vma, uaddr, buffer->pages[i]);
+> -               if (err)
+> -                       return err;
+> -
 > -               uaddr += PAGE_SIZE;
-> -               usize -= PAGE_SIZE;
-> -       } while (usize > 0);
-> +       err = vm_insert_range(vma, pages, nr_pages);
-> +       if (err)
-> +               pr_err("Remapping memory failed: %d\n", err);
->
+> -       }
+> -
 > -       return 0;
-> +       return err;
+> +       return vm_insert_range_buggy(vma, buffer->pages,
+> +                                       buffer->page_count);
 >  }
->  static int arm_iommu_mmap_attrs(struct device *dev,
->                 struct vm_area_struct *vma, void *cpu_addr,
+>
+>  void fw_iso_buffer_destroy(struct fw_iso_buffer *buffer,
 > --
 > 1.9.1
 >
