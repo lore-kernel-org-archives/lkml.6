@@ -2,151 +2,161 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88F4DC282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:55:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0111AC282C5
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:55:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43AAA218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:55:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C10CD218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:55:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=endlessm-com.20150623.gappssmtp.com header.i=@endlessm-com.20150623.gappssmtp.com header.b="qdOLVVlr"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FZtBxxEt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728201AbfAYAzc (ORCPT
+        id S1728315AbfAYAzi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 19:55:32 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39798 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726750AbfAYAzc (ORCPT
+        Thu, 24 Jan 2019 19:55:38 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:45379 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728222AbfAYAzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 19:55:32 -0500
-Received: by mail-qt1-f195.google.com with SMTP id u47so8977632qtj.6
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 16:55:31 -0800 (PST)
+        Thu, 24 Jan 2019 19:55:36 -0500
+Received: by mail-pf1-f194.google.com with SMTP id g62so3860691pfd.12
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 16:55:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=endlessm-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5enGz62sQmbz9edqo02aKojbyGTmWpcSj4kNFI14c48=;
-        b=qdOLVVlrnzw6XPC6XFds6iZJclnlBXpv90zitECXT7HYjfoD+GdoUMol4c4AV+wte3
-         GBORMDcRC5KRETFVwwxY3HSgoGo9jYIsk1utyeLVzA8y7KF+fBd5bw6gu6MGIgZLgxIN
-         5h/lKtAhK/oVdxKNUrKvQLiCK2PI7zJFSf2B/H9N51XGxaJQy/1AA2zXr8G+fBBsguHP
-         SVbIRi3B/tsv4UHywiw5fujxpTIROVbNDREig+mORzdGMk6M/Nt7bDsbMEOEgg/kMItN
-         zBigBYnegOHfNzl1Mf2x10tX82fFU5UNcpZ99PqLqmYr1gcIdbxZOXCeRDF8u5yJpioW
-         lp0A==
+        d=chromium.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=vSPb7Cbr7A2+q4Zr+YYOr1AZJUnYL55acdzIwT0IG1I=;
+        b=FZtBxxEtDxY4uGAojcFmmXNQ5ewnGU7dBWNaa4AxoyGgPH54pt+2JXPWlDQkBp6WYG
+         hC14/5a12LCG20MUBeidoiwv4KBSIb3s5ZvHiqmZyxBumHqM3P6+Xq8eLfSrkFWWizwC
+         YMV2ksb/X98MolH28Ew0hYqsow9+2EVyRx6EA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5enGz62sQmbz9edqo02aKojbyGTmWpcSj4kNFI14c48=;
-        b=h8xz6Of3jd/93ndWqrDkx2OvIuAZefMi/0cEk6PYazRowPGUrDmTh7BwD4H9HljXqX
-         lVfIVZa9F8v8zbd2Auh5JF5rCAtCdlWcsE/IHAiSVxmyQR6FL3ZjklcBv3btx89dYKlp
-         UaeNVLSl13q+M8FOOGldwg+25Bz0noD/hq3Hb5eRRffoSE1kfY6S+lCtMe4tVqmFneIH
-         VInevykSfIm2tSyaFRZ5mwWl520HJv6EkeevudGtsUsSX2w+zUzuZuNqF32uik/Puvhx
-         XSl2aKyCWP0MMcPbwZV2SCW2HfgDpvjZSXuTi3Bo4Ir2iTd4U29rw0LI5bRdIeArDz5S
-         zQFg==
-X-Gm-Message-State: AJcUukcC3jCBCi6ceaj7sSWeN3xbHmO6w9zviBxKNfB9k+q/7tIj0jr2
-        2GfT9EDuUGiMT04aKi/svrmtc/D7nBMmqBuLL2SjpCm2
-X-Google-Smtp-Source: ALg8bN5yG71aFuADBWTiDdDT9OAJ3H1mZTMjwO3DOjNroiVwub2H+Vq9MVZMIpYRZPYFNlZLfI9/gIARzbmlpRfqikA=
-X-Received: by 2002:a0c:e40a:: with SMTP id o10mr8045903qvl.197.1548377731083;
- Thu, 24 Jan 2019 16:55:31 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=vSPb7Cbr7A2+q4Zr+YYOr1AZJUnYL55acdzIwT0IG1I=;
+        b=Q/PrzREYXPLr+re05nh8rFfsi3DEMa7faZupyqCyNRrEmRYfm4N4GR+QI9rAlvySXw
+         XISFsY5ShxNWZaGMbQEmOU4Vbdj2KW6S1vW6QAlZJVuEmSn1jgFquv0z09u9ly/xQ3eG
+         Hqokv4XVz6EMV4zkEbdR0urXKaEfWHiSvSD4OfX+Zs02ZmhqOdOjw5iPNrwQgdeT28AU
+         aUVPgONF8ku4iTsfQDpwcT9PFZl18tDd/tHaTHd2mu4AL0ca7M6C+vC4jwbmjvXM+zGR
+         XXRqVL+K9pO6RmeQXB42pqD6OUKMPK2HFXwubuewWTCVEKrirGkkDl1cLQLz3c9QhBLs
+         wZXw==
+X-Gm-Message-State: AJcUukcGmwhDEBjXoranb7lSGdy8mwWTQNrkUXFQMoT6bVMYMS+SHk18
+        EP1yOsPbKPYyMWzAi2gnivkQ5Q==
+X-Google-Smtp-Source: ALg8bN4uie9HJh63Jax3McaJOhkkjulCrnHdgo0CvptP9g8PEqwnz0ZUNxgMnazQF0jtH+2tu26JPg==
+X-Received: by 2002:a63:dd15:: with SMTP id t21mr7676433pgg.347.1548377735713;
+        Thu, 24 Jan 2019 16:55:35 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
+        by smtp.gmail.com with ESMTPSA id y6sm35569207pfd.104.2019.01.24.16.55.34
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 16:55:34 -0800 (PST)
+Date:   Thu, 24 Jan 2019 16:55:34 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 3/3] Bluetooth: hci_qca: Disable IBS state machine and
+ flush Tx buffer
+Message-ID: <20190125005534.GC81583@google.com>
+References: <20190124120808.8275-1-bgodavar@codeaurora.org>
+ <20190124120808.8275-4-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-References: <20190124152310.29717-1-kai.heng.feng@canonical.com> <20190124152310.29717-3-kai.heng.feng@canonical.com>
-In-Reply-To: <20190124152310.29717-3-kai.heng.feng@canonical.com>
-From:   Daniel Drake <drake@endlessm.com>
-Date:   Fri, 25 Jan 2019 08:55:20 +0800
-Message-ID: <CAD8Lp47YpoVeDheK3pi0CcSJTdh2jSVcM8V9T_zmu=7deXszOw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] Bluetooth: btrtl: Skip initialization if firmware is
- already loaded
-To:     Kai-Heng Feng <kai.heng.feng@canonical.com>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Linux Bluetooth mailing list 
-        <linux-bluetooth@vger.kernel.org>,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190124120808.8275-4-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 11:23 PM Kai-Heng Feng
-<kai.heng.feng@canonical.com> wrote:
-> Realtek bluetooth may not work after reboot:
-> [   12.446130] Bluetooth: hci0: RTL: rtl: unknown IC info, lmp subver a99e, hci rev 826c, hci ver 0008
->
-> The power is not cut during system reboot, so the firmware is kept in
-> Bluetooth controller.
->
-> Realtek bluetooth doesn't have the ability to check firmware loading
-> status. but the version queried by HCI_OP_READ_LOCAL_VERSION will be
-> different if firmware is already loaded. Realtek's own fork, rtk_btusb
-> also use this method to detect the loading status.
->
-> So let's assume the firmware is already loaded when we can't find
-> matching IC info.
-
-This logic was already present in the driver - but it looks like this
-regressed at this point:
-
-commit 26503ad25de8c7c93a2037f919c2e49a62cf65f1
-Author: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Thu Aug 2 16:57:13 2018 +0200
-
-    Bluetooth: btrtl: split the device initialization into smaller parts
-
-After your patch it is effectively there in two places now, since it
-is also in btrtl_download_firmware() (although not really effective
-after the above commit). I wonder if that can be cleaned up to avoid
-duplication.
-
-Regarding the other patches that move away from the style of returning
-either a useful value or an error, is this purely a stylistic thing or
-is it needed for your 3rd patch? I don't have strong feelings either
-way but I have the impression that the currently implemented approach
-is a common style within kernel code and I don't see benefit in
-splitting off a separate out parameter.
-
-Daniel
-
-
-> Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201921
-> Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+On Thu, Jan 24, 2019 at 05:38:08PM +0530, Balakrishna Godavarthi wrote:
+> During hci down we observed IBS sleep commands are queued in the Tx
+> buffer and hci_uart_write_work is sending data to the chip which is
+> not required as the chip is powered off. This patch will disable IBS
+> and flush the Tx buffer before we turn off the chip.
+> 
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
 > ---
->  drivers/bluetooth/btrtl.c | 10 ++++++----
->  1 file changed, 6 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-> index c36f500d8313..e2f89d57dd14 100644
-> --- a/drivers/bluetooth/btrtl.c
-> +++ b/drivers/bluetooth/btrtl.c
-> @@ -546,9 +546,10 @@ int btrtl_initialize(struct hci_dev *hdev,
->                                             hdev->bus);
->
->         if (!btrtl_dev->ic_info) {
-> -               rtl_dev_err(hdev, "rtl: unknown IC info, lmp subver %04x, hci rev %04x, hci ver %04x",
-> -                           lmp_subver, hci_rev, hci_ver);
-> -               return -EINVAL;
-> +               rtl_dev_info(hdev, "rtl: unknown IC info, lmp subver %04x, hci rev %04x, hci ver %04x",
-> +                            lmp_subver, hci_rev, hci_ver);
-> +               rtl_dev_info(hdev, "rtl: firmware may be already loaded, or it's an unsupported IC.");
-> +               return 0;
->         }
->
->         if (btrtl_dev->ic_info->has_rom_version) {
-> @@ -621,7 +622,8 @@ int btrtl_setup_realtek(struct hci_dev *hdev)
->         if (ret)
->                 return ret;
->
-> -       ret = btrtl_download_firmware(hdev, &btrtl_dev);
-> +       if (btrtl_dev.ic_info)
-> +               ret = btrtl_download_firmware(hdev, &btrtl_dev);
->
->         return ret;
->  }
-> --
-> 2.17.1
->
+> Changes v9:
+>   * added lock while disabling the IBS state machine.
+> 
+> ---
+>  drivers/bluetooth/hci_qca.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index 6b5bcd44e24c..99ddc35f08c6 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -771,16 +771,17 @@ static int qca_enqueue(struct hci_uart *hu, struct sk_buff *skb)
+>  	/* Prepend skb with frame type */
+>  	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
+>  
+> +	spin_lock_irqsave(&qca->hci_ibs_lock, flags);
+> +
+>  	/* Don't go to sleep in middle of patch download or
+>  	 * Out-Of-Band(GPIOs control) sleep is selected.
+>  	 */
+>  	if (!test_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags)) {
+>  		skb_queue_tail(&qca->txq, skb);
+> +		spin_unlock_irqrestore(&qca->hci_ibs_lock, flags);
+>  		return 0;
+>  	}
+>  
+> -	spin_lock_irqsave(&qca->hci_ibs_lock, flags);
+> -
+>  	/* Act according to current state */
+>  	switch (qca->tx_ibs_state) {
+>  	case HCI_IBS_TX_AWAKE:
+> @@ -1273,6 +1274,18 @@ static const struct qca_vreg_data qca_soc_data = {
+>  
+>  static void qca_power_shutdown(struct hci_uart *hu)
+>  {
+> +	struct qca_data *qca = hu->priv;
+> +	unsigned long flags;
+> +
+> +	/* From this point we go into power off state. But serial port is
+> +	 * still open, stop queueing the IBS data and flush all the buffered
+> +	 * data in skb's.
+> +	 */
+> +	spin_lock_irqsave(&qca->hci_ibs_lock, flags);
+> +	clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
+> +	qca_flush(hu);
+> +	spin_unlock_irqrestore(&qca->hci_ibs_lock, flags);
+> +
+>  	host_set_baudrate(hu, 2400);
+>  	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
+>  	qca_power_setup(hu, false);
+
+I was about to add my 'Reviewed-by' tag, but I'm still left with a
+doubt. This patch certainly improves the situation by clearing the IBS
+bit and flushing the buffered data, however IIUC new data could still
+be added to the TX queue after releasing the spinlock:
+
+static int qca_enqueue(struct hci_uart *hu, struct sk_buff *skb)
+{
+	...
+
+	if (!test_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags)) {
+		skb_queue_tail(&qca->txq, skb);
+
+	...
+}
+
+To prevent this a boolean/bit like 'shutting_down' or similar would be
+needed (I don't think there is something common in the HCI core),
+which is set in qca_power_shutdown(). If the bit is set qca_enqueue()
+discards the data.
+
+Not sure how important this is, and I don't want to add necessarily
+more revisions to this series. If it is preferable to have an empty
+queue after shutdown maybe it can be done in a follow up patch.
+
+Thanks
+
+Matthias
