@@ -2,211 +2,116 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE9AC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:26:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B25C282C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:28:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D1A2218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:26:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZPOu5D40"
+	by mail.kernel.org (Postfix) with ESMTP id 19B08218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:28:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548451713;
+	bh=ZbAOvZ7TcGXFrQiocOFb2gplYV9RMuWPk15cBWYoOB0=;
+	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
+	b=UY/sjUybouJLiypGKWnq5OsgT7jfL3RgxTcWYPs20uAxFg8oSyOckuWNbPCMceYGa
+	 ite/th6cBqz5aNTPt9InYwnmSJ680G8LQBBN+S1M4Z2CS+BtP69xgNjaR+2OANqaxz
+	 a0qKLW1MYxpLYf+nYzmfBHTKaQdTZIwV6bkzkcjo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729384AbfAYV0J (ORCPT
+        id S1729240AbfAYV2b (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 16:26:09 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:35922 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfAYV0J (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 16:26:09 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b85so5315650pfc.3;
-        Fri, 25 Jan 2019 13:26:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IrWB1Ti275ClfkgObR9EXLN41d1idd7jpxV49MPVMfU=;
-        b=ZPOu5D40lUiN8SwyFRyA7p8N4E3dGPqLSNNDRJBJTMtQltuWg7sSMtejtej68iY9rz
-         XdWlsKJucBDb+DslZxPzKJTn/woC9Qv98Xyy3gzG74JU40nzIQbfSXfp+sZUVhrANZYi
-         rl62d4aslcBkHrboMa92hGh+BXA+70KFb4z33eQmMQ2b27cYdYch0Axed3Rk2idkMqar
-         b75YJT1m+b/gQOuDXp9fcV+MIw/LoPLKo+Aa0HZFf3ZoPoToIocpdFSeW7Dmr+jhozeK
-         95mLGOsABXrsoDPbSogg3J2TWVKeNggz7UpW9gZMTbyr3nw95WcqbgoeSQ41rKF4ywVN
-         rT8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IrWB1Ti275ClfkgObR9EXLN41d1idd7jpxV49MPVMfU=;
-        b=Il1qW77u3GO6Pbt4m7JOzooD/OHrM0mclFxzM2SisT46KOZGIX6OCpayZxyz+uBch1
-         73b3Br6cirfOCE2MRA3cEYRnKGewFeQI9ZIQ4RNttrdZ6NIYrMuSM5YkzdChKR7UUEbE
-         JVc2Wb6D4sLNBUnvH1rxHQ7QPZG5lWXZWbaXA+nhKiwJQLhn3vu2X3mS7Dlt6N/LqNC9
-         p6eOHoGZ9MQUwi9bHhYMrfCW9arhmQDxQ8FI6kFB2u0yRczrLcBwM0x1fTc1kQ8zXgqc
-         +T+RM8eGt1cvjVWrPBwROljqPIGMl0gVEyYWCwEDbfGkoVKeqOfWcdUI6mT5eSXw8TT3
-         ggqA==
-X-Gm-Message-State: AJcUukfXBwGRvq2ejnsoDrBSYl/D06Ao7iRAEqU1XY3FpQTdo9ky35v9
-        7RTttYOc2QQlkGLiQVm87E0Llrwm
-X-Google-Smtp-Source: ALg8bN4ovsVEKUTllkH2iPd9yA1mA3fqE+0rEG4P1HPTLjsch4MBQeA8E3egAjDz/bfza7HBUbTnbw==
-X-Received: by 2002:a63:1444:: with SMTP id 4mr11554704pgu.430.1548451568148;
-        Fri, 25 Jan 2019 13:26:08 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id z62sm37812647pfi.4.2019.01.25.13.26.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 13:26:07 -0800 (PST)
-Subject: Re: [PATCH V2 2/4] i2c: tegra: Update I2C transfer using buffer
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
- <1548363113-25969-2-git-send-email-skomatineni@nvidia.com>
- <185da588-1080-1589-46b6-5b63dff681eb@gmail.com>
- <BYAPR12MB33982FC612F99AC5CAE29EDBC29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <9b80cfc0-6cb4-a08e-ad78-2ce9bbea7036@gmail.com>
-Date:   Sat, 26 Jan 2019 00:25:58 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 25 Jan 2019 16:28:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35566 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbfAYV2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 16:28:31 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF665217D4;
+        Fri, 25 Jan 2019 21:28:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548451710;
+        bh=ZbAOvZ7TcGXFrQiocOFb2gplYV9RMuWPk15cBWYoOB0=;
+        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
+        b=azlP41og08i5ER5VHcOjNTBAxv+CL1O+TAWyGAECtyyQYakre7GL0bAeMTfgQojyl
+         5vspxPqRcMzhtNIugDuIpOzrxXVxq5MYYxTTM98S8jPrfN3zt/xZZ10iP7oCG+BTve
+         mOTLGKyfKbxYJpBa8aXz5GKhtmpYKSms+8+gj/l8=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB33982FC612F99AC5CAE29EDBC29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 2/4] clk: core: link consumer with clock driver
+References: <20181204192440.12125-1-miquel.raynal@bootlin.com> <20181204192440.12125-3-miquel.raynal@bootlin.com> <154454837597.17204.11648795524314926025@swboyd.mtv.corp.google.com> <20190104165406.3b52399a@xps13>
+User-Agent: alot/0.8
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20190104165406.3b52399a@xps13>
+Message-ID: <154845170894.136743.2408260720819956377@swboyd.mtv.corp.google.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Date:   Fri, 25 Jan 2019 13:28:28 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-25.01.2019 23:20, Sowjanya Komatineni пишет:
-> 
-> 
->>> This patch prepares the buffer with the message bytes to be 
->>> transmitted along with the packet header information and then performs 
->>> i2c transfer in PIO mode.
->>>
->>> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>> ---
->>>  [V2] : DMA support changes include preparing buffer with message bytes and
->>> 	and header before sending them through DMA. So splitted the whole
->>> 	change into 2 seperate patches in this series.
->>>
->>>  drivers/i2c/busses/i2c-tegra.c | 97 
->>> +++++++++++++++++++++++++++++-------------
->>>  1 file changed, 68 insertions(+), 29 deletions(-)
->>>
->>> diff --git a/drivers/i2c/busses/i2c-tegra.c 
->>> b/drivers/i2c/busses/i2c-tegra.c index ef854be4c837..13bce1411ddc 
->>> 100644
->>> --- a/drivers/i2c/busses/i2c-tegra.c
->>> +++ b/drivers/i2c/busses/i2c-tegra.c
->>> @@ -117,6 +117,9 @@
->>>  #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
->>>  #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
->>>  
->>> +/* Packet header size in bytes */
->>> +#define I2C_PACKET_HEADER_SIZE			12
->>> +
->>>  /*
->>>   * msg_end_type: The bus control which need to be send at end of transfer.
->>>   * @MSG_END_STOP: Send stop pulse at end of transfer.
->>> @@ -677,35 +680,69 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->>>  	return IRQ_HANDLED;
->>>  }
->>>  
->>> +static int tegra_i2c_start_pio_xfer(struct tegra_i2c_dev *i2c_dev) {
->>> +	u32 *buffer = (u32 *)i2c_dev->msg_buf;
->>> +	unsigned long flags;
->>> +	u32 int_mask;
->>> +
->>> +	spin_lock_irqsave(&i2c_dev->xfer_lock, flags);
->>> +
->>> +	int_mask = I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST;
->>> +	tegra_i2c_unmask_irq(i2c_dev, int_mask);
->>> +
->>> +	i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
->>> +	i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
->>> +	i2c_writel(i2c_dev, *(buffer++), I2C_TX_FIFO);
->>> +
->>> +	i2c_dev->msg_buf = (u8 *) buffer;
->>> +
->>> +	if (!i2c_dev->msg_read)
->>> +		tegra_i2c_fill_tx_fifo(i2c_dev);
->>> +
->>> +	if (i2c_dev->hw->has_per_pkt_xfer_complete_irq)
->>> +		int_mask |= I2C_INT_PACKET_XFER_COMPLETE;
->>> +	if (i2c_dev->msg_read)
->>> +		int_mask |= I2C_INT_RX_FIFO_DATA_REQ;
->>> +	else if (i2c_dev->msg_buf_remaining)
->>> +		int_mask |= I2C_INT_TX_FIFO_DATA_REQ;
->>> +
->>> +	tegra_i2c_unmask_irq(i2c_dev, int_mask);
->>> +	spin_unlock_irqrestore(&i2c_dev->xfer_lock, flags);
->>> +	dev_dbg(i2c_dev->dev, "unmasked irq: %02x\n",
->>> +		i2c_readl(i2c_dev, I2C_INT_MASK));
->>> +
->>> +	return 0;
->>> +}
->>> +
->>>  static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>>  	struct i2c_msg *msg, enum msg_end_type end_state)  {
->>>  	u32 packet_header;
->>>  	u32 int_mask;
->>>  	unsigned long time_left;
->>> -	unsigned long flags;
->>> +	u32 *buffer;
->>> +	int ret = 0;
->>> +
->>> +	buffer = kmalloc(ALIGN(msg->len, BYTES_PER_FIFO_WORD) +
->>> +					I2C_PACKET_HEADER_SIZE, GFP_KERNEL);
->>> +	if (!buffer)
->>> +		return -ENOMEM;
->>
->> Isn't it possible to avoid "buffer" allocation / copying overhead and keep code as-is for the PIO mode?
->>
-> 
-> Keeping PIO mode code as is and adding DMA mode will have redundant code for header generation and msg complete timeout sections.
-> Also in existing PIO mode implementation, TX FIFO is filled as soon as the word is ready but for DMA mode need to put all msg bytes along with header together to send thru DMA.
-> So created common buffer to perform PIO/DMA to reduce redundancy.
-> 
+Quoting Miquel Raynal (2019-01-04 07:54:06)
+> Hi Stephen,
+>=20
+> Stephen Boyd <sboyd@kernel.org> wrote on Tue, 11 Dec 2018 09:12:55
+> -0800:
+>=20
+> > Sorry, I'm not reviewing the whole patch right now, just this one little
+> > bit because I'm also working in the same area.
+> >=20
+> > Quoting Miquel Raynal (2018-12-04 11:24:38)
+> > > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provide=
+r.h
+> > > index 60c51871b04b..721d6b55b2fa 100644
+> > > --- a/include/linux/clk-provider.h
+> > > +++ b/include/linux/clk-provider.h
+> > > @@ -781,6 +781,8 @@ void devm_clk_hw_unregister(struct device *dev, s=
+truct clk_hw *hw);
+> > >  const char *__clk_get_name(const struct clk *clk);
+> > >  const char *clk_hw_get_name(const struct clk_hw *hw);
+> > >  struct clk_hw *__clk_get_hw(struct clk *clk);
+> > > +void clk_link_consumer(struct device *consumer, struct clk *clk);
+> > > +void clk_unlink_consumer(struct clk *clk); =20
+> >=20
+> > We shouldn't need to add these functions as far as I can tell. That's
+> > because __clk_get() has become an internal API between clkdev.c and
+> > clk.c that does nothing now on implementations that aren't the CCF. We
+> > can even change this API to take a clk_hw pointer instead of a clk
+> > pointer.
+> >=20
+> > I'd rather see us plumb a struct device and clk_hw structure down into
+> > __clk_get() and fold it all into __clk_create_clk, possibly even
+> > renaming __clk_create_clk to clk_hw_create_clk(). That way we can get
+> > the calling device and clk_hw pointer in one call in the clk framework,
+> > along with the device name and connection name, and then generate the
+> > struct clk right there. This can simplify some code and make it easier
+> > to extend this to associate calling devices with the clk consumer
+> > somehow.
+> >=20
+> > Here's the diff. With this, you should be able to add and remove device
+> > links in clk_hw_create_clk() when dev !=3D NULL.
+>=20
+> Thanks for the help; I updated my work on top of yours, it looks ok but
+> I need to run some more tests.
+>=20
+> However I had to tweak a parameter in one of your recent changes, you
+> used '-1' as index in __of_clock_get() while it is not a valid value
+> (returning an error). As in the __of_clk_get_by_name() function you
+> removed index was just set to 0 at the top of the function, I think the
+> below fix is valid.
 
-Okay, what about something like in this sketch:
+Thanks. Makes sense so I folded it in.
 
-...
-	if (msg->flags & I2C_M_RD)
-		xfer_size = msg->len;
-	else
-		xfer_size = ALIGN(msg->len, BYTES_PER_FIFO_WORD) +
-			    I2C_PACKET_HEADER_SIZE;
-
-	dma = ((xfer_size > I2C_PIO_MODE_MAX_LEN) &&
-		i2c_dev->tx_dma_chan && i2c_dev->rx_dma_chan);
-
-	if (dma) {
-		buffer = kmalloc(ALIGN(msg->len, BYTES_PER_FIFO_WORD) +
-				I2C_PACKET_HEADER_SIZE, GFP_KERNEL);
-		i2c_dev->msg_buf = (u8 *)buffer;
-	}
-
-	packet_header = (0 << PACKET_HEADER0_HEADER_SIZE_SHIFT) |
-				PACKET_HEADER0_PROTOCOL_I2C |
-				(i2c_dev->cont_id << PACKET_HEADER0_CONT_ID_SHIFT) |
-				(1 << PACKET_HEADER0_PACKET_ID_SHIFT);
-		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-
-	if (dma)
-		(*buffer++) = packet_header;
-	else
-		i2c_writel(i2c_dev, packet_header, I2C_TX_FIFO);
-
-... and so on.
-
-Likely that kmalloc overhead will be bigger than the above variant. Please consider to avoid kmalloc and copying for the PIO case in the next version.
