@@ -2,100 +2,114 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20AC3C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144EAC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:12:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF3102192C
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5121218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:12:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728548AbfAYIJu (ORCPT
+        id S1728007AbfAYIMx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 03:09:50 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:45013 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726219AbfAYIJu (ORCPT
+        Fri, 25 Jan 2019 03:12:53 -0500
+Received: from alexa-out-blr-02.qualcomm.com ([103.229.18.198]:45001 "EHLO
+        alexa-out-blr.qualcomm.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726219AbfAYIMx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 03:09:50 -0500
-Received: by mail-ot1-f65.google.com with SMTP id g16so3762388otg.11;
-        Fri, 25 Jan 2019 00:09:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=djPbkyd1+SDPYk6mxzOjNnM2qu3TJB1XOhWLX2r26UY=;
-        b=lCU6NQaIA8SuIm9EqDBlh2kX1j6AhBAh238qY7kmJxDGJuwAegkCvfuc7gIsFpAJO1
-         T9dpZTZHal98cO3wXTGUO451YZnQ7nUtX3Disv7kPh+Bz6pgCDTGsT9hJq0rcn+fyD1D
-         Oy1e44lAMvas0Rg/OTPbe+ELRjGDD//ZOwhp07MUEDKiCwxo8XKlWeODYHvqpNzSfia+
-         QNDdaWDq2Y+DyPZh3FjEYxaUAtKZPGBQ0xZdPi//Qm/HXr/Hr+sFhIDKTPo6Zx4yv3Lk
-         jW5kzg8Iyx83x1WRRFxgMWMh7+DeCiQaGTd1MzmK5qpmg006+PUSi75ZwDHHK6Ug4hUw
-         v1yA==
-X-Gm-Message-State: AJcUukeKxGM/PhQobcXld03NBAFFh1wihP6iDg9mBuIVQfwAdCI+ex1/
-        yBKI7FIP+2lzy/44Ai0P7Pyg825byq4/MBehJmg=
-X-Google-Smtp-Source: ALg8bN7qcPzB4rpapIl9bmuXZJ56NoyU3NH3MkcQD7LOJr7UNBzc3HjyajJjtO5+FDeLAQrv4FoTQKXvFFXn6LYVPaU=
-X-Received: by 2002:a9d:3d24:: with SMTP id a33mr7164512otc.365.1548403788902;
- Fri, 25 Jan 2019 00:09:48 -0800 (PST)
-MIME-Version: 1.0
-References: <20190124180724.20910-1-malat@debian.org> <20190124180724.20910-2-malat@debian.org>
-In-Reply-To: <20190124180724.20910-2-malat@debian.org>
-From:   Mathieu Malaterre <malat@debian.org>
-Date:   Fri, 25 Jan 2019 09:09:38 +0100
-Message-ID: <CA+7wUswNMgZZYpLokyv0DXqf7jemw2rhJ5uB1mGrccjmPgzAjg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] Bluetooth: Correctly annotate implicit fall through
- in __rfcomm_dlc_close
-To:     Marcel Holtmann <marcel@holtmann.org>
-Cc:     Peter Hurley <peter@hurleysoftware.com>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Fri, 25 Jan 2019 03:12:53 -0500
+X-IronPort-AV: E=Sophos;i="5.56,520,1539628200"; 
+   d="scan'208";a="322992"
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr.qualcomm.com with ESMTP/TLS/AES256-SHA; 25 Jan 2019 13:41:36 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9146"; a="6797927"
+Received: from mgottam-linux.qualcomm.com ([10.204.65.20])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 25 Jan 2019 13:41:36 +0530
+Received: by mgottam-linux.qualcomm.com (Postfix, from userid 2305155)
+        id D7243348D; Fri, 25 Jan 2019 13:41:34 +0530 (IST)
+From:   Malathi Gottam <mgottam@codeaurora.org>
+To:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, acourbot@chromium.org,
+        stanimir.varbanov@linaro.org, vgarodia@codeaurora.org,
+        mgottam@codeaurora.org
+Subject: [PATCH v5] arm64: dts: sdm845: add video nodes
+Date:   Fri, 25 Jan 2019 13:41:33 +0530
+Message-Id: <1548403893-21677-1-git-send-email-mgottam@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 7:07 PM Mathieu Malaterre <malat@debian.org> wrote:
->
-> There is a plan to build the kernel with -Wimplicit-fallthrough and
-> this place in the code produced a warning (W=1).
->
-> In this particular case put the fall through comment on a separate line so
-> as to match the regular expression expected by GCC.
->
-> This commit removes the following warning:
->
->   net/bluetooth/rfcomm/core.c:479:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+This adds video nodes to sdm845 based on the examples
+in the bindings.
 
-Please discard, already fixed by :
+Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
+---
+Changes:
+	Added video firmware node
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 38 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 38 insertions(+)
 
-6317950c1b9c Bluetooth: Mark expected switch fall-throughs
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index b72bdb0..1af68f5 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -87,6 +87,11 @@
+ 			reg = <0 0x86200000 0 0x2d00000>;
+ 			no-map;
+ 		};
++
++		venus_region: memory@95800000 {
++			reg = <0x0 0x95800000 0x0 0x500000>;
++			no-map;
++		};
+ 	};
+ 
+ 	cpus {
+@@ -1403,5 +1408,38 @@
+ 				status = "disabled";
+ 			};
+ 		};
++
++		video-codec@aa00000 {
++			compatible = "qcom,sdm845-venus";
++			reg = <0x0aa00000 0xff000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
++			power-domains = <&videocc VENUS_GDSC>;
++			clocks = <&videocc VIDEO_CC_VENUS_CTL_CORE_CLK>,
++				 <&videocc VIDEO_CC_VENUS_AHB_CLK>,
++				 <&videocc VIDEO_CC_VENUS_CTL_AXI_CLK>;
++			clock-names = "core", "iface", "bus";
++			iommus = <&apps_smmu 0x10a0 0x8>,
++				 <&apps_smmu 0x10b0 0x0>;
++			memory-region = <&venus_region>;
++
++			video-core0 {
++				compatible = "venus-decoder";
++				clocks = <&videocc VIDEO_CC_VCODEC0_CORE_CLK>,
++					 <&videocc VIDEO_CC_VCODEC0_AXI_CLK>;
++				clock-names = "core", "bus";
++				power-domains = <&videocc VCODEC0_GDSC>;
++			};
++
++			video-core1 {
++				compatible = "venus-encoder";
++				clocks = <&videocc VIDEO_CC_VCODEC1_CORE_CLK>,
++					 <&videocc VIDEO_CC_VCODEC1_AXI_CLK>;
++				clock-names = "core", "bus";
++				power-domains = <&videocc VCODEC1_GDSC>;
++			};
++			video-firmware {
++				iommus = <&apps_smmu 0x10b2 0x0>;
++			};
++		};
+ 	};
+ };
+-- 
+1.9.1
 
-> Cc: Peter Hurley <peter@hurleysoftware.com>
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> ---
->  net/bluetooth/rfcomm/core.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
->
-> diff --git a/net/bluetooth/rfcomm/core.c b/net/bluetooth/rfcomm/core.c
-> index 1a635df80643..caaae6accafa 100644
-> --- a/net/bluetooth/rfcomm/core.c
-> +++ b/net/bluetooth/rfcomm/core.c
-> @@ -480,9 +480,8 @@ static int __rfcomm_dlc_close(struct rfcomm_dlc *d, int err)
->                         __rfcomm_dlc_disconn(d);
->                         break;
->                 }
-> -               /* if closing a dlc in a session that hasn't been started,
-> -                * just close and unlink the dlc
-> -                */
-> +               /* fall through - if closing a dlc in a session that hasn't */
-> +               /* been started, just close and unlink the dlc */
->
->         default:
->                 rfcomm_dlc_clear_timer(d);
-> --
-> 2.19.2
->
