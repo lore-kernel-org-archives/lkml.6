@@ -3,261 +3,182 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 890B0C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:47:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40592C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D65021855
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:47:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1022B21855
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728726AbfAYDrG (ORCPT
+        id S1728841AbfAYDsu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:47:06 -0500
-Received: from gateway21.websitewelcome.com ([192.185.45.191]:45561 "EHLO
-        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726304AbfAYDrG (ORCPT
+        Thu, 24 Jan 2019 22:48:50 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:33533 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726304AbfAYDsu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:47:06 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway21.websitewelcome.com (Postfix) with ESMTP id EEC98400C453F
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 21:47:04 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id msSOggIJWYTGMmsSOgOUi6; Thu, 24 Jan 2019 21:47:04 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=57040 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmsSO-001SXz-9E; Thu, 24 Jan 2019 21:47:04 -0600
-Subject: Re: [PATCH] security: mark expected switch fall-throughs
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Casey Schaufler <casey@schaufler-ca.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20190125025639.GA13946@embeddedor>
- <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
- <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <f9ca33c7-2f96-ce1f-4fd2-587b991f2e85@embeddedor.com>
-Date:   Thu, 24 Jan 2019 21:47:00 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 24 Jan 2019 22:48:50 -0500
+X-UUID: 2f451d7b0e6c428d82be0b570207cc9c-20190125
+X-UUID: 2f451d7b0e6c428d82be0b570207cc9c-20190125
+Received: from mtkcas36.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 657249204; Fri, 25 Jan 2019 11:48:37 +0800
+Received: from mtkcas07.mediatek.inc (172.21.101.84) by
+ MTKMBS31DR.mediatek.inc (172.27.6.102) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 25 Jan 2019 11:48:35 +0800
+Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 25 Jan 2019 11:48:36 +0800
+Message-ID: <1548388116.29237.15.camel@mtkswgap22>
+Subject: Re: [PATCH v1 1/5] pwm: mediatek: add a property "mediatek,num-pwms"
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, John Crispin <blogic@openwrt.org>
+CC:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Weijie Gao =?UTF-8?Q?=28=E9=AB=98=E6=83=9F=E6=9D=B0=29?= 
+        <Weijie.Gao@mediatek.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Thierry Reding" <thierry.reding@gmail.com>,
+        "linux-mediatek@lists.infradead.org" 
+        <linux-mediatek@lists.infradead.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Date:   Fri, 25 Jan 2019 11:48:36 +0800
+In-Reply-To: <20190121084948.frpcgg6wkdjxkl7k@pengutronix.de>
+References: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
+         <c007d399-af86-98d3-94f9-b9762efdc219@gmail.com>
+         <1547866487.14213.10.camel@mtkswgap22>
+         <20190121084948.frpcgg6wkdjxkl7k@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 8bit
 MIME-Version: 1.0
-In-Reply-To: <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmsSO-001SXz-9E
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:57040
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 17
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
++John
+
+HI John,
+
+On Mon, 2019-01-21 at 16:49 +0800, Uwe Kleine-König wrote:
+> On Sat, Jan 19, 2019 at 10:54:47AM +0800, Ryder Lee wrote:
+> > On Fri, 2019-01-18 at 09:43 +0100, Matthias Brugger wrote:
+> > >
+> > > On 18/01/2019 04:24, Ryder Lee wrote:
+> > > > This adds a property "mediatek,num-pwms" to avoid having an endless
+> > > > list of compatibles with no differences for the same driver.
+> > > >
+> > > > Thus, the driver should have backwards compatibility to older DTs.
+> > > >
+> > > > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > > > ---
+> > > > Changes since v1: add some checks for backwards compatibility.
+> > > > ---
+> > > >  drivers/pwm/pwm-mediatek.c | 27 ++++++++++++++++++---------
+> > > >  1 file changed, 18 insertions(+), 9 deletions(-)
+> > > >
+> > > > diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+> > > > index eb6674c..81b7e5e 100644
+> > > > --- a/drivers/pwm/pwm-mediatek.c
+> > > > +++ b/drivers/pwm/pwm-mediatek.c
+> > > > @@ -55,7 +55,7 @@ enum {
+> > > >  };
+> > > >
+> > > >  struct mtk_pwm_platform_data {
+> > > > - unsigned int num_pwms;
+> > > > + unsigned int num_pwms;  /* it should not be used in the future SoCs */
+> > > >   bool pwm45_fixup;
+> > > >   bool has_clks;
+> > > >  };
+> > > > @@ -226,27 +226,36 @@ static void mtk_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+> > > >
+> > > >  static int mtk_pwm_probe(struct platform_device *pdev)
+> > > >  {
+> > > > - const struct mtk_pwm_platform_data *data;
+> > > > + struct device_node *np = pdev->dev.of_node;
+> > > >   struct mtk_pwm_chip *pc;
+> > > >   struct resource *res;
+> > > > - unsigned int i;
+> > > > + unsigned int i, num_pwms;
+> > > >   int ret;
+> > > >
+> > > >   pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
+> > > >   if (!pc)
+> > > >           return -ENOMEM;
+> > > >
+> > > > - data = of_device_get_match_data(&pdev->dev);
+> > > > - if (data == NULL)
+> > > > -         return -EINVAL;
+> > > > - pc->soc = data;
+> > > > + pc->soc = of_device_get_match_data(&pdev->dev);
+> > > >
+> > > >   res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+> > > >   pc->regs = devm_ioremap_resource(&pdev->dev, res);
+> > > >   if (IS_ERR(pc->regs))
+> > > >           return PTR_ERR(pc->regs);
+> > > >
+> > > > - for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
+> > > > + /* Check if we have set 'num-pwms' in DTs. */
+> > > > + ret = of_property_read_u32(np, "mediatek,num-pwms", &num_pwms);
+> > > > + if (ret < 0) {
+> > > > +         /* If no, fallback to use SoC data for backwards compatibility. */
+> > > > +         if (pc->soc->num_pwms) {
+> > > > +                 num_pwms = pc->soc->num_pwms;
+> > >
+> > > Maybe that's bike shedding, but I think it would be better to carve out the
+> > > num_pwms from the mtk_pwm_platform_data and check against the compatible here.
+> >
+> > I'm not sure how to properly curve it out? I think we still need this
+> > variable to save the specific value for some legacy SoCs (with older
+> > DTs).
+> 
+> I guess he means  something like:
+> 
+>         if (is_compatible_to_variant_A(dev))
+>                 num_pwms = 12;
+>         else if (is_compatible_to_variant_B(dev))
+>                 num_pwms = 2;
+> 
+> . In my eyes the bike shed should be light red and I prefer to collect
+> the fallback num_pwms in the compatible_data as is to keep the code
+> simpler. Maybe rename the member from num_pwms to fallback_num_pwms to
+> make it more obvious that it doesn't represent the actually used value.
+> 
+> > > With a expressive comment it will help other driver developers to not start
+> > > adding num_pwms in the platform data in their first attempt.
+> >
+> > Definitely.
+> 
+> My suggestion was to add a dev_warn, which IMHO is still better than a
+> comment.
+> 
+> Best regards
+> Uwe
+> 
+
+Unrelated to this patch: I'm ready to send v2 to allocate the clks array
+dynamically, but I guess MT7628 couldn't work in original code.
 
 
-On 1/24/19 9:29 PM, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 1/24/19 9:13 PM, Casey Schaufler wrote:
->> On 1/24/2019 6:56 PM, Gustavo A. R. Silva wrote:
->>> In preparation to enabling -Wimplicit-fallthrough, mark switch
->>> cases where we are expecting to fall through.
->>>
->>> This patch fixes the following warnings:
->>>
->>> security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>> security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->>>
->>> Warning level 3 was used: -Wimplicit-fallthrough=3
->>>
->>> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
->>>
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>
->> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
->>
+In mtk_pwm_config():
 
-BTW, thanks, Casey.  I'll take this in my tree.
+	clk = pc->clks[MTK_CLK_PWM1 + pwm->hwpwm]; 
+	....
+	resolution = (u64)NSEC_PER_SEC * 1000;
+	do_div(resolution, clk_get_rate(clk));
+	....
 
---
-Gustavo
+I think clk should be NULL and resolution is always 0 here. 
 
->> Ug. It can't be part of a greater comment? Grumble.
->>
-> 
-> Not like the one in this case.
-> 
-> It can be part of a one line comment like this:
-> 
-> /* fall through - ... */
-> 
-> and it has to be placed at the bottom of the case.
-> 
-> I know... I'd be great if this can be improved.
-> 
->>> ---
->>>  security/apparmor/domain.c                | 2 +-
->>>  security/integrity/ima/ima_appraise.c     | 1 +
->>>  security/integrity/ima/ima_policy.c       | 4 ++++
->>>  security/integrity/ima/ima_template_lib.c | 1 +
->>>  security/smack/smack_lsm.c                | 3 +--
->>>  5 files changed, 8 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
->>> index 726910bba84b..c7c619578095 100644
->>> --- a/security/apparmor/domain.c
->>> +++ b/security/apparmor/domain.c
->>> @@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
->>>  			stack = NULL;
->>>  			break;
->>>  		}
->>> -		/* fall through to X_NAME */
->>> +		/* fall through - to X_NAME */
->>>  	case AA_X_NAME:
->>>  		if (xindex & AA_X_CHILD)
->>>  			/* released by caller */
->>> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
->>> index a2baa85ea2f5..57daf30fb7d4 100644
->>> --- a/security/integrity/ima/ima_appraise.c
->>> +++ b/security/integrity/ima/ima_appraise.c
->>> @@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
->>>  		break;
->>>  	case CREDS_CHECK:
->>>  		iint->ima_creds_status = status;
->>> +		/* fall through */
->>>  	case FILE_CHECK:
->>>  	case POST_SETATTR:
->>>  		iint->ima_file_status = status;
->>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
->>> index 8bc8a1c8cb3f..122797023bdb 100644
->>> --- a/security/integrity/ima/ima_policy.c
->>> +++ b/security/integrity/ima/ima_policy.c
->>> @@ -938,10 +938,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->>>  		case Opt_uid_gt:
->>>  		case Opt_euid_gt:
->>>  			entry->uid_op = &uid_gt;
->>> +			/* fall through */
->>>  		case Opt_uid_lt:
->>>  		case Opt_euid_lt:
->>>  			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
->>>  				entry->uid_op = &uid_lt;
->>> +			/* fall through */
->>>  		case Opt_uid_eq:
->>>  		case Opt_euid_eq:
->>>  			uid_token = (token == Opt_uid_eq) ||
->>> @@ -970,9 +972,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->>>  			break;
->>>  		case Opt_fowner_gt:
->>>  			entry->fowner_op = &uid_gt;
->>> +			/* fall through */
->>>  		case Opt_fowner_lt:
->>>  			if (token == Opt_fowner_lt)
->>>  				entry->fowner_op = &uid_lt;
->>> +			/* fall through */
->>>  		case Opt_fowner_eq:
->>>  			ima_log_string_op(ab, "fowner", args[0].from,
->>>  					  entry->fowner_op);
->>> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
->>> index 43752002c222..513b457ae900 100644
->>> --- a/security/integrity/ima/ima_template_lib.c
->>> +++ b/security/integrity/ima/ima_template_lib.c
->>> @@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
->>>  		/* skip ':' and '\0' */
->>>  		buf_ptr += 2;
->>>  		buflen -= buf_ptr - field_data->data;
->>> +		/* fall through */
->>>  	case DATA_FMT_DIGEST:
->>>  	case DATA_FMT_HEX:
->>>  		if (!buflen)
->>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
->>> index fa98394a40d0..127aa6c58e34 100644
->>> --- a/security/smack/smack_lsm.c
->>> +++ b/security/smack/smack_lsm.c
->>> @@ -3391,13 +3391,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
->>>  		 */
->>>  		final = &smack_known_star;
->>>  		/*
->>> -		 * Fall through.
->>> -		 *
->>>  		 * If a smack value has been set we want to use it,
->>>  		 * but since tmpfs isn't giving us the opportunity
->>>  		 * to set mount options simulate setting the
->>>  		 * superblock default.
->>>  		 */
->>> +		/* Fall through */
->>>  	default:
->>>  		/*
->>>  		 * This isn't an understood special case.
+
+Ryder
+
