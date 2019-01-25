@@ -2,133 +2,419 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 780C5C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:09:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E6CC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:15:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4543E21855
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:09:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD0EC217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:15:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RhYg5ZKE"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="O/zuzgM4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729446AbfAYWJa (ORCPT
+        id S1729455AbfAYWPK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 17:09:30 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:40899 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726589AbfAYWJa (ORCPT
+        Fri, 25 Jan 2019 17:15:10 -0500
+Received: from bedivere.hansenpartnership.com ([66.63.167.143]:34396 "EHLO
+        bedivere.hansenpartnership.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726284AbfAYWPJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 17:09:30 -0500
-Received: by mail-pl1-f196.google.com with SMTP id u18so5155983plq.7;
-        Fri, 25 Jan 2019 14:09:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yOK2pu+zjQkFNn+imQ1D4TTPfe1zrFINqOeFn96lPYs=;
-        b=RhYg5ZKE+JsIoyxOWfstw6d4J0Z15RE5nl9zlvSBRPue9JtbSWzgY35OjuP4SSPuIc
-         RHTQphFZV7nExm/VSclU1IKcPAm5ldXKq77nzdg0OPhCAdwkv6wJOR2Iw8YY9fAhPBZi
-         lkHqwTXz13ORlrgIml0kSMaVp+jKXc0bepTCKoIWdUGO5/vH8i1HCbOmN+eraYCcnSrf
-         f6gwiisSGP6j/rA3fzpTqjEkm7mcNb0SSQBJtu98F4rPUN5EBhcgqC2jrSEjDvTuIUIM
-         uePyd32MWQkWaqMBaSXCny4bq7YtPqQpmluzDgIqkUeFn+UFAljLCQ/7yMO1ASOaV1Jd
-         EOyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yOK2pu+zjQkFNn+imQ1D4TTPfe1zrFINqOeFn96lPYs=;
-        b=MSbk0GYWHpkqmoYm2iZBnAAyThOLLgECohmcp2TjQG72TrFp4+o5TJvNdQzHTH5fzR
-         T75tWXoozyYeyBYBFSRaGe3EeT3u0/d/fHTRmlO+pnuOim4M6Gtv7t5kvm2wfSHbIBf4
-         11ovDASZSs8/df7iz/ZTyDYqNyjkPWeV5Go1jzFZCutKLknxMpSlRycLqz4OI3z1YUTI
-         VRJVCjxcvfiGH+1CLCv+zV+F96dYQrPo4q7aQxjZEDtzON3bNXmBfKNwKudCH03L3lnc
-         fOjqhPE02z3JITTZPwq8YNCl8dT1kndcLzHhRIRKfBcVrHmFUml4v0JiamucJNjaYP5k
-         zP6Q==
-X-Gm-Message-State: AJcUukd/cwBLudnbMTRe3VKV8eO2ODALb32hX2SHBZCpk01LTONc8lpi
-        /iogSgjd6nJkhpKqGLamun4lTcHG
-X-Google-Smtp-Source: ALg8bN6l8HusjX6qpUJKde1EcT9svrVT/fQY1jm1u1qUr8GEOtzXH99qc7RXMsH3WCd/YDkA/ynKJA==
-X-Received: by 2002:a17:902:b090:: with SMTP id p16mr12823454plr.190.1548454169164;
-        Fri, 25 Jan 2019 14:09:29 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id l22sm45850608pfj.179.2019.01.25.14.09.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 14:09:28 -0800 (PST)
-Subject: Re: [PATCH V2 3/4] i2c: tegra: Add DMA Support
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
- <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
- <dcc1e094-638e-5b04-7a61-bdbc24ee068f@gmail.com>
- <BYAPR12MB339829FC6F2F95F833FE45A1C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <ad177c2e-3801-ddad-b359-ac83530ee1d6@gmail.com>
- <BYAPR12MB33982ED3A9EC34819D2490F8C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <782dcecf-2991-e886-af18-d355a3ea8325@gmail.com>
-Message-ID: <42d20b67-95a7-c4c3-059e-0b990e6f684f@gmail.com>
-Date:   Sat, 26 Jan 2019 01:09:19 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <782dcecf-2991-e886-af18-d355a3ea8325@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Fri, 25 Jan 2019 17:15:09 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bedivere.hansenpartnership.com (Postfix) with ESMTP id 1611D8EE27B;
+        Fri, 25 Jan 2019 14:15:09 -0800 (PST)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+        by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id 2vh97xCyH_3N; Fri, 25 Jan 2019 14:15:08 -0800 (PST)
+Received: from [153.66.254.194] (unknown [50.35.68.20])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 484848EE22B;
+        Fri, 25 Jan 2019 14:15:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=hansenpartnership.com;
+        s=20151216; t=1548454508;
+        bh=HGJE7hmR/FYgOj/iPrABPHg/m1JgdceKWzEdAfZFmbc=;
+        h=Subject:From:To:Cc:Date:From;
+        b=O/zuzgM4xES0SlFSj3RVIzCp7UFCUyVWxdQLqXNMgosj0CMrwQMdD387pNcMBR7H3
+         MzOMZg7IdzjmCiFdT8mKVJXxQbUHJLJhSDCT0g/+gifT72NLfS8Jv+xOlHBdTPVTP7
+         QIDV/wtV55VfJVmXrolzDb0vxO1SnHmRtvHg7VKo=
+Message-ID: <1548454506.3212.26.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 5.0-rc3
+From:   James Bottomley <James.Bottomley@HansenPartnership.com>
+To:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-scsi <linux-scsi@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Date:   Fri, 25 Jan 2019 14:15:06 -0800
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-26.01.2019 0:49, Dmitry Osipenko пишет:
+Six fixes, all of which appear to have user visible consequences.  The
+DMA one is a regression fix from the merge window and of the others,
+four are driver specific and one specific to the target code.
 
-> 3) After applying these patches I2C transfers are failing on Tegra20 with "tegra-i2c 7000c400.i2c: Failed to allocate the DMA buffer". 
-> 
+The patch is available here:
 
-Actually scratch the above, turned out I haven't applied patches correctly. In fact patches are failing to apply with:
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-# git apply --verbose V2-3-4-i2c-tegra-Add-DMA-Support.patch
-Checking patch drivers/i2c/busses/i2c-tegra.c...
-Hunk #4 succeeded at 198 (offset 3 lines).
-Hunk #5 succeeded at 212 (offset 3 lines).
-Hunk #6 succeeded at 229 (offset 3 lines).
-Hunk #7 succeeded at 243 (offset 3 lines).
-Hunk #8 succeeded at 321 (offset 3 lines).
-Hunk #9 succeeded at 636 (offset 3 lines).
-Hunk #10 succeeded at 751 (offset 3 lines).
-Hunk #11 succeeded at 798 (offset 3 lines).
-Hunk #12 succeeded at 968 (offset 3 lines).
-Hunk #13 succeeded at 996 (offset 3 lines).
-Hunk #14 succeeded at 1050 (offset 3 lines).
-Hunk #15 succeeded at 1075 (offset 3 lines).
-Hunk #16 succeeded at 1125 (offset 3 lines).
-Hunk #17 succeeded at 1180 (offset 3 lines).
-Hunk #18 succeeded at 1304 (offset 13 lines).
-error: while searching for:
-                return -ENOMEM;
+The short changelog is:
 
-        i2c_dev->base = base;
-        i2c_dev->div_clk = div_clk;
-        i2c_dev->adapter.algo = &tegra_i2c_algo;
-        i2c_dev->adapter.quirks = &tegra_i2c_quirks;
-        i2c_dev->irq = irq;
-        i2c_dev->cont_id = pdev->id;
-        i2c_dev->dev = &pdev->dev;
+Christoph Hellwig (1):
+      scsi: communicate max segment size to the DMA mapping code
 
-        i2c_dev->rst = devm_reset_control_get_exclusive(&pdev->dev, "i2c");
-        if (IS_ERR(i2c_dev->rst)) {
+Ewan D. Milne (2):
+      scsi: lpfc: nvmet: avoid hang / use-after-free when destroying targetport
+      scsi: lpfc: nvme: avoid hang / use-after-free when destroying localport
 
-error: patch failed: drivers/i2c/busses/i2c-tegra.c:1000
-error: drivers/i2c/busses/i2c-tegra.c: patch does not apply
+Marc Gonzalez (1):
+      scsi: ufs: Use explicit access size in ufshcd_dump_regs
 
+Varun Prakash (1):
+      scsi: csiostor: fix NULL pointer dereference in csio_vport_set_state()
 
-Please use "git format-patch -4 xxxx" and do not edit patches manually.
+Xiubo Li (1):
+      scsi: tcmu: fix use after free
+
+And the diffstat:
+
+ drivers/ata/pata_macio.c          |  9 ++++-----
+ drivers/ata/sata_inic162x.c       | 22 +++++++++-------------
+ drivers/firewire/sbp2.c           |  5 +----
+ drivers/scsi/aacraid/linit.c      |  9 ++++-----
+ drivers/scsi/csiostor/csio_attr.c |  2 +-
+ drivers/scsi/lpfc/lpfc_nvme.c     | 16 +++++++++-------
+ drivers/scsi/lpfc/lpfc_nvme.h     |  2 +-
+ drivers/scsi/lpfc/lpfc_nvmet.c    |  8 +++++---
+ drivers/scsi/lpfc/lpfc_nvmet.h    |  2 +-
+ drivers/scsi/scsi_lib.c           |  4 ++--
+ drivers/scsi/ufs/ufshcd.c         | 10 ++++++++--
+ drivers/target/target_core_user.c |  3 ++-
+ 12 files changed, 47 insertions(+), 45 deletions(-)
+
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/ata/pata_macio.c b/drivers/ata/pata_macio.c
+index 8cc9c429ad95..9e7fc302430f 100644
+--- a/drivers/ata/pata_macio.c
++++ b/drivers/ata/pata_macio.c
+@@ -915,6 +915,10 @@ static struct scsi_host_template pata_macio_sht = {
+ 	.sg_tablesize		= MAX_DCMDS,
+ 	/* We may not need that strict one */
+ 	.dma_boundary		= ATA_DMA_BOUNDARY,
++	/* Not sure what the real max is but we know it's less than 64K, let's
++	 * use 64K minus 256
++	 */
++	.max_segment_size	= MAX_DBDMA_SEG,
+ 	.slave_configure	= pata_macio_slave_config,
+ };
+ 
+@@ -1044,11 +1048,6 @@ static int pata_macio_common_init(struct pata_macio_priv *priv,
+ 	/* Make sure we have sane initial timings in the cache */
+ 	pata_macio_default_timings(priv);
+ 
+-	/* Not sure what the real max is but we know it's less than 64K, let's
+-	 * use 64K minus 256
+-	 */
+-	dma_set_max_seg_size(priv->dev, MAX_DBDMA_SEG);
+-
+ 	/* Allocate libata host for 1 port */
+ 	memset(&pinfo, 0, sizeof(struct ata_port_info));
+ 	pmac_macio_calc_timing_masks(priv, &pinfo);
+diff --git a/drivers/ata/sata_inic162x.c b/drivers/ata/sata_inic162x.c
+index e0bcf9b2dab0..174e84ce4379 100644
+--- a/drivers/ata/sata_inic162x.c
++++ b/drivers/ata/sata_inic162x.c
+@@ -245,8 +245,15 @@ struct inic_port_priv {
+ 
+ static struct scsi_host_template inic_sht = {
+ 	ATA_BASE_SHT(DRV_NAME),
+-	.sg_tablesize	= LIBATA_MAX_PRD,	/* maybe it can be larger? */
+-	.dma_boundary	= INIC_DMA_BOUNDARY,
++	.sg_tablesize		= LIBATA_MAX_PRD, /* maybe it can be larger? */
++
++	/*
++	 * This controller is braindamaged.  dma_boundary is 0xffff like others
++	 * but it will lock up the whole machine HARD if 65536 byte PRD entry
++	 * is fed.  Reduce maximum segment size.
++	 */
++	.dma_boundary		= INIC_DMA_BOUNDARY,
++	.max_segment_size	= 65536 - 512,
+ };
+ 
+ static const int scr_map[] = {
+@@ -868,17 +875,6 @@ static int inic_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		return rc;
+ 	}
+ 
+-	/*
+-	 * This controller is braindamaged.  dma_boundary is 0xffff
+-	 * like others but it will lock up the whole machine HARD if
+-	 * 65536 byte PRD entry is fed. Reduce maximum segment size.
+-	 */
+-	rc = dma_set_max_seg_size(&pdev->dev, 65536 - 512);
+-	if (rc) {
+-		dev_err(&pdev->dev, "failed to set the maximum segment size\n");
+-		return rc;
+-	}
+-
+ 	rc = init_controller(hpriv->mmio_base, hpriv->cached_hctl);
+ 	if (rc) {
+ 		dev_err(&pdev->dev, "failed to initialize controller\n");
+diff --git a/drivers/firewire/sbp2.c b/drivers/firewire/sbp2.c
+index 09b845e90114..a785ffd5af89 100644
+--- a/drivers/firewire/sbp2.c
++++ b/drivers/firewire/sbp2.c
+@@ -1144,10 +1144,6 @@ static int sbp2_probe(struct fw_unit *unit, const struct ieee1394_device_id *id)
+ 	if (device->is_local)
+ 		return -ENODEV;
+ 
+-	if (dma_get_max_seg_size(device->card->device) > SBP2_MAX_SEG_SIZE)
+-		WARN_ON(dma_set_max_seg_size(device->card->device,
+-					     SBP2_MAX_SEG_SIZE));
+-
+ 	shost = scsi_host_alloc(&scsi_driver_template, sizeof(*tgt));
+ 	if (shost == NULL)
+ 		return -ENOMEM;
+@@ -1610,6 +1606,7 @@ static struct scsi_host_template scsi_driver_template = {
+ 	.eh_abort_handler	= sbp2_scsi_abort,
+ 	.this_id		= -1,
+ 	.sg_tablesize		= SG_ALL,
++	.max_segment_size	= SBP2_MAX_SEG_SIZE,
+ 	.can_queue		= 1,
+ 	.sdev_attrs		= sbp2_scsi_sysfs_attrs,
+ };
+diff --git a/drivers/scsi/aacraid/linit.c b/drivers/scsi/aacraid/linit.c
+index 634ddb90e7aa..7e56a11836c1 100644
+--- a/drivers/scsi/aacraid/linit.c
++++ b/drivers/scsi/aacraid/linit.c
+@@ -1747,11 +1747,10 @@ static int aac_probe_one(struct pci_dev *pdev, const struct pci_device_id *id)
+ 		shost->max_sectors = (shost->sg_tablesize * 8) + 112;
+ 	}
+ 
+-	error = dma_set_max_seg_size(&pdev->dev,
+-		(aac->adapter_info.options & AAC_OPT_NEW_COMM) ?
+-			(shost->max_sectors << 9) : 65536);
+-	if (error)
+-		goto out_deinit;
++	if (aac->adapter_info.options & AAC_OPT_NEW_COMM)
++		shost->max_segment_size = shost->max_sectors << 9;
++	else
++		shost->max_segment_size = 65536;
+ 
+ 	/*
+ 	 * Firmware printf works only with older firmware.
+diff --git a/drivers/scsi/csiostor/csio_attr.c b/drivers/scsi/csiostor/csio_attr.c
+index 8a004036e3d7..9bd2bd8dc2be 100644
+--- a/drivers/scsi/csiostor/csio_attr.c
++++ b/drivers/scsi/csiostor/csio_attr.c
+@@ -594,12 +594,12 @@ csio_vport_create(struct fc_vport *fc_vport, bool disable)
+ 	}
+ 
+ 	fc_vport_set_state(fc_vport, FC_VPORT_INITIALIZING);
++	ln->fc_vport = fc_vport;
+ 
+ 	if (csio_fcoe_alloc_vnp(hw, ln))
+ 		goto error;
+ 
+ 	*(struct csio_lnode **)fc_vport->dd_data = ln;
+-	ln->fc_vport = fc_vport;
+ 	if (!fc_vport->node_name)
+ 		fc_vport->node_name = wwn_to_u64(csio_ln_wwnn(ln));
+ 	if (!fc_vport->port_name)
+diff --git a/drivers/scsi/lpfc/lpfc_nvme.c b/drivers/scsi/lpfc/lpfc_nvme.c
+index 4c66b19e6199..8c9f79042228 100644
+--- a/drivers/scsi/lpfc/lpfc_nvme.c
++++ b/drivers/scsi/lpfc/lpfc_nvme.c
+@@ -297,7 +297,8 @@ lpfc_nvme_localport_delete(struct nvme_fc_local_port *localport)
+ 			 lport);
+ 
+ 	/* release any threads waiting for the unreg to complete */
+-	complete(&lport->lport_unreg_done);
++	if (lport->vport->localport)
++		complete(lport->lport_unreg_cmp);
+ }
+ 
+ /* lpfc_nvme_remoteport_delete
+@@ -2545,7 +2546,8 @@ lpfc_nvme_create_localport(struct lpfc_vport *vport)
+  */
+ void
+ lpfc_nvme_lport_unreg_wait(struct lpfc_vport *vport,
+-			   struct lpfc_nvme_lport *lport)
++			   struct lpfc_nvme_lport *lport,
++			   struct completion *lport_unreg_cmp)
+ {
+ #if (IS_ENABLED(CONFIG_NVME_FC))
+ 	u32 wait_tmo;
+@@ -2557,8 +2559,7 @@ lpfc_nvme_lport_unreg_wait(struct lpfc_vport *vport,
+ 	 */
+ 	wait_tmo = msecs_to_jiffies(LPFC_NVME_WAIT_TMO * 1000);
+ 	while (true) {
+-		ret = wait_for_completion_timeout(&lport->lport_unreg_done,
+-						  wait_tmo);
++		ret = wait_for_completion_timeout(lport_unreg_cmp, wait_tmo);
+ 		if (unlikely(!ret)) {
+ 			lpfc_printf_vlog(vport, KERN_ERR, LOG_NVME_IOERR,
+ 					 "6176 Lport %p Localport %p wait "
+@@ -2592,12 +2593,12 @@ lpfc_nvme_destroy_localport(struct lpfc_vport *vport)
+ 	struct lpfc_nvme_lport *lport;
+ 	struct lpfc_nvme_ctrl_stat *cstat;
+ 	int ret;
++	DECLARE_COMPLETION_ONSTACK(lport_unreg_cmp);
+ 
+ 	if (vport->nvmei_support == 0)
+ 		return;
+ 
+ 	localport = vport->localport;
+-	vport->localport = NULL;
+ 	lport = (struct lpfc_nvme_lport *)localport->private;
+ 	cstat = lport->cstat;
+ 
+@@ -2608,13 +2609,14 @@ lpfc_nvme_destroy_localport(struct lpfc_vport *vport)
+ 	/* lport's rport list is clear.  Unregister
+ 	 * lport and release resources.
+ 	 */
+-	init_completion(&lport->lport_unreg_done);
++	lport->lport_unreg_cmp = &lport_unreg_cmp;
+ 	ret = nvme_fc_unregister_localport(localport);
+ 
+ 	/* Wait for completion.  This either blocks
+ 	 * indefinitely or succeeds
+ 	 */
+-	lpfc_nvme_lport_unreg_wait(vport, lport);
++	lpfc_nvme_lport_unreg_wait(vport, lport, &lport_unreg_cmp);
++	vport->localport = NULL;
+ 	kfree(cstat);
+ 
+ 	/* Regardless of the unregister upcall response, clear
+diff --git a/drivers/scsi/lpfc/lpfc_nvme.h b/drivers/scsi/lpfc/lpfc_nvme.h
+index cfd4719be25c..b234d0298994 100644
+--- a/drivers/scsi/lpfc/lpfc_nvme.h
++++ b/drivers/scsi/lpfc/lpfc_nvme.h
+@@ -50,7 +50,7 @@ struct lpfc_nvme_ctrl_stat {
+ /* Declare nvme-based local and remote port definitions. */
+ struct lpfc_nvme_lport {
+ 	struct lpfc_vport *vport;
+-	struct completion lport_unreg_done;
++	struct completion *lport_unreg_cmp;
+ 	/* Add stats counters here */
+ 	struct lpfc_nvme_ctrl_stat *cstat;
+ 	atomic_t fc4NvmeLsRequests;
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.c b/drivers/scsi/lpfc/lpfc_nvmet.c
+index 6245f442d784..95fee83090eb 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.c
++++ b/drivers/scsi/lpfc/lpfc_nvmet.c
+@@ -1003,7 +1003,8 @@ lpfc_nvmet_targetport_delete(struct nvmet_fc_target_port *targetport)
+ 	struct lpfc_nvmet_tgtport *tport = targetport->private;
+ 
+ 	/* release any threads waiting for the unreg to complete */
+-	complete(&tport->tport_unreg_done);
++	if (tport->phba->targetport)
++		complete(tport->tport_unreg_cmp);
+ }
+ 
+ static void
+@@ -1692,6 +1693,7 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
+ 	struct lpfc_nvmet_tgtport *tgtp;
+ 	struct lpfc_queue *wq;
+ 	uint32_t qidx;
++	DECLARE_COMPLETION_ONSTACK(tport_unreg_cmp);
+ 
+ 	if (phba->nvmet_support == 0)
+ 		return;
+@@ -1701,9 +1703,9 @@ lpfc_nvmet_destroy_targetport(struct lpfc_hba *phba)
+ 			wq = phba->sli4_hba.nvme_wq[qidx];
+ 			lpfc_nvmet_wqfull_flush(phba, wq, NULL);
+ 		}
+-		init_completion(&tgtp->tport_unreg_done);
++		tgtp->tport_unreg_cmp = &tport_unreg_cmp;
+ 		nvmet_fc_unregister_targetport(phba->targetport);
+-		wait_for_completion_timeout(&tgtp->tport_unreg_done, 5);
++		wait_for_completion_timeout(&tport_unreg_cmp, 5);
+ 		lpfc_nvmet_cleanup_io_context(phba);
+ 	}
+ 	phba->targetport = NULL;
+diff --git a/drivers/scsi/lpfc/lpfc_nvmet.h b/drivers/scsi/lpfc/lpfc_nvmet.h
+index 1aaff63f1f41..0ec1082ce7ef 100644
+--- a/drivers/scsi/lpfc/lpfc_nvmet.h
++++ b/drivers/scsi/lpfc/lpfc_nvmet.h
+@@ -34,7 +34,7 @@
+ /* Used for NVME Target */
+ struct lpfc_nvmet_tgtport {
+ 	struct lpfc_hba *phba;
+-	struct completion tport_unreg_done;
++	struct completion *tport_unreg_cmp;
+ 
+ 	/* Stats counters - lpfc_nvmet_unsol_ls_buffer */
+ 	atomic_t rcv_ls_req_in;
+diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
+index b13cc9288ba0..6d65ac584eba 100644
+--- a/drivers/scsi/scsi_lib.c
++++ b/drivers/scsi/scsi_lib.c
+@@ -1842,8 +1842,8 @@ void __scsi_init_queue(struct Scsi_Host *shost, struct request_queue *q)
+ 	blk_queue_segment_boundary(q, shost->dma_boundary);
+ 	dma_set_seg_boundary(dev, shost->dma_boundary);
+ 
+-	blk_queue_max_segment_size(q,
+-		min(shost->max_segment_size, dma_get_max_seg_size(dev)));
++	blk_queue_max_segment_size(q, shost->max_segment_size);
++	dma_set_max_seg_size(dev, shost->max_segment_size);
+ 
+ 	/*
+ 	 * Set a reasonable default alignment:  The larger of 32-byte (dword),
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 71334aaf1447..2ddf24466a62 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -108,13 +108,19 @@
+ int ufshcd_dump_regs(struct ufs_hba *hba, size_t offset, size_t len,
+ 		     const char *prefix)
+ {
+-	u8 *regs;
++	u32 *regs;
++	size_t pos;
++
++	if (offset % 4 != 0 || len % 4 != 0) /* keep readl happy */
++		return -EINVAL;
+ 
+ 	regs = kzalloc(len, GFP_KERNEL);
+ 	if (!regs)
+ 		return -ENOMEM;
+ 
+-	memcpy_fromio(regs, hba->mmio_base + offset, len);
++	for (pos = 0; pos < len; pos += 4)
++		regs[pos / 4] = ufshcd_readl(hba, offset + pos);
++
+ 	ufshcd_hex_dump(prefix, regs, len);
+ 	kfree(regs);
+ 
+diff --git a/drivers/target/target_core_user.c b/drivers/target/target_core_user.c
+index c34c88ef3319..5831e0eecea1 100644
+--- a/drivers/target/target_core_user.c
++++ b/drivers/target/target_core_user.c
+@@ -1317,12 +1317,13 @@ static int tcmu_check_expired_cmd(int id, void *p, void *data)
+ 		 * target_complete_cmd will translate this to LUN COMM FAILURE
+ 		 */
+ 		scsi_status = SAM_STAT_CHECK_CONDITION;
++		list_del_init(&cmd->queue_entry);
+ 	} else {
++		list_del_init(&cmd->queue_entry);
+ 		idr_remove(&udev->commands, id);
+ 		tcmu_free_cmd(cmd);
+ 		scsi_status = SAM_STAT_TASK_SET_FULL;
+ 	}
+-	list_del_init(&cmd->queue_entry);
+ 
+ 	pr_debug("Timing out cmd %u on dev %s that is %s.\n",
+ 		 id, udev->name, is_running ? "inflight" : "queued");
