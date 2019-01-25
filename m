@@ -3,74 +3,76 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25C38C282C5
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:25:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04A20C282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F29B9218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:25:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D25E9218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:25:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728677AbfAYCZd (ORCPT
+        id S1728705AbfAYCZn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 21:25:33 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:36830 "EHLO
+        Thu, 24 Jan 2019 21:25:43 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:36838 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728625AbfAYCZd (ORCPT
+        with ESMTP id S1728524AbfAYCZn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 21:25:33 -0500
+        Thu, 24 Jan 2019 21:25:43 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 75AE110888E80;
-        Thu, 24 Jan 2019 18:25:32 -0800 (PST)
-Date:   Thu, 24 Jan 2019 18:25:32 -0800 (PST)
-Message-Id: <20190124.182532.1983690003554983866.davem@davemloft.net>
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7DFFE10888E81;
+        Thu, 24 Jan 2019 18:25:42 -0800 (PST)
+Date:   Thu, 24 Jan 2019 18:25:41 -0800 (PST)
+Message-Id: <20190124.182541.341610576126108739.davem@davemloft.net>
 To:     lucien.xin@gmail.com
 Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
         linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
         nhorman@tuxdriver.com
-Subject: Re: [PATCH net] sctp: set chunk transport correctly when it's a
- new asoc
+Subject: Re: [PATCH net] sctp: set flow sport from saddr only when it's 0
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <d08f8708003363950333c0690960ce3d97897bd4.1548096129.git.lucien.xin@gmail.com>
-References: <d08f8708003363950333c0690960ce3d97897bd4.1548096129.git.lucien.xin@gmail.com>
+In-Reply-To: <91961be2ab833139b1a4b0188ba47c2581b991d4.1548096161.git.lucien.xin@gmail.com>
+References: <91961be2ab833139b1a4b0188ba47c2581b991d4.1548096161.git.lucien.xin@gmail.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 24 Jan 2019 18:25:32 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 24 Jan 2019 18:25:42 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Xin Long <lucien.xin@gmail.com>
-Date: Tue, 22 Jan 2019 02:42:09 +0800
+Date: Tue, 22 Jan 2019 02:42:41 +0800
 
-> In the paths:
+> Now sctp_transport_pmtu() passes transport->saddr into .get_dst() to set
+> flow sport from 'saddr'. However, transport->saddr is set only when
+> transport->dst exists in sctp_transport_route().
 > 
->   sctp_sf_do_unexpected_init() ->
->     sctp_make_init_ack()
->   sctp_sf_do_dupcook_a/b()() ->
->     sctp_sf_do_5_1D_ce()
+> If sctp_transport_pmtu() is called without transport->saddr set, like
+> when transport->dst doesn't exists, the flow sport will be set to 0
+> from transport->saddr, which will cause a wrong route to be got.
 > 
-> The new chunk 'retval' transport is set from the incoming chunk 'chunk'
-> transport. However, 'retval' transport belong to the new asoc, which
-> is a different one from 'chunk' transport's asoc.
+> Commit 6e91b578bf3f ("sctp: re-use sctp_transport_pmtu in
+> sctp_transport_route") made the issue be triggered more easily
+> since sctp_transport_pmtu() would be called in sctp_transport_route()
+> after that.
 > 
-> It will cause that the 'retval' chunk gets set with a wrong transport.
-> Later when sending it and because of Commit b9fd683982c9 ("sctp: add
-> sctp_packet_singleton"), sctp_packet_singleton() will set some fields,
-> like vtag to 'retval' chunk from that wrong transport's asoc.
+> In gerneral, fl4->fl4_sport should always be set to
+> htons(asoc->base.bind_addr.port), unless transport->asoc doesn't exist
+> in sctp_v4/6_get_dst(), which is the case:
 > 
-> This patch is to fix it by setting 'retval' transport correctly which
-> belongs to the right asoc in sctp_make_init_ack() and
-> sctp_sf_do_5_1D_ce().
+>   sctp_ootb_pkt_new() ->
+>     sctp_transport_route()
 > 
-> Fixes: b9fd683982c9 ("sctp: add sctp_packet_singleton")
+> For that, we can simply handle it by setting flow sport from saddr only
+> when it's 0 in sctp_v4/6_get_dst().
+> 
+> Fixes: 6e91b578bf3f ("sctp: re-use sctp_transport_pmtu in sctp_transport_route")
 > Reported-by: Ying Xu <yinxu@redhat.com>
 > Signed-off-by: Xin Long <lucien.xin@gmail.com>
 
