@@ -2,294 +2,137 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1C8CC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:20:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FF65C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:20:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B98D4218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:20:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E80B218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:20:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="tFpt1ezV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727975AbfAYJUp (ORCPT
+        id S1728469AbfAYJUz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 04:20:45 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:59718 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbfAYJUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 04:20:44 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 98097A7FC9;
-        Fri, 25 Jan 2019 09:20:43 +0000 (UTC)
-Received: from [10.36.116.147] (ovpn-116-147.ams2.redhat.com [10.36.116.147])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D6FF34A4;
-        Fri, 25 Jan 2019 09:20:35 +0000 (UTC)
-Subject: Re: [RFC v3 01/21] iommu: Introduce set_pasid_table API
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
-        jean-philippe.brucker@arm.com, will.deacon@arm.com,
-        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
-        marc.zyngier@arm.com, christoffer.dall@arm.com,
-        peter.maydell@linaro.org
-References: <20190108102633.17482-1-eric.auger@redhat.com>
- <20190108102633.17482-2-eric.auger@redhat.com>
- <20190111114316.71e77d5f@x1.home>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <668880de-e967-6290-c842-54e2796f3bfe@redhat.com>
-Date:   Fri, 25 Jan 2019 10:20:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190111114316.71e77d5f@x1.home>
-Content-Type: text/plain; charset=utf-8
+        Fri, 25 Jan 2019 04:20:55 -0500
+Received: from mail-eopbgr30088.outbound.protection.outlook.com ([40.107.3.88]:49152
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727996AbfAYJUy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 04:20:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fSRUNT7Ivg3W90ba7zSOszblEVZqAMeLysv0A+U+S1o=;
+ b=tFpt1ezVRH/+3tZzliQdrC8rlZKfIZP6NarGDRxtdwJzWKIj/YOV9bnGhnNwY2Kx5oD+Yv1JzaZIQlqWFyHvLbJ7rIOEw+3Byu/Ekr0CuUyQgDgomKlUxqy0VwDyH2lMggKANMeiksZyrMXT0absAo4LVOZ0wmHe1nEUIYFF2gE=
+Received: from VI1PR04MB5134.eurprd04.prod.outlook.com (20.177.50.159) by
+ VI1PR04MB5917.eurprd04.prod.outlook.com (20.178.205.79) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.18; Fri, 25 Jan 2019 09:20:51 +0000
+Received: from VI1PR04MB5134.eurprd04.prod.outlook.com
+ ([fe80::9c6e:406c:e2bd:c293]) by VI1PR04MB5134.eurprd04.prod.outlook.com
+ ([fe80::9c6e:406c:e2bd:c293%5]) with mapi id 15.20.1558.021; Fri, 25 Jan 2019
+ 09:20:51 +0000
+From:   Laurentiu Tudor <laurentiu.tudor@nxp.com>
+To:     Wolfram Sang <wsa@the-dreams.de>
+CC:     "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Leo Li <leoyang.li@nxp.com>
+Subject: RE: [PATCH v2 1/2] i2c: imx: fix dma_request_chan error handling
+Thread-Topic: [PATCH v2 1/2] i2c: imx: fix dma_request_chan error handling
+Thread-Index: AQHUrY6sN90gZ64G9kac2+8c4kfcXaW77weAgAPT5LA=
+Date:   Fri, 25 Jan 2019 09:20:51 +0000
+Message-ID: <VI1PR04MB51345D0DD6A2138B3E452CEAEC9B0@VI1PR04MB5134.eurprd04.prod.outlook.com>
+References: <20190116112855.13824-1-laurentiu.tudor@nxp.com>
+ <20190122225155.vfy37bfuikzzymao@ninjato>
+In-Reply-To: <20190122225155.vfy37bfuikzzymao@ninjato>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 25 Jan 2019 09:20:44 +0000 (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=laurentiu.tudor@nxp.com; 
+x-originating-ip: [192.88.166.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB5917;6:AvYN1UFZu1uAR+MoFEUhOSBFMsUdeaRnQbaK+zKk85XvqjT43r27jvs6k4MoRkp0/J6OQHD5W0br728pXMb5UgrbRM6nQNrgy3lEBjefbzMeMb7/OZN9PelGIObi5jBPcEVqqrOhvdiP33uSuMCNacdI0j63JAv1gjbKiHsp+q1xMG8lk8RSFlb8HBdTTqy0wjoO51ERZP9l9AbaiV4JNghV43riH8IakxCXPK16hgztr7TrxQmd056dXTEn2OuuHFNLXlS7Vn7W4mKdcORwCFbHrcGalCk2InIfGXVgHjxqS45tSU9YhnQlNFE++Y0n3u87zQ0PkRXmbH6LS6KDz5WxvGbhp+mJDg21gQ9vxrh7CoHNDP+XEXrOJG3QxU3RaWLk2mCFR9Wj9+jYvjKBFTfhGNkWJWKZQQBT/p3r/juORdPAgNtTobKdV9OpIADXWh7jU8nds1FyT1vCP3i7dA==;5:q5rqq9zmyLCXF6G5FnWkdHqz4s0cBzA2Pc6rZTgQaDWe5Rroj/wtt02fyoFvL9HWTlruZ87Caju7Qexi5RVOo88IfzLQbxioVlmO/WD9SGxuQVupNRtcuezR7B6e7deqeFFU4l3UJlfReVbKTrQi/uOGxGSlDxVbzOd9sbrJb6WqYngvmjPXLAfQuLpixcEynGjlN1OawIN9yrsx9MGLxw==;7:+MRHXIj02EPdC0TgK9IdXUj69EWLxYn/6iB+cyIj9gTq6VpmICBTr9E2FFUYU5sC4rTLW8YlDRF5V2DlgMDbEz8YzwBHHk+0/g7uuSqnuKJW40dX1nvaAbP8+jc54FL915tYW+UKeXpjy9RGZculXg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: fffdd335-3e11-480d-f68c-08d682a666a6
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5917;
+x-ms-traffictypediagnostic: VI1PR04MB5917:
+x-microsoft-antispam-prvs: <VI1PR04MB5917B999867E82325981C426EC9B0@VI1PR04MB5917.eurprd04.prod.outlook.com>
+x-forefront-prvs: 0928072091
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(396003)(136003)(346002)(376002)(189003)(199004)(13464003)(52314003)(186003)(97736004)(25786009)(76176011)(71190400001)(71200400001)(53936002)(2906002)(99286004)(305945005)(7696005)(6436002)(86362001)(229853002)(54906003)(316002)(7736002)(6916009)(4326008)(8676002)(6506007)(66066001)(44832011)(81156014)(81166006)(14454004)(478600001)(55016002)(26005)(74316002)(256004)(6246003)(102836004)(9686003)(476003)(6116002)(33656002)(14444005)(446003)(105586002)(106356001)(8936002)(68736007)(3846002)(486006)(11346002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5917;H:VI1PR04MB5134.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: oO9bSSh0CPf+e4yMc67cyPBISISeDFrOsvR29HflovL4cki637deI0rLPTI5zH6XN/iKOH8cLv1SDTbu9kuzuo8TWJBh2haQeJVz3cqTnXBINOQ2kNv4ujXbPVwlxGlmc0Rlomkpk5IC+J9dX5fvhPBpWjEN8Fhv07vXkTEccwX60PH4BFNAuZ1wMc6JqdMyBrQQsiT1lbPJfcNNgTwTtsNRfKnUGAGXCdeJhHmC+f0dpH0FKzPg2stXNrUDiSFOr2OoG7SBBLBwlPp1Fb1tY/moaE+WPxxOL+GH/Y5gDtZN0nyiRuVt9Om9FJeNaDP6PSq9NtEte8H7fGXdOw9ct0XYlbyFpHh8Eu74m6VaOEpYs4l20dc8cdS92Nkk/zAoguhddjUYWzTsiyZyUTubzoCmyoDI4RnR2BmNw+wDIHo=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fffdd335-3e11-480d-f68c-08d682a666a6
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2019 09:20:51.6322
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5917
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+Hi Wolfram,
 
-On 1/11/19 7:43 PM, Alex Williamson wrote:
-> On Tue,  8 Jan 2019 11:26:13 +0100
-> Eric Auger <eric.auger@redhat.com> wrote:
-> 
->> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
->>
->> In virtualization use case, when a guest is assigned
->> a PCI host device, protected by a virtual IOMMU on a guest,
->> the physical IOMMU must be programmed to be consistent with
->> the guest mappings. If the physical IOMMU supports two
->> translation stages it makes sense to program guest mappings
->> onto the first stage/level (ARM/VTD terminology) while to host
->> owns the stage/level 2.
->>
->> In that case, it is mandated to trap on guest configuration
->> settings and pass those to the physical iommu driver.
->>
->> This patch adds a new API to the iommu subsystem that allows
->> to set the pasid table information.
->>
->> A generic iommu_pasid_table_config struct is introduced in
->> a new iommu.h uapi header. This is going to be used by the VFIO
->> user API. We foresee at least two specializations of this struct,
->> for PASID table passing and ARM SMMUv3.
->>
->> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
->> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
->> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->>
->> ---
->>
->> This patch generalizes the API introduced by Jacob & co-authors in
->> https://lwn.net/Articles/754331/
->>
->> v2 -> v3:
->> - replace unbind/bind by set_pasid_table
->> - move table pointer and pasid bits in the generic part of the struct
->>
->> v1 -> v2:
->> - restore the original pasid table name
->> - remove the struct device * parameter in the API
->> - reworked iommu_pasid_smmuv3
->> ---
->>  drivers/iommu/iommu.c      | 10 ++++++++
->>  include/linux/iommu.h      | 14 +++++++++++
->>  include/uapi/linux/iommu.h | 50 ++++++++++++++++++++++++++++++++++++++
->>  3 files changed, 74 insertions(+)
->>  create mode 100644 include/uapi/linux/iommu.h
->>
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index 3ed4db334341..0f2b7f1fc7c8 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -1393,6 +1393,16 @@ int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
->>  }
->>  EXPORT_SYMBOL_GPL(iommu_attach_device);
->>  
->> +int iommu_set_pasid_table(struct iommu_domain *domain,
->> +			  struct iommu_pasid_table_config *cfg)
->> +{
->> +	if (unlikely(!domain->ops->set_pasid_table))
->> +		return -ENODEV;
->> +
->> +	return domain->ops->set_pasid_table(domain, cfg);
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_set_pasid_table);
->> +
->>  static void __iommu_detach_device(struct iommu_domain *domain,
->>  				  struct device *dev)
->>  {
->> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index e90da6b6f3d1..1da2a2357ea4 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -25,6 +25,7 @@
->>  #include <linux/errno.h>
->>  #include <linux/err.h>
->>  #include <linux/of.h>
->> +#include <uapi/linux/iommu.h>
->>  
->>  #define IOMMU_READ	(1 << 0)
->>  #define IOMMU_WRITE	(1 << 1)
->> @@ -184,6 +185,7 @@ struct iommu_resv_region {
->>   * @domain_window_disable: Disable a particular window for a domain
->>   * @of_xlate: add OF master IDs to iommu grouping
->>   * @pgsize_bitmap: bitmap of all possible supported page sizes
->> + * @set_pasid_table: set pasid table
->>   */
->>  struct iommu_ops {
->>  	bool (*capable)(enum iommu_cap);
->> @@ -226,6 +228,9 @@ struct iommu_ops {
->>  	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
->>  	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
->>  
->> +	int (*set_pasid_table)(struct iommu_domain *domain,
->> +			       struct iommu_pasid_table_config *cfg);
->> +
->>  	unsigned long pgsize_bitmap;
->>  };
->>  
->> @@ -287,6 +292,8 @@ extern int iommu_attach_device(struct iommu_domain *domain,
->>  			       struct device *dev);
->>  extern void iommu_detach_device(struct iommu_domain *domain,
->>  				struct device *dev);
->> +extern int iommu_set_pasid_table(struct iommu_domain *domain,
->> +				 struct iommu_pasid_table_config *cfg);
->>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
->>  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
->>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
->> @@ -696,6 +703,13 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
->>  	return NULL;
->>  }
->>  
->> +static inline
->> +int iommu_set_pasid_table(struct iommu_domain *domain,
->> +			  struct iommu_pasid_table_config *cfg)
->> +{
->> +	return -ENODEV;
->> +}
->> +
->>  #endif /* CONFIG_IOMMU_API */
->>  
->>  #ifdef CONFIG_IOMMU_DEBUGFS
->> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
->> new file mode 100644
->> index 000000000000..7a7cf7a3de7c
->> --- /dev/null
->> +++ b/include/uapi/linux/iommu.h
->> @@ -0,0 +1,50 @@
->> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->> +/*
->> + * IOMMU user API definitions
->> + *
->> + *
->> + * This program is free software; you can redistribute it and/or modify
->> + * it under the terms of the GNU General Public License version 2 as
->> + * published by the Free Software Foundation.
->> + */
->> +
->> +#ifndef _UAPI_IOMMU_H
->> +#define _UAPI_IOMMU_H
->> +
->> +#include <linux/types.h>
->> +
->> +/**
->> + * SMMUv3 Stream Table Entry stage 1 related information
->> + * @abort: shall the STE lead to abort
->> + * @s1fmt: STE s1fmt field as set by the guest
->> + * @s1dss: STE s1dss as set by the guest
->> + * All field names match the smmu 3.0/3.1 spec (ARM IHI 0070A)
->> + */
->> +struct iommu_pasid_smmuv3 {
->> +	__u8 abort;
->> +	__u8 s1fmt;
->> +	__u8 s1dss;
->> +};
->> +
-> 
-> I can find STE.S1DSS and STE.S1FMT in the spec, but not STE.ABORT, is
-> this something to do with Config[2:0]?  Are we allowed to describe what
-> these fields are beyond their name and why they're necessary here vs
-> the other fields or do the spec restrictions preclude that?
-Yes you're right abort matches !Config[2]
+> -----Original Message-----
+> From: Wolfram Sang [mailto:wsa@the-dreams.de]
+> Sent: Wednesday, January 23, 2019 12:52 AM
+>=20
+> On Wed, Jan 16, 2019 at 01:28:54PM +0200, Laurentiu Tudor wrote:
+> > Use the correct error pointer when extracting the error code.
+> >
+> > Fixes: ea1e5f176e97 ("i2c: imx: notify about real errors on dma
+> i2c_imx_dma_request")
+>=20
+> This is not the sha1 in my tree. Maybe you rebased? I applied another
+> patch meanwhile fixing the same issue. Still thanks!
 
-what about:
+I don't know, perhaps I was on some transient snapshot. Anyway, good that i=
+n the end it's fixed.
 
-/**
- * SMMUv3 Stream Table Entry stage 1 related information
- * The PASID table is referred to as the context descriptor (CD) table.
- *
- * @s1fmt: STE s1fmt (format of the CD table: single CD, linear table
-   or 2-level table)
- * @s1dss: STE s1dss (specifies the behavior when pasid_bits != 0
-   an no pasid is passed along with the incoming transaction)
- * Please refer to the smmu 3.x spec (ARM IHI 0070A) for full details
- */
-struct iommu_pasid_smmuv3 {
-#define PASID_TABLE_SMMUV3_CFG_VERSION_1 1
-        __u32   version;
-        __u8 s1fmt;
-        __u8 s1dss;
-        __u8 padding[2];
-};
+---
+Best Regards, Laurentiu
 
-
-> 
->> +/**
->> + * PASID table data used to bind guest PASID table to the host IOMMU
->> + * Note PASID table corresponds to the Context Table on ARM SMMUv3.
->> + *
->> + * @version: API version to prepare for future extensions
->> + * @format: format of the PASID table
->> + *
->> + */
->> +struct iommu_pasid_table_config {
->> +#define PASID_TABLE_CFG_VERSION_1 1
->> +	__u32	version;
->> +#define IOMMU_PASID_FORMAT_SMMUV3	(1 << 0)
->> +	__u32	format;
->> +	__u64	base_ptr;
->> +	__u8	pasid_bits;
->> +	__u8	bypass;
->> +	union {
->> +		struct iommu_pasid_smmuv3 smmuv3;
->> +	};
->> +};
-> 
-> Structure is not naturally aligned or explicitly aligned for
-> interchange with userspace.  It might work for smmuv3 since the
-> structure is only composed of bytes, but looks troublesome in general.
-> Should each format type also contain a version?  Is format intended to
-> be a bit-field or a signature?  It seems we only need a signature, but
-> only having a single format defined, it looks like a bit-field, which
-> makes me worry what we do when we exhaust the bits.
-
-I think a signature is what we need.
-
-  The bypass field
-> should be better defined, is it 0/1?  zero/non-zero?  more selective?
-
-I suggest to replace by a signature config field (bypass, abort, translate)
-
-Thanks
-
-Eric
-> Thanks,
-> 
-> Alex
-> 
->> +
->> +#endif /* _UAPI_IOMMU_H */
-> 
+> > Signed-off-by: Laurentiu Tudor <laurentiu.tudor@nxp.com>
+> > ---
+> >  drivers/i2c/busses/i2c-imx.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/i2c/busses/i2c-imx.c b/drivers/i2c/busses/i2c-imx.=
+c
+> > index 09b124547669..42fed40198a0 100644
+> > --- a/drivers/i2c/busses/i2c-imx.c
+> > +++ b/drivers/i2c/busses/i2c-imx.c
+> > @@ -287,7 +287,7 @@ static int i2c_imx_dma_request(struct imx_i2c_struc=
+t
+> *i2c_imx,
+> >
+> >  	dma->chan_tx =3D dma_request_chan(dev, "tx");
+> >  	if (IS_ERR(dma->chan_tx)) {
+> > -		ret =3D PTR_ERR(dma->chan_rx);
+> > +		ret =3D PTR_ERR(dma->chan_tx);
+> >  		if (ret !=3D -ENODEV && ret !=3D -EPROBE_DEFER)
+> >  			dev_err(dev, "can't request DMA tx channel (%d)\n",
+> ret);
+> >  		goto fail_al;
+> > --
+> > 2.17.1
+> >
