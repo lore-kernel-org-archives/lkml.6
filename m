@@ -2,112 +2,155 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E7FC282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:24:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1662DC282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:28:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56EEA2085A
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:24:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C5CE4218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:28:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="duzGE7In"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729025AbfAYDYR (ORCPT
+        id S1728243AbfAYD2J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:24:17 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:59284 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726271AbfAYDXS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:23:18 -0500
-Received: by wens.csie.org (Postfix, from userid 1000)
-        id 333CE5FCE9; Fri, 25 Jan 2019 11:23:15 +0800 (CST)
-From:   Chen-Yu Tsai <wens@csie.org>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 02/11] dt-bindings: display: sun4i-drm: Add compatible strings for A23 display
-Date:   Fri, 25 Jan 2019 11:23:05 +0800
-Message-Id: <20190125032314.20915-3-wens@csie.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190125032314.20915-1-wens@csie.org>
-References: <20190125032314.20915-1-wens@csie.org>
+        Thu, 24 Jan 2019 22:28:09 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:46194 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726259AbfAYD2J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 22:28:09 -0500
+Received: by mail-oi1-f193.google.com with SMTP id x202so6675575oif.13
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 19:28:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=Qsc9q74JTnTMEkINAi3mNMqG0l7CnnnP36GPHL0KDdc=;
+        b=duzGE7InW77eiL4+Ivtvk9p+lwQMfuLk51gKZbkiVA8qByrVANKQl/jcSouC2pKQoZ
+         T116IehUsIYmRfXDdriXTMD/iQGZSfkncUA4HPNw1WpY9GSGgyj39/wKwFY6MNm4xZ4l
+         Lv9Zl0/3XdM5CsAAxJfB+S6pc9vtgkeBKk77s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=Qsc9q74JTnTMEkINAi3mNMqG0l7CnnnP36GPHL0KDdc=;
+        b=rBu/58ZlAmeXUmpb0xkJMrUIMmeA4J0qIngn8/IWS0RU5le1rGc+Blb/E4pMdlZwB2
+         frdnMTmtyUu6jhaOu5hGEbRUReKao/kVJ0pdE/igHOzL9VuQY4nTSgDpYyhKM1tqs0ns
+         AAR4MsKPclCmlsp8NQCND+QqMBNNcTV9jiVnx9YXFkiY7s+b93OoQuDke9zLr487Juzp
+         OWm5pCNyh8vstsSaY6jWQQ4EUA/p6tjP4oicsdUOTlnliCiG42QSa5bCBq7srCgWv/pp
+         WLp/cfRFAULp2JHxsTdy0Tf9t4H5ID9VB1ivZZyAeDOz9p36I6c05F2OqT9Omld12Oq4
+         QNbg==
+X-Gm-Message-State: AJcUuke3V8DrbnDUz2cSNkq1qga6lDWL1ea2jkxcWziYFT4B7sodrNVA
+        iPygg9LdKJVdAf6CGAmiJPMyK3V+r6H92w==
+X-Google-Smtp-Source: AHgI3IZ6k518rUo75K3zs+lY37zioi009N92QuukBCOgPYm+mWfkrw2r1oifcxLQCsXk2yXaBUR6qA==
+X-Received: by 2002:aca:2ccc:: with SMTP id s195mr252959ois.282.1548386887653;
+        Thu, 24 Jan 2019 19:28:07 -0800 (PST)
+Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com. [209.85.167.173])
+        by smtp.gmail.com with ESMTPSA id c132sm768758oia.41.2019.01.24.19.28.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 19:28:06 -0800 (PST)
+Received: by mail-oi1-f173.google.com with SMTP id u18so6685534oie.10
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 19:28:05 -0800 (PST)
+X-Received: by 2002:aca:4586:: with SMTP id s128mr256649oia.182.1548386884807;
+ Thu, 24 Jan 2019 19:28:04 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181022144901.113852-1-tfiga@chromium.org> <20181022144901.113852-2-tfiga@chromium.org>
+ <cf0fc2fc-72c6-dbca-68f7-a349879a3a14@xs4all.nl> <CAAFQd5AORjMjHdavdr3zM13BnyFnKnEb-0aKNjvwbB_xJEnxgQ@mail.gmail.com>
+ <9b7c1385-d482-6e92-2222-2daa835dbc91@xs4all.nl> <CAAFQd5DwjLt8UeDohzrMausaLGnOStvrmp5p7frYbG1hbGjx3Q@mail.gmail.com>
+ <CAAFQd5BPJv3cbJOWrziEjz_yE32DhfZv9vb-pG1Ltx-KS2=PQg@mail.gmail.com> <3ea3bf5bf9904ce877142c41f595207752172d27.camel@ndufresne.ca>
+In-Reply-To: <3ea3bf5bf9904ce877142c41f595207752172d27.camel@ndufresne.ca>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Fri, 25 Jan 2019 12:27:52 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5C_OD=bvAxG0B_G+T6bnWddPHuiVZApj_8_+4xpMjH9+g@mail.gmail.com>
+Message-ID: <CAAFQd5C_OD=bvAxG0B_G+T6bnWddPHuiVZApj_8_+4xpMjH9+g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Pawel Osciak <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Kamil Debski <kamil@wypas.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        =?UTF-8?B?VGlmZmFueSBMaW4gKOael+aFp+ePiik=?= 
+        <tiffany.lin@mediatek.com>,
+        =?UTF-8?B?QW5kcmV3LUNUIENoZW4gKOmZs+aZuui/qik=?= 
+        <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The A23's display pipeline is similar to the A33. Differences include:
+On Fri, Jan 25, 2019 at 4:55 AM Nicolas Dufresne <nicolas@ndufresne.ca> wro=
+te:
+>
+> Le jeudi 24 janvier 2019 =C3=A0 18:06 +0900, Tomasz Figa a =C3=A9crit :
+> > > Actually I just realized the last point might not even be achievable
+> > > for some of the decoders (s5p-mfc, mtk-vcodec), as they don't report
+> > > which frame originates from which bitstream buffer and the driver jus=
+t
+> > > picks the most recently consumed OUTPUT buffer to copy the timestamp
+> > > from. (s5p-mfc actually "forgets" to set the timestamp in some cases
+> > > too...)
+> > >
+> > > I need to think a bit more about this.
+> >
+> > Actually I misread the code. Both s5p-mfc and mtk-vcodec seem to
+> > correctly match the buffers.
+>
+> Ok good, since otherwise it would have been a regression in MFC driver.
+> This timestamp passing thing could in theory be made optional though,
+> it lives under some COPY_TIMESTAMP kind of flag. What that means though
+> is that a driver without such a capability would need to signal dropped
+> frames using some other mean.
+>
+> In userspace, the main use is to match the produced frame against a
+> userspace specific list of frames. At least this seems to be the case
+> in Gst and Chromium, since the userspace list contains a superset of
+> the metadata found in the v4l2_buffer.
+>
+> Now, using the produced timestamp, userspace can deduce frame that the
+> driver should have produced but didn't (could be a deadline case codec,
+> or simply the frames where corrupted). It's quite normal for a codec to
+> just keep parsing until it finally find something it can decode.
+>
+> That's at least one way to do it, but there is other possible
+> mechanism. The sequence number could be used, or even producing buffers
+> with the ERROR flag set. What matters is just to give userspace a way
+> to clear these frames, which would simply grow userspace memory usage
+> over time.
 
-  - Display backend supports larger layers, 8192x8192 instead of 2048x2048
+Is it just me or we were missing some consistent error handling then?
 
-  - TCON has DMA input
+I feel like the drivers should definitely return the bitstream buffers
+with the ERROR flag, if there is a decode failure of data in the
+buffer. Still, that could become more complicated if there is more
+than 1 frame in that piece of bitstream, but only 1 frame is corrupted
+(or whatever).
 
-  - There is no SAT module packed in the display backend
+Another case is when the bitstream, even if corrupted, is still enough
+to produce some output. My intuition tells me that such CAPTURE buffer
+should be then returned with the ERROR flag. That wouldn't still be
+enough for any more sophisticated userspace error concealment, but
+could still let the userspace know to perhaps drop the frame.
 
-Add compatible strings for the display pipeline and its components.
-
-As the MIPI DSI output device is not officially documented, and there
-are no A23 reference devices to test it, it is not covered by this
-patch.
-
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- .../devicetree/bindings/display/sunxi/sun4i-drm.txt          | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-index f426bdb42f18..31ab72cba3d4 100644
---- a/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-+++ b/Documentation/devicetree/bindings/display/sunxi/sun4i-drm.txt
-@@ -156,6 +156,7 @@ Required properties:
-    * allwinner,sun6i-a31-tcon
-    * allwinner,sun6i-a31s-tcon
-    * allwinner,sun7i-a20-tcon
-+   * allwinner,sun8i-a23-tcon
-    * allwinner,sun8i-a33-tcon
-    * allwinner,sun8i-a83t-tcon-lcd
-    * allwinner,sun8i-a83t-tcon-tv
-@@ -276,6 +277,7 @@ Required properties:
-   - compatible: value must be one of:
-     * allwinner,sun6i-a31-drc
-     * allwinner,sun6i-a31s-drc
-+    * allwinner,sun8i-a23-drc
-     * allwinner,sun8i-a33-drc
-     * allwinner,sun9i-a80-drc
-   - reg: base address and size of the memory-mapped region.
-@@ -303,6 +305,7 @@ Required properties:
-     * allwinner,sun5i-a13-display-backend
-     * allwinner,sun6i-a31-display-backend
-     * allwinner,sun7i-a20-display-backend
-+    * allwinner,sun8i-a23-display-backend
-     * allwinner,sun8i-a33-display-backend
-     * allwinner,sun9i-a80-display-backend
-   - reg: base address and size of the memory-mapped region.
-@@ -360,6 +363,7 @@ Required properties:
-     * allwinner,sun5i-a13-display-frontend
-     * allwinner,sun6i-a31-display-frontend
-     * allwinner,sun7i-a20-display-frontend
-+    * allwinner,sun8i-a23-display-frontend
-     * allwinner,sun8i-a33-display-frontend
-     * allwinner,sun9i-a80-display-frontend
-   - reg: base address and size of the memory-mapped region.
-@@ -419,6 +423,7 @@ Required properties:
-     * allwinner,sun6i-a31-display-engine
-     * allwinner,sun6i-a31s-display-engine
-     * allwinner,sun7i-a20-display-engine
-+    * allwinner,sun8i-a23-display-engine
-     * allwinner,sun8i-a33-display-engine
-     * allwinner,sun8i-a83t-display-engine
-     * allwinner,sun8i-h3-display-engine
--- 
-2.20.1
-
+Best regards,
+Tomasz
