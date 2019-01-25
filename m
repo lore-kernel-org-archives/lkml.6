@@ -2,105 +2,119 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D605BC282C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:05:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9264C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:09:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFD69218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:05:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B47CB218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:09:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729265AbfAYKFd convert rfc822-to-8bit (ORCPT
+        id S1728802AbfAYKJj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:05:33 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:43287 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727914AbfAYKFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:05:33 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9753120798; Fri, 25 Jan 2019 11:05:30 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 315D6206A6;
-        Fri, 25 Jan 2019 11:05:30 +0100 (CET)
-Date:   Fri, 25 Jan 2019 11:05:30 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Gregory Clement <gregory.clement@bootlin.com>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH v3 00/15] Bring suspend to RAM support to PCIe Aardvark
- driver
-Message-ID: <20190125110530.0ff11a54@xps13>
-In-Reply-To: <20190123170509.GB1157@e107981-ln.cambridge.arm.com>
-References: <20190108162441.5278-1-miquel.raynal@bootlin.com>
-        <20190123170509.GB1157@e107981-ln.cambridge.arm.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 25 Jan 2019 05:09:39 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:44308 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfAYKJj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 05:09:39 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gmyQX-0004wx-V1; Fri, 25 Jan 2019 18:09:34 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gmyQT-0007Y7-NH; Fri, 25 Jan 2019 18:09:29 +0800
+Date:   Fri, 25 Jan 2019 18:09:29 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Vitaly Chikunov <vt@altlinux.org>
+Cc:     David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v3] akcipher: Introduce verify_rsa/verify for public
+ key algorithms
+Message-ID: <20190125100929.zxmqbsibnnikh7tv@gondor.apana.org.au>
+References: <20190118205846.20309-1-vt@altlinux.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190118205846.20309-1-vt@altlinux.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lorenzo,
-
-Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote on Wed, 23 Jan 2019
-17:05:09 +0000:
-
-> On Tue, Jan 08, 2019 at 05:24:25PM +0100, Miquel Raynal wrote:
-> > Hello,
-> > 
-> > As part of an effort to bring suspend to RAM support to Armada 3700
-> > SoCs (main target: ESPRESSObin), this series handles the work around
-> > the PCIe IP.
-> > 
-> > First, more configuration is done in the 'setup' helper as inspired
-> > from the U-Boot driver. This is needed to entirely initialize the IP
-> > during future resume operation (patch 1).
-> > 
-> > Then, reset GPIO, PHY and clock support are introduced (patch 2-4). As
-> > current device trees do not provide the corresponding properties, not
-> > finding one of these properties is not an error and just produces a
-> > warning. However, if the property is present, an error during PHY
-> > initialization will fail the probe of the driver.
-> > 
-> > Note: To be sure the clock will be resumed before this driver, a first
-> > series adding links between clocks and consumers has been submitted,
-> > see [1]. Anyway, having the clock series applied first is not needed.  
+On Fri, Jan 18, 2019 at 11:58:46PM +0300, Vitaly Chikunov wrote:
+> Previous akcipher .verify() just `decrypts' (using RSA encrypt which is
+> using public key) signature to uncover message hash, which was then
+> compared in upper level public_key_verify_signature() with the expected
+> hash value, which itself was never passed into verify().
 > 
-> I do not understand what this means, in particular in relation
-> to the blocking clock calls in the suspend/resume NOIRQ hooks.
+> This approach was incompatible with EC-DSA family of algorithms,
+> because, to verify a signature EC-DSA algorithm also needs a hash value
+> as input; then it's used (together with a signature divided into halves
+> `r||s') to produce a witness value, which is then compared with `r' to
+> determine if the signature is correct. Thus, for EC-DSA, nor
+> requirements of .verify() itself, nor its output expectations in
+> public_key_verify_signature() wasn't sufficient.
+> 
+> Make improved .verify() call which gets hash value as parameter and
+> produce complete signature check without any output besides status.
+> 
+> RSA-centric drivers have replaced verify() with verify_rsa() which
+> have old semantic and which they still should implement (if they want
+> pkcs1pad to work). If akcipher have .verify_rsa() callback, it will be
+> used for a partial verification, which then is finished in
+> crypto_akcipher_verify().
+> 
+> Now for the top level verification only crypto_akcipher_verify() needs
+> to be called.
+> 
+> For pkcs1pad crypto_akcipher_verify_rsa() is introduced which directly
+> calls .verify_rsa() for its backend. Without this api PKCS1 can not be
+> implemented.
+> 
+> Tested on x86_64.
+> 
+> Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
 
-I am not sure to understand your question.
+Thanks for working on this!
 
-As there are multiple points in this sentence I will detail each of
-them so please comment on the one which is bothering you:
-* I am working in parallel on a series adding device links to the clock
-  framework. This way when a driver consumes a clock, the clock
-  provider driver will be resumed first.
-* If the clock series I am talking about is applied after this one,
-  there is no build issue. Of course suspending the platform may
-  not work but this is a new feature so nothing will be broken.
-* Device links do not enforce any priority if the suspend/resume phase
-  between two drivers is not the same. The PCIe driver suspends in the
-  NOIRQ phase. If we want the clock driver to suspend *after* PCIe, its
-  suspend/resume callbacks must be promoted to the NOIRQ phase as well
-  (and this is part of another series). As of today there is
-  no alternative.
+We have been here before.  We changed the AEAD interface in a way
+that is not dissimilar to what you want to do here.
 
+So I think the basic plan should be:
+
+1) Implement new top-level verify, alongside existing verify_rsa.
+2) For existing drivers implement a wrapper over verify_rsa.
+3) Convert *all* existing users to the new verify API.
+4) Remove top-level verify_rsa API.
+5) Convert existing drivers over to verify API.
+6) Remove verify_rsa completely.
+
+> +int crypto_akcipher_verify(struct akcipher_request *req,
+> +			   const unsigned char *digest, unsigned int digest_len)
+
+We should not add new fields outside of akcipher_request.  So
+these fields need to go inside it.  However, I think we don't
+actually need two new fields.  They could both go into the src
+scatterlist.  All we need is a new field, say textlen to indicate
+where the text stops and where the hash starts.  We could also
+overlay textlen over dstlen as it would now be unused for verify.
+
+The advantage of having it in one scatterlist is that for those
+users that already have the two pieces together could simply provide
+a single SG element (I don't know how likely that is in practice
+though).
+
+For others you would simply tack on an extra SG element.
 
 Thanks,
-Miquèl
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
