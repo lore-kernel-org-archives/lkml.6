@@ -2,104 +2,76 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A70FC282C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C250BC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC264217D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:51:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A179217D4
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:51:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="gtqzQOtv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726364AbfAYSvZ (ORCPT
+        id S1727990AbfAYSvg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:51:25 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59956 "EHLO mail.bootlin.com"
+        Fri, 25 Jan 2019 13:51:36 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:56008 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbfAYSvZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:51:25 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 188B2207B6; Fri, 25 Jan 2019 19:51:22 +0100 (CET)
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D3EE020734;
-        Fri, 25 Jan 2019 19:51:21 +0100 (CET)
-Date:   Fri, 25 Jan 2019 19:51:22 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v6 16/22] arm64: dts: allwinner: a64: Add DSI pipeline
-Message-ID: <20190125185122.idyipbgcgy5fzf7q@flea>
-References: <20190124195900.22620-1-jagan@amarulasolutions.com>
- <20190124195900.22620-17-jagan@amarulasolutions.com>
+        id S1725778AbfAYSvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 13:51:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=KNuk9eoZz5TzsTlNsU4tkALoOUxRrcWP45M+bKYeatE=; b=gtqzQOtv5OOZZBbPmXavhDDLUy
+        Ae7kZhD4Q2jnpR2WqiAEaTHttyUHlLCxy4ffeHdhWGpMfX/8bRcQesgr6jdZ4L3PH3XlaHxFyHr+t
+        9tshcqfXFgMk5J3LrZnepsknxhld4+HvIfhH69qyDvAfM3/E4KqjO/jGBqT/oy9Zgqcc=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gn6Zg-0006cf-1s; Fri, 25 Jan 2019 19:51:32 +0100
+Date:   Fri, 25 Jan 2019 19:51:32 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     Carlo Caione <ccaione@baylibre.com>, f.fainelli@gmail.com,
+        davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: at803x: Use helpers to access MMD PHY registers
+Message-ID: <20190125185132.GF22211@lunn.ch>
+References: <20190125123510.20511-1-ccaione@baylibre.com>
+ <20190125150013.GG12962@lunn.ch>
+ <a7f5531b-902b-2849-02a5-a4ec8660e06d@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124195900.22620-17-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <a7f5531b-902b-2849-02a5-a4ec8660e06d@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 01:28:54AM +0530, Jagan Teki wrote:
-> The A64 has a MIPI-DSI block which is similar to A31.
+On Fri, Jan 25, 2019 at 07:11:28PM +0100, Heiner Kallweit wrote:
+> On 25.01.2019 16:00, Andrew Lunn wrote:
+> > On Fri, Jan 25, 2019 at 12:35:10PM +0000, Carlo Caione wrote:
+> >> Libphy provides a standard set of helpers to access the MMD PHY
+> >> registers. Use those instead of relying on custom driver-specific
+> >> functions.
+> > 
+> > Hi Carlo
+> > 
+> > Maybe deja vu, but i thought a similar patch went by recently?
+> > 
+> Andrew, maybe you mean this one?
 > 
-> Add dsi, dphy nodes with A31 fallback compatible and finally
-> connect the dsi node to tcon0 node to make proper DSI pipeline.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 47 +++++++++++++++++++
->  1 file changed, 47 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> index cdc154b14a7e..e18d81aff813 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> @@ -358,6 +358,12 @@
->  					#address-cells = <1>;
->  					#size-cells = <0>;
->  					reg = <1>;
-> +
-> +					tcon0_out_dsi: endpoint@1 {
-> +						reg = <1>;
-> +						remote-endpoint = <&dsi_in_tcon0>;
-> +						allwinner,tcon-channel = <1>;
-> +					};
->  				};
->  			};
->  		};
-> @@ -935,6 +941,47 @@
->  			status = "disabled";
->  		};
->  
-> +		dsi: dsi@1ca0000 {
-> +			compatible = "allwinner,sun50i-a64-mipi-dsi",
-> +				     "allwinner,sun6i-a31-mipi-dsi";
-> +			reg = <0x01ca0000 0x1000>;
-> +			interrupts = <GIC_SPI 89 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&ccu CLK_BUS_MIPI_DSI>,
-> +				 <&ccu CLK_DSI_DPHY>;
+> 9b420eff9fcf ("net: phy: micrel: use phy_read_mmd and phy_write_mmd")
 
-This one looks weird. There's only a single clock in the A64, and it
-seems to be for the D-PHY only.
+Yes, probably that one.
 
-And the rate is fixed at 148.5 MHz apparently, as opposed to the
-current code that is running at twice that speed.
+Might be worth grepping of 0xd, 0xe, 0x0d, 0x0e, 13, 14, and see if
+there are any more instances in PHY drivers.
 
-Maxime
-
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+      Andrew
