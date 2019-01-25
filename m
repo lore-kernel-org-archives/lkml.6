@@ -2,74 +2,93 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1DF8C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:39:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB8AC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:40:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A6D0218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:39:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ECA1D218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:40:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727998AbfAYPjV (ORCPT
+        id S1728623AbfAYPkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:39:21 -0500
-Received: from Galois.linutronix.de ([146.0.238.70]:38711 "EHLO
-        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726265AbfAYPjU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:39:20 -0500
-Received: from [79.234.67.100] (helo=nanos)
-        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
-        (Exim 4.80)
-        (envelope-from <tglx@linutronix.de>)
-        id 1gn3Zb-0006TU-Oe; Fri, 25 Jan 2019 16:39:15 +0100
-Date:   Fri, 25 Jan 2019 16:39:09 +0100 (CET)
-From:   Thomas Gleixner <tglx@linutronix.de>
-To:     Zhenzhong Duan <zhenzhong.duan@oracle.com>
-cc:     linux-kernel@vger.kernel.org, mingo@redhat.com,
-        konrad.wilk@oracle.com, x86@kernel.org, srinivas.eeda@oracle.com,
-        bp@suse.de, tim.c.chen@linux.intel.com, peterz@infradead.org,
-        hpa@zytor.com
-Subject: Re: [PATCH] x86/speculation: Update TIF_SPEC_IB before ibpb
- barrier
-In-Reply-To: <alpine.DEB.2.21.1901231335570.1628@nanos.tec.linutronix.de>
-Message-ID: <alpine.DEB.2.21.1901251637480.1622@nanos.tec.linutronix.de>
-References: <48a105d3-fa32-40e4-9775-37d49f42eac0@default> <alpine.DEB.2.21.1901231335570.1628@nanos.tec.linutronix.de>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Fri, 25 Jan 2019 10:40:12 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:53883 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726265AbfAYPkL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:40:11 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9176020742; Fri, 25 Jan 2019 16:40:08 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5ADC120397;
+        Fri, 25 Jan 2019 16:39:58 +0100 (CET)
+Date:   Fri, 25 Jan 2019 16:39:58 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH] media: ov5640: Fix set 15fps regression
+Message-ID: <20190125153958.3aertsxgdzjldlzd@flea>
+References: <20190124175801.28018-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Linutronix-Spam-Score: -1.0
-X-Linutronix-Spam-Level: -
-X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="364yr3wufj4pv3uo"
+Content-Disposition: inline
+In-Reply-To: <20190124175801.28018-1-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 23 Jan 2019, Thomas Gleixner wrote:
 
-> On Fri, 18 Jan 2019, Zhenzhong Duan wrote:
-> 
-> > When a task is set for updating TIF_SPEC_IB throuth SECCOMP by others
-> > and it's scheduled in the first time, a stale TIF_SPEC_IB value is
-> > picked in cond_ibpb(). This is due to TIF_SPEC_IB is updated later at
-> > __switch_to_xtra().
-> > 
-> > Add an extra call to speculation_ctrl_update_tif() to update it before
-> > IBPB barrier.
-> 
-> Errm. No. It adds that call to speculation_ctrl_update_tif() for every
-> mm switch, most of the time for nothing.
-> 
-> If at all, and we discussed that before and decided not to worry about it
-> (because it gets fixed up on the next context switch), then you want to
-> handle ibpb() from there:
+--364yr3wufj4pv3uo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Actually we need to do that. It's not only the scheduled in first
-problem. That whole thing might become completely stale in either
-direction. Care to whip up a patch?
+On Thu, Jan 24, 2019 at 11:28:01PM +0530, Jagan Teki wrote:
+> The ov5640_try_frame_interval operation updates the FPS as per user
+> input based on default ov5640_frame_rate, OV5640_30_FPS which is failed
+> to update when user trigger 15fps.
+>=20
+> So, initialize the default ov5640_frame_rate to OV5640_15_FPS so-that
+> it can satisfy to update all fps.
+>=20
+> Fixes: 5a3ad937bc78 ("media: ov5640: Make the return rate type more expli=
+cit")
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-Thanks,
+I'm pretty sure I tested this and it was working fine. You're
+mentionning a regression, but what regression is there exactly (ie,
+what was working before that commit that doesn't work anymore?). What
+tools/commands are you using to see this behaviour?
 
-	tglx
+It really isn't obvious from your patch and the patch you mention what
+could go wrong or be improved.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--364yr3wufj4pv3uo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEstzgAKCRDj7w1vZxhR
+xUqJAQCQ/aFQZNYuMsvi68I8+5cbRnDBykNs/HVqsTk0QmT5jwEAj1/hGIOnYqRb
+etr2+87pF2dSusJetWCl6ZprkzqwgA8=
+=10uE
+-----END PGP SIGNATURE-----
+
+--364yr3wufj4pv3uo--
