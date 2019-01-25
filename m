@@ -2,102 +2,65 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 90745C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:33:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B35AC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57CDE218A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:33:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548437600;
-	bh=x2aO5tNv4ArRJwQC6G/BXOJu88IB2OW9/j7p48wyEmI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=PxqtLWPX8lqV6zHkI+s9AihYpgvfA0+pF1dRReEZaqLwOEAqL/kSbFZ7PK0IA9z//
-	 Il6FhOKlVF+Uta6zvJY4XfGHKYvCTItN3l/elFtFmhPNE5fDYDrA23+HHP4AOV7I1n
-	 fL2hJugmKC61AWpl3NtBjSP8+Zv49tzG8dgEJGpU=
+	by mail.kernel.org (Postfix) with ESMTP id 38A86218A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:34:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="KC4YhZfx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbfAYRdS (ORCPT
+        id S1728912AbfAYRem (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:33:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:48830 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726252AbfAYRdR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:33:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 90D6FB05A;
-        Fri, 25 Jan 2019 17:33:16 +0000 (UTC)
-Date:   Fri, 25 Jan 2019 18:33:15 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     robert shteynfeld <robert.shteynfeld@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Bob Picco <bob.picco@oracle.com>
-Subject: Re: kernel panic due to
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2830bf6f05fb3e05bc4743274b806c821807a684
-Message-ID: <20190125173315.GC20411@dhcp22.suse.cz>
-References: <CADfvbxqC1+XoSsn0sEDqFE16tN1Pq46-QDAaCu=AXJdZeY3rDQ@mail.gmail.com>
- <CAHk-=wh-1wB_X2MG0vW5e755rWJ5pBN8yyXLo2syOdcMV6qYoQ@mail.gmail.com>
- <20190125073704.GC3560@dhcp22.suse.cz>
- <20190125081924.GF3560@dhcp22.suse.cz>
- <20190125082952.GG3560@dhcp22.suse.cz>
- <CADfvbxqOOt_07hyeReEH_gCmTxxMYJr0-CSkqdX57wGTWisNTA@mail.gmail.com>
- <20190125155810.GQ3560@dhcp22.suse.cz>
- <CADfvbxp8sER_Xjkm-g8+BH87Ne8oUBirSWx6mmL=Z3XwyYoQHA@mail.gmail.com>
- <20190125163938.GA20411@dhcp22.suse.cz>
+        Fri, 25 Jan 2019 12:34:42 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:49046 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfAYRel (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 12:34:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=OYgLc90JHBdxgYaR4VZMa31svhootUyb002bIRyG078=;
+        b=KC4YhZfx1P36Y0AwALcMfnlHbDbifIElEY/v+Jrmq6fGGj/1srZVJoeV2GjMwCuBe7wFWJ/icZRgj4XFPzbAveox5YOX9cLXsg5qm/4+7JwRW89g+S+/qIrUpOmviQj3MS2g/k3YBoAj+jO/rChhBm+jEFPwFQWqC/U9pY7iWxa/jZ3ZykenVHxd5Jl+ln5b9tDLTnBs5H3RLeym1nSpqmPGhismu7Y+lQIbyQjsZ9e3M0OiVuyoX1xz7hqE2ejnbjAWGpfNRovQOJdGlmOccEgTFakniSNDtm0kXARjCm7vsEv7n6ZcIrFlV9+ztXIO8VUXsfJ5Ls+mZvm8TBJLhw==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:50565 helo=[192.168.10.176])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gn5NH-000568-1m; Fri, 25 Jan 2019 18:34:39 +0100
+Subject: Re: [PATCH v3 21/23] drm/qxl: add qxl_add_mode helper function
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>
+References: <20190118122020.27596-1-kraxel@redhat.com>
+ <20190118122020.27596-22-kraxel@redhat.com>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <37996666-8a1a-9907-eb7e-475c966e857b@tronnes.org>
+Date:   Fri, 25 Jan 2019 18:34:35 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125163938.GA20411@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190118122020.27596-22-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 25-01-19 17:39:38, Michal Hocko wrote:
-> On Fri 25-01-19 11:16:30, robert shteynfeld wrote:
-> > Attached is the dmesg from patched kernel.
-> 
-> Your Node1 physical memory range precedes Node0 which is quite unusual
-> but it shouldn't be a huge problem on its own. But memory ranges are
-> not aligned to the memory section
-> 
-> [    0.286954] Early memory node ranges
-> [    0.286955]   node   1: [mem 0x0000000000001000-0x0000000000090fff]
-> [    0.286955]   node   1: [mem 0x0000000000100000-0x00000000dbdf8fff]
-> [    0.286956]   node   1: [mem 0x0000000100000000-0x0000001423ffffff]
-> [    0.286956]   node   0: [mem 0x0000001424000000-0x0000002023ffffff]
-> 
-> As you can see the last pfn for the node1 is inside the section and
-> Node0 starts right after. This is quite unusual as well. If for no other
-> reasons then the memmap of those struct pages will be remote for one or
-> the other. Actually I am not even sure we can handle that properly
-> because we do expect 1:1 mapping between sections and nodes.
-> 
-> Now it also makes some sense why 2830bf6f05fb ("mm, memory_hotplug:
-> initialize struct pages for the full memory section") made any
-> difference. We simply write over a potentially initialized struct page
-> and blow up on that. I strongly suspect that the commit just uncovered
-> a pre-existing problem. Let me think what we can do about that.
 
-Appart from force aligning node's start the only other option is to
-revert 2830bf6f05fb and handling the underlying issue in the hotplug
-code. I really wanted to prevent that because memory hotplug assumes
-sections to be in a single node at way too many places. Maybe somebody
-has a more clever idea though.
--- 
-Michal Hocko
-SUSE Labs
+
+Den 18.01.2019 13.20, skrev Gerd Hoffmann:
+> Add a helper function to add custom video modes to a connector.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
