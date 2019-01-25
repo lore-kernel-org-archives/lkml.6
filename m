@@ -2,149 +2,139 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1F9C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:57:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2411C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:58:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 354AB218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:57:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9A7D7218D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:58:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbfAYM5C (ORCPT
+        id S1727558AbfAYM6B convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 07:57:02 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:44692 "EHLO
-        bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfAYM5B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 07:57:01 -0500
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-        (Authenticated sender: gportay)
-        with ESMTPSA id 6394D26025D
-From:   =?UTF-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@collabora.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Lucas Stach <l.stach@pengutronix.de>,
-        =?utf-8?q?Ga=C3=ABl=20PORTAY?= <gael.portay@collabora.com>,
-        Peter Senna Tschudin <peter.senna@collabora.com>,
-        Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Subject: [RFC] etnaviv: Fix gpu->memory_base address
-Date:   Fri, 25 Jan 2019 07:56:52 -0500
-Message-Id: <20190125125652.18425-1-gael.portay@collabora.com>
-X-Mailer: git-send-email 2.20.1
+        Fri, 25 Jan 2019 07:58:01 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:50008 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726049AbfAYM6B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 07:58:01 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E1499207B0; Fri, 25 Jan 2019 13:57:57 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7369120397;
+        Fri, 25 Jan 2019 13:57:57 +0100 (CET)
+Date:   Fri, 25 Jan 2019 13:57:57 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Gregory Clement <gregory.clement@bootlin.com>,
+        Jason Cooper <jason@lakedaemon.net>,
+        Andrew Lunn <andrew@lunn.ch>,
+        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        devicetree@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH v3 00/15] Bring suspend to RAM support to PCIe Aardvark
+ driver
+Message-ID: <20190125135757.6518191e@xps13>
+In-Reply-To: <20190125124011.GA16389@e107981-ln.cambridge.arm.com>
+References: <20190108162441.5278-1-miquel.raynal@bootlin.com>
+        <20190123170509.GB1157@e107981-ln.cambridge.arm.com>
+        <20190125110530.0ff11a54@xps13>
+        <20190125124011.GA16389@e107981-ln.cambridge.arm.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When used on a 2GB memory IMX6 device, the driver configures etnaviv
-memory_base address to:
+Hi Lorenzo,
 
-	dma_mask - SZ_2G + 1
+Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote on Fri, 25 Jan 2019
+12:40:11 +0000:
 
-which is 2GB as the dma_mask has all bits on. This results in the gpu
-having a narrow linear memory window of only 256MB. This patch changes
-the behavior to configure etnaviv memory_base to:
+> On Fri, Jan 25, 2019 at 11:05:30AM +0100, Miquel Raynal wrote:
+> > Hi Lorenzo,
+> > 
+> > Lorenzo Pieralisi <lorenzo.pieralisi@arm.com> wrote on Wed, 23 Jan 2019
+> > 17:05:09 +0000:
+> >   
+> > > On Tue, Jan 08, 2019 at 05:24:25PM +0100, Miquel Raynal wrote:  
+> > > > Hello,
+> > > > 
+> > > > As part of an effort to bring suspend to RAM support to Armada 3700
+> > > > SoCs (main target: ESPRESSObin), this series handles the work around
+> > > > the PCIe IP.
+> > > > 
+> > > > First, more configuration is done in the 'setup' helper as inspired
+> > > > from the U-Boot driver. This is needed to entirely initialize the IP
+> > > > during future resume operation (patch 1).
+> > > > 
+> > > > Then, reset GPIO, PHY and clock support are introduced (patch 2-4). As
+> > > > current device trees do not provide the corresponding properties, not
+> > > > finding one of these properties is not an error and just produces a
+> > > > warning. However, if the property is present, an error during PHY
+> > > > initialization will fail the probe of the driver.
+> > > > 
+> > > > Note: To be sure the clock will be resumed before this driver, a first
+> > > > series adding links between clocks and consumers has been submitted,
+> > > > see [1]. Anyway, having the clock series applied first is not needed.    
+> > > 
+> > > I do not understand what this means, in particular in relation
+> > > to the blocking clock calls in the suspend/resume NOIRQ hooks.  
+> > 
+> > I am not sure to understand your question.
+> > 
+> > As there are multiple points in this sentence I will detail each of
+> > them so please comment on the one which is bothering you:
+> > * I am working in parallel on a series adding device links to the clock
+> >   framework. This way when a driver consumes a clock, the clock
+> >   provider driver will be resumed first.
+> > * If the clock series I am talking about is applied after this one,
+> >   there is no build issue. Of course suspending the platform may
+> >   not work but this is a new feature so nothing will be broken.  
+> 
+> Suspend to RAM will be broken if the clock is suspended and no
+> notification will happen in the NOIRQ phase, it is a new-broken-feature.
+>
+> 
+> > * Device links do not enforce any priority if the suspend/resume phase
+> >   between two drivers is not the same. The PCIe driver suspends in the
+> >   NOIRQ phase. If we want the clock driver to suspend *after* PCIe, its
+> >   suspend/resume callbacks must be promoted to the NOIRQ phase as well
+> >   (and this is part of another series). As of today there is
+> >   no alternative.  
+> 
+> I will merge this series when it works, I have no evidence that it does
+> given what you are writing above, if the series you mention are
+> *necessary* for suspend-to-RAM to work they ought to be merged first.
 
-	gpu->memory_base = PHYS_OFFSET
+I am working actively to bring A3700 SoC suspend to RAM support almost
+from scratch. 
 
-which leaves the device with a linear window of 2G in our case.
+As of today I have contributed 65 patches spread in 8 series for the
+PHY, clk, PCIe, SATA, USB, pinctrl and net subsystems. Some of them
+have been merged, but the vast majority has not, yet.
 
-CC: Peter Senna Tschudin <peter.senna@collabora.com>
-CC: Sjoerd Simons <sjoerd.simons@collabora.co.uk>
-Signed-off-by: Gaël PORTAY <gael.portay@collabora.com>
----
-Hi all,
+I mentioned this run-time dependency because it exists for people who
+would like to test just the PCIe IP. But S2RAM on A3700 will be a
+new-broken-feature until all patches are merged. While there is
+still one missing, the feature is broken. If everybody waits for
+the other patches to be merged first, it is gonna be a long process :)
 
-I am looking for a proper function to get the end of the physical
-memory. We have tried memblock_end_of_DRAM at first. That function
-returns the value we are expecting, but it is not defined for drivers
-compiled as modules.
+However, if you want to wait for the clock core series to be applied
+first I respect this choice and I will update you when it will be the
+case.
 
-        ERROR: "memblock_end_of_DRAM" [drivers/gpu/drm/etnaviv/etnaviv.ko] undefined!
 
-The reason why we need this is very specific to the etnaviv driver.
-
-Etnaviv tries to guess the base address for the GPU memory so it overlaps the
-CMA area (located at the end of the memory).
-
-See comment below from the driver[1]:
-
-        /*
-         * Set the GPU linear window to be at the end of the DMA window, where
-         * the CMA area is likely to reside. This ensures that we are able to
-         * map the command buffers while having the linear window overlap as
-         * much RAM as possible, so we can optimize mappings for other buffers.
-         *
-         * For 3D cores only do this if MC2.0 is present, as with MC1.0 it leads
-         * to different views of the memory on the individual engines.
-         */
-        if (!(gpu->identity.features & chipFeatures_PIPE_3D) ||
-            (gpu->identity.minor_features0 & chipMinorFeatures0_MC20)) {
-                u32 dma_mask = (u32)dma_get_required_mask(gpu->dev);
-                if (dma_mask < PHYS_OFFSET + SZ_2G)
-                        gpu->memory_base = PHYS_OFFSET;
-                else
-                        gpu->memory_base = dma_mask - SZ_2G + 1;
-        (...)
-        }
-
-As you can see in the code above, etnaviv calls dma_get_required_mask() to get
-the end of the physical memory.
-
-Unfortunalty, the function dma_get_required_mask() returns 0xffffffff (i.e.
-4GB-1) while we have actually 2GB of memory on the device.
-
-Etnaviv deduces a GPU memory base address that starts at 2GB. As a consequence,
-the overlap between the physical and the GPU memory is only 256MB. We were
-expecting a GPU memory base address that starts at the memory physical offset
-(PHYS_OFFSET, 256MB) and a 2GB-long overlap.
-
-This is the consequence of using a function that does not returns the real
-amount of memory.
-
-Is there another function I can use to get the real amount of available memory?
-
-Kind Regards,
-Gael
-
-[1]: https://github.com/torvalds/linux/blob/master/drivers/gpu/drm/etnaviv/etnaviv_gpu.c#L729-L733
-
- drivers/gpu/drm/etnaviv/etnaviv_gpu.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-index 6904535475de..add80ce73df4 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_gpu.c
-@@ -10,6 +10,7 @@
- #include <linux/of_device.h>
- #include <linux/regulator/consumer.h>
- #include <linux/thermal.h>
-+#include <linux/memblock.h>
- 
- #include "etnaviv_cmdbuf.h"
- #include "etnaviv_dump.h"
-@@ -726,11 +727,11 @@ int etnaviv_gpu_init(struct etnaviv_gpu *gpu)
- 	 */
- 	if (!(gpu->identity.features & chipFeatures_PIPE_3D) ||
- 	    (gpu->identity.minor_features0 & chipMinorFeatures0_MC20)) {
--		u32 dma_mask = (u32)dma_get_required_mask(gpu->dev);
--		if (dma_mask < PHYS_OFFSET + SZ_2G)
-+		u32 max_memory = min((u32) dma_get_required_mask(gpu->dev), memblock_end_of_DRAM());
-+		if (max_memory <= SZ_2G + PHYS_OFFSET)
- 			gpu->memory_base = PHYS_OFFSET;
- 		else
--			gpu->memory_base = dma_mask - SZ_2G + 1;
-+			gpu->memory_base = max_memory - SZ_2G;
- 	} else if (PHYS_OFFSET >= SZ_2G) {
- 		dev_info(gpu->dev, "Need to move linear window on MC1.0, disabling TS\n");
- 		gpu->memory_base = PHYS_OFFSET;
--- 
-2.20.1
-
+Thanks,
+Miquèl
