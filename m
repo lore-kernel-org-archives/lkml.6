@@ -2,104 +2,175 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADE4AC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:00:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3B0C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:02:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84CA6218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:00:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3EE19218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:02:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbfAYQA5 (ORCPT
+        id S1728460AbfAYQCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:00:57 -0500
-Received: from mga06.intel.com ([134.134.136.31]:12904 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfAYQA5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:00:57 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 08:00:56 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,521,1539673200"; 
-   d="scan'208";a="111064134"
-Received: from tassilo.jf.intel.com (HELO tassilo.localdomain) ([10.7.201.137])
-  by orsmga006.jf.intel.com with ESMTP; 25 Jan 2019 08:00:56 -0800
-Received: by tassilo.localdomain (Postfix, from userid 1000)
-        id 56EB8300FE9; Fri, 25 Jan 2019 08:00:56 -0800 (PST)
-Date:   Fri, 25 Jan 2019 08:00:56 -0800
-From:   Andi Kleen <ak@linux.intel.com>
-To:     Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc:     lkml <linux-kernel@vger.kernel.org>, Jiri Olsa <jolsa@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        eranian@google.com, vincent.weaver@maine.edu,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>
-Subject: Re: System crash with perf_fuzzer (kernel: 5.0.0-rc3)
-Message-ID: <20190125160056.GG6118@tassilo.jf.intel.com>
-References: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com>
+        Fri, 25 Jan 2019 11:02:08 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:45068 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726122AbfAYQCI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 11:02:08 -0500
+Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0PG26fg055728;
+        Sat, 26 Jan 2019 01:02:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
+ Sat, 26 Jan 2019 01:02:06 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0PG26Rv055723
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 26 Jan 2019 01:02:06 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: possible deadlock in __do_page_fault
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Todd Kjos <tkjos@google.com>,
+        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
+        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
+        jack@suse.cz, jrdr.linux@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        syzkaller-bugs@googlegroups.com,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <201901230201.x0N214eq043832@www262.sakura.ne.jp>
+ <20190123155751.GA168927@google.com>
+ <201901240152.x0O1qUUU069046@www262.sakura.ne.jp>
+ <20190124134646.GA53008@google.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <d736c8f5-eba1-2da8-000f-4b2a80ad74ff@i-love.sakura.ne.jp>
+Date:   Sat, 26 Jan 2019 01:02:06 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7c7ec3d9-9af6-8a1d-515d-64dcf8e89b78@linux.ibm.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190124134646.GA53008@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> [Fri Jan 25 10:28:53 2019] perf: interrupt took too long (2501 > 2500), lowering kernel.perf_event_max_sample_rate to 79750
-> [Fri Jan 25 10:29:08 2019] perf: interrupt took too long (3136 > 3126), lowering kernel.perf_event_max_sample_rate to 63750
-> [Fri Jan 25 10:29:11 2019] perf: interrupt took too long (4140 > 3920), lowering kernel.perf_event_max_sample_rate to 48250
-> [Fri Jan 25 10:29:11 2019] perf: interrupt took too long (5231 > 5175), lowering kernel.perf_event_max_sample_rate to 38000
-> [Fri Jan 25 10:29:11 2019] perf: interrupt took too long (6736 > 6538), lowering kernel.perf_event_max_sample_rate to 29500
+On 2019/01/24 22:46, Joel Fernandes wrote:
+> On Thu, Jan 24, 2019 at 10:52:30AM +0900, Tetsuo Handa wrote:
+>> Joel Fernandes wrote:
+>>>> Anyway, I need your checks regarding whether this approach is waiting for
+>>>> completion at all locations which need to wait for completion.
+>>>
+>>> I think you are waiting in unwanted locations. The only location you need to
+>>> wait in is ashmem_pin_unpin.
+>>>
+>>> So, to my eyes all that is needed to fix this bug is:
+>>>
+>>> 1. Delete the range from the ashmem_lru_list
+>>> 2. Release the ashmem_mutex
+>>> 3. fallocate the range.
+>>> 4. Do the completion so that any waiting pin/unpin can proceed.
+>>>
+>>> Could you clarify why you feel you need to wait for completion at those other
+>>> locations?
 
-These are fairly normal.
+OK. Here is an updated patch.
+Passed syzbot's best-effort testing using reproducers on all three reports.
 
-> [Fri Jan 25 10:32:44 2019] ------------[ cut here ]------------
-> [Fri Jan 25 10:32:44 2019] perfevents: irq loop stuck!
+From f192176dbee54075d41249e9f22918c32cb4d4fc Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Fri, 25 Jan 2019 23:43:01 +0900
+Subject: [PATCH] staging: android: ashmem: Don't call fallocate() with ashmem_mutex held.
 
-I believe it's always possible to cause an irq loop. This happens when
-the PMU is programmed to cause PMIs on multiple counters 
-too quickly. Maybe should just recover from it without printing such
-scary messages.
+syzbot is hitting lockdep warnings [1][2][3]. This patch tries to fix
+the warning by eliminating ashmem_shrink_scan() => {shmem|vfs}_fallocate()
+sequence.
 
-Right now the scary message is justified because it resets the complete
-PMU. Perhaps need to be a bit more selective resetting on only
-the events that loop.
+[1] https://syzkaller.appspot.com/bug?id=87c399f6fa6955006080b24142e2ce7680295ad4
+[2] https://syzkaller.appspot.com/bug?id=7ebea492de7521048355fc84210220e1038a7908
+[3] https://syzkaller.appspot.com/bug?id=e02419c12131c24e2a957ea050c2ab6dcbbc3270
 
-> [Fri Jan 25 10:32:44 2019] WARNING: CPU: 1 PID: 0 at arch/x86/events/intel/core.c:2440 intel_pmu_handle_irq+0x158/0x170
+Reported-by: syzbot <syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com>
+Reported-by: syzbot <syzbot+148c2885d71194f18d28@syzkaller.appspotmail.com>
+Reported-by: syzbot <syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com>
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ drivers/staging/android/ashmem.c | 23 ++++++++++++++++++-----
+ 1 file changed, 18 insertions(+), 5 deletions(-)
 
-This looks independent.
-
-I would apply the following patch (cut'n'pasted, so may need manual apply) 
-and then run with
-
-cd /sys/kernel/debug/tracing
-echo 50000 > buffer_size_kb
-echo default_do_nmi > set_graph_function 
-echo 1 > events/msr/enable 
-echo 'msr != 0xc0000100 && msr != 0x6e0' > events/msr/write_msr/filter
-echo function_graph > current_tracer 
-echo printk:traceoff > set_ftrace_filter
-echo 1 > tracing_on
-
-and then collect the trace from /sys/kernel/debug/tracing/trace
-after the oops.  This should show the context of when it happens.
-
-diff --git a/kernel/events/Makefile b/kernel/events/Makefile
-index 3c022e33c109..8afc997110e0 100644
---- a/kernel/events/Makefile
-+++ b/kernel/events/Makefile
-@@ -1,7 +1,4 @@
- # SPDX-License-Identifier: GPL-2.0
--ifdef CONFIG_FUNCTION_TRACER
--CFLAGS_REMOVE_core.o = $(CC_FLAGS_FTRACE)
--endif
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index 90a8a9f..d40c1d2 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -75,6 +75,9 @@ struct ashmem_range {
+ /* LRU list of unpinned pages, protected by ashmem_mutex */
+ static LIST_HEAD(ashmem_lru_list);
  
- obj-y := core.o ring_buffer.o callchain.o
++static atomic_t ashmem_shrink_inflight = ATOMIC_INIT(0);
++static DECLARE_WAIT_QUEUE_HEAD(ashmem_shrink_wait);
++
+ /*
+  * long lru_count - The count of pages on our LRU list.
+  *
+@@ -438,7 +441,6 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+ static unsigned long
+ ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+ {
+-	struct ashmem_range *range, *next;
+ 	unsigned long freed = 0;
  
+ 	/* We might recurse into filesystem code, so bail out if necessary */
+@@ -448,17 +450,27 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
+ 	if (!mutex_trylock(&ashmem_mutex))
+ 		return -1;
+ 
+-	list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
++	while (!list_empty(&ashmem_lru_list)) {
++		struct ashmem_range *range =
++			list_first_entry(&ashmem_lru_list, typeof(*range), lru);
+ 		loff_t start = range->pgstart * PAGE_SIZE;
+ 		loff_t end = (range->pgend + 1) * PAGE_SIZE;
++		struct file *f = range->asma->file;
+ 
+-		range->asma->file->f_op->fallocate(range->asma->file,
+-				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
+-				start, end - start);
++		get_file(f);
++		atomic_inc(&ashmem_shrink_inflight);
+ 		range->purged = ASHMEM_WAS_PURGED;
+ 		lru_del(range);
+ 
+ 		freed += range_size(range);
++		mutex_unlock(&ashmem_mutex);
++		f->f_op->fallocate(f,
++				   FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
++				   start, end - start);
++		fput(f);
++		if (atomic_dec_and_test(&ashmem_shrink_inflight))
++			wake_up_all(&ashmem_shrink_wait);
++		mutex_lock(&ashmem_mutex);
+ 		if (--sc->nr_to_scan <= 0)
+ 			break;
+ 	}
+@@ -713,6 +725,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
+ 		return -EFAULT;
+ 
+ 	mutex_lock(&ashmem_mutex);
++	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
+ 
+ 	if (!asma->file)
+ 		goto out_unlock;
+-- 
+1.8.3.1
