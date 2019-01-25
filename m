@@ -2,42 +2,37 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08AA5C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:52:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2138C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:52:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA865218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:52:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABE55218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:52:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729573AbfAYRwB (ORCPT
+        id S1729599AbfAYRwP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:52:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53534 "EHLO mx1.redhat.com"
+        Fri, 25 Jan 2019 12:52:15 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45606 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729545AbfAYRv7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:51:59 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        id S1729242AbfAYRwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 12:52:10 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2163ED6F0C;
-        Fri, 25 Jan 2019 17:51:59 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4EC41C074125;
+        Fri, 25 Jan 2019 17:52:10 +0000 (UTC)
 Received: from [10.36.112.63] (ovpn-112-63.ams2.redhat.com [10.36.112.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9ADEC1001F4A;
-        Fri, 25 Jan 2019 17:51:54 +0000 (UTC)
-Subject: Re: [PATCH] svm: Fix AVIC incomplete IPI emulation
-To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "x86@kernel.org" <x86@kernel.org>
-Cc:     "joro@8bytes.org" <joro@8bytes.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>
-References: <20190122102450.125349-1-Suravee.Suthikulpanit@amd.com>
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D28A517189;
+        Fri, 25 Jan 2019 17:51:58 +0000 (UTC)
+Subject: Re: [PATCH v2 0/2] tweak HYPERV_CPUID_ENLIGHTMENT_INFO
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-kernel@vger.kernel.org
+References: <20190125111934.28782-1-vkuznets@redhat.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -95,71 +90,32 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
  S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
  uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <11215e54-1b5e-9e20-b9cb-dd968f3742aa@redhat.com>
-Date:   Fri, 25 Jan 2019 18:51:49 +0100
+Message-ID: <8fcab9f1-270e-131e-b9da-05888d92ce09@redhat.com>
+Date:   Fri, 25 Jan 2019 18:51:56 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20190122102450.125349-1-Suravee.Suthikulpanit@amd.com>
+In-Reply-To: <20190125111934.28782-1-vkuznets@redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 25 Jan 2019 17:51:59 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 25 Jan 2019 17:52:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 22/01/19 11:25, Suthikulpanit, Suravee wrote:
-> From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
+On 25/01/19 12:19, Vitaly Kuznetsov wrote:
+> Be more consistent with genuine Hyper-V: don't recommend using Enlightened
+> VMCS when it wasn't enabled, don't advertise reset via synthetic MSR.
 > 
-> In case of incomplete IPI with invalid interrupt type, the current
-> SVM driver does not properly emulate the IPI, and fails to boot
-> FreeBSD guests with multiple vcpus when enabling AVIC.
+> Vitaly Kuznetsov (2):
+>   x86/kvm/hyper-v: don't recommend doing reset via synthetic MSR
+>   x86/kvm/hyper-v: recommend using eVMCS only when it is enabled
 > 
-> Fix this by update APIC ICR high/low registers, which also
-> emulate sending the IPI.
-> 
-> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
-> ---
->  arch/x86/kvm/svm.c | 19 ++++---------------
->  1 file changed, 4 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-> index 2aff835a65ed..8a0c9a1f6ac8 100644
-> --- a/arch/x86/kvm/svm.c
-> +++ b/arch/x86/kvm/svm.c
-> @@ -4504,25 +4504,14 @@ static int avic_incomplete_ipi_interception(struct vcpu_svm *svm)
->  		kvm_lapic_reg_write(apic, APIC_ICR, icrl);
->  		break;
->  	case AVIC_IPI_FAILURE_TARGET_NOT_RUNNING: {
-> -		int i;
-> -		struct kvm_vcpu *vcpu;
-> -		struct kvm *kvm = svm->vcpu.kvm;
->  		struct kvm_lapic *apic = svm->vcpu.arch.apic;
->  
->  		/*
-> -		 * At this point, we expect that the AVIC HW has already
-> -		 * set the appropriate IRR bits on the valid target
-> -		 * vcpus. So, we just need to kick the appropriate vcpu.
-> +		 * Update ICR high and low, then emulate sending IPI,
-> +		 * which is handled when writing APIC_ICR.
->  		 */
-> -		kvm_for_each_vcpu(i, vcpu, kvm) {
-> -			bool m = kvm_apic_match_dest(vcpu, apic,
-> -						     icrl & KVM_APIC_SHORT_MASK,
-> -						     GET_APIC_DEST_FIELD(icrh),
-> -						     icrl & KVM_APIC_DEST_MASK);
-> -
-> -			if (m && !avic_vcpu_is_running(vcpu))
-> -				kvm_vcpu_wake_up(vcpu);
-> -		}
-> +		kvm_lapic_reg_write(apic, APIC_ICR2, icrh);
-> +		kvm_lapic_reg_write(apic, APIC_ICR, icrl);
->  		break;
->  	}
->  	case AVIC_IPI_FAILURE_INVALID_TARGET:
+>  arch/x86/kvm/hyperv.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 
 Queued, thanks.
