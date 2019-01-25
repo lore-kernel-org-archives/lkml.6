@@ -2,843 +2,387 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E965C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:47:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9AF7AC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:49:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04593218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:47:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZFxqdO43"
+	by mail.kernel.org (Postfix) with ESMTP id 5ECF5218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:49:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728986AbfAYQrE (ORCPT
+        id S1728736AbfAYQt1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:47:04 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34361 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfAYQrD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:47:03 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p6so7427620lfc.1;
-        Fri, 25 Jan 2019 08:46:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Xz6SfLbGJzzNks5UmiMVgFW0+4LQpfnDfJxZuFLPO+U=;
-        b=ZFxqdO43FJCqQEe8MNtpoLZ7wMu/y8P0m4gTiby5c+cxWORSQA2u/6wwyAQ/Bouool
-         ZjOMEwxQH768awroDYT4cvDRVwXwHNFSedi+YI2hDWCON28IOpmCCMR9TK2e4FI8EMQb
-         p/WK8Qvb28VOrb6qYsKkP4olMWHYyq5kx9jHXlVnB9I5BIB/YKGK0wKLbUwT4o5xfpC/
-         CiZ7COIxFhXjk3ma+s0CR7lP4upCczQUiR7d5TC7UUQrX7hLBLjUpDNcNHcY2L/xE6Dk
-         JE+8rUBZabkdOZGsbpGCn21RXUCguK6MGGI5wx9Uy16m5uUA0U3B5yYxZZykHlGSR2xW
-         dELg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Xz6SfLbGJzzNks5UmiMVgFW0+4LQpfnDfJxZuFLPO+U=;
-        b=PDWAmKg48Yl6mD2T4D1c4pa1szeMCpsJYr4IubvZSFaMpLEjnvFGqrmjrn7WYXrMsy
-         kWeT153D4ogl4N3gJfcMZkP+Hg8UxNU28IEqtWIdMNToAL25Ythuax3ZaNnx5YyVOu6z
-         UACJiWwm6JiYp3aZ4fJo9d/v/1A15oSp4T3iwDxt07ldEwLAft8XB+N/COUU9bKDUMby
-         hG0wjH9Aj3v3lW6eR4s55Ti3mZSFOmGB783KZWjwBdsDa/jOx23ybOA2umw5iboZgaBc
-         XtoMKPL2E31ecmr1PII9ZVLPl4+zU+kLDl89ZF0Mf/d0ZoHG/dHvA/dLOTMxTMPvhMzW
-         SEqQ==
-X-Gm-Message-State: AJcUukebXeqmE6sguO4651OS91e+4CnHGxG6mkej8lzXFi5i+aO7lbjt
-        svAi+izSLqrvGxZ8O7hGdTU=
-X-Google-Smtp-Source: ALg8bN4xCBhlJ5UQmGFRVfiu7sFbI1EE0WO7TV2+QTgC3Q6feaHvQM4d5cdY6Rh88TXO+HBTwC2M+A==
-X-Received: by 2002:ac2:4116:: with SMTP id b22mr8858826lfi.19.1548434818224;
-        Fri, 25 Jan 2019 08:46:58 -0800 (PST)
-Received: from localhost.localdomain ([2a02:a315:5445:5300:6921:1f1d:2918:d853])
-        by smtp.googlemail.com with ESMTPSA id b25sm1531540lfa.96.2019.01.25.08.46.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 08:46:57 -0800 (PST)
-From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-To:     thierry.reding@gmail.com
-Cc:     airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
-        mark.rutland@arm.com, m.szyprowski@samsung.com, krzk@kernel.org,
-        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
-Subject: [PATCH 2/2] drm/panel: Add driver for Samsung S6E63M0 panel
-Date:   Fri, 25 Jan 2019 17:46:45 +0100
-Message-Id: <20190125164645.19208-2-pawel.mikolaj.chmiel@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190125164645.19208-1-pawel.mikolaj.chmiel@gmail.com>
-References: <20190125164645.19208-1-pawel.mikolaj.chmiel@gmail.com>
+        Fri, 25 Jan 2019 11:49:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38828 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726350AbfAYQt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 11:49:27 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B0DB31393B;
+        Fri, 25 Jan 2019 16:49:25 +0000 (UTC)
+Received: from [10.36.116.147] (ovpn-116-147.ams2.redhat.com [10.36.116.147])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A88F66E3F2;
+        Fri, 25 Jan 2019 16:49:21 +0000 (UTC)
+Subject: Re: [RFC v3 02/21] iommu: Introduce cache_invalidate API
+To:     Alex Williamson <alex.williamson@redhat.com>
+Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
+        jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
+        marc.zyngier@arm.com, christoffer.dall@arm.com,
+        peter.maydell@linaro.org
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-3-eric.auger@redhat.com>
+ <20190111143042.183a27a7@x1.home>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <66653430-514f-2b4b-3d93-348deb6cd490@redhat.com>
+Date:   Fri, 25 Jan 2019 17:49:20 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190111143042.183a27a7@x1.home>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Fri, 25 Jan 2019 16:49:26 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds Samsung S6E63M0 AMOLED LCD panel driver, connected over
-spi. It's based on already removed, non dt s6e63m0 driver and
-panel-samsung-ld9040. There is possibility to choose one from 3
-different gamma tables.
-It can be found for example in some of Samsung Aries based phones.
+Hi Alex,
 
-Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
----
- drivers/gpu/drm/panel/Kconfig                 |   7 +
- drivers/gpu/drm/panel/Makefile                |   1 +
- drivers/gpu/drm/panel/panel-samsung-s6e63m0.c | 712 ++++++++++++++++++
- 3 files changed, 720 insertions(+)
- create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e63m0.c
+On 1/11/19 10:30 PM, Alex Williamson wrote:
+> On Tue,  8 Jan 2019 11:26:14 +0100
+> Eric Auger <eric.auger@redhat.com> wrote:
+> 
+>> From: "Liu, Yi L" <yi.l.liu@linux.intel.com>
+>>
+>> In any virtualization use case, when the first translation stage
+>> is "owned" by the guest OS, the host IOMMU driver has no knowledge
+>> of caching structure updates unless the guest invalidation activities
+>> are trapped by the virtualizer and passed down to the host.
+>>
+>> Since the invalidation data are obtained from user space and will be
+>> written into physical IOMMU, we must allow security check at various
+>> layers. Therefore, generic invalidation data format are proposed here,
+>> model specific IOMMU drivers need to convert them into their own format.
+>>
+>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>
+>> ---
+>> v1 -> v2:
+>> - add arch_id field
+>> - renamed tlb_invalidate into cache_invalidate as this API allows
+>>   to invalidate context caches on top of IOTLBs
+>>
+>> v1:
+>> renamed sva_invalidate into tlb_invalidate and add iommu_ prefix in
+>> header. Commit message reworded.
+>> ---
+>>  drivers/iommu/iommu.c      | 14 ++++++
+>>  include/linux/iommu.h      | 14 ++++++
+>>  include/uapi/linux/iommu.h | 95 ++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 123 insertions(+)
+>>
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>> index 0f2b7f1fc7c8..b2e248770508 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -1403,6 +1403,20 @@ int iommu_set_pasid_table(struct iommu_domain *domain,
+>>  }
+>>  EXPORT_SYMBOL_GPL(iommu_set_pasid_table);
+>>  
+>> +int iommu_cache_invalidate(struct iommu_domain *domain, struct device *dev,
+>> +			   struct iommu_cache_invalidate_info *inv_info)
+>> +{
+>> +	int ret = 0;
+>> +
+>> +	if (unlikely(!domain->ops->cache_invalidate))
+>> +		return -ENODEV;
+>> +
+>> +	ret = domain->ops->cache_invalidate(domain, dev, inv_info);
+>> +
+>> +	return ret;
+>> +}
+>> +EXPORT_SYMBOL_GPL(iommu_cache_invalidate);
+>> +
+>>  static void __iommu_detach_device(struct iommu_domain *domain,
+>>  				  struct device *dev)
+>>  {
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index 1da2a2357ea4..96d59886f230 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -186,6 +186,7 @@ struct iommu_resv_region {
+>>   * @of_xlate: add OF master IDs to iommu grouping
+>>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+>>   * @set_pasid_table: set pasid table
+>> + * @cache_invalidate: invalidate translation caches
+>>   */
+>>  struct iommu_ops {
+>>  	bool (*capable)(enum iommu_cap);
+>> @@ -231,6 +232,9 @@ struct iommu_ops {
+>>  	int (*set_pasid_table)(struct iommu_domain *domain,
+>>  			       struct iommu_pasid_table_config *cfg);
+>>  
+>> +	int (*cache_invalidate)(struct iommu_domain *domain, struct device *dev,
+>> +				struct iommu_cache_invalidate_info *inv_info);
+>> +
+>>  	unsigned long pgsize_bitmap;
+>>  };
+>>  
+>> @@ -294,6 +298,9 @@ extern void iommu_detach_device(struct iommu_domain *domain,
+>>  				struct device *dev);
+>>  extern int iommu_set_pasid_table(struct iommu_domain *domain,
+>>  				 struct iommu_pasid_table_config *cfg);
+>> +extern int iommu_cache_invalidate(struct iommu_domain *domain,
+>> +				struct device *dev,
+>> +				struct iommu_cache_invalidate_info *inv_info);
+>>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+>>  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+>>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>> @@ -709,6 +716,13 @@ int iommu_set_pasid_table(struct iommu_domain *domain,
+>>  {
+>>  	return -ENODEV;
+>>  }
+>> +static inline int
+>> +iommu_cache_invalidate(struct iommu_domain *domain,
+>> +		       struct device *dev,
+>> +		       struct iommu_cache_invalidate_info *inv_info)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>>  
+>>  #endif /* CONFIG_IOMMU_API */
+>>  
+>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+>> index 7a7cf7a3de7c..4605f5cfac84 100644
+>> --- a/include/uapi/linux/iommu.h
+>> +++ b/include/uapi/linux/iommu.h
+>> @@ -47,4 +47,99 @@ struct iommu_pasid_table_config {
+>>  	};
+>>  };
+>>  
+>> +/**
+>> + * enum iommu_inv_granularity - Generic invalidation granularity
+>> + * @IOMMU_INV_GRANU_DOMAIN_ALL_PASID:	TLB entries or PASID caches of all
+>> + *					PASIDs associated with a domain ID
+>> + * @IOMMU_INV_GRANU_PASID_SEL:		TLB entries or PASID cache associated
+>> + *					with a PASID and a domain
+>> + * @IOMMU_INV_GRANU_PAGE_PASID:		TLB entries of selected page range
+>> + *					within a PASID
+>> + *
+>> + * When an invalidation request is passed down to IOMMU to flush translation
+>> + * caches, it may carry different granularity levels, which can be specific
+>> + * to certain types of translation caches.
+>> + * This enum is a collection of granularities for all types of translation
+>> + * caches. The idea is to make it easy for IOMMU model specific driver to
+>> + * convert from generic to model specific value. Each IOMMU driver
+>> + * can enforce check based on its own conversion table. The conversion is
+>> + * based on 2D look-up with inputs as follows:
+>> + * - translation cache types
+>> + * - granularity
+>> + *
+>> + *             type |   DTLB    |    TLB    |   PASID   |
+>> + *  granule         |           |           |   cache   |
+>> + * -----------------+-----------+-----------+-----------+
+>> + *  DN_ALL_PASID    |   Y       |   Y       |   Y       |
+>> + *  PASID_SEL       |   Y       |   Y       |   Y       |
+>> + *  PAGE_PASID      |   Y       |   Y       |   N/A     |
+>> + *
+>> + */
+>> +enum iommu_inv_granularity {
+>> +	IOMMU_INV_GRANU_DOMAIN_ALL_PASID,
+>> +	IOMMU_INV_GRANU_PASID_SEL,
+>> +	IOMMU_INV_GRANU_PAGE_PASID,
+>> +	IOMMU_INV_NR_GRANU,
+>> +};
+>> +
+>> +/**
+>> + * enum iommu_inv_type - Generic translation cache types for invalidation
+>> + *
+>> + * @IOMMU_INV_TYPE_DTLB:	device IOTLB
+>> + * @IOMMU_INV_TYPE_TLB:		IOMMU paging structure cache
+>> + * @IOMMU_INV_TYPE_PASID:	PASID cache
+>> + * Invalidation requests sent to IOMMU for a given device need to indicate
+>> + * which type of translation cache to be operated on. Combined with enum
+>> + * iommu_inv_granularity, model specific driver can do a simple lookup to
+>> + * convert from generic to model specific value.
+>> + */
+>> +enum iommu_inv_type {
+>> +	IOMMU_INV_TYPE_DTLB,
+>> +	IOMMU_INV_TYPE_TLB,
+>> +	IOMMU_INV_TYPE_PASID,
+>> +	IOMMU_INV_NR_TYPE
+>> +};
+>> +
+>> +/**
+>> + * Translation cache invalidation header that contains mandatory meta data.
+>> + * @version:	info format version, expecting future extesions
+>> + * @type:	type of translation cache to be invalidated
+>> + */
+>> +struct iommu_cache_invalidate_hdr {
+>> +	__u32 version;
+>> +#define TLB_INV_HDR_VERSION_1 1
+>> +	enum iommu_inv_type type;
+>> +};
+>> +
+>> +/**
+>> + * Translation cache invalidation information, contains generic IOMMU
+>> + * data which can be parsed based on model ID by model specific drivers.
+>> + * Since the invalidation of second level page tables are included in the
+>> + * unmap operation, this info is only applicable to the first level
+>> + * translation caches, i.e. DMA request with PASID.
+>> + *
+>> + * @granularity:	requested invalidation granularity, type dependent
+>> + * @size:		2^size of 4K pages, 0 for 4k, 9 for 2MB, etc.
+> 
+> Why is this a 4K page centric interface?
+This matches the vt-d Address Mask (AM) field of the IOTLB Invalidate
+Descriptor. We can pass a log2size instead.
+> 
+>> + * @nr_pages:		number of pages to invalidate
+>> + * @pasid:		processor address space ID value per PCI spec.
+>> + * @arch_id:		architecture dependent id characterizing a context
+>> + *			and tagging the caches, ie. domain Identfier on VTD,
+>> + *			asid on ARM SMMU
+>> + * @addr:		page address to be invalidated
+>> + * @flags		IOMMU_INVALIDATE_ADDR_LEAF: leaf paging entries
+>> + *			IOMMU_INVALIDATE_GLOBAL_PAGE: global pages
+> 
+> Shouldn't some of these be tied the the granularity of the
+> invalidation?  It seems like this should be more similar to
+> iommu_pasid_table_config where the granularity of the invalidation
+> defines which entry within a union at the end of the structure is valid
+> and populated.  Otherwise we have fields that don't make sense for
+> certain invalidations.
 
-diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-index 3f3537719beb..4a4b64f74e70 100644
---- a/drivers/gpu/drm/panel/Kconfig
-+++ b/drivers/gpu/drm/panel/Kconfig
-@@ -82,6 +82,13 @@ config DRM_PANEL_SAMSUNG_LD9040
- 	depends on OF && SPI
- 	select VIDEOMODE_HELPERS
- 
-+config DRM_PANEL_SAMSUNG_S6E63M0
-+	tristate "Samsung S6E63M0 RGB/SPI panel"
-+	depends on OF
-+	depends on SPI
-+	depends on BACKLIGHT_CLASS_DEVICE
-+	select VIDEOMODE_HELPERS
-+
- config DRM_PANEL_LG_LG4573
- 	tristate "LG4573 RGB/SPI panel"
- 	depends on OF && SPI
-diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
-index 4396658a7996..3e5d53fdee47 100644
---- a/drivers/gpu/drm/panel/Makefile
-+++ b/drivers/gpu/drm/panel/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_DRM_PANEL_RASPBERRYPI_TOUCHSCREEN) += panel-raspberrypi-touchscreen
- obj-$(CONFIG_DRM_PANEL_RAYDIUM_RM68200) += panel-raydium-rm68200.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_LD9040) += panel-samsung-ld9040.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6D16D0) += panel-samsung-s6d16d0.o
-+obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0) += panel-samsung-s6e63m0.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E3HA2) += panel-samsung-s6e3ha2.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03) += panel-samsung-s6e63j0x03.o
- obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0) += panel-samsung-s6e8aa0.o
-diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c b/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c
-new file mode 100644
-index 000000000000..cb5c090621ad
---- /dev/null
-+++ b/drivers/gpu/drm/panel/panel-samsung-s6e63m0.c
-@@ -0,0 +1,712 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * S6E63M0 AMOLED LCD drm_panel driver.
-+ *
-+ * Copyright (C) 2019 Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
-+ * Derived from drivers/gpu/drm/panel-samsung-ld9040.c
-+ *
-+ * Andrzej Hajda <a.hajda@samsung.com>
-+ *
-+ * This program is free software; you can redistribute it and/or modify
-+ * it under the terms of the GNU General Public License version 2 as
-+ * published by the Free Software Foundation.
-+ */
-+
-+#include <drm/drmP.h>
-+#include <drm/drm_panel.h>
-+
-+#include <linux/backlight.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/spi/spi.h>
-+
-+#include <video/mipi_display.h>
-+#include <video/of_videomode.h>
-+#include <video/videomode.h>
-+
-+/* Manufacturer Command Set */
-+#define MCS_STAND_BY_OFF                0x11
-+#define MCS_DISPLAY_ON                  0x29
-+#define MCS_ELVSS_ON                0xb1
-+#define MCS_ACL_CTRL                0xc0
-+#define MCS_DISPLAY_CONDITION   0xf2
-+#define MCS_ETC_CONDITION           0xf6
-+#define MCS_PANEL_CONDITION         0xF8
-+#define MCS_GAMMA_CTRL              0xfa
-+
-+#define MAX_GAMMA_LEVEL             11
-+#define GAMMA_TABLE_COUNT           23
-+
-+#define MAX_BRIGHTNESS              (MAX_GAMMA_LEVEL - 1)
-+#define GAMMA_MODE_22               0
-+#define GAMMA_MODE_19               1
-+#define GAMMA_MODE_17               2
-+
-+/* array of gamma tables for gamma value 2.2 */
-+static u8 const s6e63m0_gamma_22[MAX_GAMMA_LEVEL][GAMMA_TABLE_COUNT] = {
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x78, 0xEC, 0x3D, 0xC8,
-+	  0xC2, 0xB6, 0xC4, 0xC7, 0xB6, 0xD5, 0xD7,
-+	  0xCC, 0x00, 0x39, 0x00, 0x36, 0x00, 0x51 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x73, 0x4A, 0x3D, 0xC0,
-+	  0xC2, 0xB1, 0xBB, 0xBE, 0xAC, 0xCE, 0xCF,
-+	  0xC5, 0x00, 0x5D, 0x00, 0x5E, 0x00, 0x82 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x70, 0x51, 0x3E, 0xBF,
-+	  0xC1, 0xAF, 0xB9, 0xBC, 0xAB, 0xCC, 0xCC,
-+	  0xC2, 0x00, 0x65, 0x00, 0x67, 0x00, 0x8D },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x6C, 0x54, 0x3A, 0xBC,
-+	  0xBF, 0xAC, 0xB7, 0xBB, 0xA9, 0xC9, 0xC9,
-+	  0xBE, 0x00, 0x71, 0x00, 0x73, 0x00, 0x9E },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x69, 0x54, 0x37, 0xBB,
-+	  0xBE, 0xAC, 0xB4, 0xB7, 0xA6, 0xC7, 0xC8,
-+	  0xBC, 0x00, 0x7B, 0x00, 0x7E, 0x00, 0xAB },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x66, 0x55, 0x34, 0xBA,
-+	  0xBD, 0xAB, 0xB1, 0xB5, 0xA3, 0xC5, 0xC6,
-+	  0xB9, 0x00, 0x85, 0x00, 0x88, 0x00, 0xBA },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x63, 0x53, 0x31, 0xB8,
-+	  0xBC, 0xA9, 0xB0, 0xB5, 0xA2, 0xC4, 0xC4,
-+	  0xB8, 0x00, 0x8B, 0x00, 0x8E, 0x00, 0xC2 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x62, 0x54, 0x30, 0xB9,
-+	  0xBB, 0xA9, 0xB0, 0xB3, 0xA1, 0xC1, 0xC3,
-+	  0xB7, 0x00, 0x91, 0x00, 0x95, 0x00, 0xDA },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x66, 0x58, 0x34, 0xB6,
-+	  0xBA, 0xA7, 0xAF, 0xB3, 0xA0, 0xC1, 0xC2,
-+	  0xB7, 0x00, 0x97, 0x00, 0x9A, 0x00, 0xD1 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x64, 0x56, 0x33, 0xB6,
-+	  0xBA, 0xA8, 0xAC, 0xB1, 0x9D, 0xC1, 0xC1,
-+	  0xB7, 0x00, 0x9C, 0x00, 0x9F, 0x00, 0xD6 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x5f, 0x50, 0x2d, 0xB6,
-+	  0xB9, 0xA7, 0xAd, 0xB1, 0x9f, 0xbe, 0xC0,
-+	  0xB5, 0x00, 0xa0, 0x00, 0xa4, 0x00, 0xdb },
-+};
-+
-+/* array of gamma tables for gamma value 1.9 */
-+static u8 const s6e63m0_gamma_19[MAX_GAMMA_LEVEL][GAMMA_TABLE_COUNT] = {
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x84, 0x45, 0x4F, 0xCA,
-+	  0xCB, 0xBC, 0xC9, 0xCB, 0xBC, 0xDA, 0xDA,
-+	  0xD0, 0x00, 0x35, 0x00, 0x34, 0x00, 0x4E },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x74, 0x60, 0x4A, 0xC3,
-+	  0xC6, 0xB5, 0xBF, 0xC3, 0xB2, 0xD2, 0xD3,
-+	  0xC8, 0x00, 0x5B, 0x00, 0x5B, 0x00, 0x81 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x6F, 0x65, 0x46, 0xC2,
-+	  0xC4, 0xB3, 0xBF, 0xC2, 0xB2, 0xCF, 0xD1,
-+	  0xC6, 0x00, 0x64, 0x00, 0x64, 0x00, 0x8D },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x6E, 0x65, 0x45, 0xC0,
-+	  0xC3, 0xB2, 0xBA, 0xBE, 0xAE, 0xCD, 0xD0,
-+	  0xC4, 0x00, 0x70, 0x00, 0x70, 0x00, 0x9C },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x69, 0x64, 0x40, 0xBF,
-+	  0xC1, 0xB0, 0xB9, 0xBE, 0xAD, 0xCB, 0xCD,
-+	  0xC2, 0x00, 0x7A, 0x00, 0x7B, 0x00, 0xAA },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x68, 0x64, 0x3F, 0xBE,
-+	  0xC0, 0xB0, 0xB6, 0xBB, 0xAB, 0xC8, 0xCB,
-+	  0xBF, 0x00, 0x85, 0x00, 0x86, 0x00, 0xB8 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x68, 0x64, 0x40, 0xBC,
-+	  0xBF, 0xAF, 0xB4, 0xBA, 0xA9, 0xC8, 0xCA,
-+	  0xBE, 0x00, 0x8B, 0x00, 0x8C, 0x00, 0xC0 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x67, 0x64, 0x3F, 0xBB,
-+	  0xBE, 0xAD, 0xB3, 0xB9, 0xA7, 0xC8, 0xC9,
-+	  0xBE, 0x00, 0x90, 0x00, 0x92, 0x00, 0xC8 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x63, 0x61, 0x3B, 0xBA,
-+	  0xBE, 0xAC, 0xB3, 0xB8, 0xA7, 0xC6, 0xC8,
-+	  0xBD, 0x00, 0x96, 0x00, 0x98, 0x00, 0xCF },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x61, 0x60, 0x39, 0xBB,
-+	  0xBE, 0xAD, 0xB2, 0xB6, 0xA6, 0xC5, 0xC7,
-+	  0xBD, 0x00, 0x9B, 0x00, 0x9E, 0x00, 0xD5 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x61, 0x5F, 0x39, 0xBA,
-+	  0xBD, 0xAD, 0xB1, 0xB6, 0xA5, 0xC4, 0xC5,
-+	  0xBC, 0x00, 0xA0, 0x00, 0xA4, 0x00, 0xDB },
-+};
-+
-+/* array of gamma tables for gamma value 1.7 */
-+static u8 const s6e63m0_gamma_17[MAX_GAMMA_LEVEL][GAMMA_TABLE_COUNT] = {
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x8F, 0x73, 0x63, 0xD1,
-+	  0xD0, 0xC5, 0xCC, 0xD1, 0xC2, 0xDE, 0xE0,
-+	  0xD6, 0x00, 0x39, 0x00, 0x36, 0x00, 0x51 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x82, 0x7A, 0x5B, 0xC8,
-+	  0xCB, 0xBD, 0xC5, 0xCA, 0xBA, 0xD6, 0xD8,
-+	  0xCE, 0x00, 0x5D, 0x00, 0x5E, 0x00, 0x82 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x81, 0x7B, 0x5D, 0xC6,
-+	  0xCA, 0xBB, 0xC3, 0xC7, 0xB8, 0xD6, 0xD8,
-+	  0xCD, 0x00, 0x65, 0x00, 0x67, 0x00, 0x8D },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x7B, 0x77, 0x58, 0xC3,
-+	  0xC8, 0xB8, 0xC2, 0xC6, 0xB6, 0xD3, 0xD4,
-+	  0xCA, 0x00, 0x71, 0x00, 0x73, 0x00, 0x9E },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x75, 0x77, 0x54, 0xC3,
-+	  0xC7, 0xB7, 0xC0, 0xC3, 0xB4, 0xD1, 0xD3,
-+	  0xC9, 0x00, 0x7B, 0x00, 0x7E, 0x00, 0xAB },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x72, 0x75, 0x51, 0xC2,
-+	  0xC6, 0xB5, 0xBF, 0xC1, 0xB3, 0xCE, 0xD1,
-+	  0xC6, 0x00, 0x85, 0x00, 0x88, 0x00, 0xBA },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x71, 0x73, 0x4F, 0xC2,
-+	  0xC5, 0xB5, 0xBD, 0xC0, 0xB2, 0xCD, 0xD1,
-+	  0xC5, 0x00, 0x8B, 0x00, 0x8E, 0x00, 0xC2 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x71, 0x72, 0x4F, 0xC2,
-+	  0xC4, 0xB5, 0xBB, 0xBF, 0xB0, 0xCC, 0xCF,
-+	  0xC3, 0x00, 0x91, 0x00, 0x95, 0x00, 0xCA },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x72, 0x72, 0x50, 0xC0,
-+	  0xC3, 0xB4, 0xB9, 0xBE, 0xAE, 0xCC, 0xCF,
-+	  0xC4, 0x00, 0x97, 0x00, 0x9A, 0x00, 0xD1 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x71, 0x71, 0x50, 0xBF,
-+	  0xC2, 0xB2, 0xBA, 0xBE, 0xAE, 0xCB, 0xCD,
-+	  0xC3, 0x00, 0x9C, 0x00, 0x9F, 0x00, 0xD6 },
-+	{ MCS_GAMMA_CTRL, 0x00,
-+	  0x18, 0x08, 0x24, 0x70, 0x70, 0x4F, 0xBF,
-+	  0xC2, 0xB2, 0xB8, 0xBC, 0xAC, 0xCB, 0xCD,
-+	  0xC3, 0x00, 0xA0, 0x00, 0xA4, 0x00, 0xDB },
-+};
-+
-+#define S6E63M0_STATE_BIT_ENABLED       0
-+
-+struct s6e63m0 {
-+	struct device *dev;
-+	struct drm_panel panel;
-+
-+	struct regulator_bulk_data supplies[2];
-+	struct gpio_desc *reset_gpio;
-+	u32 power_on_delay;
-+	u32 power_off_delay;
-+	u32 reset_delay;
-+	struct videomode vm;
-+	u32 width_mm;
-+	u32 height_mm;
-+
-+	unsigned long state;
-+	unsigned int gamma_mode;
-+	int brightness;
-+
-+	/* This field is tested by functions directly accessing bus before
-+	 * transfer, transfer is skipped if it is set. In case of transfer
-+	 * failure or unexpected response the field is set to error value.
-+	 * Such construct allows to eliminate many checks in higher level
-+	 * functions.
-+	 */
-+	int error;
-+};
-+
-+static inline struct s6e63m0 *panel_to_s6e63m0(struct drm_panel *panel)
-+{
-+	return container_of(panel, struct s6e63m0, panel);
-+}
-+
-+static int s6e63m0_clear_error(struct s6e63m0 *ctx)
-+{
-+	int ret = ctx->error;
-+
-+	ctx->error = 0;
-+	return ret;
-+}
-+
-+static int s6e63m0_spi_write_word(struct s6e63m0 *ctx, u16 data)
-+{
-+	struct spi_device *spi = to_spi_device(ctx->dev);
-+	struct spi_transfer xfer = {
-+		.len	= 2,
-+		.tx_buf = &data,
-+	};
-+	struct spi_message msg;
-+
-+	spi_message_init(&msg);
-+	spi_message_add_tail(&xfer, &msg);
-+
-+	return spi_sync(spi, &msg);
-+}
-+
-+static void s6e63m0_dcs_write(struct s6e63m0 *ctx, const u8 *data, size_t len)
-+{
-+	int ret = 0;
-+
-+	if (ctx->error < 0 || len == 0)
-+		return;
-+
-+	dev_dbg(ctx->dev, "writing dcs seq: %*ph\n", (int)len, data);
-+	ret = s6e63m0_spi_write_word(ctx, *data);
-+
-+	while (!ret && --len) {
-+		++data;
-+		ret = s6e63m0_spi_write_word(ctx, *data | 0x100);
-+	}
-+
-+	if (ret) {
-+		dev_err(ctx->dev, "error %d writing dcs seq: %*ph\n", ret,
-+			(int)len, data);
-+		ctx->error = ret;
-+	}
-+
-+	usleep_range(300, 310);
-+}
-+
-+#define s6e63m0_dcs_write_seq_static(ctx, seq ...) \
-+	({ \
-+		static const u8 d[] = { seq }; \
-+		s6e63m0_dcs_write(ctx, d, ARRAY_SIZE(d)); \
-+	})
-+
-+static void s6e63m0_brightness_set(struct s6e63m0 *ctx)
-+{
-+	/* disable and set new gamma */
-+	switch (ctx->gamma_mode) {
-+	case GAMMA_MODE_22:
-+		s6e63m0_dcs_write(ctx,
-+				  s6e63m0_gamma_22[ctx->brightness],
-+				  ARRAY_SIZE(s6e63m0_gamma_22[ctx->brightness])
-+				  );
-+		break;
-+	case GAMMA_MODE_19:
-+		s6e63m0_dcs_write(ctx,
-+				  s6e63m0_gamma_19[ctx->brightness],
-+				  ARRAY_SIZE(s6e63m0_gamma_19[ctx->brightness])
-+				  );
-+		break;
-+	case GAMMA_MODE_17:
-+		s6e63m0_dcs_write(ctx,
-+				  s6e63m0_gamma_17[ctx->brightness],
-+				  ARRAY_SIZE(s6e63m0_gamma_17[ctx->brightness])
-+				  );
-+		break;
-+	default:
-+		dev_info(ctx->dev,
-+			 "gamma mode could be 0:2.2, 1:1.9 or 2:1.7.Assuming 2.2\n"
-+			 );
-+		s6e63m0_dcs_write(ctx,
-+				  s6e63m0_gamma_22[ctx->brightness],
-+				  ARRAY_SIZE(s6e63m0_gamma_22[ctx->brightness])
-+				  );
-+		break;
-+	}
-+
-+	/* update gamma table. */
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_GAMMA_CTRL, 0x01);
-+}
-+
-+static void s6e63m0_init(struct s6e63m0 *ctx)
-+{
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_PANEL_CONDITION,
-+				     0x01, 0x27, 0x27, 0x07, 0x07, 0x54, 0x9f,
-+				     0x63, 0x86, 0x1a, 0x33, 0x0d, 0x00, 0x00);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_DISPLAY_CONDITION,
-+				     0x02, 0x03, 0x1c, 0x10, 0x10);
-+	s6e63m0_dcs_write_seq_static(ctx, 0xf7,
-+				     0x03, 0x00, 0x00);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_GAMMA_CTRL,
-+				     0x00, 0x18, 0x08, 0x24, 0x64, 0x56, 0x33,
-+				     0xb6, 0xba, 0xa8, 0xac, 0xb1, 0x9d, 0xc1,
-+				     0xc1, 0xb7, 0x00, 0x9c, 0x00, 0x9f, 0x00,
-+				     0xd6);
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_GAMMA_CTRL,
-+				     0x01);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_ETC_CONDITION,
-+				     0x00, 0x8c, 0x07);
-+	s6e63m0_dcs_write_seq_static(ctx, 0xb3,
-+				     0xc);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, 0xb5,
-+				     0x2c, 0x12, 0x0c, 0x0a, 0x10, 0x0e, 0x17,
-+				     0x13, 0x1f, 0x1a, 0x2a, 0x24, 0x1f, 0x1b,
-+				     0x1a, 0x17, 0x2b, 0x26, 0x22, 0x20, 0x3a,
-+				     0x34, 0x30, 0x2c, 0x29, 0x26, 0x25, 0x23,
-+				     0x21, 0x20, 0x1e, 0x1e);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, 0xb6,
-+				     0x00, 0x00, 0x11, 0x22, 0x33, 0x44, 0x44,
-+				     0x44, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66,
-+				     0x66, 0x66);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, 0xb7,
-+				     0x2c, 0x12, 0x0c, 0x0a, 0x10, 0x0e, 0x17,
-+				     0x13, 0x1f, 0x1a, 0x2a, 0x24, 0x1f, 0x1b,
-+				     0x1a, 0x17, 0x2b, 0x26, 0x22, 0x20, 0x3a,
-+				     0x34, 0x30, 0x2c, 0x29, 0x26, 0x25, 0x23,
-+				     0x21, 0x20, 0x1e, 0x1e, 0x00, 0x00, 0x11,
-+				     0x22, 0x33, 0x44, 0x44, 0x44, 0x55, 0x55,
-+				     0x66, 0x66, 0x66, 0x66, 0x66, 0x66);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, 0xb9,
-+				     0x2c, 0x12, 0x0c, 0x0a, 0x10, 0x0e, 0x17,
-+				     0x13, 0x1f, 0x1a, 0x2a, 0x24, 0x1f, 0x1b,
-+				     0x1a, 0x17, 0x2b, 0x26, 0x22, 0x20, 0x3a,
-+				     0x34, 0x30, 0x2c, 0x29, 0x26, 0x25, 0x23,
-+				     0x21, 0x20, 0x1e, 0x1e);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, 0xba,
-+				     0x00, 0x00, 0x11, 0x22, 0x33, 0x44, 0x44,
-+				     0x44, 0x55, 0x55, 0x66, 0x66, 0x66, 0x66,
-+				     0x66, 0x66);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, 0xc1,
-+				     0x4d, 0x96, 0x1d, 0x00, 0x00, 0x01, 0xdf,
-+				     0x00, 0x00, 0x03, 0x1f, 0x00, 0x00, 0x00,
-+				     0x00, 0x00, 0x00, 0x00, 0x00, 0x03, 0x06,
-+				     0x09, 0x0d, 0x0f, 0x12, 0x15, 0x18);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, 0xb2,
-+				     0x10, 0x10, 0x0b, 0x05);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_ACL_CTRL,
-+				     0x01);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_ELVSS_ON,
-+				     0x0b);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_STAND_BY_OFF);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, MCS_DISPLAY_ON);
-+
-+	s6e63m0_brightness_set(ctx);
-+}
-+
-+static int s6e63m0_power_on(struct s6e63m0 *ctx)
-+{
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+	if (ret < 0)
-+		return ret;
-+
-+	msleep(ctx->power_on_delay);
-+
-+	gpiod_set_value(ctx->reset_gpio, 1);
-+	msleep(ctx->reset_delay);
-+	gpiod_set_value(ctx->reset_gpio, 0);
-+	msleep(ctx->reset_delay);
-+
-+	return 0;
-+}
-+
-+static int s6e63m0_power_off(struct s6e63m0 *ctx)
-+{
-+	msleep(ctx->power_off_delay);
-+
-+	return regulator_bulk_disable(ARRAY_SIZE(ctx->supplies), ctx->supplies);
-+}
-+
-+static int s6e63m0_disable(struct drm_panel *panel)
-+{
-+	return 0;
-+}
-+
-+static int s6e63m0_unprepare(struct drm_panel *panel)
-+{
-+	struct s6e63m0 *ctx = panel_to_s6e63m0(panel);
-+
-+	clear_bit(S6E63M0_STATE_BIT_ENABLED, &ctx->state);
-+
-+	s6e63m0_dcs_write_seq_static(ctx, MIPI_DCS_ENTER_SLEEP_MODE);
-+
-+	s6e63m0_clear_error(ctx);
-+
-+	return s6e63m0_power_off(ctx);
-+}
-+
-+static int s6e63m0_prepare(struct drm_panel *panel)
-+{
-+	struct s6e63m0 *ctx = panel_to_s6e63m0(panel);
-+	int ret;
-+
-+	ret = s6e63m0_power_on(ctx);
-+	if (ret < 0)
-+		return ret;
-+
-+	s6e63m0_init(ctx);
-+
-+	ret = s6e63m0_clear_error(ctx);
-+
-+	if (ret < 0)
-+		s6e63m0_unprepare(panel);
-+	else
-+		set_bit(S6E63M0_STATE_BIT_ENABLED, &ctx->state);
-+
-+	return ret;
-+}
-+
-+static int s6e63m0_enable(struct drm_panel *panel)
-+{
-+	return 0;
-+}
-+
-+static int s6e63m0_get_modes(struct drm_panel *panel)
-+{
-+	struct drm_connector *connector = panel->connector;
-+	struct s6e63m0 *ctx = panel_to_s6e63m0(panel);
-+	struct drm_display_mode *mode;
-+
-+	mode = drm_mode_create(connector->dev);
-+	if (!mode) {
-+		DRM_ERROR("failed to create a new display mode\n");
-+		return 0;
-+	}
-+
-+	drm_display_mode_from_videomode(&ctx->vm, mode);
-+	mode->width_mm = ctx->width_mm;
-+	mode->height_mm = ctx->height_mm;
-+	connector->display_info.width_mm = mode->width_mm;
-+	connector->display_info.height_mm = mode->height_mm;
-+
-+	mode->type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED;
-+	mode->flags = DRM_MODE_FLAG_NVSYNC | DRM_MODE_FLAG_NHSYNC;
-+	drm_mode_probed_add(connector, mode);
-+
-+	return 1;
-+}
-+
-+static const struct drm_panel_funcs s6e63m0_drm_funcs = {
-+	.disable	= s6e63m0_disable,
-+	.unprepare	= s6e63m0_unprepare,
-+	.prepare	= s6e63m0_prepare,
-+	.enable		= s6e63m0_enable,
-+	.get_modes	= s6e63m0_get_modes,
-+};
-+
-+static int s6e63m0_get_brightness(struct backlight_device *bd)
-+{
-+	return bd->props.brightness;
-+}
-+
-+static int s6e63m0_set_brightness(struct backlight_device *bd)
-+{
-+	struct s6e63m0 *ctx = bl_get_data(bd);
-+
-+	bd->props.power = FB_BLANK_UNBLANK;
-+	if (ctx->brightness != bd->props.brightness) {
-+		ctx->brightness = bd->props.brightness;
-+		if (test_bit(S6E63M0_STATE_BIT_ENABLED, &ctx->state))
-+			s6e63m0_brightness_set(ctx);
-+	}
-+
-+	return s6e63m0_clear_error(ctx);
-+}
-+
-+static const struct backlight_ops s6e63m0_backlight_ops = {
-+	.get_brightness = s6e63m0_get_brightness,
-+	.update_status	= s6e63m0_set_brightness,
-+};
-+
-+static void s6e63m0_backlight_register(struct s6e63m0 *ctx)
-+{
-+	struct backlight_properties props = {
-+		.type		= BACKLIGHT_RAW,
-+		.brightness	= ctx->brightness,
-+		.max_brightness = MAX_BRIGHTNESS
-+	};
-+	struct device *dev = ctx->dev;
-+	struct backlight_device *bd;
-+
-+	bd = devm_backlight_device_register(dev, "panel", dev, ctx,
-+					    &s6e63m0_backlight_ops, &props);
-+	if (IS_ERR(bd))
-+		dev_err(dev, "error registering backlight device (%ld)\n",
-+			PTR_ERR(bd));
-+}
-+
-+
-+static ssize_t s6e63m0_sysfs_gamma_mode_show(struct device *dev,
-+					     struct device_attribute *attr,
-+					     char *buf)
-+{
-+	struct s6e63m0 *ctx = dev_get_drvdata(dev);
-+	char temp[10];
-+
-+	switch (ctx->gamma_mode) {
-+	case GAMMA_MODE_22:
-+		sprintf(temp, "2.2 mode\n");
-+		strcat(buf, temp);
-+		break;
-+	case GAMMA_MODE_19:
-+		sprintf(temp, "1.9 mode\n");
-+		strcat(buf, temp);
-+		break;
-+	case GAMMA_MODE_17:
-+		sprintf(temp, "1.7 mode\n");
-+		strcat(buf, temp);
-+		break;
-+	default:
-+		dev_info(dev, "gamma mode could be 0:2.2, 1:1.9 or 2:1.7)n");
-+		break;
-+	}
-+
-+	return strlen(buf);
-+}
-+
-+static ssize_t s6e63m0_sysfs_gamma_mode_store(struct device *dev,
-+					      struct device_attribute *attr,
-+					      const char *buf, size_t len)
-+{
-+	struct s6e63m0 *ctx = dev_get_drvdata(dev);
-+	int rc;
-+
-+	rc = kstrtouint(buf, 0, &ctx->gamma_mode);
-+	if (rc < 0)
-+		return rc;
-+
-+	s6e63m0_brightness_set(ctx);
-+	return len;
-+}
-+
-+static DEVICE_ATTR(gamma_mode, 0644,
-+		   s6e63m0_sysfs_gamma_mode_show,
-+		   s6e63m0_sysfs_gamma_mode_store);
-+
-+static int s6e63m0_parse_dt(struct s6e63m0 *ctx)
-+{
-+	struct device *dev = ctx->dev;
-+	struct device_node *np = dev->of_node;
-+	int ret;
-+
-+	ret = of_get_videomode(np, &ctx->vm, 0);
-+	if (ret < 0)
-+		return ret;
-+
-+	ret = of_property_read_u32(np, "power-on-delay", &ctx->power_on_delay);
-+	if (ret) {
-+		dev_info(ctx->dev, "using default power-on-delay of 25ms");
-+		ctx->power_on_delay = 25;
-+	}
-+
-+	ret = of_property_read_u32(np, "power-off-delay",
-+				   &ctx->power_off_delay);
-+	if (ret) {
-+		dev_info(ctx->dev, "using default power-of-delay of 200ms");
-+		ctx->power_off_delay = 200;
-+	}
-+
-+	ret = of_property_read_u32(np, "reset-delay", &ctx->reset_delay);
-+	if (ret) {
-+		dev_info(ctx->dev, "using default reset-delay of 120ms");
-+		ctx->reset_delay = 120;
-+	}
-+
-+	of_property_read_u32(np, "panel-width-mm", &ctx->width_mm);
-+	of_property_read_u32(np, "panel-height-mm", &ctx->height_mm);
-+
-+	return 0;
-+}
-+
-+static int s6e63m0_probe(struct spi_device *spi)
-+{
-+	struct device *dev = &spi->dev;
-+	struct s6e63m0 *ctx;
-+	int ret;
-+
-+	ctx = devm_kzalloc(dev, sizeof(struct s6e63m0), GFP_KERNEL);
-+	if (!ctx)
-+		return -ENOMEM;
-+
-+	spi_set_drvdata(spi, ctx);
-+
-+	ctx->dev = dev;
-+	ctx->brightness = MAX_BRIGHTNESS;
-+	ctx->gamma_mode = GAMMA_MODE_22;
-+
-+	ret = s6e63m0_parse_dt(ctx);
-+	if (ret < 0)
-+		return ret;
-+
-+	ctx->supplies[0].supply = "vdd3";
-+	ctx->supplies[1].supply = "vci";
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(ctx->supplies),
-+				      ctx->supplies);
-+	if (ret < 0) {
-+		dev_err(dev, "failed to get regulators: %d\n", ret);
-+		return ret;
-+	}
-+
-+	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_LOW);
-+	if (IS_ERR(ctx->reset_gpio)) {
-+		dev_err(dev, "cannot get reset-gpios %ld\n",
-+			PTR_ERR(ctx->reset_gpio));
-+		return PTR_ERR(ctx->reset_gpio);
-+	}
-+
-+	spi->bits_per_word = 9;
-+	spi->mode = SPI_MODE_3;
-+	ret = spi_setup(spi);
-+	if (ret < 0) {
-+		dev_err(dev, "spi setup failed.\n");
-+		return ret;
-+	}
-+
-+	ret = device_create_file(dev, &dev_attr_gamma_mode);
-+	if (ret < 0)
-+		dev_err(dev, "failed to add sysfs entries\n");
-+
-+	drm_panel_init(&ctx->panel);
-+	ctx->panel.dev = dev;
-+	ctx->panel.funcs = &s6e63m0_drm_funcs;
-+
-+	ret = drm_panel_add(&ctx->panel);
-+	if (ret < 0)
-+		goto err_remove_file;
-+
-+	s6e63m0_backlight_register(ctx);
-+
-+	return 0;
-+
-+err_remove_file:
-+	device_remove_file(dev, &dev_attr_gamma_mode);
-+
-+	return ret;
-+}
-+
-+static int s6e63m0_remove(struct spi_device *spi)
-+{
-+	struct s6e63m0 *ctx = spi_get_drvdata(spi);
-+
-+	s6e63m0_power_off(ctx);
-+	drm_panel_remove(&ctx->panel);
-+	device_remove_file(ctx->dev, &dev_attr_gamma_mode);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id s6e63m0_of_match[] = {
-+	{ .compatible = "samsung,s6e63m0" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, s6e63m0_of_match);
-+
-+static struct spi_driver s6e63m0_driver = {
-+	.probe			= s6e63m0_probe,
-+	.remove			= s6e63m0_remove,
-+	.driver			= {
-+		.name		= "panel-samsung-s6e63m0",
-+		.of_match_table = s6e63m0_of_match,
-+	},
-+};
-+module_spi_driver(s6e63m0_driver);
-+
-+MODULE_AUTHOR("Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>");
-+MODULE_DESCRIPTION("s6e63m0 LCD Driver");
-+MODULE_LICENSE("GPL v2");
--- 
-2.17.1
+I am a little bit embarrassed here as this API version is the outcome of
+long discussions held by Jacob, jean-Philippe and many others. I don't
+want to hijack that work as I am "simply" reusing this API. Nevertheless
+I am willing to help on this. So following your recommendation above I
+dare to propose an updated API:
 
+struct iommu_device_iotlb_inv_info {
+        __u32   version;
+#define IOMMU_DEV_IOTLB_INV_GLOBAL   0
+#define IOMMU_DEV_IOTLB_INV_SOURCEID (1 << 0)
+#define IOMMU_DEV_IOTLB_INV_PASID    (1 << 1)
+        __u8    granularity;
+        __u64   addr;
+        __u8    log2size;
+        __u64   sourceid;
+        __u64   pasid;
+        __u8    padding[2];
+};
+
+struct iommu_iotlb_inv_info {
+        __u32   version;
+#define IOMMU_IOTLB_INV_GLOBAL  0
+#define IOMMU_IOTLB_INV_ARCHID  (1 << 0)
+#define IOMMU_IOTLB_INV_PASID   (1 << 1)
+#define IOMMU_IOTLB_INV_PAGE    (1 << 2)
+        __u8    granularity;
+        __u64   archid;
+        __u64   pasid;
+        __u64   addr;
+        __u8    log2size;
+        __u8    padding[2];
+};
+
+struct iommu_pasid_inv_info {
+        __u32   version;
+#define IOMMU_PASID_INV_GLOBAL     0
+#define IOMMU_PASID_INV_ARCHID     (1 << 0)
+#define IOMMU_PASID_INV_PASID      (1 << 1)
+#define IOMMU_PASID_INV_SOURCEID   (1 << 2)
+        __u8    granularity;
+        __u64   archid;
+        __u64   pasid;
+        __u64   sourceid;
+        __u8    padding[3];
+};
+/**
+ * Translation cache invalidation information, contains generic IOMMU
+ * data which can be parsed based on model ID by model specific drivers.
+ * Since the invalidation of second level page tables are included in
+ * the unmap operation, this info is only applicable to the first level
+ * translation caches, i.e. DMA request with PASID.
+ *
+ */
+struct iommu_cache_invalidate_info {
+#define IOMMU_CACHE_INVALIDATE_INFO_VERSION_1 1
+        __u32 version;
+#define IOMMU_INV_TYPE_IOTLB        1 /* IOMMU paging structure cache */
+#define IOMMU_INV_TYPE_DEV_IOTLB    2 /* Device IOTLB */
+#define IOMMU_INV_TYPE_PASID        3 /* PASID cache */
+        __u8 type;
+        union {
+                struct iommu_iotlb_invalidate_info iotlb_inv_info;
+                struct iommu_dev_iotlb_invalidate_info dev_iotlb_inv_info;
+                struct iommu_pasid_inv_info pasid_inv_info;
+        };
+};
+
+At the moment I ignore the leaf bool parameter used on ARM for PASID
+invalidation and TLB invalidation. Maybe we can just invalidate more
+that the leaf cache structures at the moment?
+
+on ARM the PASID table can be invalidated per streamid. On vt-d, as far
+as I understand the sourceid does not tag the entries.
+
+
+
+
+
+> 
+>> + *
+>> + */
+>> +struct iommu_cache_invalidate_info {
+>> +	struct iommu_cache_invalidate_hdr	hdr;
+>> +	enum iommu_inv_granularity	granularity;
+> 
+> A separate structure for hdr seems a little pointless.
+removed
+> 
+>> +	__u32		flags;
+>> +#define IOMMU_INVALIDATE_ADDR_LEAF	(1 << 0)
+>> +#define IOMMU_INVALIDATE_GLOBAL_PAGE	(1 << 1)
+>> +	__u8		size;
+> 
+> Really need some padding or packing here for any hope of having
+> consistency with userspace.
+> 
+>> +	__u64		nr_pages;
+>> +	__u32		pasid;
+> 
+> Sub-optimal ordering for packing/padding.  Thanks,
+I introduced some padding above. Is that OK?
+
+Again if this introduces more noise than it helps I will simply rely on
+initial contributors for the respin of their series according to your
+comments. Also we if can't define generic enough structures for ARM and x86
+
+Thanks
+
+Eric
+> 
+> Alex
+> 
+>> +	__u64		arch_id;
+>> +	__u64		addr;
+>> +};
+>>  #endif /* _UAPI_IOMMU_H */
+> 
