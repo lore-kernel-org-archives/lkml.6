@@ -2,88 +2,91 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AED0EC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:51:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8029FC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:54:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69B64218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:51:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548427915;
-	bh=jeVLDdCe8wFYmSmCD6htYJqE+XYWPdH1zXbVXIRRq+M=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=LLtySYBYigswLQzPmgjcX+btTWrfKeNat5fyo+SvcrqCon9qoD9S2cyB8zVBBZvLn
-	 k7t1U7mKqHOaEpR6mcnZmohczgihY5DZV3CzbS8psRQHmSU4fcWMDa7wgAof/ZZMtr
-	 H2xqAMngsHv5/S9qg5Xw24CH82mgb2/FR6Nz87wI=
+	by mail.kernel.org (Postfix) with ESMTP id 56881218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:54:30 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726875AbfAYOvx (ORCPT
+        id S1726851AbfAYOy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:51:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38108 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbfAYOvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:51:53 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7003C218CD;
-        Fri, 25 Jan 2019 14:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548427912;
-        bh=jeVLDdCe8wFYmSmCD6htYJqE+XYWPdH1zXbVXIRRq+M=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=FNepw6GJWzNatMNhTJNqtN5aQzm/IJ4tEwXDHGM1YQRLCXudMXJm7TNYFihx3XQ1h
-         Gdr/nbEL+5HAcTVvIPB9faadI0/FAieHd1t7MfYkNsmWAaaqFNr28K3WGhb0adTWZn
-         4LPcmlk73XuSz7koASZGKbcYqpcnGqynse2FpSQk=
-Subject: Re: [PATCH 4.19 000/106] 4.19.18-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org
-Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
-        linux@roeck-us.net, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190124190206.342411005@linuxfoundation.org>
-From:   shuah <shuah@kernel.org>
-Message-ID: <4b06fa44-be84-e14c-ec09-2d570cfe2469@kernel.org>
-Date:   Fri, 25 Jan 2019 07:51:51 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 25 Jan 2019 09:54:28 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52904 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbfAYOy2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 09:54:28 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gn2sD-0000xg-Cn; Fri, 25 Jan 2019 14:54:25 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Will Drewry <wad@chromium.org>, Shuah Khan <shuah@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] selftests/seccomp: fix test failure on s390x because of positive error return Content-Type: text/plain; charset="utf-8" Content-Transfer-Encoding: 8bit
+Date:   Fri, 25 Jan 2019 14:54:25 +0000
+Message-Id: <20190125145425.7039-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/24/19 12:19 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.18 release.
-> There are 106 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Sat Jan 26 19:01:18 UTC 2019.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.19.18-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.19.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
+From: Colin Ian King <colin.king@canonical.com>
 
-Compiled and booted on my test system. No dmesg regressions.
+The error return being placed in regs.SYSCALL_RET is currently positive and
+this is causing test failures on s390x. The return value should be -EPERM
+rather than EPERM otherwise a failure is not detected and errno is not set
+accordingly on s390x.
 
-thanks,
--- Shuah
+Fixes: a33b2d0359a0 ("selftests/seccomp: Add tests for basic ptrace actions")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 496a9a8c773a..957344884360 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -1706,7 +1706,7 @@ void change_syscall(struct __test_metadata *_metadata,
+ #ifdef SYSCALL_NUM_RET_SHARE_REG
+ 		TH_LOG("Can't modify syscall return on this architecture");
+ #else
+-		regs.SYSCALL_RET = EPERM;
++		regs.SYSCALL_RET = -EPERM;
+ #endif
+ 
+ #ifdef HAVE_GETREGS
+@@ -1850,7 +1850,7 @@ TEST_F(TRACE_syscall, ptrace_syscall_dropped)
+ 					   true);
+ 
+ 	/* Tracer should skip the open syscall, resulting in EPERM. */
+-	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_openat));
++	EXPECT_SYSCALL_RETURN(-EPERM, syscall(__NR_openat));
+ }
+ 
+ TEST_F(TRACE_syscall, syscall_allowed)
+@@ -1894,7 +1894,7 @@ TEST_F(TRACE_syscall, syscall_dropped)
+ 	ASSERT_EQ(0, ret);
+ 
+ 	/* gettid has been skipped and an altered return value stored. */
+-	EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_gettid));
++	EXPECT_SYSCALL_RETURN(-EPERM, syscall(__NR_gettid));
+ 	EXPECT_NE(self->mytid, syscall(__NR_gettid));
+ }
+ 
+-- 
+2.19.1
 
