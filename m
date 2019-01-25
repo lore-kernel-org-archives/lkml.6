@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B707FC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:15:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC4EC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:15:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91967218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:15:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8358F218D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:15:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728913AbfAYNPp (ORCPT
+        id S1728959AbfAYNP4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 08:15:45 -0500
+        Fri, 25 Jan 2019 08:15:56 -0500
 Received: from mga06.intel.com ([134.134.136.31]:65210 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728779AbfAYNPl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 08:15:41 -0500
+        id S1728629AbfAYNPe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 08:15:34 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 05:15:41 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 05:15:33 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,521,1539673200"; 
-   d="scan'208";a="141284015"
+   d="scan'208";a="141283979"
 Received: from black.fi.intel.com (HELO black.fi.intel.com.) ([10.237.72.28])
-  by fmsmga001.fm.intel.com with ESMTP; 25 Jan 2019 05:15:38 -0800
+  by fmsmga001.fm.intel.com with ESMTP; 25 Jan 2019 05:15:31 -0800
 From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
         Hans de Goede <hdegoede@redhat.com>,
         linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 8/8] device connection: Find device connections also from device graphs
-Date:   Fri, 25 Jan 2019 16:15:19 +0300
-Message-Id: <20190125131519.88416-9-heikki.krogerus@linux.intel.com>
+Subject: [PATCH 5/8] usb: roles: Find the muxes by also matching against the device node
+Date:   Fri, 25 Jan 2019 16:15:16 +0300
+Message-Id: <20190125131519.88416-6-heikki.krogerus@linux.intel.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190125131519.88416-1-heikki.krogerus@linux.intel.com>
 References: <20190125131519.88416-1-heikki.krogerus@linux.intel.com>
@@ -46,84 +46,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If connections between devices are described in OF graph or
-ACPI device graph, we can find them by using the
-fwnode_graph_*() functions.
+When the connections are defined in firmware, struct
+device_connection will have the fwnode member pointing to
+the device node (struct fwnode_handle) of the requested
+device, and the endpoint will not be used at all in that
+case.
 
 Signed-off-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 ---
- drivers/base/devcon.c | 39 ++++++++++++++++++++++++++++++++++++---
- 1 file changed, 36 insertions(+), 3 deletions(-)
+ drivers/usb/roles/class.c | 21 ++++++++++++++++++---
+ include/linux/usb/role.h  |  1 +
+ 2 files changed, 19 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/base/devcon.c b/drivers/base/devcon.c
-index 858b8d2f6ef8..1c20eceff2b0 100644
---- a/drivers/base/devcon.c
-+++ b/drivers/base/devcon.c
-@@ -7,10 +7,38 @@
+diff --git a/drivers/usb/roles/class.c b/drivers/usb/roles/class.c
+index 99116af07f1d..f45d8df5cfb8 100644
+--- a/drivers/usb/roles/class.c
++++ b/drivers/usb/roles/class.c
+@@ -8,6 +8,7 @@
   */
  
- #include <linux/device.h>
+ #include <linux/usb/role.h>
 +#include <linux/property.h>
-+#include <linux/slab.h>
+ #include <linux/device.h>
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+@@ -84,7 +85,12 @@ enum usb_role usb_role_switch_get_role(struct usb_role_switch *sw)
+ }
+ EXPORT_SYMBOL_GPL(usb_role_switch_get_role);
  
- static DEFINE_MUTEX(devcon_lock);
- static LIST_HEAD(devcon_list);
- 
-+typedef void *(*devcon_match_t)(struct device_connection *con, int ep,
-+				void *data);
-+
-+static void *
-+fwnode_graph_devcon_match(struct fwnode_handle *fwnode, const char *con_id,
-+			  void *data, devcon_match_t match)
+-static int __switch_match(struct device *dev, const void *name)
++static int switch_fwnode_match(struct device *dev, const void *fwnode)
 +{
-+	struct device_connection con = { .id = con_id };
-+	struct fwnode_handle *ep;
-+	void *ret;
-+
-+	fwnode_graph_for_each_endpoint(fwnode, ep) {
-+		con.fwnode = fwnode_graph_get_remote_port_parent(ep);
-+		if (!fwnode_device_is_available(con.fwnode))
-+			continue;
-+
-+		ret = match(&con, -1, data);
-+		fwnode_handle_put(con.fwnode);
-+		if (ret) {
-+			fwnode_handle_put(ep);
-+			return ret;
-+		}
-+	}
-+	return NULL;
++	return dev_fwnode(dev) == fwnode;
 +}
 +
- /**
-  * device_connection_find_match - Find physical connection to a device
-  * @dev: Device with the connection
-@@ -23,10 +51,9 @@ static LIST_HEAD(devcon_list);
-  * caller is expecting to be returned.
-  */
- void *device_connection_find_match(struct device *dev, const char *con_id,
--			       void *data,
--			       void *(*match)(struct device_connection *con,
--					      int ep, void *data))
-+				   void *data, devcon_match_t match)
++static int switch_name_match(struct device *dev, const void *name)
  {
-+	struct fwnode_handle *fwnode = dev_fwnode(dev);
- 	const char *devname = dev_name(dev);
- 	struct device_connection *con;
- 	void *ret = NULL;
-@@ -35,6 +62,12 @@ void *device_connection_find_match(struct device *dev, const char *con_id,
- 	if (!match)
- 		return NULL;
+ 	return !strcmp((const char *)name, dev_name(dev));
+ }
+@@ -94,8 +100,16 @@ static void *usb_role_switch_match(struct device_connection *con, int ep,
+ {
+ 	struct device *dev;
  
-+	if (fwnode) {
-+		ret = fwnode_graph_devcon_match(fwnode, con_id, data, match);
-+		if (ret)
-+			return ret;
-+	}
+-	dev = class_find_device(role_class, NULL, con->endpoint[ep],
+-				__switch_match);
++	if (con->fwnode) {
++		if (!fwnode_property_present(con->fwnode, con->id))
++			return NULL;
 +
- 	mutex_lock(&devcon_lock);
++		dev = class_find_device(role_class, NULL, con->fwnode,
++					switch_fwnode_match);
++	} else {
++		dev = class_find_device(role_class, NULL, con->endpoint[ep],
++					switch_name_match);
++	}
  
- 	list_for_each_entry(con, &devcon_list, list) {
+ 	return dev ? to_role_switch(dev) : ERR_PTR(-EPROBE_DEFER);
+ }
+@@ -266,6 +280,7 @@ usb_role_switch_register(struct device *parent,
+ 	sw->get = desc->get;
+ 
+ 	sw->dev.parent = parent;
++	sw->dev.fwnode = desc->fwnode;
+ 	sw->dev.class = role_class;
+ 	sw->dev.type = &usb_role_dev_type;
+ 	dev_set_name(&sw->dev, "%s-role-switch", dev_name(parent));
+diff --git a/include/linux/usb/role.h b/include/linux/usb/role.h
+index edc51be4a77c..9684a8734757 100644
+--- a/include/linux/usb/role.h
++++ b/include/linux/usb/role.h
+@@ -32,6 +32,7 @@ typedef enum usb_role (*usb_role_switch_get_t)(struct device *dev);
+  * usb_role_switch_register() before registering the switch.
+  */
+ struct usb_role_switch_desc {
++	struct fwnode_handle *fwnode;
+ 	struct device *usb2_port;
+ 	struct device *usb3_port;
+ 	struct device *udc;
 -- 
 2.20.1
 
