@@ -2,116 +2,269 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B25C282C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:28:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D839C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:31:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19B08218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:28:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548451713;
-	bh=ZbAOvZ7TcGXFrQiocOFb2gplYV9RMuWPk15cBWYoOB0=;
-	h=Subject:References:Cc:From:In-Reply-To:To:Date:List-ID:From;
-	b=UY/sjUybouJLiypGKWnq5OsgT7jfL3RgxTcWYPs20uAxFg8oSyOckuWNbPCMceYGa
-	 ite/th6cBqz5aNTPt9InYwnmSJ680G8LQBBN+S1M4Z2CS+BtP69xgNjaR+2OANqaxz
-	 a0qKLW1MYxpLYf+nYzmfBHTKaQdTZIwV6bkzkcjo=
+	by mail.kernel.org (Postfix) with ESMTP id 547F6218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:31:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729240AbfAYV2b (ORCPT
+        id S1729354AbfAYVbI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 16:28:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35566 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbfAYV2b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 16:28:31 -0500
-Received: from localhost (unknown [104.132.0.74])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF665217D4;
-        Fri, 25 Jan 2019 21:28:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548451710;
-        bh=ZbAOvZ7TcGXFrQiocOFb2gplYV9RMuWPk15cBWYoOB0=;
-        h=Subject:References:Cc:From:In-Reply-To:To:Date:From;
-        b=azlP41og08i5ER5VHcOjNTBAxv+CL1O+TAWyGAECtyyQYakre7GL0bAeMTfgQojyl
-         5vspxPqRcMzhtNIugDuIpOzrxXVxq5MYYxTTM98S8jPrfN3zt/xZZ10iP7oCG+BTve
-         mOTLGKyfKbxYJpBa8aXz5GKhtmpYKSms+8+gj/l8=
-Content-Type: text/plain; charset="utf-8"
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 2/4] clk: core: link consumer with clock driver
-References: <20181204192440.12125-1-miquel.raynal@bootlin.com> <20181204192440.12125-3-miquel.raynal@bootlin.com> <154454837597.17204.11648795524314926025@swboyd.mtv.corp.google.com> <20190104165406.3b52399a@xps13>
-User-Agent: alot/0.8
-Cc:     Michael Turquette <mturquette@baylibre.com>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Fri, 25 Jan 2019 16:31:08 -0500
+Received: from gateway36.websitewelcome.com ([192.185.201.2]:21355 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726179AbfAYVbI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 16:31:08 -0500
+X-Greylist: delayed 1270 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Jan 2019 16:31:07 EST
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 9687F400CB6F2
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 14:22:58 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id n8jag2sOg90onn8jagTkUT; Fri, 25 Jan 2019 15:09:54 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=44236 helo=embeddedor)
+        by gator4166.hostgator.com with esmtpa (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gn8jX-002sjP-VD; Fri, 25 Jan 2019 15:09:53 -0600
+Date:   Fri, 25 Jan 2019 15:09:50 -0600
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+To:     Kyungmin Park <kyungmin.park@samsung.com>,
+        Boris Brezillon <bbrezillon@kernel.org>,
+        Miquel Raynal <miquel.raynal@bootlin.com>,
+        Richard Weinberger <richard@nod.at>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Wan ZongShun <mcuos.com@gmail.com>
+Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20190104165406.3b52399a@xps13>
-Message-ID: <154845170894.136743.2408260720819956377@swboyd.mtv.corp.google.com>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Date:   Fri, 25 Jan 2019 13:28:28 -0800
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>
+Subject: [PATCH] mtd: rawnand: mark expected switch fall-throughs
+Message-ID: <20190125210950.GA27855@embeddedor>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gn8jX-002sjP-VD
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: (embeddedor) [189.250.130.205]:44236
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 10
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Miquel Raynal (2019-01-04 07:54:06)
-> Hi Stephen,
->=20
-> Stephen Boyd <sboyd@kernel.org> wrote on Tue, 11 Dec 2018 09:12:55
-> -0800:
->=20
-> > Sorry, I'm not reviewing the whole patch right now, just this one little
-> > bit because I'm also working in the same area.
-> >=20
-> > Quoting Miquel Raynal (2018-12-04 11:24:38)
-> > > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provide=
-r.h
-> > > index 60c51871b04b..721d6b55b2fa 100644
-> > > --- a/include/linux/clk-provider.h
-> > > +++ b/include/linux/clk-provider.h
-> > > @@ -781,6 +781,8 @@ void devm_clk_hw_unregister(struct device *dev, s=
-truct clk_hw *hw);
-> > >  const char *__clk_get_name(const struct clk *clk);
-> > >  const char *clk_hw_get_name(const struct clk_hw *hw);
-> > >  struct clk_hw *__clk_get_hw(struct clk *clk);
-> > > +void clk_link_consumer(struct device *consumer, struct clk *clk);
-> > > +void clk_unlink_consumer(struct clk *clk); =20
-> >=20
-> > We shouldn't need to add these functions as far as I can tell. That's
-> > because __clk_get() has become an internal API between clkdev.c and
-> > clk.c that does nothing now on implementations that aren't the CCF. We
-> > can even change this API to take a clk_hw pointer instead of a clk
-> > pointer.
-> >=20
-> > I'd rather see us plumb a struct device and clk_hw structure down into
-> > __clk_get() and fold it all into __clk_create_clk, possibly even
-> > renaming __clk_create_clk to clk_hw_create_clk(). That way we can get
-> > the calling device and clk_hw pointer in one call in the clk framework,
-> > along with the device name and connection name, and then generate the
-> > struct clk right there. This can simplify some code and make it easier
-> > to extend this to associate calling devices with the clk consumer
-> > somehow.
-> >=20
-> > Here's the diff. With this, you should be able to add and remove device
-> > links in clk_hw_create_clk() when dev !=3D NULL.
->=20
-> Thanks for the help; I updated my work on top of yours, it looks ok but
-> I need to run some more tests.
->=20
-> However I had to tweak a parameter in one of your recent changes, you
-> used '-1' as index in __of_clock_get() while it is not a valid value
-> (returning an error). As in the __of_clk_get_by_name() function you
-> removed index was just set to 0 at the top of the function, I think the
-> below fix is valid.
+In preparation to enabling -Wimplicit-fallthrough, mark switch
+cases where we are expecting to fall through.
 
-Thanks. Makes sense so I folded it in.
+This patch fixes the following warning:
+
+drivers/mtd/nand/onenand/onenand_base.c:3264:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/onenand/onenand_base.c:3288:17: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/nand_base.c:5538:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/nand_base.c:5557:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/nand_base.c:5595:13: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/nand_legacy.c:332:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/nand_legacy.c:483:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/nandsim.c:2254:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/omap_elm.c:512:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/omap_elm.c:517:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/omap_elm.c:466:37: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/omap_elm.c:471:37: warning: this statement may fall through [-Wimplicit-fallthrough=]
+drivers/mtd/nand/raw/nuc900_nand.c: In function ‘nuc900_nand_command_lp’:
+./arch/x86/include/asm/io.h:91:22: warning: this statement may fall through [-Wimplicit-fallthrough=]
+ #define __raw_writel __writel
+drivers/mtd/nand/raw/nuc900_nand.c:52:2: note: in expansion of macro ‘__raw_writel’
+  __raw_writel((val), (dev)->reg + REG_SMCMD)
+  ^~~~~~~~~~~~
+drivers/mtd/nand/raw/nuc900_nand.c:196:3: note: in expansion of macro ‘write_cmd_reg’
+   write_cmd_reg(nand, NAND_CMD_READSTART);
+   ^~~~~~~~~~~~~
+drivers/mtd/nand/raw/nuc900_nand.c:197:2: note: here
+  default:
+  ^~~~~~~
+
+Warning level 3 was used: -Wimplicit-fallthrough=3
+
+This patch is part of the ongoing efforts to enabling
+-Wimplicit-fallthrough.
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+---
+ drivers/mtd/nand/onenand/onenand_base.c | 2 ++
+ drivers/mtd/nand/raw/diskonchip.c       | 1 +
+ drivers/mtd/nand/raw/nand_base.c        | 3 +++
+ drivers/mtd/nand/raw/nand_legacy.c      | 3 ++-
+ drivers/mtd/nand/raw/nandsim.c          | 5 +++--
+ drivers/mtd/nand/raw/nuc900_nand.c      | 3 ++-
+ drivers/mtd/nand/raw/omap_elm.c         | 4 ++++
+ 7 files changed, 17 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/mtd/nand/onenand/onenand_base.c b/drivers/mtd/nand/onenand/onenand_base.c
+index 4ca4b194e7d7..e9b71ad24f50 100644
+--- a/drivers/mtd/nand/onenand/onenand_base.c
++++ b/drivers/mtd/nand/onenand/onenand_base.c
+@@ -3280,12 +3280,14 @@ static void onenand_check_features(struct mtd_info *mtd)
+ 			if ((this->version_id & 0xf) == 0xe)
+ 				this->options |= ONENAND_HAS_NOP_1;
+ 		}
++		/* fall through */
+ 
+ 	case ONENAND_DEVICE_DENSITY_2Gb:
+ 		/* 2Gb DDP does not have 2 plane */
+ 		if (!ONENAND_IS_DDP(this))
+ 			this->options |= ONENAND_HAS_2PLANE;
+ 		this->options |= ONENAND_HAS_UNLOCK_ALL;
++		/* fall through */
+ 
+ 	case ONENAND_DEVICE_DENSITY_1Gb:
+ 		/* A-Die has all block unlock */
+diff --git a/drivers/mtd/nand/raw/diskonchip.c b/drivers/mtd/nand/raw/diskonchip.c
+index 53f57e0f007e..ead54c90f2d1 100644
+--- a/drivers/mtd/nand/raw/diskonchip.c
++++ b/drivers/mtd/nand/raw/diskonchip.c
+@@ -1477,6 +1477,7 @@ static int __init doc_probe(unsigned long physadr)
+ 			break;
+ 		case DOC_ChipID_DocMilPlus32:
+ 			pr_err("DiskOnChip Millennium Plus 32MB is not supported, ignoring.\n");
++			/* fall through */
+ 		default:
+ 			ret = -ENODEV;
+ 			goto notfound;
+diff --git a/drivers/mtd/nand/raw/nand_base.c b/drivers/mtd/nand/raw/nand_base.c
+index 96cadead262e..e05ecf2e4269 100644
+--- a/drivers/mtd/nand/raw/nand_base.c
++++ b/drivers/mtd/nand/raw/nand_base.c
+@@ -5537,6 +5537,7 @@ static int nand_scan_tail(struct nand_chip *chip)
+ 		}
+ 		if (!ecc->read_page)
+ 			ecc->read_page = nand_read_page_hwecc_oob_first;
++		/* fall through */
+ 
+ 	case NAND_ECC_HW:
+ 		/* Use standard hwecc read page function? */
+@@ -5556,6 +5557,7 @@ static int nand_scan_tail(struct nand_chip *chip)
+ 			ecc->read_subpage = nand_read_subpage;
+ 		if (!ecc->write_subpage && ecc->hwctl && ecc->calculate)
+ 			ecc->write_subpage = nand_write_subpage_hwecc;
++		/* fall through */
+ 
+ 	case NAND_ECC_HW_SYNDROME:
+ 		if ((!ecc->calculate || !ecc->correct || !ecc->hwctl) &&
+@@ -5593,6 +5595,7 @@ static int nand_scan_tail(struct nand_chip *chip)
+ 			ecc->size, mtd->writesize);
+ 		ecc->mode = NAND_ECC_SOFT;
+ 		ecc->algo = NAND_ECC_HAMMING;
++		/* fall through */
+ 
+ 	case NAND_ECC_SOFT:
+ 		ret = nand_set_ecc_soft_ops(chip);
+diff --git a/drivers/mtd/nand/raw/nand_legacy.c b/drivers/mtd/nand/raw/nand_legacy.c
+index 43575943f13b..f2526ec616a6 100644
+--- a/drivers/mtd/nand/raw/nand_legacy.c
++++ b/drivers/mtd/nand/raw/nand_legacy.c
+@@ -331,6 +331,7 @@ static void nand_command(struct nand_chip *chip, unsigned int command,
+ 		 */
+ 		if (column == -1 && page_addr == -1)
+ 			return;
++		/* fall through */
+ 
+ 	default:
+ 		/*
+@@ -483,7 +484,7 @@ static void nand_command_lp(struct nand_chip *chip, unsigned int command,
+ 		chip->legacy.cmd_ctrl(chip, NAND_CMD_NONE,
+ 				      NAND_NCE | NAND_CTRL_CHANGE);
+ 
+-		/* This applies to read commands */
++		/* fall through - This applies to read commands */
+ 	default:
+ 		/*
+ 		 * If we don't have access to the busy pin, we apply the given
+diff --git a/drivers/mtd/nand/raw/nandsim.c b/drivers/mtd/nand/raw/nandsim.c
+index 933d1a629c51..d33e15dc4cdc 100644
+--- a/drivers/mtd/nand/raw/nandsim.c
++++ b/drivers/mtd/nand/raw/nandsim.c
+@@ -2251,9 +2251,10 @@ static int __init ns_init_module(void)
+ 
+ 	switch (bbt) {
+ 	case 2:
+-		 chip->bbt_options |= NAND_BBT_NO_OOB;
++		chip->bbt_options |= NAND_BBT_NO_OOB;
++		/* fall through */
+ 	case 1:
+-		 chip->bbt_options |= NAND_BBT_USE_FLASH;
++		chip->bbt_options |= NAND_BBT_USE_FLASH;
+ 	case 0:
+ 		break;
+ 	default:
+diff --git a/drivers/mtd/nand/raw/nuc900_nand.c b/drivers/mtd/nand/raw/nuc900_nand.c
+index 38b1994e7ed3..56fa84029482 100644
+--- a/drivers/mtd/nand/raw/nuc900_nand.c
++++ b/drivers/mtd/nand/raw/nuc900_nand.c
+@@ -192,8 +192,9 @@ static void nuc900_nand_command_lp(struct nand_chip *chip,
+ 		return;
+ 
+ 	case NAND_CMD_READ0:
+-
+ 		write_cmd_reg(nand, NAND_CMD_READSTART);
++		/* fall through */
++
+ 	default:
+ 
+ 		if (!chip->legacy.dev_ready) {
+diff --git a/drivers/mtd/nand/raw/omap_elm.c b/drivers/mtd/nand/raw/omap_elm.c
+index a3f32f939cc1..94c6401ef32f 100644
+--- a/drivers/mtd/nand/raw/omap_elm.c
++++ b/drivers/mtd/nand/raw/omap_elm.c
+@@ -465,11 +465,13 @@ static int elm_context_save(struct elm_info *info)
+ 					ELM_SYNDROME_FRAGMENT_5 + offset);
+ 			regs->elm_syndrome_fragment_4[i] = elm_read_reg(info,
+ 					ELM_SYNDROME_FRAGMENT_4 + offset);
++			/* fall through */
+ 		case BCH8_ECC:
+ 			regs->elm_syndrome_fragment_3[i] = elm_read_reg(info,
+ 					ELM_SYNDROME_FRAGMENT_3 + offset);
+ 			regs->elm_syndrome_fragment_2[i] = elm_read_reg(info,
+ 					ELM_SYNDROME_FRAGMENT_2 + offset);
++			/* fall through */
+ 		case BCH4_ECC:
+ 			regs->elm_syndrome_fragment_1[i] = elm_read_reg(info,
+ 					ELM_SYNDROME_FRAGMENT_1 + offset);
+@@ -511,11 +513,13 @@ static int elm_context_restore(struct elm_info *info)
+ 					regs->elm_syndrome_fragment_5[i]);
+ 			elm_write_reg(info, ELM_SYNDROME_FRAGMENT_4 + offset,
+ 					regs->elm_syndrome_fragment_4[i]);
++			/* fall through */
+ 		case BCH8_ECC:
+ 			elm_write_reg(info, ELM_SYNDROME_FRAGMENT_3 + offset,
+ 					regs->elm_syndrome_fragment_3[i]);
+ 			elm_write_reg(info, ELM_SYNDROME_FRAGMENT_2 + offset,
+ 					regs->elm_syndrome_fragment_2[i]);
++			/* fall through */
+ 		case BCH4_ECC:
+ 			elm_write_reg(info, ELM_SYNDROME_FRAGMENT_1 + offset,
+ 					regs->elm_syndrome_fragment_1[i]);
+-- 
+2.20.1
 
