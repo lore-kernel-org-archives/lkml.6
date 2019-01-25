@@ -2,172 +2,140 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 724F4C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:02:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 609FAC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C947218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:02:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25DE7218D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:04:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="i3nR3GBV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727803AbfAYMCp (ORCPT
+        id S1727826AbfAYMD6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 07:02:45 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2673 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725909AbfAYMCp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 07:02:45 -0500
-Received: from DGGEMS414-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 7A07DF85E9AB144316E9;
-        Fri, 25 Jan 2019 20:02:42 +0800 (CST)
-Received: from 138.huawei.com (10.175.124.28) by smtp.huawei.com (10.3.19.214)
- with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 25 Jan 2019 20:02:34
- +0800
-From:   Gao Xiang <gaoxiang25@huawei.com>
-To:     Chao Yu <yuchao0@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <devel@driverdev.osuosl.org>
-CC:     LKML <linux-kernel@vger.kernel.org>,
-        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
-        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
-        Fang Wei <fangwei1@huawei.com>,
-        Gao Xiang <gaoxiang25@huawei.com>
-Subject: [PATCH 2/2] staging: erofs: complete POSIX ACL support
-Date:   Fri, 25 Jan 2019 20:01:04 +0800
-Message-ID: <20190125120104.15604-1-gaoxiang25@huawei.com>
-X-Mailer: git-send-email 2.14.4
-In-Reply-To: <20190125115103.47250-1-gaoxiang25@huawei.com>
-References: <20190125115103.47250-1-gaoxiang25@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.175.124.28]
-X-CFilter-Loop: Reflected
+        Fri, 25 Jan 2019 07:03:58 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:44078 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726095AbfAYMD6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 07:03:58 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 43mHk30Zlpz9tyRJ;
+        Fri, 25 Jan 2019 13:03:55 +0100 (CET)
+Authentication-Results: localhost; dkim=pass
+        reason="1024-bit key; insecure key"
+        header.d=c-s.fr header.i=@c-s.fr header.b=i3nR3GBV; dkim-adsp=pass;
+        dkim-atps=neutral
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id T-S7tndRbSlp; Fri, 25 Jan 2019 13:03:55 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43mHk26WMCz9tyRH;
+        Fri, 25 Jan 2019 13:03:54 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548417834; bh=ivmH+AoutJHc7vJDgG4UgyzcqbN5JHmAR0vsyyq01ro=;
+        h=From:Subject:To:Cc:Date:From;
+        b=i3nR3GBV5YF1cyvGtooAIH/DZvQoNnFNfHfJFpuXHEVe1/DSzFkigWZejO3HudDqO
+         DqfVmxoc/rz9op5BZwT8NmMkDA7SdnlDmG+CBXCGp2GABstho3oEIXeokPjOSZD0lT
+         abRlZwMkwR2ft5TBQiC4h5Pa36l5Uef3Kcweq71Y=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 2C0FF8B876;
+        Fri, 25 Jan 2019 13:03:56 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id uBLdh_CtQi6Z; Fri, 25 Jan 2019 13:03:56 +0100 (CET)
+Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 11E4D8B761;
+        Fri, 25 Jan 2019 13:03:56 +0100 (CET)
+Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id E29BF72DA7; Fri, 25 Jan 2019 12:03:55 +0000 (UTC)
+Message-Id: <5a09a970ce5f7998719f0b4cd8af22cc7dd09ef0.1548371001.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/83xx: Also save/restore SPRG4-7 during suspend
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Scott Wood <oss@buserror.net>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 25 Jan 2019 12:03:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let's add .get_acl() to read the file's acl
-from its xattrs to make POSIX ACL usable.
+The 83xx has 8 SPRG registers and uses at least SPRG4
+for DTLB handling LRU.
 
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+Fixes: 2319f1239592 ("powerpc/mm: e300c2/c3/c4 TLB errata workaround")
+Cc: stable@vger.kernel.org
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- This [PATCH 2/2] currently hasn't tested, please ignore temporarily...
- I will test it asap...
+ arch/powerpc/platforms/83xx/suspend-asm.S | 34 ++++++++++++++++++++++++-------
+ 1 file changed, 27 insertions(+), 7 deletions(-)
 
-Thanks,
-Gao Xiang
-
- drivers/staging/erofs/inode.c |  3 +++
- drivers/staging/erofs/namei.c |  1 +
- drivers/staging/erofs/xattr.c | 40 ++++++++++++++++++++++++++++++++++++++++
- drivers/staging/erofs/xattr.h |  6 ++++++
- 4 files changed, 50 insertions(+)
-
-diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
-index 4f04f7c38cf2..924b8dfc7a8f 100644
---- a/drivers/staging/erofs/inode.c
-+++ b/drivers/staging/erofs/inode.c
-@@ -287,6 +287,7 @@ const struct inode_operations erofs_generic_iops = {
- #ifdef CONFIG_EROFS_FS_XATTR
- 	.listxattr = erofs_listxattr,
- #endif
-+	.get_acl = erofs_get_acl,
- };
+diff --git a/arch/powerpc/platforms/83xx/suspend-asm.S b/arch/powerpc/platforms/83xx/suspend-asm.S
+index 3d1ecd211776..8137f77abad5 100644
+--- a/arch/powerpc/platforms/83xx/suspend-asm.S
++++ b/arch/powerpc/platforms/83xx/suspend-asm.S
+@@ -26,13 +26,13 @@
+ #define SS_MSR		0x74
+ #define SS_SDR1		0x78
+ #define SS_LR		0x7c
+-#define SS_SPRG		0x80 /* 4 SPRGs */
+-#define SS_DBAT		0x90 /* 8 DBATs */
+-#define SS_IBAT		0xd0 /* 8 IBATs */
+-#define SS_TB		0x110
+-#define SS_CR		0x118
+-#define SS_GPREG	0x11c /* r12-r31 */
+-#define STATE_SAVE_SIZE 0x16c
++#define SS_SPRG		0x80 /* 8 SPRGs */
++#define SS_DBAT		0xa0 /* 8 DBATs */
++#define SS_IBAT		0xe0 /* 8 IBATs */
++#define SS_TB		0x120
++#define SS_CR		0x128
++#define SS_GPREG	0x12c /* r12-r31 */
++#define STATE_SAVE_SIZE 0x17c
  
- const struct inode_operations erofs_symlink_iops = {
-@@ -294,6 +295,7 @@ const struct inode_operations erofs_symlink_iops = {
- #ifdef CONFIG_EROFS_FS_XATTR
- 	.listxattr = erofs_listxattr,
- #endif
-+	.get_acl = erofs_get_acl,
- };
+ 	.section .data
+ 	.align	5
+@@ -103,6 +103,16 @@ _GLOBAL(mpc83xx_enter_deep_sleep)
+ 	stw	r7, SS_SPRG+12(r3)
+ 	stw	r8, SS_SDR1(r3)
  
- const struct inode_operations erofs_fast_symlink_iops = {
-@@ -301,5 +303,6 @@ const struct inode_operations erofs_fast_symlink_iops = {
- #ifdef CONFIG_EROFS_FS_XATTR
- 	.listxattr = erofs_listxattr,
- #endif
-+	.get_acl = erofs_get_acl,
- };
- 
-diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
-index 7fed1f996ab0..b1752adc5934 100644
---- a/drivers/staging/erofs/namei.c
-+++ b/drivers/staging/erofs/namei.c
-@@ -238,5 +238,6 @@ const struct inode_operations erofs_dir_iops = {
- #ifdef CONFIG_EROFS_FS_XATTR
- 	.listxattr = erofs_listxattr,
- #endif
-+	.get_acl = erofs_get_acl,
- };
- 
-diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
-index eca65df46133..ee66ebffbb93 100644
---- a/drivers/staging/erofs/xattr.c
-+++ b/drivers/staging/erofs/xattr.c
-@@ -644,3 +644,43 @@ ssize_t erofs_listxattr(struct dentry *dentry,
- 	return shared_listxattr(&it);
- }
- 
-+#ifdef CONFIG_EROFS_FS_POSIX_ACL
-+struct posix_acl *erofs_get_acl(struct inode *inode, int type)
-+{
-+	struct posix_acl *acl;
-+	int ea_prefix, rc;
-+	char *ea_name;
-+	char *value = NULL;
++	mfspr	r4, SPRN_SPRG4
++	mfspr	r5, SPRN_SPRG5
++	mfspr	r6, SPRN_SPRG6
++	mfspr	r7, SPRN_SPRG7
 +
-+	switch (type) {
-+	case ACL_TYPE_ACCESS:
-+		ea_prefix = EROFS_XATTR_INDEX_POSIX_ACL_ACCESS;
-+		ea_name = XATTR_NAME_POSIX_ACL_ACCESS;
-+		break;
-+	case ACL_TYPE_DEFAULT:
-+		ea_prefix = EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT;
-+		ea_name = XATTR_NAME_POSIX_ACL_DEFAULT;
-+		break;
-+	default:
-+		return ERR_PTR(-EINVAL);
-+	}
++	stw	r4, SS_SPRG+16(r3)
++	stw	r5, SS_SPRG+20(r3)
++	stw	r6, SS_SPRG+24(r3)
++	stw	r7, SS_SPRG+28(r3)
 +
-+	rc = erofs_getxattr(inode, ea_prefix, ea_name, NULL, 0);
-+	if (rc > 0) {
-+		value = kvmalloc(rc, GFP_KERNEL);
-+		if (!value)
-+			return ERR_PTR(-ENOMEM);
-+		rc = erofs_getxattr(inode, ea_prefix, ea_name, value, rc);
-+	}
-+
-+	if (rc == -ENOATTR)
-+		acl = NULL;
-+	else if (rc < 0)
-+		acl = ERR_PTR(rc);
-+	else
-+		acl = posix_acl_from_xattr(&init_user_ns, value, rc);
-+	kvfree(value);
-+	return acl;
-+}
-+#endif
-+
-diff --git a/drivers/staging/erofs/xattr.h b/drivers/staging/erofs/xattr.h
-index 634dae9aaa0b..35ba5ac2139a 100644
---- a/drivers/staging/erofs/xattr.h
-+++ b/drivers/staging/erofs/xattr.h
-@@ -87,5 +87,11 @@ static ssize_t __maybe_unused erofs_listxattr(struct dentry *dentry,
- }
- #endif
+ 	mfspr	r4, SPRN_DBAT0U
+ 	mfspr	r5, SPRN_DBAT0L
+ 	mfspr	r6, SPRN_DBAT1U
+@@ -493,6 +503,16 @@ mpc83xx_deep_resume:
+ 	mtspr	SPRN_IBAT7U, r6
+ 	mtspr	SPRN_IBAT7L, r7
  
-+#ifdef CONFIG_EROFS_FS_POSIX_ACL
-+struct posix_acl *erofs_get_acl(struct inode *inode, int type);
-+#else
-+#define erofs_get_acl	(NULL)
-+#endif
++	lwz	r4, SS_SPRG+16(r3)
++	lwz	r5, SS_SPRG+20(r3)
++	lwz	r6, SS_SPRG+24(r3)
++	lwz	r7, SS_SPRG+28(r3)
 +
- #endif
- 
++	mtspr	SPRN_SPRG4, r4
++	mtspr	SPRN_SPRG5, r5
++	mtspr	SPRN_SPRG6, r6
++	mtspr	SPRN_SPRG7, r7
++
+ 	lwz	r4, SS_SPRG+0(r3)
+ 	lwz	r5, SS_SPRG+4(r3)
+ 	lwz	r6, SS_SPRG+8(r3)
 -- 
-2.14.4
+2.13.3
 
