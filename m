@@ -3,54 +3,79 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A07EC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:31:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97557C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:33:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F227218D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:31:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69696218D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:33:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727826AbfAYGbx (ORCPT
+        id S1727616AbfAYGdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 01:31:53 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:38286 "EHLO
+        Fri, 25 Jan 2019 01:33:41 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:38316 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726021AbfAYGbx (ORCPT
+        with ESMTP id S1726021AbfAYGdl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 01:31:53 -0500
+        Fri, 25 Jan 2019 01:33:41 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id E06791449B3A7;
-        Thu, 24 Jan 2019 22:31:52 -0800 (PST)
-Date:   Thu, 24 Jan 2019 22:31:52 -0800 (PST)
-Message-Id: <20190124.223152.375982172428944729.davem@davemloft.net>
-To:     zhangzl2013@126.com
-Cc:     jon.maloy@ericsson.com, ying.xue@windriver.com,
-        netdev@vger.kernel.org, tipc-discussion@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] tipc: remove dead code in struct tipc_topsrv
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id B25781449B3B6;
+        Thu, 24 Jan 2019 22:33:40 -0800 (PST)
+Date:   Thu, 24 Jan 2019 22:33:40 -0800 (PST)
+Message-Id: <20190124.223340.1801961504003089813.davem@davemloft.net>
+To:     zhang.run@zte.com.cn
+Cc:     marcel.ziswiler@toradex.com, lynxis@fe80.eu,
+        linux-usb@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn,
+        wang.yi59@zte.com.cn
+Subject: Re: [PATCH] net: usb: asix: ax88772_bind return error when
+ hw_reset fail
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <1548295601-23063-1-git-send-email-zhangzl2013@126.com>
-References: <1548295601-23063-1-git-send-email-zhangzl2013@126.com>
+In-Reply-To: <1548308929-7727-1-git-send-email-zhang.run@zte.com.cn>
+References: <1548308929-7727-1-git-send-email-zhang.run@zte.com.cn>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 24 Jan 2019 22:31:53 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 24 Jan 2019 22:33:41 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zhaolong Zhang <zhangzl2013@126.com>
-Date: Thu, 24 Jan 2019 10:06:41 +0800
+From: Zhang Run <zhang.run@zte.com.cn>
+Date: Thu, 24 Jan 2019 13:48:49 +0800
 
-> max_rcvbuf_size is no longer used since commit "414574a0af36".
+> The ax88772_bind() should return error code immediately when the PHY
+> was not reset properly through ax88772a_hw_reset().
+> Otherwise, The asix_get_phyid() will block when get the PHY 
+> Identifier from the PHYSID1 MII registers through asix_mdio_read() 
+> due to the PHY isn't ready. Furthermore, it will produce a lot of 
+> error message cause system crash.As follows:
+> asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
+>  reg index 0x0000: -71
+> asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to send
+>  software reset: ffffffb9
+> asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
+>  reg index 0x0000: -71
+> asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to enable
+>  software MII access
+> asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to read
+>  reg index 0x0000: -71
+> asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to write
+>  reg index 0x0000: -71
+> asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to enable
+>  software MII access
+> asix 1-1:1.0 (unnamed net_device) (uninitialized): Failed to read
+>  reg index 0x0000: -71
+> ... 
 > 
-> Signed-off-by: Zhaolong Zhang <zhangzl2013@126.com>
+> Signed-off-by: Zhang Run <zhang.run@zte.com.cn>
+> Reviewed-by: Yang Wei <yang.wei9@zte.com.cn>
 
 Applied.
