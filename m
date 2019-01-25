@@ -2,171 +2,75 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B4CC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:02:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 013B7C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:07:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D772C218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:02:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BC9CA218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:07:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="yKB1reus"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728717AbfAYTCN convert rfc822-to-8bit (ORCPT
+        id S1726604AbfAYTHW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 14:02:13 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:33105 "EHLO
-        mail.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726329AbfAYTCM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 14:02:12 -0500
-Received: from [IPv6:2601:646:8881:66f1:3131:71d3:81a5:3525] ([IPv6:2601:646:8881:66f1:3131:71d3:81a5:3525])
-        (authenticated bits=0)
-        by mail.zytor.com (8.15.2/8.15.2) with ESMTPSA id x0PJ0YK0239202
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NO);
-        Fri, 25 Jan 2019 11:00:38 -0800
-Date:   Fri, 25 Jan 2019 11:00:25 -0800
-User-Agent: K-9 Mail for Android
-In-Reply-To: <20190124205929.GA141510@google.com>
-References: <20190119103606.GA17400@kroah.com> <8BD4CB7A-944C-4EC5-A198-1D85C9EE28D6@zytor.com> <20190120161003.GB23827@google.com> <A40C22DF-B43F-44BA-8148-FC0881087315@zytor.com> <20190121014553.GD23827@google.com> <BC774ED4-C0FC-4AA6-9BAF-36930A661D9B@zytor.com> <20190122133901.GA189736@google.com> <117d2f96-b0e9-2376-69b7-836fa0c52539@opersys.com> <CAKOZuesWgo3CZj49aUChX_-dpijCrVLxgVZChyLLmOWXCLQf-Q@mail.gmail.com> <6f82d99a-d877-aeae-3e63-95dff260c445@opersys.com> <20190124205929.GA141510@google.com>
+        Fri, 25 Jan 2019 14:07:22 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:56033 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725778AbfAYTHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 14:07:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=SLCY49f44O40vBlW5iLYi8dQuN31A4lVjgyHOMHXJfQ=; b=yKB1reusBEMpfgeDRTOYNk/F5P
+        /iDS2Z/kanqeslz34D2L9Sun9SXyAMSlM17JNahEszbeoFiSB2FDQkdT/1Z4bF59fdDvAqJpS3pNh
+        xqnOJCUBzJeMzdeQMuqhKiD9T3ghA/+1UZPMPAoXxUY1OaLg7t/xjNf9rIqG7LpXPYE4=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gn6ot-0006pC-Gt; Fri, 25 Jan 2019 20:07:15 +0100
+Date:   Fri, 25 Jan 2019 20:07:15 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Heiner Kallweit <hkallweit1@gmail.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Realtek linux nic maintainers <nic_swsd@realtek.com>,
+        netdev@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] r8169: Load MAC address from device tree if present
+Message-ID: <20190125190715.GG22211@lunn.ch>
+References: <20190125101814.6262-1-thierry.reding@gmail.com>
+ <20190125145711.GF12962@lunn.ch>
+ <42d32783-c433-b859-6ba4-f2864f034871@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [RFC] Provide in-kernel headers for making it easy to extend the kernel
-To:     Joel Fernandes <joel@joelfernandes.org>,
-        Karim Yaghmour <karim.yaghmour@opersys.com>
-CC:     Daniel Colascione <dancol@google.com>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Christoph Hellwig <hch@infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>, ast@kernel.org,
-        atish patra <atishp04@gmail.com>,
-        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
-        Jan Kara <jack@suse.cz>, Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>, kernel-team@android.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        Manoj Rao <linux@manojrajarao.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Paul McKenney <paulmck@linux.vnet.ibm.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>, rostedt@goodmis.org,
-        Thomas Gleixner <tglx@linutronix.de>,
-        "maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-        yhs@fb.com
-From:   hpa@zytor.com
-Message-ID: <50511D3D-7193-4B1C-952E-CCC37FA71388@zytor.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <42d32783-c433-b859-6ba4-f2864f034871@gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On January 24, 2019 12:59:29 PM PST, Joel Fernandes <joel@joelfernandes.org> wrote:
->On Thu, Jan 24, 2019 at 07:57:26PM +0100, Karim Yaghmour wrote:
->> 
->> On 1/23/19 11:37 PM, Daniel Colascione wrote:
->[..]
->> > > Personally I advocated a more aggressive approach with Joel in
->private:
->> > > just put the darn headers straight into the kernel image, it's
->the
->> > > *only* artifact we're sure will follow the Android device
->whatever
->> > > happens to it (like built-in ftrace).
->> > 
->> > I was thinking along similar lines. Ordinarily, we make loadable
->> > kernel modules. What we kind of want here is a non-loadable kernel
->> > module --- or a non-loadable section in the kernel image proper.
->I'm
->> > not familiar with early-stage kernel loader operation: I know it's
->> > possible to crease discardable sections in the kernel image, but
->can
->> > we create sections that are never slurped into memory in the first
->> > place? If not, maybe loading and immediately discarding the header
->> > section is good enough.
->> 
->> Interesting. Maybe just append it to the image but have it not loaded
->and
->> have a kernel parameter than enables a "/proc/kheaders" driver to
->know where
->> the fetch the appended headers from storage at runtime. There would
->be no
->> RAM loading whatsoever of the headers, just some sort of
->> "kheaders=/dev/foobar:offset:size" parameter. If you turn the option
->on, you
->> get a fatter kernel image size to store on permanent storage, but no
->impact
->> on what's loaded at boot time.
->
->Embedding anything into the kernel image does impact boot time though
->because
->it increase the time spent by bootloader. A module OTOH would not have
->such
->overhead.
->
->Also a kernel can be booted in any number of ways other than mass
->storage so
->it is not a generic Linux-wide solution to have a kheaders= option like
->that.
->If the option is forgotten, then the running system can't use the
->feature.
->The other issue is it requires a kernel command line option /
->bootloader
->changes for that which adds more configuration burden, which not be
->needed
->with a module.
->
->> > Would such a thing really do better than LZMA? LZMA already has
->very
->> > clever techniques for eliminating long-range redundancies in
->> > compressible text, including redundancies at the sub-byte level. I
->can
->> > certainly understand the benefit of stripping comments, since
->removing
->> > comments really does decrease the total amount of information the
->> > compressor has to preserve, but I'm not sure how much the encoding
->> > scheme you propose below would help, since it reminds me of the
->> > encoding scheme that LZMA would discover automatically.
->> 
->> I'm no compression algorithm expert. If you say LZMA would do the
->> same/better than what I suggested then I have no reason to contest
->that. My
->> goal is to see the headers as part of the kernel image that's
->distributed on
->> devices so that they don't have to be chased around. I'm just trying
->to make
->> it as palatable as possible.
->
->I believe LZMA is really good at that sort of thing too.
->
->Also at 3.3MB of module size, I think we are really good size-wise. But
->Dan
->is helping look at possibly reducing further if he gets time. Many
->modules in
->my experience are much bigger. amdgpu.ko on my Linux machine is 6.1MB.
->
->I really think making it a module is the best way to make sure this is
->bundled with the kernel on the widest number of Android and other Linux
->systems, without incurring boot time overhead, or any other command
->line
->configuration burden.
->
->I spoke to so many people at LPC personally with other kernel
->contributors,
->and many folks told me one word - MODULE :D.  Even though I hesitated
->at
->first, now it seems the right solution.
->
->If no one seriously objects, I'll clean this up and post a v2 and with
->the
->RFC tag taken off. Thank you!
->
-> - Joel
+> Andrew, for my understanding: What do you think is wrong with the 
+> alignment requirement? It was introduced because we do a 32 bit access
+> to the start address of the array and want to avoid an unaligned access.
 
-So let me throw in a different notion.
+Hi Heiner
 
-A kernel module really is nothing other than a kernel build system artifact stored in the filesystem.
+Because you are doing pointer aliasing, the compiler will by default
+generate bad code, doing unaligned access. Adding the attribute works
+around this. But it is just a work around. Since this is very slow
+path code, i would just avoid the pointer aliasing, write a bit more C
+code as Thierry suggested, and the optimiser will probably figure out
+what is going on and produce reasonable code.
 
-I really don't at any reason whatsoever why this is direct from just producing an archive and putting it in the module directory, except that the latter is far simpler.
+Also, in general, by avoiding pointer aliasing, you allow static code
+checkers to work better. They are more likely to discover buffer
+overruns, etc.
 
-I see literally *no* problem, social or technical, you are solvin by actually making it a kernel ELF object.
--- 
-Sent from my Android device with K-9 Mail. Please excuse my brevity.
+    Andrew
