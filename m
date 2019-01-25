@@ -6,158 +6,73 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D02FCC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D9E5C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A8742218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14C5A218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:25:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729300AbfAYOX1 (ORCPT
+        id S1726800AbfAYOZC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:23:27 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2758 "EHLO huawei.com"
+        Fri, 25 Jan 2019 09:25:02 -0500
+Received: from smtprz14.163.net ([106.3.154.247]:54046 "EHLO smtp.tom.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728477AbfAYOWD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:22:03 -0500
-Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 3F6FAC7A571B0D0D95DC;
-        Fri, 25 Jan 2019 22:21:59 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS409-HUB.china.huawei.com (10.3.19.209) with Microsoft SMTP Server id
- 14.3.408.0; Fri, 25 Jan 2019 22:21:52 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <linux-scsi@vger.kernel.org>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>,
-        Xiang Chen <chenxiang66@hisilicon.com>,
-        "John Garry" <john.garry@huawei.com>
-Subject: [PATCH 06/13] scsi: hisi_sas: remove the check of sas_dev status in hisi_sas_I_T_nexus_reset()
-Date:   Fri, 25 Jan 2019 22:22:32 +0800
-Message-ID: <1548426159-225679-7-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1548426159-225679-1-git-send-email-john.garry@huawei.com>
-References: <1548426159-225679-1-git-send-email-john.garry@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+        id S1726321AbfAYOZB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 09:25:01 -0500
+Received: from 172.25.16.148 (unknown [172.25.16.148])
+        by freemail01.tom.com (Postfix) with ESMTP id C49271C819EF
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 22:01:11 +0800 (CST)
+Received: from 172.25.16.90 (HELO smtp.tom.com) ([172.25.16.90])
+          by localhost (TOM SMTP Server) with SMTP ID 606470645
+          for <linux-kernel@vger.kernel.org>;
+          Fri, 25 Jan 2019 22:01:11 +0800 (CST)
+Received: from antispam1.tom.com (unknown [172.25.16.55])
+        by freemail01.tom.com (Postfix) with ESMTP id A63F61C819B3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 22:01:11 +0800 (CST)
+Received: from antispam1.tom.com (antispam1.tom.com [127.0.0.1])
+        by antispam1.tom.com (Postfix) with ESMTP id A148F10016C4
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 22:01:11 +0800 (CST)
+X-Virus-Scanned: Debian amavisd-new at antispam1.tom.com
+Received: from antispam1.tom.com ([127.0.0.1])
+        by antispam1.tom.com (antispam1.tom.com [127.0.0.1]) (amavisd-new, port 10024)
+        with ESMTP id SxUx8Pbg4UXm for <linux-kernel@vger.kernel.org>;
+        Fri, 25 Jan 2019 22:01:10 +0800 (CST)
+Received: from localhost (unknown [222.209.19.163])
+        by antispam1.tom.com (Postfix) with ESMTPA id 58B691001670;
+        Fri, 25 Jan 2019 22:01:10 +0800 (CST)
+From:   Liu Xiang <liu.xiang6@zte.com.cn>
+To:     jack@suse.com
+Cc:     linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
+        liuxiang_1999@126.com, Liu Xiang <liu.xiang6@zte.com.cn>
+Subject: [PATCH] ext2: Remove useless reset code
+Date:   Fri, 25 Jan 2019 22:01:04 +0800
+Message-Id: <1548424864-4647-1-git-send-email-liu.xiang6@zte.com.cn>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+If ((char *)de == dir_end) is true, the name_len will not be used
+in the subsequent routine. So the reset code can be removed.
 
-When issing a hardreset to a SATA device when running IO, it is possible
-that abnormal CQs of the device are returned. Then enter error handle, it
-doesn't enter function hisi_sas_abort_task() as there is no timeout IO,
-and it doesn't set device as HISI_SAS_DEV_EH. So when hardreset by libata
-later, it actually doesn't issue hardreset as there is a check to judge
-whether device is in error.
-
-For this situation, actually need to hardreset the device to recover.
-So remove the check of sas_dev status in hisi_sas_I_T_nexus_reset().
-
-Before we add the check to avoid the endless loop of reset for
-directly-attached SATA device at probe time, actually we flutter it for
-it, so it is not necessary to add the check now.
-
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
+Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
 ---
- drivers/scsi/hisi_sas/hisi_sas.h       | 6 ------
- drivers/scsi/hisi_sas/hisi_sas_main.c  | 9 ---------
- drivers/scsi/hisi_sas/hisi_sas_v2_hw.c | 1 -
- 3 files changed, 16 deletions(-)
+ fs/ext2/dir.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas.h b/drivers/scsi/hisi_sas/hisi_sas.h
-index 97f0fda..aac8b38 100644
---- a/drivers/scsi/hisi_sas/hisi_sas.h
-+++ b/drivers/scsi/hisi_sas/hisi_sas.h
-@@ -83,11 +83,6 @@ enum {
- 	PORT_TYPE_SATA = (1U << 0),
- };
- 
--enum dev_status {
--	HISI_SAS_DEV_NORMAL,
--	HISI_SAS_DEV_EH,
--};
--
- enum {
- 	HISI_SAS_INT_ABT_CMD = 0,
- 	HISI_SAS_INT_ABT_DEV = 1,
-@@ -188,7 +183,6 @@ struct hisi_sas_device {
- 	enum sas_device_type	dev_type;
- 	int device_id;
- 	int sata_idx;
--	u8 dev_status;
- };
- 
- struct hisi_sas_tmf_task {
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_main.c b/drivers/scsi/hisi_sas/hisi_sas_main.c
-index e586660..b57a44b 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_main.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_main.c
-@@ -626,7 +626,6 @@ static struct hisi_sas_device *hisi_sas_alloc_dev(struct domain_device *device)
- 
- 			hisi_hba->devices[i].device_id = i;
- 			sas_dev = &hisi_hba->devices[i];
--			sas_dev->dev_status = HISI_SAS_DEV_NORMAL;
- 			sas_dev->dev_type = device->dev_type;
- 			sas_dev->hisi_hba = hisi_hba;
- 			sas_dev->sas_device = device;
-@@ -1495,7 +1494,6 @@ static int hisi_sas_abort_task(struct sas_task *task)
- 	task->task_state_flags |= SAS_TASK_STATE_ABORTED;
- 	spin_unlock_irqrestore(&task->task_state_lock, flags);
- 
--	sas_dev->dev_status = HISI_SAS_DEV_EH;
- 	if (task->lldd_task && task->task_proto & SAS_PROTOCOL_SSP) {
- 		struct scsi_cmnd *cmnd = task->uldd_task;
- 		struct hisi_sas_slot *slot = task->lldd_task;
-@@ -1639,15 +1637,10 @@ static int hisi_sas_debug_I_T_nexus_reset(struct domain_device *device)
- 
- static int hisi_sas_I_T_nexus_reset(struct domain_device *device)
- {
--	struct hisi_sas_device *sas_dev = device->lldd_dev;
- 	struct hisi_hba *hisi_hba = dev_to_hisi_hba(device);
- 	struct device *dev = hisi_hba->dev;
- 	int rc = TMF_RESP_FUNC_FAILED;
- 
--	if (sas_dev->dev_status != HISI_SAS_DEV_EH)
--		return TMF_RESP_FUNC_FAILED;
--	sas_dev->dev_status = HISI_SAS_DEV_NORMAL;
--
- 	rc = hisi_sas_internal_task_abort(hisi_hba, device,
- 					HISI_SAS_INT_ABT_DEV, 0);
- 	if (rc < 0) {
-@@ -1671,7 +1664,6 @@ static int hisi_sas_lu_reset(struct domain_device *device, u8 *lun)
- 	struct device *dev = hisi_hba->dev;
- 	int rc = TMF_RESP_FUNC_FAILED;
- 
--	sas_dev->dev_status = HISI_SAS_DEV_EH;
- 	if (dev_is_sata(device)) {
- 		struct sas_phy *phy;
- 
-@@ -2100,7 +2092,6 @@ int hisi_sas_alloc(struct hisi_hba *hisi_hba, struct Scsi_Host *shost)
- 	for (i = 0; i < HISI_SAS_MAX_DEVICES; i++) {
- 		hisi_hba->devices[i].dev_type = SAS_PHY_UNUSED;
- 		hisi_hba->devices[i].device_id = i;
--		hisi_hba->devices[i].dev_status = HISI_SAS_DEV_NORMAL;
- 	}
- 
- 	for (i = 0; i < hisi_hba->queue_count; i++) {
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-index fc0bcfa..85236ef 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v2_hw.c
-@@ -868,7 +868,6 @@ hisi_sas_device *alloc_dev_quirk_v2_hw(struct domain_device *device)
- 
- 			hisi_hba->devices[i].device_id = i;
- 			sas_dev = &hisi_hba->devices[i];
--			sas_dev->dev_status = HISI_SAS_DEV_NORMAL;
- 			sas_dev->dev_type = device->dev_type;
- 			sas_dev->hisi_hba = hisi_hba;
- 			sas_dev->sas_device = device;
+diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+index 3b8114d..5ec497f 100644
+--- a/fs/ext2/dir.c
++++ b/fs/ext2/dir.c
+@@ -517,7 +517,6 @@ int ext2_add_link (struct dentry *dentry, struct inode *inode)
+ 		while ((char *)de <= kaddr) {
+ 			if ((char *)de == dir_end) {
+ 				/* We hit i_size */
+-				name_len = 0;
+ 				rec_len = chunk_size;
+ 				de->rec_len = ext2_rec_len_to_disk(chunk_size);
+ 				de->inode = 0;
 -- 
 1.9.1
 
