@@ -2,224 +2,233 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F22CBC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 549C5C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:37:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 295CD218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:34:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="BSv4uqUP"
+	by mail.kernel.org (Postfix) with ESMTP id 154EC218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:37:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729071AbfAYQeq (ORCPT
+        id S1726825AbfAYQhB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:34:46 -0500
-Received: from cock.li ([185.100.85.212]:45018 "EHLO cock.li"
+        Fri, 25 Jan 2019 11:37:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35068 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726256AbfAYQeo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:34:44 -0500
+        id S1726256AbfAYQhB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 11:37:01 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 899849FDF3;
+        Fri, 25 Jan 2019 16:37:00 +0000 (UTC)
+Received: from treble (ovpn-120-227.rdu2.redhat.com [10.10.120.227])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id B835984ED;
+        Fri, 25 Jan 2019 16:36:59 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 10:36:57 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Igor Mammedov <imammedo@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Joe Mario <jmario@redhat.com>, Jiri Kosina <jkosina@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: cpu/hotplug: broken sibling thread hotplug
+Message-ID: <20190125163657.rqbykfn7ebpclc2z@treble>
+References: <20190124165713.2b0b37ed@redhat.com>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
-        t=1548434079; bh=TK+tNAy89sPSyNdkFAV6TLfN89aNATDSEnRCTfwPTZ8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=BSv4uqUPj1Ur8RHzQ/n+UDce6l//yjf+dYp0MzOSMH/2WTcPyYyZuShl/MKvgB8bx
-         EbaeL+KUivYsYFaVYQd+Tzh6rb8BJ4mkClaISKqDsvG+zK3DBcgNaEtYUD5i9tw6Eo
-         /bh/c6ot/cKpbGUrgAJ5cVrzTCVycPolnw6x4A6A4lt7XeH8C/LRvcuHf+et4BEan4
-         RKnB+GpV6EE4QF7Cp1sFFM4vg2VgIS4C4E4PCQpmcx3DDIyi407xADRDW8SIyrZaeX
-         0olZ6rBACqsKrFqhlXI3zRaMikstAfNNkcABq9oY3Dya3bk4QAE+JNEiXNEKSvsu+r
-         q62Lcj+lqHmPQ==
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 25 Jan 2019 16:34:39 +0000
-From:   linuxgpletc@redchan.it
-To:     Boris Lukashev <blukashev@sempervictus.com>
-Cc:     Ivan Ivanov <qmastery16@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        gentoo-user@lists.gentoo.org, freebsd-chat@freebsd.org,
-        misc@openbsd.org, esr@thyrsus.com
-Subject: Re: GRSec is vital to Linux security
-In-Reply-To: <CAFUG7Ce87ALJNgOSY5SZYFy4YWnOLdGx_+L-M+BTERBToD9GbQ@mail.gmail.com>
-References: <7bdd68b2223ea30da821b37a68d940a7@redchan.it>
- <CAFUG7Ce87ALJNgOSY5SZYFy4YWnOLdGx_+L-M+BTERBToD9GbQ@mail.gmail.com>
-Message-ID: <1abb6fa63ec5a9aa94a5b794c93f99e7@redchan.it>
-X-Sender: linuxgpletc@redchan.it
-User-Agent: Roundcube Webmail/1.3.6
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190124165713.2b0b37ed@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 25 Jan 2019 16:37:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Are you a lawyer,
-Yes (also a programmer)
-> acting on behalf of someone
-No
-
-> Sue to what end?
-I wish I could say "to free the source", a court isn't going to order 
-specific performance where there is no contract, and there is no 
-contract between the Copyright owners and GRSec. Just a bare (and 
-revocable at will) license.
-
-They could revoke if they didn't like Brad's face.
-They can sue for damages (profits probably) since he violated the 
-license, and thus copyright (he would be more protected if he did have a 
-contract with the (C) owners: damages on his end would then more likely 
-simply be whatever he paid for the license)
-
-> Force them to freely distribute their work/give up
-> all those hours of backports/integration and actual invention?
-I wish this were possible, but the GPL is not a contract in this 
-instance, so specific performance is not available. It's just a bare 
-license, you can get damages ($), that's all.
-
-If the Copyright owners registered their copyrights prior to the 
-violation they could go for statutory damages and attorneys fees though.
-
-So to what end...
-Rage at GRSec getting off the opensource boat.
-Anger at not having the security-code /slave/ we had for years.
-Bellowing about how we are servants to our creed, and yet this 
-once-compatriot has betrayed that which we hold dear.
-
-An attempt to use the GPL as a sword (instead of as a shield)?
-
-Opensource works because men like being slaves. Slaves to their country, 
-slaves to women, slaves to an engineering field, slaves to a belief, 
-(and more recently: slaves to Codes of Conducts for hobby projects!).
-
-Should not those who are still the slaves, rage against he who would use 
-their free labour and end his contributions back?
-
-I think that is the entire point of "Copyleft". It's a way of getting 
-work that would cost millions of dollars, for free.
-
-It works pretty well, up until 40 year old programmer has no stacy to 
-fuck, and no possibility of getting one.
-
-But there's one last striving that can be done: one more needle prick 
-(or even knife gouge) that can be done against the escapee: and that is 
-a copyright lawsuit.
-
-Since I cannot have my free leet secure kernel patch anymore... and no 
-one is out-in-the-open posting it in defiance of Brad (the escapee), I 
-would like one of the fellow slaves with standing - to sue him. In 
-vengeance for his betrayal of our class. They have a justiciable case, 
-evidence already in the hands of the courts (thanks to the libel case 
-(Thank you Bruce :D)).
-
-What I really want is for GRSec to remain or return to being open and 
-free, like the GPL is supposed to provide.
-
-On 2019-01-24 20:18, Boris Lukashev wrote:
-> Sue to what end? Force them to freely distribute their work/give up
-> all those hours of backports/integration and actual invention? The
-> only thing a suit could achieve is to prevent them from doing any work
-> at all as you cant force someone to work for free (in the US, under
-> most circumstances). No contributor will be able to prove quantifiable
-> material damages, and the outcomes are between destruction of the only
-> Linux vendor who puts priority on security or a waste of money and
-> time in the lawsuit. Only the lawyers benefit, everyone else loses out
-> directly or indirectly. Are you a lawyer, acting on behalf of someone
-> interested in slowing the progress of defensive technologies, or just
-> miss the days when being as script kiddie made people feel powerful?
+On Thu, Jan 24, 2019 at 04:57:13PM +0100, Igor Mammedov wrote:
+> In case guest is booted with one CPU present and then later
+> a sibling CPU is hotplugged [1], it stays offline since SMT
+> is disabled.
 > 
-> On Thu, Jan 24, 2019 at 11:54 AM <linuxgpletc@redchan.it> wrote:
->> 
->> There is ample standing to sue. GRSec made it's "access agreement"
->> public,
->> which included terms to prevent redistribution (if you redistribute, 
->> we
->> punish you). Which is a direct violation of the "no additional
->> restrictive terms"
->> clause in the GPL.
->> 
->> Why won't anyone bring a copyright lawsuit?
->> 
->> Are they happy that GRSec gets to use their code, and prevent anyone
->> from
->> freeing the derivative work? The whole point of the GPL is that
->> derivative
->> works be under the same terms.
->> 
->> Bradly Spengler has violated this understanding, he thinks that his 
->> code
->> doesn't need to be under the same terms. The code which is simply a
->> derivative work of the linux kernel.
->> 
->> There is a valid, actionable case here.
->> 
->> Any of the programmers / copyright owners who's code he modified can 
->> sue
->> him.
->> He is violating their terms of use of their software.
->> He is in the USA. It's not difficult. Just SUE.
->> 
->> Just because VMWare does things one doesn't like doesn't mean you 
->> cannot
->> sue
->> Bradly Spengler.
->> 
->> Another thing is, the "Free software" legal "representation" is trash.
->> The SFConservancy was run for the longest time by a non-lawyer BKuhn.
->> 
->> He advised "clients" to WAIT it out! And then.. guess what they have
->> waiting years?
->> No case because the statute of limitations had been passed.
->> 
->> That's how that baby-faced moron has "helped" the free software legal
->> cause.
->> 
->> You guys need to hire real IP lawyers, not bullshit pretenders.
->> And if Bradly is making money, and enough of it, you might have 
->> profits
->> you could target.
->> 
->> I kinda think that the "Free software legal" teams exist only to 
->> diffuse
->> valid suits,
->> and stymie the guys who actually wrote the code and retained their
->> copyrights.
->> 
->> Pure legal malpractice by any accounting.
->> 
->> On 2019-01-24 16:25, Boris Lukashev wrote:
->> > You've never heard of VMware, I take it? Its a proprietary half Linux
->> > which beats GPL suits with strong arm tactics and technicalities.
->> > Unlike grsec, they don't distribute any source, because it's proof of
->> > theft... Grsecs back port work is also public, since they're public
->> > upstream patches or mailing list patches, the GCC plugins are the real
->> > magic... Those aren't as GPL as the kernel, rap is patented, respectre
->> > likely will be as well. The critical code changes they need (per CPU
->> > PGD, for one) will not be accepted as Linus has "said so." Those code
->> > bits are out there...
->> >
->> > Also, doesn't matter if their patch leaks for the most part (4.4 just
->> > did get leaked a few weeks back), as I wrote before, nobody really has
->> > the time or skill available to maintain at their level of quality...
->> > Linux might be free, but it's not something that should be run in
->> > production when there's data or resource at stake.
->> >
->> > Is the thought process that they should open up their commercial
->> > stable code for free to all? Because RHEL has the same "don't leak"
->> > policy on RHEL sources too... VMware even goes so far as to blatantly
->> > claim not to use Linux. How about Google's internal Linux?
->> >
->> > GPL is dead (has been for 20y), build the strongest defenses you can
->> > with whatever code you can get and prove, because your adversaries
->> > won't care about which license clause their tooling adheres to.
->> >
->> > Boris Lukashev
->> > Systems Architect
->> > Semper Victus
->> >
->> > -------- Original Message --------
->> > From: linuxgpletc@redchan.it
->> > Sent: Wednesday, January 23, 2019 05:35 PM
->> > To: bruce@perens.com
->> > Subject: Re: GRSec is vital to Linux security
->> > CC:
->> > moglen@columbia.edu,bkuhn@sfconservancy.org,compliance@sfconservancy.org,blukashev@sempervictus.com,tcallawa@redhat.com,torvalds@osdl.org
+> Bisects to
+>  73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS")
+> which used __max_smt_threads to decide disabling SMT and in
+> case [1] only primary CPU thread is present hence SMT
+> is disabled.
+> 
+> Later bc2d8d262cba (cpu/hotplug: Fix SMT supported evaluation),
+> rewrites code path but evaluation criteria still depends on
+> sibling thread being present at boot time, so problem persist.
+> 
+> 1) QEMU -smp 1,sockets=2,cores=1,threads=2 -monitor stdio ...
+>    # hotplug sibling thread
+>    (qemu) device_add qemu64-x86_64-cpu,socket-id=0,core-id=0,thread-id=1
+> 
+> I've failed to find reasoning behind statement:
+>   "
+>   cpu/hotplug: detect SMT disabled by BIOS
+> 
+>     If SMT is disabled in BIOS, the CPU code doesn't properly detect it.
+>   "
+> 
+> Question is 
+>  1: why cpu_smt_check_topology_early() at check_bugs()
+> wasn't sufficient to detect SMT disabled in BIOS and
+>  2: why side-effect of present at boot siblings were used
+>     to keep SMT enabled?
+
+Hi Igor,
+
+Thanks for reporting this.
+
+The original problems with SMT disabled in BIOS were:
+
+1) /sys/devices/system/cpu/smt showed "on"; and
+
+2) vmx_vm_init() was incorrectly showing the L1TF_MSG_SMT warning.
+
+So 73d5e2b47264 ("cpu/hotplug: detect SMT disabled by BIOS") was
+intended to fix that, by reporting SMT as permanently disabled, when the
+BIOS has done so.
+
+The problem is, I don't think there's a way to detect a difference
+between the HW "SMT disabled by BIOS" case and the virt "Sibling not yet
+plugged in" case.
+
+I'd propose that we consider #1 above to *not* be a problem.  Because in
+the virt case, it's possible that a sibling thread can be brought online
+later.  So it makes sense to default with smt control "on" to allow for
+that possibility.
+
+The real problem is #2.  Which is a simple fix: change vmx_vm_init() to
+query the current SMT state with sched_smt_active(), instead of looking
+at the "control" sysfs value.
+
+How about this patch?  It's just a revert of 73d5e2b47264 and
+bc2d8d262cba, plus the 1-line vmx_vm_init() change.  If it looks ok to
+you, I can clean it up and submit an official version.
+
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 453e66291e38..2a4db86c2780 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -70,7 +70,7 @@ void __init check_bugs(void)
+ 	 * identify_boot_cpu() initialized SMT support information, let the
+ 	 * core code know.
+ 	 */
+-	cpu_smt_check_topology_early();
++	cpu_smt_check_topology();
+ 
+ 	if (!IS_ENABLED(CONFIG_SMP)) {
+ 		pr_info("CPU: ");
+diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
+index 886ad6db0926..494f32ae6e6f 100644
+--- a/arch/x86/kvm/vmx.c
++++ b/arch/x86/kvm/vmx.c
+@@ -11102,7 +11102,7 @@ static int vmx_vm_init(struct kvm *kvm)
+ 			 * Warn upon starting the first VM in a potentially
+ 			 * insecure environment.
+ 			 */
+-			if (cpu_smt_control == CPU_SMT_ENABLED)
++			if (sched_smt_active())
+ 				pr_warn_once(L1TF_MSG_SMT);
+ 			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
+ 				pr_warn_once(L1TF_MSG_L1D);
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index 218df7f4d3e1..5041357d0297 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -180,12 +180,10 @@ enum cpuhp_smt_control {
+ #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
+ extern enum cpuhp_smt_control cpu_smt_control;
+ extern void cpu_smt_disable(bool force);
+-extern void cpu_smt_check_topology_early(void);
+ extern void cpu_smt_check_topology(void);
+ #else
+ # define cpu_smt_control		(CPU_SMT_ENABLED)
+ static inline void cpu_smt_disable(bool force) { }
+-static inline void cpu_smt_check_topology_early(void) { }
+ static inline void cpu_smt_check_topology(void) { }
+ #endif
+ 
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index d7c2e48ed10d..240fb4ab3f38 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -360,8 +360,6 @@ void __weak arch_smt_update(void) { }
+ enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+ EXPORT_SYMBOL_GPL(cpu_smt_control);
+ 
+-static bool cpu_smt_available __read_mostly;
+-
+ void __init cpu_smt_disable(bool force)
+ {
+ 	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
+@@ -378,25 +376,11 @@ void __init cpu_smt_disable(bool force)
+ 
+ /*
+  * The decision whether SMT is supported can only be done after the full
+- * CPU identification. Called from architecture code before non boot CPUs
+- * are brought up.
+- */
+-void __init cpu_smt_check_topology_early(void)
+-{
+-	if (!topology_smt_supported())
+-		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+-}
+-
+-/*
+- * If SMT was disabled by BIOS, detect it here, after the CPUs have been
+- * brought online. This ensures the smt/l1tf sysfs entries are consistent
+- * with reality. cpu_smt_available is set to true during the bringup of non
+- * boot CPUs when a SMT sibling is detected. Note, this may overwrite
+- * cpu_smt_control's previous setting.
++ * CPU identification. Called from architecture code.
+  */
+ void __init cpu_smt_check_topology(void)
+ {
+-	if (!cpu_smt_available)
++	if (!topology_smt_supported())
+ 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+ }
+ 
+@@ -409,18 +393,10 @@ early_param("nosmt", smt_cmdline_disable);
+ 
+ static inline bool cpu_smt_allowed(unsigned int cpu)
+ {
+-	if (topology_is_primary_thread(cpu))
++	if (cpu_smt_control == CPU_SMT_ENABLED)
+ 		return true;
+ 
+-	/*
+-	 * If the CPU is not a 'primary' thread and the booted_once bit is
+-	 * set then the processor has SMT support. Store this information
+-	 * for the late check of SMT support in cpu_smt_check_topology().
+-	 */
+-	if (per_cpu(cpuhp_state, cpu).booted_once)
+-		cpu_smt_available = true;
+-
+-	if (cpu_smt_control == CPU_SMT_ENABLED)
++	if (topology_is_primary_thread(cpu))
+ 		return true;
+ 
+ 	/*
+diff --git a/kernel/smp.c b/kernel/smp.c
+index d86eec5f51c1..084c8b3a2681 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -584,8 +584,6 @@ void __init smp_init(void)
+ 		num_nodes, (num_nodes > 1 ? "s" : ""),
+ 		num_cpus,  (num_cpus  > 1 ? "s" : ""));
+ 
+-	/* Final decision about SMT support */
+-	cpu_smt_check_topology();
+ 	/* Any cleanup work */
+ 	smp_cpus_done(setup_max_cpus);
+ }
+
+
