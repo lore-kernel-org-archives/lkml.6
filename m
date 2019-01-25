@@ -2,95 +2,104 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 279F1C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3967AC282C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7DEC21872
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:30:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="OylEizMG"
+	by mail.kernel.org (Postfix) with ESMTP id 134CA218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:31:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbfAYUaZ (ORCPT
+        id S1729384AbfAYUbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 15:30:25 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:39458 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbfAYUaY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 15:30:24 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1548448221; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=nU4nsC16XwU32AgrNaULkRhA19eZpel/HCT5A8SWe08=;
-        b=OylEizMGiL5YRP90sN3JQebYz/Vmw8HxsMTwgTxTpinKVlaS1wJR+0b9YR/hcy+3hG/FPF
-        k2U4GUQWSX07AGufgC71QM5ShYIUZDov1LNTVhLZmAqYgdAJg7tRYTS1akjEGfQGl8FWLS
-        W2R5uyexFzmsPSOSdYlxreCdhqfDd/s=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-Cc:     alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 2/2] sound: soc: jz4740: Add support for multichannel audio on JZ4780
-Date:   Fri, 25 Jan 2019 17:30:09 -0300
-Message-Id: <20190125203009.24301-2-paul@crapouillou.net>
-In-Reply-To: <20190125203009.24301-1-paul@crapouillou.net>
-References: <20190125203009.24301-1-paul@crapouillou.net>
+        Fri, 25 Jan 2019 15:31:03 -0500
+Received: from mga07.intel.com ([134.134.136.100]:50533 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726044AbfAYUbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 15:31:03 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 12:31:02 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,523,1539673200"; 
+   d="scan'208";a="133144004"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga001.jf.intel.com with ESMTP; 25 Jan 2019 12:30:59 -0800
+Received: from andy by smile with local (Exim 4.92-RC4)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1gn87u-0004L3-Bj; Fri, 25 Jan 2019 22:30:58 +0200
+Date:   Fri, 25 Jan 2019 22:30:58 +0200
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Cc:     Mogens Jensen <mogens-jensen@protonmail.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Dean Wallace <duffydack73@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Stable <stable@vger.kernel.org>,
+        Johannes Stezenbach <js@sig21.net>,
+        Carlo Caione <carlo@endlessm.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
+Message-ID: <20190125203058.GT9224@smile.fi.intel.com>
+References: <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
+ <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
+ <20190117091214.7djttnpo4jjzi4su@spock>
+ <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
+ <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
+ <983fb777-df22-1b53-acea-8bbcab23b260@redhat.com>
+ <G5Oa_GRw3iClWMtIg1FeCwj1szJHRH6ToqQqCskS_HKzyNhpFFQ3sJndttzyvP3IHRJuHXvDsUC82dnw8r66OIroHCzyqTYbZoki5sSKPUE=@protonmail.com>
+ <43070180-1f10-9285-7564-cfa24e1d222e@linux.intel.com>
+ <3ERhUwlxf4lWV_mn3MgjNMrm8ZDgFevrwjq0KRjy05oM1hGiQUdsPpbIlKytNGHi1ViQ_2Xv7bxzqusfruSjbZJyUSpQ9Uo8HCiNyUdyNdU=@protonmail.com>
+ <1305936b-908d-e256-cc2a-667b6e5e0851@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1305936b-908d-e256-cc2a-667b6e5e0851@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The jz4780 SoC offers the possibility to configure the number of
-channels used for playback. Right now, the corresponding bits in the
-configuration register are always zero, which means that the hardware is
-only configured for monaural sound.
+On Fri, Jan 25, 2019 at 11:57:57AM -0600, Pierre-Louis Bossart wrote:
+> 
+> > > > The only minor annoyance I'm experiencing now, is a large amount of debug output from something in kernel log when audio is played on the system:
+> > > > writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 00 00 ............U...
+> > > > writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 12 00 ............u...
+> > > > ...
+> > > That's enabled via dynamic debug so that's rather a configuration issue
+> > > than a kernel problem?
+> > Do you have any suggestions on how to disable it?
+> > 
+> > My kernel is compiled without DYNAMIC_DEBUG, DEBUG_FS and other debug features, so I don't understand why all this debug output is flooding the kernel log.
+> > 
+> > It's a minor issue, but it would be nice to get rid of it.
+> I can confirm that this happens without DYNAMIC_DEBUG, and somehow changing
+> the log level doesn't seem to matter. I tried changing the console log as a
+> kernel parameter or with playing /proc/sys/kernel/printk, no luck. weird.
 
-With this commit, the hardware is now correctly configured for the
-number of channels requested by ALSA.
+Are you sure you did a clean build?
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- sound/soc/jz4740/jz4740-i2s.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+The logic behind print_hex_dump_bytes() is following:
+- if !CONFIG_PRINTK — nothing should be printed at all
+- otherwise if CONFIG_DYNAMIC_DEBUG — it goes thru its facilities
+- else if goes to KERN_DEBUG level and thus loglevel should affect this either
+  thru command line or via procfs
 
-diff --git a/sound/soc/jz4740/jz4740-i2s.c b/sound/soc/jz4740/jz4740-i2s.c
-index e099c0505b76..05a9d7c20fb0 100644
---- a/sound/soc/jz4740/jz4740-i2s.c
-+++ b/sound/soc/jz4740/jz4740-i2s.c
-@@ -65,6 +65,7 @@
- #define JZ4780_AIC_CONF_FIFO_TX_THRESHOLD_MASK \
- 			(0x1f <<  JZ4780_AIC_CONF_FIFO_TX_THRESHOLD_OFFSET)
- 
-+#define JZ_AIC_CTRL_CHANNELS_MASK (0x7 << 24)
- #define JZ_AIC_CTRL_OUTPUT_SAMPLE_SIZE_MASK (0x7 << 19)
- #define JZ_AIC_CTRL_INPUT_SAMPLE_SIZE_MASK (0x7 << 16)
- #define JZ_AIC_CTRL_ENABLE_RX_DMA BIT(15)
-@@ -81,6 +82,7 @@
- #define JZ_AIC_CTRL_ENABLE_PLAYBACK BIT(1)
- #define JZ_AIC_CTRL_ENABLE_CAPTURE BIT(0)
- 
-+#define JZ_AIC_CTRL_CHANNELS_OFFSET 24
- #define JZ_AIC_CTRL_OUTPUT_SAMPLE_SIZE_OFFSET 19
- #define JZ_AIC_CTRL_INPUT_SAMPLE_SIZE_OFFSET  16
- 
-@@ -287,6 +289,12 @@ static int jz4740_i2s_hw_params(struct snd_pcm_substream *substream,
- 		else
- 			ctrl &= ~JZ_AIC_CTRL_MONO_TO_STEREO;
- 
-+		if (i2s->version >= JZ_I2S_JZ4780) {
-+			ctrl &= ~JZ_AIC_CTRL_CHANNELS_MASK;
-+			ctrl |= (params_channels(params) - 1) <<
-+				JZ_AIC_CTRL_CHANNELS_OFFSET;
-+		}
-+
- 		div_reg &= ~I2SDIV_DV_MASK;
- 		div_reg |= (div - 1) << I2SDIV_DV_SHIFT;
- 	} else {
+If none of the above works like it should, the couple of possibilities I can see:
+- unclean build where previously it was compiled somehow with DEBUG
+- ignore_loglevel is in the kernel command line
+
 -- 
-2.11.0
+With Best Regards,
+Andy Shevchenko
+
 
