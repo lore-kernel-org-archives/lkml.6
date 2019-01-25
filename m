@@ -2,211 +2,128 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EB8FC282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 01:14:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048D1C282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 01:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53C30218D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 01:14:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C101E218D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 01:20:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="a40iWt1i"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Wlt9/t3J"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728222AbfAYBO0 (ORCPT
+        id S1728268AbfAYBUM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 20:14:26 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:33911 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727745AbfAYBOZ (ORCPT
+        Thu, 24 Jan 2019 20:20:12 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:46887 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726015AbfAYBUL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 20:14:25 -0500
-Received: by mail-pg1-f196.google.com with SMTP id j10so3474184pga.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 17:14:24 -0800 (PST)
+        Thu, 24 Jan 2019 20:20:11 -0500
+Received: by mail-pg1-f194.google.com with SMTP id w7so3448982pgp.13;
+        Thu, 24 Jan 2019 17:20:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=m+5DQI999ajUqCArFEiIV2zdq64KwEmFrspdMbb9YOM=;
-        b=a40iWt1ikL4vIhxIoE1K7/fUIXfa/3tz241xbFVKhaJWBCo42oaxXU+b7b5Uy5zVVK
-         hj1XmGHncIng5H7jt+tUzbOlJMjnQmFVhInyKhg/8BjfZ2aBx1kEa9zUEfkWmM+v9jGY
-         rQ7XbKZl9Fv1qUOy/Pf1MjmgYAugZB+9uJQCA=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nKiwnk5Rh0auXyU95dhs5g89Dyq0dht87Z5qnVX942k=;
+        b=Wlt9/t3JYDNyp7pVifdMKeaY39WlKfPC2NxYuyzrhyNw52CVLQX2sU8UpvdR2k4LRk
+         eK8Atw/249waCMtFUvJvMiGZum+Z+e1KEkBHY7VAUlmRfi+g8Ni9m60aqRyIkEFSW1uC
+         D/cjAPKCKf70hhuz1T5g/CEzj5ARyj/Sy+1TZwIR9FvAL1jOGrzGVw9+Pp3/4+kXlyhM
+         MoXam51DLMkcjoB5M1roJlhjGl1ELrYnuOCrHtvVyqpfXQrHGyPGaXxgOCvmgYnOtBqD
+         zKT8ErSfrxcN/ypT5mD3/bCYJ0JtXQW55syega2RTacSlPv8oX9YxY8XDU61fTuGSkhJ
+         eMZA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m+5DQI999ajUqCArFEiIV2zdq64KwEmFrspdMbb9YOM=;
-        b=ZJc93EvKCNjuwhyJIHepWjsl1Gq0A0W89JAm4LkA3pPoppjJJL99iQo3ukPaJcTVFl
-         pi1f4FGTpMxXTLKcSCAxoKpBM97NYpbYQo5dBwqhl6iJTLxb/eqG/nmqokAvlKoC8n2p
-         YKATLQ0WqHrY3AAUbRAQ8cmHnjaoH+OSqoQP7fcKGiOqbVZDYIPWG/B/gZeM4pAS6lQf
-         Yl/eOLBkEBimMwI06IbJftDmIUANjiU4JxcD0wGtf5qn1ERnekKjOaSc2AX2Q97k6Kzc
-         NKfArF5rTqYcTxGSQegwurChGGC+OZ/Q3RJ5cPVnWCUrrdIoQRRhV8Ss25ryDVnh90lL
-         SjDQ==
-X-Gm-Message-State: AJcUukeLMEVBI75ZCOmKIXdyWSCboMeqC76P5XiPRyl+SjJ7WgofGtG3
-        ci4gaqFS9IyMpb4xHdxNF+Dw4A==
-X-Google-Smtp-Source: ALg8bN6eINzDD4ySYFln3BvvB+l303BtgeHHI+9sZy0ttfPkSjIwQpNxohaZKwo2t980dX8awcticg==
-X-Received: by 2002:a62:1542:: with SMTP id 63mr8885809pfv.230.1548378864531;
-        Thu, 24 Jan 2019 17:14:24 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id 85sm31641435pfw.17.2019.01.24.17.14.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 17:14:23 -0800 (PST)
-Date:   Thu, 24 Jan 2019 17:14:12 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v9 1/3] Bluetooth: hci_qca: use wait_until_sent() for
- power pulses
-Message-ID: <20190125011412.GE81583@google.com>
-References: <20190124120808.8275-1-bgodavar@codeaurora.org>
- <20190124120808.8275-2-bgodavar@codeaurora.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nKiwnk5Rh0auXyU95dhs5g89Dyq0dht87Z5qnVX942k=;
+        b=tXpOKG5lEThmwwTXLatJa+5mrS7RObZ97VADiS8kEseHWWiQUXcKmjCw3c480/Iw9g
+         WISo4AtSX8Vf2QfZ1cr/naRbgAu1XWeb+QIMNfvi/+7FJnaOEIgdQshSRbO4ihFLqlHd
+         mDoEe58PQpVJMf49pLUP/n18W+gGTEKi42K4AbnjNQQ/kJx4vzTzkBsYlIhTY6XARrTx
+         OFT8SGgqy1BNxeHQcGytDImeVibzpwL2WMBpl+wLuZSxeUw0unsZegdDuhRpX30IZLWC
+         zLLNJ4pphR6m16JGPvD7h5ijNqC1jYQRAqpjOKIr1uYnJf+S+yHAuX5VNmR51C+wOkjc
+         kvCA==
+X-Gm-Message-State: AJcUukc9QT9hGhKqLIkGIwTNgIi1Ky+gE4wQKJrupZQdlGE+TLkENk7E
+        0b0AniLmTnxRDJ0oJDQiBI3tDD9x
+X-Google-Smtp-Source: ALg8bN63f6hqc6Rg2B3gcLkJLNMyr+aoVarxK/gobmp+Li9+w+jbpTJFCg+50za7ywE2eyrriaKunw==
+X-Received: by 2002:a63:9a09:: with SMTP id o9mr7770627pge.94.1548379210163;
+        Thu, 24 Jan 2019 17:20:10 -0800 (PST)
+Received: from [10.0.2.15] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.gmail.com with ESMTPSA id 184sm32957162pfe.106.2019.01.24.17.20.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 17:20:09 -0800 (PST)
+Subject: Re: [PATCH] of: Make of_node_name_eq() case insensitive
+To:     Frank Rowand <frowand.list@gmail.com>, linux-kernel@vger.kernel.org
+Cc:     vivien.didelot@gmail.com, Rob Herring <robh+dt@kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
+        <devicetree@vger.kernel.org>
+References: <20190124200825.2611-1-f.fainelli@gmail.com>
+ <1a19b5f3-1387-0e6d-2d84-1b61079b4efb@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <3e63d0c3-cb92-5caa-c0db-a04ef8fb5393@gmail.com>
+Date:   Thu, 24 Jan 2019 17:20:07 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <1a19b5f3-1387-0e6d-2d84-1b61079b4efb@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190124120808.8275-2-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 05:38:06PM +0530, Balakrishna Godavarthi wrote:
-> wcn3990 requires a power pulse to turn ON/OFF along with
-> regulators. Sometimes we are observing the power pulses are sent
-> out with some time delay, due to queuing these commands. This is
-> causing synchronization issues with chip, which intern delay the
-> chip setup or may end up with communication issues.
-> 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
-> Changes in v9:
->  * Reverted to 100us sleep.
->  * used inline call msecs_to_jiffies()
-> 
-> Changes in v8:
->  * Updated 1 second timeout instead of indefinite wait.
-> 
-> Changes in v7:
->  *  updated the wait time to 5 ms after sending power pulses.
-> 
-> Changes in v6:
->  * added serdev_device_write_flush() in qca_send_power_pulse
->    instead during the power off pulse.
-> 
-> Changes in v5:
->  * added serdev_device_write_flush() in qca_power_off().
-> ---
->  drivers/bluetooth/hci_qca.c | 40 +++++++++++++++----------------------
->  1 file changed, 16 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index f036c8f98ea3..c08f4d105e73 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -60,6 +60,7 @@
->  #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
->  #define IBS_TX_IDLE_TIMEOUT_MS		2000
->  #define BAUDRATE_SETTLE_TIMEOUT_MS	300
-> +#define POWER_PULSE_TRANS_TIMEOUT_MS	1000
 
-I still doubt that this mega-timeout of 1s is needed, but it shouldn't
-do any harm either, so whatever ...
 
->  /* susclk rate */
->  #define SUSCLK_RATE_32KHZ	32768
-> @@ -1013,11 +1014,10 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
->  		hci_uart_set_baudrate(hu, speed);
->  }
->  
-> -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
-> +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
->  {
-> -	struct hci_uart *hu = hci_get_drvdata(hdev);
-> -	struct qca_data *qca = hu->priv;
-> -	struct sk_buff *skb;
-> +	int ret;
-> +	int timeout = msecs_to_jiffies(POWER_PULSE_TRANS_TIMEOUT_MS);
->  
->  	/* These power pulses are single byte command which are sent
->  	 * at required baudrate to wcn3990. On wcn3990, we have an external
-> @@ -1029,21 +1029,19 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
->  	 * save power. Disabling hardware flow control is mandatory while
->  	 * sending power pulses to SoC.
->  	 */
-> -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
-> -
-> -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
-> -	if (!skb)
-> -		return -ENOMEM;
-> +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to controller", cmd);
->  
-> +	serdev_device_write_flush(hu->serdev);
->  	hci_uart_set_flow_control(hu, true);
-> +	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
-> +	if (ret < 0) {
-> +		bt_dev_err(hu->hdev, "failed to send power pulse %02x", cmd);
-> +		return ret;
-> +	}
->  
-> -	skb_put_u8(skb, cmd);
-> -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
-> -
-> -	skb_queue_tail(&qca->txq, skb);
-> -	hci_uart_tx_wakeup(hu);
-> +	serdev_device_wait_until_sent(hu->serdev, timeout);
->  
-> -	/* Wait for 100 uS for SoC to settle down */
-> +	/* Wait for 100 uS for SoC to settle down for the received byte. */
+On 1/24/19 3:45 PM, Frank Rowand wrote:
+> On 1/24/19 12:08 PM, Florian Fainelli wrote:
+>> Since c32569e358ad ("regulator: Use of_node_name_eq for node name
+>> comparisons") Vivien reported the mc13892-regulator complaining about
+>> not being able to find regulators.
+>>
+>> This is because prior to that commit we used of_node_cmp() to compare
+>> the regulator array passed from mc13892_regulators down to
+>> mc13xxx_parse_regulators_dt() and they are all defined in uppercase
+>> letters by the MC13892_*_DEFINE* macros, whereas they are defined as
+>> lowercase in the DTS.
+>>
+>> Fix this by use strncasecmp() since that makes sure the comparison is
+>> case insensitive like what of_node_cmp() did.
+>>
+>> Reported-by: Vivien Didelot <vivien.didelot@gmail.com>
+>> Fixes: c32569e358ad ("regulator: Use of_node_name_eq for node name comparisons")
+>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+>> ---
+>>  drivers/of/base.c | 3 ++-
+>>  1 file changed, 2 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/of/base.c b/drivers/of/base.c
+>> index 5226e898476e..ff47c86277cb 100644
+>> --- a/drivers/of/base.c
+>> +++ b/drivers/of/base.c
+>> @@ -66,7 +66,8 @@ bool of_node_name_eq(const struct device_node *np, const char *name)
+>>  	node_name = kbasename(np->full_name);
+>>  	len = strchrnul(node_name, '@') - node_name;
+>>  
+>> -	return (strlen(name) == len) && (strncmp(node_name, name, len) == 0);
+>> +	return (strlen(name) == len) &&
+>> +		(strncasecmp(node_name, name, len) == 0);
+>>  }
+>>  EXPORT_SYMBOL(of_node_name_eq);
+>>  
+>>
+> 
+> Node names are case sensitive.  Please fix mc13xxx_parse_regulators_dt() to
+> properly handle case instead of changing of_node_name_eq().
 
-I don't think 'for the received byte' adds much value here. If you
-respin anyway I'd suggest to leave the comment as is.
-
->  	usleep_range(100, 200);
->  	hci_uart_set_flow_control(hu, false);
->  
-> @@ -1116,7 +1114,6 @@ static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type speed_type)
->  
->  static int qca_wcn3990_init(struct hci_uart *hu)
->  {
-> -	struct hci_dev *hdev = hu->hdev;
->  	struct qca_serdev *qcadev;
->  	int ret;
->  
-> @@ -1139,12 +1136,12 @@ static int qca_wcn3990_init(struct hci_uart *hu)
->  
->  	/* Forcefully enable wcn3990 to enter in to boot mode. */
->  	host_set_baudrate(hu, 2400);
-> -	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWEROFF_PULSE);
-> +	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
->  	if (ret)
->  		return ret;
->  
->  	qca_set_speed(hu, QCA_INIT_SPEED);
-> -	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWERON_PULSE);
-> +	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWERON_PULSE);
->  	if (ret)
->  		return ret;
->  
-> @@ -1274,13 +1271,8 @@ static const struct qca_vreg_data qca_soc_data = {
->  
->  static void qca_power_shutdown(struct hci_uart *hu)
->  {
-> -	struct serdev_device *serdev = hu->serdev;
-> -	unsigned char cmd = QCA_WCN3990_POWEROFF_PULSE;
-> -
->  	host_set_baudrate(hu, 2400);
-> -	hci_uart_set_flow_control(hu, true);
-> -	serdev_device_write_buf(serdev, &cmd, sizeof(cmd));
-> -	hci_uart_set_flow_control(hu, false);
-> +	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
->  	qca_power_setup(hu, false);
->  }
->  
-
-Looks good to me besides possible minor improvements:
-
-Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+Fair enough, should we issue a warning if np->full_name contains upper
+case while name does not (and vice versa) to help troubleshoot cases
+like the one we found with Vivien?
+-- 
+Florian
