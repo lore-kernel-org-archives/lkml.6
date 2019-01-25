@@ -6,129 +6,156 @@ X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A94FDC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:35:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EF01C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:38:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 65F09218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:35:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F0B3218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:38:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GUWlGWAg"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Nn+reeA1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727763AbfAYKfy (ORCPT
+        id S1727052AbfAYKh7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:35:54 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:44670 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfAYKfy (ORCPT
+        Fri, 25 Jan 2019 05:37:59 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45252 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbfAYKh7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:35:54 -0500
-Received: by mail-wr1-f68.google.com with SMTP id z5so9692377wrt.11
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:35:53 -0800 (PST)
+        Fri, 25 Jan 2019 05:37:59 -0500
+Received: by mail-qk1-f196.google.com with SMTP id y78so5074420qka.12
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:37:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=ealOnVHVYH/YbyAmfaqodTCJ/ZpZvOckJdBQrb+F6rc=;
-        b=GUWlGWAgn+BlULBg7c8+qTcJX03xpf+jxJEZOUcTioFUD6uUTKJDxcY4lVkDG2Ir95
-         NM10k8PRNy++j2IAAiLXiwQnThm57T+s61yrZ2ScxpYsVaZTAJoGIaQ8b/ohUvsPyrHg
-         nbuDzqKclboK8S4fOZ7XH1N5lFDFa+rLIi5mY=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=klEb6fjdDLnRB0knxL2KW1PkKMB1j6jmIlkOzYEg8Ds=;
+        b=Nn+reeA1iEmyvbUNE7l7T4l/suF7Z3aOzezbZodhKrELWeqDfc86oy+SEuQiTvaigE
+         Wg3bIn1HK6fLbe7+lzyxDy3KF3cU0EWbN/hRp0vNl5QeDJzpUYbliyFSS5gSkuEQvYwi
+         +RW1qbue9dP70wGD4QCW4mKHUcRiK/35CYeV4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=ealOnVHVYH/YbyAmfaqodTCJ/ZpZvOckJdBQrb+F6rc=;
-        b=qxcUy+ICOKxIEl16Jdpvdn2k1q7PDy6C16HO6fYfqZpwFlVD117yJiWspvfiJEdhoT
-         Xb1+AlKaCgS/rBahLO9Au+/uK0sXDP8H5CTeewJ5c+NPWu0udFflYDfl6Q/s8tKHhXT9
-         RNY47qZoR6FWp1O0Wt9vdNjoKeKnmk2Y4Lmrn2TA7xExu/5Lk/9tNC+yP7QIcBaH/yga
-         cL4JAu9PlWsONQYuEjwdS3vcBX/C3wcA7JeNNkqLdFjSErqi4gzo03uYlHX/FrZDJnC8
-         A4kRfzPszIGaFvWE06w97SjTrZyN5uadORk32RdPt/9tR2q3jg7KVrkCcS8d/5gvuWYb
-         WS4Q==
-X-Gm-Message-State: AJcUukfg0h7fcWiAXE5XMXPVTB2PMmTHGurSvQpDg0dK/UwaNWbCgGc4
-        OO80DZOC2Y9JB1KXabfk19X+JA==
-X-Google-Smtp-Source: ALg8bN4kqQBRKydQRP1WfLkf37XGfg0MrzaepvhXD5TDWgMFDpF0V4v0fo85i0Y1YtvIblFOkTjtdQ==
-X-Received: by 2002:adf:f28d:: with SMTP id k13mr11373650wro.78.1548412552686;
-        Fri, 25 Jan 2019 02:35:52 -0800 (PST)
-Received: from [192.168.27.209] ([37.157.136.206])
-        by smtp.googlemail.com with ESMTPSA id y1sm81447532wme.1.2019.01.25.02.35.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 02:35:52 -0800 (PST)
-Subject: Re: [PATCH 00/10] Venus stateful Codec API
-To:     Alexandre Courbot <acourbot@chromium.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <CAPBb6MVOPmRhhM=J-RqLOpc+mDbnxYdCMO3mqQfgN-F3b=kBCw@mail.gmail.com>
- <10deb3d1-2b10-43fe-bc77-4465f561c90a@linaro.org>
- <CAPBb6MUqi3xhgE_WPRP_7gZWcH2WGz8A7vskGGJW9zGM0=D1Sw@mail.gmail.com>
-From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Message-ID: <80b97fd8-bd3a-df74-c611-5da11bd7adc6@linaro.org>
-Date:   Fri, 25 Jan 2019 12:35:51 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=klEb6fjdDLnRB0knxL2KW1PkKMB1j6jmIlkOzYEg8Ds=;
+        b=TOmo9l6J8k7gbNxa0NIOQQYHkRRjOF+TRSEKRxS89CzfYFtD4GerDOasO1KDm0bOMo
+         aPMd8AmXEjzeCETzLZ6QsadNjFiX1719cFQO5fbGSwTnJyw6WIs/gn+xX8C6Z6ZFQWCb
+         5DGU6IYtljiaSgq7N2qmJm5kDC668iH9W5v9PtJxmTYSIHqtnaRI2XsQfYYkoE4FwlZv
+         5uu1sSgDkqdD3lkklY/Rr2XtQb67C1p1WSd7zOVSMYecLyPuCKN4Gg/MwRKsKLivLmH/
+         zxLV7/E1Pu9XMicevz7hCym18g/Xvp4eTCR1/Qgdj8ULuxRNmVkSYV4dWUeNUKDW7qNO
+         X33A==
+X-Gm-Message-State: AJcUukcN7Fh+7VCUZIptU1cfL+q1EZvdqRbdYQjQfc87Bday0WYS53BU
+        gQZJM98Zf6/OYynqTKr9vgQmA7aOeS4TZC7slzbe6A==
+X-Google-Smtp-Source: ALg8bN4CExBMYPoHhulvoc6KO9PpBVUHI7JkcwQfBSmendId0IyIsMSRX9GTJJ0JMc5oazwg0ZBfD42Qmo6tcko06l0=
+X-Received: by 2002:a37:b2c2:: with SMTP id b185mr8999350qkf.194.1548412678233;
+ Fri, 25 Jan 2019 02:37:58 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CAPBb6MUqi3xhgE_WPRP_7gZWcH2WGz8A7vskGGJW9zGM0=D1Sw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181218215944.2444-1-mike.leach@linaro.org> <20181218215944.2444-2-mike.leach@linaro.org>
+ <353c8f4b-f48f-863c-7149-342b764a02c0@codeaurora.org>
+In-Reply-To: <353c8f4b-f48f-863c-7149-342b764a02c0@codeaurora.org>
+From:   Mike Leach <mike.leach@linaro.org>
+Date:   Fri, 25 Jan 2019 10:37:45 +0000
+Message-ID: <CAJ9a7Vh6McpjtyRuBDPSYMWec0TuWkXeOLBOpKvv8tWUU0sV2A@mail.gmail.com>
+Subject: Re: [RESEND PATCH v3 1/2] drivers: amba: Updates to component
+ identification for driver matching.
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     linux@armlinux.org.uk,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        coresight@lists.linaro.org, linux-kernel@vger.kernel.org,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+Hello Sai
+On Fri, 25 Jan 2019 at 07:20, Sai Prakash Ranjan
+<saiprakash.ranjan@codeaurora.org> wrote:
+>
+> Hi Mike,
+>
+> Thanks for the patch.
+>
+> BTW somehow I can't find the latest series in my inbox, so commenting
+> on this here.
+>
+> Mathieu pointed me to this patch series.This solves CPU debug module
+> sharing same PID as ETM on MSM8996. I will be posting patch for CPU
+> debug UCI table soon.
+>
+> But please find my one comment inline.
+>
+> On 12/19/2018 3:29 AM, Mike Leach wrote:
+> > The CoreSight specification (ARM IHI 0029E), updates the ID register
+> > requirements for components on an AMBA bus, to cover both traditional
+> > ARM Primecell type devices, and newer CoreSight and other components.
+> >
+> > The Peripheral ID (PID) / Component ID (CID) pair is extended in certain
+> > cases to uniquely identify components. CoreSight components related to
+> > a single function can share Peripheral ID values, and must be further
+> > identified using a Unique Component Identifier (UCI). e.g. the ETM, CTI,
+> > PMU and Debug hardware of the A35 all share the same PID.
+> >
+>
+> [..]
+>
+> > +static const struct amba_id *
+> > +amba_lookup(const struct amba_id *table, struct amba_device *dev)
+> > +{
+> >       while (table->mask) {
+> > -             ret = (dev->periphid & table->mask) == table->id;
+> > -             if (ret)
+> > -                     break;
+> > +             if (((dev->periphid & table->mask) == table->id) &&
+> > +                     ((dev->cid != CORESIGHT_CID) ||
+> > +                      (amba_cs_uci_id_match(table, dev))))
+>
+> Shouldn't the check be (dev->cid == CORESIGHT_CID) ?
+> Without this STM fails to probe on both SDM845 and MSM8996.
+>
+I believe the test is correct
 
-On 1/25/19 7:34 AM, Alexandre Courbot wrote:
-> On Thu, Jan 24, 2019 at 7:13 PM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
->>
->> Hi Alex,
->>
->> Thank you for review and valuable comments!
->>
->> On 1/24/19 10:43 AM, Alexandre Courbot wrote:
->>> Hi Stanimir,
->>>
->>> On Fri, Jan 18, 2019 at 1:20 AM Stanimir Varbanov
->>> <stanimir.varbanov@linaro.org> wrote:
->>>>
->>>> Hello,
->>>>
->>>> This aims to make Venus decoder compliant with stateful Codec API [1].
->>>> The patches 1-9 are preparation for the cherry on the cake patch 10
->>>> which implements the decoder state machine similar to the one in the
->>>> stateful codec API documentation.
->>>
->>> Thanks *a lot* for this series! I am still stress-testing it against
->>> the Chromium decoder tests, but so far it has been rock-solid. I have
->>> a few inline comments on some patches ; I will also want to review the
->>> state machine more thoroughly after refreshing my mind on Tomasz doc,
->>> but this looks pretty promising already.
->>
->> I'm expecting problems with ResetAfterFirstConfigInfo. I don't know why
->> but this test case is very dirty. I'd appreciate any help to decipher
->> what is the sequence of v4l2 calls made by this unittest case.
-> 
-> I did not see any issue with ResetAfterFirstConfigInfo, however
-> ResourceExhaustion seems to hang once in a while. But I could already
-> see this behavior with the older patchset.
+To expand the logic here:
 
-Is it hangs badly?
+if  (dev->periphid & table->mask) == table->id) {
+      //** match on peripheral ID at this point
+     if (CID != CORESIGHT_ID)
+               return table; //** not coresight - match on peripheral ID only
+     //** or
+     if (amba_cs_uci_id_match() )
+                return table;  //** is coresight - match on UCI if
+available - otherwise peripheral ID only;
 
-> 
-> In any case I plan to thoroughly review the state machine. I agree it
-> is a bit complex to grasp.
+However - looking at the coresight STM driver - this is using the
+private .data field in the amba_id for a name - which I had not
+spotted before.
+I will have to revisit this patchset to fix either the amba id struct
+or the method for getting the uci data into the amba_id.data which
+allows for multiple uses.
 
-yes the state machine isn't simple and I blamed Tomasz many times for
-that :)
+Regards
+
+Mike
+
+
+> With this,
+>
+> Tested-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+>
+> Thanks,
+> Sai
+>
+> --
+> QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+> of Code Aurora Forum, hosted by The Linux Foundation
+
+
 
 -- 
-regards,
-Stan
+Mike Leach
+Principal Engineer, ARM Ltd.
+Manchester Design Centre. UK
