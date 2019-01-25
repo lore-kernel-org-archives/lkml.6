@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDB9EC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7B61C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:59:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE71B2133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 947062133F
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:59:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729163AbfAYT7J (ORCPT
+        id S1728871AbfAYT7H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 14:59:09 -0500
+        Fri, 25 Jan 2019 14:59:07 -0500
 Received: from mga09.intel.com ([134.134.136.24]:12806 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728657AbfAYT7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 14:59:06 -0500
+        id S1726284AbfAYT7E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 14:59:04 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga007.fm.intel.com ([10.253.24.52])
   by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 11:59:03 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,522,1539673200"; 
-   d="scan'208";a="117510333"
+   d="scan'208";a="117510321"
 Received: from agluck-desk.sc.intel.com ([10.3.52.160])
-  by fmsmga007.fm.intel.com with ESMTP; 25 Jan 2019 11:59:03 -0800
+  by fmsmga007.fm.intel.com with ESMTP; 25 Jan 2019 11:59:02 -0800
 From:   Tony Luck <tony.luck@intel.com>
 To:     Borislav Petkov <bp@alien8.de>
 Cc:     Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Tony Luck <tony.luck@intel.com>,
@@ -35,9 +35,9 @@ Cc:     Qiuxu Zhuo <qiuxu.zhuo@intel.com>, Tony Luck <tony.luck@intel.com>,
         Mauro Carvalho Chehab <mchehab@s-opensource.com>,
         Kan Liang <kan.liang@linux.intel.com>,
         linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 4/4] EDAC, i10nm_edac: Add EDAC driver for Intel 10nm server processors
-Date:   Fri, 25 Jan 2019 11:59:02 -0800
-Message-Id: <20190125195902.17109-5-tony.luck@intel.com>
+Subject: [PATCH 1/4] EDAC, skx_comm_edac: Separate common codes from the skx_edac driver
+Date:   Fri, 25 Jan 2019 11:58:59 -0800
+Message-Id: <20190125195902.17109-2-tony.luck@intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190125195902.17109-1-tony.luck@intel.com>
 References: <20190125195902.17109-1-tony.luck@intel.com>
@@ -50,347 +50,883 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 
-This driver supports Intel 10nm series server integrated memory
-controller. It gets the memory capacity and topology information by
-reading the registers in PCI configuration space and memory-map I/O.
-It decodes the memory error address to the platform specific address
-by using the ACPI Address Translation (ADXL) Device Specific Method
-(DSM).
-
-Uses skx_comm_edac.c for most of the work.
+Part of the skx_edac driver codes are also used for Intel 10nm server
+EDAC driver. Carve out the common part from the skx_edac driver in
+preparation to support both skx_edac driver and i10nm_edac driver.
 
 Co-developed-by: Tony Luck <tony.luck@intel.com>
 Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- drivers/edac/Kconfig      |  12 ++
- drivers/edac/Makefile     |   3 +
- drivers/edac/i10nm_base.c | 279 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 294 insertions(+)
- create mode 100644 drivers/edac/i10nm_base.c
+ drivers/edac/skx_comm_edac.c | 693 +++++++++++++++++++++++++++++++++++
+ drivers/edac/skx_comm_edac.h | 158 ++++++++
+ 2 files changed, 851 insertions(+)
+ create mode 100644 drivers/edac/skx_comm_edac.c
+ create mode 100644 drivers/edac/skx_comm_edac.h
 
-diff --git a/drivers/edac/Kconfig b/drivers/edac/Kconfig
-index e286b5b99003..2239b3409d41 100644
---- a/drivers/edac/Kconfig
-+++ b/drivers/edac/Kconfig
-@@ -241,6 +241,18 @@ config EDAC_SKX
- 	  system has non-volatile DIMMs you should also manually
- 	  select CONFIG_ACPI_NFIT.
- 
-+config EDAC_I10NM
-+	tristate "Intel 10nm server Integrated MC"
-+	depends on PCI && X86_64 && X86_MCE_INTEL && PCI_MMCONFIG
-+	depends on ACPI_NFIT || !ACPI_NFIT # if ACPI_NFIT=m, EDAC_I10NM can't be y
-+	select DMI
-+	select ACPI_ADXL if ACPI
-+	help
-+	  Support for error detection and correction the Intel
-+	  10nm server Integrated Memory Controllers. If your
-+	  system has non-volatile DIMMs you should also manually
-+	  select CONFIG_ACPI_NFIT.
-+
- config EDAC_PND2
- 	tristate "Intel Pondicherry2"
- 	depends on PCI && X86_64 && X86_MCE_INTEL
-diff --git a/drivers/edac/Makefile b/drivers/edac/Makefile
-index 1764b7ed05db..e15115e02036 100644
---- a/drivers/edac/Makefile
-+++ b/drivers/edac/Makefile
-@@ -60,6 +60,9 @@ obj-$(CONFIG_EDAC_LAYERSCAPE)		+= layerscape_edac_mod.o
- skx_edac-y				:= skx_comm_edac.o skx_base.o
- obj-$(CONFIG_EDAC_SKX)			+= skx_edac.o
- 
-+i10nm_edac-y				:= skx_comm_edac.o i10nm_base.o
-+obj-$(CONFIG_EDAC_I10NM)		+= i10nm_edac.o
-+
- obj-$(CONFIG_EDAC_MV64X60)		+= mv64x60_edac.o
- obj-$(CONFIG_EDAC_CELL)			+= cell_edac.o
- obj-$(CONFIG_EDAC_PPC4XX)		+= ppc4xx_edac.o
-diff --git a/drivers/edac/i10nm_base.c b/drivers/edac/i10nm_base.c
+diff --git a/drivers/edac/skx_comm_edac.c b/drivers/edac/skx_comm_edac.c
 new file mode 100644
-index 000000000000..74cb80f9fc88
+index 000000000000..fd2ccba66874
 --- /dev/null
-+++ b/drivers/edac/i10nm_base.c
-@@ -0,0 +1,279 @@
++++ b/drivers/edac/skx_comm_edac.c
+@@ -0,0 +1,693 @@
 +// SPDX-License-Identifier: GPL-2.0
 +/*
-+ * Driver for Intel(R) 10nm server memory controller.
-+ * Copyright (c) 2019, Intel Corporation.
++ * Common codes for both the skx_edac driver and Intel 10nm server EDAC driver.
++ * Originally split out from the skx_edac driver.
 + *
++ * Copyright (c) 2018, Intel Corporation.
 + */
 +
-+#include <linux/module.h>
-+#include <linux/init.h>
 +#include <linux/string.h>
 +#include <linux/uaccess.h>
++#include <linux/pci.h>
 +#include <linux/acpi.h>
-+#include <asm/cpu_device_id.h>
-+#include <asm/intel-family.h>
++#include <linux/dmi.h>
++#include <linux/adxl.h>
++#include <acpi/nfit.h>
 +#include <asm/mce.h>
++#include <linux/edac.h>
 +#include "edac_module.h"
 +#include "skx_comm_edac.h"
 +
-+#define I10NM_REVISION	"v0.0.3"
-+#define EDAC_MOD_STR	"i10nm_edac"
++static const char * const component_names[] = {
++	[INDEX_SOCKET]	= "ProcessorSocketId",
++	[INDEX_MEMCTRL]	= "MemoryControllerId",
++	[INDEX_CHANNEL]	= "ChannelId",
++	[INDEX_DIMM]	= "DimmSlotId",
++};
 +
-+/* Debug macros */
-+#define i10nm_printk(level, fmt, arg...)	\
-+	edac_printk(level, "i10nm", fmt, ##arg)
++static int component_indices[ARRAY_SIZE(component_names)];
++static int adxl_component_count;
++static const char * const *adxl_component_names;
++static u64 *adxl_values;
++static char *adxl_msg;
 +
-+#define I10NM_GET_SCK_BAR(d, reg)		\
-+	pci_read_config_dword((d)->uracu, 0xd0, &(reg))
-+#define I10NM_GET_IMC_BAR(d, i, reg)	\
-+	pci_read_config_dword((d)->uracu, 0xd8 + (i) * 4, &(reg))
-+#define I10NM_GET_DIMMMTR(m, i, j)	\
-+	(*(u32 *)((m)->mbase + 0x2080c + (i) * 0x4000 + (j) * 4))
-+#define I10NM_GET_MCDDRTCFG(m, i, j)	\
-+	(*(u32 *)((m)->mbase + 0x20970 + (i) * 0x4000 + (j) * 4))
++static char skx_msg[MSG_SIZE];
++static skx_decode_f skx_decode;
++static u64 skx_tolm, skx_tohm;
++static LIST_HEAD(dev_edac_list);
 +
-+#define I10NM_GET_SCK_MMIO_BASE(reg)	(GET_BITFIELD(reg, 0, 28) << 23)
-+#define I10NM_GET_IMC_MMIO_OFFSET(reg)	(GET_BITFIELD(reg, 0, 10) << 12)
-+#define I10NM_GET_IMC_MMIO_SIZE(reg)	((GET_BITFIELD(reg, 13, 23) - \
-+					 GET_BITFIELD(reg, 0, 10) + 1) << 12)
-+
-+static struct list_head *i10nm_edac_list;
-+
-+static struct pci_dev *pci_get_dev_wrapper(int dom, unsigned int bus,
-+					   unsigned int dev, unsigned int fun)
++int __init skx_adxl_get(void)
 +{
-+	struct pci_dev *pdev;
++	const char * const *names;
++	int i, j;
 +
-+	pdev = pci_get_domain_bus_and_slot(dom, bus, PCI_DEVFN(dev, fun));
-+	if (!pdev) {
-+		edac_dbg(2, "No device %02x:%02x.%x\n",
-+			 bus, dev, fun);
-+		return NULL;
++	names = adxl_get_component_names();
++	if (!names) {
++		skx_printk(KERN_NOTICE, "No firmware support for address translation.\n");
++		return -ENODEV;
 +	}
 +
-+	if (unlikely(pci_enable_device(pdev) < 0)) {
-+		edac_dbg(2, "Failed to enable device %02x:%02x.%x\n",
-+			 bus, dev, fun);
-+		return NULL;
++	for (i = 0; i < INDEX_MAX; i++) {
++		for (j = 0; names[j]; j++) {
++			if (!strcmp(component_names[i], names[j])) {
++				component_indices[i] = j;
++				break;
++			}
++		}
++
++		if (!names[j])
++			goto err;
 +	}
 +
-+	pci_dev_get(pdev);
++	adxl_component_names = names;
++	while (*names++)
++		adxl_component_count++;
 +
-+	return pdev;
-+}
++	adxl_values = kcalloc(adxl_component_count, sizeof(*adxl_values),
++			      GFP_KERNEL);
++	if (!adxl_values) {
++		adxl_component_count = 0;
++		return -ENOMEM;
++	}
 +
-+static int i10nm_get_all_munits(void)
-+{
-+	struct pci_dev *mdev;
-+	void __iomem *mbase;
-+	unsigned long size;
-+	struct skx_dev *d;
-+	int i, j = 0;
-+	u32 reg, off;
-+	u64 base;
-+
-+	list_for_each_entry(d, i10nm_edac_list, list) {
-+		d->util_all = pci_get_dev_wrapper(d->seg, d->bus[1], 29, 1);
-+		if (!d->util_all)
-+			return -ENODEV;
-+
-+		d->uracu = pci_get_dev_wrapper(d->seg, d->bus[0], 0, 1);
-+		if (!d->uracu)
-+			return -ENODEV;
-+
-+		if (I10NM_GET_SCK_BAR(d, reg)) {
-+			i10nm_printk(KERN_ERR, "Failed to socket bar\n");
-+			return -ENODEV;
-+		}
-+
-+		base = I10NM_GET_SCK_MMIO_BASE(reg);
-+		edac_dbg(2, "socket%d mmio base 0x%llx (reg 0x%x)\n",
-+			 j++, base, reg);
-+
-+		for (i = 0; i < I10NM_NUM_IMC; i++) {
-+			mdev = pci_get_dev_wrapper(d->seg, d->bus[0],
-+						   12 + i, 0);
-+			if (i == 0 && !mdev) {
-+				i10nm_printk(KERN_ERR, "No IMC found\n");
-+				return -ENODEV;
-+			}
-+			if (!mdev)
-+				continue;
-+
-+			d->imc[i].mdev = mdev;
-+
-+			if (I10NM_GET_IMC_BAR(d, i, reg)) {
-+				i10nm_printk(KERN_ERR, "Failed to get mc bar\n");
-+				return -ENODEV;
-+			}
-+
-+			off  = I10NM_GET_IMC_MMIO_OFFSET(reg);
-+			size = I10NM_GET_IMC_MMIO_SIZE(reg);
-+			edac_dbg(2, "mc%d mmio base 0x%llx size 0x%lx (reg 0x%x)\n",
-+				 i, base + off, size, reg);
-+
-+			mbase = ioremap(base + off, size);
-+			if (!mbase) {
-+				i10nm_printk(KERN_ERR, "Failed to ioremap 0x%llx\n",
-+					     base + off);
-+				return -ENODEV;
-+			}
-+
-+			d->imc[i].mbase = mbase;
-+		}
++	adxl_msg = kzalloc(MSG_SIZE, GFP_KERNEL);
++	if (!adxl_msg) {
++		adxl_component_count = 0;
++		kfree(adxl_values);
++		return -ENOMEM;
 +	}
 +
 +	return 0;
++err:
++	skx_printk(KERN_ERR, "'%s' is not matched from DSM parameters: ",
++		   component_names[i]);
++	for (j = 0; names[j]; j++)
++		skx_printk(KERN_CONT, "%s ", names[j]);
++	skx_printk(KERN_CONT, "\n");
++
++	return -ENODEV;
 +}
 +
-+static const struct x86_cpu_id i10nm_cpuids[] = {
-+	{ X86_VENDOR_INTEL, 6, INTEL_FAM6_ATOM_TREMONT_X, 0, 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(x86cpu, i10nm_cpuids);
-+
-+static bool i10nm_check_ecc(struct skx_imc *imc, int chan)
++void __exit skx_adxl_put(void)
 +{
-+	u32 mcmtr;
-+
-+	mcmtr = *(u32 *)(imc->mbase + 0x20ef8 + chan * 0x4000);
-+	edac_dbg(1, "ch%d mcmtr reg %x\n", chan, mcmtr);
-+
-+	return !!GET_BITFIELD(mcmtr, 2, 2);
++	kfree(adxl_values);
++	kfree(adxl_msg);
 +}
 +
-+static int i10nm_get_dimm_config(struct mem_ctl_info *mci)
++static bool skx_adxl_decode(struct decoded_addr *res)
 +{
-+	struct skx_pvt *pvt = mci->pvt_info;
-+	struct skx_imc *imc = pvt->imc;
-+	struct dimm_info *dimm;
-+	u32 mtr, mcddrtcfg;
-+	int i, j, ndimms;
++	int i, len = 0;
 +
-+	for (i = 0; i < I10NM_NUM_CHANNELS; i++) {
-+		if (!imc->mbase)
++	if (res->addr >= skx_tohm || (res->addr >= skx_tolm &&
++				      res->addr < BIT_ULL(32))) {
++		edac_dbg(0, "Address 0x%llx out of range\n", res->addr);
++		return false;
++	}
++
++	if (adxl_decode(res->addr, adxl_values)) {
++		edac_dbg(0, "Failed to decode 0x%llx\n", res->addr);
++		return false;
++	}
++
++	res->socket  = (int)adxl_values[component_indices[INDEX_SOCKET]];
++	res->imc     = (int)adxl_values[component_indices[INDEX_MEMCTRL]];
++	res->channel = (int)adxl_values[component_indices[INDEX_CHANNEL]];
++	res->dimm    = (int)adxl_values[component_indices[INDEX_DIMM]];
++
++	for (i = 0; i < adxl_component_count; i++) {
++		if (adxl_values[i] == ~0x0ull)
 +			continue;
 +
-+		ndimms = 0;
-+		for (j = 0; j < I10NM_NUM_DIMMS; j++) {
-+			dimm = EDAC_DIMM_PTR(mci->layers, mci->dimms,
-+					     mci->n_layers, i, j, 0);
-+			mtr = I10NM_GET_DIMMMTR(imc, i, j);
-+			mcddrtcfg = I10NM_GET_MCDDRTCFG(imc, i, j);
-+			edac_dbg(1, "dimmmtr 0x%x mcddrtcfg 0x%x (mc%d ch%d dimm%d)\n",
-+				 mtr, mcddrtcfg, imc->mc, i, j);
-+
-+			if (IS_DIMM_PRESENT(mtr))
-+				ndimms += skx_get_dimm_info(mtr, 0, dimm,
-+							    imc, i, j);
-+			else if (IS_NVDIMM_PRESENT(mcddrtcfg, j))
-+				ndimms += skx_get_nvdimm_info(dimm, imc, i, j,
-+							      EDAC_MOD_STR);
-+		}
-+		if (ndimms && !i10nm_check_ecc(imc, 0)) {
-+			i10nm_printk(KERN_ERR, "ECC is disabled on imc %d\n",
-+				     imc->mc);
-+			return -ENODEV;
-+		}
++		len += snprintf(adxl_msg + len, MSG_SIZE - len, " %s:0x%llx",
++				adxl_component_names[i], adxl_values[i]);
++		if (MSG_SIZE - len <= 0)
++			break;
 +	}
 +
++	return true;
++}
++
++void skx_set_decode(skx_decode_f decode)
++{
++	skx_decode = decode;
++}
++
++int skx_get_src_id(struct skx_dev *d, u8 *id)
++{
++	u32 reg;
++
++	if (pci_read_config_dword(d->util_all, 0xf0, &reg)) {
++		skx_printk(KERN_ERR, "Failed to read src id\n");
++		return -ENODEV;
++	}
++
++	*id = GET_BITFIELD(reg, 12, 14);
 +	return 0;
 +}
 +
-+static struct notifier_block i10nm_mce_dec = {
-+	.notifier_call	= skx_mce_check_error,
-+	.priority	= MCE_PRIO_EDAC,
-+};
-+
-+static int __init i10nm_init(void)
++int skx_get_node_id(struct skx_dev *d, u8 *id)
 +{
-+	u8 mc = 0, src_id = 0, node_id = 0;
-+	const struct x86_cpu_id *id;
-+	const char *owner;
++	u32 reg;
++
++	if (pci_read_config_dword(d->util_all, 0xf4, &reg)) {
++		skx_printk(KERN_ERR, "Failed to read node id\n");
++		return -ENODEV;
++	}
++
++	*id = GET_BITFIELD(reg, 0, 2);
++	return 0;
++}
++
++static int get_width(u32 mtr)
++{
++	switch (GET_BITFIELD(mtr, 8, 9)) {
++	case 0:
++		return DEV_X4;
++	case 1:
++		return DEV_X8;
++	case 2:
++		return DEV_X16;
++	}
++	return DEV_UNKNOWN;
++}
++
++/*
++ * We use the per-socket device @did to count how many sockets are present,
++ * and to detemine which PCI buses are associated with each socket. Allocate
++ * and build the full list of all the skx_dev structures that we need here.
++ */
++int skx_get_all_bus_mappings(unsigned int did, int off, enum type type,
++			     struct list_head **list)
++{
++	struct pci_dev *pdev, *prev;
 +	struct skx_dev *d;
-+	int rc, i, off[3] = {0xd0, 0xc8, 0xcc};
-+	u64 tolm, tohm;
++	u32 reg;
++	int ndev = 0;
 +
-+	edac_dbg(2, "\n");
-+
-+	owner = edac_get_owner();
-+	if (owner && strncmp(owner, EDAC_MOD_STR, sizeof(EDAC_MOD_STR)))
-+		return -EBUSY;
-+
-+	id = x86_match_cpu(i10nm_cpuids);
-+	if (!id)
-+		return -ENODEV;
-+
-+	rc = skx_get_hi_lo(0x09a2, off, &tolm, &tohm);
-+	if (rc)
-+		return rc;
-+
-+	rc = skx_get_all_bus_mappings(0x3452, 0xcc, I10NM, &i10nm_edac_list);
-+	if (rc < 0)
-+		goto fail;
-+	if (rc == 0) {
-+		i10nm_printk(KERN_ERR, "No memory controllers found\n");
-+		return -ENODEV;
-+	}
-+
-+	rc = i10nm_get_all_munits();
-+	if (rc < 0)
-+		goto fail;
-+
-+	list_for_each_entry(d, i10nm_edac_list, list) {
-+		rc = skx_get_src_id(d, &src_id);
-+		if (rc < 0)
-+			goto fail;
-+
-+		rc = skx_get_node_id(d, &node_id);
-+		if (rc < 0)
-+			goto fail;
-+
-+		edac_dbg(2, "src_id = %d node_id = %d\n", src_id, node_id);
-+		for (i = 0; i < I10NM_NUM_IMC; i++) {
-+			if (!d->imc[i].mdev)
-+				continue;
-+
-+			d->imc[i].mc  = mc++;
-+			d->imc[i].lmc = i;
-+			d->imc[i].src_id  = src_id;
-+			d->imc[i].node_id = node_id;
-+
-+			rc = skx_register_mci(&d->imc[i], d->imc[i].mdev,
-+					      "Intel_10nm Socket", EDAC_MOD_STR,
-+					      i10nm_get_dimm_config);
-+			if (rc < 0)
-+				goto fail;
++	prev = NULL;
++	for (;;) {
++		pdev = pci_get_device(PCI_VENDOR_ID_INTEL, did, prev);
++		if (!pdev)
++			break;
++		ndev++;
++		d = kzalloc(sizeof(*d), GFP_KERNEL);
++		if (!d) {
++			pci_dev_put(pdev);
++			return -ENOMEM;
 +		}
++
++		if (pci_read_config_dword(pdev, off, &reg)) {
++			kfree(d);
++			pci_dev_put(pdev);
++			skx_printk(KERN_ERR, "Failed to read bus idx\n");
++			return -ENODEV;
++		}
++
++		d->bus[0] = GET_BITFIELD(reg, 0, 7);
++		d->bus[1] = GET_BITFIELD(reg, 8, 15);
++		if (type == SKX) {
++			d->seg = pci_domain_nr(pdev->bus);
++			d->bus[2] = GET_BITFIELD(reg, 16, 23);
++			d->bus[3] = GET_BITFIELD(reg, 24, 31);
++		} else {
++			d->seg = GET_BITFIELD(reg, 16, 23);
++		}
++
++		edac_dbg(2, "busses: 0x%x, 0x%x, 0x%x, 0x%x\n",
++			 d->bus[0], d->bus[1], d->bus[2], d->bus[3]);
++		list_add_tail(&d->list, &dev_edac_list);
++		prev = pdev;
 +	}
 +
-+	rc = skx_adxl_get();
-+	if (rc)
++	if (list)
++		*list = &dev_edac_list;
++	return ndev;
++}
++
++int skx_get_hi_lo(unsigned int did, int off[], u64 *tolm, u64 *tohm)
++{
++	struct pci_dev *pdev;
++	u32 reg;
++
++	pdev = pci_get_device(PCI_VENDOR_ID_INTEL, did, NULL);
++	if (!pdev) {
++		skx_printk(KERN_ERR, "Can't get tolm/tohm\n");
++		return -ENODEV;
++	}
++
++	if (pci_read_config_dword(pdev, off[0], &reg)) {
++		skx_printk(KERN_ERR, "Failed to read tolm\n");
 +		goto fail;
++	}
++	skx_tolm = reg;
 +
-+	opstate_init();
-+	mce_register_decode_chain(&i10nm_mce_dec);
-+	setup_skx_debug("i10nm_test");
++	if (pci_read_config_dword(pdev, off[1], &reg)) {
++		skx_printk(KERN_ERR, "Failed to read lower tohm\n");
++		goto fail;
++	}
++	skx_tohm = reg;
 +
-+	i10nm_printk(KERN_INFO, "%s\n", I10NM_REVISION);
++	if (pci_read_config_dword(pdev, off[2], &reg)) {
++		skx_printk(KERN_ERR, "Failed to read upper tohm\n");
++		goto fail;
++	}
++	skx_tohm |= (u64)reg << 32;
 +
++	pci_dev_put(pdev);
++	*tolm = skx_tolm;
++	*tohm = skx_tohm;
++	edac_dbg(2, "tolm = 0x%llx tohm = 0x%llx\n", skx_tolm, skx_tohm);
 +	return 0;
 +fail:
-+	skx_remove();
++	pci_dev_put(pdev);
++	return -ENODEV;
++}
++
++static int skx_get_dimm_attr(u32 reg, int lobit, int hibit, int add,
++			     int minval, int maxval, const char *name)
++{
++	u32 val = GET_BITFIELD(reg, lobit, hibit);
++
++	if (val < minval || val > maxval) {
++		edac_dbg(2, "bad %s = %d (raw=0x%x)\n", name, val, reg);
++		return -EINVAL;
++	}
++	return val + add;
++}
++
++#define numrank(reg)	skx_get_dimm_attr(reg, 12, 13, 0, 0, 2, "ranks")
++#define numrow(reg)	skx_get_dimm_attr(reg, 2, 4, 12, 1, 6, "rows")
++#define numcol(reg)	skx_get_dimm_attr(reg, 0, 1, 10, 0, 2, "cols")
++
++int skx_get_dimm_info(u32 mtr, u32 amap, struct dimm_info *dimm,
++		      struct skx_imc *imc, int chan, int dimmno)
++{
++	int  banks = 16, ranks, rows, cols, npages;
++	u64 size;
++
++	ranks = numrank(mtr);
++	rows = numrow(mtr);
++	cols = numcol(mtr);
++
++	/*
++	 * Compute size in 8-byte (2^3) words, then shift to MiB (2^20)
++	 */
++	size = ((1ull << (rows + cols + ranks)) * banks) >> (20 - 3);
++	npages = MiB_TO_PAGES(size);
++
++	edac_dbg(0, "mc#%d: channel %d, dimm %d, %lld MiB (%d pages) bank: %d, rank: %d, row: 0x%x, col: 0x%x\n",
++		 imc->mc, chan, dimmno, size, npages,
++		 banks, 1 << ranks, rows, cols);
++
++	imc->chan[chan].dimms[dimmno].close_pg = GET_BITFIELD(mtr, 0, 0);
++	imc->chan[chan].dimms[dimmno].bank_xor_enable = GET_BITFIELD(mtr, 9, 9);
++	imc->chan[chan].dimms[dimmno].fine_grain_bank = GET_BITFIELD(amap, 0, 0);
++	imc->chan[chan].dimms[dimmno].rowbits = rows;
++	imc->chan[chan].dimms[dimmno].colbits = cols;
++
++	dimm->nr_pages = npages;
++	dimm->grain = 32;
++	dimm->dtype = get_width(mtr);
++	dimm->mtype = MEM_DDR4;
++	dimm->edac_mode = EDAC_SECDED; /* likely better than this */
++	snprintf(dimm->label, sizeof(dimm->label), "CPU_SrcID#%u_MC#%u_Chan#%u_DIMM#%u",
++		 imc->src_id, imc->lmc, chan, dimmno);
++
++	return 1;
++}
++
++int skx_get_nvdimm_info(struct dimm_info *dimm, struct skx_imc *imc,
++			int chan, int dimmno, const char *mod_str)
++{
++	int smbios_handle;
++	u32 dev_handle;
++	u16 flags;
++	u64 size = 0;
++
++	dev_handle = ACPI_NFIT_BUILD_DEVICE_HANDLE(dimmno, chan, imc->lmc,
++						   imc->src_id, 0);
++
++	smbios_handle = nfit_get_smbios_id(dev_handle, &flags);
++	if (smbios_handle == -EOPNOTSUPP) {
++		pr_warn_once("%s: Can't find size of NVDIMM. Try enabling CONFIG_ACPI_NFIT\n", mod_str);
++		goto unknown_size;
++	}
++
++	if (smbios_handle < 0) {
++		skx_printk(KERN_ERR, "Can't find handle for NVDIMM ADR=0x%x\n", dev_handle);
++		goto unknown_size;
++	}
++
++	if (flags & ACPI_NFIT_MEM_MAP_FAILED) {
++		skx_printk(KERN_ERR, "NVDIMM ADR=0x%x is not mapped\n", dev_handle);
++		goto unknown_size;
++	}
++
++	size = dmi_memdev_size(smbios_handle);
++	if (size == ~0ull)
++		skx_printk(KERN_ERR, "Can't find size for NVDIMM ADR=0x%x/SMBIOS=0x%x\n",
++			   dev_handle, smbios_handle);
++
++unknown_size:
++	dimm->nr_pages = size >> PAGE_SHIFT;
++	dimm->grain = 32;
++	dimm->dtype = DEV_UNKNOWN;
++	dimm->mtype = MEM_NVDIMM;
++	dimm->edac_mode = EDAC_SECDED; /* likely better than this */
++
++	edac_dbg(0, "mc#%d: channel %d, dimm %d, %llu MiB (%u pages)\n",
++		 imc->mc, chan, dimmno, size >> 20, dimm->nr_pages);
++
++	snprintf(dimm->label, sizeof(dimm->label), "CPU_SrcID#%u_MC#%u_Chan#%u_DIMM#%u",
++		 imc->src_id, imc->lmc, chan, dimmno);
++
++	return (size == 0 || size == ~0ull) ? 0 : 1;
++}
++
++int skx_register_mci(struct skx_imc *imc, struct pci_dev *pdev,
++		     const char *ctl_name, const char *mod_str,
++		     get_dimm_config_f get_dimm_config)
++{
++	struct mem_ctl_info *mci;
++	struct edac_mc_layer layers[2];
++	struct skx_pvt *pvt;
++	int rc;
++
++	/* Allocate a new MC control structure */
++	layers[0].type = EDAC_MC_LAYER_CHANNEL;
++	layers[0].size = NUM_CHANNELS;
++	layers[0].is_virt_csrow = false;
++	layers[1].type = EDAC_MC_LAYER_SLOT;
++	layers[1].size = NUM_DIMMS;
++	layers[1].is_virt_csrow = true;
++	mci = edac_mc_alloc(imc->mc, ARRAY_SIZE(layers), layers,
++			    sizeof(struct skx_pvt));
++
++	if (unlikely(!mci))
++		return -ENOMEM;
++
++	edac_dbg(0, "MC#%d: mci = %p\n", imc->mc, mci);
++
++	/* Associate skx_dev and mci for future usage */
++	imc->mci = mci;
++	pvt = mci->pvt_info;
++	pvt->imc = imc;
++
++	mci->ctl_name = kasprintf(GFP_KERNEL, "%s#%d IMC#%d", ctl_name,
++				  imc->node_id, imc->lmc);
++	if (!mci->ctl_name) {
++		rc = -ENOMEM;
++		goto fail0;
++	}
++
++	mci->mtype_cap = MEM_FLAG_DDR4 | MEM_FLAG_NVDIMM;
++	mci->edac_ctl_cap = EDAC_FLAG_NONE;
++	mci->edac_cap = EDAC_FLAG_NONE;
++	mci->mod_name = mod_str;
++	mci->dev_name = pci_name(pdev);
++	mci->ctl_page_to_phys = NULL;
++
++	rc = get_dimm_config(mci);
++	if (rc < 0)
++		goto fail;
++
++	/* Record ptr to the generic device */
++	mci->pdev = &pdev->dev;
++
++	/* Add this new MC control structure to EDAC's list of MCs */
++	if (unlikely(edac_mc_add_mc(mci))) {
++		edac_dbg(0, "MC: failed edac_mc_add_mc()\n");
++		rc = -EINVAL;
++		goto fail;
++	}
++
++	return 0;
++
++fail:
++	kfree(mci->ctl_name);
++fail0:
++	edac_mc_free(mci);
++	imc->mci = NULL;
 +	return rc;
 +}
 +
-+static void __exit i10nm_exit(void)
++static void skx_unregister_mci(struct skx_imc *imc)
 +{
-+	edac_dbg(2, "\n");
-+	teardown_skx_debug();
-+	mce_unregister_decode_chain(&i10nm_mce_dec);
-+	skx_adxl_put();
-+	skx_remove();
++	struct mem_ctl_info *mci = imc->mci;
++
++	if (!mci)
++		return;
++
++	edac_dbg(0, "MC%d: mci = %p\n", imc->mc, mci);
++
++	/* Remove MC sysfs nodes */
++	edac_mc_del_mc(mci->pdev);
++
++	edac_dbg(1, "%s: free mci struct\n", mci->ctl_name);
++	kfree(mci->ctl_name);
++	edac_mc_free(mci);
 +}
 +
-+module_init(i10nm_init);
-+module_exit(i10nm_exit);
++static struct mem_ctl_info *get_mci(int src_id, int lmc)
++{
++	struct skx_dev *d;
 +
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MC Driver for Intel 10nm server processors");
++	if (lmc > NUM_IMC - 1) {
++		skx_printk(KERN_ERR, "Bad lmc %d\n", lmc);
++		return NULL;
++	}
++
++	list_for_each_entry(d, &dev_edac_list, list) {
++		if (d->imc[0].src_id == src_id)
++			return d->imc[lmc].mci;
++	}
++
++	skx_printk(KERN_ERR, "No mci for src_id %d lmc %d\n", src_id, lmc);
++	return NULL;
++}
++
++static void skx_mce_output_error(struct mem_ctl_info *mci,
++				 const struct mce *m,
++				 struct decoded_addr *res)
++{
++	enum hw_event_mc_err_type tp_event;
++	char *type, *optype;
++	bool ripv = GET_BITFIELD(m->mcgstatus, 0, 0);
++	bool overflow = GET_BITFIELD(m->status, 62, 62);
++	bool uncorrected_error = GET_BITFIELD(m->status, 61, 61);
++	bool recoverable;
++	u32 core_err_cnt = GET_BITFIELD(m->status, 38, 52);
++	u32 mscod = GET_BITFIELD(m->status, 16, 31);
++	u32 errcode = GET_BITFIELD(m->status, 0, 15);
++	u32 optypenum = GET_BITFIELD(m->status, 4, 6);
++
++	recoverable = GET_BITFIELD(m->status, 56, 56);
++
++	if (uncorrected_error) {
++		core_err_cnt = 1;
++		if (ripv) {
++			type = "FATAL";
++			tp_event = HW_EVENT_ERR_FATAL;
++		} else {
++			type = "NON_FATAL";
++			tp_event = HW_EVENT_ERR_UNCORRECTED;
++		}
++	} else {
++		type = "CORRECTED";
++		tp_event = HW_EVENT_ERR_CORRECTED;
++	}
++
++	/*
++	 * According with Table 15-9 of the Intel Architecture spec vol 3A,
++	 * memory errors should fit in this mask:
++	 *	000f 0000 1mmm cccc (binary)
++	 * where:
++	 *	f = Correction Report Filtering Bit. If 1, subsequent errors
++	 *	    won't be shown
++	 *	mmm = error type
++	 *	cccc = channel
++	 * If the mask doesn't match, report an error to the parsing logic
++	 */
++	if (!((errcode & 0xef80) == 0x80)) {
++		optype = "Can't parse: it is not a mem";
++	} else {
++		switch (optypenum) {
++		case 0:
++			optype = "generic undef request error";
++			break;
++		case 1:
++			optype = "memory read error";
++			break;
++		case 2:
++			optype = "memory write error";
++			break;
++		case 3:
++			optype = "addr/cmd error";
++			break;
++		case 4:
++			optype = "memory scrubbing error";
++			break;
++		default:
++			optype = "reserved";
++			break;
++		}
++	}
++	if (adxl_component_count) {
++		snprintf(skx_msg, MSG_SIZE, "%s%s err_code:0x%04x:0x%04x %s",
++			 overflow ? " OVERFLOW" : "",
++			 (uncorrected_error && recoverable) ? " recoverable" : "",
++			 mscod, errcode, adxl_msg);
++	} else {
++		snprintf(skx_msg, MSG_SIZE,
++			 "%s%s err_code:0x%04x:0x%04x socket:%d imc:%d rank:%d bg:%d ba:%d row:0x%x col:0x%x",
++			 overflow ? " OVERFLOW" : "",
++			 (uncorrected_error && recoverable) ? " recoverable" : "",
++			 mscod, errcode,
++			 res->socket, res->imc, res->rank,
++			 res->bank_group, res->bank_address, res->row, res->column);
++	}
++
++	edac_dbg(0, "%s\n", skx_msg);
++
++	/* Call the helper to output message */
++	edac_mc_handle_error(tp_event, mci, core_err_cnt,
++			     m->addr >> PAGE_SHIFT, m->addr & ~PAGE_MASK, 0,
++			     res->channel, res->dimm, -1,
++			     optype, skx_msg);
++}
++
++int skx_mce_check_error(struct notifier_block *nb, unsigned long val,
++			void *data)
++{
++	struct mce *mce = (struct mce *)data;
++	struct decoded_addr res;
++	struct mem_ctl_info *mci;
++	char *type;
++
++	if (edac_get_report_status() == EDAC_REPORTING_DISABLED)
++		return NOTIFY_DONE;
++
++	/* ignore unless this is memory related with an address */
++	if ((mce->status & 0xefff) >> 7 != 1 || !(mce->status & MCI_STATUS_ADDRV))
++		return NOTIFY_DONE;
++
++	memset(&res, 0, sizeof(res));
++	res.addr = mce->addr;
++
++	if (adxl_component_count) {
++		if (!skx_adxl_decode(&res))
++			return NOTIFY_DONE;
++
++		mci = get_mci(res.socket, res.imc);
++	} else {
++		if (!skx_decode || !skx_decode(&res))
++			return NOTIFY_DONE;
++
++		mci = res.dev->imc[res.imc].mci;
++	}
++
++	if (!mci)
++		return NOTIFY_DONE;
++
++	if (mce->mcgstatus & MCG_STATUS_MCIP)
++		type = "Exception";
++	else
++		type = "Event";
++
++	skx_mc_printk(mci, KERN_DEBUG, "HANDLING MCE MEMORY ERROR\n");
++
++	skx_mc_printk(mci, KERN_DEBUG, "CPU %d: Machine Check %s: 0x%llx "
++			   "Bank %d: 0x%llx\n", mce->extcpu, type,
++			   mce->mcgstatus, mce->bank, mce->status);
++	skx_mc_printk(mci, KERN_DEBUG, "TSC 0x%llx ", mce->tsc);
++	skx_mc_printk(mci, KERN_DEBUG, "ADDR 0x%llx ", mce->addr);
++	skx_mc_printk(mci, KERN_DEBUG, "MISC 0x%llx ", mce->misc);
++
++	skx_mc_printk(mci, KERN_DEBUG, "PROCESSOR %u:0x%x TIME %llu SOCKET "
++			   "%u APIC 0x%x\n", mce->cpuvendor, mce->cpuid,
++			   mce->time, mce->socketid, mce->apicid);
++
++	skx_mce_output_error(mci, mce, &res);
++
++	return NOTIFY_DONE;
++}
++
++void skx_remove(void)
++{
++	int i, j;
++	struct skx_dev *d, *tmp;
++
++	edac_dbg(0, "\n");
++
++	list_for_each_entry_safe(d, tmp, &dev_edac_list, list) {
++		list_del(&d->list);
++		for (i = 0; i < NUM_IMC; i++) {
++			if (d->imc[i].mci)
++				skx_unregister_mci(&d->imc[i]);
++
++			if (d->imc[i].mdev)
++				pci_dev_put(d->imc[i].mdev);
++
++			if (d->imc[i].mbase)
++				iounmap(d->imc[i].mbase);
++
++			for (j = 0; j < NUM_CHANNELS; j++) {
++				if (d->imc[i].chan[j].cdev)
++					pci_dev_put(d->imc[i].chan[j].cdev);
++			}
++		}
++		if (d->util_all)
++			pci_dev_put(d->util_all);
++		if (d->sad_all)
++			pci_dev_put(d->sad_all);
++		if (d->uracu)
++			pci_dev_put(d->uracu);
++
++		kfree(d);
++	}
++}
++
++#ifdef CONFIG_EDAC_DEBUG
++/*
++ * Debug feature.
++ * Exercise the address decode logic by writing an address to
++ * /sys/kernel/debug/edac/dirname/addr.
++ */
++static struct dentry *skx_test;
++
++static int debugfs_u64_set(void *data, u64 val)
++{
++	struct mce m;
++
++	pr_warn_once("Fake error to 0x%llx injected via debugfs\n", val);
++
++	memset(&m, 0, sizeof(m));
++	/* ADDRV + MemRd + Unknown channel */
++	m.status = MCI_STATUS_ADDRV + 0x90;
++	/* One corrected error */
++	m.status |= BIT_ULL(MCI_STATUS_CEC_SHIFT);
++	m.addr = val;
++	skx_mce_check_error(NULL, 0, &m);
++
++	return 0;
++}
++DEFINE_SIMPLE_ATTRIBUTE(fops_u64_wo, NULL, debugfs_u64_set, "%llu\n");
++
++void setup_skx_debug(const char *dirname)
++{
++	skx_test = edac_debugfs_create_dir(dirname);
++	if (!skx_test)
++		return;
++
++	if (!edac_debugfs_create_file("addr", 0200, skx_test,
++				      NULL, &fops_u64_wo)) {
++		debugfs_remove(skx_test);
++		skx_test = NULL;
++	}
++}
++
++void teardown_skx_debug(void)
++{
++	debugfs_remove_recursive(skx_test);
++}
++#endif /*CONFIG_EDAC_DEBUG*/
+diff --git a/drivers/edac/skx_comm_edac.h b/drivers/edac/skx_comm_edac.h
+new file mode 100644
+index 000000000000..f7618a9cc0ae
+--- /dev/null
++++ b/drivers/edac/skx_comm_edac.h
+@@ -0,0 +1,158 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Common codes for both the skx_edac driver and Intel 10nm server EDAC driver.
++ * Originally split out from the skx_edac driver.
++ *
++ * Copyright (c) 2018, Intel Corporation.
++ */
++
++#ifndef _SKX_COMM_EDAC_H
++#define _SKX_COMM_EDAC_H
++
++#include <linux/string.h>
++#include <linux/uaccess.h>
++#include <linux/pci.h>
++#include <linux/acpi.h>
++#include <linux/adxl.h>
++
++#define MSG_SIZE		1024
++
++/*
++ * Debug macros
++ */
++#define skx_printk(level, fmt, arg...)			\
++	edac_printk(level, "skx", fmt, ##arg)
++
++#define skx_mc_printk(mci, level, fmt, arg...)		\
++	edac_mc_chipset_printk(mci, level, "skx", fmt, ##arg)
++
++/*
++ * Get a bit field at register value <v>, from bit <lo> to bit <hi>
++ */
++#define GET_BITFIELD(v, lo, hi) \
++	(((v) & GENMASK_ULL((hi), (lo))) >> (lo))
++
++#define SKX_NUM_IMC		2	/* Memory controllers per socket */
++#define SKX_NUM_CHANNELS	3	/* Channels per memory controller */
++#define SKX_NUM_DIMMS		2	/* Max DIMMS per channel */
++
++#define I10NM_NUM_IMC		4
++#define I10NM_NUM_CHANNELS	2
++#define I10NM_NUM_DIMMS		2
++
++#define MAX(a, b)	((a) > (b) ? (a) : (b))
++#define NUM_IMC		MAX(SKX_NUM_IMC, I10NM_NUM_IMC)
++#define NUM_CHANNELS	MAX(SKX_NUM_CHANNELS, I10NM_NUM_CHANNELS)
++#define NUM_DIMMS	MAX(SKX_NUM_DIMMS, I10NM_NUM_DIMMS)
++
++#define IS_DIMM_PRESENT(r)		GET_BITFIELD(r, 15, 15)
++#define IS_NVDIMM_PRESENT(r, i)		GET_BITFIELD(r, i, i)
++
++/*
++ * Each cpu socket contains some pci devices that provide global
++ * information, and also some that are local to each of the two
++ * memory controllers on the die.
++ */
++struct skx_dev {
++	struct list_head list;
++	u8 bus[4];
++	int seg;
++	struct pci_dev *sad_all;
++	struct pci_dev *util_all;
++	struct pci_dev *uracu; /* for i10nm CPU */
++	u32 mcroute;
++	struct skx_imc {
++		struct mem_ctl_info *mci;
++		struct pci_dev *mdev; /* for i10nm CPU */
++		void __iomem *mbase;  /* for i10nm CPU */
++		u8 mc;	/* system wide mc# */
++		u8 lmc;	/* socket relative mc# */
++		u8 src_id, node_id;
++		struct skx_channel {
++			struct pci_dev	*cdev;
++			struct skx_dimm {
++				u8 close_pg;
++				u8 bank_xor_enable;
++				u8 fine_grain_bank;
++				u8 rowbits;
++				u8 colbits;
++			} dimms[NUM_DIMMS];
++		} chan[NUM_CHANNELS];
++	} imc[NUM_IMC];
++};
++
++struct skx_pvt {
++	struct skx_imc	*imc;
++};
++
++enum type {
++	SKX,
++	I10NM
++};
++
++enum {
++	INDEX_SOCKET,
++	INDEX_MEMCTRL,
++	INDEX_CHANNEL,
++	INDEX_DIMM,
++	INDEX_MAX
++};
++
++struct decoded_addr {
++	struct skx_dev *dev;
++	u64	addr;
++	int	socket;
++	int	imc;
++	int	channel;
++	u64	chan_addr;
++	int	sktways;
++	int	chanways;
++	int	dimm;
++	int	rank;
++	int	channel_rank;
++	u64	rank_address;
++	int	row;
++	int	column;
++	int	bank_address;
++	int	bank_group;
++};
++
++typedef int (*get_dimm_config_f)(struct mem_ctl_info *mci);
++typedef bool (*skx_decode_f)(struct decoded_addr *res);
++
++int __init skx_adxl_get(void);
++void __exit skx_adxl_put(void);
++void skx_set_decode(skx_decode_f decode);
++
++int skx_get_src_id(struct skx_dev *d, u8 *id);
++int skx_get_node_id(struct skx_dev *d, u8 *id);
++
++int skx_get_all_bus_mappings(unsigned int did, int off, enum type,
++			     struct list_head **list);
++
++int skx_get_hi_lo(unsigned int did, int off[], u64 *tolm, u64 *tohm);
++
++int skx_get_dimm_info(u32 mtr, u32 amap, struct dimm_info *dimm,
++		      struct skx_imc *imc, int chan, int dimmno);
++
++int skx_get_nvdimm_info(struct dimm_info *dimm, struct skx_imc *imc,
++			int chan, int dimmno, const char *mod_str);
++
++int skx_register_mci(struct skx_imc *imc, struct pci_dev *pdev,
++		     const char *ctl_name, const char *mod_str,
++		     get_dimm_config_f get_dimm_config);
++
++int skx_mce_check_error(struct notifier_block *nb, unsigned long val,
++			void *data);
++
++void skx_remove(void);
++
++#ifdef CONFIG_EDAC_DEBUG
++void setup_skx_debug(const char *dirname);
++void teardown_skx_debug(void);
++#else
++static inline void setup_skx_debug(const char *dirname) {}
++static inline void teardown_skx_debug(void) {}
++#endif /*CONFIG_EDAC_DEBUG*/
++
++#endif /* _SKX_COMM_EDAC_H */
 -- 
 2.19.1
 
