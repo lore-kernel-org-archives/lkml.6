@@ -2,157 +2,339 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D89C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F92CC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:08:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29D1F218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:06:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EC7D0218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:08:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="H5x5AUP8"
+	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="eE7zURGe"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728993AbfAYRGS (ORCPT
+        id S1728952AbfAYRIh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:06:18 -0500
-Received: from mail-vk1-f195.google.com ([209.85.221.195]:44675 "EHLO
-        mail-vk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbfAYRGS (ORCPT
+        Fri, 25 Jan 2019 12:08:37 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:47594 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbfAYRIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:06:18 -0500
-Received: by mail-vk1-f195.google.com with SMTP id h128so2278543vkg.11
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 09:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=JUabPGz8yxEC1nqOm2ma+2b8lb7Wa5vt/5vpF/8V8jA=;
-        b=H5x5AUP8IWsNn7ChNxbTAS39D80wbTm3Y0ZS3bG8D5NqWjTRQg2VximVPdpjdii7WZ
-         p/kWB3+wBZav1Hg5Uww9neGCL763af0VE4p/TN8AXtgpqkR+4zYRvFD4om1w33VNPQST
-         V12qOHkrF4OAPb8r14y/QEB6w7CHq5A0+/yjs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=JUabPGz8yxEC1nqOm2ma+2b8lb7Wa5vt/5vpF/8V8jA=;
-        b=kn06QebRWLfILTARIE1ZZ8r9AkPZcGrbkCasHHTSPpTxVFFlRWYiGaSCVfij78Egz8
-         VdKT2u9uONwmLQDdTwJj++qlsgZUr2P+DMOCBcZtEtwSq8lbQ1yw3qXVFEVbjKbnRREa
-         Tjfzl0xqfe8oIQMXrUdAdBh4OyDF14IWaJSGn+hkPiMsjzXFSk73gy0muNWYMSIxPVxE
-         HP/Pn6cIgvVUptct7qOzdsQkN5E+2no+BjIsCOuWyQlPsq8bc+vs7dGjLb+pqw6hOO8i
-         nMEW+O3WD6630vdKmAbZDdmzal57JGYftH0E16zMMCD8ZIfDUNl6Q7cdXm94cN5zAzA+
-         eyIg==
-X-Gm-Message-State: AJcUukeXJvoLSIoIfhfWy8TwGM6UcRCRvWcmbLRdzYbtfAte/OaqlswW
-        rDq8LiTSJe4Qp98AgwCeuWvM4rFdkmg=
-X-Google-Smtp-Source: ALg8bN6GKLqxAgs7PdYF9cn1ovlBez13UEQoYQtiKpkOFTGU3D++O9DyMczpiAEBGk1iQ/1yLeNZHQ==
-X-Received: by 2002:a1f:9042:: with SMTP id s63mr4564391vkd.17.1548435976015;
-        Fri, 25 Jan 2019 09:06:16 -0800 (PST)
-Received: from mail-vk1-f171.google.com (mail-vk1-f171.google.com. [209.85.221.171])
-        by smtp.gmail.com with ESMTPSA id a137sm28755320vsd.24.2019.01.25.09.06.14
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 09:06:14 -0800 (PST)
-Received: by mail-vk1-f171.google.com with SMTP id b18so2286664vke.2
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 09:06:14 -0800 (PST)
-X-Received: by 2002:a1f:3d10:: with SMTP id k16mr4753889vka.13.1548435973936;
- Fri, 25 Jan 2019 09:06:13 -0800 (PST)
+        Fri, 25 Jan 2019 12:08:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=/mVwRnIoPtUxhUd7GkCQ8i5dp4J8k0o7pdMDEQFURDE=;
+        b=eE7zURGetPf1oQUQgTioeDNO5QZzViKiFIXulcposQJssC/6WAiyWKzMx7ZgxB8gZWsNzp+goLRbhgiBqi3onV6wSAGhiFGbDomcAmhNnL09mAv1MxnKHyuUSOb00QxbNcFFmODE3IsK3J8n+1GdRpWWakBuj64t7Gvq86M1+dY1N3CH8+hvoo0RzuGaZpv9U9of2QhpdBGV2QbL9oFvbL3dR5Rqwy8XYzJVZtHrKP+x+Mg1anAu9sXFp74mDJL/Y7ccdwh6Su2kp0oUWKKJH1uAdwjxSQlb2d0Y74soN5Q43VN1wDfUpKYCnloCKIxwBunf7ub96WyuAHzH1ACOKg==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:50236 helo=[192.168.10.176])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gn4y0-0000aQ-U9; Fri, 25 Jan 2019 18:08:32 +0100
+Subject: Re: [PATCH v3 14/23] drm/qxl: cover all crtcs in shadow bo.
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>
+References: <20190118122020.27596-1-kraxel@redhat.com>
+ <20190118122020.27596-15-kraxel@redhat.com>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <0d7202d0-4b90-03aa-a1c5-520019c7c329@tronnes.org>
+Date:   Fri, 25 Jan 2019 18:08:28 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190118193200.32691-1-malat@debian.org> <CAH7mPvi2TN0b=j-6fqDpjGPkZVSEQnDiT2nj9NWmoBOhUiwKEg@mail.gmail.com>
- <CA+7wUsz6Rm58VOOTRA1+URKvONzsGcUT+A8F_sctyqMEOfs=yw@mail.gmail.com>
-In-Reply-To: <CA+7wUsz6Rm58VOOTRA1+URKvONzsGcUT+A8F_sctyqMEOfs=yw@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Sat, 26 Jan 2019 06:06:02 +1300
-X-Gmail-Original-Message-ID: <CAGXu5j+CQLk6u8iMmOfbvk5=B5PdDvc8qkkHBAjpXquhYgWTwg@mail.gmail.com>
-Message-ID: <CAGXu5j+CQLk6u8iMmOfbvk5=B5PdDvc8qkkHBAjpXquhYgWTwg@mail.gmail.com>
-Subject: Re: [PATCH] writeback: tracing: Copy only up to 31 characters in
- strncpy() calls
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     Nick Desaulniers <nick.desaulniers@gmail.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190118122020.27596-15-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 9:18 PM Mathieu Malaterre <malat@debian.org> wrote:
->
-> On Fri, Jan 25, 2019 at 5:26 AM Nick Desaulniers
-> <nick.desaulniers@gmail.com> wrote:
-> >
-> > On Fri, Jan 18, 2019 at 11:32 AM Mathieu Malaterre <malat@debian.org> wrote:
-> > >
-> > > In the past an attempt was made to remove a set of warnings triggered by
-> > > gcc 8.x and W=1 by changing calls to strncpy() into strlcpy(). This was
-> > > rejected as one of the desired behavior is to keep initializing the rest
-> > > of the destination string whenever the source string is less than the
-> > > size.
-> > >
-> > > However the code makes it clear that this is not a desired behavior to
-> > > copy the entire 32 characters into the destination buffer, since it is
-> > > expected that the string is NUL terminated. So change the maximum number
-> > > of characters to be copied to be the size of the destination buffer
-> > > minus 1.
-> > >
-> > > Break long lines and make this patch go through `checkpatch --strict` with
-> > > no errors.
-> > >
-> > > This commit removes the following warnings:
-> > >
-> > >   include/trace/events/writeback.h:69:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >   include/trace/events/writeback.h:99:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >   include/trace/events/writeback.h:179:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >   include/trace/events/writeback.h:223:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >   include/trace/events/writeback.h:277:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >   include/trace/events/writeback.h:299:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >   include/trace/events/writeback.h:324:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >   include/trace/events/writeback.h:375:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >   include/trace/events/writeback.h:586:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >   include/trace/events/writeback.h:660:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
-> > >
-> > > Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
-> > > Link: https://lore.kernel.org/patchwork/patch/910830/
-> > > Signed-off-by: Mathieu Malaterre <malat@debian.org>
-> > > ---
-> > >  include/trace/events/writeback.h | 30 ++++++++++++++++++++----------
-> > >  1 file changed, 20 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-> > > index 32db72c7c055..7bc58980f84f 100644
-> > > --- a/include/trace/events/writeback.h
-> > > +++ b/include/trace/events/writeback.h
-> > > @@ -67,7 +67,8 @@ TRACE_EVENT(writeback_dirty_page,
-> > >
-> > >         TP_fast_assign(
-> > >                 strncpy(__entry->name,
-> > > -                       mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)", 32);
-> > > +                       mapping ? dev_name(inode_to_bdi(mapping->host)->dev) :
-> > > +                       "(unknown)", sizeof(__entry->name) - 1);
-> >
-> > Does strncpy guarantee that destination will be NULL terminated if
-> > (sizeof(src) > sizeof(dst)) || (32 > sizeof(dst))?
->
-> No, that's the point here:
->
-> https://www.kernel.org/doc/htmldocs/kernel-api/API-strncpy.html
->
-> ...
-> The result is not NUL-terminated if the source exceeds count bytes.
->
-> In the case where the length of src is less than that of count, the
-> remainder of dest will be padded with NUL.
-> ...
->
-> One should use strlcpy for the use case you describe:
->
-> https://www.kernel.org/doc/htmldocs/kernel-api/API-strlcpy.html
 
-Please use strspy() -- strlcpy() will read the source beyond the length limit.
-https://www.kernel.org/doc/htmldocs/kernel-api/API-strscpy.html
 
--- 
-Kees Cook
+Den 18.01.2019 13.20, skrev Gerd Hoffmann:
+> The qxl device supports only a single active framebuffer ("primary
+> surface" in spice terminology).  In multihead configurations are handled
+> by defining rectangles within the primary surface for each head/crtc.
+> 
+> Userspace which uses the qxl ioctl interface (xorg qxl driver) is aware
+> of this limitation and will setup framebuffers and crtcs accordingly.
+> 
+> Userspace which uses dumb framebuffers (xorg modesetting driver,
+> wayland) is not aware of this limitation and tries to use two
+> framebuffers (one for each crtc) instead.
+> 
+> The qxl kms driver already has the dumb bo separated from the primary
+> surface, by using a (shared) shadow bo as primary surface.  This is
+> needed to support pageflips without having to re-create the primary
+> surface.  The qxl driver will blit from the dumb bo to the shadow bo
+> instead.
+> 
+> So we can extend the shadow logic:  Maintain a global shadow bo (aka
+> primary surface), make it big enough that dumb bo's for all crtcs fit in
+> side-by-side.  Adjust the pageflip blits to place the heads next to each
+> other in the shadow.
+> 
+> With this patch in place multihead qxl works with wayland.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/qxl/qxl_drv.h     |   5 +-
+>  drivers/gpu/drm/qxl/qxl_display.c | 119 +++++++++++++++++++++++++++++---------
+>  drivers/gpu/drm/qxl/qxl_draw.c    |   9 ++-
+>  3 files changed, 104 insertions(+), 29 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
+> index 150b1a4f66..43c6df9cf9 100644
+> --- a/drivers/gpu/drm/qxl/qxl_drv.h
+> +++ b/drivers/gpu/drm/qxl/qxl_drv.h
+> @@ -230,6 +230,8 @@ struct qxl_device {
+>  	struct qxl_ram_header *ram_header;
+>  
+>  	struct qxl_bo *primary_bo;
+> +	struct qxl_bo *dumb_shadow_bo;
+> +	struct qxl_head *dumb_heads;
+>  
+>  	struct qxl_memslot main_slot;
+>  	struct qxl_memslot surfaces_slot;
+> @@ -437,7 +439,8 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
+>  		       struct qxl_bo *bo,
+>  		       unsigned int flags, unsigned int color,
+>  		       struct drm_clip_rect *clips,
+> -		       unsigned int num_clips, int inc);
+> +		       unsigned int num_clips, int inc,
+> +		       uint32_t dumb_shadow_offset);
+>  
+>  void qxl_draw_fill(struct qxl_draw_fill *qxl_draw_fill_rec);
+>  
+> diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+> index ff13bc6a4a..d9de43e5fd 100644
+> --- a/drivers/gpu/drm/qxl/qxl_display.c
+> +++ b/drivers/gpu/drm/qxl/qxl_display.c
+> @@ -323,6 +323,8 @@ static void qxl_crtc_update_monitors_config(struct drm_crtc *crtc,
+>  		head.y = crtc->y;
+>  		if (qdev->monitors_config->count < i + 1)
+>  			qdev->monitors_config->count = i + 1;
+> +		if (qdev->primary_bo == qdev->dumb_shadow_bo)
+> +			head.x += qdev->dumb_heads[i].x;
+>  	} else if (i > 0) {
+>  		head.width = 0;
+>  		head.height = 0;
+> @@ -426,7 +428,7 @@ static int qxl_framebuffer_surface_dirty(struct drm_framebuffer *fb,
+>  	}
+>  
+>  	qxl_draw_dirty_fb(qdev, fb, qobj, flags, color,
+> -			  clips, num_clips, inc);
+> +			  clips, num_clips, inc, 0);
+>  
+>  	drm_modeset_unlock_all(fb->dev);
+>  
+> @@ -535,6 +537,7 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
+>  	    .x2 = plane->state->fb->width,
+>  	    .y2 = plane->state->fb->height
+>  	};
+> +	uint32_t dumb_shadow_offset = 0;
+>  
+>  	if (old_state->fb) {
+>  		bo_old = gem_to_qxl_bo(old_state->fb->obj[0]);
+> @@ -551,7 +554,12 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
+>  		qxl_primary_apply_cursor(plane);
+>  	}
+>  
+> -	qxl_draw_dirty_fb(qdev, plane->state->fb, bo, 0, 0, &norect, 1, 1);
+> +	if (bo->is_dumb)
+> +		dumb_shadow_offset =
+> +			qdev->dumb_heads[plane->state->crtc->index].x;
+> +
+> +	qxl_draw_dirty_fb(qdev, plane->state->fb, bo, 0, 0, &norect, 1, 1,
+> +			  dumb_shadow_offset);
+>  }
+>  
+>  static void qxl_primary_atomic_disable(struct drm_plane *plane,
+> @@ -707,12 +715,68 @@ static void qxl_cursor_atomic_disable(struct drm_plane *plane,
+>  	qxl_release_fence_buffer_objects(release);
+>  }
+>  
+> +static void qxl_update_dumb_head(struct qxl_device *qdev,
+> +				 int index, struct qxl_bo *bo)
+> +{
+> +	uint32_t width, height;
+> +
+> +	if (index >= qdev->monitors_config->max_allowed)
+> +		return;
+> +
+> +	if (bo && bo->is_dumb) {
+> +		width = bo->surf.width;
+> +		height = bo->surf.height;
+> +	} else {
+> +		width = 0;
+> +		height = 0;
+> +	}
+> +
+> +	if (qdev->dumb_heads[index].width == width &&
+> +	    qdev->dumb_heads[index].height == height)
+> +		return;
+> +
+> +	DRM_DEBUG("#%d: %dx%d -> %dx%d\n", index,
+> +		  qdev->dumb_heads[index].width,
+> +		  qdev->dumb_heads[index].height,
+> +		  width, height);
+> +	qdev->dumb_heads[index].width = width;
+> +	qdev->dumb_heads[index].height = height;
+> +}
+> +
+> +static void qxl_calc_dumb_shadow(struct qxl_device *qdev,
+> +				 struct qxl_surface *surf)
+> +{
+> +	struct qxl_head *head;
+> +	int i;
+> +
+> +	memset(surf, 0, sizeof(*surf));
+> +	for (i = 0; i < qdev->monitors_config->max_allowed; i++) {
+> +		head = qdev->dumb_heads + i;
+> +		head->x = surf->width;
+> +		surf->width += head->width;
+> +		if (surf->height < head->height)
+> +			surf->height = head->height;
+> +	}
+> +	if (surf->width < 64)
+> +		surf->width = 64;
+> +	if (surf->height < 64)
+> +		surf->height = 64;
+> +	surf->format = SPICE_SURFACE_FMT_32_xRGB;
+> +	surf->stride = surf->width * 4;
+> +
+> +	if (!qdev->dumb_shadow_bo ||
+> +	    qdev->dumb_shadow_bo->surf.width != surf->width ||
+> +	    qdev->dumb_shadow_bo->surf.height != surf->height)
+> +		DRM_DEBUG("%dx%d\n", surf->width, surf->height);
+> +}
+> +
+>  static int qxl_plane_prepare_fb(struct drm_plane *plane,
+>  				struct drm_plane_state *new_state)
+>  {
+>  	struct qxl_device *qdev = plane->dev->dev_private;
+>  	struct drm_gem_object *obj;
+> -	struct qxl_bo *user_bo, *old_bo = NULL;
+> +	struct qxl_bo *user_bo;
+> +	struct qxl_surface surf;
+>  	int ret;
+>  
+>  	if (!new_state->fb)
+> @@ -722,29 +786,30 @@ static int qxl_plane_prepare_fb(struct drm_plane *plane,
+>  	user_bo = gem_to_qxl_bo(obj);
+>  
+>  	if (plane->type == DRM_PLANE_TYPE_PRIMARY &&
+> -	    user_bo->is_dumb && !user_bo->shadow) {
+> -		if (plane->state->fb) {
+> -			obj = plane->state->fb->obj[0];
+> -			old_bo = gem_to_qxl_bo(obj);
+> +	    user_bo->is_dumb) {
+> +		qxl_update_dumb_head(qdev, new_state->crtc->index,
+> +				     user_bo);
+> +		qxl_calc_dumb_shadow(qdev, &surf);
+> +		if (!qdev->dumb_shadow_bo ||
+> +		    qdev->dumb_shadow_bo->surf.width  != surf.width ||
+> +		    qdev->dumb_shadow_bo->surf.height != surf.height) {
+> +			if (qdev->dumb_shadow_bo) {
+> +				drm_gem_object_put_unlocked
+> +					(&qdev->dumb_shadow_bo->gem_base);
+> +				qdev->dumb_shadow_bo = NULL;
+> +			}
+> +			qxl_bo_create(qdev, surf.height * surf.stride,
+> +				      true, true, QXL_GEM_DOMAIN_SURFACE, &surf,
+> +				      &qdev->dumb_shadow_bo);
+>  		}
+> -		if (old_bo && old_bo->shadow &&
+> -		    user_bo->gem_base.size == old_bo->gem_base.size &&
+> -		    plane->state->crtc     == new_state->crtc &&
+> -		    plane->state->crtc_w   == new_state->crtc_w &&
+> -		    plane->state->crtc_h   == new_state->crtc_h &&
+> -		    plane->state->src_x    == new_state->src_x &&
+> -		    plane->state->src_y    == new_state->src_y &&
+> -		    plane->state->src_w    == new_state->src_w &&
+> -		    plane->state->src_h    == new_state->src_h &&
+> -		    plane->state->rotation == new_state->rotation &&
+> -		    plane->state->zpos     == new_state->zpos) {
+> -			drm_gem_object_get(&old_bo->shadow->gem_base);
+> -			user_bo->shadow = old_bo->shadow;
+> -		} else {
+> -			qxl_bo_create(qdev, user_bo->gem_base.size,
+> -				      true, true, QXL_GEM_DOMAIN_SURFACE, NULL,
+> -				      &user_bo->shadow);
+> -			user_bo->shadow->surf = user_bo->surf;
+> +		if (user_bo->shadow != qdev->dumb_shadow_bo) {
+> +			if (user_bo->shadow) {
+> +				drm_gem_object_put_unlocked
+> +					(&user_bo->shadow->gem_base);
+> +				user_bo->shadow = NULL;
+> +			}
+> +			drm_gem_object_get(&qdev->dumb_shadow_bo->gem_base);
+> +			user_bo->shadow = qdev->dumb_shadow_bo;
+>  		}
+>  	}
+>  
+> @@ -773,7 +838,7 @@ static void qxl_plane_cleanup_fb(struct drm_plane *plane,
+>  	user_bo = gem_to_qxl_bo(obj);
+>  	qxl_bo_unpin(user_bo);
+>  
+> -	if (user_bo->shadow && !user_bo->shadow->is_primary) {
+> +	if (old_state->fb != plane->state->fb && user_bo->shadow) {
+>  		drm_gem_object_put_unlocked(&user_bo->shadow->gem_base);
+>  		user_bo->shadow = NULL;
+>  	}
+> @@ -1106,6 +1171,8 @@ int qxl_create_monitors_object(struct qxl_device *qdev)
+>  
+>  	memset(qdev->monitors_config, 0, monitors_config_size);
+>  	qdev->monitors_config->max_allowed = max_allowed;
+> +
+> +	qdev->dumb_heads = kcalloc(max_allowed, sizeof(qdev->dumb_heads[0]), GFP_KERNEL);
+
+Needs an allocation failure check. With that:
+
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
+
+
+>  	return 0;
+>  }
+>  
+> diff --git a/drivers/gpu/drm/qxl/qxl_draw.c b/drivers/gpu/drm/qxl/qxl_draw.c
+> index c408bb83c7..5313ad21c1 100644
+> --- a/drivers/gpu/drm/qxl/qxl_draw.c
+> +++ b/drivers/gpu/drm/qxl/qxl_draw.c
+> @@ -267,7 +267,8 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
+>  		       struct qxl_bo *bo,
+>  		       unsigned int flags, unsigned int color,
+>  		       struct drm_clip_rect *clips,
+> -		       unsigned int num_clips, int inc)
+> +		       unsigned int num_clips, int inc,
+> +		       uint32_t dumb_shadow_offset)
+>  {
+>  	/*
+>  	 * TODO: if flags & DRM_MODE_FB_DIRTY_ANNOTATE_FILL then we should
+> @@ -295,6 +296,9 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
+>  	if (ret)
+>  		return;
+>  
+> +	clips->x1 += dumb_shadow_offset;
+> +	clips->x2 += dumb_shadow_offset;
+> +
+>  	left = clips->x1;
+>  	right = clips->x2;
+>  	top = clips->y1;
+> @@ -342,7 +346,8 @@ void qxl_draw_dirty_fb(struct qxl_device *qdev,
+>  		goto out_release_backoff;
+>  
+>  	ret = qxl_image_init(qdev, release, dimage, surface_base,
+> -			     left, top, width, height, depth, stride);
+> +			     left - dumb_shadow_offset,
+> +			     top, width, height, depth, stride);
+>  	qxl_bo_kunmap(bo);
+>  	if (ret)
+>  		goto out_release_backoff;
+> 
