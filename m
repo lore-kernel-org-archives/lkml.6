@@ -2,95 +2,171 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E292C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:27:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 064EFC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:28:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40CE4218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:27:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="ZprbfHj7"
+	by mail.kernel.org (Postfix) with ESMTP id C6EA4218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:28:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729223AbfAYS1W (ORCPT
+        id S1729304AbfAYS2H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:27:22 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35972 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfAYS1W (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:27:22 -0500
-Received: by mail-lf1-f67.google.com with SMTP id a16so7617775lfg.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 10:27:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=5j3SrTDqjrzJUVHWaWDZVgyT6+oEkJNhO80FgEy0HCU=;
-        b=ZprbfHj7/QDQ4ynJh3seZZUkzS06hw3ptK9Uz4fzmONraUpLrsaw3UANNKtSYXkKZG
-         zjB0nnYVo9V4jwNsgsfuwYADmYrf383xOHacQQOlYbyTwEfI3kYaxcx/P0LiORX9c5yH
-         TSuw1iEgQVxy4F+zbBg96F1MAMSpKvcEl2LkuLUAdo4AJS7WjDXtlkyG7ZUs2FvCfih7
-         cKie06UFfzdXopsykaizJnMfVgU/GxXXocAGwJUcGWndywO8BhUNTnvAyNV7ZhPGdqLq
-         rwgBtKDHoDK/uk3KtjHtzxyh5fAT2R9WOHpJKM483VKGiN/7O279OYTnnf9sB2dbY2PO
-         3ZjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5j3SrTDqjrzJUVHWaWDZVgyT6+oEkJNhO80FgEy0HCU=;
-        b=M6w0dPdvfz6eV9YEB8h3DKxbZeqrVoxJMv58A+/n3tWi1Kolwrwks5j2aybT/V/1xl
-         PyELhveNk9eEx9RrmX5uoeenJ5Y2aw0tMG1vO9EHJK10LlavujemoVH5qwX4WrwJ2qUZ
-         sNcg+zv4aFdmeOUOk2uXUuA1EeIFmG0vC2tX9DvmIvm9VGR/JsM3p0yj7g0lL3LwLFn7
-         IfZFv7zzkYpKx3l73oyWXZjCeQT+ZM840UQLUOkogNRtwgSBLk9xApM8S1dhj46uEJtq
-         3wBrXlcB8Qvdb95olaTtBXyNpYO1xTxg55fJ7NDCn+rJ1OSJXYaz48E4aOuRHqollTAn
-         DLdg==
-X-Gm-Message-State: AJcUuke3/2OJY5nnL/rTp0RM4g2nbJ9x6cAivHbz9SpgLZgIpOFhEbWc
-        NMHKoZ6DO2AiN4PXiWv6AHRKpbcGRWNVAAaGENo5
-X-Google-Smtp-Source: ALg8bN7YAV6epRN3j4RJx9iJ3QI0/OIvMSjglNd2PgcWNmQ6R/FW77MEqr5lEwdMfge+6x2nUCMAAXNuydGYnPWFb9M=
-X-Received: by 2002:a19:c995:: with SMTP id z143mr9201551lff.79.1548440839997;
- Fri, 25 Jan 2019 10:27:19 -0800 (PST)
+        Fri, 25 Jan 2019 13:28:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52548 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726321AbfAYS2G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 13:28:06 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 056ED3D15;
+        Fri, 25 Jan 2019 18:28:06 +0000 (UTC)
+Received: from [10.36.112.63] (ovpn-112-63.ams2.redhat.com [10.36.112.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6A8D616C01;
+        Fri, 25 Jan 2019 18:27:59 +0000 (UTC)
+Subject: Re: [PATCH] KVM: x86: Sync the pending Posted-Interrupts
+To:     Luwei Kang <luwei.kang@intel.com>, kvm@vger.kernel.org
+Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
+        bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1547793240-9157-1-git-send-email-luwei.kang@intel.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <a88ee1f8-ec49-f35f-5b97-65bb1ceb9ea4@redhat.com>
+Date:   Fri, 25 Jan 2019 19:27:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <77df427bbfd22e0d901a9a0b2674e8d617b0c8c0.1548192726.git.rgb@redhat.com>
-In-Reply-To: <77df427bbfd22e0d901a9a0b2674e8d617b0c8c0.1548192726.git.rgb@redhat.com>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Fri, 25 Jan 2019 13:27:08 -0500
-Message-ID: <CAHC9VhScR5xLD11n0gHTx-RFjbO9-Su+_aiL7hPMxJ+65AzN1Q@mail.gmail.com>
-Subject: Re: [PATCH ghak104 V1] audit: move loginuid and sessionid from
- CONFIG_ AUDITSYSCALL to AUDIT
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Eric Paris <eparis@redhat.com>, Steve Grubb <sgrubb@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1547793240-9157-1-git-send-email-luwei.kang@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Fri, 25 Jan 2019 18:28:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 5:07 PM Richard Guy Briggs <rgb@redhat.com> wrote:
-> loginuid and sessionid (and audit_log_session_info) should be part of
-> CONFIG_AUDIT scope and not CONFIG_AUDITSYSCALL since it is used in
-> CONFIG_CHANGE, ANOM_LINK, FEATURE_CHANGE (and INTEGRITY_RULE), none of
-> which are otherwise dependent on AUDITSYSCALL.
->
-> Please see github issue
-> https://github.com/linux-audit/audit-kernel/issues/104
->
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+On 18/01/19 07:34, Luwei Kang wrote:
+> Some Posted-Interrupts from passthrough devices may be lost or
+> overwritten when the vCPU is in runnable state.
+> 
+> The SN (Suppress Notification) of PID (Posted Interrupt Descriptor) will
+> be set when the vCPU is preempted (vCPU in KVM_MP_STATE_RUNNABLE state
+> but not running on physical CPU). If a posted interrupt coming at this
+> time, the irq remmaping facility will set the bit of PIR (Posted
+> Interrupt Requests) but ON (Outstanding Notification).
+> So this interrupt can't be sync to APIC virtualization register and
+> will not be handled by Guest because ON is zero.
+> 
+> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
 > ---
->  fs/proc/base.c        |  6 ++--
->  include/linux/audit.h | 42 +++++++++++++------------
->  include/linux/sched.h |  2 +-
->  init/init_task.c      |  2 +-
->  kernel/audit.c        | 85 +++++++++++++++++++++++++++++++++++++++++++++++++++
->  kernel/auditsc.c      | 84 --------------------------------------------------
->  6 files changed, 113 insertions(+), 108 deletions(-)
+>  arch/x86/kvm/vmx/vmx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index f6915f1..820a03b 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -6048,7 +6048,7 @@ static int vmx_sync_pir_to_irr(struct kvm_vcpu *vcpu)
+>  	bool max_irr_updated;
+>  
+>  	WARN_ON(!vcpu->arch.apicv_active);
+> -	if (pi_test_on(&vmx->pi_desc)) {
+> +	if (!bitmap_empty((unsigned long *)vmx->pi_desc.pir, NR_VECTORS)) {
+>  		pi_clear_on(&vmx->pi_desc);
+>  		/*
+>  		 * IOMMU can write to PIR.ON, so the barrier matters even on UP.
+> 
 
-Looks good, merged.
+This is a very delicate path.  The bitmap check here is ordered after
+the vcpu->mode write in vcpu_enter_guest, matching the check of
+vcpu->mode in vmx_deliver_posted_interrupt (which comes after a write of
+PIR.ON):
 
--- 
-paul moore
-www.paul-moore.com
+	sender			receiver
+	write PIR
+	write PIR.ON		vcpu->mode = IN_GUEST_MODE
+	smp_mb()		smp_mb()
+	read vcpu->mode		sync_pir_to_irr
+				  read PIR.ON
+
+What you did should work, since PIR is written after PIR.ON anyway.
+However, you should at least change the comment in vcpu_enter_guest to
+mention "before reading PIR" instead of "before reading PIR.ON".
+
+Alternatively, would it be possible to instead set ON when SN is
+cleared?  The clearing of SN is in pi_clear_sn, and you would have
+instead something like
+
+	WRITE_ONCE(u16 *)&pi_desc->on_sn, POSTED_INTR_ON);
+
+where on_sn is added to struct pi_desc like this:
+
+@@ -61,4 +60,5 @@ struct pi_desc {
+ 			u32	ndst;
+ 		};
++		u16 on_sn;
+ 		u64 control;
+ 	};
+
+Paolo
