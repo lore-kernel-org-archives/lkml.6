@@ -2,59 +2,79 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29262C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A94FDC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:35:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED5E9218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:33:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 65F09218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:35:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GUWlGWAg"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727270AbfAYKdf (ORCPT
+        id S1727763AbfAYKfy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:33:35 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44760 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbfAYKdf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:33:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D41EBEBD;
-        Fri, 25 Jan 2019 02:33:34 -0800 (PST)
-Received: from [10.1.196.128] (ostrya.cambridge.arm.com [10.1.196.128])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D1BA3F5AF;
-        Fri, 25 Jan 2019 02:33:32 -0800 (PST)
-Subject: Re: [RFC v3 01/21] iommu: Introduce set_pasid_table API
-To:     Auger Eric <eric.auger@redhat.com>,
-        "eric.auger.pro@gmail.com" <eric.auger.pro@gmail.com>,
-        "iommu@lists.linux-foundation.org" <iommu@lists.linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "kvmarm@lists.cs.columbia.edu" <kvmarm@lists.cs.columbia.edu>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "alex.williamson@redhat.com" <alex.williamson@redhat.com>,
-        "jacob.jun.pan@linux.intel.com" <jacob.jun.pan@linux.intel.com>,
-        "yi.l.liu@linux.intel.com" <yi.l.liu@linux.intel.com>,
-        Will Deacon <Will.Deacon@arm.com>,
-        Robin Murphy <Robin.Murphy@arm.com>
-Cc:     Marc Zyngier <Marc.Zyngier@arm.com>,
-        "peter.maydell@linaro.org" <peter.maydell@linaro.org>,
-        "kevin.tian@intel.com" <kevin.tian@intel.com>,
-        "ashok.raj@intel.com" <ashok.raj@intel.com>,
-        Christoffer Dall <Christoffer.Dall@arm.com>
-References: <20190108102633.17482-1-eric.auger@redhat.com>
- <20190108102633.17482-2-eric.auger@redhat.com>
- <0203e4ce-eace-be6e-7e95-5a02c069c8e8@arm.com>
- <c8ec9b40-d011-caa9-1fc2-7cacb43da02e@redhat.com>
- <70ed7cbe-3e53-fcc5-00f0-47815883c530@redhat.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <56ac1f6b-69e9-5250-8b1b-68e2afca903f@arm.com>
-Date:   Fri, 25 Jan 2019 10:33:15 +0000
+        Fri, 25 Jan 2019 05:35:54 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44670 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfAYKfy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 05:35:54 -0500
+Received: by mail-wr1-f68.google.com with SMTP id z5so9692377wrt.11
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:35:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ealOnVHVYH/YbyAmfaqodTCJ/ZpZvOckJdBQrb+F6rc=;
+        b=GUWlGWAgn+BlULBg7c8+qTcJX03xpf+jxJEZOUcTioFUD6uUTKJDxcY4lVkDG2Ir95
+         NM10k8PRNy++j2IAAiLXiwQnThm57T+s61yrZ2ScxpYsVaZTAJoGIaQ8b/ohUvsPyrHg
+         nbuDzqKclboK8S4fOZ7XH1N5lFDFa+rLIi5mY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ealOnVHVYH/YbyAmfaqodTCJ/ZpZvOckJdBQrb+F6rc=;
+        b=qxcUy+ICOKxIEl16Jdpvdn2k1q7PDy6C16HO6fYfqZpwFlVD117yJiWspvfiJEdhoT
+         Xb1+AlKaCgS/rBahLO9Au+/uK0sXDP8H5CTeewJ5c+NPWu0udFflYDfl6Q/s8tKHhXT9
+         RNY47qZoR6FWp1O0Wt9vdNjoKeKnmk2Y4Lmrn2TA7xExu/5Lk/9tNC+yP7QIcBaH/yga
+         cL4JAu9PlWsONQYuEjwdS3vcBX/C3wcA7JeNNkqLdFjSErqi4gzo03uYlHX/FrZDJnC8
+         A4kRfzPszIGaFvWE06w97SjTrZyN5uadORk32RdPt/9tR2q3jg7KVrkCcS8d/5gvuWYb
+         WS4Q==
+X-Gm-Message-State: AJcUukfg0h7fcWiAXE5XMXPVTB2PMmTHGurSvQpDg0dK/UwaNWbCgGc4
+        OO80DZOC2Y9JB1KXabfk19X+JA==
+X-Google-Smtp-Source: ALg8bN4kqQBRKydQRP1WfLkf37XGfg0MrzaepvhXD5TDWgMFDpF0V4v0fo85i0Y1YtvIblFOkTjtdQ==
+X-Received: by 2002:adf:f28d:: with SMTP id k13mr11373650wro.78.1548412552686;
+        Fri, 25 Jan 2019 02:35:52 -0800 (PST)
+Received: from [192.168.27.209] ([37.157.136.206])
+        by smtp.googlemail.com with ESMTPSA id y1sm81447532wme.1.2019.01.25.02.35.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 02:35:52 -0800 (PST)
+Subject: Re: [PATCH 00/10] Venus stateful Codec API
+To:     Alexandre Courbot <acourbot@chromium.org>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org,
+        Vikash Garodia <vgarodia@codeaurora.org>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Malathi Gottam <mgottam@codeaurora.org>
+References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
+ <CAPBb6MVOPmRhhM=J-RqLOpc+mDbnxYdCMO3mqQfgN-F3b=kBCw@mail.gmail.com>
+ <10deb3d1-2b10-43fe-bc77-4465f561c90a@linaro.org>
+ <CAPBb6MUqi3xhgE_WPRP_7gZWcH2WGz8A7vskGGJW9zGM0=D1Sw@mail.gmail.com>
+From:   Stanimir Varbanov <stanimir.varbanov@linaro.org>
+Message-ID: <80b97fd8-bd3a-df74-c611-5da11bd7adc6@linaro.org>
+Date:   Fri, 25 Jan 2019 12:35:51 +0200
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <70ed7cbe-3e53-fcc5-00f0-47815883c530@redhat.com>
+In-Reply-To: <CAPBb6MUqi3xhgE_WPRP_7gZWcH2WGz8A7vskGGJW9zGM0=D1Sw@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -63,255 +83,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/01/2019 08:55, Auger Eric wrote:
-> Hi Jean-Philippe,
-> 
-> On 1/25/19 9:39 AM, Auger Eric wrote:
->> Hi Jean-Philippe,
+Hi Alex,
+
+On 1/25/19 7:34 AM, Alexandre Courbot wrote:
+> On Thu, Jan 24, 2019 at 7:13 PM Stanimir Varbanov
+> <stanimir.varbanov@linaro.org> wrote:
 >>
->> On 1/11/19 7:16 PM, Jean-Philippe Brucker wrote:
->>> On 08/01/2019 10:26, Eric Auger wrote:
->>>> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
->>>>
->>>> In virtualization use case, when a guest is assigned
->>>> a PCI host device, protected by a virtual IOMMU on a guest,
->>>> the physical IOMMU must be programmed to be consistent with
->>>> the guest mappings. If the physical IOMMU supports two
->>>> translation stages it makes sense to program guest mappings
->>>> onto the first stage/level (ARM/VTD terminology) while to host
->>>> owns the stage/level 2.
->>>>
->>>> In that case, it is mandated to trap on guest configuration
->>>> settings and pass those to the physical iommu driver.
->>>>
->>>> This patch adds a new API to the iommu subsystem that allows
->>>> to set the pasid table information.
->>>>
->>>> A generic iommu_pasid_table_config struct is introduced in
->>>> a new iommu.h uapi header. This is going to be used by the VFIO
->>>> user API. We foresee at least two specializations of this struct,
->>>> for PASID table passing and ARM SMMUv3.
+>> Hi Alex,
+>>
+>> Thank you for review and valuable comments!
+>>
+>> On 1/24/19 10:43 AM, Alexandre Courbot wrote:
+>>> Hi Stanimir,
 >>>
->>> Last sentence is a bit confusing. With SMMUv3 it is also used for the
->>> PASID table, even when it only has one entry and PASID is disabled.
->> OK removed
+>>> On Fri, Jan 18, 2019 at 1:20 AM Stanimir Varbanov
+>>> <stanimir.varbanov@linaro.org> wrote:
+>>>>
+>>>> Hello,
+>>>>
+>>>> This aims to make Venus decoder compliant with stateful Codec API [1].
+>>>> The patches 1-9 are preparation for the cherry on the cake patch 10
+>>>> which implements the decoder state machine similar to the one in the
+>>>> stateful codec API documentation.
 >>>
->>>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
->>>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
->>>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
->>>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
->>>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->>>>
->>>> ---
->>>>
->>>> This patch generalizes the API introduced by Jacob & co-authors in
->>>> https://lwn.net/Articles/754331/
->>>>
->>>> v2 -> v3:
->>>> - replace unbind/bind by set_pasid_table
->>>> - move table pointer and pasid bits in the generic part of the struct
->>>>
->>>> v1 -> v2:
->>>> - restore the original pasid table name
->>>> - remove the struct device * parameter in the API
->>>> - reworked iommu_pasid_smmuv3
->>>> ---
->>>>  drivers/iommu/iommu.c      | 10 ++++++++
->>>>  include/linux/iommu.h      | 14 +++++++++++
->>>>  include/uapi/linux/iommu.h | 50 ++++++++++++++++++++++++++++++++++++++
->>>>  3 files changed, 74 insertions(+)
->>>>  create mode 100644 include/uapi/linux/iommu.h
->>>>
->>>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->>>> index 3ed4db334341..0f2b7f1fc7c8 100644
->>>> --- a/drivers/iommu/iommu.c
->>>> +++ b/drivers/iommu/iommu.c
->>>> @@ -1393,6 +1393,16 @@ int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
->>>>  }
->>>>  EXPORT_SYMBOL_GPL(iommu_attach_device);
->>>>  
->>>> +int iommu_set_pasid_table(struct iommu_domain *domain,
->>>> +			  struct iommu_pasid_table_config *cfg)
->>>> +{
->>>> +	if (unlikely(!domain->ops->set_pasid_table))
->>>> +		return -ENODEV;
->>>> +
->>>> +	return domain->ops->set_pasid_table(domain, cfg);
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(iommu_set_pasid_table);
->>>> +
->>>>  static void __iommu_detach_device(struct iommu_domain *domain,
->>>>  				  struct device *dev)
->>>>  {
->>>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->>>> index e90da6b6f3d1..1da2a2357ea4 100644
->>>> --- a/include/linux/iommu.h
->>>> +++ b/include/linux/iommu.h
->>>> @@ -25,6 +25,7 @@
->>>>  #include <linux/errno.h>
->>>>  #include <linux/err.h>
->>>>  #include <linux/of.h>
->>>> +#include <uapi/linux/iommu.h>
->>>>  
->>>>  #define IOMMU_READ	(1 << 0)
->>>>  #define IOMMU_WRITE	(1 << 1)
->>>> @@ -184,6 +185,7 @@ struct iommu_resv_region {
->>>>   * @domain_window_disable: Disable a particular window for a domain
->>>>   * @of_xlate: add OF master IDs to iommu grouping
->>>>   * @pgsize_bitmap: bitmap of all possible supported page sizes
->>>> + * @set_pasid_table: set pasid table
->>>>   */
->>>>  struct iommu_ops {
->>>>  	bool (*capable)(enum iommu_cap);
->>>> @@ -226,6 +228,9 @@ struct iommu_ops {
->>>>  	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
->>>>  	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
->>>>  
->>>> +	int (*set_pasid_table)(struct iommu_domain *domain,
->>>> +			       struct iommu_pasid_table_config *cfg);
->>>> +
->>>>  	unsigned long pgsize_bitmap;
->>>>  };
->>>>  
->>>> @@ -287,6 +292,8 @@ extern int iommu_attach_device(struct iommu_domain *domain,
->>>>  			       struct device *dev);
->>>>  extern void iommu_detach_device(struct iommu_domain *domain,
->>>>  				struct device *dev);
->>>> +extern int iommu_set_pasid_table(struct iommu_domain *domain,
->>>> +				 struct iommu_pasid_table_config *cfg);
->>>>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
->>>>  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
->>>>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
->>>> @@ -696,6 +703,13 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
->>>>  	return NULL;
->>>>  }
->>>>  
->>>> +static inline
->>>> +int iommu_set_pasid_table(struct iommu_domain *domain,
->>>> +			  struct iommu_pasid_table_config *cfg)
->>>> +{
->>>> +	return -ENODEV;
->>>> +}
->>>> +
->>>>  #endif /* CONFIG_IOMMU_API */
->>>>  
->>>>  #ifdef CONFIG_IOMMU_DEBUGFS
->>>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
->>>> new file mode 100644
->>>> index 000000000000..7a7cf7a3de7c
->>>> --- /dev/null
->>>> +++ b/include/uapi/linux/iommu.h
->>>> @@ -0,0 +1,50 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
->>>> +/*
->>>> + * IOMMU user API definitions
->>>> + *
->>>> + *
->>>> + * This program is free software; you can redistribute it and/or modify
->>>> + * it under the terms of the GNU General Public License version 2 as
->>>> + * published by the Free Software Foundation.
->>>
->>> I don't think we need both the boilerplate and the SPDX header
->> OK I only kept the SPDX header.
->>>
->>>> + */
->>>> +
->>>> +#ifndef _UAPI_IOMMU_H
->>>> +#define _UAPI_IOMMU_H
->>>> +
->>>> +#include <linux/types.h>
->>>> +
->>>> +/**
->>>> + * SMMUv3 Stream Table Entry stage 1 related information
->>>> + * @abort: shall the STE lead to abort
->>>> + * @s1fmt: STE s1fmt field as set by the guest
->>>> + * @s1dss: STE s1dss as set by the guest
->>>> + * All field names match the smmu 3.0/3.1 spec (ARM IHI 0070A)
->>>
->>> Not really the case for @abort. Could you clarify whether @abort is
->>> valid in combination with @bypass?
->>> abort corresponds to !Config[2]. In that case the spec says "report
->> abort to device, no event recorded". S1 bypass corresponds to
->> Config=0b1x0. What about removing abort in the SMMUv3 specific part and
->> encode the stage state in the generic part. See below proposal ...
->>>> + */
->>>> +struct iommu_pasid_smmuv3 {
->>>> +	__u8 abort;
->>>> +	__u8 s1fmt;
->>>> +	__u8 s1dss;
->>>> +};
->>>> +
->>>> +/**
->>>> + * PASID table data used to bind guest PASID table to the host IOMMU
->>>> + * Note PASID table corresponds to the Context Table on ARM SMMUv3.
->>>> + *
->>>> + * @version: API version to prepare for future extensions
->>>> + * @format: format of the PASID table
->>>> + *
->>>> + */
->>>> +struct iommu_pasid_table_config {
->>>> +#define PASID_TABLE_CFG_VERSION_1 1
->>>> +	__u32	version;
->>>> +#define IOMMU_PASID_FORMAT_SMMUV3	(1 << 0)
->>>> +	__u32	format;
->>>> +	__u64	base_ptr;
->>>> +	__u8	pasid_bits;
->>>> +	__u8	bypass
->> #define IOMMU_PASID_STREAM_ABORT  (1 << 0)
->> #define IOMMU_PASID_STREAM_BYPASS (1 << 1)
->> #define IOMMU_PASID_STREAM_TRANSLATE (1 << 2)
->> __u8 config;
-> Sorry for the confusion, we don't want a bitfield here as those values
-> are exclusive.
+>>> Thanks *a lot* for this series! I am still stress-testing it against
+>>> the Chromium decoder tests, but so far it has been rock-solid. I have
+>>> a few inline comments on some patches ; I will also want to review the
+>>> state machine more thoroughly after refreshing my mind on Tomasz doc,
+>>> but this looks pretty promising already.
+>>
+>> I'm expecting problems with ResetAfterFirstConfigInfo. I don't know why
+>> but this test case is very dirty. I'd appreciate any help to decipher
+>> what is the sequence of v4l2 calls made by this unittest case.
 > 
-> What about:
-> struct iommu_pasid_table_config {
-> #define PASID_TABLE_CFG_VERSION_1 1
->         __u32   version;
-> #define IOMMU_PASID_FORMAT_SMMUV3       (1 << 0)
->         __u32   format;
->         __u64   base_ptr;
->         __u8    pasid_bits;
-> #define IOMMU_PASID_CONFIG_BYPASS       1
-> #define IOMMU_PASID_CONFIG_ABORT        2
-> #define IOMMU_PASID_CONFIG_TRANSLATE    3
+> I did not see any issue with ResetAfterFirstConfigInfo, however
+> ResourceExhaustion seems to hang once in a while. But I could already
+> see this behavior with the older patchset.
 
-Yes, this makes more sense :)
-
->         __u8    config;
->         __u8    padding[6];
->         union {
->                 struct iommu_pasid_smmuv3 smmuv3;
->         };
-> };
-
-Thanks,
-Jean
+Is it hangs badly?
 
 > 
-> Thanks
-> 
-> Eric
->>>
->>> We need some padding, in case someone adds a new struct to the union
->>> that requires 64-byte alignment
->> OK
->>>
->>> And 'bypass' might not be the right name if we're making it common,
->>> maybe 'reset' would be clearer? Or we just need to explain that bypass
->>> is the initial state of a nesting domain
->> I will add such comment. To me the "bypass" terminology sounds clearer
->> than "reset"
->>>
->>> Thanks,
->>> Jean
->>>
->>>> +	union {
->>>> +		struct iommu_pasid_smmuv3 smmuv3;
->>>> +	};
->>>> +};
->>>> +
->>>> +#endif /* _UAPI_IOMMU_H */
->>>>
->>>
+> In any case I plan to thoroughly review the state machine. I agree it
+> is a bit complex to grasp.
 
+yes the state machine isn't simple and I blamed Tomasz many times for
+that :)
+
+-- 
+regards,
+Stan
