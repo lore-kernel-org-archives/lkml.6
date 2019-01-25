@@ -2,216 +2,155 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52DF1C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:04:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98018C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:04:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11B0B218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:04:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 695E1218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:04:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ENrEsONO"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aC+L/fLT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729112AbfAYKEp (ORCPT
+        id S1729218AbfAYKE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:04:45 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:42273 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728238AbfAYKEo (ORCPT
+        Fri, 25 Jan 2019 05:04:56 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35595 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729145AbfAYKE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:04:44 -0500
-Received: by mail-ua1-f68.google.com with SMTP id d21so3040895uap.9
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:04:43 -0800 (PST)
+        Fri, 25 Jan 2019 05:04:56 -0500
+Received: by mail-ed1-f68.google.com with SMTP id x30so6951780edx.2;
+        Fri, 25 Jan 2019 02:04:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=36F1UyrhDpsJESxu4ZGkKTzuU4bNd6HP1thiwh5cFRo=;
-        b=ENrEsONOxK7lU6jrUha4iAGX+QSos40HGj9coQLsdczjqQ4ivfEoIVMme5KT5qeEyf
-         UbFSQV4DrpmUG/11C0Qjhv/sg7fQ/wvvmWBYkRG+IqjpeQbBTE6rRFyaGYOneyIsIBDc
-         FvWxIYjKzfZvLHIyKv24yJOOvPZ5jYSnBONTI=
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZvohXcEKajDUL0TBJ4gjZVmzI1Z8Ns4WdfDOcdvTKgA=;
+        b=aC+L/fLT5ny3bdPfz9DhqkJBTFLacEzfFtXpV/sDiL8sOgHu8fz4EUggDRMjTjB74D
+         hdkhaFc+mKuN6FlPS5WvpifssMxwp+4cW9BcD5f3Q7+sLSI4ZFu8UwovYK22yQWSvW4N
+         cbuOjuKPYJ+S4AYQB6A+4TBtdDT68bsbjIpeQ6dmstWXPCkOYGeqJMWxEAddjy87t3Db
+         WRJH7JRos/+107/y0XEAfAJQ/81V9FsBHHVBLzfxOAfVxwoirKloViDIbprb8fWExQSm
+         g/eEFRqowIY2TME0UJ7cHm2UoIb8UsDqfPaO2wCCinYzS/zWhaxGUH4t59wrBHCYU1kp
+         /Thg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=36F1UyrhDpsJESxu4ZGkKTzuU4bNd6HP1thiwh5cFRo=;
-        b=NA6bNEbg3cv0+S80IjQPGS2nVDvQ1jgKAGLdAIrUuJNfhTuneV3WuhZiNvuZr0jT70
-         nj+lkMkrluSwPxGX3qLBRnofrlbXIxnfmL2MP5M3hzIhPSZyEhVG63oEyYOZ6lQeULmz
-         vdUcZZ0ed0M4LYUpxYr/ungzSKpzp81mXIjFw79wBYcFrws/VSJL4xGKpwsrlT4OjvqA
-         Gsv+YhWmxuftcw+/+N8H+nOSGLg3KL7pwA2Ai2qFRuvrfNkkXzx7VD1DQ/QQTVnSCn0C
-         gr1fkLCwhuogGvldu7Q/p8Ir0KEcgU8yxiv8RUcyb0AMvrAx+9lj83gq8bkxkOs5HPzk
-         Gycg==
-X-Gm-Message-State: AJcUukdD+ZLmhkfzYXoaoo/HEVzrSGyTztbuuUOxddY4Aeu3zxQYssDn
-        04BApRffW3TkDxGk6oQvrE/hA1Qw15HEjwpVjsTH8Q==
-X-Google-Smtp-Source: ALg8bN4L5VP4ph1HqjNAQH0JLvh/gz+aYxPplJ6n0Q8Zc+jWQeDbyiMLLfJXavtUfn688JnHqpKGwphwGPAhKwkYnxI=
-X-Received: by 2002:ab0:3484:: with SMTP id c4mr4314298uar.39.1548410683029;
- Fri, 25 Jan 2019 02:04:43 -0800 (PST)
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=ZvohXcEKajDUL0TBJ4gjZVmzI1Z8Ns4WdfDOcdvTKgA=;
+        b=F7ztxVY7rjq5ej199fUXMH/KXunNvCXb/tsQGCIAJBiI9eQ/UwjMgKFzOyCi+3b9Bn
+         FZTKsyB2rqGCzFoGKA4uLErTfCAkk5gfl55LmPRcMUp6I9sdGId2SSpNUDK/drUZHP4E
+         1B1AhEdWNvihgcE3iipSPq+66aCJTEbc4xbpiM2sE6vf8lf12ZBSLNAcWBdlmSlDLDXa
+         izf7M8f0ihqkdOQ3PNNvOjxj9Zev7UdVsVoNTfIMD0EFWDZPXV5arpejTWdVXEyZ7wqk
+         rOPKRDc/LXmK6n2n33ars1srn5nQXd4ySg6+nANX7Z/80pE8FnADoR9kgEy3XpRJtQtI
+         5TIw==
+X-Gm-Message-State: AJcUukcju1rMlvBi29tAwIWLxek+2gLBK58dv5eW3k36Xre1Bms+ivbJ
+        sljKkVdz/xw5NwimUl1TxsQ=
+X-Google-Smtp-Source: ALg8bN6Rv+wK24wNAW/a33aKAOps4d++ftpf/Xmr1wOWj004yCMJD3W5t6LtEfdNh4SdlTC2eGb+Tg==
+X-Received: by 2002:a17:906:b292:: with SMTP id q18mr8959462ejz.184.1548410694111;
+        Fri, 25 Jan 2019 02:04:54 -0800 (PST)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id g16sm1181467ejb.65.2019.01.25.02.04.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 02:04:52 -0800 (PST)
+From:   Ricardo Ribalda Delgado <ricardo@ribalda.com>
+To:     Alexandru Ardelean <ardeleanalex@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        alexandru.ardelean@analog.com, linux-iio@vger.kernel.org
+Cc:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Subject: [PATCH v2] iio: adc: ad7476: Add support for ADS786X ADCs
+Date:   Fri, 25 Jan 2019 11:04:51 +0100
+Message-Id: <20190125100451.15011-1-ricardo@ribalda.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20181129174700.16585-1-ulf.hansson@linaro.org>
- <20181129174700.16585-4-ulf.hansson@linaro.org> <119031115.C8gHTGbYmQ@aspire.rjw.lan>
- <CAPDyKFqQQnMKFNpGyi_dkP_Rm8qo-1WjPfVkp2unOxyXRa2wbA@mail.gmail.com>
- <CAJZ5v0iY7j5SThQhtq5xP+g5yNiHQ+cMWxq-tdVh3t5wJ_s3Tw@mail.gmail.com> <CAPDyKFr6nD6hazmsGqT-Z-Z67oime75Yavr+SuL0P_MZF3HZGQ@mail.gmail.com>
-In-Reply-To: <CAPDyKFr6nD6hazmsGqT-Z-Z67oime75Yavr+SuL0P_MZF3HZGQ@mail.gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Fri, 25 Jan 2019 11:04:06 +0100
-Message-ID: <CAPDyKFoRZyTpccWaE7TZXM=E2xRevqX9MxMGnuq6P=qfYQfBtg@mail.gmail.com>
-Subject: Re: [PATCH v10 03/27] timer: Export next wakeup time of a CPU
-To:     "Rafael J. Wysocki" <rafael@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Linux PM <linux-pm@vger.kernel.org>,
-        "Raju P . L . S . S . S . N" <rplsssn@codeaurora.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Tony Lindgren <tony@atomide.com>,
-        Kevin Hilman <khilman@kernel.org>,
-        Lina Iyer <ilina@codeaurora.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lina Iyer <lina.iyer@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Frederic Weisbecker <fweisbec@gmail.com>,
-        Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[...]
+Add support for ADS7866, ADS7867 and ADS7868 8/10/12 bit Single channel
+ADC.
 
-> > > > > +/**
-> > > > > + * tick_nohz_get_next_wakeup - return the next wake up of the CPU
-> > > > > + * @cpu: the particular CPU to get next wake up for
-> > > > > + *
-> > > > > + * Called for idle CPUs only.
-> > > > > + */
-> > > > > +ktime_t tick_nohz_get_next_wakeup(int cpu)
-> > > > > +{
-> > > > > +     struct clock_event_device *dev = per_cpu(tick_cpu_device.evtdev, cpu);
-> > > > > +
-> > > > > +     return dev->next_event;
-> > > > > +}
-> > > > > +
-> > > > >  static void tick_nohz_account_idle_ticks(struct tick_sched *ts)
-> > > > >  {
-> > > > >  #ifndef CONFIG_VIRT_CPU_ACCOUNTING_NATIVE
-> > > > >
-> > > >
-> > > > Well, I have concerns regarding this one.
-> > > >
-> > > > I don't believe it is valid to call this new function for non-idle CPUs and
-> > > > the kerneldoc kind of says so, but the next patch doesn't actually prevent
-> > > > it from being called for a non-idle CPU (at the time it is called in there
-> > > > the target CPU may not be idle any more AFAICS).
-> > >
-> > > You are correct, but let me clarify things.
-> > >
-> > > We are calling this new API from the new genpd governor, which may
-> > > have a cpumask indicating there is more than one CPU attached to its
-> > > PM domain+sub-PM domains. In other words, we may call the API for
-> > > another CPU than the one we are executing on.
-> > >
-> > > When the new genpd governor is called, all CPUs in the cpumask of the
-> > > genpd in question, are already runtime suspended and will remain so
-> > > throughout the decisions made by the governor.
-> > >
-> > > However, because of the race condition, which needs to be manged by
-> > > the genpd backend driver and its corresponding FW, one of the CPU in
-> > > the genpd cpumask could potentially wake up from idle when the genpd
-> > > governor runs. However, as a part of exiting from idle, that CPU needs
-> > > to wait for the call to pm_runtime_get_sync() to return before
-> > > completing the exit patch of idle. This also means waiting for the
-> > > genpd governor to finish.
-> >
-> > OK, so the CPU spins on a spin lock inside of the idle loop with interrupts off.
->
-> Correct.
->
-> This is the part that is not very nice, but ideally it should be a
-> rather rare condition as it only happens during the last man standing
-> point.
->
-> >
-> > > The point is, no matter what decision the governor takes under these
-> > > circumstances, the genpd backend driver and its FW must manage this
-> > > race condition during the last man standing. For PSCI OSI mode, it
-> > > means that if a cluster idle state is suggested by Linux during these
-> > > circumstances, it must be prevented and aborted.
-> >
-> > I would suggest putting a comment to explain that somewhere as it is
-> > not really obvious.
->
-> Let me see if can squeeze in that somewhere, probably it's best suited
-> in the new genpd governor code somewhere.
->
-> >
-> > > >
-> > > > In principle, the cpuidle core can store this value, say in struct
-> > > > cpuidle_device of the given CPU, and expose a helper to access it from
-> > > > genpd, but that would be extra overhead totally unnecessary on everthing
-> > > > that doesn't use genpd for cpuidle.
-> > > >
-> > > > So maybe the driver could store it in its ->enter callback?  After all,
-> > > > the driver knows that genpd is going to be used later.
-> > >
-> > > This would work, but it wouldn't really change much when it comes to
-> > > the race condition described above.
-> >
-> > No, it wouldn't make the race go away.
-> >
-> > > Of course it would turn the code
-> > > into being more cpuidle specific, which seems reasonable to me.
-> > >
-> > > Anyway, if I understand your suggestion, in principle it means
-> > > changing $subject patch in such way that the API should not take "int
-> > > cpu" as an in-parameter, but instead only use __this_cpu() to read out
-> > > the next event for current idle CPU.
-> >
-> > Yes.
+Datasheet: http://www.ti.com/lit/ds/symlink/ads7868.pdf
 
-I have looked closer to this and it turned out that it seems that I
-should probably not need introduce an entirely new thing here. Instead
-I should likely be able to re-factor the current
-tick_nohz_get_sleep_length() and tick_nohz_next_event(), as those are
-in principle doing the similar things as I need. So I started hacking
-on that, when Daniel Lezcano told me that he already have a patch
-doing exactly what I want. :-) However, in the context of his "next
-wakeup prediction" work, but that shouldn't matter.
+Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
+---
+v2: I have missnamed the devices
+ drivers/iio/adc/Kconfig  |  3 ++-
+ drivers/iio/adc/ad7476.c | 20 ++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 1 deletion(-)
 
-If I can make it work, I will fold in his patch in the next version of
-the series instead.
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index f9354e5ee65c..d86900fc2634 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -64,7 +64,8 @@ config AD7476
+ 	help
+ 	  Say yes here to build support for Analog Devices AD7273, AD7274, AD7276,
+ 	  AD7277, AD7278, AD7475, AD7476, AD7477, AD7478, AD7466, AD7467, AD7468,
+-	  AD7495, AD7910, AD7920, AD7920 SPI analog to digital converters (ADC).
++	  AD7495, AD7910, AD7920, AD7920, ADS7866, ADS7867, ADS7868 SPI analog
++	  to digital converters (ADC).
+ 
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called ad7476.
+diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+index 0549686b9ef8..76747488044b 100644
+--- a/drivers/iio/adc/ad7476.c
++++ b/drivers/iio/adc/ad7476.c
+@@ -59,6 +59,9 @@ enum ad7476_supported_device_ids {
+ 	ID_ADC081S,
+ 	ID_ADC101S,
+ 	ID_ADC121S,
++	ID_ADS7866,
++	ID_ADS7867,
++	ID_ADS7868,
+ };
+ 
+ static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
+@@ -157,6 +160,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+ #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+ 		BIT(IIO_CHAN_INFO_RAW))
+ #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
++#define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
++		BIT(IIO_CHAN_INFO_RAW))
+ 
+ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+ 	[ID_AD7091R] = {
+@@ -209,6 +214,18 @@ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+ 		.channel[0] = ADC081S_CHAN(12),
+ 		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+ 	},
++	[ID_ADS7866] = {
++		.channel[0] = ADS786X_CHAN(12),
++		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
++	},
++	[ID_ADS7867] = {
++		.channel[0] = ADS786X_CHAN(10),
++		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
++	},
++	[ID_ADS7868] = {
++		.channel[0] = ADS786X_CHAN(8),
++		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
++	},
+ };
+ 
+ static const struct iio_info ad7476_info = {
+@@ -314,6 +331,9 @@ static const struct spi_device_id ad7476_id[] = {
+ 	{"adc081s", ID_ADC081S},
+ 	{"adc101s", ID_ADC101S},
+ 	{"adc121s", ID_ADC121S},
++	{"ads7866", ID_ADS7866},
++	{"ads7867", ID_ADS7867},
++	{"ads7868", ID_ADS7868},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(spi, ad7476_id);
+-- 
+2.20.1
 
-Please tell if you already at this point, see any issues with this approach.
-
-> >
-> > > Additionally, we need another new cpuidle API, which genpd can call to
-> > > retrieve a new per CPU "next event data" stored by the cpuidle driver
-> > > from its ->enter() callback. Is this a correct interpretation of your
-> > > suggestion?
-> >
-> > Yes, it is.
->
-> Thanks for confirming!
->
-> >
-> > Generally, something like "cpuidle, give me the wakeup time of this
-> > CPU".  And it may very well give you 0 if the CPU has woken up
-> > already. :-)
->
-> Yep, I was thinking something like that, so in principle it may
-> minimize the window of receiving in-correct "next wakeup data" in
-> genpd for a non-idle CPU, but again it doesn't solve the race
-> condition.
->
-
-Kind regards
-Uffe
