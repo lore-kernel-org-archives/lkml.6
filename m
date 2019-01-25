@@ -2,37 +2,43 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2138C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC85BC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABE55218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96732218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:52:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729599AbfAYRwP (ORCPT
+        id S1729621AbfAYRwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:52:15 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:45606 "EHLO mx1.redhat.com"
+        Fri, 25 Jan 2019 12:52:20 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53642 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729242AbfAYRwK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:52:10 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        id S1729200AbfAYRwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 12:52:17 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4EC41C074125;
-        Fri, 25 Jan 2019 17:52:10 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 84378D6F0C;
+        Fri, 25 Jan 2019 17:52:15 +0000 (UTC)
 Received: from [10.36.112.63] (ovpn-112-63.ams2.redhat.com [10.36.112.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id D28A517189;
-        Fri, 25 Jan 2019 17:51:58 +0000 (UTC)
-Subject: Re: [PATCH v2 0/2] tweak HYPERV_CPUID_ENLIGHTMENT_INFO
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
-Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Roman Kagan <rkagan@virtuozzo.com>,
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 43E34608C3;
+        Fri, 25 Jan 2019 17:52:10 +0000 (UTC)
+Subject: Re: [PATCH v2] kvm: x86/vmx: Use kzalloc for cached_vmcs12
+To:     Tom Roeder <tmroeder@google.com>,
+        Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     Jim Mattson <jmattson@google.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
         Liran Alon <liran.alon@oracle.com>,
-        linux-kernel@vger.kernel.org
-References: <20190125111934.28782-1-vkuznets@redhat.com>
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H . Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
+References: <20190124214820.187794-1-tmroeder@google.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -90,32 +96,83 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
  S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
  uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <8fcab9f1-270e-131e-b9da-05888d92ce09@redhat.com>
-Date:   Fri, 25 Jan 2019 18:51:56 +0100
+Message-ID: <48aefd0a-0987-7636-30f2-f67b06135460@redhat.com>
+Date:   Fri, 25 Jan 2019 18:52:02 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20190125111934.28782-1-vkuznets@redhat.com>
+In-Reply-To: <20190124214820.187794-1-tmroeder@google.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 25 Jan 2019 17:52:10 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 25 Jan 2019 17:52:16 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/01/19 12:19, Vitaly Kuznetsov wrote:
-> Be more consistent with genuine Hyper-V: don't recommend using Enlightened
-> VMCS when it wasn't enabled, don't advertise reset via synthetic MSR.
+On 24/01/19 22:48, Tom Roeder wrote:
+> This changes the allocation of cached_vmcs12 to use kzalloc instead of
+> kmalloc. This removes the information leak found by Syzkaller (see
+> Reported-by) in this case and prevents similar leaks from happening
+> based on cached_vmcs12.
 > 
-> Vitaly Kuznetsov (2):
->   x86/kvm/hyper-v: don't recommend doing reset via synthetic MSR
->   x86/kvm/hyper-v: recommend using eVMCS only when it is enabled
+> It also changes vmx_get_nested_state to copy out the full 4k VMCS12_SIZE
+> in copy_to_user rather than only the size of the struct.
 > 
->  arch/x86/kvm/hyperv.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
+> Tested: rebuilt against head, booted, and ran the syszkaller repro
+>   https://syzkaller.appspot.com/text?tag=ReproC&x=174efca3400000 without
+>   observing any problems.
+> 
+> Reported-by: syzbot+ded1696f6b50b615b630@syzkaller.appspotmail.com
+> Signed-off-by: Tom Roeder <tmroeder@google.com>
+> ---
+> Changelog since v1:
+> - Changed the copy_to_user calls in vmx_get_nested_state to copy the
+>   full 4k buffer.
+> 
+>  arch/x86/kvm/vmx/nested.c | 12 ++++++++----
+>  1 file changed, 8 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
+> index 2616bd2c7f2c7..ce81539238547 100644
+> --- a/arch/x86/kvm/vmx/nested.c
+> +++ b/arch/x86/kvm/vmx/nested.c
+> @@ -4140,11 +4140,11 @@ static int enter_vmx_operation(struct kvm_vcpu *vcpu)
+>  	if (r < 0)
+>  		goto out_vmcs02;
+>  
+> -	vmx->nested.cached_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
+> +	vmx->nested.cached_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
+>  	if (!vmx->nested.cached_vmcs12)
+>  		goto out_cached_vmcs12;
+>  
+> -	vmx->nested.cached_shadow_vmcs12 = kmalloc(VMCS12_SIZE, GFP_KERNEL);
+> +	vmx->nested.cached_shadow_vmcs12 = kzalloc(VMCS12_SIZE, GFP_KERNEL);
+>  	if (!vmx->nested.cached_shadow_vmcs12)
+>  		goto out_cached_shadow_vmcs12;
+>  
+> @@ -5263,13 +5263,17 @@ static int vmx_get_nested_state(struct kvm_vcpu *vcpu,
+>  			copy_shadow_to_vmcs12(vmx);
+>  	}
+>  
+> -	if (copy_to_user(user_kvm_nested_state->data, vmcs12, sizeof(*vmcs12)))
+> +	/*
+> +	 * Copy over the full allocated size of vmcs12 rather than just the size
+> +	 * of the struct.
+> +	 */
+> +	if (copy_to_user(user_kvm_nested_state->data, vmcs12, VMCS12_SIZE))
+>  		return -EFAULT;
+>  
+>  	if (nested_cpu_has_shadow_vmcs(vmcs12) &&
+>  	    vmcs12->vmcs_link_pointer != -1ull) {
+>  		if (copy_to_user(user_kvm_nested_state->data + VMCS12_SIZE,
+> -				 get_shadow_vmcs12(vcpu), sizeof(*vmcs12)))
+> +				 get_shadow_vmcs12(vcpu), VMCS12_SIZE))
+>  			return -EFAULT;
+>  	}
+>  
 > 
 
 Queued, thanks.
