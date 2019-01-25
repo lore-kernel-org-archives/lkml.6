@@ -2,210 +2,104 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE28FC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:14:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FCC9C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:14:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A254218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:14:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 25E9D218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:14:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.de header.i=@amazon.de header.b="euxO+2Xt"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Scu+8dMC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728990AbfAYSOl (ORCPT
+        id S1729290AbfAYSOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:14:41 -0500
-Received: from smtp-fw-33001.amazon.com ([207.171.190.10]:11239 "EHLO
-        smtp-fw-33001.amazon.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfAYSOl (ORCPT
+        Fri, 25 Jan 2019 13:14:50 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45369 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728843AbfAYSOs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:14:41 -0500
+        Fri, 25 Jan 2019 13:14:48 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so4505442pgc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 10:14:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.de; i=@amazon.de; q=dns/txt; s=amazon201209;
-  t=1548440078; x=1579976078;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-id:mime-version:
-   content-transfer-encoding;
-  bh=orPD8O/NEp6piWCtqIEXUsGz60HfnEcV9mEcbBNF4zQ=;
-  b=euxO+2Xt7VL7QNEWrBC+MyKZixphjcbF9aotZxbz1D9V9AvA9KCNgCwY
-   duCmgBKveyjPJwYJt80ReotnZcjC7Hzlb5SHtYXh/WMdT/dN6tQA+85vx
-   iXXe5wuz+5f953qnCWHyf0m2iVQe5cfga3c89GB+q98BGH4b/j6X205I4
-   k=;
-X-IronPort-AV: E=Sophos;i="5.56,522,1539648000"; 
-   d="scan'208";a="778764819"
-Received: from sea3-co-svc-lb6-vlan2.sea.amazon.com (HELO email-inbound-relay-2a-8549039f.us-west-2.amazon.com) ([10.47.22.34])
-  by smtp-border-fw-out-33001.sea14.amazon.com with ESMTP; 25 Jan 2019 18:14:35 +0000
-Received: from EX13MTAUEA001.ant.amazon.com (pdx1-ws-svc-p6-lb9-vlan3.pdx.amazon.com [10.236.137.198])
-        by email-inbound-relay-2a-8549039f.us-west-2.amazon.com (Postfix) with ESMTPS id 9CAFBA049C;
-        Fri, 25 Jan 2019 18:14:35 +0000 (UTC)
-Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
- EX13MTAUEA001.ant.amazon.com (10.43.61.82) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 25 Jan 2019 18:14:35 +0000
-Received: from EX13D01EUB003.ant.amazon.com (10.43.166.248) by
- EX13D01EUB003.ant.amazon.com (10.43.166.248) with Microsoft SMTP Server (TLS)
- id 15.0.1367.3; Fri, 25 Jan 2019 18:14:34 +0000
-Received: from EX13D01EUB003.ant.amazon.com ([10.43.166.248]) by
- EX13D01EUB003.ant.amazon.com ([10.43.166.248]) with mapi id 15.00.1367.000;
- Fri, 25 Jan 2019 18:14:34 +0000
-From:   "Raslan, KarimAllah" <karahmed@amazon.de>
-To:     "konrad.wilk@oracle.com" <konrad.wilk@oracle.com>
-CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>
-Subject: Re: [PATCH v5 07/13] KVM/nVMX: Use kvm_vcpu_map when mapping the
- virtual APIC page
-Thread-Topic: [PATCH v5 07/13] KVM/nVMX: Use kvm_vcpu_map when mapping the
- virtual APIC page
-Thread-Index: AQHUp/+gv6CzAdQKK02X23zmG7qf9KW9OjuAgAMpaoA=
-Date:   Fri, 25 Jan 2019 18:14:33 +0000
-Message-ID: <1548440073.17444.21.camel@amazon.de>
-References: <1547026933-31226-1-git-send-email-karahmed@amazon.de>
-         <1547026933-31226-8-git-send-email-karahmed@amazon.de>
-         <20190123175711.GL19289@Konrads-MacBook-Pro.local>
-In-Reply-To: <20190123175711.GL19289@Konrads-MacBook-Pro.local>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.43.165.122]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <6D12A0A12EE3B34F93A40689F4699B22@amazon.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=92rcxnZwHHwkt8E/fg+74lwd4Lhb6qATXYJlRZ4Zam0=;
+        b=Scu+8dMCCI70YNjSpr71//0DZzMuAzPQlh8VRKvm65oCE6SYaj9G/oiWySPqDOS55u
+         7ZcJfzzghmyzDXt9eyJh5XVFINnQvLG9cIq/TYxQ8Tu5/3kilKtqFStwU9rDm8DQNMx7
+         GcrL4Wf91SVWyM5Yii7Gd5+YpIbkAWRD1dg40=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=92rcxnZwHHwkt8E/fg+74lwd4Lhb6qATXYJlRZ4Zam0=;
+        b=MXegelJ30Trw1AxfoO453vksiFD+26sKXwn+VQf+icmJ0gKMlzfi4azevw/g4NtW91
+         iIORluYqK9ER2gFDosfQ7XnPm1lbvHyRsCPU7boqgaCXPRiOomkeAZ6WbzCu31ZWvUUA
+         CYK0gz13Nz4eE1xXJvcon8G+a1Z8bZi+nElePxUG1iaJfc4evoodPGBo2fX9xdQKDeOl
+         dMwmwlEQiJDd0aOxgLibOjMRB/qaQZGz/O0coH1I1h6r2YAdWwBBanS0OpGYgGfhDa6u
+         3dDtHRM1ECRDyj6JHK5aYlMS+1SGdBSFn5E0OQwKEr2paIa7VWlaXEDErWbT/1idau3s
+         75pw==
+X-Gm-Message-State: AJcUukeT58Ka/5UTuGGMuoSpj/nuKpYq6pc3wlsZn3zWu+PKpdJDq7MF
+        gAbVwp5TFTCVCIqj5MfGpUJiRQ==
+X-Google-Smtp-Source: ALg8bN6B90IrpGEMd5f5992BXqWJ/3W9fhAs3dRu43/E1hsU/ZXq71MlcfIdBquVyTVBcikmdbtDYQ==
+X-Received: by 2002:a65:434d:: with SMTP id k13mr10934818pgq.269.1548440088037;
+        Fri, 25 Jan 2019 10:14:48 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id l11sm33283334pff.65.2019.01.25.10.14.46
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 10:14:47 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+To:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Khasim Syed Mohammed <khasim.mohammed@linaro.org>
+Subject: [PATCH] arm64: dts: qcom: qcs404: Add rpmcc node
+Date:   Fri, 25 Jan 2019 10:14:22 -0800
+Message-Id: <20190125181422.21434-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gV2VkLCAyMDE5LTAxLTIzIGF0IDEyOjU3IC0wNTAwLCBLb25yYWQgUnplc3p1dGVrIFdpbGsg
-d3JvdGU6DQo+IE9uIFdlZCwgSmFuIDA5LCAyMDE5IGF0IDEwOjQyOjA3QU0gKzAxMDAsIEthcmlt
-QWxsYWggQWhtZWQgd3JvdGU6DQo+ID4gDQo+ID4gVXNlIGt2bV92Y3B1X21hcCB3aGVuIG1hcHBp
-bmcgdGhlIHZpcnR1YWwgQVBJQyBwYWdlIHNpbmNlIHVzaW5nDQo+ID4ga3ZtX3ZjcHVfZ3BhX3Rv
-X3BhZ2UoKSBhbmQga21hcCgpIHdpbGwgb25seSB3b3JrIGZvciBndWVzdCBtZW1vcnkgdGhhdCBo
-YXMNCj4gPiBhICJzdHJ1Y3QgcGFnZSIuDQo+ID4gDQo+ID4gT25lIGFkZGl0aW9uYWwgc2VtYW50
-aWMgY2hhbmdlIGlzIHRoYXQgdGhlIHZpcnR1YWwgaG9zdCBtYXBwaW5nIGxpZmVjeWNsZQ0KPiA+
-IGhhcyBjaGFuZ2VkIGEgYml0LiBJdCBub3cgaGFzIHRoZSBzYW1lIGxpZmV0aW1lIG9mIHRoZSBw
-aW5uaW5nIG9mIHRoZQ0KPiA+IHZpcnR1YWwgQVBJQyBwYWdlIG9uIHRoZSBob3N0IHNpZGUuDQo+
-IA0KPiBDb3VsZCB5b3UgZXhwYW5kIGEgYml0IG9uIHRoZSAnc2FtZSBsaWZldGltZSAuLiBvbiB0
-aGUgaG9zdCBzaWRlJyAgdG8gYmUNCj4gb2J2aW91cyBmb3IgZm9sa3Mgd2hhdCBleGFjdGx5IHRo
-ZSBzZW1hbnRpYyBpcz8NCj4gDQo+IEFuZCBob3cgZG9lcyB0aGlzIHJpbmcgd2l0aCB0aGlzIGNv
-bW1lbnQ6DQo+ID4gDQo+ID4gDQo+ID4gU2lnbmVkLW9mZi1ieTogS2FyaW1BbGxhaCBBaG1lZCA8
-a2FyYWhtZWRAYW1hem9uLmRlPg0KPiA+IC0tLQ0KPiA+IHY0IC0+IHY1Og0KPiA+IC0gdW5tYXAg
-d2l0aCBkaXJ0eSBmbGFnDQo+ID4gDQo+ID4gdjEgLT4gdjI6DQo+ID4gLSBEbyBub3QgY2hhbmdl
-IHRoZSBsaWZlY3ljbGUgb2YgdGhlIG1hcHBpbmcgKHBib256aW5pKQ0KPiANCj4gLi4gV2hlcmUg
-UGFvbG8gZG9lcyBub3Qgd2FudCB0aGUgc2VtYW50aWNzIG9mIHRoZSBtYXBwaW5nIHRvIGJlIGNo
-YW5nZWQ/DQo+IA0KPiBDb2RlIHdpc2UgZmVlbCBmcmVlIHRvIHNtYWNrIG15IFJldmlld2VkLWJ5
-IG9uIGl0LCBidXQgb2J2aW91c2x5IHRoZQ0KPiBxdWVzdGlvbiBvbiB0aGUgYWJvdmUgY29tbWVu
-dCBuZWVkcyB0byBiZSByZXNvbHZlZC4NCg0KQWgsIHJpZ2h0LiBTbyB0aGVyZSB3YXMgdHdvIGxp
-ZmUtY3ljbGUgY2hhbmdlczoNCg0KMS0gTGF6aWx5IHVubWFwIHRoZSBtYXBwaW5nIGFuZCBvbmx5
-IGRvIGl0IG9uOiBhKSByZWxlYXNlIGIpIGlmIHRoZSBnZm4gaXPCoA0KwqAgwqBkaWZmZXJlbnQu
-IFRoaXMgd2FzIGRvbmUgYXMgYW4gb3B0aW1pemF0aW9uIChpLmUuIGNhY2hlIG9mIGEgc2luZ2xl
-IGVudHJ5KS7CoA0KwqAgwqBUaGlzIGlzIHRoZSBmaXJzdCBsaWZlLWN5Y2xlIGNoYW5nZSB0aGF0
-IFBhb2xvIGFza2VkIG1lIHRvIGRvIHNlcGVyYXRlbHkgYW5kDQrCoCDCoHN1Z2dlc3RlZCB0byBj
-cmVhdGUgYSBQRk4gY2FjaGUgaW5zdGVhZC4gVGhpcyBoYXMgaW5kZWVkIGJlZW4gZHJvcHBlZA0K
-wqAgwqBiZXR3ZWVuIHYxIC0+IHYyIHN3aXRjaC4NCg0KMi0gVGhlIGxpZmUtY3ljbGUgY2hhbmdl
-IG5vdyBpcyB0aGUgZmFjdCB0aGF0IHRoZSBrdm1fdmNwdV9tYXAgaW50ZXJmYWNlIGRvZXM6wqAN
-CsKgIMKgYSkgbWFwIHRvIGEgdmlydHVhbCBhZGRyZXNzIGIpIHRyYW5zbGF0ZSBhIGdmbiB0byBh
-IHBmbi4NCg0KwqAgwqBUaGUgb3JpZ2luYWwgY29kZSB3YXMgZG9pbmcgdGhlIGttYXAgaW4gb25l
-IGxvY2F0aW9uIGFuZCB0aGUgZ2ZuX3RvX3BhZ2UgaW4NCsKgIMKgYW5vdGhlci4gVXNpbmcga3Zt
-X3ZjcHVfbWFwIG1lYW5zIHRoYXQgYm90aCBrbWFwK2dmbl90b19wYWdlIHdpbGwgYmUgdGllZMKg
-DQrCoCDCoHRvZ2V0aGVyIGFuZCB3aWxsIG5vdCBiZSBkb25lIHNlcGVyYXRlbHkuIFNvIGZhciBu
-byBvbmUgY29tcGxhaW5lZCBhYm91dA0KwqAgwqB0aGlzIG9uZSBzbyBJIGtlcHQgaXQgOkQNCg0K
-PiANCj4gVGhhbmsgeW91Lg0KPiANCj4gPiANCj4gPiAtIFVzZSBwZm5fdG9faHBhIGluc3RlYWQg
-b2YgZ2ZuX3RvX2dwYQ0KPiA+IC0tLQ0KPiA+ICBhcmNoL3g4Ni9rdm0vdm14L25lc3RlZC5jIHwg
-MzIgKysrKysrKysrKystLS0tLS0tLS0tLS0tLS0tLS0tLS0NCj4gPiAgYXJjaC94ODYva3ZtL3Zt
-eC92bXguYyAgICB8ICA1ICsrLS0tDQo+ID4gIGFyY2gveDg2L2t2bS92bXgvdm14LmggICAgfCAg
-MiArLQ0KPiA+ICAzIGZpbGVzIGNoYW5nZWQsIDE0IGluc2VydGlvbnMoKyksIDI1IGRlbGV0aW9u
-cygtKQ0KPiA+IA0KPiA+IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rdm0vdm14L25lc3RlZC5jIGIv
-YXJjaC94ODYva3ZtL3ZteC9uZXN0ZWQuYw0KPiA+IGluZGV4IDQxMjdhZDkuLmRjZmY5OWQgMTAw
-NjQ0DQo+ID4gLS0tIGEvYXJjaC94ODYva3ZtL3ZteC9uZXN0ZWQuYw0KPiA+ICsrKyBiL2FyY2gv
-eDg2L2t2bS92bXgvbmVzdGVkLmMNCj4gPiBAQCAtMjI5LDEwICsyMjksNyBAQCBzdGF0aWMgdm9p
-ZCBmcmVlX25lc3RlZChzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpDQo+ID4gIAkJa3ZtX3JlbGVhc2Vf
-cGFnZV9kaXJ0eSh2bXgtPm5lc3RlZC5hcGljX2FjY2Vzc19wYWdlKTsNCj4gPiAgCQl2bXgtPm5l
-c3RlZC5hcGljX2FjY2Vzc19wYWdlID0gTlVMTDsNCj4gPiAgCX0NCj4gPiAtCWlmICh2bXgtPm5l
-c3RlZC52aXJ0dWFsX2FwaWNfcGFnZSkgew0KPiA+IC0JCWt2bV9yZWxlYXNlX3BhZ2VfZGlydHko
-dm14LT5uZXN0ZWQudmlydHVhbF9hcGljX3BhZ2UpOw0KPiA+IC0JCXZteC0+bmVzdGVkLnZpcnR1
-YWxfYXBpY19wYWdlID0gTlVMTDsNCj4gPiAtCX0NCj4gPiArCWt2bV92Y3B1X3VubWFwKCZ2bXgt
-Pm5lc3RlZC52aXJ0dWFsX2FwaWNfbWFwLCB0cnVlKTsNCj4gPiAgCWlmICh2bXgtPm5lc3RlZC5w
-aV9kZXNjX3BhZ2UpIHsNCj4gPiAgCQlrdW5tYXAodm14LT5uZXN0ZWQucGlfZGVzY19wYWdlKTsN
-Cj4gPiAgCQlrdm1fcmVsZWFzZV9wYWdlX2RpcnR5KHZteC0+bmVzdGVkLnBpX2Rlc2NfcGFnZSk7
-DQo+ID4gQEAgLTI4MTcsNiArMjgxNCw3IEBAIHN0YXRpYyB2b2lkIG5lc3RlZF9nZXRfdm1jczEy
-X3BhZ2VzKHN0cnVjdCBrdm1fdmNwdSAqdmNwdSkNCj4gPiAgew0KPiA+ICAJc3RydWN0IHZtY3Mx
-MiAqdm1jczEyID0gZ2V0X3ZtY3MxMih2Y3B1KTsNCj4gPiAgCXN0cnVjdCB2Y3B1X3ZteCAqdm14
-ID0gdG9fdm14KHZjcHUpOw0KPiA+ICsJc3RydWN0IGt2bV9ob3N0X21hcCAqbWFwOw0KPiA+ICAJ
-c3RydWN0IHBhZ2UgKnBhZ2U7DQo+ID4gIAl1NjQgaHBhOw0KPiA+ICANCj4gPiBAQCAtMjg0OSwx
-MSArMjg0Nyw3IEBAIHN0YXRpYyB2b2lkIG5lc3RlZF9nZXRfdm1jczEyX3BhZ2VzKHN0cnVjdCBr
-dm1fdmNwdSAqdmNwdSkNCj4gPiAgCX0NCj4gPiAgDQo+ID4gIAlpZiAobmVzdGVkX2NwdV9oYXMo
-dm1jczEyLCBDUFVfQkFTRURfVFBSX1NIQURPVykpIHsNCj4gPiAtCQlpZiAodm14LT5uZXN0ZWQu
-dmlydHVhbF9hcGljX3BhZ2UpIHsgLyogc2hvdWxkbid0IGhhcHBlbiAqLw0KPiA+IC0JCQlrdm1f
-cmVsZWFzZV9wYWdlX2RpcnR5KHZteC0+bmVzdGVkLnZpcnR1YWxfYXBpY19wYWdlKTsNCj4gPiAt
-CQkJdm14LT5uZXN0ZWQudmlydHVhbF9hcGljX3BhZ2UgPSBOVUxMOw0KPiA+IC0JCX0NCj4gPiAt
-CQlwYWdlID0ga3ZtX3ZjcHVfZ3BhX3RvX3BhZ2UodmNwdSwgdm1jczEyLT52aXJ0dWFsX2FwaWNf
-cGFnZV9hZGRyKTsNCj4gPiArCQltYXAgPSAmdm14LT5uZXN0ZWQudmlydHVhbF9hcGljX21hcDsN
-Cj4gPiAgDQo+ID4gIAkJLyoNCj4gPiAgCQkgKiBJZiB0cmFuc2xhdGlvbiBmYWlsZWQsIFZNIGVu
-dHJ5IHdpbGwgZmFpbCBiZWNhdXNlDQo+ID4gQEAgLTI4NjgsMTEgKzI4NjIsOSBAQCBzdGF0aWMg
-dm9pZCBuZXN0ZWRfZ2V0X3ZtY3MxMl9wYWdlcyhzdHJ1Y3Qga3ZtX3ZjcHUgKnZjcHUpDQo+ID4g
-IAkJICogY29udHJvbC4gIEJ1dCBzdWNoIGEgY29uZmlndXJhdGlvbiBpcyB1c2VsZXNzLCBzbw0K
-PiA+ICAJCSAqIGxldCdzIGtlZXAgdGhlIGNvZGUgc2ltcGxlLg0KPiA+ICAJCSAqLw0KPiA+IC0J
-CWlmICghaXNfZXJyb3JfcGFnZShwYWdlKSkgew0KPiA+IC0JCQl2bXgtPm5lc3RlZC52aXJ0dWFs
-X2FwaWNfcGFnZSA9IHBhZ2U7DQo+ID4gLQkJCWhwYSA9IHBhZ2VfdG9fcGh5cyh2bXgtPm5lc3Rl
-ZC52aXJ0dWFsX2FwaWNfcGFnZSk7DQo+ID4gLQkJCXZtY3Nfd3JpdGU2NChWSVJUVUFMX0FQSUNf
-UEFHRV9BRERSLCBocGEpOw0KPiA+IC0JCX0NCj4gPiArCQlpZiAoIWt2bV92Y3B1X21hcCh2Y3B1
-LCBncGFfdG9fZ2ZuKHZtY3MxMi0+dmlydHVhbF9hcGljX3BhZ2VfYWRkciksIG1hcCkpDQo+ID4g
-KwkJCXZtY3Nfd3JpdGU2NChWSVJUVUFMX0FQSUNfUEFHRV9BRERSLCBwZm5fdG9faHBhKG1hcC0+
-cGZuKSk7DQo+ID4gKw0KPiA+ICAJfQ0KPiA+ICANCj4gPiAgCWlmIChuZXN0ZWRfY3B1X2hhc19w
-b3N0ZWRfaW50cih2bWNzMTIpKSB7DQo+ID4gQEAgLTMyNzksMTEgKzMyNzEsMTIgQEAgc3RhdGlj
-IHZvaWQgdm14X2NvbXBsZXRlX25lc3RlZF9wb3N0ZWRfaW50ZXJydXB0KHN0cnVjdCBrdm1fdmNw
-dSAqdmNwdSkNCj4gPiAgDQo+ID4gIAltYXhfaXJyID0gZmluZF9sYXN0X2JpdCgodW5zaWduZWQg
-bG9uZyAqKXZteC0+bmVzdGVkLnBpX2Rlc2MtPnBpciwgMjU2KTsNCj4gPiAgCWlmIChtYXhfaXJy
-ICE9IDI1Nikgew0KPiA+IC0JCXZhcGljX3BhZ2UgPSBrbWFwKHZteC0+bmVzdGVkLnZpcnR1YWxf
-YXBpY19wYWdlKTsNCj4gPiArCQl2YXBpY19wYWdlID0gdm14LT5uZXN0ZWQudmlydHVhbF9hcGlj
-X21hcC5odmE7DQo+ID4gKwkJaWYgKCF2YXBpY19wYWdlKQ0KPiA+ICsJCQlyZXR1cm47DQo+ID4g
-Kw0KPiA+ICAJCV9fa3ZtX2FwaWNfdXBkYXRlX2lycih2bXgtPm5lc3RlZC5waV9kZXNjLT5waXIs
-DQo+ID4gIAkJCXZhcGljX3BhZ2UsICZtYXhfaXJyKTsNCj4gPiAtCQlrdW5tYXAodm14LT5uZXN0
-ZWQudmlydHVhbF9hcGljX3BhZ2UpOw0KPiA+IC0NCj4gPiAgCQlzdGF0dXMgPSB2bWNzX3JlYWQx
-NihHVUVTVF9JTlRSX1NUQVRVUyk7DQo+ID4gIAkJaWYgKCh1OCltYXhfaXJyID4gKCh1OClzdGF0
-dXMgJiAweGZmKSkgew0KPiA+ICAJCQlzdGF0dXMgJj0gfjB4ZmY7DQo+ID4gQEAgLTM5MTcsMTAg
-KzM5MTAsNyBAQCB2b2lkIG5lc3RlZF92bXhfdm1leGl0KHN0cnVjdCBrdm1fdmNwdSAqdmNwdSwg
-dTMyIGV4aXRfcmVhc29uLA0KPiA+ICAJCWt2bV9yZWxlYXNlX3BhZ2VfZGlydHkodm14LT5uZXN0
-ZWQuYXBpY19hY2Nlc3NfcGFnZSk7DQo+ID4gIAkJdm14LT5uZXN0ZWQuYXBpY19hY2Nlc3NfcGFn
-ZSA9IE5VTEw7DQo+ID4gIAl9DQo+ID4gLQlpZiAodm14LT5uZXN0ZWQudmlydHVhbF9hcGljX3Bh
-Z2UpIHsNCj4gPiAtCQlrdm1fcmVsZWFzZV9wYWdlX2RpcnR5KHZteC0+bmVzdGVkLnZpcnR1YWxf
-YXBpY19wYWdlKTsNCj4gPiAtCQl2bXgtPm5lc3RlZC52aXJ0dWFsX2FwaWNfcGFnZSA9IE5VTEw7
-DQo+ID4gLQl9DQo+ID4gKwlrdm1fdmNwdV91bm1hcCgmdm14LT5uZXN0ZWQudmlydHVhbF9hcGlj
-X21hcCwgdHJ1ZSk7DQo+ID4gIAlpZiAodm14LT5uZXN0ZWQucGlfZGVzY19wYWdlKSB7DQo+ID4g
-IAkJa3VubWFwKHZteC0+bmVzdGVkLnBpX2Rlc2NfcGFnZSk7DQo+ID4gIAkJa3ZtX3JlbGVhc2Vf
-cGFnZV9kaXJ0eSh2bXgtPm5lc3RlZC5waV9kZXNjX3BhZ2UpOw0KPiA+IGRpZmYgLS1naXQgYS9h
-cmNoL3g4Ni9rdm0vdm14L3ZteC5jIGIvYXJjaC94ODYva3ZtL3ZteC92bXguYw0KPiA+IGluZGV4
-IDcxZDg4ZGYuLmUxMzMwOGUgMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC94ODYva3ZtL3ZteC92bXgu
-Yw0KPiA+ICsrKyBiL2FyY2gveDg2L2t2bS92bXgvdm14LmMNCj4gPiBAQCAtMzYyNywxNCArMzYy
-NywxMyBAQCBzdGF0aWMgYm9vbCB2bXhfZ3Vlc3RfYXBpY19oYXNfaW50ZXJydXB0KHN0cnVjdCBr
-dm1fdmNwdSAqdmNwdSkNCj4gPiAgDQo+ID4gIAlpZiAoV0FSTl9PTl9PTkNFKCFpc19ndWVzdF9t
-b2RlKHZjcHUpKSB8fA0KPiA+ICAJCSFuZXN0ZWRfY3B1X2hhc192aWQoZ2V0X3ZtY3MxMih2Y3B1
-KSkgfHwNCj4gPiAtCQlXQVJOX09OX09OQ0UoIXZteC0+bmVzdGVkLnZpcnR1YWxfYXBpY19wYWdl
-KSkNCj4gPiArCQlXQVJOX09OX09OQ0UoIXZteC0+bmVzdGVkLnZpcnR1YWxfYXBpY19tYXAuZ2Zu
-KSkNCj4gPiAgCQlyZXR1cm4gZmFsc2U7DQo+ID4gIA0KPiA+ICAJcnZpID0gdm14X2dldF9ydmko
-KTsNCj4gPiAgDQo+ID4gLQl2YXBpY19wYWdlID0ga21hcCh2bXgtPm5lc3RlZC52aXJ0dWFsX2Fw
-aWNfcGFnZSk7DQo+ID4gKwl2YXBpY19wYWdlID0gdm14LT5uZXN0ZWQudmlydHVhbF9hcGljX21h
-cC5odmE7DQo+ID4gIAl2cHByID0gKigodTMyICopKHZhcGljX3BhZ2UgKyBBUElDX1BST0NQUkkp
-KTsNCj4gPiAtCWt1bm1hcCh2bXgtPm5lc3RlZC52aXJ0dWFsX2FwaWNfcGFnZSk7DQo+ID4gIA0K
-PiA+ICAJcmV0dXJuICgocnZpICYgMHhmMCkgPiAodnBwciAmIDB4ZjApKTsNCj4gPiAgfQ0KPiA+
-IGRpZmYgLS1naXQgYS9hcmNoL3g4Ni9rdm0vdm14L3ZteC5oIGIvYXJjaC94ODYva3ZtL3ZteC92
-bXguaA0KPiA+IGluZGV4IDZmYjY5ZDguLmY2MThmNTIgMTAwNjQ0DQo+ID4gLS0tIGEvYXJjaC94
-ODYva3ZtL3ZteC92bXguaA0KPiA+ICsrKyBiL2FyY2gveDg2L2t2bS92bXgvdm14LmgNCj4gPiBA
-QCAtMTQyLDcgKzE0Miw3IEBAIHN0cnVjdCBuZXN0ZWRfdm14IHsNCj4gPiAgCSAqIHBvaW50ZXJz
-LCBzbyB3ZSBtdXN0IGtlZXAgdGhlbSBwaW5uZWQgd2hpbGUgTDIgcnVucy4NCj4gPiAgCSAqLw0K
-PiA+ICAJc3RydWN0IHBhZ2UgKmFwaWNfYWNjZXNzX3BhZ2U7DQo+ID4gLQlzdHJ1Y3QgcGFnZSAq
-dmlydHVhbF9hcGljX3BhZ2U7DQo+ID4gKwlzdHJ1Y3Qga3ZtX2hvc3RfbWFwIHZpcnR1YWxfYXBp
-Y19tYXA7DQo+ID4gIAlzdHJ1Y3QgcGFnZSAqcGlfZGVzY19wYWdlOw0KPiA+ICANCj4gPiAgCXN0
-cnVjdCBrdm1faG9zdF9tYXAgbXNyX2JpdG1hcF9tYXA7DQo+ID4gLS0gDQo+ID4gMi43LjQNCj4g
-PiANCgoKCkFtYXpvbiBEZXZlbG9wbWVudCBDZW50ZXIgR2VybWFueSBHbWJICktyYXVzZW5zdHIu
-IDM4CjEwMTE3IEJlcmxpbgpHZXNjaGFlZnRzZnVlaHJlcjogQ2hyaXN0aWFuIFNjaGxhZWdlciwg
-UmFsZiBIZXJicmljaApVc3QtSUQ6IERFIDI4OSAyMzcgODc5CkVpbmdldHJhZ2VuIGFtIEFtdHNn
-ZXJpY2h0IENoYXJsb3R0ZW5idXJnIEhSQiAxNDkxNzMgQgoK
+Add the rpm clock controller node, to provide the low-noise baseband
+clock for the USB PHYs, among other things.
+
+Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+---
+ arch/arm64/boot/dts/qcom/qcs404.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+index b3be39e088db..d90decd00f5c 100644
+--- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
++++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+@@ -3,6 +3,7 @@
+ 
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/qcom,gcc-qcs404.h>
++#include <dt-bindings/clock/qcom,rpmcc.h>
+ #include <dt-bindings/gpio/gpio.h>
+ 
+ / {
+@@ -225,6 +226,11 @@
+ 		rpm_requests: glink-channel {
+ 			compatible = "qcom,rpm-qcs404";
+ 			qcom,glink-channels = "rpm_requests";
++
++			rpmcc: clock-controller {
++				compatible = "qcom,rpmcc-qcs404";
++				#clock-cells = <1>;
++			};
+ 		};
+ 	};
+ 
+-- 
+2.18.0
 
