@@ -5,217 +5,119 @@ X-Spam-Level:
 X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27100C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 04:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C088C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 04:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD3D2218A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 04:26:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFBF8218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 04:30:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PB+RtKyQ"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="noxPPGM9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728199AbfAYE0m (ORCPT
+        id S1727967AbfAYEag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 23:26:42 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:39568 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727618AbfAYE0m (ORCPT
+        Thu, 24 Jan 2019 23:30:36 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:36073 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727163AbfAYEaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 23:26:42 -0500
-Received: by mail-ot1-f68.google.com with SMTP id n8so7394644otl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 20:26:41 -0800 (PST)
+        Thu, 24 Jan 2019 23:30:35 -0500
+Received: by mail-yw1-f68.google.com with SMTP id i73so3416668ywg.3;
+        Thu, 24 Jan 2019 20:30:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oBMiS9jiHeX1+9Jc28pbyzOv/aSJOX4d3/bRU2zYuPY=;
-        b=PB+RtKyQmneW/2Mw2ggVPzFQ+2ImFYrwBeXGTA0gjBCSydSrCRP0RjweuxVn+KyRf7
-         WfWwyEnZrpKLAaafmMea5YhdTtrD7AVnBeb2UrWy/FftKlcJL8x57Hbv/S6tGeGrYJj3
-         fsVhhCoIv8XQ0DGepuYa74/WOCTn7ophmmIUhFx1HXCg8xHvqWPZvGWelvk5KTTC1RPA
-         QNQtb2nOu6ZP0iXaKtcXSGMXkXToC5FO5sDeol24CCMpJc1F8z7yKPank/DFkq5dQL/L
-         lNkWPtzbfiACth/OIlYebljC8YO0R6NSpO63AAAKFktbM3qhMdXsghLVUjtYRGwiBuxi
-         PNWA==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=HyX/aw5NyT6H0MdYC4RYsIJg2sU71AJwhOqZBljavi0=;
+        b=noxPPGM9kHmC9LX3ocPlzqTh4rwuZDgjRZKeaN9pjLrHZyWBeh5SImQZ3K5i0sLofJ
+         Mzm9Q7MT1404e+KVsvHluAmgyrK+C0TaIzXR+s5GAZYLmVGxJxa8WVpiIx8h3llCU+O/
+         /1hi7kp1rtkHQkVdIAOSOifcVEBKCg1cHt3n/65B1aaPYp5hZ9hByixy7/1HlbqZsnQb
+         hrWicTahvp5EcFTU8poEVLa2m2rpJVTuS65Vu4PC+r84ioZRiup15ozqcVCRb1w6Jqo3
+         wblmyA3PEoxUGbkxmSbVeubdwh3tO6jSWdka7j8cQNqJsSC4jbleLUcWhKya8/Vymmxl
+         JK/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oBMiS9jiHeX1+9Jc28pbyzOv/aSJOX4d3/bRU2zYuPY=;
-        b=Pvk6GOGBe36BeyLS1Y9HiUmrziuN6GnOtc06H4kWJx1TlYIjiuijK4BcbuszXwa2vc
-         QNaLfev8cA0nsuw63rXLUMVwkCnEbyh8HgUJgy3d7JCnR2+UwpmCkF4Q9BlXEtfmdzRT
-         szLDoXC1wn48O+II9EBt0i7Xg6pBI1oEwO1RTF6Ajq//Dz/ckgiK1kPFBddsfPmCZH0M
-         2djLPUptpPnhYkgNQgngjEK47d7aAUSJ9LBWxbvxmSbYtPPM/GjSOPQVH/Jex9xVVOrt
-         LkWY0Mqqi4Ma2CGRJHoEa3MuP/1blQHa9MVY3if5xkMahfxReu9GrXanb8C2DiX6nfz8
-         mwwQ==
-X-Gm-Message-State: AJcUukdUID82bOzudE9v02zUY0nSV1Mu83rM/PrF1cFRp8rpovK5wckS
-        MBSjyEANyxofU7LfOD5ldELxkPw42eK+QnXd/gU=
-X-Google-Smtp-Source: ALg8bN7BfBeqGyz64gcYfEkG9GIVFChBhLyiEmm7mfSEi79EnCI/Ox4T2Zx7Ac9oF0Xe99G7kbW4wUnfFJTq9zAI3Hc=
-X-Received: by 2002:a05:6830:14c4:: with SMTP id t4mr6587531otq.303.1548390400481;
- Thu, 24 Jan 2019 20:26:40 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=HyX/aw5NyT6H0MdYC4RYsIJg2sU71AJwhOqZBljavi0=;
+        b=EXXSDdHnt15nJh018jWkbjXyAypSv3fb+l/N1BFCYun7o/KbSNmnMxYS3NAKssvqAT
+         /kLZ7NWCf/1mj+5Mph+FnWddIWfe4tHvxa5UzNZOCrOYyQ2yGPr6U4MDUcCZLjmKXZWu
+         feeU6fMjAYP3ETaRmALjbCno/Pfv8CkXiC8Q3z4bUb2Ds8qmIMwJiZKA9E9xOkkC0+6A
+         RFmClhz+7XMeRSKxwmYpHxhy4DjqRfspUYrHDPxon5CcY9u/tzpi3F2x52KSIVwrYExg
+         BVwwHcj/enGmZOuT8EARlRePyr6xger/PPl0fMkm0BQSZteP4DxQsonhPCYhEqPmTW8x
+         WNTA==
+X-Gm-Message-State: AJcUukeekQbY6OY35aLJBBE+ejn4jlmb5/AWVfizeQI39bPKD0vLXYG/
+        LkaskBQxZ28wYZ/xMbYePE+c7brW
+X-Google-Smtp-Source: ALg8bN5k153XLhm35LZSNiNWUuUui1gGh3VhVeIBjejBA3Ya75K66TqVnAvcJ3S44WTUfj/ujzJCzQ==
+X-Received: by 2002:a81:ad64:: with SMTP id l36mr9478284ywk.114.1548390633874;
+        Thu, 24 Jan 2019 20:30:33 -0800 (PST)
+Received: from [10.10.116.193] ([192.19.218.250])
+        by smtp.gmail.com with ESMTPSA id j12sm11872726ywk.43.2019.01.24.20.30.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 20:30:33 -0800 (PST)
+Subject: Re: [PATCH] iio: adc: ti-ads7950: inconsistency with spi msg
+To:     justinpopo6@gmail.com, linux-iio@vger.kernel.org
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        linux-kernel@vger.kernel.org
+References: <1548381414-20561-1-git-send-email-justinpopo6@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <ac0a8ff6-92f5-09ef-932b-aba6378f1f47@gmail.com>
+Date:   Thu, 24 Jan 2019 20:30:30 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190118193200.32691-1-malat@debian.org>
-In-Reply-To: <20190118193200.32691-1-malat@debian.org>
-From:   Nick Desaulniers <nick.desaulniers@gmail.com>
-Date:   Thu, 24 Jan 2019 20:26:24 -0800
-Message-ID: <CAH7mPvi2TN0b=j-6fqDpjGPkZVSEQnDiT2nj9NWmoBOhUiwKEg@mail.gmail.com>
-Subject: Re: [PATCH] writeback: tracing: Copy only up to 31 characters in
- strncpy() calls
-To:     Mathieu Malaterre <malat@debian.org>
-Cc:     Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Kees Cook <keescook@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1548381414-20561-1-git-send-email-justinpopo6@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 11:32 AM Mathieu Malaterre <malat@debian.org> wrote:
->
-> In the past an attempt was made to remove a set of warnings triggered by
-> gcc 8.x and W=1 by changing calls to strncpy() into strlcpy(). This was
-> rejected as one of the desired behavior is to keep initializing the rest
-> of the destination string whenever the source string is less than the
-> size.
->
-> However the code makes it clear that this is not a desired behavior to
-> copy the entire 32 characters into the destination buffer, since it is
-> expected that the string is NUL terminated. So change the maximum number
-> of characters to be copied to be the size of the destination buffer
-> minus 1.
->
-> Break long lines and make this patch go through `checkpatch --strict` with
-> no errors.
->
-> This commit removes the following warnings:
->
->   include/trace/events/writeback.h:69:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   include/trace/events/writeback.h:99:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   include/trace/events/writeback.h:179:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   include/trace/events/writeback.h:223:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   include/trace/events/writeback.h:277:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   include/trace/events/writeback.h:299:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   include/trace/events/writeback.h:324:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   include/trace/events/writeback.h:375:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   include/trace/events/writeback.h:586:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->   include/trace/events/writeback.h:660:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
->
-> Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
-> Link: https://lore.kernel.org/patchwork/patch/910830/
-> Signed-off-by: Mathieu Malaterre <malat@debian.org>
+
+Hi Justin,
+
+On 1/24/19 5:56 PM, justinpopo6@gmail.com wrote:
+> From: Justin Chen <justinpopo6@gmail.com>
+> 
+> To read a channel we require 3 cycles to send, process, and receive
+> the data. The transfer buffer for the third transaction is left blank.
+> This leaves it up to the SPI driver to decide what to do.
+> 
+> In one particular case, if the tx buffer is not set the spi driver
+> sets it to 0xff. This puts the ADC in a alarm programming state,
+> therefore the following read to a channel becomes erroneous.
+> 
+> Instead of leaving us to the mercy of the SPI driver, we send the
+> ADC cmd on the third transaction to prevent inconsistent behavior.
+
+Do you think this warrants a Fixes: tag?
+
+> 
+> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
 > ---
->  include/trace/events/writeback.h | 30 ++++++++++++++++++++----------
->  1 file changed, 20 insertions(+), 10 deletions(-)
->
-> diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
-> index 32db72c7c055..7bc58980f84f 100644
-> --- a/include/trace/events/writeback.h
-> +++ b/include/trace/events/writeback.h
-> @@ -67,7 +67,8 @@ TRACE_EVENT(writeback_dirty_page,
->
->         TP_fast_assign(
->                 strncpy(__entry->name,
-> -                       mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)", 32);
-> +                       mapping ? dev_name(inode_to_bdi(mapping->host)->dev) :
-> +                       "(unknown)", sizeof(__entry->name) - 1);
+>  drivers/iio/adc/ti-ads7950.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/iio/adc/ti-ads7950.c b/drivers/iio/adc/ti-ads7950.c
+> index 0ad6359..5453e10 100644
+> --- a/drivers/iio/adc/ti-ads7950.c
+> +++ b/drivers/iio/adc/ti-ads7950.c
+> @@ -422,6 +422,7 @@ static int ti_ads7950_probe(struct spi_device *spi)
+>  	st->scan_single_xfer[1].tx_buf = &st->single_tx;
+>  	st->scan_single_xfer[1].len = 2;
+>  	st->scan_single_xfer[1].cs_change = 1;
+> +	st->scan_single_xfer[2].rx_buf = &st->single_tx;
 
-Does strncpy guarantee that destination will be NULL terminated if
-(sizeof(src) > sizeof(dst)) || (32 > sizeof(dst))?
+Should this be st->scan_single_xfer[2].tx_buf?
 
->                 __entry->ino = mapping ? mapping->host->i_ino : 0;
->                 __entry->index = page->index;
->         ),
-> @@ -97,7 +98,8 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
->
->                 /* may be called for files on pseudo FSes w/ unregistered bdi */
->                 strncpy(__entry->name,
-> -                       bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
-> +                       bdi->dev ? dev_name(bdi->dev) : "(unknown)",
-> +                       sizeof(__entry->name) - 1);
->                 __entry->ino            = inode->i_ino;
->                 __entry->state          = inode->i_state;
->                 __entry->flags          = flags;
-> @@ -177,7 +179,8 @@ DECLARE_EVENT_CLASS(writeback_write_inode_template,
->
->         TP_fast_assign(
->                 strncpy(__entry->name,
-> -                       dev_name(inode_to_bdi(inode)->dev), 32);
-> +                       dev_name(inode_to_bdi(inode)->dev),
-> +                       sizeof(__entry->name) - 1);
->                 __entry->ino            = inode->i_ino;
->                 __entry->sync_mode      = wbc->sync_mode;
->                 __entry->cgroup_ino     = __trace_wbc_assign_cgroup(wbc);
-> @@ -221,7 +224,8 @@ DECLARE_EVENT_CLASS(writeback_work_class,
->         ),
->         TP_fast_assign(
->                 strncpy(__entry->name,
-> -                       wb->bdi->dev ? dev_name(wb->bdi->dev) : "(unknown)", 32);
-> +                       wb->bdi->dev ? dev_name(wb->bdi->dev) : "(unknown)",
-> +                       sizeof(__entry->name) - 1);
->                 __entry->nr_pages = work->nr_pages;
->                 __entry->sb_dev = work->sb ? work->sb->s_dev : 0;
->                 __entry->sync_mode = work->sync_mode;
-> @@ -274,7 +278,8 @@ DECLARE_EVENT_CLASS(writeback_class,
->                 __field(unsigned int, cgroup_ino)
->         ),
->         TP_fast_assign(
-> -               strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
-> +               strncpy(__entry->name, dev_name(wb->bdi->dev),
-> +                       sizeof(__entry->name) - 1);
->                 __entry->cgroup_ino = __trace_wb_assign_cgroup(wb);
->         ),
->         TP_printk("bdi %s: cgroup_ino=%u",
-> @@ -296,7 +301,8 @@ TRACE_EVENT(writeback_bdi_register,
->                 __array(char, name, 32)
->         ),
->         TP_fast_assign(
-> -               strncpy(__entry->name, dev_name(bdi->dev), 32);
-> +               strncpy(__entry->name, dev_name(bdi->dev),
-> +                       sizeof(__entry->name) - 1);
->         ),
->         TP_printk("bdi %s",
->                 __entry->name
-> @@ -321,7 +327,8 @@ DECLARE_EVENT_CLASS(wbc_class,
->         ),
->
->         TP_fast_assign(
-> -               strncpy(__entry->name, dev_name(bdi->dev), 32);
-> +               strncpy(__entry->name, dev_name(bdi->dev),
-> +                       sizeof(__entry->name) - 1);
->                 __entry->nr_to_write    = wbc->nr_to_write;
->                 __entry->pages_skipped  = wbc->pages_skipped;
->                 __entry->sync_mode      = wbc->sync_mode;
-> @@ -372,7 +379,8 @@ TRACE_EVENT(writeback_queue_io,
->         ),
->         TP_fast_assign(
->                 unsigned long *older_than_this = work->older_than_this;
-> -               strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
-> +               strncpy(__entry->name, dev_name(wb->bdi->dev),
-> +                       sizeof(__entry->name) - 1);
->                 __entry->older  = older_than_this ?  *older_than_this : 0;
->                 __entry->age    = older_than_this ?
->                                   (jiffies - *older_than_this) * 1000 / HZ : -1;
-> @@ -584,7 +592,8 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
->
->         TP_fast_assign(
->                 strncpy(__entry->name,
-> -                       dev_name(inode_to_bdi(inode)->dev), 32);
-> +                       dev_name(inode_to_bdi(inode)->dev),
-> +                       sizeof(__entry->name) - 1);
->                 __entry->ino            = inode->i_ino;
->                 __entry->state          = inode->i_state;
->                 __entry->dirtied_when   = inode->dirtied_when;
-> @@ -658,7 +667,8 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template,
->
->         TP_fast_assign(
->                 strncpy(__entry->name,
-> -                       dev_name(inode_to_bdi(inode)->dev), 32);
-> +                       dev_name(inode_to_bdi(inode)->dev),
-> +                       sizeof(__entry->name) - 1);
->                 __entry->ino            = inode->i_ino;
->                 __entry->state          = inode->i_state;
->                 __entry->dirtied_when   = inode->dirtied_when;
-> --
-> 2.19.2
->
+>  	st->scan_single_xfer[2].rx_buf = &st->single_rx;
+>  	st->scan_single_xfer[2].len = 2;
+>  
+> 
+
+-- 
+Florian
