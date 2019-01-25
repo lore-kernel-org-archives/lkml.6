@@ -4,70 +4,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B1A1C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:37:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 048FEC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:45:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB7A421872
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:36:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0EDA218D2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:45:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fnGKJpAm"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AxU2YuhT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbfAYFg5 (ORCPT
+        id S1726344AbfAYFpI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 00:36:57 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:35308 "EHLO
+        Fri, 25 Jan 2019 00:45:08 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:44598 "EHLO
         mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726257AbfAYFg5 (ORCPT
+        with ESMTP id S1726097AbfAYFpH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 00:36:57 -0500
-Received: by mail-ot1-f67.google.com with SMTP id 81so7524839otj.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 21:36:56 -0800 (PST)
+        Fri, 25 Jan 2019 00:45:07 -0500
+Received: by mail-ot1-f67.google.com with SMTP id g16so3507374otg.11
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 21:45:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=xSGOWldl7QkaG5faKqBMKqlpyKWAGBfLsQgLSNcpWLs=;
-        b=fnGKJpAmwwVU0Y5dKlG5+zbGsBMKo+LWAV3ustCc4VOFEm+PkgRBMvsQYgYzCb9Cze
-         XeICRuXp61hMZ0AQj/5iYRKWmiWwOVU1MhYMrz1cLLjGVYvWfDVBiz3K8S261IHlfScf
-         6BL6oSXeiV/k42yBNZr/8FnHAb8obdb2cbU9g=
+        bh=n/fiRG3dP5W/xG+nxLGedJGW4kjc6MrYm8z7TJXMsCM=;
+        b=AxU2YuhTN67CtPj5s5xKxxNVOiyYSxNxHG1+X/WpxAG7rn0Cv29uvaFxrmVyGkl+YY
+         UbqvlixBNP97gH8qA9o2i6wskCetIl4xJQLSIIMKwZNaKPD0u19F8pyosXUn7rWLjiOQ
+         U5CvXR4rkwnlA9XIlVShO0o8muZZa5qKz7lhA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=xSGOWldl7QkaG5faKqBMKqlpyKWAGBfLsQgLSNcpWLs=;
-        b=dPwKO6ACPizSyu+NJOxGWjlzjPAt5NBv4anGcf3PCILp7hCYQDac8XLkfxvBHiIa9g
-         ed7Ven3UOk60lmIQsYdVpEEbKDHZngyFO45Gds7cpQ+nOGUCRGONKUE38xmzBB6S3wmO
-         aXzaFDVoiaLwiTOufLGCViI4hZte68vSb3buQccS+Z0TgKb86p8vPxDvWQP4SRcZZDUy
-         MZBNspLgRHsU+bHrSO9Pr+p17FjoMchOF/u74i9Jy1oYAR+jlnPD9QvLjNwsym3gzz02
-         xHC7hjNv8eZ9QLkWAKqfa0kq3WIeH2QCGT/ETfX6Hcezq6IL4mNl7mmTSPN2cBpHmxfo
-         Bgxg==
-X-Gm-Message-State: AJcUukflgzyr12W2oRuQ3l8U+JBBDTPBRzFvbyH9G4qCW+nOqW4nwmXU
-        YH2kQorPV8ET49Q8dGq2z7jP5t0yd0uPGA==
-X-Google-Smtp-Source: ALg8bN4kZnnpt74BxAjoNCv2DSgwF7sbiL9v1LsrBde/lmrrKI/SazRg8H9FeuQhYRTNxVGgKR5XZw==
-X-Received: by 2002:a9d:4682:: with SMTP id z2mr6568710ote.104.1548394615970;
-        Thu, 24 Jan 2019 21:36:55 -0800 (PST)
-Received: from mail-oi1-f177.google.com (mail-oi1-f177.google.com. [209.85.167.177])
-        by smtp.gmail.com with ESMTPSA id j23sm867041oih.22.2019.01.24.21.36.55
+        bh=n/fiRG3dP5W/xG+nxLGedJGW4kjc6MrYm8z7TJXMsCM=;
+        b=dcBuD4S9Ov/1b1DbYZyRvtar6mmqOdyKv41khgY3mEWZLZC1oQI0OH9Ir3rnLOSsc2
+         LdUWIZ0I8lxkf1qgq9HwxtL2c5FIpMjQUzj/i+RWofyKkXlm9p3JWow9qWX5rtifKFCK
+         08cvlWDNq6+Qki+iZJ28hgi+nk1hPT9yGoZcvVzDfFD6bx4ANRrwMd74AKBXphuvSMej
+         EbGCISAH8tFpgwOuUeKcqUMlL8OaHIUzt1/NNnQ9lcgcnjRdyHSCKdMxQYNDZMyVSbcI
+         KuIKS7KYo1aAzsvOvV4sRvYAm7xVPOuUn5ymnqOMDND0xfT72NsK2CDSKtOyyvP5jpU0
+         kBaQ==
+X-Gm-Message-State: AJcUukdLsQLGdjKkG1CyjczQqfxm5XEqU+S5b743cPbgoc24AqhxRSPJ
+        2dADtne2Z1763Gjkg5IqMq3eb9Xgs0YDSg==
+X-Google-Smtp-Source: ALg8bN67NZGlvz7+RMwExik1/Y5k2RwOnxJBSLgm0gNrUY2WMyBloIW/CMrPmNoK3a7BKgRV8elSbw==
+X-Received: by 2002:a05:6830:1507:: with SMTP id k7mr6803163otp.158.1548395104823;
+        Thu, 24 Jan 2019 21:45:04 -0800 (PST)
+Received: from mail-oi1-f170.google.com (mail-oi1-f170.google.com. [209.85.167.170])
+        by smtp.gmail.com with ESMTPSA id l6sm847678otk.51.2019.01.24.21.45.03
         for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 21:36:55 -0800 (PST)
-Received: by mail-oi1-f177.google.com with SMTP id v6so6888325oif.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 21:36:55 -0800 (PST)
-X-Received: by 2002:aca:af53:: with SMTP id y80mr461402oie.170.1548394614764;
- Thu, 24 Jan 2019 21:36:54 -0800 (PST)
+        Thu, 24 Jan 2019 21:45:03 -0800 (PST)
+Received: by mail-oi1-f170.google.com with SMTP id j21so6868181oii.8
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 21:45:03 -0800 (PST)
+X-Received: by 2002:aca:61c3:: with SMTP id v186mr475615oib.350.1548395103354;
+ Thu, 24 Jan 2019 21:45:03 -0800 (PST)
 MIME-Version: 1.0
 References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <20190117162008.25217-10-stanimir.varbanov@linaro.org> <CAPBb6MUumC2BmWar3yUmVT8vz8x-Nr_tuMc=1VSJvmQYGdPudw@mail.gmail.com>
- <580839ce-c98b-8b88-8868-e5df8171923b@linaro.org>
-In-Reply-To: <580839ce-c98b-8b88-8868-e5df8171923b@linaro.org>
+ <20190117162008.25217-11-stanimir.varbanov@linaro.org> <CAPBb6MWMOBRrRYbbVjvm=075o_Sbmh3jVj3PNZ2dmMXu6UOzmw@mail.gmail.com>
+ <24a0dba6-5c18-189f-5f56-72f5cdd1bc90@linaro.org>
+In-Reply-To: <24a0dba6-5c18-189f-5f56-72f5cdd1bc90@linaro.org>
 From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Fri, 25 Jan 2019 14:36:43 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MXLJnoT5=WkJQb7fmT8wznnth65_Gia04QuG_1-hKAmbg@mail.gmail.com>
-Message-ID: <CAPBb6MXLJnoT5=WkJQb7fmT8wznnth65_Gia04QuG_1-hKAmbg@mail.gmail.com>
-Subject: Re: [PATCH 09/10] venus: vdec: allow bigger sizeimage set by clients
+Date:   Fri, 25 Jan 2019 14:44:52 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MWSOdZp6dbZbUJ6fVJ0fRPLXTefyr=mPnoB4Ova8aTQCw@mail.gmail.com>
+Message-ID: <CAPBb6MWSOdZp6dbZbUJ6fVJ0fRPLXTefyr=mPnoB4Ova8aTQCw@mail.gmail.com>
+Subject: Re: [PATCH 10/10] venus: dec: make decoder compliant with stateful
+ codec API
 To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
 Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -83,101 +84,653 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 7:05 PM Stanimir Varbanov
+On Thu, Jan 24, 2019 at 9:34 PM Stanimir Varbanov
 <stanimir.varbanov@linaro.org> wrote:
 >
 > Hi Alex,
 >
 > Thanks for the comments!
 >
-> On 1/24/19 10:43 AM, Alexandre Courbot wrote:
+> On 1/24/19 10:44 AM, Alexandre Courbot wrote:
 > > On Fri, Jan 18, 2019 at 1:21 AM Stanimir Varbanov
 > > <stanimir.varbanov@linaro.org> wrote:
 > >>
-> >> In most of the cases the client will know better what could be
-> >> the maximum size for compressed data buffers. Change the driver
-> >> to permit the user to set bigger size for the compressed buffer
-> >> but make reasonable sanitation.
+> >> This refactored code for start/stop streaming vb2 operations and
+> >
+> > s/refactored/refactors?
+>
+> Ack.
+>
+> >
+> >> adds a state machine handling similar to the one in stateful codec
+> >> API documentation. One major change is that now the HFI session is
+> >> started on STREAMON(OUTPUT) and stopped on REQBUF(OUTPUT,count=0),
+> >> during that time streamoff(cap,out) just flush buffers but doesn't
+> >
+> > streamoff(cap,out) should probably be in capitals for consistency.
+>
+> OK.
+>
+> >
+> >> stop the session. The other major change is that now the capture
+> >> and output queues are completely separated.
 > >>
 > >> Signed-off-by: Stanimir Varbanov <stanimir.varbanov@linaro.org>
 > >> ---
-> >>  drivers/media/platform/qcom/venus/vdec.c | 18 +++++++++++++-----
-> >>  1 file changed, 13 insertions(+), 5 deletions(-)
+> >>  drivers/media/platform/qcom/venus/core.h    |  20 +-
+> >>  drivers/media/platform/qcom/venus/helpers.c |  23 +-
+> >>  drivers/media/platform/qcom/venus/helpers.h |   5 +
+> >>  drivers/media/platform/qcom/venus/vdec.c    | 449 ++++++++++++++++----
+> >>  4 files changed, 389 insertions(+), 108 deletions(-)
 > >>
-> >> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> >> index 282de21cf2e1..7a9370df7515 100644
-> >> --- a/drivers/media/platform/qcom/venus/vdec.c
-> >> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> >> @@ -142,6 +142,7 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
-> >>         struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
-> >>         struct v4l2_plane_pix_format *pfmt = pixmp->plane_fmt;
-> >>         const struct venus_format *fmt;
-> >> +       u32 szimage;
+> >> diff --git a/drivers/media/platform/qcom/venus/core.h b/drivers/media/platform/qcom/venus/core.h
+> >> index 79c7e816c706..5a133c203455 100644
+> >> --- a/drivers/media/platform/qcom/venus/core.h
+> >> +++ b/drivers/media/platform/qcom/venus/core.h
+> >> @@ -218,6 +218,15 @@ struct venus_buffer {
 > >>
-> >>         memset(pfmt[0].reserved, 0, sizeof(pfmt[0].reserved));
-> >>         memset(pixmp->reserved, 0, sizeof(pixmp->reserved));
-> >> @@ -170,14 +171,18 @@ vdec_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
-> >>         pixmp->num_planes = fmt->num_planes;
-> >>         pixmp->flags = 0;
+> >>  #define to_venus_buffer(ptr)   container_of(ptr, struct venus_buffer, vb)
 > >>
-> >> -       pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
-> >> -                                                    pixmp->width,
-> >> -                                                    pixmp->height);
-> >> +       szimage = venus_helper_get_framesz(pixmp->pixelformat, pixmp->width,
-> >> +                                          pixmp->height);
-> >>
-> >> -       if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
-> >> +       if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
-> >> +               pfmt[0].sizeimage = szimage;
-> >>                 pfmt[0].bytesperline = ALIGN(pixmp->width, 128);
-> >> -       else
-> >> +       } else {
-> >> +               pfmt[0].sizeimage = clamp_t(u32, pfmt[0].sizeimage, 0, SZ_4M);
-> >> +               if (szimage > pfmt[0].sizeimage)
-> >> +                       pfmt[0].sizeimage = szimage;
+> >> +#define DEC_STATE_UNINIT               0
 > >
-> > pfmt[0].sizeimage = max(clamp_t(u32, pfmt[0].sizeimage, 0, SZ_4M),
-> >                                         szimage)?
+> > Not sure about "uninit", DEC_STATE_DEINIT may be more explicit here?
 >
-> I'm not a big fan to that calling of macro from macro :)
->
-> What about this:
->
->         pfmt[0].sizeimage = clamp_t(u32, pfmt[0].sizeimage, 0, SZ_4M);
->         pfmt[0].sizeimage = max(pfmt[0].sizeimage, szimage);
-
-Looks fine, I just wanted to make sure that we use the more expressive
-"max" instead of an if statement.
-
+> I don't have strong opinion on that, so I will change it.
 >
 > >
-> >>                 pfmt[0].bytesperline = 0;
+> >> +#define DEC_STATE_INIT                 1
+> >> +#define DEC_STATE_CAPTURE_SETUP                2
+> >> +#define DEC_STATE_STOPPED              3
+> >> +#define DEC_STATE_SEEK                 4
+> >> +#define DEC_STATE_DRAIN                        5
+> >> +#define DEC_STATE_DECODING             6
+> >> +#define DEC_STATE_DRC                  7
+> >
+> > How about defining these as an enum, for better type safety? I'd also
+> > prefix with VENUS_ to avoid possible (if unlikely) name collisions.
+>
+> OK.
+>
+> >
+> >> +
+> >>  /**
+> >>   * struct venus_inst - holds per instance paramerters
+> >>   *
+> >> @@ -241,6 +250,10 @@ struct venus_buffer {
+> >>   * @colorspace:        current color space
+> >>   * @quantization:      current quantization
+> >>   * @xfer_func: current xfer function
+> >> + * @codec_state:       current codec API state (see DEC/ENC_STATE_)
+> >> + * @reconf_wait:       wait queue for resolution change event
+> >> + * @ten_bits:          does new stream is 10bits depth
+> >
+> > "is new stream 10 bits deep" maybe?
+>
+> that is better description, but it should be in this patch (I have made
+> 10bits support but didn't included in that initial stateful codec patch).
+>
+> >
+> >> + * @buf_count:         used to count number number of buffers (reqbuf(0))
+> >
+> > "number" written twice here.
+>
+> OK.
+>
+> >
+> >>   * @fps:               holds current FPS
+> >>   * @timeperframe:      holds current time per frame structure
+> >>   * @fmt_out:   a reference to output format structure
+> >> @@ -255,8 +268,6 @@ struct venus_buffer {
+> >>   * @opb_buftype:       output picture buffer type
+> >>   * @opb_fmt:           output picture buffer raw format
+> >>   * @reconfig:  a flag raised by decoder when the stream resolution changed
+> >> - * @reconfig_width:    holds the new width
+> >> - * @reconfig_height:   holds the new height
+> >>   * @hfi_codec:         current codec for this instance in HFI space
+> >>   * @sequence_cap:      a sequence counter for capture queue
+> >>   * @sequence_out:      a sequence counter for output queue
+> >> @@ -296,6 +307,9 @@ struct venus_inst {
+> >>         u8 ycbcr_enc;
+> >>         u8 quantization;
+> >>         u8 xfer_func;
+> >> +       unsigned int codec_state;
+> >
+> > As mentioned above, with an enum the type of this member would make it
+> > obvious which values it can accept.
+> >
+> >> +       wait_queue_head_t reconf_wait;
+> >> +       int buf_count;
+> >>         u64 fps;
+> >>         struct v4l2_fract timeperframe;
+> >>         const struct venus_format *fmt_out;
+> >> @@ -310,8 +324,6 @@ struct venus_inst {
+> >>         u32 opb_buftype;
+> >>         u32 opb_fmt;
+> >>         bool reconfig;
+> >> -       u32 reconfig_width;
+> >> -       u32 reconfig_height;
+> >>         u32 hfi_codec;
+> >>         u32 sequence_cap;
+> >>         u32 sequence_out;
+> >> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+> >> index 637ce7b82d94..25d8cceccae4 100644
+> >> --- a/drivers/media/platform/qcom/venus/helpers.c
+> >> +++ b/drivers/media/platform/qcom/venus/helpers.c
+> >> @@ -1030,16 +1030,15 @@ void venus_helper_vb2_buf_queue(struct vb2_buffer *vb)
+> >>
+> >>         v4l2_m2m_buf_queue(m2m_ctx, vbuf);
+> >>
+> >> -       if (!(inst->streamon_out & inst->streamon_cap))
+> >> -               goto unlock;
+> >> -
+> >> -       ret = is_buf_refed(inst, vbuf);
+> >> -       if (ret)
+> >> -               goto unlock;
+> >> +       if (IS_OUT(vb->vb2_queue, inst) || IS_CAP(vb->vb2_queue, inst)) {
+> >> +               ret = is_buf_refed(inst, vbuf);
+> >> +               if (ret)
+> >> +                       goto unlock;
+> >>
+> >> -       ret = session_process_buf(inst, vbuf);
+> >> -       if (ret)
+> >> -               return_buf_error(inst, vbuf);
+> >> +               ret = session_process_buf(inst, vbuf);
+> >> +               if (ret)
+> >> +                       return_buf_error(inst, vbuf);
 > >> +       }
 > >>
-> >>         return fmt;
-> >>  }
-> >> @@ -275,6 +280,7 @@ static int vdec_s_fmt(struct file *file, void *fh, struct v4l2_format *f)
-> >>                 inst->ycbcr_enc = pixmp->ycbcr_enc;
-> >>                 inst->quantization = pixmp->quantization;
-> >>                 inst->xfer_func = pixmp->xfer_func;
-> >> +               inst->input_buf_size = pixmp->plane_fmt[0].sizeimage;
+> >>  unlock:
+> >>         mutex_unlock(&inst->lock);
+> >> @@ -1155,14 +1154,8 @@ int venus_helper_vb2_start_streaming(struct venus_inst *inst)
+> >>         if (ret)
+> >>                 goto err_unload_res;
+> >>
+> >> -       ret = venus_helper_queue_dpb_bufs(inst);
+> >> -       if (ret)
+> >> -               goto err_session_stop;
+> >> -
+> >>         return 0;
+> >>
+> >> -err_session_stop:
+> >> -       hfi_session_stop(inst);
+> >>  err_unload_res:
+> >>         hfi_session_unload_res(inst);
+> >>  err_unreg_bufs:
+> >> diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
+> >> index 2ec1c1a8b416..3b46139b5ee1 100644
+> >> --- a/drivers/media/platform/qcom/venus/helpers.h
+> >> +++ b/drivers/media/platform/qcom/venus/helpers.h
+> >> @@ -17,6 +17,11 @@
+> >>
+> >>  #include <media/videobuf2-v4l2.h>
+> >>
+> >> +#define IS_OUT(q, inst) (inst->streamon_out && \
+> >> +               q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+> >> +#define IS_CAP(q, inst) (inst->streamon_cap && \
+> >> +               q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+> >
+> > These macro names are pretty generic and we are at risk of a name
+> > collision in the future. Also the name conveys the idea that the macro
+> > will check for the buffer type only ; yet IIUC we also check that the
+> > corresponding queue is streaming? Maybe something like
+> > VENUS_BUF_OUT_READY() would be more meaningful.
+>
+> OK, I agree that the name should be changed, but maybe
+> VENUS_OUT_QUEUE_READY is better?
+
+Looks perfect!
+
+>
+> >
+> >> +
+> >>  struct venus_inst;
+> >>  struct venus_core;
+> >>
+> >> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> >> index 7a9370df7515..306e0f7d3337 100644
+> >> --- a/drivers/media/platform/qcom/venus/vdec.c
+> >> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> >> @@ -201,28 +201,18 @@ static int vdec_g_fmt(struct file *file, void *fh, struct v4l2_format *f)
+> >>         struct venus_inst *inst = to_inst(file);
+> >>         const struct venus_format *fmt = NULL;
+> >>         struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+> >> +       int ret;
+> >>
+> >>         if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+> >>                 fmt = inst->fmt_cap;
+> >>         else if (f->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+> >>                 fmt = inst->fmt_out;
+> >>
+> >> -       if (inst->reconfig) {
+> >> -               struct v4l2_format format = {};
+> >> -
+> >> -               inst->out_width = inst->reconfig_width;
+> >> -               inst->out_height = inst->reconfig_height;
+> >> -               inst->reconfig = false;
+> >> -
+> >> -               format.type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
+> >> -               format.fmt.pix_mp.pixelformat = inst->fmt_cap->pixfmt;
+> >> -               format.fmt.pix_mp.width = inst->out_width;
+> >> -               format.fmt.pix_mp.height = inst->out_height;
+> >> -
+> >> -               vdec_try_fmt_common(inst, &format);
+> >> -
+> >> -               inst->width = format.fmt.pix_mp.width;
+> >> -               inst->height = format.fmt.pix_mp.height;
+> >> +       if (f->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+> >> +               ret = wait_event_timeout(inst->reconf_wait, inst->reconfig,
+> >> +                                        msecs_to_jiffies(100));
+> >> +               if (!ret)
+> >> +                       return -EINVAL;
+>
+> btw, EINVAL should be replaced with EACCES as per stateful codec
+> documentation. I kept it EINVAL because that is the Chromium unittest
+> expectation presently (maybe you should change that in the unittest?).
+
+Ah, definitely once the stateful codec spec is set in stone.
+
+>
+> >
+> > inst->reconfig is only true during the time between a reconfigure
+> > event and the start of the CAPTURE queue. This looks like G_FMT on the
+> > CAPTURE queue will only be successful during this very short amount of
+> > time. Is my understanding correct? I wonder whether I am missing
+> > something here because the Chromium tests are all passing. But if this
+> > is correct, then this looks very restrictive. For instance, one would
+> > not be able to do VIDIOC_G_FMT twice in a row.
+>
+> I agree and I think your understanding is correct. This wait_event is
+> here only to support userspace clients which didn't implement v4l2
+> events handling (gstreamer).
+>
+> I will think more about this.
+
+Just for the record, I tried changing inst->reconfig to
+!inst->reconfig since it looked like the correct condition to me, but
+that only made things worse. :) So I'll leave it to you as to how this
+should be addressed.
+
+>
+> >
 > >>         }
 > >>
-> >>         memset(&format, 0, sizeof(format));
-> >> @@ -737,6 +743,8 @@ static int vdec_queue_setup(struct vb2_queue *q,
-> >>                 sizes[0] = venus_helper_get_framesz(inst->fmt_out->pixfmt,
-> >>                                                     inst->out_width,
-> >>                                                     inst->out_height);
-> >> +               if (inst->input_buf_size > sizes[0])
-> >> +                       sizes[0] = inst->input_buf_size;
+> >>         pixmp->pixelformat = fmt->pixfmt;
+> >> @@ -457,6 +447,10 @@ vdec_try_decoder_cmd(struct file *file, void *fh, struct v4l2_decoder_cmd *cmd)
+> >>                 if (cmd->flags & V4L2_DEC_CMD_STOP_TO_BLACK)
+> >>                         return -EINVAL;
+> >>                 break;
+> >> +       case V4L2_DEC_CMD_START:
+> >> +               if (cmd->flags & V4L2_DEC_CMD_START_MUTE_AUDIO)
+> >> +                       return -EINVAL;
+> >> +               break;
+> >>         default:
+> >>                 return -EINVAL;
+> >>         }
+> >> @@ -477,18 +471,23 @@ vdec_decoder_cmd(struct file *file, void *fh, struct v4l2_decoder_cmd *cmd)
+> >>
+> >>         mutex_lock(&inst->lock);
+> >>
+> >> -       /*
+> >> -        * Implement V4L2_DEC_CMD_STOP by enqueue an empty buffer on decoder
+> >> -        * input to signal EOS.
+> >> -        */
+> >> -       if (!(inst->streamon_out & inst->streamon_cap))
+> >> -               goto unlock;
+> >> +       if (cmd->cmd == V4L2_DEC_CMD_STOP) {
+> >> +               /*
+> >> +                * Implement V4L2_DEC_CMD_STOP by enqueue an empty buffer on
+> >> +                * decoder input to signal EOS.
+> >> +                */
+> >> +               if (!(inst->streamon_out & inst->streamon_cap))
+> >> +                       goto unlock;
+> >>
+> >> -       fdata.buffer_type = HFI_BUFFER_INPUT;
+> >> -       fdata.flags |= HFI_BUFFERFLAG_EOS;
+> >> -       fdata.device_addr = 0xdeadbeef;
+> >> +               fdata.buffer_type = HFI_BUFFER_INPUT;
+> >> +               fdata.flags |= HFI_BUFFERFLAG_EOS;
+> >> +               fdata.device_addr = 0xdeadb000;
+> >>
+> >> -       ret = hfi_session_process_buf(inst, &fdata);
+> >> +               ret = hfi_session_process_buf(inst, &fdata);
+> >> +
+> >> +               if (!ret && inst->codec_state == DEC_STATE_DECODING)
+> >> +                       inst->codec_state = DEC_STATE_DRAIN;
+> >> +       }
+> >>
+> >>  unlock:
+> >>         mutex_unlock(&inst->lock);
+> >> @@ -649,20 +648,18 @@ static int vdec_output_conf(struct venus_inst *inst)
+> >>         return 0;
+> >>  }
+> >>
+> >> -static int vdec_init_session(struct venus_inst *inst)
+> >> +static int vdec_session_init(struct venus_inst *inst)
+> >>  {
+> >>         int ret;
+> >>
+> >>         ret = hfi_session_init(inst, inst->fmt_out->pixfmt);
+> >> -       if (ret)
+> >> +       if (ret == -EINVAL)
+> >> +               return 0;
 > >
-> >                sizes[0] = max(venus_helper_get_framesz(inst->fmt_out->pixfmt,
-> >                                                    inst->out_width,
-> >                                                  inst->out_height),
-> >                                       inst->input_buf_size)?
+> > Why is -EINVAL ok? It would be helpful to have at least a comment to
+> > explain this behavior.
 >
-> I think it'd be more readable that way:
->
->                 sizes[0] = max(sizes[0], inst->input_buf_size);
+> I changed hfi_session_int to return EINVAL when you call it more than
+> once, and this check is to avoid having of new flag in the decoder
+> instance structure. Also vdec_session_init is called by vb2::queue_setup
+> and will be called more than once.
 
-Ditto.
+Ok, a comment explaining this would be nice since this early return
+looks suspicious if you don't have this information.
+
+>
+> >
+> >> +       else if (ret)
+> >>                 return ret;
+> >>
+> >> -       ret = venus_helper_set_input_resolution(inst, inst->out_width,
+> >> -                                               inst->out_height);
+> >> -       if (ret)
+> >> -               goto deinit;
+> >> -
+> >> -       ret = venus_helper_set_color_format(inst, inst->fmt_cap->pixfmt);
+> >> +       ret = venus_helper_set_input_resolution(inst, frame_width_min(inst),
+> >> +                                               frame_height_min(inst));
+> >>         if (ret)
+> >>                 goto deinit;
+> >>
+> >> @@ -681,26 +678,19 @@ static int vdec_num_buffers(struct venus_inst *inst, unsigned int *in_num,
+> >>
+> >>         *in_num = *out_num = 0;
+> >>
+> >> -       ret = vdec_init_session(inst);
+> >> -       if (ret)
+> >> -               return ret;
+> >> -
+> >>         ret = venus_helper_get_bufreq(inst, HFI_BUFFER_INPUT, &bufreq);
+> >>         if (ret)
+> >> -               goto deinit;
+> >> +               return ret;
+> >>
+> >>         *in_num = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
+> >>
+> >>         ret = venus_helper_get_bufreq(inst, HFI_BUFFER_OUTPUT, &bufreq);
+> >>         if (ret)
+> >> -               goto deinit;
+> >> +               return ret;
+> >>
+> >>         *out_num = HFI_BUFREQ_COUNT_MIN(&bufreq, ver);
+> >>
+> >> -deinit:
+> >> -       hfi_session_deinit(inst);
+> >> -
+> >> -       return ret;
+> >> +       return 0;
+> >>  }
+> >>
+> >>  static int vdec_queue_setup(struct vb2_queue *q,
+> >> @@ -733,6 +723,10 @@ static int vdec_queue_setup(struct vb2_queue *q,
+> >>                 return 0;
+> >>         }
+> >>
+> >> +       ret = vdec_session_init(inst);
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >>         ret = vdec_num_buffers(inst, &in_num, &out_num);
+> >>         if (ret)
+> >>                 return ret;
+> >> @@ -758,6 +752,11 @@ static int vdec_queue_setup(struct vb2_queue *q,
+> >>                 inst->output_buf_size = sizes[0];
+> >>                 *num_buffers = max(*num_buffers, out_num);
+> >>                 inst->num_output_bufs = *num_buffers;
+> >> +
+> >> +               mutex_lock(&inst->lock);
+> >> +               if (inst->codec_state == DEC_STATE_CAPTURE_SETUP)
+> >> +                       inst->codec_state = DEC_STATE_STOPPED;
+> >> +               mutex_unlock(&inst->lock);
+> >>                 break;
+> >>         default:
+> >>                 ret = -EINVAL;
+> >> @@ -794,80 +793,298 @@ static int vdec_verify_conf(struct venus_inst *inst)
+> >>         return 0;
+> >>  }
+> >>
+> >> -static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
+> >> +static int vdec_start_capture(struct venus_inst *inst)
+> >>  {
+> >> -       struct venus_inst *inst = vb2_get_drv_priv(q);
+> >>         int ret;
+> >>
+> >> -       mutex_lock(&inst->lock);
+> >> +       if (!inst->streamon_out)
+> >> +               return -EINVAL;
+> >>
+> >> -       if (q->type == V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE)
+> >> -               inst->streamon_out = 1;
+> >> -       else
+> >> -               inst->streamon_cap = 1;
+> >> +       if (inst->codec_state == DEC_STATE_DECODING) {
+> >> +               if (inst->reconfig)
+> >> +                       goto reconfigure;
+> >>
+> >> -       if (!(inst->streamon_out & inst->streamon_cap)) {
+> >> -               mutex_unlock(&inst->lock);
+> >> +               venus_helper_queue_dpb_bufs(inst);
+> >> +               venus_helper_process_initial_cap_bufs(inst);
+> >> +               inst->streamon_cap = 1;
+> >>                 return 0;
+> >>         }
+> >>
+> >> -       venus_helper_init_instance(inst);
+> >> +       if (inst->codec_state != DEC_STATE_STOPPED)
+> >> +               return -EINVAL;
+> >>
+> >> -       inst->reconfig = false;
+> >> -       inst->sequence_cap = 0;
+> >> -       inst->sequence_out = 0;
+> >> +reconfigure:
+> >> +       ret = hfi_session_flush(inst, HFI_FLUSH_OUTPUT);
+> >> +       if (ret)
+> >> +               return ret;
+> >>
+> >> -       ret = vdec_init_session(inst);
+> >> +       ret = vdec_output_conf(inst);
+> >>         if (ret)
+> >> -               goto bufs_done;
+> >> +               return ret;
+> >> +
+> >> +       ret = venus_helper_set_num_bufs(inst, inst->num_input_bufs,
+> >> +                                       VB2_MAX_FRAME, VB2_MAX_FRAME);
+> >> +       if (ret)
+> >> +               return ret;
+> >> +
+> >> +       ret = venus_helper_intbufs_realloc(inst);
+> >> +       if (ret)
+> >> +               goto err;
+> >> +
+> >> +       ret = venus_helper_alloc_dpb_bufs(inst);
+> >> +       if (ret)
+> >> +               goto err;
+> >> +
+> >> +       ret = venus_helper_queue_dpb_bufs(inst);
+> >> +       if (ret)
+> >> +               goto free_dpb_bufs;
+> >> +
+> >> +       ret = venus_helper_process_initial_cap_bufs(inst);
+> >> +       if (ret)
+> >> +               goto free_dpb_bufs;
+> >> +
+> >> +       venus_helper_load_scale_clocks(inst->core);
+> >> +
+> >> +       ret = hfi_session_continue(inst);
+> >> +       if (ret)
+> >> +               goto free_dpb_bufs;
+> >> +
+> >> +       inst->codec_state = DEC_STATE_DECODING;
+> >> +
+> >> +       inst->streamon_cap = 1;
+> >> +       inst->sequence_cap = 0;
+> >> +       inst->reconfig = false;
+> >> +
+> >> +       return 0;
+> >> +
+> >> +free_dpb_bufs:
+> >> +       venus_helper_free_dpb_bufs(inst);
+> >> +err:
+> >> +       return ret;
+> >> +}
+> >> +
+> >> +static int vdec_start_output(struct venus_inst *inst)
+> >> +{
+> >> +       int ret;
+> >> +
+> >> +       if (inst->codec_state == DEC_STATE_SEEK) {
+> >> +               ret = venus_helper_process_initial_out_bufs(inst);
+> >> +               inst->codec_state = DEC_STATE_DECODING;
+> >> +               goto done;
+> >> +       }
+> >> +
+> >> +       if (inst->codec_state == DEC_STATE_INIT ||
+> >> +           inst->codec_state == DEC_STATE_CAPTURE_SETUP) {
+> >> +               ret = venus_helper_process_initial_out_bufs(inst);
+> >> +               goto done;
+> >> +       }
+> >> +
+> >> +       if (inst->codec_state != DEC_STATE_UNINIT)
+> >> +               return -EINVAL;
+> >> +
+> >> +       venus_helper_init_instance(inst);
+> >> +       inst->sequence_out = 0;
+> >> +       inst->reconfig = false;
+> >>
+> >>         ret = vdec_set_properties(inst);
+> >>         if (ret)
+> >> -               goto deinit_sess;
+> >> +               return ret;
+> >>
+> >>         ret = vdec_output_conf(inst);
+> >>         if (ret)
+> >> -               goto deinit_sess;
+> >> +               return ret;
+> >>
+> >>         ret = vdec_verify_conf(inst);
+> >>         if (ret)
+> >> -               goto deinit_sess;
+> >> +               return ret;
+> >>
+> >>         ret = venus_helper_set_num_bufs(inst, inst->num_input_bufs,
+> >>                                         VB2_MAX_FRAME, VB2_MAX_FRAME);
+> >>         if (ret)
+> >> -               goto deinit_sess;
+> >> +               return ret;
+> >>
+> >> -       ret = venus_helper_alloc_dpb_bufs(inst);
+> >> +       ret = venus_helper_vb2_start_streaming(inst);
+> >>         if (ret)
+> >> -               goto deinit_sess;
+> >> +               return ret;
+> >>
+> >> -       ret = venus_helper_vb2_start_streaming(inst);
+> >> +       ret = venus_helper_process_initial_out_bufs(inst);
+> >>         if (ret)
+> >> -               goto deinit_sess;
+> >> +               return ret;
+> >>
+> >> -       mutex_unlock(&inst->lock);
+> >> +       inst->codec_state = DEC_STATE_INIT;
+> >> +
+> >> +done:
+> >> +       inst->streamon_out = 1;
+> >> +       return ret;
+> >> +}
+> >> +
+> >> +static int vdec_start_streaming(struct vb2_queue *q, unsigned int count)
+> >> +{
+> >> +       struct venus_inst *inst = vb2_get_drv_priv(q);
+> >> +       int ret;
+> >> +
+> >> +       mutex_lock(&inst->lock);
+> >> +
+> >> +       if (q->type == V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE)
+> >> +               ret = vdec_start_capture(inst);
+> >> +       else
+> >> +               ret = vdec_start_output(inst);
+> >>
+> >> +       if (ret)
+> >> +               goto error;
+> >> +
+> >> +       mutex_unlock(&inst->lock);
+> >>         return 0;
+> >>
+> >> -deinit_sess:
+> >> -       hfi_session_deinit(inst);
+> >> -bufs_done:
+> >> +error:
+> >>         venus_helper_buffers_done(inst, VB2_BUF_STATE_QUEUED);
+> >> +       mutex_unlock(&inst->lock);
+> >> +       return ret;
+> >> +}
+> >> +
+> >> +static void vdec_dst_buffers_done(struct venus_inst *inst,
+> >> +                                 enum vb2_buffer_state state)
+> >
+> > This function is only called as follows:
+> >
+> > vdec_dst_buffers_done(inst, VB2_BUF_STATE_ERROR);
+> >
+> > Therefore the state argument does not seem particularly useful. Maybe
+> > we can omit it and give this function a more specific name like
+> > vdec_cancel_dst_buffers().
+>
+> I agree, will fix that in next version.
+>
+> >
+> >> +{
+> >> +       struct vb2_v4l2_buffer *buf;
+> >> +
+> >> +       while ((buf = v4l2_m2m_dst_buf_remove(inst->m2m_ctx)))
+> >> +               v4l2_m2m_buf_done(buf, state);
+> >> +}
+> >> +
+> >> +static int vdec_stop_capture(struct venus_inst *inst)
+> >> +{
+> >> +       int ret = 0;
+> >> +
+> >> +       switch (inst->codec_state) {
+> >> +       case DEC_STATE_DECODING:
+> >> +               ret = hfi_session_flush(inst, HFI_FLUSH_ALL);
+> >> +               vdec_dst_buffers_done(inst, VB2_BUF_STATE_ERROR);
+> >> +               inst->codec_state = DEC_STATE_STOPPED;
+> >> +               break;
+> >> +       case DEC_STATE_DRAIN:
+> >> +               vdec_dst_buffers_done(inst, VB2_BUF_STATE_ERROR);
+> >> +               inst->codec_state = DEC_STATE_STOPPED;
+> >> +               break;
+> >
+> > You can simplify these two cases a bit:
+> >
+> >        case DEC_STATE_DECODING:
+> >                ret = hfi_session_flush(inst, HFI_FLUSH_ALL);
+> >                /* fallthrough */
+> >        case DEC_STATE_DRAIN:
+> >               vdec_dst_buffers_done(inst, VB2_BUF_STATE_ERROR);
+> >                inst->codec_state = DEC_STATE_STOPPED;
+> >                break;
+> >
+> >> +       case DEC_STATE_DRC:
+> >
+> > Just caught this now, but what does "DRC" stand for?
+> >
+>
+> It stands for 'Dynamic Resolution Chnage', i.e. when the resolution is
+> changed runtime.
+
+Can you document this where the macro is defined? Actually
+documentation for all the possible states would be nice IMHO, even if
+some of them are obvious by their name.
+
+Thanks!
+Alex.
