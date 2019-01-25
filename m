@@ -3,315 +3,178 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43DB8C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38ADC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 023D3218D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:04:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BDC0A218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:04:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbfAYNEn (ORCPT
+        id S1728238AbfAYNE6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 08:04:43 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:50110 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726100AbfAYNEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 08:04:42 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 1EF7B207AD; Fri, 25 Jan 2019 14:04:39 +0100 (CET)
-Received: from aptenodytes (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8846E20397;
-        Fri, 25 Jan 2019 14:04:38 +0100 (CET)
-Message-ID: <ab8ca098ad60f209fe97f79bb93b2d1e898da524.camel@bootlin.com>
-Subject: Re: [linux-sunxi] [PATCH v2 1/2] media: v4l: Add definitions for
- the HEVC slice format and controls
-From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-To:     Ayaka <ayaka@soulik.info>
-Cc:     Randy Li <randy.li@rock-chips.com>,
-        Jernej =?UTF-8?Q?=C5=A0krabec?= <jernej.skrabec@gmail.com>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-rockchip@lists.infradead.org
-Date:   Fri, 25 Jan 2019 14:04:39 +0100
-In-Reply-To: <42520087-4EAE-4F7F-BCA0-42E422170E91@soulik.info>
-References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com>
-         <20181123130209.11696-2-paul.kocialkowski@bootlin.com>
-         <5515174.7lFZcYkk85@jernej-laptop>
-         <ffe9c81db34b599f675ca5bbf02de360bf0a1608.camel@bootlin.com>
-         <776e63c9-d4a5-342a-e0f7-200ef144ffc4@rock-chips.com>
-         <64c793e08d61181b78125b3956ec38623fa5d261.camel@bootlin.com>
-         <D8005130-F7FD-4CBD-8396-1BB08BB08E81@soulik.info>
-         <f982ef378a8ade075bc7077b93640e20ecebf9f4.camel@bootlin.com>
-         <82FA0C3F-BC54-4D89-AECB-90D81B89B1CE@soulik.info>
-         <c3619a00-17e7-fb92-a427-a7478b96f356@soulik.info>
-         <bdf14f97e98f2fd06307545ab9038ac3c2086ae7.camel@bootlin.com>
-         <42520087-4EAE-4F7F-BCA0-42E422170E91@soulik.info>
-Organization: Bootlin
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Fri, 25 Jan 2019 08:04:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41966 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726100AbfAYNE5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 08:04:57 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id E60D6AF0D;
+        Fri, 25 Jan 2019 13:04:55 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 14:04:55 +0100
+Message-ID: <s5hk1iszy4o.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Leo Yan <leo.yan@linaro.org>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>, bgoswami@codeaurora.org,
+        sr@denx.de, gustavo@embeddedor.com,
+        Phil Burk <philburk@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        mchehab+samsung@kernel.org, sboyd@kernel.org,
+        Vinod Koul <vkoul@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        anna-maria@linutronix.de, Jon Corbet <corbet@lwn.net>,
+        Jeffery Miller <jmiller@neverware.com>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        joe@perches.com, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        colyli@suse.de, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] ALSA: core: Add DMA share buffer support
+In-Reply-To: <CAMz4kuKZOpAXG=Lwii5Cb6q2EKoMUJOEmDz8X=dmVv+JivWf=w@mail.gmail.com>
+References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
+        <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz>
+        <20190118190805.GF6260@sirena.org.uk>
+        <s5hzhrxzrez.wl-tiwai@suse.de>
+        <20190121124053.GA12679@sirena.org.uk>
+        <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz>
+        <20190122202535.GK7579@sirena.org.uk>
+        <s5h4l9z4mbo.wl-tiwai@suse.de>
+        <20190123124658.GE15906@leoy-ThinkPad-X240s>
+        <3962daba-f6ed-d706-c618-b791a1ba6b59@perex.cz>
+        <CAMz4kuK5JgfZF7uXa83xC3eVCrZ8+wkZRdKq2s71o_QjT=OhGg@mail.gmail.com>
+        <s5h1s51120e.wl-tiwai@suse.de>
+        <s5hwomtyr6o.wl-tiwai@suse.de>
+        <CAMz4kuKZOpAXG=Lwii5Cb6q2EKoMUJOEmDz8X=dmVv+JivWf=w@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Thu, 2019-01-24 at 20:23 +0800, Ayaka wrote:
+On Fri, 25 Jan 2019 12:24:29 +0100,
+Baolin Wang wrote:
 > 
-> Sent from my iPad
+> On Fri, 25 Jan 2019 at 18:20, Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> > On Fri, 25 Jan 2019 11:10:25 +0100,
+> > Takashi Iwai wrote:
+> > >
+> > > On Fri, 25 Jan 2019 10:25:37 +0100,
+> > > Baolin Wang wrote:
+> > > >
+> > > > Hi Jaroslav,
+> > > > On Thu, 24 Jan 2019 at 21:43, Jaroslav Kysela <perex@perex.cz> wrote:
+> > > > >
+> > > > > Dne 23.1.2019 v 13:46 Leo Yan napsal(a):
+> > > > > > Hi all,
+> > > > > >
+> > > > > > On Wed, Jan 23, 2019 at 12:58:51PM +0100, Takashi Iwai wrote:
+> > > > > >> On Tue, 22 Jan 2019 21:25:35 +0100,
+> > > > > >> Mark Brown wrote:
+> > > > > >>>
+> > > > > >>> On Mon, Jan 21, 2019 at 03:15:43PM +0100, Jaroslav Kysela wrote:
+> > > > > >>>> Dne 21.1.2019 v 13:40 Mark Brown napsal(a):
+> > > > > >>>
+> > > > > >>>>> It was the bit about adding more extended permission control that I was
+> > > > > >>>>> worried about there, not the initial O_APPEND bit.  Indeed the O_APPEND
+> > > > > >>>>> bit sounds like it might also work from the base buffer sharing point of
+> > > > > >>>>> view, I have to confess I'd not heard of that feature before (it didn't
+> > > > > >>>>> come up in the discussion when Eric raised this in Prague).
+> > > > > >>>
+> > > > > >>>> With permissions, I meant to make possible to restrict the file
+> > > > > >>>> descriptor operations (ioctls) for the depending task (like access to
+> > > > > >>>> the DMA buffer, synchronize it for the non-coherent platforms and maybe
+> > > > > >>>> read/write the actual position, delay etc.). It should be relatively
+> > > > > >>>> easy to implement using the snd_pcm_file structure.
+> > > > > >>>
+> > > > > >>> Right, that's what I understood you to mean.  If you want to have a
+> > > > > >>> policy saying "it's OK to export a PCM file descriptor if it's only got
+> > > > > >>> permissions X and Y" the security module is going to need to know about
+> > > > > >>> the mechanism for setting those permissions.  With dma_buf that's all a
+> > > > > >>> bit easier as there's less new stuff, though I've no real idea how much
+> > > > > >>> of a big deal that actually is.
+> > > > > >>
+> > > > > >> There are many ways to implement such a thing, yeah.  If we'd need an
+> > > > > >> implementation that is done solely in the sound driver layer, I can
+> > > > > >> imagine to introduce either a new ioctl or an open flag (like O_EXCL)
+> > > > > >> to specify the restricted sharing.  That is, a kind of master / slave
+> > > > > >> model where only the master is allowed to manipulate the stream while
+> > > > > >> the slave can mmap, read/write and get status.
+> > > > > >
+> > > > > > In order to support EXCLUSIVE mode, it is necessary to convert the
+> > > > > > /dev/snd/ descriptor to an anon_inode:dmabuffer file descriptor.
+> > > > > > SELinux allows that file descriptor to be passed to the client. It can
+> > > > > > also be used by the AAudioService.
+> > > > >
+> > > > > Okay, so this is probably the only point which we should resolve for the
+> > > > > already available DMA buffer sharing in ALSA (the O_APPEND flag).
+> > > > >
+> > > > > I had another glance to your dma-buf implementation and I see many
+> > > > > things which might cause problems:
+> > > > >
+> > > > > - allow to call dma-buf ioctls only when the audio device is in specific
+> > > > > state (stream is not running)
+> > > >
+> > > > Right. Will fix.
+> > > >
+> > > > > - as Takashi mentioned, if we return another file-descriptor (dma-buf
+> > > > > export) to the user space and the server closes the main pcm
+> > > > > file-descriptor (the client does not) - the result will be a crash (dma
+> > > > > buffer will be freed, but referenced through the dma-buf interface)
+> > > >
+> > > > Yes, will fix.
+> > >
+> > > There are a few more overlooked problems.  A part of them was already
+> > > mentioned in my previous reply, but let me repeat:
+> > >
+> > > - The racy ioctls have to be considered; you can perform this export
+> > >   ioctl concurrently, and both of them write and mix up the setup,
+> > >   which is obviously broken.
+> > >
+> > > - The PCM buffer can be re-allocated on the fly.  If the current
+> > >   buffer is abandoned while exporting, it leads to the UAF.
+> > >
+> > > - Similarly, what if the PCM stream that is attached is closed without
+> > >   detaching itself?  Or, what if the PCM stream attaches itself twice
+> > >   without detaching?
+> > >
+> > > - The driver may provide its own mmap method, and you can't hard-code
+> > >   the mmap implementation as currently in snd_pcm_dmabuf_mmap().
+> > >
+> > >   I suppose you can drop of most of the code in snd_pcm_dmabuf_map(),
+> > >   instead, assign PCM substream in obj, and call snd_pcm_mmap_data()
+> > >   with the given VMA.  If this really works, it manages the mmap
+> > >   refcount, so the previous two issues should be covered there.
+> > >   But it needs more consideration...
+> >
+> > Erm, obviously it's not enough.  Each attach / detach needs to manage
+> > the refcount, too, for covering the cases above.  It can re-use the
+> > PCM mmap_refount, though.
 > 
-> > On Jan 24, 2019, at 6:27 PM, Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
-> > 
-> > Hi,
-> > 
-> > > On Thu, 2019-01-10 at 21:32 +0800, ayaka wrote:
-> > > I forget a important thing, for the rkvdec and rk hevc decoder, it would 
-> > > requests cabac table, scaling list, picture parameter set and reference 
-> > > picture storing in one or various of DMA buffers. I am not talking about 
-> > > the data been parsed, the decoder would requests a raw data.
-> > > 
-> > > For the pps and rps, it is possible to reuse the slice header, just let 
-> > > the decoder know the offset from the bitstream bufer, I would suggest to 
-> > > add three properties(with sps) for them. But I think we need a method to 
-> > > mark a OUTPUT side buffer for those aux data.
-> > 
-> > I'm quite confused about the hardware implementation then. From what
-> > you're saying, it seems that it takes the raw bitstream elements rather
-> > than parsed elements. Is it really a stateless implementation?
-> > 
-> > The stateless implementation was designed with the idea that only the
-> > raw slice data should be passed in bitstream form to the decoder. For
-> > H.264, it seems that some decoders also need the slice header in raw
-> > bitstream form (because they take the full slice NAL unit), see the
-> > discussions in this thread:
-> > media: docs-rst: Document m2m stateless video decoder interface
-> 
-> Stateless just mean it won’t track the previous result, but I don’t
-> think you can define what a date the hardware would need. Even you
-> just build a dpb for the decoder, it is still stateless, but parsing
-> less or more data from the bitstream doesn’t stop a decoder become a
-> stateless decoder.
+> But we've used the DMA buffer file's refcounting to manage the DMA
+> buffer. So is this not enough?
 
-Yes fair enough, the format in which the hardware decoder takes the
-bitstream parameters does not make it stateless or stateful per-se.
-It's just that stateless decoders should have no particular reason for
-parsing the bitstream on their own since the hardware can be designed
-with registers for each relevant bitstream element to configure the
-decoding pipeline. That's how GPU-based decoder implementations are
-implemented (VAAPI/VDPAU/NVDEC, etc).
+Unless you manage the PCM substream refcount (or block the state
+change), the PCM stream itself can be released (or re-setup) freely.
 
-So the format we have agreed on so far for the stateless interface is
-to pass parsed elements via v4l2 control structures.
 
-If the hardware can only work by parsing the bitstream itself, I'm not
-sure what the best solution would be. Reconstructing the bitstream in
-the kernel is a pretty bad option, but so is parsing in the kernel or
-having the data both in parsed and raw forms. Do you see another
-possibility?
-
-Cheers,
-
-Paul
-
-> > Can you detail exactly what the rockchip decoder absolutely needs in
-> > raw bitstream format?
-> > 
-> > Cheers,
-> > 
-> > Paul
-> > 
-> > > > On 1/8/19 6:00 PM, Ayaka wrote:
-> > > > Sent from my iPad
-> > > > 
-> > > > > On Jan 8, 2019, at 4:38 PM, Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
-> > > > > 
-> > > > > Hi,
-> > > > > 
-> > > > > > On Tue, 2019-01-08 at 09:16 +0800, Ayaka wrote:
-> > > > > > 
-> > > > > > Sent from my iPad
-> > > > > > 
-> > > > > > > On Jan 7, 2019, at 5:57 PM, Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
-> > > > > > > 
-> > > > > > > Hi,
-> > > > > > > 
-> > > > > > > > > On Mon, 2019-01-07 at 11:49 +0800, Randy Li wrote:
-> > > > > > > > > On 12/12/18 8:51 PM, Paul Kocialkowski wrote:
-> > > > > > > > > Hi,
-> > > > > > > > > 
-> > > > > > > > > On Wed, 2018-12-05 at 21:59 +0100, Jernej Škrabec wrote:
-> > > > > > > > > 
-> > > > > > > > > > > +
-> > > > > > > > > > > +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_BEFORE    0x01
-> > > > > > > > > > > +#define V4L2_HEVC_DPB_ENTRY_RPS_ST_CURR_AFTER    0x02
-> > > > > > > > > > > +#define V4L2_HEVC_DPB_ENTRY_RPS_LT_CURR        0x03
-> > > > > > > > > > > +
-> > > > > > > > > > > +#define V4L2_HEVC_DPB_ENTRIES_NUM_MAX        16
-> > > > > > > > > > > +
-> > > > > > > > > > > +struct v4l2_hevc_dpb_entry {
-> > > > > > > > > > > +    __u32    buffer_tag;
-> > > > > > > > > > > +    __u8    rps;
-> > > > > > > > > > > +    __u8    field_pic;
-> > > > > > > > > > > +    __u16    pic_order_cnt[2];
-> > > > > > > > > > > +};
-> > > > > > > > Please add a property for reference index, if that rps is not used for
-> > > > > > > > this, some device would request that(not the rockchip one). And
-> > > > > > > > Rockchip's VDPU1 and VDPU2 for AVC would request a similar property.
-> > > > > > > What exactly is that reference index? Is it a bitstream element or
-> > > > > > > something deduced from the bitstream?
-> > > > > > > 
-> > > > > > picture order count(POC) for HEVC and frame_num in AVC. I think it is
-> > > > > > the number used in list0(P slice and B slice) and list1(B slice).
-> > > > > The picture order count is already the last field of the DPB entry
-> > > > > structure. There is one for each field picture.
-> > > > As we are not sure whether there is a field coded slice or CTU, I would hold this part and else about the field.
-> > > > > > > > Adding another buffer_tag for referring the memory of the motion vectors
-> > > > > > > > for each frames. Or a better method is add a meta data to echo picture
-> > > > > > > > buffer,  since the picture output is just the same as the original,
-> > > > > > > > display won't care whether the motion vectors are written the button of
-> > > > > > > > picture or somewhere else.
-> > > > > > > The motion vectors are passed as part of the raw bitstream data, in the
-> > > > > > > slices. Is there a case where the motion vectors are coded differently?
-> > > > > > No, it is an additional cache for decoder, even FFmpeg having such
-> > > > > > data, I think allwinner must output it into somewhere.
-> > > > > Ah yes I see what you mean! This is handled internally by our driver
-> > > > > and not exposed to userspace. I don't think it would be a good idea to
-> > > > > expose this cache or request that userspace allocates it like a video
-> > > > > buffer.
-> > > > > 
-> > > > No, usually the driver should allocate, as the user space have no idea on size of each devices.
-> > > > But for advantage user, application can fix a broken picture with a proper data or analysis a object motion from that.
-> > > > So I would suggest attaching this information to a picture buffer as a meta data.
-> > > > > > > > > > > +
-> > > > > > > > > > > +struct v4l2_hevc_pred_weight_table {
-> > > > > > > > > > > +    __u8    luma_log2_weight_denom;
-> > > > > > > > > > > +    __s8    delta_chroma_log2_weight_denom;
-> > > > > > > > > > > +
-> > > > > > > > > > > +    __s8    delta_luma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> > > > > > > > > > > +    __s8    luma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> > > > > > > > > > > +    __s8    delta_chroma_weight_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
-> > > > > > > > > > > +    __s8    chroma_offset_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
-> > > > > > > > > > > +
-> > > > > > > > > > > +    __s8    delta_luma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> > > > > > > > > > > +    __s8    luma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> > > > > > > > > > > +    __s8    delta_chroma_weight_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
-> > > > > > > > > > > +    __s8    chroma_offset_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX][2];
-> > > > > > > > > > > +};
-> > > > > > > > > > > +
-> > > > > > > > Those properties I think are not necessary are applying for the
-> > > > > > > > Rockchip's device, may not work for the others.
-> > > > > > > Yes, it's possible that some of the elements are not necessary for some
-> > > > > > > decoders. What we want is to cover all the elements that might be
-> > > > > > > required for a decoder.
-> > > > > > I wonder whether allwinner need that, those sao flag usually ignored
-> > > > > > by decoder in design. But more is better than less, it is hard to
-> > > > > > extend a v4l2 structure  in the future, maybe a new HEVC profile
-> > > > > > would bring a new property, it is still too early for HEVC.
-> > > > > Yes this is used by our decoder. The idea is to have all the basic
-> > > > > bitstream elements in the structures (even if some decoders don't use
-> > > > > them all) and add others for extension as separate controls later.
-> > > > > 
-> > > > > > > > > > > +struct v4l2_ctrl_hevc_slice_params {
-> > > > > > > > > > > +    __u32    bit_size;
-> > > > > > > > > > > +    __u32    data_bit_offset;
-> > > > > > > > > > > +
-> > > > > > > > > > > +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: NAL unit header */
-> > > > > > > > > > > +    __u8    nal_unit_type;
-> > > > > > > > > > > +    __u8    nuh_temporal_id_plus1;
-> > > > > > > > > > > +
-> > > > > > > > > > > +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
-> > > > > > > > > > > +    __u8    slice_type;
-> > > > > > > > > > > +    __u8    colour_plane_id;
-> > > > > > > > ----------------------------------------------------------------------------
-> > > > > > > > > > > +    __u16    slice_pic_order_cnt;
-> > > > > > > > > > > +    __u8    slice_sao_luma_flag;
-> > > > > > > > > > > +    __u8    slice_sao_chroma_flag;
-> > > > > > > > > > > +    __u8    slice_temporal_mvp_enabled_flag;
-> > > > > > > > > > > +    __u8    num_ref_idx_l0_active_minus1;
-> > > > > > > > > > > +    __u8    num_ref_idx_l1_active_minus1;
-> > > > > > > > Rockchip's decoder doesn't use this part.
-> > > > > > > > > > > +    __u8    mvd_l1_zero_flag;
-> > > > > > > > > > > +    __u8    cabac_init_flag;
-> > > > > > > > > > > +    __u8    collocated_from_l0_flag;
-> > > > > > > > > > > +    __u8    collocated_ref_idx;
-> > > > > > > > > > > +    __u8    five_minus_max_num_merge_cand;
-> > > > > > > > > > > +    __u8    use_integer_mv_flag;
-> > > > > > > > > > > +    __s8    slice_qp_delta;
-> > > > > > > > > > > +    __s8    slice_cb_qp_offset;
-> > > > > > > > > > > +    __s8    slice_cr_qp_offset;
-> > > > > > > > > > > +    __s8    slice_act_y_qp_offset;
-> > > > > > > > > > > +    __s8    slice_act_cb_qp_offset;
-> > > > > > > > > > > +    __s8    slice_act_cr_qp_offset;
-> > > > > > > > > > > +    __u8    slice_deblocking_filter_disabled_flag;
-> > > > > > > > > > > +    __s8    slice_beta_offset_div2;
-> > > > > > > > > > > +    __s8    slice_tc_offset_div2;
-> > > > > > > > > > > +    __u8    slice_loop_filter_across_slices_enabled_flag;
-> > > > > > > > > > > +
-> > > > > > > > > > > +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: Picture timing SEI message */
-> > > > > > > > > > > +    __u8    pic_struct;
-> > > > > > > > I think the decoder doesn't care about this, it is used for display.
-> > > > > > > The purpose of this field is to indicate whether the current picture is
-> > > > > > > a progressive frame or an interlaced field picture, which is useful for
-> > > > > > > decoding.
-> > > > > > > 
-> > > > > > > At least our decoder has a register field to indicate frame/top
-> > > > > > > field/bottom field, so we certainly need to keep the info around.
-> > > > > > > Looking at the spec and the ffmpeg implementation, it looks like this
-> > > > > > > flag of the bitstream is the usual way to report field coding.
-> > > > > > It depends whether the decoder cares about scan type or more, I
-> > > > > > wonder prefer general_interlaced_source_flag for just scan type, it
-> > > > > > would be better than reading another SEL.
-> > > > > Well we still need a way to indicate if the current data is top or
-> > > > > bottom field for interlaced. I don't think that knowing that the whole
-> > > > > video is interlaced would be precise enough.
-> > > > > 
-> > > > > Cheers,
-> > > > > 
-> > > > > Paul
-> > > > > 
-> > > > > > > > > > > +
-> > > > > > > > > > > +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: General slice segment header */
-> > > > > > > > > > > +    struct v4l2_hevc_dpb_entry dpb[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> > > > > > > > > > > +    __u8    num_active_dpb_entries;
-> > > > > > > > > > > +    __u8    ref_idx_l0[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> > > > > > > > > > > +    __u8    ref_idx_l1[V4L2_HEVC_DPB_ENTRIES_NUM_MAX];
-> > > > > > > > > > > +
-> > > > > > > > > > > +    __u8    num_rps_poc_st_curr_before;
-> > > > > > > > > > > +    __u8    num_rps_poc_st_curr_after;
-> > > > > > > > > > > +    __u8    num_rps_poc_lt_curr;
-> > > > > > > > > > > +
-> > > > > > > > > > > +    /* ISO/IEC 23008-2, ITU-T Rec. H.265: Weighted prediction parameter */
-> > > > > > > > > > > +    struct v4l2_hevc_pred_weight_table pred_weight_table;
-> > > > > > > > > > > +};
-> > > > > > > > > > > +
-> > > > > > > > > > > #endif
-> > > > > > > -- 
-> > > > > > > Paul Kocialkowski, Bootlin (formerly Free Electrons)
-> > > > > > > Embedded Linux and kernel engineering
-> > > > > > > https://bootlin.com
-> > > > > > > 
-> > > > > -- 
-> > > > > Paul Kocialkowski, Bootlin (formerly Free Electrons)
-> > > > > Embedded Linux and kernel engineering
-> > > > > https://bootlin.com
-> > > > > 
-> > -- 
-> > Paul Kocialkowski, Bootlin
-> > Embedded Linux and kernel engineering
-> > https://bootlin.com
-> > 
--- 
-Paul Kocialkowski, Bootlin
-Embedded Linux and kernel engineering
-https://bootlin.com
-
+Takashi
