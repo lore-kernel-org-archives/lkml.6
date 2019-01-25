@@ -2,122 +2,174 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88295C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:44:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A475BC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:45:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 497D5218E2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:44:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="GEUhvkW0"
+	by mail.kernel.org (Postfix) with ESMTP id 705D4218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:45:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548416732;
+	bh=JI+AfpCxsprQpY/aWJtY9T3GNDpHgw6OMJH5OU5Q8yc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=2lDo3CeC53sT3KGOUWhn9vm2nyfegTxE9YQjf25C+2dMY5YzWC72QUIgMXkSRPaCq
+	 Sgr9DjDkA1Lhec1bbPEm9x8b/GXjxNqzV0xTG6Wt7zLhQgR+vIW/sFcGbkidbUFftU
+	 /SUpwbWltV77jM2S2RuzxCDmr8FhVY1cWVSAu1Ds=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbfAYLol (ORCPT
+        id S1728339AbfAYLpb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:44:41 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38095 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727959AbfAYLoh (ORCPT
+        Fri, 25 Jan 2019 06:45:31 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:36804 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfAYLpa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:44:37 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so8114427lja.5
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 03:44:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=Uu+GXREpN4UO7hWlKWeYJkb2H2GuTbzfegM7LkbZ/S8=;
-        b=GEUhvkW0Aw6GHc3vSCXnmV8GTX+YAf3myHFSu3fzEAnbXvX5jP4hXHpfVi7RFjWnja
-         elrrK7YvfIRcN9CgC/dZF3gn1rPhSfenaHc44zUrV1dK5Gl2X73Qp2C4YRSEWiyrJXYl
-         ZErLRdaCPITbBF5zegxKL9TEv1aW3ySw7OiCPhQKLLJPLuw3ncrhK3VapBNZABn2IFKZ
-         VEWtlB1mF61toNnCH8oEtzitthO/MpcHWX5gIyJyfqcLOEZpkLTVqrrrgL4rjQe962m8
-         /VKS6rDm++8Wdg1694dCdU/BOaExp+AHisTiVIFzbC8BBmVLmh0fD8k/4qNxrb2NNgeQ
-         3RIw==
+        Fri, 25 Jan 2019 06:45:30 -0500
+Received: by mail-ot1-f68.google.com with SMTP id k98so8260851otk.3;
+        Fri, 25 Jan 2019 03:45:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=Uu+GXREpN4UO7hWlKWeYJkb2H2GuTbzfegM7LkbZ/S8=;
-        b=I3k8eBWspx6N3pEviwboi4uyqj1OCB879+v50OwETz1YCRgVu44pjaT+10eSEc5XvL
-         XmQ3gXJ/RFMYhuNE59AnVBC/U7gS3M7gmdMb4kBlK6hK5qZqeDHvMK5h3WtBOrL6IaPR
-         6/fg32Gfhzb6ktw6Y8WhSdbIwnc2RNtnuGoEnkzFagRi2Wxr/03xLGIkyvHQ0MURSaxx
-         Tt4ZBs9MNOKQwpHVXZ6o3SE3KCVLL0763GEBhKiSpgJZGtt3lSwPPyBpsvQo4FG3wgNm
-         MP/KN5z1qCVc7l881XVyQboLkAMjvx+WreCdBbF64Q/ztCJEVy3q4Cnw7e7t5HKQ1XMU
-         ARUQ==
-X-Gm-Message-State: AJcUukfzVSCqLVU9OsSmPjAwn2WHhR6DSBf2knTj8AzvM2nxGFqc4u8u
-        EkkCgSqdJxJquXe+nR0UKUL0m1ClKNk=
-X-Google-Smtp-Source: ALg8bN6XRXLKpFi04wXl+PQPSrzZMHYzuhRqTgfnNVEGIcDJwLrq8NNqXEeEDxsjqRcBDXesy2Gkrg==
-X-Received: by 2002:a2e:4a19:: with SMTP id x25-v6mr7678933lja.19.1548416674512;
-        Fri, 25 Jan 2019 03:44:34 -0800 (PST)
-Received: from mimer.lan (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
-        by smtp.gmail.com with ESMTPSA id l3-v6sm1490962ljg.21.2019.01.25.03.44.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 03:44:34 -0800 (PST)
-From:   Jonas Bonn <jonas@norrbonn.se>
-To:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Cc:     Jonas Bonn <jonas@norrbonn.se>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 2/2] spi-atmel: support inter-word delay
-Date:   Fri, 25 Jan 2019 12:44:29 +0100
-Message-Id: <20190125114429.20066-3-jonas@norrbonn.se>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190125114429.20066-1-jonas@norrbonn.se>
-References: <20190125114429.20066-1-jonas@norrbonn.se>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=t4Cp6HDwBhrK740eAcs5gva9lGThOBIN7jzLKKpLtX4=;
+        b=k5SS5bI7kz8UAjQtYQVzXWPWUfS7fvtmEa5082FTWzTsn2CKWdV5nrvAOwxFrYEWmZ
+         4n2wjC9E2geIv8BMofrWw1ZqCIHphkm3BCYmH4ruycRjXmYX0OIX3WB9Hc3GT3Cauz1j
+         r2aY78HwtLENzxHbzot4ZWaNeGSe2yy+8NhC4oQZAUU2I/Cc58889ki+IOFBqzqi7b0H
+         q3qUnNI1qjPYAmpKNY6McCZkyyq3+4no9iCJvDYS6nWawCe/tCFt4cwJ0G5Hi1QMgp4P
+         ofxPvgzZYPBmyG3E/70UOJhFmRezjcx1ArFOvv8rH2joTWhYANgVeNHF8KGS2KTQzTcz
+         3EWw==
+X-Gm-Message-State: AJcUukcDtaSt5oHVfTUK8Fw4kF1G05niMwtKto8xjt1XW2w7iiDM05U5
+        NipfydfHhqsHU/2L7mbm/xvk+a9Dbvp2f0MvnQA=
+X-Google-Smtp-Source: ALg8bN4v6TW/CvU0FupX2lBVTg4LbLOW16ZLTDh4sOAvid9nKmBWuv19gxN+OfNMeUKQmrfNTdmC4kv4lwAB7bTd+uo=
+X-Received: by 2002:a9d:5e8c:: with SMTP id f12mr7897682otl.343.1548416729065;
+ Fri, 25 Jan 2019 03:45:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1548398851.git.amit.kucheria@linaro.org>
+ <73e091e2d56d9fa6eb94feaed9fc2be30bf6da20.1548398851.git.amit.kucheria@linaro.org>
+ <20190125103152.7svjfmowgigznipm@vireshk-i7>
+In-Reply-To: <20190125103152.7svjfmowgigznipm@vireshk-i7>
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Fri, 25 Jan 2019 12:45:17 +0100
+Message-ID: <CAJZ5v0gA07-MKvXKH690wRF0cE3AAP3kLHtLRJpiT1Dmrs_beA@mail.gmail.com>
+Subject: Re: [PATCHv3 2/9] cpufreq: Auto-register the driver as a thermal
+ cooling device if asked
+To:     Viresh Kumar <viresh.kumar@linaro.org>
+Cc:     Amit Kucheria <amit.kucheria@linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Eduardo Valentin <edubezval@gmail.com>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Doug Anderson <dianders@chromium.org>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        "open list:CPU FREQUENCY SCALING FRAMEWORK" 
+        <linux-pm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the SPI slave requires an inter-word delay, configure the DLYBCT
-register accordingly.
+On Fri, Jan 25, 2019 at 11:32 AM Viresh Kumar <viresh.kumar@linaro.org> wrote:
+>
+> On 25-01-19, 12:32, Amit Kucheria wrote:
+> > All cpufreq drivers do similar things to register as a cooling device.
+> > Provide a cpufreq driver flag so drivers can just ask the cpufreq core
+> > to register the cooling device on their behalf. This allows us to get
+> > rid of duplicated code in the drivers.
+> >
+> > In order to allow this, we add a struct thermal_cooling_device pointer
+> > to struct cpufreq_policy so that drivers don't need to store it in a
+> > private data structure.
+> >
+> > Suggested-by: Stephen Boyd <swboyd@chromium.org>
+> > Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
+> > Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> > Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> > Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  drivers/cpufreq/cpufreq.c |  6 ++++++
+> >  include/linux/cpufreq.h   | 21 +++++++++++++++++++++
+> >  2 files changed, 27 insertions(+)
+> >
+> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > index e35a886e00bc..cf1be057caf4 100644
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -1318,6 +1318,9 @@ static int cpufreq_online(unsigned int cpu)
+> >       if (cpufreq_driver->ready)
+> >               cpufreq_driver->ready(policy);
+> >
+> > +     if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV)
+> > +             register_cooling_device(policy);
+> > +
+> >       pr_debug("initialization complete\n");
+> >
+> >       return 0;
+> > @@ -1405,6 +1408,9 @@ static int cpufreq_offline(unsigned int cpu)
+> >               goto unlock;
+> >       }
+> >
+> > +     if (cpufreq_driver->flags & CPUFREQ_AUTO_REGISTER_COOLING_DEV)
+> > +             unregister_cooling_device(policy);
+> > +
+> >       if (cpufreq_driver->stop_cpu)
+> >               cpufreq_driver->stop_cpu(policy);
+> >
+> > diff --git a/include/linux/cpufreq.h b/include/linux/cpufreq.h
+> > index bd7fbd6a4478..c7eb59b8ce94 100644
+> > --- a/include/linux/cpufreq.h
+> > +++ b/include/linux/cpufreq.h
+> > @@ -13,6 +13,7 @@
+> >
+> >  #include <linux/clk.h>
+> >  #include <linux/cpumask.h>
+> > +#include <linux/cpu_cooling.h>
+> >  #include <linux/completion.h>
+> >  #include <linux/kobject.h>
+> >  #include <linux/notifier.h>
+> > @@ -151,6 +152,9 @@ struct cpufreq_policy {
+> >
+> >       /* For cpufreq driver's internal use */
+> >       void                    *driver_data;
+> > +
+> > +     /* Pointer to the cooling device if used for thermal mitigation */
+> > +     struct thermal_cooling_device *cdev;
+> >  };
+> >
+> >  /* Only for ACPI */
+> > @@ -386,6 +390,12 @@ struct cpufreq_driver {
+> >   */
+> >  #define CPUFREQ_NO_AUTO_DYNAMIC_SWITCHING    BIT(6)
+> >
+> > +/*
+> > + * Set by drivers that want the core to automatically register the cpufreq
+> > + * driver as a thermal cooling device.
+> > + */
+> > +#define CPUFREQ_AUTO_REGISTER_COOLING_DEV    BIT(7)
+> > +
+> >  int cpufreq_register_driver(struct cpufreq_driver *driver_data);
+> >  int cpufreq_unregister_driver(struct cpufreq_driver *driver_data);
+> >
+> > @@ -415,6 +425,17 @@ cpufreq_verify_within_cpu_limits(struct cpufreq_policy *policy)
+> >                       policy->cpuinfo.max_freq);
+> >  }
+> >
+> > +static inline void register_cooling_device(struct cpufreq_policy *policy)
+> > +{
+> > +     policy->cdev = of_cpufreq_cooling_register(policy);
+> > +}
+> > +
+> > +static inline void unregister_cooling_device(struct cpufreq_policy *policy)
+> > +{
+> > +     cpufreq_cooling_unregister(policy->cdev);
+> > +     policy->cdev = NULL;
+> > +}
+>
+> I thought that we discussed over chat that you wouldn't add any
+> wrapper routines. How do you see these getting used ? I will suggest
+> that this should be open coded in the core itself.
 
-Tested on a SAMA5D2 board (derived from SAMA5D2-Xplained reference
-board).
-
-Signed-off-by: Jonas Bonn <jonas@norrbonn.se>
-CC: Nicolas Ferre <nicolas.ferre@microchip.com>
-CC: Mark Brown <broonie@kernel.org>
-CC: Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: Ludovic Desroches <ludovic.desroches@microchip.com>
-CC: linux-spi@vger.kernel.org
-CC: linux-arm-kernel@lists.infradead.org
----
- drivers/spi/spi-atmel.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
-index 74fddcd3282b..88ff3fef56e9 100644
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -1209,13 +1209,14 @@ static int atmel_spi_setup(struct spi_device *spi)
- 		csr |= SPI_BIT(CSAAT);
- 
- 	/* DLYBS is mostly irrelevant since we manage chipselect using GPIOs.
--	 *
--	 * DLYBCT would add delays between words, slowing down transfers.
--	 * It could potentially be useful to cope with DMA bottlenecks, but
--	 * in those cases it's probably best to just use a lower bitrate.
- 	 */
- 	csr |= SPI_BF(DLYBS, 0);
--	csr |= SPI_BF(DLYBCT, 0);
-+
-+	/* DLYBCT adds delays between words.  This is useful for slow devices
-+	 * that need a bit of time to setup the next transfer.
-+	 */
-+	csr |= SPI_BF(DLYBCT,
-+		clamp_t(u8, (as->spi_clk/1000000*spi->word_delay)>>5, 1, 255));
- 
- 	/* chipselect must have been muxed as GPIO (e.g. in board setup) */
- 	npcs_pin = (unsigned long)spi->controller_data;
--- 
-2.19.1
-
+Agreed.
