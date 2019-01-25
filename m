@@ -2,665 +2,135 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45417C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:08:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5DB7C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:10:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD876218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:08:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Hzg/3Rgq"
+	by mail.kernel.org (Postfix) with ESMTP id A7819218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:10:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbfAYVIW (ORCPT
+        id S1729336AbfAYVJ7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 16:08:22 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:37785 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfAYVIV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 16:08:21 -0500
-Received: by mail-vs1-f66.google.com with SMTP id n13so6519771vsk.4
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 13:08:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=e603UC/+UXyOa2q8VpgBRaeCM1kzx8+KqSRwqIuDveo=;
-        b=Hzg/3RgqKoZ+9gEH0zrIzNj6BHaiQ4S4za/6zZ0YOHpCCVwrz6MSNiQ3EOSkdvSTYw
-         aUEOhrf/Shy94FHboQDwPHyFM4L9aPgpyEcxA/Luw4DVNzohWvmPeqHsvrzv30SMMFYF
-         oLwWcZNtAZEHpf23H/tSePlaj56ALI9goS9Mtts3gJ83r3HbXyzOG4rAt2sFSU6cFmbo
-         rkdt5sf0OtIz7yQ/5iq/q44QCesDxDptnF0bLazadRYnF9KLaCccFb4B2EuCyur7bOo7
-         qCYmekhLkd0ULXmcwF08zy9YUQYDIr/MDEdfTUHNP8fJO2Hp7Z9k53MxfaUce8mnuTSZ
-         pVlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=e603UC/+UXyOa2q8VpgBRaeCM1kzx8+KqSRwqIuDveo=;
-        b=qB1iDw0CRB68bF8rVFdVOI1henZZyz1RTK0LU1EdmToVGeJSrs/0WwSvVAGMxlOLeu
-         CLxqcGesVLA5wJknDCoZoDcurIL5tqYmHMM8vulWaYL22lHUnpB+5UUg6vERsngRQMVj
-         4Ms1ADTi94NI7bGaSZFH9A88XIwn1NaaJbNMankEXN5Sd89ZXmojcLdVmjveKUawB6Mw
-         7CwI+0zRYb6E/dnzoegCQXgbXM7SFmXwHT7bUsiqf13OJaQKEUh/vopM0tT9bfJxQNho
-         +nj7s5pnV9K0fUSVzek9f01qYTV+o7768qEjp2ckFZ9Gu+sPaBMXv/NL9xzVVir7sHeV
-         89yw==
-X-Gm-Message-State: AJcUukcEtyREM/XiO5j9suCyGI8vJHTKZq+EVuqDAWFOEBwKp1Jaoe0o
-        wbP3th0wChzC7b21OGqF7L5LSPpNKD6KAO72pPU=
-X-Google-Smtp-Source: ALg8bN5/Vq2J6Amo2MTxnW1WHFyFYxqvuiigbWtCl8k8D3hBuDbOGgvLpjW4vEmBsiRH6GH6/PQXw+qxk9IYM5RTACo=
-X-Received: by 2002:a67:741:: with SMTP id 62mr4860335vsh.228.1548450499447;
- Fri, 25 Jan 2019 13:08:19 -0800 (PST)
+        Fri, 25 Jan 2019 16:09:59 -0500
+Received: from mga18.intel.com ([134.134.136.126]:10809 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726179AbfAYVJ6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 16:09:58 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 13:09:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,523,1539673200"; 
+   d="scan'208";a="121367866"
+Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
+  by orsmga003.jf.intel.com with ESMTP; 25 Jan 2019 13:09:57 -0800
+Subject: Re: [PATCH 1/5] mm/resource: return real error codes from walk
+ failures
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
+        vishal.l.verma@intel.com, thomas.lendacky@amd.com,
+        Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        Huang Ying <ying.huang@intel.com>,
+        Wu Fengguang <fengguang.wu@intel.com>,
+        Borislav Petkov <bp@suse.de>, baiyaowei@cmss.chinamobile.com,
+        Takashi Iwai <tiwai@suse.de>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <20190124231441.37A4A305@viggo.jf.intel.com>
+ <20190124231442.EFD29EE0@viggo.jf.intel.com>
+ <CAErSpo7kMjfi-1r8ZyGbheWzo+JCFkDZ1zpVhyNV7VVy8NOV7g@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <4898e064-5298-6a82-83ea-23d16f3dfb3d@intel.com>
+Date:   Fri, 25 Jan 2019 13:09:57 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20190123000057.31477-1-oded.gabbay@gmail.com> <20190123000057.31477-5-oded.gabbay@gmail.com>
- <20190123122836.GD4747@rapoport-lnx>
-In-Reply-To: <20190123122836.GD4747@rapoport-lnx>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Fri, 25 Jan 2019 23:07:53 +0200
-Message-ID: <CAFCwf10h+XCX_2cxpW6jWJZ2QqfqLh8aaePxU2agBdEZ-EeiQQ@mail.gmail.com>
-Subject: Re: [PATCH 04/15] habanalabs: add context and ASID modules
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
-        ogabbay@habana.ai
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAErSpo7kMjfi-1r8ZyGbheWzo+JCFkDZ1zpVhyNV7VVy8NOV7g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 2:28 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
->
-> On Wed, Jan 23, 2019 at 02:00:46AM +0200, Oded Gabbay wrote:
-> > This patch adds two modules - ASID and context.
-> >
-> > Each user process the opens a device's file must have at least one context
->
->                    ^that
->
-> > before it is able to "work" with the device. Each context has its own
-> > device address-space and contains information about its runtime state (its
-> > active command submissions).
-> >
-> > To have address-space separation between contexts, each context is assigned
-> > a unique ASID, which stands for "address-space id". Goya supports up to
-> > 1024 ASIDs.
-> >
-> > Currently, the driver doesn't support multiple contexts. Therefore, the
-> > user doesn't need to actively create a context. A "primary context" is
-> > created automatically when the user opens the device's file.
-> >
-> > Signed-off-by: Oded Gabbay <oded.gabbay@gmail.com>
-> > ---
-> >  drivers/misc/habanalabs/Makefile         |   2 +-
-> >  drivers/misc/habanalabs/asid.c           |  58 +++++++++
-> >  drivers/misc/habanalabs/context.c        | 155 +++++++++++++++++++++++
-> >  drivers/misc/habanalabs/device.c         |  47 +++++++
-> >  drivers/misc/habanalabs/habanalabs.h     |  70 ++++++++++
-> >  drivers/misc/habanalabs/habanalabs_drv.c |  46 ++++++-
-> >  6 files changed, 375 insertions(+), 3 deletions(-)
-> >  create mode 100644 drivers/misc/habanalabs/asid.c
-> >  create mode 100644 drivers/misc/habanalabs/context.c
-> >
-> > diff --git a/drivers/misc/habanalabs/Makefile b/drivers/misc/habanalabs/Makefile
-> > index 6f1ead69bd77..3ffbadc2ca01 100644
-> > --- a/drivers/misc/habanalabs/Makefile
-> > +++ b/drivers/misc/habanalabs/Makefile
-> > @@ -4,7 +4,7 @@
-> >
-> >  obj-m        := habanalabs.o
-> >
-> > -habanalabs-y := habanalabs_drv.o device.o
-> > +habanalabs-y := habanalabs_drv.o device.o context.o asid.o
-> >
-> >  include $(src)/goya/Makefile
-> >  habanalabs-y += $(HL_GOYA_FILES)
-> > diff --git a/drivers/misc/habanalabs/asid.c b/drivers/misc/habanalabs/asid.c
-> > new file mode 100644
-> > index 000000000000..0ce84c8f5a47
-> > --- /dev/null
-> > +++ b/drivers/misc/habanalabs/asid.c
-> > @@ -0,0 +1,58 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright 2016-2018 HabanaLabs, Ltd.
-> > + * All Rights Reserved.
-> > + */
-> > +
-> > +#include "habanalabs.h"
-> > +
-> > +#include <linux/slab.h>
-> > +#include <linux/types.h>
-> > +
-> > +int hl_asid_init(struct hl_device *hdev)
-> > +{
-> > +     hdev->asid_bitmap = kcalloc(BITS_TO_LONGS(hdev->asic_prop.max_asid),
-> > +                                     sizeof(*hdev->asid_bitmap), GFP_KERNEL);
-> > +     if (!hdev->asid_bitmap)
-> > +             return -ENOMEM;
-> > +
-> > +     mutex_init(&hdev->asid_mutex);
-> > +
-> > +     /* ASID 0 is reserved for KMD */
-> > +     set_bit(0, hdev->asid_bitmap);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +void hl_asid_fini(struct hl_device *hdev)
-> > +{
-> > +     mutex_destroy(&hdev->asid_mutex);
-> > +     kfree(hdev->asid_bitmap);
-> > +}
-> > +
-> > +unsigned long hl_asid_alloc(struct hl_device *hdev)
-> > +{
-> > +     unsigned long found;
-> > +
-> > +     mutex_lock(&hdev->asid_mutex);
-> > +
-> > +     found = find_first_zero_bit(hdev->asid_bitmap,
-> > +                                     hdev->asic_prop.max_asid);
-> > +     if (found == hdev->asic_prop.max_asid)
-> > +             found = 0;
-> > +     else
-> > +             set_bit(found, hdev->asid_bitmap);
-> > +
-> > +     mutex_unlock(&hdev->asid_mutex);
-> > +
-> > +     return found;
-> > +}
-> > +
-> > +void hl_asid_free(struct hl_device *hdev, unsigned long asid)
-> > +{
-> > +     if (WARN((asid == 0 || asid >= hdev->asic_prop.max_asid),
-> > +                                             "Invalid ASID %lu", asid))
-> > +             return;
-> > +     clear_bit(asid, hdev->asid_bitmap);
-> > +}
-> > diff --git a/drivers/misc/habanalabs/context.c b/drivers/misc/habanalabs/context.c
-> > new file mode 100644
-> > index 000000000000..cdcad077e5cf
-> > --- /dev/null
-> > +++ b/drivers/misc/habanalabs/context.c
-> > @@ -0,0 +1,155 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +/*
-> > + * Copyright 2016-2018 HabanaLabs, Ltd.
-> > + * All Rights Reserved.
-> > + */
-> > +
-> > +#include "habanalabs.h"
-> > +
-> > +#include <linux/sched.h>
-> > +#include <linux/delay.h>
-> > +
-> > +static void hl_ctx_fini(struct hl_ctx *ctx)
-> > +{
-> > +     struct hl_device *hdev = ctx->hdev;
-> > +
-> > +     if (ctx->asid != HL_KERNEL_ASID_ID)
-> > +             hl_asid_free(hdev, ctx->asid);
-> > +}
-> > +
-> > +void hl_ctx_do_release(struct kref *ref)
-> > +{
-> > +     struct hl_ctx *ctx;
-> > +
-> > +     ctx = container_of(ref, struct hl_ctx, refcount);
-> > +
-> > +     dev_dbg(ctx->hdev->dev, "Now really releasing context %d\n", ctx->asid);
-> > +
-> > +     hl_ctx_fini(ctx);
-> > +
-> > +     if (ctx->hpriv)
-> > +             hl_hpriv_put(ctx->hpriv);
-> > +
-> > +     kfree(ctx);
-> > +}
-> > +
-> > +int hl_ctx_create(struct hl_device *hdev, struct hl_fpriv *hpriv)
-> > +{
-> > +     struct hl_ctx_mgr *mgr = &hpriv->ctx_mgr;
-> > +     struct hl_ctx *ctx;
-> > +     int rc;
-> > +
-> > +     ctx = kzalloc(sizeof(*ctx), GFP_KERNEL);
-> > +     if (!ctx) {
-> > +             rc = -ENOMEM;
-> > +             goto out_err;
-> > +     }
-> > +
-> > +     rc = hl_ctx_init(hdev, ctx, false);
-> > +     if (rc)
-> > +             goto free_ctx;
-> > +
-> > +     hl_hpriv_get(hpriv);
-> > +     ctx->hpriv = hpriv;
-> > +
-> > +     /* TODO: remove for multiple contexts */
-> > +     hpriv->ctx = ctx;
-> > +     hdev->user_ctx = ctx;
-> > +
-> > +     mutex_lock(&mgr->ctx_lock);
-> > +     rc = idr_alloc(&mgr->ctx_handles, ctx, 1, 0, GFP_KERNEL);
-> > +     mutex_unlock(&mgr->ctx_lock);
-> > +
-> > +     if (rc < 0) {
-> > +             dev_err(hdev->dev, "Failed to allocate IDR for a new CTX\n");
-> > +             hl_ctx_free(hdev, ctx);
-> > +             goto out_err;
-> > +     }
-> > +
-> > +     return 0;
-> > +
-> > +free_ctx:
-> > +     kfree(ctx);
-> > +out_err:
-> > +     return rc;
-> > +}
-> > +
-> > +void hl_ctx_free(struct hl_device *hdev, struct hl_ctx *ctx)
-> > +{
-> > +     if (kref_put(&ctx->refcount, hl_ctx_do_release) == 1)
-> > +             return;
-> > +
-> > +     dev_warn(hdev->dev,
-> > +             "Context %d closed or terminated but its CS are executing\n",
-> > +             ctx->asid);
-> > +}
-> > +
-> > +int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx)
-> > +{
-> > +     ctx->hdev = hdev;
-> > +
-> > +     kref_init(&ctx->refcount);
-> > +
-> > +     if (is_kernel_ctx) {
-> > +             ctx->asid = HL_KERNEL_ASID_ID; /* KMD gets ASID 0 */
-> > +     } else {
-> > +             ctx->asid = hl_asid_alloc(hdev);
-> > +             if (!ctx->asid) {
-> > +                     dev_err(hdev->dev, "No free ASID, failed to create context\n");
-> > +                     return -ENOMEM;
-> > +             }
-> > +     }
-> > +
-> > +     dev_dbg(hdev->dev, "Created context with ASID %u\n", ctx->asid);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +void hl_ctx_get(struct hl_device *hdev, struct hl_ctx *ctx)
-> > +{
-> > +     kref_get(&ctx->refcount);
-> > +}
-> > +
-> > +int hl_ctx_put(struct hl_ctx *ctx)
-> > +{
-> > +     return kref_put(&ctx->refcount, hl_ctx_do_release);
-> > +}
-> > +
-> > +/**
-> > + * hl_ctx_mgr_init - initialize the context manager
-> > + *
-> > + * @mgr: pointer to context manager structure
-> > + *
-> > + * This manager is an object inside the hpriv object of the user process.
-> > + * The function is called when a user process opens the FD.
-> > + */
-> > +void hl_ctx_mgr_init(struct hl_ctx_mgr *mgr)
-> > +{
-> > +     mutex_init(&mgr->ctx_lock);
-> > +     idr_init(&mgr->ctx_handles);
-> > +}
-> > +
-> > +/**
-> > + * hl_ctx_mgr_fini - finalize the context manager
-> > + *
-> > + * @hdev: pointer to device structure
-> > + * @mgr: pointer to context manager structure
-> > + *
-> > + * This function goes over all the contexts in the manager and frees them.
-> > + * It is called when a process closes the FD.
-> > + */
-> > +void hl_ctx_mgr_fini(struct hl_device *hdev, struct hl_ctx_mgr *mgr)
-> > +{
-> > +     struct hl_ctx *ctx;
-> > +     struct idr *idp;
-> > +     u32 id;
-> > +
-> > +     idp = &mgr->ctx_handles;
-> > +
-> > +     idr_for_each_entry(idp, ctx, id)
-> > +             hl_ctx_free(hdev, ctx);
-> > +
-> > +     idr_destroy(&mgr->ctx_handles);
-> > +     mutex_destroy(&mgr->ctx_lock);
-> > +}
-> > diff --git a/drivers/misc/habanalabs/device.c b/drivers/misc/habanalabs/device.c
-> > index a4276ef559b3..84ce9fcb52da 100644
-> > --- a/drivers/misc/habanalabs/device.c
-> > +++ b/drivers/misc/habanalabs/device.c
-> > @@ -23,6 +23,12 @@ static void hpriv_release(struct kref *ref)
-> >       put_pid(hpriv->taskpid);
-> >
-> >       kfree(hpriv);
-> > +
-> > +     /* Now the FD is really closed */
-> > +     atomic_dec(&hdev->fd_open_cnt);
-> > +
-> > +     /* This allows a new user context to open the device */
-> > +     hdev->user_ctx = NULL;
-> >  }
-> >
-> >  void hl_hpriv_get(struct hl_fpriv *hpriv)
-> > @@ -47,6 +53,8 @@ static int hl_device_release(struct inode *inode, struct file *filp)
-> >  {
-> >       struct hl_fpriv *hpriv = filp->private_data;
-> >
-> > +     hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
-> > +
-> >       filp->private_data = NULL;
-> >
-> >       hl_hpriv_put(hpriv);
-> > @@ -133,7 +141,20 @@ static int device_early_init(struct hl_device *hdev)
-> >       if (rc)
-> >               return rc;
-> >
-> > +     rc = hl_asid_init(hdev);
-> > +     if (rc)
-> > +             goto early_fini;
-> > +
-> > +     mutex_init(&hdev->device_open);
-> > +     atomic_set(&hdev->fd_open_cnt, 0);
-> > +
-> >       return 0;
-> > +
-> > +early_fini:
-> > +     if (hdev->asic_funcs->early_fini)
-> > +             hdev->asic_funcs->early_fini(hdev);
-> > +
-> > +     return rc;
-> >  }
-> >
-> >  /**
-> > @@ -145,9 +166,12 @@ static int device_early_init(struct hl_device *hdev)
-> >  static void device_early_fini(struct hl_device *hdev)
-> >  {
-> >
-> > +     hl_asid_fini(hdev);
-> > +
-> >       if (hdev->asic_funcs->early_fini)
-> >               hdev->asic_funcs->early_fini(hdev);
-> >
-> > +     mutex_destroy(&hdev->device_open);
-> >  }
-> >
-> >  /**
-> > @@ -241,11 +265,30 @@ int hl_device_init(struct hl_device *hdev, struct class *hclass)
-> >       if (rc)
-> >               goto early_fini;
-> >
-> > +     /* Allocate the kernel context */
-> > +     hdev->kernel_ctx = kzalloc(sizeof(*hdev->kernel_ctx), GFP_KERNEL);
-> > +     if (!hdev->kernel_ctx) {
-> > +             rc = -ENOMEM;
-> > +             goto sw_fini;
-> > +     }
-> > +
-> > +     hdev->user_ctx = NULL;
-> > +
-> > +     rc = hl_ctx_init(hdev, hdev->kernel_ctx, true);
-> > +     if (rc) {
-> > +             dev_err(hdev->dev, "failed to initialize kernel context\n");
-> > +             goto free_ctx;
-> > +     }
-> > +
-> >       dev_notice(hdev->dev,
-> >               "Successfully added device to habanalabs driver\n");
-> >
-> >       return 0;
-> >
-> > +free_ctx:
-> > +     kfree(hdev->kernel_ctx);
-> > +sw_fini:
-> > +     hdev->asic_funcs->sw_fini(hdev);
-> >  early_fini:
-> >       device_early_fini(hdev);
-> >  release_device:
-> > @@ -278,6 +321,10 @@ void hl_device_fini(struct hl_device *hdev)
-> >       /* Mark device as disabled */
-> >       hdev->disabled = true;
-> >
-> > +     /* Release kernel context */
-> > +     if ((hdev->kernel_ctx) && (hl_ctx_put(hdev->kernel_ctx) != 1))
-> > +             dev_err(hdev->dev, "kernel ctx is still alive\n");
-> > +
-> >       /* Call ASIC S/W finalize function */
-> >       hdev->asic_funcs->sw_fini(hdev);
-> >
-> > diff --git a/drivers/misc/habanalabs/habanalabs.h b/drivers/misc/habanalabs/habanalabs.h
-> > index 97844825f7a8..d003a6af2131 100644
-> > --- a/drivers/misc/habanalabs/habanalabs.h
-> > +++ b/drivers/misc/habanalabs/habanalabs.h
-> > @@ -125,6 +125,45 @@ struct hl_asic_funcs {
-> >                                       void *cpu_addr, dma_addr_t dma_handle);
-> >  };
-> >
-> > +
-> > +
-> > +
-> > +
-> > +/*
-> > + * CONTEXTS
-> > + */
-> > +
-> > +#define HL_KERNEL_ASID_ID    0
-> > +
-> > +/**
-> > + * struct hl_ctx - user/kernel context.
-> > + * @hpriv: pointer to the private (KMD) data of the process (fd).
-> > + * @hdev: pointer to the device structure.
-> > + * @refcount: reference counter for the context. Context is released only when
-> > + *           this hits 0l. It is incremented on CS and CS_WAIT.
-> > + * @asid: context's unique address space ID in the device's MMU.
-> > + */
-> > +struct hl_ctx {
-> > +     struct hl_fpriv         *hpriv;
-> > +     struct hl_device        *hdev;
-> > +     struct kref             refcount;
-> > +     u32                     asid;
-> > +};
-> > +
-> > +/**
-> > + * struct hl_ctx_mgr - for handling multiple contexts.
-> > + * @ctx_lock: protects ctx_handles.
-> > + * @ctx_handles: idr to hold all ctx handles.
-> > + */
-> > +struct hl_ctx_mgr {
-> > +     struct mutex            ctx_lock;
-> > +     struct idr              ctx_handles;
-> > +};
-> > +
-> > +
-> > +
-> > +
-> > +
-> >  /*
-> >   * FILE PRIVATE STRUCTURE
-> >   */
-> > @@ -134,12 +173,16 @@ struct hl_asic_funcs {
-> >   * @hdev: habanalabs device structure.
-> >   * @filp: pointer to the given file structure.
-> >   * @taskpid: current process ID.
-> > + * @ctx: current executing context.
-> > + * @ctx_mgr: context manager to handle multiple context for this FD.
-> >   * @refcount: number of related contexts.
-> >   */
-> >  struct hl_fpriv {
-> >       struct hl_device        *hdev;
-> >       struct file             *filp;
-> >       struct pid              *taskpid;
-> > +     struct hl_ctx           *ctx; /* TODO: remove for multiple ctx */
-> > +     struct hl_ctx_mgr       ctx_mgr;
-> >       struct kref             refcount;
-> >  };
-> >
-> > @@ -195,13 +238,19 @@ void hl_wreg(struct hl_device *hdev, u32 reg, u32 val);
-> >   * @dev: realted kernel basic device structure.
-> >   * @asic_name: ASIC specific nmae.
-> >   * @asic_type: ASIC specific type.
-> > + * @kernel_ctx: KMD context structure.
-> >   * @dma_pool: DMA pool for small allocations.
-> >   * @cpu_accessible_dma_mem: KMD <-> ArmCP shared memory CPU address.
-> >   * @cpu_accessible_dma_address: KMD <-> ArmCP shared memory DMA address.
-> >   * @cpu_accessible_dma_pool: KMD <-> ArmCP shared memory pool.
-> > + * @asid_bitmap: holds used/available ASIDs.
-> > + * @asid_mutex: protects asid_bitmap.
-> > + * @device_open: lock for sanity checks upon FD open.
->
-> device_open is an ambiguous name for a lock
->
-> >   * @asic_prop: ASIC specific immutable properties.
-> >   * @asic_funcs: ASIC specific functions.
-> >   * @asic_specific: ASIC specific information to use only from ASIC files.
-> > + * @user_ctx: current user context executing.
-> > + * @fd_open_cnt: number of open context executing.
-> >   * @major: habanalabs KMD major.
-> >   * @id: device minor.
-> >   * @disabled: is device disabled.
-> > @@ -214,13 +263,21 @@ struct hl_device {
-> >       struct device                   *dev;
-> >       char                            asic_name[16];
-> >       enum hl_asic_type               asic_type;
-> > +     struct hl_ctx                   *kernel_ctx;
-> >       struct dma_pool                 *dma_pool;
-> >       void                            *cpu_accessible_dma_mem;
-> >       dma_addr_t                      cpu_accessible_dma_address;
-> >       struct gen_pool                 *cpu_accessible_dma_pool;
-> > +     unsigned long                   *asid_bitmap;
-> > +     struct mutex                    asid_mutex;
-> > +     /* TODO: change to rw_sem for multiple contexts (same as other IOCTL) */
-> > +     struct mutex                    device_open;
-> >       struct asic_fixed_properties    asic_prop;
-> >       const struct hl_asic_funcs      *asic_funcs;
-> >       void                            *asic_specific;
-> > +     /* TODO: The following fields should be moved for multi-context */
-> > +     struct hl_ctx                   *user_ctx;
-> > +     atomic_t                        fd_open_cnt;
-> >       u32                             major;
-> >       u16                             id;
-> >       u8                              disabled;
-> > @@ -270,10 +327,23 @@ int hl_poll_timeout_memory(struct hl_device *hdev, u64 addr, u32 timeout_us,
-> >  int hl_poll_timeout_device_memory(struct hl_device *hdev, void __iomem *addr,
-> >                               u32 timeout_us, u32 *val);
-> >
-> > +int hl_asid_init(struct hl_device *hdev);
-> > +void hl_asid_fini(struct hl_device *hdev);
-> > +unsigned long hl_asid_alloc(struct hl_device *hdev);
-> > +void hl_asid_free(struct hl_device *hdev, unsigned long asid);
-> > +
-> > +int hl_ctx_create(struct hl_device *hdev, struct hl_fpriv *hpriv);
-> > +void hl_ctx_free(struct hl_device *hdev, struct hl_ctx *ctx);
-> > +int hl_ctx_init(struct hl_device *hdev, struct hl_ctx *ctx, bool is_kernel_ctx);
-> > +int hl_ctx_put(struct hl_ctx *ctx);
-> > +void hl_ctx_mgr_init(struct hl_ctx_mgr *mgr);
-> > +void hl_ctx_mgr_fini(struct hl_device *hdev, struct hl_ctx_mgr *mgr);
-> >  int hl_device_init(struct hl_device *hdev, struct class *hclass);
-> >  void hl_device_fini(struct hl_device *hdev);
-> >  int hl_device_suspend(struct hl_device *hdev);
-> >  int hl_device_resume(struct hl_device *hdev);
-> > +void hl_hpriv_get(struct hl_fpriv *hpriv);
-> > +void hl_hpriv_put(struct hl_fpriv *hpriv);
-> >
-> >  void goya_set_asic_funcs(struct hl_device *hdev);
-> >
-> > diff --git a/drivers/misc/habanalabs/habanalabs_drv.c b/drivers/misc/habanalabs/habanalabs_drv.c
-> > index 79545003b7c2..0646da83eb53 100644
-> > --- a/drivers/misc/habanalabs/habanalabs_drv.c
-> > +++ b/drivers/misc/habanalabs/habanalabs_drv.c
-> > @@ -77,6 +77,7 @@ int hl_device_open(struct inode *inode, struct file *filp)
-> >  {
-> >       struct hl_device *hdev;
-> >       struct hl_fpriv *hpriv;
-> > +     int rc;
-> >
-> >       mutex_lock(&hl_devs_idr_lock);
-> >       hdev = idr_find(&hl_devs_idr, iminor(inode));
-> > @@ -88,9 +89,33 @@ int hl_device_open(struct inode *inode, struct file *filp)
-> >               return -ENXIO;
-> >       }
-> >
-> > +     mutex_lock(&hdev->device_open);
-> > +
-> > +     if (hdev->disabled) {
-> > +             dev_err_ratelimited(hdev->dev,
-> > +                     "Can't open %s because it is disabled\n",
-> > +                     dev_name(hdev->dev));
-> > +             mutex_unlock(&hdev->device_open);
-> > +             return -EPERM;
-> > +     }
-> > +
-> > +     if (hdev->user_ctx) {
-> > +             dev_info_ratelimited(hdev->dev,
-> > +                     "Device %s is already attached to application\n",
-> > +                     dev_name(hdev->dev));
-> > +             mutex_unlock(&hdev->device_open);
-> > +             return -EBUSY;
-> > +     }
-> > +
-> > +     atomic_inc(&hdev->fd_open_cnt);
-> > +
-> > +     mutex_unlock(&hdev->device_open);
-> > +
-> >       hpriv = kzalloc(sizeof(*hpriv), GFP_KERNEL);
-> > -     if (!hpriv)
-> > -             return -ENOMEM;
-> > +     if (!hpriv) {
-> > +             rc = -ENOMEM;
-> > +             goto close_device;
-> > +     }
-> >
-> >       hpriv->hdev = hdev;
-> >       filp->private_data = hpriv;
-> > @@ -98,9 +123,26 @@ int hl_device_open(struct inode *inode, struct file *filp)
-> >       kref_init(&hpriv->refcount);
-> >       nonseekable_open(inode, filp);
-> >
-> > +     hl_ctx_mgr_init(&hpriv->ctx_mgr);
-> > +
-> > +     rc = hl_ctx_create(hdev, hpriv);
-> > +     if (rc) {
-> > +             dev_err(hdev->dev, "Failed to open FD (CTX fail)\n");
-> > +             goto out_err;
-> > +     }
-> > +
-> >       hpriv->taskpid = find_get_pid(current->pid);
-> >
-> >       return 0;
-> > +
-> > +out_err:
-> > +     filp->private_data = NULL;
-> > +     hl_ctx_mgr_fini(hpriv->hdev, &hpriv->ctx_mgr);
-> > +     kfree(hpriv);
-> > +
-> > +close_device:
-> > +     atomic_dec(&hdev->fd_open_cnt);
-> > +     return rc;
-> >  }
-> >
-> >  /**
-> > --
-> > 2.17.1
-> >
->
-> --
-> Sincerely yours,
-> Mike.
->
-Fixed, thanks.
-Oded
+On 1/25/19 1:02 PM, Bjorn Helgaas wrote:
+>> @@ -453,7 +453,7 @@ int walk_system_ram_range(unsigned long
+>>         unsigned long flags;
+>>         struct resource res;
+>>         unsigned long pfn, end_pfn;
+>> -       int ret = -1;
+>> +       int ret = -EINVAL;
+> Can you either make a similar change to the powerpc version of
+> walk_system_ram_range() in arch/powerpc/mm/mem.c or explain why it's
+> not needed?  It *seems* like we'd want both versions of
+> walk_system_ram_range() to behave similarly in this respect.
+
+Sure.  A quick grep shows powerpc being the only other implementation.
+I'll just add this hunk:
+
+> diff -puN arch/powerpc/mm/mem.c~memory-hotplug-walk_system_ram_range-returns-neg-1 arch/powerpc/mm/mem.c
+> --- a/arch/powerpc/mm/mem.c~memory-hotplug-walk_system_ram_range-returns-neg-1  2019-01-25 12:57:00.000004446 -0800
+> +++ b/arch/powerpc/mm/mem.c     2019-01-25 12:58:13.215004263 -0800 
+> @@ -188,7 +188,7 @@ walk_system_ram_range(unsigned long star 
+>         struct memblock_region *reg; 
+>         unsigned long end_pfn = start_pfn + nr_pages; 
+>         unsigned long tstart, tend; 
+> -       int ret = -1; 
+> +       int ret = -EINVAL; 
+
+I'll also dust off the ol' cross-compiler and make sure I didn't
+fat-finger anything.
