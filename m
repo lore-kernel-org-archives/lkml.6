@@ -7,34 +7,34 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DF7C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47A11C282C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F28562133D
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A0CD2133D
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="Z8QcUJyn"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="ayTB7KMo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729135AbfAYQXP (ORCPT
+        id S1729202AbfAYQXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:23:15 -0500
-Received: from onstation.org ([52.200.56.107]:55028 "EHLO onstation.org"
+        Fri, 25 Jan 2019 11:23:17 -0500
+Received: from onstation.org ([52.200.56.107]:55010 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728641AbfAYQXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728796AbfAYQXM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 25 Jan 2019 11:23:12 -0500
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id 786C5507;
-        Fri, 25 Jan 2019 16:23:10 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 17BE1679;
+        Fri, 25 Jan 2019 16:23:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
         s=default; t=1548433391;
-        bh=HTkkGw1Lk0bZzeVkHwR8GT7jFnSvFt7SXDXmScglrPw=;
+        bh=SvL+JOJA/SZfh34Hx/bPEKprRTFV++phwIYRuEDCj7g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z8QcUJynTEste/+vefN3d15W5XUAlIvqzCjhoL8cRlvcgVRWvyjCrZdJdiZ9Ln33D
-         jLntecR76Yzw9IQm7XkF2m5X7d6IIPPpIIoXkLU1Z1L/YQ2xJeriiQa9RSn2cEF6my
-         cKRG22pR+t8RAcWvLGJNtH+jLWoN8tYaAjJq+/6w=
+        b=ayTB7KMoZ6IfMyr6MYlQYIghef+P4SUngIAOnS01maq3Tjr7+apQ2h4K+fqOheJ9q
+         9zUmEAAfIZiTL8XPIgqss/f086QZaB/sz3XOhqf8ZBleKT1FHcxZpTWZqety8AqGT3
+         V89vmDfCzM7DYGTn/czL3OWiuTzncqaGV8r7Xm/0=
 From:   Brian Masney <masneyb@onstation.org>
 To:     linus.walleij@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org,
@@ -45,9 +45,9 @@ Cc:     tglx@linutronix.de, shawnguo@kernel.org, dianders@chromium.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 5/9] qcom: ssbi-gpio: add support for hierarchical IRQ chip
-Date:   Fri, 25 Jan 2019 11:22:58 -0500
-Message-Id: <20190125162302.14036-6-masneyb@onstation.org>
+Subject: [PATCH 6/9] arm: dts: qcom: apq8064: add interrupt controller properties
+Date:   Fri, 25 Jan 2019 11:22:59 -0500
+Message-Id: <20190125162302.14036-7-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190125162302.14036-1-masneyb@onstation.org>
 References: <20190125162302.14036-1-masneyb@onstation.org>
@@ -56,271 +56,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-ssbi-gpio did not have any irqchip support so consumers of this in
-device tree would need to call gpio[d]_to_irq() in order to get the
-proper IRQ on the underlying PMIC. IRQ chips in device tree should
-be usable from the start without the consumer having to make an
-additional call to get the proper IRQ on the parent. This patch adds
-hierarchical IRQ chip support to the ssbi-gpio code to correct this
-issue.
+Add interrupt controller properties now that ssbi-gpio is a proper
+hierarchical IRQ chip. The interrupts property is no longer needed so
+remove it.
 
-The constant PM8XXX_GPIO_PHYSICAL_OFFSET is introduced to replace the
-hardcoded '1' that previously existed in two places in this driver to
-improve code readability.
-
-This change was not tested on any actual hardware, however the same
-change was made to spmi-gpio and tested on a LG Nexus 5 (hammerhead)
-phone.
+This change was not tested on any hardware but the same change was
+tested on qcom-pm8941.dtsi with spmi-gpio using a LG Nexus 5
+(hammerhead) phone with no issues.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
- drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 142 +++++++++++++++++++++--
- 1 file changed, 130 insertions(+), 12 deletions(-)
+ arch/arm/boot/dts/qcom-apq8064.dtsi | 46 ++---------------------------
+ 1 file changed, 2 insertions(+), 44 deletions(-)
 
-diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-index 9a9e9cb80cc5..c6b606b225a9 100644
---- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-+++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
-@@ -55,6 +55,8 @@
+diff --git a/arch/arm/boot/dts/qcom-apq8064.dtsi b/arch/arm/boot/dts/qcom-apq8064.dtsi
+index 48c3cf427610..4744fe757cf4 100644
+--- a/arch/arm/boot/dts/qcom-apq8064.dtsi
++++ b/arch/arm/boot/dts/qcom-apq8064.dtsi
+@@ -705,50 +705,8 @@
+ 					compatible = "qcom,pm8921-gpio",
+ 						     "qcom,ssbi-gpio";
+ 					reg = <0x150>;
+-					interrupts = <192 IRQ_TYPE_NONE>,
+-						     <193 IRQ_TYPE_NONE>,
+-						     <194 IRQ_TYPE_NONE>,
+-						     <195 IRQ_TYPE_NONE>,
+-						     <196 IRQ_TYPE_NONE>,
+-						     <197 IRQ_TYPE_NONE>,
+-						     <198 IRQ_TYPE_NONE>,
+-						     <199 IRQ_TYPE_NONE>,
+-						     <200 IRQ_TYPE_NONE>,
+-						     <201 IRQ_TYPE_NONE>,
+-						     <202 IRQ_TYPE_NONE>,
+-						     <203 IRQ_TYPE_NONE>,
+-						     <204 IRQ_TYPE_NONE>,
+-						     <205 IRQ_TYPE_NONE>,
+-						     <206 IRQ_TYPE_NONE>,
+-						     <207 IRQ_TYPE_NONE>,
+-						     <208 IRQ_TYPE_NONE>,
+-						     <209 IRQ_TYPE_NONE>,
+-						     <210 IRQ_TYPE_NONE>,
+-						     <211 IRQ_TYPE_NONE>,
+-						     <212 IRQ_TYPE_NONE>,
+-						     <213 IRQ_TYPE_NONE>,
+-						     <214 IRQ_TYPE_NONE>,
+-						     <215 IRQ_TYPE_NONE>,
+-						     <216 IRQ_TYPE_NONE>,
+-						     <217 IRQ_TYPE_NONE>,
+-						     <218 IRQ_TYPE_NONE>,
+-						     <219 IRQ_TYPE_NONE>,
+-						     <220 IRQ_TYPE_NONE>,
+-						     <221 IRQ_TYPE_NONE>,
+-						     <222 IRQ_TYPE_NONE>,
+-						     <223 IRQ_TYPE_NONE>,
+-						     <224 IRQ_TYPE_NONE>,
+-						     <225 IRQ_TYPE_NONE>,
+-						     <226 IRQ_TYPE_NONE>,
+-						     <227 IRQ_TYPE_NONE>,
+-						     <228 IRQ_TYPE_NONE>,
+-						     <229 IRQ_TYPE_NONE>,
+-						     <230 IRQ_TYPE_NONE>,
+-						     <231 IRQ_TYPE_NONE>,
+-						     <232 IRQ_TYPE_NONE>,
+-						     <233 IRQ_TYPE_NONE>,
+-						     <234 IRQ_TYPE_NONE>,
+-						     <235 IRQ_TYPE_NONE>;
++					interrupt-controller;
++					#interrupt-cells = <2>;
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
  
- #define PM8XXX_MAX_GPIOS               44
- 
-+#define PM8XXX_GPIO_PHYSICAL_OFFSET	1
-+
- /* custom pinconf parameters */
- #define PM8XXX_QCOM_DRIVE_STRENGH      (PIN_CONFIG_END + 1)
- #define PM8XXX_QCOM_PULL_UP_STRENGTH   (PIN_CONFIG_END + 2)
-@@ -99,6 +101,9 @@ struct pm8xxx_gpio {
- 
- 	struct pinctrl_desc desc;
- 	unsigned npins;
-+
-+	struct fwnode_handle *fwnode;
-+	struct irq_domain *domain;
- };
- 
- static const struct pinconf_generic_params pm8xxx_gpio_bindings[] = {
-@@ -499,11 +504,12 @@ static int pm8xxx_gpio_get(struct gpio_chip *chip, unsigned offset)
- 
- 	if (pin->mode == PM8XXX_GPIO_MODE_OUTPUT) {
- 		ret = pin->output_value;
--	} else {
-+	} else if (pin->irq >= 0) {
- 		ret = irq_get_irqchip_state(pin->irq, IRQCHIP_STATE_LINE_LEVEL, &state);
- 		if (!ret)
- 			ret = !!state;
--	}
-+	} else
-+		ret = -EINVAL;
- 
- 	return ret;
- }
-@@ -533,16 +539,39 @@ static int pm8xxx_gpio_of_xlate(struct gpio_chip *chip,
- 	if (flags)
- 		*flags = gpio_desc->args[1];
- 
--	return gpio_desc->args[0] - 1;
-+	return gpio_desc->args[0] - PM8XXX_GPIO_PHYSICAL_OFFSET;
- }
- 
- 
- static int pm8xxx_gpio_to_irq(struct gpio_chip *chip, unsigned offset)
-+{
-+	struct pm8xxx_gpio *pctrl = gpiochip_get_data(chip);
-+	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
-+	struct irq_fwspec fwspec;
-+	int ret;
-+
-+	fwspec.fwnode = pctrl->fwnode;
-+	fwspec.param_count = 2;
-+	fwspec.param[0] = offset + PM8XXX_GPIO_PHYSICAL_OFFSET;
-+	fwspec.param[1] = IRQ_TYPE_EDGE_RISING;
-+
-+	ret = irq_create_fwspec_mapping(&fwspec);
-+
-+	/*
-+	 * Cache the IRQ since pm8xxx_gpio_get() needs this to get determine the
-+	 * line level.
-+	 */
-+	pin->irq = ret;
-+
-+	return ret;
-+}
-+
-+static void pm8xxx_gpio_free(struct gpio_chip *chip, unsigned int offset)
- {
- 	struct pm8xxx_gpio *pctrl = gpiochip_get_data(chip);
- 	struct pm8xxx_pin_data *pin = pctrl->desc.pins[offset].drv_data;
- 
--	return pin->irq;
-+	pin->irq = -1;
- }
- 
- #ifdef CONFIG_DEBUG_FS
-@@ -571,7 +600,7 @@ static void pm8xxx_gpio_dbg_show_one(struct seq_file *s,
- 		"no", "high", "medium", "low"
- 	};
- 
--	seq_printf(s, " gpio%-2d:", offset + 1);
-+	seq_printf(s, " gpio%-2d:", offset + PM8XXX_GPIO_PHYSICAL_OFFSET);
- 	if (pin->disable) {
- 		seq_puts(s, " ---");
- 	} else {
-@@ -603,6 +632,7 @@ static void pm8xxx_gpio_dbg_show(struct seq_file *s, struct gpio_chip *chip)
- #endif
- 
- static const struct gpio_chip pm8xxx_gpio_template = {
-+	.free = pm8xxx_gpio_free,
- 	.direction_input = pm8xxx_gpio_direction_input,
- 	.direction_output = pm8xxx_gpio_direction_output,
- 	.get = pm8xxx_gpio_get,
-@@ -664,6 +694,75 @@ static int pm8xxx_pin_populate(struct pm8xxx_gpio *pctrl,
- 	return 0;
- }
- 
-+static struct irq_chip pm8xxx_irq_chip = {
-+	.name = "ssbi-gpio",
-+	.irq_mask = irq_chip_mask_parent,
-+	.irq_ack = irq_chip_ack_parent,
-+	.irq_unmask = irq_chip_unmask_parent,
-+	.irq_set_type = irq_chip_set_type_parent,
-+	.flags = IRQCHIP_MASK_ON_SUSPEND | IRQCHIP_SKIP_SET_WAKE,
-+};
-+
-+static int pm8xxx_domain_translate(struct irq_domain *domain,
-+				   struct irq_fwspec *fwspec,
-+				   unsigned long *hwirq,
-+				   unsigned int *type)
-+{
-+	struct pm8xxx_gpio *pctrl = container_of(domain->host_data,
-+						 struct pm8xxx_gpio, chip);
-+
-+	if (fwspec->param_count != 2 || fwspec->param[0] >= pctrl->chip.ngpio)
-+		return -EINVAL;
-+
-+	*hwirq = fwspec->param[0] - PM8XXX_GPIO_PHYSICAL_OFFSET;
-+	*type = fwspec->param[1];
-+
-+	return 0;
-+}
-+
-+static int pm8xxx_domain_alloc(struct irq_domain *domain, unsigned int virq,
-+			       unsigned int nr_irqs, void *data)
-+{
-+	struct pm8xxx_gpio *pctrl = container_of(domain->host_data,
-+						 struct pm8xxx_gpio, chip);
-+	struct irq_fwspec *fwspec = data;
-+	struct irq_fwspec parent_fwspec;
-+	irq_flow_handler_t handler;
-+	irq_hw_number_t hwirq;
-+	unsigned int type;
-+	int ret, i;
-+
-+	ret = pm8xxx_domain_translate(domain, fwspec, &hwirq, &type);
-+	if (ret)
-+		return ret;
-+
-+	if (type & IRQ_TYPE_EDGE_BOTH)
-+		handler = handle_edge_irq;
-+	else
-+		handler = handle_level_irq;
-+
-+	for (i = 0; i < nr_irqs; i++)
-+		irq_domain_set_info(domain, virq + i, hwirq + i,
-+				    &pm8xxx_irq_chip, pctrl, handler,
-+				    NULL, NULL);
-+
-+	parent_fwspec.fwnode = domain->parent->fwnode;
-+	parent_fwspec.param_count = 2;
-+	parent_fwspec.param[0] = hwirq + 0xc0;
-+	parent_fwspec.param[1] = fwspec->param[1];
-+
-+	return irq_domain_alloc_irqs_parent(domain, virq, nr_irqs,
-+					    &parent_fwspec);
-+}
-+
-+static const struct irq_domain_ops pm8xxx_domain_ops = {
-+	.activate = gpiochip_irq_domain_activate,
-+	.alloc = pm8xxx_domain_alloc,
-+	.deactivate = gpiochip_irq_domain_deactivate,
-+	.free = irq_domain_free_irqs_common,
-+	.translate = pm8xxx_domain_translate,
-+};
-+
- static const struct of_device_id pm8xxx_gpio_of_match[] = {
- 	{ .compatible = "qcom,pm8018-gpio", .data = (void *) 6 },
- 	{ .compatible = "qcom,pm8038-gpio", .data = (void *) 12 },
-@@ -677,6 +776,8 @@ MODULE_DEVICE_TABLE(of, pm8xxx_gpio_of_match);
- static int pm8xxx_gpio_probe(struct platform_device *pdev)
- {
- 	struct pm8xxx_pin_data *pin_data;
-+	struct irq_domain *parent_domain;
-+	struct device_node *parent_node;
- 	struct pinctrl_pin_desc *pins;
- 	struct pm8xxx_gpio *pctrl;
- 	int ret;
-@@ -713,12 +814,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- 
- 	for (i = 0; i < pctrl->desc.npins; i++) {
- 		pin_data[i].reg = SSBI_REG_ADDR_GPIO(i);
--		pin_data[i].irq = platform_get_irq(pdev, i);
--		if (pin_data[i].irq < 0) {
--			dev_err(&pdev->dev,
--				"missing interrupts for pin %d\n", i);
--			return pin_data[i].irq;
--		}
-+		pin_data[i].irq = -1;
- 
- 		ret = pm8xxx_pin_populate(pctrl, &pin_data[i]);
- 		if (ret)
-@@ -749,10 +845,29 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- 	pctrl->chip.of_gpio_n_cells = 2;
- 	pctrl->chip.label = dev_name(pctrl->dev);
- 	pctrl->chip.ngpio = pctrl->npins;
-+
-+	parent_node = of_irq_find_parent(pctrl->dev->of_node);
-+	if (!parent_node)
-+		return -ENXIO;
-+
-+	parent_domain = irq_find_host(parent_node);
-+	of_node_put(parent_node);
-+	if (!parent_domain)
-+		return -ENXIO;
-+
-+	pctrl->fwnode = of_node_to_fwnode(pctrl->dev->of_node);
-+	pctrl->domain = irq_domain_create_hierarchy(parent_domain, 0,
-+						    pctrl->chip.ngpio,
-+						    pctrl->fwnode,
-+						    &pm8xxx_domain_ops,
-+						    &pctrl->chip);
-+	if (!pctrl->domain)
-+		return -ENODEV;
-+
- 	ret = gpiochip_add_data(&pctrl->chip, pctrl);
- 	if (ret) {
- 		dev_err(&pdev->dev, "failed register gpiochip\n");
--		return ret;
-+		goto err_chip_add_data;
- 	}
- 
- 	/*
-@@ -782,6 +897,8 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
- 
- unregister_gpiochip:
- 	gpiochip_remove(&pctrl->chip);
-+err_chip_add_data:
-+	irq_domain_remove(pctrl->domain);
- 
- 	return ret;
- }
-@@ -791,6 +908,7 @@ static int pm8xxx_gpio_remove(struct platform_device *pdev)
- 	struct pm8xxx_gpio *pctrl = platform_get_drvdata(pdev);
- 
- 	gpiochip_remove(&pctrl->chip);
-+	irq_domain_remove(pctrl->domain);
- 
- 	return 0;
- }
 -- 
 2.17.2
 
