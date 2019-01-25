@@ -2,115 +2,100 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.7 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D058C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:44:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6B09C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43F38218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:44:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99949218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:45:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729297AbfAYRou (ORCPT
+        id S1729333AbfAYRpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:44:50 -0500
-Received: from mga07.intel.com ([134.134.136.100]:37562 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726321AbfAYRot (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:44:49 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 09:44:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,522,1539673200"; 
-   d="scan'208";a="133109563"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga001.jf.intel.com with ESMTP; 25 Jan 2019 09:44:44 -0800
-Received: from andy by smile with local (Exim 4.92-RC4)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gn5X0-0003Yx-TN; Fri, 25 Jan 2019 19:44:42 +0200
-Date:   Fri, 25 Jan 2019 19:44:42 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>,
-        Liam Girdwood <liam.r.girdwood@linux.intel.com>,
-        Jie Yang <yang.jie@linux.intel.com>,
-        Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [RFT][PATCH v2] gpiolib: acpi: Introduce
- ACPI_GPIO_QUIRK_ONLY_GPIOIO
-Message-ID: <20190125174442.GR9224@smile.fi.intel.com>
-References: <20190109105245.25954-1-andriy.shevchenko@linux.intel.com>
- <CACRpkdZAOaqPQkKzyNate3A67Ce0T+V7ig+Y3BV4ycx==U5jkQ@mail.gmail.com>
+        Fri, 25 Jan 2019 12:45:14 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51232 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726311AbfAYRpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 12:45:13 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB5EBEBD;
+        Fri, 25 Jan 2019 09:45:12 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 76CBD3F5AF;
+        Fri, 25 Jan 2019 09:45:05 -0800 (PST)
+Date:   Fri, 25 Jan 2019 17:45:02 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 06/21] memblock: memblock_phys_alloc_try_nid(): don't
+ panic
+Message-ID: <20190125174502.GL25901@arrakis.emea.arm.com>
+References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
+ <1548057848-15136-7-git-send-email-rppt@linux.ibm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CACRpkdZAOaqPQkKzyNate3A67Ce0T+V7ig+Y3BV4ycx==U5jkQ@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <1548057848-15136-7-git-send-email-rppt@linux.ibm.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 02:03:09PM +0100, Linus Walleij wrote:
-> On Wed, Jan 9, 2019 at 11:52 AM Andy Shevchenko
-> <andriy.shevchenko@linux.intel.com> wrote:
-> 
-> > New quirk enforces search for GPIO based on its type,
-> > i.e. iterate over GpioIo resources only.
-> >
-> > Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> > ---
-> >
-> > - it was sent few weeks ago to Hans for testing, but better to re-test
-> > - it's supposed to go via ASoC subsystem due to recent changes made for
-> >   sound driver
-> >
-> > v2:
-> > - Expand explanation why this quirk might be needed (Mika)
-> 
-> I tried to apply this but it doesn't apply on the GPIO devel
-> branch.
-> 
-> I suppose because of Hans de Goede's
-> commit 72893f0c6bd399ce84e3c1c9fc69d234fe37d098
-> Author: Hans de Goede <hdegoede@redhat.com>
-> Date:   Mon Dec 31 21:55:21 2018 +0100
-> 
->     gpiolib-acpi: Preserve non direction flags when updating gpiod_flags
-> 
-> Could you rebase and resend?
+On Mon, Jan 21, 2019 at 10:03:53AM +0200, Mike Rapoport wrote:
+> diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+> index ae34e3a..2c61ea4 100644
+> --- a/arch/arm64/mm/numa.c
+> +++ b/arch/arm64/mm/numa.c
+> @@ -237,6 +237,10 @@ static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
+>  		pr_info("Initmem setup node %d [<memory-less node>]\n", nid);
+>  
+>  	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+> +	if (!nd_pa)
+> +		panic("Cannot allocate %zu bytes for node %d data\n",
+> +		      nd_size, nid);
+> +
+>  	nd = __va(nd_pa);
+>  
+>  	/* report and initialize */
 
-Linus, as I mentioned in comments above this should go via ASoC tree, there is
-no conflicts with gpio/devel for GPIO matters.
-
-So, please, give your Ack and hopefully Mark will apply this soon.
-
-> 
-> (Also pick up Mika's ACK.)
-> 
-> PS I'm a bit split about pure ACPI patches, part of me see it as an
-> "intel thing" so that you could very well collect it in the Intel
-> GPIO tree and send me pull requests, on the other hand it is
-> ACPI and sometimes applied in Rafael's tree. Maybe just as good
-> that I keep picking them separately like this?
-> 
-> Yours,
-> Linus Walleij
+Does it mean that memblock_phys_alloc_try_nid() never returns valid
+physical memory starting at 0?
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Catalin
