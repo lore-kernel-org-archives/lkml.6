@@ -2,255 +2,147 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50781C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:11:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D894C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:12:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F08F218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:11:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548443519;
-	bh=jytltsqdKFJ6gX+xv2KY9bztv4rQoHN77Jz0ySH86DE=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=REd62n3cl8kOCgEIK2l9anr9yvtazRIFMDhnDjfxO3tiD+sJASyVjv2JVXKgbaVAq
-	 GwlRJ0QR8YHCgDtpU8fK2p5Mos4KZo+TIERoHiLlsuEVf5aOpsHXGrL6zKzCQaVndz
-	 zep/A0VgyLh6u7eEG/qe+Grrsv8veQ5JI7PZtNbA=
+	by mail.kernel.org (Postfix) with ESMTP id 48DFD218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:12:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ff8SwgtI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfAYTL5 (ORCPT
+        id S1728079AbfAYTMI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 14:11:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38808 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbfAYTL4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 14:11:56 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D2CA218B0;
-        Fri, 25 Jan 2019 19:11:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548443515;
-        bh=jytltsqdKFJ6gX+xv2KY9bztv4rQoHN77Jz0ySH86DE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=adVkPqxd7A/XX7P0u85sRlPnZMcObujpONUpOxkmOhillbOAKX5tVt4J8j0F6ImtY
-         9upfKUNzGD2sC5zjUOOAYErtE/C3MQXpuQgWEzqXoqhGw43sSsg0H3lT5BmOoQ3rOK
-         a7IpaxBhlFNfwLkMGZiSSJfFtN5fOsQLTa8+3uGU=
-Subject: Re: [PATCH] selftests/seccomp: Enhance per-arch ptrace syscall skip
- tests
-To:     Kees Cook <keescook@chromium.org>,
-        Colin Ian King <colin.king@canonical.com>
-Cc:     Andy Lutomirski <luto@amacapital.net>,
-        Will Drewry <wad@chromium.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>, kernel-janitors@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, shuah <shuah@kernel.org>
-References: <20190125183359.GA8524@beast>
- <b4d7a57b-349b-d095-2f5e-3beef86cd2c0@canonical.com>
- <CAGXu5jLUixGHcU3fZe2e8H53QbvEuSNmHyjMZXnrjP26dSWMoA@mail.gmail.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <bf579b2d-9515-ea5b-d2a5-4f148964eca2@kernel.org>
-Date:   Fri, 25 Jan 2019 12:11:54 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 25 Jan 2019 14:12:08 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:34368 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726451AbfAYTMI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 14:12:08 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0PIxPSs188697;
+        Fri, 25 Jan 2019 19:10:25 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=e45pddu4T0w+FZczQB8gd8TNniiUMDMlHfFvF74y4JI=;
+ b=ff8SwgtIWxZPFtqsLadGhu4mtI0nERLxpNCxpKi9D7k2+TeF/luMhTQeV+PEMuZTfbsF
+ 6AHkMy3tEYB4pBKt3ApVHu3f+2dRXwVVbbACswLUkCrwB27m+SYV03L43aSGHoW57DnH
+ heskUdFNt+yoOsj6y3NZDFOx4MKSQN2mgEskUqqWZY29etnzxyZKLEFccoC0/3GwigSs
+ khfLQQ5W+zK9QM4G8KipYG7LXJ1QcvX4uwiBNi8XNgwd+3q21Zypr/+/MFoguiF1rcMH
+ D5956ArTpzsqnoAFx/wSxhkVrFAq1YlsT0Izr3/rmUSiIdd9sKnf8cGkp8hb6znBhrnS 4A== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2120.oracle.com with ESMTP id 2q3vhs7ckn-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 25 Jan 2019 19:10:25 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0PJAOSR022527
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 25 Jan 2019 19:10:25 GMT
+Received: from abhmp0015.oracle.com (abhmp0015.oracle.com [141.146.116.21])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0PJAOMP028010;
+        Fri, 25 Jan 2019 19:10:24 GMT
+Received: from [10.159.247.181] (/10.159.247.181)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 25 Jan 2019 11:10:24 -0800
+Subject: Re: [PATCH 5/5] dax: "Hotplug" persistent memory for use like normal
+ RAM
+To:     "Verma, Vishal L" <vishal.l.verma@intel.com>,
+        "Williams, Dan J" <dan.j.williams@intel.com>,
+        "Du, Fan" <fan.du@intel.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bp@suse.de" <bp@suse.de>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+        "tiwai@suse.de" <tiwai@suse.de>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "jglisse@redhat.com" <jglisse@redhat.com>,
+        "zwisler@kernel.org" <zwisler@kernel.org>,
+        "mhocko@suse.com" <mhocko@suse.com>,
+        "baiyaowei@cmss.chinamobile.com" <baiyaowei@cmss.chinamobile.com>,
+        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
+        "Wu, Fengguang" <fengguang.wu@intel.com>,
+        "Huang, Ying" <ying.huang@intel.com>,
+        "bhelgaas@google.com" <bhelgaas@google.com>
+References: <20190124231441.37A4A305@viggo.jf.intel.com>
+ <20190124231448.E102D18E@viggo.jf.intel.com>
+ <0852310e-41dc-dc96-2da5-11350f5adce6@oracle.com>
+ <CAPcyv4hjJhUQpMy1CVJZur0Ssr7Cr2fkcD50L5gzx6v_KY14vg@mail.gmail.com>
+ <5A90DA2E42F8AE43BC4A093BF067884825733A5B@SHSMSX104.ccr.corp.intel.com>
+ <CAPcyv4ikXD8rJAmV6tGNiq56m_ZXPZNrYkTwOSUJ7D1O_M5s=w@mail.gmail.com>
+ <b7d45d83a314955e7dff25401dfc0d4f4247cfcd.camel@intel.com>
+From:   Jane Chu <jane.chu@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <dc7d8190-2c94-9bdb-fb5b-a80a3fb55822@oracle.com>
+Date:   Fri, 25 Jan 2019 11:10:22 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5jLUixGHcU3fZe2e8H53QbvEuSNmHyjMZXnrjP26dSWMoA@mail.gmail.com>
+In-Reply-To: <b7d45d83a314955e7dff25401dfc0d4f4247cfcd.camel@intel.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9147 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901250148
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/25/19 11:46 AM, Kees Cook wrote:
-> On Sat, Jan 26, 2019 at 7:42 AM Colin Ian King <colin.king@canonical.com> wrote:
->>
->> On 25/01/2019 18:33, Kees Cook wrote:
->>> Passing EPERM during syscall skipping was confusing since the test wasn't
->>> actually exercising the errno evaluation -- it was just passing a literal
->>> "1" (EPERM). Instead, expand the tests to check both direct value returns
->>> (positive, 45000 in this case), and errno values (negative, -ESRCH in this
->>> case) to check both fake success and fake failure during syscall skipping.
->>>
->>> Reported-by: Colin Ian King <colin.king@canonical.com>
->>> Fixes: a33b2d0359a0 ("selftests/seccomp: Add tests for basic ptrace actions")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>> ---
->>> Colin, does this end up working on s390? Based on your bug report, I
->>> suspect the positive value tests will fail, but the errno tests will
->>> pass. If that's true, I think something is wrong in the s390 handling.
->>> (And it may just be that the ptrace code to rewrite syscalls on s390
->>> in the test is wrong...) But splitting these tests up should tell us more.
->>> ---
->>>   tools/testing/selftests/seccomp/seccomp_bpf.c | 72 +++++++++++++++----
->>>   1 file changed, 57 insertions(+), 15 deletions(-)
->>>
->>> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
->>> index 496a9a8c773a..7e632b465ab4 100644
->>> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
->>> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
->>> @@ -1608,7 +1608,16 @@ TEST_F(TRACE_poke, getpid_runs_normally)
->>>   #ifdef SYSCALL_NUM_RET_SHARE_REG
->>>   # define EXPECT_SYSCALL_RETURN(val, action)  EXPECT_EQ(-1, action)
->>>   #else
->>> -# define EXPECT_SYSCALL_RETURN(val, action)  EXPECT_EQ(val, action)
->>> +# define EXPECT_SYSCALL_RETURN(val, action)          \
->>> +     do {                                            \
->>> +             errno = 0;                              \
->>> +             if (val < 0) {                          \
->>> +                     EXPECT_EQ(-1, action);          \
->>> +                     EXPECT_EQ(-(val), errno);       \
->>> +             } else {                                \
->>> +                     EXPECT_EQ(val, action);         \
->>> +             }                                       \
->>> +     } while (0)
->>>   #endif
->>>
->>>   /* Use PTRACE_GETREGS and PTRACE_SETREGS when available. This is useful for
->>> @@ -1647,7 +1656,7 @@ int get_syscall(struct __test_metadata *_metadata, pid_t tracee)
->>>
->>>   /* Architecture-specific syscall changing routine. */
->>>   void change_syscall(struct __test_metadata *_metadata,
->>> -                 pid_t tracee, int syscall)
->>> +                 pid_t tracee, int syscall, int result)
->>>   {
->>>        int ret;
->>>        ARCH_REGS regs;
->>> @@ -1706,7 +1715,7 @@ void change_syscall(struct __test_metadata *_metadata,
->>>   #ifdef SYSCALL_NUM_RET_SHARE_REG
->>>                TH_LOG("Can't modify syscall return on this architecture");
->>>   #else
->>> -             regs.SYSCALL_RET = EPERM;
->>> +             regs.SYSCALL_RET = result;
->>>   #endif
->>>
->>>   #ifdef HAVE_GETREGS
->>> @@ -1734,14 +1743,19 @@ void tracer_syscall(struct __test_metadata *_metadata, pid_t tracee,
->>>        case 0x1002:
->>>                /* change getpid to getppid. */
->>>                EXPECT_EQ(__NR_getpid, get_syscall(_metadata, tracee));
->>> -             change_syscall(_metadata, tracee, __NR_getppid);
->>> +             change_syscall(_metadata, tracee, __NR_getppid, 0);
->>>                break;
->>>        case 0x1003:
->>> -             /* skip gettid. */
->>> +             /* skip gettid with valid return code. */
->>>                EXPECT_EQ(__NR_gettid, get_syscall(_metadata, tracee));
->>> -             change_syscall(_metadata, tracee, -1);
->>> +             change_syscall(_metadata, tracee, -1, 45000);
->>>                break;
->>>        case 0x1004:
->>> +             /* skip openat with error. */
->>> +             EXPECT_EQ(__NR_openat, get_syscall(_metadata, tracee));
->>> +             change_syscall(_metadata, tracee, -1, -ESRCH);
->>> +             break;
->>> +     case 0x1005:
->>>                /* do nothing (allow getppid) */
->>>                EXPECT_EQ(__NR_getppid, get_syscall(_metadata, tracee));
->>>                break;
->>> @@ -1774,9 +1788,11 @@ void tracer_ptrace(struct __test_metadata *_metadata, pid_t tracee,
->>>        nr = get_syscall(_metadata, tracee);
->>>
->>>        if (nr == __NR_getpid)
->>> -             change_syscall(_metadata, tracee, __NR_getppid);
->>> +             change_syscall(_metadata, tracee, __NR_getppid, 0);
->>> +     if (nr == __NR_gettid)
->>> +             change_syscall(_metadata, tracee, -1, 45000);
->>>        if (nr == __NR_openat)
->>> -             change_syscall(_metadata, tracee, -1);
->>> +             change_syscall(_metadata, tracee, -1, -ESRCH);
->>>   }
->>>
->>>   FIXTURE_DATA(TRACE_syscall) {
->>> @@ -1793,8 +1809,10 @@ FIXTURE_SETUP(TRACE_syscall)
->>>                BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1002),
->>>                BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_gettid, 0, 1),
->>>                BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1003),
->>> -             BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
->>> +             BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_openat, 0, 1),
->>>                BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1004),
->>> +             BPF_JUMP(BPF_JMP|BPF_JEQ|BPF_K, __NR_getppid, 0, 1),
->>> +             BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_TRACE | 0x1005),
->>>                BPF_STMT(BPF_RET|BPF_K, SECCOMP_RET_ALLOW),
->>>        };
->>>
->>> @@ -1842,15 +1860,26 @@ TEST_F(TRACE_syscall, ptrace_syscall_redirected)
->>>        EXPECT_NE(self->mypid, syscall(__NR_getpid));
->>>   }
->>>
->>> -TEST_F(TRACE_syscall, ptrace_syscall_dropped)
->>> +TEST_F(TRACE_syscall, ptrace_syscall_errno)
->>> +{
->>> +     /* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
->>> +     teardown_trace_fixture(_metadata, self->tracer);
->>> +     self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
->>> +                                        true);
->>> +
->>> +     /* Tracer should skip the open syscall, resulting in ESRCH. */
->>> +     EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
->>> +}
->>> +
->>> +TEST_F(TRACE_syscall, ptrace_syscall_faked)
->>>   {
->>>        /* Swap SECCOMP_RET_TRACE tracer for PTRACE_SYSCALL tracer. */
->>>        teardown_trace_fixture(_metadata, self->tracer);
->>>        self->tracer = setup_trace_fixture(_metadata, tracer_ptrace, NULL,
->>>                                           true);
->>>
->>> -     /* Tracer should skip the open syscall, resulting in EPERM. */
->>> -     EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_openat));
->>> +     /* Tracer should skip the gettid syscall, resulting fake pid. */
->>> +     EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
->>>   }
->>>
->>>   TEST_F(TRACE_syscall, syscall_allowed)
->>> @@ -1883,7 +1912,21 @@ TEST_F(TRACE_syscall, syscall_redirected)
->>>        EXPECT_NE(self->mypid, syscall(__NR_getpid));
->>>   }
->>>
->>> -TEST_F(TRACE_syscall, syscall_dropped)
->>> +TEST_F(TRACE_syscall, syscall_errno)
->>> +{
->>> +     long ret;
->>> +
->>> +     ret = prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0);
->>> +     ASSERT_EQ(0, ret);
->>> +
->>> +     ret = prctl(PR_SET_SECCOMP, SECCOMP_MODE_FILTER, &self->prog, 0, 0);
->>> +     ASSERT_EQ(0, ret);
->>> +
->>> +     /* openat has been skipped and an errno return. */
->>> +     EXPECT_SYSCALL_RETURN(-ESRCH, syscall(__NR_openat));
->>> +}
->>> +
->>> +TEST_F(TRACE_syscall, syscall_faked)
->>>   {
->>>        long ret;
->>>
->>> @@ -1894,8 +1937,7 @@ TEST_F(TRACE_syscall, syscall_dropped)
->>>        ASSERT_EQ(0, ret);
->>>
->>>        /* gettid has been skipped and an altered return value stored. */
->>> -     EXPECT_SYSCALL_RETURN(EPERM, syscall(__NR_gettid));
->>> -     EXPECT_NE(self->mytid, syscall(__NR_gettid));
->>> +     EXPECT_SYSCALL_RETURN(45000, syscall(__NR_gettid));
->>>   }
->>>
->>>   TEST_F(TRACE_syscall, skip_after_RET_TRACE)
->>>
->> Works perfectly. Thanks Kees.
->>
->> Tested-by: Colin Ian King <colin.king@canonical.com>
+
+On 1/25/2019 10:20 AM, Verma, Vishal L wrote:
 > 
-> Oh excellent! Thanks. :) Shuah can you queue this up?
+> On Fri, 2019-01-25 at 09:18 -0800, Dan Williams wrote:
+>> On Fri, Jan 25, 2019 at 12:20 AM Du, Fan <fan.du@intel.com> wrote:
+>>> Dan
+>>>
+>>> Thanks for the insights!
+>>>
+>>> Can I say, the UCE is delivered from h/w to OS in a single way in
+>>> case of machine
+>>> check, only PMEM/DAX stuff filter out UC address and managed in its
+>>> own way by
+>>> badblocks, if PMEM/DAX doesn't do so, then common RAS workflow will
+>>> kick in,
+>>> right?
+>>
+>> The common RAS workflow always kicks in, it's just the page state
+>> presented by a DAX mapping needs distinct handling. Once it is
+>> hot-plugged it no longer needs to be treated differently than "System
+>> RAM".
+>>
+>>> And how about when ARS is involved but no machine check fired for
+>>> the function
+>>> of this patchset?
+>>
+>> The hotplug effectively disconnects this address range from the ARS
+>> results. They will still be reported in the libnvdimm "region" level
+>> badblocks instance, but there's no safe / coordinated way to go clear
+>> those errors without additional kernel enabling. There is no "clear
+>> error" semantic for "System RAM".
+>>
+> Perhaps as future enabling, the kernel can go perform "clear error" for
+> offlined pages, and make them usable again. But I'm not sure how
+> prepared mm is to re-accept pages previously offlined.
 > 
 
-Yup will do - I am planning to apply bunch of fixes this afternoon.
-Hoping to get them into rc5
+Offlining a DRAM backed page due to an UC makes sense because
+  a. the physical DRAM cell might still have an error
+  b. power cycle, scrubing could potentially 'repair' the DRAM cell,
+making the page usable again.
+
+But for a PMEM backed page, neither is true. If a poison bit is set in
+a page, that indicates the underlying hardware has completed the repair 
+work, all that's left is for software to recover.  Secondly, because 
+poison is persistent, unless software explicitly clear the bit,
+the page is permanently unusable.
 
 thanks,
--- Shuah
+-jane
