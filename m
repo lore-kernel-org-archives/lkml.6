@@ -2,105 +2,139 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60FE8C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:37:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 292A0C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:37:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30220218F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:37:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="T5WYtgiL"
+	by mail.kernel.org (Postfix) with ESMTP id E4982218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:37:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548434257;
+	bh=Wa8YGjA70uRv8lcXPJo00o/NWb87JGR4yVBHa3yfXtA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=Ymhly3/1ZannL65N8C+5DFWbaUUtGuXb8o8ZVm/RABbczvv2JX2DJek5oAUXT9k6c
+	 EXfwVI+qC9yNh/5OKqp10vA3Qqs0H2sOOZywrfyqCOv2WAW86mc3v4rm6k8d8kYbko
+	 01/nUFxf8C5mCXExBR+lmTHA3L6EDXAN4aj4TL2s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728623AbfAYQhX (ORCPT
+        id S1728933AbfAYQhf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:37:23 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:56738 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbfAYQhW (ORCPT
+        Fri, 25 Jan 2019 11:37:35 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:36976 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfAYQhf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:37:22 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0PGb7k1025075;
-        Fri, 25 Jan 2019 10:37:07 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548434227;
-        bh=e+BbgEkrrkWDs79/EBcXbQLkkPTCLRZTPqOGiMizwyE=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=T5WYtgiLLu6oIFP13YBvIm/5Hbj4AjOOsam8Oj5EuAMgGabDleEvLenpqTlqhgO23
-         ws2LaGY70wpBRGoDWsWWi7SVSP1MGmemGBgC6jBHu8KOxQ16mxqyisnERWLbNEvLcx
-         zXu5pZlpapGf0zesgC+jn3KYaXCemft6VMP7l8dI=
-Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0PGb7hl119280
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 25 Jan 2019 10:37:07 -0600
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE103.ent.ti.com
- (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Fri, 25
- Jan 2019 10:37:06 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Fri, 25 Jan 2019 10:37:06 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0PGb6pS008030;
-        Fri, 25 Jan 2019 10:37:06 -0600
-Date:   Fri, 25 Jan 2019 10:37:06 -0600
-From:   Bin Liu <b-liu@ti.com>
-To:     "Matwey V. Kornilov" <matwey@sai.msu.ru>
-CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        <matwey.kornilov@gmail.com>,
-        "open list:MUSB MULTIPOINT HIGH SPEED DUAL-ROLE CONTROLLER" 
-        <linux-usb@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] usb: musb: Fix potential NULL dereference
-Message-ID: <20190125163706.GI18982@uda0271908>
-Mail-Followup-To: Bin Liu <b-liu@ti.com>,
-        "Matwey V. Kornilov" <matwey@sai.msu.ru>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        matwey.kornilov@gmail.com,
-        "open list:MUSB MULTIPOINT HIGH SPEED DUAL-ROLE CONTROLLER" <linux-usb@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20190123175142.12604-1-matwey@sai.msu.ru>
+        Fri, 25 Jan 2019 11:37:35 -0500
+Received: by mail-yw1-f65.google.com with SMTP id h193so4139037ywc.4;
+        Fri, 25 Jan 2019 08:37:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=RYL7pbha6AtxQjHD3ZK0n6qiStyqrgkMrnAlVCP0NNE=;
+        b=hZvlbsqyaKWNVGRewUWJIxOTzlUYhWS2zbX7SH2tizlgJpQpx60Q9lFUr1KAvxcC/o
+         1hPJlxzXj2+3gfQcXN2m7hvMawtI4t9aj1dEem45TLpkEql/eZmnG/q1Rj1mzVyhtxwr
+         HV7sN0Yf6DRbhWtZYwjdL3tBn7xcNcxE0m4fXAVJgEjZPCK1VAIW74UMrRR1vLSuVj0h
+         HyosUDdb9lBIVd02NWUS0S1pWyvOPCIyUMbdo++pIUAlLLlAg3hl9wVbLnyV7iSiBQWQ
+         Cmfs2mFJwxet2D8u3OAyjG/l6Soc19pDLR4LD+aJZAPHD4x6jylVAxQ/YGkiG692WER7
+         s73w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition
+         :content-transfer-encoding:in-reply-to:user-agent;
+        bh=RYL7pbha6AtxQjHD3ZK0n6qiStyqrgkMrnAlVCP0NNE=;
+        b=grp19tW/nbo3bDcd8fRB8zEyFb5W9KxS0YOnVn/s1ox0ZLWlxXTHQcw8jmq8bwLSvA
+         Ob54BhFhYKIaXGJSN7tzP0tiuaWt6/M+40IdoOwZmJa3JdlMHyxPfwM/19a8o8DLs1ZE
+         dS/QUueHudkFcoRMGmJCtod0Z4p58lfps5asELBoNS2ycc/O9Vp49PIWHN6+pN1uhqIA
+         8tll35zCR+um61zbYM+9Xl5Xz3FsWa7A3jAGqNj5T9bu3D8VD8BoEj/zNoDqPXYD/Nit
+         PVvPVPKwHGVFsosidfege9i1VTsnPIJ2rxWhHF4yEv7AYH5iFctskFOEFbzHQuEnJ8AS
+         ZLYA==
+X-Gm-Message-State: AJcUukfo81jlbaPyyQ29tUJD48XxAyJWWcSsSd/RJRPlUmPjMYRk/KpZ
+        prxn/9zFmmv258PupRuu9k4=
+X-Google-Smtp-Source: ALg8bN6sgnHZX7knHYbGpxaRfjiI2fQMJ5uI/FNsinsGrbevn28z84ir4BlsluB5YpbixjVnQSajIQ==
+X-Received: by 2002:a81:d845:: with SMTP id n5mr11854141ywl.486.1548434253786;
+        Fri, 25 Jan 2019 08:37:33 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:a62a])
+        by smtp.gmail.com with ESMTPSA id b129sm10282016ywc.106.2019.01.25.08.37.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 08:37:32 -0800 (PST)
+Date:   Fri, 25 Jan 2019 08:37:31 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Arkadiusz =?utf-8?Q?Mi=C5=9Bkiewicz?= <a.miskiewicz@gmail.com>
+Cc:     cgroups@vger.kernel.org, Aleksa Sarai <asarai@suse.de>,
+        Jay Kamat <jgkamat@fb.com>, Roman Gushchin <guro@fb.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: pids.current with invalid value for hours [5.0.0 rc3 git]
+Message-ID: <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
+References: <df806a77-3327-9db5-8be2-976fde1c84e5@gmail.com>
+ <20190117122535.njcbqhlmzozdkncw@mikami>
+ <1d36b181-cbaf-6694-1a31-2f7f55d15675@gmail.com>
+ <96ef6615-a5df-30af-b4dc-417a18ca63f1@gmail.com>
+ <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190123175142.12604-1-matwey@sai.msu.ru>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
 User-Agent: Mutt/1.5.21 (2010-09-15)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 08:51:42PM +0300, Matwey V. Kornilov wrote:
-> We assign "urb->hcpriv = qh;" a few lines down. The valid qh for the urb is
-> hep->hcpriv in this code path.
+On Fri, Jan 25, 2019 at 08:52:11AM +0100, Arkadiusz Miśkiewicz wrote:
+> On 24/01/2019 12:21, Arkadiusz Miśkiewicz wrote:
+> > On 17/01/2019 14:17, Arkadiusz Miśkiewicz wrote:
+> >> On 17/01/2019 13:25, Aleksa Sarai wrote:
+> >>> On 2019-01-17, Arkadiusz Miśkiewicz <a.miskiewicz@gmail.com> wrote:
+> >>>> Using kernel 4.19.13.
+> >>>>
+> >>>> For one cgroup I noticed weird behaviour:
+> >>>>
+> >>>> # cat pids.current
+> >>>> 60
+> >>>> # cat cgroup.procs
+> >>>> #
+> >>>
+> >>> Are there any zombies in the cgroup? pids.current is linked up directly
+> >>> to __put_task_struct (so exit(2) won't decrease it, only the task_struct
+> >>> actually being freed will decrease it).
+> >>>
+> >>
+> >> There are no zombie processes.
+> >>
+> >> In mean time the problem shows on multiple servers and so far saw it
+> >> only in cgroups that were OOMed.
+> >>
+> >> What has changed on these servers (yesterday) is turning on
+> >> memory.oom.group=1 for all cgroups and changing memory.high from 1G to
+> >> "max" (leaving memory.max=2G limit only).
+> >>
+> >> Previously there was no such problem.
+> >>
+> > 
+> > I'm attaching reproducer. This time tried on different distribution
+> > kernel (arch linux).
+> > 
+> > After 60s pids.current still shows 37 processes even if there are no
+> > processes running (according to ps aux).
 > 
-> Fixes: 714bc5ef3eda ("musb: potential use after free")
-> Signed-off-by: Matwey V. Kornilov <matwey@sai.msu.ru>
-> ---
->  drivers/usb/musb/musb_host.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/usb/musb/musb_host.c b/drivers/usb/musb/musb_host.c
-> index c6118a962d37..6f267716768e 100644
-> --- a/drivers/usb/musb/musb_host.c
-> +++ b/drivers/usb/musb/musb_host.c
-> @@ -2336,7 +2336,7 @@ static int musb_urb_enqueue(
->  		 * odd, rare, error prone, but legal.
->  		 */
->  		kfree(qh);
-> -		qh = NULL;
-> +		qh = hep->hcpriv;
->  		ret = 0;
->  	} else
->  		ret = musb_schedule(musb, qh,
+> The same test on 5.0.0-rc3-00104-gc04e2a780caf and it's easy to
+> reproduce bug. No processes in cgroup but pids.current reports 91.
 
-Did you run into any issue? The original code seems to be correct to me.
+Can you please see whether the problem can be reproduced on the
+current linux-next?
 
-Regards,
--Bin.
+ git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+
+Thanks.
+
+-- 
+tejun
