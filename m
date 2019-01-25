@@ -4,37 +4,36 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA5CC282CC
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78673C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4F3C2133D
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48EA32133D
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="I5X3tuiv"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="DQzssKdF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729307AbfAYQXp (ORCPT
+        id S1728912AbfAYQXN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:23:45 -0500
-Received: from onstation.org ([52.200.56.107]:54998 "EHLO onstation.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726126AbfAYQXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 25 Jan 2019 11:23:13 -0500
+Received: from onstation.org ([52.200.56.107]:54982 "EHLO onstation.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726262AbfAYQXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 11:23:09 -0500
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id A830F67A;
-        Fri, 25 Jan 2019 16:23:11 +0000 (UTC)
+        by onstation.org (Postfix) with ESMTPSA id 22DBF1AD;
+        Fri, 25 Jan 2019 16:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1548433392;
-        bh=jcpW0GxDE5ZhtNZF3zaAjupeydEiWNhThJtWJg+y8HI=;
+        s=default; t=1548433388;
+        bh=FUjvAgNUF8oqDsWIAPUqNgD3s9/7JQJa8snVKvWpgDk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=I5X3tuivWZ/ZlVYOm7tzrkDh2gsTQT31kFt4Wo2V300qJn3NH2NEan6CwCyL1Bsa5
-         6ei2Dh8+5K5WmURrCBpU52WzkyeSM32Q3NcyXZP3aQddchOcrrPyI705eJK+KwXr5X
-         FY0sIU+AhoIiaz9f28IWrD1V3KTbqIpWcWHofz1g=
+        b=DQzssKdFIeBT3TDggC7DhPbnLXd4sI/UNFfxHI+tBrn1xeSV+9jBmRKUfFssgSyGy
+         zZrD8yZFj8UJdA2RGFSQotP3tS2xofAuwyFBtSGTBmm9aOOiIc2wd8mK8+HxwQxOEB
+         ixnCd9DVsZuVgZF2/RdRwFycBOP9r0p1l/LaReq0=
 From:   Brian Masney <masneyb@onstation.org>
 To:     linus.walleij@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org,
@@ -45,9 +44,9 @@ Cc:     tglx@linutronix.de, shawnguo@kernel.org, dianders@chromium.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 7/9] arm: dts: qcom: msm8660: add interrupt controller properties
-Date:   Fri, 25 Jan 2019 11:23:00 -0500
-Message-Id: <20190125162302.14036-8-masneyb@onstation.org>
+Subject: [PATCH 1/9] pinctrl: qcom: ssbi-gpio: hardcode IRQ counts
+Date:   Fri, 25 Jan 2019 11:22:54 -0500
+Message-Id: <20190125162302.14036-2-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190125162302.14036-1-masneyb@onstation.org>
 References: <20190125162302.14036-1-masneyb@onstation.org>
@@ -56,77 +55,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add interrupt controller properties now that ssbi-gpio is a proper
-hierarchical IRQ chip. The interrupts property is no longer needed so
-remove it.
+The probing of this driver calls platform_irq_count, which will
+setup all of the IRQs that are configured in device tree. In
+preparation for converting this driver to be a hierarchical IRQ
+chip, hardcode the IRQ count based on the hardware type so that all
+the IRQs are not configured immediately and are configured on an
+as-needed basis later in the boot process. This change will also
+allow for the removal of the interrupts property later in this
+patch series once the hierarchical IRQ chip support is in.
 
-This change was not tested on any hardware but the same change was
-tested on qcom-pm8941.dtsi with spmi-gpio using a LG Nexus 5
-(hammerhead) phone with no issues.
+This patch also removes the generic qcom,ssbi-gpio OF match since we
+don't know the number of pins. All of the existing upstream bindings
+already include the more-specific binding.
+
+This change was not tested on any actual hardware, however the same
+change was made to spmi-gpio and tested on a LG Nexus 5 (hammerhead)
+phone.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
- arch/arm/boot/dts/qcom-msm8660.dtsi | 47 ++---------------------------
- 1 file changed, 2 insertions(+), 45 deletions(-)
+ drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c | 19 ++++++-------------
+ 1 file changed, 6 insertions(+), 13 deletions(-)
 
-diff --git a/arch/arm/boot/dts/qcom-msm8660.dtsi b/arch/arm/boot/dts/qcom-msm8660.dtsi
-index e5da87036dbb..0cf6bb0f869d 100644
---- a/arch/arm/boot/dts/qcom-msm8660.dtsi
-+++ b/arch/arm/boot/dts/qcom-msm8660.dtsi
-@@ -287,51 +287,8 @@
- 					compatible = "qcom,pm8058-gpio",
- 						     "qcom,ssbi-gpio";
- 					reg = <0x150>;
--					interrupt-parent = <&pm8058>;
--					interrupts = <192 IRQ_TYPE_NONE>,
--						     <193 IRQ_TYPE_NONE>,
--						     <194 IRQ_TYPE_NONE>,
--						     <195 IRQ_TYPE_NONE>,
--						     <196 IRQ_TYPE_NONE>,
--						     <197 IRQ_TYPE_NONE>,
--						     <198 IRQ_TYPE_NONE>,
--						     <199 IRQ_TYPE_NONE>,
--						     <200 IRQ_TYPE_NONE>,
--						     <201 IRQ_TYPE_NONE>,
--						     <202 IRQ_TYPE_NONE>,
--						     <203 IRQ_TYPE_NONE>,
--						     <204 IRQ_TYPE_NONE>,
--						     <205 IRQ_TYPE_NONE>,
--						     <206 IRQ_TYPE_NONE>,
--						     <207 IRQ_TYPE_NONE>,
--						     <208 IRQ_TYPE_NONE>,
--						     <209 IRQ_TYPE_NONE>,
--						     <210 IRQ_TYPE_NONE>,
--						     <211 IRQ_TYPE_NONE>,
--						     <212 IRQ_TYPE_NONE>,
--						     <213 IRQ_TYPE_NONE>,
--						     <214 IRQ_TYPE_NONE>,
--						     <215 IRQ_TYPE_NONE>,
--						     <216 IRQ_TYPE_NONE>,
--						     <217 IRQ_TYPE_NONE>,
--						     <218 IRQ_TYPE_NONE>,
--						     <219 IRQ_TYPE_NONE>,
--						     <220 IRQ_TYPE_NONE>,
--						     <221 IRQ_TYPE_NONE>,
--						     <222 IRQ_TYPE_NONE>,
--						     <223 IRQ_TYPE_NONE>,
--						     <224 IRQ_TYPE_NONE>,
--						     <225 IRQ_TYPE_NONE>,
--						     <226 IRQ_TYPE_NONE>,
--						     <227 IRQ_TYPE_NONE>,
--						     <228 IRQ_TYPE_NONE>,
--						     <229 IRQ_TYPE_NONE>,
--						     <230 IRQ_TYPE_NONE>,
--						     <231 IRQ_TYPE_NONE>,
--						     <232 IRQ_TYPE_NONE>,
--						     <233 IRQ_TYPE_NONE>,
--						     <234 IRQ_TYPE_NONE>,
--						     <235 IRQ_TYPE_NONE>;
-+					interrupt-controller;
-+					#interrupt-cells = <2>;
- 					gpio-controller;
- 					#gpio-cells = <2>;
+diff --git a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+index ded7d765af2e..9a9e9cb80cc5 100644
+--- a/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
++++ b/drivers/pinctrl/qcom/pinctrl-ssbi-gpio.c
+@@ -665,12 +665,11 @@ static int pm8xxx_pin_populate(struct pm8xxx_gpio *pctrl,
+ }
  
+ static const struct of_device_id pm8xxx_gpio_of_match[] = {
+-	{ .compatible = "qcom,pm8018-gpio" },
+-	{ .compatible = "qcom,pm8038-gpio" },
+-	{ .compatible = "qcom,pm8058-gpio" },
+-	{ .compatible = "qcom,pm8917-gpio" },
+-	{ .compatible = "qcom,pm8921-gpio" },
+-	{ .compatible = "qcom,ssbi-gpio" },
++	{ .compatible = "qcom,pm8018-gpio", .data = (void *) 6 },
++	{ .compatible = "qcom,pm8038-gpio", .data = (void *) 12 },
++	{ .compatible = "qcom,pm8058-gpio", .data = (void *) 44 },
++	{ .compatible = "qcom,pm8917-gpio", .data = (void *) 38 },
++	{ .compatible = "qcom,pm8921-gpio", .data = (void *) 44 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, pm8xxx_gpio_of_match);
+@@ -687,13 +686,7 @@ static int pm8xxx_gpio_probe(struct platform_device *pdev)
+ 	if (!pctrl)
+ 		return -ENOMEM;
+ 
+-	pctrl->dev = &pdev->dev;
+-	npins = platform_irq_count(pdev);
+-	if (!npins)
+-		return -EINVAL;
+-	if (npins < 0)
+-		return npins;
+-	pctrl->npins = npins;
++	npins = (uintptr_t) device_get_match_data(&pdev->dev);
+ 
+ 	pctrl->regmap = dev_get_regmap(pdev->dev.parent, NULL);
+ 	if (!pctrl->regmap) {
 -- 
 2.17.2
 
