@@ -2,296 +2,154 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 218CAC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:58:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3F4BC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1FB3218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:58:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FED3218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:00:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QVH3aBSR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729160AbfAYJ62 (ORCPT
+        id S1728145AbfAYKAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 04:58:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:46566 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726761AbfAYJ62 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 04:58:28 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 9F238C07EFFE;
-        Fri, 25 Jan 2019 09:58:27 +0000 (UTC)
-Received: from rules.brq.redhat.com (dhcp-10-40-5-180.brq.redhat.com [10.40.5.180])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9B441BAA7;
-        Fri, 25 Jan 2019 09:58:14 +0000 (UTC)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Vladis Dronov <vdronov@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH] HID: debug: fix the ring buffer implementation
-Date:   Fri, 25 Jan 2019 10:57:44 +0100
-Message-Id: <20190125095744.3813-1-vdronov@redhat.com>
+        Fri, 25 Jan 2019 05:00:18 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42984 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726761AbfAYKAS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 05:00:18 -0500
+Received: by mail-ed1-f68.google.com with SMTP id y20so6897881edw.9
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:00:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=ZvohXcEKajDUL0TBJ4gjZVmzI1Z8Ns4WdfDOcdvTKgA=;
+        b=QVH3aBSRvN1iK/1H/NQymxGvlB+GCrmQVQOHaxnWbKb3hZ9Slx6IUPFF3yB04sl/AM
+         5LlUsVlnKKCmhPYEe4q5JpnErDBGacBB/NE6/+JkpEgAbe+HLBD92XGq1WL/QI0L31FM
+         06078epc3vJLge6LGdrVL7zFzX5XlkJeVPrgtT3KvsDRct2TpRmHAa8JDw2iOud614/a
+         7Rgml1rjKWMQ/4h3SB5/QpSNd57RIPLKt/lZkhwtudLTwo0g48iZ8JvFIgB98MKXHgCE
+         r2UXSuVr7EewQhNv/sChNktY5pkMsTlf6L4UBBpvMz8rTRbjM3MTB+VTrTzkTnNfRg4C
+         qvew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
+         :mime-version:content-transfer-encoding;
+        bh=ZvohXcEKajDUL0TBJ4gjZVmzI1Z8Ns4WdfDOcdvTKgA=;
+        b=jRj+8Yz1jCDOk3/T6WXIY1kt/CLkb/QcEMAO2wj3piVYUKhFkjFiFcBTY84ULXkfmq
+         wK9bQe8OPn0pm0OmRK5ytCrsm6Jh5EtHePfJep0Tyx+I3UGwe7CZ28oT/ffneuU8jn5z
+         Nr3AMXDGdK8B1sBwvUK0a2tAkr95QHWSX5UXOfaeMxY7Fs1/wHs0C9Rvr4C6xbBPT/tB
+         b1SnuUvDo1DA0NBeVjWISpaEIbPb5js3PRtgOTde5g5hiedOXN9ptL3PXO4vVKDUjX8H
+         zDsr0i9XBGE9xPjkGIl3B/OpNNCnjm/+HsHuh4xlGZCslbDI28Jomo2IxRft57uEu2uG
+         RFsA==
+X-Gm-Message-State: AJcUukcsMkIFKZohIOsGZMioDsr+NNNZxbh2RWe5WLpsgk3WgelyrDhP
+        WGN8LwgmCfN4PCPRfKJP4TM=
+X-Google-Smtp-Source: ALg8bN6Hu01BreKyOcv2oVdGNfKsUAwX3BZBjnMPizzPk+gYlWy4tIVTc9gPoBawniSOM3Ot3Zdt2A==
+X-Received: by 2002:a17:906:c457:: with SMTP id ck23mr7193996ejb.1.1548410416396;
+        Fri, 25 Jan 2019 02:00:16 -0800 (PST)
+Received: from neopili.qtec.com (cpe.xe-3-0-1-778.vbrnqe10.dk.customer.tdc.net. [80.197.57.18])
+        by smtp.gmail.com with ESMTPSA id t9sm11680946edd.25.2019.01.25.02.00.15
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 02:00:15 -0800 (PST)
+From:   Ricardo Ribalda Delgado <ricardo@ribalda.com>
+To:     Alexandru Ardelean <ardeleanalex@gmail.com>,
+        Jonathan Cameron <jic23@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        alexandru.ardelean@analog.com
+Cc:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Subject: [PATCH] iio: adc: ad7476: Add support for ADS786X ADCs
+Date:   Fri, 25 Jan 2019 11:00:13 +0100
+Message-Id: <20190125100013.13440-1-ricardo@ribalda.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Fri, 25 Jan 2019 09:58:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ring buffer implementation in hid_debug_event() and hid_debug_events_read()
-is strange allowing lost or corrupted data. After commit 717adfdaf147
-("HID: debug: check length before copy_to_user()") it is possible to enter
-an infinite loop in hid_debug_events_read() by providing 0 as count, this
-locks up a system. Fix this by rewriting the ring buffer implementation
-with kfifo and simplify the code.
+Add support for ADS7866, ADS7867 and ADS7868 8/10/12 bit Single channel
+ADC.
 
-This fixes CVE-2019-3819.
+Datasheet: http://www.ti.com/lit/ds/symlink/ads7868.pdf
 
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1669187
-Cc: stable@vger.kernel.org # v4.16+
-Fixes: cd667ce24796 ("HID: use debugfs for events/reports dumping")
-Fixes: 717adfdaf147 ("HID: debug: check length before copy_to_user()")
-Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
 ---
- drivers/hid/hid-debug.c   | 116 ++++++++++++++------------------------
- include/linux/hid-debug.h |   9 ++-
- 2 files changed, 47 insertions(+), 78 deletions(-)
+v2: I have missnamed the devices
+ drivers/iio/adc/Kconfig  |  3 ++-
+ drivers/iio/adc/ad7476.c | 20 ++++++++++++++++++++
+ 2 files changed, 22 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index c530476edba6..08870c909268 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -30,6 +30,7 @@
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index f9354e5ee65c..d86900fc2634 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -64,7 +64,8 @@ config AD7476
+ 	help
+ 	  Say yes here to build support for Analog Devices AD7273, AD7274, AD7276,
+ 	  AD7277, AD7278, AD7475, AD7476, AD7477, AD7478, AD7466, AD7467, AD7468,
+-	  AD7495, AD7910, AD7920, AD7920 SPI analog to digital converters (ADC).
++	  AD7495, AD7910, AD7920, AD7920, ADS7866, ADS7867, ADS7868 SPI analog
++	  to digital converters (ADC).
  
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
-+#include <linux/kfifo.h>
- #include <linux/sched/signal.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-@@ -661,17 +662,12 @@ EXPORT_SYMBOL_GPL(hid_dump_device);
- /* enqueue string to 'events' ring buffer */
- void hid_debug_event(struct hid_device *hdev, char *buf)
- {
--	unsigned i;
- 	struct hid_debug_list *list;
- 	unsigned long flags;
+ 	  To compile this driver as a module, choose M here: the
+ 	  module will be called ad7476.
+diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+index 0549686b9ef8..76747488044b 100644
+--- a/drivers/iio/adc/ad7476.c
++++ b/drivers/iio/adc/ad7476.c
+@@ -59,6 +59,9 @@ enum ad7476_supported_device_ids {
+ 	ID_ADC081S,
+ 	ID_ADC101S,
+ 	ID_ADC121S,
++	ID_ADS7866,
++	ID_ADS7867,
++	ID_ADS7868,
+ };
  
- 	spin_lock_irqsave(&hdev->debug_list_lock, flags);
--	list_for_each_entry(list, &hdev->debug_list, node) {
--		for (i = 0; buf[i]; i++)
--			list->hid_debug_buf[(list->tail + i) % HID_DEBUG_BUFSIZE] =
--				buf[i];
--		list->tail = (list->tail + i) % HID_DEBUG_BUFSIZE;
--        }
-+	list_for_each_entry(list, &hdev->debug_list, node)
-+		kfifo_in(&list->hid_debug_fifo, buf, strlen(buf));
- 	spin_unlock_irqrestore(&hdev->debug_list_lock, flags);
+ static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
+@@ -157,6 +160,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+ #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+ 		BIT(IIO_CHAN_INFO_RAW))
+ #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
++#define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
++		BIT(IIO_CHAN_INFO_RAW))
  
- 	wake_up_interruptible(&hdev->debug_wait);
-@@ -722,8 +718,7 @@ void hid_dump_input(struct hid_device *hdev, struct hid_usage *usage, __s32 valu
- 	hid_debug_event(hdev, buf);
+ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+ 	[ID_AD7091R] = {
+@@ -209,6 +214,18 @@ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+ 		.channel[0] = ADC081S_CHAN(12),
+ 		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+ 	},
++	[ID_ADS7866] = {
++		.channel[0] = ADS786X_CHAN(12),
++		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
++	},
++	[ID_ADS7867] = {
++		.channel[0] = ADS786X_CHAN(10),
++		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
++	},
++	[ID_ADS7868] = {
++		.channel[0] = ADS786X_CHAN(8),
++		.channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
++	},
+ };
  
- 	kfree(buf);
--        wake_up_interruptible(&hdev->debug_wait);
--
-+	wake_up_interruptible(&hdev->debug_wait);
- }
- EXPORT_SYMBOL_GPL(hid_dump_input);
- 
-@@ -1083,8 +1078,8 @@ static int hid_debug_events_open(struct inode *inode, struct file *file)
- 		goto out;
- 	}
- 
--	if (!(list->hid_debug_buf = kzalloc(HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
--		err = -ENOMEM;
-+	err = kfifo_alloc(&list->hid_debug_fifo, HID_DEBUG_FIFOSIZE, GFP_KERNEL);
-+	if (err) {
- 		kfree(list);
- 		goto out;
- 	}
-@@ -1104,77 +1099,55 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
- 		size_t count, loff_t *ppos)
- {
- 	struct hid_debug_list *list = file->private_data;
--	int ret = 0, len;
-+	int ret = 0, copied;
- 	DECLARE_WAITQUEUE(wait, current);
- 
- 	mutex_lock(&list->read_mutex);
--	while (ret == 0) {
--		if (list->head == list->tail) {
--			add_wait_queue(&list->hdev->debug_wait, &wait);
--			set_current_state(TASK_INTERRUPTIBLE);
--
--			while (list->head == list->tail) {
--				if (file->f_flags & O_NONBLOCK) {
--					ret = -EAGAIN;
--					break;
--				}
--				if (signal_pending(current)) {
--					ret = -ERESTARTSYS;
--					break;
--				}
--
--				if (!list->hdev || !list->hdev->debug) {
--					ret = -EIO;
--					set_current_state(TASK_RUNNING);
--					goto out;
--				}
--
--				/* allow O_NONBLOCK from other threads */
--				mutex_unlock(&list->read_mutex);
--				schedule();
--				mutex_lock(&list->read_mutex);
--				set_current_state(TASK_INTERRUPTIBLE);
--			}
--
--			set_current_state(TASK_RUNNING);
--			remove_wait_queue(&list->hdev->debug_wait, &wait);
--		}
--
--		if (ret)
--			goto out;
-+	if (kfifo_is_empty(&list->hid_debug_fifo)) {
-+		add_wait_queue(&list->hdev->debug_wait, &wait);
-+		set_current_state(TASK_INTERRUPTIBLE);
-+
-+		while (kfifo_is_empty(&list->hid_debug_fifo)) {
-+			if (file->f_flags & O_NONBLOCK) {
-+				ret = -EAGAIN;
-+				break;
-+			}
-+
-+			if (signal_pending(current)) {
-+				ret = -ERESTARTSYS;
-+				break;
-+			}
-+
-+			if (!list->hdev || !list->hdev->debug) {
-+				ret = -EIO;
-+				set_current_state(TASK_RUNNING);
-+				goto out;
-+			}
-+
-+			/* allow O_NONBLOCK from other threads */
-+			mutex_unlock(&list->read_mutex);
-+			schedule();
-+			mutex_lock(&list->read_mutex);
-+			set_current_state(TASK_INTERRUPTIBLE);
-+		}
-+
-+		set_current_state(TASK_RUNNING);
-+		remove_wait_queue(&list->hdev->debug_wait, &wait);
-+	}
-+
-+	if (ret)
-+		goto out;
-+
-+	if (kfifo_is_empty(&list->hid_debug_fifo))
-+		goto out;
- 
--		/* pass the ringbuffer contents to userspace */
--copy_rest:
--		if (list->tail == list->head)
--			goto out;
--		if (list->tail > list->head) {
--			len = list->tail - list->head;
--			if (len > count)
--				len = count;
--
--			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
--				goto out;
--			}
--			ret += len;
--			list->head += len;
--		} else {
--			len = HID_DEBUG_BUFSIZE - list->head;
--			if (len > count)
--				len = count;
--
--			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
--				goto out;
--			}
--			list->head = 0;
--			ret += len;
--			count -= len;
--			if (count > 0)
--				goto copy_rest;
--		}
--
--	}
-+	/* pass the fifo content to userspace, locking is not needed with only
-+	 * one concurrent reader and one concurrent writer
-+	 */
-+	ret = kfifo_to_user(&list->hid_debug_fifo, buffer, count, &copied);
-+	if (ret)
-+		goto out;
-+	ret = copied;
- out:
- 	mutex_unlock(&list->read_mutex);
- 	return ret;
-@@ -1185,7 +1158,7 @@ static __poll_t hid_debug_events_poll(struct file *file, poll_table *wait)
- 	struct hid_debug_list *list = file->private_data;
- 
- 	poll_wait(file, &list->hdev->debug_wait, wait);
--	if (list->head != list->tail)
-+	if (!kfifo_is_empty(&list->hid_debug_fifo))
- 		return EPOLLIN | EPOLLRDNORM;
- 	if (!list->hdev->debug)
- 		return EPOLLERR | EPOLLHUP;
-@@ -1200,7 +1173,7 @@ static int hid_debug_events_release(struct inode *inode, struct file *file)
- 	spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
- 	list_del(&list->node);
- 	spin_unlock_irqrestore(&list->hdev->debug_list_lock, flags);
--	kfree(list->hid_debug_buf);
-+	kfifo_free(&list->hid_debug_fifo);
- 	kfree(list);
- 
- 	return 0;
-@@ -1246,4 +1219,3 @@ void hid_debug_exit(void)
- {
- 	debugfs_remove_recursive(hid_debug_root);
- }
--
-diff --git a/include/linux/hid-debug.h b/include/linux/hid-debug.h
-index 8663f216c563..e7a7c92aaf09 100644
---- a/include/linux/hid-debug.h
-+++ b/include/linux/hid-debug.h
-@@ -24,7 +24,10 @@
- 
- #ifdef CONFIG_DEBUG_FS
- 
-+#include <linux/kfifo.h>
-+
- #define HID_DEBUG_BUFSIZE 512
-+#define HID_DEBUG_FIFOSIZE 512
- 
- void hid_dump_input(struct hid_device *, struct hid_usage *, __s32);
- void hid_dump_report(struct hid_device *, int , u8 *, int);
-@@ -38,10 +41,7 @@ void hid_debug_event(struct hid_device *, char *);
- void hid_debug_event(struct hid_device *, char *);
- 
--
- struct hid_debug_list {
--	char *hid_debug_buf;
--	int head;
--	int tail;
-+	DECLARE_KFIFO_PTR(hid_debug_fifo, char);
- 	struct fasync_struct *fasync;
- 	struct hid_device *hdev;
- 	struct list_head node;
-@@ -64,4 +64,3 @@ struct hid_debug_list {
- #endif
- 
- #endif
--
+ static const struct iio_info ad7476_info = {
+@@ -314,6 +331,9 @@ static const struct spi_device_id ad7476_id[] = {
+ 	{"adc081s", ID_ADC081S},
+ 	{"adc101s", ID_ADC101S},
+ 	{"adc121s", ID_ADC121S},
++	{"ads7866", ID_ADS7866},
++	{"ads7867", ID_ADS7867},
++	{"ads7868", ID_ADS7868},
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(spi, ad7476_id);
+-- 
+2.20.1
+
