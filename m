@@ -2,166 +2,131 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E820C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A229EC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9B19217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71AFC217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7hsD2HS"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CEmRxEvy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728529AbfAYLag (ORCPT
+        id S1728593AbfAYLav (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:30:36 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:56057 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728243AbfAYLa2 (ORCPT
+        Fri, 25 Jan 2019 06:30:51 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:34829 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726049AbfAYLaV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:30:28 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y139so6351774wmc.5
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 03:30:26 -0800 (PST)
+        Fri, 25 Jan 2019 06:30:21 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 96so9939725wrb.2;
+        Fri, 25 Jan 2019 03:30:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=sCdp2Rt8P2db7n8Wc/FgdknXH7w2aWs6zOYycWOYUKw=;
-        b=D7hsD2HSGukLPUiAdy7pxgVxpTIlbFUspp94Zb1X3ecIViMsWAF3a6dQdKxb16wgSK
-         2jJJD1gqPACPdAwYKe67IMrXSiSdgTd+GtUZVmSJjI85YFdc5ruBBREFor0J13cxHvEp
-         mik/KbUPn+jlyilaviJf+ZRpZpC2NgsnkWqax8AwGC157ULRioO2BW65g1mTkpJx+2JG
-         UdCGw+7Wk5AKrnTygjPCxIz5+k9u+YLpvhXP+S1zJVP0yn8J2+ol714AUW3+c+NT5J/m
-         CWMGxGNajjrXdHZBeJvKVGG7q9otj8bUVQoOFHMfPWflfQBzUlbJtFYS/ILRmaUODDTJ
-         javw==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=u5120sPOIxDNmEkIykLskl4iafqLfg4EFVtsDXjo7AE=;
+        b=CEmRxEvyZZIu+7sUbcoBWMrzfKvT2c7B3C9sMjGCzmRdE8gAiBvORmigtwkQHLo6Wd
+         BvXhFL1mm59jvN5uVC6nT6zYtu+u6wwgrBxF2OCIGoXJ/WDZOfaUEp8O9ZYltNyFYd+F
+         Q3D/7yYYt29xscgKUG6p1IHpuXNwOoID7QGtx2hKc1Q1RlfvYpF8hSSZBBAtYXagc9C8
+         NNzlQHMIm1w9FKMFHaM+SWGZRFZHNdndd3XZXLi/kdfaN9Oh5aN1KlT3zSz7/AZ2QTFo
+         SVH41Tkr9I2cl8cFV5i92OoIhhHbbrjUEE86J9AN/CSsdNNDTPMXd1VcQI31fsHDLPYa
+         qjMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:reply-to:subject:to:cc:references:from
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-transfer-encoding:content-language;
-        bh=sCdp2Rt8P2db7n8Wc/FgdknXH7w2aWs6zOYycWOYUKw=;
-        b=pWunyWDytb1mEtw+0PZZoVEmYUe4GtxRzYHvhU91MbAfjc6YN9TGiTBylsvIIjCbgP
-         3xTZoPgI2eirR+B9r/ecyYCOzsGAj3bdQ93g0EUJW7oZpCbi9M8NOwzZ9IChDKg890HW
-         rZ9x/3Nzgg1abu8UFTDQk1qfFKRrGkgqL0Bhx7yuwGiD7BIObu9ODPxF7PAhoD46weks
-         fvQv5AoyOHpAbXgUjlHy2hK4u4MQ2Ol5vew35FDa3z98NghAhDyouNM/EVhoFF6mayY+
-         5xQ9rnvjVEgGof56A2czHRokU7Fj8GwGqG/TYZzqoPcDi1AYFGLcoM/EyNwC2Zbtc1wg
-         zSGg==
-X-Gm-Message-State: AJcUukdMpltGFpywGWeE/BshLiiTffMX/P72izODa7fV6/rlufS8daU0
-        lNPXNYz8iiUArL0lQ5ouSTs=
-X-Google-Smtp-Source: ALg8bN7kx19hKSpc1uuOm4Ioz6PhXpMkVoP20wE7P34Sg70Lt+9UZyYG+elF2rJDrqyKlqIq4GqDHw==
-X-Received: by 2002:a7b:c4cb:: with SMTP id g11mr6491725wmk.149.1548415825578;
-        Fri, 25 Jan 2019 03:30:25 -0800 (PST)
-Received: from ?IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7? ([2a02:908:1252:fb60:be8a:bd56:1f94:86e7])
-        by smtp.gmail.com with ESMTPSA id p5sm33889642wmh.16.2019.01.25.03.30.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 03:30:25 -0800 (PST)
-Reply-To: christian.koenig@amd.com
-Subject: Re: [PATCH] drm: enable uncached DMA optimization for ARM and arm64
-To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Alex Deucher <alexdeucher@gmail.com>
-Cc:     "Daenzer, Michel" <Michel.Daenzer@amd.com>,
-        Carsten Haitzler <Carsten.Haitzler@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        David Airlie <airlied@linux.ie>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Will Deacon <will.deacon@arm.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Robin Murphy <robin.murphy@arm.com>
-References: <20190124120658.30288-1-ard.biesheuvel@linaro.org>
- <3cca35a9-c71c-a100-b29d-31ba0d1d10b1@amd.com>
- <CAKv+Gu9OG3O4+4F2nioaQ-3U-1kwRBr5KVj-1gD1ZEsUx_Ud5A@mail.gmail.com>
- <CADnq5_PETD6umm9Df7OZ9BdaV5MZutmhN+HTAnVkcRLg5=TNWw@mail.gmail.com>
- <CAKv+Gu-Yk1iEe+cF30ee7R+hcrke9XH9MdTeERA2P-0s2QpaLw@mail.gmail.com>
-From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
-Message-ID: <961e758d-b0a0-8f6c-a8fa-c3047e058706@gmail.com>
-Date:   Fri, 25 Jan 2019 12:30:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=u5120sPOIxDNmEkIykLskl4iafqLfg4EFVtsDXjo7AE=;
+        b=KA33/R1UjBxqjIRuaBW8rMMV6BsA8RqkkLMeiA8EdctKrsIWQF2qY1mKQGwfTQWHJq
+         ssSZtwtoOwTb6vDQseIMujtXmgjry+YM3ca/j2+64OgdV5J94bOB9vXa8qWfj149lHJF
+         jWzCVB5gJ4EZHMz5/zqhJZ5OcvBm+KkJvmN4bez0W0F7hBRwKlk0eIgtsziT5U2kklIC
+         Bsoruh2UIadBKAB7NB6J+9OM4tMzWPp56gozQzUDpz0s0ylysXhFJt+L1cExQox7XD6k
+         CRMPfYjsReyJn2jeIVQbvgi7Y3MXdKrESI3hA9zdvYewe7Yj4my99dKJAQAo6ekf6Cio
+         Z5+A==
+X-Gm-Message-State: AJcUukfML6w/VUJsxU2isd0y5ufsFyEmQ6mBuSyz6wR3JF14q3gyeHlj
+        dU9sivk1PQIjGCSvMWC5ZLU=
+X-Google-Smtp-Source: ALg8bN4fWo87NEVjOFspwG6CUNXUZRByAryDppCJkzOpwx2ldrVRFM9QbB8VZJOE1uzASA3GsarvoA==
+X-Received: by 2002:adf:a28d:: with SMTP id s13mr9873708wra.100.1548415818810;
+        Fri, 25 Jan 2019 03:30:18 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id z12sm81960648wrh.35.2019.01.25.03.30.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 03:30:18 -0800 (PST)
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Mathias Nyman <mathias.nyman@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
+        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH 3/6] usb: host: xhci-tegra: Add Tegra186 XUSB support
+Date:   Fri, 25 Jan 2019 12:30:10 +0100
+Message-Id: <20190125113013.11447-3-thierry.reding@gmail.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190125113013.11447-1-thierry.reding@gmail.com>
+References: <20190125113013.11447-1-thierry.reding@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKv+Gu-Yk1iEe+cF30ee7R+hcrke9XH9MdTeERA2P-0s2QpaLw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am 25.01.19 um 09:43 schrieb Ard Biesheuvel:
-> On Thu, 24 Jan 2019 at 15:01, Alex Deucher <alexdeucher@gmail.com> wrote:
->> On Thu, Jan 24, 2019 at 9:00 AM Ard Biesheuvel
->> <ard.biesheuvel@linaro.org> wrote:
->>> On Thu, 24 Jan 2019 at 13:31, Koenig, Christian
->>> <Christian.Koenig@amd.com> wrote:
->>>> Am 24.01.19 um 13:06 schrieb Ard Biesheuvel:
->>>>> The DRM driver stack is designed to work with cache coherent devices
->>>>> only, but permits an optimization to be enabled in some cases, where
->>>>> for some buffers, both the CPU and the GPU use uncached mappings,
->>>>> removing the need for DMA snooping and allocation in the CPU caches.
->>>>>
->>>>> The use of uncached GPU mappings relies on the correct implementation
->>>>> of the PCIe NoSnoop TLP attribute by the platform, otherwise the GPU
->>>>> will use cached mappings nonetheless. On x86 platforms, this does not
->>>>> seem to matter, as uncached CPU mappings will snoop the caches in any
->>>>> case. However, on ARM and arm64, enabling this optimization on a
->>>>> platform where NoSnoop is ignored results in loss of coherency, which
->>>>> breaks correct operation of the device. Since we have no way of
->>>>> detecting whether NoSnoop works or not, just disable this
->>>>> optimization entirely for ARM and arm64.
->>>>>
->>>>> Cc: Christian Koenig <christian.koenig@amd.com>
->>>>> Cc: Alex Deucher <alexander.deucher@amd.com>
->>>>> Cc: David Zhou <David1.Zhou@amd.com>
->>>>> Cc: Huang Rui <ray.huang@amd.com>
->>>>> Cc: Junwei Zhang <Jerry.Zhang@amd.com>
->>>>> Cc: Michel Daenzer <michel.daenzer@amd.com>
->>>>> Cc: David Airlie <airlied@linux.ie>
->>>>> Cc: Daniel Vetter <daniel@ffwll.ch>
->>>>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
->>>>> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
->>>>> Cc: Sean Paul <sean@poorly.run>
->>>>> Cc: Michael Ellerman <mpe@ellerman.id.au>
->>>>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
->>>>> Cc: Will Deacon <will.deacon@arm.com>
->>>>> Cc: Christoph Hellwig <hch@infradead.org>
->>>>> Cc: Robin Murphy <robin.murphy@arm.com>
->>>>> Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>
->>>>> Cc: dri-devel <dri-devel@lists.freedesktop.org>
->>>>> Reported-by: Carsten Haitzler <Carsten.Haitzler@arm.com>
->>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
->>>> The subject line should probably read "disable uncached...".
->>>>
->>> Ugh, of course ...
->>>
->>>> With that fixed the patch is Reviewed-by: Christian König
->>>> <christian.koenig@amd.com>.
->>>>
->> Same:
->> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
->>
-> Thanks all
->
-> Should I resend the patch with the subject corrected?
+From: JC Kuo <jckuo@nvidia.com>
 
-I will update the subject line and push it upstream through 
-drm-misc-next if nobody objects.
+This commit adds Tegra186 XUSB host mode controller support. This is
+very similar to the existing support for Tegra124 and Tegra210, except
+that the number of ports and PHYs differs and the IPFS wrapper being
+gone.
 
-Christian.
+Signed-off-by: JC Kuo <jckuo@nvidia.com>
+Signed-off-by: Thierry Reding <treding@nvidia.com>
+---
+ drivers/usb/host/xhci-tegra.c | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-> _______________________________________________
-> dri-devel mailing list
-> dri-devel@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/dri-devel
+diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+index 49e033f953a2..9a07ea0f9c97 100644
+--- a/drivers/usb/host/xhci-tegra.c
++++ b/drivers/usb/host/xhci-tegra.c
+@@ -1423,9 +1423,34 @@ static const struct tegra_xusb_soc tegra210_soc = {
+ };
+ MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
+ 
++static const char * const tegra186_supply_names[] = {
++};
++
++static const struct tegra_xusb_phy_type tegra186_phy_types[] = {
++	{ .name = "usb3", .num = 3, },
++	{ .name = "usb2", .num = 3, },
++	{ .name = "hsic", .num = 1, },
++};
++
++static const struct tegra_xusb_soc tegra186_soc = {
++	.firmware = "nvidia/tegra186/xusb.bin",
++	.supply_names = tegra186_supply_names,
++	.num_supplies = ARRAY_SIZE(tegra186_supply_names),
++	.phy_types = tegra186_phy_types,
++	.num_types = ARRAY_SIZE(tegra186_phy_types),
++	.ports = {
++		.usb3 = { .offset = 0, .count = 3, },
++		.usb2 = { .offset = 3, .count = 3, },
++		.hsic = { .offset = 6, .count = 1, },
++	},
++	.scale_ss_clock = false,
++	.has_ipfs = false,
++};
++
+ static const struct of_device_id tegra_xusb_of_match[] = {
+ 	{ .compatible = "nvidia,tegra124-xusb", .data = &tegra124_soc },
+ 	{ .compatible = "nvidia,tegra210-xusb", .data = &tegra210_soc },
++	{ .compatible = "nvidia,tegra186-xusb", .data = &tegra186_soc },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, tegra_xusb_of_match);
+-- 
+2.19.1
 
