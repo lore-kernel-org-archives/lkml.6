@@ -2,204 +2,119 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A6C2C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:23:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F55C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45F54218A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:23:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D055218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:25:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548440747;
+	bh=k6efufJYidSxGV6GqU87Tm0wMi+pFWgOrBG3Tz8MbwM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=NHOXhSj5SvrqMSynqmuzgeD2QFgldNdMu2y3THZiEl3Uejbe0s4PBVzJjiOr/jmDR
+	 NeNakV7Ul2PJYQTqakR4+N9AtdcM6G9NWX6GXuACm3kS0CugGLLoPuDXPP92fBokXo
+	 8H80grUzIdq2cuykhA45DPZKDyE5jN5iPfKTrwQM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729129AbfAYSX0 (ORCPT
+        id S1728145AbfAYSZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:23:26 -0500
-Received: from gateway31.websitewelcome.com ([192.185.144.80]:34888 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726252AbfAYSX0 (ORCPT
+        Fri, 25 Jan 2019 13:25:45 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42386 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfAYSZp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:23:26 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id C750F170625
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 12:23:24 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id n68Sgzbdd90onn68SgQVAJ; Fri, 25 Jan 2019 12:23:24 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=41920 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gn68N-001LRU-4C; Fri, 25 Jan 2019 12:23:23 -0600
-Date:   Fri, 25 Jan 2019 12:23:17 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Kees Cook <keescook@chromium.org>
-Subject: [PATCH] KVM: x86: Mark expected switch fall-throughs
-Message-ID: <20190125182317.GA21244@embeddedor>
+        Fri, 25 Jan 2019 13:25:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=gWt25jjc4owaAgPpqVBWO7L531zlgKHZ+khU60QnLIk=; b=b90sXEN+4HAfxPirgo7ijJdgm
+        nnhjPQ52Irv053vDkunkZWGa+HxzpN+bl6OgeByuYPNzTwoze8tKYX1azay46W+RxpwpuHQMOqm/h
+        Wb3fl+OzR2uYwkRYE8fP7uKkJqT5p7+Y3vq5xVTdkl4WePbaRNilbSHXwMeS4GecEC/wE=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gn6AF-0004Zn-Uj; Fri, 25 Jan 2019 18:25:15 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 339B01126FC0; Fri, 25 Jan 2019 18:25:15 +0000 (GMT)
+Date:   Fri, 25 Jan 2019 18:25:15 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Takashi Iwai <tiwai@suse.de>
+Cc:     Leo Yan <leo.yan@linaro.org>, alsa-devel@alsa-project.org,
+        bgoswami@codeaurora.org, gustavo@embeddedor.com,
+        srinivas.kandagatla@linaro.org, mchehab+samsung@kernel.org,
+        sr@denx.de, daniel.thompson@linaro.org, corbet@lwn.net,
+        philburk@google.com, willy@infradead.org, jmiller@neverware.com,
+        keescook@chromium.org, arnd@arndb.de, colyli@suse.de,
+        ckeepax@opensource.wolfsonmicro.com, anna-maria@linutronix.de,
+        mathieu.poirier@linaro.org, Baolin Wang <baolin.wang@linaro.org>,
+        sboyd@kernel.org, linux-kernel@vger.kernel.org, vkoul@kernel.org,
+        joe@perches.com
+Subject: Re: [alsa-devel] [RFC PATCH] ALSA: core: Add DMA share buffer  support
+Message-ID: <20190125182515.GD6939@sirena.org.uk>
+References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
+ <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz>
+ <20190118190805.GF6260@sirena.org.uk>
+ <s5hzhrxzrez.wl-tiwai@suse.de>
+ <20190121124053.GA12679@sirena.org.uk>
+ <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz>
+ <20190122202535.GK7579@sirena.org.uk>
+ <s5h4l9z4mbo.wl-tiwai@suse.de>
+ <20190123124658.GE15906@leoy-ThinkPad-X240s>
+ <s5himyczxgl.wl-tiwai@suse.de>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="ZARJHfwaSJQLOEUz"
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gn68N-001LRU-4C
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:41920
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+In-Reply-To: <s5himyczxgl.wl-tiwai@suse.de>
+X-Cookie: diplomacy, n:
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
 
-This patch fixes the following warnings:
+--ZARJHfwaSJQLOEUz
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-arch/x86/kvm/lapic.c:1037:27: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/x86/kvm/lapic.c:1876:3: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/x86/kvm/hyperv.c:1637:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/x86/kvm/svm.c:4396:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/x86/kvm/mmu.c:4372:36: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/x86/kvm/x86.c:3835:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/x86/kvm/x86.c:7938:23: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/x86/kvm/vmx/vmx.c:2015:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-arch/x86/kvm/vmx/vmx.c:1773:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+On Fri, Jan 25, 2019 at 02:19:22PM +0100, Takashi Iwai wrote:
+> Leo Yan wrote:
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+> > If we directly use the device node /dev/snd/ as file descriptor, even
+> > though we specify flag O_EXCL when open it, but it still is not an
+> > anon inode file descriptor.  Thus this is not safe enough and will be
+> > blocked by SELinux.  On the other hand, this patch wants to use
+> > dma-buf framework to provide file descriptor for the audio buffer, and
+> > this audio buffer can be one of mutiple audio buffers in the system
+> > and it can be shared to any audio client program.
 
-This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
+> Hrm, it sounds like a workaround just to bypass SELinux check...
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
----
- arch/x86/kvm/hyperv.c  | 2 +-
- arch/x86/kvm/lapic.c   | 2 ++
- arch/x86/kvm/mmu.c     | 1 +
- arch/x86/kvm/svm.c     | 2 +-
- arch/x86/kvm/vmx/vmx.c | 4 ++--
- arch/x86/kvm/x86.c     | 3 +++
- 6 files changed, 10 insertions(+), 4 deletions(-)
+> The sound server can open another PCM stream with O_APPEND, and pass
+> that fd to the client, too?
 
-diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
-index c90a5352d158..9c67efec613d 100644
---- a/arch/x86/kvm/hyperv.c
-+++ b/arch/x86/kvm/hyperv.c
-@@ -1636,7 +1636,7 @@ int kvm_hv_hypercall(struct kvm_vcpu *vcpu)
- 		ret = kvm_hvcall_signal_event(vcpu, fast, ingpa);
- 		if (ret != HV_STATUS_INVALID_PORT_ID)
- 			break;
--		/* maybe userspace knows this conn_id: fall through */
-+		/* fall through - maybe userspace knows this conn_id. */
- 	case HVCALL_POST_MESSAGE:
- 		/* don't bother userspace if it has no way to handle it */
- 		if (unlikely(rep || !vcpu_to_synic(vcpu)->active)) {
-diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
-index 9f089e2e09d0..4b6c2da7265c 100644
---- a/arch/x86/kvm/lapic.c
-+++ b/arch/x86/kvm/lapic.c
-@@ -1035,6 +1035,7 @@ static int __apic_accept_irq(struct kvm_lapic *apic, int delivery_mode,
- 	switch (delivery_mode) {
- 	case APIC_DM_LOWEST:
- 		vcpu->arch.apic_arb_prio++;
-+		/* fall through */
- 	case APIC_DM_FIXED:
- 		if (unlikely(trig_mode && !level))
- 			break;
-@@ -1874,6 +1875,7 @@ int kvm_lapic_reg_write(struct kvm_lapic *apic, u32 reg, u32 val)
- 
- 	case APIC_LVT0:
- 		apic_manage_nmi_watchdog(apic, val);
-+		/* fall through */
- 	case APIC_LVTTHMR:
- 	case APIC_LVTPC:
- 	case APIC_LVT1:
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index ce770b446238..da9c42349b1f 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -4371,6 +4371,7 @@ __reset_rsvds_bits_mask(struct kvm_vcpu *vcpu,
- 			rsvd_bits(maxphyaddr, 51);
- 		rsvd_check->rsvd_bits_mask[1][4] =
- 			rsvd_check->rsvd_bits_mask[0][4];
-+		/* fall through */
- 	case PT64_ROOT_4LEVEL:
- 		rsvd_check->rsvd_bits_mask[0][3] = exb_bit_rsvd |
- 			nonleaf_bit8_rsvd | rsvd_bits(7, 7) |
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index a157ca5b6869..36bda524c883 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -4395,7 +4395,7 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 	case MSR_IA32_APICBASE:
- 		if (kvm_vcpu_apicv_active(vcpu))
- 			avic_update_vapic_bar(to_svm(vcpu), data);
--		/* Follow through */
-+		/* Fall through */
- 	default:
- 		return kvm_set_msr_common(vcpu, msr);
- 	}
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index f6915f10e584..1de38062026e 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -1773,7 +1773,7 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		if (!msr_info->host_initiated &&
- 		    !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
- 			return 1;
--		/* Otherwise falls through */
-+		/* Else, falls through */
- 	default:
- 		msr = find_msr_entry(vmx, msr_info->index);
- 		if (msr) {
-@@ -2014,7 +2014,7 @@ static int vmx_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		/* Check reserved bit, higher 32 bits should be zero */
- 		if ((data >> 32) != 0)
- 			return 1;
--		/* Otherwise falls through */
-+		/* Else, falls through */
- 	default:
- 		msr = find_msr_entry(vmx, msr_index);
- 		if (msr) {
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index 02c8e095a239..6d514619afd3 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -3834,6 +3834,8 @@ static int kvm_vcpu_ioctl_enable_cap(struct kvm_vcpu *vcpu,
- 	case KVM_CAP_HYPERV_SYNIC2:
- 		if (cap->args[0])
- 			return -EINVAL;
-+		/* fall through */
-+
- 	case KVM_CAP_HYPERV_SYNIC:
- 		if (!irqchip_in_kernel(vcpu->kvm))
- 			return -EINVAL;
-@@ -7937,6 +7939,7 @@ static inline int vcpu_block(struct kvm *kvm, struct kvm_vcpu *vcpu)
- 		vcpu->arch.pv.pv_unhalted = false;
- 		vcpu->arch.mp_state =
- 			KVM_MP_STATE_RUNNABLE;
-+		/* fall through */
- 	case KVM_MP_STATE_RUNNABLE:
- 		vcpu->arch.apf.halted = false;
- 		break;
--- 
-2.20.1
+So long as we can teach SELinux that they're safe to export, yeah.
 
+--ZARJHfwaSJQLOEUz
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxLVIoACgkQJNaLcl1U
+h9BIlQf/c0GPSYvy1six7hAwKWMAQ1I97qAN/voUXyYjH2Ba9LCGY0NXVaMZBumu
+e0hboaVbcfiE4TDKeCn2D6XyFw0RMmCUeS/xZp5lS0fPjOC/cjQhGEX9krOUxBV+
+sWn6dJPzdTVF+pIsv7t3UsCJ09uwh3mQXx2lzvdG8mN9TY0dVYCg626qKaxnQwZR
+DsPpDqxP8RSDZDlpozDZGz7OOgo6tw1J3MKVfTkx/nxCpe7cPMyTEjrBVFagRhQ0
+0ATPOBtc/rH3wh4500vs1/p32NufvUwUhSBnQhk8AzqbSPGeGNW18SYUyg940KbP
+ImR0G3QvM7VmN3WB7uyoiv0YSicgpw==
+=Zsq2
+-----END PGP SIGNATURE-----
+
+--ZARJHfwaSJQLOEUz--
