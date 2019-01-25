@@ -2,170 +2,160 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 725A2C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:50:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF24C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:50:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48CA221855
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:50:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7400F21855
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:50:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="xUMLAesL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbfAYDu1 (ORCPT
+        id S1728970AbfAYDum (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:50:27 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.222]:40713 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728821AbfAYDu1 (ORCPT
+        Thu, 24 Jan 2019 22:50:42 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:38003 "EHLO
+        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728473AbfAYDul (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:50:27 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 277452B241
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 21:50:26 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id msVegAc7Y2PzOmsVegkgut; Thu, 24 Jan 2019 21:50:26 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=57080 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmsVd-001UmA-MV; Thu, 24 Jan 2019 21:50:25 -0600
-Subject: Re: [PATCH net-next] libceph, ceph: use struct_size() in kmalloc()
-To:     Ilya Dryomov <idryomov@gmail.com>
-Cc:     "Yan, Zheng" <zyan@redhat.com>, Sage Weil <sage@redhat.com>,
+        Thu, 24 Jan 2019 22:50:41 -0500
+Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
+        by conuserg-07.nifty.com with ESMTP id x0P3nm2q008098;
+        Fri, 25 Jan 2019 12:49:49 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x0P3nm2q008098
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548388189;
+        bh=7Hvixn4R6rXU1nhVDqmVbi8Imwg4x0RJAUaKJwgwJEs=;
+        h=From:To:Cc:Subject:Date:From;
+        b=xUMLAesLK22fVkWqMXs3F/P+iQ7O4JKqLYu1RUPyGV9Ub8lAzLreNGzWgU8a/yvLe
+         phyFQIgFE3t8xDiDKWCXbgYWe/UO+SIu7Z+pKBu2zyUK8Jpmgrxv/T3RJfloF0UQs6
+         ad4SGtqsd5fchOz9SxYj4H3pO/UGDARbxKdFdvfhxOKJICdVVJxVdsCd1FyxLvHmfG
+         KlhH2MbCmKx9OQs2xpYJMayBD8jbM6Ol7awFOSKgCAmBI5I8shj87wytLiNlt1NfWb
+         d16gBEUlLN0LDgQPe6BSCRH3vOx5yTl0X2iWAMSw75vl0J9cS8mcT1TU2NCo5shMu3
+         auPpdqQzdP0XQ==
+X-Nifty-SrcIP: [153.142.97.92]
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-crypto@vger.kernel.org
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Harsh Jain <harsh@chelsio.com>,
         "David S. Miller" <davem@davemloft.net>,
-        Ceph Development <ceph-devel@vger.kernel.org>,
-        netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org
-References: <20190115194153.GA9565@embeddedor>
- <CAOi1vP_yWH2mhquFObC6VnUzNTzc7PX7tqA3RP=ci71BMm-gqA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <daf3595f-c1fc-7964-3543-74529e9f6067@embeddedor.com>
-Date:   Thu, 24 Jan 2019 21:50:24 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAOi1vP_yWH2mhquFObC6VnUzNTzc7PX7tqA3RP=ci71BMm-gqA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmsVd-001UmA-MV
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:57080
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 25
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        linux-kernel@vger.kernel.org, qat-linux@intel.com,
+        Giovanni Cabiddu <giovanni.cabiddu@intel.com>
+Subject: [PATCH] crypto: prefix header search paths with $(srctree)/
+Date:   Fri, 25 Jan 2019 12:49:36 +0900
+Message-Id: <1548388176-11325-1-git-send-email-yamada.masahiro@socionext.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Currently, the Kbuild core manipulates header search paths in a crazy
+way [1].
 
+To fix this mess, I want all Makefiles to add explicit $(srctree)/ to
+the search paths in the srctree. Some Makefiles are already written in
+that way, but not all. The goal of this work is to make the notation
+consistent, and finally get rid of the gross hacks.
 
-On 1/17/19 8:17 AM, Ilya Dryomov wrote:
-> On Tue, Jan 15, 2019 at 8:41 PM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->> One of the more common cases of allocation size calculations is finding
->> the size of a structure that has a zero-sized array at the end, along
->> with memory for some number of elements for that array. For example:
->>
->> struct foo {
->>     int stuff;
->>     struct boo entry[];
->> };
->>
->> instance = kmalloc(sizeof(struct foo) + count * sizeof(struct boo), GFP_KERNEL);
->>
->> Instead of leaving these open-coded and prone to type mistakes, we can
->> now use the new struct_size() helper:
->>
->> instance = kmalloc(struct_size(instance, entry, count), GFP_KERNEL);
->>
->> This code was detected with the help of Coccinelle.
->>
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->> ---
->>  net/ceph/osdmap.c | 5 ++---
->>  1 file changed, 2 insertions(+), 3 deletions(-)
->>
->> diff --git a/net/ceph/osdmap.c b/net/ceph/osdmap.c
->> index 98c0ff3d6441..48a31dc9161c 100644
->> --- a/net/ceph/osdmap.c
->> +++ b/net/ceph/osdmap.c
->> @@ -495,9 +495,8 @@ static struct crush_map *crush_decode(void *pbyval, void *end)
->>                           / sizeof(struct crush_rule_step))
->>                         goto bad;
->>  #endif
->> -               r = c->rules[i] = kmalloc(sizeof(*r) +
->> -                                         yes*sizeof(struct crush_rule_step),
->> -                                         GFP_NOFS);
->> +               r = kmalloc(struct_size(r, steps, yes), GFP_NOFS);
->> +               c->rules[i] = r;
->>                 if (r == NULL)
->>                         goto badmem;
->>                 dout(" rule %d is at %p\n", i, r);
-> 
-> Applied.
-> 
+Having whitespaces after -I does not matter since commit 48f6e3cf5bc6
+("kbuild: do not drop -I without parameter").
 
-Thanks, Ilya.
+[1]: https://patchwork.kernel.org/patch/9632347/
 
---
-Gustavo
+Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+---
+
+ drivers/crypto/chelsio/Makefile            | 2 +-
+ drivers/crypto/chelsio/chtls/Makefile      | 3 ++-
+ drivers/crypto/qat/qat_c3xxx/Makefile      | 2 +-
+ drivers/crypto/qat/qat_c3xxxvf/Makefile    | 2 +-
+ drivers/crypto/qat/qat_c62x/Makefile       | 2 +-
+ drivers/crypto/qat/qat_c62xvf/Makefile     | 2 +-
+ drivers/crypto/qat/qat_dh895xcc/Makefile   | 2 +-
+ drivers/crypto/qat/qat_dh895xccvf/Makefile | 2 +-
+ 8 files changed, 9 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/crypto/chelsio/Makefile b/drivers/crypto/chelsio/Makefile
+index 639e571..b7bd980 100644
+--- a/drivers/crypto/chelsio/Makefile
++++ b/drivers/crypto/chelsio/Makefile
+@@ -1,4 +1,4 @@
+-ccflags-y := -Idrivers/net/ethernet/chelsio/cxgb4
++ccflags-y := -I $(srctree)/drivers/net/ethernet/chelsio/cxgb4
+ 
+ obj-$(CONFIG_CRYPTO_DEV_CHELSIO) += chcr.o
+ chcr-objs :=  chcr_core.o chcr_algo.o
+diff --git a/drivers/crypto/chelsio/chtls/Makefile b/drivers/crypto/chelsio/chtls/Makefile
+index df13795..b958f1b 100644
+--- a/drivers/crypto/chelsio/chtls/Makefile
++++ b/drivers/crypto/chelsio/chtls/Makefile
+@@ -1,4 +1,5 @@
+-ccflags-y := -Idrivers/net/ethernet/chelsio/cxgb4 -Idrivers/crypto/chelsio/
++ccflags-y := -I $(srctree)/drivers/net/ethernet/chelsio/cxgb4 \
++	     -I $(srctree)/drivers/crypto/chelsio
+ 
+ obj-$(CONFIG_CRYPTO_DEV_CHELSIO_TLS) += chtls.o
+ chtls-objs := chtls_main.o chtls_cm.o chtls_io.o chtls_hw.o
+diff --git a/drivers/crypto/qat/qat_c3xxx/Makefile b/drivers/crypto/qat/qat_c3xxx/Makefile
+index 8f5fd48..822b5de 100644
+--- a/drivers/crypto/qat/qat_c3xxx/Makefile
++++ b/drivers/crypto/qat/qat_c3xxx/Makefile
+@@ -1,3 +1,3 @@
+-ccflags-y := -I$(src)/../qat_common
++ccflags-y := -I $(srctree)/$(src)/../qat_common
+ obj-$(CONFIG_CRYPTO_DEV_QAT_C3XXX) += qat_c3xxx.o
+ qat_c3xxx-objs := adf_drv.o adf_c3xxx_hw_data.o
+diff --git a/drivers/crypto/qat/qat_c3xxxvf/Makefile b/drivers/crypto/qat/qat_c3xxxvf/Makefile
+index 16d178e..8f56d27 100644
+--- a/drivers/crypto/qat/qat_c3xxxvf/Makefile
++++ b/drivers/crypto/qat/qat_c3xxxvf/Makefile
+@@ -1,3 +1,3 @@
+-ccflags-y := -I$(src)/../qat_common
++ccflags-y := -I $(srctree)/$(src)/../qat_common
+ obj-$(CONFIG_CRYPTO_DEV_QAT_C3XXXVF) += qat_c3xxxvf.o
+ qat_c3xxxvf-objs := adf_drv.o adf_c3xxxvf_hw_data.o
+diff --git a/drivers/crypto/qat/qat_c62x/Makefile b/drivers/crypto/qat/qat_c62x/Makefile
+index bd75ace..6dcd404 100644
+--- a/drivers/crypto/qat/qat_c62x/Makefile
++++ b/drivers/crypto/qat/qat_c62x/Makefile
+@@ -1,3 +1,3 @@
+-ccflags-y := -I$(src)/../qat_common
++ccflags-y := -I $(srctree)/$(src)/../qat_common
+ obj-$(CONFIG_CRYPTO_DEV_QAT_C62X) += qat_c62x.o
+ qat_c62x-objs := adf_drv.o adf_c62x_hw_data.o
+diff --git a/drivers/crypto/qat/qat_c62xvf/Makefile b/drivers/crypto/qat/qat_c62xvf/Makefile
+index ecd708c..1e5d51d 100644
+--- a/drivers/crypto/qat/qat_c62xvf/Makefile
++++ b/drivers/crypto/qat/qat_c62xvf/Makefile
+@@ -1,3 +1,3 @@
+-ccflags-y := -I$(src)/../qat_common
++ccflags-y := -I $(srctree)/$(src)/../qat_common
+ obj-$(CONFIG_CRYPTO_DEV_QAT_C62XVF) += qat_c62xvf.o
+ qat_c62xvf-objs := adf_drv.o adf_c62xvf_hw_data.o
+diff --git a/drivers/crypto/qat/qat_dh895xcc/Makefile b/drivers/crypto/qat/qat_dh895xcc/Makefile
+index 180a00e..0fc06b1 100644
+--- a/drivers/crypto/qat/qat_dh895xcc/Makefile
++++ b/drivers/crypto/qat/qat_dh895xcc/Makefile
+@@ -1,3 +1,3 @@
+-ccflags-y := -I$(src)/../qat_common
++ccflags-y := -I $(srctree)/$(src)/../qat_common
+ obj-$(CONFIG_CRYPTO_DEV_QAT_DH895xCC) += qat_dh895xcc.o
+ qat_dh895xcc-objs := adf_drv.o adf_dh895xcc_hw_data.o
+diff --git a/drivers/crypto/qat/qat_dh895xccvf/Makefile b/drivers/crypto/qat/qat_dh895xccvf/Makefile
+index 5c3ccf8..9ce906a 100644
+--- a/drivers/crypto/qat/qat_dh895xccvf/Makefile
++++ b/drivers/crypto/qat/qat_dh895xccvf/Makefile
+@@ -1,3 +1,3 @@
+-ccflags-y := -I$(src)/../qat_common
++ccflags-y := -I $(srctree)/$(src)/../qat_common
+ obj-$(CONFIG_CRYPTO_DEV_QAT_DH895xCCVF) += qat_dh895xccvf.o
+ qat_dh895xccvf-objs := adf_drv.o adf_dh895xccvf_hw_data.o
+-- 
+2.7.4
+
