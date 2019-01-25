@@ -2,257 +2,152 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29E91C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:26:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62C1BC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:29:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E1D72218D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:26:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548401165;
-	bh=xXPc8LO1ToLOsjyQeYqOoXt0XNBB0pPH+h3djqfGZt8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=UnzlMpyVY9PBLGjf79GdTAf5aieQZZ2/jlUgspilxuuAZtp3RwrlbDpDehUwLBWN/
-	 ZQviHEDBDFtSupzc4Zbe3SmXqDzVyVLSe/TxaIW2AaHTdhyktHX61Qli5T5SRKn3V5
-	 IjYfB5uFEVSx0MLkc1rYtCOi/+xhvjyQ1gkoCAjk=
+	by mail.kernel.org (Postfix) with ESMTP id 1220A218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:29:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="l0wpH/Sr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728575AbfAYH0D (ORCPT
+        id S1728047AbfAYH3X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 02:26:03 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40864 "EHLO mx1.suse.de"
+        Fri, 25 Jan 2019 02:29:23 -0500
+Received: from mail-eopbgr800042.outbound.protection.outlook.com ([40.107.80.42]:45406
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727991AbfAYH0C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 02:26:02 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 653CCAEA3;
-        Fri, 25 Jan 2019 07:25:59 +0000 (UTC)
-Date:   Fri, 25 Jan 2019 08:25:58 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Chris Down <chris@chrisdown.name>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com
-Subject: Re: [PATCH 1/2] mm: Create mem_cgroup_from_seq
-Message-ID: <20190125072558.GB3560@dhcp22.suse.cz>
-References: <20190124194050.GA31341@chrisdown.name>
+        id S1726271AbfAYH3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 02:29:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QRfpnl2RW39BQDD+pY9Bhz7TOIMTYe166+eeP0U/x5k=;
+ b=l0wpH/SrGkJJlzHlEzJIsJEd9Zjxk/p/nLubNrybAJFk9c+zLsyz5zqOx3JNHQa7aq3I+UGhIyWL9FgyAsVr73U/phirfuvwyInuU15ZmYmCBfrFpiC44YgJe/DzIrceX4yopHl42BgNZb1FYmslvlnVjyS0Ej9B/+/xg8bStgo=
+Received: from SN6PR03MB4398.namprd03.prod.outlook.com (20.177.255.219) by
+ SN6PR03MB3710.namprd03.prod.outlook.com (52.135.81.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.16; Fri, 25 Jan 2019 07:29:20 +0000
+Received: from SN6PR03MB4398.namprd03.prod.outlook.com
+ ([fe80::59c4:7034:c325:36f]) by SN6PR03MB4398.namprd03.prod.outlook.com
+ ([fe80::59c4:7034:c325:36f%2]) with mapi id 15.20.1558.021; Fri, 25 Jan 2019
+ 07:29:20 +0000
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Vitor Soares <vitor.soares@synopsys.com>,
+        Boris Brezillon <bbrezillon@kernel.org>
+CC:     "linux-i3c@lists.infradead.org" <linux-i3c@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH] i3c: master: dw: fix deadlock
+Thread-Topic: [PATCH] i3c: master: dw: fix deadlock
+Thread-Index: AQHUtH+vYHS8FVEufUaAlX8QpeU+9Q==
+Date:   Fri, 25 Jan 2019 07:29:20 +0000
+Message-ID: <20190125152300.248d58f4@xhacker.debian>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [199.33.119.15]
+x-clientproxiedby: TYXPR01CA0044.jpnprd01.prod.outlook.com
+ (2603:1096:403:a::14) To SN6PR03MB4398.namprd03.prod.outlook.com
+ (2603:10b6:805:fd::27)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR03MB3710;6:QLSzZMt8MTZF8sycldi1Id+Kv8xkYdfqq7b2t5N3lmy6YMGUGqwC9d/O4Elbz5tvchLjr80Kq/TjWxUyXbx+okyhzFH+9UFx7emK08CoCPKAEhDnRROzIpPSlkgOjtos0cU0mohKDZv/g1o5rsQ2wvQiAgkrmJb2lIKdfODdPl5papxnIioMNTaWauE42GI7fsaLErsIK8nkrNqWZHOmjYr1qMJk44ZwDWnUwT5fRFqkqiRPUfjeoCwjPyJ3b6Flp62BMxqNt/Z7t0V+itcsSq9utvl0PQat3sEbmvVAt++vn9rXPqmXgvf2gLnxbimebXzJGX7yekbcaybpCqrjiRvT95g8oQ7nD40rmm8WLOoe5tDNdNmzmQa9BP/C9lifIrwcymqj9KuSVblwggOer5i3aNvmpf5hb49DCz/fJwnMw32ZurFZYNBmWlQ/ceQ87IZE1v3wdYV3V8C/F4u/7A==;5:O+rKngxkiGQ6WkiRU3SEqKdq+DhSheDA0fyZf7rK6VlcEVlo5pGRJEK68xffBi5ep0e6X0Xh0aPQJYL6cAnai+l/4IJmILPdXREN1JMe1g6jtTPaZ25dRceakn2rQgyGmMANbb+XzVest+gswb5Wpd/NuDX+ofKcs65wrbfdmHirKQktDOUf8NryD+oE6xlcyRLdgRGXEfU24phkOholHQ==;7:gtF2OSFGM62b1y4YqX3qpMRXzeY292HuCpI85TNJXnzyWpmiSxiZ+QBweQjjclt1KWrusB2ej3br0m2DM2mihdSWwPVCYIZ3ME3CCRvj+Kys3suw8X92PzmUuwhAbEhPplyVNp73WRilowKJTjomQg==
+x-ms-office365-filtering-correlation-id: 77a2acc3-ff70-4dcb-b299-08d68296d1e1
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:SN6PR03MB3710;
+x-ms-traffictypediagnostic: SN6PR03MB3710:
+x-microsoft-antispam-prvs: <SN6PR03MB37106AF54E6BB13262E318A8ED9B0@SN6PR03MB3710.namprd03.prod.outlook.com>
+x-forefront-prvs: 0928072091
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(366004)(396003)(376002)(39860400002)(136003)(189003)(199004)(6116002)(3846002)(105586002)(68736007)(7736002)(305945005)(6436002)(81156014)(81166006)(8676002)(2906002)(71200400001)(71190400001)(106356001)(52116002)(26005)(186003)(476003)(33896004)(102836004)(6506007)(386003)(486006)(97736004)(99286004)(110136005)(54906003)(4326008)(256004)(14444005)(25786009)(66066001)(8936002)(1076003)(14454004)(478600001)(50226002)(72206003)(316002)(6486002)(6512007)(9686003)(86362001)(53936002)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB3710;H:SN6PR03MB4398.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:0;
+received-spf: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: 8DlaKU7G5IZaLpzIMi2azw++mppQVTJPnzo/xdMUu/2trJ+WuuPmmyOeZ2MPhl06UDcf+IjTlf4ylOQieUCbH/R0daHZaoMFzow/T5Oyf7KQ8ifXpJVfzzYVdv2vL9LGquMlAbhnCCoqT7n42nfbvkCcnQloGvjLKKC5z+2L/eB0mJSOEuojq6o6sUMqknhRQrO3IFKQwMsZwh2zaTAEz43FIUQHBe6Z/EjMhDmSMkjUFerb4n8KEM2P7ZQ95BHgCv5LaienqNAly/IpPvLCtVKNB8AcmWsWFrclDIG9TeO7Gbwr+zfH1pYKbjr4K2ZqUiEz65gLj+p/diEUVA303DXG/gkagcxhVMlHVHI8wvzOOVYHkmisU/p+6K8CDdLuxcxZ6F0IJgrSZ3mpavwwnDzMI8PbV/XvQkuDvlMAcak=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <53AB63F8794AFB40A52D79CB69A6D823@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124194050.GA31341@chrisdown.name>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77a2acc3-ff70-4dcb-b299-08d68296d1e1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2019 07:29:17.9836
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3710
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 24-01-19 14:40:50, Chris Down wrote:
-> This is the start of a series of patches similar to my earlier
-> DEFINE_MEMCG_MAX_OR_VAL work, but with less Macro Magic(tm).
-> 
-> There are a bunch of places we go from seq_file to mem_cgroup, which
-> currently requires manually getting the css, then getting the mem_cgroup
-> from the css. It's in enough places now that having mem_cgroup_from_seq
-> makes sense (and also makes the next patch a bit nicer).
-> 
-> Signed-off-by: Chris Down <chris@chrisdown.name>
-> Cc: Andrew Morton <akpm@linux-foundation.org>
-> Cc: Johannes Weiner <hannes@cmpxchg.org>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Roman Gushchin <guro@fb.com>
-> Cc: linux-kernel@vger.kernel.org
-> Cc: cgroups@vger.kernel.org
-> Cc: linux-mm@kvack.org
-> Cc: kernel-team@fb.com
+In dw_i3c_master_irq_handler(), we already have gotten
+&master->xferqueue.lock, if we try to get the same lock again in
+dw_i3c_master_dequeue_xfer(), deadlock happens.
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+We fix this issue by introduing dw_i3c_master_dequeue_xfer_locked()
+which does all what dw_i3c_master_dequeue_xfer() does without trying
+to lock &master->xferqueue.lock.
 
-> ---
->  include/linux/memcontrol.h | 10 ++++++++++
->  mm/memcontrol.c            | 24 ++++++++++++------------
->  mm/slab_common.c           |  6 +++---
->  3 files changed, 25 insertions(+), 15 deletions(-)
-> 
-> diff --git a/include/linux/memcontrol.h b/include/linux/memcontrol.h
-> index b0eb29ea0d9c..1f3d880b7ca1 100644
-> --- a/include/linux/memcontrol.h
-> +++ b/include/linux/memcontrol.h
-> @@ -429,6 +429,11 @@ static inline unsigned short mem_cgroup_id(struct mem_cgroup *memcg)
->  }
->  struct mem_cgroup *mem_cgroup_from_id(unsigned short id);
->  
-> +static inline struct mem_cgroup *mem_cgroup_from_seq(struct seq_file *m)
-> +{
-> +	return mem_cgroup_from_css(seq_css(m));
-> +}
-> +
->  static inline struct mem_cgroup *lruvec_memcg(struct lruvec *lruvec)
->  {
->  	struct mem_cgroup_per_node *mz;
-> @@ -937,6 +942,11 @@ static inline struct mem_cgroup *mem_cgroup_from_id(unsigned short id)
->  	return NULL;
->  }
->  
-> +static inline struct mem_cgroup *mem_cgroup_from_seq(struct seq_file *m)
-> +{
-> +	return NULL;
-> +}
-> +
->  static inline struct mem_cgroup *lruvec_memcg(struct lruvec *lruvec)
->  {
->  	return NULL;
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index 18f4aefbe0bf..98aad31f5226 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -3359,7 +3359,7 @@ static int memcg_numa_stat_show(struct seq_file *m, void *v)
->  	const struct numa_stat *stat;
->  	int nid;
->  	unsigned long nr;
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  
->  	for (stat = stats; stat < stats + ARRAY_SIZE(stats); stat++) {
->  		nr = mem_cgroup_nr_lru_pages(memcg, stat->lru_mask);
-> @@ -3410,7 +3410,7 @@ static const char *const memcg1_event_names[] = {
->  
->  static int memcg_stat_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  	unsigned long memory, memsw;
->  	struct mem_cgroup *mi;
->  	unsigned int i;
-> @@ -3842,7 +3842,7 @@ static void mem_cgroup_oom_unregister_event(struct mem_cgroup *memcg,
->  
->  static int mem_cgroup_oom_control_read(struct seq_file *sf, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(sf));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(sf);
->  
->  	seq_printf(sf, "oom_kill_disable %d\n", memcg->oom_kill_disable);
->  	seq_printf(sf, "under_oom %d\n", (bool)memcg->under_oom);
-> @@ -5385,7 +5385,7 @@ static u64 memory_current_read(struct cgroup_subsys_state *css,
->  
->  static int memory_min_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  	unsigned long min = READ_ONCE(memcg->memory.min);
->  
->  	if (min == PAGE_COUNTER_MAX)
-> @@ -5415,7 +5415,7 @@ static ssize_t memory_min_write(struct kernfs_open_file *of,
->  
->  static int memory_low_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  	unsigned long low = READ_ONCE(memcg->memory.low);
->  
->  	if (low == PAGE_COUNTER_MAX)
-> @@ -5445,7 +5445,7 @@ static ssize_t memory_low_write(struct kernfs_open_file *of,
->  
->  static int memory_high_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  	unsigned long high = READ_ONCE(memcg->high);
->  
->  	if (high == PAGE_COUNTER_MAX)
-> @@ -5482,7 +5482,7 @@ static ssize_t memory_high_write(struct kernfs_open_file *of,
->  
->  static int memory_max_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  	unsigned long max = READ_ONCE(memcg->memory.max);
->  
->  	if (max == PAGE_COUNTER_MAX)
-> @@ -5544,7 +5544,7 @@ static ssize_t memory_max_write(struct kernfs_open_file *of,
->  
->  static int memory_events_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  
->  	seq_printf(m, "low %lu\n",
->  		   atomic_long_read(&memcg->memory_events[MEMCG_LOW]));
-> @@ -5562,7 +5562,7 @@ static int memory_events_show(struct seq_file *m, void *v)
->  
->  static int memory_stat_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  	struct accumulated_stats acc;
->  	int i;
->  
-> @@ -5639,7 +5639,7 @@ static int memory_stat_show(struct seq_file *m, void *v)
->  
->  static int memory_oom_group_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  
->  	seq_printf(m, "%d\n", memcg->oom_group);
->  
-> @@ -6622,7 +6622,7 @@ static u64 swap_current_read(struct cgroup_subsys_state *css,
->  
->  static int swap_max_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  	unsigned long max = READ_ONCE(memcg->swap.max);
->  
->  	if (max == PAGE_COUNTER_MAX)
-> @@ -6652,7 +6652,7 @@ static ssize_t swap_max_write(struct kernfs_open_file *of,
->  
->  static int swap_events_show(struct seq_file *m, void *v)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  
->  	seq_printf(m, "max %lu\n",
->  		   atomic_long_read(&memcg->memory_events[MEMCG_SWAP_MAX]));
-> diff --git a/mm/slab_common.c b/mm/slab_common.c
-> index 81732d05e74a..3dfdbe49ce34 100644
-> --- a/mm/slab_common.c
-> +++ b/mm/slab_common.c
-> @@ -1424,7 +1424,7 @@ void dump_unreclaimable_slab(void)
->  #if defined(CONFIG_MEMCG)
->  void *memcg_slab_start(struct seq_file *m, loff_t *pos)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  
->  	mutex_lock(&slab_mutex);
->  	return seq_list_start(&memcg->kmem_caches, *pos);
-> @@ -1432,7 +1432,7 @@ void *memcg_slab_start(struct seq_file *m, loff_t *pos)
->  
->  void *memcg_slab_next(struct seq_file *m, void *p, loff_t *pos)
->  {
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  
->  	return seq_list_next(p, &memcg->kmem_caches, pos);
->  }
-> @@ -1446,7 +1446,7 @@ int memcg_slab_show(struct seq_file *m, void *p)
->  {
->  	struct kmem_cache *s = list_entry(p, struct kmem_cache,
->  					  memcg_params.kmem_caches_node);
-> -	struct mem_cgroup *memcg = mem_cgroup_from_css(seq_css(m));
-> +	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
->  
->  	if (p == memcg->kmem_caches.next)
->  		print_slabinfo_header(m);
-> -- 
-> 2.20.1
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+---
+ drivers/i3c/master/dw-i3c-master.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
--- 
-Michal Hocko
-SUSE Labs
+diff --git a/drivers/i3c/master/dw-i3c-master.c b/drivers/i3c/master/dw-i3c=
+-master.c
+index f8c00b94817f..bb03079fbade 100644
+--- a/drivers/i3c/master/dw-i3c-master.c
++++ b/drivers/i3c/master/dw-i3c-master.c
+@@ -419,12 +419,9 @@ static void dw_i3c_master_enqueue_xfer(struct dw_i3c_m=
+aster *master,
+ 	spin_unlock_irqrestore(&master->xferqueue.lock, flags);
+ }
+=20
+-static void dw_i3c_master_dequeue_xfer(struct dw_i3c_master *master,
+-				       struct dw_i3c_xfer *xfer)
++static void dw_i3c_master_dequeue_xfer_locked(struct dw_i3c_master *master=
+,
++					      struct dw_i3c_xfer *xfer)
+ {
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&master->xferqueue.lock, flags);
+ 	if (master->xferqueue.cur =3D=3D xfer) {
+ 		u32 status;
+=20
+@@ -439,6 +436,15 @@ static void dw_i3c_master_dequeue_xfer(struct dw_i3c_m=
+aster *master,
+ 	} else {
+ 		list_del_init(&xfer->node);
+ 	}
++}
++
++static void dw_i3c_master_dequeue_xfer(struct dw_i3c_master *master,
++				       struct dw_i3c_xfer *xfer)
++{
++	unsigned long flags;
++
++	spin_lock_irqsave(&master->xferqueue.lock, flags);
++	dw_i3c_master_dequeue_xfer_locked(master, xfer);
+ 	spin_unlock_irqrestore(&master->xferqueue.lock, flags);
+ }
+=20
+@@ -494,7 +500,7 @@ static void dw_i3c_master_end_xfer_locked(struct dw_i3c=
+_master *master, u32 isr)
+ 	complete(&xfer->comp);
+=20
+ 	if (ret < 0) {
+-		dw_i3c_master_dequeue_xfer(master, xfer);
++		dw_i3c_master_dequeue_xfer_locked(master, xfer);
+ 		writel(readl(master->regs + DEVICE_CTRL) | DEV_CTRL_RESUME,
+ 		       master->regs + DEVICE_CTRL);
+ 	}
+--=20
+2.20.1
+
