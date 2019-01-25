@@ -2,174 +2,111 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F674C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:48:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 34415C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B3AF218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:48:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSrBMA+D"
+	by mail.kernel.org (Postfix) with ESMTP id 0D663218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:52:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbfAYTsD (ORCPT
+        id S1726589AbfAYTwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 14:48:03 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:42455 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbfAYTsC (ORCPT
+        Fri, 25 Jan 2019 14:52:11 -0500
+Received: from asavdk4.altibox.net ([109.247.116.15]:39813 "EHLO
+        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfAYTwL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 14:48:02 -0500
-Received: by mail-lj1-f193.google.com with SMTP id l15-v6so9352699lja.9;
-        Fri, 25 Jan 2019 11:48:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=PaL/Nm/0v0Ytkgf6OpFItlBs3opiEJwSabaR9s9+cdA=;
-        b=MSrBMA+DumtrsUm/pQTTTpC1N1PaTbo58IFFJQCNsIHblpupPe11ThukCc4LHwPB9x
-         hFQR6vD0Q0n/vEiBaxxBdXR1sMO2KCZh4vjS8ItJpSEjBWVtmwGkdK3XX+416m2xZaZJ
-         YNcV2OkvHcfrQMGTMuf4962U7Yp+Xbs4WuMDmodHT0VmmxfIdWszOrWEMVztr4Plf75M
-         MN8DxaivndxdcG1Li3uzBJnkOrDRrBaHjM/SeoUWHVijxrR7VC2y9xp2PcRV+wuxAgO3
-         oD2FaW7qhnBfgegGRYYQ1hp72rSAJ/mt+dTMf9Ve/TCIVJ+hJSqBz+nVY1wFXyrwJR5X
-         JnFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=PaL/Nm/0v0Ytkgf6OpFItlBs3opiEJwSabaR9s9+cdA=;
-        b=Vi2nvKIuNL17mfwzNvOr9XivY21RVogK7mM339r28dHef2jsHNh5NhBLs/LcqLTjC9
-         Clu8g69V3uktvf+0K8l2+uK8eG4hbXhX3JDu4C2N8YFswEGUCPUVNDEgkJxlJTuY8+Px
-         fpNEjv6Gi1H9plK5fjEvLMwMtAS2DD8A8jyrywNcD/SsPblgFLn3fbSE8Mi1Qe+mh23S
-         9BYgTxhNeoZ82Gbdz5Y1pIIhIeAx6r9DBUk6mO9xCFUZQZavL3BvrnozNhcFZqn4Z3b2
-         iYCuCW2wR7mCZg2sPp2OUvq6P6QZHetCoVqRXCxkONjIfxhCijduua7z4q+xgIOyEM7S
-         8rOA==
-X-Gm-Message-State: AJcUukdHkc1vl1LA/k6lWrxAoiCKegwlEuduMrPWY5Y3qYIj9Cyk12VF
-        ne12zMFPWf0Sk2EqGZGM/Qs99oeeQU4=
-X-Google-Smtp-Source: ALg8bN5E91E+HlT5VVEGWOC6UtfvzDJd7FJfIowJ003CcX2TdiaNY/FmtCFoKeLTC4weO5Mr+QAISg==
-X-Received: by 2002:a2e:4601:: with SMTP id t1-v6mr10068707lja.111.1548445679752;
-        Fri, 25 Jan 2019 11:47:59 -0800 (PST)
-Received: from amb.local (31-179-17-47.dynamic.chello.pl. [31.179.17.47])
-        by smtp.gmail.com with ESMTPSA id c15-v6sm1683785ljf.76.2019.01.25.11.47.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 11:47:59 -0800 (PST)
-Subject: Re: pids.current with invalid value for hours [5.0.0 rc3 git]
-To:     Tejun Heo <tj@kernel.org>
-Cc:     cgroups@vger.kernel.org, Aleksa Sarai <asarai@suse.de>,
-        Jay Kamat <jgkamat@fb.com>, Roman Gushchin <guro@fb.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org
-References: <df806a77-3327-9db5-8be2-976fde1c84e5@gmail.com>
- <20190117122535.njcbqhlmzozdkncw@mikami>
- <1d36b181-cbaf-6694-1a31-2f7f55d15675@gmail.com>
- <96ef6615-a5df-30af-b4dc-417a18ca63f1@gmail.com>
- <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
- <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
-From:   =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>
-Message-ID: <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
-Date:   Fri, 25 Jan 2019 20:47:57 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+        Fri, 25 Jan 2019 14:52:11 -0500
+Received: from ravnborg.org (unknown [158.248.194.18])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by asavdk4.altibox.net (Postfix) with ESMTPS id AE19C80392;
+        Fri, 25 Jan 2019 20:52:06 +0100 (CET)
+Date:   Fri, 25 Jan 2019 20:52:05 +0100
+From:   Sam Ravnborg <sam@ravnborg.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v5 2/2] drm/panel: Add Feiyang FY07024DI26A30-D MIPI-DSI
+ LCD panel
+Message-ID: <20190125195205.GA31938@ravnborg.org>
+References: <20190125192233.10019-1-jagan@amarulasolutions.com>
+ <20190125192233.10019-2-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: pl
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125192233.10019-2-jagan@amarulasolutions.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-CMAE-Score: 0
+X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
+        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
+        a=kj9zAlcOel0A:10 a=3fyaaF4VAAAA:8 a=iP-xVBlJAAAA:8 a=7gkXJVJtAAAA:8
+        a=4HpgsN6KaROfE_mb8mQA:9 a=CjuIK1q_8ugA:10 a=jOuFdahVONy5WApiBME_:22
+        a=lHLH-nfn2y1bM_0xSXwp:22 a=E9Po1WZjFZOl8hwRPBS3:22
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/01/2019 17:37, Tejun Heo wrote:
-> On Fri, Jan 25, 2019 at 08:52:11AM +0100, Arkadiusz Miśkiewicz wrote:
->> On 24/01/2019 12:21, Arkadiusz Miśkiewicz wrote:
->>> On 17/01/2019 14:17, Arkadiusz Miśkiewicz wrote:
->>>> On 17/01/2019 13:25, Aleksa Sarai wrote:
->>>>> On 2019-01-17, Arkadiusz Miśkiewicz <a.miskiewicz@gmail.com> wrote:
->>>>>> Using kernel 4.19.13.
->>>>>>
->>>>>> For one cgroup I noticed weird behaviour:
->>>>>>
->>>>>> # cat pids.current
->>>>>> 60
->>>>>> # cat cgroup.procs
->>>>>> #
->>>>>
->>>>> Are there any zombies in the cgroup? pids.current is linked up directly
->>>>> to __put_task_struct (so exit(2) won't decrease it, only the task_struct
->>>>> actually being freed will decrease it).
->>>>>
->>>>
->>>> There are no zombie processes.
->>>>
->>>> In mean time the problem shows on multiple servers and so far saw it
->>>> only in cgroups that were OOMed.
->>>>
->>>> What has changed on these servers (yesterday) is turning on
->>>> memory.oom.group=1 for all cgroups and changing memory.high from 1G to
->>>> "max" (leaving memory.max=2G limit only).
->>>>
->>>> Previously there was no such problem.
->>>>
->>>
->>> I'm attaching reproducer. This time tried on different distribution
->>> kernel (arch linux).
->>>
->>> After 60s pids.current still shows 37 processes even if there are no
->>> processes running (according to ps aux).
->>
->>
->> The same test on 5.0.0-rc3-00104-gc04e2a780caf and it's easy to
->> reproduce bug. No processes in cgroup but pids.current reports 91.
+Hi Jagan.
+
+Looks good, only very few nits left.
+
+On Sat, Jan 26, 2019 at 12:52:33AM +0530, Jagan Teki wrote:
+> Feiyang FY07024DI26A30-D is 1024x600, 4-lane MIPI-DSI LCD panel.
 > 
-> Can you please see whether the problem can be reproduced on the
-> current linux-next?
+> Add panel driver for it.
 > 
->  git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+> Tested-by: Bhushan Shah <bshah@kde.org>
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-I can reproduce on next (5.0.0-rc3-next-20190125), too:
-
-[root@xps test]# python3 cg.py
-Created cgroup: /sys/fs/cgroup/test_2501
-Start: pids.current: 0
-Start: cgroup.procs:
-0: pids.current: 65
-0: cgroup.procs:
-1: pids.current: 44
-1: cgroup.procs:
-2: pids.current: 44
-2: cgroup.procs:
-3: pids.current: 44
-3: cgroup.procs:
-4: pids.current: 44
-4: cgroup.procs:
-5: pids.current: 44
-5: cgroup.procs:
-6: pids.current: 44
-6: cgroup.procs:
-7: pids.current: 44
-7: cgroup.procs:
-8: pids.current: 44
-8: cgroup.procs:
-9: pids.current: 44
-9: cgroup.procs:
-10: pids.current: 44
-10: cgroup.procs:
-11: pids.current: 44
-11: cgroup.procs:
-[root@xps test]# uname -a
-Linux xps 5.0.0-rc3-next-20190125 #2 SMP PREEMPT Fri Jan 25 19:11:40 CET
-2019 x86_64 Intel(R)_Core(TM)_i9-8950HK_CPU_@_2.90GHz PLD Linux
-[root@xps test]# mount |grep cgroup2
-cgroup2 on /sys/fs/cgroup type cgroup2 (rw,nosuid,nodev,noexec,relatime)
+If you consider my inputs (I know you will) then you can add my:
+Reviewed-by: Sam Ravnborg <sam@ravnborg.org>
 
 
-I'm booting kernel with cgroup_no_v1=all
+> +	msleep(20);
+> +
+> +	gpiod_set_value(ctx->reset, 0);
+> +	/* T5 + T6 (avdd rise + video & logic signal rise)
+> +	 * T5 >= 10ms, 0 < T6 <= 10ms
+> +	 */
+> +	msleep(20);
 
--- 
-Arkadiusz Miśkiewicz, arekm / ( maven.pl | pld-linux.org )
+Please use kernel coding style comment, and maybe an empty
+line between gpiod...() and the comment:
+
+	gpiod_set_value(ctx->reset, 0);
+	/*
+	 * T5 + T6 (avdd rise + video & logic signal rise)
+	 * T5 >= 10ms, 0 < T6 <= 10ms
+	 */
+	msleep(20);
+
+
+> +static int feiyang_get_modes(struct drm_panel *panel)
+> +{
+> +	struct drm_connector *connector = panel->connector;
+> +	struct feiyang *ctx = panel_to_feiyang(panel);
+> +	struct drm_display_mode *mode;
+> +
+> +	mode = drm_mode_duplicate(panel->drm, &feiyang_default_mode);
+> +	if (!mode) {
+> +		DRM_DEV_ERROR(&ctx->dsi->dev, "failed to add mode %ux%ux@%u\n",
+> +			      feiyang_default_mode.hdisplay,
+> +			      feiyang_default_mode.vdisplay,
+> +			      feiyang_default_mode.vrefresh);
+Please consider to use DRM_MODE_FMT and DRM_MODE_ARG for printing.
+
+
+> +static const struct of_device_id feiyang_of_match[] = {
+> +	{ .compatible = "feiyang,fy07024di26a30d", },
+> +	{ }
+Maybe use { /* sentinel */ },
+?
