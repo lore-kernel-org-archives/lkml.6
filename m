@@ -2,183 +2,204 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88478C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49827C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 63B7721855
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0697821872
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:55:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GVWkWsJN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbfAYDwu (ORCPT
+        id S1728920AbfAYDzR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:52:50 -0500
-Received: from Mailgw01.mediatek.com ([1.203.163.78]:30257 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726304AbfAYDwu (ORCPT
+        Thu, 24 Jan 2019 22:55:17 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39607 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726304AbfAYDzQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:52:50 -0500
-X-UUID: a5c8e402427b4af3b64cb8581a4cbd69-20190125
-X-UUID: a5c8e402427b4af3b64cb8581a4cbd69-20190125
-Received: from mtkcas35.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mailgw01.mediatek.com ESMTP with TLS)
-        with ESMTP id 951858160; Fri, 25 Jan 2019 11:52:45 +0800
-Received: from mtkcas07.mediatek.inc (172.21.101.84) by
- MTKMBS31N2.mediatek.inc (172.27.4.87) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Fri, 25 Jan 2019 11:52:43 +0800
-Received: from [172.21.77.33] (172.21.77.33) by mtkcas07.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Fri, 25 Jan 2019 11:52:43 +0800
-Message-ID: <1548388363.29237.17.camel@mtkswgap22>
-Subject: Re: [PATCH v1 1/5] pwm: mediatek: add a property "mediatek,num-pwms"
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>, John Crispin <john@phrozen.org>
-CC:     "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        Sean Wang <sean.wang@kernel.org>,
-        Weijie Gao =?UTF-8?Q?=28=E9=AB=98=E6=83=9F=E6=9D=B0=29?= 
-        <Weijie.Gao@mediatek.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Thierry Reding" <thierry.reding@gmail.com>,
-        "linux-mediatek@lists.infradead.org" 
-        <linux-mediatek@lists.infradead.org>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Fri, 25 Jan 2019 11:52:43 +0800
-In-Reply-To: <20190121084948.frpcgg6wkdjxkl7k@pengutronix.de>
-References: <de316385a84e079d3b23891e61c959094b9fa7e5.1547781007.git.ryder.lee@mediatek.com>
-         <c007d399-af86-98d3-94f9-b9762efdc219@gmail.com>
-         <1547866487.14213.10.camel@mtkswgap22>
-         <20190121084948.frpcgg6wkdjxkl7k@pengutronix.de>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 8bit
+        Thu, 24 Jan 2019 22:55:16 -0500
+Received: by mail-pf1-f193.google.com with SMTP id r136so4090315pfc.6;
+        Thu, 24 Jan 2019 19:55:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Cybw0B3smWl3ggaY2rGioXhyGSgdUMHQ0vjwYWmqmf0=;
+        b=GVWkWsJNMgzCrXLMTjpxfZpFJ5zk5a3yPOROBFpUjCyFTd6OebkvUS6jeX/WU8HbPt
+         a3VFZBLx6Ll4TWwqnGNEdCndAlQ7zw6Qyb2CMJY8UR/lCYXxGSRbCOu9/OJ34o3yIJeo
+         sZ2vvXfkcV3bAM2ZYVsiiP93u9xyr8b02Z8JtWuAvN3HKcbBh0c4LE9Ay3n96rfG/1wh
+         qWUb8n9To8dEACaeIGZmuqzIWyP3NgLNXNTneUCs3G4sJLRAFBaMTcWprKMvmBk4syzV
+         OrsWxxXoqGF2UT/QOKNQ5BmA2TQqGkr2MQxc37tBFiOCAa5rl+QABQ5qxU/IQI1nlKXW
+         nRhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Cybw0B3smWl3ggaY2rGioXhyGSgdUMHQ0vjwYWmqmf0=;
+        b=mDQtEnJ9vNfsR6r6hxar4brfFi4ye1VvO1Wodf2/5e2AiWRK2bOKSdQziRdpeIeiCD
+         4yi4MQjElG+cI3MrVmVSknoLozxJn/FBWp1UEIy5/DAwfCEV19TYbDIWbseaP+PnRXYE
+         fHdsP1t62hB4vUElCLAKnG+tm52vVJV565g69CI6ACsO900sWS1Ih07MKVHd4IfLkINf
+         NCOgOvn18s6hbcUjBeYF6WamcfhaMmazAhrj6frkc9AGF7fuQ7KUtS7y4ud6KTbIsS9+
+         xB3mpQg0uLXTKic4bbHQyiRRzdrU3ka/HBongqgsr0oIEOOoJDJSzrQ/iz1NlgoHvjPl
+         4Y/Q==
+X-Gm-Message-State: AJcUukeXri2jzLKKy1OsHmhZ8tpU1R7qLVCej2lO4SxJ/rcnTE2Z5p0o
+        BF8GerOUvOZWTDDiCzp9u/7J1Aj1
+X-Google-Smtp-Source: ALg8bN6+C2ITwqljOp/IOurKkt8T7/fo0VgdA6FRMDYzOd8IV1njd+tFaUqLpN18OKFm5ph1uGlSFQ==
+X-Received: by 2002:a63:2586:: with SMTP id l128mr8671573pgl.104.1548388515745;
+        Thu, 24 Jan 2019 19:55:15 -0800 (PST)
+Received: from myunghoj-Precision-5530 (cpe-76-176-3-80.san.res.rr.com. [76.176.3.80])
+        by smtp.gmail.com with ESMTPSA id i193sm77952257pgc.22.2019.01.24.19.55.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 19:55:15 -0800 (PST)
+Date:   Thu, 24 Jan 2019 19:55:12 -0800
+From:   Myungho Jung <mhjungk@gmail.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>
+Cc:     linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] Bluetooth: hci_ldisc: Fix for pty driver
+Message-ID: <20190125035510.GA21654@myunghoj-Precision-5530>
 MIME-Version: 1.0
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+John
+tty_set_termios() should be called with slave side of pty driver. So, If
+tty driver is pty master, it needs to be switched to ->link. Also,
+tiocmget() and tiocmset() operations are optional so we need NULL check
+for some drivers missing the operations like pty.
 
-HI John,
+Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
+Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+---
+ drivers/bluetooth/hci_ldisc.c | 76 +++++++++++++++++++++--------------
+ 1 file changed, 46 insertions(+), 30 deletions(-)
 
-On Mon, 2019-01-21 at 16:49 +0800, Uwe Kleine-König wrote:
-> On Sat, Jan 19, 2019 at 10:54:47AM +0800, Ryder Lee wrote:
-> > On Fri, 2019-01-18 at 09:43 +0100, Matthias Brugger wrote:
-> > >
-> > > On 18/01/2019 04:24, Ryder Lee wrote:
-> > > > This adds a property "mediatek,num-pwms" to avoid having an endless
-> > > > list of compatibles with no differences for the same driver.
-> > > >
-> > > > Thus, the driver should have backwards compatibility to older DTs.
-> > > >
-> > > > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
-> > > > ---
-> > > > Changes since v1: add some checks for backwards compatibility.
-> > > > ---
-> > > >  drivers/pwm/pwm-mediatek.c | 27 ++++++++++++++++++---------
-> > > >  1 file changed, 18 insertions(+), 9 deletions(-)
-> > > >
-> > > > diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
-> > > > index eb6674c..81b7e5e 100644
-> > > > --- a/drivers/pwm/pwm-mediatek.c
-> > > > +++ b/drivers/pwm/pwm-mediatek.c
-> > > > @@ -55,7 +55,7 @@ enum {
-> > > >  };
-> > > >
-> > > >  struct mtk_pwm_platform_data {
-> > > > - unsigned int num_pwms;
-> > > > + unsigned int num_pwms;  /* it should not be used in the future SoCs */
-> > > >   bool pwm45_fixup;
-> > > >   bool has_clks;
-> > > >  };
-> > > > @@ -226,27 +226,36 @@ static void mtk_pwm_disable(struct pwm_chip *chip, struct pwm_device *pwm)
-> > > >
-> > > >  static int mtk_pwm_probe(struct platform_device *pdev)
-> > > >  {
-> > > > - const struct mtk_pwm_platform_data *data;
-> > > > + struct device_node *np = pdev->dev.of_node;
-> > > >   struct mtk_pwm_chip *pc;
-> > > >   struct resource *res;
-> > > > - unsigned int i;
-> > > > + unsigned int i, num_pwms;
-> > > >   int ret;
-> > > >
-> > > >   pc = devm_kzalloc(&pdev->dev, sizeof(*pc), GFP_KERNEL);
-> > > >   if (!pc)
-> > > >           return -ENOMEM;
-> > > >
-> > > > - data = of_device_get_match_data(&pdev->dev);
-> > > > - if (data == NULL)
-> > > > -         return -EINVAL;
-> > > > - pc->soc = data;
-> > > > + pc->soc = of_device_get_match_data(&pdev->dev);
-> > > >
-> > > >   res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > > >   pc->regs = devm_ioremap_resource(&pdev->dev, res);
-> > > >   if (IS_ERR(pc->regs))
-> > > >           return PTR_ERR(pc->regs);
-> > > >
-> > > > - for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
-> > > > + /* Check if we have set 'num-pwms' in DTs. */
-> > > > + ret = of_property_read_u32(np, "mediatek,num-pwms", &num_pwms);
-> > > > + if (ret < 0) {
-> > > > +         /* If no, fallback to use SoC data for backwards compatibility. */
-> > > > +         if (pc->soc->num_pwms) {
-> > > > +                 num_pwms = pc->soc->num_pwms;
-> > >
-> > > Maybe that's bike shedding, but I think it would be better to carve out the
-> > > num_pwms from the mtk_pwm_platform_data and check against the compatible here.
-> >
-> > I'm not sure how to properly curve it out? I think we still need this
-> > variable to save the specific value for some legacy SoCs (with older
-> > DTs).
-> 
-> I guess he means  something like:
-> 
->         if (is_compatible_to_variant_A(dev))
->                 num_pwms = 12;
->         else if (is_compatible_to_variant_B(dev))
->                 num_pwms = 2;
-> 
-> . In my eyes the bike shed should be light red and I prefer to collect
-> the fallback num_pwms in the compatible_data as is to keep the code
-> simpler. Maybe rename the member from num_pwms to fallback_num_pwms to
-> make it more obvious that it doesn't represent the actually used value.
-> 
-> > > With a expressive comment it will help other driver developers to not start
-> > > adding num_pwms in the platform data in their first attempt.
-> >
-> > Definitely.
-> 
-> My suggestion was to add a dev_warn, which IMHO is still better than a
-> comment.
-> 
-> Best regards
-> Uwe
-> 
-
-Unrelated to this patch: I'm ready to send v2 to allocate the clks array
-dynamically, but I guess MT7628 couldn't work in original code.
-
-
-In mtk_pwm_config():
-
-        clk = pc->clks[MTK_CLK_PWM1 + pwm->hwpwm]; 
-        ....
-        resolution = (u64)NSEC_PER_SEC * 1000;
-        do_div(resolution, clk_get_rate(clk));
-        ....
-
-I think clk should be NULL and resolution is always 0 here. 
-
-
-Ryder
+diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+index fbf7b4df23ab..169dde91b3d3 100644
+--- a/drivers/bluetooth/hci_ldisc.c
++++ b/drivers/bluetooth/hci_ldisc.c
+@@ -299,10 +299,18 @@ static int hci_uart_send_frame(struct hci_dev *hdev, struct sk_buff *skb)
+ 	return 0;
+ }
+ 
++/* If driver is pty master, return slave side */
++static struct tty_struct *hci_uart_get_real_tty(struct tty_struct *tty)
++{
++	return  (tty->driver->type == TTY_DRIVER_TYPE_PTY &&
++		 tty->driver->subtype == PTY_TYPE_MASTER) ? tty->link : tty;
++}
++
+ /* Flow control or un-flow control the device */
+ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
+ {
+ 	struct tty_struct *tty = hu->tty;
++	struct tty_struct *real_tty;
+ 	struct ktermios ktermios;
+ 	int status;
+ 	unsigned int set = 0;
+@@ -314,45 +322,52 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
+ 		return;
+ 	}
+ 
++	real_tty = hci_uart_get_real_tty(tty);
+ 	if (enable) {
+ 		/* Disable hardware flow control */
+-		ktermios = tty->termios;
++		ktermios = real_tty->termios;
+ 		ktermios.c_cflag &= ~CRTSCTS;
+-		status = tty_set_termios(tty, &ktermios);
++		status = tty_set_termios(real_tty, &ktermios);
+ 		BT_DBG("Disabling hardware flow control: %s",
+ 		       status ? "failed" : "success");
+ 
+-		/* Clear RTS to prevent the device from sending */
+-		/* Most UARTs need OUT2 to enable interrupts */
+-		status = tty->driver->ops->tiocmget(tty);
+-		BT_DBG("Current tiocm 0x%x", status);
+-
+-		set &= ~(TIOCM_OUT2 | TIOCM_RTS);
+-		clear = ~set;
+-		set &= TIOCM_DTR | TIOCM_RTS | TIOCM_OUT1 |
+-		       TIOCM_OUT2 | TIOCM_LOOP;
+-		clear &= TIOCM_DTR | TIOCM_RTS | TIOCM_OUT1 |
+-			 TIOCM_OUT2 | TIOCM_LOOP;
+-		status = tty->driver->ops->tiocmset(tty, set, clear);
+-		BT_DBG("Clearing RTS: %s", status ? "failed" : "success");
++		if (tty->driver->ops->tiocmget && tty->driver->ops->tiocmset) {
++			/* Clear RTS to prevent the device from sending */
++			/* Most UARTs need OUT2 to enable interrupts */
++			status = tty->driver->ops->tiocmget(tty);
++			BT_DBG("Current tiocm 0x%x", status);
++
++			set &= ~(TIOCM_OUT2 | TIOCM_RTS);
++			clear = ~set;
++			set &= TIOCM_DTR | TIOCM_RTS | TIOCM_OUT1 |
++				TIOCM_OUT2 | TIOCM_LOOP;
++			clear &= TIOCM_DTR | TIOCM_RTS | TIOCM_OUT1 |
++				TIOCM_OUT2 | TIOCM_LOOP;
++			status = tty->driver->ops->tiocmset(tty, set, clear);
++			BT_DBG("Clearing RTS: %s", status ? "failed" :
++			       "success");
++		}
+ 	} else {
+-		/* Set RTS to allow the device to send again */
+-		status = tty->driver->ops->tiocmget(tty);
+-		BT_DBG("Current tiocm 0x%x", status);
+-
+-		set |= (TIOCM_OUT2 | TIOCM_RTS);
+-		clear = ~set;
+-		set &= TIOCM_DTR | TIOCM_RTS | TIOCM_OUT1 |
+-		       TIOCM_OUT2 | TIOCM_LOOP;
+-		clear &= TIOCM_DTR | TIOCM_RTS | TIOCM_OUT1 |
+-			 TIOCM_OUT2 | TIOCM_LOOP;
+-		status = tty->driver->ops->tiocmset(tty, set, clear);
+-		BT_DBG("Setting RTS: %s", status ? "failed" : "success");
++		if (tty->driver->ops->tiocmget && tty->driver->ops->tiocmset) {
++			/* Set RTS to allow the device to send again */
++			status = tty->driver->ops->tiocmget(tty);
++			BT_DBG("Current tiocm 0x%x", status);
++
++			set |= (TIOCM_OUT2 | TIOCM_RTS);
++			clear = ~set;
++			set &= TIOCM_DTR | TIOCM_RTS | TIOCM_OUT1 |
++				TIOCM_OUT2 | TIOCM_LOOP;
++			clear &= TIOCM_DTR | TIOCM_RTS | TIOCM_OUT1 |
++				TIOCM_OUT2 | TIOCM_LOOP;
++			status = tty->driver->ops->tiocmset(tty, set, clear);
++			BT_DBG("Setting RTS: %s", status ? "failed" :
++			       "success");
++		}
+ 
+ 		/* Re-enable hardware flow control */
+-		ktermios = tty->termios;
++		ktermios = real_tty->termios;
+ 		ktermios.c_cflag |= CRTSCTS;
+-		status = tty_set_termios(tty, &ktermios);
++		status = tty_set_termios(real_tty, &ktermios);
+ 		BT_DBG("Enabling hardware flow control: %s",
+ 		       status ? "failed" : "success");
+ 	}
+@@ -367,9 +382,10 @@ void hci_uart_set_speeds(struct hci_uart *hu, unsigned int init_speed,
+ 
+ void hci_uart_set_baudrate(struct hci_uart *hu, unsigned int speed)
+ {
+-	struct tty_struct *tty = hu->tty;
++	struct tty_struct *tty;
+ 	struct ktermios ktermios;
+ 
++	tty = hci_uart_get_real_tty(hu->tty);
+ 	ktermios = tty->termios;
+ 	ktermios.c_cflag &= ~CBAUD;
+ 	tty_termios_encode_baud_rate(&ktermios, speed, speed);
+-- 
+2.17.1
 
