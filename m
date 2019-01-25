@@ -2,107 +2,68 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D19FC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8B81C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 437E920844
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 778A420844
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548458405;
-	bh=3q1MT++GyIIy1yC6+fYQ8UlBmTndj32nV68n5m4umSc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ktEFBDspc+iBt3+Z6g0qPIyhxHcQQ2K9OunMios98chV/nq7Nt4PjButhlc+TGj9N
-	 aVs1coKxP1RpBt+hSSRz0mPioSVVjkR4zWHQS504HOeWMWBRNUBlGm9N3IWm5Xd5CF
-	 Yw+24PG/BNFMmtK90pySyqrjqHajEkNL5J1j2mfc=
+	s=default; t=1548458409;
+	bh=op4mhf2e9Zkr1qOgRoovilB/bSQPRmCHj69o4/fZD9o=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=jr4Vp83GD8IM96yZ0GH/q4VOOg+bza3BiNrJ+OQKbvpAo51NNJ5LITxi6AStYonCN
+	 RDQBeQMMEHVDQM8aBRijjr+AZ1HilQrT6enc2GOdTx6pi/SzToCi8jomKZUwquE5qy
+	 wSvGzQvFQowW6PXA0mTk/xu5/mlFZJk9XRMSNt6U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730051AbfAYXUE (ORCPT
+        id S1730078AbfAYXUH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 18:20:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48412 "EHLO mail.kernel.org"
+        Fri, 25 Jan 2019 18:20:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730015AbfAYXT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 18:19:56 -0500
-Received: from quaco.cust.in.nbox.cz (unknown [95.82.135.149])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3496A21902;
-        Fri, 25 Jan 2019 23:19:54 +0000 (UTC)
+        id S1730015AbfAYXUE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 18:20:04 -0500
+Subject: Re: [GIT PULL] USB driver fixes for 5.0-rc4
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548458396;
-        bh=3q1MT++GyIIy1yC6+fYQ8UlBmTndj32nV68n5m4umSc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jJdeG27AHzTueFlx4qMT/1t7PnRAqbxXyNze4eI8tcpfHdXzY6RFGzbADzPy+sDIl
-         TlPSjTMtWGwUlmr9cwsWC3Tlqu/R5kJuscd7Dls9zGviFtemOAnhEv4++cmp53SNyN
-         foshIVdTBdWZd3932zmp9FW6ti8iL+hl1DMiIpbM=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 29/29] perf augmented_syscalls: Convert to bpf_map()
-Date:   Sat, 26 Jan 2019 00:18:43 +0100
-Message-Id: <20190125231843.2895-30-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190125231843.2895-1-acme@kernel.org>
-References: <20190125231843.2895-1-acme@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        s=default; t=1548458404;
+        bh=op4mhf2e9Zkr1qOgRoovilB/bSQPRmCHj69o4/fZD9o=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=MMvH62ywA31Eoa2RPyzj5vnQQ5nI2ZmbFEJp2bYl18wsysY1Rwq2+4zHe5MA6PPFK
+         8/lcEiQ4Nq3zXQRwqjN13yuLsKctmGLphK88lILecbgiWZSbQxcZRtLcMaIiZZjcvp
+         MHHjQRvK0YEEQkFoP4V7XLjxh0U0PpcVc5PNbYME=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190125122221.GA7517@kroah.com>
+References: <20190125122221.GA7517@kroah.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190125122221.GA7517@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.0-rc4
+X-PR-Tracked-Commit-Id: 4f9b838927812b5949a9899f14e0c9ef7f02b0c8
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: b48cef32b6a5103dddf52aadbeda90ab0f7ef673
+Message-Id: <154845840423.30665.8439735706920707614.pr-tracker-bot@kernel.org>
+Date:   Fri, 25 Jan 2019 23:20:04 +0000
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+The pull request you sent on Fri, 25 Jan 2019 13:22:21 +0100:
 
-To make the code more compact, end result is the same:
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.0-rc4
 
-  # perf trace -e /home/acme/git/perf/tools/perf/examples/bpf/augmented_syscalls.c sleep 1
-     0.000 ( 0.008 ms): sleep/9663 openat(dfd: CWD, filename: "/etc/ld.so.cache", flags: RDONLY|CLOEXEC) = 3
-     0.022 ( 0.005 ms): sleep/9663 openat(dfd: CWD, filename: "/lib64/libc.so.6", flags: RDONLY|CLOEXEC) = 3
-     0.226 ( 0.006 ms): sleep/9663 openat(dfd: CWD, filename: "/usr/lib/locale/locale-archive", flags: RDONLY|CLOEXEC) = 3
-  #
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/b48cef32b6a5103dddf52aadbeda90ab0f7ef673
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Link: https://lkml.kernel.org/n/tip-23z08bgizqnbc3qdsyl7jyyg@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/examples/bpf/augmented_syscalls.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+Thank you!
 
-diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
-index b7dba114e36c..524fdb8534b3 100644
---- a/tools/perf/examples/bpf/augmented_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_syscalls.c
-@@ -19,12 +19,8 @@
- #include <stdio.h>
- #include <linux/socket.h>
- 
--struct bpf_map SEC("maps") __augmented_syscalls__ = {
--       .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
--       .key_size = sizeof(int),
--       .value_size = sizeof(u32),
--       .max_entries = __NR_CPUS__,
--};
-+/* bpf-output associated map */
-+bpf_map(__augmented_syscalls__, PERF_EVENT_ARRAY, int, u32, __NR_CPUS__);
- 
- struct syscall_exit_args {
- 	unsigned long long common_tp_fields;
 -- 
-2.20.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
