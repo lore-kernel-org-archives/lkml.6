@@ -2,139 +2,157 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 482CAC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:17:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 476C3C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:17:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 171EA21919
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:17:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16B8521919
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:17:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="aI2tdL8Y"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtiE7QN0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbfAYIRH (ORCPT
+        id S1728778AbfAYIRO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 03:17:07 -0500
-Received: from mail-eopbgr790054.outbound.protection.outlook.com ([40.107.79.54]:54144
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726200AbfAYIRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 03:17:07 -0500
+        Fri, 25 Jan 2019 03:17:14 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:43871 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfAYIRN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 03:17:13 -0500
+Received: by mail-ot1-f68.google.com with SMTP id a11so7751357otr.10;
+        Fri, 25 Jan 2019 00:17:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ojI+cD2nSVPQfEQkeodG+4CZhQ2yvXom5FBpe9K5B8I=;
- b=aI2tdL8YujOSJmZn4GVtlyvnF6MZo8+5hQxEvyZamzDKa1zdkLYC/Gsowc7QnRvHDHYtVq0g0Vjlbwpz9xhStB6eWMC7kj/z4qRhMiyZ50G3acYeNy144XjS7VSH/m+KSVSVJLcuaDpNSKrMB+jtdlVi8D2f9/41QkGX2R8+r4M=
-Received: from SN6PR03MB4398.namprd03.prod.outlook.com (20.177.255.219) by
- SN6PR03MB3629.namprd03.prod.outlook.com (52.135.80.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.16; Fri, 25 Jan 2019 08:17:03 +0000
-Received: from SN6PR03MB4398.namprd03.prod.outlook.com
- ([fe80::59c4:7034:c325:36f]) by SN6PR03MB4398.namprd03.prod.outlook.com
- ([fe80::59c4:7034:c325:36f%2]) with mapi id 15.20.1558.021; Fri, 25 Jan 2019
- 08:17:03 +0000
-From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-CC:     Wim Van Sebroeck <wim@linux-watchdog.org>,
-        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] watchdog: dw: use devm_watchdog_register_device()
-Thread-Topic: [PATCH] watchdog: dw: use devm_watchdog_register_device()
-Thread-Index: AQHUtILe/7eTCenrE02uek0ahDuG96W/oCaAgAAByoA=
-Date:   Fri, 25 Jan 2019 08:17:03 +0000
-Message-ID: <20190125161049.7884cda4@xhacker.debian>
-References: <20190125154604.66801c6a@xhacker.debian>
-        <b521625b-ffff-ba49-77d7-018ad363db36@roeck-us.net>
-In-Reply-To: <b521625b-ffff-ba49-77d7-018ad363db36@roeck-us.net>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [199.33.119.15]
-x-clientproxiedby: TY2PR02CA0057.apcprd02.prod.outlook.com
- (2603:1096:404:e2::21) To SN6PR03MB4398.namprd03.prod.outlook.com
- (2603:10b6:805:fd::27)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR03MB3629;6:zbELXg7jBSfyHA4AK3dQ7ea+3CWrGo2INskKmFFCNiLU59ol5cGq2tm8rjLYhInJLbF53qCN8q4kbVLbwBiMdeKdXAa+4tTKVoFV2Z0FIhu+7tDQ6udpQCKlRbWAfX27nR1xSv5YaS7qx2gLymT34sHpTHthWjw+N/pv+9+lhjc+49OmAZixs3T0wU4lEZ3WAArcRD/vt2dlkZeM9rslkAnkpikF9fTxXCWgZR/a8aPUnWxefo3FUnoS6Ex+5i3RUhwqRl3XcwNHGb8/XyZ0oLaNyQ6atYIhgiWZXkPmFjbMuBcieWU6ojmZ7ZTFXzuuaAZbaUt0oK3aSKbyjNUt3nxem8iTTCIbUCpbnPbzpReXfFdmx8kbIDPr3M2chaCzXoW1jYCuQCm3wDOKBxH9E14ZmTDEwMFKX/VQYz9keIavlgbi8wHfuSQ8HioY5fQz14Pty0Uj8Bh7DzoLbA9cFw==;5:IWXiMw8L1EzTBOfipGqoGxyZbd33OXGSQa5BaqGbtIy878yMPv/uTzvAhA8IK7v9T9J4pvLBii5Wt+rUBKb+dV4rK4NhiLImmdbSQHcc25ycuRzOrP31AuxPFIUK6irNpGQVBmi5Zpm/vWyqTd7Uku6skuynZmKAH6swvrXsSilN5ybH87QclrQRO3nLzbMy3WfWuDAhyDLi7se9S2Fy8w==;7:4EtYAvMt0NYvsMwkHymz/7adLn9/JQziAnDm9HU8poMVJDNufVEP7DgFd2WdEnyalXjzXGuzRzetARw4rZSrR62sFSxwaFGc9Clj0RPEruhN+JQWAURcG9GgCh1sIhHwz0IIETXzKwguxxuCmLCFdw==
-x-ms-office365-filtering-correlation-id: 32be768c-2a5a-4bfa-9782-08d6829d7ca3
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:SN6PR03MB3629;
-x-ms-traffictypediagnostic: SN6PR03MB3629:
-x-microsoft-antispam-prvs: <SN6PR03MB362927950EE2890219B85F3CED9B0@SN6PR03MB3629.namprd03.prod.outlook.com>
-x-forefront-prvs: 0928072091
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(346002)(376002)(136003)(366004)(396003)(199004)(189003)(71190400001)(76176011)(71200400001)(316002)(54906003)(14444005)(1076003)(99286004)(256004)(2906002)(52116002)(478600001)(53936002)(66066001)(86362001)(33896004)(97736004)(6916009)(14454004)(72206003)(6246003)(9686003)(4326008)(105586002)(186003)(486006)(229853002)(6486002)(6436002)(25786009)(106356001)(3846002)(6116002)(50226002)(476003)(8936002)(26005)(6512007)(68736007)(102836004)(386003)(6506007)(53546011)(11346002)(7736002)(446003)(81156014)(8676002)(81166006)(305945005)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB3629;H:SN6PR03MB4398.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
-received-spf: None (protection.outlook.com: synaptics.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: 13ntzUxkK+U5P4C85SeubwS2ZRvyZrh79ZmViwUz4R1m6jkE8CdmOH+JyFOwFNe3x2nPz0JJKAkWmZkkQcejx6kCzg9vVrC9/GJbHxPlJf8DL7gn7hZGcTk8tH3NMEPzs69Szrz5IdnHNWgWwe5d5HBMFL2t9tTG3KgcZ7cjmS9vE4sErpF3CqzWuQoIdfS2AW4G6fd09AZbVHC/6jQt9GmMAxzprz4r5sR+7clm3TLwFshpxxIPpAQECcFuDg4AEXve6hAxljWIMlHMe0wuEurryC92LXA0ZaVgAHqmnQwyGoG1jTiuCWZax0dhtNyeH2WgquQzv9hjwyurU8fOftTuBhGINOdMzDHPUdxAH8b0a+pALLRAhh2+mzM0XwhuNx4yxDTxepnKzdo9+n1ip2YmEXETJVlCkV3kvQStlSk=
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2512D164BD533F4C9B7FD510FDFD7507@namprd03.prod.outlook.com>
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=51rjv/rE8IVdsNp/pu/SqvKcr4yosm/xU7bN7sHEyl4=;
+        b=XtiE7QN0siN9qE83S4VaURtlrAfecWQIQJ7yuon0UZGNZtoDpA6NO+z4QWaZBeG5oG
+         t5Tygns5ugebqZ+HxiZ9GkpaUh5hK11hh913ttR6dcdU6IukAInViFyZGzQpJJC1YKfs
+         0zuNwC7KRf3pk+L9QGpznBoKsioWvuBfKoFWCYa05PER79+c4apqOJUwOyWORWOgqVrz
+         AaoqbL1NDxAq7/kM14pHwrTp6PIBcdMtFRjPe65AA2l0GAykLmAok4g6HN2hm8oo2RCf
+         dy1rtQQmCgWD5unj2GIBfXAxZiCOchvHSOPgX/hXxadXOzYcZo7U0DQ7npKGeuvFUxmW
+         qlAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=51rjv/rE8IVdsNp/pu/SqvKcr4yosm/xU7bN7sHEyl4=;
+        b=GI8EZkF9YRxHw6gjI7xpCjN9cbbPMSTucH3vK6VYLOdz2n6mUwfPWsAbXTTdT2s7pI
+         Wq6pdzV9gd4vH4FwhdkFmCJ2QVbTzZc5AKwMxPRqfs7fPBH+MbtopyQAI/JfbLybvJLn
+         zXWk7D/F8ZmZB5gp0r2pDBZ4h+T/wP0CmQXCvqgEOGgVZ97F5uKEZP3VIeKV6ZT9w2hM
+         EkC3YQO+OMGexkfc50mdiFBE1NzTXClZ+zL/Jmtvxs01KQCwCHXTrZnAz0QUlPFiwd0o
+         D9pDM/bgm0ypWl/zsSjbKPPQsaKnPnav8NPFF/vdBLUfgTpjXd+BEmxPpwD3SFtxQu23
+         x1pA==
+X-Gm-Message-State: AJcUukfsc9H6uSY2eeZrad/dMXxi2uYZQw95AcOQrM9ztAJaudizhMkH
+        xaqMRRk+gWE9U1TTF9ctkamRNALEUWqdIzHGRHM=
+X-Google-Smtp-Source: ALg8bN6K74jiOvlxVvF3zxoNHdbOXAUeOPysoSzVE83lWk89ux31aGyqlfQuY0OFys36+JmXzzesuWhuWkEn7Qxnhj4=
+X-Received: by 2002:a9d:4d17:: with SMTP id n23mr7190739otf.66.1548404232067;
+ Fri, 25 Jan 2019 00:17:12 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: synaptics.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 32be768c-2a5a-4bfa-9782-08d6829d7ca3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2019 08:17:01.7085
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB3629
+References: <20181206091052.7644-1-mircea.caprioru@analog.com>
+ <20181208152954.596529f8@archlinux> <154475156267.19322.6284056396098102605@swboyd.mtv.corp.google.com>
+ <20181216100741.4e362a17@archlinux> <154836968107.136743.11352935762099070131@swboyd.mtv.corp.google.com>
+In-Reply-To: <154836968107.136743.11352935762099070131@swboyd.mtv.corp.google.com>
+From:   Alexandru Ardelean <ardeleanalex@gmail.com>
+Date:   Fri, 25 Jan 2019 10:16:59 +0200
+Message-ID: <CA+U=DsqcGqBVnNhx+aYm7Z=igyLMdXt+2x6LTe_GWsp+=ZaWiQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] staging: iio: adc: ad7192: Add clock for external
+ clock reference
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Jonathan Cameron <jic23@kernel.org>,
+        Mircea Caprioru <mircea.caprioru@analog.com>,
+        Michael.Hennerich@analog.com, knaack.h@gmx.de, lars@metafoo.de,
+        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, Rob Herring <robh+dt@kernel.org>,
+        linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Fri, Jan 25, 2019 at 12:41 AM Stephen Boyd <sboyd@kernel.org> wrote:
+>
+> Quoting Jonathan Cameron (2018-12-16 02:07:41)
+> > Rob, Clk experts, questions for you below.
+> >
+> > Jonathan
+> >
+> >
+> > On Thu, 13 Dec 2018 17:39:22 -0800
+> > Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > > Quoting Jonathan Cameron (2018-12-08 07:29:54)
+> > > > On Thu, 6 Dec 2018 11:10:51 +0200
+> > > > Mircea Caprioru <mircea.caprioru@analog.com> wrote:
+> > > >
+> > > > > This patch adds a clock to the state structure of ad7192 for getting the
+> > > > > external clock frequency. This modifications is in accordance with clock
+> > > > > framework dt bindings documentation.
+> > > > >
+> > > > > Signed-off-by: Mircea Caprioru <mircea.caprioru@analog.com>
+> > > >
+> > > > +cc Rob and the clk list for advise on how to do the binding for this one.
+> > > >
+> > > > It is basically 2 pins, you can put a clock in on one of them or connect
+> > > > a crystal across them.  The driver has to set a register to say which is
+> > > > the case.
+> > > >
+> > > > Current proposal is two optional clocks (fall back to internal oscillator)
+> > > > but that doesn't seem to be commonly done, so I'm wondering if there
+> > > > is a 'standard' way to handle this sort of thing.
+> > > >
+> > >
+> > > I'm not sure I fully understand, but I think perhaps
+> > > assigned-clock-parents would work? Or does that not work because either
+> > > way some parent is assigned, either the crystal or the optional clk that
+> > > isn't a crystal?
+> > >
+> > My concern is they aren't really separate clock inputs.   They are just different
+> > ways of providing the same fundamental clock.  So I think we may want to just
+> > provide a single clock and have another dt binding to say what it is.
+> >
+> > So lots of ways we could do it, but I'm not sure what the right one to
+> > go with is!
+> >
+>
+> Sorry for getting back to this so late. Is the datasheet public for this
+> device? If so, any link to it?
+>
 
-On Fri, 25 Jan 2019 00:04:25 -0800 Guenter Roeck wrote:
+Hey,
+Link is http://analog.com/ad7192 and that should resolve to the proper
+page, where the datasheet is available.
+[ General info: most [if not all] datasheets from Analog Devices can
+be found by concatenating "http://analog.com/ + "<part name>" ]
 
-> Hi,
->=20
-> On 1/24/19 11:52 PM, Jisheng Zhang wrote:
-> > Use devm_watchdog_register_device() to simplify the code.
-> >=20
-> > Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-> > ---
-> >   drivers/watchdog/dw_wdt.c | 3 +--
-> >   1 file changed, 1 insertion(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
-> > index 501aebb5b81f..c053c2de5c2f 100644
-> > --- a/drivers/watchdog/dw_wdt.c
-> > +++ b/drivers/watchdog/dw_wdt.c
-> > @@ -303,7 +303,7 @@ static int dw_wdt_drv_probe(struct platform_device =
-*pdev)
-> >  =20
-> >   	watchdog_set_restart_priority(wdd, 128);
-> >  =20
-> > -	ret =3D watchdog_register_device(wdd);
-> > +	ret =3D devm_watchdog_register_device(wdd);
-> >   	if (ret)
-> >   		goto out_disable_clk;
-> >  =20
-> > @@ -318,7 +318,6 @@ static int dw_wdt_drv_remove(struct platform_device=
- *pdev)
-> >   {
-> >   	struct dw_wdt *dw_wdt =3D platform_get_drvdata(pdev);
-> >  =20
-> > -	watchdog_unregister_device(&dw_wdt->wdd);
-> >   	reset_control_assert(dw_wdt->rst);
-> >   	clk_disable_unprepare(dw_wdt->clk);
-> >  =20
-> >  =20
-> Unfortunately it isn't that easy. The other two calls have to be executed=
- after
-> unregistering the watchdog, meaning you would have to add devm_add_action=
-()
-> in the probe function to call them.
+But more directly, the link to the PDF is:
+https://www.analog.com/media/en/technical-documentation/data-sheets/AD7192.pdf
+Page 10 provides some description of the pins, page 20 the mode
+register for the clock, and page 32 a general description of the
+clock.
+If you search for MCLK1 or MCLK2 you should navigate pretty quick
+through the doc.
 
-do you mean reset_control_asser() and the clk_disable_unprepare()? If yes,
-does unregister the watchdog could trigger any register access? Per my
-understanding, there's no register access path in the unregister. Am I
-missing somthing?
+The clock circuitry [the 2 pins] is common for all chips this driver
+supports [AD7190/2/3/5].
 
 Thanks
+Alex
+
+> If it's two pins, and sometimes one pin is connected and other times two
+> pins are connected but a register needs to be set if the pins are
+> connected in one configuration or the other I would say your plan for a
+> DT property indicating how the pins are configured sounds good. Usually
+> the hardware can figure these things out itself so I find this sort of
+> odd, but if this is how it is then there's not much that we can do.
+>
+> It sounds like there aren't two different clk inputs to the device.
+> Given that information specifying two optional clks is incorrect because
+> there is only one 'slot' is the external clk source.
+>
