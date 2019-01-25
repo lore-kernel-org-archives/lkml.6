@@ -2,126 +2,112 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D60A2C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0DCC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:51:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A635E21855
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:50:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EEA5E21855
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 22:51:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="nsB65D8/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbfAYWuO (ORCPT
+        id S1729466AbfAYWvw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 17:50:14 -0500
-Received: from mga04.intel.com ([192.55.52.120]:41491 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726311AbfAYWuN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 17:50:13 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 14:50:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,523,1539673200"; 
-   d="scan'208";a="112738096"
-Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.14])
-  by orsmga008.jf.intel.com with ESMTP; 25 Jan 2019 14:50:12 -0800
-Date:   Fri, 25 Jan 2019 14:50:12 -0800
-From:   Sean Christopherson <sean.j.christopherson@intel.com>
-To:     Yang Weijiang <weijiang.yang@intel.com>
-Cc:     pbonzini@redhat.com, rkrcmar@redhat.com, jmattson@google.com,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, mst@redhat.com,
-        yu-cheng.yu@intel.com, yi.z.zhang@intel.com, hjl.tools@gmail.com,
-        Zhang Yi Z <yi.z.zhang@linux.intel.com>
-Subject: Re: [PATCH v2 5/7] KVM:VMX: Pass through host CET related MSRs to
- Guest.
-Message-ID: <20190125225012.GE21849@linux.intel.com>
-References: <20190122205909.24165-1-weijiang.yang@intel.com>
- <20190122205909.24165-6-weijiang.yang@intel.com>
+        Fri, 25 Jan 2019 17:51:52 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40351 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728657AbfAYWvw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 17:51:52 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u18so5195198plq.7
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 14:51:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=0ygU07R7hyqZ5EvZoT2Dyb5b73qPfby1PdmJeQH3/Uc=;
+        b=nsB65D8/DniVOkgnbvyJoWy7zeASW1oikpY/J3rHOkVgsAfFNjO5z7EMy+ntRvV9nB
+         Qvo3bMF8jJLPEXXZruvfQJ+5coIBmQtshiVd0FsTwrkiJ670YnSyH3k7exg01WkGTpQt
+         SUCohCLVnf4rHi6ZqC2cl+W62PWX2v3TBOJXBa+ZHfQWjy/l1sMmJySjQPDMcJNnUOqh
+         XEYuwlMQvD41/q7zhKm16ZgRHKypWbAwbXSjbUAl62Lx1NGKPGY+Tlz3oM6ti8fypygw
+         j1kFfs6XGWBrWzzBztERiwRzxAJG3ac0Cy17jh7ROklbn3IhwwAg0HX/WWnLvJvi5Z+q
+         qv/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0ygU07R7hyqZ5EvZoT2Dyb5b73qPfby1PdmJeQH3/Uc=;
+        b=oGSbXesuEo29ddvmPNNeWrtR3a2I7rZX/v2ysDnbNCK2/VtwsBOTPS0QOMx1ktU0Tc
+         vxESPzZyKTHelf/x4avpdcavGvURJhEAFTCUcKrhoZtZ4HmjEZQNCfX8tsVn/cxBEJsG
+         Dya1Nu3oV9blj3GxdzoxuQ9mA/Rs/xUKbr0gm+VoxMAs0Ihjr8DRD0IN/BVHcYl+YGzR
+         NfnFnQ0gXLffTsSBO71z0kcNhJwvX8n6MrqaaCVwjny5DuEeQWwiwHcj9Pj1moXKa56F
+         IlMgsRiIuj613EAJE2Hc4jfCPdNri388P941yVMv5PqVssnwvQKBjulg0PfDYYdL8UUz
+         Know==
+X-Gm-Message-State: AJcUukdjid4S7JpgN7jH2fIKcvynNyOOE+1HUv/6kxPOghkTvX2bJbj5
+        y6TO21mdFtYM8W0+t8k8l0OqQA==
+X-Google-Smtp-Source: ALg8bN5reauIh3/PdGthHww/x6n4d67UER4Lk8vS6vaseKA2BpdpQCV+/QuRpBOl1tGXE308W8WjxA==
+X-Received: by 2002:a17:902:4a0c:: with SMTP id w12mr13014850pld.8.1548456711420;
+        Fri, 25 Jan 2019 14:51:51 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id l22sm45918689pfj.179.2019.01.25.14.51.50
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 14:51:50 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gnAKD-0001S8-TS; Fri, 25 Jan 2019 15:51:49 -0700
+Date:   Fri, 25 Jan 2019 15:51:49 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     linux-rdma@vger.kernel.org, Doug Ledford <dledford@redhat.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        Nelson Escobar <neescoba@cisco.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Parvi Kaustubhi <pkaustub@cisco.com>,
+        linux-kernel@vger.kernel.org, Lijun Ou <oulijun@huawei.com>,
+        Steve Wise <swise@chelsio.com>, target-devel@vger.kernel.org,
+        Christian Benvenuti <benve@cisco.com>,
+        Faisal Latif <faisal.latif@intel.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Shiraz Saleem <shiraz.saleem@intel.com>,
+        Selvin Xavier <selvin.xavier@broadcom.com>,
+        "Wei Hu(Xavier)" <xavier.huwei@huawei.com>,
+        Devesh Sharma <devesh.sharma@broadcom.com>
+Subject: Re: [PATCH 0/2] infiniband: trivial header search path fixups
+Message-ID: <20190125225149.GA5556@ziepe.ca>
+References: <1548391171-6407-1-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190122205909.24165-6-weijiang.yang@intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1548391171-6407-1-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 04:59:07AM +0800, Yang Weijiang wrote:
-> The CET runtime settings, i.e., CET state control bits(IA32_U_CET/
-> IA32_S_CET), CET SSP(IA32_PL3_SSP/IA32_PL0_SSP) and SSP table address
-> (IA32_INTERRUPT_SSP_TABLE_ADDR) are task/thread specific, therefore,
-> OS needs to save/restore the states properly during context switch,
-> e.g., task/thread switching, interrupt/exception handling, it uses
-> xsaves/xrstors to achieve that.
+On Fri, Jan 25, 2019 at 01:39:29PM +0900, Masahiro Yamada wrote:
+> My main motivation is to get rid of crappy header search path manipulation
+> from Kbuild core.
 > 
-> The difference between VMCS CET area fields and xsave CET area, is that
-> the former is for state retention during Guest/Host context
-> switch while the latter is for state retention during OS execution.
+> Before that, I want to do as many treewide cleanups as possible.
 > 
-> Linux currently doesn't support CPL1 and CPL2, so SSPs for these level
-> are skipped here.
+> If you are interested in the big picture of this work,
+> the full patch set is available at:
 > 
-> Signed-off-by: Zhang Yi Z <yi.z.zhang@linux.intel.com>
-> Signed-off-by: Yang Weijiang <weijiang.yang@intel.com>
-> ---
->  arch/x86/kvm/vmx.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
+> git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git build-test
 > 
-> diff --git a/arch/x86/kvm/vmx.c b/arch/x86/kvm/vmx.c
-> index 7bbb8b26e901..68c0e5e41cb1 100644
-> --- a/arch/x86/kvm/vmx.c
-> +++ b/arch/x86/kvm/vmx.c
-> @@ -11531,6 +11531,7 @@ static struct kvm_vcpu *vmx_create_vcpu(struct kvm *kvm, unsigned int id)
->  	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_CS, MSR_TYPE_RW);
->  	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_ESP, MSR_TYPE_RW);
->  	vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_SYSENTER_EIP, MSR_TYPE_RW);
-> +
+> 
+> 
+> Masahiro Yamada (2):
+>   infiniband: remove unneeded header search paths
+>   infiniband: prefix header search paths with $(srctree)/
 
-Spurious whitespace change.
+Still compiles for me too, applied to rdam for-next
 
->  	vmx->msr_bitmap_mode = 0;
->  
->  	vmx->loaded_vmcs = &vmx->vmcs01;
-> @@ -11769,6 +11770,8 @@ static void nested_vmx_entry_exit_ctls_update(struct kvm_vcpu *vcpu)
->  static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
->  {
->  	struct vcpu_vmx *vmx = to_vmx(vcpu);
-> +	struct kvm_cpuid_entry2 *best;
-> +	unsigned long *msr_bitmap;
->  
->  	if (cpu_has_secondary_exec_ctrls()) {
->  		vmx_compute_secondary_exec_control(vmx);
-> @@ -11786,6 +11789,19 @@ static void vmx_cpuid_update(struct kvm_vcpu *vcpu)
->  		nested_vmx_cr_fixed1_bits_update(vcpu);
->  		nested_vmx_entry_exit_ctls_update(vcpu);
->  	}
-> +
-> +	msr_bitmap = vmx->vmcs01.msr_bitmap;
-> +	best = kvm_find_cpuid_entry(vcpu, 7, 0);
-> +	if ((best && best->function == 0x7) &&
-> +	    ((best->ecx & bit(X86_FEATURE_SHSTK)) |
-> +	    (best->edx & bit(X86_FEATURE_IBT)))) {
-> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_U_CET, MSR_TYPE_RW);
-> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_S_CET, MSR_TYPE_RW);
-> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_INT_SSP_TAB, MSR_TYPE_RW);
-> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL0_SSP, MSR_TYPE_RW);
-> +		vmx_disable_intercept_for_msr(msr_bitmap, MSR_IA32_PL3_SSP, MSR_TYPE_RW);
-
-kvm_cpuid_update() an be called multiple times, don't we need to look
-for a change in status as opposed to the bits being enabled?  And at
-that point toggling interception should probably be wrapped in a helper
-function.
-
-> +	}
-> +
->  }
->  
->  static void vmx_set_supported_cpuid(u32 func, struct kvm_cpuid_entry2 *entry)
-> -- 
-> 2.17.1
-> 
+Thanks,
+Jason
