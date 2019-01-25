@@ -4,66 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E2CC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:24:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9CFEC282C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:24:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8124A218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:24:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B9DF1218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:24:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="ux28+rki"
+	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="Be58ebP2"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728504AbfAYMYe (ORCPT
+        id S1728558AbfAYMYi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 07:24:34 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:41609 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbfAYMYb (ORCPT
+        Fri, 25 Jan 2019 07:24:38 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:36604 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728410AbfAYMYd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 07:24:31 -0500
-Received: by mail-lj1-f194.google.com with SMTP id k15-v6so8192165ljc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 04:24:30 -0800 (PST)
+        Fri, 25 Jan 2019 07:24:33 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so8229480ljk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 04:24:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=t213Fky0dlXC3LPSWsEKGnyugEHm5O3iqscObb9Pu/w=;
-        b=ux28+rkiGYdzx/BIIXR9Dt412sbQF9EfCE0/FXheXQuGmB2DzBvMMITxFxJWwOE22h
-         3yQmuz01wfISkJwgcJdXynWm+L+7Z/d7L1eMsJRyoObFIp62Hg3q387btvSi3Pa//NXU
-         pm16WLR9Xi8poduFYMCrD8dEK5OZvRCl+uQ/Ic6MvhaLXIX4AF052d9ZYleMWdoeIfbj
-         ACfe+s++MiRS7G/8OW3C4IfxX6+MRsNJtzPAvmshP4Asx6VOG97wCcOdgcJXYpmRXYgU
-         8/1aL4GWaGu8n8eTFHmIyuDlXniAOSK9VwrmuOIyIVCRJWtr3/F+uMnkvgOm3T80jCFP
-         xPSw==
+        bh=H4asA/HrfRTCLZ9s+7ODb9ujqrC02barVnHHP3w4OeE=;
+        b=Be58ebP2NyXkKjVLpYKmbQRZZfz3qxFpZX7JJYIlPVc6kI0GGagVOkjSCFTr14Ep+t
+         FlIUuKrIHL8l2PmaM4wewKSzvatj23DhHsfnun9xWLo0OS/geLz2KKMzWndKvVEz+Oy1
+         DTlyM6cACpHEwEssEelAj/7ctskzid88crHwIz36ABtIHF9JUT04DkyWk5t5Pp8KsKWa
+         FeagTCAQNkJMnmDdG1TOui7yuBE4MZlzJCRRo8pN7L+2sbT3QFFCLKKieVOikawdEH/1
+         /KTwz+u9RAwyEOcAfFs72Rocd5M1PIxQVf8Qa/Inbule02RoAPGYLaKSh0eZJGq0qKtf
+         JiWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=t213Fky0dlXC3LPSWsEKGnyugEHm5O3iqscObb9Pu/w=;
-        b=fRPsgYEXzVceyPH7yTbUCGNTMihttJsHLKzlCxoqAKzZT77pAfD6heV/g+kX/x7srD
-         jAN/a22gUzYdDGRvXdz3lDqbUzUYqFrppI3g84fQm0lrYYXGPgWBGtlhli3A1k06IbJa
-         pe246NPGmTy01BNKuPmkFLLFFHmdK+8YXPRSbNt3fWbd01wo6OLtC8ir52wWa+wJuUOy
-         Iff2fYY7PubQJmdv5v8gz0kUOggv8H1nDLIKO8h3u39XH8hvxs6fMte6tpeRLTnqaDrU
-         pA+R52/PayOPqYBnhQL7Hu6nc6fK1+6SgeWEo5lB38GAhxtTxxa0r8hF7mMw3DU/VwKZ
-         HElg==
-X-Gm-Message-State: AJcUukeYDgKjRxLYSCOdqhYuysQRquLTaP6EMFzFsC04pNDO0gHom6Cp
-        ySaFLk8kNcyV4oMOpuMsp4unm5zH2lk=
-X-Google-Smtp-Source: ALg8bN6ETeWG1r6djfeHOB2AkscgnzjCeqWd1IFZk+1jbAwo6p8CArdmPo5QVMe7Mr11r3mPkFXm1w==
-X-Received: by 2002:a2e:8087:: with SMTP id i7-v6mr8747843ljg.179.1548419069469;
-        Fri, 25 Jan 2019 04:24:29 -0800 (PST)
+        bh=H4asA/HrfRTCLZ9s+7ODb9ujqrC02barVnHHP3w4OeE=;
+        b=cmPBnM7k9orQ4ahtIw9FloZ+3f+uWnpWFzcCRGlTUTDzshBUIfiCKbU4jTmSt1ak8Y
+         Ufz2XjfI48mBIcJV4Ce1P5oY3Fm3CE27AJ+XJCy4NoBM0sFZqy9L5EwlzDFINNEfqJxZ
+         avq5xTUvHBMASmUqZaZcuHs/7tjyfCuAj/PeHrYSmEDjAMRrefI5GBxUL198iZ2MzGAh
+         Q+AHciTVALcgR7k+XkXzZW2BeHEP3jQDkEirVnR4uf9AecNvdGJ4Qpuee7uImCb7GByD
+         zcf5pV1aoiH0fdT9EBJEyKsLuexfJXSvuRNrxSHBHfg68JfzrfYMgOoFf8go5LcvZun5
+         CGtw==
+X-Gm-Message-State: AJcUukfk08Jk0NyZC7RV+DPOWunzjucYT9AVtbqsApNut/xmcx1Q09R8
+        ZIoO8WNR2ht8jEMDJ9HAA6rquezvpUQ=
+X-Google-Smtp-Source: ALg8bN4X4/JA2vr3rvz97Rl0G1OZlJYP7AKI1v1U8VIF8CdEcalqNEa9fD/7XSaILMfEB9KpjufNBQ==
+X-Received: by 2002:a2e:7d15:: with SMTP id y21-v6mr8583036ljc.77.1548419070963;
+        Fri, 25 Jan 2019 04:24:30 -0800 (PST)
 Received: from mimer.lan (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
-        by smtp.gmail.com with ESMTPSA id y81-v6sm1508376lje.30.2019.01.25.04.24.28
+        by smtp.gmail.com with ESMTPSA id y81-v6sm1508376lje.30.2019.01.25.04.24.29
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 04:24:29 -0800 (PST)
+        Fri, 25 Jan 2019 04:24:30 -0800 (PST)
 From:   Jonas Bonn <jonas@norrbonn.se>
 To:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Cc:     Jonas Bonn <jonas@norrbonn.se>, Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: [PATCH v2 1/2] spi: support inter-word delay requirement for devices
-Date:   Fri, 25 Jan 2019 13:24:24 +0100
-Message-Id: <20190125122425.30676-2-jonas@norrbonn.se>
+Cc:     Jonas Bonn <jonas@norrbonn.se>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Mark Brown <broonie@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2 2/2] spi-atmel: support inter-word delay
+Date:   Fri, 25 Jan 2019 13:24:25 +0100
+Message-Id: <20190125122425.30676-3-jonas@norrbonn.se>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190125122425.30676-1-jonas@norrbonn.se>
 References: <20190125122425.30676-1-jonas@norrbonn.se>
@@ -74,69 +77,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some devices are slow and cannot keep up with the SPI bus and therefore
-require a short delay between words of the SPI transfer.
+If the SPI slave requires an inter-word delay, configure the DLYBCT
+register accordingly.
 
-The example of this that I'm looking at is a SAMA5D2 with a minimum SPI
-clock of 400kHz talking to an AVR-based SPI slave.  The AVR cannot put
-bytes on the bus fast enough to keep up with the SoC's SPI controller
-even at the lowest bus speed.
-
-This patch introduces the ability to specify a required inter-word
-delay for SPI devices.  It is up to the controller driver to configure
-itself accordingly in order to introduce the requested delay.
+Tested on a SAMA5D2 board (derived from SAMA5D2-Xplained reference
+board).
 
 Signed-off-by: Jonas Bonn <jonas@norrbonn.se>
+CC: Nicolas Ferre <nicolas.ferre@microchip.com>
 CC: Mark Brown <broonie@kernel.org>
-CC: Rob Herring <robh+dt@kernel.org>
-CC: Mark Rutland <mark.rutland@arm.com>
+CC: Alexandre Belloni <alexandre.belloni@bootlin.com>
+CC: Ludovic Desroches <ludovic.desroches@microchip.com>
 CC: linux-spi@vger.kernel.org
-CC: devicetree@vger.kernel.org
+CC: linux-arm-kernel@lists.infradead.org
 ---
- Documentation/devicetree/bindings/spi/spi-bus.txt | 1 +
- drivers/spi/spi.c                                 | 4 ++++
- include/linux/spi/spi.h                           | 1 +
- 3 files changed, 6 insertions(+)
+ drivers/spi/spi-atmel.c | 18 +++++++++++++-----
+ 1 file changed, 13 insertions(+), 5 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-bus.txt b/Documentation/devicetree/bindings/spi/spi-bus.txt
-index 1f6e86f787ef..a5f20060676d 100644
---- a/Documentation/devicetree/bindings/spi/spi-bus.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-bus.txt
-@@ -77,6 +77,7 @@ All slave nodes can contain the following optional properties:
- 		    Defaults to 1 if not present.
- - spi-rx-delay-us - Microsecond delay after a read transfer.
- - spi-tx-delay-us - Microsecond delay after a write transfer.
-+- spi-word-delay-us - Microsecond delay between individual words of a transfer
+diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
+index 74fddcd3282b..24445bfbd74e 100644
+--- a/drivers/spi/spi-atmel.c
++++ b/drivers/spi/spi-atmel.c
+@@ -1209,13 +1209,21 @@ static int atmel_spi_setup(struct spi_device *spi)
+ 		csr |= SPI_BIT(CSAAT);
  
- Some SPI controllers and devices support Dual and Quad SPI transfer mode.
- It allows data in the SPI system to be transferred using 2 wires (DUAL) or 4
-diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
-index 9a7def7c3237..cd4d4065eca2 100644
---- a/drivers/spi/spi.c
-+++ b/drivers/spi/spi.c
-@@ -1692,6 +1692,10 @@ static int of_spi_parse_dt(struct spi_controller *ctlr, struct spi_device *spi,
- 	}
- 	spi->max_speed_hz = value;
- 
-+	if (!of_property_read_u32(nc, "spi-word-delay-us", &value)) {
-+		spi->word_delay = value;
+ 	/* DLYBS is mostly irrelevant since we manage chipselect using GPIOs.
+-	 *
+-	 * DLYBCT would add delays between words, slowing down transfers.
+-	 * It could potentially be useful to cope with DMA bottlenecks, but
+-	 * in those cases it's probably best to just use a lower bitrate.
+ 	 */
+ 	csr |= SPI_BF(DLYBS, 0);
+-	csr |= SPI_BF(DLYBCT, 0);
++
++	/* DLYBCT adds delays between words.  This is useful for slow devices
++	 * that need a bit of time to setup the next transfer.
++	 */
++	if (spi->word_delay) {
++		csr |= SPI_BF(DLYBCT,
++			clamp_t(u8,
++				(as->spi_clk/1000000*spi->word_delay)>>5,
++				1, 255));
++	} else {
++		csr |= SPI_BF(DLYBCT, 0);
 +	}
 +
- 	return 0;
- }
  
-diff --git a/include/linux/spi/spi.h b/include/linux/spi/spi.h
-index 314d922ca607..e5200dd9d750 100644
---- a/include/linux/spi/spi.h
-+++ b/include/linux/spi/spi.h
-@@ -164,6 +164,7 @@ struct spi_device {
- 	char			modalias[SPI_NAME_SIZE];
- 	const char		*driver_override;
- 	int			cs_gpio;	/* chip select gpio */
-+	uint16_t		word_delay;	/* inter-word delay (us) */
- 
- 	/* the statistics */
- 	struct spi_statistics	statistics;
+ 	/* chipselect must have been muxed as GPIO (e.g. in board setup) */
+ 	npcs_pin = (unsigned long)spi->controller_data;
 -- 
 2.19.1
 
