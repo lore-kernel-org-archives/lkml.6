@@ -2,150 +2,124 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82D3FC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B81C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:18:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E7CE1218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:18:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtKXMVLX"
+	by mail.kernel.org (Postfix) with ESMTP id 14F7C218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:18:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfAYPSE (ORCPT
+        id S1728579AbfAYPSS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:18:04 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:39827 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbfAYPSE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:18:04 -0500
-Received: by mail-pl1-f193.google.com with SMTP id 101so4696087pld.6
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 07:18:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=CQyVqyjAD0UyM5BgevkTZgjLaebiRunzdWd/bduHnnQ=;
-        b=jtKXMVLXW2qJn51/uL/ymU0bcO1tV1zzF0r35YxSHcGlgNr1UKbE/mMoc1ztI+ABfP
-         3QJQEbbwia0I7MO5AyOkoOZGX3GBHrLW+h4ZnxIKhUaQ6S8NeKfj7mGFtg90ZmRV9+zG
-         1S005em1c9gjLWh+oR1FNNo0w2TbzemyhiBGBfGn4r8YZIyc9bpM5ChMBQF5OReokd8/
-         VHZW3jQCPnuRBfhHq8yoE51DOl9FotuhP+hQfHn86vRlDw+y1JuFz2SMtoU2BJzV2jnU
-         QxAuc6ecdXLmQ/gJBEvC0TQdkYNMevEeIfbN7nKN+nBg4bywqzvT1hDhKJORYG2f6ngP
-         7Wqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=CQyVqyjAD0UyM5BgevkTZgjLaebiRunzdWd/bduHnnQ=;
-        b=dEg5Kyi5oe/LASP0OV1HAr/eIcY0Z40lI9gRqxHZRAvl9Rs3JUrGcXaH5XBFv7cPwl
-         CvUZIte5A51US7WD2zzm+MTOCvdX6+5XKygJg91qA1uF89zvQr+ahxok7yrsMo+qYGRP
-         eRqrssFPxE7GxqNgPfEO6u8LZ/5xTs+VSC0hQhtxHziaTb9Td7azFj8P4n0nXWDqXVab
-         VJx/WTyjh6k1XZ1rsuROqZWsTlaDEQyOo3WB74mm0z/Ps74ZVK7e/XX4+Lhby22bwOhV
-         WT+7kitbG5Pa7DMSI89d4AkIPjdb2IVzFLWr+QESt0bMwVBZqZScM8OvYEMiGSiGRxLT
-         3n4g==
-X-Gm-Message-State: AJcUukcJwNeFBYLyI9sQm54LnAo4P3i1dI/GJUw+5lk6grLTM3tprNQu
-        kjZLSSZX7oJ2UUMSuobur9I=
-X-Google-Smtp-Source: ALg8bN6MKOggyl7HMhfHPyX378n0yRmmGyR6dm2Xe3Xu4d6ZoDMIgUjl8Oo0AAxgdca3Vpr6rr0yvQ==
-X-Received: by 2002:a17:902:bb98:: with SMTP id m24mr11072502pls.71.1548429483040;
-        Fri, 25 Jan 2019 07:18:03 -0800 (PST)
-Received: from nishad ([106.51.25.107])
-        by smtp.gmail.com with ESMTPSA id b10sm36543837pfj.183.2019.01.25.07.17.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 07:18:02 -0800 (PST)
-Date:   Fri, 25 Jan 2019 20:47:53 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Joe Perches <joe@perches.com>
-Cc:     NeilBrown <neil@brown.name>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Sergio Paracuellos <sergio.paracuellos@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        John Crispin <blogic@openwrt.org>, devel@driverdev.osuosl.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH] staging: mt7621-pinctrl: Remove space after cast
-Message-ID: <20190125151751.GA11257@nishad>
-References: <20190123163122.GA4807@nishad>
- <b51b1d3071aec95915d48159c1dd6e0a336cd9f4.camel@perches.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b51b1d3071aec95915d48159c1dd6e0a336cd9f4.camel@perches.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 25 Jan 2019 10:18:18 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47462 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726111AbfAYPSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:18:18 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D933EAC4B;
+        Fri, 25 Jan 2019 15:18:15 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 16:18:15 +0100
+From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
+To:     Antoine Tenart <antoine.tenart@bootlin.com>
+Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
+        Andrew Lunn <andrew@lunn.ch>, maxime.chevallier@bootlin.com,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: mvpp2: fix condition for setting up link
+ interrupt
+Message-Id: <20190125161815.0527d5174fdfb680eee59372@suse.de>
+In-Reply-To: <20190125083720.GK3662@kwain>
+References: <20190124131803.14038-1-tbogendoerfer@suse.de>
+        <20190124155137.GD482@lunn.ch>
+        <20190124160741.jady3r2e4dme7c4m@e5254000004ec.dyn.armlinux.org.uk>
+        <20190125083720.GK3662@kwain>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=ISO-8859-1
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 09:45:53AM -0800, Joe Perches wrote:
-> On Wed, 2019-01-23 at 22:01 +0530, Nishad Kamdar wrote:
-> > This patch removes space after a cast as it
-> > is not needed.
-> > Issue found by checkpatch.
+On Fri, 25 Jan 2019 09:37:20 +0100
+Antoine Tenart <antoine.tenart@bootlin.com> wrote:
+
+> Hi,
+> 
+> On Thu, Jan 24, 2019 at 04:07:41PM +0000, Russell King - ARM Linux admin wrote:
+> > On Thu, Jan 24, 2019 at 04:51:37PM +0100, Andrew Lunn wrote:
+> > > On Thu, Jan 24, 2019 at 02:18:03PM +0100, Thomas Bogendoerfer wrote:
+> > > > 
+> > > > Fixes: 4bb043262878 ("net: mvpp2: phylink support")
+> > > > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
+> > > > ---
+> > > >  drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
+> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > > > index 16066c2d5b3a..0fbfe1945a69 100644
+> > > > --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > > > +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> > > > @@ -3405,7 +3405,7 @@ static int mvpp2_open(struct net_device *dev)
+> > > >  		valid = true;
+> > > >  	}
+> > > >  
+> > > > -	if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
+> > > > +	if (priv->hw_version == MVPP22 && port->link_irq && port->phylink) {
+> > > >  		err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
+> > > >  				  dev->name, port);
+> > > >  		if (err) {
 > > 
-> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> > ---
-> >  drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-> > index 80e7067cfb79..3e959fa73703 100644
-> > --- a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-> > +++ b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-> > @@ -363,7 +363,7 @@ static int rt2880_pinmux_probe(struct platform_device *pdev)
-> >  		}
-> >  
-> >  		range = devm_kzalloc(p->dev, sizeof(*range) + 4, GFP_KERNEL);
-> > -		range->name = name = (char *) &range[1];
-> > +		range->name = name = (char *)&range[1];
-> >  		sprintf(name, "pio");
+> > This still looks fishy to me.  mvpp2_link_status_isr() has handling in
+> > it that is safe to be called for non-phylink cases, so presumably the
+> > right fix is to drop the "&& !port->phylink" completely?
 > 
-> I find this code unsightly and fragile.
-> It doesn't test the return of devm_kzalloc for failure.
+> That's right, mvpp2_link_status_isr() is safe to be called with or
+> without phylink being used. This IRQ is reporting the link status, and
+> is used when using in-band status or when phylink isn't used.
 > 
-> This might as well be
-> ---
->  drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+> We do have a similar fix locally, which looks like:
 > 
-> diff --git a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-> index 80e7067cfb79..9b52d44abef1 100644
-> --- a/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-> +++ b/drivers/staging/mt7621-pinctrl/pinctrl-rt2880.c
-> @@ -350,7 +350,6 @@ static int rt2880_pinmux_probe(struct platform_device *pdev)
->  	for_each_compatible_node(np, NULL, "ralink,rt2880-gpio") {
->  		const __be32 *ngpio, *gpiobase;
->  		struct pinctrl_gpio_range *range;
-> -		char *name;
->  
->  		if (!of_device_is_available(np))
->  			continue;
-> @@ -362,9 +361,10 @@ static int rt2880_pinmux_probe(struct platform_device *pdev)
->  			return -EINVAL;
->  		}
->  
-> -		range = devm_kzalloc(p->dev, sizeof(*range) + 4, GFP_KERNEL);
-> -		range->name = name = (char *) &range[1];
-> -		sprintf(name, "pio");
-> +		range = devm_kzalloc(p->dev, sizeof(*range), GFP_KERNEL);
-> +		if (!range)
-> +			return -ENOMEM;
-> +		range->name = "pio";
->  		range->npins = __be32_to_cpu(*ngpio);
->  		range->base = __be32_to_cpu(*gpiobase);
->  		range->pin_base = range->base;
-> 	
-> 	
+> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> index 2bcbf9caaf0d..6bab1824a1e4 100644
+> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+> @@ -3406,7 +3406,8 @@ static int mvpp2_open(struct net_device *dev)
+>                 valid = true;
+>         }
 > 
+> -       if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
+> +       if (priv->hw_version == MVPP22 && port->link_irq &&
+> +           (!port->phylink || !port->has_phy)) {
+>                 err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
+>                                   dev->name, port);
+>                 if (err) {
+> 
+> We haven't submitted it yet, as we saw several issues when a port has no
+> PHY and is using the XLG MAC (so, not on the mcbin). We currently are
+> working on them.
+> 
+> I don't like to ask this, as you submitted the fix first, but I do think
+> we should hold back a bit while we figure out proper solutions. If you
+> need in-band status to be working properly, we could share out current
+> local branch so you can test and validate it do solve your issue.
 
-Ok, I'll include it as a new patch as I think this one has already been
-accepted.
+I also thought about it, and your patch makes more sense. It's more about
+having no ethernet phy and therefore looking at the serdes for link status.
+The system I'm running on has a few internal nodes behind a switch. The
+switch propagates the external link state to the nodes via serdes lines.
 
-Thanks for the review.
+I've tested your patch and it works in my setup.
 
-Regards,
-Nishad
+Thomas.
+
+-- 
+SUSE Linux GmbH
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
