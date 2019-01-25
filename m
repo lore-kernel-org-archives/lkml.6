@@ -2,102 +2,183 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 193FAC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82644C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6A50218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:39:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548434384;
-	bh=J9fYJY1VOuGgQWjhqHz5fVIABgvyiSe+hTtN1UBPMQU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=hD3iPgNrH8SVBGH2pvww4UuGNdiWvVUiPseNoH+s92GafNb3rfuwcUlEyVkGZEplT
-	 WnAMR9o+LIv5VZwwBfvBEO4u/GpVsFmGMKGII6IVqsQTKTGbkND5EGO0jhzQz388HI
-	 EXIGrJF6Jn0bC9+cIMM6KH+faTMfli+fo5bBa51k=
+	by mail.kernel.org (Postfix) with ESMTP id 5505F218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:41:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727558AbfAYQjn (ORCPT
+        id S1726964AbfAYQlg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:39:43 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37482 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726108AbfAYQjm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:39:42 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 86CBBB044;
-        Fri, 25 Jan 2019 16:39:41 +0000 (UTC)
-Date:   Fri, 25 Jan 2019 17:39:38 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     robert shteynfeld <robert.shteynfeld@gmail.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Steven Sistare <steven.sistare@oracle.com>,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        Bob Picco <bob.picco@oracle.com>
-Subject: Re: kernel panic due to
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2830bf6f05fb3e05bc4743274b806c821807a684
-Message-ID: <20190125163938.GA20411@dhcp22.suse.cz>
-References: <CADfvbxqC1+XoSsn0sEDqFE16tN1Pq46-QDAaCu=AXJdZeY3rDQ@mail.gmail.com>
- <CAHk-=wh-1wB_X2MG0vW5e755rWJ5pBN8yyXLo2syOdcMV6qYoQ@mail.gmail.com>
- <20190125073704.GC3560@dhcp22.suse.cz>
- <20190125081924.GF3560@dhcp22.suse.cz>
- <20190125082952.GG3560@dhcp22.suse.cz>
- <CADfvbxqOOt_07hyeReEH_gCmTxxMYJr0-CSkqdX57wGTWisNTA@mail.gmail.com>
- <20190125155810.GQ3560@dhcp22.suse.cz>
- <CADfvbxp8sER_Xjkm-g8+BH87Ne8oUBirSWx6mmL=Z3XwyYoQHA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CADfvbxp8sER_Xjkm-g8+BH87Ne8oUBirSWx6mmL=Z3XwyYoQHA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 25 Jan 2019 11:41:36 -0500
+Received: from shell.v3.sk ([90.176.6.54]:40290 "EHLO shell.v3.sk"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbfAYQlg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 11:41:36 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 69F58CC89A;
+        Fri, 25 Jan 2019 17:41:32 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id MXXdaEBKKRSQ; Fri, 25 Jan 2019 17:41:28 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 69876CC8C2;
+        Fri, 25 Jan 2019 17:41:28 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id 7BvLdmNPcLPC; Fri, 25 Jan 2019 17:41:27 +0100 (CET)
+Received: from p1260.fit.wifi.vutbr.cz (unknown [147.229.117.36])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 937E8CC89A;
+        Fri, 25 Jan 2019 17:41:27 +0100 (CET)
+Message-ID: <596d69e17842e73f99ed320c9a9823f988c064c6.camel@v3.sk>
+Subject: Re: [PATCH] drm/armada: add mmp2 support
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Date:   Fri, 25 Jan 2019 17:41:26 +0100
+In-Reply-To: <20190122191039.ls6dgt2qaxympdnb@e5254000004ec.dyn.armlinux.org.uk>
+References: <20190121060349.549797-1-lkundrak@v3.sk>
+         <20190122191039.ls6dgt2qaxympdnb@e5254000004ec.dyn.armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 25-01-19 11:16:30, robert shteynfeld wrote:
-> Attached is the dmesg from patched kernel.
+On Tue, 2019-01-22 at 19:10 +0000, Russell King - ARM Linux admin
+wrote:
+> On Mon, Jan 21, 2019 at 07:03:49AM +0100, Lubomir Rintel wrote:
+> > Heavily based on the Armada 510 (Dove) support. Like with 510 support, this
+> > also just supports a single source clock -- the "Display 1" clock as
+> > generated by the APMU. This one was chosen because the OLPC XO 1.75 laptop
+> > uses it for its internal panel.
+> > 
+> > If anyone uses this to drive a MIPI or HDMI encoder, they may want to
+> > extend this to choose a different source for the pixel clock -- it should
+> > be a reasonably straightforward thing to do.
+> > 
+> > The data sheet is not available, but James Cameron of OLPC kindly
+> > provided some details about the LCD_SCLK_DIV register.
+> > 
+> > Link: https://lists.freedesktop.org/archives/dri-devel/2018-December/201021.html
+> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> > ---
+> >  drivers/gpu/drm/armada/Makefile      |  1 +
+> >  drivers/gpu/drm/armada/armada_610.c  | 93 ++++++++++++++++++++++++++++
+> >  drivers/gpu/drm/armada/armada_crtc.c |  4 ++
+> >  drivers/gpu/drm/armada/armada_drm.h  |  1 +
+> >  drivers/gpu/drm/armada/armada_hw.h   | 10 +++
+> >  5 files changed, 109 insertions(+)
+> >  create mode 100644 drivers/gpu/drm/armada/armada_610.c
+> > 
+> > diff --git a/drivers/gpu/drm/armada/Makefile b/drivers/gpu/drm/armada/Makefile
+> > index 9bc3c3213724..5bbf86324cda 100644
+> > --- a/drivers/gpu/drm/armada/Makefile
+> > +++ b/drivers/gpu/drm/armada/Makefile
+> > @@ -2,6 +2,7 @@
+> >  armada-y	:= armada_crtc.o armada_drv.o armada_fb.o armada_fbdev.o \
+> >  		   armada_gem.o armada_overlay.o armada_plane.o armada_trace.o
+> >  armada-y	+= armada_510.o
+> > +armada-y	+= armada_610.o
+> >  armada-$(CONFIG_DEBUG_FS) += armada_debugfs.o
+> >  
+> >  obj-$(CONFIG_DRM_ARMADA) := armada.o
+> > diff --git a/drivers/gpu/drm/armada/armada_610.c b/drivers/gpu/drm/armada/armada_610.c
+> > new file mode 100644
+> > index 000000000000..278b204038ea
+> > --- /dev/null
+> > +++ b/drivers/gpu/drm/armada/armada_610.c
+> > @@ -0,0 +1,93 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (C) 2012 Russell King
+> > + * Copyright (C) 2018,2019 Lubomir Rintel
+> > + *
+> > + * This program is free software; you can redistribute it and/or modify
+> > + * it under the terms of the GNU General Public License version 2 as
+> > + * published by the Free Software Foundation.
+> > + *
+> > + * Armada MMP2 variant support
+> > + */
+> > +#include <linux/clk.h>
+> > +#include <drm/drm_modes.h>
+> > +#include <drm/drm_crtc.h>
+> > +#include "armada_crtc.h"
+> > +#include "armada_drm.h"
+> > +#include "armada_hw.h"
+> > +
+> > +static int armada610_crtc_init(struct armada_crtc *dcrtc, struct device *dev)
+> > +{
+> > +	struct clk *clk;
+> > +
+> > +	clk = devm_clk_get(dev, "disp0");
+> > +	if (IS_ERR(clk))
+> > +		return PTR_ERR(clk) == -ENOENT ? -EPROBE_DEFER : PTR_ERR(clk);
+> > +
+> > +	dcrtc->extclk[0] = clk;
+> 
+> I've been reworking the clocking support for Armada, you can find the
+> current code in my git tree's drm-armada-devel branch (as mentioned
+> in MAINTAINERS).  You'll need to update to that before I can apply
+> this.
+> 
+> The clocks are named in Dove's TRM as:
+> 
+>    0 = AXIbus: Select AXI bus clock as pixel clock source.
+>    1 = EXT_REF_CLK0: LCD_EXT_REF_CLK[0]
+>    2 = PLLDivider: Select PLL divider input clock as pixel clock source.
+>    3 = EXT_REF_CLK1: LCD_EXT_REF_CLK[1]
 
-Your Node1 physical memory range precedes Node0 which is quite unusual
-but it shouldn't be a huge problem on its own. But memory ranges are
-not aligned to the memory section
+What we know (from [1]) about MMP2 clock sources is:
 
-[    0.286954] Early memory node ranges
-[    0.286955]   node   1: [mem 0x0000000000001000-0x0000000000090fff]
-[    0.286955]   node   1: [mem 0x0000000000100000-0x00000000dbdf8fff]
-[    0.286956]   node   1: [mem 0x0000000100000000-0x0000001423ffffff]
-[    0.286956]   node   0: [mem 0x0000001424000000-0x0000002023ffffff]
+0 AXI
+1 LCD Display 1
+2 LCD Display 2
+3 HDMI PLL
 
-As you can see the last pfn for the node1 is inside the section and
-Node0 starts right after. This is quite unusual as well. If for no other
-reasons then the memmap of those struct pages will be remote for one or
-the other. Actually I am not even sure we can handle that properly
-because we do expect 1:1 mapping between sections and nodes.
+[1] 
+https://lists.freedesktop.org/archives/dri-devel/2018-December/201021.html
 
-Now it also makes some sense why 2830bf6f05fb ("mm, memory_hotplug:
-initialize struct pages for the full memory section") made any
-difference. We simply write over a potentially initialized struct page
-and blow up on that. I strongly suspect that the commit just uncovered
-a pre-existing problem. Let me think what we can do about that.
- 
-> I'm not an expert at debugging the kernel, obviously.  I tried setting
-> up a serial console before without much luck as part of this debugging
-> session.
+> So I chose to use these neumonics in the Armada 510.  Please can we
+> keep to naming the clock inputs as per documented names please?
 
-Ubuntu has a nice howto for netconsole configuration
-https://wiki.ubuntu.com/Kernel/Netconsole. It is quite important to get
-the actual failure.
--- 
-Michal Hocko
-SUSE Labs
+Are you suggesting that clocks that are available on MMP2 are
+essentially the same as on 510? Like this?
+
+0 AXI -- axiclk
+1 LCD Display 1 -- ext_ref_clk0
+2 LCD Display 2 --
+ext_ref_clk1
+3 HDMI PLL -- plldivider
+
+If that is the case, then I'm happy to take your word on it. I had to
+guess.
+
+Why I guessed differently was because the clock numbers in
+the LCD_SCLK_DIV register don't seem to match and I thought the
+"external" clock sources on 510 are external to the SoC (while they two
+"LCD Display" clocks on MMP2 are generated by the PMU).
+
+> Also, have a look at how Armada 510 gets its clocks from DT - note
+> that the array they're placed in is ordered by priority (iow, if we
+> have an external clock, we use that in preference to the more
+> restricted axibus and plldivider clocks.)
+
+Okay. I'll follow up with an updated patch over the course of the next
+week.
+
+> 
+> Thanks.
+
+Thank you
+Lubo
+
