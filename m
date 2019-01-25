@@ -7,56 +7,54 @@ X-Spam-Status: No, score=-13.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E900C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DD63C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:11:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CF77218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:11:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 101D6218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:11:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548439895;
-	bh=hifuY5fjVUv2Yp38aCRBohGq10Lwo22y3/vmgk/w4UU=;
+	s=default; t=1548439897;
+	bh=10wHt3kDTYlVJE0OeS+8a1q2OPSiN9Um7mnpberkfFA=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=lOUfKLSqZr95p1i3x2tDiRNdRXlrKV02dbTPDsH3uwKPl0eZsEmfMpPd8rm33adK9
-	 uN54zbCCQarzFBviCvaszgJhbyhbWrCaNJgxUbeEcIEIevQPZ7vu0Wt4Wks8lOIN86
-	 rr0Ppc0kAAn1JTLuV4jrBrfSBXU03DuU4T6rWKlE=
+	b=aT1ZpO/gAs40LRiIgMunXoRqXp0L849RSvwcLfGEVNwN0SBxfX7guk9uhxXYp5e/I
+	 YwmJ2bGqcYR0r4AnJvPNMJRPldTCg1I3bh206iPF5GszvUBbwASC/HoPZ7+5hA0pk2
+	 ncvFbzbA6WD80vsVwWyTZbo3ydXKMuOYm+PqEmo0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbfAYSLd (ORCPT
+        id S1729258AbfAYSLe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:11:33 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46654 "EHLO
+        Fri, 25 Jan 2019 13:11:34 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:46774 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfAYSLd (ORCPT
+        with ESMTP id S1726418AbfAYSLe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:11:33 -0500
+        Fri, 25 Jan 2019 13:11:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=MT5QL6pE+X8FHr3GbnQpTb79yYAGleC7UZnRLzOYhSg=; b=qAWHpEB8lYnD
-        XztF8VyfYvIWIAbOBF+KT2hMC82mesLmhYbB+8IN58A8MmhvhrwUTztHrd0G5/rkcOBmHZknaaAxT
-        AqFyZpouL7GO9bvixmuJ5vhc+q7Rnsgi1PVIWSSgjHMSpTcaOW4OaPY7Be38mEeICPqIhjN87uABV
-        GEnA4=;
+        List-Archive; bh=VPdXhOEtaPoM420Vs6ZBb9aVcXkFp1+A6YoryXBQGYk=; b=GVUGfsVrmpfN
+        CCwH2HXllu2J7eZwtbIricAchpaftS3laOcDGqcLIlsKJh95gbPsGbFPkttMnChgXaTaleDJqcyv5
+        02zYai9T4h6Ff6Ja6Wsc7zX4Yt3WbhtTw6ReWp13aPf6HNJRZzZd1MZYuVkhVKwIF+AMlCsKjjfEi
+        lJemU=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gn5wt-0004XN-M2; Fri, 25 Jan 2019 18:11:27 +0000
+        id 1gn5ww-0004XK-TL; Fri, 25 Jan 2019 18:11:30 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 456091126FC1; Fri, 25 Jan 2019 18:11:27 +0000 (GMT)
+        id 6E93A1126FC0; Fri, 25 Jan 2019 18:11:25 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Rob Herring <robh@kernel.org>
-Cc:     Vivien Didelot <vivien.didelot@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
+Cc:     Support Opensource <support.opensource@diasemi.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: mc13xxx: Use lowercase regulator names to match the DT" to the regulator tree
+Subject: Applied "regulator: da9052: Use lowercase regulator names to match the DT" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190125181127.456091126FC1@debutante.sirena.org.uk>
-Date:   Fri, 25 Jan 2019 18:11:27 +0000 (GMT)
+Message-Id: <20190125181125.6E93A1126FC0@debutante.sirena.org.uk>
+Date:   Fri, 25 Jan 2019 18:11:25 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -64,7 +62,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: mc13xxx: Use lowercase regulator names to match the DT
+   regulator: da9052: Use lowercase regulator names to match the DT
 
 has been applied to the regulator tree at
 
@@ -89,300 +87,124 @@ to this mail.
 Thanks,
 Mark
 
-From ec520911ecc7eaf01a69d278185ddc99bba901e1 Mon Sep 17 00:00:00 2001
+From 45460fe9c0c628a14863a0f1dba1c46359841ed7 Mon Sep 17 00:00:00 2001
 From: Rob Herring <robh@kernel.org>
-Date: Fri, 25 Jan 2019 09:37:04 -0600
-Subject: [PATCH] regulator: mc13xxx: Use lowercase regulator names to match
- the DT
+Date: Fri, 25 Jan 2019 09:37:05 -0600
+Subject: [PATCH] regulator: da9052: Use lowercase regulator names to match the
+ DT
 
 Since c32569e358ad ("regulator: Use of_node_name_eq for node name
-comparisons") Vivien reported the mc13892-regulator complaining about
-not being able to find regulators.
-
-This is because prior to that commit we used of_node_cmp() to compare
-the regulator array passed from mc13892_regulators down to
-mc13xxx_parse_regulators_dt() and they are all defined in uppercase
-letters by the MC13892_*_DEFINE* macros, whereas they are defined as
-lowercase in the DTS.
+comparisons"), regulator node name comparisons are case sensitive.
+The DA9052 driver uses uppercase, but the DT has lowercase.
 
 Fix this by using a lowercase regulator name to match the DT node name.
 
 Fixes: c32569e358ad ("regulator: Use of_node_name_eq for node name comparisons")
-Reported-by: Vivien Didelot <vivien.didelot@gmail.com>
-Reported-by: Florian Fainelli <f.fainelli@gmail.com>
+Cc: Support Opensource <support.opensource@diasemi.com>
 Cc: Liam Girdwood <lgirdwood@gmail.com>
 Cc: Mark Brown <broonie@kernel.org>
 Signed-off-by: Rob Herring <robh@kernel.org>
-Tested-by: Vivien Didelot <vivien.didelot@gmail.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/mc13783-regulator.c | 78 +++++++++++++--------------
- drivers/regulator/mc13892-regulator.c | 64 +++++++++++-----------
- drivers/regulator/mc13xxx.h           | 20 +++----
- 3 files changed, 81 insertions(+), 81 deletions(-)
+ drivers/regulator/da9052-regulator.c | 64 ++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
-diff --git a/drivers/regulator/mc13783-regulator.c b/drivers/regulator/mc13783-regulator.c
-index 8fd1adc9c9a9..887a1d1726ad 100644
---- a/drivers/regulator/mc13783-regulator.c
-+++ b/drivers/regulator/mc13783-regulator.c
-@@ -228,67 +228,67 @@ static const unsigned int mc13783_pwgtdrv_val[] = {
- 
- static struct regulator_ops mc13783_gpo_regulator_ops;
- 
--#define MC13783_DEFINE(prefix, name, reg, vsel_reg, voltages)	\
--	MC13xxx_DEFINE(MC13783_REG_, name, reg, vsel_reg, voltages, \
-+#define MC13783_DEFINE(prefix, name, node, reg, vsel_reg, voltages)	\
-+	MC13xxx_DEFINE(MC13783_REG_, name, node, reg, vsel_reg, voltages, \
- 			mc13xxx_regulator_ops)
- 
--#define MC13783_FIXED_DEFINE(prefix, name, reg, voltages)		\
--	MC13xxx_FIXED_DEFINE(MC13783_REG_, name, reg, voltages, \
-+#define MC13783_FIXED_DEFINE(prefix, name, node, reg, voltages)		\
-+	MC13xxx_FIXED_DEFINE(MC13783_REG_, name, node, reg, voltages,	\
- 			mc13xxx_fixed_regulator_ops)
- 
--#define MC13783_GPO_DEFINE(prefix, name, reg, voltages)		\
--	MC13xxx_GPO_DEFINE(MC13783_REG_, name, reg, voltages, \
-+#define MC13783_GPO_DEFINE(prefix, name, node, reg, voltages)		\
-+	MC13xxx_GPO_DEFINE(MC13783_REG_, name, node, reg, voltages,	\
- 			mc13783_gpo_regulator_ops)
- 
--#define MC13783_DEFINE_SW(_name, _reg, _vsel_reg, _voltages)		\
--	MC13783_DEFINE(REG, _name, _reg, _vsel_reg, _voltages)
--#define MC13783_DEFINE_REGU(_name, _reg, _vsel_reg, _voltages)		\
--	MC13783_DEFINE(REG, _name, _reg, _vsel_reg, _voltages)
-+#define MC13783_DEFINE_SW(_name, _node, _reg, _vsel_reg, _voltages)	\
-+	MC13783_DEFINE(REG, _name, _node, _reg, _vsel_reg, _voltages)
-+#define MC13783_DEFINE_REGU(_name, _node, _reg, _vsel_reg, _voltages)	\
-+	MC13783_DEFINE(REG, _name, _node, _reg, _vsel_reg, _voltages)
- 
- static struct mc13xxx_regulator mc13783_regulators[] = {
--	MC13783_DEFINE_SW(SW1A, SWITCHERS0, SWITCHERS0, mc13783_sw1x_val),
--	MC13783_DEFINE_SW(SW1B, SWITCHERS1, SWITCHERS1, mc13783_sw1x_val),
--	MC13783_DEFINE_SW(SW2A, SWITCHERS2, SWITCHERS2, mc13783_sw2x_val),
--	MC13783_DEFINE_SW(SW2B, SWITCHERS3, SWITCHERS3, mc13783_sw2x_val),
--	MC13783_DEFINE_SW(SW3, SWITCHERS5, SWITCHERS5, mc13783_sw3_val),
--
--	MC13783_FIXED_DEFINE(REG, VAUDIO, REGULATORMODE0, mc13783_vaudio_val),
--	MC13783_FIXED_DEFINE(REG, VIOHI, REGULATORMODE0, mc13783_viohi_val),
--	MC13783_DEFINE_REGU(VIOLO, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_SW(SW1A, sw1a, SWITCHERS0, SWITCHERS0, mc13783_sw1x_val),
-+	MC13783_DEFINE_SW(SW1B, sw1b, SWITCHERS1, SWITCHERS1, mc13783_sw1x_val),
-+	MC13783_DEFINE_SW(SW2A, sw2a, SWITCHERS2, SWITCHERS2, mc13783_sw2x_val),
-+	MC13783_DEFINE_SW(SW2B, sw2b, SWITCHERS3, SWITCHERS3, mc13783_sw2x_val),
-+	MC13783_DEFINE_SW(SW3, sw3, SWITCHERS5, SWITCHERS5, mc13783_sw3_val),
-+
-+	MC13783_FIXED_DEFINE(REG, VAUDIO, vaudio, REGULATORMODE0, mc13783_vaudio_val),
-+	MC13783_FIXED_DEFINE(REG, VIOHI, viohi, REGULATORMODE0, mc13783_viohi_val),
-+	MC13783_DEFINE_REGU(VIOLO, violo, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_violo_val),
--	MC13783_DEFINE_REGU(VDIG, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VDIG, vdig, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vdig_val),
--	MC13783_DEFINE_REGU(VGEN, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VGEN, vgen, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vgen_val),
--	MC13783_DEFINE_REGU(VRFDIG, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VRFDIG, vrfdig, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vrfdig_val),
--	MC13783_DEFINE_REGU(VRFREF, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VRFREF, vrfref, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vrfref_val),
--	MC13783_DEFINE_REGU(VRFCP, REGULATORMODE0, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VRFCP, vrfcp, REGULATORMODE0, REGULATORSETTING0,
- 			    mc13783_vrfcp_val),
--	MC13783_DEFINE_REGU(VSIM, REGULATORMODE1, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VSIM, vsim, REGULATORMODE1, REGULATORSETTING0,
- 			    mc13783_vsim_val),
--	MC13783_DEFINE_REGU(VESIM, REGULATORMODE1, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VESIM, vesim, REGULATORMODE1, REGULATORSETTING0,
- 			    mc13783_vesim_val),
--	MC13783_DEFINE_REGU(VCAM, REGULATORMODE1, REGULATORSETTING0,
-+	MC13783_DEFINE_REGU(VCAM, vcam, REGULATORMODE1, REGULATORSETTING0,
- 			    mc13783_vcam_val),
--	MC13783_FIXED_DEFINE(REG, VRFBG, REGULATORMODE1, mc13783_vrfbg_val),
--	MC13783_DEFINE_REGU(VVIB, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_FIXED_DEFINE(REG, VRFBG, vrfbg, REGULATORMODE1, mc13783_vrfbg_val),
-+	MC13783_DEFINE_REGU(VVIB, vvib, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vvib_val),
--	MC13783_DEFINE_REGU(VRF1, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_DEFINE_REGU(VRF1, vrf1, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vrf_val),
--	MC13783_DEFINE_REGU(VRF2, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_DEFINE_REGU(VRF2, vrf2, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vrf_val),
--	MC13783_DEFINE_REGU(VMMC1, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_DEFINE_REGU(VMMC1, vmmc1, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vmmc_val),
--	MC13783_DEFINE_REGU(VMMC2, REGULATORMODE1, REGULATORSETTING1,
-+	MC13783_DEFINE_REGU(VMMC2, vmmc2, REGULATORMODE1, REGULATORSETTING1,
- 			    mc13783_vmmc_val),
--	MC13783_GPO_DEFINE(REG, GPO1, POWERMISC, mc13783_gpo_val),
--	MC13783_GPO_DEFINE(REG, GPO2, POWERMISC, mc13783_gpo_val),
--	MC13783_GPO_DEFINE(REG, GPO3, POWERMISC, mc13783_gpo_val),
--	MC13783_GPO_DEFINE(REG, GPO4, POWERMISC, mc13783_gpo_val),
--	MC13783_GPO_DEFINE(REG, PWGT1SPI, POWERMISC, mc13783_pwgtdrv_val),
--	MC13783_GPO_DEFINE(REG, PWGT2SPI, POWERMISC, mc13783_pwgtdrv_val),
-+	MC13783_GPO_DEFINE(REG, GPO1, gpo1, POWERMISC, mc13783_gpo_val),
-+	MC13783_GPO_DEFINE(REG, GPO2, gpo1, POWERMISC, mc13783_gpo_val),
-+	MC13783_GPO_DEFINE(REG, GPO3, gpo1, POWERMISC, mc13783_gpo_val),
-+	MC13783_GPO_DEFINE(REG, GPO4, gpo1, POWERMISC, mc13783_gpo_val),
-+	MC13783_GPO_DEFINE(REG, PWGT1SPI, pwgt1spi, POWERMISC, mc13783_pwgtdrv_val),
-+	MC13783_GPO_DEFINE(REG, PWGT2SPI, pwgt2spi, POWERMISC, mc13783_pwgtdrv_val),
+diff --git a/drivers/regulator/da9052-regulator.c b/drivers/regulator/da9052-regulator.c
+index 207cb3859dcc..cefa3558236d 100644
+--- a/drivers/regulator/da9052-regulator.c
++++ b/drivers/regulator/da9052-regulator.c
+@@ -290,10 +290,10 @@ static const struct regulator_ops da9052_ldo_ops = {
+ 	.disable = regulator_disable_regmap,
  };
  
- static int mc13783_powermisc_rmw(struct mc13xxx_regulator_priv *priv, u32 mask,
-diff --git a/drivers/regulator/mc13892-regulator.c b/drivers/regulator/mc13892-regulator.c
-index f3fba1cc1379..b55894980066 100644
---- a/drivers/regulator/mc13892-regulator.c
-+++ b/drivers/regulator/mc13892-regulator.c
-@@ -246,57 +246,57 @@ static struct regulator_ops mc13892_gpo_regulator_ops;
- static struct regulator_ops mc13892_sw_regulator_ops;
+-#define DA9052_LDO(_id, step, min, max, sbits, ebits, abits) \
++#define DA9052_LDO(_id, _name, step, min, max, sbits, ebits, abits) \
+ {\
+ 	.reg_desc = {\
+-		.name = #_id,\
++		.name = #_name,\
+ 		.ops = &da9052_ldo_ops,\
+ 		.type = REGULATOR_VOLTAGE,\
+ 		.id = DA9052_ID_##_id,\
+@@ -310,10 +310,10 @@ static const struct regulator_ops da9052_ldo_ops = {
+ 	.activate_bit = (abits),\
+ }
  
+-#define DA9052_DCDC(_id, step, min, max, sbits, ebits, abits) \
++#define DA9052_DCDC(_id, _name, step, min, max, sbits, ebits, abits) \
+ {\
+ 	.reg_desc = {\
+-		.name = #_id,\
++		.name = #_name,\
+ 		.ops = &da9052_dcdc_ops,\
+ 		.type = REGULATOR_VOLTAGE,\
+ 		.id = DA9052_ID_##_id,\
+@@ -331,37 +331,37 @@ static const struct regulator_ops da9052_ldo_ops = {
+ }
  
--#define MC13892_FIXED_DEFINE(name, reg, voltages)		\
--	MC13xxx_FIXED_DEFINE(MC13892_, name, reg, voltages,	\
-+#define MC13892_FIXED_DEFINE(name, node, reg, voltages)			\
-+	MC13xxx_FIXED_DEFINE(MC13892_, name, node, reg, voltages,	\
- 			mc13xxx_fixed_regulator_ops)
- 
--#define MC13892_GPO_DEFINE(name, reg, voltages)			\
--	MC13xxx_GPO_DEFINE(MC13892_, name, reg, voltages,	\
-+#define MC13892_GPO_DEFINE(name, node, reg, voltages)			\
-+	MC13xxx_GPO_DEFINE(MC13892_, name, node, reg, voltages,		\
- 			mc13892_gpo_regulator_ops)
- 
--#define MC13892_SW_DEFINE(name, reg, vsel_reg, voltages)	\
--	MC13xxx_DEFINE(MC13892_, name, reg, vsel_reg, voltages, \
-+#define MC13892_SW_DEFINE(name, node, reg, vsel_reg, voltages)		\
-+	MC13xxx_DEFINE(MC13892_, name, node, reg, vsel_reg, voltages,	\
- 			mc13892_sw_regulator_ops)
- 
--#define MC13892_DEFINE_REGU(name, reg, vsel_reg, voltages)	\
--	MC13xxx_DEFINE(MC13892_, name, reg, vsel_reg, voltages, \
-+#define MC13892_DEFINE_REGU(name, node, reg, vsel_reg, voltages)	\
-+	MC13xxx_DEFINE(MC13892_, name, node, reg, vsel_reg, voltages, \
- 			mc13xxx_regulator_ops)
- 
- static struct mc13xxx_regulator mc13892_regulators[] = {
--	MC13892_DEFINE_REGU(VCOINCELL, POWERCTL0, POWERCTL0, mc13892_vcoincell),
--	MC13892_SW_DEFINE(SW1, SWITCHERS0, SWITCHERS0, mc13892_sw1),
--	MC13892_SW_DEFINE(SW2, SWITCHERS1, SWITCHERS1, mc13892_sw),
--	MC13892_SW_DEFINE(SW3, SWITCHERS2, SWITCHERS2, mc13892_sw),
--	MC13892_SW_DEFINE(SW4, SWITCHERS3, SWITCHERS3, mc13892_sw),
--	MC13892_FIXED_DEFINE(SWBST, SWITCHERS5, mc13892_swbst),
--	MC13892_FIXED_DEFINE(VIOHI, REGULATORMODE0, mc13892_viohi),
--	MC13892_DEFINE_REGU(VPLL, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VCOINCELL, vcoincell, POWERCTL0, POWERCTL0, mc13892_vcoincell),
-+	MC13892_SW_DEFINE(SW1, sw1, SWITCHERS0, SWITCHERS0, mc13892_sw1),
-+	MC13892_SW_DEFINE(SW2, sw2, SWITCHERS1, SWITCHERS1, mc13892_sw),
-+	MC13892_SW_DEFINE(SW3, sw3, SWITCHERS2, SWITCHERS2, mc13892_sw),
-+	MC13892_SW_DEFINE(SW4, sw4, SWITCHERS3, SWITCHERS3, mc13892_sw),
-+	MC13892_FIXED_DEFINE(SWBST, swbst, SWITCHERS5, mc13892_swbst),
-+	MC13892_FIXED_DEFINE(VIOHI, viohi, REGULATORMODE0, mc13892_viohi),
-+	MC13892_DEFINE_REGU(VPLL, vpll, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vpll),
--	MC13892_DEFINE_REGU(VDIG, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VDIG, vdig, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vdig),
--	MC13892_DEFINE_REGU(VSD, REGULATORMODE1, REGULATORSETTING1,
-+	MC13892_DEFINE_REGU(VSD, vsd, REGULATORMODE1, REGULATORSETTING1,
- 		mc13892_vsd),
--	MC13892_DEFINE_REGU(VUSB2, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VUSB2, vusb2, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vusb2),
--	MC13892_DEFINE_REGU(VVIDEO, REGULATORMODE1, REGULATORSETTING1,
-+	MC13892_DEFINE_REGU(VVIDEO, vvideo, REGULATORMODE1, REGULATORSETTING1,
- 		mc13892_vvideo),
--	MC13892_DEFINE_REGU(VAUDIO, REGULATORMODE1, REGULATORSETTING1,
-+	MC13892_DEFINE_REGU(VAUDIO, vaudio, REGULATORMODE1, REGULATORSETTING1,
- 		mc13892_vaudio),
--	MC13892_DEFINE_REGU(VCAM, REGULATORMODE1, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VCAM, vcam, REGULATORMODE1, REGULATORSETTING0,
- 		mc13892_vcam),
--	MC13892_DEFINE_REGU(VGEN1, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VGEN1, vgen1, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vgen1),
--	MC13892_DEFINE_REGU(VGEN2, REGULATORMODE0, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VGEN2, vgen2, REGULATORMODE0, REGULATORSETTING0,
- 		mc13892_vgen2),
--	MC13892_DEFINE_REGU(VGEN3, REGULATORMODE1, REGULATORSETTING0,
-+	MC13892_DEFINE_REGU(VGEN3, vgen3, REGULATORMODE1, REGULATORSETTING0,
- 		mc13892_vgen3),
--	MC13892_FIXED_DEFINE(VUSB, USB1, mc13892_vusb),
--	MC13892_GPO_DEFINE(GPO1, POWERMISC, mc13892_gpo),
--	MC13892_GPO_DEFINE(GPO2, POWERMISC, mc13892_gpo),
--	MC13892_GPO_DEFINE(GPO3, POWERMISC, mc13892_gpo),
--	MC13892_GPO_DEFINE(GPO4, POWERMISC, mc13892_gpo),
--	MC13892_GPO_DEFINE(PWGT1SPI, POWERMISC, mc13892_pwgtdrv),
--	MC13892_GPO_DEFINE(PWGT2SPI, POWERMISC, mc13892_pwgtdrv),
-+	MC13892_FIXED_DEFINE(VUSB, vusb, USB1, mc13892_vusb),
-+	MC13892_GPO_DEFINE(GPO1, gpo1, POWERMISC, mc13892_gpo),
-+	MC13892_GPO_DEFINE(GPO2, gpo2, POWERMISC, mc13892_gpo),
-+	MC13892_GPO_DEFINE(GPO3, gpo3, POWERMISC, mc13892_gpo),
-+	MC13892_GPO_DEFINE(GPO4, gpo4, POWERMISC, mc13892_gpo),
-+	MC13892_GPO_DEFINE(PWGT1SPI, pwgt1spi, POWERMISC, mc13892_pwgtdrv),
-+	MC13892_GPO_DEFINE(PWGT2SPI, pwgt2spi, POWERMISC, mc13892_pwgtdrv),
+ static struct da9052_regulator_info da9052_regulator_info[] = {
+-	DA9052_DCDC(BUCK1, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBCOREGO),
+-	DA9052_DCDC(BUCK2, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBPROGO),
+-	DA9052_DCDC(BUCK3, 25, 950, 2525, 6, 6, DA9052_SUPPLY_VBMEMGO),
+-	DA9052_DCDC(BUCK4, 50, 1800, 3600, 5, 6, 0),
+-	DA9052_LDO(LDO1, 50, 600, 1800, 5, 6, 0),
+-	DA9052_LDO(LDO2, 25, 600, 1800, 6, 6, DA9052_SUPPLY_VLDO2GO),
+-	DA9052_LDO(LDO3, 25, 1725, 3300, 6, 6, DA9052_SUPPLY_VLDO3GO),
+-	DA9052_LDO(LDO4, 25, 1725, 3300, 6, 6, 0),
+-	DA9052_LDO(LDO5, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO6, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO7, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO8, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO9, 50, 1250, 3650, 6, 6, 0),
+-	DA9052_LDO(LDO10, 50, 1200, 3600, 6, 6, 0),
++	DA9052_DCDC(BUCK1, buck1, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBCOREGO),
++	DA9052_DCDC(BUCK2, buck2, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBPROGO),
++	DA9052_DCDC(BUCK3, buck3, 25, 950, 2525, 6, 6, DA9052_SUPPLY_VBMEMGO),
++	DA9052_DCDC(BUCK4, buck4, 50, 1800, 3600, 5, 6, 0),
++	DA9052_LDO(LDO1, ldo1, 50, 600, 1800, 5, 6, 0),
++	DA9052_LDO(LDO2, ldo2, 25, 600, 1800, 6, 6, DA9052_SUPPLY_VLDO2GO),
++	DA9052_LDO(LDO3, ldo3, 25, 1725, 3300, 6, 6, DA9052_SUPPLY_VLDO3GO),
++	DA9052_LDO(LDO4, ldo4, 25, 1725, 3300, 6, 6, 0),
++	DA9052_LDO(LDO5, ldo5, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO6, ldo6, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO7, ldo7, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO8, ldo8, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO9, ldo9, 50, 1250, 3650, 6, 6, 0),
++	DA9052_LDO(LDO10, ldo10, 50, 1200, 3600, 6, 6, 0),
  };
  
- static int mc13892_powermisc_rmw(struct mc13xxx_regulator_priv *priv, u32 mask,
-diff --git a/drivers/regulator/mc13xxx.h b/drivers/regulator/mc13xxx.h
-index 2ab9bfd93b4e..a602b08d4c9e 100644
---- a/drivers/regulator/mc13xxx.h
-+++ b/drivers/regulator/mc13xxx.h
-@@ -56,10 +56,10 @@ static inline struct mc13xxx_regulator_init_data *mc13xxx_parse_regulators_dt(
- extern struct regulator_ops mc13xxx_regulator_ops;
- extern struct regulator_ops mc13xxx_fixed_regulator_ops;
+ static struct da9052_regulator_info da9053_regulator_info[] = {
+-	DA9052_DCDC(BUCK1, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBCOREGO),
+-	DA9052_DCDC(BUCK2, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBPROGO),
+-	DA9052_DCDC(BUCK3, 25, 950, 2525, 6, 6, DA9052_SUPPLY_VBMEMGO),
+-	DA9052_DCDC(BUCK4, 25, 950, 2525, 6, 6, 0),
+-	DA9052_LDO(LDO1, 50, 600, 1800, 5, 6, 0),
+-	DA9052_LDO(LDO2, 25, 600, 1800, 6, 6, DA9052_SUPPLY_VLDO2GO),
+-	DA9052_LDO(LDO3, 25, 1725, 3300, 6, 6, DA9052_SUPPLY_VLDO3GO),
+-	DA9052_LDO(LDO4, 25, 1725, 3300, 6, 6, 0),
+-	DA9052_LDO(LDO5, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO6, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO7, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO8, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO9, 50, 1250, 3650, 6, 6, 0),
+-	DA9052_LDO(LDO10, 50, 1200, 3600, 6, 6, 0),
++	DA9052_DCDC(BUCK1, buck1, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBCOREGO),
++	DA9052_DCDC(BUCK2, buck2, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBPROGO),
++	DA9052_DCDC(BUCK3, buck3, 25, 950, 2525, 6, 6, DA9052_SUPPLY_VBMEMGO),
++	DA9052_DCDC(BUCK4, buck4, 25, 950, 2525, 6, 6, 0),
++	DA9052_LDO(LDO1, ldo1, 50, 600, 1800, 5, 6, 0),
++	DA9052_LDO(LDO2, ldo2, 25, 600, 1800, 6, 6, DA9052_SUPPLY_VLDO2GO),
++	DA9052_LDO(LDO3, ldo3, 25, 1725, 3300, 6, 6, DA9052_SUPPLY_VLDO3GO),
++	DA9052_LDO(LDO4, ldo4, 25, 1725, 3300, 6, 6, 0),
++	DA9052_LDO(LDO5, ldo5, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO6, ldo6, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO7, ldo7, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO8, ldo8, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO9, ldo9, 50, 1250, 3650, 6, 6, 0),
++	DA9052_LDO(LDO10, ldo10, 50, 1200, 3600, 6, 6, 0),
+ };
  
--#define MC13xxx_DEFINE(prefix, _name, _reg, _vsel_reg, _voltages, _ops)	\
-+#define MC13xxx_DEFINE(prefix, _name, _node, _reg, _vsel_reg, _voltages, _ops)	\
- 	[prefix ## _name] = {				\
- 		.desc = {						\
--			.name = #_name,					\
-+			.name = #_node,					\
- 			.n_voltages = ARRAY_SIZE(_voltages),		\
- 			.volt_table =  _voltages,			\
- 			.ops = &_ops,			\
-@@ -74,10 +74,10 @@ extern struct regulator_ops mc13xxx_fixed_regulator_ops;
- 		.vsel_mask = prefix ## _vsel_reg ## _ ## _name ## VSEL_M,\
- 	}
- 
--#define MC13xxx_FIXED_DEFINE(prefix, _name, _reg, _voltages, _ops)	\
-+#define MC13xxx_FIXED_DEFINE(prefix, _name, _node, _reg, _voltages, _ops)	\
- 	[prefix ## _name] = {				\
- 		.desc = {						\
--			.name = #_name,					\
-+			.name = #_node,					\
- 			.n_voltages = ARRAY_SIZE(_voltages),		\
- 			.volt_table =  _voltages,			\
- 			.ops = &_ops,		\
-@@ -89,10 +89,10 @@ extern struct regulator_ops mc13xxx_fixed_regulator_ops;
- 		.enable_bit = prefix ## _reg ## _ ## _name ## EN,	\
- 	}
- 
--#define MC13xxx_GPO_DEFINE(prefix, _name, _reg,  _voltages, _ops)	\
-+#define MC13xxx_GPO_DEFINE(prefix, _name, _node, _reg,  _voltages, _ops)	\
- 	[prefix ## _name] = {				\
- 		.desc = {						\
--			.name = #_name,					\
-+			.name = #_node,					\
- 			.n_voltages = ARRAY_SIZE(_voltages),		\
- 			.volt_table =  _voltages,			\
- 			.ops = &_ops,		\
-@@ -104,9 +104,9 @@ extern struct regulator_ops mc13xxx_fixed_regulator_ops;
- 		.enable_bit = prefix ## _reg ## _ ## _name ## EN,	\
- 	}
- 
--#define MC13xxx_DEFINE_SW(_name, _reg, _vsel_reg, _voltages, ops)	\
--	MC13xxx_DEFINE(SW, _name, _reg, _vsel_reg, _voltages, ops)
--#define MC13xxx_DEFINE_REGU(_name, _reg, _vsel_reg, _voltages, ops)	\
--	MC13xxx_DEFINE(REGU, _name, _reg, _vsel_reg, _voltages, ops)
-+#define MC13xxx_DEFINE_SW(_name, _node, _reg, _vsel_reg, _voltages, ops) \
-+	MC13xxx_DEFINE(SW, _name, _node, _reg, _vsel_reg, _voltages, ops)
-+#define MC13xxx_DEFINE_REGU(_name, _node, _reg, _vsel_reg, _voltages, ops) \
-+	MC13xxx_DEFINE(REGU, _name, _node, _reg, _vsel_reg, _voltages, ops)
- 
- #endif
+ static inline struct da9052_regulator_info *find_regulator_info(u8 chip_id,
 -- 
 2.20.1
 
