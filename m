@@ -2,76 +2,185 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E67BC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:59:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54F25C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:02:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE800218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:59:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="QFB7N072"
+	by mail.kernel.org (Postfix) with ESMTP id 1EE1D218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:02:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728558AbfAYQ7V (ORCPT
+        id S1728855AbfAYRCM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:59:21 -0500
-Received: from smtp.domeneshop.no ([194.63.252.55]:43574 "EHLO
-        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbfAYQ7U (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:59:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
-        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=lALG8IB2wTzY8nEmcwdkXqLAJ4uP2qJvRmIvYD8LSLQ=;
-        b=QFB7N07206KoT82Q6syUy9BRLxR+1649c8Ee7mHfcOBHlXE95ihw1ynRDSsiczXOm7cpVdy8pe/+rI7YtoeTnc7H1muWSf1/WV0OeWq1l8iXSNYoZLqgt805qXgP+XlqTwPnxzllt294R0KaQCSuixxE0K3lJz1MDiqW8jSltYBSxPG6A0NPeyouT4GqOZlSvdXr2q65C40uFVkaRCwAQEQqgFfmlhagUI6DKBudqqdUBzpgqfwV9w7H9uPQmt76dtPOPjwEZsIRcLEbMawzyR9tMot322tf3XFK0s5LUdfPyju7i4RkHicJq4GdiTesUAe5Q2DP/lN1eRVVYLaetw==;
-Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:50113 helo=[192.168.10.176])
-        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.84_2)
-        (envelope-from <noralf@tronnes.org>)
-        id 1gn4p4-0007AN-6E; Fri, 25 Jan 2019 17:59:18 +0100
-Subject: Re: [PATCH v3 13/23] drm/qxl: use shadow bo directly
-To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
-Cc:     David Airlie <airlied@linux.ie>,
-        open list <linux-kernel@vger.kernel.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <virtualization@lists.linux-foundation.org>,
-        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
-        <spice-devel@lists.freedesktop.org>,
-        Dave Airlie <airlied@redhat.com>
-References: <20190118122020.27596-1-kraxel@redhat.com>
- <20190118122020.27596-14-kraxel@redhat.com>
-From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
-Message-ID: <709f738a-308b-90f2-2cc0-698db4e25068@tronnes.org>
-Date:   Fri, 25 Jan 2019 17:59:13 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 25 Jan 2019 12:02:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39228 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726321AbfAYRCL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 12:02:11 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6DCE6804ED;
+        Fri, 25 Jan 2019 17:02:11 +0000 (UTC)
+Received: from treble (ovpn-120-227.rdu2.redhat.com [10.10.120.227])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A65E060930;
+        Fri, 25 Jan 2019 17:02:05 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 11:02:03 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Igor Mammedov <imammedo@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Joe Mario <jmario@redhat.com>, Jiri Kosina <jkosina@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: cpu/hotplug: broken sibling thread hotplug
+Message-ID: <20190125170203.2o2l27d2sytw44nl@treble>
+References: <20190124165713.2b0b37ed@redhat.com>
+ <20190125163657.rqbykfn7ebpclc2z@treble>
 MIME-Version: 1.0
-In-Reply-To: <20190118122020.27596-14-kraxel@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+In-Reply-To: <20190125163657.rqbykfn7ebpclc2z@treble>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 25 Jan 2019 17:02:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jan 25, 2019 at 10:36:57AM -0600, Josh Poimboeuf wrote:
+> How about this patch?  It's just a revert of 73d5e2b47264 and
+> bc2d8d262cba, plus the 1-line vmx_vm_init() change.  If it looks ok to
+> you, I can clean it up and submit an official version.
+
+This one actually compiles...
 
 
-Den 18.01.2019 13.20, skrev Gerd Hoffmann:
-> Pass the shadow bo to qxl_io_create_primary() instead of expecting
-> qxl_io_create_primary to check bo->shadow.  Set is_primary flag on the
-> shadow bo.  Move the is_primary tracking into qxl_io_create_primary()
-> and qxl_io_destroy_primary() functions.
-> 
-> That simplifies primary surface tracking and the workflow in
-> qxl_primary_atomic_update().
-> 
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
-> 
-> qxl_io_create/destroy_primary: primary_bo tracking [fixup]
-> ---
-
-I'm unable to follow the logic, but I didn't spot anything suspicious
-looking.
-
-Acked-by: Noralf Trønnes <noralf@tronnes.org>
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index 1de0f4170178..01874d54f4fd 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -71,7 +71,7 @@ void __init check_bugs(void)
+ 	 * identify_boot_cpu() initialized SMT support information, let the
+ 	 * core code know.
+ 	 */
+-	cpu_smt_check_topology_early();
++	cpu_smt_check_topology();
+ 
+ 	if (!IS_ENABLED(CONFIG_SMP)) {
+ 		pr_info("CPU: ");
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index f6915f10e584..e2d6fa3c60d5 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -26,6 +26,7 @@
+ #include <linux/mod_devicetable.h>
+ #include <linux/mm.h>
+ #include <linux/sched.h>
++#include <linux/sched/smt.h>
+ #include <linux/slab.h>
+ #include <linux/tboot.h>
+ #include <linux/trace_events.h>
+@@ -6816,7 +6817,7 @@ static int vmx_vm_init(struct kvm *kvm)
+ 			 * Warn upon starting the first VM in a potentially
+ 			 * insecure environment.
+ 			 */
+-			if (cpu_smt_control == CPU_SMT_ENABLED)
++			if (sched_smt_active())
+ 				pr_warn_once(L1TF_MSG_SMT);
+ 			if (l1tf_vmx_mitigation == VMENTER_L1D_FLUSH_NEVER)
+ 				pr_warn_once(L1TF_MSG_L1D);
+diff --git a/include/linux/cpu.h b/include/linux/cpu.h
+index 218df7f4d3e1..5041357d0297 100644
+--- a/include/linux/cpu.h
++++ b/include/linux/cpu.h
+@@ -180,12 +180,10 @@ enum cpuhp_smt_control {
+ #if defined(CONFIG_SMP) && defined(CONFIG_HOTPLUG_SMT)
+ extern enum cpuhp_smt_control cpu_smt_control;
+ extern void cpu_smt_disable(bool force);
+-extern void cpu_smt_check_topology_early(void);
+ extern void cpu_smt_check_topology(void);
+ #else
+ # define cpu_smt_control		(CPU_SMT_ENABLED)
+ static inline void cpu_smt_disable(bool force) { }
+-static inline void cpu_smt_check_topology_early(void) { }
+ static inline void cpu_smt_check_topology(void) { }
+ #endif
+ 
+diff --git a/kernel/cpu.c b/kernel/cpu.c
+index 34e40ef2f6e0..05d359e4173a 100644
+--- a/kernel/cpu.c
++++ b/kernel/cpu.c
+@@ -387,8 +387,6 @@ void __weak arch_smt_update(void) { }
+ enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
+ EXPORT_SYMBOL_GPL(cpu_smt_control);
+ 
+-static bool cpu_smt_available __read_mostly;
+-
+ void __init cpu_smt_disable(bool force)
+ {
+ 	if (cpu_smt_control == CPU_SMT_FORCE_DISABLED ||
+@@ -406,25 +404,11 @@ void __init cpu_smt_disable(bool force)
+ 
+ /*
+  * The decision whether SMT is supported can only be done after the full
+- * CPU identification. Called from architecture code before non boot CPUs
+- * are brought up.
+- */
+-void __init cpu_smt_check_topology_early(void)
+-{
+-	if (!topology_smt_supported())
+-		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+-}
+-
+-/*
+- * If SMT was disabled by BIOS, detect it here, after the CPUs have been
+- * brought online. This ensures the smt/l1tf sysfs entries are consistent
+- * with reality. cpu_smt_available is set to true during the bringup of non
+- * boot CPUs when a SMT sibling is detected. Note, this may overwrite
+- * cpu_smt_control's previous setting.
++ * CPU identification. Called from architecture code.
+  */
+ void __init cpu_smt_check_topology(void)
+ {
+-	if (!cpu_smt_available)
++	if (!topology_smt_supported())
+ 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
+ }
+ 
+@@ -437,18 +421,10 @@ early_param("nosmt", smt_cmdline_disable);
+ 
+ static inline bool cpu_smt_allowed(unsigned int cpu)
+ {
+-	if (topology_is_primary_thread(cpu))
++	if (cpu_smt_control == CPU_SMT_ENABLED)
+ 		return true;
+ 
+-	/*
+-	 * If the CPU is not a 'primary' thread and the booted_once bit is
+-	 * set then the processor has SMT support. Store this information
+-	 * for the late check of SMT support in cpu_smt_check_topology().
+-	 */
+-	if (per_cpu(cpuhp_state, cpu).booted_once)
+-		cpu_smt_available = true;
+-
+-	if (cpu_smt_control == CPU_SMT_ENABLED)
++	if (topology_is_primary_thread(cpu))
+ 		return true;
+ 
+ 	/*
+diff --git a/kernel/smp.c b/kernel/smp.c
+index 163c451af42e..f4cf1b0bb3b8 100644
+--- a/kernel/smp.c
++++ b/kernel/smp.c
+@@ -584,8 +584,6 @@ void __init smp_init(void)
+ 		num_nodes, (num_nodes > 1 ? "s" : ""),
+ 		num_cpus,  (num_cpus  > 1 ? "s" : ""));
+ 
+-	/* Final decision about SMT support */
+-	cpu_smt_check_topology();
+ 	/* Any cleanup work */
+ 	smp_cpus_done(setup_max_cpus);
+ }
