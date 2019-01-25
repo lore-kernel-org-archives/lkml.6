@@ -4,36 +4,37 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1F0DC282C8
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEB5EC282CA
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D611218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A16C42133D
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:23:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="PcYXO1vJ"
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=onstation.org header.i=@onstation.org header.b="kLPnCnWG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729242AbfAYQXa (ORCPT
+        id S1729291AbfAYQXh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:23:30 -0500
-Received: from onstation.org ([52.200.56.107]:55010 "EHLO onstation.org"
+        Fri, 25 Jan 2019 11:23:37 -0500
+Received: from onstation.org ([52.200.56.107]:55028 "EHLO onstation.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728969AbfAYQXO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:23:14 -0500
+        id S1728877AbfAYQXN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 11:23:13 -0500
 Received: from localhost.localdomain (c-98-239-145-235.hsd1.wv.comcast.net [98.239.145.235])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
         (Authenticated sender: masneyb)
-        by onstation.org (Postfix) with ESMTPSA id D4AD2194A;
+        by onstation.org (Postfix) with ESMTPSA id 43AE1853;
         Fri, 25 Jan 2019 16:23:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=onstation.org;
-        s=default; t=1548433393;
-        bh=t5ZdxbcGrp0a2WscsnqNCmFM2tK4G8DCb3YyumEQjg4=;
+        s=default; t=1548433392;
+        bh=ZZc/a5ejspeqnRSsAutrcFfbg8XjdF+sInooQkTsOEU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PcYXO1vJ9U/+Ap34KxvzztZpYsY7mbrzkZ+J/HWwDKgF8C6JL4sjgFrqv6VOPyw9u
-         zZUh76932xsXKRfsRx5t3EVPEr0i0DtxTKrL9Nqv/vaZwUJHaAZ3XoGnCbURxNeGWR
-         ax8tuZEBZZboG/2v17zSTHotw+YPyMNnZlcpBAko=
+        b=kLPnCnWGjfdnG8TLAZ3NoC/cPGqAHuZwyvlsuzkXjMm7qpsrbQkr1btrKji2KZTaH
+         lok6lYdAsNpCLMnHznMGsEdIBvtoV7er26Q/XbDyj2s8T1e+6bB5NnOKjf5Nz/X6Ow
+         5s5dZHSuHewPcNiokAHovyq90j6mAHn7h5Taym8g=
 From:   Brian Masney <masneyb@onstation.org>
 To:     linus.walleij@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org,
@@ -44,9 +45,9 @@ Cc:     tglx@linutronix.de, shawnguo@kernel.org, dianders@chromium.org,
         robh+dt@kernel.org, mark.rutland@arm.com, thierry.reding@gmail.com,
         linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
         devicetree@vger.kernel.org
-Subject: [PATCH 9/9] mfd: pm8xxx: revert "disassociate old virq if hwirq mapping already exists"
-Date:   Fri, 25 Jan 2019 11:23:02 -0500
-Message-Id: <20190125162302.14036-10-masneyb@onstation.org>
+Subject: [PATCH 8/9] arm: dts: qcom: mdm9615: add interrupt controller properties
+Date:   Fri, 25 Jan 2019 11:23:01 -0500
+Message-Id: <20190125162302.14036-9-masneyb@onstation.org>
 X-Mailer: git-send-email 2.17.2
 In-Reply-To: <20190125162302.14036-1-masneyb@onstation.org>
 References: <20190125162302.14036-1-masneyb@onstation.org>
@@ -55,37 +56,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that ssbi-gpio is a proper hierarchical IRQ chip, and all in-tree
-users of device tree have been updated, we can now drop the hack that
-was introduced to disassociate the old Linux virq if a hwirq mapping
-already exists. That patch was introduced to not break git bisect for
-any existing boards.
+Add interrupt controller properties now that ssbi-gpio is a proper
+hierarchical IRQ chip. The interrupts property is no longer needed so
+remove it.
 
-This change was not tested on any actual hardware, however the same
-change was made to spmi-pmic-arb.c and tested on a LG Nexus 5
-(hammerhead) phone.
+Note that the IRQs started at 24 instead of 192 like all of the other
+PMICs. This is the same IRQs as the MPP for this board. qcom-pm8xxx.c
+doesn't set the shared IRQs so this is highly likely to be a copy and
+paste error.
 
 Signed-off-by: Brian Masney <masneyb@onstation.org>
 ---
- drivers/mfd/qcom-pm8xxx.c | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/arm/boot/dts/qcom-mdm9615.dtsi | 9 ++-------
+ 1 file changed, 2 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mfd/qcom-pm8xxx.c b/drivers/mfd/qcom-pm8xxx.c
-index 97b931465601..a976890c4019 100644
---- a/drivers/mfd/qcom-pm8xxx.c
-+++ b/drivers/mfd/qcom-pm8xxx.c
-@@ -387,11 +387,6 @@ static void pm8xxx_irq_domain_map(struct pm_irq_chip *chip,
- 				  irq_hw_number_t hwirq, unsigned int type)
- {
- 	irq_flow_handler_t handler;
--	unsigned int old_virq;
--
--	old_virq = irq_find_mapping(domain, hwirq);
--	if (old_virq)
--		irq_domain_disassociate(domain, old_virq);
+diff --git a/arch/arm/boot/dts/qcom-mdm9615.dtsi b/arch/arm/boot/dts/qcom-mdm9615.dtsi
+index c852b69229c9..0ed6fc3e873c 100644
+--- a/arch/arm/boot/dts/qcom-mdm9615.dtsi
++++ b/arch/arm/boot/dts/qcom-mdm9615.dtsi
+@@ -323,13 +323,8 @@
  
- 	if (type & IRQ_TYPE_EDGE_BOTH)
- 		handler = handle_edge_irq;
+ 				pmicgpio: gpio@150 {
+ 					compatible = "qcom,pm8018-gpio", "qcom,ssbi-gpio";
+-					interrupt-parent = <&pmicintc>;
+-					interrupts = <24 IRQ_TYPE_NONE>,
+-						     <25 IRQ_TYPE_NONE>,
+-						     <26 IRQ_TYPE_NONE>,
+-						     <27 IRQ_TYPE_NONE>,
+-						     <28 IRQ_TYPE_NONE>,
+-						     <29 IRQ_TYPE_NONE>;
++					interrupt-controller;
++					#interrupt-cells = <2>;
+ 					gpio-controller;
+ 					#gpio-cells = <2>;
+ 				};
 -- 
 2.17.2
 
