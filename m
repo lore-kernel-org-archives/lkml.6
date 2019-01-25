@@ -2,131 +2,244 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41966C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:31:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8658CC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:32:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C1702087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:31:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 555192087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:32:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729119AbfAYSbc (ORCPT
+        id S1728823AbfAYSct (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:31:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:64942 "EHLO mx1.redhat.com"
+        Fri, 25 Jan 2019 13:32:49 -0500
+Received: from foss.arm.com ([217.140.101.70]:52506 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726335AbfAYSbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:31:32 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B824A80F7B;
-        Fri, 25 Jan 2019 18:31:31 +0000 (UTC)
-Received: from [10.36.112.63] (ovpn-112-63.ams2.redhat.com [10.36.112.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id B441260930;
-        Fri, 25 Jan 2019 18:31:24 +0000 (UTC)
-Subject: Re: [PATCH] KVM: x86: Mark expected switch fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        Joerg Roedel <joro@8bytes.org>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190125182317.GA21244@embeddedor>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <6ac2ac84-0632-2489-eb13-21323a6b4be4@redhat.com>
-Date:   Fri, 25 Jan 2019 19:31:21 +0100
+        id S1726321AbfAYScs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 13:32:48 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 755CFEBD;
+        Fri, 25 Jan 2019 10:32:48 -0800 (PST)
+Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 179B83F5C1;
+        Fri, 25 Jan 2019 10:32:45 -0800 (PST)
+Subject: Re: [PATCH v5 4/4] perf/smmuv3_pmu: Enable HiSilicon Erratum
+ 162001800 quirk
+To:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
+        lorenzo.pieralisi@arm.com
+Cc:     jean-philippe.brucker@arm.com, will.deacon@arm.com,
+        mark.rutland@arm.com, guohanjun@huawei.com, john.garry@huawei.com,
+        pabba@codeaurora.org, vkilari@codeaurora.org,
+        rruigrok@codeaurora.org, linux-acpi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linuxarm@huawei.com, neil.m.leeder@gmail.com
+References: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
+ <20181130154751.28580-5-shameerali.kolothum.thodi@huawei.com>
+From:   Robin Murphy <robin.murphy@arm.com>
+Message-ID: <bfb957ad-ab5d-1848-7aec-a486476f8be6@arm.com>
+Date:   Fri, 25 Jan 2019 18:32:40 +0000
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190125182317.GA21244@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20181130154751.28580-5-shameerali.kolothum.thodi@huawei.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 25 Jan 2019 18:31:31 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/01/19 19:23, Gustavo A. R. Silva wrote:
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index f6915f10e584..1de38062026e 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -1773,7 +1773,7 @@ static int vmx_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
->  		if (!msr_info->host_initiated &&
->  		    !guest_cpuid_has(vcpu, X86_FEATURE_RDTSCP))
->  			return 1;
-> -		/* Otherwise falls through */
-> +		/* Else, falls through */
->  	default:
->  		msr = find_msr_entry(vmx, msr_info->index);
->  		if (msr) {
+On 30/11/2018 15:47, Shameer Kolothum wrote:
+> HiSilicon erratum 162001800 describes the limitation of
+> SMMUv3 PMCG implementation on HiSilicon Hip08 platforms.
+> 
+> On these platforms, the PMCG event counter registers
+> (SMMU_PMCG_EVCNTRn) are read only and as a result it
+> is not possible to set the initial counter period value
+> on event monitor start.
+> 
+> To work around this, the current value of the counter
+> is read and used for delta calculations. OEM information
+> from ACPI header is used to identify the affected hardware
+> platforms.
+> 
+> Signed-off-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
+> ---
+>   drivers/acpi/arm64/iort.c     | 30 +++++++++++++++++++++++++++---
+>   drivers/perf/arm_smmuv3_pmu.c | 35 +++++++++++++++++++++++++++++------
+>   include/linux/acpi_iort.h     |  3 +++
+>   3 files changed, 59 insertions(+), 9 deletions(-)
+> 
+> diff --git a/drivers/acpi/arm64/iort.c b/drivers/acpi/arm64/iort.c
+> index 2da08e1..d174379 100644
+> --- a/drivers/acpi/arm64/iort.c
+> +++ b/drivers/acpi/arm64/iort.c
+> @@ -1364,6 +1364,22 @@ static void __init arm_smmu_v3_pmcg_init_resources(struct resource *res,
+>   				       ACPI_EDGE_SENSITIVE, &res[2]);
+>   }
+>   
+> +static struct acpi_platform_list pmcg_evcntr_rdonly_list[] __initdata = {
+> +	/* HiSilicon Erratum 162001800 */
+> +	{"HISI  ", "HIP08   ", 0, ACPI_SIG_IORT, greater_than_or_equal},
+> +	{ }
+> +};
+> +
+> +static int __init arm_smmu_v3_pmcg_add_platdata(struct platform_device *pdev)
+> +{
+> +	u32 options = 0;
+> +
+> +	if (acpi_match_platform_list(pmcg_evcntr_rdonly_list) >= 0)
+> +		options |= IORT_PMCG_EVCNTR_RDONLY;
 
-I would say this is a compiler QoI issue and in general there were other
-cases like this one where the comments in the KVM source are reasonable,
-but I guess it's okay.  Patch queued.
+Hmm, do we want IORT code to have to understand a (potential) whole load 
+of PMCG-specific quirks directly, or do we really only need to pass some 
+unambiguous identifier for the PMCG implementation, and let the driver 
+handle the details in private - much like the SMMU model field, only 
+without an external spec to constrain us :)
 
-Paolo
+If we ever want to have named imp-def events, we'd need to do something 
+like that anyway, so perhaps we might be better off taking that approach 
+to begin with (and if so, I'd be inclined to push the basic platdata 
+initialisation for "generic PMCG" into patch #1).
+
+> +
+> +	return platform_device_add_data(pdev, &options, sizeof(options));
+> +}
+> +
+>   struct iort_dev_config {
+>   	const char *name;
+>   	int (*dev_init)(struct acpi_iort_node *node);
+> @@ -1374,6 +1390,7 @@ struct iort_dev_config {
+>   				     struct acpi_iort_node *node);
+>   	void (*dev_set_proximity)(struct device *dev,
+>   				    struct acpi_iort_node *node);
+> +	int (*dev_add_platdata)(struct platform_device *pdev);
+>   };
+>   
+>   static const struct iort_dev_config iort_arm_smmu_v3_cfg __initconst = {
+> @@ -1395,6 +1412,7 @@ static const struct iort_dev_config iort_arm_smmu_v3_pmcg_cfg __initconst = {
+>   	.name = "arm-smmu-v3-pmu",
+>   	.dev_count_resources = arm_smmu_v3_pmcg_count_resources,
+>   	.dev_init_resources = arm_smmu_v3_pmcg_init_resources,
+> +	.dev_add_platdata	= arm_smmu_v3_pmcg_add_platdata,
+>   };
+>   
+>   static __init const struct iort_dev_config *iort_get_dev_cfg(
+> @@ -1455,10 +1473,16 @@ static int __init iort_add_platform_device(struct acpi_iort_node *node,
+>   		goto dev_put;
+>   
+>   	/*
+> -	 * Add a copy of IORT node pointer to platform_data to
+> -	 * be used to retrieve IORT data information.
+> +	 * Platform devices based on PMCG nodes uses platform_data to
+> +	 * pass quirk flags to the driver. For others, add a copy of
+> +	 * IORT node pointer to platform_data to be used to retrieve
+> +	 * IORT data information.
+>   	 */
+> -	ret = platform_device_add_data(pdev, &node, sizeof(node));
+> +	if (ops->dev_add_platdata)
+> +		ret = ops->dev_add_platdata(pdev);
+> +	else
+> +		ret = platform_device_add_data(pdev, &node, sizeof(node));
+> +
+>   	if (ret)
+>   		goto dev_put;
+>   
+> diff --git a/drivers/perf/arm_smmuv3_pmu.c b/drivers/perf/arm_smmuv3_pmu.c
+> index 71d10a0..02107a1 100644
+> --- a/drivers/perf/arm_smmuv3_pmu.c
+> +++ b/drivers/perf/arm_smmuv3_pmu.c
+> @@ -35,6 +35,7 @@
+>    */
+>   
+>   #include <linux/acpi.h>
+> +#include <linux/acpi_iort.h>
+>   #include <linux/bitfield.h>
+>   #include <linux/bitops.h>
+>   #include <linux/cpuhotplug.h>
+> @@ -111,6 +112,7 @@ struct smmu_pmu {
+>   	struct device *dev;
+>   	void __iomem *reg_base;
+>   	void __iomem *reloc_base;
+> +	u32 options;
+>   	u64 counter_present_mask;
+>   	u64 counter_mask;
+>   };
+> @@ -224,12 +226,25 @@ static void smmu_pmu_set_period(struct smmu_pmu *smmu_pmu,
+>   	u32 idx = hwc->idx;
+>   	u64 new;
+>   
+> -	/*
+> -	 * We limit the max period to half the max counter value of the counter
+> -	 * size, so that even in the case of extreme interrupt latency the
+> -	 * counter will (hopefully) not wrap past its initial value.
+> -	 */
+> -	new = smmu_pmu->counter_mask >> 1;
+> +	if (smmu_pmu->options & IORT_PMCG_EVCNTR_RDONLY) {
+> +		/*
+> +		 * On platforms that require this quirk, if the counter starts
+> +		 * at < half_counter value and wraps, the current logic of
+> +		 * handling the overflow may not work. It is expected that,
+> +		 * those platforms will have full 64 counter bits implemented
+> +		 * so that such a possibility is remote(eg: HiSilicon HIP08).
+> +		 */
+> +		new = smmu_pmu_counter_get_value(smmu_pmu, idx);
+> +	} else {
+> +		/*
+> +		 * We limit the max period to half the max counter value
+> +		 * of the counter size, so that even in the case of extreme
+> +		 * interrupt latency the counter will (hopefully) not wrap
+> +		 * past its initial value.
+> +		 */
+> +		new = smmu_pmu->counter_mask >> 1;
+> +		smmu_pmu_counter_set_value(smmu_pmu, idx, new);
+> +	}
+>   
+>   	local64_set(&hwc->prev_count, new);
+>   	smmu_pmu_counter_set_value(smmu_pmu, idx, new);
+
+Either we've just done this already, or it's not going to have any 
+effect anyway, so it can definitely go.
+
+Robin.
+
+> @@ -670,6 +685,12 @@ static void smmu_pmu_reset(struct smmu_pmu *smmu_pmu)
+>   		       smmu_pmu->reloc_base + SMMU_PMCG_OVSCLR0);
+>   }
+>   
+> +static void smmu_pmu_get_acpi_options(struct smmu_pmu *smmu_pmu)
+> +{
+> +	smmu_pmu->options = *(u32 *)dev_get_platdata(smmu_pmu->dev);
+> +	dev_notice(smmu_pmu->dev, "option mask 0x%x\n", smmu_pmu->options);
+> +}
+> +
+>   static int smmu_pmu_probe(struct platform_device *pdev)
+>   {
+>   	struct smmu_pmu *smmu_pmu;
+> @@ -749,6 +770,8 @@ static int smmu_pmu_probe(struct platform_device *pdev)
+>   		return -EINVAL;
+>   	}
+>   
+> +	smmu_pmu_get_acpi_options(smmu_pmu);
+> +
+>   	/* Pick one CPU to be the preferred one to use */
+>   	smmu_pmu->on_cpu = get_cpu();
+>   	WARN_ON(irq_set_affinity(smmu_pmu->irq, cpumask_of(smmu_pmu->on_cpu)));
+> diff --git a/include/linux/acpi_iort.h b/include/linux/acpi_iort.h
+> index 38cd77b..4a7ae69 100644
+> --- a/include/linux/acpi_iort.h
+> +++ b/include/linux/acpi_iort.h
+> @@ -26,6 +26,9 @@
+>   #define IORT_IRQ_MASK(irq)		(irq & 0xffffffffULL)
+>   #define IORT_IRQ_TRIGGER_MASK(irq)	((irq >> 32) & 0xffffffffULL)
+>   
+> +/* PMCG node option or quirk flags */
+> +#define IORT_PMCG_EVCNTR_RDONLY		(1 << 0)
+> +
+>   int iort_register_domain_token(int trans_id, phys_addr_t base,
+>   			       struct fwnode_handle *fw_node);
+>   void iort_deregister_domain_token(int trans_id);
+> 
