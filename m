@@ -2,123 +2,95 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C2AB7C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:37:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4675C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:43:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E3B8218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:37:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="FOWgqOyg"
+	by mail.kernel.org (Postfix) with ESMTP id 895B32087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:43:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728871AbfAYNhm (ORCPT
+        id S1728315AbfAYNnk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 08:37:42 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:29397 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726273AbfAYNhl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 08:37:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1548423457;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=UmGrSh3HW81+8ei0ZJ15vFrgG8Ck0j0HDo+KWJhWFtQ=;
-        b=FOWgqOygrTKJ1HWz1YaiMLA92+9r2NNywCmup+UZIBciKfM5iBjvbrWGsjIR0jxw5F
-        yrsT1YzAVB7SgNk0X/DIs9tRvrLoD61B6oIooRZV8TDx3+CF5K5CwQ1uLZ4dWHilHM/Y
-        +mgfy/N026+fV29g11tE7+LRpP1yWnQCy0aUBB2s1qdIvtoeHLSiJ0HQaG6pE1TxfDOu
-        hgLd6XqzGkX10796Tbv0NLUJ1Ne4q+RPwWOQvLPC28x1eOkLJY3oeBkQIbrjXMz1juSa
-        Ss0iNWIGx7t4SKlZCWSsxluHSsCWYE7CfvqAkJqGwghnywAO0hTmGcxLI4ll2CqdLQWd
-        Lt/g==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7Clbj+Y6aWfN4m/uBgDVMNZwSoB2jA=="
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:d1fc:fd20:acd8:d691]
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id t0203dv0PDbYp1h
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Fri, 25 Jan 2019 14:37:34 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <871403f2-fa7d-de15-89eb-070432e15c69@xenosoft.de>
- <20190118112842.GA9115@lst.de>
- <a2ca0118-5915-8b1c-7cfa-71cb4b43eaa6@xenosoft.de>
- <20190118121810.GA13327@lst.de>
- <eceebeda-0e18-00f6-06e7-def2eb0aa961@xenosoft.de>
- <20190118125500.GA15657@lst.de>
- <e11e61b1-6468-122e-fc2b-3b3f857186bb@xenosoft.de>
- <f39d4fc6-7e4e-9132-c03f-59f1b52260e0@xenosoft.de>
- <b9e5e081-a3cc-2625-4e08-2d55c2ba224b@xenosoft.de>
- <20190119130222.GA24346@lst.de> <20190119140452.GA25198@lst.de>
- <bfe4adcc-01c1-7b46-f40a-8e020ff77f58@xenosoft.de>
- <8434e281-eb85-51d9-106f-f4faa559e89c@xenosoft.de>
-Message-ID: <4d8d4854-dac9-a78e-77e5-0455e8ca56c4@xenosoft.de>
-Date:   Fri, 25 Jan 2019 14:37:34 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 25 Jan 2019 08:43:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:51754 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726252AbfAYNnj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 08:43:39 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 29A34C7A15;
+        Fri, 25 Jan 2019 13:43:39 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.163])
+        by smtp.corp.redhat.com (Postfix) with SMTP id C699F61520;
+        Fri, 25 Jan 2019 13:43:37 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Fri, 25 Jan 2019 14:43:38 +0100 (CET)
+Date:   Fri, 25 Jan 2019 14:43:36 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Roman Gushchin <guroan@gmail.com>
+Cc:     Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
+        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v6 4/7] cgroup: cgroup v2 freezer
+Message-ID: <20190125134336.GA18991@redhat.com>
+References: <20181222000307.28231-1-guro@fb.com>
+ <20181222000307.28231-5-guro@fb.com>
 MIME-Version: 1.0
-In-Reply-To: <8434e281-eb85-51d9-106f-f4faa559e89c@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181222000307.28231-5-guro@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 25 Jan 2019 13:43:39 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Next step just with the first patch: 
-5c532d07c2f3c3972104de505d06b8d85f403f06 (use powerpc zone selection)
-
-git clone git://git.infradead.org/users/hch/misc.git -b 
-powerpc-dma.6-debug a
-
-git checkout 5c532d07c2f3c3972104de505d06b8d85f403f06
-
-Link to the Git: 
-http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6-debug
-
-Results:
-
-X5000: The kernel detects the SATA hard disk drive and boots without any 
-problems.
-
-X1000: The kernel boots and the P.A. Semi Ethernet works!
-
--- Christian
-
-
-On 23 January 2019 at 3:34PM, Christian Zigotzky wrote:
-> Hi Christoph,
+On 12/21, Roman Gushchin wrote:
 >
-> I also compiled a kernel (zImage) for the X1000  from your Git 
-> 'powerpc-dma.6-debug' (both patches) today.
->
-> It boots and the P.A. Semi Ethernet works!
->
-> I will test just the first patch tomorrow.
->
-> Thanks,
-> Christian
->
->
-> On 21 January 2019 at 3:38PM, Christian Zigotzky wrote:
->> Hello Christoph,
->>
->> Thanks for your reply. I successfully compiled a kernel (uImage) for 
->> the X5000 from your Git 'powerpc-dma.6-debug' (both patches) today.
->>
->> It detects the SATA hard disk drive and boots without any problems.
->>
->
->
+> +static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze)
+> +{
+> +	struct css_task_iter it;
+> +	struct task_struct *task;
+> +
+> +	lockdep_assert_held(&cgroup_mutex);
+> +
+> +	spin_lock_irq(&css_set_lock);
+> +	if (freeze) {
+> +		cgrp->freezer.nr_tasks_to_freeze = __cgroup_task_count(cgrp);
+> +		set_bit(CGRP_FREEZE, &cgrp->flags);
+> +	} else {
+> +		clear_bit(CGRP_FREEZE, &cgrp->flags);
+> +	}
+> +	spin_unlock_irq(&css_set_lock);
+> +
+> +	css_task_iter_start(&cgrp->self, 0, &it);
+> +	while ((task = css_task_iter_next(&it))) {
+> +		/*
+> +		 * Ignore kernel threads here. Freezing cgroups containing
+> +		 * kthreads isn't supported.
+> +		 */
+> +		if (task->flags & PF_KTHREAD)
+> +			continue;
+> +		cgroup_freeze_task(task, freeze);
+> +	}
+> +	css_task_iter_end(&it);
+
+I don't understand why this can race with exiting task. Or with SIGKILL which
+kills a task before it sets current->frozen.
+
+How can we trust nr_tasks_to_freeze at all?
+
+Yes you added cgroup_dec_tasks_to_freeze() into cgroup_exit(). But it won't be
+called if CGRP_FROZEN was not set yet, or because of "spurious" transitions
+caused by cgroup_inc/dec_frozen_cnt() called by this or other tasks.
+
+it seems that cgroup_exit() should check CGRP_FREEZE instead...
+
+Oleg.
 
