@@ -2,190 +2,100 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 036FBC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 130C7C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2C22218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D63DE218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:42:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PR97mGZv";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PR97mGZv"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G3As3Hav"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbfAYRkt (ORCPT
+        id S1729224AbfAYRmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:40:49 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:39980 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfAYRkt (ORCPT
+        Fri, 25 Jan 2019 12:42:03 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:37996 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726350AbfAYRmC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:40:49 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id A5FB460850; Fri, 25 Jan 2019 17:40:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548438048;
-        bh=auKadNCRyCk9nVyVmT74uiJWyteYnDEQhEY72yLVvfQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PR97mGZvBEzOxojk0lQ2AeSyS175V/NuckrGWLk+INdAvXg68f78nuWefES2yIWEf
-         UPLrlm2sgVucw1EPP/5RSlmj1z/Sm+7d79Og/2ZJl0TmYIZtx8vpu+ScE8yAev6W8/
-         jYoLuGmGntBmPaFerxYGF5gpvfNZpVfL3Rlv+Zj0=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 065676034E;
-        Fri, 25 Jan 2019 17:40:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548438048;
-        bh=auKadNCRyCk9nVyVmT74uiJWyteYnDEQhEY72yLVvfQ=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PR97mGZvBEzOxojk0lQ2AeSyS175V/NuckrGWLk+INdAvXg68f78nuWefES2yIWEf
-         UPLrlm2sgVucw1EPP/5RSlmj1z/Sm+7d79Og/2ZJl0TmYIZtx8vpu+ScE8yAev6W8/
-         jYoLuGmGntBmPaFerxYGF5gpvfNZpVfL3Rlv+Zj0=
+        Fri, 25 Jan 2019 12:42:02 -0500
+Received: by mail-wr1-f68.google.com with SMTP id v13so11180181wrw.5
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 09:42:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KB5hRAPY3O95oNsGa06XKA/vJaO61M8l8JOqzf1yAfU=;
+        b=G3As3HaviClRz2UHJzmUlc3x05U/S7U4uvea3knWdyPLzs8wk+IStcTO2YtucFwFd/
+         cg/twdjSKDm46qBnXy42yKNq30haVO5PvoEp9dGGzzxQVhMcSfeI+bCOYsDcGuWlH6H7
+         H4PS4QxMMv6b8xVjgDPHCu5gO9El9Rnw5wGwY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KB5hRAPY3O95oNsGa06XKA/vJaO61M8l8JOqzf1yAfU=;
+        b=HHV8bj+pP1jB2g6+Q+tYg2uT1ZUiaK1AaKY4VmWXVh7kTS5Vol9ndgwbEmX3eWgfpz
+         WtR1t8UPogEX6vE9+w+1DmC+4zoESlZ8aUA6i79Pu6ApT7s5tMS4Tu4/UgXQ24ykMrng
+         9JN4U4irk4pELKHdNurgPLVjM3U5ke25gIv0cg/2aWqKLYf3otZUczqdkc965vF3D3vK
+         xzCQMl+evKWnXuDekWYDAF8yPrLyc4TuKBtqHFr9xjDYix4zguYd3VhmWyEwuB8QCPjE
+         6VSQqFIquCyD/JV3xjh/fhJ7dn4ckZLTWGw5auNaX9BfDGvEUf+OzzYPMVXlQ3g8g4Sp
+         JqJA==
+X-Gm-Message-State: AJcUukcCTi2KSaLBlnbQw/ufn0aItuLvd+fmoQfP4vJGCOE/NuGDgb4O
+        Fc3iy51FUePksRPisa0UxjswzglJOyRJhBC4JHqLzg==
+X-Google-Smtp-Source: ALg8bN6Z2dlCm2gFbOWA8Rz+eqROIb4vmS+NSKlqmwCbSqG4hM6TmiSXL/fZ0qgxxQb9Suc4RuDtpc886aQTGwQFrd8=
+X-Received: by 2002:a5d:4c8a:: with SMTP id z10mr12045757wrs.75.1548438120630;
+ Fri, 25 Jan 2019 09:42:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Fri, 25 Jan 2019 23:10:47 +0530
-From:   Sibi Sankar <sibis@codeaurora.org>
-To:     Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
+References: <1548273966-5889-1-git-send-email-john.stultz@linaro.org> <107a6e2e-ddd8-cbc1-5680-1b5899665327@arm.com>
+In-Reply-To: <107a6e2e-ddd8-cbc1-5680-1b5899665327@arm.com>
+From:   John Stultz <john.stultz@linaro.org>
+Date:   Fri, 25 Jan 2019 09:41:48 -0800
+Message-ID: <CALAqxLW9B6zZi=iQK02QEcAq=xzBiZ-xO-18t2izsKgJstzfmQ@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: hikey: Revert "Enable HS200 mode on eMMC"
+To:     Robin Murphy <robin.murphy@arm.com>
+Cc:     lkml <linux-kernel@vger.kernel.org>,
         Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 01/10] arm64: dts: qcom: sdm845: Update PIL region
- memory map
-In-Reply-To: <20190122055112.30943-2-bjorn.andersson@linaro.org>
-References: <20190122055112.30943-1-bjorn.andersson@linaro.org>
- <20190122055112.30943-2-bjorn.andersson@linaro.org>
-Message-ID: <d8bb5a09037835e07838ab6996eb01ed@codeaurora.org>
-X-Sender: sibis@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Ryan Grachek <ryan@edited.us>,
+        Alistair Strachan <astrachan@google.com>,
+        Wei Xu <xuwei5@hisilicon.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        "stable #4 . 17+" <stable@vger.kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Bjorn,
+On Thu, Jan 24, 2019 at 3:18 AM Robin Murphy <robin.murphy@arm.com> wrote:
+>
+> Hi John,
+>
+> On 23/01/2019 20:06, John Stultz wrote:
+> > From: Alistair Strachan <astrachan@google.com>
+> >
+> > This reverts commit abd7d0972a192ee653efc7b151a6af69db58f2bb. This
+> > change was already partially reverted by John Stultz in commit
+> > 9c6d26df1fae ("arm64: dts: hikey: Fix eMMC corruption regression").
+> >
+> > This change appears to cause controller resets and block read failures
+> > which prevents successful booting on some hikey boards.
+>
+> FWIW, you might want to have a play with the pinctrl settings - I've
+> seen various flakiness with HS200 eMMCs on Rockchip boards which could
+> be solved by bumping up the drive strength.
+>
 
-On 2019-01-22 11:21, Bjorn Andersson wrote:
-> Update existing and add all missing PIL regions to the reserved memory
-> map, as described in version 10.
-> 
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> ---
-> 
-> Changes since v2:
-> - New patch
-> 
->  arch/arm64/boot/dts/qcom/sdm845.dtsi | 61 ++++++++++++++++++++++++++--
->  1 file changed, 58 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> index 0ec827394e92..cdcac3704c13 100644
-> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
-> @@ -89,12 +89,47 @@
->  		};
+Hm. Thanks for the tip. I'll have to dig around to see if that can
+help. In the meantime though, I think the revert is the right
+solution, as this is currently blocking some boards from booting
+mainline.  We can then look to re-enable HS200 mode if we can sort out
+the issues we saw with boards using hynix mmc chips.
 
-Shouldn't we add hyp and xbl regions
-as well?
-
-> 
->  		memory@86200000 {
-> -			reg = <0 0x86200000 0 0x2d00000>;
-> +			reg = <0 0x86200000 0 0x100000>;
->  			no-map;
->  		};
-> 
-> -		wlan_msa_mem: memory@96700000 {
-> -			reg = <0 0x96700000 0 0x100000>;
-> +		memory@86300000 {
-> +			reg = <0 0x86300000 0 0x4800000>;
-
-from v10 I see we don't need to reserve the
-last 28M it just needs to be
-
-reg = <0 0x86300000 0 0x2c00000>;
-
-> +			no-map;
-> +		};
-> +
-> +		memory@8ab00000 {
-> +			reg = <0 0x8ab00000 0 0x1400000>;
-> +			no-map;
-> +		};
-> +
-> +		memory@8bf00000 {
-> +			reg = <0 0x8bf00000 0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_fw_mem: memory@8c400000 {
-> +			reg = <0 0x8c400000 0 0x10000>;
-> +			no-map;
-> +		};
-> +
-> +		ipa_gsi_mem: memory@8c410000 {
-> +			reg = <0 0x8c410000 0 0x5000>;
-> +			no-map;
-> +		};
-> +
-> +		memory@8c415000 {
-> +			reg = <0 0x8c415000 0 0x2000>;
-> +			no-map;
-> +		};
-> +
-> +		adsp_mem: memory@8c500000 {
-> +			reg = <0 0x8c500000 0 0x1a00000>;
-> +			no-map;
-> +		};
-> +
-> +		wlan_msa_mem: memory@8df00000 {
-> +			reg = <0 0x8df00000 0 0x100000>;
->  			no-map;
->  		};
-> 
-> @@ -103,10 +138,30 @@
->  			no-map;
->  		};
-> 
-> +		venus_mem: memory@95800000 {
-> +			reg = <0 0x95800000 0 0x500000>;
-> +			no-map;
-> +		};
-> +
-> +		cdsp_mem: memory@95d00000 {
-> +			reg = <0 0x95d00000 0 0x800000>;
-> +			no-map;
-> +		};
-> +
->  		mba_region: memory@96500000 {
-
-should we re-name mba_region/mpss_region
-to mba_mem and mpss_mem for consistency.
-
->  			reg = <0 0x96500000 0 0x200000>;
->  			no-map;
->  		};
-> +
-> +		slpi_mem: memory@96700000 {
-> +			reg = <0 0x96700000 0 0x1400000>;
-> +			no-map;
-> +		};
-> +
-> +		spss_mem: memory@97b00000 {
-> +			reg = <0 0x97b00000 0 0x100000>;
-> +			no-map;
-> +		};
->  	};
-> 
->  	cpus {
-
--- 
--- Sibi Sankar --
-Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project.
+thanks
+-john
