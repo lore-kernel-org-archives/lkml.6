@@ -2,192 +2,116 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CAEAC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:11:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAFDEC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:11:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08526218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:11:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96EA5218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:11:55 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729354AbfAYSLs (ORCPT
+        id S1729401AbfAYSLx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:11:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:57788 "EHLO mx1.redhat.com"
+        Fri, 25 Jan 2019 13:11:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57818 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726273AbfAYSLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:11:47 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        id S1726273AbfAYSLv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 13:11:51 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1FB9588E70;
-        Fri, 25 Jan 2019 18:11:46 +0000 (UTC)
-Received: from [10.36.116.52] (ovpn-116-52.ams2.redhat.com [10.36.116.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4410F6048C;
-        Fri, 25 Jan 2019 18:11:38 +0000 (UTC)
-Subject: Re: [RFC v3 03/21] iommu: Introduce bind_guest_msi
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
-        jacob.jun.pan@linux.intel.com, yi.l.liu@linux.intel.com,
-        jean-philippe.brucker@arm.com, will.deacon@arm.com,
-        robin.murphy@arm.com, kevin.tian@intel.com, ashok.raj@intel.com,
-        marc.zyngier@arm.com, christoffer.dall@arm.com,
-        peter.maydell@linaro.org
-References: <20190108102633.17482-1-eric.auger@redhat.com>
- <20190108102633.17482-4-eric.auger@redhat.com>
- <20190111154419.502b3850@x1.home>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <795f8004-a156-28c2-ba23-bbcc4bcf5018@redhat.com>
-Date:   Fri, 25 Jan 2019 19:11:36 +0100
+        by mx1.redhat.com (Postfix) with ESMTPS id 492DC88E67;
+        Fri, 25 Jan 2019 18:11:51 +0000 (UTC)
+Received: from [10.36.112.63] (ovpn-112-63.ams2.redhat.com [10.36.112.63])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C32AC60C1C;
+        Fri, 25 Jan 2019 18:11:45 +0000 (UTC)
+Subject: Re: [PATCH v2 2/2] x86/kvm/hyper-v: recommend using eVMCS only when
+ it is enabled
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        Liran Alon <liran.alon@oracle.com>,
+        linux-kernel@vger.kernel.org
+References: <20190125111934.28782-1-vkuznets@redhat.com>
+ <20190125111934.28782-3-vkuznets@redhat.com>
+ <87h8dxnesa.fsf@vitty.brq.redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <fd8dee8a-91ad-9eab-87a9-612fd40e6c01@redhat.com>
+Date:   Fri, 25 Jan 2019 19:11:43 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <20190111154419.502b3850@x1.home>
+In-Reply-To: <87h8dxnesa.fsf@vitty.brq.redhat.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 25 Jan 2019 18:11:46 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Fri, 25 Jan 2019 18:11:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On 25/01/19 12:43, Vitaly Kuznetsov wrote:
+> Fixes: 2bc39970e932 ("x86/kvm/hyper-v: Introduce KVM_GET_SUPPORTED_HV_CPUID")
 
-On 1/11/19 11:44 PM, Alex Williamson wrote:
-> On Tue,  8 Jan 2019 11:26:15 +0100
-> Eric Auger <eric.auger@redhat.com> wrote:
-> 
->> On ARM, MSI are translated by the SMMU. An IOVA is allocated
->> for each MSI doorbell. If both the host and the guest are exposed
->> with SMMUs, we end up with 2 different IOVAs allocated by each.
->> guest allocates an IOVA (gIOVA) to map onto the guest MSI
->> doorbell (gDB). The Host allocates another IOVA (hIOVA) to map
->> onto the physical doorbell (hDB).
->>
->> So we end up with 2 untied mappings:
->>          S1            S2
->> gIOVA    ->    gDB
->>               hIOVA    ->    gDB
->                                ^^^ hDB
-> 
->> Currently the PCI device is programmed by the host with hIOVA
->> as MSI doorbell. So this does not work.
->>
->> This patch introduces an API to pass gIOVA/gDB to the host so
->> that gIOVA can be reused by the host instead of re-allocating
->> a new IOVA. So the goal is to create the following nested mapping:
->>
->>          S1            S2
->> gIOVA    ->    gDB     ->    hDB
->>
->> and program the PCI device with gIOVA MSI doorbell.
->>
->> Signed-off-by: Eric Auger <eric.auger@redhat.com>
->>
->> ---
->>
->> v2 -> v3:
->> - add a struct device handle
->> ---
->>  drivers/iommu/iommu.c      | 10 ++++++++++
->>  include/linux/iommu.h      | 13 +++++++++++++
->>  include/uapi/linux/iommu.h |  6 ++++++
->>  3 files changed, 29 insertions(+)
->>
->> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
->> index b2e248770508..ea11442e7054 100644
->> --- a/drivers/iommu/iommu.c
->> +++ b/drivers/iommu/iommu.c
->> @@ -1431,6 +1431,16 @@ static void __iommu_detach_device(struct iommu_domain *domain,
->>  	trace_detach_device_from_domain(dev);
->>  }
->>  
->> +int iommu_bind_guest_msi(struct iommu_domain *domain, struct device *dev,
->> +			 struct iommu_guest_msi_binding *binding)
->> +{
->> +	if (unlikely(!domain->ops->bind_guest_msi))
->> +		return -ENODEV;
->> +
->> +	return domain->ops->bind_guest_msi(domain, dev, binding);
->> +}
->> +EXPORT_SYMBOL_GPL(iommu_bind_guest_msi);
->> +
->>  void iommu_detach_device(struct iommu_domain *domain, struct device *dev)
->>  {
->>  	struct iommu_group *group;
->> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
->> index 96d59886f230..244c1a3d5989 100644
->> --- a/include/linux/iommu.h
->> +++ b/include/linux/iommu.h
->> @@ -235,6 +235,9 @@ struct iommu_ops {
->>  	int (*cache_invalidate)(struct iommu_domain *domain, struct device *dev,
->>  				struct iommu_cache_invalidate_info *inv_info);
->>  
->> +	int (*bind_guest_msi)(struct iommu_domain *domain, struct device *dev,
->> +			      struct iommu_guest_msi_binding *binding);
->> +
->>  	unsigned long pgsize_bitmap;
->>  };
->>  
->> @@ -301,6 +304,9 @@ extern int iommu_set_pasid_table(struct iommu_domain *domain,
->>  extern int iommu_cache_invalidate(struct iommu_domain *domain,
->>  				struct device *dev,
->>  				struct iommu_cache_invalidate_info *inv_info);
->> +extern int iommu_bind_guest_msi(struct iommu_domain *domain, struct device *dev,
->> +				struct iommu_guest_msi_binding *binding);
->> +
->>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
->>  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
->>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
->> @@ -724,6 +730,13 @@ iommu_cache_invalidate(struct iommu_domain *domain,
->>  	return -ENODEV;
->>  }
->>  
->> +static inline
->> +int iommu_bind_guest_msi(struct iommu_domain *domain, struct device *dev,
->> +			 struct iommu_guest_msi_binding *binding)
->> +{
->> +	return -ENODEV;
->> +}
->> +
->>  #endif /* CONFIG_IOMMU_API */
->>  
->>  #ifdef CONFIG_IOMMU_DEBUGFS
->> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
->> index 4605f5cfac84..f28cd9a1aa96 100644
->> --- a/include/uapi/linux/iommu.h
->> +++ b/include/uapi/linux/iommu.h
->> @@ -142,4 +142,10 @@ struct iommu_cache_invalidate_info {
->>  	__u64		arch_id;
->>  	__u64		addr;
->>  };
->> +
->> +struct iommu_guest_msi_binding {
->> +	__u64		iova;
->> +	__u64		gpa;
->> +	__u32		granule;
-> 
-> What's granule?  The size?  This looks a lot like just a stage 1
-> mapping interface, I can't really figure out from the description how
-> this matches to any specific MSI mapping.  Zero comments in the code
-> or headers here about how this is supposed to work.  Thanks,
-Considering your next comment about the unbind() operation, I think the
-struct can simply be removed. Instead we could directly have:
-int (*bind_guest_msi)(struct iommu_domain *domain, struct device *dev,
-                              dma_addr_t iova, gpa_t gpa, size_t size);
-int (*unbind_guest_msi)(struct iommu_domain *domain, struct device *dev,
-                                dma_addr_t iova);
+Added, thanks.
 
-
-Thanks
-
-Eric
-> 
-> Alex
-> 
+Paolo
