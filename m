@@ -2,202 +2,180 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54D4AC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5FD4EC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:55:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C62E2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CB8C2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:55:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729262AbfAYJyw (ORCPT
+        id S1729287AbfAYJzM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 04:54:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:40930 "EHLO mx1.redhat.com"
+        Fri, 25 Jan 2019 04:55:12 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42758 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726761AbfAYJyw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 04:54:52 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A2A85C0C4265;
-        Fri, 25 Jan 2019 09:54:51 +0000 (UTC)
-Received: from localhost (ovpn-8-28.pek2.redhat.com [10.72.8.28])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5B75C6B476;
-        Fri, 25 Jan 2019 09:54:45 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>, Bjorn Helgaas <helgaas@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org, Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH 5/5] genirq/affinity: remove support for allocating interrupt sets
-Date:   Fri, 25 Jan 2019 17:53:47 +0800
-Message-Id: <20190125095347.17950-6-ming.lei@redhat.com>
-In-Reply-To: <20190125095347.17950-1-ming.lei@redhat.com>
-References: <20190125095347.17950-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 25 Jan 2019 09:54:51 +0000 (UTC)
+        id S1726761AbfAYJzL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 04:55:11 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 5258220714; Fri, 25 Jan 2019 10:55:09 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id F31AD20714;
+        Fri, 25 Jan 2019 10:55:08 +0100 (CET)
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        Florian Fainelli <f.fainelli@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, <linux-kernel@vger.kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH net-next v2 0/2] mv88e6xxx DSA suspend to RAM support
+Date:   Fri, 25 Jan 2019 10:55:05 +0100
+Message-Id: <20190125095507.29334-1-miquel.raynal@bootlin.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now allocating interrupt sets can be done via .setup_affinity()
-easily, so remove the support for allocating interrupt sets.
+After a first attempt of bringing S2RAM support to the DSA switch, it
+has been reported that a part of the configuration was lost during the
+cycle. This second version adds a first patch that saves the rules in
+a per-chip list when they are applied, so that in the second patch we
+bring S2RAM support by also re-applying these rules.
 
-With this change, we don't need the limit of 'minvec == maxvec'
-any more in pci_alloc_irq_vectors_affinity().
+Bridging is set up on the EspressoBin with the below commands (thanks
+to Andrew):
 
-Meantime irq_create_affinity_masks() gets simplified a lot.
+        ip link set eth0 up
+        ip link add name br0 type bridge
+        ip link set br0 up
+        ip link set lan0 up
+        ip link set lan0 master br0
+        ip link set lan1 up
+        ip link set lan1 master br0
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- drivers/pci/msi.c         | 14 -------------
- include/linux/interrupt.h |  4 ----
- kernel/irq/affinity.c     | 52 +++++++++++------------------------------------
- 3 files changed, 12 insertions(+), 58 deletions(-)
+Static forwarding entries are added:
 
-diff --git a/drivers/pci/msi.c b/drivers/pci/msi.c
-index 4c0b47867258..331483de1294 100644
---- a/drivers/pci/msi.c
-+++ b/drivers/pci/msi.c
-@@ -1035,13 +1035,6 @@ static int __pci_enable_msi_range(struct pci_dev *dev, int minvec, int maxvec,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
--	/*
--	 * If the caller is passing in sets, we can't support a range of
--	 * vectors. The caller needs to handle that.
--	 */
--	if (affd && affd->nr_sets && minvec != maxvec)
--		return -EINVAL;
--
- 	if (WARN_ON_ONCE(dev->msi_enabled))
- 		return -EINVAL;
- 
-@@ -1093,13 +1086,6 @@ static int __pci_enable_msix_range(struct pci_dev *dev,
- 	if (maxvec < minvec)
- 		return -ERANGE;
- 
--	/*
--	 * If the caller is passing in sets, we can't support a range of
--	 * supported vectors. The caller needs to handle that.
--	 */
--	if (affd && affd->nr_sets && minvec != maxvec)
--		return -EINVAL;
--
- 	if (WARN_ON_ONCE(dev->msix_enabled))
- 		return -EINVAL;
- 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index b820b07f3b55..a035e165f405 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -260,8 +260,6 @@ struct irq_affinity_desc {
-  * 			and driver has to handle pre_vectors & post_vectors
-  * 			correctly, set 'is_managed' flag correct too
-  * @priv:		Private data of @setup_affinity
-- * @nr_sets:		Length of passed in *sets array
-- * @sets:		Number of affinitized sets
-  */
- struct irq_affinity {
- 	int	pre_vectors;
-@@ -270,8 +268,6 @@ struct irq_affinity {
- 				  struct irq_affinity_desc *,
- 				  unsigned int);
- 	void    *priv;
--	int	nr_sets;
--	int	*sets;
- };
- 
- #if defined(CONFIG_SMP)
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index 524fdcda9f85..e8fea65325d9 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -269,9 +269,9 @@ struct irq_affinity_desc *
- irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- {
- 	int affvecs = nvecs - affd->pre_vectors - affd->post_vectors;
--	int curvec, usedvecs;
-+	int curvec;
- 	struct irq_affinity_desc *masks = NULL;
--	int i, nr_sets;
-+	int i;
- 
- 	/*
- 	 * If there aren't any vectors left after applying the pre/post
-@@ -293,34 +293,14 @@ irq_create_affinity_masks(int nvecs, const struct irq_affinity *affd)
- 	/* Fill out vectors at the beginning that don't need affinity */
- 	for (curvec = 0; curvec < affd->pre_vectors; curvec++)
- 		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
--	/*
--	 * Spread on present CPUs starting from affd->pre_vectors. If we
--	 * have multiple sets, build each sets affinity mask separately.
--	 */
--	nr_sets = affd->nr_sets;
--	if (!nr_sets)
--		nr_sets = 1;
--
--	for (i = 0, usedvecs = 0; i < nr_sets; i++) {
--		int this_vecs = affd->sets ? affd->sets[i] : affvecs;
--		int ret;
--
--		ret = irq_build_affinity_masks(affd, curvec, this_vecs,
--						curvec, masks);
--		if (ret) {
--			kfree(masks);
--			return NULL;
--		}
--		curvec += this_vecs;
--		usedvecs += this_vecs;
-+
-+	if (irq_build_affinity_masks(affd, curvec, affvecs, curvec, masks)) {
-+		kfree(masks);
-+		return NULL;
- 	}
- 
- 	/* Fill out vectors at the end that don't need affinity */
--	if (usedvecs >= affvecs)
--		curvec = affd->pre_vectors + affvecs;
--	else
--		curvec = affd->pre_vectors + usedvecs;
--	for (; curvec < nvecs; curvec++)
-+	for (curvec = affd->pre_vectors + affvecs; curvec < nvecs; curvec++)
- 		cpumask_copy(&masks[curvec].mask, irq_default_affinity);
- 
- 	/* Mark the managed interrupts */
-@@ -340,21 +320,13 @@ int irq_calc_affinity_vectors(int minvec, int maxvec, const struct irq_affinity
- {
- 	int resv = affd->pre_vectors + affd->post_vectors;
- 	int vecs = maxvec - resv;
--	int set_vecs;
-+	int ret;
- 
- 	if (resv > minvec)
- 		return 0;
- 
--	if (affd->nr_sets) {
--		int i;
--
--		for (i = 0, set_vecs = 0;  i < affd->nr_sets; i++)
--			set_vecs += affd->sets[i];
--	} else {
--		get_online_cpus();
--		set_vecs = cpumask_weight(cpu_possible_mask);
--		put_online_cpus();
--	}
--
--	return resv + min(set_vecs, vecs);
-+	get_online_cpus();
-+	ret = min_t(int, cpumask_weight(cpu_possible_mask), vecs) + resv;
-+	put_online_cpus();
-+	return ret;
- }
+        bridge fdb add 00:42:42:42:42:42 dev lan0
+        bridge fdb add 00:24:24:24:24:24 dev lan1
+
+Dumping the switch entries gives:
+
+        # bridge fdb show
+	33:33:00:00:00:01 dev eth0 self permanent
+        01:00:5e:00:00:01 dev eth0 self permanent
+        33:33:ff:06:e2:95 dev eth0 self permanent
+        dc:0b:34:87:7f:27 dev lan0 br0
+        d4:81:d7:4f:a1:0d dev lan0 br0
+        f0:ad:4e:06:e2:95 dev lan0 vlan 1 br0 permanent
+        f0:ad:4e:06:e2:95 dev lan0 br0 permanent
+        00:42:42:42:42:42 dev lan0 self static
+        d4:81:d7:4f:a1:0d dev lan0 self
+        dc:0b:34:87:7f:27 dev lan0 self
+        00:0a:35:00:01:22 dev lan1 br0
+        00:0a:35:00:01:22 dev lan1 self
+        00:24:24:24:24:24 dev lan1 self static
+        33:33:00:00:00:01 dev br0 self permanent
+        01:00:5e:00:00:01 dev br0 self permanent
+        33:33:ff:00:2a:68 dev br0 self permanent
+
+After a S2RAM cycle, the bridge and the static entries have been restored.
+
+
+        mv88e6085 d0032004.mdio-mii:01 lan0: configuring for phy/ link mode
+        mv88e6085 d0032004.mdio-mii:01 lan1: configuring for phy/ link mode
+        mv88e6085 d0032004.mdio-mii:01 lan1: Link is Up - 1Gbps/Full - flow control rx/tx
+        mv88e6085 d0032004.mdio-mii:01 lan0: Link is Up - 1Gbps/Full - flow control rx/tx
+
+        # bridge fdb show
+        33:33:00:00:00:01 dev eth0 self permanent
+        01:00:5e:00:00:01 dev eth0 self permanent
+        33:33:ff:06:e2:95 dev eth0 self permanent
+        9c:93:4e:26:e4:54 dev lan0 br0
+        d4:81:d7:45:de:60 dev lan0 br0
+        dc:0b:34:87:7f:27 dev lan0 br0
+        d4:81:d7:4f:a1:0d dev lan0 br0
+        f0:ad:4e:06:e2:95 dev lan0 vlan 1 br0 permanent
+        f0:ad:4e:06:e2:95 dev lan0 br0 permanent
+        00:42:42:42:42:42 dev lan0 self static
+        d4:81:d7:4f:a1:0d dev lan0 self
+        00:0a:35:00:01:22 dev lan1 br0
+        00:0a:35:00:01:22 dev lan1 self
+        00:24:24:24:24:24 dev lan1 self static
+        33:33:00:00:00:01 dev br0 self permanent
+        01:00:5e:00:00:01 dev br0 self permanent
+        33:33:ff:00:2a:68 dev br0 self permanent
+
+An iperf test running over the whole cycle gives:
+
+         1.00-2.00   sec  81.7 MBytes   685 Mbits/sec
+         2.00-3.00   sec  81.8 MBytes   687 Mbits/sec
+         3.00-4.00   sec  81.8 MBytes   685 Mbits/sec
+         4.00-5.00   sec  81.7 MBytes   686 Mbits/sec
+         5.00-6.00   sec  81.5 MBytes   683 Mbits/sec
+         6.00-7.00   sec  81.6 MBytes   685 Mbits/sec
+         7.00-8.00   sec  81.5 MBytes   684 Mbits/sec
+         8.00-9.00   sec  81.7 MBytes   685 Mbits/sec
+         9.00-10.00  sec  81.5 MBytes   684 Mbits/sec
+        10.00-11.00  sec  81.6 MBytes   684 Mbits/sec
+        11.00-12.00  sec  81.5 MBytes   683 Mbits/sec
+
+        macb e000b000.ethernet eth0: link down
+
+	12.00-13.00  sec  19.5 MBytes   164 Mbits/sec
+        13.00-14.00  sec  0.00 Bytes  0.00 bits/sec
+        14.00-15.00  sec  0.00 Bytes  0.00 bits/sec
+        15.00-16.00  sec  0.00 Bytes  0.00 bits/sec
+        16.00-17.00  sec  0.00 Bytes  0.00 bits/sec
+        17.00-18.00  sec  0.00 Bytes  0.00 bits/sec
+        18.00-19.00  sec  0.00 Bytes  0.00 bits/sec
+        19.00-20.00  sec  0.00 Bytes  0.00 bits/sec
+        20.00-21.00  sec  0.00 Bytes  0.00 bits/sec
+        21.00-22.00  sec  0.00 Bytes  0.00 bits/sec
+        22.00-23.00  sec  0.00 Bytes  0.00 bits/sec
+
+        macb e000b000.ethernet eth0: link up (1000/Full)
+
+        23.00-24.00  sec  0.00 Bytes  0.00 bits/sec
+        24.00-25.00  sec  0.00 Bytes  0.00 bits/sec
+        25.00-26.00  sec  18.6 MBytes   156 Mbits/sec
+        26.00-27.00  sec  81.5 MBytes   684 Mbits/sec
+        27.00-28.00  sec  81.6 MBytes   684 Mbits/sec
+        28.00-29.00  sec  81.5 MBytes   684 Mbits/sec
+        29.00-30.00  sec  81.5 MBytes   683 Mbits/sec
+        30.00-31.00  sec  81.6 MBytes   685 Mbits/sec
+        31.00-32.00  sec  81.6 MBytes   684 Mbits/sec
+        32.00-33.00  sec  81.4 MBytes   683 Mbits/sec
+        33.00-34.00  sec  81.4 MBytes   683 Mbits/sec
+        33.00-34.00  sec  81.4 MBytes   683 Mbits/sec
+
+I hope everything has been restored correctly, please let me know if
+you spot anything else that is missing.
+
+
+Thanks,
+Miquèl
+
+
+Miquel Raynal (2):
+  net: dsa: mv88e6xxx: Save switch rules
+  net: dsa: mv88e6xxx: Add suspend to RAM support
+
+ drivers/net/dsa/mv88e6xxx/chip.c | 359 ++++++++++++++++++++++++++++---
+ drivers/net/dsa/mv88e6xxx/chip.h |  33 +++
+ 2 files changed, 357 insertions(+), 35 deletions(-)
+
 -- 
-2.9.5
+2.19.1
 
