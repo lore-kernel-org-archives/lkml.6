@@ -3,36 +3,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA833C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9273CC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB16A218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6762A218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:51:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729514AbfAYRvc (ORCPT
+        id S1729534AbfAYRvi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:51:32 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52510 "EHLO mx1.redhat.com"
+        Fri, 25 Jan 2019 12:51:38 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46795 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729327AbfAYRvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:51:31 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1729327AbfAYRvg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 12:51:36 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 67FED145214;
-        Fri, 25 Jan 2019 17:51:30 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 67639C0669DE;
+        Fri, 25 Jan 2019 17:51:36 +0000 (UTC)
 Received: from [10.36.112.63] (ovpn-112-63.ams2.redhat.com [10.36.112.63])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 8CEB45D9D6;
-        Fri, 25 Jan 2019 17:51:22 +0000 (UTC)
-Subject: Re: [PATCH] [next] kvm: vmx: fix some -Wmissing-prototypes warnings
-To:     Yi Wang <wang.yi59@zte.com.cn>
-Cc:     rkrcmar@redhat.com, tglx@linutronix.de, mingo@redhat.com,
-        bp@alien8.de, hpa@zytor.com, x86@kernel.org, kvm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, xue.zhihong@zte.com.cn
-References: <1548055625-14569-1-git-send-email-wang.yi59@zte.com.cn>
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5040117C21;
+        Fri, 25 Jan 2019 17:51:29 +0000 (UTC)
+Subject: Re: [PATCH] svm: Add warning message for AVIC IPI invalid target
+To:     "Suthikulpanit, Suravee" <Suravee.Suthikulpanit@amd.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "x86@kernel.org" <x86@kernel.org>
+Cc:     "joro@8bytes.org" <joro@8bytes.org>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>
+References: <20190122102356.125085-1-Suravee.Suthikulpanit@amd.com>
 From:   Paolo Bonzini <pbonzini@redhat.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
@@ -90,62 +95,51 @@ Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
  DduC0U3xYkfbGAUvbxeepjgzp0uEnBXfPTy09JGpgWbg0w91GyfT/ujKaGd4vxG2Ei+MMNDm
  S1SMx7wu0evvQ5kT9NPzyq8R2GIhVSiAd2jioGuTjX6AZCFv3ToO53DliFMkVTecLptsXaes
  uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
-Message-ID: <063ce9c5-20f2-c675-b06b-e09736a88e7f@redhat.com>
-Date:   Fri, 25 Jan 2019 18:51:21 +0100
+Message-ID: <03361990-0af7-ea92-87bf-4d738530643d@redhat.com>
+Date:   Fri, 25 Jan 2019 18:51:26 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <1548055625-14569-1-git-send-email-wang.yi59@zte.com.cn>
+In-Reply-To: <20190122102356.125085-1-Suravee.Suthikulpanit@amd.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 25 Jan 2019 17:51:30 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 25 Jan 2019 17:51:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 21/01/19 08:27, Yi Wang wrote:
-> We get some warnings when building kernel with W=1:
-> arch/x86/kvm/vmx/vmx.c:426:5: warning: no previous prototype for ‘kvm_fill_hv_flush_list_func’ [-Wmissing-prototypes]
-> arch/x86/kvm/vmx/nested.c:58:6: warning: no previous prototype for ‘init_vmcs_shadow_fields’ [-Wmissing-prototypes]
+On 22/01/19 11:24, Suthikulpanit, Suravee wrote:
+> From: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 > 
-> Make them static to fix this.
+> Print warning message when IPI target ID is invalid due to one of
+> the following reasons:
+>   * In logical mode: cluster > max_cluster (64)
+>   * In physical mode: target > max_physical (512)
+>   * Address is not present in the physical or logical ID tables
 > 
-> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+> Signed-off-by: Suravee Suthikulpanit <suravee.suthikulpanit@amd.com>
 > ---
->  arch/x86/kvm/vmx/nested.c | 2 +-
->  arch/x86/kvm/vmx/vmx.c    | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
+>  arch/x86/kvm/svm.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/x86/kvm/vmx/nested.c b/arch/x86/kvm/vmx/nested.c
-> index 2616bd2..f8af511 100644
-> --- a/arch/x86/kvm/vmx/nested.c
-> +++ b/arch/x86/kvm/vmx/nested.c
-> @@ -55,7 +55,7 @@ enum {
->  static int max_shadow_read_write_fields =
->  	ARRAY_SIZE(shadow_read_write_fields);
->  
-> -void init_vmcs_shadow_fields(void)
-> +static void init_vmcs_shadow_fields(void)
->  {
->  	int i, j;
->  
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index f6915f1..38641e6 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -423,7 +423,7 @@ static void check_ept_pointer_match(struct kvm *kvm)
->  	to_kvm_vmx(kvm)->ept_pointers_match = EPT_POINTERS_MATCH;
->  }
->  
-> -int kvm_fill_hv_flush_list_func(struct hv_guest_mapping_flush_list *flush,
-> +static int kvm_fill_hv_flush_list_func(struct hv_guest_mapping_flush_list *flush,
->  		void *data)
->  {
->  	struct kvm_tlb_range *range = data;
+> diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
+> index a157ca5b6869..2aff835a65ed 100644
+> --- a/arch/x86/kvm/svm.c
+> +++ b/arch/x86/kvm/svm.c
+> @@ -4526,6 +4526,8 @@ static int avic_incomplete_ipi_interception(struct vcpu_svm *svm)
+>  		break;
+>  	}
+>  	case AVIC_IPI_FAILURE_INVALID_TARGET:
+> +		WARN_ONCE(1, "Invalid IPI target: index=%u, vcpu=%d, icr=%#0x:%#0x\n",
+> +			  index, svm->vcpu.vcpu_id, icrh, icrl);
+>  		break;
+>  	case AVIC_IPI_FAILURE_INVALID_BACKING_PAGE:
+>  		WARN_ONCE(1, "Invalid backing page\n");
 > 
+
 Queued, thanks.
 
 Paolo
