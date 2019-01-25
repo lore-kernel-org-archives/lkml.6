@@ -8,64 +8,64 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3DFC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:44:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48C84C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:44:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D935217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:44:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15585218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:44:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IkpJ1OAA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P8BvwZXE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbfAYSoM (ORCPT
+        id S1727736AbfAYSoK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:44:12 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:35495 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726683AbfAYSoJ (ORCPT
+        Fri, 25 Jan 2019 13:44:10 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35492 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfAYSoI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:44:09 -0500
-Received: by mail-lj1-f196.google.com with SMTP id x85-v6so9223933ljb.2;
-        Fri, 25 Jan 2019 10:44:07 -0800 (PST)
+        Fri, 25 Jan 2019 13:44:08 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so9223890ljb.2;
+        Fri, 25 Jan 2019 10:44:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=ndbUj8k5FEYEV1SSU+gmxNi3BMlfpk8Kj/4PsfHlJtY=;
-        b=IkpJ1OAAueblmBPrHgc6Ervs5VNIaz0M3Xvrt91XyQWhkRWmCrFtZu+SnuR4t4DTLq
-         5bidoE1XlDAum/4t6KMGdUdZ7oN4L7ACcDiT5kysQ99wWLcFrPRN1qODzrscvIKJnZCX
-         6ZrLeRadGTnVPuvaf9AFCPeswPq/wSuyA47BWKlYpwgp6NaXLcbKijcvk59345LXUJIw
-         LH2mHvV77JttB+lr1DeZSqeEWLCBylH+275cs3h9nzUGsAcLU9jFQGmLbpR1WZhCrq+s
-         FppnxfhtVzwohlRdwe2aYdDr+NiBbh6VIH1JSIb9LDZx+xmcJ9huYGg4qVS0ITs/UzYk
-         btBA==
+        bh=qjR22u6lXttFrgTMhVRfKccaiPxD9vLfGnMVFjSv2XU=;
+        b=P8BvwZXEdIOsyfMTdW3Kc2ay1MYZg58UcxOkkTqdjOlmSmIImoWOXuk1RXpPBa+9Yg
+         EL47gF97Yj/GJLKZvIU67r3IbNWhZekxDwZlrLQd3cpwcax9yAckOs8doXZcg9Ba8RF+
+         jNHcM4f2d+RB/j/2zlO8AbNdg1/a12HnpFcLASQRU1e83iN+PwmCV9wJU6iifFhVEKiM
+         c9zfntv0hWd36gNTDqL3T/qkZ/+qficOz6sxHryowZ7C0aL69M/9Lv4oekRcDUXWhCTc
+         UsnUKTOnpTJqWTRcNbkrbpZHOYOxY5ujnhTKWLtxdy4HYK0bZ2EkGQH8RAlJgMoSNn80
+         Dh7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ndbUj8k5FEYEV1SSU+gmxNi3BMlfpk8Kj/4PsfHlJtY=;
-        b=Rw0in3TKydPQECO0RPEqytVSciFUt6imkSsRdUpNYkOVI8djaqVanuGoDovSb1NcUx
-         EpDy4PL/XQgmz9gU5nEOjkzK1hk8Ge3LMwObuNTipcKBpgJHO5qeLZOQ1X/LbMzIXH1W
-         a+/RwfbXw74ruLWOc5wsSBe4ftKS7DrmncoI+qGFj0ja99sj+DNHkcL4hobsJ7TpyU34
-         V2omuq7HI1Kre6KzaYmz6KUZ/Tb9Ia8cH/byW8KDouvtB+q9kp6k8g+bEmU9znSzki++
-         ySQq6I/M1uijviifzQIukIR3Am/TaXKrpEtKhmTA/QYhLkKIWPhU9+YjU5WXTXPpRFG5
-         hMOQ==
-X-Gm-Message-State: AJcUukdK+lJ4hGY9vMxXo52lTXb2IlDzRfpHKSQnItGQnWNsfUPlQ5BT
-        FXWg8jQah3z4tMHaUKHSzS0=
-X-Google-Smtp-Source: ALg8bN5r3USNaclBvDvS1n2+0V88IrY6OIZMEj0WkGxmoCR/8BFO7vZqE1W5oBByGhEOulEkZSwKsg==
-X-Received: by 2002:a2e:63cd:: with SMTP id s74-v6mr9612381lje.117.1548441846191;
-        Fri, 25 Jan 2019 10:44:06 -0800 (PST)
+        bh=qjR22u6lXttFrgTMhVRfKccaiPxD9vLfGnMVFjSv2XU=;
+        b=Lu6mTfDr0YRts9o7FDffbL3yw38LY3oB9pNe6VwAjLO51RqdOnQ18Ei/b3U5WRHQ3/
+         CAUpsylgBbQW8Il6HBwOjJoEQoHrjSEuoot8oqHu3WyHE6qz3g5nRA+fnsaEOKiLE/oT
+         oip02iyHfu4zO2piqmx+9w4WAeIBOfsrEnlEz/uKsvEAi58nnhEM1LrA2iXXgS7KgbtS
+         CBUJ09LKCIJRLQ1fIDp0lPkrD68DC0c0fNlHryummO3fhnFzNBO017T+53I8MlVRYmdj
+         JWQMxkt3ThB+HMXfr73fqp5HT/wTi7QbKlAGjmzBc7jX0s+zgQKpFCpPeSnVIK5q7fpx
+         s7nw==
+X-Gm-Message-State: AJcUukc+sgDG6bsHNDEU4wR8lLSHXe5zTBtBCz5JDjt2ljAFY+d9UDHL
+        jRigRYrGqwQRR+d1nmMZi0M=
+X-Google-Smtp-Source: ALg8bN71rAUKpbv8V0UeQWmY89Ots8FBBPQEhcA5ZN8LXqId7cXUIo8Dhqqg9F4kq3/xSo39rL/u9A==
+X-Received: by 2002:a2e:9cd2:: with SMTP id g18-v6mr9852268ljj.161.1548441844952;
+        Fri, 25 Jan 2019 10:44:04 -0800 (PST)
 Received: from localhost.localdomain ([2a02:a315:5445:5300:6921:1f1d:2918:d853])
-        by smtp.googlemail.com with ESMTPSA id f18sm1715432lfk.18.2019.01.25.10.44.05
+        by smtp.googlemail.com with ESMTPSA id f18sm1715432lfk.18.2019.01.25.10.44.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 10:44:05 -0800 (PST)
+        Fri, 25 Jan 2019 10:44:04 -0800 (PST)
 From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
 To:     dmitry.torokhov@gmail.com
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
         pawel.mikolaj.chmiel@gmail.com, xc-racer2@live.ca,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] input: misc: bma150: Add support for device tree
-Date:   Fri, 25 Jan 2019 19:43:59 +0100
-Message-Id: <20190125184400.17669-3-pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 1/3] input: misc: bma150: Use managed resources helpers
+Date:   Fri, 25 Jan 2019 19:43:58 +0100
+Message-Id: <20190125184400.17669-2-pawel.mikolaj.chmiel@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190125184400.17669-1-pawel.mikolaj.chmiel@gmail.com>
 References: <20190125184400.17669-1-pawel.mikolaj.chmiel@gmail.com>
@@ -79,49 +79,141 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Jonathan Bakker <xc-racer2@live.ca>
 
-Add basic of_match table to enable bma150 to be probed via DT
+The driver can be cleaned up by using managed resource helpers
 
 Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 ---
- drivers/input/misc/bma150.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/input/misc/bma150.c | 40 +++++++++++++------------------------
+ 1 file changed, 14 insertions(+), 26 deletions(-)
 
 diff --git a/drivers/input/misc/bma150.c b/drivers/input/misc/bma150.c
-index d101bb0a33d6..c26a118d89fa 100644
+index 1efcfdf9f8a8..d101bb0a33d6 100644
 --- a/drivers/input/misc/bma150.c
 +++ b/drivers/input/misc/bma150.c
-@@ -31,6 +31,7 @@
- #include <linux/interrupt.h>
- #include <linux/delay.h>
- #include <linux/slab.h>
-+#include <linux/of.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
- #include <linux/bma150.h>
-@@ -628,6 +629,14 @@ static int bma150_resume(struct device *dev)
+@@ -471,7 +471,7 @@ static int bma150_register_input_device(struct bma150_data *bma150)
+ 	struct input_dev *idev;
+ 	int error;
  
- static UNIVERSAL_DEV_PM_OPS(bma150_pm, bma150_suspend, bma150_resume, NULL);
+-	idev = input_allocate_device();
++	idev = devm_input_allocate_device(&bma150->client->dev);
+ 	if (!idev)
+ 		return -ENOMEM;
  
-+#if IS_ENABLED(CONFIG_OF)
-+static const struct of_device_id bma150_of_match[] = {
-+	{ .compatible = "bosch,bma150" },
-+	{ },
-+};
-+MODULE_DEVICE_TABLE(of, bma150_of_match);
-+#endif
-+
- static const struct i2c_device_id bma150_id[] = {
- 	{ "bma150", 0 },
- 	{ "smb380", 0 },
-@@ -640,6 +649,7 @@ MODULE_DEVICE_TABLE(i2c, bma150_id);
- static struct i2c_driver bma150_driver = {
- 	.driver = {
- 		.name	= BMA150_DRIVER,
-+		.of_match_table = of_match_ptr(bma150_of_match),
- 		.pm	= &bma150_pm,
- 	},
- 	.class		= I2C_CLASS_HWMON,
+@@ -482,10 +482,8 @@ static int bma150_register_input_device(struct bma150_data *bma150)
+ 	input_set_drvdata(idev, bma150);
+ 
+ 	error = input_register_device(idev);
+-	if (error) {
+-		input_free_device(idev);
++	if (error)
+ 		return error;
+-	}
+ 
+ 	bma150->input = idev;
+ 	return 0;
+@@ -496,7 +494,7 @@ static int bma150_register_polled_device(struct bma150_data *bma150)
+ 	struct input_polled_dev *ipoll_dev;
+ 	int error;
+ 
+-	ipoll_dev = input_allocate_polled_device();
++	ipoll_dev = devm_input_allocate_polled_device(&bma150->client->dev);
+ 	if (!ipoll_dev)
+ 		return -ENOMEM;
+ 
+@@ -511,10 +509,8 @@ static int bma150_register_polled_device(struct bma150_data *bma150)
+ 	bma150_init_input_device(bma150, ipoll_dev->input);
+ 
+ 	error = input_register_polled_device(ipoll_dev);
+-	if (error) {
+-		input_free_polled_device(ipoll_dev);
++	if (error)
+ 		return error;
+-	}
+ 
+ 	bma150->input_polled = ipoll_dev;
+ 	bma150->input = ipoll_dev->input;
+@@ -543,7 +539,8 @@ static int bma150_probe(struct i2c_client *client,
+ 		return -EINVAL;
+ 	}
+ 
+-	bma150 = kzalloc(sizeof(struct bma150_data), GFP_KERNEL);
++	bma150 = devm_kzalloc(&client->dev, sizeof(struct bma150_data),
++			      GFP_KERNEL);
+ 	if (!bma150)
+ 		return -ENOMEM;
+ 
+@@ -556,7 +553,7 @@ static int bma150_probe(struct i2c_client *client,
+ 				dev_err(&client->dev,
+ 					"IRQ GPIO conf. error %d, error %d\n",
+ 					client->irq, error);
+-				goto err_free_mem;
++				return error;
+ 			}
+ 		}
+ 		cfg = &pdata->cfg;
+@@ -566,14 +563,14 @@ static int bma150_probe(struct i2c_client *client,
+ 
+ 	error = bma150_initialize(bma150, cfg);
+ 	if (error)
+-		goto err_free_mem;
++		return error;
+ 
+ 	if (client->irq > 0) {
+ 		error = bma150_register_input_device(bma150);
+ 		if (error)
+-			goto err_free_mem;
++			return error;
+ 
+-		error = request_threaded_irq(client->irq,
++		error = devm_request_threaded_irq(&client->dev, client->irq,
+ 					NULL, bma150_irq_thread,
+ 					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+ 					BMA150_DRIVER, bma150);
+@@ -582,12 +579,12 @@ static int bma150_probe(struct i2c_client *client,
+ 				"irq request failed %d, error %d\n",
+ 				client->irq, error);
+ 			input_unregister_device(bma150->input);
+-			goto err_free_mem;
++			return error;
+ 		}
+ 	} else {
+ 		error = bma150_register_polled_device(bma150);
+ 		if (error)
+-			goto err_free_mem;
++			return error;
+ 	}
+ 
+ 	i2c_set_clientdata(client, bma150);
+@@ -595,10 +592,6 @@ static int bma150_probe(struct i2c_client *client,
+ 	pm_runtime_enable(&client->dev);
+ 
+ 	return 0;
+-
+-err_free_mem:
+-	kfree(bma150);
+-	return error;
+ }
+ 
+ static int bma150_remove(struct i2c_client *client)
+@@ -607,15 +600,10 @@ static int bma150_remove(struct i2c_client *client)
+ 
+ 	pm_runtime_disable(&client->dev);
+ 
+-	if (client->irq > 0) {
+-		free_irq(client->irq, bma150);
++	if (client->irq > 0)
+ 		input_unregister_device(bma150->input);
+-	} else {
++	else
+ 		input_unregister_polled_device(bma150->input_polled);
+-		input_free_polled_device(bma150->input_polled);
+-	}
+-
+-	kfree(bma150);
+ 
+ 	return 0;
+ }
 -- 
 2.17.1
 
