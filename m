@@ -2,103 +2,105 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDDFC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74C9BC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:45:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D925218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:36:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 44FE6218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:45:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="cOF2idGs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729401AbfAYXgz (ORCPT
+        id S1729500AbfAYXpg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 18:36:55 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:36640 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726218AbfAYXgz (ORCPT
+        Fri, 25 Jan 2019 18:45:36 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40742 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726335AbfAYXpg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 18:36:55 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0PNSdXR142969
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 18:36:54 -0500
-Received: from e33.co.us.ibm.com (e33.co.us.ibm.com [32.97.110.151])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q87sqhtpn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 18:36:53 -0500
-Received: from localhost
-        by e33.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <bwarrum@linux.ibm.com>;
-        Fri, 25 Jan 2019 23:36:53 -0000
-Received: from b03cxnp08027.gho.boulder.ibm.com (9.17.130.19)
-        by e33.co.us.ibm.com (192.168.1.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 25 Jan 2019 23:36:50 -0000
-Received: from b03ledav003.gho.boulder.ibm.com (b03ledav003.gho.boulder.ibm.com [9.17.130.234])
-        by b03cxnp08027.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0PNanvw14876746
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 25 Jan 2019 23:36:49 GMT
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 1F7526A04D;
-        Fri, 25 Jan 2019 23:36:49 +0000 (GMT)
-Received: from b03ledav003.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D73466A04F;
-        Fri, 25 Jan 2019 23:36:47 +0000 (GMT)
-Received: from vagrant-VirtualBox.rch.stglabs.ibm.com (unknown [9.10.79.122])
-        by b03ledav003.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Jan 2019 23:36:47 +0000 (GMT)
-From:   Brad Warrum <bwarrum@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Brad Warrum <bwarrum@linux.ibm.com>,
-        Steve Royer <seroyer@linux.ibm.com>
-Subject: [PATCH] MAINTAINERS: add myself as maintainer of ibmvmc driver
-Date:   Fri, 25 Jan 2019 17:36:26 -0600
-X-Mailer: git-send-email 2.7.4
-X-TM-AS-GCONF: 00
-x-cbid: 19012523-0036-0000-0000-00000A8137DE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010477; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01151774; UDB=6.00600337; IPR=6.00932118;
- MB=3.00025291; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-25 23:36:51
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012523-0037-0000-0000-00004A7B9A9F
-Message-Id: <1548459386-4596-1-git-send-email-bwarrum@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-25_15:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=799 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901250178
+        Fri, 25 Jan 2019 18:45:36 -0500
+Received: by mail-pf1-f196.google.com with SMTP id i12so5434055pfo.7
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 15:45:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=WAJkt5pKYVfaSlTbiQyzNhjMJz/17VQ97ZsS8VrSTns=;
+        b=cOF2idGsukSeFWXjra3D1geIqOCF4Z/rilqfKCLm/ozpaS8mpxBf1j0z/VErPBW1zq
+         iDshwHN8rUvoughAq7E2/e7jzkFSha0QoBqW98o9oIvqNFHSY3V/0IO8IYwBMiiddWm3
+         LRPnBL8/93/jYbPvoUytLWMcrNl+GxK2+IVIE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=WAJkt5pKYVfaSlTbiQyzNhjMJz/17VQ97ZsS8VrSTns=;
+        b=j5xcdcLTqCWrq99vYj80ZsaHDc4LD6QIQBAlils8vjdP9jxpfaGD2vdZbxz7oFxmST
+         dPYutdtCwbQi+wsxOzSHpumFutUdvQdYXV60FlyMsoQPD3Rp2wCqnKYin/CUeNPC1bMV
+         dN7Gt90WFevNlKqw4HW/sEOsJZtt1RoCD78xE1dJhjHIKouwboho35eqRzKC9Vd+yICW
+         23L/gU77tZCYCqt6sgyw5FA414T5z7fXg70i1wZ66EsHLY7FQcUHK+drhSQBJ+/Gltbf
+         BVwEr7k6ZCyr01XKDsNau0kgKhLZz977m+alfyqDK8Ns/7Ud/raMosA4Hetqvm3bP1v6
+         BL4g==
+X-Gm-Message-State: AJcUukcVQ28HOBa8KmmI6LSJks59rg00d50ZB5gAfP1F1O6sV7/YKAys
+        tLegx+cwyPQSzpE5ERG5huoSjg==
+X-Google-Smtp-Source: ALg8bN5/VcgAWdH3Xyee+PPzZnto39/r1r0QODgXbemuZpkEkvlp8cP3uAgmpFx+hpgHBqpGo5ZyjA==
+X-Received: by 2002:a62:4d81:: with SMTP id a123mr13327468pfb.122.1548459935416;
+        Fri, 25 Jan 2019 15:45:35 -0800 (PST)
+Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
+        by smtp.gmail.com with ESMTPSA id y9sm32950302pfi.74.2019.01.25.15.45.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 15:45:34 -0800 (PST)
+From:   Bjorn Andersson <bjorn.andersson@linaro.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        David Brown <david.brown@linaro.org>,
+        Khasim Syed Mohammed <khasim.mohammed@linaro.org>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Stanimir Varbanov <svarbanov@mm-sol.com>,
+        Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: [PATCH 0/7] QCS404 PCIe PHY and controller
+Date:   Fri, 25 Jan 2019 15:45:02 -0800
+Message-Id: <20190125234509.26419-1-bjorn.andersson@linaro.org>
+X-Mailer: git-send-email 2.18.0
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Steve Royer has moved on to another project and has
-requested that I maintain the IBM Power Virtual Management
-Channel driver in his stead.
+This series adds support for the PCIe controller and PHY found in the Qualcomm
+platform QCS404.
 
-Cc: Steve Royer <seroyer@linux.ibm.com>
-Signed-off-by: Brad Warrum <bwarrum@linux.ibm.com>
----
- MAINTAINERS | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Bjorn Andersson (7):
+  clk: gcc-qcs404: Add PCIe resets
+  dt-bindings: phy: Add binding for Qualcomm PCIe2 PHY
+  phy: qcom: Add Qualcomm PCIe2 PHY driver
+  PCI: qcom: Use clk_bulk API for 2.4.0 controllers
+  dt-bindings: PCI: qcom: Add QCS404 to the binding
+  PCI: qcom: Add QCS404 PCIe controller support
+  arm64: dts: qcom: qcs404: Add PCIe related nodes
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 51029a4..9a20eae 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -7244,7 +7244,7 @@ S:	Supported
- F:	drivers/scsi/ibmvscsi/ibmvfc*
- 
- IBM Power Virtual Management Channel Driver
--M:	Steven Royer <seroyer@linux.ibm.com>
-+M:	Brad Warrum <bwarrum@linux.ibm.com>
- S:	Supported
- F:	drivers/misc/ibmvmc.*
- 
+ .../devicetree/bindings/pci/qcom,pcie.txt     |  25 +-
+ .../bindings/phy/qcom-pcie2-phy.txt           |  40 +++
+ arch/arm64/boot/dts/qcom/qcs404-evb.dtsi      |  25 ++
+ arch/arm64/boot/dts/qcom/qcs404.dtsi          |  67 ++++
+ drivers/clk/qcom/gcc-qcs404.c                 |   7 +
+ drivers/pci/controller/dwc/pcie-qcom.c        | 108 +++---
+ drivers/phy/qualcomm/Kconfig                  |   8 +
+ drivers/phy/qualcomm/Makefile                 |   1 +
+ drivers/phy/qualcomm/phy-qcom-pcie2.c         | 331 ++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-qcs404.h   |   7 +
+ 10 files changed, 558 insertions(+), 61 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/phy/qcom-pcie2-phy.txt
+ create mode 100644 drivers/phy/qualcomm/phy-qcom-pcie2.c
+
 -- 
-2.7.4
+2.18.0
 
