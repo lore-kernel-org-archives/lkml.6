@@ -2,124 +2,159 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B81C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAC2C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:18:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14F7C218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:18:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C94D217D4
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:18:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="WQkRl9ae"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728579AbfAYPSS convert rfc822-to-8bit (ORCPT
+        id S1728641AbfAYPSt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:18:18 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47462 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726111AbfAYPSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:18:18 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D933EAC4B;
-        Fri, 25 Jan 2019 15:18:15 +0000 (UTC)
-Date:   Fri, 25 Jan 2019 16:18:15 +0100
-From:   Thomas Bogendoerfer <tbogendoerfer@suse.de>
-To:     Antoine Tenart <antoine.tenart@bootlin.com>
-Cc:     Russell King - ARM Linux admin <linux@armlinux.org.uk>,
-        Andrew Lunn <andrew@lunn.ch>, maxime.chevallier@bootlin.com,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: mvpp2: fix condition for setting up link
- interrupt
-Message-Id: <20190125161815.0527d5174fdfb680eee59372@suse.de>
-In-Reply-To: <20190125083720.GK3662@kwain>
-References: <20190124131803.14038-1-tbogendoerfer@suse.de>
-        <20190124155137.GD482@lunn.ch>
-        <20190124160741.jady3r2e4dme7c4m@e5254000004ec.dyn.armlinux.org.uk>
-        <20190125083720.GK3662@kwain>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-suse-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8BIT
+        Fri, 25 Jan 2019 10:18:49 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:60928 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726335AbfAYPSt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:18:49 -0500
+Received: from zn.tnic (p200300EC2BCAC5007D55ACDD64304473.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:c500:7d55:acdd:6430:4473])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E20671EC027A;
+        Fri, 25 Jan 2019 16:18:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548429528;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=RiS6G30gJtOFHUAhupwQyDrsFVbRBa625O/IM0AgeLw=;
+        b=WQkRl9aeYEfU6dIA+svKqx6nEJzKQ0n6mhDwpBIQMhKleUoyfCqLi5asA8pU6VT9T01JCX
+        qEGwHnhprl+XbPDwvaG4YBGLSxP/1lkqPcXvfRuIvyVBjQ4yzefq2Z4doIlJQTydUAsIbR
+        beKypoqj+6usYMX4kWxHcryBO0crS94=
+Date:   Fri, 25 Jan 2019 16:18:40 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 08/22] x86/fpu: Remove user_fpu_begin()
+Message-ID: <20190125151840.GG27998@zn.tnic>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-9-bigeasy@linutronix.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190109114744.10936-9-bigeasy@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Jan 2019 09:37:20 +0100
-Antoine Tenart <antoine.tenart@bootlin.com> wrote:
+On Wed, Jan 09, 2019 at 12:47:30PM +0100, Sebastian Andrzej Siewior wrote:
+> user_fpu_begin() sets fpu_fpregs_owner_ctx to task's fpu struct. This is
+> always the case since there is no lazy FPU anymore.
+> 
+> fpu_fpregs_owner_ctx is used during context switch to decide if it needs
+> to load the saved registers or if the currently loaded registers are
+> valid. It could be skipped during
+> 	taskA -> kernel thread -> taskA
+> 
+> because the switch to kernel thread would not alter the CPU's FPU state.
+> 
+> Since this field is always updated during context switch and never
+> invalidated, setting it manually (in user context) makes no difference.
+> A kernel thread with kernel_fpu_begin() block could set
+> fpu_fpregs_owner_ctx to NULL but a kernel thread does not use
+> user_fpu_begin().
+> This is a leftover from the lazy-FPU time.
+> 
+> Remove user_fpu_begin(), it does not change fpu_fpregs_owner_ctx's
+> content.
+> 
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  arch/x86/include/asm/fpu/internal.h | 17 -----------------
+>  arch/x86/kernel/fpu/core.c          |  4 +---
+>  arch/x86/kernel/fpu/signal.c        |  1 -
+>  3 files changed, 1 insertion(+), 21 deletions(-)
 
-> Hi,
-> 
-> On Thu, Jan 24, 2019 at 04:07:41PM +0000, Russell King - ARM Linux admin wrote:
-> > On Thu, Jan 24, 2019 at 04:51:37PM +0100, Andrew Lunn wrote:
-> > > On Thu, Jan 24, 2019 at 02:18:03PM +0100, Thomas Bogendoerfer wrote:
-> > > > 
-> > > > Fixes: 4bb043262878 ("net: mvpp2: phylink support")
-> > > > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> > > > ---
-> > > >  drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
-> > > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > > > index 16066c2d5b3a..0fbfe1945a69 100644
-> > > > --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > > > +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > > > @@ -3405,7 +3405,7 @@ static int mvpp2_open(struct net_device *dev)
-> > > >  		valid = true;
-> > > >  	}
-> > > >  
-> > > > -	if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
-> > > > +	if (priv->hw_version == MVPP22 && port->link_irq && port->phylink) {
-> > > >  		err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
-> > > >  				  dev->name, port);
-> > > >  		if (err) {
-> > 
-> > This still looks fishy to me.  mvpp2_link_status_isr() has handling in
-> > it that is safe to be called for non-phylink cases, so presumably the
-> > right fix is to drop the "&& !port->phylink" completely?
-> 
-> That's right, mvpp2_link_status_isr() is safe to be called with or
-> without phylink being used. This IRQ is reporting the link status, and
-> is used when using in-band status or when phylink isn't used.
-> 
-> We do have a similar fix locally, which looks like:
-> 
-> diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> index 2bcbf9caaf0d..6bab1824a1e4 100644
-> --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> @@ -3406,7 +3406,8 @@ static int mvpp2_open(struct net_device *dev)
->                 valid = true;
->         }
-> 
-> -       if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
-> +       if (priv->hw_version == MVPP22 && port->link_irq &&
-> +           (!port->phylink || !port->has_phy)) {
->                 err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
->                                   dev->name, port);
->                 if (err) {
-> 
-> We haven't submitted it yet, as we saw several issues when a port has no
-> PHY and is using the XLG MAC (so, not on the mcbin). We currently are
-> working on them.
-> 
-> I don't like to ask this, as you submitted the fix first, but I do think
-> we should hold back a bit while we figure out proper solutions. If you
-> need in-band status to be working properly, we could share out current
-> local branch so you can test and validate it do solve your issue.
+Reviewed-by: Borislav Petkov <bp@suse.de>
 
-I also thought about it, and your patch makes more sense. It's more about
-having no ethernet phy and therefore looking at the serdes for link status.
-The system I'm running on has a few internal nodes behind a switch. The
-switch propagates the external link state to the nodes via serdes lines.
+Should we do this microoptimization in addition, to save us the
+activation when the kernel thread here:
 
-I've tested your patch and it works in my setup.
+	taskA -> kernel thread -> taskA
 
-Thomas.
+doesn't call kernel_fpu_begin() and thus fpu_fpregs_owner_ctx remains
+the same?
+
+It would be a bit more correct as it won't invoke the
+trace_x86_fpu_regs_activated() TP in case the FPU context is the same.
+
+---
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index bfe0bfc7d0d1..ee1ac46a7820 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -510,7 +510,7 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+  * Set up the userspace FPU context for the new task, if the task
+  * has used the FPU.
+  */
+-static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
++static inline void switch_fpu_finish(struct fpu *prev_fpu, struct fpu *new_fpu, int cpu)
+ {
+ 	if (static_cpu_has(X86_FEATURE_FPU)) {
+ 		if (!fpregs_state_valid(new_fpu, cpu)) {
+@@ -518,7 +518,8 @@ static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+ 				copy_kernel_to_fpregs(&new_fpu->state);
+ 		}
+ 
+-		fpregs_activate(new_fpu);
++		if (prev_fpu != new_fpu)
++			fpregs_activate(new_fpu);
+ 	}
+ }
+ 
+diff --git a/arch/x86/kernel/process_32.c b/arch/x86/kernel/process_32.c
+index 77d9eb43ccac..f8205df2df1d 100644
+--- a/arch/x86/kernel/process_32.c
++++ b/arch/x86/kernel/process_32.c
+@@ -290,7 +290,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 
+ 	this_cpu_write(current_task, next_p);
+ 
+-	switch_fpu_finish(next_fpu, cpu);
++	switch_fpu_finish(prev_fpu, next_fpu, cpu);
+ 
+ 	/* Load the Intel cache allocation PQR MSR. */
+ 	resctrl_sched_in();
+diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+index ffea7c557963..5f153b963180 100644
+--- a/arch/x86/kernel/process_64.c
++++ b/arch/x86/kernel/process_64.c
+@@ -572,7 +572,7 @@ __switch_to(struct task_struct *prev_p, struct task_struct *next_p)
+ 	this_cpu_write(current_task, next_p);
+ 	this_cpu_write(cpu_current_top_of_stack, task_top_of_stack(next_p));
+ 
+-	switch_fpu_finish(next_fpu, cpu);
++	switch_fpu_finish(prev_fpu, next_fpu, cpu);
+ 
+ 	/* Reload sp0. */
+ 	update_task_stack(next_p);
+
 
 -- 
-SUSE Linux GmbH
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
