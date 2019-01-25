@@ -7,184 +7,102 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8405DC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75E3DC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:34:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 545A72146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:34:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 323BF2146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:34:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="FdQMu+Gx"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="Y0fUpU5I"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726122AbfAYMeL (ORCPT
+        id S1726289AbfAYMeP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 07:34:11 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:11364 "EHLO pegase1.c-s.fr"
+        Fri, 25 Jan 2019 07:34:15 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:54439 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727826AbfAYMeJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 07:34:09 -0500
+        id S1727826AbfAYMeM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 07:34:12 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43mJNq3G21z9tyxv;
-        Fri, 25 Jan 2019 13:34:03 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 43mJNx4G5Yz9tyxs;
+        Fri, 25 Jan 2019 13:34:09 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=FdQMu+Gx; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=Y0fUpU5I; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id zYyVzXCXI4TW; Fri, 25 Jan 2019 13:34:03 +0100 (CET)
+        with ESMTP id sgG4hIpj0rqd; Fri, 25 Jan 2019 13:34:09 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43mJNq1qH4z9tyxr;
-        Fri, 25 Jan 2019 13:34:03 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43mJNx2xNdz9tyxr;
+        Fri, 25 Jan 2019 13:34:09 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548419643; bh=81GkYVEDUTVX9JUB5EuRLjLcW9Rv+C33s0+G5fqVhSo=;
+        t=1548419649; bh=shxpvL1EpT7PNv9ssXfb555llHD7XkFegIZFp6AerwU=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=FdQMu+GxScN29CiBk2xnmZmhoCiJ6ZzvDEy9HprGQXz4/O+81vA9GNo7CfhujdmvU
-         Xji37RT0ur76EdDU33ESkNdBsEayulevupGeWKV5TaUQ25aEer3ogMFU0w8PFdg2/w
-         irAO95+PblOu9pbxqk4cYPdqLhy4c038FRdmKcik=
+        b=Y0fUpU5IfHkU6vEY3/SH+DuqXJZ0shuUB12lDjSHjCUHdyy/8vCMx2VdSmoeAbuDj
+         5bpKn6GaS0CHyZGt5ehlR8MV0/tpA3I1nIoy1sKcI6DprEt7EANgDh+vQDTSv0UveI
+         6cU7M949kpgsjjQ6zleffVDjyYfRoPr69EYtm7EY=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 870998B87A;
-        Fri, 25 Jan 2019 13:34:04 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id AA0F28B87A;
+        Fri, 25 Jan 2019 13:34:10 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id XSReQt1UChOd; Fri, 25 Jan 2019 13:34:04 +0100 (CET)
+        with ESMTP id I2ny5lr9zVz2; Fri, 25 Jan 2019 13:34:10 +0100 (CET)
 Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 60B1C8B761;
-        Fri, 25 Jan 2019 13:34:04 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7D9CA8B761;
+        Fri, 25 Jan 2019 13:34:10 +0100 (CET)
 Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 550D072DA9; Fri, 25 Jan 2019 12:34:04 +0000 (UTC)
-Message-Id: <a805b78bc4c7c24ee061d1578e7ff7bb2746e54a.1548419273.git.christophe.leroy@c-s.fr>
+        id 65B5172DA9; Fri, 25 Jan 2019 12:34:10 +0000 (UTC)
+Message-Id: <e891ad5ef976cf1f2b9bb08a97cdf70ba454ef98.1548419273.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1548419273.git.christophe.leroy@c-s.fr>
 References: <cover.1548419273.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 02/10] powerpc/603: Store PGDIR physical address in a SPRG
+Subject: [PATCH 05/10] powerpc/603: Don't handle kernel page TLB misses when
+ not need
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         joakim.tjernlund@infinera.com
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 25 Jan 2019 12:34:04 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 12:34:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use SPRN_SPRG5 to store the current thread PGDIR and
-avoid reading thread_struct->pgdir at every TLB miss.
+ITLB miss on kernel pages only occur with CONFIG_MODULES and
+CONFIG_DEBUG_PAGEALLOC.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/reg.h      |  1 +
- arch/powerpc/kernel/cpu_setup_6xx.S |  4 ++++
- arch/powerpc/kernel/head_32.S       | 28 ++++++++++++++++------------
- 3 files changed, 21 insertions(+), 12 deletions(-)
+ arch/powerpc/kernel/head_32.S | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/arch/powerpc/include/asm/reg.h b/arch/powerpc/include/asm/reg.h
-index 1c98ef1f2d5b..ba0ab1a1431b 100644
---- a/arch/powerpc/include/asm/reg.h
-+++ b/arch/powerpc/include/asm/reg.h
-@@ -1169,6 +1169,7 @@
- #define SPRN_SPRG_SCRATCH1	SPRN_SPRG1
- #define SPRN_SPRG_RTAS		SPRN_SPRG2
- #define SPRN_SPRG_603_LRU	SPRN_SPRG4
-+#define SPRN_SPRG_603_PGDIR	SPRN_SPRG5
- #endif
- 
- #ifdef CONFIG_40x
-diff --git a/arch/powerpc/kernel/cpu_setup_6xx.S b/arch/powerpc/kernel/cpu_setup_6xx.S
-index 8c069e96c478..4c91d1f640fe 100644
---- a/arch/powerpc/kernel/cpu_setup_6xx.S
-+++ b/arch/powerpc/kernel/cpu_setup_6xx.S
-@@ -24,6 +24,10 @@ BEGIN_MMU_FTR_SECTION
- 	li	r10,0
- 	mtspr	SPRN_SPRG_603_LRU,r10		/* init SW LRU tracking */
- END_MMU_FTR_SECTION_IFSET(MMU_FTR_NEED_DTLB_SW_LRU)
-+	lis	r10, (swapper_pg_dir - PAGE_OFFSET)@h
-+	ori	r10, r10, (swapper_pg_dir - PAGE_OFFSET)@l
-+	mtspr	SPRN_SPRG_603_PGDIR, r10
-+
- BEGIN_FTR_SECTION
- 	bl	__init_fpu_registers
- END_FTR_SECTION_IFCLR(CPU_FTR_FPU_UNAVAILABLE)
 diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
-index c2f564690778..dbd15e03952a 100644
+index 53f65124edd5..3bbf937ad634 100644
 --- a/arch/powerpc/kernel/head_32.S
 +++ b/arch/powerpc/kernel/head_32.S
-@@ -502,16 +502,15 @@ InstructionTLBMiss:
+@@ -500,15 +500,19 @@ InstructionTLBMiss:
+  */
+ 	/* Get PTE (linux-style) and check access */
  	mfspr	r3,SPRN_IMISS
++#if defined(CONFIG_MODULES) || defined(CONFIG_DEBUG_PAGEALLOC)
  	lis	r1,PAGE_OFFSET@h		/* check if kernel address */
  	cmplw	0,r1,r3
--	mfspr	r2,SPRN_SPRG_THREAD
-+	mfspr	r2, SPRN_SPRG_603_PGDIR
- 	li	r1,_PAGE_USER|_PAGE_PRESENT|_PAGE_EXEC /* low addresses tested as user */
--	lwz	r2,PGDIR(r2)
- 	bge-	112f
- 	mfspr	r2,SPRN_SRR1		/* and MSR_PR bit from SRR1 */
- 	rlwimi	r1,r2,32-12,29,29	/* shift MSR_PR to _PAGE_USER posn */
- 	lis	r2,swapper_pg_dir@ha	/* if kernel address, use */
- 	addi	r2,r2,swapper_pg_dir@l	/* kernel page table */
--112:	tophys(r2,r2)
--	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
-+	tophys(r2,r2)
-+112:	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
- 	lwz	r2,0(r2)		/* get pmd entry */
- 	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
- 	beq-	InstructionAddressInvalid	/* return if no mapping */
-@@ -576,16 +575,15 @@ DataLoadTLBMiss:
- 	mfspr	r3,SPRN_DMISS
- 	lis	r1,PAGE_OFFSET@h		/* check if kernel address */
- 	cmplw	0,r1,r3
--	mfspr	r2,SPRN_SPRG_THREAD
-+	mfspr	r2, SPRN_SPRG_603_PGDIR
- 	li	r1,_PAGE_USER|_PAGE_PRESENT /* low addresses tested as user */
--	lwz	r2,PGDIR(r2)
- 	bge-	112f
- 	mfspr	r2,SPRN_SRR1		/* and MSR_PR bit from SRR1 */
- 	rlwimi	r1,r2,32-12,29,29	/* shift MSR_PR to _PAGE_USER posn */
- 	lis	r2,swapper_pg_dir@ha	/* if kernel address, use */
- 	addi	r2,r2,swapper_pg_dir@l	/* kernel page table */
--112:	tophys(r2,r2)
--	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
-+	tophys(r2,r2)
-+112:	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
- 	lwz	r2,0(r2)		/* get pmd entry */
- 	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
- 	beq-	DataAddressInvalid	/* return if no mapping */
-@@ -660,16 +658,15 @@ DataStoreTLBMiss:
- 	mfspr	r3,SPRN_DMISS
- 	lis	r1,PAGE_OFFSET@h		/* check if kernel address */
- 	cmplw	0,r1,r3
--	mfspr	r2,SPRN_SPRG_THREAD
-+	mfspr	r2, SPRN_SPRG_603_PGDIR
- 	li	r1,_PAGE_RW|_PAGE_USER|_PAGE_PRESENT /* access flags */
--	lwz	r2,PGDIR(r2)
- 	bge-	112f
- 	mfspr	r2,SPRN_SRR1		/* and MSR_PR bit from SRR1 */
- 	rlwimi	r1,r2,32-12,29,29	/* shift MSR_PR to _PAGE_USER posn */
- 	lis	r2,swapper_pg_dir@ha	/* if kernel address, use */
- 	addi	r2,r2,swapper_pg_dir@l	/* kernel page table */
--112:	tophys(r2,r2)
--	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
-+	tophys(r2,r2)
-+112:	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
- 	lwz	r2,0(r2)		/* get pmd entry */
- 	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
- 	beq-	DataAddressInvalid	/* return if no mapping */
-@@ -1030,6 +1027,13 @@ _ENTRY(switch_mmu_context)
- 	lis	r5, abatron_pteptrs@ha
- 	stw	r4, abatron_pteptrs@l + 0x4(r5)
- #endif
-+BEGIN_MMU_FTR_SECTION
-+#ifndef CONFIG_BDI_SWITCH
-+	lwz	r4, MM_PGD(r4)
 +#endif
-+	tophys(r4, r4)
-+	mtspr	SPRN_SPRG_603_PGDIR, r4
-+END_MMU_FTR_SECTION_IFCLR(MMU_FTR_HPTE_TABLE)
- 	li	r4,0
- 	isync
- 3:
+ 	mfspr	r2, SPRN_SPRG_603_PGDIR
+ 	li	r1,_PAGE_USER|_PAGE_PRESENT|_PAGE_EXEC /* low addresses tested as user */
++#if defined(CONFIG_MODULES) || defined(CONFIG_DEBUG_PAGEALLOC)
+ 	bge-	112f
+ 	mfspr	r2,SPRN_SRR1		/* and MSR_PR bit from SRR1 */
+ 	rlwimi	r1,r2,32-12,29,29	/* shift MSR_PR to _PAGE_USER posn */
+ 	lis	r2, (swapper_pg_dir - PAGE_OFFSET)@ha	/* if kernel address, use */
+ 	addi	r2, r2, (swapper_pg_dir - PAGE_OFFSET)@l	/* kernel page table */
++#endif
+ 112:	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
+ 	lwz	r2,0(r2)		/* get pmd entry */
+ 	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
 -- 
 2.13.3
 
