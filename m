@@ -2,151 +2,385 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E86C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 04:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF8CCC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 04:12:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE0021872
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 04:00:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B26C218A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 04:12:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HbaMbqQ5"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="gYfS/iMQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728640AbfAYEAG (ORCPT
+        id S1728898AbfAYEMc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 23:00:06 -0500
-Received: from mail-oi1-f176.google.com ([209.85.167.176]:35681 "EHLO
-        mail-oi1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726107AbfAYEAF (ORCPT
+        Thu, 24 Jan 2019 23:12:32 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17526 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727908AbfAYEMc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 23:00:05 -0500
-Received: by mail-oi1-f176.google.com with SMTP id v6so6770069oif.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 20:00:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=frTA/JULdM/3750UTX6F39Mn273dFKrRMZ+7TZwryZU=;
-        b=HbaMbqQ5R6bkwtLCmKGzSA+pYPmejfCk+d2lI5blP5cmXIfKqp4VZoKhh0Ap/Q5xX/
-         ts3B7vAhwqQkn+Vj0bM6339W1waCdDjGfNYaSp7Lxm6mItun5w1dlsLqclhS/rbtyKiP
-         BNhk5c7fexbdmXm4kzBOHr+k87GIiLGTctiJU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=frTA/JULdM/3750UTX6F39Mn273dFKrRMZ+7TZwryZU=;
-        b=pZIRXsEWjGXdxhOT4d4jKnhE90Ixo5nyMg6viNvoj7inzPFWHIb8WyUCMQo+1tX2FE
-         YaI7UQBiVSp1P++PjJNKqvrKfdsEmmSX4U10NhhgGoMRX7afn3WwoZIsb03PZIZTLL/a
-         55iv2LhdevINujtM+nIspsIVU9cO4yEMnPgD1vsYDMHg36bSKBFdxjFd/Acqw5wFMaLt
-         Q1Xeok69uCSNdvENNb0UmtPleKmS6TFpK7SnpO3uhLlW3cy2KQL7pNEzHstN/+sAowXw
-         ydF+4ffg0vc6KXghDEQhzbIn9J5d7IEsatmJHSqLM0k05ah+FJXgVWJXBw4rMdEzBymI
-         d12g==
-X-Gm-Message-State: AJcUukdZWDnQrKItYgRAvOhDxf0llVagsUrbjxiNhEuSjlm+uTWd4pJV
-        Nwrnuc0+dsnu4Kvx8ArExYJCgi2L264KAw==
-X-Google-Smtp-Source: ALg8bN6rzZNUDtLpVhjSDRX5M3N6sdlQIVjAVQeG1N01T5Bk57/wdODu5M8r64AM99fKvundulVQ4A==
-X-Received: by 2002:aca:f103:: with SMTP id p3mr281927oih.94.1548388803891;
-        Thu, 24 Jan 2019 20:00:03 -0800 (PST)
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com. [209.85.167.173])
-        by smtp.gmail.com with ESMTPSA id q203sm841446oif.33.2019.01.24.20.00.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 20:00:02 -0800 (PST)
-Received: by mail-oi1-f173.google.com with SMTP id r62so6789635oie.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 20:00:02 -0800 (PST)
-X-Received: by 2002:aca:c2c3:: with SMTP id s186mr280305oif.173.1548388801592;
- Thu, 24 Jan 2019 20:00:01 -0800 (PST)
+        Thu, 24 Jan 2019 23:12:32 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4a8ca9000d>; Thu, 24 Jan 2019 20:12:26 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Thu, 24 Jan 2019 20:12:26 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Thu, 24 Jan 2019 20:12:26 -0800
+Received: from [10.19.108.132] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 25 Jan
+ 2019 04:12:23 +0000
+Subject: Re: [PATCH 2/6] clocksource: tegra: add Tegra210 timer driver
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190107032810.13522-1-josephl@nvidia.com>
+ <20190107032810.13522-3-josephl@nvidia.com>
+ <cd9a4d3a-91a6-5caf-e194-2c5590406844@nvidia.com>
+From:   Joseph Lo <josephl@nvidia.com>
+Message-ID: <fbc58623-0b21-09e9-3e0f-71aaea934ba0@nvidia.com>
+Date:   Fri, 25 Jan 2019 12:12:21 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20181022144901.113852-1-tfiga@chromium.org> <20181022144901.113852-3-tfiga@chromium.org>
- <4cd223f0-b09c-da07-f26c-3b3f7a8868d7@xs4all.nl> <CAAFQd5DthE3vL+gycEBgm+aF0YhRncrfBVBNLLF4g+oKhBHEWQ@mail.gmail.com>
- <75334288-69af-6680-fbe7-2dd5ef2462ea@xs4all.nl> <0452db20a894c1c4cce263b7e07ba274a58aa8fa.camel@ndufresne.ca>
-In-Reply-To: <0452db20a894c1c4cce263b7e07ba274a58aa8fa.camel@ndufresne.ca>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 25 Jan 2019 12:59:49 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DGQvmdvV42Qz_yRVk1XCaYH6AMxWJgJ_PrECBM+U65uA@mail.gmail.com>
-Message-ID: <CAAFQd5DGQvmdvV42Qz_yRVk1XCaYH6AMxWJgJ_PrECBM+U65uA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] media: docs-rst: Document memory-to-memory video
- encoder interface
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?B?UGF3ZcWCIE/Fm2NpYWs=?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <cd9a4d3a-91a6-5caf-e194-2c5590406844@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548389549; bh=/IyE2JVeQTcP0grXbjoQJEV6crQZ7vaRcYWuTAHP/sc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=gYfS/iMQbYU77PXJby5FBPN10/agn+kJ1KgmxwwMfcGCbwclX5hOmq3qb6zuZOh/6
+         sOZbnuebEB7Mp5HIDIjAXzR2lPQMB/xMqyhu4AxySrTIOxHOZ8UYrCcCv6x22C+4HP
+         8eG05VKYmvIlqdQ8Ky2J+t0kahGkFYMXO9l7SdeYlINX2+oIpSHZ5CuMRPuZpKJvDe
+         vZCUZYwvouQ6DknDN9dQEjROotV8TlT+di7g/2qk0aiMYkQhUegQB5UHkGrRZYb4sH
+         HbMXI/rGDt3SmlfduMbiW7fZzMznMCqhBMItHjMXqCtGyj+EbETaIXsI/Hrb6lhzYa
+         SHIam8ZEeehXw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 5:14 AM Nicolas Dufresne <nicolas@ndufresne.ca> wro=
-te:
->
-> Le mercredi 23 janvier 2019 =C3=A0 14:04 +0100, Hans Verkuil a =C3=A9crit=
- :
-> > > > Does this return the same set of formats as in the 'Querying Capabi=
-lities' phase?
-> > > >
-> > >
-> > > It's actually an interesting question. At this point we wouldn't have
-> > > the OUTPUT resolution set yet, so that would be the same set as in th=
-e
-> > > initial query. If we set the resolution (with some arbitrary
-> > > pixelformat), it may become a subset...
-> >
-> > But doesn't setting the capture format also set the resolution?
-> >
-> > To quote from the text above:
-> >
-> > "The encoder will derive a new ``OUTPUT`` format from the ``CAPTURE`` f=
-ormat
-> >  being set, including resolution, colorimetry parameters, etc."
-> >
-> > So you set the capture format with a resolution (you know that), then
-> > ENUM_FMT will return the subset for that codec and resolution.
-> >
-> > But see also the comment at the end of this email.
->
-> I'm thinking that the fact that there is no "unset" value for pixel
-> format creates a certain ambiguity. Maybe we could create a new pixel
-> format, and all CODEC driver could have that set by default ? Then we
-> can just fail STREAMON if that format is set.
+On 1/24/19 7:09 PM, Jon Hunter wrote:
+> 
+> On 07/01/2019 03:28, Joseph Lo wrote:
+>> Add support for the Tegra210 timer that runs at oscillator clock
+>> (TMR10-TMR13). We need these timers to work as clock event device and to
+>> replace the ARMv8 architected timer due to it can't survive across the
+>> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
+>> source when CPU suspends in power down state.
+>>
+>> Based on the work of Antti P Miettinen <amiettinen@nvidia.com>
+>>
+>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: linux-kernel@vger.kernel.org
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   drivers/clocksource/Kconfig          |   3 +
+>>   drivers/clocksource/Makefile         |   1 +
+>>   drivers/clocksource/timer-tegra210.c | 240 +++++++++++++++++++++++++++
+>>   include/linux/cpuhotplug.h           |   1 +
+>>   4 files changed, 245 insertions(+)
+>>   create mode 100644 drivers/clocksource/timer-tegra210.c
+>>
+>> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+>> index a9e26f6a81a1..e6e3e64b6320 100644
+>> --- a/drivers/clocksource/Kconfig
+>> +++ b/drivers/clocksource/Kconfig
+>> @@ -135,6 +135,9 @@ config TEGRA_TIMER
+>>   	help
+>>   	  Enables support for the Tegra driver.
+>>   
+>> +config TEGRA210_TIMER
+>> +	def_bool ARCH_TEGRA_210_SOC
+>> +
+>>   config VT8500_TIMER
+>>   	bool "VT8500 timer driver" if COMPILE_TEST
+>>   	depends on HAS_IOMEM
+>> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+>> index cdd210ff89ea..95de59c8a47b 100644
+>> --- a/drivers/clocksource/Makefile
+>> +++ b/drivers/clocksource/Makefile
+>> @@ -36,6 +36,7 @@ obj-$(CONFIG_SUN4I_TIMER)	+= timer-sun4i.o
+>>   obj-$(CONFIG_SUN5I_HSTIMER)	+= timer-sun5i.o
+>>   obj-$(CONFIG_MESON6_TIMER)	+= timer-meson6.o
+>>   obj-$(CONFIG_TEGRA_TIMER)	+= timer-tegra20.o
+>> +obj-$(CONFIG_TEGRA210_TIMER)	+= timer-tegra210.o
+>>   obj-$(CONFIG_VT8500_TIMER)	+= timer-vt8500.o
+>>   obj-$(CONFIG_NSPIRE_TIMER)	+= timer-zevio.o
+>>   obj-$(CONFIG_BCM_KONA_TIMER)	+= bcm_kona_timer.o
+>> diff --git a/drivers/clocksource/timer-tegra210.c b/drivers/clocksource/timer-tegra210.c
+>> new file mode 100644
+>> index 000000000000..d88c127d3b3b
+>> --- /dev/null
+>> +++ b/drivers/clocksource/timer-tegra210.c
+>> @@ -0,0 +1,240 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * Copyright (c) 2014-2019, NVIDIA CORPORATION.  All rights reserved.
+>> + */
+>> +
+>> +#include <linux/clk.h>
+>> +#include <linux/clockchips.h>
+>> +#include <linux/cpu.h>
+>> +#include <linux/cpumask.h>
+>> +#include <linux/err.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/io.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_irq.h>
+>> +#include <linux/percpu.h>
+>> +#include <linux/syscore_ops.h>
+>> +
+>> +static u32 tegra210_timer_freq;
+>> +static void __iomem *tegra210_timer_reg_base;
+>> +static u32 usec_config;
+>> +
+>> +#define TIMER_PTV		0x0
+>> +#define TIMER_PTV_EN		BIT(31)
+>> +#define TIMER_PTV_PER		BIT(30)
+>> +#define TIMER_PCR		0x4
+>> +#define TIMER_PCR_INTR_CLR	BIT(30)
+>> +#define TIMERUS_CNTR_1US	0x10
+>> +#define TIMERUS_USEC_CFG	0x14
+>> +
+>> +#define TIMER10_OFFSET		0x90
+>> +
+>> +#define TIMER_FOR_CPU(cpu) (TIMER10_OFFSET + (cpu) * 8)
+>> +
+>> +struct tegra210_clockevent {
+>> +	struct clock_event_device evt;
+>> +	char name[20];
+>> +	void __iomem *reg_base;
+>> +};
+>> +#define to_tegra_cevt(p) (container_of(p, struct tegra210_clockevent, evt))
+>> +
+>> +static struct tegra210_clockevent __percpu *tegra210_evt;
+>> +
+>> +static int tegra210_timer_set_next_event(unsigned long cycles,
+>> +					 struct clock_event_device *evt)
+>> +{
+>> +	struct tegra210_clockevent *tevt;
+>> +
+>> +	tevt = to_tegra_cevt(evt);
+>> +	writel(TIMER_PTV_EN |
+>> +	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
+>> +	       tevt->reg_base + TIMER_PTV);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static inline void timer_shutdown(struct tegra210_clockevent *tevt)
+>> +{
+>> +	writel(0, tevt->reg_base + TIMER_PTV);
+>> +}
+>> +
+>> +static int tegra210_timer_shutdown(struct clock_event_device *evt)
+>> +{
+>> +	struct tegra210_clockevent *tevt;
+>> +
+>> +	tevt = to_tegra_cevt(evt);
+>> +	timer_shutdown(tevt);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra210_timer_set_periodic(struct clock_event_device *evt)
+>> +{
+>> +	struct tegra210_clockevent *tevt;
+>> +
+>> +	tevt = to_tegra_cevt(evt);
+>> +	writel(TIMER_PTV_EN | TIMER_PTV_PER | ((tegra210_timer_freq / HZ) - 1),
+>> +	       tevt->reg_base + TIMER_PTV);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static irqreturn_t tegra210_timer_isr(int irq, void *dev_id)
+>> +{
+>> +	struct tegra210_clockevent *tevt;
+>> +
+>> +	tevt = dev_id;
+>> +	writel(TIMER_PCR_INTR_CLR, tevt->reg_base + TIMER_PCR);
+>> +	tevt->evt.event_handler(&tevt->evt);
+>> +
+>> +	return IRQ_HANDLED;
+>> +}
+>> +
+>> +static int tegra210_timer_setup(unsigned int cpu)
+>> +{
+>> +	struct tegra210_clockevent *tevt = per_cpu_ptr(tegra210_evt, cpu);
+>> +
+>> +	irq_force_affinity(tevt->evt.irq, cpumask_of(cpu));
+>> +	enable_irq(tevt->evt.irq);
+>> +
+>> +	clockevents_config_and_register(&tevt->evt, tegra210_timer_freq,
+>> +					1, /* min */
+>> +					0x1fffffff); /* 29 bits */
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra210_timer_stop(unsigned int cpu)
+>> +{
+>> +	struct tegra210_clockevent *tevt = per_cpu_ptr(tegra210_evt, cpu);
+>> +
+>> +	tevt->evt.set_state_shutdown(&tevt->evt);
+>> +	disable_irq_nosync(tevt->evt.irq);
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int tegra_timer_suspend(void)
+>> +{
+>> +	int cpu;
+>> +
+>> +	for_each_possible_cpu(cpu) {
+>> +		void __iomem *reg_base = tegra210_timer_reg_base +
+>> +					 TIMER_FOR_CPU(cpu);
+>> +		writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static void tegra_timer_resume(void)
+>> +{
+>> +	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
+>> +}
+>> +
+>> +static struct syscore_ops tegra_timer_syscore_ops = {
+>> +	.suspend = tegra_timer_suspend,
+>> +	.resume = tegra_timer_resume,
+>> +};
+>> +
+>> +static int __init tegra210_timer_init(struct device_node *np)
+>> +{
+>> +	int cpu, ret;
+>> +	struct tegra210_clockevent *tevt;
+>> +	struct clk *clk;
+>> +
+>> +	tegra210_evt = alloc_percpu(struct tegra210_clockevent);
+>> +	if (!tegra210_evt)
+>> +		return -ENOMEM;
+>> +
+>> +	tegra210_timer_reg_base = of_iomap(np, 0);
+>> +	if (!tegra210_timer_reg_base)
+>> +		return -ENXIO;
+>> +
+>> +	clk = of_clk_get(np, 0);
+>> +	if (IS_ERR(clk))
+>> +		return -EINVAL;
+>> +
+>> +	clk_prepare_enable(clk);
+>> +	tegra210_timer_freq = clk_get_rate(clk);
+>> +
+>> +	for_each_possible_cpu(cpu) {
+>> +		tevt = per_cpu_ptr(tegra210_evt, cpu);
+>> +		tevt->reg_base = tegra210_timer_reg_base + TIMER_FOR_CPU(cpu);
+>> +		tevt->evt.irq = irq_of_parse_and_map(np, cpu);
+>> +		if (!tevt->evt.irq) {
+>> +			pr_err("%s: can't map IRQ for CPU%d\n",
+>> +			       __func__, cpu);
+>> +			return -EINVAL;
+>> +		}
+>> +
+>> +		snprintf(tevt->name, ARRAY_SIZE(tevt->name),
+>> +			 "tegra210_timer%d", cpu);
+>> +		tevt->evt.name = tevt->name;
+>> +		tevt->evt.cpumask = cpumask_of(cpu);
+>> +		tevt->evt.set_next_event = tegra210_timer_set_next_event;
+>> +		tevt->evt.set_state_shutdown = tegra210_timer_shutdown;
+>> +		tevt->evt.set_state_periodic = tegra210_timer_set_periodic;
+>> +		tevt->evt.set_state_oneshot = tegra210_timer_shutdown;
+>> +		tevt->evt.tick_resume = tegra210_timer_shutdown;
+>> +		tevt->evt.features = CLOCK_EVT_FEAT_PERIODIC |
+>> +			CLOCK_EVT_FEAT_ONESHOT;
+>> +		tevt->evt.rating = 460;
+>> +
+>> +		irq_set_status_flags(tevt->evt.irq, IRQ_NOAUTOEN);
+>> +		ret = request_irq(tevt->evt.irq, tegra210_timer_isr,
+>> +				  IRQF_TIMER | IRQF_NOBALANCING,
+>> +				  tevt->name, tevt);
+>> +		if (ret) {
+>> +			pr_err("%s: cannot setup irq %d for CPU%d\n",
+>> +				__func__, tevt->evt.irq, cpu);
+>> +			return -EINVAL;
+>> +		}
+>> +	}
+>> +
+>> +	/*
+>> +	 * Configure microsecond timers to have 1MHz clock
+>> +	 * Config register is 0xqqww, where qq is "dividend", ww is "divisor"
+>> +	 * Uses n+1 scheme
+>> +	 */
+>> +	switch (tegra210_timer_freq) {
+>> +	case 12000000:
+>> +		usec_config = 0x000b; /* (11+1)/(0+1) */
+>> +		break;
+>> +	case 12800000:
+>> +		usec_config = 0x043f; /* (63+1)/(4+1) */
+>> +		break;
+>> +	case 13000000:
+>> +		usec_config = 0x000c; /* (12+1)/(0+1) */
+>> +		break;
+>> +	case 16800000:
+>> +		usec_config = 0x0453; /* (83+1)/(4+1) */
+>> +		break;
+>> +	case 19200000:
+>> +		usec_config = 0x045f; /* (95+1)/(4+1) */
+>> +		break;
+>> +	case 26000000:
+>> +		usec_config = 0x0019; /* (25+1)/(0+1) */
+>> +		break;
+>> +	case 38400000:
+>> +		usec_config = 0x04bf; /* (191+1)/(4+1) */
+>> +		break;
+>> +	case 48000000:
+>> +		usec_config = 0x002f; /* (47+1)/(0+1) */
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
+>> +
+>> +	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
+>> +			  "AP_TEGRA_TIMER_STARTING", tegra210_timer_setup,
+>> +			  tegra210_timer_stop);
+>> +
+>> +	register_syscore_ops(&tegra_timer_syscore_ops);
+>> +
+>> +	return 0;
+>> +}
+> 
+> A couple comments with the above init function ...
+> 1. Does not appear to clean-up after itself on error.
 
-The state on the CAPTURE queue is actually not "unset". The queue is
-simply not ready (yet) and any operations on it will error out.
+Ah, sorry, this is because any kinds of error which cause this driver 
+fails to init the device will just be stuck after we enable CPU idle 
+with C7 state due to armv8 timer is not able to wake it up. So I 
+originally thought the clean-up was unnecessary. Anyway, will fix it.
 
-Once the application sets the coded resolution on the OUTPUT queue or
-the decoder parses the stream information, the CAPTURE queue becomes
-ready and one can do the ioctls on it.
+> 2. What about the other TMRs? Do we have any use for these?
+> 
 
->
-> That being said, in GStreamer, I have split each elements per CODEC,
-> and now only enumerate the information "per-codec". That makes me think
-> this "global" enumeration was just a miss-use of the API / me learning
-> to use it. Not having to implement this rather complex thing in the
-> driver would be nice. Notably, the new Amlogic driver does not have
-> this "Querying Capabilities" phase, and with latest GStreamer works
-> just fine.
+In this driver, only TMR10-TMR13 are used. We have another driver 
+(tegra-wdt) which uses TMR5 for watchdog timer.
 
-What do you mean by "doesn't have"? Does it lack an implementation of
-VIDIOC_ENUM_FMT and VIDIOC_ENUM_FRAMESIZES?
-
-Best regards,
-Tomasz
+Thanks,
+Joseph
