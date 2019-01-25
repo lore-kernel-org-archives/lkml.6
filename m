@@ -2,111 +2,92 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AD7EC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 376DCC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 222CD218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548458449;
-	bh=BnU3fhRFbCgSgGMbJju/vH9RmyIoZycrmRyzw4h5vbo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SeN9L9V/5HmgNDVeP2EUh6/FKPGZBqF/vw24MAY04ujbfkl6yofFUYmijvbWnFcaa
-	 dxhSBbw4bvPoG8zM5xLUBL351ZCXc/cHIpZwrwU8TUnO8e5CLI1kICHYLEUgVKQNpy
-	 5L4VB6xcWombDODSBH/eW22wo8oybdC2LHM+J3YM=
+	by mail.kernel.org (Postfix) with ESMTP id 09F3720844
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="omF2WdcH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729952AbfAYXTs (ORCPT
+        id S1729753AbfAYXUu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 18:19:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48220 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729924AbfAYXTo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 18:19:44 -0500
-Received: from quaco.cust.in.nbox.cz (unknown [95.82.135.149])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D61B21903;
-        Fri, 25 Jan 2019 23:19:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548458383;
-        bh=BnU3fhRFbCgSgGMbJju/vH9RmyIoZycrmRyzw4h5vbo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VqvaLDYtfKBPMreGqQlmrunBBHpzJ+PDRwtzqBWmRb6X9kPk9a1Agc75ttE6ri/AW
-         Hljo07wEaQ2s3CeZKx01bn4A+lEBEiPYVCMjccH5QTKsXHtSPonYecHoZGSmrqeXA3
-         vCzcca8Tigmo1DbABrPLvLq5ybA1dxg4Lo1dYQRY=
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-perf-users@vger.kernel.org,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Jiri Olsa <jolsa@kernel.org>,
-        =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
-        <lclaudio@redhat.com>, Martin KaFai Lau <kafai@fb.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Wang Nan <wangnan0@huawei.com>, Yonghong Song <yhs@fb.com>
-Subject: [PATCH 24/29] perf bpf: Add bpf_map() helper
-Date:   Sat, 26 Jan 2019 00:18:38 +0100
-Message-Id: <20190125231843.2895-25-acme@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190125231843.2895-1-acme@kernel.org>
-References: <20190125231843.2895-1-acme@kernel.org>
+        Fri, 25 Jan 2019 18:20:50 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:34780 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726362AbfAYXUt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 18:20:49 -0500
+Received: by mail-pl1-f195.google.com with SMTP id w4so5238290plz.1;
+        Fri, 25 Jan 2019 15:20:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=MeMJvq4a6zgIZgpXegstXkUvv42lmzp5EtyRneFt82A=;
+        b=omF2WdcHHNqr8RCc9TmwvqNm9G6w/BJRuwJNvvs6aj3NK56Z+g3W6KaqpVCyvwtBp7
+         UdFP/Km66TocO74E73XGDw3uxOf5/Lm4zz1OSIKyHV3VnG+sPnWks1LCfCbe2i9jKc0s
+         aBdy3LR7+5Sqw9Dh7/IQ015MnYpxSJob0xZk8YJfJ0nN+iTN+tWwUGYmqMj2d4w0X1YO
+         sLWSwnbIK9gc+0sCabkaOJMCuad8drpx9qaiiHC21f0ONZZu63kKbisLFajw1QmJ5UMx
+         jh1HIHJPDuC5MaZliC/3mgM2lp89/3Zrv8u8iox7OZD62GljgYRDUAYbp7e/LjXJkRwl
+         NgaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MeMJvq4a6zgIZgpXegstXkUvv42lmzp5EtyRneFt82A=;
+        b=HoYuttri2caTpjnMwnTcaa04PsM3fSBloK5jY/hCrdQSdUseraoYGbfxnR2cM/6C+0
+         Y9My4UgOVRgeXHPfM1iYeuD6JCS33D7FuZBlNeOwD5pDl6vR6NecIkN99eANIxqgZFNO
+         R/rXOJflqxyLwLBHdCIOrf3yToysVfkIZP3A6gNL1PIpXi0uho5iWihhKJ2Z3NBF7y6T
+         2taY6Di2AtioOQU2187eR4247wR/F5PYD4jf/pG9jsdpcqBWbOWYzRwlqm0Q95M30e7p
+         mJRSNOOviOmRSOSNWM+ERCK/nK8nPHpOcn2aP1vTwdcPZkijLbITcHPla/nMhhfbXRRI
+         tefA==
+X-Gm-Message-State: AJcUukeRE0ZbwjG06Ag5ajd6GADa2KhWL0u9w4xnp2e+weHzNXDj1K8E
+        i41mVwoPLaPk+aQun8I7AVg=
+X-Google-Smtp-Source: ALg8bN5uok7c4woJVaSYDl+OQKyBiOvulVGqEQ3onCLp/aIlZuDHJesN0nU5LTMy6gK34B3mDHyrtw==
+X-Received: by 2002:a17:902:9a47:: with SMTP id x7mr12930755plv.126.1548458448892;
+        Fri, 25 Jan 2019 15:20:48 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id g28sm43374765pfd.100.2019.01.25.15.20.48
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 15:20:48 -0800 (PST)
+Date:   Fri, 25 Jan 2019 15:20:47 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org
+Subject: Re: [PATCH 4.20 000/127] 4.20.5-stable review
+Message-ID: <20190125232047.GF27619@roeck-us.net>
+References: <20190124190211.984305387@linuxfoundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Thu, Jan 24, 2019 at 08:19:06PM +0100, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.20.5 release.
+> There are 127 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Sat Jan 26 19:01:19 UTC 2019.
+> Anything received after that time might be too late.
+> 
 
-To make the declaration of maps more compact, the following patches will
-make use of it.
+Build results:
+	total: 159 pass: 159 fail: 0
+Qemu test results:
+	total: 343 pass: 343 fail: 0
 
-Standardizing on it will allow to add the BTF details, i.e.
-BPF_ANNOTATE_KV_PAIR() (tools/testing/selftests/bpf/bpf_helpers.h)
-transparently.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Yonghong Song <yhs@fb.com>
-Link: https://lkml.kernel.org/n/tip-h3q9rxxkbzetgnbro5rclqft@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/include/bpf/bpf.h | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/tools/perf/include/bpf/bpf.h b/tools/perf/include/bpf/bpf.h
-index e667577207dc..0482028c1d11 100644
---- a/tools/perf/include/bpf/bpf.h
-+++ b/tools/perf/include/bpf/bpf.h
-@@ -18,6 +18,14 @@ struct bpf_map {
-         unsigned int numa_node;
- };
- 
-+#define bpf_map(name, _type, type_key, type_val, _max_entries)	\
-+struct bpf_map SEC("maps") name = {				\
-+	.type	     = BPF_MAP_TYPE_##_type,			\
-+	.key_size    = sizeof(type_key),			\
-+	.value_size  = sizeof(type_val),			\
-+	.max_entries = _max_entries,				\
-+}
-+
- /*
-  * FIXME: this should receive .max_entries as a parameter, as careful
-  *	  tuning of these limits is needed to avoid hitting limits that
--- 
-2.20.1
-
+Guenter
