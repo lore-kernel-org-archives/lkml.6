@@ -4,41 +4,41 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-15.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997E8C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D19FC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6116D20844
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 437E920844
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548458403;
-	bh=6Y0N18pSZIr8QY4VbWBkQZPXv/rt1VrqqsRjXi2QfVg=;
+	s=default; t=1548458405;
+	bh=3q1MT++GyIIy1yC6+fYQ8UlBmTndj32nV68n5m4umSc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=le2TyAu0JV0oWgfiUB0PGcwgPWsDFSr758q51GJW+grem2Uin0kWscie+0aNbK6iP
-	 Z/fWqjjnD5QJ2KUF33qSqaoXZ1qFNzq9/VloA7uScjX9nZEiPgYyiXab5qfosL2wqr
-	 zlHzx7TFuW6f5by51+xERDcu3xFGPE+bNg3/raY4=
+	b=ktEFBDspc+iBt3+Z6g0qPIyhxHcQQ2K9OunMios98chV/nq7Nt4PjButhlc+TGj9N
+	 aVs1coKxP1RpBt+hSSRz0mPioSVVjkR4zWHQS504HOeWMWBRNUBlGm9N3IWm5Xd5CF
+	 Yw+24PG/BNFMmtK90pySyqrjqHajEkNL5J1j2mfc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730017AbfAYXT4 (ORCPT
+        id S1730051AbfAYXUE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 18:19:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48332 "EHLO mail.kernel.org"
+        Fri, 25 Jan 2019 18:20:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729976AbfAYXTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 18:19:52 -0500
+        id S1730015AbfAYXT4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 18:19:56 -0500
 Received: from quaco.cust.in.nbox.cz (unknown [95.82.135.149])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8EF920844;
-        Fri, 25 Jan 2019 23:19:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3496A21902;
+        Fri, 25 Jan 2019 23:19:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548458391;
-        bh=6Y0N18pSZIr8QY4VbWBkQZPXv/rt1VrqqsRjXi2QfVg=;
+        s=default; t=1548458396;
+        bh=3q1MT++GyIIy1yC6+fYQ8UlBmTndj32nV68n5m4umSc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DJDK6isYAnNjd5Vv5UrVNJI/vxduCMOica0bn1VpzNB3LuKSg19NIElB8MvSI7otK
-         QuThpZMgZKujsMkCRRmoC8ezYI4AF66DrXg4J6+1zNr3FnC4wEENjY0K7nrQOgkjk0
-         7ZEbizefn8oIH/v4i9YgQyro/7+h8pPdgJFFsZc4=
+        b=jJdeG27AHzTueFlx4qMT/1t7PnRAqbxXyNze4eI8tcpfHdXzY6RFGzbADzPy+sDIl
+         TlPSjTMtWGwUlmr9cwsWC3Tlqu/R5kJuscd7Dls9zGviFtemOAnhEv4++cmp53SNyN
+         foshIVdTBdWZd3932zmp9FW6ti8iL+hl1DMiIpbM=
 From:   Arnaldo Carvalho de Melo <acme@kernel.org>
 To:     Ingo Molnar <mingo@kernel.org>
 Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
@@ -49,9 +49,9 @@ Cc:     Clark Williams <williams@redhat.com>, linux-kernel@vger.kernel.org,
         =?UTF-8?q?Luis=20Cl=C3=A1udio=20Gon=C3=A7alves?= 
         <lclaudio@redhat.com>, Namhyung Kim <namhyung@kernel.org>,
         Wang Nan <wangnan0@huawei.com>
-Subject: [PATCH 27/29] perf trace: Fixup etcsnoop example
-Date:   Sat, 26 Jan 2019 00:18:41 +0100
-Message-Id: <20190125231843.2895-28-acme@kernel.org>
+Subject: [PATCH 29/29] perf augmented_syscalls: Convert to bpf_map()
+Date:   Sat, 26 Jan 2019 00:18:43 +0100
+Message-Id: <20190125231843.2895-30-acme@kernel.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190125231843.2895-1-acme@kernel.org>
 References: <20190125231843.2895-1-acme@kernel.org>
@@ -65,43 +65,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Where we don't have "raw_syscalls:sys_enter", so we need to look for a
-"*syscalls:sys_enter*" to initialize the offsets for the
-__augmented_syscalls__ evsel, which is the case with etcsnoop, that was
-segfaulting, fixed:
+To make the code more compact, end result is the same:
 
-  # trace -e /home/acme/git/perf/tools/perf/examples/bpf/etcsnoop.c
-     0.000 (         ): gnome-shell/2105 openat(dfd: CWD, filename: "/etc/localtime")                       ...
-   631.834 (         ): cat/6521 openat(dfd: CWD, filename: "/etc/ld.so.cache", flags: RDONLY|CLOEXEC) ...
-   632.637 (         ): bash/6521 openat(dfd: CWD, filename: "/etc/passwd")                          ...
-  ^C#
+  # perf trace -e /home/acme/git/perf/tools/perf/examples/bpf/augmented_syscalls.c sleep 1
+     0.000 ( 0.008 ms): sleep/9663 openat(dfd: CWD, filename: "/etc/ld.so.cache", flags: RDONLY|CLOEXEC) = 3
+     0.022 ( 0.005 ms): sleep/9663 openat(dfd: CWD, filename: "/lib64/libc.so.6", flags: RDONLY|CLOEXEC) = 3
+     0.226 ( 0.006 ms): sleep/9663 openat(dfd: CWD, filename: "/usr/lib/locale/locale-archive", flags: RDONLY|CLOEXEC) = 3
+  #
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Fixes: b9b6a2ea2baf ("perf trace: Do not hardcode the size of the tracepoint common_ fields")
-Link: https://lkml.kernel.org/n/tip-0tjwcit8qitsmh4nyvf2b0jo@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-23z08bgizqnbc3qdsyl7jyyg@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-trace.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ tools/perf/examples/bpf/augmented_syscalls.c | 8 ++------
+ 1 file changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
-index ed4583128b9c..1447993e1ee3 100644
---- a/tools/perf/builtin-trace.c
-+++ b/tools/perf/builtin-trace.c
-@@ -3854,7 +3854,8 @@ int cmd_trace(int argc, const char **argv)
- 				goto init_augmented_syscall_tp;
- 			}
+diff --git a/tools/perf/examples/bpf/augmented_syscalls.c b/tools/perf/examples/bpf/augmented_syscalls.c
+index b7dba114e36c..524fdb8534b3 100644
+--- a/tools/perf/examples/bpf/augmented_syscalls.c
++++ b/tools/perf/examples/bpf/augmented_syscalls.c
+@@ -19,12 +19,8 @@
+ #include <stdio.h>
+ #include <linux/socket.h>
  
--			if (strcmp(perf_evsel__name(evsel), "raw_syscalls:sys_enter") == 0) {
-+			if (trace.syscalls.events.augmented->priv == NULL &&
-+			    strstr(perf_evsel__name(evsel), "syscalls:sys_enter")) {
- 				struct perf_evsel *augmented = trace.syscalls.events.augmented;
- 				if (perf_evsel__init_augmented_syscall_tp(augmented, evsel) ||
- 				    perf_evsel__init_augmented_syscall_tp_args(augmented))
+-struct bpf_map SEC("maps") __augmented_syscalls__ = {
+-       .type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
+-       .key_size = sizeof(int),
+-       .value_size = sizeof(u32),
+-       .max_entries = __NR_CPUS__,
+-};
++/* bpf-output associated map */
++bpf_map(__augmented_syscalls__, PERF_EVENT_ARRAY, int, u32, __NR_CPUS__);
+ 
+ struct syscall_exit_args {
+ 	unsigned long long common_tp_fields;
 -- 
 2.20.1
 
