@@ -2,112 +2,108 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA5EC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:40:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5626FC282C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:40:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 096CE217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:40:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1178020870
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:40:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548405626;
+	bh=x9ixiTmVDU76XRD7HVCS3rT0gY0s8L0TiVE0JQyRBdA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DcGZ6s+xoGXDKRY512VjUpold9sOtZlEb/N3M2+wtR9KshnBRLehg+xCB+EK9veuI
+	 MQj1+WM6QtksbhBg/Ae4eJO6V0cKogvjYrVNqzmnkCRPXYjHzB/bAIw3v763TNC68I
+	 GvBvVQqDiUIuypMfJEj6/Bl3L34lvqvByZyaXZ0I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728885AbfAYIkG (ORCPT
+        id S1728978AbfAYIkY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 03:40:06 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40477 "EHLO mail.bootlin.com"
+        Fri, 25 Jan 2019 03:40:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35760 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726817AbfAYIkG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 03:40:06 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B62342084E; Fri, 25 Jan 2019 09:40:03 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 8702220746;
-        Fri, 25 Jan 2019 09:40:03 +0100 (CET)
-Date:   Fri, 25 Jan 2019 09:40:04 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: allwinner: a64-amarula-relic: Add STLM75
- sensor
-Message-ID: <20190125084004.fsbxtpcesb5yaiod@flea>
-References: <20190124175254.27650-1-jagan@amarulasolutions.com>
+        id S1726441AbfAYIkY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 03:40:24 -0500
+Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id F2B4420870;
+        Fri, 25 Jan 2019 08:40:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548405623;
+        bh=x9ixiTmVDU76XRD7HVCS3rT0gY0s8L0TiVE0JQyRBdA=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=OCDokKr1PGrfPY15KxmCZGKBcQCo4P83wyiZCz+MhjQFbECQ9UmlCylQ1OIPZfatG
+         AWKVyCyrlkscZBvfXcVWGDY4b3IEbCbdT7GBAQ5nsgusqAwAfaBGuvqyXTXiP3jliT
+         D6+qzODCwG/tFs7jYu3Ea/Kmu1CAPE63p/mfkgtk=
+Date:   Fri, 25 Jan 2019 09:40:20 +0100
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Geliang Tang <geliangtang@gmail.com>
+Cc:     Phillip Lougher <phillip@squashfs.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>, Coly Li <colyli@suse.de>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] squashfs: Add posix acl support
+Message-ID: <20190125084020.GA10018@kroah.com>
+References: <cover.1548403955.git.geliangtang@gmail.com>
+ <15428d5047390927114ad49d7721b3da2bdf40ef.1548403955.git.geliangtang@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="cqlyaxwsslzi66qo"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124175254.27650-1-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <15428d5047390927114ad49d7721b3da2bdf40ef.1548403955.git.geliangtang@gmail.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jan 25, 2019 at 04:27:47PM +0800, Geliang Tang wrote:
+> --- /dev/null
+> +++ b/fs/squashfs/acl.c
+> @@ -0,0 +1,69 @@
+> +/*
+> + * Squashfs - a compressed read only filesystem for Linux
 
---cqlyaxwsslzi66qo
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+No SPDX line?
 
-On Thu, Jan 24, 2019 at 11:22:54PM +0530, Jagan Teki wrote:
-> Amarula A64 Relic has STLM75 sensor for digital temperature
-> and thermal watchdog.
->=20
-> Add support for it.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
-> Note: the respective driver change is already in mainline
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commi=
-t/?id=3D2e9a41bbc1079776dabe42ed8113b086b99ae56c
->=20
->  .../dts/allwinner/sun50i-a64-amarula-relic.dts    | 15 +++++++++++++++
->  1 file changed, 15 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b=
-/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> index 6cb2b7f0c817..5d942543d978 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> @@ -34,6 +34,21 @@
->  	status =3D "okay";
->  };
-> =20
-> +&i2c0 {
-> +	pinctrl-names =3D "default";
-> +	pinctrl-0 =3D <&i2c0_pins>;
-> +	status =3D "okay";
-> +
-> +	temp@48 {
+> + *
+> + * Copyright (c) 2018
+> + * Phillip Lougher <phillip@squashfs.org.uk>
 
-That would be sensor@48
+Did Phillip write this file, or did you?
 
-> +		compatible =3D "st,stlm75";
+> + *
+> + * This program is free software; you can redistribute it and/or
+> + * modify it under the terms of the GNU General Public License
+> + * as published by the Free Software Foundation; either version 2,
+> + * or (at your option) any later version.
+> + *
+> + * This program is distributed in the hope that it will be useful,
+> + * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> + * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+> + * GNU General Public License for more details.
+> + *
+> + * You should have received a copy of the GNU General Public License
+> + * along with this program; if not, write to the Free Software
+> + * Foundation, 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
 
-That compatible isn't documented.
+No need for any of that header stuff, if you put in the proper SPDX
+line.
 
-The rest looks good, thanks!
-Maxime
+> --- /dev/null
+> +++ b/fs/squashfs/acl.h
+> @@ -0,0 +1,31 @@
+> +/*
+> + * Squashfs - a compressed read only filesystem for Linux
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+<snip>
 
---cqlyaxwsslzi66qo
-Content-Type: application/pgp-signature; name="signature.asc"
+Same comments here about this file.
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXErLYwAKCRDj7w1vZxhR
-xdJsAQCkGNW1D6vgjZZi2m2OyaFk/OM5jou7yJaveoU0vEeuzgD/fDDwXy3yfWnA
-PQcsxjl7Ogj6oNY63U+pBRW8tJZ34wE=
-=SIYm
------END PGP SIGNATURE-----
+thanks,
 
---cqlyaxwsslzi66qo--
+greg k-h
