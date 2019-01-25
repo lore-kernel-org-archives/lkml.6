@@ -2,128 +2,112 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40585C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B232DC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 086E9218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548437069;
-	bh=P1u4LwreJrrBgNUr1qX7iaU4fv75Dta1x9DXP10ItA4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=siDLd51YXN7aWmUEMrm7D/wd6CYDUHdx++z6hw5MQwWYBq1pTFXRPCqeAhS6ixVL1
-	 U6YAZSFtefuZ+9SqqkiafmgzuQb2dx74S5fWccwTQECbM/5gndIw/HS7kyGetCFZtw
-	 TKG4311DjjUP04P6hN43H7LGrKbSLb9H5E1+t/30=
+	by mail.kernel.org (Postfix) with ESMTP id 75012218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:25:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="YIbo7Dhp"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728937AbfAYRYV (ORCPT
+        id S1729041AbfAYRZd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:24:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46668 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726321AbfAYRYU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:24:20 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 67261ACEF;
-        Fri, 25 Jan 2019 17:24:18 +0000 (UTC)
-Date:   Fri, 25 Jan 2019 18:24:16 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     akpm@linux-foundation.org, mm-commits@vger.kernel.org,
-        penguin-kernel@i-love.sakura.ne.jp, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: + memcg-do-not-report-racy-no-eligible-oom-tasks.patch added to
- -mm tree
-Message-ID: <20190125172416.GB20411@dhcp22.suse.cz>
-References: <20190109190306.rATpT%akpm@linux-foundation.org>
- <20190125165624.GA17719@cmpxchg.org>
+        Fri, 25 Jan 2019 12:25:33 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:38475 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfAYRZd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 12:25:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=b39L/vjtLb5q8xMCKHGxH4LoqdFYGuwB6tLXlSE3EJg=;
+        b=YIbo7Dhp+8fUd7IC3Y8r5C89fV7OLORtryE5Qg4kR0JwQO4iUe3Uda0gcyW3UrQU3g6vApAKjjLlU8fL+xmdYRsZvoZtyGnqE96FyX+hOXwwxT0mSLKVQVmdOIFAh/LgR0GtpRqCuCOHgQ4mwDzVRh5o+jWHKhAYsJxwBlHWqdSt7S/ErLwdGJaRYjmp7i5yTytoWyF/qbxXyrgdVpK3k8HYOPg0Gd5USpNZh1UMNOR2J0LohTt+cs+SIry+wKi5S1gvR/A07DDdHLnQmueNfFvwnh3/ykIUkOWpc9CdWTr1mwRpGKknnActpaLXU6dkDgiqisrAmGBPgugGzvNRfA==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:50460 helo=[192.168.10.176])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gn5EQ-0003eg-JZ; Fri, 25 Jan 2019 18:25:30 +0100
+Subject: Re: [PATCH v3 17/23] drm/qxl: use generic fbdev emulation
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>
+References: <20190118122020.27596-1-kraxel@redhat.com>
+ <20190118122020.27596-18-kraxel@redhat.com>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <e31c0fdd-315a-59cf-e7fe-dfd6a064f6ee@tronnes.org>
+Date:   Fri, 25 Jan 2019 18:25:27 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125165624.GA17719@cmpxchg.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190118122020.27596-18-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 25-01-19 11:56:24, Johannes Weiner wrote:
-> On Wed, Jan 09, 2019 at 11:03:06AM -0800, akpm@linux-foundation.org wrote:
-> > 
-> > The patch titled
-> >      Subject: memcg: do not report racy no-eligible OOM tasks
-> > has been added to the -mm tree.  Its filename is
-> >      memcg-do-not-report-racy-no-eligible-oom-tasks.patch
-> > 
-> > This patch should soon appear at
-> >     http://ozlabs.org/~akpm/mmots/broken-out/memcg-do-not-report-racy-no-eligible-oom-tasks.patch
-> > and later at
-> >     http://ozlabs.org/~akpm/mmotm/broken-out/memcg-do-not-report-racy-no-eligible-oom-tasks.patch
-> > 
-> > Before you just go and hit "reply", please:
-> >    a) Consider who else should be cc'ed
-> >    b) Prefer to cc a suitable mailing list as well
-> >    c) Ideally: find the original patch on the mailing list and do a
-> >       reply-to-all to that, adding suitable additional cc's
-> > 
-> > *** Remember to use Documentation/process/submit-checklist.rst when testing your code ***
-> > 
-> > The -mm tree is included into linux-next and is updated
-> > there every 3-4 working days
-> > 
-> > ------------------------------------------------------
-> > From: Michal Hocko <mhocko@suse.com>
-> > Subject: memcg: do not report racy no-eligible OOM tasks
-> > 
-> > Tetsuo has reported [1] that a single process group memcg might easily
-> > swamp the log with no-eligible oom victim reports due to race between the
-> > memcg charge and oom_reaper
-> > 
-> > Thread 1		Thread2				oom_reaper
-> > try_charge		try_charge
-> > 			  mem_cgroup_out_of_memory
-> > 			    mutex_lock(oom_lock)
-> >   mem_cgroup_out_of_memory
-> >     mutex_lock(oom_lock)
-> > 			      out_of_memory
-> > 			        select_bad_process
-> > 				oom_kill_process(current)
-> > 				  wake_oom_reaper
-> > 							  oom_reap_task
-> > 							  MMF_OOM_SKIP->victim
-> > 			    mutex_unlock(oom_lock)
-> >     out_of_memory
-> >       select_bad_process # no task
-> > 
-> > If Thread1 didn't race it would bail out from try_charge and force the
-> > charge.  We can achieve the same by checking tsk_is_oom_victim inside the
-> > oom_lock and therefore close the race.
-> > 
-> > [1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
-> > Link: http://lkml.kernel.org/r/20190107143802.16847-3-mhocko@kernel.org
-> > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> 
-> It looks like this problem is happening in production systems:
-> 
-> https://www.spinics.net/lists/cgroups/msg21268.html
-> 
-> where the threads don't exit because they are trapped writing out the
-> oom messages to a slow console (running the reproducer from this email
-> thread triggers the oom flooding).
-> 
-> So IMO we should put this into 5.0 and add:
 
-Please note that Tetsuo has found out that this will not work with the
-CLONE_VM without CLONE_SIGHAND cases and his http://lkml.kernel.org/r/01370f70-e1f6-ebe4-b95e-0df21a0bc15e@i-love.sakura.ne.jp
-should handle this case as well. I've only had objections to the
-changelog but other than that the patch looked sensible to me.
--- 
-Michal Hocko
-SUSE Labs
+
+Den 18.01.2019 13.20, skrev Gerd Hoffmann:
+> Switch qxl over to the new generic fbdev emulation.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/qxl/qxl_display.c | 7 -------
+>  drivers/gpu/drm/qxl/qxl_drv.c     | 2 ++
+>  2 files changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+> index ef832f98ab..9c751f01e3 100644
+> --- a/drivers/gpu/drm/qxl/qxl_display.c
+> +++ b/drivers/gpu/drm/qxl/qxl_display.c
+> @@ -1221,18 +1221,11 @@ int qxl_modeset_init(struct qxl_device *qdev)
+>  	qxl_display_read_client_monitors_config(qdev);
+>  
+>  	drm_mode_config_reset(&qdev->ddev);
+> -
+> -	/* primary surface must be created by this point, to allow
+> -	 * issuing command queue commands and having them read by
+> -	 * spice server. */
+> -	qxl_fbdev_init(qdev);
+>  	return 0;
+>  }
+>  
+>  void qxl_modeset_fini(struct qxl_device *qdev)
+>  {
+> -	qxl_fbdev_fini(qdev);
+> -
+>  	qxl_destroy_monitors_object(qdev);
+>  	drm_mode_config_cleanup(&qdev->ddev);
+>  }
+> diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
+> index 13c8a662f9..3fce7d16df 100644
+> --- a/drivers/gpu/drm/qxl/qxl_drv.c
+> +++ b/drivers/gpu/drm/qxl/qxl_drv.c
+> @@ -93,6 +93,8 @@ qxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+>  	if (ret)
+>  		goto modeset_cleanup;
+>  
+> +	drm_fb_helper_remove_conflicting_pci_framebuffers(pdev, 0, "qxl");
+
+I couldn't find that this was part of old fbdev code, so it would be
+nice to mention it in the commit message.
+
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
+
+
+> +	drm_fbdev_generic_setup(&qdev->ddev, 32);
+>  	return 0;
+>  
+>  modeset_cleanup:
+> 
