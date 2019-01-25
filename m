@@ -2,175 +2,79 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6A3B0C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:02:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3284C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:05:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3EE19218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:02:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CB2F218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:05:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548432346;
+	bh=APSFi6vIi7J7yk3zjb9K3fPbyPI50aTYiExSIqq9Ndc=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=E2OIbKJFkP2Ktpiy7kiOeh8B9VxlkryAcR698gLDFhHENDEA07dDtfoZeQJw9WZch
+	 5XHEYjHPChBw/EVY7OXgYhRd4xtL7Zn8Q4ZGXoh1nvkNLDlyOd23XUeYkl7T8et32g
+	 1qbviIonP71poxGuzkd2Xe4wdRFcQ/a1or2kz6xY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728460AbfAYQCI (ORCPT
+        id S1726825AbfAYQFo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:02:08 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:45068 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfAYQCI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:02:08 -0500
-Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0PG26fg055728;
-        Sat, 26 Jan 2019 01:02:06 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
- Sat, 26 Jan 2019 01:02:06 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0PG26Rv055723
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 26 Jan 2019 01:02:06 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: possible deadlock in __do_page_fault
-To:     Joel Fernandes <joel@joelfernandes.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Todd Kjos <tkjos@google.com>,
-        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
-        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
-        jack@suse.cz, jrdr.linux@gmail.com,
-        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
-        mawilcox@microsoft.com, mgorman@techsingularity.net,
-        syzkaller-bugs@googlegroups.com,
-        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>,
-        Martijn Coenen <maco@android.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <201901230201.x0N214eq043832@www262.sakura.ne.jp>
- <20190123155751.GA168927@google.com>
- <201901240152.x0O1qUUU069046@www262.sakura.ne.jp>
- <20190124134646.GA53008@google.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <d736c8f5-eba1-2da8-000f-4b2a80ad74ff@i-love.sakura.ne.jp>
-Date:   Sat, 26 Jan 2019 01:02:06 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 25 Jan 2019 11:05:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47014 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726126AbfAYQFo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 11:05:44 -0500
+Received: from shuah-t480s.internal (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 87BD0218CD;
+        Fri, 25 Jan 2019 16:05:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548432343;
+        bh=APSFi6vIi7J7yk3zjb9K3fPbyPI50aTYiExSIqq9Ndc=;
+        h=From:To:Cc:Subject:Date:From;
+        b=yqoNIGbTCIRd4ZdgaAVyNNHxu/qqiOS0hlWe2ccpHNj7So5W3nupn/22XY7AJdl3R
+         A8DqJrl1j2PBAoVbwto2BM/vZXC0+tdF63k6KDremHIeXa+RePP9dsDh6lzFSCDaGn
+         SCjq/TjeiXYkicvE1kQ4QX2ZJ7yoG47iNmcczkjI=
+From:   Shuah Khan <shuah@kernel.org>
+To:     valentina.manea.m@gmail.com, shuah@kernel.org,
+        gregkh@linuxfoundation.org
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] usbip: Fix vep_free_request() null pointer checks on input args
+Date:   Fri, 25 Jan 2019 09:05:42 -0700
+Message-Id: <20190125160542.6939-1-shuah@kernel.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20190124134646.GA53008@google.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/24 22:46, Joel Fernandes wrote:
-> On Thu, Jan 24, 2019 at 10:52:30AM +0900, Tetsuo Handa wrote:
->> Joel Fernandes wrote:
->>>> Anyway, I need your checks regarding whether this approach is waiting for
->>>> completion at all locations which need to wait for completion.
->>>
->>> I think you are waiting in unwanted locations. The only location you need to
->>> wait in is ashmem_pin_unpin.
->>>
->>> So, to my eyes all that is needed to fix this bug is:
->>>
->>> 1. Delete the range from the ashmem_lru_list
->>> 2. Release the ashmem_mutex
->>> 3. fallocate the range.
->>> 4. Do the completion so that any waiting pin/unpin can proceed.
->>>
->>> Could you clarify why you feel you need to wait for completion at those other
->>> locations?
+Fix vep_free_request() to return when usb_ep and usb_request are null
+instead of calling WARN_ON.
 
-OK. Here is an updated patch.
-Passed syzbot's best-effort testing using reproducers on all three reports.
-
-From f192176dbee54075d41249e9f22918c32cb4d4fc Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Fri, 25 Jan 2019 23:43:01 +0900
-Subject: [PATCH] staging: android: ashmem: Don't call fallocate() with ashmem_mutex held.
-
-syzbot is hitting lockdep warnings [1][2][3]. This patch tries to fix
-the warning by eliminating ashmem_shrink_scan() => {shmem|vfs}_fallocate()
-sequence.
-
-[1] https://syzkaller.appspot.com/bug?id=87c399f6fa6955006080b24142e2ce7680295ad4
-[2] https://syzkaller.appspot.com/bug?id=7ebea492de7521048355fc84210220e1038a7908
-[3] https://syzkaller.appspot.com/bug?id=e02419c12131c24e2a957ea050c2ab6dcbbc3270
-
-Reported-by: syzbot <syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com>
-Reported-by: syzbot <syzbot+148c2885d71194f18d28@syzkaller.appspotmail.com>
-Reported-by: syzbot <syzbot+4b8b031b89e6b96c4b2e@syzkaller.appspotmail.com>
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
 ---
- drivers/staging/android/ashmem.c | 23 ++++++++++++++++++-----
- 1 file changed, 18 insertions(+), 5 deletions(-)
+ drivers/usb/usbip/vudc_dev.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
-index 90a8a9f..d40c1d2 100644
---- a/drivers/staging/android/ashmem.c
-+++ b/drivers/staging/android/ashmem.c
-@@ -75,6 +75,9 @@ struct ashmem_range {
- /* LRU list of unpinned pages, protected by ashmem_mutex */
- static LIST_HEAD(ashmem_lru_list);
- 
-+static atomic_t ashmem_shrink_inflight = ATOMIC_INIT(0);
-+static DECLARE_WAIT_QUEUE_HEAD(ashmem_shrink_wait);
-+
- /*
-  * long lru_count - The count of pages on our LRU list.
-  *
-@@ -438,7 +441,6 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
- static unsigned long
- ashmem_shrink_scan(struct shrinker *shrink, struct shrink_control *sc)
+diff --git a/drivers/usb/usbip/vudc_dev.c b/drivers/usb/usbip/vudc_dev.c
+index 1634d8698e15..a72c17ff1c6a 100644
+--- a/drivers/usb/usbip/vudc_dev.c
++++ b/drivers/usb/usbip/vudc_dev.c
+@@ -297,7 +297,8 @@ static void vep_free_request(struct usb_ep *_ep, struct usb_request *_req)
  {
--	struct ashmem_range *range, *next;
- 	unsigned long freed = 0;
+ 	struct vrequest *req;
  
- 	/* We might recurse into filesystem code, so bail out if necessary */
-@@ -448,17 +450,27 @@ static int ashmem_mmap(struct file *file, struct vm_area_struct *vma)
- 	if (!mutex_trylock(&ashmem_mutex))
- 		return -1;
+-	if (WARN_ON(!_ep || !_req))
++	/* ep is always valid here - see usb_ep_free_request() */
++	if (!_req)
+ 		return;
  
--	list_for_each_entry_safe(range, next, &ashmem_lru_list, lru) {
-+	while (!list_empty(&ashmem_lru_list)) {
-+		struct ashmem_range *range =
-+			list_first_entry(&ashmem_lru_list, typeof(*range), lru);
- 		loff_t start = range->pgstart * PAGE_SIZE;
- 		loff_t end = (range->pgend + 1) * PAGE_SIZE;
-+		struct file *f = range->asma->file;
- 
--		range->asma->file->f_op->fallocate(range->asma->file,
--				FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
--				start, end - start);
-+		get_file(f);
-+		atomic_inc(&ashmem_shrink_inflight);
- 		range->purged = ASHMEM_WAS_PURGED;
- 		lru_del(range);
- 
- 		freed += range_size(range);
-+		mutex_unlock(&ashmem_mutex);
-+		f->f_op->fallocate(f,
-+				   FALLOC_FL_PUNCH_HOLE | FALLOC_FL_KEEP_SIZE,
-+				   start, end - start);
-+		fput(f);
-+		if (atomic_dec_and_test(&ashmem_shrink_inflight))
-+			wake_up_all(&ashmem_shrink_wait);
-+		mutex_lock(&ashmem_mutex);
- 		if (--sc->nr_to_scan <= 0)
- 			break;
- 	}
-@@ -713,6 +725,7 @@ static int ashmem_pin_unpin(struct ashmem_area *asma, unsigned long cmd,
- 		return -EFAULT;
- 
- 	mutex_lock(&ashmem_mutex);
-+	wait_event(ashmem_shrink_wait, !atomic_read(&ashmem_shrink_inflight));
- 
- 	if (!asma->file)
- 		goto out_unlock;
+ 	req = to_vrequest(_req);
 -- 
-1.8.3.1
+2.17.1
+
