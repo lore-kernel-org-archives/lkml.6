@@ -2,95 +2,247 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF75DC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:12:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 050AAC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:20:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A966B2085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:12:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD24F218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548426051;
+	bh=sB7ga/sa2esXoSHv2bB6G33MEW7nikD2HobnskeNVwQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=TiU1cSMGoqxKqefiXs9fR/Gkl/Y2aKqSIuMbusk4mFx3QmA2vIJb277r9xd+FQQ3o
+	 tTVykAJecChSWZYL08jfPI4hzjxmO0aXiIgviQjrfbZ10VecbI9QU9mUz9Ls3B5WIK
+	 Qhl/nRzyrYlQYRB/eJW8e+XtPv8I2pmmVcsZMTwk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbfAYOMh (ORCPT
+        id S1726825AbfAYOUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:12:37 -0500
-Received: from mga17.intel.com ([192.55.52.151]:15635 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727895AbfAYOMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:12:37 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 06:12:37 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,521,1539673200"; 
-   d="scan'208";a="119443924"
-Received: from jshavlix-mobl.amr.corp.intel.com (HELO [10.251.5.52]) ([10.251.5.52])
-  by fmsmga008.fm.intel.com with ESMTP; 25 Jan 2019 06:12:35 -0800
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-To:     Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Dean Wallace <duffydack73@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
- <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
- <20190117091214.7djttnpo4jjzi4su@spock>
- <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
- <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
- <983fb777-df22-1b53-acea-8bbcab23b260@redhat.com>
- <G5Oa_GRw3iClWMtIg1FeCwj1szJHRH6ToqQqCskS_HKzyNhpFFQ3sJndttzyvP3IHRJuHXvDsUC82dnw8r66OIroHCzyqTYbZoki5sSKPUE=@protonmail.com>
- <43070180-1f10-9285-7564-cfa24e1d222e@linux.intel.com>
- <3ERhUwlxf4lWV_mn3MgjNMrm8ZDgFevrwjq0KRjy05oM1hGiQUdsPpbIlKytNGHi1ViQ_2Xv7bxzqusfruSjbZJyUSpQ9Uo8HCiNyUdyNdU=@protonmail.com>
-From:   Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-Message-ID: <99a58213-2921-9dc3-d6d4-1469f8019fc4@linux.intel.com>
-Date:   Fri, 25 Jan 2019 08:12:35 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 25 Jan 2019 09:20:43 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33984 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726100AbfAYOUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 09:20:43 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 90021AEF3;
+        Fri, 25 Jan 2019 14:20:41 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 15:20:39 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     akpm@linux-foundation.org, Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Mike Rapoport <rppt@linux.ibm.com>, keith.busch@intel.com,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org, mgorman@suse.de
+Subject: Re: [PATCH v7 1/3] mm: Shuffle initial free memory to improve
+ memory-side-cache utilization
+Message-ID: <20190125142039.GN3560@dhcp22.suse.cz>
+References: <154690326478.676627.103843791978176914.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154690327057.676627.18166704439241470885.stgit@dwillia2-desk3.amr.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <3ERhUwlxf4lWV_mn3MgjNMrm8ZDgFevrwjq0KRjy05oM1hGiQUdsPpbIlKytNGHi1ViQ_2Xv7bxzqusfruSjbZJyUSpQ9Uo8HCiNyUdyNdU=@protonmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154690327057.676627.18166704439241470885.stgit@dwillia2-desk3.amr.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon 07-01-19 15:21:10, Dan Williams wrote:
+[...]
 
-On 1/24/19 11:16 PM, Mogens Jensen wrote:
-> ‐‐‐‐‐‐‐ Original Message ‐‐‐‐‐‐‐
-> On Tuesday, January 22, 2019 7:27 PM, Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com> wrote:
->
->> On 1/20/19 11:55 PM, Mogens Jensen wrote:
->>
->>> The only minor annoyance I'm experiencing now, is a large amount of debug output from something in kernel log when audio is played on the system:
->>> writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 00 00 ............U...
->>> writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 12 00 ............u...
->>> ...
->> That's enabled via dynamic debug so that's rather a configuration issue
->> than a kernel problem?
-> Do you have any suggestions on how to disable it?
->
-> My kernel is compiled without DYNAMIC_DEBUG, DEBUG_FS and other debug features, so I don't understand why all this debug output is flooding the kernel log.
->
-> It's a minor issue, but it would be nice to get rid of it.
+Thanks a lot for the additional information. And...
 
-I don't see it so it's definitively a config issue. I use
+> Introduce shuffle_free_memory(), and its helper shuffle_zone(), to
+> perform a Fisher-Yates shuffle of the page allocator 'free_area' lists
+> when they are initially populated with free memory at boot and at
+> hotplug time. Do this based on either the presence of a
+> page_alloc.shuffle=Y command line parameter, or autodetection of a
+> memory-side-cache (to be added in a follow-on patch).
 
-make defconfig
+... to make it opt-in and also provide an opt-out to override for the
+auto-detected case.
 
-scripts/kconfig/merge_config.sh .config base-defconfig sst-defconfig  
-hdaudio-codecs-defconfig
+> The shuffling is done in terms of CONFIG_SHUFFLE_PAGE_ORDER sized free
+> pages where the default CONFIG_SHUFFLE_PAGE_ORDER is MAX_ORDER-1 i.e.
+> 10, 4MB this trades off randomization granularity for time spent
+> shuffling.
 
-with all 3 defconfigs fetched from https://github.com/thesofproject/kconfig
+But I do not really think we want to make this a config option. Who do
+you expect will tune this? I would rather wait for those usecases to be
+called out and we can give them a command line parameter to do so rather
+than something hardcoded during compile time and as such really unusable
+for any consumer of the pre-built kernels.
 
+I do not have a problem with the default section though.
+
+> MAX_ORDER-1 was chosen to be minimally invasive to the page
+> allocator while still showing memory-side cache behavior improvements,
+> and the expectation that the security implications of finer granularity
+> randomization is mitigated by CONFIG_SLAB_FREELIST_RANDOM.
+> 
+> The performance impact of the shuffling appears to be in the noise
+> compared to other memory initialization work. Also the bulk of the work
+> is done in the background as a part of deferred_init_memmap().
+> 
+> This initial randomization can be undone over time so a follow-on patch
+> is introduced to inject entropy on page free decisions. It is reasonable
+> to ask if the page free entropy is sufficient, but it is not enough due
+> to the in-order initial freeing of pages. At the start of that process
+> putting page1 in front or behind page0 still keeps them close together,
+> page2 is still near page1 and has a high chance of being adjacent. As
+> more pages are added ordering diversity improves, but there is still
+> high page locality for the low address pages and this leads to no
+> significant impact to the cache conflict rate.
+> 
+> [1]: https://itpeernetwork.intel.com/intel-optane-dc-persistent-memory-operating-modes/
+> [2]: https://lkml.org/lkml/2018/9/22/54
+> [3]: https://lkml.org/lkml/2018/10/12/309
+
+Please turn lkml.org links into http://lkml.kernel.org/r/$msg_id
+
+[....]
+> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
+> index cc4a507d7ca4..8c37a023a790 100644
+> --- a/include/linux/mmzone.h
+> +++ b/include/linux/mmzone.h
+> @@ -1272,6 +1272,10 @@ void sparse_init(void);
+>  #else
+>  #define sparse_init()	do {} while (0)
+>  #define sparse_index_init(_sec, _nid)  do {} while (0)
+> +static inline int pfn_present(unsigned long pfn)
+> +{
+> +	return 1;
+> +}
+
+Does this really make sense? Shouldn't this default to pfn_valid on
+!sparsemem?
+
+[...]
+> +config SHUFFLE_PAGE_ALLOCATOR
+> +	bool "Page allocator randomization"
+> +	depends on ACPI_NUMA
+> +	default SLAB_FREELIST_RANDOM
+> +	help
+> +	  Randomization of the page allocator improves the average
+> +	  utilization of a direct-mapped memory-side-cache. See section
+> +	  5.2.27 Heterogeneous Memory Attribute Table (HMAT) in the ACPI
+> +	  6.2a specification for an example of how a platform advertises
+> +	  the presence of a memory-side-cache. There are also incidental
+> +	  security benefits as it reduces the predictability of page
+> +	  allocations to compliment SLAB_FREELIST_RANDOM, but the
+> +	  default granularity of shuffling on 4MB (MAX_ORDER) pages is
+> +	  selected based on cache utilization benefits.
+> +
+> +	  While the randomization improves cache utilization it may
+> +	  negatively impact workloads on platforms without a cache. For
+> +	  this reason, by default, the randomization is enabled only
+> +	  after runtime detection of a direct-mapped memory-side-cache.
+> +	  Otherwise, the randomization may be force enabled with the
+> +	  'page_alloc.shuffle' kernel command line parameter.
+> +
+> +	  Say Y if unsure.
+
+Do we really need to make this a choice? Are any of the tiny systems
+going to be NUMA? Why cannot we just make it depend on ACPI_NUMA?
+
+> +config SHUFFLE_PAGE_ORDER
+> +	depends on SHUFFLE_PAGE_ALLOCATOR
+> +	int "Page allocator shuffle order"
+> +	range 0 10
+> +	default 10
+> +	help
+> +	  Specify the granularity at which shuffling (randomization) is
+> +	  performed. By default this is set to MAX_ORDER-1 to minimize
+> +	  runtime impact of randomization and with the expectation that
+> +	  SLAB_FREELIST_RANDOM mitigates heap attacks on smaller
+> +	  object granularities.
+> +
+
+and no, do not make this configurable here as already mentioned.
+> diff --git a/mm/memblock.c b/mm/memblock.c
+> index 022d4cbb3618..3602f7a2eab4 100644
+> --- a/mm/memblock.c
+> +++ b/mm/memblock.c
+> @@ -17,6 +17,7 @@
+>  #include <linux/poison.h>
+>  #include <linux/pfn.h>
+>  #include <linux/debugfs.h>
+> +#include <linux/shuffle.h>
+>  #include <linux/kmemleak.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/memblock.h>
+> @@ -1929,9 +1930,16 @@ static unsigned long __init free_low_memory_core_early(void)
+>  	 *  low ram will be on Node1
+>  	 */
+>  	for_each_free_mem_range(i, NUMA_NO_NODE, MEMBLOCK_NONE, &start, &end,
+> -				NULL)
+> +				NULL) {
+> +		pg_data_t *pgdat;
+> +
+>  		count += __free_memory_core(start, end);
+>  
+> +		for_each_online_pgdat(pgdat)
+> +			shuffle_free_memory(pgdat, PHYS_PFN(start),
+> +					PHYS_PFN(end));
+> +	}
+> +
+>  	return count;
+>  }
+>  
+> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+> index b9a667d36c55..7caffb9a91ab 100644
+> --- a/mm/memory_hotplug.c
+> +++ b/mm/memory_hotplug.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/highmem.h>
+>  #include <linux/vmalloc.h>
+>  #include <linux/ioport.h>
+> +#include <linux/shuffle.h>
+>  #include <linux/delay.h>
+>  #include <linux/migrate.h>
+>  #include <linux/page-isolation.h>
+> @@ -895,6 +896,8 @@ int __ref online_pages(unsigned long pfn, unsigned long nr_pages, int online_typ
+>  	zone->zone_pgdat->node_present_pages += onlined_pages;
+>  	pgdat_resize_unlock(zone->zone_pgdat, &flags);
+>  
+> +	shuffle_zone(zone, pfn, zone_end_pfn(zone));
+> +
+>  	if (onlined_pages) {
+>  		node_states_set_node(nid, &arg);
+>  		if (need_zonelists_rebuild)
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index cde5dac6229a..2adcd6da8a07 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -61,6 +61,7 @@
+>  #include <linux/sched/rt.h>
+>  #include <linux/sched/mm.h>
+>  #include <linux/page_owner.h>
+> +#include <linux/shuffle.h>
+>  #include <linux/kthread.h>
+>  #include <linux/memcontrol.h>
+>  #include <linux/ftrace.h>
+> @@ -1634,6 +1635,8 @@ static int __init deferred_init_memmap(void *data)
+>  	}
+>  	pgdat_resize_unlock(pgdat, &flags);
+>  
+> +	shuffle_zone(zone, first_init_pfn, zone_end_pfn(zone));
+> +
+>  	/* Sanity check that the next zone really is unpopulated */
+>  	WARN_ON(++zid < MAX_NR_ZONES && populated_zone(++zone));
+
+I would prefer if would have less placess to place the shuffling. Why
+cannot we have a single place for the bootup and one for onlining part?
+page_alloc_init_late sounds like a good place for the later. You can
+miss some early allocations but are those of a big interest?
+
+I haven't checked the actual shuffling algorithm, I will trust you on
+that part ;)
+-- 
+Michal Hocko
+SUSE Labs
