@@ -6,21 +6,21 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F66EC282C5
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:23:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C88CC282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF301218D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:23:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF3272085A
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:24:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728959AbfAYDX4 (ORCPT
+        id S1728576AbfAYDXT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:23:56 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:59420 "EHLO
+        Thu, 24 Jan 2019 22:23:19 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:59270 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728593AbfAYDXU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:23:20 -0500
+        id S1726304AbfAYDXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 22:23:17 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 6C7B25FDD9; Fri, 25 Jan 2019 11:23:15 +0800 (CST)
+        id 2974D5F87E; Fri, 25 Jan 2019 11:23:15 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Michael Turquette <mturquette@baylibre.com>,
@@ -32,9 +32,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
 Cc:     Chen-Yu Tsai <wens@csie.org>, linux-arm-kernel@lists.infradead.org,
         linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/11] ARM: dts: sun8i-a23: Add compatible strings to display pipeline device nodes
-Date:   Fri, 25 Jan 2019 11:23:12 +0800
-Message-Id: <20190125032314.20915-10-wens@csie.org>
+Subject: [PATCH 01/11] clk: sunxi-ng: sun8i-a23: Enable PLL-MIPI LDOs when ungating it
+Date:   Fri, 25 Jan 2019 11:23:04 +0800
+Message-Id: <20190125032314.20915-2-wens@csie.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190125032314.20915-1-wens@csie.org>
 References: <20190125032314.20915-1-wens@csie.org>
@@ -45,65 +45,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that the compatible strings for the display pipeline on the A23 have
-been added to the bindings, add the corresponding compatibles to the
-device nodes already in the A23/A33 shared dtsi.
+The PLL-MIPI clock is somewhat special as it has its own LDOs which
+need to be turned on for this PLL to actually work and output a clock
+signal.
 
-While the A23 has the TCON ch1 clock defined in the CCU, and the channel
-1 registers are available, it does not have any means to use channel 1
-due to a lack of downstream encoders, and the enable bit for channel 1 is
-hard-wired to 0 (off). Hence the ch1 clock is left out.
+Add the 2 LDO enable bits to the gate bits.
 
-As the MIPI DSI output device is not officially documented, and there
-are no reference devices to test it, it is not covered by this patch.
-
+Fixes: 5690879d93e8 ("clk: sunxi-ng: Add A23 CCU")
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- arch/arm/boot/dts/sun8i-a23.dtsi | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/sun8i-a23.dtsi b/arch/arm/boot/dts/sun8i-a23.dtsi
-index d00055e9eef5..a5e884a8b2ae 100644
---- a/arch/arm/boot/dts/sun8i-a23.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a23.dtsi
-@@ -62,10 +62,26 @@
- 	};
- };
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+index a4fa2945f230..4b5f8f4e4ab8 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
+@@ -144,7 +144,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
+ 				    8, 4,		/* N */
+ 				    4, 2,		/* K */
+ 				    0, 4,		/* M */
+-				    BIT(31),		/* gate */
++				    BIT(31) | BIT(23) | BIT(22), /* gate */
+ 				    BIT(28),		/* lock */
+ 				    CLK_SET_RATE_UNGATE);
  
-+&be0 {
-+	compatible = "allwinner,sun8i-a23-display-backend";
-+};
-+
- &ccu {
- 	compatible = "allwinner,sun8i-a23-ccu";
- };
- 
-+&de {
-+	compatible = "allwinner,sun8i-a23-display-engine";
-+};
-+
-+&drc0 {
-+	compatible = "allwinner,sun8i-a23-drc";
-+};
-+
-+&fe0 {
-+	compatible = "allwinner,sun8i-a23-display-frontend";
-+};
-+
- &pio {
- 	compatible = "allwinner,sun8i-a23-pinctrl";
- 	interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>,
-@@ -73,6 +89,10 @@
- 		     <GIC_SPI 17 IRQ_TYPE_LEVEL_HIGH>;
- };
- 
-+&tcon0 {
-+	compatible = "allwinner,sun8i-a23-tcon";
-+};
-+
- &usb_otg {
- 	compatible = "allwinner,sun6i-a31-musb";
- };
 -- 
 2.20.1
 
