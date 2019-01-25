@@ -2,131 +2,181 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963ABC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:52:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2784AC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:56:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67D71218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:52:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0B5F218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:56:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="uIIoysv+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729079AbfAYQwP (ORCPT
+        id S1726683AbfAYQ42 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:52:15 -0500
-Received: from foss.arm.com ([217.140.101.70]:50502 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726108AbfAYQwO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:52:14 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2249FA78;
-        Fri, 25 Jan 2019 08:52:14 -0800 (PST)
-Received: from e107155-lin (e107155-lin.cambridge.arm.com [10.1.196.42])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B741D3F5AF;
-        Fri, 25 Jan 2019 08:52:11 -0800 (PST)
-Date:   Fri, 25 Jan 2019 16:52:04 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Pramod Kumar <pramod.kumar@broadcom.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Steve Capper <steve.capper@arm.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/1] arm64: Use PSCI calls for CPU stop when hotplug
- is supported
-Message-ID: <20190125165204.GA20168@e107155-lin>
-References: <1547790380-6276-1-git-send-email-pramod.kumar@broadcom.com>
- <20190118113242.GA8928@e107155-lin>
- <CAJ+tv6+6yqT1xkmkY3x6SNQ83K+J6zqKZr7PV5A_ffvyEzceqg@mail.gmail.com>
- <CAJ+tv6KqynSf5t_VwLqpdM4BF+wLWcJ0wPTD4nWqL4ej1Yih4g@mail.gmail.com>
- <20190123164801.GA55887@lakrids.cambridge.arm.com>
- <f1851a76-8078-b8e7-6a54-b038b47f9214@broadcom.com>
- <20190123173343.GC55887@lakrids.cambridge.arm.com>
- <CAJ+tv6+Mm8Rmsx8cfOuDT4+CVWVd4gKLzUnTs_EMxKYax+NScw@mail.gmail.com>
+        Fri, 25 Jan 2019 11:56:28 -0500
+Received: from mail-yb1-f179.google.com ([209.85.219.179]:38745 "EHLO
+        mail-yb1-f179.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfAYQ41 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 11:56:27 -0500
+Received: by mail-yb1-f179.google.com with SMTP id x9so4086337ybj.5
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 08:56:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RNchuqr3adsTArnI0ZEntYHozJYWxyEQo/SnVvUtVNc=;
+        b=uIIoysv+H0D8F8n6fbuqAaCugVthDdjFx3BGz3Q/i0kCjWNLsFDyRt4QyJTmW+MJoI
+         hlkkG0VoFp67FGmCBF+IDnT7DMHQLVolbwhaWNj/bSpXJGG3WUTU7BggZuuoeoVxHj4r
+         XbFMWUT5Lxzp+UJhZa85SWO/4ZB0qNvzJhvXTseOeH/jND0qyo5RGgPYvHeXxsDEUoQ5
+         JI0wg8e78izosTtI38FdP+KKcMONfflsl0/HLPGYFY+Rsg5u3eavtLsPx3/u5mMd2tjM
+         OoYIi50y34FwpcXVeR3msE3n9vvsgFP+XWcE47HJue02u3LtgOwVQz+MVVsJ7t4wv4Sl
+         Ud0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RNchuqr3adsTArnI0ZEntYHozJYWxyEQo/SnVvUtVNc=;
+        b=K3fmyO+Vx/ysCfu/dyMm/SMDaG0G0FzpAzlKW5sFz4et8pAvlmlWwDOR9AzWj3FRHH
+         kRNgpIwfKyCpy+dnNlQhZ8AmxuCcAgfDlCGcVivSCJ6i6VA/DcmLsc3noCzuapFojk+7
+         oSompPBpABYAfTZ4zjm1azOlEeCrGyHQ0zctdK/DurI0B2uiWdKnoY2aUmX/R4G0Jagq
+         LP3ZXND1znsJyg3GsBlfC1LIwMgum8DJdMF5YuO54AriQIMkLI+XOTcUfDn1g5xYm81P
+         qraG/E9nDq6GYU+nvfGAySb7RWNt2SbFY0l+Lz0Cmnf9rqbxXVntUUHV1amOtVk39t1a
+         PcVw==
+X-Gm-Message-State: AJcUukcUUuH9dJksiZmxen7f/pA/H27zgSz1wvzyydGB/1pa1cc2L+gs
+        GUHub5m6cEy+aAUUTDciLqGkmw==
+X-Google-Smtp-Source: ALg8bN50EEYIFsNqvGFk67RNMFLFOWxL0fXnF2p/PDCBokvqaKW0eqHFHl0qcuZ9w/7aprNWmIvoPA==
+X-Received: by 2002:a25:e904:: with SMTP id n4mr11455439ybd.54.1548435386317;
+        Fri, 25 Jan 2019 08:56:26 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::4:144f])
+        by smtp.gmail.com with ESMTPSA id a7sm18054452ywb.18.2019.01.25.08.56.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 08:56:25 -0800 (PST)
+Date:   Fri, 25 Jan 2019 11:56:24 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     akpm@linux-foundation.org
+Cc:     mm-commits@vger.kernel.org, penguin-kernel@i-love.sakura.ne.jp,
+        mhocko@suse.com, cgroups@vger.kernel.org, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: + memcg-do-not-report-racy-no-eligible-oom-tasks.patch added to
+ -mm tree
+Message-ID: <20190125165624.GA17719@cmpxchg.org>
+References: <20190109190306.rATpT%akpm@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAJ+tv6+Mm8Rmsx8cfOuDT4+CVWVd4gKLzUnTs_EMxKYax+NScw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190109190306.rATpT%akpm@linux-foundation.org>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 12:33:56PM +0530, Pramod Kumar wrote:
+On Wed, Jan 09, 2019 at 11:03:06AM -0800, akpm@linux-foundation.org wrote:
+> 
+> The patch titled
+>      Subject: memcg: do not report racy no-eligible OOM tasks
+> has been added to the -mm tree.  Its filename is
+>      memcg-do-not-report-racy-no-eligible-oom-tasks.patch
+> 
+> This patch should soon appear at
+>     http://ozlabs.org/~akpm/mmots/broken-out/memcg-do-not-report-racy-no-eligible-oom-tasks.patch
+> and later at
+>     http://ozlabs.org/~akpm/mmotm/broken-out/memcg-do-not-report-racy-no-eligible-oom-tasks.patch
+> 
+> Before you just go and hit "reply", please:
+>    a) Consider who else should be cc'ed
+>    b) Prefer to cc a suitable mailing list as well
+>    c) Ideally: find the original patch on the mailing list and do a
+>       reply-to-all to that, adding suitable additional cc's
+> 
+> *** Remember to use Documentation/process/submit-checklist.rst when testing your code ***
+> 
+> The -mm tree is included into linux-next and is updated
+> there every 3-4 working days
+> 
+> ------------------------------------------------------
+> From: Michal Hocko <mhocko@suse.com>
+> Subject: memcg: do not report racy no-eligible OOM tasks
+> 
+> Tetsuo has reported [1] that a single process group memcg might easily
+> swamp the log with no-eligible oom victim reports due to race between the
+> memcg charge and oom_reaper
+> 
+> Thread 1		Thread2				oom_reaper
+> try_charge		try_charge
+> 			  mem_cgroup_out_of_memory
+> 			    mutex_lock(oom_lock)
+>   mem_cgroup_out_of_memory
+>     mutex_lock(oom_lock)
+> 			      out_of_memory
+> 			        select_bad_process
+> 				oom_kill_process(current)
+> 				  wake_oom_reaper
+> 							  oom_reap_task
+> 							  MMF_OOM_SKIP->victim
+> 			    mutex_unlock(oom_lock)
+>     out_of_memory
+>       select_bad_process # no task
+> 
+> If Thread1 didn't race it would bail out from try_charge and force the
+> charge.  We can achieve the same by checking tsk_is_oom_victim inside the
+> oom_lock and therefore close the race.
+> 
+> [1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
+> Link: http://lkml.kernel.org/r/20190107143802.16847-3-mhocko@kernel.org
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 
-[...]
+It looks like this problem is happening in production systems:
 
->
-> This is an GPIO interrupt. This can not be marked secure as for that
-> we need to mark whole GPIO controller as secure which is not possible
-> as GPIO controller is meant for non-secure world having more than 100
-> lines connected.
->
-> I agree we have work around where we invoke handler in Linux and
-> switch to ATF via SMC and from ATF we need bring all secondary CPU to
-> ATF via sending SGI and and then respective core flushes the L1/L2 and
-> bring himself out of coherency domain and cluster and MCU shutdowns
-> the CPU subsystem gracefully. This could work for our requirement.
-> Need to check ATF support for that.
->
+https://www.spinics.net/lists/cgroups/msg21268.html
 
-Yes platform specific requirement and platform specific solution,
-happy ending :).
+where the threads don't exit because they are trapped writing out the
+oom messages to a slow console (running the reproducer from this email
+thread triggers the oom flooding).
 
-> But What about generic system? This patch address the generic
-> multi-master system's requirement.
+So IMO we should put this into 5.0 and add:
 
-Why do we need to address this in generic system ? And what exactly
-is this multi-master system's requirement ? Linux runs on one or more
-masters and will own it completely. Shutdown must involve everything
-it owns if it needs to be graceful.
+Fixes: 29ef680ae7c2 ("memcg, oom: move out_of_memory back to the charge path")
+Fixes: 3100dab2aa09 ("mm: memcontrol: print proper OOM header when no eligible victim left")
+Cc: stable@kernel.org # 4.19+
 
-> Consider system where shutting down the linux does not mean shutting
-> down the complete system.
+> --- a/mm/memcontrol.c~memcg-do-not-report-racy-no-eligible-oom-tasks
+> +++ a/mm/memcontrol.c
+> @@ -1387,10 +1387,22 @@ static bool mem_cgroup_out_of_memory(str
+>  		.gfp_mask = gfp_mask,
+>  		.order = order,
+>  	};
+> -	bool ret;
+> +	bool ret = true;
 
-Why is that the case ? Is it forceful shutdown ? Does Linux just own
-CPUs and don't care about other blocks in the system ? Irrespective
-of what it owns, system shutdown will take care.
+Should this be false if skip the oom kill, btw? Either will result in
+a forced charge - false will do so right away, true will retry once
+and then trigger the victim check in try_charge().
 
-> Lets take an example of smartnic case Where NIC master and CPUs access
-> cachable DDR. In smarnic its quite common to bring CPUs on demand means
-> when needed via MCU help.
+It's just weird to return true when we didn't do what the caller asked
+us to do.
 
-Yes you are talking about CPU hotplug or system here ? The above
-indicates, it's just CPU hotplug and a solution already exists for that.
-
-> Now in full-fledged system. if CPU subsystem is shutdown via poweroff
-> command which does not bring secondary CPUs out of coherency domain,
-> it will bring the complete system unstable when NIC master tries to
-> access DDR and snoop is send to CPUs as well which is not available.
-> Fabric/System hangs...
->
-
-That's because your custom solution just sends ipi to stop CPUs. If you
-shutdown the system, all the required information is save to non-volatile
-memory and system is powered off gracefully.
-
-> I feel While shutting down the CPUs subsystem or powering off, All
-> secondary CPUs must be shutdown properly by bring-out of coherency
-> domain to remain rest of subsystem usable. I agree that introducing
-> PSCI call introduce delay for shutdown/reboot case but stability
-> matter than little delay.
-
-IPI_STOP is not designed to do a graceful shutdown of CPU subsystem.
-Use CPU hotplug. You are trying to make you custom requirement a generic
-one. We have CPU hotplug framework to do what you want, you just have to
-use it. Infact you are doing almost the same with you patch, I don't see
-any point as why CPU hotplug can't be used.
-
---
-Regards,
-Sudeep
+>  	mutex_lock(&oom_lock);
+> +
+> +	/*
+> +	 * multi-threaded tasks might race with oom_reaper and gain
+> +	 * MMF_OOM_SKIP before reaching out_of_memory which can lead
+> +	 * to out_of_memory failure if the task is the last one in
+> +	 * memcg which would be a false possitive failure reported
+> +	 */
+> +	if (tsk_is_oom_victim(current))
+> +		goto unlock;
+> +
+>  	ret = out_of_memory(&oc);
+> +
+> +unlock:
+>  	mutex_unlock(&oom_lock);
+>  	return ret;
