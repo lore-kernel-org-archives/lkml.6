@@ -2,109 +2,106 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F14AC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B855BC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:34:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F38F2218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:34:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FDEE218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:34:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sFHFOXob"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="XOn/GUa5"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728629AbfAYQeA (ORCPT
+        id S1728912AbfAYQeF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:34:00 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:37376 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfAYQeA (ORCPT
+        Fri, 25 Jan 2019 11:34:05 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:33620 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728653AbfAYQeF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:34:00 -0500
-Received: by mail-qt1-f193.google.com with SMTP id t33so11320592qtt.4;
-        Fri, 25 Jan 2019 08:33:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:message-id:from:to:cc:subject:in-reply-to:references
-         :mime-version:content-disposition:content-transfer-encoding;
-        bh=j49pleS7H82CMHb/I7p3NPx+Vf7fKXPU6rxbQ8wBGqM=;
-        b=sFHFOXobg+YrS+NX4MkqZ45OBY9K3nRGwyV0TC/wQ9/Ip3R+G5zofNY8DDbgO6eA9G
-         X5Y8YwEKptvoL4yXPoxNx0p3vzQYxEzyFhQT/XvLbXwSUg5T2VuGrbY0uRznMRysfelA
-         d2LAkWX4u91VDA4fN8IbUkJLnXKaYM1vb+h+6tPaDuNDYiXtn0LhQ6gH55UlBFNej7Q6
-         yDLAip+EcjaqxlRCOOziDWhXiISMa2OigP7AByzu0+s3B0JKoJJN4zy7DVX/dJV+V32R
-         jlpg4heysKJxeXLBRQ/wBMUPv0UPHB/+5Ydh2OvssvS7rEW+lhTgM7SPY5S1mTX2b2mo
-         7CyA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:message-id:from:to:cc:subject:in-reply-to
-         :references:mime-version:content-disposition
-         :content-transfer-encoding;
-        bh=j49pleS7H82CMHb/I7p3NPx+Vf7fKXPU6rxbQ8wBGqM=;
-        b=Cxnq3BcGkCP+bdfyNU+HtZvByAG75anykg8jtCpi43HNodKIdVeRQT3xYIE7AxKSZg
-         f2CHE+RAnIMZwSbAtRIuTqnn8YyL9QtJo4PuFgAZ1FBEtSoIoS+fYqAz9MpCJ7TGU5nW
-         yaE/84/f+6XQW62ALWfeW1ttCICGHWCwIIzvy6SxZI6x6io2dg6zhdQNwQ3o9z02eGVs
-         sLmxrtV/VsId0qAKBymK3zsazNKty1v31xLTaTvH7xKS4nLJVtcWoW686FxSBeSHEUrJ
-         bP25UIziGS+/hIpWuQH4LEEYO1nxSVG7ZyxOwet3ZCPv8KUL0vu0yhxWQ1/hPxNDVhOW
-         n1sw==
-X-Gm-Message-State: AJcUukcXCcbVMvld9wmwMakvQvej8i7jVS9z1Ksn2a7gUM/sRqclaiZE
-        UL6qDVMdO49QyLPjO9viU94=
-X-Google-Smtp-Source: ALg8bN5OLedcjme1w2aZcnk3uj7+PFmk8RMU9ekTgejD+bYLwP1oSlkNmdvMzJU+TDitLv//4mqS0g==
-X-Received: by 2002:ac8:6151:: with SMTP id d17mr11560451qtm.194.1548434039078;
-        Fri, 25 Jan 2019 08:33:59 -0800 (PST)
-Received: from localhost (modemcable249.105-163-184.mc.videotron.ca. [184.163.105.249])
-        by smtp.gmail.com with ESMTPSA id m20sm52730514qkk.66.2019.01.25.08.33.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 08:33:58 -0800 (PST)
-Date:   Fri, 25 Jan 2019 11:33:57 -0500
-Message-ID: <20190125113357.GB21150@t480s.localdomain>
-From:   Vivien Didelot <vivien.didelot@gmail.com>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org, Liam Girdwood <lgirdwood@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>
-Subject: Re: [PATCH 1/2] regulator: mc13xxx: Use lowercase regulator names to
- match the DT
-In-Reply-To: <20190125153705.29921-1-robh@kernel.org>
-References: <20190125153705.29921-1-robh@kernel.org>
+        Fri, 25 Jan 2019 11:34:05 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0PGTHV7067701;
+        Fri, 25 Jan 2019 16:33:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=Fv+v1Me7wX02BNYeSJtqLCQpia0cVcnlWRUbIzikwAs=;
+ b=XOn/GUa5tdjpAXRycwWRoGBEjVSsUrkQEFUK5Jk9o6a0oEsQ/Iw71WeS34UHRim/ZdMZ
+ HYEIP/wVTq3xbNDlm5quaxab8p1m/1AUqQ4SLrIUz1XrlSm4Np01Yv+0L98VKuDM8QUX
+ J//mzS43t4dI+v24lII+81sj7+to/p6DogkDwBOur62v5QO5hw8Qxr0ndal3v5d1mZrW
+ Uz1yPV+I+S8ChfD5RvDSrZPJGKk/iMpkPsIXemHZDobqXiI3XShHBXWFO+MCgW2NgPX3
+ 0I8a4tMjbVRLgG4AjvEk3qCS6eKqWzihYNBAKK8oczVGFivVClQFqm7JNRiFe2cTMrKr BA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2120.oracle.com with ESMTP id 2q3vhs6na7-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 25 Jan 2019 16:33:45 +0000
+Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0PGXiPk026817
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 25 Jan 2019 16:33:44 GMT
+Received: from abhmp0016.oracle.com (abhmp0016.oracle.com [141.146.116.22])
+        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0PGXg8p003171;
+        Fri, 25 Jan 2019 16:33:43 GMT
+Received: from Konrads-MacBook-Pro.local (/10.39.251.23)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 25 Jan 2019 08:33:42 -0800
+Date:   Fri, 25 Jan 2019 11:33:36 -0500
+From:   Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+To:     Luwei Kang <luwei.kang@intel.com>
+Cc:     kvm@vger.kernel.org, pbonzini@redhat.com, rkrcmar@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] KVM: x86: Sync the pending Posted-Interrupts
+Message-ID: <20190125163329.GA41385@Konrads-MacBook-Pro.local>
+References: <1547793240-9157-1-git-send-email-luwei.kang@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <1547793240-9157-1-git-send-email-luwei.kang@intel.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9147 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=920
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901250132
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
-
-On Fri, 25 Jan 2019 09:37:04 -0600, Rob Herring <robh@kernel.org> wrote:
-> Since c32569e358ad ("regulator: Use of_node_name_eq for node name
-> comparisons") Vivien reported the mc13892-regulator complaining about
-> not being able to find regulators.
+On Fri, Jan 18, 2019 at 02:34:00PM +0800, Luwei Kang wrote:
+> Some Posted-Interrupts from passthrough devices may be lost or
+> overwritten when the vCPU is in runnable state.
 > 
-> This is because prior to that commit we used of_node_cmp() to compare
-> the regulator array passed from mc13892_regulators down to
-> mc13xxx_parse_regulators_dt() and they are all defined in uppercase
-> letters by the MC13892_*_DEFINE* macros, whereas they are defined as
-> lowercase in the DTS.
+> The SN (Suppress Notification) of PID (Posted Interrupt Descriptor) will
+> be set when the vCPU is preempted (vCPU in KVM_MP_STATE_RUNNABLE state
+> but not running on physical CPU). If a posted interrupt coming at this
+> time, the irq remmaping facility will set the bit of PIR (Posted
+> Interrupt Requests) but ON (Outstanding Notification).
+
+s/but ON/and ON is set too/?
+> So this interrupt can't be sync to APIC virtualization register and
+> will not be handled by Guest because ON is zero.
 > 
-> Fix this by using a lowercase regulator name to match the DT node name.
+> Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> ---
+>  arch/x86/kvm/vmx/vmx.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Fixes: c32569e358ad ("regulator: Use of_node_name_eq for node name comparisons")
-> Reported-by: Vivien Didelot <vivien.didelot@gmail.com>
-> Reported-by: Florian Fainelli <f.fainelli@gmail.com>
-> Cc: Liam Girdwood <lgirdwood@gmail.com>
-> Cc: Mark Brown <broonie@kernel.org>
-> Signed-off-by: Rob Herring <robh@kernel.org>
- 
-This fixes the boot with arch/arm/boot/dts/imx51-zii-rdu1.dts,
-
-Tested-by: Vivien Didelot <vivien.didelot@gmail.com>
-
-
-Thanks,
-
-	Vivien
+> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+> index f6915f1..820a03b 100644
+> --- a/arch/x86/kvm/vmx/vmx.c
+> +++ b/arch/x86/kvm/vmx/vmx.c
+> @@ -6048,7 +6048,7 @@ static int vmx_sync_pir_to_irr(struct kvm_vcpu *vcpu)
+>  	bool max_irr_updated;
+>  
+>  	WARN_ON(!vcpu->arch.apicv_active);
+> -	if (pi_test_on(&vmx->pi_desc)) {
+> +	if (!bitmap_empty((unsigned long *)vmx->pi_desc.pir, NR_VECTORS)) {
+>  		pi_clear_on(&vmx->pi_desc);
+>  		/*
+>  		 * IOMMU can write to PIR.ON, so the barrier matters even on UP.
