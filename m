@@ -2,105 +2,223 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D4AC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:27:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22123C41518
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:28:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B92C2085B
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:27:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5CC02085B
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:28:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="iTQuWVW8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726885AbfAYM1Q (ORCPT
+        id S1728032AbfAYM17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 07:27:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41254 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbfAYM1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 07:27:16 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 22B725F726;
-        Fri, 25 Jan 2019 12:27:16 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.163])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C27356EE22;
-        Fri, 25 Jan 2019 12:27:14 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 25 Jan 2019 13:27:15 +0100 (CET)
-Date:   Fri, 25 Jan 2019 13:27:13 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Roman Gushchin <guroan@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>, kernel-team@fb.com,
-        cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v6 4/7] cgroup: cgroup v2 freezer
-Message-ID: <20190125122713.GA18218@redhat.com>
-References: <20181222000307.28231-1-guro@fb.com>
- <20181222000307.28231-5-guro@fb.com>
+        Fri, 25 Jan 2019 07:27:59 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:46207 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbfAYM16 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 07:27:58 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20190125122756euoutp02ecf46d571c9c6e485a54bb40ffecedfc~9FyC-WgyX0437204372euoutp02D
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 12:27:56 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20190125122756euoutp02ecf46d571c9c6e485a54bb40ffecedfc~9FyC-WgyX0437204372euoutp02D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548419276;
+        bh=1lPVJOJ/AfWt5Dr2dBgMtuYlLQMGEYvhjUdex851l+8=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=iTQuWVW8P6sCYgF80V9EDv9Qmzgxj8rAbKC9RQ9fojpcXwwULLMlRBw3yvtUiaz26
+         5p3UZm74NXlYGWaItm56kEqKCERbfoHjrBfAo6W4k4RBozSBHdbAtVXq2a/berrTMj
+         7wSSUvdTGupymlIsow1Qf6RYXa9lj4nYaym+pNqw=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190125122755eucas1p19a117b5e5210018d02974b5820735792~9FyCWccPO2265222652eucas1p1C;
+        Fri, 25 Jan 2019 12:27:55 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id 11.CC.04294.BC00B4C5; Fri, 25
+        Jan 2019 12:27:55 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+        20190125122754eucas1p22f1e8a1622f036635033984a578bc78f~9FyBaj7vb2908929089eucas1p2e;
+        Fri, 25 Jan 2019 12:27:54 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190125122754eusmtrp142170f398fc09ead01ade6738ea16475~9FyBMAofb3212032120eusmtrp1H;
+        Fri, 25 Jan 2019 12:27:54 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-a6-5c4b00cb3e76
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id 1C.FB.04128.AC00B4C5; Fri, 25
+        Jan 2019 12:27:54 +0000 (GMT)
+Received: from [106.116.147.30] (unknown [106.116.147.30]) by
+        eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190125122753eusmtip16e5f2a4120fff53d3e36dc16f39e31b5~9FyAk-Eun0963109631eusmtip1H;
+        Fri, 25 Jan 2019 12:27:53 +0000 (GMT)
+Subject: Re: [PATCH 7/9] videobuf2/videobuf2-dma-sg.c: Convert to use
+ vm_insert_range_buggy
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, pawel@osciak.com,
+        Kyungmin Park <kyungmin.park@samsung.com>, mchehab@kernel.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        robin.murphy@arm.com, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Linux-MM <linux-mm@kvack.org>
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+Message-ID: <febb9775-20da-69d5-4f0e-cd87253eb8f9@samsung.com>
+Date:   Fri, 25 Jan 2019 13:27:53 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181222000307.28231-5-guro@fb.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 25 Jan 2019 12:27:16 +0000 (UTC)
+In-Reply-To: <CAFqt6zbYHq-pS=rGx+3ncJ7rO-LvL5=iOou21oguKjrc=3qouA@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SWUwTURTldabToVAcC6ZXRU2aaKIGBePHKKZi4jJuqNEvxEjVSVFoIS2I
+        S4IFomhFoiARhwouQREaC7VFwQ2KUAlCWKQqRtwqEbVaLTFWcSuDyt8555177znJIzHpM+Ek
+        cqcmjdVqlMlyQozXtvg6ItoCVsdH3nCOo41mE0E7e/UY3Z79XkT31BsJOq/aJqT7Tb+EtL3o
+        FqIvWoYF9LP8GPqk2yeiGz0uIf39q5GICWZMpSbE9Di7MKaOeypirlbMYiyVRwjG8rlAxNwr
+        /o4zr74NEky+tRIxZmsvzngtU9cHxYkX7WCTd+5mtXMVCeLEDpdZkNowZU9pzgE9soIBBZJA
+        zYd2WxVuQGJSSlUgaLXZCZ4MIahpvi/giReB5wQn/Dty1Ptu1HUJgfV8PuLJRwTZr44hvyuU
+        2gJDdfW4H4dRs+FM0zfMjzHKI4Csm3I/JqgoMLgNhB9LKAW8cDWMYJyaDv16t8iASHICFQ8H
+        e8S8ZTy0nnaNrAykNkCxtxfxK6dBjq1kdL0M+lxlI6mB+iGCvoESnE+9FDpr2kYbhMJbh1XE
+        43BoK8zD+YEcBLnFnIgneQhsxusE74qGJkeX0J8Io2aCuX4uLy+BJ82dyC8DFQKP3OP5ECFQ
+        UHsK42UJHD4k5d0zgHNc+Xe2sbMbO47k3Jhq3Jg63Jg63P+7ZxFeiWRsuk6tYnXzNGzGHJ1S
+        rUvXqOZsT1Fb0J9v1/bTMXQd1Q9vsyOKRPJgyWH7ynipULlbt1dtR0Bi8jCJt2VVvFSyQ7l3
+        H6tN2apNT2Z1djSZxOUyyf6A55ullEqZxiaxbCqr/fsqIAMn6VFp9eKMywdiMxWxHkqZlZAd
+        Li0sKt+1aeH+h+vOCWPvCZa3dmctuxOZK16yIGLt4zpssGYNw0VkH/FlZrp7nCGfglfcVVwb
+        vDwUbQ5pf/l6pV4GmwOSPpj2NfclBlUvDgrPfRPzMlG1aFfFsE9xe6Cv7EL5pjj7Xc+hZRtz
+        qyZ+eVAmx3WJyqhZmFan/A1IhvhCcgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMIsWRmVeSWpSXmKPExsVy+t/xu7qnGLxjDD5cEraYs34Nm8W1qw3M
+        Fmeb3rBbXN41h82iZ8NWVot7a/6zWhyaupfRYtmmP0wW9/scLKa8/clucfDDE1aL3z/msDnw
+        eKyZt4bR4/K1i8weO2fdZffYvELLY9OqTjaPTZ8msXucmPGbxePxr5dsHn1bVjF6rN9ylcXj
+        8ya5AO4oPZui/NKSVIWM/OISW6VoQwsjPUNLCz0jE0s9Q2PzWCsjUyV9O5uU1JzMstQifbsE
+        vYxzT9YzFRyQrZjXXN/AuEWii5GTQ0LARKL782u2LkYuDiGBpYwSO+69Z4dIyEicnNbACmEL
+        S/y51gVV9JZRYt//Q8wgCWGBWIkvO3exgNgiAtoScw//YgYpYhb4wCTxfdoRJoiOHiaJTc9X
+        sIFUsQkYSnS97QKzeQXsJB4+OQBmswioStxreAu2WlQgRmLWkz52iBpBiZMzn4Bt4BQIlJjx
+        +SojiM0soC7xZ94lZghbXqJ562woW1zi1pP5TBMYhWYhaZ+FpGUWkpZZSFoWMLKsYhRJLS3O
+        Tc8tNtIrTswtLs1L10vOz93ECIzwbcd+btnB2PUu+BCjAAejEg9vxyHPGCHWxLLiytxDjBIc
+        zEoivJ+PecUI8aYkVlalFuXHF5XmpBYfYjQFem4is5Rocj4w+eSVxBuaGppbWBqaG5sbm1ko
+        ifOeN6iMEhJITyxJzU5NLUgtgulj4uCUamA8esXi1wEJLa+CTXyPrW6LvGxoeHjJ0itG51yH
+        MJd5lFRFnN77/3smCE8tfZNyxrPCqKh1leQe8a6fhgejH8e1WqW1VT7eI6hfoCWVnOLAWmhY
+        zb7ypJZnZULoVg7xzyzFTFGd0yvX3r/v/vHPHJvZHoqCkf9Ozi5v8DxRuOxnV1G26IyOq0os
+        xRmJhlrMRcWJACVSZnwGAwAA
+X-CMS-MailID: 20190125122754eucas1p22f1e8a1622f036635033984a578bc78f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20190111150806epcas2p4ecaac58547db019e7dc779349d495f4d
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190111150806epcas2p4ecaac58547db019e7dc779349d495f4d
+References: <CGME20190111150806epcas2p4ecaac58547db019e7dc779349d495f4d@epcas2p4.samsung.com>
+        <20190111151154.GA2819@jordon-HP-15-Notebook-PC>
+        <241810e0-2288-c59b-6c21-6d853d9fe84a@samsung.com>
+        <CAFqt6zbYHq-pS=rGx+3ncJ7rO-LvL5=iOou21oguKjrc=3qouA@mail.gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sorry, this version raced with my vacation, I missed it.
+Hi Souptick,
 
-I'll try to read this code carefully but after a quick glance I have some
-concerns,
-
-On 12/21, Roman Gushchin wrote:
+On 2019-01-25 05:55, Souptick Joarder wrote:
+> On Tue, Jan 22, 2019 at 8:37 PM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> On 2019-01-11 16:11, Souptick Joarder wrote:
+>>> Convert to use vm_insert_range_buggy to map range of kernel memory
+>>> to user vma.
+>>>
+>>> This driver has ignored vm_pgoff. We could later "fix" these drivers
+>>> to behave according to the normal vm_pgoff offsetting simply by
+>>> removing the _buggy suffix on the function name and if that causes
+>>> regressions, it gives us an easy way to revert.
+>> Just a generic note about videobuf2: videobuf2-dma-sg is ignoring vm_pgoff by design. vm_pgoff is used as a 'cookie' to select a buffer to mmap and videobuf2-core already checks that. If userspace provides an offset, which doesn't match any of the registered 'cookies' (reported to userspace via separate v4l2 ioctl), an error is returned.
+> Ok, it means once the buf is selected, videobuf2-dma-sg should always
+> mapped buf->pages[i]
+> from index 0 ( irrespective of vm_pgoff value). So although we are
+> replacing the code with
+> vm_insert_range_buggy(), *_buggy* suffix will mislead others and
+> should not be used.
+> And if we replace this code with  vm_insert_range(), this will
+> introduce bug for *non zero*
+> value of vm_pgoff.
 >
-> +static void cgroup_update_frozen(struct cgroup *cgrp)
-> +{
-> +	bool frozen;
-> +
-> +	lockdep_assert_held(&css_set_lock);
-> +
-> +	/*
-> +	 * If the cgroup has to be frozen (CGRP_FREEZE bit set),
-> +	 * and all tasks are frozen or stopped, let's consider
-> +	 * the cgroup frozen. Otherwise it's not frozen.
-> +	 */
-> +	frozen = test_bit(CGRP_FREEZE, &cgrp->flags) &&
-> +		cgrp->freezer.nr_frozen_tasks +
-> +		cgrp->freezer.nr_stopped_tasks ==
-> +		cgrp->freezer.nr_tasks_to_freeze;
+> Please correct me if my understanding is wrong.
 
-OK. Suppose that cgroup is frozen, CGRP_FROZEN is set, stopped == 0,
-to_freeze = frozen.
-
-One of the task is killed, it calls leave_frozen(). If I read this code path
-correctly, only ->nr_frozen_tasks will be decremented, so "frozen" will be
-"false" when cgroup_update_frozen() is called.
-
-Doesn't this mean that this cgroup will no longer be CGRP_FROZEN even after
-the killed task goes away completely?
+You are correct. IMHO the best solution in this case would be to add
+following fix:
 
 
-Or. Suppose that another process picks a task from the CGRP_FROZEN cgroup and
-does PTRACE_ATTACH + PTRACE_INTERRUPT. IIUC, the tracee will only increment
-->nr_stopped_tasks, it won't touch other counters. Again, cgroup won't be FROZEN
-until PTRACE_CONT'ed tracee does cgroup_leave_stopped() ? This looks strange at
-least.
+diff --git a/drivers/media/common/videobuf2/videobuf2-core.c
+b/drivers/media/common/videobuf2/videobuf2-core.c
+index 70e8c3366f9c..ca4577a7d28a 100644
+--- a/drivers/media/common/videobuf2/videobuf2-core.c
++++ b/drivers/media/common/videobuf2/videobuf2-core.c
+@@ -2175,6 +2175,13 @@ int vb2_mmap(struct vb2_queue *q, struct
+vm_area_struct *vma)
+         goto unlock;
+     }
+ 
++    /*
++     * vm_pgoff is treated in V4L2 API as a 'cookie' to select a buffer,
++     * not as a in-buffer offset. We always want to mmap a whole buffer
++     * from its beginning.
++     */
++    vma->vm_pgoff = 0;
++
+     ret = call_memop(vb, mmap, vb->planes[plane].mem_priv, vma);
+ 
+ unlock:
+diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+index aff0ab7bf83d..46245c598a18 100644
+--- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
++++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+@@ -186,12 +186,6 @@ static int vb2_dc_mmap(void *buf_priv, struct
+vm_area_struct *vma)
+         return -EINVAL;
+     }
+ 
+-    /*
+-     * dma_mmap_* uses vm_pgoff as in-buffer offset, but we want to
+-     * map whole buffer
+-     */
+-    vma->vm_pgoff = 0;
+-
+     ret = dma_mmap_attrs(buf->dev, vma, buf->cookie,
+         buf->dma_addr, buf->size, buf->attrs);
+ 
+-- 
+
+Then you can simply use non-buggy version of your function in
+drivers/media/common/videobuf2/videobuf2-dma-sg.c.
+
+I can send above as a formal patch if you want.
+
+> So what your opinion about this patch ? Shall I drop this patch from
+> current series ?
+> or,
+> There is any better way to handle this scenario ?
+>
+>
+>>> There is an existing bug inside gem_mmap_obj(), where user passed
+>>> length is not checked against buf->num_pages. For any value of
+>>> length > buf->num_pages it will end up overrun buf->pages[i],
+>>> which could lead to a potential bug.
+> It is not gem_mmap_obj(), it should be vb2_dma_sg_mmap().
+> Sorry about it.
+>
+> What about this issue ? Does it looks like a valid issue ?
+
+It is already handled in vb2_mmap(). Such call will be rejected.
 
 
+> ...
 
-SIGSTOP. IIUC, a frozen task sleeping in do_freezer_trap() won't stop. However if
-another thread has already called do_signal_stop(), the woken frozen task will
-react to JOBCTL_STOP_PENDING and stop. And do_signal_stop()->cgroup_enter_stopped()
-will "destroy" CGRP_FROZEN too, or I am totally confused.
-
-OTOH, if you freeze a TASK_STOPPED task's cgroup, this task can react to SIGCONT,
-notify its parent, then freeze again. This is fine, but iiuc this cgroup won't be
-FROZEN in between, cgroup_file_notify() will be called twice...
-
-Oleg.
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
