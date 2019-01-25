@@ -2,108 +2,169 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1D10C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:18:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDEBDC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:19:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A52842083B
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:18:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D3AB2083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:19:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="LnReKgU1"
+	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="hYmFchma"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728736AbfAYRSy (ORCPT
+        id S1729059AbfAYRTX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:18:54 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:40688 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbfAYRSx (ORCPT
+        Fri, 25 Jan 2019 12:19:23 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:37072 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfAYRTX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:18:53 -0500
-Received: by mail-ot1-f65.google.com with SMTP id s5so9169026oth.7
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 09:18:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XQwzfQ+g8/lwIfGTHRGy1n0AEx0pfFH9xW5jjLm4zeo=;
-        b=LnReKgU1U8CYpZEXj/E+XkJangeDFTWfzzfavvZdkAkpQTyY1TAz0xaSRcFl+r9588
-         hzSjjOgsBvX/mmhC+hqK3Iu/dwyzLhDCoSk0/SrbX7BjIabkzkXlcjheU4zHmT1Q+H3U
-         vScxDxkffouKoUOHajbWWsSZyMw9+LA6uijy2GTT1WJpAZMv8TCp0BuujG0XRkxtGI9a
-         WWCvLALgPULG70Y4vw235J7uT1+jOE1v16iHqUkFD0f5Zh8Mh5hx4/HJIj2OfYjvOmaU
-         ma3s55tagkmtXmlcPFUVykbMOHUJ1Cm1tlgBK2uSgK3Y3TO6t+ZHBQZ0O51gt4fq5Se+
-         Ek+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XQwzfQ+g8/lwIfGTHRGy1n0AEx0pfFH9xW5jjLm4zeo=;
-        b=DkAN9aT61NEsgDyKv09AGUhxsoEGh8Y2VxhbFF+iCrpIPmVRDnwVlJnu9aEhIx86j8
-         2Cju4/bJ+q6qzDNUqh18Tt7OGauxWoAER8NFNwKbxlvopYuOM+h6axQ/43P68AqgtBiC
-         /ddoW6+fh5ZdBYhdCuDisPmnSB4SYOlu6qaMaYo+Tf+znC7x4DPTbUmF52TQSh0id61o
-         mKHAS1AAZg/7Y+WbLMGHkLnDQxIawjkhQk1LoTJgNWk3JFIGSjN5GYDDJkX2audw9h/J
-         Qn6MeLPPvqJ5Dqj3NqVsOUaK9iG0G074ROrlN3WuljUx9SGDY8goPOq4Kh36LODOA7ru
-         6tdg==
-X-Gm-Message-State: AJcUukfFB8wjmQA9huSEm5xObTygGGr5CCd2Rx8kgKl6mhHdlPVFU9y6
-        BHTkVG9h0ahrC/X6G8cks9wFFIHmQ4GOJG7aj11z9w==
-X-Google-Smtp-Source: ALg8bN5oXuw31EEf9F2R3TGHkiMr4UbkVW8V+zOC4h8DDdYruCknwG8HxfvTjalNj3CF4xuUYQl0atiwjUuLPUEpMCE=
-X-Received: by 2002:a9d:7dd5:: with SMTP id k21mr8634698otn.214.1548436732242;
- Fri, 25 Jan 2019 09:18:52 -0800 (PST)
+        Fri, 25 Jan 2019 12:19:23 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=3sjfNLszyjWDC/jo15UgIwGUs42l1MlpSXqlFMM/Vzo=;
+        b=hYmFchmaiCYj4Wp8ld9rF7bGNoMG51G0cQhPkSCJjRL30Wh3rZkpKE3U+9iy0lnx9/7H0G+k52Q8LnmcDxSklLyKuj8wmY8In3C7TPDItZHMOHb2TBQXqSEOYvTCe76jdXJyYO6+glNtVtDmlxjyonXrmMA62c8fcgBB+2/evKSbLYe/FngcyLO54O4liMSwpJgRkaToEUDBx4i8eDO8dBaQVrK7E53S+Gi/tMGP6sPzEQdRogAC/ptI/iZNKUb/EGu6zBGdo7Y6FMQbAkErgFK/QJQgTYb8uSEVadcHQFU0+BrqEG3NqZ1cocBjbbNks+oDDi+H97gv4VGKaoxwQw==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:50359 helo=[192.168.10.176])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gn58S-0002TC-Ht; Fri, 25 Jan 2019 18:19:20 +0100
+Subject: Re: [PATCH v3 16/23] drm/qxl: implement prime kmap/kunmap
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>
+References: <20190118122020.27596-1-kraxel@redhat.com>
+ <20190118122020.27596-17-kraxel@redhat.com>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <ba5088e7-fc42-8918-fb26-94c299caa9f9@tronnes.org>
+Date:   Fri, 25 Jan 2019 18:19:16 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190124231441.37A4A305@viggo.jf.intel.com> <20190124231448.E102D18E@viggo.jf.intel.com>
- <0852310e-41dc-dc96-2da5-11350f5adce6@oracle.com> <CAPcyv4hjJhUQpMy1CVJZur0Ssr7Cr2fkcD50L5gzx6v_KY14vg@mail.gmail.com>
- <5A90DA2E42F8AE43BC4A093BF067884825733A5B@SHSMSX104.ccr.corp.intel.com>
-In-Reply-To: <5A90DA2E42F8AE43BC4A093BF067884825733A5B@SHSMSX104.ccr.corp.intel.com>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 25 Jan 2019 09:18:41 -0800
-Message-ID: <CAPcyv4ikXD8rJAmV6tGNiq56m_ZXPZNrYkTwOSUJ7D1O_M5s=w@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dax: "Hotplug" persistent memory for use like normal RAM
-To:     "Du, Fan" <fan.du@intel.com>
-Cc:     Jane Chu <jane.chu@oracle.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Michal Hocko <mhocko@suse.com>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Takashi Iwai <tiwai@suse.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux MM <linux-mm@kvack.org>,
-        =?UTF-8?B?SsOpcj9tZSBHbGlzc2U=?= <jglisse@redhat.com>,
-        Borislav Petkov <bp@suse.de>,
-        Yaowei Bai <baiyaowei@cmss.chinamobile.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Wu, Fengguang" <fengguang.wu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190118122020.27596-17-kraxel@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 12:20 AM Du, Fan <fan.du@intel.com> wrote:
->
-> Dan
->
-> Thanks for the insights!
->
-> Can I say, the UCE is delivered from h/w to OS in a single way in case of machine
-> check, only PMEM/DAX stuff filter out UC address and managed in its own way by
-> badblocks, if PMEM/DAX doesn't do so, then common RAS workflow will kick in,
-> right?
 
-The common RAS workflow always kicks in, it's just the page state
-presented by a DAX mapping needs distinct handling. Once it is
-hot-plugged it no longer needs to be treated differently than "System
-RAM".
 
-> And how about when ARS is involved but no machine check fired for the function
-> of this patchset?
+Den 18.01.2019 13.20, skrev Gerd Hoffmann:
+> Generic fbdev emulation needs this.  Also: We must keep track of the
+> number of mappings now, so we don't unmap early in case two users want a
+> kmap of the same bo.  Add a sanity check to destroy callback to make
+> sure kmap/kunmap is balanced.
+> 
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
 
-The hotplug effectively disconnects this address range from the ARS
-results. They will still be reported in the libnvdimm "region" level
-badblocks instance, but there's no safe / coordinated way to go clear
-those errors without additional kernel enabling. There is no "clear
-error" semantic for "System RAM".
+Just a note: You catch the one-to-many kmap type of unbalance, but not
+the one-too-many kunmap situation.
+
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
+
+
+>  drivers/gpu/drm/qxl/qxl_drv.h    |  1 +
+>  drivers/gpu/drm/qxl/qxl_object.c |  6 ++++++
+>  drivers/gpu/drm/qxl/qxl_prime.c  | 17 +++++++++++++----
+>  3 files changed, 20 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/qxl/qxl_drv.h b/drivers/gpu/drm/qxl/qxl_drv.h
+> index 43c6df9cf9..8c3af1cdbe 100644
+> --- a/drivers/gpu/drm/qxl/qxl_drv.h
+> +++ b/drivers/gpu/drm/qxl/qxl_drv.h
+> @@ -84,6 +84,7 @@ struct qxl_bo {
+>  	struct ttm_bo_kmap_obj		kmap;
+>  	unsigned int pin_count;
+>  	void				*kptr;
+> +	unsigned int                    map_count;
+>  	int                             type;
+>  
+>  	/* Constant after initialization */
+> diff --git a/drivers/gpu/drm/qxl/qxl_object.c b/drivers/gpu/drm/qxl/qxl_object.c
+> index 024c8dd317..4928fa6029 100644
+> --- a/drivers/gpu/drm/qxl/qxl_object.c
+> +++ b/drivers/gpu/drm/qxl/qxl_object.c
+> @@ -36,6 +36,7 @@ static void qxl_ttm_bo_destroy(struct ttm_buffer_object *tbo)
+>  	qdev = (struct qxl_device *)bo->gem_base.dev->dev_private;
+>  
+>  	qxl_surface_evict(qdev, bo, false);
+> +	WARN_ON_ONCE(bo->map_count > 0);
+>  	mutex_lock(&qdev->gem.mutex);
+>  	list_del_init(&bo->list);
+>  	mutex_unlock(&qdev->gem.mutex);
+> @@ -131,6 +132,7 @@ int qxl_bo_kmap(struct qxl_bo *bo, void **ptr)
+>  	if (bo->kptr) {
+>  		if (ptr)
+>  			*ptr = bo->kptr;
+> +		bo->map_count++;
+>  		return 0;
+>  	}
+>  	r = ttm_bo_kmap(&bo->tbo, 0, bo->tbo.num_pages, &bo->kmap);
+> @@ -139,6 +141,7 @@ int qxl_bo_kmap(struct qxl_bo *bo, void **ptr)
+>  	bo->kptr = ttm_kmap_obj_virtual(&bo->kmap, &is_iomem);
+>  	if (ptr)
+>  		*ptr = bo->kptr;
+> +	bo->map_count = 1;
+>  	return 0;
+>  }
+>  
+> @@ -180,6 +183,9 @@ void qxl_bo_kunmap(struct qxl_bo *bo)
+>  {
+>  	if (bo->kptr == NULL)
+>  		return;
+> +	bo->map_count--;
+> +	if (bo->map_count > 0)
+> +		return;
+>  	bo->kptr = NULL;
+>  	ttm_bo_kunmap(&bo->kmap);
+>  }
+> diff --git a/drivers/gpu/drm/qxl/qxl_prime.c b/drivers/gpu/drm/qxl/qxl_prime.c
+> index a55dece118..708378844c 100644
+> --- a/drivers/gpu/drm/qxl/qxl_prime.c
+> +++ b/drivers/gpu/drm/qxl/qxl_prime.c
+> @@ -22,7 +22,7 @@
+>   * Authors: Andreas Pokorny
+>   */
+>  
+> -#include "qxl_drv.h"
+> +#include "qxl_object.h"
+>  
+>  /* Empty Implementations as there should not be any other driver for a virtual
+>   * device that might share buffers with qxl */
+> @@ -54,13 +54,22 @@ struct drm_gem_object *qxl_gem_prime_import_sg_table(
+>  
+>  void *qxl_gem_prime_vmap(struct drm_gem_object *obj)
+>  {
+> -	WARN_ONCE(1, "not implemented");
+> -	return ERR_PTR(-ENOSYS);
+> +	struct qxl_bo *bo = gem_to_qxl_bo(obj);
+> +	void *ptr;
+> +	int ret;
+> +
+> +	ret = qxl_bo_kmap(bo, &ptr);
+> +	if (ret < 0)
+> +		return ERR_PTR(ret);
+> +
+> +	return ptr;
+>  }
+>  
+>  void qxl_gem_prime_vunmap(struct drm_gem_object *obj, void *vaddr)
+>  {
+> -	WARN_ONCE(1, "not implemented");
+> +	struct qxl_bo *bo = gem_to_qxl_bo(obj);
+> +
+> +	qxl_bo_kunmap(bo);
+>  }
+>  
+>  int qxl_gem_prime_mmap(struct drm_gem_object *obj,
+> 
