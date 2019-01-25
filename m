@@ -2,68 +2,85 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7E73C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C2EC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C06022146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:35:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 106EF2146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:35:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726761AbfAYMf0 convert rfc822-to-8bit (ORCPT
+        id S1728952AbfAYMfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 07:35:26 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:49169 "EHLO mail.bootlin.com"
+        Fri, 25 Jan 2019 07:35:46 -0500
+Received: from mga18.intel.com ([134.134.136.126]:32679 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726108AbfAYMfY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 07:35:24 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 7784D207B0; Fri, 25 Jan 2019 13:35:22 +0100 (CET)
-Received: from xps13 (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 2076920397;
-        Fri, 25 Jan 2019 13:35:12 +0100 (CET)
-Date:   Fri, 25 Jan 2019 13:35:12 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Yoshio Furuyama <tmcmc-mb-yfuruyama7@ml.toshiba.co.jp>
-Cc:     bbrezillon@kernel.org, richard@nod.at, dwmw2@infradead.org,
-        computersforpeace@gmail.com, marek.vasut@gmail.com,
-        frieder.schrempf@kontron.De, peron.clem@gmail.com,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: spinand: Add support for all Toshiba Memory
- products
-Message-ID: <20190125133512.01018a33@xps13>
-In-Reply-To: <20190116055319.2755-1-tmcmc-mb-yfuruyama7@ml.toshiba.co.jp>
-References: <20190116055319.2755-1-tmcmc-mb-yfuruyama7@ml.toshiba.co.jp>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1726108AbfAYMfq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 07:35:46 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 04:35:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,521,1539673200"; 
+   d="scan'208";a="141276354"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 25 Jan 2019 04:35:42 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Fri, 25 Jan 2019 14:35:40 +0200
+Date:   Fri, 25 Jan 2019 14:35:40 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Chen Yu <chenyu56@huawei.com>
+Cc:     Andy Shevchenko <andy.shevchenko@gmail.com>,
+        liuyu712@hisilicon.com, USB <linux-usb@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Suzhuangluan <suzhuangluan@hisilicon.com>,
+        Kongfei <kongfei@hisilicon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Hans de Goede <hdegoede@redhat.com>,
+        John Stultz <john.stultz@linaro.org>
+Subject: Re: [PATCH v1 07/12] usb: roles: Find the usb role switch by also
+ matching against the device node
+Message-ID: <20190125123540.GA7262@kuha.fi.intel.com>
+References: <20181203034515.91412-1-chenyu56@huawei.com>
+ <20181203034515.91412-8-chenyu56@huawei.com>
+ <CAHp75VfUKAQ+Q0cQz-4-=i2JL9uACBX1bVvCeNjZLL1HStDGKQ@mail.gmail.com>
+ <20181203122534.GD24338@kuha.fi.intel.com>
+ <e9a8f745-6211-d6d2-24f0-ac86f82924f0@huawei.com>
+ <20190121135135.GA22960@kuha.fi.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190121135135.GA22960@kuha.fi.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yoshio,
-
-Yoshio Furuyama <tmcmc-mb-yfuruyama7@ml.toshiba.co.jp> wrote on Wed, 16
-Jan 2019 14:53:19 +0900:
-
-> Add device table for Toshiba Memory products.
-> Also, generalize OOB layout structure and function names.
+On Mon, Jan 21, 2019 at 03:51:35PM +0200, Heikki Krogerus wrote:
+> Hi,
 > 
-> Signed-off-by: Yoshio Furuyama <tmcmc-mb-yfuruyama7@ml.toshiba.co.jp>
+> On Mon, Jan 21, 2019 at 04:36:13PM +0800, Chen Yu wrote:
+> > Have the fwnode_get_name() patches been accepted?
 > 
-> ---
+> No, I didn't have a user for the function anymore:
+> https://lkml.org/lkml/2018/12/17/284
+> 
+> > And I will be grateful if you can tell me your plan about the
+> > https://lkml.org/lkml/2018/10/24/619 patches.
+> 
+> The plan is to send a new version of them together with the
+> fwnode_get_name() patch. I can send them this week.
 
-Applied to nand/next with the mathematical operations enclosed in
-braces as discussed:
-
--	region->length = mtd->oobsize / 2 - 2;  
-+	region->length = (mtd->oobsize / 2) - 2;  
+I'm about to send the graph support for the device connection API, but
+just letting you know that I did not need the fwnode_get_name() in the
+end in that series unfortunately.
 
 
-Thanks,
-Miquèl
+Br,
+
+-- 
+heikki
