@@ -6,108 +6,111 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C39CCC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:13:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4912DC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:13:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DFF9218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:13:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 140BC218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 17:13:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="SijG96OG"
+	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="HN7e32Ts"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729100AbfAYRND (ORCPT
+        id S1729172AbfAYRNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 12:13:03 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:55984 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726311AbfAYRNC (ORCPT
+        Fri, 25 Jan 2019 12:13:18 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:38191 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbfAYRNR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 12:13:02 -0500
-Received: by mail-it1-f195.google.com with SMTP id m62so11535363ith.5
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 09:13:01 -0800 (PST)
+        Fri, 25 Jan 2019 12:13:17 -0500
+Received: by mail-it1-f194.google.com with SMTP id z20so10612274itc.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 09:13:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=lixom-net.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=m4kNYUQzvKZUHTZUbRa0KQMyO0+2paZ7QOSd2bIN6wg=;
-        b=SijG96OGcKAK77pezDmqiaVggrFno4ZJ2mdlCABi+MVHTcIm5bHmfvlJAVCMTMcsAV
-         MZQav0EegbVH//R2sOmxmjFIOhg7r83XeBz/dG7MhORqB/x/fHNXfhiGy0U/lC44p0JJ
-         Eat9bDogPg2X5wu49+gGNdmSD+rwDYr+DdY43qWd7YhDpZdVEbY0l8JFTZdmLLYiZQ4z
-         FAw7ivSt64v1FMM5Iskfv8PRWtAOfr26aMYqJtZo3u7cBe3eiFo6uEQT3M7i1hIMoylG
-         owA8IZmlN9W6heaXjbaVYByqal9pYfxMmE5cQa5Zrhd2wy6979Gk5Hkm3g5fhyhbgg7d
-         TfnQ==
+        bh=0RF4f1Mp3YIzRbSEusHXgG5NVQ9EsFPWAz0T/wquLg8=;
+        b=HN7e32Tss9ateg3vrYM/qGm505jRNLs8/dnc/h/B3HsMxJ6Np3GoaQeDlRernVF+IJ
+         9GyRuui5Oi2Y7lCA2JinhA/zyBzoyHr6g/hQMPQJ/puRvkbSX+ieZv4IKe5XmWAmYqPZ
+         9YVCjbRY5dG17x3WyIkO0CwMEN/cRveLOo2ngHSINvBOP/PhT+K+cHb1x0aqyuZ8WYfD
+         +yzk1EXQ33HAUU83iNnNbg42ukrx6P1l/wpJ+AC1WCB3Ld9q6AWFRZPKgxKcSe4nNDg8
+         owAXp11eqK79aLPQeTxaPg0ETq+QDEmfh4VhER2AIvD63FoiowNjNIM7p8C101BMaG5l
+         /+fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=m4kNYUQzvKZUHTZUbRa0KQMyO0+2paZ7QOSd2bIN6wg=;
-        b=RsVj40wPXTAGh2ar9dJ86qOs4y+5Tuyn4P2uW/XGAAYmLoZwu0viQhcoiIPdWd+JLb
-         Vcs3DTHULfhbbQugmLGqdDB20ApIG+pEYK2ShpTHX92EMUjig13AreNna7Rvi+HDMRa3
-         NAH5l/af19NHiU104CVQCbFottBBe1LawJpk9hZdevbZllHQPfthJnEUM2ysUFl/hcZI
-         G3T2B7qe/TVBypf4aFEF6/YQPDN4jv9+fP/bJA9tYK9FfFQXyzD7Cr5ht+GKbt75LFUG
-         98iqZk+B76lrstWSujLUL5pjzkI8uB7/R+zKTpyU4fGKR00+aDXF9NWmuxDYXGpGzicV
-         UW3w==
-X-Gm-Message-State: AJcUukfR+NB5byeFD1Xf7mpYBNwpdOOAqd1Av0ffwysIVI6nzF3mcybn
-        Q89pFrrrnwslBE3c2kooBSkB3awGsUbf9r39HoTmvg==
-X-Google-Smtp-Source: ALg8bN4LG2i69SMMl7U2Gjr173Wma/eqeSok8FFXZLcC936MrqVwLgDYWXTLhkV3KQSpL41QfnfsYgInyODyzmAcDu8=
-X-Received: by 2002:a24:2104:: with SMTP id e4mr4406959ita.59.1548436381132;
- Fri, 25 Jan 2019 09:13:01 -0800 (PST)
+        bh=0RF4f1Mp3YIzRbSEusHXgG5NVQ9EsFPWAz0T/wquLg8=;
+        b=gMFsoCp4jW+4qxPBbx4mfXzQPCC29jYhUxu04hL81980CDXvh4Gw5W2KsomzoRBqu0
+         cc2kbL0KZNh6XffWCvpmbJUAd9uNsQ9NDQLBQHn1UW8wJApAZvrB789xSxjHhNkm9wp7
+         6LO26Wjv1WuVhDacJOP7Tf9sBjcqQ8+K4YYvE5OFwhkPXacISbI0o2CT+MLgYea6/qzA
+         tek8fLI3cYs6HS4ljlklSsAM9KiX9GfDNJis+3om5OjY7m1SjpN/RTK98dFMV2SVHRBr
+         r0Gwj2FJJdkvZ65tjhiKH1nF6FvhHB3cC7tVkf6ZlccQCVLxZOCCrUPxCaGuqtN7i5PP
+         pinA==
+X-Gm-Message-State: AJcUukfW7l4nIx6w11jwo943y3sVb/SE3jhpUX51cHgE2LDTzemeHlTq
+        syVsoIp2Xq4tiDJNLAk8JkEV4YmHCV+8nP2o1RZQBw==
+X-Google-Smtp-Source: ALg8bN5U5LbA9d0jhhe4EIIerCiNEtCzKYaZB9f81j8XceQpxiENmmBRdlm00j6i09VmNdYM98MHhCCJVvXdqDFhvg4=
+X-Received: by 2002:a24:6e88:: with SMTP id w130mr4367718itc.103.1548436396346;
+ Fri, 25 Jan 2019 09:13:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAPM=9tznaiw+a7rWqfdMMO6Aj3GtsO9vetd=3n9d+bGLW0U8Cg@mail.gmail.com>
- <20190125073745.GD11891@kroah.com> <CAOesGMgJUeUMoRXZ98=J8bpfCuZOOMo5pwpVXZX-o-y1dAQsHA@mail.gmail.com>
- <20190125160617.GB14934@kroah.com>
-In-Reply-To: <20190125160617.GB14934@kroah.com>
+References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAOesGMjU0tjJwAqCADaAv6XrCGbjB8G2oT=4LxOgSQBHO7Gptw@mail.gmail.com>
+ <ba543301-9953-4dcd-f744-2aa66746a874@au1.ibm.com>
+In-Reply-To: <ba543301-9953-4dcd-f744-2aa66746a874@au1.ibm.com>
 From:   Olof Johansson <olof@lixom.net>
-Date:   Fri, 25 Jan 2019 09:12:49 -0800
-Message-ID: <CAOesGMicf17+0x6AUCNrUYu=d4uREVCyH8F2JvUz5fN5+=jW_A@mail.gmail.com>
+Date:   Fri, 25 Jan 2019 09:13:04 -0800
+Message-ID: <CAOesGMiWqRSxaCQ3nn_Y3Ujan_60dvoiGZ3goBmxXfmOa=yR2Q@mail.gmail.com>
 Subject: Re: [PATCH 00/15] Habana Labs kernel driver
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Dave Airlie <airlied@gmail.com>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, ogabbay@habana.ai
+To:     Andrew Donnellan <andrew.donnellan@au1.ibm.com>
+Cc:     Oded Gabbay <oded.gabbay@gmail.com>,
+        Dave Airlie <airlied@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ogabbay@habana.ai, Arnd Bergmann <arnd@arndb.de>,
+        fbarrat@linux.ibm.com, linux-accelerators@lists.ozlabs.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 8:06 AM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Wed, Jan 23, 2019 at 5:03 PM Andrew Donnellan
+<andrew.donnellan@au1.ibm.com> wrote:
 >
-> On Fri, Jan 25, 2019 at 07:33:23AM -0800, Olof Johansson wrote:
-> > On Thu, Jan 24, 2019 at 11:37 PM Greg Kroah-Hartman
-> > > As for what directory the code should live in, I suggested "misc" as
-> > > there was no other universal location, and I hate to see new subsystems
-> > > be created with only one driver, as that's pretty sad.  But it's just a
-> > > name/location, I have no dog in the fight, so I really don't care where
-> > > it ends up in the tree, just as long as it gets merged somewhere :)
+> On 24/1/19 8:52 am, Olof Johansson wrote:
+> > But, I think the largest question I have (for a broader audience) is:
 > >
-> > I'm usually one to push back against new subsystems too, especially
-> > when I see a framework proposal with just one driver. In this case,
-> > given that we all know more vendors will come along, I think it makes
-> > sense to take the discussion and establish structure now. This should
-> > give some clarity to those who are out there that we haven't seen yet,
-> > and give them a chance to prepare for things such as the low-level
-> > userspace pieces mentioned above.
+> > I predict that we will see a handful of these kind of devices over the
+> > upcoming future -- definitely from ML accelerators but maybe also for
+> > other kinds of processing, where there's a command-based, buffer-based
+> > setup sending workloads to an offload engine and getting results back.
+> > While the first waves will all look different due to design trade-offs
+> > made in isolation, I think it makes sense to group them in one bucket
+> > instead of merging them through drivers/misc, if nothing else to
+> > encourage more cross-collaboration over time. First steps in figuring
+> > out long-term suitable frameworks is to get a survey of a few
+> > non-shared implementations.
 > >
-> > So I think setting this up now is the right thing to do, we know there
-> > will be more material here and having a common aggregation of it makes
-> > sense.
+> > So, I'd like to propose a drivers/accel drivers subtree, and I'd be
+> > happy to bootstrap it with a small group (@Dave Airlie: I think your
+> > input from GPU land be very useful, want to join in?). Individual
+> > drivers maintained by existing maintainers, of course.
+> >
+> > I think it might make sense to move the CAPI/OpenCAPI drivers over as
+> > well -- not necessarily to change those drivers, but to group them
+> > with the rest as more show up.
 >
-> Ok, how about:
->         drivers/deep_thought/
->
-> as a first proposal.
->
-> Let the bikeshedding begin!  :)
+> For cxl/ocxl, I have no objection to moving to this new subtree if
+> that's what we all agree to do. (what do people do about UAPI headers in
+> this situation? keep them where they are in misc/?)
 
-My original proposal upthread was driver/accel. I'm not sure whether
-Dave and/or anyone else wants to participate to start though, I hope
-they will at least join in once things are heading in the direction
-they want.
+How about moving them but keeping a stub in misc that just includes
+the moved file?
 
-I'll post patches with the proposed moves and documentation of
-expectations shortly, hopefully to collect acks.
+> If we do go ahead and set up this new subtree, perhaps we can use the
+> mailing list I set up at linux-accelerators@lists.ozlabs.org but we
+> haven't really started using...
+
+I've lost all lists.ozlabs.org muscle memory these days, but that
+seems reasonable to me.
 
 
 
