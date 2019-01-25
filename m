@@ -2,177 +2,158 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A74FC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:45:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19653C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:47:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BE4F218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:45:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D931F218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:47:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LGKC295X"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gc692FDq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbfAYQpO (ORCPT
+        id S1728871AbfAYQq7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:45:14 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:41214 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726361AbfAYQpN (ORCPT
+        Fri, 25 Jan 2019 11:46:59 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:40545 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726329AbfAYQq6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:45:13 -0500
-Received: by mail-lj1-f196.google.com with SMTP id k15-v6so8889781ljc.8
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 08:45:12 -0800 (PST)
+        Fri, 25 Jan 2019 11:46:58 -0500
+Received: by mail-lj1-f194.google.com with SMTP id n18-v6so8905310lji.7;
+        Fri, 25 Jan 2019 08:46:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Symsbaz5OpiXUIS5FJtt3IVU7bbhIA79xBTFf5fn0zA=;
-        b=LGKC295XTyGXYX3K37nEpGjonG/F5xDwd1qI2EzamBHfeoxzTzJp8X5oziY17q2BCn
-         ILT74cirXWWF0+Ei75h42D7UwgMrFAX9bwRtDAL967RTERJag7a6gDCk+EOtWr+p59uD
-         etOlaR/X7EVWU0fJlZ8+d6DpZFNdTuyiSJt0c=
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8/Orv3a49mHdt2En2NviO/VS3JHy0Qqr765jzlm9HW4=;
+        b=Gc692FDq7HwMDdrlzW2vOulpMfNRTn0r1nVNet89vjypSiCqBv/eVk6E6442KS/xTe
+         FaZyYtjWy8IuR0J5bn3Er3cXSVI+lFpZOhqW8Q2ibiVchk1Scmy8zqsiNMfV01gNaWXf
+         jAy7Omqm0usHSl4Ux/l6flBo6X3eMcrXkib6pASQcL0GFuJRvRfKaP+k8fnam3l19QTK
+         Z/Qjo3ghbB0Q7CRsN0KnD5j6ER8efZsx2jqnXpUekJ+BQCKe92EAzLzEcoJO+F8df+x/
+         6yBHw/yjiH6t+7WWTMkovn8oQ7uIVX6Gl55iL8S0m2hVvn6NCEtohRqXn+m669K0N0TL
+         cKHA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Symsbaz5OpiXUIS5FJtt3IVU7bbhIA79xBTFf5fn0zA=;
-        b=bvv3uhLwQWvdEaW22HSI6hVlxsi2XTJkgZkqLrnvmDYx/binILu8P5wUD7Q0ABkfvk
-         jCpdJVmsyjaRchmg/DlfWCcMB+wpPpbPncV64K2Ck+QECJo/egL/PapERFVW522ZH9ce
-         RVRALMuLBSmQ7FaCW2iKKriCoakU+MRRn4o0bSciREwvRKTb6xFp2wYeLluvnn7navKd
-         OfAUDuU38cPD2mc729fIsME7h3ZG6I/YhOkTrZbz/jqBRoQbq2seDDc7g2ustUs3Uufp
-         Xfm0nI7nvCE+UB+wSrljWZQckcq704FYeNqMR+aO1/cGY6NJR1AQ8t9YNtKCGKGBeiHQ
-         b6zA==
-X-Gm-Message-State: AJcUukfI68Dot/6ip9x2m9aqPANDPMyMYgrkOl4c3/1mh1Yf3j0eMaxU
-        ZUaeed31EAvwkkdtUZr9Jj4IAqYIRvmNUThS65GKUw==
-X-Google-Smtp-Source: ALg8bN649qw/8n5UGgGKLPdyCvj3Kc9h6oUV9vIyu3oWXjVwnXyUWCPy7Tj/w79qF7RlpBQ7ynGtd+i7baSB5Z+PzVw=
-X-Received: by 2002:a2e:6595:: with SMTP id e21-v6mr9394294ljf.123.1548434711455;
- Fri, 25 Jan 2019 08:45:11 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=8/Orv3a49mHdt2En2NviO/VS3JHy0Qqr765jzlm9HW4=;
+        b=qzmj7HUfUVgcmTxTxNktkWcd7CBCZpA6NoktH53Gdw3ELbtTDZ3W/72wWyDCxjsNnD
+         gi6Rf4J8iskVeXcIcQhXC72VKvwZiIt3lupk2+OqFKvUY23tuOIOFJBvha/cEdl7gU+3
+         bGMymMR/HebuPauGkl0jC8e8Mfsbkk0Ec8neddhSIEHAx725rDeDg3dGpmfq96UITieo
+         r3HUyqEeJ02DVxV48nJqDeCqYO9Kiev9vYwV4gCbdhKvseew29e5RZVD/PPKtXLeit4H
+         pVGS/GB3JHVbe7Afcs+Bx8Vpi3uQ1jD0kkKDRzvImR9/WQy9IU0gqD/pgsPui2aK7052
+         UDnQ==
+X-Gm-Message-State: AJcUuke+GDj23Lk6s7y11PrHjBNs5KzdZ3DjuuRS4rb/2DxSmku2aX3O
+        55cfCxvc5t+MWAFiPCfpL9c=
+X-Google-Smtp-Source: ALg8bN6YQRbKph6ym/t/YT0eEOpv14zlkAUmJpgrxNwOwP34veJzcZm/al/vCWychbQgweUfdp70aA==
+X-Received: by 2002:a2e:8256:: with SMTP id j22-v6mr9544116ljh.40.1548434816639;
+        Fri, 25 Jan 2019 08:46:56 -0800 (PST)
+Received: from localhost.localdomain ([2a02:a315:5445:5300:6921:1f1d:2918:d853])
+        by smtp.googlemail.com with ESMTPSA id b25sm1531540lfa.96.2019.01.25.08.46.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 08:46:55 -0800 (PST)
+From:   =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+To:     thierry.reding@gmail.com
+Cc:     airlied@linux.ie, daniel@ffwll.ch, robh+dt@kernel.org,
+        mark.rutland@arm.com, m.szyprowski@samsung.com, krzk@kernel.org,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jonathan Bakker <xc-racer2@live.ca>,
+        =?UTF-8?q?Pawe=C5=82=20Chmiel?= <pawel.mikolaj.chmiel@gmail.com>
+Subject: [PATCH 1/2] drm: panel: Add Samsung s6e63m0 panel documentation
+Date:   Fri, 25 Jan 2019 17:46:44 +0100
+Message-Id: <20190125164645.19208-1-pawel.mikolaj.chmiel@gmail.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-References: <20190124190211.984305387@linuxfoundation.org>
-In-Reply-To: <20190124190211.984305387@linuxfoundation.org>
-From:   Naresh Kamboju <naresh.kamboju@linaro.org>
-Date:   Fri, 25 Jan 2019 22:15:00 +0530
-Message-ID: <CA+G9fYteq20MGKUx6sy9sxdbyGoarWA+4yGPnNKB-ZUEbt47Kw@mail.gmail.com>
-Subject: Re: [PATCH 4.20 000/127] 4.20.5-stable review
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     open list <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Shuah Khan <shuah@kernel.org>, patches@kernelci.org,
-        Ben Hutchings <ben.hutchings@codethink.co.uk>,
-        lkft-triage@lists.linaro.org,
-        linux- stable <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Jan 2019 at 01:10, Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
->
-> This is the start of the stable review cycle for the 4.20.5 release.
-> There are 127 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
->
-> Responses should be made by Sat Jan 26 19:01:19 UTC 2019.
-> Anything received after that time might be too late.
->
-> The whole patch series can be found in one patch at:
->         https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-=
-4.20.5-rc1.gz
-> or in the git tree and branch at:
->         git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable=
--rc.git linux-4.20.y
-> and the diffstat can be found below.
->
-> thanks,
->
-> greg k-h
->
+From: Jonathan Bakker <xc-racer2@live.ca>
 
-Results from Linaro=E2=80=99s test farm.
-No regressions on arm64, arm, x86_64, and i386.
+This commit adds documentation for Samsung s6e63m0 AMOLED LCD panel
+driver.
 
-NOTE: Kselftest source have been updated to version 4.20
+Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+---
+ .../display/panel/samsung,s6e63m0.txt         | 60 +++++++++++++++++++
+ 1 file changed, 60 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e63m0.txt
 
-Summary
-------------------------------------------------------------------------
+diff --git a/Documentation/devicetree/bindings/display/panel/samsung,s6e63m0.txt b/Documentation/devicetree/bindings/display/panel/samsung,s6e63m0.txt
+new file mode 100644
+index 000000000000..4979200e2dd2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/samsung,s6e63m0.txt
+@@ -0,0 +1,60 @@
++Samsung s6e63m0 AMOLED LCD panel
++
++Required properties:
++  - compatible: "samsung,s6e63m0"
++  - reset-gpio: GPIO spec for reset pin
++  - vdd3-supply: VDD regulator
++  - vci-supply: VCI regulator
++  - display-timings: timings for the connected panel as described by [1]
++
++Optional properties:
++  - reset-delay: Delay in ms after adjusting reset-gpio, default 120ms
++  - power-on-delay: Delay in ms after powering on, default 25ms
++  - power-off-delay: Delay in ms before powering off, default 200ms
++  - panel-width-mm: physical panel width in mm
++  - panel-height-mm: physical panel height in mm
++
++The device node can contain one 'port' child node with one child
++'endpoint' node, according to the bindings defined in [2]. This
++node should describe panel's video bus.
++
++[1]: Documentation/devicetree/bindings/display/panel/display-timing.txt
++[2]: Documentation/devicetree/bindings/media/video-interfaces.txt
++
++Example:
++
++		s6e63m0: display@0 {
++			compatible = "samsung,s6e63m0";
++			reg = <0>;
++			reset-gpio = <&mp05 5 1>;
++			vdd3-supply = <&ldo12_reg>;
++			vci-supply = <&ldo11_reg>;
++			spi-max-frequency = <1000000>;
++
++			power-on-delay = <0>;
++			power-off-delay = <0>;
++			reset-delay = <10>;
++			panel-width-mm = <53>;
++			panel-height-mm = <89>;
++
++			display-timings {
++				timing-0 {
++					/* 480x800@60Hz */
++					clock-frequency = <25628040>;
++					hactive = <480>;
++					vactive = <800>;
++					hfront-porch = <16>;
++					hback-porch = <16>;
++					hsync-len = <2>;
++					vfront-porch = <28>;
++					vback-porch = <1>;
++					vsync-len = <2>;
++				};
++			};
++
++			port {
++				lcd_ep: endpoint {
++					remote-endpoint = <&fimd_ep>;
++				};
++			};
++		};
+-- 
+2.17.1
 
-kernel: 4.20.5-rc1
-git repo: https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stab=
-le-rc.git
-git branch: linux-4.20.y
-git commit: c3515872cb7fee25e684c686581b51b51c1530e9
-git describe: v4.20.4-127-gc3515872cb7f
-Test details: https://qa-reports.linaro.org/lkft/linux-stable-rc-4.20-oe/bu=
-ild/v4.20.4-127-gc3515872cb7f
-
-No regressions (compared to build v4.20.4)
-------------------------------------------------------------------------
-
-
-Fixes (compared to build v4.20.4)
-------------------------------------------------------------------------
-Following are the test case fixes coming from kselftest version 4.20
-  kselftest:
-    * bpf_test_btf
-    * bpf_test_sockmap
-    * net_tls
-    * proc_proc-self-map-files-002
-    * seccomp_seccomp_bpf
-
-Ran 18206 total tests in the following environments and test suites.
-
-Environments
---------------
-- dragonboard-410c - arm64
-- hi6220-hikey - arm64
-- i386
-- juno-r2 - arm64
-- qemu_arm
-- qemu_arm64
-- qemu_i386
-- qemu_x86_64
-- x15 - arm
-- x86_64
-
-Test Suites
------------
-* boot
-* install-android-platform-tools-r2600
-* kselftest
-* libhugetlbfs
-* ltp-cap_bounds-tests
-* ltp-containers-tests
-* ltp-cpuhotplug-tests
-* ltp-cve-tests
-* ltp-fcntl-locktests-tests
-* ltp-filecaps-tests
-* ltp-fs_bind-tests
-* ltp-fs_perms_simple-tests
-* ltp-fsx-tests
-* ltp-hugetlb-tests
-* ltp-io-tests
-* ltp-ipc-tests
-* ltp-math-tests
-* ltp-mm-tests
-* ltp-nptl-tests
-* ltp-pty-tests
-* ltp-sched-tests
-* ltp-securebits-tests
-* ltp-syscalls-tests
-* ltp-timers-tests
-* spectre-meltdown-checker-test
-* ltp-fs-tests
-* ltp-open-posix-tests
-* kselftest-vsyscall-mode-none
-
---=20
-Linaro LKFT
-https://lkft.linaro.org
