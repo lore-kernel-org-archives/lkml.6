@@ -2,225 +2,147 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D0C9C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:12:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBDAC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:18:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 377F4218A6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:12:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MRUKIBTN"
+	by mail.kernel.org (Postfix) with ESMTP id AF1CB218A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:18:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726423AbfAYLL7 (ORCPT
+        id S1726630AbfAYLSP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:11:59 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:41758 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726049AbfAYLL7 (ORCPT
+        Fri, 25 Jan 2019 06:18:15 -0500
+Received: from vmicros1.altlinux.org ([194.107.17.57]:35680 "EHLO
+        vmicros1.altlinux.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfAYLSO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:11:59 -0500
-Received: by mail-lf1-f68.google.com with SMTP id c16so6648070lfj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 03:11:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=F4nZ8haCiD9aMxNe4xvhCOtfga74GqsGwEJe4KcLbLc=;
-        b=MRUKIBTNlYGmNnfQUKmW24eHo/82D6eUWC3RNE3UP3W3BJMSO0gzq/2gp88GHL1W3p
-         13I9UcxRMKiPeGSxNuh6GQr98j79TpUT6uitntzJ6x2PkVieeziBup52kIgcHDpA5CLP
-         i4+z6YhGdpeMMB2mvqi74sElw6qu8YoP2wADE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=F4nZ8haCiD9aMxNe4xvhCOtfga74GqsGwEJe4KcLbLc=;
-        b=ki5bMq2RUAsjV87FReo0b2p0ovk3qNweDGCMq4s4dpu/7Ol+yl8YXw2dPna7LFRBco
-         z9LHhhXlj0mlhwulWJ7BeSrzIsAsOKxepa2x9yQdruI0E7ewQUibZ9rIzvJ9ujBQURIg
-         Nt+/NZIyVmWwGY4gp8OL3sn7I3m06O8908Z2F4YSa1xViWWskwVmoTEoBf0nScwKHwF6
-         n98Vd1Qs4mIB0Prhz073+cv8Em1shqTBoyVn3RDg0++qf7QDY/1+oIRYsJsQYhiwePJs
-         oL1TB2U0PcuXlc+tai4zxvS3w+t6O1nl1M9XbQ69dyt0TCDca3bF9U2dtiKafrJhKUGX
-         xIdw==
-X-Gm-Message-State: AJcUukdYFnnm8Y6nilryIhkfLGzvwvvgwE33q0qGO8ybgl2zr2LSlVEQ
-        QzJbEzEYzFD8IaeuJNLU5dndUbk2KSZ8hQkXWW7/2w==
-X-Google-Smtp-Source: ALg8bN7d+YTmxmnVTOdWK3rHVl29fuWqO2e+J2z1kj816LXq5VTNnMkno3T8U3pBiKUqbqTEvn3iQJqo+M6Emoq5JKU=
-X-Received: by 2002:a19:e601:: with SMTP id d1mr8780228lfh.71.1548414715826;
- Fri, 25 Jan 2019 03:11:55 -0800 (PST)
+        Fri, 25 Jan 2019 06:18:14 -0500
+Received: from imap.altlinux.org (imap.altlinux.org [194.107.17.38])
+        by vmicros1.altlinux.org (Postfix) with ESMTP id 66ECF72CC61;
+        Fri, 25 Jan 2019 14:18:11 +0300 (MSK)
+Received: from altlinux.org (sole.flsd.net [185.75.180.6])
+        by imap.altlinux.org (Postfix) with ESMTPSA id 4B4354A4A16;
+        Fri, 25 Jan 2019 14:18:11 +0300 (MSK)
+Date:   Fri, 25 Jan 2019 14:18:09 +0300
+From:   Vitaly Chikunov <vt@altlinux.org>
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH v3] akcipher: Introduce verify_rsa/verify for public
+ key algorithms
+Message-ID: <20190125111808.slyoptlns53t7fiw@altlinux.org>
+Mail-Followup-To: Herbert Xu <herbert@gondor.apana.org.au>,
+        David Howells <dhowells@redhat.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        linux-integrity@vger.kernel.org, keyrings@vger.kernel.org,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20190118205846.20309-1-vt@altlinux.org>
+ <20190125100929.zxmqbsibnnikh7tv@gondor.apana.org.au>
 MIME-Version: 1.0
-References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
- <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz> <20190118190805.GF6260@sirena.org.uk>
- <s5hzhrxzrez.wl-tiwai@suse.de> <20190121124053.GA12679@sirena.org.uk>
- <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz> <20190122202535.GK7579@sirena.org.uk>
- <s5h4l9z4mbo.wl-tiwai@suse.de> <20190123124658.GE15906@leoy-ThinkPad-X240s>
- <3962daba-f6ed-d706-c618-b791a1ba6b59@perex.cz> <CAMz4kuK5JgfZF7uXa83xC3eVCrZ8+wkZRdKq2s71o_QjT=OhGg@mail.gmail.com>
- <s5h1s51120e.wl-tiwai@suse.de>
-In-Reply-To: <s5h1s51120e.wl-tiwai@suse.de>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Fri, 25 Jan 2019 19:11:43 +0800
-Message-ID: <CAMz4ku+h0HM4zmdb_a83gkW5EfVo24z74d7NQBSD8u8zdzaRUQ@mail.gmail.com>
-Subject: Re: [RFC PATCH] ALSA: core: Add DMA share buffer support
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Leo Yan <leo.yan@linaro.org>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>, bgoswami@codeaurora.org,
-        sr@denx.de, gustavo@embeddedor.com,
-        Phil Burk <philburk@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        mchehab+samsung@kernel.org, sboyd@kernel.org,
-        Vinod Koul <vkoul@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        anna-maria@linutronix.de, Jon Corbet <corbet@lwn.net>,
-        Jeffery Miller <jmiller@neverware.com>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        joe@perches.com, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        colyli@suse.de, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=koi8-r
+Content-Disposition: inline
+In-Reply-To: <20190125100929.zxmqbsibnnikh7tv@gondor.apana.org.au>
+User-Agent: NeoMutt/20171215-106-ac61c7
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Takashi,
-On Fri, 25 Jan 2019 at 18:10, Takashi Iwai <tiwai@suse.de> wrote:
->
-> On Fri, 25 Jan 2019 10:25:37 +0100,
-> Baolin Wang wrote:
-> >
-> > Hi Jaroslav,
-> > On Thu, 24 Jan 2019 at 21:43, Jaroslav Kysela <perex@perex.cz> wrote:
-> > >
-> > > Dne 23.1.2019 v 13:46 Leo Yan napsal(a):
-> > > > Hi all,
-> > > >
-> > > > On Wed, Jan 23, 2019 at 12:58:51PM +0100, Takashi Iwai wrote:
-> > > >> On Tue, 22 Jan 2019 21:25:35 +0100,
-> > > >> Mark Brown wrote:
-> > > >>>
-> > > >>> On Mon, Jan 21, 2019 at 03:15:43PM +0100, Jaroslav Kysela wrote:
-> > > >>>> Dne 21.1.2019 v 13:40 Mark Brown napsal(a):
-> > > >>>
-> > > >>>>> It was the bit about adding more extended permission control that I was
-> > > >>>>> worried about there, not the initial O_APPEND bit.  Indeed the O_APPEND
-> > > >>>>> bit sounds like it might also work from the base buffer sharing point of
-> > > >>>>> view, I have to confess I'd not heard of that feature before (it didn't
-> > > >>>>> come up in the discussion when Eric raised this in Prague).
-> > > >>>
-> > > >>>> With permissions, I meant to make possible to restrict the file
-> > > >>>> descriptor operations (ioctls) for the depending task (like access to
-> > > >>>> the DMA buffer, synchronize it for the non-coherent platforms and maybe
-> > > >>>> read/write the actual position, delay etc.). It should be relatively
-> > > >>>> easy to implement using the snd_pcm_file structure.
-> > > >>>
-> > > >>> Right, that's what I understood you to mean.  If you want to have a
-> > > >>> policy saying "it's OK to export a PCM file descriptor if it's only got
-> > > >>> permissions X and Y" the security module is going to need to know about
-> > > >>> the mechanism for setting those permissions.  With dma_buf that's all a
-> > > >>> bit easier as there's less new stuff, though I've no real idea how much
-> > > >>> of a big deal that actually is.
-> > > >>
-> > > >> There are many ways to implement such a thing, yeah.  If we'd need an
-> > > >> implementation that is done solely in the sound driver layer, I can
-> > > >> imagine to introduce either a new ioctl or an open flag (like O_EXCL)
-> > > >> to specify the restricted sharing.  That is, a kind of master / slave
-> > > >> model where only the master is allowed to manipulate the stream while
-> > > >> the slave can mmap, read/write and get status.
-> > > >
-> > > > In order to support EXCLUSIVE mode, it is necessary to convert the
-> > > > /dev/snd/ descriptor to an anon_inode:dmabuffer file descriptor.
-> > > > SELinux allows that file descriptor to be passed to the client. It can
-> > > > also be used by the AAudioService.
-> > >
-> > > Okay, so this is probably the only point which we should resolve for the
-> > > already available DMA buffer sharing in ALSA (the O_APPEND flag).
-> > >
-> > > I had another glance to your dma-buf implementation and I see many
-> > > things which might cause problems:
-> > >
-> > > - allow to call dma-buf ioctls only when the audio device is in specific
-> > > state (stream is not running)
-> >
-> > Right. Will fix.
-> >
-> > > - as Takashi mentioned, if we return another file-descriptor (dma-buf
-> > > export) to the user space and the server closes the main pcm
-> > > file-descriptor (the client does not) - the result will be a crash (dma
-> > > buffer will be freed, but referenced through the dma-buf interface)
-> >
-> > Yes, will fix.
->
-> There are a few more overlooked problems.  A part of them was already
-> mentioned in my previous reply, but let me repeat:
->
-> - The racy ioctls have to be considered; you can perform this export
->   ioctl concurrently, and both of them write and mix up the setup,
->   which is obviously broken.
+On Fri, Jan 25, 2019 at 06:09:29PM +0800, Herbert Xu wrote:
+> On Fri, Jan 18, 2019 at 11:58:46PM +0300, Vitaly Chikunov wrote:
+> > Previous akcipher .verify() just `decrypts' (using RSA encrypt which is
+> > using public key) signature to uncover message hash, which was then
+> > compared in upper level public_key_verify_signature() with the expected
+> > hash value, which itself was never passed into verify().
+> > 
+> > This approach was incompatible with EC-DSA family of algorithms,
+> > because, to verify a signature EC-DSA algorithm also needs a hash value
+> > as input; then it's used (together with a signature divided into halves
+> > `r||s') to produce a witness value, which is then compared with `r' to
+> > determine if the signature is correct. Thus, for EC-DSA, nor
+> > requirements of .verify() itself, nor its output expectations in
+> > public_key_verify_signature() wasn't sufficient.
+> > 
+> > Make improved .verify() call which gets hash value as parameter and
+> > produce complete signature check without any output besides status.
+> > 
+> > RSA-centric drivers have replaced verify() with verify_rsa() which
+> > have old semantic and which they still should implement (if they want
+> > pkcs1pad to work). If akcipher have .verify_rsa() callback, it will be
+> > used for a partial verification, which then is finished in
+> > crypto_akcipher_verify().
+> > 
+> > Now for the top level verification only crypto_akcipher_verify() needs
+> > to be called.
+> > 
+> > For pkcs1pad crypto_akcipher_verify_rsa() is introduced which directly
+> > calls .verify_rsa() for its backend. Without this api PKCS1 can not be
+> > implemented.
+> > 
+> > Tested on x86_64.
+> > 
+> > Signed-off-by: Vitaly Chikunov <vt@altlinux.org>
+> 
+> Thanks for working on this!
+> 
+> We have been here before.  We changed the AEAD interface in a way
+> that is not dissimilar to what you want to do here.
+> 
+> So I think the basic plan should be:
 
-Yes, I think I missed the snd_pcm_stream_lock, and will add.
+While time goes, I got another simpler idea how we should settle this:
 
->
-> - The PCM buffer can be re-allocated on the fly.  If the current
->   buffer is abandoned while exporting, it leads to the UAF.
+1. Since we are know that by nature RSA sign/verify is just encrypt/decrypt,
+and since sign/verify calls should not be used directly by any normal
+users:
+- Remove sign/verify calls from all existing RSA backends.
 
-So I need some validation to check if the buffer is available now when
-exporting it.
+2. pkcs1pad should use encrypt/decrypt API for its low level purposes
+(instead of sign/verify API, which now would be not implemented by them),
+and provide sign (same as before) and new verify (returning only status).
 
->
-> - Similarly, what if the PCM stream that is attached is closed without
->   detaching itself?  Or, what if the PCM stream attaches itself twice
+Thus, we avoid verify_rsa call altogether while remaining its
+functionality, and skipping conversion step.
 
-We will detach it automatically in snd_pcm_free_stream()
+> 1) Implement new top-level verify, alongside existing verify_rsa.
+> 2) For existing drivers implement a wrapper over verify_rsa.
+> 3) Convert *all* existing users to the new verify API.
+> 4) Remove top-level verify_rsa API.
+> 5) Convert existing drivers over to verify API.
+> 6) Remove verify_rsa completely.
+> 
+> > +int crypto_akcipher_verify(struct akcipher_request *req,
+> > +			   const unsigned char *digest, unsigned int digest_len)
+> 
+> We should not add new fields outside of akcipher_request.  So
+> these fields need to go inside it.  However, I think we don't
+> actually need two new fields.  They could both go into the src
+> scatterlist.  All we need is a new field, say textlen to indicate
+> where the text stops and where the hash starts.  We could also
+> overlay textlen over dstlen as it would now be unused for verify.
 
->   without detaching?
+Well, if we allowed to reuse dst* fields why not just put digest over
+dst scatterlist? That would be much simpler.
 
-Sure, need add validation for this case.
+Thanks,
 
->
-> - The driver may provide its own mmap method, and you can't hard-code
->   the mmap implementation as currently in snd_pcm_dmabuf_mmap().
->
->   I suppose you can drop of most of the code in snd_pcm_dmabuf_map(),
->   instead, assign PCM substream in obj, and call snd_pcm_mmap_data()
->   with the given VMA.  If this really works, it manages the mmap
->   refcount, so the previous two issues should be covered there.
->   But it needs more consideration...
 
-Ah, I think I missed the snd_pcm_mmap_data() function. Yes, so I can
-remove the implementation in snd_pcm_dmabuf_map().
-
->
-> - What happens to the PCM buffer that has been allocated before
->   attaching, if it's not the pre-allocated one?
->   It should be released properly beforehand, otherwise leaks.
-
-I am not sure I understood you correctly. If the PCM buffer has been
-allocated, the platform driver should handle it? Since we always use
-substream->dma_buffer.
-
->
-> - There is no validation of the attached dma-buf pages; most drivers
->   set coherent DMA mask, and they rely on it.  e.g. if a page over the
->   DMA mask is passed, it will break silently.
-
-Sorry maybe I did not get your point here. We have validate the
-dma_map_sg_attr() funtion, in this fucntion it will validate the DMA
-mask by dma_capable().
-
->
-> - Some drivers don't use the standard memory pages but keep their own
->   hardware buffer (e.g. rme96 or rm32 driver).  This ioctl would be
->   completely broken on such hardware.
->   That is, we need some sanity check whether the PCM allows the
->   arbitrary dma-buf or not.
-
-Make sense. Need add some validation to make sure if this PCM can export or not.
-
-Very appreciated for your useful comments.
-
--- 
-Baolin Wang
-Best Regards
+> The advantage of having it in one scatterlist is that for those
+> users that already have the two pieces together could simply provide
+> a single SG element (I don't know how likely that is in practice
+> though).
+> 
+> For others you would simply tack on an extra SG element.
+> 
+> Thanks,
+> -- 
+> Email: Herbert Xu <herbert@gondor.apana.org.au>
+> Home Page: http://gondor.apana.org.au/~herbert/
+> PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
