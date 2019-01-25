@@ -2,172 +2,134 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D988CC282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:21:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E354C282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:23:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B57412084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:21:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB99D2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:23:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JJWeXQsJ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728339AbfAYDVC (ORCPT
+        id S1728400AbfAYDXR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:21:02 -0500
-Received: from mail.hallyn.com ([178.63.66.53]:52676 "EHLO mail.hallyn.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726271AbfAYDVC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:21:02 -0500
-Received: by mail.hallyn.com (Postfix, from userid 1001)
-        id DBF63C8A; Thu, 24 Jan 2019 21:20:59 -0600 (CST)
-Date:   Thu, 24 Jan 2019 21:20:59 -0600
-From:   "Serge E. Hallyn" <serge@hallyn.com>
-To:     Richard Guy Briggs <rgb@redhat.com>
-Cc:     Linux Security Module list 
-        <linux-security-module@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>,
-        Paul Moore <paul@paul-moore.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Eric Paris <eparis@redhat.com>, Serge Hallyn <serge@hallyn.com>
-Subject: Re: [PATCH ghak103 V1] audit: add support for fcaps v3
-Message-ID: <20190125032059.GA10044@mail.hallyn.com>
-References: <f8348d1e67d66e8e5d42e3bdfbda7e88139f2d31.1548297089.git.rgb@redhat.com>
+        Thu, 24 Jan 2019 22:23:17 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:1601 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfAYDXQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 22:23:16 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4a810a0018>; Thu, 24 Jan 2019 19:22:50 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Thu, 24 Jan 2019 19:23:15 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Thu, 24 Jan 2019 19:23:15 -0800
+Received: from [10.19.108.132] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 25 Jan
+ 2019 03:23:13 +0000
+Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <devicetree@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190107032810.13522-1-josephl@nvidia.com>
+ <20190107032810.13522-2-josephl@nvidia.com>
+ <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
+From:   Joseph Lo <josephl@nvidia.com>
+Message-ID: <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
+Date:   Fri, 25 Jan 2019 11:23:11 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f8348d1e67d66e8e5d42e3bdfbda7e88139f2d31.1548297089.git.rgb@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548386570; bh=Vf5raOr5Nltjpm3Hj7ObWfFqyEkrUq7A+aU6p8IhhSw=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=JJWeXQsJZvBtgdeg0lEZYjrUZfoLupOTw+CSme5n4wQ1ilgtNeLTxtahC5PaS0FXt
+         vYu+UV4vgc874NHCR54sgBuxYHX5WtH1a9fCxvUFMtSEGytIEAaax0MdaIkMASBemH
+         iEWIfD2WlgrJn5mVP9Vm3d5B/apbgR9MikHyZBwxo7jzd1VrF6JpQvSpztV0Zr+VJl
+         WBNQlAfEPlrgX/70ICRtUYtYkzU5j7MXJlg1qjb/1qOCgH+oylsJKzjY5r4a1duXHF
+         m40+9C7pWDca/dYaYtBa4cmxduVeXs096siOqPKslstig7VlNWA0FZeiZjarH1zkis
+         ehmylk8fCgb3g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 23, 2019 at 09:36:25PM -0500, Richard Guy Briggs wrote:
-> V3 namespaced file capabilities were introduced in
-> commit 8db6c34f1dbc ("Introduce v3 namespaced file capabilities")
-> 
-> Add support for these by adding the "frootid" field to the existing
-> fcaps fields in the NAME and BPRM_FCAPS records.
-> 
-> Please see github issue
-> https://github.com/linux-audit/audit-kernel/issues/103
-> 
-> Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
+Hi Jon,
 
-Looks like good info to have,
+Thanks for reviewing.
 
-Acked-by: Serge Hallyn <serge@hallyn.com>
+On 1/24/19 6:30 PM, Jon Hunter wrote:
+> 
+> On 07/01/2019 03:28, Joseph Lo wrote:
+>> The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+>> timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+>> from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+>> (TMR10-TMR13). Each TMR can be programmed to generate one-shot periodic,
+>> or watchdog interrupts.
+>>
+>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>> Cc: linux-kernel@vger.kernel.org
+>> Cc: devicetree@vger.kernel.org
+>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>> ---
+>>   .../bindings/timer/nvidia,tegra210-timer.txt  | 25 +++++++++++++++++++
+>>   1 file changed, 25 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>> new file mode 100644
+>> index 000000000000..ba511220a669
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>> @@ -0,0 +1,25 @@
+>> +NVIDIA Tegra210 timer
+>> +
+>> +The Tegra210 timer provides fourteen 29-bit timer counters and one 32-bit
+>> +timestamp counter. The TMRs run at either a fixed 1 MHz clock rate derived
+>> +from the oscillator clock (TMR0-TMR9) or directly at the oscillator clock
+>> +(TMR10-TMR13). Each TMR can be programmed to generate one-shot, periodic,
+>> +or watchdog interrupts.
+>> +
+>> +Required properties:
+>> +- compatible : "nvidia,tegra210-timer".
+>> +- reg : Specifies base physical address and size of the registers.
+>> +- interrupts : A list of 4 interrupts; one per each of TMR10 through TMR13.
+> 
+> Why do we only add the interrupts for TMR10 - TMR13? What about the others?
+> 
 
-> ---
-> Passes audit-testsuite.
-> 
->  include/linux/capability.h | 5 +++--
->  kernel/audit.c             | 6 ++++--
->  kernel/audit.h             | 1 +
->  kernel/auditsc.c           | 4 ++++
->  security/commoncap.c       | 2 ++
->  5 files changed, 14 insertions(+), 4 deletions(-)
-> 
-> diff --git a/include/linux/capability.h b/include/linux/capability.h
-> index f640dcbc880c..f6bb691547fd 100644
-> --- a/include/linux/capability.h
-> +++ b/include/linux/capability.h
-> @@ -14,7 +14,7 @@
->  #define _LINUX_CAPABILITY_H
->  
->  #include <uapi/linux/capability.h>
-> -
-> +#include <linux/uidgid.h>
->  
->  #define _KERNEL_CAPABILITY_VERSION _LINUX_CAPABILITY_VERSION_3
->  #define _KERNEL_CAPABILITY_U32S    _LINUX_CAPABILITY_U32S_3
-> @@ -25,11 +25,12 @@
->  	__u32 cap[_KERNEL_CAPABILITY_U32S];
->  } kernel_cap_t;
->  
-> -/* exact same as vfs_cap_data but in cpu endian and always filled completely */
-> +/* exact same as vfs_ns_cap_data but in cpu endian and always filled completely */
->  struct cpu_vfs_cap_data {
->  	__u32 magic_etc;
->  	kernel_cap_t permitted;
->  	kernel_cap_t inheritable;
-> +	kuid_t rootid;
->  };
->  
->  #define _USER_CAP_HEADER_SIZE  (sizeof(struct __user_cap_header_struct))
-> diff --git a/kernel/audit.c b/kernel/audit.c
-> index ca55ccb46b76..6f5eeb658ccb 100644
-> --- a/kernel/audit.c
-> +++ b/kernel/audit.c
-> @@ -2083,8 +2083,9 @@ static void audit_log_fcaps(struct audit_buffer *ab, struct audit_names *name)
->  {
->  	audit_log_cap(ab, "cap_fp", &name->fcap.permitted);
->  	audit_log_cap(ab, "cap_fi", &name->fcap.inheritable);
-> -	audit_log_format(ab, " cap_fe=%d cap_fver=%x",
-> -			 name->fcap.fE, name->fcap_ver);
-> +	audit_log_format(ab, " cap_fe=%d cap_fver=%x cap_frootid=%d",
-> +			 name->fcap.fE, name->fcap_ver,
-> +			 from_kuid(&init_user_ns, name->fcap.rootid));
->  }
->  
->  static inline int audit_copy_fcaps(struct audit_names *name,
-> @@ -2103,6 +2104,7 @@ static inline int audit_copy_fcaps(struct audit_names *name,
->  	name->fcap.permitted = caps.permitted;
->  	name->fcap.inheritable = caps.inheritable;
->  	name->fcap.fE = !!(caps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
-> +	name->fcap.rootid = caps.rootid;
->  	name->fcap_ver = (caps.magic_etc & VFS_CAP_REVISION_MASK) >>
->  				VFS_CAP_REVISION_SHIFT;
->  
-> diff --git a/kernel/audit.h b/kernel/audit.h
-> index 6ffb70575082..deefdbe61a47 100644
-> --- a/kernel/audit.h
-> +++ b/kernel/audit.h
-> @@ -69,6 +69,7 @@ struct audit_cap_data {
->  		kernel_cap_t	effective;	/* effective set of process */
->  	};
->  	kernel_cap_t		ambient;
-> +	kuid_t			rootid;
->  };
->  
->  /* When fs/namei.c:getname() is called, we store the pointer in name and bump
-> diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-> index b585ceb2f7a2..461c52eff870 100644
-> --- a/kernel/auditsc.c
-> +++ b/kernel/auditsc.c
-> @@ -1358,6 +1358,9 @@ static void audit_log_exit(void)
->  			audit_log_cap(ab, "pi", &axs->new_pcap.inheritable);
->  			audit_log_cap(ab, "pe", &axs->new_pcap.effective);
->  			audit_log_cap(ab, "pa", &axs->new_pcap.ambient);
-> +			audit_log_format(ab, " frootid=%d",
-> +					 from_kuid(&init_user_ns,
-> +						   axs->fcap.rootid));
->  			break; }
->  
->  		}
-> @@ -2355,6 +2358,7 @@ int __audit_log_bprm_fcaps(struct linux_binprm *bprm,
->  	ax->fcap.permitted = vcaps.permitted;
->  	ax->fcap.inheritable = vcaps.inheritable;
->  	ax->fcap.fE = !!(vcaps.magic_etc & VFS_CAP_FLAGS_EFFECTIVE);
-> +	ax->fcap.rootid = vcaps.rootid;
->  	ax->fcap_ver = (vcaps.magic_etc & VFS_CAP_REVISION_MASK) >> VFS_CAP_REVISION_SHIFT;
->  
->  	ax->old_pcap.permitted   = old->cap_permitted;
-> diff --git a/security/commoncap.c b/security/commoncap.c
-> index 232db019f051..c097f3568001 100644
-> --- a/security/commoncap.c
-> +++ b/security/commoncap.c
-> @@ -643,6 +643,8 @@ int get_vfs_caps_from_disk(const struct dentry *dentry, struct cpu_vfs_cap_data
->  	cpu_caps->permitted.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
->  	cpu_caps->inheritable.cap[CAP_LAST_U32] &= CAP_LAST_U32_VALID_MASK;
->  
-> +	cpu_caps->rootid = rootkuid;
-> +
->  	return 0;
->  }
->  
-> -- 
-> 1.8.3.1
+The others (TMR0-TMR9) are occupied for other usages. TMR5 is occupied 
+for the watchdog timer in the upstream kernel. And others (still in 
+TMR0-TMR9) are occupied for different usages in our downstream kernel.
+
+And notice that only TMR10-TMR13 are running at the oscillator clock 
+(clk_m). With the Tegra210 timer driver, we introduce in this series, 
+which only replace the clock event device function that was originally 
+owned by the arch timer (armv8 timer) and it also running at the 
+oscillator clock. The sched_timer still owns by the arch timer. So the 
+timer resolution will be the same. That's why we choose TMR10-TMR13 as 
+the timer for Tegra210.
+
+Thanks,
+Joseph
