@@ -2,71 +2,327 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC86DC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:54:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C51CC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:55:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 854A1218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:54:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FFCD217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:55:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728673AbfAYHym (ORCPT
+        id S1728897AbfAYHzH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 02:54:42 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:33071 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726761AbfAYHyl (ORCPT
+        Fri, 25 Jan 2019 02:55:07 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:44602 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726271AbfAYHzH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 02:54:41 -0500
-Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 7F087CF172;
-        Fri, 25 Jan 2019 09:02:27 +0100 (CET)
-Content-Type: text/plain;
-        charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] Bluetooth: make hw_err static, reduces object code size
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <20190124172254.13186-1-colin.king@canonical.com>
-Date:   Fri, 25 Jan 2019 08:54:39 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Transfer-Encoding: 7bit
-Message-Id: <6F6742C3-1D20-44F9-9EF6-DF6085069DA0@holtmann.org>
-References: <20190124172254.13186-1-colin.king@canonical.com>
-To:     Colin King <colin.king@canonical.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Fri, 25 Jan 2019 02:55:07 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0P7nGH0114849
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:55:05 -0500
+Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2q7tf3t5cv-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:55:04 -0500
+Received: from localhost
+        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Fri, 25 Jan 2019 07:55:03 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 25 Jan 2019 07:54:58 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (mk.ibm.com [9.149.105.60])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0P7svl157081884
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 25 Jan 2019 07:54:57 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 5D7BF42041;
+        Fri, 25 Jan 2019 07:54:57 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id AE95C42045;
+        Fri, 25 Jan 2019 07:54:55 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.204.19])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 25 Jan 2019 07:54:55 +0000 (GMT)
+Date:   Fri, 25 Jan 2019 09:54:53 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Peter Xu <peterx@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Hugh Dickins <hughd@google.com>,
+        Maya Gokhale <gokhale2@llnl.gov>,
+        Jerome Glisse <jglisse@redhat.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Martin Cracauer <cracauer@cons.org>,
+        Denis Plotnikov <dplotnikov@virtuozzo.com>,
+        Shaohua Li <shli@fb.com>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Pavel Emelyanov <xemul@parallels.com>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        Marty McFadden <mcfadden8@llnl.gov>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Mel Gorman <mgorman@suse.de>,
+        "Kirill A . Shutemov" <kirill@shutemov.name>,
+        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
+Subject: Re: [PATCH RFC 07/24] userfaultfd: wp: add the writeprotect API to
+ userfaultfd ioctl
+References: <20190121075722.7945-1-peterx@redhat.com>
+ <20190121075722.7945-8-peterx@redhat.com>
+ <20190121104232.GA26461@rapoport-lnx>
+ <20190124045551.GD18231@xz-x1>
+ <20190124072706.GA3179@rapoport-lnx>
+ <20190124092848.GL18231@xz-x1>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124092848.GL18231@xz-x1>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19012507-0008-0000-0000-000002B5D0BF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012507-0009-0000-0000-0000222207BA
+Message-Id: <20190125075453.GF31519@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-25_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901250066
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Colin,
-
-> Don't populate the const array hw_err on the stack but instead make
-> it static. Makes the object code smaller by 45 bytes:
+On Thu, Jan 24, 2019 at 05:28:48PM +0800, Peter Xu wrote:
+> On Thu, Jan 24, 2019 at 09:27:07AM +0200, Mike Rapoport wrote:
+> > On Thu, Jan 24, 2019 at 12:56:15PM +0800, Peter Xu wrote:
+> > > On Mon, Jan 21, 2019 at 12:42:33PM +0200, Mike Rapoport wrote:
+> > > 
+> > > [...]
+> > > 
+> > > > > @@ -1343,7 +1344,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+> > > > > 
+> > > > >  		/* check not compatible vmas */
+> > > > >  		ret = -EINVAL;
+> > > > > -		if (!vma_can_userfault(cur))
+> > > > > +		if (!vma_can_userfault(cur, vm_flags))
+> > > > >  			goto out_unlock;
+> > > > > 
+> > > > >  		/*
+> > > > > @@ -1371,6 +1372,8 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+> > > > >  			if (end & (vma_hpagesize - 1))
+> > > > >  				goto out_unlock;
+> > > > >  		}
+> > > > > +		if ((vm_flags & VM_UFFD_WP) && !(cur->vm_flags & VM_WRITE))
+> > > > > +			goto out_unlock;
+> > > > 
+> > > > This is problematic for the non-cooperative use-case. Way may still want to
+> > > > monitor a read-only area because it may eventually become writable, e.g. if
+> > > > the monitored process runs mprotect().
+> > > 
+> > > Firstly I think I should be able to change it to VM_MAYWRITE which
+> > > seems to suite more.
+> > > 
+> > > Meanwhile, frankly speaking I didn't think a lot about how to nest the
+> > > usages of uffd-wp and mprotect(), so far I was only considering it as
+> > > a replacement of mprotect().  But indeed it can happen that the
+> > > monitored process calls mprotect().  Is there an existing scenario of
+> > > such usage?
+> > > 
+> > > The problem is I'm uncertain about whether this scenario can work
+> > > after all.  Say, the monitor process A write protected process B's
+> > > page P, so logically A will definitely receive a message before B
+> > > writes to page P.  However here if we allow process B to do
+> > > mprotect(PROT_WRITE) upon page P and grant write permission to it on
+> > > its own, then A will not be able to capture the write operation at
+> > > all?  Then I don't know how it can work here... or whether we should
+> > > fail the mprotect() at least upon uffd-wp ranges?
+> > 
+> > The use-case we've discussed a while ago was to use uffd-wp instead of
+> > soft-dirty for tracking memory changes in CRIU for pre-copy migration.
+> > Currently, we enable soft-dirty for the migrated process and monitor
+> > /proc/pid/pagemap between memory dump iterations to see what memory pages
+> > have been changed.
+> > With uffd-wp we thought to register all the process memory with uffd-wp and
+> > then track changes with uffd-wp notifications. Back then it was considered
+> > only at the very general level without paying much attention to details.
+> > 
+> > So my initial thought was that we do register the entire memory with
+> > uffd-wp. If an area changes from RO to RW at some point, uffd-wp will
+> > generate notifications to the monitor, it would be able to notice the
+> > change and the write will continue normally.
+> > 
+> > If we are to limit uffd-wp register only to VMAs with VM_WRITE and even
+> > VM_MAYWRITE, we'd need a way to handle the possible changes of VMA
+> > protection and an ability to add monitoring for areas that changed from RO
+> > to RW.
+> > 
+> > Can't say I have a clear picture in mind at the moment, will continue to
+> > think about it.
 > 
-> Before:
->   text	   data	    bss	    dec	    hex	filename
-> 100880	  21090	   1088	 123058	  1e0b2	linux/net/bluetooth/hci_core.o
+> Thanks for these details.  Though I have a question about how it's
+> used.
 > 
-> After:
->   text	   data	    bss	    dec	    hex	filename
-> 100739	  21186	   1088	 123013	  1e085	linux/net/bluetooth/hci_core.o
+> Since we're talking about replacing soft dirty with uffd-wp here, I
+> noticed that there's a major interface difference between soft-dirty
+> and uffd-wp: the soft-dirty was all about /proc operations so a
+> monitor process can easily monitor mostly any process on the system as
+> long as knowing its PID.  However I'm unsure about uffd-wp since
+> userfaultfd was always bound to a mm_struct.  For example, the syscall
+> userfaultfd() will always attach the current process mm_struct to the
+> newly created userfaultfd but it cannot be attached to another random
+> mm_struct of other processes.  Or is there any way that the CRIU
+> monitor process can gain an userfaultfd of any process of the system
+> somehow?
+ 
+Yes, there is. For CRIU to read the process state during snapshot (or one
+the source in case of the migration) we inject a parasite code into the
+victim process. The parasite code communicates with the "main" CRIU monitor
+via UNIX socket to pass information that cannot be obtained from outside.
+For uffd-wp usage we thought about creating the uffd context in the
+parasite code, registering the memory and passing the userfault file
+descriptor to the CRIU core via that UNIX socket.
+
+> > 
+> > > > Particularity, for using uffd-wp as a replacement for soft-dirty would
+> > > > require it.
+> > > > 
+> > > > > 
+> > > > >  		/*
+> > > > >  		 * Check that this vma isn't already owned by a
+> > > > > @@ -1400,7 +1403,7 @@ static int userfaultfd_register(struct userfaultfd_ctx *ctx,
+> > > > >  	do {
+> > > > >  		cond_resched();
+> > > > > 
+> > > > > -		BUG_ON(!vma_can_userfault(vma));
+> > > > > +		BUG_ON(!vma_can_userfault(vma, vm_flags));
+> > > > >  		BUG_ON(vma->vm_userfaultfd_ctx.ctx &&
+> > > > >  		       vma->vm_userfaultfd_ctx.ctx != ctx);
+> > > > >  		WARN_ON(!(vma->vm_flags & VM_MAYWRITE));
+> > > > > @@ -1760,6 +1763,46 @@ static int userfaultfd_zeropage(struct userfaultfd_ctx *ctx,
+> > > > >  	return ret;
+> > > > >  }
+> > > > > 
+> > > > > +static int userfaultfd_writeprotect(struct userfaultfd_ctx *ctx,
+> > > > > +				    unsigned long arg)
+> > > > > +{
+> > > > > +	int ret;
+> > > > > +	struct uffdio_writeprotect uffdio_wp;
+> > > > > +	struct uffdio_writeprotect __user *user_uffdio_wp;
+> > > > > +	struct userfaultfd_wake_range range;
+> > > > > +
+> > > > 
+> > > > In the non-cooperative mode the userfaultfd_writeprotect() may race with VM
+> > > > layout changes, pretty much as uffdio_copy() [1]. My solution for uffdio_copy()
+> > > > was to return -EAGAIN if such race is encountered. I think the same would
+> > > > apply here.
+> > > 
+> > > I tried to understand the problem at [1] but failed... could you help
+> > > to clarify it a bit more?
+> > > 
+> > > I'm quoting some of the discussions from [1] here directly between you
+> > > and Pavel:
+> > > 
+> > >   > Since the monitor cannot assume that the process will access all its memory
+> > >   > it has to copy some pages "in the background". A simple monitor may look
+> > >   > like:
+> > >   > 
+> > >   > 	for (;;) {
+> > >   > 		wait_for_uffd_events(timeout);
+> > >   > 		handle_uffd_events();
+> > >   > 		uffd_copy(some not faulted pages);
+> > >   > 	}
+> > >   > 
+> > >   > Then, if the "background" uffd_copy() races with fork, the pages we've
+> > >   > copied may be already present in parent's mappings before the call to
+> > >   > copy_page_range() and may be not.
+> > >   > 
+> > >   > If the pages were not present, uffd_copy'ing them again to the child's
+> > >   > memory would be ok.
+> > >   >
+> > >   > But if uffd_copy() was first to catch mmap_sem, and we would uffd_copy them
+> > >   > again, child process will get memory corruption.
+> > > 
+> > > Here I don't understand why the child process will get memory
+> > > corruption if uffd_copy() caught the mmap_sem first.
+> > > 
+> > > If it did it, then IMHO when uffd_copy() copies the page again it'll
+> > > simply get a -EEXIST showing that the page has already been copied.
+> > > Could you explain on why there will be a data corruption?
+> > 
+> > Let's say we do post-copy migration of a process A with CRIU and its page at
+> > address 0x1000 is already copied. Now it modifies the contents of this
+> > page. At this point the contents of the page at 0x1000 is different on the
+> > source and the destination.
+> > Next, process A forks process B. The CRIU's uffd monitor gets
+> > UFFD_EVENT_FORK, and starts filling process B memory with UFFDIO_COPY.
+> > It may happen, that UFFDIO_COPY to 0x1000 of the process B will occur
 > 
-> (gcc version 8.2.0 x86_64)
+> I think this is the place I started to get confused...
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
-> net/bluetooth/hci_core.c | 2 +-
-> 1 file changed, 1 insertion(+), 1 deletion(-)
+> The mmap copy phase and the FORK event path is in dup_mmap() as
+> mentioned in the patch too:
+> 
+>      dup_mmap()
+>         down_write(old_mm)
+>         down_write(new_mm)
+>         foreach(vma)
+>             copy_page_range()            (a)
+>         up_write(new_mm)
+>         up_write(old_mm)
+>         dup_userfaultfd_complete()       (b)
+> 
+> Here if we already received UFFD_EVENT_FORK and started to copy pages
+> to process B in the background, then we should have at least passed
+> (b) above since otherwise we won't even know the existance of process
+> B.  However if so, we should have already passed the point to copy
+> data at (a) too, then how could copy_page_range() race?  It seems that
+> I might have missed something important out there but it's not easy
+> for me to figure out myself...
 
-patch has been applied to bluetooth-next tree.
+Apparently, I confused myself as well...
+I clearly remember that there was a problem with fork() but the sequence
+the causes it keeps evading me :(
 
-Regards
+Anyway, some mean of synchronization between uffd_copy and the
+non-cooperative events is required. Take, for example, MADV_DONTNEED. When
+it races with uffdio_copy() a process may end reading non zero values right
+after MADV_DONTNEED call.
 
-Marcel
+uffd monitor           | process
+-----------------------+-------------------------------------------
+uffdio_copy(0x1000)    | madvise(MADV_DONTNEED, 0x1000)
+                       |    down_read(mmap_sem)
+                       |    zap_pte_range(0x1000)
+                       |    up_read(mmap_sem)
+   down_read(mmap_sem) |
+   copy()              |
+   up_read(mmap_sem)   |
+                       |  read(0x1000) != 0
+
+Similar issues happen with mpremap() and munmap().
+
+> Thanks,
+> 
+> > *before* fork() completes and it may race with copy_page_range().
+> > If UFFDIO_COPY wins the race, it will fill the page with the contents from
+> > the source, although the correct data is what process A set in that page.
+> > 
+> > Hope it helps.
+> 
+> > > >  
+> > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=df2cc96e77011cf7989208b206da9817e0321028
+> > > >
+> 
+> -- 
+> Peter Xu
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
