@@ -2,125 +2,149 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0B22C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:50:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12B40C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:54:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D82720881
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:50:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3D5820881
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:54:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DoZFkntd"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kToesyks"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728410AbfAYNur (ORCPT
+        id S1728542AbfAYNyT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 08:50:47 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:37760 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726252AbfAYNur (ORCPT
+        Fri, 25 Jan 2019 08:54:19 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:42157 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfAYNyS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 08:50:47 -0500
-Received: by mail-lf1-f65.google.com with SMTP id y11so6983528lfj.4
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 05:50:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=2cgDgJCXbM7SgzHTfhBhdnsde3Z4ewq3kODySppK7gc=;
-        b=DoZFkntdIXNd60D5zXJcyXiKrCxTOYHma58LtKsbXOITYjjHgem/kajybVm1W29dz5
-         LENfw2xmV3j43wouUi3Le1D6r7Cd+DpigzQyovGiyX5btY1w/UDLt7ZU/30ppwCmVbqK
-         H6IoGT31DgdDKk4+/Wmc9INzaKb4qr55BU/Xw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2cgDgJCXbM7SgzHTfhBhdnsde3Z4ewq3kODySppK7gc=;
-        b=PGXUieJ5ejxf8E3AysCHXpqVyfTvx6V7l1Dc0PYJtTsKCYge1iI4/m5CrtYi+9CBuj
-         z1zY+8zF4ub2gKGOKuHY+d7CeAvyR2zGDwqKhz0Nsg51WodUG2ECthO7QDTygw2LATdq
-         LOB3TT75GwhmAFj0CMO2Ga6we97o4LvE25ELEiWw7B7TpdxDZka4Z+Z99TCYXGt5I0IG
-         WZFRfT1RFMI2ZQWLwAJ2oo1TKVXhOBoPd8Wf0jRH9xj3YprgY4baNarRUoXnE9KbJ5WD
-         1dCprv2iFFWyz3XBIvbhlmL9siWmn1f03Mg1KMG3eHiYwxwCPEraPr8x4dBxD1LHU7ir
-         rNSw==
-X-Gm-Message-State: AJcUukcCnrDCQQpijR/vJhRjpf/W883lIlyjDra+JQpa8xZefjZI9LSD
-        Frm1XFkfH4PWhrt/hV5dOoknNg==
-X-Google-Smtp-Source: ALg8bN5V2wGmCTTZqJyCXF6wuOGLVPpMhzjW5Jf7LJm/AMVyOF/L6BXGtkhCPJ777i3KeMh5GEworA==
-X-Received: by 2002:a19:6514:: with SMTP id z20mr473701lfb.31.1548424244941;
-        Fri, 25 Jan 2019 05:50:44 -0800 (PST)
-Received: from localhost.localdomain (h-158-174-22-210.NA.cust.bahnhof.se. [158.174.22.210])
-        by smtp.gmail.com with ESMTPSA id q128-v6sm1505684ljq.14.2019.01.25.05.50.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 05:50:44 -0800 (PST)
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-To:     Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>
-Subject: [GIT PULL] MMC fixes for v5.0-rc4
-Date:   Fri, 25 Jan 2019 14:50:43 +0100
-Message-Id: <20190125135043.22286-1-ulf.hansson@linaro.org>
+        Fri, 25 Jan 2019 08:54:18 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20190125135415euoutp0186c0e5aa1f44b307da90cf555ee7cd45~9G9as7hCM2639226392euoutp01x;
+        Fri, 25 Jan 2019 13:54:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20190125135415euoutp0186c0e5aa1f44b307da90cf555ee7cd45~9G9as7hCM2639226392euoutp01x
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548424455;
+        bh=jWw/l4QLnjeXzLowJnTJlB0lCENMN4uoWKH1dHHjzMA=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=kToesyksiQ+1G/7QohxpLcYOrYWYp0/zOqZhl2mu5DaAjZielVsBi9KlItYWePT7d
+         VODLk14cNueazWe0iQ0kDNict+iM1MdNNwszcPS6jTvVspLPls0TfjshIke2AInV7J
+         ohISyqeiOuQgZds2Cp1vFOdGSvZqIB39HOQP4JDc=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190125135414eucas1p15178f2d37fcb8650184986641374ac2d~9G9Z9d4sD0209302093eucas1p1i;
+        Fri, 25 Jan 2019 13:54:14 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges1new.samsung.com (EUCPMTA) with SMTP id 1B.02.04441.6051B4C5; Fri, 25
+        Jan 2019 13:54:14 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20190125135414eucas1p2ffc71c63f1a27f67d076dec889954b40~9G9ZSKu2o1260312603eucas1p2v;
+        Fri, 25 Jan 2019 13:54:14 +0000 (GMT)
+X-AuditID: cbfec7f2-5c9ff70000001159-c0-5c4b150637c3
+Received: from eusync3.samsung.com ( [203.254.199.213]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id 22.D0.04284.6051B4C5; Fri, 25
+        Jan 2019 13:54:14 +0000 (GMT)
+Received: from AMDC2765.digital.local ([106.116.147.25]) by
+        eusync3.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
+        (built May  5 2014)) with ESMTPA id <0PLW00JUW3Y9R020@eusync3.samsung.com>;
+        Fri, 25 Jan 2019 13:54:14 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <l.luba@partner.samsung.com>,
+        Markus Reichl <m.reichl@fivetechno.de>
+Subject: [PATCH] devfreq: Suspend all devices on system shutdown
+Date:   Fri, 25 Jan 2019 14:54:03 +0100
+Message-id: <20190125135403.10228-1-m.szyprowski@samsung.com>
 X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7djP87psot4xBh+eqVhsnLGe1eL6l+es
+        FufPb2C3uNUgY3F51xw2i8+9RxgtZpzfx2Tx8sgPRou1R+6yW9xuXMHmwOVx6069x6ZVnWwe
+        B9/tYfLo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujCnd/xgLPnJX3L74kqWB8S9nFyMnh4SA
+        icTGZx9Zuhi5OIQEVjBKTJywBsr5zCixctE2VpiqV13vmSASyxglbh5bywjhNDBJzLv+khmk
+        ik3AUKLrbRcbiC0iEC9x/c8xsFHMAluZJLpb54AVCQs4SKz9sgTMZhFQlVjbd5MFxOYVsJXo
+        XnWHGWKdvMTqDQeYQZolBBrZJOZeuMcIkXCRmDxpC5QtI9HZcZAJoqiZUaJ9xix2CKeHUWLr
+        nB1sEFXWEoePXwT7glmAT2LStulAYzmA4rwSHW1CECUeEs83XwfbLCQQK/H7YhPzBEbxBYwM
+        qxjFU0uLc9NTiw3zUsv1ihNzi0vz0vWS83M3MQLj7fS/4592MH69lHSIUYCDUYmHd4Ogd4wQ
+        a2JZcWXuIUYJDmYlEV5OAaAQb0piZVVqUX58UWlOavEhRmkOFiVx3mqGB9FCAumJJanZqakF
+        qUUwWSYOTqkGRslHgXdXWR3L3iWpm3FiYv80XpblWxvfr2a+84XBvoLrYfFtdmu59RlPPv7s
+        WzZ7i5Jt29xJaW9DoxQONb1j+xt1cefXqHY14ZZLS9kV0wMvpArr+B/R/Wh0crbsBbuLrWl9
+        mo/k5b/Pjbfi0lkgo2D1dcqh8y2F6jNX/F3JX/nKft+dq0qq5UosxRmJhlrMRcWJAPA5+WWz
+        AgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrDJMWRmVeSWpSXmKPExsVy+t/xq7psot4xBqtesVtsnLGe1eL6l+es
+        FufPb2C3uNUgY3F51xw2i8+9RxgtZpzfx2Tx8sgPRou1R+6yW9xuXMHmwOVx6069x6ZVnWwe
+        B9/tYfLo27KK0ePzJrkA1igum5TUnMyy1CJ9uwSujCnd/xgLPnJX3L74kqWB8S9nFyMnh4SA
+        icSrrvdMXYxcHEICSxglnr9YxgLhNDFJrH9wiB2kik3AUKLrbRdbFyMHh4hAvMTJabUgNcwC
+        25kk9j79wARSIyzgILH2yxJmEJtFQFVibd9NFhCbV8BWonvVHWaIbfISqzccYJ7AyLWAkWEV
+        o0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYJhsO/Zz8w7GSxuDDzEKcDAq8fBG8HvHCLEmlhVX
+        5h5ilOBgVhLh5RQACvGmJFZWpRblxxeV5qQWH2KU5mBREuc9b1AZJSSQnliSmp2aWpBaBJNl
+        4uCUamBU+/wxr9zt4uaiDQdDF5/0vL1YJiTW/4C062WJVWwfVL+eSU9fk+kluy5nKePO4HW/
+        Ob2KindEye98WHK04Jv1GZPb2sf/h6R+bbRlF4zoSA63eaX8Psz9cENb7N19rZlL/pssfv/T
+        3j65yuJf3AOhfL5Sl5Xl3+ZqsD7/kllx3JfpTTC71BklluKMREMt5qLiRABZLXIaDwIAAA==
+X-CMS-MailID: 20190125135414eucas1p2ffc71c63f1a27f67d076dec889954b40
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20190125135414eucas1p2ffc71c63f1a27f67d076dec889954b40
+References: <CGME20190125135414eucas1p2ffc71c63f1a27f67d076dec889954b40@eucas1p2.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+This way devfreq core ensures that all its devices will be set to safe
+operation points before reboot operation. There are board on which some
+aggressive power saving operation points are behind the capabilities of
+the bootloader to properly reset the hardware and boot the board. This
+way one can avoid board crash early after reboot.
 
-Here's a PR with a couple of MMC fixes intended for v5.0-rc4. Details about the
-highlights are as usual found in the signed tag.
+Similar pattern is used in CPUfreq subsystem.
 
-Note that, my GPG-key expired last week, I have set a new expiration date for
-it and re-published it, however not sure if it's been replicated to all
-keyservers yet. Please tell if there is any issues from your side.
+Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/devfreq/devfreq.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Please pull this in!
+diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+index 0ae3de76833b..f6aba8344c56 100644
+--- a/drivers/devfreq/devfreq.c
++++ b/drivers/devfreq/devfreq.c
+@@ -23,6 +23,7 @@
+ #include <linux/devfreq.h>
+ #include <linux/workqueue.h>
+ #include <linux/platform_device.h>
++#include <linux/syscore_ops.h>
+ #include <linux/list.h>
+ #include <linux/printk.h>
+ #include <linux/hrtimer.h>
+@@ -1422,6 +1423,10 @@ static struct attribute *devfreq_attrs[] = {
+ };
+ ATTRIBUTE_GROUPS(devfreq);
+ 
++static struct syscore_ops devfreq_syscore_ops = {
++	.shutdown = devfreq_suspend,
++};
++
+ static int __init devfreq_init(void)
+ {
+ 	devfreq_class = class_create(THIS_MODULE, "devfreq");
+@@ -1438,6 +1443,8 @@ static int __init devfreq_init(void)
+ 	}
+ 	devfreq_class->dev_groups = devfreq_groups;
+ 
++	register_syscore_ops(&devfreq_syscore_ops);
++
+ 	return 0;
+ }
+ subsys_initcall(devfreq_init);
+-- 
+2.17.1
 
-Kind regards
-Ulf Hansson
-
-
-The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
-
-  Linux 5.0-rc2 (2019-01-14 10:41:12 +1200)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v5.0-rc2
-
-for you to fetch changes up to f3716b8ae9347797b73896725f192c3a7b0069b5:
-
-  mmc: dw_mmc-bluefield: : Fix the license information (2019-01-22 08:46:20 +0100)
-
-----------------------------------------------------------------
-MMC host:
- - sdhci-acpi: Fixup build dependency for PCI
- - sdhci-omap: Resolve Kconfig warnings on keystone
- - sdhci-iproc: Propagate errors from DT parsing
- - meson-gx: Fixup IRQ handling in release callback
- - meson-gx: Use signal re-sampling to fixup tuning
- - dw_mmc-bluefield: Fix the license information
-
-----------------------------------------------------------------
-Andreas Fenkart (1):
-      mmc: meson-gx: enable signal re-sampling together with tuning
-
-Faiz Abbas (1):
-      mmc: host: Fix Kconfig warnings on keystone_defconfig
-
-Liming Sun (1):
-      mmc: dw_mmc-bluefield: : Fix the license information
-
-Remi Pommarel (1):
-      mmc: meson-gx: Free irq in release() callback
-
-Sinan Kaya (1):
-      mmc: sdhci-acpi: Make PCI dependency explicit
-
-Stefan Wahren (1):
-      mmc: sdhci-iproc: handle mmc_of_parse() errors during probe
-
- drivers/mmc/host/Kconfig            |  4 ++--
- drivers/mmc/host/dw_mmc-bluefield.c |  5 -----
- drivers/mmc/host/meson-gx-mmc.c     | 32 ++++++++++++++++++++------------
- drivers/mmc/host/sdhci-iproc.c      |  5 ++++-
- 4 files changed, 26 insertions(+), 20 deletions(-)
