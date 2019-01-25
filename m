@@ -2,96 +2,174 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2907C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:45:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F674C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:48:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 96834218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:45:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548445507;
-	bh=Kl6CpE7je6XsPgyneluwNb85V6L1KTSWO092lJEYEgU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=io+l7oVwwFQODvS7coZcz28mPb50xm3SdXL8QNzWinsX08+ec6+oanpDbluJJAxNt
-	 C+w15F2iuxyewymyNRMt82LtSWHOFBC+1lJNaoD2k7x1e3VK3kKusDGP/cdO/uWuAL
-	 aw021A52TRUdHD+qBKRv95kMOzfBVj4oxZKRuk+k=
+	by mail.kernel.org (Postfix) with ESMTP id 5B3AF218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:48:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MSrBMA+D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbfAYTpG (ORCPT
+        id S1726604AbfAYTsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 14:45:06 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33661 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725778AbfAYTpF (ORCPT
+        Fri, 25 Jan 2019 14:48:03 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:42455 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfAYTsC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 14:45:05 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p7so11589537wru.0;
-        Fri, 25 Jan 2019 11:45:04 -0800 (PST)
+        Fri, 25 Jan 2019 14:48:02 -0500
+Received: by mail-lj1-f193.google.com with SMTP id l15-v6so9352699lja.9;
+        Fri, 25 Jan 2019 11:48:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=JmdXWPZhzyH5PZx96mF9B7z3C7elnoOo/xc9usySFHE=;
-        b=U4NRNLf+qQpqc1jcos061ZSKEO6Ax1d8t5bHKFhnWrm7lD6Xrz340opNwOj8BouELM
-         PDf5dbKczoXv5WhjpX6JmT0Ox1pJWkMgd6JOKvmJnGHs4nB9i+zDc3DYQgZlCTYur69f
-         NnQXaFPV4e+6wMml3ru6gtlqHovBcQCgGkEwennzpNofUE/gsZ6Eeuzy3XqXCY9Wsdq3
-         j1eDnadCKplY7/Zu5KUYdo0vNnMOBski7/adUQNYKUQSLr2xXe+TJ+YOjVayCoDb43+0
-         UTyCMz9rXyvcx4idI50TczM5S5tSU0p5PmnuPs5frHsvHyKF3ccWpPfOcij4Di6tSuZh
-         zmdw==
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=PaL/Nm/0v0Ytkgf6OpFItlBs3opiEJwSabaR9s9+cdA=;
+        b=MSrBMA+DumtrsUm/pQTTTpC1N1PaTbo58IFFJQCNsIHblpupPe11ThukCc4LHwPB9x
+         hFQR6vD0Q0n/vEiBaxxBdXR1sMO2KCZh4vjS8ItJpSEjBWVtmwGkdK3XX+416m2xZaZJ
+         YNcV2OkvHcfrQMGTMuf4962U7Yp+Xbs4WuMDmodHT0VmmxfIdWszOrWEMVztr4Plf75M
+         MN8DxaivndxdcG1Li3uzBJnkOrDRrBaHjM/SeoUWHVijxrR7VC2y9xp2PcRV+wuxAgO3
+         oD2FaW7qhnBfgegGRYYQ1hp72rSAJ/mt+dTMf9Ve/TCIVJ+hJSqBz+nVY1wFXyrwJR5X
+         JnFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=JmdXWPZhzyH5PZx96mF9B7z3C7elnoOo/xc9usySFHE=;
-        b=XxTMhm9nRuINGeMm8AgwAH4EPpD/aAmkSTN6k4XkGGQBDnNgNwdpV54XgJC8+hpagm
-         VZb4OJXRTLUcACJK+ZkMqCvSlzwvIyAMOtHUCAr6qsP9GyYnKjtvF9AaB51aWLvw2ZgC
-         glUyWLsKR5pZIyWnCjHXRzaOjE+DUmfeguKhbEPdCVaXiOUEjXdaGd3GL/1H9/tuJsOa
-         O6G+Ug1hsneLLLxrFfmqTyemHlj8eMaM1SPnzcicedMSGXw4S5nTTEPTn8jlNSGtOc6o
-         epBrSUChnIp7oKsYR1FV9ex9H7sQgaLb3b8sV+GmlAsQyzSxt3y+FZXI70taTcy9Wmci
-         Gt8Q==
-X-Gm-Message-State: AJcUukc47vJPMo2ia3M2wegpMZLsLStcQF1D6Sf/7c89bhPT5NsF2Qks
-        SjvtumKLP1eTQgTcSYdneu7zrPT7
-X-Google-Smtp-Source: ALg8bN5YSYIhsNZFAn7/k5ImOIgH8aHDWSAjTCIzZyVMDreU4Y9ujipHv2cOYUrcd6/l0Cl5WOM1jg==
-X-Received: by 2002:adf:cc91:: with SMTP id p17mr12989557wrj.118.1548445503704;
-        Fri, 25 Jan 2019 11:45:03 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id p5sm34481621wmh.16.2019.01.25.11.45.02
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 11:45:02 -0800 (PST)
-Date:   Fri, 25 Jan 2019 20:45:00 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        linux-edac <linux-edac@vger.kernel.org>
-Subject: Re: [PATCH] RAS: Add a MAINTAINERS entry
-Message-ID: <20190125194500.GA34849@gmail.com>
-References: <20190125174227.10652-1-bp@alien8.de>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=PaL/Nm/0v0Ytkgf6OpFItlBs3opiEJwSabaR9s9+cdA=;
+        b=Vi2nvKIuNL17mfwzNvOr9XivY21RVogK7mM339r28dHef2jsHNh5NhBLs/LcqLTjC9
+         Clu8g69V3uktvf+0K8l2+uK8eG4hbXhX3JDu4C2N8YFswEGUCPUVNDEgkJxlJTuY8+Px
+         fpNEjv6Gi1H9plK5fjEvLMwMtAS2DD8A8jyrywNcD/SsPblgFLn3fbSE8Mi1Qe+mh23S
+         9BYgTxhNeoZ82Gbdz5Y1pIIhIeAx6r9DBUk6mO9xCFUZQZavL3BvrnozNhcFZqn4Z3b2
+         iYCuCW2wR7mCZg2sPp2OUvq6P6QZHetCoVqRXCxkONjIfxhCijduua7z4q+xgIOyEM7S
+         8rOA==
+X-Gm-Message-State: AJcUukdHkc1vl1LA/k6lWrxAoiCKegwlEuduMrPWY5Y3qYIj9Cyk12VF
+        ne12zMFPWf0Sk2EqGZGM/Qs99oeeQU4=
+X-Google-Smtp-Source: ALg8bN5E91E+HlT5VVEGWOC6UtfvzDJd7FJfIowJ003CcX2TdiaNY/FmtCFoKeLTC4weO5Mr+QAISg==
+X-Received: by 2002:a2e:4601:: with SMTP id t1-v6mr10068707lja.111.1548445679752;
+        Fri, 25 Jan 2019 11:47:59 -0800 (PST)
+Received: from amb.local (31-179-17-47.dynamic.chello.pl. [31.179.17.47])
+        by smtp.gmail.com with ESMTPSA id c15-v6sm1683785ljf.76.2019.01.25.11.47.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 11:47:59 -0800 (PST)
+Subject: Re: pids.current with invalid value for hours [5.0.0 rc3 git]
+To:     Tejun Heo <tj@kernel.org>
+Cc:     cgroups@vger.kernel.org, Aleksa Sarai <asarai@suse.de>,
+        Jay Kamat <jgkamat@fb.com>, Roman Gushchin <guro@fb.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org
+References: <df806a77-3327-9db5-8be2-976fde1c84e5@gmail.com>
+ <20190117122535.njcbqhlmzozdkncw@mikami>
+ <1d36b181-cbaf-6694-1a31-2f7f55d15675@gmail.com>
+ <96ef6615-a5df-30af-b4dc-417a18ca63f1@gmail.com>
+ <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
+ <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
+From:   =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>
+Message-ID: <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
+Date:   Fri, 25 Jan 2019 20:47:57 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125174227.10652-1-bp@alien8.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: pl
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-* Borislav Petkov <bp@alien8.de> wrote:
-
-> From: Borislav Petkov <bp@suse.de>
+On 25/01/2019 17:37, Tejun Heo wrote:
+> On Fri, Jan 25, 2019 at 08:52:11AM +0100, Arkadiusz Miśkiewicz wrote:
+>> On 24/01/2019 12:21, Arkadiusz Miśkiewicz wrote:
+>>> On 17/01/2019 14:17, Arkadiusz Miśkiewicz wrote:
+>>>> On 17/01/2019 13:25, Aleksa Sarai wrote:
+>>>>> On 2019-01-17, Arkadiusz Miśkiewicz <a.miskiewicz@gmail.com> wrote:
+>>>>>> Using kernel 4.19.13.
+>>>>>>
+>>>>>> For one cgroup I noticed weird behaviour:
+>>>>>>
+>>>>>> # cat pids.current
+>>>>>> 60
+>>>>>> # cat cgroup.procs
+>>>>>> #
+>>>>>
+>>>>> Are there any zombies in the cgroup? pids.current is linked up directly
+>>>>> to __put_task_struct (so exit(2) won't decrease it, only the task_struct
+>>>>> actually being freed will decrease it).
+>>>>>
+>>>>
+>>>> There are no zombie processes.
+>>>>
+>>>> In mean time the problem shows on multiple servers and so far saw it
+>>>> only in cgroups that were OOMed.
+>>>>
+>>>> What has changed on these servers (yesterday) is turning on
+>>>> memory.oom.group=1 for all cgroups and changing memory.high from 1G to
+>>>> "max" (leaving memory.max=2G limit only).
+>>>>
+>>>> Previously there was no such problem.
+>>>>
+>>>
+>>> I'm attaching reproducer. This time tried on different distribution
+>>> kernel (arch linux).
+>>>
+>>> After 60s pids.current still shows 37 processes even if there are no
+>>> processes running (according to ps aux).
+>>
+>>
+>> The same test on 5.0.0-rc3-00104-gc04e2a780caf and it's easy to
+>> reproduce bug. No processes in cgroup but pids.current reports 91.
 > 
-> This was long overdue and it is needed at least so that Tony and I get
-> CCed on patches.
+> Can you please see whether the problem can be reproduced on the
+> current linux-next?
 > 
-> Signed-off-by: Borislav Petkov <bp@suse.de>
-> Acked-by: Tony Luck <tony.luck@intel.com>
+>  git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
 
-Acked-by: Ingo Molnar <mingo@kernel.org>
+I can reproduce on next (5.0.0-rc3-next-20190125), too:
 
-Thanks,
+[root@xps test]# python3 cg.py
+Created cgroup: /sys/fs/cgroup/test_2501
+Start: pids.current: 0
+Start: cgroup.procs:
+0: pids.current: 65
+0: cgroup.procs:
+1: pids.current: 44
+1: cgroup.procs:
+2: pids.current: 44
+2: cgroup.procs:
+3: pids.current: 44
+3: cgroup.procs:
+4: pids.current: 44
+4: cgroup.procs:
+5: pids.current: 44
+5: cgroup.procs:
+6: pids.current: 44
+6: cgroup.procs:
+7: pids.current: 44
+7: cgroup.procs:
+8: pids.current: 44
+8: cgroup.procs:
+9: pids.current: 44
+9: cgroup.procs:
+10: pids.current: 44
+10: cgroup.procs:
+11: pids.current: 44
+11: cgroup.procs:
+[root@xps test]# uname -a
+Linux xps 5.0.0-rc3-next-20190125 #2 SMP PREEMPT Fri Jan 25 19:11:40 CET
+2019 x86_64 Intel(R)_Core(TM)_i9-8950HK_CPU_@_2.90GHz PLD Linux
+[root@xps test]# mount |grep cgroup2
+cgroup2 on /sys/fs/cgroup type cgroup2 (rw,nosuid,nodev,noexec,relatime)
 
-	Ingo
+
+I'm booting kernel with cgroup_no_v1=all
+
+-- 
+Arkadiusz Miśkiewicz, arekm / ( maven.pl | pld-linux.org )
