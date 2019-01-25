@@ -2,188 +2,197 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C530EC282C5
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:14:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E825FC282C5
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95E38218D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:14:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="sweZFUxy"
+	by mail.kernel.org (Postfix) with ESMTP id A9F0D2083B
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:14:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728469AbfAYDOF (ORCPT
+        id S1728554AbfAYDOO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:14:05 -0500
-Received: from sonic312-28.consmr.mail.bf2.yahoo.com ([74.6.128.90]:41050 "EHLO
-        sonic312-28.consmr.mail.bf2.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728339AbfAYDOD (ORCPT
+        Thu, 24 Jan 2019 22:14:14 -0500
+Received: from mail.windriver.com ([147.11.1.11]:33652 "EHLO
+        mail.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728339AbfAYDOO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:14:03 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1548386042; bh=w8ta0RrtTEnHTNvflMGm2gLEJJUhaEuuAVTXf9p/XFk=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=sweZFUxy1MilKcOQ3wr551PC40XtOk7gmb8oTOo12P5C7GN22IDJ4ucdeUbPkQYl7Zoqsm/pA96lDjSAp7s8IAPTKXvaunrwy/ps2vgNVyJGaIKDnR2oEg91u4UOH92QmmelD/FTVbiyHv6fxwwx6dGueqMZsGQSWJPqyVL+QUrHb6BU7il2VWlrjRZSLnk7e6f7OKQ4PHgS131pq7ieRIDPRTQzWdNT7kIn8FVUe9Cv0FHqwjuIacGaPA2eiL0vZLcAGSFoJV9JF22pqz/9t5Y1FkEXG51FT9w7wPXQmX5OAj2Wuv3DXscnnJYCYHLBVo/Qqqmy7HEnDNwRWrgirQ==
-X-YMail-OSG: mhXClJgVM1n4WLvaUG7axCwoOZUklJgYhB0fnJy2wZKcqDfICXkMhquab6emxlo
- ipeGRnOKApJ9uRCj15L1nj0PqnPgXPXOWccoDZfQRGRyo_.meOJrYO1ZTkEPkkJ.g4kczH9w3NEX
- 89.X2G2uux3vRGc3nHTAsQ8w7o4fWrOjlwT9TH2odRhcgxc8.XsH_mV.sae8nDDwGoZ3i23fb6NE
- Woi1dWFo3frdHHKLI5sdo7GuDrsbkTnTw6jz3U.YiUjqyJ3TevrRGhe0jMgs0bSbeGE5Ywaayq76
- wORwotWBU..QgmAWGaNqh1ENBGkF73UDSiWo8tj6FqeTPNzblkPuQbkqF9RfmL7Sm.F8bV5sEfSX
- EPgMvSNO.9xlwU2cHMg7_7DiZCxSNF5tNCr54AhGTgAfB7.wrAvDAVqBufvAAYesWS4fgY88.CKz
- ctkf.vxdIc_4bTIgs8mSezgX7M3ietcIT0ltSLatdwv9_MaBlsHHFNgAr9.t1dP6AIWHEUmVOXuw
- p8ozghsynmOMMDltrhq4Gf.An4qv0nP.y7ypWVgKvh5LMbdDru5fcmhrr66SbrebFkbmoFofpgxX
- OtJxiNRWdIdYz.P.8YeZkLgqxyXwYvm0vFRpfhMzv80uOWuQqKfwsPn3.WsjGW0_R9Bcqhkcgf8i
- Fr5GLs7fIuL7JU.P79szoSrMXbcMfXaGULplXa86MEZvppwBEzuF956ztqdAvl.XQIcjHSkmaTQJ
- ZFLxs.dxcpDYz3WuTGt1KdHDJ1oZuLTRAbxGmtEDkKYmFu0ToeATnS7uJzVwOxP7QbTu6CKa_IMj
- retjVKxuNZQ6fg_czxTvzBjUacLGAfsoOrc2Q_5p9yIVbfYCqbF8yjkCA098Irp.P3.KtcSqjWCD
- Vy0pur54SW6PmBAHfzFX8KeZs4bbbqcBmE7PSF3iAM5pV3QvEQPY3_YarWQGcDKCP28odDmZMM3G
- zZeOaC3slIP.7Xqdgz0KbJsImCXQWU8f8eWdt3UdMTBopkIeClucCcXMqeaSGM1a6My53.1RwVLx
- xFPPBb18w4QSYOlbH9UTXmpEYplgRI10HQdQHkPQY5HLUoDMtJrzGQXC142KJsKqqgkKJeiDDsjx
- ZFM.W9xBEdwPDk_kt7lznbWn85tILOlc0nv.AqZYF
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.bf2.yahoo.com with HTTP; Fri, 25 Jan 2019 03:14:02 +0000
-Received: from 202.36.179.100 (EHLO [10.193.2.218]) ([202.36.179.100])
-          by smtp417.mail.bf1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID fbf0cee7abaadf9895f2ada916badca5;
-          Fri, 25 Jan 2019 03:14:01 +0000 (UTC)
-Subject: Re: [PATCH] security: mark expected switch fall-throughs
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-References: <20190125025639.GA13946@embeddedor>
-From:   Casey Schaufler <casey@schaufler-ca.com>
-Message-ID: <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
-Date:   Thu, 24 Jan 2019 19:13:58 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Thu, 24 Jan 2019 22:14:14 -0500
+Received: from ALA-HCA.corp.ad.wrs.com ([147.11.189.40])
+        by mail.windriver.com (8.15.2/8.15.1) with ESMTPS id x0P3E7oF006218
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Thu, 24 Jan 2019 19:14:07 -0800 (PST)
+Received: from [128.224.162.180] (128.224.162.180) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 24 Jan
+ 2019 19:14:07 -0800
+Subject: Re: LTP case read_all_proc fails on qemux86-64 since 5.0-rc1
+To:     Jens Axboe <axboe@kernel.dk>
+CC:     <davem@davemloft.net>, <linux-ide@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <316b80da-0811-f9e6-dd42-41ddbb7eb8a0@windriver.com>
+ <C1903094-A3C8-4273-9869-72D400180E51@kernel.dk>
+ <11b1b3ee-a94b-dd5e-3ba6-df3efa239c7f@kernel.dk>
+ <adb69f96-8825-ef14-3e02-98c046f72ecb@windriver.com>
+ <31660451-9ab4-43b8-b468-ae7b9a8d2279@kernel.dk>
+ <eae853aa-de54-42d6-a9bc-254c152cec5b@windriver.com>
+ <29f3b60d-922e-001a-0c1c-ed8482c6e409@kernel.dk>
+ <0905efc0-d4f2-08d8-0f87-bd4bfab6e46e@windriver.com>
+ <ff2b87eb-54f0-f40b-a317-8bbbb32759f4@kernel.dk>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <594d7f4d-f241-b279-954d-6d4569ea8dd2@windriver.com>
+Date:   Fri, 25 Jan 2019 11:14:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190125025639.GA13946@embeddedor>
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <ff2b87eb-54f0-f40b-a317-8bbbb32759f4@kernel.dk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Content-Language: en-US
+X-Originating-IP: [128.224.162.180]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/24/2019 6:56 PM, Gustavo A. R. Silva wrote:
-> In preparation to enabling -Wimplicit-fallthrough, mark switch
-> cases where we are expecting to fall through.
->
-> This patch fixes the following warnings:
->
-> security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
-> security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
->
-> Warning level 3 was used: -Wimplicit-fallthrough=3
->
-> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
->
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-Ug. It can't be part of a greater comment? Grumble.
+On 1/25/19 10:26 AM, Jens Axboe wrote:
+> On 1/24/19 7:22 PM, He Zhe wrote:
+>>
+>> On 1/25/19 10:05 AM, Jens Axboe wrote:
+>>> On 1/24/19 6:40 PM, He Zhe wrote:
+>>>> On 1/24/19 11:40 PM, Jens Axboe wrote:
+>>>>> On 1/24/19 1:23 AM, He Zhe wrote:
+>>>>>> On 1/24/19 12:05 AM, Jens Axboe wrote:
+>>>>>>> On 1/22/19 8:39 PM, Jens Axboe wrote:
+>>>>>>>> On Jan 22, 2019, at 8:13 PM, He Zhe <zhe.he@windriver.com> wrote:
+>>>>>>>>> LTP case read_all_proc(read_all -d /proc -q -r 10) often, but not every time, fails with the following call traces, since 600335205b8d "ide: convert to blk-mq"(5.0-rc1) till now(5.0-rc3).
+>>>>>>>>>
+>>>>>>>>> qemu-system-x86_64 -drive file=rootfs.ext4,if=virtio,format=raw -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-pci,rng=rng0 -nographic -m 16192 -smp cpus=12 -cpu core2duo -enable-kvm -serial mon:stdio -serial null -kernel bzImage -append 'root=/dev/vda rw highres=off console=ttyS0 mem=16192M'
+>>>>>>>>>
+>>>>>>>>> tst_test.c:1085: INFO: Timeout per run is 0h 05m 00s
+>>>>>>>>> [   47.080156] Warning: /proc/ide/hd?/settings interface is obsolete, and will be removed soon!
+>>>>>>>>> [   47.085330] ------------[ cut here ]------------
+>>>>>>>>> [   47.085810] kernel BUG at block/blk-mq.c:767!
+>>>>>>>>> [   47.086498] invalid opcode: 0000 [#1] PREEMPT SMP PTI
+>>>>>>>>> [   47.087022] CPU: 5 PID: 146 Comm: kworker/5:1H Not tainted 5.0.0-rc3 #1
+>>>>>>>>> [   47.087858] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+>>>>>>>>> [   47.088992] Workqueue: kblockd blk_mq_run_work_fn
+>>>>>>>>> [   47.089469] RIP: 0010:blk_mq_add_to_requeue_list+0xc1/0xd0
+>>>>>>>>> [   47.090035] Code: 48 8d 53 48 49 8b 8c 24 b8 04 00 00 48 89 51 08 48 89 4b 48 49 8d 8c 24 b8 04 00 00 48 89 4b 50 49 89 94 24 b8 04 00 008
+>>>>>>>>> [   47.091930] RSP: 0018:ffff9e1ea4b43e40 EFLAGS: 00010002
+>>>>>>>>> [   47.092458] RAX: ffff9e1ea13c0048 RBX: ffff9e1ea13c0000 RCX: 0000000000000006
+>>>>>>>>> [   47.093181] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9e1ea13c0000
+>>>>>>>>> [   47.093906] RBP: ffff9e1ea4b43e68 R08: ffffeb5bcf630680 R09: 0000000000000000
+>>>>>>>>> [   47.094626] R10: 0000000000000001 R11: 0000000000000012 R12: ffff9e1ea1033a40
+>>>>>>>>> [   47.095347] R13: ffff9e1ea13a8d00 R14: ffff9e1ea13a9000 R15: 0000000000000046
+>>>>>>>>> [   47.096071] FS:  0000000000000000(0000) GS:ffff9e1ea4b40000(0000) knlGS:0000000000000000
+>>>>>>>>> [   47.096898] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>>>> [   47.097477] CR2: 0000003fda41fda0 CR3: 00000003d8e6a000 CR4: 00000000000006e0
+>>>>>>>>> [   47.098203] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>>>>>> [   47.098929] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>>>>>> [   47.099650] Call Trace:
+>>>>>>>>> [   47.099910]  <IRQ>
+>>>>>>>>> [   47.100128]  blk_mq_requeue_request+0x58/0x60
+>>>>>>>>> [   47.100576]  ide_requeue_and_plug+0x20/0x50
+>>>>>>>>> [   47.101014]  ide_intr+0x21a/0x230
+>>>>>>>>> [   47.101362]  ? idecd_open+0xc0/0xc0
+>>>>>>>>> [   47.101735]  __handle_irq_event_percpu+0x43/0x1e0
+>>>>>>>>> [   47.102214]  handle_irq_event_percpu+0x32/0x80
+>>>>>>>>> [   47.102668]  handle_irq_event+0x39/0x60
+>>>>>>>>> [   47.103074]  handle_edge_irq+0xe8/0x1c0
+>>>>>>>>> [   47.103470]  handle_irq+0x20/0x30
+>>>>>>>>> [   47.103819]  do_IRQ+0x46/0xe0
+>>>>>>>>> [   47.104128]  common_interrupt+0xf/0xf
+>>>>>>>>> [   47.104505]  </IRQ>
+>>>>>>>>> [   47.104731] RIP: 0010:ide_output_data+0xbc/0x100
+>>>>>>>>> [   47.105201] Code: 74 22 8d 41 ff 85 c9 74 24 49 8d 54 40 02 41 0f b7 00 66 41 89 01 49 83 c0 02 49 39 d0 75 ef 5b 41 5c 5d c3 4c 89 c6 445
+>>>>>>>>> [   47.107092] RSP: 0018:ffffbd508059bb18 EFLAGS: 00010246 ORIG_RAX: ffffffffffffffdd
+>>>>>>>>> [   47.107862] RAX: ffff9e1ea13a8800 RBX: ffff9e1ea13a9000 RCX: 0000000000000000
+>>>>>>>>> [   47.108581] RDX: 0000000000000170 RSI: ffff9e1ea13c012c RDI: 0000000000000000
+>>>>>>>>> [   47.109293] RBP: ffffbd508059bb28 R08: ffff9e1ea13c0120 R09: 0000000000000170
+>>>>>>>>> [   47.110016] R10: 000000000000000d R11: 000000000000000c R12: ffff9e1ea13a8800
+>>>>>>>>> [   47.110731] R13: 000000000000000c R14: ffff9e1ea13c0000 R15: 0000000000007530
+>>>>>>>>> [   47.111446]  ide_transfer_pc+0x216/0x310
+>>>>>>>>> [   47.111848]  ? __const_udelay+0x3d/0x40
+>>>>>>>>> [   47.112236]  ? ide_execute_command+0x85/0xb0
+>>>>>>>>> [   47.112668]  ? ide_pc_intr+0x3f0/0x3f0
+>>>>>>>>> [   47.113051]  ? ide_check_atapi_device+0x110/0x110
+>>>>>>>>> [   47.113524]  ide_issue_pc+0x178/0x240
+>>>>>>>>> [   47.113901]  ide_cd_do_request+0x15c/0x350
+>>>>>>>>> [   47.114314]  ide_queue_rq+0x180/0x6b0
+>>>>>>>>> [   47.114686]  ? blk_mq_get_driver_tag+0xa1/0x110
+>>>>>>>>> [   47.115153]  blk_mq_dispatch_rq_list+0x90/0x550
+>>>>>>>>> [   47.115606]  ? __queue_delayed_work+0x63/0x90
+>>>>>>>>> [   47.116054]  ? deadline_fifo_request+0x41/0x90
+>>>>>>>>> [   47.116506]  blk_mq_do_dispatch_sched+0x80/0x100
+>>>>>>>>> [   47.116976]  blk_mq_sched_dispatch_requests+0xfc/0x170
+>>>>>>>>> [   47.117491]  __blk_mq_run_hw_queue+0x6f/0xd0
+>>>>>>>>> [   47.117941]  blk_mq_run_work_fn+0x1b/0x20
+>>>>>>>>> [   47.118342]  process_one_work+0x14c/0x450
+>>>>>>>>> [   47.118747]  worker_thread+0x4a/0x440
+>>>>>>>>> [   47.119125]  kthread+0x105/0x140
+>>>>>>>>> [   47.119456]  ? process_one_work+0x450/0x450
+>>>>>>>>> [   47.119880]  ? kthread_park+0x90/0x90
+>>>>>>>>> [   47.120251]  ret_from_fork+0x35/0x40
+>>>>>>>>> [   47.120619] Modules linked in:
+>>>>>>>>> [   47.120952] ---[ end trace 4562f716e88fdefe ]---
+>>>>>>>>> [   47.121423] RIP: 0010:blk_mq_add_to_requeue_list+0xc1/0xd0
+>>>>>>>>> [   47.121981] Code: 48 8d 53 48 49 8b 8c 24 b8 04 00 00 48 89 51 08 48 89 4b 48 49 8d 8c 24 b8 04 00 00 48 89 4b 50 49 89 94 24 b8 04 00 008
+>>>>>>>>> [   47.123851] RSP: 0018:ffff9e1ea4b43e40 EFLAGS: 00010002
+>>>>>>>>> [   47.124393] RAX: ffff9e1ea13c0048 RBX: ffff9e1ea13c0000 RCX: 0000000000000006
+>>>>>>>>> [   47.125108] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9e1ea13c0000
+>>>>>>>>> [   47.125819] RBP: ffff9e1ea4b43e68 R08: ffffeb5bcf630680 R09: 0000000000000000
+>>>>>>>>> [   47.126539] R10: 0000000000000001 R11: 0000000000000012 R12: ffff9e1ea1033a40
+>>>>>>>>> [   47.127262] R13: ffff9e1ea13a8d00 R14: ffff9e1ea13a9000 R15: 0000000000000046
+>>>>>>>>> [   47.127988] FS:  0000000000000000(0000) GS:ffff9e1ea4b40000(0000) knlGS:0000000000000000
+>>>>>>>>> [   47.128793] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>>>> [   47.129385] CR2: 0000003fda41fda0 CR3: 00000003d8e6a000 CR4: 00000000000006e0
+>>>>>>>>> [   47.130104] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>>>>>> [   47.130823] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>>>>>> [   47.131547] Kernel panic - not syncing: Fatal exception in interrupt
+>>>>>>>>> [   47.132609] Kernel Offset: 0x7c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>>>>>>>>> [   47.133679] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+>>>>>>>>> [   47.134432] ------------[ cut here ]-----------
+>>>>>>>> I’ll take a look at this, thanks for the report.
+>>>>>>> I can't reproduce this, unfortunately. But I'm guessing it might be related
+>>>>>>> to a race with the requeue and request handling in IDE. Can you try with
+>>>>>>> the below patch?
+>>>>>> Thanks for attention, but this patch doesn't help.
+>>>>> OK, thanks for trying.
+>>>>>
+>>>>>> From what I reached, to reproduce it, we need to use legacy CONFIG_IDE
+>>>>>> and friends where "ide: convert to blk-mq" sits, not CONFIG_ATA and so
+>>>>>> on.  I can reproduce it with qemux86-64 with "-drive ... if=ide" or
+>>>>>> "-drive ... if=virtio".
+>>>>> Yes of course, I am trying to reproduce with the legacy stack. Just not
+>>>>> having any luck doing it, even thousands of read_all iterations on /proc
+>>>>> with IO to the IDE drives is still not doing it. From your trace, it
+>>>>> looks like ide-cd causing it, which would mean a cdrom of some sort.
+>>>>>
+>>>>> I'll try again!
+>>>> My .config is attached.
+>>> Can you try with this patch?
+>> With this patch, it cannot boot up.
+> Ugh, forgot it's inclusive. You want it at '2', not '1'.
 
-> ---
->  security/apparmor/domain.c                | 2 +-
->  security/integrity/ima/ima_appraise.c     | 1 +
->  security/integrity/ima/ima_policy.c       | 4 ++++
->  security/integrity/ima/ima_template_lib.c | 1 +
->  security/smack/smack_lsm.c                | 3 +--
->  5 files changed, 8 insertions(+), 3 deletions(-)
+With "set->queue_depth = 2;", reading aganst /sys or normal disk dir is OK, but the following hang. So the related test cases are all timed out.
+
+ps -elf
+---- snip ----
+5 D root       415     1  0  80   0 -   664 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 10
+5 D root       416     1  0  80   0 -   669 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 10
+5 D root       417     1  0  80   0 -   674 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 10
+5 D root       421     1  0  80   0 -   629 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 1
+5 D root       434     1  0  80   0 -   629 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 1
+5 D root       448     1  0  80   0 -   629 io_sch 02:55 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 1
+5 D root       474     1  0  80   0 -   629 flush_ 02:55 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /dev -r 1
+
+In addition, without this change, it can be reproduced more often with more processes.
+
+Zhe
+
 >
-> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-> index 726910bba84b..c7c619578095 100644
-> --- a/security/apparmor/domain.c
-> +++ b/security/apparmor/domain.c
-> @@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
->  			stack = NULL;
->  			break;
->  		}
-> -		/* fall through to X_NAME */
-> +		/* fall through - to X_NAME */
->  	case AA_X_NAME:
->  		if (xindex & AA_X_CHILD)
->  			/* released by caller */
-> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-> index a2baa85ea2f5..57daf30fb7d4 100644
-> --- a/security/integrity/ima/ima_appraise.c
-> +++ b/security/integrity/ima/ima_appraise.c
-> @@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
->  		break;
->  	case CREDS_CHECK:
->  		iint->ima_creds_status = status;
-> +		/* fall through */
->  	case FILE_CHECK:
->  	case POST_SETATTR:
->  		iint->ima_file_status = status;
-> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-> index 8bc8a1c8cb3f..122797023bdb 100644
-> --- a/security/integrity/ima/ima_policy.c
-> +++ b/security/integrity/ima/ima_policy.c
-> @@ -938,10 +938,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  		case Opt_uid_gt:
->  		case Opt_euid_gt:
->  			entry->uid_op = &uid_gt;
-> +			/* fall through */
->  		case Opt_uid_lt:
->  		case Opt_euid_lt:
->  			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
->  				entry->uid_op = &uid_lt;
-> +			/* fall through */
->  		case Opt_uid_eq:
->  		case Opt_euid_eq:
->  			uid_token = (token == Opt_uid_eq) ||
-> @@ -970,9 +972,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
->  			break;
->  		case Opt_fowner_gt:
->  			entry->fowner_op = &uid_gt;
-> +			/* fall through */
->  		case Opt_fowner_lt:
->  			if (token == Opt_fowner_lt)
->  				entry->fowner_op = &uid_lt;
-> +			/* fall through */
->  		case Opt_fowner_eq:
->  			ima_log_string_op(ab, "fowner", args[0].from,
->  					  entry->fowner_op);
-> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-> index 43752002c222..513b457ae900 100644
-> --- a/security/integrity/ima/ima_template_lib.c
-> +++ b/security/integrity/ima/ima_template_lib.c
-> @@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
->  		/* skip ':' and '\0' */
->  		buf_ptr += 2;
->  		buflen -= buf_ptr - field_data->data;
-> +		/* fall through */
->  	case DATA_FMT_DIGEST:
->  	case DATA_FMT_HEX:
->  		if (!buflen)
-> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-> index fa98394a40d0..127aa6c58e34 100644
-> --- a/security/smack/smack_lsm.c
-> +++ b/security/smack/smack_lsm.c
-> @@ -3391,13 +3391,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
->  		 */
->  		final = &smack_known_star;
->  		/*
-> -		 * Fall through.
-> -		 *
->  		 * If a smack value has been set we want to use it,
->  		 * but since tmpfs isn't giving us the opportunity
->  		 * to set mount options simulate setting the
->  		 * superblock default.
->  		 */
-> +		/* Fall through */
->  	default:
->  		/*
->  		 * This isn't an understood special case.
+
