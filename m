@@ -2,206 +2,190 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2037CC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94CA0C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:33:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7BEB218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:33:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="DFN6RsSF"
+	by mail.kernel.org (Postfix) with ESMTP id 624782146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:33:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548430432;
+	bh=WjkqafWbRIcHoKvZHTxSFOYP9foD21IA9880hyor6PY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
+	b=O0ENyJZ95/iiZKt22t6hiMmD7iGgb3SLdImJ+KlaE3TmLt0DvNoiSQQ490WZVgnou
+	 ytBtPGJg0/Wp6xakyTgfz1t1Reyg/faRjiZomcG1BddR4RMlmb5WulHNPZ2x4Uj5/F
+	 joHFLmoz0+JkDZ49tjinnhAHqKiJ7nipKR8e9kuM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728550AbfAYPdg (ORCPT
+        id S1728632AbfAYPdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:33:36 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51385 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbfAYPdg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:33:36 -0500
-Received: by mail-it1-f194.google.com with SMTP id w18so11092629ite.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 07:33:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=VnxuO0zInriS8uytZ7mXwH/xwkftDEWcb8plf38/ch4=;
-        b=DFN6RsSFdzmY0p8mcPBtIBSBEenEbBgV3a1c4lpyy16qx4dtd+plvsJeVYu3gJCbjj
-         zeLrguWqEZlSQQrYGFaszAuWAxwY83UbN6T1HcY7Aq+J6eM6FHNJDKIxMdymTy0H7oqu
-         4eqPOENDHQ9N5jXtx4GFF9G1QgGEYTvf1iHb2YMQ0If+8yin5nWmF0Eb2i9fdRjDMCd5
-         C+qbbnTgIa4ykU0BVzfRJPGlkB957ILuBvf/hfPdgxKhzU0a05rkhdTqMi0pxfHjgAk6
-         mT3TkzeajB8HH7wSa8YGxsjK8zyfdimWG+uiHjmVO3T/lB1hZsHoQtPykNelxB2lOWJh
-         8fTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VnxuO0zInriS8uytZ7mXwH/xwkftDEWcb8plf38/ch4=;
-        b=TXfn7JOT5n6Ye8xyVa7eLXJ72raNvCjgI/xBytg2QVuKKSTHANSddHySWCk9a17U83
-         qyMBbIzP8AD94Qdkn9wNhQn1w7DNosVG6u1pnJFfUbhP33eIS1P0KLfilceIwN0MyDNK
-         aN56mEihpVkthGRRB5Sm3MY9+iYjXtXpOsjFQnDJPIgsoi3ZaKM4hi8JDDuR/zDv97VV
-         8ECN1LH+e6LhWCguDrNc2PitUzkk2SeT4Lo69PCPPw3iY4J89BYc3BHUxdBpJIfK9Mxv
-         O/nTf9AVCgCS5QosEdLmIJvRNGyDUqoLqAW++5+842v9aoyMTCzGgqlRDcvPQu5UN7kR
-         rQtA==
-X-Gm-Message-State: AJcUukdjIcapfrmJuquTUnQAxcuqOgxl725hkf64e8Y2ismDTbbBS7PP
-        NC+FR9qaoBCgCD4BrVZFcVq2UNC3CMJszFh1T6+iyQ==
-X-Google-Smtp-Source: ALg8bN5a8v09r0nJgCDim5fnuhErJaS2P4mj/Kj77NZNLRZkK03VdiH138TnTg69dL99F53+SM3bUdS7HerP9QtDy9Y=
-X-Received: by 2002:a24:2104:: with SMTP id e4mr4164119ita.59.1548430414712;
- Fri, 25 Jan 2019 07:33:34 -0800 (PST)
+        Fri, 25 Jan 2019 10:33:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60266 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726256AbfAYPdu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:33:50 -0500
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E1F3218DE;
+        Fri, 25 Jan 2019 15:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548430428;
+        bh=WjkqafWbRIcHoKvZHTxSFOYP9foD21IA9880hyor6PY=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=mhToJIad9MPm6BCQWUIguEEwRFF68Iz2qkd6bvNQ7n1evDNx4yTI44We/ASyD2ez6
+         HIrkiO59EfWBFoYh1aCA4+Bg9ICR33f6kB/zccX96Q8n27rbiR6gHgsfXtpzt+vp3Z
+         joTIpxeTqRZEH8lkFzu/PEKkZtYcEqt2As1jF2is=
+Received: by mail-qt1-f174.google.com with SMTP id l11so11127322qtp.0;
+        Fri, 25 Jan 2019 07:33:48 -0800 (PST)
+X-Gm-Message-State: AJcUukdiq7ZaoavYEoVT1P9URikeM9lqdmddzqUq/VlBz5iS3rbu06u9
+        qGeD5fZpvWPx7CTSDUG+d1Ij6rgpsYy+BvhlAQ==
+X-Google-Smtp-Source: ALg8bN6TwF7xTsekzlSSvlZVKpFbTOEMZIVoartuxWhCbbIoS2kxZjN1wBC4N4w6y/fqXhU1lXYsrdfmLbJoXhX+tw8=
+X-Received: by 2002:aed:3ecf:: with SMTP id o15mr11596557qtf.26.1548430427574;
+ Fri, 25 Jan 2019 07:33:47 -0800 (PST)
 MIME-Version: 1.0
-References: <20190123000057.31477-1-oded.gabbay@gmail.com> <CAPM=9tznaiw+a7rWqfdMMO6Aj3GtsO9vetd=3n9d+bGLW0U8Cg@mail.gmail.com>
- <20190125073745.GD11891@kroah.com>
-In-Reply-To: <20190125073745.GD11891@kroah.com>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Fri, 25 Jan 2019 07:33:23 -0800
-Message-ID: <CAOesGMgJUeUMoRXZ98=J8bpfCuZOOMo5pwpVXZX-o-y1dAQsHA@mail.gmail.com>
-Subject: Re: [PATCH 00/15] Habana Labs kernel driver
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Dave Airlie <airlied@gmail.com>,
-        Oded Gabbay <oded.gabbay@gmail.com>,
-        Jerome Glisse <jglisse@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>, ogabbay@habana.ai
+References: <20190124200825.2611-1-f.fainelli@gmail.com> <1a19b5f3-1387-0e6d-2d84-1b61079b4efb@gmail.com>
+ <3e63d0c3-cb92-5caa-c0db-a04ef8fb5393@gmail.com> <04286c55-b995-3c5b-dc03-9f3c46d6376b@gmail.com>
+ <bb238bed-0183-18b4-0182-fac4a74ed8a2@gmail.com>
+In-Reply-To: <bb238bed-0183-18b4-0182-fac4a74ed8a2@gmail.com>
+From:   Rob Herring <robh+dt@kernel.org>
+Date:   Fri, 25 Jan 2019 09:33:35 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqL=N7+mHrAbNotMeQmuyTLkVWTQ0C38Hq22szOk+kOyRg@mail.gmail.com>
+Message-ID: <CAL_JsqL=N7+mHrAbNotMeQmuyTLkVWTQ0C38Hq22szOk+kOyRg@mail.gmail.com>
+Subject: Re: [PATCH] of: Make of_node_name_eq() case insensitive
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Frank Rowand <frowand.list@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        vivien.didelot@gmail.com,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
+        <devicetree@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
-
-On Thu, Jan 24, 2019 at 11:37 PM Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> wrote:
+On Thu, Jan 24, 2019 at 11:00 PM Florian Fainelli <f.fainelli@gmail.com> wrote:
 >
-> On Thu, Jan 24, 2019 at 07:57:11AM +1000, Dave Airlie wrote:
-> > On Wed, 23 Jan 2019 at 10:01, Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> > >
-> > > Hello,
-> > >
-> > > For those who don't know me, my name is Oded Gabbay (Kernel Maintainer
-> > > for AMD's amdkfd driver, worked at RedHat's Desktop group) and I work at
-> > > Habana Labs since its inception two and a half years ago.
+>
+>
+> On 1/24/19 6:06 PM, Frank Rowand wrote:
+> > On 1/24/19 5:20 PM, Florian Fainelli wrote:
+> >>
+> >>
+> >> On 1/24/19 3:45 PM, Frank Rowand wrote:
+> >>> On 1/24/19 12:08 PM, Florian Fainelli wrote:
+> >>>> Since c32569e358ad ("regulator: Use of_node_name_eq for node name
+> >>>> comparisons") Vivien reported the mc13892-regulator complaining about
+> >>>> not being able to find regulators.
+> >>>>
+> >>>> This is because prior to that commit we used of_node_cmp() to compare
+> >>>> the regulator array passed from mc13892_regulators down to
+> >>>> mc13xxx_parse_regulators_dt() and they are all defined in uppercase
+> >>>> letters by the MC13892_*_DEFINE* macros, whereas they are defined as
+> >>>> lowercase in the DTS.
+> >>>>
+> >>>> Fix this by use strncasecmp() since that makes sure the comparison is
+> >>>> case insensitive like what of_node_cmp() did.
+> >>>>
+> >>>> Reported-by: Vivien Didelot <vivien.didelot@gmail.com>
+> >>>> Fixes: c32569e358ad ("regulator: Use of_node_name_eq for node name comparisons")
+> >>>> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> >>>> ---
+> >>>>  drivers/of/base.c | 3 ++-
+> >>>>  1 file changed, 2 insertions(+), 1 deletion(-)
+> >>>>
+> >>>> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> >>>> index 5226e898476e..ff47c86277cb 100644
+> >>>> --- a/drivers/of/base.c
+> >>>> +++ b/drivers/of/base.c
+> >>>> @@ -66,7 +66,8 @@ bool of_node_name_eq(const struct device_node *np, const char *name)
+> >>>>    node_name = kbasename(np->full_name);
+> >>>>    len = strchrnul(node_name, '@') - node_name;
+> >>>>
+> >>>> -  return (strlen(name) == len) && (strncmp(node_name, name, len) == 0);
+> >>>> +  return (strlen(name) == len) &&
+> >>>> +          (strncasecmp(node_name, name, len) == 0);
+> >>>>  }
+> >>>>  EXPORT_SYMBOL(of_node_name_eq);
+> >>>>
+> >>>>
+> >>>
+> >>> Node names are case sensitive.  Please fix mc13xxx_parse_regulators_dt() to
+> >>> properly handle case instead of changing of_node_name_eq().
+> >>
+> >> Fair enough, should we issue a warning if np->full_name contains upper
+> >> case while name does not (and vice versa) to help troubleshoot cases
+> >> like the one we found with Vivien?
 > >
-> > Hey Oded,
-> >
-> > So this creates a driver with a userspace facing API via ioctls.
-> > Although this isn't a "GPU" driver we have a rule in the graphics
-> > drivers are for accelerators that we don't merge userspace API with an
-> > appropriate userspace user.
-> >
-> > https://dri.freedesktop.org/docs/drm/gpu/drm-uapi.html#open-source-userspace-requirements
-> >
-> > I see nothing in these accelerator drivers that make me think we
-> > should be treating them different.
+> > It seems like a lot of work to detect that specific case.  If anything,
+> > maybe just add some text to the existing "Unknown regulator: ..." warning
+> > in mc13xxx_parse_regulators_dt() to mention that case matters.
 >
-> I understand that this is your position on when you accept drivers into
-> the DRM layer, as you need to interact with common interfaces and a
-> massive userspace stack at the same time.  And that's wonderful, it
-> allows you to be able to move both sides of that stack forward without
-> removing support for devices that worked on older kernels.
+> I was not thinking about something very clever, just issue a warning
+> like this, completely untested and likely flawed:
 >
-> But, that's not really the case with this new driver at all.  We add new
-> driver subsystems, and individual drivers, with loads of new ioctls, in
-> every new kernel release.  We don't impose on all of them the "your
-> userspace code must be open" rule, so why is this new driver somehow
-> different from them?
+> diff --git a/drivers/of/base.c b/drivers/of/base.c
+> index 5226e898476e..2505286c875b 100644
+> --- a/drivers/of/base.c
+> +++ b/drivers/of/base.c
+> @@ -58,6 +58,7 @@ DEFINE_RAW_SPINLOCK(devtree_lock);
+>  bool of_node_name_eq(const struct device_node *np, const char *name)
+>  {
+>         const char *node_name;
+> +       int ret1, ret2;
+>         size_t len;
 >
-> Yes, there is the fun legal issue of "derivative works" when talking
-> about a userspace program that is written to only interact with a
-> specific kernel driver using a custom api like this one has, and how the
-> license of the kernel side (GPLv2) affects the userspace side
-> (whatever), but that is something that I leave up to the lawyers who
-> like discussing and enforcing such things.
+>         if (!np)
+> @@ -66,7 +67,12 @@ bool of_node_name_eq(const struct device_node *np,
+> const char *name)
+>         node_name = kbasename(np->full_name);
+>         len = strchrnul(node_name, '@') - node_name;
 >
-> When evaluating this driver (note, I saw it for a few revisions before
-> Oded posted it here), all I did was try to make sure that it fit in
-> properly with the kernel apis and methods of operations.  Given that
-> there are no in-kernel drivers for this type of device, and that it
-> really is a pretty small shim layer around the hardware, which means
-> that userspace does a lot of the heavy lifting, it is going to be a
-> very hardware-specific user/kernel api, and that shows.
+> -       return (strlen(name) == len) && (strncmp(node_name, name, len)
+> == 0);
+> +       ret1 = strncmp(node_name, name, len);
+> +       ret2 = strncasecmp(node_name, len);
+> +
+> +       WARN(ret1 ^ ret2, "Comparing case sensitive names!");
+> +
+> +       return (strlen(name) == len && (strncmp(node_name, name, len) == 0);
 
-I brought this up because there are sort of, if you squint, three-ish
-of these already (the OpenCAPI/CAPI ones and now this). Also,
-Jonathan's comment about CCIX pieces coming as well.
+If it comes to this, I'd rather not always do 3 string compares.
 
-I've talked to a handful of vendors in this space and more or less all
-of them hope that drivers/misc is still a suitable home for their
-driver by the time it's ready to post, and I know that if we keep them
-there, it'll only be one or two more drivers until we have this
-discussion anyway.
+>  }
+>  EXPORT_SYMBOL(of_node_name_eq);
+>
+>
+> My concern is that we have identified one place here where the
+> conversion to of_node_name_eq() broke that particular driver in fact,
+> all other regulator drivers but qcom-rpmh-regulator.c that use
+> of_node_name_eq() are broken after that change, but presumably this is
+> not the only place in the kernel where things could break, so having a
+> warning could potentially help (also adding the backtrace which is neat).
 
-That's really why I brought it up now, to get a clear stance on "Yeah,
-we know these are all slightly different today, and we're willing to
-give them a predictable home for the first while as we figure out
-together how things should look". Keep in mind, this space is also
-currently a bit of a gold rush, with many people working hard to get
-to market with near-zero talk between them.
+Most modern DT's don't really rely on the node names. Regulators are
+the oddball.
 
-> Sidenote, this could have almost just been a UIO driver, which would
-> have put _ALL_ of the logic in userspace.  At least this way we have a
-> chance for the kernel code to be sane and not try to inflict problems on
-> the rest of the system.
+I checked all the other affected regulator drivers. da9052 is also
+affected. IMO, we should fix the drivers and I'm sending out patches
+to do that.
 
-Yeah, and sharing hardware when you have userspace drivers tends to
-need a bunch of synchronization and coordination which leads to taller
-(closed?) stacks there. Having resource arbitration and sharing
-assisted by the kernel is usually the right thing, and we should
-encourage that.
+> What should the fix look like though? Add an of_node_casename_eq() and
+> use it, revert Rob's commit that changes these regulators to use
+> of_node_name_eq()?
 
-> Going forward, it would be wonderful if we could come up with a unified
-> api for how to interact with these types of hardware accelerators, but
-> given the newness of this industry, and the vastly different ways people
-> are trying to solve the problem, that is going to take a few attempts,
-> and many years before we can get there.  Until then, taking drivers like
-> this into the kernel tree makes sense as that way all of our users will
-> be able to use that hardware, and better yet, the rest of us can learn
-> more about how this stuff works so that we can help out with that api
-> generation when it happens.
+No, we don't want to add of_node_casename_eq.
 
-Exactly my viewpoint as well, combined with not pushing vendors
-towards nvidia models by default even if they start out separate, and
-having a chance to find inroads with them on engineering levels when
-they come to us with the drivers.
+We may have to internally go back to case insensitive compare, but I'd
+like to avoid that and fix any specific cases if possible.
 
-Absolutely best chance for success is _always_ when we can engage with
-the vendor engineers as peers, instead of going up and down the
-corporate charts first (you often need to do a bit of both, but having
-allies in engineering makes it much easier).
+> I don't know the regulator framework enough to know whether forcibly
+> making the names lowercase is not breaking sysfs/debugfs...
 
-> So for now, I have no objection to taking this type of driver into the
-> tree.  Yes, it would be wonderful if we had an open userspace program to
-> drive it so that we could actually test and make changes to the api over
-> time, but I think that is something that the submitting company needs to
-> realize will be better for them to do, as for right now, all of that
-> testing and changes are their responsibility.
+Userspace relying on specific regulator names seems questionable to
+me. Certainly, debugfs is not an ABI.
 
-I do think having requirements of being able to exercise the hardware
-is really valuable, and we should consider what a requirement for that
-would look like. For the Habana case that could be a separate
-low-level library and a test workload on top. For FPGA cases it could
-be a well-known reference bitstream with the vendor reference
-control/communication path + similar low-level pieces.
-
-> As for what directory the code should live in, I suggested "misc" as
-> there was no other universal location, and I hate to see new subsystems
-> be created with only one driver, as that's pretty sad.  But it's just a
-> name/location, I have no dog in the fight, so I really don't care where
-> it ends up in the tree, just as long as it gets merged somewhere :)
-
-I'm usually one to push back against new subsystems too, especially
-when I see a framework proposal with just one driver. In this case,
-given that we all know more vendors will come along, I think it makes
-sense to take the discussion and establish structure now. This should
-give some clarity to those who are out there that we haven't seen yet,
-and give them a chance to prepare for things such as the low-level
-userspace pieces mentioned above.
-
-So I think setting this up now is the right thing to do, we know there
-will be more material here and having a common aggregation of it makes
-sense.
-
-
--Olof
+Rob
