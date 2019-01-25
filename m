@@ -2,117 +2,273 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48503C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:37:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA30C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:39:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FA0B2084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:37:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B2F320870
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:39:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727914AbfAYIhY (ORCPT
+        id S1728365AbfAYIj5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 03:37:24 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40383 "EHLO mail.bootlin.com"
+        Fri, 25 Jan 2019 03:39:57 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50746 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726200AbfAYIhX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 03:37:23 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 250BA207B0; Fri, 25 Jan 2019 09:37:20 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id D79F220712;
-        Fri, 25 Jan 2019 09:37:19 +0100 (CET)
-Date:   Fri, 25 Jan 2019 09:37:20 +0100
-From:   Antoine Tenart <antoine.tenart@bootlin.com>
-To:     Russell King - ARM Linux admin <linux@armlinux.org.uk>
-Cc:     Andrew Lunn <andrew@lunn.ch>,
-        Thomas Bogendoerfer <tbogendoerfer@suse.de>,
-        antoine.tenart@bootlin.com, maxime.chevallier@bootlin.com,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: mvpp2: fix condition for setting up link
- interrupt
-Message-ID: <20190125083720.GK3662@kwain>
-References: <20190124131803.14038-1-tbogendoerfer@suse.de>
- <20190124155137.GD482@lunn.ch>
- <20190124160741.jady3r2e4dme7c4m@e5254000004ec.dyn.armlinux.org.uk>
+        id S1727264AbfAYIj5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 03:39:57 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6E679368E6;
+        Fri, 25 Jan 2019 08:39:56 +0000 (UTC)
+Received: from [10.36.116.147] (ovpn-116-147.ams2.redhat.com [10.36.116.147])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5997B183DF;
+        Fri, 25 Jan 2019 08:39:49 +0000 (UTC)
+Subject: Re: [RFC v3 01/21] iommu: Introduce set_pasid_table API
+To:     Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        eric.auger.pro@gmail.com, iommu@lists.linux-foundation.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
+        kvmarm@lists.cs.columbia.edu, joro@8bytes.org,
+        alex.williamson@redhat.com, jacob.jun.pan@linux.intel.com,
+        yi.l.liu@linux.intel.com, will.deacon@arm.com, robin.murphy@arm.com
+Cc:     marc.zyngier@arm.com, peter.maydell@linaro.org,
+        kevin.tian@intel.com, ashok.raj@intel.com, christoffer.dall@arm.com
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-2-eric.auger@redhat.com>
+ <0203e4ce-eace-be6e-7e95-5a02c069c8e8@arm.com>
+From:   Auger Eric <eric.auger@redhat.com>
+Message-ID: <c8ec9b40-d011-caa9-1fc2-7cacb43da02e@redhat.com>
+Date:   Fri, 25 Jan 2019 09:39:47 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190124160741.jady3r2e4dme7c4m@e5254000004ec.dyn.armlinux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <0203e4ce-eace-be6e-7e95-5a02c069c8e8@arm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 25 Jan 2019 08:39:56 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Jean-Philippe,
 
-On Thu, Jan 24, 2019 at 04:07:41PM +0000, Russell King - ARM Linux admin wrote:
-> On Thu, Jan 24, 2019 at 04:51:37PM +0100, Andrew Lunn wrote:
-> > On Thu, Jan 24, 2019 at 02:18:03PM +0100, Thomas Bogendoerfer wrote:
-> > > 
-> > > Fixes: 4bb043262878 ("net: mvpp2: phylink support")
-> > > Signed-off-by: Thomas Bogendoerfer <tbogendoerfer@suse.de>
-> > > ---
-> > >  drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > > index 16066c2d5b3a..0fbfe1945a69 100644
-> > > --- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > > +++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-> > > @@ -3405,7 +3405,7 @@ static int mvpp2_open(struct net_device *dev)
-> > >  		valid = true;
-> > >  	}
-> > >  
-> > > -	if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
-> > > +	if (priv->hw_version == MVPP22 && port->link_irq && port->phylink) {
-> > >  		err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
-> > >  				  dev->name, port);
-> > >  		if (err) {
+On 1/11/19 7:16 PM, Jean-Philippe Brucker wrote:
+> On 08/01/2019 10:26, Eric Auger wrote:
+>> From: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>
+>> In virtualization use case, when a guest is assigned
+>> a PCI host device, protected by a virtual IOMMU on a guest,
+>> the physical IOMMU must be programmed to be consistent with
+>> the guest mappings. If the physical IOMMU supports two
+>> translation stages it makes sense to program guest mappings
+>> onto the first stage/level (ARM/VTD terminology) while to host
+>> owns the stage/level 2.
+>>
+>> In that case, it is mandated to trap on guest configuration
+>> settings and pass those to the physical iommu driver.
+>>
+>> This patch adds a new API to the iommu subsystem that allows
+>> to set the pasid table information.
+>>
+>> A generic iommu_pasid_table_config struct is introduced in
+>> a new iommu.h uapi header. This is going to be used by the VFIO
+>> user API. We foresee at least two specializations of this struct,
+>> for PASID table passing and ARM SMMUv3.
 > 
-> This still looks fishy to me.  mvpp2_link_status_isr() has handling in
-> it that is safe to be called for non-phylink cases, so presumably the
-> right fix is to drop the "&& !port->phylink" completely?
-
-That's right, mvpp2_link_status_isr() is safe to be called with or
-without phylink being used. This IRQ is reporting the link status, and
-is used when using in-band status or when phylink isn't used.
-
-We do have a similar fix locally, which looks like:
-
-diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-index 2bcbf9caaf0d..6bab1824a1e4 100644
---- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-+++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
-@@ -3406,7 +3406,8 @@ static int mvpp2_open(struct net_device *dev)
-                valid = true;
-        }
-
--       if (priv->hw_version == MVPP22 && port->link_irq && !port->phylink) {
-+       if (priv->hw_version == MVPP22 && port->link_irq &&
-+           (!port->phylink || !port->has_phy)) {
-                err = request_irq(port->link_irq, mvpp2_link_status_isr, 0,
-                                  dev->name, port);
-                if (err) {
-
-We haven't submitted it yet, as we saw several issues when a port has no
-PHY and is using the XLG MAC (so, not on the mcbin). We currently are
-working on them.
-
-I don't like to ask this, as you submitted the fix first, but I do think
-we should hold back a bit while we figure out proper solutions. If you
-need in-band status to be working properly, we could share out current
-local branch so you can test and validate it do solve your issue.
-
-Thanks!
-Antoine
-
--- 
-Antoine Ténart, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+> Last sentence is a bit confusing. With SMMUv3 it is also used for the
+> PASID table, even when it only has one entry and PASID is disabled.
+OK removed
+> 
+>> Signed-off-by: Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+>> Signed-off-by: Liu, Yi L <yi.l.liu@linux.intel.com>
+>> Signed-off-by: Ashok Raj <ashok.raj@intel.com>
+>> Signed-off-by: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>> Signed-off-by: Eric Auger <eric.auger@redhat.com>
+>>
+>> ---
+>>
+>> This patch generalizes the API introduced by Jacob & co-authors in
+>> https://lwn.net/Articles/754331/
+>>
+>> v2 -> v3:
+>> - replace unbind/bind by set_pasid_table
+>> - move table pointer and pasid bits in the generic part of the struct
+>>
+>> v1 -> v2:
+>> - restore the original pasid table name
+>> - remove the struct device * parameter in the API
+>> - reworked iommu_pasid_smmuv3
+>> ---
+>>  drivers/iommu/iommu.c      | 10 ++++++++
+>>  include/linux/iommu.h      | 14 +++++++++++
+>>  include/uapi/linux/iommu.h | 50 ++++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 74 insertions(+)
+>>  create mode 100644 include/uapi/linux/iommu.h
+>>
+>> diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+>> index 3ed4db334341..0f2b7f1fc7c8 100644
+>> --- a/drivers/iommu/iommu.c
+>> +++ b/drivers/iommu/iommu.c
+>> @@ -1393,6 +1393,16 @@ int iommu_attach_device(struct iommu_domain *domain, struct device *dev)
+>>  }
+>>  EXPORT_SYMBOL_GPL(iommu_attach_device);
+>>  
+>> +int iommu_set_pasid_table(struct iommu_domain *domain,
+>> +			  struct iommu_pasid_table_config *cfg)
+>> +{
+>> +	if (unlikely(!domain->ops->set_pasid_table))
+>> +		return -ENODEV;
+>> +
+>> +	return domain->ops->set_pasid_table(domain, cfg);
+>> +}
+>> +EXPORT_SYMBOL_GPL(iommu_set_pasid_table);
+>> +
+>>  static void __iommu_detach_device(struct iommu_domain *domain,
+>>  				  struct device *dev)
+>>  {
+>> diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+>> index e90da6b6f3d1..1da2a2357ea4 100644
+>> --- a/include/linux/iommu.h
+>> +++ b/include/linux/iommu.h
+>> @@ -25,6 +25,7 @@
+>>  #include <linux/errno.h>
+>>  #include <linux/err.h>
+>>  #include <linux/of.h>
+>> +#include <uapi/linux/iommu.h>
+>>  
+>>  #define IOMMU_READ	(1 << 0)
+>>  #define IOMMU_WRITE	(1 << 1)
+>> @@ -184,6 +185,7 @@ struct iommu_resv_region {
+>>   * @domain_window_disable: Disable a particular window for a domain
+>>   * @of_xlate: add OF master IDs to iommu grouping
+>>   * @pgsize_bitmap: bitmap of all possible supported page sizes
+>> + * @set_pasid_table: set pasid table
+>>   */
+>>  struct iommu_ops {
+>>  	bool (*capable)(enum iommu_cap);
+>> @@ -226,6 +228,9 @@ struct iommu_ops {
+>>  	int (*of_xlate)(struct device *dev, struct of_phandle_args *args);
+>>  	bool (*is_attach_deferred)(struct iommu_domain *domain, struct device *dev);
+>>  
+>> +	int (*set_pasid_table)(struct iommu_domain *domain,
+>> +			       struct iommu_pasid_table_config *cfg);
+>> +
+>>  	unsigned long pgsize_bitmap;
+>>  };
+>>  
+>> @@ -287,6 +292,8 @@ extern int iommu_attach_device(struct iommu_domain *domain,
+>>  			       struct device *dev);
+>>  extern void iommu_detach_device(struct iommu_domain *domain,
+>>  				struct device *dev);
+>> +extern int iommu_set_pasid_table(struct iommu_domain *domain,
+>> +				 struct iommu_pasid_table_config *cfg);
+>>  extern struct iommu_domain *iommu_get_domain_for_dev(struct device *dev);
+>>  extern struct iommu_domain *iommu_get_dma_domain(struct device *dev);
+>>  extern int iommu_map(struct iommu_domain *domain, unsigned long iova,
+>> @@ -696,6 +703,13 @@ const struct iommu_ops *iommu_ops_from_fwnode(struct fwnode_handle *fwnode)
+>>  	return NULL;
+>>  }
+>>  
+>> +static inline
+>> +int iommu_set_pasid_table(struct iommu_domain *domain,
+>> +			  struct iommu_pasid_table_config *cfg)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +
+>>  #endif /* CONFIG_IOMMU_API */
+>>  
+>>  #ifdef CONFIG_IOMMU_DEBUGFS
+>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+>> new file mode 100644
+>> index 000000000000..7a7cf7a3de7c
+>> --- /dev/null
+>> +++ b/include/uapi/linux/iommu.h
+>> @@ -0,0 +1,50 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 WITH Linux-syscall-note */
+>> +/*
+>> + * IOMMU user API definitions
+>> + *
+>> + *
+>> + * This program is free software; you can redistribute it and/or modify
+>> + * it under the terms of the GNU General Public License version 2 as
+>> + * published by the Free Software Foundation.
+> 
+> I don't think we need both the boilerplate and the SPDX header
+OK I only kept the SPDX header.
+> 
+>> + */
+>> +
+>> +#ifndef _UAPI_IOMMU_H
+>> +#define _UAPI_IOMMU_H
+>> +
+>> +#include <linux/types.h>
+>> +
+>> +/**
+>> + * SMMUv3 Stream Table Entry stage 1 related information
+>> + * @abort: shall the STE lead to abort
+>> + * @s1fmt: STE s1fmt field as set by the guest
+>> + * @s1dss: STE s1dss as set by the guest
+>> + * All field names match the smmu 3.0/3.1 spec (ARM IHI 0070A)
+> 
+> Not really the case for @abort. Could you clarify whether @abort is
+> valid in combination with @bypass?
+> abort corresponds to !Config[2]. In that case the spec says "report
+abort to device, no event recorded". S1 bypass corresponds to
+Config=0b1x0. What about removing abort in the SMMUv3 specific part and
+encode the stage state in the generic part. See below proposal ...
+>> + */
+>> +struct iommu_pasid_smmuv3 {
+>> +	__u8 abort;
+>> +	__u8 s1fmt;
+>> +	__u8 s1dss;
+>> +};
+>> +
+>> +/**
+>> + * PASID table data used to bind guest PASID table to the host IOMMU
+>> + * Note PASID table corresponds to the Context Table on ARM SMMUv3.
+>> + *
+>> + * @version: API version to prepare for future extensions
+>> + * @format: format of the PASID table
+>> + *
+>> + */
+>> +struct iommu_pasid_table_config {
+>> +#define PASID_TABLE_CFG_VERSION_1 1
+>> +	__u32	version;
+>> +#define IOMMU_PASID_FORMAT_SMMUV3	(1 << 0)
+>> +	__u32	format;
+>> +	__u64	base_ptr;
+>> +	__u8	pasid_bits;
+>> +	__u8	bypass
+#define IOMMU_PASID_STREAM_ABORT  (1 << 0)
+#define IOMMU_PASID_STREAM_BYPASS (1 << 1)
+#define IOMMU_PASID_STREAM_TRANSLATE (1 << 2)
+__u8 config;
+> 
+> We need some padding, in case someone adds a new struct to the union
+> that requires 64-byte alignment
+OK
+> 
+> And 'bypass' might not be the right name if we're making it common,
+> maybe 'reset' would be clearer? Or we just need to explain that bypass
+> is the initial state of a nesting domain
+I will add such comment. To me the "bypass" terminology sounds clearer
+than "reset"
+> 
+> Thanks,
+> Jean
+> 
+>> +	union {
+>> +		struct iommu_pasid_smmuv3 smmuv3;
+>> +	};
+>> +};
+>> +
+>> +#endif /* _UAPI_IOMMU_H */
+>>
+> 
