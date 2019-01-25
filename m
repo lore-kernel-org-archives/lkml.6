@@ -2,88 +2,70 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40DB1C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27588C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 056C920844
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTWexWsR"
+	by mail.kernel.org (Postfix) with ESMTP id EC59620844
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:20:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548458431;
+	bh=FeP4DBmh6KaJK01lZq5l/dsAd9z0gUTSVFigUQkec7U=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=mrVBPg5PHo9cybiID8FvB93xlQbr+NHsq2eNx1JBO8+MkswHoAHLuUWqLIOfPBX+r
+	 XHQjbTXqYJd6CPcWIU9FiqbHLFELuZBygGcbMnsTvjFteHv+AmcFLwkclXALPBAaia
+	 /pOV/N4lAYVCRSahzUfY7BvNWvl5eiTKkK3Ter7Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730129AbfAYXUU (ORCPT
+        id S1730136AbfAYXUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 18:20:20 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:42355 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729551AbfAYXUT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 18:20:19 -0500
-Received: by mail-pl1-f194.google.com with SMTP id y1so5219577plp.9;
-        Fri, 25 Jan 2019 15:20:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pw/9rbtBlTvDAy7ZB9mM72Xqq+PeG+LZRuTERIIZc4U=;
-        b=hTWexWsR7kWNDpMIDAt2F7OLKfNeMIPchEVjXcBE73i5Ao8whubKEIHSLwG/LdN35B
-         BY2voCKcYnuvDwVJqb6VEaIja/cpODoeFn42gbZaxrwYlfJiaqH69GKgQmVsYSPibx1B
-         XvCEcx0swpq3dQC5fIxeDyf/tq7rofDNYFrf3PXOj8x90WPUDf4bBxrGv231EeBxhq9q
-         o9F6vJE4bhOZzvCG9Yc/v9qoSWLvjDRXfwV1jfnZhetP81grFjxdCxSwlcFBnoCDmHN6
-         9PGPTXTh4lOQ7spzSVcmxTLYFr5ypeA0Ykf4njpNv5m7VuFkuN3dEKWKisku+XfendrH
-         r3tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pw/9rbtBlTvDAy7ZB9mM72Xqq+PeG+LZRuTERIIZc4U=;
-        b=J/oe9xGNHWdTa9ecU6wJnDGt9qxpbmPNDzDZUI9ne2f1ue9QfB8iNy4qfyTlamEqww
-         dJr+v64DN1F4Aic++rHlwFwF7chy3cd2DvXKOC2uYEwk6EKQh9Y9FncqHzm8t3y7yFxH
-         sjRd1s3oFy+jQ7B9ZOs/2x4+IKE1hRKxMduXwNYrLlbjEkgxXOc/bARgkXrexsXWp/pr
-         6X5KjjrINLVs4OIRpMMTn4Mx1afbkBt6sy4Z4U+IUogudC1TvutUlyMFwi/gRa6inoYI
-         0pdKQyTkY6wlVJ/sNTSJsCiYI0FgP+NkgPvPfWIXZBdaxJ3a+JpJNA7PqZ+P1QHXsYpo
-         lxdg==
-X-Gm-Message-State: AJcUukewJDe5ugJs94MQnaTyQN5FPP7cCVU1zUKD1ORNzhrXPm7OFkR/
-        7vrCiD/z+5N5SrdBZOPp4M0=
-X-Google-Smtp-Source: ALg8bN6HFMjmjwyhnQrxWOsRY3jgyCgB4qssGiR5TgyLVO5COwBpLHDdR41lmKLbWV4arcsY8QQUdw==
-X-Received: by 2002:a17:902:9692:: with SMTP id n18mr13188593plp.333.1548458419163;
-        Fri, 25 Jan 2019 15:20:19 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id e128sm33510659pfe.67.2019.01.25.15.20.18
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 15:20:18 -0800 (PST)
-Date:   Fri, 25 Jan 2019 15:20:17 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
-        akpm@linux-foundation.org, shuah@kernel.org, patches@kernelci.org,
-        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH 4.19 000/106] 4.19.18-stable review
-Message-ID: <20190125232017.GE27619@roeck-us.net>
-References: <20190124190206.342411005@linuxfoundation.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124190206.342411005@linuxfoundation.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Fri, 25 Jan 2019 18:20:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48530 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729803AbfAYXUF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 18:20:05 -0500
+Subject: Re: [GIT PULL] Staging driver fixes for 5.0-rc4
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548458405;
+        bh=FeP4DBmh6KaJK01lZq5l/dsAd9z0gUTSVFigUQkec7U=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=B7z7Jji/EoMntjaEiFenv2eXgpbPfJiF5qt0o77yx+tza1pDroz2kGPbJ9WM7i8zT
+         nQWaXjhV7x4uCV9mlw9GF0zb1yEKDxrPCqkPfG+y1uKrL76NLY2300Cspm7kd5cCFu
+         M+Mne3y0SC15jrQD7+6YVcqHQOwJtF/em5OZk+FM=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190125122259.GA7652@kroah.com>
+References: <20190125122259.GA7652@kroah.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190125122259.GA7652@kroah.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git
+ tags/staging-5.0-rc4
+X-PR-Tracked-Commit-Id: 31eb79db420a3f94c4c45a8c0a05cd30e333f981
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 96f18cb89ffa4bc6dafa447c9493449809fbb318
+Message-Id: <154845840519.30665.10974165396641962091.pr-tracker-bot@kernel.org>
+Date:   Fri, 25 Jan 2019 23:20:05 +0000
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        devel@linuxdriverproject.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 08:19:17PM +0100, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 4.19.18 release.
-> There are 106 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-Build results:
-	total: 156 pass: 156 fail: 0
-Qemu test results:
-	total: 343 pass: 343 fail: 0
+The pull request you sent on Fri, 25 Jan 2019 13:22:59 +0100:
 
-Guenter
+> git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging.git tags/staging-5.0-rc4
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/96f18cb89ffa4bc6dafa447c9493449809fbb318
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
