@@ -2,129 +2,152 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DE8C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C84C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:58:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07C7D218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:57:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HaRwAzzi"
+	by mail.kernel.org (Postfix) with ESMTP id CBE76218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:58:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728007AbfAYO5v (ORCPT
+        id S1726984AbfAYO6k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:57:51 -0500
-Received: from userp2120.oracle.com ([156.151.31.85]:44896 "EHLO
-        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbfAYO5v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:57:51 -0500
-Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
-        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0PEnNEt173460;
-        Fri, 25 Jan 2019 14:57:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=1hVAr1jHbK9xdBIGH3lIXe/a/YJdBQYCFBP7MZhLc6g=;
- b=HaRwAzzigoQ5CiiPXnoN5SPgs41M28QgHhMeBIJuneQKRXSKvQdAwkD28d+8B3ji1LcD
- uPpvu2Hrc3CPD1ERbNL4r9VJVjnB4gg0poTkviBal+q3CA5BUuDKtsK0nXSaSR0Q1sVQ
- zTp3jcPatDYFXAHAspTjanhoPw60Mwz0DZJ7YkuHu4yRtiifmI3Wq3eUU8iJt+C3iBed
- SfPQvsA2EE1hHISf3HKhhsU/ACqOhDD/irWcCjfrQbwd43joXshVeTyRdySb31qtbZLb
- g9cYyedMHbpwZrmk7YylonBhyg75PM0gh3TwjbApWKbW7KzQWIvyDhk3VBHY/3uaw/0E SA== 
-Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
-        by userp2120.oracle.com with ESMTP id 2q3vhs63pf-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 25 Jan 2019 14:57:32 +0000
-Received: from achartre-desktop.fr.oracle.com (dhcp-10-166-106-34.fr.oracle.com [10.166.106.34])
-        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0PEvTGN003972;
-        Fri, 25 Jan 2019 14:57:29 GMT
-From:   Alexandre Chartre <alexandre.chartre@oracle.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Alexandre Chartre <alexandre.chartre@oracle.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org
-Subject: [PATCH] x86/alternatives: check int3 breakpoint physical addresses
-Date:   Fri, 25 Jan 2019 15:57:29 +0100
-Message-Id: <1548428249-8258-1-git-send-email-alexandre.chartre@oracle.com>
-X-Mailer: git-send-email 1.7.1
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9146 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=915
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901250122
+        Fri, 25 Jan 2019 09:58:40 -0500
+Received: from protonic.xs4all.nl ([83.163.252.89]:50788 "EHLO protonic.nl"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726216AbfAYO6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 09:58:39 -0500
+X-Greylist: delayed 350 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Jan 2019 09:58:39 EST
+Received: from erd987 (unknown [192.168.2.69])
+        by sparta (Postfix) with ESMTP id EA1F844A004C;
+        Fri, 25 Jan 2019 15:54:01 +0100 (CET)
+Date:   Fri, 25 Jan 2019 15:52:48 +0100
+From:   Robin van der Gracht <robin@protonic.nl>
+To:     Martin Kepplinger <martink@posteo.de>
+Cc:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        ulf.hansson@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: Re: [PATCH] mmc: mxs-mmc: Introduce regulator support
+Message-ID: <20190125155248.23937600@erd987>
+In-Reply-To: <20190125113449.10128-1-martink@posteo.de>
+References: <20190125113449.10128-1-martink@posteo.de>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Modifying multi-byte instructions is achieved by temporarily replacing
-the first instruction to patch with an int3 instruction. Then, if an
-int3 interrupt is raised, the int3 handler will check if the interrupt
-was caused by this temporary patch by comparing the address that raises
-the interrupt (the interrupt address) and the address that was patched
-(the patched address).
+Hi Martin,
 
-The int3 handler compares virtual addresses of the interrupt and
-patched addresses. However, this doesn't work if the code to modify
-is mapped to multiple virtual addresses because, in that case, the
-patched virtual address can be different from the interrupt virtual
-address.
+On Fri, 25 Jan 2019 12:34:49 +0100
+Martin Kepplinger <martink@posteo.de> wrote:
 
-A simple solution is then to also compare physical addresses when
-virtual addresses do not match. Note that we still compare virtual
-addresses because that's a faster comparison than having to fully
-resolve and compare physical addresses.
+> From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> 
+> This adds support for explicitly switching the mmc's power on and off.
+> 
+> Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> ---
+> 
+> This is not my patch. It's taken from https://patchwork.kernel.org/patch/4365751/
+> rebased and minimally changed; but we use this.
+> 
+> Are there any objections to this?
+> 
+> Robin, can I still add your Signed-off-by to this? Also, should I set you
+> as the author?
 
-Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-Cc: x86@kernel.org
----
+It's old, but thanks for keeping me in the loop :)
 
-This is a potential issue and I don't know if it can be triggered with the
-current kernel: is there any code mapped to multiple virtual addresses
-which can be updated with text_poke_bp()? However as the patch is small and
-simple, it might be worth applying it anyway to prevent any such issue.
+> 
+> thanks,
+> 
+>                                 martin
+> 
+>  drivers/mmc/host/mxs-mmc.c | 31 +++++++++++++++++++++++--------
+>  1 file changed, 23 insertions(+), 8 deletions(-)
+> 
+> diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+> index add1e70195ea..e3c19fabb723 100644
+> --- a/drivers/mmc/host/mxs-mmc.c
+> +++ b/drivers/mmc/host/mxs-mmc.c
+> @@ -517,6 +517,26 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+>  	else
+>  		host->bus_width = 0;
+>  
+> +	if (ios->power_mode != host->power_mode) {
+> +		switch (ios->power_mode) {
+> +		case MMC_POWER_OFF:
+> +			if ((host->vmmc) && regulator_disable(host->vmmc)) {
+> +				dev_err(mmc_dev(host->mmc),
+> +					"Failed to disable vmmc regulator\n");
+> +			}
+> +			break;
+> +		case MMC_POWER_UP:
+> +			if ((host->vmmc) && regulator_enable(host->vmmc)) {
+> +				dev_err(mmc_dev(host->mmc),
+> +					"Failed to enable vmmc regulator\n");
+> +			}
+> +			break;
+> +		default:
+> +			break;
+> +		}
+> +		host->power_mode = ios->power_mode;
+> +	}
+> +
 
-Note that this issue has been observed and reproduced with a custom kernel
-with some code mapped to different virtual addresses and using jump labels
-As jump labels use text_poke_bp(), crashes were sometimes observed when
-updating jump labels.
+A single check in the root contitional for the availability of vmmc
+should suffice, so:
 
- arch/x86/kernel/alternative.c |   13 ++++++++++++-
- 1 files changed, 12 insertions(+), 1 deletions(-)
+if (host->vmmc && ios->power_mode != host->power_mode) {
+	...
+	case MMC_POWER_XX:
+		if (regulator_xx(host->vmmc))
+			dev_err;
+	...
 
-diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-index ebeac48..e563573 100644
---- a/arch/x86/kernel/alternative.c
-+++ b/arch/x86/kernel/alternative.c
-@@ -757,7 +757,18 @@ int poke_int3_handler(struct pt_regs *regs)
- 	if (likely(!bp_patching_in_progress))
- 		return 0;
- 
--	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
-+	if (user_mode(regs))
-+		return 0;
-+
-+	/*
-+	 * If virtual addresses are different, check if physical addresses
-+	 * are the same in case we have the same code mapped to different
-+	 * virtual addresses. Note that we could just compare physical
-+	 * addresses, however we first compare virtual addresses because
-+	 * this is much faster and very likely to succeed.
-+	 */
-+	if (regs->ip != (unsigned long)bp_int3_addr &&
-+	    slow_virt_to_phys((void *)regs->ip) != slow_virt_to_phys(bp_int3_addr))
- 		return 0;
- 
- 	/* set up the specified breakpoint handler */
--- 
-1.7.1
+
+>  	if (ios->clock)
+>  		mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
+>  }
+> @@ -613,16 +633,11 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+>  
+>  	host->mmc = mmc;
+>  	host->sdio_irq_en = 0;
+> +	host->power_mode = MMC_POWER_OFF;
+
+My patch added 'power_mode' and 'vmmc' to the drivers private struct
+(which are missing in this email?)
+
+>  
+>  	reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
+> -	if (!IS_ERR(reg_vmmc)) {
+> -		ret = regulator_enable(reg_vmmc);
+> -		if (ret) {
+> -			dev_err(&pdev->dev,
+> -				"Failed to enable vmmc regulator: %d\n", ret);
+> -			goto out_mmc_free;
+> -		}
+> -	}
+> +	if (!IS_ERR(reg_vmmc))
+> +		host->vmmc = reg_vmmc;
+
+what about mmc_regulator_get_supply(mmc)?
+
+If we use that the vmmc will be made available under mmv->supply->vmmc
+if probe was successfull instead of storing it in the drivers private
+struct.
+
+>  
+>  	ssp->clk = devm_clk_get(&pdev->dev, NULL);
+>  	if (IS_ERR(ssp->clk)) {
+
+Robin van der Gracht
