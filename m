@@ -2,98 +2,161 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34660C282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:49:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CA7CC282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F34D7218D2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 43622218D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:50:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728648AbfAYCtr (ORCPT
+        id S1728718AbfAYCuQ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 21:49:47 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41340 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726107AbfAYCtr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 21:49:47 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2F9A9397F;
-        Fri, 25 Jan 2019 02:49:46 +0000 (UTC)
-Received: from xz-x1 (ovpn-12-78.pek2.redhat.com [10.72.12.78])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 20BD84A4;
-        Fri, 25 Jan 2019 02:49:38 +0000 (UTC)
-Date:   Fri, 25 Jan 2019 10:49:36 +0800
-From:   Peter Xu <peterx@redhat.com>
-To:     Jerome Glisse <jglisse@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        Hugh Dickins <hughd@google.com>,
-        Maya Gokhale <gokhale2@llnl.gov>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Martin Cracauer <cracauer@cons.org>,
-        Denis Plotnikov <dplotnikov@virtuozzo.com>,
-        Shaohua Li <shli@fb.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Marty McFadden <mcfadden8@llnl.gov>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Mel Gorman <mgorman@suse.de>,
-        "Kirill A . Shutemov" <kirill@shutemov.name>,
-        "Dr . David Alan Gilbert" <dgilbert@redhat.com>
-Subject: Re: [PATCH RFC 04/24] mm: gup: allow VM_FAULT_RETRY for multiple
- times
-Message-ID: <20190125024936.GO18231@xz-x1>
-References: <20190121075722.7945-1-peterx@redhat.com>
- <20190121075722.7945-5-peterx@redhat.com>
- <20190121162455.GC3711@redhat.com>
- <20190124070503.GJ18231@xz-x1>
- <20190124153431.GB5030@redhat.com>
+        Thu, 24 Jan 2019 21:50:16 -0500
+Received: from mail-ed1-f43.google.com ([209.85.208.43]:39987 "EHLO
+        mail-ed1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726107AbfAYCuQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 21:50:16 -0500
+Received: by mail-ed1-f43.google.com with SMTP id g22so6231059edr.7;
+        Thu, 24 Jan 2019 18:50:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=P1zzXln1riUs/zkYl5yWs+M8mhcZVCnbTojUF9bsN5Y=;
+        b=qDLmKpjIXiq3aL2KpSxWjIXZHdlBjkSP7USiZQmFFlHV+3I9G7ftoTHbcF0WZpSmUy
+         dkI0gIRslYeHPhM7rFS+k2dnHX7FEMwKBMnHpGILQTMqHyzeIxqtEaB7IHWCt0MSVYZC
+         5PpHDR1QGIKTFBwXmdnEZvFjN4OxmQWvsR67shikTPmJfaKb0eFttYCfsC0wO+xfXWbj
+         erpZNrt1aq5N1MKx9MNL5/3DeuAbH0Q4SDQhSaBpRjeU40EKMGfORgn1xa3PHe+6ufmz
+         YcXwiN5Z8FBqQgZsOo2fADll1EuJIXOcIc07Hjj+8ZYglZNAPafkrhCMEdr4IJRgcBN/
+         yJcg==
+X-Gm-Message-State: AJcUukegZW9H/+IoFt9O/eQPG+wKgeDcA5K3c7CxdLft7FGsX11YYf1L
+        KBnuvYagv9pQE89seqCrj2zPwo1rrUA=
+X-Google-Smtp-Source: ALg8bN5q4/A6GkXF8L1z2swVZZ9HbVJEYQbBc1e5KP/oXZq5jPMklBiJS0K1HVlHyiDAEnErQ+i22g==
+X-Received: by 2002:a50:9291:: with SMTP id k17mr8947875eda.243.1548384612869;
+        Thu, 24 Jan 2019 18:50:12 -0800 (PST)
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com. [209.85.221.46])
+        by smtp.gmail.com with ESMTPSA id p30sm11299201eda.68.2019.01.24.18.50.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 18:50:12 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id p7so8731375wru.0;
+        Thu, 24 Jan 2019 18:50:12 -0800 (PST)
+X-Received: by 2002:adf:891a:: with SMTP id s26mr9414215wrs.44.1548384611813;
+ Thu, 24 Jan 2019 18:50:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190124153431.GB5030@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Fri, 25 Jan 2019 02:49:46 +0000 (UTC)
+References: <20190111173015.12119-1-jernej.skrabec@siol.net>
+ <20190121095014.b6iq5dubfi7x2pi4@flea> <CAGb2v66d0wM8Yt2uS4MMhU6PP02h8CKwKjinasO6jtZ4ue1CAQ@mail.gmail.com>
+ <2800701.S2xdS7azMu@jernej-laptop>
+In-Reply-To: <2800701.S2xdS7azMu@jernej-laptop>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Fri, 25 Jan 2019 10:49:58 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66wm3ZVjHxqBvU1EgBjj3Dn9keyG8jGrdiiXEFa_HD2kg@mail.gmail.com>
+Message-ID: <CAGb2v66wm3ZVjHxqBvU1EgBjj3Dn9keyG8jGrdiiXEFa_HD2kg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] media: dt: bindings: sunxi-ir: Add A64 compatible
+To:     =?UTF-8?Q?Jernej_=C5=A0krabec?= <jernej.skrabec@siol.net>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi <linux-sunxi@googlegroups.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 10:34:32AM -0500, Jerome Glisse wrote:
-> On Thu, Jan 24, 2019 at 03:05:03PM +0800, Peter Xu wrote:
-> > On Mon, Jan 21, 2019 at 11:24:55AM -0500, Jerome Glisse wrote:
-> > > On Mon, Jan 21, 2019 at 03:57:02PM +0800, Peter Xu wrote:
-> > > > This is the gup counterpart of the change that allows the VM_FAULT_RETRY
-> > > > to happen for more than once.
-> > > > 
-> > > > Signed-off-by: Peter Xu <peterx@redhat.com>
-> > > 
-> > > So it would be nice to add a comment in the code and in the commit message
-> > > about possible fault starvation (mostly due to previous patch changes) as
-> > > if some one experience that and try to bisect it might overlook the commit.
-> > > 
-> > > Otherwise:
-> > > 
-> > > Reviewed-by: Jérôme Glisse <jglisse@redhat.com>
-> > 
-> > Jerome, can I still keep this r-b if I'm going to fix the starvation
-> > issue you mentioned in previous patch about lock page?
-> > 
-> 
-> No please, i still want to review properly the oneline ie making sure
-> that it will not change any of the existing use of FAULT_FLAG_TRIED
-> I am finishing a bunch of patches myself so i am bit short on time right
-> now to take a deeper look but i will try to do that in next few days :)
-> 
-> In anycase i will review again your next posting.
+On Fri, Jan 25, 2019 at 2:57 AM Jernej Škrabec <jernej.skrabec@siol.net> wrote:
+>
+> Dne ponedeljek, 21. januar 2019 ob 10:57:57 CET je Chen-Yu Tsai napisal(a):
+> > On Mon, Jan 21, 2019 at 5:50 PM Maxime Ripard <maxime.ripard@bootlin.com>
+> wrote:
+> > > Hi,
+> > >
+> > > I'm a bit late to the party, sorry for that.
+> > >
+> > > On Sat, Jan 12, 2019 at 09:56:11AM +0800, Chen-Yu Tsai wrote:
+> > > > On Sat, Jan 12, 2019 at 1:30 AM Jernej Skrabec <jernej.skrabec@siol.net>
+> wrote:
+> > > > > A64 IR is compatible with A13, so add A64 compatible with A13 as a
+> > > > > fallback.
+> > > >
+> > > > We ask people to add the SoC-specific compatible as a contigency,
+> > > > in case things turn out to be not so "compatible".
+> > > >
+> > > > To be consistent with all the other SoCs and other peripherals,
+> > > > unless you already spotted a "compatible" difference in the
+> > > > hardware, i.e. the hardware isn't completely the same, this
+> > > > patch isn't needed. On the other hand, if you did, please mention
+> > > > the differences in the commit log.
+> > >
+> > > Even if we don't spot things, since we have the stable DT now, if we
+> > > ever had that compatible in the DT from day 1, it's much easier to
+> > > deal with.
+> > >
+> > > I'd really like to have that pattern for all the IPs even if we didn't
+> > > spot any issue, since we can't really say that the datasheet are
+> > > complete, and one can always make a mistake and overlook something.
+> > >
+> > > I'm fine with this version, and can apply it as is if we all agree.
+> >
+> > I'm OK with having the fallback compatible. I'm just pointing out
+> > that there are and will be a whole bunch of them, and we don't need
+> > to document all of them unless we are actually doing something to
+> > support them.
+> >
+> > On the other hand, the compatible string situation for IR needs a
+> > bit of cleaning up at the moment. Right now we have sun4i-a10 and
+> > sun5i-a13. As Jernej pointed out, the A13's register definition is
+> > different from A64 (or any other SoCs later than sun6i). So we need
+> > someone with an A10s/A13 device that has IR to test it and see if
+> > the driver or the manual is wrong, and we'd likely add a compatible
+> > for the A20.
+> >
+> > Also, the earlier SoCs (A10/sun5i/A20) have IR TX capability. This
+> > was lost in A31, and also all of sun8i / sun50i. So we're going to
+> > need to add an A31 compatible that all later platforms would need
+> > to switch to.
+>
+> Actually, A13 also doesn't have IR TX capability. So I still think it's best
+> having A13 compatible as a fallback and not A31. Unless A31 was released
+> before A13?
 
-Sure thing.  Thank you Jerome!
+No, but the A31 IR receiver has some additional bits in the FIFO control
+and status registers, as well as the config register (which controls
+sampling parameters). Looks like the A31 has an improved version. That
+would make it backward compatible, if not for the fact that the FIFO
+level bits are at a different offset, which might have been moved to
+make way for the extra bits. That would make them incompatible. But
+this should really be tested.
 
--- 
-Peter Xu
+So the fallback compatible should be the A31's, not the A13's.
+
+The A64's looks like the same hardware as the A31, with two extra bits:
+
+  - CGPO: register 0x00, bit offset 8. Controls output level of
+          "non-existing" TX pin
+
+  - DRQ_EN: register 0x2c, bit offset 5. Controls DRQ usage for DMA.
+            Not really useful as there isn't a DMA request line for
+            the hardware.
+
+Both bits are also togglable on the A31, but since actual hardware
+don't support these two features, I think we can ignore them.
+
+So it looks like for the A64 has the same IP block as the A31, in
+which case we won't need the per-SoC compatible as we've done the
+work to compare them.
+
+Maxime, what do you think? And do you guys have any A10s/A13 hardware
+to test the FIFO level bits?
+
+
+Regards
+ChenYu
