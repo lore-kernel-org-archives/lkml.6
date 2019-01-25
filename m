@@ -2,122 +2,224 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70C62C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69482C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:18:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 410D821919
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:18:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lightnvm-io.20150623.gappssmtp.com header.i=@lightnvm-io.20150623.gappssmtp.com header.b="MSSEySbN"
+	by mail.kernel.org (Postfix) with ESMTP id 3806C21919
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:18:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728810AbfAYIR7 (ORCPT
+        id S1728718AbfAYISq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 03:17:59 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:46354 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726735AbfAYIR7 (ORCPT
+        Fri, 25 Jan 2019 03:18:46 -0500
+Received: from mail-oi1-f195.google.com ([209.85.167.195]:47097 "EHLO
+        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726607AbfAYISq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 03:17:59 -0500
-Received: by mail-lf1-f65.google.com with SMTP id f5so6267958lfc.13
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 00:17:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lightnvm-io.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=9jiQno4UhpYBqTa//0Ls70fFfjYDxFXuvNUqs9ZqpgM=;
-        b=MSSEySbN5UO6m87vMtYZyqZQFMhszrz4L99zNl5hfZLuSPCxNIcU6L+x3ZDiUsM5+R
-         xXlApON/eAxmUmgJ+jKLuIss3hqZY0WsRFGlmUha9uJS1YtpK1S73Hc0ayYZj3SNuKNP
-         Od1TrmnsZ3ah2QGqnnbmUWE2Df/pRZtiO4+ZW6cUQlO9zfvgj1zHjwtWouhfJUngGmn+
-         nB+x3RHfAtOHGOl5wLQ0lO6a5EZc94HJFILh/3mfPH48dZ85kKd8q1gakl9+p0Rn9gAq
-         g+Hn8Zrx1rUNTN1l09o8vcmkY3RAGK4Tf3eMze890SZmUbckntS2oUMFqDjVcurD+kBn
-         zabQ==
+        Fri, 25 Jan 2019 03:18:46 -0500
+Received: by mail-oi1-f195.google.com with SMTP id x202so7060445oif.13
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 00:18:45 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=9jiQno4UhpYBqTa//0Ls70fFfjYDxFXuvNUqs9ZqpgM=;
-        b=XrJFkoEWCCt+nAfWWdfYrNKCMRBkh2Zc/T0V0t+JqHrDlqzFyrPlLTGvItgRqlpa7i
-         Dk2NkPSHdj3amGT89HmCCtl1p/Y4ILefF9E5NqFgvnGnjIY/xMXtNzahLHq07BDNqAi7
-         ZqG3UOmFlTxA6w4R4SXXSH+EY05Ko7L6S5Ski7ZEtF2AxMJEnbfHzej/3SWq6+7HCUgL
-         KZd/Fa2SY2pG9WQvx8x2vclIlNbACObbgsWUrICDfHyIwP8ksV4HbBUgDHZAnBRddaZX
-         ijgKdKS701ouusFyhFU8tB1gGMU8rWxa/aAzUgJW5Sl8weLJmG7MvTdd8GEGzuZZiZ1l
-         IM3Q==
-X-Gm-Message-State: AJcUukd9ySTMPwQRx4ubI1fguziyqddhINhYCMcJi+Q3dw4UjACRxaWn
-        3W3iHsx5WQPzDjxWZBhtVQNgMPMyo7g=
-X-Google-Smtp-Source: ALg8bN7s9/hh6YJu10Qia8w6IQ+areeNtAS9ETVh4HZHOP9szGp9pljunMcfDJFTcGro58SAhkCYcw==
-X-Received: by 2002:a19:1cb:: with SMTP id 194mr7925460lfb.61.1548404276489;
-        Fri, 25 Jan 2019 00:17:56 -0800 (PST)
-Received: from [192.168.0.36] (2-111-91-225-cable.dk.customer.tdc.net. [2.111.91.225])
-        by smtp.googlemail.com with ESMTPSA id b25-v6sm1413706lji.94.2019.01.25.00.17.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 00:17:55 -0800 (PST)
-Subject: Re: [PATCH] lightnvm: pblk: fix TRACE_INCLUDE_PATH
-To:     Hans Holmberg <hans.ml.holmberg@owltronix.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-block@vger.kernel.org, Jens Axboe <axboe@kernel.dk>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <1548401030-28860-1-git-send-email-yamada.masahiro@socionext.com>
- <CANr-nt0=gw90vBLA_FMjmD7duNVYJcGmcqfk9HiQpdKxHV-A+g@mail.gmail.com>
-From:   =?UTF-8?Q?Matias_Bj=c3=b8rling?= <mb@lightnvm.io>
-Message-ID: <17453c37-72ee-11e1-979d-e60a034d94e3@lightnvm.io>
-Date:   Fri, 25 Jan 2019 09:17:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=8Zlmdjy5XkZ2rL0/5E9GQ1qmVMGgIWthiVHeC78Ds0g=;
+        b=bKffSKYHcQou9AclqB9FCooFUANmXR9d9j1hZXvI7to2fx27T4ab7BoSuE6d0nePMR
+         K9fEaW6xhiBsS8GjW6YkHKqRBAARGWyVDTuW7Fs88BtS7UMSXnKT20nQIQYT6NpL/RZ2
+         vJECKjhlTHiCQNAZvL8QwWlmaadvB3/wF/zqdV7ybM3ghRL93U4qPQjwdUAleH9aOxJ1
+         3v63pIpS9MBl40iq1cXt46bT/EpaJce45jG0/7v4MbrLz6bKnUu3bWvIbt09Fojm8AWh
+         h40y/ErpZO7VX+6qrZz1Y0c5e9dVpxM/PRaeWO415oyThECvq3y/6yR6hF2VcggzAVGB
+         0VJQ==
+X-Gm-Message-State: AJcUukflaXNTpDGcqYmlaJKqfb2NEDQ1Dox+1XRMqAp9REgQ3dsYoE4W
+        e+IhpCzVjcyJpCwcfOMD/eBP9JsXg7Ad0cTgDMHToxYz
+X-Google-Smtp-Source: ALg8bN5MaFWphtY67cfDOwct31BT0oPWap2a4HrrlQJEINrPUtPQMjbK/4Xo4Vn6OyBmqgNFeo78RarmYvFIDyvwQTs=
+X-Received: by 2002:a05:6808:13:: with SMTP id u19mr718410oic.57.1548403124836;
+ Thu, 24 Jan 2019 23:58:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <CANr-nt0=gw90vBLA_FMjmD7duNVYJcGmcqfk9HiQpdKxHV-A+g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+References: <20190118193200.32691-1-malat@debian.org> <CAH7mPvi2TN0b=j-6fqDpjGPkZVSEQnDiT2nj9NWmoBOhUiwKEg@mail.gmail.com>
+In-Reply-To: <CAH7mPvi2TN0b=j-6fqDpjGPkZVSEQnDiT2nj9NWmoBOhUiwKEg@mail.gmail.com>
+From:   Mathieu Malaterre <malat@debian.org>
+Date:   Fri, 25 Jan 2019 08:58:32 +0100
+Message-ID: <CA+7wUsz6Rm58VOOTRA1+URKvONzsGcUT+A8F_sctyqMEOfs=yw@mail.gmail.com>
+Subject: Re: [PATCH] writeback: tracing: Copy only up to 31 characters in
+ strncpy() calls
+To:     Nick Desaulniers <nick.desaulniers@gmail.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/25/19 9:01 AM, Hans Holmberg wrote:
-> On Fri, Jan 25, 2019 at 8:35 AM Masahiro Yamada
-> <yamada.masahiro@socionext.com> wrote:
->>
->> As the comment block in include/trace/define_trace.h says,
->> TRACE_INCLUDE_PATH should be a relative path to the define_trace.h
->>
->> ../../drivers/lightnvm is the correct relative path.
->>
->> ../../../drivers/lightnvm is working by coincidence because the top
->> Makefile adds -I$(srctree)/arch/$(SRCARCH)/include as a header
->> search path, but we should not rely on it.
-> 
-> Nice catch, thanks!
-> 
-> Reviewed-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-> 
->>
->> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
->> ---
->>
->>   drivers/lightnvm/pblk-trace.h | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/lightnvm/pblk-trace.h b/drivers/lightnvm/pblk-trace.h
->> index 679e5c45..9534503 100644
->> --- a/drivers/lightnvm/pblk-trace.h
->> +++ b/drivers/lightnvm/pblk-trace.h
->> @@ -139,7 +139,7 @@ TRACE_EVENT(pblk_state,
->>   /* This part must be outside protection */
->>
->>   #undef TRACE_INCLUDE_PATH
->> -#define TRACE_INCLUDE_PATH ../../../drivers/lightnvm
->> +#define TRACE_INCLUDE_PATH ../../drivers/lightnvm
->>   #undef TRACE_INCLUDE_FILE
->>   #define TRACE_INCLUDE_FILE pblk-trace
->>   #include <trace/define_trace.h>
->> --
->> 2.7.4
->>
+On Fri, Jan 25, 2019 at 5:26 AM Nick Desaulniers
+<nick.desaulniers@gmail.com> wrote:
+>
+> On Fri, Jan 18, 2019 at 11:32 AM Mathieu Malaterre <malat@debian.org> wrote:
+> >
+> > In the past an attempt was made to remove a set of warnings triggered by
+> > gcc 8.x and W=1 by changing calls to strncpy() into strlcpy(). This was
+> > rejected as one of the desired behavior is to keep initializing the rest
+> > of the destination string whenever the source string is less than the
+> > size.
+> >
+> > However the code makes it clear that this is not a desired behavior to
+> > copy the entire 32 characters into the destination buffer, since it is
+> > expected that the string is NUL terminated. So change the maximum number
+> > of characters to be copied to be the size of the destination buffer
+> > minus 1.
+> >
+> > Break long lines and make this patch go through `checkpatch --strict` with
+> > no errors.
+> >
+> > This commit removes the following warnings:
+> >
+> >   include/trace/events/writeback.h:69:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >   include/trace/events/writeback.h:99:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >   include/trace/events/writeback.h:179:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >   include/trace/events/writeback.h:223:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >   include/trace/events/writeback.h:277:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >   include/trace/events/writeback.h:299:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >   include/trace/events/writeback.h:324:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >   include/trace/events/writeback.h:375:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >   include/trace/events/writeback.h:586:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >   include/trace/events/writeback.h:660:3: warning: 'strncpy' specified bound 32 equals destination size [-Wstringop-truncation]
+> >
+> > Cc: Nick Desaulniers <nick.desaulniers@gmail.com>
+> > Link: https://lore.kernel.org/patchwork/patch/910830/
+> > Signed-off-by: Mathieu Malaterre <malat@debian.org>
+> > ---
+> >  include/trace/events/writeback.h | 30 ++++++++++++++++++++----------
+> >  1 file changed, 20 insertions(+), 10 deletions(-)
+> >
+> > diff --git a/include/trace/events/writeback.h b/include/trace/events/writeback.h
+> > index 32db72c7c055..7bc58980f84f 100644
+> > --- a/include/trace/events/writeback.h
+> > +++ b/include/trace/events/writeback.h
+> > @@ -67,7 +67,8 @@ TRACE_EVENT(writeback_dirty_page,
+> >
+> >         TP_fast_assign(
+> >                 strncpy(__entry->name,
+> > -                       mapping ? dev_name(inode_to_bdi(mapping->host)->dev) : "(unknown)", 32);
+> > +                       mapping ? dev_name(inode_to_bdi(mapping->host)->dev) :
+> > +                       "(unknown)", sizeof(__entry->name) - 1);
+>
+> Does strncpy guarantee that destination will be NULL terminated if
+> (sizeof(src) > sizeof(dst)) || (32 > sizeof(dst))?
 
-Thanks Masahiro-san. Applied for 5.1.
+No, that's the point here:
+
+https://www.kernel.org/doc/htmldocs/kernel-api/API-strncpy.html
+
+...
+The result is not NUL-terminated if the source exceeds count bytes.
+
+In the case where the length of src is less than that of count, the
+remainder of dest will be padded with NUL.
+...
+
+One should use strlcpy for the use case you describe:
+
+https://www.kernel.org/doc/htmldocs/kernel-api/API-strlcpy.html
+
+> >                 __entry->ino = mapping ? mapping->host->i_ino : 0;
+> >                 __entry->index = page->index;
+> >         ),
+> > @@ -97,7 +98,8 @@ DECLARE_EVENT_CLASS(writeback_dirty_inode_template,
+> >
+> >                 /* may be called for files on pseudo FSes w/ unregistered bdi */
+> >                 strncpy(__entry->name,
+> > -                       bdi->dev ? dev_name(bdi->dev) : "(unknown)", 32);
+> > +                       bdi->dev ? dev_name(bdi->dev) : "(unknown)",
+> > +                       sizeof(__entry->name) - 1);
+> >                 __entry->ino            = inode->i_ino;
+> >                 __entry->state          = inode->i_state;
+> >                 __entry->flags          = flags;
+> > @@ -177,7 +179,8 @@ DECLARE_EVENT_CLASS(writeback_write_inode_template,
+> >
+> >         TP_fast_assign(
+> >                 strncpy(__entry->name,
+> > -                       dev_name(inode_to_bdi(inode)->dev), 32);
+> > +                       dev_name(inode_to_bdi(inode)->dev),
+> > +                       sizeof(__entry->name) - 1);
+> >                 __entry->ino            = inode->i_ino;
+> >                 __entry->sync_mode      = wbc->sync_mode;
+> >                 __entry->cgroup_ino     = __trace_wbc_assign_cgroup(wbc);
+> > @@ -221,7 +224,8 @@ DECLARE_EVENT_CLASS(writeback_work_class,
+> >         ),
+> >         TP_fast_assign(
+> >                 strncpy(__entry->name,
+> > -                       wb->bdi->dev ? dev_name(wb->bdi->dev) : "(unknown)", 32);
+> > +                       wb->bdi->dev ? dev_name(wb->bdi->dev) : "(unknown)",
+> > +                       sizeof(__entry->name) - 1);
+> >                 __entry->nr_pages = work->nr_pages;
+> >                 __entry->sb_dev = work->sb ? work->sb->s_dev : 0;
+> >                 __entry->sync_mode = work->sync_mode;
+> > @@ -274,7 +278,8 @@ DECLARE_EVENT_CLASS(writeback_class,
+> >                 __field(unsigned int, cgroup_ino)
+> >         ),
+> >         TP_fast_assign(
+> > -               strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
+> > +               strncpy(__entry->name, dev_name(wb->bdi->dev),
+> > +                       sizeof(__entry->name) - 1);
+> >                 __entry->cgroup_ino = __trace_wb_assign_cgroup(wb);
+> >         ),
+> >         TP_printk("bdi %s: cgroup_ino=%u",
+> > @@ -296,7 +301,8 @@ TRACE_EVENT(writeback_bdi_register,
+> >                 __array(char, name, 32)
+> >         ),
+> >         TP_fast_assign(
+> > -               strncpy(__entry->name, dev_name(bdi->dev), 32);
+> > +               strncpy(__entry->name, dev_name(bdi->dev),
+> > +                       sizeof(__entry->name) - 1);
+> >         ),
+> >         TP_printk("bdi %s",
+> >                 __entry->name
+> > @@ -321,7 +327,8 @@ DECLARE_EVENT_CLASS(wbc_class,
+> >         ),
+> >
+> >         TP_fast_assign(
+> > -               strncpy(__entry->name, dev_name(bdi->dev), 32);
+> > +               strncpy(__entry->name, dev_name(bdi->dev),
+> > +                       sizeof(__entry->name) - 1);
+> >                 __entry->nr_to_write    = wbc->nr_to_write;
+> >                 __entry->pages_skipped  = wbc->pages_skipped;
+> >                 __entry->sync_mode      = wbc->sync_mode;
+> > @@ -372,7 +379,8 @@ TRACE_EVENT(writeback_queue_io,
+> >         ),
+> >         TP_fast_assign(
+> >                 unsigned long *older_than_this = work->older_than_this;
+> > -               strncpy(__entry->name, dev_name(wb->bdi->dev), 32);
+> > +               strncpy(__entry->name, dev_name(wb->bdi->dev),
+> > +                       sizeof(__entry->name) - 1);
+> >                 __entry->older  = older_than_this ?  *older_than_this : 0;
+> >                 __entry->age    = older_than_this ?
+> >                                   (jiffies - *older_than_this) * 1000 / HZ : -1;
+> > @@ -584,7 +592,8 @@ TRACE_EVENT(writeback_sb_inodes_requeue,
+> >
+> >         TP_fast_assign(
+> >                 strncpy(__entry->name,
+> > -                       dev_name(inode_to_bdi(inode)->dev), 32);
+> > +                       dev_name(inode_to_bdi(inode)->dev),
+> > +                       sizeof(__entry->name) - 1);
+> >                 __entry->ino            = inode->i_ino;
+> >                 __entry->state          = inode->i_state;
+> >                 __entry->dirtied_when   = inode->dirtied_when;
+> > @@ -658,7 +667,8 @@ DECLARE_EVENT_CLASS(writeback_single_inode_template,
+> >
+> >         TP_fast_assign(
+> >                 strncpy(__entry->name,
+> > -                       dev_name(inode_to_bdi(inode)->dev), 32);
+> > +                       dev_name(inode_to_bdi(inode)->dev),
+> > +                       sizeof(__entry->name) - 1);
+> >                 __entry->ino            = inode->i_ino;
+> >                 __entry->state          = inode->i_state;
+> >                 __entry->dirtied_when   = inode->dirtied_when;
+> > --
+> > 2.19.2
+> >
