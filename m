@@ -2,149 +2,140 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E573C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:53:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AD11C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:55:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C218217D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:53:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5F84217D4
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:55:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="PR6M+G/u"
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="nDdnLJiv";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="BWHc9XcS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbfAYSx5 (ORCPT
+        id S1726589AbfAYSzE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:53:57 -0500
-Received: from mx5.ucr.edu ([138.23.62.67]:3417 "EHLO mx5.ucr.edu"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726165AbfAYSx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:53:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
-  t=1548442436; x=1579978436;
-  h=from:to:cc:subject:date:message-id;
-  bh=A6AGaJZxC7CSOYep6As6FAR1JzODsulmW2ZPRkr14ow=;
-  b=PR6M+G/uLju4FfPSHsS1rJ3Xs9eUJp6SRVH05p9t2CB4aUQWDEWwxN2O
-   uYqm0GYHzQEi8XHXInUT/9pAgZN5guOhIk5MxPeIdm57AkKYVEzp9yyj+
-   PbsI+3SAn9jD2IkypQXCqRPHz2nt05nPr5yGFxq6aUHdr1UF7en0rwpLO
-   mBSnSKFLaRoJ2y97ZkRxz//AP8A5wgUDMt8dFCo8F1OETOcKyJOijQI5z
-   GfaNmuUR9Trml4Mx1VW1gJH9BiR0o7r2PSRq4YLE04AprQUuvKDSsg+Mm
-   FBI+VE2vqhLEU7Htnb1rQOaqQE2U8pnezbyVCSiHPB9AR+lV5dD5BjzVw
-   g==;
-IronPort-PHdr: =?us-ascii?q?9a23=3AHKc2LhzqY93+4aDXCy+O+j09IxM/srCxBDY+r6Qd?=
- =?us-ascii?q?1OIUIJqq85mqBkHD//Il1AaPAd2Lraocw8Pt8InYEVQa5piAtH1QOLdtbDQizf?=
- =?us-ascii?q?ssogo7HcSeAlf6JvO5JwYzHcBFSUM3tyrjaRsdF8nxfUDdrWOv5jAOBBr/KRB1?=
- =?us-ascii?q?JuPoEYLOksi7ze+/94HQbglSmDaxfa55IQmrownWqsQYm5ZpJLwryhvOrHtIeu?=
- =?us-ascii?q?BWyn1tKFmOgRvy5dq+8YB6/ShItP0v68BPUaPhf6QlVrNYFygpM3o05MLwqxbO?=
- =?us-ascii?q?SxaE62YGXWUXlhpIBBXF7A3/U5zsvCb2qvZx1S+HNsDtU7s6RSqt4LtqSB/wiS?=
- =?us-ascii?q?cIKTg58H3MisdtiK5XuQ+tqwBjz4LRZoyVMft+frjGfdMbQ2pBUdtaWTJYDIih?=
- =?us-ascii?q?YYsPDvQOPeJFoILgo1cDoweyCQyqCejyyDFHm2X20LU63eo/DA/I0g8uEdUVvX?=
- =?us-ascii?q?jIsNn4LrseXPqpwKXUyzjIcvNY2S366IjNah0uo/CMXLNwccrMzkkkCgTIj1WR?=
- =?us-ascii?q?qIzlJTyV1/gBv3SV4ud7SOKgl3QnpxtvrTey28chk4/EjZ8WxFDc7Sh13po5KN?=
- =?us-ascii?q?miREN4YdOoCoVcuzyGO4dsX88vR2VltD4nxrAHvZO3ZjYGxZonyhLFdfCKcpKE?=
- =?us-ascii?q?7xDsWeuXPDx2nmhqeKiliBa36UWgz+r8WdSq31tStSpFl8XMtmgK1xzO9siLUv?=
- =?us-ascii?q?t98Vml2TaIzw3T7/tLIUEwlabCM54hzKM8moMdsUjeGiL7nF/6jKCRdkUj9eio?=
- =?us-ascii?q?7/robq/6qZ+bMo94kgD+MqIwlcyjGek0LBQCUmyB9em/1LDv51P1TKhWgvEsj6?=
- =?us-ascii?q?XUtJTXKdwepqGjAg9V1ogj6wy4DzejyNkZnXgGLFJfdxKGk4TlJ1/DLevlDfij?=
- =?us-ascii?q?mVSgiilkyO3bPrH5GJXCMmDDkKv9fbZ680NczAszzdZC55NbE70BI+z8WlX3tN?=
- =?us-ascii?q?PGCh80KBK0w+n5B9VnzI8eWnyAArWfMKzMtV+E/OUvI/ODZNxdliz6Lq0U5uzu?=
- =?us-ascii?q?kHhxzU4PfaCohcNMQG2zBLJrL1jPMimkucsIDWpf5ll2d+ftklDXFGELag=3D?=
- =?us-ascii?q?=3D?=
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2C5AAAJW0tcgMfSVdFkHAEBAQQBAQcEA?=
- =?us-ascii?q?QGBUQcBAQsBhAUPjBtfixdQAQEGinxthVeCcoUKgXsBCgEBLIRAgwwiNAkNAQM?=
- =?us-ascii?q?BAQIBAQIBEwEBCQ0JCCcxgjopgl82UoEVAQUBNVuCRwGBdA0FnyM8jBcziGABB?=
- =?us-ascii?q?4FLCQEIh26EQYEPgQeDboR/g1SCQwKBLAEBAYo5hS2RIgEGAgGBY4FBjnokgzG?=
- =?us-ascii?q?GcIgFAS2acQIEAgQFAgUPIYElgg5NJYFsCoFEglGOLB4zgQeHWoJNAQ?=
-X-IPAS-Result: =?us-ascii?q?A2C5AAAJW0tcgMfSVdFkHAEBAQQBAQcEAQGBUQcBAQsBhAU?=
- =?us-ascii?q?PjBtfixdQAQEGinxthVeCcoUKgXsBCgEBLIRAgwwiNAkNAQMBAQIBAQIBEwEBC?=
- =?us-ascii?q?Q0JCCcxgjopgl82UoEVAQUBNVuCRwGBdA0FnyM8jBcziGABB4FLCQEIh26EQYE?=
- =?us-ascii?q?PgQeDboR/g1SCQwKBLAEBAYo5hS2RIgEGAgGBY4FBjnokgzGGcIgFAS2acQIEA?=
- =?us-ascii?q?gQFAgUPIYElgg5NJYFsCoFEglGOLB4zgQeHWoJNAQ?=
-X-IronPort-AV: E=Sophos;i="5.56,522,1539673200"; 
-   d="scan'208";a="23695216"
-Received: from mail-pf1-f199.google.com ([209.85.210.199])
-  by smtpmx5.ucr.edu with ESMTP/TLS/AES128-GCM-SHA256; 25 Jan 2019 10:45:53 -0800
-Received: by mail-pf1-f199.google.com with SMTP id p15so8232133pfk.7
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 10:45:53 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=1QOsUWecV2RDcnzuAuipZco+k6f59evuap0j4RrEzQo=;
-        b=DbWaqKd/QxJd3phb1/nujncOkpWb8WGZz2VWPG0xeoVQ0hth0wjXXwgM4PIkIZhZyR
-         32ZHUv/XpAvsG8pN/JekWNSgQyiz67xgt4ivXdjUBgLPGed36g7EY4YH9J9vmszFolTZ
-         qqrn3TdUzrQ1H955sGn05kN9oJuOCrvASNt6vuX+DCEn+1llqFjHCwauWl8pLPC0kDMY
-         oK+fzqATJ3mjOEUI9ZoyonpX3krNtEnlXw+QURqlAuMXbw5shImviNuBImkNS4OOdk1D
-         FrQHfXBiayJtk8tP16IRBEBDJl2iVMfEG6q85fqQoo4ViLZFAumK7C+EeG/MZTDPyoAP
-         IS2g==
-X-Gm-Message-State: AJcUukfkb2cfxqnOo3VbqCCl3f+ZIgmt12w26ge6mJyVDV3o1xi7hSUW
-        ZezDpEGhjR8DVZSaQwMEjJ9ekqjaAPsGORMR7l3ZloeP+2xSm9+bJ3kr0VMz0DK9irUd72xXBAx
-        /zkeQ34K/4vw76JQa3XR/Gxm/mQ==
-X-Received: by 2002:a63:be4d:: with SMTP id g13mr11060314pgo.378.1548441953001;
-        Fri, 25 Jan 2019 10:45:53 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN4eG5mL0LiUw4mtCPBegkwoliucgx9/VQjYjHOdO6c4vwIWIqknx/3RFpXQYUlNPE4aY7waMA==
-X-Received: by 2002:a63:be4d:: with SMTP id g13mr11060293pgo.378.1548441952615;
-        Fri, 25 Jan 2019 10:45:52 -0800 (PST)
-Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
-        by smtp.googlemail.com with ESMTPSA id t3sm26068745pgv.31.2019.01.25.10.45.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 10:45:51 -0800 (PST)
-From:   Yizhuo <yzhai003@ucr.edu>
-Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
-        Bard Liao <bardliao@realtek.com>,
-        Oder Chiou <oder_chiou@realtek.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: rt5651: Variable "ret" in function rt5651_i2c_probe() could be uninitialized
-Date:   Fri, 25 Jan 2019 10:45:37 -0800
-Message-Id: <20190125184537.13419-1-yzhai003@ucr.edu>
-X-Mailer: git-send-email 2.17.1
-To:     unlisted-recipients:; (no To-header on input)
+        Fri, 25 Jan 2019 13:55:04 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:52896 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726024AbfAYSzE (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 13:55:04 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0PIrDd5009921;
+        Fri, 25 Jan 2019 10:54:50 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : content-type : content-id :
+ content-transfer-encoding : mime-version; s=facebook;
+ bh=eZPrtPAPAPKbK5W7QL8EmrN2fq2UyU3ONq4ikY3vy54=;
+ b=nDdnLJivOz5/cx5QEnvx9zwZtxctnaeZYsXg2KimL4FedB+DV1Q1fUqj6tToNKOmlvfW
+ J4LPYHfqhBeHvPoiuvzuU312/0pOKxoMPKkU3d38VqO4IRpFRGvQZ9Ttwgu9WD1kZ4zs
+ ODx6A2yNfxVa+lFbsCXepGx7M+qrQefMcpA= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2q86x008ux-6
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Fri, 25 Jan 2019 10:54:50 -0800
+Received: from prn-hub06.TheFacebook.com (2620:10d:c081:35::130) by
+ prn-hub03.TheFacebook.com (2620:10d:c081:35::127) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Fri, 25 Jan 2019 10:54:26 -0800
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Fri, 25 Jan 2019 10:54:26 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=eZPrtPAPAPKbK5W7QL8EmrN2fq2UyU3ONq4ikY3vy54=;
+ b=BWHc9XcSx0KuExeeOUUDUo5NAgOq1QTOktNyq9WO8fIg9WE0lq4T03r3FdD5soPavJ0eYePEO/6g2rqQJkggTk272/MOQjiU8Rhco9drHkSFjdV7cxp3nMY/ZSdKuRV/SiXFNuWVv7S5wPwh4wkaqilKifW1goXFrQQZaVamF04=
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com (10.175.2.19) by
+ MWHPR15MB1712.namprd15.prod.outlook.com (10.174.254.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.21; Fri, 25 Jan 2019 18:54:25 +0000
+Received: from MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::ec0e:4a05:81f8:7df9]) by MWHPR15MB1165.namprd15.prod.outlook.com
+ ([fe80::ec0e:4a05:81f8:7df9%4]) with mapi id 15.20.1558.021; Fri, 25 Jan 2019
+ 18:54:25 +0000
+From:   Song Liu <songliubraving@fb.com>
+To:     lkml <linux-kernel@vger.kernel.org>
+CC:     "kan.liang@linux.intel.com" <kan.liang@linux.intel.com>
+Subject: perf/x86/intel/uncore
+Thread-Topic: perf/x86/intel/uncore
+Thread-Index: AQHUtN9kdquBrmJs/06ZsIdLUZtzEQ==
+Date:   Fri, 25 Jan 2019 18:54:24 +0000
+Message-ID: <E44A3BE5-E45A-4D88-818C-02E6E6342060@fb.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-mailer: Apple Mail (2.3445.102.3)
+x-originating-ip: [2620:10d:c090:200::6:7f1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR15MB1712;20:hZ9JIRFFbzSajEDM8OoigBxJCFtR7RaujDYaLsDaEtxXWDlhHxthkS2nHmXmFmXdFjM4DZDH3UPcu+aWFfd3vc1cSmQIGw/iR0vWq04irF+58UYVagV8BQo9yABYXM2l2oF8OlLaCu13xkIXEIyEqP42PR4fjtprTmpd0FjLLHs=
+x-ms-office365-filtering-correlation-id: 9a8532f3-3e33-41b1-ad23-08d682f686bc
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:MWHPR15MB1712;
+x-ms-traffictypediagnostic: MWHPR15MB1712:
+x-microsoft-antispam-prvs: <MWHPR15MB1712F2D4EF10DC4DFCDEF3DAB39B0@MWHPR15MB1712.namprd15.prod.outlook.com>
+x-forefront-prvs: 0928072091
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(136003)(39860400002)(366004)(346002)(396003)(51874003)(199004)(189003)(4326008)(50226002)(316002)(36756003)(305945005)(6436002)(25786009)(6512007)(256004)(7736002)(8936002)(6486002)(53936002)(6116002)(82746002)(83716004)(86362001)(71200400001)(71190400001)(81166006)(81156014)(14454004)(105586002)(478600001)(68736007)(2616005)(6916009)(57306001)(8676002)(486006)(33656002)(186003)(6506007)(97736004)(2906002)(46003)(476003)(106356001)(99286004)(102836004)(505234006);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR15MB1712;H:MWHPR15MB1165.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: IAFqpFmJFv//UvX2zmz1Q7f9EgkyCGFfBng9xLmw9uJe79fLisj3cvwU0i0SjEF/uqsCZaLzwMWTI0sVv8MGK9twa6b2/Wb2hPmf6l4pBkq56GY3xEvaj9Lx9sX4pT/bjJYoVI3Tfy238Ctf1MjLvviuOSo98qySIlZwG/mwRt4C5n9oFQOzYbfrCShBXNYiyYBNMyGF8dI9uEgDmfkFoZPLTlVvgEN2kspOBIMVaxt10MmoraPh6wL6QhZkTjP5fXEXOxcD94bWvE5O/z2dkywmhZ4FTOkJ/2qOn5dkeMU7PskvkrFjytOkhck3HNS1ojiDL8TE7/y8PgAcZZCXCd2/pxTzeSjdlRpPXD4qoaJL/srZtttrB6Efi3JvTZfj4qs5yS96/G5Ae7fra+A/e9xahDFEFMBAPdjx/8L07qE=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <641E629144E81C4EACE7C032695DFBAA@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a8532f3-3e33-41b1-ad23-08d682f686bc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2019 18:54:25.2350
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR15MB1712
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-25_12:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In function rt5651_i2c_probe(), local variable "ret" could
-be uninitialized if function regmap_read() returns -EINVAL.
-However, this value is used in if statement. This is
-potentially unsafe.
+Hi,
 
-Signed-off-by: Yizhuo <yzhai003@ucr.edu>
----
- sound/soc/codecs/rt5651.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+We are debugging an issue that skx_pci_uncores cannot be registered on
+8-socket system with Xeon Platinum 8176 CPUs. After poking around for a
+while, I found it is caused by snbep_pci2phy_map_init() couldn't find
+a unbox_dev:
 
-diff --git a/sound/soc/codecs/rt5651.c b/sound/soc/codecs/rt5651.c
-index da60b28ba3df..8d6cbc6b6ff0 100644
---- a/sound/soc/codecs/rt5651.c
-+++ b/sound/soc/codecs/rt5651.c
-@@ -1734,6 +1734,7 @@ static int rt5651_i2c_probe(struct i2c_client *i2c,
- 	struct rt5651_platform_data *pdata = dev_get_platdata(&i2c->dev);
- 	struct rt5651_priv *rt5651;
- 	int ret;
-+	int err;
- 
- 	rt5651 = devm_kzalloc(&i2c->dev, sizeof(*rt5651),
- 				GFP_KERNEL);
-@@ -1755,7 +1756,10 @@ static int rt5651_i2c_probe(struct i2c_client *i2c,
- 		return ret;
- 	}
- 
--	regmap_read(rt5651->regmap, RT5651_DEVICE_ID, &ret);
-+	err = regmap_read(rt5651->regmap, RT5651_DEVICE_ID, &ret);
-+	if (err)
-+		return err;
-+
- 	if (ret != RT5651_DEVICE_ID_VALUE) {
- 		dev_err(&i2c->dev,
- 			"Device with ID register %#x is not rt5651\n", ret);
--- 
-2.17.1
+  ubox_dev =3D pci_get_device(PCI_VENDOR_ID_INTEL, devid, ubox_dev);
+  unbox_dev =3D=3D NULL
+  ...
 
+The same kernel (Linus' master) works fine on some single socket SKX
+systems.
+
+I am not sure what to check next. And I am not sure whether this is
+specific to this system (HPE Superdome Flex).
+
+One thing I noticed is that the PCI configuration space shows
+subsystem vendor ID of 0x1590 instead of 0x8086:
+
+0000:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers=
+ (rev 04)
+00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
+10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+20: 00 00 00 00 00 00 00 00 00 00 00 00 90 15 14 20   << subsystem vendor
+
+30: 00 00 00 00 40 00 00 00 00 00 00 00 00 00 00 00
+
+But I don't think that is the problem as the code search with PCI_ANY_ID.
+
+
+Any suggestions on what might be broken? And what to try next?
+
+Thanks in advance!
+Song=
