@@ -2,159 +2,185 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CACD1C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:56:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E3EDC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99278218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:56:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E50C218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548431834;
+	bh=SkX1ewLFPA5g/FP0Y3G7x6hwqN/9cDUe1Ec2vu58fNc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=2J8wfapamL/wB2MHIGMnuKTtrU4uD10sDHaSYDha8LTBNeVi3ptHD/9JhUr3isSiK
+	 4K/M8qHTiSVFkRGaq3aPnbiOXd0qlitIWGXrPETprFSti/UqybZfVWmr7r2AaGdyDa
+	 tg5BICK296PHAQLtXUgxYTNqv16s0wJSVVUXwpRE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbfAYP4q (ORCPT
+        id S1728952AbfAYP5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:56:46 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49628 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726252AbfAYP4q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:56:46 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDD77A78;
-        Fri, 25 Jan 2019 07:56:45 -0800 (PST)
-Received: from [10.1.196.75] (e110467-lin.cambridge.arm.com [10.1.196.75])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 813253F5AF;
-        Fri, 25 Jan 2019 07:56:43 -0800 (PST)
-Subject: Re: [PATCH RFC 1/1] arm64: Use PSCI calls for CPU stop when hotplug
- is supported
-To:     Pramod Kumar <pramod.kumar@broadcom.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>, Rob Herring <robh@kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Scott Branden <scott.branden@broadcom.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        BCM Kernel Feedback <bcm-kernel-feedback-list@broadcom.com>,
-        Sudeep Holla <sudeep.holla@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Steve Capper <steve.capper@arm.com>
-References: <1547790380-6276-1-git-send-email-pramod.kumar@broadcom.com>
- <20190118113242.GA8928@e107155-lin>
- <CAJ+tv6+6yqT1xkmkY3x6SNQ83K+J6zqKZr7PV5A_ffvyEzceqg@mail.gmail.com>
- <CAJ+tv6KqynSf5t_VwLqpdM4BF+wLWcJ0wPTD4nWqL4ej1Yih4g@mail.gmail.com>
- <20190123164801.GA55887@lakrids.cambridge.arm.com>
- <f1851a76-8078-b8e7-6a54-b038b47f9214@broadcom.com>
- <20190123173343.GC55887@lakrids.cambridge.arm.com>
- <CAJ+tv6+Mm8Rmsx8cfOuDT4+CVWVd4gKLzUnTs_EMxKYax+NScw@mail.gmail.com>
-From:   Robin Murphy <robin.murphy@arm.com>
-Message-ID: <28d43f76-12ac-662b-31ad-942c9d7e81ea@arm.com>
-Date:   Fri, 25 Jan 2019 15:56:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 25 Jan 2019 10:57:12 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:35156 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726252AbfAYP5M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:57:12 -0500
+Received: by mail-oi1-f196.google.com with SMTP id v6so8022818oif.2;
+        Fri, 25 Jan 2019 07:57:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=yznjzNNy1+1fIbKuH6Qgt44pp5Q8zl8F/RgJ2eO6RFw=;
+        b=lpUqZjZD+tzq0d6qU+KcAHALjjXeTU8Y+PQ0hq0e1cKq9zcZjnkTEM7VWg0nSkIm/w
+         ZGbMZ5wZh2nEF2biacDmgiMd6Lj/p/xXbgKVa2AtV8praq2yO/IJqkmU995Tn9ZtSfHN
+         jDOEmuKyl01IUtXnuLoYPY7Hn8fySnGWYeuPwzbwG9pv+RkGuYyP9KfAYXjyxK0D6kNV
+         rnV9VUPpocrxUWeSs62Vcm5C/f4nqDlWd4gEELjK11zKQmFdFjCLEk78O7tFB16Ue4rm
+         5cjRM7xyZGe8NTqoekjUs5ysCI67ovb6jg3MvjiZOn9vBlGZ2muhEceMLnGCqc8hem47
+         kYMg==
+X-Gm-Message-State: AJcUukcx7FZvm/NPlj2nUDQoY1JsiEPbk0dUQgnPwIdSc0A20ogI9e4D
+        lr2SCbEhWLNzujc2LRAHEzEsoFU=
+X-Google-Smtp-Source: AHgI3IYYS1ChxnEwZrRF7ZEJVZdBas0htnypEUViOtmceAE94fVj5JdTu3mmeaPslM7sjOomWIYtmQ==
+X-Received: by 2002:aca:e715:: with SMTP id e21mr1684734oih.76.1548430629308;
+        Fri, 25 Jan 2019 07:37:09 -0800 (PST)
+Received: from xps15.herring.priv (24-155-109-49.dyn.grandenetworks.net. [24.155.109.49])
+        by smtp.googlemail.com with ESMTPSA id w5sm1259009oif.48.2019.01.25.07.37.08
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 07:37:08 -0800 (PST)
+From:   Rob Herring <robh@kernel.org>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org,
+        Support Opensource <support.opensource@diasemi.com>,
+        Liam Girdwood <lgirdwood@gmail.com>
+Subject: [PATCH 2/2] regulator: da9052: Use lowercase regulator names to match the DT
+Date:   Fri, 25 Jan 2019 09:37:05 -0600
+Message-Id: <20190125153705.29921-2-robh@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190125153705.29921-1-robh@kernel.org>
+References: <20190125153705.29921-1-robh@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAJ+tv6+Mm8Rmsx8cfOuDT4+CVWVd4gKLzUnTs_EMxKYax+NScw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-GB
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 25/01/2019 07:03, Pramod Kumar wrote:
-> On Wed, Jan 23, 2019 at 11:03 PM Mark Rutland <mark.rutland@arm.com> wrote:
->>
->> On Wed, Jan 23, 2019 at 09:05:26AM -0800, Scott Branden wrote:
->>> Hi Mark,
->>>
->>> Hopefully I can shed some light on the use case inline.
->>>
->>> On 2019-01-23 8:48 a.m., Mark Rutland wrote:
->>>> On Mon, Jan 21, 2019 at 11:30:02AM +0530, Pramod Kumar wrote:
->>>>> On Mon, Jan 21, 2019 at 11:28 AM Pramod Kumar <pramod.kumar@broadcom.com>
->>>>> wrote:
->>>>>
->>>>>       Need comes from a specific use case where one Accelerator card(SoC) is
->>>>>       plugged in a sever over a PCIe interface.  This Card gets supply from a
->>>>>       battery, which could provide very less power for a very small time, in case
->>>>>       of any power loss. Once Card switches to battery, this has to reduce its
->>>>>       power consumption to its lowest point and back-up the DDR contents asap
->>>>>       before battery gets fully drained off.
->>>> In this example is Linux running on the server, or on the accelerator?
->>> Accelerator
->>>>
->>>> What precisely are you trying to back up from DDR, and why?
->>> Data in DDR is being written to disk at this time (disk is connected to
->>> accelerator)
->>>>
->>>> What is responsible for backing up that contents?
->>>
->>> A low power M-class processor and DMA engine which continues necessary
->>> operations to transfer DDR memory to disk.
->>>
->>> The high power processors on the accelerator running linux needed to be
->>> halted ASAP on this power loss event and M0 take over. Graceful shutdown of
->>> linux and other peripherals is unnecessary (and we don't have the power
->>> necessary to do so).
->>
->> If graceful shutdown of Linux is not required (and is in fact
->> undesireable), why is Linux involved at all in this shutdown process?
->>
->> For example, why is this not a secure interrupt taken to EL3, which can
->> (gracefully) shut down the CPUs regardless?
->>
-> 
-> This is an GPIO interrupt. This can not be marked secure as for that
-> we need to mark whole GPIO controller as secure which is not possible
-> as GPIO controller is meant for non-secure world having more than 100
-> lines connected.
-> 
-> I agree we have work around where we invoke handler in Linux and
-> switch to ATF via SMC and from ATF we need bring all secondary CPU to
-> ATF via sending SGI and and then respective core flushes the L1/L2 and
-> bring himself out of coherency domain and cluster and MCU shutdowns
-> the CPU subsystem gracefully. This could work for our requirement.
-> Need to check ATF support for that.
+Since c32569e358ad ("regulator: Use of_node_name_eq for node name
+comparisons"), regulator node name comparisons are case sensitive.
+The DA9052 driver uses uppercase, but the DT has lowercase.
 
-Right, SMCCC has whole spaces for SoC-specific and platform-specific 
-service calls. If your system has a need to power off as fast as 
-possible under system-specific constraints, it seems much more sensible 
-to immediately tell the firmware "power off as fast as possible under 
-the system-specific constraints that you have full knowledge of, 
-please", rather than trying to coax the generic kernel_halt() (or 
-whatever) infrastructure to sort-of-do-what-you-want.
+Fix this by using a lowercase regulator name to match the DT node name.
 
-> But What about generic system? This patch address the generic
-> multi-master system's requirement. Consider system where shutting down
-> the linux does not mean shutting down the complete system. Lets take
-> an example of smartnic case Where NIC master and CPUs access cachable
-> DDR. In smarnic its quite common to bring CPUs on demand means when
-> needed via MCU help.
-> Now in full-fledged system. if CPU subsystem is shutdown via poweroff
-> command which does not bring secondary CPUs out of coherency domain,
-> it will bring the complete system unstable when NIC master tries to
-> access DDR and snoop is send to CPUs as well which is not available.
-> Fabric/System hangs...
+Fixes: c32569e358ad ("regulator: Use of_node_name_eq for node name comparisons")
+Cc: Support Opensource <support.opensource@diasemi.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>
+Signed-off-by: Rob Herring <robh@kernel.org>
+---
+ drivers/regulator/da9052-regulator.c | 64 ++++++++++++++--------------
+ 1 file changed, 32 insertions(+), 32 deletions(-)
 
-Not sure that's really relevant here... If platform firmware is able to 
-power things off in a way that breaks the platform, surely that's 
-entirely the firmware's own fault.
+diff --git a/drivers/regulator/da9052-regulator.c b/drivers/regulator/da9052-regulator.c
+index 207cb3859dcc..cefa3558236d 100644
+--- a/drivers/regulator/da9052-regulator.c
++++ b/drivers/regulator/da9052-regulator.c
+@@ -290,10 +290,10 @@ static const struct regulator_ops da9052_ldo_ops = {
+ 	.disable = regulator_disable_regmap,
+ };
+ 
+-#define DA9052_LDO(_id, step, min, max, sbits, ebits, abits) \
++#define DA9052_LDO(_id, _name, step, min, max, sbits, ebits, abits) \
+ {\
+ 	.reg_desc = {\
+-		.name = #_id,\
++		.name = #_name,\
+ 		.ops = &da9052_ldo_ops,\
+ 		.type = REGULATOR_VOLTAGE,\
+ 		.id = DA9052_ID_##_id,\
+@@ -310,10 +310,10 @@ static const struct regulator_ops da9052_ldo_ops = {
+ 	.activate_bit = (abits),\
+ }
+ 
+-#define DA9052_DCDC(_id, step, min, max, sbits, ebits, abits) \
++#define DA9052_DCDC(_id, _name, step, min, max, sbits, ebits, abits) \
+ {\
+ 	.reg_desc = {\
+-		.name = #_id,\
++		.name = #_name,\
+ 		.ops = &da9052_dcdc_ops,\
+ 		.type = REGULATOR_VOLTAGE,\
+ 		.id = DA9052_ID_##_id,\
+@@ -331,37 +331,37 @@ static const struct regulator_ops da9052_ldo_ops = {
+ }
+ 
+ static struct da9052_regulator_info da9052_regulator_info[] = {
+-	DA9052_DCDC(BUCK1, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBCOREGO),
+-	DA9052_DCDC(BUCK2, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBPROGO),
+-	DA9052_DCDC(BUCK3, 25, 950, 2525, 6, 6, DA9052_SUPPLY_VBMEMGO),
+-	DA9052_DCDC(BUCK4, 50, 1800, 3600, 5, 6, 0),
+-	DA9052_LDO(LDO1, 50, 600, 1800, 5, 6, 0),
+-	DA9052_LDO(LDO2, 25, 600, 1800, 6, 6, DA9052_SUPPLY_VLDO2GO),
+-	DA9052_LDO(LDO3, 25, 1725, 3300, 6, 6, DA9052_SUPPLY_VLDO3GO),
+-	DA9052_LDO(LDO4, 25, 1725, 3300, 6, 6, 0),
+-	DA9052_LDO(LDO5, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO6, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO7, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO8, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO9, 50, 1250, 3650, 6, 6, 0),
+-	DA9052_LDO(LDO10, 50, 1200, 3600, 6, 6, 0),
++	DA9052_DCDC(BUCK1, buck1, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBCOREGO),
++	DA9052_DCDC(BUCK2, buck2, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBPROGO),
++	DA9052_DCDC(BUCK3, buck3, 25, 950, 2525, 6, 6, DA9052_SUPPLY_VBMEMGO),
++	DA9052_DCDC(BUCK4, buck4, 50, 1800, 3600, 5, 6, 0),
++	DA9052_LDO(LDO1, ldo1, 50, 600, 1800, 5, 6, 0),
++	DA9052_LDO(LDO2, ldo2, 25, 600, 1800, 6, 6, DA9052_SUPPLY_VLDO2GO),
++	DA9052_LDO(LDO3, ldo3, 25, 1725, 3300, 6, 6, DA9052_SUPPLY_VLDO3GO),
++	DA9052_LDO(LDO4, ldo4, 25, 1725, 3300, 6, 6, 0),
++	DA9052_LDO(LDO5, ldo5, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO6, ldo6, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO7, ldo7, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO8, ldo8, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO9, ldo9, 50, 1250, 3650, 6, 6, 0),
++	DA9052_LDO(LDO10, ldo10, 50, 1200, 3600, 6, 6, 0),
+ };
+ 
+ static struct da9052_regulator_info da9053_regulator_info[] = {
+-	DA9052_DCDC(BUCK1, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBCOREGO),
+-	DA9052_DCDC(BUCK2, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBPROGO),
+-	DA9052_DCDC(BUCK3, 25, 950, 2525, 6, 6, DA9052_SUPPLY_VBMEMGO),
+-	DA9052_DCDC(BUCK4, 25, 950, 2525, 6, 6, 0),
+-	DA9052_LDO(LDO1, 50, 600, 1800, 5, 6, 0),
+-	DA9052_LDO(LDO2, 25, 600, 1800, 6, 6, DA9052_SUPPLY_VLDO2GO),
+-	DA9052_LDO(LDO3, 25, 1725, 3300, 6, 6, DA9052_SUPPLY_VLDO3GO),
+-	DA9052_LDO(LDO4, 25, 1725, 3300, 6, 6, 0),
+-	DA9052_LDO(LDO5, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO6, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO7, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO8, 50, 1200, 3600, 6, 6, 0),
+-	DA9052_LDO(LDO9, 50, 1250, 3650, 6, 6, 0),
+-	DA9052_LDO(LDO10, 50, 1200, 3600, 6, 6, 0),
++	DA9052_DCDC(BUCK1, buck1, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBCOREGO),
++	DA9052_DCDC(BUCK2, buck2, 25, 500, 2075, 6, 6, DA9052_SUPPLY_VBPROGO),
++	DA9052_DCDC(BUCK3, buck3, 25, 950, 2525, 6, 6, DA9052_SUPPLY_VBMEMGO),
++	DA9052_DCDC(BUCK4, buck4, 25, 950, 2525, 6, 6, 0),
++	DA9052_LDO(LDO1, ldo1, 50, 600, 1800, 5, 6, 0),
++	DA9052_LDO(LDO2, ldo2, 25, 600, 1800, 6, 6, DA9052_SUPPLY_VLDO2GO),
++	DA9052_LDO(LDO3, ldo3, 25, 1725, 3300, 6, 6, DA9052_SUPPLY_VLDO3GO),
++	DA9052_LDO(LDO4, ldo4, 25, 1725, 3300, 6, 6, 0),
++	DA9052_LDO(LDO5, ldo5, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO6, ldo6, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO7, ldo7, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO8, ldo8, 50, 1200, 3600, 6, 6, 0),
++	DA9052_LDO(LDO9, ldo9, 50, 1250, 3650, 6, 6, 0),
++	DA9052_LDO(LDO10, ldo10, 50, 1200, 3600, 6, 6, 0),
+ };
+ 
+ static inline struct da9052_regulator_info *find_regulator_info(u8 chip_id,
+-- 
+2.19.1
 
-> I feel While shutting down the CPUs subsystem or powering off, All
-> secondary CPUs must be shutdown properly by bring-out of coherency
-> domain to remain rest of subsystem usable. I agree that introducing
-> PSCI call introduce delay for shutdown/reboot case but stability
-> matter than little delay.
-
-Again, if you don't trust the firmware to implement SYSTEM_OFF 
-appropriately for the platform, can you really assume its CPU_OFF 
-implementation is safe either?
-
-People already complain today about how long CPU bringup takes on 
-certain systems. Extending their reboot cycle by a similar degree for 
-reasons that are entirely irrelevant to those systems is hardly going to 
-make those users any happier.
-
-Robin.
