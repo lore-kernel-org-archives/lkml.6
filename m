@@ -2,70 +2,70 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B353CC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09AA8C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85889218F0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C46C2217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="u9hDWa+A"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aDwinDgZ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727809AbfAYLaW (ORCPT
+        id S1728145AbfAYLaZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:30:22 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:44421 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfAYLaU (ORCPT
+        Fri, 25 Jan 2019 06:30:25 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41334 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726878AbfAYLaW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:30:20 -0500
-Received: by mail-wr1-f65.google.com with SMTP id z5so9880101wrt.11;
-        Fri, 25 Jan 2019 03:30:18 -0800 (PST)
+        Fri, 25 Jan 2019 06:30:22 -0500
+Received: by mail-wr1-f67.google.com with SMTP id x10so9894864wrs.8;
+        Fri, 25 Jan 2019 03:30:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q06YcEO7r7oiNXtCNtDcZmxkFfAsBt1uDq63g/LTR2k=;
-        b=u9hDWa+A9ZSeDhwxO2PJYVUeabsCCIk5+sY7lohHO0Aw5SOas+5g0LZAlWcKmL0wTS
-         0z5Do/JuAE+N+Nxnr6ODfZn0rpKGxxPfdNmbs5h+OsAUnAZBdKNlGQ6yY/k9u7AvcDkl
-         tAhYHbYC5TK8IWpWUD2VpKszbE6nAv/oxJWaa9iLIwsV7a9uadlLAmXaUXOUdcGz8jXQ
-         Hnlo/n8bZoaApFvfXH5CV9a6Bp8Pjp0S5sHWmCfXeRz/HVXTrCS9mTFu5H2drqer/PFl
-         cqf7WM6i7jHDNtcKm/KdYxDPAEYLhkYqem5P10gNXjAZ3Ia5QctXERbxnxiGovI2xILl
-         b9Uw==
+        bh=VvuZ8hl8eBYpxwbsEYMwOLTbpcQiEop8FkF1ZB8j4vU=;
+        b=aDwinDgZaneohOEdSdVIr9sq/a0yhoAyH6G2GA6zRRwDtgIiwim64mMJlvmbej7HTJ
+         MdFklTQ/BMwrY/Xy5cYoTT3s00zbSk8Qkv/1RBFAhHlji8Rs428MCw733RP6xtt4UdKF
+         KgUswniYgntTzjYvH7FxPmL0fsVZK2JP7kVtgy92Tju7ksggqpdiaHE811a7wlMUiqhi
+         8Di/e7D7hDrYE7f34jJ5+pU+NfgUcI+dYQ8/ArFWxaUPfQGXxc7L445T9Hu2tovAWW4g
+         h/ryfA+W/w9oTw6aaoX4wnjoh1pbCLqrgDQWrbaflDQ6Rwq1RR8YZrjt4xsalb9GQ+d2
+         pf2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q06YcEO7r7oiNXtCNtDcZmxkFfAsBt1uDq63g/LTR2k=;
-        b=Eu/k7grOMfrLmqWg9HJLbl+i2647nwD9DP7E9vgi2QD0WLVDSRaGbQl73oCMZ9jeNd
-         XHL0Kse4UAKwIcGtz8w9l7uIRjXNI/uGb4BZEW/NJtj/sAg29qQPlwR9kYIHcNtTQ9gl
-         x01Fvfq2AdSF3mbnhrtZe97zM5NMWQhdOYnEHC9S6N4zEZIpgnp+YeyCDovxOOITBMHJ
-         A1A1+DEg6ku4zLvh7SY2I8XtF7tHDyu44h3lOIn6HiiRUUU1HcgXdBMPHWc+26ObyPw2
-         dkRIMwbfLLsP5sglZRjmP5mHuGQy+OY0PGn4VsKTUR382fem+uL83tw3EVwffPBczlsS
-         5ZjQ==
-X-Gm-Message-State: AJcUuke8q0LIc8/rQAo8LGr90rVonQcFetpp2FIj0aWm6Ru7Tpay67ZA
-        72j/GdHDA7XXmdaMCr3g/RWzhwcYJGs=
-X-Google-Smtp-Source: ALg8bN7VKasZeS/QWhcrDQihl6Hci1HQF2F2uJbnE21PVShB0UmtdHIryhVr35QCI+QBwBjdossPqQ==
-X-Received: by 2002:adf:a357:: with SMTP id d23mr11621314wrb.195.1548415817320;
-        Fri, 25 Jan 2019 03:30:17 -0800 (PST)
+        bh=VvuZ8hl8eBYpxwbsEYMwOLTbpcQiEop8FkF1ZB8j4vU=;
+        b=tbYSPhzz6gPTvQgXMM4faCgJKm1ubfye16vXP+qX08HxODnQEGnCqnQzHAvGYWAatK
+         EaXnewzxTlS+Lg6cRRF+Z6ylxcsWNan4vBuiWPi5p0MGoN7dsuQSijeMuSkWOoVCVJw7
+         cibaIBe/NyD9EnqlX4vhG/C/HLYP5rgr2jIhS/nq5CZmMROIgUz403y9RTItOcLO6Pru
+         lGABVitFqQ97jE5ooQmaXiBNFICrpbhG7g4dj1hJoW6EO6gq+kHS5l1uPgS5liVZAPPf
+         6+N6fjH0AFrn9jRQ1r4+ZzJVHAZsy4nsPqgbHMUeRNcxITRmkoPQDsIL672otf3e3Cwa
+         2PAg==
+X-Gm-Message-State: AJcUukejgN/YoaIyEkyRE4BzwbeoTWmPjj57yIJC2seB9q7PRCx1LfO5
+        MKALOwMx8oCOasuNhHHWwD0=
+X-Google-Smtp-Source: ALg8bN5kP8CCimu+yM+jrVF1LZTOJbkENulywLNpVnt7TmMwQwf1WOn2+Ig2ytAtV84jqVXimsBz6w==
+X-Received: by 2002:adf:dbcb:: with SMTP id e11mr11509763wrj.58.1548415820353;
+        Fri, 25 Jan 2019 03:30:20 -0800 (PST)
 Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id a12sm114926161wro.18.2019.01.25.03.30.16
+        by smtp.gmail.com with ESMTPSA id z17sm80107397wrv.2.2019.01.25.03.30.19
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 03:30:16 -0800 (PST)
+        Fri, 25 Jan 2019 03:30:19 -0800 (PST)
 From:   Thierry Reding <thierry.reding@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Cc:     Mathias Nyman <mathias.nyman@intel.com>,
         Jon Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
         linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 2/6] usb: host: xhci-tegra: Selectively program IPFS
-Date:   Fri, 25 Jan 2019 12:30:09 +0100
-Message-Id: <20190125113013.11447-2-thierry.reding@gmail.com>
+Subject: [PATCH 4/6] arm64: tegra: Add XUSB and pad controller on Tegra186
+Date:   Fri, 25 Jan 2019 12:30:11 +0100
+Message-Id: <20190125113013.11447-4-thierry.reding@gmail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190125113013.11447-1-thierry.reding@gmail.com>
 References: <20190125113013.11447-1-thierry.reding@gmail.com>
@@ -76,123 +76,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: JC Kuo <jckuo@nvidia.com>
+From: Thierry Reding <treding@nvidia.com>
 
-Starting with Tegra186, the XUSB controller no longer has the IPFS
-wrapper. This commit adds a "has_ipfs" field to struct tegra_xusb_soc
-that can be used to declare the existence of the IPFS wrapper.
+Adds the XUSB pad and XUSB controllers on Tegra186.
 
-For the existing chips (i.e. Tegra124 and Tegra210), the new field is
-set to true. A future patch adding support for Tegra186 will set it to
-false.
-
-Signed-off-by: JC Kuo <jckuo@nvidia.com>
 Signed-off-by: Thierry Reding <treding@nvidia.com>
 ---
- drivers/usb/host/xhci-tegra.c | 43 +++++++++++++++++++++--------------
- 1 file changed, 26 insertions(+), 17 deletions(-)
+ arch/arm64/boot/dts/nvidia/tegra186.dtsi | 135 +++++++++++++++++++++++
+ 1 file changed, 135 insertions(+)
 
-diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
-index 938ff06c0349..49e033f953a2 100644
---- a/drivers/usb/host/xhci-tegra.c
-+++ b/drivers/usb/host/xhci-tegra.c
-@@ -161,6 +161,7 @@ struct tegra_xusb_soc {
- 	} ports;
+diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+index 22815db4a3ed..09d3b0d60e41 100644
+--- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
++++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+@@ -338,6 +338,141 @@
+ 		status = "disabled";
+ 	};
  
- 	bool scale_ss_clock;
-+	bool has_ipfs;
- };
- 
- struct tegra_xusb {
-@@ -637,16 +638,18 @@ static irqreturn_t tegra_xusb_mbox_thread(int irq, void *data)
- 	return IRQ_HANDLED;
- }
- 
--static void tegra_xusb_ipfs_config(struct tegra_xusb *tegra,
--				   struct resource *regs)
-+static void tegra_xusb_config(struct tegra_xusb *tegra,
-+			      struct resource *regs)
- {
- 	u32 value;
- 
--	value = ipfs_readl(tegra, IPFS_XUSB_HOST_CONFIGURATION_0);
--	value |= IPFS_EN_FPCI;
--	ipfs_writel(tegra, value, IPFS_XUSB_HOST_CONFIGURATION_0);
-+	if (tegra->soc->has_ipfs) {
-+		value = ipfs_readl(tegra, IPFS_XUSB_HOST_CONFIGURATION_0);
-+		value |= IPFS_EN_FPCI;
-+		ipfs_writel(tegra, value, IPFS_XUSB_HOST_CONFIGURATION_0);
- 
--	usleep_range(10, 20);
-+		usleep_range(10, 20);
-+	}
- 
- 	/* Program BAR0 space */
- 	value = fpci_readl(tegra, XUSB_CFG_4);
-@@ -661,13 +664,15 @@ static void tegra_xusb_ipfs_config(struct tegra_xusb *tegra,
- 	value |= XUSB_IO_SPACE_EN | XUSB_MEM_SPACE_EN | XUSB_BUS_MASTER_EN;
- 	fpci_writel(tegra, value, XUSB_CFG_1);
- 
--	/* Enable interrupt assertion */
--	value = ipfs_readl(tegra, IPFS_XUSB_HOST_INTR_MASK_0);
--	value |= IPFS_IP_INT_MASK;
--	ipfs_writel(tegra, value, IPFS_XUSB_HOST_INTR_MASK_0);
-+	if (tegra->soc->has_ipfs) {
-+		/* Enable interrupt assertion */
-+		value = ipfs_readl(tegra, IPFS_XUSB_HOST_INTR_MASK_0);
-+		value |= IPFS_IP_INT_MASK;
-+		ipfs_writel(tegra, value, IPFS_XUSB_HOST_INTR_MASK_0);
- 
--	/* Set hysteresis */
--	ipfs_writel(tegra, 0x80, IPFS_XUSB_HOST_CLKGATE_HYSTERESIS_0);
-+		/* Set hysteresis */
-+		ipfs_writel(tegra, 0x80, IPFS_XUSB_HOST_CLKGATE_HYSTERESIS_0);
-+	}
- }
- 
- static int tegra_xusb_clk_enable(struct tegra_xusb *tegra)
-@@ -1015,10 +1020,12 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 	if (IS_ERR(tegra->fpci_base))
- 		return PTR_ERR(tegra->fpci_base);
- 
--	res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
--	tegra->ipfs_base = devm_ioremap_resource(&pdev->dev, res);
--	if (IS_ERR(tegra->ipfs_base))
--		return PTR_ERR(tegra->ipfs_base);
-+	if (tegra->soc->has_ipfs) {
-+		res = platform_get_resource(pdev, IORESOURCE_MEM, 2);
-+		tegra->ipfs_base = devm_ioremap_resource(&pdev->dev, res);
-+		if (IS_ERR(tegra->ipfs_base))
-+			return PTR_ERR(tegra->ipfs_base);
-+	}
- 
- 	tegra->xhci_irq = platform_get_irq(pdev, 0);
- 	if (tegra->xhci_irq < 0)
-@@ -1208,7 +1215,7 @@ static int tegra_xusb_probe(struct platform_device *pdev)
- 		goto disable_rpm;
- 	}
- 
--	tegra_xusb_ipfs_config(tegra, regs);
-+	tegra_xusb_config(tegra, regs);
- 
- 	err = tegra_xusb_load_firmware(tegra);
- 	if (err < 0) {
-@@ -1380,6 +1387,7 @@ static const struct tegra_xusb_soc tegra124_soc = {
- 		.usb3 = { .offset = 0, .count = 2, },
- 	},
- 	.scale_ss_clock = true,
-+	.has_ipfs = true,
- };
- MODULE_FIRMWARE("nvidia/tegra124/xusb.bin");
- 
-@@ -1411,6 +1419,7 @@ static const struct tegra_xusb_soc tegra210_soc = {
- 		.usb3 = { .offset = 0, .count = 4, },
- 	},
- 	.scale_ss_clock = false,
-+	.has_ipfs = true,
- };
- MODULE_FIRMWARE("nvidia/tegra210/xusb.bin");
- 
++	padctl: padctl@3520000 {
++		compatible = "nvidia,tegra186-xusb-padctl";
++		reg = <0x0 0x03520000 0x0 0x1000>,
++		      <0x0 0x03540000 0x0 0x1000>;
++		reg-names = "padctl", "ao";
++
++		resets = <&bpmp TEGRA186_RESET_XUSB_PADCTL>;
++		reset-names = "padctl";
++
++		status = "disabled";
++
++		pads {
++			usb2 {
++				clocks = <&bpmp TEGRA186_CLK_USB2_TRK>;
++				clock-names = "trk";
++				status = "disabled";
++
++				lanes {
++					usb2-0 {
++						status = "disabled";
++						#phy-cells = <0>;
++					};
++
++					usb2-1 {
++						status = "disabled";
++						#phy-cells = <0>;
++					};
++
++					usb2-2 {
++						status = "disabled";
++						#phy-cells = <0>;
++					};
++				};
++			};
++
++			hsic {
++				clocks = <&bpmp TEGRA186_CLK_HSIC_TRK>;
++				clock-names = "trk";
++				status = "disabled";
++
++				lanes {
++					hsic-0 {
++						status = "disabled";
++						#phy-cells = <0>;
++					};
++				};
++			};
++
++			usb3 {
++				status = "disabled";
++
++				lanes {
++					usb3-0 {
++						status = "disabled";
++						#phy-cells = <0>;
++					};
++
++					usb3-1 {
++						status = "disabled";
++						#phy-cells = <0>;
++					};
++
++					usb3-2 {
++						status = "disabled";
++						#phy-cells = <0>;
++					};
++				};
++			};
++		};
++
++		ports {
++			usb2-0 {
++				status = "disabled";
++			};
++
++			usb2-1 {
++				status = "disabled";
++			};
++
++			usb2-2 {
++				status = "disabled";
++			};
++
++			hsic-0 {
++				status = "disabled";
++			};
++
++			usb3-0 {
++				status = "disabled";
++			};
++
++			usb3-1 {
++				status = "disabled";
++			};
++
++			usb3-2 {
++				status = "disabled";
++			};
++		};
++	};
++
++	usb@3530000 {
++		compatible = "nvidia,tegra186-xusb";
++		reg = <0x0 0x03530000 0x0 0x8000>,
++		      <0x0 0x03538000 0x0 0x1000>;
++		reg-names = "hcd", "fpci";
++
++		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
++			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
++
++		clocks = <&bpmp TEGRA186_CLK_XUSB_HOST>,
++			 <&bpmp TEGRA186_CLK_XUSB_FALCON>,
++			 <&bpmp TEGRA186_CLK_XUSB_SS>,
++			 <&bpmp TEGRA186_CLK_XUSB_CORE_SS>,
++			 <&bpmp TEGRA186_CLK_CLK_M>,
++			 <&bpmp TEGRA186_CLK_XUSB_FS>,
++			 <&bpmp TEGRA186_CLK_PLLU>,
++			 <&bpmp TEGRA186_CLK_CLK_M>,
++			 <&bpmp TEGRA186_CLK_PLLE>;
++		clock-names = "xusb_host", "xusb_falcon_src", "xusb_ss",
++			      "xusb_ss_src", "xusb_hs_src", "xusb_fs_src",
++			      "pll_u_480m", "clk_m", "pll_e";
++
++		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_XUSBC>,
++				<&bpmp TEGRA186_POWER_DOMAIN_XUSBA>;
++		power-domain-names = "xusb_host", "xusb_ss";
++		nvidia,xusb-padctl = <&padctl>;
++
++		status = "disabled";
++
++		#address-cells = <1>;
++		#size-cells = <0>;
++	};
++
+ 	fuse@3820000 {
+ 		compatible = "nvidia,tegra186-efuse";
+ 		reg = <0x0 0x03820000 0x0 0x10000>;
 -- 
 2.19.1
 
