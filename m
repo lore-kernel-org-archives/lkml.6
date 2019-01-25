@@ -2,118 +2,191 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D38C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:01:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 534ECC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99E0F218D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:01:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0AEE8218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:03:24 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfAYNBS (ORCPT
+        id S1726878AbfAYNDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 08:01:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53842 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726108AbfAYNBR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 08:01:17 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1CD857EBC8;
-        Fri, 25 Jan 2019 13:01:17 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.163])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 916EC5D70A;
-        Fri, 25 Jan 2019 13:01:15 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Fri, 25 Jan 2019 14:01:16 +0100 (CET)
-Date:   Fri, 25 Jan 2019 14:01:14 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Vladis Dronov <vdronov@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: Re: [PATCH] HID: debug: fix the ring buffer implementation
-Message-ID: <20190125130113.GA18589@redhat.com>
-References: <20190125095744.3813-1-vdronov@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125095744.3813-1-vdronov@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 25 Jan 2019 13:01:17 +0000 (UTC)
+        Fri, 25 Jan 2019 08:03:23 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41524 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726108AbfAYNDX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 08:03:23 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 6E9F2AF0D;
+        Fri, 25 Jan 2019 13:03:20 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 14:03:18 +0100
+Message-ID: <s5hlg38zy7d.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Leo Yan <leo.yan@linaro.org>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>, bgoswami@codeaurora.org,
+        sr@denx.de, gustavo@embeddedor.com,
+        Phil Burk <philburk@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        mchehab+samsung@kernel.org, sboyd@kernel.org,
+        Vinod Koul <vkoul@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        anna-maria@linutronix.de, Jon Corbet <corbet@lwn.net>,
+        Jeffery Miller <jmiller@neverware.com>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        joe@perches.com, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        colyli@suse.de, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] ALSA: core: Add DMA share buffer support
+In-Reply-To: <CAMz4ku+h0HM4zmdb_a83gkW5EfVo24z74d7NQBSD8u8zdzaRUQ@mail.gmail.com>
+References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
+        <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz>
+        <20190118190805.GF6260@sirena.org.uk>
+        <s5hzhrxzrez.wl-tiwai@suse.de>
+        <20190121124053.GA12679@sirena.org.uk>
+        <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz>
+        <20190122202535.GK7579@sirena.org.uk>
+        <s5h4l9z4mbo.wl-tiwai@suse.de>
+        <20190123124658.GE15906@leoy-ThinkPad-X240s>
+        <3962daba-f6ed-d706-c618-b791a1ba6b59@perex.cz>
+        <CAMz4kuK5JgfZF7uXa83xC3eVCrZ8+wkZRdKq2s71o_QjT=OhGg@mail.gmail.com>
+        <s5h1s51120e.wl-tiwai@suse.de>
+        <CAMz4ku+h0HM4zmdb_a83gkW5EfVo24z74d7NQBSD8u8zdzaRUQ@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/25, Vladis Dronov wrote:
->
-> Ring buffer implementation in hid_debug_event() and hid_debug_events_read()
-> is strange allowing lost or corrupted data. After commit 717adfdaf147
-> ("HID: debug: check length before copy_to_user()") it is possible to enter
-> an infinite loop in hid_debug_events_read() by providing 0 as count, this
-> locks up a system. Fix this by rewriting the ring buffer implementation
-> with kfifo and simplify the code.
->
-> This fixes CVE-2019-3819.
+On Fri, 25 Jan 2019 12:11:43 +0100,
+Baolin Wang wrote:
+> 
+> Hi Takashi,
+> On Fri, 25 Jan 2019 at 18:10, Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> > On Fri, 25 Jan 2019 10:25:37 +0100,
+> > Baolin Wang wrote:
+> > >
+> > > Hi Jaroslav,
+> > > On Thu, 24 Jan 2019 at 21:43, Jaroslav Kysela <perex@perex.cz> wrote:
+> > > >
+> > > > Dne 23.1.2019 v 13:46 Leo Yan napsal(a):
+> > > > > Hi all,
+> > > > >
+> > > > > On Wed, Jan 23, 2019 at 12:58:51PM +0100, Takashi Iwai wrote:
+> > > > >> On Tue, 22 Jan 2019 21:25:35 +0100,
+> > > > >> Mark Brown wrote:
+> > > > >>>
+> > > > >>> On Mon, Jan 21, 2019 at 03:15:43PM +0100, Jaroslav Kysela wrote:
+> > > > >>>> Dne 21.1.2019 v 13:40 Mark Brown napsal(a):
+> > > > >>>
+> > > > >>>>> It was the bit about adding more extended permission control that I was
+> > > > >>>>> worried about there, not the initial O_APPEND bit.  Indeed the O_APPEND
+> > > > >>>>> bit sounds like it might also work from the base buffer sharing point of
+> > > > >>>>> view, I have to confess I'd not heard of that feature before (it didn't
+> > > > >>>>> come up in the discussion when Eric raised this in Prague).
+> > > > >>>
+> > > > >>>> With permissions, I meant to make possible to restrict the file
+> > > > >>>> descriptor operations (ioctls) for the depending task (like access to
+> > > > >>>> the DMA buffer, synchronize it for the non-coherent platforms and maybe
+> > > > >>>> read/write the actual position, delay etc.). It should be relatively
+> > > > >>>> easy to implement using the snd_pcm_file structure.
+> > > > >>>
+> > > > >>> Right, that's what I understood you to mean.  If you want to have a
+> > > > >>> policy saying "it's OK to export a PCM file descriptor if it's only got
+> > > > >>> permissions X and Y" the security module is going to need to know about
+> > > > >>> the mechanism for setting those permissions.  With dma_buf that's all a
+> > > > >>> bit easier as there's less new stuff, though I've no real idea how much
+> > > > >>> of a big deal that actually is.
+> > > > >>
+> > > > >> There are many ways to implement such a thing, yeah.  If we'd need an
+> > > > >> implementation that is done solely in the sound driver layer, I can
+> > > > >> imagine to introduce either a new ioctl or an open flag (like O_EXCL)
+> > > > >> to specify the restricted sharing.  That is, a kind of master / slave
+> > > > >> model where only the master is allowed to manipulate the stream while
+> > > > >> the slave can mmap, read/write and get status.
+> > > > >
+> > > > > In order to support EXCLUSIVE mode, it is necessary to convert the
+> > > > > /dev/snd/ descriptor to an anon_inode:dmabuffer file descriptor.
+> > > > > SELinux allows that file descriptor to be passed to the client. It can
+> > > > > also be used by the AAudioService.
+> > > >
+> > > > Okay, so this is probably the only point which we should resolve for the
+> > > > already available DMA buffer sharing in ALSA (the O_APPEND flag).
+> > > >
+> > > > I had another glance to your dma-buf implementation and I see many
+> > > > things which might cause problems:
+> > > >
+> > > > - allow to call dma-buf ioctls only when the audio device is in specific
+> > > > state (stream is not running)
+> > >
+> > > Right. Will fix.
+> > >
+> > > > - as Takashi mentioned, if we return another file-descriptor (dma-buf
+> > > > export) to the user space and the server closes the main pcm
+> > > > file-descriptor (the client does not) - the result will be a crash (dma
+> > > > buffer will be freed, but referenced through the dma-buf interface)
+> > >
+> > > Yes, will fix.
+> >
+> > There are a few more overlooked problems.  A part of them was already
+> > mentioned in my previous reply, but let me repeat:
+> >
+> > - The racy ioctls have to be considered; you can perform this export
+> >   ioctl concurrently, and both of them write and mix up the setup,
+> >   which is obviously broken.
+> 
+> Yes, I think I missed the snd_pcm_stream_lock, and will add.
 
-To me this looks like a good cleanup even if we forget about bugfix. Cosmetic
-nits, feel free to ignore...
+Beware that it's not so trivial.  The stream lock is usually
+spinlock.
 
-> +	if (kfifo_is_empty(&list->hid_debug_fifo)) {
-> +		add_wait_queue(&list->hdev->debug_wait, &wait);
-> +		set_current_state(TASK_INTERRUPTIBLE);
-> +
-> +		while (kfifo_is_empty(&list->hid_debug_fifo)) {
-> +			if (file->f_flags & O_NONBLOCK) {
-> +				ret = -EAGAIN;
-> +				break;
-> +			}
-> +
-> +			if (signal_pending(current)) {
-> +				ret = -ERESTARTSYS;
-> +				break;
-> +			}
-> +
-> +			if (!list->hdev || !list->hdev->debug) {
-> +				ret = -EIO;
-> +				set_current_state(TASK_RUNNING);
-> +				goto out;
+In addition, we need to be careful about the PCM state, as Jaroslav
+mentioned.  Basically SNDRV_PCM_STATE_SETUP is already too late for
+attaching the buffer, since another buffer is already assigned to the
+stream.  Similarly, after detaching, the stream state must go to
+SNDRV_PCM_STATE_OPEN.
 
-Can't resist... Yes, this is what the current code does. But you know that it looks
-suspicious ;) if you add a comment the patch will be even better.
+> > - What happens to the PCM buffer that has been allocated before
+> >   attaching, if it's not the pre-allocated one?
+> >   It should be released properly beforehand, otherwise leaks.
+> 
+> I am not sure I understood you correctly. If the PCM buffer has been
+> allocated, the platform driver should handle it? Since we always use
+> substream->dma_buffer.
 
-> +			}
-> +
-> +			/* allow O_NONBLOCK from other threads */
-> +			mutex_unlock(&list->read_mutex);
-> +			schedule();
-> +			mutex_lock(&list->read_mutex);
-> +			set_current_state(TASK_INTERRUPTIBLE);
-> +		}
-> +
-> +		set_current_state(TASK_RUNNING);
+substream->dma_buffer is merely a pre-allocated buffer, and not every
+driver sets it up.  The actual PCM buffer is found in substream's
+runtime, and this implementation isn't always with the preallocated
+buffer.  It can even be a fixed IO-mapped buffer.
 
-you can use __set_current_state() here, mb() is not needed.
+> > - There is no validation of the attached dma-buf pages; most drivers
+> >   set coherent DMA mask, and they rely on it.  e.g. if a page over the
+> >   DMA mask is passed, it will break silently.
+> 
+> Sorry maybe I did not get your point here. We have validate the
+> dma_map_sg_attr() funtion, in this fucntion it will validate the DMA
+> mask by dma_capable().
 
-> +		remove_wait_queue(&list->hdev->debug_wait, &wait);
-> +	}
-> +
-> +	if (ret)
-> +		goto out;
-> +
+OK, then this should be fine -- at least about DMA mask.  But, how
+about other setups, e.g. coherency?
 
-perhaps it make sense to move this check into the "if (kfifo_is_empty())" block.
+Imagine that a buffer allocated for chip A is exported to another chip
+B.  If chip B requires some special setup of the pages while A isn't,
+this won't work.  For example, some HD-audio chips require the
+non-cached pages while some HD-audio chips allow normal pages.
 
-> +	if (kfifo_is_empty(&list->hid_debug_fifo))
-> +		goto out;
 
-is kfifo_is_empty() == T really possible here?
+thanks,
 
-Oleg.
-
+Takashi
