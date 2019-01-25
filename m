@@ -2,157 +2,101 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CEF9C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:43:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AE00C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:48:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C7A22184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:43:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f1ggZk85"
+	by mail.kernel.org (Postfix) with ESMTP id 434B62184B
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:48:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728067AbfAYInU (ORCPT
+        id S1727845AbfAYIsG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 03:43:20 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:46401 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfAYInT (ORCPT
+        Fri, 25 Jan 2019 03:48:06 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40636 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726520AbfAYIsF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 03:43:19 -0500
-Received: by mail-io1-f68.google.com with SMTP id s8so7085133iob.13
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 00:43:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=5C27t5i/Kxs7sqw0V4cwfbsTRjCbPSa4Pe/4IHFM4IU=;
-        b=f1ggZk859V6w+zigTYcibT8r3QHPSARkxS5C9jTf8Sm2bH8BmAd0PedGXdK0Jc6EHp
-         yrxCRVZfrGCkCosLH5cD7gD4aEqBABGyzT4GMdU0JmcXZIeCqUWCdwYS67AIFos/X6N9
-         /Zc7r7Bogu+Zx0ac2BDv9+u0w22QbsOHfWPVE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=5C27t5i/Kxs7sqw0V4cwfbsTRjCbPSa4Pe/4IHFM4IU=;
-        b=N+sCrkZgWS1DF6bgVJL72kbuz8+S+PDp5GeJBVPg3JjP6a1mwPszAb2wEfTRhsMuKx
-         xSPf4bahKlPBBQy6rZnDjgFYWkwLxr/PrnsNt4SCmsgjTxcf4hrxfog5s4iNs2iowGns
-         IbpZmuyY45lx1A9DbK/Zk/BgbW+ytyyz+Bs8iO+421nbZW5sJW56vT3fcKYXFStA25hJ
-         ld18GZjkwkxGgKvg+WHYlUd1fyfIiopLb0Gh030MhYrM7gSc/IR2rSVLMPagDEy0+e4o
-         pw/OAh5QmCdlZBBG2hSXG2l0kPWRS1ni5KvHAHWa14M9HNSmNHhO1GV2PKMcjun8TwZJ
-         TxBg==
-X-Gm-Message-State: AHQUAua+7IXFDV0ZNPllEvV5UNZ+whh2JvtP0lcS+bGc5iBE8+IKylaL
-        MebnOGv0rt+0nUci9kwJ5ookJZFtUDfpbLiqHpAmtw==
-X-Google-Smtp-Source: ALg8bN5l9hoVLJ+wkvRk2hidT/8N4aAJXqPZqBu3XHVW+oJcDKWoAZNhZUcSg4D4tAC3NuYfT+OocgJdVTPjrPTfN9I=
-X-Received: by 2002:a5d:8410:: with SMTP id i16mr5987962ion.173.1548405798631;
- Fri, 25 Jan 2019 00:43:18 -0800 (PST)
+        Fri, 25 Jan 2019 03:48:05 -0500
+Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0P8cvFL078973
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 03:48:04 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q7w9nngba-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 03:48:04 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <heiko.carstens@de.ibm.com>;
+        Fri, 25 Jan 2019 08:48:02 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 25 Jan 2019 08:48:00 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0P8lxuh3539282
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 25 Jan 2019 08:47:59 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CDC1142047;
+        Fri, 25 Jan 2019 08:47:59 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 9B56942045;
+        Fri, 25 Jan 2019 08:47:59 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.95])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 25 Jan 2019 08:47:59 +0000 (GMT)
+Date:   Fri, 25 Jan 2019 09:47:58 +0100
+From:   Heiko Carstens <heiko.carstens@de.ibm.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        linux-s390@vger.kernel.org
+Subject: Re: [PATCH] s390: hypfs: no need to check return value of
+ debugfs_create functions
+References: <20190122152151.16139-1-gregkh@linuxfoundation.org>
 MIME-Version: 1.0
-References: <20190124120658.30288-1-ard.biesheuvel@linaro.org>
- <3cca35a9-c71c-a100-b29d-31ba0d1d10b1@amd.com> <CAKv+Gu9OG3O4+4F2nioaQ-3U-1kwRBr5KVj-1gD1ZEsUx_Ud5A@mail.gmail.com>
- <CADnq5_PETD6umm9Df7OZ9BdaV5MZutmhN+HTAnVkcRLg5=TNWw@mail.gmail.com>
-In-Reply-To: <CADnq5_PETD6umm9Df7OZ9BdaV5MZutmhN+HTAnVkcRLg5=TNWw@mail.gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 25 Jan 2019 09:43:07 +0100
-Message-ID: <CAKv+Gu-Yk1iEe+cF30ee7R+hcrke9XH9MdTeERA2P-0s2QpaLw@mail.gmail.com>
-Subject: Re: [PATCH] drm: enable uncached DMA optimization for ARM and arm64
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Carsten Haitzler <Carsten.Haitzler@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        "Daenzer, Michel" <Michel.Daenzer@amd.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
-        "Huang, Ray" <Ray.Huang@amd.com>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        Sean Paul <sean@poorly.run>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        Robin Murphy <robin.murphy@arm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190122152151.16139-1-gregkh@linuxfoundation.org>
+X-TM-AS-GCONF: 00
+x-cbid: 19012508-0020-0000-0000-0000030B436F
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012508-0021-0000-0000-0000215C86F2
+Message-Id: <20190125084758.GB3561@osiris>
+Content-Type: text/plain; charset=us-ascii
+Content-Transfer-Encoding: 8bit
+Content-Disposition: inline
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-25_05:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=765 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901250073
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 at 15:01, Alex Deucher <alexdeucher@gmail.com> wrote:
->
-> On Thu, Jan 24, 2019 at 9:00 AM Ard Biesheuvel
-> <ard.biesheuvel@linaro.org> wrote:
-> >
-> > On Thu, 24 Jan 2019 at 13:31, Koenig, Christian
-> > <Christian.Koenig@amd.com> wrote:
-> > >
-> > > Am 24.01.19 um 13:06 schrieb Ard Biesheuvel:
-> > > > The DRM driver stack is designed to work with cache coherent device=
-s
-> > > > only, but permits an optimization to be enabled in some cases, wher=
-e
-> > > > for some buffers, both the CPU and the GPU use uncached mappings,
-> > > > removing the need for DMA snooping and allocation in the CPU caches=
-.
-> > > >
-> > > > The use of uncached GPU mappings relies on the correct implementati=
-on
-> > > > of the PCIe NoSnoop TLP attribute by the platform, otherwise the GP=
-U
-> > > > will use cached mappings nonetheless. On x86 platforms, this does n=
-ot
-> > > > seem to matter, as uncached CPU mappings will snoop the caches in a=
-ny
-> > > > case. However, on ARM and arm64, enabling this optimization on a
-> > > > platform where NoSnoop is ignored results in loss of coherency, whi=
-ch
-> > > > breaks correct operation of the device. Since we have no way of
-> > > > detecting whether NoSnoop works or not, just disable this
-> > > > optimization entirely for ARM and arm64.
-> > > >
-> > > > Cc: Christian Koenig <christian.koenig@amd.com>
-> > > > Cc: Alex Deucher <alexander.deucher@amd.com>
-> > > > Cc: David Zhou <David1.Zhou@amd.com>
-> > > > Cc: Huang Rui <ray.huang@amd.com>
-> > > > Cc: Junwei Zhang <Jerry.Zhang@amd.com>
-> > > > Cc: Michel Daenzer <michel.daenzer@amd.com>
-> > > > Cc: David Airlie <airlied@linux.ie>
-> > > > Cc: Daniel Vetter <daniel@ffwll.ch>
-> > > > Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> > > > Cc: Maxime Ripard <maxime.ripard@bootlin.com>
-> > > > Cc: Sean Paul <sean@poorly.run>
-> > > > Cc: Michael Ellerman <mpe@ellerman.id.au>
-> > > > Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-> > > > Cc: Will Deacon <will.deacon@arm.com>
-> > > > Cc: Christoph Hellwig <hch@infradead.org>
-> > > > Cc: Robin Murphy <robin.murphy@arm.com>
-> > > > Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>
-> > > > Cc: dri-devel <dri-devel@lists.freedesktop.org>
-> > > > Reported-by: Carsten Haitzler <Carsten.Haitzler@arm.com>
-> > > > Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-> > >
-> > > The subject line should probably read "disable uncached...".
-> > >
-> >
-> > Ugh, of course ...
-> >
-> > > With that fixed the patch is Reviewed-by: Christian K=C3=B6nig
-> > > <christian.koenig@amd.com>.
-> > >
->
-> Same:
-> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
->
+On Tue, Jan 22, 2019 at 04:21:00PM +0100, Greg Kroah-Hartman wrote:
+> When calling debugfs functions, there is no need to ever check the
+> return value.  The function can work or not, but the code logic should
+> never do something different based on this.
+> 
+> Cc: Martin Schwidefsky <schwidefsky@de.ibm.com>
+> Cc: Heiko Carstens <heiko.carstens@de.ibm.com>
+> Cc: linux-s390@vger.kernel.org
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> ---
+>  arch/s390/hypfs/hypfs.h        |  6 +++---
+>  arch/s390/hypfs/hypfs_dbfs.c   |  8 ++------
+>  arch/s390/hypfs/hypfs_diag.c   |  9 ++++-----
+>  arch/s390/hypfs/hypfs_diag0c.c |  3 ++-
+>  arch/s390/hypfs/hypfs_sprp.c   |  6 +++---
+>  arch/s390/hypfs/hypfs_vm.c     |  3 ++-
+>  arch/s390/hypfs/inode.c        | 11 +++--------
+>  7 files changed, 19 insertions(+), 27 deletions(-)
 
-Thanks all
+Applied, thanks!
 
-Should I resend the patch with the subject corrected?
