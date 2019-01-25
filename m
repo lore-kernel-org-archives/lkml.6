@@ -2,152 +2,110 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00C84C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:58:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F83DC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:00:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE76218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:58:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 240E1218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:00:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="jrM/uxrj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfAYO6k (ORCPT
+        id S1727065AbfAYPAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:58:40 -0500
-Received: from protonic.xs4all.nl ([83.163.252.89]:50788 "EHLO protonic.nl"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726216AbfAYO6j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:58:39 -0500
-X-Greylist: delayed 350 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Jan 2019 09:58:39 EST
-Received: from erd987 (unknown [192.168.2.69])
-        by sparta (Postfix) with ESMTP id EA1F844A004C;
-        Fri, 25 Jan 2019 15:54:01 +0100 (CET)
-Date:   Fri, 25 Jan 2019 15:52:48 +0100
-From:   Robin van der Gracht <robin@protonic.nl>
-To:     Martin Kepplinger <martink@posteo.de>
-Cc:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        ulf.hansson@linaro.org, shawnguo@kernel.org,
-        s.hauer@pengutronix.de, linux-imx@nxp.com,
-        linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: Re: [PATCH] mmc: mxs-mmc: Introduce regulator support
-Message-ID: <20190125155248.23937600@erd987>
-In-Reply-To: <20190125113449.10128-1-martink@posteo.de>
-References: <20190125113449.10128-1-martink@posteo.de>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 25 Jan 2019 10:00:18 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:55720 "EHLO vps0.lunn.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726122AbfAYPAS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:00:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=vj3C7OyAui/Gs3zjsUIsHTINfUeXshAblM3oKnQKT18=; b=jrM/uxrjymGpV8xveYBWB6UOtt
+        I7DCyKbZOtWNmcVCc29ghswFN3IfWYJz2WA3HHLEaxRBD754E1M5ne4MtZSiQR4LW4kUzC5QZz3TZ
+        WO5tVpXS0NBB5LJKe9OXC4orK34cn9e0X31MNCFrw0iPtTWpVW1YWhk/kJgEfvZS7G4o=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gn2xp-0004T2-VY; Fri, 25 Jan 2019 16:00:13 +0100
+Date:   Fri, 25 Jan 2019 16:00:13 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Carlo Caione <ccaione@baylibre.com>
+Cc:     f.fainelli@gmail.com, hkallweit1@gmail.com, davem@davemloft.net,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: phy: at803x: Use helpers to access MMD PHY registers
+Message-ID: <20190125150013.GG12962@lunn.ch>
+References: <20190125123510.20511-1-ccaione@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125123510.20511-1-ccaione@baylibre.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
+On Fri, Jan 25, 2019 at 12:35:10PM +0000, Carlo Caione wrote:
+> Libphy provides a standard set of helpers to access the MMD PHY
+> registers. Use those instead of relying on custom driver-specific
+> functions.
 
-On Fri, 25 Jan 2019 12:34:49 +0100
-Martin Kepplinger <martink@posteo.de> wrote:
+Hi Carlo
 
-> From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Maybe deja vu, but i thought a similar patch went by recently?
+
+Anyway,
+
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+
+    Andrew
+
 > 
-> This adds support for explicitly switching the mmc's power on and off.
-> 
-> Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+> Signed-off-by: Carlo Caione <ccaione@baylibre.com>
 > ---
+>  drivers/net/phy/at803x.c | 16 +++-------------
+>  1 file changed, 3 insertions(+), 13 deletions(-)
 > 
-> This is not my patch. It's taken from https://patchwork.kernel.org/patch/4365751/
-> rebased and minimally changed; but we use this.
-> 
-> Are there any objections to this?
-> 
-> Robin, can I still add your Signed-off-by to this? Also, should I set you
-> as the author?
-
-It's old, but thanks for keeping me in the loop :)
-
-> 
-> thanks,
-> 
->                                 martin
-> 
->  drivers/mmc/host/mxs-mmc.c | 31 +++++++++++++++++++++++--------
->  1 file changed, 23 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-> index add1e70195ea..e3c19fabb723 100644
-> --- a/drivers/mmc/host/mxs-mmc.c
-> +++ b/drivers/mmc/host/mxs-mmc.c
-> @@ -517,6 +517,26 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
->  	else
->  		host->bus_width = 0;
+> diff --git a/drivers/net/phy/at803x.c b/drivers/net/phy/at803x.c
+> index f9432d053a22..23ba76f8d950 100644
+> --- a/drivers/net/phy/at803x.c
+> +++ b/drivers/net/phy/at803x.c
+> @@ -39,9 +39,6 @@
+>  #define AT803X_LOC_MAC_ADDR_0_15_OFFSET		0x804C
+>  #define AT803X_LOC_MAC_ADDR_16_31_OFFSET	0x804B
+>  #define AT803X_LOC_MAC_ADDR_32_47_OFFSET	0x804A
+> -#define AT803X_MMD_ACCESS_CONTROL		0x0D
+> -#define AT803X_MMD_ACCESS_CONTROL_DATA		0x0E
+> -#define AT803X_FUNC_DATA			0x4003
+>  #define AT803X_REG_CHIP_CONFIG			0x1f
+>  #define AT803X_BT_BX_REG_SEL			0x8000
 >  
-> +	if (ios->power_mode != host->power_mode) {
-> +		switch (ios->power_mode) {
-> +		case MMC_POWER_OFF:
-> +			if ((host->vmmc) && regulator_disable(host->vmmc)) {
-> +				dev_err(mmc_dev(host->mmc),
-> +					"Failed to disable vmmc regulator\n");
-> +			}
-> +			break;
-> +		case MMC_POWER_UP:
-> +			if ((host->vmmc) && regulator_enable(host->vmmc)) {
-> +				dev_err(mmc_dev(host->mmc),
-> +					"Failed to enable vmmc regulator\n");
-> +			}
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +		host->power_mode = ios->power_mode;
-> +	}
-> +
-
-A single check in the root contitional for the availability of vmmc
-should suffice, so:
-
-if (host->vmmc && ios->power_mode != host->power_mode) {
-	...
-	case MMC_POWER_XX:
-		if (regulator_xx(host->vmmc))
-			dev_err;
-	...
-
-
->  	if (ios->clock)
->  		mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
->  }
-> @@ -613,16 +633,11 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+> @@ -168,16 +165,9 @@ static int at803x_set_wol(struct phy_device *phydev,
+>  		if (!is_valid_ether_addr(mac))
+>  			return -EINVAL;
 >  
->  	host->mmc = mmc;
->  	host->sdio_irq_en = 0;
-> +	host->power_mode = MMC_POWER_OFF;
-
-My patch added 'power_mode' and 'vmmc' to the drivers private struct
-(which are missing in this email?)
-
->  
->  	reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
-> -	if (!IS_ERR(reg_vmmc)) {
-> -		ret = regulator_enable(reg_vmmc);
-> -		if (ret) {
-> -			dev_err(&pdev->dev,
-> -				"Failed to enable vmmc regulator: %d\n", ret);
-> -			goto out_mmc_free;
+> -		for (i = 0; i < 3; i++) {
+> -			phy_write(phydev, AT803X_MMD_ACCESS_CONTROL,
+> -				  AT803X_DEVICE_ADDR);
+> -			phy_write(phydev, AT803X_MMD_ACCESS_CONTROL_DATA,
+> -				  offsets[i]);
+> -			phy_write(phydev, AT803X_MMD_ACCESS_CONTROL,
+> -				  AT803X_FUNC_DATA);
+> -			phy_write(phydev, AT803X_MMD_ACCESS_CONTROL_DATA,
+> -				  mac[(i * 2) + 1] | (mac[(i * 2)] << 8));
 > -		}
-> -	}
-> +	if (!IS_ERR(reg_vmmc))
-> +		host->vmmc = reg_vmmc;
-
-what about mmc_regulator_get_supply(mmc)?
-
-If we use that the vmmc will be made available under mmv->supply->vmmc
-if probe was successfull instead of storing it in the drivers private
-struct.
-
+> +		for (i = 0; i < 3; i++)
+> +			phy_write_mmd(phydev, AT803X_DEVICE_ADDR, offsets[i],
+> +				      mac[(i * 2) + 1] | (mac[(i * 2)] << 8));
 >  
->  	ssp->clk = devm_clk_get(&pdev->dev, NULL);
->  	if (IS_ERR(ssp->clk)) {
-
-Robin van der Gracht
+>  		value = phy_read(phydev, AT803X_INTR_ENABLE);
+>  		value |= AT803X_INTR_ENABLE_WOL;
+> -- 
+> 2.19.1
+> 
