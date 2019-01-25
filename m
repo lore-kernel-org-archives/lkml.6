@@ -2,158 +2,346 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLACK autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E8AC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:55:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6CBC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E85CB20881
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:55:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99073218A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:56:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="yWcsLctJ"
+	dkim=pass (1024-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="MZ65MInY"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbfAYKzO (ORCPT
+        id S1727285AbfAYK4p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:55:14 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39983 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfAYKzO (ORCPT
+        Fri, 25 Jan 2019 05:56:45 -0500
+Received: from forward100p.mail.yandex.net ([77.88.28.100]:45445 "EHLO
+        forward100p.mail.yandex.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726049AbfAYK4p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:55:14 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v5so6601799lfe.7
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:55:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/bqEREUNQF0lnHixYiWX5TuONOArgR+FJLmGNjXRqiU=;
-        b=yWcsLctJT6Nb5vAUj5CbqC4ha9zM7VOsn0uD61e9fsWQ+Q8wkOEY6SJ5TbSSA38Veg
-         GlxTyFYmsR4slBR8o4SxPtPDI/pSg8OKq5yuhOY+gvYLgZv/xuTfpcVVqS8tVe6zyxkX
-         nwWjryJLF+d4vCkYfRL5zcmKhPv5SK6SEQqUpjsK7ckzNCPwmN0sNBa6s92ujZjP3V25
-         uYqa7t+EF4iqk2Qz5myQ8FUlxW/23TTdmccnjA9R42HHy9d3Kg9rnTlfHUdyuxOtafR7
-         ZVq0PVmha0DxF+vIDCyJ8z4in5ALZRaGqdn39XNOooxJN6fzk2cdoD7hNLnl+egWnewO
-         6e9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=/bqEREUNQF0lnHixYiWX5TuONOArgR+FJLmGNjXRqiU=;
-        b=AhUNApnS5OskN4T7Fa7oJv1ovDp8tBehaJqkVVABVVKCWXZ/0d2T/P4393u5VobU43
-         XI7DbL5wgKYLNemTz0RxRncvasY/b5Apf+lr8Lts4ftuBpHw1tMKZP1CHVsuT8Gtcw6J
-         SiKzoPEFF47Lul/bY8r6G9flA4PWQ7Qlu3bZMvGQ2VKp3O1kTjMJfs1aLYBDnRY3Wl5G
-         3HC17Ek0yggJCyUOgq3McJlwShZQzcmge0cce2iOxj/Qzxy1/dleBKzR829M1aqbID9X
-         y8xeunqu2Ct2txaoGS1aaMuXFjQsr9KHraUOegiQQXY5sT9Vfhk9GL2yr4GHy9AGAQgJ
-         gsBg==
-X-Gm-Message-State: AJcUukdTFIfrSFebz4JPq3FUgypohfQrO06ah1hA9g3eeJHdkxiN2fIx
-        +D4Uj2kc/ecOVtawUkuZ6TfyjitlWaM=
-X-Google-Smtp-Source: ALg8bN72lQAgHijsMPAXbC2JYyfDqOKTT6xpQcEFO/wNyj/7XjyWuoyJNJGMFoCGeV4abP8ov4cz6A==
-X-Received: by 2002:a19:5394:: with SMTP id h20mr7964276lfl.75.1548413711504;
-        Fri, 25 Jan 2019 02:55:11 -0800 (PST)
-Received: from mimer.lan (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
-        by smtp.gmail.com with ESMTPSA id a62sm1424257lfa.37.2019.01.25.02.55.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 02:55:10 -0800 (PST)
-From:   Jonas Bonn <jonas@norrbonn.se>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jonas Bonn <jonas@norrbonn.se>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org
-Subject: [PATCH 1/1] spi-nor: always respect write-protect input
-Date:   Fri, 25 Jan 2019 11:55:07 +0100
-Message-Id: <20190125105507.2733-1-jonas@norrbonn.se>
-X-Mailer: git-send-email 2.19.1
+        Fri, 25 Jan 2019 05:56:45 -0500
+Received: from mxback7j.mail.yandex.net (mxback7j.mail.yandex.net [IPv6:2a02:6b8:0:1619::110])
+        by forward100p.mail.yandex.net (Yandex) with ESMTP id 2D2FC598111F;
+        Fri, 25 Jan 2019 13:56:42 +0300 (MSK)
+Received: from smtp1o.mail.yandex.net (smtp1o.mail.yandex.net [2a02:6b8:0:1a2d::25])
+        by mxback7j.mail.yandex.net (nwsmtp/Yandex) with ESMTP id 36oHdN1ph2-ufXGGG2d;
+        Fri, 25 Jan 2019 13:56:42 +0300
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; s=mail; t=1548413802;
+        bh=vQLxyh6P0iKcS/E/jVe+FtkT48AE5Oxvkn7EYp+YsRU=;
+        h=Subject:To:Cc:References:From:Message-ID:Date:In-Reply-To;
+        b=MZ65MInYaUSmKsrXbWnh/crnNg/CwYe0qaHSW7k0WGfWFY8IN7UcR4kdnCnfoGP8p
+         v5BGlv/JAHWqUP+E2mCH5abPt2rga9X8t2jHviljBeGuWT0kaKrfif65gDX5lO8+9G
+         I2gxXMA0wMTJs7CXAhrU7HXIcVeeD8B5rs0nXDtY=
+Authentication-Results: mxback7j.mail.yandex.net; dkim=pass header.i=@flygoat.com
+Received: by smtp1o.mail.yandex.net (nwsmtp/Yandex) with ESMTPSA id b7OpyjULBp-uaZuNKrq;
+        Fri, 25 Jan 2019 13:56:39 +0300
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (Client certificate not present)
+Subject: Re: [PATCH v3 1/2] irqchip: Add driver for Loongson-1 interrupt
+ controller
+To:     Marc Zyngier <marc.zyngier@arm.com>
+Cc:     linux-mips@vger.kernel.org, tglx@linutronix.de,
+        jason@lakedaemon.net, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20190122154557.22689-1-jiaxun.yang@flygoat.com>
+ <20190124032730.18237-1-jiaxun.yang@flygoat.com>
+ <20190124032730.18237-2-jiaxun.yang@flygoat.com>
+ <86pnsm8jon.wl-marc.zyngier@arm.com>
+From:   Jiaxun Yang <jiaxun.yang@flygoat.com>
+Message-ID: <a0041cdb-1db6-9fee-411a-ae9d2a575349@flygoat.com>
+Date:   Fri, 25 Jan 2019 18:56:33 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <86pnsm8jon.wl-marc.zyngier@arm.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The status register bit SRWD (status register write disable) is
-described in many words in the datasheets but effectively boils down to:
+Hi Marc
 
-i) if set, respect WP# when trying to change protection bits;
-ii) if unset, ignore WP# when trying to change protection bits
+Thanks for your suggestions, I'm working on v4 and I would like to ask 
+if it is better to have a driver for only one irqchip
 
-In short, the bit determines whether the WP# signal is honored or not.
+and create dt nodes for each chip, or just register all the chips in a 
+single driver with only one dt node.
 
-It's difficult to imagine the use-case where the WP# is connected and
-asserted but the user doesn't want to respect its setting.  As such,
-this patch sets the SRWD bit unconditionally so that the WP# is _always_
-respected; hardware that doesn't care about WP# normally won't even have
-it connected.
+ÔÚ 2019/1/24 ÏÂÎç5:54, Marc Zyngier Ð´µÀ:
+> On Thu, 24 Jan 2019 03:27:29 +0000,
+> Jiaxun Yang <jiaxun.yang@flygoat.com> wrote:
+>> This controller appeared on Loongson-1 family MCUs
+>> including Loongson-1B and Loongson-1C.
+>>
+>> Signed-off-by: Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> ---
+>>   drivers/irqchip/Kconfig    |   9 ++
+>>   drivers/irqchip/Makefile   |   1 +
+>>   drivers/irqchip/irq-ls1x.c | 176 +++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 186 insertions(+)
+>>   create mode 100644 drivers/irqchip/irq-ls1x.c
+>>
+>> diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+>> index 3d1e60779078..5dcb5456cd14 100644
+>> --- a/drivers/irqchip/Kconfig
+>> +++ b/drivers/irqchip/Kconfig
+>> @@ -406,6 +406,15 @@ config IMX_IRQSTEER
+>>   	help
+>>   	  Support for the i.MX IRQSTEER interrupt multiplexer/remapper.
+>>   
+>> +config LS1X_IRQ
+>> +	bool "Loongson-1 Interrupt Controller"
+>> +	depends on MACH_LOONGSON32
+>> +	default y
+>> +	select IRQ_DOMAIN
+>> +	select GENERIC_IRQ_CHIP
+>> +	help
+>> +	  Support for the Loongson-1 platform Interrupt Controller.
+>> +
+>>   endmenu
+>>   
+>>   config SIFIVE_PLIC
+>> diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+>> index c93713d24b86..7acd0e36d0b4 100644
+>> --- a/drivers/irqchip/Makefile
+>> +++ b/drivers/irqchip/Makefile
+>> @@ -94,3 +94,4 @@ obj-$(CONFIG_CSKY_APB_INTC)		+= irq-csky-apb-intc.o
+>>   obj-$(CONFIG_SIFIVE_PLIC)		+= irq-sifive-plic.o
+>>   obj-$(CONFIG_IMX_IRQSTEER)		+= irq-imx-irqsteer.o
+>>   obj-$(CONFIG_MADERA_IRQ)		+= irq-madera.o
+>> +obj-$(CONFIG_LS1X_IRQ)			+= irq-ls1x.o
+>> diff --git a/drivers/irqchip/irq-ls1x.c b/drivers/irqchip/irq-ls1x.c
+>> new file mode 100644
+>> index 000000000000..de92ca04cf9f
+>> --- /dev/null
+>> +++ b/drivers/irqchip/irq-ls1x.c
+>> @@ -0,0 +1,176 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + *  Copyright (C) 2019, Jiaxun Yang <jiaxun.yang@flygoat.com>
+>> + *  Loongson-1 platform IRQ support
+>> + */
+>> +
+>> +#include <linux/errno.h>
+>> +#include <linux/init.h>
+>> +#include <linux/types.h>
+>> +#include <linux/interrupt.h>
+>> +#include <linux/ioport.h>
+>> +#include <linux/irqchip.h>
+>> +#include <linux/of_address.h>
+>> +#include <linux/of_irq.h>
+>> +#include <linux/io.h>
+>> +#include <linux/irqchip/chained_irq.h>
+>> +
+>> +#include <asm/mach-loongson32/irq.h>
+>> +
+>> +
+>> +#define MAX_CHIPS	5
+>> +#define LS_REG_INTC_STATUS	0x00
+>> +#define LS_REG_INTC_EN	0x04
+>> +#define LS_REG_INTC_SET	0x08
+>> +#define LS_REG_INTC_CLR	0x0c
+>> +#define LS_REG_INTC_POL	0x10
+>> +#define LS_REG_INTC_EDGE	0x14
+>> +#define CHIP_SIZE	0x18
+>> +
+>> +static void ls_chained_handle_irq(struct irq_desc *desc)
+>> +{
+>> +	struct irq_chip_generic *gc = irq_desc_get_handler_data(desc);
+>> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+>> +	u32 pending;
+>> +
+>> +	chained_irq_enter(chip, desc);
+>> +	pending = readl(gc->reg_base + LS_REG_INTC_STATUS) &
+>> +			readl(gc->reg_base + LS_REG_INTC_EN);
+>> +
+>> +	if (!pending) {
+>> +		spurious_interrupt();
+>> +		chained_irq_exit(chip, desc);
+>> +		return;
+>> +	}
+> Given the context, this is the same as writing:
+>
+> 	if (!pending)
+> 		spurious_interrupt();
+>
+> and let it go through.
+>
+>> +
+>> +	while (pending) {
+>> +		int bit = __ffs(pending);
+>> +
+>> +		generic_handle_irq(gc->irq_base + bit);
+>> +		pending &= ~BIT(bit);
+>> +	}
+>> +
+>> +	chained_irq_exit(chip, desc);
+>> +}
+>> +
+>> +static void ls_intc_set_bit(struct irq_chip_generic *gc,
+>> +							unsigned int offset,
+>> +							u32 mask, bool set)
+>> +{
+>> +	if (set)
+>> +		writel(readl(gc->reg_base + offset) | mask,
+>> +		gc->reg_base + offset);
+>> +	else
+>> +		writel(readl(gc->reg_base + offset) & ~mask,
+>> +		gc->reg_base + offset);
+>> +}
+>> +
+>> +static int ls_intc_set_type(struct irq_data *data, unsigned int type)
+>> +{
+>> +	struct irq_chip_generic *gc = irq_data_get_irq_chip_data(data);
+>> +	u32 mask = data->mask;
+>> +
+>> +	switch (type) {
+>> +	case IRQ_TYPE_LEVEL_HIGH:
+>> +		ls_intc_set_bit(gc, LS_REG_INTC_EDGE, mask, false);
+>> +		ls_intc_set_bit(gc, LS_REG_INTC_POL, mask, true);
+>> +		break;
+>> +	case IRQ_TYPE_LEVEL_LOW:
+>> +		ls_intc_set_bit(gc, LS_REG_INTC_EDGE, mask, false);
+>> +		ls_intc_set_bit(gc, LS_REG_INTC_POL, mask, false);
+>> +		break;
+>> +	case IRQ_TYPE_EDGE_RISING:
+>> +		ls_intc_set_bit(gc, LS_REG_INTC_EDGE, mask, true);
+>> +		ls_intc_set_bit(gc, LS_REG_INTC_POL, mask, true);
+>> +		break;
+>> +	case IRQ_TYPE_EDGE_FALLING:
+>> +		ls_intc_set_bit(gc, LS_REG_INTC_EDGE, mask, true);
+>> +		ls_intc_set_bit(gc, LS_REG_INTC_POL, mask, false);
+>> +		break;
+>> +	case IRQ_TYPE_NONE:
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+> I just realised that in your DT binding, you define the interrupt
+> specifier as having a single cell. Which means that you never describe
+> the interrupt trigger there. Why?
+>
+> Does it mean that all the drivers have to configure their interrupt
+> trigger themselves, and cannot rely on DT to do it? This seems quite
+> backward.
 
-Tested on a Cypress s25fl512s.  With this patch, the WP# is always
-respected, irregardless of whether any flash protection bits are set.
+My fault, will fix it later.
 
-Signed-off-by: Jonas Bonn <jonas@norrbonn.se>
-CC: Marek Vasut <marek.vasut@gmail.com>
-CC: David Woodhouse <dwmw2@infradead.org>
-CC: Brian Norris <computersforpeace@gmail.com>
-CC: Boris Brezillon <bbrezillon@kernel.org>
-CC: Richard Weinberger <richard@nod.at>
-CC: linux-mtd@lists.infradead.org
----
- drivers/mtd/spi-nor/spi-nor.c | 18 +++++++++++-------
- 1 file changed, 11 insertions(+), 7 deletions(-)
+>
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +
+>> +static int __init ls_intc_of_init(struct device_node *node,
+>> +				       struct device_node *parent)
+>> +{
+>> +	struct irq_chip_generic *gc[MAX_CHIPS];
+>> +	struct irq_chip_type *ct;
+>> +	struct irq_domain *domain;
+>> +	void __iomem *base;
+>> +	int parent_irq[MAX_CHIPS], err = 0;
+>> +	unsigned int i = 0;
+>> +
+>> +	unsigned int num_chips = of_irq_count(node);
+>> +
+>> +	base = of_iomap(node, 0);
+>> +	if (!base)
+>> +		return -ENODEV;
+>> +
+>> +	for (i = 0; i < num_chips; i++) {
+>> +		/* Mask all irqs */
+>> +		writel(0x0, base + (i * CHIP_SIZE) +
+>> +		       LS_REG_INTC_EN);
+>> +
+>> +		/* Set all irqs to high level triggered */
+>> +		writel(0xffffffff, base + (i * CHIP_SIZE) +
+>> +		       LS_REG_INTC_POL);
+>> +
+>> +		parent_irq[i] = irq_of_parse_and_map(node, i);
+>> +
+>> +		if (!parent_irq[i]) {
+>> +			pr_warn("unable to get parent irq for irqchip %u\n", i);
+>> +			goto out_err;
+>> +		}
+>> +
+>> +		gc[i] = irq_alloc_generic_chip("INTC", 1,
+>> +					    LS1X_IRQ_BASE + (i * 32),
+>> +					    base + (i * CHIP_SIZE),
+>> +					    handle_level_irq);
+>> +
+>> +		ct = gc[i]->chip_types;
+>> +		ct->regs.mask = LS_REG_INTC_EN;
+>> +		ct->regs.ack = LS_REG_INTC_CLR;
+>> +		ct->chip.irq_unmask = irq_gc_mask_set_bit;
+>> +		ct->chip.irq_mask = irq_gc_mask_clr_bit;
+>> +		ct->chip.irq_ack = irq_gc_ack_set_bit;
+>> +		ct->chip.irq_set_type = ls_intc_set_type;
+>> +
+>> +		irq_setup_generic_chip(gc[i], IRQ_MSK(32), 0, 0,
+>> +				       IRQ_NOPROBE | IRQ_LEVEL);
+>> +	}
+>> +
+>> +	domain = irq_domain_add_legacy(node, num_chips * 32, LS1X_IRQ_BASE, 0,
+>> +		&irq_domain_simple_ops, NULL);
+> Why a legacy domain? This is usually reserved to old drivers that are
+> converted to a new infrastructure, while needing some form of platform
+> hacks. I don't see this being the case here.
+>
+> It is also worrying that although you have up to 5 irqchips, they all
+> share a single domain. What does this mean? each irqchip is expected
+> to have its own domain.
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index c6064479b614..c960c097e0bc 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1230,9 +1230,6 @@ static int stm_lock(struct spi_nor *nor, loff_t ofs, uint64_t len)
- 
- 	status_new = (status_old & ~mask & ~SR_TB) | val;
- 
--	/* Disallow further writes if WP pin is asserted */
--	status_new |= SR_SRWD;
--
- 	if (!use_top)
- 		status_new |= SR_TB;
- 
-@@ -1312,10 +1309,6 @@ static int stm_unlock(struct spi_nor *nor, loff_t ofs, uint64_t len)
- 
- 	status_new = (status_old & ~mask & ~SR_TB) | val;
- 
--	/* Don't protect status register if we're fully unlocked */
--	if (lock_len == 0)
--		status_new &= ~SR_SRWD;
--
- 	if (!use_top)
- 		status_new |= SR_TB;
- 
-@@ -3918,6 +3911,7 @@ static int spi_nor_setup(struct spi_nor *nor,
- static int spi_nor_init(struct spi_nor *nor)
- {
- 	int err;
-+	int sr;
- 
- 	/*
- 	 * Atmel, SST, Intel/Numonyx, and others serial NOR tend to power up
-@@ -3953,6 +3947,16 @@ static int spi_nor_init(struct spi_nor *nor)
- 		set_4byte(nor, true);
- 	}
- 
-+	/* Always respect the WP# (write-protect) input */
-+	sr = read_sr(nor);
-+	if (sr < 0) {
-+		dev_err(nor->dev, "error while reading status register\n");
-+		return -EINVAL;
-+	}
-+	sr |= SR_SRWD;
-+	return write_sr_and_check(nor, sr, SR_SRWD);
-+
-+
- 	return 0;
- }
- 
--- 
-2.19.1
+Yes, I do like this for backward compatible reason. I'm turning
 
+a legacy platform device mach(arch/mips/loongson32) in to
+
+dt based generic mach and I would like to do it step by step rather than 
+one time.
+
+So I use legacy domain in order to keep IRQ same with the
+
+old driver exist on arch/mips/loongson32/common/irq.c
+
+>> +	if (!domain) {
+>> +		pr_warn("unable to register IRQ domain\n");
+>> +		err = -EINVAL;
+>> +		goto out_err;
+>> +	}
+>> +
+>> +	for (i = 0; i < num_chips; i++)
+>> +		irq_set_chained_handler_and_data(parent_irq[i],
+>> +		ls_chained_handle_irq, gc[i]);
+>> +
+>> +	pr_info("ls1x-irq: %u chips registered\n", num_chips);
+>> +
+>> +	return 0;
+>> +
+>> +out_err:
+>> +	for (i = 0; i < MAX_CHIPS; i++) {
+>> +		if (gc[i])
+> But you've never initialised gc[], nor parent_irq[]. So you'll get
+> whatever the stack had at this point. Not great.
+>
+>> +			irq_destroy_generic_chip(gc[i], IRQ_MSK(32),
+>> +				       IRQ_NOPROBE | IRQ_LEVEL, 0);
+>> +		if (parent_irq[i])
+>> +			irq_dispose_mapping(parent_irq[i]);
+>> +	}
+>> +	return err;
+>> +}
+>> +
+>> +IRQCHIP_DECLARE(ls1x_intc, "loongson,ls1x-intc", ls_intc_of_init);
+>> -- 
+>> 2.20.1
+>>
+> Thanks,
+>
+> 	M.
+>
