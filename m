@@ -2,270 +2,166 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6846AC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E820C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 360BF217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B19217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:30:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hFR665rC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D7hsD2HS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728362AbfAYLa2 (ORCPT
+        id S1728529AbfAYLag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:30:28 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34693 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727850AbfAYLaY (ORCPT
+        Fri, 25 Jan 2019 06:30:36 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:56057 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728243AbfAYLa2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:30:24 -0500
-Received: by mail-wr1-f68.google.com with SMTP id f7so9953766wrp.1;
-        Fri, 25 Jan 2019 03:30:22 -0800 (PST)
+        Fri, 25 Jan 2019 06:30:28 -0500
+Received: by mail-wm1-f65.google.com with SMTP id y139so6351774wmc.5
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 03:30:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=5Apo6kyI4moXkz5y+JmbgDq/SbREeohTrEGMe1T3mus=;
-        b=hFR665rCmboVrJ1uXor+IwNsFOMhct3XBl0Y3+UlQ4alNU8DB3EHGA6P9PId3IgYXs
-         +sXbkMSpSeTYoFn9MdHeAsj7VWIivA3M0ahHXL0MyrlfrraU4fibobGBliFl9/Nvdah5
-         h62hor5isHvUTo8L6HIcEE1chwVRCOITlE1dIWp05BK2IExJlaQ+GIcjnFgSyVIVtaLK
-         fV9lmBZD1OHKk6MWBsdSlKHtkJWmNUuiZasRmAkOBN9V7B04P8xlaWMtU/iMzikNETTP
-         gXupn1vkjSIw83gEff/TLSgNnddJLZKePWmwEMJXUwUwUDecu/2+RwHJj3y5yPpQ4Lc4
-         TIKQ==
+        h=reply-to:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=sCdp2Rt8P2db7n8Wc/FgdknXH7w2aWs6zOYycWOYUKw=;
+        b=D7hsD2HSGukLPUiAdy7pxgVxpTIlbFUspp94Zb1X3ecIViMsWAF3a6dQdKxb16wgSK
+         2jJJD1gqPACPdAwYKe67IMrXSiSdgTd+GtUZVmSJjI85YFdc5ruBBREFor0J13cxHvEp
+         mik/KbUPn+jlyilaviJf+ZRpZpC2NgsnkWqax8AwGC157ULRioO2BW65g1mTkpJx+2JG
+         UdCGw+7Wk5AKrnTygjPCxIz5+k9u+YLpvhXP+S1zJVP0yn8J2+ol714AUW3+c+NT5J/m
+         CWMGxGNajjrXdHZBeJvKVGG7q9otj8bUVQoOFHMfPWflfQBzUlbJtFYS/ILRmaUODDTJ
+         javw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=5Apo6kyI4moXkz5y+JmbgDq/SbREeohTrEGMe1T3mus=;
-        b=Q0m+xkFhbTbBJ08wFYZqyaIHl0HprMhi7lbguxO+Pw8Q2Sa7G+ZOWm8H129QhqIjwl
-         NL65pltRR79Lno3iijvK7HqLMIJKvYvJ55G11t9KKlO0rPSj16L6GwpoMzDJsurcGnn8
-         l/94E8vMGeSdEk4KCXw064KbdhPpjEv14A/BLEeviDh8j5TV04ZdyQUPhnRD8E/3Db+r
-         jvVhdqLzByAo6hk6Q25XVxrOsclzIc16zTQ2FBuTI5w1tzDMqDK+1JZzy4++XjajogEq
-         iOuhtGexw5l1Xtq9vMXylAKMJ0hWrmDUGisC5IsqyHzNO2MATs6CCVB1hlXMsm/KfD+T
-         UvjA==
-X-Gm-Message-State: AHQUAuZUWtaZqmexTqIBGC+e6uqN7BcKRf0Ly3dMCZMLs6FBEUsPlzVy
-        p90KzPYlmW0Qa+UbllWx0RA=
-X-Google-Smtp-Source: AHgI3IaejyOtgVv5k9CLMqd/kAuD/egtpGXFyvbpVeSw157TKHoRY1ysGmUhJ8sa6aysaugKIhWq7A==
-X-Received: by 2002:adf:ed92:: with SMTP id c18mr3109771wro.194.1548415821817;
-        Fri, 25 Jan 2019 03:30:21 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id v6sm95535316wrd.88.2019.01.25.03.30.21
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 03:30:21 -0800 (PST)
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Mathias Nyman <mathias.nyman@intel.com>,
-        Jon Hunter <jonathanh@nvidia.com>, JC Kuo <jckuo@nvidia.com>,
-        linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] arm64: tegra: Enable XUSB on P2771
-Date:   Fri, 25 Jan 2019 12:30:12 +0100
-Message-Id: <20190125113013.11447-5-thierry.reding@gmail.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190125113013.11447-1-thierry.reding@gmail.com>
-References: <20190125113013.11447-1-thierry.reding@gmail.com>
+        h=x-gm-message-state:reply-to:subject:to:cc:references:from
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-transfer-encoding:content-language;
+        bh=sCdp2Rt8P2db7n8Wc/FgdknXH7w2aWs6zOYycWOYUKw=;
+        b=pWunyWDytb1mEtw+0PZZoVEmYUe4GtxRzYHvhU91MbAfjc6YN9TGiTBylsvIIjCbgP
+         3xTZoPgI2eirR+B9r/ecyYCOzsGAj3bdQ93g0EUJW7oZpCbi9M8NOwzZ9IChDKg890HW
+         rZ9x/3Nzgg1abu8UFTDQk1qfFKRrGkgqL0Bhx7yuwGiD7BIObu9ODPxF7PAhoD46weks
+         fvQv5AoyOHpAbXgUjlHy2hK4u4MQ2Ol5vew35FDa3z98NghAhDyouNM/EVhoFF6mayY+
+         5xQ9rnvjVEgGof56A2czHRokU7Fj8GwGqG/TYZzqoPcDi1AYFGLcoM/EyNwC2Zbtc1wg
+         zSGg==
+X-Gm-Message-State: AJcUukdMpltGFpywGWeE/BshLiiTffMX/P72izODa7fV6/rlufS8daU0
+        lNPXNYz8iiUArL0lQ5ouSTs=
+X-Google-Smtp-Source: ALg8bN7kx19hKSpc1uuOm4Ioz6PhXpMkVoP20wE7P34Sg70Lt+9UZyYG+elF2rJDrqyKlqIq4GqDHw==
+X-Received: by 2002:a7b:c4cb:: with SMTP id g11mr6491725wmk.149.1548415825578;
+        Fri, 25 Jan 2019 03:30:25 -0800 (PST)
+Received: from ?IPv6:2a02:908:1252:fb60:be8a:bd56:1f94:86e7? ([2a02:908:1252:fb60:be8a:bd56:1f94:86e7])
+        by smtp.gmail.com with ESMTPSA id p5sm33889642wmh.16.2019.01.25.03.30.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 03:30:25 -0800 (PST)
+Reply-To: christian.koenig@amd.com
+Subject: Re: [PATCH] drm: enable uncached DMA optimization for ARM and arm64
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Alex Deucher <alexdeucher@gmail.com>
+Cc:     "Daenzer, Michel" <Michel.Daenzer@amd.com>,
+        Carsten Haitzler <Carsten.Haitzler@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "Zhang, Jerry" <Jerry.Zhang@amd.com>,
+        Christoph Hellwig <hch@infradead.org>,
+        David Airlie <airlied@linux.ie>,
+        "Huang, Ray" <Ray.Huang@amd.com>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Will Deacon <will.deacon@arm.com>,
+        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
+        Sean Paul <sean@poorly.run>,
+        "Koenig, Christian" <Christian.Koenig@amd.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        Robin Murphy <robin.murphy@arm.com>
+References: <20190124120658.30288-1-ard.biesheuvel@linaro.org>
+ <3cca35a9-c71c-a100-b29d-31ba0d1d10b1@amd.com>
+ <CAKv+Gu9OG3O4+4F2nioaQ-3U-1kwRBr5KVj-1gD1ZEsUx_Ud5A@mail.gmail.com>
+ <CADnq5_PETD6umm9Df7OZ9BdaV5MZutmhN+HTAnVkcRLg5=TNWw@mail.gmail.com>
+ <CAKv+Gu-Yk1iEe+cF30ee7R+hcrke9XH9MdTeERA2P-0s2QpaLw@mail.gmail.com>
+From:   =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>
+Message-ID: <961e758d-b0a0-8f6c-a8fa-c3047e058706@gmail.com>
+Date:   Fri, 25 Jan 2019 12:30:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <CAKv+Gu-Yk1iEe+cF30ee7R+hcrke9XH9MdTeERA2P-0s2QpaLw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thierry Reding <treding@nvidia.com>
+Am 25.01.19 um 09:43 schrieb Ard Biesheuvel:
+> On Thu, 24 Jan 2019 at 15:01, Alex Deucher <alexdeucher@gmail.com> wrote:
+>> On Thu, Jan 24, 2019 at 9:00 AM Ard Biesheuvel
+>> <ard.biesheuvel@linaro.org> wrote:
+>>> On Thu, 24 Jan 2019 at 13:31, Koenig, Christian
+>>> <Christian.Koenig@amd.com> wrote:
+>>>> Am 24.01.19 um 13:06 schrieb Ard Biesheuvel:
+>>>>> The DRM driver stack is designed to work with cache coherent devices
+>>>>> only, but permits an optimization to be enabled in some cases, where
+>>>>> for some buffers, both the CPU and the GPU use uncached mappings,
+>>>>> removing the need for DMA snooping and allocation in the CPU caches.
+>>>>>
+>>>>> The use of uncached GPU mappings relies on the correct implementation
+>>>>> of the PCIe NoSnoop TLP attribute by the platform, otherwise the GPU
+>>>>> will use cached mappings nonetheless. On x86 platforms, this does not
+>>>>> seem to matter, as uncached CPU mappings will snoop the caches in any
+>>>>> case. However, on ARM and arm64, enabling this optimization on a
+>>>>> platform where NoSnoop is ignored results in loss of coherency, which
+>>>>> breaks correct operation of the device. Since we have no way of
+>>>>> detecting whether NoSnoop works or not, just disable this
+>>>>> optimization entirely for ARM and arm64.
+>>>>>
+>>>>> Cc: Christian Koenig <christian.koenig@amd.com>
+>>>>> Cc: Alex Deucher <alexander.deucher@amd.com>
+>>>>> Cc: David Zhou <David1.Zhou@amd.com>
+>>>>> Cc: Huang Rui <ray.huang@amd.com>
+>>>>> Cc: Junwei Zhang <Jerry.Zhang@amd.com>
+>>>>> Cc: Michel Daenzer <michel.daenzer@amd.com>
+>>>>> Cc: David Airlie <airlied@linux.ie>
+>>>>> Cc: Daniel Vetter <daniel@ffwll.ch>
+>>>>> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+>>>>> Cc: Maxime Ripard <maxime.ripard@bootlin.com>
+>>>>> Cc: Sean Paul <sean@poorly.run>
+>>>>> Cc: Michael Ellerman <mpe@ellerman.id.au>
+>>>>> Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>>>>> Cc: Will Deacon <will.deacon@arm.com>
+>>>>> Cc: Christoph Hellwig <hch@infradead.org>
+>>>>> Cc: Robin Murphy <robin.murphy@arm.com>
+>>>>> Cc: amd-gfx list <amd-gfx@lists.freedesktop.org>
+>>>>> Cc: dri-devel <dri-devel@lists.freedesktop.org>
+>>>>> Reported-by: Carsten Haitzler <Carsten.Haitzler@arm.com>
+>>>>> Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+>>>> The subject line should probably read "disable uncached...".
+>>>>
+>>> Ugh, of course ...
+>>>
+>>>> With that fixed the patch is Reviewed-by: Christian König
+>>>> <christian.koenig@amd.com>.
+>>>>
+>> Same:
+>> Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+>>
+> Thanks all
+>
+> Should I resend the patch with the subject corrected?
 
-Enable the relevant pads for XUSB support on P2771-0000 and hook up the
-USB supply voltage regulators to the ports.
+I will update the subject line and push it upstream through 
+drm-misc-next if nobody objects.
 
-Signed-off-by: Thierry Reding <treding@nvidia.com>
----
- .../boot/dts/nvidia/tegra186-p2771-0000.dts   | 115 ++++++++++++++++++
- .../arm64/boot/dts/nvidia/tegra186-p3310.dtsi |  19 ++-
- 2 files changed, 130 insertions(+), 4 deletions(-)
+Christian.
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-index 65487eee2ce6..ab9e4e42b4dc 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p2771-0000.dts
-@@ -55,6 +55,93 @@
- 		status = "okay";
- 	};
- 
-+	padctl@3520000 {
-+		status = "okay";
-+
-+		avdd-pll-erefeut-supply = <&vdd_1v8_pll>;
-+		avdd-usb-supply = <&vdd_3v3_sys>;
-+		dvdd-pex-supply = <&vdd_pex>;
-+		dvdd-pex-pll-supply = <&vdd_pex>;
-+		hvdd-pex-supply = <&vdd_1v8>;
-+		hvdd-pex-pll-supply = <&vdd_1v8>;
-+		vclamp-usb-supply = <&vdd_1v8>;
-+		vddio-hsic-supply = <&gnd>;
-+
-+		pads {
-+			usb2 {
-+				status = "okay";
-+
-+				lanes {
-+					usb2-0 {
-+						nvidia,function = "xusb";
-+						status = "okay";
-+					};
-+
-+					usb2-1 {
-+						nvidia,function = "xusb";
-+						status = "okay";
-+					};
-+
-+					usb2-2 {
-+						nvidia,function = "xusb";
-+						status = "okay";
-+					};
-+				};
-+			};
-+
-+			usb3 {
-+				status = "okay";
-+
-+				lanes {
-+					usb3-0 {
-+						nvidia,function = "xusb";
-+						status = "okay";
-+					};
-+
-+					usb3-1 {
-+						nvidia,function = "xusb";
-+						status = "okay";
-+					};
-+
-+					usb3-2 {
-+						nvidia,function = "xusb";
-+						status = "okay";
-+					};
-+				};
-+			};
-+		};
-+
-+		ports {
-+			usb2-0 {
-+				status = "okay";
-+				mode = "otg";
-+
-+				vbus-supply = <&vdd_usb0>;
-+			};
-+
-+			usb2-1 {
-+				status = "okay";
-+				mode = "host";
-+
-+				vbus-supply = <&vdd_usb1>;
-+			};
-+
-+			usb3-0 {
-+				nvidia,usb2-companion = <1>;
-+				status = "okay";
-+			};
-+		};
-+	};
-+
-+	usb@3530000 {
-+		status = "okay";
-+
-+		phys = <&{/padctl@3520000/pads/usb2/lanes/usb2-0}>,
-+		       <&{/padctl@3520000/pads/usb2/lanes/usb2-1}>,
-+		       <&{/padctl@3520000/pads/usb3/lanes/usb3-0}>;
-+		phy-names = "usb2-0", "usb2-1", "usb3-0";
-+	};
-+
- 	pcie@10003000 {
- 		status = "okay";
- 
-@@ -177,5 +264,33 @@
- 
- 			vin-supply = <&vdd_5v0_sys>;
- 		};
-+
-+		vdd_usb0: regulator@102 {
-+			compatible = "regulator-fixed";
-+			reg = <102>;
-+
-+			regulator-name = "VDD_USB0";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+
-+			gpio = <&gpio TEGRA_MAIN_GPIO(L, 4) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+
-+			vin-supply = <&vdd_5v0_sys>;
-+		};
-+
-+		vdd_usb1: regulator@103 {
-+			compatible = "regulator-fixed";
-+			reg = <103>;
-+
-+			regulator-name = "VDD_USB1";
-+			regulator-min-microvolt = <5000000>;
-+			regulator-max-microvolt = <5000000>;
-+
-+			gpio = <&gpio TEGRA_MAIN_GPIO(L, 5) GPIO_ACTIVE_HIGH>;
-+			enable-active-high;
-+
-+			vin-supply = <&vdd_5v0_sys>;
-+		};
- 	};
- };
-diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-index b539561e7877..eb64d9be3231 100644
---- a/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra186-p3310.dtsi
-@@ -289,7 +289,7 @@
- 						regulator-boot-on;
- 					};
- 
--					ldo0 {
-+					vdd_1v8_pll: ldo0 {
- 						regulator-name = "VDD_1V8_AP_PLL";
- 						regulator-min-microvolt = <1800000>;
- 						regulator-max-microvolt = <1800000>;
-@@ -358,10 +358,21 @@
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 
--		vdd_5v0_sys: regulator@0 {
-+		gnd: regulator@0 {
- 			compatible = "regulator-fixed";
- 			reg = <0>;
- 
-+			regulator-name = "GND";
-+			regulator-min-microvolt = <0>;
-+			regulator-max-microvolt = <0>;
-+			regulator-always-on;
-+			regulator-boot-on;
-+		};
-+
-+		vdd_5v0_sys: regulator@1 {
-+			compatible = "regulator-fixed";
-+			reg = <1>;
-+
- 			regulator-name = "VDD_5V0_SYS";
- 			regulator-min-microvolt = <5000000>;
- 			regulator-max-microvolt = <5000000>;
-@@ -369,9 +380,9 @@
- 			regulator-boot-on;
- 		};
- 
--		vdd_1v8_ap: regulator@1 {
-+		vdd_1v8_ap: regulator@2 {
- 			compatible = "regulator-fixed";
--			reg = <1>;
-+			reg = <2>;
- 
- 			regulator-name = "VDD_1V8_AP";
- 			regulator-min-microvolt = <1800000>;
--- 
-2.19.1
+> _______________________________________________
+> dri-devel mailing list
+> dri-devel@lists.freedesktop.org
+> https://lists.freedesktop.org/mailman/listinfo/dri-devel
 
