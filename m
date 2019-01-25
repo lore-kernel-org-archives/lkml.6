@@ -2,154 +2,104 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9900C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:35:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FDB0C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:40:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AAA0E218FF
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C76FE218FC
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:40:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mvista-com.20150623.gappssmtp.com header.i=@mvista-com.20150623.gappssmtp.com header.b="gt2e+PgX"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B6tA7RR4"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729202AbfAYUfc (ORCPT
+        id S1726991AbfAYUkM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 15:35:32 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:34064 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726179AbfAYUfb (ORCPT
+        Fri, 25 Jan 2019 15:40:12 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36074 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725778AbfAYUkM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 15:35:31 -0500
-Received: by mail-ot1-f65.google.com with SMTP id t5so9759475otk.1
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 12:35:28 -0800 (PST)
+        Fri, 25 Jan 2019 15:40:12 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so4672467pgm.3;
+        Fri, 25 Jan 2019 12:40:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mvista-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=V7Zz6B4ep/S9lo2cEqRIuyWB8Oo9z82Zia2aFv4SK0M=;
-        b=gt2e+PgXjIbm7TYJ2AND6hu+hnnpvm9LASQWkcVJ0IyNrBFsg+5dw5OBoQdNTmY1eS
-         VVBteq4a4G9MokMZlU2/R4nmxC0tubl4S2Qf5NEiv9eA3aKZMfGrudboTevUnkSjn5xq
-         HazaqnFF02cvmoSbBzIi3NxZq4utCN6x+RyEl8SFfZwCrftj5wLrJYZWaBmxC7LAOm0u
-         zA0ChV4mpETT2EY4mF1/i05CbydM+bxUo4YiGs2IQbbJ2DatzL/v1BgnMV1NtkMnVeNx
-         Stka32Nm2la4dEUfLzWqBBPTKLWA4ilAWgo5xhyhI96j6fdVcSbwm19PVc0wri2fcfHh
-         5VIQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=WZMUnIdM2wgUPHI/CCC2k5/Bf/kPJWYDXntSHmfQhd8=;
+        b=B6tA7RR4cZW7xpPvVsr1F+SnXP4ycVtp26T2mVogeuiG9hPV6QC4N/nSCkJpqzc/2b
+         6G/1o9AvGtlFctnOPSMSHexkAuxzWApgtheRF+4qOn0Gz6LJ6TREof76S5dHLYKGPkjI
+         urBtujVdWhhjCAq5Dzm6/DWSIPRSOUND2IZOvta0bQLCF+T1A4i6YYQ2lx2BWd1sZ8Iq
+         WUw/g3hocyXv59DRp8S7jfPvkqC5g4RMjwPpaQp4noY57fMkaDcvi4hjri7bSHpjYY6j
+         lqP25adNEgh4VIrkqJ0bD5wERq8r0LGDSiLNoyzGf39w9/PZodHfk2S/ivaCGrMQThxA
+         g/Wg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=V7Zz6B4ep/S9lo2cEqRIuyWB8Oo9z82Zia2aFv4SK0M=;
-        b=cf5Vin0GCIvM5qdJ51uhvRNqJy0SfTPrMFciSm3D/fcz8Oz77kxU2LH7hX+wUHI9b2
-         6HLlDWmJrJAQzab19bOkO3j1GstWwSGwqcP7a62ZKxPQodNkBUw3d1DU1RV9AGWlFhj7
-         GLWkeOSS0cDv7LwlLblWRZI3rYWYt8ForaSCQWH+nDQcov0jVI04SXIPFFCFspmpZqof
-         vwV+41MCvN+ulFtI0GcCdtYkWfGzzROV/aoCQICRlTbAhazJkJlK+q4gxHGGSvYbJxKI
-         IwaABYRykr15jrYkCd7BeISvcHbfoslG5xzSxUmNHuPew9UQWpD9dG7sWpeSY2U8vd1U
-         Uhng==
-X-Gm-Message-State: AJcUukfyhTDXdvGx6d9/pn97a10sYdaNGXzjTW9ZHEYlhz1xBELiPtoE
-        DGSn1SS2g3x2e/Yx0Njy6/Mm2w==
-X-Google-Smtp-Source: ALg8bN69G3lnM7aJqDk/rPyMLx6EsXng3ItsywYGfGYkfI6jFRXZ7jqTKiVK3MPN1wVZNVaGch1xjg==
-X-Received: by 2002:a05:6830:165a:: with SMTP id h26mr9287581otr.299.1548448527527;
-        Fri, 25 Jan 2019 12:35:27 -0800 (PST)
-Received: from minyard.net ([2001:470:b8f6:1b:a64e:31ff:fe14:d744])
-        by smtp.gmail.com with ESMTPSA id r9sm1746527otq.81.2019.01.25.12.35.25
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 12:35:26 -0800 (PST)
-Date:   Fri, 25 Jan 2019 14:35:24 -0600
-From:   Corey Minyard <cminyard@mvista.com>
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        qiaonuohan@huawei.com
-Subject: Re: [PATCH] ipmi_si: fix use-after-free of resource->name
-Message-ID: <20190125203524.GA20851@minyard.net>
-Reply-To: cminyard@mvista.com
-References: <1548383459-38420-1-git-send-email-yangyingliang@huawei.com>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=WZMUnIdM2wgUPHI/CCC2k5/Bf/kPJWYDXntSHmfQhd8=;
+        b=mmiUqZ0tf8wRL1EWQwJkNN3L4bWDPoNPvgt+C+ENNtSqj4X6UIQxHFs6Fq+qCkWHOG
+         p227RzPhhCRb1WK3y6CHitDTZkpuaoJxe4Y30G04vbXsxhWxOSIOomVRNYBrt3OQXoOs
+         1y/1kLRc0BsvAIgIEGEwz8e5LG7OYXU7MWq4DmbKHwF743gJT+mr/ZG5mGDYLww5dSzg
+         BOcZ5nV+xUK2F7LkXLGZ8FeHEMzL1edKhkeH6bqwli/ZvYdyvIquEoOFi4+ZuxltEa+7
+         B0ZDiT2ZV06Y1CNvvS8dzIc0HrehYxGi9MKUqodFVS1ooPTjxcXpf2LaIONYKuFSvKPT
+         nfpg==
+X-Gm-Message-State: AJcUuke/WVmwDXQJrjhqC0BdupM8tam1Kuliq05AwN4V18U3iCdzZbn0
+        S9beAwOPFnooYSUpOqEI73mYuC73
+X-Google-Smtp-Source: ALg8bN4LOgsNVuavjylDX2BKAA9jt5Qnmlsq7faDQGEwDgitCWe0zowWNSsVZG2MSvGt8WEjtR/HjQ==
+X-Received: by 2002:a62:61c3:: with SMTP id v186mr12571093pfb.55.1548448811134;
+        Fri, 25 Jan 2019 12:40:11 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id i4sm45993450pfj.82.2019.01.25.12.40.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 12:40:10 -0800 (PST)
+Subject: Re: [PATCH V2 3/4] i2c: tegra: Add DMA Support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
+ <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
+ <dcc1e094-638e-5b04-7a61-bdbc24ee068f@gmail.com>
+ <BYAPR12MB339829FC6F2F95F833FE45A1C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ad177c2e-3801-ddad-b359-ac83530ee1d6@gmail.com>
+Date:   Fri, 25 Jan 2019 23:40:02 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548383459-38420-1-git-send-email-yangyingliang@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <BYAPR12MB339829FC6F2F95F833FE45A1C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 10:30:59AM +0800, Yang Yingliang wrote:
-> When we excute the following commands, we got oops
-> rmmod ipmi_si
-> cat /proc/ioports
+25.01.2019 23:31, Sowjanya Komatineni пишет:
 > 
-
-snip...
-
+>>> +	if (i2c_dev->has_dma) {
+>>> +		ret = tegra_i2c_init_dma_param(i2c_dev, true);
+>>> +		if (ret == -EPROBE_DEFER)
+>>> +			goto disable_div_clk;
+>>> +		ret = tegra_i2c_init_dma_param(i2c_dev, false);
+>>> +		if (ret == -EPROBE_DEFER)
+>>> +			goto disable_div_clk;
+>>
+>> So tegra_i2c_init_dma_param() could fail, printing a error message, and probe will succeed? If allocation fails during the driver's probe, then just fail the probe. Please give the rationale.
 > 
-> If io_setup is called successful in try_smi_init() but try_smi_init()
-> goes out_err before calling ipmi_register_smi(), so ipmi_unregister_smi()
-> will not be called while removing module. It leads to the resource that
-> allocated in io_setup() can not be freed, but the name(DEVICE_NAME) of
-> resource is freed while removing the module. It causes use-after-free
-> when cat /proc/ioports.
+> If APB DMA probe doesn’t happen prior to tegra i2c, DMA is not available by the time tegra_init_dma_param tries to request slave channel and in those cases dma_request_slave_channel_reason will return EPROBE_DEFER for tegra I2C probe to retry
 > 
-> Fix this by calling shutdown_smi() while removing the module and don't
-> call release_region() if request_region() is not called to avoid error
-> prints.
-> 
-> Fixes: 93c303d2045b ("ipmi_si: Clean up shutdown a bit")
-> Cc: stable@vger.kernel.org
-> Reported-by: NuoHan Qiao <qiaonuohan@huawei.com>
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
->  drivers/char/ipmi/ipmi_si_intf.c    | 2 ++
->  drivers/char/ipmi/ipmi_si_port_io.c | 3 +++
->  2 files changed, 5 insertions(+)
-> 
-> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-> index dc8603d..635e98a 100644
-> --- a/drivers/char/ipmi/ipmi_si_intf.c
-> +++ b/drivers/char/ipmi/ipmi_si_intf.c
-> @@ -2235,6 +2235,8 @@ static void cleanup_one_si(struct smi_info *smi_info)
->  
->  	if (smi_info->intf)
->  		ipmi_unregister_smi(smi_info->intf);
-> +	else
-> +		shutdown_smi(smi_info);
+> In case if DMA is available but DMA buffer allocation fails, then tegra_i2c_init_dma_param returns ENOMEM and probe also fails returning same ENOMEM
 
-This is completely the wrong way to fix this.  The general principle is
-that a function cleans up for itself if it returns an error.  If you
-add hacks other places for a function failing you end up with a mess.
-
-I think the right way to fix this is to add something like:
-
-	if (rv && new_smi->io.io_size && smi_info->io.io_cleanup) {
-		smi_info->io.io_cleanup(&smi_info->io);
-		smi_info->io.io_cleanup = NULL;
-	}
-
-at the end of try_smi_init().  
-
--corey
-
->  
->  	if (smi_info->pdev) {
->  		if (smi_info->pdev_registered)
-> diff --git a/drivers/char/ipmi/ipmi_si_port_io.c b/drivers/char/ipmi/ipmi_si_port_io.c
-> index ef6dffc..0c46a3f 100644
-> --- a/drivers/char/ipmi/ipmi_si_port_io.c
-> +++ b/drivers/char/ipmi/ipmi_si_port_io.c
-> @@ -53,6 +53,9 @@ static void port_cleanup(struct si_sm_io *io)
->  	unsigned int addr = io->addr_data;
->  	int          idx;
->  
-> +	if (io->regsize != 1 && io->regsize != 2 && io->regsize != 4)
-> +		return;
-> +
->  	if (addr) {
->  		for (idx = 0; idx < io->io_size; idx++)
->  			release_region(addr + idx * io->regspacing,
-> -- 
-> 1.8.3
-> 
-> 
+Is that what you're going to change in the next version? Your current variant of the code doesn't fail the probe on ENOMEM and there is duplicated attempt to invoke tegra_i2c_init_dma_param() during the transfer.
