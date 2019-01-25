@@ -2,131 +2,194 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD926C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 841D0C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:42:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7E868218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:41:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4742F2184B
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:42:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tEf2tPrp"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="hna+AtoL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727035AbfAYLlB (ORCPT
+        id S1727728AbfAYLmO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:41:01 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:43086 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfAYLlA (ORCPT
+        Fri, 25 Jan 2019 06:42:14 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:17356 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726026AbfAYLmO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:41:00 -0500
-Received: by mail-pf1-f193.google.com with SMTP id w73so4630575pfk.10;
-        Fri, 25 Jan 2019 03:41:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vn/VFDFGKo7EAeSEgz1HUxsLFd2UXKIdl6RTX3F9HNc=;
-        b=tEf2tPrpuHspmPp8Oq2Sr+rd/ft6ovZFUieIg3wdD4zjN8sUl/kZuz5ek8GrEoC/ui
-         vFyIezZZ3A/TimGIrgql6VHC8sjX0ZxVq6YXufTKWAFvV+3R/5AdGOjgo06+yzFBLX7P
-         uirf11/6kwz5xSXsDRAJSO6AhEb8Z4JCT6rQ4FT719fDIViqlAmM2lo26Hd33yxNUNQP
-         wj1IVI4TybgDi27jc/apAavunjXDKfmAsuF3VMfhiU3bwv3l2e9hpbQ+b3Uh86xRiMjO
-         U1BionTvbST7qyMGCkO/b4o5BLSHrJY2ed0nTzue33Xt4ss7q/g4ucTT/I0WOCaH+Ghd
-         R3lA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vn/VFDFGKo7EAeSEgz1HUxsLFd2UXKIdl6RTX3F9HNc=;
-        b=NiWO+vT2+qnN33MXWvkJeK2iVJ1JSC3s7wnSKKdlnllCqUt+mpOApnp4tBpMHFlohg
-         uqU1fstG/879fYoffKtAt1gSbnVBLETU6lKOSL1NlX/TwK9jcJKlq9Sj3OvQa3sxgbqZ
-         WW7a8SMdJNY0KWZDa4g2gkPVkajE+FMzL/B+zhbtuKpW58cf30v23hGUWsei5dPYzkfP
-         IvxZg8knSZ0MvokX2nAChQ+KR8rvpH4ZTro+y3WCMeZl7g94vmaahJaiobQfuhWgjiFx
-         qf2lBta4ql+msjaHjV/4hd3IyF8Oub5zWV3MDHeAyEoBtuuU5GgyuckHtw/4jStCWgmm
-         zrpA==
-X-Gm-Message-State: AJcUukcUgcb/mSB7aWte/LzJn6Q7pSfpG/TaUZQynGvx/mHf4V4OcRLk
-        N6NeAHWnX+PhPd6W6KbykZg=
-X-Google-Smtp-Source: ALg8bN4YBgXQGtsqcVvmWP0fW8ErEwD0lLtHE0pn4/TCXlHA6sAMTThBL216Z0l2fJx919C29obnjQ==
-X-Received: by 2002:a63:dd15:: with SMTP id t21mr9255127pgg.347.1548416459763;
-        Fri, 25 Jan 2019 03:40:59 -0800 (PST)
-Received: from bharath12345-Inspiron-5559 ([117.198.99.29])
-        by smtp.gmail.com with ESMTPSA id p24sm37961226pfk.155.2019.01.25.03.40.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 03:40:59 -0800 (PST)
-Date:   Fri, 25 Jan 2019 17:10:52 +0530
-From:   Bharath Vedartham <linux.bhar@gmail.com>
-To:     Himanshu Jha <himanshujha199640@gmail.com>
-Cc:     Alexandru Ardelean <ardeleanalex@gmail.com>, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: iio: industrialio-core: add check when kzalloc
- fails
-Message-ID: <20190125114052.GA2982@bharath12345-Inspiron-5559>
-References: <20190124142755.GA31059@bhar.linux>
- <CA+U=Dsrefk01AbyKmkhLrwQyq8mkBKoO6kv_zXYEFSSCCqDObw@mail.gmail.com>
- <20190125105313.GA16451@himanshu-Vostro-3559>
+        Fri, 25 Jan 2019 06:42:14 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4af6140000>; Fri, 25 Jan 2019 03:42:12 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Fri, 25 Jan 2019 03:42:12 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Fri, 25 Jan 2019 03:42:12 -0800
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 25 Jan
+ 2019 11:42:10 +0000
+Subject: Re: [PATCH v2] ALSA: hda/tegra: enable clock during probe
+To:     Sameer Pujar <spujar@nvidia.com>, <perex@perex.cz>,
+        <tiwai@suse.com>, <pierre-louis.bossart@linux.intel.com>
+CC:     <thierry.reding@gmail.com>, <rlokhande@nvidia.com>,
+        <sharadg@nvidia.com>, <mkumard@nvidia.com>,
+        <alsa-devel@alsa-project.org>, <linux-tegra@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <ae87a09f-2922-9a9d-3ad3-e9abe7fb20c2@nvidia.com>
+Date:   Fri, 25 Jan 2019 11:42:08 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125105313.GA16451@himanshu-Vostro-3559>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <1548414418-5785-1-git-send-email-spujar@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548416532; bh=S09AqtOme5DJH7T6pDSr4ZMARMmhvcCYGd4/Ko/EFi4=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=hna+AtoLIV3M7BWdwpACe78nMkDVjZGFZKIEK+oY+nICxwbPpYz6oZGZZRCND4UZb
+         RKi2youQbAL1zv/uV+nFb1OiAdSHjPh9ax5fULz8xduur0EG+3BTgCjMC1OL2GGINz
+         E0HPmCylpLrmJqj5w3T/rjrznnCAEV98Z6+TDIdTM41izgi8QK8PhRty1HiZ/o1uyZ
+         zkmJAL42G1GITq9IOnH2ODOK8X+q20VhtNOm+G1PfQjqsVRzrfRo83YOj4gpTD+5kO
+         1KF/+nw0CnLo+HktDSPZhZSjunUi/WI2vNuB0W1O0OMMwytK4PskTLE6q/hhFngJJW
+         IHD6xtc40IJ8w==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 04:23:13PM +0530, Himanshu Jha wrote:
-> On Fri, Jan 25, 2019 at 08:55:27AM +0200, Alexandru Ardelean wrote:
-> > On Thu, Jan 24, 2019 at 4:28 PM Bharath Vedartham <linux.bhar@gmail.com> wrote:
-> > >
-> > > add code to handle the case when kzalloc fails to allocate memory to dev
-> > >
-> > > Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-> > > ---
-> > >  drivers/iio/industrialio-core.c | 2 ++
-> > >  1 file changed, 2 insertions(+)
-> > >
-> > > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> > > index 4f5cd9f..93caa6b 100644
-> > > --- a/drivers/iio/industrialio-core.c
-> > > +++ b/drivers/iio/industrialio-core.c
-> > > @@ -1475,6 +1475,8 @@ struct iio_dev *iio_device_alloc(int sizeof_priv)
-> > >                 }
-> > >                 dev_set_name(&dev->dev, "iio:device%d", dev->id);
-> > >                 INIT_LIST_HEAD(&dev->buffer_list);
-> > > +       } else {
-> > > +               return NULL;
-> > 
-> > I'd argue that this is a bit redundant, because `dev` is NULL, the
-> > return below (return dev) will also return NULL.
-Agreed. I will read the code more carefully from next time.
-Thank you :)
-> 
-> +1
-> 
-> Also, subject title is incorrect.
-> 
-> Always use:
-> 
-> $ git log --oneline drivers/iio/industrialio-core.c
-> 
-> Use the most frequently tag/subject from the output of above
-> command.
-> 
-> "iio: core: ...." would be fine.
-> 
-> 
-> -- 
-> Himanshu Jha
-> Undergraduate Student
-> Department of Electronics & Communication
-> Guru Tegh Bahadur Institute of Technology
-Yes will do that from next time. I was of the understanding that this header 
-was good enough.
 
-Thank you,
-Bharath
+On 25/01/2019 11:06, Sameer Pujar wrote:
+> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
+> will not be ON. This could cause issue during probe, where hda init
+> setup is done. This patch enables clocks unconditionally during probe.
+> 
+> Along with above, follwoing changes are done.
+>   * enable runtime PM before exiting from probe work. This helps to avoid
+>     usage of pm_runtime_get_sync/pm_runtime_put() in probe work.
+>   * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
+>   * runtime PM callbacks moved out of CONFIG_PM check
+> 
+> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
+> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
+> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
+> ---
+>  sound/pci/hda/hda_tegra.c | 26 +++++++++++++++++---------
+>  1 file changed, 17 insertions(+), 9 deletions(-)
+> 
+> diff --git a/sound/pci/hda/hda_tegra.c b/sound/pci/hda/hda_tegra.c
+> index c8d18dc..ba6175f 100644
+> --- a/sound/pci/hda/hda_tegra.c
+> +++ b/sound/pci/hda/hda_tegra.c
+> @@ -219,7 +219,6 @@ static int hda_tegra_enable_clocks(struct hda_tegra *data)
+>  	return rc;
+>  }
+>  
+> -#ifdef CONFIG_PM_SLEEP
+>  static void hda_tegra_disable_clocks(struct hda_tegra *data)
+>  {
+>  	clk_disable_unprepare(data->hda2hdmi_clk);
+> @@ -227,6 +226,7 @@ static void hda_tegra_disable_clocks(struct hda_tegra *data)
+>  	clk_disable_unprepare(data->hda_clk);
+>  }
+>  
+> +#ifdef CONFIG_PM_SLEEP
+>  /*
+>   * power management
+>   */
+> @@ -257,7 +257,6 @@ static int hda_tegra_resume(struct device *dev)
+>  }
+>  #endif /* CONFIG_PM_SLEEP */
+>  
+> -#ifdef CONFIG_PM
+>  static int hda_tegra_runtime_suspend(struct device *dev)
+>  {
+>  	struct snd_card *card = dev_get_drvdata(dev);
+> @@ -283,7 +282,7 @@ static int hda_tegra_runtime_resume(struct device *dev)
+>  	int rc;
+>  
+>  	rc = hda_tegra_enable_clocks(hda);
+> -	if (rc != 0)
+> +	if (rc)
+>  		return rc;
+>  	if (chip && chip->running) {
+>  		hda_tegra_init(hda);
+> @@ -292,7 +291,6 @@ static int hda_tegra_runtime_resume(struct device *dev)
+>  
+>  	return 0;
+>  }
+> -#endif /* CONFIG_PM */
+>  
+>  static const struct dev_pm_ops hda_tegra_pm = {
+>  	SET_SYSTEM_SLEEP_PM_OPS(hda_tegra_suspend, hda_tegra_resume)
+> @@ -551,9 +549,9 @@ static int hda_tegra_probe(struct platform_device *pdev)
+>  
+>  	dev_set_drvdata(&pdev->dev, card);
+>  
+> -	pm_runtime_enable(hda->dev);
+> -	if (!azx_has_pm_runtime(chip))
+> -		pm_runtime_forbid(hda->dev);
+> +	err = hda_tegra_enable_clocks(hda);
+> +	if (err)
+> +		goto out_free;
+>  
+>  	schedule_work(&hda->probe_work);
+>  
+> @@ -571,7 +569,6 @@ static void hda_tegra_probe_work(struct work_struct *work)
+>  	struct platform_device *pdev = to_platform_device(hda->dev);
+>  	int err;
+>  
+> -	pm_runtime_get_sync(hda->dev);
+>  	err = hda_tegra_first_init(chip, pdev);
+>  	if (err < 0)
+>  		goto out_free;
+> @@ -592,8 +589,15 @@ static void hda_tegra_probe_work(struct work_struct *work)
+>  	chip->running = 1;
+>  	snd_hda_set_power_save(&chip->bus, power_save * 1000);
+>  
+> +	/* set device state as active */
+> +	if (pm_runtime_set_active(hda->dev) < 0)
+> +		goto out_free;
+> +	/* enable runtime PM */
+> +	pm_runtime_enable(hda->dev);
+> +	if (!azx_has_pm_runtime(chip))
+> +		pm_runtime_forbid(hda->dev);
+> +
+>   out_free:
+> -	pm_runtime_put(hda->dev);
+>  	return; /* no error return from async probe */
+>  }
+>  
+> @@ -603,6 +607,10 @@ static int hda_tegra_remove(struct platform_device *pdev)
+>  
+>  	ret = snd_card_free(dev_get_drvdata(&pdev->dev));
+>  	pm_runtime_disable(&pdev->dev);
+> +	if (!pm_runtime_status_suspended(&pdev->dev)) {
+> +		hda_tegra_runtime_suspend(&pdev->dev);
+> +		pm_runtime_set_suspended(&pdev->dev);
+> +	}
+
+I think that we need to be consistent in the above with what is done in
+the probe. If in the probe we call hda_tegra_enable_clocks(), then here
+we should call hda_tegra_disable_clocks(). However, my preference is
+still to all hda_tegra_runtime_resume() in probe and then leave the
+above as-is. Let's see what everyone else thinks.
+
+Cheers
+Jon
+
+-- 
+nvpublic
