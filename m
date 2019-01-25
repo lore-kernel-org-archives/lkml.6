@@ -2,162 +2,173 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0EDC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:10:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CB77C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72DB4218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:10:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC696218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:10:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729229AbfAYKKF (ORCPT
+        id S1729275AbfAYKKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:10:05 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:43524 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728917AbfAYKKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:10:04 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D4F8A20798; Fri, 25 Jan 2019 11:10:01 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A49B9206A6;
-        Fri, 25 Jan 2019 11:10:01 +0100 (CET)
-Date:   Fri, 25 Jan 2019 11:10:02 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH v2 2/2] media: cedrus: Add HEVC/H.265 decoding support
-Message-ID: <20190125101002.z5ftls5xo7izygvy@flea>
-References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com>
- <20181123130209.11696-3-paul.kocialkowski@bootlin.com>
- <20181127082119.xdemdwgclai7kj3r@flea>
- <4f25de5bbcb7bf196fe4925f54e3335b50670bd2.camel@bootlin.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="z6zsvccsx3aejq2d"
-Content-Disposition: inline
-In-Reply-To: <4f25de5bbcb7bf196fe4925f54e3335b50670bd2.camel@bootlin.com>
-User-Agent: NeoMutt/20180716
+        Fri, 25 Jan 2019 05:10:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:36506 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728917AbfAYKKb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 05:10:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 598B4AF89;
+        Fri, 25 Jan 2019 10:10:28 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 11:10:25 +0100
+Message-ID: <s5h1s51120e.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Baolin Wang <baolin.wang@linaro.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Leo Yan <leo.yan@linaro.org>,
+        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>, bgoswami@codeaurora.org,
+        sr@denx.de, gustavo@embeddedor.com,
+        Phil Burk <philburk@google.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        mchehab+samsung@kernel.org, sboyd@kernel.org,
+        Vinod Koul <vkoul@kernel.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        anna-maria@linutronix.de, Jon Corbet <corbet@lwn.net>,
+        Jeffery Miller <jmiller@neverware.com>,
+        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
+        joe@perches.com, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        colyli@suse.de, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] ALSA: core: Add DMA share buffer support
+In-Reply-To: <CAMz4kuK5JgfZF7uXa83xC3eVCrZ8+wkZRdKq2s71o_QjT=OhGg@mail.gmail.com>
+References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
+        <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz>
+        <20190118190805.GF6260@sirena.org.uk>
+        <s5hzhrxzrez.wl-tiwai@suse.de>
+        <20190121124053.GA12679@sirena.org.uk>
+        <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz>
+        <20190122202535.GK7579@sirena.org.uk>
+        <s5h4l9z4mbo.wl-tiwai@suse.de>
+        <20190123124658.GE15906@leoy-ThinkPad-X240s>
+        <3962daba-f6ed-d706-c618-b791a1ba6b59@perex.cz>
+        <CAMz4kuK5JgfZF7uXa83xC3eVCrZ8+wkZRdKq2s71o_QjT=OhGg@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, 25 Jan 2019 10:25:37 +0100,
+Baolin Wang wrote:
+> 
+> Hi Jaroslav,
+> On Thu, 24 Jan 2019 at 21:43, Jaroslav Kysela <perex@perex.cz> wrote:
+> >
+> > Dne 23.1.2019 v 13:46 Leo Yan napsal(a):
+> > > Hi all,
+> > >
+> > > On Wed, Jan 23, 2019 at 12:58:51PM +0100, Takashi Iwai wrote:
+> > >> On Tue, 22 Jan 2019 21:25:35 +0100,
+> > >> Mark Brown wrote:
+> > >>>
+> > >>> On Mon, Jan 21, 2019 at 03:15:43PM +0100, Jaroslav Kysela wrote:
+> > >>>> Dne 21.1.2019 v 13:40 Mark Brown napsal(a):
+> > >>>
+> > >>>>> It was the bit about adding more extended permission control that I was
+> > >>>>> worried about there, not the initial O_APPEND bit.  Indeed the O_APPEND
+> > >>>>> bit sounds like it might also work from the base buffer sharing point of
+> > >>>>> view, I have to confess I'd not heard of that feature before (it didn't
+> > >>>>> come up in the discussion when Eric raised this in Prague).
+> > >>>
+> > >>>> With permissions, I meant to make possible to restrict the file
+> > >>>> descriptor operations (ioctls) for the depending task (like access to
+> > >>>> the DMA buffer, synchronize it for the non-coherent platforms and maybe
+> > >>>> read/write the actual position, delay etc.). It should be relatively
+> > >>>> easy to implement using the snd_pcm_file structure.
+> > >>>
+> > >>> Right, that's what I understood you to mean.  If you want to have a
+> > >>> policy saying "it's OK to export a PCM file descriptor if it's only got
+> > >>> permissions X and Y" the security module is going to need to know about
+> > >>> the mechanism for setting those permissions.  With dma_buf that's all a
+> > >>> bit easier as there's less new stuff, though I've no real idea how much
+> > >>> of a big deal that actually is.
+> > >>
+> > >> There are many ways to implement such a thing, yeah.  If we'd need an
+> > >> implementation that is done solely in the sound driver layer, I can
+> > >> imagine to introduce either a new ioctl or an open flag (like O_EXCL)
+> > >> to specify the restricted sharing.  That is, a kind of master / slave
+> > >> model where only the master is allowed to manipulate the stream while
+> > >> the slave can mmap, read/write and get status.
+> > >
+> > > In order to support EXCLUSIVE mode, it is necessary to convert the
+> > > /dev/snd/ descriptor to an anon_inode:dmabuffer file descriptor.
+> > > SELinux allows that file descriptor to be passed to the client. It can
+> > > also be used by the AAudioService.
+> >
+> > Okay, so this is probably the only point which we should resolve for the
+> > already available DMA buffer sharing in ALSA (the O_APPEND flag).
+> >
+> > I had another glance to your dma-buf implementation and I see many
+> > things which might cause problems:
+> >
+> > - allow to call dma-buf ioctls only when the audio device is in specific
+> > state (stream is not running)
+> 
+> Right. Will fix.
+>
+> > - as Takashi mentioned, if we return another file-descriptor (dma-buf
+> > export) to the user space and the server closes the main pcm
+> > file-descriptor (the client does not) - the result will be a crash (dma
+> > buffer will be freed, but referenced through the dma-buf interface)
+> 
+> Yes, will fix.
 
---z6zsvccsx3aejq2d
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There are a few more overlooked problems.  A part of them was already
+mentioned in my previous reply, but let me repeat:
 
-Hi,
+- The racy ioctls have to be considered; you can perform this export
+  ioctl concurrently, and both of them write and mix up the setup,
+  which is obviously broken.
 
-On Thu, Jan 24, 2019 at 02:10:25PM +0100, Paul Kocialkowski wrote:
-> On Tue, 2018-11-27 at 09:21 +0100, Maxime Ripard wrote:
-> > Hi!
-> >=20
-> > On Fri, Nov 23, 2018 at 02:02:09PM +0100, Paul Kocialkowski wrote:
-> > > This introduces support for HEVC/H.265 to the Cedrus VPU driver, with
-> > > both uni-directional and bi-directional prediction modes supported.
-> > >=20
-> > > Field-coded (interlaced) pictures, custom quantization matrices and
-> > > 10-bit output are not supported at this point.
-> > >=20
-> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> >=20
-> > Output from checkpatch:
-> > total: 0 errors, 68 warnings, 14 checks, 999 lines checked
->=20
-> Looks like many of the "line over 80 chars" are due to macros. I don't
-> think it would be a good idea to break them down or to change the
-> macros names since they are directly inherited from the bitstream
-> elements.
->=20
-> What do you think?
+- The PCM buffer can be re-allocated on the fly.  If the current
+  buffer is abandoned while exporting, it leads to the UAF.
 
-Yeah, the 80-chars limit can be ignored. But there's more warnings and
-checks that should be addressed.
+- Similarly, what if the PCM stream that is attached is closed without
+  detaching itself?  Or, what if the PCM stream attaches itself twice
+  without detaching?
 
-> > > +	/* Output frame. */
-> > > +
-> > > +	output_pic_list_index =3D V4L2_HEVC_DPB_ENTRIES_NUM_MAX;
-> > > +	pic_order_cnt[0] =3D pic_order_cnt[1] =3D slice_params->slice_pic_o=
-rder_cnt;
-> > > +	mv_col_buf_addr[0] =3D cedrus_h265_frame_info_mv_col_buf_addr(ctx,
-> > > +		run->dst->vb2_buf.index, 0) - PHYS_OFFSET;
-> > > +	mv_col_buf_addr[1] =3D cedrus_h265_frame_info_mv_col_buf_addr(ctx,
-> > > +		run->dst->vb2_buf.index, 1) - PHYS_OFFSET;
-> > > +	dst_luma_addr =3D cedrus_dst_buf_addr(ctx, run->dst->vb2_buf.index,=
- 0) -
-> > > +			PHYS_OFFSET;
-> > > +	dst_chroma_addr =3D cedrus_dst_buf_addr(ctx, run->dst->vb2_buf.inde=
-x, 1) -
-> > > +			PHYS_OFFSET;
-> > > +
-> > > +	cedrus_h265_frame_info_write_single(dev, output_pic_list_index,
-> > > +					    slice_params->pic_struct !=3D 0,
-> > > +					    pic_order_cnt, mv_col_buf_addr,
-> > > +					    dst_luma_addr, dst_chroma_addr);
-> >=20
-> > You can only pass the run and slice_params pointers to that function.
->=20
-> The point is to make it independent from the context, so that the same
-> function can be called with either the slice_params or the dpb info.
-> I don't think making two variants or even two wrappers would bring any
-> significant benefit.
+- The driver may provide its own mmap method, and you can't hard-code
+  the mmap implementation as currently in snd_pcm_dmabuf_mmap().
 
-Then you can still pass directly the vb2 buffer pointer, that would
-remove the mv_col_buf_addr, dst_luma_addr and dst_chroma_addr. The
-idea here is that the less arguments you have in your function, the
-easier it is to understand.
+  I suppose you can drop of most of the code in snd_pcm_dmabuf_map(),
+  instead, assign PCM substream in obj, and call snd_pcm_mmap_data()
+  with the given VMA.  If this really works, it manages the mmap
+  refcount, so the previous two issues should be covered there.
+  But it needs more consideration...
 
-> > > +
-> > > +	cedrus_write(dev, VE_DEC_H265_OUTPUT_FRAME_IDX, output_pic_list_ind=
-ex);
-> > > +
-> > > +	/* Reference picture list 0 (for P/B frames). */
-> > > +	if (slice_params->slice_type !=3D V4L2_HEVC_SLICE_TYPE_I) {
-> > > +		cedrus_h265_ref_pic_list_write(dev, slice_params->ref_idx_l0,
-> > > +			slice_params->num_ref_idx_l0_active_minus1 + 1,
-> > > +			slice_params->dpb, slice_params->num_active_dpb_entries,
-> > > +			VE_DEC_H265_SRAM_OFFSET_REF_PIC_LIST0);
-> > > +
-> >=20
-> > slice_params is enough.
->=20
-> The rationale is similar to the one above: being able to use the same
-> helper with either L0 or L1, which implies passing the relevant
-> elements directly.
+- What happens to the PCM buffer that has been allocated before
+  attaching, if it's not the pre-allocated one?
+  It should be released properly beforehand, otherwise leaks.
 
-The DPB and num_active_dpb_entries will not change from one run to the
-other though. And having intermediate functions if that allows to be
-clearer is fine as well.
+- There is no validation of the attached dma-buf pages; most drivers
+  set coherent DMA mask, and they rely on it.  e.g. if a page over the
+  DMA mask is passed, it will break silently.
 
-Maxime
+- Some drivers don't use the standard memory pages but keep their own
+  hardware buffer (e.g. rme96 or rm32 driver).  This ioctl would be
+  completely broken on such hardware.
+  That is, we need some sanity check whether the PCM allows the
+  arbitrary dma-buf or not.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
 
---z6zsvccsx3aejq2d
-Content-Type: application/pgp-signature; name="signature.asc"
+thanks,
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXErgegAKCRDj7w1vZxhR
-xRsaAQC2ViWDkwRbE+VzfnvT6IM2IOggLnD2AO3axObHgVowZwEAsoum8jkX4cu3
-0xmBF8qYXaO9qf+KUl0tIhsEPcj2dQA=
-=H23o
------END PGP SIGNATURE-----
-
---z6zsvccsx3aejq2d--
+Takashi
