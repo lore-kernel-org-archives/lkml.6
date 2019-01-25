@@ -2,143 +2,168 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 086E8C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25B94C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C940F2184C
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:04:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="c9XfQHXK"
+	by mail.kernel.org (Postfix) with ESMTP id F099F2184C
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:05:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728779AbfAYHEW (ORCPT
+        id S1728035AbfAYHFe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 02:04:22 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40428 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728588AbfAYHEV (ORCPT
+        Fri, 25 Jan 2019 02:05:34 -0500
+Received: from outbound1sev.lav.puc.rediris.es ([130.206.19.169]:43694 "EHLO
+        mx02.puc.rediris.es" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727210AbfAYHFe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 02:04:21 -0500
-Received: by mail-ed1-f65.google.com with SMTP id g22so6555121edr.7
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 23:04:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=lmDIKADatw1oUeQ5UHUMSZddpdBoEMSbYiY1RQRpnEA=;
-        b=c9XfQHXKTJjH9D8+A9yWRU0POrNIBML8yy4f3PPCCfnJpwyfoCXm+jquPMXGhj78uP
-         v3QMXI6KhuZb5C1BK6jeNEPlGnHiYGwAZUc/Oet7u0C3OjNstLEQ0B6NnDxAPvN9TzNh
-         bVB81EaHQT+ngBa2Tn9F3YVPUF3LOVVXKHEvY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=lmDIKADatw1oUeQ5UHUMSZddpdBoEMSbYiY1RQRpnEA=;
-        b=MF1MiS3PGI4vr4Wa/OfeOWDkTkffLKvQjCBlBdxfr7Nren4mx8O3wqmblKDlMCuMDV
-         ZBxJ4bls4pU7OPAVCP8PEQNHICioWGBluiq8lF5YOZf6u/mvLkL/2EGkUON9lc4EmcES
-         kfYGgMhx+ItZATUTxQM7ZiR+rmpLWF+g5S6fBfV3gjZ5Jpsi7G28E9cf6PioTRyfxMRf
-         Roo3d3DDlybAI4c9oNfWcVfzmK8ebddyhOEwZ5lxhIrRvKGAT49fr/OwBcEECZvc3mVc
-         4xJcQNQTc6D5ugC0g52+iMIJphC9ZHT8AclmYRtsOcChWpq5TTS01/xbNrGBhoXh9Ksm
-         79MA==
-X-Gm-Message-State: AJcUukexcWwLtgTk8OIMrCoXVSnzr6v+I4HAhyg17bppo32D6KUZ4nVK
-        7PGBB2u22Bb3KTJoAdlkEh2pC35k9FE=
-X-Google-Smtp-Source: ALg8bN7iPl88pvKHtZoqcZiLt/406TypDrvj6REJZ/Hbw2n5j69b2EFHMQr7yQhhLfGYchfwNWc8zQ==
-X-Received: by 2002:a50:b667:: with SMTP id c36mr9996768ede.190.1548399859489;
-        Thu, 24 Jan 2019 23:04:19 -0800 (PST)
-Received: from localhost ([49.248.181.51])
-        by smtp.gmail.com with ESMTPSA id 49sm11802931edz.59.2019.01.24.23.04.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 23:04:18 -0800 (PST)
-From:   Amit Kucheria <amit.kucheria@linaro.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
-        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
-        mka@chromium.org, Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK)
-Subject: [PATCHv3 9/9] cpufreq: scpi: Use auto-registration of thermal cooling device
-Date:   Fri, 25 Jan 2019 12:32:29 +0530
-Message-Id: <94d264be0f980396cf4d2b94ba31e55ef1bc304b.1548398851.git.amit.kucheria@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1548398851.git.amit.kucheria@linaro.org>
-References: <cover.1548398851.git.amit.kucheria@linaro.org>
-In-Reply-To: <cover.1548398851.git.amit.kucheria@linaro.org>
-References: <cover.1548398851.git.amit.kucheria@linaro.org>
+        Fri, 25 Jan 2019 02:05:34 -0500
+Received: from sim.rediris.es (mta-out04.sim.rediris.es [130.206.24.46])
+        (user=smtp-out_iram mech=LOGIN bits=0)
+        by mx02.puc.rediris.es  with ESMTP id x0P70JWe026096-x0P70JWg026096
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Fri, 25 Jan 2019 08:00:19 +0100
+Received: from sim.rediris.es (localhost.localdomain [127.0.0.1])
+        by sim.rediris.es (Postfix) with ESMTPS id 8A7A339566;
+        Fri, 25 Jan 2019 08:00:18 +0100 (CET)
+Received: from sim.rediris.es (localhost.localdomain [127.0.0.1])
+        by sim.rediris.es (Postfix) with ESMTPS id 00F4B3957D;
+        Fri, 25 Jan 2019 08:00:17 +0100 (CET)
+Received: from lt-gp.iram.es (gra-fw.iram.es [150.214.244.1])
+        by sim.rediris.es (Postfix) with ESMTPA id BC5BF39566;
+        Fri, 25 Jan 2019 08:00:16 +0100 (CET)
+Date:   Fri, 25 Jan 2019 08:00:16 +0100
+From:   Gabriel Paubert <paubert@iram.es>
+To:     Christophe Leroy <christophe.leroy@c-s.fr>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Mike Rapoport <rppt@linux.ibm.com>
+Subject: Re: [PATCH v13 00/10] powerpc: Switch to CONFIG_THREAD_INFO_IN_TASK
+Message-ID: <20190125070016.j2lmcz7aidcbhznp@lt-gp.iram.es>
+References: <cover.1547195976.git.christophe.leroy@c-s.fr>
+ <2e700e1c-5bd9-652e-b535-68a89dd703a1@c-s.fr>
+ <87y37ax3ru.fsf@concordia.ellerman.id.au>
+ <9b4dab64-6a6b-a599-4676-bf891473ada7@c-s.fr>
+ <c5b86b5b-1f38-39bf-0458-3c6572b3b35c@c-s.fr>
+ <89049465-643f-b383-82e2-360dc9660d09@c-s.fr>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <89049465-643f-b383-82e2-360dc9660d09@c-s.fr>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-FEAS-AUTH-USER: smtp-out_iram
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the CPUFREQ_AUTO_REGISTER_COOLING_DEV flag to allow cpufreq core to
-automatically register as a thermal cooling device.
+On Thu, Jan 24, 2019 at 04:58:41PM +0100, Christophe Leroy wrote:
+> 
+> 
+> Le 24/01/2019 à 16:01, Christophe Leroy a écrit :
+> > 
+> > 
+> > Le 24/01/2019 à 10:43, Christophe Leroy a écrit :
+> > > 
+> > > 
+> > > On 01/24/2019 01:06 AM, Michael Ellerman wrote:
+> > > > Christophe Leroy <christophe.leroy@c-s.fr> writes:
+> > > > > Le 12/01/2019 à 10:55, Christophe Leroy a écrit :
+> > > > > > The purpose of this serie is to activate
+> > > > > > CONFIG_THREAD_INFO_IN_TASK which
+> > > > > > moves the thread_info into task_struct.
+> > > > > > 
+> > > > > > Moving thread_info into task_struct has the following advantages:
+> > > > > > - It protects thread_info from corruption in the case of stack
+> > > > > > overflows.
+> > > > > > - Its address is harder to determine if stack addresses are
+> > > > > > leaked, making a number of attacks more difficult.
+> > > > > 
+> > > > > I ran null_syscall and context_switch benchmark selftests
+> > > > > and the result
+> > > > > is surprising. There is slight degradation in context_switch and a
+> > > > > significant one on null_syscall:
+> > > > > 
+> > > > > Without the serie:
+> > > > > 
+> > > > > ~# chrt -f 98 ./context_switch --no-altivec --no-vector --no-fp
+> > > > > 55542
+> > > > > 55562
+> > > > > 55564
+> > > > > 55562
+> > > > > 55568
+> > > > > ...
+> > > > > 
+> > > > > ~# ./null_syscall
+> > > > >      2546.71 ns     336.17 cycles
+> > > > > 
+> > > > > 
+> > > > > With the serie:
+> > > > > 
+> > > > > ~# chrt -f 98 ./context_switch --no-altivec --no-vector --no-fp
+> > > > > 55138
+> > > > > 55142
+> > > > > 55152
+> > > > > 55144
+> > > > > 55142
+> > > > > 
+> > > > > ~# ./null_syscall
+> > > > >      3479.54 ns     459.30 cycles
+> > > > > 
+> > > > > So 0,8% less context switches per second and 37% more time
+> > > > > for one syscall ?
+> > > > > 
+> > > > > Any idea ?
+> > > > 
+> > > > What platform is that on?
+> > > 
+> > > It is on the 8xx
+> 
+> On the 83xx, I have a slight improvment:
+> 
+> Without the serie:
+> 
+> root@vgoippro:~# ./null_syscall
+>     921.44 ns     307.15 cycles
+> 
+> With the serie:
+> 
+> root@vgoippro:~# ./null_syscall
+>     918.78 ns     306.26 cycles
+> 
 
-This allows removal of boiler plate code from the driver.
+The 8xx has very low cache associativity, something like 2, right?
 
-Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-Acked-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/cpufreq/scpi-cpufreq.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+In this case it may be access patterns which change the number of
+cache line transfers when you move things around. 
 
-diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
-index 99449738faa4..82420e8e5f0d 100644
---- a/drivers/cpufreq/scpi-cpufreq.c
-+++ b/drivers/cpufreq/scpi-cpufreq.c
-@@ -22,7 +22,6 @@
- #include <linux/cpu.h>
- #include <linux/cpufreq.h>
- #include <linux/cpumask.h>
--#include <linux/cpu_cooling.h>
- #include <linux/export.h>
- #include <linux/module.h>
- #include <linux/of_platform.h>
-@@ -34,7 +33,6 @@
- struct scpi_data {
- 	struct clk *clk;
- 	struct device *cpu_dev;
--	struct thermal_cooling_device *cdev;
- };
- 
- static struct scpi_ops *scpi_ops;
-@@ -186,7 +184,6 @@ static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
- {
- 	struct scpi_data *priv = policy->driver_data;
- 
--	cpufreq_cooling_unregister(priv->cdev);
- 	clk_put(priv->clk);
- 	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
- 	kfree(priv);
-@@ -195,23 +192,16 @@ static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
- 	return 0;
- }
- 
--static void scpi_cpufreq_ready(struct cpufreq_policy *policy)
--{
--	struct scpi_data *priv = policy->driver_data;
--
--	priv->cdev = of_cpufreq_cooling_register(policy);
--}
--
- static struct cpufreq_driver scpi_cpufreq_driver = {
- 	.name	= "scpi-cpufreq",
- 	.flags	= CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
--		  CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-+		  CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-+		  CPUFREQ_AUTO_REGISTER_COOLING_DEV,
- 	.verify	= cpufreq_generic_frequency_table_verify,
- 	.attr	= cpufreq_generic_attr,
- 	.get	= scpi_cpufreq_get_rate,
- 	.init	= scpi_cpufreq_init,
- 	.exit	= scpi_cpufreq_exit,
--	.ready	= scpi_cpufreq_ready,
- 	.target_index	= scpi_cpufreq_set_target,
- };
- 
--- 
-2.17.1
+Try to move things around in main(), for example allocate a variable of
+~1kB on the stack in the function that performs the null_syscalls (use 
+the variable before and after the loop, to avoid clever compiler
+optimizations).
 
+	Gabriel
+
+
+> Christophe
+> 
+> > > 
+> > > > 
+> > > > On 64-bit we have to turn one mtmsrd into two and that's obviously a
+> > > > slow down. But I don't see that you've done anything similar in 32-bit
+> > > > code.
+> > > > 
+> > > > I assume it's patch 8 that causes the slow down?
+> > > 
+> > > I have not digged into it yet, but why patch 8 ?
+> > > 
+> > 
+> > The increase of null_syscall duration happens with patch 5 when we
+> > activate CONFIG_THREAD_INFO_IN_TASK.
+> > 
