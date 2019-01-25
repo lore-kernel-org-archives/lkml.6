@@ -2,84 +2,109 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 351E3C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:47:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18177C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:47:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CBEB218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:47:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E3BAA218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:47:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728751AbfAYPrg (ORCPT
+        id S1728917AbfAYPrn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:47:36 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49316 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfAYPrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:47:35 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BA87A78;
-        Fri, 25 Jan 2019 07:47:34 -0800 (PST)
-Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 313463F5AF;
-        Fri, 25 Jan 2019 07:47:28 -0800 (PST)
-Date:   Fri, 25 Jan 2019 15:47:25 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mattst88@gmail.com, linux@armlinux.org.uk, will.deacon@arm.com,
-        tony.luck@intel.com, fenghua.yu@intel.com, geert@linux-m68k.org,
-        monstr@monstr.eu, paul.burton@mips.com, deller@gmx.de,
-        benh@kernel.crashing.org, mpe@ellerman.id.au,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, dalias@libc.org,
-        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
-        jcmvbkbc@gmail.com, akpm@linux-foundation.org,
-        deepa.kernel@gmail.com, ebiederm@xmission.com,
-        firoz.khan@linaro.org, linux-alpha@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
-        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v2 25/29] y2038: syscalls: rename y2038 compat syscalls
-Message-ID: <20190125154724.GH25901@arrakis.emea.arm.com>
-References: <20190118161835.2259170-1-arnd@arndb.de>
- <20190118161835.2259170-26-arnd@arndb.de>
+        Fri, 25 Jan 2019 10:47:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54293 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726122AbfAYPrl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:47:41 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 6905520397; Fri, 25 Jan 2019 16:47:38 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 388EF20397;
+        Fri, 25 Jan 2019 16:47:28 +0100 (CET)
+Date:   Fri, 25 Jan 2019 16:47:28 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        devicetree@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
+Subject: Re: [PATCH v6 12/22] dt-bindings: sun6i-dsi: Add VCC-DSI supply
+ property
+Message-ID: <20190125154728.v555gwwmramamm32@flea>
+References: <20190124195900.22620-1-jagan@amarulasolutions.com>
+ <20190124195900.22620-13-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rxheysiip7de6ngo"
 Content-Disposition: inline
-In-Reply-To: <20190118161835.2259170-26-arnd@arndb.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190124195900.22620-13-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 18, 2019 at 05:18:31PM +0100, Arnd Bergmann wrote:
-> A lot of system calls that pass a time_t somewhere have an implementation
-> using a COMPAT_SYSCALL_DEFINEx() on 64-bit architectures, and have
-> been reworked so that this implementation can now be used on 32-bit
-> architectures as well.
-> 
-> The missing step is to redefine them using the regular SYSCALL_DEFINEx()
-> to get them out of the compat namespace and make it possible to build them
-> on 32-bit architectures.
-> 
-> Any system call that ends in 'time' gets a '32' suffix on its name for
-> that version, while the others get a '_time32' suffix, to distinguish
-> them from the normal version, which takes a 64-bit time argument in the
-> future.
-> 
-> In this step, only 64-bit architectures are changed, doing this rename
-> first lets us avoid touching the 32-bit architectures twice.
-> 
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-For arm64:
+--rxheysiip7de6ngo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+On Fri, Jan 25, 2019 at 01:28:50AM +0530, Jagan Teki wrote:
+> Most of the Allwinner MIPI DSI controllers are supply with
+> VCC-DSI pin. which need to supply for some of the boards to
+> trigger the power.
+>=20
+> So, document the supply property so-that the required board
+> can eable it via device tree.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.tx=
+t b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> index 6a6cf5de08b0..69e233e8fad1 100644
+> --- a/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> +++ b/Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt
+> @@ -27,6 +27,9 @@ Required properties:
+>      first port should be the input endpoint, usually coming from the
+>      associated TCON.
+> =20
+> +Optional properties:
+> +  - vcc-dsi-supply: the VCC-DSI power supply of the DSI encoder
+> +
+
+It looks like the VCC power rail is found on all the Allwinner SoCs,
+so it should be made mandatory.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rxheysiip7de6ngo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXEsvkAAKCRDj7w1vZxhR
+xf/OAP0WFHQ2cdrPgixtVKbGRa8+3plVbGmUXVqKYzSxl+m8RgD+MLbJ/e6QTJxZ
+Qeh6FvUCYWAnW67OMEHzja+FQr7BAgY=
+=RBpI
+-----END PGP SIGNATURE-----
+
+--rxheysiip7de6ngo--
