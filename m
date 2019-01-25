@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D11E7C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:58:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D53AC282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:58:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C1DA2195D
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:58:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0A1E20820
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:58:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="h/IXMmFm"
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="ldiW9XVU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729096AbfAYH6r (ORCPT
+        id S1729073AbfAYH6p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 02:58:47 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:17310 "EHLO
+        Fri, 25 Jan 2019 02:58:45 -0500
+Received: from conuserg-07.nifty.com ([210.131.2.74]:17313 "EHLO
         conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbfAYH6n (ORCPT
+        with ESMTP id S1728988AbfAYH6n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 25 Jan 2019 02:58:43 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x0P7vbeR015362;
-        Fri, 25 Jan 2019 16:57:39 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x0P7vbeR015362
+        by conuserg-07.nifty.com with ESMTP id x0P7vbeQ015362;
+        Fri, 25 Jan 2019 16:57:38 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x0P7vbeQ015362
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1548403060;
-        bh=2HM1Z4UoltBcG6m5akSE3Nja5SNuDxs/Gfy4F46J0AU=;
+        s=dec2015msa; t=1548403059;
+        bh=sQk/Dl7wT+orikM5quGi46hn80YeahxI8cR8k21DNNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h/IXMmFm+9OnIPhRk4tFU3LDe7yJEDBb7rSxT0j3Z8E9028pAw9gqyVrsefaErwNy
-         DU/2Q8FDXYawfr1e2nqiQ+2HKZGBSaLS1g4rvG91QDaLeZhlxq8oPzaeAyyyaQ7Y+z
-         kYape/qx01MsQjvKIMPG0x36KT5AG0dk/AQSEpUx96FA+1UyevV/8AtqLdGvZ40q3p
-         hrmZerrjQ/jCsa4njzzMZJEmYY1GDSlbVxddZ3znDdohhtIHiCsVkSCTqlP82Gs145
-         CzD8ATpisM8omTnmfX7IwIOrQlFUjK5WpIL1x4be0V6IrMwJ8J8l+lr336k07bivBw
-         9iHNO4D9jRLQQ==
+        b=ldiW9XVUC/PtcuxprwPTitYPJcLNuct06cwidyKmc3cWNRozxN49E0CzZyTHjHuEM
+         LxEk+58t1/ttcZ0ek4p8twvltL6Eu/rxjoQH2zC9c3Ev7laYbbQMmSi8OFh9so3qaU
+         9YOqe1QdnuN1oqqW4NMbIMLcBpbk2kOOt84Zhbjo5iXNzPCBL6ccaP+7ybA35fK3ot
+         j9IGhVlAc+LCzgv1Cfu5SIJzwcr1okRmA4QjCxCJlJ/0KRcf4hseJaalozg/3REkve
+         Uw2VzNR2D6nwa1AGaCMaEFdG3sxiRRpKimjwdl8KDceMvCJEl1Mkxiw6q2qH8AU6/z
+         WtnlUbPBpAt8Q==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     Marc Zyngier <marc.zyngier@arm.com>,
@@ -46,9 +46,9 @@ Cc:     linux-arm-kernel@lists.infradead.org, kvmarm@lists.cs.columbia.edu,
         linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
         Will Deacon <will.deacon@arm.com>,
         Catalin Marinas <catalin.marinas@arm.com>
-Subject: [PATCH 3/3] KVM: arm/arm64: prefix header search paths with $(srctree)/
-Date:   Fri, 25 Jan 2019 16:57:30 +0900
-Message-Id: <1548403050-6585-4-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 2/3] KVM: arm/arm64: remove -I. header search paths
+Date:   Fri, 25 Jan 2019 16:57:29 +0900
+Message-Id: <1548403050-6585-3-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548403050-6585-1-git-send-email-yamada.masahiro@socionext.com>
 References: <1548403050-6585-1-git-send-email-yamada.masahiro@socionext.com>
@@ -57,49 +57,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the Kbuild core manipulates header search paths in a crazy
-way [1].
+The header search path -I. in kernel Makefiles is very suspicious;
+it allows the compiler to search for headers in the top of $(srctree),
+where obviously no header file exists.
 
-To fix this mess, I want all Makefiles to add explicit $(srctree)/ to
-the search paths in the srctree. Some Makefiles are already written in
-that way, but not all. The goal of this work is to make the notation
-consistent, and finally get rid of the gross hacks.
-
-Having whitespaces after -I does not matter since commit 48f6e3cf5bc6
-("kbuild: do not drop -I without parameter").
-
-[1]: https://patchwork.kernel.org/patch/9632347/
+I was able to build without these extra header search paths.
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- arch/arm/kvm/Makefile   | 2 +-
- arch/arm64/kvm/Makefile | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ arch/arm/kvm/Makefile   | 3 +--
+ arch/arm64/kvm/Makefile | 2 --
+ 2 files changed, 1 insertion(+), 4 deletions(-)
 
 diff --git a/arch/arm/kvm/Makefile b/arch/arm/kvm/Makefile
-index bca775e..531e59f 100644
+index 48de846..bca775e 100644
 --- a/arch/arm/kvm/Makefile
 +++ b/arch/arm/kvm/Makefile
-@@ -8,7 +8,7 @@ ifeq ($(plus_virt),+virt)
- 	plus_virt_def := -DREQUIRES_VIRT=1
+@@ -9,8 +9,7 @@ ifeq ($(plus_virt),+virt)
  endif
  
--ccflags-y += -Iarch/arm/kvm -Ivirt/kvm/arm/vgic
-+ccflags-y += -I $(srctree)/$(src) -I $(srctree)/virt/kvm/arm/vgic
- CFLAGS_arm.o := $(plus_virt_def)
+ ccflags-y += -Iarch/arm/kvm -Ivirt/kvm/arm/vgic
+-CFLAGS_arm.o := -I. $(plus_virt_def)
+-CFLAGS_mmu.o := -I.
++CFLAGS_arm.o := $(plus_virt_def)
  
  AFLAGS_init.o := -Wa,-march=armv7-a$(plus_virt)
+ AFLAGS_interrupts.o := -Wa,-march=armv7-a$(plus_virt)
 diff --git a/arch/arm64/kvm/Makefile b/arch/arm64/kvm/Makefile
-index 3089b31..690e033 100644
+index 0f2a135..3089b31 100644
 --- a/arch/arm64/kvm/Makefile
 +++ b/arch/arm64/kvm/Makefile
-@@ -3,7 +3,7 @@
- # Makefile for Kernel-based Virtual Machine module
+@@ -4,8 +4,6 @@
  #
  
--ccflags-y += -Iarch/arm64/kvm -Ivirt/kvm/arm/vgic
-+ccflags-y += -I $(srctree)/$(src) -I $(srctree)/virt/kvm/arm/vgic
+ ccflags-y += -Iarch/arm64/kvm -Ivirt/kvm/arm/vgic
+-CFLAGS_arm.o := -I.
+-CFLAGS_mmu.o := -I.
  
  KVM=../../../virt/kvm
  
