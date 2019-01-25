@@ -2,466 +2,149 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1341AC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:32:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AAA0C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3B57217D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:32:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="BS2bKl6v"
+	by mail.kernel.org (Postfix) with ESMTP id D8CAC217D4
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:33:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfAYTcb (ORCPT
+        id S1729223AbfAYTdQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 14:32:31 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:39318 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726044AbfAYTca (ORCPT
+        Fri, 25 Jan 2019 14:33:16 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:54854 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726311AbfAYTdP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 14:32:30 -0500
-Received: by mail-io1-f68.google.com with SMTP id k7so8627887iob.6
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 11:32:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=zWMjs2IVOoaX3c/TZg8A2DMFxT1iA7yen0kktQjqN7o=;
-        b=BS2bKl6vOX8FR1YUJ7nL6w4PS0fX1tMSx575iDeTyXKNIzxD7DFFvwHWYynM4IW8Bf
-         qUrjrONWcJ1m9ZMLWTbX9pmp4FGc14wwIUBglj6R91I3Hsh1kYyyTiSFru+f9e9wMdAK
-         tpaX8+HDVe43TqFiDtlLKfXTDPLWgRUCKJ2H9w3ibh0KZ0a/GN9jPu81kgPGsKfb9H0E
-         fyfgw1dQJ0udg8uaHhD7iiIXNpxxEQcTwYBC5WwEtvYab+RX2ikdFggO0XcQiaqt8cJk
-         dNCKTzgTOGvuqMQOGTIvchbhWpREkoGjyw973PLYdhBSW8mevkRl0Fppdk0icmEcIY29
-         xkmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=zWMjs2IVOoaX3c/TZg8A2DMFxT1iA7yen0kktQjqN7o=;
-        b=tAfDFh2CMjxXahJcJWHTcomD1w6M+jqAr4hH6u9yLmMb6f6VRhx4lVDn7fjbWxmUf2
-         4gPlWdlXfxH+YyzOvJHkLTvjYY8dlUDcWpz2yv8pb0VCwhi0PbFL6S9x7TE9QE9zPsoa
-         zArV4bGtbPgBwAw8vFMbLAlDsBxObsnaNKL8PApSB1zETVFK5PnbMpZqhDgaiky4ab+G
-         Purwjty0L9Vl1Dsc6jem/61cHYm3PxCXNfyBxpglHPfU8F2atcv5t5TkR/EH5awrCZ3R
-         oreJ7PcnD7bmhJ1p15P/1fFiQh/lzxehUZ2U1zAEP3pu7aZ8AMoDCB/wmyGuQYmEZGL0
-         qjgA==
-X-Gm-Message-State: AJcUukdh37FO40TK1PFJoAZqgg0mUe/4U/qbLBQurzOstHwzalelToF2
-        I2yka4zDU8wRy18rcn0sFfPu0gxtQxg=
-X-Google-Smtp-Source: AHgI3IYr/RIamMI94Bie0AoT4IsYxXX8sK2qFvyXoBRsi5wcVxbkrPqFpULvRXN9iN0vGYlf1FyGEg==
-X-Received: by 2002:a5d:8c9a:: with SMTP id g26mr6464500ion.97.1548444747575;
-        Fri, 25 Jan 2019 11:32:27 -0800 (PST)
-Received: from [192.168.1.158] ([216.160.245.98])
-        by smtp.gmail.com with ESMTPSA id s184sm4974928itb.44.2019.01.25.11.32.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 11:32:26 -0800 (PST)
-Subject: Re: LTP case read_all_proc fails on qemux86-64 since 5.0-rc1
-From:   Jens Axboe <axboe@kernel.dk>
-To:     He Zhe <zhe.he@windriver.com>
-Cc:     davem@davemloft.net, linux-ide@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <316b80da-0811-f9e6-dd42-41ddbb7eb8a0@windriver.com>
- <C1903094-A3C8-4273-9869-72D400180E51@kernel.dk>
- <11b1b3ee-a94b-dd5e-3ba6-df3efa239c7f@kernel.dk>
- <adb69f96-8825-ef14-3e02-98c046f72ecb@windriver.com>
- <31660451-9ab4-43b8-b468-ae7b9a8d2279@kernel.dk>
- <eae853aa-de54-42d6-a9bc-254c152cec5b@windriver.com>
- <29f3b60d-922e-001a-0c1c-ed8482c6e409@kernel.dk>
- <0905efc0-d4f2-08d8-0f87-bd4bfab6e46e@windriver.com>
- <ff2b87eb-54f0-f40b-a317-8bbbb32759f4@kernel.dk>
- <594d7f4d-f241-b279-954d-6d4569ea8dd2@windriver.com>
- <6028ed5e-5779-0ab9-1c7e-93e7e5e827bd@kernel.dk>
-Message-ID: <bc722123-86aa-e062-7792-32ca9badbe3e@kernel.dk>
-Date:   Fri, 25 Jan 2019 12:32:25 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 25 Jan 2019 14:33:15 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0PJNfGt122253
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 14:33:14 -0500
+Received: from e06smtp05.uk.ibm.com (e06smtp05.uk.ibm.com [195.75.94.101])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2q85sn7yc0-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 14:33:13 -0500
+Received: from localhost
+        by e06smtp05.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Fri, 25 Jan 2019 19:33:11 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp05.uk.ibm.com (192.168.101.135) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 25 Jan 2019 19:33:00 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0PJWxsk39321658
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 25 Jan 2019 19:32:59 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A4230A405F;
+        Fri, 25 Jan 2019 19:32:59 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A9233A405C;
+        Fri, 25 Jan 2019 19:32:54 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.204.72])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 25 Jan 2019 19:32:54 +0000 (GMT)
+Date:   Fri, 25 Jan 2019 21:32:52 +0200
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+        Christoph Hellwig <hch@lst.de>,
+        "David S. Miller" <davem@davemloft.net>,
+        Dennis Zhou <dennis@kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Greentime Hu <green.hu@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Guan Xuetao <gxt@pku.edu.cn>, Guo Ren <guoren@kernel.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Mark Salter <msalter@redhat.com>,
+        Matt Turner <mattst88@gmail.com>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Simek <monstr@monstr.eu>,
+        Paul Burton <paul.burton@mips.com>,
+        Petr Mladek <pmladek@suse.com>, Rich Felker <dalias@libc.org>,
+        Richard Weinberger <richard@nod.at>,
+        Rob Herring <robh+dt@kernel.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Stafford Horne <shorne@gmail.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Vineet Gupta <vgupta@synopsys.com>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        devicetree@vger.kernel.org, kasan-dev@googlegroups.com,
+        linux-alpha@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-c6x-dev@linux-c6x.org, linux-ia64@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+        linux-mips@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+        linux-um@lists.infradead.org, linux-usb@vger.kernel.org,
+        linux-xtensa@linux-xtensa.org, linuxppc-dev@lists.ozlabs.org,
+        openrisc@lists.librecores.org, sparclinux@vger.kernel.org,
+        uclinux-h8-devel@lists.sourceforge.jp, x86@kernel.org,
+        xen-devel@lists.xenproject.org
+Subject: Re: [PATCH v2 06/21] memblock: memblock_phys_alloc_try_nid(): don't
+ panic
+References: <1548057848-15136-1-git-send-email-rppt@linux.ibm.com>
+ <1548057848-15136-7-git-send-email-rppt@linux.ibm.com>
+ <20190125174502.GL25901@arrakis.emea.arm.com>
 MIME-Version: 1.0
-In-Reply-To: <6028ed5e-5779-0ab9-1c7e-93e7e5e827bd@kernel.dk>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125174502.GL25901@arrakis.emea.arm.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 19012519-0020-0000-0000-0000030B808E
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012519-0021-0000-0000-0000215CC7C3
+Message-Id: <20190125193252.GH31519@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-25_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=884 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901250151
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/24/19 8:20 PM, Jens Axboe wrote:
-> On 1/24/19 8:14 PM, He Zhe wrote:
->>
->>
->> On 1/25/19 10:26 AM, Jens Axboe wrote:
->>> On 1/24/19 7:22 PM, He Zhe wrote:
->>>>
->>>> On 1/25/19 10:05 AM, Jens Axboe wrote:
->>>>> On 1/24/19 6:40 PM, He Zhe wrote:
->>>>>> On 1/24/19 11:40 PM, Jens Axboe wrote:
->>>>>>> On 1/24/19 1:23 AM, He Zhe wrote:
->>>>>>>> On 1/24/19 12:05 AM, Jens Axboe wrote:
->>>>>>>>> On 1/22/19 8:39 PM, Jens Axboe wrote:
->>>>>>>>>> On Jan 22, 2019, at 8:13 PM, He Zhe <zhe.he@windriver.com> wrote:
->>>>>>>>>>> LTP case read_all_proc(read_all -d /proc -q -r 10) often, but not every time, fails with the following call traces, since 600335205b8d "ide: convert to blk-mq"(5.0-rc1) till now(5.0-rc3).
->>>>>>>>>>>
->>>>>>>>>>> qemu-system-x86_64 -drive file=rootfs.ext4,if=virtio,format=raw -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-pci,rng=rng0 -nographic -m 16192 -smp cpus=12 -cpu core2duo -enable-kvm -serial mon:stdio -serial null -kernel bzImage -append 'root=/dev/vda rw highres=off console=ttyS0 mem=16192M'
->>>>>>>>>>>
->>>>>>>>>>> tst_test.c:1085: INFO: Timeout per run is 0h 05m 00s
->>>>>>>>>>> [   47.080156] Warning: /proc/ide/hd?/settings interface is obsolete, and will be removed soon!
->>>>>>>>>>> [   47.085330] ------------[ cut here ]------------
->>>>>>>>>>> [   47.085810] kernel BUG at block/blk-mq.c:767!
->>>>>>>>>>> [   47.086498] invalid opcode: 0000 [#1] PREEMPT SMP PTI
->>>>>>>>>>> [   47.087022] CPU: 5 PID: 146 Comm: kworker/5:1H Not tainted 5.0.0-rc3 #1
->>>>>>>>>>> [   47.087858] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
->>>>>>>>>>> [   47.088992] Workqueue: kblockd blk_mq_run_work_fn
->>>>>>>>>>> [   47.089469] RIP: 0010:blk_mq_add_to_requeue_list+0xc1/0xd0
->>>>>>>>>>> [   47.090035] Code: 48 8d 53 48 49 8b 8c 24 b8 04 00 00 48 89 51 08 48 89 4b 48 49 8d 8c 24 b8 04 00 00 48 89 4b 50 49 89 94 24 b8 04 00 008
->>>>>>>>>>> [   47.091930] RSP: 0018:ffff9e1ea4b43e40 EFLAGS: 00010002
->>>>>>>>>>> [   47.092458] RAX: ffff9e1ea13c0048 RBX: ffff9e1ea13c0000 RCX: 0000000000000006
->>>>>>>>>>> [   47.093181] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9e1ea13c0000
->>>>>>>>>>> [   47.093906] RBP: ffff9e1ea4b43e68 R08: ffffeb5bcf630680 R09: 0000000000000000
->>>>>>>>>>> [   47.094626] R10: 0000000000000001 R11: 0000000000000012 R12: ffff9e1ea1033a40
->>>>>>>>>>> [   47.095347] R13: ffff9e1ea13a8d00 R14: ffff9e1ea13a9000 R15: 0000000000000046
->>>>>>>>>>> [   47.096071] FS:  0000000000000000(0000) GS:ffff9e1ea4b40000(0000) knlGS:0000000000000000
->>>>>>>>>>> [   47.096898] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>>>>> [   47.097477] CR2: 0000003fda41fda0 CR3: 00000003d8e6a000 CR4: 00000000000006e0
->>>>>>>>>>> [   47.098203] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>>>>>>>> [   47.098929] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>>>>>>>> [   47.099650] Call Trace:
->>>>>>>>>>> [   47.099910]  <IRQ>
->>>>>>>>>>> [   47.100128]  blk_mq_requeue_request+0x58/0x60
->>>>>>>>>>> [   47.100576]  ide_requeue_and_plug+0x20/0x50
->>>>>>>>>>> [   47.101014]  ide_intr+0x21a/0x230
->>>>>>>>>>> [   47.101362]  ? idecd_open+0xc0/0xc0
->>>>>>>>>>> [   47.101735]  __handle_irq_event_percpu+0x43/0x1e0
->>>>>>>>>>> [   47.102214]  handle_irq_event_percpu+0x32/0x80
->>>>>>>>>>> [   47.102668]  handle_irq_event+0x39/0x60
->>>>>>>>>>> [   47.103074]  handle_edge_irq+0xe8/0x1c0
->>>>>>>>>>> [   47.103470]  handle_irq+0x20/0x30
->>>>>>>>>>> [   47.103819]  do_IRQ+0x46/0xe0
->>>>>>>>>>> [   47.104128]  common_interrupt+0xf/0xf
->>>>>>>>>>> [   47.104505]  </IRQ>
->>>>>>>>>>> [   47.104731] RIP: 0010:ide_output_data+0xbc/0x100
->>>>>>>>>>> [   47.105201] Code: 74 22 8d 41 ff 85 c9 74 24 49 8d 54 40 02 41 0f b7 00 66 41 89 01 49 83 c0 02 49 39 d0 75 ef 5b 41 5c 5d c3 4c 89 c6 445
->>>>>>>>>>> [   47.107092] RSP: 0018:ffffbd508059bb18 EFLAGS: 00010246 ORIG_RAX: ffffffffffffffdd
->>>>>>>>>>> [   47.107862] RAX: ffff9e1ea13a8800 RBX: ffff9e1ea13a9000 RCX: 0000000000000000
->>>>>>>>>>> [   47.108581] RDX: 0000000000000170 RSI: ffff9e1ea13c012c RDI: 0000000000000000
->>>>>>>>>>> [   47.109293] RBP: ffffbd508059bb28 R08: ffff9e1ea13c0120 R09: 0000000000000170
->>>>>>>>>>> [   47.110016] R10: 000000000000000d R11: 000000000000000c R12: ffff9e1ea13a8800
->>>>>>>>>>> [   47.110731] R13: 000000000000000c R14: ffff9e1ea13c0000 R15: 0000000000007530
->>>>>>>>>>> [   47.111446]  ide_transfer_pc+0x216/0x310
->>>>>>>>>>> [   47.111848]  ? __const_udelay+0x3d/0x40
->>>>>>>>>>> [   47.112236]  ? ide_execute_command+0x85/0xb0
->>>>>>>>>>> [   47.112668]  ? ide_pc_intr+0x3f0/0x3f0
->>>>>>>>>>> [   47.113051]  ? ide_check_atapi_device+0x110/0x110
->>>>>>>>>>> [   47.113524]  ide_issue_pc+0x178/0x240
->>>>>>>>>>> [   47.113901]  ide_cd_do_request+0x15c/0x350
->>>>>>>>>>> [   47.114314]  ide_queue_rq+0x180/0x6b0
->>>>>>>>>>> [   47.114686]  ? blk_mq_get_driver_tag+0xa1/0x110
->>>>>>>>>>> [   47.115153]  blk_mq_dispatch_rq_list+0x90/0x550
->>>>>>>>>>> [   47.115606]  ? __queue_delayed_work+0x63/0x90
->>>>>>>>>>> [   47.116054]  ? deadline_fifo_request+0x41/0x90
->>>>>>>>>>> [   47.116506]  blk_mq_do_dispatch_sched+0x80/0x100
->>>>>>>>>>> [   47.116976]  blk_mq_sched_dispatch_requests+0xfc/0x170
->>>>>>>>>>> [   47.117491]  __blk_mq_run_hw_queue+0x6f/0xd0
->>>>>>>>>>> [   47.117941]  blk_mq_run_work_fn+0x1b/0x20
->>>>>>>>>>> [   47.118342]  process_one_work+0x14c/0x450
->>>>>>>>>>> [   47.118747]  worker_thread+0x4a/0x440
->>>>>>>>>>> [   47.119125]  kthread+0x105/0x140
->>>>>>>>>>> [   47.119456]  ? process_one_work+0x450/0x450
->>>>>>>>>>> [   47.119880]  ? kthread_park+0x90/0x90
->>>>>>>>>>> [   47.120251]  ret_from_fork+0x35/0x40
->>>>>>>>>>> [   47.120619] Modules linked in:
->>>>>>>>>>> [   47.120952] ---[ end trace 4562f716e88fdefe ]---
->>>>>>>>>>> [   47.121423] RIP: 0010:blk_mq_add_to_requeue_list+0xc1/0xd0
->>>>>>>>>>> [   47.121981] Code: 48 8d 53 48 49 8b 8c 24 b8 04 00 00 48 89 51 08 48 89 4b 48 49 8d 8c 24 b8 04 00 00 48 89 4b 50 49 89 94 24 b8 04 00 008
->>>>>>>>>>> [   47.123851] RSP: 0018:ffff9e1ea4b43e40 EFLAGS: 00010002
->>>>>>>>>>> [   47.124393] RAX: ffff9e1ea13c0048 RBX: ffff9e1ea13c0000 RCX: 0000000000000006
->>>>>>>>>>> [   47.125108] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9e1ea13c0000
->>>>>>>>>>> [   47.125819] RBP: ffff9e1ea4b43e68 R08: ffffeb5bcf630680 R09: 0000000000000000
->>>>>>>>>>> [   47.126539] R10: 0000000000000001 R11: 0000000000000012 R12: ffff9e1ea1033a40
->>>>>>>>>>> [   47.127262] R13: ffff9e1ea13a8d00 R14: ffff9e1ea13a9000 R15: 0000000000000046
->>>>>>>>>>> [   47.127988] FS:  0000000000000000(0000) GS:ffff9e1ea4b40000(0000) knlGS:0000000000000000
->>>>>>>>>>> [   47.128793] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->>>>>>>>>>> [   47.129385] CR2: 0000003fda41fda0 CR3: 00000003d8e6a000 CR4: 00000000000006e0
->>>>>>>>>>> [   47.130104] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->>>>>>>>>>> [   47.130823] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->>>>>>>>>>> [   47.131547] Kernel panic - not syncing: Fatal exception in interrupt
->>>>>>>>>>> [   47.132609] Kernel Offset: 0x7c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
->>>>>>>>>>> [   47.133679] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
->>>>>>>>>>> [   47.134432] ------------[ cut here ]-----------
->>>>>>>>>> I’ll take a look at this, thanks for the report.
->>>>>>>>> I can't reproduce this, unfortunately. But I'm guessing it might be related
->>>>>>>>> to a race with the requeue and request handling in IDE. Can you try with
->>>>>>>>> the below patch?
->>>>>>>> Thanks for attention, but this patch doesn't help.
->>>>>>> OK, thanks for trying.
->>>>>>>
->>>>>>>> From what I reached, to reproduce it, we need to use legacy CONFIG_IDE
->>>>>>>> and friends where "ide: convert to blk-mq" sits, not CONFIG_ATA and so
->>>>>>>> on.  I can reproduce it with qemux86-64 with "-drive ... if=ide" or
->>>>>>>> "-drive ... if=virtio".
->>>>>>> Yes of course, I am trying to reproduce with the legacy stack. Just not
->>>>>>> having any luck doing it, even thousands of read_all iterations on /proc
->>>>>>> with IO to the IDE drives is still not doing it. From your trace, it
->>>>>>> looks like ide-cd causing it, which would mean a cdrom of some sort.
->>>>>>>
->>>>>>> I'll try again!
->>>>>> My .config is attached.
->>>>> Can you try with this patch?
->>>> With this patch, it cannot boot up.
->>> Ugh, forgot it's inclusive. You want it at '2', not '1'.
->>
->> With "set->queue_depth = 2;", reading aganst /sys or normal disk dir is OK, but the following hang. So the related test cases are all timed out.
->>
->> ps -elf
->> ---- snip ----
->> 5 D root       415     1  0  80   0 -   664 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 10
->> 5 D root       416     1  0  80   0 -   669 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 10
->> 5 D root       417     1  0  80   0 -   674 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 10
->> 5 D root       421     1  0  80   0 -   629 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 1
->> 5 D root       434     1  0  80   0 -   629 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 1
->> 5 D root       448     1  0  80   0 -   629 io_sch 02:55 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 1
->> 5 D root       474     1  0  80   0 -   629 flush_ 02:55 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /dev -r 1
->>
->> In addition, without this change, it can be reproduced more often with more processes.
+On Fri, Jan 25, 2019 at 05:45:02PM +0000, Catalin Marinas wrote:
+> On Mon, Jan 21, 2019 at 10:03:53AM +0200, Mike Rapoport wrote:
+> > diff --git a/arch/arm64/mm/numa.c b/arch/arm64/mm/numa.c
+> > index ae34e3a..2c61ea4 100644
+> > --- a/arch/arm64/mm/numa.c
+> > +++ b/arch/arm64/mm/numa.c
+> > @@ -237,6 +237,10 @@ static void __init setup_node_data(int nid, u64 start_pfn, u64 end_pfn)
+> >  		pr_info("Initmem setup node %d [<memory-less node>]\n", nid);
+> >  
+> >  	nd_pa = memblock_phys_alloc_try_nid(nd_size, SMP_CACHE_BYTES, nid);
+> > +	if (!nd_pa)
+> > +		panic("Cannot allocate %zu bytes for node %d data\n",
+> > +		      nd_size, nid);
+> > +
+> >  	nd = __va(nd_pa);
+> >  
+> >  	/* report and initialize */
 > 
-> I've managed to reproduce it now, though I don't quite yet see what is going
-> on. It's almost like we're NOT honoring the serialization, which results
-> in a sense request being doubly queued. I'll see if I can figure it out
-> and produce a patch that works.
+> Does it mean that memblock_phys_alloc_try_nid() never returns valid
+> physical memory starting at 0?
 
-Alright, here's something that has a chance of working. I don't think we
-can solve the ordering issue with sense requests without doing something
-like this. Can you give it a spin?
+Yes, it does.
+memblock_find_in_range_node() that is used by all allocation methods
+skips the first page [1].
+ 
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/memblock.c#n257
 
-
-diff --git a/drivers/ide/ide-atapi.c b/drivers/ide/ide-atapi.c
-index da58020a144e..33a28cde126c 100644
---- a/drivers/ide/ide-atapi.c
-+++ b/drivers/ide/ide-atapi.c
-@@ -235,21 +235,28 @@ EXPORT_SYMBOL_GPL(ide_prep_sense);
- 
- int ide_queue_sense_rq(ide_drive_t *drive, void *special)
- {
--	struct request *sense_rq = drive->sense_rq;
-+	ide_hwif_t *hwif = drive->hwif;
-+	struct request *sense_rq;
-+	unsigned long flags;
-+
-+	spin_lock_irqsave(&hwif->lock, flags);
- 
- 	/* deferred failure from ide_prep_sense() */
- 	if (!drive->sense_rq_armed) {
- 		printk(KERN_WARNING PFX "%s: error queuing a sense request\n",
- 		       drive->name);
-+		spin_unlock_irqrestore(&hwif->lock, flags);
- 		return -ENOMEM;
- 	}
- 
-+	sense_rq = drive->sense_rq;
- 	ide_req(sense_rq)->special = special;
- 	drive->sense_rq_armed = false;
- 
- 	drive->hwif->rq = NULL;
- 
- 	ide_insert_request_head(drive, sense_rq);
-+	spin_unlock_irqrestore(&hwif->lock, flags);
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(ide_queue_sense_rq);
-diff --git a/drivers/ide/ide-io.c b/drivers/ide/ide-io.c
-index 8445b484ae69..b137f27a34d5 100644
---- a/drivers/ide/ide-io.c
-+++ b/drivers/ide/ide-io.c
-@@ -68,8 +68,10 @@ int ide_end_rq(ide_drive_t *drive, struct request *rq, blk_status_t error,
- 	}
- 
- 	if (!blk_update_request(rq, error, nr_bytes)) {
--		if (rq == drive->sense_rq)
-+		if (rq == drive->sense_rq) {
- 			drive->sense_rq = NULL;
-+			drive->sense_rq_active = false;
-+		}
- 
- 		__blk_mq_end_request(rq, error);
- 		return 0;
-@@ -451,16 +453,11 @@ void ide_requeue_and_plug(ide_drive_t *drive, struct request *rq)
- 		blk_mq_delay_run_hw_queue(q->queue_hw_ctx[0], 3);
- }
- 
--/*
-- * Issue a new request to a device.
-- */
--blk_status_t ide_queue_rq(struct blk_mq_hw_ctx *hctx,
--			  const struct blk_mq_queue_data *bd)
-+blk_status_t ide_issue_rq(ide_drive_t *drive, struct request *rq,
-+			  bool local_requeue)
- {
--	ide_drive_t	*drive = hctx->queue->queuedata;
--	ide_hwif_t	*hwif = drive->hwif;
-+	ide_hwif_t *hwif = drive->hwif;
- 	struct ide_host *host = hwif->host;
--	struct request	*rq = bd->rq;
- 	ide_startstop_t	startstop;
- 
- 	if (!blk_rq_is_passthrough(rq) && !(rq->rq_flags & RQF_DONTPREP)) {
-@@ -474,8 +471,6 @@ blk_status_t ide_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	if (ide_lock_host(host, hwif))
- 		return BLK_STS_DEV_RESOURCE;
- 
--	blk_mq_start_request(rq);
--
- 	spin_lock_irq(&hwif->lock);
- 
- 	if (!ide_lock_port(hwif)) {
-@@ -510,18 +505,6 @@ blk_status_t ide_queue_rq(struct blk_mq_hw_ctx *hctx,
- 		hwif->cur_dev = drive;
- 		drive->dev_flags &= ~(IDE_DFLAG_SLEEPING | IDE_DFLAG_PARKED);
- 
--		/*
--		 * we know that the queue isn't empty, but this can happen
--		 * if ->prep_rq() decides to kill a request
--		 */
--		if (!rq) {
--			rq = bd->rq;
--			if (!rq) {
--				ide_unlock_port(hwif);
--				goto out;
--			}
--		}
--
- 		/*
- 		 * Sanity: don't accept a request that isn't a PM request
- 		 * if we are currently power managed. This is very important as
-@@ -560,9 +543,12 @@ blk_status_t ide_queue_rq(struct blk_mq_hw_ctx *hctx,
- 		}
- 	} else {
- plug_device:
-+		if (local_requeue)
-+			list_add(&rq->queuelist, &drive->rq_list);
- 		spin_unlock_irq(&hwif->lock);
- 		ide_unlock_host(host);
--		ide_requeue_and_plug(drive, rq);
-+		if (!local_requeue)
-+			ide_requeue_and_plug(drive, rq);
- 		return BLK_STS_OK;
- 	}
- 
-@@ -573,6 +559,26 @@ blk_status_t ide_queue_rq(struct blk_mq_hw_ctx *hctx,
- 	return BLK_STS_OK;
- }
- 
-+/*
-+ * Issue a new request to a device.
-+ */
-+blk_status_t ide_queue_rq(struct blk_mq_hw_ctx *hctx,
-+			  const struct blk_mq_queue_data *bd)
-+{
-+	ide_drive_t *drive = hctx->queue->queuedata;
-+	ide_hwif_t *hwif = drive->hwif;
-+
-+	spin_lock_irq(&hwif->lock);
-+	if (drive->sense_rq_active) {
-+		spin_unlock_irq(&hwif->lock);
-+		return BLK_STS_DEV_RESOURCE;
-+	}
-+	spin_unlock_irq(&hwif->lock);
-+
-+	blk_mq_start_request(bd->rq);
-+	return ide_issue_rq(drive, bd->rq, false);
-+}
-+
- static int drive_is_ready(ide_drive_t *drive)
- {
- 	ide_hwif_t *hwif = drive->hwif;
-@@ -893,13 +899,8 @@ EXPORT_SYMBOL_GPL(ide_pad_transfer);
- 
- void ide_insert_request_head(ide_drive_t *drive, struct request *rq)
- {
--	ide_hwif_t *hwif = drive->hwif;
--	unsigned long flags;
--
--	spin_lock_irqsave(&hwif->lock, flags);
-+	drive->sense_rq_active = true;
- 	list_add_tail(&rq->queuelist, &drive->rq_list);
--	spin_unlock_irqrestore(&hwif->lock, flags);
--
- 	kblockd_schedule_work(&drive->rq_work);
- }
- EXPORT_SYMBOL_GPL(ide_insert_request_head);
-diff --git a/drivers/ide/ide-park.c b/drivers/ide/ide-park.c
-index 102aa3bc3e7f..8af7af6001eb 100644
---- a/drivers/ide/ide-park.c
-+++ b/drivers/ide/ide-park.c
-@@ -54,7 +54,9 @@ static void issue_park_cmd(ide_drive_t *drive, unsigned long timeout)
- 	scsi_req(rq)->cmd[0] = REQ_UNPARK_HEADS;
- 	scsi_req(rq)->cmd_len = 1;
- 	ide_req(rq)->type = ATA_PRIV_MISC;
-+	spin_lock_irq(&hwif->lock);
- 	ide_insert_request_head(drive, rq);
-+	spin_unlock_irq(&hwif->lock);
- 
- out:
- 	return;
-diff --git a/drivers/ide/ide-probe.c b/drivers/ide/ide-probe.c
-index 63627be0811a..5aeaca24a28f 100644
---- a/drivers/ide/ide-probe.c
-+++ b/drivers/ide/ide-probe.c
-@@ -1159,18 +1159,27 @@ static void drive_rq_insert_work(struct work_struct *work)
- 	ide_drive_t *drive = container_of(work, ide_drive_t, rq_work);
- 	ide_hwif_t *hwif = drive->hwif;
- 	struct request *rq;
-+	blk_status_t ret;
- 	LIST_HEAD(list);
- 
--	spin_lock_irq(&hwif->lock);
--	if (!list_empty(&drive->rq_list))
--		list_splice_init(&drive->rq_list, &list);
--	spin_unlock_irq(&hwif->lock);
-+	blk_mq_quiesce_queue(drive->queue);
- 
--	while (!list_empty(&list)) {
--		rq = list_first_entry(&list, struct request, queuelist);
-+	ret = BLK_STS_OK;
-+	spin_lock_irq(&hwif->lock);
-+	while (!list_empty(&drive->rq_list)) {
-+		rq = list_first_entry(&drive->rq_list, struct request, queuelist);
- 		list_del_init(&rq->queuelist);
--		blk_execute_rq_nowait(drive->queue, rq->rq_disk, rq, true, NULL);
-+
-+		spin_unlock_irq(&hwif->lock);
-+		ret = ide_issue_rq(drive, rq, true);
-+		spin_lock_irq(&hwif->lock);
- 	}
-+	spin_unlock_irq(&hwif->lock);
-+
-+	blk_mq_unquiesce_queue(drive->queue);
-+
-+	if (ret != BLK_STS_OK)
-+		kblockd_schedule_work(&drive->rq_work);
- }
- 
- static const u8 ide_hwif_to_major[] =
-diff --git a/include/linux/ide.h b/include/linux/ide.h
-index e7d29ae633cd..971cf76a78a0 100644
---- a/include/linux/ide.h
-+++ b/include/linux/ide.h
-@@ -615,6 +615,7 @@ struct ide_drive_s {
- 
- 	/* current sense rq and buffer */
- 	bool sense_rq_armed;
-+	bool sense_rq_active;
- 	struct request *sense_rq;
- 	struct request_sense sense_data;
- 
-@@ -1219,6 +1220,7 @@ extern void ide_stall_queue(ide_drive_t *drive, unsigned long timeout);
- extern void ide_timer_expiry(struct timer_list *t);
- extern irqreturn_t ide_intr(int irq, void *dev_id);
- extern blk_status_t ide_queue_rq(struct blk_mq_hw_ctx *, const struct blk_mq_queue_data *);
-+extern blk_status_t ide_issue_rq(ide_drive_t *, struct request *, bool);
- extern void ide_requeue_and_plug(ide_drive_t *drive, struct request *rq);
- 
- void ide_init_disk(struct gendisk *, ide_drive_t *);
+> -- 
+> Catalin
+> 
 
 -- 
-Jens Axboe
+Sincerely yours,
+Mike.
 
