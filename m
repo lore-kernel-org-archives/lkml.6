@@ -2,137 +2,142 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_NEOMUTT autolearn=no autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE5E2C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEA4C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB23520881
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:56:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=android.com header.i=@android.com header.b="ae9Ce5Hf"
+	by mail.kernel.org (Postfix) with ESMTP id EFB37218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548424656;
+	bh=nOZ44cpuU6o5g8UPqeCA7flOdxL1BFBwyhbj2ZkAO4I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=b2AjORLjxSWQ2mr/3qKzgSulM2uDyzsI90gsIrGNN03DPrxzh6cOQ/js4dPQg8haF
+	 GAkSN9WJvdjHOtLRPUBgOrjftdfHoz/Imlc2Lf2j8gk2KyKtIWRI1pLRdVdEU061bF
+	 NqVvfdygkJ3BZlmbAUnx9iaJwt24CpamLNzf5dFI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728694AbfAYN4u (ORCPT
+        id S1728751AbfAYN5e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 08:56:50 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40999 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbfAYN4u (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 08:56:50 -0500
-Received: by mail-wr1-f68.google.com with SMTP id x10so10384042wrs.8
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 05:56:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=android.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=isKIZLHvDy4G7/JJd0SWz3JorDTm2gi1KhTLX9kC+50=;
-        b=ae9Ce5HfcC42GyeyRAtkqlER6uZQRYfuTBWKl17hZwU3ygeEuuN6SOIR9MhwuDjiHm
-         Qy+ekSlS06P2HWILFZIWmBc5iQT5QVGqL7VRoXFsVnH9bCEyZ6lbiIbvziWzDA+tyK7W
-         olYPoGA9nUwxgSIVaJ7DoxnoWx2fRGyJ9jsfsdJUwzYpjPFepK2yKSJ+cVGRow+TcCIC
-         rieIvr2fqEP/+N0pTNAziOeVa2U/yPytfLnz2pbnWQlxrXM2ifwrK2B2dir9vL/oiXLg
-         hZuih3nUNKEilCaRjP3G72nYWi5nc9JBBH1qC94hg5L9Gi38pR5Lb8dlfiB+Ba6HKKxw
-         etIg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=isKIZLHvDy4G7/JJd0SWz3JorDTm2gi1KhTLX9kC+50=;
-        b=lMvsHlCGr8jTqFn4LU5kYQtnTJCjFZynLhAyDeb4hfL+QrWd5yamSJGg5eb2to/CSz
-         NjKINqnYaXgtAayNgySjqgyjK5ShqNUe5jUIUGmb4DwWD+rhui+iqD3cqAMs6vbCclIV
-         pvY+xBQjDQItXsi6oInw5x1NDZKjj9QIwXsoie/UDi3ZIBOLRPa1JBsP3hWgYSlMmgJB
-         r2Qd7aGmf5Bwavm18cxAr+Z4Aozwr+QV21pBTCNUPpyLcIzTCPUlPqQcLpjfygyTqAhd
-         Qt95QBJRZcGuZWQrXtls/tOMoZ8lXb+oNpOKyw9YBEO7cTZo6LKB9RtpoPutbSgohuYf
-         xVkw==
-X-Gm-Message-State: AJcUukd7uqnvc//Sk8FWkfEqSBExODg9khvolfakAOAvNYzHBd37UUeJ
-        lI203Nl9/ZWjkUJ0+jNM9vNMhg==
-X-Google-Smtp-Source: ALg8bN6HvHT7B4hYeesrm4wh8OywkbZ8E9Qb4u1i+q8m5hyMF6/h5YH+L9r2Phu7heKZF1ysrzyKwQ==
-X-Received: by 2002:adf:f091:: with SMTP id n17mr11537008wro.292.1548424608755;
-        Fri, 25 Jan 2019 05:56:48 -0800 (PST)
-Received: from google.com ([2a00:79e0:d:203:9bb:78dc:3222:caef])
-        by smtp.gmail.com with ESMTPSA id p6sm135680949wrx.50.2019.01.25.05.56.47
-        (version=TLS1_3 cipher=AEAD-AES256-GCM-SHA384 bits=256/256);
-        Fri, 25 Jan 2019 05:56:48 -0800 (PST)
-Date:   Fri, 25 Jan 2019 13:56:46 +0000
-From:   Alessio Balsini <balsini@android.com>
-To:     Patrick Bellasi <patrick.bellasi@arm.com>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        linux-api@vger.kernel.org, Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v6 01/16] sched/core: Allow sched_setattr() to use the
- current policy
-Message-ID: <20190125135646.j4j2onitam4mwvcw@google.com>
-References: <20190115101513.2822-1-patrick.bellasi@arm.com>
- <20190115101513.2822-2-patrick.bellasi@arm.com>
+        Fri, 25 Jan 2019 08:57:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45802 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726095AbfAYN5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 08:57:34 -0500
+Received: from quaco.ghostprotocols.net (unknown [147.229.117.36])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5E2B6218CD;
+        Fri, 25 Jan 2019 13:57:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548424652;
+        bh=nOZ44cpuU6o5g8UPqeCA7flOdxL1BFBwyhbj2ZkAO4I=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XVRnbQmb/IBwDYR4Bad85ZeD7VJE0NV33JK1tjB8iIN/81Z27LVKFfiBiwqura9Kj
+         LjQBeoT3Ww0GiZ/xDaUclIGBOlDB3w4Jle7bZLWfWS6kCwV3wVkCs1ponaA/+n2E2l
+         652QH05/DP0KNSaY9Sqv9zEkjO2MvcJPOXxaS8tA=
+Received: by quaco.ghostprotocols.net (Postfix, from userid 1000)
+        id 26E014034F; Fri, 25 Jan 2019 14:57:30 +0100 (CET)
+Date:   Fri, 25 Jan 2019 14:57:30 +0100
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     Tony Jones <tonyj@suse.de>
+Cc:     linux-kernel@vger.kernel.org,
+        Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>,
+        Ravi Bangoria <ravi.bangoria@linux.ibm.com>,
+        Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
+        linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 0/6] Fix issues with Python3 scripting
+Message-ID: <20190125135730.GE12077@kernel.org>
+References: <20190124005229.16146-1-tonyj@suse.de>
+ <20190125123119.GD12077@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190115101513.2822-2-patrick.bellasi@arm.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20190125123119.GD12077@kernel.org>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Patrick,
+Em Fri, Jan 25, 2019 at 01:31:19PM +0100, Arnaldo Carvalho de Melo escreveu:
+> Em Wed, Jan 23, 2019 at 04:52:23PM -0800, Tony Jones escreveu:
+> > Seeteena posted, earlier this week, some patches to add Python3 support
+> > to scripts/python/*.py.  Unfortunately there were some issues with these
+> > patches (such as: https://lkml.org/lkml/2019/1/17/351)
+> > 
+> > Since I already had a tested set of patches in openSUSE:Factory and 
+> > SLE15-SP1 and was about to submit them, Seeteena and I that agreed I 
+> > should post my patches not involving scripts/python/*.py and Seeteena 
+> > will later resubmit the patches for scripts/python/*.py incorporating 
+> > my review feedback under a joint signed-off-by.
+> > 
+> > It should be noted that the use of "from __future__ import print_function" 
+> > (see: https://lkml.org/lkml/2019/1/16/641) and "except as" (see change to:
+> > tests/attr.py) implies Python2 >= 2.6 as the necessary support has not 
+> > been backported to prior versions.  I am not sure if it's worth detecting 
+> > <2.6 at build time or whether it's sufficiently old as to be a non-issue?
+> > 
+> > The shebang changes were driven mostly by our build process as it scans
+> > all files within an rpm and the shebangs would result in a rpm requires
+> > on the python2 binary when BuildRequires was python3-devel. I think they 
+> > make sense to apply upstream but understand totally if it's prefered we 
+> > keep them local.
+> > 
+> > These changes have been tested with PYTHON=python2 (v2.7) and 
+> > PYTHON=python3 (v3.6) on latest openSUSE Tumbleweed.  I did notice that 
+> > test #18 "'import perf' in python" is failing on my system without these 
+> > changes. I'll look at it further but didn't want to hold up Seeteena's 
+> > resubmit.
+> 
+> So it fails on AmazonLinux 1, that has python 2.6, please check if this
+> is something we can workaround, if its difficult, I'll just use
+> NO_PYTHON=1 there to disable it.
+> 
+>   CC       /tmp/build/perf/util/parse-branch-options.o
+> util/scripting-engines/trace-event-python.c: In function 'python_start_script':
+> util/scripting-engines/trace-event-python.c:1520:2: error: passing argument 1 of 'PyImport_AppendInittab' discards 'const' qualifier from pointer target type [-Werror]
+>   PyImport_AppendInittab("perf_trace_context", initfunc);
+>   ^
+> In file included from /usr/include/python2.6/Python.h:130:0,
+>                  from util/scripting-engines/trace-event-python.c:22:
+> /usr/include/python2.6/import.h:54:17: note: expected 'char *' but argument is of type 'const char *'
+>  PyAPI_FUNC(int) PyImport_AppendInittab(char *name, void (*initfunc)(void));
+>                  ^
+> cc1: all warnings being treated as errors
+> mv: cannot stat '/tmp/build/perf/util/scripting-engines/.trace-event-python.o.tmp': No such file or directory
+> make[5]: *** [/tmp/build/perf/util/scripting-engines/trace-event-python.o] Error 1
 
-What do you think about the following minor changes:
+I did a quick hack to init an auto variable with that const string and
+then pass it, is passing everything so far:
 
-On Tue, Jan 15, 2019 at 10:14:58AM +0000, Patrick Bellasi wrote:
->  /* SCHED_ISO: reserved but not implemented yet */
->  #define SCHED_IDLE		5
->  #define SCHED_DEADLINE		6
-> +/* Must be the last entry: used to sanity check attr.policy values */
-
-I would remove this comment:
-- the meaning of SCHED_POLICY_MAX is evident, and
-- should we hint on how the value is used? That comment will be removed
-  the next time SCHED_POLICY_MAX is used for something else.
-  This is what should also happen to the comment of SETPARAM_POLICY:
-  now sched_setparam() is no more the only code path accessing
-  SETPARAM_POLICY.
-
-> +#define SCHED_POLICY_MAX	7
-
-+#define SCHED_POLICY_MAX    SCHED_DEADLINE
-
-This would make it compliant with the definition of MAX.
-
-> --- a/kernel/sched/core.c
-> +++ b/kernel/sched/core.c
-> @@ -4560,8 +4560,17 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
->  	if (retval)
->  		return retval;
->  
-> -	if ((int)attr.sched_policy < 0)
-> +	/*
-> +	 * A valid policy is always required from userspace, unless
-> +	 * SCHED_FLAG_KEEP_POLICY is set and the current policy
-> +	 * is enforced for this call.
-> +	 */
-> +	if (attr.sched_policy >= SCHED_POLICY_MAX &&
-
-+	if (attr.sched_policy > SCHED_POLICY_MAX &&
-
-In line with the previous update.
-
-> +	    !(attr.sched_flags & SCHED_FLAG_KEEP_POLICY)) {
->  		return -EINVAL;
-
-Thanks,
-Alessio
+$ dm
+   1 alpine:3.4                    : Ok   gcc (Alpine 5.3.0) 5.3.0
+   2 alpine:3.5                    : Ok   gcc (Alpine 6.2.1) 6.2.1 20160822
+   3 alpine:3.6                    : Ok   gcc (Alpine 6.3.0) 6.3.0
+   4 alpine:3.7                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+   5 alpine:3.8                    : Ok   gcc (Alpine 6.4.0) 6.4.0
+   6 alpine:edge                   : Ok   gcc (Alpine 8.2.0) 8.2.0
+   7 amazonlinux:1                 : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-28)
+   8 amazonlinux:2                 : Ok   gcc (GCC) 7.3.1 20180303 (Red Hat 7.3.1-5)
+   9 android-ndk:r12b-arm          : Ok   gcc (GCC) 6.3.1 20161221 (Red Hat 6.3.1-1)
+  10 android-ndk:r15c-arm          : Ok   gcc (GCC) 8.2.1 20181215 (Red Hat 8.2.1-6)
+  11 centos:5                      : Ok   gcc (GCC) 4.1.2 20080704 (Red Hat 4.1.2-55)
+  12 centos:6                      : Ok   gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-23)
+  13 centos:7                      : Ok   gcc (GCC) 4.8.5 20150623 (Red Hat 4.8.5-36)
+  14 clearlinux:latest             : Ok   gcc (Clear Linux OS for Intel Architecture) 8.2.1 20180502
+  15 debian:7                      : Ok   gcc (Debian 4.7.2-5) 4.7.2
+  16 debian:8                      : Ok   gcc (Debian 4.9.2-10+deb8u2) 4.9.2
+  17 debian:9                      : Ok   gcc (Debian 6.3.0-18+deb9u1) 6.3.0 20170516
+  18 debian:experimental           : Ok   gcc (Debian 8.2.0-13) 8.2.0
+  19 debian:experimental-x-arm64   : Ok   gcc (Debian 8.2.0-13) 8.2.0
+  20 debian:experimental-x-mips    : Ok   gcc (Debian 8.2.0-13) 8.2.0
+  21 debian:experimental-x-mips64  : Ok   gcc (Debian 8.2.0-13) 8.2.0
+  22 debian:experimental-x-mipsel  : Ok   gcc (Debian 8.2.0-13) 8.2.0
+  23 fedora:20                     : Ok   gcc (GCC) 4.8.3 20140911 (Red Hat 4.8.3-7)
+  24 fedora:22                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  25 fedora:23                     : Ok   gcc (GCC) 5.3.1 20160406 (Red Hat 5.3.1-6)
+  26: fedora:24
