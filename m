@@ -2,206 +2,126 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEA2C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:09:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F8A6C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:09:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A64652184C
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:09:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDAFF2184C
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:09:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="i2Sj/5OI"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iBJawRXa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728632AbfAYUJo (ORCPT
+        id S1729003AbfAYUJs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 15:09:44 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:48042 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfAYUJn (ORCPT
+        Fri, 25 Jan 2019 15:09:48 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:41547 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726361AbfAYUJo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 15:09:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1548446981; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:content-type:
-         content-transfer-encoding:in-reply-to:references;
-        bh=XJmGEvYv3skTMuJOx2sSMUDaSz+Es8Mo7g2m8/2irTo=;
-        b=i2Sj/5OIoJOXNB7FidcVENYEQ12R7EcexyPpLluoWmiGYJFTOS9uou+UYXz3jFESSOx5g4
-        tUyx5XzcQ2RJwqYGTq85BIystfzkCJf/M8dzmfiLW0eFYpkiHwSVA48UTS7SziYBM7eWyG
-        d2nhcrZgHvv4rzEY4onipnGmNWxblYg=
-From:   Paul Cercueil <paul@crapouillou.net>
-To:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>
-Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
-        Paul Cercueil <paul@crapouillou.net>
-Subject: [PATCH 1/3] mmc: jz4740: Remove platform data and use standard APIs
-Date:   Fri, 25 Jan 2019 17:09:25 -0300
-Message-Id: <20190125200927.21045-1-paul@crapouillou.net>
+        Fri, 25 Jan 2019 15:09:44 -0500
+Received: by mail-vs1-f66.google.com with SMTP id t17so6395502vsc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 12:09:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y7B0gQIQWlF8Bax9rKwXH7utiM4ileYlEu7GxLV2X8g=;
+        b=iBJawRXa0hgodJOVFYTLGQNpOT+YyvP+13IEVK8JUVbSo6sxZDhIEIrcs/2j52jUPU
+         oiP+VA1JgJaeFVoqoU9hlTC4jrtJu0sl8ZvmdIPA3ePkJSMZVv+DdUkAxvFr10hbgkTt
+         SrGr2aAhoGx2NR+l9u3lOKOBT2mnEExGwW6woy0iCD1pqKE7zrbWiG2PJmgvJ4n+jxqG
+         gcbo3TeoOlBe4AMyVAwCEn48huMrmGs8k7cbOUxLkEvv9YO5QD4Xcqx6ZPh+JcEtKNyu
+         SwRApk1ubTYzXEurYzo23yHlyOeSQbwEN4G451+Fhneh8vqCaW2XAev9S8FfsxfkbYzt
+         1/Mg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y7B0gQIQWlF8Bax9rKwXH7utiM4ileYlEu7GxLV2X8g=;
+        b=M6CKrDzZmBHoSSwRB+Jx9IQNwcdEivGGFu3KBFVkg6GVdTilZNDwdjlZ4bz6t4VSje
+         lBjA+BmS3cpNPs2TPsusWEvywZ/5vtgAHq1g/9o7GH1iD1IXVCKxvrJaiOcjkIOJvroX
+         wWlRmwqmNQacTTYxO888SBEc1L44KKKFSj+dgoZeSf8LNtq+byO4YQ4cI5ouGKg+mKxI
+         uSqv65ZjJ6SyDRy8NOFGAZHAW1KvhwMiLFDP8z8mCDu0eEUgqTdzx5p0fz4qjNNeo6F+
+         Ur3mwb8qSSmo7STfabBey/Uk1jZnIbbGld746cgEPM13ULOwhmLLZ4qJqtfEuxblC1GY
+         Q37w==
+X-Gm-Message-State: AJcUuke82bmNde2runHN23qHCk1OX2bdg1VCxzftxG9TXs5pHDQHWZBA
+        M2u1HZvJdSM3FTFCaDc0zydP4StLLQb/O1pBth8=
+X-Google-Smtp-Source: ALg8bN4fpCqXFPa7jMtz+VutYtVhcf2zn68x219J0OqDH0M4cZ/wg04sCF1e+9nRIQpu7U0CUEPRL4WSNp6LLWU21Yc=
+X-Received: by 2002:a67:741:: with SMTP id 62mr4775247vsh.228.1548446983155;
+ Fri, 25 Jan 2019 12:09:43 -0800 (PST)
+MIME-Version: 1.0
+References: <20190123000057.31477-1-oded.gabbay@gmail.com> <20190123000057.31477-2-oded.gabbay@gmail.com>
+ <20190123122804.GB2194@rapoport-lnx> <20190123124004.GA19703@kroah.com> <20190123125502.GF4747@rapoport-lnx>
+In-Reply-To: <20190123125502.GF4747@rapoport-lnx>
+From:   Oded Gabbay <oded.gabbay@gmail.com>
+Date:   Fri, 25 Jan 2019 22:09:17 +0200
+Message-ID: <CAFCwf13JJK8BDE6DChxiMT9hOV99MBPffU0EK=aM2WrW3FxEPA@mail.gmail.com>
+Subject: Re: [PATCH 01/15] habanalabs: add skeleton driver
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Greg KH <gregkh@linuxfoundation.org>,
+        "Linux-Kernel@Vger. Kernel. Org" <linux-kernel@vger.kernel.org>,
+        ogabbay@habana.ai
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Drop the custom code to get the 'cd' and 'wp' GPIOs. The driver now
-calls mmc_of_parse() which will init these from devicetree or
-device properties.
+On Wed, Jan 23, 2019 at 2:55 PM Mike Rapoport <rppt@linux.ibm.com> wrote:
+>
+> On Wed, Jan 23, 2019 at 01:40:04PM +0100, Greg KH wrote:
+> > On Wed, Jan 23, 2019 at 02:28:05PM +0200, Mike Rapoport wrote:
+> > > On Wed, Jan 23, 2019 at 02:00:43AM +0200, Oded Gabbay wrote:
+> > > > +/**
+> > > > + * hl_device_release - release function for habanalabs device
+> > > > + *
+> > > > + * @inode: pointer to inode structure
+> > > > + * @filp: pointer to file structure
+> > > > + *
+> > > > + * Called when process closes an habanalabs device
+> > > > + */
+> > >
+> > > It's nice to see docs coming along with the codei
+> > > I have some comments for the formatting.
+> > >
+> > > kernel-doc won't be happy about missing return value descriptions, and
+> > > although they are sometimes redundant or too obvious their absence makes
+> > > 'make V=1 htmldocs' really noisy.
+> > >
+> > > In general, it would be nice if you could link hanabnalabs driver
+> > > kernel-doc somewhere in Documentation/ run 'make V=1 htmldocs'.
+> > >
+> > > > +static int hl_device_release(struct inode *inode, struct file *filp)
+> >
+> > There's no need for kerneldoc comments for static functions, as no one
+> > can call them and they are not part of any api.
+> >
+> > So what would be better here is to just drop the /** line and use /*
+>
+> Maybe it'd make sense to use /* for most of the comments in this driver as
+> there are kernel-doc formatting issues in non-static functions as well, I
+> was just too lazy to go over all of them.
+>
+Hi Mike,
+That's what I'm going to do for v2, except for the comments in
+habanalabs.h, which we made sure are written according to kernel-doc.
+I promise that we will go over the entire code and make everything
+kernel-doc compatible (I'm opening a jira ticket now :) ) but it may
+take a couple of weeks or more.
 
-Also drop the custom code to get the 'power' GPIO. The MMC core
-provides us with the means to power the MMC card through an external
-regulator.
+In any case, I fixed all of your other comments for this patch.
+Thanks,
+Oded
 
-Signed-off-by: Paul Cercueil <paul@crapouillou.net>
----
- drivers/mmc/host/jz4740_mmc.c | 71 +++++++++----------------------------------
- 1 file changed, 14 insertions(+), 57 deletions(-)
-
-diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
-index 33215d66afa2..e41c7230815f 100644
---- a/drivers/mmc/host/jz4740_mmc.c
-+++ b/drivers/mmc/host/jz4740_mmc.c
-@@ -21,7 +21,6 @@
- #include <linux/dmaengine.h>
- #include <linux/dma-mapping.h>
- #include <linux/err.h>
--#include <linux/gpio/consumer.h>
- #include <linux/interrupt.h>
- #include <linux/io.h>
- #include <linux/irq.h>
-@@ -36,7 +35,6 @@
- #include <asm/cacheflush.h>
- 
- #include <asm/mach-jz4740/dma.h>
--#include <asm/mach-jz4740/jz4740_mmc.h>
- 
- #define JZ_REG_MMC_STRPCL	0x00
- #define JZ_REG_MMC_STATUS	0x04
-@@ -148,9 +146,7 @@ enum jz4780_cookie {
- struct jz4740_mmc_host {
- 	struct mmc_host *mmc;
- 	struct platform_device *pdev;
--	struct jz4740_mmc_platform_data *pdata;
- 	struct clk *clk;
--	struct gpio_desc *power;
- 
- 	enum jz4740_mmc_version version;
- 
-@@ -894,16 +890,16 @@ static void jz4740_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	switch (ios->power_mode) {
- 	case MMC_POWER_UP:
- 		jz4740_mmc_reset(host);
--		if (host->power)
--			gpiod_set_value(host->power, 1);
-+		if (!IS_ERR(mmc->supply.vmmc))
-+			mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, ios->vdd);
- 		host->cmdat |= JZ_MMC_CMDAT_INIT;
- 		clk_prepare_enable(host->clk);
- 		break;
- 	case MMC_POWER_ON:
- 		break;
- 	default:
--		if (host->power)
--			gpiod_set_value(host->power, 0);
-+		if (!IS_ERR(mmc->supply.vmmc))
-+			mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, 0);
- 		clk_disable_unprepare(host->clk);
- 		break;
- 	}
-@@ -936,38 +932,6 @@ static const struct mmc_host_ops jz4740_mmc_ops = {
- 	.enable_sdio_irq = jz4740_mmc_enable_sdio_irq,
- };
- 
--static int jz4740_mmc_request_gpios(struct jz4740_mmc_host *host,
--				    struct mmc_host *mmc,
--				    struct platform_device *pdev)
--{
--	struct jz4740_mmc_platform_data *pdata = dev_get_platdata(&pdev->dev);
--	int ret = 0;
--
--	if (!pdata)
--		return 0;
--
--	if (!pdata->card_detect_active_low)
--		mmc->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
--	if (!pdata->read_only_active_low)
--		mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
--
--	/*
--	 * Get optional card detect and write protect GPIOs,
--	 * only back out on probe deferral.
--	 */
--	ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0, NULL);
--	if (ret == -EPROBE_DEFER)
--		return ret;
--
--	ret = mmc_gpiod_request_ro(mmc, "wp", 0, false, 0, NULL);
--	if (ret == -EPROBE_DEFER)
--		return ret;
--
--	host->power = devm_gpiod_get_optional(&pdev->dev, "power",
--					      GPIOD_OUT_HIGH);
--	return PTR_ERR_OR_ZERO(host->power);
--}
--
- static const struct of_device_id jz4740_mmc_of_match[] = {
- 	{ .compatible = "ingenic,jz4740-mmc", .data = (void *) JZ_MMC_JZ4740 },
- 	{ .compatible = "ingenic,jz4725b-mmc", .data = (void *)JZ_MMC_JZ4725B },
-@@ -982,9 +946,6 @@ static int jz4740_mmc_probe(struct platform_device* pdev)
- 	struct mmc_host *mmc;
- 	struct jz4740_mmc_host *host;
- 	const struct of_device_id *match;
--	struct jz4740_mmc_platform_data *pdata;
--
--	pdata = dev_get_platdata(&pdev->dev);
- 
- 	mmc = mmc_alloc_host(sizeof(struct jz4740_mmc_host), &pdev->dev);
- 	if (!mmc) {
-@@ -993,29 +954,25 @@ static int jz4740_mmc_probe(struct platform_device* pdev)
- 	}
- 
- 	host = mmc_priv(mmc);
--	host->pdata = pdata;
- 
- 	match = of_match_device(jz4740_mmc_of_match, &pdev->dev);
- 	if (match) {
- 		host->version = (enum jz4740_mmc_version)match->data;
--		ret = mmc_of_parse(mmc);
--		if (ret) {
--			if (ret != -EPROBE_DEFER)
--				dev_err(&pdev->dev,
--					"could not parse of data: %d\n", ret);
--			goto err_free_host;
--		}
- 	} else {
- 		/* JZ4740 should be the only one using legacy probe */
- 		host->version = JZ_MMC_JZ4740;
--		mmc->caps |= MMC_CAP_SDIO_IRQ;
--		if (!(pdata && pdata->data_1bit))
--			mmc->caps |= MMC_CAP_4_BIT_DATA;
--		ret = jz4740_mmc_request_gpios(host, mmc, pdev);
--		if (ret)
--			goto err_free_host;
- 	}
- 
-+	ret = mmc_of_parse(mmc);
-+	if (ret) {
-+		if (ret != -EPROBE_DEFER)
-+			dev_err(&pdev->dev,
-+				"could not parse device properties: %d\n", ret);
-+		goto err_free_host;
-+	}
-+
-+	mmc_regulator_get_supply(mmc);
-+
- 	host->irq = platform_get_irq(pdev, 0);
- 	if (host->irq < 0) {
- 		ret = host->irq;
--- 
-2.11.0
-
+> > thanks,
+> >
+> > greg k-h
+> >
+>
+> --
+> Sincerely yours,
+> Mike.
+>
