@@ -2,98 +2,94 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F3BA8C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:17:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2758EC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:27:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C477D218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:17:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="NTYTh2mG"
+	by mail.kernel.org (Postfix) with ESMTP id DBECE21872
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 05:27:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726441AbfAYFRK (ORCPT
+        id S1726392AbfAYF14 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 00:17:10 -0500
-Received: from mail-40133.protonmail.ch ([185.70.40.133]:31891 "EHLO
-        mail-40133.protonmail.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725300AbfAYFRJ (ORCPT
+        Fri, 25 Jan 2019 00:27:56 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43848 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726100AbfAYF14 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 00:17:09 -0500
-Date:   Fri, 25 Jan 2019 05:16:59 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-        s=default; t=1548393426;
-        bh=woeysuqhgtGgsVXmIhjEhQrJa9mY1Hmx2nb9BNPtnFQ=;
-        h=Date:To:From:Cc:Reply-To:Subject:In-Reply-To:References:
-         Feedback-ID:From;
-        b=NTYTh2mGQP9yM5zh8zt3EwpT8osG9zu/vOVt7enqTnC+K17ci0WZAeD6+b0oTbcNg
-         s5kgEmICX3xVCzRdJ4v/M7m4SpG1ba5GJZOCiMxh3dNGoD8VvuhDNt7/kq90u8OVWO
-         Mv0gTmy0K20jts20zMGu1L/FJYn1893BvAuRxwBA=
-To:     Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
-From:   Mogens Jensen <mogens-jensen@protonmail.com>
-Cc:     Hans de Goede <hdegoede@redhat.com>,
-        Dean Wallace <duffydack73@gmail.com>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Johannes Stezenbach <js@sig21.net>,
-        Carlo Caione <carlo@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Reply-To: Mogens Jensen <mogens-jensen@protonmail.com>
-Subject: Re: Regression found (Stop-marking-clocks-as-CLK_IS_CRITICAL)
-Message-ID: <3ERhUwlxf4lWV_mn3MgjNMrm8ZDgFevrwjq0KRjy05oM1hGiQUdsPpbIlKytNGHi1ViQ_2Xv7bxzqusfruSjbZJyUSpQ9Uo8HCiNyUdyNdU=@protonmail.com>
-In-Reply-To: <43070180-1f10-9285-7564-cfa24e1d222e@linux.intel.com>
-References: <20181025232517.ywnw54qibemosjws@picard>
- <3e12e051-b874-187d-d4f5-e146f59c659b@redhat.com>
- <U9ny3qDg8fEQ-IaXWgwAmDf_U7yb1NZxpwoOvTorCbG86v8wUae3kWsa5omAv-ngu3VMaSONp6RdzmaI26Cz6uoyf5ddIiXuJQbzGf2MN3w=@protonmail.com>
- <20190117091214.7djttnpo4jjzi4su@spock>
- <c935552f-951f-ab9f-b41c-76c729c6d85c@redhat.com>
- <pozwYTgSVvWumpTgwwf_C-qvYFNnl7yl9gcq9M-LOUXQTvkSX5f8E_2d-HYNYV_ruL8kAURaIR3ItM_UmFJeV-e28eYy8b2MomlwHMbb-5U=@protonmail.com>
- <983fb777-df22-1b53-acea-8bbcab23b260@redhat.com>
- <G5Oa_GRw3iClWMtIg1FeCwj1szJHRH6ToqQqCskS_HKzyNhpFFQ3sJndttzyvP3IHRJuHXvDsUC82dnw8r66OIroHCzyqTYbZoki5sSKPUE=@protonmail.com>
- <43070180-1f10-9285-7564-cfa24e1d222e@linux.intel.com>
-Feedback-ID: 4dFv7M8pOtP7CMTtfNdOwXARWpF2vcQYB4dRuX1h9mb-6008qkzO2MVweOzrAYHEdkjJ6P5PUdgJEubk4l9Lhg==:Ext:ProtonMail
+        Fri, 25 Jan 2019 00:27:56 -0500
+Received: by mail-pg1-f194.google.com with SMTP id v28so3710808pgk.10;
+        Thu, 24 Jan 2019 21:27:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=AazxMwswwxM1xU4axiuXpJdgtWxgeH5uwdI+Roy00ZM=;
+        b=Uvg4vEKUfFYbpx1TXIF2yr7w4gNAsev6DyQHoVGJSxtbkB808BgJuHIbVyuMVgfqRw
+         IJYBE03z7XZZjpJxF4ZRRDplMslv4fCUPNDIgaIpAHYSFqev/IbEKizjwpLAElVisRO+
+         B4v+iZZoA/InjHfKv3cySZpcHYuyJ2sfrHCIaq6rmbSq05dV92S3ajQZgkNQQXo/dHX7
+         IIRIQmHJumDkvGHgcygEw0sgqHWNPPn/ES2zioPI4RgG15/kBr1yqzuqXxHWmyCBJNR3
+         eSm97moOLi3ExYGCpLmmUBFZj/hgUU/cMvzDqHGlWhdjeTSpsY+TzpqaFl1HxFHZlM9c
+         eHKg==
+X-Gm-Message-State: AJcUukcD6Wvhz3FDJFcs0LbJItx5zSUiUerxh4zK2wj0pxn/fBbZNIGi
+        upraW+NoEnsRmD6KQegG6vmcj0Ej
+X-Google-Smtp-Source: ALg8bN4pjN2RM6ljcA9hWOhTrBulBfQdknp/cFm6OceEVDS/krV4jJGJqGc6rYH1+siIP7YqA1lNoA==
+X-Received: by 2002:a63:ed03:: with SMTP id d3mr8580481pgi.275.1548394075232;
+        Thu, 24 Jan 2019 21:27:55 -0800 (PST)
+Received: from asus.site ([2601:647:4000:5dd1:a41e:80b4:deb3:fb66])
+        by smtp.gmail.com with ESMTPSA id x11sm63609948pfe.72.2019.01.24.21.27.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 21:27:53 -0800 (PST)
+Subject: Re: [PATCH 1/2] infiniband: remove unneeded header search paths
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Jason Gunthorpe <jgg@mellanox.com>, linux-rdma@vger.kernel.org,
+        Doug Ledford <dledford@redhat.com>
+Cc:     Jason Gunthorpe <jgg@ziepe.ca>, Sagi Grimberg <sagi@grimberg.me>,
+        linux-kernel@vger.kernel.org, target-devel@vger.kernel.org
+References: <1548391171-6407-1-git-send-email-yamada.masahiro@socionext.com>
+ <1548391171-6407-2-git-send-email-yamada.masahiro@socionext.com>
+From:   Bart Van Assche <bvanassche@acm.org>
+Message-ID: <8563eb16-0740-536e-3c35-2ebcff76ba71@acm.org>
+Date:   Thu, 24 Jan 2019 21:27:52 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1548391171-6407-2-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90 Original Me=
-ssage =E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90=E2=80=90
-On Tuesday, January 22, 2019 7:27 PM, Pierre-Louis Bossart <pierre-louis.bo=
-ssart@linux.intel.com> wrote:
+On 1/24/19 8:39 PM, Masahiro Yamada wrote:
+> The included headers are located in include/target/. I was able to
+> build these drivers without the extra header search paths.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+> 
+>   drivers/infiniband/ulp/isert/Makefile | 1 -
+>   drivers/infiniband/ulp/srpt/Makefile  | 1 -
+>   2 files changed, 2 deletions(-)
+> 
+> diff --git a/drivers/infiniband/ulp/isert/Makefile b/drivers/infiniband/ulp/isert/Makefile
+> index c8bf242..a4a4766 100644
+> --- a/drivers/infiniband/ulp/isert/Makefile
+> +++ b/drivers/infiniband/ulp/isert/Makefile
+> @@ -1,2 +1 @@
+> -ccflags-y		:= -Idrivers/target -Idrivers/target/iscsi
+>   obj-$(CONFIG_INFINIBAND_ISERT)	+= ib_isert.o
+> diff --git a/drivers/infiniband/ulp/srpt/Makefile b/drivers/infiniband/ulp/srpt/Makefile
+> index e3ee4bd..43fbde4 100644
+> --- a/drivers/infiniband/ulp/srpt/Makefile
+> +++ b/drivers/infiniband/ulp/srpt/Makefile
+> @@ -1,2 +1 @@
+> -ccflags-y			:= -Idrivers/target
+>   obj-$(CONFIG_INFINIBAND_SRPT)	+= ib_srpt.o
 
-> On 1/20/19 11:55 PM, Mogens Jensen wrote:
->
-> > The only minor annoyance I'm experiencing now, is a large amount of deb=
-ug output from something in kernel log when audio is played on the system:
-> > writing to lpe: 00000000: 01 01 01 01 00 00 08 00 ff ff ff ff 55 00 00 =
-00 ............U...
-> > writing to lpe: 00000000: 01 01 01 01 00 00 1a 00 ff ff ff ff 75 00 12 =
-00 ............u...
-> > ...
->
-> That's enabled via dynamic debug so that's rather a configuration issue
-> than a kernel problem?
-
-Do you have any suggestions on how to disable it?
-
-My kernel is compiled without DYNAMIC_DEBUG, DEBUG_FS and other debug featu=
-res, so I don't understand why all this debug output is flooding the kernel=
- log.
-
-It's a minor issue, but it would be nice to get rid of it.
-
-Regards,
-
-Mogens Jensen
-
+Reviewed-by: Bart Van Assche <bvanassche@acm.org>
