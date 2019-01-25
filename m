@@ -2,195 +2,142 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7BA2C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:37:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56AEBC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89E79218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:37:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="wDe5kDHT"
+	by mail.kernel.org (Postfix) with ESMTP id 2B62E21855
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728778AbfAYJhS (ORCPT
+        id S1728917AbfAYJie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 04:37:18 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:46245 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726888AbfAYJhS (ORCPT
+        Fri, 25 Jan 2019 04:38:34 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50643 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727689AbfAYJie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 04:37:18 -0500
-Received: by mail-ed1-f66.google.com with SMTP id o10so6818358edt.13
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 01:37:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:message-id:mime-version:subject:date:in-reply-to:cc:to
-         :references;
-        bh=U7xWct8fpo5uF4inpPT83b7tyag62f+IlDnqulmlW28=;
-        b=wDe5kDHT96ZRkEpQgeZv15Lq8/P4s1cKVJPH4eufmLrNh/i5ed8+HJ3iWukx6deoUy
-         OZjEnkSZyvKoTBt0NZfwNy9CwhRG/Y7LddteXDHuQGvVytyreEmNUhslw+IWapazAEQP
-         QPK0adhTvxOa7XhOYxhsaqIn7ypsPTEYI0+jgaRTdQFQCnD4Oh2hEF5poOqsLg2exOc9
-         S+XtlmNJr2NYQ4RVFyHG+1UQp1RY8WRjtSDpGzAMqLgj1Duh4K7sLR4RevMTgFU4iIfb
-         giVByJtTLADcJ3es7Gfy8/wba3k7iQaQ6kU7w7foXE6Y05RE1rpkg64nrNF1RlB6VWSq
-         ZNbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:message-id:mime-version:subject:date
-         :in-reply-to:cc:to:references;
-        bh=U7xWct8fpo5uF4inpPT83b7tyag62f+IlDnqulmlW28=;
-        b=RsP4Os+w6W7OKcfTEzHOc7qtO3lsiBx33I6r4EyfZk9EUgkfRLZz0Ip98UQ4jqEJIH
-         29AFs7dvhzdHSYdFviHYdxOwAvWihM1VG+hRAVEtTOjg3PybLTIH4k0sXPjiScCAmHTL
-         t9Dx6F/z8uGpkyM+WBWZIV0alui8t0OOPesc8l0sMMaNQGqsQ81AUj34yd16dhiMZ8/S
-         XLDwMq55G1pvgne5tZXPNjj2oXEDwBwdNJD2o5jqiylfkYXlu+LETaSvk1q2oLUjQ6cy
-         AdIBucK5fAgK4pdOECqEzZkXvumlA4t+4v+FFXyAA76gmLxnMsdDCtra+3O8SyGsjjvC
-         Guqg==
-X-Gm-Message-State: AJcUukccFerTtjrJl8iT6IsYZI7QmsQL5DeLMhHSQK65DqOsGVKIksF7
-        QQ6K49kcs0l846eI061Y/xNWGloleIZsjw==
-X-Google-Smtp-Source: ALg8bN6INZA6fUxYN/O52HKyif58nX39xqE03ZXJNS+xYJ1/eBQC2C4ZCN3pexXSaST8zD8YqC1a3w==
-X-Received: by 2002:a50:95b4:: with SMTP id w49mr9890358eda.186.1548409036128;
-        Fri, 25 Jan 2019 01:37:16 -0800 (PST)
-Received: from [192.168.1.85] (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id b45sm11629157eda.34.2019.01.25.01.37.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 01:37:15 -0800 (PST)
-From:   =?utf-8?Q?Javier_Gonz=C3=A1lez?= <javier@javigon.com>
-Message-Id: <7BAC034D-8992-41E4-87A9-378813C821F7@javigon.com>
-Content-Type: multipart/signed;
-        boundary="Apple-Mail=_025C617B-44BF-449F-A530-B3644883D9D7";
-        protocol="application/pgp-signature";
-        micalg=pgp-sha512
-Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
-Subject: Re: [PATCH] lightnvm: pblk: stop taking the free lock in in
- pblk_lines_free
-Date:   Fri, 25 Jan 2019 10:37:14 +0100
-In-Reply-To: <CANr-nt04b06LAXm0LUV4wtGM18Qb2UZ2+Kq+D7XC79nyiptUug@mail.gmail.com>
-Cc:     =?utf-8?Q?Matias_Bj=C3=B8rling?= <mb@lightnvm.io>,
-        linux-block@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Hans Holmberg <hans.holmberg@cnexlabs.com>
-To:     Hans Holmberg <hans.ml.holmberg@owltronix.com>
-References: <20190122101531.30893-1-hans@owltronix.com>
- <251D7CB9-A9B0-4474-85A0-B0C23DB31272@javigon.com>
- <CANr-nt04b06LAXm0LUV4wtGM18Qb2UZ2+Kq+D7XC79nyiptUug@mail.gmail.com>
-X-Mailer: Apple Mail (2.3445.102.3)
+        Fri, 25 Jan 2019 04:38:34 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gmxwS-00025Q-0K; Fri, 25 Jan 2019 10:38:28 +0100
+Message-ID: <1548409107.28802.36.camel@pengutronix.de>
+Subject: Re: [PATCH v4 5/5] imx8mq.dtsi: add the sdma nodes
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
+        dmaengine@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Fri, 25 Jan 2019 10:38:27 +0100
+In-Reply-To: <20190125025528.15645-6-angus@akkea.ca>
+References: <20190120023150.17138-1-angus@akkea.ca>
+         <20190125025528.15645-1-angus@akkea.ca>
+         <20190125025528.15645-6-angus@akkea.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Am Donnerstag, den 24.01.2019, 19:55 -0700 schrieb Angus Ainslie (Purism):
+> Add the sdma nodes to the base devicetree for the imx8mq
+> 
+> Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 
---Apple-Mail=_025C617B-44BF-449F-A530-B3644883D9D7
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain;
-	charset=utf-8
+One nit below, with that fixed:
 
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
 
-> On 25 Jan 2019, at 10.15, Hans Holmberg =
-<hans.ml.holmberg@owltronix.com> wrote:
->=20
-> On Thu, Jan 24, 2019 at 2:19 PM Javier Gonz=C3=A1lez =
-<javier@javigon.com> wrote:
->>> On 22 Jan 2019, at 11.15, hans@owltronix.com wrote:
->>>=20
->>> From: Hans Holmberg <hans.holmberg@cnexlabs.com>
->>>=20
->>> pblk_line_meta_free might sleep (it can end up calling vfree, =
-depending
->>> on how we allocate lba lists), and this can lead to a BUG()
->>> if we wake up on a different cpu and release the lock.
->>>=20
->>> As there is no point of grabbing the free lock when pblk has shut =
-down,
->>> remove the lock.
->>>=20
->>> Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
->>> ---
->>> drivers/lightnvm/pblk-init.c | 2 --
->>> 1 file changed, 2 deletions(-)
->>>=20
->>> diff --git a/drivers/lightnvm/pblk-init.c =
-b/drivers/lightnvm/pblk-init.c
->>> index f9a3e47b6a93..eb0135c77805 100644
->>> --- a/drivers/lightnvm/pblk-init.c
->>> +++ b/drivers/lightnvm/pblk-init.c
->>> @@ -584,14 +584,12 @@ static void pblk_lines_free(struct pblk *pblk)
->>>      struct pblk_line *line;
->>>      int i;
->>>=20
->>> -     spin_lock(&l_mg->free_lock);
->>>      for (i =3D 0; i < l_mg->nr_lines; i++) {
->>>              line =3D &pblk->lines[i];
->>>=20
->>>              pblk_line_free(line);
->>>              pblk_line_meta_free(l_mg, line);
->>>      }
->>> -     spin_unlock(&l_mg->free_lock);
->>>=20
->>>      pblk_line_mg_free(pblk);
->>>=20
->>> --
->>> 2.17.1
->>=20
->> Can you add a comment too indicating that this is only safe on a =
-single
->> threaded shutdown?
->=20
-> To be able to free the lines, we need have stopped anything accessing
-> the lines first. That seems obvious to me.
->=20
+You might need to split this patch out from the series and send it to
+Shawn separately after the dmaengine changes have been accepted.
 
-The reason I mention this is that there is assumptions on the shutdown
-logic that the line freeup will be single threaded - you can see that we
-do not lock pblk_line_mg_free() either, for the same reason as you are
-removing this lock. We can do this is only because we have a single open
-line at the time (which in close down we fill up in parallel to speed up
-the process BTW). If we have more open lines, it would be desirable to
-close them in parallel. At this point we either have a sync point when
-they are all closed and then free, or we allow them to free themselves.
-In the second case, locking will be necessary.
+regards,
+Lucas
 
-IMHO, a comment does not hurt.
+> ---
+>  arch/arm64/boot/dts/freescale/imx8mq.dtsi | 28 +++++++++++++++++++++++
+>  1 file changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mq.dtsi b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> index c0402375e7c1..f0cd3675ead0 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/imx8mq.dtsi
+> @@ -336,6 +336,17 @@
+> >  				clocks = <&clk IMX8MQ_CLK_WDOG3_ROOT>;
+> >  				status = "disabled";
+> >  			};
+> +
+> > > +			sdma2: sdma@302c0000 {
+> > +				compatible = "fsl,imx8mq-sdma", "fsl,imx7d-sdma";
+> > +				reg = <0x302c0000 0x10000>;
+> > +				interrupts = <GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>;
+> > +				clocks = <&clk IMX8MQ_CLK_SDMA2_ROOT>,
+> +					<&clk IMX8MQ_CLK_SDMA2_ROOT>;
 
-> It would be nice to make a pass over the code and document pblk's
-> locking(and other concurrency handling, like the line krefs) though.
->=20
+Some spaces to align the second clock reference as in the rest of this
+file, please.
 
-True that - krefs specially would deserve some documentation. Let me see
-if I can allocate some time the following weeks to write up some
-documentation.
-
-> Thanks,
-> Hans
->=20
->> Otherwise the patch looks good.
->>=20
->> Reviewed-by: Javier Gonz=C3=A1lez <javier@javigon.com>
-
---Apple-Mail=_025C617B-44BF-449F-A530-B3644883D9D7
-Content-Transfer-Encoding: 7bit
-Content-Disposition: attachment;
-	filename=signature.asc
-Content-Type: application/pgp-signature;
-	name=signature.asc
-Content-Description: Message signed with OpenPGP
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCgAdFiEEU1dMZpvMIkj0jATvPEYBfS0leOAFAlxK2MoACgkQPEYBfS0l
-eODJCA/7BPpAYB3Rmziu5rEtnitaNWmUSiZ2AZ5yHzVq7JmDXMmMqkOa1eXeoJu7
-HjXC3wHDcWUoBxAGxwFIUvo36+6o4h5qh2bj+RI/vt2jMP7tbBXQ5Vd6AlAGhnl+
-iTfjPf/iuB0VHpL3ViWCpf4rcgvSdk2Qi222INq2YAA9s0hihNsRiRM2SNai6UsD
-aSQsuz+fBOrWJzeYFwe7L8Ui67+eU80Su4f25YB4QXuvTP0Yal6S19RmxMWP51tc
-5I3lyL4kVFjV6riWU7TiNrG98BKQt/pqPxQaBzgpnbuGgCtBJnY+IituwH7VKidF
-YftswdrvqwXeouxnvM2EaCWWnLcI+B9XB5nSwtLWbaMlbyv9WYm5J/ZOPXUMF/8b
-bXLsh3UDudB/3tkJJYOnwJg0i4UyMli+UX93MFJdiCKyBl5+jDvK6bk04vO0G1tM
-VNMkUY4BYZeCFTEXABXVyiIz9j1cobe0T05/LSqoz5HxmZTHr3CcjStx6/GimYxr
-7fSdUD+nQecjmknjL/6WU4Al8jNuDkhgOrLcOiYnrvK3XchD2HGkXjpEpbhWR5gt
-U22vjoEvT/KZzOw3y6tofYe/wHNiUmnY4RS4UwGh7WQvLDovbIxPn4RD26jab4XV
-zQokB58h3ywvASzZ9+eNgKxOXKMS+VHXrU71kkkNXWByjsq3ACg=
-=eU8s
------END PGP SIGNATURE-----
-
---Apple-Mail=_025C617B-44BF-449F-A530-B3644883D9D7--
+> +				clock-names = "ipg", "ahb";
+> > +				#dma-cells = <3>;
+> > +				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
+> > +			};
+> >  		};
+>  
+> >  		bus@30400000 { /* AIPS2 */
+> @@ -370,6 +381,8 @@
+> >  				clocks = <&clk IMX8MQ_CLK_UART3_ROOT>,
+> >  				         <&clk IMX8MQ_CLK_UART3_ROOT>;
+> >  				clock-names = "ipg", "per";
+> > +				dmas = <&sdma1 26 4 0>, <&sdma1 27 4 0>;
+> > +				dma-names = "rx", "tx";
+> >  				status = "disabled";
+> >  			};
+>  
+> @@ -381,6 +394,8 @@
+> >  				clocks = <&clk IMX8MQ_CLK_UART2_ROOT>,
+> >  				         <&clk IMX8MQ_CLK_UART2_ROOT>;
+> >  				clock-names = "ipg", "per";
+> > +				dmas = <&sdma1 24 4 0>, <&sdma1 25 4 0>;
+> > +				dma-names = "rx", "tx";
+> >  				status = "disabled";
+> >  			};
+>  
+> @@ -432,6 +447,8 @@
+> >  				clocks = <&clk IMX8MQ_CLK_UART4_ROOT>,
+> >  				         <&clk IMX8MQ_CLK_UART4_ROOT>;
+> >  				clock-names = "ipg", "per";
+> > +				dmas = <&sdma1 28 4 0>, <&sdma1 29 4 0>;
+> > +				dma-names = "rx", "tx";
+> >  				status = "disabled";
+> >  			};
+>  
+> @@ -465,6 +482,17 @@
+> >  				status = "disabled";
+> >  			};
+>  
+> > > +			sdma1: sdma@30bd0000 {
+> > +				compatible = "fsl,imx8mq-sdma", "fsl,imx7d-sdma";
+> > +				reg = <0x30bd0000 0x10000>;
+> > +				interrupts = <GIC_SPI 2 IRQ_TYPE_LEVEL_HIGH>;
+> > +				clocks = <&clk IMX8MQ_CLK_SDMA1_ROOT>,
+> > +					<&clk IMX8MQ_CLK_AHB>;
+> > +				clock-names = "ipg", "ahb";
+> > +				#dma-cells = <3>;
+> > +				fsl,sdma-ram-script-name = "imx/sdma/sdma-imx7d.bin";
+> > +			};
+> +
+> > >  			fec1: ethernet@30be0000 {
+> >  				compatible = "fsl,imx8mq-fec", "fsl,imx6sx-fec";
+> >  				reg = <0x30be0000 0x10000>;
