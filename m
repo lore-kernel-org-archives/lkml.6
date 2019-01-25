@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 226C0C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:22:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6D4AC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:22:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE18A218D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:22:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5C31218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:22:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548418947;
-	bh=2pi3rOZ9+pUimDrXOz6Bu369DZf3iP9QN/q6XHIcU0E=;
+	s=default; t=1548418969;
+	bh=XP5k4jhSVLoPdGoC02GSYhF035CT97+lUS9C4UQvM98=;
 	h=Date:From:To:Cc:Subject:List-ID:From;
-	b=VuoESvNO+t1vIJ3VgwMVGuvN2AABJb7tkj8TzSc0IEMHlVABB/M+Dfg98UuTCRPld
-	 +mI10Ir6BfHCFUTgF8bD65ss/4OxGXupvfpAIOqst1QTVRF4jPqhvBANiPOzOEBsw9
-	 RBC+l0TNyGJfo7UvZHz6DVOvazGwgB+FpqPz+iRw=
+	b=UOCvmRKQNVNXx6y+vGlrRT46pVd2tqn4iHXSIzSSPzZWRtYFfnvI/g0QpuJ+mPxf4
+	 diJH/8wJgaw8L1j9xJzGdZ4FXwjSICiT2AoyEXGuD979DrhYu1ZkS1BFGjTzKpN/nT
+	 TA4RXRqiJKw5jO2wHD7LUGAixLo7JbeEVs9JGYpc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726396AbfAYMW0 (ORCPT
+        id S1727264AbfAYMWr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 07:22:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36602 "EHLO mail.kernel.org"
+        Fri, 25 Jan 2019 07:22:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36756 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725909AbfAYMWZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 07:22:25 -0500
+        id S1725909AbfAYMWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 07:22:47 -0500
 Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B29DD218D9;
-        Fri, 25 Jan 2019 12:22:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FF6A218D9;
+        Fri, 25 Jan 2019 12:22:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548418944;
-        bh=2pi3rOZ9+pUimDrXOz6Bu369DZf3iP9QN/q6XHIcU0E=;
+        s=default; t=1548418966;
+        bh=XP5k4jhSVLoPdGoC02GSYhF035CT97+lUS9C4UQvM98=;
         h=Date:From:To:Cc:Subject:From;
-        b=aBzV6BgGEyDmvHiRLzV6y6/Ky49Pm2mbbl7X2inLHVNlfW8VsnQtOnqiKhv7q1Xgp
-         HtPCN1dweBqTIge/k46yHs9Dawt949F0PbIqCSJeDPryzHbYruLljbyETWoxO51SmN
-         V+YsAb57o17cWvq5BgGFkgQG5n7i4kdpctt51lt8=
-Date:   Fri, 25 Jan 2019 13:22:21 +0100
+        b=XeaQgD6uHnhFXYxsF19uW6Dof9FWHUUFD8YkbRqmStqZsvMZ5pmx0C6yloGYW9LGG
+         32WdOY2X2R4pOceGF3Rtweba1NRatGryXvgfvKM/NOWafEdvYicflC6YnSpQZcGBf7
+         sdGM74zlen8ZYPytfjN934Ool4+wj6FOW3UxLvlc=
+Date:   Fri, 25 Jan 2019 13:22:44 +0100
 From:   Greg KH <gregkh@linuxfoundation.org>
 To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org
-Subject: [GIT PULL] USB driver fixes for 5.0-rc4
-Message-ID: <20190125122221.GA7517@kroah.com>
+Cc:     Jiri Slaby <jslaby@suse.cz>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: [GIT PULL] TTY/Serial fixes for 5.0-rc4
+Message-ID: <20190125122244.GA7566@kroah.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -61,20 +63,21 @@ The following changes since commit 1c7fc5cbc33980acd13d668f1c8f0313d6ae9fd8:
 
 are available in the Git repository at:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git tags/usb-5.0-rc4
+  git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tags/tty-5.0-rc4
 
-for you to fetch changes up to 4f9b838927812b5949a9899f14e0c9ef7f02b0c8:
+for you to fetch changes up to 815d835b7ba46685c316b000013367dacb2b461b:
 
-  Merge tag 'usb-serial-5.0-rc3' of https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial into usb-linus (2019-01-18 12:58:20 +0100)
+  serial: fsl_lpuart: fix maximum acceptable baud rate with over-sampling (2019-01-22 09:32:08 +0100)
 
 ----------------------------------------------------------------
-USB/PHY fixes for 5.0-rc4
+TTY/Serial driver fixes for 5.0-rc4
 
-Here are a number of small USB and PHY driver fixes for 5.0-rc4.
+Here are a number of small tty core and serial driver fixes for 5.0-rc4
+to resolve some reported issues.
 
-Nothing major at all, just the usual selection of USB gadget bugfixes,
-some new USB serial driver ids, some SPDX fixes, and some PHY driver
-fixes for reported issues.
+Nothing major, the small serial driver fixes, a tty core fixup for a
+crash that was reported, and some good vt fixes from Nicolas Pitre as he
+seems to be auditing that chunk of code a lot lately.
 
 All of these have been in linux-next for a while with no reported
 issues.
@@ -82,77 +85,36 @@ issues.
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 
 ----------------------------------------------------------------
-Alban Bedel (2):
-      phy: ath79-usb: Fix the power on error path
-      phy: ath79-usb: Fix the main reset name to match the DT binding
+Greg Kroah-Hartman (1):
+      tty: Handle problem if line discipline does not have receive_buf
 
-Bo He (1):
-      usb: dwc3: gadget: synchronize_irq dwc irq in suspend
+He Zhe (1):
+      serial: 8250: Fix serial8250 initialization crash
 
-Charles Yeh (1):
-      USB: serial: pl2303: add new PID to support PL2303TB
+Matthias Kaehlcke (1):
+      tty: serial: qcom_geni_serial: Allow mctrl when flow control is disabled
 
-Christian Lamparter (1):
-      USB: leds: fix regression in usbport led trigger
+Nicolas Pitre (4):
+      vt: make vt_console_print() compatible with the unicode screen buffer
+      vt: always call notifier with the console lock held
+      vt: invoke notifier on screen size change
+      vgacon: unconfuse vc_origin when using soft scrollback
 
-Colin Ian King (1):
-      phy: ti: ensure priv is not null before dereferencing it
+Paul Fulghum (1):
+      tty/n_hdlc: fix __might_sleep warning
 
-Dan Carpenter (1):
-      usb: gadget: Potential NULL dereference on allocation error
+Samir Virmani (1):
+      uart: Fix crash in uart_write and uart_put_char
 
-Greg Kroah-Hartman (5):
-      Merge tag 'fixes-for-v5.0-rc2' of git://git.kernel.org/.../balbi/usb into usb-linus
-      USB: usbip: delete README file
-      USB: serial: keyspan_usa: add proper SPDX lines for .h files
-      Merge tag 'phy-for-5.0-rc' of git://git.kernel.org/.../kishon/linux-phy into usb-linus
-      Merge tag 'usb-serial-5.0-rc3' of https://git.kernel.org/.../johan/usb-serial into usb-linus
+Tomonori Sakita (1):
+      serial: fsl_lpuart: fix maximum acceptable baud rate with over-sampling
 
-Jack Pham (1):
-      usb: dwc3: gadget: Clear req->needs_extra_trb flag on cleanup
-
-John Hubbard (1):
-      phy: fix build breakage: add PHY_MODE_SATA
-
-Karoly Pados (1):
-      USB: serial: ftdi_sio: fix GPIO not working in autosuspend
-
-Lubomir Rintel (1):
-      USB: EHCI: ehci-mv: add MODULE_DEVICE_TABLE
-
-Max Schulze (1):
-      USB: serial: simple: add Motorola Tetra TPG2200 device id
-
-Minas Harutyunyan (1):
-      usb: dwc2: gadget: Fix Remote Wakeup interrupt bit clearing
-
-Peter Chen (1):
-      usb: chipidea: fix static checker warning for NULL pointer
-
-Shuah Khan (1):
-      MAINTAINERS: email address update in MAINTAINERS entries
-
-Zeng Tao (1):
-      usb: dwc3: gadget: Fix the uninitialized link_state when udc starts
-
- MAINTAINERS                                |  3 +++
- drivers/phy/qualcomm/phy-ath79-usb.c       |  4 ++--
- drivers/phy/ti/phy-gmii-sel.c              |  4 ++--
- drivers/usb/chipidea/ci_hdrc_imx.c         |  3 ++-
- drivers/usb/core/ledtrig-usbport.c         | 17 ++++++++++-------
- drivers/usb/dwc2/gadget.c                  |  2 +-
- drivers/usb/dwc3/gadget.c                  |  4 ++++
- drivers/usb/gadget/function/f_sourcesink.c |  2 +-
- drivers/usb/host/ehci-mv.c                 |  1 +
- drivers/usb/serial/ftdi_sio.c              | 15 ++++++++++++++-
- drivers/usb/serial/keyspan_usa26msg.h      |  1 +
- drivers/usb/serial/keyspan_usa28msg.h      |  1 +
- drivers/usb/serial/keyspan_usa49msg.h      |  1 +
- drivers/usb/serial/keyspan_usa67msg.h      |  1 +
- drivers/usb/serial/keyspan_usa90msg.h      |  1 +
- drivers/usb/serial/pl2303.c                |  1 +
- drivers/usb/serial/pl2303.h                |  2 ++
- drivers/usb/serial/usb-serial-simple.c     |  3 ++-
- drivers/usb/usbip/README                   |  7 -------
- 19 files changed, 50 insertions(+), 23 deletions(-)
- delete mode 100644 drivers/usb/usbip/README
+ drivers/tty/n_hdlc.c                  |  1 +
+ drivers/tty/serial/8250/8250_core.c   | 17 ++++++------
+ drivers/tty/serial/fsl_lpuart.c       |  2 +-
+ drivers/tty/serial/qcom_geni_serial.c |  4 +--
+ drivers/tty/serial/serial_core.c      | 12 ++++++---
+ drivers/tty/tty_io.c                  |  3 ++-
+ drivers/tty/vt/vt.c                   | 50 ++++++++++++-----------------------
+ drivers/video/console/vgacon.c        |  7 ++---
+ 8 files changed, 44 insertions(+), 52 deletions(-)
