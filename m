@@ -2,120 +2,129 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 421A0C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:57:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37DE8C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081A1218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:57:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07C7D218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:57:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="ad1+QzPi"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="HaRwAzzi"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726921AbfAYO5Q (ORCPT
+        id S1728007AbfAYO5v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:57:16 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:55715 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbfAYO5P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:57:15 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=JnYZe81m8mRJ5RfUEA8Um5lzxmgxWGE0ky+A7rSf9uA=; b=ad1+QzPia0EJgCcCaEbpXCUvQc
-        zuFsdQbmHa6DdLScnS6Hln9tqtKk9llhW0X81jR08UjsqLMpFL4FlqP2Xnwy90GuLaZm4LlgVeA9B
-        exiLAfRT4VDrBGuMyJzwrzfmUiG86wOMrlCmCZ2oM9wYkFvpLOdrM5VbpYJWNpGiHuiw=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gn2ut-0004QH-2Z; Fri, 25 Jan 2019 15:57:11 +0100
-Date:   Fri, 25 Jan 2019 15:57:11 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Thierry Reding <thierry.reding@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Heiner Kallweit <hkallweit1@gmail.com>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] r8169: Load MAC address from device tree if present
-Message-ID: <20190125145711.GF12962@lunn.ch>
-References: <20190125101814.6262-1-thierry.reding@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125101814.6262-1-thierry.reding@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Fri, 25 Jan 2019 09:57:51 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:44896 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbfAYO5v (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 09:57:51 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0PEnNEt173460;
+        Fri, 25 Jan 2019 14:57:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
+ subject : date : message-id; s=corp-2018-07-02;
+ bh=1hVAr1jHbK9xdBIGH3lIXe/a/YJdBQYCFBP7MZhLc6g=;
+ b=HaRwAzzigoQ5CiiPXnoN5SPgs41M28QgHhMeBIJuneQKRXSKvQdAwkD28d+8B3ji1LcD
+ uPpvu2Hrc3CPD1ERbNL4r9VJVjnB4gg0poTkviBal+q3CA5BUuDKtsK0nXSaSR0Q1sVQ
+ zTp3jcPatDYFXAHAspTjanhoPw60Mwz0DZJ7YkuHu4yRtiifmI3Wq3eUU8iJt+C3iBed
+ SfPQvsA2EE1hHISf3HKhhsU/ACqOhDD/irWcCjfrQbwd43joXshVeTyRdySb31qtbZLb
+ g9cYyedMHbpwZrmk7YylonBhyg75PM0gh3TwjbApWKbW7KzQWIvyDhk3VBHY/3uaw/0E SA== 
+Received: from aserv0021.oracle.com (aserv0021.oracle.com [141.146.126.233])
+        by userp2120.oracle.com with ESMTP id 2q3vhs63pf-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 25 Jan 2019 14:57:32 +0000
+Received: from achartre-desktop.fr.oracle.com (dhcp-10-166-106-34.fr.oracle.com [10.166.106.34])
+        by aserv0021.oracle.com (8.14.4/8.14.4) with ESMTP id x0PEvTGN003972;
+        Fri, 25 Jan 2019 14:57:29 GMT
+From:   Alexandre Chartre <alexandre.chartre@oracle.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Alexandre Chartre <alexandre.chartre@oracle.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Josh Poimboeuf <jpoimboe@redhat.com>, x86@kernel.org
+Subject: [PATCH] x86/alternatives: check int3 breakpoint physical addresses
+Date:   Fri, 25 Jan 2019 15:57:29 +0100
+Message-Id: <1548428249-8258-1-git-send-email-alexandre.chartre@oracle.com>
+X-Mailer: git-send-email 1.7.1
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9146 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=915
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901250122
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 11:18:14AM +0100, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
-> 
-> If the system was booted using a device tree and if the device tree
-> contains a MAC address, use it instead of reading one from the EEPROM.
-> This is useful in situations where the EEPROM isn't properly programmed
-> or where the firmware wants to override the existing MAC address.
-> 
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
-> Based on net-next.
-> 
->  drivers/net/ethernet/realtek/r8169.c | 35 +++++++++++++++++-----------
->  1 file changed, 22 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/realtek/r8169.c b/drivers/net/ethernet/realtek/r8169.c
-> index f574b6b557f9..fd9edd643ca5 100644
-> --- a/drivers/net/ethernet/realtek/r8169.c
-> +++ b/drivers/net/ethernet/realtek/r8169.c
-> @@ -6957,6 +6957,21 @@ static int rtl_alloc_irq(struct rtl8169_private *tp)
->  	return pci_alloc_irq_vectors(tp->pci_dev, 1, 1, flags);
->  }
->  
-> +static void rtl_read_mac_address(struct rtl8169_private *tp,
-> +				 u8 mac_addr[ETH_ALEN])
-> +{
-> +	/* Get MAC address */
-> +	switch (tp->mac_version) {
-> +	case RTL_GIGA_MAC_VER_35 ... RTL_GIGA_MAC_VER_38:
-> +	case RTL_GIGA_MAC_VER_40 ... RTL_GIGA_MAC_VER_51:
-> +		*(u32 *)&mac_addr[0] = rtl_eri_read(tp, 0xe0, ERIAR_EXGMAC);
-> +		*(u16 *)&mac_addr[4] = rtl_eri_read(tp, 0xe4, ERIAR_EXGMAC);
-> +		break;
-> +	default:
-> +		break;
-> +	}
-> +}
-> +
->  DECLARE_RTL_COND(rtl_link_list_ready_cond)
->  {
->  	return RTL_R8(tp, MCU) & LINK_LIST_RDY;
-> @@ -7148,6 +7163,7 @@ static int rtl_get_ether_clk(struct rtl8169_private *tp)
->  static int rtl_init_one(struct pci_dev *pdev, const struct pci_device_id *ent)
->  {
->  	const struct rtl_cfg_info *cfg = rtl_cfg_infos + ent->driver_data;
-> +	u8 mac_addr[ETH_ALEN] __aligned(4);
+Modifying multi-byte instructions is achieved by temporarily replacing
+the first instruction to patch with an int3 instruction. Then, if an
+int3 interrupt is raised, the int3 handler will check if the interrupt
+was caused by this temporary patch by comparing the address that raises
+the interrupt (the interrupt address) and the address that was patched
+(the patched address).
 
-Hi Thierry
+The int3 handler compares virtual addresses of the interrupt and
+patched addresses. However, this doesn't work if the code to modify
+is mapped to multiple virtual addresses because, in that case, the
+patched virtual address can be different from the interrupt virtual
+address.
 
-Maybe now would be a good time to cleanup this __aligned(4), pointer
-aliasing, etc?
+A simple solution is then to also compare physical addresses when
+virtual addresses do not match. Note that we still compare virtual
+addresses because that's a faster comparison than having to fully
+resolve and compare physical addresses.
 
-> +	/* get MAC address */
-> +	if (eth_platform_get_mac_address(&pdev->dev, mac_addr))
-> +		rtl_read_mac_address(tp, mac_addr);
-> +
+Signed-off-by: Alexandre Chartre <alexandre.chartre@oracle.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: H. Peter Anvin <hpa@zytor.com>
+Cc: Josh Poimboeuf <jpoimboe@redhat.com>
+Cc: x86@kernel.org
+---
 
-Maybe that could be made more readable with:
+This is a potential issue and I don't know if it can be triggered with the
+current kernel: is there any code mapped to multiple virtual addresses
+which can be updated with text_poke_bp()? However as the patch is small and
+simple, it might be worth applying it anyway to prevent any such issue.
 
-      err = eth_platform_get_mac_address(&pdev->dev, mac_addr);
-      if (err)
-      	 	rtl_read_mac_address(tp, mac_addr);
+Note that this issue has been observed and reproduced with a custom kernel
+with some code mapped to different virtual addresses and using jump labels
+As jump labels use text_poke_bp(), crashes were sometimes observed when
+updating jump labels.
 
-Thanks
-	Andrew
+ arch/x86/kernel/alternative.c |   13 ++++++++++++-
+ 1 files changed, 12 insertions(+), 1 deletions(-)
+
+diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
+index ebeac48..e563573 100644
+--- a/arch/x86/kernel/alternative.c
++++ b/arch/x86/kernel/alternative.c
+@@ -757,7 +757,18 @@ int poke_int3_handler(struct pt_regs *regs)
+ 	if (likely(!bp_patching_in_progress))
+ 		return 0;
+ 
+-	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
++	if (user_mode(regs))
++		return 0;
++
++	/*
++	 * If virtual addresses are different, check if physical addresses
++	 * are the same in case we have the same code mapped to different
++	 * virtual addresses. Note that we could just compare physical
++	 * addresses, however we first compare virtual addresses because
++	 * this is much faster and very likely to succeed.
++	 */
++	if (regs->ip != (unsigned long)bp_int3_addr &&
++	    slow_virt_to_phys((void *)regs->ip) != slow_virt_to_phys(bp_int3_addr))
+ 		return 0;
+ 
+ 	/* set up the specified breakpoint handler */
+-- 
+1.7.1
