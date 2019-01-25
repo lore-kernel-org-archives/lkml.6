@@ -2,141 +2,84 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08CA8C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:46:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 351E3C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:47:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D301A218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:46:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0CBEB218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:47:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726800AbfAYPqy (ORCPT
+        id S1728751AbfAYPrg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:46:54 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:39437 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfAYPqx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:46:53 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0PFjwNV177240
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Fri, 25 Jan 2019 07:45:58 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0PFjwsK177237;
-        Fri, 25 Jan 2019 07:45:58 -0800
-Date:   Fri, 25 Jan 2019 07:45:58 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Andy Shevchenko <tipbot@zytor.com>
-Message-ID: <tip-9359a8cbcc77d4afb07444f341e39015d232bd55@git.kernel.org>
-Cc:     thomas.tai@oracle.com, bhelgaas@google.com,
-        linux-kernel@vger.kernel.org, tbaicar@codeaurora.org,
-        tglx@linutronix.de, andriy.shevchenko@linux.intel.com, hch@lst.de,
-        tony.luck@intel.com, rafael.j.wysocki@intel.com, bp@suse.de,
-        rostedt@goodmis.org, hpa@zytor.com, mingo@kernel.org
-Reply-To: tglx@linutronix.de, tbaicar@codeaurora.org,
-          linux-kernel@vger.kernel.org, bhelgaas@google.com,
-          thomas.tai@oracle.com, mingo@kernel.org, hpa@zytor.com,
-          rostedt@goodmis.org, bp@suse.de, rafael.j.wysocki@intel.com,
-          tony.luck@intel.com, hch@lst.de,
-          andriy.shevchenko@linux.intel.com
-In-Reply-To: <20190125143035.81589-1-andriy.shevchenko@linux.intel.com>
-References: <20190125143035.81589-1-andriy.shevchenko@linux.intel.com>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:ras/core] RAS: Use consistent types for UUIDs
-Git-Commit-ID: 9359a8cbcc77d4afb07444f341e39015d232bd55
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Fri, 25 Jan 2019 10:47:36 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49316 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726122AbfAYPrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 10:47:35 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9BA87A78;
+        Fri, 25 Jan 2019 07:47:34 -0800 (PST)
+Received: from arrakis.emea.arm.com (arrakis.cambridge.arm.com [10.1.196.113])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 313463F5AF;
+        Fri, 25 Jan 2019 07:47:28 -0800 (PST)
+Date:   Fri, 25 Jan 2019 15:47:25 +0000
+From:   Catalin Marinas <catalin.marinas@arm.com>
+To:     Arnd Bergmann <arnd@arndb.de>
+Cc:     y2038@lists.linaro.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+        mattst88@gmail.com, linux@armlinux.org.uk, will.deacon@arm.com,
+        tony.luck@intel.com, fenghua.yu@intel.com, geert@linux-m68k.org,
+        monstr@monstr.eu, paul.burton@mips.com, deller@gmx.de,
+        benh@kernel.crashing.org, mpe@ellerman.id.au,
+        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com, dalias@libc.org,
+        davem@davemloft.net, luto@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, x86@kernel.org,
+        jcmvbkbc@gmail.com, akpm@linux-foundation.org,
+        deepa.kernel@gmail.com, ebiederm@xmission.com,
+        firoz.khan@linaro.org, linux-alpha@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-ia64@vger.kernel.org,
+        linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+        linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
+        sparclinux@vger.kernel.org, netdev@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v2 25/29] y2038: syscalls: rename y2038 compat syscalls
+Message-ID: <20190125154724.GH25901@arrakis.emea.arm.com>
+References: <20190118161835.2259170-1-arnd@arndb.de>
+ <20190118161835.2259170-26-arnd@arndb.de>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20190118161835.2259170-26-arnd@arndb.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  9359a8cbcc77d4afb07444f341e39015d232bd55
-Gitweb:     https://git.kernel.org/tip/9359a8cbcc77d4afb07444f341e39015d232bd55
-Author:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-AuthorDate: Fri, 25 Jan 2019 16:30:35 +0200
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Fri, 25 Jan 2019 16:40:40 +0100
+On Fri, Jan 18, 2019 at 05:18:31PM +0100, Arnd Bergmann wrote:
+> A lot of system calls that pass a time_t somewhere have an implementation
+> using a COMPAT_SYSCALL_DEFINEx() on 64-bit architectures, and have
+> been reworked so that this implementation can now be used on 32-bit
+> architectures as well.
+> 
+> The missing step is to redefine them using the regular SYSCALL_DEFINEx()
+> to get them out of the compat namespace and make it possible to build them
+> on 32-bit architectures.
+> 
+> Any system call that ends in 'time' gets a '32' suffix on its name for
+> that version, while the others get a '_time32' suffix, to distinguish
+> them from the normal version, which takes a 64-bit time argument in the
+> future.
+> 
+> In this step, only 64-bit architectures are changed, doing this rename
+> first lets us avoid touching the 32-bit architectures twice.
+> 
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-RAS: Use consistent types for UUIDs
+For arm64:
 
-The commit
-
-  297b64c74385 ("ras: acpi / apei: generate trace event for unrecognized CPER section")
-
-brought inconsistency in UUID types which are used across the RAS
-subsystem.
-
-Fix this by using guid_t everywhere.
-
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Thomas Tai <thomas.tai@oracle.com>
-Cc: Tony Luck <tony.luck@intel.com>
-Cc: Tyler Baicar <tbaicar@codeaurora.org>
-Link: https://lkml.kernel.org/r/20190125143035.81589-1-andriy.shevchenko@linux.intel.com
----
- drivers/ras/ras.c       | 2 +-
- include/ras/ras_event.h | 8 ++++----
- 2 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/ras/ras.c b/drivers/ras/ras.c
-index 3f38907320dc..95540ea8dd9d 100644
---- a/drivers/ras/ras.c
-+++ b/drivers/ras/ras.c
-@@ -14,7 +14,7 @@
- #define TRACE_INCLUDE_PATH ../../include/ras
- #include <ras/ras_event.h>
- 
--void log_non_standard_event(const uuid_le *sec_type, const uuid_le *fru_id,
-+void log_non_standard_event(const guid_t *sec_type, const guid_t *fru_id,
- 			    const char *fru_text, const u8 sev, const u8 *err,
- 			    const u32 len)
- {
-diff --git a/include/ras/ras_event.h b/include/ras/ras_event.h
-index a0794632fd01..36c5c5e38c1d 100644
---- a/include/ras/ras_event.h
-+++ b/include/ras/ras_event.h
-@@ -27,7 +27,7 @@
- TRACE_EVENT(extlog_mem_event,
- 	TP_PROTO(struct cper_sec_mem_err *mem,
- 		 u32 err_seq,
--		 const uuid_le *fru_id,
-+		 const guid_t *fru_id,
- 		 const char *fru_text,
- 		 u8 sev),
- 
-@@ -39,7 +39,7 @@ TRACE_EVENT(extlog_mem_event,
- 		__field(u8, sev)
- 		__field(u64, pa)
- 		__field(u8, pa_mask_lsb)
--		__field_struct(uuid_le, fru_id)
-+		__field_struct(guid_t, fru_id)
- 		__string(fru_text, fru_text)
- 		__field_struct(struct cper_mem_err_compact, data)
- 	),
-@@ -218,8 +218,8 @@ TRACE_EVENT(arm_event,
-  */
- TRACE_EVENT(non_standard_event,
- 
--	TP_PROTO(const uuid_le *sec_type,
--		 const uuid_le *fru_id,
-+	TP_PROTO(const guid_t *sec_type,
-+		 const guid_t *fru_id,
- 		 const char *fru_text,
- 		 const u8 sev,
- 		 const u8 *err,
+Acked-by: Catalin Marinas <catalin.marinas@arm.com>
