@@ -2,143 +2,126 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 634BFC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23A11C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:34:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 30228218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:31:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="bUbrur6p"
+	by mail.kernel.org (Postfix) with ESMTP id DE5E721855
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:34:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728936AbfAYJbA (ORCPT
+        id S1728365AbfAYJez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 04:31:00 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:38892 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726520AbfAYJbA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 04:31:00 -0500
-Received: from zn.tnic (p200300EC2BCAC5008171EC5460E7CDAE.dip0.t-ipconnect.de [IPv6:2003:ec:2bca:c500:8171:ec54:60e7:cdae])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3D3D11EC0229;
-        Fri, 25 Jan 2019 10:30:58 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548408658;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=l8/CFgutwOvxgqngQLTy4YuEb5ebbbFztEea0Avs9q0=;
-        b=bUbrur6puTnchZI+GtOUgt9AOVvc+Ae5pp2AbXn3zl56ko7TQeiAMvMt82l/uiNKrzFkWU
-        xE+Lgre99tNAQPN+kju5rRJhk7+gwDA1BVSo2SOpdZc5BqECsohuDcMTrvfJV+xcR6Z0Dt
-        NtKvCITWDx8Hug0dQ4Tj6P0pQgnMd4Q=
-Date:   Fri, 25 Jan 2019 10:30:52 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org, hpa@zytor.com,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, linux_dti@icloud.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, akpm@linux-foundation.org,
-        kernel-hardening@lists.openwall.com, linux-mm@kvack.org,
-        will.deacon@arm.com, ard.biesheuvel@linaro.org,
-        kristen@linux.intel.com, deneen.t.dock@intel.com,
-        Nadav Amit <namit@vmware.com>,
-        Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH 01/17] Fix "x86/alternatives: Lockdep-enforce text_mutex
- in text_poke*()"
-Message-ID: <20190125093052.GA27998@zn.tnic>
-References: <20190117003259.23141-1-rick.p.edgecombe@intel.com>
- <20190117003259.23141-2-rick.p.edgecombe@intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190117003259.23141-2-rick.p.edgecombe@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 25 Jan 2019 04:34:55 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:56965 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726269AbfAYJey (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 04:34:54 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gmxst-0001Sj-1b; Fri, 25 Jan 2019 10:34:47 +0100
+Message-ID: <1548408884.28802.33.camel@pengutronix.de>
+Subject: Re: [PATCH v4 4/5] dma: imx-sdma: add a test for imx8mq multi sdma
+ devices
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
+Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
+        dmaengine@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Fri, 25 Jan 2019 10:34:44 +0100
+In-Reply-To: <20190125025528.15645-5-angus@akkea.ca>
+References: <20190120023150.17138-1-angus@akkea.ca>
+         <20190125025528.15645-1-angus@akkea.ca>
+         <20190125025528.15645-5-angus@akkea.ca>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 16, 2019 at 04:32:43PM -0800, Rick Edgecombe wrote:
-> From: Nadav Amit <namit@vmware.com>
+Am Donnerstag, den 24.01.2019, 19:55 -0700 schrieb Angus Ainslie (Purism):
+> On i.mx8mq, there are two sdma instances, and the common dma framework
+> will get a channel dynamically from any available sdma instance whether
+> it's the first sdma device or the second sdma device. Some IPs like
+> SAI only work with sdma2 not sdma1. To make sure the sdma channel is from
+> the correct sdma device, use the phandle to match.
 > 
-> text_mutex is currently expected to be held before text_poke() is
-> called, but we kgdb does not take the mutex, and instead *supposedly*
-> ensures the lock is not taken and will not be acquired by any other core
-> while text_poke() is running.
-> 
-> The reason for the "supposedly" comment is that it is not entirely clear
-> that this would be the case if gdb_do_roundup is zero.
-
-I guess that variable name is "kgdb_do_roundup" ?
-
-> This patch creates two wrapper functions, text_poke() and
-
-Avoid having "This patch" or "This commit" in the commit message. It is
-tautologically useless.
-
-Also, do
-
-$ git grep 'This patch' Documentation/process
-
-for more details.
-
-> text_poke_kgdb() which do or do not run the lockdep assertion
-> respectively.
-> 
-> While we are at it, change the return code of text_poke() to something
-> meaningful. One day, callers might actually respect it and the existing
-> BUG_ON() when patching fails could be removed. For kgdb, the return
-> value can actually be used.
-> 
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> Fixes: 9222f606506c ("x86/alternatives: Lockdep-enforce text_mutex in text_poke*()")
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Acked-by: Jiri Kosina <jkosina@suse.cz>
-> Signed-off-by: Nadav Amit <namit@vmware.com>
-> Signed-off-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> > Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 > ---
->  arch/x86/include/asm/text-patching.h |  1 +
->  arch/x86/kernel/alternative.c        | 52 ++++++++++++++++++++--------
->  arch/x86/kernel/kgdb.c               | 11 +++---
->  3 files changed, 45 insertions(+), 19 deletions(-)
+>  drivers/dma/imx-sdma.c                | 8 ++++++++
+>  include/linux/platform_data/dma-imx.h | 1 +
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
+> index ec6fb48f387a..88e112a4aabf 100644
+> --- a/drivers/dma/imx-sdma.c
+> +++ b/drivers/dma/imx-sdma.c
+> @@ -1927,11 +1927,17 @@ static int sdma_init(struct sdma_engine *sdma)
+>  static bool sdma_filter_fn(struct dma_chan *chan, void *fn_param)
+>  {
+> >  	struct sdma_channel *sdmac = to_sdma_chan(chan);
+> > +	struct sdma_engine *sdma = sdmac->sdma;
+> >  	struct imx_dma_data *data = fn_param;
+>  
+> >  	if (!imx_dma_is_general_purpose(chan))
+> >  		return false;
+>  
+> > +	/* return false if it's not the right device */
+> +	if ((sdmac->sdma->drvdata == &sdma_imx8mq)
 
-...
+Why do this check only on i.MX8M? This is completely generic and can
+and should be done for every SDMA engine with a OF node.
 
-> +/**
-> + * text_poke_kgdb - Update instructions on a live kernel by kgdb
-> + * @addr: address to modify
-> + * @opcode: source of the copy
-> + * @len: length to copy
-> + *
-> + * Only atomic text poke/set should be allowed when not doing early patching.
-> + * It means the size must be writable atomically and the address must be aligned
-> + * in a way that permits an atomic write. It also makes sure we fit on a single
-> + * page.
-> + *
-> + * Context: should only be used by kgdb, which ensures no other core is running,
-> + *	    despite the fact it does not hold the text_mutex.
-> + */
-> +void *text_poke_kgdb(void *addr, const void *opcode, size_t len)
+Also why use the phandle to match this instead of the of_node pointer
+directly?
 
-text_poke_unlocked() I guess. I don't think kgdb is that special that it
-needs its own function flavor.
+Regards,
+Lucas
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> +		&& (sdma->dev->of_node->phandle != data->phandle))
+> > +		return false;
+> +
+> >  	sdmac->data = *data;
+> >  	chan->private = &sdmac->data;
+>  
+> @@ -1942,6 +1948,7 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
+> >  				   struct of_dma *ofdma)
+>  {
+> >  	struct sdma_engine *sdma = ofdma->of_dma_data;
+> > +	struct device_node *np = ofdma->of_node;
+> >  	dma_cap_mask_t mask = sdma->dma_device.cap_mask;
+> >  	struct imx_dma_data data;
+>  
+> @@ -1959,6 +1966,7 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
+> >  	 * be set to sdmac->event_id1.
+> >  	 */
+> >  	data.dma_request2 = 0;
+> > +	data.phandle = np->phandle;
+>  
+> >  	return dma_request_channel(mask, sdma_filter_fn, &data);
+>  }
+> diff --git a/include/linux/platform_data/dma-imx.h b/include/linux/platform_data/dma-imx.h
+> index 7d964e787299..eeb5b73ae542 100644
+> --- a/include/linux/platform_data/dma-imx.h
+> +++ b/include/linux/platform_data/dma-imx.h
+> @@ -55,6 +55,7 @@ struct imx_dma_data {
+> >  	int dma_request2; /* secondary DMA request line */
+> >  	enum sdma_peripheral_type peripheral_type;
+> >  	int priority;
+> > +	int phandle;
+>  };
+>  
+>  static inline int imx_dma_is_ipu(struct dma_chan *chan)
