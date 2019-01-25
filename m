@@ -2,119 +2,124 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B13DC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:56:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59155C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C76D2218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 06:56:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 24EDD2184B
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:02:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="iSMhlvcL"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YjkIfraW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728223AbfAYG4x (ORCPT
+        id S1727803AbfAYHCw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 01:56:53 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:61151 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726271AbfAYG4x (ORCPT
+        Fri, 25 Jan 2019 02:02:52 -0500
+Received: from mail-ed1-f53.google.com ([209.85.208.53]:34303 "EHLO
+        mail-ed1-f53.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726897AbfAYHCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 01:56:53 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id x0P6sNWn014857;
-        Fri, 25 Jan 2019 15:54:24 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com x0P6sNWn014857
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1548399265;
-        bh=kOFx2JtTztRNzevV/1XzwIagjECo3SMM4V/39EhMnQo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=iSMhlvcLLuDzzMVrbnPuv8WfWzETeB4UyKz9HKWhNE/IfbUPXMRbERobKnwXFLGmd
-         cIKiTnJcK6n94Hm7AmXViRtUWerr1tZyblXO/Z6ARr0Kd+ByA90fbwzI4PZ8C6B3tA
-         gqthXvT9fcj5C/4lw+iyumyysPLWLLnx02IxNjbqECv+C5fuwjcYNS1cJCRLSbwzND
-         2rP3zjnP9iI6fgpP4xYI29Q5K/ojbv4X2UOKBxsrXP7gPeFtaAwm2Gk7VXaLIczq57
-         qSkuIX5hpoXvS3PZCPxabvZJlttsVMteIDNUs/EQC9CNm8PQ+HFKdHiFdiwVNG59et
-         IjjH+RpLdDc1g==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sakari Ailus <sakari.ailus@iki.fi>,
-        Patrice Chotard <patrice.chotard@st.com>,
-        Akihiro Tsukada <tskd08@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        linux-kernel@vger.kernel.org, Abylay Ospan <aospan@netup.ru>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sergey Kozlov <serjk@netup.ru>, Mike Isely <isely@pobox.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Yasunari Takiguchi <Yasunari.Takiguchi@sony.com>,
-        Andy Walls <awalls@md.metrocast.net>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 0/3] media: clean-up header search paths and add $(srctree)/ prefix
-Date:   Fri, 25 Jan 2019 15:54:16 +0900
-Message-Id: <1548399259-17750-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 25 Jan 2019 02:02:51 -0500
+Received: by mail-ed1-f53.google.com with SMTP id b3so6593652ede.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 23:02:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=cyLosbw975pFE25Y2vfzwPuN8/wk+kN4j80s9bRHwe4=;
+        b=YjkIfraWX8lxLQ8cGi6MkrIdQxnCp/M421VYz7v5jtMHz4OSFLCQF2G8fcaOqM8Mi0
+         b8M7FlN0Hp8OLqSRWstF6FJIcMHF+BrfEhDjVfMTxE/KFhRATuaossCsCZztkLqSn5rl
+         FSB3WWby34rQutSqSnKub+MKY9OFnWAZTUf0A=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=cyLosbw975pFE25Y2vfzwPuN8/wk+kN4j80s9bRHwe4=;
+        b=HQtpbThFTVdqNhtKjXxBmGWUza6CHIkK39ytKJnqmw9w6zFyrJedbWcnt1qJbxudFA
+         y19ZotyDsdcSCWLfXxKPEK0Pdr8MSWZ41yxJMYGU2BCwhL/10g0218PqUcWtFLNu/gVs
+         TPuSf5rxVy7hDy0Ig3u6uE8CMfnbnqA0UVS3ikG+1lma4EgICKHii28XIuurCltQQXZD
+         jjEjNRaU5KVeOzOL25+2e/CI2XhTBqLywvT2YLY4XFkS24nV1QLUCF2/H9krQQeT0LZ4
+         sZYn7hcjv1FOVim50+Z71z13DFZWVfhgofAPwBF1YpEeFpJX7uN7F5oFO2TJT+n3dljB
+         5sEA==
+X-Gm-Message-State: AJcUukcTLmrlycVMLyKSwWz2Gq/nxhgJPmRxWLDQZ/hFyruUJJDuX9Sq
+        4Ay1yOmn8IxQttyV3pZkjLgkphY/yuk=
+X-Google-Smtp-Source: ALg8bN5g4aavWdMqMtIL3By+udehsRSZVXv41h+ZMTiqy0c+hxDeesoxs/MIYpFMI3AGMUu2dlb6fQ==
+X-Received: by 2002:a50:bae3:: with SMTP id x90mr9829519ede.221.1548399769658;
+        Thu, 24 Jan 2019 23:02:49 -0800 (PST)
+Received: from localhost ([49.248.181.51])
+        by smtp.gmail.com with ESMTPSA id x47sm11711410eda.91.2019.01.24.23.02.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 24 Jan 2019 23:02:49 -0800 (PST)
+From:   Amit Kucheria <amit.kucheria@linaro.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
+        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
+        mka@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Zhang Rui <rui.zhang@intel.com>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC
+        support),
+        linux-pm@vger.kernel.org (open list:CPU FREQUENCY SCALING FRAMEWORK)
+Subject: [PATCHv3 0/9] cpufreq: Add flag to auto-register as cooling device
+Date:   Fri, 25 Jan 2019 12:32:20 +0530
+Message-Id: <cover.1548398851.git.amit.kucheria@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My main motivation is to get rid of crappy header search path manipulation
-from Kbuild core.
+Add a flag for cpufreq drivers to tell cpufreq core to auto-register
+themselves as a thermal cooling device.
 
-Before that, I want to do as many treewide cleanups as possible.
+There series converts over all the drivers except arm_big_little.c.
+Tested on SDM845 with the qcom-cpufreq-hw driver. Only compile-tested the
+others.
 
-If you are interested in the big picture of this work,
-the full patch set is available at:
-git://git.kernel.org/pub/scm/linux/kernel/git/masahiroy/linux-kbuild.git build-test
+Things needing fixing (but not a blocker for the series):
+ - Look at how to detect that we're not in IKS mode in arm_big_little's
+   .ready callback.
 
+Changes since v2:
+ - Get rid of #ifdef'ery and let the pointer exist in all cases
+ - Get rid of (!CPU_THERMAL || THERMAL) dependency in all cpufreq drivers'
+   Kconfig
 
+Changes since v1:
+- Fix compilation failures with allmodconfig
+- Get rid of #ifdef in cpufreq.c
+- Removed miscellaneous patches and sent them separately
+- Merged patches 1 and 2 from v1
 
-Masahiro Yamada (3):
-  media: coda: remove -I$(src) header search path
-  media: remove unneeded header search paths
-  media: prefix header search paths with $(srctree)/
+Amit Kucheria (9):
+  thermal: cpu_cooling: Require thermal core to be compiled in
+  cpufreq: Auto-register the driver as a thermal cooling device if asked
+  cpufreq: qcom-hw: Register as a cpufreq cooling device
+  cpufreq: imx6q: Use auto-registration of thermal cooling device
+  cpufreq: cpufreq-dt: Use auto-registration of thermal cooling device
+  cpufreq: mediatek: Use auto-registration of thermal cooling device
+  cpufreq: qoriq: Use auto-registration of thermal cooling device
+  cpufreq: scmi: Use auto-registration of thermal cooling device
+  cpufreq: scpi: Use auto-registration of thermal cooling device
 
- drivers/media/common/b2c2/Makefile            | 4 ++--
- drivers/media/dvb-frontends/cxd2880/Makefile  | 2 --
- drivers/media/i2c/smiapp/Makefile             | 2 +-
- drivers/media/mmc/siano/Makefile              | 3 +--
- drivers/media/pci/b2c2/Makefile               | 2 +-
- drivers/media/pci/bt8xx/Makefile              | 5 ++---
- drivers/media/pci/cx18/Makefile               | 4 ++--
- drivers/media/pci/cx23885/Makefile            | 4 ++--
- drivers/media/pci/cx88/Makefile               | 4 ++--
- drivers/media/pci/ddbridge/Makefile           | 4 ++--
- drivers/media/pci/dm1105/Makefile             | 2 +-
- drivers/media/pci/mantis/Makefile             | 2 +-
- drivers/media/pci/netup_unidvb/Makefile       | 2 +-
- drivers/media/pci/ngene/Makefile              | 4 ++--
- drivers/media/pci/pluto2/Makefile             | 2 +-
- drivers/media/pci/pt1/Makefile                | 4 ++--
- drivers/media/pci/pt3/Makefile                | 4 ++--
- drivers/media/pci/smipcie/Makefile            | 5 ++---
- drivers/media/pci/ttpci/Makefile              | 4 ++--
- drivers/media/platform/coda/Makefile          | 2 --
- drivers/media/platform/coda/coda-h264.c       | 3 ++-
- drivers/media/platform/coda/trace.h           | 2 +-
- drivers/media/platform/sti/c8sectpfe/Makefile | 5 ++---
- drivers/media/radio/Makefile                  | 2 --
- drivers/media/spi/Makefile                    | 4 +---
- drivers/media/usb/as102/Makefile              | 2 +-
- drivers/media/usb/au0828/Makefile             | 4 ++--
- drivers/media/usb/b2c2/Makefile               | 2 +-
- drivers/media/usb/cx231xx/Makefile            | 5 ++---
- drivers/media/usb/em28xx/Makefile             | 4 ++--
- drivers/media/usb/go7007/Makefile             | 2 +-
- drivers/media/usb/pvrusb2/Makefile            | 4 ++--
- drivers/media/usb/siano/Makefile              | 2 +-
- drivers/media/usb/tm6000/Makefile             | 4 ++--
- drivers/media/usb/ttusb-budget/Makefile       | 2 +-
- drivers/media/usb/usbvision/Makefile          | 2 --
- 36 files changed, 50 insertions(+), 64 deletions(-)
+ drivers/cpufreq/Kconfig            |  3 ---
+ drivers/cpufreq/Kconfig.arm        |  5 -----
+ drivers/cpufreq/cpufreq-dt.c       | 14 ++------------
+ drivers/cpufreq/cpufreq.c          |  6 ++++++
+ drivers/cpufreq/imx6q-cpufreq.c    | 24 ++----------------------
+ drivers/cpufreq/mediatek-cpufreq.c | 14 ++------------
+ drivers/cpufreq/qcom-cpufreq-hw.c  |  3 ++-
+ drivers/cpufreq/qoriq-cpufreq.c    | 15 ++-------------
+ drivers/cpufreq/scmi-cpufreq.c     | 14 ++------------
+ drivers/cpufreq/scpi-cpufreq.c     | 14 ++------------
+ drivers/thermal/Kconfig            |  1 +
+ include/linux/cpufreq.h            | 21 +++++++++++++++++++++
+ 12 files changed, 42 insertions(+), 92 deletions(-)
 
 -- 
-2.7.4
+2.17.1
 
