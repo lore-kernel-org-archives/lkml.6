@@ -2,234 +2,132 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-21.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,
+	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F6F5C282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:52:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DF5C282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:53:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 395BF218D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:52:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548377540;
-	bh=uiO6NzAW/IsMkr/a3xq6PA2jzljKqzvkff43pGJPnCU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=MwZLehCzlKOHw3IyHcUVz1Ti+s2R+LYeYDBUYbj1Ztm664PgTOdgYg4lIyKttfST2
-	 eeDTqOia0w3OMRRrtMgkKBeFS1mjoVPoxUhrFfDL1Bbu4ebVPxG7KxH4RuyqIMREHC
-	 LSw+Qeq6JiCPyIcaK3WJW5hC0SRTPNG/5UvnFyrk=
+	by mail.kernel.org (Postfix) with ESMTP id 8521C218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:53:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="odbvWhwT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727969AbfAYAwS (ORCPT
+        id S1728162AbfAYAxY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 19:52:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47864 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726015AbfAYAwR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 19:52:17 -0500
-Received: from localhost (unknown [104.132.1.80])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75B6E218B0;
-        Fri, 25 Jan 2019 00:52:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548377536;
-        bh=uiO6NzAW/IsMkr/a3xq6PA2jzljKqzvkff43pGJPnCU=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=w3ibNCUqOZtor7wRJOv68JOSwUVjNCfDrlCy1CG7S4k1PDrSwdX83SMRnxjDhM/Ln
-         TqCy+qOLlVAIztGcPUyqKbSQftqsbPYWp+MpZ0vrmCCuChPlD2H1H2PL6JhyMj0hv9
-         DHZ3LZMvnDms8XmDrUVPFlnpN6ymlmNLMH1h78Os=
-Date:   Thu, 24 Jan 2019 16:52:15 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-kernel@vger.kernel.org,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: Re: [f2fs-dev] [PATCH 2/2] f2fs: sync filesystem after roll-forward
- recovery
-Message-ID: <20190125005215.GA2196@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20190123000229.45236-1-jaegeuk@kernel.org>
- <20190123000229.45236-2-jaegeuk@kernel.org>
- <fc1eab1c-f752-c44a-6ebf-338b1fdad741@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fc1eab1c-f752-c44a-6ebf-338b1fdad741@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+        Thu, 24 Jan 2019 19:53:24 -0500
+Received: from mail-vs1-f73.google.com ([209.85.217.73]:36127 "EHLO
+        mail-vs1-f73.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726815AbfAYAxX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 19:53:23 -0500
+Received: by mail-vs1-f73.google.com with SMTP id r133so2998565vsc.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 16:53:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=lImYpiAn1uJlETxYy7nHGrYS1qOku0eBJBZYPcEb9VQ=;
+        b=odbvWhwT6481BRFmWz+HTJ5w2iyTkKq165H7DpqSBNd95LzJ58leC9HI1ts+um3zTt
+         sGLG5AE3GNvCFdvII60PxnCfPGSHYHSWqIIups9yHdHh/9ULFPeNDVbtKl4GkMhOMDvX
+         IFWWA7vUoilKzA+26J924P2pgfXlAVQ+zuEAEkGGfzAd6lsLUeir/3i2WyuxOUsIIiaQ
+         AzPCMHrjHtHJXki4Y7B6JN2qTo1Qhr+HrE2rS3dLz0Sjr4IHtQkeWqWt0Lwrx+8Oobsg
+         r7dY2PQ82m9JQv5WNJ5AK6BHsbKX+eeIkK4GXmytnBVHfssgAXA4b5J92BtycUH/ahCd
+         Rl3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=lImYpiAn1uJlETxYy7nHGrYS1qOku0eBJBZYPcEb9VQ=;
+        b=qjHhUQpDJK4tPPDteu6cVD8BK8hiOCPaB7mxAT8oV7MsPgm6UtgT2LFUo8E4gR+paj
+         slkSimoSD8oagjLkGg4L0yuSnCu5fTKP4XOeDiyAK+Sax6aV0OwaB3eaERQrPa5WcYFV
+         gfhV5NiI/e2Yw6Xm6ACRNTvCMGT9MUJKsg6EESPNn5yXXWUgLElfM2oVwCOk01k/jEyv
+         8sDLUXwCi+OUp10QMNLca2vV8JmPqXcyURJg86YIqV0UlhYY4wKQ4usx6Qjdq5Gv4FjF
+         3qMV3K5lXGKMpl9UdYKdQ5S1/zMJXlCAj2wYRgGlvhMoQ0Q+hVZtaDmwLyf4qkUbiLMB
+         ibLQ==
+X-Gm-Message-State: AJcUukdh4EEiDxAW8z56yF6FrMHW3dUFezHYDJnyrrKto9UgNK21kB7I
+        ra/U0CKo+A80/Bi1iz3CYr6tHaV0Nt1Uz4/Yz4s=
+X-Google-Smtp-Source: ALg8bN5gjC2t14WSAJstQ+OAgdmNd0+EtOob/jdgNeSBgNP66NpeJ/4VYrKvORwUINDWmrKNyJ2F3mUHXNfET2Cl0WY=
+X-Received: by 2002:a67:8542:: with SMTP id h63mr7284273vsd.43.1548377602513;
+ Thu, 24 Jan 2019 16:53:22 -0800 (PST)
+Date:   Thu, 24 Jan 2019 16:52:59 -0800
+Message-Id: <20190125005304.183322-1-ndesaulniers@google.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.20.1.321.g9e740568ce-goog
+X-Patchwork-Bot: notify
+Subject: [PATCH] drm/amd/display: add -msse2 to prevent Clang from emitting
+ libcalls to undefined SW FP routines
+From:   ndesaulniers@google.com
+To:     airlied@linux.ie, daniel@ffwll.ch
+Cc:     Nick Desaulniers <ndesaulniers@google.com>, stable@vger.kernel.org,
+        S@google.com, Shirish <Shirish.S@amd.com>,
+        Matthias Kaehlcke <mka@google.com>,
+        James Y Knight <jyknight@google.com>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Harry Wentland <harry.wentland@amd.com>,
+        Leo Li <sunpeng.li@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        "=?UTF-8?q?Christian=20K=C3=B6nig?=" <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        Matthias Kaehlcke <mka@chromium.org>,
+        "=?UTF-8?q?Michel=20D=C3=A4nzer?=" <michel.daenzer@amd.com>,
+        Tony Cheng <Tony.Cheng@amd.com>,
+        Dmytro Laktyushkin <Dmytro.Laktyushkin@amd.com>,
+        amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/24, Chao Yu wrote:
-> On 2019/1/23 8:02, Jaegeuk Kim wrote:
-> > Some works after roll-forward recovery can get an error which will release
-> > all the data structures. Let's flush them in order to make it clean.
-> > 
-> > One possible corruption came from:
-> > 
-> > [   90.400500] list_del corruption. prev->next should be ffffffed1f566208, but was (null)
-> > [   90.675349] Call trace:
-> > [   90.677869]  __list_del_entry_valid+0x94/0xb4
-> > [   90.682351]  remove_dirty_inode+0xac/0x114
-> > [   90.686563]  __f2fs_write_data_pages+0x6a8/0x6c8
-> > [   90.691302]  f2fs_write_data_pages+0x40/0x4c
-> > [   90.695695]  do_writepages+0x80/0xf0
-> > [   90.699372]  __writeback_single_inode+0xdc/0x4ac
-> > [   90.704113]  writeback_sb_inodes+0x280/0x440
-> > [   90.708501]  wb_writeback+0x1b8/0x3d0
-> > [   90.712267]  wb_workfn+0x1a8/0x4d4
-> > [   90.715765]  process_one_work+0x1c0/0x3d4
-> > [   90.719883]  worker_thread+0x224/0x344
-> > [   90.723739]  kthread+0x120/0x130
-> > [   90.727055]  ret_from_fork+0x10/0x18
-> > 
-> > Reported-by: Sahitya Tummala <stummala@codeaurora.org>
-> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> > ---
-> >  fs/f2fs/checkpoint.c |  5 +++--
-> >  fs/f2fs/node.c       |  4 +++-
-> >  fs/f2fs/super.c      | 42 +++++++++++++++++++++++++++++++-----------
-> >  3 files changed, 37 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> > index f955cd3e0677..ccccf0ce2f06 100644
-> > --- a/fs/f2fs/checkpoint.c
-> > +++ b/fs/f2fs/checkpoint.c
-> > @@ -306,8 +306,9 @@ static int f2fs_write_meta_pages(struct address_space *mapping,
-> >  		goto skip_write;
-> >  
-> >  	/* collect a number of dirty meta pages and write together */
-> > -	if (wbc->for_kupdate ||
-> > -		get_pages(sbi, F2FS_DIRTY_META) < nr_pages_to_skip(sbi, META))
-> > +	if (wbc->sync_mode != WB_SYNC_ALL &&
-> > +			get_pages(sbi, F2FS_DIRTY_META) <
-> > +					nr_pages_to_skip(sbi, META))
-> >  		goto skip_write;
-> >  
-> >  	/* if locked failed, cp will flush dirty pages instead */
-> > diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
-> > index 4f450e573312..f6ff84e29749 100644
-> > --- a/fs/f2fs/node.c
-> > +++ b/fs/f2fs/node.c
-> > @@ -1920,7 +1920,9 @@ static int f2fs_write_node_pages(struct address_space *mapping,
-> >  	f2fs_balance_fs_bg(sbi);
-> >  
-> >  	/* collect a number of dirty node pages and write together */
-> > -	if (get_pages(sbi, F2FS_DIRTY_NODES) < nr_pages_to_skip(sbi, NODE))
-> > +	if (wbc->sync_mode != WB_SYNC_ALL &&
-> > +			get_pages(sbi, F2FS_DIRTY_NODES) <
-> > +					nr_pages_to_skip(sbi, NODE))
-> >  		goto skip_write;
-> >  
-> >  	if (wbc->sync_mode == WB_SYNC_ALL)
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 7998ff5418f2..2af0db2b738e 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -1456,9 +1456,16 @@ static int f2fs_enable_quotas(struct super_block *sb);
-> >  
-> >  static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
-> >  {
-> > +	unsigned int s_flags = sbi->sb->s_flags;
-> >  	struct cp_control cpc;
-> > -	int err;
-> > +	int err = 0;
-> > +	int ret;
-> >  
-> > +	if (s_flags & SB_RDONLY) {
-> > +		f2fs_msg(sbi->sb, KERN_ERR,
-> > +				"checkpoint=disable on readonly fs");
-> > +		return -EINVAL;
-> > +	}
-> >  	sbi->sb->s_flags |= SB_ACTIVE;
-> >  
-> >  	f2fs_update_time(sbi, DISABLE_TIME);
-> > @@ -1466,18 +1473,24 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
-> >  	while (!f2fs_time_over(sbi, DISABLE_TIME)) {
-> >  		mutex_lock(&sbi->gc_mutex);
-> >  		err = f2fs_gc(sbi, true, false, NULL_SEGNO);
-> > -		if (err == -ENODATA)
-> > +		if (err == -ENODATA) {
-> > +			err = 0;
-> >  			break;
-> > +		}
-> >  		if (err && err != -EAGAIN)
-> > -			return err;
-> > +			break;
-> 
-> Should be?
-> 
-> if (err) {
-> 	if (err == -EAGAIN)
-> 		err = 0;
+arch/x86/Makefile disables SSE and SSE2 for the whole kernel.  The
+AMDGPU drivers modified in this patch re-enable SSE but not SSE2.  Turn
+on SSE2 to support emitting double precision floating point instructions
+rather than calls to non-existent (usually available from gcc_s or
+compiler_rt) floating point helper routines.
 
-Have to report EAGAIN, but not for ENODATA.
+Link: https://gcc.gnu.org/onlinedocs/gccint/Soft-float-library-routines.html
+Link: https://github.com/ClangBuiltLinux/linux/issues/327
+Cc: stable@vger.kernel.org # 4.19
+Reported-by: S, Shirish <Shirish.S@amd.com>
+Reported-by: Matthias Kaehlcke <mka@google.com>
+Suggested-by: James Y Knight <jyknight@google.com>
+Suggested-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Nick Desaulniers <ndesaulniers@google.com>
+Tested-by: Guenter Roeck <linux@roeck-us.net>
+---
+ drivers/gpu/drm/amd/display/dc/calcs/Makefile | 2 +-
+ drivers/gpu/drm/amd/display/dc/dml/Makefile   | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-> 	else
-> 		break;
-> }
-> 
-> Thanks,
-> 
-> >  	}
-> >  
-> > -	err = sync_filesystem(sbi->sb);
-> > -	if (err)
-> > -		return err;
-> > +	ret = sync_filesystem(sbi->sb);
-> > +	if (ret || err) {
-> > +		err = ret ? ret: err;
-> > +		goto restore_flag;
-> > +	}
-> >  
-> > -	if (f2fs_disable_cp_again(sbi))
-> > -		return -EAGAIN;
-> > +	if (f2fs_disable_cp_again(sbi)) {
-> > +		err = -EAGAIN;
-> > +		goto restore_flag;
-> > +	}
-> >  
-> >  	mutex_lock(&sbi->gc_mutex);
-> >  	cpc.reason = CP_PAUSE;
-> > @@ -1486,7 +1499,9 @@ static int f2fs_disable_checkpoint(struct f2fs_sb_info *sbi)
-> >  
-> >  	sbi->unusable_block_count = 0;
-> >  	mutex_unlock(&sbi->gc_mutex);
-> > -	return 0;
-> > +restore_flag:
-> > +	sbi->sb->s_flags = s_flags;	/* Restore MS_RDONLY status */
-> > +	return err;
-> >  }
-> >  
-> >  static void f2fs_enable_checkpoint(struct f2fs_sb_info *sbi)
-> > @@ -3356,7 +3371,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >  	if (test_opt(sbi, DISABLE_CHECKPOINT)) {
-> >  		err = f2fs_disable_checkpoint(sbi);
-> >  		if (err)
-> > -			goto free_meta;
-> > +			goto sync_free_meta;
-> >  	} else if (is_set_ckpt_flags(sbi, CP_DISABLED_FLAG)) {
-> >  		f2fs_enable_checkpoint(sbi);
-> >  	}
-> > @@ -3369,7 +3384,7 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >  		/* After POR, we can run background GC thread.*/
-> >  		err = f2fs_start_gc_thread(sbi);
-> >  		if (err)
-> > -			goto free_meta;
-> > +			goto sync_free_meta;
-> >  	}
-> >  	kvfree(options);
-> >  
-> > @@ -3391,6 +3406,11 @@ static int f2fs_fill_super(struct super_block *sb, void *data, int silent)
-> >  	f2fs_update_time(sbi, REQ_TIME);
-> >  	return 0;
-> >  
-> > +sync_free_meta:
-> > +	/* safe to flush all the data */
-> > +	sync_filesystem(sbi->sb);
-> > +	retry = false;
-> > +
-> >  free_meta:
-> >  #ifdef CONFIG_QUOTA
-> >  	f2fs_truncate_quota_inode_pages(sb);
-> > 
+diff --git a/drivers/gpu/drm/amd/display/dc/calcs/Makefile b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+index 95f332ee3e7e..dc85a3c088af 100644
+--- a/drivers/gpu/drm/amd/display/dc/calcs/Makefile
++++ b/drivers/gpu/drm/amd/display/dc/calcs/Makefile
+@@ -30,7 +30,7 @@ else ifneq ($(call cc-option, -mstack-alignment=16),)
+ 	cc_stack_align := -mstack-alignment=16
+ endif
+ 
+-calcs_ccflags := -mhard-float -msse $(cc_stack_align)
++calcs_ccflags := -mhard-float -msse -msse2 $(cc_stack_align)
+ 
+ CFLAGS_dcn_calcs.o := $(calcs_ccflags)
+ CFLAGS_dcn_calc_auto.o := $(calcs_ccflags)
+diff --git a/drivers/gpu/drm/amd/display/dc/dml/Makefile b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+index d97ca6528f9d..33c7d7588712 100644
+--- a/drivers/gpu/drm/amd/display/dc/dml/Makefile
++++ b/drivers/gpu/drm/amd/display/dc/dml/Makefile
+@@ -30,7 +30,7 @@ else ifneq ($(call cc-option, -mstack-alignment=16),)
+ 	cc_stack_align := -mstack-alignment=16
+ endif
+ 
+-dml_ccflags := -mhard-float -msse $(cc_stack_align)
++dml_ccflags := -mhard-float -msse -msse2 $(cc_stack_align)
+ 
+ CFLAGS_display_mode_lib.o := $(dml_ccflags)
+ CFLAGS_display_pipe_clocks.o := $(dml_ccflags)
+-- 
+2.20.1.321.g9e740568ce-goog
+
