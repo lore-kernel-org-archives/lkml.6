@@ -7,158 +7,120 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28540C282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4EA5C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E94F42146E
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:34:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91AB02146E
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 12:34:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="XbYkNb4y"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="eXxXjTwd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727985AbfAYMeG (ORCPT
+        id S1728268AbfAYMeK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 07:34:06 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:27881 "EHLO pegase1.c-s.fr"
+        Fri, 25 Jan 2019 07:34:10 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:40792 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbfAYMeE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 07:34:04 -0500
+        id S1726111AbfAYMeI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 07:34:08 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43mJNn2Bglz9tyxt;
-        Fri, 25 Jan 2019 13:34:01 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 43mJNs4NSfz9tyxw;
+        Fri, 25 Jan 2019 13:34:05 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=XbYkNb4y; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=eXxXjTwd; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id mWZvesbFzYD7; Fri, 25 Jan 2019 13:34:01 +0100 (CET)
+        with ESMTP id KCl2qgSiCOwJ; Fri, 25 Jan 2019 13:34:05 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43mJNn105zz9tyxr;
-        Fri, 25 Jan 2019 13:34:01 +0100 (CET)
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43mJNs3KzPz9tyxr;
+        Fri, 25 Jan 2019 13:34:05 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548419641; bh=ge1wiHZra7rk+JGrJzu6zJRiaoRZAtpAAWM41Ep0gLY=;
+        t=1548419645; bh=bmatQtpwO9PQVzJeUZnTW6zoJHmtskpEwihqd2uxsKw=;
         h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=XbYkNb4yM8UcNgYqGu8uk9DadgRrCjVq7kBhJXcL02MiPL/a+4zKUip/z4Si9EVGV
-         wRDKVkf8sofUT4wlNB6yXNzUly1adeu5Y1cBiin2RvNC2w1A74SXpXhRR/zNWOZXMl
-         LEOePzb7rMNO7HJLjXzNUBilBopdNRmTNuny3WK0=
+        b=eXxXjTwdb+mpjedNH17I56j1ZfdGv3QHmN8GN3PseGMMpEmLK5HgkPvc9keSlqn3y
+         zyV9o5v+42vUTbBt0aiciDtiltzQvRMB7a00BG3cjN0xylVrbgkL3TyC9YZaulvWbH
+         nI5WbyHuFJPIfXGUkSc/J943aAYZmF6ZxpZdY/Xo=
 Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 703B58B87A;
-        Fri, 25 Jan 2019 13:34:02 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id BD60B8B87A;
+        Fri, 25 Jan 2019 13:34:06 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id KDGYCeD_-pBV; Fri, 25 Jan 2019 13:34:02 +0100 (CET)
+        with ESMTP id fD1XM7ZXue5T; Fri, 25 Jan 2019 13:34:06 +0100 (CET)
 Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 5544A8B761;
-        Fri, 25 Jan 2019 13:34:02 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 68AC68B761;
+        Fri, 25 Jan 2019 13:34:06 +0100 (CET)
 Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 4DC0272DA9; Fri, 25 Jan 2019 12:34:02 +0000 (UTC)
-Message-Id: <c6fb603cd68ed554f9f9b994d525cf0fdc5b5d07.1548419273.git.christophe.leroy@c-s.fr>
+        id 5AB1A72DA9; Fri, 25 Jan 2019 12:34:06 +0000 (UTC)
+Message-Id: <2edbd69dd9a26431ae7f2568c459569e90a9bcb5.1548419273.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1548419273.git.christophe.leroy@c-s.fr>
 References: <cover.1548419273.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 01/10] powerpc: simplify BDI switch
+Subject: [PATCH 03/10] powerpc/603: use physical address directly in TLB miss
+ handlers.
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>,
         joakim.tjernlund@infinera.com
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 25 Jan 2019 12:34:02 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 12:34:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is no reason to re-read each time the pointer at
-location 0xf0 as it is fixed and known.
+Since commit c62ce9ef97ba ("powerpc: remove remaining bits from
+CONFIG_APUS"), tophys() has become a pure constant operation.
+PAGE_OFFSET is known at compile time so the physical address
+can be builtin directly.
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/include/asm/mmu.h | 2 ++
- arch/powerpc/kernel/head_32.S  | 5 ++---
- arch/powerpc/kernel/head_40x.S | 5 ++---
- arch/powerpc/kernel/head_8xx.S | 1 +
- arch/powerpc/mm/8xx_mmu.c      | 7 ++-----
- 5 files changed, 9 insertions(+), 11 deletions(-)
+ arch/powerpc/kernel/head_32.S | 15 ++++++---------
+ 1 file changed, 6 insertions(+), 9 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/mmu.h b/arch/powerpc/include/asm/mmu.h
-index 25607604a7a5..6d22a8e78fe2 100644
---- a/arch/powerpc/include/asm/mmu.h
-+++ b/arch/powerpc/include/asm/mmu.h
-@@ -356,6 +356,8 @@ extern void early_init_mmu_secondary(void);
- extern void setup_initial_memory_limit(phys_addr_t first_memblock_base,
- 				       phys_addr_t first_memblock_size);
- static inline void mmu_early_init_devtree(void) { }
-+
-+extern void *abatron_pteptrs[2];
- #endif /* __ASSEMBLY__ */
- #endif
- 
 diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
-index 05b08db3901d..c2f564690778 100644
+index dbd15e03952a..53f65124edd5 100644
 --- a/arch/powerpc/kernel/head_32.S
 +++ b/arch/powerpc/kernel/head_32.S
-@@ -1027,9 +1027,8 @@ _ENTRY(switch_mmu_context)
- 	 * The PGDIR is passed as second argument.
- 	 */
- 	lwz	r4,MM_PGD(r4)
--	lis	r5, KERNELBASE@h
--	lwz	r5, 0xf0(r5)
--	stw	r4, 0x4(r5)
-+	lis	r5, abatron_pteptrs@ha
-+	stw	r4, abatron_pteptrs@l + 0x4(r5)
- #endif
- 	li	r4,0
- 	isync
-diff --git a/arch/powerpc/kernel/head_40x.S b/arch/powerpc/kernel/head_40x.S
-index b19d78410511..11dd09d0ce1a 100644
---- a/arch/powerpc/kernel/head_40x.S
-+++ b/arch/powerpc/kernel/head_40x.S
-@@ -953,9 +953,8 @@ _GLOBAL(set_context)
- 	/* Context switch the PTE pointer for the Abatron BDI2000.
- 	 * The PGDIR is the second parameter.
- 	 */
--	lis	r5, KERNELBASE@h
--	lwz	r5, 0xf0(r5)
--	stw	r4, 0x4(r5)
-+	lis	r5, abatron_pteptrs@ha
-+	stw	r4, abatron_pteptrs@l + 0x4(r5)
- #endif
- 	sync
- 	mtspr	SPRN_PID,r3
-diff --git a/arch/powerpc/kernel/head_8xx.S b/arch/powerpc/kernel/head_8xx.S
-index c3f776fda984..4a2e3ffdb5bb 100644
---- a/arch/powerpc/kernel/head_8xx.S
-+++ b/arch/powerpc/kernel/head_8xx.S
-@@ -1012,5 +1012,6 @@ swapper_pg_dir:
- /* Room for two PTE table poiners, usually the kernel and current user
-  * pointer to their respective root page table (pgdir).
-  */
-+	.globl	abatron_pteptrs
- abatron_pteptrs:
- 	.space	8
-diff --git a/arch/powerpc/mm/8xx_mmu.c b/arch/powerpc/mm/8xx_mmu.c
-index b5f6d794281d..e2c32bdb6023 100644
---- a/arch/powerpc/mm/8xx_mmu.c
-+++ b/arch/powerpc/mm/8xx_mmu.c
-@@ -159,14 +159,11 @@ void set_context(unsigned long id, pgd_t *pgd)
- {
- 	s16 offset = (s16)(__pa(swapper_pg_dir));
- 
--#ifdef CONFIG_BDI_SWITCH
--	pgd_t	**ptr = *(pgd_t ***)(KERNELBASE + 0xf0);
--
- 	/* Context switch the PTE pointer for the Abatron BDI2000.
- 	 * The PGDIR is passed as second argument.
- 	 */
--	*(ptr + 1) = pgd;
--#endif
-+	if (IS_ENABLED(CONFIG_BDI_SWITCH))
-+		abatron_pteptrs[1] = pgd;
- 
- 	/* Register M_TWB will contain base address of level 1 table minus the
- 	 * lower part of the kernel PGDIR base address, so that all accesses to
+@@ -507,9 +507,8 @@ InstructionTLBMiss:
+ 	bge-	112f
+ 	mfspr	r2,SPRN_SRR1		/* and MSR_PR bit from SRR1 */
+ 	rlwimi	r1,r2,32-12,29,29	/* shift MSR_PR to _PAGE_USER posn */
+-	lis	r2,swapper_pg_dir@ha	/* if kernel address, use */
+-	addi	r2,r2,swapper_pg_dir@l	/* kernel page table */
+-	tophys(r2,r2)
++	lis	r2, (swapper_pg_dir - PAGE_OFFSET)@ha	/* if kernel address, use */
++	addi	r2, r2, (swapper_pg_dir - PAGE_OFFSET)@l	/* kernel page table */
+ 112:	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
+ 	lwz	r2,0(r2)		/* get pmd entry */
+ 	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
+@@ -580,9 +579,8 @@ DataLoadTLBMiss:
+ 	bge-	112f
+ 	mfspr	r2,SPRN_SRR1		/* and MSR_PR bit from SRR1 */
+ 	rlwimi	r1,r2,32-12,29,29	/* shift MSR_PR to _PAGE_USER posn */
+-	lis	r2,swapper_pg_dir@ha	/* if kernel address, use */
+-	addi	r2,r2,swapper_pg_dir@l	/* kernel page table */
+-	tophys(r2,r2)
++	lis	r2, (swapper_pg_dir - PAGE_OFFSET)@ha	/* if kernel address, use */
++	addi	r2, r2, (swapper_pg_dir - PAGE_OFFSET)@l	/* kernel page table */
+ 112:	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
+ 	lwz	r2,0(r2)		/* get pmd entry */
+ 	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
+@@ -663,9 +661,8 @@ DataStoreTLBMiss:
+ 	bge-	112f
+ 	mfspr	r2,SPRN_SRR1		/* and MSR_PR bit from SRR1 */
+ 	rlwimi	r1,r2,32-12,29,29	/* shift MSR_PR to _PAGE_USER posn */
+-	lis	r2,swapper_pg_dir@ha	/* if kernel address, use */
+-	addi	r2,r2,swapper_pg_dir@l	/* kernel page table */
+-	tophys(r2,r2)
++	lis	r2, (swapper_pg_dir - PAGE_OFFSET)@ha	/* if kernel address, use */
++	addi	r2, r2, (swapper_pg_dir - PAGE_OFFSET)@l	/* kernel page table */
+ 112:	rlwimi	r2,r3,12,20,29		/* insert top 10 bits of address */
+ 	lwz	r2,0(r2)		/* get pmd entry */
+ 	rlwinm.	r2,r2,0,0,19		/* extract address of pte page */
 -- 
 2.13.3
 
