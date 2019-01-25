@@ -3,97 +3,112 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11F40C282C5
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:28:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1652DC282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBEE8218EA
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:28:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA7A5218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:28:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728660AbfAYC2k (ORCPT
+        id S1728691AbfAYC2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 21:28:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43054 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728371AbfAYC2j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 21:28:39 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C33FB1326B0;
-        Fri, 25 Jan 2019 02:28:39 +0000 (UTC)
-Received: from MiWiFi-R3L-srv.redhat.com (ovpn-8-16.pek2.redhat.com [10.72.8.16])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7CFF7850B;
-        Fri, 25 Jan 2019 02:28:33 +0000 (UTC)
-From:   Baoquan He <bhe@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     tglx@linutronix.de, mingo@kernel.org, bp@alien8.de, hpa@zytor.com,
-        kirill.shutemov@linux.intel.com, dyoung@redhat.com, x86@kernel.org,
-        kexec@lists.infradead.org, Baoquan He <bhe@redhat.com>
-Subject: [PATCH RESEND 1/3] x86/boot: Add bit fields into xloadflags for 5-level kernel checking
-Date:   Fri, 25 Jan 2019 10:28:15 +0800
-Message-Id: <20190125022817.29506-2-bhe@redhat.com>
-In-Reply-To: <20190125022817.29506-1-bhe@redhat.com>
-References: <20190125022817.29506-1-bhe@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Fri, 25 Jan 2019 02:28:39 +0000 (UTC)
+        Thu, 24 Jan 2019 21:28:44 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:15543 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1728372AbfAYC2m (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 21:28:42 -0500
+X-UUID: 7d55a966bba44f91bc7928b74472a746-20190125
+X-UUID: 7d55a966bba44f91bc7928b74472a746-20190125
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <wangyan.wang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 2046741440; Fri, 25 Jan 2019 10:28:37 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS33DR.mediatek.inc
+ (172.27.6.106) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 25 Jan
+ 2019 10:28:36 +0800
+Received: from [10.16.6.141] (10.16.6.141) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 25 Jan 2019 10:28:35 +0800
+Message-ID: <1548383315.19561.4.camel@mszsdaap41>
+Subject: Re: [PATCH V2,4/8] drm/mediatek: fix the rate and divder of hdmi
+ phy for MT2701
+From:   mtk14994 <wangyan.wang@mediatek.com>
+To:     CK Hu <ck.hu@mediatek.com>
+CC:     Michael Turquette <mturquette@baylibre.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        David Airlie <airlied@linux.ie>,
+        chunhui dai <chunhui.dai@mediatek.com>,
+        Sean Wang <sean.wang@mediatek.com>,
+        Ryder Lee <ryder.lee@mediatek.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        <dri-devel@lists.freedesktop.org>, <jitao.shi@mediatek.com>,
+        <bibby.hsieh@mediatek.com>, <srv_heupstream@mediatek.com>
+Date:   Fri, 25 Jan 2019 10:28:35 +0800
+In-Reply-To: <1548310639.4220.3.camel@mtksdaap41>
+References: <20190118125928.3279-1-wangyan.wang@mediatek.com>
+         <20190118125928.3279-5-wangyan.wang@mediatek.com>
+         <1548310639.4220.3.camel@mtksdaap41>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.10.4-0ubuntu2 
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add two bit fields XLF_5LEVEL and XLF_5LEVEL_ENABLED for 5-level kernel.
-Bit XLF_5LEVEL indicates if 5-level related code is contained
-in this kernel.
-Bit XLF_5LEVEL_ENABLED indicates if CONFIG_X86_5LEVEL=y is set.
+Dear CK,
 
-They are being used in later patch to check if kexec/kdump kernel
-is loaded in right place.
+      OK,I will modify according your comments in V3.
 
-Signed-off-by: Baoquan He <bhe@redhat.com>
----
- arch/x86/boot/header.S                | 12 +++++++++++-
- arch/x86/include/uapi/asm/bootparam.h |  2 ++
- 2 files changed, 13 insertions(+), 1 deletion(-)
+Best Regards
+Wangyan Wang
 
-diff --git a/arch/x86/boot/header.S b/arch/x86/boot/header.S
-index 850b8762e889..be19f4199727 100644
---- a/arch/x86/boot/header.S
-+++ b/arch/x86/boot/header.S
-@@ -419,7 +419,17 @@ xloadflags:
- # define XLF4 0
- #endif
- 
--			.word XLF0 | XLF1 | XLF23 | XLF4
-+#ifdef CONFIG_X86_64
-+#ifdef CONFIG_X86_5LEVEL
-+#define XLF56 (XLF_5LEVEL|XLF_5LEVEL_ENABLED)
-+#else
-+#define XLF56 XLF_5LEVEL
-+#endif
-+#else
-+#define XLF56 0
-+#endif
-+
-+			.word XLF0 | XLF1 | XLF23 | XLF4 | XLF56
- 
- cmdline_size:   .long   COMMAND_LINE_SIZE-1     #length of the command line,
-                                                 #added with boot protocol
-diff --git a/arch/x86/include/uapi/asm/bootparam.h b/arch/x86/include/uapi/asm/bootparam.h
-index 60733f137e9a..c895df5482c5 100644
---- a/arch/x86/include/uapi/asm/bootparam.h
-+++ b/arch/x86/include/uapi/asm/bootparam.h
-@@ -29,6 +29,8 @@
- #define XLF_EFI_HANDOVER_32		(1<<2)
- #define XLF_EFI_HANDOVER_64		(1<<3)
- #define XLF_EFI_KEXEC			(1<<4)
-+#define XLF_5LEVEL			(1<<5)
-+#define XLF_5LEVEL_ENABLED		(1<<6)
- 
- #ifndef __ASSEMBLY__
- 
--- 
-2.13.6
+
+On Thu, 2019-01-24 at 14:17 +0800, CK Hu wrote:
+> On Fri, 2019-01-18 at 20:59 +0800, Wangyan Wang wrote:
+> > From: chunhui dai <chunhui.dai@mediatek.com>
+> 
+> Describe something here.
+> 
+> > 
+> > Fixes: 0fc721b2968e ("drm/mediatek: add hdmi driver for MT2701 and MT7623")
+> > Signed-off-by: chunhui dai <chunhui.dai@mediatek.com>
+> 
+> Any one who pass a patch should sign off it.
+> 
+> Regards,
+> CK
+> 
+> > ---
+> >  drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c | 4 ++--
+> >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> > index 43bc058d5528..88dd9e812ca0 100644
+> > --- a/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> > +++ b/drivers/gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c
+> > @@ -114,8 +114,8 @@ static int mtk_hdmi_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> >  
+> >  	if (rate <= 64000000)
+> >  		pos_div = 3;
+> > -	else if (rate <= 12800000)
+> > -		pos_div = 1;
+> > +	else if (rate <= 128000000)
+> > +		pos_div = 2;
+> >  	else
+> >  		pos_div = 1;
+> >  
+> 
+> 
+
 
