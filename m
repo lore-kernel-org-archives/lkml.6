@@ -2,75 +2,142 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1826AC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83CD1C41518
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC281218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:24:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B2F2218F0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:24:46 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728657AbfAYVYg convert rfc822-to-8bit (ORCPT
+        id S1729328AbfAYVYo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 16:24:36 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:33879 "EHLO mail.bootlin.com"
+        Fri, 25 Jan 2019 16:24:44 -0500
+Received: from mga05.intel.com ([192.55.52.43]:47950 "EHLO mga05.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726179AbfAYVYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 16:24:35 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E70E2207B2; Fri, 25 Jan 2019 22:24:32 +0100 (CET)
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B1B6A20397;
-        Fri, 25 Jan 2019 22:24:32 +0100 (CET)
-Date:   Fri, 25 Jan 2019 22:24:33 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     David Airlie <airlied@linux.ie>, Daniel Vetter <daniel@ffwll.ch>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        devicetree@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, linux-sunxi@googlegroups.com
-Subject: Re: [PATCH v6 11/22] clk: sunxi-ng: a64: Add minimum rate for
- PLL_MIPI
-Message-ID: <20190125212433.ni2jg3wvpyjazlxf@flea>
-References: <20190124195900.22620-1-jagan@amarulasolutions.com>
- <20190124195900.22620-12-jagan@amarulasolutions.com>
+        id S1726179AbfAYVYo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 16:24:44 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 13:24:43 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,523,1539673200"; 
+   d="scan'208";a="121370755"
+Received: from ray.jf.intel.com (HELO [10.7.201.139]) ([10.7.201.139])
+  by orsmga003.jf.intel.com with ESMTP; 25 Jan 2019 13:24:43 -0800
+Subject: Re: [PATCH 2/5] mm/resource: move HMM pr_debug() deeper into resource
+ code
+To:     Bjorn Helgaas <bhelgaas@google.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>, zwisler@kernel.org,
+        vishal.l.verma@intel.com, thomas.lendacky@amd.com,
+        Andrew Morton <akpm@linux-foundation.org>, mhocko@suse.com,
+        linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        Huang Ying <ying.huang@intel.com>,
+        Wu Fengguang <fengguang.wu@intel.com>,
+        Jerome Glisse <jglisse@redhat.com>
+References: <20190124231441.37A4A305@viggo.jf.intel.com>
+ <20190124231444.38182DD8@viggo.jf.intel.com>
+ <CAErSpo4oSjQAxeRy8Tz_Jvo+cRovBvVx9WBeNb_P6PxT-A_XhA@mail.gmail.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <b191ad4a-da4e-9bc7-4468-d6e4a8b3d66f@intel.com>
+Date:   Fri, 25 Jan 2019 13:24:43 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: 8BIT
-In-Reply-To: <20190124195900.22620-12-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAErSpo4oSjQAxeRy8Tz_Jvo+cRovBvVx9WBeNb_P6PxT-A_XhA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 01:28:49AM +0530, Jagan Teki wrote:
-> Minimum PLL used for MIPI is 500MHz, as per manual, but
-> lowering the min rate by 300MHz can result proper working
-> nkms divider with the help of desired dclock rate from
-> panel driver.
+On 1/25/19 1:18 PM, Bjorn Helgaas wrote:
+> On Thu, Jan 24, 2019 at 5:21 PM Dave Hansen <dave.hansen@linux.intel.com> wrote:
+>> diff -puN kernel/resource.c~move-request_region-check kernel/resource.c
+>> --- a/kernel/resource.c~move-request_region-check       2019-01-24 15:13:14.453199539 -0800
+>> +++ b/kernel/resource.c 2019-01-24 15:13:14.458199539 -0800
+>> @@ -1123,6 +1123,16 @@ struct resource * __request_region(struc
+>>                 conflict = __request_resource(parent, res);
+>>                 if (!conflict)
+>>                         break;
+>> +               /*
+>> +                * mm/hmm.c reserves physical addresses which then
+>> +                * become unavailable to other users.  Conflicts are
+>> +                * not expected.  Be verbose if one is encountered.
+>> +                */
+>> +               if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
+>> +                       pr_debug("Resource conflict with unaddressable "
+>> +                                "device memory at %#010llx !\n",
+>> +                                (unsigned long long)start);
 > 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> I don't object to the change, but are you really OK with this being a
+> pr_debug() message that is only emitted when enabled via either the
+> dynamic debug mechanism or DEBUG being defined?  From the comments, it
+> seems more like a KERN_INFO sort of message.
 
-Going 200MHz below the minimum doesn't seem really reasonable. What
-is the issue that you are trying to fix here?
+I left it consistent with the original message that was in the code.
+I'm happy to change it, though, if the consumers of it (Jerome,
+basically) want something different.
 
-It looks like it's picking bad dividers, but if that's the case, this
-isn't the proper fix.
+> Also, maybe the message would be more useful if it included the
+> conflicting resource as well as the region you're requesting?  Many of
+> the other callers of request_resource_conflict() have something like
+> this:
+> 
+>   dev_err(dev, "resource collision: %pR conflicts with %s %pR\n",
+>         new, conflict->name, conflict);
 
-Maxime
+Seems sane.  I was just trying to change as little as possible.
 
--- 
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
