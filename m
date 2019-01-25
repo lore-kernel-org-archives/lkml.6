@@ -2,106 +2,149 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C4D58C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:04:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B0A4C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DF9F2184B
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:04:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="qfeP7iav"
+	by mail.kernel.org (Postfix) with ESMTP id 19C7C218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 11:04:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728365AbfAYLEP (ORCPT
+        id S1728395AbfAYLEj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 06:04:15 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:39818 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726108AbfAYLEO (ORCPT
+        Fri, 25 Jan 2019 06:04:39 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:33734 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbfAYLEi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 06:04:14 -0500
-Received: by mail-lj1-f193.google.com with SMTP id t9-v6so8011981ljh.6
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 03:04:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BFwQ9Uc+RMzfvTqW37RxvKqIi88RNAVDwfx5KC3LSgM=;
-        b=qfeP7iavRdrNcEkyIJLuP4y4KzLNqoei+b57Mv9h0lHfkiabTbksm50huLWE0fRKpg
-         Qm+ntNxS3Gb35ZK5mZ1SZbTtqzG8zeyHhJS2zFJkDNBfYgnhVR6pJb41RR8nveURoFvm
-         3VOusGgV7WnFBLi8WsTY+b8IRlfjWZA9kb3xta8pe9hOolvT2cQqCfSYt0UvRC49OaDu
-         bNya8FQTAijLiYcVDGQi5hjZ9Mi2lZeBvr8cUfAQwFQmlmlx7PmmHBMS6hozH7iXw04q
-         jsaehd8lfvZgPKoxmYXlDvO2FEOaK/efj1mosMUCrOu+FTNA1dJhIObxO7ffpbgooPi7
-         7CjQ==
+        Fri, 25 Jan 2019 06:04:38 -0500
+Received: by mail-lf1-f65.google.com with SMTP id i26so6662564lfc.0;
+        Fri, 25 Jan 2019 03:04:36 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=BFwQ9Uc+RMzfvTqW37RxvKqIi88RNAVDwfx5KC3LSgM=;
-        b=njhqw4BYYkQPvNvymdVX/iUxOi2okNMhCcw9FZQzFScp6zuoJOmFlTOFzGrxidFa1G
-         xyRRSXYgRpaoMGB+o5dmcXUOnn9nK/rH7qwUxH4TQca1or2jNerj0fA/K6yvuRc74v/I
-         sA0azIfXugFlTJVF9n6r4dkf7eI1m9ceRXxhFiswID1V6q0c2lZFfbyTyjutAhTEsZj+
-         zvoH8ahx0iVYkje0K4cyVx/L37v8/NBzgpzG0hKIWe5wPZg4Rcd4RSa7nkXPOlgUYZqL
-         RWSXovGdTQbRbljAYJMEC29x1DWT1SP6cPkHQsT+mzCH1vf8/7Bl4BwX93mmDKtCLhUW
-         CgVw==
-X-Gm-Message-State: AJcUukfR5dRaFy+LZvb4xWd86h/Fjf91L6TztZEkbTNQ0B4kieWYVO5t
-        mV92QVvQb7DI7YKwe7RYT9uqysROrkk=
-X-Google-Smtp-Source: ALg8bN40OSYemWclv0yn1OYMp7N0caZNyVQJ/a5+6M/j1jv8c3PpO7MkRjSRKUF2/0ARMBNrjVr8sA==
-X-Received: by 2002:a2e:b04f:: with SMTP id d15-v6mr8720356ljl.3.1548414252331;
-        Fri, 25 Jan 2019 03:04:12 -0800 (PST)
-Received: from mimer.lan (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
-        by smtp.gmail.com with ESMTPSA id 11sm1426088lfq.89.2019.01.25.03.04.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 03:04:11 -0800 (PST)
-From:   Jonas Bonn <jonas@norrbonn.se>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jonas Bonn <jonas@norrbonn.se>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <bbrezillon@kernel.org>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org
-Subject: [PATCH 1/1] spi-nor: s25fl512s supports region locking
-Date:   Fri, 25 Jan 2019 12:04:08 +0100
-Message-Id: <20190125110408.8941-1-jonas@norrbonn.se>
-X-Mailer: git-send-email 2.19.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=U5ofuj/SpJN91nWjSU2HBWbgMkgJhLDUcWpcM5DC2Og=;
+        b=MXQRKY5t4r2OzKFBlss8O2JUGSMZK6xxnSjMsUp5MrsNJKGcZtsz7SYSXQM7axaFTk
+         4UyEOrHEOf29+fLIh2UARYTvv+d/poxjU18WYlVPb9WdQgaGBp40pn++l/Hwki0cMd3J
+         mRPoc5VNbH79Vf7h81Q64xvCKFlmBfj0ba77kz94etFGyfnqrJsT3ZaSH1HpefyPho9o
+         E6tRISrB0ier1bUuM9t9cwqwBtIwSMd8ecEuJxE7XDIP6jeEx31WIr2NOZU96JhmExBC
+         s8IjNyBPww3gkjbFEbnZ6FQnfBIZ7pWLy/ATbblEnfxXt7OwNmLQ4sjUAvUF3FQEtBum
+         pI7Q==
+X-Gm-Message-State: AJcUukfIKCgAat/kKLNEVvgToGfU1cuWhpb6n906ovVSKvx1wyapTAot
+        d7w/lW1d7tc+GpzaWYPJYOQ=
+X-Google-Smtp-Source: ALg8bN7WhzMmtJRpqPDfwsYjxVeWz7gchFVjO5+i0FwS9gSzoadC+7yeYVf5FCPK7w/5ZIPytM2w2Q==
+X-Received: by 2002:a19:2755:: with SMTP id n82mr8230875lfn.94.1548414275540;
+        Fri, 25 Jan 2019 03:04:35 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id t144sm1401578lff.53.2019.01.25.03.04.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 03:04:34 -0800 (PST)
+Date:   Fri, 25 Jan 2019 13:04:27 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com, matti.vaittinen@fi.rohmeurope.com
+Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: [RFC PATCH v2 05/10] clk: bd718x7: Support ROHM BD70528 clk block
+Message-ID: <20190125110407.GA29283@localhost.localdomain>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both the BP0-2 bits and the TBPROT bit are supported on this chip.
+ROHM BD70528 is an ultra low power PMIC with similar 32K clk as
+bd718x7. Only difference (from clk perspective) is register address.
+Add support for controlling BD70528 clk using bd718x7 driver.
 
-Signed-off-by: Jonas Bonn <jonas@norrbonn.se>
-CC: Marek Vasut <marek.vasut@gmail.com>
-CC: David Woodhouse <dwmw2@infradead.org>
-CC: Brian Norris <computersforpeace@gmail.com>
-CC: Boris Brezillon <bbrezillon@kernel.org>
-CC: Richard Weinberger <richard@nod.at>
-CC: linux-mtd@lists.infradead.org
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 ---
- drivers/mtd/spi-nor/spi-nor.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/Kconfig       |  6 +++---
+ drivers/clk/clk-bd718x7.c | 21 +++++++++++++++++----
+ 2 files changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index c80225029165..b819b12fafcf 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -1880,7 +1880,7 @@ static const struct flash_info spi_nor_ids[] = {
- 	{ "s25sl064p",  INFO(0x010216, 0x4d00,  64 * 1024, 128, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
- 	{ "s25fl256s0", INFO(0x010219, 0x4d00, 256 * 1024, 128, USE_CLSR) },
- 	{ "s25fl256s1", INFO(0x010219, 0x4d01,  64 * 1024, 512, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | USE_CLSR) },
--	{ "s25fl512s",  INFO(0x010220, 0x4d00, 256 * 1024, 256, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | USE_CLSR) },
-+	{ "s25fl512s",  INFO(0x010220, 0x4d00, 256 * 1024, 256, SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | SPI_NOR_HAS_LOCK | SPI_NOR_HAS_TB | USE_CLSR) },
- 	{ "s70fl01gs",  INFO(0x010221, 0x4d00, 256 * 1024, 256, 0) },
- 	{ "s25sl12800", INFO(0x012018, 0x0300, 256 * 1024,  64, 0) },
- 	{ "s25sl12801", INFO(0x012018, 0x0301,  64 * 1024, 256, 0) },
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index e5b2fe80eab4..992cfb86f2ca 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -285,10 +285,10 @@ config COMMON_CLK_STM32H7
+ 
+ config COMMON_CLK_BD718XX
+ 	tristate "Clock driver for ROHM BD718x7 PMIC"
+-	depends on MFD_ROHM_BD718XX
++	depends on MFD_ROHM_BD718XX || MFD_ROHM_BD70528
+ 	help
+-	  This driver supports ROHM BD71837 and ROHM BD71847
+-	  PMICs clock gates.
++	  This driver supports ROHM BD71837, ROHM BD71847 and
++	  ROHM BD70528 PMICs clock gates.
+ 
+ source "drivers/clk/actions/Kconfig"
+ source "drivers/clk/bcm/Kconfig"
+diff --git a/drivers/clk/clk-bd718x7.c b/drivers/clk/clk-bd718x7.c
+index 461228ebf703..41c1374f4217 100644
+--- a/drivers/clk/clk-bd718x7.c
++++ b/drivers/clk/clk-bd718x7.c
+@@ -8,6 +8,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/mfd/rohm-bd718x7.h>
++#include <linux/mfd/rohm-bd70528.h>
+ #include <linux/clk-provider.h>
+ #include <linux/clkdev.h>
+ #include <linux/regmap.h>
+@@ -86,9 +87,21 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+ 		dev_err(&pdev->dev, "No parent clk found\n");
+ 		return -EINVAL;
+ 	}
+-
+-	c->reg = BD718XX_REG_OUT32K;
+-	c->mask = BD718XX_OUT32K_EN;
++	switch (mfd->chip_type) {
++	case ROHM_CHIP_TYPE_BD71837:
++	case ROHM_CHIP_TYPE_BD71847:
++
++		c->reg = BD718XX_REG_OUT32K;
++		c->mask = BD718XX_OUT32K_EN;
++		break;
++	case ROHM_CHIP_TYPE_BD70528:
++		c->reg = BD70528_REG_CLK_OUT;
++		c->mask = BD70528_CLK_OUT_EN_MASK;
++		break;
++	default:
++		dev_err(&pdev->dev, "Unknown clk chip\n");
++		return -EINVAL;
++	}
+ 	c->mfd = mfd;
+ 	c->pdev = pdev;
+ 	c->hw.init = &init;
+@@ -119,5 +132,5 @@ static struct platform_driver bd71837_clk = {
+ module_platform_driver(bd71837_clk);
+ 
+ MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+-MODULE_DESCRIPTION("BD71837/BD71847 chip clk driver");
++MODULE_DESCRIPTION("BD71837/BD71847/BD70528 chip clk driver");
+ MODULE_LICENSE("GPL");
 -- 
-2.19.1
+2.14.3
 
+
+-- 
+Matti Vaittinen
+ROHM Semiconductors
+
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
