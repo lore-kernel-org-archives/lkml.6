@@ -2,93 +2,86 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9375AC282C2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2640C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:39:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 56EE0218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:32:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B92FB218DE
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 14:39:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548426754;
-	bh=hEG1JgvRgEoHRlaufO4PKPnY1RPyKem8nD/y+Xb3snM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=spYrKGdKDNUehQ3YjMx6MlP2/Ri3IeoCP4Ak88y+5fzV6jUDRD3Zw9+m9MaoQIpMA
-	 mvwCkzZtUaMUAlXHxBxWKjxvDjk3jLXTL1VJzfVQEMX3jbftfkWfL2onyLFJLZVn9f
-	 yR2zyqKOUw6ljK/C19ChWH07TlwdG4QLFviY/BqI=
+	s=default; t=1548427186;
+	bh=tZ5zyO/nqJzkKrWXyZxNsTspzfvzP6n3BgPlNZmNoIw=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=rdEC7h22IKUnBplsJX/dOYwZDme2NtccogHw4GDkOOGmecGOyGQT9vNmQ7+pvO3H3
+	 CO+FMxqQaWXUGzidzNNID+0qRLzaJxq43qXik5KOah2EJZ5xPCzRuiaYIn2t3ZSKCz
+	 MuiQz7l9Z9SBP0IW4iI3fD+Hv3YpFZOvYQeyDQD0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728958AbfAYOcd (ORCPT
+        id S1726418AbfAYOjp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 09:32:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37300 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726256AbfAYOcc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 09:32:32 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9239EAF4C;
-        Fri, 25 Jan 2019 14:32:31 +0000 (UTC)
-Date:   Fri, 25 Jan 2019 15:32:30 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     akpm@linux-foundation.org, Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        keith.busch@intel.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, mgorman@suse.de
-Subject: Re: [PATCH v7 3/3] mm: Maintain randomization of page free lists
-Message-ID: <20190125143230.GP3560@dhcp22.suse.cz>
-References: <154690326478.676627.103843791978176914.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154690328135.676627.5979130839159447106.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Fri, 25 Jan 2019 09:39:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726111AbfAYOjo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 09:39:44 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9E8F5218D0;
+        Fri, 25 Jan 2019 14:39:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548427184;
+        bh=tZ5zyO/nqJzkKrWXyZxNsTspzfvzP6n3BgPlNZmNoIw=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=MEohiFhK5G6tSIPdyOixYodsWrmfqCf44bpYjYAGDsP7kY+mnaBvGc0rR3QUcs5xs
+         +hkRU0/DP8NESgyqZ/EZIYTLNck0rQuG0dEtDYSieQCOWGc8exGeyaIxsYgBBfqlHi
+         mATQ8jAScs+6Hwam6/0i55HE6M0v9T5SXwPN9xEI=
+Subject: Re: [PATCH 3.18 00/52] 3.18.133-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     torvalds@linux-foundation.org, akpm@linux-foundation.org,
+        linux@roeck-us.net, patches@kernelci.org,
+        ben.hutchings@codethink.co.uk, lkft-triage@lists.linaro.org,
+        stable@vger.kernel.org, shuah <shuah@kernel.org>
+References: <20190124190140.879495253@linuxfoundation.org>
+From:   shuah <shuah@kernel.org>
+Message-ID: <3f8c79cd-d319-2c81-6379-e0fc6e7fac8f@kernel.org>
+Date:   Fri, 25 Jan 2019 07:39:42 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154690328135.676627.5979130839159447106.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190124190140.879495253@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 07-01-19 15:21:21, Dan Williams wrote:
-> When freeing a page with an order >= shuffle_page_order randomly select
-> the front or back of the list for insertion.
+On 1/24/19 12:19 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 3.18.133 release.
+> There are 52 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> While the mm tries to defragment physical pages into huge pages this can
-> tend to make the page allocator more predictable over time. Inject the
-> front-back randomness to preserve the initial randomness established by
-> shuffle_free_memory() when the kernel was booted.
+> Responses should be made by Sat Jan 26 19:01:07 UTC 2019.
+> Anything received after that time might be too late.
 > 
-> The overhead of this manipulation is constrained by only being applied
-> for MAX_ORDER sized pages by default.
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v3.x/stable-review/patch-3.18.133-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-3.18.y
+> and the diffstat can be found below.
 > 
-> Cc: Michal Hocko <mhocko@suse.com>
-> Cc: Kees Cook <keescook@chromium.org>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  include/linux/mmzone.h  |   10 ++++++++++
->  include/linux/shuffle.h |   12 ++++++++++++
->  mm/page_alloc.c         |   11 +++++++++--
->  mm/shuffle.c            |   16 ++++++++++++++++
->  4 files changed, 47 insertions(+), 2 deletions(-)
+> thanks,
 > 
-> diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-> index b78a45e0b11c..c15f7f703be0 100644
-> --- a/include/linux/mmzone.h
-> +++ b/include/linux/mmzone.h
-> @@ -98,6 +98,8 @@ extern int page_group_by_mobility_disabled;
->  struct free_area {
->  	struct list_head	free_list[MIGRATE_TYPES];
->  	unsigned long		nr_free;
-> +	u64			rand;
-> +	u8			rand_bits;
->  };
+> greg k-h
+> 
 
-Do we really need per order randomness? Why a global one is not
-sufficient?
--- 
-Michal Hocko
-SUSE Labs
+Compiled and booted on my test system. No dmesg regressions.
+
+thanks,
+-- Shuah
