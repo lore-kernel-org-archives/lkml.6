@@ -2,75 +2,140 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 013B7C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:07:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DB38C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:07:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC9CA218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:07:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="yKB1reus"
+	by mail.kernel.org (Postfix) with ESMTP id 171D1218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 19:07:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726604AbfAYTHW (ORCPT
+        id S1728145AbfAYTH0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 14:07:22 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:56033 "EHLO vps0.lunn.ch"
+        Fri, 25 Jan 2019 14:07:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57012 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbfAYTHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1725976AbfAYTHV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 25 Jan 2019 14:07:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=SLCY49f44O40vBlW5iLYi8dQuN31A4lVjgyHOMHXJfQ=; b=yKB1reusBEMpfgeDRTOYNk/F5P
-        /iDS2Z/kanqeslz34D2L9Sun9SXyAMSlM17JNahEszbeoFiSB2FDQkdT/1Z4bF59fdDvAqJpS3pNh
-        xqnOJCUBzJeMzdeQMuqhKiD9T3ghA/+1UZPMPAoXxUY1OaLg7t/xjNf9rIqG7LpXPYE4=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gn6ot-0006pC-Gt; Fri, 25 Jan 2019 20:07:15 +0100
-Date:   Fri, 25 Jan 2019 20:07:15 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Heiner Kallweit <hkallweit1@gmail.com>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Realtek linux nic maintainers <nic_swsd@realtek.com>,
-        netdev@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] r8169: Load MAC address from device tree if present
-Message-ID: <20190125190715.GG22211@lunn.ch>
-References: <20190125101814.6262-1-thierry.reding@gmail.com>
- <20190125145711.GF12962@lunn.ch>
- <42d32783-c433-b859-6ba4-f2864f034871@gmail.com>
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6C8A91B98;
+        Fri, 25 Jan 2019 19:07:21 +0000 (UTC)
+Received: from redhat.com (ovpn-122-28.rdu2.redhat.com [10.10.122.28])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 6238F17D93;
+        Fri, 25 Jan 2019 19:07:19 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 14:07:17 -0500
+From:   Jerome Glisse <jglisse@redhat.com>
+To:     Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, dan.j.williams@intel.com,
+        dave.jiang@intel.com, zwisler@kernel.org, vishal.l.verma@intel.com,
+        thomas.lendacky@amd.com, akpm@linux-foundation.org,
+        mhocko@suse.com, linux-nvdimm@lists.01.org, linux-mm@kvack.org,
+        ying.huang@intel.com, fengguang.wu@intel.com
+Subject: Re: [PATCH 2/5] mm/resource: move HMM pr_debug() deeper into
+ resource code
+Message-ID: <20190125190716.GB3237@redhat.com>
+References: <20190124231441.37A4A305@viggo.jf.intel.com>
+ <20190124231444.38182DD8@viggo.jf.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <42d32783-c433-b859-6ba4-f2864f034871@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20190124231444.38182DD8@viggo.jf.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 25 Jan 2019 19:07:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> Andrew, for my understanding: What do you think is wrong with the 
-> alignment requirement? It was introduced because we do a 32 bit access
-> to the start address of the array and want to avoid an unaligned access.
+On Thu, Jan 24, 2019 at 03:14:44PM -0800, Dave Hansen wrote:
+> 
+> From: Dave Hansen <dave.hansen@linux.intel.com>
+> 
+> HMM consumes physical address space for its own use, even
+> though nothing is mapped or accessible there.  It uses a
+> special resource description (IORES_DESC_DEVICE_PRIVATE_MEMORY)
+> to uniquely identify these areas.
+> 
+> When HMM consumes address space, it makes a best guess about
+> what to consume.  However, it is possible that a future memory
+> or device hotplug can collide with the reserved area.  In the
+> case of these conflicts, there is an error message in
+> register_memory_resource().
+> 
+> Later patches in this series move register_memory_resource()
+> from using request_resource_conflict() to __request_region().
+> Unfortunately, __request_region() does not return the conflict
+> like the previous function did, which makes it impossible to
+> check for IORES_DESC_DEVICE_PRIVATE_MEMORY in a conflicting
+> resource.
+> 
+> Instead of warning in register_memory_resource(), move the
+> check into the core resource code itself (__request_region())
+> where the conflicting resource _is_ available.  This has the
+> added bonus of producing a warning in case of HMM conflicts
+> with devices *or* RAM address space, as opposed to the RAM-
+> only warnings that were there previously.
+> 
+> Signed-off-by: Dave Hansen <dave.hansen@linux.intel.com>
+> Cc: Dan Williams <dan.j.williams@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Tom Lendacky <thomas.lendacky@amd.com>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Michal Hocko <mhocko@suse.com>
+> Cc: linux-nvdimm@lists.01.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: Huang Ying <ying.huang@intel.com>
+> Cc: Fengguang Wu <fengguang.wu@intel.com>
 
-Hi Heiner
+Reviewed-by: Jerome Glisse <jglisse@redhat.com>
 
-Because you are doing pointer aliasing, the compiler will by default
-generate bad code, doing unaligned access. Adding the attribute works
-around this. But it is just a work around. Since this is very slow
-path code, i would just avoid the pointer aliasing, write a bit more C
-code as Thierry suggested, and the optimiser will probably figure out
-what is going on and produce reasonable code.
-
-Also, in general, by avoiding pointer aliasing, you allow static code
-checkers to work better. They are more likely to discover buffer
-overruns, etc.
-
-    Andrew
+> ---
+> 
+>  b/kernel/resource.c   |   10 ++++++++++
+>  b/mm/memory_hotplug.c |    5 -----
+>  2 files changed, 10 insertions(+), 5 deletions(-)
+> 
+> diff -puN kernel/resource.c~move-request_region-check kernel/resource.c
+> --- a/kernel/resource.c~move-request_region-check	2019-01-24 15:13:14.453199539 -0800
+> +++ b/kernel/resource.c	2019-01-24 15:13:14.458199539 -0800
+> @@ -1123,6 +1123,16 @@ struct resource * __request_region(struc
+>  		conflict = __request_resource(parent, res);
+>  		if (!conflict)
+>  			break;
+> +		/*
+> +		 * mm/hmm.c reserves physical addresses which then
+> +		 * become unavailable to other users.  Conflicts are
+> +		 * not expected.  Be verbose if one is encountered.
+> +		 */
+> +		if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
+> +			pr_debug("Resource conflict with unaddressable "
+> +				 "device memory at %#010llx !\n",
+> +				 (unsigned long long)start);
+> +		}
+>  		if (conflict != parent) {
+>  			if (!(conflict->flags & IORESOURCE_BUSY)) {
+>  				parent = conflict;
+> diff -puN mm/memory_hotplug.c~move-request_region-check mm/memory_hotplug.c
+> --- a/mm/memory_hotplug.c~move-request_region-check	2019-01-24 15:13:14.455199539 -0800
+> +++ b/mm/memory_hotplug.c	2019-01-24 15:13:14.459199539 -0800
+> @@ -109,11 +109,6 @@ static struct resource *register_memory_
+>  	res->flags = IORESOURCE_SYSTEM_RAM | IORESOURCE_BUSY;
+>  	conflict =  request_resource_conflict(&iomem_resource, res);
+>  	if (conflict) {
+> -		if (conflict->desc == IORES_DESC_DEVICE_PRIVATE_MEMORY) {
+> -			pr_debug("Device unaddressable memory block "
+> -				 "memory hotplug at %#010llx !\n",
+> -				 (unsigned long long)start);
+> -		}
+>  		pr_debug("System RAM resource %pR cannot be added\n", res);
+>  		kfree(res);
+>  		return ERR_PTR(-EEXIST);
+> _
