@@ -2,189 +2,142 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0B42C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:19:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38BE1C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:29:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C05F218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:19:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="0U85/4lT"
+	by mail.kernel.org (Postfix) with ESMTP id 0A75E218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 15:29:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728816AbfAYPTT (ORCPT
+        id S1726825AbfAYP3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 10:19:19 -0500
-Received: from conuserg-07.nifty.com ([210.131.2.74]:57741 "EHLO
-        conuserg-07.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726335AbfAYPTS (ORCPT
+        Fri, 25 Jan 2019 10:29:13 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:48990 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726238AbfAYP3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 10:19:18 -0500
-X-Greylist: delayed 3384 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Jan 2019 10:19:16 EST
-Received: from grover.tkatk1.zaq.ne.jp (zaqdadce369.zaq.ne.jp [218.220.227.105]) (authenticated)
-        by conuserg-07.nifty.com with ESMTP id x0PFIASP009019;
-        Sat, 26 Jan 2019 00:18:10 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-07.nifty.com x0PFIASP009019
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1548429492;
-        bh=UjZn5mrVHgxUKzEuknpPlQFNQPWFnwzRirXQUCx7OAo=;
-        h=From:To:Cc:Subject:Date:From;
-        b=0U85/4lT/ZnAa9xa28dNJ90yRuM3vnUqe8/zfExsHB3uvdHmCvb82d/s/BuZfWZGm
-         winqc+YlL4F9xzQvYAFbOJWEywjNYAiqpZ5YbChAtX2n18BFu+t31iBZW6II1KoRH1
-         gYPbYX+mFVoyTXT9UyG7tJBZgFPlZKDmrVYQrKDQMh3Hxd9bMJmBQ0ljTOYB500VHz
-         0paycTjufdwhKVWyIPzxv0NkYMGLdxyk6izJa8EiYE1Xnz6lzwro9cVcPsMWIsyrWU
-         S86dv9UQ7sWCrR03VGwolNsyunvTgLoOR2ywzn8GKwsHRu7AJgEfGWqUtmixWABDU3
-         tgVbgtU0zpSug==
-X-Nifty-SrcIP: [218.220.227.105]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Kalle Valo <kvalo@codeaurora.org>, linux-wireless@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        brcm80211-dev-list.pdl@broadcom.com,
-        Franky Lin <franky.lin@broadcom.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        netdev@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Hin-Tak Leung <htl10@users.sourceforge.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Herton Ronaldo Krzesinski <herton@canonical.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        brcm80211-dev-list@cypress.com, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>
-Subject: [PATCH] net: wireless: prefix header search paths with $(srctree)/
-Date:   Sat, 26 Jan 2019 00:18:00 +0900
-Message-Id: <1548429480-22137-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 25 Jan 2019 10:29:13 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id CCB77634C7B;
+        Fri, 25 Jan 2019 17:28:35 +0200 (EET)
+Received: from sailus by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gn3PI-0001Uc-Qk; Fri, 25 Jan 2019 17:28:36 +0200
+Date:   Fri, 25 Jan 2019 17:28:36 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     mchehab@kernel.org, perex@perex.cz, tiwai@suse.com,
+        hverkuil@xs4all.nl, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org
+Subject: Re: [PATCH v10 0/4] Media Device Allocator API
+Message-ID: <20190125152836.njwepezj2xf4xp22@valkosipuli.retiisi.org.uk>
+References: <cover.1548360791.git.shuah@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1548360791.git.shuah@kernel.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently, the Kbuild core manipulates header search paths in a crazy
-way [1].
+Hi Shuah,
 
-To fix this mess, I want all Makefiles to add explicit $(srctree)/ to
-the search paths in the srctree. Some Makefiles are already written in
-that way, but not all. The goal of this work is to make the notation
-consistent, and finally get rid of the gross hacks.
+On Thu, Jan 24, 2019 at 01:32:37PM -0700, Shuah Khan wrote:
+> Media Device Allocator API to allows multiple drivers share a media device.
+> This API solves a very common use-case for media devices where one physical
+> device (an USB stick) provides both audio and video. When such media device
+> exposes a standard USB Audio class, a proprietary Video class, two or more
+> independent drivers will share a single physical USB bridge. In such cases,
+> it is necessary to coordinate access to the shared resource.
+> 
+> Using this API, drivers can allocate a media device with the shared struct
+> device as the key. Once the media device is allocated by a driver, other
+> drivers can get a reference to it. The media device is released when all
+> the references are released.
 
-Having whitespaces after -I does not matter since commit 48f6e3cf5bc6
-("kbuild: do not drop -I without parameter").
+Thanks for the update. I have to apologise I haven't ended up reviewing the
+set for some time. After taking a look at the current version, I'm happy to
+see that a number of issues recognised during earlier review rounds have
+been addressed.
 
-I also removed one header search path in:
+Would you happen to have a media graph (media-ctl --print-dot and media-ctl
+-p) from the device? That'd help understanding the device a bit better for
+those who are not familiar with it.
 
-  drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile
+> 
+> - This patch series is tested on 5.0-rc3 and addresses comments on
+>   v9 series from Hans Verkuil.
+> - v9 was tested on 4.20-rc6.
+> - Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
+>   arecord. When analog is streaming, digital and audio user-space
+>   applications detect that the tuner is busy and exit. When digital
+>   is streaming, analog and audio applications detect that the tuner is
+>   busy and exit. When arecord is owns the tuner, digital and analog
+>   detect that the tuner is busy and exit.
+> - Tested media device allocator API with bind/unbind testing on
+>   snd-usb-audio and au0828 drivers to make sure /dev/mediaX is released
+>   only when the last driver is unbound.
+> - Addressed review comments from Hans on the RFC v8 (rebased on 4.19)
+> - Updated change log to describe the use-case more clearly.
+> - No changes to 0001,0002 code since the v7 referenced below.
+> - 0003 is a new patch to enable ALSA defines that have been
+>   disabled for kernel between 4.9 and 4.19.
+> - Minor merge conflict resolution in 0004.
+> - Added SPDX to new files.
+> 
+> Changes since v9:
+> - Patch 1: Fix mutex assert warning from find_module() calls. This
+>   code was written before the change to find_module() that requires
+>   callers to hold module_mutex. I missed this during my testing on
+>   4.20-rc6. Hans Verkuil reported the problem.
+> - Patch 4: sound/usb: Initializes all the entities it can before
+>   registering the device based on comments from Hans Verkuil
+> - Carried Reviewed-by tag from Takashi Iwai for the sound from v9.
+> - No changes to Patches 2 and 3.
+> 
+> References:
+> https://lkml.org/lkml/2018/11/2/169
+> https://www.mail-archive.com/linux-media@vger.kernel.org/msg105854.html
+> 
+> Shuah Khan (4):
+>   media: Media Device Allocator API
+>   media: change au0828 to use Media Device Allocator API
+>   media: media.h: Enable ALSA MEDIA_INTF_T* interface types
+>   sound/usb: Use Media Controller API to share media resources
+> 
+>  Documentation/media/kapi/mc-core.rst   |  41 ++++
+>  drivers/media/Makefile                 |   4 +
+>  drivers/media/media-dev-allocator.c    | 144 +++++++++++
+>  drivers/media/usb/au0828/au0828-core.c |  12 +-
+>  drivers/media/usb/au0828/au0828.h      |   1 +
+>  include/media/media-dev-allocator.h    |  53 ++++
+>  include/uapi/linux/media.h             |  25 +-
+>  sound/usb/Kconfig                      |   4 +
+>  sound/usb/Makefile                     |   2 +
+>  sound/usb/card.c                       |  14 ++
+>  sound/usb/card.h                       |   3 +
+>  sound/usb/media.c                      | 327 +++++++++++++++++++++++++
+>  sound/usb/media.h                      |  74 ++++++
+>  sound/usb/mixer.h                      |   3 +
+>  sound/usb/pcm.c                        |  29 ++-
+>  sound/usb/quirks-table.h               |   1 +
+>  sound/usb/stream.c                     |   2 +
+>  sound/usb/usbaudio.h                   |   6 +
+>  18 files changed, 723 insertions(+), 22 deletions(-)
+>  create mode 100644 drivers/media/media-dev-allocator.c
+>  create mode 100644 include/media/media-dev-allocator.h
+>  create mode 100644 sound/usb/media.c
+>  create mode 100644 sound/usb/media.h
+> 
 
-I was able to compile without it.
-
-[1]: https://patchwork.kernel.org/patch/9632347/
-
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
-
- drivers/net/wireless/broadcom/brcm80211/brcmfmac/Makefile | 4 ++--
- drivers/net/wireless/broadcom/brcm80211/brcmsmac/Makefile | 6 +++---
- drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile | 4 +---
- drivers/net/wireless/intel/iwlwifi/dvm/Makefile           | 2 +-
- drivers/net/wireless/intel/iwlwifi/mvm/Makefile           | 2 +-
- drivers/net/wireless/realtek/rtl818x/rtl8180/Makefile     | 2 +-
- drivers/net/wireless/realtek/rtl818x/rtl8187/Makefile     | 2 +-
- 7 files changed, 10 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/Makefile b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/Makefile
-index 22fd95a..f7cf3e5 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmfmac/Makefile
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmfmac/Makefile
-@@ -16,8 +16,8 @@
- # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
- ccflags-y += \
--	-Idrivers/net/wireless/broadcom/brcm80211/brcmfmac	\
--	-Idrivers/net/wireless/broadcom/brcm80211/include
-+	-I $(srctree)/$(src) \
-+	-I $(srctree)/$(src)/../include
- 
- obj-$(CONFIG_BRCMFMAC) += brcmfmac.o
- brcmfmac-objs += \
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/Makefile b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/Makefile
-index ed83f33..482d773 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmsmac/Makefile
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmsmac/Makefile
-@@ -16,9 +16,9 @@
- # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
- ccflags-y := \
--	-Idrivers/net/wireless/broadcom/brcm80211/brcmsmac \
--	-Idrivers/net/wireless/broadcom/brcm80211/brcmsmac/phy \
--	-Idrivers/net/wireless/broadcom/brcm80211/include
-+	-I $(srctree)/$(src) \
-+	-I $(srctree)/$(src)/phy \
-+	-I $(srctree)/$(src)/../include
- 
- brcmsmac-y := \
- 	mac80211_if.o \
-diff --git a/drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile b/drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile
-index 256c91f..bb02c62 100644
---- a/drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile
-+++ b/drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile
-@@ -15,9 +15,7 @@
- # OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR IN
- # CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
- 
--ccflags-y :=				\
--	-Idrivers/net/wireless/broadcom/brcm80211/brcmutil \
--	-Idrivers/net/wireless/broadcom/brcm80211/include
-+ccflags-y := -I $(srctree)/$(src)/../include
- 
- obj-$(CONFIG_BRCMUTIL)	+= brcmutil.o
- brcmutil-objs	= utils.o d11.o
-diff --git a/drivers/net/wireless/intel/iwlwifi/dvm/Makefile b/drivers/net/wireless/intel/iwlwifi/dvm/Makefile
-index 702d42b..0486b17 100644
---- a/drivers/net/wireless/intel/iwlwifi/dvm/Makefile
-+++ b/drivers/net/wireless/intel/iwlwifi/dvm/Makefile
-@@ -11,4 +11,4 @@ iwldvm-objs		+= rxon.o devices.o
- iwldvm-$(CONFIG_IWLWIFI_LEDS) += led.o
- iwldvm-$(CONFIG_IWLWIFI_DEBUGFS) += debugfs.o
- 
--ccflags-y += -I$(src)/../
-+ccflags-y += -I $(srctree)/$(src)/../
-diff --git a/drivers/net/wireless/intel/iwlwifi/mvm/Makefile b/drivers/net/wireless/intel/iwlwifi/mvm/Makefile
-index 9ffd219..7d1b318 100644
---- a/drivers/net/wireless/intel/iwlwifi/mvm/Makefile
-+++ b/drivers/net/wireless/intel/iwlwifi/mvm/Makefile
-@@ -10,4 +10,4 @@ iwlmvm-$(CONFIG_IWLWIFI_LEDS) += led.o
- iwlmvm-y += tof.o
- iwlmvm-$(CONFIG_PM) += d3.o
- 
--ccflags-y += -I$(src)/../
-+ccflags-y += -I $(srctree)/$(src)/../
-diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8180/Makefile b/drivers/net/wireless/realtek/rtl818x/rtl8180/Makefile
-index 2966681..5d6b06d 100644
---- a/drivers/net/wireless/realtek/rtl818x/rtl8180/Makefile
-+++ b/drivers/net/wireless/realtek/rtl818x/rtl8180/Makefile
-@@ -2,4 +2,4 @@ rtl818x_pci-objs	:= dev.o rtl8225.o sa2400.o max2820.o grf5101.o rtl8225se.o
- 
- obj-$(CONFIG_RTL8180)	+= rtl818x_pci.o
- 
--ccflags-y += -Idrivers/net/wireless/realtek/rtl818x
-+ccflags-y += -I $(srctree)/$(src)/..
-diff --git a/drivers/net/wireless/realtek/rtl818x/rtl8187/Makefile b/drivers/net/wireless/realtek/rtl818x/rtl8187/Makefile
-index ff07491..95bac73 100644
---- a/drivers/net/wireless/realtek/rtl818x/rtl8187/Makefile
-+++ b/drivers/net/wireless/realtek/rtl818x/rtl8187/Makefile
-@@ -2,4 +2,4 @@ rtl8187-objs		:= dev.o rtl8225.o leds.o rfkill.o
- 
- obj-$(CONFIG_RTL8187)	+= rtl8187.o
- 
--ccflags-y += -Idrivers/net/wireless/realtek/rtl818x
-+ccflags-y += -I $(srctree)/$(src)/..
 -- 
-2.7.4
+Kind regards,
 
+Sakari Ailus
