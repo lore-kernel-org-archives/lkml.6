@@ -2,325 +2,170 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56810C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10A8C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:28:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19EEA21915
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:27:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D2DB21915
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:28:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j2J2Xwos"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727210AbfAYI10 (ORCPT
+        id S1728400AbfAYI2B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 03:27:26 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:37452 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726669AbfAYI10 (ORCPT
+        Fri, 25 Jan 2019 03:28:01 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44122 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726402AbfAYI2B (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 03:27:26 -0500
-Received: by mail-ua1-f68.google.com with SMTP id u19so2974933uae.4
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 00:27:24 -0800 (PST)
+        Fri, 25 Jan 2019 03:28:01 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e11so4226930plt.11;
+        Fri, 25 Jan 2019 00:28:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=V8hJoKyXaoUESl3aFsZMgQYMtfaGubDrCWRZkqTGBCQ=;
+        b=j2J2XwosZBnDTSBcO1+TgSCFvGX54cqFQqdZaVRW+TmuIqlkbfpzaPtEoek3msyxgb
+         XXSFp6SwCsMfzf3Lbluy+egA8wg8RdI7GiT2oIKDfW/gzPxyQ4bVMhO7wfxIF34dg9Tc
+         7CAx+Hyxn+CNphBQjVUwg61C5zhHILEatsEuRDrsM/2q1mGPGSO76cYo2YCh0+aLm0ah
+         EJVUx3VYG2rX5p7O4A6rQyOJLpxQN01ekWc/YfAEd05YwlxDEfJ9TLisGjT0gfop6/2G
+         vlN2Aho18yB6sUBmsI0UwO+H+6eAa4TnrKZ0pzJ4GYQF1tfnvyxg8a59bjVlHXDZaZkK
+         fN1Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BXKJptZMSBfv+PGSeg6Oj9y3mwSyQnNFAD2m1M6ZCTU=;
-        b=MsuYX4IbjusL13xXwJi5l6tIgxhKTEmPiyPubVd9wZ50tFRkIZRfcYAiGQ3d0wMz1+
-         n7cJTyCbywNyR60oqKoATzBsEWyfaMG2GkKeTW0JbtvbT4F9oanob7E8BINDHOpdzTYA
-         36aiewyaTwyM44UOs0qClHwuhyLz4n6a65Fjo4OLMEnQd+iG0gEINHjCyqQIDvPOWEG0
-         oVxJA7TSXUdPRRsLPfAd5ZN3chsFzfGrlh2pimU7Lp7M90pwg6du0VXyJEQbzCMC6Q0S
-         gTA7HXTg2KdHMd9mxIM1fEdZdBmN13VRAezRPYm+EDIxp1ubdjm/P9EZ0Jzm0xwWiPaL
-         m/JQ==
-X-Gm-Message-State: AJcUukfqq39zbNJRR3EPHr/fjaQ4N7zBvqLsvaKDZc0bO4ZGAUVw2XyH
-        vI9+z4clssR70mKBB1yHVdsQFMbEo5SOTYNscQM=
-X-Google-Smtp-Source: ALg8bN64Qa8pyPkpLQX1oVA+o+Sz/IhUxI7aI9siOX/97AVlE+xI2enn49vixTmJfTKCC3QuQgdlGfClPz6XsGWbZ9g=
-X-Received: by 2002:ab0:210e:: with SMTP id d14mr4169400ual.20.1548404844158;
- Fri, 25 Jan 2019 00:27:24 -0800 (PST)
-MIME-Version: 1.0
-References: <20190125025747.1853-1-jcmvbkbc@gmail.com>
-In-Reply-To: <20190125025747.1853-1-jcmvbkbc@gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Fri, 25 Jan 2019 09:27:12 +0100
-Message-ID: <CAMuHMdV-HiZt9PP6LyF8c=7ARNbMX3bJH6r6Ru7koBxEu+9ZSw@mail.gmail.com>
-Subject: Re: [PATCH] treewide: get rid of HAVE_FUTEX_CMPXCHG
-To:     Max Filippov <jcmvbkbc@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Paul Burton <paul.burton@mips.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Ungerer <gerg@linux-m68k.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=V8hJoKyXaoUESl3aFsZMgQYMtfaGubDrCWRZkqTGBCQ=;
+        b=OP0fBuy+rcPXLoNQvkSiBBi2T+4ir9HAUQKBUo/JQCxruV1jhm37e6IDWHOx6uLIl9
+         duBVW2OdKDff/GCs46RQj+1PegjUZZqAdFcWnEMbjRgKjDNvX43XX7o0DB+y9GZfGLgO
+         HTLl/zY981jTFQnv4JSnaLojLFZ6gnvTnTWFw/oH5K0SuaKyo8tV/vTntOt8NA02qL5U
+         cEG0BnQQf5CmDCAmgfPH3JAeXRJ8xV+M8X7gYGbsD3spxr74PRpkLKw3uMCppE1w036E
+         UVBe1ciQGgRsVT/exaRhx+nifKGClDNsWGj12P5+KDslJhbz9uJa2k4GyGmXhGKrSuZq
+         k4zw==
+X-Gm-Message-State: AJcUukf86eIkVMbZY8dVzopTa7UPUXyPpDSWkxlKmCsJgUs4rf1FziYm
+        2hLTr9qwwK5Wsg9+RoRrZLM=
+X-Google-Smtp-Source: ALg8bN5+m6xS97ECNh2XNm1uwWV9pHk2I4HcJ/inW1OkpG3gWbOIQmzRNGXoSKw1OBysc9uO85vT4w==
+X-Received: by 2002:a17:902:be0e:: with SMTP id r14mr9454206pls.124.1548404880339;
+        Fri, 25 Jan 2019 00:28:00 -0800 (PST)
+Received: from localhost ([43.224.245.181])
+        by smtp.gmail.com with ESMTPSA id v89sm34880711pfk.12.2019.01.25.00.27.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 00:27:59 -0800 (PST)
+From:   Geliang Tang <geliangtang@gmail.com>
+To:     Phillip Lougher <phillip@squashfs.org.uk>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Kees Cook <keescook@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Coly Li <colyli@suse.de>
+Cc:     Geliang Tang <geliangtang@gmail.com>,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v4 0/2] squashfs/squashfs-tools: Add posix acl support
+Date:   Fri, 25 Jan 2019 16:27:46 +0800
+Message-Id: <cover.1548403955.git.geliangtang@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Max,
+When we use mksquashfs tool to create a squashfs image from the files which
+have POSIX ACLs(Access Control Lists), we get these errors:
 
-On Fri, Jan 25, 2019 at 3:58 AM Max Filippov <jcmvbkbc@gmail.com> wrote:
-> CONFIG_HAVE_FUTEX_CMPXCHG is currently used to determine if
-> atomic_inatomic is always working or must be probed. For most
-> architectures it is either selected, or it is known that they always
-> have futex_atomic_cmpxchg_inatomic working.
->
-> Drop HAVE_FUTEX_CMPXCHG from the Kconfig and let architectures that may
-> not have it working define macro arch_have_futex_cmpxchg that probes
-> whether futex_atomic_cmpxchg_inatomic is working, otherwise assume that
-> it is working.
->
-> Implement arch_have_futex_cmpxchg for MIPS, Xtensa and for the users of
-> asm-generic/futex.h.
->
-> Cc: Andy Lutomirski <luto@kernel.org>
-> Cc: Arnd Bergmann <arnd@arndb.de>
-> Cc: Geert Uytterhoeven <geert@linux-m68k.org>
-> Cc: Paul Burton <paul.burton@mips.com>
-> Cc: Ralf Baechle <ralf@linux-mips.org>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
+Unrecognised xattr prefix system.posix_acl_access
+Unrecognised xattr prefix system.posix_acl_default
 
-Thanks for your patch!
+This patcheset adds posix acl support to squashfs to fix this problem. Patch
+#1 for kerenl tree and patch #2 for squashfs-tools tree.
 
-> ---
->  arch/arc/Kconfig                |  1 -
->  arch/m68k/Kconfig               |  1 -
->  arch/mips/include/asm/futex.h   |  2 ++
->  arch/riscv/Kconfig              |  1 -
->  arch/s390/Kconfig               |  1 -
->  arch/sh/Kconfig                 |  1 -
->  arch/um/Kconfig                 |  1 -
->  arch/xtensa/Kconfig             |  1 -
->  arch/xtensa/include/asm/futex.h |  4 ++++
->  include/asm-generic/futex.h     |  2 ++
->  init/Kconfig                    |  8 --------
->  kernel/futex.c                  | 30 ++++++++----------------------
->  12 files changed, 16 insertions(+), 37 deletions(-)
->
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-> index 376366a7db81..01932be9f7e3 100644
-> --- a/arch/arc/Kconfig
-> +++ b/arch/arc/Kconfig
-> @@ -29,7 +29,6 @@ config ARC
->         select HAVE_ARCH_KGDB
->         select HAVE_ARCH_TRACEHOOK
->         select HAVE_DEBUG_STACKOVERFLOW
-> -       select HAVE_FUTEX_CMPXCHG if FUTEX
->         select HAVE_GENERIC_DMA_COHERENT
->         select HAVE_IOREMAP_PROT
->         select HAVE_KERNEL_GZIP
-> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-> index e173ea2ff395..09499af5d22a 100644
-> --- a/arch/m68k/Kconfig
-> +++ b/arch/m68k/Kconfig
-> @@ -20,7 +20,6 @@ config M68K
->         select GENERIC_STRNLEN_USER if MMU
->         select ARCH_WANT_IPC_PARSE_VERSION
->         select ARCH_USES_GETTIMEOFFSET if MMU && !COLDFIRE
-> -       select HAVE_FUTEX_CMPXCHG if MMU && FUTEX
+---
 
-I guess it didn't really matter for !MMU?
+Testcase:
 
->         select HAVE_MOD_ARCH_SPECIFIC
->         select MODULES_USE_ELF_REL
->         select MODULES_USE_ELF_RELA
-> diff --git a/arch/mips/include/asm/futex.h b/arch/mips/include/asm/futex.h
-> index c14d798f3888..f61221d080fc 100644
-> --- a/arch/mips/include/asm/futex.h
-> +++ b/arch/mips/include/asm/futex.h
-> @@ -122,6 +122,8 @@ arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
->         return ret;
->  }
->
-> +#define arch_have_futex_cmpxchg() (cpu_has_llsc)
-> +
->  static inline int
->  futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
->                               u32 oldval, u32 newval)
-> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-> index feeeaa60697c..074966cdd41d 100644
-> --- a/arch/riscv/Kconfig
-> +++ b/arch/riscv/Kconfig
-> @@ -31,7 +31,6 @@ config RISCV
->         select HAVE_ARCH_AUDITSYSCALL
->         select HAVE_MEMBLOCK_NODE_MAP
->         select HAVE_DMA_CONTIGUOUS
-> -       select HAVE_FUTEX_CMPXCHG if FUTEX
->         select HAVE_GENERIC_DMA_COHERENT
->         select HAVE_PERF_EVENTS
->         select HAVE_SYSCALL_TRACEPOINTS
-> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> index ed554b09eb3f..6f3819275d08 100644
-> --- a/arch/s390/Kconfig
-> +++ b/arch/s390/Kconfig
-> @@ -146,7 +146,6 @@ config S390
->         select HAVE_FTRACE_MCOUNT_RECORD
->         select HAVE_FUNCTION_GRAPH_TRACER
->         select HAVE_FUNCTION_TRACER
-> -       select HAVE_FUTEX_CMPXCHG if FUTEX
->         select HAVE_GCC_PLUGINS
->         select HAVE_KERNEL_BZIP2
->         select HAVE_KERNEL_GZIP
-> diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
-> index a9c36f95744a..a04bc11c8819 100644
-> --- a/arch/sh/Kconfig
-> +++ b/arch/sh/Kconfig
-> @@ -50,7 +50,6 @@ config SUPERH
->         select OLD_SIGACTION
->         select PCI_DOMAINS if PCI
->         select HAVE_ARCH_AUDITSYSCALL
-> -       select HAVE_FUTEX_CMPXCHG if FUTEX
->         select HAVE_NMI
->         select NEED_SG_DMA_LENGTH
->
-> diff --git a/arch/um/Kconfig b/arch/um/Kconfig
-> index ec9711d068b7..38c5ce3b64b1 100644
-> --- a/arch/um/Kconfig
-> +++ b/arch/um/Kconfig
-> @@ -10,7 +10,6 @@ config UML
->         select HAVE_ARCH_AUDITSYSCALL
->         select HAVE_ARCH_SECCOMP_FILTER
->         select HAVE_UID16
-> -       select HAVE_FUTEX_CMPXCHG if FUTEX
->         select HAVE_DEBUG_KMEMLEAK
->         select HAVE_DEBUG_BUGVERBOSE
->         select GENERIC_IRQ_SHOW
-> diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-> index 7021d1e15909..a4d34de57809 100644
-> --- a/arch/xtensa/Kconfig
-> +++ b/arch/xtensa/Kconfig
-> @@ -25,7 +25,6 @@ config XTENSA
->         select HAVE_DMA_CONTIGUOUS
->         select HAVE_EXIT_THREAD
->         select HAVE_FUNCTION_TRACER
-> -       select HAVE_FUTEX_CMPXCHG if !MMU
->         select HAVE_HW_BREAKPOINT if PERF_EVENTS
->         select HAVE_IRQ_TIME_ACCOUNTING
->         select HAVE_OPROFILE
-> diff --git a/arch/xtensa/include/asm/futex.h b/arch/xtensa/include/asm/futex.h
-> index 505d09eff184..ac88d64f94e4 100644
-> --- a/arch/xtensa/include/asm/futex.h
-> +++ b/arch/xtensa/include/asm/futex.h
-> @@ -87,6 +87,10 @@ static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
->         return ret;
->  }
->
-> +#if !XCHAL_HAVE_S32C1I
-> +#define arch_have_futex_cmpxchg() (0)
-> +#endif
-> +
->  static inline int
->  futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
->                               u32 oldval, u32 newval)
-> diff --git a/include/asm-generic/futex.h b/include/asm-generic/futex.h
-> index fcb61b4659b3..deefe5b22b9b 100644
-> --- a/include/asm-generic/futex.h
-> +++ b/include/asm-generic/futex.h
-> @@ -136,6 +136,8 @@ arch_futex_atomic_op_inuser(int op, u32 oparg, int *oval, u32 __user *uaddr)
->         return ret;
->  }
->
-> +#define arch_have_futex_cmpxchg() (0)
+$ mkdir root
+$ getfacl root
+  # file: root
+  # owner: tgl
+  # group: tgl
+  user::rwx
+  group::r-x
+  other::r-x
+$ setfacl -m u:tgl:rw root
+$ setfacl -m d:tgl:rw root
+$ getfacl root
+  # file: root
+  # owner: tgl
+  # group: tgl
+  user::rwx
+  user:tgl:rw-
+  group::r-x
+  mask::rwx
+  other::r-x
+  default:user::rwx
+  default:user:tgl:rw-
+  default:group::r-x
+  default:mask::rwx
+  default:other::r-x
+$ getfattr -m . -d root
+  # file: root
+  system.posix_acl_access=0sAgAAAAEABwD/////AgAGAOgDAAAEAAUA/////xAABwD/////IAAFAP////8=
+  system.posix_acl_default=0sAgAAAAEABwD/////AgAGAOgDAAAEAAUA/////xAABwD/////IAAFAP////8=
 
-This is for the SMP=y case only, right?
+$ mksquashfs root root.img
+$ sudo mount root.img /mnt/squash/
 
-> +
->  static inline int
->  futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
->                               u32 oldval, u32 newval)
-> diff --git a/init/Kconfig b/init/Kconfig
-> index 513fa544a134..351f4c93f932 100644
-> --- a/init/Kconfig
-> +++ b/init/Kconfig
-> @@ -1338,14 +1338,6 @@ config FUTEX_PI
->         depends on FUTEX && RT_MUTEXES
->         default y
->
-> -config HAVE_FUTEX_CMPXCHG
-> -       bool
-> -       depends on FUTEX
-> -       help
-> -         Architectures should select this if futex_atomic_cmpxchg_inatomic()
-> -         is implemented and always working. This removes a couple of runtime
-> -         checks.
-> -
->  config EPOLL
->         bool "Enable eventpoll support" if EXPERT
->         default y
-> diff --git a/kernel/futex.c b/kernel/futex.c
-> index be3bff2315ff..5697c1f2254d 100644
-> --- a/kernel/futex.c
-> +++ b/kernel/futex.c
-> @@ -174,7 +174,11 @@
->   * double_lock_hb() and double_unlock_hb(), respectively.
->   */
->
-> -#ifdef CONFIG_HAVE_FUTEX_CMPXCHG
-> +/*
-> + * Architectures should define this macro if futex_atomic_cmpxchg_inatomic()
-> + * may not be always working.
-> + */
-> +#ifdef arch_have_futex_cmpxchg
+$ cd /mnt
+$ getfacl squash
+  # file: squash
+  # owner: tgl
+  # group: tgl
+  user::rwx
+  user:tgl:rw-
+  group::r-x
+  mask::rwx
+  other::r-x
+  default:user::rwx
+  default:user:tgl:rw-
+  default:group::r-x
+  default:mask::rwx
+  default:other::r-x
+$ getfattr -m . -d squash
+  # file: squash
+  system.posix_acl_access=0sAgAAAAEABwD/////AgAGAOgDAAAEAAUA/////xAABwD/////IAAFAP////8=
+  system.posix_acl_default=0sAgAAAAEABwD/////AgAGAOgDAAAEAAUA/////xAABwD/////IAAFAP////8=
 
-Shouldn't this be #ifndef now...
+---
 
->  #define futex_cmpxchg_enabled 1
->  #else
->  static int  __read_mostly futex_cmpxchg_enabled;
-> @@ -3842,26 +3846,6 @@ COMPAT_SYSCALL_DEFINE6(futex, u32 __user *, uaddr, int, op, u32, val,
->  }
->  #endif /* CONFIG_COMPAT_32BIT_TIME */
->
-> -static void __init futex_detect_cmpxchg(void)
-> -{
-> -#ifndef CONFIG_HAVE_FUTEX_CMPXCHG
-> -       u32 curval;
-> -
-> -       /*
-> -        * This will fail and we want it. Some arch implementations do
-> -        * runtime detection of the futex_atomic_cmpxchg_inatomic()
-> -        * functionality. We want to know that before we call in any
-> -        * of the complex code paths. Also we want to prevent
-> -        * registration of robust lists in that case. NULL is
-> -        * guaranteed to fault and we get -EFAULT on functional
-> -        * implementation, the non-functional ones will return
-> -        * -ENOSYS.
-> -        */
-> -       if (cmpxchg_futex_value_locked(&curval, NULL, 0, 0) == -EFAULT)
-> -               futex_cmpxchg_enabled = 1;
-> -#endif
-> -}
-> -
->  static int __init futex_init(void)
->  {
->         unsigned int futex_shift;
-> @@ -3880,7 +3864,9 @@ static int __init futex_init(void)
->                                                futex_hashsize, futex_hashsize);
->         futex_hashsize = 1UL << futex_shift;
->
-> -       futex_detect_cmpxchg();
-> +#ifdef arch_have_futex_cmpxchg
-> +       futex_cmpxchg_enabled = arch_have_futex_cmpxchg();
+Geliang Tang (1):
+  squashfs: Add posix acl support
 
-... else you're assigning to the constant:
+ Documentation/filesystems/squashfs.txt |  2 -
+ fs/squashfs/Kconfig                    | 11 ++++
+ fs/squashfs/Makefile                   |  1 +
+ fs/squashfs/acl.c                      | 69 ++++++++++++++++++++++++++
+ fs/squashfs/acl.h                      | 31 ++++++++++++
+ fs/squashfs/inode.c                    |  4 +-
+ fs/squashfs/namei.c                    |  6 ++-
+ fs/squashfs/squashfs_fs.h              | 12 +++--
+ fs/squashfs/super.c                    |  3 ++
+ fs/squashfs/symlink.c                  |  6 ++-
+ fs/squashfs/xattr.c                    | 31 +++++++++++-
+ fs/squashfs/xattr.h                    |  8 +++
+ 12 files changed, 171 insertions(+), 13 deletions(-)
+ create mode 100644 fs/squashfs/acl.c
+ create mode 100644 fs/squashfs/acl.h
 
-    error: lvalue required as left operand of assignment
+---
 
-> +#endif
->
->         for (i = 0; i < futex_hashsize; i++) {
->                 atomic_set(&futex_queues[i].waiters, 0);
+Geliang Tang (1):
+  squashfs-tools: Add posix acl support
 
-Gr{oetje,eeting}s,
+ squashfs-tools/read_xattrs.c |  2 ++
+ squashfs-tools/squashfs_fs.h | 12 +++++++-----
+ 2 files changed, 9 insertions(+), 5 deletions(-)
 
-                        Geert
+-- 
+2.17.1
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
