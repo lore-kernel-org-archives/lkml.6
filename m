@@ -2,174 +2,109 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C1D0C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42AB7C282C2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59AF5218CD
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0863F218CD
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 16:09:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tronnes.org header.i=@tronnes.org header.b="gArcX+7f"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbfAYQJr (ORCPT
+        id S1727558AbfAYQJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 11:09:47 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:59142 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726108AbfAYQJr (ORCPT
+        Fri, 25 Jan 2019 11:09:52 -0500
+Received: from smtp.domeneshop.no ([194.63.252.55]:41684 "EHLO
+        smtp.domeneshop.no" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726108AbfAYQJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 11:09:47 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0PG9613128722
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 11:09:46 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2q84vqat8b-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 11:09:45 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Fri, 25 Jan 2019 16:09:45 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 25 Jan 2019 16:09:43 -0000
-Received: from b01ledav005.gho.pok.ibm.com (b01ledav005.gho.pok.ibm.com [9.57.199.110])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0PG9gAO14155970
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 25 Jan 2019 16:09:42 GMT
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7B026AE062;
-        Fri, 25 Jan 2019 16:09:42 +0000 (GMT)
-Received: from b01ledav005.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D7CC8AE05C;
-        Fri, 25 Jan 2019 16:09:41 +0000 (GMT)
-Received: from oc8380061452.ibm.com (unknown [9.53.179.224])
-        by b01ledav005.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 25 Jan 2019 16:09:41 +0000 (GMT)
-Subject: Re: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific
- drc info
-To:     Tyrel Datwyler <turtle.in.the.kernel@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Juliet Kim <minkim@us.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        nathanl@linux.vnet.ibm.com
-References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
- <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com>
- <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com>
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
- mQENBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
- lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
- DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
- t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
- AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
- AAG0LU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPokBOAQT
- AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
- CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
- 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
- QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
- AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
- oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/UrkBDQRXGOxnAQgAmJ5Y
- ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
- DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
- 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
- 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
- qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABiQEfBBgBAgAJBQJX
- GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
- efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
- ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
- yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
- IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
- 53/hcWvxHVs=
-Organization: IBM Linux Technology Center
-Date:   Fri, 25 Jan 2019 10:09:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+        Fri, 25 Jan 2019 11:09:52 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=tronnes.org; s=ds201810;
+        h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject; bh=zcy8HKQUdBHlJJOMkh7XP4QKAs+yKn8Q4aUXTkATKfo=;
+        b=gArcX+7f2y2OQ6qLhEAEJc5OmMdrbvg75SLdkyhIheEZH3NaGfUT5FI28+GDYELNvkkqdxUx30wGK2jny+dqiK00qm1nVQ1Pg5oJNeoNdvCByBe9CCSwtcA/4r1op9BzCXTeQ9n0EZDwNhZodjEwvM/U1aA0OF9wzMCon1Ffy5CWd1Thu1hED4nyYN4QaJz3tJItGgaIhcXIPF3VFxIRGL1CePOtG1xlDxcEA4Yu37ZtYXeB8aqf5MBWXvGOicFOEhKZDhk+5WIvkswReTlCE/NMkPSYzJoixv4te4bwkTWWfza837wFqaOTtTwZeyWLjzvAWW9X4NkO6te4fWs1Bw==;
+Received: from 211.81-166-168.customer.lyse.net ([81.166.168.211]:49436 helo=[192.168.10.176])
+        by smtp.domeneshop.no with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.84_2)
+        (envelope-from <noralf@tronnes.org>)
+        id 1gn43C-000652-Ad; Fri, 25 Jan 2019 17:09:50 +0100
+Subject: Re: [PATCH v3 10/23] drm/qxl: move qxl_primary_apply_cursor to
+ correct place
+To:     Gerd Hoffmann <kraxel@redhat.com>, dri-devel@lists.freedesktop.org
+Cc:     David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>
+References: <20190118122020.27596-1-kraxel@redhat.com>
+ <20190118122020.27596-11-kraxel@redhat.com>
+From:   =?UTF-8?Q?Noralf_Tr=c3=b8nnes?= <noralf@tronnes.org>
+Message-ID: <b3c756b3-c7b6-f4d3-5208-c8de0168d655@tronnes.org>
+Date:   Fri, 25 Jan 2019 17:09:46 +0100
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com>
+In-Reply-To: <20190118122020.27596-11-kraxel@redhat.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012516-0072-0000-0000-000003EFA6AB
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010475; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01151625; UDB=6.00600247; IPR=6.00931968;
- MB=3.00025286; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-25 16:09:44
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012516-0073-0000-0000-00004AF0EF0B
-Message-Id: <63da6cfa-5272-0c78-ae91-0ad1130db3f1@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-25_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901250129
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Adding Nathan Lynch
 
-On 1/24/19 6:04 PM, Tyrel Datwyler wrote:
-> On 12/14/2018 12:50 PM, Michael Bringmann wrote:
->> Define interface to acquire arch-specific drc info to match against
->> hotpluggable devices.  The current implementation exposes several
->> pseries-specific dynamic memory properties in generic kernel code.
->> This patch set provides an interface to pull that code out of the
->> generic kernel.
->>
->> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
->> ---
->>  include/linux/topology.h |    9 +++++++++
->>  1 file changed, 9 insertions(+)
->>
->> diff --git a/include/linux/topology.h b/include/linux/topology.h
->> index cb0775e..df97f5f 100644
->> --- a/include/linux/topology.h
->> +++ b/include/linux/topology.h
->> @@ -44,6 +44,15 @@
+
+Den 18.01.2019 13.20, skrev Gerd Hoffmann:
+> The cursor must be set again after creating the primary surface.
+> Also drop the error message.
 > 
-> As far as I know pseries is the only platform that uses DR connectors, and I
-> highly doubt that any other powerpc platform or arch ever will. So, I'm not sure
-> that this is really generic enough to belong in topology.h. If anything I would
-> suggest putting this in an include in arch/powerpc/include/ named something like
-> drcinfo.h or pseries-drc.h. That will make it visible to modules like rpaphp
-> that want/need to use this functionality.
+> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> ---
+>  drivers/gpu/drm/qxl/qxl_display.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
 > 
-> -Tyrel
-> 
->>  
->>  int arch_update_cpu_topology(void);
->>  
->> +int arch_find_drc_match(struct device_node *dn,
->> +			bool (*usercb)(struct device_node *dn,
->> +				u32 drc_index, char *drc_name,
->> +				char *drc_type, u32 drc_power_domain,
->> +				void *data),
->> +			char *opt_drc_type, char *opt_drc_name,
->> +			bool match_drc_index, bool ck_php_type,
->> +			void *data);
->> +
->>  /* Conform to ACPI 2.0 SLIT distance definitions */
->>  #define LOCAL_DISTANCE		10
->>  #define REMOTE_DISTANCE		20
->>
-> 
+> diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+> index 86bfc19bea..1b700ef503 100644
+> --- a/drivers/gpu/drm/qxl/qxl_display.c
+> +++ b/drivers/gpu/drm/qxl/qxl_display.c
+> @@ -533,7 +533,6 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
+>  	    .x2 = plane->state->fb->width,
+>  	    .y2 = plane->state->fb->height
+>  	};
+> -	int ret;
+>  	bool same_shadow = false;
+>  
+>  	if (old_state->fb) {
+> @@ -554,16 +553,13 @@ static void qxl_primary_atomic_update(struct drm_plane *plane,
+>  		if (!same_shadow)
+>  			qxl_io_destroy_primary(qdev);
+>  		bo_old->is_primary = false;
+> -
+> -		ret = qxl_primary_apply_cursor(plane);
+> -		if (ret)
+> -			DRM_ERROR(
+> -			"could not set cursor after creating primary");
+>  	}
+>  
+>  	if (!bo->is_primary) {
+> -		if (!same_shadow)
+> +		if (!same_shadow) {
+>  			qxl_io_create_primary(qdev, 0, bo);
+> +			qxl_primary_apply_cursor(plane);
+> +		}
+>  		bo->is_primary = true;
+>  	}
+>  
 > 
 
--- 
-Michael W. Bringmann
-Linux I/O, Networking and Security Development
-IBM Corporation
-Tie-Line  363-5196
-External: (512) 286-5196
-Cell:       (512) 466-0650
-mwb@linux.vnet.ibm.com
+I don't see how the commit message matches what you're doing. It gives
+the impression that it must be applied under yet another condition, but
+the condition for applying the cursor is changed from bo_old->is_primary
+to !bo->is_primary.
+It probably makes sense to someone that knows the driver.
 
+Acked-by: Noralf Trønnes <noralf@tronnes.org>
