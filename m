@@ -2,200 +2,120 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FA0EC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:52:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50157C282C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:52:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED849217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:52:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1526A217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:52:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="vMFBqrK6"
+	dkim=pass (1024-bit key) header.d=Synaptics.onmicrosoft.com header.i=@Synaptics.onmicrosoft.com header.b="YRXS2Wxa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729007AbfAYHwQ (ORCPT
+        id S1729044AbfAYHwU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 02:52:16 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:40377 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726669AbfAYHwP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 02:52:15 -0500
-Received: by mail-lf1-f67.google.com with SMTP id v5so6244160lfe.7;
-        Thu, 24 Jan 2019 23:52:13 -0800 (PST)
+        Fri, 25 Jan 2019 02:52:20 -0500
+Received: from mail-eopbgr770041.outbound.protection.outlook.com ([40.107.77.41]:61874
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726669AbfAYHwU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 02:52:20 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:references:cc:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=S/PecIcQc1kFgYlonoFxz1E4IJONkcf4aGIUu1zvd08=;
-        b=vMFBqrK63eVtVNZj0Q/vwZC4cCnruJWwIClI0a5m7ZShYCSrcLdZl8CXhFmEz27nv1
-         qbt0icT+fv9/IPCBXvVL4SVgAmP/248fNBpn2LfTAVzFLKT4mIHLmD1qeV+l6AKhOFAC
-         xojX7hMo3rfgBcVNeQRHsTDLHCBwiLXo6uPpcepX9K16FYASuc9hc3rAkmU0RdZpo8gZ
-         kQhRWZ+fOLbQ/5ynd9aZ+9Q7r4l1ZYtHXw205ivFQoJNr1jLqRmRbSu/2keIBIeJYIo5
-         htWEeZG4BOQLVfEp9nDPBODwYcO2MD6pYE+Lv+gFrtOIilXkaXnheS+xDnqgecs7QCK8
-         WPtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:references:cc:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=S/PecIcQc1kFgYlonoFxz1E4IJONkcf4aGIUu1zvd08=;
-        b=cUVeWul6qLP/KBx4BGeQTR5FHMJgkJnhXaBDEpFmvr2PpGbLzxOJaMpLj9sTgNdp1Q
-         rLNzoQLYN8J3gxoxueSPdo2vXNkL0xLaLxXQa0V69ZGfBt2fNIfczrp1VVkzADAlALY2
-         EvR1/7QXBzC4u+nwJ85TfCNyfLDaYWnu8CM4DOzKuJ47wNqwoAqnvNqRk8KGFmBc6rat
-         GYhGIhI5PybMNELp2aeJKlC0f3jBn+uYX6KEyVi9s0nSYVWfBK/4tcMQj17BUnQhRmBV
-         pIEQTshKbLS45P6IVV+ZdJ3tjVXLjTjqYfS1yPdduaq+DGzkGuxWSNNpALEbjG6zpitw
-         woSA==
-X-Gm-Message-State: AJcUuke7c2jb23aiBCIasen/wpoCft3agHiUbUK8Za6mT0p+EOuAzPYE
-        thZV/81OrGFL0nkUqLEiuj+TdNsThkM=
-X-Google-Smtp-Source: ALg8bN7otxJKrI5WLSDESVMwICheRQoDxph9wU7Fe09s2gHoQ34UigkHR5gO+uVy94eh48TJ7dhHaQ==
-X-Received: by 2002:a19:c502:: with SMTP id w2mr7505557lfe.168.1548402732699;
-        Thu, 24 Jan 2019 23:52:12 -0800 (PST)
-Received: from amb.local (out244.support.agnat.pl. [91.234.176.244])
-        by smtp.gmail.com with ESMTPSA id m1sm1330557lfb.56.2019.01.24.23.52.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 23:52:12 -0800 (PST)
-Subject: Re: pids.current with invalid value for hours [5.0.0 rc3 git]
-From:   =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>
-To:     cgroups@vger.kernel.org
-References: <df806a77-3327-9db5-8be2-976fde1c84e5@gmail.com>
- <20190117122535.njcbqhlmzozdkncw@mikami>
- <1d36b181-cbaf-6694-1a31-2f7f55d15675@gmail.com>
- <96ef6615-a5df-30af-b4dc-417a18ca63f1@gmail.com>
-Cc:     Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org
-Message-ID: <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
-Date:   Fri, 25 Jan 2019 08:52:11 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+ d=Synaptics.onmicrosoft.com; s=selector1-synaptics-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DZHuxHV0NU8+OgapU5oohEFj2PhqN1HYwCqQlCRFjNM=;
+ b=YRXS2WxaD3ApdQATI73y7wROcO9JuWZNoLar0FkbY7BUfDLYRXdxSMz4VIXBcccACMBAw54z+3l4AR4BUPPbU2nbVs3wjT9jOISgVYbfhd/Itj4unS8xhNbHTV43/4utrc/5u3aRNrD541iX9dvoVGPENrxY9rF1h2CDdEbHOS8=
+Received: from SN6PR03MB4398.namprd03.prod.outlook.com (20.177.255.219) by
+ SN6PR03MB4511.namprd03.prod.outlook.com (20.177.255.215) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1537.27; Fri, 25 Jan 2019 07:52:18 +0000
+Received: from SN6PR03MB4398.namprd03.prod.outlook.com
+ ([fe80::59c4:7034:c325:36f]) by SN6PR03MB4398.namprd03.prod.outlook.com
+ ([fe80::59c4:7034:c325:36f%2]) with mapi id 15.20.1558.021; Fri, 25 Jan 2019
+ 07:52:18 +0000
+From:   Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+To:     Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>
+CC:     "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: [PATCH] watchdog: dw: use devm_watchdog_register_device()
+Thread-Topic: [PATCH] watchdog: dw: use devm_watchdog_register_device()
+Thread-Index: AQHUtILkJEgOoFDo5k+scnWOyUtyXg==
+Date:   Fri, 25 Jan 2019 07:52:18 +0000
+Message-ID: <20190125154604.66801c6a@xhacker.debian>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [199.33.119.15]
+x-clientproxiedby: TY2PR04CA0003.apcprd04.prod.outlook.com
+ (2603:1096:404:f6::15) To SN6PR03MB4398.namprd03.prod.outlook.com
+ (2603:10b6:805:fd::27)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Jisheng.Zhang@synaptics.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR03MB4511;6:TC7mk32yKT77g3EOsTj+L3dhGhsauP3TDJ5GwcBi9cNQF9FBHBPul5mtjugSiixwwKdqoxdOmQz9M75TSgh3awLHtAzfxezdsPt0EouX5GFTgtFvTOAYSuXO/gxBcudgtkIzzK0hBwgnmAHfknaBh+qmEaBR4hfE/giqc2N00CmY/7ULmoyb361sFFx5Y4KhoYaz8bsJ3LOqfAG3CGgE3ceWqCLIWnyqdCa1/KVA6nrUAfTAtnHuIUKuZmeRjSYx8PkW2eManedw1D0egpuJo/G2xK0MED9k+PZkw0OTLonYwqMLu4PAV66A6wbnn3a5E6AuIO7Ak/HYBJknvQ6WnuwuOBGsWQ0J7oBH7s95+v8BMwJH1kegBCkif4AaDrlRXJvf7sc7MadoyjrUrjfDW8+1aV8j2umtCKGWiiK/OIvYY36XwNdodPX/x1NhKshHQpO0Y/QShWsVTm0ezu5AiQ==;5:ymhVJSaEBIY1lc6woFuczqW9r/SOPBg9iYeUpeKsssjhipbEiEZmB+guFMkJJVJOk2d9F4OEZO1jFxMQsuy2x8EKK1/I1LI/yAZJ/vZJaq+J3ZYx1dnFf//33ZM/zT+6yJSMn9H+xse991wopqtV0VguQENnoafqry353nnXcD7xNYfuBvNKjV/UCF4vShFBi6a16e+765lUJd8C/EBRzA==;7:1kJEeAOnzFLJFABMUi0ABLM+LLIgi/hDcAXij7y2CRc0XQYz6Pw4QF4mNl+e4/azLETXIqtlAOJMXKvXs7PnO9nnbFknWYOUXFCWDGFGh1SOzMD3NmnD7xjWZSE1k1Ni7krmChG1o+kaWm4CYwjNvA==
+x-ms-office365-filtering-correlation-id: 9203bd69-1e85-4fb0-a3da-08d6829a0739
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:SN6PR03MB4511;
+x-ms-traffictypediagnostic: SN6PR03MB4511:
+x-microsoft-antispam-prvs: <SN6PR03MB45110253D09F66B1E7EC28F3ED9B0@SN6PR03MB4511.namprd03.prod.outlook.com>
+x-forefront-prvs: 0928072091
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(376002)(346002)(39860400002)(136003)(396003)(199004)(189003)(305945005)(68736007)(7736002)(53936002)(86362001)(102836004)(6506007)(6436002)(386003)(25786009)(6486002)(52116002)(33896004)(9686003)(6512007)(4326008)(26005)(50226002)(8676002)(186003)(81156014)(8936002)(81166006)(97736004)(316002)(54906003)(6116002)(3846002)(2906002)(110136005)(4744005)(256004)(71200400001)(71190400001)(99286004)(106356001)(478600001)(66066001)(105586002)(1076003)(476003)(72206003)(14454004)(486006)(39210200001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR03MB4511;H:SN6PR03MB4398.namprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:0;MX:1;
+received-spf: None (protection.outlook.com: synaptics.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: daBNYLY00NiidfhMH50yH/hyDdVCLmogGZMBkxxKKj+ziqFv66E5B1hpwMdHM0JRzBvi4nY6jx09JgRJ5XeSLRE6eqz7JKjl5csaOUDphEtoDah3RQR/BDoyAwubIGTpqFo/FJp/s3MPXUkv8X+AoCgMuJpEw2SAsxYfS6TU+mtQ+O7msMvVofgztWW0QwVHpn0HToH+vaaBse5mWif/DBIIQelsoo+bOiLPkq/hqD5P6ZKrJo0Inx+BDgj97aOMhqymQY7uGSPwFf1uWKExVtkYTk6lw+Sz53uCL4yUs5NrYsJ1WfrfKgzmXv9kRs07Jywbft5owdO5trGUpy3+CaVuEuLaLHODt1oQo8TB3OKXLKA39SfvTW9ZLrA9qjbF5BIS8mR5Yu6FlsRuTAVfXVO2YEGSi8nlcFq6l9vk8QA=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <52CB72195FD926478CDBCD3A3AC154A5@namprd03.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-In-Reply-To: <96ef6615-a5df-30af-b4dc-417a18ca63f1@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: pl
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: synaptics.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9203bd69-1e85-4fb0-a3da-08d6829a0739
+X-MS-Exchange-CrossTenant-originalarrivaltime: 25 Jan 2019 07:52:15.9933
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 335d1fbc-2124-4173-9863-17e7051a2a0e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR03MB4511
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 24/01/2019 12:21, Arkadiusz Miśkiewicz wrote:
-> On 17/01/2019 14:17, Arkadiusz Miśkiewicz wrote:
->> On 17/01/2019 13:25, Aleksa Sarai wrote:
->>> On 2019-01-17, Arkadiusz Miśkiewicz <a.miskiewicz@gmail.com> wrote:
->>>> Using kernel 4.19.13.
->>>>
->>>> For one cgroup I noticed weird behaviour:
->>>>
->>>> # cat pids.current
->>>> 60
->>>> # cat cgroup.procs
->>>> #
->>>
->>> Are there any zombies in the cgroup? pids.current is linked up directly
->>> to __put_task_struct (so exit(2) won't decrease it, only the task_struct
->>> actually being freed will decrease it).
->>>
->>
->> There are no zombie processes.
->>
->> In mean time the problem shows on multiple servers and so far saw it
->> only in cgroups that were OOMed.
->>
->> What has changed on these servers (yesterday) is turning on
->> memory.oom.group=1 for all cgroups and changing memory.high from 1G to
->> "max" (leaving memory.max=2G limit only).
->>
->> Previously there was no such problem.
->>
-> 
-> I'm attaching reproducer. This time tried on different distribution
-> kernel (arch linux).
-> 
-> After 60s pids.current still shows 37 processes even if there are no
-> processes running (according to ps aux).
+Use devm_watchdog_register_device() to simplify the code.
 
+Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
+---
+ drivers/watchdog/dw_wdt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-The same test on 5.0.0-rc3-00104-gc04e2a780caf and it's easy to
-reproduce bug. No processes in cgroup but pids.current reports 91.
+diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
+index 501aebb5b81f..c053c2de5c2f 100644
+--- a/drivers/watchdog/dw_wdt.c
++++ b/drivers/watchdog/dw_wdt.c
+@@ -303,7 +303,7 @@ static int dw_wdt_drv_probe(struct platform_device *pde=
+v)
+=20
+ 	watchdog_set_restart_priority(wdd, 128);
+=20
+-	ret =3D watchdog_register_device(wdd);
++	ret =3D devm_watchdog_register_device(wdd);
+ 	if (ret)
+ 		goto out_disable_clk;
+=20
+@@ -318,7 +318,6 @@ static int dw_wdt_drv_remove(struct platform_device *pd=
+ev)
+ {
+ 	struct dw_wdt *dw_wdt =3D platform_get_drvdata(pdev);
+=20
+-	watchdog_unregister_device(&dw_wdt->wdd);
+ 	reset_control_assert(dw_wdt->rst);
+ 	clk_disable_unprepare(dw_wdt->clk);
+=20
+--=20
+2.20.1
 
-memory.oom.group=0 - everything works fine, pids are counted properly
-memory.oom.group=1 - bug becomes visible
-
-[root@xps test]# python3 cg.py
-Created cgroup: /sys/fs/cgroup/test_5277
-Start: pids.current: 0
-Start: cgroup.procs:
-0: pids.current: 103
-0: cgroup.procs:
-1: pids.current: 91
-1: cgroup.procs:
-2: pids.current: 91
-2: cgroup.procs:
-3: pids.current: 91
-3: cgroup.procs:
-4: pids.current: 91
-4: cgroup.procs:
-5: pids.current: 91
-5: cgroup.procs:
-6: pids.current: 91
-6: cgroup.procs:
-7: pids.current: 91
-7: cgroup.procs:
-8: pids.current: 91
-8: cgroup.procs:
-9: pids.current: 91
-9: cgroup.procs:
-10: pids.current: 91
-10: cgroup.procs:
-11: pids.current: 91
-11: cgroup.procs:
-[root@xps test]# uname -a
-Linux xps 5.0.0-rc3-00104-gc04e2a780caf #288 SMP PREEMPT Thu Jan 24
-19:00:32 CET 2019 x86_64 Intel(R)_Core(TM)_i9-8950HK_CPU_@_2.90GHz PLD Linux
-
-
-cc relevant people
-
-script is here: https://www.spinics.net/lists/cgroups/msg21330.html
-
-> 
-> [root@warm ~]# uname -a
-> Linux warm 4.20.3-arch1-1-ARCH #1 SMP PREEMPT Wed Jan 16 22:38:58 UTC
-> 2019 x86_64 GNU/Linux
-> [root@warm ~]# python3 cg.py
-> Created cgroup: /sys/fs/cgroup/test_26207
-> Start: pids.current: 0
-> Start: cgroup.procs:
-> 0: pids.current: 62
-> 0: cgroup.procs:
-> 1: pids.current: 37
-> 1: cgroup.procs:
-> 2: pids.current: 37
-> 2: cgroup.procs:
-> 3: pids.current: 37
-> 3: cgroup.procs:
-> 4: pids.current: 37
-> 4: cgroup.procs:
-> 5: pids.current: 37
-> 5: cgroup.procs:
-> 6: pids.current: 37
-> 6: cgroup.procs:
-> 7: pids.current: 37
-> 7: cgroup.procs:
-> 8: pids.current: 37
-> 8: cgroup.procs:
-> 9: pids.current: 37
-> 9: cgroup.procs:
-> 10: pids.current: 37
-> 10: cgroup.procs:
-> 11: pids.current: 37
-> 11: cgroup.procs:
-> 
-
-
--- 
-Arkadiusz Miśkiewicz, arekm / ( maven.pl | pld-linux.org )
