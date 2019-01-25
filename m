@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6108CC282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:55:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D70B7C282C6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32C36217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:55:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99CA5217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:56:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="coyFDyZ/";
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="coyFDyZ/"
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="DpyD3Z5+";
+	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="DpyD3Z5+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728849AbfAYCzx (ORCPT
+        id S1728885AbfAYC4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 21:55:53 -0500
-Received: from node.akkea.ca ([192.155.83.177]:52108 "EHLO node.akkea.ca"
+        Thu, 24 Jan 2019 21:56:00 -0500
+Received: from node.akkea.ca ([192.155.83.177]:52134 "EHLO node.akkea.ca"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728694AbfAYCzk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 21:55:40 -0500
+        id S1728683AbfAYCzj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 21:55:39 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id C03E64E205C;
-        Fri, 25 Jan 2019 02:55:39 +0000 (UTC)
+        by node.akkea.ca (Postfix) with ESMTP id EAE3C4E2058;
+        Fri, 25 Jan 2019 02:55:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1548384939; bh=NtFtvKu7hgih6/01kJslPvJy0MSpNrvkPmrJHu9XxMM=;
+        t=1548384938; bh=2BskzDdkFSPQ7IWwVr4w3oGtVDWNwTeYX0iWNkTP6cU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=coyFDyZ/SG5g1Ba9ugw1yk/Cnn0Wi0rML5tbTK26IGvGgF0vJ5l8oMylby4QANIZZ
-         eX5yEZHB/OzAJ8wmeY9G4f9zJ/DiOg3jMZXahzqkobbieT0Kx+0AU1gY4vkUts17YG
-         xD89XTwdFNasizYL+iyDgM2dGEeYDs6O7GygUUiU=
+        b=DpyD3Z5+oNfU6uJs6Jgqhv8BIVvERCiRKkKcirj20uqqOybvivU8wUtay6LGulBmg
+         tU2KybODiExQFDy3DbRjVf3BBeQYbzt8kRpAUvtnlk0NUrwUPu9bsWauZLAqAz2oen
+         R6BR6Bi6WpX2bk2hcleGSRe7LbB/oIdErzdbi10Y=
 X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
 Received: from node.akkea.ca ([127.0.0.1])
         by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id 5E9mFXaPlrsN; Fri, 25 Jan 2019 02:55:39 +0000 (UTC)
+        with ESMTP id 33bNu387GHL5; Fri, 25 Jan 2019 02:55:38 +0000 (UTC)
 Received: from localhost.localdomain (198-48-167-13.cpe.pppoe.ca [198.48.167.13])
-        by node.akkea.ca (Postfix) with ESMTPSA id C3A8C4E204E;
+        by node.akkea.ca (Postfix) with ESMTPSA id 0EE274E204D;
         Fri, 25 Jan 2019 02:55:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1548384939; bh=NtFtvKu7hgih6/01kJslPvJy0MSpNrvkPmrJHu9XxMM=;
+        t=1548384938; bh=2BskzDdkFSPQ7IWwVr4w3oGtVDWNwTeYX0iWNkTP6cU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=coyFDyZ/SG5g1Ba9ugw1yk/Cnn0Wi0rML5tbTK26IGvGgF0vJ5l8oMylby4QANIZZ
-         eX5yEZHB/OzAJ8wmeY9G4f9zJ/DiOg3jMZXahzqkobbieT0Kx+0AU1gY4vkUts17YG
-         xD89XTwdFNasizYL+iyDgM2dGEeYDs6O7GygUUiU=
+        b=DpyD3Z5+oNfU6uJs6Jgqhv8BIVvERCiRKkKcirj20uqqOybvivU8wUtay6LGulBmg
+         tU2KybODiExQFDy3DbRjVf3BBeQYbzt8kRpAUvtnlk0NUrwUPu9bsWauZLAqAz2oen
+         R6BR6Bi6WpX2bk2hcleGSRe7LbB/oIdErzdbi10Y=
 From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
 To:     angus@akkea.ca
 Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
@@ -53,9 +53,9 @@ Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Lucas Stach <l.stach@pengutronix.de>,
         Daniel Baluta <daniel.baluta@gmail.com>
-Subject: [PATCH v4 4/5] dma: imx-sdma: add a test for imx8mq multi sdma devices
-Date:   Thu, 24 Jan 2019 19:55:27 -0700
-Message-Id: <20190125025528.15645-5-angus@akkea.ca>
+Subject: [PATCH v4 3/5] dt-bindings: dma: fsl-imx-sdma: add fsl,imx8mq to the accepted compatible node
+Date:   Thu, 24 Jan 2019 19:55:26 -0700
+Message-Id: <20190125025528.15645-4-angus@akkea.ca>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190125025528.15645-1-angus@akkea.ca>
 References: <20190120023150.17138-1-angus@akkea.ca>
@@ -65,68 +65,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On i.mx8mq, there are two sdma instances, and the common dma framework
-will get a channel dynamically from any available sdma instance whether
-it's the first sdma device or the second sdma device. Some IPs like
-SAI only work with sdma2 not sdma1. To make sure the sdma channel is from
-the correct sdma device, use the phandle to match.
+The imx8mq is a slightly different variant on the imx7d
 
 Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
 ---
- drivers/dma/imx-sdma.c                | 8 ++++++++
- include/linux/platform_data/dma-imx.h | 1 +
- 2 files changed, 9 insertions(+)
+ Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index ec6fb48f387a..88e112a4aabf 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -1927,11 +1927,17 @@ static int sdma_init(struct sdma_engine *sdma)
- static bool sdma_filter_fn(struct dma_chan *chan, void *fn_param)
- {
- 	struct sdma_channel *sdmac = to_sdma_chan(chan);
-+	struct sdma_engine *sdma = sdmac->sdma;
- 	struct imx_dma_data *data = fn_param;
- 
- 	if (!imx_dma_is_general_purpose(chan))
- 		return false;
- 
-+	/* return false if it's not the right device */
-+	if ((sdmac->sdma->drvdata == &sdma_imx8mq)
-+		&& (sdma->dev->of_node->phandle != data->phandle))
-+		return false;
-+
- 	sdmac->data = *data;
- 	chan->private = &sdmac->data;
- 
-@@ -1942,6 +1948,7 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
- 				   struct of_dma *ofdma)
- {
- 	struct sdma_engine *sdma = ofdma->of_dma_data;
-+	struct device_node *np = ofdma->of_node;
- 	dma_cap_mask_t mask = sdma->dma_device.cap_mask;
- 	struct imx_dma_data data;
- 
-@@ -1959,6 +1966,7 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
- 	 * be set to sdmac->event_id1.
- 	 */
- 	data.dma_request2 = 0;
-+	data.phandle = np->phandle;
- 
- 	return dma_request_channel(mask, sdma_filter_fn, &data);
- }
-diff --git a/include/linux/platform_data/dma-imx.h b/include/linux/platform_data/dma-imx.h
-index 7d964e787299..eeb5b73ae542 100644
---- a/include/linux/platform_data/dma-imx.h
-+++ b/include/linux/platform_data/dma-imx.h
-@@ -55,6 +55,7 @@ struct imx_dma_data {
- 	int dma_request2; /* secondary DMA request line */
- 	enum sdma_peripheral_type peripheral_type;
- 	int priority;
-+	int phandle;
- };
- 
- static inline int imx_dma_is_ipu(struct dma_chan *chan)
+diff --git a/Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt b/Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt
+index 3c9a57a8443b..9d8bbac27d8b 100644
+--- a/Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt
++++ b/Documentation/devicetree/bindings/dma/fsl-imx-sdma.txt
+@@ -9,6 +9,7 @@ Required properties:
+       "fsl,imx53-sdma"
+       "fsl,imx6q-sdma"
+       "fsl,imx7d-sdma"
++      "fsl,imx8mq-sdma"
+   The -to variants should be preferred since they allow to determine the
+   correct ROM script addresses needed for the driver to work without additional
+   firmware.
 -- 
 2.17.1
 
