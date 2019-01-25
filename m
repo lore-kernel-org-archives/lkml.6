@@ -2,199 +2,162 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7885BC282C6
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:10:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0EDC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:10:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 401C9218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:10:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=javigon-com.20150623.gappssmtp.com header.i=@javigon-com.20150623.gappssmtp.com header.b="el/PofVj"
+	by mail.kernel.org (Postfix) with ESMTP id 72DB4218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:10:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729115AbfAYKJ7 (ORCPT
+        id S1729229AbfAYKKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:09:59 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:33258 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728917AbfAYKJ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:09:58 -0500
-Received: by mail-ed1-f65.google.com with SMTP id p6so6977028eds.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 02:09:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=javigon-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zYp4aSF2I+B7wPt69ZXXOjpLPND18P+ZVSL6wfj6i78=;
-        b=el/PofVj1MGkiSYbQdewCccU3uVymx3OPpjmRfMVVYg8f+gnVdMtEwBe7p2Z2X4J8Z
-         H03Aflx7OuiLEjYK41L9tG4nigJg6HDo0+K20K7dIaDm0nn0ggzu6Q8crALK9NJIjShF
-         QudPoovpaSbjgQ1ur+VtHvt12clW4xYkVW/jk/NKEaR5oHd1+A1eu4jsYHI9iQ+QxDM5
-         b4qt0CnZ0VQF/SrwGi1GI4FshjtQMbcqO3eCuVmkIzw2Uct6CEIJPUHGHJEnXWwEw9Ug
-         MFKEwI4Q7VhupnjnEJVX0jl6kLQtzujBbOY51ckSnO/lso27M4Wt9pOx3hntwZaArEMo
-         q96w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=zYp4aSF2I+B7wPt69ZXXOjpLPND18P+ZVSL6wfj6i78=;
-        b=gc5FBMHYjGNBZ3MJbIFPA7hjtwvfQttTl0bwILLtvMfp3BpNFCp9EF6H7O/O+/ohJL
-         VdKRbEVQjy9EMhYEHtl8StrGIZiTRipOgHbMmytd2emwxSCOlLcafE7+wynir4gErTsM
-         CsxfLym5HzAHl/gHRkjsgJTbFhs7xh3CPTymlgAywpGBOcYsf19vT4gpReix7UxPvr1D
-         z2fK+FbXXOqcFpS7KKVHCDB1Zzc41PQZlf1FLrv7FlI2bITkLffkdBi6cTGDf0Ie6PwX
-         wdHzOH0aOIrm1j+wBkKeAeZu5fowDBSIIZRUy7Ot79SvczI3Xanrk/LweyCpfgxmzvS0
-         23bA==
-X-Gm-Message-State: AJcUukcj2M/p176muE+IKXG3Z2NDCb1k72BtCl20wG8HmIPxHzIWOSui
-        PawBXUH/r9jnLegn/Vc91Zu6Hg==
-X-Google-Smtp-Source: ALg8bN6HDq9REXnTj+FREtp7xD6cDv1Ye7IjRQmnM6B5GqY9rbojbUJE//nT1b/jzd3sWZq6molSqQ==
-X-Received: by 2002:a17:906:394e:: with SMTP id g14-v6mr9124537eje.0.1548410996298;
-        Fri, 25 Jan 2019 02:09:56 -0800 (PST)
-Received: from ch-wrk-javier.cnexlabs.com (ip-5-186-122-168.cgn.fibianet.dk. [5.186.122.168])
-        by smtp.gmail.com with ESMTPSA id n11sm11524744edn.14.2019.01.25.02.09.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 02:09:55 -0800 (PST)
-From:   =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>
-To:     mb@lightnvm.io
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Javier=20Gonz=C3=A1lez?= <javier@javigon.com>
-Subject: [PATCH] lightnvm: pblk: prevent stall due to wb threshold
-Date:   Fri, 25 Jan 2019 11:09:43 +0100
-Message-Id: <20190125100943.28743-1-javier@javigon.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 25 Jan 2019 05:10:05 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:43524 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728917AbfAYKKE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 05:10:04 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D4F8A20798; Fri, 25 Jan 2019 11:10:01 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A49B9206A6;
+        Fri, 25 Jan 2019 11:10:01 +0100 (CET)
+Date:   Fri, 25 Jan 2019 11:10:02 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-sunxi@googlegroups.com, Randy Li <ayaka@soulik.info>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH v2 2/2] media: cedrus: Add HEVC/H.265 decoding support
+Message-ID: <20190125101002.z5ftls5xo7izygvy@flea>
+References: <20181123130209.11696-1-paul.kocialkowski@bootlin.com>
+ <20181123130209.11696-3-paul.kocialkowski@bootlin.com>
+ <20181127082119.xdemdwgclai7kj3r@flea>
+ <4f25de5bbcb7bf196fe4925f54e3335b50670bd2.camel@bootlin.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="z6zsvccsx3aejq2d"
+Content-Disposition: inline
+In-Reply-To: <4f25de5bbcb7bf196fe4925f54e3335b50670bd2.camel@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In order to respect mw_cuinits, pblk's write buffer maintains a
-backpointer to protect data not yet persisted; when writing to the write
-buffer, this backpointer defines a threshold that pblk's rate-limiter
-enforces.
 
-On small PU configurations, the following scenarios might take place: (i)
-the threshold is larger than the write buffer and (ii) the threshold is
-smaller than the write buffer, but larger than the maximun allowed
-split bio - 256KB at this moment (Note that writes are not always
-split - we only do this when we the size of the buffer is smaller
-than the buffer). In both cases, pblk's rate-limiter prevents the I/O to
-be written to the buffer, thus stalling.
+--z6zsvccsx3aejq2d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This patch fixes the original backpointer implementation by considering
-the threshold both on buffer creation and on the rate-limiters path,
-when bio_split is triggered (case (ii) above).
+Hi,
 
-Fixes: 766c8ceb16fc ("lightnvm: pblk: guarantee that backpointer is respected on writer stall")
-Signed-off-by: Javier González <javier@javigon.com>
----
- drivers/lightnvm/pblk-rb.c | 25 +++++++++++++++++++------
- drivers/lightnvm/pblk-rl.c |  5 ++---
- drivers/lightnvm/pblk.h    |  2 +-
- 3 files changed, 22 insertions(+), 10 deletions(-)
+On Thu, Jan 24, 2019 at 02:10:25PM +0100, Paul Kocialkowski wrote:
+> On Tue, 2018-11-27 at 09:21 +0100, Maxime Ripard wrote:
+> > Hi!
+> >=20
+> > On Fri, Nov 23, 2018 at 02:02:09PM +0100, Paul Kocialkowski wrote:
+> > > This introduces support for HEVC/H.265 to the Cedrus VPU driver, with
+> > > both uni-directional and bi-directional prediction modes supported.
+> > >=20
+> > > Field-coded (interlaced) pictures, custom quantization matrices and
+> > > 10-bit output are not supported at this point.
+> > >=20
+> > > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> >=20
+> > Output from checkpatch:
+> > total: 0 errors, 68 warnings, 14 checks, 999 lines checked
+>=20
+> Looks like many of the "line over 80 chars" are due to macros. I don't
+> think it would be a good idea to break them down or to change the
+> macros names since they are directly inherited from the bitstream
+> elements.
+>=20
+> What do you think?
 
-diff --git a/drivers/lightnvm/pblk-rb.c b/drivers/lightnvm/pblk-rb.c
-index d4ca8c64ee0f..a6133b50ed9c 100644
---- a/drivers/lightnvm/pblk-rb.c
-+++ b/drivers/lightnvm/pblk-rb.c
-@@ -45,10 +45,23 @@ void pblk_rb_free(struct pblk_rb *rb)
- /*
-  * pblk_rb_calculate_size -- calculate the size of the write buffer
-  */
--static unsigned int pblk_rb_calculate_size(unsigned int nr_entries)
-+static unsigned int pblk_rb_calculate_size(unsigned int nr_entries,
-+					   unsigned int threshold)
- {
--	/* Alloc a write buffer that can at least fit 128 entries */
--	return (1 << max(get_count_order(nr_entries), 7));
-+	unsigned int thr_sz = 1 << (get_count_order(threshold + NVM_MAX_VLBA));
-+	unsigned int max_sz = max(thr_sz, nr_entries);
-+	unsigned int max_io;
-+
-+	/* Alloc a write buffer that can (i) fit at least two split bios
-+	 * (considering max I/O size NVM_MAX_VLBA, and (ii) guarantee that the
-+	 * threshold will be respected
-+	 */
-+	max_io = (1 << max((int)(get_count_order(max_sz)),
-+				(int)(get_count_order(NVM_MAX_VLBA << 1))));
-+	if ((threshold + NVM_MAX_VLBA) >= max_io)
-+		max_io <<= 1;
-+
-+	return max_io;
- }
- 
- /*
-@@ -67,12 +80,12 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
- 	unsigned int alloc_order, order, iter;
- 	unsigned int nr_entries;
- 
--	nr_entries = pblk_rb_calculate_size(size);
-+	nr_entries = pblk_rb_calculate_size(size, threshold);
- 	entries = vzalloc(array_size(nr_entries, sizeof(struct pblk_rb_entry)));
- 	if (!entries)
- 		return -ENOMEM;
- 
--	power_size = get_count_order(size);
-+	power_size = get_count_order(nr_entries);
- 	power_seg_sz = get_count_order(seg_size);
- 
- 	down_write(&pblk_rb_lock);
-@@ -149,7 +162,7 @@ int pblk_rb_init(struct pblk_rb *rb, unsigned int size, unsigned int threshold,
- 	 * Initialize rate-limiter, which controls access to the write buffer
- 	 * by user and GC I/O
- 	 */
--	pblk_rl_init(&pblk->rl, rb->nr_entries);
-+	pblk_rl_init(&pblk->rl, rb->nr_entries, threshold);
- 
- 	return 0;
- }
-diff --git a/drivers/lightnvm/pblk-rl.c b/drivers/lightnvm/pblk-rl.c
-index 76116d5f78e4..f81d8f0570ef 100644
---- a/drivers/lightnvm/pblk-rl.c
-+++ b/drivers/lightnvm/pblk-rl.c
-@@ -207,7 +207,7 @@ void pblk_rl_free(struct pblk_rl *rl)
- 	del_timer(&rl->u_timer);
- }
- 
--void pblk_rl_init(struct pblk_rl *rl, int budget)
-+void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold)
- {
- 	struct pblk *pblk = container_of(rl, struct pblk, rl);
- 	struct nvm_tgt_dev *dev = pblk->dev;
-@@ -217,7 +217,6 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
- 	int sec_meta, blk_meta;
- 	unsigned int rb_windows;
- 
--
- 	/* Consider sectors used for metadata */
- 	sec_meta = (lm->smeta_sec + lm->emeta_sec[0]) * l_mg->nr_free_lines;
- 	blk_meta = DIV_ROUND_UP(sec_meta, geo->clba);
-@@ -234,7 +233,7 @@ void pblk_rl_init(struct pblk_rl *rl, int budget)
- 	/* To start with, all buffer is available to user I/O writers */
- 	rl->rb_budget = budget;
- 	rl->rb_user_max = budget;
--	rl->rb_max_io = budget >> 1;
-+	rl->rb_max_io = (budget >> 1) - get_count_order(threshold);
- 	rl->rb_gc_max = 0;
- 	rl->rb_state = PBLK_RL_HIGH;
- 
-diff --git a/drivers/lightnvm/pblk.h b/drivers/lightnvm/pblk.h
-index 85e38ed62f85..752cd40e4ae6 100644
---- a/drivers/lightnvm/pblk.h
-+++ b/drivers/lightnvm/pblk.h
-@@ -924,7 +924,7 @@ int pblk_gc_sysfs_force(struct pblk *pblk, int force);
- /*
-  * pblk rate limiter
-  */
--void pblk_rl_init(struct pblk_rl *rl, int budget);
-+void pblk_rl_init(struct pblk_rl *rl, int budget, int threshold);
- void pblk_rl_free(struct pblk_rl *rl);
- void pblk_rl_update_rates(struct pblk_rl *rl);
- int pblk_rl_high_thrs(struct pblk_rl *rl);
--- 
-2.17.1
+Yeah, the 80-chars limit can be ignored. But there's more warnings and
+checks that should be addressed.
 
+> > > +	/* Output frame. */
+> > > +
+> > > +	output_pic_list_index =3D V4L2_HEVC_DPB_ENTRIES_NUM_MAX;
+> > > +	pic_order_cnt[0] =3D pic_order_cnt[1] =3D slice_params->slice_pic_o=
+rder_cnt;
+> > > +	mv_col_buf_addr[0] =3D cedrus_h265_frame_info_mv_col_buf_addr(ctx,
+> > > +		run->dst->vb2_buf.index, 0) - PHYS_OFFSET;
+> > > +	mv_col_buf_addr[1] =3D cedrus_h265_frame_info_mv_col_buf_addr(ctx,
+> > > +		run->dst->vb2_buf.index, 1) - PHYS_OFFSET;
+> > > +	dst_luma_addr =3D cedrus_dst_buf_addr(ctx, run->dst->vb2_buf.index,=
+ 0) -
+> > > +			PHYS_OFFSET;
+> > > +	dst_chroma_addr =3D cedrus_dst_buf_addr(ctx, run->dst->vb2_buf.inde=
+x, 1) -
+> > > +			PHYS_OFFSET;
+> > > +
+> > > +	cedrus_h265_frame_info_write_single(dev, output_pic_list_index,
+> > > +					    slice_params->pic_struct !=3D 0,
+> > > +					    pic_order_cnt, mv_col_buf_addr,
+> > > +					    dst_luma_addr, dst_chroma_addr);
+> >=20
+> > You can only pass the run and slice_params pointers to that function.
+>=20
+> The point is to make it independent from the context, so that the same
+> function can be called with either the slice_params or the dpb info.
+> I don't think making two variants or even two wrappers would bring any
+> significant benefit.
+
+Then you can still pass directly the vb2 buffer pointer, that would
+remove the mv_col_buf_addr, dst_luma_addr and dst_chroma_addr. The
+idea here is that the less arguments you have in your function, the
+easier it is to understand.
+
+> > > +
+> > > +	cedrus_write(dev, VE_DEC_H265_OUTPUT_FRAME_IDX, output_pic_list_ind=
+ex);
+> > > +
+> > > +	/* Reference picture list 0 (for P/B frames). */
+> > > +	if (slice_params->slice_type !=3D V4L2_HEVC_SLICE_TYPE_I) {
+> > > +		cedrus_h265_ref_pic_list_write(dev, slice_params->ref_idx_l0,
+> > > +			slice_params->num_ref_idx_l0_active_minus1 + 1,
+> > > +			slice_params->dpb, slice_params->num_active_dpb_entries,
+> > > +			VE_DEC_H265_SRAM_OFFSET_REF_PIC_LIST0);
+> > > +
+> >=20
+> > slice_params is enough.
+>=20
+> The rationale is similar to the one above: being able to use the same
+> helper with either L0 or L1, which implies passing the relevant
+> elements directly.
+
+The DPB and num_active_dpb_entries will not change from one run to the
+other though. And having intermediate functions if that allows to be
+clearer is fine as well.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--z6zsvccsx3aejq2d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCXErgegAKCRDj7w1vZxhR
+xRsaAQC2ViWDkwRbE+VzfnvT6IM2IOggLnD2AO3axObHgVowZwEAsoum8jkX4cu3
+0xmBF8qYXaO9qf+KUl0tIhsEPcj2dQA=
+=H23o
+-----END PGP SIGNATURE-----
+
+--z6zsvccsx3aejq2d--
