@@ -2,83 +2,200 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EE6FC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E894FC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:24:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69996218DE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:24:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="EEf22r2W"
+	by mail.kernel.org (Postfix) with ESMTP id B3555218EA
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 07:24:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548401075;
+	bh=N9XMA7a3bQoV94ELIDbjuV0/37IqFrqBcMEl87YKkcM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=d3ElR1bNFNNJs44ZCsMAhr6RW+kDPc2kLAcQeuncwA8Xl55G4nj2d1Nw0DE9uWhdi
+	 MDPSu2lB++Hatwl5h6JLU3xShkAtZzkKOKPTd8pPBoUAlL8hWRRJdyBT1+BqZ5og4m
+	 wyDpzk2BXnSMgZx6mm4+kDETuYNu9nD/tlEbH4nc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728249AbfAYHYW (ORCPT
+        id S1728395AbfAYHYe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 02:24:22 -0500
-Received: from conuserg-09.nifty.com ([210.131.2.76]:34627 "EHLO
-        conuserg-09.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726520AbfAYHYW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 02:24:22 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-09.nifty.com with ESMTP id x0P7NrIe018208;
-        Fri, 25 Jan 2019 16:23:53 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-09.nifty.com x0P7NrIe018208
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1548401034;
-        bh=Z/++O0uH9aXyE0dKkwp/Ew71RM7jlqo9SoheGBRqJgM=;
-        h=From:To:Cc:Subject:Date:From;
-        b=EEf22r2WEx9eQBmsyiukWO8T3/rlkl263MeTIJ6wIrdKdOe6IBoRIb8Sqm0CJ6Fjr
-         cpjNmqNInxLtyqQw4TsHQEeKQOOAhICRyFa2ZyVvI/zgAaZ+7PqM1fS25EOVHwItuA
-         Y1pWW70q3o4QgKHloK6G+QHWwhwhyB3bz3ECVPHAXV2PnwNi+TrOVy5+w1QzKWN/2W
-         hGPtWerpibP+iMFWYrs2ea0W0tOQx+Tvf1tNl1H0+wosN8lO7vW/wSNqWT4YOQEHx5
-         e8jBjlsb9ztqzwtWHT7ACCeaH57R+st7o5Vn6FKAshZkrW304+9hd8vdPTxMFyQuK5
-         AxYPozNNXEhWw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     Matias Bjorling <mb@lightnvm.io>, linux-block@vger.kernel.org,
-        Jens Axboe <axboe@kernel.dk>
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] lightnvm: pblk: fix TRACE_INCLUDE_PATH
-Date:   Fri, 25 Jan 2019 16:23:50 +0900
-Message-Id: <1548401030-28860-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Fri, 25 Jan 2019 02:24:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40546 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726520AbfAYHYd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 02:24:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 73196AEA3;
+        Fri, 25 Jan 2019 07:24:31 +0000 (UTC)
+Date:   Fri, 25 Jan 2019 08:24:29 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Chris Down <chris@chrisdown.name>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Tejun Heo <tj@kernel.org>, Roman Gushchin <guro@fb.com>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Extract memcg maxable seq_file logic to
+ seq_show_memcg_tunable
+Message-ID: <20190125072429.GA3560@dhcp22.suse.cz>
+References: <20190124194100.GA31425@chrisdown.name>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124194100.GA31425@chrisdown.name>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As the comment block in include/trace/define_trace.h says,
-TRACE_INCLUDE_PATH should be a relative path to the define_trace.h
+On Thu 24-01-19 14:41:00, Chris Down wrote:
+> memcg has a significant number of files exposed to kernfs where their
+> value is either exposed directly or is "max" in the case of
+> PAGE_COUNTER_MAX.
+> 
+> This patch makes this generic by providing a single function to do this
+> work. In combination with the previous patch adding mem_cgroup_from_seq,
+> this makes all of the seq_show feeder functions significantly more
+> simple.
 
-../../drivers/lightnvm is the correct relative path.
+Yeah this is what I've had in mind when mentioning a helper in the
+previous version of the patch. I like this more even though the
+resulting savings are not that large.
 
-../../../drivers/lightnvm is working by coincidence because the top
-Makefile adds -I$(srctree)/arch/$(SRCARCH)/include as a header
-search path, but we should not rely on it.
+> Signed-off-by: Chris Down <chris@chrisdown.name>
+> Cc: Andrew Morton <akpm@linux-foundation.org>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Tejun Heo <tj@kernel.org>
+> Cc: Roman Gushchin <guro@fb.com>
+> Cc: linux-kernel@vger.kernel.org
+> Cc: cgroups@vger.kernel.org
+> Cc: linux-mm@kvack.org
+> Cc: kernel-team@fb.com
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Acked-by: Michal Hocko <mhocko@suse.com>
 
- drivers/lightnvm/pblk-trace.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> ---
+>  mm/memcontrol.c | 64 +++++++++++++++----------------------------------
+>  1 file changed, 19 insertions(+), 45 deletions(-)
+> 
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 98aad31f5226..81b6f752471a 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -5375,6 +5375,16 @@ static void mem_cgroup_bind(struct cgroup_subsys_state *root_css)
+>  		root_mem_cgroup->use_hierarchy = false;
+>  }
+>  
+> +static int seq_puts_memcg_tunable(struct seq_file *m, unsigned long value)
+> +{
+> +	if (value == PAGE_COUNTER_MAX)
+> +		seq_puts(m, "max\n");
+> +	else
+> +		seq_printf(m, "%llu\n", (u64)value * PAGE_SIZE);
+> +
+> +	return 0;
+> +}
+> +
+>  static u64 memory_current_read(struct cgroup_subsys_state *css,
+>  			       struct cftype *cft)
+>  {
+> @@ -5385,15 +5395,8 @@ static u64 memory_current_read(struct cgroup_subsys_state *css,
+>  
+>  static int memory_min_show(struct seq_file *m, void *v)
+>  {
+> -	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+> -	unsigned long min = READ_ONCE(memcg->memory.min);
+> -
+> -	if (min == PAGE_COUNTER_MAX)
+> -		seq_puts(m, "max\n");
+> -	else
+> -		seq_printf(m, "%llu\n", (u64)min * PAGE_SIZE);
+> -
+> -	return 0;
+> +	return seq_puts_memcg_tunable(m,
+> +		READ_ONCE(mem_cgroup_from_seq(m)->memory.min));
+>  }
+>  
+>  static ssize_t memory_min_write(struct kernfs_open_file *of,
+> @@ -5415,15 +5418,8 @@ static ssize_t memory_min_write(struct kernfs_open_file *of,
+>  
+>  static int memory_low_show(struct seq_file *m, void *v)
+>  {
+> -	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+> -	unsigned long low = READ_ONCE(memcg->memory.low);
+> -
+> -	if (low == PAGE_COUNTER_MAX)
+> -		seq_puts(m, "max\n");
+> -	else
+> -		seq_printf(m, "%llu\n", (u64)low * PAGE_SIZE);
+> -
+> -	return 0;
+> +	return seq_puts_memcg_tunable(m,
+> +		READ_ONCE(mem_cgroup_from_seq(m)->memory.low));
+>  }
+>  
+>  static ssize_t memory_low_write(struct kernfs_open_file *of,
+> @@ -5445,15 +5441,7 @@ static ssize_t memory_low_write(struct kernfs_open_file *of,
+>  
+>  static int memory_high_show(struct seq_file *m, void *v)
+>  {
+> -	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+> -	unsigned long high = READ_ONCE(memcg->high);
+> -
+> -	if (high == PAGE_COUNTER_MAX)
+> -		seq_puts(m, "max\n");
+> -	else
+> -		seq_printf(m, "%llu\n", (u64)high * PAGE_SIZE);
+> -
+> -	return 0;
+> +	return seq_puts_memcg_tunable(m, READ_ONCE(mem_cgroup_from_seq(m)->high));
+>  }
+>  
+>  static ssize_t memory_high_write(struct kernfs_open_file *of,
+> @@ -5482,15 +5470,8 @@ static ssize_t memory_high_write(struct kernfs_open_file *of,
+>  
+>  static int memory_max_show(struct seq_file *m, void *v)
+>  {
+> -	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+> -	unsigned long max = READ_ONCE(memcg->memory.max);
+> -
+> -	if (max == PAGE_COUNTER_MAX)
+> -		seq_puts(m, "max\n");
+> -	else
+> -		seq_printf(m, "%llu\n", (u64)max * PAGE_SIZE);
+> -
+> -	return 0;
+> +	return seq_puts_memcg_tunable(m,
+> +		READ_ONCE(mem_cgroup_from_seq(m)->memory.max));
+>  }
+>  
+>  static ssize_t memory_max_write(struct kernfs_open_file *of,
+> @@ -6622,15 +6603,8 @@ static u64 swap_current_read(struct cgroup_subsys_state *css,
+>  
+>  static int swap_max_show(struct seq_file *m, void *v)
+>  {
+> -	struct mem_cgroup *memcg = mem_cgroup_from_seq(m);
+> -	unsigned long max = READ_ONCE(memcg->swap.max);
+> -
+> -	if (max == PAGE_COUNTER_MAX)
+> -		seq_puts(m, "max\n");
+> -	else
+> -		seq_printf(m, "%llu\n", (u64)max * PAGE_SIZE);
+> -
+> -	return 0;
+> +	return seq_puts_memcg_tunable(m,
+> +		READ_ONCE(mem_cgroup_from_seq(m)->swap.max));
+>  }
+>  
+>  static ssize_t swap_max_write(struct kernfs_open_file *of,
+> -- 
+> 2.20.1
 
-diff --git a/drivers/lightnvm/pblk-trace.h b/drivers/lightnvm/pblk-trace.h
-index 679e5c45..9534503 100644
---- a/drivers/lightnvm/pblk-trace.h
-+++ b/drivers/lightnvm/pblk-trace.h
-@@ -139,7 +139,7 @@ TRACE_EVENT(pblk_state,
- /* This part must be outside protection */
- 
- #undef TRACE_INCLUDE_PATH
--#define TRACE_INCLUDE_PATH ../../../drivers/lightnvm
-+#define TRACE_INCLUDE_PATH ../../drivers/lightnvm
- #undef TRACE_INCLUDE_FILE
- #define TRACE_INCLUDE_FILE pblk-trace
- #include <trace/define_trace.h>
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
