@@ -3,160 +3,256 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0111AC282C5
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:55:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E62C1C282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:56:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C10CD218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:55:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="FZtBxxEt"
+	by mail.kernel.org (Postfix) with ESMTP id A8AF4218D9
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 00:56:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548377779;
+	bh=v6MM12VBxCLz7q3t1RaRp04eyGYu15HRvEEKzwfqhAY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=GxUF+zkZp2J3MpQSem7YolQWavCqWaZaqVS5ruGTonyNjk39x3KHnIMOOogvPUH44
+	 /KeDoIjd6dQzLb2M3dtRbZtOHuKdLf3j5op7IdKoJRAfxzcXSl5nyWRXih70fey/Lw
+	 PBcn1RcJiK6l9fPdaCfbyjQ/bDb5goa3kFg/CaiQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728315AbfAYAzi (ORCPT
+        id S1728344AbfAYA4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 19:55:38 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:45379 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728222AbfAYAzg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 19:55:36 -0500
-Received: by mail-pf1-f194.google.com with SMTP id g62so3860691pfd.12
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 16:55:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vSPb7Cbr7A2+q4Zr+YYOr1AZJUnYL55acdzIwT0IG1I=;
-        b=FZtBxxEtDxY4uGAojcFmmXNQ5ewnGU7dBWNaa4AxoyGgPH54pt+2JXPWlDQkBp6WYG
-         hC14/5a12LCG20MUBeidoiwv4KBSIb3s5ZvHiqmZyxBumHqM3P6+Xq8eLfSrkFWWizwC
-         YMV2ksb/X98MolH28Ew0hYqsow9+2EVyRx6EA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vSPb7Cbr7A2+q4Zr+YYOr1AZJUnYL55acdzIwT0IG1I=;
-        b=Q/PrzREYXPLr+re05nh8rFfsi3DEMa7faZupyqCyNRrEmRYfm4N4GR+QI9rAlvySXw
-         XISFsY5ShxNWZaGMbQEmOU4Vbdj2KW6S1vW6QAlZJVuEmSn1jgFquv0z09u9ly/xQ3eG
-         Hqokv4XVz6EMV4zkEbdR0urXKaEfWHiSvSD4OfX+Zs02ZmhqOdOjw5iPNrwQgdeT28AU
-         aUVPgONF8ku4iTsfQDpwcT9PFZl18tDd/tHaTHd2mu4AL0ca7M6C+vC4jwbmjvXM+zGR
-         XXRqVL+K9pO6RmeQXB42pqD6OUKMPK2HFXwubuewWTCVEKrirGkkDl1cLQLz3c9QhBLs
-         wZXw==
-X-Gm-Message-State: AJcUukcGmwhDEBjXoranb7lSGdy8mwWTQNrkUXFQMoT6bVMYMS+SHk18
-        EP1yOsPbKPYyMWzAi2gnivkQ5Q==
-X-Google-Smtp-Source: ALg8bN4uie9HJh63Jax3McaJOhkkjulCrnHdgo0CvptP9g8PEqwnz0ZUNxgMnazQF0jtH+2tu26JPg==
-X-Received: by 2002:a63:dd15:: with SMTP id t21mr7676433pgg.347.1548377735713;
-        Thu, 24 Jan 2019 16:55:35 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:75a:3f6e:21d:9374])
-        by smtp.gmail.com with ESMTPSA id y6sm35569207pfd.104.2019.01.24.16.55.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 24 Jan 2019 16:55:34 -0800 (PST)
-Date:   Thu, 24 Jan 2019 16:55:34 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v9 3/3] Bluetooth: hci_qca: Disable IBS state machine and
- flush Tx buffer
-Message-ID: <20190125005534.GC81583@google.com>
-References: <20190124120808.8275-1-bgodavar@codeaurora.org>
- <20190124120808.8275-4-bgodavar@codeaurora.org>
+        Thu, 24 Jan 2019 19:56:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49950 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726015AbfAYA4R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 24 Jan 2019 19:56:17 -0500
+Received: from localhost (unknown [104.132.1.80])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35D22218B0;
+        Fri, 25 Jan 2019 00:56:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548377776;
+        bh=v6MM12VBxCLz7q3t1RaRp04eyGYu15HRvEEKzwfqhAY=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=h6m6hHkhA7lTmECt0wBf904wlKPgm3d0DHZTKRwCuLGL3bSz9QzssWiBj3fdu6B7a
+         r2OKxU4abvAo7b6WZd3i/2hESfcpNu3V1TnpBiv06id1l+a/LAxsINrmVCyhGWlHjY
+         Tt2yarcOn0ObZ1WX/SbJrXKy0eFFQjfTU+eM7LDc=
+Date:   Thu, 24 Jan 2019 16:56:15 -0800
+From:   Jaegeuk Kim <jaegeuk@kernel.org>
+To:     Chao Yu <yuchao0@huawei.com>
+Cc:     linux-kernel@vger.kernel.org,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: Re: [f2fs-dev] [PATCH 1/2] f2fs: run discard jobs when put_super
+Message-ID: <20190125005615.GB2196@jaegeuk-macbookpro.roam.corp.google.com>
+References: <20190123000229.45236-1-jaegeuk@kernel.org>
+ <2afde906-0bbc-7464-104b-237343ed218b@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190124120808.8275-4-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <2afde906-0bbc-7464-104b-237343ed218b@huawei.com>
+User-Agent: Mutt/1.8.2 (2017-04-18)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 05:38:08PM +0530, Balakrishna Godavarthi wrote:
-> During hci down we observed IBS sleep commands are queued in the Tx
-> buffer and hci_uart_write_work is sending data to the chip which is
-> not required as the chip is powered off. This patch will disable IBS
-> and flush the Tx buffer before we turn off the chip.
+On 01/23, Chao Yu wrote:
+> On 2019/1/23 8:02, Jaegeuk Kim wrote:
+> > When we umount f2fs, we need to avoid long delay due to discard commands, which
+> > is actually taking tens of seconds, if storage is very slow on UNMAP. So, this
+> > patch introduces timeout-based work on it.
+> > 
+> > By default, let me give 5 seconds for discard.
+> > 
+> > Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+> > ---
+> >  Documentation/ABI/testing/sysfs-fs-f2fs |  7 +++++++
+> >  fs/f2fs/f2fs.h                          |  5 ++++-
+> >  fs/f2fs/segment.c                       | 11 ++++++++++-
+> >  fs/f2fs/super.c                         | 17 ++++++++---------
+> >  fs/f2fs/sysfs.c                         |  3 +++
+> >  5 files changed, 32 insertions(+), 11 deletions(-)
+> > 
+> > diff --git a/Documentation/ABI/testing/sysfs-fs-f2fs b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > index a7ce33199457..91822ce25831 100644
+> > --- a/Documentation/ABI/testing/sysfs-fs-f2fs
+> > +++ b/Documentation/ABI/testing/sysfs-fs-f2fs
+> > @@ -86,6 +86,13 @@ Description:
+> >  		The unit size is one block, now only support configuring in range
+> >  		of [1, 512].
+> >  
+> > +What:          /sys/fs/f2fs/<disk>/umount_discard_timeout
+> > +Date:          January 2019
+> > +Contact:       "Jaegeuk Kim" <jaegeuk@kernel.org>
+> > +Description:
+> > +		Set timeout to issue discard commands during umount.
+> > +		Default: 5 secs
+> > +
+> >  What:		/sys/fs/f2fs/<disk>/max_victim_search
+> >  Date:		January 2014
+> >  Contact:	"Jaegeuk Kim" <jaegeuk.kim@samsung.com>
+> > diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> > index 0f564883e078..6b6ec5600089 100644
+> > --- a/fs/f2fs/f2fs.h
+> > +++ b/fs/f2fs/f2fs.h
+> > @@ -191,6 +191,7 @@ enum {
+> >  #define DEF_CP_INTERVAL			60	/* 60 secs */
+> >  #define DEF_IDLE_INTERVAL		5	/* 5 secs */
+> >  #define DEF_DISABLE_INTERVAL		5	/* 5 secs */
+> > +#define DEF_UMOUNT_DISCARD_TIMEOUT	5	/* 5 secs */
+> >  
+> >  struct cp_control {
+> >  	int reason;
+> > @@ -310,6 +311,7 @@ struct discard_policy {
+> >  	bool sync;			/* submit discard with REQ_SYNC flag */
+> >  	bool ordered;			/* issue discard by lba order */
+> >  	unsigned int granularity;	/* discard granularity */
+> > +	int timeout;			/* discard timeout for put_super */
+> >  };
+> >  
+> >  struct discard_cmd_control {
+> > @@ -1110,6 +1112,7 @@ enum {
+> >  	DISCARD_TIME,
+> >  	GC_TIME,
+> >  	DISABLE_TIME,
+> > +	UMOUNT_DISCARD_TIMEOUT,
+> >  	MAX_TIME,
 > 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
-> Changes v9:
->   * added lock while disabling the IBS state machine.
+> After the patch, MAX_TIME will be 6, so if we set @timeout to 6 via sysfs,
+> the configuration will not be enabled due to below condition, right?
+
+Yup.
+
 > 
-> ---
->  drivers/bluetooth/hci_qca.c | 17 +++++++++++++++--
->  1 file changed, 15 insertions(+), 2 deletions(-)
+> +	if (dpolicy->timeout != MAX_TIME)
+> +		f2fs_update_time(sbi, dpolicy->timeout);
 > 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index 6b5bcd44e24c..99ddc35f08c6 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -771,16 +771,17 @@ static int qca_enqueue(struct hci_uart *hu, struct sk_buff *skb)
->  	/* Prepend skb with frame type */
->  	memcpy(skb_push(skb, 1), &hci_skb_pkt_type(skb), 1);
->  
-> +	spin_lock_irqsave(&qca->hci_ibs_lock, flags);
-> +
->  	/* Don't go to sleep in middle of patch download or
->  	 * Out-Of-Band(GPIOs control) sleep is selected.
->  	 */
->  	if (!test_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags)) {
->  		skb_queue_tail(&qca->txq, skb);
-> +		spin_unlock_irqrestore(&qca->hci_ibs_lock, flags);
->  		return 0;
->  	}
->  
-> -	spin_lock_irqsave(&qca->hci_ibs_lock, flags);
-> -
->  	/* Act according to current state */
->  	switch (qca->tx_ibs_state) {
->  	case HCI_IBS_TX_AWAKE:
-> @@ -1273,6 +1274,18 @@ static const struct qca_vreg_data qca_soc_data = {
->  
->  static void qca_power_shutdown(struct hci_uart *hu)
->  {
-> +	struct qca_data *qca = hu->priv;
-> +	unsigned long flags;
-> +
-> +	/* From this point we go into power off state. But serial port is
-> +	 * still open, stop queueing the IBS data and flush all the buffered
-> +	 * data in skb's.
-> +	 */
-> +	spin_lock_irqsave(&qca->hci_ibs_lock, flags);
-> +	clear_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags);
-> +	qca_flush(hu);
-> +	spin_unlock_irqrestore(&qca->hci_ibs_lock, flags);
-> +
->  	host_set_baudrate(hu, 2400);
->  	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
->  	qca_power_setup(hu, false);
-
-I was about to add my 'Reviewed-by' tag, but I'm still left with a
-doubt. This patch certainly improves the situation by clearing the IBS
-bit and flushing the buffered data, however IIUC new data could still
-be added to the TX queue after releasing the spinlock:
-
-static int qca_enqueue(struct hci_uart *hu, struct sk_buff *skb)
-{
-	...
-
-	if (!test_bit(STATE_IN_BAND_SLEEP_ENABLED, &qca->flags)) {
-		skb_queue_tail(&qca->txq, skb);
-
-	...
-}
-
-To prevent this a boolean/bit like 'shutting_down' or similar would be
-needed (I don't think there is something common in the HCI core),
-which is set in qca_power_shutdown(). If the bit is set qca_enqueue()
-discards the data.
-
-Not sure how important this is, and I don't want to add necessarily
-more revisions to this series. If it is preferable to have an empty
-queue after shutdown maybe it can be done in a follow up patch.
-
-Thanks
-
-Matthias
+> >  };
+> >  
+> > @@ -3006,7 +3009,7 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
+> >  bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
+> >  void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
+> >  void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi);
+> > -bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi);
+> > +bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi);
+> >  void f2fs_clear_prefree_segments(struct f2fs_sb_info *sbi,
+> >  					struct cp_control *cpc);
+> >  void f2fs_dirty_to_prefree(struct f2fs_sb_info *sbi);
+> > diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+> > index 9b79056d705d..97e0faf09ebf 100644
+> > --- a/fs/f2fs/segment.c
+> > +++ b/fs/f2fs/segment.c
+> > @@ -1037,6 +1037,7 @@ static void __init_discard_policy(struct f2fs_sb_info *sbi,
+> >  
+> >  	dpolicy->max_requests = DEF_MAX_DISCARD_REQUEST;
+> >  	dpolicy->io_aware_gran = MAX_PLIST_NUM;
+> > +	dpolicy->timeout = MAX_TIME;
+> >  
+> >  	if (discard_type == DPOLICY_BG) {
+> >  		dpolicy->min_interval = DEF_MIN_DISCARD_ISSUE_TIME;
+> > @@ -1424,7 +1425,14 @@ static int __issue_discard_cmd(struct f2fs_sb_info *sbi,
+> >  	int i, issued = 0;
+> >  	bool io_interrupted = false;
+> >  
+> > +	if (dpolicy->timeout != MAX_TIME)
+> > +		f2fs_update_time(sbi, dpolicy->timeout);
+> > +
+> >  	for (i = MAX_PLIST_NUM - 1; i >= 0; i--) {
+> > +		if (dpolicy->timeout != MAX_TIME &&
+> > +				f2fs_time_over(sbi, dpolicy->timeout))
+> > +			break;
+> > +
+> >  		if (i + 1 < dpolicy->granularity)
+> >  			break;
+> >  
+> > @@ -1611,7 +1619,7 @@ void f2fs_stop_discard_thread(struct f2fs_sb_info *sbi)
+> >  }
+> >  
+> >  /* This comes from f2fs_put_super */
+> > -bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
+> > +bool f2fs_issue_discard_timeout(struct f2fs_sb_info *sbi)
+> >  {
+> >  	struct discard_cmd_control *dcc = SM_I(sbi)->dcc_info;
+> >  	struct discard_policy dpolicy;
+> > @@ -1619,6 +1627,7 @@ bool f2fs_wait_discard_bios(struct f2fs_sb_info *sbi)
+> >  
+> >  	__init_discard_policy(sbi, &dpolicy, DPOLICY_UMOUNT,
+> >  					dcc->discard_granularity);
+> > +	dpolicy.timeout = UMOUNT_DISCARD_TIMEOUT;
+> >  	__issue_discard_cmd(sbi, &dpolicy);
+> >  	dropped = __drop_discard_cmd(sbi);
+> >  
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index ea514acede36..7998ff5418f2 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -1029,6 +1029,9 @@ static void f2fs_put_super(struct super_block *sb)
+> >  	int i;
+> >  	bool dropped;
+> >  
+> > +	/* be sure to wait for any on-going discard commands */
+> > +	dropped = f2fs_issue_discard_timeout(sbi);
+> > +
+> >  	f2fs_quota_off_umount(sb);
+> >  
+> >  	/* prevent remaining shrinker jobs */
+> > @@ -1044,17 +1047,12 @@ static void f2fs_put_super(struct super_block *sb)
+> >  		struct cp_control cpc = {
+> >  			.reason = CP_UMOUNT,
+> >  		};
+> > -		f2fs_write_checkpoint(sbi, &cpc);
+> > -	}
+> >  
+> > -	/* be sure to wait for any on-going discard commands */
+> > -	dropped = f2fs_wait_discard_bios(sbi);
+> > +		if ((f2fs_hw_support_discard(sbi) ||
+> > +				f2fs_hw_should_discard(sbi)) &&
+> > +				!sbi->discard_blks && !dropped)
+> > +			cpc.reason |= CP_TRIMMED;
+> >  
+> > -	if ((f2fs_hw_support_discard(sbi) || f2fs_hw_should_discard(sbi)) &&
+> > -					!sbi->discard_blks && !dropped) {
+> > -		struct cp_control cpc = {
+> > -			.reason = CP_UMOUNT | CP_TRIMMED,
+> > -		};
+> >  		f2fs_write_checkpoint(sbi, &cpc);
+> 
+> Still, there will be problematic as I commented in last patch, could you
+> check that?
+> 
+> Thanks,
+> 
+> >  	}
+> >  
+> > @@ -2706,6 +2704,7 @@ static void init_sb_info(struct f2fs_sb_info *sbi)
+> >  	sbi->interval_time[DISCARD_TIME] = DEF_IDLE_INTERVAL;
+> >  	sbi->interval_time[GC_TIME] = DEF_IDLE_INTERVAL;
+> >  	sbi->interval_time[DISABLE_TIME] = DEF_DISABLE_INTERVAL;
+> > +	sbi->interval_time[UMOUNT_DISCARD_TIMEOUT] = DEF_UMOUNT_DISCARD_TIMEOUT;
+> >  	clear_sbi_flag(sbi, SBI_NEED_FSCK);
+> >  
+> >  	for (i = 0; i < NR_COUNT_TYPE; i++)
+> > diff --git a/fs/f2fs/sysfs.c b/fs/f2fs/sysfs.c
+> > index 5b83e1d66cb3..18c627e8fc90 100644
+> > --- a/fs/f2fs/sysfs.c
+> > +++ b/fs/f2fs/sysfs.c
+> > @@ -426,6 +426,8 @@ F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, idle_interval, interval_time[REQ_TIME]);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, discard_idle_interval,
+> >  					interval_time[DISCARD_TIME]);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_idle_interval, interval_time[GC_TIME]);
+> > +F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info,
+> > +		umount_discard_timeout, interval_time[UMOUNT_DISCARD_TIMEOUT]);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, iostat_enable, iostat_enable);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, readdir_ra, readdir_ra);
+> >  F2FS_RW_ATTR(F2FS_SBI, f2fs_sb_info, gc_pin_file_thresh, gc_pin_file_threshold);
+> > @@ -483,6 +485,7 @@ static struct attribute *f2fs_attrs[] = {
+> >  	ATTR_LIST(idle_interval),
+> >  	ATTR_LIST(discard_idle_interval),
+> >  	ATTR_LIST(gc_idle_interval),
+> > +	ATTR_LIST(umount_discard_timeout),
+> >  	ATTR_LIST(iostat_enable),
+> >  	ATTR_LIST(readdir_ra),
+> >  	ATTR_LIST(gc_pin_file_thresh),
+> > 
