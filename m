@@ -2,122 +2,151 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A98D4C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FF9C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:54:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70943218D9
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:53:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YeVa+flA"
+	by mail.kernel.org (Postfix) with ESMTP id 6A482218A6
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 10:54:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbfAYKxW (ORCPT
+        id S1726817AbfAYKyh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 05:53:22 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44776 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725909AbfAYKxW (ORCPT
+        Fri, 25 Jan 2019 05:54:37 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:35257 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725909AbfAYKyh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 05:53:22 -0500
-Received: by mail-pf1-f196.google.com with SMTP id u6so4576582pfh.11;
-        Fri, 25 Jan 2019 02:53:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=L91MzvIDdYc15dcB4zub4pVbI3kUIlxSQxQ4CtMFeUg=;
-        b=YeVa+flAOTHV/vGbsnDqk7YesNYLq2GhYxqwpObfIztwUsYl8R7CYn+SBIrYhvyHi6
-         +IdqA0jIKu0sOooEUzGkRDlHXBH+QUKdOyPjjQu30eYuP23Uh7ZG3oFmW0oL8uQFxftn
-         /nBs9qaEvHCXMuaevtRBw/2BXnCKUF12zeZyoYBrgBWU7ojcWMqbttLJq6A2qCE3wIw0
-         ca4c8wkI8S7Lnq6kx1ZD7uT6E3MTrHgNX6chYgOXnZbjx0YNSYzADkTOSCakyMS3wQuP
-         irXgKaOmszQHT0lW1+p0BsrUJ06rbGXkgtfymYr14rgSG/mNjFSZr8+UlG5WUh0lJv5c
-         llxg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L91MzvIDdYc15dcB4zub4pVbI3kUIlxSQxQ4CtMFeUg=;
-        b=lKox0lyVceHpRSpMi3Rl1s0ygrE1BYU3rh5Ykx2RcqT/56tVELeBmTkVBSraOyLjLT
-         QwEiX1ZfGA6ZJ2iXfU6jgr0YZ+4ElFLS4A6gMKEebywafJJ2R308U8/EQvPhUj3kFnAN
-         RGNaf/BldAtRQEBJG0pikDUSTCqMRMi89JO46igUb6e41y8jk3bv65E6cTHTbrNoMrvb
-         /vVp2MtDolBtp7KMbJXZ0GFMtkSb8A0CwsVs0pA++RmZVA4QmDyub5+em1T3tJAyufRT
-         nQTQcqHg5H9ANxwzDojlcQQYQw/8SmrrgNAXlq3GPPgPII6qu/p1aZx9zRIPNfIjupcf
-         1yWA==
-X-Gm-Message-State: AJcUukfYf43spc2pzklGn7J3+4lZhyxP9H9VJcAAoipaEyuJQANiJ87V
-        Kl7suP5+qm0cYGvU3rwsm70=
-X-Google-Smtp-Source: ALg8bN5DtGRkf5lPkQvEyIQQLfiWgyn1s7cMEFjaH/WC5XUfqEtHpDDonw5CgnG4Dg+rftaxDd21mQ==
-X-Received: by 2002:a62:2f06:: with SMTP id v6mr10560033pfv.216.1548413601065;
-        Fri, 25 Jan 2019 02:53:21 -0800 (PST)
-Received: from himanshu-Vostro-3559 ([103.233.116.134])
-        by smtp.gmail.com with ESMTPSA id q75sm49621022pfa.38.2019.01.25.02.53.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 02:53:20 -0800 (PST)
-Date:   Fri, 25 Jan 2019 16:23:13 +0530
-From:   Himanshu Jha <himanshujha199640@gmail.com>
-To:     Alexandru Ardelean <ardeleanalex@gmail.com>
-Cc:     Bharath Vedartham <linux.bhar@gmail.com>, jic23@kernel.org,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] drivers: iio: industrialio-core: add check when kzalloc
- fails
-Message-ID: <20190125105313.GA16451@himanshu-Vostro-3559>
-References: <20190124142755.GA31059@bhar.linux>
- <CA+U=Dsrefk01AbyKmkhLrwQyq8mkBKoO6kv_zXYEFSSCCqDObw@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+U=Dsrefk01AbyKmkhLrwQyq8mkBKoO6kv_zXYEFSSCCqDObw@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Fri, 25 Jan 2019 05:54:37 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gmz88-0003cp-Dj; Fri, 25 Jan 2019 11:54:36 +0100
+Message-ID: <1548413675.28802.45.camel@pengutronix.de>
+Subject: Re: [PATCH 4/4] irq: imx: irqsteer: add multi output interrupts
+ support
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Aisheng Dong <aisheng.dong@nxp.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Cc:     "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        Marc Zyngier <marc.zyngier@arm.com>
+Date:   Fri, 25 Jan 2019 11:54:35 +0100
+In-Reply-To: <1547797668-30342-5-git-send-email-aisheng.dong@nxp.com>
+References: <1547797668-30342-1-git-send-email-aisheng.dong@nxp.com>
+         <1547797668-30342-5-git-send-email-aisheng.dong@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 08:55:27AM +0200, Alexandru Ardelean wrote:
-> On Thu, Jan 24, 2019 at 4:28 PM Bharath Vedartham <linux.bhar@gmail.com> wrote:
-> >
-> > add code to handle the case when kzalloc fails to allocate memory to dev
-> >
-> > Signed-off-by: Bharath Vedartham <linux.bhar@gmail.com>
-> > ---
-> >  drivers/iio/industrialio-core.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >
-> > diff --git a/drivers/iio/industrialio-core.c b/drivers/iio/industrialio-core.c
-> > index 4f5cd9f..93caa6b 100644
-> > --- a/drivers/iio/industrialio-core.c
-> > +++ b/drivers/iio/industrialio-core.c
-> > @@ -1475,6 +1475,8 @@ struct iio_dev *iio_device_alloc(int sizeof_priv)
-> >                 }
-> >                 dev_set_name(&dev->dev, "iio:device%d", dev->id);
-> >                 INIT_LIST_HEAD(&dev->buffer_list);
-> > +       } else {
-> > +               return NULL;
+Am Freitag, den 18.01.2019, 07:53 +0000 schrieb Aisheng Dong:
+> One irqsteer channel can support up to 8 output interrupts.
 > 
-> I'd argue that this is a bit redundant, because `dev` is NULL, the
-> return below (return dev) will also return NULL.
+> > Cc: Marc Zyngier <marc.zyngier@arm.com>
+> > Cc: Lucas Stach <l.stach@pengutronix.de>
+> > Cc: Shawn Guo <shawnguo@kernel.org>
+> > Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
+> ---
+>  drivers/irqchip/irq-imx-irqsteer.c | 39 +++++++++++++++++++++++++++-----------
+>  1 file changed, 28 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-imx-irqsteer.c b/drivers/irqchip/irq-imx-irqsteer.c
+> index 1bebf0a..54802fa 100644
+> --- a/drivers/irqchip/irq-imx-irqsteer.c
+> +++ b/drivers/irqchip/irq-imx-irqsteer.c
+> @@ -10,6 +10,7 @@
+>  #include <linux/irqchip/chained_irq.h>
+>  #include <linux/irqdomain.h>
+>  #include <linux/kernel.h>
+> +#include <linux/of_irq.h>
+>  #include <linux/of_platform.h>
+>  #include <linux/spinlock.h>
+>  
+> @@ -21,10 +22,13 @@
+> >  #define CHAN_MINTDIS(t)		(CTRL_STRIDE_OFF(t, 3) + 0x4)
+> >  #define CHAN_MASTRSTAT(t)	(CTRL_STRIDE_OFF(t, 3) + 0x8)
+>  
+> > +#define CHAN_MAX_OUTPUT_INT	0x8
+> +
+>  struct irqsteer_data {
+> > >  	void __iomem		*regs;
+> > >  	struct clk		*ipg_clk;
+> > > -	int			irq;
+> > > +	int			irq[CHAN_MAX_OUTPUT_INT];
+> > > +	int			irq_count;
+> > >  	raw_spinlock_t		lock;
+> > >  	int			reg_num;
+> > >  	int			channel;
+> @@ -117,7 +121,7 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
+> >  	struct device_node *np = pdev->dev.of_node;
+> >  	struct irqsteer_data *data;
+> >  	struct resource *res;
+> > -	int ret;
+> > +	int i, ret;
+>  
+> >  	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> >  	if (!data)
+> @@ -130,12 +134,6 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
+> >  		return PTR_ERR(data->regs);
+> >  	}
+>  
+> > -	data->irq = platform_get_irq(pdev, 0);
+> > -	if (data->irq <= 0) {
+> > -		dev_err(&pdev->dev, "failed to get irq\n");
+> > -		return -ENODEV;
+> > -	}
+> -
+> >  	data->ipg_clk = devm_clk_get(&pdev->dev, "ipg");
+> >  	if (IS_ERR(data->ipg_clk)) {
+> >  		ret = PTR_ERR(data->ipg_clk);
+> @@ -177,8 +175,23 @@ static int imx_irqsteer_probe(struct platform_device *pdev)
+> >  		return -ENOMEM;
+> >  	}
+>  
+> > -	irq_set_chained_handler_and_data(data->irq, imx_irqsteer_irq_handler,
+> > -					 data);
+> +	data->irq_count = of_irq_count(np);
 
-+1
+We normally don't validate stuff that comes from the DT, but I guess it
+might be helpful to validate that the number of output irqs specified
+matches what the number of input irqs, i.e. there is one output irqs
+specified for each group of 64 inputs.
 
-Also, subject title is incorrect.
+> +	if (!data->irq_count || data->irq_count > CHAN_MAX_OUTPUT_INT) {
+> > +		clk_disable_unprepare(data->ipg_clk);
+> > +		return -EINVAL;
+> > +	}
+> +
+> > +	for (i = 0; i < data->irq_count; i++) {
+> > +		data->irq[i] = irq_of_parse_and_map(np, i);
+> > +		if (!data->irq[i]) {
+> > +			clk_disable_unprepare(data->ipg_clk);
+> > +			return -EINVAL;
+> > +		}
+> +
+> > +		irq_set_chained_handler_and_data(data->irq[i],
+> > +						 imx_irqsteer_irq_handler,
+> +						 data);
 
-Always use:
+We really want some data about the output irq being passed here, so we
+can cut down the number of register reads in the irq handler to the
+maximum of 2 status registers per group.
 
-$ git log --oneline drivers/iio/industrialio-core.c
-
-Use the most frequently tag/subject from the output of above
-command.
-
-"iio: core: ...." would be fine.
-
-
--- 
-Himanshu Jha
-Undergraduate Student
-Department of Electronics & Communication
-Guru Tegh Bahadur Institute of Technology
+Regards,
+Lucas
