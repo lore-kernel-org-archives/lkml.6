@@ -2,225 +2,141 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C0D4C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:21:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B394EC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:22:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C567218FE
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:21:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82670218D0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:22:34 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729054AbfAYJVk (ORCPT
+        id S1729072AbfAYJWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 04:21:40 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41150 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726269AbfAYJVk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 04:21:40 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 6982C7C854;
-        Fri, 25 Jan 2019 09:21:39 +0000 (UTC)
-Received: from [10.72.12.101] (ovpn-12-101.pek2.redhat.com [10.72.12.101])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F4A66019F;
-        Fri, 25 Jan 2019 09:21:34 +0000 (UTC)
-Subject: Re: [PATCH net-next V4 5/5] vhost: access vq metadata through kernel
- virtual address
-To:     "Michael S. Tsirkin" <mst@redhat.com>
-Cc:     virtualization@lists.linux-foundation.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        aarcange@redhat.com
-References: <20190123095557.30168-1-jasowang@redhat.com>
- <20190123095557.30168-6-jasowang@redhat.com>
- <20190124214402-mutt-send-email-mst@kernel.org>
-From:   Jason Wang <jasowang@redhat.com>
-Message-ID: <42a63594-a4b9-1b7b-2566-544853880317@redhat.com>
-Date:   Fri, 25 Jan 2019 17:21:31 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190124214402-mutt-send-email-mst@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
+        Fri, 25 Jan 2019 04:22:32 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32843 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726269AbfAYJWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 04:22:32 -0500
+Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 0976B46FACFCFDBABD7C;
+        Fri, 25 Jan 2019 09:22:31 +0000 (GMT)
+Received: from LHREML524-MBS.china.huawei.com ([169.254.2.138]) by
+ LHREML711-CAH.china.huawei.com ([10.201.108.34]) with mapi id 14.03.0415.000;
+ Fri, 25 Jan 2019 09:22:24 +0000
+From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To:     Robin Murphy <robin.murphy@arm.com>,
+        Andrew Murray <andrew.murray@arm.com>
+CC:     "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "vkilari@codeaurora.org" <vkilari@codeaurora.org>,
+        "neil.m.leeder@gmail.com" <neil.m.leeder@gmail.com>,
+        "jean-philippe.brucker@arm.com" <jean-philippe.brucker@arm.com>,
+        "pabba@codeaurora.org" <pabba@codeaurora.org>,
+        John Garry <john.garry@huawei.com>,
+        "will.deacon@arm.com" <will.deacon@arm.com>,
+        "rruigrok@codeaurora.org" <rruigrok@codeaurora.org>,
+        Linuxarm <linuxarm@huawei.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "Guohanjun (Hanjun Guo)" <guohanjun@huawei.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+Subject: RE: [PATCH v5 2/4] perf: add arm64 smmuv3 pmu driver
+Thread-Topic: [PATCH v5 2/4] perf: add arm64 smmuv3 pmu driver
+Thread-Index: AQHUiMReCYaliznTZUOBIOWTrrVwNqW7zC+AgAEf2sCAACyzAIAB+g2AgAD1H7A=
+Date:   Fri, 25 Jan 2019 09:22:23 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA83929A9FE@lhreml524-mbs.china.huawei.com>
+References: <20181130154751.28580-1-shameerali.kolothum.thodi@huawei.com>
+ <20181130154751.28580-3-shameerali.kolothum.thodi@huawei.com>
+ <20190122162351.GE8120@e119886-lin.cambridge.arm.com>
+ <5FC3163CFD30C246ABAA99954A238FA83929855B@lhreml524-mbs.china.huawei.com>
+ <20190123121406.GH8120@e119886-lin.cambridge.arm.com>
+ <f83054eb-3fe3-0041-7a9f-6f7e58cea5c8@arm.com>
+In-Reply-To: <f83054eb-3fe3-0041-7a9f-6f7e58cea5c8@arm.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Fri, 25 Jan 2019 09:21:39 +0000 (UTC)
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.227.237]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 2019/1/25 上午11:03, Michael S. Tsirkin wrote:
-> On Wed, Jan 23, 2019 at 05:55:57PM +0800, Jason Wang wrote:
->> It was noticed that the copy_user() friends that was used to access
->> virtqueue metdata tends to be very expensive for dataplane
->> implementation like vhost since it involves lots of software checks,
->> speculation barrier, hardware feature toggling (e.g SMAP). The
->> extra cost will be more obvious when transferring small packets since
->> the time spent on metadata accessing become more significant.
->>
->> This patch tries to eliminate those overheads by accessing them
->> through kernel virtual address by vmap(). To make the pages can be
->> migrated, instead of pinning them through GUP, we use MMU notifiers to
->> invalidate vmaps and re-establish vmaps during each round of metadata
->> prefetching if necessary. For devices that doesn't use metadata
->> prefetching, the memory accessors fallback to normal copy_user()
->> implementation gracefully. The invalidation was synchronized with
->> datapath through vq mutex, and in order to avoid hold vq mutex during
->> range checking, MMU notifier was teared down when trying to modify vq
->> metadata.
->>
->> Another thing is kernel lacks efficient solution for tracking dirty
->> pages by vmap(), this will lead issues if vhost is using file backed
->> memory which needs care of writeback. This patch solves this issue by
->> just skipping the vma that is file backed and fallback to normal
->> copy_user() friends. This might introduce some overheads for file
->> backed users but consider this use case is rare we could do
->> optimizations on top.
->>
->> Note that this was only done when device IOTLB is not enabled. We
->> could use similar method to optimize it in the future.
->>
->> Tests shows at most about 22% improvement on TX PPS when using
->> virtio-user + vhost_net + xdp1 + TAP on 2.6GHz Broadwell:
->>
->>          SMAP on | SMAP off
->> Before: 5.0Mpps | 6.6Mpps
->> After:  6.1Mpps | 7.4Mpps
->>
->> Signed-off-by: Jason Wang <jasowang@redhat.com>
->> ---
->>   drivers/vhost/vhost.c | 288 +++++++++++++++++++++++++++++++++++++++++-
->>   drivers/vhost/vhost.h |  13 ++
->>   mm/shmem.c            |   1 +
->>   3 files changed, 300 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
->> index 37e2cac8e8b0..096ae3298d62 100644
->> --- a/drivers/vhost/vhost.c
->> +++ b/drivers/vhost/vhost.c
->> @@ -440,6 +440,9 @@ void vhost_dev_init(struct vhost_dev *dev,
->>   		vq->indirect = NULL;
->>   		vq->heads = NULL;
->>   		vq->dev = dev;
->> +		memset(&vq->avail_ring, 0, sizeof(vq->avail_ring));
->> +		memset(&vq->used_ring, 0, sizeof(vq->used_ring));
->> +		memset(&vq->desc_ring, 0, sizeof(vq->desc_ring));
->>   		mutex_init(&vq->mutex);
->>   		vhost_vq_reset(dev, vq);
->>   		if (vq->handle_kick)
->> @@ -510,6 +513,73 @@ static size_t vhost_get_desc_size(struct vhost_virtqueue *vq, int num)
->>   	return sizeof(*vq->desc) * num;
->>   }
->>   
->> +static void vhost_uninit_vmap(struct vhost_vmap *map)
->> +{
->> +	if (map->addr)
->> +		vunmap(map->unmap_addr);
->> +
->> +	map->addr = NULL;
->> +	map->unmap_addr = NULL;
->> +}
->> +
->> +static int vhost_invalidate_vmap(struct vhost_virtqueue *vq,
->> +				 struct vhost_vmap *map,
->> +				 unsigned long ustart,
->> +				 size_t size,
->> +				 unsigned long start,
->> +				 unsigned long end,
->> +				 bool blockable)
->> +{
->> +	if (end < ustart || start > ustart - 1 + size)
->> +		return 0;
->> +
->> +	if (!blockable)
->> +		return -EAGAIN;
->> +
->> +	mutex_lock(&vq->mutex);
->> +	vhost_uninit_vmap(map);
->> +	mutex_unlock(&vq->mutex);
->> +
->> +	return 0;
->> +}
->> +
->> +static int vhost_invalidate_range_start(struct mmu_notifier *mn,
->> +					const struct mmu_notifier_range *range)
->> +{
->> +	struct vhost_dev *dev = container_of(mn, struct vhost_dev,
->> +					     mmu_notifier);
->> +	int i;
->> +
->> +	for (i = 0; i < dev->nvqs; i++) {
->> +		struct vhost_virtqueue *vq = dev->vqs[i];
->> +
->> +		if (vhost_invalidate_vmap(vq, &vq->avail_ring,
->> +					  (unsigned long)vq->avail,
->> +					  vhost_get_avail_size(vq, vq->num),
->> +					  range->start, range->end,
->> +					  range->blockable))
->> +			return -EAGAIN;
->> +		if (vhost_invalidate_vmap(vq, &vq->desc_ring,
->> +					  (unsigned long)vq->desc,
->> +					  vhost_get_desc_size(vq, vq->num),
->> +					  range->start, range->end,
->> +					  range->blockable))
->> +			return -EAGAIN;
->> +		if (vhost_invalidate_vmap(vq, &vq->used_ring,
->> +					  (unsigned long)vq->used,
->> +					  vhost_get_used_size(vq, vq->num),
->> +					  range->start, range->end,
->> +					  range->blockable))
->> +			return -EAGAIN;
->> +	}
->> +
->> +	return 0;
->> +}
->> +
->> +static const struct mmu_notifier_ops vhost_mmu_notifier_ops = {
->> +	.invalidate_range_start = vhost_invalidate_range_start,
->> +};
->> +
->>   /* Caller should have device mutex */
->>   long vhost_dev_set_owner(struct vhost_dev *dev)
->>   {
-> It seems questionable to merely track .invalidate_range_start.
-> Don't we care about keeping pages young/accessed?
-
-
-My understanding is the young stuffs were only needed for secondary MMU 
-where the hva is not used. This is not the case of vhost since anyway 
-guest will access those pages through userspace address.
-
-
-> MMU will think they aren't and will penalize vhost by pushing
-> them out.
->
-> I note that MMU documentation says
->          * invalidate_range_start() and invalidate_range_end() must be
->           * paired
-> and it seems questionable that they are not paired here.
-
-
-I can see some users with the unpaired invalidate_range_start(). Maybe I 
-miss something but I can not find anything that we need to do after the 
-page is unmaped.
-
-
->
->
-> I also wonder about things like write-protecting the pages.
-> It does not look like a range is invalidated when page
-> is write-protected, even though I might have missed that.
-> If not we can be corrupting memory in a variety of ways
-> e.g. when using KSM, or with COW.
-
-
-Yes, we probably need to implement change_pte() method which will do 
-vunmap().
-
-Thanks
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogUm9iaW4gTXVycGh5IFtt
+YWlsdG86cm9iaW4ubXVycGh5QGFybS5jb21dDQo+IFNlbnQ6IDI0IEphbnVhcnkgMjAxOSAxODoy
+NQ0KPiBUbzogQW5kcmV3IE11cnJheSA8YW5kcmV3Lm11cnJheUBhcm0uY29tPjsgU2hhbWVlcmFs
+aSBLb2xvdGh1bSBUaG9kaQ0KPiA8c2hhbWVlcmFsaS5rb2xvdGh1bS50aG9kaUBodWF3ZWkuY29t
+Pg0KPiBDYzogbG9yZW56by5waWVyYWxpc2lAYXJtLmNvbTsgbWFyay5ydXRsYW5kQGFybS5jb207
+DQo+IHZraWxhcmlAY29kZWF1cm9yYS5vcmc7IG5laWwubS5sZWVkZXJAZ21haWwuY29tOw0KPiBq
+ZWFuLXBoaWxpcHBlLmJydWNrZXJAYXJtLmNvbTsgcGFiYmFAY29kZWF1cm9yYS5vcmc7IEpvaG4g
+R2FycnkNCj4gPGpvaG4uZ2FycnlAaHVhd2VpLmNvbT47IHdpbGwuZGVhY29uQGFybS5jb207IHJy
+dWlncm9rQGNvZGVhdXJvcmEub3JnOw0KPiBMaW51eGFybSA8bGludXhhcm1AaHVhd2VpLmNvbT47
+IGxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7DQo+IGxpbnV4LWFjcGlAdmdlci5rZXJuZWwu
+b3JnOyBHdW9oYW5qdW4gKEhhbmp1biBHdW8pDQo+IDxndW9oYW5qdW5AaHVhd2VpLmNvbT47IGxp
+bnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENI
+IHY1IDIvNF0gcGVyZjogYWRkIGFybTY0IHNtbXV2MyBwbXUgZHJpdmVyDQo+IA0KPiBPbiAyMy8w
+MS8yMDE5IDEyOjE0LCBBbmRyZXcgTXVycmF5IHdyb3RlOg0KPiBbLi4uXQ0KPiA+Pj4+ICtzdGF0
+aWMgaW5saW5lIHZvaWQgc21tdV9wbXVfY291bnRlcl9zZXRfdmFsdWUoc3RydWN0IHNtbXVfcG11
+DQo+ID4+PiAqc21tdV9wbXUsDQo+ID4+Pj4gKwkJCQkJICAgICAgdTMyIGlkeCwgdTY0IHZhbHVl
+KQ0KPiA+Pj4+ICt7DQo+ID4+Pj4gKwlpZiAoc21tdV9wbXUtPmNvdW50ZXJfbWFzayAmIEJJVCgz
+MikpDQo+ID4+Pj4gKwkJd3JpdGVxKHZhbHVlLCBzbW11X3BtdS0+cmVsb2NfYmFzZSArDQo+IFNN
+TVVfUE1DR19FVkNOVFIoaWR4LA0KPiA+Pj4gOCkpOw0KPiA+Pj4+ICsJZWxzZQ0KPiA+Pj4+ICsJ
+CXdyaXRlbCh2YWx1ZSwgc21tdV9wbXUtPnJlbG9jX2Jhc2UgKw0KPiBTTU1VX1BNQ0dfRVZDTlRS
+KGlkeCwNCj4gPj4+IDQpKTsNCj4gPj4+DQo+ID4+PiBUaGUgYXJtNjQgSU8gbWFjcm9zIHVzZSBf
+X2ZvcmNlIHUzMiBhbmQgc28gaXQncyBwcm9iYWJseSBPSyB0byBwcm92aWRlIGENCj4gNjQNCj4g
+Pj4+IGJpdA0KPiA+Pj4gdmFsdWUgdG8gd3JpdGVsLiBCdXQgeW91IGNvdWxkIHVzZSBzb21ldGhp
+bmcgbGlrZSBsb3dlcl8zMl9iaXRzIGZvciBjbGFyaXR5Lg0KPiA+Pg0KPiA+PiBZZXMsIG1hY3Jv
+IHVzZXMgX19mb3JjZSB1MzIuIEkgd2lsbCBjaGFuZ2UgaXQgdG8gbWFrZSBpdCBtb3JlIGNsZWFy
+IHRob3VnaC4NCj4gDQo+IFRvIGJlIHBlZGFudGljLCB0aGUgZmlyc3QgY2FzdCB3aGljaCB0aGUg
+dmFsdWUgYWN0dWFsbHkgdW5kZXJnb2VzIGlzIHRvDQo+IChfX3UzMikgOykNCj4gDQo+IFVsdGlt
+YXRlbHksIF9fcmF3X3dyaXRlbCgpIHRha2VzIGEgdTMyLCBzbyBpbiB0aGF0IHNlbnNlIGl0J3Mg
+bmV2ZXIgYQ0KPiBwcm9ibGVtIHRvIHBhc3MgYSB1NjQsIHNpbmNlIHVuc2lnbmVkIHRydW5jYXRp
+b24gaXMgd2VsbC1kZWZpbmVkIGluIHRoZQ0KPiBDIHN0YW5kYXJkLiBUaGUgY2FzdGluZyBpbnZv
+bHZlZCBpbiB0aGUgSS9PIGFjY2Vzc29ycyBpcyBtb3N0bHkgYWJvdXQNCj4gZ29pbmcgdG8gYW4g
+ZW5kaWFuLXNwZWNpZmljIHR5cGUgYW5kIGJhY2sgYWdhaW4uDQo+IA0KPiBbLi4uXQ0KPiA+Pj4+
+ICtzdGF0aWMgdm9pZCBzbW11X3BtdV9ldmVudF9zdGFydChzdHJ1Y3QgcGVyZl9ldmVudCAqZXZl
+bnQsIGludCBmbGFncykNCj4gPj4+PiArew0KPiA+Pj4+ICsJc3RydWN0IHNtbXVfcG11ICpzbW11
+X3BtdSA9IHRvX3NtbXVfcG11KGV2ZW50LT5wbXUpOw0KPiA+Pj4+ICsJc3RydWN0IGh3X3BlcmZf
+ZXZlbnQgKmh3YyA9ICZldmVudC0+aHc7DQo+ID4+Pj4gKwlpbnQgaWR4ID0gaHdjLT5pZHg7DQo+
+ID4+Pj4gKwl1MzIgZmlsdGVyX3NwYW4sIGZpbHRlcl9zaWQ7DQo+ID4+Pj4gKwl1MzIgZXZ0eXBl
+cjsNCj4gPj4+PiArDQo+ID4+Pj4gKwlod2MtPnN0YXRlID0gMDsNCj4gPj4+PiArDQo+ID4+Pj4g
+KwlzbW11X3BtdV9zZXRfcGVyaW9kKHNtbXVfcG11LCBod2MpOw0KPiA+Pj4+ICsNCj4gPj4+PiAr
+CXNtbXVfcG11X2dldF9ldmVudF9maWx0ZXIoZXZlbnQsICZmaWx0ZXJfc3BhbiwgJmZpbHRlcl9z
+aWQpOw0KPiA+Pj4+ICsNCj4gPj4+PiArCWV2dHlwZXIgPSBnZXRfZXZlbnQoZXZlbnQpIHwNCj4g
+Pj4+PiArCQkgIGZpbHRlcl9zcGFuIDw8IFNNTVVfUE1DR19TSURfU1BBTl9TSElGVDsNCj4gPj4+
+PiArDQo+ID4+Pj4gKwlzbW11X3BtdV9zZXRfZXZ0eXBlcihzbW11X3BtdSwgaWR4LCBldnR5cGVy
+KTsNCj4gPj4+PiArCXNtbXVfcG11X3NldF9zbXIoc21tdV9wbXUsIGlkeCwgZmlsdGVyX3NpZCk7
+DQo+ID4+Pj4gKwlzbW11X3BtdV9pbnRlcnJ1cHRfZW5hYmxlKHNtbXVfcG11LCBpZHgpOw0KPiA+
+Pj4+ICsJc21tdV9wbXVfY291bnRlcl9lbmFibGUoc21tdV9wbXUsIGlkeCk7DQo+ID4+Pj4gK30N
+Cj4gPj4+PiArDQo+ID4+Pj4gK3N0YXRpYyB2b2lkIHNtbXVfcG11X2V2ZW50X3N0b3Aoc3RydWN0
+IHBlcmZfZXZlbnQgKmV2ZW50LCBpbnQgZmxhZ3MpDQo+ID4+Pj4gK3sNCj4gPj4+PiArCXN0cnVj
+dCBzbW11X3BtdSAqc21tdV9wbXUgPSB0b19zbW11X3BtdShldmVudC0+cG11KTsNCj4gPj4+PiAr
+CXN0cnVjdCBod19wZXJmX2V2ZW50ICpod2MgPSAmZXZlbnQtPmh3Ow0KPiA+Pj4+ICsJaW50IGlk
+eCA9IGh3Yy0+aWR4Ow0KPiA+Pj4+ICsNCj4gPj4+PiArCWlmIChod2MtPnN0YXRlICYgUEVSRl9I
+RVNfU1RPUFBFRCkNCj4gPj4+PiArCQlyZXR1cm47DQo+ID4+Pj4gKw0KPiA+Pj4+ICsJc21tdV9w
+bXVfY291bnRlcl9kaXNhYmxlKHNtbXVfcG11LCBpZHgpOw0KPiA+Pj4NCj4gPj4+IElzIGl0IGlu
+dGVudGlvbmFsIG5vdCB0byBjYWxsIHNtbXVfcG11X2ludGVycnVwdF9kaXNhYmxlIGhlcmU/DQo+
+ID4+DQo+ID4+IFllcywgaXQgaXMuIEVhcmxpZXIgcGF0Y2ggaGFkIHRoZSBpbnRlcnJ1cHQgdG9n
+Z2xpbmcgYW5kIFJvYmluIHBvaW50ZWQgb3V0IHRoYXQNCj4gPj4gaXQgaXMgbm90IHJlYWxseSBu
+ZWVkZWQgYXMgY291bnRlcnMgYXJlIGFueXdheSBzdG9wcGVkIGFuZCBleHBsaWNpdGx5DQo+IGRp
+c2FibGluZw0KPiA+PiBtYXkgbm90IHNvbHZlIHRoZSBzcHVyaW91cyBpbnRlcnJ1cHQgY2FzZSBh
+cyB3ZWxsLg0KPiA+Pg0KPiA+DQo+ID4gQWggYXBvbG9naWVzIGZvciBub3Qgc2VlaW5nIHRoYXQg
+aW4gZWFybGllciByZXZpZXdzLg0KPiANCj4gSG1tLCBJIGRpZG4ndCBleGFjdGx5IG1lYW4gImtl
+ZXAgZW5hYmxpbmcgaXQgZXZlcnkgdGltZSBhbiBldmVudCBpcw0KPiByZXN0YXJ0ZWQgYW5kIG5l
+dmVyIGRpc2FibGUgaXQgYW55d2hlcmUiLCB0aG91Z2guIEkgd2FzIHRoaW5raW5nIG1vcmUNCj4g
+YWxvbmcgdGhlIGxpbmVzIG9mIGVuYWJsaW5nIGluIGV2ZW50X2FkZCgpIGFuZCBkaXNhYmxpbmcg
+aW4gZXZlbnRfZGVsKCkNCj4gKGkuZS4gZWZmZWN0aXZlbHkgdHlpbmcgaXQgdG8gYWxsb2NhdGlv
+biBhbmQgZGVhbGxvY2F0aW9uIG9mIHRoZSBjb3VudGVyKS4NCj4gDQoNClJpZ2h0LiBJIG1pc3Nl
+ZCB0aGUgcG9pbnQgdGhhdCBpdCB3YXMgbm90IGRpc2FibGVkIGF0IGFsbCEuIEkgd2lsbCByZWFy
+cmFuZ2UgaXQgDQp0byBfYWRkL19kZWwgcGF0aC4gDQoNClRoYW5rcyBmb3IgYWxsIHRoZSBjb21t
+ZW50cy4gSSBhbSBwbGFubmluZyB0byBzZW5kIG91dCBhIHY2IHNvb24uIA0KQmV0d2VlbiwgZGlk
+IHlvdSBnZXQgYSBjaGFuY2UgdG8gdGFrZSBhIGxvb2sgYXQgcGF0Y2ggIzQgKEhpU2lsaWNvbiBl
+cnJhdHVtIG9uZSkgPyANCkFwcHJlY2lhdGUgaWYgeW91IGNvdWxkIHRha2UgYSBsb29rIGFuZCBs
+ZXQgbWUga25vdyBiZWZvcmUgdjYuDQoNClRoYW5rcywNClNoYW1lZXINCg0KIA0K
