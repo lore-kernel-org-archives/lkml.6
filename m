@@ -2,197 +2,252 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A993CC282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAA7FC282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:29:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AD6D218A2
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:29:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DVcLpxU2"
+	by mail.kernel.org (Postfix) with ESMTP id 8E76E218A2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 03:29:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbfAYD30 (ORCPT
+        id S1728634AbfAYD3n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 22:29:26 -0500
-Received: from mail-ot1-f42.google.com ([209.85.210.42]:43661 "EHLO
-        mail-ot1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726259AbfAYD30 (ORCPT
+        Thu, 24 Jan 2019 22:29:43 -0500
+Received: from gateway21.websitewelcome.com ([192.185.45.191]:26533 "EHLO
+        gateway21.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726304AbfAYD3m (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 22:29:26 -0500
-Received: by mail-ot1-f42.google.com with SMTP id a11so7272118otr.10
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 19:29:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=WePBlCqzunKd5puSTDx1THJ7fWsRbdAn/c/0X7bdcJU=;
-        b=DVcLpxU2k02mDb5Lp7JPMuf0k2ZweB7gndF1hgp8Tvh5eqeJUq/h4sn3KpJkYF4V+A
-         /Bt8N/R0kXE6EdPXMHbJZkMdhXbJWwrl3FtncPWiOpFy5vRsBfLFNjyVHshh6KQ3I8B2
-         JUvs2RRq8a68AMPNEzXNF1ZMFbcvhub5bLbXk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=WePBlCqzunKd5puSTDx1THJ7fWsRbdAn/c/0X7bdcJU=;
-        b=khK0z7ZNiqzH6g3rj0XbcDh0Ybfn9GguEiqsX8VGxCQlmyYuUvwJKfXWW4Bfmes1UA
-         +P1zF9p+b/TiWLaened5ubRQzNdCXgfcLd6BCWABo+Ps92Fkd/1jk0Nes+pNuf+pHoSc
-         MBVd29WJJ/+X6twb1w40WuvLHz2ByCXywB+gzfJZ7fAPBSNTxCVkmDNmulToW4NzARly
-         gJ2Q+P6WKR9kJetDqLQPtPfz3CCbZt/Ez1NwZxYGoRpgaMbir4VFegkTFPgYXEK8k9dK
-         chGyG5IAQMK6h7qrQbPnTjjpP7L2gvWKSX4Kl6vleyoi8ffk0oUrBxKATv3aAZgqcXfk
-         zFZQ==
-X-Gm-Message-State: AJcUukfhYwOd7AtVU/ae1GpdZOCVKdo24j2wLGj38MhMSff7Z8W4eMa2
-        ugJj7A022MpxDqmHT6zXYwd4UsBOtwWKcA==
-X-Google-Smtp-Source: ALg8bN4GN47TFJ4mRwfi+8jYKacFoTPv/MroZUSmjbNpSXrZnl4I+1qQ3E1Tpkxx5viLIifuEEqyyA==
-X-Received: by 2002:a9d:4806:: with SMTP id c6mr5993627otf.127.1548386965057;
-        Thu, 24 Jan 2019 19:29:25 -0800 (PST)
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com. [209.85.210.42])
-        by smtp.gmail.com with ESMTPSA id b128sm834576oif.7.2019.01.24.19.29.22
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 24 Jan 2019 19:29:23 -0800 (PST)
-Received: by mail-ot1-f42.google.com with SMTP id n8so7304781otl.6
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 19:29:22 -0800 (PST)
-X-Received: by 2002:a9d:4687:: with SMTP id z7mr6692294ote.350.1548386962460;
- Thu, 24 Jan 2019 19:29:22 -0800 (PST)
+        Thu, 24 Jan 2019 22:29:42 -0500
+Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
+        by gateway21.websitewelcome.com (Postfix) with ESMTP id 9249F400C3EDD
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 21:29:41 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id msBZgTE6o4FKpmsBZgrYNa; Thu, 24 Jan 2019 21:29:41 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=56564 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gmsBY-001Gdd-PO; Thu, 24 Jan 2019 21:29:41 -0600
+Subject: Re: [PATCH] security: mark expected switch fall-throughs
+To:     Casey Schaufler <casey@schaufler-ca.com>,
+        John Johansen <john.johansen@canonical.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Mimi Zohar <zohar@linux.ibm.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
+Cc:     linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
+References: <20190125025639.GA13946@embeddedor>
+ <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <7b0a0b5b-38ce-a737-6420-2c96cce12527@embeddedor.com>
+Date:   Thu, 24 Jan 2019 21:29:31 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181022144901.113852-1-tfiga@chromium.org> <20181022144901.113852-3-tfiga@chromium.org>
- <4cd223f0-b09c-da07-f26c-3b3f7a8868d7@xs4all.nl> <5fb0f2db44ba7aa3788b61f2aa9a30d4f4984de5.camel@ndufresne.ca>
- <d853eb91-c05d-fb10-f154-bc24e4ebb89d@xs4all.nl> <CAAFQd5COddN-YosKyfBJ7n=qt40ONP=YEjBo5HQBOPGhs19h+g@mail.gmail.com>
- <fcad4ca0-cfdd-d0fb-4b18-808426584755@xs4all.nl> <ea1b39bf1a14f73b74d17c925f67ea3613ea6eae.camel@ndufresne.ca>
-In-Reply-To: <ea1b39bf1a14f73b74d17c925f67ea3613ea6eae.camel@ndufresne.ca>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 25 Jan 2019 12:29:11 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DXWc1mBYZ=2zH0fPitLc=L2UGem85wokB6oht4CxVrsQ@mail.gmail.com>
-Message-ID: <CAAFQd5DXWc1mBYZ=2zH0fPitLc=L2UGem85wokB6oht4CxVrsQ@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] media: docs-rst: Document memory-to-memory video
- encoder interface
-To:     Nicolas Dufresne <nicolas@ndufresne.ca>
-Cc:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?B?UGF3ZcWCIE/Fm2NpYWs=?= <posciak@chromium.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Kamil Debski <kamil@wypas.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Jeongtae Park <jtp.park@samsung.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Tiffany Lin <tiffany.lin@mediatek.com>,
-        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        dave.stevenson@raspberrypi.org,
-        Ezequiel Garcia <ezequiel@collabora.com>,
-        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <d30c9427-29bb-4b98-ec71-0663d0f9fa7f@schaufler-ca.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gmsBY-001Gdd-PO
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:56564
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 8
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 5:04 AM Nicolas Dufresne <nicolas@ndufresne.ca> wro=
-te:
->
-> Le mercredi 23 janvier 2019 =C3=A0 12:28 +0100, Hans Verkuil a =C3=A9crit=
- :
-> > On 01/23/19 11:00, Tomasz Figa wrote:
-> > > On Sat, Nov 17, 2018 at 8:37 PM Hans Verkuil <hverkuil@xs4all.nl> wro=
-te:
-> > > > On 11/17/2018 05:18 AM, Nicolas Dufresne wrote:
-> > > > > Le lundi 12 novembre 2018 =C3=A0 14:23 +0100, Hans Verkuil a =C3=
-=A9crit :
-> > > > > > On 10/22/2018 04:49 PM, Tomasz Figa wrote:
-> > > [snip]
-> > > > > > > +      rely on it. The ``V4L2_BUF_FLAG_LAST`` buffer flag sho=
-uld be used
-> > > > > > > +      instead.
-> > > > > >
-> > > > > > Question: should new codec drivers still implement the EOS even=
-t?
-> > > > >
-> > > > > I'm been asking around, but I think here is a good place. Do we r=
-eally
-> > > > > need the FLAG_LAST in userspace ? Userspace can also wait for the=
- first
-> > > > > EPIPE return from DQBUF.
-> > > >
-> > > > I'm interested in hearing Tomasz' opinion. This flag is used alread=
-y, so there
-> > > > definitely is a backwards compatibility issue here.
-> > > >
-> > >
-> > > FWIW, it would add the overhead of 1 more system call, although I
-> > > don't think it's of our concern.
-> > >
-> > > My personal feeling is that using error codes for signaling normal
-> > > conditions isn't very elegant, though.
-> >
-> > I agree. Let's keep this flag.
->
-> Agreed, though a reminder of the initial question, "do we keep the EOS
-> event ?", and I think the event can be dropped.
->
 
-I would happily drop it, if we know that it wouldn't break any
-userspace. Chromium doesn't use it either.
 
-Best regards,
-Tomasz
+On 1/24/19 9:13 PM, Casey Schaufler wrote:
+> On 1/24/2019 6:56 PM, Gustavo A. R. Silva wrote:
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>> cases where we are expecting to fall through.
+>>
+>> This patch fixes the following warnings:
+>>
+>> security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Acked-by: Casey Schaufler <casey@schaufler-ca.com>
+> 
+> Ug. It can't be part of a greater comment? Grumble.
+> 
 
-> >
-> > Regards,
-> >
-> >       Hans
-> >
-> > > > > > > +
-> > > > > > > +3. Once all ``OUTPUT`` buffers queued before the ``V4L2_ENC_=
-CMD_STOP`` call and
-> > > > > > > +   the last ``CAPTURE`` buffer are dequeued, the encoder is =
-stopped and it will
-> > > > > > > +   accept, but not process any newly queued ``OUTPUT`` buffe=
-rs until the client
-> > > > > > > +   issues any of the following operations:
-> > > > > > > +
-> > > > > > > +   * ``V4L2_ENC_CMD_START`` - the encoder will resume operat=
-ion normally,
-> > > > > >
-> > > > > > Perhaps mention that this does not reset the encoder? It's not =
-immediately clear
-> > > > > > when reading this.
-> > > > >
-> > > > > Which drivers supports this ? I believe I tried with Exynos in th=
-e
-> > > > > past, and that didn't work. How do we know if a driver supports t=
-his or
-> > > > > not. Do we make it mandatory ? When it's not supported, it basica=
-lly
-> > > > > mean userspace need to cache and resend the header in userspace, =
-and
-> > > > > also need to skip to some sync point.
-> > > >
-> > > > Once we agree on the spec, then the next step will be to add good c=
-ompliance
-> > > > checks and update drivers that fail the tests.
-> > > >
-> > > > To check if the driver support this ioctl you can call VIDIOC_TRY_E=
-NCODER_CMD
-> > > > to see if the functionality is supported.
-> > >
-> > > There is nothing here for the hardware to support. It's an entirely
-> > > driver thing, since it just needs to wait for the encoder to complete
-> > > all the pending frames and stop enqueuing more frames to the decoder
-> > > until V4L2_ENC_CMD_START is called. Any driver that can't do it must
-> > > be fixed, since otherwise you have no way to ensure that you got all
-> > > the encoded output.
-> > >
-> > > Best regards,
-> > > Tomasz
-> > >
->
+Not like the one in this case.
+
+It can be part of a one line comment like this:
+
+/* fall through - ... */
+
+and it has to be placed at the bottom of the case.
+
+I know... I'd be great if this can be improved.
+
+>> ---
+>>  security/apparmor/domain.c                | 2 +-
+>>  security/integrity/ima/ima_appraise.c     | 1 +
+>>  security/integrity/ima/ima_policy.c       | 4 ++++
+>>  security/integrity/ima/ima_template_lib.c | 1 +
+>>  security/smack/smack_lsm.c                | 3 +--
+>>  5 files changed, 8 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
+>> index 726910bba84b..c7c619578095 100644
+>> --- a/security/apparmor/domain.c
+>> +++ b/security/apparmor/domain.c
+>> @@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
+>>  			stack = NULL;
+>>  			break;
+>>  		}
+>> -		/* fall through to X_NAME */
+>> +		/* fall through - to X_NAME */
+>>  	case AA_X_NAME:
+>>  		if (xindex & AA_X_CHILD)
+>>  			/* released by caller */
+>> diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
+>> index a2baa85ea2f5..57daf30fb7d4 100644
+>> --- a/security/integrity/ima/ima_appraise.c
+>> +++ b/security/integrity/ima/ima_appraise.c
+>> @@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
+>>  		break;
+>>  	case CREDS_CHECK:
+>>  		iint->ima_creds_status = status;
+>> +		/* fall through */
+>>  	case FILE_CHECK:
+>>  	case POST_SETATTR:
+>>  		iint->ima_file_status = status;
+>> diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
+>> index 8bc8a1c8cb3f..122797023bdb 100644
+>> --- a/security/integrity/ima/ima_policy.c
+>> +++ b/security/integrity/ima/ima_policy.c
+>> @@ -938,10 +938,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>>  		case Opt_uid_gt:
+>>  		case Opt_euid_gt:
+>>  			entry->uid_op = &uid_gt;
+>> +			/* fall through */
+>>  		case Opt_uid_lt:
+>>  		case Opt_euid_lt:
+>>  			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
+>>  				entry->uid_op = &uid_lt;
+>> +			/* fall through */
+>>  		case Opt_uid_eq:
+>>  		case Opt_euid_eq:
+>>  			uid_token = (token == Opt_uid_eq) ||
+>> @@ -970,9 +972,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
+>>  			break;
+>>  		case Opt_fowner_gt:
+>>  			entry->fowner_op = &uid_gt;
+>> +			/* fall through */
+>>  		case Opt_fowner_lt:
+>>  			if (token == Opt_fowner_lt)
+>>  				entry->fowner_op = &uid_lt;
+>> +			/* fall through */
+>>  		case Opt_fowner_eq:
+>>  			ima_log_string_op(ab, "fowner", args[0].from,
+>>  					  entry->fowner_op);
+>> diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
+>> index 43752002c222..513b457ae900 100644
+>> --- a/security/integrity/ima/ima_template_lib.c
+>> +++ b/security/integrity/ima/ima_template_lib.c
+>> @@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
+>>  		/* skip ':' and '\0' */
+>>  		buf_ptr += 2;
+>>  		buflen -= buf_ptr - field_data->data;
+>> +		/* fall through */
+>>  	case DATA_FMT_DIGEST:
+>>  	case DATA_FMT_HEX:
+>>  		if (!buflen)
+>> diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+>> index fa98394a40d0..127aa6c58e34 100644
+>> --- a/security/smack/smack_lsm.c
+>> +++ b/security/smack/smack_lsm.c
+>> @@ -3391,13 +3391,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
+>>  		 */
+>>  		final = &smack_known_star;
+>>  		/*
+>> -		 * Fall through.
+>> -		 *
+>>  		 * If a smack value has been set we want to use it,
+>>  		 * but since tmpfs isn't giving us the opportunity
+>>  		 * to set mount options simulate setting the
+>>  		 * superblock default.
+>>  		 */
+>> +		/* Fall through */
+>>  	default:
+>>  		/*
+>>  		 * This isn't an understood special case.
