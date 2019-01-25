@@ -2,186 +2,311 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB91C282C3
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:56:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86262C282C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:58:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01CF5217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:56:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49D3B217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 02:58:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XNe+sGfc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728905AbfAYC4m (ORCPT
+        id S1728524AbfAYC6e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 24 Jan 2019 21:56:42 -0500
-Received: from gateway34.websitewelcome.com ([192.185.148.222]:36567 "EHLO
-        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725991AbfAYC4m (ORCPT
+        Thu, 24 Jan 2019 21:58:34 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:45511 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbfAYC6e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 24 Jan 2019 21:56:42 -0500
-Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
-        by gateway34.websitewelcome.com (Postfix) with ESMTP id 096B750F973
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 20:56:41 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id mrfcgkrg890onmrfdgBtHy; Thu, 24 Jan 2019 20:56:41 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=33912 helo=embeddedor)
-        by gator4166.hostgator.com with esmtpa (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gmrfc-000vHu-2W; Thu, 24 Jan 2019 20:56:40 -0600
-Date:   Thu, 24 Jan 2019 20:56:39 -0600
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     John Johansen <john.johansen@canonical.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Mimi Zohar <zohar@linux.ibm.com>,
-        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-        Casey Schaufler <casey@schaufler-ca.com>
-Cc:     linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Subject: [PATCH] security: mark expected switch fall-throughs
-Message-ID: <20190125025639.GA13946@embeddedor>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gmrfc-000vHu-2W
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: (embeddedor) [189.250.130.205]:33912
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 8
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+        Thu, 24 Jan 2019 21:58:34 -0500
+Received: by mail-lf1-f67.google.com with SMTP id b20so5855293lfa.12
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Jan 2019 18:58:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=g/4y7umu6CytKjWMl+gM/NKSN/Q9oaQ6rYgF5sx7LA4=;
+        b=XNe+sGfcgw6KtaQkcp0WpdCr5zWDomy9HoU4KlGCw4OPM5IOFGmffYo47DCQivXCf7
+         7oY3cyWAnGAMz1Jzg3/va5WWKlWngvFVJQRdjcdzdLIAbqoZHxt0hPLvJsPbfJScHnrI
+         uw0Ga0HV6QuwjPUASjQKWyAPSVRPpkG2Z6EhbWVEUR5I8ryyLIavghRc919iVsnnIHIW
+         pyHUD+oun3bDXYuIT9YXfH3Q+SaRTDEQ19l+cmI6E887XF/Ujcmj/XyFE4qACOtg4gZe
+         y+v7x/akXZTUCL/atX715eYIOTUOoQYoOI+0RI5jGM+k5LXgq3noJj+gr0L2RXGxllWP
+         fq2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=g/4y7umu6CytKjWMl+gM/NKSN/Q9oaQ6rYgF5sx7LA4=;
+        b=MlszXo4eR7MsYgPRh4dXZY0SXyHACkh3vbPemJ1NnHs6FRX0OudFTN5VM7LW9L1au4
+         UI2iIEZygFG3zIgPTSXawBL5vnaxFtBGLiWB/J9cRni34AQ9yLiHd2zSrpx9pUGMHCyq
+         4vXn9evsmRToLONFZwg0RSoAR2wbkXZ63kRJdB3z/34y8JcMD7qDX43icSK5scBclbET
+         /hjRGAJbjKvKk6P3TZzp5QA1u82Ndhh5LrQFToKvSy8Oitpsdc4DQUVVE3frwDCL3pDn
+         11DjLtf4zt1Ftd7NRHrsTAhl5beMKZpQ6owso0AK/H4jNl9858ePIkeWNGMJwqL+ghZd
+         bp3Q==
+X-Gm-Message-State: AJcUukdS02N8E1bnRWhUw5DpaQ3uiVopVqRAlpwMH+tqVFGAuQM7g7c8
+        etJPveEiJO70mSM4Pyhu6mMlSQ/Lq2M=
+X-Google-Smtp-Source: ALg8bN7PQMGEmv0V9KSofnR7s4KI3ms3FBXy5/ovImnvbrGVfYSUbGcsvlQBqKTlZALckwhj37iB2g==
+X-Received: by 2002:a19:2106:: with SMTP id h6mr7024172lfh.29.1548385110635;
+        Thu, 24 Jan 2019 18:58:30 -0800 (PST)
+Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
+        by smtp.gmail.com with ESMTPSA id y131sm1230397lfc.43.2019.01.24.18.58.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 24 Jan 2019 18:58:29 -0800 (PST)
+From:   Max Filippov <jcmvbkbc@gmail.com>
+To:     LKML <linux-kernel@vger.kernel.org>
+Cc:     Max Filippov <jcmvbkbc@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Paul Burton <paul.burton@mips.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: [PATCH] treewide: get rid of HAVE_FUTEX_CMPXCHG
+Date:   Thu, 24 Jan 2019 18:57:47 -0800
+Message-Id: <20190125025747.1853-1-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation to enabling -Wimplicit-fallthrough, mark switch
-cases where we are expecting to fall through.
+CONFIG_HAVE_FUTEX_CMPXCHG is currently used to determine if
+atomic_inatomic is always working or must be probed. For most
+architectures it is either selected, or it is known that they always
+have futex_atomic_cmpxchg_inatomic working.
 
-This patch fixes the following warnings:
+Drop HAVE_FUTEX_CMPXCHG from the Kconfig and let architectures that may
+not have it working define macro arch_have_futex_cmpxchg that probes
+whether futex_atomic_cmpxchg_inatomic is working, otherwise assume that
+it is working.
 
-security/integrity/ima/ima_appraise.c:116:26: warning: this statement may fall through [-Wimplicit-fallthrough=]
-security/integrity/ima/ima_template_lib.c:85:10: warning: this statement may fall through [-Wimplicit-fallthrough=]
-security/integrity/ima/ima_policy.c:940:18: warning: this statement may fall through [-Wimplicit-fallthrough=]
-security/integrity/ima/ima_policy.c:943:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-security/integrity/ima/ima_policy.c:972:21: warning: this statement may fall through [-Wimplicit-fallthrough=]
-security/integrity/ima/ima_policy.c:974:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
-security/smack/smack_lsm.c:3391:9: warning: this statement may fall through [-Wimplicit-fallthrough=]
-security/apparmor/domain.c:569:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+Implement arch_have_futex_cmpxchg for MIPS, Xtensa and for the users of
+asm-generic/futex.h.
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
-
-This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Max Filippov <jcmvbkbc@gmail.com>
 ---
- security/apparmor/domain.c                | 2 +-
- security/integrity/ima/ima_appraise.c     | 1 +
- security/integrity/ima/ima_policy.c       | 4 ++++
- security/integrity/ima/ima_template_lib.c | 1 +
- security/smack/smack_lsm.c                | 3 +--
- 5 files changed, 8 insertions(+), 3 deletions(-)
+ arch/arc/Kconfig                |  1 -
+ arch/m68k/Kconfig               |  1 -
+ arch/mips/include/asm/futex.h   |  2 ++
+ arch/riscv/Kconfig              |  1 -
+ arch/s390/Kconfig               |  1 -
+ arch/sh/Kconfig                 |  1 -
+ arch/um/Kconfig                 |  1 -
+ arch/xtensa/Kconfig             |  1 -
+ arch/xtensa/include/asm/futex.h |  4 ++++
+ include/asm-generic/futex.h     |  2 ++
+ init/Kconfig                    |  8 --------
+ kernel/futex.c                  | 30 ++++++++----------------------
+ 12 files changed, 16 insertions(+), 37 deletions(-)
 
-diff --git a/security/apparmor/domain.c b/security/apparmor/domain.c
-index 726910bba84b..c7c619578095 100644
---- a/security/apparmor/domain.c
-+++ b/security/apparmor/domain.c
-@@ -572,7 +572,7 @@ static struct aa_label *x_to_label(struct aa_profile *profile,
- 			stack = NULL;
- 			break;
- 		}
--		/* fall through to X_NAME */
-+		/* fall through - to X_NAME */
- 	case AA_X_NAME:
- 		if (xindex & AA_X_CHILD)
- 			/* released by caller */
-diff --git a/security/integrity/ima/ima_appraise.c b/security/integrity/ima/ima_appraise.c
-index a2baa85ea2f5..57daf30fb7d4 100644
---- a/security/integrity/ima/ima_appraise.c
-+++ b/security/integrity/ima/ima_appraise.c
-@@ -114,6 +114,7 @@ static void ima_set_cache_status(struct integrity_iint_cache *iint,
- 		break;
- 	case CREDS_CHECK:
- 		iint->ima_creds_status = status;
-+		/* fall through */
- 	case FILE_CHECK:
- 	case POST_SETATTR:
- 		iint->ima_file_status = status;
-diff --git a/security/integrity/ima/ima_policy.c b/security/integrity/ima/ima_policy.c
-index 8bc8a1c8cb3f..122797023bdb 100644
---- a/security/integrity/ima/ima_policy.c
-+++ b/security/integrity/ima/ima_policy.c
-@@ -938,10 +938,12 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 		case Opt_uid_gt:
- 		case Opt_euid_gt:
- 			entry->uid_op = &uid_gt;
-+			/* fall through */
- 		case Opt_uid_lt:
- 		case Opt_euid_lt:
- 			if ((token == Opt_uid_lt) || (token == Opt_euid_lt))
- 				entry->uid_op = &uid_lt;
-+			/* fall through */
- 		case Opt_uid_eq:
- 		case Opt_euid_eq:
- 			uid_token = (token == Opt_uid_eq) ||
-@@ -970,9 +972,11 @@ static int ima_parse_rule(char *rule, struct ima_rule_entry *entry)
- 			break;
- 		case Opt_fowner_gt:
- 			entry->fowner_op = &uid_gt;
-+			/* fall through */
- 		case Opt_fowner_lt:
- 			if (token == Opt_fowner_lt)
- 				entry->fowner_op = &uid_lt;
-+			/* fall through */
- 		case Opt_fowner_eq:
- 			ima_log_string_op(ab, "fowner", args[0].from,
- 					  entry->fowner_op);
-diff --git a/security/integrity/ima/ima_template_lib.c b/security/integrity/ima/ima_template_lib.c
-index 43752002c222..513b457ae900 100644
---- a/security/integrity/ima/ima_template_lib.c
-+++ b/security/integrity/ima/ima_template_lib.c
-@@ -83,6 +83,7 @@ static void ima_show_template_data_ascii(struct seq_file *m,
- 		/* skip ':' and '\0' */
- 		buf_ptr += 2;
- 		buflen -= buf_ptr - field_data->data;
-+		/* fall through */
- 	case DATA_FMT_DIGEST:
- 	case DATA_FMT_HEX:
- 		if (!buflen)
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index fa98394a40d0..127aa6c58e34 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -3391,13 +3391,12 @@ static void smack_d_instantiate(struct dentry *opt_dentry, struct inode *inode)
- 		 */
- 		final = &smack_known_star;
- 		/*
--		 * Fall through.
--		 *
- 		 * If a smack value has been set we want to use it,
- 		 * but since tmpfs isn't giving us the opportunity
- 		 * to set mount options simulate setting the
- 		 * superblock default.
- 		 */
-+		/* Fall through */
- 	default:
- 		/*
- 		 * This isn't an understood special case.
+diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+index 376366a7db81..01932be9f7e3 100644
+--- a/arch/arc/Kconfig
++++ b/arch/arc/Kconfig
+@@ -29,7 +29,6 @@ config ARC
+ 	select HAVE_ARCH_KGDB
+ 	select HAVE_ARCH_TRACEHOOK
+ 	select HAVE_DEBUG_STACKOVERFLOW
+-	select HAVE_FUTEX_CMPXCHG if FUTEX
+ 	select HAVE_GENERIC_DMA_COHERENT
+ 	select HAVE_IOREMAP_PROT
+ 	select HAVE_KERNEL_GZIP
+diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
+index e173ea2ff395..09499af5d22a 100644
+--- a/arch/m68k/Kconfig
++++ b/arch/m68k/Kconfig
+@@ -20,7 +20,6 @@ config M68K
+ 	select GENERIC_STRNLEN_USER if MMU
+ 	select ARCH_WANT_IPC_PARSE_VERSION
+ 	select ARCH_USES_GETTIMEOFFSET if MMU && !COLDFIRE
+-	select HAVE_FUTEX_CMPXCHG if MMU && FUTEX
+ 	select HAVE_MOD_ARCH_SPECIFIC
+ 	select MODULES_USE_ELF_REL
+ 	select MODULES_USE_ELF_RELA
+diff --git a/arch/mips/include/asm/futex.h b/arch/mips/include/asm/futex.h
+index c14d798f3888..f61221d080fc 100644
+--- a/arch/mips/include/asm/futex.h
++++ b/arch/mips/include/asm/futex.h
+@@ -122,6 +122,8 @@ arch_futex_atomic_op_inuser(int op, int oparg, int *oval, u32 __user *uaddr)
+ 	return ret;
+ }
+ 
++#define arch_have_futex_cmpxchg() (cpu_has_llsc)
++
+ static inline int
+ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
+ 			      u32 oldval, u32 newval)
+diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
+index feeeaa60697c..074966cdd41d 100644
+--- a/arch/riscv/Kconfig
++++ b/arch/riscv/Kconfig
+@@ -31,7 +31,6 @@ config RISCV
+ 	select HAVE_ARCH_AUDITSYSCALL
+ 	select HAVE_MEMBLOCK_NODE_MAP
+ 	select HAVE_DMA_CONTIGUOUS
+-	select HAVE_FUTEX_CMPXCHG if FUTEX
+ 	select HAVE_GENERIC_DMA_COHERENT
+ 	select HAVE_PERF_EVENTS
+ 	select HAVE_SYSCALL_TRACEPOINTS
+diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+index ed554b09eb3f..6f3819275d08 100644
+--- a/arch/s390/Kconfig
++++ b/arch/s390/Kconfig
+@@ -146,7 +146,6 @@ config S390
+ 	select HAVE_FTRACE_MCOUNT_RECORD
+ 	select HAVE_FUNCTION_GRAPH_TRACER
+ 	select HAVE_FUNCTION_TRACER
+-	select HAVE_FUTEX_CMPXCHG if FUTEX
+ 	select HAVE_GCC_PLUGINS
+ 	select HAVE_KERNEL_BZIP2
+ 	select HAVE_KERNEL_GZIP
+diff --git a/arch/sh/Kconfig b/arch/sh/Kconfig
+index a9c36f95744a..a04bc11c8819 100644
+--- a/arch/sh/Kconfig
++++ b/arch/sh/Kconfig
+@@ -50,7 +50,6 @@ config SUPERH
+ 	select OLD_SIGACTION
+ 	select PCI_DOMAINS if PCI
+ 	select HAVE_ARCH_AUDITSYSCALL
+-	select HAVE_FUTEX_CMPXCHG if FUTEX
+ 	select HAVE_NMI
+ 	select NEED_SG_DMA_LENGTH
+ 
+diff --git a/arch/um/Kconfig b/arch/um/Kconfig
+index ec9711d068b7..38c5ce3b64b1 100644
+--- a/arch/um/Kconfig
++++ b/arch/um/Kconfig
+@@ -10,7 +10,6 @@ config UML
+ 	select HAVE_ARCH_AUDITSYSCALL
+ 	select HAVE_ARCH_SECCOMP_FILTER
+ 	select HAVE_UID16
+-	select HAVE_FUTEX_CMPXCHG if FUTEX
+ 	select HAVE_DEBUG_KMEMLEAK
+ 	select HAVE_DEBUG_BUGVERBOSE
+ 	select GENERIC_IRQ_SHOW
+diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+index 7021d1e15909..a4d34de57809 100644
+--- a/arch/xtensa/Kconfig
++++ b/arch/xtensa/Kconfig
+@@ -25,7 +25,6 @@ config XTENSA
+ 	select HAVE_DMA_CONTIGUOUS
+ 	select HAVE_EXIT_THREAD
+ 	select HAVE_FUNCTION_TRACER
+-	select HAVE_FUTEX_CMPXCHG if !MMU
+ 	select HAVE_HW_BREAKPOINT if PERF_EVENTS
+ 	select HAVE_IRQ_TIME_ACCOUNTING
+ 	select HAVE_OPROFILE
+diff --git a/arch/xtensa/include/asm/futex.h b/arch/xtensa/include/asm/futex.h
+index 505d09eff184..ac88d64f94e4 100644
+--- a/arch/xtensa/include/asm/futex.h
++++ b/arch/xtensa/include/asm/futex.h
+@@ -87,6 +87,10 @@ static inline int arch_futex_atomic_op_inuser(int op, int oparg, int *oval,
+ 	return ret;
+ }
+ 
++#if !XCHAL_HAVE_S32C1I
++#define arch_have_futex_cmpxchg() (0)
++#endif
++
+ static inline int
+ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
+ 			      u32 oldval, u32 newval)
+diff --git a/include/asm-generic/futex.h b/include/asm-generic/futex.h
+index fcb61b4659b3..deefe5b22b9b 100644
+--- a/include/asm-generic/futex.h
++++ b/include/asm-generic/futex.h
+@@ -136,6 +136,8 @@ arch_futex_atomic_op_inuser(int op, u32 oparg, int *oval, u32 __user *uaddr)
+ 	return ret;
+ }
+ 
++#define arch_have_futex_cmpxchg() (0)
++
+ static inline int
+ futex_atomic_cmpxchg_inatomic(u32 *uval, u32 __user *uaddr,
+ 			      u32 oldval, u32 newval)
+diff --git a/init/Kconfig b/init/Kconfig
+index 513fa544a134..351f4c93f932 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1338,14 +1338,6 @@ config FUTEX_PI
+ 	depends on FUTEX && RT_MUTEXES
+ 	default y
+ 
+-config HAVE_FUTEX_CMPXCHG
+-	bool
+-	depends on FUTEX
+-	help
+-	  Architectures should select this if futex_atomic_cmpxchg_inatomic()
+-	  is implemented and always working. This removes a couple of runtime
+-	  checks.
+-
+ config EPOLL
+ 	bool "Enable eventpoll support" if EXPERT
+ 	default y
+diff --git a/kernel/futex.c b/kernel/futex.c
+index be3bff2315ff..5697c1f2254d 100644
+--- a/kernel/futex.c
++++ b/kernel/futex.c
+@@ -174,7 +174,11 @@
+  * double_lock_hb() and double_unlock_hb(), respectively.
+  */
+ 
+-#ifdef CONFIG_HAVE_FUTEX_CMPXCHG
++/*
++ * Architectures should define this macro if futex_atomic_cmpxchg_inatomic()
++ * may not be always working.
++ */
++#ifdef arch_have_futex_cmpxchg
+ #define futex_cmpxchg_enabled 1
+ #else
+ static int  __read_mostly futex_cmpxchg_enabled;
+@@ -3842,26 +3846,6 @@ COMPAT_SYSCALL_DEFINE6(futex, u32 __user *, uaddr, int, op, u32, val,
+ }
+ #endif /* CONFIG_COMPAT_32BIT_TIME */
+ 
+-static void __init futex_detect_cmpxchg(void)
+-{
+-#ifndef CONFIG_HAVE_FUTEX_CMPXCHG
+-	u32 curval;
+-
+-	/*
+-	 * This will fail and we want it. Some arch implementations do
+-	 * runtime detection of the futex_atomic_cmpxchg_inatomic()
+-	 * functionality. We want to know that before we call in any
+-	 * of the complex code paths. Also we want to prevent
+-	 * registration of robust lists in that case. NULL is
+-	 * guaranteed to fault and we get -EFAULT on functional
+-	 * implementation, the non-functional ones will return
+-	 * -ENOSYS.
+-	 */
+-	if (cmpxchg_futex_value_locked(&curval, NULL, 0, 0) == -EFAULT)
+-		futex_cmpxchg_enabled = 1;
+-#endif
+-}
+-
+ static int __init futex_init(void)
+ {
+ 	unsigned int futex_shift;
+@@ -3880,7 +3864,9 @@ static int __init futex_init(void)
+ 					       futex_hashsize, futex_hashsize);
+ 	futex_hashsize = 1UL << futex_shift;
+ 
+-	futex_detect_cmpxchg();
++#ifdef arch_have_futex_cmpxchg
++	futex_cmpxchg_enabled = arch_have_futex_cmpxchg();
++#endif
+ 
+ 	for (i = 0; i < futex_hashsize; i++) {
+ 		atomic_set(&futex_queues[i].waiters, 0);
 -- 
-2.20.1
+2.11.0
 
