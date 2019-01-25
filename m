@@ -2,145 +2,104 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84106C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:26:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C14FC282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:26:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54883218D0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:26:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0433A218E2
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 13:26:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="H91ePaCn"
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="VlNtAkml"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727721AbfAYN0c (ORCPT
+        id S1728238AbfAYN0z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 08:26:32 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:2912 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726095AbfAYN0c (ORCPT
+        Fri, 25 Jan 2019 08:26:55 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:39980 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726095AbfAYN0y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 08:26:32 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c4b0e860000>; Fri, 25 Jan 2019 05:26:30 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Fri, 25 Jan 2019 05:26:31 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Fri, 25 Jan 2019 05:26:31 -0800
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 25 Jan
- 2019 13:26:29 +0000
-Subject: Re: [PATCH] ALSA: hda/tegra: enable clock during probe
-To:     Takashi Iwai <tiwai@suse.de>
-CC:     Sameer Pujar <spujar@nvidia.com>,
-        <pierre-louis.bossart@linux.intel.com>, <perex@perex.cz>,
-        <alsa-devel@alsa-project.org>, <thierry.reding@gmail.com>,
-        <rlokhande@nvidia.com>, <linux-kernel@vger.kernel.org>,
-        <linux-tegra@vger.kernel.org>
-References: <1548351403-1875-1-git-send-email-spujar@nvidia.com>
- <s5h5zudc1qw.wl-tiwai@suse.de>
- <06c00ce1-32ed-8aa9-0340-d00202a8fa62@nvidia.com>
- <s5hr2d0zz96.wl-tiwai@suse.de>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <b64f5d05-f352-7b46-d70d-3809aab8ddda@nvidia.com>
-Date:   Fri, 25 Jan 2019 13:26:27 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 25 Jan 2019 08:26:54 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0PDNlxa141111;
+        Fri, 25 Jan 2019 13:26:33 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
+ : subject : message-id : references : mime-version : content-type :
+ in-reply-to; s=corp-2018-07-02;
+ bh=uD1NORlCeQhZxfmPF2/YqS9dFy+x7wKZsm8z1Uj6Fpw=;
+ b=VlNtAkmlNLVAoz8VaLsNn+sv6bSrsSoQo6SztcrbKX5OB45n0aTnA7jogUxsIcNwDRvU
+ CHQKmwSrvXUAbNrGDfKgku7aSOKdEFge+TYwf9ftxvDHzdBPZeoJx2R0j9gEAsXu2Zxh
+ woqo3tOU0cmz53X0UyTeJ4aWfw1W8TdaCRQ/bYRu4OmAtkC8mCpIr1tMJnLQHO45LNmK
+ nSBVZaDD3QYnxlfQIuuVT/3vT5rCqjF18FesghFRAluFak0b6hwTbH+LlxCyDClocjJG
+ xrO35XK4XCd5NcnE7AoguA+s1dVpF9gFaNI9y/a3jdIwSGRo0wX0FEcEd4jNL+HsbCxY lA== 
+Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
+        by userp2130.oracle.com with ESMTP id 2q3uav5u6s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 25 Jan 2019 13:26:33 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0PDQRiV021151
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 25 Jan 2019 13:26:27 GMT
+Received: from abhmp0006.oracle.com (abhmp0006.oracle.com [141.146.116.12])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id x0PDQQpv027277;
+        Fri, 25 Jan 2019 13:26:26 GMT
+Received: from kadam (/41.202.241.12)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 25 Jan 2019 05:26:25 -0800
+Date:   Fri, 25 Jan 2019 16:26:14 +0300
+From:   Dan Carpenter <dan.carpenter@oracle.com>
+To:     Gao Xiang <gaoxiang25@huawei.com>
+Cc:     Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
+        Chao Yu <chao@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        weidu.du@huawei.com, Fang Wei <fangwei1@huawei.com>,
+        Miao Xie <miaoxie@huawei.com>
+Subject: Re: [PATCH 1/2] staging: erofs: use xattr_prefix to wrap up
+Message-ID: <20190125132614.GB1795@kadam>
+References: <20190125115103.47250-1-gaoxiang25@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <s5hr2d0zz96.wl-tiwai@suse.de>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL103.nvidia.com (172.20.187.11) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548422790; bh=PFxm0QupoaG7oKh+/xHrIXcLL7nFXDBr4VQJxJePcyQ=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=H91ePaCntofN3RWAb0zxLhM3QjxIjNW6395c12fSnxyOkp4t93bQDlSiaURrLheR2
-         cmWL10c3twLfxy+GOeb70S8MTFGH63Xtig6nFcpF3jKt+tbvElmLzXv4370dZhGDHp
-         RaIJaoe7VICZXTSJisWxyPDGKVN6w3OP3VJOPBJ57uANBg4tRpBLgajUXw4QND97Cl
-         yhyZkebXrA4ziph8vWv12IE4S0WOxlxjyM1rmSi8qcqIX0co3YBUZt1TvKK/HEA6ww
-         MuvWIe5//bUKPhto0I9sRnxk+AU9dYe0QTn6h/mn2mL80ZPEFjzglOLn49GhY+ZGf2
-         cRjnh51CPDIBg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125115103.47250-1-gaoxiang25@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9146 signatures=668682
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=834
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1901250110
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 25/01/2019 12:40, Takashi Iwai wrote:
-> On Fri, 25 Jan 2019 12:36:00 +0100,
-> Jon Hunter wrote:
->>
->>
->> On 24/01/2019 19:08, Takashi Iwai wrote:
->>> On Thu, 24 Jan 2019 18:36:43 +0100,
->>> Sameer Pujar wrote:
->>>>
->>>> If CONFIG_PM is disabled or runtime PM calls are forbidden, the clocks
->>>> will not be ON. This could cause issue during probe, where hda init
->>>> setup is done. This patch checks whether runtime PM is enabled or not.
->>>> If disabled, clocks are enabled in probe() and disabled in remove()
->>>>
->>>> This patch does following minor changes as cleanup,
->>>>   * return code check for pm_runtime_get_sync() to take care of failure
->>>>     and exit gracefully.
->>>>   * In remove path runtime PM is disabled before calling snd_card_free().
->>>>   * hda_tegra_disable_clocks() is moved out of CONFIG_PM_SLEEP check.
->>>>   * runtime PM callbacks moved out of CONFIG_PM check
->>>>
->>>> Signed-off-by: Sameer Pujar <spujar@nvidia.com>
->>>> Reviewed-by: Ravindra Lokhande <rlokhande@nvidia.com>
->>>> Reviewed-by: Jon Hunter <jonathanh@nvidia.com>
->>> (snip)
->>>> @@ -555,6 +553,13 @@ static int hda_tegra_probe(struct platform_device *pdev)
->>>>  	if (!azx_has_pm_runtime(chip))
->>>>  		pm_runtime_forbid(hda->dev);
->>>>  
->>>> +	/* explicit resume if runtime PM is disabled */
->>>> +	if (!pm_runtime_enabled(hda->dev)) {
->>>> +		err = hda_tegra_runtime_resume(hda->dev);
->>>> +		if (err)
->>>> +			goto out_free;
->>>> +	}
->>>> +
->>>>  	schedule_work(&hda->probe_work);
->>>
->>> Calling runtime_resume here is really confusing...
->>
->> Why? IMO it is better to have a single handler for resuming the device
->> and so if RPM is not enabled we call the handler directly. This is what
->> we have been advised to do in the past and do in other drivers. See ...
+On Fri, Jan 25, 2019 at 07:51:03PM +0800, Gao Xiang wrote:
+> Let's use xattr_prefix instead of open code.
+> No logic changes.
 > 
-> The point is that we're not "resuming" anything there.  It's in the
-> early probe stage, and the device state is uninitialized, not really
-> suspended.  It'd end up with just calling the same helper
-> (hda_tegra_enable_clocks()), though.
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+> ---
+>  drivers/staging/erofs/xattr.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
+> index 1c9498e38f0e..eca65df46133 100644
+> --- a/drivers/staging/erofs/xattr.c
+> +++ b/drivers/staging/erofs/xattr.c
+> @@ -521,7 +521,7 @@ static int xattr_entrylist(struct xattr_iter *_it,
+>  		return 1;
+>  
+>  	/* Note that at least one of 'prefix' and 'name' should be non-NULL */
 
-Yes and you can make the same argument for every driver that calls
-pm_runtime_get_sync() during probe to turn on clocks, handle resets,
-etc, because at the end of the day the very first call to
-pm_runtime_get_sync() invokes the runtime_resume callback, when we have
-never been suspended.
+The comment is sort of confusing now.
 
-Yes at the end of the day it is the same and given that we have done
-this elsewhere I think it is good to be consistent if/where we can.
+> -	prefix = h->prefix != NULL ? h->prefix : h->name;
+> +	prefix = xattr_prefix(h);
+>  	prefix_len = strlen(prefix);
 
-Furthermore, there are other various drivers in the kernel that do the
-same ...
+regards,
+dan carpenter
 
-drivers/i2c/busses/i2c-img-scb.c
-drivers/dma/xilinx/zynqmp_dma.c
-drivers/gpu/drm/arm/malidp_drv.c
-
-Cheers
-Jon
-
--- 
-nvpublic
