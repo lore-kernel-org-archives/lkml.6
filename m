@@ -2,75 +2,67 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98201C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:37:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2F45C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:38:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5AC6C2087E
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:37:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6C7302087E
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 18:38:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cag5pUGo"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eRE96xBN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727955AbfAYShw (ORCPT
+        id S1729311AbfAYSiS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 13:37:52 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35953 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfAYShv (ORCPT
+        Fri, 25 Jan 2019 13:38:18 -0500
+Received: from mail-ed1-f66.google.com ([209.85.208.66]:41588 "EHLO
+        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726321AbfAYSiS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 13:37:51 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f23so8130391edb.3;
-        Fri, 25 Jan 2019 10:37:49 -0800 (PST)
+        Fri, 25 Jan 2019 13:38:18 -0500
+Received: by mail-ed1-f66.google.com with SMTP id a20so8106944edc.8;
+        Fri, 25 Jan 2019 10:38:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
          :user-agent:mime-version:in-reply-to:content-language
          :content-transfer-encoding;
-        bh=nxqryeb7ynQmLlzsE8XHe8MVntwRxDxi5tsjFZektms=;
-        b=cag5pUGoj8ZoKz770/aw9WZSm+BQnptcui2nfHx+gQcKdJW0yeofrgtMZbrndOoBTG
-         j3Ws0jruVmdsqnn+4DT2DXppDvFTYWFnm7Da97vtF9qWiIE54qbvc7LoYDALsYoTg00p
-         qfK1g+ig/SuqnxVEE+C5gMLJ/wGuUXaVa281LUxOhuSocQ78Lv3ZB535+CrLpV1u1qaz
-         Z7+WkM+7I79PsfRiy+PEwxFJSWGYFGU7D4alVuOA518SxRAI1zddTw6NLByfjux4Nk4C
-         Xz71NCFPf6kQ+Il3z5G4Qd06DlKaERRLG0sjKLw2FjCzZNpD9fbUXzDWplZXVICOM2KP
-         5LWw==
+        bh=RK/RNSLuJatuThuuwTlo2+3dPMmT4AcQSJQ01+f058Y=;
+        b=eRE96xBNp/uuyGV5ORtH/Z632cCIIwVt2rLSaF4XBtK0QETCQ6FIqsb6BF/CIvAsfd
+         w87zJ7h3tio47EeUGdMI4a80wnk0onbmZUcD5VqmKD2YfNBtJ9y2uJGp5JT7UCdBWNWh
+         VOUKK73oPKQavU3JNzG6zyVLHBj0LhbYt3BgzIAXuB19jcn3c0m+duuSevK6QKAClbSK
+         AqFMHRzivUqQ+ELYo8W9XZwTt+hjTCNYx4VNE1ohV6uZiRl8vPKZUJwfhaBTuKu71Ln3
+         yFfuDiW0yhLr8B+fFHkKNu3vENAgkb1l6vV1UmHQ/hCK1pLhDAMINsvCjy28UyAAqUv4
+         PNug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
          :message-id:date:user-agent:mime-version:in-reply-to
          :content-language:content-transfer-encoding;
-        bh=nxqryeb7ynQmLlzsE8XHe8MVntwRxDxi5tsjFZektms=;
-        b=PqtuCEUh1bJRcTyCoJLff1u0Iuu8BIH+OgrKd6fhjofiZwuv5XIoPyCsfc433ZlrYX
-         sEWuN9pWk+/eejOAs+ePz191q0KWwavXgmZa2lVOsmXNa2AGqF3pzyo+0+gVFFVYnqc2
-         uivj3nDFHw/vviSePf0K05vo0sN7Nyvz1p/Yeh4YlsWJqyO/rR/tq1sT6CBaHxVozyoH
-         Zwzns/BXtdF8UcoNV2gszXn0CSC8dX+SAqeYr3NZo5kkhAZKhzfee3fxsZU51meB/jVb
-         OOIyHRDPXOX49N1ZXsJF+Hawd3HfxvrkMgST2yLCI0xjltEY/WKio4ey3elssLHKWu8y
-         aUbQ==
-X-Gm-Message-State: AJcUukeSCmaQwCNcV3vheNmto5yrbVMvYKuygIUhTbF/LXj5kyX0I3QZ
-        laL9nBl9g/UWfUJnn9q/+Uo=
-X-Google-Smtp-Source: ALg8bN5pepLeaNRqJBOkTIgf+xgr65JYMDqiIa65R2tIGZBB/2H3eIK6+Ysv5fmWqmk7j6YniwzGow==
-X-Received: by 2002:a50:cf41:: with SMTP id d1mr11910608edk.242.1548441468490;
-        Fri, 25 Jan 2019 10:37:48 -0800 (PST)
+        bh=RK/RNSLuJatuThuuwTlo2+3dPMmT4AcQSJQ01+f058Y=;
+        b=gwbsqZw3TxEBF0rKpQa0TGA+TYo8iQeRwBR86hU5DjOX+rMgNjjCGNP111CKPkxnRH
+         RICgXE29Ko0r2BiZbqBH5azC3HmK3k1Lsw5KPdBJwJLcthSpCb2owC4owKoks4kUSkGH
+         sVEThpbudCPBunCR3QZfp+T6zKVGy+KIrLzXvvJ2ib8wBoOiFbRW4Mm5cH3BY+KI7fg4
+         N/jpl89/4j0rOf4JczfnAauQnM9HzOLHcHQjYLUbimRPbtyco4W5iNoywbE8hUiPc/oV
+         z3qYxG5WCcApnmrlDBFC3l+xtx+h2GTkV7mBuMxLyiPEqBFbNzikPZ0a4JEu2CHSBiB9
+         11eQ==
+X-Gm-Message-State: AJcUukfY1GwlP84B2LQbGHvzd8+xGrRDWKc1zUr3crndoCOs/M2GJoF+
+        q7Ajr1gt4rmiYYrHxoLcG2qPPFJ5
+X-Google-Smtp-Source: ALg8bN7ZKy04C6VTlG50QHnN28TDkdYKeueRiVStwUw2HxPH/3RsuXAbbsNkWfDGRckb7lRWqb8Wyg==
+X-Received: by 2002:a50:f61e:: with SMTP id c30mr11424357edn.197.1548441495047;
+        Fri, 25 Jan 2019 10:38:15 -0800 (PST)
 Received: from [10.67.49.9] ([192.19.223.250])
-        by smtp.googlemail.com with ESMTPSA id h1sm334371ejx.41.2019.01.25.10.37.45
+        by smtp.googlemail.com with ESMTPSA id b46sm12248971edc.57.2019.01.25.10.38.12
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 10:37:47 -0800 (PST)
-Subject: Re: [PATCH net-next v2 1/2] net: dsa: mv88e6xxx: Save switch rules
-To:     Miquel Raynal <miquel.raynal@bootlin.com>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-References: <20190125095507.29334-1-miquel.raynal@bootlin.com>
- <20190125095507.29334-2-miquel.raynal@bootlin.com>
+        Fri, 25 Jan 2019 10:38:14 -0800 (PST)
+Subject: Re: [PATCH v2] iio: adc: ti-ads7950: inconsistency with spi msg
+To:     justinpopo6@gmail.com, linux-iio@vger.kernel.org
+Cc:     jic23@kernel.org, knaack.h@gmx.de, lars@metafoo.de,
+        linux-kernel@vger.kernel.org
+References: <1548440422-27943-1-git-send-email-justinpopo6@gmail.com>
 From:   Florian Fainelli <f.fainelli@gmail.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
@@ -127,12 +119,12 @@ Autocrypt: addr=f.fainelli@gmail.com; prefer-encrypt=mutual; keydata=
  caxTGgc5zzQHeX67eMzrGomG3ZnIxmd1sAbgvJUDaD2GrYlulfwGWwWyTNbWRvMighVdPkSF
  6XFgQaosWxkV0OELLy2N485YrTr2Uq64VKyxpncLh50e2RnyAJ9Za0Dx0yyp44iD1OvHtkEI
  M5kY0ACeNhCZJvZ5g4C2Lc9fcTHu8jxmEkI=
-Message-ID: <c1421a5d-5f92-bb86-b5cc-9fa19a1c8d9f@gmail.com>
-Date:   Fri, 25 Jan 2019 10:37:38 -0800
+Message-ID: <9d110c8a-2a2a-412e-847e-215b9edc97e4@gmail.com>
+Date:   Fri, 25 Jan 2019 10:38:11 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190125095507.29334-2-miquel.raynal@bootlin.com>
+In-Reply-To: <1548440422-27943-1-git-send-email-justinpopo6@gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -141,42 +133,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Miquel,
-
-On 1/25/19 1:55 AM, Miquel Raynal wrote:
-> The user might apply a specific switch configuration, with specific
-> forwarding rules, VLAN, bridges, etc.
+On 1/25/19 10:20 AM, justinpopo6@gmail.com wrote:
+> From: Justin Chen <justinpopo6@gmail.com>
 > 
-> During suspend to RAM the switch power will be turned off and the
-> switch will lost its configuration. In an attempt to bring S2RAM
-> support to the mv88e6xxx DSA, let's first save these rules in a
-> per-chip list thanks to the mv88e6xxx_add/del_xxx_rule()
-> helpers. These helpers are then called from various callbacks:
-> * mv88e6xxx_port_fdb_add/del()
-> * mv88e6xxx_port_mdb_add/del()
-> * mv88e6xxx_port_vlan_add/del()
-> * mv88e6xxx_port_bridge_join/leave()
-> * mv88e6xxx_crosschip_bridge_join/leave()
+> To read a channel we require 3 cycles to send, process, and receive
+> the data. The transfer buffer for the third transaction is left blank.
+> This leaves it up to the SPI driver to decide what to do.
 > 
-> To avoid recursion problems when replaying the rules, the content of
-> the above *_add()/*_join() callbacks has been moved in separate
-> helpers with a '_' prefix. Hence, each callback just calls the
-> corresponding helper and the corresponding *_add_xxx_rule().
+> In one particular case, if the tx buffer is not set the spi driver
+> sets it to 0xff. This puts the ADC in a alarm programming state,
+> therefore the following read to a channel becomes erroneous.
+> 
+> Instead of leaving us to the mercy of the SPI driver, we send the
+> ADC cmd on the third transaction to prevent inconsistent behavior.
+> 
+> Fixes: 902c4b2446d4 ("iio: adc: New driver for TI ADS7950 chips")
+> Signed-off-by: Justin Chen <justinpopo6@gmail.com>
 
-None of this should be done in the driver IMHO, because this is
-presumably applicable to all switch devices that lose their state during
-suspend/resume, so at best, this should be moved to the core DSA layer,
-but doing this means that we should also have a well established
-contract between the DSA layer and individual switch drivers as far as
-quiescing/saving/restoring state goes.
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
 
-By moving things to the core we can also more tightly control what data
-structures get used to represent e.g.: VLANs, FDBs, MDBs etc and
-possibly push/utilize caching into the original subsystem. For instance
-VLAN/bridge already do maintain caches of VLANs, so if we could somehow
-expose those, we would not bloat the kernel's memory footprint by having
-an additional layer to maintain with identical information.
-
-Just my 2 cents.
+Thanks!
 -- 
 Florian
