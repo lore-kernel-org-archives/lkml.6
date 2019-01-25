@@ -2,105 +2,120 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A69ACC282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:02:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 585A9C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:02:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7B1B1217D7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:02:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LKcMJVPY"
+	by mail.kernel.org (Postfix) with ESMTP id 2A2BF217D7
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 09:02:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728268AbfAYJCg (ORCPT
+        id S1728657AbfAYJCr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 04:02:36 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:46235 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfAYJCg (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 04:02:36 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c73so4439480pfe.13;
-        Fri, 25 Jan 2019 01:02:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=88xVhSy7MEuibVBgcnfkB+gaLEeJpkHmfvynvn+iaDk=;
-        b=LKcMJVPYQ711R28tbmSojEbIVSBd4aZpTCvV5KX+q3CeSea9bEFuPBcL44LKMQzKDt
-         8vvmcSpKCTCZJfk+2MGJBm0CiHyGQPHuDTU8Hc/HY+2m55O87xQHC2D2stvquy3LzD/P
-         Yb2zXBH8sn3t41KNzOCBgwftcueIKxdknJu0GJprK7Lenuj6PHmGWIYcrE9VUcfX0CX0
-         Vigcxd2DdDT3h8Q2IkBH9W5X9Iuhpwy3AiJpuV0xGbqgUERcvQpqLxTBUgKdjQJ1kcn1
-         wDGkjLynrQJmojV890BZGH7hyde6nl5EhSgVtb9OzEA1ct7xfRJSlc7t7nWY2Ty6H1uY
-         +sfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=88xVhSy7MEuibVBgcnfkB+gaLEeJpkHmfvynvn+iaDk=;
-        b=m7JJqqjsLTU7c8g5IPv6v3Q+/5Mk2dIDG3ZbifkYYnVSLDqXG2XRh1OvY8OYO5jW+2
-         en7s6Zk6glhxEl59XtJgiLTB5TuzKUd4Vjxb5vgqPXJzQiEFaQRD+8g2cuUvOhluZxxs
-         JVVS2rqbnta/VeUOa+bcF7qWAjUXNqgvL/9HZ40Lyfv5E3kRgOAtuWSY/oEhYNWYogeT
-         4P/I3JX9Pz7dco32Wezmpbhvj6bjZhr99l2EDNjrdwkIrecQzqYOtFuCYbFRZMRlpsoT
-         DwuzG6qF3bzVAnbd+d4ZloK3S5fV6Kk6W4dy77JVmYKubfuoGhxy/BuRoCDBMi19mWzG
-         sJ+w==
-X-Gm-Message-State: AJcUukdJ4vAN0OZ4UPz5n/ygMrDAyc+0CQ9nLBNni/6bc10AgDQUNsNy
-        tEB5CAOH7KNpFUFgBKKNX32vpZPh
-X-Google-Smtp-Source: ALg8bN7T15BrMLp4+y+HJs+zC9cCFzvUq+sQRCOYByGuujW0Q/n2588ttePzg27IpsNYYexh7x0Oxg==
-X-Received: by 2002:a62:9f1b:: with SMTP id g27mr9799605pfe.87.1548406955462;
-        Fri, 25 Jan 2019 01:02:35 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id u6sm26980785pgr.79.2019.01.25.01.02.34
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 01:02:34 -0800 (PST)
-Subject: Re: [PATCH] watchdog: dw: remove useless pr_fmt
-To:     Jisheng Zhang <Jisheng.Zhang@synaptics.com>,
-        Wim Van Sebroeck <wim@linux-watchdog.org>
-Cc:     "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20190125155138.2f914f5c@xhacker.debian>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <c866bacf-1866-bebd-b1c1-43fb4f9f8047@roeck-us.net>
-Date:   Fri, 25 Jan 2019 01:02:33 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20190125155138.2f914f5c@xhacker.debian>
-Content-Type: text/plain; charset=utf-8; format=flowed
+        Fri, 25 Jan 2019 04:02:47 -0500
+Received: from mga02.intel.com ([134.134.136.20]:41931 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726520AbfAYJCr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 04:02:47 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 01:02:46 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,520,1539673200"; 
+   d="scan'208";a="121220434"
+Received: from irsmsx106.ger.corp.intel.com ([163.33.3.31])
+  by orsmga003.jf.intel.com with ESMTP; 25 Jan 2019 01:02:44 -0800
+Received: from irsmsx156.ger.corp.intel.com (10.108.20.68) by
+ IRSMSX106.ger.corp.intel.com (163.33.3.31) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Fri, 25 Jan 2019 09:02:43 +0000
+Received: from irsmsx102.ger.corp.intel.com ([169.254.2.65]) by
+ IRSMSX156.ger.corp.intel.com ([169.254.3.156]) with mapi id 14.03.0415.000;
+ Fri, 25 Jan 2019 09:02:43 +0000
+From:   "Reshetova, Elena" <elena.reshetova@intel.com>
+To:     Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>
+CC:     Alan Stern <stern@rowland.harvard.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Andrey Ryabinin" <aryabinin@virtuozzo.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] kcov: convert kcov.refcount to refcount_t
+Thread-Topic: [PATCH] kcov: convert kcov.refcount to refcount_t
+Thread-Index: AQHUrYYWOOwEuMXWwEOBiuSRPC5USKWx2V6AgAepqoCAADl1AIAALpmAgAEc9ACAAO+qAIADxgJg
+Date:   Fri, 25 Jan 2019 09:02:42 +0000
+Message-ID: <2236FBA76BA1254E88B949DDB74E612BA4B92711@IRSMSX102.ger.corp.intel.com>
+References: <20190121131816.GC17749@hirez.programming.kicks-ass.net>
+ <Pine.LNX.4.44L0.1901211103000.24162-100000@netrider.rowland.org>
+ <20190122090456.GE13777@hirez.programming.kicks-ass.net>
+ <CAGXu5jKHo4CZWAnn4Wvg=MV=xaf3j4mBvxggBHuZETTkMOxkOA@mail.gmail.com>
+In-Reply-To: <CAGXu5jKHo4CZWAnn4Wvg=MV=xaf3j4mBvxggBHuZETTkMOxkOA@mail.gmail.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYjRmNzZmODYtNmE5YS00MzZkLThjODgtNTcwMjMzNDJjNTA4IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiTXlCcGtOQmQzV3NHaVRnNWtHQW9WUXNVbjFmOW9tcU5oOEwrSEJVcDkxVldON3I2OXJVUjB2Q1FqRzhIUmgxSCJ9
+x-originating-ip: [163.33.239.181]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/24/19 11:57 PM, Jisheng Zhang wrote:
-> When switch to watchdog infrastructure, pr_* usage is removed, so
-> there's no any users of the pr_fmt, remove it.
-> 
-> Signed-off-by: Jisheng Zhang <Jisheng.Zhang@synaptics.com>
-
-Reviewed-by: Guenter Roeck <linux@roeck-us.net>
-
-> ---
->   drivers/watchdog/dw_wdt.c | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/watchdog/dw_wdt.c b/drivers/watchdog/dw_wdt.c
-> index c053c2de5c2f..0ce8fa5cfbf4 100644
-> --- a/drivers/watchdog/dw_wdt.c
-> +++ b/drivers/watchdog/dw_wdt.c
-> @@ -16,8 +16,6 @@
->    * heartbeat requests after the watchdog device has been closed.
->    */
->   
-> -#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
-> -
->   #include <linux/bitops.h>
->   #include <linux/clk.h>
->   #include <linux/delay.h>
-> 
-
+PiA+IEkgc3VwcG9zZSB3ZSBjYW4gYWRkIHNtcF9hY3F1aXJlX19hZnRlcl9jdHJsX2RlcCgpIG9u
+IHRoZSB0cnVlIGJyYW5jaC4NCj4gPiBUaGVuIGl0IHJlYWxsIGRvZXMgYmVjb21lIHJlbF9hY3Eu
+DQo+ID4NCj4gPiBBIHdlZSBzb21ldGhpbmcgbGlrZSBzbyAoSSBjb3VsZG4ndCBmaW5kIGFuIGFy
+bTY0IHJlZmNvdW50LCBldmVuIHRob3VnaA0KPiA+IEkgaGF2ZSBkaXN0aW5jdCBtZW1vcmllcyBv
+ZiB0YWxrIGFib3V0IGl0KS4NCj4gDQo+IEluIHRoZSBlbmQsIGFybSBhbmQgYXJtNjQgY2hvc2Ug
+dG8gdXNlIFJFRkNPVU5UX0ZVTEwgdW5jb25kaXRpb25hbGx5LA0KPiBzbyB0aGVyZSdzIG5vIGFy
+Y2gtc3BlY2lmaWMgaW1wbGVtZW50YXRpb24uDQo+IA0KPiA+IFRoaXMgaXNuJ3QgY29tcGlsZWQs
+IGFuZCBvYnZpb3VzbHkgbmVlZHMgY29tbWVudC9kb2N1bWVudGF0aW9uIHVwZGF0ZXMNCj4gPiB0
+byBnbyBhbG9uZyB3aXRoIGl0Lg0KPiANCj4gRWxlbmEsIGNhbiB5b3UgZG8gdGhlIGRvYyB1cGRh
+dGVzPw0KDQpXZWxsLCBkb2MgdXBkYXRlcyBzaG91bGQgZ28gd2l0aCBiZWxvdyBwYXRjaCArIGFu
+ZCBhZGRpdGlvbmFsIHRlc3RpbmcuLi4NCg0KUGV0ZXIsIHNob3VsZCBJIGNyZWF0ZSBhIGZ1bGwg
+dmVyc2lvbiBmcm9tIGJlbG93IHdpdGggZG9jL2NvbW1lbnRzDQp1cGRhdGVzLCBydW4gdGhlIHdo
+b2xlIHRoaW5nIHZpYSB6ZXJvIGRheSBhbmQgc2VuZCB0byB5b3UgaWYgaXQgYWxsIGxvb2tzIG9r
+Pw0KDQpCZXN0IFJlZ2FyZHMsDQpFbGVuYS4NCg0KPiA+DQo+ID4gLS0tDQo+ID4gIGFyY2gveDg2
+L2luY2x1ZGUvYXNtL3JlZmNvdW50LmggfCA5ICsrKysrKysrLQ0KPiA+ICBsaWIvcmVmY291bnQu
+YyAgICAgICAgICAgICAgICAgIHwgNyArKysrKystDQo+ID4gIDIgZmlsZXMgY2hhbmdlZCwgMTQg
+aW5zZXJ0aW9ucygrKSwgMiBkZWxldGlvbnMoLSkNCj4gPg0KPiA+IGRpZmYgLS1naXQgYS9hcmNo
+L3g4Ni9pbmNsdWRlL2FzbS9yZWZjb3VudC5oIGIvYXJjaC94ODYvaW5jbHVkZS9hc20vcmVmY291
+bnQuaA0KPiA+IGluZGV4IGRiYWVkNTVjMWMyNC4uNmY3YTFlYjM0NWI0IDEwMDY0NA0KPiA+IC0t
+LSBhL2FyY2gveDg2L2luY2x1ZGUvYXNtL3JlZmNvdW50LmgNCj4gPiArKysgYi9hcmNoL3g4Ni9p
+bmNsdWRlL2FzbS9yZWZjb3VudC5oDQo+ID4gQEAgLTc0LDkgKzc0LDE2IEBAIGJvb2wgcmVmY291
+bnRfc3ViX2FuZF90ZXN0KHVuc2lnbmVkIGludCBpLCByZWZjb3VudF90ICpyKQ0KPiA+DQo+ID4g
+IHN0YXRpYyBfX2Fsd2F5c19pbmxpbmUgX19tdXN0X2NoZWNrIGJvb2wgcmVmY291bnRfZGVjX2Fu
+ZF90ZXN0KHJlZmNvdW50X3QgKnIpDQo+ID4gIHsNCj4gPiAtICAgICAgIHJldHVybiBHRU5fVU5B
+UllfU1VGRklYRURfUk1XY2MoTE9DS19QUkVGSVggImRlY2wiLA0KPiA+ICsgICAgICAgYm9vbCBy
+ZXQgPSBHRU5fVU5BUllfU1VGRklYRURfUk1XY2MoTE9DS19QUkVGSVggImRlY2wiLA0KPiA+ICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBSRUZDT1VOVF9DSEVDS19MVF9a
+RVJPLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICByLT5yZWZz
+LmNvdW50ZXIsIGUsICJjeCIpOw0KPiA+ICsNCj4gPiArICAgICAgIGlmIChyZXQpIHsNCj4gPiAr
+ICAgICAgICAgICAgICAgc21wX2FjcXVpcmVfX2FmdGVyX2N0cmxfZGVwKCk7DQo+ID4gKyAgICAg
+ICAgICAgICAgIHJldHVybiB0cnVlOw0KPiA+ICsgICAgICAgfQ0KPiA+ICsNCj4gPiArICAgICAg
+IHJldHVybiBmYWxzZTsNCj4gPiAgfQ0KPiA+DQo+ID4gIHN0YXRpYyBfX2Fsd2F5c19pbmxpbmUg
+X19tdXN0X2NoZWNrDQo+ID4gZGlmZiAtLWdpdCBhL2xpYi9yZWZjb3VudC5jIGIvbGliL3JlZmNv
+dW50LmMNCj4gPiBpbmRleCBlYmNmOGNkNDllMDUuLjgyNzZhZDM0OWQ0OCAxMDA2NDQNCj4gPiAt
+LS0gYS9saWIvcmVmY291bnQuYw0KPiA+ICsrKyBiL2xpYi9yZWZjb3VudC5jDQo+ID4gQEAgLTE5
+MCw3ICsxOTAsMTIgQEAgYm9vbCByZWZjb3VudF9zdWJfYW5kX3Rlc3RfY2hlY2tlZCh1bnNpZ25l
+ZCBpbnQgaSwNCj4gcmVmY291bnRfdCAqcikNCj4gPg0KPiA+ICAgICAgICAgfSB3aGlsZSAoIWF0
+b21pY190cnlfY21weGNoZ19yZWxlYXNlKCZyLT5yZWZzLCAmdmFsLCBuZXcpKTsNCj4gPg0KPiA+
+IC0gICAgICAgcmV0dXJuICFuZXc7DQo+ID4gKyAgICAgICBpZiAoIW5ldykgew0KPiA+ICsgICAg
+ICAgICAgICAgICBzbXBfYWNxdWlyZV9fYWZ0ZXJfY3RybF9kZXAoKTsNCj4gPiArICAgICAgICAg
+ICAgICAgcmV0dXJuIHRydWU7DQo+ID4gKyAgICAgICB9DQo+ID4gKw0KPiA+ICsgICAgICAgcmV0
+dXJuIGZhbHNlOw0KPiA+ICB9DQo+ID4gIEVYUE9SVF9TWU1CT0wocmVmY291bnRfc3ViX2FuZF90
+ZXN0X2NoZWNrZWQpOw0KPiA+DQo+IA0KPiBUaGFua3MgZm9yIHRoaXMhDQo+IA0KPiAtLQ0KPiBL
+ZWVzIENvb2sNCg==
