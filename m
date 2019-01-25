@@ -2,119 +2,143 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87724C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:50:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3508C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:50:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49369218B0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:50:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8551F218B0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 21:50:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FC0nOo00"
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="FhdrwMNI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbfAYVuD (ORCPT
+        id S1729412AbfAYVuV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 16:50:03 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38728 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfAYVuD (ORCPT
+        Fri, 25 Jan 2019 16:50:21 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:40200 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbfAYVuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 16:50:03 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q1so5332042pfi.5;
-        Fri, 25 Jan 2019 13:50:02 -0800 (PST)
+        Fri, 25 Jan 2019 16:50:20 -0500
+Received: by mail-pf1-f194.google.com with SMTP id i12so5327968pfo.7
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 13:50:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=yTEavDtA3yJcKVDEdgLLqL+IspX2mD2fA6pVfc2AQfo=;
-        b=FC0nOo00vnFj0mpgw9Y4S9N131OFT20VFPY6gY6JgRLqCkkjDFTGJyNdpef4w60ueb
-         vh7HoKxqRYoZ2+Bmoz6MMG1Uh8QIWnclAVC6JkJl31kvtGB6u+pFwDKxyQTqpGm9FkBd
-         2C7MUBUDHZTQrqSVZP9LDcTbWEhY2AsecNRr9BcZaawiN1IctGdbia7OYu+tud8cHGCa
-         oSu0IryeGa2UJlEbv58K/oYmkGPusek/G5B/5N/aztfZcrYqVuI2q03feKFf9q5RjCmJ
-         UEpgfaWBG3XSciiJRVVbndS7mYAehdIB7PcA7ayxwrKMKP3yOwtff9V4dWrByw482MPJ
-         DLUA==
+        d=ziepe.ca; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9+DBtuGjCp2Q60+t9cZOc0VZSPnC3YYLZ8i2NyOn0+A=;
+        b=FhdrwMNI0phvAvR02vwY+oxUFi6Stt60J2SQwmVSXIbeBJxbRctJNV8CPHQBr2yVmv
+         hw7pjH4HgADm92WB1Q5PdAUecgwiAE0pDmPIQjNcKNPpDAxSEyy6m2CDnImltoaOp6Yj
+         R/50EXX0FmJ/iC4IJfbpIFYYrSF3X0T7uXE2Z8gpOuuZwNd8mQjm6qmcDAhL0sLovaFQ
+         LmLNfIMPTWlO1BM27cL1sZjdHrF4eER3fhN96XWvXwiM8c8YBrWbmn8PYGWb3bdn+/+2
+         JjAoDf2KTKFdQpJmGVMTUaAzRcyfm9CHl8hTlHR0LkGrK9ccovYILPZZocWGu0v+DeNW
+         tgxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=yTEavDtA3yJcKVDEdgLLqL+IspX2mD2fA6pVfc2AQfo=;
-        b=BorA29tIwqlUsja+J7uEAooga17vGMBdOYVQwoH9r5uGiDtati4Pcl3kTnAOsxhHNl
-         DYQNg2dQU/0DFJ2JvmOe3Wn0Tok1TegeuBsMXnmigom9VHR4vMOXnJB4nuSlWs3WwUQn
-         QOyTBLdDrlki3JGd0MPtMaoWIwqPQVB618RzK8U+JD9alT//e06ZnFAh3ukhyouESiyw
-         GbpL5sMISOh9Os6w3+X9dRJPbj8KICRjQfBWQnulc5oah6r3dksv4EEC3XSBgA/UOTqt
-         nW7MiGH5MUMreIp4JBycc0jw32lQxGN9cLqapwaoyPGhAmDq7kOFpjNasMThwU5RmBOy
-         pzuw==
-X-Gm-Message-State: AJcUukeTN7Hh9cK8+rT8eOOlwmM27ikXuPm1v32bkE722bstNwAcYkqK
-        emkSJ1vvwO0rapzHKwp8cn4jaO1o
-X-Google-Smtp-Source: ALg8bN6Ay2vMEdFrEoOIhsXHNE/ZBbbhFAc1CygrBvVn8zv3LhP0/yILVGubw6Gxa9R9YnwCMwMSnA==
-X-Received: by 2002:a62:da5a:: with SMTP id w26mr12635181pfl.106.1548453001963;
-        Fri, 25 Jan 2019 13:50:01 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id m11sm38472944pgh.51.2019.01.25.13.49.55
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 13:50:01 -0800 (PST)
-Subject: Re: [PATCH V2 3/4] i2c: tegra: Add DMA Support
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
- <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
- <dcc1e094-638e-5b04-7a61-bdbc24ee068f@gmail.com>
- <BYAPR12MB339829FC6F2F95F833FE45A1C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
- <ad177c2e-3801-ddad-b359-ac83530ee1d6@gmail.com>
- <BYAPR12MB33982ED3A9EC34819D2490F8C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <782dcecf-2991-e886-af18-d355a3ea8325@gmail.com>
-Date:   Sat, 26 Jan 2019 00:49:52 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9+DBtuGjCp2Q60+t9cZOc0VZSPnC3YYLZ8i2NyOn0+A=;
+        b=VpFd6v7d7ZhVd8QpCuSJxxAbRwzkclC/9ltJaqP2jVn6YSI/L5hqd1814Es58JDkcl
+         RB3gEo7vvC0udYcqrp7skRclI4i4YVkYxbd4v61cb+Ehtk05M2eK36oi5fGi6Ar+cKwE
+         N7WX6geTUYGpl8JbF4ph//lSq2KxSZWqcoRJ17vqpUiBLwTcIagyjIOj+zNwyEWx4Fva
+         itt4HF7Zpa5MFjb5MedhE/YEpY611BjcS0WLnGBrcmA1sHz4wjk9hE+Hx4+I07hfvrdC
+         5tXrCgaHxNkQVLUEdkJlquv6VIm25CDfp9Z+0uwMKwlJ+dYP3NkTQ4+CVIYck9s49rBe
+         vMvg==
+X-Gm-Message-State: AJcUukdX+ewxGypvpdL6l8cXlL1HrPwhbu3jVM+dgFGxZJKNz2aBobiT
+        BblDMIJKq3lM/pOV8elto0BAOQ==
+X-Google-Smtp-Source: ALg8bN7+4ENmh9wjS9+xie2rjwhoaAKN3bEsmPulRrvULeDe8zjKaV/+Tk4RWpiQ1yu4y1+0HogkyQ==
+X-Received: by 2002:a65:51ca:: with SMTP id i10mr11118790pgq.371.1548453020032;
+        Fri, 25 Jan 2019 13:50:20 -0800 (PST)
+Received: from ziepe.ca (S010614cc2056d97f.ed.shawcable.net. [174.3.196.123])
+        by smtp.gmail.com with ESMTPSA id z191sm31824706pgd.74.2019.01.25.13.50.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 13:50:19 -0800 (PST)
+Received: from jgg by mlx.ziepe.ca with local (Exim 4.90_1)
+        (envelope-from <jgg@ziepe.ca>)
+        id 1gn9Mg-0005M7-DU; Fri, 25 Jan 2019 14:50:18 -0700
+Date:   Fri, 25 Jan 2019 14:50:18 -0700
+From:   Jason Gunthorpe <jgg@ziepe.ca>
+To:     "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Cc:     dledford@redhat.com, linux-rdma@vger.kernel.org,
+        lijun_nudt@163.com, oulijun@huawei.com, liudongdong3@huawei.com,
+        linuxarm@huawei.com, linux-kernel@vger.kernel.org,
+        xavier_huwei@163.com
+Subject: Re: [PATCH V2 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused
+ by sending mailbox&CMQ during reset
+Message-ID: <20190125215018.GF23001@ziepe.ca>
+References: <1547868967-115951-1-git-send-email-xavier.huwei@huawei.com>
+ <1547868967-115951-3-git-send-email-xavier.huwei@huawei.com>
+ <20190123224041.GA11605@ziepe.ca>
+ <5C492D59.8030707@huawei.com>
+ <20190124183120.GD17167@ziepe.ca>
+ <5C4A714C.2070109@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <BYAPR12MB33982ED3A9EC34819D2490F8C29B0@BYAPR12MB3398.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5C4A714C.2070109@huawei.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-26.01.2019 0:11, Sowjanya Komatineni пишет:
+On Fri, Jan 25, 2019 at 10:15:40AM +0800, Wei Hu (Xavier) wrote:
 > 
 > 
->>>>> +	if (i2c_dev->has_dma) {
->>>>> +		ret = tegra_i2c_init_dma_param(i2c_dev, true);
->>>>> +		if (ret == -EPROBE_DEFER)
->>>>> +			goto disable_div_clk;
->>>>> +		ret = tegra_i2c_init_dma_param(i2c_dev, false);
->>>>> +		if (ret == -EPROBE_DEFER)
->>>>> +			goto disable_div_clk;
->>>>
->>>> So tegra_i2c_init_dma_param() could fail, printing a error message, and probe will succeed? If allocation fails during the driver's probe, then just fail the probe. Please give the rationale.
->>>
->>> If APB DMA probe doesn’t happen prior to tegra i2c, DMA is not available by the time tegra_init_dma_param tries to request slave channel and in those cases dma_request_slave_channel_reason will return EPROBE_DEFER for tegra I2C probe to retry
->>>
->>> In case if DMA is available but DMA buffer allocation fails, then tegra_i2c_init_dma_param returns ENOMEM and probe also fails returning same ENOMEM
->>
->> Is that what you're going to change in the next version? Your current variant of the code doesn't fail the probe on ENOMEM and there is duplicated attempt to invoke tegra_i2c_init_dma_param() during the transfer.
+> On 2019/1/25 2:31, Jason Gunthorpe wrote:
+> > On Thu, Jan 24, 2019 at 11:13:29AM +0800, Wei Hu (Xavier) wrote:
+> >>
+> >> On 2019/1/24 6:40, Jason Gunthorpe wrote:
+> >>> On Sat, Jan 19, 2019 at 11:36:06AM +0800, Wei Hu (Xavier) wrote:
+> >>>
+> >>>> +static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
+> >>>> +					unsigned long instance_stage,
+> >>>> +					unsigned long reset_stage)
+> >>>> +{
+> >>>> +	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
+> >>>> +	struct hnae3_handle *handle = priv->handle;
+> >>>> +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
+> >>>> +	unsigned long end;
+> >>>> +
+> >>>> +	/* When hardware reset is detected, we should stop sending mailbox&cmq
+> >>>> +	 * to hardware, and wait until hardware reset finished. If now
+> >>>> +	 * in .init_instance() function, we should exit with error. If now at
+> >>>> +	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
+> >>>> +	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
+> >>>> +	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
+> >>>> +	 * related process will exit with error to notify NIC driver to
+> >>>> +	 * reschedule soft reset process once again.
+> >>>> +	 */
+> >>>> +	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+> >>>> +	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
+> >>>> +		udelay(1);
+> >>> I thought you were getting rid of these loops?
+> >> Hi, Jason
+> >>
+> >>     Upper applications maybe notify driver to issue mailbox or CMD
+> >>     commands to hardware, some commands used to cancel resources,
+> >>     destory bt/destory cq/unreg mr/destory qp etc. when such
+> >>     commands are executed successfully, the hardware engine will
+> >>     no longer access some memory registered by the driver.
+> >>
+> >>     When reset occurs, it is possible for upper applications notify driver
+> >>     to issue mailbox or CMD commands, we need to wait until hardware
+> >>     reset finished to ensure that hardware no longer accesses related
+> >> memory.
+> > You should not wait for things using loops like the above.
+> Hi, Jason
 > 
-> Sorry correction to my previous reply.  If DMA buffer allocation fails, tegra_i2c_init_dma_param returns ENOMEM but probe will succeed as i2c transaction need to happen during  boot for some platform device programming for successful boot and they use PIO mode as xfer bytes is less and deferring i2c probe for ENOMEM causes boot to fail so during probe EPROBE_DEFER is only taken care.
-> 
-> Re-attempt of tegra_i2c_init_dma_param in xfer happens only if no successful DMA channel allocation happens prior to that ( during probe in case of ENOMEM).
-> DMA mode is mainly for large transfer, and i2c xfer returning failure due to failing DMA buffer allocation causes boot to hang as platform device programming need to happen which doesn’t need to use DMA.
-> Will fix this and will send updated patch to reattempt DMA request and buffer allocation during DMA mode transfer and will return fail for DMA mode I2C transfer...
+>     Are your comments foucsing on udelay? If not, thanks for your detail
+> information.
+>     In hns3 RoCE driver, some CMQ/mailbox operation are called inside
+> the lock,
+>     we can't use msleep in the lock, otherwise it will cause deadlock.
+>     When reset occurs, RDMA service cannot be provided normally, I think
+> in this
+>     case using udelay will not have a great impact.
 
-1) The chance to get ENOMEM during is miserable and likely that there are much bigger problems in this case. Hence just fail the probe if tegra_i2c_init_dma_param() fails with any error.
+You should not use any kind of sleep call in a loop like this.
 
-2) What is that super-critical platform device? It is possible to compile tegra-i2c as a kernel module and seems nothing enforces CONFIG_I2C_TEGRA=y.
-
-3) After applying these patches I2C transfers are failing on Tegra20 with "tegra-i2c 7000c400.i2c: Failed to allocate the DMA buffer". 
+Jason
