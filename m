@@ -2,125 +2,168 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA31C282C7
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:28:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 02636C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DCB221915
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:28:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B95B821915
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 08:29:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2xLYMFt"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lB4dqZRR"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728994AbfAYI2K (ORCPT
+        id S1729014AbfAYI3V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 03:28:10 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:43222 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726200AbfAYI2I (ORCPT
+        Fri, 25 Jan 2019 03:29:21 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33841 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726200AbfAYI3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 03:28:08 -0500
-Received: by mail-pl1-f194.google.com with SMTP id gn14so4222154plb.10;
-        Fri, 25 Jan 2019 00:28:08 -0800 (PST)
+        Fri, 25 Jan 2019 03:29:20 -0500
+Received: by mail-ot1-f66.google.com with SMTP id t5so7839693otk.1;
+        Fri, 25 Jan 2019 00:29:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :in-reply-to:references;
-        bh=ald4abrKdW8AbO7gX/eespEZrXh8gG1ZicKya1SVk3k=;
-        b=T2xLYMFtx+L7IjLMnkMWJlZN63nwMAbk/TTNCH3N1EPIKkrQdcfnEsOUKITtudtWbP
-         rR9Xw/leT4eiM0paY/1PHBj28Z8YLhOb1Y5sIdhBUPD/1/iw9CnnFUJYTnkuTRvCgVZz
-         N88Z7PHY1wzhj9tHjcPvf715hIPrLsSRaS+k8SyNlxT23swWU2GNDOGuqCsZMFfAJCnu
-         I/dCFbNdcwv/gke23OFjTtaufzDjjHIZrwVBIESVTfIG6ZJSa5savi6K4zpJW2YzdoJy
-         6ElVo/S1eLsWi8oK+tD9TxqI4ttAJ49gMfC0vh1iy8gEjipBQmbZRYG+QXwauPOgzSHM
-         8DkQ==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=hLy0h+QMOhO9fBvlSzRAhEKmK/ocgEKSoYIkItMbfns=;
+        b=lB4dqZRRYF9LPSu6tI2XEXdKCePsv7gVIfUlrD8Fl9l38QXUgRel4mjggM6+Qnk5Q0
+         FLfn2/LO9wUU5dbqBj4vd0PkUm6EwbK2VurE48VBiKtZ4Bxyog5aScyvsgoCUa53bCCq
+         +4rpSgaO3zkRAzol1NtsKBj9LAtheLgBN6h1Htayql0qa2/uLVRAyBB+XU7u4ah6jaGD
+         h6r7Q8bYQeG7jb6A8rqg4ybIqdlnPUM15BUghDC/DkLtTwbK3zJpMDxOajpxaePmyGcT
+         DtVFFT+x5yMffLYTfyDWHXQyGhIrRr5WysDtt82/rVBs1ox788dvvor734u8DEuy9fzO
+         nolw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:in-reply-to:references;
-        bh=ald4abrKdW8AbO7gX/eespEZrXh8gG1ZicKya1SVk3k=;
-        b=G3mqMh8fL8Q2rT5RqszJIBKwmwCw2rvLj70Gic5G8C6PY2X+ZFb4N35HPdNhfvrX8+
-         SB0wpkKjQ/2w2hGUKi+GCuHKucHTDITXq+YOonHaLgFnVGdHi/xBIX3jKSadFq+bK7wX
-         aevc8x7AxkKQOFB3vaX0Yhnh2XCsrNW2N3oGQ7rH+jFDSIPrpQLZ9Db10c+N5eZsFnS9
-         N1Pm3Snh/+XqSEP/vtuXByQFNQ5WQQ3cLaw+BmFcPa3iGm5/oH731HOOvHtT6dvV56E/
-         LqxO7rI8vsc4I0atqeEbC9f6QCX3hGKJjWW8IgOQjYBCK/U1MjYluhrD4ckFKRfXlHD6
-         HrNQ==
-X-Gm-Message-State: AJcUuke3eWfmspK7AWVDdrn98Q84jOOTJVY5guqy/q6CBO9rOV7Hx74Y
-        AwYoGoHlMdWzKWVzOqyG2RM=
-X-Google-Smtp-Source: ALg8bN76XELN2ulmqfyeUP7Qy8m1ycVt/8nE09w3b5CPY2oQ1iILqLW1zrOzHiXNhh4q/BSp9D6fXg==
-X-Received: by 2002:a17:902:28aa:: with SMTP id f39mr10084545plb.297.1548404888110;
-        Fri, 25 Jan 2019 00:28:08 -0800 (PST)
-Received: from localhost ([43.224.245.181])
-        by smtp.gmail.com with ESMTPSA id j21sm32602274pfn.175.2019.01.25.00.28.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 00:28:07 -0800 (PST)
-From:   Geliang Tang <geliangtang@gmail.com>
-To:     Phillip Lougher <phillip@squashfs.org.uk>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Kees Cook <keescook@chromium.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Coly Li <colyli@suse.de>
-Cc:     Geliang Tang <geliangtang@gmail.com>,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v4 2/2] squashfs-tools: Add posix acl support
-Date:   Fri, 25 Jan 2019 16:27:48 +0800
-Message-Id: <8ccfc9ba88a466cf046c366f07e994ca7a46ac0a.1548401987.git.geliangtang@gmail.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <cover.1548403955.git.geliangtang@gmail.com>
-References: <cover.1548403955.git.geliangtang@gmail.com>
-In-Reply-To: <cover.1548403955.git.geliangtang@gmail.com>
-References: <cover.1548403955.git.geliangtang@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hLy0h+QMOhO9fBvlSzRAhEKmK/ocgEKSoYIkItMbfns=;
+        b=iXFSZ45mb/Xu22ZLlhg0GcwazqVijSNeRZxek0IQPqg4yde9c4G7fceJ2SlP2AhLbA
+         f4UnxBCeDqPIbrJ05QLlWIBT5TXwM5NuUQHnjKjiDvlt5ByZTDDRtBvWKdwHLi/JiRx1
+         SdK1VNKOVh8z+3/Zv1+VTGv3IGrbJhkBJI8iLhQ2Mu4cTSjQAZZ85OMyjvY34CCZRnXs
+         jNpXfkkncKqYELvjjq+iGR2MltVA6onq9VI1hVlp//GdYZC4s2WJrTbdz4sPjFxg/Tq4
+         cE91J+6EQOtqeH085sjWRaR6T9oYSiK1fO60BHUwH3R+gAjGWvWB8NPs6PbMuG7xUbyJ
+         a7yQ==
+X-Gm-Message-State: AJcUukcwQ+MGjeaMfjpdusN9PonwOOLSPuhhm6Omp8v/hJtg0I98J1WB
+        Q69i+q1cGpGRdkoHfmLdsFKfj+F3dSq8McPqA+c=
+X-Google-Smtp-Source: ALg8bN69IN6ZXDFtzZPu5JLqdmJU+qXPkpumKxkXI1iL7068szzaIiN1curhyXKPK7UYfz5AOqdPgvsCjtoecZJ64kY=
+X-Received: by 2002:a9d:7059:: with SMTP id x25mr7345622otj.35.1548404959292;
+ Fri, 25 Jan 2019 00:29:19 -0800 (PST)
+MIME-Version: 1.0
+References: <20190124213225.11803-1-ricardo@ribalda.com>
+In-Reply-To: <20190124213225.11803-1-ricardo@ribalda.com>
+From:   Alexandru Ardelean <ardeleanalex@gmail.com>
+Date:   Fri, 25 Jan 2019 10:29:07 +0200
+Message-ID: <CA+U=Dspe=xvki7rZPhofiV50yOLnRR2sg9v1R_XRVxHbDXh-_Q@mail.gmail.com>
+Subject: Re: [PATCH] iio: adc: ad7476: Add support for ADS786X ADCs
+To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alexandru.ardelean@analog.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds posix acl (Access Control Lists) support to squashfs-tools.
+On Thu, Jan 24, 2019 at 11:33 PM Ricardo Ribalda Delgado
+<ricardo@ribalda.com> wrote:
+>
+> Add support for ADS7866, ADS7867 and ADS7868 8/10/12 bit Single channel
+> ADC.
+>
+> Datasheet: http://www.ti.com/product/ADS7866
+> Datasheet: http://www.ti.com/product/ADS7867
+> Datasheet: http://www.ti.com/product/ADS7868
+>
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
+> ---
+>  drivers/iio/adc/Kconfig  |  3 ++-
+>  drivers/iio/adc/ad7476.c | 20 ++++++++++++++++++++
+>  2 files changed, 22 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> index f9354e5ee65c..d86900fc2634 100644
+> --- a/drivers/iio/adc/Kconfig
+> +++ b/drivers/iio/adc/Kconfig
+> @@ -64,7 +64,8 @@ config AD7476
+>         help
+>           Say yes here to build support for Analog Devices AD7273, AD7274, AD7276,
+>           AD7277, AD7278, AD7475, AD7476, AD7477, AD7478, AD7466, AD7467, AD7468,
+> -         AD7495, AD7910, AD7920, AD7920 SPI analog to digital converters (ADC).
+> +         AD7495, AD7910, AD7920, AD7920, ADS7866, ADS7867, ADS7868 SPI analog
+> +         to digital converters (ADC).
 
-Signed-off-by: Geliang Tang <geliangtang@gmail.com>
----
- squashfs-tools/read_xattrs.c |  2 ++
- squashfs-tools/squashfs_fs.h | 12 +++++++-----
- 2 files changed, 9 insertions(+), 5 deletions(-)
+The driver is for Analog Devices parts.
+And these new parts are from TI.
 
-diff --git a/squashfs-tools/read_xattrs.c b/squashfs-tools/read_xattrs.c
-index 42106f5..8ef8291 100644
---- a/squashfs-tools/read_xattrs.c
-+++ b/squashfs-tools/read_xattrs.c
-@@ -64,6 +64,8 @@ static long long xattr_table_start;
-  */
- struct prefix prefix_table[] = {
- 	{ "user.", SQUASHFS_XATTR_USER },
-+	{ "system.", SQUASHFS_XATTR_POSIX_ACL_ACCESS },
-+	{ "system.", SQUASHFS_XATTR_POSIX_ACL_DEFAULT },
- 	{ "trusted.", SQUASHFS_XATTR_TRUSTED },
- 	{ "security.", SQUASHFS_XATTR_SECURITY },
- 	{ "", -1 }
-diff --git a/squashfs-tools/squashfs_fs.h b/squashfs-tools/squashfs_fs.h
-index afca918..040035c 100644
---- a/squashfs-tools/squashfs_fs.h
-+++ b/squashfs-tools/squashfs_fs.h
-@@ -122,11 +122,13 @@
- #define SQUASHFS_LSOCKET_TYPE		14
- 
- /* Xattr types */
--#define SQUASHFS_XATTR_USER		0
--#define SQUASHFS_XATTR_TRUSTED		1
--#define SQUASHFS_XATTR_SECURITY		2
--#define SQUASHFS_XATTR_VALUE_OOL	256
--#define SQUASHFS_XATTR_PREFIX_MASK	0xff
-+#define SQUASHFS_XATTR_USER			0
-+#define SQUASHFS_XATTR_POSIX_ACL_ACCESS		1
-+#define SQUASHFS_XATTR_POSIX_ACL_DEFAULT	2
-+#define SQUASHFS_XATTR_TRUSTED			3
-+#define SQUASHFS_XATTR_SECURITY			4
-+#define SQUASHFS_XATTR_VALUE_OOL		256
-+#define SQUASHFS_XATTR_PREFIX_MASK		0xff
- 
- /* Flag whether block is compressed or uncompressed, bit is set if block is
-  * uncompressed */
--- 
-2.17.1
+I'm not sure what the policy is for mixing manufacturers in drivers.
+But if that is allowed/fine, then maybe it would be a good idea to
+highlight that these chips are from another manufacturer.
+Or maybe rename the driver to a generic form to support both manufacturers ?
 
+In any case, Jonathan will have to tell us what to do here :)
+
+Thanks
+Alex
+
+>
+>           To compile this driver as a module, choose M here: the
+>           module will be called ad7476.
+> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+> index 0549686b9ef8..108c18d64f7d 100644
+> --- a/drivers/iio/adc/ad7476.c
+> +++ b/drivers/iio/adc/ad7476.c
+> @@ -59,6 +59,9 @@ enum ad7476_supported_device_ids {
+>         ID_ADC081S,
+>         ID_ADC101S,
+>         ID_ADC121S,
+> +       ID_ADS7866,
+> +       ID_ADS7867,
+> +       ID_ADS7868,
+>  };
+>
+>  static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
+> @@ -157,6 +160,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+>  #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+>                 BIT(IIO_CHAN_INFO_RAW))
+>  #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
+> +#define ADS786X_CHAN(bits) _AD7476_CHAN((bits) + 4, 0, \
+> +               BIT(IIO_CHAN_INFO_RAW))
+>
+>  static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+>         [ID_AD7091R] = {
+> @@ -209,6 +214,18 @@ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+>                 .channel[0] = ADC081S_CHAN(12),
+>                 .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+>         },
+> +       [ID_ADS7866] = {
+> +               .channel[0] = ADS786X_CHAN(8),
+> +               .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +       },
+> +       [ID_ADS7867] = {
+> +               .channel[0] = ADS786X_CHAN(10),
+> +               .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +       },
+> +       [ID_ADS7868] = {
+> +               .channel[0] = ADS786X_CHAN(12),
+> +               .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> +       },
+>  };
+>
+>  static const struct iio_info ad7476_info = {
+> @@ -314,6 +331,9 @@ static const struct spi_device_id ad7476_id[] = {
+>         {"adc081s", ID_ADC081S},
+>         {"adc101s", ID_ADC101S},
+>         {"adc121s", ID_ADC121S},
+> +       {"ads7866", ID_ADS7866},
+> +       {"ads7867", ID_ADS7867},
+> +       {"ads7868", ID_ADS7868},
+>         {}
+>  };
+>  MODULE_DEVICE_TABLE(spi, ad7476_id);
+> --
+> 2.20.1
+>
