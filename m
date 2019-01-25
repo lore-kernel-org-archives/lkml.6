@@ -2,106 +2,206 @@ Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5613C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:08:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEA2C282C0
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:09:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A09612133F
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:08:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A64652184C
+	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 20:09:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="i2Sj/5OI"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfAYUI2 (ORCPT
+        id S1728632AbfAYUJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 15:08:28 -0500
-Received: from mga03.intel.com ([134.134.136.65]:50936 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725778AbfAYUI1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 15:08:27 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 25 Jan 2019 12:08:27 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,522,1539673200"; 
-   d="scan'208";a="133140165"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga001.jf.intel.com with ESMTP; 25 Jan 2019 12:08:27 -0800
-Received: from [10.254.80.124] (kliang2-mobl1.ccr.corp.intel.com [10.254.80.124])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id BCE545806CD;
-        Fri, 25 Jan 2019 12:08:26 -0800 (PST)
-Subject: Re: perf/x86/intel/uncore
-To:     Song Liu <songliubraving@fb.com>,
-        lkml <linux-kernel@vger.kernel.org>
-References: <E44A3BE5-E45A-4D88-818C-02E6E6342060@fb.com>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <2f74c906-6d13-ff18-f967-100e82343f2f@linux.intel.com>
-Date:   Fri, 25 Jan 2019 15:08:21 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <E44A3BE5-E45A-4D88-818C-02E6E6342060@fb.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Fri, 25 Jan 2019 15:09:44 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:48042 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfAYUJn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 15:09:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1548446981; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:content-type:
+         content-transfer-encoding:in-reply-to:references;
+        bh=XJmGEvYv3skTMuJOx2sSMUDaSz+Es8Mo7g2m8/2irTo=;
+        b=i2Sj/5OIoJOXNB7FidcVENYEQ12R7EcexyPpLluoWmiGYJFTOS9uou+UYXz3jFESSOx5g4
+        tUyx5XzcQ2RJwqYGTq85BIystfzkCJf/M8dzmfiLW0eFYpkiHwSVA48UTS7SziYBM7eWyG
+        d2nhcrZgHvv4rzEY4onipnGmNWxblYg=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     devicetree@vger.kernel.org, linux-mips@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>
+Subject: [PATCH 1/3] mmc: jz4740: Remove platform data and use standard APIs
+Date:   Fri, 25 Jan 2019 17:09:25 -0300
+Message-Id: <20190125200927.21045-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Drop the custom code to get the 'cd' and 'wp' GPIOs. The driver now
+calls mmc_of_parse() which will init these from devicetree or
+device properties.
 
+Also drop the custom code to get the 'power' GPIO. The MMC core
+provides us with the means to power the MMC card through an external
+regulator.
 
-On 1/25/2019 1:54 PM, Song Liu wrote:
-> Hi,
-> 
-> We are debugging an issue that skx_pci_uncores cannot be registered on
-> 8-socket system with Xeon Platinum 8176 CPUs. After poking around for a
-> while, I found it is caused by snbep_pci2phy_map_init() couldn't find
-> a unbox_dev:
-> 
->    ubox_dev = pci_get_device(PCI_VENDOR_ID_INTEL, devid, ubox_dev);
->    unbox_dev == NULL
->    ...
-> 
-> The same kernel (Linus' master) works fine on some single socket SKX
-> systems.
-> 
-> I am not sure what to check next. And I am not sure whether this is
-> specific to this system (HPE Superdome Flex).
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+---
+ drivers/mmc/host/jz4740_mmc.c | 71 +++++++++----------------------------------
+ 1 file changed, 14 insertions(+), 57 deletions(-)
 
-Could you please share the offset 0xC0 and 0xD4 of the PCI configuration 
-space for each device which PCI ID is 0x2014?
+diff --git a/drivers/mmc/host/jz4740_mmc.c b/drivers/mmc/host/jz4740_mmc.c
+index 33215d66afa2..e41c7230815f 100644
+--- a/drivers/mmc/host/jz4740_mmc.c
++++ b/drivers/mmc/host/jz4740_mmc.c
+@@ -21,7 +21,6 @@
+ #include <linux/dmaengine.h>
+ #include <linux/dma-mapping.h>
+ #include <linux/err.h>
+-#include <linux/gpio/consumer.h>
+ #include <linux/interrupt.h>
+ #include <linux/io.h>
+ #include <linux/irq.h>
+@@ -36,7 +35,6 @@
+ #include <asm/cacheflush.h>
+ 
+ #include <asm/mach-jz4740/dma.h>
+-#include <asm/mach-jz4740/jz4740_mmc.h>
+ 
+ #define JZ_REG_MMC_STRPCL	0x00
+ #define JZ_REG_MMC_STATUS	0x04
+@@ -148,9 +146,7 @@ enum jz4780_cookie {
+ struct jz4740_mmc_host {
+ 	struct mmc_host *mmc;
+ 	struct platform_device *pdev;
+-	struct jz4740_mmc_platform_data *pdata;
+ 	struct clk *clk;
+-	struct gpio_desc *power;
+ 
+ 	enum jz4740_mmc_version version;
+ 
+@@ -894,16 +890,16 @@ static void jz4740_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	switch (ios->power_mode) {
+ 	case MMC_POWER_UP:
+ 		jz4740_mmc_reset(host);
+-		if (host->power)
+-			gpiod_set_value(host->power, 1);
++		if (!IS_ERR(mmc->supply.vmmc))
++			mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, ios->vdd);
+ 		host->cmdat |= JZ_MMC_CMDAT_INIT;
+ 		clk_prepare_enable(host->clk);
+ 		break;
+ 	case MMC_POWER_ON:
+ 		break;
+ 	default:
+-		if (host->power)
+-			gpiod_set_value(host->power, 0);
++		if (!IS_ERR(mmc->supply.vmmc))
++			mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, 0);
+ 		clk_disable_unprepare(host->clk);
+ 		break;
+ 	}
+@@ -936,38 +932,6 @@ static const struct mmc_host_ops jz4740_mmc_ops = {
+ 	.enable_sdio_irq = jz4740_mmc_enable_sdio_irq,
+ };
+ 
+-static int jz4740_mmc_request_gpios(struct jz4740_mmc_host *host,
+-				    struct mmc_host *mmc,
+-				    struct platform_device *pdev)
+-{
+-	struct jz4740_mmc_platform_data *pdata = dev_get_platdata(&pdev->dev);
+-	int ret = 0;
+-
+-	if (!pdata)
+-		return 0;
+-
+-	if (!pdata->card_detect_active_low)
+-		mmc->caps2 |= MMC_CAP2_CD_ACTIVE_HIGH;
+-	if (!pdata->read_only_active_low)
+-		mmc->caps2 |= MMC_CAP2_RO_ACTIVE_HIGH;
+-
+-	/*
+-	 * Get optional card detect and write protect GPIOs,
+-	 * only back out on probe deferral.
+-	 */
+-	ret = mmc_gpiod_request_cd(mmc, "cd", 0, false, 0, NULL);
+-	if (ret == -EPROBE_DEFER)
+-		return ret;
+-
+-	ret = mmc_gpiod_request_ro(mmc, "wp", 0, false, 0, NULL);
+-	if (ret == -EPROBE_DEFER)
+-		return ret;
+-
+-	host->power = devm_gpiod_get_optional(&pdev->dev, "power",
+-					      GPIOD_OUT_HIGH);
+-	return PTR_ERR_OR_ZERO(host->power);
+-}
+-
+ static const struct of_device_id jz4740_mmc_of_match[] = {
+ 	{ .compatible = "ingenic,jz4740-mmc", .data = (void *) JZ_MMC_JZ4740 },
+ 	{ .compatible = "ingenic,jz4725b-mmc", .data = (void *)JZ_MMC_JZ4725B },
+@@ -982,9 +946,6 @@ static int jz4740_mmc_probe(struct platform_device* pdev)
+ 	struct mmc_host *mmc;
+ 	struct jz4740_mmc_host *host;
+ 	const struct of_device_id *match;
+-	struct jz4740_mmc_platform_data *pdata;
+-
+-	pdata = dev_get_platdata(&pdev->dev);
+ 
+ 	mmc = mmc_alloc_host(sizeof(struct jz4740_mmc_host), &pdev->dev);
+ 	if (!mmc) {
+@@ -993,29 +954,25 @@ static int jz4740_mmc_probe(struct platform_device* pdev)
+ 	}
+ 
+ 	host = mmc_priv(mmc);
+-	host->pdata = pdata;
+ 
+ 	match = of_match_device(jz4740_mmc_of_match, &pdev->dev);
+ 	if (match) {
+ 		host->version = (enum jz4740_mmc_version)match->data;
+-		ret = mmc_of_parse(mmc);
+-		if (ret) {
+-			if (ret != -EPROBE_DEFER)
+-				dev_err(&pdev->dev,
+-					"could not parse of data: %d\n", ret);
+-			goto err_free_host;
+-		}
+ 	} else {
+ 		/* JZ4740 should be the only one using legacy probe */
+ 		host->version = JZ_MMC_JZ4740;
+-		mmc->caps |= MMC_CAP_SDIO_IRQ;
+-		if (!(pdata && pdata->data_1bit))
+-			mmc->caps |= MMC_CAP_4_BIT_DATA;
+-		ret = jz4740_mmc_request_gpios(host, mmc, pdev);
+-		if (ret)
+-			goto err_free_host;
+ 	}
+ 
++	ret = mmc_of_parse(mmc);
++	if (ret) {
++		if (ret != -EPROBE_DEFER)
++			dev_err(&pdev->dev,
++				"could not parse device properties: %d\n", ret);
++		goto err_free_host;
++	}
++
++	mmc_regulator_get_supply(mmc);
++
+ 	host->irq = platform_get_irq(pdev, 0);
+ 	if (host->irq < 0) {
+ 		ret = host->irq;
+-- 
+2.11.0
 
-snbep_pci2phy_map_init() tries to build a mapping from BUS# to Socket ID.
-CPUNODEID (0xc0) discloses the Node ID of current BUS.
-GIDNIDMAP (0xd4) discloses the mapping between Socket ID and Node ID.
-
-Here is an example from a 4 socket SKX.
-BUS    CPUNODEID(bit2:0)    GIDNIDMAP
-0x0    0x0            0x688
-0x40    0x1            0x688
-0x80    0x2            0x688
-0xC0    0x3            0x688
-
-
-> 
-> One thing I noticed is that the PCI configuration space shows
-> subsystem vendor ID of 0x1590 instead of 0x8086:
-> 
-> 0000:00:08.0 System peripheral: Intel Corporation Sky Lake-E Ubox Registers (rev 04)
-> 00: 86 80 14 20 00 00 10 00 04 00 80 08 00 00 80 00
-> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> 20: 00 00 00 00 00 00 00 00 00 00 00 00 90 15 14 20   << subsystem vendor
-> 
-> 30: 00 00 00 00 40 00 00 00 00 00 00 00 00 00 00 00
-> 
-> But I don't think that is the problem as the code search with PCI_ANY_ID.
->
-
-It looks for the device with PCI ID 0x2014.
-
-
-Thanks,
-Kan
