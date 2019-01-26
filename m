@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 224FAC282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:57:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD96AC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:57:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EF0F1214C6
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:57:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3C78218B0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:57:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729592AbfAZJ47 (ORCPT
+        id S1729615AbfAZJ5g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 04:56:59 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:59033 "EHLO
+        Sat, 26 Jan 2019 04:57:36 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38075 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfAZJ46 (ORCPT
+        with ESMTP id S1726143AbfAZJ5g (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 04:56:58 -0500
+        Sat, 26 Jan 2019 04:57:36 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0Q9upRs510045
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0Q9vU2V510307
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 26 Jan 2019 01:56:51 -0800
+        Sat, 26 Jan 2019 01:57:30 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0Q9upWQ510042;
-        Sat, 26 Jan 2019 01:56:51 -0800
-Date:   Sat, 26 Jan 2019 01:56:51 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0Q9vUK2510304;
+        Sat, 26 Jan 2019 01:57:30 -0800
+Date:   Sat, 26 Jan 2019 01:57:30 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-pnbkqo8jxbi49d4f3yd3b5w3@git.kernel.org>
-Cc:     mingo@kernel.org, adrian.hunter@intel.com, hpa@zytor.com,
-        acme@redhat.com, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        tglx@linutronix.de, jolsa@kernel.org
-Reply-To: jolsa@kernel.org, tglx@linutronix.de, namhyung@kernel.org,
-          acme@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          adrian.hunter@intel.com, mingo@kernel.org
+Message-ID: <tip-1p65lyeebc2ose0lbozvemda@git.kernel.org>
+Cc:     hpa@zytor.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
+        adrian.hunter@intel.com, acme@redhat.com, namhyung@kernel.org,
+        mingo@kernel.org, tglx@linutronix.de
+Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+          adrian.hunter@intel.com, acme@redhat.com, namhyung@kernel.org,
+          mingo@kernel.org, tglx@linutronix.de
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf tools: Move branch structs to branch.h
-Git-Commit-ID: f1a397f33743bbb7346cb01e41cc70ca318426e8
+Subject: [tip:perf/core] perf block-range: Add missing headers
+Git-Commit-ID: e7a795d3ba62897d326f1732d01325594a6ef64f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -54,116 +54,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f1a397f33743bbb7346cb01e41cc70ca318426e8
-Gitweb:     https://git.kernel.org/tip/f1a397f33743bbb7346cb01e41cc70ca318426e8
+Commit-ID:  e7a795d3ba62897d326f1732d01325594a6ef64f
+Gitweb:     https://git.kernel.org/tip/e7a795d3ba62897d326f1732d01325594a6ef64f
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 22 Jan 2019 10:58:22 -0200
+AuthorDate: Tue, 22 Jan 2019 11:03:49 -0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 25 Jan 2019 15:12:08 +0100
+CommitDate: Fri, 25 Jan 2019 15:12:09 +0100
 
-perf tools: Move branch structs to branch.h
+perf block-range: Add missing headers
 
-We already have it, move those there from events.h so that we untangle
-the header dependencies a bit more.
+Some are being obtained indirectly and as we prune unnecessary includes,
+this stops working, fix it by adding the headers for things used in
+these file.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-pnbkqo8jxbi49d4f3yd3b5w3@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-1p65lyeebc2ose0lbozvemda@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/branch.h | 27 ++++++++++++++++++++++++---
- tools/perf/util/event.h  | 21 +--------------------
- tools/perf/util/symbol.h |  1 +
- 3 files changed, 26 insertions(+), 23 deletions(-)
+ tools/perf/util/block-range.c | 2 ++
+ tools/perf/util/block-range.h | 6 +++++-
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/branch.h b/tools/perf/util/branch.h
-index 1e3c7c5cdc63..64f96b79f1d7 100644
---- a/tools/perf/util/branch.h
-+++ b/tools/perf/util/branch.h
-@@ -1,8 +1,31 @@
- #ifndef _PERF_BRANCH_H
- #define _PERF_BRANCH_H 1
+diff --git a/tools/perf/util/block-range.c b/tools/perf/util/block-range.c
+index f1451c987eec..1be432657501 100644
+--- a/tools/perf/util/block-range.c
++++ b/tools/perf/util/block-range.c
+@@ -1,6 +1,8 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include "block-range.h"
+ #include "annotate.h"
++#include <assert.h>
++#include <stdlib.h>
  
-+#include <stdio.h>
- #include <stdint.h>
--#include "../perf.h"
-+#include <linux/perf_event.h>
+ struct {
+ 	struct rb_root root;
+diff --git a/tools/perf/util/block-range.h b/tools/perf/util/block-range.h
+index a5ba719d69fb..ec0fb534bf56 100644
+--- a/tools/perf/util/block-range.h
++++ b/tools/perf/util/block-range.h
+@@ -2,7 +2,11 @@
+ #ifndef __PERF_BLOCK_RANGE_H
+ #define __PERF_BLOCK_RANGE_H
+ 
+-#include "symbol.h"
++#include <stdbool.h>
++#include <linux/rbtree.h>
 +#include <linux/types.h>
 +
-+struct branch_flags {
-+	u64 mispred:1;
-+	u64 predicted:1;
-+	u64 in_tx:1;
-+	u64 abort:1;
-+	u64 cycles:16;
-+	u64 type:4;
-+	u64 reserved:40;
-+};
-+
-+struct branch_entry {
-+	u64			from;
-+	u64			to;
-+	struct branch_flags	flags;
-+};
-+
-+struct branch_stack {
-+	u64			nr;
-+	struct branch_entry	entries[0];
-+};
++struct symbol;
  
- struct branch_type_stat {
- 	bool	branch_to;
-@@ -13,8 +36,6 @@ struct branch_type_stat {
- 	u64	cross_2m;
- };
- 
--struct branch_flags;
--
- void branch_type_count(struct branch_type_stat *st, struct branch_flags *flags,
- 		       u64 from, u64 to);
- 
-diff --git a/tools/perf/util/event.h b/tools/perf/util/event.h
-index dad32b81fe71..feba1aa819b4 100644
---- a/tools/perf/util/event.h
-+++ b/tools/perf/util/event.h
-@@ -161,26 +161,7 @@ struct ip_callchain {
- 	u64 ips[0];
- };
- 
--struct branch_flags {
--	u64 mispred:1;
--	u64 predicted:1;
--	u64 in_tx:1;
--	u64 abort:1;
--	u64 cycles:16;
--	u64 type:4;
--	u64 reserved:40;
--};
--
--struct branch_entry {
--	u64			from;
--	u64			to;
--	struct branch_flags	flags;
--};
--
--struct branch_stack {
--	u64			nr;
--	struct branch_entry	entries[0];
--};
-+struct branch_stack;
- 
- enum {
- 	PERF_IP_FLAG_BRANCH		= 1ULL << 0,
-diff --git a/tools/perf/util/symbol.h b/tools/perf/util/symbol.h
-index 277841e3dbd1..956d9916e364 100644
---- a/tools/perf/util/symbol.h
-+++ b/tools/perf/util/symbol.h
-@@ -12,6 +12,7 @@
- #include <stdio.h>
- #include <byteswap.h>
- #include <libgen.h>
-+#include "branch.h"
- #include "build-id.h"
- #include "event.h"
- #include "path.h"
+ /*
+  * struct block_range - non-overlapping parts of basic blocks
