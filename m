@@ -4,45 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A150C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:01:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAB7C282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB448217D7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:01:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8FC9217D7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:02:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729650AbfAZKBa (ORCPT
+        id S1729681AbfAZKCG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 05:01:30 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:42423 "EHLO
+        Sat, 26 Jan 2019 05:02:06 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:41673 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfAZKB3 (ORCPT
+        with ESMTP id S1726143AbfAZKCG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 05:01:29 -0500
+        Sat, 26 Jan 2019 05:02:06 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QA1ItW510864
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QA1t74510903
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 26 Jan 2019 02:01:18 -0800
+        Sat, 26 Jan 2019 02:01:55 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QA1ILE510861;
-        Sat, 26 Jan 2019 02:01:18 -0800
-Date:   Sat, 26 Jan 2019 02:01:18 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QA1thh510900;
+        Sat, 26 Jan 2019 02:01:55 -0800
+Date:   Sat, 26 Jan 2019 02:01:55 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Davidlohr Bueso <tipbot@zytor.com>
-Message-ID: <tip-3aef2cad5d51ee66d2a614dd2f70cb34c74caf77@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, acme@redhat.com, mingo@kernel.org,
-        dbueso@suse.de, namhyung@kernel.org, hpa@zytor.com,
-        tglx@linutronix.de, dave@stgolabs.net, jolsa@kernel.org
-Reply-To: namhyung@kernel.org, dbueso@suse.de, hpa@zytor.com,
-          tglx@linutronix.de, dave@stgolabs.net, jolsa@kernel.org,
-          acme@redhat.com, linux-kernel@vger.kernel.org, mingo@kernel.org
-In-Reply-To: <20181206191819.30182-2-dave@stgolabs.net>
-References: <20181206191819.30182-2-dave@stgolabs.net>
+Message-ID: <tip-f3acb3a8a2081344801974ac5ec8e1b0d6f0ef36@git.kernel.org>
+Cc:     acme@redhat.com, dbueso@suse.de, namhyung@kernel.org,
+        dave@stgolabs.net, jolsa@kernel.org, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de
+Reply-To: dave@stgolabs.net, namhyung@kernel.org, acme@redhat.com,
+          dbueso@suse.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, jolsa@kernel.org, tglx@linutronix.de
+In-Reply-To: <20181206191819.30182-3-dave@stgolabs.net>
+References: <20181206191819.30182-3-dave@stgolabs.net>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] tools: Update rbtree implementation
-Git-Commit-ID: 3aef2cad5d51ee66d2a614dd2f70cb34c74caf77
+Subject: [tip:perf/core] perf machine: Use cached rbtrees
+Git-Commit-ID: f3acb3a8a2081344801974ac5ec8e1b0d6f0ef36
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,613 +56,353 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  3aef2cad5d51ee66d2a614dd2f70cb34c74caf77
-Gitweb:     https://git.kernel.org/tip/3aef2cad5d51ee66d2a614dd2f70cb34c74caf77
+Commit-ID:  f3acb3a8a2081344801974ac5ec8e1b0d6f0ef36
+Gitweb:     https://git.kernel.org/tip/f3acb3a8a2081344801974ac5ec8e1b0d6f0ef36
 Author:     Davidlohr Bueso <dave@stgolabs.net>
-AuthorDate: Thu, 6 Dec 2018 11:18:13 -0800
+AuthorDate: Thu, 6 Dec 2018 11:18:14 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Fri, 25 Jan 2019 15:12:09 +0100
 
-tools: Update rbtree implementation
+perf machine: Use cached rbtrees
 
-There have been a number of changes in the kernel's rbrtee
-implementation, including loose lockless searching guarantees and
-rb_root_cached, which later patches will use as an optimization.
+At the cost of an extra pointer, we can avoid the O(logN) cost of
+finding the first element in the tree (smallest node), which is
+something required for nearly every operation dealing with
+machine->guests and threads->entries.
+
+The conversion is straightforward, however, it's worth noticing that the
+rb_erase_init() calls have been replaced by rb_erase_cached() which has
+no _init() flavor, however, the node is explicitly cleared next anyway,
+which was redundant until now.
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20181206191819.30182-2-dave@stgolabs.net
+Link: http://lkml.kernel.org/r/20181206191819.30182-3-dave@stgolabs.net
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/include/linux/rbtree.h           |  52 ++++++++--
- tools/include/linux/rbtree_augmented.h |  60 ++++++++---
- tools/lib/rbtree.c                     | 178 +++++++++++++++++++++++++--------
- 3 files changed, 229 insertions(+), 61 deletions(-)
+ tools/perf/builtin-report.c |  3 ++-
+ tools/perf/util/build-id.c  | 12 ++++++----
+ tools/perf/util/machine.c   | 53 ++++++++++++++++++++++++++-------------------
+ tools/perf/util/machine.h   | 12 +++++-----
+ tools/perf/util/rb_resort.h |  6 ++---
+ 5 files changed, 50 insertions(+), 36 deletions(-)
 
-diff --git a/tools/include/linux/rbtree.h b/tools/include/linux/rbtree.h
-index 112582253dd0..8e9ed4786269 100644
---- a/tools/include/linux/rbtree.h
-+++ b/tools/include/linux/rbtree.h
-@@ -43,13 +43,28 @@ struct rb_root {
- 	struct rb_node *rb_node;
- };
+diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
+index 794a0de5ac1d..c9ceaf88759c 100644
+--- a/tools/perf/builtin-report.c
++++ b/tools/perf/builtin-report.c
+@@ -753,7 +753,8 @@ static int tasks_print(struct report *rep, FILE *fp)
+ 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
+ 		struct threads *threads = &machine->threads[i];
  
-+/*
-+ * Leftmost-cached rbtrees.
-+ *
-+ * We do not cache the rightmost node based on footprint
-+ * size vs number of potential users that could benefit
-+ * from O(1) rb_last(). Just not worth it, users that want
-+ * this feature can always implement the logic explicitly.
-+ * Furthermore, users that want to cache both pointers may
-+ * find it a bit asymmetric, but that's ok.
-+ */
-+struct rb_root_cached {
-+	struct rb_root rb_root;
-+	struct rb_node *rb_leftmost;
-+};
+-		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
++		for (nd = rb_first_cached(&threads->entries); nd;
++		     nd = rb_next(nd)) {
+ 			task = tasks + itask++;
  
- #define rb_parent(r)   ((struct rb_node *)((r)->__rb_parent_color & ~3))
+ 			task->thread = rb_entry(nd, struct thread, rb_node);
+diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
+index 07ef7fad689c..2ff802068f06 100644
+--- a/tools/perf/util/build-id.c
++++ b/tools/perf/util/build-id.c
+@@ -364,7 +364,8 @@ int perf_session__write_buildid_table(struct perf_session *session,
+ 	if (err)
+ 		return err;
  
- #define RB_ROOT	(struct rb_root) { NULL, }
-+#define RB_ROOT_CACHED (struct rb_root_cached) { {NULL, }, NULL }
- #define	rb_entry(ptr, type, member) container_of(ptr, type, member)
+-	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
++	for (nd = rb_first_cached(&session->machines.guests); nd;
++	     nd = rb_next(nd)) {
+ 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
+ 		err = machine__write_buildid_table(pos, fd);
+ 		if (err)
+@@ -397,7 +398,8 @@ int dsos__hit_all(struct perf_session *session)
+ 	if (err)
+ 		return err;
  
--#define RB_EMPTY_ROOT(root)  ((root)->rb_node == NULL)
-+#define RB_EMPTY_ROOT(root)  (READ_ONCE((root)->rb_node) == NULL)
+-	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
++	for (nd = rb_first_cached(&session->machines.guests); nd;
++	     nd = rb_next(nd)) {
+ 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
  
- /* 'empty' nodes are nodes that are known not to be inserted in an rbtree */
- #define RB_EMPTY_NODE(node)  \
-@@ -68,6 +83,12 @@ extern struct rb_node *rb_prev(const struct rb_node *);
- extern struct rb_node *rb_first(const struct rb_root *);
- extern struct rb_node *rb_last(const struct rb_root *);
+ 		err = machine__hit_all_dsos(pos);
+@@ -850,7 +852,8 @@ int perf_session__cache_build_ids(struct perf_session *session)
  
-+extern void rb_insert_color_cached(struct rb_node *,
-+				   struct rb_root_cached *, bool);
-+extern void rb_erase_cached(struct rb_node *node, struct rb_root_cached *);
-+/* Same as rb_first(), but O(1) */
-+#define rb_first_cached(root) (root)->rb_leftmost
-+
- /* Postorder iteration - always visit the parent after its children */
- extern struct rb_node *rb_first_postorder(const struct rb_root *);
- extern struct rb_node *rb_next_postorder(const struct rb_node *);
-@@ -75,6 +96,8 @@ extern struct rb_node *rb_next_postorder(const struct rb_node *);
- /* Fast replacement of a single node without remove/rebalance/add/rebalance */
- extern void rb_replace_node(struct rb_node *victim, struct rb_node *new,
- 			    struct rb_root *root);
-+extern void rb_replace_node_cached(struct rb_node *victim, struct rb_node *new,
-+				   struct rb_root_cached *root);
+ 	ret = machine__cache_build_ids(&session->machines.host);
  
- static inline void rb_link_node(struct rb_node *node, struct rb_node *parent,
- 				struct rb_node **rb_link)
-@@ -90,12 +113,29 @@ static inline void rb_link_node(struct rb_node *node, struct rb_node *parent,
- 	   ____ptr ? rb_entry(____ptr, type, member) : NULL; \
- 	})
+-	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
++	for (nd = rb_first_cached(&session->machines.guests); nd;
++	     nd = rb_next(nd)) {
+ 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
+ 		ret |= machine__cache_build_ids(pos);
+ 	}
+@@ -867,7 +870,8 @@ bool perf_session__read_build_ids(struct perf_session *session, bool with_hits)
+ 	struct rb_node *nd;
+ 	bool ret = machine__read_build_ids(&session->machines.host, with_hits);
  
--
--/*
-- * Handy for checking that we are not deleting an entry that is
-- * already in a list, found in block/{blk-throttle,cfq-iosched}.c,
-- * probably should be moved to lib/rbtree.c...
-+/**
-+ * rbtree_postorder_for_each_entry_safe - iterate in post-order over rb_root of
-+ * given type allowing the backing memory of @pos to be invalidated
-+ *
-+ * @pos:	the 'type *' to use as a loop cursor.
-+ * @n:		another 'type *' to use as temporary storage
-+ * @root:	'rb_root *' of the rbtree.
-+ * @field:	the name of the rb_node field within 'type'.
-+ *
-+ * rbtree_postorder_for_each_entry_safe() provides a similar guarantee as
-+ * list_for_each_entry_safe() and allows the iteration to continue independent
-+ * of changes to @pos by the body of the loop.
-+ *
-+ * Note, however, that it cannot handle other modifications that re-order the
-+ * rbtree it is iterating over. This includes calling rb_erase() on @pos, as
-+ * rb_erase() may rebalance the tree, causing us to miss some nodes.
-  */
-+#define rbtree_postorder_for_each_entry_safe(pos, n, root, field) \
-+	for (pos = rb_entry_safe(rb_first_postorder(root), typeof(*pos), field); \
-+	     pos && ({ n = rb_entry_safe(rb_next_postorder(&pos->field), \
-+			typeof(*pos), field); 1; }); \
-+	     pos = n)
-+
- static inline void rb_erase_init(struct rb_node *n, struct rb_root *root)
+-	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
++	for (nd = rb_first_cached(&session->machines.guests); nd;
++	     nd = rb_next(nd)) {
+ 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
+ 		ret |= machine__read_build_ids(pos, with_hits);
+ 	}
+diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
+index ae85106bb5bf..66f019fdc510 100644
+--- a/tools/perf/util/machine.c
++++ b/tools/perf/util/machine.c
+@@ -42,7 +42,7 @@ static void machine__threads_init(struct machine *machine)
+ 
+ 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
+ 		struct threads *threads = &machine->threads[i];
+-		threads->entries = RB_ROOT;
++		threads->entries = RB_ROOT_CACHED;
+ 		init_rwsem(&threads->lock);
+ 		threads->nr = 0;
+ 		INIT_LIST_HEAD(&threads->dead);
+@@ -180,7 +180,7 @@ void machine__delete_threads(struct machine *machine)
+ 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
+ 		struct threads *threads = &machine->threads[i];
+ 		down_write(&threads->lock);
+-		nd = rb_first(&threads->entries);
++		nd = rb_first_cached(&threads->entries);
+ 		while (nd) {
+ 			struct thread *t = rb_entry(nd, struct thread, rb_node);
+ 
+@@ -223,7 +223,7 @@ void machine__delete(struct machine *machine)
+ void machines__init(struct machines *machines)
  {
- 	rb_erase(n, root);
-diff --git a/tools/include/linux/rbtree_augmented.h b/tools/include/linux/rbtree_augmented.h
-index 43be941db695..d008e1404580 100644
---- a/tools/include/linux/rbtree_augmented.h
-+++ b/tools/include/linux/rbtree_augmented.h
-@@ -44,7 +44,9 @@ struct rb_augment_callbacks {
- 	void (*rotate)(struct rb_node *old, struct rb_node *new);
- };
- 
--extern void __rb_insert_augmented(struct rb_node *node, struct rb_root *root,
-+extern void __rb_insert_augmented(struct rb_node *node,
-+				  struct rb_root *root,
-+				  bool newleft, struct rb_node **leftmost,
- 	void (*augment_rotate)(struct rb_node *old, struct rb_node *new));
- /*
-  * Fixup the rbtree and update the augmented information when rebalancing.
-@@ -60,7 +62,16 @@ static inline void
- rb_insert_augmented(struct rb_node *node, struct rb_root *root,
- 		    const struct rb_augment_callbacks *augment)
- {
--	__rb_insert_augmented(node, root, augment->rotate);
-+	__rb_insert_augmented(node, root, false, NULL, augment->rotate);
-+}
-+
-+static inline void
-+rb_insert_augmented_cached(struct rb_node *node,
-+			   struct rb_root_cached *root, bool newleft,
-+			   const struct rb_augment_callbacks *augment)
-+{
-+	__rb_insert_augmented(node, &root->rb_root,
-+			      newleft, &root->rb_leftmost, augment->rotate);
+ 	machine__init(&machines->host, "", HOST_KERNEL_ID);
+-	machines->guests = RB_ROOT;
++	machines->guests = RB_ROOT_CACHED;
  }
  
- #define RB_DECLARE_CALLBACKS(rbstatic, rbname, rbstruct, rbfield,	\
-@@ -93,7 +104,9 @@ rbname ## _rotate(struct rb_node *rb_old, struct rb_node *rb_new)	\
- 	old->rbaugmented = rbcompute(old);				\
- }									\
- rbstatic const struct rb_augment_callbacks rbname = {			\
--	rbname ## _propagate, rbname ## _copy, rbname ## _rotate	\
-+	.propagate = rbname ## _propagate,				\
-+	.copy = rbname ## _copy,					\
-+	.rotate = rbname ## _rotate					\
- };
- 
- 
-@@ -126,11 +139,11 @@ __rb_change_child(struct rb_node *old, struct rb_node *new,
+ void machines__exit(struct machines *machines)
+@@ -235,9 +235,10 @@ void machines__exit(struct machines *machines)
+ struct machine *machines__add(struct machines *machines, pid_t pid,
+ 			      const char *root_dir)
  {
- 	if (parent) {
- 		if (parent->rb_left == old)
--			parent->rb_left = new;
-+			WRITE_ONCE(parent->rb_left, new);
- 		else
--			parent->rb_right = new;
-+			WRITE_ONCE(parent->rb_right, new);
- 	} else
--		root->rb_node = new;
-+		WRITE_ONCE(root->rb_node, new);
- }
+-	struct rb_node **p = &machines->guests.rb_node;
++	struct rb_node **p = &machines->guests.rb_root.rb_node;
+ 	struct rb_node *parent = NULL;
+ 	struct machine *pos, *machine = malloc(sizeof(*machine));
++	bool leftmost = true;
  
- extern void __rb_erase_color(struct rb_node *parent, struct rb_root *root,
-@@ -138,12 +151,17 @@ extern void __rb_erase_color(struct rb_node *parent, struct rb_root *root,
- 
- static __always_inline struct rb_node *
- __rb_erase_augmented(struct rb_node *node, struct rb_root *root,
-+		     struct rb_node **leftmost,
- 		     const struct rb_augment_callbacks *augment)
- {
--	struct rb_node *child = node->rb_right, *tmp = node->rb_left;
-+	struct rb_node *child = node->rb_right;
-+	struct rb_node *tmp = node->rb_left;
- 	struct rb_node *parent, *rebalance;
- 	unsigned long pc;
- 
-+	if (leftmost && node == *leftmost)
-+		*leftmost = rb_next(node);
-+
- 	if (!tmp) {
- 		/*
- 		 * Case 1: node to erase has no more than 1 child (easy!)
-@@ -170,6 +188,7 @@ __rb_erase_augmented(struct rb_node *node, struct rb_root *root,
- 		tmp = parent;
- 	} else {
- 		struct rb_node *successor = child, *child2;
-+
- 		tmp = child->rb_left;
- 		if (!tmp) {
- 			/*
-@@ -183,6 +202,7 @@ __rb_erase_augmented(struct rb_node *node, struct rb_root *root,
- 			 */
- 			parent = successor;
- 			child2 = successor->rb_right;
-+
- 			augment->copy(node, successor);
- 		} else {
- 			/*
-@@ -204,19 +224,23 @@ __rb_erase_augmented(struct rb_node *node, struct rb_root *root,
- 				successor = tmp;
- 				tmp = tmp->rb_left;
- 			} while (tmp);
--			parent->rb_left = child2 = successor->rb_right;
--			successor->rb_right = child;
-+			child2 = successor->rb_right;
-+			WRITE_ONCE(parent->rb_left, child2);
-+			WRITE_ONCE(successor->rb_right, child);
- 			rb_set_parent(child, successor);
-+
- 			augment->copy(node, successor);
- 			augment->propagate(parent, successor);
- 		}
- 
--		successor->rb_left = tmp = node->rb_left;
-+		tmp = node->rb_left;
-+		WRITE_ONCE(successor->rb_left, tmp);
- 		rb_set_parent(tmp, successor);
- 
- 		pc = node->__rb_parent_color;
- 		tmp = __rb_parent(pc);
- 		__rb_change_child(node, successor, tmp, root);
-+
- 		if (child2) {
- 			successor->__rb_parent_color = pc;
- 			rb_set_parent_color(child2, parent, RB_BLACK);
-@@ -237,9 +261,21 @@ static __always_inline void
- rb_erase_augmented(struct rb_node *node, struct rb_root *root,
- 		   const struct rb_augment_callbacks *augment)
- {
--	struct rb_node *rebalance = __rb_erase_augmented(node, root, augment);
-+	struct rb_node *rebalance = __rb_erase_augmented(node, root,
-+							 NULL, augment);
- 	if (rebalance)
- 		__rb_erase_color(rebalance, root, augment->rotate);
- }
- 
--#endif	/* _TOOLS_LINUX_RBTREE_AUGMENTED_H */
-+static __always_inline void
-+rb_erase_augmented_cached(struct rb_node *node, struct rb_root_cached *root,
-+			  const struct rb_augment_callbacks *augment)
-+{
-+	struct rb_node *rebalance = __rb_erase_augmented(node, &root->rb_root,
-+							 &root->rb_leftmost,
-+							 augment);
-+	if (rebalance)
-+		__rb_erase_color(rebalance, &root->rb_root, augment->rotate);
-+}
-+
-+#endif /* _TOOLS_LINUX_RBTREE_AUGMENTED_H */
-diff --git a/tools/lib/rbtree.c b/tools/lib/rbtree.c
-index 17c2b596f043..904adb70a4f0 100644
---- a/tools/lib/rbtree.c
-+++ b/tools/lib/rbtree.c
-@@ -22,6 +22,7 @@
- */
- 
- #include <linux/rbtree_augmented.h>
-+#include <linux/export.h>
- 
- /*
-  * red-black trees properties:  http://en.wikipedia.org/wiki/Rbtree
-@@ -43,6 +44,30 @@
-  *  parentheses and have some accompanying text comment.
-  */
- 
-+/*
-+ * Notes on lockless lookups:
-+ *
-+ * All stores to the tree structure (rb_left and rb_right) must be done using
-+ * WRITE_ONCE(). And we must not inadvertently cause (temporary) loops in the
-+ * tree structure as seen in program order.
-+ *
-+ * These two requirements will allow lockless iteration of the tree -- not
-+ * correct iteration mind you, tree rotations are not atomic so a lookup might
-+ * miss entire subtrees.
-+ *
-+ * But they do guarantee that any such traversal will only see valid elements
-+ * and that it will indeed complete -- does not get stuck in a loop.
-+ *
-+ * It also guarantees that if the lookup returns an element it is the 'correct'
-+ * one. But not returning an element does _NOT_ mean it's not present.
-+ *
-+ * NOTE:
-+ *
-+ * Stores to __rb_parent_color are not important for simple lookups so those
-+ * are left undone as of now. Nor did I check for loops involving parent
-+ * pointers.
-+ */
-+
- static inline void rb_set_black(struct rb_node *rb)
- {
- 	rb->__rb_parent_color |= RB_BLACK;
-@@ -70,22 +95,35 @@ __rb_rotate_set_parents(struct rb_node *old, struct rb_node *new,
- 
- static __always_inline void
- __rb_insert(struct rb_node *node, struct rb_root *root,
-+	    bool newleft, struct rb_node **leftmost,
- 	    void (*augment_rotate)(struct rb_node *old, struct rb_node *new))
- {
- 	struct rb_node *parent = rb_red_parent(node), *gparent, *tmp;
- 
-+	if (newleft)
-+		*leftmost = node;
-+
- 	while (true) {
- 		/*
--		 * Loop invariant: node is red
--		 *
--		 * If there is a black parent, we are done.
--		 * Otherwise, take some corrective action as we don't
--		 * want a red root or two consecutive red nodes.
-+		 * Loop invariant: node is red.
- 		 */
--		if (!parent) {
-+		if (unlikely(!parent)) {
-+			/*
-+			 * The inserted node is root. Either this is the
-+			 * first node, or we recursed at Case 1 below and
-+			 * are no longer violating 4).
-+			 */
- 			rb_set_parent_color(node, NULL, RB_BLACK);
- 			break;
--		} else if (rb_is_black(parent))
+ 	if (machine == NULL)
+ 		return NULL;
+@@ -252,12 +253,14 @@ struct machine *machines__add(struct machines *machines, pid_t pid,
+ 		pos = rb_entry(parent, struct machine, rb_node);
+ 		if (pid < pos->pid)
+ 			p = &(*p)->rb_left;
+-		else
++		else {
+ 			p = &(*p)->rb_right;
++			leftmost = false;
 +		}
-+
-+		/*
-+		 * If there is a black parent, we are done.
-+		 * Otherwise, take some corrective action as,
-+		 * per 4), we don't want a red root or two
-+		 * consecutive red nodes.
-+		 */
-+		if(rb_is_black(parent))
- 			break;
+ 	}
  
- 		gparent = rb_red_parent(parent);
-@@ -94,7 +132,7 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
- 		if (parent != tmp) {	/* parent == gparent->rb_left */
- 			if (tmp && rb_is_red(tmp)) {
- 				/*
--				 * Case 1 - color flips
-+				 * Case 1 - node's uncle is red (color flips).
- 				 *
- 				 *       G            g
- 				 *      / \          / \
-@@ -117,7 +155,8 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
- 			tmp = parent->rb_right;
- 			if (node == tmp) {
- 				/*
--				 * Case 2 - left rotate at parent
-+				 * Case 2 - node's uncle is black and node is
-+				 * the parent's right child (left rotate at parent).
- 				 *
- 				 *      G             G
- 				 *     / \           / \
-@@ -128,8 +167,9 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
- 				 * This still leaves us in violation of 4), the
- 				 * continuation into Case 3 will fix that.
- 				 */
--				parent->rb_right = tmp = node->rb_left;
--				node->rb_left = parent;
-+				tmp = node->rb_left;
-+				WRITE_ONCE(parent->rb_right, tmp);
-+				WRITE_ONCE(node->rb_left, parent);
- 				if (tmp)
- 					rb_set_parent_color(tmp, parent,
- 							    RB_BLACK);
-@@ -140,7 +180,8 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
- 			}
+ 	rb_link_node(&machine->rb_node, parent, p);
+-	rb_insert_color(&machine->rb_node, &machines->guests);
++	rb_insert_color_cached(&machine->rb_node, &machines->guests, leftmost);
  
- 			/*
--			 * Case 3 - right rotate at gparent
-+			 * Case 3 - node's uncle is black and node is
-+			 * the parent's left child (right rotate at gparent).
- 			 *
- 			 *        G           P
- 			 *       / \         / \
-@@ -148,8 +189,8 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
- 			 *     /                 \
- 			 *    n                   U
- 			 */
--			gparent->rb_left = tmp;  /* == parent->rb_right */
--			parent->rb_right = gparent;
-+			WRITE_ONCE(gparent->rb_left, tmp); /* == parent->rb_right */
-+			WRITE_ONCE(parent->rb_right, gparent);
- 			if (tmp)
- 				rb_set_parent_color(tmp, gparent, RB_BLACK);
- 			__rb_rotate_set_parents(gparent, parent, root, RB_RED);
-@@ -170,8 +211,9 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
- 			tmp = parent->rb_left;
- 			if (node == tmp) {
- 				/* Case 2 - right rotate at parent */
--				parent->rb_left = tmp = node->rb_right;
--				node->rb_right = parent;
-+				tmp = node->rb_right;
-+				WRITE_ONCE(parent->rb_left, tmp);
-+				WRITE_ONCE(node->rb_right, parent);
- 				if (tmp)
- 					rb_set_parent_color(tmp, parent,
- 							    RB_BLACK);
-@@ -182,8 +224,8 @@ __rb_insert(struct rb_node *node, struct rb_root *root,
- 			}
+ 	return machine;
+ }
+@@ -268,7 +271,7 @@ void machines__set_comm_exec(struct machines *machines, bool comm_exec)
  
- 			/* Case 3 - left rotate at gparent */
--			gparent->rb_right = tmp;  /* == parent->rb_left */
--			parent->rb_left = gparent;
-+			WRITE_ONCE(gparent->rb_right, tmp); /* == parent->rb_left */
-+			WRITE_ONCE(parent->rb_left, gparent);
- 			if (tmp)
- 				rb_set_parent_color(tmp, gparent, RB_BLACK);
- 			__rb_rotate_set_parents(gparent, parent, root, RB_RED);
-@@ -223,8 +265,9 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
- 				 *      / \         / \
- 				 *     Sl  Sr      N   Sl
- 				 */
--				parent->rb_right = tmp1 = sibling->rb_left;
--				sibling->rb_left = parent;
-+				tmp1 = sibling->rb_left;
-+				WRITE_ONCE(parent->rb_right, tmp1);
-+				WRITE_ONCE(sibling->rb_left, parent);
- 				rb_set_parent_color(tmp1, parent, RB_BLACK);
- 				__rb_rotate_set_parents(parent, sibling, root,
- 							RB_RED);
-@@ -268,15 +311,31 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
- 				 *
- 				 *   (p)           (p)
- 				 *   / \           / \
--				 *  N   S    -->  N   Sl
-+				 *  N   S    -->  N   sl
- 				 *     / \             \
--				 *    sl  Sr            s
-+				 *    sl  Sr            S
- 				 *                       \
- 				 *                        Sr
-+				 *
-+				 * Note: p might be red, and then both
-+				 * p and sl are red after rotation(which
-+				 * breaks property 4). This is fixed in
-+				 * Case 4 (in __rb_rotate_set_parents()
-+				 *         which set sl the color of p
-+				 *         and set p RB_BLACK)
-+				 *
-+				 *   (p)            (sl)
-+				 *   / \            /  \
-+				 *  N   sl   -->   P    S
-+				 *       \        /      \
-+				 *        S      N        Sr
-+				 *         \
-+				 *          Sr
- 				 */
--				sibling->rb_left = tmp1 = tmp2->rb_right;
--				tmp2->rb_right = sibling;
--				parent->rb_right = tmp2;
-+				tmp1 = tmp2->rb_right;
-+				WRITE_ONCE(sibling->rb_left, tmp1);
-+				WRITE_ONCE(tmp2->rb_right, sibling);
-+				WRITE_ONCE(parent->rb_right, tmp2);
- 				if (tmp1)
- 					rb_set_parent_color(tmp1, sibling,
- 							    RB_BLACK);
-@@ -296,8 +355,9 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
- 			 *        / \         / \
- 			 *      (sl) sr      N  (sl)
- 			 */
--			parent->rb_right = tmp2 = sibling->rb_left;
--			sibling->rb_left = parent;
-+			tmp2 = sibling->rb_left;
-+			WRITE_ONCE(parent->rb_right, tmp2);
-+			WRITE_ONCE(sibling->rb_left, parent);
- 			rb_set_parent_color(tmp1, sibling, RB_BLACK);
- 			if (tmp2)
- 				rb_set_parent(tmp2, parent);
-@@ -309,8 +369,9 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
- 			sibling = parent->rb_left;
- 			if (rb_is_red(sibling)) {
- 				/* Case 1 - right rotate at parent */
--				parent->rb_left = tmp1 = sibling->rb_right;
--				sibling->rb_right = parent;
-+				tmp1 = sibling->rb_right;
-+				WRITE_ONCE(parent->rb_left, tmp1);
-+				WRITE_ONCE(sibling->rb_right, parent);
- 				rb_set_parent_color(tmp1, parent, RB_BLACK);
- 				__rb_rotate_set_parents(parent, sibling, root,
- 							RB_RED);
-@@ -334,10 +395,11 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
- 					}
- 					break;
- 				}
--				/* Case 3 - right rotate at sibling */
--				sibling->rb_right = tmp1 = tmp2->rb_left;
--				tmp2->rb_left = sibling;
--				parent->rb_left = tmp2;
-+				/* Case 3 - left rotate at sibling */
-+				tmp1 = tmp2->rb_left;
-+				WRITE_ONCE(sibling->rb_right, tmp1);
-+				WRITE_ONCE(tmp2->rb_left, sibling);
-+				WRITE_ONCE(parent->rb_left, tmp2);
- 				if (tmp1)
- 					rb_set_parent_color(tmp1, sibling,
- 							    RB_BLACK);
-@@ -345,9 +407,10 @@ ____rb_erase_color(struct rb_node *parent, struct rb_root *root,
- 				tmp1 = sibling;
- 				sibling = tmp2;
- 			}
--			/* Case 4 - left rotate at parent + color flips */
--			parent->rb_left = tmp2 = sibling->rb_right;
--			sibling->rb_right = parent;
-+			/* Case 4 - right rotate at parent + color flips */
-+			tmp2 = sibling->rb_right;
-+			WRITE_ONCE(parent->rb_left, tmp2);
-+			WRITE_ONCE(sibling->rb_right, parent);
- 			rb_set_parent_color(tmp1, sibling, RB_BLACK);
- 			if (tmp2)
- 				rb_set_parent(tmp2, parent);
-@@ -378,22 +441,41 @@ static inline void dummy_copy(struct rb_node *old, struct rb_node *new) {}
- static inline void dummy_rotate(struct rb_node *old, struct rb_node *new) {}
+ 	machines->host.comm_exec = comm_exec;
  
- static const struct rb_augment_callbacks dummy_callbacks = {
--	dummy_propagate, dummy_copy, dummy_rotate
-+	.propagate = dummy_propagate,
-+	.copy = dummy_copy,
-+	.rotate = dummy_rotate
+-	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
++	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
+ 		struct machine *machine = rb_entry(nd, struct machine, rb_node);
+ 
+ 		machine->comm_exec = comm_exec;
+@@ -277,7 +280,7 @@ void machines__set_comm_exec(struct machines *machines, bool comm_exec)
+ 
+ struct machine *machines__find(struct machines *machines, pid_t pid)
+ {
+-	struct rb_node **p = &machines->guests.rb_node;
++	struct rb_node **p = &machines->guests.rb_root.rb_node;
+ 	struct rb_node *parent = NULL;
+ 	struct machine *machine;
+ 	struct machine *default_machine = NULL;
+@@ -340,7 +343,7 @@ void machines__process_guests(struct machines *machines,
+ {
+ 	struct rb_node *nd;
+ 
+-	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
++	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
+ 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
+ 		process(pos, data);
+ 	}
+@@ -353,7 +356,8 @@ void machines__set_id_hdr_size(struct machines *machines, u16 id_hdr_size)
+ 
+ 	machines->host.id_hdr_size = id_hdr_size;
+ 
+-	for (node = rb_first(&machines->guests); node; node = rb_next(node)) {
++	for (node = rb_first_cached(&machines->guests); node;
++	     node = rb_next(node)) {
+ 		machine = rb_entry(node, struct machine, rb_node);
+ 		machine->id_hdr_size = id_hdr_size;
+ 	}
+@@ -466,9 +470,10 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
+ 						  pid_t pid, pid_t tid,
+ 						  bool create)
+ {
+-	struct rb_node **p = &threads->entries.rb_node;
++	struct rb_node **p = &threads->entries.rb_root.rb_node;
+ 	struct rb_node *parent = NULL;
+ 	struct thread *th;
++	bool leftmost = true;
+ 
+ 	th = threads__get_last_match(threads, machine, pid, tid);
+ 	if (th)
+@@ -486,8 +491,10 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
+ 
+ 		if (tid < th->tid)
+ 			p = &(*p)->rb_left;
+-		else
++		else {
+ 			p = &(*p)->rb_right;
++			leftmost = false;
++		}
+ 	}
+ 
+ 	if (!create)
+@@ -496,7 +503,7 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
+ 	th = thread__new(pid, tid);
+ 	if (th != NULL) {
+ 		rb_link_node(&th->rb_node, parent, p);
+-		rb_insert_color(&th->rb_node, &threads->entries);
++		rb_insert_color_cached(&th->rb_node, &threads->entries, leftmost);
+ 
+ 		/*
+ 		 * We have to initialize map_groups separately
+@@ -507,7 +514,7 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
+ 		 * leader and that would screwed the rb tree.
+ 		 */
+ 		if (thread__init_map_groups(th, machine)) {
+-			rb_erase_init(&th->rb_node, &threads->entries);
++			rb_erase_cached(&th->rb_node, &threads->entries);
+ 			RB_CLEAR_NODE(&th->rb_node);
+ 			thread__put(th);
+ 			return NULL;
+@@ -798,7 +805,7 @@ size_t machines__fprintf_dsos(struct machines *machines, FILE *fp)
+ 	struct rb_node *nd;
+ 	size_t ret = __dsos__fprintf(&machines->host.dsos.head, fp);
+ 
+-	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
++	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
+ 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
+ 		ret += __dsos__fprintf(&pos->dsos.head, fp);
+ 	}
+@@ -818,7 +825,7 @@ size_t machines__fprintf_dsos_buildid(struct machines *machines, FILE *fp,
+ 	struct rb_node *nd;
+ 	size_t ret = machine__fprintf_dsos_buildid(&machines->host, fp, skip, parm);
+ 
+-	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
++	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
+ 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
+ 		ret += machine__fprintf_dsos_buildid(pos, fp, skip, parm);
+ 	}
+@@ -858,7 +865,8 @@ size_t machine__fprintf(struct machine *machine, FILE *fp)
+ 
+ 		ret = fprintf(fp, "Threads: %u\n", threads->nr);
+ 
+-		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
++		for (nd = rb_first_cached(&threads->entries); nd;
++		     nd = rb_next(nd)) {
+ 			struct thread *pos = rb_entry(nd, struct thread, rb_node);
+ 
+ 			ret += thread__fprintf(pos, fp);
+@@ -1161,7 +1169,7 @@ failure:
+ 
+ void machines__destroy_kernel_maps(struct machines *machines)
+ {
+-	struct rb_node *next = rb_first(&machines->guests);
++	struct rb_node *next = rb_first_cached(&machines->guests);
+ 
+ 	machine__destroy_kernel_maps(&machines->host);
+ 
+@@ -1169,7 +1177,7 @@ void machines__destroy_kernel_maps(struct machines *machines)
+ 		struct machine *pos = rb_entry(next, struct machine, rb_node);
+ 
+ 		next = rb_next(&pos->rb_node);
+-		rb_erase(&pos->rb_node, &machines->guests);
++		rb_erase_cached(&pos->rb_node, &machines->guests);
+ 		machine__delete(pos);
+ 	}
+ }
+@@ -1734,7 +1742,7 @@ static void __machine__remove_thread(struct machine *machine, struct thread *th,
+ 	BUG_ON(refcount_read(&th->refcnt) == 0);
+ 	if (lock)
+ 		down_write(&threads->lock);
+-	rb_erase_init(&th->rb_node, &threads->entries);
++	rb_erase_cached(&th->rb_node, &threads->entries);
+ 	RB_CLEAR_NODE(&th->rb_node);
+ 	--threads->nr;
+ 	/*
+@@ -2511,7 +2519,8 @@ int machine__for_each_thread(struct machine *machine,
+ 
+ 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
+ 		threads = &machine->threads[i];
+-		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
++		for (nd = rb_first_cached(&threads->entries); nd;
++		     nd = rb_next(nd)) {
+ 			thread = rb_entry(nd, struct thread, rb_node);
+ 			rc = fn(thread, priv);
+ 			if (rc != 0)
+@@ -2538,7 +2547,7 @@ int machines__for_each_thread(struct machines *machines,
+ 	if (rc != 0)
+ 		return rc;
+ 
+-	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
++	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
+ 		struct machine *machine = rb_entry(nd, struct machine, rb_node);
+ 
+ 		rc = machine__for_each_thread(machine, fn, priv);
+diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
+index 4ecd380ce1b4..e2f3df45410a 100644
+--- a/tools/perf/util/machine.h
++++ b/tools/perf/util/machine.h
+@@ -29,11 +29,11 @@ struct vdso_info;
+ #define THREADS__TABLE_SIZE	(1 << THREADS__TABLE_BITS)
+ 
+ struct threads {
+-	struct rb_root	  entries;
+-	struct rw_semaphore lock;
+-	unsigned int	  nr;
+-	struct list_head  dead;
+-	struct thread	  *last_match;
++	struct rb_root_cached  entries;
++	struct rw_semaphore    lock;
++	unsigned int	       nr;
++	struct list_head       dead;
++	struct thread	       *last_match;
  };
  
- void rb_insert_color(struct rb_node *node, struct rb_root *root)
- {
--	__rb_insert(node, root, dummy_rotate);
-+	__rb_insert(node, root, false, NULL, dummy_rotate);
- }
+ struct machine {
+@@ -140,7 +140,7 @@ typedef void (*machine__process_t)(struct machine *machine, void *data);
  
- void rb_erase(struct rb_node *node, struct rb_root *root)
- {
- 	struct rb_node *rebalance;
--	rebalance = __rb_erase_augmented(node, root, &dummy_callbacks);
-+	rebalance = __rb_erase_augmented(node, root,
-+					 NULL, &dummy_callbacks);
- 	if (rebalance)
- 		____rb_erase_color(rebalance, root, dummy_rotate);
- }
+ struct machines {
+ 	struct machine host;
+-	struct rb_root guests;
++	struct rb_root_cached guests;
+ };
  
-+void rb_insert_color_cached(struct rb_node *node,
-+			    struct rb_root_cached *root, bool leftmost)
-+{
-+	__rb_insert(node, &root->rb_root, leftmost,
-+		    &root->rb_leftmost, dummy_rotate);
-+}
-+
-+void rb_erase_cached(struct rb_node *node, struct rb_root_cached *root)
-+{
-+	struct rb_node *rebalance;
-+	rebalance = __rb_erase_augmented(node, &root->rb_root,
-+					 &root->rb_leftmost, &dummy_callbacks);
-+	if (rebalance)
-+		____rb_erase_color(rebalance, &root->rb_root, dummy_rotate);
-+}
-+
- /*
-  * Augmented rbtree manipulation functions.
-  *
-@@ -402,9 +484,10 @@ void rb_erase(struct rb_node *node, struct rb_root *root)
-  */
+ void machines__init(struct machines *machines);
+diff --git a/tools/perf/util/rb_resort.h b/tools/perf/util/rb_resort.h
+index a920f702a74d..f272e181d3d6 100644
+--- a/tools/perf/util/rb_resort.h
++++ b/tools/perf/util/rb_resort.h
+@@ -144,8 +144,8 @@ struct __name##_sorted *__name = __name##_sorted__new
+ 				  __ilist->rblist.nr_entries)
  
- void __rb_insert_augmented(struct rb_node *node, struct rb_root *root,
-+			   bool newleft, struct rb_node **leftmost,
- 	void (*augment_rotate)(struct rb_node *old, struct rb_node *new))
- {
--	__rb_insert(node, root, augment_rotate);
-+	__rb_insert(node, root, newleft, leftmost, augment_rotate);
- }
+ /* For 'struct machine->threads' */
+-#define DECLARE_RESORT_RB_MACHINE_THREADS(__name, __machine, hash_bucket)	\
+-	DECLARE_RESORT_RB(__name)(&__machine->threads[hash_bucket].entries,	\
+-				  __machine->threads[hash_bucket].nr)
++#define DECLARE_RESORT_RB_MACHINE_THREADS(__name, __machine, hash_bucket)    \
++ DECLARE_RESORT_RB(__name)(&__machine->threads[hash_bucket].entries.rb_root, \
++			   __machine->threads[hash_bucket].nr)
  
- /*
-@@ -498,15 +581,24 @@ void rb_replace_node(struct rb_node *victim, struct rb_node *new,
- {
- 	struct rb_node *parent = rb_parent(victim);
- 
-+	/* Copy the pointers/colour from the victim to the replacement */
-+	*new = *victim;
-+
- 	/* Set the surrounding nodes to point to the replacement */
--	__rb_change_child(victim, new, parent, root);
- 	if (victim->rb_left)
- 		rb_set_parent(victim->rb_left, new);
- 	if (victim->rb_right)
- 		rb_set_parent(victim->rb_right, new);
-+	__rb_change_child(victim, new, parent, root);
-+}
- 
--	/* Copy the pointers/colour from the victim to the replacement */
--	*new = *victim;
-+void rb_replace_node_cached(struct rb_node *victim, struct rb_node *new,
-+			    struct rb_root_cached *root)
-+{
-+	rb_replace_node(victim, new, &root->rb_root);
-+
-+	if (root->rb_leftmost == victim)
-+		root->rb_leftmost = new;
- }
- 
- static struct rb_node *rb_left_deepest_node(const struct rb_node *node)
+ #endif /* _PERF_RESORT_RB_H_ */
