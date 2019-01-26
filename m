@@ -2,141 +2,60 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1819C282C5
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF9A6C282C5
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:43:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADBCD218A6
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:40:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azCSHkFr"
+	by mail.kernel.org (Postfix) with ESMTP id BF325218F0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:43:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfAZIkq (ORCPT
+        id S1728024AbfAZInl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 03:40:46 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43995 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfAZIkq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 03:40:46 -0500
-Received: by mail-wr1-f67.google.com with SMTP id r10so12598138wrs.10;
-        Sat, 26 Jan 2019 00:40:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id;
-        bh=y9B6554bHZTaAtyUJxUUnPEsPSAphke/2C5LEfcn/9U=;
-        b=azCSHkFrAOPtYWktFxe11s71o7/D6BtseDARWQLDhQTqmOrPAAyugLRdOyCeX2uqTl
-         p5Q4angu5xnE9iUjCcUnFkZpl8sU5cFeuRyJ3puI/qI5xk48fzwcFQyhJF51fk/p0g7i
-         VBUjhDOtG5if4zwPmZ2PO22zsOOQ4KG9C1g+QrSNaPGuGF/iCrCDypVXJAKL6rlhRiTe
-         2qpsrLOQhCvpwHi8IO8OBsJMvWdddXqoXQ0ho0A8q0b/FvFU6MmaTi253BYWSL6N1E0V
-         6j6pEnEUhIKN1kXaeK0pbMLiSNpaLDQLQkcAIJvKlTTssjueh2oGhFQCCyViUTCH/eCK
-         ZV5g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
-        bh=y9B6554bHZTaAtyUJxUUnPEsPSAphke/2C5LEfcn/9U=;
-        b=BcC1Mo+l5Bb65Y5l8kLaov+6jMiWN5+jo+YYvMlViJnkLnzbD4Yg4h1i4Nj7UmDtai
-         KxdKmJNuvKjcbeQo/gmemlg3mshJhQjqTXvmU/eWpmIi6tF4oLydwKeSLAux9mvuWvak
-         3aIAvLru1/qOoBhnK+z0K3vZcJ7P2GMBngfF/6zPTWwSkgQ4bwtTQ1TPuerE9XbyhQW8
-         Df+HsgfuTWtX9kmThE6J7vtAJFz41/LJpnUsGMD/D1tJ5U507ABD9H1d9Yjd6c/gT5qE
-         v5WeSRjAZdK/0EKm06s0Tr/vtSsVLbKZQ9ORkKRZI2xzg48nF4swPY3VfDCRo5UO+BZb
-         nSrQ==
-X-Gm-Message-State: AJcUukfuoIK3FCAatU/SEoK7k9EUEvEj+XhjYmluC0A+gcQtY8NRtAO5
-        mTiok9Ngh1Kk8eKc5lIxXB9FE++6
-X-Google-Smtp-Source: ALg8bN5Ao/KVsX9De7KUGzOFU4ghJb+zDTo7aEAFTVWK+FoFpExceD2pI4tv2yfR8BwjsJ/3EEfO9A==
-X-Received: by 2002:a5d:6850:: with SMTP id o16mr14708718wrw.123.1548492043941;
-        Sat, 26 Jan 2019 00:40:43 -0800 (PST)
-Received: from 640k.lan ([93.56.166.5])
-        by smtp.gmail.com with ESMTPSA id o9sm40151089wmh.3.2019.01.26.00.40.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 26 Jan 2019 00:40:43 -0800 (PST)
-From:   Paolo Bonzini <pbonzini@redhat.com>
-To:     torvalds@linux-foundation.org
-Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
-        kvm@vger.kernel.org
-Subject: [GIT PULL] KVM fixes for 5.0-rc4
-Date:   Sat, 26 Jan 2019 09:40:41 +0100
-Message-Id: <1548492041-46410-1-git-send-email-pbonzini@redhat.com>
-X-Mailer: git-send-email 1.8.3.1
+        Sat, 26 Jan 2019 03:43:41 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2777 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726174AbfAZInl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 03:43:41 -0500
+Received: from DGGEMS408-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 1D4126899966E82C7C32;
+        Sat, 26 Jan 2019 16:43:39 +0800 (CST)
+Received: from linux-ioko.site (10.71.200.31) by
+ DGGEMS408-HUB.china.huawei.com (10.3.19.208) with Microsoft SMTP Server id
+ 14.3.408.0; Sat, 26 Jan 2019 16:43:33 +0800
+From:   Peng Li <lipeng321@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>, <yisen.zhuang@huawei.com>,
+        <salil.mehta@huawei.com>, <lipeng321@huawei.com>
+Subject: [PATCH net 0/3] net: hns: code optimizations & bugfixes for HNS driver
+Date:   Sat, 26 Jan 2019 17:18:24 +0800
+Message-ID: <1548494307-63594-1-git-send-email-lipeng321@huawei.com>
+X-Mailer: git-send-email 1.9.1
+MIME-Version: 1.0
+Content-Type: text/plain
+X-Originating-IP: [10.71.200.31]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+This patchset includes bugfixes and code optimizations for the HNS
+ethernet controller driver
 
-The following changes since commit d7393226d15add056285c8fc86723d54d7e0c77d:
+Yonglong Liu (3):
+  net: hns: Fix for missing of_node_put() after of_parse_phandle()
+  net: hns: Restart autoneg need return failed when autoneg off
+  net: hns: Fix wrong read accesses via Clause 45 MDIO protocol
 
-  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2019-01-18 17:17:20 +1200)
+ drivers/net/ethernet/hisilicon/hns/hns_enet.c    |  5 +++++
+ drivers/net/ethernet/hisilicon/hns/hns_ethtool.c | 16 +++++++++-------
+ drivers/net/ethernet/hisilicon/hns_mdio.c        |  2 +-
+ 3 files changed, 15 insertions(+), 8 deletions(-)
 
-are available in the git repository at:
+-- 
+1.9.1
 
-
-  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
-
-for you to fetch changes up to b2869f28e1476cd705bb28c58fd01b0bd661bb99:
-
-  KVM: x86: Mark expected switch fall-throughs (2019-01-25 19:29:36 +0100)
-
-----------------------------------------------------------------
-Quite a few fixes for x86: nested virtualization save/restore, AMD nested virtualization
-and virtual APIC, 32-bit fixes, an important fix to restore operation on older
-processors, and a bunch of hyper-v bugfixes.  Several are marked stable.
-
-There are also fixes for GCC warnings and for a GCC/objtool interaction.
-
-----------------------------------------------------------------
-Alexander Popov (1):
-      KVM: x86: Fix single-step debugging
-
-Ben Gardon (1):
-      kvm: selftests: Fix region overlap check in kvm_util
-
-Gustavo A. R. Silva (1):
-      KVM: x86: Mark expected switch fall-throughs
-
-Masahiro Yamada (1):
-      KVM: x86: fix TRACE_INCLUDE_PATH and remove -I. header search paths
-
-Sean Christopherson (4):
-      KVM: VMX: Use the correct field var when clearing VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL
-      KVM: x86: Fix PV IPIs for 32-bit KVM host
-      KVM: x86: WARN_ONCE if sending a PV IPI returns a fatal error
-      KVM: VMX: Move vmx_vcpu_run()'s VM-Enter asm blob to a helper function
-
-Suravee Suthikulpanit (2):
-      svm: Add warning message for AVIC IPI invalid target
-      svm: Fix AVIC incomplete IPI emulation
-
-Tom Roeder (1):
-      kvm: x86/vmx: Use kzalloc for cached_vmcs12
-
-Vitaly Kuznetsov (6):
-      x86/kvm/hyper-v: don't announce GUEST IDLE MSR support
-      x86/kvm/hyper-v: don't recommend doing reset via synthetic MSR
-      x86/kvm/hyper-v: recommend using eVMCS only when it is enabled
-      KVM: nSVM: clear events pending from svm_complete_interrupts() when exiting to L1
-      x86/kvm/hyper-v: nested_enable_evmcs() sets vmcs_version incorrectly
-      KVM: selftests: check returned evmcs version range
-
-Yi Wang (1):
-      kvm: vmx: fix some -Wmissing-prototypes warnings
-
- arch/x86/kernel/kvm.c                           |   7 +-
- arch/x86/kvm/Makefile                           |   4 -
- arch/x86/kvm/hyperv.c                           |   7 +-
- arch/x86/kvm/lapic.c                            |   2 +
- arch/x86/kvm/mmu.c                              |   1 +
- arch/x86/kvm/svm.c                              |  31 +++--
- arch/x86/kvm/trace.h                            |   2 +-
- arch/x86/kvm/vmx/evmcs.c                        |   7 +-
- arch/x86/kvm/vmx/nested.c                       |  14 ++-
- arch/x86/kvm/vmx/vmx.c                          | 147 +++++++++++++-----------
- arch/x86/kvm/x86.c                              |   8 +-
- tools/testing/selftests/kvm/lib/kvm_util.c      |   9 +-
- tools/testing/selftests/kvm/x86_64/evmcs_test.c |   6 +
- 13 files changed, 130 insertions(+), 115 deletions(-)
