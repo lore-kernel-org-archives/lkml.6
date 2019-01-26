@@ -2,112 +2,130 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAF20C282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:32:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B319C282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:38:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 976EE218F0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:32:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14337218F0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:38:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gZChaMIx"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="oOzOa5vj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727072AbfAZAcn (ORCPT
+        id S1726863AbfAZAif (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 19:32:43 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:33824 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725550AbfAZAcn (ORCPT
+        Fri, 25 Jan 2019 19:38:35 -0500
+Received: from mail-vk1-f196.google.com ([209.85.221.196]:42761 "EHLO
+        mail-vk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAZAie (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 19:32:43 -0500
-Received: by mail-io1-f67.google.com with SMTP id b16so9205641ior.1;
-        Fri, 25 Jan 2019 16:32:42 -0800 (PST)
+        Fri, 25 Jan 2019 19:38:34 -0500
+Received: by mail-vk1-f196.google.com with SMTP id y14so2539405vky.9
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 16:38:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=u1SO7X4mwgqbFZQSq726atHOE/SZQX/izHCcb6UexKU=;
-        b=gZChaMIx+qvp5NiDGib9haAgnpUXt8XjvfDjby/cmh6myHqGFV3zJHURkDACr2W/dz
-         WaHPDv31R7dD40hBNq1i6kV2O70DyNbHxw8jotcIYElGCEsczXWXqQAaonJwGtupltvg
-         hAPC4mDpaQgjZ46/pMFglTLqJu+YSWmkf1/zPbydQAi5aS3qTazk54nSsNmMOlzYVF+r
-         bN930EDLrGb/7eTWbhmm0Hyocz5/T8VRo1eaYK/kjr+JfSIcv/iWITgkz01oq+psbqlr
-         ZjA2ATZVuFojyEnjGxinYEuShrIvMWIGenK/IVmM2KEzF8i95SkpCbl/wgz/JOvAa6V5
-         QGog==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=DheyDUZs0hMflfS1BvQnTgJ0tAbsmWQIPECsUp28vqc=;
+        b=oOzOa5vj43wWpgSPSDtO+zGrUkyzuj+cWpSvXRXW0Bl6gCJV7jc9yjkbWiRWsHkyEm
+         BRsrz7m5y9DR02trukb9z4gARF97jbWP17UwaXVGQE/9Rk9ChrzB6pCFkJ78bieDimDz
+         I/xOEBbmu6v272Ndpx6ONQLSyCqZ5wBUFy57k=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=u1SO7X4mwgqbFZQSq726atHOE/SZQX/izHCcb6UexKU=;
-        b=pOT3F2jzgB8kg+v1mQco10nt72rfOHSUSlOBalxXWwNlRYMS4HsVRpQWjDwEFj511z
-         DsBpiEssEIINcT31EOzwVBci4o7TGyLUXWJd+ZO9/i6QO50Mmwx1bGqJfYEOiqMCkSsD
-         Dd4wC/runryKE6wJphrZLz/DZ+dNZCQwHHmbDY3IjdfklRVsXotVwiBKkq14mne7sf3w
-         Huwl+Hup9VcMqtGVun6ezNfaWW2u2sdhIeiTmQS5YkLLVeZFMRanniXCBXqormK4SS0l
-         VhqompETKrcL6HGzeAIGIW8I//GuQI9pTevzrSJ4QPY2OypicfWXkSOpbPK7IoBSlEno
-         lFfw==
-X-Gm-Message-State: AJcUukeD1fK4B/QuVYEsTJDDzD5xvRTfMShNhlKzyDWVUV1XrabABLUX
-        xByyl3NQayVxlZoIqh+oBvc=
-X-Google-Smtp-Source: ALg8bN4wH7X6iJ6v2NLYLjUemrrYY2/i7hrJL4W6diNbmqmVjXM/+y7QQ9cO5B+TSVlkzGuQX95/sQ==
-X-Received: by 2002:a5d:81c3:: with SMTP id t3mr8410890iol.93.1548462762363;
-        Fri, 25 Jan 2019 16:32:42 -0800 (PST)
-Received: from m-hyperV (50-47-89-76.evrt.wa.frontiernet.net. [50.47.89.76])
-        by smtp.gmail.com with ESMTPSA id 134sm13679261itl.25.2019.01.25.16.32.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 16:32:41 -0800 (PST)
-Date:   Fri, 25 Jan 2019 16:32:40 -0800
-From:   Maya Nakamura <m.maya.nakamura@gmail.com>
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     linux-kernel@vger.kernel.org,
-        driverdev-devel@linuxdriverproject.org, haiyangz@microsoft.com,
-        marcelo.cerri@canonical.com, lorenzo.pieralisi@arm.com,
-        bhelgaas@google.com, linux-pci@vger.kernel.org, kys@microsoft.com,
-        sthemmin@microsoft.com, olaf@aepfle.de, apw@canonical.com,
-        jasowang@redhat.com, mikelley@microsoft.com,
-        Alexander.Levin@microsoft.com
-Subject: Re: [PATCH 1/2] PCI: hv: Replace hv_vp_set with hv_vpset
-Message-ID: <20190126003239.GB1837@m-hyperV>
-References: <cover.1548232616.git.m.maya.nakamura@gmail.com>
- <87ffdc2eb0642301516378feb1416cf7450bf6c1.1548232616.git.m.maya.nakamura@gmail.com>
- <87sgxi19oy.fsf@vitty.brq.redhat.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=DheyDUZs0hMflfS1BvQnTgJ0tAbsmWQIPECsUp28vqc=;
+        b=VmkjjKzB+OpydTxVfzTk1YSigHPzOFXoBep4o6H/gTSA04k0ifm/VoNuyjgAtMp1JX
+         mgYUIFyBwcQLnY075QxITY35iXVbaZHwi4OByHi+VIeZyhf4+g+2DQbsVLbx9BCkeTMM
+         c3DkUvrBbdq0xE3CQ079EdQSEDLAgmt7a02OH0YBWecb7Cq6aNWk8nM+j7mdr/PvXQww
+         HuRA+3bEgpJNGMmoUSJe+x+oeE1aUb2MU49tTdoyYEWWlV0Hl9/PZscQ0AK1BPqB15v2
+         oTYKw4ZsO3p9SFilfSXTtfoVUv2foAi8cOXZ7M3ZAzkwo82sPGLcimL+28yOiBC7R/mz
+         wrrw==
+X-Gm-Message-State: AJcUukdBskQyBwoCX1fHzVS5sN+l6A/NZzwuU6Witzd9Bjq5cTdDRu5p
+        m4BN7PvC6KLORByrC2nvbqrVAoPAGoU=
+X-Google-Smtp-Source: ALg8bN4+665vAq+B4nALtqH9poThZATjkF+SfmvK4MEdUz/VwOfsfGU77QcADze8R20zrD4YluuOyw==
+X-Received: by 2002:a1f:1c81:: with SMTP id c123mr5322370vkc.52.1548463113053;
+        Fri, 25 Jan 2019 16:38:33 -0800 (PST)
+Received: from mail-ua1-f51.google.com (mail-ua1-f51.google.com. [209.85.222.51])
+        by smtp.gmail.com with ESMTPSA id w77sm6073537vsg.29.2019.01.25.16.38.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 16:38:32 -0800 (PST)
+Received: by mail-ua1-f51.google.com with SMTP id n7so3856694uao.7
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 16:38:31 -0800 (PST)
+X-Received: by 2002:ab0:645:: with SMTP id f63mr5356393uaf.106.1548463111521;
+ Fri, 25 Jan 2019 16:38:31 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87sgxi19oy.fsf@vitty.brq.redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20190125204846.GA4106@embeddedor>
+In-Reply-To: <20190125204846.GA4106@embeddedor>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Sat, 26 Jan 2019 13:38:18 +1300
+X-Gmail-Original-Message-ID: <CAGXu5jJXsLw7N-M9Ev_BMapC3L2Q1t_qn0rbJEjwOQY1=us76w@mail.gmail.com>
+Message-ID: <CAGXu5jJXsLw7N-M9Ev_BMapC3L2Q1t_qn0rbJEjwOQY1=us76w@mail.gmail.com>
+Subject: Re: [PATCH] ASN.1: mark expected switch fall-throughs
+To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 02:12:13PM +0100, Vitaly Kuznetsov wrote:
-> Maya Nakamura <m.maya.nakamura@gmail.com> writes:
-> 
-> > @@ -460,12 +454,16 @@ struct hv_pcibus_device {
-> >  	struct msi_controller msi_chip;
-> >  	struct irq_domain *irq_domain;
-> >  
-> > -	/* hypercall arg, must not cross page boundary */
-> > -	struct retarget_msi_interrupt retarget_msi_interrupt_params;
-> > -
-> >  	spinlock_t retarget_msi_interrupt_lock;
-> >  
-> >  	struct workqueue_struct *wq;
-> > +
-> > +	/* hypercall arg, must not cross page boundary */
-> > +	struct retarget_msi_interrupt retarget_msi_interrupt_params;
-> > +
-> > +	/*
-> > +	 * Don't put anything here: retarget_msi_interrupt_params must be last
-> > +	 */
-> 
-> This change seems to be unrelated and not anyhow described in the commit
-> message - or did I miss something?
-> 
-Thank you for pointing that out. I will add why it was moved in v2.
+On Sat, Jan 26, 2019 at 9:49 AM Gustavo A. R. Silva
+<gustavo@embeddedor.com> wrote:
+>
+> In preparation to enabling -Wimplicit-fallthrough, mark switch
+> cases where we are expecting to fall through.
+>
+> This patch fixes the following warnings:
+>
+> lib/asn1_decoder.c:386:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+> lib/asn1_decoder.c:449:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>
+> Warning level 3 was used: -Wimplicit-fallthrough=3
+>
+> This patch is part of the ongoing efforts to enabling
+> -Wimplicit-fallthrough.
+>
+> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 
-Maya
-> 
-> -- 
-> Vitaly
+Reviewed-by: Kees Cook <keescook@chromium.org>
+
+-Kees
+
+> ---
+>  lib/asn1_decoder.c | 4 ++++
+>  1 file changed, 4 insertions(+)
+>
+> diff --git a/lib/asn1_decoder.c b/lib/asn1_decoder.c
+> index dc14beae2c9a..8f3d207d2b00 100644
+> --- a/lib/asn1_decoder.c
+> +++ b/lib/asn1_decoder.c
+> @@ -385,6 +385,8 @@ int asn1_ber_decoder(const struct asn1_decoder *decoder,
+>         case ASN1_OP_END_SET_ACT:
+>                 if (unlikely(!(flags & FLAG_MATCHED)))
+>                         goto tag_mismatch;
+> +               /* fall through */
+> +
+>         case ASN1_OP_END_SEQ:
+>         case ASN1_OP_END_SET_OF:
+>         case ASN1_OP_END_SEQ_OF:
+> @@ -450,6 +452,8 @@ int asn1_ber_decoder(const struct asn1_decoder *decoder,
+>                         pc += asn1_op_lengths[op];
+>                         goto next_op;
+>                 }
+> +               /* fall through */
+> +
+>         case ASN1_OP_ACT:
+>                 ret = actions[machine[pc + 1]](context, hdr, tag, data + tdp, len);
+>                 if (ret < 0)
+> --
+> 2.20.1
+>
+
+
+-- 
+Kees Cook
