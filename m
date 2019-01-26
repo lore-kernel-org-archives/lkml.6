@@ -2,171 +2,170 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32BBAC282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20C36C282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:57:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E720421855
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:52:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="Bq6w6jFU"
+	by mail.kernel.org (Postfix) with ESMTP id DB79021855
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:57:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729485AbfAZBwF (ORCPT
+        id S1728398AbfAZB5F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 20:52:05 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:15562 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725550AbfAZBwE (ORCPT
+        Fri, 25 Jan 2019 20:57:05 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:52693 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725916AbfAZB5E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 20:52:04 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c4bbd410000>; Fri, 25 Jan 2019 17:52:01 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Fri, 25 Jan 2019 17:52:01 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Fri, 25 Jan 2019 17:52:01 -0800
-Received: from HQMAIL112.nvidia.com (172.18.146.18) by HQMAIL106.nvidia.com
- (172.18.146.12) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 26 Jan
- 2019 01:52:01 +0000
-Received: from HQMAIL107.nvidia.com (172.20.187.13) by HQMAIL112.nvidia.com
- (172.18.146.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Sat, 26 Jan
- 2019 01:52:01 +0000
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (104.47.33.55) by
- HQMAIL107.nvidia.com (172.20.187.13) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4 via Frontend Transport; Sat, 26 Jan 2019 01:52:01 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com (20.178.196.24) by
- BYAPR12MB3431.namprd12.prod.outlook.com (20.178.196.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.16; Sat, 26 Jan 2019 01:51:59 +0000
-Received: from BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::e4f9:9814:247a:d064]) by BYAPR12MB3398.namprd12.prod.outlook.com
- ([fe80::e4f9:9814:247a:d064%5]) with mapi id 15.20.1558.021; Sat, 26 Jan 2019
- 01:51:59 +0000
-From:   Sowjanya Komatineni <skomatineni@nvidia.com>
-To:     Dmitry Osipenko <digetx@gmail.com>,
-        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        Mantravadi Karthik <mkarthik@nvidia.com>,
-        Shardar Mohammed <smohammed@nvidia.com>,
-        Timo Alho <talho@nvidia.com>
-CC:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-Subject: RE: [PATCH V2 3/4] i2c: tegra: Add DMA Support
-Thread-Topic: [PATCH V2 3/4] i2c: tegra: Add DMA Support
-Thread-Index: AQHUtCaoqz5N11EqJkeckmeQlifKWKXAs7AAgAAVOHA=
-Date:   Sat, 26 Jan 2019 01:51:59 +0000
-Message-ID: <BYAPR12MB33981C0EE06C88C9814B431EC2940@BYAPR12MB3398.namprd12.prod.outlook.com>
-References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
- <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
- <e782dfd3-4dc4-4f69-e360-f38e4705fdb4@gmail.com>
-In-Reply-To: <e782dfd3-4dc4-4f69-e360-f38e4705fdb4@gmail.com>
-Accept-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=skomatineni@nvidia.com; 
-x-originating-ip: [216.228.112.22]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR12MB3431;6:76E3dqdK2xhIe3ZWKCPKEsIVpHc2KvN1lzEF8Qt8iK/gz7ctsXqAG2+z8bcxOqwywO/p5NEZ7k27VvIoYQnWhmTaA7XsFep3+JYlG/t4n9iDqw8KY+qpT1yz89x6l5PmoyLvB4nnzM74nJGpzp4pLztRbfhr8eRORm4hAyk9MlnYnOz6VVuTSb1JIDo5PhFGx8UDkk6SVOo8/etBN2DT2bNsjpU9LN6pEYLZvlU2dgLYTqgQ2W4VpNTucpMt+LI6kVy1kU+lX1LTF1sVvvt5ijcXkqrjVh9egb0abayVZQjXkju/TDU8NIM1ag7wmA7TcrbhYFPZaqfMAUGYqr5gghRlTqm9zx5Gquau9UlESlhGV1TGwDEFzIAX4lnhKHKO2yBXRIAM5IeH2EiB25MU732ZO5s1GEe94279tjHahb9Fzx/XM8KV1e+9JDtWsmc4DvC9V98RApxA5UGg8KoRdA==;5:214sHNRJR+Uo7io+MzXTEn+3fAyHgSWkE3QZ/vqAvZlPYA87sr80yuBGJrhnAXw+sgFTJo1At1o2bVOcpTej6p7GuKztTWwdmTmPFct0mf0QsziR/CKEVc0PU1QAFiIUrg3gU4XyXXf/cxo3LEnZ0Q+cRlwCuLjIQEK4z1euXc64lsPaYJDihEmEisIP8FWxzIXUBZPUXTXBhksSuSEtZg==;7:ErTcggJsOE9WA1Miz5BBUo7GRqkS3FExArR22PJ1awUK1fKUJAWqYmXswkTGpWhdKyNuxej2SAtUod4+lPfiqZhcv83RMsVnLFoeQ+Dx5i8bflv/ckJGOV3g0M/0fz1GhawFK6uiINjH1vAJrGTLBA==
-x-ms-office365-filtering-correlation-id: cb793e80-6807-4d93-b0c4-08d68330dc18
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR12MB3431;
-x-ms-traffictypediagnostic: BYAPR12MB3431:
-x-microsoft-antispam-prvs: <BYAPR12MB3431776FCA29DCF88CD3EA62C2940@BYAPR12MB3431.namprd12.prod.outlook.com>
-x-forefront-prvs: 0929F1BAED
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(376002)(396003)(39860400002)(346002)(189003)(199004)(478600001)(55016002)(81156014)(81166006)(6436002)(6116002)(7736002)(3846002)(2906002)(486006)(8676002)(8936002)(305945005)(68736007)(86362001)(256004)(6636002)(99286004)(14444005)(54906003)(476003)(74316002)(110136005)(6246003)(66066001)(76176011)(7696005)(229853002)(33656002)(4326008)(25786009)(71200400001)(71190400001)(39060400002)(6506007)(102836004)(97736004)(14454004)(186003)(316002)(2501003)(26005)(105586002)(9686003)(106356001)(53936002)(11346002)(446003);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR12MB3431;H:BYAPR12MB3398.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nvidia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: rT7qpD1uTgdVlh5zi828jp13qVEFibDlM9gaDBeDDgeKKbPxPMaW7+26z11LXOPP8/REz2ECDY8spNIkeGsYh7mJkbaL0TMJOQ4DqOweLFmGZNeJPiNvzStI14IvyGxQYLuAwKsuy9xzQwjdWBzJnC0/xcP3zoqzj73ZIVzc0YUr4VMa00AhNVCVWuXvFTgFvoaqfHlP222lGq19P8FS5ioF+COZh+7f7l2rqiW4/OM/pkQyCj40KUQpZmuFF+XfJW1DdkCY3bRVr5zuea/XKTpmate+HPcHqMORWwzmRZTn0Ix3G2ytQizj68VEeN2MI4aDc3JDzn6W1FLUnQMazNQ7rqLRuxKwbtnqRQ/8hvyVRRuTbFhfS1S3PiKU3N0hRH+PQfo7d2Bspa5nZasConxx6YN4Up29/sH6YRhTEsw=
+        Fri, 25 Jan 2019 20:57:04 -0500
+Received: from fsav107.sakura.ne.jp (fsav107.sakura.ne.jp [27.133.134.234])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0Q1v3dZ074969;
+        Sat, 26 Jan 2019 10:57:03 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav107.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp);
+ Sat, 26 Jan 2019 10:57:03 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav107.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0Q1v3aU074964
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sat, 26 Jan 2019 10:57:03 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: possible deadlock in __do_page_fault
+To:     Joel Fernandes <joel@joelfernandes.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Todd Kjos <tkjos@google.com>,
+        syzbot+a76129f18c89f3e2ddd4@syzkaller.appspotmail.com,
+        ak@linux.intel.com, Johannes Weiner <hannes@cmpxchg.org>,
+        jack@suse.cz, jrdr.linux@gmail.com,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        mawilcox@microsoft.com, mgorman@techsingularity.net,
+        syzkaller-bugs@googlegroups.com,
+        =?UTF-8?Q?Arve_Hj=c3=b8nnev=c3=a5g?= <arve@android.com>,
+        Todd Kjos <tkjos@android.com>,
+        Martijn Coenen <maco@android.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <201901230201.x0N214eq043832@www262.sakura.ne.jp>
+ <20190123155751.GA168927@google.com>
+ <201901240152.x0O1qUUU069046@www262.sakura.ne.jp>
+ <20190124134646.GA53008@google.com>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <06b4806c-6b53-85a5-84db-fa432ea4ccd0@i-love.sakura.ne.jp>
+Date:   Sat, 26 Jan 2019 10:57:03 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb793e80-6807-4d93-b0c4-08d68330dc18
-X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jan 2019 01:51:59.2677
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR12MB3431
-X-OriginatorOrg: Nvidia.com
+In-Reply-To: <20190124134646.GA53008@google.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548467521; bh=DOdNPBjFjIwm2M1z/2G8YDj2DGkz7f/VungmrUX9E/Q=;
-        h=X-PGP-Universal:From:To:CC:Subject:Thread-Topic:Thread-Index:Date:
-         Message-ID:References:In-Reply-To:Accept-Language:X-MS-Has-Attach:
-         X-MS-TNEF-Correlator:authentication-results:x-originating-ip:
-         x-ms-publictraffictype:x-microsoft-exchange-diagnostics:
-         x-ms-office365-filtering-correlation-id:x-microsoft-antispam:
-         x-ms-traffictypediagnostic:x-microsoft-antispam-prvs:
-         x-forefront-prvs:x-forefront-antispam-report:received-spf:
-         x-ms-exchange-senderadcheck:x-microsoft-antispam-message-info:
-         MIME-Version:X-MS-Exchange-CrossTenant-Network-Message-Id:
-         X-MS-Exchange-CrossTenant-originalarrivaltime:
-         X-MS-Exchange-CrossTenant-fromentityheader:
-         X-MS-Exchange-CrossTenant-id:
-         X-MS-Exchange-Transport-CrossTenantHeadersStamped:X-OriginatorOrg:
-         Content-Language:Content-Type:Content-Transfer-Encoding;
-        b=Bq6w6jFUxiv9z3nsgB+OzmxNu4jK5oEGyhx74E0yhwijsG97ye1o4pRG3OL0p/z5N
-         LspFGiokrToJuLoIPGX80og+GRRCFln2med9JQEsKCDzItqU9jjmdDUWb8jneHpw1U
-         sXTkW2pgiFyD9yVOA6iXkZBA4Q06mGjTIkZq3PCuhm0FdCIYsGa9+c76690vx0ZPix
-         V2o302IYFDPwchlwiN6N9sbBhXnR60oVV5lZZQ+pn1YuKn1HGQjcBY/8JUWypX+Sxg
-         R95qXgA18heMdhWYT1F6Q/hfo+Jlahz1a/ByCz8+fmVT1L/fji26lgSP4bnKzLzj8x
-         G8hdwXsXxkaeQ==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiA+ICtzdGF0aWMgaW50IHRlZ3JhX2kyY19pbml0X2RtYV9wYXJhbShzdHJ1Y3QgdGVncmFfaTJj
-X2RldiAqaTJjX2RldiwNCj4gPiArCQkJCSAgICBib29sIGRtYV90b19tZW1vcnkpDQo+ID4gK3sN
-Cj4gPiArCXN0cnVjdCBkbWFfY2hhbiAqZG1hX2NoYW47DQo+ID4gKwl1MzIgKmRtYV9idWY7DQo+
-ID4gKwlkbWFfYWRkcl90IGRtYV9waHlzOw0KPiA+ICsJaW50IHJldDsNCj4gPiArCWNvbnN0IGNo
-YXIgKmNoYW5fbmFtZSA9IGRtYV90b19tZW1vcnkgPyAicngiIDogInR4IjsNCj4gPiArDQo+ID4g
-KwlkbWFfY2hhbiA9IGRtYV9yZXF1ZXN0X3NsYXZlX2NoYW5uZWxfcmVhc29uKGkyY19kZXYtPmRl
-diwgY2hhbl9uYW1lKTsNCj4gPiArCWlmIChJU19FUlIoZG1hX2NoYW4pKQ0KPiA+ICsJCXJldHVy
-biBQVFJfRVJSKGRtYV9jaGFuKTsNCj4NCj4gSGVyZSBzaGFsbCBiZSBhIGNoZWNrIG9mIHdoZXRo
-ZXIgZG1hX2J1ZiBpcyBhbHJlYWR5IGFsbG9jYXRlZCwgb3RoZXJ3aXNlIGl0IHdpbGwgYmUgYWxs
-b2NhdGVkIHR3aWNlIGFuZCB0aGUgZmlyc3QgYWxsb2NhdGlvbiB0dXJuZWQgaW50byBtZW1sZWFr
-Og0KPg0KPglpZiAoaTJjX2Rldi0+ZG1hX2J1ZikNCj4JCXJldHVybiAwOw0KDQpJZiBkbWFfYnVm
-IGlzIGFsbG9jYXRlZCBhbHJlYWR5IHRoZW4gZG1hIGNoYW5uZWxzIHdpbGwgYmUgYXNzaWduZWQg
-YW5kIGl0IHdpbGwgbm90IHBlcmZvcm0gaW5pdCBkbWEgYWdhaW4uDQpTbyBpZiBkbWEgYnVmIGFs
-bG9jYXRpb24gaGFwcGVucyBhbHJlYWR5IHRoZW4gaXQgd2lsbCBub3QgY29tZSBoZXJlIGFnYWlu
-Lg0KDQo+ID4gKw0KPiA+ICsJZG1hX2J1ZiA9IGRtYV9hbGxvY19jb2hlcmVudChpMmNfZGV2LT5k
-ZXYsIGkyY19kZXYtPmRtYV9idWZfc2l6ZSwNCj4gPiArCQkJCSAgICAgJmRtYV9waHlzLCBHRlBf
-S0VSTkVMKTsNCj4gPiArDQo+DQo+IEknbSB3b25kZXJpbmcgd2hldGhlciBhIHdyaXRlLWNvbWJp
-bmVkIERNQSBtYXBwaW5nIHdpbGwgYmUgbW9yZSBvcHRpbWFsIHRoYW4gaGF2aW5nIEwyIGZsdXNo
-ZXMgLyBpbnZhbGlkYXRpb24gZm9yIHRoZSAiY29oZXJlbnQiIGFsbG9jYXRpb25zLiANCj4NCj4g
-QW5kIEknbSBub3cgcXVlc3Rpb25pbmcgd2hldGhlciB0aGVyZSBpcyBhbnkgcmVhbCBiZW5lZml0
-IGZyb20gdGhlIERNQSB0cmFuc2ZlcnJpbmcgYXQgYWxsLCBnaXZlbiB0aGUgRE1BIGJvdW5jZS1i
-dWZmZXIgQ1BVIHJlYWQvd3JpdGUgb3ZlcmhlYWQuIEl0IGxvb2tzIHRvIG1lIHRoYXQgdGhlIHdo
-b2xlIHB1cnBvc2Ugb2YgdGhlIEkyQyBETUEgdHJhbnNmZXJyaW5nIGlzIHRvIG1vdmUgZGF0YSBm
-cm9tICh0bykgc29tZSBJMkMgZGV2aWNlIHRvIGEgPiA+IHNvbWUgZGV2aWNlIG9uIHRoZSBBUEIg
-YnVzLCBieXBhc3NpbmcgdGhlIENQVS4gSWYgdGhhdCdzIGlzIHRoZSBjYXNlLCB0aGVuIHRoaXMg
-cGF0Y2ggbWF5IG5vdCByZWFsbHkgd29ydGggdGhlIGVmZm9ydCBhbmQgaW5zdGVhZCBjb3VsZCBv
-bmx5IGh1cnQgdGhlIHRyYW5zZmVycmluZyBwZXJmb3JtYW5jZS4gUGxlYXNlIHByb3ZpZGUgc29t
-ZSBwZXJmb3JtYW5jZSByZXN1bHRzIG9yIGNvcnJlY3QgbWUgaWYgSSdtIHdyb25nLg0KPg0KPiBb
-c25pcF0NCg0KRE1BIHRyYW5zZmVyIGhlbHBzIHRvIHJlZHVjZSBvdmVyaGVhZCBvbmx5IGR1cmlu
-ZyBsYXJnZSB0cmFuc2ZlciB3aGljaCBpcyB2ZXJ5IHJhcmUgb3BlcmF0aW9uLiBXaWxsIGNoZWNr
-IGFuZCBwcm92aWRlIHNvbWUgcGVyZm9ybWFuY2UgZGF0YS4uLg0KDQo+ID4gIA0KPiA+ICAJaWYg
-KCFpMmNfZGV2LT5ody0+aGFzX3NpbmdsZV9jbGtfc291cmNlKSB7DQo+ID4gIAkJZmFzdF9jbGsg
-PSBkZXZtX2Nsa19nZXQoJnBkZXYtPmRldiwgImZhc3QtY2xrIik7IEBAIC0xMDc5LDYgDQo+ID4g
-KzE0MDIsMTUgQEAgc3RhdGljIGludCB0ZWdyYV9pMmNfcHJvYmUoc3RydWN0IHBsYXRmb3JtX2Rl
-dmljZSAqcGRldikNCj4gPiAgCQl9DQo+ID4gIAl9DQo+ID4gIA0KPiA+ICsJaWYgKGkyY19kZXYt
-Pmhhc19kbWEpIHsNCj4gPiArCQlyZXQgPSB0ZWdyYV9pMmNfaW5pdF9kbWFfcGFyYW0oaTJjX2Rl
-diwgdHJ1ZSk7DQo+ID4gKwkJaWYgKHJldCA9PSAtRVBST0JFX0RFRkVSKQ0KPiA+ICsJCQlnb3Rv
-IGRpc2FibGVfZGl2X2NsazsNCj4gPiArCQlyZXQgPSB0ZWdyYV9pMmNfaW5pdF9kbWFfcGFyYW0o
-aTJjX2RldiwgZmFsc2UpOw0KPiA+ICsJCWlmIChyZXQgPT0gLUVQUk9CRV9ERUZFUikNCj4gPiAr
-CQkJZ290byBkaXNhYmxlX2Rpdl9jbGs7DQo+DQo+IE1pc3NpbmcgZG1hX2J1ZiBmcmVlaW5nIGFu
-ZCBjaGFubmVsIHJlbGVhc2luZyBpbiBhIGNhc2Ugb2YgZXJyb3IuDQoNCmRtYSBidWYgZnJlZWlu
-ZyBhbmQgY2hhbm5lbCByZWxlYXNlIGhhcHBlbnMgaW5zaWRlIGluaXRfZG1hIHdoZW4gYnVmZmVy
-IGFsbG9jYXRpb24gZmFpbHMuDQpJZiBkbWFfcmVxdWVzdF9zbGF2ZV9jaGFubmVsX3JlYXNvbiBm
-YWlscyBubyBuZWVkIHRvIHJlbGVhc2UgY2hhbm5lbCBidXQgaWYgY2hhbm5lbCByZXF1ZXN0IHN1
-Y2NlZWRzIGFuZCBidWZmZXIgYWxsb2NhdGlvbiBmYWlscywgdGhlbiBidWZmZXIgZnJlZSBhbmQg
-Y2hhbm5lbCByZWxlYXNlIHdpbGwgaGFwcGVuLg0KDQo+ID4gKwl9DQo+ID4gKw0KPiA+ICAJcmV0
-ID0gdGVncmFfaTJjX2luaXQoaTJjX2Rldik7DQo+ID4gIAlpZiAocmV0KSB7DQo+ID4gIAkJZGV2
-X2VycigmcGRldi0+ZGV2LCAiRmFpbGVkIHRvIGluaXRpYWxpemUgaTJjIGNvbnRyb2xsZXJcbiIp
-Ow0KPiA+IA0KDQo=
+On 2019/01/24 22:46, Joel Fernandes wrote:
+> On Thu, Jan 24, 2019 at 10:52:30AM +0900, Tetsuo Handa wrote:
+>> Then, I'm tempted to eliminate shrinker and LRU list (like a draft patch shown
+>> below). I think this is not equivalent to current code because this shrinks
+>> upon only range_alloc() time and I don't know whether it is OK to temporarily
+>> release ashmem_mutex during range_alloc() at "Case #4" of ashmem_pin(), but
+>> can't we go this direction? 
+> 
+> No, the point of the shrinker is to do a lazy free. We cannot free things
+> during unpin since it can be pinned again and we need to find that range by
+> going through the list. We also cannot get rid of any lists. Since if
+> something is re-pinned, we need to find it and find out if it was purged. We
+> also need the list for knowing what was unpinned so the shrinker works.
+> 
+> By the way, all this may be going away quite soon (the whole driver) as I
+> said, so just give it a little bit of time.
+> 
+> I am happy to fix it soon if that's not the case (which I should know soon -
+> like a couple of weeks) but I'd like to hold off till then.
+> 
+>> By the way, why not to check range_alloc() failure before calling range_shrink() ?
+> 
+> That would be a nice thing to do. Send a patch?
+
+OK. Here is a patch. I chose __GFP_NOFAIL rather than adding error handling,
+for small GFP_KERNEL allocation won't fail unless current thread was killed by
+the OOM killer or memory allocation fault injection forces it fail, and
+range_alloc() will not be called for multiple times from one syscall.
+
+But note that doing GFP_KERNEL allocation with ashmem_mutex held has a risk of
+needlessly invoking the OOM killer because "the point of the shrinker is to do
+a lazy free" counts on ashmem_mutex not held by GFP_KERNEL allocating thread.
+Although other shrinkers likely make forward progress by releasing memory,
+technically you should avoid doing GFP_KERNEL allocation with ashmem_mutex held
+if shrinker depends on ashmem_mutex not held.
+
+
+
+From e1c4a9b53b0bb11a0743a8f861915c043deb616d Mon Sep 17 00:00:00 2001
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Date: Sat, 26 Jan 2019 10:52:39 +0900
+Subject: [PATCH] staging: android: ashmem: Don't allow range_alloc() to fail.
+
+ashmem_pin() is calling range_shrink() without checking whether
+range_alloc() succeeded. Since memory allocation fault injection might
+force range_alloc() to fail while range_alloc() is called for only once
+for one ioctl() request, make range_alloc() not to fail.
+
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+---
+ drivers/staging/android/ashmem.c | 17 ++++++-----------
+ 1 file changed, 6 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/staging/android/ashmem.c b/drivers/staging/android/ashmem.c
+index d40c1d2..a8070a2 100644
+--- a/drivers/staging/android/ashmem.c
++++ b/drivers/staging/android/ashmem.c
+@@ -171,18 +171,14 @@ static inline void lru_del(struct ashmem_range *range)
+  * @end:	   The ending page (inclusive)
+  *
+  * This function is protected by ashmem_mutex.
+- *
+- * Return: 0 if successful, or -ENOMEM if there is an error
+  */
+-static int range_alloc(struct ashmem_area *asma,
+-		       struct ashmem_range *prev_range, unsigned int purged,
+-		       size_t start, size_t end)
++static void range_alloc(struct ashmem_area *asma,
++			struct ashmem_range *prev_range, unsigned int purged,
++			size_t start, size_t end)
+ {
+ 	struct ashmem_range *range;
+ 
+-	range = kmem_cache_zalloc(ashmem_range_cachep, GFP_KERNEL);
+-	if (!range)
+-		return -ENOMEM;
++	range = kmem_cache_zalloc(ashmem_range_cachep, GFP_KERNEL | __GFP_NOFAIL);
+ 
+ 	range->asma = asma;
+ 	range->pgstart = start;
+@@ -193,8 +189,6 @@ static int range_alloc(struct ashmem_area *asma,
+ 
+ 	if (range_on_lru(range))
+ 		lru_add(range);
+-
+-	return 0;
+ }
+ 
+ /**
+@@ -687,7 +681,8 @@ static int ashmem_unpin(struct ashmem_area *asma, size_t pgstart, size_t pgend)
+ 		}
+ 	}
+ 
+-	return range_alloc(asma, range, purged, pgstart, pgend);
++	range_alloc(asma, range, purged, pgstart, pgend);
++	return 0;
+ }
+ 
+ /*
+-- 
+1.8.3.1
+
