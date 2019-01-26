@@ -5,129 +5,230 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 003B0C282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C025FC282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:29:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C34CA21902
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 81CDE218FF
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:29:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bHIj//tP"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FZ6UVCVX"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729506AbfAZB2H (ORCPT
+        id S1729523AbfAZB3O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 20:28:07 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38607 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725924AbfAZB2G (ORCPT
+        Fri, 25 Jan 2019 20:29:14 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:34065 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAZB3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 20:28:06 -0500
-Received: by mail-pl1-f195.google.com with SMTP id e5so5333817plb.5;
-        Fri, 25 Jan 2019 17:28:06 -0800 (PST)
+        Fri, 25 Jan 2019 20:29:13 -0500
+Received: by mail-pf1-f195.google.com with SMTP id h3so5545477pfg.1;
+        Fri, 25 Jan 2019 17:29:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=aWviH/eVzJhNQJdE+Iu5XDsgDbK9WHfiAChh2DS0Lbk=;
-        b=bHIj//tP2/P4EsPXfl1mZantJKvmNzYloNIPfGKBh9opc3R0J8Q5aj5VRBuYtMBs24
-         swpAs44W1pAvRtEehEiliLqC+1xFZ/GFqjFEJptZqe1fv5X3Ry9ZhCLEOua5m419/+CI
-         NYlT1i/BUbQYA9zxVs32WxP4BRv3LgHLNc98tjFASwQfiPDEcS9vNmxs9kJUs3oSua+i
-         odmRCR5I/YMFDJ4vewnRUD3ND3vN0XkardeP7aRFz3VYP1SZf4+1rgeYKQZi5LAi9RUp
-         u2XQT75TkPTj+N2jeXhkwjQ3BhHmIzAq9Ih4Lp1mWCFFEnR/a7p/tLxmEU11ExnGe61b
-         Qk8w==
+        bh=95eqdei5DLy6BvgFDZo7hJh1AsScbmdkLRMn+AGD90I=;
+        b=FZ6UVCVXzywChXyCA3MNteF3ehR/o+8ZU+eiPmvM3G+OKyUTy6oP97hztWIpl+7Gxg
+         hzZAAU/q8cZT2G2stqIOmcZLNvq7jSQBW5Hjhbbj1jc9Vz8TdPXQNVN2frgnTgbfWljy
+         xjfHCeSXuyCXvb8vsKqQsK9ugGtRfmjez/mnf/UXJlpbyi2PG7qpeZVP13f1/6r7hvJp
+         CuQNr2Ds3OdBFFuh2oFjdjUb9oob1fOS284aY+g7m6QBqlBZA+XJglAwU3nC+knN8mRn
+         J4Q92KvCe4rGLvxuzC/Zdc2hu40UdziYaH9NSauUrXH4TC0O2vpurg2M1zTejkZT9B9g
+         H8rg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:content-transfer-encoding
          :in-reply-to:user-agent;
-        bh=aWviH/eVzJhNQJdE+Iu5XDsgDbK9WHfiAChh2DS0Lbk=;
-        b=A3M+P7mVWxXXHhLfi9tAvtDPav28vxAGW7WMRBk0pWZ1VysJFHExUFN8mNDMnkFERk
-         7yF6816sHbJKZPgsgQqY0hR2xKuY1xxoqjG7QzzPMxut9u8Hq5DSZoGvOweqPNq6Zi0P
-         opGbsSIeTNxg566Lc2HMh4N3ojwAJhL5TrC0pYNpHFZZJHI6OKhc2+Jy9OgsnapfyRU2
-         jx1onbMf4rRR5MAD8QbSDp71sD4xFseZZ44muHP+lgSho53PPfnnZGGbb7l97A8ByvAY
-         wdLGZ0oBDA7YscZzt4MJYqIAHXFah1/voJqXpKLXXB0/LnBHX7GGbHmqFsvqBTs9ekw7
-         26sA==
-X-Gm-Message-State: AJcUukcx/Dec/UdrwJg5BIWZBvApZ/CX1BzCzKxWft9Hy1QW9ctgrFJc
-        LHh7P+LkfdDZl/zY98RR2mo=
-X-Google-Smtp-Source: ALg8bN7kJ1lDMBRcoNuNT3G3IH4rEzXBfsNglpuTPeXAd9+w2vW7yOCVRPvd8mWPJ5isFVd4s3wiUw==
-X-Received: by 2002:a17:902:6b46:: with SMTP id g6mr13284844plt.21.1548466085507;
-        Fri, 25 Jan 2019 17:28:05 -0800 (PST)
+        bh=95eqdei5DLy6BvgFDZo7hJh1AsScbmdkLRMn+AGD90I=;
+        b=b8/bPuL2XZjIR4cJcjP3fHoEQorrrCFeUNMlgddyekguPd2WsRRSn7N9m4xv3nK65X
+         cBcoQOs71v41MHTTLQxoAIpKKPLKqN/Ag5DUFUxqQFTF2PxZ59iPUHjXv9Qi0BJXusxs
+         yTjCzqNvJQDGhHxMlZ+AxFq9S44W7H/6UT+nxLpzVFbCsGBh2sKLYKTwvtiZ85r+mX6H
+         F9wJj+3r58q6zLzFLHKZvGcWVvn05Tg+yaSzFO8LpTEmaGhJrkiz7s0h2TSeow+sE/DE
+         bYCTpyJO7Q9aeg2NDpJCiP77sFnFJt90jUNAZPo4C4D24RVsjxKIgYzbYhnj+d+c9QBU
+         hLCA==
+X-Gm-Message-State: AJcUukfVPsWfoVq0WwX9s44wnBhlHAcGU3CMkngSPFaXsFIgN+22qfP4
+        t0stcuWKhlvDVNB2jI/2Ry0=
+X-Google-Smtp-Source: ALg8bN5dxJyTaMruG21BJzuLXt0toH1XFa+HqypqQQbRtKtpufxAlUaMmT/RexyLGGHAqZ9xpQLMQQ==
+X-Received: by 2002:a62:16d6:: with SMTP id 205mr13142482pfw.256.1548466152415;
+        Fri, 25 Jan 2019 17:29:12 -0800 (PST)
 Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id r12sm27040856pgv.83.2019.01.25.17.28.04
+        by smtp.gmail.com with ESMTPSA id q75sm51701501pfa.38.2019.01.25.17.29.11
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 17:28:04 -0800 (PST)
-Date:   Fri, 25 Jan 2019 17:28:02 -0800
+        Fri, 25 Jan 2019 17:29:11 -0800 (PST)
+Date:   Fri, 25 Jan 2019 17:29:09 -0800
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
 To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
 Cc:     robh+dt@kernel.org, mark.rutland@arm.com, xc-racer2@live.ca,
         devicetree@vger.kernel.org, linux-input@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] input: dt-bindings: Add binding for bma150 sensor
-Message-ID: <20190126012802.GD212026@dtor-ws>
+Subject: Re: [PATCH 1/3] input: misc: bma150: Use managed resources helpers
+Message-ID: <20190126012909.GE212026@dtor-ws>
 References: <20190125184400.17669-1-pawel.mikolaj.chmiel@gmail.com>
- <20190125184400.17669-4-pawel.mikolaj.chmiel@gmail.com>
+ <20190125184400.17669-2-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190125184400.17669-4-pawel.mikolaj.chmiel@gmail.com>
+In-Reply-To: <20190125184400.17669-2-pawel.mikolaj.chmiel@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 07:44:00PM +0100, Paweł Chmiel wrote:
+On Fri, Jan 25, 2019 at 07:43:58PM +0100, Paweł Chmiel wrote:
 > From: Jonathan Bakker <xc-racer2@live.ca>
 > 
-> Add device tree bindings for Bosch BMA150 Accelerometer Sensor
+> The driver can be cleaned up by using managed resource helpers
 > 
 > Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
 > Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
 > ---
->  .../bindings/input/bosch,bma150.txt           | 20 +++++++++++++++++++
->  1 file changed, 20 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/input/bosch,bma150.txt
+>  drivers/input/misc/bma150.c | 40 +++++++++++++------------------------
+>  1 file changed, 14 insertions(+), 26 deletions(-)
 > 
-> diff --git a/Documentation/devicetree/bindings/input/bosch,bma150.txt b/Documentation/devicetree/bindings/input/bosch,bma150.txt
-> new file mode 100644
-> index 000000000000..290c60e38c70
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/input/bosch,bma150.txt
-> @@ -0,0 +1,20 @@
-> +* Bosch BMA150 Accelerometer Sensor
-> +
-> +Also works for the SMB380 and BMA023 accelerometers
-> +
-> +Required properties:
-> +- compatible : Should be "bosch,bma150"
-> +- reg : The I2C address of the sensor
-> +
-> +Optional properties:
-> +- interrupt-parent : should be the phandle for the interrupt controller
-> +- interrupts : Interrupt mapping for IRQ.  If not present device will be polled
-> +
-> +Example:
-> +
-> +bma150@38 {
-> +	compatible = "bosch,bma150";
-> +	reg = <0x38>;
-> +	interrupt-parent = <&gph0>;
-> +	interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
+> diff --git a/drivers/input/misc/bma150.c b/drivers/input/misc/bma150.c
+> index 1efcfdf9f8a8..d101bb0a33d6 100644
+> --- a/drivers/input/misc/bma150.c
+> +++ b/drivers/input/misc/bma150.c
+> @@ -471,7 +471,7 @@ static int bma150_register_input_device(struct bma150_data *bma150)
+>  	struct input_dev *idev;
+>  	int error;
+>  
+> -	idev = input_allocate_device();
+> +	idev = devm_input_allocate_device(&bma150->client->dev);
+>  	if (!idev)
+>  		return -ENOMEM;
+>  
+> @@ -482,10 +482,8 @@ static int bma150_register_input_device(struct bma150_data *bma150)
+>  	input_set_drvdata(idev, bma150);
+>  
+>  	error = input_register_device(idev);
+> -	if (error) {
+> -		input_free_device(idev);
+> +	if (error)
+>  		return error;
+> -	}
+>  
+>  	bma150->input = idev;
+>  	return 0;
+> @@ -496,7 +494,7 @@ static int bma150_register_polled_device(struct bma150_data *bma150)
+>  	struct input_polled_dev *ipoll_dev;
+>  	int error;
+>  
+> -	ipoll_dev = input_allocate_polled_device();
+> +	ipoll_dev = devm_input_allocate_polled_device(&bma150->client->dev);
+>  	if (!ipoll_dev)
+>  		return -ENOMEM;
+>  
+> @@ -511,10 +509,8 @@ static int bma150_register_polled_device(struct bma150_data *bma150)
+>  	bma150_init_input_device(bma150, ipoll_dev->input);
+>  
+>  	error = input_register_polled_device(ipoll_dev);
+> -	if (error) {
+> -		input_free_polled_device(ipoll_dev);
+> +	if (error)
+>  		return error;
+> -	}
+>  
+>  	bma150->input_polled = ipoll_dev;
+>  	bma150->input = ipoll_dev->input;
+> @@ -543,7 +539,8 @@ static int bma150_probe(struct i2c_client *client,
+>  		return -EINVAL;
+>  	}
+>  
+> -	bma150 = kzalloc(sizeof(struct bma150_data), GFP_KERNEL);
+> +	bma150 = devm_kzalloc(&client->dev, sizeof(struct bma150_data),
+> +			      GFP_KERNEL);
+>  	if (!bma150)
+>  		return -ENOMEM;
+>  
+> @@ -556,7 +553,7 @@ static int bma150_probe(struct i2c_client *client,
+>  				dev_err(&client->dev,
+>  					"IRQ GPIO conf. error %d, error %d\n",
+>  					client->irq, error);
+> -				goto err_free_mem;
+> +				return error;
+>  			}
+>  		}
+>  		cfg = &pdata->cfg;
+> @@ -566,14 +563,14 @@ static int bma150_probe(struct i2c_client *client,
+>  
+>  	error = bma150_initialize(bma150, cfg);
+>  	if (error)
+> -		goto err_free_mem;
+> +		return error;
+>  
+>  	if (client->irq > 0) {
+>  		error = bma150_register_input_device(bma150);
+>  		if (error)
+> -			goto err_free_mem;
+> +			return error;
+>  
+> -		error = request_threaded_irq(client->irq,
+> +		error = devm_request_threaded_irq(&client->dev, client->irq,
+>  					NULL, bma150_irq_thread,
+>  					IRQF_TRIGGER_RISING | IRQF_ONESHOT,
+>  					BMA150_DRIVER, bma150);
+> @@ -582,12 +579,12 @@ static int bma150_probe(struct i2c_client *client,
+>  				"irq request failed %d, error %d\n",
+>  				client->irq, error);
+>  			input_unregister_device(bma150->input);
 
-Hmm, here you say that IRQ_TYPE_LEVEL_HIGH, so it is level interrupts,
-but the driver overrides to rising edge unconditionally. Since you are
-the first to add DT support please make separate patch to driver to drop
-the ORQ trigger from request_theraded_irq() leaving only IRQF_ONESHOT.
+No need to unregister manually if you are using devm.
 
-Also please create patch removing platform data support as noone is
-using it upstream.
+> -			goto err_free_mem;
+> +			return error;
+>  		}
+>  	} else {
+>  		error = bma150_register_polled_device(bma150);
+>  		if (error)
+> -			goto err_free_mem;
+> +			return error;
+>  	}
+>  
+>  	i2c_set_clientdata(client, bma150);
+> @@ -595,10 +592,6 @@ static int bma150_probe(struct i2c_client *client,
+>  	pm_runtime_enable(&client->dev);
+>  
+>  	return 0;
+> -
+> -err_free_mem:
+> -	kfree(bma150);
+> -	return error;
+>  }
+>  
+>  static int bma150_remove(struct i2c_client *client)
+> @@ -607,15 +600,10 @@ static int bma150_remove(struct i2c_client *client)
+>  
+>  	pm_runtime_disable(&client->dev);
+>  
+> -	if (client->irq > 0) {
+> -		free_irq(client->irq, bma150);
+> +	if (client->irq > 0)
+>  		input_unregister_device(bma150->input);
 
-What about the rest of config parameters from bma150_cfg? They should be
-handled as device properties too.
+Here as well.
+
+> -	} else {
+> +	else
+>  		input_unregister_polled_device(bma150->input_polled);
+
+And here.
+
+> -		input_free_polled_device(bma150->input_polled);
+> -	}
+> -
+> -	kfree(bma150);
+>  
+>  	return 0;
+>  }
+> -- 
+> 2.17.1
+> 
 
 Thanks.
 
