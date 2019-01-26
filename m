@@ -3,39 +3,38 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B684C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:50:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D5DC282C8
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:50:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73DBC214D8
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:50:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8A55214D8
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:50:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726934AbfAZQup (ORCPT
+        id S1726958AbfAZQuz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 11:50:45 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2782 "EHLO huawei.com"
+        Sat, 26 Jan 2019 11:50:55 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2682 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726630AbfAZQuF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 11:50:05 -0500
+        id S1726403AbfAZQuD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 11:50:03 -0500
 Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 1D4CE4556EB623CF008A;
-        Sun, 27 Jan 2019 00:49:59 +0800 (CST)
+        by Forcepoint Email with ESMTP id F28D9EC00AE81845FAE2;
+        Sun, 27 Jan 2019 00:49:58 +0800 (CST)
 Received: from SZA150611058.china.huawei.com (10.45.143.145) by
  DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.408.0; Sun, 27 Jan 2019 00:49:48 +0800
+ 14.3.408.0; Sun, 27 Jan 2019 00:49:52 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>,
         Peng Li <lipeng321@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 04/12] net: hns3: fix return value handle issue for hclge_set_loopback()
-Date:   Sun, 27 Jan 2019 00:49:13 +0800
-Message-ID: <20190126164921.3872-5-tanhuazhong@huawei.com>
+Subject: [PATCH net-next 10/12] net: hns3: add 8 BD limit for tx flow
+Date:   Sun, 27 Jan 2019 00:49:19 +0800
+Message-ID: <20190126164921.3872-11-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.20.1.windows.1
 In-Reply-To: <20190126164921.3872-1-tanhuazhong@huawei.com>
 References: <20190126164921.3872-1-tanhuazhong@huawei.com>
@@ -49,61 +48,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Peng Li <lipeng321@huawei.com>
 
-In current code, it always return 0, even loopback mode setting failed.
-It's incorrect. This patch fixes return value handle for loopback test.
+A single transmit packet can span up to 8 descriptors according
+to the HW limit. If a skb has more than 8 frags, driver uses
+skb_copy to get a new skb which has less frags.
 
-Fixes: 0f29fc23b21d ("net: hns3: Fix for loopback selftest failed problem")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c      | 8 ++++----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 3 +++
- 2 files changed, 7 insertions(+), 4 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 28 ++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-index abb78696d7ce..ed73f7fc9171 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_ethtool.c
-@@ -117,7 +117,7 @@ static int hns3_lp_up(struct net_device *ndev, enum hnae3_loop loop_mode)
- 	ret = hns3_lp_setup(ndev, loop_mode, true);
- 	usleep_range(10000, 20000);
- 
--	return 0;
-+	return ret;
- }
- 
- static int hns3_lp_down(struct net_device *ndev, enum hnae3_loop loop_mode)
-@@ -334,10 +334,10 @@ static void hns3_self_test(struct net_device *ndev,
- 			continue;
- 
- 		data[test_index] = hns3_lp_up(ndev, loop_type);
--		if (!data[test_index]) {
-+		if (!data[test_index])
- 			data[test_index] = hns3_lp_run_test(ndev, loop_type);
--			hns3_lp_down(ndev, loop_type);
--		}
-+
-+		hns3_lp_down(ndev, loop_type);
- 
- 		if (data[test_index])
- 			eth_test->flags |= ETH_TEST_FL_FAILED;
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index 64b1589e549f..d5482f9c422c 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -5332,6 +5332,9 @@ static int hclge_set_loopback(struct hnae3_handle *handle,
- 		break;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index 93e3e38ba852..216f3dd25cd6 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -1133,6 +1133,7 @@ static int hns3_nic_maybe_stop_tso(struct sk_buff **out_skb, int *bnum,
+ 				   struct hns3_enet_ring *ring)
+ {
+ 	struct sk_buff *skb = *out_skb;
++	struct sk_buff *new_skb = NULL;
+ 	struct skb_frag_struct *frag;
+ 	int bdnum_for_frag;
+ 	int frag_num;
+@@ -1155,7 +1156,19 @@ static int hns3_nic_maybe_stop_tso(struct sk_buff **out_skb, int *bnum,
+ 		buf_num += bdnum_for_frag;
  	}
  
-+	if (ret)
-+		return ret;
+-	if (buf_num > ring_space(ring))
++	if (unlikely(buf_num > HNS3_MAX_BD_PER_FRAG)) {
++		buf_num = (skb->len + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
++		if (ring_space(ring) < buf_num)
++			return -EBUSY;
++		/* manual split the send packet */
++		new_skb = skb_copy(skb, GFP_ATOMIC);
++		if (!new_skb)
++			return -ENOMEM;
++		dev_kfree_skb_any(skb);
++		*out_skb = new_skb;
++	}
 +
- 	kinfo = &vport->nic.kinfo;
- 	for (i = 0; i < kinfo->num_tqps; i++) {
- 		ret = hclge_tqp_enable(hdev, i, 0, en);
++	if (unlikely(ring_space(ring) < buf_num))
+ 		return -EBUSY;
+ 
+ 	*bnum = buf_num;
+@@ -1166,11 +1179,24 @@ static int hns3_nic_maybe_stop_tx(struct sk_buff **out_skb, int *bnum,
+ 				  struct hns3_enet_ring *ring)
+ {
+ 	struct sk_buff *skb = *out_skb;
++	struct sk_buff *new_skb = NULL;
+ 	int buf_num;
+ 
+ 	/* No. of segments (plus a header) */
+ 	buf_num = skb_shinfo(skb)->nr_frags + 1;
+ 
++	if (unlikely(buf_num > HNS3_MAX_BD_PER_FRAG)) {
++		buf_num = (skb->len + HNS3_MAX_BD_SIZE - 1) / HNS3_MAX_BD_SIZE;
++		if (ring_space(ring) < buf_num)
++			return -EBUSY;
++		/* manual split the send packet */
++		new_skb = skb_copy(skb, GFP_ATOMIC);
++		if (!new_skb)
++			return -ENOMEM;
++		dev_kfree_skb_any(skb);
++		*out_skb = new_skb;
++	}
++
+ 	if (unlikely(ring_space(ring) < buf_num))
+ 		return -EBUSY;
+ 
 -- 
 2.20.1
 
