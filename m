@@ -2,128 +2,143 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB227C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:06:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99E86C282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:06:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA652218F0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:06:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548497176;
-	bh=qOVJ0Jo+RKwjH9m0MuM310+kDMy2gAkYgzo5oU6geaw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=E3XPsLGdUHRwN57i9G52CLbrYr4maDI+Bj3ydNRspCBmo6h0SrIBhSzaVVuKZh2j7
-	 BSpQCc2UrYs3oZSY9YcYjITNL8f0Liw2rS4VNulsBtkreLskFaGzlO8b2HEOVkUFUe
-	 +bHFn7Oarvg0ENtF4roG62CJ1kOkiCsvdBalPCYI=
+	by mail.kernel.org (Postfix) with ESMTP id 753CD217D7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:06:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbfAZKGP (ORCPT
+        id S1729750AbfAZKG2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 05:06:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37404 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726143AbfAZKGO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 05:06:14 -0500
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9D9FF217D7;
-        Sat, 26 Jan 2019 10:06:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548497173;
-        bh=qOVJ0Jo+RKwjH9m0MuM310+kDMy2gAkYgzo5oU6geaw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=dAb/O/D0LaSEc3XW+1o/LrX4ko9RXL7vfBhfY/+tJcpDfTzBGPoBtTweyNhhaS+Hs
-         iKmtrY8s0MBkKuwYabBMF5NRcVvXkpQVAqPiCx/E0B0OBgX/bUlBZ3pdrxKGoZflfr
-         HpEzkzVXMNOT4Uzm1mm03YHeErWTRG6SkkiCNz0w=
-Date:   Sat, 26 Jan 2019 11:06:05 +0100
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-mtd@lists.infradead.org,
-        Nguyen An Hoan <na-hoan@jinso.co.jp>,
-        linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] eeprom: at25: Merge "off" and "offset" in
- at25_ee_write()
-Message-ID: <20190126110546.360190cc@bbrezillon>
-In-Reply-To: <20190118140525.29189-2-geert+renesas@glider.be>
-References: <20190118140525.29189-1-geert+renesas@glider.be>
-        <20190118140525.29189-2-geert+renesas@glider.be>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 26 Jan 2019 05:06:28 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:40257 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726143AbfAZKG1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 05:06:27 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QA5mF4513000
+        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
+        Sat, 26 Jan 2019 02:05:48 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QA5i3q512997;
+        Sat, 26 Jan 2019 02:05:44 -0800
+Date:   Sat, 26 Jan 2019 02:05:44 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Song Liu <tipbot@zytor.com>
+Message-ID: <tip-811184fb6977bb02c21512d8af6a613a7ebce329@git.kernel.org>
+Cc:     tglx@linutronix.de, hpa@zytor.com, daniel@iogearbox.net,
+        peterz@infradead.org, songliubraving@fb.com,
+        linux-kernel@vger.kernel.org, acme@redhat.com, ast@kernel.org,
+        mingo@kernel.org, jolsa@kernel.org
+Reply-To: hpa@zytor.com, tglx@linutronix.de, peterz@infradead.org,
+          daniel@iogearbox.net, songliubraving@fb.com, mingo@kernel.org,
+          acme@redhat.com, ast@kernel.org, jolsa@kernel.org,
+          linux-kernel@vger.kernel.org
+In-Reply-To: <20190122210218.358664-1-songliubraving@fb.com>
+References: <20190122210218.358664-1-songliubraving@fb.com>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:perf/core] perf bpf: Fix synthesized
+ PERF_RECORD_KSYMBOL/BPF_EVENT
+Git-Commit-ID: 811184fb6977bb02c21512d8af6a613a7ebce329
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 18 Jan 2019 15:05:24 +0100
-Geert Uytterhoeven <geert+renesas@glider.be> wrote:
+Commit-ID:  811184fb6977bb02c21512d8af6a613a7ebce329
+Gitweb:     https://git.kernel.org/tip/811184fb6977bb02c21512d8af6a613a7ebce329
+Author:     Song Liu <songliubraving@fb.com>
+AuthorDate: Tue, 22 Jan 2019 13:02:18 -0800
+Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
+CommitDate: Fri, 25 Jan 2019 15:12:10 +0100
 
-> Since commit 01973a01f9ec34b7 ("eeprom: at25: remove nvmem regmap
-> dependency") changed the type of "off" from "loff_t" to "unsigned int",
-> "off" and "offset" are now the same type, and can be merged into a
-> single variable.
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+perf bpf: Fix synthesized PERF_RECORD_KSYMBOL/BPF_EVENT
 
-Reviewed-by: Boris Brezillon <bbrezillon@kernel.org>
+Added missing machine->id_hdr_size to event->header.size. Also fixed
+size of PERF_RECORD_KSYMBOL by removing extra bytes for name.
 
-> ---
-> v2:
->   - Merge "off" and "offset" into a single variable instead of just
->     killing the cast, as suggested by Arnd.
-> ---
->  drivers/misc/eeprom/at25.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/misc/eeprom/at25.c b/drivers/misc/eeprom/at25.c
-> index 99de6939cd5ac2e3..2d8e5388e574710d 100644
-> --- a/drivers/misc/eeprom/at25.c
-> +++ b/drivers/misc/eeprom/at25.c
-> @@ -130,7 +130,8 @@ static int at25_ee_read(void *priv, unsigned int offset,
->  	return status;
->  }
->  
-> -static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
-> +static int at25_ee_write(void *priv, unsigned int offset, void *val,
-> +			 size_t count)
->  {
->  	struct at25_data *at25 = priv;
->  	const char *buf = val;
-> @@ -138,10 +139,10 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
->  	unsigned		buf_size;
->  	u8			*bounce;
->  
-> -	if (unlikely(off >= at25->chip.byte_len))
-> +	if (unlikely(offset >= at25->chip.byte_len))
->  		return -EFBIG;
-> -	if ((off + count) > at25->chip.byte_len)
-> -		count = at25->chip.byte_len - off;
-> +	if ((offset + count) > at25->chip.byte_len)
-> +		count = at25->chip.byte_len - offset;
->  	if (unlikely(!count))
->  		return -EINVAL;
->  
-> @@ -160,7 +161,6 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
->  	do {
->  		unsigned long	timeout, retries;
->  		unsigned	segment;
-> -		unsigned	offset = (unsigned) off;
->  		u8		*cp = bounce;
->  		int		sr;
->  		u8		instr;
-> @@ -234,7 +234,7 @@ static int at25_ee_write(void *priv, unsigned int off, void *val, size_t count)
->  			break;
->  		}
->  
-> -		off += segment;
-> +		offset += segment;
->  		buf += segment;
->  		count -= segment;
->  
+Committer notes:
 
+We need to malloc that extra machine->id_hdr_size at the start of
+perf_event__synthesize_bpf_events() and also need to cast the event to
+(void *) otherwise we segfault, fix it.
+
+Reported-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Suggested-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Song Liu <songliubraving@fb.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: kernel-team@fb.com
+Fixes: 7b612e291a5a ("perf tools: Synthesize PERF_RECORD_* for loaded BPF programs")
+Link: http://lkml.kernel.org/r/20190122210218.358664-1-songliubraving@fb.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+---
+ tools/perf/util/bpf-event.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/tools/perf/util/bpf-event.c b/tools/perf/util/bpf-event.c
+index 01e1dc1bb7fb..796ef793f4ce 100644
+--- a/tools/perf/util/bpf-event.c
++++ b/tools/perf/util/bpf-event.c
+@@ -7,6 +7,7 @@
+ #include "bpf-event.h"
+ #include "debug.h"
+ #include "symbol.h"
++#include "machine.h"
+ 
+ #define ptr_to_u64(ptr)    ((__u64)(unsigned long)(ptr))
+ 
+@@ -149,7 +150,7 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+ 		*ksymbol_event = (struct ksymbol_event){
+ 			.header = {
+ 				.type = PERF_RECORD_KSYMBOL,
+-				.size = sizeof(struct ksymbol_event),
++				.size = offsetof(struct ksymbol_event, name),
+ 			},
+ 			.addr = prog_addrs[i],
+ 			.len = prog_lens[i],
+@@ -178,6 +179,9 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+ 
+ 		ksymbol_event->header.size += PERF_ALIGN(name_len + 1,
+ 							 sizeof(u64));
++
++		memset((void *)event + event->header.size, 0, machine->id_hdr_size);
++		event->header.size += machine->id_hdr_size;
+ 		err = perf_tool__process_synth_event(tool, event,
+ 						     machine, process);
+ 	}
+@@ -194,6 +198,8 @@ static int perf_event__synthesize_one_bpf_prog(struct perf_tool *tool,
+ 			.id = info.id,
+ 		};
+ 		memcpy(bpf_event->tag, prog_tags[i], BPF_TAG_SIZE);
++		memset((void *)event + event->header.size, 0, machine->id_hdr_size);
++		event->header.size += machine->id_hdr_size;
+ 		err = perf_tool__process_synth_event(tool, event,
+ 						     machine, process);
+ 	}
+@@ -217,7 +223,7 @@ int perf_event__synthesize_bpf_events(struct perf_tool *tool,
+ 	int err;
+ 	int fd;
+ 
+-	event = malloc(sizeof(event->bpf_event) + KSYM_NAME_LEN);
++	event = malloc(sizeof(event->bpf_event) + KSYM_NAME_LEN + machine->id_hdr_size);
+ 	if (!event)
+ 		return -1;
+ 	while (true) {
