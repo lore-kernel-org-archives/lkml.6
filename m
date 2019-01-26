@@ -6,22 +6,22 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 073B9C282C6
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:24:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24B9AC282C3
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0C8421902
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:24:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD511218FF
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:24:42 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729550AbfAZDYg (ORCPT
+        id S1729616AbfAZDYl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 22:24:36 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:2676 "EHLO huawei.com"
+        Fri, 25 Jan 2019 22:24:41 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2775 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725924AbfAZDYf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 22:24:35 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 031FCFED8D87E2B5B827;
-        Sat, 26 Jan 2019 11:24:32 +0800 (CST)
+        id S1729556AbfAZDYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 22:24:39 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3E80DAE571645C409AD3;
+        Sat, 26 Jan 2019 11:24:37 +0800 (CST)
 Received: from linux-ioko.site (10.71.200.31) by
  DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
  14.3.408.0; Sat, 26 Jan 2019 11:24:26 +0800
@@ -31,9 +31,9 @@ CC:     <linux-rdma@vger.kernel.org>, <xavier.huwei@huawei.com>,
         <lijun_nudt@163.com>, <oulijun@huawei.com>,
         <liudongdong3@huawei.com>, <linuxarm@huawei.com>,
         <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
-Subject: [PATCH V3 rdma-next 1/3] RDMA/hns: Fix the Oops during rmmod or insmod ko when reset occurs
-Date:   Sat, 26 Jan 2019 11:59:21 +0800
-Message-ID: <1548475163-44098-2-git-send-email-xavier.huwei@huawei.com>
+Subject: [PATCH V3 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused by sending mailbox&CMQ during reset
+Date:   Sat, 26 Jan 2019 11:59:22 +0800
+Message-ID: <1548475163-44098-3-git-send-email-xavier.huwei@huawei.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548475163-44098-1-git-send-email-xavier.huwei@huawei.com>
 References: <1548475163-44098-1-git-send-email-xavier.huwei@huawei.com>
@@ -46,318 +46,311 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the reset process, the hns3 NIC driver notifies the RoCE driver
-to perform reset related processing by calling the .reset_notify()
-interface registered by the RoCE driver in hip08 SoC.
+On hi08 chip, There is a possibility of chip hanging and
+some errors when sending mailbox & doorbell during reset.
+We can fix it by prohibiting mailbox and doorbell during
+reset and reset occurred to ensure that hardware can work
+normally.
 
-In the current version, if a reset occurs simultaneously during
-the execution of rmmod or insmod ko, there may be Oops error as below:
-
-[  650.375307] Internal error: Oops: 86000007 [#1] PREEMPT SMP
-[  650.381223] Modules linked in: hns_roce(O) hns3(O) hclge(O) hnae3(O) [last unloaded: hns_roce_hw_v2]
-[  650.391279] CPU: 0 PID: 14 Comm: kworker/0:1 Tainted: G           O      4.19.0-ge00d540 #1
-[  650.399875] Hardware name: Huawei Technologies Co., Ltd.
-[  650.411393] Workqueue: events hclge_reset_service_task [hclge]
-[  650.417576] pstate: 60c00009 (nZCv daif +PAN +UAO)
-[  650.422618] pc : 0xffff00000100b0b8
-[  650.426282] lr : 0xffff00000100aea0
-[  650.429914] sp : ffff000009afbab0
-[  650.433388] x29: ffff000009afbab0 x28: 0000000000000800
-[  650.439012] x27: 0000000000007ff0 x26: ffff80002f90c004
-[  650.444599] x25: 00000000000007ff x24: ffff000008f97000
-[  650.450165] x23: ffff80003efee0a8 x22: 0000000000001000
-[  650.455730] x21: ffff80002f917ff0 x20: ffff8000286ea070
-[  650.461289] x19: 0000000000000800 x18: 0000000000000400
-[  650.466868] x17: 00000000c4d3225d x16: 00000000000021b8
-[  650.472423] x15: 0000000000000400 x14: 0000000000000400
-[  650.477990] x13: 0000000000000000 x12: ffff80003fac6e30
-[  650.483552] x11: 0000800036303000 x10: 0000000000000001
-[  650.489103] x9 : 0000000000000000 x8 : ffff80003016d000
-[  650.494662] x7 : 0000000000000000 x6 : 000000000000003f
-[  650.500218] x5 : 0000000000000040 x4 : 0000000000000000
-[  650.505783] x3 : 0000000000000004 x2 : 00000000000007ff
-[  650.511349] x1 : 0000000000000000 x0 : 0000000000000000
-[  650.517002] Process kworker/0:1 (pid: 14, stack limit = 0x00000000af8f0ad9)
-[  650.524164] Call trace:
-[  650.526814]  0xffff00000100b0b8
-[  650.530108]  0xffff00000100b3a0
-[  650.534336]  hns_roce_init+0x624/0xc88 [hns_roce]
-[  650.539196]  0xffff000001002df8
-[  650.542488]  0xffff000001006960
-[  650.546032]  hclge_notify_roce_client+0x74/0xe0 [hclge]
-[  650.551637]  hclge_reset_service_task+0xa58/0xbc0 [hclge]
-[  650.557479]  process_one_work+0x1e4/0x458
-[  650.561738]  worker_thread+0x40/0x450
-[  650.565662]  kthread+0x12c/0x130
-[  650.569247]  ret_from_fork+0x10/0x18
-[  650.573235] Code: bad PC value
-[  650.576663] ---[ end trace 97e6a2fe783337a8 ]---
-
-In the reset process, we will release the resources firstly,
-and after the hardware reset is completed, we will reapply
-resources and reconfigure the hardware.
-
-We can solve this problem by modifying both the NIC and the
-RoCE driver. We can modify the concurrent processing in the
-NIC driver to avoid calling the .reset_notify and
-.uninit_instance ops at the same time. And we need to modify
-the RoCE driver to record the reset stage and the driver's
-init/uninit state, and check the state in the .reset_notify,
-.init_instance. and uninit_instance functions to avoid NULL
-pointer operation.
-
-Fixes: cb7a94c9c808 ("RDMA/hns: Add reset process for RoCE in hip08")
+Fixes: a04ff739f2a9 ("RDMA/hns: Add command queue support for hip08 RoCE driver")
 Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
 ---
-v2->v3: Non change.
-v1->v2: Delete checking whether in the reset state and waiting
-	for the reset to complete in hns_roce_hw_v2_uninit_instance
-	function to address Jason's comments. The related link:
-	https://lkml.org/lkml/2019/1/11/1338
+v2->v3: Get rid of udelay operation to address jason's comments,
+	the related link as below:
+	https://patchwork.kernel.org/patch/10771917/
+v1->v2: Non change.
 ---
- drivers/infiniband/hw/hns/hns_roce_device.h |  21 ++++++
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 103 ++++++++++++++++++++++++----
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |   1 +
- 3 files changed, 112 insertions(+), 13 deletions(-)
+ drivers/infiniband/hw/hns/hns_roce_cmd.c    |  32 ++++--
+ drivers/infiniband/hw/hns/hns_roce_device.h |   7 ++
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 155 +++++++++++++++++++++++++++-
+ drivers/infiniband/hw/hns/hns_roce_hw_v2.h  |   2 +
+ 4 files changed, 183 insertions(+), 13 deletions(-)
 
+diff --git a/drivers/infiniband/hw/hns/hns_roce_cmd.c b/drivers/infiniband/hw/hns/hns_roce_cmd.c
+index a0ba19d..2acf946 100644
+--- a/drivers/infiniband/hw/hns/hns_roce_cmd.c
++++ b/drivers/infiniband/hw/hns/hns_roce_cmd.c
+@@ -176,17 +176,33 @@ int hns_roce_cmd_mbox(struct hns_roce_dev *hr_dev, u64 in_param, u64 out_param,
+ 		      unsigned long in_modifier, u8 op_modifier, u16 op,
+ 		      unsigned long timeout)
+ {
+-	if (hr_dev->is_reset)
+-		return 0;
++	int ret;
++
++	if (hr_dev->hw->rst_prc_mbox) {
++		ret = hr_dev->hw->rst_prc_mbox(hr_dev);
++		if (ret == CMD_RST_PRC_SUCCESS)
++			return 0;
++		else if (ret == CMD_RST_PRC_EBUSY)
++			return -EBUSY;
++	}
+ 
+ 	if (hr_dev->cmd.use_events)
+-		return hns_roce_cmd_mbox_wait(hr_dev, in_param, out_param,
+-					      in_modifier, op_modifier, op,
+-					      timeout);
++		ret = hns_roce_cmd_mbox_wait(hr_dev, in_param, out_param,
++					     in_modifier, op_modifier, op,
++					     timeout);
+ 	else
+-		return hns_roce_cmd_mbox_poll(hr_dev, in_param, out_param,
+-					      in_modifier, op_modifier, op,
+-					      timeout);
++		ret = hns_roce_cmd_mbox_poll(hr_dev, in_param, out_param,
++					     in_modifier, op_modifier, op,
++					     timeout);
++
++	if (ret == CMD_RST_PRC_EBUSY)
++		return -EBUSY;
++
++	if (ret && (hr_dev->hw->rst_prc_mbox &&
++		    hr_dev->hw->rst_prc_mbox(hr_dev) == CMD_RST_PRC_SUCCESS))
++		return 0;
++
++	return ret;
+ }
+ EXPORT_SYMBOL_GPL(hns_roce_cmd_mbox);
+ 
 diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-index 6fde434..0f3fe90 100644
+index 0f3fe90..65eb4bc 100644
 --- a/drivers/infiniband/hw/hns/hns_roce_device.h
 +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-@@ -217,6 +217,26 @@ enum {
- 	HNS_ROCE_DB_PER_PAGE = PAGE_SIZE / 4
+@@ -237,6 +237,12 @@ enum {
+ 	HNS_ROCE_RST_DIRECT_RETURN		= 0,
  };
  
-+enum hns_roce_reset_stage {
-+	HNS_ROCE_STATE_NON_RST,
-+	HNS_ROCE_STATE_RST_BEF_DOWN,
-+	HNS_ROCE_STATE_RST_DOWN,
-+	HNS_ROCE_STATE_RST_UNINIT,
-+	HNS_ROCE_STATE_RST_INIT,
-+	HNS_ROCE_STATE_RST_INITED,
-+};
-+
-+enum hns_roce_instance_state {
-+	HNS_ROCE_STATE_NON_INIT,
-+	HNS_ROCE_STATE_INIT,
-+	HNS_ROCE_STATE_INITED,
-+	HNS_ROCE_STATE_UNINIT,
-+};
-+
 +enum {
-+	HNS_ROCE_RST_DIRECT_RETURN		= 0,
++	CMD_RST_PRC_OTHERS,
++	CMD_RST_PRC_SUCCESS,
++	CMD_RST_PRC_EBUSY,
 +};
 +
  #define HNS_ROCE_CMD_SUCCESS			1
  
  #define HNS_ROCE_PORT_DOWN			0
-@@ -920,6 +940,7 @@ struct hns_roce_dev {
- 	spinlock_t		bt_cmd_lock;
- 	bool			active;
- 	bool			is_reset;
-+	unsigned long		reset_cnt;
- 	struct hns_roce_ib_iboe iboe;
- 
- 	struct list_head        pgdir_list;
+@@ -874,6 +880,7 @@ struct hns_roce_hw {
+ 			 u64 out_param, u32 in_modifier, u8 op_modifier, u16 op,
+ 			 u16 token, int event);
+ 	int (*chk_mbox)(struct hns_roce_dev *hr_dev, unsigned long timeout);
++	int (*rst_prc_mbox)(struct hns_roce_dev *hr_dev);
+ 	int (*set_gid)(struct hns_roce_dev *hr_dev, u8 port, int gid_index,
+ 		       const union ib_gid *gid, const struct ib_gid_attr *attr);
+ 	int (*set_mac)(struct hns_roce_dev *hr_dev, u8 phy_port, u8 *addr);
 diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index d63dd15..575a233 100644
+index 575a233..21f1010 100644
 --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
 +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -6021,6 +6021,7 @@ static int hns_roce_v2_post_srq_recv(struct ib_srq *ibsrq,
- static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
- 				  struct hnae3_handle *handle)
- {
-+	struct hns_roce_v2_priv *priv = hr_dev->priv;
- 	const struct pci_device_id *id;
- 	int i;
- 
-@@ -6051,10 +6052,13 @@ static int hns_roce_hw_v2_get_cfg(struct hns_roce_dev *hr_dev,
- 	hr_dev->cmd_mod = 1;
- 	hr_dev->loop_idc = 0;
- 
-+	hr_dev->reset_cnt = handle->ae_algo->ops->ae_dev_reset_cnt(handle);
-+	priv->handle = handle;
-+
- 	return 0;
- }
- 
--static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
-+static int __hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
- {
- 	struct hns_roce_dev *hr_dev;
- 	int ret;
-@@ -6071,7 +6075,6 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
- 
- 	hr_dev->pci_dev = handle->pdev;
- 	hr_dev->dev = &handle->pdev->dev;
--	handle->priv = hr_dev;
- 
- 	ret = hns_roce_hw_v2_get_cfg(hr_dev, handle);
- 	if (ret) {
-@@ -6085,6 +6088,8 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
- 		goto error_failed_get_cfg;
- 	}
- 
-+	handle->priv = hr_dev;
-+
- 	return 0;
- 
- error_failed_get_cfg:
-@@ -6096,7 +6101,7 @@ static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
+@@ -712,6 +712,126 @@ static int hns_roce_v2_post_recv(struct ib_qp *ibqp,
  	return ret;
  }
  
--static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
-+static void __hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
- 					   bool reset)
- {
- 	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
-@@ -6104,24 +6109,78 @@ static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
- 	if (!hr_dev)
- 		return;
- 
-+	handle->priv = NULL;
- 	hns_roce_exit(hr_dev);
- 	kfree(hr_dev->priv);
- 	ib_dealloc_device(&hr_dev->ib_dev);
- }
- 
-+static int hns_roce_hw_v2_init_instance(struct hnae3_handle *handle)
++static int hns_roce_v2_cmd_hw_reseted(struct hns_roce_dev *hr_dev,
++				      unsigned long instance_stage,
++				      unsigned long reset_stage)
 +{
++	/* When hardware reset has been completed once or more, we should stop
++	 * sending mailbox&cmq to hardware. If now in .init_instance()
++	 * function, we should exit with error. If now at HNAE3_INIT_CLIENT
++	 * stage of soft reset process, we should exit with error, and then
++	 * HNAE3_INIT_CLIENT related process can rollback the operation like
++	 * notifing hardware to free resources, HNAE3_INIT_CLIENT related
++	 * process will exit with error to notify NIC driver to reschedule soft
++	 * reset process once again.
++	 */
++	hr_dev->is_reset = true;
++
++	if (reset_stage == HNS_ROCE_STATE_RST_INIT ||
++	    instance_stage == HNS_ROCE_STATE_INIT)
++		return CMD_RST_PRC_EBUSY;
++
++	return CMD_RST_PRC_SUCCESS;
++}
++
++static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
++					unsigned long instance_stage,
++					unsigned long reset_stage)
++{
++	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
++	struct hnae3_handle *handle = priv->handle;
 +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
-+	struct device *dev = &handle->pdev->dev;
-+	int ret;
++	unsigned long end;
 +
-+	handle->rinfo.instance_state = HNS_ROCE_STATE_INIT;
++	/* When hardware reset is detected, we should stop sending mailbox&cmq
++	 * to hardware, and wait until hardware reset finished. If now
++	 * in .init_instance() function, we should exit with error. If now at
++	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
++	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
++	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
++	 * related process will exit with error to notify NIC driver to
++	 * reschedule soft reset process once again.
++	 */
++	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
++	while (time_before(jiffies, end))
++		if (!ops->get_hw_reset_stat(handle))
++			break;
 +
-+	if (ops->ae_dev_resetting(handle) || ops->get_hw_reset_stat(handle)) {
-+		handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
-+		goto reset_chk_err;
-+	}
++	if (!ops->get_hw_reset_stat(handle))
++		hr_dev->is_reset = true;
++	else
++		dev_warn(hr_dev->dev, "hw_resetting!\n");
 +
-+	ret = __hns_roce_hw_v2_init_instance(handle);
-+	if (ret) {
-+		handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
-+		dev_err(dev, "RoCE instance init failed! ret = %d\n", ret);
-+		if (ops->ae_dev_resetting(handle) ||
-+		    ops->get_hw_reset_stat(handle))
-+			goto reset_chk_err;
-+		else
-+			return ret;
-+	}
++	if (!hr_dev->is_reset || reset_stage == HNS_ROCE_STATE_RST_INIT ||
++	    instance_stage == HNS_ROCE_STATE_INIT)
++		return CMD_RST_PRC_EBUSY;
 +
-+	handle->rinfo.instance_state = HNS_ROCE_STATE_INITED;
++	return CMD_RST_PRC_SUCCESS;
++}
 +
++static int hns_roce_v2_cmd_sw_resetting(struct hns_roce_dev *hr_dev)
++{
++	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
++	struct hnae3_handle *handle = priv->handle;
++	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
++	unsigned long end;
++
++	/* When software reset is detected at .init_instance() function, we
++	 * should stop sending mailbox&cmq to hardware, and
++	 * wait until hardware reset finished, we should exit with error.
++	 */
++	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
++	while (time_before(jiffies, end))
++		if (ops->ae_dev_reset_cnt(handle) != hr_dev->reset_cnt)
++			break;
++
++	if (ops->ae_dev_reset_cnt(handle) != hr_dev->reset_cnt)
++		hr_dev->is_reset = true;
++	else
++		dev_warn(hr_dev->dev, "reset_cnt no change!\n");
++
++	return CMD_RST_PRC_EBUSY;
++}
++
++static int hns_roce_v2_rst_process_cmd(struct hns_roce_dev *hr_dev)
++{
++	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
++	struct hnae3_handle *handle = priv->handle;
++	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
++	unsigned long instance_stage;	/* the current instance stage */
++	unsigned long reset_stage;	/* the current reset stage */
++	unsigned long reset_cnt;
++	bool sw_resetting;
++	bool hw_resetting;
++
++	if (hr_dev->is_reset)
++		return CMD_RST_PRC_SUCCESS;
++
++	/* Get information about reset from NIC driver or RoCE driver itself,
++	 * the meaning of the following variables from NIC driver are described
++	 * as below:
++	 * reset_cnt -- The count value of completed hardware reset.
++	 * hw_resetting -- Whether hardware device is resetting now.
++	 * sw_resetting -- Whether NIC's software reset process is running now.
++	 */
++	instance_stage = handle->rinfo.instance_state;
++	reset_stage = handle->rinfo.reset_state;
++	reset_cnt = ops->ae_dev_reset_cnt(handle);
++	hw_resetting = ops->get_hw_reset_stat(handle);
++	sw_resetting = ops->ae_dev_resetting(handle);
++
++	if (reset_cnt != hr_dev->reset_cnt)
++		return hns_roce_v2_cmd_hw_reseted(hr_dev, instance_stage,
++						  reset_stage);
++	else if (hw_resetting)
++		return hns_roce_v2_cmd_hw_resetting(hr_dev, instance_stage,
++						    reset_stage);
++	else if (sw_resetting && instance_stage == HNS_ROCE_STATE_INIT)
++		return hns_roce_v2_cmd_sw_resetting(hr_dev);
 +
 +	return 0;
-+
-+reset_chk_err:
-+	dev_err(dev, "Device is busy in resetting state.\n"
-+		     "please retry later.\n");
-+
-+	return -EBUSY;
 +}
 +
-+static void hns_roce_hw_v2_uninit_instance(struct hnae3_handle *handle,
-+					   bool reset)
-+{
-+	if (handle->rinfo.instance_state != HNS_ROCE_STATE_INITED)
-+		return;
-+
-+	handle->rinfo.instance_state = HNS_ROCE_STATE_UNINIT;
-+
-+	__hns_roce_hw_v2_uninit_instance(handle, reset);
-+
-+	handle->rinfo.instance_state = HNS_ROCE_STATE_NON_INIT;
-+}
- static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
+ static int hns_roce_cmq_space(struct hns_roce_v2_cmq_ring *ring)
  {
--	struct hns_roce_dev *hr_dev = (struct hns_roce_dev *)handle->priv;
-+	struct hns_roce_dev *hr_dev;
- 	struct ib_event event;
- 
--	if (!hr_dev) {
--		dev_err(&handle->pdev->dev,
--			"Input parameter handle->priv is NULL!\n");
--		return -EINVAL;
-+	if (handle->rinfo.instance_state != HNS_ROCE_STATE_INITED) {
-+		set_bit(HNS_ROCE_RST_DIRECT_RETURN, &handle->rinfo.state);
-+		return 0;
- 	}
- 
-+	handle->rinfo.reset_state = HNS_ROCE_STATE_RST_DOWN;
-+	clear_bit(HNS_ROCE_RST_DIRECT_RETURN, &handle->rinfo.state);
-+
-+	hr_dev = (struct hns_roce_dev *)handle->priv;
-+	if (!hr_dev)
-+		return 0;
-+
- 	hr_dev->active = false;
--	hr_dev->is_reset = true;
- 
- 	event.event = IB_EVENT_DEVICE_FATAL;
- 	event.device = &hr_dev->ib_dev;
-@@ -6133,17 +6192,29 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
- 
- static int hns_roce_hw_v2_reset_notify_init(struct hnae3_handle *handle)
- {
-+	struct device *dev = &handle->pdev->dev;
- 	int ret;
- 
--	ret = hns_roce_hw_v2_init_instance(handle);
-+	if (test_and_clear_bit(HNS_ROCE_RST_DIRECT_RETURN,
-+			       &handle->rinfo.state)) {
-+		handle->rinfo.reset_state = HNS_ROCE_STATE_RST_INITED;
-+		return 0;
-+	}
-+
-+	handle->rinfo.reset_state = HNS_ROCE_STATE_RST_INIT;
-+
-+	dev_info(&handle->pdev->dev, "In reset process RoCE client reinit.\n");
-+	ret = __hns_roce_hw_v2_init_instance(handle);
- 	if (ret) {
- 		/* when reset notify type is HNAE3_INIT_CLIENT In reset notify
- 		 * callback function, RoCE Engine reinitialize. If RoCE reinit
- 		 * failed, we should inform NIC driver.
- 		 */
- 		handle->priv = NULL;
--		dev_err(&handle->pdev->dev,
--			"In reset process RoCE reinit failed %d.\n", ret);
-+		dev_err(dev, "In reset process RoCE reinit failed %d.\n", ret);
-+	} else {
-+		handle->rinfo.reset_state = HNS_ROCE_STATE_RST_INITED;
-+		dev_info(dev, "Reset done, RoCE client reinit finished.\n");
- 	}
- 
- 	return ret;
-@@ -6151,8 +6222,14 @@ static int hns_roce_hw_v2_reset_notify_init(struct hnae3_handle *handle)
- 
- static int hns_roce_hw_v2_reset_notify_uninit(struct hnae3_handle *handle)
- {
-+	if (test_bit(HNS_ROCE_RST_DIRECT_RETURN, &handle->rinfo.state))
-+		return 0;
-+
-+	handle->rinfo.reset_state = HNS_ROCE_STATE_RST_UNINIT;
-+	dev_info(&handle->pdev->dev, "In reset process RoCE client uninit.\n");
- 	msleep(100);
--	hns_roce_hw_v2_uninit_instance(handle, false);
-+	__hns_roce_hw_v2_uninit_instance(handle, false);
-+
- 	return 0;
+ 	int ntu = ring->next_to_use;
+@@ -892,8 +1012,8 @@ static int hns_roce_cmq_csq_clean(struct hns_roce_dev *hr_dev)
+ 	return clean;
  }
  
+-static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+-			     struct hns_roce_cmq_desc *desc, int num)
++static int __hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
++			       struct hns_roce_cmq_desc *desc, int num)
+ {
+ 	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
+ 	struct hns_roce_v2_cmq_ring *csq = &priv->cmq.csq;
+@@ -905,9 +1025,6 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+ 	int ret = 0;
+ 	int ntc;
+ 
+-	if (hr_dev->is_reset)
+-		return 0;
+-
+ 	spin_lock_bh(&csq->lock);
+ 
+ 	if (num > hns_roce_cmq_space(csq)) {
+@@ -982,6 +1099,30 @@ static int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
+ 	return ret;
+ }
+ 
++int hns_roce_cmq_send(struct hns_roce_dev *hr_dev,
++			     struct hns_roce_cmq_desc *desc, int num)
++{
++	int retval;
++	int ret;
++
++	ret = hns_roce_v2_rst_process_cmd(hr_dev);
++	if (ret == CMD_RST_PRC_SUCCESS)
++		return 0;
++	if (ret == CMD_RST_PRC_EBUSY)
++		return ret;
++
++	ret = __hns_roce_cmq_send(hr_dev, desc, num);
++	if (ret) {
++		retval = hns_roce_v2_rst_process_cmd(hr_dev);
++		if (retval == CMD_RST_PRC_SUCCESS)
++			return 0;
++		else if (retval == CMD_RST_PRC_EBUSY)
++			return retval;
++	}
++
++	return ret;
++}
++
+ static int hns_roce_cmq_query_hw_info(struct hns_roce_dev *hr_dev)
+ {
+ 	struct hns_roce_query_version *resp;
+@@ -1857,6 +1998,9 @@ static int hns_roce_v2_chk_mbox(struct hns_roce_dev *hr_dev,
+ 
+ 	status = hns_roce_v2_cmd_complete(hr_dev);
+ 	if (status != 0x1) {
++		if (status == CMD_RST_PRC_EBUSY)
++			return status;
++
+ 		dev_err(dev, "mailbox status 0x%x!\n", status);
+ 		return -EBUSY;
+ 	}
+@@ -5978,6 +6122,7 @@ static int hns_roce_v2_post_srq_recv(struct ib_srq *ibsrq,
+ 	.hw_exit = hns_roce_v2_exit,
+ 	.post_mbox = hns_roce_v2_post_mbox,
+ 	.chk_mbox = hns_roce_v2_chk_mbox,
++	.rst_prc_mbox = hns_roce_v2_rst_process_cmd,
+ 	.set_gid = hns_roce_v2_set_gid,
+ 	.set_mac = hns_roce_v2_set_mac,
+ 	.write_mtpt = hns_roce_v2_write_mtpt,
 diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-index 242eeae..938d36a 100644
+index 938d36a..f22094e 100644
 --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
 +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-@@ -1602,6 +1602,7 @@ struct hns_roce_link_table_entry {
- #define HNS_ROCE_LINK_TABLE_NXT_PTR_M GENMASK(31, 20)
+@@ -96,6 +96,8 @@
+ #define HNS_ROCE_V2_UC_RC_SGE_NUM_IN_WQE	2
+ #define HNS_ROCE_V2_RSV_QPS			8
  
- struct hns_roce_v2_priv {
-+	struct hnae3_handle *handle;
- 	struct hns_roce_v2_cmq cmq;
- 	struct hns_roce_link_table tsq;
- 	struct hns_roce_link_table tpq;
++#define HNS_ROCE_V2_HW_RST_TIMEOUT             1000
++
+ #define HNS_ROCE_CONTEXT_HOP_NUM		1
+ #define HNS_ROCE_SCCC_HOP_NUM			1
+ #define HNS_ROCE_MTT_HOP_NUM			1
 -- 
 1.9.1
 
