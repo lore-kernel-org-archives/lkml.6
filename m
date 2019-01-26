@@ -2,105 +2,373 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91FD6C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF92CC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:42:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A052214D8
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:25:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="pxlUfJQs"
+	by mail.kernel.org (Postfix) with ESMTP id A593B2184C
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548535344;
+	bh=V+K2tTS5n6G8J+ys+JczNogQmEH54aDiUpvRlq8CNSs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=l3EkPKZaVVAY3TuURaJqh8zQs2UZbxY6P6S1snbMB7Af0FfVuS5v5XOKB9P+wdEo9
+	 JguV5v4oMx/3IheMzHKgIEsINDbR0tUDtIqlW29wuHDHvxY9iChWurFyVxZhzOoY0L
+	 N0T4WuGaiae3LkGswUwNphRngKH+zADqQdIMMZts=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726343AbfAZUZj (ORCPT
+        id S1726361AbfAZUmC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 15:25:39 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:38418 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfAZUZi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 15:25:38 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=hazEsmpqbDvFZ2wfJl1VeB9kYj/SI5azh2E2e6QjFsU=; b=pxlUfJQsE54HL/pI4wH4T/6dp
-        nD/t5X46kcJ1ERAl4cGeyJMLeWHM3sKLdthI6G8kV1LEcqtw1ImPBairXYMjbp2Wg6ZSo2JVCQXb8
-        G0hoJv056FSlT8/5fY7K5BWJriYfHkO7TKOH+CCUxQ+3K4kTSCVHNWjNblYiq/QPMZ0QEahKqlB2L
-        FWjHP0c2gWxLyGO09VJs3//qo0Mp8FPex/gumUpsZWIOyVXAU3+DbxnRl01lfWDRLMGtYCAc4GIqJ
-        g9us0pNzRUDznCquW150VjKlVO3pZzDW2lxZ/DNqYUx7dzFpSrBtT8KdXiDDfzWcDML/VkEyIX2WN
-        p85iXAtHQ==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gnUWH-0007Gm-CK; Sat, 26 Jan 2019 20:25:37 +0000
-Date:   Sat, 26 Jan 2019 12:25:34 -0800
-From:   Darren Hart <dvhart@infradead.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH] futex: no need to check return value of debugfs_create
- functions
-Message-ID: <20190126202534.GC7439@wrath>
-References: <20190122152151.16139-40-gregkh@linuxfoundation.org>
+        Sat, 26 Jan 2019 15:42:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41920 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726180AbfAZUmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 15:42:01 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 438882133D;
+        Sat, 26 Jan 2019 20:41:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548535320;
+        bh=V+K2tTS5n6G8J+ys+JczNogQmEH54aDiUpvRlq8CNSs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=OCpBoZVsRh5SypiX+9PLQiIBmC5mLE62GnXecvwK8wEVqPDciB4kvq7PgDUDmqhYy
+         Fhdnwiv3JaKyvKCcVNB+QteTAlbc8nstJZYdymyXMP1WlTUk7tNa8I5WMynp8F0u7I
+         CcbZRxztPvo4VGtlXJPLijN0Kp1DBra5qXX6o3+c=
+Date:   Sat, 26 Jan 2019 20:41:55 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Cc:     Alexandru Ardelean <ardeleanalex@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        alexandru.ardelean@analog.com, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2] iio:dac:ti-dac7612: Add driver for Texas Instruments
+ DAC7612
+Message-ID: <20190126204155.6fbb9512@archlinux>
+In-Reply-To: <20190125100055.13836-1-ricardo@ribalda.com>
+References: <20190125100055.13836-1-ricardo@ribalda.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190122152151.16139-40-gregkh@linuxfoundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 04:21:39PM +0100, Greg Kroah-Hartman wrote:
-> When calling debugfs functions, there is no need to ever check the
-> return value.  The function can work or not, but the code logic should
-> never do something different based on this.
+On Fri, 25 Jan 2019 11:00:55 +0100
+Ricardo Ribalda Delgado <ricardo@ribalda.com> wrote:
+
+> It is a driver for Texas Instruments Dual, 12-Bit Serial Input
+> Digital-to-Analog Converter.
 > 
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@redhat.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Darren Hart <dvhart@infradead.org>
-> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Datasheet of this chip:
+> http://www.ti.com/lit/ds/sbas106/sbas106.pdf
+> 
+> Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Hi Ricardo,
 
-As documented, and futexes can't be modules, so no need to check for the dentry.
+Various bits and pieces inline.
 
-Reviewed-by: Darren Hart (VMware) <dvhart@infradead.org>
-
-
+Jonathan
 
 > ---
->  kernel/futex.c | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
 > 
-> diff --git a/kernel/futex.c b/kernel/futex.c
-> index be3bff2315ff..c2ed57b084a4 100644
-> --- a/kernel/futex.c
-> +++ b/kernel/futex.c
-> @@ -321,12 +321,8 @@ static int __init fail_futex_debugfs(void)
->  	if (IS_ERR(dir))
->  		return PTR_ERR(dir);
+> v2: Fix range
+>  MAINTAINERS                  |   6 ++
+>  drivers/iio/dac/Kconfig      |  10 +++
+>  drivers/iio/dac/Makefile     |   1 +
+>  drivers/iio/dac/ti-dac7612.c | 169 +++++++++++++++++++++++++++++++++++
+>  4 files changed, 186 insertions(+)
+>  create mode 100644 drivers/iio/dac/ti-dac7612.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index d039f66a5cef..30ba5435906b 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -14877,6 +14877,12 @@ F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>  F:	drivers/clk/keystone/sci-clk.c
+>  F:	drivers/reset/reset-ti-sci.c
 >  
-> -	if (!debugfs_create_bool("ignore-private", mode, dir,
-> -				 &fail_futex.ignore_private)) {
-> -		debugfs_remove_recursive(dir);
-> -		return -ENOMEM;
-> -	}
-> -
-> +	debugfs_create_bool("ignore-private", mode, dir,
-> +			    &fail_futex.ignore_private);
->  	return 0;
->  }
+> +Texas Instruments' DAC7612 DAC Driver
+> +M:	Ricardo Ribalda <ricardo@ribalda.com>
+> +L:	linux-iio@vger.kernel.org
+> +S:	Supported
+> +F:	drivers/iio/dac/ti-dac7612.c
+> +
+>  THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+>  M:	Hans Verkuil <hverkuil@xs4all.nl>
+>  L:	linux-media@vger.kernel.org
+> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> index f28daf67db6a..fbef9107acad 100644
+> --- a/drivers/iio/dac/Kconfig
+> +++ b/drivers/iio/dac/Kconfig
+> @@ -375,6 +375,16 @@ config TI_DAC7311
 >  
-> -- 
-> 2.20.1
-> 
-> 
+>  	  If compiled as a module, it will be called ti-dac7311.
+>  
+> +config TI_DAC7612
+> +	tristate "Texas Instruments 12-bit 2-channel DAC driver"
+> +	depends on SPI_MASTER && GPIOLIB
+> +	help
+> +	  Driver for the Texas Instruments DAC7612, DAC7612U, DAC7612UB
+> +	  The driver hand drive the load pin automatically, otherwise
+> +	  it needs to be toggled manually.
 
--- 
-Darren Hart
-VMware Open Source Technology Center
+Given the driver doesn't load without that pin, do we need to give
+the otherwise?  I would drop this comment entirely.
+
+> +
+> +	  If compiled as a module, it will be called ti-dac7612.
+> +
+>  config VF610_DAC
+>  	tristate "Vybrid vf610 DAC driver"
+>  	depends on OF
+> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+> index f0a37c93de8e..1369fa1d2f0e 100644
+> --- a/drivers/iio/dac/Makefile
+> +++ b/drivers/iio/dac/Makefile
+> @@ -41,4 +41,5 @@ obj-$(CONFIG_STM32_DAC) += stm32-dac.o
+>  obj-$(CONFIG_TI_DAC082S085) += ti-dac082s085.o
+>  obj-$(CONFIG_TI_DAC5571) += ti-dac5571.o
+>  obj-$(CONFIG_TI_DAC7311) += ti-dac7311.o
+> +obj-$(CONFIG_TI_DAC7612) += ti-dac7612.o
+>  obj-$(CONFIG_VF610_DAC) += vf610_dac.o
+> diff --git a/drivers/iio/dac/ti-dac7612.c b/drivers/iio/dac/ti-dac7612.c
+> new file mode 100644
+> index 000000000000..278406f69e0c
+> --- /dev/null
+> +++ b/drivers/iio/dac/ti-dac7612.c
+> @@ -0,0 +1,169 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * DAC7612 Dual, 12-Bit Serial input Digital-to-Analog Converter
+> + *
+> + * Copyright 2019 Qtechnology A/S
+> + * 2019 Ricardo Ribalda <ricardo@ribalda.com>
+> + *
+> + * Licensed under the GPL-2.
+> + */
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/spi/spi.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/iio/iio.h>
+> +
+> +#define NUM_CHANS 2
+> +#define RESOLUTION 12
+Please prefix any naming that is generic like this with
+the driver name.  Avoids potential redefined clashes in the future.
+Where they are 'real numbers' rather than Magic numbers I would
+generally look at using the actual number rather than a define.
+
+> +
+> +struct dac7612 {
+> +	struct spi_device *spi;
+> +	struct gpio_desc *nld;
+> +	uint16_t cache[NUM_CHANS];
+> +};
+> +
+> +static int dac7612_cmd_single(struct dac7612 *priv, int channel, u16 val)
+> +{
+> +	uint8_t buffer[2];
+> +	int ret;
+> +
+> +	if (channel >= NUM_CHANS)
+Is there any way this can happen?  Seems a little over paranoid.
+> +		return -EINVAL;
+> +
+> +	buffer[0] = BIT(5) | (channel << 4) | (val >> 8);
+BIT(5) is a magic number so should probably come from a define
+as should the shifts of the other parts.
+
+> +	buffer[1] = val & 0xff;
+> +
+> +	priv->cache[channel] = val;
+> +
+> +	ret = spi_write(priv->spi, buffer, sizeof(buffer));
+
+spi write can potentially do a dma transfer so it needs
+a dma safe buffer.  This one isn't as it is on the stack.
+Given it is a moderately fast path, best option is to put the
+buffer in priv and use the __cacheline_aligned trick (plus the
+fact private data is already cacheline aligned) to get it into
+it's own cacheline.  Wofram Sang's OSS talk on i2c dma is a good
+tutorial on this and is on youtube if you have time.
+
+https://www.youtube.com/watch?v=JDwaMClvV-s
+
+> +	if (ret)
+> +		return ret;
+> +
+> +	gpiod_set_value(priv->nld, 0);
+> +	gpiod_set_value(priv->nld, 1);
+> +
+> +	return 0;
+> +}
+> +
+> +#define dac7612_CHANNEL(chan, name) {				\
+> +	.type = IIO_VOLTAGE,					\
+> +	.channel = (chan),					\
+> +	.address = (chan),					\
+Not used, so don't set it.
+
+> +	.indexed = true,					\
+These are bit fields, so whilst this works, = 1 is more conventional.
+
+> +	.output = true,						\
+> +	.datasheet_name = name,					\
+> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
+> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
+> +	.scan_type = {						\
+> +			.sign = 'u',				\
+> +			.realbits = RESOLUTION,			\
+> +			.storagebits = RESOLUTION,		\
+No need to provide scan_type as we don't have buffered output in
+mainline.  Also this would be wrong as storagebits needs to be
+8/16/32/64 etc.
+
+Would prefer a straight forward value like RESOLUTION was just
+expressed as a number.
+
+> +	},							\
+> +}
+> +
+> +static const struct iio_chan_spec dac7612_channels[] = {
+> +	dac7612_CHANNEL(0, "OUTA"),
+> +	dac7612_CHANNEL(1, "OUTB"),
+> +};
+> +
+> +static int dac7612_read_raw(struct iio_dev *iio_dev,
+> +			    const struct iio_chan_spec *chan,
+> +			    int *val, int *val2, long mask)
+> +{
+> +	struct dac7612 *priv;
+> +
+> +	switch (mask) {
+> +	case IIO_CHAN_INFO_RAW:
+> +		priv = iio_priv(iio_dev);
+> +		*val = priv->cache[chan->channel];
+> +		return IIO_VAL_INT;
+> +
+> +	case IIO_CHAN_INFO_SCALE:
+> +		*val = 1000000;
+
+This makes me wonder.  The units of voltage are millivolts, so is
+raw value * 1000000 = value in mv?
+
+That would make this a very high voltage device.
+See Documentation/ABI/testing/sysfs-bus-iio* for
+IIO ABI documentation.
+
+> +		return IIO_VAL_INT_PLUS_MICRO;
+> +
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +}
+> +
+> +static int dac7612_write_raw(struct iio_dev *iio_dev,
+> +			     const struct iio_chan_spec *chan,
+> +			     int val, int val2, long mask)
+> +{
+> +	struct dac7612 *priv;
+
+struct dac7612 *priv = iio_priv(iio_dev);
+
+(it's just macro magic to get the right point so normally considered
+fine to be called like this).
+
+
+> +	int ret;
+> +
+> +	if (mask != IIO_CHAN_INFO_RAW)
+> +		return -EINVAL;
+> +
+> +	if ((val >= BIT(RESOLUTION)) || val < 0)
+> +		return -EINVAL;
+
+As not providing a write_fmt function (which is fine)
+should also sanity check that val2 is 0.
+
+> +
+> +	priv = iio_priv(iio_dev);
+> +	if (val == priv->cache[chan->channel])
+> +		return 0;
+> +
+> +	mutex_lock(&iio_dev->mlock);
+> +	ret = dac7612_cmd_single(priv, chan->channel, val);
+> +	mutex_unlock(&iio_dev->mlock);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct iio_info dac7612_info = {
+> +	.read_raw = dac7612_read_raw,
+> +	.write_raw = dac7612_write_raw,
+> +};
+> +
+> +static int dac7612_probe(struct spi_device *spi)
+> +{
+> +	struct iio_dev *iio_dev;
+> +	struct dac7612 *priv;
+> +	int i;
+> +	int ret;
+> +
+> +	iio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*priv));
+> +	if (!iio_dev)
+> +		return -ENOMEM;
+> +
+> +	priv = iio_priv(iio_dev);
+> +	priv->nld = devm_gpiod_get_optional(&spi->dev, "nLD", GPIOD_OUT_HIGH);
+
+This isn't a particularly standard gpio name.  Hence this driver definitely
+needs a DT binding doc (remember to cc dt list and maintainers).  Also
+this should almost certainly be prefixed with a vendor prefix.
+
+It's also not the name I'm seeing on the datasheet, so needs some justifying
+comments.
+
+> +	if (IS_ERR(priv->nld))
+> +		return PTR_ERR(priv->nld);
+> +	priv->spi = spi;
+> +	spi_set_drvdata(spi, iio_dev);
+> +	iio_dev->dev.parent = &spi->dev;
+> +	iio_dev->info = &dac7612_info;
+> +	iio_dev->modes = INDIO_DIRECT_MODE;
+> +	iio_dev->channels = dac7612_channels;
+> +	iio_dev->num_channels = NUM_CHANS;
+ARRAY_SIZE.
+> +	iio_dev->name = spi_get_device_id(spi)->name;
+> +
+> +	for (i = 0; i < NUM_CHANS; i++) {
+ARRAY_SIZE
+> +		ret = dac7612_cmd_single(priv, i, 0);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	return devm_iio_device_register(&spi->dev, iio_dev);
+> +}
+> +
+> +static const struct spi_device_id dac7612_id[] = {
+> +	{"ti-dac7612"},
+> +	{}
+> +};
+> +MODULE_DEVICE_TABLE(spi, dac7612_id);
+> +
+> +static struct spi_driver dac7612_driver = {
+> +	.driver = {
+> +		   .name = "ti-dac7612",
+> +		   },
+> +	.probe = dac7612_probe,
+> +	.id_table = dac7612_id,
+> +};
+> +module_spi_driver(dac7612_driver);
+> +
+> +MODULE_AUTHOR("Ricardo Ribalda <ricardo@ribalda.com>");
+> +MODULE_DESCRIPTION("Texas Instruments DAC7612 DAC driver");
+> +MODULE_LICENSE("GPL v2");
+
