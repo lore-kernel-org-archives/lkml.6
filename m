@@ -4,45 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DAB7C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:02:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D521C282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:02:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8FC9217D7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:02:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 68867217D7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:02:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729681AbfAZKCG (ORCPT
+        id S1729697AbfAZKCn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 05:02:06 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:41673 "EHLO
+        Sat, 26 Jan 2019 05:02:43 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:49757 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfAZKCG (ORCPT
+        with ESMTP id S1726143AbfAZKCn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 05:02:06 -0500
+        Sat, 26 Jan 2019 05:02:43 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QA1t74510903
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QA2X94510947
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 26 Jan 2019 02:01:55 -0800
+        Sat, 26 Jan 2019 02:02:33 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QA1thh510900;
-        Sat, 26 Jan 2019 02:01:55 -0800
-Date:   Sat, 26 Jan 2019 02:01:55 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QA2Xpa510944;
+        Sat, 26 Jan 2019 02:02:33 -0800
+Date:   Sat, 26 Jan 2019 02:02:33 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Davidlohr Bueso <tipbot@zytor.com>
-Message-ID: <tip-f3acb3a8a2081344801974ac5ec8e1b0d6f0ef36@git.kernel.org>
-Cc:     acme@redhat.com, dbueso@suse.de, namhyung@kernel.org,
-        dave@stgolabs.net, jolsa@kernel.org, mingo@kernel.org,
-        linux-kernel@vger.kernel.org, hpa@zytor.com, tglx@linutronix.de
-Reply-To: dave@stgolabs.net, namhyung@kernel.org, acme@redhat.com,
-          dbueso@suse.de, hpa@zytor.com, linux-kernel@vger.kernel.org,
-          mingo@kernel.org, jolsa@kernel.org, tglx@linutronix.de
-In-Reply-To: <20181206191819.30182-3-dave@stgolabs.net>
-References: <20181206191819.30182-3-dave@stgolabs.net>
+Message-ID: <tip-55ecd6310f9fe48cf7e435be408862da1e0e6baa@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, dave@stgolabs.net, acme@redhat.com,
+        mingo@kernel.org, dbueso@suse.de, jolsa@kernel.org,
+        namhyung@kernel.org, tglx@linutronix.de, hpa@zytor.com
+Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
+          dave@stgolabs.net, acme@redhat.com, tglx@linutronix.de,
+          hpa@zytor.com, namhyung@kernel.org, jolsa@kernel.org,
+          dbueso@suse.de
+In-Reply-To: <20181206191819.30182-4-dave@stgolabs.net>
+References: <20181206191819.30182-4-dave@stgolabs.net>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf machine: Use cached rbtrees
-Git-Commit-ID: f3acb3a8a2081344801974ac5ec8e1b0d6f0ef36
+Subject: [tip:perf/core] perf callchain: Use cached rbtrees
+Git-Commit-ID: 55ecd6310f9fe48cf7e435be408862da1e0e6baa
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -56,143 +57,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  f3acb3a8a2081344801974ac5ec8e1b0d6f0ef36
-Gitweb:     https://git.kernel.org/tip/f3acb3a8a2081344801974ac5ec8e1b0d6f0ef36
+Commit-ID:  55ecd6310f9fe48cf7e435be408862da1e0e6baa
+Gitweb:     https://git.kernel.org/tip/55ecd6310f9fe48cf7e435be408862da1e0e6baa
 Author:     Davidlohr Bueso <dave@stgolabs.net>
-AuthorDate: Thu, 6 Dec 2018 11:18:14 -0800
+AuthorDate: Thu, 6 Dec 2018 11:18:15 -0800
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Fri, 25 Jan 2019 15:12:09 +0100
 
-perf machine: Use cached rbtrees
+perf callchain: Use cached rbtrees
 
 At the cost of an extra pointer, we can avoid the O(logN) cost of
 finding the first element in the tree (smallest node), which is
-something required for nearly every operation dealing with
-machine->guests and threads->entries.
-
-The conversion is straightforward, however, it's worth noticing that the
-rb_erase_init() calls have been replaced by rb_erase_cached() which has
-no _init() flavor, however, the node is explicitly cleared next anyway,
-which was redundant until now.
+something required for nearly every in/srcline callchain node deletion
+(in/srcline__tree_delete()).
 
 Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
 Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: http://lkml.kernel.org/r/20181206191819.30182-3-dave@stgolabs.net
+Link: http://lkml.kernel.org/r/20181206191819.30182-4-dave@stgolabs.net
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/builtin-report.c |  3 ++-
- tools/perf/util/build-id.c  | 12 ++++++----
- tools/perf/util/machine.c   | 53 ++++++++++++++++++++++++++-------------------
- tools/perf/util/machine.h   | 12 +++++-----
- tools/perf/util/rb_resort.h |  6 ++---
- 5 files changed, 50 insertions(+), 36 deletions(-)
+ tools/perf/util/dso.c     |  4 ++--
+ tools/perf/util/dso.h     |  4 ++--
+ tools/perf/util/srcline.c | 43 +++++++++++++++++++++++++------------------
+ tools/perf/util/srcline.h | 13 +++++++------
+ 4 files changed, 36 insertions(+), 28 deletions(-)
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index 794a0de5ac1d..c9ceaf88759c 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -753,7 +753,8 @@ static int tasks_print(struct report *rep, FILE *fp)
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		struct threads *threads = &machine->threads[i];
+diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+index cbe6e7dc6af3..9ec4b2e6d4ac 100644
+--- a/tools/perf/util/dso.c
++++ b/tools/perf/util/dso.c
+@@ -1199,8 +1199,8 @@ struct dso *dso__new(const char *name)
+ 		dso__set_short_name(dso, dso->name, false);
+ 		dso->symbols = dso->symbol_names = RB_ROOT;
+ 		dso->data.cache = RB_ROOT;
+-		dso->inlined_nodes = RB_ROOT;
+-		dso->srclines = RB_ROOT;
++		dso->inlined_nodes = RB_ROOT_CACHED;
++		dso->srclines = RB_ROOT_CACHED;
+ 		dso->data.fd = -1;
+ 		dso->data.status = DSO_DATA_STATUS_UNKNOWN;
+ 		dso->symtab_type = DSO_BINARY_TYPE__NOT_FOUND;
+diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+index 2de54c0b26b2..40edfb375a8b 100644
+--- a/tools/perf/util/dso.h
++++ b/tools/perf/util/dso.h
+@@ -143,8 +143,8 @@ struct dso {
+ 	struct rb_root	 *root;		/* root of rbtree that rb_node is in */
+ 	struct rb_root	 symbols;
+ 	struct rb_root	 symbol_names;
+-	struct rb_root	 inlined_nodes;
+-	struct rb_root	 srclines;
++	struct rb_root_cached inlined_nodes;
++	struct rb_root_cached srclines;
+ 	struct {
+ 		u64		addr;
+ 		struct symbol	*symbol;
+diff --git a/tools/perf/util/srcline.c b/tools/perf/util/srcline.c
+index dc86597d0cc4..00f215580b5a 100644
+--- a/tools/perf/util/srcline.c
++++ b/tools/perf/util/srcline.c
+@@ -594,11 +594,12 @@ struct srcline_node {
+ 	struct rb_node		rb_node;
+ };
  
--		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
-+		for (nd = rb_first_cached(&threads->entries); nd;
-+		     nd = rb_next(nd)) {
- 			task = tasks + itask++;
- 
- 			task->thread = rb_entry(nd, struct thread, rb_node);
-diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index 07ef7fad689c..2ff802068f06 100644
---- a/tools/perf/util/build-id.c
-+++ b/tools/perf/util/build-id.c
-@@ -364,7 +364,8 @@ int perf_session__write_buildid_table(struct perf_session *session,
- 	if (err)
- 		return err;
- 
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		err = machine__write_buildid_table(pos, fd);
- 		if (err)
-@@ -397,7 +398,8 @@ int dsos__hit_all(struct perf_session *session)
- 	if (err)
- 		return err;
- 
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 
- 		err = machine__hit_all_dsos(pos);
-@@ -850,7 +852,8 @@ int perf_session__cache_build_ids(struct perf_session *session)
- 
- 	ret = machine__cache_build_ids(&session->machines.host);
- 
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret |= machine__cache_build_ids(pos);
- 	}
-@@ -867,7 +870,8 @@ bool perf_session__read_build_ids(struct perf_session *session, bool with_hits)
- 	struct rb_node *nd;
- 	bool ret = machine__read_build_ids(&session->machines.host, with_hits);
- 
--	for (nd = rb_first(&session->machines.guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&session->machines.guests); nd;
-+	     nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret |= machine__read_build_ids(pos, with_hits);
- 	}
-diff --git a/tools/perf/util/machine.c b/tools/perf/util/machine.c
-index ae85106bb5bf..66f019fdc510 100644
---- a/tools/perf/util/machine.c
-+++ b/tools/perf/util/machine.c
-@@ -42,7 +42,7 @@ static void machine__threads_init(struct machine *machine)
- 
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		struct threads *threads = &machine->threads[i];
--		threads->entries = RB_ROOT;
-+		threads->entries = RB_ROOT_CACHED;
- 		init_rwsem(&threads->lock);
- 		threads->nr = 0;
- 		INIT_LIST_HEAD(&threads->dead);
-@@ -180,7 +180,7 @@ void machine__delete_threads(struct machine *machine)
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		struct threads *threads = &machine->threads[i];
- 		down_write(&threads->lock);
--		nd = rb_first(&threads->entries);
-+		nd = rb_first_cached(&threads->entries);
- 		while (nd) {
- 			struct thread *t = rb_entry(nd, struct thread, rb_node);
- 
-@@ -223,7 +223,7 @@ void machine__delete(struct machine *machine)
- void machines__init(struct machines *machines)
+-void srcline__tree_insert(struct rb_root *tree, u64 addr, char *srcline)
++void srcline__tree_insert(struct rb_root_cached *tree, u64 addr, char *srcline)
  {
- 	machine__init(&machines->host, "", HOST_KERNEL_ID);
--	machines->guests = RB_ROOT;
-+	machines->guests = RB_ROOT_CACHED;
- }
- 
- void machines__exit(struct machines *machines)
-@@ -235,9 +235,10 @@ void machines__exit(struct machines *machines)
- struct machine *machines__add(struct machines *machines, pid_t pid,
- 			      const char *root_dir)
- {
--	struct rb_node **p = &machines->guests.rb_node;
-+	struct rb_node **p = &machines->guests.rb_root.rb_node;
+-	struct rb_node **p = &tree->rb_node;
++	struct rb_node **p = &tree->rb_root.rb_node;
  	struct rb_node *parent = NULL;
- 	struct machine *pos, *machine = malloc(sizeof(*machine));
+ 	struct srcline_node *i, *node;
 +	bool leftmost = true;
  
- 	if (machine == NULL)
- 		return NULL;
-@@ -252,12 +253,14 @@ struct machine *machines__add(struct machines *machines, pid_t pid,
- 		pos = rb_entry(parent, struct machine, rb_node);
- 		if (pid < pos->pid)
+ 	node = zalloc(sizeof(struct srcline_node));
+ 	if (!node) {
+@@ -614,16 +615,18 @@ void srcline__tree_insert(struct rb_root *tree, u64 addr, char *srcline)
+ 		i = rb_entry(parent, struct srcline_node, rb_node);
+ 		if (addr < i->addr)
  			p = &(*p)->rb_left;
 -		else
 +		else {
@@ -200,209 +143,127 @@ index ae85106bb5bf..66f019fdc510 100644
 +			leftmost = false;
 +		}
  	}
- 
- 	rb_link_node(&machine->rb_node, parent, p);
--	rb_insert_color(&machine->rb_node, &machines->guests);
-+	rb_insert_color_cached(&machine->rb_node, &machines->guests, leftmost);
- 
- 	return machine;
+ 	rb_link_node(&node->rb_node, parent, p);
+-	rb_insert_color(&node->rb_node, tree);
++	rb_insert_color_cached(&node->rb_node, tree, leftmost);
  }
-@@ -268,7 +271,7 @@ void machines__set_comm_exec(struct machines *machines, bool comm_exec)
  
- 	machines->host.comm_exec = comm_exec;
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *machine = rb_entry(nd, struct machine, rb_node);
- 
- 		machine->comm_exec = comm_exec;
-@@ -277,7 +280,7 @@ void machines__set_comm_exec(struct machines *machines, bool comm_exec)
- 
- struct machine *machines__find(struct machines *machines, pid_t pid)
+-char *srcline__tree_find(struct rb_root *tree, u64 addr)
++char *srcline__tree_find(struct rb_root_cached *tree, u64 addr)
  {
--	struct rb_node **p = &machines->guests.rb_node;
-+	struct rb_node **p = &machines->guests.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
- 	struct machine *machine;
- 	struct machine *default_machine = NULL;
-@@ -340,7 +343,7 @@ void machines__process_guests(struct machines *machines,
+-	struct rb_node *n = tree->rb_node;
++	struct rb_node *n = tree->rb_root.rb_node;
+ 
+ 	while (n) {
+ 		struct srcline_node *i = rb_entry(n, struct srcline_node,
+@@ -640,15 +643,15 @@ char *srcline__tree_find(struct rb_root *tree, u64 addr)
+ 	return NULL;
+ }
+ 
+-void srcline__tree_delete(struct rb_root *tree)
++void srcline__tree_delete(struct rb_root_cached *tree)
  {
- 	struct rb_node *nd;
+ 	struct srcline_node *pos;
+-	struct rb_node *next = rb_first(tree);
++	struct rb_node *next = rb_first_cached(tree);
  
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		process(pos, data);
- 	}
-@@ -353,7 +356,8 @@ void machines__set_id_hdr_size(struct machines *machines, u16 id_hdr_size)
- 
- 	machines->host.id_hdr_size = id_hdr_size;
- 
--	for (node = rb_first(&machines->guests); node; node = rb_next(node)) {
-+	for (node = rb_first_cached(&machines->guests); node;
-+	     node = rb_next(node)) {
- 		machine = rb_entry(node, struct machine, rb_node);
- 		machine->id_hdr_size = id_hdr_size;
- 	}
-@@ -466,9 +470,10 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 						  pid_t pid, pid_t tid,
- 						  bool create)
- {
--	struct rb_node **p = &threads->entries.rb_node;
-+	struct rb_node **p = &threads->entries.rb_root.rb_node;
- 	struct rb_node *parent = NULL;
- 	struct thread *th;
-+	bool leftmost = true;
- 
- 	th = threads__get_last_match(threads, machine, pid, tid);
- 	if (th)
-@@ -486,8 +491,10 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 
- 		if (tid < th->tid)
- 			p = &(*p)->rb_left;
--		else
-+		else {
- 			p = &(*p)->rb_right;
-+			leftmost = false;
-+		}
- 	}
- 
- 	if (!create)
-@@ -496,7 +503,7 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 	th = thread__new(pid, tid);
- 	if (th != NULL) {
- 		rb_link_node(&th->rb_node, parent, p);
--		rb_insert_color(&th->rb_node, &threads->entries);
-+		rb_insert_color_cached(&th->rb_node, &threads->entries, leftmost);
- 
- 		/*
- 		 * We have to initialize map_groups separately
-@@ -507,7 +514,7 @@ static struct thread *____machine__findnew_thread(struct machine *machine,
- 		 * leader and that would screwed the rb tree.
- 		 */
- 		if (thread__init_map_groups(th, machine)) {
--			rb_erase_init(&th->rb_node, &threads->entries);
-+			rb_erase_cached(&th->rb_node, &threads->entries);
- 			RB_CLEAR_NODE(&th->rb_node);
- 			thread__put(th);
- 			return NULL;
-@@ -798,7 +805,7 @@ size_t machines__fprintf_dsos(struct machines *machines, FILE *fp)
- 	struct rb_node *nd;
- 	size_t ret = __dsos__fprintf(&machines->host.dsos.head, fp);
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret += __dsos__fprintf(&pos->dsos.head, fp);
- 	}
-@@ -818,7 +825,7 @@ size_t machines__fprintf_dsos_buildid(struct machines *machines, FILE *fp,
- 	struct rb_node *nd;
- 	size_t ret = machine__fprintf_dsos_buildid(&machines->host, fp, skip, parm);
- 
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *pos = rb_entry(nd, struct machine, rb_node);
- 		ret += machine__fprintf_dsos_buildid(pos, fp, skip, parm);
- 	}
-@@ -858,7 +865,8 @@ size_t machine__fprintf(struct machine *machine, FILE *fp)
- 
- 		ret = fprintf(fp, "Threads: %u\n", threads->nr);
- 
--		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
-+		for (nd = rb_first_cached(&threads->entries); nd;
-+		     nd = rb_next(nd)) {
- 			struct thread *pos = rb_entry(nd, struct thread, rb_node);
- 
- 			ret += thread__fprintf(pos, fp);
-@@ -1161,7 +1169,7 @@ failure:
- 
- void machines__destroy_kernel_maps(struct machines *machines)
- {
--	struct rb_node *next = rb_first(&machines->guests);
-+	struct rb_node *next = rb_first_cached(&machines->guests);
- 
- 	machine__destroy_kernel_maps(&machines->host);
- 
-@@ -1169,7 +1177,7 @@ void machines__destroy_kernel_maps(struct machines *machines)
- 		struct machine *pos = rb_entry(next, struct machine, rb_node);
- 
+ 	while (next) {
+ 		pos = rb_entry(next, struct srcline_node, rb_node);
  		next = rb_next(&pos->rb_node);
--		rb_erase(&pos->rb_node, &machines->guests);
-+		rb_erase_cached(&pos->rb_node, &machines->guests);
- 		machine__delete(pos);
+-		rb_erase(&pos->rb_node, tree);
++		rb_erase_cached(&pos->rb_node, tree);
+ 		free_srcline(pos->srcline);
+ 		zfree(&pos);
+ 	}
+@@ -682,28 +685,32 @@ void inline_node__delete(struct inline_node *node)
+ 	free(node);
+ }
+ 
+-void inlines__tree_insert(struct rb_root *tree, struct inline_node *inlines)
++void inlines__tree_insert(struct rb_root_cached *tree,
++			  struct inline_node *inlines)
+ {
+-	struct rb_node **p = &tree->rb_node;
++	struct rb_node **p = &tree->rb_root.rb_node;
+ 	struct rb_node *parent = NULL;
+ 	const u64 addr = inlines->addr;
+ 	struct inline_node *i;
++	bool leftmost = true;
+ 
+ 	while (*p != NULL) {
+ 		parent = *p;
+ 		i = rb_entry(parent, struct inline_node, rb_node);
+ 		if (addr < i->addr)
+ 			p = &(*p)->rb_left;
+-		else
++		else {
+ 			p = &(*p)->rb_right;
++			leftmost = false;
++		}
+ 	}
+ 	rb_link_node(&inlines->rb_node, parent, p);
+-	rb_insert_color(&inlines->rb_node, tree);
++	rb_insert_color_cached(&inlines->rb_node, tree, leftmost);
+ }
+ 
+-struct inline_node *inlines__tree_find(struct rb_root *tree, u64 addr)
++struct inline_node *inlines__tree_find(struct rb_root_cached *tree, u64 addr)
+ {
+-	struct rb_node *n = tree->rb_node;
++	struct rb_node *n = tree->rb_root.rb_node;
+ 
+ 	while (n) {
+ 		struct inline_node *i = rb_entry(n, struct inline_node,
+@@ -720,15 +727,15 @@ struct inline_node *inlines__tree_find(struct rb_root *tree, u64 addr)
+ 	return NULL;
+ }
+ 
+-void inlines__tree_delete(struct rb_root *tree)
++void inlines__tree_delete(struct rb_root_cached *tree)
+ {
+ 	struct inline_node *pos;
+-	struct rb_node *next = rb_first(tree);
++	struct rb_node *next = rb_first_cached(tree);
+ 
+ 	while (next) {
+ 		pos = rb_entry(next, struct inline_node, rb_node);
+ 		next = rb_next(&pos->rb_node);
+-		rb_erase(&pos->rb_node, tree);
++		rb_erase_cached(&pos->rb_node, tree);
+ 		inline_node__delete(pos);
  	}
  }
-@@ -1734,7 +1742,7 @@ static void __machine__remove_thread(struct machine *machine, struct thread *th,
- 	BUG_ON(refcount_read(&th->refcnt) == 0);
- 	if (lock)
- 		down_write(&threads->lock);
--	rb_erase_init(&th->rb_node, &threads->entries);
-+	rb_erase_cached(&th->rb_node, &threads->entries);
- 	RB_CLEAR_NODE(&th->rb_node);
- 	--threads->nr;
- 	/*
-@@ -2511,7 +2519,8 @@ int machine__for_each_thread(struct machine *machine,
+diff --git a/tools/perf/util/srcline.h b/tools/perf/util/srcline.h
+index 5762212dc342..b11a0aaaa676 100644
+--- a/tools/perf/util/srcline.h
++++ b/tools/perf/util/srcline.h
+@@ -19,11 +19,11 @@ void free_srcline(char *srcline);
+ char *get_srcline_split(struct dso *dso, u64 addr, unsigned *line);
  
- 	for (i = 0; i < THREADS__TABLE_SIZE; i++) {
- 		threads = &machine->threads[i];
--		for (nd = rb_first(&threads->entries); nd; nd = rb_next(nd)) {
-+		for (nd = rb_first_cached(&threads->entries); nd;
-+		     nd = rb_next(nd)) {
- 			thread = rb_entry(nd, struct thread, rb_node);
- 			rc = fn(thread, priv);
- 			if (rc != 0)
-@@ -2538,7 +2547,7 @@ int machines__for_each_thread(struct machines *machines,
- 	if (rc != 0)
- 		return rc;
+ /* insert the srcline into the DSO, which will take ownership */
+-void srcline__tree_insert(struct rb_root *tree, u64 addr, char *srcline);
++void srcline__tree_insert(struct rb_root_cached *tree, u64 addr, char *srcline);
+ /* find previously inserted srcline */
+-char *srcline__tree_find(struct rb_root *tree, u64 addr);
++char *srcline__tree_find(struct rb_root_cached *tree, u64 addr);
+ /* delete all srclines within the tree */
+-void srcline__tree_delete(struct rb_root *tree);
++void srcline__tree_delete(struct rb_root_cached *tree);
  
--	for (nd = rb_first(&machines->guests); nd; nd = rb_next(nd)) {
-+	for (nd = rb_first_cached(&machines->guests); nd; nd = rb_next(nd)) {
- 		struct machine *machine = rb_entry(nd, struct machine, rb_node);
+ #define SRCLINE_UNKNOWN  ((char *) "??:0")
  
- 		rc = machine__for_each_thread(machine, fn, priv);
-diff --git a/tools/perf/util/machine.h b/tools/perf/util/machine.h
-index 4ecd380ce1b4..e2f3df45410a 100644
---- a/tools/perf/util/machine.h
-+++ b/tools/perf/util/machine.h
-@@ -29,11 +29,11 @@ struct vdso_info;
- #define THREADS__TABLE_SIZE	(1 << THREADS__TABLE_BITS)
+@@ -46,10 +46,11 @@ struct inline_node *dso__parse_addr_inlines(struct dso *dso, u64 addr,
+ void inline_node__delete(struct inline_node *node);
  
- struct threads {
--	struct rb_root	  entries;
--	struct rw_semaphore lock;
--	unsigned int	  nr;
--	struct list_head  dead;
--	struct thread	  *last_match;
-+	struct rb_root_cached  entries;
-+	struct rw_semaphore    lock;
-+	unsigned int	       nr;
-+	struct list_head       dead;
-+	struct thread	       *last_match;
- };
+ /* insert the inline node list into the DSO, which will take ownership */
+-void inlines__tree_insert(struct rb_root *tree, struct inline_node *inlines);
++void inlines__tree_insert(struct rb_root_cached *tree,
++			  struct inline_node *inlines);
+ /* find previously inserted inline node list */
+-struct inline_node *inlines__tree_find(struct rb_root *tree, u64 addr);
++struct inline_node *inlines__tree_find(struct rb_root_cached *tree, u64 addr);
+ /* delete all nodes within the tree of inline_node s */
+-void inlines__tree_delete(struct rb_root *tree);
++void inlines__tree_delete(struct rb_root_cached *tree);
  
- struct machine {
-@@ -140,7 +140,7 @@ typedef void (*machine__process_t)(struct machine *machine, void *data);
- 
- struct machines {
- 	struct machine host;
--	struct rb_root guests;
-+	struct rb_root_cached guests;
- };
- 
- void machines__init(struct machines *machines);
-diff --git a/tools/perf/util/rb_resort.h b/tools/perf/util/rb_resort.h
-index a920f702a74d..f272e181d3d6 100644
---- a/tools/perf/util/rb_resort.h
-+++ b/tools/perf/util/rb_resort.h
-@@ -144,8 +144,8 @@ struct __name##_sorted *__name = __name##_sorted__new
- 				  __ilist->rblist.nr_entries)
- 
- /* For 'struct machine->threads' */
--#define DECLARE_RESORT_RB_MACHINE_THREADS(__name, __machine, hash_bucket)	\
--	DECLARE_RESORT_RB(__name)(&__machine->threads[hash_bucket].entries,	\
--				  __machine->threads[hash_bucket].nr)
-+#define DECLARE_RESORT_RB_MACHINE_THREADS(__name, __machine, hash_bucket)    \
-+ DECLARE_RESORT_RB(__name)(&__machine->threads[hash_bucket].entries.rb_root, \
-+			   __machine->threads[hash_bucket].nr)
- 
- #endif /* _PERF_RESORT_RB_H_ */
+ #endif /* PERF_SRCLINE_H */
