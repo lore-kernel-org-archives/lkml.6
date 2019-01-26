@@ -2,114 +2,176 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC69C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:16:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A96AC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:20:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 512CC217D7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:16:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 49DFD218F0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:20:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728408AbfAZKQV (ORCPT
+        id S1727694AbfAZKUY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 05:16:21 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43383 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfAZKQV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 05:16:21 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QAFuGC515004
-        (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 26 Jan 2019 02:15:56 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QAFu26515001;
-        Sat, 26 Jan 2019 02:15:56 -0800
-Date:   Sat, 26 Jan 2019 02:15:56 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   "tip-bot for Gustavo A. R. Silva" <tipbot@zytor.com>
-Message-ID: <tip-89da3446294a8b811b28a4807e74e7ee7044d49f@git.kernel.org>
-Cc:     x86@kernel.org, bp@suse.de, tglx@linutronix.de,
-        gustavo@embeddedor.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, hpa@zytor.com, mingo@redhat.com,
-        keescook@chromium.org
-Reply-To: mingo@kernel.org, linux-kernel@vger.kernel.org,
-          gustavo@embeddedor.com, tglx@linutronix.de, bp@suse.de,
-          x86@kernel.org, keescook@chromium.org, mingo@redhat.com,
-          hpa@zytor.com
-In-Reply-To: <20190125205520.GA9602@embeddedor>
-References: <20190125205520.GA9602@embeddedor>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/insn-eval: Mark expected switch-case
- fall-through
-Git-Commit-ID: 89da3446294a8b811b28a4807e74e7ee7044d49f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Sat, 26 Jan 2019 05:20:24 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2780 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726174AbfAZKUY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 05:20:24 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 55EE481A7C89EC101583;
+        Sat, 26 Jan 2019 18:20:22 +0800 (CST)
+Received: from [127.0.0.1] (10.184.212.80) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Sat, 26 Jan 2019
+ 18:20:17 +0800
+From:   "liwei (GF)" <liwei391@huawei.com>
+Subject: Re: [PATCH v9 22/26] irqchip/gic-v3: Allow interrupts to be set as
+ pseudo-NMI
+To:     Julien Thierry <julien.thierry@arm.com>,
+        <linux-arm-kernel@lists.infradead.org>
+CC:     <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <marc.zyngier@arm.com>,
+        <christoffer.dall@arm.com>, <james.morse@arm.com>,
+        <catalin.marinas@arm.com>, <will.deacon@arm.com>,
+        <mark.rutland@arm.com>, Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+ <1548084825-8803-23-git-send-email-julien.thierry@arm.com>
+Message-ID: <8c0efe3f-1fc7-cbc7-0086-bd9c379cf0fc@huawei.com>
+Date:   Sat, 26 Jan 2019 18:19:52 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1548084825-8803-23-git-send-email-julien.thierry@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.184.212.80]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  89da3446294a8b811b28a4807e74e7ee7044d49f
-Gitweb:     https://git.kernel.org/tip/89da3446294a8b811b28a4807e74e7ee7044d49f
-Author:     Gustavo A. R. Silva <gustavo@embeddedor.com>
-AuthorDate: Fri, 25 Jan 2019 14:55:20 -0600
-Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Sat, 26 Jan 2019 10:46:42 +0100
 
-x86/insn-eval: Mark expected switch-case fall-through
 
-In preparation to enable -Wimplicit-fallthrough by default, mark
-switch-case statements where fall-through is intentional, explicitly.
+On 2019/1/21 23:33, Julien Thierry wrote:
+> Implement NMI callbacks for GICv3 irqchip. Install NMI safe handlers
+> when setting up interrupt line as NMI.
+> 
+> Only SPIs and PPIs are allowed to be set up as NMI.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> ---
+>  drivers/irqchip/irq-gic-v3.c | 84 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 84 insertions(+)
+> 
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 4df1e94..447d8ab 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+(snip)
+>  
+> +static int gic_irq_nmi_setup(struct irq_data *d)
+> +{
+> +	struct irq_desc *desc = irq_to_desc(d->irq);
+> +
+> +	if (!gic_supports_nmi())
+> +		return -EINVAL;
+> +
+> +	if (gic_peek_irq(d, GICD_ISENABLER)) {
+> +		pr_err("Cannot set NMI property of enabled IRQ %u\n", d->irq);
+> +		return -EINVAL;
+> +	}
+> +
+> +	/*
+> +	 * A secondary irq_chip should be in charge of LPI request,
+> +	 * it should not be possible to get there
+> +	 */
+> +	if (WARN_ON(gic_irq(d) >= 8192))
+> +		return -EINVAL;
+> +
+> +	/* desc lock should already be held */
+> +	if (gic_irq(d) < 32) {
+> +		/* Setting up PPI as NMI, only switch handler for first NMI */
+> +		if (!refcount_inc_not_zero(&ppi_nmi_refs[gic_irq(d) - 16])) {
+> +			refcount_set(&ppi_nmi_refs[gic_irq(d) - 16], 1);
+> +			desc->handle_irq = handle_percpu_devid_fasteoi_nmi;
+> +		}
+> +	} else {
+> +		desc->handle_irq = handle_fasteoi_nmi;
+> +	}
+> +
+> +	gic_set_irq_prio(gic_irq(d), gic_dist_base(d), GICD_INT_NMI_PRI);
+> +
+> +	return 0;
+> +}
+> +
+> +static void gic_irq_nmi_teardown(struct irq_data *d)
+> +{
+> +	struct irq_desc *desc = irq_to_desc(d->irq);
+> +
+> +	if (WARN_ON(!gic_supports_nmi()))
+> +		return;
+> +
+> +	if (gic_peek_irq(d, GICD_ISENABLER)) {
+> +		pr_err("Cannot set NMI property of enabled IRQ %u\n", d->irq);
+> +		return;
+> +	}
+> +
+> +	/*
+> +	 * A secondary irq_chip should be in charge of LPI request,
+> +	 * it should not be possible to get there
+> +	 */
+> +	if (WARN_ON(gic_irq(d) >= 8192))
+> +		return;
+> +
+> +	/* desc lock should already be held */
+> +	if (gic_irq(d) < 32) {
+> +		/* Tearing down NMI, only switch handler for last NMI */
+> +		if (refcount_dec_and_test(&ppi_nmi_refs[gic_irq(d) - 16]))
+> +			desc->handle_irq = handle_percpu_devid_irq;
+> +	} else {
+> +		desc->handle_irq = handle_fasteoi_irq;
+> +	}
+> +
+> +	gic_set_irq_prio(gic_irq(d), gic_dist_base(d), GICD_INT_DEF_PRI);
+> +}
+> +
 
-Thus fix the following warning:
+Hello Julien,
+I am afraid the setting of priority is not correct here. If the irq is in redistributor(gic_irq(d) < 32),
+we should set the priority on each cpu, while we just set the priority on the current cpu here.
+static inline void __iomem *gic_dist_base(struct irq_data *d)
+{
+	if (gic_irq_in_rdist(d))	/* SGI+PPI -> SGI_base for this CPU */
+		return gic_data_rdist_sgi_base();
 
-  arch/x86/lib/insn-eval.c: In function ‘resolve_default_seg’:
-  arch/x86/lib/insn-eval.c:179:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-     if (insn->addr_bytes == 2)
-        ^
-  arch/x86/lib/insn-eval.c:182:2: note: here
-    case -EDOM:
-    ^~~~
+	if (d->hwirq <= 1023)		/* SPI -> dist_base */
+		return gic_data.dist_base;
 
-Warning level 3 was used: -Wimplicit-fallthrough=3
+	return NULL;
+}
 
-This is part of the ongoing efforts to enable -Wimplicit-fallthrough by
-default.
+I tried to add a smp_call_function here, but the kernel reported a warning as we have disabled irq
+when calling raw_spin_lock_irqsave in request_nmi or ready_percpu_nmi.
+[    2.137262] Call trace:
+[    2.137265]  smp_call_function_many+0xf8/0x3a0
+[    2.137267]  smp_call_function+0x40/0x58
+[    2.137271]  gic_irq_nmi_setup+0xe8/0x118
+[    2.137275]  ready_percpu_nmi+0x6c/0xf0
+[    2.137279]  armpmu_request_irq+0x228/0x250
+[    2.137281]  arm_pmu_acpi_init+0x150/0x2f0
+[    2.137284]  do_one_initcall+0x54/0x218
+[    2.137289]  kernel_init_freeable+0x230/0x354
+[    2.137293]  kernel_init+0x18/0x118
+[    2.137295]  ret_from_fork+0x10/0x18
 
- [ bp: Massage commit message. ]
+I am exploring a better way to solve this issue.
 
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20190125205520.GA9602@embeddedor
----
- arch/x86/lib/insn-eval.c | 2 ++
- 1 file changed, 2 insertions(+)
+Thanks,
+Wei Li
 
-diff --git a/arch/x86/lib/insn-eval.c b/arch/x86/lib/insn-eval.c
-index 9119d8e41f1f..cf00ab6c6621 100644
---- a/arch/x86/lib/insn-eval.c
-+++ b/arch/x86/lib/insn-eval.c
-@@ -179,6 +179,8 @@ static int resolve_default_seg(struct insn *insn, struct pt_regs *regs, int off)
- 		if (insn->addr_bytes == 2)
- 			return -EINVAL;
- 
-+		/* fall through */
-+
- 	case -EDOM:
- 	case offsetof(struct pt_regs, bx):
- 	case offsetof(struct pt_regs, si):
