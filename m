@@ -2,50 +2,42 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E589C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 13:49:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C73BDC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 13:49:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A74221872
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 13:49:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A070521872
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 13:49:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbfAZNtM (ORCPT
+        id S1726281AbfAZNtz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 08:49:12 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.202]:44104 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726075AbfAZNtM (ORCPT
+        Sat, 26 Jan 2019 08:49:55 -0500
+Received: from gateway34.websitewelcome.com ([192.185.148.104]:38004 "EHLO
+        gateway34.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726225AbfAZNtz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 08:49:12 -0500
-Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id F10CE840D
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jan 2019 07:49:10 -0600 (CST)
+        Sat, 26 Jan 2019 08:49:55 -0500
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway34.websitewelcome.com (Postfix) with ESMTP id AA58519803A
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jan 2019 07:49:53 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id nOKcg6KLKYTGMnOKcgoEli; Sat, 26 Jan 2019 07:49:10 -0600
+        id nOLJgU5xkdnCenOLJgWaxm; Sat, 26 Jan 2019 07:49:53 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=48338 helo=[192.168.1.76])
+Received: from [189.250.130.205] (port=48358 helo=[192.168.1.76])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gnOKK-003YwO-7n; Sat, 26 Jan 2019 07:49:10 -0600
-Subject: Re: [PATCH] mtd: rawnand: mark expected switch fall-throughs
-To:     Boris Brezillon <bbrezillon@kernel.org>
-Cc:     Kyungmin Park <kyungmin.park@samsung.com>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Richard Weinberger <richard@nod.at>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Wan ZongShun <mcuos.com@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        Kees Cook <keescook@chromium.org>
-References: <20190125210950.GA27855@embeddedor>
- <20190126105208.221a2051@bbrezillon>
+        id 1gnOLJ-003ZmD-CS; Sat, 26 Jan 2019 07:49:53 -0600
+Subject: Re: [PATCH 0/2] Fix NULL pointer dereference and use struct_size()
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <cover.1548175934.git.gustavo@embeddedor.com>
+ <CACRpkdZWg2pKkV8nxbnh6v55J58Hg1Crw=gmRge_1bLmABrE=w@mail.gmail.com>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=gustavo@embeddedor.com; keydata=
@@ -91,12 +83,12 @@ Autocrypt: addr=gustavo@embeddedor.com; keydata=
  YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
  GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
  VtSixD1uOgytAP7RWS474w==
-Message-ID: <853a267c-807b-c613-6662-93730a0b4c33@embeddedor.com>
-Date:   Sat, 26 Jan 2019 07:48:50 -0600
+Message-ID: <c0ae4f61-cf2c-c6ca-6d1c-4710b78f6b29@embeddedor.com>
+Date:   Sat, 26 Jan 2019 07:49:52 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20190126105208.221a2051@bbrezillon>
+In-Reply-To: <CACRpkdZWg2pKkV8nxbnh6v55J58Hg1Crw=gmRge_1bLmABrE=w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -108,13 +100,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.130.205
 X-Source-L: No
-X-Exim-ID: 1gnOKK-003YwO-7n
+X-Exim-ID: 1gnOLJ-003ZmD-CS
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:48338
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:48358
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 10
+X-Email-Count: 15
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -122,37 +114,23 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Boris,
 
-On 1/26/19 3:52 AM, Boris Brezillon wrote:
-> On Fri, 25 Jan 2019 15:09:50 -0600
-> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+
+On 1/26/19 7:20 AM, Linus Walleij wrote:
+> On Tue, Jan 22, 2019 at 5:55 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
 > 
->> diff --git a/drivers/mtd/nand/raw/nandsim.c b/drivers/mtd/nand/raw/nandsim.c
->> index 933d1a629c51..d33e15dc4cdc 100644
->> --- a/drivers/mtd/nand/raw/nandsim.c
->> +++ b/drivers/mtd/nand/raw/nandsim.c
->> @@ -2251,9 +2251,10 @@ static int __init ns_init_module(void)
->>  
->>  	switch (bbt) {
->>  	case 2:
->> -		 chip->bbt_options |= NAND_BBT_NO_OOB;
->> +		chip->bbt_options |= NAND_BBT_NO_OOB;
->> +		/* fall through */
->>  	case 1:
->> -		 chip->bbt_options |= NAND_BBT_USE_FLASH;
->> +		chip->bbt_options |= NAND_BBT_USE_FLASH;
+>> The first patch in this series fixes a potential NULL pointer
+>> dereference by adding a NULL check. A tag for stable has been
+>> added for this patch.
+>>
+>> The second patch promotes the use of struct_size() in devm_kzalloc().
 > 
-> You miss a '/* fall through */' here.
+> Both patches:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 > 
 
-Not really.  Notice that in this case the code falls through
-to a break statement.
+Thanks, Linus.
 
->>  	case 0:
->>  		break;
->>  	default:
-
-Thanks
 --
 Gustavo
