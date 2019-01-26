@@ -2,373 +2,417 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DF92CC282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:42:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21423C282C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A593B2184C
+	by mail.kernel.org (Postfix) with ESMTP id DBF4D21872
 	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:42:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548535344;
-	bh=V+K2tTS5n6G8J+ys+JczNogQmEH54aDiUpvRlq8CNSs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=l3EkPKZaVVAY3TuURaJqh8zQs2UZbxY6P6S1snbMB7Af0FfVuS5v5XOKB9P+wdEo9
-	 JguV5v4oMx/3IheMzHKgIEsINDbR0tUDtIqlW29wuHDHvxY9iChWurFyVxZhzOoY0L
-	 N0T4WuGaiae3LkGswUwNphRngKH+zADqQdIMMZts=
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ECCZaA9d"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726361AbfAZUmC (ORCPT
+        id S1726392AbfAZUmL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 15:42:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41920 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726180AbfAZUmB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 15:42:01 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 438882133D;
-        Sat, 26 Jan 2019 20:41:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548535320;
-        bh=V+K2tTS5n6G8J+ys+JczNogQmEH54aDiUpvRlq8CNSs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=OCpBoZVsRh5SypiX+9PLQiIBmC5mLE62GnXecvwK8wEVqPDciB4kvq7PgDUDmqhYy
-         Fhdnwiv3JaKyvKCcVNB+QteTAlbc8nstJZYdymyXMP1WlTUk7tNa8I5WMynp8F0u7I
-         CcbZRxztPvo4VGtlXJPLijN0Kp1DBra5qXX6o3+c=
-Date:   Sat, 26 Jan 2019 20:41:55 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
-Cc:     Alexandru Ardelean <ardeleanalex@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        alexandru.ardelean@analog.com, linux-iio@vger.kernel.org
-Subject: Re: [PATCH v2] iio:dac:ti-dac7612: Add driver for Texas Instruments
- DAC7612
-Message-ID: <20190126204155.6fbb9512@archlinux>
-In-Reply-To: <20190125100055.13836-1-ricardo@ribalda.com>
-References: <20190125100055.13836-1-ricardo@ribalda.com>
-X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 26 Jan 2019 15:42:11 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40825 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726367AbfAZUmL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 15:42:11 -0500
+Received: by mail-lj1-f193.google.com with SMTP id n18-v6so11092937lji.7;
+        Sat, 26 Jan 2019 12:42:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=+1vqaVTTxsAFD3s/PuU0J+V+z+7xadd3gTT8UHwOtd4=;
+        b=ECCZaA9dtJH7Rnzfqqtj2f4elmmJBTCqco2EEj45PcK+/Y702Jt1p7Awk679oWhuWF
+         I5rWwXpbl3b+kWvli07o4p+oK3/qFihq+084+cjn0tpT+n/xqdNBbXKJVf0CWiTAL/Lj
+         DlloVMPpIVIP4R9PB81ZEcdPivzWmv9/J1G3mSct55kqJlv3AHOeK+OrCPdg/fuZ+cen
+         iZLtFlHfa2nuD7+N8wHPmDI75B3Wuy4f87WNKyBahmqEe9wb9NZiBYXloRngwBi63srF
+         5ps0ZubDA3Ug6hvk9fJxZT9cjsWGmd89la81fkIOgT6tbzhYFxCzP4eyhqUgZLe/iFvy
+         4oWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=+1vqaVTTxsAFD3s/PuU0J+V+z+7xadd3gTT8UHwOtd4=;
+        b=IWs41aryMy629MHx2Af9SQGUhhcRLmuGknzoEY7GCtI/hEFiAcir/A2SuNZ331auD/
+         hUHakke2F1PFV2biw2V5KE3Ts0EBoIXzUa4F2iR1krNcCR88o4qptvlZ+z/vSkBn1AGS
+         MLNPABWAZejtqFzO0soLamCFTkDIDdiQCEfV0NeUk7QLttq/0/+vBUh9xz+8Fl3WAZln
+         Q38w8OejFzmQMFuCnLQr+Uq5GpAkLT88r7Xkqjwb/51VzsNSrANmZ64DKp+i96o1v2VB
+         apuyF1SjwXWrIoy3R4Tehi7we6D33EJg7wwQqKdhawklEskzbfXXgxKYr2xID4c3xKez
+         sqrg==
+X-Gm-Message-State: AJcUukdEth1odhkfkYEyhKEkHKsXk/0h5OPRZfXbenQYaF4KgMXLmqOS
+        FHhAgA+j0qhOKgSbSb3FQA8Q38vn
+X-Google-Smtp-Source: ALg8bN6ZGfvuJ5/x3jLQIptyIJCIoqAYge2tP+tx+XMYS/5RewLfL57ajIz2p9fRiXknP3sxUnFzRw==
+X-Received: by 2002:a2e:5cc8:: with SMTP id q191-v6mr12671171ljb.192.1548535327390;
+        Sat, 26 Jan 2019 12:42:07 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id w9sm2201517lfc.66.2019.01.26.12.42.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 26 Jan 2019 12:42:06 -0800 (PST)
+Subject: Re: [PATCH V3 3/3] i2c: tegra: Add DMA Support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
+ <1548475073-12408-3-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <ef3fbbc9-e9f7-6a8b-f520-737d640332eb@gmail.com>
+Date:   Sat, 26 Jan 2019 23:42:05 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <1548475073-12408-3-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Jan 2019 11:00:55 +0100
-Ricardo Ribalda Delgado <ricardo@ribalda.com> wrote:
-
-> It is a driver for Texas Instruments Dual, 12-Bit Serial Input
-> Digital-to-Analog Converter.
+26.01.2019 6:57, Sowjanya Komatineni пишет:
+> This patch adds DMA support for Tegra I2C.
 > 
-> Datasheet of this chip:
-> http://www.ti.com/lit/ds/sbas106/sbas106.pdf
+> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+> transfer size of the max FIFO depth and DMA mode is used for
+> transfer size higher than max FIFO depth to save CPU overhead.
 > 
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
-Hi Ricardo,
-
-Various bits and pieces inline.
-
-Jonathan
-
+> PIO mode needs full intervention of CPU to fill or empty FIFO's
+> and also need to service multiple data requests interrupt for the
+> same transaction adding overhead on CPU for large transfers.
+> 
+> DMA mode is helpful for Large transfers during downloading or
+> uploading FW over I2C to some external devices.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> 
 > ---
+>  [V3] : Updated without additional buffer allocation.
+>  [V2] : Updated based on V1 review feedback along with code cleanup for
+> 	proper implementation of DMA.
 > 
-> v2: Fix range
->  MAINTAINERS                  |   6 ++
->  drivers/iio/dac/Kconfig      |  10 +++
->  drivers/iio/dac/Makefile     |   1 +
->  drivers/iio/dac/ti-dac7612.c | 169 +++++++++++++++++++++++++++++++++++
->  4 files changed, 186 insertions(+)
->  create mode 100644 drivers/iio/dac/ti-dac7612.c
+>  drivers/i2c/busses/i2c-tegra.c | 341 ++++++++++++++++++++++++++++++++++++++---
+>  1 file changed, 316 insertions(+), 25 deletions(-)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index d039f66a5cef..30ba5435906b 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14877,6 +14877,12 @@ F:	Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->  F:	drivers/clk/keystone/sci-clk.c
->  F:	drivers/reset/reset-ti-sci.c
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 3dcbc9960d9d..452358a77400 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -8,6 +8,9 @@
 >  
-> +Texas Instruments' DAC7612 DAC Driver
-> +M:	Ricardo Ribalda <ricardo@ribalda.com>
-> +L:	linux-iio@vger.kernel.org
-> +S:	Supported
-> +F:	drivers/iio/dac/ti-dac7612.c
-> +
->  THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
->  M:	Hans Verkuil <hverkuil@xs4all.nl>
->  L:	linux-media@vger.kernel.org
-> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> index f28daf67db6a..fbef9107acad 100644
-> --- a/drivers/iio/dac/Kconfig
-> +++ b/drivers/iio/dac/Kconfig
-> @@ -375,6 +375,16 @@ config TI_DAC7311
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/dmapool.h>
+> +#include <linux/dma-mapping.h>
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+>  #include <linux/init.h>
+> @@ -45,6 +48,8 @@
+>  #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
+>  #define I2C_FIFO_CONTROL_TX_TRIG_SHIFT		5
+>  #define I2C_FIFO_CONTROL_RX_TRIG_SHIFT		2
+> +#define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
+> +#define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) << 2)
+>  #define I2C_FIFO_STATUS				0x060
+>  #define I2C_FIFO_STATUS_TX_MASK			0xF0
+>  #define I2C_FIFO_STATUS_TX_SHIFT		4
+> @@ -119,6 +124,16 @@
+>  /* Packet header size in bytes */
+>  #define I2C_PACKET_HEADER_SIZE			12
 >  
->  	  If compiled as a module, it will be called ti-dac7311.
->  
-> +config TI_DAC7612
-> +	tristate "Texas Instruments 12-bit 2-channel DAC driver"
-> +	depends on SPI_MASTER && GPIOLIB
-> +	help
-> +	  Driver for the Texas Instruments DAC7612, DAC7612U, DAC7612UB
-> +	  The driver hand drive the load pin automatically, otherwise
-> +	  it needs to be toggled manually.
-
-Given the driver doesn't load without that pin, do we need to give
-the otherwise?  I would drop this comment entirely.
-
+> +#define DATA_DMA_DIR_TX				(1 << 0)
+> +#define DATA_DMA_DIR_RX				(1 << 1)
 > +
-> +	  If compiled as a module, it will be called ti-dac7612.
-> +
->  config VF610_DAC
->  	tristate "Vybrid vf610 DAC driver"
->  	depends on OF
-> diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
-> index f0a37c93de8e..1369fa1d2f0e 100644
-> --- a/drivers/iio/dac/Makefile
-> +++ b/drivers/iio/dac/Makefile
-> @@ -41,4 +41,5 @@ obj-$(CONFIG_STM32_DAC) += stm32-dac.o
->  obj-$(CONFIG_TI_DAC082S085) += ti-dac082s085.o
->  obj-$(CONFIG_TI_DAC5571) += ti-dac5571.o
->  obj-$(CONFIG_TI_DAC7311) += ti-dac7311.o
-> +obj-$(CONFIG_TI_DAC7612) += ti-dac7612.o
->  obj-$(CONFIG_VF610_DAC) += vf610_dac.o
-> diff --git a/drivers/iio/dac/ti-dac7612.c b/drivers/iio/dac/ti-dac7612.c
-> new file mode 100644
-> index 000000000000..278406f69e0c
-> --- /dev/null
-> +++ b/drivers/iio/dac/ti-dac7612.c
-> @@ -0,0 +1,169 @@
-> +// SPDX-License-Identifier: GPL-2.0
 > +/*
-> + * DAC7612 Dual, 12-Bit Serial input Digital-to-Analog Converter
-> + *
-> + * Copyright 2019 Qtechnology A/S
-> + * 2019 Ricardo Ribalda <ricardo@ribalda.com>
-> + *
-> + * Licensed under the GPL-2.
+> + * Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
+> + * above this, controller will use DMA to fill FIFO.
+> + * MAX PIO len is 20 bytes excluding packet header.
 > + */
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/spi/spi.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/iio/iio.h>
+> +#define I2C_PIO_MODE_MAX_LEN			20
 > +
-> +#define NUM_CHANS 2
-> +#define RESOLUTION 12
-Please prefix any naming that is generic like this with
-the driver name.  Avoids potential redefined clashes in the future.
-Where they are 'real numbers' rather than Magic numbers I would
-generally look at using the actual number rather than a define.
-
+>  /*
+>   * msg_end_type: The bus control which need to be send at end of transfer.
+>   * @MSG_END_STOP: Send stop pulse at end of transfer.
+> @@ -179,6 +194,7 @@ struct tegra_i2c_hw_feature {
+>   * @fast_clk: clock reference for fast clock of I2C controller
+>   * @rst: reset control for the I2C controller
+>   * @base: ioremapped registers cookie
+> + * @phys_addr: Physical address of I2C base address to use for DMA configuration
+>   * @cont_id: I2C controller ID, used for packet header
+>   * @irq: IRQ number of transfer complete interrupt
+>   * @irq_disabled: used to track whether or not the interrupt is enabled
+> @@ -192,6 +208,14 @@ struct tegra_i2c_hw_feature {
+>   * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
+>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
+>   * @xfer_lock: lock to serialize transfer submission and processing
+> + * @has_dma: indicated if controller supports DMA
+> + * @tx_dma_chan: DMA transmit channel
+> + * @rx_dma_chan: DMA receive channel
+> + * @dma_phys: handle to DMA resources
+> + * @dma_buf: pointer to allocated DMA buffer
+> + * @dma_buf_size: DMA buffer size
+> + * @is_curr_dma_xfer: indicates active DMA transfer
+> + * @dma_complete: DMA completion notifier
+>   */
+>  struct tegra_i2c_dev {
+>  	struct device *dev;
+> @@ -201,6 +225,7 @@ struct tegra_i2c_dev {
+>  	struct clk *fast_clk;
+>  	struct reset_control *rst;
+>  	void __iomem *base;
+> +	phys_addr_t phys_addr;
+>  	int cont_id;
+>  	int irq;
+>  	bool irq_disabled;
+> @@ -214,8 +239,18 @@ struct tegra_i2c_dev {
+>  	u16 clk_divisor_non_hs_mode;
+>  	bool is_multimaster_mode;
+>  	spinlock_t xfer_lock;
+> +	bool has_dma;
+> +	struct dma_chan *tx_dma_chan;
+> +	struct dma_chan *rx_dma_chan;
+> +	dma_addr_t dma_phys;
+> +	u32 *dma_buf;
+> +	unsigned int dma_buf_size;
+> +	bool is_curr_dma_xfer;
+> +	struct completion dma_complete;
+>  };
+>  
+> +static struct dma_chan *chan;
 > +
-> +struct dac7612 {
-> +	struct spi_device *spi;
-> +	struct gpio_desc *nld;
-> +	uint16_t cache[NUM_CHANS];
-> +};
-> +
-> +static int dac7612_cmd_single(struct dac7612 *priv, int channel, u16 val)
+>  static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+>  		       unsigned long reg)
+>  {
+> @@ -282,6 +317,75 @@ static void tegra_i2c_unmask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
+>  	i2c_writel(i2c_dev, int_mask, I2C_INT_MASK);
+>  }
+>  
+> +static void tegra_i2c_dma_complete(void *args)
 > +{
-> +	uint8_t buffer[2];
-> +	int ret;
+> +	struct tegra_i2c_dev *i2c_dev = args;
 > +
-> +	if (channel >= NUM_CHANS)
-Is there any way this can happen?  Seems a little over paranoid.
-> +		return -EINVAL;
+> +	complete(&i2c_dev->dma_complete);
+> +}
 > +
-> +	buffer[0] = BIT(5) | (channel << 4) | (val >> 8);
-BIT(5) is a magic number so should probably come from a define
-as should the shifts of the other parts.
-
-> +	buffer[1] = val & 0xff;
+> +static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
+> +{
+> +	struct dma_async_tx_descriptor *dma_desc;
+> +	enum dma_transfer_direction dir;
 > +
-> +	priv->cache[channel] = val;
+> +	dev_dbg(i2c_dev->dev, "Starting DMA for length: %zu\n", len);
+> +	reinit_completion(&i2c_dev->dma_complete);
+> +	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
+> +	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
+> +					       len, dir, DMA_PREP_INTERRUPT |
+> +					       DMA_CTRL_ACK);
+> +	if (!dma_desc) {
+> +		dev_err(i2c_dev->dev, "Failed to get DMA descriptor\n");
+> +		return -EIO;
+> +	}
 > +
-> +	ret = spi_write(priv->spi, buffer, sizeof(buffer));
-
-spi write can potentially do a dma transfer so it needs
-a dma safe buffer.  This one isn't as it is on the stack.
-Given it is a moderately fast path, best option is to put the
-buffer in priv and use the __cacheline_aligned trick (plus the
-fact private data is already cacheline aligned) to get it into
-it's own cacheline.  Wofram Sang's OSS talk on i2c dma is a good
-tutorial on this and is on youtube if you have time.
-
-https://www.youtube.com/watch?v=JDwaMClvV-s
-
-> +	if (ret)
-> +		return ret;
-> +
-> +	gpiod_set_value(priv->nld, 0);
-> +	gpiod_set_value(priv->nld, 1);
-> +
+> +	dma_desc->callback = tegra_i2c_dma_complete;
+> +	dma_desc->callback_param = i2c_dev;
+> +	dmaengine_submit(dma_desc);
+> +	dma_async_issue_pending(chan);
 > +	return 0;
 > +}
 > +
-> +#define dac7612_CHANNEL(chan, name) {				\
-> +	.type = IIO_VOLTAGE,					\
-> +	.channel = (chan),					\
-> +	.address = (chan),					\
-Not used, so don't set it.
-
-> +	.indexed = true,					\
-These are bit fields, so whilst this works, = 1 is more conventional.
-
-> +	.output = true,						\
-> +	.datasheet_name = name,					\
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW),		\
-> +	.info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),	\
-> +	.scan_type = {						\
-> +			.sign = 'u',				\
-> +			.realbits = RESOLUTION,			\
-> +			.storagebits = RESOLUTION,		\
-No need to provide scan_type as we don't have buffered output in
-mainline.  Also this would be wrong as storagebits needs to be
-8/16/32/64 etc.
-
-Would prefer a straight forward value like RESOLUTION was just
-expressed as a number.
-
-> +	},							\
-> +}
-> +
-> +static const struct iio_chan_spec dac7612_channels[] = {
-> +	dac7612_CHANNEL(0, "OUTA"),
-> +	dac7612_CHANNEL(1, "OUTB"),
-> +};
-> +
-> +static int dac7612_read_raw(struct iio_dev *iio_dev,
-> +			    const struct iio_chan_spec *chan,
-> +			    int *val, int *val2, long mask)
+> +static int tegra_i2c_init_dma_param(struct tegra_i2c_dev *i2c_dev,
+> +				    bool dma_to_memory)
 > +{
-> +	struct dac7612 *priv;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		priv = iio_priv(iio_dev);
-> +		*val = priv->cache[chan->channel];
-> +		return IIO_VAL_INT;
-> +
-> +	case IIO_CHAN_INFO_SCALE:
-> +		*val = 1000000;
-
-This makes me wonder.  The units of voltage are millivolts, so is
-raw value * 1000000 = value in mv?
-
-That would make this a very high voltage device.
-See Documentation/ABI/testing/sysfs-bus-iio* for
-IIO ABI documentation.
-
-> +		return IIO_VAL_INT_PLUS_MICRO;
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int dac7612_write_raw(struct iio_dev *iio_dev,
-> +			     const struct iio_chan_spec *chan,
-> +			     int val, int val2, long mask)
-> +{
-> +	struct dac7612 *priv;
-
-struct dac7612 *priv = iio_priv(iio_dev);
-
-(it's just macro magic to get the right point so normally considered
-fine to be called like this).
-
-
+> +	struct dma_chan *dma_chan;
+> +	u32 *dma_buf;
+> +	dma_addr_t dma_phys;
 > +	int ret;
+> +	const char *chan_name = dma_to_memory ? "rx" : "tx";
 > +
-> +	if (mask != IIO_CHAN_INFO_RAW)
-> +		return -EINVAL;
+> +	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev, chan_name);
+> +	if (IS_ERR(dma_chan))
+> +		return PTR_ERR(dma_chan);
 > +
-> +	if ((val >= BIT(RESOLUTION)) || val < 0)
-> +		return -EINVAL;
-
-As not providing a write_fmt function (which is fine)
-should also sanity check that val2 is 0.
-
+> +	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
+> +				     &dma_phys, GFP_KERNEL);
 > +
-> +	priv = iio_priv(iio_dev);
-> +	if (val == priv->cache[chan->channel])
-> +		return 0;
+> +	if (!dma_buf) {
+> +		dev_err(i2c_dev->dev, "Failed to allocate the DMA buffer\n");
+> +		ret = -ENOMEM;
+> +		goto scrub;
+> +	}
 > +
-> +	mutex_lock(&iio_dev->mlock);
-> +	ret = dac7612_cmd_single(priv, chan->channel, val);
-> +	mutex_unlock(&iio_dev->mlock);
+> +	if (dma_to_memory)
+> +		i2c_dev->rx_dma_chan = dma_chan;
+> +	else
+> +		i2c_dev->tx_dma_chan = dma_chan;
 > +
+> +	i2c_dev->dma_buf = dma_buf;
+> +	i2c_dev->dma_phys = dma_phys;
+> +
+> +	return 0;
+> +
+> +scrub:
+> +	dma_free_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
+> +			  dma_buf, dma_phys);
+> +	dma_release_channel(dma_chan);
 > +	return ret;
 > +}
 > +
-> +static const struct iio_info dac7612_info = {
-> +	.read_raw = dac7612_read_raw,
-> +	.write_raw = dac7612_write_raw,
-> +};
-> +
-> +static int dac7612_probe(struct spi_device *spi)
-> +{
-> +	struct iio_dev *iio_dev;
-> +	struct dac7612 *priv;
-> +	int i;
-> +	int ret;
-> +
-> +	iio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*priv));
-> +	if (!iio_dev)
-> +		return -ENOMEM;
-> +
-> +	priv = iio_priv(iio_dev);
-> +	priv->nld = devm_gpiod_get_optional(&spi->dev, "nLD", GPIOD_OUT_HIGH);
-
-This isn't a particularly standard gpio name.  Hence this driver definitely
-needs a DT binding doc (remember to cc dt list and maintainers).  Also
-this should almost certainly be prefixed with a vendor prefix.
-
-It's also not the name I'm seeing on the datasheet, so needs some justifying
-comments.
-
-> +	if (IS_ERR(priv->nld))
-> +		return PTR_ERR(priv->nld);
-> +	priv->spi = spi;
-> +	spi_set_drvdata(spi, iio_dev);
-> +	iio_dev->dev.parent = &spi->dev;
-> +	iio_dev->info = &dac7612_info;
-> +	iio_dev->modes = INDIO_DIRECT_MODE;
-> +	iio_dev->channels = dac7612_channels;
-> +	iio_dev->num_channels = NUM_CHANS;
-ARRAY_SIZE.
-> +	iio_dev->name = spi_get_device_id(spi)->name;
-> +
-> +	for (i = 0; i < NUM_CHANS; i++) {
-ARRAY_SIZE
-> +		ret = dac7612_cmd_single(priv, i, 0);
-> +		if (ret)
-> +			return ret;
+>  static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
+>  {
+>  	unsigned long timeout = jiffies + HZ;
+> @@ -641,25 +745,45 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  		goto err;
+>  	}
+>  
+> -	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+> -		if (i2c_dev->msg_buf_remaining)
+> -			tegra_i2c_empty_rx_fifo(i2c_dev);
+> -		else
+> -			BUG();
+> -	}
+> +	if (!i2c_dev->is_curr_dma_xfer) {
+> +		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
+> +			if (i2c_dev->msg_buf_remaining)
+> +				tegra_i2c_empty_rx_fifo(i2c_dev);
+> +			else
+> +				BUG();
+> +		}
+>  
+> -	if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+> -		if (i2c_dev->msg_buf_remaining)
+> -			tegra_i2c_fill_tx_fifo(i2c_dev);
+> -		else
+> -			tegra_i2c_mask_irq(i2c_dev, I2C_INT_TX_FIFO_DATA_REQ);
+> +		if (!i2c_dev->msg_read &&
+> +		   (status & I2C_INT_TX_FIFO_DATA_REQ)) {
+> +			if (i2c_dev->msg_buf_remaining)
+> +				tegra_i2c_fill_tx_fifo(i2c_dev);
+> +			else
+> +				tegra_i2c_mask_irq(i2c_dev,
+> +						   I2C_INT_TX_FIFO_DATA_REQ);
+> +		}
+>  	}
+>  
+>  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+>  	if (i2c_dev->is_dvc)
+>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+>  
+> -	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+> +	if (status & I2C_INT_ALL_PACKETS_XFER_COMPLETE) {
+> +	/*
+> +	 * During message read XFER_COMPLETE interrupt is triggered prior to
+> +	 * DMA complete notification and during message write XFER_COMPLETE
+> +	 * interrupt is triggered after DMA complete notification.
+> +	 * PACKETS_XFER_COMPLETE indicates completion of all bytes of transfer.
+> +	 * so forcing msg_buf_remaining to 0.
+> +	 */
+> +		if (i2c_dev->is_curr_dma_xfer)
+> +			i2c_dev->msg_buf_remaining = 0;
+> +		status |= I2C_INT_PACKET_XFER_COMPLETE;
+> +		i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+> +		if (!i2c_dev->msg_buf_remaining)
+> +			complete(&i2c_dev->msg_complete);
+> +	} else if (status & I2C_INT_PACKET_XFER_COMPLETE) {
+> +		if (i2c_dev->is_curr_dma_xfer)
+> +			i2c_dev->msg_buf_remaining = 0;
+>  		BUG_ON(i2c_dev->msg_buf_remaining);
+>  		complete(&i2c_dev->msg_complete);
+>  	}
+> @@ -668,17 +792,68 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
+>  	/* An error occurred, mask all interrupts */
+>  	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
+>  		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
+> -		I2C_INT_RX_FIFO_DATA_REQ);
+> +		I2C_INT_RX_FIFO_DATA_REQ | I2C_INT_ALL_PACKETS_XFER_COMPLETE);
+>  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
+>  	if (i2c_dev->is_dvc)
+>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
+>  
+> +	if (i2c_dev->is_curr_dma_xfer) {
+> +		dmaengine_terminate_all(chan);
+> +		complete(&i2c_dev->dma_complete);
 > +	}
 > +
-> +	return devm_iio_device_register(&spi->dev, iio_dev);
+>  	complete(&i2c_dev->msg_complete);
+>  done:
+>  	spin_unlock(&i2c_dev->xfer_lock);
+>  	return IRQ_HANDLED;
+>  }
+>  
+> +static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
+> +				       size_t len, int direction)
+> +{
+> +	u32 val, reg;
+> +	u8 dma_burst = 0;
+> +	struct dma_slave_config dma_sconfig;
+> +
+> +	if (i2c_dev->hw->has_mst_fifo)
+> +		reg = I2C_MST_FIFO_CONTROL;
+> +	else
+> +		reg = I2C_FIFO_CONTROL;
+> +	val = i2c_readl(i2c_dev, reg);
+> +
+> +	if (len & 0xF)
+> +		dma_burst = 1;
+> +	else if (len & 0x10)
+> +		dma_burst = 4;
+> +	else
+> +		dma_burst = 8;
+> +
+> +	if (direction == DATA_DMA_DIR_TX) {
+> +		if (i2c_dev->hw->has_mst_fifo)
+> +			val |= I2C_MST_FIFO_CONTROL_TX_TRIG(dma_burst);
+> +		else
+> +			val |= I2C_FIFO_CONTROL_TX_TRIG(dma_burst);
+> +	} else {
+> +		if (i2c_dev->hw->has_mst_fifo)
+> +			val |= I2C_MST_FIFO_CONTROL_RX_TRIG(dma_burst);
+> +		else
+> +			val |= I2C_FIFO_CONTROL_RX_TRIG(dma_burst);
+> +	}
+> +	i2c_writel(i2c_dev, val, reg);
+> +
+> +	if (direction == DATA_DMA_DIR_TX) {
+> +		dma_sconfig.dst_addr = i2c_dev->phys_addr + I2C_TX_FIFO;
+> +		dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +		dma_sconfig.dst_maxburst = dma_burst;
+> +	} else {
+> +		dma_sconfig.src_addr = i2c_dev->phys_addr + I2C_RX_FIFO;
+> +		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> +		dma_sconfig.src_maxburst = dma_burst;
+> +	}
+> +
+> +	dmaengine_slave_config(chan, &dma_sconfig);
 > +}
 > +
-> +static const struct spi_device_id dac7612_id[] = {
-> +	{"ti-dac7612"},
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(spi, dac7612_id);
-> +
-> +static struct spi_driver dac7612_driver = {
-> +	.driver = {
-> +		   .name = "ti-dac7612",
-> +		   },
-> +	.probe = dac7612_probe,
-> +	.id_table = dac7612_id,
-> +};
-> +module_spi_driver(dac7612_driver);
-> +
-> +MODULE_AUTHOR("Ricardo Ribalda <ricardo@ribalda.com>");
-> +MODULE_DESCRIPTION("Texas Instruments DAC7612 DAC driver");
-> +MODULE_LICENSE("GPL v2");
+>  static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	struct i2c_msg *msg, enum msg_end_type end_state)
+>  {
+> @@ -688,6 +863,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	unsigned long flags;
+>  	u16 xfer_time = 100;
+>  	size_t xfer_size = 0;
+> +	u32 *buffer = 0;
+> +	int ret = 0;
+> +	bool dma = false;
+>  
+>  	if (msg->flags & I2C_M_RD)
+>  		xfer_size = ALIGN(msg->len, BYTES_PER_FIFO_WORD);
+> @@ -698,6 +876,11 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
+>  	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
+>  					i2c_dev->bus_clk_rate);
+>  
+> +	dma = ((xfer_size > I2C_PIO_MODE_MAX_LEN) &&
+> +		i2c_dev->tx_dma_chan && i2c_dev->rx_dma_chan);
 
+The xfer_size is aligned to 4, does this mean that DMA will transfer more bytes than needed when msg->len isn't multiple of 4?
