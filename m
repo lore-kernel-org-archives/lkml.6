@@ -2,154 +2,128 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31607C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 18:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11249C282C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 18:09:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01F2F2184C
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 18:02:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FWHuwG++"
+	by mail.kernel.org (Postfix) with ESMTP id DCFCC2184C
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 18:09:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548526157;
+	bh=rHuzDfPwjtqRyLzcYTXQWvdEoTAwNRFWp4WH2OxOSKg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=mkxS735ipEXUODJ+feiL5ByT7VxGFTpYFtgO5QQxbhtPorPj3A0VA3s+bPH+qZrOD
+	 /r8iFGQPN1gyWsrIr+PHScgCJfGjz28CTKJWSzvZfw9GWY3pdCsCcDqhTPbfQO1Xq4
+	 U7gGjP1mKWUXNy4iUBL0pW/AaTPX6HHcJXXq5l3A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbfAZSCK (ORCPT
+        id S1726233AbfAZSJQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 13:02:10 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42394 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726089AbfAZSCK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 13:02:10 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so9091709lfh.9;
-        Sat, 26 Jan 2019 10:02:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=iMjTmor3W7gktBx6x0djHp6YFK4i4C+B9ypjZYMjmkE=;
-        b=FWHuwG++HpVKcD7z0akRfk03KEfb6YsaGDRsakFU4QIGomkbgsCP8ajdBT42g28+9H
-         gGaDEVE7yPWUuGf+lCyLPOCGjUjIIgMvU1H+AJ8d3mBVMdVA0ynNrKYQbuUtFq2bm3b/
-         ISjeVi0xSCHhmFF2K2CfBBpkqTEzrdSChZJbQTUXVkcCIlTlP7wi6D8S2Y5kT8mfYZPT
-         hMVSI92uNgxvJXqBmkq1KUnjjSgMnqVjL++3qGXJKAilGv/bnkPA65FmMC0n8uEJ6zZn
-         qB1i/T/cNt5RE/hqskmamaeS8r5eG/FJsZbaFzTzvutuq+Q2EMKfdSbpU1M68jt1qQ7g
-         gKvg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=iMjTmor3W7gktBx6x0djHp6YFK4i4C+B9ypjZYMjmkE=;
-        b=dMlTPc0z9VccF/6J3JxkWYpcByA2Zoc5K4LkCLMSxiAckf5N7DVuY72wDEpWicSlPV
-         cO2M0ZaC1FgAGaLWcYSoN3vovAwuq4EQVRSQJUpzJ7WwJSnQFYJTGLjWAbjC2/My5AL7
-         YPLeaGHx/G3AtHStVuAJLYMmd37NNGV0JLKaeS9H2jhfxZWtHKsP62O8F6bRpkYtRYsd
-         iNVs4jka1NUrnxzg4u0n5t7/JHgUJZ3CEdcmgUeybBs6rYgwe60UEbLnHBvjwrn2Yjml
-         TYp6lsFF6fw5TK8sjgFRpk2oLMtDktTuHf8m7HYs9FJvN5qqFPLQA90kGwFH5ON2PQ5T
-         +Dsg==
-X-Gm-Message-State: AJcUukc1RznQbM6AAJIbOXJ+sq8PtrEuZRXdIMVJFBIEwKazAsr3ux0v
-        Xtlr8gWN1SDsFz06/TgZjx9DuPx6
-X-Google-Smtp-Source: ALg8bN4LSgNYUnsnP9e6l2uvbu9KndMGw12xXPzLncGQ17LQf8uOSlnXrQGAs2iztMu7ZNom2hXgZw==
-X-Received: by 2002:a19:a28e:: with SMTP id l136mr11917589lfe.87.1548525727516;
-        Sat, 26 Jan 2019 10:02:07 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id p67sm2173784lfe.14.2019.01.26.10.02.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 26 Jan 2019 10:02:06 -0800 (PST)
-Subject: Re: [PATCH V3 2/3] i2c: tegra: Update transfer timeout
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
- <1548475073-12408-2-git-send-email-skomatineni@nvidia.com>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <0cf91475-f77d-7453-deb6-3dd91b63aeb6@gmail.com>
-Date:   Sat, 26 Jan 2019 21:02:05 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 26 Jan 2019 13:09:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35520 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726073AbfAZSJQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 13:09:16 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B36AA218A6;
+        Sat, 26 Jan 2019 18:09:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548526155;
+        bh=rHuzDfPwjtqRyLzcYTXQWvdEoTAwNRFWp4WH2OxOSKg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=YlCBCLJc1qeT8tkDvuqw9wJsN+NKNzdke9ThA8+Dv4fuF/AcLZtbDImI+SgBAuckm
+         tBWqcKt+FZlkjIvoFqhVAnpYnCSabAJckdp1bMdAPqAyl/o7AMAoVa8XznGEYOr+WN
+         Sf/GMvzYnzXSzT/Jmy9GIZeUb9QjARbWOXOS1i2E=
+Date:   Sat, 26 Jan 2019 18:09:09 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Alexandru Ardelean <ardeleanalex@gmail.com>
+Cc:     Rodrigo Ribeiro <rodrigorsdc@gmail.com>, lars@metafoo.de,
+        Michael.Hennerich@analog.com, knaack.h@gmx.de,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com, Rafael Tsuha <rafael.tsuha@usp.br>
+Subject: Re: [PATCH] staging:iio:ad7152: Rename misspelled RESEVERD ->
+ RESERVED
+Message-ID: <20190126180909.38380f05@archlinux>
+In-Reply-To: <CA+U=DsqG6PKs1Off9QP_3_q+c5=uzRypHCs+O6iur=NC5QdDdQ@mail.gmail.com>
+References: <1548358316-8062-1-git-send-email-rodrigorsdc@gmail.com>
+        <CA+U=DsqG6PKs1Off9QP_3_q+c5=uzRypHCs+O6iur=NC5QdDdQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <1548475073-12408-2-git-send-email-skomatineni@nvidia.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-26.01.2019 6:57, Sowjanya Komatineni пишет:
-> Update I2C transfer timeout based on transfer bytes and I2C bus
-> rate to allow enough time during max transfer size based on the
-> speed.
+On Fri, 25 Jan 2019 10:19:54 +0200
+Alexandru Ardelean <ardeleanalex@gmail.com> wrote:
 
-Could it be that I2C device is busy and just slowly handling the transfer requests? Maybe better to leave the timeout as-is and assume the worst case scenario?
+> On Thu, Jan 24, 2019 at 9:35 PM Rodrigo Ribeiro <rodrigorsdc@gmail.com> wrote:
+> >
+> > Remove the checkpatch.pl check:
+> >
+> > CHECK: 'RESEVERD' may be misspelled - perhaps 'RESERVED'?  
+> 
+> Hey,
+> 
+> A bit curios about this one.
+> Are you using this chip/driver ?
+> 
+> Thing is: the part is nearing EOL, and it could be an idea to be
+> marked for removal (since it's still in staging).
+> But if there are users for this driver, it could be left around for a while.
 
-> 
-> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
-> ---
->  [V3] : Same as V2
->  [V2] : Added this patch in V2 series to allow enough time for data transfer
-> 	to happen.
-> 	This patch has dependency with DMA patch as TEGRA_I2C_TIMEOUT define
-> 	takes argument with this patch.
-> 
->  drivers/i2c/busses/i2c-tegra.c | 18 ++++++++++++++++--
->  1 file changed, 16 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
-> index aec500ef9a98..3dcbc9960d9d 100644
-> --- a/drivers/i2c/busses/i2c-tegra.c
-> +++ b/drivers/i2c/busses/i2c-tegra.c
-> @@ -23,7 +23,7 @@
->  #include <linux/reset.h>
->  #include <linux/slab.h>
->  
-> -#define TEGRA_I2C_TIMEOUT (msecs_to_jiffies(1000))
-> +#define TEGRA_I2C_TIMEOUT(ms) (msecs_to_jiffies(ms))
->  #define BYTES_PER_FIFO_WORD 4
->  
->  #define I2C_CNFG				0x000
-> @@ -116,6 +116,9 @@
->  #define I2C_MST_FIFO_STATUS_TX_MASK		0xff0000
->  #define I2C_MST_FIFO_STATUS_TX_SHIFT		16
->  
-> +/* Packet header size in bytes */
-> +#define I2C_PACKET_HEADER_SIZE			12
-> +
->  /*
->   * msg_end_type: The bus control which need to be send at end of transfer.
->   * @MSG_END_STOP: Send stop pulse at end of transfer.
-> @@ -683,6 +686,17 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  	u32 int_mask;
->  	unsigned long time_left;
->  	unsigned long flags;
-> +	u16 xfer_time = 100;
-> +	size_t xfer_size = 0;
+While it might be going away soon, I'm also not that bothered about
+the small amount of churn that a tidy up patch like this causes,
+and it might not go away ;)
 
-No need to initialize xfer_size to 0.
+However it is rather odd to have a 'reserved' entry for a register.
+can't see that providing any useful information.  Normally I'm
+happy to have complete register sets as a form of documentation
+if the author wants to do it that way.  This however seems silly.
 
-> +
-> +	if (msg->flags & I2C_M_RD)
-> +		xfer_size = ALIGN(msg->len, BYTES_PER_FIFO_WORD);
-> +	else
-> +		xfer_size = ALIGN(msg->len, BYTES_PER_FIFO_WORD) +
-> +			    I2C_PACKET_HEADER_SIZE;
-> +
-> +	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
-> +					i2c_dev->bus_clk_rate);>  
->  	tegra_i2c_flush_fifos(i2c_dev);
->  
-> @@ -739,7 +753,7 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->  		i2c_readl(i2c_dev, I2C_INT_MASK));
->  
->  	time_left = wait_for_completion_timeout(&i2c_dev->msg_complete,
-> -						TEGRA_I2C_TIMEOUT);
-> +						TEGRA_I2C_TIMEOUT(xfer_time));
->  	tegra_i2c_mask_irq(i2c_dev, int_mask);
->  
->  	if (time_left == 0) {
+Alex, we haven't really gone with marking things as 'going away'
+before.  I'd suggest we take a guess and remove it if you and the
+team an analog don't think it's in use.  Happy to get a patch for
+that if you want to send one.  Of course, Rodrigo could do that
+patch to get started if that works for everyone? :)
+
+Jonathan
 > 
+> Thanks
+> Alex
+> 
+> >
+> > Signed-off-by: Rodrigo Ribeiro <rodrigorsdc@gmail.com>
+> > Signed-off-by: Rafael Tsuha <rafael.tsuha@usp.br>
+> > ---
+> > This macro is not used anywhere. Should we just correct the
+> > spelling or remove the macro?
+> >
+> >  drivers/staging/iio/cdc/ad7152.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/drivers/staging/iio/cdc/ad7152.c b/drivers/staging/iio/cdc/ad7152.c
+> > index 25f51db..c9da6d4 100644
+> > --- a/drivers/staging/iio/cdc/ad7152.c
+> > +++ b/drivers/staging/iio/cdc/ad7152.c
+> > @@ -35,7 +35,7 @@
+> >  #define AD7152_REG_CH2_GAIN_HIGH       12
+> >  #define AD7152_REG_CH2_SETUP           14
+> >  #define AD7152_REG_CFG                 15
+> > -#define AD7152_REG_RESEVERD            16
+> > +#define AD7152_REG_RESERVED            16
+> >  #define AD7152_REG_CAPDAC_POS          17
+> >  #define AD7152_REG_CAPDAC_NEG          18
+> >  #define AD7152_REG_CFG2                        26
+> > --
+> > 2.7.4
+> >  
 
