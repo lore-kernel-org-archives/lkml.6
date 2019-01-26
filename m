@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-12.0 required=3.0
 	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88FF7C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:09:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7C1AC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:10:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 577B3217D7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7D8F3218CD
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:10:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbfAZKJt (ORCPT
+        id S1729392AbfAZKKv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 05:09:49 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:59273 "EHLO
+        Sat, 26 Jan 2019 05:10:51 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:38309 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfAZKJt (ORCPT
+        with ESMTP id S1726262AbfAZKKu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 05:09:49 -0500
+        Sat, 26 Jan 2019 05:10:50 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QA9dG3513709
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QAAGgX513815
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 26 Jan 2019 02:09:39 -0800
+        Sat, 26 Jan 2019 02:10:16 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QA9cCw513706;
-        Sat, 26 Jan 2019 02:09:38 -0800
-Date:   Sat, 26 Jan 2019 02:09:38 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QAAF8s513812;
+        Sat, 26 Jan 2019 02:10:15 -0800
+Date:   Sat, 26 Jan 2019 02:10:15 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Tony Jones <tipbot@zytor.com>
-Message-ID: <tip-35ea7e4bbb89ecd32057f5f6a2a8feb0d7224e51@git.kernel.org>
-Cc:     s1seetee@linux.vnet.ibm.com, acme@redhat.com, hpa@zytor.com,
-        ravi.bangoria@linux.ibm.com, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, tonyj@suse.de, corbet@lwn.net,
-        tglx@linutronix.de, jolsa@kernel.org
-Reply-To: jolsa@kernel.org, tglx@linutronix.de, corbet@lwn.net,
-          tonyj@suse.de, linux-kernel@vger.kernel.org, mingo@kernel.org,
-          ravi.bangoria@linux.ibm.com, hpa@zytor.com, acme@redhat.com,
-          s1seetee@linux.vnet.ibm.com
-In-Reply-To: <20190124005229.16146-7-tonyj@suse.de>
-References: <20190124005229.16146-7-tonyj@suse.de>
+From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
+Message-ID: <tip-h3q9rxxkbzetgnbro5rclqft@git.kernel.org>
+Cc:     mingo@kernel.org, daniel@iogearbox.net,
+        linux-kernel@vger.kernel.org, lclaudio@redhat.com,
+        adrian.hunter@intel.com, hpa@zytor.com, namhyung@kernel.org,
+        yhs@fb.com, wangnan0@huawei.com, kafai@fb.com, tglx@linutronix.de,
+        jolsa@kernel.org, acme@redhat.com
+Reply-To: wangnan0@huawei.com, kafai@fb.com, tglx@linutronix.de,
+          yhs@fb.com, jolsa@kernel.org, acme@redhat.com,
+          linux-kernel@vger.kernel.org, mingo@kernel.org,
+          daniel@iogearbox.net, hpa@zytor.com, namhyung@kernel.org,
+          lclaudio@redhat.com, adrian.hunter@intel.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf script python: Add Python3 support to
- tests/attr.py
-Git-Commit-ID: 35ea7e4bbb89ecd32057f5f6a2a8feb0d7224e51
+Subject: [tip:perf/core] perf bpf: Add bpf_map() helper
+Git-Commit-ID: b45d5511aa9029264740e2353ad7faf3cd444703
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -59,181 +58,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  35ea7e4bbb89ecd32057f5f6a2a8feb0d7224e51
-Gitweb:     https://git.kernel.org/tip/35ea7e4bbb89ecd32057f5f6a2a8feb0d7224e51
-Author:     Tony Jones <tonyj@suse.de>
-AuthorDate: Wed, 23 Jan 2019 16:52:29 -0800
+Commit-ID:  b45d5511aa9029264740e2353ad7faf3cd444703
+Gitweb:     https://git.kernel.org/tip/b45d5511aa9029264740e2353ad7faf3cd444703
+Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
+AuthorDate: Thu, 24 Jan 2019 15:01:46 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Fri, 25 Jan 2019 15:12:10 +0100
 
-perf script python: Add Python3 support to tests/attr.py
+perf bpf: Add bpf_map() helper
 
-Support both Python 2 and Python 3 in tests/attr.py
+To make the declaration of maps more compact, the following patches will
+make use of it.
 
-The use of "except as" syntax implies the minimum supported Python2 version is
-now v2.6
+Standardizing on it will allow to add the BTF details, i.e.
+BPF_ANNOTATE_KV_PAIR() (tools/testing/selftests/bpf/bpf_helpers.h)
+transparently.
 
-Committer testing:
-
-  $ make -C tools/perf PYTHON3=python install-bin
-
-Before:
-
-  # perf test attr
-  16: Setup struct perf_event_attr                          : FAILED!
-  48: Synthesize attr update                                : Ok
-  [root@quaco ~]# perf test -v attr
-  16: Setup struct perf_event_attr                          :
-  --- start ---
-  test child forked, pid 3121
-    File "/home/acme/libexec/perf-core/tests/attr.py", line 324
-      except Unsup, obj:
-                ^
-  SyntaxError: invalid syntax
-  test child finished with -1
-  ---- end ----
-  Setup struct perf_event_attr: FAILED!
-  48: Synthesize attr update                                :
-  --- start ---
-  test child forked, pid 3124
-  test child finished with 0
-  ---- end ----
-  Synthesize attr update: Ok
-  #
-
-After:
-
-   # perf test attr
-  16: Setup struct perf_event_attr                          : Ok
-  48: Synthesize attr update                                : Ok
-  #
-
-Signed-off-by: Tony Jones <tonyj@suse.de>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Tested-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Cc: Seeteena Thoufeek <s1seetee@linux.vnet.ibm.com>
-Link: http://lkml.kernel.org/r/20190124005229.16146-7-tonyj@suse.de
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
+Cc: Martin KaFai Lau <kafai@fb.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Wang Nan <wangnan0@huawei.com>
+Cc: Yonghong Song <yhs@fb.com>
+Link: https://lkml.kernel.org/n/tip-h3q9rxxkbzetgnbro5rclqft@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/tests/attr.py | 32 +++++++++++++++++++-------------
- 1 file changed, 19 insertions(+), 13 deletions(-)
+ tools/perf/include/bpf/bpf.h | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
-index 3e07eee33b10..cb39ac46bc73 100644
---- a/tools/perf/tests/attr.py
-+++ b/tools/perf/tests/attr.py
-@@ -1,5 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/tools/perf/include/bpf/bpf.h b/tools/perf/include/bpf/bpf.h
+index e667577207dc..0482028c1d11 100644
+--- a/tools/perf/include/bpf/bpf.h
++++ b/tools/perf/include/bpf/bpf.h
+@@ -18,6 +18,14 @@ struct bpf_map {
+         unsigned int numa_node;
+ };
  
-+from __future__ import print_function
++#define bpf_map(name, _type, type_key, type_val, _max_entries)	\
++struct bpf_map SEC("maps") name = {				\
++	.type	     = BPF_MAP_TYPE_##_type,			\
++	.key_size    = sizeof(type_key),			\
++	.value_size  = sizeof(type_val),			\
++	.max_entries = _max_entries,				\
++}
 +
- import os
- import sys
- import glob
-@@ -7,7 +9,11 @@ import optparse
- import tempfile
- import logging
- import shutil
--import ConfigParser
-+
-+try:
-+    import configparser
-+except ImportError:
-+    import ConfigParser as configparser
- 
- def data_equal(a, b):
-     # Allow multiple values in assignment separated by '|'
-@@ -99,20 +105,20 @@ class Event(dict):
-     def equal(self, other):
-         for t in Event.terms:
-             log.debug("      [%s] %s %s" % (t, self[t], other[t]));
--            if not self.has_key(t) or not other.has_key(t):
-+            if t not in self or t not in other:
-                 return False
-             if not data_equal(self[t], other[t]):
-                 return False
-         return True
- 
-     def optional(self):
--        if self.has_key('optional') and self['optional'] == '1':
-+        if 'optional' in self and self['optional'] == '1':
-             return True
-         return False
- 
-     def diff(self, other):
-         for t in Event.terms:
--            if not self.has_key(t) or not other.has_key(t):
-+            if t not in self or t not in other:
-                 continue
-             if not data_equal(self[t], other[t]):
-                 log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
-@@ -133,7 +139,7 @@ class Event(dict):
- #   - expected values assignments
- class Test(object):
-     def __init__(self, path, options):
--        parser = ConfigParser.SafeConfigParser()
-+        parser = configparser.SafeConfigParser()
-         parser.read(path)
- 
-         log.warning("running '%s'" % path)
-@@ -192,7 +198,7 @@ class Test(object):
-         return True
- 
-     def load_events(self, path, events):
--        parser_event = ConfigParser.SafeConfigParser()
-+        parser_event = configparser.SafeConfigParser()
-         parser_event.read(path)
- 
-         # The event record section header contains 'event' word,
-@@ -206,7 +212,7 @@ class Test(object):
-             # Read parent event if there's any
-             if (':' in section):
-                 base = section[section.index(':') + 1:]
--                parser_base = ConfigParser.SafeConfigParser()
-+                parser_base = configparser.SafeConfigParser()
-                 parser_base.read(self.test_dir + '/' + base)
-                 base_items = parser_base.items('event')
- 
-@@ -321,9 +327,9 @@ def run_tests(options):
-     for f in glob.glob(options.test_dir + '/' + options.test):
-         try:
-             Test(f, options).run()
--        except Unsup, obj:
-+        except Unsup as obj:
-             log.warning("unsupp  %s" % obj.getMsg())
--        except Notest, obj:
-+        except Notest as obj:
-             log.warning("skipped %s" % obj.getMsg())
- 
- def setup_log(verbose):
-@@ -362,7 +368,7 @@ def main():
-     parser.add_option("-p", "--perf",
-                       action="store", type="string", dest="perf")
-     parser.add_option("-v", "--verbose",
--                      action="count", dest="verbose")
-+                      default=0, action="count", dest="verbose")
- 
-     options, args = parser.parse_args()
-     if args:
-@@ -372,7 +378,7 @@ def main():
-     setup_log(options.verbose)
- 
-     if not options.test_dir:
--        print 'FAILED no -d option specified'
-+        print('FAILED no -d option specified')
-         sys.exit(-1)
- 
-     if not options.test:
-@@ -381,8 +387,8 @@ def main():
-     try:
-         run_tests(options)
- 
--    except Fail, obj:
--        print "FAILED %s" % obj.getMsg();
-+    except Fail as obj:
-+        print("FAILED %s" % obj.getMsg())
-         sys.exit(-1)
- 
-     sys.exit(0)
+ /*
+  * FIXME: this should receive .max_entries as a parameter, as careful
+  *	  tuning of these limits is needed to avoid hitting limits that
