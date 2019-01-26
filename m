@@ -3,46 +3,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12871C282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:42:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8F11C282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D417E218FF
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:42:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83E3E21855
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:47:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729530AbfAZBmJ (ORCPT
+        id S1728190AbfAZBrv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 20:42:09 -0500
-Received: from out30-43.freemail.mail.aliyun.com ([115.124.30.43]:32799 "EHLO
-        out30-43.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725550AbfAZBmJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 20:42:09 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R271e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04446;MF=yang.shi@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TJ.cBFS_1548466923;
-Received: from US-143344MP.local(mailfrom:yang.shi@linux.alibaba.com fp:SMTPD_---0TJ.cBFS_1548466923)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Sat, 26 Jan 2019 09:42:05 +0800
-Subject: Re: [RFC PATCH] mm: vmscan: do not iterate all mem cgroups for global
- direct reclaim
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     hannes@cmpxchg.org, akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-References: <1548187782-108454-1-git-send-email-yang.shi@linux.alibaba.com>
- <20190123095926.GS4087@dhcp22.suse.cz>
- <3684a63c-4c1d-fd1a-cda5-af92fb6bea8d@linux.alibaba.com>
- <20190124084341.GE4087@dhcp22.suse.cz>
-From:   Yang Shi <yang.shi@linux.alibaba.com>
-Message-ID: <7f2a5566-7547-b089-cf14-9c6db38283aa@linux.alibaba.com>
-Date:   Fri, 25 Jan 2019 17:42:02 -0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.12; rv:52.0)
- Gecko/20100101 Thunderbird/52.7.0
+        Fri, 25 Jan 2019 20:47:51 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:58222 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725924AbfAZBrv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 20:47:51 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 59D5039CE0D929295477;
+        Sat, 26 Jan 2019 09:47:49 +0800 (CST)
+Received: from [127.0.0.1] (10.57.115.182) by DGGEMS413-HUB.china.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Sat, 26 Jan 2019
+ 09:47:43 +0800
+Subject: Re: [PATCH V2 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused by
+ sending mailbox&CMQ during reset
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+References: <1547868967-115951-1-git-send-email-xavier.huwei@huawei.com>
+ <1547868967-115951-3-git-send-email-xavier.huwei@huawei.com>
+ <20190123224041.GA11605@ziepe.ca> <5C492D59.8030707@huawei.com>
+ <20190124183120.GD17167@ziepe.ca> <5C4A714C.2070109@huawei.com>
+ <20190125215018.GF23001@ziepe.ca>
+CC:     <dledford@redhat.com>, <linux-rdma@vger.kernel.org>,
+        <lijun_nudt@163.com>, <oulijun@huawei.com>,
+        <liudongdong3@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
+From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
+Message-ID: <5C4BBC3E.2000004@huawei.com>
+Date:   Sat, 26 Jan 2019 09:47:42 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-In-Reply-To: <20190124084341.GE4087@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+In-Reply-To: <20190125215018.GF23001@ziepe.ca>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -50,78 +54,74 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 1/24/19 12:43 AM, Michal Hocko wrote:
-> On Wed 23-01-19 12:24:38, Yang Shi wrote:
+On 2019/1/26 5:50, Jason Gunthorpe wrote:
+> On Fri, Jan 25, 2019 at 10:15:40AM +0800, Wei Hu (Xavier) wrote:
 >>
->> On 1/23/19 1:59 AM, Michal Hocko wrote:
->>> On Wed 23-01-19 04:09:42, Yang Shi wrote:
->>>> In current implementation, both kswapd and direct reclaim has to iterate
->>>> all mem cgroups.  It is not a problem before offline mem cgroups could
->>>> be iterated.  But, currently with iterating offline mem cgroups, it
->>>> could be very time consuming.  In our workloads, we saw over 400K mem
->>>> cgroups accumulated in some cases, only a few hundred are online memcgs.
->>>> Although kswapd could help out to reduce the number of memcgs, direct
->>>> reclaim still get hit with iterating a number of offline memcgs in some
->>>> cases.  We experienced the responsiveness problems due to this
->>>> occassionally.
->>> Can you provide some numbers?
->> What numbers do you mean? How long did it take to iterate all the memcgs?
->> For now I don't have the exact number for the production environment, but
->> the unresponsiveness is visible.
-> Yeah, I would be interested in the worst case direct reclaim latencies.
-> You can get that from our vmscan tracepoints quite easily.
+>> On 2019/1/25 2:31, Jason Gunthorpe wrote:
+>>> On Thu, Jan 24, 2019 at 11:13:29AM +0800, Wei Hu (Xavier) wrote:
+>>>> On 2019/1/24 6:40, Jason Gunthorpe wrote:
+>>>>> On Sat, Jan 19, 2019 at 11:36:06AM +0800, Wei Hu (Xavier) wrote:
+>>>>>
+>>>>>> +static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
+>>>>>> +					unsigned long instance_stage,
+>>>>>> +					unsigned long reset_stage)
+>>>>>> +{
+>>>>>> +	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
+>>>>>> +	struct hnae3_handle *handle = priv->handle;
+>>>>>> +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
+>>>>>> +	unsigned long end;
+>>>>>> +
+>>>>>> +	/* When hardware reset is detected, we should stop sending mailbox&cmq
+>>>>>> +	 * to hardware, and wait until hardware reset finished. If now
+>>>>>> +	 * in .init_instance() function, we should exit with error. If now at
+>>>>>> +	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
+>>>>>> +	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
+>>>>>> +	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
+>>>>>> +	 * related process will exit with error to notify NIC driver to
+>>>>>> +	 * reschedule soft reset process once again.
+>>>>>> +	 */
+>>>>>> +	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+>>>>>> +	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
+>>>>>> +		udelay(1);
+>>>>> I thought you were getting rid of these loops?
+>>>> Hi, Jason
+>>>>
+>>>>     Upper applications maybe notify driver to issue mailbox or CMD
+>>>>     commands to hardware, some commands used to cancel resources,
+>>>>     destory bt/destory cq/unreg mr/destory qp etc. when such
+>>>>     commands are executed successfully, the hardware engine will
+>>>>     no longer access some memory registered by the driver.
+>>>>
+>>>>     When reset occurs, it is possible for upper applications notify driver
+>>>>     to issue mailbox or CMD commands, we need to wait until hardware
+>>>>     reset finished to ensure that hardware no longer accesses related
+>>>> memory.
+>>> You should not wait for things using loops like the above.
+>> Hi, Jason
+>>
+>>     Are your comments foucsing on udelay? If not, thanks for your detail
+>> information.
+>>     In hns3 RoCE driver, some CMQ/mailbox operation are called inside
+>> the lock,
+>>     we can't use msleep in the lock, otherwise it will cause deadlock.
+>>     When reset occurs, RDMA service cannot be provided normally, I think
+>> in this
+>>     case using udelay will not have a great impact.
+> You should not use any kind of sleep call in a loop like this.
+Hi, Jason
 
-I wish I could. But I just can't predict when the problem will happen on 
-what machine, and I can't simply run perf on all machines of production 
-environment.
+    OK, I got your opinion and will modify it in v3 patch as below:   
 
-I tried to dig into our cluster monitor data history which records some 
-system behaviors. By looking into the data, it seems excessive direct 
-reclaim latency may reach tens of seconds due to excessive memcgs in 
-some cases (the discrepancy depends on the number of memcgs and workload 
-too).
-
-And the excessive direct reclaim latency problem has been reduced 
-significantly since the patch was deployed.
-
+    end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+    while (time_before(jiffies, end))
+        if (!ops->get_hw_reset_stat(handle))
+            break;           
+   
+    Regards
+Xavier
+> Jason
 >
->> I had some test number with triggering direct reclaim with 8k memcgs
->> artificially, which has just one clean page charged for each memcg, so the
->> reclaim is cheaper than real production environment.
->>
->> perf shows it took around 220ms to iterate 8k memcgs:
->>
->>                dd 13873 [011]   578.542919:
->> vmscan:mm_vmscan_direct_reclaim_begin
->>                dd 13873 [011]   578.758689:
->> vmscan:mm_vmscan_direct_reclaim_end
->>
->> So, iterating 400K would take at least 11s in this artificial case. The
->> production environment is much more complicated, so it would take much
->> longer in fact.
-> Having real world numbers would definitely help with the justification.
+> .
 >
->>>> Here just break the iteration once it reclaims enough pages as what
->>>> memcg direct reclaim does.  This may hurt the fairness among memcgs
->>>> since direct reclaim may awlays do reclaim from same memcgs.  But, it
->>>> sounds ok since direct reclaim just tries to reclaim SWAP_CLUSTER_MAX
->>>> pages and memcgs can be protected by min/low.
->>> OK, this makes some sense to me. The purpose of the direct reclaim is
->>> to reclaim some memory and throttle the allocation pace. The iterator is
->>> cached so the next reclaimer on the same hierarchy will simply continue
->>> so the fairness should be more or less achieved.
->> Yes, you are right. I missed this point.
->>
->>> Btw. is there any reason to keep !global_reclaim() check in place? Why
->>> is it not sufficient to exclude kswapd?
->> Iterating all memcgs in kswapd is still useful to help to reduce those
->> zombie memcgs.
-> Yes, but for that you do not need to check for global_reclaim right?
-
-Aha, yes. You are right. !current_is_kswapd() is good enough. Will fix 
-this in v2.
-
-Thanks,
-Yang
 
 
