@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BB3FC282C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:40:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DC2C282C6
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1411921903
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83296218A2
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:40:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="Ya02Rfui"
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="Rghoq/JW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729740AbfAZDkZ (ORCPT
+        id S1729720AbfAZDkY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 22:40:25 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:33199 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729697AbfAZDkT (ORCPT
+        Fri, 25 Jan 2019 22:40:24 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:44298 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729615AbfAZDkW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 22:40:19 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z11so5006611pgu.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 19:40:19 -0800 (PST)
+        Fri, 25 Jan 2019 22:40:22 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e11so5415934plt.11
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 19:40:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ingics-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=FB2HDBo2fJ1Vg2n17fymgtY1AAQPiycb4kajZ5KihdI=;
-        b=Ya02RfuicFkEhFX+gY8bbL1rSmRMMPXth9KQkinnCzp7i0sTTMurpAKuDFH8SsQLCM
-         zXukfvHeGVGWeL+69BOf5TulYP+COG7Prg48KXdb49vML+F/fH3NdzQKGyNKlrUzd88m
-         rnGoJQJXbkg50WBmGf6nZOR/m16B5rwzjZdGV0PK4Y5KPTtLkHpPXasu1B8srgty1TMo
-         GnjVeoVHOMVrT3rN6ZXp+RmNj3lgsi+VALHSNR6tQjYy57rYUvU8OvASYk6LEi06NVGP
-         A8BFuWEAMkuf8iq89BBaocAMofzTYgCKZ+vS6JI6MQfjXiz3ZIB0j7POjH3Dsl7hOJgS
-         8joA==
+        bh=Hzlq2tFDUYk9/Eai4Q/mwEmBcnhYQ0na7mF2KNolLy8=;
+        b=Rghoq/JWmLSrrBS1WZp0kv5TMm/YjudymPqVOV0b5zlg71GLYG1dDD1PQT+YxNlAt5
+         IOEZ4GeQS+OlKjLaDMjYzFzA/lx9Rz8D08ZJOgDuTZ60P42OVuDNhNx7hBgXcUYP6pBV
+         du4ym3LFkcrjmkyHPt3t1osUXwEsZ0+mTMECtMLkcBY+X1Q/ZEVL3rVujIx8kb3/ThS3
+         pza2Q3s1EsB8aSCiWitDeHb53pD1GV8HpjBU0vlynMhbScGHlEolZ76UQBEbVr45ekIM
+         X9xfVZr43h1xqup7qeZEgxwFpvNnG/B1YUXNP2p2jlgUwHheTmcOjy++LegtBSwg7lwN
+         TZXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=FB2HDBo2fJ1Vg2n17fymgtY1AAQPiycb4kajZ5KihdI=;
-        b=FL8UqGe7eQboQN+zCfn/RE3cTAVbKVvUSRwGcqvy6X25nL8I+xvpC2/hIkEN0L3QtM
-         5k7Cjdcph4tWL026urCoTT+KWe51b4YwBF+iuA7Yh6bMVkive5OUjsuhkuWmFrCf5D9i
-         PtF4Bzu8Cpft84EAEMnxQ6azPSL0vlaxqNmQgQ7GawUdklQ7ci9QGUFCFZL9h0ykuA/k
-         VBGrMwx9rEhX/7LL6Yiu72jj8dJRv6PvzCBrKiVNzBnzDgQMgmiuJYYPyNyLrdyvqCLT
-         kB/21/q07gtQQouE/BUis2VBfIZa6j9XLc0udf6pqOHcQR98cGj4oFnuzEVq8zENRbK3
-         kU7g==
-X-Gm-Message-State: AJcUukcZoBNtvhWeU9UmkcPIdX6oZuEU1QptbfYjpFFN2etewxflGsfP
-        chGCxaMGhhAJTKlNZRXfFENDHA==
-X-Google-Smtp-Source: ALg8bN519i1ym9op8YCSA5zT7w/xeISwXElJtwAThOXYE1NHtqv0KH4YVlElubyzJ0zJsjzmsILb6A==
-X-Received: by 2002:a62:1992:: with SMTP id 140mr13609177pfz.33.1548474018577;
-        Fri, 25 Jan 2019 19:40:18 -0800 (PST)
+        bh=Hzlq2tFDUYk9/Eai4Q/mwEmBcnhYQ0na7mF2KNolLy8=;
+        b=ETj5FnSgWTyDM3FLMg2/HriWZ5EoI5ZD19rbgJ8MXYjeQraN/oe0gHKnNzvSEQdJqJ
+         Rp7icB22y3OMReDbSpNUVPygpPArNrl7fKbH5j/9yFP4ePiAafVQd6raj+Qs9z3ciDRI
+         QDnpYtS0VP1Yx/k+cjZNhW2yF53kc8T5Pfrx2GGP0rVFQ3jWHeEwRXpLHLBuNWFdDAPI
+         4EBNeMhYRHenXuXDSHKOIFRN/GyIJ9Kx4ivBkDC7qKWySJkJwcciGvwCi2NZd/SOVI+H
+         Z4WH1WxN95j+2fEBKwuu9Qz5Qh30oa8LSe3A2tQweBwUGnHGrSpbQCPeKdtQiIy/3SEg
+         ZMVg==
+X-Gm-Message-State: AJcUukfdxe0bO387ywDBVp0Wn5SyuwBaz9kKTlgwunX6ruiLCEtTdbMY
+        D7oyC/SIu/+yWvN6bmC8lbqW2g==
+X-Google-Smtp-Source: ALg8bN6ZxP7s+A5uC3RKNw4MFkVOXB/CumQIXvm3npPrZjYLNKoXXSmMGn/7Ns6wx4iuf0S7nUmm4w==
+X-Received: by 2002:a17:902:145:: with SMTP id 63mr13613249plb.256.1548474021496;
+        Fri, 25 Jan 2019 19:40:21 -0800 (PST)
 Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
-        by smtp.gmail.com with ESMTPSA id 24sm37460086pfr.75.2019.01.25.19.40.15
+        by smtp.gmail.com with ESMTPSA id 24sm37460086pfr.75.2019.01.25.19.40.18
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 19:40:17 -0800 (PST)
+        Fri, 25 Jan 2019 19:40:20 -0800 (PST)
 From:   Axel Lin <axel.lin@ingics.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Milo Kim <milo.kim@ti.com>, Keerthy <j-keerthy@ti.com>,
@@ -62,9 +62,9 @@ Cc:     Milo Kim <milo.kim@ti.com>, Keerthy <j-keerthy@ti.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH 7/8] regulator: lp8788-buck: Constify lp8788_buck_desc
-Date:   Sat, 26 Jan 2019 11:39:06 +0800
-Message-Id: <20190126033907.18427-7-axel.lin@ingics.com>
+Subject: [PATCH 8/8] regulator: lp8788-ldo: Constify lp8788_dldo_desc and lp8788_aldo_desc
+Date:   Sat, 26 Jan 2019 11:39:07 +0800
+Message-Id: <20190126033907.18427-8-axel.lin@ingics.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190126033907.18427-1-axel.lin@ingics.com>
 References: <20190126033907.18427-1-axel.lin@ingics.com>
@@ -75,22 +75,31 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/regulator/lp8788-buck.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/lp8788-ldo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/lp8788-buck.c b/drivers/regulator/lp8788-buck.c
-index ec46290b647e..30de784d8e30 100644
---- a/drivers/regulator/lp8788-buck.c
-+++ b/drivers/regulator/lp8788-buck.c
-@@ -370,7 +370,7 @@ static const struct regulator_ops lp8788_buck34_ops = {
- 	.get_mode = lp8788_buck_get_mode,
+diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
+index 2ee22e7ea675..a2ef146e6b3a 100644
+--- a/drivers/regulator/lp8788-ldo.c
++++ b/drivers/regulator/lp8788-ldo.c
+@@ -186,7 +186,7 @@ static const struct regulator_ops lp8788_ldo_voltage_fixed_ops = {
+ 	.enable_time = lp8788_ldo_enable_time,
  };
  
--static struct regulator_desc lp8788_buck_desc[] = {
-+static const struct regulator_desc lp8788_buck_desc[] = {
+-static struct regulator_desc lp8788_dldo_desc[] = {
++static const struct regulator_desc lp8788_dldo_desc[] = {
  	{
- 		.name = "buck1",
- 		.id = BUCK1,
+ 		.name = "dldo1",
+ 		.id = DLDO1,
+@@ -343,7 +343,7 @@ static struct regulator_desc lp8788_dldo_desc[] = {
+ 	},
+ };
+ 
+-static struct regulator_desc lp8788_aldo_desc[] = {
++static const struct regulator_desc lp8788_aldo_desc[] = {
+ 	{
+ 		.name = "aldo1",
+ 		.id = ALDO1,
 -- 
 2.17.1
 
