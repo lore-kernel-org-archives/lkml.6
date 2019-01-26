@@ -2,300 +2,93 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B18A6C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 17:07:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E63F7C282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 17:09:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0FB217D7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 17:07:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA88A217D7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 17:09:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726215AbfAZRHn (ORCPT
+        id S1726304AbfAZRJW convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 12:07:43 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55944 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726070AbfAZRHn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 12:07:43 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 98C235A1F9;
-        Sat, 26 Jan 2019 17:07:42 +0000 (UTC)
-Received: from rules.brq.redhat.com (dhcp-10-40-5-180.brq.redhat.com [10.40.5.180])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 092514142;
-        Sat, 26 Jan 2019 17:07:35 +0000 (UTC)
-From:   Vladis Dronov <vdronov@redhat.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Oleg Nesterov <oleg@redhat.com>, linux-input@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Vladis Dronov <vdronov@redhat.com>, stable@vger.kernel.org
-Subject: [PATCH v2] HID: debug: fix the ring buffer implementation
-Date:   Sat, 26 Jan 2019 18:07:22 +0100
-Message-Id: <20190126170722.8035-1-vdronov@redhat.com>
+        Sat, 26 Jan 2019 12:09:22 -0500
+Received: from mail.fireflyinternet.com ([109.228.58.192]:61579 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726070AbfAZRJV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 12:09:21 -0500
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from localhost (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP (TLS) id 15361170-1500050 
+        for multiple; Sat, 26 Jan 2019 17:09:16 +0000
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sat, 26 Jan 2019 17:07:42 +0000 (UTC)
+Content-Transfer-Encoding: 8BIT
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Nick Desaulniers <ndesaulniers@google.com>
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+In-Reply-To: <20190126075749.GA30117@archlinux-ryzen>
+Cc:     Jani Nikula <jani.nikula@linux.intel.com>,
+        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthias Kaehlcke <mka@chromium.org>
+References: <20190126071122.24557-1-natechancellor@gmail.com>
+ <CAKwvOdmA6075WEPaKkL9d1wUQmboU9CxhbNT1oiVk8_Onjh5Rg@mail.gmail.com>
+ <20190126075749.GA30117@archlinux-ryzen>
+Message-ID: <154852255129.15238.871669857659377262@skylake-alporthouse-com>
+User-Agent: alot/0.6
+Subject: Re: [PATCH v2] drm/i915: Disable -Wuninitialized
+Date:   Sat, 26 Jan 2019 17:09:11 +0000
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ring buffer implementation in hid_debug_event() and hid_debug_events_read()
-is strange allowing lost or corrupted data. After commit 717adfdaf147
-("HID: debug: check length before copy_to_user()") it is possible to enter
-an infinite loop in hid_debug_events_read() by providing 0 as count, this
-locks up a system. Fix this by rewriting the ring buffer implementation
-with kfifo and simplify the code.
+Quoting Nathan Chancellor (2019-01-26 07:57:49)
+> On Fri, Jan 25, 2019 at 11:34:19PM -0800, Nick Desaulniers wrote:
+> > On Fri, Jan 25, 2019 at 11:13 PM Nathan Chancellor
+> > <natechancellor@gmail.com> wrote:
+> > >
+> > > This warning is disabled by default in scripts/Makefile.extrawarn when
+> > > W= is not provided but this Makefile adds -Wall after this warning is
+> > > disabled so it shows up in the build when it shouldn't:
+> > >
+> > > In file included from drivers/gpu/drm/i915/intel_breadcrumbs.c:895:
+> > > drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c:350:34: error:
+> > > variable 'wq' is uninitialized when used within its own initialization
+> > > [-Werror,-Wuninitialized]
+> > >         DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
+> > >                                         ^~
+> > > ./include/linux/wait.h:74:63: note: expanded from macro
+> > > 'DECLARE_WAIT_QUEUE_HEAD_ONSTACK'
+> > >         struct wait_queue_head name = __WAIT_QUEUE_HEAD_INIT_ONSTACK(name)
+> > >                                ~~~~                                  ^~~~
+> > > ./include/linux/wait.h:72:33: note: expanded from macro
+> > > '__WAIT_QUEUE_HEAD_INIT_ONSTACK'
+> > >         ({ init_waitqueue_head(&name); name; })
+> > >                                        ^~~~
+> > > 1 error generated.
+> > >
+> > > Explicitly disable the warning like commit 46e2068081e9 ("drm/i915:
+> > > Disable some extra clang warnings").
+> > >
+> > > Link: https://github.com/ClangBuiltLinux/linux/issues/220
+> > > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+> > 
+> > Reviewed-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+> > 
+> > probably could give Chris Wilson the suggested by tag.
+> > https://lore.kernel.org/lkml/154513398652.1108.7150969916024071452@skylake-alporthouse-com/
+> > 
+> 
+> Ugh you're right, completely slipped my mind.
+> 
+> Suggested-by: Chris Wilson <chris@chris-wilson.co.uk>
 
-This fixes CVE-2019-3819.
-
-v2: fix an execution logic and add a comment
-
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1669187
-Cc: stable@vger.kernel.org # v4.18+
-Fixes: cd667ce24796 ("HID: use debugfs for events/reports dumping")
-Fixes: 717adfdaf147 ("HID: debug: check length before copy_to_user()")
-Signed-off-by: Vladis Dronov <vdronov@redhat.com>
----
- drivers/hid/hid-debug.c   | 116 ++++++++++++++------------------------
- include/linux/hid-debug.h |   9 ++-
- 2 files changed, 47 insertions(+), 78 deletions(-)
-
-diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-index c530476edba6..08870c909268 100644
---- a/drivers/hid/hid-debug.c
-+++ b/drivers/hid/hid-debug.c
-@@ -30,6 +30,7 @@
- 
- #include <linux/debugfs.h>
- #include <linux/seq_file.h>
-+#include <linux/kfifo.h>
- #include <linux/sched/signal.h>
- #include <linux/export.h>
- #include <linux/slab.h>
-@@ -661,17 +662,12 @@ EXPORT_SYMBOL_GPL(hid_dump_device);
- /* enqueue string to 'events' ring buffer */
- void hid_debug_event(struct hid_device *hdev, char *buf)
- {
--	unsigned i;
- 	struct hid_debug_list *list;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&hdev->debug_list_lock, flags);
--	list_for_each_entry(list, &hdev->debug_list, node) {
--		for (i = 0; buf[i]; i++)
--			list->hid_debug_buf[(list->tail + i) % HID_DEBUG_BUFSIZE] =
--				buf[i];
--		list->tail = (list->tail + i) % HID_DEBUG_BUFSIZE;
--        }
-+	list_for_each_entry(list, &hdev->debug_list, node)
-+		kfifo_in(&list->hid_debug_fifo, buf, strlen(buf));
- 	spin_unlock_irqrestore(&hdev->debug_list_lock, flags);
- 
- 	wake_up_interruptible(&hdev->debug_wait);
-@@ -722,8 +718,7 @@ void hid_dump_input(struct hid_device *hdev, struct hid_usage *usage, __s32 valu
- 	hid_debug_event(hdev, buf);
- 
- 	kfree(buf);
--        wake_up_interruptible(&hdev->debug_wait);
--
-+	wake_up_interruptible(&hdev->debug_wait);
- }
- EXPORT_SYMBOL_GPL(hid_dump_input);
- 
-@@ -1083,8 +1078,8 @@ static int hid_debug_events_open(struct inode *inode, struct file *file)
- 		goto out;
- 	}
- 
--	if (!(list->hid_debug_buf = kzalloc(HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
--		err = -ENOMEM;
-+	err = kfifo_alloc(&list->hid_debug_fifo, HID_DEBUG_FIFOSIZE, GFP_KERNEL);
-+	if (err) {
- 		kfree(list);
- 		goto out;
- 	}
-@@ -1104,77 +1099,57 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
- 		size_t count, loff_t *ppos)
- {
- 	struct hid_debug_list *list = file->private_data;
--	int ret = 0, len;
-+	int ret = 0, copied;
- 	DECLARE_WAITQUEUE(wait, current);
- 
- 	mutex_lock(&list->read_mutex);
--	while (ret == 0) {
--		if (list->head == list->tail) {
--			add_wait_queue(&list->hdev->debug_wait, &wait);
--			set_current_state(TASK_INTERRUPTIBLE);
--
--			while (list->head == list->tail) {
--				if (file->f_flags & O_NONBLOCK) {
--					ret = -EAGAIN;
--					break;
--				}
--				if (signal_pending(current)) {
--					ret = -ERESTARTSYS;
--					break;
--				}
--
--				if (!list->hdev || !list->hdev->debug) {
--					ret = -EIO;
--					set_current_state(TASK_RUNNING);
--					goto out;
--				}
--
--				/* allow O_NONBLOCK from other threads */
--				mutex_unlock(&list->read_mutex);
--				schedule();
--				mutex_lock(&list->read_mutex);
--				set_current_state(TASK_INTERRUPTIBLE);
--			}
--
--			set_current_state(TASK_RUNNING);
--			remove_wait_queue(&list->hdev->debug_wait, &wait);
--		}
--
--		if (ret)
--			goto out;
-+	if (kfifo_is_empty(&list->hid_debug_fifo)) {
-+		add_wait_queue(&list->hdev->debug_wait, &wait);
-+		set_current_state(TASK_INTERRUPTIBLE);
-+
-+		while (kfifo_is_empty(&list->hid_debug_fifo)) {
-+			if (file->f_flags & O_NONBLOCK) {
-+				ret = -EAGAIN;
-+				break;
-+			}
-+
-+			if (signal_pending(current)) {
-+				ret = -ERESTARTSYS;
-+				break;
-+			}
-+
-+			/* if list->hdev is NULL we cannot remove_wait_queue().
-+			 * if list->hdev->debug is 0 then hid_debug_unregister()
-+			 * was already called and list->hdev is being destroyed.
-+			 * if we add remove_wait_queue() here we can hit a race.
-+			 */
-+			if (!list->hdev || !list->hdev->debug) {
-+				ret = -EIO;
-+				set_current_state(TASK_RUNNING);
-+				goto out;
-+			}
-+
-+			/* allow O_NONBLOCK from other threads */
-+			mutex_unlock(&list->read_mutex);
-+			schedule();
-+			mutex_lock(&list->read_mutex);
-+			set_current_state(TASK_INTERRUPTIBLE);
-+		}
-+
-+		set_current_state(TASK_RUNNING);
-+		remove_wait_queue(&list->hdev->debug_wait, &wait);
-+
-+		if (ret)
-+			goto out;
-+	}
- 
--		/* pass the ringbuffer contents to userspace */
--copy_rest:
--		if (list->tail == list->head)
--			goto out;
--		if (list->tail > list->head) {
--			len = list->tail - list->head;
--			if (len > count)
--				len = count;
--
--			if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
--				goto out;
--			}
--			ret += len;
--			list->head += len;
--		} else {
--			len = HID_DEBUG_BUFSIZE - list->head;
--			if (len > count)
--				len = count;
--
--			if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
--				ret = -EFAULT;
--				goto out;
--			}
--			list->head = 0;
--			ret += len;
--			count -= len;
--			if (count > 0)
--				goto copy_rest;
--		}
--
--	}
-+	/* pass the fifo content to userspace, locking is not needed with only
-+	 * one concurrent reader and one concurrent writer
-+	 */
-+	ret = kfifo_to_user(&list->hid_debug_fifo, buffer, count, &copied);
-+	if (ret)
-+		goto out;
-+	ret = copied;
- out:
- 	mutex_unlock(&list->read_mutex);
- 	return ret;
-@@ -1185,7 +1160,7 @@ static __poll_t hid_debug_events_poll(struct file *file, poll_table *wait)
- 	struct hid_debug_list *list = file->private_data;
- 
- 	poll_wait(file, &list->hdev->debug_wait, wait);
--	if (list->head != list->tail)
-+	if (!kfifo_is_empty(&list->hid_debug_fifo))
- 		return EPOLLIN | EPOLLRDNORM;
- 	if (!list->hdev->debug)
- 		return EPOLLERR | EPOLLHUP;
-@@ -1200,7 +1175,7 @@ static int hid_debug_events_release(struct inode *inode, struct file *file)
- 	spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
- 	list_del(&list->node);
- 	spin_unlock_irqrestore(&list->hdev->debug_list_lock, flags);
--	kfree(list->hid_debug_buf);
-+	kfifo_free(&list->hid_debug_fifo);
- 	kfree(list);
- 
- 	return 0;
-@@ -1246,4 +1221,3 @@ void hid_debug_exit(void)
- {
- 	debugfs_remove_recursive(hid_debug_root);
- }
--
-diff --git a/include/linux/hid-debug.h b/include/linux/hid-debug.h
-index 8663f216c563..e7a7c92aaf09 100644
---- a/include/linux/hid-debug.h
-+++ b/include/linux/hid-debug.h
-@@ -24,7 +24,10 @@
- 
- #ifdef CONFIG_DEBUG_FS
- 
-+#include <linux/kfifo.h>
-+
- #define HID_DEBUG_BUFSIZE 512
-+#define HID_DEBUG_FIFOSIZE 512
- 
- void hid_dump_input(struct hid_device *, struct hid_usage *, __s32);
- void hid_dump_report(struct hid_device *, int , u8 *, int);
-@@ -38,10 +41,7 @@ void hid_debug_event(struct hid_device *, char *);
- void hid_debug_event(struct hid_device *, char *);
- 
--
- struct hid_debug_list {
--	char *hid_debug_buf;
--	int head;
--	int tail;
-+	DECLARE_KFIFO_PTR(hid_debug_fifo, char);
- 	struct fasync_struct *fasync;
- 	struct hid_device *hdev;
- 	struct list_head node;
-@@ -64,4 +64,3 @@ struct hid_debug_list {
- #endif
- 
- #endif
--
+Ignorance is bliss. Applied to dinq, thanks!
+-Chris
