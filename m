@@ -2,100 +2,106 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3294BC282C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 04:11:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 239F9C282C3
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 04:14:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06AB8218CD
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 04:11:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ddU2K9+E"
+	by mail.kernel.org (Postfix) with ESMTP id E34D0218A2
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 04:14:43 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729759AbfAZELd (ORCPT
+        id S1729609AbfAZEOm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 23:11:33 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:45501 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729731AbfAZELd (ORCPT
+        Fri, 25 Jan 2019 23:14:42 -0500
+Received: from zeniv.linux.org.uk ([195.92.253.2]:33382 "EHLO
+        ZenIV.linux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725975AbfAZEOm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 23:11:33 -0500
-Received: by mail-pg1-f195.google.com with SMTP id y4so4995196pgc.12
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 20:11:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=y3VdLJWQGXPQM/DsCFiVj823D2T7QeCVu5p3fFIf6EM=;
-        b=ddU2K9+EAjuJpdGPbPHcURlafW6BUQGU+lSJ6LZlQcs4NglK/YxpRSrB0Ug8AAIleK
-         UcFUUil1uUcKSavzt5fDviPgbutIxhKDUK6CYxKkwSUgAtuLm/gM3syYtrAOcMDJ/ljR
-         Iyfwj9N+084PfKtwhdo7ROFdqC2UuXPHhpHWU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=y3VdLJWQGXPQM/DsCFiVj823D2T7QeCVu5p3fFIf6EM=;
-        b=Q4doq3ivs6qwSrNLRZ2M8t2EEPuLsR2fVf8PJw7cbktef2LgG+JKhyoE7qsBS08Ema
-         A02eM+98xD/ps3lWSQ/S0hQnejj97pPk+uWNI4wr4+6ulD3HRVEvL9cUg5ne97xEvmRw
-         uBGePyABlQdF4Nb6qwtcTa8yJFY0GFgKqCQUEWdxQfiXo7wsyY1vR0/JNheDM2Ns3qH/
-         adGL+6kKKWo3I6IIHqoF/WyLX4JUF7TwcUvbxDdA2vWjUK6QcMBd3n6NFtdNzf0U4b/4
-         US/IOU5OCcbk7Ex4Hay7IxzajLnHmKoUofEMwDkSWYDJuze3CyNMqNu28n1gp984WuM+
-         MoHA==
-X-Gm-Message-State: AJcUukfhxVC6uhJQQQg5V3NN+1Vm/KYVPykQad3zjElIJ234D58NuHuA
-        x4b/8Zny+acc7bo/iqpfWjCGOUXzIQ==
-X-Google-Smtp-Source: ALg8bN4F/IqHArp9RBXNNmWzVsOJVthhC86A/n5rHKctOsqxs/3TkVQ1hx4NXmSmfdY5/gozsz0RvQ==
-X-Received: by 2002:a62:1e45:: with SMTP id e66mr13519991pfe.152.1548475892228;
-        Fri, 25 Jan 2019 20:11:32 -0800 (PST)
-Received: from localhost.localdomain ([2409:4072:905:e69d:b1bd:9891:c622:302d])
-        by smtp.gmail.com with ESMTPSA id h129sm75099676pfb.110.2019.01.25.20.11.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 20:11:31 -0800 (PST)
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     robh+dt@kernel.org, arnd@arndb.de,
-        linux-arm-kernel@lists.infradead.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
-        amit.kucheria@linaro.org,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Subject: [PATCH 5/5] MAINTAINERS: Add entry for Bitmain SoC platform
-Date:   Sat, 26 Jan 2019 09:40:41 +0530
-Message-Id: <20190126041041.13173-6-manivannan.sadhasivam@linaro.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190126041041.13173-1-manivannan.sadhasivam@linaro.org>
-References: <20190126041041.13173-1-manivannan.sadhasivam@linaro.org>
+        Fri, 25 Jan 2019 23:14:42 -0500
+Received: from viro by ZenIV.linux.org.uk with local (Exim 4.91 #2 (Red Hat Linux))
+        id 1gnFMG-00020f-RD; Sat, 26 Jan 2019 04:14:16 +0000
+Date:   Sat, 26 Jan 2019 04:14:16 +0000
+From:   Al Viro <viro@zeniv.linux.org.uk>
+To:     Shuah Khan <shuah@kernel.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, w.d.hubbs@gmail.com,
+        chris@the-brannons.com, kirk@reisers.ca,
+        samuel.thibault@ens-lyon.org, gregkh@linuxfoundation.org,
+        robh@kernel.org, jslaby@suse.com, sameo@linux.intel.com,
+        davem@davemloft.net, arnd@arndb.de,
+        nishka.dasgupta_ug18@ashoka.edu.in, m.maya.nakamura@gmail.com,
+        santhameena13@gmail.com, zhongjiang@huawei.com,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+        speakup@linux-speakup.org, devel@driverdev.osuosl.org,
+        linux-serial@vger.kernel.org, linux-wireless@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: Re: [PATCH] tty: Fix WARNING in tty_set_termios
+Message-ID: <20190126041416.GF2217@ZenIV.linux.org.uk>
+References: <20190125232905.21727-1-shuah@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190125232905.21727-1-shuah@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add MAINTAINERS entry for Bitmain SoC platform with myself as the
-Maintainer.
+On Fri, Jan 25, 2019 at 04:29:05PM -0700, Shuah Khan wrote:
+> tty_set_termios() has the following WARMN_ON which can be triggered with a
+> syscall to invoke TIOCGETD __NR_ioctl.
+> 
+> WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
+>                 tty->driver->subtype == PTY_TYPE_MASTER);
+> Reference: https://syzkaller.appspot.com/bug?id=2410d22f1d8e5984217329dd0884b01d99e3e48d
+> 
+> A simple change would have been to print error message instead of WARN_ON.
+> However, the callers assume that tty_set_termios() always returns 0 and
+> don't check return value. The complete solution is fixing all the callers
+> to check error and bail out to fix the WARN_ON.
+> 
+> This fix changes tty_set_termios() to return error and all the callers
+> to check error and bail out. The reproducer is used to reproduce the
+> problem and verify the fix.
 
-Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
----
- MAINTAINERS | 7 +++++++
- 1 file changed, 7 insertions(+)
+> --- a/drivers/bluetooth/hci_ldisc.c
+> +++ b/drivers/bluetooth/hci_ldisc.c
+> @@ -321,6 +321,8 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
+>  		status = tty_set_termios(tty, &ktermios);
+>  		BT_DBG("Disabling hardware flow control: %s",
+>  		       status ? "failed" : "success");
+> +		if (status)
+> +			return;
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 51029a425dbe..da85ffe5e3f4 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -1372,6 +1372,13 @@ F:	arch/arm/mach-aspeed/
- F:	arch/arm/boot/dts/aspeed-*
- N:	aspeed
- 
-+ARM/BITMAIN ARCHITECTURE
-+M:	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-+L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
-+S:	Maintained
-+F:	arch/arm64/boot/dts/bitmain/
-+F:	Documentation/devicetree/bindings/arm/bitmain.yaml
-+
- ARM/CALXEDA HIGHBANK ARCHITECTURE
- M:	Rob Herring <robh@kernel.org>
- L:	linux-arm-kernel@lists.infradead.org (moderated for non-subscribers)
--- 
-2.17.1
+Can that ldisc end up set on pty master?  And does it make any sense there?
 
+> diff --git a/drivers/tty/serdev/serdev-ttyport.c b/drivers/tty/serdev/serdev-ttyport.c
+> index fa1672993b4c..29b51370deac 100644
+> --- a/drivers/tty/serdev/serdev-ttyport.c
+> +++ b/drivers/tty/serdev/serdev-ttyport.c
+> @@ -136,7 +136,9 @@ static int ttyport_open(struct serdev_controller *ctrl)
+>  	ktermios.c_cflag |= CRTSCTS;
+>  	/* Hangups are not supported so make sure to ignore carrier detect. */
+>  	ktermios.c_cflag |= CLOCAL;
+> -	tty_set_termios(tty, &ktermios);
+> +	ret = tty_set_termios(tty, &ktermios);
+
+How can _that_ happen to pty master?
+
+> diff --git a/net/nfc/nci/uart.c b/net/nfc/nci/uart.c
+> index 78fe622eba65..9978c21ce34d 100644
+> --- a/net/nfc/nci/uart.c
+> +++ b/net/nfc/nci/uart.c
+> @@ -447,6 +447,7 @@ void nci_uart_set_config(struct nci_uart *nu, int baudrate, int flow_ctrl)
+>  	else
+>  		new_termios.c_cflag &= ~CRTSCTS;
+>  
+> +	/* FIXME tty_set_termios() could return error */
+
+Ditto for this one.
+
+IOW, I don't believe that this patch makes any sense.  If anything,
+we need to prevent unconditional tty_set_termios() on the path
+that *does* lead to calling it for pty.
