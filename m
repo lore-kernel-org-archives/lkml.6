@@ -2,138 +2,147 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD907C282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:55:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CDBC282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 974DF218FF
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:55:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TQf6hAa1"
+	by mail.kernel.org (Postfix) with ESMTP id ECC83218FF
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:56:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbfAZAzk (ORCPT
+        id S1728823AbfAZA4O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 19:55:40 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:35498 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbfAZAzk (ORCPT
+        Fri, 25 Jan 2019 19:56:14 -0500
+Received: from gateway24.websitewelcome.com ([192.185.51.202]:40578 "EHLO
+        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725916AbfAZA4N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 19:55:40 -0500
-Received: by mail-pl1-f194.google.com with SMTP id p8so5311069plo.2;
-        Fri, 25 Jan 2019 16:55:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Y9iFsUiO/WbQXdNfoAP0UGyMHMfi/LlzHR8NdSQFJcQ=;
-        b=TQf6hAa1/eMqenX671m0CLGxi23K5uWiKG9KgNp3OvIoHffKbeTCBC8q3YJdocggRp
-         g8Hb0/NW3vyg04SLfLiFgHxJeC8z3ds9I8Lux5mZd1CsA0PZq3AFrh72imrhyUNWSfdF
-         gUK8oSoU/fKkR4TbIqNgmwwEYzplVsRU3D0bdgsVRMIlO2Qf3MGU8rXrmBn2YwXqSsRL
-         2vknLXknR3Z9VA9NRvMp4vg438PNzj282ZzmaeW3x/tCf2fjsl9/5YHg03SYy0SQZ3Md
-         W8455UYlUz+ucM6riOWDK93h0QtNLJSnVSdn/Yril6ovSh/uiTLHwfQXWXw/EBxsduk7
-         WboQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Y9iFsUiO/WbQXdNfoAP0UGyMHMfi/LlzHR8NdSQFJcQ=;
-        b=h8nZKvb/JDDBirnZWrmH1ndjnsOmNSpT90a03VafhiiuL1n5pJ5U6oqqkeCCfAsx8M
-         8BFjvTg3VyDLn9i9/vNaokt7VzQ7yGeUSkjG2b9OK2bl3WOt5RuyrI48sFNj/5N5wGPn
-         a4P6hb5pEVtN2cm0ONlSZaGSPlO+Qv6yTes+i/vFJnxh9GAXwctyUMc7jZmSpNHouhA3
-         2DJwNJwQJiSd8y86drNiyxZrqa3df429G0pJBaeY8enx/N++6V4as2Yqc2SilO+sWrWt
-         TxoK78ifsT1FpfvllQ8vLql7LH40AdaOmkhRLfnYlBf1NC04zwR36Qv85/OvgTkuUbyG
-         gq1g==
-X-Gm-Message-State: AJcUukfI/w3RuP6D7s02iB3o3mgPfG2N6LMNX6lydOGYxC4pj/7+rR4u
-        E4w6x548RikiLfSBFlUqrcQ=
-X-Google-Smtp-Source: ALg8bN48m8CZXojx36XPO3/pcEhW3AX6H/yfHswvgMDw/hFtplSFx7UpcIS848cD1fwx6Pi5YYQ2XQ==
-X-Received: by 2002:a17:902:4222:: with SMTP id g31mr13176078pld.240.1548464139118;
-        Fri, 25 Jan 2019 16:55:39 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id g15sm107380895pfj.131.2019.01.25.16.55.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 16:55:38 -0800 (PST)
-Date:   Fri, 25 Jan 2019 16:55:36 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Martin Kepplinger <martink@posteo.de>
-Cc:     devicetree@vger.kernel.org, linux-input@vger.kernel.org,
-        robh+dt@kernel.org, mark.rutland@arm.com,
-        chinyeow.sim.xt@renesas.com, linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: Re: [PATCH v2 2/2] Input: st1232 - add support for st1633
-Message-ID: <20190126005536.GA212026@dtor-ws>
-References: <20190124102125.25458-1-martink@posteo.de>
- <20190124102125.25458-2-martink@posteo.de>
+        Fri, 25 Jan 2019 19:56:13 -0500
+Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
+        by gateway24.websitewelcome.com (Postfix) with ESMTP id 59D26CE4B6
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 18:56:12 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id nCGagVFDE2PzOnCGag54bD; Fri, 25 Jan 2019 18:56:12 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=41458 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1gnCGa-000SUQ-2m; Fri, 25 Jan 2019 18:56:12 -0600
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>
+References: <20190125203140.GA1814@embeddedor>
+ <CAGXu5j+N+tqx+1z-1zq2_Egantdcr6YSm_1s4XeSUN427zDhQA@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Subject: Re: [PATCH] lib/cmdline.c: mark expected switch fall-throughs
+Message-ID: <14d9d30d-3c33-34a6-5401-016ff60b35c1@embeddedor.com>
+Date:   Fri, 25 Jan 2019 18:56:11 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124102125.25458-2-martink@posteo.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <CAGXu5j+N+tqx+1z-1zq2_Egantdcr6YSm_1s4XeSUN427zDhQA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1gnCGa-000SUQ-2m
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:41458
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Martin,
 
-On Thu, Jan 24, 2019 at 11:21:25AM +0100, Martin Kepplinger wrote:
-> From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+
+On 1/25/19 6:18 PM, Kees Cook wrote:
+> On Sat, Jan 26, 2019 at 9:31 AM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> In preparation to enabling -Wimplicit-fallthrough, mark switch
+>> cases where we are expecting to fall through.
+>>
+>> This patch fixes the following warnings:
+>>
+>> lib/cmdline.c:137:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/cmdline.c:140:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/cmdline.c:143:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/cmdline.c:146:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/cmdline.c:149:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>>
+>> Warning level 3 was used: -Wimplicit-fallthrough=3
+>>
+>> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
+>>
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > 
-> Add support for the Sitronix ST1633 touchscreen controller to the st1232
-> driver. A protocol spec can be found here:
-> www.ampdisplay.com/documents/pdf/AM-320480B6TZQW-TC0H.pdf
+> Acked-by: Kees Cook <keescook@chromium.org>
 > 
-> Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-> ---
-> 
-> while this works, I'm not totally convinced by how the i2c path of probe
-> looks. what do you say?
 
-Not quite what I had in mind. See below...
+Now applied to for-next/kspp, thanks.
 
->  static int st1232_ts_probe(struct i2c_client *client,
->  			   const struct i2c_device_id *id)
->  {
->  	struct st1232_ts_data *ts;
-> +	struct st1232_ts_finger *finger;
->  	struct input_dev *input_dev;
->  	int error;
-> +	const struct st_chip_info *match = NULL;
-> +
-> +	if (dev_fwnode(&client->dev))
-> +		match = device_get_match_data(&client->dev);
-> +	else if (id && id->driver_data == st1232)
-> +		match = &st1232_chip_info;
-> +	else if (id && id->driver_data == st1633)
-> +		match = &st1633_chip_info;
-> +	if (!match) {
-> +		dev_err(&client->dev, "unknown device model\n");
-> +		return -ENODEV;
-> +	}
+https://git.kernel.org/gustavoars/c/5dd481673c3ddd27d36851754bafbaa82bdff34f
 
-If you do:
-
-static const struct i2c_device_id st1232_ts_id[] = {
-	{ ST1232_TS_NAME, (unsigned long)&st1232_chip_info },
-	{ ST1633_TS_NAME, (unsigned long)&st1633_chip_info },
-	{ }
-};
-
-
-Then you can do:
-
-	match = device_get_match_data(&client->dev);
-	if (!match && id)
-		match = (const void *)id->driver_data;
-	if (!match) {
-		dev_err(&client->dev, "unknown device model\n");
-		return -ENODEV;
-	}
-
-Thanks.
-
--- 
-Dmitry
+Cheers!
+--
+Gustavo
