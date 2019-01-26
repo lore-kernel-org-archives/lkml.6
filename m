@@ -7,44 +7,42 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A2E3C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:12:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5010EC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:12:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23A5D217D7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:12:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2000B21726
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:12:23 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729732AbfAZKMC (ORCPT
+        id S1729759AbfAZKMV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 05:12:02 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:43145 "EHLO
+        Sat, 26 Jan 2019 05:12:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:48815 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfAZKMC (ORCPT
+        with ESMTP id S1726143AbfAZKMV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 05:12:02 -0500
+        Sat, 26 Jan 2019 05:12:21 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QABVXD513911
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0QACAeX514154
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 26 Jan 2019 02:11:31 -0800
+        Sat, 26 Jan 2019 02:12:10 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QABV5L513908;
-        Sat, 26 Jan 2019 02:11:31 -0800
-Date:   Sat, 26 Jan 2019 02:11:31 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0QAC969514151;
+        Sat, 26 Jan 2019 02:12:09 -0800
+Date:   Sat, 26 Jan 2019 02:12:09 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-pjlf38sv3i1hbn5vzkr4y3ol@git.kernel.org>
-Cc:     tglx@linutronix.de, jolsa@kernel.org, hpa@zytor.com,
-        wangnan0@huawei.com, lclaudio@redhat.com, daniel@iogearbox.net,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org, kafai@fb.com,
-        yhs@fb.com, acme@redhat.com, adrian.hunter@intel.com,
-        mingo@kernel.org
-Reply-To: hpa@zytor.com, tglx@linutronix.de, jolsa@kernel.org,
-          wangnan0@huawei.com, lclaudio@redhat.com, daniel@iogearbox.net,
-          kafai@fb.com, yhs@fb.com, acme@redhat.com,
-          linux-kernel@vger.kernel.org, namhyung@kernel.org,
-          mingo@kernel.org, adrian.hunter@intel.com
+Message-ID: <tip-0tjwcit8qitsmh4nyvf2b0jo@git.kernel.org>
+Cc:     mingo@kernel.org, lclaudio@redhat.com, jolsa@kernel.org,
+        adrian.hunter@intel.com, tglx@linutronix.de, hpa@zytor.com,
+        acme@redhat.com, linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        wangnan0@huawei.com
+Reply-To: jolsa@kernel.org, lclaudio@redhat.com, mingo@kernel.org,
+          wangnan0@huawei.com, namhyung@kernel.org,
+          linux-kernel@vger.kernel.org, acme@redhat.com, hpa@zytor.com,
+          tglx@linutronix.de, adrian.hunter@intel.com
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf augmented_raw_syscalls: Use bpf_map()
-Git-Commit-ID: 56d8175a4d05ed31fe9c3053a83a5f8e08a284ee
+Subject: [tip:perf/core] perf trace: Fixup etcsnoop example
+Git-Commit-ID: 1d59cb1bbd4cbe5a8f8032242cdacea5658129cf
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,59 +56,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  56d8175a4d05ed31fe9c3053a83a5f8e08a284ee
-Gitweb:     https://git.kernel.org/tip/56d8175a4d05ed31fe9c3053a83a5f8e08a284ee
+Commit-ID:  1d59cb1bbd4cbe5a8f8032242cdacea5658129cf
+Gitweb:     https://git.kernel.org/tip/1d59cb1bbd4cbe5a8f8032242cdacea5658129cf
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Thu, 24 Jan 2019 15:17:23 +0100
+AuthorDate: Thu, 24 Jan 2019 15:39:15 +0100
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
-CommitDate: Fri, 25 Jan 2019 15:12:10 +0100
+CommitDate: Fri, 25 Jan 2019 15:12:11 +0100
 
-perf augmented_raw_syscalls: Use bpf_map()
+perf trace: Fixup etcsnoop example
 
-To make the code more compact and also paving the way to have the BTF
-annotation to be done transparently.
+Where we don't have "raw_syscalls:sys_enter", so we need to look for a
+"*syscalls:sys_enter*" to initialize the offsets for the
+__augmented_syscalls__ evsel, which is the case with etcsnoop, that was
+segfaulting, fixed:
+
+  # trace -e /home/acme/git/perf/tools/perf/examples/bpf/etcsnoop.c
+     0.000 (         ): gnome-shell/2105 openat(dfd: CWD, filename: "/etc/localtime")                       ...
+   631.834 (         ): cat/6521 openat(dfd: CWD, filename: "/etc/ld.so.cache", flags: RDONLY|CLOEXEC) ...
+   632.637 (         ): bash/6521 openat(dfd: CWD, filename: "/etc/passwd")                          ...
+  ^C#
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Luis Cláudio Gonçalves <lclaudio@redhat.com>
-Cc: Martin KaFai Lau <kafai@fb.com>
 Cc: Namhyung Kim <namhyung@kernel.org>
 Cc: Wang Nan <wangnan0@huawei.com>
-Cc: Yonghong Song <yhs@fb.com>
-Link: https://lkml.kernel.org/n/tip-pjlf38sv3i1hbn5vzkr4y3ol@git.kernel.org
+Fixes: b9b6a2ea2baf ("perf trace: Do not hardcode the size of the tracepoint common_ fields")
+Link: https://lkml.kernel.org/n/tip-0tjwcit8qitsmh4nyvf2b0jo@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/examples/bpf/augmented_raw_syscalls.c | 14 ++------------
- 1 file changed, 2 insertions(+), 12 deletions(-)
+ tools/perf/builtin-trace.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/examples/bpf/augmented_raw_syscalls.c b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-index 9e9d4c66e53c..f9b2161e1ca4 100644
---- a/tools/perf/examples/bpf/augmented_raw_syscalls.c
-+++ b/tools/perf/examples/bpf/augmented_raw_syscalls.c
-@@ -18,23 +18,13 @@
- #include <pid_filter.h>
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index ed4583128b9c..1447993e1ee3 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -3854,7 +3854,8 @@ int cmd_trace(int argc, const char **argv)
+ 				goto init_augmented_syscall_tp;
+ 			}
  
- /* bpf-output associated map */
--struct bpf_map SEC("maps") __augmented_syscalls__ = {
--	.type = BPF_MAP_TYPE_PERF_EVENT_ARRAY,
--	.key_size = sizeof(int),
--	.value_size = sizeof(u32),
--	.max_entries = __NR_CPUS__,
--};
-+bpf_map(__augmented_syscalls__, PERF_EVENT_ARRAY, int, u32, __NR_CPUS__);
- 
- struct syscall {
- 	bool	enabled;
- };
- 
--struct bpf_map SEC("maps") syscalls = {
--	.type	     = BPF_MAP_TYPE_ARRAY,
--	.key_size    = sizeof(int),
--	.value_size  = sizeof(struct syscall),
--	.max_entries = 512,
--};
-+bpf_map(syscalls, ARRAY, int, struct syscall, 512);
- 
- struct syscall_enter_args {
- 	unsigned long long common_tp_fields;
+-			if (strcmp(perf_evsel__name(evsel), "raw_syscalls:sys_enter") == 0) {
++			if (trace.syscalls.events.augmented->priv == NULL &&
++			    strstr(perf_evsel__name(evsel), "syscalls:sys_enter")) {
+ 				struct perf_evsel *augmented = trace.syscalls.events.augmented;
+ 				if (perf_evsel__init_augmented_syscall_tp(augmented, evsel) ||
+ 				    perf_evsel__init_augmented_syscall_tp_args(augmented))
