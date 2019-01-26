@@ -2,115 +2,201 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92811C282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD7CC282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:17:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C38621855
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:11:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F4FE21902
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:17:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="madlEAkH"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eS1QWiGC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728754AbfAZBLR (ORCPT
+        id S1727867AbfAZBRI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 20:11:17 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37830 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725550AbfAZBLR (ORCPT
+        Fri, 25 Jan 2019 20:17:08 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:45465 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAZBRH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 20:11:17 -0500
-Received: by mail-pg1-f194.google.com with SMTP id c25so4893927pgb.4;
-        Fri, 25 Jan 2019 17:11:17 -0800 (PST)
+        Fri, 25 Jan 2019 20:17:07 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g62so5498286pfd.12;
+        Fri, 25 Jan 2019 17:17:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
          :user-agent;
-        bh=VCXjBMT6Rj94A9eM6Y+enJqibylV1neUCEXpsXR/fqg=;
-        b=madlEAkHyCD1Ju83EqOFmsTjfXeWWJSMp9g3pvEbUIfPe8BnrF/GE94gbdXIXQxQwU
-         daWyQKlYbK6AYXIqL7TrmmsXnByLWZJNAYHeVRyMgmt6p5kJkIbGYdvTnsvMu9oJRg6o
-         kmlHtkuouLNi9UFOy75F4nEtl53NjwwYSFjvKHh7JdHRJ2PGIQh/ZV1e+b6lvrcOU0tw
-         xpXCnRyXMLG3CFqAqLR9hIj5sVHoyBo/+y80BrJsolo0Zynh348WBrvniL94DUhbizmx
-         OAYuxj+lslr4eKzHebZ2Ag/7B5Ok7v3j6CF0ck9sWxFjJxy9N2q2v8EyEQGRyZsd6cLY
-         3jhw==
+        bh=zFUPyiecKChK/e0u1mqAoiYkxRi+n9AALMCCHtZq21E=;
+        b=eS1QWiGCW57PTbymz4aexvUE8gvvCdzeS0ozTrSoN3cGtux9Yj5RIlgWhqn37EDhjB
+         xCu6nLE6s6COoGqGGxijWE07wutpgvfYCc4ldY7qtKdIeLYfH09Dpx5NEiZ2FCYf9KVX
+         FSqlZ6NZGmpNcw2IIAITyg05GKuSricdSSTfuwMcfZaLNrDm/668HtyB40HuCcgrikmj
+         IiBBH8pVViFpssKoxF5u8n7+l+L3Y6wqfm1Y+qRep8qA0tXuM0WtfEVmAs7a/lJlblZk
+         78zwHhsg6K93jZ97VjlYFxSVKz4jqr6RQZD0HtV1wXPYXj3oM6PM2yvqCu5SlR/+Z4w6
+         a45A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=VCXjBMT6Rj94A9eM6Y+enJqibylV1neUCEXpsXR/fqg=;
-        b=FpUsh7wqceG8PzQ6Afr4HfMuCX1juhzi4Bo/TamY9GmToKuopJ/yaxWp8oj6noyUvv
-         aAny7Ez6TL/YsBfzo/Uf1x31vxSN/EHq1UJ7el9P3az7JC51xI6XOtHksiwC3C5bKrA+
-         3QQoCewJxid/gcM5oYKDPWO2gslA/CD7IZ6W4UgKoJcVSQQc4pKYYP1KmOmSJyA9/cgG
-         wJ1xDBZkkBXN29S6BHlKJITMiYyV9mJvrZjVf4d8vlmAuOD0isG0K1fGe2Tm3oKuip3p
-         tq87BqP7ndQLxFq/3omVO96UMne+ZYe92dFugb89r27HiPReG30eAl+tEhGx2V/R/VOM
-         T8Fg==
-X-Gm-Message-State: AJcUukdHcQMzF4oSVCznzjwa6+6ShFlYaI4VKVMTwiH6BQom+ZgcsYAB
-        o7FRdK4cPDTMPyEh1g8UE1KD1Fvc
-X-Google-Smtp-Source: ALg8bN7lFBdJGrBdtAB/LF19mfUv9EaSru+k/Cm/56QFG/uB6j6iAhoI5INfecI3OTGSUpX3m1dPUw==
-X-Received: by 2002:a63:1b58:: with SMTP id b24mr11781457pgm.247.1548465076132;
-        Fri, 25 Jan 2019 17:11:16 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=zFUPyiecKChK/e0u1mqAoiYkxRi+n9AALMCCHtZq21E=;
+        b=Gxkdv+ZHqgFFp0HrL0oO+KRGH2gf6s5eGooGfH6HL6Ium05xklTp9sPe5ftYEJe3Lp
+         Ab7b7b82Dl6zXbHMNreKsNTbT53f5+CMM42oodlfgO+P6g9T1ctVI3qvil52g2UEo/v+
+         D1akZkvYiPLZ1EWJr2CsXu0lWDSTs0CIvqmZb2+zRm97muKSS5TwBmAx+qx8vG2o53Y0
+         +hSmr1PdGuuFwrak6qxY9zJOQs5fqnIdTzZDEiCK0d4h4Ki5elfUfBud8EMMz4txPBoT
+         Ba5vstm1oqHAdCAlu64/LuxHdXEUWMpy6fgovVsMEILkRf3W1bDLn4EzMW9Tcej49TdY
+         Dq1A==
+X-Gm-Message-State: AJcUukeVebGzNo/6rl6faI+eI2Qsnr4I9jWXtBSZuxMKe3so1ThjJBsu
+        BI3z1x5t3jWqzb+snUSOi8I=
+X-Google-Smtp-Source: ALg8bN4HqvELvehjR7nGNb3LnGADpP5rH0YCC2K40KQUGkzv86ZXtsCc2Zc1BDJbJ1t/RHfGKDDHBQ==
+X-Received: by 2002:a63:ed42:: with SMTP id m2mr12048524pgk.147.1548465426156;
+        Fri, 25 Jan 2019 17:17:06 -0800 (PST)
 Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id p24sm40133791pfk.155.2019.01.25.17.11.15
+        by smtp.gmail.com with ESMTPSA id d25sm36516349pfe.40.2019.01.25.17.17.04
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 17:11:15 -0800 (PST)
-Date:   Fri, 25 Jan 2019 17:11:13 -0800
+        Fri, 25 Jan 2019 17:17:05 -0800 (PST)
+Date:   Fri, 25 Jan 2019 17:17:02 -0800
 From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
-Subject: [git pull] Input updates for v5.0-rc3
-Message-ID: <20190126011113.GA23858@dtor-ws>
+To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        mchehab+samsung@kernel.org, colyli@suse.de,
+        ckeepax@opensource.wolfsonmicro.com, andrew.smirnov@gmail.com,
+        arnd@arndb.de, xiaotong.lu@spreadtrum.com, xc-racer2@live.ca,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/4] input: misc: gp2a: Use managed resource helpers
+Message-ID: <20190126011702.GB212026@dtor-ws>
+References: <20190125175045.22576-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190125175045.22576-2-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190125175045.22576-2-pawel.mikolaj.chmiel@gmail.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Fri, Jan 25, 2019 at 06:50:42PM +0100, Paweł Chmiel wrote:
+> From: Jonathan Bakker <xc-racer2@live.ca>
+> 
+> Simplify cleanup of failures by using managed resource helpers
+> 
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  drivers/input/misc/gp2ap002a00f.c | 37 ++++++++++---------------------
+>  1 file changed, 12 insertions(+), 25 deletions(-)
+> 
+> diff --git a/drivers/input/misc/gp2ap002a00f.c b/drivers/input/misc/gp2ap002a00f.c
+> index c6a29e57b5e4..79c8c4c56d1a 100644
+> --- a/drivers/input/misc/gp2ap002a00f.c
+> +++ b/drivers/input/misc/gp2ap002a00f.c
+> @@ -138,14 +138,15 @@ static int gp2a_probe(struct i2c_client *client,
+>  			return error;
+>  	}
+>  
+> -	error = gpio_request_one(pdata->vout_gpio, GPIOF_IN, GP2A_I2C_NAME);
+> +	error = devm_gpio_request_one(&client->dev, pdata->vout_gpio,
+> +				      GPIOF_IN, GP2A_I2C_NAME);
+>  	if (error)
+>  		goto err_hw_shutdown;
+>  
+> -	dt = kzalloc(sizeof(struct gp2a_data), GFP_KERNEL);
+> +	dt = devm_kzalloc(&client->dev, sizeof(struct gp2a_data), GFP_KERNEL);
+>  	if (!dt) {
+>  		error = -ENOMEM;
+> -		goto err_free_gpio;
+> +		goto err_hw_shutdown;
+>  	}
+>  
+>  	dt->pdata = pdata;
+> @@ -153,12 +154,12 @@ static int gp2a_probe(struct i2c_client *client,
+>  
+>  	error = gp2a_initialize(dt);
+>  	if (error < 0)
+> -		goto err_free_mem;
+> +		goto err_hw_shutdown;
+>  
+> -	dt->input = input_allocate_device();
+> +	dt->input = devm_input_allocate_device(&client->dev);
+>  	if (!dt->input) {
+>  		error = -ENOMEM;
+> -		goto err_free_mem;
+> +		goto err_hw_shutdown;
+>  	}
+>  
+>  	input_set_drvdata(dt->input, dt);
+> @@ -171,19 +172,18 @@ static int gp2a_probe(struct i2c_client *client,
+>  
+>  	input_set_capability(dt->input, EV_SW, SW_FRONT_PROXIMITY);
+>  
+> -	error = request_threaded_irq(client->irq, NULL, gp2a_irq,
+> -			IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING |
+> -				IRQF_ONESHOT,
+> -			GP2A_I2C_NAME, dt);
+> +	error = devm_request_threaded_irq(&client->dev, client->irq, NULL,
+> +			gp2a_irq, IRQF_TRIGGER_RISING | IRQF_TRIGGER_FALLING |
+> +			IRQF_ONESHOT, GP2A_I2C_NAME, dt);
+>  	if (error) {
+>  		dev_err(&client->dev, "irq request failed\n");
+> -		goto err_free_input_dev;
+> +		goto err_hw_shutdown;
+>  	}
+>  
+>  	error = input_register_device(dt->input);
+>  	if (error) {
+>  		dev_err(&client->dev, "device registration failed\n");
+> -		goto err_free_irq;
+> +		goto err_hw_shutdown;
+>  	}
+>  
+>  	device_init_wakeup(&client->dev, pdata->wakeup);
+> @@ -191,14 +191,6 @@ static int gp2a_probe(struct i2c_client *client,
+>  
+>  	return 0;
+>  
+> -err_free_irq:
+> -	free_irq(client->irq, dt);
+> -err_free_input_dev:
+> -	input_free_device(dt->input);
+> -err_free_mem:
+> -	kfree(dt);
+> -err_free_gpio:
+> -	gpio_free(pdata->vout_gpio);
+>  err_hw_shutdown:
+>  	if (pdata->hw_shutdown)
+>  		pdata->hw_shutdown(client);
+> @@ -210,12 +202,7 @@ static int gp2a_remove(struct i2c_client *client)
+>  	struct gp2a_data *dt = i2c_get_clientdata(client);
+>  	const struct gp2a_platform_data *pdata = dt->pdata;
+>  
+> -	free_irq(client->irq, dt);
+> -
+>  	input_unregister_device(dt->input);
 
-Please pull from:
+You do not need explicitly unregister input device if it is managed
+(allocated with devm).
 
-	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+> -	kfree(dt);
+> -
+> -	gpio_free(pdata->vout_gpio);
+>  
+>  	if (pdata->hw_shutdown)
+>  		pdata->hw_shutdown(client);
 
-to receive updates for the input subsystem. You will get a fixup for
-the input_event fix for y2038 Sparc64, and couple other minor fixes.
-
-Changelog:
----------
-
-Anders Roxell (1):
-      Input: raspberrypi-ts - fix link error
-
-Deepa Dinamani (2):
-      Input: input_event - provide override for sparc64
-      Input: input_event - fix the CONFIG_SPARC64 mixup
-
-Dmitry Torokhov (1):
-      Input: uinput - fix undefined behavior in uinput_validate_absinfo()
-
-Lubomir Rintel (1):
-      Input: olpc_apsp - assign priv->dev earlier
-
-Tom Panfil (1):
-      Input: xpad - add support for SteelSeries Stratus Duo
-
-Diffstat:
---------
-
- drivers/input/joystick/xpad.c     | 3 +++
- drivers/input/misc/uinput.c       | 5 +++--
- drivers/input/serio/olpc_apsp.c   | 3 ++-
- drivers/input/touchscreen/Kconfig | 2 +-
- include/uapi/linux/input.h        | 6 +++++-
- 5 files changed, 14 insertions(+), 5 deletions(-)
+This is however is wrong, as you can't shutdown hardware before
+disapling/freeing IRQ, etc. Given that there are no users of
+gp2a_platform_data in kernel I'd recommend creating a preparatory patch
+removing platform data support from the driver.
 
 Thanks.
-
 
 -- 
 Dmitry
