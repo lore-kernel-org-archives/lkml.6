@@ -2,137 +2,208 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B709C282C5
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 07:17:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D033C282C5
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 07:31:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C805B218F0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 07:17:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ARzJt+eo"
+	by mail.kernel.org (Postfix) with ESMTP id 524EE218B0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 07:31:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728495AbfAZHR2 (ORCPT
+        id S1728646AbfAZHaz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 02:17:28 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:36368 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727367AbfAZHR2 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 02:17:28 -0500
-Received: by mail-ed1-f65.google.com with SMTP id f23so9080961edb.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 23:17:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=I+CVU/4ovJ142nVuQBxiCY9SzGT5NLLn6Bz7juh1WB4=;
-        b=ARzJt+eo0UUeMzjiGkRDw6pAnNneTphUISizb91vZ+ilkVqFJrAGaIWi/y92TqQXD+
-         itiNEUJ/wvfg1/30JSZbBYosFkwHPw7QP68LG/TOPaMFGrPMBILX/a8s0yiXRv8XGV+q
-         4CZvtCDjYxqQntFIpFDh8189k5PCk12Xpu7GDgK3ymKMTuSgCGEK73TNuLdJc82anFT+
-         ik2oXDaAZeyhJdVUbrh4UQ57PnThP45Cn6yxgj0CbE249uCIUpSWjuHB5UzA45mDKQUE
-         5QfalrvuD82p8SAmhxt/6elQSKK8YPLXOF4h7Shl+vJt6wehfxttfmJaeJNLBn/JP86o
-         5NlQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=I+CVU/4ovJ142nVuQBxiCY9SzGT5NLLn6Bz7juh1WB4=;
-        b=NFb7WQv2pawph8UkZbt1QpwTOdK76c+mBBTMM8eSX5pVBXXHMU1ViPaaNHMVR9P1xR
-         PY0UWxLBDvW9Pgo5Kt2NF7IXYcDebOYV2TbGvH3+0Ez6vGOLrAqtxjtr+Jc6Mw/CnBsg
-         d9kFrPtlNABemojTJh27yoF/xIXRX5PoImLyvbRNTL442CtaKf0V+Ny7WQ2rM0VBUP9Q
-         jj0dP2/ZO935QT08iSwn/G5xWF1X6Xz/1uHhKAzJLAxRxuNFWSmuyi8LImLiKzYb5sir
-         JPT6JUpKPKemQAVS2WywpSnPJ16j8EUMq+WzgpOH02vb2gmlPknOphKF+8X47TqJE5vi
-         mKHg==
-X-Gm-Message-State: AJcUukcZOXDaQpSbV45hpthc9HVDLmKsO5sAldsm3CZGW9y6rRRzm5O6
-        W1a2a52UZC7tM5dShkJ3Wjo=
-X-Google-Smtp-Source: ALg8bN7OfEZuKZRs4X84soPvDtrk2BzXPJqVj4BGq5SSQeQCQybK0D42ZXz044eLFrg23mYl4NKb3g==
-X-Received: by 2002:a50:d84d:: with SMTP id v13mr13448296edj.103.1548487045727;
-        Fri, 25 Jan 2019 23:17:25 -0800 (PST)
-Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id y16sm12219251edb.41.2019.01.25.23.17.24
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 23:17:25 -0800 (PST)
-Date:   Sat, 26 Jan 2019 00:17:23 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Jani Nikula <jani.nikula@linux.intel.com>,
-        Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-        Rodrigo Vivi <rodrigo.vivi@intel.com>
-Cc:     intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Chris Wilson <chris@chris-wilson.co.uk>,
-        Matthias Kaehlcke <mka@chromium.org>
-Subject: Re: [PATCH v2] drm/i915: Disable -Wuninitialized
-Message-ID: <20190126071723.GA24759@archlinux-ryzen>
-References: <20190126071122.24557-1-natechancellor@gmail.com>
+        Sat, 26 Jan 2019 02:30:55 -0500
+Received: from mail5.windriver.com ([192.103.53.11]:40492 "EHLO mail5.wrs.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727521AbfAZHay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 02:30:54 -0500
+Received: from ALA-HCA.corp.ad.wrs.com (ala-hca.corp.ad.wrs.com [147.11.189.40])
+        by mail5.wrs.com (8.15.2/8.15.2) with ESMTPS id x0Q7U0Hv009608
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Fri, 25 Jan 2019 23:30:10 -0800
+Received: from [128.224.162.180] (128.224.162.180) by ALA-HCA.corp.ad.wrs.com
+ (147.11.189.50) with Microsoft SMTP Server (TLS) id 14.3.435.0; Fri, 25 Jan
+ 2019 23:29:49 -0800
+Subject: Re: LTP case read_all_proc fails on qemux86-64 since 5.0-rc1
+To:     Jens Axboe <axboe@kernel.dk>
+CC:     <davem@davemloft.net>, <linux-ide@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <316b80da-0811-f9e6-dd42-41ddbb7eb8a0@windriver.com>
+ <C1903094-A3C8-4273-9869-72D400180E51@kernel.dk>
+ <11b1b3ee-a94b-dd5e-3ba6-df3efa239c7f@kernel.dk>
+ <adb69f96-8825-ef14-3e02-98c046f72ecb@windriver.com>
+ <31660451-9ab4-43b8-b468-ae7b9a8d2279@kernel.dk>
+ <eae853aa-de54-42d6-a9bc-254c152cec5b@windriver.com>
+ <29f3b60d-922e-001a-0c1c-ed8482c6e409@kernel.dk>
+ <0905efc0-d4f2-08d8-0f87-bd4bfab6e46e@windriver.com>
+ <ff2b87eb-54f0-f40b-a317-8bbbb32759f4@kernel.dk>
+ <594d7f4d-f241-b279-954d-6d4569ea8dd2@windriver.com>
+ <6028ed5e-5779-0ab9-1c7e-93e7e5e827bd@kernel.dk>
+ <bc722123-86aa-e062-7792-32ca9badbe3e@kernel.dk>
+From:   He Zhe <zhe.he@windriver.com>
+Message-ID: <a0fcb119-82e7-c9b2-ea76-6aa39bd33edb@windriver.com>
+Date:   Sat, 26 Jan 2019 15:29:45 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190126071122.24557-1-natechancellor@gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <bc722123-86aa-e062-7792-32ca9badbe3e@kernel.dk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-Originating-IP: [128.224.162.180]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 12:11:23AM -0700, Nathan Chancellor wrote:
-> This warning is disabled by default in scripts/Makefile.extrawarn when
-> W= is not provided but this Makefile adds -Wall after this warning is
-> disabled so it shows up in the build when it shouldn't:
-> 
-> In file included from drivers/gpu/drm/i915/intel_breadcrumbs.c:895:
-> drivers/gpu/drm/i915/selftests/intel_breadcrumbs.c:350:34: error:
-> variable 'wq' is uninitialized when used within its own initialization
-> [-Werror,-Wuninitialized]
->         DECLARE_WAIT_QUEUE_HEAD_ONSTACK(wq);
->                                         ^~
-> ./include/linux/wait.h:74:63: note: expanded from macro
-> 'DECLARE_WAIT_QUEUE_HEAD_ONSTACK'
->         struct wait_queue_head name = __WAIT_QUEUE_HEAD_INIT_ONSTACK(name)
->                                ~~~~                                  ^~~~
-> ./include/linux/wait.h:72:33: note: expanded from macro
-> '__WAIT_QUEUE_HEAD_INIT_ONSTACK'
->         ({ init_waitqueue_head(&name); name; })
->                                        ^~~~
-> 1 error generated.
-> 
-> Explicitly disable the warning like commit 46e2068081e9 ("drm/i915:
-> Disable some extra clang warnings").
-> 
-> Link: https://github.com/ClangBuiltLinux/linux/issues/220
-> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> ---
-> 
-> v1 -> v2:
-> 
-> * Rather than disable the warning for the problematic folder, disable it
->   for the entire folder like Matthias's commit.
-> 
 
-Link to v1: https://lore.kernel.org/lkml/20181025193601.11746-1-natechancellor@gmail.com/
 
-Since I forgot '--in-reply-to' :(
+On 1/26/19 3:32 AM, Jens Axboe wrote:
+> On 1/24/19 8:20 PM, Jens Axboe wrote:
+>> On 1/24/19 8:14 PM, He Zhe wrote:
+>>> On 1/25/19 10:26 AM, Jens Axboe wrote:
+>>>> On 1/24/19 7:22 PM, He Zhe wrote:
+>>>>> On 1/25/19 10:05 AM, Jens Axboe wrote:
+>>>>>> On 1/24/19 6:40 PM, He Zhe wrote:
+>>>>>>> On 1/24/19 11:40 PM, Jens Axboe wrote:
+>>>>>>>> On 1/24/19 1:23 AM, He Zhe wrote:
+>>>>>>>>> On 1/24/19 12:05 AM, Jens Axboe wrote:
+>>>>>>>>>> On 1/22/19 8:39 PM, Jens Axboe wrote:
+>>>>>>>>>>> On Jan 22, 2019, at 8:13 PM, He Zhe <zhe.he@windriver.com> wrote:
+>>>>>>>>>>>> LTP case read_all_proc(read_all -d /proc -q -r 10) often, but not every time, fails with the following call traces, since 600335205b8d "ide: convert to blk-mq"(5.0-rc1) till now(5.0-rc3).
+>>>>>>>>>>>>
+>>>>>>>>>>>> qemu-system-x86_64 -drive file=rootfs.ext4,if=virtio,format=raw -object rng-random,filename=/dev/urandom,id=rng0 -device virtio-rng-pci,rng=rng0 -nographic -m 16192 -smp cpus=12 -cpu core2duo -enable-kvm -serial mon:stdio -serial null -kernel bzImage -append 'root=/dev/vda rw highres=off console=ttyS0 mem=16192M'
+>>>>>>>>>>>>
+>>>>>>>>>>>> tst_test.c:1085: INFO: Timeout per run is 0h 05m 00s
+>>>>>>>>>>>> [   47.080156] Warning: /proc/ide/hd?/settings interface is obsolete, and will be removed soon!
+>>>>>>>>>>>> [   47.085330] ------------[ cut here ]------------
+>>>>>>>>>>>> [   47.085810] kernel BUG at block/blk-mq.c:767!
+>>>>>>>>>>>> [   47.086498] invalid opcode: 0000 [#1] PREEMPT SMP PTI
+>>>>>>>>>>>> [   47.087022] CPU: 5 PID: 146 Comm: kworker/5:1H Not tainted 5.0.0-rc3 #1
+>>>>>>>>>>>> [   47.087858] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.12.0-0-ga698c8995f-prebuilt.qemu.org 04/01/2014
+>>>>>>>>>>>> [   47.088992] Workqueue: kblockd blk_mq_run_work_fn
+>>>>>>>>>>>> [   47.089469] RIP: 0010:blk_mq_add_to_requeue_list+0xc1/0xd0
+>>>>>>>>>>>> [   47.090035] Code: 48 8d 53 48 49 8b 8c 24 b8 04 00 00 48 89 51 08 48 89 4b 48 49 8d 8c 24 b8 04 00 00 48 89 4b 50 49 89 94 24 b8 04 00 008
+>>>>>>>>>>>> [   47.091930] RSP: 0018:ffff9e1ea4b43e40 EFLAGS: 00010002
+>>>>>>>>>>>> [   47.092458] RAX: ffff9e1ea13c0048 RBX: ffff9e1ea13c0000 RCX: 0000000000000006
+>>>>>>>>>>>> [   47.093181] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9e1ea13c0000
+>>>>>>>>>>>> [   47.093906] RBP: ffff9e1ea4b43e68 R08: ffffeb5bcf630680 R09: 0000000000000000
+>>>>>>>>>>>> [   47.094626] R10: 0000000000000001 R11: 0000000000000012 R12: ffff9e1ea1033a40
+>>>>>>>>>>>> [   47.095347] R13: ffff9e1ea13a8d00 R14: ffff9e1ea13a9000 R15: 0000000000000046
+>>>>>>>>>>>> [   47.096071] FS:  0000000000000000(0000) GS:ffff9e1ea4b40000(0000) knlGS:0000000000000000
+>>>>>>>>>>>> [   47.096898] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>>>>>>> [   47.097477] CR2: 0000003fda41fda0 CR3: 00000003d8e6a000 CR4: 00000000000006e0
+>>>>>>>>>>>> [   47.098203] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>>>>>>>>> [   47.098929] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>>>>>>>>> [   47.099650] Call Trace:
+>>>>>>>>>>>> [   47.099910]  <IRQ>
+>>>>>>>>>>>> [   47.100128]  blk_mq_requeue_request+0x58/0x60
+>>>>>>>>>>>> [   47.100576]  ide_requeue_and_plug+0x20/0x50
+>>>>>>>>>>>> [   47.101014]  ide_intr+0x21a/0x230
+>>>>>>>>>>>> [   47.101362]  ? idecd_open+0xc0/0xc0
+>>>>>>>>>>>> [   47.101735]  __handle_irq_event_percpu+0x43/0x1e0
+>>>>>>>>>>>> [   47.102214]  handle_irq_event_percpu+0x32/0x80
+>>>>>>>>>>>> [   47.102668]  handle_irq_event+0x39/0x60
+>>>>>>>>>>>> [   47.103074]  handle_edge_irq+0xe8/0x1c0
+>>>>>>>>>>>> [   47.103470]  handle_irq+0x20/0x30
+>>>>>>>>>>>> [   47.103819]  do_IRQ+0x46/0xe0
+>>>>>>>>>>>> [   47.104128]  common_interrupt+0xf/0xf
+>>>>>>>>>>>> [   47.104505]  </IRQ>
+>>>>>>>>>>>> [   47.104731] RIP: 0010:ide_output_data+0xbc/0x100
+>>>>>>>>>>>> [   47.105201] Code: 74 22 8d 41 ff 85 c9 74 24 49 8d 54 40 02 41 0f b7 00 66 41 89 01 49 83 c0 02 49 39 d0 75 ef 5b 41 5c 5d c3 4c 89 c6 445
+>>>>>>>>>>>> [   47.107092] RSP: 0018:ffffbd508059bb18 EFLAGS: 00010246 ORIG_RAX: ffffffffffffffdd
+>>>>>>>>>>>> [   47.107862] RAX: ffff9e1ea13a8800 RBX: ffff9e1ea13a9000 RCX: 0000000000000000
+>>>>>>>>>>>> [   47.108581] RDX: 0000000000000170 RSI: ffff9e1ea13c012c RDI: 0000000000000000
+>>>>>>>>>>>> [   47.109293] RBP: ffffbd508059bb28 R08: ffff9e1ea13c0120 R09: 0000000000000170
+>>>>>>>>>>>> [   47.110016] R10: 000000000000000d R11: 000000000000000c R12: ffff9e1ea13a8800
+>>>>>>>>>>>> [   47.110731] R13: 000000000000000c R14: ffff9e1ea13c0000 R15: 0000000000007530
+>>>>>>>>>>>> [   47.111446]  ide_transfer_pc+0x216/0x310
+>>>>>>>>>>>> [   47.111848]  ? __const_udelay+0x3d/0x40
+>>>>>>>>>>>> [   47.112236]  ? ide_execute_command+0x85/0xb0
+>>>>>>>>>>>> [   47.112668]  ? ide_pc_intr+0x3f0/0x3f0
+>>>>>>>>>>>> [   47.113051]  ? ide_check_atapi_device+0x110/0x110
+>>>>>>>>>>>> [   47.113524]  ide_issue_pc+0x178/0x240
+>>>>>>>>>>>> [   47.113901]  ide_cd_do_request+0x15c/0x350
+>>>>>>>>>>>> [   47.114314]  ide_queue_rq+0x180/0x6b0
+>>>>>>>>>>>> [   47.114686]  ? blk_mq_get_driver_tag+0xa1/0x110
+>>>>>>>>>>>> [   47.115153]  blk_mq_dispatch_rq_list+0x90/0x550
+>>>>>>>>>>>> [   47.115606]  ? __queue_delayed_work+0x63/0x90
+>>>>>>>>>>>> [   47.116054]  ? deadline_fifo_request+0x41/0x90
+>>>>>>>>>>>> [   47.116506]  blk_mq_do_dispatch_sched+0x80/0x100
+>>>>>>>>>>>> [   47.116976]  blk_mq_sched_dispatch_requests+0xfc/0x170
+>>>>>>>>>>>> [   47.117491]  __blk_mq_run_hw_queue+0x6f/0xd0
+>>>>>>>>>>>> [   47.117941]  blk_mq_run_work_fn+0x1b/0x20
+>>>>>>>>>>>> [   47.118342]  process_one_work+0x14c/0x450
+>>>>>>>>>>>> [   47.118747]  worker_thread+0x4a/0x440
+>>>>>>>>>>>> [   47.119125]  kthread+0x105/0x140
+>>>>>>>>>>>> [   47.119456]  ? process_one_work+0x450/0x450
+>>>>>>>>>>>> [   47.119880]  ? kthread_park+0x90/0x90
+>>>>>>>>>>>> [   47.120251]  ret_from_fork+0x35/0x40
+>>>>>>>>>>>> [   47.120619] Modules linked in:
+>>>>>>>>>>>> [   47.120952] ---[ end trace 4562f716e88fdefe ]---
+>>>>>>>>>>>> [   47.121423] RIP: 0010:blk_mq_add_to_requeue_list+0xc1/0xd0
+>>>>>>>>>>>> [   47.121981] Code: 48 8d 53 48 49 8b 8c 24 b8 04 00 00 48 89 51 08 48 89 4b 48 49 8d 8c 24 b8 04 00 00 48 89 4b 50 49 89 94 24 b8 04 00 008
+>>>>>>>>>>>> [   47.123851] RSP: 0018:ffff9e1ea4b43e40 EFLAGS: 00010002
+>>>>>>>>>>>> [   47.124393] RAX: ffff9e1ea13c0048 RBX: ffff9e1ea13c0000 RCX: 0000000000000006
+>>>>>>>>>>>> [   47.125108] RDX: 0000000000000000 RSI: 0000000000000001 RDI: ffff9e1ea13c0000
+>>>>>>>>>>>> [   47.125819] RBP: ffff9e1ea4b43e68 R08: ffffeb5bcf630680 R09: 0000000000000000
+>>>>>>>>>>>> [   47.126539] R10: 0000000000000001 R11: 0000000000000012 R12: ffff9e1ea1033a40
+>>>>>>>>>>>> [   47.127262] R13: ffff9e1ea13a8d00 R14: ffff9e1ea13a9000 R15: 0000000000000046
+>>>>>>>>>>>> [   47.127988] FS:  0000000000000000(0000) GS:ffff9e1ea4b40000(0000) knlGS:0000000000000000
+>>>>>>>>>>>> [   47.128793] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+>>>>>>>>>>>> [   47.129385] CR2: 0000003fda41fda0 CR3: 00000003d8e6a000 CR4: 00000000000006e0
+>>>>>>>>>>>> [   47.130104] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+>>>>>>>>>>>> [   47.130823] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+>>>>>>>>>>>> [   47.131547] Kernel panic - not syncing: Fatal exception in interrupt
+>>>>>>>>>>>> [   47.132609] Kernel Offset: 0x7c00000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+>>>>>>>>>>>> [   47.133679] ---[ end Kernel panic - not syncing: Fatal exception in interrupt ]---
+>>>>>>>>>>>> [   47.134432] ------------[ cut here ]-----------
+>>>>>>>>>>> I’ll take a look at this, thanks for the report.
+>>>>>>>>>> I can't reproduce this, unfortunately. But I'm guessing it might be related
+>>>>>>>>>> to a race with the requeue and request handling in IDE. Can you try with
+>>>>>>>>>> the below patch?
+>>>>>>>>> Thanks for attention, but this patch doesn't help.
+>>>>>>>> OK, thanks for trying.
+>>>>>>>>
+>>>>>>>>> From what I reached, to reproduce it, we need to use legacy CONFIG_IDE
+>>>>>>>>> and friends where "ide: convert to blk-mq" sits, not CONFIG_ATA and so
+>>>>>>>>> on.  I can reproduce it with qemux86-64 with "-drive ... if=ide" or
+>>>>>>>>> "-drive ... if=virtio".
+>>>>>>>> Yes of course, I am trying to reproduce with the legacy stack. Just not
+>>>>>>>> having any luck doing it, even thousands of read_all iterations on /proc
+>>>>>>>> with IO to the IDE drives is still not doing it. From your trace, it
+>>>>>>>> looks like ide-cd causing it, which would mean a cdrom of some sort.
+>>>>>>>>
+>>>>>>>> I'll try again!
+>>>>>>> My .config is attached.
+>>>>>> Can you try with this patch?
+>>>>> With this patch, it cannot boot up.
+>>>> Ugh, forgot it's inclusive. You want it at '2', not '1'.
+>>> With "set->queue_depth = 2;", reading aganst /sys or normal disk dir is OK, but the following hang. So the related test cases are all timed out.
+>>>
+>>> ps -elf
+>>> ---- snip ----
+>>> 5 D root       415     1  0  80   0 -   664 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 10
+>>> 5 D root       416     1  0  80   0 -   669 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 10
+>>> 5 D root       417     1  0  80   0 -   674 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 10
+>>> 5 D root       421     1  0  80   0 -   629 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 1
+>>> 5 D root       434     1  0  80   0 -   629 io_sch 02:49 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 1
+>>> 5 D root       448     1  0  80   0 -   629 io_sch 02:55 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /proc -r 1
+>>> 5 D root       474     1  0  80   0 -   629 flush_ 02:55 ttyS0    00:00:00 /opt/ltp/testcases/bin/read_all -d /dev -r 1
+>>>
+>>> In addition, without this change, it can be reproduced more often with more processes.
+>> I've managed to reproduce it now, though I don't quite yet see what is going
+>> on. It's almost like we're NOT honoring the serialization, which results
+>> in a sense request being doubly queued. I'll see if I can figure it out
+>> and produce a patch that works.
+> Alright, here's something that has a chance of working. I don't think we
+> can solve the ordering issue with sense requests without doing something
+> like this. Can you give it a spin?
 
->  drivers/gpu/drm/i915/Makefile | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/gpu/drm/i915/Makefile b/drivers/gpu/drm/i915/Makefile
-> index 8300efe60fe1..210d0e8777b6 100644
-> --- a/drivers/gpu/drm/i915/Makefile
-> +++ b/drivers/gpu/drm/i915/Makefile
-> @@ -22,6 +22,7 @@ subdir-ccflags-y += $(call cc-disable-warning, unused-but-set-variable)
->  subdir-ccflags-y += $(call cc-disable-warning, sign-compare)
->  subdir-ccflags-y += $(call cc-disable-warning, sometimes-uninitialized)
->  subdir-ccflags-y += $(call cc-disable-warning, initializer-overrides)
-> +subdir-ccflags-y += $(call cc-disable-warning, uninitialized)
->  subdir-ccflags-$(CONFIG_DRM_I915_WERROR) += -Werror
->  
->  # Fine grained warnings disable
-> -- 
-> 2.20.1
-> 
+This works well from my side. Thanks.
+
+Zhe
+
+
