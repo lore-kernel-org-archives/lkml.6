@@ -2,157 +2,146 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C61C7C282C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:19:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 812ACC282C3
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1B59218A6
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:19:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4AE0C218F0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:38:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=ucr.edu header.i=@ucr.edu header.b="mUnn8s7x"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728782AbfAZGTb (ORCPT
+        id S1727829AbfAZGdC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 01:19:31 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:44868 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726030AbfAZGTa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 01:19:30 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 82BCA97E98C81D4BF8DF;
-        Sat, 26 Jan 2019 14:19:28 +0800 (CST)
-Received: from HGHY1z004218071.china.huawei.com (10.177.29.32) by
- DGGEMS407-HUB.china.huawei.com (10.3.19.207) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 26 Jan 2019 14:19:19 +0800
-From:   Zheng Xiang <zhengxiang9@huawei.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <tglx@linutronix.de>, <jason@lakedaemon.net>,
-        <marc.zyngier@arm.com>, <wanghaibin.wang@huawei.com>,
-        Zheng Xiang <zhengxiang9@huawei.com>
-Subject: [PATCH] irqchip/gic-v3-its: Lock its device list during find and create its device
-Date:   Sat, 26 Jan 2019 14:16:24 +0800
-Message-ID: <20190126061624.5260-1-zhengxiang9@huawei.com>
-X-Mailer: git-send-email 2.15.1.windows.2
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.29.32]
-X-CFilter-Loop: Reflected
+        Sat, 26 Jan 2019 01:33:02 -0500
+Received: from mx1.ucr.edu ([138.23.248.2]:14082 "EHLO mx1.ucr.edu"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726030AbfAZGdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 01:33:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=ucr.edu; i=@ucr.edu; q=dns/txt; s=selector3;
+  t=1548484381; x=1580020381;
+  h=from:to:cc:subject:date:message-id;
+  bh=spBmDIiF5jHQhSNgngoPo9qlEpmTF8uUh2cGxlBjoKg=;
+  b=mUnn8s7xNSkwvgpFWhAWF9+rcXhTxknF2i02ASK8kq9fGQlUKIukIlop
+   JVG3t8xecp4/9Yj1BxeWb00MvKyW1t1OSzjycRwvz21PNkv/zBdddv374
+   3rBq3Id7ZW6RqezSJei0ISBnUUT3Xdxm8/E8qFQiQLBCC0HYckHpRQATB
+   yXrt6/rBwHhMMJYpUSshPEwzk5wC1irAPSdQ1S6sz9L3N0bfsYr7Wmgsj
+   HgpKfrr6/c9pWbkqq+NMc/EK1iwo9takt9JbzemKSZdZlN+omtJ7MSsm/
+   0FPVPBUJJqnh2GMBts7uNRIbwV08Xpbb6+ypk+dXVxqb9o3mSllVLedQn
+   g==;
+IronPort-PHdr: =?us-ascii?q?9a23=3ApGyrYxXL7R72lg8HMWL2I5Gi0jLV8LGtZVwlr6E/?=
+ =?us-ascii?q?grcLSJyIuqrYYxyFt8tkgFKBZ4jH8fUM07OQ7/iwHzRYqb+681k6OKRWUBEEjc?=
+ =?us-ascii?q?hE1ycBO+WiTXPBEfjxciYhF95DXlI2t1uyMExSBdqsLwaK+i764jEdAAjwOhRo?=
+ =?us-ascii?q?LerpBIHSk9631+ev8JHPfglEnjWwba9xIRmssQndqtQdjJd/JKo21hbHuGZDdf?=
+ =?us-ascii?q?5MxWNvK1KTnhL86dm18ZV+7SleuO8v+tBZX6nicKs2UbJXDDI9M2Ao/8LrrgXM?=
+ =?us-ascii?q?TRGO5nQHTGoblAdDDhXf4xH7WpfxtTb6tvZ41SKHM8D6Uaw4VDK/5KpwVhTmlD?=
+ =?us-ascii?q?kIOCI48GHPi8x/kqRboA66pxdix4LYeZyZOOZicq/Ye94aQGtBXt1KVyxABIO8?=
+ =?us-ascii?q?YJYEAfQYM+1FoYn9pkUBrR+jCgKxAO/ixCNEinrw0KYn0eouDBvG0RQgEdwQrX?=
+ =?us-ascii?q?raotb7OqAJXOyp0KXF1ynPYulK1Tvh7oXDbxAvoeuLXbJ1acfey0gvFgLFjlWN?=
+ =?us-ascii?q?rozuIjSY1+QMsmib9eVgVP6jh3Ippgxqvzig2t0shpPXiY0I11DJ7CN0y5s2K9?=
+ =?us-ascii?q?2gUEN3f8KoHZ9KuyyZN4Z6WN0uT3xotSog17ELvZ22cDAXxJkmwxPTceKLfoaI?=
+ =?us-ascii?q?7x75SuqcIC10iXBqdb+5mh2861KvyvfmWcmxyFtKqy1FncTSuX0VzBzT79SHSu?=
+ =?us-ascii?q?N6/ke8xTaDzwDT5f9AIUAzjafbLoQuwr80lpYKqUTDETL6lFz4jKOLckgp+fKk?=
+ =?us-ascii?q?6+vgYrXhqZ+cM5F7hhviPaQpn8yzGeU4Mg4QUGiH4emwyqHv8EnjTLhJjvA6iL?=
+ =?us-ascii?q?fVvI3aKMgBu6K0BwxY3p4m6xmlDjem1NoYnWMALFJAYB+Gj4noO1HUL/D5Efuz?=
+ =?us-ascii?q?n1qhnSx2x//aJL3tGIvCIWXekLv5Z7Zy91ZcyBYvzdBY/59UDrABIPTuWk7+rd?=
+ =?us-ascii?q?DYDQE2Mxayw+n5DNVwzZ0eWW2RDa+DKq/SskGH5vgpI+aSYI8ZojH9K+Iq562m?=
+ =?us-ascii?q?o2U+nAosfLupwJxfPGGqHv1nex3CSWfnmJEMHXpc7Vl2d/DjlFDXCW0bXH21Ra?=
+ =?us-ascii?q?9po25jBQ=3D=3D?=
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2C7AQDC/ktcgMbXVdFjHAECBAEIBAGBU?=
+ =?us-ascii?q?gcBDAGEBQ+MG1+LFk8BAQEGimQYbYVXgnKFCoF7AQoBASyEQIMMIjQJDQEDAQE?=
+ =?us-ascii?q?CAQECARMBAQkNCQgbDDGCOimCX4EIgRUBBQE1W4JHAYF0DZ1aPIxKiFcBB4FLC?=
+ =?us-ascii?q?QEIh26EQYEPgQeDboR/g1SCQwKBLAEBAY9skSQBBgIBgWOBQo57JIMxhnCIBwE?=
+ =?us-ascii?q?tmnQCBAIEBQIFDyGBJYIOTSWBbAqBRIJRjiweM4EHh1qCTQE?=
+X-IPAS-Result: =?us-ascii?q?A2C7AQDC/ktcgMbXVdFjHAECBAEIBAGBUgcBDAGEBQ+MG1+?=
+ =?us-ascii?q?LFk8BAQEGimQYbYVXgnKFCoF7AQoBASyEQIMMIjQJDQEDAQECAQECARMBAQkNC?=
+ =?us-ascii?q?QgbDDGCOimCX4EIgRUBBQE1W4JHAYF0DZ1aPIxKiFcBB4FLCQEIh26EQYEPgQe?=
+ =?us-ascii?q?DboR/g1SCQwKBLAEBAY9skSQBBgIBgWOBQo57JIMxhnCIBwEtmnQCBAIEBQIFD?=
+ =?us-ascii?q?yGBJYIOTSWBbAqBRIJRjiweM4EHh1qCTQE?=
+X-IronPort-AV: E=Sophos;i="5.56,525,1539673200"; 
+   d="scan'208";a="1052417701"
+Received: from mail-pg1-f198.google.com ([209.85.215.198])
+  by smtp1.ucr.edu with ESMTP/TLS/AES128-GCM-SHA256; 25 Jan 2019 22:32:35 -0800
+Received: by mail-pg1-f198.google.com with SMTP id m16so7767145pgd.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 22:32:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=yaf63aLCqjFpTNHGLnD1DlppPDZbRyd+ngLiTc70LIY=;
+        b=bmjXgY0DDN4KRazjqadSY4M3wJx7mYMQA9jLaKgQQmS91vRH1psZ5t5zhxBhDTHwUI
+         vt/lzAvzdSJGd3AhhGLl0q5lDmmMkz8BCSYJIhme1Eq4Dx6oYLayGZvBeIDD3MEIsgxD
+         j273TfD25+t8514DhkAOVTMpLefyOG+UyAjAEj/lLnJckypDha2z8ix7BaMYbW3bmZIr
+         Q96Ofu7WKrhabSbbdHOD6hgByTwyceNo/oK5yyluOTXGjUB2hKp3Zq+SrAQSY73/UqSz
+         tuVFKuMOLYQhQY0HQ6Be/24MLU3t/+cuNSuMscy1WFsESUNTewEEZm7VlAS8+5NPqkhs
+         QWbQ==
+X-Gm-Message-State: AJcUuke9NVglJDkRH5z5oPnWzn14CvHYPYUjcufKaxd3pJ1FqB1wLqnS
+        Snh07FP253ManoLBBHIUzOjuiqLTCj0q3krhLz19TRdOnCRAlYzZD5exttfJX9JkP5WV91VhVhv
+        fHQviykK/lCfnGN7C4pfEgXJP6A==
+X-Received: by 2002:a17:902:9691:: with SMTP id n17mr14442970plp.9.1548484354983;
+        Fri, 25 Jan 2019 22:32:34 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN5YsCv7XKtB9I5a/bKPNYO+58A8UnKPAsilEc7mFrGw0e/Em5uRbQoHdzn94g45XXnYFhWVVA==
+X-Received: by 2002:a17:902:9691:: with SMTP id n17mr14442948plp.9.1548484354611;
+        Fri, 25 Jan 2019 22:32:34 -0800 (PST)
+Received: from Yizhuo.cs.ucr.edu (yizhuo.cs.ucr.edu. [169.235.26.74])
+        by smtp.googlemail.com with ESMTPSA id c9sm51998403pfc.92.2019.01.25.22.32.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 22:32:33 -0800 (PST)
+From:   Yizhuo <yzhai003@ucr.edu>
+Cc:     csong@cs.ucr.edu, zhiyunq@cs.ucr.edu, Yizhuo <yzhai003@ucr.edu>,
+        Tony Lindgren <tony@atomide.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-omap@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH] ARM: OMAP2+: Variable "reg" in function omap4_dsi_mux_pads() could be uninitialized
+Date:   Fri, 25 Jan 2019 22:32:20 -0800
+Message-Id: <20190126063221.8257-1-yzhai003@ucr.edu>
+X-Mailer: git-send-email 2.17.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently each PCI device under a PCI Bridge shares the same device id
-and ITS device. Assume there are two PCI devices call its_msi_prepare
-concurrently and they are both going to find and create their ITS
-device. There is a chance that the later one couldn't find ITS device
-before the other one creating the ITS device. It will cause the later
-one to create a different ITS device even if they have the same
-device_id.
-
-Signed-off-by: Zheng Xiang <zhengxiang9@huawei.com>
+In function omap4_dsi_mux_pads(), local variable "reg" could
+be uninitialized if function regmap_read() returns -EINVAL.
+However, it will be used directly in the later context, which
+is potentially unsafe.
+Signed-off-by: Yizhuo <yzhai003@ucr.edu>
 ---
- drivers/irqchip/irq-gic-v3-its.c | 52 +++++++++++++++-------------------------
- 1 file changed, 19 insertions(+), 33 deletions(-)
+ arch/arm/mach-omap2/display.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index db20e99..397edc8 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -2205,25 +2205,6 @@ static void its_cpu_init_collections(void)
- 	raw_spin_unlock(&its_lock);
- }
+diff --git a/arch/arm/mach-omap2/display.c b/arch/arm/mach-omap2/display.c
+index b3f6eb5d04a2..6e7440ef503a 100644
+--- a/arch/arm/mach-omap2/display.c
++++ b/arch/arm/mach-omap2/display.c
+@@ -84,6 +84,7 @@ static int omap4_dsi_mux_pads(int dsi_id, unsigned lanes)
+ 	u32 enable_mask, enable_shift;
+ 	u32 pipd_mask, pipd_shift;
+ 	u32 reg;
++	int ret;
  
--static struct its_device *its_find_device(struct its_node *its, u32 dev_id)
--{
--	struct its_device *its_dev = NULL, *tmp;
--	unsigned long flags;
--
--	raw_spin_lock_irqsave(&its->lock, flags);
--
--	list_for_each_entry(tmp, &its->its_device_list, entry) {
--		if (tmp->device_id == dev_id) {
--			its_dev = tmp;
--			break;
--		}
--	}
--
--	raw_spin_unlock_irqrestore(&its->lock, flags);
--
--	return its_dev;
--}
--
- static struct its_baser *its_get_baser(struct its_node *its, u32 type)
- {
- 	int i;
-@@ -2321,7 +2302,7 @@ static bool its_alloc_vpe_table(u32 vpe_id)
- static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 					    int nvecs, bool alloc_lpis)
- {
--	struct its_device *dev;
-+	struct its_device *dev = NULL, *tmp;
- 	unsigned long *lpi_map = NULL;
- 	unsigned long flags;
- 	u16 *col_map = NULL;
-@@ -2331,6 +2312,24 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 	int nr_ites;
- 	int sz;
- 
-+	raw_spin_lock_irqsave(&its->lock, flags);
-+	list_for_each_entry(tmp, &its->its_device_list, entry) {
-+		if (tmp->device_id == dev_id) {
-+			dev = tmp;
-+			break;
-+		}
-+	}
-+	if (dev) {
-+		/*
-+		 * We already have seen this ID, probably through
-+		 * another alias (PCI bridge of some sort). No need to
-+		 * create the device.
-+		 */
-+		pr_debug("Reusing ITT for devID %x\n", dev_id);
-+		raw_spin_unlock_irqrestore(&its->lock, flags);
-+		return dev;
-+	}
-+
- 	if (!its_alloc_device_table(its, dev_id))
- 		return NULL;
- 
-@@ -2378,7 +2377,6 @@ static struct its_device *its_create_device(struct its_node *its, u32 dev_id,
- 	dev->device_id = dev_id;
- 	INIT_LIST_HEAD(&dev->entry);
- 
--	raw_spin_lock_irqsave(&its->lock, flags);
- 	list_add(&dev->entry, &its->its_device_list);
- 	raw_spin_unlock_irqrestore(&its->lock, flags);
- 
-@@ -2443,23 +2441,11 @@ static int its_msi_prepare(struct irq_domain *domain, struct device *dev,
- 		return -EINVAL;
+ 	if (dsi_id == 0) {
+ 		enable_mask = OMAP4_DSI1_LANEENABLE_MASK;
+@@ -99,7 +100,11 @@ static int omap4_dsi_mux_pads(int dsi_id, unsigned lanes)
+ 		return -ENODEV;
  	}
  
--	its_dev = its_find_device(its, dev_id);
--	if (its_dev) {
--		/*
--		 * We already have seen this ID, probably through
--		 * another alias (PCI bridge of some sort). No need to
--		 * create the device.
--		 */
--		pr_debug("Reusing ITT for devID %x\n", dev_id);
--		goto out;
--	}
--
- 	its_dev = its_create_device(its, dev_id, nvec, true);
- 	if (!its_dev)
- 		return -ENOMEM;
+-	regmap_read(omap4_dsi_mux_syscon, OMAP4_DSIPHY_SYSCON_OFFSET, &reg);
++	ret = regmap_read(omap4_dsi_mux_syscon,
++					  OMAP4_DSIPHY_SYSCON_OFFSET,
++					  &reg);
++	if (ret)
++		return ret;
  
- 	pr_debug("ITT %d entries, %d bits\n", nvec, ilog2(nvec));
--out:
- 	info->scratchpad[0].ptr = its_dev;
- 	return 0;
- }
+ 	reg &= ~enable_mask;
+ 	reg &= ~pipd_mask;
 -- 
-1.8.3.1
-
+2.17.1
 
