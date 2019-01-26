@@ -3,39 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21CDBC282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:56:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DECA9C282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:57:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECC83218FF
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:56:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B6CE521855
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:57:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728823AbfAZA4O (ORCPT
+        id S1726589AbfAZA55 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 19:56:14 -0500
-Received: from gateway24.websitewelcome.com ([192.185.51.202]:40578 "EHLO
-        gateway24.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725916AbfAZA4N (ORCPT
+        Fri, 25 Jan 2019 19:57:57 -0500
+Received: from gateway32.websitewelcome.com ([192.185.145.18]:15367 "EHLO
+        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725550AbfAZA54 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 19:56:13 -0500
-Received: from cm10.websitewelcome.com (cm10.websitewelcome.com [100.42.49.4])
-        by gateway24.websitewelcome.com (Postfix) with ESMTP id 59D26CE4B6
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 18:56:12 -0600 (CST)
+        Fri, 25 Jan 2019 19:57:56 -0500
+Received: from cm17.websitewelcome.com (cm17.websitewelcome.com [100.42.49.20])
+        by gateway32.websitewelcome.com (Postfix) with ESMTP id 379C4A39A6
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 18:57:55 -0600 (CST)
 Received: from gator4166.hostgator.com ([108.167.133.22])
         by cmsmtp with SMTP
-        id nCGagVFDE2PzOnCGag54bD; Fri, 25 Jan 2019 18:56:12 -0600
+        id nCIFg5oT690onnCIFgWegk; Fri, 25 Jan 2019 18:57:55 -0600
 X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=41458 helo=[192.168.1.76])
+Received: from [189.250.130.205] (port=41614 helo=[192.168.1.76])
         by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
         (Exim 4.91)
         (envelope-from <gustavo@embeddedor.com>)
-        id 1gnCGa-000SUQ-2m; Fri, 25 Jan 2019 18:56:12 -0600
+        id 1gnCIE-000TGY-SF; Fri, 25 Jan 2019 18:57:54 -0600
+Subject: Re: [PATCH] ASN.1: mark expected switch fall-throughs
 To:     Kees Cook <keescook@chromium.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>
-References: <20190125203140.GA1814@embeddedor>
- <CAGXu5j+N+tqx+1z-1zq2_Egantdcr6YSm_1s4XeSUN427zDhQA@mail.gmail.com>
+References: <20190125204846.GA4106@embeddedor>
+ <CAGXu5jJXsLw7N-M9Ev_BMapC3L2Q1t_qn0rbJEjwOQY1=us76w@mail.gmail.com>
 From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=gustavo@embeddedor.com; keydata=
@@ -81,16 +82,15 @@ Autocrypt: addr=gustavo@embeddedor.com; keydata=
  YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
  GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
  VtSixD1uOgytAP7RWS474w==
-Subject: Re: [PATCH] lib/cmdline.c: mark expected switch fall-throughs
-Message-ID: <14d9d30d-3c33-34a6-5401-016ff60b35c1@embeddedor.com>
-Date:   Fri, 25 Jan 2019 18:56:11 -0600
+Message-ID: <4bb2f0bd-f93c-f8f6-5a72-a0c5035fb8de@embeddedor.com>
+Date:   Fri, 25 Jan 2019 18:57:54 -0600
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <CAGXu5j+N+tqx+1z-1zq2_Egantdcr6YSm_1s4XeSUN427zDhQA@mail.gmail.com>
+In-Reply-To: <CAGXu5jJXsLw7N-M9Ev_BMapC3L2Q1t_qn0rbJEjwOQY1=us76w@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
 X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
 X-AntiAbuse: Original Domain - vger.kernel.org
@@ -99,13 +99,13 @@ X-AntiAbuse: Sender Address Domain - embeddedor.com
 X-BWhitelist: no
 X-Source-IP: 189.250.130.205
 X-Source-L: No
-X-Exim-ID: 1gnCGa-000SUQ-2m
+X-Exim-ID: 1gnCIE-000TGY-SF
 X-Source: 
 X-Source-Args: 
 X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:41458
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:41614
 X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 2
+X-Email-Count: 4
 X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
 X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -115,8 +115,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 
 
-On 1/25/19 6:18 PM, Kees Cook wrote:
-> On Sat, Jan 26, 2019 at 9:31 AM Gustavo A. R. Silva
+On 1/25/19 6:38 PM, Kees Cook wrote:
+> On Sat, Jan 26, 2019 at 9:49 AM Gustavo A. R. Silva
 > <gustavo@embeddedor.com> wrote:
 >>
 >> In preparation to enabling -Wimplicit-fallthrough, mark switch
@@ -124,24 +124,22 @@ On 1/25/19 6:18 PM, Kees Cook wrote:
 >>
 >> This patch fixes the following warnings:
 >>
->> lib/cmdline.c:137:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/cmdline.c:140:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/cmdline.c:143:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/cmdline.c:146:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
->> lib/cmdline.c:149:7: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/asn1_decoder.c:386:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+>> lib/asn1_decoder.c:449:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
 >>
 >> Warning level 3 was used: -Wimplicit-fallthrough=3
 >>
->> This patch is part of the ongoing efforts to enabling -Wimplicit-fallthrough.
+>> This patch is part of the ongoing efforts to enabling
+>> -Wimplicit-fallthrough.
 >>
 >> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
 > 
-> Acked-by: Kees Cook <keescook@chromium.org>
+> Reviewed-by: Kees Cook <keescook@chromium.org>
 > 
 
 Now applied to for-next/kspp, thanks.
 
-https://git.kernel.org/gustavoars/c/5dd481673c3ddd27d36851754bafbaa82bdff34f
+https://git.kernel.org/gustavoars/c/482c7212e6af6a3362e337fb49e2e101e4578644
 
 Cheers!
 --
