@@ -2,132 +2,94 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F04C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:48:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 19686C282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 22:02:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0444521903
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:48:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEC092087F
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 22:02:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XWLlXkKQ"
+	dkim=pass (1024-bit key) header.d=appneta.com header.i=@appneta.com header.b="JrkEPAK1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726468AbfAZVs3 (ORCPT
+        id S1726447AbfAZWCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 16:48:29 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:41882 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726350AbfAZVs3 (ORCPT
+        Sat, 26 Jan 2019 17:02:51 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:39300 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726385AbfAZWCv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 16:48:29 -0500
-Received: by mail-ua1-f66.google.com with SMTP id z24so4407784ual.8
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jan 2019 13:48:28 -0800 (PST)
+        Sat, 26 Jan 2019 17:02:51 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w6so5601151pgl.6
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jan 2019 14:02:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7fF79YLYE1hKZSv/2wcivjap/8uZqvGhdgcmhBLSoGk=;
-        b=XWLlXkKQ1QWC8ozof/e1S3HrWbMIbbC/Gmq876VlWgPIo1NfCUuF8m3y69pUJzoFfw
-         Vemh/X3CEWXPvwThjvVDzwjsOvW2zx0rdN2OoDeunKzjevPzcAZoRsz5FcWY3+TWpMYZ
-         YOtCzdVNFGX8ty9q4tvm0j4IbqrigxreiCPHIi/Rn5AgMryKqApXzPxm8JN07jMtwV4c
-         FPPxO912ylnBQ7BBirfQKE7WXPu7Ij19eqsz7ocSHYJPKNspbob76fjrNfKZ8fCA2M93
-         xstQrZ8s8PapIIQezcbQVcDKX7bmlGPgomDReqN0fpb12sYQGrG4vTgDaHzeaOQHqZzc
-         D64Q==
+        d=appneta.com; s=google;
+        h=mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=ZQALRatgGYbV9MY7AZa7uBN2jjfiu74zaU+cT5Nuvk8=;
+        b=JrkEPAK13maqpDGaY5iT2Os1IHmAkd3ui2sZkZwh3Vp/rrrR5CAY252Ug8iYUEuVQZ
+         /NFoYK1sMzMT7K6Rd+ZcPjy4iEG682ulDX3KXM0bJmkL6i1yJwTMUyeYcxqneVgP1K+2
+         eoTXFb2gQmQfNAqzjgzVpUyt6L8XOdPf28+pE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7fF79YLYE1hKZSv/2wcivjap/8uZqvGhdgcmhBLSoGk=;
-        b=BeG570UzdAqVvjzs5kFkS8oE6xVLLctemt72/ybA+RVk2asGTWjtXGV29BnFy4N4Z4
-         qhKM0wlL0Y142/EUwHYNXA0Mci06Hm1XTdBCkASTsGiJKP23HCiWUcvTCd7oSBqBLOlB
-         Stjl6UWcHmzCul4FMUHMJffkklk2MoVpBTu/2WBwEqFJ9rqlwb1bfkKJfzsJqvbyxQ3x
-         kisWgcLABlVxBEWEuwJfRouAKndLK4vcfIwu9bngCm0gvUVo5AgUV/51xgnL5wFL9i6S
-         q41bjDoBYCzq6MPwHPBYeuDXmL7+KtzCqU6tA8ypRICs0Rx8SFFtYxIacodgiDkz+Ck4
-         gTkA==
-X-Gm-Message-State: AJcUukfogPqAbX07rAE79kJyT/6sQL3UxqskV2SsU3U/1KG61lar/EW+
-        Kt5+pYz6fz/aUoBiqwi3f/JL7Sn4r87H3/RkDnQP8j6llXA=
-X-Google-Smtp-Source: ALg8bN4V37bRr3WvoNIwpuRUAyGwbweJitaQXeSDhXTsDQCVDbrW6qA4HnvSz3h6ezJoolacSOM56Z30DRpwJvPx1GU=
-X-Received: by 2002:ab0:7544:: with SMTP id k4mr6533657uaq.66.1548539307472;
- Sat, 26 Jan 2019 13:48:27 -0800 (PST)
-MIME-Version: 1.0
-References: <20190123000057.31477-1-oded.gabbay@gmail.com> <20190123000057.31477-2-oded.gabbay@gmail.com>
- <CAK8P3a2NX_SNZPfqE4fnVcnxmSfAEzWMODce3L-g6JJ0NSTuBw@mail.gmail.com>
- <CAFCwf10jv4aMNefk_1Xj_Tg5Yjg8ekzWtZ94TssfHzaSN5CVAA@mail.gmail.com> <CAK8P3a3=1Rocb8jcG8XHadgcUCL6xXs8GRxc-Az6oyPqffYTpw@mail.gmail.com>
-In-Reply-To: <CAK8P3a3=1Rocb8jcG8XHadgcUCL6xXs8GRxc-Az6oyPqffYTpw@mail.gmail.com>
-From:   Oded Gabbay <oded.gabbay@gmail.com>
-Date:   Sat, 26 Jan 2019 23:48:02 +0200
-Message-ID: <CAFCwf109SsyUVfvWAwA-j6HbqJ-QEZkWUhwirtX7dUf5CP_R7A@mail.gmail.com>
-Subject: Re: [PATCH 01/15] habanalabs: add skeleton driver
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     gregkh <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ogabbay@habana.ai
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=ZQALRatgGYbV9MY7AZa7uBN2jjfiu74zaU+cT5Nuvk8=;
+        b=t5LMgLaSx886rzvl8Fkt2HRWSFRHVeJKCP8MuEradHBq1Ftb7rXJL1Lq8ttT/IYwO/
+         03PpuOVmSNfdU9xqcT94mrV6Tw5jJxi6o16KwkZwjY1zVsibpkjhOGP/E8xjwi6joHBJ
+         hfBkLE7v42ZaQcXS2txe4+vfLJ7rvbUaEwhcN3byFUo0nu6j6G+aicyv4vR6kN33g9pF
+         YqM6zS+4iLOC18MDJLfKpQiZH3BcPxKZSLeyBGRt3zG4aO8JeESzYM1MXEJUJLBYPfuv
+         wLEjr1vD/LI16/Mrb+oxnJiZoJ2045Up/OZDB3vrrT1uYr1ohV4oK5GSCmjoT6VCAV1k
+         +hlw==
+X-Gm-Message-State: AJcUukfusIk2w3d0a2X8MwUMtd5jVecpOJ7XvJpVzYFGA9/CV/FAU13q
+        nIY7gieyVjxYTGbyaitl7Zye
+X-Google-Smtp-Source: ALg8bN49XPEHwxF3LkAYky1Y6Fu2tMEvs+rMyr27LxnflTESJUAzgeABKdsfpTbGh6Uaz21ep8KGJQ==
+X-Received: by 2002:a62:1c0a:: with SMTP id c10mr16231264pfc.213.1548540170527;
+        Sat, 26 Jan 2019 14:02:50 -0800 (PST)
+Received: from dhcp-128-189-224-133.ubcsecure.wireless.ubc.ca (dhcp-128-189-224-133.ubcsecure.wireless.ubc.ca. [128.189.224.133])
+        by smtp.gmail.com with ESMTPSA id q1sm35553923pgs.14.2019.01.26.14.02.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 26 Jan 2019 14:02:49 -0800 (PST)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [v2 PATCH] rhashtable: Still do rehash when we get EEXIST
+From:   Josh Elsasser <jelsasser@appneta.com>
+In-Reply-To: <D5A6C2E7-2AB1-46D0-8876-2D6AAAA3937F@appneta.com>
+Date:   Sat, 26 Jan 2019 14:02:48 -0800
+Cc:     Thomas Graf <tgraf@suug.ch>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Josh Elsasser <jelsasser@appneta.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <A247F887-832E-44AD-AC41-C22E124E44EE@appneta.com>
+References: <20190123211758.104275-1-jelsasser@appneta.com>
+ <20190124030841.n4jtsqka5zji3e62@gondor.apana.org.au>
+ <D5A6C2E7-2AB1-46D0-8876-2D6AAAA3937F@appneta.com>
+To:     Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S . Miller" <davem@davemloft.net>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 11:14 PM Arnd Bergmann <arnd@arndb.de> wrote:
->
-> On Sat, Jan 26, 2019 at 5:25 PM Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> >
-> > On Sat, Jan 26, 2019 at 6:06 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > >
-> > > On Wed, Jan 23, 2019 at 1:01 AM Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> > >
-> > > > diff --git a/drivers/misc/habanalabs/include/habanalabs_device_if.h b/drivers/misc/habanalabs/include/habanalabs_device_if.h
-> > > > new file mode 100644
-> > > > index 000000000000..9dbb7077eabd
-> > > > --- /dev/null
-> > > > +++ b/drivers/misc/habanalabs/include/habanalabs_device_if.h
-> > >
-> > > Since this is a apparently a user space ABI, the file should be in
-> > > include/uapi/linux/,
-> > > not in the driver directory.
-> >
-> > This is not a user space ABI. This is the ABI between the driver and the F/W.
->
-> Ah, I see. In that case, you should get rid of all the bitfields and make the
-> struct members all __le32/__le64/... to make it work on big-endian kernels.
->
-I really don't want to start converting bitfields and structures to
-use __le32/64.
-As I wrote in one of the previous reviews, we don't support big-endian
-architecture (what's left after POWER moved to support little endian
-?).  We actually do run on POWER9 but with ppc64le architecture
-In any case, our software stack is so big that this minor change in
-the driver won't have any impact on the overall ability to run
-something on our H/W
+On Jan 23, 2019, at 7:40 PM, Josh Elsasser <jelsasser@appneta.com> =
+wrote:
+> On Jan 23, 2019, at 7:08 PM, Herbert Xu <herbert@gondor.apana.org.au> =
+wrote:
+>=20
+>> Thanks for catching this!
+>>=20
+>> Although I think we should fix this in a different way.  The problem
+>> here is that the shrink cannot proceed because there was a previous
+>> rehash that is still incomplete.  We should wait for its completion
+>> and then reattempt a shrinnk should it still be necessary.
+>=20
+> I can't test this right now because our VM server's down=20
 
-> > >
-> > > > +/* must be aligned to 4 bytes */
-> > > > +struct armcp_info {
-> > > > +       struct armcp_sensor sensors[ARMCP_MAX_SENSORS];
-> > > > +       __u8 kernel_version[VERSION_MAX_LEN];
-> > > > +       __u32 reserved[3];
-> > > > +       __u32 cpld_version;
-> > > > +       __u32 infineon_version;
-> > > > +       __u8 fuse_version[VERSION_MAX_LEN];
-> > > > +       __u8 thermal_version[VERSION_MAX_LEN];
-> > > > +       __u8 armcp_version[VERSION_MAX_LEN];
-> > > > +       __u64 dram_size;
-> > > > +};
-> > >
-> > > The compiler will align this to 8 bytes on most architectures, and
-> > > add another padding field before dram_size. Better remove the
-> > > 'reserved' fields, or make them an even number.
-> > I can't do that, because those fields were once used by the F/W and if
-> > I will change the order here, or add/remove those fields then it will
-> > break compatibility with old F/W.
->
-> Ok, I see. Then you should add an explicit padding field and fix the
-> comment to make the structure match the actual interface.
->
->        Arnd
-Understood, will be fixed.
-Thanks,
-Oded
+Got one of the poor little reproducer VM's back up and running and =
+loaded
+up this patch. Works like a charm. For the v2 PATCH, can add my:
+
+Tested-by: Josh Elsasser <jelsasser@appneta.com>=
