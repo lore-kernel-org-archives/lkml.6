@@ -2,345 +2,280 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC5AC282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 729EEC282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1469421903
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:27:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548462450;
-	bh=8LXYoJtRhagIsq2Y7nU+K6k++/CRn2zRN4+Hk0OINJ4=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=oMWbNTIKNkbw7GKAxMilfthu0htxMfAeYN7Tx2bgnBUYZhzId1zOqvvrJccAtiGlF
-	 CTNkx+99pKNOPTyhuIfyj7tbdwzztn+3kUCxu9ILBv/W6EVBlDvQt690TPhQ/Uucmb
-	 fHBKMrdCHv1JanRNvWrBa9zVQJkbUhI6erytarGU=
+	by mail.kernel.org (Postfix) with ESMTP id 2CF60218CD
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:28:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOJU9TQ+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726335AbfAZA12 (ORCPT
+        id S1727933AbfAZA2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 19:27:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40226 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725550AbfAZA11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 19:27:27 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7A5BE218CD;
-        Sat, 26 Jan 2019 00:27:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548462446;
-        bh=8LXYoJtRhagIsq2Y7nU+K6k++/CRn2zRN4+Hk0OINJ4=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=fmzJ1g2SDFKTifZMHVtJCff17FxVSr7mrwIdrroulUb9awDM2YW0AuufSXYUtMqDd
-         77So73FmYhxDzku6OFaunZVHAuU2goXf3NpV7bFaC1U5Ej7px524QXvUZ2okfKR5dc
-         WW76y1PM9lRjr7USeIVvmTVbCEn08BZJTHcUZKcE=
-Subject: Re: [PATCH v10 1/4] media: Media Device Allocator API
-To:     Sakari Ailus <sakari.ailus@iki.fi>
-Cc:     mchehab@kernel.org, perex@perex.cz, tiwai@suse.com,
-        hverkuil@xs4all.nl, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        shuah <shuah@kernel.org>
-References: <cover.1548360791.git.shuah@kernel.org>
- <df3aae79629e5c0ab5a57dfaf5e2d815a134cd2d.1548360791.git.shuah@kernel.org>
- <20190125153843.onbq7uiwpjp3b2y7@valkosipuli.retiisi.org.uk>
-From:   shuah <shuah@kernel.org>
-Message-ID: <fa3a4d98-d4a3-47ac-0fdc-4f3e0c7c630d@kernel.org>
-Date:   Fri, 25 Jan 2019 17:27:24 -0700
+        Fri, 25 Jan 2019 19:28:08 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46376 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAZA2I (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 19:28:08 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v15-v6so9790146ljh.13;
+        Fri, 25 Jan 2019 16:28:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=zJzMwUHrYpfswprYenT2FabZaUSlSXLLkyuHHpWPyJI=;
+        b=mOJU9TQ+bW4QpR83KU5IXFPWTNGACqB5O5876fXTU/1GHAA50y/bINhnSctOENHgVn
+         Cj0G1RN7cqP8/USOQHLYFiKvfYmPov+K7sVr7VVWdY/nWVLJY9NDO2uzdFGSsBc/J1a8
+         l0ixDYwMJ/owzarrgunYuUM+7fmJ2shKUe0JKt/6LjXriZxLNkMZBrmslDccgOKJxCKB
+         GStE2ZEvVd0xwBqYph7hcplRf7u+THI8+fQJ2yvCyPOKaiYON8emGi+77kKwD5YEsUcO
+         jT0kVn2oiDXCqQ1ZHH8i8wSlBjBZ/Fh3uhNH429dNvA1SvuiiI6dAnrt9jLn7nlzawZR
+         GpTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=zJzMwUHrYpfswprYenT2FabZaUSlSXLLkyuHHpWPyJI=;
+        b=WOj/GbuF/U4HNHjWQ9Z5H7Sr5NCcf1GZzsmXnEJwx9ip1S/EiR9nbWompJSp6Gb2s5
+         AwziEEks5sjC4QG1lxNB9Ep/S8F23YWAbBMOoH/NW2mq3lG3Ru8hEzIAusG/yC6EUGd4
+         nwtep9hd6ScXloCCqW8LKKuLrRxjt973MFToxdEEiI9NkgY6aMrReftY/JAhgMkkzvl6
+         CeHt9PRqtj8WNnFxtTDhZRbavVaN2Xr0wyq3sIadjDSh4d/q7Qvfwl3j+97BGPhVsmL6
+         wMHaWgy+J89NB5RpTPgB06X8SAErm9+29h1XM8NK22JEgU01bkGzvgcsP8iCpDcZjED4
+         OQmw==
+X-Gm-Message-State: AJcUukdpwBahwAxJ8CH5BfKGdSjF+c1Wu/AXKclTbPmH5I//jo4gqnyl
+        CtuYvK078PeR++rR2cpTC3TASqE4
+X-Google-Smtp-Source: ALg8bN5w9QldoE+RYaacx6/zKii77fMr2zc2o6iEA5vXvwd3ZkcvbPE5ettIoWZD7WPKzZove4qHDQ==
+X-Received: by 2002:a2e:9107:: with SMTP id m7-v6mr10754511ljg.23.1548462484417;
+        Fri, 25 Jan 2019 16:28:04 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id a20-v6sm1800336ljf.28.2019.01.25.16.28.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 16:28:03 -0800 (PST)
+Subject: Re: [PATCH V2 3/4] i2c: tegra: Add DMA Support
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        thierry.reding@gmail.com, jonathanh@nvidia.com,
+        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
+Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-i2c@vger.kernel.org
+References: <1548363113-25969-1-git-send-email-skomatineni@nvidia.com>
+ <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <e782dfd3-4dc4-4f69-e360-f38e4705fdb4@gmail.com>
+Date:   Sat, 26 Jan 2019 03:28:02 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190125153843.onbq7uiwpjp3b2y7@valkosipuli.retiisi.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <1548363113-25969-3-git-send-email-skomatineni@nvidia.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sakari,
+24.01.2019 23:51, Sowjanya Komatineni пишет:
+> This patch adds DMA support for Tegra I2C.
+> 
+> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
+> transfer size of the max FIFO depth and DMA mode is used for
+> transfer size higher than max FIFO depth to save CPU overhead.
+> 
+> PIO mode needs full intervention of CPU to fill or empty FIFO's
+> and also need to service multiple data requests interrupt for the
+> same transaction adding overhead on CPU for large transfers.
+> 
+> DMA mode is helpful for Large transfers during downloading or
+> uploading FW over I2C to some external devices.
+> 
+> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
+> ---
+>  [V2] : Updated based on V1 review feedback along with code cleanup for
+> 	proper implementation of DMA.
+> 
+>  drivers/i2c/busses/i2c-tegra.c | 366 +++++++++++++++++++++++++++++++++++++++--
+>  1 file changed, 349 insertions(+), 17 deletions(-)
+> 
+> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
+> index 13bce1411ddc..769700d5a7f3 100644
+> --- a/drivers/i2c/busses/i2c-tegra.c
+> +++ b/drivers/i2c/busses/i2c-tegra.c
+> @@ -9,6 +9,9 @@
+>  #include <asm/unaligned.h>
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+> +#include <linux/dmaengine.h>
+> +#include <linux/dmapool.h>
+> +#include <linux/dma-mapping.h>
+>  #include <linux/err.h>
+>  #include <linux/i2c.h>
+>  #include <linux/init.h>
+> @@ -46,6 +49,8 @@
+>  #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
+>  #define I2C_FIFO_CONTROL_TX_TRIG_SHIFT		5
+>  #define I2C_FIFO_CONTROL_RX_TRIG_SHIFT		2
+> +#define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
+> +#define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) << 2)
+>  #define I2C_FIFO_STATUS				0x060
+>  #define I2C_FIFO_STATUS_TX_MASK			0xF0
+>  #define I2C_FIFO_STATUS_TX_SHIFT		4
+> @@ -120,6 +125,16 @@
+>  /* Packet header size in bytes */
+>  #define I2C_PACKET_HEADER_SIZE			12
+>  
+> +#define DATA_DMA_DIR_TX				(1 << 0)
+> +#define DATA_DMA_DIR_RX				(1 << 1)
+> +
+> +/*
+> + * Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
+> + * above this, controller will use DMA to fill FIFO.
+> + * MAX PIO len is 20 bytes excluding packet header.
+> + */
+> +#define I2C_PIO_MODE_MAX_LEN			32
+> +
+>  /*
+>   * msg_end_type: The bus control which need to be send at end of transfer.
+>   * @MSG_END_STOP: Send stop pulse at end of transfer.
+> @@ -180,6 +195,7 @@ struct tegra_i2c_hw_feature {
+>   * @fast_clk: clock reference for fast clock of I2C controller
+>   * @rst: reset control for the I2C controller
+>   * @base: ioremapped registers cookie
+> + * @phys_addr: Physical address of I2C base address to use for DMA configuration
+>   * @cont_id: I2C controller ID, used for packet header
+>   * @irq: IRQ number of transfer complete interrupt
+>   * @irq_disabled: used to track whether or not the interrupt is enabled
+> @@ -193,6 +209,14 @@ struct tegra_i2c_hw_feature {
+>   * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
+>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
+>   * @xfer_lock: lock to serialize transfer submission and processing
+> + * @has_dma: indicated if controller supports DMA
+> + * @tx_dma_chan: DMA transmit channel
+> + * @rx_dma_chan: DMA receive channel
+> + * @dma_phys: handle to DMA resources
+> + * @dma_buf: pointer to allocated DMA buffer
+> + * @dma_buf_size: DMA buffer size
+> + * @is_curr_dma_xfer: indicates active DMA transfer
+> + * @dma_complete: DMA completion notifier
+>   */
+>  struct tegra_i2c_dev {
+>  	struct device *dev;
+> @@ -202,6 +226,7 @@ struct tegra_i2c_dev {
+>  	struct clk *fast_clk;
+>  	struct reset_control *rst;
+>  	void __iomem *base;
+> +	phys_addr_t phys_addr;
+>  	int cont_id;
+>  	int irq;
+>  	bool irq_disabled;
+> @@ -215,8 +240,18 @@ struct tegra_i2c_dev {
+>  	u16 clk_divisor_non_hs_mode;
+>  	bool is_multimaster_mode;
+>  	spinlock_t xfer_lock;
+> +	bool has_dma;
+> +	struct dma_chan *tx_dma_chan;
+> +	struct dma_chan *rx_dma_chan;
+> +	dma_addr_t dma_phys;
+> +	u32 *dma_buf;
+> +	unsigned int dma_buf_size;
+> +	bool is_curr_dma_xfer;
+> +	struct completion dma_complete;
+>  };
+>  
+> +static struct dma_chan *chan;
+> +
+>  static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
+>  		       unsigned long reg)
+>  {
+> @@ -283,6 +318,75 @@ static void tegra_i2c_unmask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
+>  	i2c_writel(i2c_dev, int_mask, I2C_INT_MASK);
+>  }
+>  
+> +static void tegra_i2c_dma_complete(void *args)
+> +{
+> +	struct tegra_i2c_dev *i2c_dev = args;
+> +
+> +	complete(&i2c_dev->dma_complete);
+> +}
+> +
+> +static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
+> +{
+> +	struct dma_async_tx_descriptor *dma_desc;
+> +	enum dma_transfer_direction dir;
+> +
+> +	dev_dbg(i2c_dev->dev, "Starting DMA for length: %zu\n", len);
+> +	reinit_completion(&i2c_dev->dma_complete);
+> +	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
+> +	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
+> +					       len, dir, DMA_PREP_INTERRUPT |
+> +					       DMA_CTRL_ACK);
+> +	if (!dma_desc) {
+> +		dev_err(i2c_dev->dev, "Failed to get DMA descriptor\n");
+> +		return -EIO;
+> +	}
+> +
+> +	dma_desc->callback = tegra_i2c_dma_complete;
+> +	dma_desc->callback_param = i2c_dev;
+> +	dmaengine_submit(dma_desc);
+> +	dma_async_issue_pending(chan);
+> +	return 0;
+> +}
+> +
+> +static int tegra_i2c_init_dma_param(struct tegra_i2c_dev *i2c_dev,
+> +				    bool dma_to_memory)
+> +{
+> +	struct dma_chan *dma_chan;
+> +	u32 *dma_buf;
+> +	dma_addr_t dma_phys;
+> +	int ret;
+> +	const char *chan_name = dma_to_memory ? "rx" : "tx";
+> +
+> +	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev, chan_name);
+> +	if (IS_ERR(dma_chan))
+> +		return PTR_ERR(dma_chan);
 
-On 1/25/19 8:38 AM, Sakari Ailus wrote:
-> Hi Shuah,
-> 
-> On Thu, Jan 24, 2019 at 01:32:38PM -0700, Shuah Khan wrote:
->> Media Device Allocator API to allows multiple drivers share a media device.
->> This API solves a very common use-case for media devices where one physical
->> device (an USB stick) provides both audio and video. When such media device
->> exposes a standard USB Audio class, a proprietary Video class, two or more
->> independent drivers will share a single physical USB bridge. In such cases,
->> it is necessary to coordinate access to the shared resource.
->>
->> Using this API, drivers can allocate a media device with the shared struct
->> device as the key. Once the media device is allocated by a driver, other
->> drivers can get a reference to it. The media device is released when all
->> the references are released.
-> 
-> Are there real, non-USB devices that could use the same API?
-> 
+Here shall be a check of whether dma_buf is already allocated, otherwise it will be allocated twice and the first allocation turned into memleak:
 
-There might be. I don't have any to test. This patch is restricted
-to USB at the moment.
+	if (i2c_dev->dma_buf)
+		return 0;
 
->>
->> Signed-off-by: Shuah Khan <shuah@kernel.org>
->> ---
->>   Documentation/media/kapi/mc-core.rst |  41 ++++++++
->>   drivers/media/Makefile               |   4 +
->>   drivers/media/media-dev-allocator.c  | 144 +++++++++++++++++++++++++++
->>   include/media/media-dev-allocator.h  |  53 ++++++++++
->>   4 files changed, 242 insertions(+)
->>   create mode 100644 drivers/media/media-dev-allocator.c
->>   create mode 100644 include/media/media-dev-allocator.h
->>
->> diff --git a/Documentation/media/kapi/mc-core.rst b/Documentation/media/kapi/mc-core.rst
->> index 0bcfeadbc52d..07f2a6a90af2 100644
->> --- a/Documentation/media/kapi/mc-core.rst
->> +++ b/Documentation/media/kapi/mc-core.rst
->> @@ -259,6 +259,45 @@ Subsystems should facilitate link validation by providing subsystem specific
->>   helper functions to provide easy access for commonly needed information, and
->>   in the end provide a way to use driver-specific callbacks.
->>   
->> +Media Controller Device Allocator API
->> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
->> +
->> +When the media device belongs to more than one driver, the shared media
->> +device is allocated with the shared struct device as the key for look ups.
->> +
->> +The shared media device should stay in registered state until the last
->> +driver unregisters it. In addition, the media device should be released when
->> +all the references are released. Each driver gets a reference to the media
->> +device during probe, when it allocates the media device. If media device is
->> +already allocated, the allocate API bumps up the refcount and returns the
->> +existing media device. The driver puts the reference back in its disconnect
->> +routine when it calls :c:func:`media_device_delete()`.
->> +
->> +The media device is unregistered and cleaned up from the kref put handler to
->> +ensure that the media device stays in registered state until the last driver
->> +unregisters the media device.
->> +
->> +**Driver Usage**
->> +
->> +Drivers should use the appropriate media-core routines to manage the shared
->> +media device life-time handling the two states:
->> +1. allocate -> register -> delete
->> +2. get reference to already registered device -> delete
->> +
->> +call :c:func:`media_device_delete()` routine to make sure the shared media
->> +device delete is handled correctly.
->> +
->> +**driver probe:**
->> +Call :c:func:`media_device_usb_allocate()` to allocate or get a reference
->> +Call :c:func:`media_device_register()`, if media devnode isn't registered
->> +
->> +**driver disconnect:**
->> +Call :c:func:`media_device_delete()` to free the media_device. Freeing is
->> +handled by the kref put handler.
->> +
->> +API Definitions
->> +^^^^^^^^^^^^^^^
->> +
->>   .. kernel-doc:: include/media/media-device.h
->>   
->>   .. kernel-doc:: include/media/media-devnode.h
->> @@ -266,3 +305,5 @@ in the end provide a way to use driver-specific callbacks.
->>   .. kernel-doc:: include/media/media-entity.h
->>   
->>   .. kernel-doc:: include/media/media-request.h
->> +
->> +.. kernel-doc:: include/media/media-dev-allocator.h
->> diff --git a/drivers/media/Makefile b/drivers/media/Makefile
->> index 985d35ec6b29..1d7653318af6 100644
->> --- a/drivers/media/Makefile
->> +++ b/drivers/media/Makefile
->> @@ -6,6 +6,10 @@
->>   media-objs	:= media-device.o media-devnode.o media-entity.o \
->>   		   media-request.o
->>   
->> +ifeq ($(CONFIG_USB),y)
->> +	media-objs += media-dev-allocator.o
->> +endif
->> +
->>   #
->>   # I2C drivers should come before other drivers, otherwise they'll fail
->>   # when compiled as builtin drivers
->> diff --git a/drivers/media/media-dev-allocator.c b/drivers/media/media-dev-allocator.c
->> new file mode 100644
->> index 000000000000..4606456c1e86
->> --- /dev/null
->> +++ b/drivers/media/media-dev-allocator.c
->> @@ -0,0 +1,144 @@
->> +// SPDX-License-Identifier: GPL-2.0-or-later
-> 
-> GPL-2.0+
-> 
+> +
+> +	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
+> +				     &dma_phys, GFP_KERNEL);
+> +
 
-I would like to address this in a follow-on patch instead of
-re-doing the series again. Hope that is okay.
+I'm wondering whether a write-combined DMA mapping will be more optimal than having L2 flushes / invalidation for the "coherent" allocations. 
 
->> +/*
->> + * media-dev-allocator.c - Media Controller Device Allocator API
->> + *
->> + * Copyright (c) 2018 Shuah Khan <shuah@kernel.org>
->> + *
->> + * Credits: Suggested by Laurent Pinchart <laurent.pinchart@ideasonboard.com>
->> + */
->> +
->> +/*
->> + * This file adds a global refcounted Media Controller Device Instance API.
->> + * A system wide global media device list is managed and each media device
->> + * includes a kref count. The last put on the media device releases the media
->> + * device instance.
->> + *
->> + */
->> +
->> +#include <linux/kref.h>
->> +#include <linux/module.h>
->> +#include <linux/slab.h>
->> +#include <linux/usb.h>
->> +
->> +#include <media/media-device.h>
->> +
->> +static LIST_HEAD(media_device_list);
->> +static DEFINE_MUTEX(media_device_lock);
->> +
->> +struct media_device_instance {
->> +	struct media_device mdev;
->> +	struct module *owner;
->> +	struct list_head list;
->> +	struct kref refcount;
->> +};
->> +
->> +static inline struct media_device_instance *
->> +to_media_device_instance(struct media_device *mdev)
->> +{
->> +	return container_of(mdev, struct media_device_instance, mdev);
->> +}
->> +
->> +static void media_device_instance_release(struct kref *kref)
->> +{
->> +	struct media_device_instance *mdi =
->> +		container_of(kref, struct media_device_instance, refcount);
->> +
->> +	dev_dbg(mdi->mdev.dev, "%s: mdev=%p\n", __func__, &mdi->mdev);
->> +
->> +	mutex_lock(&media_device_lock);
->> +
->> +	media_device_unregister(&mdi->mdev);
->> +	media_device_cleanup(&mdi->mdev);
-> 
-> This is a problem, albeit not really more of a problem than it is in a
-> driver.
+And I'm now questioning whether there is any real benefit from the DMA transferring at all, given the DMA bounce-buffer CPU read/write overhead. It looks to me that the whole purpose of the I2C DMA transferring is to move data from (to) some I2C device to a some device on the APB bus, bypassing the CPU. If that's is the case, then this patch may not really worth the effort and instead could only hurt the transferring performance. Please provide some performance results or correct me if I'm wrong.
 
-Okay good to know that it can be addressed in your media device
-refcounting series.
+[snip]
 
-The refcounting changes can be made here instead. I'll take this
-> into account in the media device refcounting series I'm planning to start
-> working on again; would you be perhaps able to help testing with this
-> device once I have patches in that shape? I have no access to the hardware.
-> 
+>  
+>  	if (!i2c_dev->hw->has_single_clk_source) {
+>  		fast_clk = devm_clk_get(&pdev->dev, "fast-clk");
+> @@ -1079,6 +1402,15 @@ static int tegra_i2c_probe(struct platform_device *pdev)
+>  		}
+>  	}
+>  
+> +	if (i2c_dev->has_dma) {
+> +		ret = tegra_i2c_init_dma_param(i2c_dev, true);
+> +		if (ret == -EPROBE_DEFER)
+> +			goto disable_div_clk;
+> +		ret = tegra_i2c_init_dma_param(i2c_dev, false);
+> +		if (ret == -EPROBE_DEFER)
+> +			goto disable_div_clk;
 
-Absolutely. I will be happy to help you with testing on the same
-hardware, I used for this series.
+Missing dma_buf freeing and channel releasing in a case of error.
 
->> +
->> +	list_del(&mdi->list);
->> +	mutex_unlock(&media_device_lock);
->> +
->> +	kfree(mdi);
->> +}
->> +
->> +/* Callers should hold media_device_lock when calling this function */
->> +static struct media_device *__media_device_get(struct device *dev,
->> +						const char *module_name,
->> +						struct module *modp)
->> +{
->> +	struct media_device_instance *mdi;
->> +
->> +	list_for_each_entry(mdi, &media_device_list, list) {
->> +
->> +		if (mdi->mdev.dev != dev)
->> +			continue;
->> +
->> +		kref_get(&mdi->refcount);
->> +
->> +		/* get module reference for the media_device owner */
->> +		if (modp != mdi->owner && !try_module_get(mdi->owner))
->> +			dev_err(dev, "%s: try_module_get() error\n", __func__);
->> +		dev_dbg(dev, "%s: get mdev=%p module_name %s\n",
->> +			__func__, &mdi->mdev, module_name);
->> +		return &mdi->mdev;
->> +	}
->> +
->> +	mdi = kzalloc(sizeof(*mdi), GFP_KERNEL);
->> +	if (!mdi)
->> +		return NULL;
->> +
->> +	mdi->owner = modp;
->> +	kref_init(&mdi->refcount);
->> +	list_add_tail(&mdi->list, &media_device_list);
->> +
->> +	dev_dbg(dev, "%s: alloc mdev=%p module_name %s\n", __func__,
->> +		&mdi->mdev, module_name);
->> +	return &mdi->mdev;
->> +}
->> +
->> +#if IS_ENABLED(CONFIG_USB)
-> 
-> You already compile the file only if CONFIG_USB is enabled. I think you
-> could remove this.
-> 
->> +struct media_device *media_device_usb_allocate(struct usb_device *udev,
->> +					       const char *module_name)
-> 
-> I'd like to suggest working based on usb_interface instead of usb_device
-> here: that object already exists and you can find out the device based on
-> it. It seems all callers of this function already have the usb_interface
-> around.
+> +	}
+> +
+>  	ret = tegra_i2c_init(i2c_dev);
+>  	if (ret) {
+>  		dev_err(&pdev->dev, "Failed to initialize i2c controller\n");
 > 
 
-Is there an advantage to using interface instead of the parent device?
-Is there a problem doing it this way?
-
-
->> +{
->> +	struct media_device *mdev;
->> +	struct module *modptr;
->> +
->> +	mutex_lock(&module_mutex);
->> +	modptr = find_module(module_name);
->> +	mutex_unlock(&module_mutex);
->> +
->> +	mutex_lock(&media_device_lock);
->> +	mdev = __media_device_get(&udev->dev, module_name, modptr);
->> +	if (!mdev) {
->> +		mutex_unlock(&media_device_lock);
->> +		return ERR_PTR(-ENOMEM);
->> +	}
->> +
->> +	/* check if media device is already initialized */
->> +	if (!mdev->dev)
->> +		__media_device_usb_init(mdev, udev, udev->product,
->> +					module_name);
->> +	mutex_unlock(&media_device_lock);
->> +	return mdev;
->> +}
->> +EXPORT_SYMBOL_GPL(media_device_usb_allocate);
->> +#endif
->> +
->> +void media_device_delete(struct media_device *mdev, const char *module_name)
-> 
-> Same here. The use of the module name seems a bit hackish to me, albeit I
-> suppose it'd work, too.
-> 
-
-What is hackish about it? I found it very useful to use it in debug and
-error messages that are user-friendly.
-
-thanks,
--- Shuah
