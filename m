@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD96AC282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:57:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E566C282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:58:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3C78218B0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:57:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 67ACB218B0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:58:16 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729615AbfAZJ5g (ORCPT
+        id S1729634AbfAZJ6O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 04:57:36 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:38075 "EHLO
+        Sat, 26 Jan 2019 04:58:14 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47075 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726143AbfAZJ5g (ORCPT
+        with ESMTP id S1726143AbfAZJ6O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 04:57:36 -0500
+        Sat, 26 Jan 2019 04:58:14 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0Q9vU2V510307
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0Q9w73q510363
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sat, 26 Jan 2019 01:57:30 -0800
+        Sat, 26 Jan 2019 01:58:07 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0Q9vUK2510304;
-        Sat, 26 Jan 2019 01:57:30 -0800
-Date:   Sat, 26 Jan 2019 01:57:30 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0Q9w7Y1510360;
+        Sat, 26 Jan 2019 01:58:07 -0800
+Date:   Sat, 26 Jan 2019 01:58:07 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Arnaldo Carvalho de Melo <tipbot@zytor.com>
-Message-ID: <tip-1p65lyeebc2ose0lbozvemda@git.kernel.org>
-Cc:     hpa@zytor.com, jolsa@kernel.org, linux-kernel@vger.kernel.org,
-        adrian.hunter@intel.com, acme@redhat.com, namhyung@kernel.org,
-        mingo@kernel.org, tglx@linutronix.de
-Reply-To: hpa@zytor.com, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-          adrian.hunter@intel.com, acme@redhat.com, namhyung@kernel.org,
-          mingo@kernel.org, tglx@linutronix.de
+Message-ID: <tip-n2gcrfmh480rm44p7fra13vv@git.kernel.org>
+Cc:     namhyung@kernel.org, jolsa@kernel.org, adrian.hunter@intel.com,
+        mingo@kernel.org, tglx@linutronix.de, acme@redhat.com,
+        hpa@zytor.com, linux-kernel@vger.kernel.org
+Reply-To: acme@redhat.com, hpa@zytor.com, linux-kernel@vger.kernel.org,
+          namhyung@kernel.org, adrian.hunter@intel.com, jolsa@kernel.org,
+          tglx@linutronix.de, mingo@kernel.org
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:perf/core] perf block-range: Add missing headers
-Git-Commit-ID: e7a795d3ba62897d326f1732d01325594a6ef64f
+Subject: [tip:perf/core] perf symbols: Remove include map.h from dso.h
+Git-Commit-ID: d328e305ea1fe78f569a4ea2cacca7fa5beec06e
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -54,56 +54,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  e7a795d3ba62897d326f1732d01325594a6ef64f
-Gitweb:     https://git.kernel.org/tip/e7a795d3ba62897d326f1732d01325594a6ef64f
+Commit-ID:  d328e305ea1fe78f569a4ea2cacca7fa5beec06e
+Gitweb:     https://git.kernel.org/tip/d328e305ea1fe78f569a4ea2cacca7fa5beec06e
 Author:     Arnaldo Carvalho de Melo <acme@redhat.com>
-AuthorDate: Tue, 22 Jan 2019 11:03:49 -0200
+AuthorDate: Tue, 22 Jan 2019 11:10:59 -0200
 Committer:  Arnaldo Carvalho de Melo <acme@redhat.com>
 CommitDate: Fri, 25 Jan 2019 15:12:09 +0100
 
-perf block-range: Add missing headers
+perf symbols: Remove include map.h from dso.h
 
-Some are being obtained indirectly and as we prune unnecessary includes,
-this stops working, fix it by adding the headers for things used in
-these file.
+Disentangling the dependency tree, to reduce build time.
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-1p65lyeebc2ose0lbozvemda@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-n2gcrfmh480rm44p7fra13vv@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 ---
- tools/perf/util/block-range.c | 2 ++
- tools/perf/util/block-range.h | 6 +++++-
- 2 files changed, 7 insertions(+), 1 deletion(-)
+ tools/perf/ui/browsers/map.c     | 1 +
+ tools/perf/util/dso.h            | 4 +++-
+ tools/perf/util/symbol_fprintf.c | 1 +
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/block-range.c b/tools/perf/util/block-range.c
-index f1451c987eec..1be432657501 100644
---- a/tools/perf/util/block-range.c
-+++ b/tools/perf/util/block-range.c
-@@ -1,6 +1,8 @@
- // SPDX-License-Identifier: GPL-2.0
- #include "block-range.h"
- #include "annotate.h"
-+#include <assert.h>
-+#include <stdlib.h>
+diff --git a/tools/perf/ui/browsers/map.c b/tools/perf/ui/browsers/map.c
+index 5b8b8c637686..c70d9337405b 100644
+--- a/tools/perf/ui/browsers/map.c
++++ b/tools/perf/ui/browsers/map.c
+@@ -6,6 +6,7 @@
+ #include <linux/bitops.h>
+ #include "../../util/util.h"
+ #include "../../util/debug.h"
++#include "../../util/map.h"
+ #include "../../util/symbol.h"
+ #include "../browser.h"
+ #include "../helpline.h"
+diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+index af2eda29660f..56001b82d448 100644
+--- a/tools/perf/util/dso.h
++++ b/tools/perf/util/dso.h
+@@ -7,12 +7,14 @@
+ #include <linux/rbtree.h>
+ #include <sys/types.h>
+ #include <stdbool.h>
++#include <stdio.h>
+ #include "rwsem.h"
+ #include <linux/bitops.h>
+-#include "map.h"
+ #include "namespaces.h"
+ #include "build-id.h"
  
- struct {
- 	struct rb_root root;
-diff --git a/tools/perf/util/block-range.h b/tools/perf/util/block-range.h
-index a5ba719d69fb..ec0fb534bf56 100644
---- a/tools/perf/util/block-range.h
-+++ b/tools/perf/util/block-range.h
-@@ -2,7 +2,11 @@
- #ifndef __PERF_BLOCK_RANGE_H
- #define __PERF_BLOCK_RANGE_H
- 
--#include "symbol.h"
-+#include <stdbool.h>
-+#include <linux/rbtree.h>
-+#include <linux/types.h>
++struct map;
 +
-+struct symbol;
+ enum dso_binary_type {
+ 	DSO_BINARY_TYPE__KALLSYMS = 0,
+ 	DSO_BINARY_TYPE__GUEST_KALLSYMS,
+diff --git a/tools/perf/util/symbol_fprintf.c b/tools/perf/util/symbol_fprintf.c
+index ed0205cc7942..50472c75da59 100644
+--- a/tools/perf/util/symbol_fprintf.c
++++ b/tools/perf/util/symbol_fprintf.c
+@@ -3,6 +3,7 @@
+ #include <inttypes.h>
+ #include <stdio.h>
  
- /*
-  * struct block_range - non-overlapping parts of basic blocks
++#include "map.h"
+ #include "symbol.h"
+ 
+ size_t symbol__fprintf(struct symbol *sym, FILE *fp)
