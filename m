@@ -6,30 +6,30 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12192C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:52:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1171C282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:52:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D3379214C6
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FD25214C6
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 09:52:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729771AbfAZJwG (ORCPT
+        id S1729746AbfAZJwF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 04:52:06 -0500
-Received: from bhuna.collabora.co.uk ([46.235.227.227]:48214 "EHLO
+        Sat, 26 Jan 2019 04:52:05 -0500
+Received: from bhuna.collabora.co.uk ([46.235.227.227]:48212 "EHLO
         bhuna.collabora.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729556AbfAZJvp (ORCPT
+        with ESMTP id S1729580AbfAZJvq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 04:51:45 -0500
+        Sat, 26 Jan 2019 04:51:46 -0500
 Received: from [127.0.0.1] (localhost [127.0.0.1])
         (Authenticated sender: eballetbo)
-        with ESMTPSA id 509A727F096
+        with ESMTPSA id 15DF027DCD2
 From:   Enric Balletbo i Serra <enric.balletbo@collabora.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     groeck@chromium.org, gwendal@chromium.org, kernel@collabora.com,
         bleung@chromium.org
-Subject: [PATCH v2 09/12] platform/chrome: cros_ec_spi: switch to SPDX identifier
-Date:   Sat, 26 Jan 2019 10:51:28 +0100
-Message-Id: <20190126095131.4756-10-enric.balletbo@collabora.com>
+Subject: [PATCH v2 10/12] platform/chrome: cros_kbd_led_backlight: switch to SPDX identifier
+Date:   Sat, 26 Jan 2019 10:51:29 +0100
+Message-Id: <20190126095131.4756-11-enric.balletbo@collabora.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190126095131.4756-1-enric.balletbo@collabora.com>
 References: <20190126095131.4756-1-enric.balletbo@collabora.com>
@@ -41,48 +41,44 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Adopt the SPDX license identifier headers to ease license compliance
-management. Also change the description for one more appropriate.
+management. Also change the term 'Chrome OS' for 'ChromeOS' to be
+coherent with other drivers.
 
 Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 ---
 
 Changes in v2: None
 
- drivers/platform/chrome/cros_ec_spi.c | 20 +++++---------------
- 1 file changed, 5 insertions(+), 15 deletions(-)
+ .../platform/chrome/cros_kbd_led_backlight.c  | 19 ++++---------------
+ 1 file changed, 4 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_spi.c b/drivers/platform/chrome/cros_ec_spi.c
-index 2be41e8afa47..b20fc4040396 100644
---- a/drivers/platform/chrome/cros_ec_spi.c
-+++ b/drivers/platform/chrome/cros_ec_spi.c
-@@ -1,17 +1,7 @@
+diff --git a/drivers/platform/chrome/cros_kbd_led_backlight.c b/drivers/platform/chrome/cros_kbd_led_backlight.c
+index ca3e4da852b4..aa409f0201fb 100644
+--- a/drivers/platform/chrome/cros_kbd_led_backlight.c
++++ b/drivers/platform/chrome/cros_kbd_led_backlight.c
+@@ -1,18 +1,7 @@
 -/*
-- * ChromeOS EC multi-function device (SPI)
+- *  Keyboard backlight LED driver for Chrome OS.
 - *
-- * Copyright (C) 2012 Google, Inc
+- *  Copyright (C) 2012 Google, Inc.
 - *
-- * This software is licensed under the terms of the GNU General Public
-- * License version 2, as published by the Free Software Foundation, and
-- * may be copied, distributed, and modified under those terms.
+- *  This program is free software; you can redistribute it and/or modify
+- *  it under the terms of the GNU General Public License as published by
+- *  the Free Software Foundation; either version 2 of the License, or
+- *  (at your option) any later version.
 - *
-- * This program is distributed in the hope that it will be useful,
-- * but WITHOUT ANY WARRANTY; without even the implied warranty of
-- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-- * GNU General Public License for more details.
+- *  This program is distributed in the hope that it will be useful,
+- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- *  GNU General Public License for more details.
 - */
 +// SPDX-License-Identifier: GPL-2.0+
-+// SPI interface for ChromeOS Embedded Controller
++// Keyboard backlight LED driver for ChromeOS
 +//
-+// Copyright (C) 2012 Google, Inc
++// Copyright (C) 2012 Google, Inc.
  
- #include <linux/delay.h>
- #include <linux/kernel.h>
-@@ -730,4 +720,4 @@ static struct spi_driver cros_ec_driver_spi = {
- module_spi_driver(cros_ec_driver_spi);
- 
- MODULE_LICENSE("GPL v2");
--MODULE_DESCRIPTION("ChromeOS EC multi function device (SPI)");
-+MODULE_DESCRIPTION("SPI interface for ChromeOS Embedded Controller");
+ #include <linux/acpi.h>
+ #include <linux/leds.h>
 -- 
 2.20.1
 
