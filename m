@@ -2,91 +2,130 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22F6EC282C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:35:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8385C282C3
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E684920833
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:35:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A0AB6218A2
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:39:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729460AbfAZDfu (ORCPT
+        id S1729543AbfAZDjU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 22:35:50 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:60472 "EHLO
-        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726030AbfAZDfu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 22:35:50 -0500
-X-Greylist: delayed 2015 seconds by postgrey-1.27 at vger.kernel.org; Fri, 25 Jan 2019 22:35:49 EST
-Received: from mr3.cc.vt.edu (mr3.cc.vt.edu [IPv6:2607:b400:92:8500:0:7f:b804:6b0a])
-        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x0Q32DGb003400
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 22:02:14 -0500
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-        by mr3.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x0Q328W6017646
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 22:02:13 -0500
-Received: by mail-qt1-f199.google.com with SMTP id q3so13218681qtq.15
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 19:02:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:mime-version:date:message-id;
-        bh=BYfgDlGlTIN/7TdD4cBo/pBUguFrDva6TtNClYrVCZQ=;
-        b=f0Dzc/tdz3h2ZKRgC4C3a23P+cJVB23pl6fTsyW3qfL6hbGBMJt8futIL7WX9aBCwY
-         YjOrpZGRxGfA35lKX7S7PilrXkUFvgX3PvQ+Rkq7l/95Au2ZcGo3Ws2Pzt3p28z24dYp
-         GmE6SXv5peneHRf4ByInWUfDCmRvVa2Fu4kPabryvnPaPpkBcxZMqTxAzZHW2wdFcYYk
-         q9BqLirjfNOIhT0VejNcqrWkTG71uG+I/rDkWaBOYxK8imo3t3+UWoW68kbzSAEhs4ac
-         Q6Z/OKOBp/W2Iv1Exp0/1jQAINesaQOAMMKpinztj7N+9xgxbaFq1jFyjXrL+UWOkJr+
-         0iVQ==
-X-Gm-Message-State: AJcUukd21krg4tw5z6Ua/kyHGiNn8wpUunKNVAgFqlA5bkH4dOi7upTM
-        K5NaSzgieakiRqgd9FSywnL+D/xnea3+xvizn3J4IbUX3ekBEzf3n622g0Ct/+gDPgk2qokGJ2z
-        gY78NFNk3yjnfrKfQnSTXUrOtt4zX8ZncI+F2TzNvqJ1k2cjxUEsEB6vnVbAX6vHwickq4pwat8
-        AuLUvTKv7I1rxIv1wH
-X-Received: by 2002:a0c:b786:: with SMTP id l6mr12866937qve.244.1548471728472;
-        Fri, 25 Jan 2019 19:02:08 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN5YfbViMq73MoytuFlfQTM2PrHDhk//lXn4DP7+eF9crtblyiA/GqKAGhGZ50rP+H+kcuz0dQ==
-X-Received: by 2002:a0c:b786:: with SMTP id l6mr12866925qve.244.1548471728204;
-        Fri, 25 Jan 2019 19:02:08 -0800 (PST)
-Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4341::936])
-        by smtp.gmail.com with ESMTPSA id z18sm52819685qkz.96.2019.01.25.19.02.06
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 19:02:06 -0800 (PST)
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-From:   valdis.kletnieks@vt.edu
-To:     linux-kernel@vger.kernel.org
-Subject: Heads up: next-20190115 and GCC 9.0 don't play nice.
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date:   Fri, 25 Jan 2019 22:02:05 -0500
-Message-ID: <19134.1548471725@turing-police.cc.vt.edu>
+        Fri, 25 Jan 2019 22:39:20 -0500
+Received: from mail-oln040092005021.outbound.protection.outlook.com ([40.92.5.21]:25600
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726030AbfAZDjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 22:39:19 -0500
+Received: from BL2NAM02FT015.eop-nam02.prod.protection.outlook.com
+ (10.152.76.51) by BL2NAM02HT120.eop-nam02.prod.protection.outlook.com
+ (10.152.76.85) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.10; Sat, 26 Jan
+ 2019 03:39:17 +0000
+Received: from BYAPR02MB5495.namprd02.prod.outlook.com (10.152.76.57) by
+ BL2NAM02FT015.mail.protection.outlook.com (10.152.77.167) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.10 via Frontend Transport; Sat, 26 Jan 2019 03:39:17 +0000
+Received: from BYAPR02MB5495.namprd02.prod.outlook.com
+ ([fe80::b889:1a99:77fa:d4fe]) by BYAPR02MB5495.namprd02.prod.outlook.com
+ ([fe80::b889:1a99:77fa:d4fe%2]) with mapi id 15.20.1558.021; Sat, 26 Jan 2019
+ 03:39:17 +0000
+From:   Jonathan Bakker <xc-racer2@live.ca>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        =?utf-8?B?UGF3ZcWCIENobWllbA==?= <pawel.mikolaj.chmiel@gmail.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] input: dt-bindings: Add binding for bma150 sensor
+Thread-Topic: [PATCH 3/3] input: dt-bindings: Add binding for bma150 sensor
+Thread-Index: AQHUtN31Pp2wqt5z3ESXULecqgcK06XAwwUAgAAkqQA=
+Date:   Sat, 26 Jan 2019 03:39:17 +0000
+Message-ID: <BYAPR02MB54950EDEEE82D5F06C7131CEA3940@BYAPR02MB5495.namprd02.prod.outlook.com>
+References: <20190125184400.17669-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190125184400.17669-4-pawel.mikolaj.chmiel@gmail.com>
+ <20190126012802.GD212026@dtor-ws>
+In-Reply-To: <20190126012802.GD212026@dtor-ws>
+Accept-Language: en-CA, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: CO2PR04CA0170.namprd04.prod.outlook.com
+ (2603:10b6:104:4::24) To BYAPR02MB5495.namprd02.prod.outlook.com
+ (2603:10b6:a03:9a::25)
+x-incomingtopheadermarker: OriginalChecksum:35BB498FDC0F1D10F3370C7F8EC9BFAAC44C15B3EA2454DDDDDB3533F995896F;UpperCasedChecksum:A93F05DE58BCC614E30A50B260BC4984F229714E8CCF8301E9FAF92983053E89;SizeAsReceived:8962;Count:64
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [T0xTc8VYg35J2dkdW5hjQSfiH9wa8e3j2X+PSTBEfQIwjl/oe/pBSIui6LRFd/AY]
+x-microsoft-original-message-id: <cf2b7f7f-872b-c138-9813-cacf05dc101e@live.ca>
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BL2NAM02HT120;6:PuCW2ZY7RNr7sI5HonUFCD9P1V0/ODJhdfB6VSEFqWVw2cxD/2V9kvokJbA+wAUNACVkaZvghZuy8EYPBTMFPja0XEaxfvXbXtMOUBwYe5ifIP/AHirba5bem7o1UKQQckHyj6mjTCxMlDjZxJ/BySjKIR5JuUU4uWSXII5oJK0+Itxq6HXGk2CnZWZaseil5Z4eS/H1ru9qRockt0dH7G+4SNf4xseI8wC1d3ytnZ2IO+ifrbq6OQhSYs9WVoeisFC1NkOtfQhWFqBVO9mwvzNDPnA8o4RlD4V6hBsopxbo4GelPFv5CR0/Xyo7noSsVvEjJI84JybpjTB9tiLWQR+Th6Kq9u+hBMBg3tFXpalkjATzJUsXopQOu/xxmcZB8UQIVH1+Lf7GDlQEGaS0y0sTeUqaSszWg1tFzowKbg6B3HI9EcTVgdjjiSsb2kiCNl0HUhpqsPvNSwWkWHkbgQ==;5:8yHFX+036ByfGdHlUn+QGfF1oS6AEE/jXDOfBDpvy4X+yNDVIHL874gSeozKmsvbfZUBMnO+NBMYHDEGcygu7UFSJn4LIm9aWe8GSEOi4CeIcOp8C6e0T4qVwwdIxPoYJj3y5dpVYOyr+t9a9puNfrusxGKE64NFeZhSLnl10nbQhRCPa/4XP1RlDDF8D/EW4AIUdr+Y+nCYhUdS4YPlCQ==;7:yC+XQopxMPpj18Ye16tdg8zzGKYJo4Clvmf7yQahWvh+muFArX8ppig21pROkuJworZ7oUjUF37f/yQutsaKgceXXC1wBAXuMd3XUtHFwZ7l/lPmj3xvSZFYPc6M4ktelsIED+T8DAKrUQtjz39jxg==
+x-incomingheadercount: 64
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(20181119070)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:BL2NAM02HT120;
+x-ms-traffictypediagnostic: BL2NAM02HT120:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:BL2NAM02HT120;BCL:0;PCL:0;RULEID:;SRVR:BL2NAM02HT120;
+x-microsoft-antispam-message-info: O0p1nJ/AxfaZ9H61VLRt7KV3CwtjOkA8JJVkvEPvsaZlpMAmo1TTqf841cgrMcRb
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <AF7D8BCB675CBE438AB653DFCE7CDAA5@namprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 9bd8b953-1c55-4da7-b616-8bcad099ae8b
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d5c68cd-b1eb-4f97-caf7-08d6833fd8ab
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 9bd8b953-1c55-4da7-b616-8bcad099ae8b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jan 2019 03:39:15.7069
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2NAM02HT120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-So a GCC 9 escaped to Fedora Rawhide in the last few days, and things didn't
-go well. Fortunately, I had the 8.2.1-7 RPMs still around.
-
-Issue 1: There's a new warning added for taking the address of a member of
-a packed array. It wasn't *too* noisy.
-
-Issue 2: Looks like it's not ready for prime time.
-
-  CC [M]  fs/ntfs/super.o
-fs/ntfs/super.c: In function 'is_boot_sector_ntfs':
-fs/ntfs/super.c:597:3: warning: converting a packed 'const NTFS_BOOT_SECTOR *' {aka 'const struct <anonymous> *'} pointer (alignment 1) to 'le32' {aka 'unsigned int'} (alignment 4) may result in an unaligned pointer value [-Waddress-of-packed-member]
-  597 |   for (i = 0, u = (le32*)b; u < (le32*)(&b->checksum); ++u)
-      |   ^~~
-fs/ntfs/super.c:597:3: internal compiler error: Segmentation fault
-Please submit a full bug report,
-with preprocessed source if appropriate.
-See <http://bugzilla.redhat.com/bugzilla> for instructions.
-Preprocessed source stored into /tmp/cc0KDLoH.out file, please attach this to your bugreport.
-make[2]: *** [scripts/Makefile.build:277: fs/ntfs/super.o] Error 1
-make[1]: *** [scripts/Makefile.build:491: fs/ntfs] Error 2
-make: *** [Makefile:1044: fs] Error 2
-
-I've reported this to the RedHat/Fedora crew as:
-https://bugzilla.redhat.com/show_bug.cgi?id=1669696
-
+DQoNCk9uIDIwMTktMDEtMjUgNToyOCBwLm0uLCBEbWl0cnkgVG9yb2tob3Ygd3JvdGU6DQo+IE9u
+IEZyaSwgSmFuIDI1LCAyMDE5IGF0IDA3OjQ0OjAwUE0gKzAxMDAsIFBhd2XFgiBDaG1pZWwgd3Jv
+dGU6DQo+PiBGcm9tOiBKb25hdGhhbiBCYWtrZXIgPHhjLXJhY2VyMkBsaXZlLmNhPg0KPj4NCj4+
+IEFkZCBkZXZpY2UgdHJlZSBiaW5kaW5ncyBmb3IgQm9zY2ggQk1BMTUwIEFjY2VsZXJvbWV0ZXIg
+U2Vuc29yDQo+Pg0KPj4gU2lnbmVkLW9mZi1ieTogSm9uYXRoYW4gQmFra2VyIDx4Yy1yYWNlcjJA
+bGl2ZS5jYT4NCj4+IFNpZ25lZC1vZmYtYnk6IFBhd2XFgiBDaG1pZWwgPHBhd2VsLm1pa29sYWou
+Y2htaWVsQGdtYWlsLmNvbT4NCj4+IC0tLQ0KPj4gIC4uLi9iaW5kaW5ncy9pbnB1dC9ib3NjaCxi
+bWExNTAudHh0ICAgICAgICAgICB8IDIwICsrKysrKysrKysrKysrKysrKysNCj4+ICAxIGZpbGUg
+Y2hhbmdlZCwgMjAgaW5zZXJ0aW9ucygrKQ0KPj4gIGNyZWF0ZSBtb2RlIDEwMDY0NCBEb2N1bWVu
+dGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaW5wdXQvYm9zY2gsYm1hMTUwLnR4dA0KPj4NCj4+
+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaW5wdXQvYm9z
+Y2gsYm1hMTUwLnR4dCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnB1dC9i
+b3NjaCxibWExNTAudHh0DQo+PiBuZXcgZmlsZSBtb2RlIDEwMDY0NA0KPj4gaW5kZXggMDAwMDAw
+MDAwMDAwLi4yOTBjNjBlMzhjNzANCj4+IC0tLSAvZGV2L251bGwNCj4+ICsrKyBiL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9pbnB1dC9ib3NjaCxibWExNTAudHh0DQo+PiBAQCAt
+MCwwICsxLDIwIEBADQo+PiArKiBCb3NjaCBCTUExNTAgQWNjZWxlcm9tZXRlciBTZW5zb3INCj4+
+ICsNCj4+ICtBbHNvIHdvcmtzIGZvciB0aGUgU01CMzgwIGFuZCBCTUEwMjMgYWNjZWxlcm9tZXRl
+cnMNCj4+ICsNCj4+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPj4gKy0gY29tcGF0aWJsZSA6IFNo
+b3VsZCBiZSAiYm9zY2gsYm1hMTUwIg0KPj4gKy0gcmVnIDogVGhlIEkyQyBhZGRyZXNzIG9mIHRo
+ZSBzZW5zb3INCj4+ICsNCj4+ICtPcHRpb25hbCBwcm9wZXJ0aWVzOg0KPj4gKy0gaW50ZXJydXB0
+LXBhcmVudCA6IHNob3VsZCBiZSB0aGUgcGhhbmRsZSBmb3IgdGhlIGludGVycnVwdCBjb250cm9s
+bGVyDQo+PiArLSBpbnRlcnJ1cHRzIDogSW50ZXJydXB0IG1hcHBpbmcgZm9yIElSUS4gIElmIG5v
+dCBwcmVzZW50IGRldmljZSB3aWxsIGJlIHBvbGxlZA0KPj4gKw0KPj4gK0V4YW1wbGU6DQo+PiAr
+DQo+PiArYm1hMTUwQDM4IHsNCj4+ICsJY29tcGF0aWJsZSA9ICJib3NjaCxibWExNTAiOw0KPj4g
+KwlyZWcgPSA8MHgzOD47DQo+PiArCWludGVycnVwdC1wYXJlbnQgPSA8JmdwaDA+Ow0KPj4gKwlp
+bnRlcnJ1cHRzID0gPDEgSVJRX1RZUEVfTEVWRUxfSElHSD47DQo+IA0KPiBIbW0sIGhlcmUgeW91
+IHNheSB0aGF0IElSUV9UWVBFX0xFVkVMX0hJR0gsIHNvIGl0IGlzIGxldmVsIGludGVycnVwdHMs
+DQo+IGJ1dCB0aGUgZHJpdmVyIG92ZXJyaWRlcyB0byByaXNpbmcgZWRnZSB1bmNvbmRpdGlvbmFs
+bHkuIFNpbmNlIHlvdSBhcmUNCj4gdGhlIGZpcnN0IHRvIGFkZCBEVCBzdXBwb3J0IHBsZWFzZSBt
+YWtlIHNlcGFyYXRlIHBhdGNoIHRvIGRyaXZlciB0byBkcm9wDQo+IHRoZSBPUlEgdHJpZ2dlciBm
+cm9tIHJlcXVlc3RfdGhlcmFkZWRfaXJxKCkgbGVhdmluZyBvbmx5IElSUUZfT05FU0hPVC4NCj4g
+DQpUaGlzIHdhcyBzaW1wbHkgYW4gb3ZlcnNpZ2h0IG9uIG15IHBhcnQsIG15IGRldmljZSB3YXMg
+dXNpbmcgdGhlIHRoZSBwb2xsZWQgbWV0aG9kIGFzIG9wcG9zZWQgdG8gYW4gaW50ZXJydXB0LiAg
+SSdsbCBjb3JyZWN0IHRoaXMgaW4gdjIuDQo+IEFsc28gcGxlYXNlIGNyZWF0ZSBwYXRjaCByZW1v
+dmluZyBwbGF0Zm9ybSBkYXRhIHN1cHBvcnQgYXMgbm9vbmUgaXMNCj4gdXNpbmcgaXQgdXBzdHJl
+YW0uDQo+IA0KV2lsbCBkby4NCj4gV2hhdCBhYm91dCB0aGUgcmVzdCBvZiBjb25maWcgcGFyYW1l
+dGVycyBmcm9tIGJtYTE1MF9jZmc/IFRoZXkgc2hvdWxkIGJlDQo+IGhhbmRsZWQgYXMgZGV2aWNl
+IHByb3BlcnRpZXMgdG9vLg0KPiANCk9rLCBJIGNhbiBhZGQgdGhlbSBhcyB3ZWxsLiAgSSBkaWRu
+J3QgYm90aGVyIGFzIHRoZSBjb21tZW50IGluIHRoZSBzb3VyY2UgY29kZSBzYXlzIHRoYXQgdGhl
+IGRlZmF1bHQgdmFsdWVzIGFyZSB0aGUgb25lcyByZWNvbW1lbmRlZCBieSBCb3NjaC4NCj4gVGhh
+bmtzLg0KPiANClRoYW5rcywNCkpvbmF0aGFuDQo=
