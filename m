@@ -2,138 +2,345 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBF95C282C2
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:22:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DC5AC282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:27:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4F3218B0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:22:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iem6TZp/"
+	by mail.kernel.org (Postfix) with ESMTP id 1469421903
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:27:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548462450;
+	bh=8LXYoJtRhagIsq2Y7nU+K6k++/CRn2zRN4+Hk0OINJ4=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=oMWbNTIKNkbw7GKAxMilfthu0htxMfAeYN7Tx2bgnBUYZhzId1zOqvvrJccAtiGlF
+	 CTNkx+99pKNOPTyhuIfyj7tbdwzztn+3kUCxu9ILBv/W6EVBlDvQt690TPhQ/Uucmb
+	 fHBKMrdCHv1JanRNvWrBa9zVQJkbUhI6erytarGU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727740AbfAZAW4 (ORCPT
+        id S1726335AbfAZA12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 19:22:56 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38402 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725550AbfAZAWz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 19:22:55 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q1so5473104pfi.5;
-        Fri, 25 Jan 2019 16:22:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fmQF2ztk6C7oZdxNx9BxsKJ6l7A6BuJIUZ1aFfpxZE8=;
-        b=iem6TZp/VhSCjsUsdvV+GxJK3d0ksfif6hLxmm6yqAeDQJcHd9qUo6TMcHsXcQADF6
-         1HHptX1/LfshZR2MnFKUXCQvwaM7yLdBmGN7UX/1qtgwA0OPaxKrGlzSvhv0hWOWKZNe
-         jBkK56lsNbI5Lni5IW21tgV950LjgTBRT1c2VOiUm5fILMVLwMvp9HEa4m5ftxdUm909
-         GEWeQfhWxj/lSCxbmyGzbur9fjS19vJ09x1s+hvlZju0RxqlCrMxHHApVaYUFrGlaylx
-         mz5O6EZEjDSd79hOzKl3VdthwLlOwDuVlDuHXv81IuiQtL/rYa9hMDBqv/h8yMCMMdZP
-         Pu3A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fmQF2ztk6C7oZdxNx9BxsKJ6l7A6BuJIUZ1aFfpxZE8=;
-        b=Wt7zUBWgVsziOVzJnOzwSUkJUAkhb7rE0QRcjtQOUywhR+e+gciXvV5Jmq7aK4y3un
-         JFt4mq0ZKmHlE7N8TAOdFC+Yc22/WT4r6SMFFOukB9+fngGOvpE3Qh0Rl4pZDtqKFdIp
-         zQkt5IWGd8ayszn22XV78y+DPNC5jSvSyo/s1PlwHBn0DMNOdAehECbLaQgmzVBvD32O
-         H2nyy5WhsFuCSid1Hl3a2CJ8g7N+HzYxdc4hXGUmwPrZQ2tcf2+rdB7zv3dJXfIu+HyI
-         3H3Pz5ua/gENFlAgbKb5Am9oh6MgGlTHlYCMV1Jqgt4kBgXjgiCBlrrWX5x4Yp8YR3Dh
-         7jxw==
-X-Gm-Message-State: AJcUukdosrVGxbL+Akr6aoWPR9MkX8UQ43wPC2f0H0Olt1BT4XqE2xiP
-        BQjg6361a6Fe1UZQVuauutmr1bTsuDA=
-X-Google-Smtp-Source: ALg8bN7MQIt54+cnjIVfkaOHfD8KheRLSbu8lbn7/WoqhZ6X+GO6T/dt6AGVwCHyZ/WFrapkw6EOtw==
-X-Received: by 2002:a62:4641:: with SMTP id t62mr12892535pfa.141.1548462174338;
-        Fri, 25 Jan 2019 16:22:54 -0800 (PST)
-Received: from m-hyperV (50-47-89-76.evrt.wa.frontiernet.net. [50.47.89.76])
-        by smtp.gmail.com with ESMTPSA id r66sm41369677pfk.157.2019.01.25.16.22.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 16:22:53 -0800 (PST)
-Date:   Fri, 25 Jan 2019 16:22:52 -0800
-From:   Maya Nakamura <m.maya.nakamura@gmail.com>
-To:     Dan Carpenter <dan.carpenter@oracle.com>
-Cc:     lorenzo.pieralisi@arm.com, bhelgaas@google.com,
-        linux-pci@vger.kernel.org, kys@microsoft.com,
-        sthemmin@microsoft.com, olaf@aepfle.de, apw@canonical.com,
-        jasowang@redhat.com, mikelley@microsoft.com,
-        Alexander.Levin@microsoft.com, marcelo.cerri@canonical.com,
-        vkuznets@redhat.com, haiyangz@microsoft.com,
-        driverdev-devel@linuxdriverproject.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] PCI: hv: Refactor hv_irq_unmask() to use
- cpumask_to_vpset()
-Message-ID: <20190126002251.GA1837@m-hyperV>
-References: <cover.1548232616.git.m.maya.nakamura@gmail.com>
- <885d207cd90a558364d611e4ebd64a87aa8962d7.1548232616.git.m.maya.nakamura@gmail.com>
- <20190124122918.GL4482@kadam>
+        Fri, 25 Jan 2019 19:27:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40226 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725550AbfAZA11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 19:27:27 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7A5BE218CD;
+        Sat, 26 Jan 2019 00:27:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548462446;
+        bh=8LXYoJtRhagIsq2Y7nU+K6k++/CRn2zRN4+Hk0OINJ4=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fmzJ1g2SDFKTifZMHVtJCff17FxVSr7mrwIdrroulUb9awDM2YW0AuufSXYUtMqDd
+         77So73FmYhxDzku6OFaunZVHAuU2goXf3NpV7bFaC1U5Ej7px524QXvUZ2okfKR5dc
+         WW76y1PM9lRjr7USeIVvmTVbCEn08BZJTHcUZKcE=
+Subject: Re: [PATCH v10 1/4] media: Media Device Allocator API
+To:     Sakari Ailus <sakari.ailus@iki.fi>
+Cc:     mchehab@kernel.org, perex@perex.cz, tiwai@suse.com,
+        hverkuil@xs4all.nl, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+        shuah <shuah@kernel.org>
+References: <cover.1548360791.git.shuah@kernel.org>
+ <df3aae79629e5c0ab5a57dfaf5e2d815a134cd2d.1548360791.git.shuah@kernel.org>
+ <20190125153843.onbq7uiwpjp3b2y7@valkosipuli.retiisi.org.uk>
+From:   shuah <shuah@kernel.org>
+Message-ID: <fa3a4d98-d4a3-47ac-0fdc-4f3e0c7c630d@kernel.org>
+Date:   Fri, 25 Jan 2019 17:27:24 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124122918.GL4482@kadam>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190125153843.onbq7uiwpjp3b2y7@valkosipuli.retiisi.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 03:29:18PM +0300, Dan Carpenter wrote:
-> On Wed, Jan 23, 2019 at 01:02:12PM -0800, Maya Nakamura wrote:
-> > @@ -908,12 +906,12 @@ static void hv_irq_unmask(struct irq_data *data)
-> >  	struct retarget_msi_interrupt *params;
-> >  	struct hv_pcibus_device *hbus;
-> >  	struct cpumask *dest;
-> > +	cpumask_var_t tmp;
-> >  	struct pci_bus *pbus;
-> >  	struct pci_dev *pdev;
-> >  	unsigned long flags;
-> >  	u32 var_size = 0;
-> > -	int cpu_vmbus;
-> > -	int cpu;
-> > +	int cpu, nr_bank = 0;
->                         ^^^^^
-> No need to initialize this to a bogus value.  It's misleading and it
-> turns off GCC's uninitialized variable warning so it can lead to bugs.
->
-Thank you for pointing that out. I will remove its initialization in v2.
+Hi Sakari,
 
-> > @@ -953,29 +951,28 @@ static void hv_irq_unmask(struct irq_data *data)
-> >  		 */
-> >  		params->int_target.flags |=
-> >  			HV_DEVICE_INTERRUPT_TARGET_PROCESSOR_SET;
-> > -		params->int_target.vp_set.valid_bank_mask =
-> > -			(1ull << HV_VP_SET_BANK_COUNT_MAX) - 1;
-> > +
-> > +		if (!alloc_cpumask_var(&tmp, GFP_KERNEL)) {
-> > +			dev_err(&hbus->hdev->device, "out of memory");
+On 1/25/19 8:38 AM, Sakari Ailus wrote:
+> Hi Shuah,
 > 
+> On Thu, Jan 24, 2019 at 01:32:38PM -0700, Shuah Khan wrote:
+>> Media Device Allocator API to allows multiple drivers share a media device.
+>> This API solves a very common use-case for media devices where one physical
+>> device (an USB stick) provides both audio and video. When such media device
+>> exposes a standard USB Audio class, a proprietary Video class, two or more
+>> independent drivers will share a single physical USB bridge. In such cases,
+>> it is necessary to coordinate access to the shared resource.
+>>
+>> Using this API, drivers can allocate a media device with the shared struct
+>> device as the key. Once the media device is allocated by a driver, other
+>> drivers can get a reference to it. The media device is released when all
+>> the references are released.
 > 
-> No need for this error message.  alloc_cpumask_var() already has better
-> debug messages built in.
+> Are there real, non-USB devices that could use the same API?
 > 
-I will delete this dev_err() in v2.
 
-> > +			return;
-> 
-> We can't return directly.  We need to unlock first.
-> 
-I will unlock in v2.
+There might be. I don't have any to test. This patch is restricted
+to USB at the moment.
 
-> > +		if (!nr_bank) {
-> > +			dev_err(&hbus->hdev->device, "too high CPU");
+>>
+>> Signed-off-by: Shuah Khan <shuah@kernel.org>
+>> ---
+>>   Documentation/media/kapi/mc-core.rst |  41 ++++++++
+>>   drivers/media/Makefile               |   4 +
+>>   drivers/media/media-dev-allocator.c  | 144 +++++++++++++++++++++++++++
+>>   include/media/media-dev-allocator.h  |  53 ++++++++++
+>>   4 files changed, 242 insertions(+)
+>>   create mode 100644 drivers/media/media-dev-allocator.c
+>>   create mode 100644 include/media/media-dev-allocator.h
+>>
+>> diff --git a/Documentation/media/kapi/mc-core.rst b/Documentation/media/kapi/mc-core.rst
+>> index 0bcfeadbc52d..07f2a6a90af2 100644
+>> --- a/Documentation/media/kapi/mc-core.rst
+>> +++ b/Documentation/media/kapi/mc-core.rst
+>> @@ -259,6 +259,45 @@ Subsystems should facilitate link validation by providing subsystem specific
+>>   helper functions to provide easy access for commonly needed information, and
+>>   in the end provide a way to use driver-specific callbacks.
+>>   
+>> +Media Controller Device Allocator API
+>> +^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+>> +
+>> +When the media device belongs to more than one driver, the shared media
+>> +device is allocated with the shared struct device as the key for look ups.
+>> +
+>> +The shared media device should stay in registered state until the last
+>> +driver unregisters it. In addition, the media device should be released when
+>> +all the references are released. Each driver gets a reference to the media
+>> +device during probe, when it allocates the media device. If media device is
+>> +already allocated, the allocate API bumps up the refcount and returns the
+>> +existing media device. The driver puts the reference back in its disconnect
+>> +routine when it calls :c:func:`media_device_delete()`.
+>> +
+>> +The media device is unregistered and cleaned up from the kref put handler to
+>> +ensure that the media device stays in registered state until the last driver
+>> +unregisters the media device.
+>> +
+>> +**Driver Usage**
+>> +
+>> +Drivers should use the appropriate media-core routines to manage the shared
+>> +media device life-time handling the two states:
+>> +1. allocate -> register -> delete
+>> +2. get reference to already registered device -> delete
+>> +
+>> +call :c:func:`media_device_delete()` routine to make sure the shared media
+>> +device delete is handled correctly.
+>> +
+>> +**driver probe:**
+>> +Call :c:func:`media_device_usb_allocate()` to allocate or get a reference
+>> +Call :c:func:`media_device_register()`, if media devnode isn't registered
+>> +
+>> +**driver disconnect:**
+>> +Call :c:func:`media_device_delete()` to free the media_device. Freeing is
+>> +handled by the kref put handler.
+>> +
+>> +API Definitions
+>> +^^^^^^^^^^^^^^^
+>> +
+>>   .. kernel-doc:: include/media/media-device.h
+>>   
+>>   .. kernel-doc:: include/media/media-devnode.h
+>> @@ -266,3 +305,5 @@ in the end provide a way to use driver-specific callbacks.
+>>   .. kernel-doc:: include/media/media-entity.h
+>>   
+>>   .. kernel-doc:: include/media/media-request.h
+>> +
+>> +.. kernel-doc:: include/media/media-dev-allocator.h
+>> diff --git a/drivers/media/Makefile b/drivers/media/Makefile
+>> index 985d35ec6b29..1d7653318af6 100644
+>> --- a/drivers/media/Makefile
+>> +++ b/drivers/media/Makefile
+>> @@ -6,6 +6,10 @@
+>>   media-objs	:= media-device.o media-devnode.o media-entity.o \
+>>   		   media-request.o
+>>   
+>> +ifeq ($(CONFIG_USB),y)
+>> +	media-objs += media-dev-allocator.o
+>> +endif
+>> +
+>>   #
+>>   # I2C drivers should come before other drivers, otherwise they'll fail
+>>   # when compiled as builtin drivers
+>> diff --git a/drivers/media/media-dev-allocator.c b/drivers/media/media-dev-allocator.c
+>> new file mode 100644
+>> index 000000000000..4606456c1e86
+>> --- /dev/null
+>> +++ b/drivers/media/media-dev-allocator.c
+>> @@ -0,0 +1,144 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
 > 
-> This error message is not useful.
+> GPL-2.0+
 > 
-I will delete this dev_err() in v2.
 
-Maya
+I would like to address this in a follow-on patch instead of
+re-doing the series again. Hope that is okay.
+
+>> +/*
+>> + * media-dev-allocator.c - Media Controller Device Allocator API
+>> + *
+>> + * Copyright (c) 2018 Shuah Khan <shuah@kernel.org>
+>> + *
+>> + * Credits: Suggested by Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+>> + */
+>> +
+>> +/*
+>> + * This file adds a global refcounted Media Controller Device Instance API.
+>> + * A system wide global media device list is managed and each media device
+>> + * includes a kref count. The last put on the media device releases the media
+>> + * device instance.
+>> + *
+>> + */
+>> +
+>> +#include <linux/kref.h>
+>> +#include <linux/module.h>
+>> +#include <linux/slab.h>
+>> +#include <linux/usb.h>
+>> +
+>> +#include <media/media-device.h>
+>> +
+>> +static LIST_HEAD(media_device_list);
+>> +static DEFINE_MUTEX(media_device_lock);
+>> +
+>> +struct media_device_instance {
+>> +	struct media_device mdev;
+>> +	struct module *owner;
+>> +	struct list_head list;
+>> +	struct kref refcount;
+>> +};
+>> +
+>> +static inline struct media_device_instance *
+>> +to_media_device_instance(struct media_device *mdev)
+>> +{
+>> +	return container_of(mdev, struct media_device_instance, mdev);
+>> +}
+>> +
+>> +static void media_device_instance_release(struct kref *kref)
+>> +{
+>> +	struct media_device_instance *mdi =
+>> +		container_of(kref, struct media_device_instance, refcount);
+>> +
+>> +	dev_dbg(mdi->mdev.dev, "%s: mdev=%p\n", __func__, &mdi->mdev);
+>> +
+>> +	mutex_lock(&media_device_lock);
+>> +
+>> +	media_device_unregister(&mdi->mdev);
+>> +	media_device_cleanup(&mdi->mdev);
 > 
-> regards,
-> dan carpenter
+> This is a problem, albeit not really more of a problem than it is in a
+> driver.
+
+Okay good to know that it can be addressed in your media device
+refcounting series.
+
+The refcounting changes can be made here instead. I'll take this
+> into account in the media device refcounting series I'm planning to start
+> working on again; would you be perhaps able to help testing with this
+> device once I have patches in that shape? I have no access to the hardware.
 > 
+
+Absolutely. I will be happy to help you with testing on the same
+hardware, I used for this series.
+
+>> +
+>> +	list_del(&mdi->list);
+>> +	mutex_unlock(&media_device_lock);
+>> +
+>> +	kfree(mdi);
+>> +}
+>> +
+>> +/* Callers should hold media_device_lock when calling this function */
+>> +static struct media_device *__media_device_get(struct device *dev,
+>> +						const char *module_name,
+>> +						struct module *modp)
+>> +{
+>> +	struct media_device_instance *mdi;
+>> +
+>> +	list_for_each_entry(mdi, &media_device_list, list) {
+>> +
+>> +		if (mdi->mdev.dev != dev)
+>> +			continue;
+>> +
+>> +		kref_get(&mdi->refcount);
+>> +
+>> +		/* get module reference for the media_device owner */
+>> +		if (modp != mdi->owner && !try_module_get(mdi->owner))
+>> +			dev_err(dev, "%s: try_module_get() error\n", __func__);
+>> +		dev_dbg(dev, "%s: get mdev=%p module_name %s\n",
+>> +			__func__, &mdi->mdev, module_name);
+>> +		return &mdi->mdev;
+>> +	}
+>> +
+>> +	mdi = kzalloc(sizeof(*mdi), GFP_KERNEL);
+>> +	if (!mdi)
+>> +		return NULL;
+>> +
+>> +	mdi->owner = modp;
+>> +	kref_init(&mdi->refcount);
+>> +	list_add_tail(&mdi->list, &media_device_list);
+>> +
+>> +	dev_dbg(dev, "%s: alloc mdev=%p module_name %s\n", __func__,
+>> +		&mdi->mdev, module_name);
+>> +	return &mdi->mdev;
+>> +}
+>> +
+>> +#if IS_ENABLED(CONFIG_USB)
+> 
+> You already compile the file only if CONFIG_USB is enabled. I think you
+> could remove this.
+> 
+>> +struct media_device *media_device_usb_allocate(struct usb_device *udev,
+>> +					       const char *module_name)
+> 
+> I'd like to suggest working based on usb_interface instead of usb_device
+> here: that object already exists and you can find out the device based on
+> it. It seems all callers of this function already have the usb_interface
+> around.
+> 
+
+Is there an advantage to using interface instead of the parent device?
+Is there a problem doing it this way?
+
+
+>> +{
+>> +	struct media_device *mdev;
+>> +	struct module *modptr;
+>> +
+>> +	mutex_lock(&module_mutex);
+>> +	modptr = find_module(module_name);
+>> +	mutex_unlock(&module_mutex);
+>> +
+>> +	mutex_lock(&media_device_lock);
+>> +	mdev = __media_device_get(&udev->dev, module_name, modptr);
+>> +	if (!mdev) {
+>> +		mutex_unlock(&media_device_lock);
+>> +		return ERR_PTR(-ENOMEM);
+>> +	}
+>> +
+>> +	/* check if media device is already initialized */
+>> +	if (!mdev->dev)
+>> +		__media_device_usb_init(mdev, udev, udev->product,
+>> +					module_name);
+>> +	mutex_unlock(&media_device_lock);
+>> +	return mdev;
+>> +}
+>> +EXPORT_SYMBOL_GPL(media_device_usb_allocate);
+>> +#endif
+>> +
+>> +void media_device_delete(struct media_device *mdev, const char *module_name)
+> 
+> Same here. The use of the module name seems a bit hackish to me, albeit I
+> suppose it'd work, too.
+> 
+
+What is hackish about it? I found it very useful to use it in debug and
+error messages that are user-friendly.
+
+thanks,
+-- Shuah
