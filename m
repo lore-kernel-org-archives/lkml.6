@@ -2,43 +2,39 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91CDDC282C9
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DD8EC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CE0E214D8
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:49:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7368F214D8
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:50:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726380AbfAZQt6 (ORCPT
+        id S1726418AbfAZQuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 11:49:58 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:42306 "EHLO huawei.com"
+        Sat, 26 Jan 2019 11:50:01 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42308 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726197AbfAZQt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 11:49:57 -0500
+        id S1726070AbfAZQt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 11:49:58 -0500
 Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id DC9933EA6119B8F4DE49;
+        by Forcepoint Email with ESMTP id D365C79B32884D046CCF;
         Sun, 27 Jan 2019 00:49:53 +0800 (CST)
 Received: from SZA150611058.china.huawei.com (10.45.143.145) by
  DGGEMS405-HUB.china.huawei.com (10.3.19.205) with Microsoft SMTP Server id
- 14.3.408.0; Sun, 27 Jan 2019 00:49:46 +0800
+ 14.3.408.0; Sun, 27 Jan 2019 00:49:45 +0800
 From:   Huazhong Tan <tanhuazhong@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <huangdaode@hisilicon.com>, <yisen.zhuang@huawei.com>,
         <salil.mehta@huawei.com>, <linuxarm@huawei.com>,
-        Jian Shen <shenjian15@huawei.com>,
-        Peng Li <lipeng321@huawei.com>,
         Huazhong Tan <tanhuazhong@huawei.com>
-Subject: [PATCH net-next 01/12] net: hns3: don't update packet statistics for packets dropped by hardware
-Date:   Sun, 27 Jan 2019 00:49:10 +0800
-Message-ID: <20190126164921.3872-2-tanhuazhong@huawei.com>
+Subject: [PATCH net-next 00/12] code optimizations & bugfixes for HNS3 driver
+Date:   Sun, 27 Jan 2019 00:49:09 +0800
+Message-ID: <20190126164921.3872-1-tanhuazhong@huawei.com>
 X-Mailer: git-send-email 2.20.1.windows.1
-In-Reply-To: <20190126164921.3872-1-tanhuazhong@huawei.com>
-References: <20190126164921.3872-1-tanhuazhong@huawei.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 7BIT
 Content-Type:   text/plain; charset=US-ASCII
@@ -49,40 +45,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+This patchset includes bugfixes and code optimizations for the HNS3
+ethernet controller driver
 
-Packet statistics for netdev should not include the packets dropped
-by hardware.
+Jian Shen (6):
+  net: hns3: don't update packet statistics for packets dropped by
+    hardware
+  net: hns3: clear pci private data when unload hns3 driver
+  net: hns3: fix return value handle issue for hclge_set_loopback()
+  net: hns3: fix broadcast promisc issue for revision 0x20
+  net: hns3: add initialization for nic state
+  net: hns3: don't allow vf to enable promisc mode
 
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 3 ---
- 1 file changed, 3 deletions(-)
+Peng Li (1):
+  net: hns3: add 8 BD limit for tx flow
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 327dde2765ab..5ef3bdc7c808 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -1425,9 +1425,7 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 			start = u64_stats_fetch_begin_irq(&ring->syncp);
- 			tx_bytes += ring->stats.tx_bytes;
- 			tx_pkts += ring->stats.tx_pkts;
--			tx_drop += ring->stats.tx_busy;
- 			tx_drop += ring->stats.sw_err_cnt;
--			tx_errors += ring->stats.tx_busy;
- 			tx_errors += ring->stats.sw_err_cnt;
- 		} while (u64_stats_fetch_retry_irq(&ring->syncp, start));
- 
-@@ -1438,7 +1436,6 @@ static void hns3_nic_get_stats64(struct net_device *netdev,
- 			rx_bytes += ring->stats.rx_bytes;
- 			rx_pkts += ring->stats.rx_pkts;
- 			rx_drop += ring->stats.non_vld_descs;
--			rx_drop += ring->stats.err_pkt_len;
- 			rx_drop += ring->stats.l2_err;
- 			rx_errors += ring->stats.non_vld_descs;
- 			rx_errors += ring->stats.l2_err;
+Yunsheng Lin (4):
+  net: hns3: add error handling in hclge_ieee_setets
+  net: hns3: do reinitialization while mqprio configuration changed
+  net: hns3: remove dcb_ops->map_update in hclge_dcb
+  net: hns3: call hns3_nic_set_real_num_queue with netdev down
+
+liuzhongzhu (1):
+  net: hns3: After setting the loopback, add the status of getting MAC
+
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h   |  1 -
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 72 +++++++++----------
+ .../ethernet/hisilicon/hns3/hns3_ethtool.c    |  8 +--
+ .../hisilicon/hns3/hns3pf/hclge_dcb.c         | 51 ++++++++++---
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 36 +++++++++-
+ .../hisilicon/hns3/hns3pf/hclge_mbx.c         |  7 +-
+ .../hisilicon/hns3/hns3vf/hclgevf_main.c      | 32 +++++----
+ 7 files changed, 138 insertions(+), 69 deletions(-)
+
 -- 
 2.20.1
 
