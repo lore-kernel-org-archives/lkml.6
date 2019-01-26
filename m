@@ -2,186 +2,134 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02115C282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:27:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 003B0C282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:28:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5C7B218FF
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:27:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C34CA21902
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:28:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bHIj//tP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729003AbfAZB1j (ORCPT
+        id S1729506AbfAZB2H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 20:27:39 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:15567 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726256AbfAZB1i (ORCPT
+        Fri, 25 Jan 2019 20:28:07 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38607 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725924AbfAZB2G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 20:27:38 -0500
-Received: from fsav303.sakura.ne.jp (fsav303.sakura.ne.jp [153.120.85.134])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0Q1RaWn049730;
-        Sat, 26 Jan 2019 10:27:36 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav303.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp);
- Sat, 26 Jan 2019 10:27:36 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav303.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0Q1RaiU049727
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 26 Jan 2019 10:27:36 +0900 (JST)
-        (envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Subject: Re: pids.current with invalid value for hours [5.0.0 rc3 git]
-To:     =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <df806a77-3327-9db5-8be2-976fde1c84e5@gmail.com>
- <20190117122535.njcbqhlmzozdkncw@mikami>
- <1d36b181-cbaf-6694-1a31-2f7f55d15675@gmail.com>
- <96ef6615-a5df-30af-b4dc-417a18ca63f1@gmail.com>
- <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
- <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
- <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
-From:   Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Message-ID: <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
-Date:   Sat, 26 Jan 2019 10:27:36 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 25 Jan 2019 20:28:06 -0500
+Received: by mail-pl1-f195.google.com with SMTP id e5so5333817plb.5;
+        Fri, 25 Jan 2019 17:28:06 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=aWviH/eVzJhNQJdE+Iu5XDsgDbK9WHfiAChh2DS0Lbk=;
+        b=bHIj//tP2/P4EsPXfl1mZantJKvmNzYloNIPfGKBh9opc3R0J8Q5aj5VRBuYtMBs24
+         swpAs44W1pAvRtEehEiliLqC+1xFZ/GFqjFEJptZqe1fv5X3Ry9ZhCLEOua5m419/+CI
+         NYlT1i/BUbQYA9zxVs32WxP4BRv3LgHLNc98tjFASwQfiPDEcS9vNmxs9kJUs3oSua+i
+         odmRCR5I/YMFDJ4vewnRUD3ND3vN0XkardeP7aRFz3VYP1SZf4+1rgeYKQZi5LAi9RUp
+         u2XQT75TkPTj+N2jeXhkwjQ3BhHmIzAq9Ih4Lp1mWCFFEnR/a7p/tLxmEU11ExnGe61b
+         Qk8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=aWviH/eVzJhNQJdE+Iu5XDsgDbK9WHfiAChh2DS0Lbk=;
+        b=A3M+P7mVWxXXHhLfi9tAvtDPav28vxAGW7WMRBk0pWZ1VysJFHExUFN8mNDMnkFERk
+         7yF6816sHbJKZPgsgQqY0hR2xKuY1xxoqjG7QzzPMxut9u8Hq5DSZoGvOweqPNq6Zi0P
+         opGbsSIeTNxg566Lc2HMh4N3ojwAJhL5TrC0pYNpHFZZJHI6OKhc2+Jy9OgsnapfyRU2
+         jx1onbMf4rRR5MAD8QbSDp71sD4xFseZZ44muHP+lgSho53PPfnnZGGbb7l97A8ByvAY
+         wdLGZ0oBDA7YscZzt4MJYqIAHXFah1/voJqXpKLXXB0/LnBHX7GGbHmqFsvqBTs9ekw7
+         26sA==
+X-Gm-Message-State: AJcUukcx/Dec/UdrwJg5BIWZBvApZ/CX1BzCzKxWft9Hy1QW9ctgrFJc
+        LHh7P+LkfdDZl/zY98RR2mo=
+X-Google-Smtp-Source: ALg8bN7kJ1lDMBRcoNuNT3G3IH4rEzXBfsNglpuTPeXAd9+w2vW7yOCVRPvd8mWPJ5isFVd4s3wiUw==
+X-Received: by 2002:a17:902:6b46:: with SMTP id g6mr13284844plt.21.1548466085507;
+        Fri, 25 Jan 2019 17:28:05 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id r12sm27040856pgv.83.2019.01.25.17.28.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 17:28:04 -0800 (PST)
+Date:   Fri, 25 Jan 2019 17:28:02 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com, xc-racer2@live.ca,
+        devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] input: dt-bindings: Add binding for bma150 sensor
+Message-ID: <20190126012802.GD212026@dtor-ws>
+References: <20190125184400.17669-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190125184400.17669-4-pawel.mikolaj.chmiel@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190125184400.17669-4-pawel.mikolaj.chmiel@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/26 4:47, Arkadiusz Miśkiewicz wrote:
->> Can you please see whether the problem can be reproduced on the
->> current linux-next?
->>
->>  git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+On Fri, Jan 25, 2019 at 07:44:00PM +0100, Paweł Chmiel wrote:
+> From: Jonathan Bakker <xc-racer2@live.ca>
 > 
-> I can reproduce on next (5.0.0-rc3-next-20190125), too:
+> Add device tree bindings for Bosch BMA150 Accelerometer Sensor
 > 
+> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> ---
+>  .../bindings/input/bosch,bma150.txt           | 20 +++++++++++++++++++
+>  1 file changed, 20 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/input/bosch,bma150.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/input/bosch,bma150.txt b/Documentation/devicetree/bindings/input/bosch,bma150.txt
+> new file mode 100644
+> index 000000000000..290c60e38c70
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/bosch,bma150.txt
+> @@ -0,0 +1,20 @@
+> +* Bosch BMA150 Accelerometer Sensor
+> +
+> +Also works for the SMB380 and BMA023 accelerometers
+> +
+> +Required properties:
+> +- compatible : Should be "bosch,bma150"
+> +- reg : The I2C address of the sensor
+> +
+> +Optional properties:
+> +- interrupt-parent : should be the phandle for the interrupt controller
+> +- interrupts : Interrupt mapping for IRQ.  If not present device will be polled
+> +
+> +Example:
+> +
+> +bma150@38 {
+> +	compatible = "bosch,bma150";
+> +	reg = <0x38>;
+> +	interrupt-parent = <&gph0>;
+> +	interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
 
-Please try this patch.
+Hmm, here you say that IRQ_TYPE_LEVEL_HIGH, so it is level interrupts,
+but the driver overrides to rising edge unconditionally. Since you are
+the first to add DT support please make separate patch to driver to drop
+the ORQ trigger from request_theraded_irq() leaving only IRQF_ONESHOT.
 
-Subject: [PATCH v2] memcg: killed threads should not invoke memcg OOM killer
-From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-To: Andrew Morton <akpm@linux-foundation.org>,
- Johannes Weiner <hannes@cmpxchg.org>, David Rientjes <rientjes@google.com>
-Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
- Kirill Tkhai <ktkhai@virtuozzo.com>,
- Linus Torvalds <torvalds@linux-foundation.org>
-Message-ID: <01370f70-e1f6-ebe4-b95e-0df21a0bc15e@i-love.sakura.ne.jp>
-Date: Tue, 15 Jan 2019 19:17:27 +0900
+Also please create patch removing platform data support as noone is
+using it upstream.
 
-If $N > $M, a single process with $N threads in a memcg group can easily
-kill all $M processes in that memcg group, for mem_cgroup_out_of_memory()
-does not check if current thread needs to invoke the memcg OOM killer.
+What about the rest of config parameters from bma150_cfg? They should be
+handled as device properties too.
 
-  T1@P1     |T2...$N@P1|P2...$M   |OOM reaper
-  ----------+----------+----------+----------
-                        # all sleeping
-  try_charge()
-    mem_cgroup_out_of_memory()
-      mutex_lock(oom_lock)
-             try_charge()
-               mem_cgroup_out_of_memory()
-                 mutex_lock(oom_lock)
-      out_of_memory()
-        select_bad_process()
-        oom_kill_process(P1)
-        wake_oom_reaper()
-                                   oom_reap_task() # ignores P1
-      mutex_unlock(oom_lock)
-                 out_of_memory()
-                   select_bad_process(P2...$M)
-                        # all killed by T2...$N@P1
-                   wake_oom_reaper()
-                                   oom_reap_task() # ignores P2...$M
-                 mutex_unlock(oom_lock)
+Thanks.
 
-We don't need to invoke the memcg OOM killer if current thread was killed
-when waiting for oom_lock, for mem_cgroup_oom_synchronize(true) can count
-on try_charge() when mem_cgroup_oom_synchronize(true) can not make forward
-progress because try_charge() allows already killed/exiting threads to
-make forward progress, and memory_max_write() can bail out upon signals.
-
-At first Michal thought that fatal signal check is racy compared to
-tsk_is_oom_victim() check. But an experiment showed that trying to call
-mark_oom_victim() on all killed thread groups is more racy than fatal
-signal check due to task_will_free_mem(current) path in out_of_memory().
-
-Therefore, this patch changes mem_cgroup_out_of_memory() to bail out upon
-should_force_charge() == T rather than upon fatal_signal_pending() == T,
-for should_force_charge() == T && signal_pending(current) == F at
-memory_max_write() can't happen because current thread won't call
-memory_max_write() after getting PF_EXITING.
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Fixes: 29ef680ae7c2 ("memcg, oom: move out_of_memory back to the charge path")
-Fixes: 3100dab2aa09 ("mm: memcontrol: print proper OOM header when no eligible victim left")
-Cc: stable@vger.kernel.org # 4.19+
----
- mm/memcontrol.c | 19 ++++++++++++++-----
- 1 file changed, 14 insertions(+), 5 deletions(-)
-
-diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-index af7f18b..79a7d2a 100644
---- a/mm/memcontrol.c
-+++ b/mm/memcontrol.c
-@@ -248,6 +248,12 @@ enum res_type {
- 	     iter != NULL;				\
- 	     iter = mem_cgroup_iter(NULL, iter, NULL))
- 
-+static inline bool should_force_charge(void)
-+{
-+	return tsk_is_oom_victim(current) || fatal_signal_pending(current) ||
-+		(current->flags & PF_EXITING);
-+}
-+
- /* Some nice accessors for the vmpressure. */
- struct vmpressure *memcg_to_vmpressure(struct mem_cgroup *memcg)
- {
-@@ -1389,8 +1395,13 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	};
- 	bool ret;
- 
--	mutex_lock(&oom_lock);
--	ret = out_of_memory(&oc);
-+	if (mutex_lock_killable(&oom_lock))
-+		return true;
-+	/*
-+	 * A few threads which were not waiting at mutex_lock_killable() can
-+	 * fail to bail out. Therefore, check again after holding oom_lock.
-+	 */
-+	ret = should_force_charge() || out_of_memory(&oc);
- 	mutex_unlock(&oom_lock);
- 	return ret;
- }
-@@ -2209,9 +2220,7 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
- 	 * bypass the last charges so that they can exit quickly and
- 	 * free their memory.
- 	 */
--	if (unlikely(tsk_is_oom_victim(current) ||
--		     fatal_signal_pending(current) ||
--		     current->flags & PF_EXITING))
-+	if (unlikely(should_force_charge()))
- 		goto force;
- 
- 	/*
 -- 
-1.8.3.1
-
+Dmitry
