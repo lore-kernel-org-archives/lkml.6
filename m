@@ -2,129 +2,342 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E145C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D6DC282C8
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:36:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B90E218B0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:32:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B85CE2184B
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 16:36:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=norrbonn-se.20150623.gappssmtp.com header.i=@norrbonn-se.20150623.gappssmtp.com header.b="1Dw3YGg8"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CPU/kCY8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726346AbfAZQcf (ORCPT
+        id S1726262AbfAZQgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 11:32:35 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:35150 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726264AbfAZQc3 (ORCPT
+        Sat, 26 Jan 2019 11:36:20 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:42682 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726084AbfAZQgU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 11:32:29 -0500
-Received: by mail-lf1-f66.google.com with SMTP id e26so9033978lfc.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jan 2019 08:32:27 -0800 (PST)
+        Sat, 26 Jan 2019 11:36:20 -0500
+Received: by mail-pg1-f194.google.com with SMTP id d72so5410216pga.9;
+        Sat, 26 Jan 2019 08:36:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=norrbonn-se.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=H4asA/HrfRTCLZ9s+7ODb9ujqrC02barVnHHP3w4OeE=;
-        b=1Dw3YGg8xJI9+QrCu/LPqQ7Tr/GpytlL6Sj9JOqPWV3qR7JsVOZvTwcLkBmBXK2uSZ
-         TFcurMiTzkCaWD95yVxh4ISXWz4SAVqgOKY1IaZeYUf/9QFNcV5k7bFGLvIHyADk5vWy
-         +YN52P1zK5m6I6mEfnSzjP8VWEep9DACZXPu6VHTUPEnrcK28uoeDKgzsfU/E8PH800R
-         HaXLsnx/buy6A5AdzNPoivt2pFHTu4B9tUtKGGpSKXpY9ygCjl8VdKWo/P9tOtBlfeyL
-         shX85Yq4wrOuH5UporbikUTEjIY4YqXfIDN1Ar/apyBE8ldFeEmDCvW4015QH3UkobIS
-         lhhQ==
+        d=gmail.com; s=20161025;
+        h=sender:subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=MN5Yd+GZ+1d0sSpmST1GZif/BnYu5CGKz8fJsuK8Bu4=;
+        b=CPU/kCY8OcLI5dPWbX+CLZXgTCVdi0xmnNOMzz8jAk7xjeGEYbcGaxAxqyc7WOfghZ
+         GV2v5BZqoJ6e0NtIQw/IpOMpXVGIq/RDlHm6Fhzj+VTvl14DcgRueS7aAYiPkI4zF1eG
+         Sn9UMqt6Ogjfhw3Pv31xuCVC4ON3nRFWYZHw4jEzdJDeckXNpDXlS6gss5+rsT6lhMlT
+         +7g0agMQ+Z80jTqiOz3HkaKvj2RV8zo1AMiPNaGNfpZcwo04xT05RLkSACxB7I0KrXOd
+         bFzkMOha+8cai+FTKrl2JnZT09heLvo1dgW7lfu5pQzGGfodI9iiKC+jZfQ86UAyMboX
+         kkKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=H4asA/HrfRTCLZ9s+7ODb9ujqrC02barVnHHP3w4OeE=;
-        b=gYUr5XSeaB8oRuXDaTkODwycfWJGIrrRXHrpuR6gG1n5uyeadcvlaVMhhrNkanlITU
-         5iuPalyTCbIELG//SBut6MU1BhxMsC4HYn+MXcy3bbinL96BPtRtcZnbKSpkxIuVh+FK
-         WtkKXxGkHinAOrpr0HuyUj+fl3b/SN1Uu+t3LYaXTwKHlgD08DomhFpnPEohzVKoeM7O
-         FLKeen/9M5xWEOo7HmWnlol2Vvl583+3hzkqUzRyBBgD3eD/GyQGPfj7KFNpiL5W/1ir
-         8Bh6/QIsGHt031qbC7UXIc1EcrZ4SLRodtfGwO+WttCk3tO2Bfl/VD42/L2XZdLqIND5
-         w/vw==
-X-Gm-Message-State: AJcUukcqV4cBdCUy6P4y3tEVaFKqqt4OhkuMnIkXMZUjmj96iZYZZNqc
-        QHrhMxrUwXf/NH6CgAZJ6FRWYvV2a7I=
-X-Google-Smtp-Source: ALg8bN7ixO5jynANWXsRXQCc6pion+WBh06LKAJNIlpvS/JPjjM6Ib4nje2yFpEoX9h2Cy6IwOzaeA==
-X-Received: by 2002:a19:c4cc:: with SMTP id u195mr12471052lff.141.1548520346833;
-        Sat, 26 Jan 2019 08:32:26 -0800 (PST)
-Received: from mimer.lan (h-29-16.A159.priv.bahnhof.se. [79.136.29.16])
-        by smtp.gmail.com with ESMTPSA id e94sm2170532lfi.23.2019.01.26.08.32.25
+        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
+         :date:user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=MN5Yd+GZ+1d0sSpmST1GZif/BnYu5CGKz8fJsuK8Bu4=;
+        b=RC4SXffzjxfUzEsVNE85sot3jgxwfnC7EhIzrIsqLk7zl2zfjw172fSHtkzMhvtPZ6
+         +rJ+MOhfBN/vDM1j+5LFLtz8nEP1Cck2XZFwd/8V/MyQ8q1drrWRkaJumVBrRFgcab3P
+         0KauCOOQUWfmhoVCoTHcdmbeKQLcFaazwheUHKECtrMwsat31qndtQ0+tcash4veHsF2
+         nd44wRWLxJ9wA3Icgx4RILFnZYJ3ooTvvCKDYhZN2bmvECgSsxGrOBYaR4nnUD7+J8bY
+         s4B88a5Jv/UnBzAu8it4NWRVd7os0h+cwQgWwReLCDTKiOKURA6fYbZXcHltwxBZejnO
+         eonQ==
+X-Gm-Message-State: AJcUukd3mXgaiNeBIqwcm/lhY3QJWIPzRpSq38El/r7oflOkm01KH6PN
+        /F8bLx9wncVCoWU78HFtsxoL2SqM
+X-Google-Smtp-Source: ALg8bN7qNOWibE0dUFeCdWpZoO793c4GouWzao94ttwYT4K+R8aIoW+i0ZDrZvBaCD4EJCx9O9ztOg==
+X-Received: by 2002:a62:5b44:: with SMTP id p65mr15277467pfb.47.1548520578381;
+        Sat, 26 Jan 2019 08:36:18 -0800 (PST)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id v89sm40327183pfk.12.2019.01.26.08.36.15
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 26 Jan 2019 08:32:26 -0800 (PST)
-From:   Jonas Bonn <jonas@norrbonn.se>
-To:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org
-Cc:     Jonas Bonn <jonas@norrbonn.se>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Mark Brown <broonie@kernel.org>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH v3 2/2] spi-atmel: support inter-word delay
-Date:   Sat, 26 Jan 2019 17:32:20 +0100
-Message-Id: <20190126163220.26421-3-jonas@norrbonn.se>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190126163220.26421-1-jonas@norrbonn.se>
-References: <20190126163220.26421-1-jonas@norrbonn.se>
+        Sat, 26 Jan 2019 08:36:17 -0800 (PST)
+Subject: Re: [RFC PATCH v2 10/10] watchdog: bd70528: Initial support for ROHM
+ BD70528 watchdog block
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        mazziesaccount@gmail.com
+Cc:     heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        lee.jones@linaro.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        broonie@kernel.org, gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+References: <20190125110625.GA29348@localhost.localdomain>
+From:   Guenter Roeck <linux@roeck-us.net>
+Message-ID: <1d05ec19-daf6-f1d9-f80c-57fc92906d22@roeck-us.net>
+Date:   Sat, 26 Jan 2019 08:36:14 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190125110625.GA29348@localhost.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the SPI slave requires an inter-word delay, configure the DLYBCT
-register accordingly.
+On 1/25/19 3:06 AM, Matti Vaittinen wrote:
+> Initial support for watchdog block included in ROHM BD70528
+> power management IC.
+> 
+> Configurations for low power states are still to be checked.
+> 
+> Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+> ---
+>   drivers/watchdog/Kconfig       |  12 +++
+>   drivers/watchdog/Makefile      |   1 +
+>   drivers/watchdog/bd70528_wdt.c | 183 +++++++++++++++++++++++++++++++++++++++++
+>   3 files changed, 196 insertions(+)
+>   create mode 100644 drivers/watchdog/bd70528_wdt.c
+> 
+> diff --git a/drivers/watchdog/Kconfig b/drivers/watchdog/Kconfig
+> index 57f017d74a97..f30e3a3e886e 100644
+> --- a/drivers/watchdog/Kconfig
+> +++ b/drivers/watchdog/Kconfig
+> @@ -90,6 +90,18 @@ config SOFT_WATCHDOG_PRETIMEOUT
+>   	  watchdog. Be aware that governors might affect the watchdog because it
+>   	  is purely software, e.g. the panic governor will stall it!
+>   
+> +config BD70528_WATCHDOG
+> +	tristate "ROHM BD70528 PMIC Watchdog"
+> +	depends on MFD_ROHM_BD70528
+> +	select WATCHDOG_CORE
+> +	help
+> +	  Support for the watchdog in the ROHM BD70528 PMIC. Watchdog trigger
+> +	  cause system reset.
+> +
+> +	  Say Y here to include support for the ROHM BD70528 watchdog.
+> +	  Alternatively say M to compile the driver as a module,
+> +	  which will be called bd70528_wdt.
+> +
+>   config DA9052_WATCHDOG
+>   	tristate "Dialog DA9052 Watchdog"
+>   	depends on PMIC_DA9052 || COMPILE_TEST
+> diff --git a/drivers/watchdog/Makefile b/drivers/watchdog/Makefile
+> index a0917ef28e07..1ce87a3b1172 100644
+> --- a/drivers/watchdog/Makefile
+> +++ b/drivers/watchdog/Makefile
+> @@ -204,6 +204,7 @@ obj-$(CONFIG_WATCHDOG_SUN4V)		+= sun4v_wdt.o
+>   obj-$(CONFIG_XEN_WDT) += xen_wdt.o
+>   
+>   # Architecture Independent
+> +obj-$(CONFIG_BD70528_WATCHDOG) += bd70528_wdt.o
+>   obj-$(CONFIG_DA9052_WATCHDOG) += da9052_wdt.o
+>   obj-$(CONFIG_DA9055_WATCHDOG) += da9055_wdt.o
+>   obj-$(CONFIG_DA9062_WATCHDOG) += da9062_wdt.o
+> diff --git a/drivers/watchdog/bd70528_wdt.c b/drivers/watchdog/bd70528_wdt.c
+> new file mode 100644
+> index 000000000000..347339683cb9
+> --- /dev/null
+> +++ b/drivers/watchdog/bd70528_wdt.c
+> @@ -0,0 +1,183 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (C) 2018 ROHM Semiconductors
+> +// ROHM BD70528MWV watchdog driver
+> +
+> +#include <linux/bcd.h>
+> +#include <linux/kernel.h>
+> +#include <linux/mfd/rohm-bd70528.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/watchdog.h>
+> +
+> +struct wdtbd70528 {
+> +	struct bd70528 *bd;
+> +	struct device *dev;
+> +};
+> +
+> +static int bd70528_wdt_set(struct bd70528 *bd70528, int enable)
+> +{
+> +	int ret;
+> +
+> +	mutex_lock(&bd70528->rtc_timer_lock);
+> +	ret = bd70528->wdt_set(bd70528, enable, NULL);
+> +	mutex_unlock(&bd70528->rtc_timer_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static int bd70528_wdt_start(struct watchdog_device *wdt)
+> +{
+> +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
+> +
+> +	dev_dbg(w->dev, "WDT ping...\n");
+> +	return bd70528_wdt_set(w->bd, 1);
+> +}
+> +
+> +static int bd70528_wdt_stop(struct watchdog_device *wdt)
+> +{
+> +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
+> +
+> +	dev_dbg(w->dev, "WDT stopping...\n");
+> +	return bd70528_wdt_set(w->bd, 0);
+> +}
+> +
+> +static int bd70528_wdt_set_timeout(struct watchdog_device *wdt,
+> +				    unsigned int timeout)
+> +{
+> +	unsigned int hours;
+> +	unsigned int minutes;
+> +	unsigned int seconds;
+> +	int ret;
+> +	struct bd70528 *bd70528;
+> +	struct wdtbd70528 *w = watchdog_get_drvdata(wdt);
+> +
+> +	bd70528 = w->bd;
+> +	seconds = timeout;
+> +	hours = timeout / (60 * 60);
+> +	/* Maximum timeout is 1h 59m 59s => hours is 1 or 0 */
+> +	if (hours)
+> +		seconds -= (60 * 60);
+> +	minutes = seconds / 60;
+> +	seconds = seconds % 60;
+> +
+> +	mutex_lock(&bd70528->rtc_timer_lock);
+> +
+> +	ret = bd70528->wdt_set(bd70528, 0, NULL);
+> +	if (ret)
+> +		goto out_unlock;
+> +
+> +	ret = regmap_update_bits(bd70528->chip.regmap, BD70528_REG_WDT_HOUR,
+> +				 BD70528_MASK_WDT_HOUR, hours);
+> +	if (ret) {
+> +		dev_err(w->dev, "Failed to set WDT hours\n");
+> +		goto out_en_unlock;
+> +	}
+> +	ret = regmap_update_bits(bd70528->chip.regmap, BD70528_REG_WDT_MINUTE,
+> +				 BD70528_MASK_WDT_MINUTE, bin2bcd(minutes));
+> +	if (ret) {
+> +		dev_err(w->dev, "Failed to set WDT minutes\n");
+> +		goto out_en_unlock;
+> +	}
+> +	ret = regmap_update_bits(bd70528->chip.regmap, BD70528_REG_WDT_SEC,
+> +				 BD70528_MASK_WDT_SEC, bin2bcd(seconds));
+> +	if (ret)
+> +		dev_err(w->dev, "Failed to set WDT seconds\n");
+> +	else
+> +		dev_dbg(w->dev, "WDT tmo set to %u\n", timeout);
+> +
+> +out_en_unlock:
+> +	ret = bd70528->wdt_set(bd70528, 1, NULL);
+> +out_unlock:
+> +	mutex_unlock(&bd70528->rtc_timer_lock);
+> +
+> +	return ret;
+> +}
+> +
+> +static const struct watchdog_info bd70528_wdt_info = {
+> +	.identity = "bd70528-wdt",
+> +	.options = WDIOF_SETTIMEOUT | WDIOF_KEEPALIVEPING | WDIOF_MAGICCLOSE,
+> +};
+> +
+> +static const struct watchdog_ops bd70528_wdt_ops = {
+> +	.start		= bd70528_wdt_start,
+> +	.stop		= bd70528_wdt_stop,
+> +	.set_timeout	= bd70528_wdt_set_timeout,
+> +};
+> +
+> +/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
+> +#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
+> +/* Minimum time is 1 second */
+> +#define WDT_MIN_MS 1000
+> +#define DEFAULT_TIMEOUT 60
+> +
+> +static int bd70528_wdt_probe(struct platform_device *pdev)
+> +{
+> +	struct bd70528 *bd70528;
+> +	struct wdtbd70528 *w;
+> +	int ret;
+> +	unsigned int reg;
+> +	struct watchdog_device *wdt;
+> +
+> +	bd70528 = dev_get_drvdata(pdev->dev.parent);
+> +	if (!bd70528) {
+> +		dev_err(&pdev->dev, "No MFD driver data\n");
+> +		return -EINVAL;
+> +	}
+> +	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
+> +	if (!w)
+> +		return -ENOMEM;
+> +	w->bd = bd70528;
 
-Tested on a SAMA5D2 board (derived from SAMA5D2-Xplained reference
-board).
+Unless I am missing something, only the mutex and the regmap pointer
+are used from struct bd70528. With that in mind, it might be desirable
+to copy those pointers to struct wdtbd70528 to avoid the additional
+dereferencing at runtime.
 
-Signed-off-by: Jonas Bonn <jonas@norrbonn.se>
-CC: Nicolas Ferre <nicolas.ferre@microchip.com>
-CC: Mark Brown <broonie@kernel.org>
-CC: Alexandre Belloni <alexandre.belloni@bootlin.com>
-CC: Ludovic Desroches <ludovic.desroches@microchip.com>
-CC: linux-spi@vger.kernel.org
-CC: linux-arm-kernel@lists.infradead.org
----
- drivers/spi/spi-atmel.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+> +	w->dev = &pdev->dev;
+> +
+> +	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
+> +	if (!wdt)
+> +		return -ENOMEM;
+> +
 
-diff --git a/drivers/spi/spi-atmel.c b/drivers/spi/spi-atmel.c
-index 74fddcd3282b..24445bfbd74e 100644
---- a/drivers/spi/spi-atmel.c
-+++ b/drivers/spi/spi-atmel.c
-@@ -1209,13 +1209,21 @@ static int atmel_spi_setup(struct spi_device *spi)
- 		csr |= SPI_BIT(CSAAT);
- 
- 	/* DLYBS is mostly irrelevant since we manage chipselect using GPIOs.
--	 *
--	 * DLYBCT would add delays between words, slowing down transfers.
--	 * It could potentially be useful to cope with DMA bottlenecks, but
--	 * in those cases it's probably best to just use a lower bitrate.
- 	 */
- 	csr |= SPI_BF(DLYBS, 0);
--	csr |= SPI_BF(DLYBCT, 0);
-+
-+	/* DLYBCT adds delays between words.  This is useful for slow devices
-+	 * that need a bit of time to setup the next transfer.
-+	 */
-+	if (spi->word_delay) {
-+		csr |= SPI_BF(DLYBCT,
-+			clamp_t(u8,
-+				(as->spi_clk/1000000*spi->word_delay)>>5,
-+				1, 255));
-+	} else {
-+		csr |= SPI_BF(DLYBCT, 0);
-+	}
-+
- 
- 	/* chipselect must have been muxed as GPIO (e.g. in board setup) */
- 	npcs_pin = (unsigned long)spi->controller_data;
--- 
-2.19.1
+struct watchdog_device can be part of struct wdtbd70528. Two separate allocations
+are not necessary.
+
+> +	wdt->info = &bd70528_wdt_info;
+> +	wdt->ops =  &bd70528_wdt_ops;
+> +	wdt->min_hw_heartbeat_ms = WDT_MIN_MS;
+> +	wdt->max_hw_heartbeat_ms = WDT_MAX_MS;
+> +	wdt->parent = pdev->dev.parent;
+> +	wdt->timeout = DEFAULT_TIMEOUT;
+> +	watchdog_set_drvdata(wdt, w);
+> +	watchdog_init_timeout(wdt, 0, pdev->dev.parent);
+> +
+> +	ret = bd70528_wdt_set_timeout(wdt, wdt->timeout);
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
+> +		return ret;
+> +	}
+> +
+> +	mutex_lock(&bd70528->rtc_timer_lock);
+> +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &reg);
+> +	mutex_unlock(&bd70528->rtc_timer_lock);
+> +
+
+I don't see the point for the above mutex locks. This is just reading a
+single register. regmap itself provides locking for that already.
+
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to get the watchdog state\n");
+> +		return ret;
+> +	}
+> +	if (reg & BD70528_MASK_WDT_EN) {
+> +		dev_dbg(&pdev->dev, "watchdog was running during probe\n");
+> +		set_bit(WDOG_HW_RUNNING, &wdt->status);
+> +	}
+> +
+> +	ret = devm_watchdog_register_device(&pdev->dev, wdt);
+> +	if (ret < 0)
+> +		dev_err(&pdev->dev, "watchdog registration failed: %d\n", ret);
+> +
+> +	return ret;
+> +}
+> +static struct platform_driver bd70528_wdt = {
+> +	.driver = {
+> +		.name = "bd70528-wdt"
+> +	},
+> +	.probe = bd70528_wdt_probe,
+> +};
+> +
+> +module_platform_driver(bd70528_wdt);
+> +
+> +MODULE_AUTHOR("Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>");
+> +MODULE_DESCRIPTION("BD70528 watchdog driver");
+> +MODULE_LICENSE("GPL");
+> 
 
