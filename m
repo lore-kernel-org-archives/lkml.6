@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2364C282C6
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:40:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E9CAC282C5
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:40:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6117218A2
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:40:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F900218A2
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:40:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="sgAT9sYN"
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="0XDvGimx"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729656AbfAZDkO (ORCPT
+        id S1729676AbfAZDkS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 22:40:14 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:36424 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729615AbfAZDkK (ORCPT
+        Fri, 25 Jan 2019 22:40:18 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46709 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729637AbfAZDkN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 22:40:10 -0500
-Received: by mail-pl1-f193.google.com with SMTP id g9so5431473plo.3
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 19:40:10 -0800 (PST)
+        Fri, 25 Jan 2019 22:40:13 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c73so5603435pfe.13
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 19:40:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ingics-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=dzsOiGH/R3nCY1ZAjsq4uxfEl0pQ2SbbvsP+tc/yPtg=;
-        b=sgAT9sYNWIx/qhe9C9rVfqgCHVTe8a4yeYZi6bysYUSuJt2QfD2PXtfQLoqHl5usnt
-         ZBjr/4CnCKBxPJrlmkhd/i3FEpzQLACq+GuDcyZ7ZYrl3jD5qp3iCH0AB5kNPWnTyxfQ
-         r+rEBwkVfCmSqarPWh67ablEnzqqo6ouAaGK2krTSW3tDLlFb7jYHMlsZSZ1k5AWdmpX
-         4yexOxVgo9/+ESZn8rXrEuSrsMa8G+ij27WbsKBEQcMKggYpEWBj53QuEAxHKTzcfIni
-         hGISIrP96ltVOjLcTo+5p6mmRV6tBdkgcq9Y872A1IRwNJw8RchVNOtvjCYAt9AXSB64
-         605w==
+        bh=rUYeF7/yVivumcJoEGIoQFFgBPf9Gu0zem633y5c8Gc=;
+        b=0XDvGimxP3AkIR8c3zZCs06NMe7QZN3LEDSq1Ep3lEbmDzlM9QJxFBKUzbMY63bbeT
+         9BDd8QQtc7khvBYLABhq815h09WUbTELpG4f0LpaWqQbScqZbKSSRmFQEbUzUpB8/nPG
+         rUQydGpAFZp2rhl66jludGOGws/lfY0AD6zGXgKOF3TaC1IPaWZr4m/Tkfl4JyrOXXcn
+         luQoHIUgDoG6XY4FEepdR7IwloCMuin+cYfExKUYSHP98G52xB3kn3l1qm0YgziQzDdV
+         ALNdp2nkxrXZVKIQ63Rq0ANnzuVbog/airl5qDM7Or+SJD24oyiirh2lz1d6faVLdiOr
+         QaYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=dzsOiGH/R3nCY1ZAjsq4uxfEl0pQ2SbbvsP+tc/yPtg=;
-        b=bsZK1rBEbc+wL62Oxp9u7O2PfBIefOH06tbOg+C5d3aew7xajS9nImxBHzLz8mrqp8
-         gxsxUE+w3ZAee89Kbe4gZytoWJLsOOpDIqOuh/QfmDB10lADhOLvg92hFBYDAWX3SWfm
-         MyMg0c7FETKhbGmdl1vcrv/YLtRmC835Lj/Jb1lGIJQ2Wx3pHaUwoIpWNW+ZHMKKOuce
-         tXzMYtQnFXxc/0iA4skZOdJ6RH4ZbVjn2uOW96/45kFQdjr3C/ndWItImkUdcvAsrPj/
-         2tI+EmPEPzXd0T3PnzXR9UKRsEmYr8xwEfcJwe5Y1jweXdgAeMedgzKnYJSJhe0BmJmY
-         AtBw==
-X-Gm-Message-State: AJcUukdIIQj2ZV3SgJA5UFgKnJ6tdnwSMu4m8uBqwZzAbWc19j4eQZCg
-        bRjjFkGvdxsjd7YEZpYO7ut1nA==
-X-Google-Smtp-Source: ALg8bN6CnXn1VAWxJFwB9jhfM2iBj1cF/Gz8TshOWZKZtC1lpOakOfS7PsGV9dj7Ld01oTkh3ZO5mA==
-X-Received: by 2002:a17:902:2c03:: with SMTP id m3mr13028087plb.6.1548474009610;
-        Fri, 25 Jan 2019 19:40:09 -0800 (PST)
+        bh=rUYeF7/yVivumcJoEGIoQFFgBPf9Gu0zem633y5c8Gc=;
+        b=Zd1QlCLc6HKZuqNcWa8RdBc6ez02BGSjSK3DXaYwFO7ZlrtBojWhwsq8C24VawfDyp
+         VWXgIIXy0oBLgQ2+mJasvF5ribOgHdp1zTN2Do/yMrzpTYxYLGmXCdgHElN6wUDg5nHY
+         wIyWRaMWkHyOp31T5wPwXrUbFQZAlGuS2ja/rjnH9Gu+weNJvN/DWKp7uNDPXumHqEsp
+         N87XmE/Bplor0ao9HnazJgVo7NmyNLadAvlz9bMD+DhJ4JlmnB1rmOWh/tIJeyZWKBl3
+         nLhExXr19qPxg/A0e0GDC+Vxlrai4jMa79NriyuSAa3h/Sgrb+DYe4es3alCS/ol8YGD
+         54Pg==
+X-Gm-Message-State: AJcUukeDcxLKFcAS2pE0WL+26DPsl/8M+9sMGWkb9HDq0MXNngF0bLTd
+        R5Eaxai1HLVTH3EXpC/ihA3BJw==
+X-Google-Smtp-Source: ALg8bN6yW9ztEIW0/7KKbwNsV5WjdjyKI7W7wqoW09XVYJYb6DF3lzHpwsepI3cW9I2rdZwaZhlTZQ==
+X-Received: by 2002:a63:86c1:: with SMTP id x184mr12192620pgd.305.1548474012734;
+        Fri, 25 Jan 2019 19:40:12 -0800 (PST)
 Received: from localhost.localdomain (220-133-186-239.HINET-IP.hinet.net. [220.133.186.239])
-        by smtp.gmail.com with ESMTPSA id 24sm37460086pfr.75.2019.01.25.19.40.06
+        by smtp.gmail.com with ESMTPSA id 24sm37460086pfr.75.2019.01.25.19.40.09
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 19:40:09 -0800 (PST)
+        Fri, 25 Jan 2019 19:40:11 -0800 (PST)
 From:   Axel Lin <axel.lin@ingics.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Milo Kim <milo.kim@ti.com>, Keerthy <j-keerthy@ti.com>,
@@ -62,9 +62,9 @@ Cc:     Milo Kim <milo.kim@ti.com>, Keerthy <j-keerthy@ti.com>,
         Marek Szyprowski <m.szyprowski@samsung.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH 4/8] regulator: lp873x: Constify lp873x_buck01_ops and lp873x_ldo01_ops
-Date:   Sat, 26 Jan 2019 11:39:03 +0800
-Message-Id: <20190126033907.18427-4-axel.lin@ingics.com>
+Subject: [PATCH 5/8] regulator: lp8755: Constify lp8755_regulators
+Date:   Sat, 26 Jan 2019 11:39:04 +0800
+Message-Id: <20190126033907.18427-5-axel.lin@ingics.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20190126033907.18427-1-axel.lin@ingics.com>
 References: <20190126033907.18427-1-axel.lin@ingics.com>
@@ -75,31 +75,22 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/regulator/lp873x-regulator.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/regulator/lp8755.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/regulator/lp873x-regulator.c b/drivers/regulator/lp873x-regulator.c
-index 70e3df653381..2ec5e833c379 100644
---- a/drivers/regulator/lp873x-regulator.c
-+++ b/drivers/regulator/lp873x-regulator.c
-@@ -146,7 +146,7 @@ static int lp873x_buck_get_current_limit(struct regulator_dev *rdev)
+diff --git a/drivers/regulator/lp8755.c b/drivers/regulator/lp8755.c
+index 6d229ad4ef3e..14fd38807134 100644
+--- a/drivers/regulator/lp8755.c
++++ b/drivers/regulator/lp8755.c
+@@ -315,7 +315,7 @@ static int lp8755_init_data(struct lp8755_chip *pchip)
+ 	.vsel_mask = LP8755_BUCK_VOUT_M,\
  }
  
- /* Operations permitted on BUCK0, BUCK1 */
--static struct regulator_ops lp873x_buck01_ops = {
-+static const struct regulator_ops lp873x_buck01_ops = {
- 	.is_enabled		= regulator_is_enabled_regmap,
- 	.enable			= regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
-@@ -161,7 +161,7 @@ static struct regulator_ops lp873x_buck01_ops = {
- };
- 
- /* Operations permitted on LDO0 and LDO1 */
--static struct regulator_ops lp873x_ldo01_ops = {
-+static const struct regulator_ops lp873x_ldo01_ops = {
- 	.is_enabled		= regulator_is_enabled_regmap,
- 	.enable			= regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
+-static struct regulator_desc lp8755_regulators[] = {
++static const struct regulator_desc lp8755_regulators[] = {
+ 	lp8755_buck_desc(0),
+ 	lp8755_buck_desc(1),
+ 	lp8755_buck_desc(2),
 -- 
 2.17.1
 
