@@ -2,80 +2,80 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1AD7C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E02CEC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:12:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68B9C20989
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:06:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QNOlhw9+"
+	by mail.kernel.org (Postfix) with ESMTP id A7A5E21903
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:12:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726381AbfAZVGq (ORCPT
+        id S1726373AbfAZVME (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 16:06:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42054 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726233AbfAZVGq (ORCPT
+        Sat, 26 Jan 2019 16:12:04 -0500
+Received: from mail-qt1-f193.google.com ([209.85.160.193]:35059 "EHLO
+        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726233AbfAZVMD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 16:06:46 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=v1pUe8U3koPCbUGEXyabYzj4Vrle2C0B15qKtiK8qfY=; b=QNOlhw9+UnVErXJA/rMeONvSc
-        RO1/s9w5rspj6lmouLBQEVdjt/cSt1xkhCQVO8E2scrQAbAtp8W/phbtgQRD7eGfl4x+axmjp3Wts
-        r2/CILGFqWwDX5RMz224h9rZA+NfoHt57POHuHI7P2AvZX73gvakQ0+kbKVYPVm8Vv1yXwk1aJnPq
-        9nu6QbMdoZzNAUVe19ys66zxN5BvKosWoLn8GF0VSClq3vVnMI7UXz23HSQMnC8t8WqvaAmubO0pQ
-        YM61/CBApjrZnZl/JpRHZ6azI7GeTyJ3UQVQgwSsAY8s+Du3CIm1lff1+y7Bxtrz3ZywwVReOZhh+
-        Nj4SRUaGw==;
-Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gnV9x-0001wr-6d; Sat, 26 Jan 2019 21:06:37 +0000
-Date:   Sat, 26 Jan 2019 13:06:34 -0800
-From:   Darren Hart <dvhart@infradead.org>
-To:     Mattias Jacobsson <2pi@mok.nu>
-Cc:     andy@infradead.org, mario.limonciello@dell.com,
-        michal.lkml@markovi.net, mjg59@srcf.ucam.org, pali.rohar@gmail.com,
-        yamada.masahiro@socionext.com, platform-driver-x86@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] platform/x86: wmi: add WMI support to
- MODULE_DEVICE_TABLE()
-Message-ID: <20190126210634.GB13882@wrath>
-References: <cover.1547827336.git.2pi@mok.nu>
+        Sat, 26 Jan 2019 16:12:03 -0500
+Received: by mail-qt1-f193.google.com with SMTP id v11so14501979qtc.2
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jan 2019 13:12:03 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kqDPi4evcw9cuSy8c7Vrx3CedcR00yuJYOpWb6GGvJo=;
+        b=KUeF5lMG+QiG3/oLQ4v3lvblfAPFKv5HK7Hk+pHik+FrDC0A8Yh8rCjdfAO9czfmYV
+         r6P122d7X/ZAJWKEsLR4IMpVg3nADz4pAAac5Z+oKZNqiLs2wM/x8CNkLLjoQsttT0ls
+         +FObQp8U8hJVKpEfmSLb+k4E5/A3pKJbYid3Hj8oEO6c4n5ds6lEMwsm+8DyzeTD0FoM
+         RP3nGsvQLTvTc+BCmBMqkI/SG1niRW8JLk8o/Ro0047R5dl/48UX+zlQvwcZ2kPbjBmA
+         0L1gsirH/mSn64aKjuIINIVZaPbqou/O4AxB2L46aO3Uc8gR73wtlwaUaMefwRPRYvT5
+         hm7A==
+X-Gm-Message-State: AJcUukcvqwkcAJpFl85hqGDd25eu0VMG8kaMyQPYnGQwDOPW9D7bpxAr
+        2Davdm/7TGmUs3NQeXech/usHJ4Eodi+uhWBiRo=
+X-Google-Smtp-Source: ALg8bN5FBV5Wa93THkfk/pEuvg8K0RtwIx2+/RhM7pdZoq1EEXYn+9Ec4WU1RpJp4yko/YjtxV1z1LTPKLaUgRwdRj4=
+X-Received: by 2002:ac8:4141:: with SMTP id e1mr15308628qtm.96.1548537122672;
+ Sat, 26 Jan 2019 13:12:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1547827336.git.2pi@mok.nu>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CAOesGMicf17+0x6AUCNrUYu=d4uREVCyH8F2JvUz5fN5+=jW_A@mail.gmail.com>
+ <20190125181616.62609-1-olof@lixom.net>
+In-Reply-To: <20190125181616.62609-1-olof@lixom.net>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 26 Jan 2019 22:11:46 +0100
+Message-ID: <CAK8P3a09qVNyCOMzuQgaivyWeOUY6d6kYGKFEAa7ertu-dUBdQ@mail.gmail.com>
+Subject: Re: [PATCH/RFC 0/5] HW accel subsystem
+To:     Olof Johansson <olof@lixom.net>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-accelerators@lists.ozlabs.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Frederic Barrat <fbarrat@linux.ibm.com>,
+        Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
+        ogabbay@habana.ai, Dave Airlie <airlied@redhat.com>,
+        =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 19, 2019 at 12:55:52PM +0100, Mattias Jacobsson wrote:
-> This patchset adds WMI support to MODULE_DEVICE_TABLE().
+On Fri, Jan 25, 2019 at 7:17 PM Olof Johansson <olof@lixom.net> wrote:
+>
+> Per discussion in on the Habana Labs driver submission
+> (https://lore.kernel.org/lkml/20190123000057.31477-1-oded.gabbay@gmail.com/),
+> there seems to be time to create a separate subsystem for hw accellerators
+> instead of letting them proliferate around the tree (and/or in misc).
+>
+> There's difference in opinion on how stringent the requirements are for
+> a fully open stack for these kind of drivers. I've documented the middle
+> road approach in the first patch (requiring some sort of open low-level
+> userspace for the kernel interaction, and a way to use/test it).
+>
+> Comments and suggestions for better approaches are definitely welcome.
 
-Hi Mattias,
+We probably want to move drivers/misc/mic together with the others
+as well. We could even move arch/powerpc/platforms/cell/spu*/
+for another historic example.
 
-Thanks for the patch series. I've reviewed and found no major issues - but what
-I'm missing from this cover letter and each commit message is the why. What is
-the problem this series is intended to address? This should be clear in the
-commit messages so developers reading the git history have the necessary context
-to understand why the change was made and the intent behind them were.
-
-The only advantage that I see by the end of the series is removing the need for
-driver authors to prefix the modules alias  with "wmi:" - which is an advantage
-and avoids careless errors. Is that the only goal? It adds some complexity by
-spreading the implementation across more files and more directories, so we need
-to document the justification.
-
-Thanks,
-
--- 
-Darren Hart
-VMware Open Source Technology Center
+        Arnd
