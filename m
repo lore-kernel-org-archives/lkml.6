@@ -2,258 +2,89 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64E2BC282C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:42:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8A4FC282C3
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:48:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 13471218F0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:42:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AF587218F0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:48:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XlX4IY1e"
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="DY6bBKgL"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729547AbfAZDmV (ORCPT
+        id S1728888AbfAZDsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 22:42:21 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45053 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfAZDmV (ORCPT
+        Fri, 25 Jan 2019 22:48:47 -0500
+Received: from sonic301-20.consmr.mail.gq1.yahoo.com ([98.137.64.146]:34987
+        "EHLO sonic301-20.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725924AbfAZDsq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 22:42:21 -0500
-Received: by mail-ed1-f66.google.com with SMTP id y56so8885105edd.11
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 19:42:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=bz5xbLN1LlTc1jcBMgIUmo/QyfyWOqoeVgo0gmif0cg=;
-        b=XlX4IY1en317kTf1prwZuwAkDb+pCX7AN0QMH8dc/aaRyjXMPDf/oQ3iDYMnOFeLkr
-         /FgC0Prr0rSxuwEppwKKGqgQ/xQtGtuUKHFVvtriwuz3A+ZT7M2zAXl37n6ekewe3Cvh
-         lEBt8VmIQNgIS9QZBUPAjtM7V0tTtU5ldKBNM/FnNdCNiuwGZW/GTynD8UctOsDCzNzW
-         7AQDNTns4UBdAzbJDR47hSFBeP3rh0FuGDnQniRLZNuGm3P4dOtU3aWxRFlXzIoI2e9/
-         rHishHSuIjbEYc8AiPxDh7cewnWT3sXcctBc9JTzExIdpD2GS8068MKbysw32GycnrV0
-         XGvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=bz5xbLN1LlTc1jcBMgIUmo/QyfyWOqoeVgo0gmif0cg=;
-        b=FNBEWm+JnkcoVU0fwRF9uYmUsLwI6nmjux718tG0IZ+TdAZiXSBB/jBNLraOadNZ7F
-         k9WjJO1BNyvKankHIO+2cjxPtJnOEmKurXPlHlEYUOL7LmotE4TckSIrk6h4B2Cp3zhY
-         uIM+ngLaI06e5fVIW6w4OUsGISp7df9Fz7YI1acGzgtZUoC6mwV+UYoPQoQkhTXsjUea
-         X1zSOnoEiae8/0g5AS+gFxRPcJiEqEqmj5r8LpIXfZYE6BIGgDiJ94G7rrCyF/rz4FDf
-         XD1S4n/XsXDg0MbBzCquuJ66kFkgl2S2yfQcv3IqoxLceveTxSxq6MEA/NSMgVSrpK9N
-         yZ/w==
-X-Gm-Message-State: AJcUukeYZxilHZvdkUpfxa1+vXrsy3XEOFh3eY3TPs7fNb1shZ6J5FFk
-        2N+lF3DUkLv8uFKGkiEiQtw=
-X-Google-Smtp-Source: ALg8bN7KPZ2IC1wQE0iW+R5e2D5PWmi/9utfdm/dL/qxq/zEcw3ZS0ZBmD4cnVZX0/gT+taFfRTpEw==
-X-Received: by 2002:a50:aa68:: with SMTP id p37mr12717706edc.168.1548474137460;
-        Fri, 25 Jan 2019 19:42:17 -0800 (PST)
-Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id p22-v6sm6805122ejf.48.2019.01.25.19.42.16
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 25 Jan 2019 19:42:16 -0800 (PST)
-Date:   Fri, 25 Jan 2019 20:42:14 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     "Wentland, Harry" <Harry.Wentland@amd.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        "Li, Sun peng (Leo)" <Sunpeng.Li@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] drm/amd/display: Pass app_tf by value rather than by
- reference
-Message-ID: <20190126034214.GA24554@archlinux-ryzen>
-References: <20181210234201.4850-1-natechancellor@gmail.com>
- <CAKwvOdkOwdrsOAADGp9To2F5o2AAW7123yADFzYLMawwsinmug@mail.gmail.com>
- <20181211214240.GA31705@flashbox>
- <CAKwvOdn4467193YUMCboj+Z62m0+pVMAbjAc4avCsSsng7hpPg@mail.gmail.com>
- <61e435a1-6f54-ad91-50a6-9989cf75ba90@amd.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <61e435a1-6f54-ad91-50a6-9989cf75ba90@amd.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Fri, 25 Jan 2019 22:48:46 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1548474525; bh=fEICpJjWWzhjrr72FQ/QjjsO8F3wa705ICZLCTpLh94=; h=From:To:Cc:Subject:Date:From:Subject; b=DY6bBKgLtW08lC0ArUwTrHhOBos3Qd+zinLTOQa/Yn23FRH+3fR6OcThuvPimShsmAB+4tDDDy+43Zz0COMEbE3QYzK2UOZDqOo51B6cJb2EAeRMTic4KoqPptjNfWc2daWlvm9icl2q56vbUd0uo0XY3O5BHHgOR41FpZAe9ce3rhweIsizU7RjFaidUREpoTZ+8Sz8EtONN7/0MyXu/fXRV/X66AKHhf7HeLuA4t+Vyq3J0JnQ0GBE66nyspY0rvMepKh1l3bv+dd2Jant/TEbtONETaZILURyzKoH1kDCAyrjEhuwz+THhcRC67/9o9xzKoiHfDq+2Z2qqDUtJA==
+X-YMail-OSG: .89TsswVM1l1o_9GHO31df.mB8UYasW8mZDx3y4jIQfzLB4lIayqrhUH5SvUeOt
+ ChIO6KL6s3pzuhsH5f0M4BJ8XGS06XNPQm.wg.T1jJESGoLARN.mKrBinmb.kszGsq6d9BbUQGoM
+ FgBlXzbw8sl6LpqjNeNenBIObBPlRy48TshdTDEbY0UGlmm8Xaok2vW64xnTjfyywdzlxngXW0oT
+ eCWelfsH6wLvrIChKXr1JlshpgKPNqOv3CtgP7Rb5eC2iDZubE5344Fy0fOqOBOb5WXZOIq2u1L5
+ pWrfqDm2hZn79.sCX7TwcXG6A7KbLh_eAVorq4oW53HouBmYIBDFI_rJtge50MtIXqJVduor4Hbm
+ icN_hAizjwXPWrAZ.nfJd4tXUCTFQCcq64iz2WyE5JqcMnkifk2I7U7gtDgoqHoeRnXbx_IF.s1p
+ o5AURsM9SLdMGZ8oTq3P1amy.vbGe.wP13cvWs26CQ1s9HIVpsoQZfb4KpqNT80rh4_wu.KBNlmH
+ qqfqc.clg7MatKsOWRLD3WhhsHX_xyPmd.G0f1tPrmPU7m69A3TNwlSduFyOdF_ZuzFV2Ixp.61q
+ ccf7CzGl7Rv5XgTpKVa5FhRucdrNkqRwiG16xYgh4vyKBE7S74v0e1SHrQZqRzSVJ1BQsxFxhvGn
+ BN5.bQIxnPfHYToHt6D_iSutmTrdKeTVOBF5ARzHx74dAxJ7COjydICyci9UDHKYrCy2ZGryrJyN
+ Paz2bC_cdAFYT79Y2IGuOE0XeiGjrFGzEZilutnu2Wm0WkRyOXEJm57cBggQ2TzykB.ZFRFXESZp
+ AkbHHb9NFK5Q.YF5CMky495Lg.7Tb1SzkIZVdOt3NIiDtWFwS4Yn6Pf66VTm67MI71u1ISYmAlRf
+ I1uU1GQJOXKiiw7.I75._8LQJiXtXhzk8afzm_C4bEbW3osXKJIQm3CdEBfNy6QMaUGfIB.H.VL7
+ gaRjvvhWrdcgctvw6t2ro_utG_vlLLh8TSu42k0NFEaO9ypUsOuoMVI9btOZYJZPUWx79ZmKiytf
+ EFL5UMZpZqfSR5u10H0i338hBV0WyOrm6Zphuyft2wZcenV0lVd0WJLKUB2uMsg--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic301.consmr.mail.gq1.yahoo.com with HTTP; Sat, 26 Jan 2019 03:48:45 +0000
+Received: from 125.120.85.115 (EHLO localhost.localdomain) ([125.120.85.115])
+          by smtp409.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 5574a3d7169bdadf60e8591b428ea179;
+          Sat, 26 Jan 2019 03:48:42 +0000 (UTC)
+From:   Gao Xiang <hsiangkao@aol.com>
+To:     Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
+        LKML <linux-kernel@vger.kernel.org>, chao@kernel.org,
+        weidu.du@huawei.com, Miao Xie <miaoxie@huawei.com>,
+        Gao Xiang <gaoxiang25@huawei.com>
+Subject: [PATCH v3 1/2] staging: erofs: use xattr_prefix to wrap up
+Date:   Sat, 26 Jan 2019 11:48:28 +0800
+Message-Id: <20190126034829.11586-1-hsiangkao@aol.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Dec 14, 2018 at 08:09:00PM +0000, Wentland, Harry wrote:
-> On 2018-12-11 5:07 p.m., Nick Desaulniers wrote:
-> > On Tue, Dec 11, 2018 at 1:42 PM Nathan Chancellor
-> > <natechancellor@gmail.com> wrote:
-> >>
-> >> On Tue, Dec 11, 2018 at 01:25:00PM -0800, Nick Desaulniers wrote:
-> >>> On Mon, Dec 10, 2018 at 3:42 PM Nathan Chancellor
-> >>> <natechancellor@gmail.com> wrote:
-> >>>>
-> >>>> Clang warns when an expression that equals zero is used as a null
-> >>>> pointer constant (in lieu of NULL):
-> >>>>
-> >>>> drivers/gpu/drm/amd/amdgpu/../display/amdgpu_dm/amdgpu_dm.c:4435:3:
-> >>>> warning: expression which evaluates to zero treated as a null pointer
-> >>>> constant of type 'const enum color_transfer_func *'
-> >>>> [-Wnon-literal-null-conversion]
-> >>>>                 TRANSFER_FUNC_UNKNOWN,
-> >>>>                 ^~~~~~~~~~~~~~~~~~~~~
-> >>>> 1 warning generated.
-> >>>>
-> >>>> This warning is caused by commit bb47de736661 ("drm/amdgpu: Set FreeSync
-> >>>> state using drm VRR properties") and it could be solved by using NULL
-> >>>> instead of TRANSFER_FUNC_UNKNOWN or casting TRANSFER_FUNC_UNKNOWN as a
-> >>>> pointer. However, after looking into it, there doesn't appear to be a
-> >>>> good reason to pass app_tf by reference as it is never mutated along the
-> >>>> way. This is the only code path in which app_tf is used:
-> >>>>
-> >>>> mod_freesync_build_vrr_infopacket ->
-> >>>>     build_vrr_infopacket_v2 ->
-> >>>>         build_vrr_infopacket_fs2_data
-> >>>>
-> >>>> Neither mod_freesync_build_vrr_infopacket or build_vrr_infopacket_v2
-> >>>> modify app_tf's value and build_vrr_infopacket_fs2_data expects just
-> >>>> the value so we can avoid dereferencing anything by just passing in
-> >>>> app_tf's value to mod_freesync_build_vrr_infopacket and
-> >>>> build_vrr_infopacket_v2.
-> >>>>
-> >>>> There is no functional change because build_vrr_infopacket_fs2_data
-> >>>> doesn't do anything if TRANSFER_FUNC_UNKNOWN is passed to it, the same
-> >>>> as not calling build_vrr_infopacket_fs2_data at all like before this
-> >>>> change when NULL was used for app_tf.
-> >>>
-> >>> Nathan,
-> >>> Thanks for sending this patch.  I was hoping to provide review sooner,
-> >>> but have been quite busy lately.
-> >>>
-> >>
-> >> Late review is better than no review, I appeciate you taking the time to
-> >> do this!
-> >>
-> >>> Yeah, especially for LP64 targets, the pointer to enum is larger than
-> >>> just the enum, and if it's not being updated ("in/out paramter")
-> >>> there's no need to pass by pointer.
-> >>>
-> >>
-> >> Thanks for confirming!
-> >>
-> >>>>
-> >>>> Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-> >>>> ---
-> >>>>  drivers/gpu/drm/amd/display/modules/freesync/freesync.c | 7 +++----
-> >>>>  drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h  | 2 +-
-> >>>>  2 files changed, 4 insertions(+), 5 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-> >>>> index 620a171620ee..520665a9d81a 100644
-> >>>> --- a/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-> >>>> +++ b/drivers/gpu/drm/amd/display/modules/freesync/freesync.c
-> >>>> @@ -656,7 +656,7 @@ static void build_vrr_infopacket_v1(enum signal_type signal,
-> >>>>
-> >>>>  static void build_vrr_infopacket_v2(enum signal_type signal,
-> >>>>                 const struct mod_vrr_params *vrr,
-> >>>> -               const enum color_transfer_func *app_tf,
-> >>>> +               enum color_transfer_func app_tf,
-> >>>>                 struct dc_info_packet *infopacket)
-> >>>>  {
-> >>>>         unsigned int payload_size = 0;
-> >>>> @@ -664,8 +664,7 @@ static void build_vrr_infopacket_v2(enum signal_type signal,
-> >>>>         build_vrr_infopacket_header_v2(signal, infopacket, &payload_size);
-> >>>>         build_vrr_infopacket_data(vrr, infopacket);
-> >>>>
-> >>>> -       if (app_tf != NULL)
-> >>>> -               build_vrr_infopacket_fs2_data(*app_tf, infopacket);
-> >>>> +       build_vrr_infopacket_fs2_data(app_tf, infopacket);
-> >>>>
-> >>>>         build_vrr_infopacket_checksum(&payload_size, infopacket);
-> >>>>
-> >>>> @@ -676,7 +675,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
-> >>>>                 const struct dc_stream_state *stream,
-> >>>>                 const struct mod_vrr_params *vrr,
-> >>>>                 enum vrr_packet_type packet_type,
-> >>>> -               const enum color_transfer_func *app_tf,
-> >>>> +               enum color_transfer_func app_tf,
-> >>>>                 struct dc_info_packet *infopacket)
-> >>>>  {
-> >>>>         /* SPD info packet for FreeSync */
-> >>>> diff --git a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-> >>>> index 949a8b62aa98..063af6258fd9 100644
-> >>>> --- a/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-> >>>> +++ b/drivers/gpu/drm/amd/display/modules/inc/mod_freesync.h
-> >>>> @@ -145,7 +145,7 @@ void mod_freesync_build_vrr_infopacket(struct mod_freesync *mod_freesync,
-> >>>>                 const struct dc_stream_state *stream,
-> >>>>                 const struct mod_vrr_params *vrr,
-> >>>>                 enum vrr_packet_type packet_type,
-> >>>> -               const enum color_transfer_func *app_tf,
-> >>>> +               enum color_transfer_func app_tf,
-> >>>
-> >>> Don't you need to update the callsite of `mod_freesync_build_vrr_infopacket` in
-> >>>
-> >>> drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c#4949:
-> >>>
-> >>> -                                           NULL,
-> >>> +                                          transfer_func_unknown,
-> >>>
-> >>
-> >> That change in commit bb47de736661 ("drm/amdgpu: Set FreeSync state
-> >> using drm VRR properties") in -next is what prompted this patch (the
-> >> warning in the commit message is not present in mainline):
-> > 
-> > Ah! Sorry, I was looking at mainline.  I should have noticed
-> > bb47de736661 wasn't there.
-> > 
-> > Shouldn't that change fail to compile, as transfer_func_unknown is an
-> > `enum color_transfer_func` value, but
-> > mod_freesync_build_vrr_infopacket takes a *pointer* to an `enum
-> > color_transfer_func` value?
-> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/amd/display/modules/freesync/freesync.c#n675
-> > 
-> >>
-> >>         mod_freesync_build_vrr_infopacket(
-> >>                 dm->freesync_module,
-> >>                 new_stream,
-> >>                 &vrr,
-> >>                 packet_type_vrr,
-> >>                 transfer_func_unknown,
-> >>                 &vrr_infopacket);
-> >>
-> >>> Maybe at that point the `if (app_tf != NULL)` could be replaced with
-> >>> `if (app_tf != transfer_func_unknown)` hoisted from
-> >>> `build_vrr_infopacket_fs2_data`? (There's only one caller of
-> >>> `build_vrr_infopacket_fs2_data` today, maybe fine to leave the
-> >>> unconditional call and check).
-> >>>
-> >>
-> >> Hmmm that's not unreasonable I suppose. I guess it depends on if
-> >> build_vrr_infopacket_fs2_data could ever be called from outside of
-> >> build_vrr_infopacket_v2; if it can, it makes sense to leave the
-> >> conditional check for 'app_tf != transfer_func_unknown' in
-> >> build_vrr_infopacket_fs2_data and leaving the unconditional call
-> >> to it in build_vrr_infopacket_v2 (since app_tf is no longer a pointer,
-> >> no need to check against NULL).
-> >>
-> >> I'm happy to do a v2 if the maintainers feel strongly about it, thank
-> >> you for bringing that up.
-> > 
-> > Don't worry about it, I think it's fine.
-> > Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> > 
-> 
-> Sorry for being late to the game. FWIW, code is also
-> Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-> 
-> We can change the comparison separately later.
-> 
-> Not sure why this was ever passed as a pointer.
-> 
-> Harry
+From: Gao Xiang <gaoxiang25@huawei.com>
 
-Thanks Harry, could you (or someone) pick this up? This warning is now in mainline.
+Let's use xattr_prefix instead of open code.
+No logic changes.
 
-Nathan
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
+---
+ drivers/staging/erofs/xattr.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
+index 1c9498e38f0e..7de46690d972 100644
+--- a/drivers/staging/erofs/xattr.c
++++ b/drivers/staging/erofs/xattr.c
+@@ -520,8 +520,7 @@ static int xattr_entrylist(struct xattr_iter *_it,
+ 	if (h == NULL || (h->list != NULL && !h->list(it->dentry)))
+ 		return 1;
+ 
+-	/* Note that at least one of 'prefix' and 'name' should be non-NULL */
+-	prefix = h->prefix != NULL ? h->prefix : h->name;
++	prefix = xattr_prefix(h);
+ 	prefix_len = strlen(prefix);
+ 
+ 	if (it->buffer == NULL) {
+-- 
+2.11.0
+
