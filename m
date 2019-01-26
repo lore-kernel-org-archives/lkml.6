@@ -2,85 +2,118 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD50EC282C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:10:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B380C282C3
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D8F8218CD
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:10:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA5CC218A6
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:18:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKvIgjXT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727687AbfAZGKo (ORCPT
+        id S1727857AbfAZGST (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 01:10:44 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:10584 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726329AbfAZGKo (ORCPT
+        Sat, 26 Jan 2019 01:18:19 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:32902 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbfAZGSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 01:10:44 -0500
-Received: from fsav103.sakura.ne.jp (fsav103.sakura.ne.jp [27.133.134.230])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0Q6Agqx005759;
-        Sat, 26 Jan 2019 15:10:42 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav103.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp);
- Sat, 26 Jan 2019 15:10:42 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav103.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0Q6AbZH005679
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 26 Jan 2019 15:10:42 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: pids.current with invalid value for hours [5.0.0 rc3 git]
-To:     =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <df806a77-3327-9db5-8be2-976fde1c84e5@gmail.com>
- <20190117122535.njcbqhlmzozdkncw@mikami>
- <1d36b181-cbaf-6694-1a31-2f7f55d15675@gmail.com>
- <96ef6615-a5df-30af-b4dc-417a18ca63f1@gmail.com>
- <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
- <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
- <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
- <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
- <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <72aa8863-a534-b8df-6b9e-f69cf4dd5c4d@i-love.sakura.ne.jp>
-Date:   Sat, 26 Jan 2019 15:10:38 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 26 Jan 2019 01:18:18 -0500
+Received: by mail-pf1-f195.google.com with SMTP id c123so5748894pfb.0
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 22:18:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JSmITJw8ipgTHDHuuQbVyNNP7a2K+4jjuUDKEO/2BSQ=;
+        b=iKvIgjXTU+cd0F7lUCt9CqpCckQ8Lgi4IWCA2A3uqy99Mj0FoEQfml8lOh5o2hcjaz
+         LK6mLVA7ktj7qgKo05JFa+wxGgmViaKD3kwQhGNdJPWPbypRikJtiQ9X7OncP5OU5T4y
+         Onjj2C8vnf5Ji51YM0oE+aW+dPJSZD4JMQB5KfVip/csehJZfXjSqDTXDOe8HGcfiUXy
+         DY2dDe65mlm8Y8CINF2pL6pExl/YMvnzK4ksBMk5ApAMAldJdyDFPEzfAZpj5S2AR82j
+         jaOLwtye0VOVvWhXrjPr0ruLkNk2NwuN5PdK2EOfk7axkVBJwqLqbZUzcVG4jefrrXSt
+         oPfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=JSmITJw8ipgTHDHuuQbVyNNP7a2K+4jjuUDKEO/2BSQ=;
+        b=HbbuR+peiN4ZGxh1K3ea6qlYG6RotGvRqCLBfuB19dm+NFw9Hrjiar98FC82Yikyq/
+         5d4FHhM6yM8E50hOM/r6xO23H1up+eEdH9wjOPOwXj/kgyg1N1j5nds03r/SDFpFAw+b
+         7cttnUd6LSoe57Y27zUxG2i0NGEGQyoKKUL7qgsbXgM+94Bv7Em5qoePpN3se3lVX0NM
+         tl7fsrF2B0syFKEpN1nsyASJcmEDyARkoZ/sD9h4dm5e6f0sfun7C5RiK0yKJnK1HcNm
+         jUl7ZzbcofTQRINdLHjd8ha5rfqIZ5PzznEqfEqAlbAEYiLdpuE0NY3lp2eDFpwyzyli
+         PBfw==
+X-Gm-Message-State: AJcUukdzFm8KfTEzwoyBqSIVpljLcfmJcoQHyvQDbmOrlDrhkoH9Do46
+        56MMagGJb69BtrFXk9QVXNU=
+X-Google-Smtp-Source: ALg8bN5Lp4psJFzc3iU5Wp4n4UXGTX50I1KuRfCGOg7kq/kwqpaoaJslhHffMN3StBzDuBgqBN4AgA==
+X-Received: by 2002:a62:c683:: with SMTP id x3mr13649666pfk.10.1548483497516;
+        Fri, 25 Jan 2019 22:18:17 -0800 (PST)
+Received: from anarsoul-thinkpad.lan (216-71-193-140.dyn.novuscom.net. [216.71.193.140])
+        by smtp.gmail.com with ESMTPSA id 85sm36537643pfw.17.2019.01.25.22.18.16
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 22:18:16 -0800 (PST)
+From:   Vasily Khoruzhick <anarsoul@gmail.com>
+To:     Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+        Olliver Schinagl <oliver@schinagl.nl>,
+        linux-kernel@vger.kernel.org
+Cc:     Vasily Khoruzhick <anarsoul@gmail.com>
+Subject: [PATCH] regulator: axp20x: fix ALDO2, DLDO2 and ELDO3 definitions for AXP803
+Date:   Fri, 25 Jan 2019 22:18:09 -0800
+Message-Id: <20190126061809.18035-1-anarsoul@gmail.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-In-Reply-To: <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/26 11:41, Arkadiusz Miśkiewicz wrote:
-> dmesg:
-> http://ixion.pld-linux.org/~arekm/cgroup-oom-2.txt
+Looks like refactoring didn't go well and left ALDO2, DLDO2 and ELDO3
+definitions broken for AXP803 - now they are using register address
+instead of mask. Fix it by using mask where necessary.
 
-What is wrong with this output? It seems to me that the OOM killer is killing
-processes as soon as python 3 fork()s one. Although "potentially unexpected
-fatal signal 7." messages due to handling SIGBUS at get_signal() after the
-OOM reaper reclaimed the OOM victim's memory is a bit noisy, I don't think
-that something is wrong.
+Fixes: db4a555f7c4cf ("regulator: axp20x: use defines for masks")
+Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
+---
+ drivers/regulator/axp20x-regulator.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-  Jan 26 03:33:49 xps kernel: python3 invoked oom-killer: gfp_mask=0x6000c0(GFP_KERNEL), order=0, oom_score_adj=0
-  Jan 26 03:33:52 xps kernel: potentially unexpected fatal signal 7.
-
-You seem to be monitoring cgroup statistic values for only 1 minute, but
-since the fork bombs might take longer than 1 minute, I'm not sure that
-the statistic values after terminating cg.py and waited for a while (e.g.
-1 minute) is still showing unexpected values.
+diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+index 48af859fd053..a808b03cae10 100644
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -719,7 +719,7 @@ static const struct regulator_desc axp803_regulators[] = {
+ 		 AXP22X_ALDO1_V_OUT, AXP22X_ALDO1_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO1_MASK),
+ 	AXP_DESC(AXP803, ALDO2, "aldo2", "aldoin", 700, 3300, 100,
+-		 AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT,
++		 AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO2_MASK),
+ 	AXP_DESC(AXP803, ALDO3, "aldo3", "aldoin", 700, 3300, 100,
+ 		 AXP22X_ALDO3_V_OUT, AXP22X_ALDO3_V_OUT_MASK,
+@@ -729,7 +729,7 @@ static const struct regulator_desc axp803_regulators[] = {
+ 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO1_MASK),
+ 	AXP_DESC_RANGES(AXP803, DLDO2, "dldo2", "dldoin",
+ 			axp803_dldo2_ranges, AXP803_DLDO2_NUM_VOLTAGES,
+-			AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT,
++			AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT_MASK,
+ 			AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO2_MASK),
+ 	AXP_DESC(AXP803, DLDO3, "dldo3", "dldoin", 700, 3300, 100,
+ 		 AXP22X_DLDO3_V_OUT, AXP22X_DLDO3_V_OUT_MASK,
+@@ -744,7 +744,7 @@ static const struct regulator_desc axp803_regulators[] = {
+ 		 AXP22X_ELDO2_V_OUT, AXP22X_ELDO2_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO2_MASK),
+ 	AXP_DESC(AXP803, ELDO3, "eldo3", "eldoin", 700, 1900, 50,
+-		 AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT,
++		 AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO3_MASK),
+ 	AXP_DESC(AXP803, FLDO1, "fldo1", "fldoin", 700, 1450, 50,
+ 		 AXP803_FLDO1_V_OUT, AXP803_FLDO1_V_OUT_MASK,
+-- 
+2.20.1
 
