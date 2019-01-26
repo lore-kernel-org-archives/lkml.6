@@ -2,107 +2,103 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54349C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA0DEC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:14:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 016832133D
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:14:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=voegeli.com header.i=@voegeli.com header.b="xjVlJB7w"
+	by mail.kernel.org (Postfix) with ESMTP id A193B2184B
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 21:14:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726432AbfAZVOK (ORCPT
+        id S1726485AbfAZVOk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 16:14:10 -0500
-Received: from mail.tobiasvoegeli.ch ([94.130.103.102]:37984 "EHLO
-        mail.tobiasvoegeli.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726262AbfAZVOJ (ORCPT
+        Sat, 26 Jan 2019 16:14:40 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45822 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726262AbfAZVOj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 16:14:09 -0500
-Subject: Re: [PATCH] input: elan_i2c: Add ACPI ID for touchpad in Lenovo
- V130-15IGM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=voegeli.com; s=2017;
-        t=1548537247; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=c3QfhmGTzMnFBPnz9TKz9Hfhj3jTqxmt2EgPDWT/cds=;
-        b=xjVlJB7wVOihdniefLgUJ7m6ctRRWp5cOJrV8+VLs28/WXzxJGaBFZsCS4sfotmo/6YAD2
-        aTPNM1SV4oTgilFkDR2UcMvAU3sgBYpy9ZGO6UoKevr/i4cIwVU6DbgqsfqpbSbINHA8Ml
-        j0ENt0z1jiztzfWSbpWvXMwbWJnP48yb5QTeL4CbtBas5coNr1Z9Nnfpw4LIwjeIRF88ms
-        cRXOWSd4cJrUZ0JpZq0TgqMY4WimNLhNRuU9q7PZsqD/aW84DlhJpuRNqM/a/7wlHwUky2
-        LrwPoeXXkApqsP1KH0jBJnSxs9g00vNWRwHn0YkDLx75a+snfUviES6w8mWAtA==
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     =?UTF-8?Q?Tobias_V=c3=b6geli?= <tobias@voegeli.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20190126154856.14060-1-tobias@voegeli.com>
-From:   =?UTF-8?Q?Tobias_V=c3=b6geli?= <tobias@voegeli.com>
-Message-ID: <ebaf58f8-328f-9f3a-c5c8-086274063f2c@voegeli.com>
-Date:   Sat, 26 Jan 2019 22:14:07 +0100
+        Sat, 26 Jan 2019 16:14:39 -0500
+Received: by mail-qk1-f196.google.com with SMTP id y78so7390872qka.12
+        for <linux-kernel@vger.kernel.org>; Sat, 26 Jan 2019 13:14:39 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZQMGx38XhBGTMF/0CaQDgyTCsEgvPq5pWGrKKNC/swQ=;
+        b=mgqKoIkC/J2BhdPIQvWs1KkCEzEE7tno9NyoowhdDJ3or5uYEPRJvLpD3kBTq44jbG
+         y118d98Ez2jYNO5oDVJu+DiDN5FzLfRAvckC0KgK839dpkHeYT7E1zGeiQpcd660rMJG
+         e5bJxpQg2dJJUvJAQaHA4qm7Os1gO3zpDANQzU7OSRSX3ZaWJLrkbX/Ma0srpFL6XEGE
+         a3RIkkzNfGufz/Q+vk8U6/1YFivQvZOcaNX/FP1wtV54Na023n2M7npQkeaHimgf8zep
+         M6qqxzZdftQ4cgnk1EHlqmTmmRxJ8xDq6tM6s1Zr/Asjpwbc2OzEsGG8bFDdOd9qFXfX
+         Rv2g==
+X-Gm-Message-State: AJcUukfjykLk/eZud6IECMZeBtVOSeN2Y5VIPEpqJxIyHiSh0EMmp3mA
+        r1CPdjqghFIWHjY62tS80d0mdgT5Y8ce2zJbG2o=
+X-Google-Smtp-Source: ALg8bN6tCUbC2AjDyQtyGyMWX03B76YdxtVHUfNul19PPfxGIA7cei8k29CEjNOwkq7fev9KqYuD1hqtQ9+2Qxy6+G0=
+X-Received: by 2002:a37:9a89:: with SMTP id c131mr14580394qke.173.1548537279039;
+ Sat, 26 Jan 2019 13:14:39 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190126154856.14060-1-tobias@voegeli.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=voegeli.com;
-        s=2017; t=1548537247; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=c3QfhmGTzMnFBPnz9TKz9Hfhj3jTqxmt2EgPDWT/cds=;
-        b=fzhHWgvg8hwHlVo3M/OKF55QlF7Mw6lfG/m/e40ggjXoMYaK4/uagbJ1qM09L6yNdC/wxz
-        9vQtjYXBrqPWuz5nlUv9xNMewAH0q6DXpR0jXPfmDfsGXJOggrPRzgki2i8C9eA4vDwZHE
-        AYX1ME1ZvnIWgdegu4LCKjWeakX7glS07Vz5bK6e32IAHTJJJIENA+EplDjRnpx+TmdVg1
-        G373aCUva4c0Q6BZTOoYU9k5xmbtIbhd1gdRUyqD8f20tz/gXWjum4/8Bd7KspJJceMLnL
-        6zloee2TZsl2tYV9kIHmEnbYP6whMyiv5Re4GtbJwtvVdygIpkD9pu9HcGbXFw==
-ARC-Seal: i=1; s=2017; d=voegeli.com; t=1548537247; a=rsa-sha256; cv=none;
-        b=Kt0bpgwzQjerqOQV5AwshbOPF1OKlheCNZ8D773QGEEiAOshj1aW5THFDAVCAgpmc/vf4M
-        ekiU6cTrm4KGUvl2xA/wjRxKB3VNospdu+wzst2SOJhRKGr0jITM+tYf/sf8JwiHWVrlWS
-        pErl6QQdsSAZUhMAGMp8Wuk7pZGK+TsnBxB3bu23KLtCO4Ql+vgMwOcTonzt0+Q8RgtzW5
-        9jkul482aUkepOnJXzkTQQoV27Ghjz+7fPE4HIkfLJCSUrfrZ+zMiFfsEqCsCg6zMFdDG3
-        F/6Pnafr4u0p+hF1kV11pfIj7vlleTCjF0OR5ZdceDTf1KglptUL6SO2wH21tQ==
-ARC-Authentication-Results: i=1;
-        ORIGINATING;
-        auth=pass smtp.auth=mail@tobiasvoegeli.ch smtp.mailfrom=tobias@voegeli.com
-Authentication-Results: ORIGINATING;
-        auth=pass smtp.auth=mail@tobiasvoegeli.ch smtp.mailfrom=tobias@voegeli.com
+References: <20190123000057.31477-1-oded.gabbay@gmail.com> <20190123000057.31477-2-oded.gabbay@gmail.com>
+ <CAK8P3a2NX_SNZPfqE4fnVcnxmSfAEzWMODce3L-g6JJ0NSTuBw@mail.gmail.com> <CAFCwf10jv4aMNefk_1Xj_Tg5Yjg8ekzWtZ94TssfHzaSN5CVAA@mail.gmail.com>
+In-Reply-To: <CAFCwf10jv4aMNefk_1Xj_Tg5Yjg8ekzWtZ94TssfHzaSN5CVAA@mail.gmail.com>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sat, 26 Jan 2019 22:14:21 +0100
+Message-ID: <CAK8P3a3=1Rocb8jcG8XHadgcUCL6xXs8GRxc-Az6oyPqffYTpw@mail.gmail.com>
+Subject: Re: [PATCH 01/15] habanalabs: add skeleton driver
+To:     Oded Gabbay <oded.gabbay@gmail.com>
+Cc:     gregkh <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        ogabbay@habana.ai
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Not sure if the last mail went trough, so here again:
-
-Forget this patch, I did some further testing and even though the touchpad works, it generates some dmesg messages. I have to take a closer look into this.
-
-Sorry for the spam.
-
-Tobias
-
-
-> From: Tobias Vögeli <tobias@voegeli.com>
+On Sat, Jan 26, 2019 at 5:25 PM Oded Gabbay <oded.gabbay@gmail.com> wrote:
 >
-> Add ELAN061A to the ACPI table to support the touchpad of the Lenovo V130-15IGM.
+> On Sat, Jan 26, 2019 at 6:06 PM Arnd Bergmann <arnd@arndb.de> wrote:
+> >
+> > On Wed, Jan 23, 2019 at 1:01 AM Oded Gabbay <oded.gabbay@gmail.com> wrote:
+> >
+> > > diff --git a/drivers/misc/habanalabs/include/habanalabs_device_if.h b/drivers/misc/habanalabs/include/habanalabs_device_if.h
+> > > new file mode 100644
+> > > index 000000000000..9dbb7077eabd
+> > > --- /dev/null
+> > > +++ b/drivers/misc/habanalabs/include/habanalabs_device_if.h
+> >
+> > Since this is a apparently a user space ABI, the file should be in
+> > include/uapi/linux/,
+> > not in the driver directory.
 >
-> Signed-off-by: Tobias Vögeli <tobias@voegeli.com>
-> ---
->   drivers/input/mouse/elan_i2c_core.c | 1 +
->   1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/input/mouse/elan_i2c_core.c b/drivers/input/mouse/elan_i2c_core.c
-> index f322a1768fbb..4998b7007201 100644
-> --- a/drivers/input/mouse/elan_i2c_core.c
-> +++ b/drivers/input/mouse/elan_i2c_core.c
-> @@ -1347,6 +1347,7 @@ static const struct acpi_device_id elan_acpi_id[] = {
->   	{ "ELAN0611", 0 },
->   	{ "ELAN0612", 0 },
->   	{ "ELAN0618", 0 },
-> +	{ "ELAN061A", 0 },
->   	{ "ELAN061C", 0 },
->   	{ "ELAN061D", 0 },
->   	{ "ELAN061E", 0 },
+> This is not a user space ABI. This is the ABI between the driver and the F/W.
+
+Ah, I see. In that case, you should get rid of all the bitfields and make the
+struct members all __le32/__le64/... to make it work on big-endian kernels.
+
+> >
+> > > +/* must be aligned to 4 bytes */
+> > > +struct armcp_info {
+> > > +       struct armcp_sensor sensors[ARMCP_MAX_SENSORS];
+> > > +       __u8 kernel_version[VERSION_MAX_LEN];
+> > > +       __u32 reserved[3];
+> > > +       __u32 cpld_version;
+> > > +       __u32 infineon_version;
+> > > +       __u8 fuse_version[VERSION_MAX_LEN];
+> > > +       __u8 thermal_version[VERSION_MAX_LEN];
+> > > +       __u8 armcp_version[VERSION_MAX_LEN];
+> > > +       __u64 dram_size;
+> > > +};
+> >
+> > The compiler will align this to 8 bytes on most architectures, and
+> > add another padding field before dram_size. Better remove the
+> > 'reserved' fields, or make them an even number.
+> I can't do that, because those fields were once used by the F/W and if
+> I will change the order here, or add/remove those fields then it will
+> break compatibility with old F/W.
+
+Ok, I see. Then you should add an explicit padding field and fix the
+comment to make the structure match the actual interface.
+
+       Arnd
