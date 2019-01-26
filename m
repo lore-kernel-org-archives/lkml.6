@@ -2,85 +2,115 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F456C282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:09:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 92811C282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05CB121855
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:09:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C38621855
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 01:11:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="madlEAkH"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726991AbfAZBJZ (ORCPT
+        id S1728754AbfAZBLR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 20:09:25 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:32779 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725550AbfAZBJZ (ORCPT
+        Fri, 25 Jan 2019 20:11:17 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:37830 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725550AbfAZBLR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 20:09:25 -0500
-Received: from fsav402.sakura.ne.jp (fsav402.sakura.ne.jp [133.242.250.101])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0Q19Mn8032702;
-        Sat, 26 Jan 2019 10:09:23 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav402.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp);
- Sat, 26 Jan 2019 10:09:22 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav402.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0Q19H0p032570
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sat, 26 Jan 2019 10:09:22 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: + memcg-do-not-report-racy-no-eligible-oom-tasks.patch added to
- -mm tree
-To:     Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, mm-commits@vger.kernel.org,
-        cgroups@vger.kernel.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <20190109190306.rATpT%akpm@linux-foundation.org>
- <20190125165624.GA17719@cmpxchg.org> <20190125172416.GB20411@dhcp22.suse.cz>
- <20190125183333.GA19686@cmpxchg.org>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <38234fd5-d1eb-aa2d-b792-513855b2ae3b@i-love.sakura.ne.jp>
-Date:   Sat, 26 Jan 2019 10:09:18 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Fri, 25 Jan 2019 20:11:17 -0500
+Received: by mail-pg1-f194.google.com with SMTP id c25so4893927pgb.4;
+        Fri, 25 Jan 2019 17:11:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=VCXjBMT6Rj94A9eM6Y+enJqibylV1neUCEXpsXR/fqg=;
+        b=madlEAkHyCD1Ju83EqOFmsTjfXeWWJSMp9g3pvEbUIfPe8BnrF/GE94gbdXIXQxQwU
+         daWyQKlYbK6AYXIqL7TrmmsXnByLWZJNAYHeVRyMgmt6p5kJkIbGYdvTnsvMu9oJRg6o
+         kmlHtkuouLNi9UFOy75F4nEtl53NjwwYSFjvKHh7JdHRJ2PGIQh/ZV1e+b6lvrcOU0tw
+         xpXCnRyXMLG3CFqAqLR9hIj5sVHoyBo/+y80BrJsolo0Zynh348WBrvniL94DUhbizmx
+         OAYuxj+lslr4eKzHebZ2Ag/7B5Ok7v3j6CF0ck9sWxFjJxy9N2q2v8EyEQGRyZsd6cLY
+         3jhw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=VCXjBMT6Rj94A9eM6Y+enJqibylV1neUCEXpsXR/fqg=;
+        b=FpUsh7wqceG8PzQ6Afr4HfMuCX1juhzi4Bo/TamY9GmToKuopJ/yaxWp8oj6noyUvv
+         aAny7Ez6TL/YsBfzo/Uf1x31vxSN/EHq1UJ7el9P3az7JC51xI6XOtHksiwC3C5bKrA+
+         3QQoCewJxid/gcM5oYKDPWO2gslA/CD7IZ6W4UgKoJcVSQQc4pKYYP1KmOmSJyA9/cgG
+         wJ1xDBZkkBXN29S6BHlKJITMiYyV9mJvrZjVf4d8vlmAuOD0isG0K1fGe2Tm3oKuip3p
+         tq87BqP7ndQLxFq/3omVO96UMne+ZYe92dFugb89r27HiPReG30eAl+tEhGx2V/R/VOM
+         T8Fg==
+X-Gm-Message-State: AJcUukdHcQMzF4oSVCznzjwa6+6ShFlYaI4VKVMTwiH6BQom+ZgcsYAB
+        o7FRdK4cPDTMPyEh1g8UE1KD1Fvc
+X-Google-Smtp-Source: ALg8bN7lFBdJGrBdtAB/LF19mfUv9EaSru+k/Cm/56QFG/uB6j6iAhoI5INfecI3OTGSUpX3m1dPUw==
+X-Received: by 2002:a63:1b58:: with SMTP id b24mr11781457pgm.247.1548465076132;
+        Fri, 25 Jan 2019 17:11:16 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id p24sm40133791pfk.155.2019.01.25.17.11.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 17:11:15 -0800 (PST)
+Date:   Fri, 25 Jan 2019 17:11:13 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+Subject: [git pull] Input updates for v5.0-rc3
+Message-ID: <20190126011113.GA23858@dtor-ws>
 MIME-Version: 1.0
-In-Reply-To: <20190125183333.GA19686@cmpxchg.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/26 3:33, Johannes Weiner wrote:
-> On Fri, Jan 25, 2019 at 06:24:16PM +0100, Michal Hocko wrote:
->> On Fri 25-01-19 11:56:24, Johannes Weiner wrote:
->>> It looks like this problem is happening in production systems:
->>>
->>> https://www.spinics.net/lists/cgroups/msg21268.html
->>>
->>> where the threads don't exit because they are trapped writing out the
->>> oom messages to a slow console (running the reproducer from this email
->>> thread triggers the oom flooding).
->>>
->>> So IMO we should put this into 5.0 and add:
->>
->> Please note that Tetsuo has found out that this will not work with the
->> CLONE_VM without CLONE_SIGHAND cases and his http://lkml.kernel.org/r/01370f70-e1f6-ebe4-b95e-0df21a0bc15e@i-love.sakura.ne.jp
->> should handle this case as well. I've only had objections to the
->> changelog but other than that the patch looked sensible to me.
-> 
-> I see. Yeah that looks reasonable to me too.
-> 
-> Tetsuo, could you include the Fixes: and CC: stable in your patch?
-> 
+Hi Linus,
 
-Andrew Morton is still offline. Do we want to ask Linus Torvalds?
+Please pull from:
+
+	git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+
+to receive updates for the input subsystem. You will get a fixup for
+the input_event fix for y2038 Sparc64, and couple other minor fixes.
+
+Changelog:
+---------
+
+Anders Roxell (1):
+      Input: raspberrypi-ts - fix link error
+
+Deepa Dinamani (2):
+      Input: input_event - provide override for sparc64
+      Input: input_event - fix the CONFIG_SPARC64 mixup
+
+Dmitry Torokhov (1):
+      Input: uinput - fix undefined behavior in uinput_validate_absinfo()
+
+Lubomir Rintel (1):
+      Input: olpc_apsp - assign priv->dev earlier
+
+Tom Panfil (1):
+      Input: xpad - add support for SteelSeries Stratus Duo
+
+Diffstat:
+--------
+
+ drivers/input/joystick/xpad.c     | 3 +++
+ drivers/input/misc/uinput.c       | 5 +++--
+ drivers/input/serio/olpc_apsp.c   | 3 ++-
+ drivers/input/touchscreen/Kconfig | 2 +-
+ include/uapi/linux/input.h        | 6 +++++-
+ 5 files changed, 14 insertions(+), 5 deletions(-)
+
+Thanks.
+
+
+-- 
+Dmitry
