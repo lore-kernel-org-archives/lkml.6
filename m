@@ -2,118 +2,143 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B380C282C3
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3AC5C282C5
 	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:18:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA5CC218A6
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE25D218A6
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 06:18:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iKvIgjXT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QM9wJXUd"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727857AbfAZGST (ORCPT
+        id S1728256AbfAZGS5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 01:18:19 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:32902 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726030AbfAZGSS (ORCPT
+        Sat, 26 Jan 2019 01:18:57 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:40387 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726030AbfAZGS5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 01:18:18 -0500
-Received: by mail-pf1-f195.google.com with SMTP id c123so5748894pfb.0
-        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 22:18:18 -0800 (PST)
+        Sat, 26 Jan 2019 01:18:57 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so5080952pgp.7;
+        Fri, 25 Jan 2019 22:18:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JSmITJw8ipgTHDHuuQbVyNNP7a2K+4jjuUDKEO/2BSQ=;
-        b=iKvIgjXTU+cd0F7lUCt9CqpCckQ8Lgi4IWCA2A3uqy99Mj0FoEQfml8lOh5o2hcjaz
-         LK6mLVA7ktj7qgKo05JFa+wxGgmViaKD3kwQhGNdJPWPbypRikJtiQ9X7OncP5OU5T4y
-         Onjj2C8vnf5Ji51YM0oE+aW+dPJSZD4JMQB5KfVip/csehJZfXjSqDTXDOe8HGcfiUXy
-         DY2dDe65mlm8Y8CINF2pL6pExl/YMvnzK4ksBMk5ApAMAldJdyDFPEzfAZpj5S2AR82j
-         jaOLwtye0VOVvWhXrjPr0ruLkNk2NwuN5PdK2EOfk7axkVBJwqLqbZUzcVG4jefrrXSt
-         oPfg==
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=DRwifb4mSZ+paxxIQN74boKUCYU/zt297aJLV9mI2mM=;
+        b=QM9wJXUdZlqk4/xCK6lLcRjh6DFthq9OMiVx8cTgXroz7JQNexT8G/yYsDw/0AqbCV
+         egev5Y6xFEK6IUeShLMXli6N1GThiLSsqKTIVG42Ng6AKwYXvBlVJd9TFUXdmLgsj2ZY
+         UIaniJrmb98+97y7Uo5ZGHcJPX/xuAiVhDkm8g2v8TkDE0Dr6p+Jp+WGZzYsiJpvCWlg
+         uDslBTxIQuMN3Mbcu5XGnyjXOHWZtpGpGJpmqoo+xkXZ6OpMKiGGS3wybP6XwbhLoJBU
+         JZkfPcYSw3yKRGu0MzWvHncosaf/vUYVAJO2gngzd3qa6pCdwLdjVyL/dWfUvZxqX89x
+         Mowg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=JSmITJw8ipgTHDHuuQbVyNNP7a2K+4jjuUDKEO/2BSQ=;
-        b=HbbuR+peiN4ZGxh1K3ea6qlYG6RotGvRqCLBfuB19dm+NFw9Hrjiar98FC82Yikyq/
-         5d4FHhM6yM8E50hOM/r6xO23H1up+eEdH9wjOPOwXj/kgyg1N1j5nds03r/SDFpFAw+b
-         7cttnUd6LSoe57Y27zUxG2i0NGEGQyoKKUL7qgsbXgM+94Bv7Em5qoePpN3se3lVX0NM
-         tl7fsrF2B0syFKEpN1nsyASJcmEDyARkoZ/sD9h4dm5e6f0sfun7C5RiK0yKJnK1HcNm
-         jUl7ZzbcofTQRINdLHjd8ha5rfqIZ5PzznEqfEqAlbAEYiLdpuE0NY3lp2eDFpwyzyli
-         PBfw==
-X-Gm-Message-State: AJcUukdzFm8KfTEzwoyBqSIVpljLcfmJcoQHyvQDbmOrlDrhkoH9Do46
-        56MMagGJb69BtrFXk9QVXNU=
-X-Google-Smtp-Source: ALg8bN5Lp4psJFzc3iU5Wp4n4UXGTX50I1KuRfCGOg7kq/kwqpaoaJslhHffMN3StBzDuBgqBN4AgA==
-X-Received: by 2002:a62:c683:: with SMTP id x3mr13649666pfk.10.1548483497516;
-        Fri, 25 Jan 2019 22:18:17 -0800 (PST)
-Received: from anarsoul-thinkpad.lan (216-71-193-140.dyn.novuscom.net. [216.71.193.140])
-        by smtp.gmail.com with ESMTPSA id 85sm36537643pfw.17.2019.01.25.22.18.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 22:18:16 -0800 (PST)
-From:   Vasily Khoruzhick <anarsoul@gmail.com>
-To:     Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Olliver Schinagl <oliver@schinagl.nl>,
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=DRwifb4mSZ+paxxIQN74boKUCYU/zt297aJLV9mI2mM=;
+        b=awXirKXIwunIL+R4HMb3ZN5EVL6EN4G21LQ8Fg6j4kfpP5qtWtqHX6yEXm2zpq43+5
+         0ki8Pzjv2PyyNkpNR5bRkVoqFEM9eG2uqXH7Sa/jVq8c7mIl+WUqojX/2DLIzpeMy+Iy
+         MxBpZc6b1uaJJ49dWpMXJTGTsRI3EPtgK04IQVfqhT2dd+OJJXtuATWmet945551j5RG
+         HrEVqoXBqgEPNlfxCWl0ESkBj9QhYXsyYBzFY88HJvNYIST5m7UyMZVqS3Ez0VaWT4UD
+         cnJ00cUNrfDo+d7FLsIyAie3G7V7QW4OxMRvKAKakZnVKiqrJvoy8L8P6h7UbflPgP9Z
+         Ga+g==
+X-Gm-Message-State: AJcUukdd7RGc5i2qFAeptXLoAoubljs2SPGvZPLwRfAS/7MukTLGVWgh
+        9bEKfMIjy6+S7PjxuRKUqLk=
+X-Google-Smtp-Source: ALg8bN7rztBFTuzeqllaLS0SMhpG4L3EYAjLCJgoKnOHzXv8ZTn4B4HZlZpCe9vgxUHvptNZcgVSfw==
+X-Received: by 2002:a62:be0c:: with SMTP id l12mr13578883pff.51.1548483535854;
+        Fri, 25 Jan 2019 22:18:55 -0800 (PST)
+Received: from Shreeya-Patel ([2405:204:2025:63cf:8193:9b01:86c4:8b4c])
+        by smtp.googlemail.com with ESMTPSA id 6sm55413187pfv.30.2019.01.25.22.18.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 25 Jan 2019 22:18:55 -0800 (PST)
+Message-ID: <3356f9251a02eceee65ebf860e0ccec4e497e5df.camel@gmail.com>
+Subject: Re: [PATCH v3 0/3] adt7316 regmap implementation
+From:   Shreeya Patel <shreeya.patel23498@gmail.com>
+To:     Jeremy Fertic <jeremyfertic@gmail.com>
+Cc:     jic23@kernel.org, lars@metafoo.de, Michael.Hennerich@analog.com,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Cc:     Vasily Khoruzhick <anarsoul@gmail.com>
-Subject: [PATCH] regulator: axp20x: fix ALDO2, DLDO2 and ELDO3 definitions for AXP803
-Date:   Fri, 25 Jan 2019 22:18:09 -0800
-Message-Id: <20190126061809.18035-1-anarsoul@gmail.com>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date:   Sat, 26 Jan 2019 11:48:46 +0530
+In-Reply-To: <0ce4cd728a61ef2231d45f68e702708cf59cd781.camel@gmail.com>
+References: <20190120153633.18231-1-shreeya.patel23498@gmail.com>
+         <20190126012243.GA4762@r2700x.localdomain>
+         <0ce4cd728a61ef2231d45f68e702708cf59cd781.camel@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5-0ubuntu0.18.04.1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Looks like refactoring didn't go well and left ALDO2, DLDO2 and ELDO3
-definitions broken for AXP803 - now they are using register address
-instead of mask. Fix it by using mask where necessary.
+On Sat, 2019-01-26 at 10:42 +0530, Shreeya Patel wrote:
+> On Fri, 2019-01-25 at 18:22 -0700, Jeremy Fertic wrote:
+> > On Sun, Jan 20, 2019 at 09:06:30PM +0530, Shreeya Patel wrote:
+> > > This patchset consist of some initial patches for heading
+> > > towards the regmap implementation and also the final patch
+> > > which enables the driver to use regmap API thus removing
+> > > the redundant and common code.
+> > > 
+> > > Changes in v3
+> > >   -Fetch the changes from remote and rebase to have it in
+> > > the current working directory.
+> > > 
+> > > Changes in v2
+> > >   -Change the val_bits to 8 and add two more patches
+> > > having a different change before the final implemetation
+> > > of regmap.
+> > > 
+> > > Shreeya Patel (3):
+> > >   Staging: iio: adt7316: Remove irq from bus structure
+> > >   Staging: iio: adt7316: Remove multi read and write functions
+> > >   Staging: iio: adt7316: Add regmap support
+> > > 
+> > >  drivers/staging/iio/addac/adt7316-i2c.c |  97 ++--------------
+> > >  drivers/staging/iio/addac/adt7316-spi.c |  95 +++------------
+> > >  drivers/staging/iio/addac/adt7316.c     | 147 ++++++++++++------
+> > > ------
+> > >  drivers/staging/iio/addac/adt7316.h     |  15 +--
+> > >  4 files changed, 103 insertions(+), 251 deletions(-)
+> > > 
+> > > -- 
+> > > 2.17.1
+> > > 
+> > 
+> > The series doesn't apply to the current iio testing branch. If
+> > there's any
+> > value in a quick sanity testing, I can do that after a rebase. I
+> > wasn't
+> > planning to test everything the patch touches, but thought I could
+> > at
+> > least test a few register reads and writes to make sure we haven't
+> > missed
+> > anything obvious in the regmap implementation.
+> 
+> Hi Jeremy,
+> 
+> Is it still not applying? Jonathan told me that v2 of this series
+> wasn't applying so I rebased for this series.
+> 
+> I hope I didn't mess things up while rebasing :(
+> 
+> Thanks
 
-Fixes: db4a555f7c4cf ("regulator: axp20x: use defines for masks")
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
----
- drivers/regulator/axp20x-regulator.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Yes it is my mistake. I've rebased against greg's staging tree.
+I will soon send a v4 for the series.
 
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 48af859fd053..a808b03cae10 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -719,7 +719,7 @@ static const struct regulator_desc axp803_regulators[] = {
- 		 AXP22X_ALDO1_V_OUT, AXP22X_ALDO1_V_OUT_MASK,
- 		 AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO1_MASK),
- 	AXP_DESC(AXP803, ALDO2, "aldo2", "aldoin", 700, 3300, 100,
--		 AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT,
-+		 AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT_MASK,
- 		 AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO2_MASK),
- 	AXP_DESC(AXP803, ALDO3, "aldo3", "aldoin", 700, 3300, 100,
- 		 AXP22X_ALDO3_V_OUT, AXP22X_ALDO3_V_OUT_MASK,
-@@ -729,7 +729,7 @@ static const struct regulator_desc axp803_regulators[] = {
- 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO1_MASK),
- 	AXP_DESC_RANGES(AXP803, DLDO2, "dldo2", "dldoin",
- 			axp803_dldo2_ranges, AXP803_DLDO2_NUM_VOLTAGES,
--			AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT,
-+			AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT_MASK,
- 			AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO2_MASK),
- 	AXP_DESC(AXP803, DLDO3, "dldo3", "dldoin", 700, 3300, 100,
- 		 AXP22X_DLDO3_V_OUT, AXP22X_DLDO3_V_OUT_MASK,
-@@ -744,7 +744,7 @@ static const struct regulator_desc axp803_regulators[] = {
- 		 AXP22X_ELDO2_V_OUT, AXP22X_ELDO2_V_OUT_MASK,
- 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO2_MASK),
- 	AXP_DESC(AXP803, ELDO3, "eldo3", "eldoin", 700, 1900, 50,
--		 AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT,
-+		 AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT_MASK,
- 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO3_MASK),
- 	AXP_DESC(AXP803, FLDO1, "fldo1", "fldoin", 700, 1450, 50,
- 		 AXP803_FLDO1_V_OUT, AXP803_FLDO1_V_OUT_MASK,
--- 
-2.20.1
+Thanks
+
+> 
+> > 
+> > Jeremy
+> > 
+> 
+> 
 
