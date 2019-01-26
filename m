@@ -6,71 +6,72 @@ X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05E6AC282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:46:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E3BC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:50:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0A982184C
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7AF321872
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 20:50:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=voegeli.com header.i=@voegeli.com header.b="A6E2ceJQ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=tobiasvoegeli.ch header.i=@tobiasvoegeli.ch header.b="OF3JktBy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726372AbfAZUqZ (ORCPT
+        id S1726352AbfAZUuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 15:46:25 -0500
-Received: from mail.tobiasvoegeli.ch ([94.130.103.102]:27943 "EHLO
+        Sat, 26 Jan 2019 15:50:01 -0500
+Received: from mail.tobiasvoegeli.ch ([94.130.103.102]:21473 "EHLO
         mail.tobiasvoegeli.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726180AbfAZUqZ (ORCPT
+        with ESMTP id S1726180AbfAZUuA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 15:46:25 -0500
+        Sat, 26 Jan 2019 15:50:00 -0500
+X-Greylist: delayed 347 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Jan 2019 15:49:59 EST
 Subject: Re: [PATCH] input: elan_i2c: Add ACPI ID for touchpad in Lenovo
  V130-15IGM
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=voegeli.com; s=2017;
-        t=1548535583; h=from:from:sender:reply-to:subject:subject:date:date:
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobiasvoegeli.ch;
+        s=2017; t=1548535451; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=E0cu3+7VPOgDgAVoCRJ42z+pG76YbesCNK0cx5TfV/8=;
-        b=A6E2ceJQR4RitMQwxLWGSG/ccLp9Xbv9wK1+eKqi9bUj1b3Udclh2LInO1TnpW1OMerWQO
-        LkG5AM6XvN4+JXQmFJ59FK3lIT1ZigKaZbykMLmS4kmCBay1CbMWSnN/49/ly/nnsgnTXq
-        n8LzfdXFrnP5lcy/7NdqLk9k49+l+5F/nc9M8n3RbDe1eTIZ9C2sG0SjIjjTE1930mVSDZ
-        oi6gDKk5h9HWIw0dWcxIgJ+O0SHwy41/ScTtMx04K8u63DPGos5MGNggovo9XyEZzfubmY
-        GnFfcqRGyeN99MbT+ZOjOWxcHomomnQm9zFAyucS7IJLhdtR7gF/moZTzcZa2g==
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     =?UTF-8?Q?Tobias_V=c3=b6geli?= <tobias@voegeli.com>,
-        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+        bh=dAe0SNXjf7/HwUD+yzQj5qXqSN3p4nk5PC+x2xRnep4=;
+        b=OF3JktByHT3U/B9A7zUbHF2gwkaWNx5NPzVBGrHo5EXOo5joxLNdBLKmwK0dMcmA6Gz0WR
+        dcxhBx8/ScqBFnHz2GbpM8r9Ac+wjHLYUJN/xcchy7DKp6TUXbaZNYmlA0Lghwx3jqVLD+
+        j+x1Et7kd50JldFClV8NSUApQkxPMRVUp5vblr3/M96TMj+NJl/fOZqSwA16HobXB3Nxjh
+        lJhf//ohSez09Z1KoI/PfX9aaM51fw8y7Fl/ZQ0L22bmqUXrC97Kz8AUNfu+JEC9jg0JI6
+        6OnIswBnLXb2CSvRSTqgeGqzapxltFWOFglGy7pC+6GgpWDvhIj6+mkNaiVRdA==
+To:     =?UTF-8?Q?Tobias_V=c3=b6geli?= <tobias@voegeli.com>
+Cc:     linux-kernel@vger.kernel.org
 References: <20190126154856.14060-1-tobias@voegeli.com>
-From:   =?UTF-8?Q?Tobias_V=c3=b6geli?= <tobias@voegeli.com>
-Message-ID: <7a392798-0c21-a44b-6964-0ba511324fff@voegeli.com>
-Date:   Sat, 26 Jan 2019 21:46:23 +0100
+From:   =?UTF-8?Q?Tobias_V=c3=b6geli?= <maillist@tobiasvoegeli.ch>
+Message-ID: <4f204934-9b2d-110a-da0b-22bf5d92d9bc@tobiasvoegeli.ch>
+Date:   Sat, 26 Jan 2019 21:44:10 +0100
 MIME-Version: 1.0
 In-Reply-To: <20190126154856.14060-1-tobias@voegeli.com>
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
 Content-Language: en-US
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=voegeli.com;
-        s=2017; t=1548535583; h=from:from:sender:reply-to:subject:subject:date:date:
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=tobiasvoegeli.ch;
+        s=2017; t=1548535451; h=from:from:sender:reply-to:subject:subject:date:date:
          message-id:message-id:to:to:cc:cc:mime-version:mime-version:
          content-type:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=E0cu3+7VPOgDgAVoCRJ42z+pG76YbesCNK0cx5TfV/8=;
-        b=J8JcIW3Bm9MId5yF4M3laxkp659YroV7RePR5r4v9s78CCWwUsO6CaGlkkTMqOXXb7LQED
-        8uSUXWxoMMzBnUCy5TFgqwjy7IjjyGuqff/6GgXyhwSpaCuu4v7qL4DHTqXYG5SMqQK6Us
-        5DMhcFInqgPhP1CyONsoA3GPQ8DpNeRvkbyoOi95h9adx3WLxdAHeNUscAyRma+tZdrVBp
-        sknsZIO73bP9x92OLve020WULhgs+iqbQf8L5RCfr2dtgqvdjZlB4yMP3silV0rGzEIo5v
-        IsnRLHxQusHDf76NX5N3GRnFO3SqjpqPaL28jOgvdRu4vzQBi9g0wfZaFhv65Q==
-ARC-Seal: i=1; s=2017; d=voegeli.com; t=1548535583; a=rsa-sha256; cv=none;
-        b=Eqf3wpKzDf6ZttOPjxBLK66be7vMM5giqZaL4oQuqWNuYgcpiomqn/gmig5s1gUlRGgbIf
-        zuAN1/++IMuzZGpKnmwxqarZVrnjhdPC5p4X8dCBP97ZXRX0EdilZV07M+1GofBf+8//7g
-        x1lftCmI60Pys558R3po2zCThPoNUwdXJ86EW2EqGDVXjT6jx9JdkCPcohxm8UgV6vLBjR
-        +9ROMwkYoQK6VlYmXsekD7miSCQqkgf3cNBCwOhCf1YSO+Ix+rE6/OQMjVy172ghpeSUY6
-        bsuMH5V00phb7eNO/m8o53ECRHBubuuqRWPq5Yux43SAUTwBUQXCC9V6NagAlg==
+        bh=dAe0SNXjf7/HwUD+yzQj5qXqSN3p4nk5PC+x2xRnep4=;
+        b=yul+ywAlw8m05ZGDZ1igVylX7bk2RO61P0FqIGpOhzpD5/VgKvLejfFQOKkVnSDJdPc0z2
+        9AuPk9EddCkC+sbox68T1xc6QCRhz78gtL0fxpZa8fXMkz1Ok15bYZszpccu+g472fZ8mi
+        gXMe6mHkcpXNM6q+nQvGPoooBklX68aW1aN92ldVLVAOylh0om7ZJyZ3AsiRURJn+k4y74
+        SoPtyMnYay3h537nOLIO/49wWASxeVHAQO9+wqfG2kkPv0mVfbFNvgsdR/a5DiLVBR+1gq
+        8vLiwSmEiC6NhpeMrHn89BzLoY3QXGxiI0rmk/6cpuQBqCZD2s2sC8owG+BL2Q==
+ARC-Seal: i=1; s=2017; d=tobiasvoegeli.ch; t=1548535451; a=rsa-sha256;
+        cv=none;
+        b=gpw7/hyon7zk+XCxfJDFm5JfCLE8nWglzl2JrD//ew5QU4IED+SX6zGkdR/KVbdulACf/M
+        JcCyKlmeozSLiNYP59NTIzp3gNgYTitpNEYt1qR2gbEZ/g9FJa70274B3TlRUTq2XQMI4O
+        D3ECgyFBisLQ6J3wQWhcIq/pZp+7IdMhIp8+zaHx1/sVMoKmi7VUB2xU2FP+T7pQewHIZa
+        InpMhVAGLPNUsFQSpBWIG/KtvEm/Wlp8fHSHLn7PDuNBo/oXXYkorzB2tVIjBPk6DImEwR
+        zi0I65g32Iu0st2ejDweRDw4veqGBlo5H1fHG7VyEzbSOsdg9KDQ3X7fSjh9nw==
 ARC-Authentication-Results: i=1;
         ORIGINATING;
-        auth=pass smtp.auth=mail@tobiasvoegeli.ch smtp.mailfrom=tobias@voegeli.com
+        auth=pass smtp.auth=maillist@tobiasvoegeli.ch smtp.mailfrom=maillist@tobiasvoegeli.ch
 Authentication-Results: ORIGINATING;
-        auth=pass smtp.auth=mail@tobiasvoegeli.ch smtp.mailfrom=tobias@voegeli.com
+        auth=pass smtp.auth=maillist@tobiasvoegeli.ch smtp.mailfrom=maillist@tobiasvoegeli.ch
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -82,7 +83,6 @@ Sorry for the spam.
 
 Tobias
 
-  
 
 > From: Tobias Vögeli <tobias@voegeli.com>
 >
