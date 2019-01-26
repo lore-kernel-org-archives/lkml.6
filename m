@@ -2,259 +2,221 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA9FC282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 02:42:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB73EC282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 02:48:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7F7821855
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 02:42:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kOSko4tw"
+	by mail.kernel.org (Postfix) with ESMTP id 83B8221902
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 02:48:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729526AbfAZClx (ORCPT
+        id S1728104AbfAZCsx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 21:41:53 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:44941 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726097AbfAZClw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 21:41:52 -0500
-Received: by mail-lf1-f66.google.com with SMTP id z13so8281358lfe.11;
-        Fri, 25 Jan 2019 18:41:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=FXYnc+feRAb5IL5ih0l/fztceExppPTojg+0FF9QPB8=;
-        b=kOSko4twlZRBrZ/q8QvTd0GneHJSaTzxE+k3+urR6J/GMuCFgoRwLhNgIJ6gXlwtSF
-         bs47kTGeMgZB4igWHfPEjwC9mBk0SpShhWN7sJzPTNOv3H9gH8StpUA3+71Ow7pEzSdn
-         Yixiweozd4Ub4SSyqBfG9obUBEZsC0V3nHSnKuHy0g+i0n/NgwbTsV4EKr/zVWzoq8YA
-         c5SrixdzB5VBflVU9FKzntFvcTmRGe68mwZsMKi1+zI1MnDVthpvH0kUhByv+vFpGQqc
-         G1QTOdo26s3Thw2W6YF1HHgkRRRb6I5yLHlsaqnpc9IKPu9D1RkkdivYeIcZGJMV/tf5
-         kfRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=FXYnc+feRAb5IL5ih0l/fztceExppPTojg+0FF9QPB8=;
-        b=dsIb+yvCGc2csBBD7ZPNrfQpsYGvL9EKCQs7RoeROQ5WgBobAvzS1MDBesgxfHsq5R
-         c7He0GVwmCuObhckKx6I8NV0CJYDqUkRNQh8EPP++TGdpr+s1CBjy88PMAFUO4GIQhtm
-         XlsMmZZdk86FKgE3NHck4l5T3VuZJ+tqk5ns19pFZdkYUD8zWjF2ScjeGwVKbF1dNbbZ
-         cwOBjB17CeiVJ0RD8iCQkHRJo1EiFRXUZeQ0U32FfqmlBNTgarBmgJRrgPVuzwZ+6Nzu
-         7kBVRViOHmwCXYKP1OfB2S5FJ6/WqAWcQaWMxqF0WxOgUnud2O5MXqKW0USZh7CMAEBv
-         CYcw==
-X-Gm-Message-State: AJcUukfpZJpN7LuJ7Z11m6ehPqQVh+7aLwSwpOD4G2F26g/l7vIo3txw
-        Z/OjfHbUjMzNtMIh9wq+7Y8=
-X-Google-Smtp-Source: ALg8bN7YG9oc17SrKRtXE+2r9TbPhIF7t0zRd+DsuhT+r/9XWviNmx70bF2TMk6Yhce2z43Gd4MWyg==
-X-Received: by 2002:a19:d9d6:: with SMTP id s83mr10524839lfi.57.1548470509382;
-        Fri, 25 Jan 2019 18:41:49 -0800 (PST)
-Received: from amb.local (31-179-17-47.dynamic.chello.pl. [31.179.17.47])
-        by smtp.gmail.com with ESMTPSA id q3sm1752556lff.42.2019.01.25.18.41.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 25 Jan 2019 18:41:48 -0800 (PST)
-Subject: Re: pids.current with invalid value for hours [5.0.0 rc3 git]
-To:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Cc:     Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>, Michal Hocko <mhocko@suse.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>
-References: <df806a77-3327-9db5-8be2-976fde1c84e5@gmail.com>
- <20190117122535.njcbqhlmzozdkncw@mikami>
- <1d36b181-cbaf-6694-1a31-2f7f55d15675@gmail.com>
- <96ef6615-a5df-30af-b4dc-417a18ca63f1@gmail.com>
- <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
- <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
- <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
- <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
-From:   =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>
-Message-ID: <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
-Date:   Sat, 26 Jan 2019 03:41:47 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.4.0
+        Fri, 25 Jan 2019 21:48:53 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:2774 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725916AbfAZCsx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 21:48:53 -0500
+Received: from DGGEMS409-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id CBA3035207AF64052123;
+        Sat, 26 Jan 2019 10:48:50 +0800 (CST)
+Received: from [127.0.0.1] (10.134.22.195) by DGGEMS409-HUB.china.huawei.com
+ (10.3.19.209) with Microsoft SMTP Server id 14.3.408.0; Sat, 26 Jan 2019
+ 10:48:42 +0800
+Subject: Re: [PATCH v2 2/2] staging: erofs: complete POSIX ACL support
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <devel@driverdev.osuosl.org>
+CC:     LKML <linux-kernel@vger.kernel.org>,
+        <linux-erofs@lists.ozlabs.org>, "Chao Yu" <chao@kernel.org>,
+        Miao Xie <miaoxie@huawei.com>, <weidu.du@huawei.com>,
+        Fang Wei <fangwei1@huawei.com>
+References: <20190125161007.4447-1-gaoxiang25@huawei.com>
+ <20190125161007.4447-2-gaoxiang25@huawei.com>
+From:   Chao Yu <yuchao0@huawei.com>
+Message-ID: <94daa491-40c8-4a09-a0b5-55a7e92dc3fc@huawei.com>
+Date:   Sat, 26 Jan 2019 10:48:53 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
-Content-Type: text/plain; charset=utf-8
-Content-Language: pl
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190125161007.4447-2-gaoxiang25@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.134.22.195]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 26/01/2019 02:27, Tetsuo Handa wrote:
-> On 2019/01/26 4:47, Arkadiusz Miśkiewicz wrote:
->>> Can you please see whether the problem can be reproduced on the
->>> current linux-next?
->>>
->>>  git://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
->>
->> I can reproduce on next (5.0.0-rc3-next-20190125), too:
->>
+On 2019/1/26 0:10, Gao Xiang wrote:
+> Let's add .get_acl() to read the file's acl from its xattrs
+> to make POSIX ACL usable.
 > 
-> Please try this patch.
-
-Doesn't help:
-
-[root@xps test]# python3 cg.py
-Created cgroup: /sys/fs/cgroup/test_2149
-Start: pids.current: 0
-Start: cgroup.procs:
-0: pids.current: 97
-0: cgroup.procs:
-1: pids.current: 14
-1: cgroup.procs:
-2: pids.current: 14
-2: cgroup.procs:
-3: pids.current: 14
-3: cgroup.procs:
-4: pids.current: 14
-4: cgroup.procs:
-5: pids.current: 14
-5: cgroup.procs:
-6: pids.current: 14
-6: cgroup.procs:
-7: pids.current: 14
-7: cgroup.procs:
-8: pids.current: 14
-8: cgroup.procs:
-9: pids.current: 14
-9: cgroup.procs:
-10: pids.current: 14
-10: cgroup.procs:
-11: pids.current: 14
-11: cgroup.procs:
-[root@xps test]# ps aux|grep python
-root      3160  0.0  0.0 234048  2160 pts/2    S+   03:34   0:00 grep python
-[root@xps test]# uname -a
-Linux xps 5.0.0-rc3-00104-gc04e2a780caf-dirty #289 SMP PREEMPT Sat Jan
-26 03:29:45 CET 2019 x86_64 Intel(R)_Core(TM)_i9-8950HK_CPU_@_2.90GHz
-PLD Linux
-
-
-kernel config:
-http://ixion.pld-linux.org/~arekm/cgroup-oom-kernelconf-2.txt
-
-dmesg:
-http://ixion.pld-linux.org/~arekm/cgroup-oom-2.txt
-
-
+> Here is the on-disk detail,
+> fullname: system.posix_acl_access
+> struct erofs_xattr_entry:
+>         .e_name_len = 0
+>         .e_name_index = EROFS_XATTR_INDEX_POSIX_ACL_ACCESS (2)
 > 
-> Subject: [PATCH v2] memcg: killed threads should not invoke memcg OOM killer
-> From: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-> To: Andrew Morton <akpm@linux-foundation.org>,
->  Johannes Weiner <hannes@cmpxchg.org>, David Rientjes <rientjes@google.com>
-> Cc: Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
->  Kirill Tkhai <ktkhai@virtuozzo.com>,
->  Linus Torvalds <torvalds@linux-foundation.org>
-> Message-ID: <01370f70-e1f6-ebe4-b95e-0df21a0bc15e@i-love.sakura.ne.jp>
-> Date: Tue, 15 Jan 2019 19:17:27 +0900
+> fullname: system.posix_acl_default
+> struct erofs_xattr_entry:
+> 	.e_name_len = 0
+> 	.e_name_index = EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT (3)
 > 
-> If $N > $M, a single process with $N threads in a memcg group can easily
-> kill all $M processes in that memcg group, for mem_cgroup_out_of_memory()
-> does not check if current thread needs to invoke the memcg OOM killer.
-> 
->   T1@P1     |T2...$N@P1|P2...$M   |OOM reaper
->   ----------+----------+----------+----------
->                         # all sleeping
->   try_charge()
->     mem_cgroup_out_of_memory()
->       mutex_lock(oom_lock)
->              try_charge()
->                mem_cgroup_out_of_memory()
->                  mutex_lock(oom_lock)
->       out_of_memory()
->         select_bad_process()
->         oom_kill_process(P1)
->         wake_oom_reaper()
->                                    oom_reap_task() # ignores P1
->       mutex_unlock(oom_lock)
->                  out_of_memory()
->                    select_bad_process(P2...$M)
->                         # all killed by T2...$N@P1
->                    wake_oom_reaper()
->                                    oom_reap_task() # ignores P2...$M
->                  mutex_unlock(oom_lock)
-> 
-> We don't need to invoke the memcg OOM killer if current thread was killed
-> when waiting for oom_lock, for mem_cgroup_oom_synchronize(true) can count
-> on try_charge() when mem_cgroup_oom_synchronize(true) can not make forward
-> progress because try_charge() allows already killed/exiting threads to
-> make forward progress, and memory_max_write() can bail out upon signals.
-> 
-> At first Michal thought that fatal signal check is racy compared to
-> tsk_is_oom_victim() check. But an experiment showed that trying to call
-> mark_oom_victim() on all killed thread groups is more racy than fatal
-> signal check due to task_will_free_mem(current) path in out_of_memory().
-> 
-> Therefore, this patch changes mem_cgroup_out_of_memory() to bail out upon
-> should_force_charge() == T rather than upon fatal_signal_pending() == T,
-> for should_force_charge() == T && signal_pending(current) == F at
-> memory_max_write() can't happen because current thread won't call
-> memory_max_write() after getting PF_EXITING.
-> 
-> Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Acked-by: Michal Hocko <mhocko@suse.com>
-> Fixes: 29ef680ae7c2 ("memcg, oom: move out_of_memory back to the charge path")
-> Fixes: 3100dab2aa09 ("mm: memcontrol: print proper OOM header when no eligible victim left")
-> Cc: stable@vger.kernel.org # 4.19+
+> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
 > ---
->  mm/memcontrol.c | 19 ++++++++++++++-----
->  1 file changed, 14 insertions(+), 5 deletions(-)
+> change log v2:
+>  - add the missing SB_POSIXACL flag;
+>  - fix the on-disk detail, use .e_name_len == 0 and proper prefix value;
+>  - tested ok with xattr enabled erofs_mkfs;
 > 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index af7f18b..79a7d2a 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -248,6 +248,12 @@ enum res_type {
->  	     iter != NULL;				\
->  	     iter = mem_cgroup_iter(NULL, iter, NULL))
+>  .../erofs/Documentation/filesystems/erofs.txt      |  2 ++
+>  drivers/staging/erofs/inode.c                      |  3 ++
+>  drivers/staging/erofs/namei.c                      |  1 +
+>  drivers/staging/erofs/super.c                      |  8 +++++
+>  drivers/staging/erofs/xattr.c                      | 37 ++++++++++++++++++++++
+>  drivers/staging/erofs/xattr.h                      |  6 ++++
+>  6 files changed, 57 insertions(+)
+> 
+> diff --git a/drivers/staging/erofs/Documentation/filesystems/erofs.txt b/drivers/staging/erofs/Documentation/filesystems/erofs.txt
+> index 803988d74c21..961ec4da7705 100644
+> --- a/drivers/staging/erofs/Documentation/filesystems/erofs.txt
+> +++ b/drivers/staging/erofs/Documentation/filesystems/erofs.txt
+> @@ -36,6 +36,8 @@ Here is the main features of EROFS:
 >  
-> +static inline bool should_force_charge(void)
-> +{
-> +	return tsk_is_oom_victim(current) || fatal_signal_pending(current) ||
-> +		(current->flags & PF_EXITING);
-> +}
+>   - Support xattr inline and tail-end data inline for all files;
+>  
+> + - Support POSIX.1e ACLs by using xattrs;
 > +
->  /* Some nice accessors for the vmpressure. */
->  struct vmpressure *memcg_to_vmpressure(struct mem_cgroup *memcg)
->  {
-> @@ -1389,8 +1395,13 @@ static bool mem_cgroup_out_of_memory(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  	};
->  	bool ret;
+>   - Support transparent file compression as an option:
+>     LZ4 algorithm with 4 KB fixed-output compression for high performance;
 >  
-> -	mutex_lock(&oom_lock);
-> -	ret = out_of_memory(&oc);
-> +	if (mutex_lock_killable(&oom_lock))
-> +		return true;
-> +	/*
-> +	 * A few threads which were not waiting at mutex_lock_killable() can
-> +	 * fail to bail out. Therefore, check again after holding oom_lock.
-> +	 */
-> +	ret = should_force_charge() || out_of_memory(&oc);
->  	mutex_unlock(&oom_lock);
->  	return ret;
+> diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
+> index 4f04f7c38cf2..924b8dfc7a8f 100644
+> --- a/drivers/staging/erofs/inode.c
+> +++ b/drivers/staging/erofs/inode.c
+> @@ -287,6 +287,7 @@ const struct inode_operations erofs_generic_iops = {
+>  #ifdef CONFIG_EROFS_FS_XATTR
+>  	.listxattr = erofs_listxattr,
+>  #endif
+> +	.get_acl = erofs_get_acl,
+>  };
+>  
+>  const struct inode_operations erofs_symlink_iops = {
+> @@ -294,6 +295,7 @@ const struct inode_operations erofs_symlink_iops = {
+>  #ifdef CONFIG_EROFS_FS_XATTR
+>  	.listxattr = erofs_listxattr,
+>  #endif
+> +	.get_acl = erofs_get_acl,
+>  };
+>  
+>  const struct inode_operations erofs_fast_symlink_iops = {
+> @@ -301,5 +303,6 @@ const struct inode_operations erofs_fast_symlink_iops = {
+>  #ifdef CONFIG_EROFS_FS_XATTR
+>  	.listxattr = erofs_listxattr,
+>  #endif
+> +	.get_acl = erofs_get_acl,
+>  };
+>  
+> diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
+> index 7fed1f996ab0..b1752adc5934 100644
+> --- a/drivers/staging/erofs/namei.c
+> +++ b/drivers/staging/erofs/namei.c
+> @@ -238,5 +238,6 @@ const struct inode_operations erofs_dir_iops = {
+>  #ifdef CONFIG_EROFS_FS_XATTR
+>  	.listxattr = erofs_listxattr,
+>  #endif
+> +	.get_acl = erofs_get_acl,
+>  };
+>  
+> diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
+> index 176fca2af379..54cd7dac0a1f 100644
+> --- a/drivers/staging/erofs/super.c
+> +++ b/drivers/staging/erofs/super.c
+> @@ -398,6 +398,14 @@ static int erofs_read_super(struct super_block *sb,
+>  	if (!silent)
+>  		infoln("root inode @ nid %llu", ROOT_NID(sbi));
+>  
+> +#ifdef CONFIG_EROFS_FS_POSIX_ACL
+> +	/* Update the POSIXACL Flag */
+> +	if (test_opt(sbi, POSIX_ACL))
+> +		sb->s_flags |= SB_POSIXACL;
+> +	else
+> +		sb->s_flags &= ~SB_POSIXACL;
+> +#endif
+> +
+>  #ifdef CONFIG_EROFS_FS_ZIP
+>  	INIT_RADIX_TREE(&sbi->workstn_tree, GFP_ATOMIC);
+>  #endif
+> diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
+> index 7de46690d972..6759485ae862 100644
+> --- a/drivers/staging/erofs/xattr.c
+> +++ b/drivers/staging/erofs/xattr.c
+> @@ -643,3 +643,40 @@ ssize_t erofs_listxattr(struct dentry *dentry,
+>  	return shared_listxattr(&it);
 >  }
-> @@ -2209,9 +2220,7 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
->  	 * bypass the last charges so that they can exit quickly and
->  	 * free their memory.
->  	 */
-> -	if (unlikely(tsk_is_oom_victim(current) ||
-> -		     fatal_signal_pending(current) ||
-> -		     current->flags & PF_EXITING))
-> +	if (unlikely(should_force_charge()))
->  		goto force;
 >  
->  	/*
+> +#ifdef CONFIG_EROFS_FS_POSIX_ACL
+> +struct posix_acl *erofs_get_acl(struct inode *inode, int type)
+> +{
+> +	struct posix_acl *acl;
+> +	int ea_prefix, rc;
+> +	char *value = NULL;
+> +
+> +	switch(type) {
+> +	case ACL_TYPE_ACCESS:
+> +		ea_prefix = EROFS_XATTR_INDEX_POSIX_ACL_ACCESS;
+> +		break;
+> +	case ACL_TYPE_DEFAULT:
+> +		ea_prefix = EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT;
+> +		break;
+> +	default:
+> +		return ERR_PTR(-EINVAL);
+> +	}
+> +
+> +	rc = erofs_getxattr(inode, ea_prefix, "", NULL, 0);
+> +	if (rc > 0) {
+> +		value = kvmalloc(rc, GFP_KERNEL);
+
+erofs_kmalloc() is enough?
+
+Thanks,
+
+> +		if (!value)
+> +			return ERR_PTR(-ENOMEM);
+> +		rc = erofs_getxattr(inode, ea_prefix, "", value, rc);
+> +	}
+> +
+> +	if (rc == -ENOATTR)
+> +		acl = NULL;
+> +	else if (rc < 0)
+> +		acl = ERR_PTR(rc);
+> +	else
+> +		acl = posix_acl_from_xattr(&init_user_ns, value, rc);
+> +	kvfree(value);
+> +	return acl;
+> +}
+> +#endif
+> +
+> diff --git a/drivers/staging/erofs/xattr.h b/drivers/staging/erofs/xattr.h
+> index 634dae9aaa0b..35ba5ac2139a 100644
+> --- a/drivers/staging/erofs/xattr.h
+> +++ b/drivers/staging/erofs/xattr.h
+> @@ -87,5 +87,11 @@ static ssize_t __maybe_unused erofs_listxattr(struct dentry *dentry,
+>  }
+>  #endif
+>  
+> +#ifdef CONFIG_EROFS_FS_POSIX_ACL
+> +struct posix_acl *erofs_get_acl(struct inode *inode, int type);
+> +#else
+> +#define erofs_get_acl	(NULL)
+> +#endif
+> +
+>  #endif
+>  
 > 
 
-
--- 
-Arkadiusz Miśkiewicz, arekm / ( maven.pl | pld-linux.org )
