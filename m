@@ -2,142 +2,135 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51C8EC282C5
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB4BC282C5
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:11:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 10777218F0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:10:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mgQjPLJs"
+	by mail.kernel.org (Postfix) with ESMTP id E9504218F0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:11:12 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727290AbfAZIKc (ORCPT
+        id S1728029AbfAZILL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 03:10:32 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43428 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726122AbfAZIKb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 03:10:31 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f9so9100813eds.10;
-        Sat, 26 Jan 2019 00:10:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=4Jzvf/p0rpOd3JqtM+G4fhfeLqa+SZeQEdzgW17WLl0=;
-        b=mgQjPLJsFH8tLW+pI9Q/rPKTVLUsrlY8etLIXBoXww3TPQztANay59ObLgQsyXph84
-         1/Iuw3HIdDjn5ohfXzn9/jmb/RjQ7ei6g7Uj+lAaSPSv6moI4z+m40tkZHwt6+cASTYy
-         PzlcK3TtjQQtvjja5nAZ2TPLzJlQV9qug5vAUL+k2VnJLrTP/IaCtBXJdjNYNHeZF86N
-         S6Ovssz+W7/7OIH1KeGXa+pnnztVtNft9GhZklKxeCRgf2Bvqm6kt4OQJpXxA5xL4X7z
-         eyTrwimdw/yxi/XIr2rqPYC8d4Pmxh9BVI6O17ydFTluM84K3o3aBbdQS8u3FEWAZK6R
-         a/tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4Jzvf/p0rpOd3JqtM+G4fhfeLqa+SZeQEdzgW17WLl0=;
-        b=CL6ar0P1mGygAkRVTY5rpCqSXTHzpJ1DoESuEevDxrdfub/NLjmyhIqncogyPL4Oph
-         69rIZDOhLgysmX0DKU/eoR8+qAGLkrpLcO593fWSUyjQuaWM25ELOtSJge6y9FOOROS3
-         oTYGxET6Swt8YJuEQZ3qSokB/purVapJuJVz9anyqyoWOJAvawDLurRUW64s4LFxQ1O8
-         ebZbW5e7pBpQsVoofI+3bZn8mQearibBMuHJU+62JZse+rj7QJoItNUvCiXZmHaFYwy6
-         nvLJpeVmQXG327GTVzpQs7/BrDoPMKeKHzJSDBOkcPsh79j7LrwprH3D0WGpBUVkZUwt
-         oZ8A==
-X-Gm-Message-State: AJcUukembbODMLQg88LqUDylwwzJhUsTZoomYASl20AvzC9xIbUFABSO
-        xlE4vR7JgAyVQJX9ahs2SLs=
-X-Google-Smtp-Source: ALg8bN72aXNreeTrr22yGwhZyrajInHA2s3iMmWeFGKpIHoBamC69bF9neL5NHLZmQ5yH3aZ4RApMw==
-X-Received: by 2002:a17:906:4ad7:: with SMTP id u23-v6mr12455182ejt.202.1548490229472;
-        Sat, 26 Jan 2019 00:10:29 -0800 (PST)
-Received: from archlinux-ryzen ([2a01:4f9:2a:1fae::2])
-        by smtp.gmail.com with ESMTPSA id f31sm12692806eda.16.2019.01.26.00.10.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 26 Jan 2019 00:10:28 -0800 (PST)
-Date:   Sat, 26 Jan 2019 01:10:27 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     =?iso-8859-1?Q?R=E9mi?= Denis-Courmont <remi@remlab.net>,
-        Remi Denis-Courmont <courmisch@gmail.com>
-Cc:     "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Nick Desaulniers <ndesaulniers@google.com>
-Subject: Re: Clang warnings in net/phonet
-Message-ID: <20190126081027.GA30885@archlinux-ryzen>
-References: <20190108025420.GA26093@flashbox>
+        Sat, 26 Jan 2019 03:11:11 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41146 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726122AbfAZILL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 03:11:11 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 76EF6142C0B;
+        Sat, 26 Jan 2019 08:11:10 +0000 (UTC)
+Received: from [10.36.112.15] (unknown [10.36.112.15])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7650D1797F;
+        Sat, 26 Jan 2019 08:11:08 +0000 (UTC)
+Subject: Re: [PATCH] x86/kvm/hyper-v: don't announce GUEST IDLE MSR support
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>, kvm@vger.kernel.org
+Cc:     =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Roman Kagan <rkagan@virtuozzo.com>,
+        linux-kernel@vger.kernel.org
+References: <20190124142709.8184-1-vkuznets@redhat.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <47cc28ee-8c33-6859-c3b8-95f6d065d0cd@redhat.com>
+Date:   Sat, 26 Jan 2019 09:11:04 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190108025420.GA26093@flashbox>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+In-Reply-To: <20190124142709.8184-1-vkuznets@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Sat, 26 Jan 2019 08:11:10 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 07, 2019 at 07:54:20PM -0700, Nathan Chancellor wrote:
-> Hi all,
+On 24/01/19 15:27, Vitaly Kuznetsov wrote:
+> HV_X64_MSR_GUEST_IDLE_AVAILABLE appeared in kvm_vcpu_ioctl_get_hv_cpuid()
+> by mistake: it announces support for HV_X64_MSR_GUEST_IDLE (0x400000F0)
+> which we don't support in KVM (yet).
 > 
-> When building the kernel with Clang, this warning comes up in net/phonet.
+> Fixes: 2bc39970e932 ("x86/kvm/hyper-v: Introduce KVM_GET_SUPPORTED_HV_CPUID")
+> Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+> ---
+>  arch/x86/kvm/hyperv.c | 1 -
+>  1 file changed, 1 deletion(-)
 > 
-> net/phonet/pep.c:224:16: warning: array index 1 is past the end of the array (which contains 1 element) [-Warray-bounds]
->         ph->data[0] = oph->data[1]; /* CTRL id */
->                       ^         ~
-> include/net/phonet/pep.h:66:3: note: array 'data' declared here
->                 u8              data[1];
->                 ^
-> net/phonet/pep.c:281:10: warning: array index 1 is past the end of the array (which contains 1 element) [-Warray-bounds]
->         switch (hdr->data[1]) {
->                 ^         ~
-> include/net/phonet/pep.h:66:3: note: array 'data' declared here
->                 u8              data[1];
->                 ^
-> net/phonet/pep.c:285:12: warning: array index 4 is past the end of the array (which contains 1 element) [-Warray-bounds]
->                         switch (hdr->data[4]) {
->                                 ^         ~
-> include/net/phonet/pep.h:66:3: note: array 'data' declared here
->                 u8              data[1];
->                 ^
-> net/phonet/pep.c:295:8: warning: array index 4 is past the end of the array (which contains 1 element) [-Warray-bounds]
->                         if (hdr->data[4] == PEP_IND_READY)
->                             ^         ~
-> include/net/phonet/pep.h:66:3: note: array 'data' declared here
->                 u8              data[1];
->                 ^
-> net/phonet/pep.c:304:21: warning: array index 4 is past the end of the array (which contains 1 element) [-Warray-bounds]
->                 atomic_add(wake = hdr->data[4], &pn->tx_credits);
->                                   ^         ~
-> include/net/phonet/pep.h:66:3: note: array 'data' declared here
->                 u8              data[1];
->                 ^
-> net/phonet/pep.c:509:9: warning: array index 4 is past the end of the array (which contains 1 element) [-Warray-bounds]
->         n_sb = hdr->data[4];
->                ^         ~
-> include/net/phonet/pep.h:66:3: note: array 'data' declared here
->                 u8              data[1];
->                 ^
-> net/phonet/pep.c:817:14: warning: array index 1 is past the end of the array (which contains 1 element) [-Warray-bounds]
->         peer_type = hdr->other_pep_type << 8;
->                     ^    ~~~~~~~~~~~~~~
-> include/net/phonet/pep.h:66:3: note: array 'data' declared here
->                 u8              data[1];
->                 ^
-> net/phonet/pep.c:820:9: warning: array index 4 is past the end of the array (which contains 1 element) [-Warray-bounds]
->         n_sb = hdr->data[4];
->                ^         ~
-> include/net/phonet/pep.h:66:3: note: array 'data' declared here
->                 u8              data[1];
->                 ^
-> 8 warnings generated.
+> diff --git a/arch/x86/kvm/hyperv.c b/arch/x86/kvm/hyperv.c
+> index c90a5352d158..ac44a681f065 100644
+> --- a/arch/x86/kvm/hyperv.c
+> +++ b/arch/x86/kvm/hyperv.c
+> @@ -1832,7 +1832,6 @@ int kvm_vcpu_ioctl_get_hv_cpuid(struct kvm_vcpu *vcpu, struct kvm_cpuid2 *cpuid,
+>  			ent->eax |= HV_X64_MSR_VP_INDEX_AVAILABLE;
+>  			ent->eax |= HV_X64_MSR_RESET_AVAILABLE;
+>  			ent->eax |= HV_MSR_REFERENCE_TSC_AVAILABLE;
+> -			ent->eax |= HV_X64_MSR_GUEST_IDLE_AVAILABLE;
+>  			ent->eax |= HV_X64_ACCESS_FREQUENCY_MSRS;
+>  			ent->eax |= HV_X64_ACCESS_REENLIGHTENMENT;
+>  
 > 
-> I have taken a look at the effected code but I can't really figure out
-> the proper fix for this warning (my knowledge of C just isn't there
-> yet). Nick had suggested changing 'u8 data[1]' to 'u8 *data' in
-> 'struct pnpipehdr', which seems logical but I can't say for sure. Any
-> advice would be appreciated :)
-> 
-> Thanks,
-> Nathan
 
-Gentle ping?
+Queued, thanks.
+
+Paolo
