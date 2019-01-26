@@ -2,332 +2,106 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20015C282C5
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:24:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35917C282C5
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0951218B0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:24:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="MDdlf1nf"
+	by mail.kernel.org (Postfix) with ESMTP id 03ABF218A6
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:30:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726362AbfAZIYb (ORCPT
+        id S1726689AbfAZIaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 03:24:31 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25327 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726091AbfAZIYb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 03:24:31 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548491045; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=dsb4k6hdbwZLTNmyO7XpAwWCf3qovs0ho/eYHJN9HAXeUN+t35+N3k2cUkXyGNFuOQZJb5CoiBoXDaK8K4rb9wHRHDwygvI8yeg4iyivT5EKVL9QCUnNsuRYOnEMnDiacNTEVUaBR7ODtMRQeTPKh+pNwshnj8u+2qXytOCQXJ8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548491045; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=RP1CToRdam3cQPGr7dzyewBDiLQg0f7cEhSjfL014xI=; 
-        b=Qqb5NMN1Tto28JwBFmILrvnWE/KvIa4qprH3885mXP5Fy42gYE4xWVRew6lh80EQS+cyjeCvIRRPZHdEwtwTIDiV1bZLCZXJHSpHKJGNnhFmFqrruSmG8cBDDa4E087jB9fYOsaINxQJUNqDTX1iMGSAM4sg3Wnq7RKd+DRLuKg=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
-  b=jmNGgUkFYs9uzqq5XrhtRtkDLYoh55/lr4aFWSj0596bVw/zR70n3+jUaOq5attCwT+TYZ/v384Q
-    vXTWDZuBIABmNdttj/xXHwcSz4TpVI6wd9lmSOwXPfNOVxy+rZaR  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548491045;
-        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        l=12001; bh=RP1CToRdam3cQPGr7dzyewBDiLQg0f7cEhSjfL014xI=;
-        b=MDdlf1nfNfV+z5XRsEyF81JHaXYRXvub+fDiqE8opGGCKnTruZ/9yCgEP58r3DRp
-        B2wWSH+w+AeagADoQFNJUMd4LWt9JfFWJTzPhJCX/76GkoVHZbNTyXV7wNVEDdGxG54
-        g8aP1bcP18eGu8u2rqx3U++u6Sr3o6i6Ry2E/zWA=
-Received: from [192.168.88.133] (171.221.112.138 [171.221.112.138]) by mx.zohomail.com
-        with SMTPS id 1548491043069117.07821722834046; Sat, 26 Jan 2019 00:24:03 -0800 (PST)
-Subject: Re: [PATCH RESEND 4/4] Pinctrl: Ingenic: Fix const declaration.
-To:     Paul Cercueil <paul@crapouillou.net>
-References: <1548410393-6981-1-git-send-email-zhouyanjie@zoho.com>
- <1548410393-6981-5-git-send-email-zhouyanjie@zoho.com>
- <1548439157.1804.1@crapouillou.net>
-Cc:     linus.walleij@linaro.org, linux-mips@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        paul.burton@mips.com, syq@debian.org, jiaxun.yang@flygoat.com,
-        772753199@qq.com, apw@canonical.com, joe@perches.com
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-Message-ID: <5C4C191B.9040702@zoho.com>
-Date:   Sat, 26 Jan 2019 16:23:55 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
-MIME-Version: 1.0
-In-Reply-To: <1548439157.1804.1@crapouillou.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+        Sat, 26 Jan 2019 03:30:21 -0500
+Received: from mail.qboosh.pl ([217.73.31.61]:58575 "EHLO mail.qboosh.pl"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726122AbfAZIaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 03:30:21 -0500
+X-Greylist: delayed 417 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Jan 2019 03:30:20 EST
+Received: by mail.qboosh.pl (Postfix, from userid 1000)
+        id 040B21A26DA9; Sat, 26 Jan 2019 09:23:22 +0100 (CET)
+Date:   Sat, 26 Jan 2019 09:23:22 +0100
+From:   Jakub Bogusz <qboosh@pld-linux.org>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc:     Eric Wong <e@80x24.org>, lkml <linux-kernel@vger.kernel.org>,
+        Miloslav Trmac <mitr@volny.cz>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: Re: [PATCH][RESEND] wistron_btns needs executable BIOS image
+Message-ID: <20190126082321.GA6792@mail>
+References: <20170731182010.GA933@stranger.qboosh.pl> <20190125191437.GA25902@stranger.qboosh.pl> <20190125211349.nfbbcuaip5y6l5dr@dcvr> <CAKdAkRSZ6cT=fO42YG320Po6cYtWaPgg2puAf5jMnC+hD+Em2g@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAKdAkRSZ6cT=fO42YG320Po6cYtWaPgg2puAf5jMnC+hD+Em2g@mail.gmail.com>
+User-Agent: Mutt/1.4.2.3i
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My fault, I checked it again, the reason for this problem is that the
-member "pins" in structure "group_desc" is not a const type.
-It did not report this warning when I used gcc-5.2.0.
-After switching to gcc-6.3.0, the warning appeared.
-Should we ignore the warning information given by checkpatch.pl?
+On Fri, Jan 25, 2019 at 01:41:47PM -0800, Dmitry Torokhov wrote:
+> On Fri, Jan 25, 2019 at 1:13 PM Eric Wong <e@80x24.org> wrote:
+> >
+> > Jakub Bogusz <qboosh@pld-linux.org> wrote:
+> > > Let's try once again... (take 3)
+> > >
+> > > First time I sent this patch when I prepared it in 2013 for Linux 3.12,
+> > > the second time after update for Linux 4.12 in 2017...
+> > > And it still applies to Linux 4.20.
+> >
+> > Adding Dmitry Torokhov and linux-input to Cc:
+> > (that's what ./scripts/get_maintainer.pl says)
 
-On 2019=E5=B9=B401=E6=9C=8826=E6=97=A5 01:59, Paul Cercueil wrote:
-> Hi,
->
-> On Fri, Jan 25, 2019 at 6:59 AM, Zhou Yanjie <zhouyanjie@zoho.com> wrote:
->> Warning is reported when checkpatch indicates that
->> "static const char * array" should be changed to
->> "static const char * const".
->>
->> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com=20
->> <mailto:zhouyanjie@zoho.com>>
->> ---
->>  drivers/pinctrl/pinctrl-ingenic.c | 136=20
->> +++++++++++++++++++++-----------------
->>  1 file changed, 76 insertions(+), 60 deletions(-)
->>
->> diff --git a/drivers/pinctrl/pinctrl-ingenic.c=20
->> b/drivers/pinctrl/pinctrl-ingenic.c
->> index 2b3f7e4..e982896 100644
->> --- a/drivers/pinctrl/pinctrl-ingenic.c
->> +++ b/drivers/pinctrl/pinctrl-ingenic.c
->> @@ -172,23 +172,25 @@ static const struct group_desc jz4740_groups[] =3D=
- {
->>      INGENIC_PIN_GROUP("pwm7", jz4740_pwm_pwm7),
->>  };
->>
->> -static const char *jz4740_mmc_groups[] =3D { "mmc-1bit", "mmc-4bit", };
->> -static const char *jz4740_uart0_groups[] =3D { "uart0-data",=20
->> "uart0-hwflow", };
->> -static const char *jz4740_uart1_groups[] =3D { "uart1-data", };
->> -static const char *jz4740_lcd_groups[] =3D {
->> +static const char * const jz4740_mmc_groups[] =3D { "mmc-1bit",=20
->> "mmc-4bit", };
->> +static const char * const jz4740_uart0_groups[] =3D {
->> +    "uart0-data", "uart0-hwflow",
->> +};
->> +static const char * const jz4740_uart1_groups[] =3D { "uart1-data", };
->> +static const char * const jz4740_lcd_groups[] =3D {
->>      "lcd-8bit", "lcd-16bit", "lcd-18bit", "lcd-18bit-tft",=20
->> "lcd-no-pins",
->>  };
->> -static const char *jz4740_nand_groups[] =3D {
->> +static const char * const jz4740_nand_groups[] =3D {
->>      "nand-cs1", "nand-cs2", "nand-cs3", "nand-cs4",
->>  };
->> -static const char *jz4740_pwm0_groups[] =3D { "pwm0", };
->> -static const char *jz4740_pwm1_groups[] =3D { "pwm1", };
->> -static const char *jz4740_pwm2_groups[] =3D { "pwm2", };
->> -static const char *jz4740_pwm3_groups[] =3D { "pwm3", };
->> -static const char *jz4740_pwm4_groups[] =3D { "pwm4", };
->> -static const char *jz4740_pwm5_groups[] =3D { "pwm5", };
->> -static const char *jz4740_pwm6_groups[] =3D { "pwm6", };
->> -static const char *jz4740_pwm7_groups[] =3D { "pwm7", };
->> +static const char * const jz4740_pwm0_groups[] =3D { "pwm0", };
->> +static const char * const jz4740_pwm1_groups[] =3D { "pwm1", };
->> +static const char * const jz4740_pwm2_groups[] =3D { "pwm2", };
->> +static const char * const jz4740_pwm3_groups[] =3D { "pwm3", };
->> +static const char * const jz4740_pwm4_groups[] =3D { "pwm4", };
->> +static const char * const jz4740_pwm5_groups[] =3D { "pwm5", };
->> +static const char * const jz4740_pwm6_groups[] =3D { "pwm6", };
->> +static const char * const jz4740_pwm7_groups[] =3D { "pwm7", };
->>
->>  static const struct function_desc jz4740_functions[] =3D {
->>      { "mmc", jz4740_mmc_groups, ARRAY_SIZE(jz4740_mmc_groups), },
->
-> With this patch applied I get this:
->
-> drivers/pinctrl/pinctrl-ingenic.c:196:11: attention : initialization=20
-> discards
-> =E2=80=98const=E2=80=99 qualifier from pointer target type [-Wdiscarded-q=
-ualifiers]
->  { "mmc", jz4740_mmc_groups, ARRAY_SIZE(jz4740_mmc_groups), },
->           ^~~~~~~~~~~~~~~~~
->
->> @@ -272,19 +274,19 @@ static const struct group_desc jz4725b_groups[]=20
->> =3D {
->>      INGENIC_PIN_GROUP("pwm5", jz4725b_pwm_pwm5),
->>  };
->>
->> -static const char *jz4725b_mmc0_groups[] =3D { "mmc0-1bit",=20
->> "mmc0-4bit", };
->> -static const char *jz4725b_mmc1_groups[] =3D { "mmc1-1bit",=20
->> "mmc1-4bit", };
->> -static const char *jz4725b_uart_groups[] =3D { "uart-data", };
->> -static const char *jz4725b_nand_groups[] =3D {
->> +static const char * const jz4725b_mmc0_groups[] =3D { "mmc0-1bit",=20
->> "mmc0-4bit", };
->> +static const char * const jz4725b_mmc1_groups[] =3D { "mmc1-1bit",=20
->> "mmc1-4bit", };
->> +static const char * const jz4725b_uart_groups[] =3D { "uart-data", };
->> +static const char * const jz4725b_nand_groups[] =3D {
->>      "nand-cs1", "nand-cs2", "nand-cs3", "nand-cs4",
->>      "nand-cle-ale", "nand-fre-fwe",
->>  };
->> -static const char *jz4725b_pwm0_groups[] =3D { "pwm0", };
->> -static const char *jz4725b_pwm1_groups[] =3D { "pwm1", };
->> -static const char *jz4725b_pwm2_groups[] =3D { "pwm2", };
->> -static const char *jz4725b_pwm3_groups[] =3D { "pwm3", };
->> -static const char *jz4725b_pwm4_groups[] =3D { "pwm4", };
->> -static const char *jz4725b_pwm5_groups[] =3D { "pwm5", };
->> +static const char * const jz4725b_pwm0_groups[] =3D { "pwm0", };
->> +static const char * const jz4725b_pwm1_groups[] =3D { "pwm1", };
->> +static const char * const jz4725b_pwm2_groups[] =3D { "pwm2", };
->> +static const char * const jz4725b_pwm3_groups[] =3D { "pwm3", };
->> +static const char * const jz4725b_pwm4_groups[] =3D { "pwm4", };
->> +static const char * const jz4725b_pwm5_groups[] =3D { "pwm5", };
->>
->>  static const struct function_desc jz4725b_functions[] =3D {
->>      { "mmc0", jz4725b_mmc0_groups, ARRAY_SIZE(jz4725b_mmc0_groups), },
->> @@ -500,46 +502,56 @@ static const struct group_desc jz4770_groups[] =3D=
- {
->>      INGENIC_PIN_GROUP("mac-mii", jz4770_mac_mii),
->>  };
->>
->> -static const char *jz4770_uart0_groups[] =3D { "uart0-data",=20
->> "uart0-hwflow", };
->> -static const char *jz4770_uart1_groups[] =3D { "uart1-data",=20
->> "uart1-hwflow", };
->> -static const char *jz4770_uart2_groups[] =3D { "uart2-data",=20
->> "uart2-hwflow", };
->> -static const char *jz4770_uart3_groups[] =3D { "uart3-data",=20
->> "uart3-hwflow", };
->> -static const char *jz4770_mmc0_groups[] =3D {
->> +static const char * const jz4770_uart0_groups[] =3D {
->> +    "uart0-data", "uart0-hwflow",
->> +};
->> +static const char * const jz4770_uart1_groups[] =3D {
->> +    "uart1-data", "uart1-hwflow",
->> +};
->> +static const char * const jz4770_uart2_groups[] =3D {
->> +    "uart2-data", "uart2-hwflow",
->> +};
->> +static const char * const jz4770_uart3_groups[] =3D {
->> +    "uart3-data", "uart3-hwflow",
->> +};
->> +static const char * const jz4770_mmc0_groups[] =3D {
->>      "mmc0-1bit-a", "mmc0-4bit-a",
->>      "mmc0-1bit-e", "mmc0-4bit-e", "mmc0-8bit-e",
->>  };
->> -static const char *jz4770_mmc1_groups[] =3D {
->> +static const char * const jz4770_mmc1_groups[] =3D {
->>      "mmc1-1bit-d", "mmc1-4bit-d",
->>      "mmc1-1bit-e", "mmc1-4bit-e", "mmc1-8bit-e",
->>  };
->> -static const char *jz4770_mmc2_groups[] =3D {
->> +static const char * const jz4770_mmc2_groups[] =3D {
->>      "mmc2-1bit-b", "mmc2-4bit-b",
->>      "mmc2-1bit-e", "mmc2-4bit-e", "mmc2-8bit-e",
->>  };
->> -static const char *jz4770_nemc_groups[] =3D {
->> +static const char * const jz4770_nemc_groups[] =3D {
->>      "nemc-8bit-data", "nemc-16bit-data", "nemc-cle-ale",
->>      "nemc-addr", "nemc-rd-we", "nemc-frd-fwe", "nemc-wait",
->>  };
->> -static const char *jz4770_cs1_groups[] =3D { "nemc-cs1", };
->> -static const char *jz4770_cs2_groups[] =3D { "nemc-cs2", };
->> -static const char *jz4770_cs3_groups[] =3D { "nemc-cs3", };
->> -static const char *jz4770_cs4_groups[] =3D { "nemc-cs4", };
->> -static const char *jz4770_cs5_groups[] =3D { "nemc-cs5", };
->> -static const char *jz4770_cs6_groups[] =3D { "nemc-cs6", };
->> -static const char *jz4770_i2c0_groups[] =3D { "i2c0-data", };
->> -static const char *jz4770_i2c1_groups[] =3D { "i2c1-data", };
->> -static const char *jz4770_i2c2_groups[] =3D { "i2c2-data", };
->> -static const char *jz4770_cim_groups[] =3D { "cim-data-8bit",=20
->> "cim-data-12bit", };
->> -static const char *jz4770_lcd_groups[] =3D { "lcd-24bit",=20
->> "lcd-no-pins", };
->> -static const char *jz4770_pwm0_groups[] =3D { "pwm0", };
->> -static const char *jz4770_pwm1_groups[] =3D { "pwm1", };
->> -static const char *jz4770_pwm2_groups[] =3D { "pwm2", };
->> -static const char *jz4770_pwm3_groups[] =3D { "pwm3", };
->> -static const char *jz4770_pwm4_groups[] =3D { "pwm4", };
->> -static const char *jz4770_pwm5_groups[] =3D { "pwm5", };
->> -static const char *jz4770_pwm6_groups[] =3D { "pwm6", };
->> -static const char *jz4770_pwm7_groups[] =3D { "pwm7", };
->> -static const char *jz4770_mac_groups[] =3D { "mac-rmii", "mac-mii", };
->> +static const char * const jz4770_cs1_groups[] =3D { "nemc-cs1", };
->> +static const char * const jz4770_cs2_groups[] =3D { "nemc-cs2", };
->> +static const char * const jz4770_cs3_groups[] =3D { "nemc-cs3", };
->> +static const char * const jz4770_cs4_groups[] =3D { "nemc-cs4", };
->> +static const char * const jz4770_cs5_groups[] =3D { "nemc-cs5", };
->> +static const char * const jz4770_cs6_groups[] =3D { "nemc-cs6", };
->> +static const char * const jz4770_i2c0_groups[] =3D { "i2c0-data", };
->> +static const char * const jz4770_i2c1_groups[] =3D { "i2c1-data", };
->> +static const char * const jz4770_i2c2_groups[] =3D { "i2c2-data", };
->> +static const char * const jz4770_cim_groups[] =3D {
->> +    "cim-data-8bit", "cim-data-12bit",
->> +};
->> +static const char * const jz4770_lcd_groups[] =3D { "lcd-24bit",=20
->> "lcd-no-pins", };
->> +static const char * const jz4770_pwm0_groups[] =3D { "pwm0", };
->> +static const char * const jz4770_pwm1_groups[] =3D { "pwm1", };
->> +static const char * const jz4770_pwm2_groups[] =3D { "pwm2", };
->> +static const char * const jz4770_pwm3_groups[] =3D { "pwm3", };
->> +static const char * const jz4770_pwm4_groups[] =3D { "pwm4", };
->> +static const char * const jz4770_pwm5_groups[] =3D { "pwm5", };
->> +static const char * const jz4770_pwm6_groups[] =3D { "pwm6", };
->> +static const char * const jz4770_pwm7_groups[] =3D { "pwm7", };
->> +static const char * const jz4770_mac_groups[] =3D { "mac-rmii",=20
->> "mac-mii", };
->>
->>  static const struct function_desc jz4770_functions[] =3D {
->>      { "uart0", jz4770_uart0_groups, ARRAY_SIZE(jz4770_uart0_groups), },
->> @@ -652,25 +664,29 @@ static const struct group_desc jz4780_groups[] =3D=
- {
->>      INGENIC_PIN_GROUP("pwm7", jz4770_pwm_pwm7),
->>  };
->>
->> -static const char *jz4780_uart2_groups[] =3D { "uart2-data",=20
->> "uart2-hwflow", };
->> -static const char *jz4780_uart4_groups[] =3D { "uart4-data", };
->> -static const char *jz4780_mmc0_groups[] =3D {
->> +static const char * const jz4780_uart2_groups[] =3D {
->> +    "uart2-data", "uart2-hwflow",
->> +};
->> +static const char * const jz4780_uart4_groups[] =3D { "uart4-data", };
->> +static const char * const jz4780_mmc0_groups[] =3D {
->>      "mmc0-1bit-a", "mmc0-4bit-a", "mmc0-8bit-a",
->>      "mmc0-1bit-e", "mmc0-4bit-e",
->>  };
->> -static const char *jz4780_mmc1_groups[] =3D {
->> +static const char * const jz4780_mmc1_groups[] =3D {
->>      "mmc1-1bit-d", "mmc1-4bit-d", "mmc1-1bit-e", "mmc1-4bit-e",
->>  };
->> -static const char *jz4780_mmc2_groups[] =3D {
->> +static const char * const jz4780_mmc2_groups[] =3D {
->>      "mmc2-1bit-b", "mmc2-4bit-b", "mmc2-1bit-e", "mmc2-4bit-e",
->>  };
->> -static const char *jz4780_nemc_groups[] =3D {
->> +static const char * const jz4780_nemc_groups[] =3D {
->>      "nemc-data", "nemc-cle-ale", "nemc-addr",
->>      "nemc-rd-we", "nemc-frd-fwe", "nemc-wait",
->>  };
->> -static const char *jz4780_i2c3_groups[] =3D { "i2c3-data", };
->> -static const char *jz4780_i2c4_groups[] =3D { "i2c4-data-e",=20
->> "i2c4-data-f", };
->> -static const char *jz4780_cim_groups[] =3D { "cim-data", };
->> +static const char * const jz4780_i2c3_groups[] =3D { "i2c3-data", };
->> +static const char * const jz4780_i2c4_groups[] =3D {
->> +    "i2c4-data-e", "i2c4-data-f",
->> +};
->> +static const char * const jz4780_cim_groups[] =3D { "cim-data", };
->>
->>  static const struct function_desc jz4780_functions[] =3D {
->>      { "uart0", jz4770_uart0_groups, ARRAY_SIZE(jz4770_uart0_groups), },
->> --=20
->> 2.7.4
->>
->>
->
->
+Thanks. I was aware only of MAINTAINERS file.
+
+[...]
+> > > wistron_btns needs executable BIOS image.
+> > >
+> > > Signed-off-by: Jakub Bogusz <qboosh@pld-linux.org>
+> > >
+> > > --- linux-4.12/drivers/input/misc/wistron_btns.c.orig 2013-11-16 09:05:55.612742472 +0100
+> > > +++ linux-4.12/drivers/input/misc/wistron_btns.c      2013-11-16 09:24:37.356028732 +0100
+> > > @@ -33,6 +33,7 @@
+> > >  #include <linux/types.h>
+> > >  #include <linux/platform_device.h>
+> > >  #include <linux/leds.h>
+> > > +#include <asm/set_memory.h>
+> > >
+> > >  /* How often we poll keys - msecs */
+> > >  #define POLL_INTERVAL_DEFAULT        500 /* when idle */
+> > > @@ -124,6 +125,7 @@
+> > >       if (entry_point >= 0xF0000) {
+> > >               bios_code_map_base = base;
+> > >               bios_entry_point = bios_code_map_base + (entry_point & 0xFFFF);
+> > > +             set_memory_x((unsigned long)bios_code_map_base, 0x10000 >> PAGE_SHIFT);
+> > >       } else {
+> > >               iounmap(base);
+> > >               bios_code_map_base = ioremap(entry_point & ~0x3FFF, 0x4000);
+> > > @@ -134,6 +136,7 @@
+> > >                       goto err;
+> > >               }
+> > >               bios_entry_point = bios_code_map_base + (entry_point & 0x3FFF);
+> > > +             set_memory_x((unsigned long)bios_code_map_base, 0x4000 >> PAGE_SHIFT);
+> > >       }
+> > >       /* The Windows driver maps 0x10000 bytes, we keep only one page... */
+> > >       bios_data_map_base = ioremap(0x400, 0xc00);
+> 
+> It is really weird have __iomem region to have executable bit set. I
+> wonder if, along with the setting memory to X, we should not change
+> that ioremap() to memremap()?
+
+Maybe... this is area of BIOS ROM, not I/O. But I'm not sure about
+cacheability.
+
+Looking at recent kernel code (4.19 to be exact) ioremap ends in
+__ioremap_caller with _PAGE_CACHE_MODE_UC_MINUS, while memremap would end
+in __ioremap_caller with e.g. (depending on flags) _PAGE_CACHE_MODE_WT.
+
+Unfortunately now I have rare access to this hardware (FS Amilo) to
+test.
 
 
-
+-- 
+Jakub Bogusz    http://qboosh.pl/
