@@ -2,430 +2,194 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86028C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 18:16:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E73C282C9
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 18:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4013421872
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 18:16:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mf9QuN8o"
+	by mail.kernel.org (Postfix) with ESMTP id 51E39218A6
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 18:17:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548526649;
+	bh=lgFuBwHkLU/6piaKUPoh8tsQjofieMDIzapn1TfeaoY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=vcdgGk149zdTu0DD/EBkvCtq1hdj1EEa8scLPwn61Yh3FLj6tD0zuUyLM7rzvD3jb
+	 cufgzC8F1Dc0MOdtvwr0yHQyW3GHqVyhONjWrcMQJbs+z84aeboBsvt0I+CJ1IPk66
+	 bXGjw+ykayMe1vtYai32mlujfJqYnbs0lggp9ML8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726283AbfAZSQ1 (ORCPT
+        id S1726364AbfAZSR2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 13:16:27 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:46898 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726073AbfAZSQ0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 13:16:26 -0500
-Received: by mail-lj1-f196.google.com with SMTP id v15-v6so10928842ljh.13;
-        Sat, 26 Jan 2019 10:16:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=sXQ3j6gwyJDVXlprt68fQXaK9Gt1muzJj/JOTUlcBjc=;
-        b=Mf9QuN8oiUWk7wXub5mvNDUaviNNXjLJrUYvMQCxDnq+33nq4dxO97E9rUBg44irEA
-         dKtD+d9raKZGecjBNyWYRjLAJc63u6U8b5JH67JaBlrAdbrxkPrakl1H8EaPADNTbS+L
-         YH8FNYrxa0ippSSZ9+za4bZrS1Uh+e7vaxKrE/0f9iFejmnIHjOMlhxKs8dCAwj0mUbd
-         oiapY8tWTmnweUHclwDpfPB4LNkBsn0ZGF59qfILBCIR247gwIZwetTlWJrDXEtr8C8s
-         OBvZzisU+0bEE+/h7QSBiG7JdOF5uFj+OMxUeYHa68KFkBJT0kMJsmig19ndrak37fj1
-         tHkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=sXQ3j6gwyJDVXlprt68fQXaK9Gt1muzJj/JOTUlcBjc=;
-        b=O/W9J7XPxs1hGsi5B1N8qUONTgq+qArMZj4Xydm6D8ajv2C3oktlIN8FDJkQMDxw8J
-         /ru0atoGpZxi98DAyvXnE0K9hQia1Z3/INADGYZa8ioLGKLAfBNHZp2kDuu81ezYSeT0
-         MR8nMYVp3AnmnDJtMswAUAuuDJV2vd5qsRxquWI5aCk5VWGHHq3fFXNOptGghN0wLact
-         M5BSoTLbsFMgfoQIT86d6iVdDMePwoCNw5CSjrdaU+tp6XWKd5xHgaoxBQ8tN4LuY0+z
-         fZTZQ6Z8EkdujZOaMLV7mSD4BWl54m3qX+Ht+Jrc2KhC+K6Pvvh6tqwRcG3XrmQjN7Ad
-         HZLw==
-X-Gm-Message-State: AJcUukepNM7SNlH5T4EPfkkAZQcwKzhDsqK2d6Eo/bqnH8x+weagrL5k
-        A7jkiEnzaUhoL285e8gL6iuenqyj
-X-Google-Smtp-Source: ALg8bN5Rh57+D6p621wrAKsPJf3SD+K5HdNFnNP0+xYz8d4NVE5hZl2jL4wEuzTqsnYDz7jbJwCUBA==
-X-Received: by 2002:a2e:83d7:: with SMTP id s23-v6mr12302508ljh.139.1548526582947;
-        Sat, 26 Jan 2019 10:16:22 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
-        by smtp.googlemail.com with ESMTPSA id f16-v6sm2239524lji.88.2019.01.26.10.16.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 26 Jan 2019 10:16:22 -0800 (PST)
-Subject: Re: [PATCH V3 3/3] i2c: tegra: Add DMA Support
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
-        thierry.reding@gmail.com, jonathanh@nvidia.com,
-        mkarthik@nvidia.com, smohammed@nvidia.com, talho@nvidia.com
-Cc:     linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
- <1548475073-12408-3-git-send-email-skomatineni@nvidia.com>
- <fc6f3214-8418-1c4e-90e4-70dd32d253ef@gmail.com>
-Message-ID: <a2ea9d8e-e2ab-5e43-912f-dc4888e509a6@gmail.com>
-Date:   Sat, 26 Jan 2019 21:16:21 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sat, 26 Jan 2019 13:17:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38194 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726073AbfAZSR1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 13:17:27 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D86E21872;
+        Sat, 26 Jan 2019 18:17:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548526646;
+        bh=lgFuBwHkLU/6piaKUPoh8tsQjofieMDIzapn1TfeaoY=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=PnbcmM5ZOoQA3UxngMa/Zu4rlrg/pE9bvSrPiUcy/FMes10EQg3Wj7OzNBkMz6eUe
+         9/rsfxwCGF9rVf8hJNYjBdtDizoa3u7CFTrQ7A72MFCf7tksf3cB44oVlWcZiXTDMA
+         JaM6iRM0voAdwIWSRtiLvQHeZ07LnirWrbG7pHew=
+Date:   Sat, 26 Jan 2019 18:17:21 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Cc:     Alexandru Ardelean <ardeleanalex@gmail.com>,
+        linux-iio@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        alexandru.ardelean@analog.com
+Subject: Re: [PATCH] iio: adc: ad7476: Add support for ADS786X ADCs
+Message-ID: <20190126181721.5e176d6e@archlinux>
+In-Reply-To: <CAPybu_084MFXDT=Op7icdbo2K3LimxoK_jRew7S6R0=q-yqNng@mail.gmail.com>
+References: <20190124213225.11803-1-ricardo@ribalda.com>
+        <CA+U=Dspe=xvki7rZPhofiV50yOLnRR2sg9v1R_XRVxHbDXh-_Q@mail.gmail.com>
+        <CAPybu_084MFXDT=Op7icdbo2K3LimxoK_jRew7S6R0=q-yqNng@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <fc6f3214-8418-1c4e-90e4-70dd32d253ef@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-26.01.2019 20:11, Dmitry Osipenko пишет:
-> 26.01.2019 6:57, Sowjanya Komatineni пишет:
->> This patch adds DMA support for Tegra I2C.
->>
->> Tegra I2C TX and RX FIFO depth is 8 words. PIO mode is used for
->> transfer size of the max FIFO depth and DMA mode is used for
->> transfer size higher than max FIFO depth to save CPU overhead.
->>
->> PIO mode needs full intervention of CPU to fill or empty FIFO's
->> and also need to service multiple data requests interrupt for the
->> same transaction adding overhead on CPU for large transfers.
->>
->> DMA mode is helpful for Large transfers during downloading or
->> uploading FW over I2C to some external devices.
->>
->> Signed-off-by: Sowjanya Komatineni <skomatineni@nvidia.com>
->>
->> ---
->>  [V3] : Updated without additional buffer allocation.
->>  [V2] : Updated based on V1 review feedback along with code cleanup for
->> 	proper implementation of DMA.
->>
->>  drivers/i2c/busses/i2c-tegra.c | 341 ++++++++++++++++++++++++++++++++++++++---
->>  1 file changed, 316 insertions(+), 25 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-tegra.c b/drivers/i2c/busses/i2c-tegra.c
->> index 3dcbc9960d9d..452358a77400 100644
->> --- a/drivers/i2c/busses/i2c-tegra.c
->> +++ b/drivers/i2c/busses/i2c-tegra.c
->> @@ -8,6 +8,9 @@
->>  
->>  #include <linux/clk.h>
->>  #include <linux/delay.h>
->> +#include <linux/dmaengine.h>
->> +#include <linux/dmapool.h>
->> +#include <linux/dma-mapping.h>
->>  #include <linux/err.h>
->>  #include <linux/i2c.h>
->>  #include <linux/init.h>
->> @@ -45,6 +48,8 @@
->>  #define I2C_FIFO_CONTROL_RX_FLUSH		BIT(0)
->>  #define I2C_FIFO_CONTROL_TX_TRIG_SHIFT		5
->>  #define I2C_FIFO_CONTROL_RX_TRIG_SHIFT		2
->> +#define I2C_FIFO_CONTROL_TX_TRIG(x)		(((x) - 1) << 5)
->> +#define I2C_FIFO_CONTROL_RX_TRIG(x)		(((x) - 1) << 2)
->>  #define I2C_FIFO_STATUS				0x060
->>  #define I2C_FIFO_STATUS_TX_MASK			0xF0
->>  #define I2C_FIFO_STATUS_TX_SHIFT		4
->> @@ -119,6 +124,16 @@
->>  /* Packet header size in bytes */
->>  #define I2C_PACKET_HEADER_SIZE			12
->>  
->> +#define DATA_DMA_DIR_TX				(1 << 0)
->> +#define DATA_DMA_DIR_RX				(1 << 1)
->> +
->> +/*
->> + * Upto I2C_PIO_MODE_MAX_LEN bytes, controller will use PIO mode,
->> + * above this, controller will use DMA to fill FIFO.
->> + * MAX PIO len is 20 bytes excluding packet header.
->> + */
->> +#define I2C_PIO_MODE_MAX_LEN			20
->> +
->>  /*
->>   * msg_end_type: The bus control which need to be send at end of transfer.
->>   * @MSG_END_STOP: Send stop pulse at end of transfer.
->> @@ -179,6 +194,7 @@ struct tegra_i2c_hw_feature {
->>   * @fast_clk: clock reference for fast clock of I2C controller
->>   * @rst: reset control for the I2C controller
->>   * @base: ioremapped registers cookie
->> + * @phys_addr: Physical address of I2C base address to use for DMA configuration
->>   * @cont_id: I2C controller ID, used for packet header
->>   * @irq: IRQ number of transfer complete interrupt
->>   * @irq_disabled: used to track whether or not the interrupt is enabled
->> @@ -192,6 +208,14 @@ struct tegra_i2c_hw_feature {
->>   * @clk_divisor_non_hs_mode: clock divider for non-high-speed modes
->>   * @is_multimaster_mode: track if I2C controller is in multi-master mode
->>   * @xfer_lock: lock to serialize transfer submission and processing
->> + * @has_dma: indicated if controller supports DMA
-> 
-> AFAIK, all Terga's support DMA. Let's change to "@has_dma: can utilize DMA" for clarity.
-> 
->> + * @tx_dma_chan: DMA transmit channel
->> + * @rx_dma_chan: DMA receive channel
->> + * @dma_phys: handle to DMA resources
->> + * @dma_buf: pointer to allocated DMA buffer
->> + * @dma_buf_size: DMA buffer size
->> + * @is_curr_dma_xfer: indicates active DMA transfer
->> + * @dma_complete: DMA completion notifier
->>   */
->>  struct tegra_i2c_dev {
->>  	struct device *dev;
->> @@ -201,6 +225,7 @@ struct tegra_i2c_dev {
->>  	struct clk *fast_clk;
->>  	struct reset_control *rst;
->>  	void __iomem *base;
->> +	phys_addr_t phys_addr;
->>  	int cont_id;
->>  	int irq;
->>  	bool irq_disabled;
->> @@ -214,8 +239,18 @@ struct tegra_i2c_dev {
->>  	u16 clk_divisor_non_hs_mode;
->>  	bool is_multimaster_mode;
->>  	spinlock_t xfer_lock;
->> +	bool has_dma;
->> +	struct dma_chan *tx_dma_chan;
->> +	struct dma_chan *rx_dma_chan;
->> +	dma_addr_t dma_phys;
->> +	u32 *dma_buf;
->> +	unsigned int dma_buf_size;
->> +	bool is_curr_dma_xfer;
->> +	struct completion dma_complete;
->>  };
->>  
->> +static struct dma_chan *chan;
->> +
->>  static void dvc_writel(struct tegra_i2c_dev *i2c_dev, u32 val,
->>  		       unsigned long reg)
->>  {
->> @@ -282,6 +317,75 @@ static void tegra_i2c_unmask_irq(struct tegra_i2c_dev *i2c_dev, u32 mask)
->>  	i2c_writel(i2c_dev, int_mask, I2C_INT_MASK);
->>  }
->>  
->> +static void tegra_i2c_dma_complete(void *args)
->> +{
->> +	struct tegra_i2c_dev *i2c_dev = args;
->> +
->> +	complete(&i2c_dev->dma_complete);
->> +}
->> +
->> +static int tegra_i2c_dma_submit(struct tegra_i2c_dev *i2c_dev, size_t len)
->> +{
->> +	struct dma_async_tx_descriptor *dma_desc;
->> +	enum dma_transfer_direction dir;
->> +
->> +	dev_dbg(i2c_dev->dev, "Starting DMA for length: %zu\n", len);
->> +	reinit_completion(&i2c_dev->dma_complete);
->> +	dir = i2c_dev->msg_read ? DMA_DEV_TO_MEM : DMA_MEM_TO_DEV;
->> +	dma_desc = dmaengine_prep_slave_single(chan, i2c_dev->dma_phys,
->> +					       len, dir, DMA_PREP_INTERRUPT |
->> +					       DMA_CTRL_ACK);
->> +	if (!dma_desc) {
->> +		dev_err(i2c_dev->dev, "Failed to get DMA descriptor\n");
->> +		return -EIO;
->> +	}
->> +
->> +	dma_desc->callback = tegra_i2c_dma_complete;
->> +	dma_desc->callback_param = i2c_dev;
->> +	dmaengine_submit(dma_desc);
->> +	dma_async_issue_pending(chan);
->> +	return 0;
->> +}
->> +
->> +static int tegra_i2c_init_dma_param(struct tegra_i2c_dev *i2c_dev,
->> +				    bool dma_to_memory)
->> +{
->> +	struct dma_chan *dma_chan;
->> +	u32 *dma_buf;
->> +	dma_addr_t dma_phys;
->> +	int ret;
->> +	const char *chan_name = dma_to_memory ? "rx" : "tx";
->> +
->> +	dma_chan = dma_request_slave_channel_reason(i2c_dev->dev, chan_name);
->> +	if (IS_ERR(dma_chan))
->> +		return PTR_ERR(dma_chan);
->> +
->> +	dma_buf = dma_alloc_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
->> +				     &dma_phys, GFP_KERNEL);
->> +
->> +	if (!dma_buf) {
->> +		dev_err(i2c_dev->dev, "Failed to allocate the DMA buffer\n");
->> +		ret = -ENOMEM;
->> +		goto scrub;
->> +	}
->> +
->> +	if (dma_to_memory)
->> +		i2c_dev->rx_dma_chan = dma_chan;
->> +	else
->> +		i2c_dev->tx_dma_chan = dma_chan;
->> +
->> +	i2c_dev->dma_buf = dma_buf;
->> +	i2c_dev->dma_phys = dma_phys;
->> +
->> +	return 0;
->> +
->> +scrub:
->> +	dma_free_coherent(i2c_dev->dev, i2c_dev->dma_buf_size,
->> +			  dma_buf, dma_phys);
-> 
-> Will dma_free_coherent() handle NULL ptr which will happen when dma_buf allocation fails for the RX init'ing?
-> 
->> +	dma_release_channel(dma_chan);
->> +	return ret;
->> +}
->> +
->>  static int tegra_i2c_flush_fifos(struct tegra_i2c_dev *i2c_dev)
->>  {
->>  	unsigned long timeout = jiffies + HZ;
->> @@ -641,25 +745,45 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->>  		goto err;
->>  	}
->>  
->> -	if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
->> -		if (i2c_dev->msg_buf_remaining)
->> -			tegra_i2c_empty_rx_fifo(i2c_dev);
->> -		else
->> -			BUG();
->> -	}
->> +	if (!i2c_dev->is_curr_dma_xfer) {
->> +		if (i2c_dev->msg_read && (status & I2C_INT_RX_FIFO_DATA_REQ)) {
->> +			if (i2c_dev->msg_buf_remaining)
->> +				tegra_i2c_empty_rx_fifo(i2c_dev);
->> +			else
->> +				BUG();
->> +		}
->>  
->> -	if (!i2c_dev->msg_read && (status & I2C_INT_TX_FIFO_DATA_REQ)) {
->> -		if (i2c_dev->msg_buf_remaining)
->> -			tegra_i2c_fill_tx_fifo(i2c_dev);
->> -		else
->> -			tegra_i2c_mask_irq(i2c_dev, I2C_INT_TX_FIFO_DATA_REQ);
->> +		if (!i2c_dev->msg_read &&
->> +		   (status & I2C_INT_TX_FIFO_DATA_REQ)) {
->> +			if (i2c_dev->msg_buf_remaining)
->> +				tegra_i2c_fill_tx_fifo(i2c_dev);
->> +			else
->> +				tegra_i2c_mask_irq(i2c_dev,
->> +						   I2C_INT_TX_FIFO_DATA_REQ);
->> +		}
->>  	}
->>  
->>  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
->>  	if (i2c_dev->is_dvc)
->>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
->>  
->> -	if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->> +	if (status & I2C_INT_ALL_PACKETS_XFER_COMPLETE) {
->> +	/*
->> +	 * During message read XFER_COMPLETE interrupt is triggered prior to
->> +	 * DMA complete notification and during message write XFER_COMPLETE
->> +	 * interrupt is triggered after DMA complete notification.
->> +	 * PACKETS_XFER_COMPLETE indicates completion of all bytes of transfer.
->> +	 * so forcing msg_buf_remaining to 0.
->> +	 */
->> +		if (i2c_dev->is_curr_dma_xfer)
->> +			i2c_dev->msg_buf_remaining = 0;
->> +		status |= I2C_INT_PACKET_XFER_COMPLETE;
->> +		i2c_writel(i2c_dev, status, I2C_INT_STATUS);
->> +		if (!i2c_dev->msg_buf_remaining)
->> +			complete(&i2c_dev->msg_complete);
->> +	} else if (status & I2C_INT_PACKET_XFER_COMPLETE) {
->> +		if (i2c_dev->is_curr_dma_xfer)
->> +			i2c_dev->msg_buf_remaining = 0;
->>  		BUG_ON(i2c_dev->msg_buf_remaining);
->>  		complete(&i2c_dev->msg_complete);
->>  	}
->> @@ -668,17 +792,68 @@ static irqreturn_t tegra_i2c_isr(int irq, void *dev_id)
->>  	/* An error occurred, mask all interrupts */
->>  	tegra_i2c_mask_irq(i2c_dev, I2C_INT_NO_ACK | I2C_INT_ARBITRATION_LOST |
->>  		I2C_INT_PACKET_XFER_COMPLETE | I2C_INT_TX_FIFO_DATA_REQ |
->> -		I2C_INT_RX_FIFO_DATA_REQ);
->> +		I2C_INT_RX_FIFO_DATA_REQ | I2C_INT_ALL_PACKETS_XFER_COMPLETE);
->>  	i2c_writel(i2c_dev, status, I2C_INT_STATUS);
->>  	if (i2c_dev->is_dvc)
->>  		dvc_writel(i2c_dev, DVC_STATUS_I2C_DONE_INTR, DVC_STATUS);
->>  
->> +	if (i2c_dev->is_curr_dma_xfer) {
->> +		dmaengine_terminate_all(chan);
->> +		complete(&i2c_dev->dma_complete);
->> +	}
->> +
->>  	complete(&i2c_dev->msg_complete);
->>  done:
->>  	spin_unlock(&i2c_dev->xfer_lock);
->>  	return IRQ_HANDLED;
->>  }
->>  
->> +static void tegra_i2c_config_fifo_trig(struct tegra_i2c_dev *i2c_dev,
->> +				       size_t len, int direction)
->> +{
->> +	u32 val, reg;
->> +	u8 dma_burst = 0;
->> +	struct dma_slave_config dma_sconfig;
->> +
->> +	if (i2c_dev->hw->has_mst_fifo)
->> +		reg = I2C_MST_FIFO_CONTROL;
->> +	else
->> +		reg = I2C_FIFO_CONTROL;
->> +	val = i2c_readl(i2c_dev, reg);
->> +
->> +	if (len & 0xF)
->> +		dma_burst = 1;
->> +	else if (len & 0x10)
->> +		dma_burst = 4;
->> +	else
->> +		dma_burst = 8;
-> 
-> I'm still wondering whether dma_burst < 8 negatively affects transfer efficiency. Could you please clarify?
-> 
->> +
->> +	if (direction == DATA_DMA_DIR_TX) {
->> +		if (i2c_dev->hw->has_mst_fifo)
->> +			val |= I2C_MST_FIFO_CONTROL_TX_TRIG(dma_burst);
->> +		else
->> +			val |= I2C_FIFO_CONTROL_TX_TRIG(dma_burst);
->> +	} else {
->> +		if (i2c_dev->hw->has_mst_fifo)
->> +			val |= I2C_MST_FIFO_CONTROL_RX_TRIG(dma_burst);
->> +		else
->> +			val |= I2C_FIFO_CONTROL_RX_TRIG(dma_burst);
->> +	}
->> +	i2c_writel(i2c_dev, val, reg);
->> +
->> +	if (direction == DATA_DMA_DIR_TX) {
->> +		dma_sconfig.dst_addr = i2c_dev->phys_addr + I2C_TX_FIFO;
->> +		dma_sconfig.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
->> +		dma_sconfig.dst_maxburst = dma_burst;
->> +	} else {
->> +		dma_sconfig.src_addr = i2c_dev->phys_addr + I2C_RX_FIFO;
->> +		dma_sconfig.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
->> +		dma_sconfig.src_maxburst = dma_burst;
->> +	}
->> +
->> +	dmaengine_slave_config(chan, &dma_sconfig);
->> +}
->> +
->>  static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>  	struct i2c_msg *msg, enum msg_end_type end_state)
->>  {
->> @@ -688,6 +863,9 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>  	unsigned long flags;
->>  	u16 xfer_time = 100;
->>  	size_t xfer_size = 0;
->> +	u32 *buffer = 0;
->> +	int ret = 0;
->> +	bool dma = false;
->>  
->>  	if (msg->flags & I2C_M_RD)
->>  		xfer_size = ALIGN(msg->len, BYTES_PER_FIFO_WORD);
->> @@ -698,6 +876,11 @@ static int tegra_i2c_xfer_msg(struct tegra_i2c_dev *i2c_dev,
->>  	xfer_time += DIV_ROUND_CLOSEST((xfer_size * 9) * 1000,
->>  					i2c_dev->bus_clk_rate);
->>  
->> +	dma = ((xfer_size > I2C_PIO_MODE_MAX_LEN) &&
->> +		i2c_dev->tx_dma_chan && i2c_dev->rx_dma_chan);
-> 
-> There is no need to allocate resources for DMA until dma==true, let's postpone channels requesting and dma_buf allocation until they are really needed.
+On Fri, 25 Jan 2019 10:57:55 +0100
+Ricardo Ribalda Delgado <ricardo@ribalda.com> wrote:
 
-Although DMA channels shall be requested during the probe to maintain suspend-resume order, but dma_buf allocation could be postponed.
+> Hi Alexandru
+> 
+> On Fri, Jan 25, 2019 at 9:29 AM Alexandru Ardelean
+> <ardeleanalex@gmail.com> wrote:
+> >
+> > On Thu, Jan 24, 2019 at 11:33 PM Ricardo Ribalda Delgado
+> > <ricardo@ribalda.com> wrote:  
+> > >
+> > > Add support for ADS7866, ADS7867 and ADS7868 8/10/12 bit Single channel
+> > > ADC.
+> > >
+> > > Datasheet: http://www.ti.com/product/ADS7866
+> > > Datasheet: http://www.ti.com/product/ADS7867
+> > > Datasheet: http://www.ti.com/product/ADS7868
+> > >
+> > > Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
+> > > ---
+> > >  drivers/iio/adc/Kconfig  |  3 ++-
+> > >  drivers/iio/adc/ad7476.c | 20 ++++++++++++++++++++
+> > >  2 files changed, 22 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+> > > index f9354e5ee65c..d86900fc2634 100644
+> > > --- a/drivers/iio/adc/Kconfig
+> > > +++ b/drivers/iio/adc/Kconfig
+> > > @@ -64,7 +64,8 @@ config AD7476
+> > >         help
+> > >           Say yes here to build support for Analog Devices AD7273, AD7274, AD7276,
+> > >           AD7277, AD7278, AD7475, AD7476, AD7477, AD7478, AD7466, AD7467, AD7468,
+> > > -         AD7495, AD7910, AD7920, AD7920 SPI analog to digital converters (ADC).
+> > > +         AD7495, AD7910, AD7920, AD7920, ADS7866, ADS7867, ADS7868 SPI analog
+> > > +         to digital converters (ADC).  
+> >
+> > The driver is for Analog Devices parts.
+> > And these new parts are from TI.
+> >
+> > I'm not sure what the policy is for mixing manufacturers in drivers.
+> > But if that is allowed/fine, then maybe it would be a good idea to
+> > highlight that these chips are from another manufacturer.
+> > Or maybe rename the driver to a generic form to support both manufacturers ?
+
+Don't rename the driver.  That always goes wrong in the long run.
+
+However, absolutely highlight that multiple manufacturers parts are being
+covered in the help text.  That should be sufficient.
+
+This isn't the first time we have had a multi manufacturer driver but
+they are rare in IIO.  Really common in other subsystems though where
+cloning is more common (or devices are naturally similar because
+they are simple - which is what I would guess is happening here though
+I haven't actually looked yet!)
+
+Jonathan
+
+
+> >
+> > In any case, Jonathan will have to tell us what to do here :)  
+> 
+> Thanks for your review.
+> 
+> I have to send a v2, because I have inverted the name of the devices :S.
+> 
+> I will send it right away to avoid that anyone uses this version and
+> then wait for Jonathan feedback
+> 
+> >
+> > Thanks
+> > Alex
+> >  
+> > >
+> > >           To compile this driver as a module, choose M here: the
+> > >           module will be called ad7476.
+> > > diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
+> > > index 0549686b9ef8..108c18d64f7d 100644
+> > > --- a/drivers/iio/adc/ad7476.c
+> > > +++ b/drivers/iio/adc/ad7476.c
+> > > @@ -59,6 +59,9 @@ enum ad7476_supported_device_ids {
+> > >         ID_ADC081S,
+> > >         ID_ADC101S,
+> > >         ID_ADC121S,
+> > > +       ID_ADS7866,
+> > > +       ID_ADS7867,
+> > > +       ID_ADS7868,
+> > >  };
+> > >
+> > >  static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
+> > > @@ -157,6 +160,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
+> > >  #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
+> > >                 BIT(IIO_CHAN_INFO_RAW))
+> > >  #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
+> > > +#define ADS786X_CHAN(bits) _AD7476_CHAN((bits) + 4, 0, \
+> > > +               BIT(IIO_CHAN_INFO_RAW))
+> > >
+> > >  static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+> > >         [ID_AD7091R] = {
+> > > @@ -209,6 +214,18 @@ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
+> > >                 .channel[0] = ADC081S_CHAN(12),
+> > >                 .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > >         },
+> > > +       [ID_ADS7866] = {
+> > > +               .channel[0] = ADS786X_CHAN(8),
+> > > +               .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > +       },
+> > > +       [ID_ADS7867] = {
+> > > +               .channel[0] = ADS786X_CHAN(10),
+> > > +               .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > +       },
+> > > +       [ID_ADS7868] = {
+> > > +               .channel[0] = ADS786X_CHAN(12),
+> > > +               .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
+> > > +       },
+> > >  };
+> > >
+> > >  static const struct iio_info ad7476_info = {
+> > > @@ -314,6 +331,9 @@ static const struct spi_device_id ad7476_id[] = {
+> > >         {"adc081s", ID_ADC081S},
+> > >         {"adc101s", ID_ADC101S},
+> > >         {"adc121s", ID_ADC121S},
+> > > +       {"ads7866", ID_ADS7866},
+> > > +       {"ads7867", ID_ADS7867},
+> > > +       {"ads7868", ID_ADS7868},
+> > >         {}
+> > >  };
+> > >  MODULE_DEVICE_TABLE(spi, ad7476_id);
+> > > --
+> > > 2.20.1
+> > >  
+> 
+> 
+> 
+
