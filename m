@@ -2,184 +2,118 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4236CC282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:23:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD3F1C282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEEFC218FF
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:23:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brauner.io header.i=@brauner.io header.b="dVUxA+ki"
+	by mail.kernel.org (Postfix) with ESMTP id 97EF2217D7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 10:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728545AbfAZKX3 (ORCPT
+        id S1728522AbfAZKZs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 05:23:29 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:45471 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726321AbfAZKX2 (ORCPT
+        Sat, 26 Jan 2019 05:25:48 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:38434 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726174AbfAZKZs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 05:23:28 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d39so9232819edb.12
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jan 2019 02:23:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brauner.io; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pzFhJSS4KW5LhUkWfBQejbUA4Kwx9M/fuV2wEpFVbBQ=;
-        b=dVUxA+kiTzlSdxLRDlhm1WlMsF6jc1VyE8Mr9eynhZfeKGBGbvOrQ9KdrYWwO5abjA
-         U9j1nRpNbxkczS8ES+TSbbUKT/WSJ0TBWfKaHclICyb0rEEVulJvn/4O/mpB9L2I5A/x
-         pXjRfCeRXZm8M/bL6zHAx+wbu+R2JnR90Kp74PewwtfzJ02ifhlvfm6xuBPe+FG+GOMs
-         fqRuqZFW+hliKCvs39rfrfq5nAZJWG3R3/8FjVRkoMl/vSiyANpOG0TN22Eg2pienB+1
-         JviDl3Iwik64rbyd/eAMW1xXmi1Zt4o8zGjkvMtjSQOB9Zy0W9DR5QFclHKwSjwA1sL6
-         MevA==
+        Sat, 26 Jan 2019 05:25:48 -0500
+Received: by mail-vs1-f67.google.com with SMTP id x64so7173384vsa.5;
+        Sat, 26 Jan 2019 02:25:47 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=pzFhJSS4KW5LhUkWfBQejbUA4Kwx9M/fuV2wEpFVbBQ=;
-        b=agUCHoTtcjnreLIbdLOaTvzpBXukV7kOPC3iWyVENnG4bcgv4+PCgYOBV9gpY0V4Hc
-         MrT5L9mc/p3PllRfS8STz/5xUVIUldOKawDfi7L7nJSNPhFf/DNqshLGC8HzeIkH4IF2
-         gNf/rWgCCpI8akKC99eg8jD4/BFid6t4yINzJdlDqDWitsUpbd2EoVk5AqKnAkGUQZnV
-         LHQKf3YfM7HsYZjhRJAQRxwwte65FwxUY55t3xv6P70/yJLiagcS0NsQZFif5Jj5ZRgC
-         yibQPo2Ewhhe5mJfup7U+hRLLeAsEMxPhhhDJOVbkJV4c5PL5VHG3YVC1AGYVwnSPpvA
-         vN6w==
-X-Gm-Message-State: AJcUukfz4OgI/xzuLwsEEH8oXUNYecZsW9AngcGOxKoTtVN0skw9H5m7
-        sTEfmxhv3Ko6KGcRPLghvnIsLQ==
-X-Google-Smtp-Source: ALg8bN4aOlk6E4lQluOWEXihkYIbYKawmoBTtY6lMDxq/JGZu2RrXK2Q8HbCFHW8IATEWvtXx+r65A==
-X-Received: by 2002:a50:9063:: with SMTP id z32mr14108965edz.133.1548498205875;
-        Sat, 26 Jan 2019 02:23:25 -0800 (PST)
-Received: from localhost.localdomain ([2a02:8109:b6bf:f9e4:6c97:81a6:a1a2:5bb2])
-        by smtp.gmail.com with ESMTPSA id b46sm12677656edc.57.2019.01.26.02.23.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 26 Jan 2019 02:23:25 -0800 (PST)
-From:   Christian Brauner <christian@brauner.io>
-To:     gregkh@linuxfoundation.org, tkjos@android.com,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org
-Cc:     arve@android.com, maco@android.com, joel@joelfernandes.org,
-        tkjos@google.com, Christian Brauner <christian@brauner.io>,
-        Martijn Coenen <maco@google.com>
-Subject: [PATCH] binder: fix CONFIG_ANDROID_BINDER_DEVICES
-Date:   Sat, 26 Jan 2019 11:23:20 +0100
-Message-Id: <20190126102320.14120-1-christian@brauner.io>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=hXFk2P3Vse2UsQPQiWrGQq6Z73B1APMdhn/Ravn5Ong=;
+        b=aPOF54xOSwo7OV8taGvyq8tLlpe88AfQjXS+tfpyC4WxqM308KUUHLHw4zWNVsrzhH
+         ZsqSJ1ez9dKDOwoNyQWhTRpycj4APHHafrmteWQ3CnzJTQujojIgRyBBnfG9zP1yMWXC
+         kXL/o/0H4JuzBuAVqZfs1HOyoTSnYkVNL/RHcYo07LfTyiv8Z7nR9YqR+wdKQL9mchEc
+         p4PH9nDkueEFMDq6/eU96XB6DMsIjkG0d/MB2suy/v8P6vdWLohsle+EaJjmoj2n0h0n
+         xNtL6kmhVCugmUrYStV2yiy6R1BKc5Yzis+YQaqhPx7QGZEBfM/ZZsaY4EzZJJh2AUhx
+         sojw==
+X-Gm-Message-State: AJcUukf8litZwrxJv3kDYJCzs64ma3GGuuTDM0nf1Das0gIbD7MrVqWy
+        4ZlzPHk7EaSBueJuIZAxCEuEbFtlgnlD2or2gz8=
+X-Google-Smtp-Source: ALg8bN56Ye9gQEq1QfAzJZtqgQjizkdeCg+xKE+X7E6/8Fy2d1elBSx0ZpeBE0hAHtJS592zlX4haNmQiqUU0aguj5g=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr5540086vsi.63.1548498346735;
+ Sat, 26 Jan 2019 02:25:46 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
-Content-Transfer-Encoding: 8bit
+References: <20190125114429.20066-1-jonas@norrbonn.se> <20190125114429.20066-2-jonas@norrbonn.se>
+ <CAMz4ku+sqzK19994BpdSfaDjNdXW_-gnCutr_fYQiv5ynxOq2g@mail.gmail.com>
+ <f34151c8-28a3-3d53-a27e-b5ff512d9c94@norrbonn.se> <20190125174713.GA6939@sirena.org.uk>
+ <20190125175031.GA25898@sirena.org.uk> <84d6c40f-62bb-fd00-0dcb-d2f390b136c1@norrbonn.se>
+In-Reply-To: <84d6c40f-62bb-fd00-0dcb-d2f390b136c1@norrbonn.se>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Sat, 26 Jan 2019 11:25:34 +0100
+Message-ID: <CAMuHMdUyt=DDMwDZA-TB0Yac13NJQCo2LxzvqnRzvn6LZ5F98w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] spi: support inter-word delay requirement for devices
+To:     Jonas Bonn <jonas@norrbonn.se>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        DTML <devicetree@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Several users have tried to only rely on binderfs to provide binder devices
-and set CONFIG_ANDROID_BINDER_DEVICES="" empty. This is a great use-case of
-binderfs and one that was always intended to work. However, this is
-currently not possible since setting CONFIG_ANDROID_BINDER_DEVICES="" emtpy
-will simply panic the kernel:
+Hi Jonas,
 
-kobject: (00000000028c2f79): attempted to be registered with empty name!
-WARNING: CPU: 7 PID: 1703 at lib/kobject.c:228 kobject_add_internal+0x288/0x2b0
-Modules linked in: binder_linux(+) bridge stp llc ipmi_ssif gpio_ich dcdbas coretemp kvm_intel kvm irqbypass serio_raw input_leds lpc_ich i5100_edac mac_hid ipmi_si ipmi_devintf ipmi_msghandler sch_fq_codel ib_i
-CPU: 7 PID: 1703 Comm: modprobe Not tainted 5.0.0-rc2-brauner-binderfs #263
-Hardware name: Dell      DCS XS24-SC2          /XS24-SC2              , BIOS S59_3C20 04/07/2011
-RIP: 0010:kobject_add_internal+0x288/0x2b0
-Code: 12 95 48 c7 c7 78 63 3b 95 e8 77 35 71 ff e9 91 fe ff ff 0f 0b eb a7 0f 0b eb 9a 48 89 de 48 c7 c7 00 63 3b 95 e8 f8 95 6a ff <0f> 0b 41 bc ea ff ff ff e9 6d fe ff ff 41 bc fe ff ff ff e9 62 fe
-RSP: 0018:ffff973f84237a30 EFLAGS: 00010282
-RAX: 0000000000000000 RBX: ffff8b53e2472010 RCX: 0000000000000006
-RDX: 0000000000000007 RSI: 0000000000000086 RDI: ffff8b53edbd63a0
-RBP: ffff973f84237a60 R08: 0000000000000342 R09: 0000000000000004
-R10: ffff973f84237af0 R11: 0000000000000001 R12: 0000000000000000
-R13: ffff8b53e9f1a1e0 R14: 00000000e9f1a1e0 R15: 0000000000a00037
-FS:  00007fbac36f7540(0000) GS:ffff8b53edbc0000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fbac364cfa7 CR3: 00000004a6d48000 CR4: 00000000000406e0
-Call Trace:
- kobject_add+0x71/0xd0
- ? _cond_resched+0x19/0x40
- ? mutex_lock+0x12/0x40
- device_add+0x12e/0x6b0
- device_create_groups_vargs+0xe4/0xf0
- device_create_with_groups+0x3f/0x60
- ? _cond_resched+0x19/0x40
- misc_register+0x140/0x180
- binder_init+0x1ed/0x2d4 [binder_linux]
- ? trace_event_define_fields_binder_transaction_fd_send+0x8e/0x8e [binder_linux]
- do_one_initcall+0x4a/0x1c9
- ? _cond_resched+0x19/0x40
- ? kmem_cache_alloc_trace+0x151/0x1c0
- do_init_module+0x5f/0x216
- load_module+0x223d/0x2b20
- __do_sys_finit_module+0xfc/0x120
- ? __do_sys_finit_module+0xfc/0x120
- __x64_sys_finit_module+0x1a/0x20
- do_syscall_64+0x5a/0x120
- entry_SYSCALL_64_after_hwframe+0x44/0xa9
-RIP: 0033:0x7fbac3202839
-Code: 00 f3 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 1f f6 2c 00 f7 d8 64 89 01 48
-RSP: 002b:00007ffd1494a908 EFLAGS: 00000246 ORIG_RAX: 0000000000000139
-RAX: ffffffffffffffda RBX: 000055b629ebec60 RCX: 00007fbac3202839
-RDX: 0000000000000000 RSI: 000055b629c20d2e RDI: 0000000000000003
-RBP: 000055b629c20d2e R08: 0000000000000000 R09: 000055b629ec2310
-R10: 0000000000000003 R11: 0000000000000246 R12: 0000000000000000
-R13: 000055b629ebed70 R14: 0000000000040000 R15: 000055b629ebec60
+On Sat, Jan 26, 2019 at 8:53 AM Jonas Bonn <jonas@norrbonn.se> wrote:
+> On 25/01/2019 18:50, Mark Brown wrote:
+> > On Fri, Jan 25, 2019 at 05:47:13PM +0000, Mark Brown wrote:
+> >> On Fri, Jan 25, 2019 at 01:06:45PM +0100, Jonas Bonn wrote:
+> >>> Having this as device property rather than a transfer property allows this
+> >>> to be configured one time in setup() rather than having to fiddle with the
+> >>> configuration register for every transfer.
+> >
+> >> That doesn't mean that the coniguration should be done in DT though, and
+> >> given that this presumably is a property of the device there seems to be
+> >> no reason why we'd have it in DT - if every instance of the device is
+> >> going to need to set the property we should just figure it out from the
+> >> compatble string instead.
+> >
+> > To be clear here: the suggestion is to add a parameter the slave device
+> > can set in spi_device which sets the default word_delay similarly to how
+> > max_speed_hz works.
+>
+> I'm confused... isn't that exactly what this patch does?  It adds a
+> field word_delay to spi_device in the same manner as max_speed_hz.
+>
+> I also added the ability to set it via DT, which I can break out into a
+> separate patch if that's an issue.  Or is the problem that it's set via
+> DT, at all?  Documentation/devicetree/bindings/spi-bus.txt documents 10
+> other slave-node properties related to transfer characteristics;
+> word_delay is just another such characteristic.
+>
+> But again, I'm having trouble parsing your response  Is the patch wrong,
+> should be broken up, or you just misunderstood it?
 
-So check for the empty string since strsep() will otherwise return the
-emtpy string which will cause kobject_add_internal() to panic when trying
-to add a kobject with an emtpy name.
+IIUIC, Mark means that it may be a non-configurable property of the slave
+device, and thus should be handled (fixed setting) in the SPI slave driver.
 
-Fixes: ac4812c5ffbb ("binder: Support multiple /dev instances")
-Cc: Martijn Coenen <maco@google.com>
-Signed-off-by: Christian Brauner <christian.brauner@ubuntu.com>
----
- drivers/android/binder.c | 30 ++++++++++++++++--------------
- 1 file changed, 16 insertions(+), 14 deletions(-)
+Compare this to CPHA/CPOL, which are properties of the SPI slave device,
+but which may be configurable. E.g. many SPI FLASHes support multiple
+configurations. See e.g. commit 9c5becce21af35e5 ("ARM: shmobile: koelsch:
+Fix QSPI mode of SPI-Flash into mode3").
 
-diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-index 751d76173f81..5f7d6fe06eec 100644
---- a/drivers/android/binder.c
-+++ b/drivers/android/binder.c
-@@ -5898,21 +5898,23 @@ static int __init binder_init(void)
- 				    &transaction_log_fops);
- 	}
- 
--	/*
--	 * Copy the module_parameter string, because we don't want to
--	 * tokenize it in-place.
--	 */
--	device_names = kstrdup(binder_devices_param, GFP_KERNEL);
--	if (!device_names) {
--		ret = -ENOMEM;
--		goto err_alloc_device_names_failed;
--	}
-+	if (strcmp(binder_devices_param, "") != 0) {
-+		/*
-+		* Copy the module_parameter string, because we don't want to
-+		* tokenize it in-place.
-+		 */
-+		device_names = kstrdup(binder_devices_param, GFP_KERNEL);
-+		if (!device_names) {
-+			ret = -ENOMEM;
-+			goto err_alloc_device_names_failed;
-+		}
- 
--	device_tmp = device_names;
--	while ((device_name = strsep(&device_tmp, ","))) {
--		ret = init_binder_device(device_name);
--		if (ret)
--			goto err_init_binder_device_failed;
-+		device_tmp = device_names;
-+		while ((device_name = strsep(&device_tmp, ","))) {
-+			ret = init_binder_device(device_name);
-+			if (ret)
-+				goto err_init_binder_device_failed;
-+		}
- 	}
- 
- 	ret = init_binderfs();
+Again, max_speed_hz is something different: while both the SPI master and
+slave may support high speeds, board wiring (capacitance/inductance) may
+need to force a slower speed than supported by the devices, so it makes
+sense to make that configurable from DT.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.20.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
