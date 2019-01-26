@@ -1,111 +1,166 @@
-Return-Path: <SRS0=KJEp=QB=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66554C282C0
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:58:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53443C282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:01:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2ECE1217D4
-	for <linux-kernel@archiver.kernel.org>; Fri, 25 Jan 2019 23:58:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D1B5218FF
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 00:01:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GMH/oJN5"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QRAMv4pt"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729507AbfAYX6t (ORCPT
+        id S1726262AbfAZABV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 18:58:49 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:37024 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726218AbfAYX6s (ORCPT
+        Fri, 25 Jan 2019 19:01:21 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35866 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726218AbfAZABU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 18:58:48 -0500
-Received: by mail-it1-f193.google.com with SMTP id b5so12158430iti.2;
-        Fri, 25 Jan 2019 15:58:48 -0800 (PST)
+        Fri, 25 Jan 2019 19:01:20 -0500
+Received: by mail-lj1-f193.google.com with SMTP id g11-v6so9801596ljk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 16:01:18 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ImNYreKqjVLM4GCqjmMQdpMN5LcD/RYcu5KlQGlCsKw=;
-        b=GMH/oJN5OSITLf4PlYxXLJm6aoWFPBcfSIQkvWYVmxOs/oOxxmvCVvcxNh7ob8eJlr
-         OtW07in7lwsiCL9NG2cnj5muse9Uwp2qKO1a5A/yEelgOTjrqe9JeRXcWQvq5rXEm3p8
-         Z7NFCVNEOjOieI6HQZyCblm6+/LmNUxFXpr/K58DrGxm+qv6+32nHjmiqgo1hXgRCdSM
-         ab5zRJ0AjYfwoJDUTBBqKUd06QFM88VpwNWK33DvAcu40lqAIW91S5TbbHKFCfZtULQa
-         LKoQQHWKpFZtPW/oG2KI8BA7QVmJJWyOKU3OG7Md13jZRmTEsjips2eMwoaE/6iwDqeN
-         sEhQ==
+        bh=bivZF+N5UQBK8QlBWBWjTitl9qn7GkzcyFvvnhd7MCs=;
+        b=QRAMv4pt2wTw41Xy606JFLtBQ/Tzuun7yaXzkdy58rK1o7QtdzeUSY8XDAQYSicxsR
+         BM92IpzsANL7rWyV/Iyr2xtH644hOohv3nCQ8RmH0uEELReZdPnLqSaXmb/xJcuosCKo
+         /0t3S4WlVMeSC8Qb7DzJBljcsJ4NrbOK5JNQ0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ImNYreKqjVLM4GCqjmMQdpMN5LcD/RYcu5KlQGlCsKw=;
-        b=LmXN0EMXca/zj5kbW9MnkA/rAgAvPb/HOLMShbUAtcVBU8ktt7ZtRVXcerUh7HbDck
-         vBqdGTJm9NXKSgoYyLv85B3p4M9jYJRz2Ou4otymoJjnkbqm/jQnVp63iqYJk5qLUXNx
-         5p8FtfvDwObLJZ5uFwMjbYMEGsjsBxBLGfNgmCoj/8LLg4AuiLy+p0sLlo53fwRi4Y2w
-         tRDMFs/LD6UYq/8cn5hW6o2OdpkyzWqyYOaAIkmbfEY6QFoEcjlIdpHuJNdDXkiUr73u
-         e9HIlyhc+Z9mc5Oy8+uWvH4DZqF7g2z+LqvqoRXyRjqM6GUynK1phhNm+PSHeGyYYyvg
-         8Yxg==
-X-Gm-Message-State: AJcUukeHoqbvY2s8tqrQ9ciH/1ejr3ZVPxgXJChnonXlWpepekpkCuQ1
-        jO4Erl/mejMi0a9p30o8+xepT1BIcJHo6loEwgo=
-X-Google-Smtp-Source: ALg8bN7LUDWuEjyHRtLB3YAJnFIV7UWorTvilrX9o/yjSPzwj721ecaCgTj0qSCWr5K09MDRIKmFL7RJUjg5QcssSDo=
-X-Received: by 2002:a24:d1c4:: with SMTP id w187mr5382960itg.141.1548460727592;
- Fri, 25 Jan 2019 15:58:47 -0800 (PST)
+        bh=bivZF+N5UQBK8QlBWBWjTitl9qn7GkzcyFvvnhd7MCs=;
+        b=bdI1/lnwueYd3BGfF8eASNRNbXQkWV9tPVJZ4nd7IXJw9MzHKstYDQhfSge8kzMbE4
+         47ETRfY9O0NaoOTg3Hy0N2kub/P31NfKNm9gaHQYpWKZ5Zco3g9H168MHGZOCp32QGot
+         EhX2P1CfZpQ4YjXavUXJoCy4XYkxReGaBzdHJmTNVaEAtvE8F4yrwOpcFwnNBVwDzZJA
+         my2/nl/eRjrwEkkZm0UpZIte6aOkXuxbdesPRcvnmAmMIdHaHtZtoxuf35zdiz9vghrc
+         Diav+O6A+KPCDPBcjGIUpGzFTUROcXT3KtRaAi/AhNc9WzYjkTQA5+kgENzyfBoO+rrr
+         EPuw==
+X-Gm-Message-State: AJcUukdCTM8cV37TvhOLMcqwTs8Tr9i4aLz7XpYwtZ8pBBnayCwZNxHW
+        KvXyogegmDGxREa5W0QvB8b3cmNavMk=
+X-Google-Smtp-Source: ALg8bN6h9W/wx29UQhWLuf8Z1Ep2PPR2dfwtnpu1i3AFhc3xVfO084+ql2wCPUFYWKYpMiW92Ng6OQ==
+X-Received: by 2002:a2e:3012:: with SMTP id w18-v6mr10215653ljw.75.1548460877760;
+        Fri, 25 Jan 2019 16:01:17 -0800 (PST)
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com. [209.85.208.173])
+        by smtp.gmail.com with ESMTPSA id s127sm1776108lfe.8.2019.01.25.16.01.15
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 25 Jan 2019 16:01:16 -0800 (PST)
+Received: by mail-lj1-f173.google.com with SMTP id k15-v6so9764211ljc.8
+        for <linux-kernel@vger.kernel.org>; Fri, 25 Jan 2019 16:01:15 -0800 (PST)
+X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr10925579ljc.97.1548460875218;
+ Fri, 25 Jan 2019 16:01:15 -0800 (PST)
 MIME-Version: 1.0
-References: <20190124220954.2147f1da@canb.auug.org.au> <CAKdAkRRBVDd80e4zjmwqqMH-dt4-1paVdrriu2Fn=-Zv+7qgrg@mail.gmail.com>
-In-Reply-To: <CAKdAkRRBVDd80e4zjmwqqMH-dt4-1paVdrriu2Fn=-Zv+7qgrg@mail.gmail.com>
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Date:   Fri, 25 Jan 2019 15:58:36 -0800
-Message-ID: <CAKdAkRTzN+Zg-9LSdx2uSAV6_u8ytQZCVxJyRaKhKSNf+3teRA@mail.gmail.com>
-Subject: Re: linux-next: Fixes tag needs some work in the input-current tree
-To:     Stephen Rothwell <sfr@canb.auug.org.au>
-Cc:     Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Lubomir Rintel <lkundrak@v3.sk>
+References: <cover.1548312692.git.asutoshd@codeaurora.org> <d6aa4d9bd29bbb2c3ee78e6635d4704e4113a26e.1548312692.git.asutoshd@codeaurora.org>
+ <CAE=gft6P9ssNp_GRUFJT7BvJUHduorg=-bvi0KytDMWTd0pGew@mail.gmail.com> <926d2232-67f2-bd3a-ab79-87bbca3a1add@codeaurora.org>
+In-Reply-To: <926d2232-67f2-bd3a-ab79-87bbca3a1add@codeaurora.org>
+From:   Evan Green <evgreen@chromium.org>
+Date:   Fri, 25 Jan 2019 16:00:38 -0800
+X-Gmail-Original-Message-ID: <CAE=gft7fxf52ud7FQLqT6L3PRoP3cUDYqnG8yqPtyTh=9D72UA@mail.gmail.com>
+Message-ID: <CAE=gft7fxf52ud7FQLqT6L3PRoP3cUDYqnG8yqPtyTh=9D72UA@mail.gmail.com>
+Subject: Re: [<PATCH v1> 1/1] scsi: qcom-ufs: Add support for bus voting using
+ ICB framework
+To:     "Asutosh Das (asd)" <asutoshd@codeaurora.org>
+Cc:     subhashj@codeaurora.org, cang@codeaurora.org,
+        vivek.gautam@codeaurora.org,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Vinayak Holikatti <vinholikatti@gmail.com>,
+        jejb@linux.vnet.ibm.com,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 3:56 PM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
+On Fri, Jan 25, 2019 at 2:29 AM Asutosh Das (asd)
+<asutoshd@codeaurora.org> wrote:
 >
-> Hi Stephen,
->
-> On Thu, Jan 24, 2019 at 3:09 AM Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+> On 1/24/2019 10:22 PM, Evan Green wrote:
+> > On Wed, Jan 23, 2019 at 11:02 PM Asutosh Das <asutoshd@codeaurora.org> wrote:
+> >>
+> >> Adapt to the new ICB framework for bus bandwidth voting.
+> >>
+> >> This requires the source/destination port ids.
+> >> Also this requires a tuple of values.
+> >>
+> >> The tuple is for two different paths - from UFS master
+> >> to BIMC slave. The other is from CPU master to UFS slave.
+> >> This tuple consists of the average and peak bandwidth.
+> >>
+> >> Signed-off-by: Asutosh Das <asutoshd@codeaurora.org>
+> >> ---
+> >>   .../devicetree/bindings/ufs/ufshcd-pltfrm.txt      |  12 ++
+> >>   drivers/scsi/ufs/ufs-qcom.c                        | 234 ++++++++++++++++-----
+> >>   drivers/scsi/ufs/ufs-qcom.h                        |  20 ++
+> >>   3 files changed, 218 insertions(+), 48 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> >> index a99ed55..94249ef 100644
+> >> --- a/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> >> +++ b/Documentation/devicetree/bindings/ufs/ufshcd-pltfrm.txt
+> >> @@ -45,6 +45,18 @@ Optional properties:
+> >>   Note: If above properties are not defined it can be assumed that the supply
+> >>   regulators or clocks are always on.
+> >>
+> >> +* Following bus parameters are required:
+> >> +interconnects
+> >> +interconnect-names
+> >> +- Please refer to Documentation/devicetree/bindings/interconnect/
+> >> +  for more details on the above.
+> >> +qcom,msm-bus,name - string describing the bus path
+> >> +qcom,msm-bus,num-cases - number of configurations in which ufs can operate in
+> >> +qcom,msm-bus,num-paths - number of paths to vote for
+> >> +qcom,msm-bus,vectors-KBps - Takes a tuple <ib ab>, <ib ab> (2 tuples for 2 num-paths)
+> >> +                           The number of these entries *must* be same as
+> >> +                           num-cases.
 > >
-> > Hi Dmitry,
-> >
-> > In commit
-> >
-> >   ec87da107d11 ("Input: olpc_apsp - assign priv->dev earlier")
-> >
-> > Fixes tag
-> >
-> >   Fixes: commit af518342effd ("Input: olpc_apsp - check FIFO status on open(), not probe()")
-> >
-> > has these problem(s):
-> >
-> >   - No SHA1 recognised
-> >
-> > The "commit" at the start of the tag value was unexpected.
->
-> Hmm, this is really weird:
->
-> dtor@dtor-ws:~/kernel/master (for-linus)$ git log --oneline --
-> drivers/input/serio/olpc_apsp.c
-> ec87da107d11 Input: olpc_apsp - assign priv->dev earlier
-> 2a58dd767bf9 Input: olpc_apsp - remove set but not used variable 'np'
-> ed22cee91a88 Input: olpc_apsp - enable the SP clock
-> af518342effd Input: olpc_apsp - check FIFO status on open(), not probe()
->
-> As you can see there is that SHA1 in question present in my for-linus branch.
+> > I think we can do away with all of the qcom* ones, right? This should
+> > be achievable with just interconnects and interconnect-names.
+> Let me give that a bit more thought - though I'm not sure how that'd work.
 
-Argh, I see what you mean, the word "commit" should be omitted. Oh
-well, it's in the branch that I loath to rebase, so it will have to
-stay as is.
+From the downstream kernel that I have, it looks like these are
+basically used to define the bandwidth values for each gear/mode in
+UFS. My understanding is that the DT folks generally balk at having
+configuration data in the device tree. I'm hopeful that we can have a
+snippet of code that actually computes the required bandwidth for a
+certain combination of gear speed and lanes. But if that is somehow
+not possible, this can at worst be a table in code of
+bandwidths[gear]. But let's try for the computation first.
 
--- 
-Dmitry
+>
+> >
+> > Also, is this patch based on a downstream tree? I don't recognize a
+> > lot of the context. We'll need a patch that's based on an upstream
+> > tree.
+> This was developed on the internal Chrome AU and ported to ufs-next.
+> Let me check internally on this anyway.
+>
+
+Whoops, you're right, the context I was confused about does appear to
+be upstream. I was unaware there was dangling code to the old
+downstream bus scaling stuff in the upstream kernel. I think we should
+get rid of all of that and start fresh.
+
+Also, like the dangling downstream code was, the new stuff should
+probably be surrounded by ifdefs for the new interconnect core.
+
+I also think we don't really need the max_bus_bw thing, so when we rip
+out all the downstream leftovers we don't need to put that back in.
+
+-Evan
