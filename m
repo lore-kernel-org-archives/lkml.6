@@ -2,77 +2,65 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.1 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC3D7C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 12:43:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E853BC282C7
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 13:05:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81376218A6
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 12:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B15E42184C
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 13:05:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726241AbfAZMnE (ORCPT
+        id S1726174AbfAZNBV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 07:43:04 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:41968 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726052AbfAZMnE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 07:43:04 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 9720974EDD7936B989CF;
-        Sat, 26 Jan 2019 20:43:02 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Sat, 26 Jan 2019
- 20:42:53 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <johannes.berg@intel.com>, <emmanuel.grumbach@intel.com>,
-        <luciano.coelho@intel.com>, <linuxwifi@intel.com>,
-        <kvalo@codeaurora.org>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH] iwlwifi: Use kmemdup instead of duplicating its function
-Date:   Sat, 26 Jan 2019 20:42:35 +0800
-Message-ID: <20190126124235.11248-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
+        Sat, 26 Jan 2019 08:01:21 -0500
+Received: from unassigned.psychz.net ([45.34.167.97]:39344 "EHLO
+        loghomestore.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726056AbfAZNBV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 08:01:21 -0500
+To:     linux-kernel@vger.kernel.org
+Subject: Data entry service and data processing services
+Message-ID: <6bcf1c6f463b7a30704500fe58d3486b@vecteezy.com>
+Date:   Sat, 26 Jan 2019 08:53:20 +0100
+From:   "Linda" <jafewtanse@mail.fr>
+Reply-To: huhansto@sina.com
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; format=flowed; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use kmemdup rather than duplicating its implementation
+We provide data entry service and data processing services.
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+We makes it easy for you to take the documents you have and turn them into
+documents you can use.
+If you have paper and image forms, directory listings, spreadsheets,
+reports or any number of handwritten
+or printed documents we can transcribe the required information using data
+entry and other data capture
+techniques into Excel, Access, or a text file database designed to meet the
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-index d9afedc..569cc50 100644
---- a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-@@ -1196,13 +1196,9 @@ iwl_parse_nvm_mcc_info(struct device *dev, const struct iwl_cfg *cfg,
- 	regd_to_copy = sizeof(struct ieee80211_regdomain) +
- 		valid_rules * sizeof(struct ieee80211_reg_rule);
- 
--	copy_rd = kzalloc(regd_to_copy, GFP_KERNEL);
--	if (!copy_rd) {
-+	copy_rd = kmemdup(regd, regd_to_copy, GFP_KERNEL);
-+	if (!copy_rd)
- 		copy_rd = ERR_PTR(-ENOMEM);
--		goto out;
--	}
--
--	memcpy(copy_rd, regd, regd_to_copy);
- 
- out:
- 	kfree(regdb_ptrs);
--- 
-2.7.4
+specific needs of your business.
 
+We can also enter information directly into your internet web site
+application.
+
+We provide complete data processing services including: data entry form
+preparation, data form control,
+manual data entry, automated data capture, data base production and
+electronic data transmission
+and delivery.
+
+Our experienced data entry professionals are trained to capture data
+efficiently and effectively.
+So quit worrying about being understaffed during peak processing periods.
+
+Let's start it today if you have needs.
+
+Thanks,
+Linda
 
