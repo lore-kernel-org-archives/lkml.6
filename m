@@ -2,252 +2,142 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CB3DC282C0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:06:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2339FC282C0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:14:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3F5A218F0
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:06:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="suwu1d+9"
+	by mail.kernel.org (Postfix) with ESMTP id E2807218B0
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:14:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728104AbfAZDGS (ORCPT
+        id S1729485AbfAZDOS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 22:06:18 -0500
-Received: from sonic305-21.consmr.mail.gq1.yahoo.com ([98.137.64.84]:45828
-        "EHLO sonic305-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725916AbfAZDGS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 22:06:18 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1548471976; bh=YMjHO9DGrnYFQ0iG/jRnXEOb2J0X21r4Mq3lbz0C3GA=; h=Subject:To:Cc:References:From:Date:In-Reply-To:From:Subject; b=suwu1d+9NN/LxoXkV2lxMeAET5G+KEcn+TMXbUdnGyXaQ80oJ+NWorvZTobXPOMy4uBGNccQ+W8lw3ReVpNRrlE+JxP3WWMMwi90LJIGxt9MLIIzOHyB5Ai7AdlEZkuQ08TfSZ+pScocn/mQoMgn8rzzVv8OpFr2D23HUvEU2Bq+ETmv/X+LOgNghzKtk95S6AGr3+2EbMw98I4+ZS8P1XGGV50+VCkxhtGA/rtPTCn2uJvPEkba9oSthKX4LLusywN9oK7dj0HTdTGwhokaPy2S4T/W86zZmGUmaskGP4NvcHX4lNr+gCQLKJRfzQODsUuF3zDbFs0PEb5LLwH5AQ==
-X-YMail-OSG: ypjfWfwVM1nNieBaI4hSNIo5QkLhC89Ycv1ioSj2EriumnBXVEDvYXZORgQdwgo
- 9h577qyg_dtyzkPS.u2yGsTPE.JQ_k9ksbAf1R1fEvhIUV2d64SD2KgrrldsuMvOUzkxmnyPIQds
- m99hpb3Bi89texL8sbTXjH1Dwew_PQXZPU3k06jrvWN_E.7y.oVERtWFokAe8NwH5Unyov3F.k.C
- z89cir9JZiT2YTDB.3Byi9cQ236HMwb1jbul_SrRSQtx.SrhSskjge3AocswLwv_1nH8A003JuQd
- LqL9OPDelZ_IkU7qUYHmZIWGl4qcDYXWyGr8DwpWMt43V4.llglFMNmm7ClKB_pzlfgvwJOdgw0y
- Fc_xZfxj.KUVB5S1AbD2wL15290B5Ek2jhY0cNfux2xW4xabLGKJ6LoEDKEXCWx6x4WAyB.KpAuW
- vR_Le6f_4Te2hRsFIxljaGJnGsMrcahvevhOJwxbZzP1BiEH.XGwG3QS145_i2B6tqQDGzULGQB.
- RaVQsmNsP5MEFEEhxOf.nC6HGcy6pgVORJbRul5NH5FBqkHlwL19YqfSBS5J4Nvgn.FzQJLq36b.
- ddhAcgU2O8vTaQsnrLHClWqV8z17HPoJTjRA4.GjN_k_oYfYjuNUsuwvyAcf4O0j.dSwvDvznIUT
- B6.dRTUIFFzplWzSQSk44.5cejISwPtfgFm3tjjeQGzE4W_fXqJM8UGRFF1NGu6d4Y06UgX.3vyN
- 4XkWqpjrLUxlPts9isQ_0OL7GjgEhKITqLXxAKFQhmpQ1S.o.B1NP.JNSNgbleL_trq5neDk4qcm
- 0LajY2EVzHPqRBRPMqJlnUEkUKDR85eJ_6AXVeelc2A33gPhb6Id18empGWxWD2blGFIe2jSughs
- AoZsQNtgQ8_NoKOjkIsMCj0b7upyKpLkdyz5qCxUZ.arzEAqUYtJt8FdH2D9tUJDPoVkAW03JPG5
- iWGUPruqSkX6BKZyI2FDb1YzGMuR4SGLaI2OMglUaQCDag8UsU4.BLZK6BXmr54euaXvd59.76mL
- FOEUORSCwQp9FpFilV8J2MCI60XEjaJYE9Ap93SjiAymrrhD9k.2ApA--
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.gq1.yahoo.com with HTTP; Sat, 26 Jan 2019 03:06:16 +0000
-Received: from 125.120.85.115 (EHLO [10.1.1.220]) ([125.120.85.115])
-          by smtp419.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID d3b63daab4a55472c65c54c0414565b1;
-          Sat, 26 Jan 2019 03:06:12 +0000 (UTC)
-Subject: Re: [PATCH v2 2/2] staging: erofs: complete POSIX ACL support
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
-        LKML <linux-kernel@vger.kernel.org>, weidu.du@huawei.com,
-        Miao Xie <miaoxie@huawei.com>
-References: <20190125161007.4447-1-gaoxiang25@huawei.com>
- <20190125161007.4447-2-gaoxiang25@huawei.com>
- <94daa491-40c8-4a09-a0b5-55a7e92dc3fc@huawei.com>
-From:   Gao Xiang <hsiangkao@aol.com>
-Message-ID: <531700c1-31b4-1a9d-d3f8-4ca4e85bfdff@aol.com>
-Date:   Sat, 26 Jan 2019 11:06:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <94daa491-40c8-4a09-a0b5-55a7e92dc3fc@huawei.com>
-Content-Type: text/plain; charset=windows-1252
+        Fri, 25 Jan 2019 22:14:18 -0500
+Received: from mail-oln040092000081.outbound.protection.outlook.com ([40.92.0.81]:6416
+        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725916AbfAZDOS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 22:14:18 -0500
+Received: from BN3NAM01FT031.eop-nam01.prod.protection.outlook.com
+ (10.152.66.57) by BN3NAM01HT039.eop-nam01.prod.protection.outlook.com
+ (10.152.66.82) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1580.10; Sat, 26 Jan
+ 2019 03:14:14 +0000
+Received: from BYAPR02MB5495.namprd02.prod.outlook.com (10.152.66.54) by
+ BN3NAM01FT031.mail.protection.outlook.com (10.152.67.156) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.10 via Frontend Transport; Sat, 26 Jan 2019 03:14:14 +0000
+Received: from BYAPR02MB5495.namprd02.prod.outlook.com
+ ([fe80::b889:1a99:77fa:d4fe]) by BYAPR02MB5495.namprd02.prod.outlook.com
+ ([fe80::b889:1a99:77fa:d4fe%2]) with mapi id 15.20.1558.021; Sat, 26 Jan 2019
+ 03:14:14 +0000
+From:   Jonathan Bakker <xc-racer2@live.ca>
+To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        =?utf-8?B?UGF3ZcWCIENobWllbA==?= <pawel.mikolaj.chmiel@gmail.com>
+CC:     "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "colyli@suse.de" <colyli@suse.de>,
+        "ckeepax@opensource.wolfsonmicro.com" 
+        <ckeepax@opensource.wolfsonmicro.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "xiaotong.lu@spreadtrum.com" <xiaotong.lu@spreadtrum.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 4/4] dt-bindings: input: Add documentation for gp2a sensor
+Thread-Topic: [PATCH 4/4] dt-bindings: input: Add documentation for gp2a
+ sensor
+Thread-Index: AQHUtNaG8EAwL07Gf0mUl9lwMbRi1aXAxFyAgAAcYgA=
+Date:   Sat, 26 Jan 2019 03:14:14 +0000
+Message-ID: <BYAPR02MB54959FD8A7CF5977B0D4B5B7A3940@BYAPR02MB5495.namprd02.prod.outlook.com>
+References: <20190125175045.22576-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190125175045.22576-5-pawel.mikolaj.chmiel@gmail.com>
+ <20190126013237.GF212026@dtor-ws>
+In-Reply-To: <20190126013237.GF212026@dtor-ws>
+Accept-Language: en-CA, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR18CA0033.namprd18.prod.outlook.com
+ (2603:10b6:320:31::19) To BYAPR02MB5495.namprd02.prod.outlook.com
+ (2603:10b6:a03:9a::25)
+x-incomingtopheadermarker: OriginalChecksum:EE2EBE4EDB2C26CA0DEAC704B620E217766D9DD7231C6CCA5A9ED02DB133D107;UpperCasedChecksum:58D8A52DEE8C4BEFE7798022AD4A22FE58E3CBD80D0CE335A632F6979C18D47A;SizeAsReceived:9333;Count:64
+x-ms-exchange-messagesentrepresentingtype: 1
+x-tmn:  [ORB4IdqSo0zg+jWJMbsSKwXm/NUYjTtzuHZRkc8TaF/fJjZCu0uKTMxKZh94GMcD]
+x-microsoft-original-message-id: <3d31818f-7c62-2c4e-e5a6-ea30fef99413@live.ca>
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN3NAM01HT039;6:GA0BkVkQrQqNfh7Fv4UyJVfOHghSJ/HcfXOiL2A0GroDbKVM3k2/AtIW2Ce4QxamVgfWgWolkeJWVAGSXXHp0CUYXpjfP7+yh81i7HBHF6e+C905OCMvPoaeip+XMkGc8w7MnwS8Yfr/Lp0sI4ok6ZE7V5C+163aX5gWUGqytsVUBn1yynQTW42nhrT0vn2sp3GiIX+c/0wLB0DSBhtiypeC90df8v5mwlalf2mtGC58Jjq/IVEOxF4nwGcaTVnTU0TEP3bn8epZffwOMdPP8GGb+MjqcEo6y3RXjXEbxpnGj3td2IBHefc8HlOnoJ1EHjjFDxzuXRSYqGoHX1wWw7Xm623SRESvbFkwKv7IN6/8Wapp7FRbDWMhJ9ZC2w0NXtfQDGFkg7CrfTgLiCm2sWBvEwC7SK8G2ns3k+v2xU6fBb0uDWHTNTVWiAOBuR9w1tF1nkbTY2/MEiRxTIN3hA==;5:I7slEexAefuKn8+8vwB4OOaD29PgVc3S8Nj4ZlKrgbnx4fptp5miLsOrX0TLRI7sQFDFWwyTIhdMFwDDXmWWptLZaa38jj7PNn8YxZ8oXxMllDn8xpeSCRcJEgbgnUmi7uANH0KI5hgDkIqkCvBxig03sk5IgbxOxOjJz5uxm9FWjv/DqDzlfL/Aa+aW2E9r1q3bDZfZhjYpeXGxQ5Z4TA==;7:8DQe6Iy0RwYMjXiRMzObT2t0BM3jcWLpKhpS+Nyo91s+bEV7r8inV1Xia4jEka6lziXoeSol7np5ZD8QkxTGPA9bLONv01I2BBIp8+5snH1CVnSP+ErmEET+jr+q9cyhDAUGJKZeRww/aaE+4dMo5w==
+x-incomingheadercount: 64
+x-eopattributedmessage: 0
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(201702061078)(5061506573)(5061507331)(1603103135)(2017031320274)(2017031323274)(2017031324274)(2017031322404)(1601125500)(1603101475)(1701031045);SRVR:BN3NAM01HT039;
+x-ms-traffictypediagnostic: BN3NAM01HT039:
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(4566010)(82015058);SRVR:BN3NAM01HT039;BCL:0;PCL:0;RULEID:;SRVR:BN3NAM01HT039;
+x-microsoft-antispam-message-info: APXEyy51/t8F4RLStThcSOuRuaPq8adAd+fJ2R9669Do4ywTQfFBz0N8w+RPFzcD
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <D5B4C8A28AC48D4489BEF83537B93157@namprd02.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 9bd8b953-1c55-4da7-b616-8bcad099ae8b
+X-MS-Exchange-CrossTenant-Network-Message-Id: d255b618-e598-4da4-5535-08d6833c5983
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 9bd8b953-1c55-4da7-b616-8bcad099ae8b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 26 Jan 2019 03:14:13.6622
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Internet
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN3NAM01HT039
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
-
-On 2019/1/26 10:48, Chao Yu wrote:
-> On 2019/1/26 0:10, Gao Xiang wrote:
->> Let's add .get_acl() to read the file's acl from its xattrs
->> to make POSIX ACL usable.
->>
->> Here is the on-disk detail,
->> fullname: system.posix_acl_access
->> struct erofs_xattr_entry:
->>         .e_name_len = 0
->>         .e_name_index = EROFS_XATTR_INDEX_POSIX_ACL_ACCESS (2)
->>
->> fullname: system.posix_acl_default
->> struct erofs_xattr_entry:
->> 	.e_name_len = 0
->> 	.e_name_index = EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT (3)
->>
->> Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
->> ---
->> change log v2:
->>  - add the missing SB_POSIXACL flag;
->>  - fix the on-disk detail, use .e_name_len == 0 and proper prefix value;
->>  - tested ok with xattr enabled erofs_mkfs;
->>
->>  .../erofs/Documentation/filesystems/erofs.txt      |  2 ++
->>  drivers/staging/erofs/inode.c                      |  3 ++
->>  drivers/staging/erofs/namei.c                      |  1 +
->>  drivers/staging/erofs/super.c                      |  8 +++++
->>  drivers/staging/erofs/xattr.c                      | 37 ++++++++++++++++++++++
->>  drivers/staging/erofs/xattr.h                      |  6 ++++
->>  6 files changed, 57 insertions(+)
->>
->> diff --git a/drivers/staging/erofs/Documentation/filesystems/erofs.txt b/drivers/staging/erofs/Documentation/filesystems/erofs.txt
->> index 803988d74c21..961ec4da7705 100644
->> --- a/drivers/staging/erofs/Documentation/filesystems/erofs.txt
->> +++ b/drivers/staging/erofs/Documentation/filesystems/erofs.txt
->> @@ -36,6 +36,8 @@ Here is the main features of EROFS:
->>  
->>   - Support xattr inline and tail-end data inline for all files;
->>  
->> + - Support POSIX.1e ACLs by using xattrs;
->> +
->>   - Support transparent file compression as an option:
->>     LZ4 algorithm with 4 KB fixed-output compression for high performance;
->>  
->> diff --git a/drivers/staging/erofs/inode.c b/drivers/staging/erofs/inode.c
->> index 4f04f7c38cf2..924b8dfc7a8f 100644
->> --- a/drivers/staging/erofs/inode.c
->> +++ b/drivers/staging/erofs/inode.c
->> @@ -287,6 +287,7 @@ const struct inode_operations erofs_generic_iops = {
->>  #ifdef CONFIG_EROFS_FS_XATTR
->>  	.listxattr = erofs_listxattr,
->>  #endif
->> +	.get_acl = erofs_get_acl,
->>  };
->>  
->>  const struct inode_operations erofs_symlink_iops = {
->> @@ -294,6 +295,7 @@ const struct inode_operations erofs_symlink_iops = {
->>  #ifdef CONFIG_EROFS_FS_XATTR
->>  	.listxattr = erofs_listxattr,
->>  #endif
->> +	.get_acl = erofs_get_acl,
->>  };
->>  
->>  const struct inode_operations erofs_fast_symlink_iops = {
->> @@ -301,5 +303,6 @@ const struct inode_operations erofs_fast_symlink_iops = {
->>  #ifdef CONFIG_EROFS_FS_XATTR
->>  	.listxattr = erofs_listxattr,
->>  #endif
->> +	.get_acl = erofs_get_acl,
->>  };
->>  
->> diff --git a/drivers/staging/erofs/namei.c b/drivers/staging/erofs/namei.c
->> index 7fed1f996ab0..b1752adc5934 100644
->> --- a/drivers/staging/erofs/namei.c
->> +++ b/drivers/staging/erofs/namei.c
->> @@ -238,5 +238,6 @@ const struct inode_operations erofs_dir_iops = {
->>  #ifdef CONFIG_EROFS_FS_XATTR
->>  	.listxattr = erofs_listxattr,
->>  #endif
->> +	.get_acl = erofs_get_acl,
->>  };
->>  
->> diff --git a/drivers/staging/erofs/super.c b/drivers/staging/erofs/super.c
->> index 176fca2af379..54cd7dac0a1f 100644
->> --- a/drivers/staging/erofs/super.c
->> +++ b/drivers/staging/erofs/super.c
->> @@ -398,6 +398,14 @@ static int erofs_read_super(struct super_block *sb,
->>  	if (!silent)
->>  		infoln("root inode @ nid %llu", ROOT_NID(sbi));
->>  
->> +#ifdef CONFIG_EROFS_FS_POSIX_ACL
->> +	/* Update the POSIXACL Flag */
->> +	if (test_opt(sbi, POSIX_ACL))
->> +		sb->s_flags |= SB_POSIXACL;
->> +	else
->> +		sb->s_flags &= ~SB_POSIXACL;
->> +#endif
->> +
->>  #ifdef CONFIG_EROFS_FS_ZIP
->>  	INIT_RADIX_TREE(&sbi->workstn_tree, GFP_ATOMIC);
->>  #endif
->> diff --git a/drivers/staging/erofs/xattr.c b/drivers/staging/erofs/xattr.c
->> index 7de46690d972..6759485ae862 100644
->> --- a/drivers/staging/erofs/xattr.c
->> +++ b/drivers/staging/erofs/xattr.c
->> @@ -643,3 +643,40 @@ ssize_t erofs_listxattr(struct dentry *dentry,
->>  	return shared_listxattr(&it);
->>  }
->>  
->> +#ifdef CONFIG_EROFS_FS_POSIX_ACL
->> +struct posix_acl *erofs_get_acl(struct inode *inode, int type)
->> +{
->> +	struct posix_acl *acl;
->> +	int ea_prefix, rc;
->> +	char *value = NULL;
->> +
->> +	switch(type) {
->> +	case ACL_TYPE_ACCESS:
->> +		ea_prefix = EROFS_XATTR_INDEX_POSIX_ACL_ACCESS;
->> +		break;
->> +	case ACL_TYPE_DEFAULT:
->> +		ea_prefix = EROFS_XATTR_INDEX_POSIX_ACL_DEFAULT;
->> +		break;
->> +	default:
->> +		return ERR_PTR(-EINVAL);
->> +	}
->> +
->> +	rc = erofs_getxattr(inode, ea_prefix, "", NULL, 0);
->> +	if (rc > 0) {
->> +		value = kvmalloc(rc, GFP_KERNEL);
-> 
-> erofs_kmalloc() is enough?
-
-I think kmalloc is enough for this case, but I think kvmalloc is not
-bad as well.
-
-Actually I want to introduce erofs_kvmalloc() in the later patch and
-use it in general except for the context which is unsuitable for vmalloc..
-
-Let me send v3 if it is unnecessary...
-
-Thanks,
-Gao Xiang
-
-> 
-> Thanks,
-> 
->> +		if (!value)
->> +			return ERR_PTR(-ENOMEM);
->> +		rc = erofs_getxattr(inode, ea_prefix, "", value, rc);
->> +	}
->> +
->> +	if (rc == -ENOATTR)
->> +		acl = NULL;
->> +	else if (rc < 0)
->> +		acl = ERR_PTR(rc);
->> +	else
->> +		acl = posix_acl_from_xattr(&init_user_ns, value, rc);
->> +	kvfree(value);
->> +	return acl;
->> +}
->> +#endif
->> +
->> diff --git a/drivers/staging/erofs/xattr.h b/drivers/staging/erofs/xattr.h
->> index 634dae9aaa0b..35ba5ac2139a 100644
->> --- a/drivers/staging/erofs/xattr.h
->> +++ b/drivers/staging/erofs/xattr.h
->> @@ -87,5 +87,11 @@ static ssize_t __maybe_unused erofs_listxattr(struct dentry *dentry,
->>  }
->>  #endif
->>  
->> +#ifdef CONFIG_EROFS_FS_POSIX_ACL
->> +struct posix_acl *erofs_get_acl(struct inode *inode, int type);
->> +#else
->> +#define erofs_get_acl	(NULL)
->> +#endif
->> +
->>  #endif
->>  
->>
-> 
+SGkgRG1pdHJ5LA0KDQpUaGFua3MgZm9yIHlvdXIgcmV2aWV3IG9mIHRoZSBwYXRjaGVzLg0KDQpD
+b25zaWRlcmluZyB0aGF0IHRoZSBsaWdodCBzZW5zb3IgcGFydCBzaG91bGQgYmUgaW4gSUlPLCBz
+aG91bGQgdGhlIGVudGlyZSBkcml2ZXIgYmUgcmV3cml0dGVuIGFzIGFuIElJTyBkcml2ZXI/ICBU
+aGVyZSdzIGFscmVhZHkgdGhlIGRyaXZlciBmb3IgZ3AyYXAwMjBhMDBmIHRoZXJlIHdoaWNoIGlz
+IHByZXN1bWFibHkgdGhlIGdwMmFwMDAyYTAwZidzIHN1Y2Nlc3NvciBhbmQgZG9lcyB0aGUgc2Ft
+ZSBmdW5jdGlvbnMuDQoNCk9uIDIwMTktMDEtMjUgNTozMiBwLm0uLCBEbWl0cnkgVG9yb2tob3Yg
+d3JvdGU6DQo+IE9uIEZyaSwgSmFuIDI1LCAyMDE5IGF0IDA2OjUwOjQ1UE0gKzAxMDAsIFBhd2XF
+giBDaG1pZWwgd3JvdGU6DQo+PiBGcm9tOiBKb25hdGhhbiBCYWtrZXIgPHhjLXJhY2VyMkBsaXZl
+LmNhPg0KPj4NCj4+IFRoaXMgY29tbWl0IGFkZHMgZG9jdW1lbnRhdGlvbiBmb3IgU2hhcnAgR1Ay
+QVAwMDJBMDBGLg0KPj4gSXQncyBQcm94aW1pdHkvT3B0byBTZW5zb3IgY29ubmVjdGVkIG92ZXIg
+aTJjLg0KPj4NCj4+IFNpZ25lZC1vZmYtYnk6IEpvbmF0aGFuIEJha2tlciA8eGMtcmFjZXIyQGxp
+dmUuY2E+DQo+PiBTaWduZWQtb2ZmLWJ5OiBQYXdlxYIgQ2htaWVsIDxwYXdlbC5taWtvbGFqLmNo
+bWllbEBnbWFpbC5jb20+DQo+PiAtLS0NCj4+ICAuLi4vYmluZGluZ3MvaW5wdXQvc2hhcnAsZ3Ay
+YXAwMDJhMDBmLnR4dCAgICAgfCAyOSArKysrKysrKysrKysrKysrKysrDQo+PiAgMSBmaWxlIGNo
+YW5nZWQsIDI5IGluc2VydGlvbnMoKykNCj4+ICBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRh
+dGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2lucHV0L3NoYXJwLGdwMmFwMDAyYTAwZi50eHQNCj4+
+DQo+PiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2lucHV0
+L3NoYXJwLGdwMmFwMDAyYTAwZi50eHQgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGlu
+Z3MvaW5wdXQvc2hhcnAsZ3AyYXAwMDJhMDBmLnR4dA0KPj4gbmV3IGZpbGUgbW9kZSAxMDA2NDQN
+Cj4+IGluZGV4IDAwMDAwMDAwMDAwMC4uYzUyNGViN2QzZDYwDQo+PiAtLS0gL2Rldi9udWxsDQo+
+PiArKysgYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvaW5wdXQvc2hhcnAsZ3Ay
+YXAwMDJhMDBmLnR4dA0KPj4gQEAgLTAsMCArMSwyOSBAQA0KPj4gKyogU2hhcnAgR1AyQVAwMDJB
+MDBGIEkyQyBQcm94aW1pdHkvT3B0byBTZW5zb3INCj4+ICsNCj4+ICtSZXF1aXJlZCBwcm9wZXJ0
+aWVzOg0KPj4gKy0gY29tcGF0aWJsZSA6IFNob3VsZCBiZSAic2hhcnAsZ3AyYXAwMDJhMDBmIg0K
+Pj4gKy0gcmVnIDogVGhlIEkyQyBhZGRyZXNzIG9mIHRoZSBzZW5zb3INCj4+ICstIHZvdXQtZ3Bp
+byA6IFRoZSBncGlvIGNvbm5lY3RlZCB0byB0aGUgdm91dCBwaW4NCj4gDQo+IERvIHlvdSBrbm93
+IHdoYXQgaXQgaXMgZm9yPw0KPiANCkl0J3MgdGhlIGNvbnRyb2wgb2YgdGhlIG1haW4gcG93ZXIg
+c3VwcGx5IHRvIHRoZSBjaGlwLg0KPj4gKy0gaW50ZXJydXB0LXBhcmVudCA6IHNob3VsZCBiZSB0
+aGUgcGhhbmRsZSBmb3IgdGhlIGludGVycnVwdCBjb250cm9sbGVyDQo+PiArLSBpbnRlcnJ1cHRz
+IDogSW50ZXJydXB0IG1hcHBpbmcgZm9yIEdQSU8gSVJRLCBpdCBzaG91bGQgYnkgY29uZmlndXJl
+ZCB3aXRoDQo+PiArCQlmbGFncyBJUlFfVFlQRV9FREdFX0JPVEgNCj4+ICsNCj4+ICtPcHRpb25h
+bCBwcm9wZXJ0aWVzOg0KPj4gKy0gd2FrZXVwIDogSWYgdGhlIGRldmljZSBpcyBjYXBhYmxlIG9m
+IHdha2luZyB1cCB0aGUgc3lzdGVtDQo+PiArLSBpby1jaGFubmVscyA6IFBoYW5kbGUgdG8gYW4g
+QURDIGNoYW5uZWwgY29ubmVjdGVkIHRvIHRoZSBsaWdodCBzZW5zb3INCj4+ICstIGlvLWNoYW5u
+ZWwtbmFtZXMgPSAibGlnaHQiOw0KPj4gKy0gcG9sbC1pbnRlcnZhbCA6IFBvbGwgaW50ZXJ2YWwg
+dGltZSBpbiBtaWxsaXNlY29uZHMsIGRlZmF1bHQgNTAwbXMNCj4+ICstIGxpZ2h0LWFkYy1tYXgg
+OiBNYXhpbXVtIGxpZ2h0IHZhbHVlIHJlcG9ydGVkLCBkZWZhdWx0IDQwOTYNCj4+ICstIGxpZ2h0
+LWFkYy1mdXp6IDogRnV6eiB2YWx1ZSBmb3IgcmVwb3J0ZWQgbGlnaHQgdmFsdWUsIGRlZmF1bHQg
+ODANCj4+ICsNCj4+ICtFeGFtcGxlOg0KPj4gKw0KPj4gK2dwMmFANDQgew0KPj4gKwljb21wYXRp
+YmxlID0gInNoYXJwLGdwMmFwMDAyYTAwZiI7DQo+PiArCXJlZyA9IDwweDQ0PjsNCj4+ICsJdm91
+dC1ncGlvID0gPCZncGgwIDIgR1BJT19BQ1RJVkVfSElHSD47DQo+PiArCWludGVycnVwdC1wYXJl
+bnQgPSA8JmdwaDA+Ow0KPj4gKwlpbnRlcnJ1cHRzID0gPDIgSVJRX1RZUEVfRURHRV9CT1RIPjsN
+Cj4+ICsJaW8tY2hhbm5lbHMgPSA8JmFkYyA5PjsNCj4+ICsJaW8tY2hhbm5lbC1uYW1lcyA9ICJs
+aWdodCI7DQo+PiArfTsNCj4+IC0tIA0KPj4gMi4xNy4xDQo+Pg0KPiANClRoYW5rcywNCkpvbmF0
+aGFuDQo=
