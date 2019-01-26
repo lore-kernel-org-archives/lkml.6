@@ -2,200 +2,141 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65A17C282C3
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:24:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27BF7C282C3
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 359BE21902
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:24:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0A9B21855
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 03:28:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729594AbfAZDYk (ORCPT
+        id S1729526AbfAZD2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 25 Jan 2019 22:24:40 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2776 "EHLO huawei.com"
+        Fri, 25 Jan 2019 22:28:08 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:2677 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729560AbfAZDYj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 25 Jan 2019 22:24:39 -0500
-Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 4556A174C939B7AE0D0F;
-        Sat, 26 Jan 2019 11:24:37 +0800 (CST)
-Received: from linux-ioko.site (10.71.200.31) by
- DGGEMS403-HUB.china.huawei.com (10.3.19.203) with Microsoft SMTP Server id
- 14.3.408.0; Sat, 26 Jan 2019 11:24:26 +0800
+        id S1726030AbfAZD2H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 25 Jan 2019 22:28:07 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 81AC358E97445D7EC13E;
+        Sat, 26 Jan 2019 11:28:05 +0800 (CST)
+Received: from [127.0.0.1] (10.57.115.182) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Sat, 26 Jan 2019
+ 11:27:58 +0800
+Subject: Re: [PATCH V2 rdma-next 2/3] RDMA/hns: Fix the chip hanging caused by
+ sending mailbox&CMQ during reset
+To:     Jason Gunthorpe <jgg@ziepe.ca>
+References: <1547868967-115951-1-git-send-email-xavier.huwei@huawei.com>
+ <1547868967-115951-3-git-send-email-xavier.huwei@huawei.com>
+ <20190123224041.GA11605@ziepe.ca> <5C492D59.8030707@huawei.com>
+ <20190124183120.GD17167@ziepe.ca> <5C4A714C.2070109@huawei.com>
+ <20190125215018.GF23001@ziepe.ca> <5C4BBC3E.2000004@huawei.com>
+CC:     <lijun_nudt@163.com>, <linux-rdma@vger.kernel.org>,
+        <xavier_huwei@163.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <dledford@redhat.com>
 From:   "Wei Hu (Xavier)" <xavier.huwei@huawei.com>
-To:     <dledford@redhat.com>, <jgg@ziepe.ca>
-CC:     <linux-rdma@vger.kernel.org>, <xavier.huwei@huawei.com>,
-        <lijun_nudt@163.com>, <oulijun@huawei.com>,
-        <liudongdong3@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <xavier_huwei@163.com>
-Subject: [PATCH V3 rdma-next 3/3] RDMA/hns: Fix the chip hanging caused by sending doorbell during reset
-Date:   Sat, 26 Jan 2019 11:59:23 +0800
-Message-ID: <1548475163-44098-4-git-send-email-xavier.huwei@huawei.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1548475163-44098-1-git-send-email-xavier.huwei@huawei.com>
-References: <1548475163-44098-1-git-send-email-xavier.huwei@huawei.com>
+Message-ID: <5C4BD3BD.2080601@huawei.com>
+Date:   Sat, 26 Jan 2019 11:27:57 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
+ Thunderbird/38.5.1
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.71.200.31]
+In-Reply-To: <5C4BBC3E.2000004@huawei.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.57.115.182]
 X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On hi08 chip, There is a possibility of chip hanging when sending
-doorbell during reset. We can fix it by prohibiting doorbell during
-reset.
 
-Fixes: 2d40788825ac ("RDMA/hns: Add support for processing send wr and receive wr")
-Signed-off-by: Wei Hu (Xavier) <xavier.huwei@huawei.com>
----
-v2->v3: Non change.
-v1->v2: Non change.
----
- drivers/infiniband/hw/hns/hns_roce_device.h |  1 +
- drivers/infiniband/hw/hns/hns_roce_hw_v2.c  | 20 +++++++++++++-------
- drivers/infiniband/hw/hns/hns_roce_hw_v2.h  | 11 +++++++++++
- 3 files changed, 25 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-index 65eb4bc..8ca8d74 100644
---- a/drivers/infiniband/hw/hns/hns_roce_device.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-@@ -947,6 +947,7 @@ struct hns_roce_dev {
- 	spinlock_t		bt_cmd_lock;
- 	bool			active;
- 	bool			is_reset;
-+	bool			dis_db;
- 	unsigned long		reset_cnt;
- 	struct hns_roce_ib_iboe iboe;
- 
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-index 21f1010..ab8e327 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-@@ -587,7 +587,7 @@ static int hns_roce_v2_post_send(struct ib_qp *ibqp,
- 		roce_set_field(sq_db.parameter, V2_DB_PARAMETER_SL_M,
- 			       V2_DB_PARAMETER_SL_S, qp->sl);
- 
--		hns_roce_write64_k((__le32 *)&sq_db, qp->sq.db_reg_l);
-+		hns_roce_write64(hr_dev, (__le32 *)&sq_db, qp->sq.db_reg_l);
- 
- 		qp->sq_next_wqe = ind;
- 		qp->next_sge = sge_ind;
-@@ -717,7 +717,7 @@ static int hns_roce_v2_cmd_hw_reseted(struct hns_roce_dev *hr_dev,
- 				      unsigned long reset_stage)
- {
- 	/* When hardware reset has been completed once or more, we should stop
--	 * sending mailbox&cmq to hardware. If now in .init_instance()
-+	 * sending mailbox&cmq&doorbell to hardware. If now in .init_instance()
- 	 * function, we should exit with error. If now at HNAE3_INIT_CLIENT
- 	 * stage of soft reset process, we should exit with error, and then
- 	 * HNAE3_INIT_CLIENT related process can rollback the operation like
-@@ -726,6 +726,7 @@ static int hns_roce_v2_cmd_hw_reseted(struct hns_roce_dev *hr_dev,
- 	 * reset process once again.
- 	 */
- 	hr_dev->is_reset = true;
-+	hr_dev->dis_db = true;
- 
- 	if (reset_stage == HNS_ROCE_STATE_RST_INIT ||
- 	    instance_stage == HNS_ROCE_STATE_INIT)
-@@ -743,8 +744,8 @@ static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
- 	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
- 	unsigned long end;
- 
--	/* When hardware reset is detected, we should stop sending mailbox&cmq
--	 * to hardware, and wait until hardware reset finished. If now
-+	/* When hardware reset is detected, we should stop sending mailbox&cmq&
-+	 * doorbell to hardware, and wait until hardware reset finished. If now
- 	 * in .init_instance() function, we should exit with error. If now at
- 	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
- 	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
-@@ -752,6 +753,7 @@ static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
- 	 * related process will exit with error to notify NIC driver to
- 	 * reschedule soft reset process once again.
- 	 */
-+	hr_dev->dis_db = true;
- 	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
- 	while (time_before(jiffies, end))
- 		if (!ops->get_hw_reset_stat(handle))
-@@ -777,9 +779,10 @@ static int hns_roce_v2_cmd_sw_resetting(struct hns_roce_dev *hr_dev)
- 	unsigned long end;
- 
- 	/* When software reset is detected at .init_instance() function, we
--	 * should stop sending mailbox&cmq to hardware, and
-+	 * should stop sending mailbox&cmq&doorbell to hardware, and
- 	 * wait until hardware reset finished, we should exit with error.
- 	 */
-+	hr_dev->dis_db = true;
- 	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
- 	while (time_before(jiffies, end))
- 		if (ops->ae_dev_reset_cnt(handle) != hr_dev->reset_cnt)
-@@ -2511,6 +2514,7 @@ static void hns_roce_v2_write_cqc(struct hns_roce_dev *hr_dev,
- static int hns_roce_v2_req_notify_cq(struct ib_cq *ibcq,
- 				     enum ib_cq_notify_flags flags)
- {
-+	struct hns_roce_dev *hr_dev = to_hr_dev(ibcq->device);
- 	struct hns_roce_cq *hr_cq = to_hr_cq(ibcq);
- 	u32 notification_flag;
- 	u32 doorbell[2];
-@@ -2536,7 +2540,7 @@ static int hns_roce_v2_req_notify_cq(struct ib_cq *ibcq,
- 	roce_set_bit(doorbell[1], V2_CQ_DB_PARAMETER_NOTIFY_S,
- 		     notification_flag);
- 
--	hns_roce_write64_k(doorbell, hr_cq->cq_db_l);
-+	hns_roce_write64(hr_dev, doorbell, hr_cq->cq_db_l);
- 
- 	return 0;
- }
-@@ -4780,6 +4784,7 @@ static void hns_roce_v2_init_irq_work(struct hns_roce_dev *hr_dev,
- 
- static void set_eq_cons_index_v2(struct hns_roce_eq *eq)
- {
-+	struct hns_roce_dev *hr_dev = eq->hr_dev;
- 	u32 doorbell[2];
- 
- 	doorbell[0] = 0;
-@@ -4806,7 +4811,7 @@ static void set_eq_cons_index_v2(struct hns_roce_eq *eq)
- 		       HNS_ROCE_V2_EQ_DB_PARA_S,
- 		       (eq->cons_index & HNS_ROCE_V2_CONS_IDX_M));
- 
--	hns_roce_write64_k(doorbell, eq->doorbell);
-+	hns_roce_write64(hr_dev, doorbell, eq->doorbell);
- }
- 
- static struct hns_roce_aeqe *get_aeqe_v2(struct hns_roce_eq *eq, u32 entry)
-@@ -6326,6 +6331,7 @@ static int hns_roce_hw_v2_reset_notify_down(struct hnae3_handle *handle)
- 		return 0;
- 
- 	hr_dev->active = false;
-+	hr_dev->dis_db = true;
- 
- 	event.event = IB_EVENT_DEVICE_FATAL;
- 	event.device = &hr_dev->ib_dev;
-diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-index f22094e..6b0486f 100644
---- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-+++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.h
-@@ -1799,4 +1799,15 @@ struct hns_roce_sccc_clr_done {
- 	__le32 rsv[5];
- };
- 
-+static inline void hns_roce_write64(struct hns_roce_dev *hr_dev, __le32 val[2],
-+				    void __iomem *dest)
-+{
-+	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
-+	struct hnae3_handle *handle = priv->handle;
-+	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
-+
-+	if (!hr_dev->dis_db && !ops->get_hw_reset_stat(handle))
-+		hns_roce_write64_k(val, dest);
-+}
-+
- #endif
--- 
-1.9.1
+On 2019/1/26 9:47, Wei Hu (Xavier) wrote:
+>
+> On 2019/1/26 5:50, Jason Gunthorpe wrote:
+>> On Fri, Jan 25, 2019 at 10:15:40AM +0800, Wei Hu (Xavier) wrote:
+>>> On 2019/1/25 2:31, Jason Gunthorpe wrote:
+>>>> On Thu, Jan 24, 2019 at 11:13:29AM +0800, Wei Hu (Xavier) wrote:
+>>>>> On 2019/1/24 6:40, Jason Gunthorpe wrote:
+>>>>>> On Sat, Jan 19, 2019 at 11:36:06AM +0800, Wei Hu (Xavier) wrote:
+>>>>>>
+>>>>>>> +static int hns_roce_v2_cmd_hw_resetting(struct hns_roce_dev *hr_dev,
+>>>>>>> +					unsigned long instance_stage,
+>>>>>>> +					unsigned long reset_stage)
+>>>>>>> +{
+>>>>>>> +	struct hns_roce_v2_priv *priv = (struct hns_roce_v2_priv *)hr_dev->priv;
+>>>>>>> +	struct hnae3_handle *handle = priv->handle;
+>>>>>>> +	const struct hnae3_ae_ops *ops = handle->ae_algo->ops;
+>>>>>>> +	unsigned long end;
+>>>>>>> +
+>>>>>>> +	/* When hardware reset is detected, we should stop sending mailbox&cmq
+>>>>>>> +	 * to hardware, and wait until hardware reset finished. If now
+>>>>>>> +	 * in .init_instance() function, we should exit with error. If now at
+>>>>>>> +	 * HNAE3_INIT_CLIENT stage of soft reset process, we should exit with
+>>>>>>> +	 * error, and then HNAE3_INIT_CLIENT related process can rollback the
+>>>>>>> +	 * operation like notifing hardware to free resources, HNAE3_INIT_CLIENT
+>>>>>>> +	 * related process will exit with error to notify NIC driver to
+>>>>>>> +	 * reschedule soft reset process once again.
+>>>>>>> +	 */
+>>>>>>> +	end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+>>>>>>> +	while (ops->get_hw_reset_stat(handle) && time_before(jiffies, end))
+>>>>>>> +		udelay(1);
+>>>>>> I thought you were getting rid of these loops?
+>>>>> Hi, Jason
+>>>>>
+>>>>>     Upper applications maybe notify driver to issue mailbox or CMD
+>>>>>     commands to hardware, some commands used to cancel resources,
+>>>>>     destory bt/destory cq/unreg mr/destory qp etc. when such
+>>>>>     commands are executed successfully, the hardware engine will
+>>>>>     no longer access some memory registered by the driver.
+>>>>>
+>>>>>     When reset occurs, it is possible for upper applications notify driver
+>>>>>     to issue mailbox or CMD commands, we need to wait until hardware
+>>>>>     reset finished to ensure that hardware no longer accesses related
+>>>>> memory.
+>>>> You should not wait for things using loops like the above.
+>>> Hi, Jason
+>>>
+>>>     Are your comments foucsing on udelay? If not, thanks for your detail
+>>> information.
+>>>     In hns3 RoCE driver, some CMQ/mailbox operation are called inside
+>>> the lock,
+>>>     we can't use msleep in the lock, otherwise it will cause deadlock.
+>>>     When reset occurs, RDMA service cannot be provided normally, I think
+>>> in this
+>>>     case using udelay will not have a great impact.
+>> You should not use any kind of sleep call in a loop like this.
+> Hi, Jason
+>
+>     OK, I got your opinion and will modify it in v3 patch as below:   
+>
+>     end = msecs_to_jiffies(HNS_ROCE_V2_HW_RST_TIMEOUT) + jiffies;
+>     while (time_before(jiffies, end))
+>         if (!ops->get_hw_reset_stat(handle))
+>             break;           
+>    
+Hi, Jason
+    Thanks for your comments, I have modified them and send patch V3.
+    Thanks.
+
+    Regards
+Xavier
+>     Regards
+> Xavier
+>> Jason
+>>
+>> .
+>>
+>
+> _______________________________________________
+> Linuxarm mailing list
+> Linuxarm@huawei.com
+> http://hulk.huawei.com/mailman/listinfo/linuxarm
+>
+> .
+>
+
 
