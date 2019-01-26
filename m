@@ -2,106 +2,141 @@ Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35917C282C5
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:30:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1819C282C5
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03ABF218A6
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:30:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADBCD218A6
+	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 08:40:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azCSHkFr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726689AbfAZIaV (ORCPT
+        id S1727290AbfAZIkq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 03:30:21 -0500
-Received: from mail.qboosh.pl ([217.73.31.61]:58575 "EHLO mail.qboosh.pl"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726122AbfAZIaV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 03:30:21 -0500
-X-Greylist: delayed 417 seconds by postgrey-1.27 at vger.kernel.org; Sat, 26 Jan 2019 03:30:20 EST
-Received: by mail.qboosh.pl (Postfix, from userid 1000)
-        id 040B21A26DA9; Sat, 26 Jan 2019 09:23:22 +0100 (CET)
-Date:   Sat, 26 Jan 2019 09:23:22 +0100
-From:   Jakub Bogusz <qboosh@pld-linux.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Eric Wong <e@80x24.org>, lkml <linux-kernel@vger.kernel.org>,
-        Miloslav Trmac <mitr@volny.cz>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: Re: [PATCH][RESEND] wistron_btns needs executable BIOS image
-Message-ID: <20190126082321.GA6792@mail>
-References: <20170731182010.GA933@stranger.qboosh.pl> <20190125191437.GA25902@stranger.qboosh.pl> <20190125211349.nfbbcuaip5y6l5dr@dcvr> <CAKdAkRSZ6cT=fO42YG320Po6cYtWaPgg2puAf5jMnC+hD+Em2g@mail.gmail.com>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAKdAkRSZ6cT=fO42YG320Po6cYtWaPgg2puAf5jMnC+hD+Em2g@mail.gmail.com>
-User-Agent: Mutt/1.4.2.3i
+        Sat, 26 Jan 2019 03:40:46 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43995 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726122AbfAZIkq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 03:40:46 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r10so12598138wrs.10;
+        Sat, 26 Jan 2019 00:40:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:from:to:cc:subject:date:message-id;
+        bh=y9B6554bHZTaAtyUJxUUnPEsPSAphke/2C5LEfcn/9U=;
+        b=azCSHkFrAOPtYWktFxe11s71o7/D6BtseDARWQLDhQTqmOrPAAyugLRdOyCeX2uqTl
+         p5Q4angu5xnE9iUjCcUnFkZpl8sU5cFeuRyJ3puI/qI5xk48fzwcFQyhJF51fk/p0g7i
+         VBUjhDOtG5if4zwPmZ2PO22zsOOQ4KG9C1g+QrSNaPGuGF/iCrCDypVXJAKL6rlhRiTe
+         2qpsrLOQhCvpwHi8IO8OBsJMvWdddXqoXQ0ho0A8q0b/FvFU6MmaTi253BYWSL6N1E0V
+         6j6pEnEUhIKN1kXaeK0pbMLiSNpaLDQLQkcAIJvKlTTssjueh2oGhFQCCyViUTCH/eCK
+         ZV5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id;
+        bh=y9B6554bHZTaAtyUJxUUnPEsPSAphke/2C5LEfcn/9U=;
+        b=BcC1Mo+l5Bb65Y5l8kLaov+6jMiWN5+jo+YYvMlViJnkLnzbD4Yg4h1i4Nj7UmDtai
+         KxdKmJNuvKjcbeQo/gmemlg3mshJhQjqTXvmU/eWpmIi6tF4oLydwKeSLAux9mvuWvak
+         3aIAvLru1/qOoBhnK+z0K3vZcJ7P2GMBngfF/6zPTWwSkgQ4bwtTQ1TPuerE9XbyhQW8
+         Df+HsgfuTWtX9kmThE6J7vtAJFz41/LJpnUsGMD/D1tJ5U507ABD9H1d9Yjd6c/gT5qE
+         v5WeSRjAZdK/0EKm06s0Tr/vtSsVLbKZQ9ORkKRZI2xzg48nF4swPY3VfDCRo5UO+BZb
+         nSrQ==
+X-Gm-Message-State: AJcUukfuoIK3FCAatU/SEoK7k9EUEvEj+XhjYmluC0A+gcQtY8NRtAO5
+        mTiok9Ngh1Kk8eKc5lIxXB9FE++6
+X-Google-Smtp-Source: ALg8bN5Ao/KVsX9De7KUGzOFU4ghJb+zDTo7aEAFTVWK+FoFpExceD2pI4tv2yfR8BwjsJ/3EEfO9A==
+X-Received: by 2002:a5d:6850:: with SMTP id o16mr14708718wrw.123.1548492043941;
+        Sat, 26 Jan 2019 00:40:43 -0800 (PST)
+Received: from 640k.lan ([93.56.166.5])
+        by smtp.gmail.com with ESMTPSA id o9sm40151089wmh.3.2019.01.26.00.40.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 26 Jan 2019 00:40:43 -0800 (PST)
+From:   Paolo Bonzini <pbonzini@redhat.com>
+To:     torvalds@linux-foundation.org
+Cc:     linux-kernel@vger.kernel.org, rkrcmar@redhat.com,
+        kvm@vger.kernel.org
+Subject: [GIT PULL] KVM fixes for 5.0-rc4
+Date:   Sat, 26 Jan 2019 09:40:41 +0100
+Message-Id: <1548492041-46410-1-git-send-email-pbonzini@redhat.com>
+X-Mailer: git-send-email 1.8.3.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 01:41:47PM -0800, Dmitry Torokhov wrote:
-> On Fri, Jan 25, 2019 at 1:13 PM Eric Wong <e@80x24.org> wrote:
-> >
-> > Jakub Bogusz <qboosh@pld-linux.org> wrote:
-> > > Let's try once again... (take 3)
-> > >
-> > > First time I sent this patch when I prepared it in 2013 for Linux 3.12,
-> > > the second time after update for Linux 4.12 in 2017...
-> > > And it still applies to Linux 4.20.
-> >
-> > Adding Dmitry Torokhov and linux-input to Cc:
-> > (that's what ./scripts/get_maintainer.pl says)
+Linus,
 
-Thanks. I was aware only of MAINTAINERS file.
+The following changes since commit d7393226d15add056285c8fc86723d54d7e0c77d:
 
-[...]
-> > > wistron_btns needs executable BIOS image.
-> > >
-> > > Signed-off-by: Jakub Bogusz <qboosh@pld-linux.org>
-> > >
-> > > --- linux-4.12/drivers/input/misc/wistron_btns.c.orig 2013-11-16 09:05:55.612742472 +0100
-> > > +++ linux-4.12/drivers/input/misc/wistron_btns.c      2013-11-16 09:24:37.356028732 +0100
-> > > @@ -33,6 +33,7 @@
-> > >  #include <linux/types.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/leds.h>
-> > > +#include <asm/set_memory.h>
-> > >
-> > >  /* How often we poll keys - msecs */
-> > >  #define POLL_INTERVAL_DEFAULT        500 /* when idle */
-> > > @@ -124,6 +125,7 @@
-> > >       if (entry_point >= 0xF0000) {
-> > >               bios_code_map_base = base;
-> > >               bios_entry_point = bios_code_map_base + (entry_point & 0xFFFF);
-> > > +             set_memory_x((unsigned long)bios_code_map_base, 0x10000 >> PAGE_SHIFT);
-> > >       } else {
-> > >               iounmap(base);
-> > >               bios_code_map_base = ioremap(entry_point & ~0x3FFF, 0x4000);
-> > > @@ -134,6 +136,7 @@
-> > >                       goto err;
-> > >               }
-> > >               bios_entry_point = bios_code_map_base + (entry_point & 0x3FFF);
-> > > +             set_memory_x((unsigned long)bios_code_map_base, 0x4000 >> PAGE_SHIFT);
-> > >       }
-> > >       /* The Windows driver maps 0x10000 bytes, we keep only one page... */
-> > >       bios_data_map_base = ioremap(0x400, 0xc00);
-> 
-> It is really weird have __iomem region to have executable bit set. I
-> wonder if, along with the setting memory to X, we should not change
-> that ioremap() to memremap()?
+  Merge tag 'for-linus' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma (2019-01-18 17:17:20 +1200)
 
-Maybe... this is area of BIOS ROM, not I/O. But I'm not sure about
-cacheability.
-
-Looking at recent kernel code (4.19 to be exact) ioremap ends in
-__ioremap_caller with _PAGE_CACHE_MODE_UC_MINUS, while memremap would end
-in __ioremap_caller with e.g. (depending on flags) _PAGE_CACHE_MODE_WT.
-
-Unfortunately now I have rare access to this hardware (FS Amilo) to
-test.
+are available in the git repository at:
 
 
--- 
-Jakub Bogusz    http://qboosh.pl/
+  https://git.kernel.org/pub/scm/virt/kvm/kvm.git tags/for-linus
+
+for you to fetch changes up to b2869f28e1476cd705bb28c58fd01b0bd661bb99:
+
+  KVM: x86: Mark expected switch fall-throughs (2019-01-25 19:29:36 +0100)
+
+----------------------------------------------------------------
+Quite a few fixes for x86: nested virtualization save/restore, AMD nested virtualization
+and virtual APIC, 32-bit fixes, an important fix to restore operation on older
+processors, and a bunch of hyper-v bugfixes.  Several are marked stable.
+
+There are also fixes for GCC warnings and for a GCC/objtool interaction.
+
+----------------------------------------------------------------
+Alexander Popov (1):
+      KVM: x86: Fix single-step debugging
+
+Ben Gardon (1):
+      kvm: selftests: Fix region overlap check in kvm_util
+
+Gustavo A. R. Silva (1):
+      KVM: x86: Mark expected switch fall-throughs
+
+Masahiro Yamada (1):
+      KVM: x86: fix TRACE_INCLUDE_PATH and remove -I. header search paths
+
+Sean Christopherson (4):
+      KVM: VMX: Use the correct field var when clearing VM_ENTRY_LOAD_IA32_PERF_GLOBAL_CTRL
+      KVM: x86: Fix PV IPIs for 32-bit KVM host
+      KVM: x86: WARN_ONCE if sending a PV IPI returns a fatal error
+      KVM: VMX: Move vmx_vcpu_run()'s VM-Enter asm blob to a helper function
+
+Suravee Suthikulpanit (2):
+      svm: Add warning message for AVIC IPI invalid target
+      svm: Fix AVIC incomplete IPI emulation
+
+Tom Roeder (1):
+      kvm: x86/vmx: Use kzalloc for cached_vmcs12
+
+Vitaly Kuznetsov (6):
+      x86/kvm/hyper-v: don't announce GUEST IDLE MSR support
+      x86/kvm/hyper-v: don't recommend doing reset via synthetic MSR
+      x86/kvm/hyper-v: recommend using eVMCS only when it is enabled
+      KVM: nSVM: clear events pending from svm_complete_interrupts() when exiting to L1
+      x86/kvm/hyper-v: nested_enable_evmcs() sets vmcs_version incorrectly
+      KVM: selftests: check returned evmcs version range
+
+Yi Wang (1):
+      kvm: vmx: fix some -Wmissing-prototypes warnings
+
+ arch/x86/kernel/kvm.c                           |   7 +-
+ arch/x86/kvm/Makefile                           |   4 -
+ arch/x86/kvm/hyperv.c                           |   7 +-
+ arch/x86/kvm/lapic.c                            |   2 +
+ arch/x86/kvm/mmu.c                              |   1 +
+ arch/x86/kvm/svm.c                              |  31 +++--
+ arch/x86/kvm/trace.h                            |   2 +-
+ arch/x86/kvm/vmx/evmcs.c                        |   7 +-
+ arch/x86/kvm/vmx/nested.c                       |  14 ++-
+ arch/x86/kvm/vmx/vmx.c                          | 147 +++++++++++++-----------
+ arch/x86/kvm/x86.c                              |   8 +-
+ tools/testing/selftests/kvm/lib/kvm_util.c      |   9 +-
+ tools/testing/selftests/kvm/x86_64/evmcs_test.c |   6 +
+ 13 files changed, 130 insertions(+), 115 deletions(-)
