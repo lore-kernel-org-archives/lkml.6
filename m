@@ -2,155 +2,69 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B47AC282CB
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 19:04:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E16BC282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 19:05:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 355E521473
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 19:04:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B4E82146E
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 19:05:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548615906;
+	bh=ZKr5ruyGQNFYRl1FL9RwAgb1rafNdWYy0IcOLTtu1ZQ=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
+	b=Ks2wCKEVWa701is+jSHhB5INDDMG47cydkoWI2F6+XFAex8pSB7enwUws9PpwxHWp
+	 cgLdsUSzZxqVYESQoTwMAJwmXCSEunhKDTxqO8aq63aq4zAmy7N6bLD1rT7eFaXxwK
+	 ad3I9QpZkrv2pIpDgTfLlLhPgdpWB5bXxZ2LnmHE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727068AbfA0TEW (ORCPT
+        id S1727082AbfA0TFE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 14:04:22 -0500
-Received: from route-level1.fsdata.se ([89.221.252.216]:48935 "EHLO
-        route-level1.fsdata.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbfA0TEV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 14:04:21 -0500
-Received: from DAG01.HMC.local (192.168.46.11) by EDGE01LEVEL1.hmc.local
- (192.168.46.33) with Microsoft SMTP Server (TLS) id 15.0.847.32; Sun, 27 Jan
- 2019 20:04:01 +0100
-Received: from localhost (94.234.44.129) by DAG01.HMC.local (192.168.46.11)
- with Microsoft SMTP Server (TLS) id 15.0.1263.5; Sun, 27 Jan 2019 20:04:02
- +0100
-From:   Mattias Jacobsson <2pi@mok.nu>
-To:     <mario.limonciello@dell.com>, <dvhart@infradead.org>,
-        <andy@infradead.org>, <mjg59@srcf.ucam.org>, <pali.rohar@gmail.com>
-CC:     <2pi@mok.nu>, <platform-driver-x86@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/3] platform/x86: wmi: use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS()
-Date:   Sun, 27 Jan 2019 20:03:29 +0100
-Message-ID: <d3f8c420937b75d1b9101e5392c5dbf54b763cb3.1548610407.git.2pi@mok.nu>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <cover.1548610407.git.2pi@mok.nu>
-References: <cover.1548610407.git.2pi@mok.nu>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-Originating-IP: [94.234.44.129]
-X-ClientProxiedBy: PROXY04.HMC.local (192.168.46.54) To DAG01.HMC.local
- (192.168.46.11)
-Received-SPF: Neutral (EDGE01LEVEL1.hmc.local: 192.168.46.11 is neither
- permitted nor denied by domain of 2pi@mok.nu)
+        Sun, 27 Jan 2019 14:05:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43230 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726630AbfA0TFE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 14:05:04 -0500
+Subject: Re: [GIT PULL] EDAC fix for 5.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548615903;
+        bh=ZKr5ruyGQNFYRl1FL9RwAgb1rafNdWYy0IcOLTtu1ZQ=;
+        h=From:In-Reply-To:References:Date:To:Cc:From;
+        b=RKUjTKRGDNzBOFHVERYVbzVqIgPkSBtmnjtMk+F7cynUEtL47j3xob+b9VVJDmVfD
+         AqC+1HbQwIDzzUUMjwqeSGGxdWL5YTMB8f6V0pK03KJfye+QQXj2bS+5j7Uuip6kdJ
+         wBMK0oSSfRx9xKI7rHqY3g09B7idrVLfoe14zbBE=
+From:   pr-tracker-bot@kernel.org
+In-Reply-To: <20190127114154.GB3916@zn.tnic>
+References: <20190127114154.GB3916@zn.tnic>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20190127114154.GB3916@zn.tnic>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git
+ tags/edac_fix_for_5.0
+X-PR-Tracked-Commit-Id: 245b6c6558128327d330549b23d09594c46f58df
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 983542434e6beef911d5ae4488c49080a177e5e4
+Message-Id: <154861590356.4831.1139036714488811530.pr-tracker-bot@kernel.org>
+Date:   Sun, 27 Jan 2019 19:05:03 +0000
+To:     Borislav Petkov <bp@suse.de>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-edac <linux-edac@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-WMI drivers can if they have specified an array of struct wmi_device_id
-use the MODULE_DEVICE_TABLE() macro to automatically generate the
-appropriate MODULE_ALIAS() output. Thus avoiding to keep both the array
-of struct wmi_device_id and the MODULE_ALIAS() declaration(s) in sync.
+The pull request you sent on Sun, 27 Jan 2019 12:41:54 +0100:
 
-Change all drivers that have specified an array of struct wmi_device_id
-to use MODULE_DEVICE_TABLE() instead of MODULE_ALIAS().
+> git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git tags/edac_fix_for_5.0
 
-Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
-Reviewed-by: Mario Limonciello <mario.limonciello@dell.com>
----
- drivers/platform/x86/dell-smbios-wmi.c       | 2 +-
- drivers/platform/x86/dell-wmi-descriptor.c   | 2 +-
- drivers/platform/x86/dell-wmi.c              | 4 ++--
- drivers/platform/x86/huawei-wmi.c            | 3 +--
- drivers/platform/x86/intel-wmi-thunderbolt.c | 2 +-
- drivers/platform/x86/wmi-bmof.c              | 2 +-
- 6 files changed, 7 insertions(+), 8 deletions(-)
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/983542434e6beef911d5ae4488c49080a177e5e4
 
-diff --git a/drivers/platform/x86/dell-smbios-wmi.c b/drivers/platform/x86/dell-smbios-wmi.c
-index cf2229ece9ff..c3ed3c8c17b9 100644
---- a/drivers/platform/x86/dell-smbios-wmi.c
-+++ b/drivers/platform/x86/dell-smbios-wmi.c
-@@ -277,4 +277,4 @@ void exit_dell_smbios_wmi(void)
- 	wmi_driver_unregister(&dell_smbios_wmi_driver);
- }
- 
--MODULE_ALIAS("wmi:" DELL_WMI_SMBIOS_GUID);
-+MODULE_DEVICE_TABLE(wmi, dell_smbios_wmi_id_table);
-diff --git a/drivers/platform/x86/dell-wmi-descriptor.c b/drivers/platform/x86/dell-wmi-descriptor.c
-index 072821aa47fc..14ab250b7d5a 100644
---- a/drivers/platform/x86/dell-wmi-descriptor.c
-+++ b/drivers/platform/x86/dell-wmi-descriptor.c
-@@ -207,7 +207,7 @@ static struct wmi_driver dell_wmi_descriptor_driver = {
- 
- module_wmi_driver(dell_wmi_descriptor_driver);
- 
--MODULE_ALIAS("wmi:" DELL_WMI_DESCRIPTOR_GUID);
-+MODULE_DEVICE_TABLE(wmi, dell_wmi_descriptor_id_table);
- MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
- MODULE_DESCRIPTION("Dell WMI descriptor driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/platform/x86/dell-wmi.c b/drivers/platform/x86/dell-wmi.c
-index 16c7f3d9a335..0602aba62b3f 100644
---- a/drivers/platform/x86/dell-wmi.c
-+++ b/drivers/platform/x86/dell-wmi.c
-@@ -50,8 +50,6 @@ MODULE_LICENSE("GPL");
- 
- static bool wmi_requires_smbios_request;
- 
--MODULE_ALIAS("wmi:"DELL_EVENT_GUID);
--
- struct dell_wmi_priv {
- 	struct input_dev *input_dev;
- 	u32 interface_version;
-@@ -738,3 +736,5 @@ static void __exit dell_wmi_exit(void)
- 	wmi_driver_unregister(&dell_wmi_driver);
- }
- module_exit(dell_wmi_exit);
-+
-+MODULE_DEVICE_TABLE(wmi, dell_wmi_id_table);
-diff --git a/drivers/platform/x86/huawei-wmi.c b/drivers/platform/x86/huawei-wmi.c
-index 59872f87b741..52fcac5b393a 100644
---- a/drivers/platform/x86/huawei-wmi.c
-+++ b/drivers/platform/x86/huawei-wmi.c
-@@ -201,8 +201,7 @@ static struct wmi_driver huawei_wmi_driver = {
- 
- module_wmi_driver(huawei_wmi_driver);
- 
--MODULE_ALIAS("wmi:"WMI0_EVENT_GUID);
--MODULE_ALIAS("wmi:"AMW0_EVENT_GUID);
-+MODULE_DEVICE_TABLE(wmi, huawei_wmi_id_table);
- MODULE_AUTHOR("Ayman Bagabas <ayman.bagabas@gmail.com>");
- MODULE_DESCRIPTION("Huawei WMI hotkeys");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/platform/x86/intel-wmi-thunderbolt.c b/drivers/platform/x86/intel-wmi-thunderbolt.c
-index 9ded8e2af312..4dfa61434a76 100644
---- a/drivers/platform/x86/intel-wmi-thunderbolt.c
-+++ b/drivers/platform/x86/intel-wmi-thunderbolt.c
-@@ -88,7 +88,7 @@ static struct wmi_driver intel_wmi_thunderbolt_driver = {
- 
- module_wmi_driver(intel_wmi_thunderbolt_driver);
- 
--MODULE_ALIAS("wmi:" INTEL_WMI_THUNDERBOLT_GUID);
-+MODULE_DEVICE_TABLE(wmi, intel_wmi_thunderbolt_id_table);
- MODULE_AUTHOR("Mario Limonciello <mario.limonciello@dell.com>");
- MODULE_DESCRIPTION("Intel WMI Thunderbolt force power driver");
- MODULE_LICENSE("GPL v2");
-diff --git a/drivers/platform/x86/wmi-bmof.c b/drivers/platform/x86/wmi-bmof.c
-index c4530ba715e8..8751a13134be 100644
---- a/drivers/platform/x86/wmi-bmof.c
-+++ b/drivers/platform/x86/wmi-bmof.c
-@@ -119,7 +119,7 @@ static struct wmi_driver wmi_bmof_driver = {
- 
- module_wmi_driver(wmi_bmof_driver);
- 
--MODULE_ALIAS("wmi:" WMI_BMOF_GUID);
-+MODULE_DEVICE_TABLE(wmi, wmi_bmof_id_table);
- MODULE_AUTHOR("Andrew Lutomirski <luto@kernel.org>");
- MODULE_DESCRIPTION("WMI embedded Binary MOF driver");
- MODULE_LICENSE("GPL");
+Thank you!
+
 -- 
-2.20.1
-
+Deet-doot-dot, I am a bot.
+https://korg.wiki.kernel.org/userdoc/prtracker
