@@ -2,109 +2,74 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE334C282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:51:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D66DFC282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 09:24:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82F6320989
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:51:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="1HHP2v8T"
+	by mail.kernel.org (Postfix) with ESMTP id A7346214C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 09:24:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726647AbfA0Ivf (ORCPT
+        id S1726632AbfA0JY2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 03:51:35 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37364 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbfA0Ive (ORCPT
+        Sun, 27 Jan 2019 04:24:28 -0500
+Received: from mail-qt1-f195.google.com ([209.85.160.195]:43754 "EHLO
+        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726419AbfA0JY2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 03:51:34 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so6421532plr.4
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 00:51:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3j1tnJn6chV8NybL+pzH4UR0FshETpkANJg0PhFiLu0=;
-        b=1HHP2v8TK/FxyU5hGCzqdOVNidz2toX0d5jXBYkufqU5l1RlCB040W+pgi5wgwcAfq
-         Oi1OL3ifqq5GwPMW7x3H0UM8QsW1VnmUxOnsLzEET4gVGLyWD95vAY8lWfK/FYnTcc1u
-         Ap3nchs3/78KCHnwoUKgm+hRVqsvg8yAV19F6aBwNgZgL8+e/9zGhauV0AxBqF3hKyJU
-         AkwnG3GiUD+MDfefnVE5uOlNQYYW4g/gQtfjwKNZQaWB1nlZwAgzw/JF6wSRKlDtDnEB
-         nD7vQT20U4Ct/qY+4Fc8ycKJbRXuHFIcr15z3oAcYm8kkuv+6mOY0sMohiznhu3rm15Q
-         Xo8A==
+        Sun, 27 Jan 2019 04:24:28 -0500
+Received: by mail-qt1-f195.google.com with SMTP id i7so15271217qtj.10;
+        Sun, 27 Jan 2019 01:24:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=3j1tnJn6chV8NybL+pzH4UR0FshETpkANJg0PhFiLu0=;
-        b=ZyRISQMep+n5wZdArm8DIQL2ualqE38dQJukDGSJrxb9iEyaz7zUPJHqD83YOAzJDc
-         EJdVHpLLf7+cjKCyB+ErCKAuhdLrSf7oIMX6pi1EtWrQlj+ohNG+VS6bE2BKfkTaUViH
-         +nZlvVBk7yxNT7wEWpbhNESt9VUH4KaAAmd/5nLEQ27rMxvhyvINZ2+1E3Y/Ut4Q0Yjz
-         SDg2s5rNZja0cDV9sH0gZ7ovge5ff9Z/iWy+qYLsVwmh7mHxFf/D4r+f26lq3DeRDlzF
-         nH2e49N/Xe4RLc7zcv8O0PvjOwinAStFugK8bsfOMljzs+pwFv4gZBMT51UrbhVbBdxb
-         HbpA==
-X-Gm-Message-State: AJcUukeQY0xN+YHWSEv0qt2HRvtCj5/OHQ4ajo04hqtgp7jk4EYUBy6y
-        nZCpUr6vgk2ISxFMeJl57WzucQ==
-X-Google-Smtp-Source: ALg8bN6eqwQrJwyVjPcsqaMEYBts1ZFTGrW53qeJr6V3FaT95horzDetMnFCPpsyS3QBPPYCRLQ4AQ==
-X-Received: by 2002:a17:902:a58a:: with SMTP id az10mr17899561plb.10.1548579093770;
-        Sun, 27 Jan 2019 00:51:33 -0800 (PST)
-Received: from localhost.localdomain (36-239-222-123.dynamic-ip.hinet.net. [36.239.222.123])
-        by smtp.gmail.com with ESMTPSA id z9sm74282234pfd.99.2019.01.27.00.51.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 00:51:32 -0800 (PST)
-From:   Axel Lin <axel.lin@ingics.com>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Nicolas.Ferre@microchip.com, Liam Girdwood <lgirdwood@gmail.com>,
-        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH] regulator: mcp16502: Include linux/gpio/consumer.h to fix build error
-Date:   Sun, 27 Jan 2019 16:51:22 +0800
-Message-Id: <20190127085122.11821-1-axel.lin@ingics.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=AaDJija6UKG2unMz2UqBHNOl5GWCn+T+fZPhVoigDHM=;
+        b=tzS8x9rIvBxNwc7mtQggg6f1y+yas7DLMvv1WlKlfinhrLB1DtBzf9RM6mA8RUbU8t
+         0J8fbdoQS4aY0lLDejd3idD6lPAMYfClsHHPelzVkVkd3aLzaQkKHCMpgBPND3kEpzAh
+         Of4LXbNLnxouDmfcds3aSIPAd5oqL0wq4ztessX4LeaNinlgBAWzoEaRvn5dy0FF6+5L
+         OizYTie1LckfM9eAPkJLXSFEtS5mXQg7Y7Iil0bUMh18y5tAmFTjd02jC6oIyjiDu9br
+         uLAT27tyAXX8ssNta+tkvq9u5ywFhqCOw/yJz9SV/KVBmrRAszK9M2YKA+Vm18dUinY9
+         EqDw==
+X-Gm-Message-State: AJcUukf7wNy3Vc4Htgh4R0I06SQi85bbVXO3UdI4jgoCVnnc2W7kN5Au
+        i+V7+Vo2JudUS7iTgIEl6J/AQYzAHANo3eG7bTA=
+X-Google-Smtp-Source: ALg8bN6YOrCCbFLraxbCAPIcE7Ke2xKTD7COsjshu0jkDrMpY+3p8hvnecYOSve52woTsvixPsFw+6HRVTtgmj5kkQI=
+X-Received: by 2002:aed:35c5:: with SMTP id d5mr17403811qte.212.1548581067076;
+ Sun, 27 Jan 2019 01:24:27 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20190126041041.13173-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20190126041041.13173-1-manivannan.sadhasivam@linaro.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Sun, 27 Jan 2019 10:24:09 +0100
+Message-ID: <CAK8P3a3Y_w5_ZavpyUh0VKrS8FeUPTJKkchtGGLc1qe3nG2mfA@mail.gmail.com>
+Subject: Re: [PATCH 0/5] Add initial Bitmain BM1880 SoC/Board support
+To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        haitao.suo@bitmain.com, darren.tsao@bitmain.com,
+        Amit Kucheria <amit.kucheria@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fix below build error:
-drivers/regulator/mcp16502.c: In function ‘mcp16502_gpio_set_mode’:
-drivers/regulator/mcp16502.c:135:3: error: implicit declaration of function ‘gpiod_set_value’; did you mean ‘gpio_set_value’? [-Werror=implicit-function-declaration]
-   gpiod_set_value(mcp->lpm, 0);
-   ^~~~~~~~~~~~~~~
-   gpio_set_value
-drivers/regulator/mcp16502.c: In function ‘mcp16502_probe’:
-drivers/regulator/mcp16502.c:486:13: error: implicit declaration of function ‘devm_gpiod_get’; did you mean ‘devm_gpio_free’? [-Werror=implicit-function-declaration]
-  mcp->lpm = devm_gpiod_get(dev, "lpm", GPIOD_OUT_LOW);
-             ^~~~~~~~~~~~~~
-             devm_gpio_free
-drivers/regulator/mcp16502.c:486:40: error: ‘GPIOD_OUT_LOW’ undeclared (first use in this function); did you mean ‘GPIOF_INIT_LOW’?
-  mcp->lpm = devm_gpiod_get(dev, "lpm", GPIOD_OUT_LOW);
-                                        ^~~~~~~~~~~~~
-                                        GPIOF_INIT_LOW
+On Sat, Jan 26, 2019 at 5:11 AM Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> Hello,
+>
+> This patchset adds initial support for Bitmain BM1880 SoC and Sophon
+> Edge board. BM1880 SoC consists of a Dual Core ARM Cortex A53 Application
+> processor subsystem, a single core RISC-V subsystem and a Tensor
+> Processor subsystem. This patchset adds support for only ARM Cortex
+> A53 Application processor subsystem with UART, which enables the board to
+> boot into initramfs with 2 CPUs.
 
-Signed-off-by: Axel Lin <axel.lin@ingics.com>
----
- drivers/regulator/mcp16502.c | 1 +
- 1 file changed, 1 insertion(+)
+Nice work! All patches in this series
 
-diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
-index 3479ae009b0b..0fc4963bd5b0 100644
---- a/drivers/regulator/mcp16502.c
-+++ b/drivers/regulator/mcp16502.c
-@@ -17,6 +17,7 @@
- #include <linux/regmap.h>
- #include <linux/regulator/driver.h>
- #include <linux/suspend.h>
-+#include <linux/gpio/consumer.h>
- 
- #define VDD_LOW_SEL 0x0D
- #define VDD_HIGH_SEL 0x3F
--- 
-2.17.1
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
