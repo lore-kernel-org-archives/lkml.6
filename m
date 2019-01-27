@@ -2,250 +2,67 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=BIGNUM_EMAILS,DKIMWL_WL_MED,
-	DKIM_SIGNED,DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE121C282C7
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 01:21:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB1E8C282C7
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 02:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D922184B
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 01:21:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EB64F217D7
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 02:00:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ohmlinxelectronics-com.20150623.gappssmtp.com header.i=@ohmlinxelectronics-com.20150623.gappssmtp.com header.b="CMGAzoE2"
+	dkim=pass (2048-bit key) header.d=redchan.it header.i=@redchan.it header.b="GdOLzvNq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726394AbfA0BU4 (ORCPT
+        id S1726402AbfA0B50 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 20:20:56 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35633 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726249AbfA0BUz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 20:20:55 -0500
-Received: by mail-lf1-f67.google.com with SMTP id e26so9464521lfc.2
-        for <linux-kernel@vger.kernel.org>; Sat, 26 Jan 2019 17:20:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ohmlinxelectronics-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wUgO/SUT/uWUrzvP+RTG5f7Cn2CZ3mqjNqDGNg7T0lY=;
-        b=CMGAzoE2VJweSqfVoGrUR4U2C76dwfPl0Mhn/iL4QfOr30FdkE2KvVegOvbEYRszCR
-         IA2rRHM9LU0+AvWXB2/aSKCyPUgJG6s0CTv4GVpN7CaVlBOJtQKlVzM+U0kyvjh0iwLb
-         UZEbH32uhTwOIlZwZU64kM4oS/SQ0rfP49l4szlkLzoUYNDtK/MdEtZPUdYAkgNpE0w6
-         H+JItvGmEssxcr8S1VV6cf2DMEc6KKpGXwxjXPu/P72yNr4mG/LaQILz3Y1caob4vNlU
-         /yS10vWVEiebe4E9/zNUqWMsZP2hGdVinhP/q/kWnvyXGSsCdpGYJhWKT3ZaJccKqBHS
-         ezwQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wUgO/SUT/uWUrzvP+RTG5f7Cn2CZ3mqjNqDGNg7T0lY=;
-        b=szrR3R++Lc7XaqHUz76LAPQOEZLQjZUtAherpy3Q4TdrHerIjOnkw6v8zld+80jTiS
-         uE6hvYdBxKRfvAlNpF/CHUzsBXczJVlaNb1mQHgSCt0d2xjPRKbPRV+re7VT5CdisQKA
-         085kwkGRpFaBInPD1SQ3rYWqCIdHqHQY3/YhSsroZ75BR8i4He/Uz2JE2/bGw6fSnAHK
-         Tam0h1xfc/oGKJKnpQYuzLEDeuV64HL2qHIqucGk1K1c8e5UVwg+JaplbDwvuIB6sLzZ
-         Nrh0ydZzEthPUgUSIbV5bojpIQuhKMNvA7BoAbWmEqONARkp2jHJyPw/PQonycVoQd7U
-         U2dA==
-X-Gm-Message-State: AJcUukdVrQSmHucaWiCyE168lHCn4ybzyuuIjBM9gmrRWlzBL7gUy5Re
-        XQJAKo5seAz0sW23vjCR6LnLGR5ZN9ErAjR8bNuQDg==
-X-Google-Smtp-Source: ALg8bN6Nn8F3FhNMiVqqV4jCz6oyTT9VK2YwXeYcQKbrHvtEe7mw7lueqMoMasem7vvusyxLeJEquUw3k35utFBUbWE=
-X-Received: by 2002:a19:280f:: with SMTP id o15mr13294157lfo.0.1548552052345;
- Sat, 26 Jan 2019 17:20:52 -0800 (PST)
+        Sat, 26 Jan 2019 20:57:26 -0500
+Received: from cock.li ([185.100.85.212]:48160 "EHLO cock.li"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726262AbfA0B50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 20:57:26 -0500
 MIME-Version: 1.0
-References: <20190122185351.GA28627@kadam> <CAPo_4QB+ozVESD85d2qxuitgvgPgLvrjx9SyEMfFTGvkz4MjWg@mail.gmail.com>
- <CAKdAkRT6hKywKW1NnD-hiuFn9YTZF74GZVr36ZNJqyoxQghT9Q@mail.gmail.com>
-In-Reply-To: <CAKdAkRT6hKywKW1NnD-hiuFn9YTZF74GZVr36ZNJqyoxQghT9Q@mail.gmail.com>
-From:   Ken Sloat <ken.sloat@ohmlinxelectronics.com>
-Date:   Sat, 26 Jan 2019 20:20:43 -0500
-Message-ID: <CAPo_4QCMX+oYw2ZcBgSiLcEzgTJMJB=E-xdXWe_Xg2a=FmQ+Rg@mail.gmail.com>
-Subject: Re: [bug report] Input: add st-keyscan driver
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        Gabriel FERNANDEZ <gabriel.fernandez@st.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Nate Drude <nate.drude@ohmlinxelectronics.com>,
-        giuseppe.condorelli@st.com
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=redchan.it; s=mail;
+        t=1548554241; bh=7dea7wFHOwcdi11PMDzIdHLZyI3GZbvgeHXpxaBgqN0=;
+        h=Date:From:To:Cc:Subject:From;
+        b=GdOLzvNqjZNwWCTEJeUZzNohLu4HKcFXZz1Si80z0XCVqHYy/Q4aLaqmtzSuSgvuo
+         LsSq3jXBFaYlJfVOMTMMGoWTKzh4Ey6FGwhDlBn1Z0XLrZhWoLeniYzl1uejrdwwV7
+         IG15cSRzXHZu8mCdsx4r1Cn24gzZNquGozsBhJon2qjNjKpO5swAHG2iwzvDZQIzpd
+         7zqqT/Xk56Yfvv7T0pH1Pd3yLG5Hl4u7cUbqjilgGJ0RykXUkN9o9dTwBCsZW0al36
+         ZRUrxDcSzpbF8KjRzodF0MtwilBV6WhtVGRTCG84hYuxF/5ukFGSlN/5ga3NBd5m17
+         ngLR/Q69Q5Zdg==
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Sun, 27 Jan 2019 01:57:21 +0000
+From:   sicevar@redchan.it
+To:     linux-kernel@vger.kernel.org, gentoo-user@lists.gentoo.org,
+        ubuntu-users@lists.ubuntu.com, debian-user@lists.debian.org
+Cc:     editor@lwn.net, blukashev@sempervictus.com
+Subject: GPL License Revocation from 8chan "John Doe" user (Software:
+ GPC-Slots2)
+Message-ID: <3d04b2dbdb4465b757a797c34c73ee6f@redchan.it>
+X-Sender: sicevar@redchan.it
+User-Agent: Roundcube Webmail/1.3.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 5:15 PM Dmitry Torokhov
-<dmitry.torokhov@gmail.com> wrote:
->
-> On Sat, Jan 26, 2019 at 1:25 PM Ken Sloat
-> <ken.sloat@ohmlinxelectronics.com> wrote:
-> >
-> > On Tue, Jan 22, 2019 at 1:53 PM Dan Carpenter <dan.carpenter@oracle.com> wrote:
-> > >
-> > > Hello Gabriel FERNANDEZ,
-> >
-> > Hello Dan,
-> >
-> > I have added CCs for the maintainers as well as Gabriel Fernandez as
-> > currently you just have the linux-input mailing list
-> >
-> > > The patch 062589b13991: "Input: add st-keyscan driver" from Apr 12,
-> > > 2014, leads to the following static checker warning:
-> > >
-> > >         drivers/input/keyboard/st-keyscan.c:156 keyscan_probe()
-> > >         error: potential zalloc NULL dereference: 'keypad_data->input_dev'
-> > >
-> > > drivers/input/keyboard/st-keyscan.c
-> > >     125 static int keyscan_probe(struct platform_device *pdev)
-> > >     126 {
-> > >     127         struct st_keyscan *keypad_data;
-> > >     128         struct input_dev *input_dev;
-> > >     129         struct resource *res;
-> > >     130         int error;
-> > >     131
-> > >     132         if (!pdev->dev.of_node) {
-> > >     133                 dev_err(&pdev->dev, "no DT data present\n");
-> > >     134                 return -EINVAL;
-> > >     135         }
-> > >     136
-> > >     137         keypad_data = devm_kzalloc(&pdev->dev, sizeof(*keypad_data),
-> > >     138                                    GFP_KERNEL);
-> > >     139         if (!keypad_data)
-> > >     140                 return -ENOMEM;
-> > >     141
-> > >     142         input_dev = devm_input_allocate_device(&pdev->dev);
-> > >     143         if (!input_dev) {
-> > >     144                 dev_err(&pdev->dev, "failed to allocate the input device\n");
-> > >     145                 return -ENOMEM;
-> > >     146         }
-> > >     147
-> > >     148         input_dev->name = pdev->name;
-> > >     149         input_dev->phys = "keyscan-keys/input0";
-> > >     150         input_dev->dev.parent = &pdev->dev;
-> > >     151         input_dev->open = keyscan_open;
-> > >     152         input_dev->close = keyscan_close;
-> > >     153
-> > >     154         input_dev->id.bustype = BUS_HOST;
-> > >     155
-> > > --> 156         error = keypad_matrix_key_parse_dt(keypad_data);
-> > >                                                    ^^^^^^^^^^^
-> > I agree with you this would be a problem
-> > to clarify the NULL derefence would occur here within keypad_matrix_key_parse_dt
-> >
-> > struct device *dev = keypad_data->input_dev->dev.parent;
-> >
-> > > This assumes we have set "keypad_data->input_dev = input_dev;" but we
-> > > don't do that until...
-> > >
-> > >     157         if (error)
-> > >     158                 return error;
-> > >     159
-> > >     160         error = matrix_keypad_build_keymap(NULL, NULL,
-> > >     161                                            keypad_data->n_rows,
-> > >     162                                            keypad_data->n_cols,
-> > >     163                                            NULL, input_dev);
-> > >     164         if (error) {
-> > >     165                 dev_err(&pdev->dev, "failed to build keymap\n");
-> > >     166                 return error;
-> > >     167         }
-> > >     168
-> > >     169         input_set_drvdata(input_dev, keypad_data);
-> > >     170
-> > >     171         keypad_data->input_dev = input_dev;
-> > >                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-> > >
-> > > this line here.  This driver has never worked and it was included almost
-> > > five years ago.  Is it worth fixing?
-> > >
-> > >     172
-> > >     173         res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > >     174         keypad_data->base = devm_ioremap_resource(&pdev->dev, res);
-> > >     175         if (IS_ERR(keypad_data->base))
-> > >     176                 return PTR_ERR(keypad_data->base);
-> > >     177
-> > >
-> > > regards,
-> > > dan carpenter
-> > >
-> >
-> > Here is the interesting thing, I was looking on patchwork, and several
-> > of the patches including what appears to be the latest actually set
-> > "keypad_data->input_dev = input_dev" before calling
-> > "keypad_matrix_key_parse_dt"
-> >
-> > From v4 on patchwork
-> > + if (IS_ERR(keypad_data->clk)) {
-> > + dev_err(&pdev->dev, "cannot get clock");
-> > + return PTR_ERR(keypad_data->clk);
-> > + }
-> > +
-> > + keypad_data->input_dev = input_dev;
-> > +
-> > + input_dev->name = pdev->name;
-> > + input_dev->phys = "keyscan-keys/input0";
-> > + input_dev->dev.parent = &pdev->dev;
-> > + input_dev->open = keyscan_open;
-> > + input_dev->close = keyscan_close;
-> > +
-> > + input_dev->id.bustype = BUS_HOST;
-> > +
-> > + error = keypad_matrix_key_parse_dt(keypad_data);
-> >
-> > According to patchwork, these aren't listed as accepted, so I'm not
-> > sure where the exact accepted patch came from. Looking at the commit
-> > log, it looks like the issue you showed above was made in the original
-> > commit 062589b1399176a9c14bc68e16169f40439d658c so I'm not quite sure
-> > what is going on here. Maybe the maintainer can chime in with the
-> > original patch/mailing list discussion on this. For reference, I've
-> > added the patchwork links below
-> > https://patchwork.kernel.org/patch/3854341/
-> > https://patchwork.kernel.org/patch/3968891/
-> > https://patchwork.kernel.org/patch/3969991/
->
-> It may very well be that I messed up when applying the patch. I guess
-> whatever platform that is using the driver has not attempted to update
-> their kernel since then.
->
-> Thanks.
->
-> --
-> Dmitry
+http://8ch.net/tech/res/1018729.html#1023699
 
-Hi Dmitry,
+>> 1023661
+> You can't revoke, though :^)
 
-Thanks for the quick response. Yes I was just looking at the other
-mailing lists patchwork and while comments were missing on the
-linux-input list for the v4 patch, there was a discussion on the
-regular kernel mailing list:
-https://lore.kernel.org/patchwork/patch/455450/#630445
+Yes I can, and have.
+It is MY property. NOT YOURS.
+I CAN TELL YOU THAT YOUR LICENSE IS REVOKED.
 
-It looks like you told him he didn't need to submit a v5 but generated
-one based on the changes suggested in the discussion:
+Infact, you, whomever you are: Your license is revoked.
+You paid me nothing, there is not contract between you and I.
+It is a bare license, without an attached interest.
 
-[begin quote]
-On Wed, Apr 16, 2014 at 10:49:29AM +0200, Gabriel Fernandez wrote:
-> On 13 April 2014 07:10, Dmitry Torokhov <dmitry.torokhov@gmail.com> wrote:
-> >
-> > Does the version of the patch below still work for you?
-> >
-> Yes it's was tested on b2000 and b2089 sti boards.
->
-> > Thanks.
-> >
-> > --
-> > Dmitry
-> >
-> Thanks for yours remarks, i will prepare a v5 versions.
+You're license is revoked, and I will sue you if you modify, use, or 
+distribute the game.
 
-
-If the version I sent to you works then you do not need to prepare v5,
-I'll just apply what I have.
-
-Thanks!
-[end quote]
-
-So I guess Dan's original question remains, should this be fixed
-considering it's so old and apparently nobody could possibly be using
-it in the kernel since it doesn't work (in which case the driver
-should probably be dropped) or should we fix it?
-
-Thanks,
-Ken Sloat
+Understand >>1023661
