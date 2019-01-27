@@ -2,293 +2,130 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A1A2C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9B5C282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:28:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B4172087F
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:26:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9118A20989
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:28:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=adirat-com.20150623.gappssmtp.com header.i=@adirat-com.20150623.gappssmtp.com header.b="cGz0S9CA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727095AbfA0U0F (ORCPT
+        id S1727114AbfA0U21 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 15:26:05 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:33269 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfA0U0F (ORCPT
+        Sun, 27 Jan 2019 15:28:27 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40765 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726566AbfA0U21 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 15:26:05 -0500
-Received: by mail-io1-f69.google.com with SMTP id p21so12755836iog.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 12:26:04 -0800 (PST)
+        Sun, 27 Jan 2019 15:28:27 -0500
+Received: by mail-wr1-f66.google.com with SMTP id p4so15798610wrt.7
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 12:28:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=adirat-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7PLSrAY77YXMqD8mCsNFYfXnusW2BtN7ecVfaVQTgoU=;
+        b=cGz0S9CAtUtmJN7kwaeJtGy23OlBQgTs4ncjxDDEFMihU8dxT3YXmNVsUuCP5XrOxY
+         TpTWzL2MSM++DN7ZSNdFgoCDtkSFxDfdjBMrr8+vN9qYwM1AnTtV3Ak/IAKrwgJbSlci
+         4f96zpHUwqD7PJeD6PetfgejbHb/aIeGBDUQ7FEgK58XYx4IW57guUx2LieDAb4CS8LH
+         2khYHaDB0zWExf13liXxUBqc64dCXcWTDtwIWW0EFgPeLHd3GgT37081aQg8AsqTbXW/
+         NYOk2F1U+8+2cEPi6UBGacF2Kw3QuehlsSm+09CcGKcSACnkb12LbbNrxqhJDEB1f7q+
+         Bp3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=f8KsjLDD+2ZWd9KCzjsogY2UgL9wzPvF1Xj9+8WFfZs=;
-        b=EIROGPARwnHTK+SzybZwXK2qVxUTzGOx88850Z+CWAd8G89aJxLcGRR9do4o+3XI+B
-         K1sqR8/XIie76mZHTGBadFgPNbXgXYD0CscOveO4+qCR62AOIrYXqqBJQEr3V7ocv4su
-         DhpOVxT7R4Hh7YQ/SK0d1adNl/U6NffHOC2K7/QE3a+8ZxRUjQGk5PIlyo8uXMiCpzKJ
-         zJ1aM4BtQUWfwY+sb/EUdAKMFt2IZqPrdGQJ6eONHH0cTU6scQsMRTQQb3zFZ7ns3rWi
-         f3RCZGenn5Lm52oxBzErVoBYcIXH1FrsBxAhbm/ZIZPOPnt+eheIyM+VVKBVQFbslWzo
-         qAvw==
-X-Gm-Message-State: AJcUukcGpoGLGl7OMR6g3wzEp3cW7rpCf82pJBHnO/AIZjyNgEQEk0rs
-        pKe6McLwMq6PKxfq8BlUjbBnaG0p8uFYlycDsfSRYXnK0R9E
-X-Google-Smtp-Source: ALg8bN6w7SgSjwWECvhISTSh0X0sFaiIJrwDDg/VboUV0UsY6MY+tJbW7c4wGno55ILwb4pK2sbU3RiThVVl6ogMc18bJVm6NDfJ
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=7PLSrAY77YXMqD8mCsNFYfXnusW2BtN7ecVfaVQTgoU=;
+        b=oFe+lwfBByFR1bp7FECoAIT1cayGMzHijHfpBCqSgrbm9CnXHfmwxqK0waUFgN/OFt
+         70ok2IY093v2F/C+ePEOepjk9OMJpMbhI+TzgXB9ReYZLHCS7TsWisi/OLwJDlTf9o5G
+         r8VzI1wTUeM65ZJj+2v/OChwGMs7U6rmuJFhTmCWeDFsgUuGJgoqH8138Vmzadsich8G
+         +C4OrPag9h5xbL5u02ECall48r4JAU9AmvaKOpQrSA7A8Imqxf7kB6Ee+qtP3PiQ/XQ7
+         VFrmF1tl73f3QAV0YSkmOYS97r7xm08mEHXcENxyouoHlm1d0kVfvVo9EmRPnIe889fA
+         hzsw==
+X-Gm-Message-State: AJcUukcpAQ/6+xDuNvYasqQhNNzelHkTDPy1upRJocnhNR3sEED+CwM+
+        B/EbPUYt3NmYkvQEmVHDDJsyJLr3rtBnsw==
+X-Google-Smtp-Source: ALg8bN41P1eQpZMTWiYQJEO6/bSLTQvFStJ37D29f6N3zeUPvOyR8UqBVpHaxjLzi/s+7fUilKDKng==
+X-Received: by 2002:adf:f009:: with SMTP id j9mr18892547wro.170.1548620905352;
+        Sun, 27 Jan 2019 12:28:25 -0800 (PST)
+Received: from iwork.lan ([188.24.59.111])
+        by smtp.gmail.com with ESMTPSA id k19sm187868249wre.5.2019.01.27.12.28.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 27 Jan 2019 12:28:24 -0800 (PST)
+From:   Ioan-Adrian Ratiu <adi@adirat.com>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: [RFC][PATCH] Revert "ARM: dts: bcm2837: Fix polarity of wifi reset GPIOs"
+Date:   Sun, 27 Jan 2019 22:28:13 +0200
+Message-Id: <20190127202813.29493-1-adi@adirat.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Received: by 2002:a02:c90a:: with SMTP id t10mr15654318jao.19.1548620763897;
- Sun, 27 Jan 2019 12:26:03 -0800 (PST)
-Date:   Sun, 27 Jan 2019 12:26:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000862b160580765e94@google.com>
-Subject: KASAN: use-after-free Read in br_mdb_ip_get
-From:   syzbot <syzbot+bc5ab0af2dbf3b0ae897@syzkaller.appspotmail.com>
-To:     bridge@lists.linux-foundation.org, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        nikolay@cumulusnetworks.com, roopa@cumulusnetworks.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+This reverts commit bea8a160c621d19f7f78b13e14e03f4b8e44cd4b.
 
-syzbot found the following crash on:
+Contrary to what the commit message says, on my rpi 3 b v1.2 changing
+the polarity causes the exact behaviour this commit intends to fix, as
+described at the referenced link below (wlan0 disapears).
 
-HEAD commit:    ba6069759381 Merge tag 'mmc-v5.0-rc2' of git://git.kernel...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17b342c4c00000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
-dashboard link: https://syzkaller.appspot.com/bug?extid=bc5ab0af2dbf3b0ae897
-compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+With reset-gpios = ... GPIO_ACTIVE_HIGH, brcmfmac errors in dmesg:
 
-Unfortunately, I don't have any reproducer for this crash yet.
+[    7.977512] brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep state -110
+[    7.977623] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
+[    7.978007] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
+[    7.978377] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
+[    7.978724] brcmfmac: brcmf_sdio_dpc: failed backplane access over SDIO, halting operation
+[    7.978734] brcmfmac: brcmf_proto_bcdc_query_dcmd: brcmf_proto_bcdc_msg failed w/status -110
+[    7.978747] brcmfmac: brcmf_cfg80211_get_channel: chanspec failed (-110)
+[    7.982817] brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep state -110
+[    7.982880] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
+[    7.983255] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+bc5ab0af2dbf3b0ae897@syzkaller.appspotmail.com
+The only solution I currently have is to revert and everything works
+as expected and as before changing the polarity.
 
-bridge0: port 2(bridge_slave_1) entered blocking state
-bridge0: port 2(bridge_slave_1) entered forwarding state
-bridge0: port 1(bridge_slave_0) entered blocking state
-bridge0: port 1(bridge_slave_0) entered forwarding state
-==================================================================
-BUG: KASAN: use-after-free in memcmp+0xb3/0xc0 lib/string.c:862
-Read of size 1 at addr ffff88809f1efe70 by task syz-executor1/8111
-
-CPU: 0 PID: 8111 Comm: syz-executor1 Not tainted 5.0.0-rc3+ #43
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x1db/0x2d0 lib/dump_stack.c:113
-  print_address_description.cold+0x7c/0x20d mm/kasan/report.c:187
-IPv6: ADDRCONF(NETDEV_UP): bond0: link is not ready
-  kasan_report.cold+0x1b/0x40 mm/kasan/report.c:317
-8021q: adding VLAN 0 to HW filter on device bond0
-  __asan_report_load1_noabort+0x14/0x20 mm/kasan/generic_report.c:132
-  memcmp+0xb3/0xc0 lib/string.c:862
-  memcmp include/linux/string.h:393 [inline]
-  rhashtable_compare include/linux/rhashtable.h:473 [inline]
-  __rhashtable_lookup include/linux/rhashtable.h:498 [inline]
-  rhashtable_lookup include/linux/rhashtable.h:534 [inline]
-  br_mdb_ip_get+0x694/0xe30 net/bridge/br_multicast.c:97
-IPv6: ADDRCONF(NETDEV_UP): veth0: link is not ready
-  br_multicast_new_group+0x77/0x200 net/bridge/br_multicast.c:467
-IPv6: ADDRCONF(NETDEV_UP): team0: link is not ready
-8021q: adding VLAN 0 to HW filter on device team0
-  br_multicast_add_group+0x4ce/0x7d0 net/bridge/br_multicast.c:552
-  br_ip6_multicast_add_group net/bridge/br_multicast.c:626 [inline]
-  br_ip6_multicast_mld2_report net/bridge/br_multicast.c:1043 [inline]
-  br_multicast_ipv6_rcv net/bridge/br_multicast.c:1667 [inline]
-  br_multicast_rcv+0x24aa/0x4270 net/bridge/br_multicast.c:1705
-IPv6: ADDRCONF(NETDEV_UP): hsr0: link is not ready
-IPv6: ADDRCONF(NETDEV_CHANGE): hsr0: link becomes ready
-IPv6: ADDRCONF(NETDEV_UP): vxcan1: link is not ready
-  br_dev_xmit+0x7f4/0x1780 net/bridge/br_device.c:93
-8021q: adding VLAN 0 to HW filter on device batadv0
-  __netdev_start_xmit include/linux/netdevice.h:4382 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4391 [inline]
-  xmit_one net/core/dev.c:3278 [inline]
-  dev_hard_start_xmit+0x261/0xc70 net/core/dev.c:3294
-  __dev_queue_xmit+0x2f8a/0x3a60 net/core/dev.c:3864
-  dev_queue_xmit+0x18/0x20 net/core/dev.c:3897
-  neigh_hh_output include/net/neighbour.h:498 [inline]
-  neigh_output include/net/neighbour.h:506 [inline]
-  ip6_finish_output2+0x141a/0x28e0 net/ipv6/ip6_output.c:120
-  ip6_finish_output+0x577/0xc30 net/ipv6/ip6_output.c:154
-  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
-  ip6_output+0x23c/0xa00 net/ipv6/ip6_output.c:171
-  dst_output include/net/dst.h:444 [inline]
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  NF_HOOK include/linux/netfilter.h:283 [inline]
-  mld_sendpack+0xa44/0xfd0 net/ipv6/mcast.c:1683
-  mld_send_cr net/ipv6/mcast.c:1979 [inline]
-  mld_ifc_timer_expire+0x449/0x8a0 net/ipv6/mcast.c:2478
-  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
-  expire_timers kernel/time/timer.c:1362 [inline]
-  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
-  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
-  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x180/0x1d0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1b7/0x760 arch/x86/kernel/apic/apic.c:1062
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:807
-  </IRQ>
-RIP: 0010:kasan_check_read+0x0/0x20 mm/kasan/common.c:99
-Code: ef e9 14 eb ff ff 48 8b 73 58 89 c2 48 c7 c7 f0 c2 3c 89 f7 da e8 54  
-69 a2 ff e9 c4 f5 ff ff 90 90 90 90 90 90 90 90 90 90 90 <55> 89 f6 31 d2  
-48 89 e5 48 8b 4d 08 e8 ff 23 00 00 5d c3 0f 1f 00
-IPVS: ftp: loaded support on port[0] = 21
-RSP: 0018:ffff88809e937428 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-RAX: 0000000000000000 RBX: ffffffff8a318400 RCX: ffffffff8162f642
-RDX: 0000000000000001 RSI: 0000000000000008 RDI: ffffffff8a318400
-RBP: ffff88809e937530 R08: 1ffffffff1463080 R09: fffffbfff1463081
-R10: fffffbfff1463080 R11: ffffffff8a318407 R12: ffff88809ac4c600
-R13: ffff88809e937508 R14: dffffc0000000000 R15: ffffed1013d26e91
-  mutex_optimistic_spin kernel/locking/mutex.c:646 [inline]
-  __mutex_lock_common kernel/locking/mutex.c:928 [inline]
-  __mutex_lock+0x377/0x1670 kernel/locking/mutex.c:1072
-IPVS: ftp: loaded support on port[0] = 21
-  mutex_lock_nested+0x16/0x20 kernel/locking/mutex.c:1087
-  rtnl_lock net/core/rtnetlink.c:77 [inline]
-  rtnetlink_rcv_msg+0x425/0xc30 net/core/rtnetlink.c:5127
-  netlink_rcv_skb+0x17d/0x410 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1d/0x30 net/core/rtnetlink.c:5148
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x574/0x770 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa05/0xf90 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xdd/0x130 net/socket.c:631
-  __sys_sendto+0x387/0x5f0 net/socket.c:1788
-  __do_sys_sendto net/socket.c:1800 [inline]
-  __se_sys_sendto net/socket.c:1796 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
-  do_syscall_64+0x1a3/0x800 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x411fc3
-Code: ff 0f 83 40 18 00 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00  
-83 3d cd 42 64 00 00 75 17 49 89 ca b8 2c 00 00 00 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 11 18 00 00 c3 48 83 ec 08 e8 87 fa ff ff
-RSP: 002b:0000000000a4fb28 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000411fc3
-RDX: 000000000000006c RSI: 0000000000a50070 RDI: 0000000000000003
-RBP: 0000000000000003 R08: 0000000000a4fb30 R09: 000000000000000c
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000a4fef0
-R13: 0000000000a4fbb8 R14: 0000000000a4fc80 R15: 00000000004bcf8a
-
-Allocated by task 8111:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_kmalloc mm/kasan/common.c:496 [inline]
-  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
-  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
-  kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
-  kmalloc include/linux/slab.h:545 [inline]
-  kzalloc include/linux/slab.h:740 [inline]
-  br_multicast_new_group.part.0+0xdc/0x1a40 net/bridge/br_multicast.c:476
-  br_multicast_new_group+0x19d/0x200 net/bridge/br_multicast.c:471
-  br_multicast_add_group+0x4ce/0x7d0 net/bridge/br_multicast.c:552
-  br_ip6_multicast_add_group net/bridge/br_multicast.c:626 [inline]
-  br_ip6_multicast_mld2_report net/bridge/br_multicast.c:1043 [inline]
-  br_multicast_ipv6_rcv net/bridge/br_multicast.c:1667 [inline]
-  br_multicast_rcv+0x24aa/0x4270 net/bridge/br_multicast.c:1705
-  br_dev_xmit+0x7f4/0x1780 net/bridge/br_device.c:93
-  __netdev_start_xmit include/linux/netdevice.h:4382 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4391 [inline]
-  xmit_one net/core/dev.c:3278 [inline]
-  dev_hard_start_xmit+0x261/0xc70 net/core/dev.c:3294
-  __dev_queue_xmit+0x2f8a/0x3a60 net/core/dev.c:3864
-  dev_queue_xmit+0x18/0x20 net/core/dev.c:3897
-  neigh_resolve_output net/core/neighbour.c:1476 [inline]
-  neigh_resolve_output+0x6a0/0xb30 net/core/neighbour.c:1456
-  neigh_output include/net/neighbour.h:508 [inline]
-  ip6_finish_output2+0xc56/0x28e0 net/ipv6/ip6_output.c:120
-  ip6_finish_output+0x577/0xc30 net/ipv6/ip6_output.c:154
-  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
-  ip6_output+0x23c/0xa00 net/ipv6/ip6_output.c:171
-  dst_output include/net/dst.h:444 [inline]
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  NF_HOOK include/linux/netfilter.h:283 [inline]
-  mld_sendpack+0xa44/0xfd0 net/ipv6/mcast.c:1683
-  mld_send_cr net/ipv6/mcast.c:1979 [inline]
-  mld_ifc_timer_expire+0x449/0x8a0 net/ipv6/mcast.c:2478
-  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
-  expire_timers kernel/time/timer.c:1362 [inline]
-  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
-  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
-  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
-
-Freed by task 8111:
-  save_stack+0x45/0xd0 mm/kasan/common.c:73
-  set_track mm/kasan/common.c:85 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
-  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
-  __cache_free mm/slab.c:3487 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3806
-  br_multicast_new_group.part.0+0x1489/0x1a40 net/bridge/br_multicast.c:486
-  br_multicast_new_group+0x19d/0x200 net/bridge/br_multicast.c:471
-  br_multicast_add_group+0x4ce/0x7d0 net/bridge/br_multicast.c:552
-  br_ip6_multicast_add_group net/bridge/br_multicast.c:626 [inline]
-  br_ip6_multicast_mld2_report net/bridge/br_multicast.c:1043 [inline]
-  br_multicast_ipv6_rcv net/bridge/br_multicast.c:1667 [inline]
-  br_multicast_rcv+0x24aa/0x4270 net/bridge/br_multicast.c:1705
-  br_dev_xmit+0x7f4/0x1780 net/bridge/br_device.c:93
-  __netdev_start_xmit include/linux/netdevice.h:4382 [inline]
-  netdev_start_xmit include/linux/netdevice.h:4391 [inline]
-  xmit_one net/core/dev.c:3278 [inline]
-  dev_hard_start_xmit+0x261/0xc70 net/core/dev.c:3294
-  __dev_queue_xmit+0x2f8a/0x3a60 net/core/dev.c:3864
-  dev_queue_xmit+0x18/0x20 net/core/dev.c:3897
-  neigh_resolve_output net/core/neighbour.c:1476 [inline]
-  neigh_resolve_output+0x6a0/0xb30 net/core/neighbour.c:1456
-  neigh_output include/net/neighbour.h:508 [inline]
-  ip6_finish_output2+0xc56/0x28e0 net/ipv6/ip6_output.c:120
-  ip6_finish_output+0x577/0xc30 net/ipv6/ip6_output.c:154
-  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
-  ip6_output+0x23c/0xa00 net/ipv6/ip6_output.c:171
-  dst_output include/net/dst.h:444 [inline]
-  NF_HOOK include/linux/netfilter.h:289 [inline]
-  NF_HOOK include/linux/netfilter.h:283 [inline]
-  mld_sendpack+0xa44/0xfd0 net/ipv6/mcast.c:1683
-  mld_send_cr net/ipv6/mcast.c:1979 [inline]
-  mld_ifc_timer_expire+0x449/0x8a0 net/ipv6/mcast.c:2478
-  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
-  expire_timers kernel/time/timer.c:1362 [inline]
-  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
-  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
-  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
-
-The buggy address belongs to the object at ffff88809f1efe00
-  which belongs to the cache kmalloc-192 of size 192
-The buggy address is located 112 bytes inside of
-  192-byte region [ffff88809f1efe00, ffff88809f1efec0)
-The buggy address belongs to the page:
-page:ffffea00027c7bc0 count:1 mapcount:0 mapping:ffff88812c3f0040 index:0x0
-flags: 0x1fffc0000000200(slab)
-raw: 01fffc0000000200 ffffea00027df108 ffffea00027c7c48 ffff88812c3f0040
-raw: 0000000000000000 ffff88809f1ef000 0000000100000010 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff88809f1efd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-  ffff88809f1efd80: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> ffff88809f1efe00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                                              ^
-  ffff88809f1efe80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
-  ffff88809f1eff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-==================================================================
-
-
+Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911443
+Signed-off-by: Ioan-Adrian Ratiu <adi@adirat.com>
 ---
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts | 2 +-
+ arch/arm/boot/dts/bcm2837-rpi-3-b.dts      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
+index 93762244be7f..4adb85e66be3 100644
+--- a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
++++ b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
+@@ -31,7 +31,7 @@
+ 
+ 	wifi_pwrseq: wifi-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+-		reset-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&expgpio 1 GPIO_ACTIVE_HIGH>;
+ 	};
+ };
+ 
+diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+index 89e6fd547c75..c318bcbc6ba7 100644
+--- a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
++++ b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+@@ -26,7 +26,7 @@
+ 
+ 	wifi_pwrseq: wifi-pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+-		reset-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
++		reset-gpios = <&expgpio 1 GPIO_ACTIVE_HIGH>;
+ 	};
+ };
+ 
+-- 
+2.20.1
+
