@@ -2,155 +2,95 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D419C282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:37:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33DDCC282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:42:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 362A3214C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:37:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548578251;
-	bh=l1qJ1O18UAJWbwMNUwkeNBZcDHoZC2pV/59uHdjfI3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=EBWbK1w4cOYoSd19c289LS6NUQUHgSOuPhpfOpj0IM6KT9EbLA9yNCYCT1bk7yFJ8
-	 hcsq9qznDxGKS7AUf4eWct7A7U/24KjgZpgnQPvihtP5Mw/FafFfIeEMLtChIIw+De
-	 sIZSqC8S6VuQq9ikg+CR7CWlV3e17gU6ypgEznlY=
+	by mail.kernel.org (Postfix) with ESMTP id E14B7217D7
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:42:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfA0Ih3 (ORCPT
+        id S1726590AbfA0ImS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 03:37:29 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40030 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726327AbfA0Ih2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 03:37:28 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 31A37AE3B;
-        Sun, 27 Jan 2019 08:37:26 +0000 (UTC)
-Date:   Sun, 27 Jan 2019 09:37:24 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Arkadiusz =?utf-8?Q?Mi=C5=9Bkiewicz?= <a.miskiewicz@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: [PATCH v2] oom, oom_reaper: do not enqueue same task twice
-Message-ID: <20190127083724.GA18811@dhcp22.suse.cz>
-References: <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
- <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
- <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
- <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
- <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
- <72aa8863-a534-b8df-6b9e-f69cf4dd5c4d@i-love.sakura.ne.jp>
- <33a07810-6dbc-36be-5bb6-a279773ccf69@i-love.sakura.ne.jp>
- <34e97b46-0792-cc66-e0f2-d72576cdec59@i-love.sakura.ne.jp>
- <2b0c7d6c-c58a-da7d-6f0a-4900694ec2d3@gmail.com>
- <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
+        Sun, 27 Jan 2019 03:42:18 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:37664 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbfA0ImQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 03:42:16 -0500
+Received: by mail-lf1-f65.google.com with SMTP id y11so9739488lfj.4;
+        Sun, 27 Jan 2019 00:42:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=9FTIfDASsMNAYoIZcyHR5mRcG34dUMfrhjEUxRl4eU4=;
+        b=iTqN5HQsJJ5reWIOXzEvYvUjv/+x/tkAF38jl9+5peNCG0Djs14/RJqWNsHlO3n+4I
+         bCq34RKK2x5uZyJt34gs2kWncq3d00o/0mgvXdfd9jhGrcwVKw6UgJYQ2AWuOfXlLFIP
+         +RZRcLqRhsT0pwM+JFC/WahTRZV2Av6Y0kPKozzsXwSbSb3iRd1z9/cuTMXTS82q3+CI
+         KHE+d7P15qqZfHBe7PMNKczMGf4YCIWmD1k0pCcXOJsHEScovf1meeyoUR5F586NMaTi
+         V1CYTqUokPkSEG6xpfKa5mJG71qtyxqx0ZRxHEyBRWAJ06QGlGuhDfUNibmrZMa4YU36
+         lGQg==
+X-Gm-Message-State: AJcUukcsVo9RWwBHIJOy6kyPgIOiCOdCeOC/fLvx0RzbDphEySYUewsE
+        rYgGBH46GLy3GOEoUrT+XHA0LpzYsQ3NVLjs4H8=
+X-Google-Smtp-Source: ALg8bN6IRanYeWVdhlr5VIpgUzY0XYiYg7rf1MNr1y38ICzr3BpctjunBH53m85XTk+Rm5vi0D4SUFRNlsnB91TGf0c=
+X-Received: by 2002:a19:f705:: with SMTP id z5mr14253624lfe.158.1548578532918;
+ Sun, 27 Jan 2019 00:42:12 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181210235156.6237-1-natechancellor@gmail.com> <20190126191143.GB25003@archlinux-ryzen>
+In-Reply-To: <20190126191143.GB25003@archlinux-ryzen>
+From:   Masanori Goto <gotom@debian.or.jp>
+Date:   Sun, 27 Jan 2019 17:42:01 +0900
+Message-ID: <CALZLnaEkikS6Yv-PR-kBpnrCRrn9A8yHg+ZYGXkq+d_JQvR23g@mail.gmail.com>
+Subject: Re: [PATCH] scsi: nsp32: Remove unnecessary self assignment in nsp32_set_sync_entry
+To:     Nathan Chancellor <natechancellor@gmail.com>
+Cc:     YOKOTA Hiroshi <yokota@netlab.is.tsukuba.ac.jp>,
+        "James E.J. Bottomley" <jejb@linux.ibm.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat 26-01-19 22:10:52, Tetsuo Handa wrote:
-[...]
-> >From 9c9e935fc038342c48461aabca666f1b544e32b1 Mon Sep 17 00:00:00 2001
-> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> Date: Sat, 26 Jan 2019 21:57:25 +0900
-> Subject: [PATCH v2] oom, oom_reaper: do not enqueue same task twice
-> 
-> Arkadiusz reported that enabling memcg's group oom killing causes
-> strange memcg statistics where there is no task in a memcg despite
-> the number of tasks in that memcg is not 0. It turned out that there
-> is a bug in wake_oom_reaper() which allows enqueuing same task twice
-> which makes impossible to decrease the number of tasks in that memcg
-> due to a refcount leak.
-> 
-> This bug existed since the OOM reaper became invokable from
-> task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
-> but memcg's group oom killing made it easier to trigger this bug by
-> calling wake_oom_reaper() on the same task from one out_of_memory()
-> request.
-> 
-> Fix this bug using an approach used by commit 855b018325737f76
-> ("oom, oom_reaper: disable oom_reaper for oom_kill_allocating_task").
-> As a side effect of this patch, this patch also avoids enqueuing
-> multiple threads sharing memory via task_will_free_mem(current) path.
+Thanks for the fix!
 
-Thanks for the analysis and the patch. This should work, I believe but
-I am not really thrilled to overload the meaning of the MMF_UNSTABLE.
-The flag is meant to signal accessing address space is not stable and it
-is not aimed to synchronize oom reaper with the oom path.
+2019年1月27日(日) 4:11 Nathan Chancellor <natechancellor@gmail.com>:
+>
+> On Mon, Dec 10, 2018 at 04:51:56PM -0700, Nathan Chancellor wrote:
+> > Clang warns:
+> >
+> > drivers/scsi/nsp32.c:2444:14: warning: explicitly assigning value of
+> > variable of type 'unsigned char' to itself [-Wself-assign]
+> >         offset      = offset;
+> >         ~~~~~~      ^
+> >
+> > Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 
-Can we make use mark_oom_victim directly? I didn't get to think that
-through right now so I might be missing something but this should
-prevent repeating queueing as well.
+Acked-by: GOTO Masanori <gotom@debian.or.jp>
 
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f0e8cd9edb1a..dac4f2197e53 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -690,7 +690,7 @@ static void mark_oom_victim(struct task_struct *tsk)
- 	WARN_ON(oom_killer_disabled);
- 	/* OOM killer might race with memcg OOM */
- 	if (test_and_set_tsk_thread_flag(tsk, TIF_MEMDIE))
--		return;
-+		return false;
- 
- 	/* oom_mm is bound to the signal struct life time. */
- 	if (!cmpxchg(&tsk->signal->oom_mm, NULL, mm)) {
-@@ -707,6 +707,8 @@ static void mark_oom_victim(struct task_struct *tsk)
- 	__thaw_task(tsk);
- 	atomic_inc(&oom_victims);
- 	trace_mark_victim(tsk->pid);
-+
-+	return true;
- }
- 
- /**
-@@ -873,7 +875,7 @@ static void __oom_kill_process(struct task_struct *victim)
- 	 * reserves from the user space under its control.
- 	 */
- 	do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
--	mark_oom_victim(victim);
-+	can_oom_reap = mark_oom_victim(victim);
- 	pr_err("Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
- 		task_pid_nr(victim), victim->comm, K(victim->mm->total_vm),
- 		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
-@@ -954,8 +956,8 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	 */
- 	task_lock(p);
- 	if (task_will_free_mem(p)) {
--		mark_oom_victim(p);
--		wake_oom_reaper(p);
-+		if (mark_oom_victim(p)
-+			wake_oom_reaper(p);
- 		task_unlock(p);
- 		put_task_struct(p);
- 		return;
-@@ -1084,8 +1086,8 @@ bool out_of_memory(struct oom_control *oc)
- 	 * quickly exit and free its memory.
- 	 */
- 	if (task_will_free_mem(current)) {
--		mark_oom_victim(current);
--		wake_oom_reaper(current);
-+		if (mark_oom_victim(current))
-+			wake_oom_reaper(current);
- 		return true;
- 	}
- 
--- 
-Michal Hocko
-SUSE Labs
+> > ---
+> >  drivers/scsi/nsp32.c | 1 -
+> >  1 file changed, 1 deletion(-)
+> >
+> > diff --git a/drivers/scsi/nsp32.c b/drivers/scsi/nsp32.c
+> > index 5aac3e801903..7ce6e7acf2f3 100644
+> > --- a/drivers/scsi/nsp32.c
+> > +++ b/drivers/scsi/nsp32.c
+> > @@ -2441,7 +2441,6 @@ static void nsp32_set_sync_entry(nsp32_hw_data *data,
+> >
+> >       period      = data->synct[entry].period_num;
+> >       ackwidth    = data->synct[entry].ackwidth;
+> > -     offset      = offset;
+> >       sample_rate = data->synct[entry].sample_rate;
+> >
+> >       target->syncreg    = TO_SYNCREG(period, offset);
+> > --
+> > 2.20.0
+> >
+>
+> Ping?
