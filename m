@@ -1,70 +1,76 @@
-Return-Path: <SRS0=RQnK=QC=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B10C2C282C7
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 23:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 53CA2C282C7
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 00:33:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 751EB218A2
-	for <linux-kernel@archiver.kernel.org>; Sat, 26 Jan 2019 23:45:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548546306;
-	bh=3dV3kKogh0OzNOl3CXrt4i8GzFbwxMpyqE1kMI3yMsc=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=Iquv2s1Zrnoos/mf7BPvD9fPOc1JelNLHuR6hzpe9vHYl2RwgYLqcf1BETfjj/628
-	 sb+k3AxPrRPDRv2tcfUAMpHRO+tNAZYlMJE/wyQHajAuF/DVWsfRrDi5X8ak7KtXmz
-	 lQ5EAKQ/QofHeBFGrwqH/tZ/djuEgwip5BccUKyg=
+	by mail.kernel.org (Postfix) with ESMTP id 256BD20C01
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 00:33:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726413AbfAZXpE (ORCPT
+        id S1726405AbfA0Abk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 26 Jan 2019 18:45:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60488 "EHLO mail.kernel.org"
+        Sat, 26 Jan 2019 19:31:40 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59634 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726364AbfAZXpE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 26 Jan 2019 18:45:04 -0500
-Subject: Re: [GIT PULL] VFIO fixes for v5.0-rc4
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548546303;
-        bh=3dV3kKogh0OzNOl3CXrt4i8GzFbwxMpyqE1kMI3yMsc=;
-        h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=oBYH++5dD2OtRRCji+nTlDoWAowgr5Xlfhd+zAisUrF4oWphwMYwNDwIwMQwW4bUT
-         4H9haaVvx5xWllkg0XBKCjhp5XbplSFT4eflh985MOLalkwYOIad87eBO0Qt99rJvg
-         XYoVcMTojdInKM1uNJXv9WGeJAHBOe4JD1Kcd/po=
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190125141724.4e5c446b@x1.home>
-References: <20190125141724.4e5c446b@x1.home>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190125141724.4e5c446b@x1.home>
-X-PR-Tracked-Remote: git://github.com/awilliam/linux-vfio.git
- tags/vfio-v5.0-rc4
-X-PR-Tracked-Commit-Id: 9a71ac7e15a723e90fc40388b4b92eefaabf747c
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 2580acb2a1b12f93f8259ff2053cec455d1d22a7
-Message-Id: <154854630358.17010.8019481705438354881.pr-tracker-bot@kernel.org>
-Date:   Sat, 26 Jan 2019 23:45:03 +0000
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kvm@vger.kernel.org" <kvm@vger.kernel.org>
+        id S1726249AbfA0Abk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 26 Jan 2019 19:31:40 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2345FC0467DF;
+        Sun, 27 Jan 2019 00:31:40 +0000 (UTC)
+Received: from redhat.com (ovpn-120-59.rdu2.redhat.com [10.10.120.59])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 339F9101E5A5;
+        Sun, 27 Jan 2019 00:31:39 +0000 (UTC)
+Date:   Sat, 26 Jan 2019 19:31:38 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     David Miller <davem@davemloft.net>
+Cc:     jasowang@redhat.com, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org
+Subject: Re: [PATCH net-next V4 0/5] vhost: accelerate metadata access
+ through vmap()
+Message-ID: <20190126193126-mutt-send-email-mst@kernel.org>
+References: <20190123095557.30168-1-jasowang@redhat.com>
+ <20190126.143708.1203048880266877709.davem@davemloft.net>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190126.143708.1203048880266877709.davem@davemloft.net>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Sun, 27 Jan 2019 00:31:40 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 25 Jan 2019 14:17:24 -0700:
+On Sat, Jan 26, 2019 at 02:37:08PM -0800, David Miller wrote:
+> From: Jason Wang <jasowang@redhat.com>
+> Date: Wed, 23 Jan 2019 17:55:52 +0800
+> 
+> > This series tries to access virtqueue metadata through kernel virtual
+> > address instead of copy_user() friends since they had too much
+> > overheads like checks, spec barriers or even hardware feature
+> > toggling.
+> > 
+> > Test shows about 24% improvement on TX PPS. It should benefit other
+> > cases as well.
+> 
+> I've read over the discussion of patch #5 a few times.
+> 
+> And it seems to me that, at a minimum, a few things still need to
+> be resolved:
+> 
+> 1) More perf data added to commit message.
+> 
+> 2) Whether invalidate_range_start() and invalidate_range_end() must
+>    be paired.
 
-> git://github.com/awilliam/linux-vfio.git tags/vfio-v5.0-rc4
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/2580acb2a1b12f93f8259ff2053cec455d1d22a7
+Add dirty tracking.
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+> Etc.  So I am marking this series "Changes Requested".
