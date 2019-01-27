@@ -2,127 +2,109 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
+X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F2FC282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE334C282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:51:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7A22217D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:48:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82F6320989
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:51:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="1HHP2v8T"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726585AbfA0Isf (ORCPT
+        id S1726647AbfA0Ivf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 03:48:35 -0500
-Received: from mfb01-md.ns.itscom.net ([175.177.155.109]:50985 "EHLO
-        mfb01-md.ns.itscom.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbfA0Ise (ORCPT
+        Sun, 27 Jan 2019 03:51:35 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:37364 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbfA0Ive (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 03:48:34 -0500
-Received: from mail04-md.ns.itscom.net (mail04-md.ns.itscom.net [175.177.155.114])
-        by mfb01-md.ns.itscom.net (Postfix) with ESMTP id 59926238155
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 17:39:51 +0900 (JST)
-Received: from scan10-mds.s.noc.itscom.net (scan10-md.ns.itscom.net [175.177.155.4])
-        by mail04-md-outgoing.ns.itscom.net (Postfix) with ESMTP id 4619E620592;
-        Sun, 27 Jan 2019 17:39:50 +0900 (JST)
-Received: from unknown (HELO mail04-md-outgoing.ns.itscom.net) ([175.177.155.114])
-  by scan10-mds.s.noc.itscom.net with ESMTP; 27 Jan 2019 17:39:49 +0900
-Received: from jromail.nowhere (h219-110-108-112.catv02.itscom.jp [219.110.108.112])
-        by mail04-md-outgoing.ns.itscom.net (Postfix) with ESMTP;
-        Sun, 27 Jan 2019 17:39:49 +0900 (JST)
-Received: from jro by jrobl id 1gnfyn-0000Yh-O2 ; Sun, 27 Jan 2019 17:39:49 +0900
-From:   "J. R. Okajima" <hooanon05g@gmail.com>
-To:     neilb@suse.com, bfields@redhat.com, Anna.Schumaker@Netapp.com
-Cc:     linux-kernel@vger.kernel.org
-Subject: fix v5.0-rc1, SUNRPC: init machine_cred.magic under CONFIG_DEBUG_CREDENTIALS
+        Sun, 27 Jan 2019 03:51:34 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b5so6421532plr.4
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 00:51:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ingics-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3j1tnJn6chV8NybL+pzH4UR0FshETpkANJg0PhFiLu0=;
+        b=1HHP2v8TK/FxyU5hGCzqdOVNidz2toX0d5jXBYkufqU5l1RlCB040W+pgi5wgwcAfq
+         Oi1OL3ifqq5GwPMW7x3H0UM8QsW1VnmUxOnsLzEET4gVGLyWD95vAY8lWfK/FYnTcc1u
+         Ap3nchs3/78KCHnwoUKgm+hRVqsvg8yAV19F6aBwNgZgL8+e/9zGhauV0AxBqF3hKyJU
+         AkwnG3GiUD+MDfefnVE5uOlNQYYW4g/gQtfjwKNZQaWB1nlZwAgzw/JF6wSRKlDtDnEB
+         nD7vQT20U4Ct/qY+4Fc8ycKJbRXuHFIcr15z3oAcYm8kkuv+6mOY0sMohiznhu3rm15Q
+         Xo8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=3j1tnJn6chV8NybL+pzH4UR0FshETpkANJg0PhFiLu0=;
+        b=ZyRISQMep+n5wZdArm8DIQL2ualqE38dQJukDGSJrxb9iEyaz7zUPJHqD83YOAzJDc
+         EJdVHpLLf7+cjKCyB+ErCKAuhdLrSf7oIMX6pi1EtWrQlj+ohNG+VS6bE2BKfkTaUViH
+         +nZlvVBk7yxNT7wEWpbhNESt9VUH4KaAAmd/5nLEQ27rMxvhyvINZ2+1E3Y/Ut4Q0Yjz
+         SDg2s5rNZja0cDV9sH0gZ7ovge5ff9Z/iWy+qYLsVwmh7mHxFf/D4r+f26lq3DeRDlzF
+         nH2e49N/Xe4RLc7zcv8O0PvjOwinAStFugK8bsfOMljzs+pwFv4gZBMT51UrbhVbBdxb
+         HbpA==
+X-Gm-Message-State: AJcUukeQY0xN+YHWSEv0qt2HRvtCj5/OHQ4ajo04hqtgp7jk4EYUBy6y
+        nZCpUr6vgk2ISxFMeJl57WzucQ==
+X-Google-Smtp-Source: ALg8bN6eqwQrJwyVjPcsqaMEYBts1ZFTGrW53qeJr6V3FaT95horzDetMnFCPpsyS3QBPPYCRLQ4AQ==
+X-Received: by 2002:a17:902:a58a:: with SMTP id az10mr17899561plb.10.1548579093770;
+        Sun, 27 Jan 2019 00:51:33 -0800 (PST)
+Received: from localhost.localdomain (36-239-222-123.dynamic-ip.hinet.net. [36.239.222.123])
+        by smtp.gmail.com with ESMTPSA id z9sm74282234pfd.99.2019.01.27.00.51.30
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 27 Jan 2019 00:51:32 -0800 (PST)
+From:   Axel Lin <axel.lin@ingics.com>
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Nicolas.Ferre@microchip.com, Liam Girdwood <lgirdwood@gmail.com>,
+        linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
+Subject: [PATCH] regulator: mcp16502: Include linux/gpio/consumer.h to fix build error
+Date:   Sun, 27 Jan 2019 16:51:22 +0800
+Message-Id: <20190127085122.11821-1-axel.lin@ingics.com>
+X-Mailer: git-send-email 2.17.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2149.1548578389.1@jrobl>
-Date:   Sun, 27 Jan 2019 17:39:49 +0900
-Message-ID: <2150.1548578389@jrobl>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-By the commit,
-a52458b48af1 2018-12-19 NFS/NFSD/SUNRPC: replace generic creds with 'struct cred'.
+Fix below build error:
+drivers/regulator/mcp16502.c: In function ‘mcp16502_gpio_set_mode’:
+drivers/regulator/mcp16502.c:135:3: error: implicit declaration of function ‘gpiod_set_value’; did you mean ‘gpio_set_value’? [-Werror=implicit-function-declaration]
+   gpiod_set_value(mcp->lpm, 0);
+   ^~~~~~~~~~~~~~~
+   gpio_set_value
+drivers/regulator/mcp16502.c: In function ‘mcp16502_probe’:
+drivers/regulator/mcp16502.c:486:13: error: implicit declaration of function ‘devm_gpiod_get’; did you mean ‘devm_gpio_free’? [-Werror=implicit-function-declaration]
+  mcp->lpm = devm_gpiod_get(dev, "lpm", GPIOD_OUT_LOW);
+             ^~~~~~~~~~~~~~
+             devm_gpio_free
+drivers/regulator/mcp16502.c:486:40: error: ‘GPIOD_OUT_LOW’ undeclared (first use in this function); did you mean ‘GPIOF_INIT_LOW’?
+  mcp->lpm = devm_gpiod_get(dev, "lpm", GPIOD_OUT_LOW);
+                                        ^~~~~~~~~~~~~
+                                        GPIOF_INIT_LOW
 
-struct rpc_cred machine_cred was converted to struct cred, but
-machine_cred.magic is still uninitialized.  Without initializing it, I
-got 'Invalid credentials' error.  It is necessary when
-CONFIG_DEBUG_CREDENTIALS is enabled.
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
+---
+ drivers/regulator/mcp16502.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-CRED: Invalid credentials
-CRED: At /proj/aufs/aufs4-linux.git/include/linux/cred.h:253
-CRED: Specified credentials: 000000006ca067d8 
-CRED: ->magic=0, put_addr=          (null)
-CRED: ->usage=1, subscr=0
-CRED: ->*uid = { 0,0,0,0 }
-CRED: ->*gid = { 0,0,0,0 }
-CRED: ->security is           (null)
-------------[ cut here ]------------
-kernel BUG at /proj/aufs/aufs4-linux.git/kernel/cred.c:825!
-invalid opcode: 0000 [#1] PREEMPT SMP PTI
-CPU: 0 PID: 24923 Comm: mount.nfs4 Tainted: G        W         5.0.0-rc1aufsD+ #906
-Hardware name: Pegatron Pegatron/IPM41, BIOS 0001 02/05/2009
-RIP: 0010:__invalid_creds+0x4d/0x60
-Code: 44 89 ea 4c 89 e6 48 c7 c7 cf 92 49 82 e8 5e 21 05 00 48 c7 c6 e1 92 49 82 48 89 df 65 48 8b 14 25 80 4e 01 00 e8 23 fe ff ff <0f> 0b 48 c7 c7 00 ac 68 82 e8 25 6a 53 00 0f 1f 44 00 00 66 66 66
-RSP: 0018:ffff88810bedf918 EFLAGS: 00010293
-RAX: 0000000000000000 RBX: ffffffff829016c0 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: ffffffff8294c428
-RBP: ffff88810bedf930 R08: 0000000000000001 R09: 0000000000000000
-R10: ffff88810bedf930 R11: 0000000000000000 R12: ffffffff824964d0
-R13: 00000000000000fd R14: ffffffff829016c0 R15: 0000000000000001
-FS:  00007f8616b55480(0000) GS:ffff88811ba00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fda79fe7170 CR3: 00000000aca90000 CR4: 00000000000406f0
-Call Trace:
- nfs4_discover_server_trunking+0x2cb/0x330
- nfs4_init_client+0x16e/0x210
- ? lockdep_init_map+0x57/0x1d0
- ? rpc_wake_up_task_on_wq_queue_action_locked+0x60/0x60
- ? nfs_get_client+0x500/0x680
- nfs_get_client+0x51d/0x680
- nfs4_set_client+0xb9/0x130
- nfs4_create_server+0x10d/0x290
- nfs4_remote_mount+0x30/0x90
- mount_fs+0x51/0x220
- ? __init_waitqueue_head+0x3b/0x50
- vfs_kern_mount+0x6b/0x190
- ? nfs_do_root_mount+0x3c/0xc0
- nfs_do_root_mount+0x84/0xc0
- nfs4_try_mount+0x37/0x50
- nfs_fs_mount+0x2a1/0xa40
- ? nfs_clone_super+0x80/0x80
- ? nfs_free_parsed_mount_data+0x60/0x60
- mount_fs+0x51/0x220
- ? nfs_alloc_parsed_mount_data+0xd0/0xd0
- ? mount_fs+0x51/0x220
- ? __init_waitqueue_head+0x3b/0x50
- vfs_kern_mount+0x6b/0x190
- ? ns_capable_common+0xc3/0x110
- do_mount+0x220/0xf90
- ksys_mount+0xea/0x170
- __x64_sys_mount+0x25/0x30
- do_syscall_64+0x79/0x360
- entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Here is a patch.
-
-diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-index 1ff9768f5456..0e5236a3b5e0 100644
---- a/net/sunrpc/auth.c
-+++ b/net/sunrpc/auth.c
-@@ -41,6 +41,9 @@ static unsigned long number_cred_unused;
+diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
+index 3479ae009b0b..0fc4963bd5b0 100644
+--- a/drivers/regulator/mcp16502.c
++++ b/drivers/regulator/mcp16502.c
+@@ -17,6 +17,7 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/suspend.h>
++#include <linux/gpio/consumer.h>
  
- static struct cred machine_cred = {
- 	.usage = ATOMIC_INIT(1),
-+#ifdef CONFIG_DEBUG_CREDENTIALS
-+	.magic = CRED_MAGIC
-+#endif
- };
- 
- /*
+ #define VDD_LOW_SEL 0x0D
+ #define VDD_HIGH_SEL 0x3F
+-- 
+2.17.1
+
