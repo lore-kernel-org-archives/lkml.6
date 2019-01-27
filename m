@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0A8C282C0
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D5BC4151A
 	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 09:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561222148D
+	by mail.kernel.org (Postfix) with ESMTP id 826BC2184E
 	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 09:44:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cCxh0pjZ"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z95qUwXk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfA0Jmz (ORCPT
+        id S1726750AbfA0Jn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 04:42:55 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38381 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726419AbfA0Jmz (ORCPT
+        Sun, 27 Jan 2019 04:43:59 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42429 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726620AbfA0Jn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 04:42:55 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so6453436plb.5
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 01:42:54 -0800 (PST)
+        Sun, 27 Jan 2019 04:43:59 -0500
+Received: by mail-pl1-f195.google.com with SMTP id y1so6449510plp.9
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 01:43:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:mime-version:content-disposition;
-        bh=se7BxVIyNFcNpVxegQ8rA3stfJpqK+Q8feAKjvC+8o8=;
-        b=cCxh0pjZt9JNQXMBF5JTAvFYt3iSLnEzcEUVGy4QWwYqbJV5FZYk/3PGZXUxoW0I9S
-         zfE2jg2eOo5IhLlq/G8ifY17KIxU9WIAizu5OANSyrZIyBQLvy7pP9+nONOr/ItliSvZ
-         ekjYh+soAYoCLJP44Uy6ogtlaM6/YiTCnw4vo=
+        bh=4wt96ezv21X1O+EFi8O9ramir52ck0BWI5x6GktBbJY=;
+        b=Z95qUwXkhvKOLOyHkPKceuSKDClXQUBMS3157K9afZ2TgwBC8Fy9nm8OS17A5uCjlN
+         qE2Wy1y5km6hlMyidwWZBLdjR07tfQQxYhlINZBPsBLuJaueAlNbQDC+BEuiLMg58QUM
+         wF4LWQc5MUheFNd70xznWLsgcs3diRK4uhtvY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
          :content-disposition;
-        bh=se7BxVIyNFcNpVxegQ8rA3stfJpqK+Q8feAKjvC+8o8=;
-        b=nfQDqmajqG5heeD4StIhQ24naIsXmo1qf1CkUsFD6XsAr7qjvmY1nWPhLlZs7+lsOy
-         zIhKC4PuvQmfUYh6GA/i+uhb4ME3L0yctU+rS5mqeltKpAf66Eqs/kMXUK6Op2NhTLGi
-         M+jFlLTQefSjaiTgkoXF2+0DPxsmcsFYKJl0yNrQ5qnGGd4pAd+x6q80pbbJd5V3w9je
-         /Q7Qg1I8JuSv9U97pIb7TiUJRFv/IAZK/c3MaDGtPGTatSXR220DCbquwFLpjRq+diE7
-         3JxIb8253Lj8r5dRvZ3Q9i08JIUok/sPFHCYJqK34g+9r2xiYlM7hV5vl75NkoKk/jhN
-         b90Q==
-X-Gm-Message-State: AJcUukeMp46GaJ497qU8p3Q1ea7WFcJissM3X9d/sZyB67L0jst0SXiq
-        YcqqaHxWWg14mkpNdfAT5I3BFA==
-X-Google-Smtp-Source: ALg8bN7HSMa9Ovaoy2hKbA10DPN30A6ot4mxWcIjJCfKmDnvp+DlwW6Y3gCGtsNCeR2EhqUPQ7S8ag==
-X-Received: by 2002:a17:902:74cc:: with SMTP id f12mr17808403plt.134.1548582174394;
-        Sun, 27 Jan 2019 01:42:54 -0800 (PST)
+        bh=4wt96ezv21X1O+EFi8O9ramir52ck0BWI5x6GktBbJY=;
+        b=jzPpQgZS8D6SA+Esw9DAOUntrF8nmd+JO+jX4X/0Owec0O8kDvZsgbw4RzDG14B4GH
+         aQB5vnZZCHmQcBkEh/pVBknTZkK2t4CGqAJb5qGdkbxrPOADa6IXncTJ3QK5YTwys61F
+         hmoUiBevRpy+NW3efRxP594doYYiK7WxOzBKTgBvUcgltnsNyN/tGHxNdegazLEu6JIg
+         xm1t891IsaatFj3hER4nDc2iuKkMN6L5w0fP1IaRAcreu/5kLYFaaYFc4A0371jUL3lU
+         PDTZeqjDZ/LEuzDA8Huv3Q2CvyQDIvLzyJIfbyXORtrP6v0NDxpnO1mPFpCC4z7Eqa8Q
+         wEPQ==
+X-Gm-Message-State: AJcUukfXazqQYfYuBksGmVSpA1q+KmCWBwoPHINoeUtxc206jU0Wuplt
+        pBbHYpzg6cXqwytwooIwLYI4XQ==
+X-Google-Smtp-Source: ALg8bN6kobbEzXRunvrsIBXKYTv54dvAGl0GvYxWjjpxX2Ey+UdII3q+gq8ncnWRU/bD/TTzM6Xc/g==
+X-Received: by 2002:a17:902:7c82:: with SMTP id y2mr17393048pll.33.1548582238647;
+        Sun, 27 Jan 2019 01:43:58 -0800 (PST)
 Received: from www.outflux.net (173-164-112-133-Oregon.hfc.comcastbusiness.net. [173.164.112.133])
-        by smtp.gmail.com with ESMTPSA id y5sm51388777pge.49.2019.01.27.01.42.52
+        by smtp.gmail.com with ESMTPSA id h69sm37401699pge.4.2019.01.27.01.43.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 27 Jan 2019 01:42:53 -0800 (PST)
-Date:   Sun, 27 Jan 2019 01:42:51 -0800
+        Sun, 27 Jan 2019 01:43:57 -0800 (PST)
+Date:   Sun, 27 Jan 2019 01:43:57 -0800
 From:   Kees Cook <keescook@chromium.org>
 To:     Shuah Khan <shuah@kernel.org>
 Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
         ndesaulniers@google.com
-Subject: [PATCH] selftests/harness: Update named initializer syntax
-Message-ID: <20190127094251.GA9391@beast>
+Subject: [PATCH] selftests/seccomp: Actually sleep for 1/10th second
+Message-ID: <20190127094357.GA9436@beast>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
@@ -67,50 +67,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The harness was still using old-style GNU named initializer syntax.
-Fix this so Clang will stop warning:
+Clang noticed that some none-zero sleep()s were actually using zero
+anyway. This switches to nanosleep() to gain sub-second granularity.
 
-seccomp_bpf.c:2924:1: warning: use of GNU old-style field designator extension
-      [-Wgnu-designator]
-./../kselftest_harness.h:147:25: note: expanded from macro 'TEST'
-                        ^
-./../kselftest_harness.h:172:5: note: expanded from macro '__TEST_IMPL'
-                  fn: &test_name, termsig: _signal }; \
-                  ^
+seccomp_bpf.c:2625:9: warning: implicit conversion from 'double' to
+      'unsigned int' changes value from 0.1 to 0 [-Wliteral-conversion]
+                sleep(0.1);
+                ~~~~~ ^~~
 
 Signed-off-by: Kees Cook <keescook@chromium.org>
 ---
- tools/testing/selftests/kselftest_harness.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ tools/testing/selftests/seccomp/seccomp_bpf.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/kselftest_harness.h b/tools/testing/selftests/kselftest_harness.h
-index 76d654ef3234..2d90c98eeb67 100644
---- a/tools/testing/selftests/kselftest_harness.h
-+++ b/tools/testing/selftests/kselftest_harness.h
-@@ -168,8 +168,8 @@
- #define __TEST_IMPL(test_name, _signal) \
- 	static void test_name(struct __test_metadata *_metadata); \
- 	static struct __test_metadata _##test_name##_object = \
--		{ name: "global." #test_name, \
--		  fn: &test_name, termsig: _signal }; \
-+		{ .name = "global." #test_name, \
-+		  .fn = &test_name, .termsig = _signal }; \
- 	static void __attribute__((constructor)) _register_##test_name(void) \
- 	{ \
- 		__register_test(&_##test_name##_object); \
-@@ -304,9 +304,9 @@
- 	} \
- 	static struct __test_metadata \
- 		      _##fixture_name##_##test_name##_object = { \
--		name: #fixture_name "." #test_name, \
--		fn: &wrapper_##fixture_name##_##test_name, \
--		termsig: signal, \
-+		.name = #fixture_name "." #test_name, \
-+		.fn = &wrapper_##fixture_name##_##test_name, \
-+		.termsig = signal, \
- 	 }; \
- 	static void __attribute__((constructor)) \
- 			_register_##fixture_name##_##test_name(void) \
+diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
+index 067cb4607d6c..a9f278c13f13 100644
+--- a/tools/testing/selftests/seccomp/seccomp_bpf.c
++++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
+@@ -2569,6 +2569,7 @@ TEST_F(TSYNC, two_siblings_not_under_filter)
+ {
+ 	long ret, sib;
+ 	void *status;
++	struct timespec delay = { .tv_nsec = 100000000 };
+ 
+ 	ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
+ 		TH_LOG("Kernel does not support PR_SET_NO_NEW_PRIVS!");
+@@ -2622,7 +2623,7 @@ TEST_F(TSYNC, two_siblings_not_under_filter)
+ 	EXPECT_EQ(SIBLING_EXIT_UNKILLED, (long)status);
+ 	/* Poll for actual task death. pthread_join doesn't guarantee it. */
+ 	while (!kill(self->sibling[sib].system_tid, 0))
+-		sleep(0.1);
++		nanosleep(&delay, NULL);
+ 	/* Switch to the remaining sibling */
+ 	sib = !sib;
+ 
+@@ -2647,7 +2648,7 @@ TEST_F(TSYNC, two_siblings_not_under_filter)
+ 	EXPECT_EQ(0, (long)status);
+ 	/* Poll for actual task death. pthread_join doesn't guarantee it. */
+ 	while (!kill(self->sibling[sib].system_tid, 0))
+-		sleep(0.1);
++		nanosleep(&delay, NULL);
+ 
+ 	ret = seccomp(SECCOMP_SET_MODE_FILTER, SECCOMP_FILTER_FLAG_TSYNC,
+ 		      &self->apply_prog);
 -- 
 2.17.1
 
