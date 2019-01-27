@@ -4,29 +4,29 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9634CC282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:15:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89E00C282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:21:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 681982146E
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:15:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 616802146E
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:21:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfA0KPI (ORCPT
+        id S1726800AbfA0KVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 05:15:08 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:34682 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbfA0KPI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 05:15:08 -0500
+        Sun, 27 Jan 2019 05:21:46 -0500
+Received: from foss.arm.com ([217.140.101.70]:34736 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726516AbfA0KVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 05:21:45 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 573A9A78;
-        Sun, 27 Jan 2019 02:15:07 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1346BA78;
+        Sun, 27 Jan 2019 02:21:45 -0800 (PST)
 Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 698A53F237;
-        Sun, 27 Jan 2019 02:15:04 -0800 (PST)
-Date:   Sun, 27 Jan 2019 10:14:58 +0000
-Message-ID: <86pnsiwgnx.wl-marc.zyngier@arm.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E73A23F237;
+        Sun, 27 Jan 2019 02:21:41 -0800 (PST)
+Date:   Sun, 27 Jan 2019 10:21:40 +0000
+Message-ID: <86o982wgcr.wl-marc.zyngier@arm.com>
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     Zhou Yanjie <zhouyanjie@zoho.com>
 Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
@@ -34,10 +34,10 @@ Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
         paul.burton@mips.com, mark.rutland@arm.com, jason@lakedaemon.net,
         tglx@linutronix.de, syq@debian.org, jiaxun.yang@flygoat.com,
         772753199@qq.com
-Subject: Re: [PATCH 3/4] Irqchip: Ingenic: Add support for the X1000.
-In-Reply-To: <1548517123-60058-4-git-send-email-zhouyanjie@zoho.com>
+Subject: Re: [PATCH 1/4] Irqchip: Ingenic: Change interrupt handling form cascade to chained_irq.
+In-Reply-To: <1548517123-60058-2-git-send-email-zhouyanjie@zoho.com>
 References: <1548517123-60058-1-git-send-email-zhouyanjie@zoho.com>
-        <1548517123-60058-4-git-send-email-zhouyanjie@zoho.com>
+        <1548517123-60058-2-git-send-email-zhouyanjie@zoho.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -49,39 +49,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 26 Jan 2019 15:38:42 +0000,
+On Sat, 26 Jan 2019 15:38:40 +0000,
 Zhou Yanjie <zhouyanjie@zoho.com> wrote:
 > 
-> Add support for probing the irq-ingenic driver on the X1000 Soc.
-> X1000 is a 1.0GHz processor for IoT. It has MIPS32 XBurst RISC core
-> with double precision hardware float point unit.
-
-I don't think we need the marketing spiel, as none of the advertised
-target market, ISA or feature set of this SoC is relevant for this
-patch. Put it in the cover letter if you must.
-
-Instead, explaining that it behaves just like any of the other "2chip"
-Ingenic SoCs makes is much more relevant.
-
+> The interrupt handling method is changed from old-style cascade to
+> chained_irq which is more appropriate. Also, it can process the
+> corner situation that more than one irq is coming to a single
+> chip at the same time.
 > 
 > Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
 > ---
->  drivers/irqchip/irq-ingenic.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/irqchip/irq-ingenic.c | 49 ++++++++++++++++++++++---------------------
+>  1 file changed, 25 insertions(+), 24 deletions(-)
 > 
 > diff --git a/drivers/irqchip/irq-ingenic.c b/drivers/irqchip/irq-ingenic.c
-> index 69be219..0b643c7 100644
+> index 2ff0898..2713ec4 100644
 > --- a/drivers/irqchip/irq-ingenic.c
 > +++ b/drivers/irqchip/irq-ingenic.c
-> @@ -177,3 +177,4 @@ static int __init intc_2chip_of_init(struct device_node *node,
->  IRQCHIP_DECLARE(jz4770_intc, "ingenic,jz4770-intc", intc_2chip_of_init);
->  IRQCHIP_DECLARE(jz4775_intc, "ingenic,jz4775-intc", intc_2chip_of_init);
->  IRQCHIP_DECLARE(jz4780_intc, "ingenic,jz4780-intc", intc_2chip_of_init);
-> +IRQCHIP_DECLARE(x1000_intc, "ingenic,x1000-intc", intc_2chip_of_init);
-> -- 
-> 2.7.4
-> 
-> 
+> @@ -1,16 +1,7 @@
+> +// SPDX-License-Identifier: GPL-2.0
+>  /*
+>   *  Copyright (C) 2009-2010, Lars-Peter Clausen <lars@metafoo.de>
+> - *  JZ4740 platform IRQ support
+> - *
+> - *  This program is free software; you can redistribute it and/or modify it
+> - *  under  the terms of the GNU General	 Public License as published by the
+> - *  Free Software Foundation;  either version 2 of the License, or (at your
+> - *  option) any later version.
+> - *
+> - *  You should have received a copy of the GNU General Public License along
+> - *  with this program; if not, write to the Free Software Foundation, Inc.,
+> - *  675 Mass Ave, Cambridge, MA 02139, USA.
+> - *
+> + *  Ingenic XBurst platform IRQ support
+>   */
+>  
+>  #include <linux/errno.h>
+> @@ -19,6 +10,7 @@
+>  #include <linux/interrupt.h>
+>  #include <linux/ioport.h>
+>  #include <linux/irqchip.h>
+> +#include <linux/irqchip/chained_irq.h>
+>  #include <linux/irqchip/ingenic.h>
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+> @@ -41,22 +33,35 @@ struct ingenic_intc_data {
+>  #define JZ_REG_INTC_PENDING	0x10
+>  #define CHIP_SIZE		0x20
+>  
+> -static irqreturn_t intc_cascade(int irq, void *data)
+> +static void ingenic_chained_handle_irq(struct irq_desc *desc)
+>  {
+> -	struct ingenic_intc_data *intc = irq_get_handler_data(irq);
+> -	uint32_t irq_reg;
+> +	struct ingenic_intc_data *intc = irq_desc_get_handler_data(desc);
+> +	struct irq_chip *chip = irq_desc_get_chip(desc);
+> +	bool have_irq = false;
+> +	u32 pending;
+>  	unsigned i;
+>  
+> +	chained_irq_enter(chip, desc);
+>  	for (i = 0; i < intc->num_chips; i++) {
+> -		irq_reg = readl(intc->base + (i * CHIP_SIZE) +
+> +		pending = readl(intc->base + (i * CHIP_SIZE) +
+>  				JZ_REG_INTC_PENDING);
+> -		if (!irq_reg)
+> +		if (!pending)
+>  			continue;
+>  
+> -		generic_handle_irq(__fls(irq_reg) + (i * 32) + JZ4740_IRQ_BASE);
+> +		have_irq = true;
+> +		while (pending) {
+> +			int bit = __ffs(pending);
+
+So 'bit' is the least significant bit in the pending word,
+
+> +
+> +			generic_handle_irq(__fls(pending) + (i * 32) +
+
+and here you handle the *most significant* bit,
+
+> +					JZ4740_IRQ_BASE);
+> +			pending &= ~BIT(bit);
+
+yet it is the least significant bit that you clear. I am tempted to
+say that you have never tested this code with more than a single
+interrupt.
 
 Thanks,
 
