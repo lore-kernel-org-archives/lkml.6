@@ -2,129 +2,96 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD5FDC282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:38:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF65C282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:56:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A74D82148D
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:38:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bG7fmttc"
+	by mail.kernel.org (Postfix) with ESMTP id CBF8C214C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:56:19 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726681AbfA0Kim (ORCPT
+        id S1726671AbfA0K4S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 05:38:42 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:39066 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726441AbfA0Kim (ORCPT
+        Sun, 27 Jan 2019 05:56:18 -0500
+Received: from www262.sakura.ne.jp ([202.181.97.72]:21595 "EHLO
+        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfA0K4S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 05:38:42 -0500
-Received: by mail-it1-f195.google.com with SMTP id a6so15500565itl.4;
-        Sun, 27 Jan 2019 02:38:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=ybBP+IUw0wA6yvj6uUeWUOT7wvGHqpFpF4qMfyRcWAM=;
-        b=bG7fmttcrAu/Ib97423dO1HX/u6b6j2OiH72pNWCm9YsSPr+CkbvNLaO0+qS0NdiWH
-         HfFdW3rJnBrpDG6II8cyG/0GS8Ugk4WYPOgCdZX6GVfQsIaK/vivWBNslH+jaiEhnQR6
-         f7sE60jq+WEeDxqydzM+HAOVSFy3XOfkadkxnLT5t+U5xQQz43RFKYjx0h6mGN9394Lu
-         bzPX2EKfQZ7tL05oRBJtYqNT+q1e21AmnGOLw5bUoACAmhXAeUD2xFtroammMMN710vz
-         fBy+yeKZ1COMftUdn7E0nj1C9LY5Z+8pwth2zEnl0RmbyQlSuadtA4eTnyLHX3itaBQk
-         Tt7A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=ybBP+IUw0wA6yvj6uUeWUOT7wvGHqpFpF4qMfyRcWAM=;
-        b=Ars4TWGSZt0lHZsMWDOa7jXiHvk93Pv5tZdGFEUdofAivvqXJAW7a6ovmXbVoMQ1yg
-         jmOQd8uA/bEHFOM3fqmar3f1WmUjQE9xtYJQjsUH09fjHos7XmT1ZsbKabzE/sXKieZG
-         H8U5aNGnrdkKJ67dbf96hcwni66fqxcLSSIv0GM8z+LZoZSNujHFTW81xrkjpNjmJHjB
-         ProE1Aki/vBj9qnjELlcgqp5gBNAm8dFx6RvuQPXrvSq9VBAF0WXwvH5eoq4AEOHCD6V
-         pjGdce7Ut4XoFh0qZVc4nAt6tLOO2XFIb2KIVwvPmn8EWE2U3p2+HC+ihJ04CyQDd1lr
-         5sdQ==
-X-Gm-Message-State: AJcUukeSclvdRSX5Fp/hAB99UUYAXWpR380nyEmTrQqUr3YTbHm83du8
-        6JtkkRZ2yDjlD/ApizHxjbHGLoi9kfyXuKkh7us=
-X-Google-Smtp-Source: ALg8bN6auXmMl/eBky+INoX6daFtX2dvE4FectWVTRTKUn3QD9JPQcoJApENBpBky3q1IeDwMvvAWPCFL9rx9wfzzjc=
-X-Received: by 2002:a24:80d2:: with SMTP id g201mr8084982itd.63.1548585520921;
- Sun, 27 Jan 2019 02:38:40 -0800 (PST)
+        Sun, 27 Jan 2019 05:56:18 -0500
+Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0RAuF88050388;
+        Sun, 27 Jan 2019 19:56:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Received: from www262.sakura.ne.jp (202.181.97.72)
+ by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
+ Sun, 27 Jan 2019 19:56:15 +0900 (JST)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
+Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
+        (authenticated bits=0)
+        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0RAuAXl050345
+        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
+        Sun, 27 Jan 2019 19:56:15 +0900 (JST)
+        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
+Subject: Re: [PATCH v2] oom, oom_reaper: do not enqueue same task twice
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
+        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-kernel@vger.kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>
+References: <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
+ <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
+ <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
+ <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
+ <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
+ <72aa8863-a534-b8df-6b9e-f69cf4dd5c4d@i-love.sakura.ne.jp>
+ <33a07810-6dbc-36be-5bb6-a279773ccf69@i-love.sakura.ne.jp>
+ <34e97b46-0792-cc66-e0f2-d72576cdec59@i-love.sakura.ne.jp>
+ <2b0c7d6c-c58a-da7d-6f0a-4900694ec2d3@gmail.com>
+ <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
+ <20190127083724.GA18811@dhcp22.suse.cz>
+From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Message-ID: <ec0d0580-a2dd-f329-9707-0cb91205a216@i-love.sakura.ne.jp>
+Date:   Sun, 27 Jan 2019 19:56:06 +0900
+User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <1547797668-30342-1-git-send-email-aisheng.dong@nxp.com>
- <1547797668-30342-5-git-send-email-aisheng.dong@nxp.com> <1547801609.2626.5.camel@pengutronix.de>
- <AM0PR04MB42111D634F28492434AA9309809C0@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <1547806960.2626.9.camel@pengutronix.de> <AM0PR04MB42111FE266342A2C2EAECC3580980@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <1548154758.2465.20.camel@pengutronix.de> <AM0PR04MB4211B9003857795EBC79541480980@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <1548161549.2465.24.camel@pengutronix.de> <AM0PR04MB42114F3D625CC48343EA427080980@AM0PR04MB4211.eurprd04.prod.outlook.com>
- <1548412956.28802.41.camel@pengutronix.de>
-In-Reply-To: <1548412956.28802.41.camel@pengutronix.de>
-From:   Dong Aisheng <dongas86@gmail.com>
-Date:   Sun, 27 Jan 2019 18:38:29 +0800
-Message-ID: <CAA+hA=TmBBTaNtmWFEX62LViwPKsBTvv-jWcwU7a7K7yh=JhYQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] irq: imx: irqsteer: add multi output interrupts support
-To:     Lucas Stach <l.stach@pengutronix.de>
-Cc:     Aisheng Dong <aisheng.dong@nxp.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        dl-linux-imx <linux-imx@nxp.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        Marc Zyngier <marc.zyngier@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190127083724.GA18811@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Lucas,
+On 2019/01/27 17:37, Michal Hocko wrote:
+> Thanks for the analysis and the patch. This should work, I believe but
+> I am not really thrilled to overload the meaning of the MMF_UNSTABLE.
+> The flag is meant to signal accessing address space is not stable and it
+> is not aimed to synchronize oom reaper with the oom path.
+> 
+> Can we make use mark_oom_victim directly? I didn't get to think that
+> through right now so I might be missing something but this should
+> prevent repeating queueing as well.
 
-[...]
+Yes, TIF_MEMDIE would work. But you are planning to remove TIF_MEMDIE. Also,
+TIF_MEMDIE can't avoid enqueuing many threads sharing mm_struct to the OOM
+reaper. There is no need to enqueue many threads sharing mm_struct because
+the OOM reaper acts on mm_struct rather than task_struct. Thus, enqueuing
+based on per mm_struct flag sounds better, but MMF_OOM_VICTIM cannot be
+set from wake_oom_reaper(victim) because victim's mm might be already inside
+exit_mmap() when wake_oom_reaper(victim) is called after task_unlock(victim).
 
-> > > The fsl,irq-groups property is exactly your NINT32 parameter above. I just
-> > > wrongly assumed that it's always in multiples of 64, as that's what the
-> > > i.MX8MQ DCSS irqsteer module looks like. We should fix this and be done with
-> > > it.
-> > >
-> >
-> > No, not exactly the same thing. Using group will confuse people that the group is 32.
-> > However, internally Group is fixed 64 interrupts although it may not use all the
-> > 64 interrupts. E.g. 32 interrupts.
-> > See CHn_MINTDIS register which is also defined fixed to 64.
-> >
-> > The two HW parameter for integration is already very clear. We should use interrupts
-> > Number for the channel. Not group.
->
-> Okay, I see that the name irq-groups is confusing for you. But then I
-> find the -per-chan naming confusing.
->
-> So given that we seem to agree to split each channel into it's own DT
-> node, there is no need to name the property "something-per-chan", as
-> it's implied by the split DT nodes that all properties in one node are
-> referencing a channel.
->
+We could reintroduce MMF_OOM_KILLED in commit 855b018325737f76
+("oom, oom_reaper: disable oom_reaper for oom_kill_allocating_task")
+if you don't like overloading the meaning of the MMF_UNSTABLE. But since
+MMF_UNSTABLE is available in Linux 4.9+ kernels (which covers all LTS stable
+versions with the OOM reaper support), we can temporarily use MMF_UNSTABLE
+for ease of backporting.
 
-Double checked with IP module owner by looking into the RTL code,
-writes to CHANnCTL registers have no effect.
-This register is reserved and the doc will be updated.
-Verified on both MX8QXP and MX8MQ.
-
-All channels are isolated and have independent programming model.
-So it will be okay to define them separately in device tree.
-
-> May I suggest to name the property "fsl,num-irqs"?
-
-Sounds good to me.
-
-Regards
-Dong Aisheng
-
->
-> Regards,
-> Lucas
->
