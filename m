@@ -2,130 +2,98 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA9B5C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:28:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1CC1C282CB
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:30:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9118A20989
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:28:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6E5822133D
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:30:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=adirat-com.20150623.gappssmtp.com header.i=@adirat-com.20150623.gappssmtp.com header.b="cGz0S9CA"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pW5Omw8p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727114AbfA0U21 (ORCPT
+        id S1727133AbfA0UaP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 15:28:27 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:40765 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726566AbfA0U21 (ORCPT
+        Sun, 27 Jan 2019 15:30:15 -0500
+Received: from mail-qt1-f194.google.com ([209.85.160.194]:37239 "EHLO
+        mail-qt1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726630AbfA0UaO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 15:28:27 -0500
-Received: by mail-wr1-f66.google.com with SMTP id p4so15798610wrt.7
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 12:28:26 -0800 (PST)
+        Sun, 27 Jan 2019 15:30:14 -0500
+Received: by mail-qt1-f194.google.com with SMTP id t33so16230179qtt.4;
+        Sun, 27 Jan 2019 12:30:14 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=adirat-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7PLSrAY77YXMqD8mCsNFYfXnusW2BtN7ecVfaVQTgoU=;
-        b=cGz0S9CAtUtmJN7kwaeJtGy23OlBQgTs4ncjxDDEFMihU8dxT3YXmNVsUuCP5XrOxY
-         TpTWzL2MSM++DN7ZSNdFgoCDtkSFxDfdjBMrr8+vN9qYwM1AnTtV3Ak/IAKrwgJbSlci
-         4f96zpHUwqD7PJeD6PetfgejbHb/aIeGBDUQ7FEgK58XYx4IW57guUx2LieDAb4CS8LH
-         2khYHaDB0zWExf13liXxUBqc64dCXcWTDtwIWW0EFgPeLHd3GgT37081aQg8AsqTbXW/
-         NYOk2F1U+8+2cEPi6UBGacF2Kw3QuehlsSm+09CcGKcSACnkb12LbbNrxqhJDEB1f7q+
-         Bp3w==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=x0xpwfJTYmKMrI6IiBvN0+6STIL0Vh4u6UvzeC6GJo4=;
+        b=pW5Omw8p6G8BzpwC1kCuWI+4cJtrNY+Fiiak/naWdzD+vne1gHMieJadn0+1k4CQnE
+         3coWixByAAbYQWm9zGIGt9KOWuDeodELQ+o+7xgLCgVWWC2w86JtwualPR/9HguMG6KC
+         3yy/TSB4kgazR1omO+fa1+add9cuLA8BGayRFfrAEq4sQ8VIkvNPapLEPFJoDSZtzZWr
+         v4T0VsgpIHTa47u5WIT6mbS7gpKm9ZzQ1EgtZIpnn2Vktmyj1lc2sLNF25O2KreRr76k
+         UxPRh2+T6oBxbMfZ/Q4bHIzaDeTdeLlDnU+32f/S0GFW5YpLtM8Fh21yalHx9OBiarTE
+         pyyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=7PLSrAY77YXMqD8mCsNFYfXnusW2BtN7ecVfaVQTgoU=;
-        b=oFe+lwfBByFR1bp7FECoAIT1cayGMzHijHfpBCqSgrbm9CnXHfmwxqK0waUFgN/OFt
-         70ok2IY093v2F/C+ePEOepjk9OMJpMbhI+TzgXB9ReYZLHCS7TsWisi/OLwJDlTf9o5G
-         r8VzI1wTUeM65ZJj+2v/OChwGMs7U6rmuJFhTmCWeDFsgUuGJgoqH8138Vmzadsich8G
-         +C4OrPag9h5xbL5u02ECall48r4JAU9AmvaKOpQrSA7A8Imqxf7kB6Ee+qtP3PiQ/XQ7
-         VFrmF1tl73f3QAV0YSkmOYS97r7xm08mEHXcENxyouoHlm1d0kVfvVo9EmRPnIe889fA
-         hzsw==
-X-Gm-Message-State: AJcUukcpAQ/6+xDuNvYasqQhNNzelHkTDPy1upRJocnhNR3sEED+CwM+
-        B/EbPUYt3NmYkvQEmVHDDJsyJLr3rtBnsw==
-X-Google-Smtp-Source: ALg8bN41P1eQpZMTWiYQJEO6/bSLTQvFStJ37D29f6N3zeUPvOyR8UqBVpHaxjLzi/s+7fUilKDKng==
-X-Received: by 2002:adf:f009:: with SMTP id j9mr18892547wro.170.1548620905352;
-        Sun, 27 Jan 2019 12:28:25 -0800 (PST)
-Received: from iwork.lan ([188.24.59.111])
-        by smtp.gmail.com with ESMTPSA id k19sm187868249wre.5.2019.01.27.12.28.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 12:28:24 -0800 (PST)
-From:   Ioan-Adrian Ratiu <adi@adirat.com>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-Subject: [RFC][PATCH] Revert "ARM: dts: bcm2837: Fix polarity of wifi reset GPIOs"
-Date:   Sun, 27 Jan 2019 22:28:13 +0200
-Message-Id: <20190127202813.29493-1-adi@adirat.com>
-X-Mailer: git-send-email 2.20.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=x0xpwfJTYmKMrI6IiBvN0+6STIL0Vh4u6UvzeC6GJo4=;
+        b=RAQOR2bUOgmTBhbGCsTXf7OFp1OMeCMMEDLGIv2KoOB6YfAHh6BCEnIrKQhf4HjQKT
+         6UsuQKz51kioQIFtrR0o4+dDPUXAx6UAYjOrUHqJFGJ2c5ok6khsbWhuY+YRfzoi9Bg4
+         IEqx92QlTE5EwpVYxB/d6RhUsCYOzAAMHdaagI/vs0wKbjSVDjUCmWZ0ArbLLpMJQNhr
+         oRowQjn83968DSTkZqDnuDV4ASv4Kp1dVr6EebNMafCPKMZb8Cj0nDww00Ch3eGzsxf4
+         JZgmEmE75UqO3WSUfTFF0mhhkJx80anFXh3x69co/M8O7zME8nNmI0KfkNNF9LL7aqpk
+         y9QQ==
+X-Gm-Message-State: AJcUukcJ/iKswK/OjWzwlADz+fHS5z+nS7a6on97jPfMNwF+0+va1RHd
+        5msv1yME7Vvh1vEQtGuV3XU=
+X-Google-Smtp-Source: ALg8bN6RmF4UawEAhLMuhFUIVNrs0Obu59DkbGCkWUDskDO5oFG10HgoeQQPdjq6HinPWWsvKjFN0Q==
+X-Received: by 2002:ac8:2e6a:: with SMTP id s39mr19307233qta.355.1548621013703;
+        Sun, 27 Jan 2019 12:30:13 -0800 (PST)
+Received: from renatolg ([186.220.19.121])
+        by smtp.gmail.com with ESMTPSA id e186sm59608324qkb.32.2019.01.27.12.30.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 27 Jan 2019 12:30:13 -0800 (PST)
+Date:   Sun, 27 Jan 2019 18:30:00 -0200
+From:   Renato Lui Geh <renatogeh@gmail.com>
+To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
+        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
+        stefan.popa@analog.com, alexandru.Ardelean@analog.com,
+        giuliano.belinassi@usp.br
+Cc:     linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org, kernel-usp@googlegroups.com
+Subject: [PATCH v2 0/2] staging: iio: ad7780: move out of staging
+Message-ID: <20190127202957.o3ghqnwjt2konxge@renatolg>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Disposition: inline
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This reverts commit bea8a160c621d19f7f78b13e14e03f4b8e44cd4b.
+This series of patches add user input to ad7780 'gain' & 'filter' gpio
+pins. It also includes a patch to move ad7780 out of staging and to the
+main tree.
 
-Contrary to what the commit message says, on my rpi 3 b v1.2 changing
-the polarity causes the exact behaviour this commit intends to fix, as
-described at the referenced link below (wlan0 disapears).
+Renato Lui Geh (2):
+  staging: iio: ad7780: add gain & filter gpio support
+  staging: iio: ad7780: moving ad7780 out of staging
 
-With reset-gpios = ... GPIO_ACTIVE_HIGH, brcmfmac errors in dmesg:
+ drivers/iio/adc/Kconfig                |  13 +
+ drivers/iio/adc/Makefile               |   1 +
+ drivers/iio/adc/ad7780.c               | 361 +++++++++++++++++++++++++
+ drivers/staging/iio/adc/Kconfig        |  13 -
+ drivers/staging/iio/adc/Makefile       |   1 -
+ drivers/staging/iio/adc/ad7780.c       | 277 -------------------
+ include/linux/iio/adc/ad_sigma_delta.h |   5 +
+ 7 files changed, 380 insertions(+), 291 deletions(-)
+ create mode 100644 drivers/iio/adc/ad7780.c
+ delete mode 100644 drivers/staging/iio/adc/ad7780.c
 
-[    7.977512] brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep state -110
-[    7.977623] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
-[    7.978007] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
-[    7.978377] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
-[    7.978724] brcmfmac: brcmf_sdio_dpc: failed backplane access over SDIO, halting operation
-[    7.978734] brcmfmac: brcmf_proto_bcdc_query_dcmd: brcmf_proto_bcdc_msg failed w/status -110
-[    7.978747] brcmfmac: brcmf_cfg80211_get_channel: chanspec failed (-110)
-[    7.982817] brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep state -110
-[    7.982880] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
-[    7.983255] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
-
-The only solution I currently have is to revert and everything works
-as expected and as before changing the polarity.
-
-Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911443
-Signed-off-by: Ioan-Adrian Ratiu <adi@adirat.com>
----
- arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts | 2 +-
- arch/arm/boot/dts/bcm2837-rpi-3-b.dts      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
-index 93762244be7f..4adb85e66be3 100644
---- a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
-+++ b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
-@@ -31,7 +31,7 @@
- 
- 	wifi_pwrseq: wifi-pwrseq {
- 		compatible = "mmc-pwrseq-simple";
--		reset-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
-+		reset-gpios = <&expgpio 1 GPIO_ACTIVE_HIGH>;
- 	};
- };
- 
-diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
-index 89e6fd547c75..c318bcbc6ba7 100644
---- a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
-+++ b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
-@@ -26,7 +26,7 @@
- 
- 	wifi_pwrseq: wifi-pwrseq {
- 		compatible = "mmc-pwrseq-simple";
--		reset-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
-+		reset-gpios = <&expgpio 1 GPIO_ACTIVE_HIGH>;
- 	};
- };
- 
 -- 
 2.20.1
 
