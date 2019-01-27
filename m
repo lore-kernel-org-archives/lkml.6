@@ -6,66 +6,62 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D964BC282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 12:26:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9A25C282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 12:31:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE26217D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 12:26:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5EAD2147A
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 12:31:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="MPy5WjsJ"
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="jiITg+iE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbfA0M0r (ORCPT
+        id S1726775AbfA0MbH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 07:26:47 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:43680 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbfA0M0r (ORCPT
+        Sun, 27 Jan 2019 07:31:07 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:44761 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726535AbfA0MbG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 07:26:47 -0500
-Received: by mail-ot1-f67.google.com with SMTP id a11so12403568otr.10
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 04:26:46 -0800 (PST)
+        Sun, 27 Jan 2019 07:31:06 -0500
+Received: by mail-io1-f66.google.com with SMTP id r200so11226268iod.11
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 04:31:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc:content-transfer-encoding;
-        bh=FV09SYoL0F04ZmSUaNF5xOhlXlJTckZ/GU1hR92+CcY=;
-        b=MPy5WjsJlaQiwcMncMwsJ5UFS7ZMJeBLA+3P1DRfqyigMRlDTk9SBD7VBGVJuoeFx9
-         JCDjwxEkl5hg24uZmIH4BB2qy0LWpSXcPwgO1ZQ8qBkEIy3V+wkESXqmHnh1evX1Lw96
-         BUjoydtFnWg2EtZvKpWaPO/1jv2AIrB/z9h2HN+BDIM5ZjbT67YMGjmsHQRGP7umF/dK
-         1ZT8KiRNiqIefnlL7tGjWSMzaqzHmh08TGsBHiKFL5NKHiO+FOnTnDMH/MF/0HdcXH+s
-         SEvVk1gPv/TITcF+7a/0CQU62H/tvSLC8WW5IRwvxMWmigl2eMja+bwDHo5MCFnH4bHA
-         7MJQ==
+        bh=ylwVQt/bj/wGunye0Cfen+VL65GmNXz4RkapuwjnSuY=;
+        b=jiITg+iEelaAbvPaqqpRNaKA+YI70JqxADX7KhOpvsIKbLVl+1BasZJg7FVuGuxdfy
+         ebmcUU5JVEdOJ45TTipW6ru+ZOfnE+a5FX5YBQiIqKxF/jh6O+GKA7/ht3M+3K7xYwtr
+         U6aboeYgEcvw1btcMEWYh+L5cuvhpm3/U2Mvci+bIBEBswWV5QD8m7rZL3ZNtek1jSHX
+         OwkYAyLzVVtA9c4amLEMs8qBZt0iAVM0M+B3Wk4ENn+2AhcGFuQl50IRKCt0Ny2LnelL
+         3k3Wh3A3Yxpd6AOJ1Ut7SiS2vDR0j3WSPRnI610wT1BIcFEtJWXygEBk2G7rkavKB/qf
+         nM5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc:content-transfer-encoding;
-        bh=FV09SYoL0F04ZmSUaNF5xOhlXlJTckZ/GU1hR92+CcY=;
-        b=kgTIqCa1K8R76dlPtgyJisT6dPWNUrGNJ0/4ACnbvO54vGrcqfHN6GMssYZLhQBQVN
-         0nEJQb8YUQyuvrbz3L2XKImBh4PSKP4zoE9DIjg599li3WGf4QNsJ5B1BHsVx+5u7ks8
-         9NmzcxEUnvdF9yXGx1hvVxgVz9tFiDtVxgVqGlFIq5AbjBKBWLf2zrbj9/2wPEg+40ry
-         UKABdqugf9ztcaMxxU4JIwJayKd1t4ewIVp2zfxDPIhjSWH8zvVfRnLexhIQZLszk1in
-         6e6V5dSQmK5DN88LAy3EK6kTXE1Lg+PXEs9sc/tRSzbipDjzgxnA+i0bjNGskuxXYk/e
-         kP9g==
-X-Gm-Message-State: AJcUukeB3jnH5kkG6q2UxDlDqJWr3+JfEYKu+vitFTE4CtRa5NF7fqUV
-        gXvqOlVrD4ER92M+FYRpSU8WVsjiiDbRbOkItr6RFA==
-X-Google-Smtp-Source: ALg8bN4HwA9drGKobG9D/YBH0b7fqsVPIKzg6dyz6wZHcrg8C9kuTgwJ6Z+iOW8kvKSOrp+9PSPce9tS3QjA86cCAhA=
-X-Received: by 2002:a9d:70d5:: with SMTP id w21mr9862260otj.301.1548592006116;
- Sun, 27 Jan 2019 04:26:46 -0800 (PST)
+        bh=ylwVQt/bj/wGunye0Cfen+VL65GmNXz4RkapuwjnSuY=;
+        b=U3w+53e3YxBybG9ySWaRX865ptuLZy1AIW6xJHDzTD2BzhDK1xDHsNaDy7fPA9prO8
+         T8fjJe33xahd/ywQ5+b6hP6oqpewPmUl+KpXc6zcPKEEdxrF0DWGbOyo+7SOX3tCC+eQ
+         NmKdJVDOws1Uhnn+JZpWWvebRlfuLM2zGP+u2N1L8nGX/1JppuOQyo+6cYZWBtRU7b2+
+         auSjqxrIzAet/kw2Sgf831QhTvvWoTtaaHMKpBkPgn2KAFDQsHwsqMT0aw+jkwuu/5Qk
+         /lXyryczA218VTaOCZXziBKqejfUtA+Pzg6i75q2Mb/A6hbh49dtrkjb8N2yENPIactJ
+         slvg==
+X-Gm-Message-State: AHQUAuZBgu5rmkTGjzxTwDJxmbdozxHRpUP9ku6H127aEw9V2fIHlfeK
+        d//xp37U61Y/sP4X64cwVRA2cRTfZVtY1/RL3xpAlA==
+X-Google-Smtp-Source: AHgI3IbrNjBhNjaxQBxwwg4tvFiBjE3B65LKZsMe/9T4QcFezz+mRJC2LTko71NCqHcDrkk9P+lRJRnOH/5fRua23qI=
+X-Received: by 2002:a5d:834e:: with SMTP id q14mr10583438ior.258.1548592265876;
+ Sun, 27 Jan 2019 04:31:05 -0800 (PST)
 MIME-Version: 1.0
-References: <20190108091539.16674-1-brgl@bgdev.pl> <8c190cf3-b4f3-90d0-07ce-4bb7927160df@ti.com>
- <20190122122228.GA2736@kroah.com>
-In-Reply-To: <20190122122228.GA2736@kroah.com>
-From:   Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Date:   Sun, 27 Jan 2019 13:26:35 +0100
-Message-ID: <CAMpxmJW+ODrqCTSaQMOgRG2d3Qy2SipzYQU3JRPbJE_Wn85H0w@mail.gmail.com>
-Subject: Re: [RESEND PATCH 00/12] eeprom: at24: remove platform_data
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Sekhar Nori <nsekhar@ti.com>, Bartosz Golaszewski <brgl@bgdev.pl>,
-        Kevin Hilman <khilman@kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        LKML <linux-kernel@vger.kernel.org>,
-        arm-soc <linux-arm-kernel@lists.infradead.org>,
-        linux-i2c <linux-i2c@vger.kernel.org>
+References: <20190124151837.1ca96816@canb.auug.org.au> <df1743f8-71c8-3b18-1e8a-94198d99477d@huawei.com>
+In-Reply-To: <df1743f8-71c8-3b18-1e8a-94198d99477d@huawei.com>
+From:   Bartosz Golaszewski <brgl@bgdev.pl>
+Date:   Sun, 27 Jan 2019 13:30:55 +0100
+Message-ID: <CAMRc=MdMK=PMqHeroiyytwZ0w3++iiXWZaBQsRMQvjgvQqDBQw@mail.gmail.com>
+Subject: Re: linux-next: build warning after merge of the gpio-brgl tree
+To:     YueHaibing <yuehaibing@huawei.com>
+Cc:     Stephen Rothwell <sfr@canb.auug.org.au>,
+        Linux Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
@@ -73,49 +69,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-wt., 22 sty 2019 o 13:22 Greg Kroah-Hartman
-<gregkh@linuxfoundation.org> napisa=C5=82(a):
+czw., 24 sty 2019 o 06:42 YueHaibing <yuehaibing@huawei.com> napisa=C5=82(a=
+):
 >
-> On Thu, Jan 10, 2019 at 07:43:47PM +0530, Sekhar Nori wrote:
+> On 2019/1/24 12:18, Stephen Rothwell wrote:
 > > Hi Bartosz,
 > >
-> > On 08/01/19 2:45 PM, Bartosz Golaszewski wrote:
-> > > From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-> > >
-> > > Hi Sekhar,
-> > >
-> > > now that all dependencies are in and v5.0-rc1 is tagged, please consi=
-der
-> > > picking up the second batch of davinci-specific changes into your tre=
-e.
-> > > Once that's done, please provide me with an immutable branch for me t=
-o
-> > > apply the last patch to my at24 tree.
+> > After merging the gpio-brgl tree, today's linux-next build (arm
+> > multi_v7_defconfig) produced this warning:
 > >
-> > You can use branch v5.1/eeprom-for-bartosz in my tree for this (commit
-> > e430685f4969).
+> > drivers/gpio/gpio-davinci.c: In function 'davinci_gpio_get_irq_chip':
+> > drivers/gpio/gpio-davinci.c:472:9: warning: function returns address of=
+ local variable [-Wreturn-local-addr]
+> >   return &gpio_unbanked.chip;
+> >          ^~~~~~~~~~~~~~~~~~~
+> > drivers/gpio/gpio-davinci.c: In function 'keystone_gpio_get_irq_chip':
+> > drivers/gpio/gpio-davinci.c:480:9: warning: function returns address of=
+ local variable [-Wreturn-local-addr]
+> >   return &gpio_unbanked;
+> >          ^~~~~~~~~~~~~~
 > >
-> > >
-> > > This is the second part of the effort to modernize the at24 driver an=
-d
-> > > remove the legacy platform data structure in favor of device properti=
-es.
-> > > It required getting rid of the at24 setup callback in favor of nvmem
-> > > lookups.
-> > >
-> > > Re-tested with da850-evm and dm365-evm.
+> > Introduced by commit
 > >
-> > Applied patches 1-11 for v5.1
+> >   ee5e87158e63 ("gpio: davinci: drop pointless static qualifier")
 >
-> Feel free to take patch 12 as well :)
+> I'm very sorry for this.
+>
+> I misread the code, Pls revert this.
+>
+> >
+>
 
-Hi Greg,
+I backed out this one.
 
-I took over the at24 driver from Wolfram Sang. I collect patches for
-it in my branch and then send pull-requests to Wolfram directly. I've
-applied this patch to my branch in case there's some more development
-for at24 in this cycle. Sekhar provided me with an immutable branch
-with the arch commits I merged in.
-
-Best regards,
-Bartosz Golaszewski
+Thanks,
+Bartosz
