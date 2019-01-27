@@ -6,47 +6,48 @@ X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 039BDC282CA
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2964FC282CC
 	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:10:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD7DF217D8
+	by mail.kernel.org (Postfix) with ESMTP id E96E2217F4
 	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:10:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548619807;
-	bh=ga0SdcuaHa6YyBwCD4EZ4foTW4yGn1FKUYAfijdaNho=;
+	s=default; t=1548619808;
+	bh=yGGg8oEGIZTDEN9eYHA1bd3C7YcUExEjGcVeHihKkqk=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=rh3s1r3uF9z/uB/QiXpEJGjqND3FXPfLmYltwpozBG+gFLSPdPA+UMzi7FzGOoPhr
-	 69190CfqVtKqtjb45EzeAFgXtfxKjhQ3AwcFvkXqWDZJqYUOrCZ+rIQGnCCDN3Igh1
-	 Xun8lyS+TZGxfm2KouDRSr3aHEdACRXwIXdUmHlA=
+	b=buZka3LZ3iaFLbJSCMZ1nTnWvOUl9UcmCQDSScRXRlU0gMT0cei0yiEs9zj17CHD6
+	 rb0/y37F7cPr/xUtKE4rEi2ZqPUrjMCQ5cKqd06S5btILLlzywMRfNBXdh1c5J64Dl
+	 OLVOSNbL8tiDfyEFpwoJggrzkZRhdvmQ1InCSh+k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727048AbfA0UKF (ORCPT
+        id S1727074AbfA0UKG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 15:10:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59454 "EHLO mail.kernel.org"
+        Sun, 27 Jan 2019 15:10:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59484 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726566AbfA0UKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726864AbfA0UKF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 27 Jan 2019 15:10:05 -0500
-Subject: Re: [GIT pull] genirq updates for 5.0
+Subject: Re: [GIT pull] timer updates for 5.0
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548619804;
-        bh=ga0SdcuaHa6YyBwCD4EZ4foTW4yGn1FKUYAfijdaNho=;
+        s=default; t=1548619805;
+        bh=yGGg8oEGIZTDEN9eYHA1bd3C7YcUExEjGcVeHihKkqk=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=rN8jNmf8oz7zvIE8pNUXweXlclkY2qbalvOjGPhv4EHyyd/oEFw5412C3IPTI9U3r
-         Xqw5VTm4LqxUwY7ImDHP/9v/J7BmC+A+uJSsuel5wv/VF/WfpexD9CiQFeMaaOf8kg
-         kR3OKPeZv84wG/0QT/Tk0OzG/wCA/tBJXbDEqhHI=
+        b=mF4e8I6aRuA7JOjab3QkOUotmmvGSn0121F39lPeBnQL2EOM/8NA/dqTTLfKAYSaV
+         LIDTFYp7z+u4VE9saD1eCcO/ZW5AVfdOBXbu2sgScIXcLEgkCeG8srUletsLDSYvGQ
+         mYR09its5A2ImFhOEKshLiplVMt/BoZr6jIiH3dI=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <154858670614.17124.729797537033859836.tglx@nanos.tec.linutronix.de>
+In-Reply-To: <154858670614.17124.9973897341622496366.tglx@nanos.tec.linutronix.de>
 References: <154858670614.17124.729797537033859836.tglx@nanos.tec.linutronix.de>
+ <154858670614.17124.9973897341622496366.tglx@nanos.tec.linutronix.de>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <154858670614.17124.729797537033859836.tglx@nanos.tec.linutronix.de>
+X-PR-Tracked-Message-Id: <154858670614.17124.9973897341622496366.tglx@nanos.tec.linutronix.de>
 X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git
- irq-urgent-for-linus
-X-PR-Tracked-Commit-Id: 37b144df8099465bf8d08296d8b424c77fd9b0ac
+ timers-urgent-for-linus
+X-PR-Tracked-Commit-Id: 93ad0fc088c5b4631f796c995bdd27a082ef33a6
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 0d484375d73ad2ec39a395365449a70c200645b1
-Message-Id: <154861980471.25513.16606351865862553106.pr-tracker-bot@kernel.org>
-Date:   Sun, 27 Jan 2019 20:10:04 +0000
+X-PR-Merge-Commit-Id: f907bb4c326d145c13504db184f38557d169f4bc
+Message-Id: <154861980530.25513.4256455854979370857.pr-tracker-bot@kernel.org>
+Date:   Sun, 27 Jan 2019 20:10:05 +0000
 To:     Thomas Gleixner <tglx@linutronix.de>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         linux-kernel@vger.kernel.org, x86@kernel.org
@@ -55,12 +56,12 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Sun, 27 Jan 2019 12:05:05 +0100:
+The pull request you sent on Sun, 27 Jan 2019 12:05:07 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq-urgent-for-linus
+> git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git timers-urgent-for-linus
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/0d484375d73ad2ec39a395365449a70c200645b1
+https://git.kernel.org/torvalds/c/f907bb4c326d145c13504db184f38557d169f4bc
 
 Thank you!
 
