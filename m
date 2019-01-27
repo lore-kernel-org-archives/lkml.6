@@ -2,108 +2,92 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E003C282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:32:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1D5C282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEC2D214C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548577943;
-	bh=nQXDxP01s4SLMY6bzfqIw/LMSfQaNg6LvEpP7Ni8Izs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=l+BWHVVEs6o3ltb1jcbpnh6Ys/k+RgqICzwsh87E+gGGX/y/g7l0jAFznEh0VDfvd
-	 yWH6RYva8TemVvB/z/jKst0fdCjpqokcs51IfxFKsavtWerjM0Qwh7H/jrKdktdb0t
-	 MA+eNXu2Sxw8GAc+LCDmlDZiYpaDj4m0W2Hn/4Vk=
+	by mail.kernel.org (Postfix) with ESMTP id 561A2214C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:34:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726713AbfA0IcW (ORCPT
+        id S1726735AbfA0IeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 03:32:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35634 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726511AbfA0IcV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 03:32:21 -0500
-Received: from localhost (5356596B.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12982214C6;
-        Sun, 27 Jan 2019 08:32:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548577940;
-        bh=nQXDxP01s4SLMY6bzfqIw/LMSfQaNg6LvEpP7Ni8Izs=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=B9LgnseCMb3D7LsL3cgC7lxiDi1RrKVyjCSdTgqptMqaFfHv+xjHvYKgQUqedd9Nd
-         n1ViOAzKt/pNCHNwn5ZYZd6FHBY4sG71lEL+sD24wcP6myfvXQh7tA9YaT62n0x6QW
-         SMXZTTZ7ymmZDHaiqbO5Q3X2lAvCQrAFKnHsetlY=
-Date:   Sun, 27 Jan 2019 09:32:17 +0100
-From:   gregkh <gregkh@linuxfoundation.org>
-To:     Oded Gabbay <oded.gabbay@gmail.com>
-Cc:     Arnd Bergmann <arnd@arndb.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        ogabbay@habana.ai
-Subject: Re: [PATCH 01/15] habanalabs: add skeleton driver
-Message-ID: <20190127083217.GB4561@kroah.com>
-References: <20190123000057.31477-1-oded.gabbay@gmail.com>
- <20190123000057.31477-2-oded.gabbay@gmail.com>
- <CAK8P3a2NX_SNZPfqE4fnVcnxmSfAEzWMODce3L-g6JJ0NSTuBw@mail.gmail.com>
- <CAFCwf10jv4aMNefk_1Xj_Tg5Yjg8ekzWtZ94TssfHzaSN5CVAA@mail.gmail.com>
- <CAK8P3a3=1Rocb8jcG8XHadgcUCL6xXs8GRxc-Az6oyPqffYTpw@mail.gmail.com>
- <CAFCwf109SsyUVfvWAwA-j6HbqJ-QEZkWUhwirtX7dUf5CP_R7A@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAFCwf109SsyUVfvWAwA-j6HbqJ-QEZkWUhwirtX7dUf5CP_R7A@mail.gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+        Sun, 27 Jan 2019 03:34:09 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:55287 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726327AbfA0IeI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 03:34:08 -0500
+Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1gnftE-0002dU-6L; Sun, 27 Jan 2019 08:34:04 +0000
+From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
+To:     marcel@holtmann.org, johan.hedberg@gmail.com
+Cc:     drake@endlessm.com, linux-bluetooth@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        stable@vger.kernel.org
+Subject: [PATCH v2] Bluetooth: btrtl: Restore old logic to assume firmware is already loaded
+Date:   Sun, 27 Jan 2019 16:33:59 +0800
+Message-Id: <20190127083359.17833-1-kai.heng.feng@canonical.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 11:48:02PM +0200, Oded Gabbay wrote:
-> On Sat, Jan 26, 2019 at 11:14 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> >
-> > On Sat, Jan 26, 2019 at 5:25 PM Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> > >
-> > > On Sat, Jan 26, 2019 at 6:06 PM Arnd Bergmann <arnd@arndb.de> wrote:
-> > > >
-> > > > On Wed, Jan 23, 2019 at 1:01 AM Oded Gabbay <oded.gabbay@gmail.com> wrote:
-> > > >
-> > > > > diff --git a/drivers/misc/habanalabs/include/habanalabs_device_if.h b/drivers/misc/habanalabs/include/habanalabs_device_if.h
-> > > > > new file mode 100644
-> > > > > index 000000000000..9dbb7077eabd
-> > > > > --- /dev/null
-> > > > > +++ b/drivers/misc/habanalabs/include/habanalabs_device_if.h
-> > > >
-> > > > Since this is a apparently a user space ABI, the file should be in
-> > > > include/uapi/linux/,
-> > > > not in the driver directory.
-> > >
-> > > This is not a user space ABI. This is the ABI between the driver and the F/W.
-> >
-> > Ah, I see. In that case, you should get rid of all the bitfields and make the
-> > struct members all __le32/__le64/... to make it work on big-endian kernels.
-> >
-> I really don't want to start converting bitfields and structures to
-> use __le32/64.
-> As I wrote in one of the previous reviews, we don't support big-endian
-> architecture (what's left after POWER moved to support little endian
-> ?).  We actually do run on POWER9 but with ppc64le architecture
-> In any case, our software stack is so big that this minor change in
-> the driver won't have any impact on the overall ability to run
-> something on our H/W
+Realtek bluetooth may not work after reboot:
+[   12.446130] Bluetooth: hci0: RTL: rtl: unknown IC info, lmp subver a99e, hci rev 826c, hci ver 0008
 
-You don't have to do anything at the moment to "convert" to use a
-specific endian, but you do have to always mark such variables that are
-in a specific endian that this is the format they are expected in.
+This is a regression introduced by commit 26503ad25de8 ("Bluetooth:
+btrtl: split the device initialization into smaller parts"). The new
+logic errors out early when no matching IC info can be found, in this
+case it means the firmware is already loaded.
 
-Then, when you run a tool like sparse, you will be notified if you
-happen to be making any assumptions that might not be correct about
-those variables, and it's trivial to usually fix it up at that time.
+So let's assume the firmware is already loaded when we can't find
+matching IC info, like the old logic did.
 
-hope this helps,
+Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201921
+Fixes: 26503ad25de8 ("Bluetooth: btrtl: split the device initialization into smaller parts")
+Cc: stable@vger.kernel.org # 4.19+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+---
+ drivers/bluetooth/btrtl.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-greg k-h
+diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
+index 41405de27d66..c91bba00df4e 100644
+--- a/drivers/bluetooth/btrtl.c
++++ b/drivers/bluetooth/btrtl.c
+@@ -552,10 +552,9 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
+ 					    hdev->bus);
+ 
+ 	if (!btrtl_dev->ic_info) {
+-		rtl_dev_err(hdev, "rtl: unknown IC info, lmp subver %04x, hci rev %04x, hci ver %04x",
++		rtl_dev_info(hdev, "rtl: unknown IC info, lmp subver %04x, hci rev %04x, hci ver %04x",
+ 			    lmp_subver, hci_rev, hci_ver);
+-		ret = -EINVAL;
+-		goto err_free;
++		return btrtl_dev;
+ 	}
+ 
+ 	if (btrtl_dev->ic_info->has_rom_version) {
+@@ -610,6 +609,11 @@ int btrtl_download_firmware(struct hci_dev *hdev,
+ 	 * standard btusb. Once that firmware is uploaded, the subver changes
+ 	 * to a different value.
+ 	 */
++	if (!btrtl_dev->ic_info) {
++		rtl_dev_info(hdev, "rtl: assuming no firmware upload needed\n");
++		return 0;
++	}
++
+ 	switch (btrtl_dev->ic_info->lmp_subver) {
+ 	case RTL_ROM_LMP_8723A:
+ 	case RTL_ROM_LMP_3499:
+-- 
+2.17.1
+
