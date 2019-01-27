@@ -2,96 +2,103 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0DF65C282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:56:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18046C282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBF8C214C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 10:56:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E1D1021920
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:05:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726671AbfA0K4S (ORCPT
+        id S1726694AbfA0LFF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 05:56:18 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:21595 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbfA0K4S (ORCPT
+        Sun, 27 Jan 2019 06:05:05 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:40047 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbfA0LFE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 05:56:18 -0500
-Received: from fsav106.sakura.ne.jp (fsav106.sakura.ne.jp [27.133.134.233])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0RAuF88050388;
-        Sun, 27 Jan 2019 19:56:15 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav106.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp);
- Sun, 27 Jan 2019 19:56:15 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav106.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0RAuAXl050345
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sun, 27 Jan 2019 19:56:15 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: Re: [PATCH v2] oom, oom_reaper: do not enqueue same task twice
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>
-References: <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
- <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
- <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
- <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
- <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
- <72aa8863-a534-b8df-6b9e-f69cf4dd5c4d@i-love.sakura.ne.jp>
- <33a07810-6dbc-36be-5bb6-a279773ccf69@i-love.sakura.ne.jp>
- <34e97b46-0792-cc66-e0f2-d72576cdec59@i-love.sakura.ne.jp>
- <2b0c7d6c-c58a-da7d-6f0a-4900694ec2d3@gmail.com>
- <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
- <20190127083724.GA18811@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <ec0d0580-a2dd-f329-9707-0cb91205a216@i-love.sakura.ne.jp>
-Date:   Sun, 27 Jan 2019 19:56:06 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sun, 27 Jan 2019 06:05:04 -0500
+Received: from p5492e0d8.dip0.t-ipconnect.de ([84.146.224.216] helo=nanos)
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gniF3-0001qs-0b; Sun, 27 Jan 2019 12:04:45 +0100
+Date:   Sun, 27 Jan 2019 12:04:44 +0100 (CET)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     mingo@kernel.org, kjlu@umn.edu, hpa@zytor.com,
+        stable@vger.kernel.org, peterz@infradead.org,
+        torvalds@linux-foundation.org, linux-kernel@vger.kernel.org
+cc:     linux-tip-commits@vger.kernel.org
+Subject: Re: [tip:sched/core] sched/core: Fix a potential double-fetch bug
+ in sched_copy_attr()
+In-Reply-To: <tip-120e4e76857ddbc9268e1aa3f9de61a498e84618@git.kernel.org>
+Message-ID: <alpine.DEB.2.21.1901271201170.1622@nanos.tec.linutronix.de>
+References: <20190109074524.10176-1-kjlu@umn.edu> <tip-120e4e76857ddbc9268e1aa3f9de61a498e84618@git.kernel.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20190127083724.GA18811@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/27 17:37, Michal Hocko wrote:
-> Thanks for the analysis and the patch. This should work, I believe but
-> I am not really thrilled to overload the meaning of the MMF_UNSTABLE.
-> The flag is meant to signal accessing address space is not stable and it
-> is not aimed to synchronize oom reaper with the oom path.
+On Mon, 21 Jan 2019, tip-bot for Kangjie Lu wrote:
+> Commit-ID:  120e4e76857ddbc9268e1aa3f9de61a498e84618
+> Gitweb:     https://git.kernel.org/tip/120e4e76857ddbc9268e1aa3f9de61a498e84618
+> Author:     Kangjie Lu <kjlu@umn.edu>
+> AuthorDate: Wed, 9 Jan 2019 01:45:24 -0600
+> Committer:  Ingo Molnar <mingo@kernel.org>
+> CommitDate: Mon, 21 Jan 2019 11:26:17 +0100
 > 
-> Can we make use mark_oom_victim directly? I didn't get to think that
-> through right now so I might be missing something but this should
-> prevent repeating queueing as well.
+> sched/core: Fix a potential double-fetch bug in sched_copy_attr()
+> 
+> "uattr->size" is copied in from user space and checked. However, it is
+> copied in again after the security check. A malicious user may race to
+> change it. The fix sets uattr->size to be the checked size.
+> 
+> Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+> Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+> Cc: Linus Torvalds <torvalds@linux-foundation.org>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: pakki001@umn.edu
+> Cc: <stable@vger.kernel.org>
+> Link: https://lkml.kernel.org/r/20190109074524.10176-1-kjlu@umn.edu
+> Signed-off-by: Ingo Molnar <mingo@kernel.org>
+> ---
+>  kernel/sched/core.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index a674c7db2f29..d4d3514c4fe9 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -4499,6 +4499,9 @@ static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *a
+>  	if (ret)
+>  		return -EFAULT;
+>  
+> +	/* In case attr->size was changed by user-space: */
+> +	attr->size = size;
+> +
 
-Yes, TIF_MEMDIE would work. But you are planning to remove TIF_MEMDIE. Also,
-TIF_MEMDIE can't avoid enqueuing many threads sharing mm_struct to the OOM
-reaper. There is no need to enqueue many threads sharing mm_struct because
-the OOM reaper acts on mm_struct rather than task_struct. Thus, enqueuing
-based on per mm_struct flag sounds better, but MMF_OOM_VICTIM cannot be
-set from wake_oom_reaper(victim) because victim's mm might be already inside
-exit_mmap() when wake_oom_reaper(victim) is called after task_unlock(victim).
+Just when pondering to send that to Linus, I tried to write up a concise
+summary for this which made me look at the patch.
 
-We could reintroduce MMF_OOM_KILLED in commit 855b018325737f76
-("oom, oom_reaper: disable oom_reaper for oom_kill_allocating_task")
-if you don't like overloading the meaning of the MMF_UNSTABLE. But since
-MMF_UNSTABLE is available in Linux 4.9+ kernels (which covers all LTS stable
-versions with the OOM reaper support), we can temporarily use MMF_UNSTABLE
-for ease of backporting.
+If the size changed, then its clear that user space fiddled with the date
+between the size fetch and the full copy from user. So why restoring the
+size instead of doing the obvious:
 
+   	 if (attr->size != size)
+	 	return -ECRAP;
+
+Hmm?
+
+Thanks,
+
+	tglx
