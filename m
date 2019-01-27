@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B8BCC282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:09:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8FDDC282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:16:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1A862147A
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:09:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 833962133F
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:16:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfA0OJr (ORCPT
+        id S1726765AbfA0OQA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 09:09:47 -0500
-Received: from outbound-smtp12.blacknight.com ([46.22.139.17]:36019 "EHLO
-        outbound-smtp12.blacknight.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726511AbfA0OJr (ORCPT
+        Sun, 27 Jan 2019 09:16:00 -0500
+Received: from outbound-smtp10.blacknight.com ([46.22.139.15]:53727 "EHLO
+        outbound-smtp10.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726511AbfA0OQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 09:09:47 -0500
-Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
-        by outbound-smtp12.blacknight.com (Postfix) with ESMTPS id 05F991C24D1
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 14:09:45 +0000 (GMT)
-Received: (qmail 32551 invoked from network); 27 Jan 2019 14:09:44 -0000
+        Sun, 27 Jan 2019 09:16:00 -0500
+Received: from mail.blacknight.com (pemlinmail03.blacknight.ie [81.17.254.16])
+        by outbound-smtp10.blacknight.com (Postfix) with ESMTPS id D50C11C31EB
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 14:15:57 +0000 (GMT)
+Received: (qmail 9036 invoked from network); 27 Jan 2019 14:15:57 -0000
 Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.225.79])
-  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 27 Jan 2019 14:09:44 -0000
-Date:   Sun, 27 Jan 2019 14:09:36 +0000
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 27 Jan 2019 14:15:57 -0000
+Date:   Sun, 27 Jan 2019 14:15:56 +0000
 From:   Mel Gorman <mgorman@techsingularity.net>
 To:     valdis.kletnieks@vt.edu
 Cc:     Pavel Machek <pavel@ucw.cz>,
         kernel list <linux-kernel@vger.kernel.org>,
         Andrew Morton <akpm@osdl.org>, vbabka@suse.cz,
         aarcange@redhat.com, rientjes@google.com, mhocko@kernel.org,
-        zi.yan@cs.rutgers.edu, hannes@cmpxchg.org, Jan Kara <jack@suse.cz>
+        zi.yan@cs.rutgers.edu, hannes@cmpxchg.org, jack@suse.cz
 Subject: Re: [regression -next0117] What is kcompactd and why is he eating
  100% of my cpu?
-Message-ID: <20190127133132.GA9565@techsingularity.net>
+Message-ID: <20190127141556.GB9565@techsingularity.net>
 References: <20190126200005.GB27513@amd>
  <12171.1548557813@turing-police.cc.vt.edu>
 MIME-Version: 1.0
@@ -48,9 +48,6 @@ Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
-
-Adding Jan Kara to cc due to the fact it appears the lockup is within
-buffer_migrate_page_norefs which changed recently.
 
 On Sat, Jan 26, 2019 at 09:56:53PM -0500, valdis.kletnieks@vt.edu wrote:
 > On Sat, 26 Jan 2019 21:00:05 +0100, Pavel Machek said:
@@ -72,27 +69,11 @@ On Sat, Jan 26, 2019 at 09:56:53PM -0500, valdis.kletnieks@vt.edu wrote:
 > 
 > 1) echo 3 > /proc/sys/vm/drop_caches  unwedges kcompactd in 1-3 seconds.
 > 
-> 2) Typical kcompactd traceback:
-> 
-> cat /proc/27/stack
-> [<0>] retint_kernel+0x1b/0x2d
-> [<0>] lock_is_held_type+0x1b/0x50
-> [<0>] ___might_sleep+0xad/0x220
-> [<0>] __might_sleep+0x113/0x130
-> [<0>] on_each_cpu_cond_mask+0x12a/0x140
-> [<0>] on_each_cpu_cond+0x18/0x20
-> [<0>] invalidate_bh_lrus+0x29/0x30
-> [<0>] __buffer_migrate_page+0x154/0x340
-> [<0>] buffer_migrate_page_norefs+0x14/0x20
-> [<0>] move_to_new_page+0x8e/0x360
-> [<0>] migrate_pages+0x3cc/0xfd8
-> [<0>] compact_zone+0xb70/0x1380
-> [<0>] kcompactd_do_work+0x15b/0x500
-> [<0>] kcompactd+0x74/0x340
-> [<0>] kthread+0x158/0x170
-> [<0>] ret_from_fork+0x3a/0x50
-> [<0>] 0xffffffffffffffff
-> 
+
+This aspect is curious as it indicates that kcompactd could potentially
+be infinite looping but it's not something I've experienced myself. By
+any chance is there a preditable reproduction case for this?
+
 > I've also seen khugepaged hung up:
 > 
 > cat /proc/29/stack
@@ -116,6 +97,14 @@ On Sat, Jan 26, 2019 at 09:56:53PM -0500, valdis.kletnieks@vt.edu wrote:
 > 
 > Looks like something has gone astray with compact_zone.
 > 
+
+It's a possibility that the buffer aspect of the trace is a red herring
+and there is some corner case that prevents the migration scan/free
+scanner meeting and exiting compaction. Again, a reproduction case of
+some sort would be nice or an indication of how long it takes to
+trigger. An update of the series is due which may or may not fix this
+but if it doesn't, we'll need to start tracing this to see what's going
+on at the point of failure.
 
 -- 
 Mel Gorman
