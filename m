@@ -7,43 +7,47 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21A1BC282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1617C282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:35:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6891214C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA12C214C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:35:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726575AbfA0LfI (ORCPT
+        id S1726754AbfA0Lfp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 06:35:08 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:56115 "EHLO
+        Sun, 27 Jan 2019 06:35:45 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:46439 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726443AbfA0LfI (ORCPT
+        with ESMTP id S1726443AbfA0Lfp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 06:35:08 -0500
+        Sun, 27 Jan 2019 06:35:45 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0RBYoB41007836
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id x0RBYBEV1007793
         (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-        Sun, 27 Jan 2019 03:34:51 -0800
+        Sun, 27 Jan 2019 03:34:11 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0RBYmBT1007833;
-        Sun, 27 Jan 2019 03:34:48 -0800
-Date:   Sun, 27 Jan 2019 03:34:48 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id x0RBY8rw1007790;
+        Sun, 27 Jan 2019 03:34:08 -0800
+Date:   Sun, 27 Jan 2019 03:34:08 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Quentin Perret <tipbot@zytor.com>
-Message-ID: <tip-8d5d0cfb63cbcb4005e19a332b31d687b1d01e58@git.kernel.org>
-Cc:     torvalds@linux-foundation.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, quentin.perret@arm.com, peterz@infradead.org,
-        mingo@kernel.org, hpa@zytor.com
-Reply-To: peterz@infradead.org, mingo@kernel.org, tglx@linutronix.de,
-          torvalds@linux-foundation.org, hpa@zytor.com,
-          quentin.perret@arm.com, linux-kernel@vger.kernel.org
-In-Reply-To: <20181203095628.11858-11-quentin.perret@arm.com>
-References: <20181203095628.11858-11-quentin.perret@arm.com>
+From:   tip-bot for Lukas Bulwahn <tipbot@zytor.com>
+Message-ID: <tip-62a8ddc93a8526eafbdc26e5ee3830e2e9f639e8@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        rlove@rlove.org, lukas.bulwahn@gmail.com, rml@tech9.net,
+        corbet@lwn.net, torvalds@linux-foundation.org,
+        peterz@infradead.org, hpa@zytor.com, efault@gmx.de,
+        robert.w.love@intel.com
+Reply-To: hpa@zytor.com, torvalds@linux-foundation.org,
+          peterz@infradead.org, corbet@lwn.net, robert.w.love@intel.com,
+          efault@gmx.de, tglx@linutronix.de, mingo@kernel.org,
+          linux-kernel@vger.kernel.org, rml@tech9.net, rlove@rlove.org,
+          lukas.bulwahn@gmail.com
+In-Reply-To: <20190112060613.7115-1-lukas.bulwahn@gmail.com>
+References: <20190112060613.7115-1-lukas.bulwahn@gmail.com>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:sched/core] sched/topology: Introduce a sysctl for Energy
- Aware Scheduling
-Git-Commit-ID: 8d5d0cfb63cbcb4005e19a332b31d687b1d01e58
+Subject: [tip:sched/core] MAINTAINERS, sched: Drop PREEMPTIBLE KERNEL
+ section entry
+Git-Commit-ID: 62a8ddc93a8526eafbdc26e5ee3830e2e9f639e8
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -57,175 +61,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  8d5d0cfb63cbcb4005e19a332b31d687b1d01e58
-Gitweb:     https://git.kernel.org/tip/8d5d0cfb63cbcb4005e19a332b31d687b1d01e58
-Author:     Quentin Perret <quentin.perret@arm.com>
-AuthorDate: Mon, 3 Dec 2018 09:56:23 +0000
+Commit-ID:  62a8ddc93a8526eafbdc26e5ee3830e2e9f639e8
+Gitweb:     https://git.kernel.org/tip/62a8ddc93a8526eafbdc26e5ee3830e2e9f639e8
+Author:     Lukas Bulwahn <lukas.bulwahn@gmail.com>
+AuthorDate: Sat, 12 Jan 2019 07:06:13 +0100
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Sun, 27 Jan 2019 12:29:37 +0100
 
-sched/topology: Introduce a sysctl for Energy Aware Scheduling
+MAINTAINERS, sched: Drop PREEMPTIBLE KERNEL section entry
 
-In its current state, Energy Aware Scheduling (EAS) starts automatically
-on asymmetric platforms having an Energy Model (EM). However, there are
-users who want to have an EM (for thermal management for example), but
-don't want EAS with it.
+The PREEMPTIBLE KERNEL section entry seems quite outdated:
 
-In order to let users disable EAS explicitly, introduce a new sysctl
-called 'sched_energy_aware'. It is enabled by default so that EAS can
-start automatically on platforms where it makes sense. Flipping it to 0
-rebuilds the scheduling domains and disables EAS.
+Robert Love is not actively maintaining the file anymore, nor a recorded
+contributor to the files in the PREEMPTIBLE KERNEL section for the last
+few years.
 
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+The mailing list kpreempt-tech@lists.sourceforge.net does not exist
+anymore; the website just points to some very old patches for v2.4/v2.5.
+
+So, let's delete the PREEMPTIBLE KERNEL section entry and clean this up:
+
+- Documentation/preempt-locking.txt is not modified much anyway, and the
+  changes in that file are generally maintained by Jonathan Corbet. So,
+  we do not need to explicitly mention Documentation/preempt-locking.txt
+  in MAINTAINERS.
+
+- include/linux/preempt.h is maintained by Peter and Ingo, so we simply
+  add that file to the SCHEDULER section entry.
+
+I got directed to this issue, as I could not subscribe to the outdated
+mailing list address and decided to investigate and then cleaned this up.
+
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@gmail.com>
+Acked-by: Peter Zijlstra <peterz@infradead.org>
+Cc: Jonathan Corbet <corbet@lwn.net>
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Mike Galbraith <efault@gmx.de>
+Cc: Robert Love <rlove@rlove.org>
+Cc: Robert Love <rml@tech9.net>
+Cc: Robert Love <robert.w.love@intel.com>
 Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: adharmap@codeaurora.org
-Cc: chris.redpath@arm.com
-Cc: currojerez@riseup.net
-Cc: dietmar.eggemann@arm.com
-Cc: edubezval@gmail.com
-Cc: gregkh@linuxfoundation.org
-Cc: javi.merino@kernel.org
-Cc: joel@joelfernandes.org
-Cc: juri.lelli@redhat.com
-Cc: morten.rasmussen@arm.com
-Cc: patrick.bellasi@arm.com
-Cc: pkondeti@codeaurora.org
-Cc: rjw@rjwysocki.net
-Cc: skannan@codeaurora.org
-Cc: smuckle@google.com
-Cc: srinivas.pandruvada@linux.intel.com
-Cc: thara.gopinath@linaro.org
-Cc: tkjos@google.com
-Cc: valentin.schneider@arm.com
-Cc: vincent.guittot@linaro.org
-Cc: viresh.kumar@linaro.org
-Link: https://lkml.kernel.org/r/20181203095628.11858-11-quentin.perret@arm.com
+Link: http://lkml.kernel.org/r/20190112060613.7115-1-lukas.bulwahn@gmail.com
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- Documentation/sysctl/kernel.txt | 12 ++++++++++++
- include/linux/sched/sysctl.h    |  7 +++++++
- kernel/sched/topology.c         | 29 +++++++++++++++++++++++++++++
- kernel/sysctl.c                 | 11 +++++++++++
- 4 files changed, 59 insertions(+)
+ MAINTAINERS | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/Documentation/sysctl/kernel.txt b/Documentation/sysctl/kernel.txt
-index c0527d8a468a..379063e58326 100644
---- a/Documentation/sysctl/kernel.txt
-+++ b/Documentation/sysctl/kernel.txt
-@@ -79,6 +79,7 @@ show up in /proc/sys/kernel:
- - reboot-cmd                  [ SPARC only ]
- - rtsig-max
- - rtsig-nr
-+- sched_energy_aware
- - seccomp/                    ==> Documentation/userspace-api/seccomp_filter.rst
- - sem
- - sem_next_id		      [ sysv ipc ]
-@@ -890,6 +891,17 @@ rtsig-nr shows the number of RT signals currently queued.
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 51029a425dbe..2eea25ab58ec 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -12226,14 +12226,6 @@ S:	Maintained
+ F:	drivers/net/ppp/pptp.c
+ W:	http://sourceforge.net/projects/accel-pptp
  
- ==============================================================
+-PREEMPTIBLE KERNEL
+-M:	Robert Love <rml@tech9.net>
+-L:	kpreempt-tech@lists.sourceforge.net
+-W:	https://www.kernel.org/pub/linux/kernel/people/rml/preempt-kernel
+-S:	Supported
+-F:	Documentation/preempt-locking.txt
+-F:	include/linux/preempt.h
+-
+ PRINTK
+ M:	Petr Mladek <pmladek@suse.com>
+ M:	Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+@@ -13456,6 +13448,7 @@ F:	kernel/sched/
+ F:	include/linux/sched.h
+ F:	include/uapi/linux/sched.h
+ F:	include/linux/wait.h
++F:	include/linux/preempt.h
  
-+sched_energy_aware:
-+
-+Enables/disables Energy Aware Scheduling (EAS). EAS starts
-+automatically on platforms where it can run (that is,
-+platforms with asymmetric CPU topologies and having an Energy
-+Model available). If your platform happens to meet the
-+requirements for EAS but you do not want to use it, change
-+this value to 0.
-+
-+==============================================================
-+
- sched_schedstats:
- 
- Enables/disables scheduler statistics. Enabling this feature
-diff --git a/include/linux/sched/sysctl.h b/include/linux/sched/sysctl.h
-index a9c32daeb9d8..99ce6d728df7 100644
---- a/include/linux/sched/sysctl.h
-+++ b/include/linux/sched/sysctl.h
-@@ -83,4 +83,11 @@ extern int sysctl_schedstats(struct ctl_table *table, int write,
- 				 void __user *buffer, size_t *lenp,
- 				 loff_t *ppos);
- 
-+#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+extern unsigned int sysctl_sched_energy_aware;
-+extern int sched_energy_aware_handler(struct ctl_table *table, int write,
-+				 void __user *buffer, size_t *lenp,
-+				 loff_t *ppos);
-+#endif
-+
- #endif /* _LINUX_SCHED_SYSCTL_H */
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 3f35ba1d8fde..50c3fc316c54 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -203,9 +203,35 @@ sd_parent_degenerate(struct sched_domain *sd, struct sched_domain *parent)
- 
- DEFINE_STATIC_KEY_FALSE(sched_energy_present);
- #if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+unsigned int sysctl_sched_energy_aware = 1;
- DEFINE_MUTEX(sched_energy_mutex);
- bool sched_energy_update;
- 
-+#ifdef CONFIG_PROC_SYSCTL
-+int sched_energy_aware_handler(struct ctl_table *table, int write,
-+			 void __user *buffer, size_t *lenp, loff_t *ppos)
-+{
-+	int ret, state;
-+
-+	if (write && !capable(CAP_SYS_ADMIN))
-+		return -EPERM;
-+
-+	ret = proc_dointvec_minmax(table, write, buffer, lenp, ppos);
-+	if (!ret && write) {
-+		state = static_branch_unlikely(&sched_energy_present);
-+		if (state != sysctl_sched_energy_aware) {
-+			mutex_lock(&sched_energy_mutex);
-+			sched_energy_update = 1;
-+			rebuild_sched_domains();
-+			sched_energy_update = 0;
-+			mutex_unlock(&sched_energy_mutex);
-+		}
-+	}
-+
-+	return ret;
-+}
-+#endif
-+
- static void free_pd(struct perf_domain *pd)
- {
- 	struct perf_domain *tmp;
-@@ -322,6 +348,9 @@ static bool build_perf_domains(const struct cpumask *cpu_map)
- 	struct cpufreq_policy *policy;
- 	struct cpufreq_governor *gov;
- 
-+	if (!sysctl_sched_energy_aware)
-+		goto free;
-+
- 	/* EAS is enabled for asymmetric CPU capacity topologies. */
- 	if (!per_cpu(sd_asym_cpucapacity, cpu)) {
- 		if (sched_debug()) {
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index ba4d9e85feb8..987ae08147bf 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -467,6 +467,17 @@ static struct ctl_table kern_table[] = {
- 		.extra1		= &one,
- 	},
- #endif
-+#if defined(CONFIG_ENERGY_MODEL) && defined(CONFIG_CPU_FREQ_GOV_SCHEDUTIL)
-+	{
-+		.procname	= "sched_energy_aware",
-+		.data		= &sysctl_sched_energy_aware,
-+		.maxlen		= sizeof(unsigned int),
-+		.mode		= 0644,
-+		.proc_handler	= sched_energy_aware_handler,
-+		.extra1		= &zero,
-+		.extra2		= &one,
-+	},
-+#endif
- #ifdef CONFIG_PROVE_LOCKING
- 	{
- 		.procname	= "prove_locking",
+ SCR24X CHIP CARD INTERFACE DRIVER
+ M:	Lubomir Rintel <lkundrak@v3.sk>
