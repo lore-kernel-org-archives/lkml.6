@@ -2,132 +2,139 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8144C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:32:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8352C282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:32:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B02512133F
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:32:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 71E8B2133D
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:32:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AcFN1iqT"
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ukCMbb6G"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727172AbfA0UcN (ORCPT
+        id S1727182AbfA0Uc5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 15:32:13 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41471 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbfA0UcN (ORCPT
+        Sun, 27 Jan 2019 15:32:57 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:50816 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726630AbfA0Uc5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 15:32:13 -0500
-Received: by mail-pg1-f193.google.com with SMTP id m1so6323278pgq.8;
-        Sun, 27 Jan 2019 12:32:12 -0800 (PST)
+        Sun, 27 Jan 2019 15:32:57 -0500
+Received: by mail-wm1-f67.google.com with SMTP id n190so11851768wmd.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 12:32:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=BSK3zkF4qiqbJQU70H588EwbFtk9ADV29oj9m37AlvE=;
-        b=AcFN1iqTQaJE+IfF+4e+2QhW8wmhGoO9NdxVS7fDd9tgJGhRLu7Dtmp5qjG5y6Vpaz
-         qZcNl+ZH389gWaWFQfutmjiHCEH3OnX8IpVuTsBwgnQlP8Ott7R8l9L/j5MMC1Rog479
-         NuQFLBQ4/azctof7rJAcEdbWvv9zhoQp7A58/XMHlkce5cOaj0Sd41ojKVe9Sk26AUEU
-         kzq/tbHfHT2gsIQqAu744MRSBAyzMgIrPMbdNLW7YttuQyqZtuVRfT1lrvEajNa86HeK
-         zolv/IAX6JrU6om+tKHg0bdXFNlkZD7ekwV8aO5pBhchzeU9aXPuAow/IIJIhVemlcbO
-         Pyew==
+        d=googlemail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=D8JT6hyWHXwusno3V05RF2t12TrCsleWDgqZTAqYmd8=;
+        b=ukCMbb6GtV86dnO3O5Hs2/WPvXVZ18nbYaNDVzgEMa1NGJih1NDKQp5xeENHigXclM
+         pCm6G7iek0xr464gYC2yCWYY+gJkEONBo+2eXrEm5ERBK/PfOZMaWErLFNwOX28/iUvN
+         V3fk2oZwDc39jg2LgSCTwV6Ztrc98ByZn97Wid+dV+adrsfe+Ds0dgdtO7ULSVJjV6F/
+         njZozhHvGAp5r27/RVr07tcv+1JWoi0BN0qhbHtG79psAROpkWDuma+B7/nbOSw2koem
+         ZO9Z9PhbNQiBOiFLaov7mjD05XPEdU6NfywuL6uBaFFRPPrIcMH29fOT9psiubPDHmps
+         s7ig==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=BSK3zkF4qiqbJQU70H588EwbFtk9ADV29oj9m37AlvE=;
-        b=Xq42xIzC0JpEuTvGAAO1a1UFLSkd1mFxUZniXZuVYzbqtG/HIPgFXfk9fNofLuTfg1
-         9nBJa9qWlnMV7uUrvEOcWhV4KMiO7xyVOUptvROQeC2PUfAa09TGdae+rMpMcbQuvkjA
-         nWokmrCpFz0utTgu5NGuOTmqLI6XWrdN6UxAjZzXkpeWTejIcqQ6/4xTfIyg4hSZdFGF
-         715GaNCCk/xrdIKobh12Mrfi+N1eldqsobJCS4zp175ZlNU66u5R21o79rOWu86dIntY
-         sZ6JWJpCxFwS4lefIgFw1ZNJ+vBIQqNFeoYPgVWIlDEjVu3LY2fo8KCGTRbmZwVInpVT
-         KveQ==
-X-Gm-Message-State: AJcUukfHnMBPIY920AHthTfNgfK30puVMkf3KYLCrCLsClp4e6EQZucp
-        wlu7M9IkqKiofgmJq+QInV/13cPZW+sLe92dbBA=
-X-Google-Smtp-Source: ALg8bN4K1IWL9rPL/yGZyyWFsRsHFdRZoj04/wj9/W08qdbekKg76O9hh9hFoTzFq0/SI1TfEdBIXtVJl8h9i9XBync=
-X-Received: by 2002:a63:d450:: with SMTP id i16mr17204191pgj.246.1548621132026;
- Sun, 27 Jan 2019 12:32:12 -0800 (PST)
-MIME-Version: 1.0
-References: <20190122200302.19861-1-2pi@mok.nu>
-In-Reply-To: <20190122200302.19861-1-2pi@mok.nu>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Sun, 27 Jan 2019 22:32:00 +0200
-Message-ID: <CAHp75Vfv1sMyAQn=ue0hroqAnbkhQayCj64xNBHO5PRRv53GSA@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: wmi: fix potential null pointer dereferences
-To:     Mattias Jacobsson <2pi@mok.nu>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=D8JT6hyWHXwusno3V05RF2t12TrCsleWDgqZTAqYmd8=;
+        b=eiidGDDx9p+8fTQ5S1NIKiZhrx+d0sAEppgWOlNVBoP0mEp3njxmKW7UKXWRkPDaU3
+         lzqkmS8rw53nz7QR0dABL0LgBrkADaiN7OR25c7yC5Si/1rOvw4kyWBeDPSi1YBQzsww
+         B97ouDzbp6rwZIXxfSTzvUPRK2HX86AssRVcL9hAPFj6mv91rVxiKSwzNJh2+vWq7bOB
+         DVLgzz366jR0kOvrFlJ9kKZ/uE5veinBdmPQO+RrHfpbbqTx7cY+QFOyQ1ZyURlPrZLm
+         rUlub5ssXq96UU8Trs9pgx1C/sL2KgJI2EX4RrnQgdv4U9lL/h+Vx5uJzbJzgPaDZgFQ
+         xppw==
+X-Gm-Message-State: AJcUukfcpTi/ihY5oV7aoQrXhBvldYHE/XBFGhP6EJUYm+QSbM0KfgW2
+        gHsfDULUY1jmH8t5uMDhDaSrQ5Bf5gZ+3g==
+X-Google-Smtp-Source: ALg8bN6aK6vOa87pSC7oZhJpQOIixbVul8fAewD4fKxyaVrAHK9E4O4io+ZIJ1CQLNBZWoOwsngDMw==
+X-Received: by 2002:a1c:a6c2:: with SMTP id p185mr13117275wme.133.1548621174505;
+        Sun, 27 Jan 2019 12:32:54 -0800 (PST)
+Received: from winie.fritz.box (i59F4FF78.versanet.de. [89.244.255.120])
+        by smtp.gmail.com with ESMTPSA id k128sm100195726wmd.37.2019.01.27.12.32.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 27 Jan 2019 12:32:53 -0800 (PST)
+From:   Florian La Roche <florian.laroche@googlemail.com>
+X-Google-Original-From: Florian La Roche <Florian.LaRoche@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Crt Mori <cmo@melexis.com>, Joe Perches <joe@perches.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Will Deacon <will.deacon@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Florian La Roche <Florian.LaRoche@gmail.com>
+Subject: [PATCH v2 1/1] int_sqrt() adjustments
+Date:   Sun, 27 Jan 2019 21:32:39 +0100
+Message-Id: <20190127203239.973-1-Florian.LaRoche@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:04 PM Mattias Jacobsson <2pi@mok.nu> wrote:
->
-> In the function wmi_dev_match() there are three variables that
-> potentially can result in a null pointer dereference. Namely:
-> dev/wblock, driver/wmi_driver, and wmi_driver->id_table.
->
-> Check for NULL and return that the driver can't handle the device if any
-> of these variables would result in a null pointer dereference.
->
-> The NULL checks are performed prior to running container_of() for the
-> variables dev/wblock and driver/wmi_driver.
->
-> Fixes: 844af950da94 ("platform/x86: wmi: Turn WMI into a bus driver")
-> Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
-> ---
->  drivers/platform/x86/wmi.c | 16 ++++++++++++----
->  1 file changed, 12 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-> index bea35be68706..c596479e8b13 100644
-> --- a/drivers/platform/x86/wmi.c
-> +++ b/drivers/platform/x86/wmi.c
-> @@ -763,10 +763,18 @@ static void wmi_dev_release(struct device *dev)
->
->  static int wmi_dev_match(struct device *dev, struct device_driver *driver)
->  {
-> -       struct wmi_driver *wmi_driver =
-> -               container_of(driver, struct wmi_driver, driver);
+Add __attribute_const__ and use normal ints for the right param of "<<".
 
-AFAIU this is just a pointer arithmetics, no need to move it.
+Signed-off-by: Florian La Roche <Florian.LaRoche@gmail.com>
+---
+ include/linux/kernel.h | 4 ++--
+ lib/int_sqrt.c         | 8 ++++----
+ 2 files changed, 6 insertions(+), 6 deletions(-)
 
-> -       struct wmi_block *wblock = dev_to_wblock(dev);
-
-> -       const struct wmi_device_id *id = wmi_driver->id_table;
-> +       const struct wmi_device_id *id;
-> +       struct wmi_block *wblock;
-> +       struct wmi_driver *wmi_driver;
-> +
-
-> +       if (dev == NULL || driver == NULL)
-> +               return 0;
-
-On which circumstances this may ever happen?
-
-> +       wblock = dev_to_wblock(dev);
-> +       wmi_driver = container_of(driver, struct wmi_driver, driver);
-> +
-> +       if (wmi_driver->id_table == NULL)
-> +               return 0;
-> +       id = wmi_driver->id_table;
->
->         while (id->guid_string) {
->                 uuid_le driver_guid;
-> --
-> 2.20.1
->
-
-
+diff --git a/include/linux/kernel.h b/include/linux/kernel.h
+index 8f0e68e250a7..df03a3cca309 100644
+--- a/include/linux/kernel.h
++++ b/include/linux/kernel.h
+@@ -513,10 +513,10 @@ extern int __kernel_text_address(unsigned long addr);
+ extern int kernel_text_address(unsigned long addr);
+ extern int func_ptr_is_kernel_text(void *ptr);
+ 
+-unsigned long int_sqrt(unsigned long);
++__attribute_const__ unsigned long int_sqrt(unsigned long);
+ 
+ #if BITS_PER_LONG < 64
+-u32 int_sqrt64(u64 x);
++__attribute_const__ u32 int_sqrt64(u64 x);
+ #else
+ static inline u32 int_sqrt64(u64 x)
+ {
+diff --git a/lib/int_sqrt.c b/lib/int_sqrt.c
+index 30e0f9770f88..fd249238fd31 100644
+--- a/lib/int_sqrt.c
++++ b/lib/int_sqrt.c
+@@ -16,14 +16,14 @@
+  *
+  * Computes: floor(sqrt(x))
+  */
+-unsigned long int_sqrt(unsigned long x)
++__attribute_const__ unsigned long int_sqrt(unsigned long x)
+ {
+ 	unsigned long b, m, y = 0;
+ 
+ 	if (x <= 1)
+ 		return x;
+ 
+-	m = 1UL << (__fls(x) & ~1UL);
++	m = 1UL << (__fls(x) & ~1);
+ 	while (m != 0) {
+ 		b = y + m;
+ 		y >>= 1;
+@@ -45,14 +45,14 @@ EXPORT_SYMBOL(int_sqrt);
+  * is expected.
+  * @x: 64bit integer of which to calculate the sqrt
+  */
+-u32 int_sqrt64(u64 x)
++__attribute_const__ u32 int_sqrt64(u64 x)
+ {
+ 	u64 b, m, y = 0;
+ 
+ 	if (x <= ULONG_MAX)
+ 		return int_sqrt((unsigned long) x);
+ 
+-	m = 1ULL << ((fls64(x) - 1) & ~1ULL);
++	m = 1ULL << ((fls64(x) - 1) & ~1);
+ 	while (m != 0) {
+ 		b = y + m;
+ 		y >>= 1;
 -- 
-With Best Regards,
-Andy Shevchenko
+2.17.1
+
