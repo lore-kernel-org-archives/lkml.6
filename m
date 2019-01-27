@@ -2,54 +2,81 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F484C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 22:15:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7F1DC282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 22:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0B6D2133D
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 22:15:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FC5620882
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 22:35:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548628547;
+	bh=l6UMu/2x4OWi0Y+SJq0JSEzyFitC+pTg7s2Ap7kBkvI=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:List-ID:From;
+	b=ncOYLbI1GnrXUHpwOeN3gZuLxHyS5pPmuk87L3MzuPVJuXM773Lr/mpj0OpyhC5zK
+	 x1GWRSa5qnuSUWkW5gOpDFvWW3DNRxC7R6+MuUS+eFTEdt9TtA4eCmjX8VBsDEPICa
+	 hlk507qIy2/s6Cng7e34/WjtzMEbx8sbkZpobAoE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726766AbfA0WPt (ORCPT
+        id S1726817AbfA0Wfq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 17:15:49 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:48670 "EHLO gloria.sntech.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726302AbfA0WPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 17:15:49 -0500
-Received: from p5b12725f.dip0.t-ipconnect.de ([91.18.114.95] helo=phil.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gnsiP-0000k9-1q; Sun, 27 Jan 2019 23:15:45 +0100
-From:   Heiko Stuebner <heiko@sntech.de>
-To:     Dmitry Voytik <voytikd@gmail.com>
-Cc:     Katsuhiro Suzuki <katsuhiro@katsuster.net>,
-        linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH] arm64: dts: rockchip: enable usb-host regulators during boot
-Date:   Sun, 27 Jan 2019 23:15:43 +0100
-Message-ID: <2042016.tQT6YM4xNP@phil>
-In-Reply-To: <20190122223848.6019-1-voytikd@gmail.com>
-References: <20190122223848.6019-1-voytikd@gmail.com>
+        Sun, 27 Jan 2019 17:35:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:34168 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726361AbfA0Wfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 17:35:45 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5DB8FAE9D;
+        Sun, 27 Jan 2019 22:35:44 +0000 (UTC)
+Date:   Sun, 27 Jan 2019 23:35:42 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Dominique Martinet <asmadeus@codewreck.org>
+cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+In-Reply-To: <nycvar.YFH.7.76.1901241523500.6626@cbobk.fhfr.pm>
+Message-ID: <nycvar.YFH.7.76.1901272335040.6626@cbobk.fhfr.pm>
+References: <nycvar.YFH.7.76.1901240009560.6626@cbobk.fhfr.pm> <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com> <20190124002455.GA23181@nautica> <20190124124501.GA18012@nautica> <nycvar.YFH.7.76.1901241523500.6626@cbobk.fhfr.pm>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Dienstag, 22. Januar 2019, 23:38:48 CET schrieb Dmitry Voytik:
-> After commit ef05bcb60, boot from USB drives is broken.
-> Fix this problem by enabling usb-host regulators during boot time.
+On Thu, 24 Jan 2019, Jiri Kosina wrote:
+
+> > Jiri, you've offered resubmitting the last two patches properly, can you 
+> > incorporate this change or should I just send this directly? (I'd take 
+> > most of your commit message and add your name somewhere)
 > 
-> Signed-off-by: Dmitry Voytik <voytikd@gmail.com>
+> I've been running some basic smoke testing with the kernel from
+> 
+> 	https://git.kernel.org/pub/scm/linux/kernel/git/jikos/jikos.git/log/?h=pagecache-sidechannel-v2
+> 
+> (attaching the respective two patches to apply on top of latest Linus' 
+> tree to this mail as well), and everything looks good so far.
 
-added a fixes and cc-stable tag and applied as fix for 5.0
+So, any objections to aproaching it this way?
 
-Thanks
-Heiko
+I've not been able to spot any obvious breakage so far with it.
 
+Thanks,
+
+-- 
+Jiri Kosina
+SUSE Labs
 
