@@ -7,43 +7,41 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F702C282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:44:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03F2FC282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:48:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F12A52184B
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:44:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7A22217D7
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:48:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726648AbfA0IoN (ORCPT
+        id S1726585AbfA0Isf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 03:44:13 -0500
-Received: from mfb01-md.ns.itscom.net ([175.177.155.109]:37902 "EHLO
+        Sun, 27 Jan 2019 03:48:35 -0500
+Received: from mfb01-md.ns.itscom.net ([175.177.155.109]:50985 "EHLO
         mfb01-md.ns.itscom.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbfA0IoL (ORCPT
+        with ESMTP id S1726327AbfA0Ise (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 03:44:11 -0500
-X-Greylist: delayed 356 seconds by postgrey-1.27 at vger.kernel.org; Sun, 27 Jan 2019 03:44:10 EST
-Received: from mail02-md.ns.itscom.net (mail02-md.ns.itscom.net [175.177.155.112])
-        by mfb01-md.ns.itscom.net (Postfix) with ESMTP id 1F8C5238127
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 17:38:15 +0900 (JST)
-Received: from scan11-mds.s.noc.itscom.net (scan11-md.ns.itscom.net [175.177.155.5])
-        by mail02-md-outgoing.ns.itscom.net (Postfix) with ESMTP id 89A88B00622;
-        Sun, 27 Jan 2019 17:38:13 +0900 (JST)
+        Sun, 27 Jan 2019 03:48:34 -0500
+Received: from mail04-md.ns.itscom.net (mail04-md.ns.itscom.net [175.177.155.114])
+        by mfb01-md.ns.itscom.net (Postfix) with ESMTP id 59926238155
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 17:39:51 +0900 (JST)
+Received: from scan10-mds.s.noc.itscom.net (scan10-md.ns.itscom.net [175.177.155.4])
+        by mail04-md-outgoing.ns.itscom.net (Postfix) with ESMTP id 4619E620592;
+        Sun, 27 Jan 2019 17:39:50 +0900 (JST)
 Received: from unknown (HELO mail04-md-outgoing.ns.itscom.net) ([175.177.155.114])
-  by scan11-mds.s.noc.itscom.net with ESMTP; 27 Jan 2019 17:38:13 +0900
+  by scan10-mds.s.noc.itscom.net with ESMTP; 27 Jan 2019 17:39:49 +0900
 Received: from jromail.nowhere (h219-110-108-112.catv02.itscom.jp [219.110.108.112])
         by mail04-md-outgoing.ns.itscom.net (Postfix) with ESMTP;
-        Sun, 27 Jan 2019 17:38:13 +0900 (JST)
-Received: from jro by jrobl id 1gnfxF-0000Xs-4R ; Sun, 27 Jan 2019 17:38:13 +0900
+        Sun, 27 Jan 2019 17:39:49 +0900 (JST)
+Received: from jro by jrobl id 1gnfyn-0000Yh-O2 ; Sun, 27 Jan 2019 17:39:49 +0900
 From:   "J. R. Okajima" <hooanon05g@gmail.com>
-To:     NeilBrown <neilb@suse.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>
+To:     neilb@suse.com, bfields@redhat.com, Anna.Schumaker@Netapp.com
 Cc:     linux-kernel@vger.kernel.org
 Subject: fix v5.0-rc1, SUNRPC: init machine_cred.magic under CONFIG_DEBUG_CREDENTIALS
 MIME-Version: 1.0
 Content-Type: text/plain; charset="us-ascii"
-Content-ID: <2098.1548578293.1@jrobl>
-Date:   Sun, 27 Jan 2019 17:38:13 +0900
-Message-ID: <2099.1548578293@jrobl>
+Content-ID: <2149.1548578389.1@jrobl>
+Date:   Sun, 27 Jan 2019 17:39:49 +0900
+Message-ID: <2150.1548578389@jrobl>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
