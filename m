@@ -2,224 +2,221 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23777C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 21:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 042EEC282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 21:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C781E2133D
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 21:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A98FC2133D
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 21:34:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="tFx+BqMN"
+	dkim=pass (1024-bit key) header.d=cumulusnetworks.com header.i=@cumulusnetworks.com header.b="MPTrFM50"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727101AbfA0VdN (ORCPT
+        id S1727332AbfA0VeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 16:33:13 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:40684 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbfA0VdN (ORCPT
+        Sun, 27 Jan 2019 16:34:11 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36727 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726958AbfA0VeK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 16:33:13 -0500
-Received: by mail-wm1-f66.google.com with SMTP id f188so11748101wmf.5
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 13:33:11 -0800 (PST)
+        Sun, 27 Jan 2019 16:34:10 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p6so11787454wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 13:34:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=V03FTtrAd0+nzIizDrmSVZJ4SFo1zuGNptEHc0Beu3k=;
-        b=tFx+BqMNQOAnnI8uV87FJBVt3f3nm4LZNNRgG5f+R0ukOK3GKcrvM8Dm88nxzttsFL
-         L1GoV3zNV5X8tKFvDnWN2M0V6IqZ+DDWF8ZHvK+zLM+8MI8L6224AGxBqgPsuUJ4W7MR
-         umptG675KeEBZqYvjq9g+XEKPp3+scnNHF4ZTi/xBlx4OR/gHzP3bZXGwJJdXq3z0uiw
-         iWERpmdNQ30JK93hMVq7MxlDPRdk3Wj+X9KsIEZJmf4dY9TWd7eNT7MM41WMg/rVaUg8
-         ivWUvtmdAoC/7NG8efUy4GGe27qqGClZqCt3scJ1mAko99QmpQFp9gsEX7wcB2ZYdl0d
-         FGBg==
+        d=cumulusnetworks.com; s=google;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=A0EHerfZLtY170iK3Acs12XMeS75bvOLGpiGFWVHsmM=;
+        b=MPTrFM50y2XKkHvmq/a4nxS1jQsr6VKr6JU7ErhrPsqVMXxYUPC/yuzUpySM1WYoN1
+         irTVhEYgovR50NRJUOVdbdrAlaZrMZYhmGzvGHM0XvCVvWspm65gRUCNa7tB/j8IwANk
+         ncyvgIwYFhk0SQ2rtX9ZDj5nkvnOSH7ZEvtvY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=V03FTtrAd0+nzIizDrmSVZJ4SFo1zuGNptEHc0Beu3k=;
-        b=KH78+ub9BxnRS7Ce0W3FrqQMa3AjVxAHXUhG4jXWKxd3L2ov/wPyGL0WSw0GLFvunt
-         kQ6wgZtPI7oyn4S5qlejkXVNbvlxtG6IYyBKBUvgfm1X3cfttVMdlHGfdSiZXUaKnWpi
-         LiTp/RPFkb/zbpRw6PlnLIn1ZaQOHPpa/lmMVDlzCr5jDuU4kgulO3kTJTKArot6V2HG
-         JqEXMXd8k+H3MzCi3dPF4sHT/9pP7sBInLGzjKIReeS+cgQjhC16o5iEhZa4A7MEEAFj
-         a0k5eqRvhbxKL1wEIlbWvSQRDONoRQUSLCNdaHOn/en2jAfFvFjHKfxEoJBZhQikJDWL
-         3U9w==
-X-Gm-Message-State: AJcUukcBstFyhUS7Qv2DUzJfIozMo8BTy8nqvLHW2CIeoVhEWxzkgTzp
-        fk7vVnMQmlSu0SJBfNm4RXA9jIkVWZHbOQ==
-X-Google-Smtp-Source: ALg8bN4BYGuySFML76FiiK/po/imrSIPUfISWcNVs1v3s3r5JWM2YE7C3sJ5JjxsdM9WiBELodv05w==
-X-Received: by 2002:a1c:a185:: with SMTP id k127mr14357994wme.134.1548624790131;
-        Sun, 27 Jan 2019 13:33:10 -0800 (PST)
-Received: from winie.fritz.box (i59F4FF78.versanet.de. [89.244.255.120])
-        by smtp.gmail.com with ESMTPSA id h17sm108857254wrt.59.2019.01.27.13.33.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 13:33:09 -0800 (PST)
-From:   Florian La Roche <florian.laroche@googlemail.com>
-X-Google-Original-From: Florian La Roche <Florian.LaRoche@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Crt Mori <cmo@melexis.com>, Joe Perches <joe@perches.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Florian La Roche <Florian.LaRoche@gmail.com>
-Subject: [PATCH v3 1/1] int_sqrt() adjustments
-Date:   Sun, 27 Jan 2019 22:33:04 +0100
-Message-Id: <20190127213304.22845-1-Florian.LaRoche@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=A0EHerfZLtY170iK3Acs12XMeS75bvOLGpiGFWVHsmM=;
+        b=pZuIqGdn/Ocv6F5MabNjIpb1TZJ3g+r/Cij80emnV6wBFtMqyK1z52q6kSUnf2d3xc
+         /ZS013p0uoACm4HuftEjr8M4cptCspSbzaQQ2dxo/ns84yE5H2IoTjgTivTm/BcFXA9d
+         GGTdPh2Jw6eT08iNf0/pnDL11oB/7/jrn1mDhKiUDDKIATQWlE/yXZUG9dRGlpZcU+7f
+         hCtB9rF5BW4EdJP9XojztAKvq4E5lRMSyicXbLr3LnXSzqxn5PqOGBACB5OGL9EMXPov
+         sL6RkjFUYY2N3ppbNfJKuyRhg8exu4PivgDzHZN7TXo5Ws4/hWvM2z25ivtpZPaPPezp
+         irfQ==
+X-Gm-Message-State: AJcUukcq9yTEEMj3CDhmHZhSF17raMTSjO3S1jvmmjtR4L1u58mjEgqN
+        2DgcnhXTOtwTILXra7vx7Ey59A==
+X-Google-Smtp-Source: ALg8bN4PYd1uziFOUaSThanTFbgTLcGWaRryrbKH8crpSk1Lu/S8sOMSTE+j8mW1KlniLNEDCGVBcQ==
+X-Received: by 2002:a1c:9183:: with SMTP id t125mr14203982wmd.79.1548624848738;
+        Sun, 27 Jan 2019 13:34:08 -0800 (PST)
+Received: from [192.168.0.107] (79-100-158-105.ip.btc-net.bg. [79.100.158.105])
+        by smtp.gmail.com with ESMTPSA id y14sm12718928wro.92.2019.01.27.13.34.07
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Sun, 27 Jan 2019 13:34:07 -0800 (PST)
+Subject: Re: KASAN: use-after-free Read in br_mdb_ip_get
+To:     syzbot <syzbot+bc5ab0af2dbf3b0ae897@syzkaller.appspotmail.com>,
+        bridge@lists.linux-foundation.org, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        roopa@cumulusnetworks.com, syzkaller-bugs@googlegroups.com
+References: <000000000000862b160580765e94@google.com>
+From:   Nikolay Aleksandrov <nikolay@cumulusnetworks.com>
+Message-ID: <3c44c1ff-2790-ec06-35c6-3572b92170c7@cumulusnetworks.com>
+Date:   Sun, 27 Jan 2019 23:34:06 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <000000000000862b160580765e94@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add __attribute_const__ and adjust to use (signed) int for the right param of "<<".
-Change the return value of int_sqrt() from "unsigned long" to u32 to be
-the same as int_sqrt64() and adjust some calling functions.
+On 27/01/2019 22:26, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following crash on:
+> 
+> HEAD commit:    ba6069759381 Merge tag 'mmc-v5.0-rc2' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17b342c4c00000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
+> dashboard link: https://syzkaller.appspot.com/bug?extid=bc5ab0af2dbf3b0ae897
+> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+bc5ab0af2dbf3b0ae897@syzkaller.appspotmail.com
+> 
+> bridge0: port 2(bridge_slave_1) entered blocking state
+> bridge0: port 2(bridge_slave_1) entered forwarding state
+> bridge0: port 1(bridge_slave_0) entered blocking state
+> bridge0: port 1(bridge_slave_0) entered forwarding state
+> ==================================================================
+> BUG: KASAN: use-after-free in memcmp+0xb3/0xc0 lib/string.c:862
+> Read of size 1 at addr ffff88809f1efe70 by task syz-executor1/8111
+> 
+[snip]
+> 
+> Allocated by task 8111:
+>  save_stack+0x45/0xd0 mm/kasan/common.c:73
+>  set_track mm/kasan/common.c:85 [inline]
+>  __kasan_kmalloc mm/kasan/common.c:496 [inline]
+>  __kasan_kmalloc.constprop.0+0xcf/0xe0 mm/kasan/common.c:469
+>  kasan_kmalloc+0x9/0x10 mm/kasan/common.c:504
+>  kmem_cache_alloc_trace+0x151/0x760 mm/slab.c:3609
+>  kmalloc include/linux/slab.h:545 [inline]
+>  kzalloc include/linux/slab.h:740 [inline]
+>  br_multicast_new_group.part.0+0xdc/0x1a40 net/bridge/br_multicast.c:476
+>  br_multicast_new_group+0x19d/0x200 net/bridge/br_multicast.c:471
+>  br_multicast_add_group+0x4ce/0x7d0 net/bridge/br_multicast.c:552
+>  br_ip6_multicast_add_group net/bridge/br_multicast.c:626 [inline]
+>  br_ip6_multicast_mld2_report net/bridge/br_multicast.c:1043 [inline]
+>  br_multicast_ipv6_rcv net/bridge/br_multicast.c:1667 [inline]
+>  br_multicast_rcv+0x24aa/0x4270 net/bridge/br_multicast.c:1705
+>  br_dev_xmit+0x7f4/0x1780 net/bridge/br_device.c:93
+>  __netdev_start_xmit include/linux/netdevice.h:4382 [inline]
+>  netdev_start_xmit include/linux/netdevice.h:4391 [inline]
+>  xmit_one net/core/dev.c:3278 [inline]
+>  dev_hard_start_xmit+0x261/0xc70 net/core/dev.c:3294
+>  __dev_queue_xmit+0x2f8a/0x3a60 net/core/dev.c:3864
+>  dev_queue_xmit+0x18/0x20 net/core/dev.c:3897
+>  neigh_resolve_output net/core/neighbour.c:1476 [inline]
+>  neigh_resolve_output+0x6a0/0xb30 net/core/neighbour.c:1456
+>  neigh_output include/net/neighbour.h:508 [inline]
+>  ip6_finish_output2+0xc56/0x28e0 net/ipv6/ip6_output.c:120
+>  ip6_finish_output+0x577/0xc30 net/ipv6/ip6_output.c:154
+>  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
+>  ip6_output+0x23c/0xa00 net/ipv6/ip6_output.c:171
+>  dst_output include/net/dst.h:444 [inline]
+>  NF_HOOK include/linux/netfilter.h:289 [inline]
+>  NF_HOOK include/linux/netfilter.h:283 [inline]
+>  mld_sendpack+0xa44/0xfd0 net/ipv6/mcast.c:1683
+>  mld_send_cr net/ipv6/mcast.c:1979 [inline]
+>  mld_ifc_timer_expire+0x449/0x8a0 net/ipv6/mcast.c:2478
+>  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+>  expire_timers kernel/time/timer.c:1362 [inline]
+>  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+>  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+>  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+> 
+> Freed by task 8111:
+>  save_stack+0x45/0xd0 mm/kasan/common.c:73
+>  set_track mm/kasan/common.c:85 [inline]
+>  __kasan_slab_free+0x102/0x150 mm/kasan/common.c:458
+>  kasan_slab_free+0xe/0x10 mm/kasan/common.c:466
+>  __cache_free mm/slab.c:3487 [inline]
+>  kfree+0xcf/0x230 mm/slab.c:3806
+>  br_multicast_new_group.part.0+0x1489/0x1a40 net/bridge/br_multicast.c:486
 
-Signed-off-by: Florian La Roche <Florian.LaRoche@gmail.com>
----
- drivers/gpu/drm/i915/selftests/i915_gem_gtt.c | 8 ++++----
- drivers/media/pci/cx88/cx88-dsp.c             | 2 +-
- include/linux/kernel.h                        | 4 ++--
- lib/int_sqrt.c                                | 8 ++++----
- lib/prime_numbers.c                           | 2 +-
- mm/vmscan.c                                   | 2 +-
- 6 files changed, 13 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-index a9ed0ecc94e2..460ef38d9667 100644
---- a/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-+++ b/drivers/gpu/drm/i915/selftests/i915_gem_gtt.c
-@@ -348,7 +348,7 @@ static int fill_hole(struct drm_i915_private *i915,
- 	struct drm_i915_gem_object *obj;
- 	const unsigned long max_pages =
- 		min_t(u64, ULONG_MAX - 1, hole_size/2 >> PAGE_SHIFT);
--	const unsigned long max_step = max(int_sqrt(max_pages), 2UL);
-+	const u32 max_step = max(int_sqrt(max_pages), 2UL);
- 	unsigned long npages, prime, flags;
- 	struct i915_vma *vma;
- 	LIST_HEAD(objects);
-@@ -400,7 +400,7 @@ static int fill_hole(struct drm_i915_private *i915,
- 
- 					err = i915_vma_pin(vma, 0, 0, offset | flags);
- 					if (err) {
--						pr_err("%s(%s) pin (forward) failed with err=%d on size=%lu pages (prime=%lu), offset=%llx\n",
-+						pr_err("%s(%s) pin (forward) failed with err=%d on size=%lu pages (prime=%u), offset=%llx\n",
- 						       __func__, p->name, err, npages, prime, offset);
- 						goto err;
- 					}
-@@ -473,7 +473,7 @@ static int fill_hole(struct drm_i915_private *i915,
- 
- 					err = i915_vma_pin(vma, 0, 0, offset | flags);
- 					if (err) {
--						pr_err("%s(%s) pin (backward) failed with err=%d on size=%lu pages (prime=%lu), offset=%llx\n",
-+						pr_err("%s(%s) pin (backward) failed with err=%d on size=%lu pages (prime=%u), offset=%llx\n",
- 						       __func__, p->name, err, npages, prime, offset);
- 						goto err;
- 					}
-@@ -533,7 +533,7 @@ static int fill_hole(struct drm_i915_private *i915,
- 				}
- 			}
- 
--			if (igt_timeout(end_time, "%s timed out (npages=%lu, prime=%lu)\n",
-+			if (igt_timeout(end_time, "%s timed out (npages=%lu, prime=%u)\n",
- 					__func__, npages, prime)) {
- 				err = -EINTR;
- 				goto err;
-diff --git a/drivers/media/pci/cx88/cx88-dsp.c b/drivers/media/pci/cx88/cx88-dsp.c
-index 105029088120..563a298f2ac0 100644
---- a/drivers/media/pci/cx88/cx88-dsp.c
-+++ b/drivers/media/pci/cx88/cx88-dsp.c
-@@ -137,7 +137,7 @@ static u32 freq_magnitude(s16 x[], u32 N, u32 freq)
- {
- 	u32 sum = int_goertzel(x, N, freq);
- 
--	return (u32)int_sqrt(sum);
-+	return int_sqrt(sum);
- }
- 
- static u32 noise_magnitude(s16 x[], u32 N, u32 freq_start, u32 freq_end)
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 8f0e68e250a7..796027bbf1b8 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -513,10 +513,10 @@ extern int __kernel_text_address(unsigned long addr);
- extern int kernel_text_address(unsigned long addr);
- extern int func_ptr_is_kernel_text(void *ptr);
- 
--unsigned long int_sqrt(unsigned long);
-+__attribute_const__ u32 int_sqrt(unsigned long);
- 
- #if BITS_PER_LONG < 64
--u32 int_sqrt64(u64 x);
-+__attribute_const__ u32 int_sqrt64(u64 x);
- #else
- static inline u32 int_sqrt64(u64 x)
- {
-diff --git a/lib/int_sqrt.c b/lib/int_sqrt.c
-index 30e0f9770f88..43b0158dd901 100644
---- a/lib/int_sqrt.c
-+++ b/lib/int_sqrt.c
-@@ -16,14 +16,14 @@
-  *
-  * Computes: floor(sqrt(x))
-  */
--unsigned long int_sqrt(unsigned long x)
-+__attribute_const__ u32 int_sqrt(unsigned long x)
- {
- 	unsigned long b, m, y = 0;
- 
- 	if (x <= 1)
- 		return x;
- 
--	m = 1UL << (__fls(x) & ~1UL);
-+	m = 1UL << (__fls(x) & ~1);
- 	while (m != 0) {
- 		b = y + m;
- 		y >>= 1;
-@@ -45,14 +45,14 @@ EXPORT_SYMBOL(int_sqrt);
-  * is expected.
-  * @x: 64bit integer of which to calculate the sqrt
-  */
--u32 int_sqrt64(u64 x)
-+__attribute_const__ u32 int_sqrt64(u64 x)
- {
- 	u64 b, m, y = 0;
- 
- 	if (x <= ULONG_MAX)
- 		return int_sqrt((unsigned long) x);
- 
--	m = 1ULL << ((fls64(x) - 1) & ~1ULL);
-+	m = 1ULL << ((fls64(x) - 1) & ~1);
- 	while (m != 0) {
- 		b = y + m;
- 		y >>= 1;
-diff --git a/lib/prime_numbers.c b/lib/prime_numbers.c
-index 550eec457c2e..96c7ef08f379 100644
---- a/lib/prime_numbers.c
-+++ b/lib/prime_numbers.c
-@@ -67,7 +67,7 @@ static unsigned long selftest_max;
- 
- static bool slow_is_prime_number(unsigned long x)
- {
--	unsigned long y = int_sqrt(x);
-+	u32 y = int_sqrt(x);
- 
- 	while (y > 1) {
- 		if ((x % y) == 0)
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a714c4f800e9..0b9abe1de9e7 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2216,7 +2216,7 @@ static bool inactive_list_is_low(struct lruvec *lruvec, bool file,
- 	struct pglist_data *pgdat = lruvec_pgdat(lruvec);
- 	enum lru_list inactive_lru = file * LRU_FILE;
- 	unsigned long inactive, active;
--	unsigned long inactive_ratio;
-+	u32 inactive_ratio;
- 	unsigned long refaults;
- 	unsigned long gb;
- 
--- 
-2.17.1
+Weird, this is the kfree() on the error path of br_multicast_new_group()
+when rhashtable_lookup_insert_fast() fails, which means the entry should
+not be linked in the rhashtable or the hlist.
+All other frees are via kfree_rcu. I'll keep looking.. 
+
+>  br_multicast_new_group+0x19d/0x200 net/bridge/br_multicast.c:471
+>  br_multicast_add_group+0x4ce/0x7d0 net/bridge/br_multicast.c:552
+>  br_ip6_multicast_add_group net/bridge/br_multicast.c:626 [inline]
+>  br_ip6_multicast_mld2_report net/bridge/br_multicast.c:1043 [inline]
+>  br_multicast_ipv6_rcv net/bridge/br_multicast.c:1667 [inline]
+>  br_multicast_rcv+0x24aa/0x4270 net/bridge/br_multicast.c:1705
+>  br_dev_xmit+0x7f4/0x1780 net/bridge/br_device.c:93
+>  __netdev_start_xmit include/linux/netdevice.h:4382 [inline]
+>  netdev_start_xmit include/linux/netdevice.h:4391 [inline]
+>  xmit_one net/core/dev.c:3278 [inline]
+>  dev_hard_start_xmit+0x261/0xc70 net/core/dev.c:3294
+>  __dev_queue_xmit+0x2f8a/0x3a60 net/core/dev.c:3864
+>  dev_queue_xmit+0x18/0x20 net/core/dev.c:3897
+>  neigh_resolve_output net/core/neighbour.c:1476 [inline]
+>  neigh_resolve_output+0x6a0/0xb30 net/core/neighbour.c:1456
+>  neigh_output include/net/neighbour.h:508 [inline]
+>  ip6_finish_output2+0xc56/0x28e0 net/ipv6/ip6_output.c:120
+>  ip6_finish_output+0x577/0xc30 net/ipv6/ip6_output.c:154
+>  NF_HOOK_COND include/linux/netfilter.h:278 [inline]
+>  ip6_output+0x23c/0xa00 net/ipv6/ip6_output.c:171
+>  dst_output include/net/dst.h:444 [inline]
+>  NF_HOOK include/linux/netfilter.h:289 [inline]
+>  NF_HOOK include/linux/netfilter.h:283 [inline]
+>  mld_sendpack+0xa44/0xfd0 net/ipv6/mcast.c:1683
+>  mld_send_cr net/ipv6/mcast.c:1979 [inline]
+>  mld_ifc_timer_expire+0x449/0x8a0 net/ipv6/mcast.c:2478
+>  call_timer_fn+0x254/0x900 kernel/time/timer.c:1325
+>  expire_timers kernel/time/timer.c:1362 [inline]
+>  __run_timers+0x6fc/0xd50 kernel/time/timer.c:1681
+>  run_timer_softirq+0x52/0xb0 kernel/time/timer.c:1694
+>  __do_softirq+0x30b/0xb11 kernel/softirq.c:292
+> 
+> The buggy address belongs to the object at ffff88809f1efe00
+>  which belongs to the cache kmalloc-192 of size 192
+> The buggy address is located 112 bytes inside of
+>  192-byte region [ffff88809f1efe00, ffff88809f1efec0)
+> The buggy address belongs to the page:
+> page:ffffea00027c7bc0 count:1 mapcount:0 mapping:ffff88812c3f0040 index:0x0
+> flags: 0x1fffc0000000200(slab)
+> raw: 01fffc0000000200 ffffea00027df108 ffffea00027c7c48 ffff88812c3f0040
+> raw: 0000000000000000 ffff88809f1ef000 0000000100000010 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>  ffff88809f1efd00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  ffff88809f1efd80: 00 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+>> ffff88809f1efe00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>                                                              ^
+>  ffff88809f1efe80: fb fb fb fb fb fb fb fb fc fc fc fc fc fc fc fc
+>  ffff88809f1eff00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+> ==================================================================
+> 
+> 
+> ---
+> This bug is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this bug report. See:
+> https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with syzbot.
 
