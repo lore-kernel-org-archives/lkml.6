@@ -2,101 +2,92 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-15.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D7FFC282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:40:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA758C282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:41:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9EB0214C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548589225;
-	bh=vyTfpJCa0yS8juXi+m5bmyXv1CY6zBBNmlO1H/X9Df0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=thQ7ybxlFCuEM2an/n751D177FAe/GKR72tsUwfvJZ+oHwv3mlTjJw9Gnt4ocKDwv
-	 agQdOxTedLidqAYbAqqlFO8mtT4tb4JwlAGq+w7IDWxleGr2/Fn6SAgGDJFGX8uWAg
-	 cRThXq0tAOi2A+sS/+Y9vNP5yyehwS03FGYGTIUo=
+	by mail.kernel.org (Postfix) with ESMTP id 9FF5C217D7
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 11:41:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726995AbfA0LkY (ORCPT
+        id S1726817AbfA0Ll5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 06:40:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:60504 "EHLO mx1.suse.de"
+        Sun, 27 Jan 2019 06:41:57 -0500
+Received: from mx2.suse.de ([195.135.220.15]:60620 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726774AbfA0LkX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 06:40:23 -0500
+        id S1726453AbfA0Ll5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 06:41:57 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 63A56AD18;
-        Sun, 27 Jan 2019 11:40:22 +0000 (UTC)
-Date:   Sun, 27 Jan 2019 12:40:21 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Cc:     Arkadiusz =?utf-8?Q?Mi=C5=9Bkiewicz?= <a.miskiewicz@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>
-Subject: Re: [PATCH v2] oom, oom_reaper: do not enqueue same task twice
-Message-ID: <20190127114021.GB18811@dhcp22.suse.cz>
-References: <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
- <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
- <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
- <72aa8863-a534-b8df-6b9e-f69cf4dd5c4d@i-love.sakura.ne.jp>
- <33a07810-6dbc-36be-5bb6-a279773ccf69@i-love.sakura.ne.jp>
- <34e97b46-0792-cc66-e0f2-d72576cdec59@i-love.sakura.ne.jp>
- <2b0c7d6c-c58a-da7d-6f0a-4900694ec2d3@gmail.com>
- <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
- <20190127083724.GA18811@dhcp22.suse.cz>
- <ec0d0580-a2dd-f329-9707-0cb91205a216@i-love.sakura.ne.jp>
+        by mx1.suse.de (Postfix) with ESMTP id 69F39ABDC;
+        Sun, 27 Jan 2019 11:41:56 +0000 (UTC)
+Date:   Sun, 27 Jan 2019 12:41:54 +0100
+From:   Borislav Petkov <bp@suse.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-edac <linux-edac@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] EDAC fix for 5.0
+Message-ID: <20190127114154.GB3916@zn.tnic>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <ec0d0580-a2dd-f329-9707-0cb91205a216@i-love.sakura.ne.jp>
+Content-Transfer-Encoding: 8bit
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun 27-01-19 19:56:06, Tetsuo Handa wrote:
-> On 2019/01/27 17:37, Michal Hocko wrote:
-> > Thanks for the analysis and the patch. This should work, I believe but
-> > I am not really thrilled to overload the meaning of the MMF_UNSTABLE.
-> > The flag is meant to signal accessing address space is not stable and it
-> > is not aimed to synchronize oom reaper with the oom path.
-> > 
-> > Can we make use mark_oom_victim directly? I didn't get to think that
-> > through right now so I might be missing something but this should
-> > prevent repeating queueing as well.
-> 
-> Yes, TIF_MEMDIE would work. But you are planning to remove TIF_MEMDIE. Also,
-> TIF_MEMDIE can't avoid enqueuing many threads sharing mm_struct to the OOM
-> reaper. There is no need to enqueue many threads sharing mm_struct because
-> the OOM reaper acts on mm_struct rather than task_struct. Thus, enqueuing
-> based on per mm_struct flag sounds better, but MMF_OOM_VICTIM cannot be
-> set from wake_oom_reaper(victim) because victim's mm might be already inside
-> exit_mmap() when wake_oom_reaper(victim) is called after task_unlock(victim).
->
-> We could reintroduce MMF_OOM_KILLED in commit 855b018325737f76
-> ("oom, oom_reaper: disable oom_reaper for oom_kill_allocating_task")
-> if you don't like overloading the meaning of the MMF_UNSTABLE. But since
-> MMF_UNSTABLE is available in Linux 4.9+ kernels (which covers all LTS stable
-> versions with the OOM reaper support), we can temporarily use MMF_UNSTABLE
-> for ease of backporting.
+Hi Linus,
 
-I agree that a per-mm state is more optimal but I would rather fix the
-issue in a clear way first and only then think about an optimization on
-top. Queueing based on mark_oom_victim (whatever that uses to guarantee
-the victim is marked atomically and only once) makes sense from the
-conceptual point of view and it makes a lot of sense to start from
-there. MMF_UNSTABLE has a completely different purpose. So unless you
-see a correctness issue with that then I would rather go that way.
+please pull this single fix for Altera EDAC below.
+
+Thx.
+
+---
+The following changes since commit 49a57857aeea06ca831043acbb0fa5e0f50602fd:
+
+  Linux 5.0-rc3 (2019-01-21 13:14:44 +1300)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git tags/edac_fix_for_5.0
+
+for you to fetch changes up to 245b6c6558128327d330549b23d09594c46f58df:
+
+  EDAC, altera: Fix S10 persistent register offset (2019-01-24 17:13:59 +0100)
+
+----------------------------------------------------------------
+Fix persistent register offsets of altera_edac, from Thor Thayer.
+
+----------------------------------------------------------------
+Thor Thayer (1):
+      EDAC, altera: Fix S10 persistent register offset
+
+ drivers/edac/altera_edac.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/edac/altera_edac.h b/drivers/edac/altera_edac.h
+index 4213cb0bb2a7..f8664bac9fa8 100644
+--- a/drivers/edac/altera_edac.h
++++ b/drivers/edac/altera_edac.h
+@@ -295,8 +295,8 @@ struct altr_sdram_mc_data {
+ #define S10_SYSMGR_ECC_INTSTAT_DERR_OFST  0xA0
+ 
+ /* Sticky registers for Uncorrected Errors */
+-#define S10_SYSMGR_UE_VAL_OFST            0x120
+-#define S10_SYSMGR_UE_ADDR_OFST           0x124
++#define S10_SYSMGR_UE_VAL_OFST            0x220
++#define S10_SYSMGR_UE_ADDR_OFST           0x224
+ 
+ #define S10_DDR0_IRQ_MASK                 BIT(16)
+ 
+
 -- 
-Michal Hocko
-SUSE Labs
+Regards/Gruss,
+    Boris.
+
+SUSE Linux GmbH, GF: Felix Imendörffer, Jane Smithard, Graham Norton, HRB 21284 (AG Nürnberg)
