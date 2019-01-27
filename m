@@ -2,117 +2,135 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEB1C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 13:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 092FBC282CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 13:13:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A23BA2147A
+	by mail.kernel.org (Postfix) with ESMTP id CE39B218A1
 	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 13:13:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="GqzCs9zm"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="ojgZ+4lE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726633AbfA0NMs (ORCPT
+        id S1726779AbfA0NNO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 08:12:48 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:54076 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726458AbfA0NMs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 08:12:48 -0500
-Received: from zn.tnic (p200300EC2BE8D900708CC781A29E26E6.dip0.t-ipconnect.de [IPv6:2003:ec:2be8:d900:708c:c781:a29e:26e6])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 541E11EC02AE;
-        Sun, 27 Jan 2019 14:12:46 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548594766;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=+9jp0cJdte1N+sTYsJ0qCS5YDpddbad5pEV3Ifi9S9M=;
-        b=GqzCs9zmTiEh6LcOdFhzBlo+IKP2zmrTf8ayI1NBNaLN/2manMqFEeZs+p37NjtthE3HEU
-        q77idZXT31GtXYCC7KfudLYy5FXGn7MZjB178JUzg6ETKptdT4zRBreX1ShQ+ieoZ0kur6
-        mdR2rpQPQHJyWRyZBa3ZUbr8z3bznk0=
-From:   Borislav Petkov <bp@alien8.de>
-To:     X86 ML <x86@kernel.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Frederic Weisbecker <frederic@kernel.org>,
-        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: [PATCH] x86/hw_breakpoints, kprobes: Remove kprobes ifdeffery
-Date:   Sun, 27 Jan 2019 14:12:37 +0100
-Message-Id: <20190127131237.4557-1-bp@alien8.de>
-X-Mailer: git-send-email 2.19.1
+        Sun, 27 Jan 2019 08:13:14 -0500
+Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:30862 "EHLO
+        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726458AbfA0NNO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 08:13:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1548594792;
+        s=strato-dkim-0002; d=xenosoft.de;
+        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
+        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
+        bh=FMQ75Hy5BCOjUBN14zYaKiW4FJiuRF2jN5cnJ7YbwWQ=;
+        b=ojgZ+4lE8n6GUekAQyji1unIMR2WqMS36ulXfccr3KQVRawhWB+TXRGBlpmsWqr68Q
+        8bf3/8t9GDw7eMaoWJg2/UGOJoFKnJTXYyRMPSob0QInfi9SrgQycr5YN9qM3RYWPF1l
+        b+2NNbWbQkoY5/rGB/85U74GadjzyK10tBxNiyk1iVvlI6+QqdDzjDroy6658zk6RXws
+        Vs37r9QmXOGzONmCcmzJVhwahf/UsTFdJBN3LGA8GmzkJ/ZK30pgvGvRc+lFUJnA/gGV
+        Fx7ln4MTbDtbsfh2eG874xCsYRWXB93JY9VirQEzL0PrtaRIcy5fIAFlwUktpP9dqsUE
+        +z3A==
+X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkNjyLlwLU8/n0bu4gMtisxiLYr"
+X-RZG-CLASS-ID: mo00
+Received: from [IPv6:2a02:8109:a400:162c:21ae:8103:d1b3:1b6]
+        by smtp.strato.de (RZmta 44.9 AUTH)
+        with ESMTPSA id t0203dv0RDD9xIo
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
+        (Client did not present a certificate);
+        Sun, 27 Jan 2019 14:13:09 +0100 (CET)
+Subject: Re: use generic DMA mapping code in powerpc V4
+From:   Christian Zigotzky <chzigotzky@xenosoft.de>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     linux-arch@vger.kernel.org,
+        Darren Stevens <darren@stevens-zone.net>,
+        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
+        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
+        Paul Mackerras <paulus@samba.org>,
+        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
+References: <871403f2-fa7d-de15-89eb-070432e15c69@xenosoft.de>
+ <20190118112842.GA9115@lst.de>
+ <a2ca0118-5915-8b1c-7cfa-71cb4b43eaa6@xenosoft.de>
+ <20190118121810.GA13327@lst.de>
+ <eceebeda-0e18-00f6-06e7-def2eb0aa961@xenosoft.de>
+ <20190118125500.GA15657@lst.de>
+ <e11e61b1-6468-122e-fc2b-3b3f857186bb@xenosoft.de>
+ <f39d4fc6-7e4e-9132-c03f-59f1b52260e0@xenosoft.de>
+ <b9e5e081-a3cc-2625-4e08-2d55c2ba224b@xenosoft.de>
+ <20190119130222.GA24346@lst.de> <20190119140452.GA25198@lst.de>
+ <bfe4adcc-01c1-7b46-f40a-8e020ff77f58@xenosoft.de>
+ <8434e281-eb85-51d9-106f-f4faa559e89c@xenosoft.de>
+ <4d8d4854-dac9-a78e-77e5-0455e8ca56c4@xenosoft.de>
+Message-ID: <1dec2fbe-f654-dac7-392a-93a5d20e3602@xenosoft.de>
+Date:   Sun, 27 Jan 2019 14:13:09 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
+In-Reply-To: <4d8d4854-dac9-a78e-77e5-0455e8ca56c4@xenosoft.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Language: de-DE
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+Christoph,
 
-Remove the ifdeffery in the breakpoint parsing arch_build_bp_info() by
-adding a within_kprobe_blacklist() stub for the !CONFIG_KPROBES case.
+What shall I do next?
 
-It is returning true when kprobes are not enabled to mean that any
-address is within the kprobes blacklist on such kernels and thus not
-allow kernel breakpoints on non-kprobes kernels.
+Cheers,
+Christian
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-Cc: "David S. Miller" <davem@davemloft.net>
-Cc: Frederic Weisbecker <frederic@kernel.org>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>
-Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
----
- arch/x86/kernel/hw_breakpoint.c | 4 ----
- include/linux/kprobes.h         | 5 +++++
- 2 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
-index 7d6f91f2869a..ff9bfd40429e 100644
---- a/arch/x86/kernel/hw_breakpoint.c
-+++ b/arch/x86/kernel/hw_breakpoint.c
-@@ -261,12 +261,8 @@ static int arch_build_bp_info(struct perf_event *bp,
- 		 * allow kernel breakpoints at all.
- 		 */
- 		if (attr->bp_addr >= TASK_SIZE_MAX) {
--#ifdef CONFIG_KPROBES
- 			if (within_kprobe_blacklist(attr->bp_addr))
- 				return -EINVAL;
--#else
--			return -EINVAL;
--#endif
- 		}
- 
- 		hw->type = X86_BREAKPOINT_EXECUTE;
-diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
-index e07e91daaacc..201f0f2683f2 100644
---- a/include/linux/kprobes.h
-+++ b/include/linux/kprobes.h
-@@ -442,6 +442,11 @@ static inline int enable_kprobe(struct kprobe *kp)
- {
- 	return -ENOSYS;
- }
-+
-+static inline bool within_kprobe_blacklist(unsigned long addr)
-+{
-+	return true;
-+}
- #endif /* CONFIG_KPROBES */
- static inline int disable_kretprobe(struct kretprobe *rp)
- {
--- 
-2.19.1
+On 25 January 2019 at 2:37PM, Christian Zigotzky wrote:
+> Next step just with the first patch: 
+> 5c532d07c2f3c3972104de505d06b8d85f403f06 (use powerpc zone selection)
+>
+> git clone git://git.infradead.org/users/hch/misc.git -b 
+> powerpc-dma.6-debug a
+>
+> git checkout 5c532d07c2f3c3972104de505d06b8d85f403f06
+>
+> Link to the Git: 
+> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6-debug
+>
+> Results:
+>
+> X5000: The kernel detects the SATA hard disk drive and boots without 
+> any problems.
+>
+> X1000: The kernel boots and the P.A. Semi Ethernet works!
+>
+> -- Christian
+>
+>
+> On 23 January 2019 at 3:34PM, Christian Zigotzky wrote:
+>> Hi Christoph,
+>>
+>> I also compiled a kernel (zImage) for the X1000  from your Git 
+>> 'powerpc-dma.6-debug' (both patches) today.
+>>
+>> It boots and the P.A. Semi Ethernet works!
+>>
+>> I will test just the first patch tomorrow.
+>>
+>> Thanks,
+>> Christian
+>>
+>>
+>> On 21 January 2019 at 3:38PM, Christian Zigotzky wrote:
+>>> Hello Christoph,
+>>>
+>>> Thanks for your reply. I successfully compiled a kernel (uImage) for 
+>>> the X5000 from your Git 'powerpc-dma.6-debug' (both patches) today.
+>>>
+>>> It detects the SATA hard disk drive and boots without any problems.
+>>>
+>>
+>>
+>
+>
 
