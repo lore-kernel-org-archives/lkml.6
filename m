@@ -2,139 +2,135 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8352C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:32:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C230C282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71E8B2133D
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:32:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 454522133D
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 20:33:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="ukCMbb6G"
+	dkim=pass (2048-bit key) header.d=adirat-com.20150623.gappssmtp.com header.i=@adirat-com.20150623.gappssmtp.com header.b="TkBWGGDF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727182AbfA0Uc5 (ORCPT
+        id S1727205AbfA0Ud1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 15:32:57 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:50816 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbfA0Uc5 (ORCPT
+        Sun, 27 Jan 2019 15:33:27 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36024 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726630AbfA0Ud1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 15:32:57 -0500
-Received: by mail-wm1-f67.google.com with SMTP id n190so11851768wmd.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 12:32:55 -0800 (PST)
+        Sun, 27 Jan 2019 15:33:27 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p6so11675256wmc.1
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 12:33:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=D8JT6hyWHXwusno3V05RF2t12TrCsleWDgqZTAqYmd8=;
-        b=ukCMbb6GtV86dnO3O5Hs2/WPvXVZ18nbYaNDVzgEMa1NGJih1NDKQp5xeENHigXclM
-         pCm6G7iek0xr464gYC2yCWYY+gJkEONBo+2eXrEm5ERBK/PfOZMaWErLFNwOX28/iUvN
-         V3fk2oZwDc39jg2LgSCTwV6Ztrc98ByZn97Wid+dV+adrsfe+Ds0dgdtO7ULSVJjV6F/
-         njZozhHvGAp5r27/RVr07tcv+1JWoi0BN0qhbHtG79psAROpkWDuma+B7/nbOSw2koem
-         ZO9Z9PhbNQiBOiFLaov7mjD05XPEdU6NfywuL6uBaFFRPPrIcMH29fOT9psiubPDHmps
-         s7ig==
+        d=adirat-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=w+2Ky73FIN6TlxiPuvYaVz5DmY08FlUVHBFUHW5SDNg=;
+        b=TkBWGGDFWBG9o5t/MH/Siu2TrPb42Sja+LQ98X/Z/pcOccNpVxse6p7WS9BD+bWRpo
+         SwuV+VUKOG1uITkZhVNte3wRLp965YOZQv8dnIT56ds2MnV1INawx1MzrPnVADHNUisY
+         7Yrm6zQxA8hVGlogNttnzDBqLl8TrJ8iqI62unSMJOvWoP+zkVcWtlNphtfKG+h+ijDh
+         LNMU/c0c/6CU/sdxGBEPV18jgqPPAHCEfh+shjlI3fHSSkyz2f2GFB8gjBV8b595XxuK
+         ekquaSAyoAXkA9hMr6/MLDb/vwMFCQbMOBvhzJbWgGdwPQXYjtnCvaGko1riXs7TST0S
+         DGSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=D8JT6hyWHXwusno3V05RF2t12TrCsleWDgqZTAqYmd8=;
-        b=eiidGDDx9p+8fTQ5S1NIKiZhrx+d0sAEppgWOlNVBoP0mEp3njxmKW7UKXWRkPDaU3
-         lzqkmS8rw53nz7QR0dABL0LgBrkADaiN7OR25c7yC5Si/1rOvw4kyWBeDPSi1YBQzsww
-         B97ouDzbp6rwZIXxfSTzvUPRK2HX86AssRVcL9hAPFj6mv91rVxiKSwzNJh2+vWq7bOB
-         DVLgzz366jR0kOvrFlJ9kKZ/uE5veinBdmPQO+RrHfpbbqTx7cY+QFOyQ1ZyURlPrZLm
-         rUlub5ssXq96UU8Trs9pgx1C/sL2KgJI2EX4RrnQgdv4U9lL/h+Vx5uJzbJzgPaDZgFQ
-         xppw==
-X-Gm-Message-State: AJcUukfcpTi/ihY5oV7aoQrXhBvldYHE/XBFGhP6EJUYm+QSbM0KfgW2
-        gHsfDULUY1jmH8t5uMDhDaSrQ5Bf5gZ+3g==
-X-Google-Smtp-Source: ALg8bN6aK6vOa87pSC7oZhJpQOIixbVul8fAewD4fKxyaVrAHK9E4O4io+ZIJ1CQLNBZWoOwsngDMw==
-X-Received: by 2002:a1c:a6c2:: with SMTP id p185mr13117275wme.133.1548621174505;
-        Sun, 27 Jan 2019 12:32:54 -0800 (PST)
-Received: from winie.fritz.box (i59F4FF78.versanet.de. [89.244.255.120])
-        by smtp.gmail.com with ESMTPSA id k128sm100195726wmd.37.2019.01.27.12.32.52
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 12:32:53 -0800 (PST)
-From:   Florian La Roche <florian.laroche@googlemail.com>
-X-Google-Original-From: Florian La Roche <Florian.LaRoche@gmail.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Crt Mori <cmo@melexis.com>, Joe Perches <joe@perches.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Will Deacon <will.deacon@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Florian La Roche <Florian.LaRoche@gmail.com>
-Subject: [PATCH v2 1/1] int_sqrt() adjustments
-Date:   Sun, 27 Jan 2019 21:32:39 +0100
-Message-Id: <20190127203239.973-1-Florian.LaRoche@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=w+2Ky73FIN6TlxiPuvYaVz5DmY08FlUVHBFUHW5SDNg=;
+        b=U8T3Kx/Z5fexgrysxjaU7/jbPeZWqlnO8OEOb2AxEr5muSDN7ORZPqkuAObLRIhVju
+         /Cdib9xWt4SzVjzXSHiK5ZzjWh00neYC3aLtDJLUP3habEHJS0hSDaIj+3aDKCVRBJwk
+         X6gke20ZgfrOPgq+ckQKlW6fNPnTWmH9XHAwG0oztrbKbIcpC979YNrRCp96zI9mxowZ
+         EYoezdITdcW/mFGJq/DCIWrnVdGTwlG1FyxYrZafIWx2fZr4PR9zfk0qLhZ6+kpuVaOX
+         xlaBUx8BraPfSNb0u4sMK6Mtu2XTA8skKkZNXamZCWzeKkiKfzY/aVmapC3xfTpiH97X
+         9ykQ==
+X-Gm-Message-State: AJcUukcCjGoGcl6k48ZTV1rlFYs6FFsywpm0RaaLjoiic1QJxUBmUm9D
+        CjbHzaaKZgoxU4BQLD4MwFpnZ4SDbYG1IQ==
+X-Google-Smtp-Source: ALg8bN7s8T381hkPCjXZrvo4gcKVdI7yLThV6JsWcGCWbMQUkJsJhLiMAHaSfZAklW/DxLlDZPgXDg==
+X-Received: by 2002:a1c:a00f:: with SMTP id j15mr13853333wme.84.1548621205320;
+        Sun, 27 Jan 2019 12:33:25 -0800 (PST)
+Received: from iwork ([188.24.59.111])
+        by smtp.gmail.com with ESMTPSA id o16sm159165303wrn.11.2019.01.27.12.33.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 27 Jan 2019 12:33:24 -0800 (PST)
+From:   Ioan-Adrian Ratiu <adi@adirat.com>
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [RFC][PATCH] Revert "ARM: dts: bcm2837: Fix polarity of wifi reset GPIOs"
+In-Reply-To: <20190127202813.29493-1-adi@adirat.com>
+References: <20190127202813.29493-1-adi@adirat.com>
+Date:   Sun, 27 Jan 2019 22:33:24 +0200
+Message-ID: <87zhrl96y3.fsf@ni.com>
+MIME-Version: 1.0
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add __attribute_const__ and use normal ints for the right param of "<<".
+Link to the full 4.19.18 config I'm using:
 
-Signed-off-by: Florian La Roche <Florian.LaRoche@gmail.com>
----
- include/linux/kernel.h | 4 ++--
- lib/int_sqrt.c         | 8 ++++----
- 2 files changed, 6 insertions(+), 6 deletions(-)
+https://drive.google.com/open?id=1ZI3MeGB2fkYMsEjzGQYXUk2wqr0h9h7R
 
-diff --git a/include/linux/kernel.h b/include/linux/kernel.h
-index 8f0e68e250a7..df03a3cca309 100644
---- a/include/linux/kernel.h
-+++ b/include/linux/kernel.h
-@@ -513,10 +513,10 @@ extern int __kernel_text_address(unsigned long addr);
- extern int kernel_text_address(unsigned long addr);
- extern int func_ptr_is_kernel_text(void *ptr);
- 
--unsigned long int_sqrt(unsigned long);
-+__attribute_const__ unsigned long int_sqrt(unsigned long);
- 
- #if BITS_PER_LONG < 64
--u32 int_sqrt64(u64 x);
-+__attribute_const__ u32 int_sqrt64(u64 x);
- #else
- static inline u32 int_sqrt64(u64 x)
- {
-diff --git a/lib/int_sqrt.c b/lib/int_sqrt.c
-index 30e0f9770f88..fd249238fd31 100644
---- a/lib/int_sqrt.c
-+++ b/lib/int_sqrt.c
-@@ -16,14 +16,14 @@
-  *
-  * Computes: floor(sqrt(x))
-  */
--unsigned long int_sqrt(unsigned long x)
-+__attribute_const__ unsigned long int_sqrt(unsigned long x)
- {
- 	unsigned long b, m, y = 0;
- 
- 	if (x <= 1)
- 		return x;
- 
--	m = 1UL << (__fls(x) & ~1UL);
-+	m = 1UL << (__fls(x) & ~1);
- 	while (m != 0) {
- 		b = y + m;
- 		y >>= 1;
-@@ -45,14 +45,14 @@ EXPORT_SYMBOL(int_sqrt);
-  * is expected.
-  * @x: 64bit integer of which to calculate the sqrt
-  */
--u32 int_sqrt64(u64 x)
-+__attribute_const__ u32 int_sqrt64(u64 x)
- {
- 	u64 b, m, y = 0;
- 
- 	if (x <= ULONG_MAX)
- 		return int_sqrt((unsigned long) x);
- 
--	m = 1ULL << ((fls64(x) - 1) & ~1ULL);
-+	m = 1ULL << ((fls64(x) - 1) & ~1);
- 	while (m != 0) {
- 		b = y + m;
- 		y >>= 1;
--- 
-2.17.1
-
+On Sun, 27 Jan 2019, Ioan-Adrian Ratiu <adi@adirat.com> wrote:
+> This reverts commit bea8a160c621d19f7f78b13e14e03f4b8e44cd4b.
+>
+> Contrary to what the commit message says, on my rpi 3 b v1.2 changing
+> the polarity causes the exact behaviour this commit intends to fix, as
+> described at the referenced link below (wlan0 disapears).
+>
+> With reset-gpios = ... GPIO_ACTIVE_HIGH, brcmfmac errors in dmesg:
+>
+> [    7.977512] brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep state -110
+> [    7.977623] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
+> [    7.978007] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
+> [    7.978377] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
+> [    7.978724] brcmfmac: brcmf_sdio_dpc: failed backplane access over SDIO, halting operation
+> [    7.978734] brcmfmac: brcmf_proto_bcdc_query_dcmd: brcmf_proto_bcdc_msg failed w/status -110
+> [    7.978747] brcmfmac: brcmf_cfg80211_get_channel: chanspec failed (-110)
+> [    7.982817] brcmfmac: brcmf_sdio_bus_sleep: error while changing bus sleep state -110
+> [    7.982880] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
+> [    7.983255] brcmfmac: brcmf_sdio_txfail: sdio error, abort command and terminate frame
+>
+> The only solution I currently have is to revert and everything works
+> as expected and as before changing the polarity.
+>
+> Link: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911443
+> Signed-off-by: Ioan-Adrian Ratiu <adi@adirat.com>
+> ---
+>  arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts | 2 +-
+>  arch/arm/boot/dts/bcm2837-rpi-3-b.dts      | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
+> index 93762244be7f..4adb85e66be3 100644
+> --- a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
+> +++ b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
+> @@ -31,7 +31,7 @@
+>  
+>  	wifi_pwrseq: wifi-pwrseq {
+>  		compatible = "mmc-pwrseq-simple";
+> -		reset-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
+> +		reset-gpios = <&expgpio 1 GPIO_ACTIVE_HIGH>;
+>  	};
+>  };
+>  
+> diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+> index 89e6fd547c75..c318bcbc6ba7 100644
+> --- a/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+> +++ b/arch/arm/boot/dts/bcm2837-rpi-3-b.dts
+> @@ -26,7 +26,7 @@
+>  
+>  	wifi_pwrseq: wifi-pwrseq {
+>  		compatible = "mmc-pwrseq-simple";
+> -		reset-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
+> +		reset-gpios = <&expgpio 1 GPIO_ACTIVE_HIGH>;
+>  	};
+>  };
+>  
+> -- 
+> 2.20.1
