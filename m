@@ -4,56 +4,57 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ABDA5C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9696FC282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:24:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 744722133F
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:24:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 647812133F
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:24:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="ZjOY/ZcU"
+	dkim=pass (2048-bit key) header.d=ingics-com.20150623.gappssmtp.com header.i=@ingics-com.20150623.gappssmtp.com header.b="jkkcqThj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfA0OYM (ORCPT
+        id S1726840AbfA0OYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 09:24:12 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:40259 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbfA0OYL (ORCPT
+        Sun, 27 Jan 2019 09:24:15 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:41635 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726511AbfA0OYP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 09:24:11 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u18so6601299plq.7
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 06:24:11 -0800 (PST)
+        Sun, 27 Jan 2019 09:24:15 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b7so6825600pfi.8
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 06:24:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=ingics-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=Vcbc/kbmi+EHjFYqlPvU7XnQO2HoaYQfmZEVK0PCW2E=;
-        b=ZjOY/ZcU8QbUVhenRfHdRRd7zH9+bUGYokqSelvjadqEhR3NZVcubjuANDj8bPwWoE
-         atj+6k0uIZOeo+QxQXBau0BvTvkK9ZyVEjcqOoa1SA8p3LdpmfbFctYFpPORK0cc0Rco
-         G/GYrfTNkpDxdsU7gWo3XdpIFar45LGppjWM3bZsmTIpV9EZolTfV2uafxzfzQa22Ohr
-         lzTyf1z1mH1MdtObuk/Kq6HSekJq9uHsb8FvRmc2xz2mGonp3poDH+EOTXtpsimRyVvW
-         YvDfgGQazBzxeQMTNONeKXOJ8CdIgy30TIZJQPqtLzmJ4uyfsQxfH0/aKHMRagUXChgB
-         Hj0w==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=hOXaIGO07SqD6VX+hKWuJ/AUa7VvlqvEGsTfV5hokdw=;
+        b=jkkcqThjxKvk2OTv81Yi23vewUSo8Y+9rPIpmKdUBRK4zXt7ZLSRNjxRJhgwIlxFdd
+         RDzQiGOLRrb+HdBfYxgy+VQd/utKYB7Ys1+CK2dSDvkS0ggJhRAIkkVIfCBYfxpcStYT
+         X/tcIlRfKm1PYjLq2/PRP7xtPYOWYROzyhl/YeStDdBIMiDhXY5PtE0lkS1E87kAP9mz
+         ZhV/caAOC3Bup1zHqLTJq6rV7XexuApcHIRuntQqZqtSdFb1P03OEib6MlCx0MymO3ul
+         MZA9m+r29w1DqNtk8iEXQZU2jrWky0oEo0q0sp7mTtgSsPJD9dHcqfTCfRN+6g9+VM8V
+         QhtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Vcbc/kbmi+EHjFYqlPvU7XnQO2HoaYQfmZEVK0PCW2E=;
-        b=nOw6GFs7GlgOS/hFj91gF3O2KttvhE03RMmbO7Pl1b+ildDN0g86qgAmfpnHTYtUkg
-         ohlYN1BN4jwpTfe2ZLBQXpjP2zulnwhgQdof9+toaFEvRnlHMR1/oA9yHFlY8c0m0csn
-         nzypheUiaxJ7WYvrMpHEiQWXPWsEYQipqN6yc/yp5rZxcqlD5by3QPhOtDsWJeRxv6Fc
-         Jg13dvoJsuFPkFDCcqEjMaNqIC2FoPnrwkgJiGU8jH3yIPp9kTX7HFYdis9/JR/EtAJN
-         6BTNEMRZSlhUHL7TZMMCO8DL32gxUjgxKib7sVipN9Wc5Pjv7RympLiIMxJe4XvQTYR/
-         Htxg==
-X-Gm-Message-State: AJcUukcdGY7HjvJrkMuhFPsbcv20WEBZqJLucRLDMdK07tPVNMOfzZy7
-        gqYmbRBSe5VZlPlpJGGAZaZHhw==
-X-Google-Smtp-Source: ALg8bN4fmWgFB+pD1LMuWl8CFfzFmeFWenblbM5rHNQmIUBFT7aZSrllWlXGPqoHKJD1ARUF+4NTYg==
-X-Received: by 2002:a17:902:209:: with SMTP id 9mr18625938plc.288.1548599050829;
-        Sun, 27 Jan 2019 06:24:10 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=hOXaIGO07SqD6VX+hKWuJ/AUa7VvlqvEGsTfV5hokdw=;
+        b=uERSI29UhvSPzvyb5gbsyD+TMXvnFWLGZrfIvzuOIz2iYo712lPjPUPIIBvthU9B6r
+         lQkJhVeuJAZrxBZBRKpTzcco+JKsd0pgRTE+LhcwT4QiDc/K8Hc8qpm5+fVpdXiW6z63
+         kjHDYemF+wvwra9DJ/RA/KEAwzcvzY53EjRsQFm5Gqg9BO0OHVoqSLvYs5b0MssQwJfi
+         WO2dUpRy+jPL/XJ97acasiUaoDTsNgOUBT0Vmdv6KFLzp5NTjnmnJpHzTs7WlyWe6jU6
+         ugddpdUeK0eKAzJQtjQ6dzwpjxt5a4wOQlH/GZrvZSMcyLjOjImA4mvHzhdkAH9wHR9E
+         tmRg==
+X-Gm-Message-State: AJcUukcs8obTtFdTCexw5cJrxgK80kBVWUoUpRpEyuxjp1UVMxB6VDBZ
+        Kpe/RsGFuULyUBnrioXlGatJXA==
+X-Google-Smtp-Source: ALg8bN7vz+/u+W+jJ2DNkCAYXBu4fCVPC5CljVJMWE1VJXJ+LK0Rk8WDuiFTH9C/UMgp/1G3juG8aw==
+X-Received: by 2002:a62:d005:: with SMTP id p5mr18487606pfg.175.1548599054561;
+        Sun, 27 Jan 2019 06:24:14 -0800 (PST)
 Received: from localhost.localdomain (36-239-222-123.dynamic-ip.hinet.net. [36.239.222.123])
-        by smtp.gmail.com with ESMTPSA id f67sm46757219pfc.141.2019.01.27.06.24.06
+        by smtp.gmail.com with ESMTPSA id f67sm46757219pfc.141.2019.01.27.06.24.11
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 06:24:09 -0800 (PST)
+        Sun, 27 Jan 2019 06:24:13 -0800 (PST)
 From:   Axel Lin <axel.lin@ingics.com>
 To:     Mark Brown <broonie@kernel.org>
 Cc:     Chris Zhong <zyw@rock-chips.com>,
@@ -61,100 +62,44 @@ Cc:     Chris Zhong <zyw@rock-chips.com>,
         Elaine Zhang <zhangqing@rock-chips.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
         linux-kernel@vger.kernel.org, Axel Lin <axel.lin@ingics.com>
-Subject: [PATCH 1/2] regulator: rk808: Constify regulator_ops
-Date:   Sun, 27 Jan 2019 22:23:43 +0800
-Message-Id: <20190127142344.26612-1-axel.lin@ingics.com>
+Subject: [PATCH 2/2] regulator: rk808: Update module description to include RK805
+Date:   Sun, 27 Jan 2019 22:23:44 +0800
+Message-Id: <20190127142344.26612-2-axel.lin@ingics.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20190127142344.26612-1-axel.lin@ingics.com>
+References: <20190127142344.26612-1-axel.lin@ingics.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-While at it, also fix indent for rk805_reg_ops and rk805_switch_ops.
+This driver also supports RK805 now.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 ---
- drivers/regulator/rk808-regulator.c | 42 ++++++++++++++---------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/regulator/rk808-regulator.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
-index 213b68743cc8..c18ed632c95d 100644
+index c18ed632c95d..08578f6d737d 100644
 --- a/drivers/regulator/rk808-regulator.c
 +++ b/drivers/regulator/rk808-regulator.c
-@@ -363,28 +363,28 @@ static int rk808_set_suspend_disable(struct regulator_dev *rdev)
- 				  rdev->desc->enable_mask);
- }
+@@ -1,5 +1,5 @@
+ /*
+- * Regulator driver for Rockchip RK808/RK818
++ * Regulator driver for Rockchip RK805/RK808/RK818
+  *
+  * Copyright (c) 2014, Fuzhou Rockchip Electronics Co., Ltd
+  *
+@@ -796,7 +796,7 @@ static struct platform_driver rk808_regulator_driver = {
  
--static struct regulator_ops rk805_reg_ops = {
--		.list_voltage           = regulator_list_voltage_linear,
--		.map_voltage            = regulator_map_voltage_linear,
--		.get_voltage_sel        = regulator_get_voltage_sel_regmap,
--		.set_voltage_sel        = regulator_set_voltage_sel_regmap,
--		.enable                 = regulator_enable_regmap,
--		.disable                = regulator_disable_regmap,
--		.is_enabled             = regulator_is_enabled_regmap,
--		.set_suspend_voltage    = rk808_set_suspend_voltage,
--		.set_suspend_enable     = rk805_set_suspend_enable,
--		.set_suspend_disable    = rk805_set_suspend_disable,
-+static const struct regulator_ops rk805_reg_ops = {
-+	.list_voltage           = regulator_list_voltage_linear,
-+	.map_voltage            = regulator_map_voltage_linear,
-+	.get_voltage_sel        = regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel        = regulator_set_voltage_sel_regmap,
-+	.enable                 = regulator_enable_regmap,
-+	.disable                = regulator_disable_regmap,
-+	.is_enabled             = regulator_is_enabled_regmap,
-+	.set_suspend_voltage    = rk808_set_suspend_voltage,
-+	.set_suspend_enable     = rk805_set_suspend_enable,
-+	.set_suspend_disable    = rk805_set_suspend_disable,
- };
+ module_platform_driver(rk808_regulator_driver);
  
--static struct regulator_ops rk805_switch_ops = {
--		.enable                 = regulator_enable_regmap,
--		.disable                = regulator_disable_regmap,
--		.is_enabled             = regulator_is_enabled_regmap,
--		.set_suspend_enable     = rk805_set_suspend_enable,
--		.set_suspend_disable    = rk805_set_suspend_disable,
-+static const struct regulator_ops rk805_switch_ops = {
-+	.enable                 = regulator_enable_regmap,
-+	.disable                = regulator_disable_regmap,
-+	.is_enabled             = regulator_is_enabled_regmap,
-+	.set_suspend_enable     = rk805_set_suspend_enable,
-+	.set_suspend_disable    = rk805_set_suspend_disable,
- };
- 
--static struct regulator_ops rk808_buck1_2_ops = {
-+static const struct regulator_ops rk808_buck1_2_ops = {
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
- 	.get_voltage_sel	= rk808_buck1_2_get_voltage_sel_regmap,
-@@ -399,7 +399,7 @@ static struct regulator_ops rk808_buck1_2_ops = {
- 	.set_suspend_disable	= rk808_set_suspend_disable,
- };
- 
--static struct regulator_ops rk808_reg_ops = {
-+static const struct regulator_ops rk808_reg_ops = {
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -412,7 +412,7 @@ static struct regulator_ops rk808_reg_ops = {
- 	.set_suspend_disable	= rk808_set_suspend_disable,
- };
- 
--static struct regulator_ops rk808_reg_ops_ranges = {
-+static const struct regulator_ops rk808_reg_ops_ranges = {
- 	.list_voltage		= regulator_list_voltage_linear_range,
- 	.map_voltage		= regulator_map_voltage_linear_range,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -425,7 +425,7 @@ static struct regulator_ops rk808_reg_ops_ranges = {
- 	.set_suspend_disable	= rk808_set_suspend_disable,
- };
- 
--static struct regulator_ops rk808_switch_ops = {
-+static const struct regulator_ops rk808_switch_ops = {
- 	.enable			= regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
- 	.is_enabled		= regulator_is_enabled_regmap,
+-MODULE_DESCRIPTION("regulator driver for the RK808/RK818 series PMICs");
++MODULE_DESCRIPTION("regulator driver for the RK805/RK808/RK818 series PMICs");
+ MODULE_AUTHOR("Chris Zhong <zyw@rock-chips.com>");
+ MODULE_AUTHOR("Zhang Qing <zhangqing@rock-chips.com>");
+ MODULE_AUTHOR("Wadim Egorov <w.egorov@phytec.de>");
 -- 
 2.17.1
 
