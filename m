@@ -2,92 +2,155 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C1D5C282C0
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:34:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D419C282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:37:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 561A2214C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:34:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 362A3214C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 08:37:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548578251;
+	bh=l1qJ1O18UAJWbwMNUwkeNBZcDHoZC2pV/59uHdjfI3Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=EBWbK1w4cOYoSd19c289LS6NUQUHgSOuPhpfOpj0IM6KT9EbLA9yNCYCT1bk7yFJ8
+	 hcsq9qznDxGKS7AUf4eWct7A7U/24KjgZpgnQPvihtP5Mw/FafFfIeEMLtChIIw+De
+	 sIZSqC8S6VuQq9ikg+CR7CWlV3e17gU6ypgEznlY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfA0IeJ (ORCPT
+        id S1726661AbfA0Ih3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 03:34:09 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:55287 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726327AbfA0IeI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 03:34:08 -0500
-Received: from 61-220-137-37.hinet-ip.hinet.net ([61.220.137.37] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <kai.heng.feng@canonical.com>)
-        id 1gnftE-0002dU-6L; Sun, 27 Jan 2019 08:34:04 +0000
-From:   Kai-Heng Feng <kai.heng.feng@canonical.com>
-To:     marcel@holtmann.org, johan.hedberg@gmail.com
-Cc:     drake@endlessm.com, linux-bluetooth@vger.kernel.org,
+        Sun, 27 Jan 2019 03:37:29 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40030 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726327AbfA0Ih2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 03:37:28 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 31A37AE3B;
+        Sun, 27 Jan 2019 08:37:26 +0000 (UTC)
+Date:   Sun, 27 Jan 2019 09:37:24 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Cc:     Arkadiusz =?utf-8?Q?Mi=C5=9Bkiewicz?= <a.miskiewicz@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
+        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
+        Roman Gushchin <guro@fb.com>,
+        Johannes Weiner <hannes@cmpxchg.org>,
         linux-kernel@vger.kernel.org,
-        Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        stable@vger.kernel.org
-Subject: [PATCH v2] Bluetooth: btrtl: Restore old logic to assume firmware is already loaded
-Date:   Sun, 27 Jan 2019 16:33:59 +0800
-Message-Id: <20190127083359.17833-1-kai.heng.feng@canonical.com>
-X-Mailer: git-send-email 2.17.1
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm <linux-mm@kvack.org>
+Subject: Re: [PATCH v2] oom, oom_reaper: do not enqueue same task twice
+Message-ID: <20190127083724.GA18811@dhcp22.suse.cz>
+References: <1cdbef13-564d-61a6-95f4-579d2cad243d@gmail.com>
+ <20190125163731.GJ50184@devbig004.ftw2.facebook.com>
+ <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
+ <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
+ <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
+ <72aa8863-a534-b8df-6b9e-f69cf4dd5c4d@i-love.sakura.ne.jp>
+ <33a07810-6dbc-36be-5bb6-a279773ccf69@i-love.sakura.ne.jp>
+ <34e97b46-0792-cc66-e0f2-d72576cdec59@i-love.sakura.ne.jp>
+ <2b0c7d6c-c58a-da7d-6f0a-4900694ec2d3@gmail.com>
+ <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Realtek bluetooth may not work after reboot:
-[   12.446130] Bluetooth: hci0: RTL: rtl: unknown IC info, lmp subver a99e, hci rev 826c, hci ver 0008
+On Sat 26-01-19 22:10:52, Tetsuo Handa wrote:
+[...]
+> >From 9c9e935fc038342c48461aabca666f1b544e32b1 Mon Sep 17 00:00:00 2001
+> From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+> Date: Sat, 26 Jan 2019 21:57:25 +0900
+> Subject: [PATCH v2] oom, oom_reaper: do not enqueue same task twice
+> 
+> Arkadiusz reported that enabling memcg's group oom killing causes
+> strange memcg statistics where there is no task in a memcg despite
+> the number of tasks in that memcg is not 0. It turned out that there
+> is a bug in wake_oom_reaper() which allows enqueuing same task twice
+> which makes impossible to decrease the number of tasks in that memcg
+> due to a refcount leak.
+> 
+> This bug existed since the OOM reaper became invokable from
+> task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
+> but memcg's group oom killing made it easier to trigger this bug by
+> calling wake_oom_reaper() on the same task from one out_of_memory()
+> request.
+> 
+> Fix this bug using an approach used by commit 855b018325737f76
+> ("oom, oom_reaper: disable oom_reaper for oom_kill_allocating_task").
+> As a side effect of this patch, this patch also avoids enqueuing
+> multiple threads sharing memory via task_will_free_mem(current) path.
 
-This is a regression introduced by commit 26503ad25de8 ("Bluetooth:
-btrtl: split the device initialization into smaller parts"). The new
-logic errors out early when no matching IC info can be found, in this
-case it means the firmware is already loaded.
+Thanks for the analysis and the patch. This should work, I believe but
+I am not really thrilled to overload the meaning of the MMF_UNSTABLE.
+The flag is meant to signal accessing address space is not stable and it
+is not aimed to synchronize oom reaper with the oom path.
 
-So let's assume the firmware is already loaded when we can't find
-matching IC info, like the old logic did.
+Can we make use mark_oom_victim directly? I didn't get to think that
+through right now so I might be missing something but this should
+prevent repeating queueing as well.
 
-Bugzilla: https://bugzilla.kernel.org/show_bug.cgi?id=201921
-Fixes: 26503ad25de8 ("Bluetooth: btrtl: split the device initialization into smaller parts")
-Cc: stable@vger.kernel.org # 4.19+
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
----
- drivers/bluetooth/btrtl.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/bluetooth/btrtl.c b/drivers/bluetooth/btrtl.c
-index 41405de27d66..c91bba00df4e 100644
---- a/drivers/bluetooth/btrtl.c
-+++ b/drivers/bluetooth/btrtl.c
-@@ -552,10 +552,9 @@ struct btrtl_device_info *btrtl_initialize(struct hci_dev *hdev,
- 					    hdev->bus);
+diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+index f0e8cd9edb1a..dac4f2197e53 100644
+--- a/mm/oom_kill.c
++++ b/mm/oom_kill.c
+@@ -690,7 +690,7 @@ static void mark_oom_victim(struct task_struct *tsk)
+ 	WARN_ON(oom_killer_disabled);
+ 	/* OOM killer might race with memcg OOM */
+ 	if (test_and_set_tsk_thread_flag(tsk, TIF_MEMDIE))
+-		return;
++		return false;
  
- 	if (!btrtl_dev->ic_info) {
--		rtl_dev_err(hdev, "rtl: unknown IC info, lmp subver %04x, hci rev %04x, hci ver %04x",
-+		rtl_dev_info(hdev, "rtl: unknown IC info, lmp subver %04x, hci rev %04x, hci ver %04x",
- 			    lmp_subver, hci_rev, hci_ver);
--		ret = -EINVAL;
--		goto err_free;
-+		return btrtl_dev;
+ 	/* oom_mm is bound to the signal struct life time. */
+ 	if (!cmpxchg(&tsk->signal->oom_mm, NULL, mm)) {
+@@ -707,6 +707,8 @@ static void mark_oom_victim(struct task_struct *tsk)
+ 	__thaw_task(tsk);
+ 	atomic_inc(&oom_victims);
+ 	trace_mark_victim(tsk->pid);
++
++	return true;
+ }
+ 
+ /**
+@@ -873,7 +875,7 @@ static void __oom_kill_process(struct task_struct *victim)
+ 	 * reserves from the user space under its control.
+ 	 */
+ 	do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
+-	mark_oom_victim(victim);
++	can_oom_reap = mark_oom_victim(victim);
+ 	pr_err("Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB\n",
+ 		task_pid_nr(victim), victim->comm, K(victim->mm->total_vm),
+ 		K(get_mm_counter(victim->mm, MM_ANONPAGES)),
+@@ -954,8 +956,8 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+ 	 */
+ 	task_lock(p);
+ 	if (task_will_free_mem(p)) {
+-		mark_oom_victim(p);
+-		wake_oom_reaper(p);
++		if (mark_oom_victim(p)
++			wake_oom_reaper(p);
+ 		task_unlock(p);
+ 		put_task_struct(p);
+ 		return;
+@@ -1084,8 +1086,8 @@ bool out_of_memory(struct oom_control *oc)
+ 	 * quickly exit and free its memory.
+ 	 */
+ 	if (task_will_free_mem(current)) {
+-		mark_oom_victim(current);
+-		wake_oom_reaper(current);
++		if (mark_oom_victim(current))
++			wake_oom_reaper(current);
+ 		return true;
  	}
  
- 	if (btrtl_dev->ic_info->has_rom_version) {
-@@ -610,6 +609,11 @@ int btrtl_download_firmware(struct hci_dev *hdev,
- 	 * standard btusb. Once that firmware is uploaded, the subver changes
- 	 * to a different value.
- 	 */
-+	if (!btrtl_dev->ic_info) {
-+		rtl_dev_info(hdev, "rtl: assuming no firmware upload needed\n");
-+		return 0;
-+	}
-+
- 	switch (btrtl_dev->ic_info->lmp_subver) {
- 	case RTL_ROM_LMP_8723A:
- 	case RTL_ROM_LMP_3499:
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
