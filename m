@@ -2,182 +2,421 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 190B3C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:57:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5467FC282CC
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 15:03:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6FC2214C6
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 14:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F4E221736
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 15:03:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548601437;
+	bh=ENGOCHW7hGgblzm9bCcg3uNAeM4F4IFlpmUZ1c0Qvm0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=ivn3gXJrUC+B900iqzQD5/eg0DO246xE4YZj6ti9L+Dk3ZMhm6+IuMXBFAdhEXfZG
+	 V8TurnRLCU/tPQfAhVgEP15VSnHkJzwhk4prOelAQOsdYCA98MxDwKT+gis3eR/rfE
+	 HrGEHkKIC+ku+w3y1XY/AUmPnRSDSCjG4oOOJdYM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726683AbfA0O5r (ORCPT
+        id S1726754AbfA0PD4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 09:57:47 -0500
-Received: from www262.sakura.ne.jp ([202.181.97.72]:33935 "EHLO
-        www262.sakura.ne.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbfA0O5q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 09:57:46 -0500
-Received: from fsav102.sakura.ne.jp (fsav102.sakura.ne.jp [27.133.134.229])
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id x0REvilp012274;
-        Sun, 27 Jan 2019 23:57:44 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Received: from www262.sakura.ne.jp (202.181.97.72)
- by fsav102.sakura.ne.jp (F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp);
- Sun, 27 Jan 2019 23:57:44 +0900 (JST)
-X-Virus-Status: clean(F-Secure/fsigk_smtp/530/fsav102.sakura.ne.jp)
-Received: from [192.168.1.8] (softbank126126163036.bbtec.net [126.126.163.36])
-        (authenticated bits=0)
-        by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id x0REvhfx012270
-        (version=TLSv1.2 cipher=AES256-SHA bits=256 verify=NO);
-        Sun, 27 Jan 2019 23:57:44 +0900 (JST)
-        (envelope-from penguin-kernel@i-love.sakura.ne.jp)
-Subject: [PATCH v3] oom, oom_reaper: do not enqueue same task twice
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     =?UTF-8?Q?Arkadiusz_Mi=c5=9bkiewicz?= <a.miskiewicz@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        Aleksa Sarai <asarai@suse.de>, Jay Kamat <jgkamat@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm <linux-mm@kvack.org>
-References: <a95d004a-4358-7efc-6d21-12aac4411b32@gmail.com>
- <480296c4-ed7a-3265-e84a-298e42a0f1d5@I-love.SAKURA.ne.jp>
- <6da6ca69-5a6e-a9f6-d091-f89a8488982a@gmail.com>
- <72aa8863-a534-b8df-6b9e-f69cf4dd5c4d@i-love.sakura.ne.jp>
- <33a07810-6dbc-36be-5bb6-a279773ccf69@i-love.sakura.ne.jp>
- <34e97b46-0792-cc66-e0f2-d72576cdec59@i-love.sakura.ne.jp>
- <2b0c7d6c-c58a-da7d-6f0a-4900694ec2d3@gmail.com>
- <1d161137-55a5-126f-b47e-b2625bd798ca@i-love.sakura.ne.jp>
- <20190127083724.GA18811@dhcp22.suse.cz>
- <ec0d0580-a2dd-f329-9707-0cb91205a216@i-love.sakura.ne.jp>
- <20190127114021.GB18811@dhcp22.suse.cz>
-From:   Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
-Message-ID: <e865a044-2c10-9858-f4ef-254bc71d6cc2@i-love.sakura.ne.jp>
-Date:   Sun, 27 Jan 2019 23:57:38 +0900
-User-Agent: Mozilla/5.0 (Windows NT 6.3; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Sun, 27 Jan 2019 10:03:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33830 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726511AbfA0PD4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 10:03:56 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6E86120855;
+        Sun, 27 Jan 2019 15:03:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548601434;
+        bh=ENGOCHW7hGgblzm9bCcg3uNAeM4F4IFlpmUZ1c0Qvm0=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LcTJmhxpVcB+u3Uak4/p/eOGuhJyhWdvVbm2fjQzc4/NemiyCESZSBpy3ts/NiaKJ
+         S8y/NBzvw7jVxxQZzODsUAW5eGfpMMwYUTn9T83Wjt4SMrQRtZlBVFnpheDGuyNEAe
+         Ih72CvsGefia6XleVe7T2gdcN89lXBXdgZQEkl7c=
+Date:   Sun, 27 Jan 2019 15:03:49 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
+Cc:     Alexandru Ardelean <ardeleanalex@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        alexandru.ardelean@analog.com, linux-iio@vger.kernel.org
+Subject: Re: [PATCH v2] iio:dac:ti-dac7612: Add driver for Texas Instruments
+ DAC7612
+Message-ID: <20190127150349.304fcd7a@archlinux>
+In-Reply-To: <CAPybu_2pk9twU6Wmxng0jcdZyN_1L0jWPwDB266Cs3ZwyMmFLw@mail.gmail.com>
+References: <20190125100055.13836-1-ricardo@ribalda.com>
+        <20190126204155.6fbb9512@archlinux>
+        <CAPybu_2pk9twU6Wmxng0jcdZyN_1L0jWPwDB266Cs3ZwyMmFLw@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.3 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190127114021.GB18811@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019/01/27 20:40, Michal Hocko wrote:
-> On Sun 27-01-19 19:56:06, Tetsuo Handa wrote:
->> On 2019/01/27 17:37, Michal Hocko wrote:
->>> Thanks for the analysis and the patch. This should work, I believe but
->>> I am not really thrilled to overload the meaning of the MMF_UNSTABLE.
->>> The flag is meant to signal accessing address space is not stable and it
->>> is not aimed to synchronize oom reaper with the oom path.
->>>
->>> Can we make use mark_oom_victim directly? I didn't get to think that
->>> through right now so I might be missing something but this should
->>> prevent repeating queueing as well.
->>
->> Yes, TIF_MEMDIE would work. But you are planning to remove TIF_MEMDIE. Also,
->> TIF_MEMDIE can't avoid enqueuing many threads sharing mm_struct to the OOM
->> reaper. There is no need to enqueue many threads sharing mm_struct because
->> the OOM reaper acts on mm_struct rather than task_struct. Thus, enqueuing
->> based on per mm_struct flag sounds better, but MMF_OOM_VICTIM cannot be
->> set from wake_oom_reaper(victim) because victim's mm might be already inside
->> exit_mmap() when wake_oom_reaper(victim) is called after task_unlock(victim).
->>
->> We could reintroduce MMF_OOM_KILLED in commit 855b018325737f76
->> ("oom, oom_reaper: disable oom_reaper for oom_kill_allocating_task")
->> if you don't like overloading the meaning of the MMF_UNSTABLE. But since
->> MMF_UNSTABLE is available in Linux 4.9+ kernels (which covers all LTS stable
->> versions with the OOM reaper support), we can temporarily use MMF_UNSTABLE
->> for ease of backporting.
+On Sat, 26 Jan 2019 22:34:50 +0100
+Ricardo Ribalda Delgado <ricardo@ribalda.com> wrote:
+
+> HI Jonathan
 > 
-> I agree that a per-mm state is more optimal but I would rather fix the
-> issue in a clear way first and only then think about an optimization on
-> top. Queueing based on mark_oom_victim (whatever that uses to guarantee
-> the victim is marked atomically and only once) makes sense from the
-> conceptual point of view and it makes a lot of sense to start from
-> there. MMF_UNSTABLE has a completely different purpose. So unless you
-> see a correctness issue with that then I would rather go that way.
+> Thanks for your review. I will make the changes and send it back to
+> you after testing it on Monday on real hardware.
 > 
+> Until then I have pushed my changes to
+> https://github.com/ribalda/linux/tree/ribalda-iio-v3 in case you want
+> to see it before I send it to the list.
+> (I am still missing the dt-bindings)
+> 
+> Some comments inline.
+Replies inline.
 
-Then, adding a per mm_struct flag is better. I don't see the difference
-between reusing MMF_UNSTABLE as a flag for whether wake_oom_reaper() for
-that victim's memory was already called (what you think as an overload)
-and reusing TIF_MEMDIE as a flag for whether wake_oom_reaper() for that
-victim thread can be called (what I think as an overload). We want to
-remove TIF_MEMDIE, and we can actually remove TIF_MEMDIE if you stop
-whack-a-mole "can you observe it in real workload/program?" game.
-I don't see a correctness issue with TIF_MEMDIE but I don't want to go
-TIF_MEMDIE way.
+> 
+> Best regards!
+> 
+> On Sat, Jan 26, 2019 at 9:42 PM Jonathan Cameron <jic23@kernel.org> wrote:
+> >
+> > On Fri, 25 Jan 2019 11:00:55 +0100
+> > Ricardo Ribalda Delgado <ricardo@ribalda.com> wrote:
+> >  
+> > > It is a driver for Texas Instruments Dual, 12-Bit Serial Input
+> > > Digital-to-Analog Converter.
+> > >
+> > > Datasheet of this chip:
+> > > http://www.ti.com/lit/ds/sbas106/sbas106.pdf
+> > >
+> > > Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>  
+> > Hi Ricardo,
+> >
+> > Various bits and pieces inline.
+> >
+> > Jonathan
+> >  
+> > > ---
+> > >
+> > > v2: Fix range
+> > >  MAINTAINERS                  |   6 ++
+> > >  drivers/iio/dac/Kconfig      |  10 +++
+> > >  drivers/iio/dac/Makefile     |   1 +
+> > >  drivers/iio/dac/ti-dac7612.c | 169 +++++++++++++++++++++++++++++++++++
+> > >  4 files changed, 186 insertions(+)
+> > >  create mode 100644 drivers/iio/dac/ti-dac7612.c
+> > >
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index d039f66a5cef..30ba5435906b 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -14877,6 +14877,12 @@ F:   Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+> > >  F:   drivers/clk/keystone/sci-clk.c
+> > >  F:   drivers/reset/reset-ti-sci.c
+> > >
+> > > +Texas Instruments' DAC7612 DAC Driver
+> > > +M:   Ricardo Ribalda <ricardo@ribalda.com>
+> > > +L:   linux-iio@vger.kernel.org
+> > > +S:   Supported
+> > > +F:   drivers/iio/dac/ti-dac7612.c
+> > > +
+> > >  THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+> > >  M:   Hans Verkuil <hverkuil@xs4all.nl>
+> > >  L:   linux-media@vger.kernel.org
+> > > diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> > > index f28daf67db6a..fbef9107acad 100644
+> > > --- a/drivers/iio/dac/Kconfig
+> > > +++ b/drivers/iio/dac/Kconfig
+> > > @@ -375,6 +375,16 @@ config TI_DAC7311
+> > >
+> > >         If compiled as a module, it will be called ti-dac7311.
+> > >
+> > > +config TI_DAC7612
+> > > +     tristate "Texas Instruments 12-bit 2-channel DAC driver"
+> > > +     depends on SPI_MASTER && GPIOLIB
+> > > +     help
+> > > +       Driver for the Texas Instruments DAC7612, DAC7612U, DAC7612UB
+> > > +       The driver hand drive the load pin automatically, otherwise
+> > > +       it needs to be toggled manually.  
+> >
+> > Given the driver doesn't load without that pin, do we need to give
+> > the otherwise?  I would drop this comment entirely.  
+> 
+> I am probing the gpio with devm_gpiod_get_optional() so the driver can
+> load without the pin
+Hmm. I thought that would blow up when you tried to set the output but
+it seems not as the gpiod function just returns without doing anything.
 
+So is this a an actual usecase you have?  My inclination would be to just
+make it non optional otherwise.  The thought of relying on a random pulse
+from another device doesn't seem like a good idea to me.
 
+> 
+> >  
+> > > +
+> > > +       If compiled as a module, it will be called ti-dac7612.
+> > > +
+> > >  config VF610_DAC
+> > >       tristate "Vybrid vf610 DAC driver"
+> > >       depends on OF
+> > > diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+> > > index f0a37c93de8e..1369fa1d2f0e 100644
+> > > --- a/drivers/iio/dac/Makefile
+> > > +++ b/drivers/iio/dac/Makefile
+> > > @@ -41,4 +41,5 @@ obj-$(CONFIG_STM32_DAC) += stm32-dac.o
+> > >  obj-$(CONFIG_TI_DAC082S085) += ti-dac082s085.o
+> > >  obj-$(CONFIG_TI_DAC5571) += ti-dac5571.o
+> > >  obj-$(CONFIG_TI_DAC7311) += ti-dac7311.o
+> > > +obj-$(CONFIG_TI_DAC7612) += ti-dac7612.o
+> > >  obj-$(CONFIG_VF610_DAC) += vf610_dac.o
+> > > diff --git a/drivers/iio/dac/ti-dac7612.c b/drivers/iio/dac/ti-dac7612.c
+> > > new file mode 100644
+> > > index 000000000000..278406f69e0c
+> > > --- /dev/null
+> > > +++ b/drivers/iio/dac/ti-dac7612.c
+> > > @@ -0,0 +1,169 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * DAC7612 Dual, 12-Bit Serial input Digital-to-Analog Converter
+> > > + *
+> > > + * Copyright 2019 Qtechnology A/S
+> > > + * 2019 Ricardo Ribalda <ricardo@ribalda.com>
+> > > + *
+> > > + * Licensed under the GPL-2.
+> > > + */
+> > > +#include <linux/kernel.h>
+> > > +#include <linux/module.h>
+> > > +#include <linux/spi/spi.h>
+> > > +#include <linux/gpio/consumer.h>
+> > > +#include <linux/iio/iio.h>
+> > > +
+> > > +#define NUM_CHANS 2
+> > > +#define RESOLUTION 12  
+> > Please prefix any naming that is generic like this with
+> > the driver name.  Avoids potential redefined clashes in the future.
+> > Where they are 'real numbers' rather than Magic numbers I would
+> > generally look at using the actual number rather than a define.
+> >  
+> > > +
+> > > +struct dac7612 {
+> > > +     struct spi_device *spi;
+> > > +     struct gpio_desc *nld;
+> > > +     uint16_t cache[NUM_CHANS];
+> > > +};
+> > > +
+> > > +static int dac7612_cmd_single(struct dac7612 *priv, int channel, u16 val)
+> > > +{
+> > > +     uint8_t buffer[2];
+> > > +     int ret;
+> > > +
+> > > +     if (channel >= NUM_CHANS)  
+> > Is there any way this can happen?  Seems a little over paranoid.  
+> > > +             return -EINVAL;
+> > > +
+> > > +     buffer[0] = BIT(5) | (channel << 4) | (val >> 8);  
+> > BIT(5) is a magic number so should probably come from a define
+> > as should the shifts of the other parts.
+> >  
+> > > +     buffer[1] = val & 0xff;
+> > > +
+> > > +     priv->cache[channel] = val;
+> > > +
+> > > +     ret = spi_write(priv->spi, buffer, sizeof(buffer));  
+> >
+> > spi write can potentially do a dma transfer so it needs
+> > a dma safe buffer.  This one isn't as it is on the stack.
+> > Given it is a moderately fast path, best option is to put the
+> > buffer in priv and use the __cacheline_aligned trick (plus the
+> > fact private data is already cacheline aligned) to get it into
+> > it's own cacheline.  Wofram Sang's OSS talk on i2c dma is a good
+> > tutorial on this and is on youtube if you have time.
+> >
+> > https://www.youtube.com/watch?v=JDwaMClvV-s
+> >  
+> > > +     if (ret)
+> > > +             return ret;
+> > > +
+> > > +     gpiod_set_value(priv->nld, 0);
+> > > +     gpiod_set_value(priv->nld, 1);
+> > > +
+> > > +     return 0;
+> > > +}
+> > > +
+> > > +#define dac7612_CHANNEL(chan, name) {                                \
+> > > +     .type = IIO_VOLTAGE,                                    \
+> > > +     .channel = (chan),                                      \
+> > > +     .address = (chan),                                      \  
+> > Not used, so don't set it.
+> >  
+> > > +     .indexed = true,                                        \  
+> > These are bit fields, so whilst this works, = 1 is more conventional.
+> >  
+> > > +     .output = true,                                         \
+> > > +     .datasheet_name = name,                                 \
+> > > +     .info_mask_separate = BIT(IIO_CHAN_INFO_RAW),           \
+> > > +     .info_mask_shared_by_type = BIT(IIO_CHAN_INFO_SCALE),   \
+> > > +     .scan_type = {                                          \
+> > > +                     .sign = 'u',                            \
+> > > +                     .realbits = RESOLUTION,                 \
+> > > +                     .storagebits = RESOLUTION,              \  
+> > No need to provide scan_type as we don't have buffered output in
+> > mainline.  Also this would be wrong as storagebits needs to be
+> > 8/16/32/64 etc.
+> >
+> > Would prefer a straight forward value like RESOLUTION was just
+> > expressed as a number.
+> >  
+> > > +     },                                                      \
+> > > +}
+> > > +
+> > > +static const struct iio_chan_spec dac7612_channels[] = {
+> > > +     dac7612_CHANNEL(0, "OUTA"),
+> > > +     dac7612_CHANNEL(1, "OUTB"),
+> > > +};
+> > > +
+> > > +static int dac7612_read_raw(struct iio_dev *iio_dev,
+> > > +                         const struct iio_chan_spec *chan,
+> > > +                         int *val, int *val2, long mask)
+> > > +{
+> > > +     struct dac7612 *priv;
+> > > +
+> > > +     switch (mask) {
+> > > +     case IIO_CHAN_INFO_RAW:
+> > > +             priv = iio_priv(iio_dev);
+> > > +             *val = priv->cache[chan->channel];
+> > > +             return IIO_VAL_INT;
+> > > +
+> > > +     case IIO_CHAN_INFO_SCALE:
+> > > +             *val = 1000000;  
+> >
+> > This makes me wonder.  The units of voltage are millivolts, so is
+> > raw value * 1000000 = value in mv?  
+> 
+> I tried using IIO_VAL_FRACTIONAL, with val = 1 and val2=1000000, and
+> it only returned -EINVAL.
 
-From 9c9e935fc038342c48461aabca666f1b544e32b1 Mon Sep 17 00:00:00 2001
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Date: Sun, 27 Jan 2019 23:51:37 +0900
-Subject: [PATCH v3] oom, oom_reaper: do not enqueue same task twice
+That is odd and definitely worth chasing down the reason.
 
-Arkadiusz reported that enabling memcg's group oom killing causes
-strange memcg statistics where there is no task in a memcg despite
-the number of tasks in that memcg is not 0. It turned out that there
-is a bug in wake_oom_reaper() which allows enqueuing same task twice
-which makes impossible to decrease the number of tasks in that memcg
-due to a refcount leak.
-
-This bug existed since the OOM reaper became invokable from
-task_will_free_mem(current) path in out_of_memory() in Linux 4.7,
-but memcg's group oom killing made it easier to trigger this bug by
-calling wake_oom_reaper() on the same task from one out_of_memory()
-request.
-
-Fix this bug using an approach used by commit 855b018325737f76
-("oom, oom_reaper: disable oom_reaper for oom_kill_allocating_task").
-As a side effect of this patch, this patch also avoids enqueuing
-multiple threads sharing memory via task_will_free_mem(current) path.
-
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: Arkadiusz Miśkiewicz <arekm@maven.pl>
-Tested-by: Arkadiusz Miśkiewicz <arekm@maven.pl>
-Fixes: af8e15cc85a25315 ("oom, oom_reaper: do not enqueue task if it is on the oom_reaper_list head")
----
- include/linux/sched/coredump.h | 1 +
- mm/oom_kill.c                  | 4 ++--
- 2 files changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/include/linux/sched/coredump.h b/include/linux/sched/coredump.h
-index ec912d0..ecdc654 100644
---- a/include/linux/sched/coredump.h
-+++ b/include/linux/sched/coredump.h
-@@ -71,6 +71,7 @@ static inline int get_dumpable(struct mm_struct *mm)
- #define MMF_HUGE_ZERO_PAGE	23      /* mm has ever used the global huge zero page */
- #define MMF_DISABLE_THP		24	/* disable THP for all VMAs */
- #define MMF_OOM_VICTIM		25	/* mm is the oom victim */
-+#define MMF_OOM_REAP_QUEUED	26	/* mm was queued for oom_reaper */
- #define MMF_DISABLE_THP_MASK	(1 << MMF_DISABLE_THP)
- 
- #define MMF_INIT_MASK		(MMF_DUMPABLE_MASK | MMF_DUMP_FILTER_MASK |\
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index f0e8cd9..059e617 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -647,8 +647,8 @@ static int oom_reaper(void *unused)
- 
- static void wake_oom_reaper(struct task_struct *tsk)
- {
--	/* tsk is already queued? */
--	if (tsk == oom_reaper_list || tsk->oom_reaper_list)
-+	/* mm is already queued? */
-+	if (test_and_set_bit(MMF_OOM_REAP_QUEUED, &tsk->signal->oom_mm->flags))
- 		return;
- 
- 	get_task_struct(tsk);
--- 
-1.8.3.1
+> Then I discovered the PLUS_MICRO and I want to remember that cating
+> the range sysfs file returned:
+> 0,000001, but I will try again on Monday.
+> 
+> >
+> > That would make this a very high voltage device.
+> > See Documentation/ABI/testing/sysfs-bus-iio* for
+> > IIO ABI documentation.
+> >  
+> > > +             return IIO_VAL_INT_PLUS_MICRO;
+> > > +
+> > > +     default:
+> > > +             return -EINVAL;
+> > > +     }
+> > > +}
+> > > +
+> > > +static int dac7612_write_raw(struct iio_dev *iio_dev,
+> > > +                          const struct iio_chan_spec *chan,
+> > > +                          int val, int val2, long mask)
+> > > +{
+> > > +     struct dac7612 *priv;  
+> >
+> > struct dac7612 *priv = iio_priv(iio_dev);
+> >
+> > (it's just macro magic to get the right point so normally considered
+> > fine to be called like this).
+> >
+> >  
+> > > +     int ret;
+> > > +
+> > > +     if (mask != IIO_CHAN_INFO_RAW)
+> > > +             return -EINVAL;
+> > > +
+> > > +     if ((val >= BIT(RESOLUTION)) || val < 0)
+> > > +             return -EINVAL;  
+> >
+> > As not providing a write_fmt function (which is fine)
+> > should also sanity check that val2 is 0.
+> >  
+> > > +
+> > > +     priv = iio_priv(iio_dev);
+> > > +     if (val == priv->cache[chan->channel])
+> > > +             return 0;
+> > > +
+> > > +     mutex_lock(&iio_dev->mlock);
+> > > +     ret = dac7612_cmd_single(priv, chan->channel, val);
+> > > +     mutex_unlock(&iio_dev->mlock);
+> > > +
+> > > +     return ret;
+> > > +}
+> > > +
+> > > +static const struct iio_info dac7612_info = {
+> > > +     .read_raw = dac7612_read_raw,
+> > > +     .write_raw = dac7612_write_raw,
+> > > +};
+> > > +
+> > > +static int dac7612_probe(struct spi_device *spi)
+> > > +{
+> > > +     struct iio_dev *iio_dev;
+> > > +     struct dac7612 *priv;
+> > > +     int i;
+> > > +     int ret;
+> > > +
+> > > +     iio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*priv));
+> > > +     if (!iio_dev)
+> > > +             return -ENOMEM;
+> > > +
+> > > +     priv = iio_priv(iio_dev);
+> > > +     priv->nld = devm_gpiod_get_optional(&spi->dev, "nLD", GPIOD_OUT_HIGH);  
+> >
+> > This isn't a particularly standard gpio name.  Hence this driver definitely
+> > needs a DT binding doc (remember to cc dt list and maintainers).  Also
+> > this should almost certainly be prefixed with a vendor prefix.
+> >
+> > It's also not the name I'm seeing on the datasheet, so needs some justifying
+> > comments.
+> >  
+> > > +     if (IS_ERR(priv->nld))
+> > > +             return PTR_ERR(priv->nld);
+> > > +     priv->spi = spi;
+> > > +     spi_set_drvdata(spi, iio_dev);
+> > > +     iio_dev->dev.parent = &spi->dev;
+> > > +     iio_dev->info = &dac7612_info;
+> > > +     iio_dev->modes = INDIO_DIRECT_MODE;
+> > > +     iio_dev->channels = dac7612_channels;
+> > > +     iio_dev->num_channels = NUM_CHANS;  
+> > ARRAY_SIZE.  
+> > > +     iio_dev->name = spi_get_device_id(spi)->name;
+> > > +
+> > > +     for (i = 0; i < NUM_CHANS; i++) {  
+> > ARRAY_SIZE  
+> > > +             ret = dac7612_cmd_single(priv, i, 0);
+> > > +             if (ret)
+> > > +                     return ret;
+> > > +     }
+> > > +
+> > > +     return devm_iio_device_register(&spi->dev, iio_dev);
+> > > +}
+> > > +
+> > > +static const struct spi_device_id dac7612_id[] = {
+> > > +     {"ti-dac7612"},
+> > > +     {}
+> > > +};
+> > > +MODULE_DEVICE_TABLE(spi, dac7612_id);
+> > > +
+> > > +static struct spi_driver dac7612_driver = {
+> > > +     .driver = {
+> > > +                .name = "ti-dac7612",
+> > > +                },
+> > > +     .probe = dac7612_probe,
+> > > +     .id_table = dac7612_id,
+> > > +};
+> > > +module_spi_driver(dac7612_driver);
+> > > +
+> > > +MODULE_AUTHOR("Ricardo Ribalda <ricardo@ribalda.com>");
+> > > +MODULE_DESCRIPTION("Texas Instruments DAC7612 DAC driver");
+> > > +MODULE_LICENSE("GPL v2");  
+> >  
+> 
+> 
 
