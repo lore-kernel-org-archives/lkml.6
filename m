@@ -3,63 +3,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5827C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 17:25:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE204C282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 17:25:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A392C20881
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 17:25:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 992392084C
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 17:25:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548609907;
-	bh=By9OtlWBCO/2nkIRWNFElytRojfVTbzLlVj4mdE4RSA=;
+	s=default; t=1548609917;
+	bh=biy834JjEBi1CPBDQNfabToedyaxYyTtw82ktRIVNFo=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:List-ID:From;
-	b=uGzza8X8+05Ii6F5cPkuvtMIgwlZI/uKqq+T4hI9Yb8WJ4lq8UaQ98+KyPdIncWyU
-	 +txm3c2iQ9Izyo24b9dVzil4cx4WnUFKuOIg0nXCHHbY3p52PL/9lA3wozSZaeJRoJ
-	 F8MnDIQnsYH9D+h4KkknuraYZfwe01SgLwcPpNVc=
+	b=cpVrJEF2VitKSGGeSpvNgqynpJSmGMa66gRan4y3UcEwg+ZADbW46P1T0nu1FWal5
+	 j7/61jG5oF7I8WkGNhZfccvon9vOGTRfXQrxsSpw9g2xNQSNyDq7GoQWHr+IW1CZPl
+	 XzUzn4FUoCkBCOZg+YeNdNTGDXoQC9HNlizxda34=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfA0RZG (ORCPT
+        id S1727105AbfA0RZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 12:25:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37766 "EHLO mail.kernel.org"
+        Sun, 27 Jan 2019 12:25:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37790 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726357AbfA0RZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1727074AbfA0RZF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Sun, 27 Jan 2019 12:25:05 -0500
-Subject: Re: [git pull] Input updates for v5.0-rc3
+Subject: Re: [GIT PULL] dma-mapping fix for 5.0-rc
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548609904;
-        bh=By9OtlWBCO/2nkIRWNFElytRojfVTbzLlVj4mdE4RSA=;
+        s=default; t=1548609905;
+        bh=biy834JjEBi1CPBDQNfabToedyaxYyTtw82ktRIVNFo=;
         h=From:In-Reply-To:References:Date:To:Cc:From;
-        b=MNVEL16L2HFyqo3xqWWBZzUzVaWRgxuh1fkCg9nUL6hH0nD4ncMsZJZH0ooZT3WZf
-         E6Dtxkho5HLstm4SOLbf9Upoi2BNdXgKD1uMIO9DJkYnMqY8Lx1HUSQTBu4eGFVgUO
-         Ht2YZo36Ldv5v5G+kG8ZghrjGGGroLBvT5DC053w=
+        b=wPzob/w24Uv5jLka/GHgWLVnkt4oOx+gOndYLLBD2eNSykik5Cn5Z6P2wlqLPftTw
+         rLWqypS1dmFT+fCG2SBaYLUjzmWWH2+qBbnJ9/Skyl1tHxItz+ErRpA1FpNGfvNwkA
+         pAj+rAl8d3zFW71J22BbuvRoDiwWgC/b5zIFo+BE=
 From:   pr-tracker-bot@kernel.org
-In-Reply-To: <20190126011113.GA23858@dtor-ws>
-References: <20190126011113.GA23858@dtor-ws>
+In-Reply-To: <20190127092721.GA22044@infradead.org>
+References: <20190127092721.GA22044@infradead.org>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20190126011113.GA23858@dtor-ws>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
-X-PR-Tracked-Commit-Id: 141e5dcaa7356077028b4cd48ec351a38c70e5e5
+X-PR-Tracked-Message-Id: <20190127092721.GA22044@infradead.org>
+X-PR-Tracked-Remote: git://git.infradead.org/users/hch/dma-mapping.git
+ tags/dma-mapping-5.0-2
+X-PR-Tracked-Commit-Id: 60d8cd572f655aac6107a2330dced004ad1fe3d7
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 78e372e6509bc2412e86afb11be65185f4c9c568
-Message-Id: <154860990465.19009.15601039563890389947.pr-tracker-bot@kernel.org>
-Date:   Sun, 27 Jan 2019 17:25:04 +0000
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
+X-PR-Merge-Commit-Id: c180f1b04be01d025aa1e6e53e1a8b6626bd90c4
+Message-Id: <154860990527.19009.3637678196596036300.pr-tracker-bot@kernel.org>
+Date:   Sun, 27 Jan 2019 17:25:05 +0000
+To:     Christoph Hellwig <hch@infradead.org>
 Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-input@vger.kernel.org
+        Julien Grall <julien.grall@arm.com>,
+        Stefano Stabellini <sstabellini@kernel.org>,
+        iommu@lists.linux-foundation.org, linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 25 Jan 2019 17:11:13 -0800:
+The pull request you sent on Sun, 27 Jan 2019 10:27:21 +0100:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/dtor/input.git for-linus
+> git://git.infradead.org/users/hch/dma-mapping.git tags/dma-mapping-5.0-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/78e372e6509bc2412e86afb11be65185f4c9c568
+https://git.kernel.org/torvalds/c/c180f1b04be01d025aa1e6e53e1a8b6626bd90c4
 
 Thank you!
 
