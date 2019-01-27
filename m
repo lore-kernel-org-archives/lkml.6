@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DF89C282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 07:08:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63AB0C282C0
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 07:08:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CAB0217D7
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 07:08:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 329DC214C6
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 07:08:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="P5pfRmbc"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=wdc.com header.i=@wdc.com header.b="PibYvW6p"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726632AbfA0HIS (ORCPT
+        id S1726689AbfA0HIb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 02:08:18 -0500
-Received: from esa5.hgst.iphmx.com ([216.71.153.144]:37256 "EHLO
-        esa5.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726146AbfA0HIS (ORCPT
+        Sun, 27 Jan 2019 02:08:31 -0500
+Received: from esa4.hgst.iphmx.com ([216.71.154.42]:4391 "EHLO
+        esa4.hgst.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726146AbfA0HIb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 02:08:18 -0500
+        Sun, 27 Jan 2019 02:08:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
   d=wdc.com; i=@wdc.com; q=dns/txt; s=dkim.wdc.com;
-  t=1548572898; x=1580108898;
+  t=1548572911; x=1580108911;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=HWsqQY9kZkceBww9unbKzePKnY/h5AHjL+2bSqvP+KU=;
-  b=P5pfRmbcxp1CLfE3eRMnjbd5FYROG7Io0X/7fU1M/3QNivnnmYjq6nKF
-   FLVkKTgbptMg5GDqIqJfRKYvSWR4F1xJtNHDoDFStijn4jShclDiwt6EQ
-   F3UVhhA+VbpbB99Fcc9WSOcUgzlSTUK1jz7f7eyt5BxZokHseg4QxuhK+
-   WLaXoKC4eE9tVLRixgt+C4tyeC/kxRwaQHY07zCqFBt6zD5BJDelLjC5L
-   fNY4JeIxkPgISIH3TKqhqhqwiIRTn1+B6dS7T1nDgLYdR6mwItLT8DtMP
-   z3SYqj2tmMwS02nsVDjJK+lgVGdqKOTlPnAlXOhpHLy+Xxr2lKsWx1Cv3
-   A==;
+  bh=QxuRPPDSvUnjZmfzIphSkJNf+emFCuhe7yO3D1CmbuY=;
+  b=PibYvW6pyf/DoPsCurOmo8nvdFV2YhgTebNGfw6Acu1PdEke/Dh7/qcz
+   82WVQb9JtfelCFixDEJN+1nBSWjLmHnGOLPly4pIs46mqPm3CoPIttbDj
+   VPN8IXdy6TdKp0Mccu9NScC+tigT0xEXxK3WUO6ANxe4sYgTC2yxhi4an
+   xr6Dxz/Bq/FebsItpX9K+ZvkFqiP9hKcbAK9U3wp5QGR0nJH/S7d3mmiC
+   EBwWFAqOsSKlUQWnB1lpNKKuta++yVuS5XTnfkPrePW7+emmGirxcFFss
+   zlvGz7DBHnz2pqpdT4KPXbHtAo7MvmEdeQx9tNRDtyVx5Y15LjT791cmy
+   Q==;
 X-IronPort-AV: E=Sophos;i="5.56,529,1539619200"; 
-   d="scan'208";a="101125467"
-Received: from uls-op-cesaip02.wdc.com (HELO uls-op-cesaep02.wdc.com) ([199.255.45.15])
-  by ob1.hgst.iphmx.com with ESMTP; 27 Jan 2019 15:08:18 +0800
+   d="scan'208";a="99875948"
+Received: from uls-op-cesaip01.wdc.com (HELO uls-op-cesaep01.wdc.com) ([199.255.45.14])
+  by ob1.hgst.iphmx.com with ESMTP; 27 Jan 2019 15:08:31 +0800
 Received: from uls-op-cesaip02.wdc.com ([10.248.3.37])
-  by uls-op-cesaep02.wdc.com with ESMTP; 26 Jan 2019 22:49:20 -0800
+  by uls-op-cesaep01.wdc.com with ESMTP; 26 Jan 2019 22:47:36 -0800
 Received: from kfae422988.sdcorp.global.sandisk.com ([10.0.230.227])
-  by uls-op-cesaip02.wdc.com with ESMTP; 26 Jan 2019 23:08:15 -0800
+  by uls-op-cesaip02.wdc.com with ESMTP; 26 Jan 2019 23:08:28 -0800
 From:   Avri Altman <avri.altman@wdc.com>
 To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
         "Martin K. Petersen" <martin.petersen@oracle.com>,
@@ -52,9 +52,9 @@ To:     "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
 Cc:     Avi Shchislowski <avi.shchislowski@wdc.com>,
         Alex Lemberg <alex.lemberg@wdc.com>,
         Avri Altman <avri.altman@wdc.com>
-Subject: [PATCH v4 1/3] scsi: ufs-bsg: Change the calling convention for write descriptor
-Date:   Sun, 27 Jan 2019 09:07:46 +0200
-Message-Id: <1548572868-12589-2-git-send-email-avri.altman@wdc.com>
+Subject: [PATCH v4 2/3] scsi: ufs: Allow reading descriptor via raw upiu
+Date:   Sun, 27 Jan 2019 09:07:47 +0200
+Message-Id: <1548572868-12589-3-git-send-email-avri.altman@wdc.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1548572868-12589-1-git-send-email-avri.altman@wdc.com>
 References: <1548572868-12589-1-git-send-email-avri.altman@wdc.com>
@@ -63,144 +63,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we had a write descriptor query upiu, we appended the descriptor
-right after the bsg request.  This was fine as the bsg driver allows to
-allocate whatever buffer we needed in its job request.
-
-Still, the proper way to deliver payload, however small (we only write
-config descriptors of 144 bytes), is by using the job request payload
-data buffer.
-
-So change this ABI now, while ufs-bsg is still new, and nobody is
-actually using it.
+Allow to read descriptors via raw upiu. This in fact was forbidden just
+as a precaution, as ufs-bsg actually enforces which functionality is
+supported.
 
 Signed-off-by: Avri Altman <avri.altman@wdc.com>
 Reviewed-by: Evan Green <evgreen@chromium.org>
 ---
- Documentation/scsi/ufs.txt |  6 ++++++
- drivers/scsi/ufs/ufs_bsg.c | 47 +++++++++++++++++++++++++---------------------
- 2 files changed, 32 insertions(+), 21 deletions(-)
+ drivers/scsi/ufs/ufshcd.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/scsi/ufs.txt b/Documentation/scsi/ufs.txt
-index 520b5b0..78fe7cb 100644
---- a/Documentation/scsi/ufs.txt
-+++ b/Documentation/scsi/ufs.txt
-@@ -147,6 +147,12 @@ send SG_IO with the applicable sg_io_v4:
- 	io_hdr_v4.max_response_len = reply_len;
- 	io_hdr_v4.request_len = request_len;
- 	io_hdr_v4.request = (__u64)request_upiu;
-+	if (dir == SG_DXFER_TO_DEV) {
-+		io_hdr_v4.dout_xfer_len = (uint32_t)byte_cnt;
-+		io_hdr_v4.dout_xferp = (uintptr_t)(__u64)buff;
-+	}
+diff --git a/drivers/scsi/ufs/ufshcd.c b/drivers/scsi/ufs/ufshcd.c
+index 2ddf244..6b9ed21 100644
+--- a/drivers/scsi/ufs/ufshcd.c
++++ b/drivers/scsi/ufs/ufshcd.c
+@@ -5775,6 +5775,20 @@ static int ufshcd_issue_devman_upiu_cmd(struct ufs_hba *hba,
+ 
+ 	/* just copy the upiu response as it is */
+ 	memcpy(rsp_upiu, lrbp->ucd_rsp_ptr, sizeof(*rsp_upiu));
++	if (desc_buff && desc_op == UPIU_QUERY_OPCODE_READ_DESC) {
++		u8 *descp = (u8 *)lrbp->ucd_rsp_ptr + sizeof(*rsp_upiu);
++		u16 resp_len = be32_to_cpu(lrbp->ucd_rsp_ptr->header.dword_2) &
++			       MASK_QUERY_DATA_SEG_LEN;
 +
-+If you wish to write a descriptor, use the dout_xferp sg_io_v4.
++		if (*buff_len >= resp_len) {
++			memcpy(desc_buff, descp, resp_len);
++			*buff_len = resp_len;
++		} else {
++			dev_warn(hba->dev, "rsp size is bigger than buffer");
++			*buff_len = 0;
++			err = -EINVAL;
++		}
++	}
  
- UFS Specifications can be found at,
- UFS - http://www.jedec.org/sites/default/files/docs/JESD220.pdf
-diff --git a/drivers/scsi/ufs/ufs_bsg.c b/drivers/scsi/ufs/ufs_bsg.c
-index 775bb4e..2fd0769 100644
---- a/drivers/scsi/ufs/ufs_bsg.c
-+++ b/drivers/scsi/ufs/ufs_bsg.c
-@@ -27,15 +27,11 @@ static int ufs_bsg_get_query_desc_size(struct ufs_hba *hba, int *desc_len,
+ 	ufshcd_put_dev_cmd_tag(hba, tag);
+ 	wake_up(&hba->dev_cmd.tag_wq);
+@@ -5810,11 +5824,6 @@ int ufshcd_exec_raw_upiu_cmd(struct ufs_hba *hba,
+ 	int ocs_value;
+ 	u8 tm_f = be32_to_cpu(req_upiu->header.dword_1) >> 16 & MASK_TM_FUNC;
  
- static int ufs_bsg_verify_query_size(struct ufs_hba *hba,
- 				     unsigned int request_len,
--				     unsigned int reply_len,
--				     int desc_len, enum query_opcode desc_op)
-+				     unsigned int reply_len)
- {
- 	int min_req_len = sizeof(struct ufs_bsg_request);
- 	int min_rsp_len = sizeof(struct ufs_bsg_reply);
- 
--	if (desc_op == UPIU_QUERY_OPCODE_WRITE_DESC)
--		min_req_len += desc_len;
+-	if (desc_buff && desc_op != UPIU_QUERY_OPCODE_WRITE_DESC) {
+-		err = -ENOTSUPP;
+-		goto out;
+-	}
 -
- 	if (min_req_len > request_len || min_rsp_len > reply_len) {
- 		dev_err(hba->dev, "not enough space assigned\n");
- 		return -EINVAL;
-@@ -44,14 +40,13 @@ static int ufs_bsg_verify_query_size(struct ufs_hba *hba,
- 	return 0;
- }
- 
--static int ufs_bsg_verify_query_params(struct ufs_hba *hba,
--				       struct ufs_bsg_request *bsg_request,
--				       unsigned int request_len,
--				       unsigned int reply_len,
--				       uint8_t *desc_buff, int *desc_len,
--				       enum query_opcode desc_op)
-+static int ufs_bsg_alloc_desc_buffer(struct ufs_hba *hba, struct bsg_job *job,
-+				     uint8_t **desc_buff, int *desc_len,
-+				     enum query_opcode desc_op)
- {
-+	struct ufs_bsg_request *bsg_request = job->request;
- 	struct utp_upiu_query *qr;
-+	u8 *descp;
- 
- 	if (desc_op == UPIU_QUERY_OPCODE_READ_DESC) {
- 		dev_err(hba->dev, "unsupported opcode %d\n", desc_op);
-@@ -67,11 +62,19 @@ static int ufs_bsg_verify_query_params(struct ufs_hba *hba,
- 		return -EINVAL;
- 	}
- 
--	if (ufs_bsg_verify_query_size(hba, request_len, reply_len, *desc_len,
--				      desc_op))
-+	if (*desc_len > job->request_payload.payload_len) {
-+		dev_err(hba->dev, "Illegal desc size\n");
- 		return -EINVAL;
-+	}
-+
-+	descp = kzalloc(*desc_len, GFP_KERNEL);
-+	if (!descp)
-+		return -ENOMEM;
- 
--	desc_buff = (uint8_t *)(bsg_request + 1);
-+	sg_copy_to_buffer(job->request_payload.sg_list,
-+			  job->request_payload.sg_cnt, descp, *desc_len);
-+
-+	*desc_buff = descp;
- 
- out:
- 	return 0;
-@@ -91,7 +94,7 @@ static int ufs_bsg_request(struct bsg_job *job)
- 	enum query_opcode desc_op = UPIU_QUERY_OPCODE_NOP;
- 	int ret;
- 
--	ret = ufs_bsg_verify_query_size(hba, req_len, reply_len, 0, desc_op);
-+	ret = ufs_bsg_verify_query_size(hba, req_len, reply_len);
- 	if (ret)
- 		goto out;
- 
-@@ -101,9 +104,8 @@ static int ufs_bsg_request(struct bsg_job *job)
  	switch (msgcode) {
- 	case UPIU_TRANSACTION_QUERY_REQ:
- 		desc_op = bsg_request->upiu_req.qr.opcode;
--		ret = ufs_bsg_verify_query_params(hba, bsg_request, req_len,
--						  reply_len, desc_buff,
--						  &desc_len, desc_op);
-+		ret = ufs_bsg_alloc_desc_buffer(hba, job, &desc_buff,
-+						&desc_len, desc_op);
- 		if (ret)
- 			goto out;
- 
-@@ -135,11 +137,14 @@ static int ufs_bsg_request(struct bsg_job *job)
+ 	case UPIU_TRANSACTION_NOP_OUT:
+ 		cmd_type = DEV_CMD_TYPE_NOP;
+@@ -5855,7 +5864,6 @@ int ufshcd_exec_raw_upiu_cmd(struct ufs_hba *hba,
  		break;
  	}
  
-+	if (!desc_buff)
-+		goto out;
-+
-+	kfree(desc_buff);
-+
- out:
- 	bsg_reply->result = ret;
--	job->reply_len = sizeof(struct ufs_bsg_reply) +
--			 bsg_reply->reply_payload_rcv_len;
--
-+	job->reply_len = sizeof(struct ufs_bsg_reply);
- 	bsg_job_done(job, ret, bsg_reply->reply_payload_rcv_len);
+-out:
+ 	return err;
+ }
  
- 	return ret;
 -- 
 1.9.1
 
