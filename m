@@ -2,135 +2,122 @@ Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 092FBC282CC
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 13:13:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 101E0C282CA
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 13:35:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE39B218A1
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 13:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BFC3E2148D
+	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 13:35:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=xenosoft.de header.i=@xenosoft.de header.b="ojgZ+4lE"
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="MZPHg0tk"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfA0NNO (ORCPT
+        id S1726749AbfA0NfX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 08:13:14 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.51]:30862 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726458AbfA0NNO (ORCPT
+        Sun, 27 Jan 2019 08:35:23 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:37336 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726521AbfA0NfW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 08:13:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1548594792;
-        s=strato-dkim-0002; d=xenosoft.de;
-        h=In-Reply-To:Date:Message-ID:References:Cc:To:From:Subject:
-        X-RZG-CLASS-ID:X-RZG-AUTH:From:Subject:Sender;
-        bh=FMQ75Hy5BCOjUBN14zYaKiW4FJiuRF2jN5cnJ7YbwWQ=;
-        b=ojgZ+4lE8n6GUekAQyji1unIMR2WqMS36ulXfccr3KQVRawhWB+TXRGBlpmsWqr68Q
-        8bf3/8t9GDw7eMaoWJg2/UGOJoFKnJTXYyRMPSob0QInfi9SrgQycr5YN9qM3RYWPF1l
-        b+2NNbWbQkoY5/rGB/85U74GadjzyK10tBxNiyk1iVvlI6+QqdDzjDroy6658zk6RXws
-        Vs37r9QmXOGzONmCcmzJVhwahf/UsTFdJBN3LGA8GmzkJ/ZK30pgvGvRc+lFUJnA/gGV
-        Fx7ln4MTbDtbsfh2eG874xCsYRWXB93JY9VirQEzL0PrtaRIcy5fIAFlwUktpP9dqsUE
-        +z3A==
-X-RZG-AUTH: ":L2QefEenb+UdBJSdRCXu93KJ1bmSGnhMdmOod1DhGM4l4Hio94KKxRySfLxnHfJ+Dkjp5G5MdirQj0WG7CkNjyLlwLU8/n0bu4gMtisxiLYr"
-X-RZG-CLASS-ID: mo00
-Received: from [IPv6:2a02:8109:a400:162c:21ae:8103:d1b3:1b6]
-        by smtp.strato.de (RZmta 44.9 AUTH)
-        with ESMTPSA id t0203dv0RDD9xIo
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (curve secp521r1 with 521 ECDH bits, eq. 15360 bits RSA))
-        (Client did not present a certificate);
-        Sun, 27 Jan 2019 14:13:09 +0100 (CET)
-Subject: Re: use generic DMA mapping code in powerpc V4
-From:   Christian Zigotzky <chzigotzky@xenosoft.de>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-arch@vger.kernel.org,
-        Darren Stevens <darren@stevens-zone.net>,
-        linux-kernel@vger.kernel.org, Julian Margetson <runaway@candw.ms>,
-        linux-mm@kvack.org, iommu@lists.linux-foundation.org,
-        Paul Mackerras <paulus@samba.org>,
-        Olof Johansson <olof@lixom.net>, linuxppc-dev@lists.ozlabs.org
-References: <871403f2-fa7d-de15-89eb-070432e15c69@xenosoft.de>
- <20190118112842.GA9115@lst.de>
- <a2ca0118-5915-8b1c-7cfa-71cb4b43eaa6@xenosoft.de>
- <20190118121810.GA13327@lst.de>
- <eceebeda-0e18-00f6-06e7-def2eb0aa961@xenosoft.de>
- <20190118125500.GA15657@lst.de>
- <e11e61b1-6468-122e-fc2b-3b3f857186bb@xenosoft.de>
- <f39d4fc6-7e4e-9132-c03f-59f1b52260e0@xenosoft.de>
- <b9e5e081-a3cc-2625-4e08-2d55c2ba224b@xenosoft.de>
- <20190119130222.GA24346@lst.de> <20190119140452.GA25198@lst.de>
- <bfe4adcc-01c1-7b46-f40a-8e020ff77f58@xenosoft.de>
- <8434e281-eb85-51d9-106f-f4faa559e89c@xenosoft.de>
- <4d8d4854-dac9-a78e-77e5-0455e8ca56c4@xenosoft.de>
-Message-ID: <1dec2fbe-f654-dac7-392a-93a5d20e3602@xenosoft.de>
-Date:   Sun, 27 Jan 2019 14:13:09 +0100
+        Sun, 27 Jan 2019 08:35:22 -0500
+Received: by mail-pg1-f193.google.com with SMTP id c25so6095934pgb.4
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 05:35:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=0t8jTWZDEYo+Yt4XC5Knr5JwLIvHmprPwkJs/XNpzcw=;
+        b=MZPHg0tk4gp8CD0e30v6fPbcn3q2tjH34SuTas9igmjK92QXAbNWpTGevFfzvA9v/4
+         x44XbW8asiH6Zb6o+J+owDFyoJbozaaKzfo4aQw6yo6dQ5oLX6lItL1hVXqQ+4EhH5Ar
+         PJKoNgzLu6vSCRTRkcP4eoNGvjBWYoQtq14lSLjnOLdW2S3jJryA8gPEQkxUe3p8Zq01
+         C0MQjJP9FhqwbcH6bXIdLTY9sIQnVmxWmDTdqsUtOMIldiE/kHfCareZakK04oFeRQAG
+         fIr/UeuiVxltEWnX5OXf8XwBleF002IBxUwtNYIFauJCIFJ1N4gV9Uek0BEP6kRN40A/
+         m9Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=0t8jTWZDEYo+Yt4XC5Knr5JwLIvHmprPwkJs/XNpzcw=;
+        b=bCSrPDjxinM9Mvz5GhR9l5SCLm5CP3aPHclQIo4vvLzHXc/5W8qtISzVD4TpwyCTP5
+         wMoOltB1+x/L4GO3GCFwTX4MmQ5u80h/ZW1N10l/fykD1/ey0JZBQVbwc8/LueHzxQXR
+         X2w2Vw5RzAGsbxlluM22mRsdsKbIVCNxlgAVbjBTY2znI1+BWxeXPdeSR7Yu/XfkIBt4
+         /jaMquOrqGGiiXRmQ6Ax5vQjOad6xSE7TMX8xU70ZUIWcwGjhGThNDRT+WUJcLqF1bh5
+         82tFrgZ1USG2Y9cTirHj/Jb1nhp5Fvh/MH1Q2JGPOqcfREJByq4u0SMUkyDYzrva3gPg
+         gY4Q==
+X-Gm-Message-State: AJcUukcneu9IJdnJ1v2oZf8x/17KvYA5JPKnyLtOmhnanyUTziY9oDB/
+        ljMPCKzsd4n+lCLYE8BbHTp5vA==
+X-Google-Smtp-Source: ALg8bN7ICA0/mw36+3pjYW0evPU5kqJKpYFa3ZekQ3ANAC89HBUH7DDK5x+n3yd8eF4juvzMJBbAVA==
+X-Received: by 2002:a63:df50:: with SMTP id h16mr16624276pgj.421.1548596121636;
+        Sun, 27 Jan 2019 05:35:21 -0800 (PST)
+Received: from [192.168.1.121] (66.29.188.166.static.utbb.net. [66.29.188.166])
+        by smtp.gmail.com with ESMTPSA id m85sm47295276pfj.171.2019.01.27.05.35.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 27 Jan 2019 05:35:20 -0800 (PST)
+Subject: Re: upstream boot error: can't ssh into the instance (2)
+To:     Dmitry Vyukov <dvyukov@google.com>, linux-block@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Cc:     syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        syzbot <syzbot+4df6ca820108fd248943@syzkaller.appspotmail.com>,
+        Ming Lei <ming.lei@redhat.com>
+References: <00000000000027601e05806bf6be@google.com>
+ <CACT4Y+aH2wo8rdaiZJd7s6Ct3b8mDeuvOj8CsvystV9T10+b-g@mail.gmail.com>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <ace6b631-3e4b-3da5-f280-463a1bb41d97@kernel.dk>
+Date:   Sun, 27 Jan 2019 06:35:18 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <4d8d4854-dac9-a78e-77e5-0455e8ca56c4@xenosoft.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: de-DE
+In-Reply-To: <CACT4Y+aH2wo8rdaiZJd7s6Ct3b8mDeuvOj8CsvystV9T10+b-g@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Christoph,
+On 1/27/19 1:05 AM, Dmitry Vyukov wrote:
+> On Sun, Jan 27, 2019 at 9:01 AM syzbot
+> <syzbot+4df6ca820108fd248943@syzkaller.appspotmail.com> wrote:
+>>
+>> Hello,
+>>
+>> syzbot found the following crash on:
+>>
+>> HEAD commit:    7930851ef10c Merge tag 'scsi-fixes' of git://git.kernel.or..
+>> git tree:       upstream
+>> console output: https://syzkaller.appspot.com/x/log.txt?x=1002c77f400000
+>> kernel config:  https://syzkaller.appspot.com/x/.config?x=505743eba4e4f68
+>> dashboard link: https://syzkaller.appspot.com/bug?extid=4df6ca820108fd248943
+>> compiler:       gcc (GCC) 9.0.0 20181231 (experimental)
+>>
+>> Unfortunately, I don't have any reproducer for this crash yet.
+>>
+>> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+>> Reported-by: syzbot+4df6ca820108fd248943@syzkaller.appspotmail.com
+> 
+> 
+> Mainline tree crashes on boot.
+> +generic_make_request maintainers
+> 
+> [    7.485069] ==================================================================
+> [    7.486411] BUG: KASAN: use-after-free in generic_make_request+0x14dd/0x1810
+> [    7.487539] Read of size 2 at addr ffff8880a39618d4 by task swapper/0/1
+> [    7.488689]
 
-What shall I do next?
+Ah duh, not sure how I missed that:
 
-Cheers,
-Christian
++                       bio_set_flag(bio, BIO_QUEUE_ENTERED);
+                        ret = q->make_request_fn(q, bio);
++                       bio_clear_flag(bio, BIO_QUEUE_ENTERED);
 
+Ming, we can't touch bio after ->make_request_fn(), it could very well be
+completed already.
 
-On 25 January 2019 at 2:37PM, Christian Zigotzky wrote:
-> Next step just with the first patch: 
-> 5c532d07c2f3c3972104de505d06b8d85f403f06 (use powerpc zone selection)
->
-> git clone git://git.infradead.org/users/hch/misc.git -b 
-> powerpc-dma.6-debug a
->
-> git checkout 5c532d07c2f3c3972104de505d06b8d85f403f06
->
-> Link to the Git: 
-> http://git.infradead.org/users/hch/misc.git/shortlog/refs/heads/powerpc-dma.6-debug
->
-> Results:
->
-> X5000: The kernel detects the SATA hard disk drive and boots without 
-> any problems.
->
-> X1000: The kernel boots and the P.A. Semi Ethernet works!
->
-> -- Christian
->
->
-> On 23 January 2019 at 3:34PM, Christian Zigotzky wrote:
->> Hi Christoph,
->>
->> I also compiled a kernel (zImage) for the X1000  from your Git 
->> 'powerpc-dma.6-debug' (both patches) today.
->>
->> It boots and the P.A. Semi Ethernet works!
->>
->> I will test just the first patch tomorrow.
->>
->> Thanks,
->> Christian
->>
->>
->> On 21 January 2019 at 3:38PM, Christian Zigotzky wrote:
->>> Hello Christoph,
->>>
->>> Thanks for your reply. I successfully compiled a kernel (uImage) for 
->>> the X5000 from your Git 'powerpc-dma.6-debug' (both patches) today.
->>>
->>> It detects the SATA hard disk drive and boots without any problems.
->>>
->>
->>
->
->
+-- 
+Jens Axboe
 
