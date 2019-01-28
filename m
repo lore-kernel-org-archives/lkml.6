@@ -4,52 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B0FC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 306CEC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:54:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E541B20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:54:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3E5920989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:54:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690858;
-	bh=cNhBxVPY2HlMccojuZ0tQfbd8C1CpjR4OeOlv5/JEHY=;
+	s=default; t=1548690862;
+	bh=2BeKfaQx2WgYOy2LAB21EcSI5EM5xCzabMCMBdSAD/U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mikMDylkCgUn6/frIXhR1gm9k/Z0jKyy32Cx8AgWhbMNJwnAOksQhjbZ+NRUmFsLn
-	 A5t2gQ91OOMOEjtZn+at28GBgqJ2WVEVlvVcKKn02TTy4c4o7I/ghZbtN7/3QNPCTu
-	 Q+1wsrgNehrRmbzmB2SQmHZZ51MDTfoAHxHdtNk4=
+	b=CB2JnmCGPuA3VFTgk4exRJeEDXxLvNK1FKCfTnJHxsz5O6V/NpQPhPzD0VqcgII7k
+	 C7unQu3DjR1daMuJPOKRj3mr2LTNzlR38UldjLua6IrTwAWKZNSqBALOUv4m6GMk9I
+	 rIxqadHGftWwffgaXDRNeLRx81xQmstfv3OiAP14=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729668AbfA1PyQ (ORCPT
+        id S1729250AbfA1PyU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:54:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40424 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:54:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40496 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729632AbfA1PyN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:54:13 -0500
+        id S1727151AbfA1PyT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:54:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C52620855;
-        Mon, 28 Jan 2019 15:54:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AA69520855;
+        Mon, 28 Jan 2019 15:54:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690853;
-        bh=cNhBxVPY2HlMccojuZ0tQfbd8C1CpjR4OeOlv5/JEHY=;
+        s=default; t=1548690858;
+        bh=2BeKfaQx2WgYOy2LAB21EcSI5EM5xCzabMCMBdSAD/U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YH/FFIx2QeaIUosNHtQb3jD0+GlyoZwkXIxWUOHSHpsXJJY4Tb0he3HJS9H2Jhend
-         b5C7CodtKdPufzG2fPqYaa3EOWiF2Rf7oGttWuOtJYc+hm2p7d9rnpZPetVJXkDtxI
-         F5i70Wk+p8aD45rmWYPNZ/zOoa3QlOyLgd8STqpA=
+        b=byC+xaWXxcwp9JMUUKSjBsWOLvULkdhNNgiRiDEnZ9KJ/Rys8EhYg609qjwio2PSz
+         7h07p1JCAZfbYP64sW77DjakPvSsIKJrhi3huGY94J8IKH9OHz1WoUxYcVwLay5vav
+         c0hupYhDZxaQxOY0DwKvcem382tDpdcPdcJlNp1M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
+        Arnd Bergmann <arnd@arndb.de>, Guo Ren <ren_guo@c-sky.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 213/304] perf tools: Cast off_t to s64 to avoid warning on bionic libc
-Date:   Mon, 28 Jan 2019 10:42:10 -0500
-Message-Id: <20190128154341.47195-213-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 215/304] tools uapi asm: Update asm-generic/unistd.h copy
+Date:   Mon, 28 Jan 2019 10:42:12 -0500
+Message-Id: <20190128154341.47195-215-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -63,45 +63,57 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 866053bb644f754d1a93aaa9db9998fecf7a8978 ]
+[ Upstream commit 89a0948984896352cac1ebe079cb3d64d6c3adc6 ]
 
-To avoid this warning:
+To get the change in:
 
-    CC       /tmp/build/perf/util/s390-cpumsf.o
-  util/s390-cpumsf.c: In function 's390_cpumsf_samples':
-  util/s390-cpumsf.c:508:3: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'off_t' [-Wformat=]
-     pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
-     ^
+  b7d624ab4312 ("asm-generic: unistd.h: fixup broken macro include.")
 
-Now the various Android cross toolchains used in the perf tools
-container test builds are all clean and we can remove this:
+That doesn't imply in any changes in the tools.
 
-  export EXTRA_MAKE_ARGS="WERROR=0"
+This silences the following perf build warning:
+
+  Warning: Kernel ABI header at 'tools/include/uapi/asm-generic/unistd.h' differs from latest version at 'include/uapi/asm-generic/unistd.h'
+  diff -u tools/include/uapi/asm-generic/unistd.h include/uapi/asm-generic/unistd.h
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Cc: Guo Ren <ren_guo@c-sky.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: https://lkml.kernel.org/n/tip-5rav4ccyb0sjciysz2i4p3sx@git.kernel.org
+Link: https://lkml.kernel.org/n/tip-2e7xwm5i2qcc88jp2lyawdyd@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/s390-cpumsf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/include/uapi/asm-generic/unistd.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-index a2eeebbfb25f..68b2570304ec 100644
---- a/tools/perf/util/s390-cpumsf.c
-+++ b/tools/perf/util/s390-cpumsf.c
-@@ -506,7 +506,7 @@ static int s390_cpumsf_samples(struct s390_cpumsf_queue *sfq, u64 *ts)
- 	aux_ts = get_trailer_time(buf);
- 	if (!aux_ts) {
- 		pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
--		       sfq->buffer->data_offset);
-+		       (s64)sfq->buffer->data_offset);
- 		aux_ts = ~0ULL;
- 		goto out;
- 	}
+diff --git a/tools/include/uapi/asm-generic/unistd.h b/tools/include/uapi/asm-generic/unistd.h
+index 538546edbfbd..c7f3321fbe43 100644
+--- a/tools/include/uapi/asm-generic/unistd.h
++++ b/tools/include/uapi/asm-generic/unistd.h
+@@ -760,8 +760,10 @@ __SYSCALL(__NR_rseq, sys_rseq)
+ #define __NR_ftruncate __NR3264_ftruncate
+ #define __NR_lseek __NR3264_lseek
+ #define __NR_sendfile __NR3264_sendfile
++#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
+ #define __NR_newfstatat __NR3264_fstatat
+ #define __NR_fstat __NR3264_fstat
++#endif
+ #define __NR_mmap __NR3264_mmap
+ #define __NR_fadvise64 __NR3264_fadvise64
+ #ifdef __NR3264_stat
+@@ -776,8 +778,10 @@ __SYSCALL(__NR_rseq, sys_rseq)
+ #define __NR_ftruncate64 __NR3264_ftruncate
+ #define __NR_llseek __NR3264_lseek
+ #define __NR_sendfile64 __NR3264_sendfile
++#if defined(__ARCH_WANT_NEW_STAT) || defined(__ARCH_WANT_STAT64)
+ #define __NR_fstatat64 __NR3264_fstatat
+ #define __NR_fstat64 __NR3264_fstat
++#endif
+ #define __NR_mmap2 __NR3264_mmap
+ #define __NR_fadvise64_64 __NR3264_fadvise64
+ #ifdef __NR3264_stat
 -- 
 2.19.1
 
