@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF14AC282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2083FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B7B0C2177B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E272E21741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694970;
-	bh=JLr07R+BoziYrRPSUIRjw3C9xk1qhfbNLg9pQlYNJ4w=;
+	s=default; t=1548694974;
+	bh=uXlKz46DVC94iM1WuhpC5ObdCWuBjQtPeWi1r4OfR3g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TOkRTtJlMwcuazTDUiyfE1pvg2OFR18oa+cbvN0OE0wrmHThiT9qw9TYBwigVRk+i
-	 0pfF4B6f8muVccao5pA5uJgKZFAyWYofHSdOAPwDXXTWDCR445Tr3ItgvV4s/gcaik
-	 ReRk3Kqru1rUZ09lPp4aA3RAzAvAR+8GxZ4qYRvw=
+	b=I1aBB4obOKBJSBZ/xTIEDNie0dEmtZNTViTOXpquqzWIWXZaUg10KawbpAqyaMAMM
+	 mGYVkp6M/Urh9rceZKlPrRmGibMAwXU4ZS2A/yX6pbVeIqdo52gV0YHey5OvESBXwo
+	 4STFYN1avThDjBduxFkQfzaSi+sRk2jDwZNkH2ts=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387567AbfA1QOG (ORCPT
+        id S2387937AbfA1RCw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:14:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42866 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:02:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43246 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732767AbfA1QNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:55 -0500
+        id S2387564AbfA1QOG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:14:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ABDC120879;
-        Mon, 28 Jan 2019 16:13:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5057920855;
+        Mon, 28 Jan 2019 16:14:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692034;
-        bh=JLr07R+BoziYrRPSUIRjw3C9xk1qhfbNLg9pQlYNJ4w=;
+        s=default; t=1548692045;
+        bh=uXlKz46DVC94iM1WuhpC5ObdCWuBjQtPeWi1r4OfR3g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e4SJ3hmq70xKPvz+8U1j3jmT05FNB2OX6vc6VAYMPUCly2YkIBkiF6bnp7SxKyl1n
-         C8HTPg4IAOBJElOs5tXnsAkXs2ydNp21j3OoPsirDvr05+K7M8FYv00e8Q4iQQoBYC
-         0JOxVHBSrjytQUnwtem939k7JAqV56831fhcrjKg=
+        b=Pd/VN9xVJRTjxbovmowHptiH/D5y0q5UXjB20306hOLejXVSQ9KVK2xd3mGR6xLrb
+         Vk3D0P4aTGeWp+wtpCM2sl4rZM0WEwGIGDpUTMni5g8fgVptUGe7rWX1eUPBn825qS
+         I/QdUpyYP1SaPG+BNuwj1hVQbpkwWShnaTbolAsc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.14 046/170] f2fs: avoid build warn of fall_through
-Date:   Mon, 28 Jan 2019 11:09:56 -0500
-Message-Id: <20190128161200.55107-46-sashal@kernel.org>
+Cc:     Young Xiao <YangX92@hotmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 051/170] sunvdc: Do not spin in an infinite loop when vio_ldc_send() returns EAGAIN
+Date:   Mon, 28 Jan 2019 11:10:01 -0500
+Message-Id: <20190128161200.55107-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,43 +57,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jaegeuk Kim <jaegeuk@kernel.org>
+From: Young Xiao <YangX92@hotmail.com>
 
-[ Upstream commit f5d5510e7389fa264337fb524346bac9eb93adc8 ]
+[ Upstream commit a11f6ca9aef989b56cd31ff4ee2af4fb31a172ec ]
 
-After merging the f2fs tree, today's linux-next build
- (x86_64_allmodconfig) produced this warning:
+__vdc_tx_trigger should only loop on EAGAIN a finite
+number of times.
 
- In file included from fs/f2fs/dir.c:11:
- fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
- fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
-    if (set)
-       ^
- fs/f2fs/f2fs.h:2390:2: note: here
-   case FI_DATA_EXIST:
-   ^~~~
+See commit adddc32d6fde ("sunvnet: Do not spin in an
+infinite loop when vio_ldc_send() returns EAGAIN") for detail.
 
- Exposed by my use of -Wimplicit-fallthrough
-
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/block/sunvdc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 3f1a44696036..d2873f227072 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2014,6 +2014,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
- 	case FI_INLINE_DENTRY:
- 		if (set)
- 			return;
-+		/* fall through */
- 	case FI_DATA_EXIST:
- 	case FI_INLINE_DOTS:
- 		f2fs_mark_inode_dirty_sync(inode, true);
+diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+index ad9749463d4f..ed4d6276e94f 100644
+--- a/drivers/block/sunvdc.c
++++ b/drivers/block/sunvdc.c
+@@ -41,6 +41,8 @@ MODULE_VERSION(DRV_MODULE_VERSION);
+ #define WAITING_FOR_GEN_CMD	0x04
+ #define WAITING_FOR_ANY		-1
+ 
++#define	VDC_MAX_RETRIES	10
++
+ static struct workqueue_struct *sunvdc_wq;
+ 
+ struct vdc_req_entry {
+@@ -427,6 +429,7 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		.end_idx		= dr->prod,
+ 	};
+ 	int err, delay;
++	int retries = 0;
+ 
+ 	hdr.seq = dr->snd_nxt;
+ 	delay = 1;
+@@ -439,6 +442,8 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		udelay(delay);
+ 		if ((delay <<= 1) > 128)
+ 			delay = 128;
++		if (retries++ > VDC_MAX_RETRIES)
++			break;
+ 	} while (err == -EAGAIN);
+ 
+ 	if (err == -ENOTCONN)
 -- 
 2.19.1
 
