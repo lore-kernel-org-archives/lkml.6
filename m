@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74387C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 47FE2C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4348320989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13EA820989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696188;
-	bh=SMSRi0Noe/4iDDh2D+49mXP4SZN1ulcyXleky9Ic7fc=;
+	s=default; t=1548696196;
+	bh=u1nfwmX8QGYdJ2mubzopu3dIW9gr9/sHa4ZzuAqjgAA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Awfg2fD31Okf/bIIdkGwNoPFT5m5eQJZehmWfqr/RqirN56rWA/yh0EojCsM2lC/g
-	 A7FN5uR1WqvgOQNEF5IuKdPsknc7xFuzwEyQXivuIAMT3+cXo0UsmGNt8xGUa+oIyR
-	 LK5A4TVQstSIfEwU0Dr7orMTLScm6dm4OU+aWd8g=
+	b=qO5m8Q2jVNCLjjeF0d98wBZXEV4aDStE4CBLyZYKIIlDd8H8rAK2hMtwD2ObntFt6
+	 3FayyYnUV7zQu8RMA9N428VzU1rX5+J4ly8SNnKb+63wzjF/hR4SK6A4QKvyWLW+mQ
+	 e9RXwOyE9I0fMgutXvuIg/qjsxx9th4zNbpfUm0M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731571AbfA1RXG (ORCPT
+        id S1731904AbfA1RXO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:23:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48386 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:23:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48300 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730552AbfA1QDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:03:04 -0500
+        id S1730562AbfA1QDA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:03:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C6052175B;
-        Mon, 28 Jan 2019 16:03:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 887AD21848;
+        Mon, 28 Jan 2019 16:02:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691383;
-        bh=SMSRi0Noe/4iDDh2D+49mXP4SZN1ulcyXleky9Ic7fc=;
+        s=default; t=1548691379;
+        bh=u1nfwmX8QGYdJ2mubzopu3dIW9gr9/sHa4ZzuAqjgAA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AstEmFeJFqPbI4tLbFTnn4c9R6uum3iW1SJ+rGtISjXo7kn5muZcmZKpY0ey2T4S4
-         8I6SFKId5RI8R0Yehzm5BWJ3SoDBXXj8gZq5zdNdNLwfC+mSKaII8DHzG7lY+gPwqC
-         vxYF5ZhUvXbP2O0wsJ9IIU7kjUhtEa7Y183FJRLw=
+        b=Stov3nExay0QP6n5QVUajM/MuDNEJPh8+ur/5He+oc/MqiJjqnwYQHVX1AzMVbxvl
+         aPwbvgqKncZTNaL4Fk0GSaunC3W704saBhQtuaVeKmIeYdAckFzS944Ay4NOrer+Gx
+         Dc0u6igQlKLAblSp5TMeTO2C6dtE1NXXmHz0pDFk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tiezhu Yang <kernelpatch@126.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>,
         linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 075/258] f2fs: fix wrong return value of f2fs_acl_create
-Date:   Mon, 28 Jan 2019 10:56:21 -0500
-Message-Id: <20190128155924.51521-75-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 073/258] f2fs: avoid build warn of fall_through
+Date:   Mon, 28 Jan 2019 10:56:19 -0500
+Message-Id: <20190128155924.51521-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,61 +57,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tiezhu Yang <kernelpatch@126.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
+[ Upstream commit f5d5510e7389fa264337fb524346bac9eb93adc8 ]
 
-When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
-should return -EIO instead of -ENOMEM, this patch makes it consistent
-with posix_acl_create() which has been fixed in commit beaf226b863a
-("posix_acl: don't ignore return value of posix_acl_create_masq()").
+After merging the f2fs tree, today's linux-next build
+ (x86_64_allmodconfig) produced this warning:
 
-Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
-Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
+ In file included from fs/f2fs/dir.c:11:
+ fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
+ fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (set)
+       ^
+ fs/f2fs/f2fs.h:2390:2: note: here
+   case FI_DATA_EXIST:
+   ^~~~
+
+ Exposed by my use of -Wimplicit-fallthrough
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
 Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/acl.c | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
+ fs/f2fs/f2fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
-index 111824199a88..b9fe937a3c70 100644
---- a/fs/f2fs/acl.c
-+++ b/fs/f2fs/acl.c
-@@ -352,12 +352,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 		return PTR_ERR(p);
- 
- 	clone = f2fs_acl_clone(p, GFP_NOFS);
--	if (!clone)
--		goto no_mem;
-+	if (!clone) {
-+		ret = -ENOMEM;
-+		goto release_acl;
-+	}
- 
- 	ret = f2fs_acl_create_masq(clone, mode);
- 	if (ret < 0)
--		goto no_mem_clone;
-+		goto release_clone;
- 
- 	if (ret == 0)
- 		posix_acl_release(clone);
-@@ -371,11 +373,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
- 
- 	return 0;
- 
--no_mem_clone:
-+release_clone:
- 	posix_acl_release(clone);
--no_mem:
-+release_acl:
- 	posix_acl_release(p);
--	return -ENOMEM;
-+	return ret;
- }
- 
- int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index ecb735142276..462a2fb8aa69 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2311,6 +2311,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 	case FI_NEW_INODE:
+ 		if (set)
+ 			return;
++		/* fall through */
+ 	case FI_DATA_EXIST:
+ 	case FI_INLINE_DOTS:
+ 	case FI_PIN_FILE:
 -- 
 2.19.1
 
