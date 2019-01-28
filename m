@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C936C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE038C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 163FE21852
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83D512082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691232;
-	bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
+	s=default; t=1548691236;
+	bh=FiUeQ9WN+QmxxHZXyoaHNstdzpqLULB+glHW3Mnej4g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ypszUctjfC8L6WLU/KMCuS54ovaQsdlk/A7KmVsXzuxCuyLsdgygXUDpk+bUI9I3j
-	 nYD5pXCUPlUhllepCJGb4pU6DjCf99zrf/4IA4Ir6az7V3y9+wYH/UYCw8RYt2CCbR
-	 79920i7sovlu1TBo0q60urBpycyIJjpuX4rv5udA=
+	b=PjOm1ptBr+sXemhuOijfXgXhr3ulRr9GK1BO9cOf5yhMijmBimpJ/C3b2kayPKnI2
+	 SsKDUNnmx4Dcwch5wIbg5Kx0Ta/zCgYv2mW2CwaHpdX9ipopzuHcTVgB6pojcr2drJ
+	 zrozEe71YZbcIsTUUeCSOclqjkDepW72YPlACBnk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730800AbfA1QA3 (ORCPT
+        id S1730810AbfA1QAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:00:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45688 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:00:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45776 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730754AbfA1QA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:00:26 -0500
+        id S1730447AbfA1QA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:00:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 856872175B;
-        Mon, 28 Jan 2019 16:00:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 22D222175B;
+        Mon, 28 Jan 2019 16:00:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691226;
-        bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
+        s=default; t=1548691229;
+        bh=FiUeQ9WN+QmxxHZXyoaHNstdzpqLULB+glHW3Mnej4g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P3PJGx6c6K065jiagpFpMA2mEaBHRSnEv/p7XDlXG9cm5aODwykF0C047a66yiFSm
-         pFecePzz0cb9e8vTjhjGYwwitoipeBxxhmnG7SNXgW4RlN/b5pTAufRXOx0w1gH/EG
-         kwXJSxWJO2B0mIUR+ItdTYtsWT0GzsTdnuuUSxRs=
+        b=cZ/941Jlui3bvo+dqBNZff9N9dPXB/w4URcLIi7ovyhMX9KPOeKrXB/hBRpFSzbBE
+         /bMtbpY7daZtpQkSk6FSDr8Da/WRWEbzbYgm/NZ6vGB2aNIs/ZWd6u9uxr5wFzjgsg
+         /QUcdoZmrOZ8CzenmGMKAyutnY+knOhVWRzyVVkQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 022/258] x86/PCI: Fix Broadcom CNB20LE unintended sign extension (redux)
-Date:   Mon, 28 Jan 2019 10:55:28 -0500
-Message-Id: <20190128155924.51521-22-sashal@kernel.org>
+Cc:     Frank Rowand <frank.rowand@sony.com>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 023/258] powerpc/pseries: add of_node_put() in dlpar_detach_node()
+Date:   Mon, 28 Jan 2019 10:55:29 -0500
+Message-Id: <20190128155924.51521-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,42 +57,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Frank Rowand <frank.rowand@sony.com>
 
-[ Upstream commit 53bb565fc5439f2c8c57a786feea5946804aa3e9 ]
+[ Upstream commit 5b3f5c408d8cc59b87e47f1ab9803dbd006e4a91 ]
 
-In the expression "word1 << 16", word1 starts as u16, but is promoted to a
-signed int, then sign-extended to resource_size_t, which is probably not
-what was intended.  Cast to resource_size_t to avoid the sign extension.
+The previous commit, "of: overlay: add missing of_node_get() in
+__of_attach_node_sysfs" added a missing of_node_get() to
+__of_attach_node_sysfs().  This results in a refcount imbalance
+for nodes attached with dlpar_attach_node().  The calling sequence
+from dlpar_attach_node() to __of_attach_node_sysfs() is:
 
-This fixes an identical issue as fixed by commit 0b2d70764bb3 ("x86/PCI:
-Fix Broadcom CNB20LE unintended sign extension") back in 2014.
+   dlpar_attach_node()
+      of_attach_node()
+         __of_attach_node_sysfs()
 
-Detected by CoverityScan, CID#138749, 138750 ("Unintended sign extension")
+For more detailed description of the node refcount, see
+commit 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow
+during DLPAR remove").
 
-Fixes: 3f6ea84a3035 ("PCI: read memory ranges out of Broadcom CNB20LE host bridge")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
+Tested-by: Alan Tull <atull@kernel.org>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/pci/broadcom_bus.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/powerpc/platforms/pseries/dlpar.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/x86/pci/broadcom_bus.c b/arch/x86/pci/broadcom_bus.c
-index 526536c81ddc..ca1e8e6dccc8 100644
---- a/arch/x86/pci/broadcom_bus.c
-+++ b/arch/x86/pci/broadcom_bus.c
-@@ -50,8 +50,8 @@ static void __init cnb20le_res(u8 bus, u8 slot, u8 func)
- 	word1 = read_pci_config_16(bus, slot, func, 0xc0);
- 	word2 = read_pci_config_16(bus, slot, func, 0xc2);
- 	if (word1 != word2) {
--		res.start = (word1 << 16) | 0x0000;
--		res.end   = (word2 << 16) | 0xffff;
-+		res.start = ((resource_size_t) word1 << 16) | 0x0000;
-+		res.end   = ((resource_size_t) word2 << 16) | 0xffff;
- 		res.flags = IORESOURCE_MEM;
- 		update_res(info, res.start, res.end, res.flags, 0);
- 	}
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index a0b20c03f078..e3010b14aea5 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -272,6 +272,8 @@ int dlpar_detach_node(struct device_node *dn)
+ 	if (rc)
+ 		return rc;
+ 
++	of_node_put(dn);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
