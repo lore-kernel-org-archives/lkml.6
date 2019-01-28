@@ -2,64 +2,122 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95915C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B198C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71BD020811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D47E120811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548693292;
+	bh=nK42UhxkzNMA8gHw0CQttrLKnD2RU16ZMCHcHkJMpA0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=DssQA59pRZcD+L/bC3bP26PjJY4qEQZo7JBxfriiaD2kLsOAVMitCI+iT5sM4+MaU
+	 DHayiqEtLIIMLM4vzVHIKUDxDN7OeAa7Yr+eu9bqP2gd4C34FRQi16AfKCgPk+8efi
+	 Kjgn+415Qui5BX2soOJMO6zuSb1+zforpamXPxT0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390333AbfA1Qej (ORCPT
+        id S2390373AbfA1Qev (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:34:39 -0500
-Received: from muru.com ([72.249.23.125]:36298 "EHLO muru.com"
+        Mon, 28 Jan 2019 11:34:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388052AbfA1Qeh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:34:37 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id 91EEA80AA;
-        Mon, 28 Jan 2019 16:34:44 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 08:34:33 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Randy Dunlap <rdunlap@infradead.org>, Keerthy <j-keerthy@ti.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linux PM list <linux-pm@vger.kernel.org>,
-        linux-omap@vger.kernel.org, Eduardo Valentin <edubezval@gmail.com>
-Subject: Re: linux-5.0-rc3, ti-soc-thermal: unmet dependencies Kconfig warning
-Message-ID: <20190128163433.GY5720@atomide.com>
-References: <8baafd04-eda0-778d-84d2-7ccc1d07db6b@infradead.org>
+        id S2390075AbfA1QZy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:54 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 28ED520879;
+        Mon, 28 Jan 2019 16:25:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692753;
+        bh=nK42UhxkzNMA8gHw0CQttrLKnD2RU16ZMCHcHkJMpA0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=gRK0S9eOB5Nk2Q1ZDe1OMvsi7P4m0nMZLMXHdHBirp8khrFuASiQwL4tkt+EfJluz
+         UpBAo3doGjozdlToPZsClhStQ6epjwhFzQHjJP+UuKHvHyvHaBpK+/1yPDvJogRsRN
+         WxgPxQJgOqTeXNVuNhxg/6CLIt9Lw1W2/SWFNQFc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 65/80] seq_buf: Make seq_buf_puts() null-terminate the buffer
+Date:   Mon, 28 Jan 2019 11:23:46 -0500
+Message-Id: <20190128162401.58841-65-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
+References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8baafd04-eda0-778d-84d2-7ccc1d07db6b@infradead.org>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-* Randy Dunlap <rdunlap@infradead.org> [190126 06:54]:
-> Hi,
-> 
-> FYI, I'm seeing this Kconfig warning in 5.0-rc3:
+[ Upstream commit 0464ed24380905d640030d368cd84a4e4d1e15e2 ]
 
-Thanks for reporting it.
+Currently seq_buf_puts() will happily create a non null-terminated
+string for you in the buffer. This is particularly dangerous if the
+buffer is on the stack.
 
-> WARNING: unmet direct dependencies detected for TI_SOC_THERMAL
->   Depends on [n]: THERMAL [=y] && (ARCH_HAS_BANDGAP || COMPILE_TEST [=n]) && HAS_IOMEM [=y]
->   Selected by [m]:
->   - MMC_SDHCI_OMAP [=m] && MMC [=m] && MMC_SDHCI_PLTFM [=m] && OF [=y]
-> 
-> 
-> Maybe there is already a patch for this?
+For example:
 
-Keerthy can you please take a look at this issue?
+  char buf[8];
+  char secret = "secret";
+  struct seq_buf s;
 
-Regards,
+  seq_buf_init(&s, buf, sizeof(buf));
+  seq_buf_puts(&s, "foo");
+  printk("Message is %s\n", buf);
 
-Tony
+Can result in:
+
+  Message is fooªªªªªsecret
+
+We could require all users to memset() their buffer to zero before
+use. But that seems likely to be forgotten and lead to bugs.
+
+Instead we can change seq_buf_puts() to always leave the buffer in a
+null-terminated state.
+
+The only downside is that this makes the buffer 1 character smaller
+for seq_buf_puts(), but that seems like a good trade off.
+
+Link: http://lkml.kernel.org/r/20181019042109.8064-1-mpe@ellerman.id.au
+
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ lib/seq_buf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/lib/seq_buf.c b/lib/seq_buf.c
+index 5c94e1012a91..cbef5ee4c459 100644
+--- a/lib/seq_buf.c
++++ b/lib/seq_buf.c
+@@ -143,9 +143,13 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
+ 
+ 	WARN_ON(s->size == 0);
+ 
++	/* Add 1 to len for the trailing null byte which must be there */
++	len += 1;
++
+ 	if (seq_buf_can_fit(s, len)) {
+ 		memcpy(s->buffer + s->len, str, len);
+-		s->len += len;
++		/* Don't count the trailing null byte against the capacity */
++		s->len += len - 1;
+ 		return 0;
+ 	}
+ 	seq_buf_set_overflow(s);
+-- 
+2.19.1
+
