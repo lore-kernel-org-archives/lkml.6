@@ -2,144 +2,187 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B021C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:54:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D215C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:58:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB36420882
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:54:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Uyoff7v8"
+	by mail.kernel.org (Postfix) with ESMTP id 07CF820989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:58:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbfA1Fyn (ORCPT
+        id S1726672AbfA1F6A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 00:54:43 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:43476 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbfA1Fym (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 00:54:42 -0500
-Received: by mail-oi1-f195.google.com with SMTP id u18so12063175oie.10
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 21:54:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vFcdm97ZQVqY+sV8pPGkw6BS+L2oAzaBBnHbL8dP6qY=;
-        b=Uyoff7v8XzH8f5DxoBbglk0HZJLuF+9E8p7lxgKwVrvu5ZYWUGmCiADjNdzSzDki9M
-         dn31m0DG6cwz/d8+NwWxZI5CL2SMMzbEKpvOXMMgXKMY14+ciHrdd9LNFavU5QXk+l0Q
-         eMU36ihXXuctBaDC0u8ivl7W6QrPxSq8SdAYw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vFcdm97ZQVqY+sV8pPGkw6BS+L2oAzaBBnHbL8dP6qY=;
-        b=pQX+Zp7qjeRFX7pWQdSRnlhIeua7mtgak4zMH4kg7+aSnhOmKGlHn/J/i8wCXmZ2dn
-         SlKDT1kCVtcy4C0pyZYsyPvVI/x0oMjDDcRPj+zW59oWxZuW5ZuawgFATedrvDTMNUWu
-         weM15t/4Kgy6ZpoKvineAgjxVYqSolUepExOYfJ65XOi+kizrCo5B2jmQ5qiiaeAELQX
-         7uBXoHpG8p5hWHCo9LB1Q8QqvTcBKO8trvGIrtdPllAt2mIKifbuM2sxySZT54GV8JCR
-         ReIqRBkp8wF8ekRi4VXoVfcsU5H2beWYOWQEkeZngmRk1NBolL2HPdrU2SrA4yzhRs8h
-         f/2A==
-X-Gm-Message-State: AJcUukcxOIuypbGTUwm1rKsKdRf7FsLtPibNPR8F0dQRxn8HnRklOT1N
-        fI6teNfelbUTLq7j8eD+uPRCY9x110c=
-X-Google-Smtp-Source: AHgI3Ia/ztUGYDoTkLFw9eLQDZ0WKk9Zp1sYyJXn67EkoXSDG0QlgCq4uUYi/vZ0OwyM4z4j2IpnDQ==
-X-Received: by 2002:aca:1b13:: with SMTP id b19mr5013696oib.215.1548654881505;
-        Sun, 27 Jan 2019 21:54:41 -0800 (PST)
-Received: from mail-oi1-f178.google.com (mail-oi1-f178.google.com. [209.85.167.178])
-        by smtp.gmail.com with ESMTPSA id 21sm4439292oie.24.2019.01.27.21.54.39
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 21:54:40 -0800 (PST)
-Received: by mail-oi1-f178.google.com with SMTP id t204so12073960oie.7
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 21:54:39 -0800 (PST)
-X-Received: by 2002:a54:4486:: with SMTP id v6mr5215060oiv.233.1548654879619;
- Sun, 27 Jan 2019 21:54:39 -0800 (PST)
-MIME-Version: 1.0
-References: <20181115145650.9827-1-maxime.ripard@bootlin.com> <20181115145650.9827-2-maxime.ripard@bootlin.com>
-In-Reply-To: <20181115145650.9827-2-maxime.ripard@bootlin.com>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Mon, 28 Jan 2019 14:54:27 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MX9=+k=5M-w7SyCUAKUceAXN7UG_6==tFx4RhR13Etdwg@mail.gmail.com>
-Message-ID: <CAPBb6MX9=+k=5M-w7SyCUAKUceAXN7UG_6==tFx4RhR13Etdwg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] media: uapi: Add H264 low-level decoder API
- compound controls.
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Tomasz Figa <tfiga@chromium.org>,
-        Pawel Osciak <posciak@chromium.org>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Guenter Roeck <groeck@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 28 Jan 2019 00:58:00 -0500
+Received: from hermes.aosc.io ([199.195.250.187]:41100 "EHLO hermes.aosc.io"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726149AbfA1F6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 00:58:00 -0500
+Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
+        by hermes.aosc.io (Postfix) with ESMTPSA id 6345919D11F;
+        Mon, 28 Jan 2019 05:57:56 +0000 (UTC)
+From:   Icenowy Zheng <icenowy@aosc.io>
+To:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Icenowy Zheng <icenowy@aosc.io>
+Subject: [PATCH] USB: serial: cp210x: add GPIO support for CP2104
+Date:   Mon, 28 Jan 2019 13:57:17 +0800
+Message-Id: <20190128055717.31162-1-icenowy@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 11:56 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> From: Pawel Osciak <posciak@chromium.org>
->
-> Stateless video codecs will require both the H264 metadata and slices in
-> order to be able to decode frames.
->
-> This introduces the definitions for a new pixel format for H264 slices that
-> have been parsed, as well as the structures used to pass the metadata from
-> the userspace to the kernel.
->
-> Co-Developed-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> Signed-off-by: Pawel Osciak <posciak@chromium.org>
-> Signed-off-by: Guenter Roeck <groeck@chromium.org>
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+The CP2104 chips feature 4 controllable GPIO pins, which are similar to
+the ones on CP2102N chip (output-only when push-pull, output or
+simulated input mode when open-drain).
 
-<snip>
+Add support for the GPIO pins for cp210x driver. The pin get/set routine
+is shared with CP2102N, but the pinconf initialization code is not
+shared because the acquisition of GPIO configuration in OTP ROM is
+similar to CP2105, not CP2102N.
 
-> diff --git a/drivers/media/v4l2-core/v4l2-ctrls.c b/drivers/media/v4l2-core/v4l2-ctrls.c
-> index b854cceb19dc..e96c453208e8 100644
-> --- a/drivers/media/v4l2-core/v4l2-ctrls.c
-> +++ b/drivers/media/v4l2-core/v4l2-ctrls.c
-> @@ -825,6 +825,11 @@ const char *v4l2_ctrl_get_name(u32 id)
->         case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER:return "H264 Number of HC Layers";
->         case V4L2_CID_MPEG_VIDEO_H264_HIERARCHICAL_CODING_LAYER_QP:
->                                                                 return "H264 Set QP Value for HC Layers";
-> +       case V4L2_CID_MPEG_VIDEO_H264_SPS:                      return "H264 SPS";
-> +       case V4L2_CID_MPEG_VIDEO_H264_PPS:                      return "H264 PPS";
-> +       case V4L2_CID_MPEG_VIDEO_H264_SCALING_MATRIX:           return "H264 Scaling Matrix";
-> +       case V4L2_CID_MPEG_VIDEO_H264_SLICE_PARAMS:             return "H264 Slice Parameters";
-> +       case V4L2_CID_MPEG_VIDEO_H264_DECODE_PARAMS:            return "H264 Decode Parameters";
->         case V4L2_CID_MPEG_VIDEO_MPEG4_I_FRAME_QP:              return "MPEG4 I-Frame QP Value";
->         case V4L2_CID_MPEG_VIDEO_MPEG4_P_FRAME_QP:              return "MPEG4 P-Frame QP Value";
->         case V4L2_CID_MPEG_VIDEO_MPEG4_B_FRAME_QP:              return "MPEG4 B-Frame QP Value";
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+---
+ drivers/usb/serial/cp210x.c | 82 +++++++++++++++++++++++++++++++++++--
+ 1 file changed, 78 insertions(+), 4 deletions(-)
 
-To make things future-proof I think it may be good to add a control
-specifying the granularity of data sent with each request (see
-https://lkml.org/lkml/2019/1/24/147).
+diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
+index c0777a374a88..b27cf9d00aec 100644
+--- a/drivers/usb/serial/cp210x.c
++++ b/drivers/usb/serial/cp210x.c
+@@ -443,10 +443,10 @@ struct cp210x_pin_mode {
+ #define CP210X_PIN_MODE_GPIO		BIT(0)
+ 
+ /*
+- * CP210X_VENDOR_SPECIFIC, CP210X_GET_PORTCONFIG call reads these 0xf bytes.
+- * Structure needs padding due to unused/unspecified bytes.
++ * CP210X_VENDOR_SPECIFIC, CP210X_GET_PORTCONFIG call reads these 0xf bytes
++ * on a CP2105 chip. Structure needs padding due to unused/unspecified bytes.
+  */
+-struct cp210x_config {
++struct cp210x_dual_port_config {
+ 	__le16	gpio_mode;
+ 	u8	__pad0[2];
+ 	__le16	reset_state;
+@@ -457,6 +457,19 @@ struct cp210x_config {
+ 	u8	device_cfg;
+ } __packed;
+ 
++/*
++ * CP210X_VENDOR_SPECIFIC, CP210X_GET_PORTCONFIG call reads these 0xd bytes
++ * on a CP2104 chip. Structure needs padding due to unused/unspecified bytes.
++ */
++struct cp210x_single_port_config {
++	__le16	gpio_mode;
++	u8	__pad0[2];
++	__le16	reset_state;
++	u8	__pad1[4];
++	__le16	suspend_state;
++	u8	device_cfg;
++} __packed;
++
+ /* GPIO modes */
+ #define CP210X_SCI_GPIO_MODE_OFFSET	9
+ #define CP210X_SCI_GPIO_MODE_MASK	GENMASK(11, 9)
+@@ -464,11 +477,19 @@ struct cp210x_config {
+ #define CP210X_ECI_GPIO_MODE_OFFSET	2
+ #define CP210X_ECI_GPIO_MODE_MASK	GENMASK(3, 2)
+ 
++#define CP210X_GPIO_MODE_OFFSET		8
++#define CP210X_GPIO_MODE_MASK		GENMASK(11, 8)
++
+ /* CP2105 port configuration values */
+ #define CP2105_GPIO0_TXLED_MODE		BIT(0)
+ #define CP2105_GPIO1_RXLED_MODE		BIT(1)
+ #define CP2105_GPIO1_RS485_MODE		BIT(2)
+ 
++/* CP2104 port configuration values */
++#define CP2104_GPIO0_TXLED_MODE		BIT(0)
++#define CP2104_GPIO1_RXLED_MODE		BIT(1)
++#define CP2104_GPIO2_RS485_MODE		BIT(2)
++
+ /* CP2102N configuration array indices */
+ #define CP210X_2NCONFIG_CONFIG_VERSION_IDX	2
+ #define CP210X_2NCONFIG_GPIO_MODE_IDX		581
+@@ -1470,7 +1491,7 @@ static int cp2105_gpioconf_init(struct usb_serial *serial)
+ {
+ 	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
+ 	struct cp210x_pin_mode mode;
+-	struct cp210x_config config;
++	struct cp210x_dual_port_config config;
+ 	u8 intf_num = cp210x_interface_num(serial);
+ 	u8 iface_config;
+ 	int result;
+@@ -1529,6 +1550,56 @@ static int cp2105_gpioconf_init(struct usb_serial *serial)
+ 	return 0;
+ }
+ 
++static int cp2104_gpioconf_init(struct usb_serial *serial)
++{
++	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
++	struct cp210x_single_port_config config;
++	u8 iface_config;
++	u8 gpio_latch;
++	int result;
++	u8 i;
++
++	result = cp210x_read_vendor_block(serial, REQTYPE_DEVICE_TO_HOST,
++					  CP210X_GET_PORTCONFIG, &config,
++					  sizeof(config));
++	if (result < 0)
++		return result;
++
++	priv->gc.ngpio = 4;
++
++	iface_config = config.device_cfg;
++	priv->gpio_pushpull = (u8)((le16_to_cpu(config.gpio_mode) &
++					CP210X_GPIO_MODE_MASK) >>
++					CP210X_GPIO_MODE_OFFSET);
++	gpio_latch = (u8)((le16_to_cpu(config.reset_state) &
++					CP210X_GPIO_MODE_MASK) >>
++					CP210X_GPIO_MODE_OFFSET);
++
++	/* mark all pins which are not in GPIO mode */
++	if (iface_config & CP2104_GPIO0_TXLED_MODE)	/* GPIO 0 */
++		priv->gpio_altfunc |= BIT(0);
++	if (iface_config & CP2104_GPIO1_RXLED_MODE)	/* GPIO 1 */
++		priv->gpio_altfunc |= BIT(1);
++	if (iface_config & CP2104_GPIO2_RS485_MODE)	/* GPIO 2 */
++		priv->gpio_altfunc |= BIT(2);
++
++	/*
++	 * Like CP2102N, CP2104 has also no strict input and output pin
++	 * modes.
++	 * Do the same input mode emulation as CP2102N.
++	 */
++	for (i = 0; i < priv->gc.ngpio; ++i) {
++		/*
++		 * Set direction to "input" iff pin is open-drain and reset
++		 * value is 1.
++		 */
++		if (!(priv->gpio_pushpull & BIT(i)) && (gpio_latch & BIT(i)))
++			priv->gpio_input |= BIT(i);
++	}
++
++	return 0;
++}
++
+ static int cp2102n_gpioconf_init(struct usb_serial *serial)
+ {
+ 	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
+@@ -1620,6 +1691,9 @@ static int cp210x_gpio_init(struct usb_serial *serial)
+ 	int result;
+ 
+ 	switch (priv->partnum) {
++	case CP210X_PARTNUM_CP2104:
++		result = cp2104_gpioconf_init(serial);
++		break;
+ 	case CP210X_PARTNUM_CP2105:
+ 		result = cp2105_gpioconf_init(serial);
+ 		break;
+-- 
+2.18.1
 
-Right now we have a consensus that to make things simple, we request
-one frame of encoded data per request. But this will probably be
-relaxed in the future, since allowing to process things at lower
-granularity may improve latency. Moreover the granularity accepted by
-the encoder is hardware/firmware dependent, so it is probably a good
-idea to expose this from the beginning.
-
-How about a new V4L2_CID_MPEG_VIDEO_H264_GRANULARITY control with only
-one value at the moment, namely
-V4L2_MPEG_VIDEO_H264_GRANULARITY_FRAME? We could extend this in the
-future, and that way user-space will have no excuse for not checking
-that the codec supports the input granularity it will send.
-
-I'm wondering whether this could be made codec-independent, but I'm
-afraid this would add confusion.
