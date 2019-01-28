@@ -2,101 +2,105 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07453C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:43:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E76C6C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:43:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D50CF2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:43:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5AE92084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:43:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548693797;
+	bh=8au7j8K6/I0RW4yHIlYdvt2CwNCTjJILoEnRlgObnWE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=xP4UlWEoJVKfP4RjWZjEHTkzcIBdKH+zgVAJc5+ETNCLqnuIZdFvZuIUKNVNeECu/
+	 q266dgQj4DAlUPEnsu0Q804CIlNzbKmM37U+8tGk/mgtyzHDG7hiJhb0mA2Yb7R9Fm
+	 o4ghjWNgfXHTfjF1ALwmDTpAoP5FJXIxsgSyWxcA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389747AbfA1QnI (ORCPT
+        id S2389184AbfA1QnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:43:08 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37326 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S2389049AbfA1QXc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:32 -0500
-Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SGJQgS110140
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:23:31 -0500
-Received: from e13.ny.us.ibm.com (e13.ny.us.ibm.com [129.33.205.203])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qa49ab8tm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:23:31 -0500
-Received: from localhost
-        by e13.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
-        Mon, 28 Jan 2019 16:23:30 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e13.ny.us.ibm.com (146.89.104.200) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 28 Jan 2019 16:23:27 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SGNQd425624780
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Jan 2019 16:23:26 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 22C20B2065;
-        Mon, 28 Jan 2019 16:23:26 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 8A4FAB206A;
-        Mon, 28 Jan 2019 16:23:25 +0000 (GMT)
-Received: from talon7.ibm.com (unknown [9.41.179.222])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 28 Jan 2019 16:23:25 +0000 (GMT)
-From:   Eddie James <eajames@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-hwmon@vger.kernel.org, linux@roeck-us.net, joel@jms.id.au,
-        jdelvare@suse.com, tglx@linutronix.de,
-        Eddie James <eajames@linux.vnet.ibm.com>
-Subject: [PATCH v2 0/2] occ: FSI and hwmon: Fix license headers
-Date:   Mon, 28 Jan 2019 10:23:22 -0600
-X-Mailer: git-send-email 1.8.3.1
-X-TM-AS-GCONF: 00
-x-cbid: 19012816-0064-0000-0000-0000039F04B5
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010493; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01153048; UDB=6.00601113; IPR=6.00933410;
- MB=3.00025324; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-28 16:23:29
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012816-0065-0000-0000-00003C351A79
-Message-Id: <1548692604-9899-1-git-send-email-eajames@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=762 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901280123
+        Mon, 28 Jan 2019 11:43:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59752 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389454AbfA1QXb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:23:31 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF8B32175B;
+        Mon, 28 Jan 2019 16:23:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692610;
+        bh=8au7j8K6/I0RW4yHIlYdvt2CwNCTjJILoEnRlgObnWE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iVCngjhhMDOlpX/9mMnjfGZyEG5A1DUYOkHxO8FRGDyZ3CS2rL/rFq+h+I2nkhDVm
+         azfVPi9/Bz3fJW8C9QcHYMdKmuy2I+4ClICWJ4v6ha2nnBG3nC6YMRdnxcEfpLDmLH
+         DX31fFEyh2bus6ILt3Ygpp/kNq5fKr/yRKlijfpA=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 092/107] niu: fix missing checks of niu_pci_eeprom_read
+Date:   Mon, 28 Jan 2019 11:19:32 -0500
+Message-Id: <20190128161947.57405-92-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
+References: <20190128161947.57405-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eddie James <eajames@linux.vnet.ibm.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-Source files for the FSI OCC and OCC hwmon drivers had a combination of bad
-license information and missing IBM copyright. Correct the licenses.
+[ Upstream commit 26fd962bde0b15e54234fe762d86bc0349df1de4 ]
 
-Changes since v1:
- - correct header comment style
+niu_pci_eeprom_read() may fail, so we should check its return value
+before using the read data.
 
-Eddie James (2):
-  hwmon (occ): Fix license headers
-  fsi: occ: Fix license header
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Shannon Nelson <shannon.lee.nelson@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/sun/niu.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
- drivers/fsi/fsi-occ.c      |  3 ++-
- drivers/hwmon/occ/common.c |  3 ++-
- drivers/hwmon/occ/common.h |  3 ++-
- drivers/hwmon/occ/p8_i2c.c |  3 ++-
- drivers/hwmon/occ/p9_sbe.c |  3 ++-
- drivers/hwmon/occ/sysfs.c  | 13 ++-----------
- 6 files changed, 12 insertions(+), 16 deletions(-)
-
+diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+index e45e2f14fb94..fe5b0ac8c631 100644
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -8121,6 +8121,8 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
+ 		start += 3;
+ 
+ 		prop_len = niu_pci_eeprom_read(np, start + 4);
++		if (prop_len < 0)
++			return prop_len;
+ 		err = niu_pci_vpd_get_propname(np, start + 5, namebuf, 64);
+ 		if (err < 0)
+ 			return err;
+@@ -8165,8 +8167,12 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
+ 			netif_printk(np, probe, KERN_DEBUG, np->dev,
+ 				     "VPD_SCAN: Reading in property [%s] len[%d]\n",
+ 				     namebuf, prop_len);
+-			for (i = 0; i < prop_len; i++)
+-				*prop_buf++ = niu_pci_eeprom_read(np, off + i);
++			for (i = 0; i < prop_len; i++) {
++				err = niu_pci_eeprom_read(np, off + i);
++				if (err >= 0)
++					*prop_buf = err;
++				++prop_buf;
++			}
+ 		}
+ 
+ 		start += len;
 -- 
-1.8.3.1
+2.19.1
 
