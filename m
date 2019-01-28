@@ -2,112 +2,97 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 34945C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:26:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AFDC282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:27:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D1E92148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:26:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 528C520881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:27:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fjfi.cvut.cz header.i=@fjfi.cvut.cz header.b="EU2vATTU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfA1I05 (ORCPT
+        id S1726861AbfA1I1W (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:26:57 -0500
-Received: from paleale.coelho.fi ([176.9.41.70]:51786 "EHLO
-        farmhouse.coelho.fi" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726647AbfA1I04 (ORCPT
+        Mon, 28 Jan 2019 03:27:22 -0500
+Received: from mailgw1.fjfi.cvut.cz ([147.32.9.3]:44494 "EHLO
+        mailgw1.fjfi.cvut.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfA1I1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:26:56 -0500
-Received: from 91-156-4-241.elisa-laajakaista.fi ([91.156.4.241] helo=redipa)
-        by farmhouse.coelho.fi with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.91)
-        (envelope-from <luca@coelho.fi>)
-        id 1go2Fb-0002Wo-G5; Mon, 28 Jan 2019 10:26:41 +0200
-Message-ID: <4f29fc396b9df90d39c4e46bf85c0d7f23dd9ddc.camel@coelho.fi>
-From:   Luca Coelho <luca@coelho.fi>
-To:     Kalle Valo <kvalo@codeaurora.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-wireless@vger.kernel.org,
-        brcm80211-dev-list.pdl@broadcom.com,
-        Franky Lin <franky.lin@broadcom.com>,
-        Intel Linux Wireless <linuxwifi@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
-        netdev@vger.kernel.org,
-        Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
-        Chi-Hsien Lin <chi-hsien.lin@cypress.com>,
-        Hin-Tak Leung <htl10@users.sourceforge.net>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        Herton Ronaldo Krzesinski <herton@canonical.com>,
-        Hante Meuleman <hante.meuleman@broadcom.com>,
-        Wright Feng <wright.feng@cypress.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        brcm80211-dev-list@cypress.com, linux-kernel@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>
-Date:   Mon, 28 Jan 2019 10:26:36 +0200
-In-Reply-To: <8736pd2nw4.fsf@codeaurora.org>
-References: <1548429480-22137-1-git-send-email-yamada.masahiro@socionext.com>
-         <8736pd2nw4.fsf@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.4-1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
-Subject: Re: [PATCH] net: wireless: prefix header search paths with
- $(srctree)/
+        Mon, 28 Jan 2019 03:27:22 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTP id 49348A2348;
+        Mon, 28 Jan 2019 09:27:18 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjfi.cvut.cz;
+        s=20151024; t=1548664038; i=@fjfi.cvut.cz;
+        bh=Dn5qZfS5ktpFlozSnl1kn07sZK1+BZhHUiDw5tDPuZ4=;
+        h=Date:From:To:cc:Subject:In-Reply-To:References;
+        b=EU2vATTUpUUMq7w0Y7CdFtbIrEAEwgVP2aknvoS7Ri3hKE1yDvJgIDYLveY8ZK5qF
+         pOvumEheqbetW4kdd/d1qKoF2LhWZOY+kP8Ti13WZf2tR+dZAcXc9NLf4o7F+ZviKJ
+         lEAlvoTKQvXlGRRHlOi+UlViGVH4gfLHbZZZ93GI=
+X-CTU-FNSPE-Virus-Scanned: amavisd-new at fjfi.cvut.cz
+Received: from mailgw1.fjfi.cvut.cz ([127.0.0.1])
+        by localhost (mailgw1.fjfi.cvut.cz [127.0.0.1]) (amavisd-new, port 10022)
+        with ESMTP id eIsUu8Rv_3f8; Mon, 28 Jan 2019 09:27:07 +0100 (CET)
+Received: from linux.fjfi.cvut.cz (linux.fjfi.cvut.cz [147.32.5.111])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mailgw1.fjfi.cvut.cz (Postfix) with ESMTPS id 1D09DA2481;
+        Mon, 28 Jan 2019 09:27:06 +0100 (CET)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailgw1.fjfi.cvut.cz 1D09DA2481
+Received: by linux.fjfi.cvut.cz (Postfix, from userid 1001)
+        id 9674D6004E; Mon, 28 Jan 2019 09:27:05 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by linux.fjfi.cvut.cz (Postfix) with ESMTP id 833C06004D;
+        Mon, 28 Jan 2019 09:27:05 +0100 (CET)
+Date:   Mon, 28 Jan 2019 09:27:05 +0100 (CET)
+From:   David Kozub <zub@linux.fjfi.cvut.cz>
+To:     Scott Bauer <sbauer@plzdonthack.me>
+cc:     Jens Axboe <axboe@kernel.dk>,
+        Jonathan Derrick <jonathan.derrick@intel.com>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jonas Rabenstein <jonas.rabenstein@studium.uni-erlangen.de>
+Subject: Re: [PATCH v3 00/16] block: sed-opal: support shadow MBR done flag
+ and write
+In-Reply-To: <20190127211449.GP21149@hacktheplanet>
+Message-ID: <alpine.LRH.2.21.1901280924090.12735@linux.fjfi.cvut.cz>
+References: <1548196307-12987-1-git-send-email-zub@linux.fjfi.cvut.cz> <20190127211449.GP21149@hacktheplanet>
+User-Agent: Alpine 2.21 (LRH 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2019-01-28 at 10:21 +0200, Kalle Valo wrote:
-> Masahiro Yamada <yamada.masahiro@socionext.com> writes:
-> 
-> > Currently, the Kbuild core manipulates header search paths in a
-> > crazy
-> > way [1].
-> > 
-> > To fix this mess, I want all Makefiles to add explicit $(srctree)/
-> > to
-> > the search paths in the srctree. Some Makefiles are already written
-> > in
-> > that way, but not all. The goal of this work is to make the
-> > notation
-> > consistent, and finally get rid of the gross hacks.
-> > 
-> > Having whitespaces after -I does not matter since commit
-> > 48f6e3cf5bc6
-> > ("kbuild: do not drop -I without parameter").
-> > 
-> > I also removed one header search path in:
-> > 
-> >   drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile
-> > 
-> > I was able to compile without it.
-> > 
-> > [1]: https://patchwork.kernel.org/patch/9632347/
-> > 
-> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> > ---
-> > 
-> >  drivers/net/wireless/broadcom/brcm80211/brcmfmac/Makefile | 4 ++--
-> >  drivers/net/wireless/broadcom/brcm80211/brcmsmac/Makefile | 6 +++-
-> > --
-> >  drivers/net/wireless/broadcom/brcm80211/brcmutil/Makefile | 4 +---
-> >  drivers/net/wireless/intel/iwlwifi/dvm/Makefile           | 2 +-
-> >  drivers/net/wireless/intel/iwlwifi/mvm/Makefile           | 2 +-
-> >  drivers/net/wireless/realtek/rtl818x/rtl8180/Makefile     | 2 +-
-> >  drivers/net/wireless/realtek/rtl818x/rtl8187/Makefile     | 2 +-
-> >  7 files changed, 10 insertions(+), 12 deletions(-)
-> 
-> Luca, is it ok if I take this to wireless-drivers-next even though it
-> touches iwlwifi makefiles?
+On Sun, 27 Jan 2019, Scott Bauer wrote:
 
-Sure, it's much easier like that.
+> On Tue, Jan 22, 2019 at 11:31:31PM +0100, David Kozub wrote:
+>> David Kozub (8):
+>>   block: sed-opal: fix typos and formatting
+>>   block: sed-opal: close parameter list in cmd_finalize
+>>   block: sed-opal: unify cmd start
+>>   block: sed-opal: unify error handling of responses
+>>   block: sed-opal: reuse response_get_token to decrease code duplication
+>>   block: sed-opal: pass steps via argument rather than via opal_dev
+>>   block: sed-opal: don't repeat opal_discovery0 in each steps array
+>>   block: sed-opal: rename next to execute_steps
+>>
+>
+> You forgot to send 16/16 again in v3. I pulled and tested off your github page.
+> If you send a v4 or just resend that patch you can add my reviewed-by, as I reviewed it
+> on my tree/from your github.
 
-Acked-by: Luca Coelho <luciano.coelho@intel.com>
+Hi Scott. Thank you for the review.
 
---
-Cheers,
-Luca.
+W.r.t. the 16th patch: I think I sent it, after all I also see it in 
+lore.kernel.org:
 
+https://lore.kernel.org/lkml/1548196307-12987-17-git-send-email-zub@linux.fjfi.cvut.cz/
+
+Anyway, if the best way forward is to send v4, I'll do it.
+
+Best regards,
+David
