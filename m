@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECBD9C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B9AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1DCE20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7135420881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697946;
-	bh=I7pvq7t2LNOlv+qCf0XfWD7FvlCtcake4L0qhz0Dk90=;
+	s=default; t=1548697954;
+	bh=UaU2v9q9c1g8rto2aM2CQUEMVCf4hkrzL06mthyZTik=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oL5GznIgUY7z2kg+NfzWe3KGaukXuwAykhan1L7RCgk62VFCS1WnAGni7nkLheDav
-	 O6eLy/92z6vabtyu2mWC1vHMd3WVAnBuXaWFi7jgh24/EyKeiwiMSUbUcSKbIELQpt
-	 FdtzQQQnw8avRlBDO/H7Sb0LvPtdOqE23IMejhzg=
+	b=Tr/5hmrAzDlyb413cNNh2Hx0Uf/xhDvjhy6nKTB6E6kpuR8kTZy8o7O8CfeB4o9TM
+	 xJLcPG0EXCPf+M5DBO8eBOlfZqgqoeLwfkNCXzZ61eiLTRHbNRBwX65jlStwt26oaE
+	 3RIt1+s0i9RVAnlkarzw4iydTbtcmIksRTLZafXE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727637AbfA1RwZ (ORCPT
+        id S1727785AbfA1Rwd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:52:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57108 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:52:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57052 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726899AbfA1Pnz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:43:55 -0500
+        id S1727066AbfA1Pnw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:43:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 490C02173C;
-        Mon, 28 Jan 2019 15:43:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 547582175B;
+        Mon, 28 Jan 2019 15:43:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690234;
-        bh=I7pvq7t2LNOlv+qCf0XfWD7FvlCtcake4L0qhz0Dk90=;
+        s=default; t=1548690231;
+        bh=UaU2v9q9c1g8rto2aM2CQUEMVCf4hkrzL06mthyZTik=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dU6kQF9ItK+WTUn4trtF0cGlnRdnp3vcQch6VaELYBarMimmV7gRsr/T8hx5UGaHG
-         Kt2pdPfkK1ZDWF/yJXlDsqPuHcAIyg1o7hbVAlLfx1Ng0J172Ml3+677q8GQA/OjQD
-         NaupYNL8LKuET1JtKagofdT+NynnDLb5d8xRoE4M=
+        b=uwIYFsnMNgg7q7pbpnppuF/VxtsGqGkyUAHzUdY5ty4XA8G/7ZiLsasgAjuxq3e8+
+         uVnninDFZP/7Kr962estvB75qhT7gpijqazb56u9xxt9iUJGCNmyj0ItrqytZE5eSH
+         6saUx4M60xzyoIWlqA1YT26m9e6yL4GgickaasWE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+Cc:     Muchun Song <smuchun@gmail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 010/304] ath10k: fixup extended per sta tx statistics
-Date:   Mon, 28 Jan 2019 10:38:47 -0500
-Message-Id: <20190128154341.47195-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 008/304] gpiolib: Fix possible use after free on label
+Date:   Mon, 28 Jan 2019 10:38:45 -0500
+Message-Id: <20190128154341.47195-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,52 +57,122 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Muchun Song <smuchun@gmail.com>
 
-[ Upstream commit 539b44e70c5b4ad82d2c0c97a4dfb37523d891f6 ]
+[ Upstream commit 18534df419041e6c1f4b41af56ee7d41f757815c ]
 
-I had a couple concerns with this code.  First, we definitely need to
-set the error code if the kzalloc() fails.  Secondly, I was worried that
-if we didn't set "arsta->tx_stats" to NULL after freeing it, then it
-looks to me like it might lead to a use after free.  I can't test that,
-but it's harmless to set it to NULL so I did.
+gpiod_request_commit() copies the pointer to the label passed as
+an argument only to be used later. But there's a chance the caller
+could immediately free the passed string(e.g., local variable).
+This could trigger a use after free when we use gpio label(e.g.,
+gpiochip_unlock_as_irq(), gpiochip_is_requested()).
 
-Fixes: a904417fc876 ("ath10k: add extended per sta tx statistics support")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+To be on the safe side: duplicate the string with kstrdup_const()
+so that if an unaware user passes an address to a stack-allocated
+buffer, we won't get the arbitrary label.
+
+Also fix gpiod_set_consumer_name().
+
+Signed-off-by: Muchun Song <smuchun@gmail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/mac.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/gpio/gpiolib.c        | 25 +++++++++++++++++++++----
+ include/linux/gpio/consumer.h |  6 ++++--
+ 2 files changed, 25 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index 7e49342bae38..b4764fee4751 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -6296,8 +6296,10 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
- 		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
- 			arsta->tx_stats = kzalloc(sizeof(*arsta->tx_stats),
- 						  GFP_KERNEL);
--			if (!arsta->tx_stats)
-+			if (!arsta->tx_stats) {
-+				ret = -ENOMEM;
- 				goto exit;
-+			}
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index a2cbb474901c..33266460e81c 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2299,6 +2299,12 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 	unsigned long		flags;
+ 	unsigned		offset;
+ 
++	if (label) {
++		label = kstrdup_const(label, GFP_KERNEL);
++		if (!label)
++			return -ENOMEM;
++	}
++
+ 	spin_lock_irqsave(&gpio_lock, flags);
+ 
+ 	/* NOTE:  gpio_request() can be called in early boot,
+@@ -2309,6 +2315,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 		desc_set_label(desc, label ? : "?");
+ 		status = 0;
+ 	} else {
++		kfree_const(label);
+ 		status = -EBUSY;
+ 		goto done;
+ 	}
+@@ -2325,6 +2332,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
+ 
+ 		if (status < 0) {
+ 			desc_set_label(desc, NULL);
++			kfree_const(label);
+ 			clear_bit(FLAG_REQUESTED, &desc->flags);
+ 			goto done;
  		}
+@@ -2420,6 +2428,7 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
+ 			chip->free(chip, gpio_chip_hwgpio(desc));
+ 			spin_lock_irqsave(&gpio_lock, flags);
+ 		}
++		kfree_const(desc->label);
+ 		desc_set_label(desc, NULL);
+ 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
+ 		clear_bit(FLAG_REQUESTED, &desc->flags);
+@@ -3375,11 +3384,19 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
+  * @desc: gpio to set the consumer name on
+  * @name: the new consumer name
+  */
+-void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
++int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
+ {
+-	VALIDATE_DESC_VOID(desc);
+-	/* Just overwrite whatever the previous name was */
+-	desc->label = name;
++	VALIDATE_DESC(desc);
++	if (name) {
++		name = kstrdup_const(name, GFP_KERNEL);
++		if (!name)
++			return -ENOMEM;
++	}
++
++	kfree_const(desc->label);
++	desc_set_label(desc, name);
++
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(gpiod_set_consumer_name);
  
- 		num_tdls_stations = ath10k_mac_tdls_vif_stations_count(hw, vif);
-@@ -6385,8 +6387,10 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
- 			   "mac vdev %d peer delete %pM sta %pK (sta gone)\n",
- 			   arvif->vdev_id, sta->addr, sta);
+diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
+index f2f887795d43..ed070512b40e 100644
+--- a/include/linux/gpio/consumer.h
++++ b/include/linux/gpio/consumer.h
+@@ -162,7 +162,7 @@ int gpiod_is_active_low(const struct gpio_desc *desc);
+ int gpiod_cansleep(const struct gpio_desc *desc);
  
--		if (ath10k_debug_is_extd_tx_stats_enabled(ar))
-+		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
- 			kfree(arsta->tx_stats);
-+			arsta->tx_stats = NULL;
-+		}
+ int gpiod_to_irq(const struct gpio_desc *desc);
+-void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
++int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
  
- 		if (sta->tdls) {
- 			ret = ath10k_mac_tdls_peer_update(ar, arvif->vdev_id,
+ /* Convert between the old gpio_ and new gpiod_ interfaces */
+ struct gpio_desc *gpio_to_desc(unsigned gpio);
+@@ -495,10 +495,12 @@ static inline int gpiod_to_irq(const struct gpio_desc *desc)
+ 	return -EINVAL;
+ }
+ 
+-static inline void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
++static inline int gpiod_set_consumer_name(struct gpio_desc *desc,
++					  const char *name)
+ {
+ 	/* GPIO can never have been requested */
+ 	WARN_ON(1);
++	return -EINVAL;
+ }
+ 
+ static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
 -- 
 2.19.1
 
