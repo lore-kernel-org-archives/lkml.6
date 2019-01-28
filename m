@@ -2,109 +2,140 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48326C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71375C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:54:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 208182087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48ED22087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:54:29 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727582AbfA1Tts (ORCPT
+        id S1727166AbfA1Ty1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:49:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42326 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726744AbfA1Ttr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:49:47 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id D312C550B0;
-        Mon, 28 Jan 2019 19:49:46 +0000 (UTC)
-Received: from redhat.com (dhcp-17-208.bos.redhat.com [10.18.17.208])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A59AC1850A;
-        Mon, 28 Jan 2019 19:49:45 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 14:49:43 -0500
-From:   Joe Lawrence <joe.lawrence@redhat.com>
-To:     Alice Ferrazzi <alicef@alicef.me>
-Cc:     jpoimboe@redhat.com, jeyu@kernel.org, jikos@kernel.org,
-        mbenes@suse.cz, pmladek@suse.com, live-patching@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-Subject: Re: [PATCH] livepatch: core: Return ENOTSUPP instead of ENOSYS
-Message-ID: <20190128194943.GA18515@redhat.com>
-References: <20190126192630.6163-1-alicef@alicef.me>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190126192630.6163-1-alicef@alicef.me>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Mon, 28 Jan 2019 19:49:47 +0000 (UTC)
+        Mon, 28 Jan 2019 14:54:27 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:46434 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726766AbfA1Ty1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 14:54:27 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 103181AE5;
+        Mon, 28 Jan 2019 19:54:25 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 11:54:24 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Chris Mason <clm@fb.com>, Roman Gushchin <guro@fb.com>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] mm,slab,vmscan: accumulate gradual pressure on small
+ slabs
+Message-Id: <20190128115424.df3f4647023e9e43e75afe67@linux-foundation.org>
+In-Reply-To: <20190128143535.7767c397@imladris.surriel.com>
+References: <20190128143535.7767c397@imladris.surriel.com>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 27, 2019 at 04:26:30AM +0900, Alice Ferrazzi wrote:
-> This patch fixes a checkpatch warning:
->     WARNING: ENOSYS means 'invalid syscall nr' and nothing else
+On Mon, 28 Jan 2019 14:35:35 -0500 Rik van Riel <riel@surriel.com> wrote:
+
+> There are a few issues with the way the number of slab objects to
+> scan is calculated in do_shrink_slab.  First, for zero-seek slabs,
+> we could leave the last object around forever. That could result
+> in pinning a dying cgroup into memory, instead of reclaiming it.
+> The fix for that is trivial.
 > 
-> Signed-off-by: Alice Ferrazzi <alice.ferrazzi@miraclelinux.com>
-> ---
->  kernel/livepatch/core.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Secondly, small slabs receive much more pressure, relative to their
+> size, than larger slabs, due to "rounding up" the minimum number of
+> scanned objects to batch_size.
 > 
-> diff --git a/kernel/livepatch/core.c b/kernel/livepatch/core.c
-> index 5b77a7314e01..eea6b94fef89 100644
-> --- a/kernel/livepatch/core.c
-> +++ b/kernel/livepatch/core.c
-> @@ -897,7 +897,7 @@ int klp_register_patch(struct klp_patch *patch)
->  
->  	if (!klp_have_reliable_stack()) {
->  		pr_err("This architecture doesn't have support for the livepatch consistency model.\n");
-> -		return -ENOSYS;
-> +		return -ENOTSUPP;
+> We can keep the pressure on all slabs equal relative to their size
+> by accumulating the scan pressure on small slabs over time, resulting
+> in sometimes scanning an object, instead of always scanning several.
+> 
+> This results in lower system CPU use, and a lower major fault rate,
+> as actively used entries from smaller caches get reclaimed less
+> aggressively, and need to be reloaded/recreated less often.
+> 
+> Fixes: 4b85afbdacd2 ("mm: zero-seek shrinkers")
+> Fixes: 172b06c32b94 ("mm: slowly shrink slabs with a relatively small number of objects")
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Chris Mason <clm@fb.com>
+> Cc: Roman Gushchin <guro@fb.com>
+> Cc: kernel-team@fb.com
+> Tested-by: Chris Mason <clm@fb.com>
+
+I added your Signed-off-by:
+
+> --- a/mm/vmscan.c
+> +++ b/mm/vmscan.c
+> @@ -488,18 +488,28 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
+>  		 * them aggressively under memory pressure to keep
+>  		 * them from causing refetches in the IO caches.
+>  		 */
+> -		delta = freeable / 2;
+> +		delta = (freeable + 1)/ 2;
 >  	}
 >  
->  	return klp_init_patch(patch);
-> -- 
-> 2.19.2
-> 
+>  	/*
+>  	 * Make sure we apply some minimal pressure on default priority
+> -	 * even on small cgroups. Stale objects are not only consuming memory
+> +	 * even on small cgroups, by accumulating pressure across multiple
+> +	 * slab shrinker runs. Stale objects are not only consuming memory
+>  	 * by themselves, but can also hold a reference to a dying cgroup,
+>  	 * preventing it from being reclaimed. A dying cgroup with all
+>  	 * corresponding structures like per-cpu stats and kmem caches
+>  	 * can be really big, so it may lead to a significant waste of memory.
+>  	 */
+> -	delta = max_t(unsigned long long, delta, min(freeable, batch_size));
+> +	if (!delta) {
+> +		shrinker->small_scan += freeable;
+> +
+> +		delta = shrinker->small_scan >> priority;
+> +		shrinker->small_scan -= delta << priority;
+> +
+> +		delta *= 4;
+> +		do_div(delta, shrinker->seeks);
 
-Hi Alice,
+What prevents shrinker->small_scan from over- or underflowing over time?
 
-Patches should be based off the upstream livepatching tree, found here:
+> +	}
+>  
+>  	total_scan += delta;
+>  	if (total_scan < 0) {
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/livepatching/livepatching.git
-
-and in this case, the for-next branch, which holds patches that have
-already been queued up for the next release.  This one:
-
-  958ef1e39d24 ("livepatch: Simplify API by removing registration step")
-
-has moved the code in question from klp_register_patch() to
-klp_enable_patch().
+I'll add this:
 
 
-As far as the change itself, I don't have strong opinion about it
-either way.
 
-On the one hand, there is the checkpatch warning and -ENOTSUPP reads
-more intuitively than -ENOSYS. 
 
-However, the current pattern seems to be more prevelent in the kernel.
-I wonder if the checkpatch warning would be better specified for return
-values that are actually passed back to userspace.
 
-Also, klp_register_patch(), now klp_enable_patch(), is exported for
-module use, though I don't believe anyone (samples / tests / kpatch /
-kgraft?) is inspecting which error value is returned.
+whitespace fixes, per Roman
 
-I would defer to whichever convention the maintainers prefer here.
+--- a/mm/vmscan.c~mmslabvmscan-accumulate-gradual-pressure-on-small-slabs-fix
++++ a/mm/vmscan.c
+@@ -488,7 +488,7 @@ static unsigned long do_shrink_slab(stru
+ 		 * them aggressively under memory pressure to keep
+ 		 * them from causing refetches in the IO caches.
+ 		 */
+-		delta = (freeable + 1)/ 2;
++		delta = (freeable + 1) / 2;
+ 	}
+ 
+ 	/*
+@@ -508,7 +508,6 @@ static unsigned long do_shrink_slab(stru
+ 
+ 		delta *= 4;
+ 		do_div(delta, shrinker->seeks);
+-
+ 	}
+ 
+ 	total_scan += delta;
+_
 
--- Joe
