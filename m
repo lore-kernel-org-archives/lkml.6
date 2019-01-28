@@ -2,89 +2,108 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA6EC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23579C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6797720879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E95B320879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548693745;
+	bh=coPPtY93kHQgqoCp5iWSNXYKSkTXmBl115yEVy2kBaw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=TXpCCov0tmmU3XsWLQrhMlcCqjHH1ZcoB1LjvvR11Tnco5Pd+JvmrPERi9dAzENtR
+	 9cbn0FrdQk9a1Zc9oktKaX8Wrq1RC3OLHj1eycTykxcCJT251pC/MFOytSmjM37m59
+	 JeoPvBkUYCxzFKbHXWblnLYJnnaXMPeXke7TuMLk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390124AbfA1QmP (ORCPT
+        id S2390447AbfA1QmX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:42:15 -0500
-Received: from mail-qt1-f196.google.com ([209.85.160.196]:33047 "EHLO
-        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388926AbfA1QmN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:42:13 -0500
-Received: by mail-qt1-f196.google.com with SMTP id l11so18984456qtp.0;
-        Mon, 28 Jan 2019 08:42:13 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Seb+vsjeDDo4nWRYcSrSTH7YxWGTcZxRanKkOKBpbKA=;
-        b=oyqX8ipmqWxYAmQhHE2jkN38hVPn4UK1KfvsiS1OwifzSvIh1AoDf5Gt0+PHRO2QsI
-         rfNHjVwKgr0mKbgt7eyvlc+/pDjnov9WYEPZz3nENwLM5wcMUSav2wHLkYS/v+TRMjC8
-         suGRTfvdGOclPsTIVTIqkDkMO37V9OCJLYly+PsX6i+eI5DsM0FjioOp/4tca//d/Kya
-         icKNbgYu9AQibh7V4uFolz72lGIr5rGE60Y/Hwn4Ge83Dgv57dpdqmXXx5Yc5HzWnnsW
-         umYm/2DywhHZH6ylc3KFH106s/4ZcaNMLWMx6LWtpHrh+uZdhYxpDnbOcCHGHHt7/HCK
-         vsEg==
-X-Gm-Message-State: AJcUukeDI3EJCjL7yw7880NhOOjYuEnnBbZb7Z8h63tmBUv/At2qE82s
-        lXqW+tY6EkLNrAwmcGbwCk9fPCRYejpIBVYpUDE=
-X-Google-Smtp-Source: AHgI3Ib9npUIcSYDhZQbOSwoOisbzGQ5ZhH5Pf28jelh3gdFMe/ui1A65deoFjBDFll2IC2RKshrTOja4jA60zXeEuA=
-X-Received: by 2002:ac8:1d12:: with SMTP id d18mr10791584qtl.343.1548693732472;
- Mon, 28 Jan 2019 08:42:12 -0800 (PST)
+        Mon, 28 Jan 2019 11:42:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60020 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389494AbfA1QXm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:23:42 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CC0332084A;
+        Mon, 28 Jan 2019 16:23:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692621;
+        bh=coPPtY93kHQgqoCp5iWSNXYKSkTXmBl115yEVy2kBaw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pw+wVrGsEyCA5qxzwT4iIkE2Yzj01bmAwdZzSQ1+ZA0tZ2r6cL8KPAEf5N51nkE27
+         TUZaZ3Jo8wP8ywD/MxGbGtZoExbve+XF+CnzexzGngIrr8dlbCqlnpIDgk2JBVYUOZ
+         QuvIkWIW/YVVVe/j6qRh6Bd9582QctVSKHFCWnV0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 097/107] isdn: hisax: hfc_pci: Fix a possible concurrency use-after-free bug in HFCPCI_l1hw()
+Date:   Mon, 28 Jan 2019 11:19:37 -0500
+Message-Id: <20190128161947.57405-97-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
+References: <20190128161947.57405-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190128154341.47195-1-sashal@kernel.org> <20190128154341.47195-175-sashal@kernel.org>
-In-Reply-To: <20190128154341.47195-175-sashal@kernel.org>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 28 Jan 2019 17:41:55 +0100
-Message-ID: <CAK8P3a3z8tOxz=Rem6N7m_0_8OaU9Sxf7yViZJP5fmYGeaxUvQ@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 4.20 175/304] ARM: mmp: fix timer_init calls
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "# 3.4.x" <stable@vger.kernel.org>,
-        Olof Johansson <olof@lixom.net>,
-        Lubomir Rintel <lkundrak@v3.sk>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 4:52 PM Sasha Levin <sashal@kernel.org> wrote:
->
-> From: Arnd Bergmann <arnd@arndb.de>
->
-> [ Upstream commit 12d3a30db4a3b3df5fbadf5974b9cf50544a9950 ]
->
-> The change to passing the timer frequency as a function argument
-> was a good idea, but caused a build failure for one user that
-> was missed in the update:
->
-> arch/arm/mach-mmp/time.c: In function 'mmp_dt_init_timer':
-> arch/arm/mach-mmp/time.c:242:2: error: implicit declaration of function 'timer_init'; did you mean 'hrtimer_init'? [-Werror=implicit-function-declaration]
->
-> Change that as well to fix the build error, and rename the
-> function to put it into a proper namespace and make it clearer
-> what is actually going on.
->
-> I saw that the high 6500000 HZ frequency was previously only
-> set with CONFIG_MMP2, but is now also used with MMP (pxa910),
-> so I'm changing that back here. Please make sure that the
-> frequencies are all correct now.
->
-> Fixes: f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-I did not think that Lubumir's patch was meant for stable,
-but as you've picked that one already we clearly
-want mine as well, so this is good for all stable kernels.
+[ Upstream commit 7418e6520f22a2e35815122fa5a53d5bbfa2c10f ]
 
-     Arnd
+In drivers/isdn/hisax/hfc_pci.c, the functions hfcpci_interrupt() and
+HFCPCI_l1hw() may be concurrently executed.
+
+HFCPCI_l1hw()
+  line 1173: if (!cs->tx_skb)
+
+hfcpci_interrupt()
+  line 942: spin_lock_irqsave();
+  line 1066: dev_kfree_skb_irq(cs->tx_skb);
+
+Thus, a possible concurrency use-after-free bug may occur
+in HFCPCI_l1hw().
+
+To fix these bugs, the calls to spin_lock_irqsave() and
+spin_unlock_irqrestore() are added in HFCPCI_l1hw(), to protect the
+access to cs->tx_skb.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/isdn/hisax/hfc_pci.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
+index 90449e1e91e5..1b1453d62fed 100644
+--- a/drivers/isdn/hisax/hfc_pci.c
++++ b/drivers/isdn/hisax/hfc_pci.c
+@@ -1169,11 +1169,13 @@ HFCPCI_l1hw(struct PStack *st, int pr, void *arg)
+ 		if (cs->debug & L1_DEB_LAPD)
+ 			debugl1(cs, "-> PH_REQUEST_PULL");
+ #endif
++		spin_lock_irqsave(&cs->lock, flags);
+ 		if (!cs->tx_skb) {
+ 			test_and_clear_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
+ 			st->l1.l1l2(st, PH_PULL | CONFIRM, NULL);
+ 		} else
+ 			test_and_set_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
++		spin_unlock_irqrestore(&cs->lock, flags);
+ 		break;
+ 	case (HW_RESET | REQUEST):
+ 		spin_lock_irqsave(&cs->lock, flags);
+-- 
+2.19.1
+
