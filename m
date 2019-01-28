@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1CF4C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93027C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C245B21848
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 621682082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691150;
-	bh=INfw3x0PEw8wjZIATFrl5hYnvIK3kjLWHAWkKeZkh2M=;
+	s=default; t=1548691156;
+	bh=KZ51WbxuHMBDzOgtr0oM85ZM/uLWiX2hpYMI96fMqh0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W6FZ02cvWPxLCENqnKBZrR/POlT0DNH7KLY3UZs7tAEVg7Evzjt/WjDqOl9YxSi1o
-	 7a0NuDB4InlopNhnPR6vBoNF++VBw9dnYi2ceE9Lj6aIm5RGipXtxlIgKNV24RVfEK
-	 B3l23+73hgpOFp6SCV+8CKGJGir2oZR58M8myy/o=
+	b=IDCGSUg+e/BA4Re7Rzc76pEnydFdOjFbSCTrva4DtJjtoCEnozyDKPrckuNudwOm2
+	 BcGNlS02xl2kNYNheLRywJKaC30yteJnXSKxStqC1HlUpSRqUH+sum2UuyNX3faJQs
+	 3xP+9J4HbMfl/A9IlGdlmCPrBy9gulmrellrWHP8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730543AbfA1P7J (ORCPT
+        id S1730557AbfA1P7O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:59:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44522 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:59:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730192AbfA1P7G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:59:06 -0500
+        id S1730546AbfA1P7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:59:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 17B1F2175B;
-        Mon, 28 Jan 2019 15:59:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8069421841;
+        Mon, 28 Jan 2019 15:59:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691145;
-        bh=INfw3x0PEw8wjZIATFrl5hYnvIK3kjLWHAWkKeZkh2M=;
+        s=default; t=1548691149;
+        bh=KZ51WbxuHMBDzOgtr0oM85ZM/uLWiX2hpYMI96fMqh0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vZ2btjTHWHSbOipTLB6X0lZTRs5h4o52zL+rlm73MPDDpM3r2Ox77tv7Ls/rdsgbi
-         4uPspANrh/HhqAZ3KBypp82tx8cg1MX87PV2oUrUqpuMtfdESUJWv+h59/BUl2k4+t
-         qbQjkiT8c9mKxCPZrjvRAZCv9ChR52g37tjwOkKk=
+        b=uy7eZXimZGJOMUoJqUbTDx6g7QCalBT8aIaRkL8FWuWJGx6xipEi/onz0JMFKOqrR
+         05ixAfQUrc8ldTpw6A7j5UnWNz9I11wXLYUmxIE5rHQg4qQlWA+gFPZoyfKiwfecvq
+         Bv1Fz68kFxbw6HEYjPObj/4C+AfzWbOHLPGJDnwk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oleg Nesterov <oleg@redhat.com>, Ben Woodard <woodard@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Will Deacon <will.deacon@arm.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 301/304] exec: load_script: don't blindly truncate shebang string
-Date:   Mon, 28 Jan 2019 10:43:38 -0500
-Message-Id: <20190128154341.47195-301-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 302/304] kernel/kcov.c: mark write_comp_data() as notrace
+Date:   Mon, 28 Jan 2019 10:43:39 -0500
+Message-Id: <20190128154341.47195-302-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -60,54 +61,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleg Nesterov <oleg@redhat.com>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 8099b047ecc431518b9bb6bdbba3549bbecdc343 ]
+[ Upstream commit 634724431607f6f46c495dfef801a1c8b44a96d9 ]
 
-load_script() simply truncates bprm->buf and this is very wrong if the
-length of shebang string exceeds BINPRM_BUF_SIZE-2.  This can silently
-truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
-happens to be the valid executable path.
+Since __sanitizer_cov_trace_const_cmp4 is marked as notrace, the
+function called from __sanitizer_cov_trace_const_cmp4 shouldn't be
+traceable either.  ftrace_graph_caller() gets called every time func
+write_comp_data() gets called if it isn't marked 'notrace'.  This is the
+backtrace from gdb:
 
-Change load_script() to return ENOEXEC if it can't find '\n' or zero in
-bprm->buf.  Note that '\0' can come from either
-prepare_binprm()->memset() or from kernel_read(), we do not care.
+ #0  ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:179
+ #1  0xffffff8010201920 in ftrace_caller () at ../arch/arm64/kernel/entry-ftrace.S:151
+ #2  0xffffff8010439714 in write_comp_data (type=5, arg1=0, arg2=0, ip=18446743524224276596) at ../kernel/kcov.c:116
+ #3  0xffffff8010439894 in __sanitizer_cov_trace_const_cmp4 (arg1=<optimized out>, arg2=<optimized out>) at ../kernel/kcov.c:188
+ #4  0xffffff8010201874 in prepare_ftrace_return (self_addr=18446743524226602768, parent=0xffffff801014b918, frame_pointer=18446743524223531344) at ./include/generated/atomic-instrumented.h:27
+ #5  0xffffff801020194c in ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:182
 
-Link: http://lkml.kernel.org/r/20181112160931.GA28463@redhat.com
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Ben Woodard <woodard@redhat.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Rework so that write_comp_data() that are called from
+__sanitizer_cov_trace_*_cmp*() are marked as 'notrace'.
+
+Commit 903e8ff86753 ("kernel/kcov.c: mark funcs in __sanitizer_cov_trace_pc() as notrace")
+missed to mark write_comp_data() as 'notrace'. When that patch was
+created gcc-7 was used. In lib/Kconfig.debug
+config KCOV_ENABLE_COMPARISONS
+	depends on $(cc-option,-fsanitize-coverage=trace-cmp)
+
+That code path isn't hit with gcc-7. However, it were that with gcc-8.
+
+Link: http://lkml.kernel.org/r/20181206143011.23719-1-anders.roxell@linaro.org
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Co-developed-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Cc: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/binfmt_script.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ kernel/kcov.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index 7cde3f46ad26..d0078cbb718b 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -42,10 +42,14 @@ static int load_script(struct linux_binprm *bprm)
- 	fput(bprm->file);
- 	bprm->file = NULL;
+diff --git a/kernel/kcov.c b/kernel/kcov.c
+index 97959d7b77e2..c2277dbdbfb1 100644
+--- a/kernel/kcov.c
++++ b/kernel/kcov.c
+@@ -112,7 +112,7 @@ void notrace __sanitizer_cov_trace_pc(void)
+ EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
  
--	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
--	if ((cp = strchr(bprm->buf, '\n')) == NULL)
--		cp = bprm->buf+BINPRM_BUF_SIZE-1;
-+	for (cp = bprm->buf+2;; cp++) {
-+		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
-+			return -ENOEXEC;
-+		if (!*cp || (*cp == '\n'))
-+			break;
-+	}
- 	*cp = '\0';
-+
- 	while (cp > bprm->buf) {
- 		cp--;
- 		if ((*cp == ' ') || (*cp == '\t'))
+ #ifdef CONFIG_KCOV_ENABLE_COMPARISONS
+-static void write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
++static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
+ {
+ 	struct task_struct *t;
+ 	u64 *area;
 -- 
 2.19.1
 
