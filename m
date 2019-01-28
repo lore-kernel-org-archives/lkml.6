@@ -2,119 +2,118 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D9FCC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94193C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 041D220880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5AB8620880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:28:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XMyKgx8V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726805AbfA1J2G (ORCPT
+        id S1726859AbfA1J2S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:28:06 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:42538 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726369AbfA1J2G (ORCPT
+        Mon, 28 Jan 2019 04:28:18 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:33780 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbfA1J2R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:28:06 -0500
-X-UUID: 863d28cdc2af469cb5d87e6ffaa7e7bc-20190128
-X-UUID: 863d28cdc2af469cb5d87e6ffaa7e7bc-20190128
-Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw02.mediatek.com
-        (envelope-from <ck.hu@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1465889627; Mon, 28 Jan 2019 17:27:58 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n2.mediatek.inc (172.21.101.56) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Mon, 28 Jan 2019 17:27:55 +0800
-Received: from [172.21.77.4] (172.21.77.4) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Mon, 28 Jan 2019 17:27:56 +0800
-Message-ID: <1548667676.10401.17.camel@mtksdaap41>
-Subject: Re: [PATCH V3,0/8] make mt7623 clock of HDMI stable
-From:   CK Hu <ck.hu@mediatek.com>
-To:     Wangyan Wang <wangyan.wang@mediatek.com>
-CC:     Michael Turquette <mturquette@baylibre.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        David Airlie <airlied@linux.ie>,
-        Sean Wang <sean.wang@mediatek.com>,
-        Ryder Lee <ryder.lee@mediatek.com>,
-        "Colin Ian King" <colin.king@canonical.com>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        <dri-devel@lists.freedesktop.org>, <jitao.shi@mediatek.com>,
-        <bibby.hsieh@mediatek.com>, <srv_heupstream@mediatek.com>
-Date:   Mon, 28 Jan 2019 17:27:56 +0800
-In-Reply-To: <20190125040205.5451-1-wangyan.wang@mediatek.com>
-References: <20190125040205.5451-1-wangyan.wang@mediatek.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.10.4-0ubuntu2 
+        Mon, 28 Jan 2019 04:28:17 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+        References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=q07BdVLL3C99fU5+GZcl5MQksCE2HUN5ZMQmAGIoYN0=; b=XMyKgx8VAHbVNB+UmtHmmJznF
+        C0GcNUhwUcoM+5f7dMSZo/NGqQl7cNc5XxNSt0XC8YkJ/A/2ZcaYeeUQ92Xl41XMAs+calSFJiIA7
+        I2u5YmXOqDVp1FOEboNVHjy6ui1QmLCfS/dQhJbEL+X4DKaPLQirUJc5pqUGew8pntstqSNeJWBaS
+        FeJuUvr7MtlhASwaMgBfodecqw25ybj/Hfvuup1TZL766b5QWgbJZUVlw93FK5rOL/Wippxibl+07
+        pgaQWa6hX5iuf5EB4iPRmdE83Dlt80Lrm9geRhLk9pmBJ1XkT52oXUzDliyF/A2eekgHQoVwv5kIQ
+        QIx1yN39g==;
+Received: from j217100.upc-j.chello.nl ([24.132.217.100] helo=hirez.programming.kicks-ass.net)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1go3D0-000615-58; Mon, 28 Jan 2019 09:28:02 +0000
+Received: by hirez.programming.kicks-ass.net (Postfix, from userid 1000)
+        id 8A92820101B91; Mon, 28 Jan 2019 10:28:00 +0100 (CET)
+Date:   Mon, 28 Jan 2019 10:28:00 +0100
+From:   Peter Zijlstra <peterz@infradead.org>
+To:     "Reshetova, Elena" <elena.reshetova@intel.com>
+Cc:     Alan Stern <stern@rowland.harvard.edu>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Andrea Parri <andrea.parri@amarulasolutions.com>,
+        Kees Cook <keescook@chromium.org>,
+        "Paul E. McKenney" <paulmck@linux.ibm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kcov: convert kcov.refcount to refcount_t
+Message-ID: <20190128092800.GE28467@hirez.programming.kicks-ass.net>
+References: <20190121131816.GC17749@hirez.programming.kicks-ass.net>
+ <Pine.LNX.4.44L0.1901211103000.24162-100000@netrider.rowland.org>
+ <20190122090456.GE13777@hirez.programming.kicks-ass.net>
+ <2236FBA76BA1254E88B949DDB74E612BA4B944B3@IRSMSX102.ger.corp.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-TM-SNTS-SMTP: 13C157F7FD1C1FE845342FFC67C91DCB7AFB3126B8FEBB6A239CD4F9D45860B62000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4B944B3@IRSMSX102.ger.corp.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Wangyan:
+On Sun, Jan 27, 2019 at 06:41:38PM +0000, Reshetova, Elena wrote:
+> > On Mon, Jan 21, 2019 at 11:05:03AM -0500, Alan Stern wrote:
+> > > On Mon, 21 Jan 2019, Peter Zijlstra wrote:
 
-How do you prove that this series would make mt7623 HDMI clock more
-stable? By experience result? I would like to prove it by the source
-code.
-
-Does 'stable' means that hardware could generate the frequency most
-close to the target frequency? If it does, I think you could compare the
-frequency generated by original code and applying this series for all
-the usually-used frequency. I also need you to show the clock tree and
-all setting of each divider so we could review that is this series good
-enough. Also, describe these in cover latter.
-
-You have mail to dri-devel [1] and linux-mediatek [2], but these patches
-does not show in web site. Maybe your mail is not plain text, please fix
-this and resend patches.
-
-[1] https://lists.freedesktop.org/archives/dri-devel/
-[2] http://lists.infradead.org/pipermail/linux-mediatek/
-
-Regards,
-CK
-
-On Fri, 2019-01-25 at 12:01 +0800, Wangyan Wang wrote:
-> V3 adopt maintainer's suggestion.
-> Here is the change list between V2 & V3:
-> 1. add "Signed-off-by: wangyan wang <wangyan.wang@mediatek.com>"
-> in commit message
+> > Yes, that's a very good suggestion.
+> > 
+> > I suppose we can add smp_acquire__after_ctrl_dep() on the true branch.
+> > Then it reall does become rel_acq.
+> > 
+> > A wee something like so (I couldn't find an arm64 refcount, even though
+> > I have distinct memories of talk about it).
+> > 
+> > This isn't compiled, and obviously needs comment/documentation updates
+> > to go along with it.
+> > 
+> > ---
+> >  arch/x86/include/asm/refcount.h | 9 ++++++++-
+> >  lib/refcount.c                  | 7 ++++++-
+> >  2 files changed, 14 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
+> > index dbaed55c1c24..6f7a1eb345b4 100644
+> > --- a/arch/x86/include/asm/refcount.h
+> > +++ b/arch/x86/include/asm/refcount.h
+> > @@ -74,9 +74,16 @@ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
+> > 
+> >  static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
+> >  {
+> > -	return GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
+> > +	bool ret = GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
+> > 
+> > 	REFCOUNT_CHECK_LT_ZERO,
+> >  					r-
+> > >refs.counter, e, "cx");
+> > +
+> > +	if (ret) {
+> > +		smp_acquire__after_ctrl_dep();
+> > +		return true;
+> > +	}
+> > +
+> > +	return false;
+> >  }
 > 
-> 2. add modify description in patch 
-> "drm/mediatek: fix the rate and divder ..."
->  
-> chunhui dai (8):
->   drm/mediatek: recalculate hdmi phy clock of MT2701 by querying
->     hardware
->   drm/mediatek: move the setting of fixed divider
->   drm/mediatek: using different flags of clk for HDMI phy
->   drm/mediatek: fix the rate and divder of hdmi phy for MT2701
->   clk: mediatek: add MUX_GATE_FLAGS_2
->   clk: mediatek: using CLK_MUX_ROUND_CLOSEST for the clock of dpi1_sel
->   drm/mediatek: using new factor for tvdpll in MT2701
->   drm/mediatek: fix the rate of parent for hdmi phy in MT2701
-> 
->  drivers/clk/mediatek/clk-mt2701.c             |  4 +-
->  drivers/clk/mediatek/clk-mtk.c                |  2 +-
->  drivers/clk/mediatek/clk-mtk.h                | 20 +++++--
->  drivers/gpu/drm/mediatek/mtk_dpi.c            |  8 +--
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.c       | 34 +++--------
->  drivers/gpu/drm/mediatek/mtk_hdmi_phy.h       |  7 +--
->  .../gpu/drm/mediatek/mtk_mt2701_hdmi_phy.c    | 56 +++++++++++++++++--
->  .../gpu/drm/mediatek/mtk_mt8173_hdmi_phy.c    | 23 ++++++++
->  8 files changed, 102 insertions(+), 52 deletions(-)
-> 
+> Actually as I started to do this, any reason why the change here only
+> for dec_and_test and not for sub_and _test also? Should not the arch.
+> specific logic follow the generic?
 
-
+Yes, sub_and_test also needs it; I simply overlooked it.
