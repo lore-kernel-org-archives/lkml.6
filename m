@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D208FC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7FE4C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A7E072175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 86C9F2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690699;
-	bh=IYFWtsPiA/H/kYCsgZU763bveExVKt/n42NU/WHNgd8=;
+	s=default; t=1548690705;
+	bh=xRz9z9fe4cnM7O27lB9bmw/V8TQEWxMYuGqXPSOQKgY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iH0m9WySS3Ko4HORA3vqKd1v5CD5XuUwJwJ2IuK92x2b72AX+NLV4ObLo429pqYX+
-	 Mim428+SHDIujDYdMvFIlVlLX9WP85/KEeNhYLgJgLKzstMFv+U7HpgmlC2D/0acK9
-	 r6hoM3lQXk7Hrh5hIKJObYQ5XsaYHHLkLmSSs1/I=
+	b=mY14cGii9xSCa93v/MzvDNii1hr+8milDGsLyZJV11do1ihSQ8gYYGS5tvvX8sEAX
+	 rb6IIR46JglxTBNcPegvEIcCBvz/sfNKG080a21lZmmZIwYLyrwyxuyVp/DAZQ1nI8
+	 DY12uRGyBuhJQPoI0WTu9MC2wRvLiU0PSMfYzuNs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729123AbfA1Pvh (ORCPT
+        id S1728728AbfA1Pvn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:51:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38202 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:51:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728718AbfA1Pvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:51:35 -0500
+        id S1729133AbfA1Pvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:51:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED19320880;
-        Mon, 28 Jan 2019 15:51:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F48C20880;
+        Mon, 28 Jan 2019 15:51:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690694;
-        bh=IYFWtsPiA/H/kYCsgZU763bveExVKt/n42NU/WHNgd8=;
+        s=default; t=1548690700;
+        bh=xRz9z9fe4cnM7O27lB9bmw/V8TQEWxMYuGqXPSOQKgY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G561HPsbqCGxwySHrNdJbhmhGi+haM6s3/rUQpV1fFmGjVLpCDi7vwKk64yMVsQRg
-         2oss8wLSGXIa6Wuzt1FDwXVuH5rOrPFb3UiwW5sU3oWGrBp17IpFvH5lyE5dYIrWmj
-         Bcczxk0H/ZB8/kTujFYivoC06BM9WHNEjzt0waE0=
+        b=1bA2lDTWUgFBSQmPwxcvCiCQr8akspi8DPCqxmy0CipEc7Iv+wUnQoLnxy5KnCi1i
+         lnvbjdk9N1ymtQfuzWjIL00A62hX4soVM1yx4E6I6cc1MQQaHRPdLPI+oD52jZPopi
+         eDZl9bWBR1a+w1xMkn7xuvo7DjUcy8n3rXXvvHWE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
-        <krzysztof.adamski@nokia.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 166/304] i2c-axxia: check for error conditions first
-Date:   Mon, 28 Jan 2019 10:41:23 -0500
-Message-Id: <20190128154341.47195-166-sashal@kernel.org>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 168/304] phy: sun4i-usb: add support for missing USB PHY index
+Date:   Mon, 28 Jan 2019 10:41:25 -0500
+Message-Id: <20190128154341.47195-168-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,85 +58,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Adamski, Krzysztof (Nokia - PL/Wroclaw)" <krzysztof.adamski@nokia.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit 4f5c85fe3a60ace555d09898166af372547f97fc ]
+[ Upstream commit 2659392e5c08dff626e6db1d739adff58a94604d ]
 
-It was observed that when using seqentional mode contrary to the
-documentation, the SS bit (which is supposed to only be set if
-automatic/sequence command completed normally), is sometimes set
-together with NA (NAK in address phase) causing transfer to falsely be
-considered successful.
+The new Allwinner H6 SoC's USB2 PHY has two holes -- USB1 (which is a
+3.0 port with dedicated PHY) and USB2 (which doesn't exist at all).
 
-My assumption is that this does not happen during manual mode since the
-controller is stopping its work the moment it sets NA/ND bit in status
-register. This is not the case in Automatic/Sequentional mode where it
-is still working to send STOP condition and the actual status we get
-depends on the time when the ISR is run.
+Add support for this kind of missing USB PHY index.
 
-This patch changes the order of checking status bits in ISR - error
-conditions are checked first and only if none of them occurred, the
-transfer may be considered successful. This is required to introduce
-using of sequentional mode in next patch.
-
-Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-axxia.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ drivers/phy/allwinner/phy-sun4i-usb.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
-index 51d34959709b..fb5bac079e83 100644
---- a/drivers/i2c/busses/i2c-axxia.c
-+++ b/drivers/i2c/busses/i2c-axxia.c
-@@ -296,22 +296,7 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
- 			i2c_int_disable(idev, MST_STATUS_TFL);
- 	}
+diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
+index d4dcd39b8d76..881078ff73f6 100644
+--- a/drivers/phy/allwinner/phy-sun4i-usb.c
++++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+@@ -126,6 +126,7 @@ struct sun4i_usb_phy_cfg {
+ 	bool dedicated_clocks;
+ 	bool enable_pmu_unk1;
+ 	bool phy0_dual_route;
++	int missing_phys;
+ };
  
--	if (status & MST_STATUS_SCC) {
--		/* Stop completed */
--		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		complete(&idev->msg_complete);
--	} else if (status & MST_STATUS_SNS) {
--		/* Transfer done */
--		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
--			axxia_i2c_empty_rx_fifo(idev);
--		complete(&idev->msg_complete);
--	} else if (status & MST_STATUS_TSS) {
--		/* Transfer timeout */
--		idev->msg_err = -ETIMEDOUT;
--		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		complete(&idev->msg_complete);
--	} else if (unlikely(status & MST_STATUS_ERR)) {
-+	if (unlikely(status & MST_STATUS_ERR)) {
- 		/* Transfer error */
- 		i2c_int_disable(idev, ~0);
- 		if (status & MST_STATUS_AL)
-@@ -328,6 +313,21 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
- 			readl(idev->base + MST_TX_BYTES_XFRD),
- 			readl(idev->base + MST_TX_XFER));
- 		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_SCC) {
-+		/* Stop completed */
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_SNS) {
-+		/* Transfer done */
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
-+			axxia_i2c_empty_rx_fifo(idev);
-+		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_TSS) {
-+		/* Transfer timeout */
-+		idev->msg_err = -ETIMEDOUT;
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		complete(&idev->msg_complete);
- 	}
+ struct sun4i_usb_phy_data {
+@@ -646,6 +647,9 @@ static struct phy *sun4i_usb_phy_xlate(struct device *dev,
+ 	if (args->args[0] >= data->cfg->num_phys)
+ 		return ERR_PTR(-ENODEV);
  
- out:
++	if (data->cfg->missing_phys & BIT(args->args[0]))
++		return ERR_PTR(-ENODEV);
++
+ 	return data->phys[args->args[0]].phy;
+ }
+ 
+@@ -741,6 +745,9 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
+ 		struct sun4i_usb_phy *phy = data->phys + i;
+ 		char name[16];
+ 
++		if (data->cfg->missing_phys & BIT(i))
++			continue;
++
+ 		snprintf(name, sizeof(name), "usb%d_vbus", i);
+ 		phy->vbus = devm_regulator_get_optional(dev, name);
+ 		if (IS_ERR(phy->vbus)) {
 -- 
 2.19.1
 
