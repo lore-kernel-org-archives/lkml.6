@@ -6,51 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9377CC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36361C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61EEB2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED48D2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692006;
-	bh=NpBzhb76FkwGomBDiLGlWepY8ZCWLmsM6eCJLDiXKvk=;
+	s=default; t=1548692010;
+	bh=XMCt/Am89DSH2OqT69hpegTGT7rZbwrgd6n7iSi0E8c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xq3HMnse1rK+gaI1JFGIGVght0qT6RkqI5V60ZpwrcQHZkNY4+WOxG25rOgom/Rxa
-	 pZXaacuPah8nfHdhI34SLM7kOHXIszCVU8GK5lBlNtOqHPpa3P9c9d7VhlFxZFY2et
-	 dfYqzrd62KYKyXjE1pre+IzObiJO/nbgOGBdQ0Zw=
+	b=fFyyy2r3/yLYwF85VazPc4svcBF0XZGUdcGt9Pt/CfjRHZ9RhCyfaLNzqqiv9CUpK
+	 2TL81W5NoMtl9u3e9QQ3r5kBgL5ZMYe+3O8KGtdI0zskUWPlXY/TUGL6DXJLOdiU3U
+	 K+q6aIGh7k5Ho2eTQ2nItLxwDDvZrs+99sy4w1Wo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387414AbfA1QNY (ORCPT
+        id S2387426AbfA1QN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:13:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42016 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:13:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733301AbfA1QNV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:21 -0500
+        id S1732495AbfA1QNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E44032175B;
-        Mon, 28 Jan 2019 16:13:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 931652147A;
+        Mon, 28 Jan 2019 16:13:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692000;
-        bh=NpBzhb76FkwGomBDiLGlWepY8ZCWLmsM6eCJLDiXKvk=;
+        s=default; t=1548692003;
+        bh=XMCt/Am89DSH2OqT69hpegTGT7rZbwrgd6n7iSi0E8c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bmVizv4lzt3Dp9ELiRJVew0BTzp3YqC2m6zMvAw49EwAoyk++k/iOTrEPBOeylbg+
-         qpOMid4XaGL4Yp1HOUmFb6ZGnAz8CuWJBjwT0dRCAmGpal55GfYUQonYiqwqXaZdvb
-         vJQaIdJHv4jEKcd2anlpUpYbeOiPebYlNU2g4CIY=
+        b=G5ZcIfgFRyCQwgiqL3861EtJTWv7Ww9IVANO+cOQT96sqRQDwYgYNa5KCrQ6TU3ps
+         ouWPRzJnba1e2dg0LyHnRd7th+/YF9s2V0UnZiBo0KBILQXl2lMAKOycuzkDH9c5zo
+         BdDU1ml9HrKxwGXeM2KxSZLb2lOq7UPtf3sTe5bk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pu Wen <puwen@hygon.cn>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 034/170] perf tools: Add Hygon Dhyana support
-Date:   Mon, 28 Jan 2019 11:09:44 -0500
-Message-Id: <20190128161200.55107-34-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 035/170] soc/tegra: Don't leak device tree node reference
+Date:   Mon, 28 Jan 2019 11:09:45 -0500
+Message-Id: <20190128161200.55107-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -62,42 +57,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pu Wen <puwen@hygon.cn>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 4787eff3fa88f62fede6ed7afa06477ae6bf984d ]
+[ Upstream commit 9eb40fa2cd2d1f6829e7b49bb22692f754b9cfe0 ]
 
-The tool perf is useful for the performance analysis on the Hygon Dhyana
-platform. But right now there is no Hygon support for it to analyze the
-KVM guest os data. So add Hygon Dhyana support to it by checking vendor
-string to share the code path of AMD.
+of_find_node_by_path() acquires a reference to the node returned by it
+and that reference needs to be dropped by its caller. soc_is_tegra()
+doesn't do that, so fix it.
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
-Acked-by: Borislav Petkov <bp@suse.de>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1542008451-31735-1-git-send-email-puwen@hygon.cn
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+[treding: slightly rewrite to avoid inline comparison]
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/x86/util/kvm-stat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/soc/tegra/common.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
-index b32409a0e546..081353d7b095 100644
---- a/tools/perf/arch/x86/util/kvm-stat.c
-+++ b/tools/perf/arch/x86/util/kvm-stat.c
-@@ -156,7 +156,7 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
- 	if (strstr(cpuid, "Intel")) {
- 		kvm->exit_reasons = vmx_exit_reasons;
- 		kvm->exit_reasons_isa = "VMX";
--	} else if (strstr(cpuid, "AMD")) {
-+	} else if (strstr(cpuid, "AMD") || strstr(cpuid, "Hygon")) {
- 		kvm->exit_reasons = svm_exit_reasons;
- 		kvm->exit_reasons_isa = "SVM";
- 	} else
+diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+index cd8f41351add..7bfb154d6fa5 100644
+--- a/drivers/soc/tegra/common.c
++++ b/drivers/soc/tegra/common.c
+@@ -22,11 +22,15 @@ static const struct of_device_id tegra_machine_match[] = {
+ 
+ bool soc_is_tegra(void)
+ {
++	const struct of_device_id *match;
+ 	struct device_node *root;
+ 
+ 	root = of_find_node_by_path("/");
+ 	if (!root)
+ 		return false;
+ 
+-	return of_match_node(tegra_machine_match, root) != NULL;
++	match = of_match_node(tegra_machine_match, root);
++	of_node_put(root);
++
++	return match != NULL;
+ }
 -- 
 2.19.1
 
