@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52E6DC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63272C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2472E21917
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C7F22082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691394;
-	bh=2o5CzXbiV2lK/X86csF8RkTU8gIhseoVlQZwA6P7uc8=;
+	s=default; t=1548691399;
+	bh=tPsCcYNbycxrBc4OFjAldpgUZ7y/P7l5AE+2PXnZEWY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hxrzBW5oWTubE3DJE3zefqKOsFo/ENpfgBl+OfaIfVKWuq0tm1IPTSk4jLHnQC6nv
-	 xNgBdgwsD5kxnMhXSBN0BKvDLmsO5NWdhoe0woMBrY0pBg6ySQvDguvew63d5mXPvd
-	 vzcWGI3xl+CcW7PRRE359M6C/TR7bHF1F9BQpSO4=
+	b=UXx4GGiMcghVkfrnwRp0lxyaxuAOKuEObpnporeCZoAu0EVOPhpsHUt446q+m1m9G
+	 3jzZDGVvPHIzOEtm+cvC32mUAfLSheCRP4E2G7chem1818QGDq3fJVKyl2lrLZkKxw
+	 vo0Cbpa/SUef/f+U8y5TAwG8Md6jaOWmblzrgzmc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731338AbfA1QDM (ORCPT
+        id S1730586AbfA1QDR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:03:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48404 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:03:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727969AbfA1QDH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:03:07 -0500
+        id S1731343AbfA1QDQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:03:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B6582082E;
-        Mon, 28 Jan 2019 16:03:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DEA1C21916;
+        Mon, 28 Jan 2019 16:03:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691386;
-        bh=2o5CzXbiV2lK/X86csF8RkTU8gIhseoVlQZwA6P7uc8=;
+        s=default; t=1548691395;
+        bh=tPsCcYNbycxrBc4OFjAldpgUZ7y/P7l5AE+2PXnZEWY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2sw2+wM/rWN9zFCRoTpe/EQW4kPOyHD+uDMszEb0wIpYo+kXpmSowQFEqb098odyY
-         OwFCUh2prMAl3tEyluwpIEAGOsF3iFMxGZQRcEi1NeFhqqlYvOjcc7ERPpm6ZGtdF+
-         DRN3HDzhnxIr51iF8JnUUb72/aCD5F8KGQqtu0Ec=
+        b=UdC6bW/+CXCSZp8h9k+f1KR8nadnCCyXhWyBv4ItSV7pF7Fh8w2P7i6ukjZtwRaDj
+         uIq9Kpx13ifDzjqdTcIJFA0FbEQ50Sus2I4ksDApGWP0vea7o3QrsoxHnuPSEnAKR/
+         z1pwAp95tiIvOGjM3kgXO3UNmbkPOzTRxwgt814k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 076/258] i2c: sh_mobile: add support for r8a77990 (R-Car E3)
-Date:   Mon, 28 Jan 2019 10:56:22 -0500
-Message-Id: <20190128155924.51521-76-sashal@kernel.org>
+Cc:     Young Xiao <YangX92@hotmail.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 079/258] sunvdc: Do not spin in an infinite loop when vio_ldc_send() returns EAGAIN
+Date:   Mon, 28 Jan 2019 10:56:25 -0500
+Message-Id: <20190128155924.51521-79-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,41 +57,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Young Xiao <YangX92@hotmail.com>
 
-[ Upstream commit 5eb316e636eb298c204f5b368526d4480b63c0ba ]
+[ Upstream commit a11f6ca9aef989b56cd31ff4ee2af4fb31a172ec ]
 
-Add support for the IIC code for the r8a77990 (R-Car E3).
+__vdc_tx_trigger should only loop on EAGAIN a finite
+number of times.
 
-It is not considered compatible with existing fallback bindings
-due to the documented absence of automatic transmission registers.
+See commit adddc32d6fde ("sunvnet: Do not spin in an
+infinite loop when vio_ldc_send() returns EAGAIN") for detail.
 
-These registers are currently not used by the driver and
-thus the provides the same behaviour for "renesas,iic-r8a77990" and
-"renesas,rcar-gen3-iic". The point of declaring incompatibility is
-to allow for automatic transmission register support to be added to
-"renesas,iic-r8a77990" and "renesas,rcar-gen3-iic" in future.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/block/sunvdc.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 818cab14e87c..b3ed14f4eae9 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -808,6 +808,7 @@ static const struct of_device_id sh_mobile_i2c_dt_ids[] = {
- 	{ .compatible = "renesas,rcar-gen2-iic", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-r8a7795", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,rcar-gen3-iic", .data = &fast_clock_dt_config },
-+	{ .compatible = "renesas,iic-r8a77990", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-sh73a0", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,rmobile-iic", .data = &default_dt_config },
- 	{},
+diff --git a/drivers/block/sunvdc.c b/drivers/block/sunvdc.c
+index f68e9baffad7..5d7024057540 100644
+--- a/drivers/block/sunvdc.c
++++ b/drivers/block/sunvdc.c
+@@ -45,6 +45,8 @@ MODULE_VERSION(DRV_MODULE_VERSION);
+ #define WAITING_FOR_GEN_CMD	0x04
+ #define WAITING_FOR_ANY		-1
+ 
++#define	VDC_MAX_RETRIES	10
++
+ static struct workqueue_struct *sunvdc_wq;
+ 
+ struct vdc_req_entry {
+@@ -431,6 +433,7 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		.end_idx		= dr->prod,
+ 	};
+ 	int err, delay;
++	int retries = 0;
+ 
+ 	hdr.seq = dr->snd_nxt;
+ 	delay = 1;
+@@ -443,6 +446,8 @@ static int __vdc_tx_trigger(struct vdc_port *port)
+ 		udelay(delay);
+ 		if ((delay <<= 1) > 128)
+ 			delay = 128;
++		if (retries++ > VDC_MAX_RETRIES)
++			break;
+ 	} while (err == -EAGAIN);
+ 
+ 	if (err == -ENOTCONN)
 -- 
 2.19.1
 
