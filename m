@@ -2,137 +2,71 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 992A9C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:37:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76486C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:40:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6724A20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:37:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Aj2IzNyV"
+	by mail.kernel.org (Postfix) with ESMTP id 2CE3E20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:40:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfA1MhN (ORCPT
+        id S1726762AbfA1Mka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:37:13 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39134 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726682AbfA1MhM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:37:12 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t9-v6so14053823ljh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 04:37:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Dy1XvrSx6dEgjmvPuzo6v6xDy3nS51OW/InA6mRxIvk=;
-        b=Aj2IzNyVtMWpHPg/SGwyjeqEGxhf9TJkU0bIEKp6TJMcHUSojPEGSPTWa5Qeukb/Sh
-         26egQbxOJFwG8tLLEdWa8sGlhEpE6IQzRp+YhlI8QlcNJ7Ie74QPbC7kEmdhB1ZjwYaF
-         kc04gALyaDgbUKXJFrXIsJ5Axdr3CIjAkiVhI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dy1XvrSx6dEgjmvPuzo6v6xDy3nS51OW/InA6mRxIvk=;
-        b=MF2ERll+870fanCjjy9U6x9zqXea1EKt5WpCNgJPdqcVWhKIQEsoJxhHKUtkVx4Guw
-         Vn9YVnh+nfxskOIDqidAaEB6Asl/B5qNcG/g0hgi7ZZuaPvRKv7ZrzQtkK7w9jZbqFCv
-         8J2UO/o4o66jLoxiLbXeVvO/UAq/lgBCdcfBFdpl5fBrj7xyJewS7wqG4sI0A8OfyUQv
-         xbFz3OCFluseFp2f5BxL6f4JGKwDpEYKyUtqxxbJpNF0/LqzC6KnfSYd63ETMGaw6w5N
-         89LKJ7VeSz3ZmsLSbXhLxG4wDGGgLXo2JUr2R7c4gIcB2zciy0YXAhJYV9QihUXz/YOM
-         2v2g==
-X-Gm-Message-State: AJcUukdjgo4YXkgCyEyUAVoQbwNnMn1z7H+gMDFYsQQ/eYTtxNA6Lo/p
-        GQ0b7oFC7ho489cXG+fxh9jaj5Yh2wM5KK5e/4qN3A==
-X-Google-Smtp-Source: ALg8bN58Y/UVDbaHBYZAvtKV8CWyDrJcKGLO5WlcS2yyDWsT/7AVan1kYf/gaS5qm2/FBOq2r0CPIf1EQJelCQZishs=
-X-Received: by 2002:a2e:568d:: with SMTP id k13-v6mr18326422lje.105.1548679030770;
- Mon, 28 Jan 2019 04:37:10 -0800 (PST)
-MIME-Version: 1.0
-References: <20190120151357.11106-1-vz@mleia.com>
-In-Reply-To: <20190120151357.11106-1-vz@mleia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 28 Jan 2019 13:36:59 +0100
-Message-ID: <CACRpkdYn+LgeRaL4=UPLGYxdCpnoj8r3Yp=A6yHADr=fhB_UFg@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: remove unused 'pinconf-config' debugfs interface
-To:     Vladimir Zapolskiy <vz@mleia.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Laurent Meunier <laurent.meunier@st.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Russell King <linux@arm.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 28 Jan 2019 07:40:30 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:44866 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726668AbfA1Mka (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 07:40:30 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E59B580D;
+        Mon, 28 Jan 2019 04:40:29 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 6A9C53F59C;
+        Mon, 28 Jan 2019 04:40:27 -0800 (PST)
+Date:   Mon, 28 Jan 2019 12:40:30 +0000
+Message-ID: <86pnshuf9d.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
+        <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>
+Subject: Re: [PATCH v9 25/26] arm64: Skip irqflags tracing for NMI in IRQs disabled context
+In-Reply-To: <1548084825-8803-26-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-26-git-send-email-julien.thierry@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 20, 2019 at 4:14 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
+On Mon, 21 Jan 2019 15:33:44 +0000,
+Julien Thierry <julien.thierry@arm.com> wrote:
+> 
+> When an NMI is raised while interrupts where disabled, the IRQ tracing
+> already is in the correct state (i.e. hardirqs_off) and should be left
+> as such when returning to the interrupted context.
+> 
+> Check whether PMR was masking interrupts when the NMI was raised and
+> skip IRQ tracing if necessary.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
 
-> The main goal of the change is to remove .pin_config_dbg_parse_modify
-> callback before a driver with its support appears. So far the in-kernel
-> interface did not attract any users since its introduction 5 years ago.
->
-> Originally .pin_config_dbg_parse_modify callback and the associated
-> 'pinconf-config' debugfs file were introduced in commit f07512e615dd
-> ("pinctrl/pinconfig: add debug interface"), a short description of
-> 'pinconf-config' usage for debugging can be expressed this way:
->
-> Write to 'pinconf-config' (see pinconf_dbg_config_write() function):
->
-> % echo -n modify $map_type $device_name $state_name $pin_name $config > \
->         /sys/kernel/debug/pinctrl/$pinctrl/pinconf-config
->
-> It supposes to update a global (therefore single!) 'pinconf_dbg_conf'
-> variable with an alternative setting, the arguments should match
-> an existing pinconf device and some registered pinctrl mapping 'map':
->
-> * $map_type is either 'config_pin' or 'config_group', it should match
->   'map->type' value of PIN_MAP_TYPE_CONFIGS_PIN or
->    PIN_MAP_TYPE_CONFIGS_GROUP accordingly,
-> * $device_name should match 'map->dev_name' string value,
-> * $state_name should match 'map->name' string value,
-> * $pin_name should match 'map->data.configs.group_or_pin' string value,
->
-> If all above has matched, then $config is a new value to be set by calling
-> pinconfops->pin_config_dbg_parse_modify(pctldev, config, matched_config).
->
-> After a successful write into 'pinconf-config' a user can read the file
-> to get information about that single modified pin configuration.
->
-> The fact is .pin_config_dbg_parse_modify callback has never been defined
-> in 'struct pinconf_ops' of any pinconf driver, thus an actual modification
-> of a pin or group state on any present pinconf controller does not happen,
-> and it declares that all related code is no more than dead code.
->
-> I discovered the issue while attempting to add .pin_config_dbg_parse_modify
-> support in some drivers and found that too short 'MAX_NAME_LEN' set by
->
->   drivers/pinctrl/pinconf.c:372:#define MAX_NAME_LEN 15
->
-> is practically insufficient to store a regular pinctrl device name,
-> which are like 'e6060000.pin-controller-sh-pfc' or pin names like
-> 'MX6QDL_PAD_ENET_REF_CLK', thus it is another indicator that the code
-> is barely usable, insufficiently tested and unprepossessing.
->
-> Of course it might be possible to increase MAX_NAME_LEN, and then add
-> .pin_config_dbg_parse_modify callbacks to the drivers, but the whole
-> idea of such a limited debug option looks inviable. A more flexible
-> way to functionally substitute the original approach is to implicitly
-> or explicitly use pinctrl_select_state() function whenever needed.
->
-> Signed-off-by: Vladimir Zapolskiy <vz@mleia.com>
-> Cc: Laurent Meunier <laurent.meunier@st.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Russell King <linux@arm.linux.org.uk>
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
-This is fine, the build robot is complaining of some missing
-prototype though, probably some implicit include that
-disappeared when you removed <linux/pinctrl/machine.h>
-from the <linux/pinctrl/pinconf.h> file.
+	M.
 
-Will you send a v2 with this fixed? (I think just leaving the
-include in place would be a quickfix.)
-
-Yours,
-Linus Walleij
+-- 
+Jazz is not dead, it just smell funny.
