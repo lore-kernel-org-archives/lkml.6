@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5CEC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:47:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 460A5C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:47:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5B32084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:47:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16BC62084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:47:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694049;
-	bh=7NzD0BLo68vKDP7D5v0/7AZER6eA00AwLtRi1gQIwoA=;
+	s=default; t=1548694062;
+	bh=qLnbqiT9riauDfqU+6LCamqrNi58n5MPx5SdsEi67lI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bVgvGjbKif3+JQ6W67/xGR9zdGIN2XKfMwZbeGE21IqNAJNQmIlFx+wGC/binAIjY
-	 UzLGYpl9m1j0Ps41RkEy8R1lQQ9I0cm9N0U2RxHHsJzvbgQcqmefnQLlYdMlXD0BCD
-	 HVVPC8HLNfTs3hcpzxt2rtfMEIM8GSVGPCCTv77Y=
+	b=GBxoNHSbj8v2UUuu84behPOmv1lI2rjTcIg3hihe2cH0BHZv/VRUulhfIiO9viKAo
+	 7eGArIdl6c3GPvtj2m+c2/pI5z87GNgmScrJIKFyypMk1h8Ubs7u1IiQT6dc1tlj+g
+	 QADDrj6ULhrdem/tvum01pmYU1HniIyi9T58StjU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388611AbfA1Qr1 (ORCPT
+        id S2389136AbfA1QWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:47:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58118 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:22:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57822 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388738AbfA1QWJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:09 -0500
+        id S2389073AbfA1QVz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:21:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 35C1820663;
-        Mon, 28 Jan 2019 16:22:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 26E912084A;
+        Mon, 28 Jan 2019 16:21:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692528;
-        bh=7NzD0BLo68vKDP7D5v0/7AZER6eA00AwLtRi1gQIwoA=;
+        s=default; t=1548692515;
+        bh=qLnbqiT9riauDfqU+6LCamqrNi58n5MPx5SdsEi67lI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RFsCRfQxY0iyf5UiYuLtBFEFmJh2xAmn1eM4IN2dVhfIlOZoIPXPXgLZRURsi9+Vo
-         HbyFJYVC4KcL05ywF9selUvVJ4v8Eoh2CZNe+NqkcSAnchme1nNZfkvU9yZHD0JNja
-         mDoOBZGEbhZ6nFVwM6M6h0Uhf2HdFwA4PZ26PkNY=
+        b=UyzOnRhD0k0XNRB5IJ+v93yb5LqZ/u9h6RS+eCZjU9BfR/i3Jal4wNuTIsNlnLwUH
+         hNV2IfTEobxVVBTSBS/fmQf+1Yu/ObBvxqv1cv+FkRftHEx+Fsj3ygHsFlesW6o84G
+         It7JFJzVDRby47678Tcxrz1Tv3D89XlEA/zV1ibI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 051/107] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
-Date:   Mon, 28 Jan 2019 11:18:51 -0500
-Message-Id: <20190128161947.57405-51-sashal@kernel.org>
+Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 046/107] tracing: Have trace_stack nr_entries compare not be so subtle
+Date:   Mon, 28 Jan 2019 11:18:46 -0500
+Message-Id: <20190128161947.57405-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -59,46 +58,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <anson.huang@nxp.com>
+From: Dan Carpenter <dan.carpenter@oracle.com>
 
-[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
+[ Upstream commit ca16b0fbb05242f18da9d810c07d3882ffed831c ]
 
-Same as other i.MX6 SoCs, ensure unused MMDC channel's
-handshake is bypassed, this is to make sure no request
-signal will be generated when periphe_clk_sel is changed
-or SRC warm reset is triggered.
+Dan Carpenter reviewed the trace_stack.c code and figured he found an off by
+one bug.
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+ "From reviewing the code, it seems possible for
+  stack_trace_max.nr_entries to be set to .max_entries and in that case we
+  would be reading one element beyond the end of the stack_dump_trace[]
+  array.  If it's not set to .max_entries then the bug doesn't affect
+  runtime."
+
+Although it looks to be the case, it is not. Because we have:
+
+ static unsigned long stack_dump_trace[STACK_TRACE_ENTRIES+1] =
+	 { [0 ... (STACK_TRACE_ENTRIES)] = ULONG_MAX };
+
+ struct stack_trace stack_trace_max = {
+	.max_entries		= STACK_TRACE_ENTRIES - 1,
+	.entries		= &stack_dump_trace[0],
+ };
+
+And:
+
+	stack_trace_max.nr_entries = x;
+	for (; x < i; x++)
+		stack_dump_trace[x] = ULONG_MAX;
+
+Even if nr_entries equals max_entries, indexing with it into the
+stack_dump_trace[] array will not overflow the array. But if it is the case,
+the second part of the conditional that tests stack_dump_trace[nr_entries]
+to ULONG_MAX will always be true.
+
+By applying Dan's patch, it removes the subtle aspect of it and makes the if
+conditional slightly more efficient.
+
+Link: http://lkml.kernel.org/r/20180620110758.crunhd5bfep7zuiz@kili.mountain
+
+Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6sl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ kernel/trace/trace_stack.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index 5fd4ddac1bf1..f3d9dc2d2405 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -17,6 +17,8 @@
+diff --git a/kernel/trace/trace_stack.c b/kernel/trace/trace_stack.c
+index 2a1abbaca10e..f9255740411e 100644
+--- a/kernel/trace/trace_stack.c
++++ b/kernel/trace/trace_stack.c
+@@ -290,7 +290,7 @@ __next(struct seq_file *m, loff_t *pos)
+ {
+ 	long n = *pos - 1;
  
- #include "clk.h"
+-	if (n > stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
++	if (n >= stack_trace_max.nr_entries || stack_dump_trace[n] == ULONG_MAX)
+ 		return NULL;
  
-+#define CCDR				0x4
-+#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
- #define CCSR			0xc
- #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
- #define CACRR			0x10
-@@ -414,6 +416,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
- 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
- 
-+	/* Ensure the MMDC CH0 handshake is bypassed */
-+	writel_relaxed(readl_relaxed(base + CCDR) |
-+		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
-+
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
- 
- 	clk_data.clks = clks;
+ 	m->private = (void *)n;
 -- 
 2.19.1
 
