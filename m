@@ -4,48 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E28C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F11CC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E428A2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15A3E2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692686;
-	bh=hJIh8QLmnTUJg9HEZ4nA/enTyoQ3r6pXm5y59mYhCk4=;
+	s=default; t=1548692689;
+	bh=kaVyc7Qcmbnp+b5HeNTRWZk6dumTsdFyQ355WS8qJFg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ke8IkMmYjm/u804ZlVViI31puC6Kh8JE+dns29tO73DynqO080mwmLueEKsZGqJ73
-	 soLDKaKxKvMFosAOPCOd4YQ5ZhnTeKVaCaHYf5OkBrhloPAa5cACNiFw0xbyaxVU4r
-	 TCE6uZdhD8jY7n1ialOL1DvPVBMnOEvf5NYzUL8U=
+	b=UqY4QwWksoRP+BxFWoZc5mjWvrE/GdpxJuO1ipAfxz9tFWYe/7HEoPJoIxDVBDWlv
+	 ZgrBdRiLmogRQJUIpw9TRwLMnAHcjR0sqYuJid6D4G0UTz/UiWWB1Fxd+ZyDiSkwIJ
+	 utGzed3V/+MDvfzw+dIZaVLa6T2XCGd1/YL41Rc8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389317AbfA1QYo (ORCPT
+        id S2389778AbfA1QYm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:24:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33260 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:24:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389769AbfA1QYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:24:40 -0500
+        id S2389734AbfA1QYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CAC4F2173C;
-        Mon, 28 Jan 2019 16:24:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CA0B2177E;
+        Mon, 28 Jan 2019 16:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692679;
-        bh=hJIh8QLmnTUJg9HEZ4nA/enTyoQ3r6pXm5y59mYhCk4=;
+        s=default; t=1548692678;
+        bh=kaVyc7Qcmbnp+b5HeNTRWZk6dumTsdFyQ355WS8qJFg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RuQeG2DKHtga8tBTa9s8Rj404ZIg7UfWUpiEtmCRV+883b5Hg4mK3BVe/zLKkLJr+
-         N1RuA/eW/2Mn2G9QC/UrKsOqGrnOOL5PpoOdYx4yHc5KRBeI1PBFGf7JP8DSzNIiuL
-         Vm0rr7pD2EHqoDDMg2oKJ3x/CrYGoUhdyUNeU/VI=
+        b=K9eWjmLqFs4crFSc+sp2ETv9GksOrsExs0PVh2JazNlLq4buV+n5bDya8WhCx9j/O
+         M/JdaTe5ajKMtJDsFzYSWSoq76OSKWSupYBGh66hTPRbkNK6g+xhT9LCuGzt5+U/Up
+         K0DB8h9Zojfr9Z9JOm6kVsIkUwTSqs2gVF20fMCo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 25/80] ARM: dts: mmp2: fix TWSI2
-Date:   Mon, 28 Jan 2019 11:23:06 -0500
-Message-Id: <20190128162401.58841-25-sashal@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Torsten Duwe <duwe@suse.de>, Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 24/80] arm64: ftrace: don't adjust the LR value
+Date:   Mon, 28 Jan 2019 11:23:05 -0500
+Message-Id: <20190128162401.58841-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -57,56 +61,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit 1147e05ac9fc2ef86a3691e7ca5c2db7602d81dd ]
+[ Upstream commit 6e803e2e6e367db9a0d6ecae1bd24bb5752011bd ]
 
-Marvell keeps their MMP2 datasheet secret, but there are good clues
-that TWSI2 is not on 0xd4025000 on that platform, not does it use
-IRQ 58. In fact, the IRQ 58 on MMP2 seems to be a signal processor:
+The core ftrace code requires that when it is handed the PC of an
+instrumented function, this PC is the address of the instrumented
+instruction. This is necessary so that the core ftrace code can identify
+the specific instrumentation site. Since the instrumented function will
+be a BL, the address of the instrumented function is LR - 4 at entry to
+the ftrace code.
 
-   arch/arm/mach-mmp/irqs.h:#define IRQ_MMP2_MSP  58
+This fixup is applied in the mcount_get_pc and mcount_get_pc0 helpers,
+which acquire the PC of the instrumented function.
 
-I'm taking a somewhat educated guess that is probably a copy & paste
-error from PXA168 or PXA910 and that the real controller in fact hides
-at address 0xd4031000 and uses an interrupt line multiplexed via IRQ 17.
+The mcount_get_lr helper is used to acquire the LR of the instrumented
+function, whose value does not require this adjustment, and cannot be
+adjusted to anything meaningful. No adjustment of this value is made on
+other architectures, including arm. However, arm64 adjusts this value by
+4.
 
-I'm also copying some properties from TWSI1 that were missing or
-incorrect.
+This patch brings arm64 in line with other architectures and removes the
+adjustment of the LR value.
 
-Tested on a OLPC XO 1.75 machine, where the RTC is on TWSI2.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Torsten Duwe <duwe@suse.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/mmp2.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ arch/arm64/kernel/entry-ftrace.S | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 766bbb8495b6..47e5b63339d1 100644
---- a/arch/arm/boot/dts/mmp2.dtsi
-+++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -220,12 +220,15 @@
- 				status = "disabled";
- 			};
+diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
+index 0f03a8fe2314..d18d15810d19 100644
+--- a/arch/arm64/kernel/entry-ftrace.S
++++ b/arch/arm64/kernel/entry-ftrace.S
+@@ -78,7 +78,6 @@
+ 	.macro mcount_get_lr reg
+ 	ldr	\reg, [x29]
+ 	ldr	\reg, [\reg, #8]
+-	mcount_adjust_addr	\reg, \reg
+ 	.endm
  
--			twsi2: i2c@d4025000 {
-+			twsi2: i2c@d4031000 {
- 				compatible = "mrvl,mmp-twsi";
--				reg = <0xd4025000 0x1000>;
--				interrupts = <58>;
-+				reg = <0xd4031000 0x1000>;
-+				interrupt-parent = <&intcmux17>;
-+				interrupts = <0>;
- 				clocks = <&soc_clocks MMP2_CLK_TWSI1>;
- 				resets = <&soc_clocks MMP2_CLK_TWSI1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				status = "disabled";
- 			};
- 
+ 	.macro mcount_get_lr_addr reg
 -- 
 2.19.1
 
