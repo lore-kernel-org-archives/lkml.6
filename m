@@ -2,96 +2,130 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0654CC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17AAC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD7472147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697008;
-	bh=BK2v3EalhyqBpa0iRFrwi0ZwAhThugfBz1iFsjy1seg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jMdkm9mEgKICFn8sz4ztPHGFRKlQ/+BDQhIXAb3/goFa1EEp7Qjlm0479a6GRnD4g
-	 c5RkF/3jd0Ady0EtkyuVnvQakIxGCI1TXbCEeUqlQFWqc7CdqLEU2Qs4UsdMr75q0W
-	 t8JGWChoD+0UvF3bk/pP7mw4oF3Rv24cuhCYVaLE=
+	by mail.kernel.org (Postfix) with ESMTP id AA48A2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730399AbfA1Rgk (ORCPT
+        id S1729829AbfA1PzJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:36:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41166 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728624AbfA1PzK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:10 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 12F5620855;
-        Mon, 28 Jan 2019 15:55:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690910;
-        bh=BK2v3EalhyqBpa0iRFrwi0ZwAhThugfBz1iFsjy1seg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qHUgq6uxLKH4FytGtlqvYCg0Nx9NqV3fdIfJwE33QxsaMQMRfWJP0gRIde8BFxtsU
-         +Vwl01e0OUIrR15dxGBWPPwAkDtbgWBGamH245lmVDVCpCEa4pn/K8g+Gls6cT4XJ8
-         bEdIXU32Pnw1hNaMyXpsdYqNym8jaOvnVYZrxUj8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jian Shen <shenjian15@huawei.com>, Peng Li <lipeng321@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 232/304] net: hns3: don't restore rules when flow director is disabled
-Date:   Mon, 28 Jan 2019 10:42:29 -0500
-Message-Id: <20190128154341.47195-232-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 10:55:09 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44950 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728882AbfA1PzD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:55:03 -0500
+Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SFl6qS037506
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:55:02 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qa2r375fu-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:55:02 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Mon, 28 Jan 2019 15:55:00 -0000
+Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 28 Jan 2019 15:54:57 -0000
+Received: from d06av26.portsmouth.uk.ibm.com (d06av26.portsmouth.uk.ibm.com [9.149.105.62])
+        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SFsuHg65798278
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 28 Jan 2019 15:54:56 GMT
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id ED80AAE051;
+        Mon, 28 Jan 2019 15:54:55 +0000 (GMT)
+Received: from d06av26.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 8D7CBAE053;
+        Mon, 28 Jan 2019 15:54:55 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.97.178])
+        by d06av26.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 28 Jan 2019 15:54:55 +0000 (GMT)
+Date:   Mon, 28 Jan 2019 16:54:54 +0100
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Michael Mueller <mimu@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Subject: Re: [PATCH v6 05/13] KVM: s390: use pending_irqs_no_gisa() where
+ appropriate
+In-Reply-To: <20190124125939.130763-6-mimu@linux.ibm.com>
+References: <20190124125939.130763-1-mimu@linux.ibm.com>
+        <20190124125939.130763-6-mimu@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19012815-4275-0000-0000-00000305F2AF
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012815-4276-0000-0000-00003813F6DB
+Message-Id: <20190128165454.6e4bb540@oc2783563651>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901280120
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+On Thu, 24 Jan 2019 13:59:31 +0100
+Michael Mueller <mimu@linux.ibm.com> wrote:
 
-[ Upstream commit 8edc2285b7285c5fbffe438dc8113260d3e76656 ]
+> Interruption types that are not represented in GISA shall
+> use pending_irqs_no_gisa() to test pending interruptions.
+> 
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+> Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
 
-When user disables flow director, all the rules will be disabled. But
-when reset happens, it will restore all the rules again. It's not
-reasonable. This patch fixes it by add flow director status check before
-restore fules.
+I guess this is just a tiny optimization.
 
-Fixes: 6871af29b3ab ("net: hns3: Add reset handle for flow director")
-Fixes: c17852a8932f ("net: hns3: Add support for enable/disable flow director")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-index ffdd96020860..a7895aefe291 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-@@ -4339,6 +4339,10 @@ static int hclge_restore_fd_entries(struct hnae3_handle *handle)
- 	if (!hnae3_dev_fd_supported(hdev))
- 		return -EOPNOTSUPP;
- 
-+	/* if fd is disabled, should not restore it when reset */
-+	if (!hdev->fd_cfg.fd_en)
-+		return 0;
-+
- 	hlist_for_each_entry_safe(rule, node, &hdev->fd_rule_list, rule_node) {
- 		ret = hclge_config_action(hdev, HCLGE_FD_STAGE_1, rule);
- 		if (!ret)
--- 
-2.19.1
+> ---
+>  arch/s390/kvm/interrupt.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index 005dbe7252e7..cb48736867ed 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -353,7 +353,7 @@ static void set_intercept_indicators_io(struct kvm_vcpu *vcpu)
+>  
+>  static void set_intercept_indicators_ext(struct kvm_vcpu *vcpu)
+>  {
+> -	if (!(pending_irqs(vcpu) & IRQ_PEND_EXT_MASK))
+> +	if (!(pending_irqs_no_gisa(vcpu) & IRQ_PEND_EXT_MASK))
+>  		return;
+>  	if (psw_extint_disabled(vcpu))
+>  		kvm_s390_set_cpuflags(vcpu, CPUSTAT_EXT_INT);
+> @@ -363,7 +363,7 @@ static void set_intercept_indicators_ext(struct kvm_vcpu *vcpu)
+>  
+>  static void set_intercept_indicators_mchk(struct kvm_vcpu *vcpu)
+>  {
+> -	if (!(pending_irqs(vcpu) & IRQ_PEND_MCHK_MASK))
+> +	if (!(pending_irqs_no_gisa(vcpu) & IRQ_PEND_MCHK_MASK))
+>  		return;
+>  	if (psw_mchk_disabled(vcpu))
+>  		vcpu->arch.sie_block->ictl |= ICTL_LPSW;
 
