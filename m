@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E75C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D628EC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A59E2217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A519F21741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690609;
-	bh=Uwr4dWGAsV4+A0M6VpMaibSMQ0CMvPDgdj4xvIvbNFA=;
+	s=default; t=1548690614;
+	bh=uksaXLgZR4CcvzXReguvlIiyqaxIV61NpWhAqSkrdFU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tupW3lMjDIOr6sYNM24hZcbRj1I71R1dLKcXISM30g6hNifT74ADFOz5RxzJx/479
-	 0zixi887WyIC8tBGuIrvUXA+REHNHpQIn1UJj1iul10g/ls4ejcn4NDWMj3zyi4ql6
-	 YfMrVEblmEdl8vDgRhSn5EA1f3PiIp6Wew6QmE2E=
+	b=0WoWXMmg//Iv941MgwgPudJt8YmoyxyYBkWuNvh2O9/oCRJvGRkteUF6j4cVjYf01
+	 rqNS38UAYFb/f4tl3VxDUYpLepuxtHiKdqfnBTd8MNQX0RoEVmvSbhcRPrlc6DsOdh
+	 KM1Cy1Xju0kEzg30UrTIJTzfArACY/2Wd1eCi0XQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728860AbfA1PuI (ORCPT
+        id S1728877AbfA1PuM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:50:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36076 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:50:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36270 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728840AbfA1PuE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:50:04 -0500
+        id S1727590AbfA1PuK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:50:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C08B21741;
-        Mon, 28 Jan 2019 15:50:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 11BB420880;
+        Mon, 28 Jan 2019 15:50:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690603;
-        bh=Uwr4dWGAsV4+A0M6VpMaibSMQ0CMvPDgdj4xvIvbNFA=;
+        s=default; t=1548690609;
+        bh=uksaXLgZR4CcvzXReguvlIiyqaxIV61NpWhAqSkrdFU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xqwbQ26UiOUP+HJi1DaVQI3+57JPjwktTnPWT/lSS2QdED2TetQMtFkI4TekTbttK
-         gBBAPN1DZk3kQnNW6w26voE6Gw4eltlifK/QI7QVm6e6NyWZrZ+oNOt2cE9WBB3juq
-         FZ3nNAloZncTEGyhAp7uLlx8qKdk0C5tJUFV7NvY=
+        b=dD9x52znGLnAS53YXrPvEuAoWft8JlT1hmEz3VmxSEKbbC1wDy47cZ9RuEAuo10/R
+         gYEphGbGJuGdvit67onW7cMcgBBriUr3WHlNQ+ZzjVnS1RW7prFkz9FZ6NHIT83iW3
+         DQ/9PrXBbAOqHtmUCt5VL51GT2cCm30xbKSuSMbM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 138/304] pinctrl: sx150x: handle failure case of devm_kstrdup
-Date:   Mon, 28 Jan 2019 10:40:55 -0500
-Message-Id: <20190128154341.47195-138-sashal@kernel.org>
+Cc:     Tomasz Figa <tfiga@chromium.org>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 140/304] media: v4l2-device: Link subdevices to their parent devices if available
+Date:   Mon, 28 Jan 2019 10:40:57 -0500
+Message-Id: <20190128154341.47195-140-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,64 +58,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Tomasz Figa <tfiga@chromium.org>
 
-[ Upstream commit a9d9f6b83f1bb05da849b3540e6d1f70ef1c2343 ]
+[ Upstream commit ee494cf377e142f65f202fadf0d859f8e12119fb ]
 
-devm_kstrdup() may return NULL if internal allocation failed.
-Thus using  label, name  is unsafe without checking. Therefor
-in the unlikely case of allocation failure, sx150x_probe() simply
-returns -ENOMEM.
+Currently v4l2_device_register_subdev_nodes() does not initialize the
+dev_parent field of the video_device structs it creates for subdevices
+being registered. This leads to __video_register_device() falling back
+to the parent device of associated v4l2_device struct, which often does
+not match the physical device the subdevice is registered for.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Due to the problem above, the links between real devices and v4l-subdev
+nodes cannot be obtained from sysfs, which might be confusing for the
+userspace trying to identify the hardware.
+
+Fix this by initializing the dev_parent field of the video_device struct
+with the value of dev field of the v4l2_subdev struct. In case of
+subdevices without a parent struct device, the field will be NULL and the
+old behavior will be preserved by the semantics of
+__video_register_device().
+
+Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-sx150x.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ drivers/media/v4l2-core/v4l2-device.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index cbf58a10113d..4d87d75b9c6e 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1166,7 +1166,6 @@ static int sx150x_probe(struct i2c_client *client,
- 	}
+diff --git a/drivers/media/v4l2-core/v4l2-device.c b/drivers/media/v4l2-core/v4l2-device.c
+index df0ac38c4050..e0ddb9a52bd1 100644
+--- a/drivers/media/v4l2-core/v4l2-device.c
++++ b/drivers/media/v4l2-core/v4l2-device.c
+@@ -247,6 +247,7 @@ int v4l2_device_register_subdev_nodes(struct v4l2_device *v4l2_dev)
  
- 	/* Register GPIO controller */
--	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
- 	pctl->gpio.base = -1;
- 	pctl->gpio.ngpio = pctl->data->npins;
- 	pctl->gpio.get_direction = sx150x_gpio_get_direction;
-@@ -1180,6 +1179,10 @@ static int sx150x_probe(struct i2c_client *client,
- 	pctl->gpio.of_node = dev->of_node;
- #endif
- 	pctl->gpio.can_sleep = true;
-+	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
-+	if (!pctl->gpio.label)
-+		return -ENOMEM;
-+
- 	/*
- 	 * Setting multiple pins is not safe when all pins are not
- 	 * handled by the same regmap register. The oscio pin (present
-@@ -1200,13 +1203,15 @@ static int sx150x_probe(struct i2c_client *client,
- 
- 	/* Add Interrupt support if an irq is specified */
- 	if (client->irq > 0) {
--		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
--						   GFP_KERNEL);
- 		pctl->irq_chip.irq_mask = sx150x_irq_mask;
- 		pctl->irq_chip.irq_unmask = sx150x_irq_unmask;
- 		pctl->irq_chip.irq_set_type = sx150x_irq_set_type;
- 		pctl->irq_chip.irq_bus_lock = sx150x_irq_bus_lock;
- 		pctl->irq_chip.irq_bus_sync_unlock = sx150x_irq_bus_sync_unlock;
-+		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
-+						   GFP_KERNEL);
-+		if (!pctl->irq_chip.name)
-+			return -ENOMEM;
- 
- 		pctl->irq.masked = ~0;
- 		pctl->irq.sense = 0;
+ 		video_set_drvdata(vdev, sd);
+ 		strscpy(vdev->name, sd->name, sizeof(vdev->name));
++		vdev->dev_parent = sd->dev;
+ 		vdev->v4l2_dev = v4l2_dev;
+ 		vdev->fops = &v4l2_subdev_fops;
+ 		vdev->release = v4l2_device_release_subdev_node;
 -- 
 2.19.1
 
