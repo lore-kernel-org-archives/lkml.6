@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3485C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCDAC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1DD22147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2ED3121741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690299;
-	bh=XHvGrq9LUVK3VhEp6c72qxwXepi97IZhYICnHguuWkc=;
+	s=default; t=1548690304;
+	bh=Gu/bul+kriYcN94uMrAWo0kYYB3ZX3NjGr/JJYtEsAw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F83glXw5UJ7jrCha+LaQYJjN9d7vLysDL1n1RT8PY1epVR0JrdZehJeEzSZJEGxFS
-	 gOJpEao2M58m7IJKC9MpXn8oJSsTrcnIORsjLtPj1kCXqH8kejWyi4cYMW6qSoblIS
-	 mq4oARuEA8LTs3qkjF1z2QNjiXP6oDu3aVq1qX78=
+	b=OWS/q0NuS/OM2LIyHHVqvWvvnvI64DzvtaSaOtmOx5PytF6vSBs31VJtZdwdz6xq3
+	 cSv0lHX7DxDzXG+3/807UeRBJsTvruIrqUhjXGdbV06EbnJ6RnLNWbfin145lyURjq
+	 72eRDmS2K35hpgI6l3FHds4O6G5td7XUXsl0tFB0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727601AbfA1Po6 (ORCPT
+        id S1727627AbfA1PpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:44:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58274 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:45:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58354 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727571AbfA1Poz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:44:55 -0500
+        id S1727599AbfA1Po6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:44:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3FB1521741;
-        Mon, 28 Jan 2019 15:44:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B271F2177B;
+        Mon, 28 Jan 2019 15:44:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690294;
-        bh=XHvGrq9LUVK3VhEp6c72qxwXepi97IZhYICnHguuWkc=;
+        s=default; t=1548690298;
+        bh=Gu/bul+kriYcN94uMrAWo0kYYB3ZX3NjGr/JJYtEsAw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=g5kBFrBS7oHHq+A8SbczQoZzywrZE1psXqqkFzY0Nx54GLI5DE3yhqGS6XPV1ySB7
-         zCF+FNi6LjpSkhWJBigcj/X9BZfMF1M/O7WlxqCpdIgP7AZiUGpyFtLe8desAhdRGA
-         aDHrZRhgrp3NeP1iUNjmcSjfYLHO+P2uKU2aVtqw=
+        b=u8MhH5q7wohx6qHr1yNyCCR1mDmusuNBg9ouhT6nTSPyO4Rs6hhvVsMUNlPJCeICc
+         2qBHbLPGHidyGQBialAfMI/8glYtJwrHLbjImyKYfaYYtv4LASovCFrBHeOrHX+FXF
+         B3EqxIHwT+2ge4/y1i7bpjViap0+nkOHYZ0XgThE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Paul Burton <paul.burton@mips.com>, linux-mips@linux-mips.org,
-        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 037/304] MIPS: Boston: Disable EG20T prefetch
-Date:   Mon, 28 Jan 2019 10:39:14 -0500
-Message-Id: <20190128154341.47195-37-sashal@kernel.org>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, linux-sctp@vger.kernel.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 039/304] sctp: Fix SKB list traversal in sctp_intl_store_ordered().
+Date:   Mon, 28 Jan 2019 10:39:16 -0500
+Message-Id: <20190128154341.47195-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,49 +57,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Burton <paul.burton@mips.com>
+From: "David S. Miller" <davem@davemloft.net>
 
-[ Upstream commit 5ec17af7ead09701e23d2065e16db6ce4e137289 ]
+[ Upstream commit e15e067d0656625c77c52b4e5f0cfbf0c0c3583f ]
 
-The Intel EG20T Platform Controller Hub used on the MIPS Boston
-development board supports prefetching memory to optimize DMA transfers.
-Unfortunately for unknown reasons this doesn't work well with some MIPS
-CPUs such as the P6600, particularly when using an I/O Coherence Unit
-(IOCU) to provide cache-coherent DMA. In these systems it is common for
-DMA data to be lost, resulting in broken access to EG20T devices such as
-the MMC or SATA controllers.
+Same change as made to sctp_intl_store_reasm().
 
-Support for a DT property to configure the prefetching was added a while
-back by commit 549ce8f134bd ("misc: pch_phub: Read prefetch value from
-device tree if passed") but we never added the DT snippet to make use of
-it. Add that now in order to disable the prefetching & fix DMA on the
-affected systems.
+To be fully correct, an iterator has an undefined value when something
+like skb_queue_walk() naturally terminates.
 
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Patchwork: https://patchwork.linux-mips.org/patch/21068/
-Cc: linux-mips@linux-mips.org
+This will actually matter when SKB queues are converted over to
+list_head.
+
+Formalize what this code ends up doing with the current
+implementation.
+
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/boot/dts/img/boston.dts | 6 ++++++
- 1 file changed, 6 insertions(+)
+ net/sctp/stream_interleave.c | 17 ++++++++++++-----
+ 1 file changed, 12 insertions(+), 5 deletions(-)
 
-diff --git a/arch/mips/boot/dts/img/boston.dts b/arch/mips/boot/dts/img/boston.dts
-index 65af3f6ba81c..84328afa3a55 100644
---- a/arch/mips/boot/dts/img/boston.dts
-+++ b/arch/mips/boot/dts/img/boston.dts
-@@ -141,6 +141,12 @@
- 				#size-cells = <2>;
- 				#interrupt-cells = <1>;
+diff --git a/net/sctp/stream_interleave.c b/net/sctp/stream_interleave.c
+index 0a78cdf86463..500449b72eca 100644
+--- a/net/sctp/stream_interleave.c
++++ b/net/sctp/stream_interleave.c
+@@ -383,7 +383,7 @@ static void sctp_intl_store_ordered(struct sctp_ulpq *ulpq,
+ 				    struct sctp_ulpevent *event)
+ {
+ 	struct sctp_ulpevent *cevent;
+-	struct sk_buff *pos;
++	struct sk_buff *pos, *loc;
  
-+				eg20t_phub@2,0,0 {
-+					compatible = "pci8086,8801";
-+					reg = <0x00020000 0 0 0 0>;
-+					intel,eg20t-prefetch = <0>;
-+				};
-+
- 				eg20t_mac@2,0,1 {
- 					compatible = "pci8086,8802";
- 					reg = <0x00020100 0 0 0 0>;
+ 	pos = skb_peek_tail(&ulpq->lobby);
+ 	if (!pos) {
+@@ -403,18 +403,25 @@ static void sctp_intl_store_ordered(struct sctp_ulpq *ulpq,
+ 		return;
+ 	}
+ 
++	loc = NULL;
+ 	skb_queue_walk(&ulpq->lobby, pos) {
+ 		cevent = (struct sctp_ulpevent *)pos->cb;
+ 
+-		if (cevent->stream > event->stream)
++		if (cevent->stream > event->stream) {
++			loc = pos;
+ 			break;
+-
++		}
+ 		if (cevent->stream == event->stream &&
+-		    MID_lt(event->mid, cevent->mid))
++		    MID_lt(event->mid, cevent->mid)) {
++			loc = pos;
+ 			break;
++		}
+ 	}
+ 
+-	__skb_queue_before(&ulpq->lobby, pos, sctp_event2skb(event));
++	if (!loc)
++		__skb_queue_tail(&ulpq->lobby, sctp_event2skb(event));
++	else
++		__skb_queue_before(&ulpq->lobby, loc, sctp_event2skb(event));
+ }
+ 
+ static void sctp_intl_retrieve_ordered(struct sctp_ulpq *ulpq,
 -- 
 2.19.1
 
