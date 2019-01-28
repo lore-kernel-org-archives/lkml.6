@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2564C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40925C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7965220663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1177220663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693159;
-	bh=Xv5jPtmK0A+grYouMJDcojhSF+A/s5ETfA62vx0eyOY=;
+	s=default; t=1548693163;
+	bh=KWrhPQE54yTIZ3vQ+83yDjtzsBEZa40Bh+VWqlZWwak=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=B0INfpRPfc8bSWh5/OTXzY+OwatsLC4lMBMnbLRc2rwsTFdCzCX+mFm3tj9YyXr98
-	 UsDXf473xv1aXaepwGiir/X3EbGTxzZkCRvEcfESSJog3vhq/ItKaG79G2VnT9RetC
-	 aQy2Jy56X04gpz5f8g+2onjEud+ykwiuGyA8JKXU=
+	b=bEVLrJaW2xW7gcLldg87QIPYFAQmUMmw5vF9J3U/f/rAPStSCyltH2m3jQdL/5t2d
+	 5jzttolBNsCc6MEZU10wFz0bq+vqUaLuIQ8WQUfdvXxv6jCoE6dfsxW3VB1X6dGf46
+	 n01t6bmHlQpRxDIfb4UTPEUzti3ClL3jZPcpLwns=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729438AbfA1Qci (ORCPT
+        id S2390586AbfA1Qcg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:32:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36088 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:32:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36118 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390254AbfA1Q0j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:39 -0500
+        id S2390257AbfA1Q0k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 044792147A;
-        Mon, 28 Jan 2019 16:26:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3077C2084A;
+        Mon, 28 Jan 2019 16:26:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692798;
-        bh=Xv5jPtmK0A+grYouMJDcojhSF+A/s5ETfA62vx0eyOY=;
+        s=default; t=1548692799;
+        bh=KWrhPQE54yTIZ3vQ+83yDjtzsBEZa40Bh+VWqlZWwak=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IuveAGVj1kz/Ntagr6NLazU5sNQR8S7jR7GHbD8pTA28d52ZCVL/Za3nOIlUGV/W7
-         OxQerM0T/FrN8k/8iG9wEf8FDzPVieUvp1U6uf6Zl6pc790F3RNnBoGj9/ADQidZMy
-         dLuXGz41etE4ytX9uPxO6k8zSIctW2dpSNHJUcjI=
+        b=lwhFSa2w1zdnUJNe0jKyXeKBAv7dUCMrESb54AEBSY8Qx9TZtiQ5IzPPRs52uQ4eq
+         T9a2NjsdYIof9qAWDGtmVMdb5kBVSV+FLAW9HxoFKg/l2kCVu8Z/cbQ/MzdttUd5uY
+         sPdo+qEpTv5ptQOCl6GYGTJIYlqVW77K1UJm57EY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Renato Lui Geh <renatogeh@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 3.18 11/61] staging: iio: ad7780: update voltage on read
-Date:   Mon, 28 Jan 2019 11:25:33 -0500
-Message-Id: <20190128162623.59854-11-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 12/61] ARM: OMAP2+: hwmod: Fix some section annotations
+Date:   Mon, 28 Jan 2019 11:25:34 -0500
+Message-Id: <20190128162623.59854-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -59,44 +58,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Renato Lui Geh <renatogeh@gmail.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 336650c785b62c3bea7c8cf6061c933a90241f67 ]
+[ Upstream commit c10b26abeb53cabc1e6271a167d3f3d396ce0218 ]
 
-The ad7780 driver previously did not read the correct device output, as
-it read an outdated value set at initialization. It now updates its
-voltage on read.
+When building the kernel with Clang, the following section mismatch
+warnings appears:
 
-Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
-Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+WARNING: vmlinux.o(.text+0x2d398): Section mismatch in reference from
+the function _setup() to the function .init.text:_setup_iclk_autoidle()
+The function _setup() references
+the function __init _setup_iclk_autoidle().
+This is often because _setup lacks a __init
+annotation or the annotation of _setup_iclk_autoidle is wrong.
+
+WARNING: vmlinux.o(.text+0x2d3a0): Section mismatch in reference from
+the function _setup() to the function .init.text:_setup_reset()
+The function _setup() references
+the function __init _setup_reset().
+This is often because _setup lacks a __init
+annotation or the annotation of _setup_reset is wrong.
+
+WARNING: vmlinux.o(.text+0x2d408): Section mismatch in reference from
+the function _setup() to the function .init.text:_setup_postsetup()
+The function _setup() references
+the function __init _setup_postsetup().
+This is often because _setup lacks a __init
+annotation or the annotation of _setup_postsetup is wrong.
+
+_setup is used in omap_hwmod_allocate_module, which isn't marked __init
+and looks like it shouldn't be, meaning to fix these warnings, those
+functions must be moved out of the init section, which this patch does.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/adc/ad7780.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/arm/mach-omap2/omap_hwmod.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-index 273add3ed63f..5a3072740326 100644
---- a/drivers/staging/iio/adc/ad7780.c
-+++ b/drivers/staging/iio/adc/ad7780.c
-@@ -90,12 +90,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
- 			   long m)
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index e67ffbc9ec40..0e17fa4ca419 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -2578,7 +2578,7 @@ static int __init _init(struct omap_hwmod *oh, void *data)
+  * a stub; implementing this properly requires iclk autoidle usecounting in
+  * the clock code.   No return value.
+  */
+-static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
++static void _setup_iclk_autoidle(struct omap_hwmod *oh)
  {
- 	struct ad7780_state *st = iio_priv(indio_dev);
-+	int voltage_uv;
+ 	struct omap_hwmod_ocp_if *os;
+ 	struct list_head *p;
+@@ -2613,7 +2613,7 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
+  * reset.  Returns 0 upon success or a negative error code upon
+  * failure.
+  */
+-static int __init _setup_reset(struct omap_hwmod *oh)
++static int _setup_reset(struct omap_hwmod *oh)
+ {
+ 	int r;
  
- 	switch (m) {
- 	case IIO_CHAN_INFO_RAW:
- 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
- 	case IIO_CHAN_INFO_SCALE:
--		*val = st->int_vref_mv * st->gain;
-+		voltage_uv = regulator_get_voltage(st->reg);
-+		if (voltage_uv < 0)
-+			return voltage_uv;
-+		*val = (voltage_uv / 1000) * st->gain;
- 		*val2 = chan->scan_type.realbits - 1;
- 		return IIO_VAL_FRACTIONAL_LOG2;
- 	case IIO_CHAN_INFO_OFFSET:
+@@ -2674,7 +2674,7 @@ static int __init _setup_reset(struct omap_hwmod *oh)
+  *
+  * No return value.
+  */
+-static void __init _setup_postsetup(struct omap_hwmod *oh)
++static void _setup_postsetup(struct omap_hwmod *oh)
+ {
+ 	u8 postsetup_state;
+ 
 -- 
 2.19.1
 
