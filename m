@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2936C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA56AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B95AD2171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A38282084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692447;
-	bh=XMCt/Am89DSH2OqT69hpegTGT7rZbwrgd6n7iSi0E8c=;
+	s=default; t=1548692450;
+	bh=khEciF1J8C5dG2EQcIl21l4X5RDmspjmIGFXJSMYwDs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=t4lkGsZY64jWfWTCbhhmA7Gol+TypZeRTwnHsGqTMQhTcxz+1XHNf7Z5DdOE/W7wg
-	 dctAuHqIIthUZUftsSIO4eNrAZJKoyV4q8f+Cpj87zamSU/qvlIZUYoaNmcN5hotUp
-	 gYQBCkVHzTh7iaPG9aORdFRo/cKwM1oN3XC/QKNo=
+	b=oWqfQTXgvl5vNuAJkLyANkDzQqqwtKm7p0b3On0i5V225nLb4vp4X+KNunoK4Tw0K
+	 a1f3CNQOqpdFrJk2n55bK6EV3ASWkRiwHVe7XrqV9Dbwoqt5jUK076bFMBjbDHGVUf
+	 48BH50k7BcG6dKQpFsCeieEPU7l5agFnUCGMQ3Nk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388883AbfA1QUq (ORCPT
+        id S2388896AbfA1QUs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:20:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56348 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:20:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387966AbfA1QUo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:20:44 -0500
+        id S2388872AbfA1QUp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:20:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E24942184D;
-        Mon, 28 Jan 2019 16:20:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEEF82147A;
+        Mon, 28 Jan 2019 16:20:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692443;
-        bh=XMCt/Am89DSH2OqT69hpegTGT7rZbwrgd6n7iSi0E8c=;
+        s=default; t=1548692445;
+        bh=khEciF1J8C5dG2EQcIl21l4X5RDmspjmIGFXJSMYwDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=loaYOB6QAVR3RHsmr5hww9m0A26O2qedDh1UBOMZMIavK61GS9l9QB0ET5Ie3pG4J
-         QU+rlCbwOpEg+pOeRSZ6g5FZZy1/ujyibLYDF4cBATpCGU13WwfpZ4/0cH5lN3wsxd
-         NQgmM8D10t8a9ZAE2F2YSoGAy6WC5GlZeaAiQseY=
+        b=VhNU5x+UjOOk/lfozUJv4Nb2miv7P3NAfQTC9HxfapCLRf7i+Dl5xtpfB/kxyg42M
+         64E8UB1N3i8x3UMzeXgwI6J9gzzXDGPHwAn+s6AntDhYjTwUukZvvONKkqrfXwn+GC
+         m0pqd3kuM8f/LDvuzf/hVIe7tDkMs96LwvIHTerM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 021/107] soc/tegra: Don't leak device tree node reference
-Date:   Mon, 28 Jan 2019 11:18:21 -0500
-Message-Id: <20190128161947.57405-21-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 022/107] media: mtk-vcodec: Release device nodes in mtk_vcodec_init_enc_pm()
+Date:   Mon, 28 Jan 2019 11:18:22 -0500
+Message-Id: <20190128161947.57405-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -57,44 +59,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 9eb40fa2cd2d1f6829e7b49bb22692f754b9cfe0 ]
+[ Upstream commit 8ea0f2ba0fa3f91ea1b8d823a54b042026ada6b3 ]
 
-of_find_node_by_path() acquires a reference to the node returned by it
-and that reference needs to be dropped by its caller. soc_is_tegra()
-doesn't do that, so fix it.
+of_parse_phandle() returns the device node with refcount incremented.
+There are two nodes that are used temporary in mtk_vcodec_init_enc_pm(),
+but their refcounts are not decremented.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-[treding: slightly rewrite to avoid inline comparison]
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+The patch adds one of_node_put() and fixes returning error codes.
+
+Found by Linux Driver Verification project (linuxtesting.org).
+
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/tegra/common.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-index cd8f41351add..7bfb154d6fa5 100644
---- a/drivers/soc/tegra/common.c
-+++ b/drivers/soc/tegra/common.c
-@@ -22,11 +22,15 @@ static const struct of_device_id tegra_machine_match[] = {
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+index 3e73e9db781f..7c025045ea90 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+@@ -41,25 +41,27 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 0);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pm->larbvenc = &pdev->dev;
  
- bool soc_is_tegra(void)
- {
-+	const struct of_device_id *match;
- 	struct device_node *root;
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 1);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
  
- 	root = of_find_node_by_path("/");
- 	if (!root)
- 		return false;
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
  
--	return of_match_node(tegra_machine_match, root) != NULL;
-+	match = of_match_node(tegra_machine_match, root);
-+	of_node_put(root);
-+
-+	return match != NULL;
- }
+ 	pm->larbvenclt = &pdev->dev;
 -- 
 2.19.1
 
