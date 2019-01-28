@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43519C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:36:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1901C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CA3420880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:36:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DB9120880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:36:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548678994;
-	bh=iujMqwWlG7Zj3NZgs1PQxZy9Jr7CR0v1NjtW4hiFmBU=;
+	s=default; t=1548679004;
+	bh=0ksAVTdg9fJTwdReDG+3lpHgWq4+pNBikq6PM7r2Drw=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=WYNq6T0c/GMrkJwKT9FhcaI7qcpzrgAYgF4uGISYzofpCG+eCqbnNnZgMq7X5HFyX
-	 MxIQFI5czHCYrvg4d6P3CutsSsh/G9k17vV+yp+uCUt0YqIMowQXXoj5dJvCepS5+X
-	 A3MvVdxU3MbbNamM79pe3EBYRs67oObOrrfSIfKY=
+	b=zMBFn9d+sC9OnKUcufWM43sXQw+/PN1iP7A/3El/v2NthjQ9akiuUFjQpvq02PAFR
+	 nY4Xi5wiBY+pMf9iTEt4+oOPWJDgxKyW1FWlec5TJYfcbuioos3QGwpZlsCyyngE10
+	 z1JPZfXMZNsdMe7FsjVOJnyAR4oMeaAqvrKrBwlY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726998AbfA1Mfz (ORCPT
+        id S1726899AbfA1Mfp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:35:55 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42420 "EHLO
+        Mon, 28 Jan 2019 07:35:45 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42200 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726947AbfA1Mfs (ORCPT
+        with ESMTP id S1726843AbfA1Mfl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:35:48 -0500
+        Mon, 28 Jan 2019 07:35:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=cQxN0636JXfzISjcLv536fnojzSwohWaKL8eVF6Vnzc=; b=bdao5L+ef6z4
-        YUHNa9s/dIFpyfMQeqnk4Ks5RypKma5SrdU26oOPnHaQifylmr3557xy+BiZpi7w73GCzlC6AfQgn
-        wOijrh+ksFO4ReyS8JxwNN/N0RVIrT/PS9R0mGcLq4e3PWsDex4pVq+o5RD4eQVUhgQYhd4PUbc5i
-        0+eM0=;
+        List-Archive; bh=yh7zlaGNNIvO7pFyA772SmFQ+acx1N9Pvh1mNLWhRew=; b=Uc6EG9gRZyX1
+        wXBvvomT37/FF1OfMto01xp+PH7GRd5n9yHHHq0eLIp46Gyv2wmQ1Y1PIw6eyy9+EFZRd4kdHQM45
+        DP6AaXtyUmGvnRXrzntDvTQPFW0h7096sgK8R8Q2gTJTM0bpxCYnRNDKduBCpEWN910Y1LqXqPpJk
+        qkmLY=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1go68g-0002TM-Do; Mon, 28 Jan 2019 12:35:46 +0000
+        id 1go68Y-0002Sr-9V; Mon, 28 Jan 2019 12:35:38 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 0C1B31127D29; Mon, 28 Jan 2019 12:35:46 +0000 (GMT)
+        id DA2951127D29; Mon, 28 Jan 2019 12:35:37 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
-Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: lp8788-buck: Constify lp8788_buck_desc" to the regulator tree
+Cc:     Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
+Subject: Applied "regulator: mcp16502: Include linux/gpio/consumer.h to fix build error" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190128123546.0C1B31127D29@debutante.sirena.org.uk>
-Date:   Mon, 28 Jan 2019 12:35:46 +0000 (GMT)
+Message-Id: <20190128123537.DA2951127D29@debutante.sirena.org.uk>
+Date:   Mon, 28 Jan 2019 12:35:37 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +60,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: lp8788-buck: Constify lp8788_buck_desc
+   regulator: mcp16502: Include linux/gpio/consumer.h to fix build error
 
 has been applied to the regulator tree at
 
@@ -84,30 +85,50 @@ to this mail.
 Thanks,
 Mark
 
-From b133305c51e977f5c64c9effd1b6533ae04095a0 Mon Sep 17 00:00:00 2001
+From f3c6a1a194317f3a31ee2b2067bb0a41de64bc8b Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Sat, 26 Jan 2019 11:39:06 +0800
-Subject: [PATCH] regulator: lp8788-buck: Constify lp8788_buck_desc
+Date: Sun, 27 Jan 2019 16:51:22 +0800
+Subject: [PATCH] regulator: mcp16502: Include linux/gpio/consumer.h to fix
+ build error
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Fix below build error:
+drivers/regulator/mcp16502.c: In function ‘mcp16502_gpio_set_mode’:
+drivers/regulator/mcp16502.c:135:3: error: implicit declaration of function ‘gpiod_set_value’; did you mean ‘gpio_set_value’? [-Werror=implicit-function-declaration]
+   gpiod_set_value(mcp->lpm, 0);
+   ^~~~~~~~~~~~~~~
+   gpio_set_value
+drivers/regulator/mcp16502.c: In function ‘mcp16502_probe’:
+drivers/regulator/mcp16502.c:486:13: error: implicit declaration of function ‘devm_gpiod_get’; did you mean ‘devm_gpio_free’? [-Werror=implicit-function-declaration]
+  mcp->lpm = devm_gpiod_get(dev, "lpm", GPIOD_OUT_LOW);
+             ^~~~~~~~~~~~~~
+             devm_gpio_free
+drivers/regulator/mcp16502.c:486:40: error: ‘GPIOD_OUT_LOW’ undeclared (first use in this function); did you mean ‘GPIOF_INIT_LOW’?
+  mcp->lpm = devm_gpiod_get(dev, "lpm", GPIOD_OUT_LOW);
+                                        ^~~~~~~~~~~~~
+                                        GPIOF_INIT_LOW
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/lp8788-buck.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/regulator/mcp16502.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/regulator/lp8788-buck.c b/drivers/regulator/lp8788-buck.c
-index ec46290b647e..30de784d8e30 100644
---- a/drivers/regulator/lp8788-buck.c
-+++ b/drivers/regulator/lp8788-buck.c
-@@ -370,7 +370,7 @@ static const struct regulator_ops lp8788_buck34_ops = {
- 	.get_mode = lp8788_buck_get_mode,
- };
+diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
+index 3479ae009b0b..0fc4963bd5b0 100644
+--- a/drivers/regulator/mcp16502.c
++++ b/drivers/regulator/mcp16502.c
+@@ -17,6 +17,7 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/suspend.h>
++#include <linux/gpio/consumer.h>
  
--static struct regulator_desc lp8788_buck_desc[] = {
-+static const struct regulator_desc lp8788_buck_desc[] = {
- 	{
- 		.name = "buck1",
- 		.id = BUCK1,
+ #define VDD_LOW_SEL 0x0D
+ #define VDD_HIGH_SEL 0x3F
 -- 
 2.20.1
 
