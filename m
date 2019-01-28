@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24733C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24356C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9B8520663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EAD6020663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693128;
-	bh=Vj/IySeZbjcDTEuO9HzlyjlItraICGr0kB8gsrD5YC0=;
+	s=default; t=1548693132;
+	bh=t7heJ8OzTmswUO9H+/IrsZg47198KdFvP3EOPbuvgCE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zlW1m9qYvKgWxj82YS7g+chAV6Ya1hJq7EIS2sdqFUbGqSCsWJLLxLIj0PJAkXX5K
-	 3YRMB6LIFmU+T+OO0ovcS7kiNzh2MS8JAl4J0Dx7iMLe08O962EcIdgChp+iQgJ6Gq
-	 fWEiZAdM4xogt+DUjxMNfhbu5/cxU6vGhbgsFeCs=
+	b=nvmnOzMeAZ8YL82ip+MsCa1SoDPq2hde/vTNOYCB+bc2fdqXZRiWUlZSDUhxmb0Qk
+	 xWir3GyP2LO9pL689kX4H7fMuvwrBERqtA3yttvLxY74GZX3bdi2yf+VwC1bE02jOe
+	 72iWkqUUFBZPwETbDuECGAb1mmkib5sGCP9LHOUY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390318AbfA1Q1B (ORCPT
+        id S2390622AbfA1QcK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:27:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36582 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:32:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36662 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388628AbfA1Q05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:57 -0500
+        id S2390305AbfA1Q06 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EF1C2084A;
-        Mon, 28 Jan 2019 16:26:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 703662171F;
+        Mon, 28 Jan 2019 16:26:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692815;
-        bh=Vj/IySeZbjcDTEuO9HzlyjlItraICGr0kB8gsrD5YC0=;
+        s=default; t=1548692818;
+        bh=t7heJ8OzTmswUO9H+/IrsZg47198KdFvP3EOPbuvgCE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T+9pMqQfn4bdkn6+Etxy5w8MlO9BSmBT/oYbuQEdl0My3Uha7eIP3xSdVMAw6Xmu1
-         16eC0UdXZ7x8wp86HuknsuifCyairnDtc3V7qd440xHPVcK+M3xwc+n/acmXzx1yPz
-         aznGbtLnI4J4WUN+hT4cLqEjr/q1QyEEhY5LaWpk=
+        b=Ze7rASXj9RqUazHATCZfZtt5yCC+rGsh0e6eUXJqb13sh3+mfGnfbqOpJnjcFp2YC
+         zR6RUztzNzygIzGWf6E+0n7yuLV4wAF64vp8E1Spw+fsoVO0AH47eM4k01ugozos7O
+         dicMT7RE8kmx8NzaMtnYEaEGSMZqL03+hKpa8aQc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 19/61] ARM: mmp/mmp2: dt: enable the clock
-Date:   Mon, 28 Jan 2019 11:25:41 -0500
-Message-Id: <20190128162623.59854-19-sashal@kernel.org>
+Cc:     Zoran Markovic <zmarkovic@sierrawireless.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 21/61] smack: fix access permissions for keyring
+Date:   Mon, 28 Jan 2019 11:25:43 -0500
+Message-Id: <20190128162623.59854-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -57,153 +61,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Zoran Markovic <zmarkovic@sierrawireless.com>
 
-[ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
+[ Upstream commit 5b841bfab695e3b8ae793172a9ff7990f99cc3e2 ]
 
-The device-tree booted MMP2 needs to enable the timer clock, otherwise
-it would stop ticking when the boot finishes.
+Function smack_key_permission() only issues smack requests for the
+following operations:
+ - KEY_NEED_READ (issues MAY_READ)
+ - KEY_NEED_WRITE (issues MAY_WRITE)
+ - KEY_NEED_LINK (issues MAY_WRITE)
+ - KEY_NEED_SETATTR (issues MAY_WRITE)
+A blank smack request is issued in all other cases, resulting in
+smack access being granted if there is any rule defined between
+subject and object, or denied with -EACCES otherwise.
 
-It can also use the clock rate from the clk, the non-DT boards need to
-keep using the hardcoded rates.
+Request MAY_READ access for KEY_NEED_SEARCH and KEY_NEED_VIEW.
+Fix the logic in the unlikely case when both MAY_READ and
+MAY_WRITE are needed. Validate access permission field for valid
+contents.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-mmp/common.h |  2 +-
- arch/arm/mach-mmp/mmp2.c   |  2 +-
- arch/arm/mach-mmp/pxa168.c |  2 +-
- arch/arm/mach-mmp/time.c   | 32 ++++++++++++++++++++------------
- 4 files changed, 23 insertions(+), 15 deletions(-)
+ security/smack/smack_lsm.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
-index cf445bae6d77..69c7eec6d1e0 100644
---- a/arch/arm/mach-mmp/common.h
-+++ b/arch/arm/mach-mmp/common.h
-@@ -1,7 +1,7 @@
- #include <linux/reboot.h>
- #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index 59350f6b7e8d..e36976ed38e4 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -3847,6 +3847,12 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	int request = 0;
+ 	int rc;
  
--extern void timer_init(int irq);
-+extern void timer_init(int irq, unsigned long rate);
- 
- extern void __init mmp_map_io(void);
- extern void mmp_restart(enum reboot_mode, const char *);
-diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-index a70b5530bd42..90a0d8114af2 100644
---- a/arch/arm/mach-mmp/mmp2.c
-+++ b/arch/arm/mach-mmp/mmp2.c
-@@ -133,7 +133,7 @@ void __init mmp2_timer_init(void)
- 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
- 	__raw_writel(clk_rst, APBC_TIMERS);
- 
--	timer_init(IRQ_MMP2_TIMER1);
-+	timer_init(IRQ_MMP2_TIMER1, 6500000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
-index 144e997624c0..5a616db7f392 100644
---- a/arch/arm/mach-mmp/pxa168.c
-+++ b/arch/arm/mach-mmp/pxa168.c
-@@ -78,7 +78,7 @@ void __init pxa168_timer_init(void)
- 	/* 3.25MHz, bus/functional clock enabled, release reset */
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA168_TIMER1);
-+	timer_init(IRQ_PXA168_TIMER1, 6500000);
- }
- 
- void pxa168_clear_keypad_wakeup(void)
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index 2756351dbb35..b66ea443f154 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -22,6 +22,7 @@
- #include <linux/kernel.h>
- #include <linux/interrupt.h>
- #include <linux/clockchips.h>
-+#include <linux/clk.h>
- 
- #include <linux/io.h>
- #include <linux/irq.h>
-@@ -39,12 +40,6 @@
- 
- #include "clock.h"
- 
--#ifdef CONFIG_CPU_MMP2
--#define MMP_CLOCK_FREQ		6500000
--#else
--#define MMP_CLOCK_FREQ		3250000
--#endif
--
- #define TIMERS_VIRT_BASE	TIMERS1_VIRT_BASE
- 
- #define MAX_DELTA		(0xfffffffe)
-@@ -197,19 +192,18 @@ static struct irqaction timer_irq = {
- 	.dev_id		= &ckevt,
- };
- 
--void __init timer_init(int irq)
-+void __init timer_init(int irq, unsigned long rate)
- {
- 	timer_config();
- 
--	sched_clock_register(mmp_read_sched_clock, 32, MMP_CLOCK_FREQ);
-+	sched_clock_register(mmp_read_sched_clock, 32, rate);
- 
- 	ckevt.cpumask = cpumask_of(0);
- 
- 	setup_irq(irq, &timer_irq);
- 
--	clocksource_register_hz(&cksrc, MMP_CLOCK_FREQ);
--	clockevents_config_and_register(&ckevt, MMP_CLOCK_FREQ,
--					MIN_DELTA, MAX_DELTA);
-+	clocksource_register_hz(&cksrc, rate);
-+	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
- }
- 
- #ifdef CONFIG_OF
-@@ -221,7 +215,9 @@ static struct of_device_id mmp_timer_dt_ids[] = {
- void __init mmp_dt_init_timer(void)
- {
- 	struct device_node *np;
-+	struct clk *clk;
- 	int irq, ret;
-+	unsigned long rate;
- 
- 	np = of_find_matching_node(NULL, mmp_timer_dt_ids);
- 	if (!np) {
-@@ -229,6 +225,18 @@ void __init mmp_dt_init_timer(void)
- 		goto out;
- 	}
- 
-+	clk = of_clk_get(np, 0);
-+	if (!IS_ERR(clk)) {
-+		ret = clk_prepare_enable(clk);
-+		if (ret)
-+			goto out;
-+		rate = clk_get_rate(clk) / 2;
-+	} else if (cpu_is_pj4()) {
-+		rate = 6500000;
-+	} else {
-+		rate = 3250000;
-+	}
++	/*
++	 * Validate requested permissions
++	 */
++	if (perm & ~KEY_NEED_ALL)
++		return -EINVAL;
 +
- 	irq = irq_of_parse_and_map(np, 0);
- 	if (!irq) {
- 		ret = -EINVAL;
-@@ -239,7 +247,7 @@ void __init mmp_dt_init_timer(void)
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	timer_init(irq);
-+	timer_init(irq, rate);
- 	return;
- out:
- 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
+ 	keyp = key_ref_to_ptr(key_ref);
+ 	if (keyp == NULL)
+ 		return -EINVAL;
+@@ -3866,10 +3872,10 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	ad.a.u.key_struct.key = keyp->serial;
+ 	ad.a.u.key_struct.key_desc = keyp->description;
+ #endif
+-	if (perm & KEY_NEED_READ)
+-		request = MAY_READ;
++	if (perm & (KEY_NEED_READ | KEY_NEED_SEARCH | KEY_NEED_VIEW))
++		request |= MAY_READ;
+ 	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
+-		request = MAY_WRITE;
++		request |= MAY_WRITE;
+ 	rc = smk_access(tkp, keyp->security, request, &ad);
+ 	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
+ 	return rc;
 -- 
 2.19.1
 
