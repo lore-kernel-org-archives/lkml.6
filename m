@@ -2,52 +2,54 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E64ABC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:11:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66BC3C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:13:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB64820881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:11:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2CCEF20882
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:13:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727047AbfA1HLV (ORCPT
+        id S1726778AbfA1HNY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:11:21 -0500
-Received: from mga09.intel.com ([134.134.136.24]:57806 "EHLO mga09.intel.com"
+        Mon, 28 Jan 2019 02:13:24 -0500
+Received: from mga09.intel.com ([134.134.136.24]:57937 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726627AbfA1HLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:11:21 -0500
+        id S1726627AbfA1HNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 02:13:24 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2019 23:11:20 -0800
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2019 23:13:23 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,533,1539673200"; 
-   d="scan'208";a="129414987"
+   d="scan'208";a="294962330"
 Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 27 Jan 2019 23:11:20 -0800
+  by orsmga005.jf.intel.com with ESMTP; 27 Jan 2019 23:13:23 -0800
 Received: from [10.125.252.29] (abudanko-mobl.ccr.corp.intel.com [10.125.252.29])
-        by linux.intel.com (Postfix) with ESMTP id 9F2DB58028E;
-        Sun, 27 Jan 2019 23:11:18 -0800 (PST)
-Subject: [PATCH v2 4/4] perf report: support record trace file decompression
+        by linux.intel.com (Postfix) with ESMTP id 208785806C8;
+        Sun, 27 Jan 2019 23:13:20 -0800 (PST)
+Subject: Re: [PATCH v5 0/4] Reduce NUMA related overhead in perf record
+ profiling on large server systems
 From:   Alexey Budankov <alexey.budankov@linux.intel.com>
 To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Jiri Olsa <jolsa@redhat.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Andi Kleen <ak@linux.intel.com>,
         linux-kernel <linux-kernel@vger.kernel.org>
-References: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
+References: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
 Organization: Intel Corp.
-Message-ID: <1b2a4690-4f1e-ac83-aa63-5e29bdac105f@linux.intel.com>
-Date:   Mon, 28 Jan 2019 10:11:17 +0300
+Message-ID: <27127a53-4393-ab69-ff61-0d0a36a629a0@linux.intel.com>
+Date:   Mon, 28 Jan 2019 10:13:20 +0300
 User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
+In-Reply-To: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -56,334 +58,385 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Jiri, Arnaldo,
 
-PERF_RECORD_COMPRESSED records are decompressed from trace file into
-a linked list of mmaped memory regions using streaming Zstandard API.
-After that the regions are loaded fetching uncompressed events. When
-dumping raw trace (e.g., perf report -D --header) file offsets of
-events from compressed records are set to zero.
+On 22.01.2019 20:45, Alexey Budankov wrote:
+> 
+> It has been observed that trace reading thread runs on the same hw thread
+> most of the time during perf record sampling collection. This scheduling
+> layout leads up to 30% profiling overhead in case when some cpu intensive
+> workload fully utilizes a large server system with NUMA. Overhead usually
+> arises from remote (cross node) HW and memory references that have much
+> longer latencies than local ones [1].
+> 
+> This patch set implements --affinity option that lowers 30% overhead
+> completely for serial trace streaming (--affinity=cpu) and from 30% to
+> 10% for AIO1 (--aio=1) trace streaming (--affinity=node|cpu).
+> See OVERHEAD section below for more details.
+> 
+> Implemented extension provides users with capability to instruct Perf 
+> tool to bounce trace reading thread's affinity mask between NUMA nodes 
+> (--affinity=node) or assign the thread to the exact cpu (--affinity=cpu) 
+> that trace buffer being processed belongs to.
+> 
+> The extension brings improvement in case of full system utilization when 
+> Perf tool process contends with workload process on cpu cores. In case a 
+> system has free cores to execute Perf tool process during profiling the 
+> default system scheduling layout induces the lowest overhead.
+> 
+> The patch set has been validated on BT benchmark from NAS Parallel 
+> Benchmarks [2] running on dual socket, 44 cores, 88 hw threads Broadwell 
+> system with kernels v4.4-21-generic (Ubuntu 16.04) and v4.20.0-rc5 
+> (tip perf/core). 
+> 
+> The patch set is for Arnaldo's perf/core repository.
+> 
+> OVERHEAD:
+> 			       BENCH REPORT BASED   ELAPSED TIME BASED
+> 	  v4.20.0-rc5 
+>           (tip perf/core):
+> 				
+> (current) SERIAL-SYS  / BASE : 1.27x (14.37/11.31), 1.29x (15.19/11.69)
+> 	  SERIAL-NODE / BASE : 1.15x (13.04/11.31), 1.17x (13.79/11.69)
+> 	  SERIAL-CPU  / BASE : 1.00x (11.32/11.31), 1.01x (11.89/11.69)
+> 	
+> 	  AIO1-SYS    / BASE : 1.29x (14.58/11.31), 1.29x (15.26/11.69)
+> 	  AIO1-NODE   / BASE : 1.08x (12.23/11.31), 1,11x (13.01/11.69)
+> 	  AIO1-CPU    / BASE : 1.07x (12.14/11.31), 1.08x (12.83/11.69)
+> 
+> 	  v4.4.0-21-generic
+>           (Ubuntu 16.04 LTS):
+> 
+> (current) SERIAL-SYS  / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
+> 	  SERIAL-NODE / BASE : 1.19x (13.02/10.87), 1.23x (14.03/11.32)
+> 	  SERIAL-CPU  / BASE : 1.03x (11.21/10.87), 1.07x (12.18/11.32)
+> 	
+> 	  AIO1-SYS    / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
+> 	  AIO1-NODE   / BASE : 1.10x (12.04/10.87), 1.15x (13.03/11.32)
+> 	  AIO1-CPU    / BASE : 1.12x (12.20/10.87), 1.15x (13.09/11.32)
+> 
+> ---
+> Alexey Budankov (4):
+>   perf record: allocate affinity masks
+>   perf record: bind the AIO user space buffers to nodes
+>   perf record: apply affinity masks when reading mmap buffers
+>   perf record: implement --affinity=node|cpu option
+> 
+>  tools/perf/Documentation/perf-record.txt |   5 ++
+>  tools/perf/builtin-record.c              |  45 +++++++++-
+>  tools/perf/perf.h                        |   8 ++
+>  tools/perf/util/cpumap.c                 |  10 +++
+>  tools/perf/util/cpumap.h                 |   1 +
+>  tools/perf/util/evlist.c                 |   6 +-
+>  tools/perf/util/evlist.h                 |   2 +-
+>  tools/perf/util/mmap.c                   | 105 ++++++++++++++++++++++-
+>  tools/perf/util/mmap.h                   |   3 +-
+>  9 files changed, 175 insertions(+), 10 deletions(-)
+> 
+> ---
+> Changes in v5:
+> - avoided multiple allocations of online cpu maps by 
+>   implementing it once in cpu_map__online()
+> - reduced indentation at record__parse_affinity()
 
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
-Changes in v2:
-- moved compression/decompression code to session layer
----
- tools/perf/builtin-report.c |   5 +-
- tools/perf/util/session.c   | 165 +++++++++++++++++++++++++++++++++++-
- tools/perf/util/session.h   |  11 +++
- tools/perf/util/tool.h      |   2 +
- 4 files changed, 181 insertions(+), 2 deletions(-)
+Are there any more comments on this patch set?
 
-diff --git a/tools/perf/builtin-report.c b/tools/perf/builtin-report.c
-index c9ceaf88759c..c8b5686d1f6a 100644
---- a/tools/perf/builtin-report.c
-+++ b/tools/perf/builtin-report.c
-@@ -1197,6 +1197,9 @@ int cmd_report(int argc, const char **argv)
- 	if (session == NULL)
- 		return -1;
- 
-+	if (perf_session__zstd_init(session, 0) < 0)
-+		pr_warning("Decompression initialization failed. Reported data may be incomplete.\n");
-+
- 	if (report.queue_size) {
- 		ordered_events__set_alloc_size(&session->ordered_events,
- 					       report.queue_size);
-@@ -1409,7 +1412,7 @@ int cmd_report(int argc, const char **argv)
- 
- error:
- 	zfree(&report.ptime_range);
--
-+	perf_session__zstd_fini(session);
- 	perf_session__delete(session);
- 	return ret;
- }
-diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
-index b2bace785d9a..e35a5cc4d9a5 100644
---- a/tools/perf/util/session.c
-+++ b/tools/perf/util/session.c
-@@ -32,6 +32,21 @@ int perf_session__zstd_init(struct perf_session *session, int level)
- {
- 	size_t ret;
- 
-+	session->zstd_dstream = ZSTD_createDStream();
-+	if (session->zstd_dstream == NULL) {
-+		pr_err("Couldn't create decompression stream.\n");
-+		return -1;
-+	}
-+
-+	ret = ZSTD_initDStream(session->zstd_dstream);
-+	if (ZSTD_isError(ret)) {
-+		pr_err("Failed to initialize decompression stream: %s\n", ZSTD_getErrorName(ret));
-+		return -1;
-+	}
-+
-+	if (level == 0)
-+		return 0;
-+
- 	session->header.env.comp_type  = PERF_COMP_NONE;
- 	session->header.env.comp_level = 0;
- 
-@@ -55,6 +70,22 @@ int perf_session__zstd_init(struct perf_session *session, int level)
- 
- int perf_session__zstd_fini(struct perf_session *session)
- {
-+	struct decomp *next = session->decomp, *decomp;
-+	size_t decomp_len = session->header.env.comp_mmap_len;
-+
-+	if (session->zstd_dstream) {
-+		ZSTD_freeDStream(session->zstd_dstream);
-+		session->zstd_dstream = NULL;
-+	}
-+
-+	do {
-+		decomp = next;
-+		if (decomp == NULL)
-+			break;
-+		next = decomp->next;
-+		munmap(decomp, decomp_len + sizeof(struct decomp));
-+	} while (1);
-+
- 	if (session->zstd_cstream) {
- 		ZSTD_freeCStream(session->zstd_cstream);
- 		session->zstd_cstream = NULL;
-@@ -106,6 +137,80 @@ size_t perf_session__zstd_compress(void *to,  void *dst, size_t dst_size,
- 
- 	return compressed;
- }
-+
-+static size_t perf_session__zstd_decompress(struct perf_session *session,
-+					void *src, size_t src_size,
-+					void *dst, size_t dst_size)
-+{
-+	size_t ret;
-+	ZSTD_inBuffer input = { src, src_size, 0 };
-+	ZSTD_outBuffer output = { dst, dst_size, 0 };
-+
-+	while (input.pos < input.size) {
-+		ret = ZSTD_decompressStream(session->zstd_dstream, &output, &input);
-+		if (ZSTD_isError(ret)) {
-+			pr_err("failed to decompress (B): %ld -> %ld : %s\n",
-+				src_size, output.size, ZSTD_getErrorName(ret));
-+			break;
-+		}
-+		output.dst  = dst + output.pos;
-+		output.size = dst_size - output.pos;
-+	}
-+
-+	return output.pos;
-+}
-+
-+static int perf_session__process_compressed_event(struct perf_session *session,
-+					union perf_event *event, u64 file_offset)
-+{
-+	void *src;
-+	size_t decomp_size, src_size;
-+	u64 decomp_last_rem = 0;
-+	size_t decomp_len = session->header.env.comp_mmap_len;
-+	struct decomp *decomp, *decomp_last = session->decomp_last;
-+
-+	decomp = mmap(NULL, sizeof(struct decomp) + decomp_len, PROT_READ|PROT_WRITE,
-+		      MAP_ANONYMOUS|MAP_PRIVATE, -1, 0);
-+	if (decomp == MAP_FAILED) {
-+		pr_err("Couldn't allocate memory for decompression\n");
-+		return -1;
-+	}
-+
-+	decomp->file_pos = file_offset;
-+	decomp->head = 0;
-+
-+	if (decomp_last) {
-+		decomp_last_rem = decomp_last->size - decomp_last->head;
-+		memcpy(decomp->data, &(decomp_last->data[decomp_last->head]), decomp_last_rem);
-+		decomp->size = decomp_last_rem;
-+	}
-+
-+	src = (void *)event + sizeof(struct compressed_event);
-+	src_size = event->pack.header.size - sizeof(struct compressed_event);
-+
-+	decomp_size = perf_session__zstd_decompress(session, src, src_size,
-+				&(decomp->data[decomp_last_rem]), decomp_len - decomp_last_rem);
-+	if (!decomp_size) {
-+		munmap(decomp, sizeof(struct decomp) + decomp_len);
-+		pr_err("Couldn't decompress data\n");
-+		return -1;
-+	}
-+
-+	decomp->size += decomp_size;
-+
-+	if (session->decomp == NULL) {
-+		session->decomp = decomp;
-+		session->decomp_last = decomp;
-+	} else {
-+		session->decomp_last->next = decomp;
-+		session->decomp_last = decomp;
-+	}
-+
-+	pr_debug("decomp (B): %ld to %ld\n", src_size, decomp_size);
-+
-+	return 0;
-+}
-+
- #else /* !HAVE_ZSTD_SUPPORT */
- int perf_session__zstd_init(struct perf_session *session __maybe_unused, int level __maybe_unused)
- {
-@@ -123,6 +228,14 @@ size_t perf_session__zstd_compress(void *to __maybe_unused,
- {
- 	return 0;
- }
-+
-+static int perf_session__process_compressed_event(struct perf_session *session __maybe_unused,
-+				union perf_event *event __maybe_unused,
-+				u64 file_offset __maybe_unused)
-+{
-+	dump_printf(": unhandled!\n");
-+	return 0;
-+}
- #endif
- 
- size_t perf_session__zstd_copy(void *to __maybe_unused,
-@@ -531,6 +644,8 @@ void perf_tool__fill_defaults(struct perf_tool *tool)
- 		tool->time_conv = process_event_op2_stub;
- 	if (tool->feature == NULL)
- 		tool->feature = process_event_op2_stub;
-+	if (tool->compressed == NULL)
-+		tool->compressed = perf_session__process_compressed_event;
- }
- 
- static void swap_sample_id_all(union perf_event *event, void *data)
-@@ -1464,7 +1579,8 @@ static s64 perf_session__process_user_event(struct perf_session *session,
- 	int fd = perf_data__fd(session->data);
- 	int err;
- 
--	dump_event(session->evlist, event, file_offset, &sample);
-+	if (event->header.type != PERF_RECORD_COMPRESSED)
-+		dump_event(session->evlist, event, file_offset, &sample);
- 
- 	/* These events are processed right away */
- 	switch (event->header.type) {
-@@ -1517,6 +1633,11 @@ static s64 perf_session__process_user_event(struct perf_session *session,
- 		return tool->time_conv(session, event);
- 	case PERF_RECORD_HEADER_FEATURE:
- 		return tool->feature(session, event);
-+	case PERF_RECORD_COMPRESSED:
-+		err = tool->compressed(session, event, file_offset);
-+		if (err)
-+			dump_event(session->evlist, event, file_offset, &sample);
-+		return 0;
- 	default:
- 		return -EINVAL;
- 	}
-@@ -1799,6 +1920,8 @@ static int perf_session__flush_thread_stacks(struct perf_session *session)
- 
- volatile int session_done;
- 
-+static int __perf_session__process_decomp_events(struct perf_session *session);
-+
- static int __perf_session__process_pipe_events(struct perf_session *session)
- {
- 	struct ordered_events *oe = &session->ordered_events;
-@@ -1879,6 +2002,10 @@ static int __perf_session__process_pipe_events(struct perf_session *session)
- 	if (skip > 0)
- 		head += skip;
- 
-+	err = __perf_session__process_decomp_events(session);
-+	if (err)
-+		goto out_err;
-+
- 	if (!session_done())
- 		goto more;
- done:
-@@ -1927,6 +2054,38 @@ fetch_mmaped_event(struct perf_session *session,
- 	return event;
- }
- 
-+static int __perf_session__process_decomp_events(struct perf_session *session)
-+{
-+	s64 skip;
-+	u64 size, file_pos = 0;
-+	union perf_event *event;
-+	struct decomp *decomp = session->decomp_last;
-+
-+	if (!decomp)
-+		return 0;
-+
-+	while (decomp->head < decomp->size && !session_done()) {
-+		event = fetch_mmaped_event(session, decomp->head, decomp->size, decomp->data);
-+		if (!event)
-+			break;
-+
-+		size = event->header.size;
-+		if (size < sizeof(struct perf_event_header) ||
-+		    (skip = perf_session__process_event(session, event, file_pos)) < 0) {
-+			pr_err("%#" PRIx64 " [%#x]: failed to process type: %d\n",
-+				decomp->file_pos + decomp->head, event->header.size, event->header.type);
-+			return -EINVAL;
-+		}
-+
-+		if (skip)
-+			size += skip;
-+
-+		decomp->head += size;
-+	}
-+
-+	return 0;
-+}
-+
- /*
-  * On 64bit we can mmap the data file in one go. No need for tiny mmap
-  * slices. On 32bit we use 32MB.
-@@ -2027,6 +2186,10 @@ reader__process_events(struct reader *rd, struct perf_session *session,
- 	head += size;
- 	file_pos += size;
- 
-+	err = __perf_session__process_decomp_events(session);
-+	if (err)
-+		goto out;
-+
- 	ui_progress__update(prog, size);
- 
- 	if (session_done())
-diff --git a/tools/perf/util/session.h b/tools/perf/util/session.h
-index d8f3284cd838..06a0536adbe0 100644
---- a/tools/perf/util/session.h
-+++ b/tools/perf/util/session.h
-@@ -42,7 +42,18 @@ struct perf_session {
- 	u64			bytes_compressed;
- #ifdef HAVE_ZSTD_SUPPORT
- 	ZSTD_CStream		*zstd_cstream;
-+	ZSTD_DStream		*zstd_dstream;
- #endif
-+	struct decomp		*decomp;
-+	struct decomp		*decomp_last;
-+};
-+
-+struct decomp {
-+	struct decomp *next;
-+	u64 file_pos;
-+	u64 head;
-+	size_t size;
-+	char data[];
- };
- 
- struct perf_tool;
-diff --git a/tools/perf/util/tool.h b/tools/perf/util/tool.h
-index 250391672f9f..9096a6e3de59 100644
---- a/tools/perf/util/tool.h
-+++ b/tools/perf/util/tool.h
-@@ -28,6 +28,7 @@ typedef int (*event_attr_op)(struct perf_tool *tool,
- 
- typedef int (*event_op2)(struct perf_session *session, union perf_event *event);
- typedef s64 (*event_op3)(struct perf_session *session, union perf_event *event);
-+typedef int (*event_op4)(struct perf_session *session, union perf_event *event, u64 data);
- 
- typedef int (*event_oe)(struct perf_tool *tool, union perf_event *event,
- 			struct ordered_events *oe);
-@@ -72,6 +73,7 @@ struct perf_tool {
- 			stat,
- 			stat_round,
- 			feature;
-+	event_op4	compressed;
- 	event_op3	auxtrace;
- 	bool		ordered_events;
- 	bool		ordering_requires_timestamps;
+Thanks,
+Alexey
 
+> 
+> Changes in v4:
+> - fixed compilation issue converting pr_warn() to pr_warning()
+> - implemented stop if mbind() fails
+> - corrected mmap_params->cpu_map initialization to be based on /sys/devices/system/cpu/online
+> - separated node cpu map generation into build_node_mask()
+> 
+> Changes in v3:
+> - converted PERF_AFFINITY_EOF to PERF_AFFINITY_MAX
+> - corrected code style issues
+> - adjusted __aio_alloc,__aio_bind,__aio_free() implementation
+> - separated mask manipulations into __adjust_affinity() and __setup_affinity_mask()
+> - implemented mapping of c index into online cpu index
+> - adjusted indentation at record__parse_affinity()
+> 
+> Changes in v2:
+> - made debug affinity mode message user friendly
+> - converted affinity mode defines to enum values
+> - implemented perf_mmap__aio_alloc, perf_mmap__aio_free, perf_mmap__aio_bind 
+>   and put HAVE_LIBNUMA_SUPPORT #ifdefs in there
+> - separated AIO buffers binding to patch 2/4
+> 
+> ---
+> [1] https://en.wikipedia.org/wiki/Non-uniform_memory_access
+> [2] https://www.nas.nasa.gov/publications/npb.html
+> [3] http://man7.org/linux/man-pages/man2/sched_setaffinity.2.html
+> [4] http://man7.org/linux/man-pages/man2/mbind.2.html
+> 
+> ---
+> ENVIRONMENT AND MEASUREMENTS:
+> 
+>   MACHINE:
+> 
+> 	broadwell, dual socket, 44 core, 88 threads
+> 
+> 	/proc/cpuinfo
+> 
+> 	processor	: 87
+> 	vendor_id	: GenuineIntel
+> 	cpu family	: 6
+> 	model		: 79
+> 	model name	: Intel(R) Xeon(R) CPU E5-2699 v4 @ 2.20GHz
+> 	stepping	: 1
+> 	microcode	: 0xb000019
+> 	cpu MHz		: 1200.117
+> 	cache size	: 56320 KB
+> 	physical id	: 1
+> 	siblings	: 44
+> 	core id		: 28
+> 	cpu cores	: 22
+> 	apicid		: 121
+> 	initial apicid	: 121
+> 	fpu		: yes
+> 	fpu_exception	: yes
+> 	cpuid level	: 20
+> 	wp		: yes
+> 	flags		: fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 monitor ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm 3dnowprefetch epb intel_pt tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 hle avx2 smep bmi2 erms invpcid rtm cqm rdseed adx smap xsaveopt cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local dtherm ida arat pln pts
+> 	bugs		:
+> 	bogomips	: 4391.42
+> 	clflush size	: 64
+> 	cache_alignment	: 64
+> 	address sizes	: 46 bits physical, 48 bits virtual
+> 	power management:
+>   		
+>   BASE:
+> 
+> 	/usr/bin/time ./bt.B.x 
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 	
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 	
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    10.87
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 64608.74
+> 	Mop/s/thread    =                   734.19
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 	
+> 	956.25user 19.14system 0:11.32elapsed 8616%CPU (0avgtext+0avgdata 210496maxresident)k
+> 	0inputs+0outputs (0major+57939minor)pagefaults 0swaps
+> 
+>   SERIAL-SYS:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 0
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 0
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    13.73
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 51136.52
+> 	Mop/s/thread    =                   581.10
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1661,120 MB perf.data ]
+> 
+> 	1184.84user 40.70system 0:14.69elapsed 8341%CPU (0avgtext+0avgdata 208612maxresident)k
+> 	0inputs+3402072outputs (0major+137077minor)pagefaults 0swaps
+> 
+>   SERIAL-NODE:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --affinity=node -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 0
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 1
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    13.02
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 53924.69
+> 	Mop/s/thread    =                   612.78
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1557,152 MB perf.data ]
+> 
+> 	1120.42user 29.92system 0:14.03elapsed 8198%CPU (0avgtext+0avgdata 206388maxresident)k
+> 	0inputs+3189128outputs (0major+149207minor)pagefaults 0swaps
+> 
+>   SERIAL-CPU:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --affinity=cpu -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 0
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 2
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    11.21
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 62642.24
+> 	Mop/s/thread    =                   711.84
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1365,043 MB perf.data ]
+> 
+> 	976.06user 31.35system 0:12.18elapsed 8264%CPU (0avgtext+0avgdata 208488maxresident)k
+> 	0inputs+2795704outputs (0major+126032minor)pagefaults 0swaps
+> 
+>   AIO1-SYS:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 1
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 0
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    14.23
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 49338.27
+> 	Mop/s/thread    =                   560.66
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1720,590 MB perf.data ]
+> 
+> 	1229.19user 41.99system 0:15.22elapsed 8350%CPU (0avgtext+0avgdata 208604maxresident)k
+> 	0inputs+3523880outputs (0major+124670minor)pagefaults 0swaps
+> 
+>   AIO1-NODE:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 --affinity=node -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 1
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 1
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    12.04
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 58313.58
+> 	Mop/s/thread    =                   662.65
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1471,279 MB perf.data ]
+> 
+> 	1055.62user 30.43system 0:13.03elapsed 8333%CPU (0avgtext+0avgdata 208424maxresident)k
+> 	0inputs+3013288outputs (0major+79088minor)pagefaults 0swaps
+> 
+>   AIO1-CPU:
+> 
+> 	/usr/bin/time ./tip/tools/perf/perf record -v -N -B -T -R -F 25000 --aio=1 --affinity=cpu -a -e cycles -- ./bt.B.x 
+> 	Using CPUID GenuineIntel-6-4F-1
+> 	nr_cblocks: 1
+> 	affinity (UNSET:0, NODE:1, CPU:2) = 2
+> 	mmap size 528384B
+> 
+> 	NAS Parallel Benchmarks (NPB3.3-OMP) - BT Benchmark
+> 
+> 	No input file inputbt.data. Using compiled defaults
+> 	Size:  102x 102x 102
+> 	Iterations:  200       dt:   0.0003000
+> 	Number of available threads:    88
+> 
+> 	BT Benchmark Completed.
+> 	Class           =                        B
+> 	Size            =            102x 102x 102
+> 	Iterations      =                      200
+> 	Time in seconds =                    12.20
+> 	Total threads   =                       88
+> 	Avail threads   =                       88
+> 	Mop/s total     =                 57538.84
+> 	Mop/s/thread    =                   653.85
+> 	Operation type  =           floating point
+> 	Verification    =               SUCCESSFUL
+> 	Version         =                    3.3.1
+> 	Compile date    =              20 Sep 2018
+> 
+> 	[ perf record: Captured and wrote 1486,859 MB perf.data ]
+> 
+> 	1051.97user 42.07system 0:13.09elapsed 8352%CPU (0avgtext+0avgdata 206388maxresident)k
+> 	0inputs+3045168outputs (0major+174612minor)pagefaults 0swaps
+> 
