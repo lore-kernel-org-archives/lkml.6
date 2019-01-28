@@ -2,148 +2,179 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 059E8C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:44:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEB04C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:45:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2AD22087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:44:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8C0302171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:45:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="m6xPf4Ep";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SY2LvpQc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfA1No0 (ORCPT
+        id S1726766AbfA1Npx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:44:26 -0500
-Received: from mx2.suse.de ([195.135.220.15]:45650 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbfA1NoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:44:25 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A4753AB42;
-        Mon, 28 Jan 2019 13:44:23 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 392191E3FEF; Mon, 28 Jan 2019 14:44:23 +0100 (CET)
-Date:   Mon, 28 Jan 2019 14:44:23 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-kernel@vger.kernel.org, Jan Kara <jack@suse.cz>,
-        Ira Weiny <ira.weiny@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Keith Busch <keith.busch@intel.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-nvdimm@lists.01.org
-Subject: Re: [PATCH] MAINTAINERS: Update filesystem-dax and NVDIMM entries
-Message-ID: <20190128134423.GE27972@quack2.suse.cz>
-References: <154835747897.2884847.389054528444820204.stgit@dwillia2-desk3.amr.corp.intel.com>
+        Mon, 28 Jan 2019 08:45:53 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:38104 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfA1Npx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 08:45:53 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id BBD7360851; Mon, 28 Jan 2019 13:45:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548683149;
+        bh=NijZksKMHZ/9rah5scXmUB3OrJFZczGzQ6VzUkGep8o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=m6xPf4EpSsBG9lfUo/rNmpRLrzq7a1i+5xyL10Pkfzvnp4dX0vI2tCMuBVVoWCmgr
+         NDLHlYiltB0nV/vZB5zWDHorZjZPZJDBpZ33jaQah+AE+WP1A4wD45V7P/fjpnrHc9
+         EOAfZfRpxmGJCeReD5VBP0dIm/b3GqnQYeU0Aw8k=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 96F37602F8;
+        Mon, 28 Jan 2019 13:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1548683148;
+        bh=NijZksKMHZ/9rah5scXmUB3OrJFZczGzQ6VzUkGep8o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=SY2LvpQcnWz1AbmI4sSoLc/4vfe8818ZqErzQZO3GzmuJbs3Sg68Ri7TO2u+1bIAZ
+         TRXmtpIE8uJlIaCTGqRa7E+j2yRMPbaLZ29y9/ntjYC2VwUHcGQIdG+R84UQ6pDbrh
+         CD2K+dO3DgZ8HLZ+aVK5E1oFxc2bi+t2SylTP8rA=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <154835747897.2884847.389054528444820204.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Mon, 28 Jan 2019 19:15:48 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v9 2/3] Bluetooth: hci_qca: Deassert RTS while baudrate
+ change command
+In-Reply-To: <20190125001259.GB81583@google.com>
+References: <20190124120808.8275-1-bgodavar@codeaurora.org>
+ <20190124120808.8275-3-bgodavar@codeaurora.org>
+ <20190125001259.GB81583@google.com>
+Message-ID: <6b18e30fb1b747d674a75cb265b5821b@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 24-01-19 11:17:59, Dan Williams wrote:
-> Ross has moved on to other areas.
-> 
-> Matthew and Jan are trusted reviewers for DAX.
-> 
-> Dan is now coordinating filesystem-dax pull requests.
-> 
-> Ira and Keith are now involved with the NVDIMM and Device-DAX
-> sub-systems.
-> 
-> The linux-nvdimm mailing hosts a patchwork instance for both DAX and
-> NVDIMM patches.
-> 
-> Cc: Jan Kara <jack@suse.cz>
-> Cc: Ira Weiny <ira.weiny@intel.com>
-> Cc: Ross Zwisler <zwisler@kernel.org>
-> Cc: Keith Busch <keith.busch@intel.com>
-> Cc: Matthew Wilcox <willy@infradead.org>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Hi Matthias,
 
-Acked-by: Jan Kara <jack@suse.cz>
-
-								Honza
-
-
-> ---
->  MAINTAINERS |   17 ++++++++---------
->  1 file changed, 8 insertions(+), 9 deletions(-)
+On 2019-01-25 05:42, Matthias Kaehlcke wrote:
+> Hi Balakrishna,
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 51029a425dbe..5f43ee438a74 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -4535,10 +4535,11 @@ S:	Maintained
->  F:	drivers/i2c/busses/i2c-diolan-u2c.c
->  
->  FILESYSTEM DIRECT ACCESS (DAX)
-> -M:	Matthew Wilcox <willy@infradead.org>
-> -M:	Ross Zwisler <zwisler@kernel.org>
-> -M:	Jan Kara <jack@suse.cz>
-> +M:	Dan Williams <dan.j.williams@intel.com>
-> +R:	Matthew Wilcox <willy@infradead.org>
-> +R:	Jan Kara <jack@suse.cz>
->  L:	linux-fsdevel@vger.kernel.org
-> +L:	linux-nvdimm@lists.01.org
->  S:	Supported
->  F:	fs/dax.c
->  F:	include/linux/dax.h
-> @@ -4546,9 +4547,9 @@ F:	include/trace/events/fs_dax.h
->  
->  DEVICE DIRECT ACCESS (DAX)
->  M:	Dan Williams <dan.j.williams@intel.com>
-> -M:	Dave Jiang <dave.jiang@intel.com>
-> -M:	Ross Zwisler <zwisler@kernel.org>
->  M:	Vishal Verma <vishal.l.verma@intel.com>
-> +M:	Keith Busch <keith.busch@intel.com>
-> +M:	Dave Jiang <dave.jiang@intel.com>
->  L:	linux-nvdimm@lists.01.org
->  S:	Supported
->  F:	drivers/dax/
-> @@ -8641,7 +8642,6 @@ S:	Maintained
->  F:	tools/lib/lockdep/
->  
->  LIBNVDIMM BLK: MMIO-APERTURE DRIVER
-> -M:	Ross Zwisler <zwisler@kernel.org>
->  M:	Dan Williams <dan.j.williams@intel.com>
->  M:	Vishal Verma <vishal.l.verma@intel.com>
->  M:	Dave Jiang <dave.jiang@intel.com>
-> @@ -8654,7 +8654,6 @@ F:	drivers/nvdimm/region_devs.c
->  LIBNVDIMM BTT: BLOCK TRANSLATION TABLE
->  M:	Vishal Verma <vishal.l.verma@intel.com>
->  M:	Dan Williams <dan.j.williams@intel.com>
-> -M:	Ross Zwisler <zwisler@kernel.org>
->  M:	Dave Jiang <dave.jiang@intel.com>
->  L:	linux-nvdimm@lists.01.org
->  Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
-> @@ -8662,7 +8661,6 @@ S:	Supported
->  F:	drivers/nvdimm/btt*
->  
->  LIBNVDIMM PMEM: PERSISTENT MEMORY DRIVER
-> -M:	Ross Zwisler <zwisler@kernel.org>
->  M:	Dan Williams <dan.j.williams@intel.com>
->  M:	Vishal Verma <vishal.l.verma@intel.com>
->  M:	Dave Jiang <dave.jiang@intel.com>
-> @@ -8681,9 +8679,10 @@ F:	Documentation/devicetree/bindings/pmem/pmem-region.txt
->  
->  LIBNVDIMM: NON-VOLATILE MEMORY DEVICE SUBSYSTEM
->  M:	Dan Williams <dan.j.williams@intel.com>
-> -M:	Ross Zwisler <zwisler@kernel.org>
->  M:	Vishal Verma <vishal.l.verma@intel.com>
->  M:	Dave Jiang <dave.jiang@intel.com>
-> +M:	Keith Busch <keith.busch@intel.com>
-> +M:	Ira Weiny <ira.weiny@intel.com>
->  L:	linux-nvdimm@lists.01.org
->  Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
->  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git
+> On Thu, Jan 24, 2019 at 05:38:07PM +0530, Balakrishna Godavarthi wrote:
+>> This patch will help to stop frame reassembly errors while changing
+>> the baudrate. This is because host send a change baudrate request
+>> command to the chip with 115200 bps, Whereas chip will change their
+>> UART clocks to the enable for new baudrate and sends the response
+>> for the change request command with newer baudrate, On host side
+>> we are still operating in 115200 bps which results of reading garbage
+>> data. Here we are pulling RTS line, so that chip we will wait to send 
+>> data
+>> to host until host change its baudrate.
+>> 
+>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+>> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+>> ---
+>> Changes in v9:
+>>  * disabled flow control while setting the baudrate of HOST and chip.
+>> ---
+>>  drivers/bluetooth/hci_qca.c | 24 +++++++++++++-----------
+>>  1 file changed, 13 insertions(+), 11 deletions(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index c08f4d105e73..6b5bcd44e24c 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -964,7 +964,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+>>  	struct qca_data *qca = hu->priv;
+>>  	struct sk_buff *skb;
+>> -	struct qca_serdev *qcadev;
+>>  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+>> 
+>>  	if (baudrate > QCA_BAUDRATE_3200000)
+>> @@ -978,13 +977,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  		return -ENOMEM;
+>>  	}
+>> 
+>> -	/* Disabling hardware flow control is mandatory while
+>> -	 * sending change baudrate request to wcn3990 SoC.
+>> -	 */
+>> -	qcadev = serdev_device_get_drvdata(hu->serdev);
+>> -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> -		hci_uart_set_flow_control(hu, true);
+>> -
+>>  	/* Assign commands to change baudrate and packet type. */
+>>  	skb_put_data(skb, cmd, sizeof(cmd));
+>>  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+>> @@ -1000,9 +992,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+>>  	set_current_state(TASK_RUNNING);
+>> 
+>> -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> -		hci_uart_set_flow_control(hu, false);
+>> -
+>>  	return 0;
+>>  }
+>> 
+>> @@ -1089,6 +1078,7 @@ static int qca_check_speeds(struct hci_uart *hu)
+>>  static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type 
+>> speed_type)
+>>  {
+>>  	unsigned int speed, qca_baudrate;
+>> +	struct qca_serdev *qcadev;
+>>  	int ret;
+>> 
+>>  	if (speed_type == QCA_INIT_SPEED) {
+>> @@ -1100,6 +1090,15 @@ static int qca_set_speed(struct hci_uart *hu, 
+>> enum qca_speed_type speed_type)
+>>  		if (!speed)
+>>  			return 0;
+>> 
+>> +		/* Deassert RTS while changing the baudrate of chip and host.
+>> +		 * This will prevent chip from transmitting its response with
+>> +		 * the new baudrate while the host port is still operating at
+>> +		 * the old speed.
+>> +		 */
 > 
+> It is not necessarily evident which action deasserts RTS, I suggest to
+> rephrase it to something like:
+> 
+> "Disable flow control for wcn3990 to deassert RTS while ... "
+> 
+
+[Bala]: will update.
+
+>> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+>> +		if (qcadev->btsoc_type == QCA_WCN3990)
+>> +			hci_uart_set_flow_control(hu, true);
+>> +
+>>  		qca_baudrate = qca_get_baudrate_value(speed);
+>>  		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
+>>  		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+> 
+> flow control should be re-enabled in the error path.
+> 
+> Cheers
+> 
+> Matthias
+
+[Bala; will update.
+
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Regards
+Balakrishna.
