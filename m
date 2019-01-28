@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5086AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AA5C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 214432148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C0E620879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692187;
-	bh=P0oOs61tq//lvwzcpa3l3hK24HNWIhwRluwau96AKpc=;
+	s=default; t=1548692191;
+	bh=1lo/rXqcyk+Uvm7ySNkdnHLfIbMaG7qc5NVc1MfvC7k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PSciN1Gy4WVrkrSQPpBpYOWmZpw0b6LqtfUOdI4PSVQnCD85ZYYoILSkRc6eybFTG
-	 xB15wgXs+lVI2dLg0jeufm4eH/uT3hFU7e6oDlsddLOffPhufjqtN/3WLpZlaDeH6S
-	 RuD5WeX7xBeDzLCGxgCECssEy8IAFv4DnElxyoZk=
+	b=Ar+7Pkd5VfxmZ9z374PpMPjllMkuBX9x3t/ZsSsSaeZRowz7dX8kP9PCXWQQD3MXM
+	 UPLSLz9OvQkct6SUXTHljGNEwpqoQbkWsMz9zzJRU3aN2cQttnBNNaBlAIaL/0rjfB
+	 ibs3dphhLM088JI7tqi4/W57pO7IRLg4gxyrhiN0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733218AbfA1QQZ (ORCPT
+        id S2387971AbfA1QQa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:16:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48490 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:16:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733160AbfA1QQW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:16:22 -0500
+        id S1733160AbfA1QQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:16:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 38DB020879;
-        Mon, 28 Jan 2019 16:16:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C00F52147A;
+        Mon, 28 Jan 2019 16:16:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692182;
-        bh=P0oOs61tq//lvwzcpa3l3hK24HNWIhwRluwau96AKpc=;
+        s=default; t=1548692185;
+        bh=1lo/rXqcyk+Uvm7ySNkdnHLfIbMaG7qc5NVc1MfvC7k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QH+bxLA4yP+dacAuNIS7+UlipD0s18efM7w6xF1RlF7+ooNp8jTnRJ3d3DSigVpmT
-         oHng6nrZ5UgVYdCW98SDQ4F8Z2VXQxC79hcowiWb3lfQWoVcHgBXz422WQ7xZNEDoz
-         qMKGg29s/aK9NjBKCA/mPvPMxDj6sg8Vr0BNPTy4=
+        b=FS5xKRfnyXT4BNLxx0WDf4DaD+gSbGHPTJ4a6/Vt3M6PMO1cnvYNoI6WKPDeuq2tb
+         8CW51XYmwjg1N2inzwiXOfpiMHc/L9G0/y8aaOEzW5JvCUkM/ndeWuur0JhebRvWXG
+         JVtebrEWrbrbrY1ZqQAkWYM9ikD8QGs1hJm2DvKo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michal Suchanek <msuchanek@suse.de>,
-        Stefan Wahren <stefan.wahren@i2se.com>,
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 100/170] mmc: bcm2835: reset host on timeout
-Date:   Mon, 28 Jan 2019 11:10:50 -0500
-Message-Id: <20190128161200.55107-100-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 101/170] memstick: Prevent memstick host from getting runtime suspended during card detection
+Date:   Mon, 28 Jan 2019 11:10:51 -0500
+Message-Id: <20190128161200.55107-101-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -59,48 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Suchanek <msuchanek@suse.de>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit f6000a4eb34e6462bc0dd39809c1bb99f9633269 ]
+[ Upstream commit e03e303edf1c63e6dd455ccd568c74e93ef3ba8c ]
 
-The bcm2835 mmc host tends to lock up for unknown reason so reset it on
-timeout. The upper mmc block layer tries retransimitting with single
-blocks which tends to work out after a long wait.
+We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
+helpers to let memstick host support runtime pm.
 
-This is better than giving up and leaving the machine broken for no
-obvious reason.
+The rpm count may go down to zero before the memstick host powers on, so
+the host can be runtime suspended.
 
-Fixes: 660fc733bd74 ("mmc: bcm2835: Add new driver for the sdhost controller.")
-Signed-off-by: Michal Suchanek <msuchanek@suse.de>
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Acked-by: Eric Anholt <eric@anholt.net>
+So before doing card detection, increment the rpm count to avoid the
+host gets runtime suspended. Balance the rpm count after card detection
+is done.
+
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/mmc/host/bcm2835.c | 3 +++
+ drivers/memstick/core/memstick.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
-index aef40e1739ee..a251be266ad7 100644
---- a/drivers/mmc/host/bcm2835.c
-+++ b/drivers/mmc/host/bcm2835.c
-@@ -286,6 +286,7 @@ static void bcm2835_reset(struct mmc_host *mmc)
+diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
+index 76382c858c35..1246d69ba187 100644
+--- a/drivers/memstick/core/memstick.c
++++ b/drivers/memstick/core/memstick.c
+@@ -18,6 +18,7 @@
+ #include <linux/delay.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
++#include <linux/pm_runtime.h>
  
- 	if (host->dma_chan)
- 		dmaengine_terminate_sync(host->dma_chan);
-+	host->dma_chan = NULL;
- 	bcm2835_reset_internal(host);
+ #define DRIVER_NAME "memstick"
+ 
+@@ -436,6 +437,7 @@ static void memstick_check(struct work_struct *work)
+ 	struct memstick_dev *card;
+ 
+ 	dev_dbg(&host->dev, "memstick_check started\n");
++	pm_runtime_get_noresume(host->dev.parent);
+ 	mutex_lock(&host->lock);
+ 	if (!host->card) {
+ 		if (memstick_power_on(host))
+@@ -479,6 +481,7 @@ static void memstick_check(struct work_struct *work)
+ 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
+ 
+ 	mutex_unlock(&host->lock);
++	pm_runtime_put(host->dev.parent);
+ 	dev_dbg(&host->dev, "memstick_check finished\n");
  }
  
-@@ -846,6 +847,8 @@ static void bcm2835_timeout(struct work_struct *work)
- 		dev_err(dev, "timeout waiting for hardware interrupt.\n");
- 		bcm2835_dumpregs(host);
- 
-+		bcm2835_reset(host->mmc);
-+
- 		if (host->data) {
- 			host->data->error = -ETIMEDOUT;
- 			bcm2835_finish_data(host);
 -- 
 2.19.1
 
