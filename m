@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A19EC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A109C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCBC621741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C4C3421741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694801;
-	bh=59c4kl/kX/ZOEEQsOciG9l6TfLHFGvv4w3RADOKGkOw=;
+	s=default; t=1548694808;
+	bh=O+P3oojbtj9ao1YfFYme8jtLqBZCZgHbx324E+szaWQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=x5dpO4hLbqHe9Fg4z+DTdZwVD1qQE4innX986nzBs+jMeqqUefjxbbLhVFP97IITb
-	 x+kaMQb9aD/vW4dmcTBrmhgyVUUxt63oQujCNkkhwXeEFqVBHuVt0XDceHhDLa50Tt
-	 hX25i0kGrmk2iwNKO/Jn5JA06Vu/15Qhz77ZssnY=
+	b=PlmTMu6aJYRh7IKMiZw6zLCbO46zmcTylv+078/mRRj0c8z8u0tCtnMVjrwBVtaex
+	 rddCs/qzSnHZWElKe8OwTOLur5e+OCEcl8Zhiw1dilIFofMgHQvFHEZXf4TdcZWpAR
+	 mraJuXvxPbW0Ns0dDqKPMSkBYLai060bFGKwT3oU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388074AbfA1Q77 (ORCPT
+        id S2388269AbfA1RAH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:59:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46922 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:00:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46612 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733131AbfA1QPz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:55 -0500
+        id S2387865AbfA1QPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 634792147A;
-        Mon, 28 Jan 2019 16:15:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 065E92147A;
+        Mon, 28 Jan 2019 16:15:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692154;
-        bh=59c4kl/kX/ZOEEQsOciG9l6TfLHFGvv4w3RADOKGkOw=;
+        s=default; t=1548692149;
+        bh=O+P3oojbtj9ao1YfFYme8jtLqBZCZgHbx324E+szaWQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=seOqLyCconvDZyc9B/MIf+TW0hyFRXB8i7ycz7/+PDMFEaCHPHWXw1nxS+oX5uIbm
-         coTOaCDMt2Z5DkopngXRgW7evJ21vKTqr0TEQ2hb3GXJZ1zfwjSNisNr6ecgS44pdT
-         Az8z7m5OL/s1Y2z0S0sqdspINTWSnGdR0FjMjeVw=
+        b=VFGc80Ac5DNKwvXvQa5fzVDewKZs1dlFWGzTlfs54mP9u2r1uECjxfwIgr+i9ZGl9
+         Ogxiy05t/f19wREhCCT0u5KPKA/wSX/DHDIk14/qIPZSbmLlMBK98O5VaW7oh6Ib3T
+         0HwDOez8tNhY+Lbd7aEkZnwcv2vmHkQnCb1DP0KA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 091/170] phy: sun4i-usb: add support for missing USB PHY index
-Date:   Mon, 28 Jan 2019 11:10:41 -0500
-Message-Id: <20190128161200.55107-91-sashal@kernel.org>
+Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 089/170] OPP: Use opp_table->regulators to verify no regulator case
+Date:   Mon, 28 Jan 2019 11:10:39 -0500
+Message-Id: <20190128161200.55107-89-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,55 +57,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Viresh Kumar <viresh.kumar@linaro.org>
 
-[ Upstream commit 2659392e5c08dff626e6db1d739adff58a94604d ]
+[ Upstream commit 90e3577b5feb42bac1269e16bb3d2bdd8f6df40f ]
 
-The new Allwinner H6 SoC's USB2 PHY has two holes -- USB1 (which is a
-3.0 port with dedicated PHY) and USB2 (which doesn't exist at all).
+The value of opp_table->regulator_count is not very consistent right now
+and it may end up being 0 while we do have a "opp-microvolt" property in
+the OPP table. It was kept that way as we used to check if any
+regulators are set with the OPP core for a device or not using value of
+regulator_count.
 
-Add support for this kind of missing USB PHY index.
+Lets use opp_table->regulators for that purpose as the meaning of
+regulator_count is going to change in the later patches.
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-Signed-off-by: Kishon Vijay Abraham I <kishon@ti.com>
+Reported-by: Quentin Perret <quentin.perret@arm.com>
+Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/phy/allwinner/phy-sun4i-usb.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/base/power/opp/core.c | 11 +++++++----
+ 1 file changed, 7 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
-index afedb8cd1990..d1ccff527756 100644
---- a/drivers/phy/allwinner/phy-sun4i-usb.c
-+++ b/drivers/phy/allwinner/phy-sun4i-usb.c
-@@ -125,6 +125,7 @@ struct sun4i_usb_phy_cfg {
- 	bool dedicated_clocks;
- 	bool enable_pmu_unk1;
- 	bool phy0_dual_route;
-+	int missing_phys;
- };
+diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.c
+index d4862775b9f6..d5e7e8cc4f22 100644
+--- a/drivers/base/power/opp/core.c
++++ b/drivers/base/power/opp/core.c
+@@ -192,12 +192,12 @@ unsigned long dev_pm_opp_get_max_volt_latency(struct device *dev)
+ 	if (IS_ERR(opp_table))
+ 		return 0;
  
- struct sun4i_usb_phy_data {
-@@ -645,6 +646,9 @@ static struct phy *sun4i_usb_phy_xlate(struct device *dev,
- 	if (args->args[0] >= data->cfg->num_phys)
- 		return ERR_PTR(-ENODEV);
+-	count = opp_table->regulator_count;
+-
+ 	/* Regulator may not be required for the device */
+-	if (!count)
++	if (!opp_table->regulators)
+ 		goto put_opp_table;
  
-+	if (data->cfg->missing_phys & BIT(args->args[0]))
-+		return ERR_PTR(-ENODEV);
++	count = opp_table->regulator_count;
 +
- 	return data->phys[args->args[0]].phy;
- }
+ 	uV = kmalloc_array(count, sizeof(*uV), GFP_KERNEL);
+ 	if (!uV)
+ 		goto put_opp_table;
+@@ -921,6 +921,9 @@ static bool _opp_supported_by_regulators(struct dev_pm_opp *opp,
+ 	struct regulator *reg;
+ 	int i;
  
-@@ -740,6 +744,9 @@ static int sun4i_usb_phy_probe(struct platform_device *pdev)
- 		struct sun4i_usb_phy *phy = data->phys + i;
- 		char name[16];
- 
-+		if (data->cfg->missing_phys & BIT(i))
-+			continue;
++	if (!opp_table->regulators)
++		return true;
 +
- 		snprintf(name, sizeof(name), "usb%d_vbus", i);
- 		phy->vbus = devm_regulator_get_optional(dev, name);
- 		if (IS_ERR(phy->vbus)) {
+ 	for (i = 0; i < opp_table->regulator_count; i++) {
+ 		reg = opp_table->regulators[i];
+ 
+@@ -1226,7 +1229,7 @@ static int _allocate_set_opp_data(struct opp_table *opp_table)
+ 	struct dev_pm_set_opp_data *data;
+ 	int len, count = opp_table->regulator_count;
+ 
+-	if (WARN_ON(!count))
++	if (WARN_ON(!opp_table->regulators))
+ 		return -EINVAL;
+ 
+ 	/* space for set_opp_data */
 -- 
 2.19.1
 
