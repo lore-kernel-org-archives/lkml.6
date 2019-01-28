@@ -2,93 +2,112 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F65FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:28:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6D69C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:28:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A4F62147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:28:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696490;
-	bh=sGPrnnt4LNGpIXsfQSBa+4zvfJ8mFUE7DDbc95Ih33w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pwfQ4ocdaNDWyZOjgUqMmjGeH3TFmWoT/zCBEpHALUuxkCtTgJp0nTS9ZoBo9jLBP
-	 B+S+9lE9CHNnlm1fK4kHrc6vKNP/6lk39SU/lA0b12rnsKE92h1sAEVn4z0ueYArkX
-	 MiM15ofjcQ4E/9smtM7HjRTyJ9I/8jIAta7XUyjA=
+	by mail.kernel.org (Postfix) with ESMTP id BCA8D2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:28:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730967AbfA1R2I (ORCPT
+        id S1730811AbfA1R2T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:28:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45278 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730404AbfA1QAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:00:00 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BB1BA2175B;
-        Mon, 28 Jan 2019 15:59:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691199;
-        bh=sGPrnnt4LNGpIXsfQSBa+4zvfJ8mFUE7DDbc95Ih33w=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LocSPK7++5ywdNSRIoxwOswNcTrXx6wcod8xPKqtN0+U/OktXnRMPzbI8FQ+6S6ge
-         6Y48e3ewUxLm00rjL0uqWvyDloU7lnES4H+CfGylLoBH5vbXOxbHihE2HmfE+rLVAf
-         rrYYsGlsV09KTUqmK7c57Nr9NNiEGJM4d78JDFxg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lior David <liord@codeaurora.org>,
-        Maya Erez <merez@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 012/258] wil6210: fix memory leak in wil_find_tx_bcast_2
-Date:   Mon, 28 Jan 2019 10:55:18 -0500
-Message-Id: <20190128155924.51521-12-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
-References: <20190128155924.51521-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 12:28:19 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41742 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1730549AbfA1R2R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 12:28:17 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 5DB63AF0D;
+        Mon, 28 Jan 2019 17:28:15 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 18:28:14 +0100 (CET)
+From:   Miroslav Benes <mbenes@suse.cz>
+To:     Sasha Levin <sashal@kernel.org>
+cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@osadl.org>,
+        Jiri Kosina <jkosina@suse.cz>, live-patching@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 174/258] livepatch: check kzalloc return
+ values
+In-Reply-To: <20190128155924.51521-174-sashal@kernel.org>
+Message-ID: <alpine.LSU.2.21.1901281826230.9332@pobox.suse.cz>
+References: <20190128155924.51521-1-sashal@kernel.org> <20190128155924.51521-174-sashal@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lior David <liord@codeaurora.org>
+On Mon, 28 Jan 2019, Sasha Levin wrote:
 
-[ Upstream commit 664497400c89a4d40aee51bcf48bbd2e4dc71104 ]
+> From: Nicholas Mc Guire <hofrat@osadl.org>
+> 
+> [ Upstream commit 5f30b2e823484ce6a79f2b59901b6351c15effa6 ]
+> 
+> kzalloc() return should always be checked - notably in example code
+> where this may be seen as reference. On failure of allocation in
+> livepatch_fix1_dummy_alloc() respectively dummy_alloc() previous
+> allocation is freed (thanks to Petr Mladek <pmladek@suse.com> for
+> catching this) and NULL returned.
+> 
+> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+> Fixes: 439e7271dc2b ("livepatch: introduce shadow variable API")
+> Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+> Reviewed-by: Petr Mladek <pmladek@suse.com>
+> Acked-by: Miroslav Benes <mbenes@suse.cz>
+> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-A successful call to wil_tx_ring takes skb reference so
-it will only be freed in wil_tx_complete. Consume the skb
-in wil_find_tx_bcast_2 to prevent memory leak.
+Hi Sasha,
 
-Signed-off-by: Lior David <liord@codeaurora.org>
-Signed-off-by: Maya Erez <merez@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/wireless/ath/wil6210/txrx.c | 2 ++
- 1 file changed, 2 insertions(+)
+I am not sure what stable policy is, but the patch is for samples/ 
+directory and I do not think it is something which should necessarily go 
+to stable. It is your call though.
 
-diff --git a/drivers/net/wireless/ath/wil6210/txrx.c b/drivers/net/wireless/ath/wil6210/txrx.c
-index 6a7943e487fb..75c8aa297107 100644
---- a/drivers/net/wireless/ath/wil6210/txrx.c
-+++ b/drivers/net/wireless/ath/wil6210/txrx.c
-@@ -1313,6 +1313,8 @@ static struct wil_ring *wil_find_tx_bcast_2(struct wil6210_priv *wil,
- 			wil_dbg_txrx(wil, "BCAST DUP -> ring %d\n", i);
- 			wil_set_da_for_vring(wil, skb2, i);
- 			wil_tx_ring(wil, vif, v2, skb2);
-+			/* successful call to wil_tx_ring takes skb2 ref */
-+			dev_kfree_skb_any(skb2);
- 		} else {
- 			wil_err(wil, "skb_copy failed\n");
- 		}
--- 
-2.19.1
+Regards,
+Miroslav
+
+> ---
+>  samples/livepatch/livepatch-shadow-fix1.c | 5 +++++
+>  samples/livepatch/livepatch-shadow-mod.c  | 4 ++++
+>  2 files changed, 9 insertions(+)
+> 
+> diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
+> index 49b13553eaae..e8f1bd6b29b1 100644
+> --- a/samples/livepatch/livepatch-shadow-fix1.c
+> +++ b/samples/livepatch/livepatch-shadow-fix1.c
+> @@ -89,6 +89,11 @@ struct dummy *livepatch_fix1_dummy_alloc(void)
+>  	 * pointer to handle resource release.
+>  	 */
+>  	leak = kzalloc(sizeof(int), GFP_KERNEL);
+> +	if (!leak) {
+> +		kfree(d);
+> +		return NULL;
+> +	}
+> +
+>  	klp_shadow_alloc(d, SV_LEAK, sizeof(leak), GFP_KERNEL,
+>  			 shadow_leak_ctor, leak);
+>  
+> diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
+> index 4c54b250332d..4aa8a88d3cd6 100644
+> --- a/samples/livepatch/livepatch-shadow-mod.c
+> +++ b/samples/livepatch/livepatch-shadow-mod.c
+> @@ -118,6 +118,10 @@ noinline struct dummy *dummy_alloc(void)
+>  
+>  	/* Oops, forgot to save leak! */
+>  	leak = kzalloc(sizeof(int), GFP_KERNEL);
+> +	if (!leak) {
+> +		kfree(d);
+> +		return NULL;
+> +	}
+>  
+>  	pr_info("%s: dummy @ %p, expires @ %lx\n",
+>  		__func__, d, d->jiffies_expire);
+> -- 
+> 2.19.1
+> 
 
