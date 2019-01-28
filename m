@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9363CC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 388B3C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6219F21738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F40272175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691819;
-	bh=eDYTTJ6p7zS48/XjJJfxWeet2C2n7NaYhdS2NEI87t0=;
+	s=default; t=1548691823;
+	bh=yG1I47SHAW1Y9veuNv5imVcFdG2h60Ym3uH0MJ8ZrW4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P8KUNjkckYhU5u/rI5EvLYvcYO3ZfkZpt/Nab0Ml8Lu11UmDZU+H3VP8tHU5yeDXg
-	 WZVF/5xhsM7+H0VkvtSJU2KGeRfIJPOMa7gtCvTU+K0NU1qKcgbFOW6d5g+v7svjy/
-	 MM1pguuBU/yPaat5TupcBZKFvvo2X7bdgpT4XdGQ=
+	b=uY4xYQzt2i2AIEiMSIYeHeJ2NRriQdMVu/IoLLhyi+OtZcTDfL5DZY0YNi5UrPi5n
+	 A6ez7NFGVhr7wuGhDbwrVJzfQlZGI29pFMG8GY46wdH4fiu5tl0LfZCJVqyqewJ7in
+	 8cXek+BIsiYDKOf6RZaMLiLinq8mYwuYGY+oUonE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732758AbfA1QKR (ORCPT
+        id S1732768AbfA1QKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:10:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35876 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:10:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35928 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732298AbfA1QKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:10:13 -0500
+        id S1732747AbfA1QKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:10:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 781B72177E;
-        Mon, 28 Jan 2019 16:10:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5EDB62184D;
+        Mon, 28 Jan 2019 16:10:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691812;
-        bh=eDYTTJ6p7zS48/XjJJfxWeet2C2n7NaYhdS2NEI87t0=;
+        s=default; t=1548691814;
+        bh=yG1I47SHAW1Y9veuNv5imVcFdG2h60Ym3uH0MJ8ZrW4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qlLUh3svPIOIeYb1hEzhW/CXwSRkZeSdFIyj1qpZ/V4fE5WZlWOfg8F8bscg32Bqt
-         9wAEcEG9bdiT84y15IEGjvnT4oZleCOeNeznrdcJDxg89Mz5Qr6FSqLcLNKHliWed/
-         9iOBiKYRNyU5guQGPcdONHjn57wA+LO49kLQgriA=
+        b=YOYTJW+CFUAZOm4OQWpJBOpPUfdy6ph+oNPkilAYTkegamU6l+PKkhc9l8Jy051AY
+         PdZQSlA3td6DdtQva2wdWUzxYxYaZ39SHUXFjpMuKQv3jaiDnYzAW0lonWeIqcGbn6
+         1sYD2jf2DXXfQcD5+lyreYMt/+DSxc4/Pr+iWcU4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stefan Roese <sr@denx.de>, Paul Burton <paul.burton@mips.com>,
-        John Crispin <blogic@openwrt.org>,
-        Daniel Schwierzeck <daniel.schwierzeck@gmail.com>,
-        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
-        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 225/258] MIPS: ralink: Select CONFIG_CPU_MIPSR2_IRQ_VI on MT7620/8
-Date:   Mon, 28 Jan 2019 10:58:51 -0500
-Message-Id: <20190128155924.51521-225-sashal@kernel.org>
+Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 226/258] cifs: check ntwrk_buf_start for NULL before dereferencing it
+Date:   Mon, 28 Jan 2019 10:58:52 -0500
+Message-Id: <20190128155924.51521-226-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -60,54 +57,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Roese <sr@denx.de>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-[ Upstream commit 0b15394475e3bcaf35ca4bf22fc55d56df67224e ]
+[ Upstream commit 59a63e479ce36a3f24444c3a36efe82b78e4a8e0 ]
 
-Testing has shown, that when using mainline U-Boot on MT7688 based
-boards, the system may hang or crash while mounting the root-fs. The
-main issue here is that mainline U-Boot configures EBase to a value
-near the end of system memory. And with CONFIG_CPU_MIPSR2_IRQ_VI
-disabled, trap_init() will not allocate a new area to place the
-exception handler. The original value will be used and the handler
-will be copied to this location, which might already be used by some
-userspace application.
+RHBZ: 1021460
 
-The MT7688 supports VI - its config3 register is 0x00002420, so VInt
-(Bit 5) is set. But without setting CONFIG_CPU_MIPSR2_IRQ_VI this
-bit will not be evaluated to result in "cpu_has_vi" being set. This
-patch now selects CONFIG_CPU_MIPSR2_IRQ_VI on MT7620/8 which results
-trap_init() to allocate some memory for the exception handler.
+There is an issue where when multiple threads open/close the same directory
+ntwrk_buf_start might end up being NULL, causing the call to smbCalcSize
+later to oops with a NULL deref.
 
-Please note that this issue was not seen with the Mediatek U-Boot
-version, as it does not touch EBase (stays at default of 0x8000.0000).
-This is strictly also not correct as the kernel (_text) resides
-here.
+The real bug is why this happens and why this can become NULL for an
+open cfile, which should not be allowed.
+This patch tries to avoid a oops until the time when we fix the underlying
+issue.
 
-Signed-off-by: Stefan Roese <sr@denx.de>
-[paul.burton@mips.com: s/beeing/being/]
-Signed-off-by: Paul Burton <paul.burton@mips.com>
-Cc: John Crispin <blogic@openwrt.org>
-Cc: Daniel Schwierzeck <daniel.schwierzeck@gmail.com>
-Cc: Ralf Baechle <ralf@linux-mips.org>
-Cc: linux-mips@linux-mips.org
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/ralink/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ fs/cifs/readdir.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/ralink/Kconfig b/arch/mips/ralink/Kconfig
-index 1f9cb0e3c79a..613d61763433 100644
---- a/arch/mips/ralink/Kconfig
-+++ b/arch/mips/ralink/Kconfig
-@@ -38,6 +38,7 @@ choice
- 
- 	config SOC_MT7620
- 		bool "MT7620/8"
-+		select CPU_MIPSR2_IRQ_VI
- 		select HW_HAS_PCI
- 
- 	config SOC_MT7621
+diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
+index e169e1a5fd35..3925a7bfc74d 100644
+--- a/fs/cifs/readdir.c
++++ b/fs/cifs/readdir.c
+@@ -655,7 +655,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
+ 		/* scan and find it */
+ 		int i;
+ 		char *cur_ent;
+-		char *end_of_smb = cfile->srch_inf.ntwrk_buf_start +
++		char *end_of_smb;
++
++		if (cfile->srch_inf.ntwrk_buf_start == NULL) {
++			cifs_dbg(VFS, "ntwrk_buf_start is NULL during readdir\n");
++			return -EIO;
++		}
++
++		end_of_smb = cfile->srch_inf.ntwrk_buf_start +
+ 			server->ops->calc_smb_size(
+ 					cfile->srch_inf.ntwrk_buf_start,
+ 					server);
 -- 
 2.19.1
 
