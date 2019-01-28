@@ -4,57 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B78DC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78677C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0FD021738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3D7A62173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692390;
-	bh=yzX3yOPfXHZAsRv4i1lqHC0NmaDrNzvgnQSWp1yz1Es=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iuzUaaD2YhJdVooi24YPi5iVDkPq7TXcOArwTc/D3g7qLGDG4nBDbpqEtmJUjvfln
-	 Zy/zkhbSzUF76dSruiPmCEZPQVY90pPNLSX70j2Jdxp9V2o6558/kBDsvkpAR3tDaX
-	 Jsk2IqO1bAbdlIgEhKZVlWCoPagfvuV88IiPcZC8=
+	s=default; t=1548692396;
+	bh=Pvg5B9F4tecx/bOmiYjKXwTdadFwK2EXttTnRi7aOig=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=D40+YI33pXmPCrVxLUVrjMdQHI9dElHHMKJjt9U+pWn4ZlyyA/5iH4ScEsfc0tUPY
+	 gn/49xn3PerG8IPVvDRAFrZ2xQoQPU1xm2HscY3MkOJqztS5Zm/brtDfDQNCnFM5oi
+	 JM188RTTk5pnGJ2UfApcMhPw2FKMPimoDzH9DzSA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388677AbfA1QTt (ORCPT
+        id S2388692AbfA1QTy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:19:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54742 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:19:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387965AbfA1QTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:19:47 -0500
+        id S2388679AbfA1QTw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:19:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4EF5D2084A;
-        Mon, 28 Jan 2019 16:19:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EC0672084A;
+        Mon, 28 Jan 2019 16:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692386;
-        bh=yzX3yOPfXHZAsRv4i1lqHC0NmaDrNzvgnQSWp1yz1Es=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s/4jh3hLXOK8Zb3ggKhfYSe0s35CVgIR0xHyKTl4h2HBidKlU+RRyKaUaEOJ7TqfX
-         W6aHsjcMKt/xhAfiyCr9PFqHXV3XEfkSUPgRH3It5ukFuVHEyEOSCcSpGpzvPh1OKP
-         uCeRSOjSOhEZUnbpD1jLa7tTO4DM8xtpo/qv6jNw=
+        s=default; t=1548692391;
+        bh=Pvg5B9F4tecx/bOmiYjKXwTdadFwK2EXttTnRi7aOig=;
+        h=From:To:Cc:Subject:Date:From;
+        b=DJECOCbaNEBWZYPvnrVZ+cLdB3aQ6+FrGVk9PKqIF9t8BHbNb0LqBMucbk8AP+tGR
+         IQfcH+wasSN+UhKY9hiyOT9f16t19D54oEwQe7mwaZV+LezlVzPS4tlOJrP5N3vYhI
+         z745+jNnQYFvET2ZAmSenDFyWr/b0tfPEXK+XCTc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Du Changbin <changbin.du@gmail.com>,
-        Kieran Bingham <kbingham@kernel.org>,
-        Jan Kiszka <jan.kiszka@siemens.com>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 170/170] scripts/gdb: fix lx-version string output
-Date:   Mon, 28 Jan 2019 11:12:00 -0500
-Message-Id: <20190128161200.55107-170-sashal@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.9 001/107] drm/bufs: Fix Spectre v1 vulnerability
+Date:   Mon, 28 Jan 2019 11:18:01 -0500
+Message-Id: <20190128161947.57405-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
-References: <20190128161200.55107-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -63,56 +57,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Du Changbin <changbin.du@gmail.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit b058809bfc8faeb7b7cae047666e23375a060059 ]
+[ Upstream commit a37805098900a6e73a55b3a43b7d3bcd987bb3f4 ]
 
-A bug is present in GDB which causes early string termination when
-parsing variables.  This has been reported [0], but we should ensure
-that we can support at least basic printing of the core kernel strings.
+idx can be indirectly controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
 
-For current gdb version (has been tested with 7.3 and 8.1), 'lx-version'
-only prints one character.
+This issue was detected with the help of Smatch:
 
-  (gdb) lx-version
-  L(gdb)
+drivers/gpu/drm/drm_bufs.c:1420 drm_legacy_freebufs() warn: potential
+spectre issue 'dma->buflist' [r] (local cap)
 
-This can be fixed by casting 'linux_banner' as (char *).
+Fix this by sanitizing idx before using it to index dma->buflist
 
-  (gdb) lx-version
-  Linux version 4.19.0-rc1+ (changbin@acer) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #21 SMP Sat Sep 1 21:43:30 CST 2018
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
 
-[0] https://sourceware.org/bugzilla/show_bug.cgi?id=20077
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
 
-[kbingham@kernel.org: add detail to commit message]
-Link: http://lkml.kernel.org/r/20181111162035.8356-1-kieran.bingham@ideasonboard.com
-Fixes: 2d061d999424 ("scripts/gdb: add version command")
-Signed-off-by: Du Changbin <changbin.du@gmail.com>
-Signed-off-by: Kieran Bingham <kbingham@kernel.org>
-Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>
-Cc: Jason Wessel <jason.wessel@windriver.com>
-Cc: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181016095549.GA23586@embeddedor.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/gdb/linux/proc.py | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/drm_bufs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/scripts/gdb/linux/proc.py b/scripts/gdb/linux/proc.py
-index 086d27223c0c..0aebd7565b03 100644
---- a/scripts/gdb/linux/proc.py
-+++ b/scripts/gdb/linux/proc.py
-@@ -41,7 +41,7 @@ class LxVersion(gdb.Command):
+diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
+index adb1dd7fde5f..9ccd7d702cd3 100644
+--- a/drivers/gpu/drm/drm_bufs.c
++++ b/drivers/gpu/drm/drm_bufs.c
+@@ -36,6 +36,8 @@
+ #include <drm/drmP.h>
+ #include "drm_legacy.h"
  
-     def invoke(self, arg, from_tty):
-         # linux_banner should contain a newline
--        gdb.write(gdb.parse_and_eval("linux_banner").string())
-+        gdb.write(gdb.parse_and_eval("(char *)linux_banner").string())
- 
- LxVersion()
- 
++#include <linux/nospec.h>
++
+ static struct drm_map_list *drm_find_matching_map(struct drm_device *dev,
+ 						  struct drm_local_map *map)
+ {
+@@ -1413,6 +1415,7 @@ int drm_legacy_freebufs(struct drm_device *dev, void *data,
+ 				  idx, dma->buf_count - 1);
+ 			return -EINVAL;
+ 		}
++		idx = array_index_nospec(idx, dma->buf_count);
+ 		buf = dma->buflist[idx];
+ 		if (buf->file_priv != file_priv) {
+ 			DRM_ERROR("Process %d freeing buffer not owned\n",
 -- 
 2.19.1
 
