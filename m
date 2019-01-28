@@ -4,49 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D07CC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA113C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C5082184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A13B220663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692440;
-	bh=T2KkMJLqLcMkW/F15AAG+VkK5kTnrfXnvjuc9BCA04s=;
+	s=default; t=1548692444;
+	bh=/1o/hWjVWupNbOKEKUcTfRf2sGd1aJzscPc84GOwT+w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=iadiCuwrgdUfqWEBTuL8CrnQuky1HNdrDvxl0bf5FAih5f5KlR1UkBWkr4LRCJEfX
-	 k/6vwIwjoO+E2uK0SqfUt64Rs1PvT5tl4fwHxO08Iolef4YaMg+fa2t21ciSfm9OVj
-	 AgvViLITyKGpHZAXnJmTA5QvAyN3SmD1CXrY09eY=
+	b=0u7nATDSZWUh5enfQbLHGgqr6EAFiND7ITqVwlPY2OrjDHOdJ0yDclNZhp8GABEI5
+	 mFfNElToqxMar7SB9z3INzxsSx+LSKwIj0LcwnxBfYb/7WqG4CoaZdyM0Myst7Z3bX
+	 pWoUJ2yuZBcAkc7e8vuZDzBV/V4A5hc16BT3cPoU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388861AbfA1QUh (ORCPT
+        id S2388868AbfA1QUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:20:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56070 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:20:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388842AbfA1QUe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:20:34 -0500
+        id S2388455AbfA1QUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:20:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FD4520663;
-        Mon, 28 Jan 2019 16:20:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3CAE12173C;
+        Mon, 28 Jan 2019 16:20:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692433;
-        bh=T2KkMJLqLcMkW/F15AAG+VkK5kTnrfXnvjuc9BCA04s=;
+        s=default; t=1548692440;
+        bh=/1o/hWjVWupNbOKEKUcTfRf2sGd1aJzscPc84GOwT+w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=h3uI/xoQrM0B79YGfJHyuIT/THng6qdgn7Wf3aN5fEOGILLD8Obx/xsKXffUAwGit
-         mpkayHD2YOmrHIXXG/H655z2jo9EsUhSbkaIHM5fsJ6ECB6NLzMKz1HOSZnIdzFPWJ
-         MLrx7v7C9guttIhJCTiJNUFD9m3KGSHflLGo7/VE=
+        b=eLeABou3HrMGejMaX1d/DCLholwr9vjJcxdwYgISth/DX2idnZAFhtQDAs7MenSF5
+         obPgrGdILpEoiFgdZwy4x2Z0DyFuu7h98ZQgdXeT4Z+KsBHp/Zva2I4TUKLD1r9Uht
+         xTOiWTgq3opn4TpfquGSXQXn+V7Xc7R6hQBvMj34=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 018/107] ARM: OMAP2+: hwmod: Fix some section annotations
-Date:   Mon, 28 Jan 2019 11:18:18 -0500
-Message-Id: <20190128161947.57405-18-sashal@kernel.org>
+Cc:     Pu Wen <puwen@hygon.cn>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 020/107] perf tools: Add Hygon Dhyana support
+Date:   Mon, 28 Jan 2019 11:18:20 -0500
+Message-Id: <20190128161947.57405-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -58,76 +63,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Pu Wen <puwen@hygon.cn>
 
-[ Upstream commit c10b26abeb53cabc1e6271a167d3f3d396ce0218 ]
+[ Upstream commit 4787eff3fa88f62fede6ed7afa06477ae6bf984d ]
 
-When building the kernel with Clang, the following section mismatch
-warnings appears:
+The tool perf is useful for the performance analysis on the Hygon Dhyana
+platform. But right now there is no Hygon support for it to analyze the
+KVM guest os data. So add Hygon Dhyana support to it by checking vendor
+string to share the code path of AMD.
 
-WARNING: vmlinux.o(.text+0x2d398): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_iclk_autoidle()
-The function _setup() references
-the function __init _setup_iclk_autoidle().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_iclk_autoidle is wrong.
-
-WARNING: vmlinux.o(.text+0x2d3a0): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_reset()
-The function _setup() references
-the function __init _setup_reset().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_reset is wrong.
-
-WARNING: vmlinux.o(.text+0x2d408): Section mismatch in reference from
-the function _setup() to the function .init.text:_setup_postsetup()
-The function _setup() references
-the function __init _setup_postsetup().
-This is often because _setup lacks a __init
-annotation or the annotation of _setup_postsetup is wrong.
-
-_setup is used in omap_hwmod_allocate_module, which isn't marked __init
-and looks like it shouldn't be, meaning to fix these warnings, those
-functions must be moved out of the init section, which this patch does.
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+Acked-by: Borislav Petkov <bp@suse.de>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1542008451-31735-1-git-send-email-puwen@hygon.cn
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-omap2/omap_hwmod.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ tools/perf/arch/x86/util/kvm-stat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
-index b5c1714ebfdd..bfc74954540c 100644
---- a/arch/arm/mach-omap2/omap_hwmod.c
-+++ b/arch/arm/mach-omap2/omap_hwmod.c
-@@ -2551,7 +2551,7 @@ static int __init _init(struct omap_hwmod *oh, void *data)
-  * a stub; implementing this properly requires iclk autoidle usecounting in
-  * the clock code.   No return value.
-  */
--static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
-+static void _setup_iclk_autoidle(struct omap_hwmod *oh)
- {
- 	struct omap_hwmod_ocp_if *os;
- 	struct list_head *p;
-@@ -2586,7 +2586,7 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
-  * reset.  Returns 0 upon success or a negative error code upon
-  * failure.
-  */
--static int __init _setup_reset(struct omap_hwmod *oh)
-+static int _setup_reset(struct omap_hwmod *oh)
- {
- 	int r;
- 
-@@ -2647,7 +2647,7 @@ static int __init _setup_reset(struct omap_hwmod *oh)
-  *
-  * No return value.
-  */
--static void __init _setup_postsetup(struct omap_hwmod *oh)
-+static void _setup_postsetup(struct omap_hwmod *oh)
- {
- 	u8 postsetup_state;
- 
+diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
+index b63d4be655a2..2020e12a856f 100644
+--- a/tools/perf/arch/x86/util/kvm-stat.c
++++ b/tools/perf/arch/x86/util/kvm-stat.c
+@@ -154,7 +154,7 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
+ 	if (strstr(cpuid, "Intel")) {
+ 		kvm->exit_reasons = vmx_exit_reasons;
+ 		kvm->exit_reasons_isa = "VMX";
+-	} else if (strstr(cpuid, "AMD")) {
++	} else if (strstr(cpuid, "AMD") || strstr(cpuid, "Hygon")) {
+ 		kvm->exit_reasons = svm_exit_reasons;
+ 		kvm->exit_reasons_isa = "SVM";
+ 	} else
 -- 
 2.19.1
 
