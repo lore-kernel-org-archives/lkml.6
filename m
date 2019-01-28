@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D19EBC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A619EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DE032148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 760452148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691964;
-	bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
+	s=default; t=1548691970;
+	bh=oqYRu9YYe90NkDGlrxXHPbMasuf+zU2pc9P7t53fPIY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=AZQJP9NAg7rS4gqr/Ez+6GTCWC2kwUEjL80gkTWnRKO1Etcmhgq3NYktDCxtIMfiR
-	 sKnEzjzFnu8mYA5a/H40QwkxLvyHo4Y0+GwP+/x5D1/bsYJAYcL08VAzJ2vi2YKG1w
-	 TbiBEVITj09p4m5OrCXcsU/SfbYuj6jbRg3ij3L0=
+	b=qUjYxLu/9i40K2YYa9Mlwzp7U9QqYFRUzmRXrsxmmpbrqrS7vqp+7WfR4Yd/ib4K7
+	 cT4XynrOWz0TAO9XEXyvPq4QRKDE3vjayTV+k63/dJUoBf+hwelgfVH+m+oQSFIhoH
+	 H5nBse+xj3zMjBbyTCzgH64Rt3apQjMbTbTKihxk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733179AbfA1QMm (ORCPT
+        id S1733221AbfA1QMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:12:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40926 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:12:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41194 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733192AbfA1QMh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:12:37 -0500
+        id S1733203AbfA1QMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:12:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82DFB2148E;
-        Mon, 28 Jan 2019 16:12:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 353D92147A;
+        Mon, 28 Jan 2019 16:12:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691956;
-        bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
+        s=default; t=1548691965;
+        bh=oqYRu9YYe90NkDGlrxXHPbMasuf+zU2pc9P7t53fPIY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DoXx3u00Zql0xT42TKvl+EaJPZh1Tlsu+lPvs9oh2oIr9b0TL1qJMO6dWITdxl+Dv
-         O+zfWV6Xxvjod8OAAsWR1xVJmiIOk+UesznHKGj2aifVAvXqw2YZG8rjXnjyVVsmPQ
-         penwg1A9Q2at/PrhVzRbkllRcDoL7vW46J1JB6r0=
+        b=t8ivgNKOGwuPrgnomHFu0ti6fVoZLirChqLeIrteAH49rW/39oZ8Npkap3XrMf4sB
+         yJFLt4bkf2vI+ZKqlIThexNFIRIoDjZwQ6N/24WyHHddQyng6oRDW3N9bHx3FeyeXX
+         HDdYyphMU3rx+ysigwGsHAC1+/YYEKl+cRjnX3Tw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 015/170] x86/PCI: Fix Broadcom CNB20LE unintended sign extension (redux)
-Date:   Mon, 28 Jan 2019 11:09:25 -0500
-Message-Id: <20190128161200.55107-15-sashal@kernel.org>
+Cc:     Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 018/170] crypto: aes_ti - disable interrupts while accessing S-box
+Date:   Mon, 28 Jan 2019 11:09:28 -0500
+Message-Id: <20190128161200.55107-18-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,42 +58,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 53bb565fc5439f2c8c57a786feea5946804aa3e9 ]
+[ Upstream commit 0a6a40c2a8c184a2fb467efacfb1cd338d719e0b ]
 
-In the expression "word1 << 16", word1 starts as u16, but is promoted to a
-signed int, then sign-extended to resource_size_t, which is probably not
-what was intended.  Cast to resource_size_t to avoid the sign extension.
+In the "aes-fixed-time" AES implementation, disable interrupts while
+accessing the S-box, in order to make cache-timing attacks more
+difficult.  Previously it was possible for the CPU to be interrupted
+while the S-box was loaded into L1 cache, potentially evicting the
+cachelines and causing later table lookups to be time-variant.
 
-This fixes an identical issue as fixed by commit 0b2d70764bb3 ("x86/PCI:
-Fix Broadcom CNB20LE unintended sign extension") back in 2014.
+In tests I did on x86 and ARM, this doesn't affect performance
+significantly.  Responsiveness is potentially a concern, but interrupts
+are only disabled for a single AES block.
 
-Detected by CoverityScan, CID#138749, 138750 ("Unintended sign extension")
+Note that even after this change, the implementation still isn't
+necessarily guaranteed to be constant-time; see
+https://cr.yp.to/antiforgery/cachetiming-20050414.pdf for a discussion
+of the many difficulties involved in writing truly constant-time AES
+software.  But it's valuable to make such attacks more difficult.
 
-Fixes: 3f6ea84a3035 ("PCI: read memory ranges out of Broadcom CNB20LE host bridge")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/pci/broadcom_bus.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ crypto/Kconfig  |  3 ++-
+ crypto/aes_ti.c | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/arch/x86/pci/broadcom_bus.c b/arch/x86/pci/broadcom_bus.c
-index 526536c81ddc..ca1e8e6dccc8 100644
---- a/arch/x86/pci/broadcom_bus.c
-+++ b/arch/x86/pci/broadcom_bus.c
-@@ -50,8 +50,8 @@ static void __init cnb20le_res(u8 bus, u8 slot, u8 func)
- 	word1 = read_pci_config_16(bus, slot, func, 0xc0);
- 	word2 = read_pci_config_16(bus, slot, func, 0xc2);
- 	if (word1 != word2) {
--		res.start = (word1 << 16) | 0x0000;
--		res.end   = (word2 << 16) | 0xffff;
-+		res.start = ((resource_size_t) word1 << 16) | 0x0000;
-+		res.end   = ((resource_size_t) word2 << 16) | 0xffff;
- 		res.flags = IORESOURCE_MEM;
- 		update_res(info, res.start, res.end, res.flags, 0);
- 	}
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 5579eb88d460..84f99f8eca4b 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -930,7 +930,8 @@ config CRYPTO_AES_TI
+ 	  8 for decryption), this implementation only uses just two S-boxes of
+ 	  256 bytes each, and attempts to eliminate data dependent latencies by
+ 	  prefetching the entire table into the cache at the start of each
+-	  block.
++	  block. Interrupts are also disabled to avoid races where cachelines
++	  are evicted when the CPU is interrupted to do something else.
+ 
+ config CRYPTO_AES_586
+ 	tristate "AES cipher algorithms (i586)"
+diff --git a/crypto/aes_ti.c b/crypto/aes_ti.c
+index 03023b2290e8..1ff9785b30f5 100644
+--- a/crypto/aes_ti.c
++++ b/crypto/aes_ti.c
+@@ -269,6 +269,7 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	const u32 *rkp = ctx->key_enc + 4;
+ 	int rounds = 6 + ctx->key_length / 4;
+ 	u32 st0[4], st1[4];
++	unsigned long flags;
+ 	int round;
+ 
+ 	st0[0] = ctx->key_enc[0] ^ get_unaligned_le32(in);
+@@ -276,6 +277,12 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	st0[2] = ctx->key_enc[2] ^ get_unaligned_le32(in + 8);
+ 	st0[3] = ctx->key_enc[3] ^ get_unaligned_le32(in + 12);
+ 
++	/*
++	 * Temporarily disable interrupts to avoid races where cachelines are
++	 * evicted when the CPU is interrupted to do something else.
++	 */
++	local_irq_save(flags);
++
+ 	st0[0] ^= __aesti_sbox[ 0] ^ __aesti_sbox[128];
+ 	st0[1] ^= __aesti_sbox[32] ^ __aesti_sbox[160];
+ 	st0[2] ^= __aesti_sbox[64] ^ __aesti_sbox[192];
+@@ -300,6 +307,8 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	put_unaligned_le32(subshift(st1, 1) ^ rkp[5], out + 4);
+ 	put_unaligned_le32(subshift(st1, 2) ^ rkp[6], out + 8);
+ 	put_unaligned_le32(subshift(st1, 3) ^ rkp[7], out + 12);
++
++	local_irq_restore(flags);
+ }
+ 
+ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+@@ -308,6 +317,7 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	const u32 *rkp = ctx->key_dec + 4;
+ 	int rounds = 6 + ctx->key_length / 4;
+ 	u32 st0[4], st1[4];
++	unsigned long flags;
+ 	int round;
+ 
+ 	st0[0] = ctx->key_dec[0] ^ get_unaligned_le32(in);
+@@ -315,6 +325,12 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	st0[2] = ctx->key_dec[2] ^ get_unaligned_le32(in + 8);
+ 	st0[3] = ctx->key_dec[3] ^ get_unaligned_le32(in + 12);
+ 
++	/*
++	 * Temporarily disable interrupts to avoid races where cachelines are
++	 * evicted when the CPU is interrupted to do something else.
++	 */
++	local_irq_save(flags);
++
+ 	st0[0] ^= __aesti_inv_sbox[ 0] ^ __aesti_inv_sbox[128];
+ 	st0[1] ^= __aesti_inv_sbox[32] ^ __aesti_inv_sbox[160];
+ 	st0[2] ^= __aesti_inv_sbox[64] ^ __aesti_inv_sbox[192];
+@@ -339,6 +355,8 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	put_unaligned_le32(inv_subshift(st1, 1) ^ rkp[5], out + 4);
+ 	put_unaligned_le32(inv_subshift(st1, 2) ^ rkp[6], out + 8);
+ 	put_unaligned_le32(inv_subshift(st1, 3) ^ rkp[7], out + 12);
++
++	local_irq_restore(flags);
+ }
+ 
+ static struct crypto_alg aes_alg = {
 -- 
 2.19.1
 
