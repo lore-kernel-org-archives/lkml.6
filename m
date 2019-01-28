@@ -2,127 +2,200 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9070C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:45:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D9DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A47522171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548686726;
-	bh=R4LUADSyGzbKRrmHJJdrrtmnh1hqwyHHtyZMh/+etHY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HaRKGY/9PNnpQCWBxTrnNjAbdiAa1eWZdhDeqtDiyNtvM4fDnf5kYtt7jakEXF06B
-	 GTiEq9Ehi1FgjGvXYiu+c2AjOBoLyEpM9HECl8dWotCsHco0DWEfANapShoIY2iyLu
-	 JLVzT5f7nuprldE3L5LjH3CjoSFooYJRsSk2DXJ8=
+	by mail.kernel.org (Postfix) with ESMTP id 1D7DC2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:45:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="l9iKR8Hh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbfA1OpY (ORCPT
+        id S1726992AbfA1Opo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:45:24 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40952 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726693AbfA1OpT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:45:19 -0500
-Received: by mail-ed1-f67.google.com with SMTP id g22so13190509edr.7
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 06:45:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=nTySQcXDgbgWvZzIuOomkfESKJ+ZiRRspPXpQ++HP0Y=;
-        b=dctjK6wIV7a7Oc7qU/081YuM6vdYgnoOE/5cF/uDSIzLcXQYHWtsgybP1JsxJJ47ER
-         en26HEgmSeYGvdlgNGHsNDh8+6ualSavZFfXFF3UQyNuaT/CBjvdB1bvgS6yB3uSkRIh
-         M8LteJpYH/AdGQjwSadXFohld79HAq82fabWUdrGD7kUax/q+iHMlR/cvZSfhZ8ViDtU
-         zT5f7FE4WeYP3Iyp5d11laTGWE6UClmSq38ki2S3ibj/Et4j6oNS5AMMF8X9ZoGIcMB+
-         zlFawrVlqSkCXQX83ddI3REThmQy9xycXbXRsNIiwGvEgNnjlW9ypv5M9lUqp+Rzdoeo
-         hCzA==
-X-Gm-Message-State: AJcUukctZAoEWsweKcvPrzNHez3AdoZoYJIuJCWepxEsVm3DC88XPjhx
-        BhCeMhtQcGXCEj0Q/O7Jnqs=
-X-Google-Smtp-Source: ALg8bN4SDZcBeV3rbkI2gxNZ8px9xHNMo/kDxk2X/qizXtVKHesg5Jmhm964+1jN/CWGYVmWZahd/Q==
-X-Received: by 2002:a50:b3b8:: with SMTP id s53mr22208336edd.122.1548686717177;
-        Mon, 28 Jan 2019 06:45:17 -0800 (PST)
-Received: from tiehlicka.microfocus.com (prg-ext-pat.suse.com. [213.151.95.130])
-        by smtp.gmail.com with ESMTPSA id j8sm2919064ejr.17.2019.01.28.06.45.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 06:45:16 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        gerald.schaefer@de.ibm.com, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH 2/2] mm, memory_hotplug: test_pages_in_a_zone do not pass the end of zone
-Date:   Mon, 28 Jan 2019 15:45:06 +0100
-Message-Id: <20190128144506.15603-3-mhocko@kernel.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128144506.15603-1-mhocko@kernel.org>
-References: <20190128144506.15603-1-mhocko@kernel.org>
+        Mon, 28 Jan 2019 09:45:44 -0500
+Received: from mail-eopbgr150102.outbound.protection.outlook.com ([40.107.15.102]:8905
+        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726693AbfA1Opo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 09:45:44 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ITWgOsAfqUNwV4/TF5YNirwYxx1ZcJOc/UObXX/iNNE=;
+ b=l9iKR8HhgsgS9kB1O4Xqut9T9WY0UFiBrrlu/E4MgHZLqizI7+QW+n0xZRwQ1t3FEx3DsietgM8sUm7T1ZXuId1lLK9dbWJxaHktLkzmpBy/cNW4Vn6fiyjsiosr7cONhvyxyGDzjVPD4GnWhcrbOdnFrUd+JAIA+NZO+i8B+j0=
+Received: from VI1PR0702MB3710.eurprd07.prod.outlook.com (52.134.3.144) by
+ VI1PR0702MB3840.eurprd07.prod.outlook.com (52.134.7.161) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.6; Mon, 28 Jan 2019 14:45:39 +0000
+Received: from VI1PR0702MB3710.eurprd07.prod.outlook.com
+ ([fe80::95ff:2ede:57df:f1ba]) by VI1PR0702MB3710.eurprd07.prod.outlook.com
+ ([fe80::95ff:2ede:57df:f1ba%2]) with mapi id 15.20.1580.014; Mon, 28 Jan 2019
+ 14:45:39 +0000
+From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+To:     Paul Moore <paul@paul-moore.com>
+CC:     Paul Moore <pmoore@redhat.com>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        Richard Guy Briggs <rbriggs@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] audit: always enable syscall auditing when supported and
+ audit is enabled
+Thread-Topic: [PATCH] audit: always enable syscall auditing when supported and
+ audit is enabled
+Thread-Index: AQHUtuRMqf59sA9YxEyiYKAWmGDXiKXEuzUAgAAHQ4A=
+Date:   Mon, 28 Jan 2019 14:45:39 +0000
+Message-ID: <bde56c65-60cb-5f42-64d2-bfeabfc6c78b@nokia.com>
+References: <20151208164237.15736.42955.stgit@localhost>
+ <5490ae28-251b-bfda-38a6-5be201a4a8d8@nokia.com>
+ <CAHC9VhQsVFY1LAakAUUCBZw6nmSy0-eoFrhQgVQrkqgAsWVGhQ@mail.gmail.com>
+In-Reply-To: <CAHC9VhQsVFY1LAakAUUCBZw6nmSy0-eoFrhQgVQrkqgAsWVGhQ@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [131.228.32.165]
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
+x-clientproxiedby: HE1PR0902CA0031.eurprd09.prod.outlook.com
+ (2603:10a6:7:15::20) To VI1PR0702MB3710.eurprd07.prod.outlook.com
+ (2603:10a6:803:7::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=alexander.sverdlin@nokia.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0702MB3840;6:nAVzQOgsbSYaiMyEAvKp8h0oOiKOuYSkjq0SeugEVxOrH5fHQPyZIhLmu00IfmiitaFWVz5CHDKBKrjW0bknZR9BNdI+jQcuIOKFJ6RRv/Fg0LIAIGlxSJN/RmFsvigXda9uFQ3gmMBPqNOsrXuaySeXjVImASNclm5EygXz3S426j/yLlRLcJM0DuWyuq2J9jO3eTq2kMbxjaOb8HJAti4kFiGsmBgehihHqw7WjI1udV3X1HnqOwKdddb7fmwc6Xvxs658+amP770myXgtpqUmpUlAXs0WzW7E09d/kpe9Oepptv/rB4Uq5nZq5fXCcB11cvSFrmq52ub2KIaDcG71lPojpmQgO/NzfyYWRACLdXHfImJZHxqLveG5cDoAXzVCEPUEbkLrgG3drcXmo0H59BStnOo8ISEW+UzM4anASPL//OT8vrbsY6wJ2Bc83fXadGK8Yh+JV6B5raBBGw==;5:1HUKGsvnjnZhk1X8wgqWMo5VTa8czaNC2NR6DByLmZxugUScOe7owA5DWqwz7gNxQeiqOiTRuGxiSYkvoXb10gLL86323kqbaVkE+LOuca+226zwlGRVUXekZmXWVNumksnJAfRINyrUim+0JTbUD7rhUeXaqSPdfP1Wx66i3XPjb9LPvl2ImKqOK7rX2ibJi7ZnFr8+TBFFI2e/b+QeUg==;7:8P9yufTSQFdPIhwjeKe66txy6vTOTvlnFeN0NfkmnXDn7SNm023HehlyrOBl6ntkc8H4+D7tyFntbnJjtPGF4mosePOOAb100EPHsfRxF08h9vSlqZDmeoZM3irzJYK8mZbx9TjmC3D6hpQTBtPYHA==
+x-ms-office365-filtering-correlation-id: 7e39c010-8526-4a9b-d69f-08d6852f4572
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:VI1PR0702MB3840;
+x-ms-traffictypediagnostic: VI1PR0702MB3840:
+x-microsoft-antispam-prvs: <VI1PR0702MB384079FB846C3F485758EC7A88960@VI1PR0702MB3840.eurprd07.prod.outlook.com>
+x-forefront-prvs: 0931CB1479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(376002)(366004)(136003)(346002)(396003)(189003)(199004)(76176011)(6916009)(6486002)(7736002)(305945005)(99286004)(65826007)(52116002)(2906002)(25786009)(8936002)(386003)(71200400001)(26005)(53546011)(71190400001)(14444005)(102836004)(8676002)(186003)(81166006)(486006)(97736004)(6506007)(81156014)(6512007)(256004)(229853002)(64126003)(68736007)(6436002)(54906003)(6116002)(3846002)(106356001)(36756003)(53936002)(6246003)(105586002)(58126008)(31686004)(4326008)(316002)(14454004)(65956001)(66066001)(11346002)(2616005)(65806001)(31696002)(478600001)(86362001)(446003)(476003)(21314003);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0702MB3840;H:VI1PR0702MB3710.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: uFBibdAHdTrzdd2cyphfbVNcUs/eceoV59eko9KXjJ+B/i6jzO6JjBP5K8Rkoizslq5DIIkaS/NMwOOmCF8iV3n1dQ/SwK0YLfpp7vkl+3TaaUXOja53XwxZTux9OlGz0CLx7xXe5muoiaEd5HuCEwnI3fq+r7tWF4h8TO08bDg4E+4ah8t8VkTr0vVVoFMNvhFNk79ICX78pMD3kOtCL2EIN4EDAC2a1alweqcFliUvN9pzoI1K+OFtpj6YifcEW5ICD3l4adOdyT1T6AW40n6i3aTsy1yt3GMheqyFrH1HSskZElw1nE232yL6z7v6PGy8XCZK9214I+6yXncPzuMglP7pIu2ggk7srx/Fe0NyQo3hsd+hHQR+vuYw8hisu9zoaCnm0ovqOcvCA40e36i5T2z2F2NBssA2fZ+5o9I=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BEEA34246BF2C8488A9BA80BB1FA475B@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7e39c010-8526-4a9b-d69f-08d6852f4572
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 14:45:38.3286
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0702MB3840
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-
-If memory end is not aligned with the sparse memory section boundary, the
-mapping of such a section is only partly initialized. This may lead to
-VM_BUG_ON due to uninitialized struct pages access from test_pages_in_a_zone()
-function triggered by memory_hotplug sysfs handlers.
-
-Here are the the panic examples:
- CONFIG_DEBUG_VM_PGFLAGS=y
- kernel parameter mem=2050M
- --------------------------
- page:000003d082008000 is uninitialized and poisoned
- page dumped because: VM_BUG_ON_PAGE(PagePoisoned(p))
- Call Trace:
- ([<0000000000385b26>] test_pages_in_a_zone+0xde/0x160)
-  [<00000000008f15c4>] show_valid_zones+0x5c/0x190
-  [<00000000008cf9c4>] dev_attr_show+0x34/0x70
-  [<0000000000463ad0>] sysfs_kf_seq_show+0xc8/0x148
-  [<00000000003e4194>] seq_read+0x204/0x480
-  [<00000000003b53ea>] __vfs_read+0x32/0x178
-  [<00000000003b55b2>] vfs_read+0x82/0x138
-  [<00000000003b5be2>] ksys_read+0x5a/0xb0
-  [<0000000000b86ba0>] system_call+0xdc/0x2d8
- Last Breaking-Event-Address:
-  [<0000000000385b26>] test_pages_in_a_zone+0xde/0x160
- Kernel panic - not syncing: Fatal exception: panic_on_oops
-
-Fix this by checking whether the pfn to check is within the zone.
-
-[mhocko@suse.com: separated this change from
-http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com]
-Signed-off-by: Mikhail Zaslonko <zaslonko@linux.ibm.com>
-Signed-off-by: Michal Hocko <mhocko@suse.com>
----
- mm/memory_hotplug.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-index 07872789d778..7711d0e327b6 100644
---- a/mm/memory_hotplug.c
-+++ b/mm/memory_hotplug.c
-@@ -1274,6 +1274,9 @@ int test_pages_in_a_zone(unsigned long start_pfn, unsigned long end_pfn,
- 				i++;
- 			if (i == MAX_ORDER_NR_PAGES || pfn + i >= end_pfn)
- 				continue;
-+			/* Check if we got outside of the zone */
-+			if (zone && !zone_spans_pfn(zone, pfn + i))
-+				return 0;
- 			page = pfn_to_page(pfn + i);
- 			if (zone && page_zone(page) != zone)
- 				return 0;
--- 
-2.20.1
-
+SGVsbG8gUGF1bCwNCg0KT24gMjgvMDEvMjAxOSAxNToxOSwgUGF1bCBNb29yZSB3cm90ZToNCj4+
+PiBUbyB0aGUgYmVzdCBvZiBvdXIga25vd2xlZGdlLCBldmVyeW9uZSB3aG8gZW5hYmxlcyBhdWRp
+dCBhdCBjb21waWxlDQo+Pj4gdGltZSBhbHNvIGVuYWJsZXMgc3lzY2FsbCBhdWRpdGluZzsgdGhp
+cyBwYXRjaCBzaW1wbGlmaWVzIHRoZSBLY29uZmlnDQo+Pj4gbWVudXMgYnkgcmVtb3ZpbmcgdGhl
+IG9wdGlvbiB0byBkaXNhYmxlIHN5c2NhbGwgYXVkaXRpbmcgd2hlbiBhdWRpdA0KPj4+IGlzIHNl
+bGVjdGVkIGFuZCB0aGUgdGFyZ2V0IGFyY2ggc3VwcG9ydHMgaXQuDQo+Pj4NCj4+PiBTaWduZWQt
+b2ZmLWJ5OiBQYXVsIE1vb3JlIDxwbW9vcmVAcmVkaGF0LmNvbT4NCj4+IHRoaXMgcGF0Y2ggaXMg
+cmVzcG9uc2libGUgZm9yIG1hc3NpdmUgcGVyZm9ybWFuY2UgZGVncmFkYXRpb24gZm9yIHRob3Nl
+DQo+PiB3aG8gdXNlZCBvbmx5IENPTkZJR19TRUNVUklUWV9BUFBBUk1PUi4NCj4+DQo+PiBBbmQg
+dGhlIG51bWJlcnMgYXJlLCB0YWtlIHRoZSBmb2xsb3dpbmcgdGVzdCBmb3IgaW5zdGFuY2U6DQo+
+Pg0KPj4gZGQgaWY9L2Rldi96ZXJvIG9mPS9kZXYvbnVsbCBjb3VudD0yTQ0KPj4NCj4+IEFSTTY0
+OiAgICAgIDUwME1CL3MgLT4gMzUwTUIvcw0KPj4gQVJNOiAgICAgICAgNDAwTUIvcyAtPiAzMDBN
+Qi9zDQo+IEhpIHRoZXJlLg0KPiANCj4gT3V0IG9mIGN1cmlvc2l0eSwgd2hhdCBrZXJuZWwvZGlz
+dHJpYnV0aW9uIGFyZSB5b3UgcnVubmluZywgb3IgaXMgdGhpcw0KPiBhIGN1c3RvbSBrZXJuZWwg
+Y29tcGlsZT8gIENhbiB5b3UgYWxzbyBzaGFyZSB0aGUgb3V0cHV0IG9mICdhdWRpdGN0bA0KPiAt
+bCcgZnJvbSB5b3VyIHN5c3RlbT8gIFRoZSBnZW5lcmFsIGFwcHJvYWNoIHRha2VuIGJ5IGV2ZXJ5
+b25lIHRvDQo+IHR1cm4tb2ZmIHRoZSBwZXItc3lzY2FsbCBhdWRpdCBvdmVyaGVhZCBpcyB0byBh
+ZGQgdGhlICItYSBuZXZlcix0YXNrIg0KPiBydWxlIHRvIHRoZWlyIGF1ZGl0IGNvbmZpZ3VyYXRp
+b246DQo+IA0KPiAgIyBhdWRpdGN0bCAtYSBuZXZlcix0YXNrDQo+IA0KPiBJZiB5b3UgYXJlIHVz
+aW5nIEZlZG9yYS9DZW50T1MvUkhFTCwgb3IgYSBzaW1pbGFybHkgY29uZmlndXJlZCBzeXN0ZW0s
+DQo+IHlvdSBjYW4gZmluZCB0aGlzIGNvbmZpZ3VyYXRpb24gaW4gdGhlIC9ldGMvYXVkaXQvYXVk
+aXQucnVsZXMgZmlsZSAoYmUNCj4gd2FybmVkLCB0aGF0IGZpbGUgaXMgYXV0b21hdGljYWxseSBn
+ZW5lcmF0ZWQgYmFzZWQgb24NCj4gL2V0Yy9hdWRpdC9ydWxlcy5kKS4NCg0KaGVyZSBhcmUgc29t
+ZSBwZXJmIHJlcG9ydHMgZm9yIHlvdXIgcmVmZXJlbmNlOg0KDQpMaW51eCBmY3QtMGEgNC45LjE0
+NC14eHggYXJtdjdsIGFybXY3bCBhcm12N2wgR05VL0xpbnV4DQojIE92ZXJoZWFkICBDb21tYW5k
+ICBTaGFyZWQgT2JqZWN0ICAgICAgU3ltYm9sICAgICAgICAgICAgICAgICAgICAgIA0KIyAuLi4u
+Li4uLiAgLi4uLi4uLiAgLi4uLi4uLi4uLi4uLi4uLi4gIC4uLi4uLi4uLi4uLi4uLi4uLi4uLi4u
+Li4uLi4NCiMNCiAgICAxNC4zMiUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gdmVj
+dG9yX3N3aQ0KICAgIDEzLjcwJSAgZGQgICAgICAgbGliYy0yLjI4LnNvICAgICAgIFsuXSBfX2xp
+YmNfZG9fc3lzY2FsbA0KICAgICA4LjQyJSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtr
+XSBjdXJyZW50X2tlcm5lbF90aW1lNjQNCiAgICAgNS42NSUgIGRkICAgICAgIFtrZXJuZWwua2Fs
+bHN5bXNdICBba10gYXJtX2NsZWFyX3VzZXINCiAgICAgNS42NSUgIGRkICAgICAgIFtrZXJuZWwu
+a2FsbHN5bXNdICBba10gX19mZ2V0X2xpZ2h0DQogICAgIDUuNTQlICBkZCAgICAgICBba2VybmVs
+LmthbGxzeW1zXSAgW2tdIF9fYXVkaXRfc3lzY2FsbF9lbnRyeQ0KICAgICAzLjc5JSAgZGQgICAg
+ICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBmc25vdGlmeQ0KICAgICAyLjk3JSAgZGQgICAgICAg
+bGliYy0yLjI4LnNvICAgICAgIFsuXSBtZW1jcHkNCiAgICAgMi45NCUgIGRkICAgICAgIFtrZXJu
+ZWwua2FsbHN5bXNdICBba10gX19hdWRpdF9zeXNjYWxsX2V4aXQNCiAgICAgMi42NyUgIGRkICAg
+ICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gX19mc25vdGlmeV9wYXJlbnQNCiAgICAgMi40MyUg
+IGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gdmZzX3JlYWQNCiAgICAgMi4yNCUgIGRk
+ICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gX192ZnNfcmVhZA0KICAgICAyLjIzJSAgZGQg
+ICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSB2ZnNfd3JpdGUNCiAgICAgMS45NiUgIGRkICAg
+ICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gc3lzY2FsbF90cmFjZV9leGl0DQogICAgIDEuNzEl
+ICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIHN5c2NhbGxfdHJhY2VfZW50ZXINCiAg
+ICAgMS4yMyUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gcndfdmVyaWZ5X2FyZWEN
+CiAgICAgMS4yMiUgIGRkICAgICAgIGxpYmMtMi4yOC5zbyAgICAgICBbLl0gcmVhZA0KICAgICAx
+LjE0JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBzZWN1cml0eV9maWxlX3Blcm1p
+c3Npb24NCiAgICAgMS4wNyUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gaW92X2l0
+ZXJfemVybw0KICAgICAxLjAxJSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBfX3N5
+c190cmFjZV9yZXR1cm4NCiAgICAgMC44OCUgIGRkICAgICAgIGxpYmMtMi4yOC5zbyAgICAgICBb
+Ll0gX19HSV9fX2xpYmNfd3JpdGUNCiAgICAgMC44NSUgIGRkICAgICAgIGRkLmNvcmV1dGlscyAg
+ICAgICBbLl0gMHgwMDAwM2M0OA0KICAgICAwLjg0JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3lt
+c10gIFtrXSByZWFkX2l0ZXJfemVybw0KICAgICAwLjc5JSAgZGQgICAgICAgW2tlcm5lbC5rYWxs
+c3ltc10gIFtrXSB1bnJvbGxfdHJlZV9yZWZzDQogICAgIDAuNzUlICBkZCAgICAgICBba2VybmVs
+LmthbGxzeW1zXSAgW2tdIF9fdmZzX3dyaXRlDQogICAgIDAuNjglICBkZCAgICAgICBba2VybmVs
+LmthbGxzeW1zXSAgW2tdIF9fZmRnZXRfcG9zDQogICAgIDAuNjQlICBkZCAgICAgICBkZC5jb3Jl
+dXRpbHMgICAgICAgWy5dIDB4MDAwMDEzYTQNCiAgICAgMC41OSUgIGRkICAgICAgIFtrZXJuZWwu
+a2FsbHN5bXNdICBba10gZHB1dA0KICAgICAwLjU3JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3lt
+c10gIFtrXSBrZnJlZQ0KICAgICAwLjU2JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtr
+XSBwYXRoX3B1dA0KICAgICAwLjUyJSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBy
+ZXRfdG9fdXNlcg0KDQpMaW51eCBmY3RqLTBhIDQuNC4xNjctZzQyMjBjMDkteHh4IGFybXY3bCBH
+TlUvTGludXgNCiMgT3ZlcmhlYWQgIENvbW1hbmQgIFNoYXJlZCBPYmplY3QgICAgICBTeW1ib2wg
+ICAgICAgICAgICAgICAgICAgICAgICAgDQojIC4uLi4uLi4uICAuLi4uLi4uICAuLi4uLi4uLi4u
+Li4uLi4uLiAgLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLg0KIw0KICAgIDIzLjkxJSAg
+ZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSB2ZWN0b3Jfc3dpICAgICAgICAgICAgICAg
+ICANCiAgICAxOS41NyUgIGRkICAgICAgIGxpYmMtMi4yOC5zbyAgICAgICBbLl0gX19saWJjX2Rv
+X3N5c2NhbGwgICAgICAgICAgDQogICAgIDUuNjclICBkZCAgICAgICBba2VybmVsLmthbGxzeW1z
+XSAgW2tdIGFybV9jbGVhcl91c2VyICAgICAgICAgICAgIA0KICAgICA0LjI1JSAgZGQgICAgICAg
+bGliYy0yLjI4LnNvICAgICAgIFsuXSBtZW1jcHkgICAgICAgICAgICAgICAgICAgICANCiAgICAg
+NC4yMiUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gZnNub3RpZnkgICAgICAgICAg
+ICAgICAgICAgDQogICAgIDMuOTMlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIF9f
+ZmdldF9saWdodCAgICAgICAgICAgICAgIA0KICAgICAzLjEwJSAgZGQgICAgICAgW2tlcm5lbC5r
+YWxsc3ltc10gIFtrXSByZWFkX2l0ZXJfemVybyAgICAgICAgICAgICANCiAgICAgMi41MSUgIGRk
+ICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gdmZzX3dyaXRlICAgICAgICAgICAgICAgICAg
+DQogICAgIDIuMDYlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIHJldF9mYXN0X3N5
+c2NhbGwgICAgICAgICAgIA0KICAgICAxLjk3JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10g
+IFtrXSBfX2Zzbm90aWZ5X3BhcmVudCAgICAgICAgICANCiAgICAgMS42NiUgIGRkICAgICAgIGxp
+YmMtMi4yOC5zbyAgICAgICBbLl0gcmVhZCAgICAgICAgICAgICAgICAgICAgICAgDQogICAgIDEu
+NjUlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIF9fdmZzX3JlYWQgICAgICAgICAg
+ICAgICAgIA0KICAgICAxLjYzJSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBtbWlv
+c2V0ICAgICAgICAgICAgICAgICAgICANCiAgICAgMS42MSUgIGRkICAgICAgIFtrZXJuZWwua2Fs
+bHN5bXNdICBba10gdmZzX3JlYWQgICAgICAgICAgICAgICAgICAgDQogICAgIDEuNDclICBkZCAg
+ICAgICBsaWJjLTIuMjguc28gICAgICAgWy5dIF9fR0lfX19saWJjX3dyaXRlICAgICAgICAgIA0K
+ICAgICAxLjM5JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSByd192ZXJpZnlfYXJl
+YSAgICAgICAgICAgICANCiAgICAgMS4zOSUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBb
+a10gc2VjdXJpdHlfZmlsZV9wZXJtaXNzaW9uICAgDQogICAgIDEuMzQlICBkZCAgICAgICBba2Vy
+bmVsLmthbGxzeW1zXSAgW2tdIGlvdl9pdGVyX2luaXQgICAgICAgICAgICAgIA0KICAgICAxLjM0
+JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBpb3ZfaXRlcl96ZXJvICAgICAgICAg
+ICAgICANCiAgICAgMS4yMCUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gbG9jYWxf
+cmVzdGFydCAgICAgICAgICAgICAgDQogICAgIDAuODklICBkZCAgICAgICBba2VybmVsLmthbGxz
+eW1zXSAgW2tdIHN5c19yZWFkICAgICAgICAgICAgICAgICAgIA0KICAgICAwLjg5JSAgZGQgICAg
+ICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBfY29uZF9yZXNjaGVkICAgICAgICAgICAgICANCiAg
+ICAgMC44NiUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gX19mZGdldF9wb3MgICAg
+ICAgICAgICAgICAgDQogICAgIDAuODUlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2td
+IHN5c193cml0ZSAgICAgICAgICAgICAgICAgIA0KICAgICAwLjc3JSAgZGQgICAgICAgZGQgICAg
+ICAgICAgICAgICAgIFsuXSAweDAwMDAzZGYwICAgICAgICAgICAgICAgICANCiAgICAgMC43MiUg
+IGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gX192ZnNfd3JpdGUgICAgICAgICAgICAg
+ICAgDQogICAgIDAuNjElICBkZCAgICAgICBkZCAgICAgICAgICAgICAgICAgWy5dIDB4MDAwMDM5
+NDYgICAgICAgICAgICAgICAgIA0KICAgICAwLjU1JSAgZGQgICAgICAgZGQgICAgICAgICAgICAg
+ICAgIFsuXSAweDAwMDAzOGVlICAgICAgICAgICAgICAgICANCiAgICAgMC41MSUgIGRkICAgICAg
+IGRkICAgICAgICAgICAgICAgICBbLl0gMHgwMDAwM2NhOCAgICAgICAgICAgICAgICAgDQoNCg0K
+LS0gDQpCZXN0IHJlZ2FyZHMsDQpBbGV4YW5kZXIgU3ZlcmRsaW4uDQo=
