@@ -2,384 +2,74 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78331C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:53:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A86AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B2AF2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:53:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548683582;
-	bh=/r2nGIzRHMJUgPOsG569908Ek9lBYpDrSxo8XLr98ZY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
-	b=Uq+CA3jaXvYvVyu8UMtxmNIk3I2xWD5gFXafDzLURcFztaUQyRGKU4h8TDHw9yHDI
-	 BdmhE93gz8PJ0XJHq3d7sJs/u+sxZ6pMXrhh4ftPLXuk2j4IzX5krGeaAjiSg07wDf
-	 kaXAdSwxqYMw1GPBT3PZnHOBGsbUBDXyhaU6/bRA=
+	by mail.kernel.org (Postfix) with ESMTP id 1647D21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:53:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726803AbfA1NxA (ORCPT
+        id S1726862AbfA1NxF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:53:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33378 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726672AbfA1NxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:53:00 -0500
-Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6CE32087F;
-        Mon, 28 Jan 2019 13:52:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548683579;
-        bh=/r2nGIzRHMJUgPOsG569908Ek9lBYpDrSxo8XLr98ZY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Ko7TFuk9B34y2xtqzxjND1SHShOsASH2/Wp1C69qV4v2vkVYG/7uTGl1hKv2J/vk0
-         KfBjPse2rj/TmHesJnclI51XbDeuDonEsobLu6OEcgOC5+I9jzNB/l2Wl2bJBwEwvt
-         as1fGQ7e3pdZNnKN0KR41Pc05tJzIuQnO/fP0GnY=
-Date:   Mon, 28 Jan 2019 22:52:54 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Daniel Bristot de Oliveira <bristot@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Jiri Kosina <jkosina@suse.cz>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Chris von Recklinghausen <crecklin@redhat.com>,
-        Jason Baron <jbaron@akamai.com>, Scott Wood <swood@redhat.com>,
-        Marcelo Tosatti <mtosatti@redhat.com>,
-        Clark Williams <williams@redhat.com>, x86@kernel.org
-Subject: Re: [PATCH V3 7/9] x86/alternative: Batch of patch operations
-Message-Id: <20190128225254.6a30448ad13577c865f2bf69@kernel.org>
-In-Reply-To: <82bd24f1-305d-fa0c-aa13-3eac4a31fb93@redhat.com>
-References: <cover.1545228276.git.bristot@redhat.com>
-        <e3057f0d0bddd625de6d4e7c631faf734e28628b.1545228276.git.bristot@redhat.com>
-        <20190123141523.eb6aa6a17efc76881e89e130@kernel.org>
-        <82bd24f1-305d-fa0c-aa13-3eac4a31fb93@redhat.com>
-X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 28 Jan 2019 08:53:05 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47174 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726672AbfA1NxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 08:53:04 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A2CB9AEF5;
+        Mon, 28 Jan 2019 13:53:02 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 14:49:54 +0100
+From:   Cyril Hrubis <chrubis@suse.cz>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Matthew Wilcox <willy@infradead.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dominique Martinet <asmadeus@codewreck.org>,
+        Andy Lutomirski <luto@amacapital.net>,
+        Josh Snyder <joshs@netflix.com>,
+        Dave Chinner <david@fromorbit.com>,
+        Jann Horn <jannh@google.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
+Message-ID: <20190128134954.GB18885@rei>
+References: <CAHk-=wgF9p9xNzZei_-ejGLy1bJf4VS1C5E9_V0kCTEpCkpCTQ@mail.gmail.com>
+ <9E337EA6-7CDA-457B-96C6-E91F83742587@amacapital.net>
+ <CAHk-=wjqkbjL2_BwUYxJxJhdadiw6Zx-Yu_mK3E6P7kG3wSGcQ@mail.gmail.com>
+ <20190116054613.GA11670@nautica>
+ <CAHk-=wjVjecbGRcxZUSwoSgAq9ZbMxbA=MOiqDrPgx7_P3xGhg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901161710470.6626@cbobk.fhfr.pm>
+ <CAHk-=wgsnWvSsMfoEYzOq6fpahkHWxF3aSJBbVqywLa34OXnLg@mail.gmail.com>
+ <nycvar.YFH.7.76.1901162120000.6626@cbobk.fhfr.pm>
+ <20190116213708.GN6310@bombadil.infradead.org>
+ <nycvar.YFH.7.76.1901162238310.6626@cbobk.fhfr.pm>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.1901162238310.6626@cbobk.fhfr.pm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 26 Jan 2019 12:52:15 +0100
-Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
+Hi!
+> > Of course, there aren't any tests for RWF_NOWAIT in xfstests.  Are there 
+> > any in LTP?
 
-> On 1/23/19 6:15 AM, Masami Hiramatsu wrote:
-> > Hi Daniel,
-> > 
-> > On Fri, 21 Dec 2018 11:27:32 +0100
-> > Daniel Bristot de Oliveira <bristot@redhat.com> wrote:
-> > 
-> >> Currently, the patch of an address is done in three steps:
-> >>
-> >> -- Pseudo-code #1 - Current implementation ---
-> >>         1) add an int3 trap to the address that will be patched
-> >>             sync cores (send IPI to all other CPUs)
-> >>         2) update all but the first byte of the patched range
-> >>             sync cores (send IPI to all other CPUs)
-> >>         3) replace the first byte (int3) by the first byte of replacing opcode
-> >>             sync cores (send IPI to all other CPUs)
-> >> -- Pseudo-code #1 ---
-> >>
-> >> When a static key has more than one entry, these steps are called once for
-> >> each entry. The number of IPIs then is linear with regard to the number 'n' of
-> >> entries of a key: O(n*3), which is O(n).
-> >>
-> >> This algorithm works fine for the update of a single key. But we think
-> >> it is possible to optimize the case in which a static key has more than
-> >> one entry. For instance, the sched_schedstats jump label has 56 entries
-> >> in my (updated) fedora kernel, resulting in 168 IPIs for each CPU in
-> >> which the thread that is enabling the key is _not_ running.
-> >>
-> >> With this patch, rather than receiving a single patch to be processed, a vector
-> >> of patches is passed, enabling the rewrite of the pseudo-code #1 in this
-> >> way:
-> >>
-> >> -- Pseudo-code #2 - This patch  ---
-> >> 1)  for each patch in the vector:
-> >>         add an int3 trap to the address that will be patched
-> >>
-> >>     sync cores (send IPI to all other CPUs)
-> >>
-> >> 2)  for each patch in the vector:
-> >>         update all but the first byte of the patched range
-> >>
-> >>     sync cores (send IPI to all other CPUs)
-> >>
-> >> 3)  for each patch in the vector:
-> >>         replace the first byte (int3) by the first byte of replacing opcode
-> >>
-> >>     sync cores (send IPI to all other CPUs)
-> >> -- Pseudo-code #2 - This patch  ---
-> >>
-> >> Doing the update in this way, the number of IPI becomes O(3) with regard
-> >> to the number of keys, which is O(1).
-> >>
-> >> The batch mode is done with the function text_poke_bp_batch(), that receives
-> >> two arguments: a vector of "struct text_to_poke", and the number of entries
-> >> in the vector.
-> >>
-> >> The vector must be sorted by the addr field of the text_to_poke structure,
-> >> enabling the binary search of a handler in the poke_int3_handler function
-> >> (a fast path).
-> >>
-> >> Signed-off-by: Daniel Bristot de Oliveira <bristot@redhat.com>
-> >> Cc: Thomas Gleixner <tglx@linutronix.de>
-> >> Cc: Ingo Molnar <mingo@redhat.com>
-> >> Cc: Borislav Petkov <bp@alien8.de>
-> >> Cc: "H. Peter Anvin" <hpa@zytor.com>
-> >> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> >> Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> >> Cc: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
-> >> Cc: Jiri Kosina <jkosina@suse.cz>
-> >> Cc: Josh Poimboeuf <jpoimboe@redhat.com>
-> >> Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>
-> >> Cc: Chris von Recklinghausen <crecklin@redhat.com>
-> >> Cc: Jason Baron <jbaron@akamai.com>
-> >> Cc: Scott Wood <swood@redhat.com>
-> >> Cc: Marcelo Tosatti <mtosatti@redhat.com>
-> >> Cc: Clark Williams <williams@redhat.com>
-> >> Cc: x86@kernel.org
-> >> Cc: linux-kernel@vger.kernel.org
-> >> ---
-> >>  arch/x86/include/asm/text-patching.h |  15 ++++
-> >>  arch/x86/kernel/alternative.c        | 108 +++++++++++++++++++++++++--
-> >>  2 files changed, 117 insertions(+), 6 deletions(-)
-> >>
-> >> diff --git a/arch/x86/include/asm/text-patching.h b/arch/x86/include/asm/text-patching.h
-> >> index e85ff65c43c3..42ea7846df33 100644
-> >> --- a/arch/x86/include/asm/text-patching.h
-> >> +++ b/arch/x86/include/asm/text-patching.h
-> >> @@ -18,6 +18,20 @@ static inline void apply_paravirt(struct paravirt_patch_site *start,
-> >>  #define __parainstructions_end	NULL
-> >>  #endif
-> >>  
-> >> +/*
-> >> + * Currently, the max observed size in the kernel code is
-> >> + * JUMP_LABEL_NOP_SIZE/RELATIVEJUMP_SIZE, which are 5.
-> >> + * Raise it if needed.
-> >> + */
-> >> +#define POKE_MAX_OPCODE_SIZE	5
-> >> +
-> >> +struct text_to_poke {
-> >> +	void *handler;
-> >> +	void *addr;
-> >> +	size_t len;
-> >> +	const char opcode[POKE_MAX_OPCODE_SIZE];
-> >> +};
-> >> +
-> >>  extern void *text_poke_early(void *addr, const void *opcode, size_t len);
-> >>  
-> >>  /*
-> >> @@ -37,6 +51,7 @@ extern void *text_poke_early(void *addr, const void *opcode, size_t len);
-> >>  extern void *text_poke(void *addr, const void *opcode, size_t len);
-> >>  extern int poke_int3_handler(struct pt_regs *regs);
-> >>  extern void *text_poke_bp(void *addr, const void *opcode, size_t len, void *handler);
-> >> +extern void text_poke_bp_batch(struct text_to_poke *tp, unsigned int nr_entries);
-> >>  extern int after_bootmem;
-> >>  
-> >>  #endif /* _ASM_X86_TEXT_PATCHING_H */
-> >> diff --git a/arch/x86/kernel/alternative.c b/arch/x86/kernel/alternative.c
-> >> index 6f5ad8587de0..8fa47e5ec709 100644
-> >> --- a/arch/x86/kernel/alternative.c
-> >> +++ b/arch/x86/kernel/alternative.c
-> >> @@ -21,6 +21,7 @@
-> >>  #include <asm/tlbflush.h>
-> >>  #include <asm/io.h>
-> >>  #include <asm/fixmap.h>
-> >> +#include <linux/bsearch.h>
-> >>  
-> >>  int __read_mostly alternatives_patched;
-> >>  
-> >> @@ -738,10 +739,32 @@ static void do_sync_core(void *info)
-> >>  }
-> >>  
-> >>  static bool bp_patching_in_progress;
-> >> +/*
-> >> + * Single poke.
-> >> + */
-> >>  static void *bp_int3_handler, *bp_int3_addr;
-> >> +/*
-> >> + * Batching poke.
-> >> + */
-> >> +static struct text_to_poke *bp_int3_tpv;
-> >> +static unsigned int bp_int3_tpv_nr;
-> >> +
-> >> +static int text_bp_batch_bsearch(const void *key, const void *elt)
-> >> +{
-> >> +	struct text_to_poke *tp = (struct text_to_poke *) elt;
-> >> +
-> >> +	if (key < tp->addr)
-> >> +		return -1;
-> >> +	if (key > tp->addr)
-> >> +		return 1;
-> >> +	return 0;
-> >> +}
-> >>  
-> >>  int poke_int3_handler(struct pt_regs *regs)
-> >>  {
-> >> +	void *ip;
-> >> +	struct text_to_poke *tp;
-> >> +
-> >>  	/*
-> >>  	 * Having observed our INT3 instruction, we now must observe
-> >>  	 * bp_patching_in_progress.
-> >> @@ -757,21 +780,41 @@ int poke_int3_handler(struct pt_regs *regs)
-> >>  	if (likely(!bp_patching_in_progress))
-> >>  		return 0;
-> >>  
-> >> -	if (user_mode(regs) || regs->ip != (unsigned long)bp_int3_addr)
-> >> +	if (user_mode(regs))
-> >>  		return 0;
-> >>  
-> >> -	/* set up the specified breakpoint handler */
-> >> -	regs->ip = (unsigned long) bp_int3_handler;
-> >> +	/*
-> >> +	 * Single poke first.
-> >> +	 */
-> > 
-> > I wonder why would you separate single poke and batch poke?
-> > It seems a single poke is just a case that bp_int3_tpv_nr == 1.
-> 
-> Hi Masami!
-> 
-> The single poke is used only at the boot time, before the system is able to
-> allocate memory. After that, the batch mode becomes the default.
+Just FYI I've send a patch with basic RWF_NOWAIT test for review to LTP
+ML and also CCed mailing lists from this thread.
 
-Hmm, what's the difference from text_poke_early()?
-
-> 
-> I was thinking to make one function to each method, but then I would have to
-> change the do_int3() and manage how to switch between one and the other without
-> further overhead. I was planing to do this in a second round of improvements.
-
-I didn't think such big change.
-I just thought we could allocate single entry array on stack, something like
-
-text_poke_bp(void *addr, const void *opcode, size_t len, void *handler)
-{
-	struct text_to_poke tp = {.handler = handler, .addr = addr, .len = len};
-	if (len > POKE_MAX_OPCODE_SIZE)
-		return -E2BIG;
-	memcpy(tp.opcode, opcode, len);
-	return text_poke_bp_batch(&tp, 1);
-}
-
-> 
-> > If so, you can remove bp_int3_addr and this block.
-> > 
-> >> +	if (bp_int3_addr) {
-> >> +		if (regs->ip == (unsigned long) bp_int3_addr) {
-> >> +			regs->ip = (unsigned long) bp_int3_handler;
-> >> +			return 1;
-> >> +		}
-> >> +		return 0;
-> >> +	}
-> >>
-> >> -	return 1;
-> >> +	/*
-> >> +	 * Batch mode.
-> >> +	 */
-> >> +	if (bp_int3_tpv_nr) {
-> > 
-> > if (unlikely(bp_int3_tpv_nr))
-> > 
-> > Sorry about interrupting, but this is a "hot-path" when we use kprobes.
-> 
-> No problem at all! :-)
-
-Thanks! :-)
-
-> 
-> I will change this function to better deal with the hot-path (the default mode
-> after the system boots up).
-> 
-> how about something like this:
-> ------------------ %< ------------------
-> int poke_int3_handler(struct pt_regs *regs)
-> {
->         void *ip;
->         struct text_to_poke *tp;
-> 
->         /*
->          * Having observed our INT3 instruction, we now must observe
->          * bp_patching_in_progress.
->          *
->          *      in_progress = TRUE              INT3
->          *      WMB                             RMB
->          *      write INT3                      if (in_progress)
->          *
->          * Idem for bp_int3_handler.
->          */
->         smp_rmb();
-> 
->         if (likely(!bp_patching_in_progress))
->                 return 0;
-> 
->         if (user_mode(regs))
->                 return 0;
-> 
->         /*
->          * Single poke is only used at the boot.
->          */
->         if (unlikely(!bp_int3_tpv))
->                 goto single_poke;
-> 
->         ip = (void *) regs->ip - sizeof(unsigned char);
->         tp = bsearch(ip, bp_int3_tpv, bp_int3_tpv_nr,
->                      sizeof(struct text_to_poke),
->                      text_bp_batch_bsearch);
->         if (tp) {
->                 /* set up the specified breakpoint handler */
->                 regs->ip = (unsigned long) tp->handler;
->                 return 1;
->         }
-> 
->         return 0;
-> 
-> single_poke:
->         if (regs->ip == (unsigned long) bp_int3_addr) {
->                 regs->ip = (unsigned long) bp_int3_handler;
->                 return 1;
->         }
-> 
->         return 0;
-> }
-> ------------- >% ----------
-> 
-> In this way the default code is up, and the only 'if' I am using is a var of the
-> batch mode (that will be used later). If are are still at the boot, we are
-> jumping to the end of the function.
-> 
-> look better?
-
-yeah, it looks much better. But I just wonder why don't you consolidate both by
-just because reducing code.
-
-> 
-> > 
-> > Also, could you add NOKPROBE_SYMBOL(); for all symbols involved in this
-> > process?
-> > Recently I found I missed it for poke_int3_handler and sent a fix.
-> > ( https://www.mail-archive.com/linux-kernel@vger.kernel.org/msg1898241.html )
-> > If this increase the function-call-chain from poke_int3_handler, those
-> > must be marked as NOKPROBE_SYMBOL().
-> 
-> Ack! Doing that!
-
-Thank you!
-
-> 
-> Thanks!
-
+https://lkml.org/lkml/2019/1/28/416
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Cyril Hrubis
+chrubis@suse.cz
