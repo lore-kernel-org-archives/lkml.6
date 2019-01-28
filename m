@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B7D0C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:02:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95CB0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:02:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DAAF2082E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:02:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5DF6A2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:02:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691326;
-	bh=bfYfdsACu4/XDMdOLmpqe4guQy3fQQGA9ejQermmO4c=;
+	s=default; t=1548691329;
+	bh=khEciF1J8C5dG2EQcIl21l4X5RDmspjmIGFXJSMYwDs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=smKDtxca8KeRbmZ6JjwneFJrnHeXg9fm6f1EOx2/yawhdWuGg0HrIY3VAP2jvZHJi
-	 xhZljJ1QhmdSGH2/pYdWi7Lgv4ge151OSbZB7MZvwpZ5+WYI/JbDy1lTg7k/Gu93/n
-	 KDPpAhWTV+W7V1CGF/Mv2L78vOI3UYIjAbX8N/ng=
+	b=vUJObnv+Kjs2t3jI96hvWyZdWuvs/klaTvysSsSZv4LaMMjr9NSOAJkmNJ0Dz6gYK
+	 ldWlhqQqxWdtY7psoQfhUbVRKM1EVVQQBZ95SuFAAgRn2wDlC961qdxmlSFTErO2gS
+	 RVxOgp3dA+fKBkSkhkJcH3ByDJdB8nOzmyCWeVFc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731203AbfA1QCE (ORCPT
+        id S1731188AbfA1QCD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:02:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47274 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:02:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47210 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731166AbfA1QCC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:02:02 -0500
+        id S1731159AbfA1QCA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:02:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CFF721927;
-        Mon, 28 Jan 2019 16:02:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 657DA2175B;
+        Mon, 28 Jan 2019 16:01:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691321;
-        bh=bfYfdsACu4/XDMdOLmpqe4guQy3fQQGA9ejQermmO4c=;
+        s=default; t=1548691319;
+        bh=khEciF1J8C5dG2EQcIl21l4X5RDmspjmIGFXJSMYwDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FOUO1o4e6wvFceuLFbrGsbM+i7xPuv65Bz8xCHyHIW55GdJYHUfmllqySJ18sxdYN
-         d2vqxuTZLak1kQG2VHYaQfX9GGM3fm/5BzSjIqYu0UWa+8ASI/E3EoQbgeOwPiV09C
-         dOLxiuJqPOTOoiYVqxxkkR92MshVcNpxkj8mDU2w=
+        b=rUcCFGV9a3p+Xnr5bP8DJu7ie6S1moD59y0rKJvQ2ixHQ7GhsLwejewVTN0SFREQv
+         MhpDLUMD2hkz2xR0EooLyCcgJiT90XRYovPDd0TI2Qu2kKzQZwkmDYviuPcUxR+NOT
+         l4gTKcHdhK/l0HDjeoinZ4cYICEUv6UmGM6hVvqc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Gao Xiang <gaoxiang25@huawei.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-erofs@lists.ozlabs.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 058/258] staging: erofs: fix the definition of DBG_BUGON
-Date:   Mon, 28 Jan 2019 10:56:04 -0500
-Message-Id: <20190128155924.51521-58-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 057/258] media: mtk-vcodec: Release device nodes in mtk_vcodec_init_enc_pm()
+Date:   Mon, 28 Jan 2019 10:56:03 -0500
+Message-Id: <20190128155924.51521-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,48 +59,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gao Xiang <gaoxiang25@huawei.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit eef168789866514e5d4316f030131c9fe65b643f ]
+[ Upstream commit 8ea0f2ba0fa3f91ea1b8d823a54b042026ada6b3 ]
 
-It's better not to positively BUG_ON the kernel, however developers
-need a way to locate issues as soon as possible.
+of_parse_phandle() returns the device node with refcount incremented.
+There are two nodes that are used temporary in mtk_vcodec_init_enc_pm(),
+but their refcounts are not decremented.
 
-DBG_BUGON is introduced and it could only crash when EROFS_FS_DEBUG
-(EROFS developping feature) is on. It is helpful for developers
-to find and solve bugs quickly by eng builds.
+The patch adds one of_node_put() and fixes returning error codes.
 
-Previously, DBG_BUGON is defined as ((void)0) if EROFS_FS_DEBUG is off,
-but some unused variable warnings as follows could occur:
+Found by Linux Driver Verification project (linuxtesting.org).
 
-drivers/staging/erofs/unzip_vle.c: In function `init_alway:':
-drivers/staging/erofs/unzip_vle.c:61:33: warning: unused variable `work' [-Wunused-variable]
-  struct z_erofs_vle_work *const work =
-                                 ^~~~
-
-Fix it to #define DBG_BUGON(x) ((void)(x)).
-
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Gao Xiang <gaoxiang25@huawei.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/erofs/internal.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/staging/erofs/internal.h b/drivers/staging/erofs/internal.h
-index 367b39fe46e5..e6313c54e3ad 100644
---- a/drivers/staging/erofs/internal.h
-+++ b/drivers/staging/erofs/internal.h
-@@ -39,7 +39,7 @@
- #define debugln(x, ...)         ((void)0)
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+index 3e73e9db781f..7c025045ea90 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+@@ -41,25 +41,27 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 0);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pm->larbvenc = &pdev->dev;
  
- #define dbg_might_sleep()       ((void)0)
--#define DBG_BUGON(...)          ((void)0)
-+#define DBG_BUGON(x)            ((void)(x))
- #endif
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 1);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
  
- #ifdef CONFIG_EROFS_FAULT_INJECTION
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 
+ 	pm->larbvenclt = &pdev->dev;
 -- 
 2.19.1
 
