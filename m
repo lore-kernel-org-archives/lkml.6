@@ -2,209 +2,287 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08EE4C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:50:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20130C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C41BB20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:50:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="aZiP/Q52"
+	by mail.kernel.org (Postfix) with ESMTP id D572420881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:51:20 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfA1Huw (ORCPT
+        id S1726648AbfA1HvS convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:50:52 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:35045 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbfA1Huv (ORCPT
+        Mon, 28 Jan 2019 02:51:18 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43774 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbfA1HvR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:50:51 -0500
-Received: by mail-it1-f193.google.com with SMTP id p197so18059104itp.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 23:50:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HICkapWg27iyhgzEsEbJrxhO+P32hzzqXI53DO57g7Q=;
-        b=aZiP/Q52ZYJbsTu24TjWMph8AsnVGR+U91sP95ylnU+HUICiVhKEPwBBcu0VoBrl3f
-         WKDcbpdN7bGXCZ6zO4s+5htCF874lpfqU9FZSNY0mpM8i6EwjduK2QrLHtsilXGUaCHl
-         ZJrIA9BdE478hq4yYY9LHeiqSYGrru2MLHS8s=
+        Mon, 28 Jan 2019 02:51:17 -0500
+Received: from mail-pl1-f198.google.com ([209.85.214.198])
+        by youngberry.canonical.com with esmtps (TLS1.0:RSA_AES_128_CBC_SHA1:16)
+        (Exim 4.76)
+        (envelope-from <kai.heng.feng@canonical.com>)
+        id 1go1hJ-0006AI-Oj
+        for linux-kernel@vger.kernel.org; Mon, 28 Jan 2019 07:51:14 +0000
+Received: by mail-pl1-f198.google.com with SMTP id ay11so11252149plb.20
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 23:51:13 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HICkapWg27iyhgzEsEbJrxhO+P32hzzqXI53DO57g7Q=;
-        b=ihmrFfFUfnbTa9zkhAG0AUxRdbAcUK7QdXzXYE23vj1MhqxVs6tb0ylFYhWhsMHweQ
-         mu7kRIjSoQVu83wbiQaLQHQEm8+IQmW1iqnPrllreOCnj/NVb2dnw0JXGigezkTvHtSe
-         RDxIg1qEbn1TqGMMjF5lQXytnLTwNHiT+9hm8Fu7eZbvzrK496f9mQk4LFMkysDgGC6L
-         VwOD/QxVrkeHB/jSWQ3EbVlHYgTzMdHu1/MNflrstFeajifkGjldIeZIg/zF3sPT3lZB
-         jr+Gtww8Y3G31BZfv+ftfgMOa4A3h6E+udi8GIqPH/SlQ0Rmt01nEaHvo0oLw2uKP5XE
-         yeyg==
-X-Gm-Message-State: AJcUukd09eGW7IbKB+qf5SkSv2CM+X+mQ+IViz7BsFnbGw8K+jJHVCT0
-        hhxFm0P2TXehUdpjpGWHqfHgKWjNDTSdq6D/IvUx5Q==
-X-Google-Smtp-Source: ALg8bN4jrWPGadFPjiDRwASFBWBR5LYM8fa/gJvlWaTThQlLFKgpetch1Q8BIPmJKXj9J0sv8V+oMgq0ga/DtPGjYGY=
-X-Received: by 2002:a24:4f07:: with SMTP id c7mr9844892itb.107.1548661849682;
- Sun, 27 Jan 2019 23:50:49 -0800 (PST)
-MIME-Version: 1.0
-References: <20190124175801.28018-1-jagan@amarulasolutions.com> <20190125153958.3aertsxgdzjldlzd@flea>
-In-Reply-To: <20190125153958.3aertsxgdzjldlzd@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 28 Jan 2019 13:20:37 +0530
-Message-ID: <CAMty3ZCuBqiOGAixWhy5bYqUHk0_=NvX08zp2F+MT4GgVEo+Rw@mail.gmail.com>
-Subject: Re: [PATCH] media: ov5640: Fix set 15fps regression
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
+         :content-transfer-encoding:message-id:references:to;
+        bh=/E+wvqgvML2gnJk6c1toEQKZlLCIrBjpRFvWrvUmb7E=;
+        b=dBaBt+lVl8YhA/PiuNi5SWMFzpdH0SvJe2YQc1TALrS8lgBYYPCvbThwJZOnAritQQ
+         NKq5E4eRQ3ygpwn8OJUt6lacUhLVwpaUIY+Bu4Nk+0Cx5jDXXfgS3TFKTbVstgAdV7uA
+         5L5ICBxyAIJkJw5VMj3tbuV+kRxCKyHiY1NgAEekyYRt9qiwwUalwdrdAqNbEl8g2hEg
+         BVh1CUfDL3yEB92DK3YrMCVf2qJdGU/Mf1SrBiItOvvI6Q2w4vRnsJfDoxpn8Fx4AqZK
+         PQLQX/KD02Vy9LC/J+zEcZL4tDk2S42ZN+6dEUML0fnOEAvC+Mygus8USAqwM4KyclnR
+         eymw==
+X-Gm-Message-State: AJcUukdHRrkxEVuMVS+ugnHcE5Lj9XfGimNhaTYxM9nGY8NKSIiPZN+l
+        3xGFLNG6eDR2jbT7BOfSDRp3g0AKBrt95AuIdvYbPfC0BHVBIAYhCpUofkBa+7LEjRmcZtpNrGU
+        AjBJaatX8Flq2aIwle4sOIoJgAdvlkjGvWbQoOlcQKA==
+X-Received: by 2002:a63:e74b:: with SMTP id j11mr19041150pgk.397.1548661872393;
+        Sun, 27 Jan 2019 23:51:12 -0800 (PST)
+X-Google-Smtp-Source: ALg8bN7uq+SsaHOGr0yF2ai2raaqQn+2M9TbAvNvM4jcQrNlphqQ7jLwInt94CVrwu6OQC6UYkmxUg==
+X-Received: by 2002:a63:e74b:: with SMTP id j11mr19041126pgk.397.1548661871959;
+        Sun, 27 Jan 2019 23:51:11 -0800 (PST)
+Received: from [10.101.46.245] (61-220-137-37.HINET-IP.hinet.net. [61.220.137.37])
+        by smtp.gmail.com with ESMTPSA id s84sm63252569pfi.15.2019.01.27.23.51.09
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 27 Jan 2019 23:51:11 -0800 (PST)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
+Subject: Re: [PATCH] PCI / ACPI: Don't clear pme_poll on device that has
+ unreliable ACPI wake
+From:   Kai Heng Feng <kai.heng.feng@canonical.com>
+In-Reply-To: <20190124200508.GH14636@google.com>
+Date:   Mon, 28 Jan 2019 15:51:08 +0800
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, jeffrey.t.kirsher@intel.com,
+        intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <C7E9B3C9-7E20-4CEB-8B56-D9A8D2E76DD0@canonical.com>
+References: <20190122064544.27426-1-kai.heng.feng@canonical.com>
+ <20190122235134.GE14636@google.com>
+ <91E74111-5BB6-4604-A1D7-B537AB42C317@canonical.com>
+ <20190124151524.GF14636@google.com>
+ <FFC6EC3F-3608-41FC-8B14-815D1747C4B6@canonical.com>
+ <20190124200508.GH14636@google.com>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+X-Mailer: Apple Mail (2.3445.101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 9:10 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Jan 24, 2019 at 11:28:01PM +0530, Jagan Teki wrote:
-> > The ov5640_try_frame_interval operation updates the FPS as per user
-> > input based on default ov5640_frame_rate, OV5640_30_FPS which is failed
-> > to update when user trigger 15fps.
-> >
-> > So, initialize the default ov5640_frame_rate to OV5640_15_FPS so-that
-> > it can satisfy to update all fps.
-> >
-> > Fixes: 5a3ad937bc78 ("media: ov5640: Make the return rate type more explicit")
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
->
-> I'm pretty sure I tested this and it was working fine. You're
-> mentionning a regression, but what regression is there exactly (ie,
-> what was working before that commit that doesn't work anymore?). What
-> tools/commands are you using to see this behaviour?
-
-In fact I have mentioned this on your v9 [1], may be you missed it.
-
-I have reproduced with media-ctl, below is the full log. let me know
-if I still miss anything.
-
-Before this change:
-# media-ctl -p
-Media controller API version 5.0.0
-
-Media device information
-------------------------
-driver          sun6i-csi
-model           Allwinner Video Capture Device
-serial
-bus info
-hw revision     0x0
-driver version  5.0.0
-
-Device topology
-- entity 1: sun6i-csi (1 pad, 1 link)
-            type Node subtype V4L flags 0
-            device node name /dev/video0
-        pad0: Sink
-                <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
-
-- entity 5: ov5640 1-003c (1 pad, 1 link)
-            type V4L2 subdev subtype Sensor flags 0
-            device node name /dev/v4l-subdev0
-        pad0: Source
-                [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb
-xfer:srgb ycbcr:601 quantization:full-range]
-                -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
-
-# media-ctl --set-v4l2 "'ov5640 1-003c':0[fmt:UYVY8_2X8/640x480@1/15 field:none]
-"
-# media-ctl -p
-Media controller API version 5.0.0
-
-Media device information
-------------------------
-driver          sun6i-csi
-model           Allwinner Video Capture Device
-serial
-bus info
-hw revision     0x0
-driver version  5.0.0
-
-Device topology
-- entity 1: sun6i-csi (1 pad, 1 link)
-            type Node subtype V4L flags 0
-            device node name /dev/video0
-        pad0: Sink
-                <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
-
-- entity 5: ov5640 1-003c (1 pad, 1 link)
-            type V4L2 subdev subtype Sensor flags 0
-            device node name /dev/v4l-subdev0
-        pad0: Source
-                [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb
-xfer:srgb ycbcr:601 quantization:full-range]
-                -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
 
 
-After this change:
-# media-ctl -p
-Media controller API version 5.0.0
+> On Jan 25, 2019, at 4:05 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+> 
+> On Thu, Jan 24, 2019 at 11:29:37PM +0800, Kai Heng Feng wrote:
+>>> On Jan 24, 2019, at 11:15 PM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+>>> On Wed, Jan 23, 2019 at 03:17:37PM +0800, Kai Heng Feng wrote:
+>>>>> On Jan 23, 2019, at 7:51 AM, Bjorn Helgaas <helgaas@kernel.org> wrote:
+>>>>> On Tue, Jan 22, 2019 at 02:45:44PM +0800, Kai-Heng Feng wrote:
+>>>>>> There are some e1000e devices can only be woken up from D3 one time, by
+>>>>>> plugging ethernet cable. Subsequent cable plugging does set PME bit
+>>>>>> correctly, but it still doesn't get woken up.
+>>>>>> 
+>>>>>> Since e1000e connects to the root complex directly, we rely on ACPI to
+>>>>>> wake it up. In this case, the GPE from _PRW only works once and stops
+>>>>>> working after that.
+>>>>>> 
+>>>>>> So introduce a new PCI quirk, to avoid clearing pme_poll flag for buggy
+>>>>>> platform firmwares that have unreliable GPE wake.
+>>>>> 
+>>>>> This quirk applies to all 0x15bb (E1000_DEV_ID_PCH_CNP_I219_LM7) and
+>>>>> 0x15bd (E1000_DEV_ID_PCH_CNP_I219_LM6) devices.  The e1000e driver
+>>>>> claims about a zillion different device IDs.
+>>>>> 
+>>>>> I would be surprised if these two devices are defective but all the
+>>>>> others work correctly.  Could it be that there is a problem with the
+>>>>> wiring on this particular motherboard or with the ACPI _PRW methods
+>>>>> (or the way Linux interprets them) in this firmware?
+>>>> 
+>>>> If this is a motherboard issue or platform specific, do you prefer to use
+>>>> DMI matches here?
+>>> 
+>>> I'm not sure what the problem is yet, so let's hold off on the exact
+>>> structure of the fix.
+>> 
+>> I think DMI table can put in e1000e driver instead of PCI quirk.
+> 
+> I don't think we should add a quirk or DMI table yet because we
+> haven't gotten to the root cause of this problem.  If the root cause
+> is a problem in the Linux code, adding a quirk will mask the problem
+> for this specific system, but will leave other systems with similar
+> problems.
+> 
+>>> If I understand correctly, e1000e wakeup works once, but doesn't work
+>>> after that.  Your lspci (from after that first wakeup, from
+>>> https://bugzilla.kernel.org/attachment.cgi?id=280691) shows this:
+>>> 
+>>> 00:14.0 XHC  XHCI USB
+>>>   Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
+>>>   Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
+>>> 00:1f.3 HDAS audio
+>>>   Flags: PMEClk- DSI- D1- D2- ... PME(D0-,D1-,D2-,D3hot+,D3cold+)
+>>>   Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=0 PME-
+>>> 00:1f.6 GLAN e1000e
+>>>   Flags: PMEClk- DSI+ D1- D2- ... PME(D0+,D1-,D2-,D3hot+,D3cold+)
+>>>   Status: D3 NoSoftRst+ PME-Enable+ DSel=0 DScale=1 PME+
+>>> 
+>>> So the e1000e PME_Status bit is still set, which means it probably
+>>> won't generate another PME interrupt, which would explain why wakeup
+>>> doesn't work.  To test this theory, can you try this:
+>>> 
+>>> - sleep
+>>> - wakeup via e1000e
+>>> # DEV=00:1f.6
+>>> # lspci -vvs $DEV
+>>> # setpci -s $DEV CAP_PM+4.W
+>>> # setpci -s $DEV CAP_PM+4.W=0x8100
+>>> - sleep
+>>> - attempt another wakeup via e1000e
+>>> 
+>>> If this second wakeup works, it would suggest that PME_Status isn't
+>>> being cleared correctly.  I see code, e.g., in
+>>> acpi_setup_gpe_for_wake(), that *looks* like it would arrange to clear
+>>> it, but I'm not very familiar with it.  Maybe there's some issue with
+>>> multiple devices sharing an "implicit notification" situation like
+>>> this.
+>> 
+>> The PME status is being cleared correctly.
+> 
+> I was hoping to understand this better via the experiment above, but
+> I'm still confused.  Here's the scenario as I understand it:
+> 
+>  0) fresh boot
+>  1) e1000e PME_Status should be 0
+>  2) sleep
+>  3) wakeup via e1000e succeeds
+>  4) e1000e PME_Status should be 0
+>  5) sleep
+>  6) wakeup via e1000e fails
+>  7) wakeup via USB succeeds
+>  8) e1000e PME_Status should be 0, but is actually 1
 
-Media device information
-------------------------
-driver          sun6i-csi
-model           Allwinner Video Capture Device
-serial
-bus info
-hw revision     0x0
-driver version  5.0.0
+Sorry for not illustrating the scenario more clearly, here’s the test scenario:
+ 0) fresh boot
+ 1) no ethernet cable plugged
+ 2) e1000e runtime suspend
+ 3) PME_Status is 0
+ 4) plug ethernet cable
+ 5) e1000e gets woken up by ACPI wakeup
+ 6) network connection established
+ 6) unplug the ethernet cable
+ 7) e1000e runtime suspend
+ 8) plug ethernet cable again
+ 9) PME_Status=1 but it’s not woken up, stays suspended
+ 10) Plug a USB device, e1000e wakes up.
 
-Device topology
-- entity 1: sun6i-csi (1 pad, 1 link)
-            type Node subtype V4L flags 0
-            device node name /dev/video0
-        pad0: Sink
-                <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
+This shows somehow the ACPI GPE still works for USB controller but not ethernet device.
 
-- entity 5: ov5640 1-003c (1 pad, 1 link)
-            type V4L2 subdev subtype Sensor flags 0
-            device node name /dev/v4l-subdev0
-        pad0: Source
-                [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb
-xfer:srgb ycbcr:601 quantization:full-range]
-                -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
+> 
+> If I understand correctly, the bugzilla lspci
+> (https://bugzilla.kernel.org/attachment.cgi?id=280691) was collected
+> at point 8, and it shows PME_Status=1 when it should be 0.
+> 
+> If we write a 1 to PME_Status to clear it, and it remains set, that's
+> obviously a hardware defect, and Intel should document that in an
+> erratum, and a quirk would be the appropriate way to work around it.
+> But I doubt that's what's happening.
 
-# media-ctl --set-v4l2 "'ov5640 1-003c':0[fmt:UYVY8_2X8/640x480@1/15 field:none]
-"
-# media-ctl -p
-Media controller API version 5.0.0
+I’ll ask them if they can provide an erratum.
 
-Media device information
-------------------------
-driver          sun6i-csi
-model           Allwinner Video Capture Device
-serial
-bus info
-hw revision     0x0
-driver version  5.0.0
+> 
+> If e1000e changes PME_Status from 0 to 1 and we don't get an interrupt
+> (in this case, an SCI triggering GPE 0x6d), the problem is something
+> in the path outside e1000e.  Since the wakeup works the first time, we
+> know e1000e is *capable* of generating an interrupt, and the problem
+> is probably something in the way we acknowledge it.
+> 
+> I want to make sure we're executing the code that clears
+> PCI_PM_CTRL_PME_STATUS.  Would you mind applying the patch below,
+> turning on CONFIG_ACPI_DEBUG, booting with
+> 
+>  acpi.debug_layer=0x00000004 acpi.debug_level=0x00000004
+> 
+> and collecting the dmesg log?  I think you can also set these debug
+> flags via /sys/module/acpi/parameters/debug_* if that's easier.
 
-Device topology
-- entity 1: sun6i-csi (1 pad, 1 link)
-            type Node subtype V4L flags 0
-            device node name /dev/video0
-        pad0: Sink
-                <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
+Dmesg with the debug patch applied:
+https://bugzilla.kernel.org/attachment.cgi?id=280819
 
-- entity 5: ov5640 1-003c (1 pad, 1 link)
-            type V4L2 subdev subtype Sensor flags 0
-            device node name /dev/v4l-subdev0
-        pad0: Source
-                [fmt:UYVY8_2X8/640x480@1/15 field:none colorspace:srgb
-xfer:srgb ycbcr:601 quantization:full-range]
-                -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
+At the end, I re-plugged the ethernet cable, nothing shows.
 
-[1] https://patchwork.kernel.org/patch/10708931/
+Kai-Heng
+
+> 
+>> The lspci is captured after I plugged the ethernet cable second time,
+>> i.e. PME is set but not being woken up.
+>> 
+>> Kai-Heng
+> 
+> Bjorn
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index c9d8e3c837de..91a70ffdd3a1 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -1927,7 +1927,7 @@ void pcie_clear_root_pme_status(struct pci_dev *dev)
+> bool pci_check_pme_status(struct pci_dev *dev)
+> {
+> 	int pmcsr_pos;
+> -	u16 pmcsr;
+> +	u16 pmcsr, pmcsr_orig;
+> 	bool ret = false;
+> 
+> 	if (!dev->pm_cap)
+> @@ -1939,6 +1939,7 @@ bool pci_check_pme_status(struct pci_dev *dev)
+> 		return false;
+> 
+> 	/* Clear PME status. */
+> +	pmcsr_orig = pmcsr;
+> 	pmcsr |= PCI_PM_CTRL_PME_STATUS;
+> 	if (pmcsr & PCI_PM_CTRL_PME_ENABLE) {
+> 		/* Disable PME to avoid interrupt flood. */
+> @@ -1948,6 +1949,9 @@ bool pci_check_pme_status(struct pci_dev *dev)
+> 
+> 	pci_write_config_word(dev, pmcsr_pos, pmcsr);
+> 
+> +	pci_read_config_word(dev, pmcsr_pos, &pmcsr);
+> +	pci_info(dev, "%s PM_CTRL %#06x -> %#06x\n", __func__, pmcsr_orig, pmcsr);
+> +
+> 	return ret;
+> }
+> 
+> @@ -2027,18 +2031,22 @@ static void pci_pme_list_scan(struct work_struct *work)
+> 
+> static void __pci_pme_active(struct pci_dev *dev, bool enable)
+> {
+> -	u16 pmcsr;
+> +	u16 pmcsr, pmcsr_orig;
+> 
+> 	if (!dev->pme_support)
+> 		return;
+> 
+> 	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
+> +	pmcsr_orig = pmcsr;
+> 	/* Clear PME_Status by writing 1 to it and enable PME# */
+> 	pmcsr |= PCI_PM_CTRL_PME_STATUS | PCI_PM_CTRL_PME_ENABLE;
+> 	if (!enable)
+> 		pmcsr &= ~PCI_PM_CTRL_PME_ENABLE;
+> 
+> 	pci_write_config_word(dev, dev->pm_cap + PCI_PM_CTRL, pmcsr);
+> +
+> +	pci_read_config_word(dev, dev->pm_cap + PCI_PM_CTRL, &pmcsr);
+> +	pci_info(dev, "%s PM_CTRL %#06x -> %#06x\n", __func__, pmcsr_orig, pmcsr);
+> }
+> 
+> /**
+
