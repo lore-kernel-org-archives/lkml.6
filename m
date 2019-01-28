@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F206FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E902DC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C33FD2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B28482177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691945;
-	bh=h4bYPE8tgq+3qOo8AIQCvjIJi5Lm5fppydrzclmr9eo=;
+	s=default; t=1548691948;
+	bh=WxyQF8ao2ZZQP9+yGZb0W04joDBGKyz64zqK5fKbsT0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wAXp4wR/40k5wMCIGs8Lv6jKKe2RT9iter0LJTVQPV5d5eVoEY8YWCQ6YS6COPMkJ
-	 FEJ2vvNgRa2iZ5MGRV90k90zFwBAq8dsKZdh/awTTCDTp2GPqRPe/xfyCDq/Ojeg5t
-	 yy6JZ6CQ2+kDgmFfovBFcVHJ0F0tn7JqVCSY/F3Q=
+	b=BL02UsNkeum3T4o1x2Bb9N8pJAoAsxSDKkK8lHzrJ88w1GUcve/+7vIgVBn6WULso
+	 4dFAgcyR5LxJ5FHNoHf0GjZCfk6OthRmW2sjEH7fiyuh3Wog2Q1yfItrbWWTw6Sbr4
+	 pnUUBEX3JmfN4kpeF8Y6h8U10YCNjLs8OfciMJ1Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732504AbfA1QMX (ORCPT
+        id S1733162AbfA1QM1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:12:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40362 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:12:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732694AbfA1QMU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:12:20 -0500
+        id S1733150AbfA1QMY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:12:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DCB2D2175B;
-        Mon, 28 Jan 2019 16:12:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB2E52175B;
+        Mon, 28 Jan 2019 16:12:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691939;
-        bh=h4bYPE8tgq+3qOo8AIQCvjIJi5Lm5fppydrzclmr9eo=;
+        s=default; t=1548691943;
+        bh=WxyQF8ao2ZZQP9+yGZb0W04joDBGKyz64zqK5fKbsT0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rufw5SXSNh8OsXyW71En29p2Dte56uFlKVDVFPVyx71l6IlCMy8Mt0ALjQ/IVQmR1
-         tnK3n0pOMcyNQSiQrptis9RukIRgrCwwfQPFoudXV5iuztEKdTUlb5UC/NUHmcurNj
-         B2RqIFhvUzLU3XYwH15EMq06hu3CDJsKecr7JN+Q=
+        b=c+DIySEusSVexVcFPDQrIImPuvdGboDz4Xia6LMP94WVN77+lBae4ZxUNPhVCvrHP
+         DiAmkRvuns3lGsaG7kdJ95xWjauzwQtYCL+j67ml0ayR/56z3PYEXT2G5KioZPJ5zc
+         StYCpfiQInfAkT9+NiAdly86V3m6Tq7WlT36s5z0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+Cc:     Suganath Prabu <suganath-prabu.subramani@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
         Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 007/170] ath9k: dynack: use authentication messages for 'late' ack
-Date:   Mon, 28 Jan 2019 11:09:17 -0500
-Message-Id: <20190128161200.55107-7-sashal@kernel.org>
+        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 009/170] scsi: mpt3sas: Call sas_remove_host before removing the target devices
+Date:   Mon, 28 Jan 2019 11:09:19 -0500
+Message-Id: <20190128161200.55107-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -59,39 +59,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
 
-[ Upstream commit 3831a2a0010c72e3956020cbf1057a1701a2e469 ]
+[ Upstream commit dc730212e8a378763cb182b889f90c8101331332 ]
 
-In order to properly support dynack in ad-hoc mode running
-wpa_supplicant, take into account authentication frames for
-'late ack' detection. This patch has been tested on devices
-mounted on offshore high-voltage stations connected through
-~24Km link
+Call sas_remove_host() before removing the target devices in the driver's
+.remove() callback function(i.e. during driver unload time).  So that
+driver can provide a way to allow SYNC CACHE, START STOP unit commands
+etc. (which are issued from SML) to the target drives during driver unload
+time.
 
-Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Tested-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Once sas_remove_host() is called before removing the target drives then
+driver can just clean up the resources allocated for target devices and no
+need to call sas_port_delete_phy(), sas_port_delete() API's as these API's
+internally called from sas_remove_host().
+
+Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/dynack.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/scsi/mpt3sas/mpt3sas_scsih.c     | 2 +-
+ drivers/scsi/mpt3sas/mpt3sas_transport.c | 7 +++++--
+ 2 files changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath9k/dynack.c b/drivers/net/wireless/ath/ath9k/dynack.c
-index 7334c9b09e82..cc0dc966c512 100644
---- a/drivers/net/wireless/ath/ath9k/dynack.c
-+++ b/drivers/net/wireless/ath/ath9k/dynack.c
-@@ -187,7 +187,8 @@ void ath_dynack_sample_tx_ts(struct ath_hw *ah, struct sk_buff *skb,
- 	/* late ACK */
- 	if (ts->ts_status & ATH9K_TXERR_XRETRY) {
- 		if (ieee80211_is_assoc_req(hdr->frame_control) ||
--		    ieee80211_is_assoc_resp(hdr->frame_control)) {
-+		    ieee80211_is_assoc_resp(hdr->frame_control) ||
-+		    ieee80211_is_auth(hdr->frame_control)) {
- 			ath_dbg(common, DYNACK, "late ack\n");
- 			ath9k_hw_setslottime(ah, (LATEACK_TO - 3) / 2);
- 			ath9k_hw_set_ack_timeout(ah, LATEACK_TO);
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+index ae5e579ac473..b28efddab7b1 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
+@@ -8260,6 +8260,7 @@ static void scsih_remove(struct pci_dev *pdev)
+ 
+ 	/* release all the volumes */
+ 	_scsih_ir_shutdown(ioc);
++	sas_remove_host(shost);
+ 	list_for_each_entry_safe(raid_device, next, &ioc->raid_device_list,
+ 	    list) {
+ 		if (raid_device->starget) {
+@@ -8296,7 +8297,6 @@ static void scsih_remove(struct pci_dev *pdev)
+ 		ioc->sas_hba.num_phys = 0;
+ 	}
+ 
+-	sas_remove_host(shost);
+ 	mpt3sas_base_detach(ioc);
+ 	spin_lock(&gioc_lock);
+ 	list_del(&ioc->list);
+diff --git a/drivers/scsi/mpt3sas/mpt3sas_transport.c b/drivers/scsi/mpt3sas/mpt3sas_transport.c
+index 63dd9bc21ff2..66d9f04c4c0b 100644
+--- a/drivers/scsi/mpt3sas/mpt3sas_transport.c
++++ b/drivers/scsi/mpt3sas/mpt3sas_transport.c
+@@ -846,10 +846,13 @@ mpt3sas_transport_port_remove(struct MPT3SAS_ADAPTER *ioc, u64 sas_address,
+ 			    mpt3sas_port->remote_identify.sas_address,
+ 			    mpt3sas_phy->phy_id);
+ 		mpt3sas_phy->phy_belongs_to_port = 0;
+-		sas_port_delete_phy(mpt3sas_port->port, mpt3sas_phy->phy);
++		if (!ioc->remove_host)
++			sas_port_delete_phy(mpt3sas_port->port,
++						mpt3sas_phy->phy);
+ 		list_del(&mpt3sas_phy->port_siblings);
+ 	}
+-	sas_port_delete(mpt3sas_port->port);
++	if (!ioc->remove_host)
++		sas_port_delete(mpt3sas_port->port);
+ 	kfree(mpt3sas_port);
+ }
+ 
 -- 
 2.19.1
 
