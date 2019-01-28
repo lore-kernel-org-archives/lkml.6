@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B17F4C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:06:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E801C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8212B21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:06:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE7E021741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695219;
-	bh=E4haNz1KFU9KMcZa4cI/X5nbWOOAhLfiC4jNjAaRw1w=;
+	s=default; t=1548695227;
+	bh=7N+LpQ+NxZq/CHIg4NnQJQGooRQutIYwya96um++ZJE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W2azCw67NV35aiJrub5xixC9VlKh4/2VFggs6fcXhc9vYAyZKqZ20YRWJLp9PGvFk
-	 tpMVue9aw8u+A2lXnPFn6L79r6TeLAYp9YcShAQDEtcn7jhTQSZWxDAOoiTiSDvlS4
-	 VUhlxu1USqiDGpuErBCKFvJ5pjdHhtAfMYddhBHw=
+	b=ZNw33t2s5nzP6XMvjMIeRmalgdbrdb0KPh9WZw0Y3livoPdS50nLUUOoHz713bk9m
+	 EW5f58UtLDnnqZb2rTOXU6QqEtLr7lo1V9OvK4ZgHt5W+LKKNdBtgTZwajBSgQGizk
+	 6etpCcr2lwumLHARtizRoO3Ke0hELB/yOVj3/c0A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387601AbfA1RG5 (ORCPT
+        id S2387865AbfA1RHF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:06:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41662 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:07:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41480 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732209AbfA1QNE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:04 -0500
+        id S1732860AbfA1QM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:12:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59A602147A;
-        Mon, 28 Jan 2019 16:13:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2AA192148E;
+        Mon, 28 Jan 2019 16:12:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691983;
-        bh=E4haNz1KFU9KMcZa4cI/X5nbWOOAhLfiC4jNjAaRw1w=;
+        s=default; t=1548691976;
+        bh=7N+LpQ+NxZq/CHIg4NnQJQGooRQutIYwya96um++ZJE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T0+BwGE/kisfJxrzlpSV2eAWZcfMLmbJdT549swvYBs80HOETiji1GJ4rRXUd/ju5
-         mV7WPdUWHqCzVP5cK0ykpF7hYTyI4wYMVD9c5W0OB4oZrrIo7a09uRtnJZcK2CusG9
-         tFRoVYvPM3gl1WtbaY8k6RtiESKminIuIShByIuA=
+        b=oQCKRWn6BJ+dqh18WNagk8KjPAko2DbMgskeGW5b8oK4VPpQBSSns1qBePlPu/KiC
+         E5Ub+tOVMa1VhximYTbEeVb6Y7HFJCK+BZqp79LxJzVnz8o9iEcJ2U+evyMS5q2k12
+         q5HYmdG2AB33D4ZxWVAl4CiUj1V54OFxJkY25xLA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Norris <briannorris@chromium.org>,
-        Benson Leung <bleung@chromium.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 027/170] platform/chrome: don't report EC_MKBP_EVENT_SENSOR_FIFO as wakeup
-Date:   Mon, 28 Jan 2019 11:09:37 -0500
-Message-Id: <20190128161200.55107-27-sashal@kernel.org>
+Cc:     Matheus Tavares <matheus.bernardino@usp.br>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.14 024/170] staging:iio:ad2s90: Make probe handle spi_setup failure
+Date:   Mon, 28 Jan 2019 11:09:34 -0500
+Message-Id: <20190128161200.55107-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,74 +58,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: Matheus Tavares <matheus.bernardino@usp.br>
 
-[ Upstream commit 6ad16b78a039b45294b1ad5d69c14ac57b2fe706 ]
+[ Upstream commit b3a3eafeef769c6982e15f83631dcbf8d1794efb ]
 
-EC_MKBP_EVENT_SENSOR_FIFO events can be triggered for a variety of
-reasons, and there are very few cases in which they should be treated as
-wakeup interrupts (particularly, when a certain
-MOTIONSENSE_MODULE_FLAG_* is set, but this is not even supported in the
-mainline cros_ec_sensor driver yet). Most of the time, they are benign
-sensor readings. In any case, the top-level cros_ec device doesn't know
-enough to determine that they should wake the system, and so it should
-not report the event. This would be the job of the cros_ec_sensors
-driver to parse.
+Previously, ad2s90_probe ignored the return code from spi_setup, not
+handling its possible failure. This patch makes ad2s90_probe check if
+the code is an error code and, if so, do the following:
 
-This patch adds checks to cros_ec_get_next_event() such that it doesn't
-signal 'wakeup' for events of type EC_MKBP_EVENT_SENSOR_FIFO.
+- Call dev_err with an appropriate error message.
+- Return the spi_setup's error code.
 
-This patch is particularly relevant on devices like Scarlet (Rockchip
-RK3399 tablet, known as Acer Chromebook Tab 10), where the EC firmware
-reports sensor events much more frequently. This was causing
-/sys/power/wakeup_count to increase very frequently, often needlessly
-interrupting our ability to suspend the system.
+Note: The 'return ret' statement could be out of the 'if' block, but
+this whole block will be moved up in the function in the patch:
+'staging:iio:ad2s90: Move device registration to the end of probe'.
 
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Benson Leung <bleung@chromium.org>
+Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/chrome/cros_ec_proto.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ drivers/staging/iio/resolver/ad2s90.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-index e7bbdf947bbc..2ac4a7178470 100644
---- a/drivers/platform/chrome/cros_ec_proto.c
-+++ b/drivers/platform/chrome/cros_ec_proto.c
-@@ -551,6 +551,7 @@ static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
+diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+index b2270908f26f..cbee9ad00f0d 100644
+--- a/drivers/staging/iio/resolver/ad2s90.c
++++ b/drivers/staging/iio/resolver/ad2s90.c
+@@ -86,7 +86,12 @@ static int ad2s90_probe(struct spi_device *spi)
+ 	/* need 600ns between CS and the first falling edge of SCLK */
+ 	spi->max_speed_hz = 830000;
+ 	spi->mode = SPI_MODE_3;
+-	spi_setup(spi);
++	ret = spi_setup(spi);
++
++	if (ret < 0) {
++		dev_err(&spi->dev, "spi_setup failed!\n");
++		return ret;
++	}
  
- int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
- {
-+	u8 event_type;
- 	u32 host_event;
- 	int ret;
- 
-@@ -570,11 +571,22 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
- 		return ret;
- 
- 	if (wake_event) {
-+		event_type = ec_dev->event_data.event_type;
- 		host_event = cros_ec_get_host_event(ec_dev);
- 
--		/* Consider non-host_event as wake event */
--		*wake_event = !host_event ||
--			      !!(host_event & ec_dev->host_event_wake_mask);
-+		/*
-+		 * Sensor events need to be parsed by the sensor sub-device.
-+		 * Defer them, and don't report the wakeup here.
-+		 */
-+		if (event_type == EC_MKBP_EVENT_SENSOR_FIFO)
-+			*wake_event = false;
-+		/* Masked host-events should not count as wake events. */
-+		else if (host_event &&
-+			 !(host_event & ec_dev->host_event_wake_mask))
-+			*wake_event = false;
-+		/* Consider all other events as wake events. */
-+		else
-+			*wake_event = true;
- 	}
- 
- 	return ret;
+ 	return 0;
+ }
 -- 
 2.19.1
 
