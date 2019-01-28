@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A7CC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D23C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B40620855
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F9F820855
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696251;
-	bh=xBUip2RE/d4z9KAwPhr1oJHHpeWArlCt1Hlk6jhWcOA=;
+	s=default; t=1548696261;
+	bh=NpBzhb76FkwGomBDiLGlWepY8ZCWLmsM6eCJLDiXKvk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EO35JRm+rZCLy9z2vU9hO6diqGz9212rUGZzgbXrpXBEO+AHomyuegc5oF4EvlRwJ
-	 zVjjDV45bcRzYqLFknzzQ/xkYm6tMBovavpuveRuEPnQiRRuSjBZ5PYuw/TI0MPvlA
-	 OBS6TjBfGKLMdvwsaf2yYwIFnPmTguJNB5nZedzQ=
+	b=L/Nl7S0/8M9nfCuX94blHO2RuhqtQit/hMqQmifQeEI/W9aVraZ2fWNmRpzlhoEW1
+	 HLMCrNY66nszYirdEYD1MNb5JMI2Q6UZA0tfl2XrOXhdzTvUyMy2+McN5mvynz30o6
+	 vETVGQJ0rAAm/cbU5kW1AYFGItJexWHLm6LTON20=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731452AbfA1RYJ (ORCPT
+        id S1731117AbfA1QBt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:24:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47136 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:01:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47022 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731148AbfA1QB5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:01:57 -0500
+        id S1729271AbfA1QBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:01:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EEB2C21916;
-        Mon, 28 Jan 2019 16:01:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A76921848;
+        Mon, 28 Jan 2019 16:01:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691316;
-        bh=xBUip2RE/d4z9KAwPhr1oJHHpeWArlCt1Hlk6jhWcOA=;
+        s=default; t=1548691306;
+        bh=NpBzhb76FkwGomBDiLGlWepY8ZCWLmsM6eCJLDiXKvk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wICo8uWXFKc4ZWu9dRQPqJpv1JKygxweaFNQkCZvxzvcG61RifdlfGZglviO717/5
-         WeB70UzKWH91/WJviAWj9/+EKqobFyrGIMCvYPP6kSNTeOxwkNsodoND+dq7rgHMJI
-         qPL2z/E6+QUFaOJn7x3CbklQZamGuP1Kn12+Wlmc=
+        b=mbXtrHgFZ4vC9x01JWu4eeExAXYyPxRgRuuLXa2Dxd1rItqrif7DJSN+OtgLvJv6K
+         BT5c2EMjIy1I/Vye5NrrJjJWrCG9UFHQ+wf77rqDhtPreRjcQ44jrvjIq8HuXdmJpW
+         h2N6T3zHDqsYfrq3VkbliKISPVbJP6dimKgqiu/Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Akinobu Mita <akinobu.mita@gmail.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 056/258] media: video-i2c: avoid accessing released memory area when removing driver
-Date:   Mon, 28 Jan 2019 10:56:02 -0500
-Message-Id: <20190128155924.51521-56-sashal@kernel.org>
+Cc:     Pu Wen <puwen@hygon.cn>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 053/258] perf tools: Add Hygon Dhyana support
+Date:   Mon, 28 Jan 2019 10:55:59 -0500
+Message-Id: <20190128155924.51521-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,62 +63,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Akinobu Mita <akinobu.mita@gmail.com>
+From: Pu Wen <puwen@hygon.cn>
 
-[ Upstream commit c764da98a600a4b068d25c77164f092f159cecec ]
+[ Upstream commit 4787eff3fa88f62fede6ed7afa06477ae6bf984d ]
 
-The video device release() callback for video-i2c driver frees the whole
-struct video_i2c_data.  If there is no user left for the video device
-when video_unregister_device() is called, the release callback is executed.
+The tool perf is useful for the performance analysis on the Hygon Dhyana
+platform. But right now there is no Hygon support for it to analyze the
+KVM guest os data. So add Hygon Dhyana support to it by checking vendor
+string to share the code path of AMD.
 
-However, in video_i2c_remove() some fields (v4l2_dev, lock, and queue_lock)
-in struct video_i2c_data are still accessed after video_unregister_device()
-is called.
-
-This fixes the use after free by moving the code from video_i2c_remove()
-to the release() callback.
-
-Fixes: 5cebaac60974 ("media: video-i2c: add video-i2c driver")
-
-Reviewed-by: Matt Ranostay <matt.ranostay@konsulko.com>
-Signed-off-by: Akinobu Mita <akinobu.mita@gmail.com>
-Acked-by: Sakari Ailus <sakari.ailus@linux.intel.com>
-Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Pu Wen <puwen@hygon.cn>
+Acked-by: Borislav Petkov <bp@suse.de>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Link: http://lkml.kernel.org/r/1542008451-31735-1-git-send-email-puwen@hygon.cn
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/video-i2c.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ tools/perf/arch/x86/util/kvm-stat.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/media/i2c/video-i2c.c b/drivers/media/i2c/video-i2c.c
-index 06d29d8f6be8..f27d294dcbef 100644
---- a/drivers/media/i2c/video-i2c.c
-+++ b/drivers/media/i2c/video-i2c.c
-@@ -510,7 +510,12 @@ static const struct v4l2_ioctl_ops video_i2c_ioctl_ops = {
- 
- static void video_i2c_release(struct video_device *vdev)
- {
--	kfree(video_get_drvdata(vdev));
-+	struct video_i2c_data *data = video_get_drvdata(vdev);
-+
-+	v4l2_device_unregister(&data->v4l2_dev);
-+	mutex_destroy(&data->lock);
-+	mutex_destroy(&data->queue_lock);
-+	kfree(data);
- }
- 
- static int video_i2c_probe(struct i2c_client *client,
-@@ -608,10 +613,6 @@ static int video_i2c_remove(struct i2c_client *client)
- 	struct video_i2c_data *data = i2c_get_clientdata(client);
- 
- 	video_unregister_device(&data->vdev);
--	v4l2_device_unregister(&data->v4l2_dev);
--
--	mutex_destroy(&data->lock);
--	mutex_destroy(&data->queue_lock);
- 
- 	return 0;
- }
+diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
+index b32409a0e546..081353d7b095 100644
+--- a/tools/perf/arch/x86/util/kvm-stat.c
++++ b/tools/perf/arch/x86/util/kvm-stat.c
+@@ -156,7 +156,7 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
+ 	if (strstr(cpuid, "Intel")) {
+ 		kvm->exit_reasons = vmx_exit_reasons;
+ 		kvm->exit_reasons_isa = "VMX";
+-	} else if (strstr(cpuid, "AMD")) {
++	} else if (strstr(cpuid, "AMD") || strstr(cpuid, "Hygon")) {
+ 		kvm->exit_reasons = svm_exit_reasons;
+ 		kvm->exit_reasons_isa = "SVM";
+ 	} else
 -- 
 2.19.1
 
