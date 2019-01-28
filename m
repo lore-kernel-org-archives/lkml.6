@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79B39C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDF5C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:37:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 436202147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 799CE2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:37:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697027;
-	bh=w6rl0+yIbb0gfVaM+A6naT5nTbl+4ZHBrNUsPndjiy8=;
+	s=default; t=1548697038;
+	bh=Ya31zp4FLM1EhnlCS2TEnTvVz+C2ZIUHpbNTsNW9rzQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=J+y3xnIlO2K8MHiPi/jKdhluGumkPXj6CjBKrFn94Jsc0KOPuOARSh+jS3+Ysa6YB
-	 p5NwTak3adOPHUW4RSt/Mz0+HESvUiN+WvrDPhvTdXx7HnqbXHhCUVloMfENAVxlkG
-	 QpPdYeneHLSewfT6aomn2ZuO11kdzNcldTe/tNIo=
+	b=OvtG1BHO65F1sKDQgnkepRcWLNH4rS7a7JCBy3HfUgJqHrgpw/0c8u37RbaTS4dVU
+	 7nEeu4flu25MwykNRQg8YqDJPuNVvzln/knBw2SHnI9294MT3nuGGu5kmvxbwe+9l2
+	 y7/uu+RVvwdV8SBWwQkbm/j+RhWb7r6jSWsdbm/g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730003AbfA1RhF (ORCPT
+        id S1729868AbfA1RhQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:37:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41088 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:37:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41054 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727890AbfA1PzE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:04 -0500
+        id S1728475AbfA1PzB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:55:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A7D8620855;
-        Mon, 28 Jan 2019 15:55:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6A9C82147A;
+        Mon, 28 Jan 2019 15:54:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690903;
-        bh=w6rl0+yIbb0gfVaM+A6naT5nTbl+4ZHBrNUsPndjiy8=;
+        s=default; t=1548690901;
+        bh=Ya31zp4FLM1EhnlCS2TEnTvVz+C2ZIUHpbNTsNW9rzQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=eNcyaHM+AcRc0KNY4z8ISolyhgon4jgY1lnhFBHraDJr7DIYYT/aVm0rvmhP7TejH
-         L2E3Is/Z9JZ5SyHP1ZPOKtazW/DU8eC94q1CUBi4OGQo7XlcihtJ0U+ucuOh8RinyS
-         CKCK4uFJDkntbKdpc9MtHa3ywyJ5VYOu4Hv8ZYhQ=
+        b=PliWLXwfjCN7EkYQFyLNmUl5YyUcdX0+2JBrdRf3d+yz9QuohOkxxxG6058Ib36S1
+         Mla/Y5zX/ChjqOvCWPIETit89l3nDpSVRHUKuIJ5hD/a2/WBeJmJZWY5BrdRxnGc7a
+         u3YNl7chdUOeRH6zM6IISsDghwaY6975aN+oqvn8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jian Shen <shenjian15@huawei.com>, Peng Li <lipeng321@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 230/304] net: hns3: add max vector number check for pf
-Date:   Mon, 28 Jan 2019 10:42:27 -0500
-Message-Id: <20190128154341.47195-230-sashal@kernel.org>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 229/304] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
+Date:   Mon, 28 Jan 2019 10:42:26 -0500
+Message-Id: <20190128154341.47195-229-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,46 +58,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jian Shen <shenjian15@huawei.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit 75edb610860fda65ceedb017fc69afabd2806b8b ]
+[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
 
-Each pf supports max 64 vectors and 128 tqps. For 2p/4p core scenario,
-there may be more than 64 cpus online. So the result of min_t(u16,
-num_Online_cpus(), tqp_num) may be more than 64. This patch adds check
-for the vector number.
+The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
+concurrently executed.
+The two functions both access a possible shared variable "frame.skb".
 
-Fixes: dd38c72604dc ("net: hns3: fix for coalesce configuration lost during reset")
-Signed-off-by: Jian Shen <shenjian15@huawei.com>
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
+which is called by cw1200_bss_info_changed(). The free operation is
+protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
+
+In cw1200_hw_scan(), this shared variable is accessed without the
+protection of the mutex lock "priv->conf_mutex".
+Thus, concurrency use-after-free bugs may occur.
+
+To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
+mutex_unlock(&priv->conf_mutex) are moved to the places, which can
+protect the accesses to the shared variable.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/wireless/st/cw1200/scan.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 85d534a24f2c..beb5dbd5e98d 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -2902,6 +2902,8 @@ map_ring_fail:
+diff --git a/drivers/net/wireless/st/cw1200/scan.c b/drivers/net/wireless/st/cw1200/scan.c
+index 67213f11acbd..0a9eac93dd01 100644
+--- a/drivers/net/wireless/st/cw1200/scan.c
++++ b/drivers/net/wireless/st/cw1200/scan.c
+@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
+ 		return -EINVAL;
  
- static int hns3_nic_alloc_vector_data(struct hns3_nic_priv *priv)
- {
-+#define HNS3_VECTOR_PF_MAX_NUM		64
++	/* will be unlocked in cw1200_scan_work() */
++	down(&priv->scan.lock);
++	mutex_lock(&priv->conf_mutex);
 +
- 	struct hnae3_handle *h = priv->ae_handle;
- 	struct hns3_enet_tqp_vector *tqp_vector;
- 	struct hnae3_vector_info *vector;
-@@ -2914,6 +2916,8 @@ static int hns3_nic_alloc_vector_data(struct hns3_nic_priv *priv)
- 	/* RSS size, cpu online and vector_num should be the same */
- 	/* Should consider 2p/4p later */
- 	vector_num = min_t(u16, num_online_cpus(), tqp_num);
-+	vector_num = min_t(u16, vector_num, HNS3_VECTOR_PF_MAX_NUM);
-+
- 	vector = devm_kcalloc(&pdev->dev, vector_num, sizeof(*vector),
- 			      GFP_KERNEL);
- 	if (!vector)
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+ 	if (!frame.skb)
+@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->ie_len)
+ 		skb_put_data(frame.skb, req->ie, req->ie_len);
+ 
+-	/* will be unlocked in cw1200_scan_work() */
+-	down(&priv->scan.lock);
+-	mutex_lock(&priv->conf_mutex);
+-
+ 	ret = wsm_set_template_frame(priv, &frame);
+ 	if (!ret) {
+ 		/* Host want to be the probe responder. */
+ 		ret = wsm_set_probe_responder(priv, true);
+ 	}
+ 	if (ret) {
++		dev_kfree_skb(frame.skb);
+ 		mutex_unlock(&priv->conf_mutex);
+ 		up(&priv->scan.lock);
+-		dev_kfree_skb(frame.skb);
+ 		return ret;
+ 	}
+ 
+@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 		++priv->scan.n_ssids;
+ 	}
+ 
+-	mutex_unlock(&priv->conf_mutex);
+-
+ 	if (frame.skb)
+ 		dev_kfree_skb(frame.skb);
++	mutex_unlock(&priv->conf_mutex);
+ 	queue_work(priv->workqueue, &priv->scan.work);
+ 	return 0;
+ }
 -- 
 2.19.1
 
