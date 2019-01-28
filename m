@@ -2,128 +2,114 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C85FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D782DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C3972147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exLkt2+Q"
+	by mail.kernel.org (Postfix) with ESMTP id B0B212147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727691AbfA1SYM (ORCPT
+        id S1727465AbfA1SYi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:24:12 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42358 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727035AbfA1SYJ (ORCPT
+        Mon, 28 Jan 2019 13:24:38 -0500
+Received: from relay6-d.mail.gandi.net ([217.70.183.198]:48775 "EHLO
+        relay6-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726266AbfA1SYi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:24:09 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 64so8364750pfr.9;
-        Mon, 28 Jan 2019 10:24:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=1RA36miYBXMiHkO56Tit33gKqdto2/u99xV4L9uWAfk=;
-        b=exLkt2+QdsKCYUS0eNKJWsLvkNdluZYWvhreWC58XcCj9An9yIsgWuLSYp3QoeTA45
-         it3JMu6rnXQ8i142dbP5wfLXij2SzLPyn/7FMB9bly/I3FnPro7VuzEg8rNRaCmaw9Hj
-         NETklKeqLYl2daDmygOwdgEaLA/kaiHnhP48Kb7VmGXlq2HKXgYopOQMfjbonF6fPiha
-         J7X7DcT3y44nPPINLJYIULzrXoq0NQxNrzYvgWcWQLyoFa6ggPsmzPkx512LFOaCQQTb
-         BoTAPMg3aS53UAw4LNFCazwI+pjPP0weoJJkTm7Hmd3rrPkU3n5z4p9yLoe9fELBETpp
-         scdg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=1RA36miYBXMiHkO56Tit33gKqdto2/u99xV4L9uWAfk=;
-        b=kPcXnVrAkWyj1fbjJuodjbEyp7Q66fbNE5/G3TW16HdHPVW93WgiJzwMbYAmjG6qP+
-         ULKPBvbT8+QrixbYagUHhtyRWRI4uL0hCgANg8Qmw3tZTBf9qbJynrUROC5uGx9gRLvT
-         korGuD6O3Ezg44YQEsLRCTqGDNVMUTeegjC+AaKrdVDHymTK+qRhyUmaB8Vku0FRDNWv
-         OOaYmkXQiol9F1TNuutrJpsR14pxxNkletQZGXxoEgT2ZxNswzoZI5kZV42jWPmj8oq5
-         vlb0+4MSnCVIPjM6vYySE5QghwQDtLxpsScUy9R7rKZotN/JFe+34WkWa52Z/QCenV4W
-         nqMg==
-X-Gm-Message-State: AJcUukfgiK3KxkXY4ABr5M6B4RH9UweFM3bQRJErYpZh2IARZQzhBojg
-        kq6WE1YhGE9xqefLyy+dSMk=
-X-Google-Smtp-Source: ALg8bN698DF8D2UtfKH2CEgdB++Ykpsu0DF0madLD5AuXilcVrIsdhEAGk24pEeNiYiEPClm7VBvOA==
-X-Received: by 2002:a63:4e15:: with SMTP id c21mr20818287pgb.50.1548699848119;
-        Mon, 28 Jan 2019 10:24:08 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id r76sm47784775pfb.69.2019.01.28.10.24.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 10:24:07 -0800 (PST)
-Date:   Mon, 28 Jan 2019 10:24:05 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
-        linux-input@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.20 148/304] Input: rotary-encoder - don't log
- EPROBE_DEFER to kernel log
-Message-ID: <20190128182405.GA30191@dtor-ws>
-References: <20190128154341.47195-1-sashal@kernel.org>
- <20190128154341.47195-148-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+        Mon, 28 Jan 2019 13:24:38 -0500
+X-Originating-IP: 83.155.44.161
+Received: from classic (mon69-7-83-155-44-161.fbx.proxad.net [83.155.44.161])
+        (Authenticated sender: hadess@hadess.net)
+        by relay6-d.mail.gandi.net (Postfix) with ESMTPSA id 886FDC0003;
+        Mon, 28 Jan 2019 18:24:33 +0000 (UTC)
+Message-ID: <7e289e6b3410a3fdea99d7d6becfe5180a69f0c5.camel@hadess.net>
+Subject: Re: [PATCH] input: goodix - support Goodix gt5688
+From:   Bastien Nocera <hadess@hadess.net>
+To:     Guido =?ISO-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Date:   Mon, 28 Jan 2019 19:24:33 +0100
+In-Reply-To: <20190128170310.GA305@bogon.m.sigxcpu.org>
+References: <20190128170310.GA305@bogon.m.sigxcpu.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190128154341.47195-148-sashal@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sasha,
-
-On Mon, Jan 28, 2019 at 10:41:05AM -0500, Sasha Levin wrote:
-> From: Uwe Kleine-König <uwe@kleine-koenig.org>
+On Mon, 2019-01-28 at 18:03 +0100, Guido GÃ¼nther wrote:
+> From what I've seen in vendor trees it's fine to treat this as gt1xÂ¹.
 > 
-> [ Upstream commit 0832e93632c61987d504e251b927a2be769dd21a ]
-> 
-> When a driver fails to bind because a resource it still missing it's not
-> helpful to report this as (usually) probing is repeated later.
+> [1]: https://github.com/TadiT7/android_kernel_mtk-4.4/tree/master/drivers/input/touchscreen/mediatek/GT5688
 
-I do not think that patch that merely suppresses a harmless warning in
-dmesg belongs in stable.
+Can you please point to the exact line of code that makes you say that?
+I'm not saying it's not compatible, but it's not the same driver that
+the current goodix.c was based on, or even goodix.c.
 
-> 
-> Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
-> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
+Can you please elaborate?
+
+Finding that data in the specs would also be fine:
+https://github.com/hadess/gt9xx/tree/master/specifications
+
+Cheers
+
+[1]: original driver:
+https://github.com/hadess/gt9xx/commit/82b141220e8bce00060e0de697735d0a70af2678
+
+> Signed-off-by: Guido GÃ¼nther <agx@sigxcpu.org>
 > ---
->  drivers/input/misc/rotary_encoder.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
+>  Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
+>  drivers/input/touchscreen/goodix.c                             | 2
+> ++
+>  2 files changed, 3 insertions(+)
 > 
-> diff --git a/drivers/input/misc/rotary_encoder.c b/drivers/input/misc/rotary_encoder.c
-> index 30ec77ad32c6..d748897bf5e9 100644
-> --- a/drivers/input/misc/rotary_encoder.c
-> +++ b/drivers/input/misc/rotary_encoder.c
-> @@ -240,8 +240,10 @@ static int rotary_encoder_probe(struct platform_device *pdev)
+> diff --git
+> a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> index f7e95c52f3c7..57d3d8870a09 100644
+> --- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> +++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
+> @@ -3,6 +3,7 @@ Device tree bindings for Goodix GT9xx series
+> touchscreen controller
+>  Required properties:
 >  
->  	encoder->gpios = devm_gpiod_get_array(dev, NULL, GPIOD_IN);
->  	if (IS_ERR(encoder->gpios)) {
-> -		dev_err(dev, "unable to get gpios\n");
-> -		return PTR_ERR(encoder->gpios);
-> +		err = PTR_ERR(encoder->gpios);
-> +		if (err != -EPROBE_DEFER)
-> +			dev_err(dev, "unable to get gpios: %d\n", err);
-> +		return err;
->  	}
->  	if (encoder->gpios->ndescs < 2) {
->  		dev_err(dev, "not enough gpios found\n");
-> -- 
-> 2.19.1
-> 
+>   - compatible		: Should be "goodix,gt1151"
+> +				 or "goodix,gt5688"
+>  				 or "goodix,gt911"
+>  				 or "goodix,gt9110"
+>  				 or "goodix,gt912"
+> diff --git a/drivers/input/touchscreen/goodix.c
+> b/drivers/input/touchscreen/goodix.c
+> index f2d9c2c41885..47b1ced41576 100644
+> --- a/drivers/input/touchscreen/goodix.c
+> +++ b/drivers/input/touchscreen/goodix.c
+> @@ -216,6 +216,7 @@ static const struct goodix_chip_data
+> *goodix_get_chip_data(u16 id)
+>  {
+>  	switch (id) {
+>  	case 1151:
+> +	case 5688:
+>  		return &gt1x_chip_data;
+>  
+>  	case 911:
+> @@ -942,6 +943,7 @@ MODULE_DEVICE_TABLE(acpi, goodix_acpi_match);
+>  #ifdef CONFIG_OF
+>  static const struct of_device_id goodix_of_match[] = {
+>  	{ .compatible = "goodix,gt1151" },
+> +	{ .compatible = "goodix,gt5688" },
+>  	{ .compatible = "goodix,gt911" },
+>  	{ .compatible = "goodix,gt9110" },
+>  	{ .compatible = "goodix,gt912" },
 
-Thanks.
-
--- 
-Dmitry
