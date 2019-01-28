@@ -2,104 +2,148 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C63B0C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:44:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB36C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 816C32084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:44:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693886;
-	bh=VJHfTeWE69BzaokekwoAcSIM5OmZnXbFokFQuWGBqaQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rOre3seIFy7pZRzPcqc2mzZrU2sLohcLaWw1TjIcx+eBGuSIoM6mOUFcRtP2KnHDX
-	 U+8liOVvvn7dtr/SlvO4GYIp4aMz0dxHjcQt3z+HVncg8KkBr2CN3bkq0KxC/YVKrU
-	 KsmldhVcCvU1Aoc/ZNJVZqh0cDi1CacKlrKMvI0g=
+	by mail.kernel.org (Postfix) with ESMTP id DF1962084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:44:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="JD3ygfcs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390600AbfA1Qoo (ORCPT
+        id S2390686AbfA1Qov (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:44:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388611AbfA1QW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:58 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 19DA520663;
-        Mon, 28 Jan 2019 16:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692578;
-        bh=VJHfTeWE69BzaokekwoAcSIM5OmZnXbFokFQuWGBqaQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JsxklBYDTBQxwyF6gxTGY2UobuPPICT9xiWKUNtLnujQR5R7QLs7T66PG1wMVuudT
-         aFw0/z2tRXmy3j2KWfoqBndrye/VToOCe7tMoIz07TUU2e8tKPGHn+aKv7yXNr04ak
-         OrB/FacD/IJsAHy94vkSfnyeyJiyXQlyxFfdR9Vo=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Alexander Shiyan <shc_work@mail.ru>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 075/107] video: clps711x-fb: release disp device node in probe()
-Date:   Mon, 28 Jan 2019 11:19:15 -0500
-Message-Id: <20190128161947.57405-75-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
-References: <20190128161947.57405-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 11:44:51 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:34954 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388611AbfA1Qor (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:44:47 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=mGB8DEDySB6RHrLQInzE74pNyXQC/5XZJ4QtJxmbywg=; b=JD3ygfcs+iL7S+RZ3FbqWlKbw
+        1YPgWo21TiwtUDiZmPh2jxmwEVBxnxCLqhnXilmNP8TLFFo/D5QgHZIzmKQwP7ulS2K8kh9lPTdl/
+        1FQHqojjvSXC8YC+mZ4co+Xz4JI5nkuWRuvRKzHt0d0Vf6TaRGs1s782BKCeZdDHiWR6w=;
+Received: from p200300ccfbcaa5007ee9d3fffe1fa246.dip0.t-ipconnect.de ([2003:cc:fbca:a500:7ee9:d3ff:fe1f:a246] helo=localhost)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1goA1Y-0007Gz-AI; Mon, 28 Jan 2019 17:44:40 +0100
+Received: from [::1] (helo=localhost)
+        by localhost with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1goA1V-0002f6-LS; Mon, 28 Jan 2019 17:44:37 +0100
+Date:   Mon, 28 Jan 2019 17:44:29 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     bcousson@baylibre.com, tony@atomide.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        letux-kernel@openphoenux.org
+Subject: Re: [PATCH] arm: dts: gta04: add gps support
+Message-ID: <20190128163025.7daa385b@kemnade.info>
+In-Reply-To: <20190128075356.GJ3691@localhost>
+References: <20190125194310.11170-1-andreas@kemnade.info>
+ <20190128075356.GJ3691@localhost>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/jnd3g4.rS3VPk9X7AQnelhT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+--Sig_/jnd3g4.rS3VPk9X7AQnelhT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
+On Mon, 28 Jan 2019 08:53:56 +0100
+Johan Hovold <johan@kernel.org> wrote:
 
-clps711x_fb_probe() increments refcnt of disp device node by
-of_parse_phandle() and leaves it undecremented on both
-successful and error paths.
+> On Fri, Jan 25, 2019 at 08:43:10PM +0100, Andreas Kemnade wrote:
+> > The GTA04 has a w2sg0004 or w2sg0084 gps chip. Not detectable
+> > which one is mounted so use the compatibility entry for w2sg0004
+> > for all which will work for both.
+> >=20
+> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> > ---
+> > w2sg0004 bindings (together with the corresponding support is in
+> > https://git.kernel.org/pub/scm/linux/kernel/git/johan/gnss gnss-next)
+> >  arch/arm/boot/dts/omap3-gta04.dtsi | 13 +++++++++++++
+> >  1 file changed, 13 insertions(+)
+> >=20
+> > diff --git a/arch/arm/boot/dts/omap3-gta04.dtsi b/arch/arm/boot/dts/oma=
+p3-gta04.dtsi
+> > index e53d32691308..d58c117e429f 100644
+> > --- a/arch/arm/boot/dts/omap3-gta04.dtsi
+> > +++ b/arch/arm/boot/dts/omap3-gta04.dtsi
+> > @@ -312,6 +312,12 @@ =20
+> >  		>; =20
+> >         };
+> > =20
+> > +	gps_pins: pinmux_gps_pins {
+> > +		pinctrl-single,pins =3D <
+> > +			OMAP3_CORE1_IOPAD(0x2176, PIN_OUTPUT_PULLDOWN | MUX_MODE4) /* gpio1=
+45 */
+> > +		>;
+> > +	};
+> > +
+> >  	hdq_pins: hdq_pins {
+> >  		pinctrl-single,pins =3D <
+> >  			OMAP3_CORE1_IOPAD(0x21c6, PIN_INPUT_PULLUP | MUX_MODE0) /* i2c3_sda=
+.hdq */
+> > @@ -644,6 +650,13 @@
+> >  &uart2 {
+> >  	pinctrl-names =3D "default";
+> >  	pinctrl-0 =3D <&uart2_pins>;
+> > +	gps: gps { =20
+>=20
+> The node should be named "gnss" as per the binding.
+>=20
+> > +		compatible =3D "wi2wi,w2sg0004";
+> > +		pinctrl-names =3D "default";
+> > +		pinctrl-0 =3D <&gps_pins>;
+> > +		sirf,onoff-gpios =3D <&gpio5 17 GPIO_ACTIVE_HIGH>;
+> > +		lna-supply =3D <&vsim>; =20
+>=20
+> Also, the vcc-supply is a required property.
+>=20
+well, it is not require in the driver and it has different behavior (on eve=
+n when not opened if
+on-off is there) than the lna-supply used here. So maybe fix the binding do=
+cumentation?
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Regards,
+Andreas
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Cc: Alexander Shiyan <shc_work@mail.ru>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/video/fbdev/clps711x-fb.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+--Sig_/jnd3g4.rS3VPk9X7AQnelhT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
-index ff561073ee4e..42f909618f04 100644
---- a/drivers/video/fbdev/clps711x-fb.c
-+++ b/drivers/video/fbdev/clps711x-fb.c
-@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
- 	}
- 
- 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
--	if (ret)
-+	if (ret) {
-+		of_node_put(disp);
- 		goto out_fb_release;
-+	}
- 
- 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
- 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
- 
- 	ret = of_property_read_u32(disp, "bits-per-pixel",
- 				   &info->var.bits_per_pixel);
-+	of_node_put(disp);
- 	if (ret)
- 		goto out_fb_release;
- 
--- 
-2.19.1
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAEBCAAdFiEEPIWxmAFyOaBcwCpFl4jFM1s/ye8FAlxPMW0ACgkQl4jFM1s/
+ye9ZoQ//VDB79MrCEDDdmoQ81Yg/OoS+lifHW5tNqOVyNrMNVaOxBwLU6K58X7w6
+2eCBj79lc4EDxhanbw5b2dczCyi5HdaeOPPkQu3exYonnXAw1j9+tAEEz6howJXu
+9c/FOO4AsiUuyIqbMtHg+Vu93ydGhWuA2xG4PBwwIXdacLUTtkL7MRQfQadUpHt+
+w4cBm+BR0AsWJQETP2Y0qu8XfRTUJ1tXyO96UUt3USzPOW58LhY6Dw3llBaLActc
+vkKRa8yr1NppxwBqixnSpXI6AG1l0MuQnSQhsF0D3J1TbYnLbYDpyeitMBbe1Vmf
+Cr0kA7VKVJ0chSCVZOuFBhGmbG6cgwxFK91tu/Fo6ZjIMXCfzyY7PFjPAqevpp4a
+skkEZMiCL6WdHabKVGRJiFnCOOXEEq/RZguXNhvUF9GHTlFP0vWtz6+ozgc6gNWv
+97C/02Oo49qkTnrJHvhBdZ05iq7TD8hlurjSnwq2c1rk4CSIWVD6nkkgI+Nii87D
+4Fr20DUhcyJtyDE0h0MP4fXvLTrMsPuRM4dY+y6LCR8uwaFBNv5mB+DmUxfS/gJ6
+IvUWEtgJ94jc6e4a2W3gc6L0jQS7TiMedlwIN0/Ebyrekt1tWHyvZEahHzcWrY7U
+dWH1kNyNG3QyFB6AHUfqlkri5z7zpYNsmHScTtjaXTM0ZKCgE+Q=
+=r8SB
+-----END PGP SIGNATURE-----
+
+--Sig_/jnd3g4.rS3VPk9X7AQnelhT--
