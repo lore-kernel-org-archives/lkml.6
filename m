@@ -7,50 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E15C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC167C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6C65521848
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C92B2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691168;
-	bh=DswvjFhhMD433tg2t4eilKeFeUabt1oJPaBCuhaotog=;
+	s=default; t=1548691175;
+	bh=t5Tx9wOUdjwV1AZezCkGQiVXL1YLa/2ZDs3LGxniwpM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oj7S2GPBtL5psWF0Rh+6MhVL19nT107J/UykPTyxSzf17f2uzuK2P5/iBiNG+fsFo
-	 z+Jpc8jZCtqoAcxfjPsKUbYmadTlV3LIdbtDmlxo5g3khKoA7X7t67q29HCHv4HFbg
-	 Ol3pQwEaMgg5MEXh40gjJgKddSWYoV5ziOixRD58=
+	b=SVnAPEfzXMOs4deojoBlp2KaurYMQIroqtxQ7JiEzjBcCVW1SVDJA9qwHjpsCL03H
+	 BVD/za3hmYSrwfrKHJDZbO8zWnk1DMtBuF1B4M1o+EVRSgfDZPIJMbaHlKg3laK0Wx
+	 6/Mz9r7t6YnrxhrJBzr/YrNrBsRLSk8lioASPzrY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730563AbfA1P70 (ORCPT
+        id S1730583AbfA1P7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:59:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44716 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:59:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727635AbfA1P7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:59:23 -0500
+        id S1728987AbfA1P7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:59:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DC3342082E;
-        Mon, 28 Jan 2019 15:59:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E3F772175B;
+        Mon, 28 Jan 2019 15:59:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691162;
-        bh=DswvjFhhMD433tg2t4eilKeFeUabt1oJPaBCuhaotog=;
+        s=default; t=1548691171;
+        bh=t5Tx9wOUdjwV1AZezCkGQiVXL1YLa/2ZDs3LGxniwpM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pWV3PkRTKYtkzXdghQU2+xIZ6/XHc3UROAQ9kwpoh6uAnH4vsrG1SPFTexuchcCvF
-         MOOKGN2Q8LC3tbHy95Dg2UNw8hgS4alSWytLjKsFRgf+P0D9ersxpyJo2NC+ZkcBx7
-         +UrZwuE5DTkeH0Bkg0JMCvny1f7IK3VLTPaVFRsA=
+        b=SivOAHz5ESyl1lEDcyb9QSLDnj7eXCWQWt14kv9ep4kBAEml4KQTaXRolJqqKXhxU
+         usYUKpRPzPq/ux+kUwvxQrvj7PIdqBhNdqstjroRvHIiGDDI5GFiA4Rc2or4/JfKlE
+         CnKeLbZKEjlQSxptUXCoq12ofyeB0Zaph6rnHdJY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chuck Lever <chuck.lever@oracle.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 304/304] xprtrdma: Don't wake pending tasks until disconnect is done
-Date:   Mon, 28 Jan 2019 10:43:41 -0500
-Message-Id: <20190128154341.47195-304-sashal@kernel.org>
+Cc:     Slawomir Stepien <sst@poczta.fm>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.19 002/258] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
+Date:   Mon, 28 Jan 2019 10:55:08 -0500
+Message-Id: <20190128155924.51521-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -59,198 +59,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chuck Lever <chuck.lever@oracle.com>
+From: Slawomir Stepien <sst@poczta.fm>
 
-[ Upstream commit 0c0829bcf51aef713806e49b8ea2bac7962f54e2 ]
+[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
 
-Transport disconnect processing does a "wake pending tasks" at
-various points.
+Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
+error code. This change will ensure that this error is being passed up
+in the call stack, so it can be handled.
 
-Suppose an RPC Reply is being processed. The RPC task that Reply
-goes with is waiting on the pending queue. If a disconnect wake-up
-happens before reply processing is done, that reply, even if it is
-good, is thrown away, and the RPC has to be sent again.
-
-This window apparently does not exist for socket transports because
-there is a lock held while a reply is being received which prevents
-the wake-up call until after reply processing is done.
-
-To resolve this, all RPC replies being processed on an RPC-over-RDMA
-transport have to complete before pending tasks are awoken due to a
-transport disconnect.
-
-Callers that already hold the transport write lock may invoke
-->ops->close directly. Others use a generic helper that schedules
-a close when the write lock can be taken safely.
-
-Signed-off-by: Chuck Lever <chuck.lever@oracle.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sunrpc/xprtrdma/backchannel.c          | 13 +++++++------
- net/sunrpc/xprtrdma/svc_rdma_backchannel.c |  8 +++++---
- net/sunrpc/xprtrdma/transport.c            | 17 ++++++++++-------
- net/sunrpc/xprtrdma/verbs.c                |  1 -
- net/sunrpc/xprtrdma/xprt_rdma.h            |  1 +
- 5 files changed, 23 insertions(+), 17 deletions(-)
+ drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/net/sunrpc/xprtrdma/backchannel.c b/net/sunrpc/xprtrdma/backchannel.c
-index e5b367a3e517..88fde80b9347 100644
---- a/net/sunrpc/xprtrdma/backchannel.c
-+++ b/net/sunrpc/xprtrdma/backchannel.c
-@@ -193,14 +193,15 @@ static int rpcrdma_bc_marshal_reply(struct rpc_rqst *rqst)
-  */
- int xprt_rdma_bc_send_reply(struct rpc_rqst *rqst)
- {
--	struct rpcrdma_xprt *r_xprt = rpcx_to_rdmax(rqst->rq_xprt);
-+	struct rpc_xprt *xprt = rqst->rq_xprt;
-+	struct rpcrdma_xprt *r_xprt = rpcx_to_rdmax(xprt);
- 	struct rpcrdma_req *req = rpcr_to_rdmar(rqst);
- 	int rc;
+diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
+index b736275c10f5..6a48ad067a8b 100644
+--- a/drivers/staging/iio/adc/ad7280a.c
++++ b/drivers/staging/iio/adc/ad7280a.c
+@@ -256,7 +256,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned int devaddr,
+ 	if (ret)
+ 		return ret;
  
--	if (!xprt_connected(rqst->rq_xprt))
--		goto drop_connection;
-+	if (!xprt_connected(xprt))
-+		return -ENOTCONN;
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
  
--	if (!xprt_request_get_cong(rqst->rq_xprt, rqst))
-+	if (!xprt_request_get_cong(xprt, rqst))
- 		return -EBADSLT;
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -294,7 +296,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned int devaddr,
  
- 	rc = rpcrdma_bc_marshal_reply(rqst);
-@@ -216,7 +217,7 @@ failed_marshal:
- 	if (rc != -ENOTCONN)
- 		return rc;
- drop_connection:
--	xprt_disconnect_done(rqst->rq_xprt);
-+	xprt_rdma_close(xprt);
- 	return -ENOTCONN;
- }
+ 	ad7280_delay(st);
  
-@@ -339,7 +340,7 @@ void rpcrdma_bc_receive_call(struct rpcrdma_xprt *r_xprt,
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
  
- out_overflow:
- 	pr_warn("RPC/RDMA backchannel overflow\n");
--	xprt_disconnect_done(xprt);
-+	xprt_force_disconnect(xprt);
- 	/* This receive buffer gets reposted automatically
- 	 * when the connection is re-established.
- 	 */
-diff --git a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-index f3c147d70286..b908f2ca08fd 100644
---- a/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-+++ b/net/sunrpc/xprtrdma/svc_rdma_backchannel.c
-@@ -200,11 +200,10 @@ rpcrdma_bc_send_request(struct svcxprt_rdma *rdma, struct rpc_rqst *rqst)
- 		svc_rdma_send_ctxt_put(rdma, ctxt);
- 		goto drop_connection;
- 	}
--	return rc;
-+	return 0;
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -327,7 +331,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned int cnt,
+ 	ad7280_delay(st);
  
- drop_connection:
- 	dprintk("svcrdma: failed to send bc call\n");
--	xprt_disconnect_done(xprt);
- 	return -ENOTCONN;
- }
+ 	for (i = 0; i < cnt; i++) {
+-		__ad7280_read32(st, &tmp);
++		ret = __ad7280_read32(st, &tmp);
++		if (ret)
++			return ret;
  
-@@ -225,8 +224,11 @@ xprt_rdma_bc_send_request(struct rpc_rqst *rqst)
+ 		if (ad7280_check_crc(st, tmp))
+ 			return -EIO;
+@@ -370,7 +376,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
+ 		return ret;
  
- 	ret = -ENOTCONN;
- 	rdma = container_of(sxprt, struct svcxprt_rdma, sc_xprt);
--	if (!test_bit(XPT_DEAD, &sxprt->xpt_flags))
-+	if (!test_bit(XPT_DEAD, &sxprt->xpt_flags)) {
- 		ret = rpcrdma_bc_send_request(rdma, rqst);
-+		if (ret == -ENOTCONN)
-+			svc_close_xprt(sxprt);
-+	}
- 
- 	mutex_unlock(&sxprt->xpt_mutex);
- 
-diff --git a/net/sunrpc/xprtrdma/transport.c b/net/sunrpc/xprtrdma/transport.c
-index ae2a83828953..e7683d3b1e6c 100644
---- a/net/sunrpc/xprtrdma/transport.c
-+++ b/net/sunrpc/xprtrdma/transport.c
-@@ -437,8 +437,7 @@ out1:
-  * Caller holds @xprt's send lock to prevent activity on this
-  * transport while the connection is torn down.
-  */
--static void
--xprt_rdma_close(struct rpc_xprt *xprt)
-+void xprt_rdma_close(struct rpc_xprt *xprt)
- {
- 	struct rpcrdma_xprt *r_xprt = rpcx_to_rdmax(xprt);
- 	struct rpcrdma_ep *ep = &r_xprt->rx_ep;
-@@ -449,13 +448,13 @@ xprt_rdma_close(struct rpc_xprt *xprt)
- 	if (test_and_clear_bit(RPCRDMA_IAF_REMOVING, &ia->ri_flags)) {
- 		xprt_clear_connected(xprt);
- 		rpcrdma_ia_remove(ia);
--		return;
-+		goto out;
- 	}
+ 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
+-		__ad7280_read32(st, &val);
++		ret = __ad7280_read32(st, &val);
++		if (ret)
++			return ret;
 +
- 	if (ep->rep_connected == -ENODEV)
- 		return;
- 	if (ep->rep_connected > 0)
- 		xprt->reestablish_timeout = 0;
--	xprt_disconnect_done(xprt);
- 	rpcrdma_ep_disconnect(ep, ia);
+ 		if (val == 0)
+ 			return n - 1;
  
- 	/* Prepare @xprt for the next connection by reinitializing
-@@ -463,6 +462,10 @@ xprt_rdma_close(struct rpc_xprt *xprt)
- 	 */
- 	r_xprt->rx_buf.rb_credits = 1;
- 	xprt->cwnd = RPC_CWNDSHIFT;
-+
-+out:
-+	++xprt->connect_cookie;
-+	xprt_disconnect_done(xprt);
- }
- 
- /**
-@@ -713,7 +716,7 @@ xprt_rdma_send_request(struct rpc_rqst *rqst)
- #endif	/* CONFIG_SUNRPC_BACKCHANNEL */
- 
- 	if (!xprt_connected(xprt))
--		goto drop_connection;
-+		return -ENOTCONN;
- 
- 	if (!xprt_request_get_cong(xprt, rqst))
- 		return -EBADSLT;
-@@ -745,8 +748,8 @@ failed_marshal:
- 	if (rc != -ENOTCONN)
- 		return rc;
- drop_connection:
--	xprt_disconnect_done(xprt);
--	return -ENOTCONN;	/* implies disconnect */
-+	xprt_rdma_close(xprt);
-+	return -ENOTCONN;
- }
- 
- void xprt_rdma_print_stats(struct rpc_xprt *xprt, struct seq_file *seq)
-diff --git a/net/sunrpc/xprtrdma/verbs.c b/net/sunrpc/xprtrdma/verbs.c
-index b9bc7f9f6bb9..919fddec0197 100644
---- a/net/sunrpc/xprtrdma/verbs.c
-+++ b/net/sunrpc/xprtrdma/verbs.c
-@@ -316,7 +316,6 @@ rpcrdma_cm_event_handler(struct rdma_cm_id *id, struct rdma_cm_event *event)
- 			ep->rep_connected = -EAGAIN;
- 		goto disconnected;
- 	case RDMA_CM_EVENT_DISCONNECTED:
--		++xprt->connect_cookie;
- 		ep->rep_connected = -ECONNABORTED;
- disconnected:
- 		xprt_force_disconnect(xprt);
-diff --git a/net/sunrpc/xprtrdma/xprt_rdma.h b/net/sunrpc/xprtrdma/xprt_rdma.h
-index a13ccb643ce0..0af75b1405f8 100644
---- a/net/sunrpc/xprtrdma/xprt_rdma.h
-+++ b/net/sunrpc/xprtrdma/xprt_rdma.h
-@@ -653,6 +653,7 @@ static inline void rpcrdma_set_xdrlen(struct xdr_buf *xdr, size_t len)
- extern unsigned int xprt_rdma_max_inline_read;
- void xprt_rdma_format_addresses(struct rpc_xprt *xprt, struct sockaddr *sap);
- void xprt_rdma_free_addresses(struct rpc_xprt *xprt);
-+void xprt_rdma_close(struct rpc_xprt *xprt);
- void xprt_rdma_print_stats(struct rpc_xprt *xprt, struct seq_file *seq);
- int xprt_rdma_init(void);
- void xprt_rdma_cleanup(void);
 -- 
 2.19.1
 
