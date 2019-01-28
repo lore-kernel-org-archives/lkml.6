@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16994C282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5604C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CED3E2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AB6F2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694214;
-	bh=ASDMg/4epFmYnhML5aDcH927KPsDPUNDWyQNH9oXQr4=;
+	s=default; t=1548694218;
+	bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=b+UxLVRoe8AaT03pS3t5N3klyQ5dwTdFKS9UCzHTl7sRpIBqACBHCwUASJhsawG87
-	 HlSet3PwqUi3biELbdV8yIqTQUZWNOnDZwj41tarxqo3EzaZKvfjw+HE/mTw0+VZjS
-	 jcWbXo0a+yB1mlLolWEnbSOBJ4aj3/g5P14TykOg=
+	b=SBg1EsSG1gOyW0ROi7gR6y0rjrAVaCHnfStGpthoNyLPEZ85FTL+WU1LwwH72Pfac
+	 YhAOQfX+NroKROw1UVwOMNQfuUfzsfnpA9JL8d9qdUxwUYnDKH2rk6Qx2DA19p5krf
+	 x14ECkt0ooM1R1xN2T1Xd54RjUA6ObJ54U3qtBxQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387730AbfA1QUN (ORCPT
+        id S2389212AbfA1QuR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:20:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55414 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:50:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55500 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388735AbfA1QUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:20:09 -0500
+        id S2388750AbfA1QUN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:20:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D53C2147A;
-        Mon, 28 Jan 2019 16:20:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 093172171F;
+        Mon, 28 Jan 2019 16:20:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692408;
-        bh=ASDMg/4epFmYnhML5aDcH927KPsDPUNDWyQNH9oXQr4=;
+        s=default; t=1548692412;
+        bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SbwMBheWxRejZNGHgNqsiSBoNqIjfCF2n0YvFZdM6VJbuOentKIARv4BW6UHT9m4h
-         G/MYmox7tTkuiIcABwRLz0LhAv8n3kiRlTbQqRAs5XnDKnaQm1WDJDepVoeAtaTrpU
-         vzl1FYyzg8p3OvmQQ6KqU5u5Wu8w9/5pW6d+w/lA=
+        b=wX0J3LbZ8yknsS1F6jhSauUfU4Qq+nZsL9jauM6j5j0QokhpGz5Rg+jXvWUA4ZE0E
+         f3luCUZqKfmb8EIqj1XPrnVXLdPhcZ1JugYeY3to9ejp5igxlnhoiH/Q3KpKBEKQco
+         NmWqtNsU0j5U0z/jm6FcD+uSsjQqA3gaJBuYi3ps=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yufen Wang <wangyufen@huawei.com>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 008/107] ARM: 8808/1: kexec:offline panic_smp_self_stop CPU
-Date:   Mon, 28 Jan 2019 11:18:08 -0500
-Message-Id: <20190128161947.57405-8-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 010/107] x86/PCI: Fix Broadcom CNB20LE unintended sign extension (redux)
+Date:   Mon, 28 Jan 2019 11:18:10 -0500
+Message-Id: <20190128161947.57405-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -58,63 +58,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yufen Wang <wangyufen@huawei.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 82c08c3e7f171aa7f579b231d0abbc1d62e91974 ]
+[ Upstream commit 53bb565fc5439f2c8c57a786feea5946804aa3e9 ]
 
-In case panic() and panic() called at the same time on different CPUS.
-For example:
-CPU 0:
-  panic()
-     __crash_kexec
-       machine_crash_shutdown
-         crash_smp_send_stop
-       machine_kexec
-         BUG_ON(num_online_cpus() > 1);
+In the expression "word1 << 16", word1 starts as u16, but is promoted to a
+signed int, then sign-extended to resource_size_t, which is probably not
+what was intended.  Cast to resource_size_t to avoid the sign extension.
 
-CPU 1:
-  panic()
-    local_irq_disable
-    panic_smp_self_stop
+This fixes an identical issue as fixed by commit 0b2d70764bb3 ("x86/PCI:
+Fix Broadcom CNB20LE unintended sign extension") back in 2014.
 
-If CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop(), kdump
-fails. CPU1 can't receive the ipi irq, CPU1 will be always online.
-To fix this problem, this patch split out the panic_smp_self_stop()
-and add set_cpu_online(smp_processor_id(), false).
+Detected by CoverityScan, CID#138749, 138750 ("Unintended sign extension")
 
-Signed-off-by: Yufen Wang <wangyufen@huawei.com>
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Fixes: 3f6ea84a3035 ("PCI: read memory ranges out of Broadcom CNB20LE host bridge")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kernel/smp.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+ arch/x86/pci/broadcom_bus.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
-index d2ce37da87d8..4b129aac7233 100644
---- a/arch/arm/kernel/smp.c
-+++ b/arch/arm/kernel/smp.c
-@@ -690,6 +690,21 @@ void smp_send_stop(void)
- 		pr_warn("SMP: failed to stop secondary CPUs\n");
- }
- 
-+/* In case panic() and panic() called at the same time on CPU1 and CPU2,
-+ * and CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop()
-+ * CPU1 can't receive the ipi irqs from CPU2, CPU1 will be always online,
-+ * kdump fails. So split out the panic_smp_self_stop() and add
-+ * set_cpu_online(smp_processor_id(), false).
-+ */
-+void panic_smp_self_stop(void)
-+{
-+	pr_debug("CPU %u will stop doing anything useful since another CPU has paniced\n",
-+	         smp_processor_id());
-+	set_cpu_online(smp_processor_id(), false);
-+	while (1)
-+		cpu_relax();
-+}
-+
- /*
-  * not supported here
-  */
+diff --git a/arch/x86/pci/broadcom_bus.c b/arch/x86/pci/broadcom_bus.c
+index 526536c81ddc..ca1e8e6dccc8 100644
+--- a/arch/x86/pci/broadcom_bus.c
++++ b/arch/x86/pci/broadcom_bus.c
+@@ -50,8 +50,8 @@ static void __init cnb20le_res(u8 bus, u8 slot, u8 func)
+ 	word1 = read_pci_config_16(bus, slot, func, 0xc0);
+ 	word2 = read_pci_config_16(bus, slot, func, 0xc2);
+ 	if (word1 != word2) {
+-		res.start = (word1 << 16) | 0x0000;
+-		res.end   = (word2 << 16) | 0xffff;
++		res.start = ((resource_size_t) word1 << 16) | 0x0000;
++		res.end   = ((resource_size_t) word2 << 16) | 0xffff;
+ 		res.flags = IORESOURCE_MEM;
+ 		update_res(info, res.start, res.end, res.flags, 0);
+ 	}
 -- 
 2.19.1
 
