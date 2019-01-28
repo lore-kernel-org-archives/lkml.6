@@ -7,114 +7,208 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3FBAC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:11:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B55C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:11:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8407921738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:11:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 260782171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:11:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="It2VOLZ5"
+	dkim=pass (1024-bit key) header.d=c-s.fr header.i=@c-s.fr header.b="eHs13F7b"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727074AbfA1LLf (ORCPT
+        id S1727094AbfA1LLj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:11:35 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:7261 "EHLO pegase1.c-s.fr"
+        Mon, 28 Jan 2019 06:11:39 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:25096 "EHLO pegase1.c-s.fr"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727033AbfA1LLa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:11:30 -0500
+        id S1727067AbfA1LLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 06:11:35 -0500
 Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 43p6Q10thhz9v1q9;
-        Mon, 28 Jan 2019 12:11:21 +0100 (CET)
+        by localhost (Postfix) with ESMTP id 43p6Q71Xs4z9v1q8;
+        Mon, 28 Jan 2019 12:11:27 +0100 (CET)
 Authentication-Results: localhost; dkim=pass
         reason="1024-bit key; insecure key"
-        header.d=c-s.fr header.i=@c-s.fr header.b=It2VOLZ5; dkim-adsp=pass;
+        header.d=c-s.fr header.i=@c-s.fr header.b=eHs13F7b; dkim-adsp=pass;
         dkim-atps=neutral
 X-Virus-Scanned: Debian amavisd-new at c-s.fr
 Received: from pegase1.c-s.fr ([192.168.12.234])
         by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id BTKxBnuJQN4c; Mon, 28 Jan 2019 12:11:21 +0100 (CET)
+        with ESMTP id s-fb7NYT_vow; Mon, 28 Jan 2019 12:11:27 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 43p6Q06xzYz9v1q3;
-        Mon, 28 Jan 2019 12:11:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
-        t=1548673881; bh=Oyahhs2dPeEr1U/OySi46JgAIKGTXPGVCaOaBMFpyA0=;
-        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
-        b=It2VOLZ5WRfdc061ojDYvS2sXjoi0mY0Kq5vZrbzNUtOKABgRTgADWJEvSSyRk9m0
-         0RPX58KszWYrReXaMY7nwInLpl0eEbRoPueIoJLe5knXwx2VxR6AI1C7HccFd/76Xr
-         8QYey6g11WK4a/x2bqklNNgmDtxmaZylyCUxSjuI=
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 6F39B8B79D;
+        by pegase1.c-s.fr (Postfix) with ESMTP id 43p6Q7035Jz9v1q3;
         Mon, 28 Jan 2019 12:11:27 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=c-s.fr; s=mail;
+        t=1548673887; bh=+AC8fYPlx+rtvnzYktQs73gj5W3C0ZmpXwsPScCZEuY=;
+        h=In-Reply-To:References:From:Subject:To:Cc:Date:From;
+        b=eHs13F7bo6dR+0rgoVl67smoYBTUzYX0VFTxezgDtSU9Tj+C+XB9HM9c8qxGy6iMB
+         r9FqCKSfhZP+e/Jjc0MTBaUDz4LnOLsLSvRHZ0egiTfMEibEK9XyZGDbCJ1uCLmp+i
+         S9HNclsSqTOw+R81aBMeBIW78OuyKV42nKsI9LnE=
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 7BCC28B79D;
+        Mon, 28 Jan 2019 12:11:33 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
         by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id EX9woafcjlrO; Mon, 28 Jan 2019 12:11:27 +0100 (CET)
+        with ESMTP id IUEdOk-qQuYh; Mon, 28 Jan 2019 12:11:33 +0100 (CET)
 Received: from po16846vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 3604E8B796;
-        Mon, 28 Jan 2019 12:11:27 +0100 (CET)
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 4FE5E8B796;
+        Mon, 28 Jan 2019 12:11:33 +0100 (CET)
 Received: by po16846vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 288B372DE6; Mon, 28 Jan 2019 11:11:27 +0000 (UTC)
-Message-Id: <96a6861f3b7ec6ca2a59ee50c327fa5f2d03bbee.1548673552.git.christophe.leroy@c-s.fr>
+        id 3905E72DE6; Mon, 28 Jan 2019 11:11:33 +0000 (UTC)
+Message-Id: <30119723bdd998847e09e720348ac2ec229444af.1548673552.git.christophe.leroy@c-s.fr>
 In-Reply-To: <cover.1548673552.git.christophe.leroy@c-s.fr>
 References: <cover.1548673552.git.christophe.leroy@c-s.fr>
 From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH 08/11] powerpc/40x: add exception frame marker
+Subject: [PATCH 11/11] powerpc/40x: Refactor exception entry macros by using
+ head_32.h
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
         Michael Ellerman <mpe@ellerman.id.au>
 Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Mon, 28 Jan 2019 11:11:27 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 11:11:33 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds STACK_FRAME_REGS_MARKER in the stack at exception entry
-in order to see interrupts in call traces as below:
-
-[    0.013964] Call Trace:
-[    0.014014] [c0745db0] [c007a9d4] tick_periodic.constprop.5+0xd8/0x104 (unreliable)
-[    0.014086] [c0745dc0] [c007aa20] tick_handle_periodic+0x20/0x9c
-[    0.014181] [c0745de0] [c0009cd0] timer_interrupt+0xa0/0x264
-[    0.014258] [c0745e10] [c000e484] ret_from_except+0x0/0x14
-[    0.014390] --- interrupt: 901 at console_unlock.part.7+0x3f4/0x528
-[    0.014390]     LR = console_unlock.part.7+0x3f0/0x528
-[    0.014455] [c0745ee0] [c0050334] console_unlock.part.7+0x114/0x528 (unreliable)
-[    0.014542] [c0745f30] [c00524e0] register_console+0x3d8/0x44c
-[    0.014625] [c0745f60] [c0675aac] cpm_uart_console_init+0x18/0x2c
-[    0.014709] [c0745f70] [c06614f4] console_init+0x114/0x1cc
-[    0.014795] [c0745fb0] [c0658b68] start_kernel+0x300/0x3d8
-[    0.014864] [c0745ff0] [c00022cc] start_here+0x44/0x98
+Refactor exception entry macros by using the ones defined in head_32.h
 
 Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
 ---
- arch/powerpc/kernel/head_40x.S | 6 ++++++
- 1 file changed, 6 insertions(+)
+ arch/powerpc/kernel/head_40x.S | 94 ++++--------------------------------------
+ 1 file changed, 8 insertions(+), 86 deletions(-)
 
 diff --git a/arch/powerpc/kernel/head_40x.S b/arch/powerpc/kernel/head_40x.S
-index 59f6f53f1ac2..f3bfb695f952 100644
+index d52e460ea85e..e123bb3aff96 100644
 --- a/arch/powerpc/kernel/head_40x.S
 +++ b/arch/powerpc/kernel/head_40x.S
-@@ -132,6 +132,9 @@ _ENTRY(saved_ksp_limit)
- 	tovirt(r1,r11);			/* set new kernel sp */	\
- 	rlwinm	r9,r9,0,14,12;		/* clear MSR_WE (necessary?)	   */\
- 	stw	r0,GPR0(r11);						     \
-+	lis	r10, STACK_FRAME_REGS_MARKER@ha; /* exception frame marker */\
-+	addi	r10, r10, STACK_FRAME_REGS_MARKER@l;			     \
-+	stw	r10, 8(r11);						     \
- 	SAVE_4GPRS(3, r11);						     \
- 	SAVE_2GPRS(7, r11)
+@@ -44,6 +44,14 @@
+ #include <asm/export.h>
+ #include <asm/asm-405.h>
  
-@@ -174,6 +177,9 @@ _ENTRY(saved_ksp_limit)
- 	tovirt(r1,r11);							     \
- 	rlwinm	r9,r9,0,14,12;		/* clear MSR_WE (necessary?)	   */\
- 	stw	r0,GPR0(r11);						     \
-+	lis	r10, STACK_FRAME_REGS_MARKER@ha; /* exception frame marker */\
-+	addi	r10, r10, STACK_FRAME_REGS_MARKER@l;			     \
-+	stw	r10, 8(r11);						     \
- 	SAVE_4GPRS(3, r11);						     \
- 	SAVE_2GPRS(7, r11)
++.macro DO_KVM intno
++.endm
++
++/* clear MSR_WE (necessary?)*/
++#define CLR_MSR_WE(reg)		rlwinm	reg, reg, 0, ~MSR_WE
++
++#include "head_32.h"
++
+ /* As with the other PowerPC ports, it is expected that when code
+  * execution begins here, the following registers contain valid, yet
+  * optional, information:
+@@ -99,52 +107,6 @@ _ENTRY(saved_ksp_limit)
+ 	.space	4
  
+ /*
+- * Exception vector entry code. This code runs with address translation
+- * turned off (i.e. using physical addresses). We assume SPRG_THREAD has
+- * the physical address of the current task thread_struct.
+- */
+-#define EXCEPTION_PROLOG						     \
+-	mtspr	SPRN_SPRG_SCRATCH0,r10;	/* save two registers to work with */\
+-	mtspr	SPRN_SPRG_SCRATCH1,r11;					     \
+-	mfcr	r10;			/* save CR in r10 for now	   */\
+-	EXCEPTION_PROLOG_1;						     \
+-	EXCEPTION_PROLOG_2
+-
+-#define EXCEPTION_PROLOG_1						     \
+-	mfspr	r11,SPRN_SRR1;		/* check whether user or kernel    */\
+-	andi.	r11,r11,MSR_PR;						     \
+-	tophys(r11,r1);							     \
+-	beq	1f;							     \
+-	mfspr	r11,SPRN_SPRG_THREAD;	/* if from user, start at top of   */\
+-	lwz	r11,TASK_STACK-THREAD(r11); /* this thread's kernel stack */\
+-	addi	r11,r11,THREAD_SIZE;					     \
+-	tophys(r11,r11);						     \
+-1:	subi	r11,r11,INT_FRAME_SIZE;	/* Allocate an exception frame     */
+-
+-#define EXCEPTION_PROLOG_2						     \
+-	stw	r10,_CCR(r11);          /* save various registers	   */\
+-	stw	r12,GPR12(r11);						     \
+-	stw	r9,GPR9(r11);						     \
+-	mfspr	r10,SPRN_SPRG_SCRATCH0;					     \
+-	stw	r10,GPR10(r11);						     \
+-	mfspr	r12,SPRN_SPRG_SCRATCH1;					     \
+-	stw	r12,GPR11(r11);						     \
+-	mflr	r10;							     \
+-	stw	r10,_LINK(r11);						     \
+-	mfspr	r12,SPRN_SRR0;						     \
+-	stw	r1,GPR1(r11);						     \
+-	mfspr	r9,SPRN_SRR1;						     \
+-	stw	r1,0(r11);						     \
+-	tovirt(r1,r11);			/* set new kernel sp */	\
+-	rlwinm	r9,r9,0,14,12;		/* clear MSR_WE (necessary?)	   */\
+-	stw	r0,GPR0(r11);						     \
+-	lis	r10, STACK_FRAME_REGS_MARKER@ha; /* exception frame marker */\
+-	addi	r10, r10, STACK_FRAME_REGS_MARKER@l;			     \
+-	stw	r10, 8(r11);						     \
+-	SAVE_4GPRS(3, r11);						     \
+-	SAVE_2GPRS(7, r11)
+-
+-/*
+  * Exception prolog for critical exceptions.  This is a little different
+  * from the normal exception prolog above since a critical exception
+  * can potentially occur at any point during normal exception processing.
+@@ -205,32 +167,12 @@ _ENTRY(saved_ksp_limit)
+ /*
+  * Exception vectors.
+  */
+-#define	START_EXCEPTION(n, label)					     \
+-	. = n;								     \
+-label:
+-
+-#define EXCEPTION(n, label, hdlr, xfer)				\
+-	START_EXCEPTION(n, label);				\
+-	EXCEPTION_PROLOG;				\
+-	addi	r3,r1,STACK_FRAME_OVERHEAD;			\
+-	xfer(n, hdlr)
+-
+ #define CRITICAL_EXCEPTION(n, label, hdlr)			\
+ 	START_EXCEPTION(n, label);				\
+ 	CRITICAL_EXCEPTION_PROLOG;				\
+ 	addi	r3,r1,STACK_FRAME_OVERHEAD;			\
+ 	EXC_XFER_TEMPLATE_CRITICAL(hdlr, n+2)
+ 
+-#define EXC_XFER_TEMPLATE(hdlr, trap, msr, copyee, tfer, ret)	\
+-	li	r10,trap;					\
+-	stw	r10,_TRAP(r11);					\
+-	lis	r10,msr@h;					\
+-	ori	r10,r10,msr@l;					\
+-	copyee(r10, r9);					\
+-	bl	tfer;		 				\
+-	.long	hdlr;						\
+-	.long	ret
+-
+ #define EXC_XFER_TEMPLATE_CRITICAL(hdlr, trap)			\
+ 	li	r10,trap;					\
+ 	stw	r10,_TRAP(r11);					\
+@@ -239,26 +181,6 @@ label:
+ 	.long	hdlr;						\
+ 	.long	ret_from_crit_exc
+ 
+-#define COPY_EE(d, s)		rlwimi d,s,0,16,16
+-#define NOCOPY(d, s)
+-
+-#define EXC_XFER_STD(n, hdlr)		\
+-	EXC_XFER_TEMPLATE(hdlr, n, MSR_KERNEL, NOCOPY, transfer_to_handler_full, \
+-			  ret_from_except_full)
+-
+-#define EXC_XFER_LITE(n, hdlr)		\
+-	EXC_XFER_TEMPLATE(hdlr, n+1, MSR_KERNEL, NOCOPY, transfer_to_handler, \
+-			  ret_from_except)
+-
+-#define EXC_XFER_EE(n, hdlr)		\
+-	EXC_XFER_TEMPLATE(hdlr, n, MSR_KERNEL, COPY_EE, transfer_to_handler_full, \
+-			  ret_from_except_full)
+-
+-#define EXC_XFER_EE_LITE(n, hdlr)	\
+-	EXC_XFER_TEMPLATE(hdlr, n+1, MSR_KERNEL, COPY_EE, transfer_to_handler, \
+-			  ret_from_except)
+-
+-
+ /*
+  * 0x0100 - Critical Interrupt Exception
+  */
 -- 
 2.13.3
 
