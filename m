@@ -2,224 +2,391 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F437C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C97AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 447BD2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:50:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HCIilymf";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="I0tC10OC"
+	by mail.kernel.org (Postfix) with ESMTP id 4DD7B2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:50:09 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726874AbfA1Nt6 (ORCPT
+        id S1726895AbfA1NuH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:49:58 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40244 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfA1Nt6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:49:58 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 779DE6072E; Mon, 28 Jan 2019 13:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548683397;
-        bh=jLekNMlt29VoliIvsUGbMcPHooW3QQi1ouQ1GtV1alY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=HCIilymfWuAGrgON5CFiF+lQ4KUfNgpzKIKr6S5nV2LxIoH4zCgmj67QQ/7j3tSR1
-         uadbeziK0/AIK6Xsf6UsEcKymmZMGhpHdfGoQqg1FgNr029I4qP/LFyA3a5PPMDfp4
-         W7RwkMaWSn5N7GyjuSoZEbwGpCSvaudcBL9X5ShU=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 3DB74605A5;
-        Mon, 28 Jan 2019 13:49:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548683396;
-        bh=jLekNMlt29VoliIvsUGbMcPHooW3QQi1ouQ1GtV1alY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=I0tC10OCo0hnM7GiDbwpTWjqb/BEcyZ8h/jy6bSPJWSslb5qijnazy11iUCouhh+C
-         w73G4dJGskK+V6+YFafpIKrboxtNiTqAb+1aSyz8tHfYU/9GSxnxppUBMqmBp2wpmO
-         fnSl+GiuKnmt7lXqDRwPmMSxpKq68hNlMDjR/Lxw=
+        Mon, 28 Jan 2019 08:50:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46594 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726668AbfA1NuG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 08:50:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 851EDACBF;
+        Mon, 28 Jan 2019 13:50:03 +0000 (UTC)
+From:   Cyril Hrubis <metan@ucw.cz>
+To:     ltp@lists.linux.it
+Cc:     Cyril Hrubis <chrubis@suse.cz>, Jiri Kosina <jikos@kernel.org>,
+        Linux-MM <linux-mm@kvack.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>
+Subject: [PATCH] syscalls/preadv203: Add basic RWF_NOWAIT test
+Date:   Mon, 28 Jan 2019 14:46:56 +0100
+Message-Id: <20190128134656.27979-1-metan@ucw.cz>
+X-Mailer: git-send-email 2.19.2
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 28 Jan 2019 19:19:56 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, johan@kernel.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v9 1/3] Bluetooth: hci_qca: use wait_until_sent() for
- power pulses
-In-Reply-To: <20190125011412.GE81583@google.com>
-References: <20190124120808.8275-1-bgodavar@codeaurora.org>
- <20190124120808.8275-2-bgodavar@codeaurora.org>
- <20190125011412.GE81583@google.com>
-Message-ID: <0fac93a13ee445569659075cf467ad4d@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+From: Cyril Hrubis <chrubis@suse.cz>
 
-On 2019-01-25 06:44, Matthias Kaehlcke wrote:
-> On Thu, Jan 24, 2019 at 05:38:06PM +0530, Balakrishna Godavarthi wrote:
->> wcn3990 requires a power pulse to turn ON/OFF along with
->> regulators. Sometimes we are observing the power pulses are sent
->> out with some time delay, due to queuing these commands. This is
->> causing synchronization issues with chip, which intern delay the
->> chip setup or may end up with communication issues.
->> 
->> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> ---
->> Changes in v9:
->>  * Reverted to 100us sleep.
->>  * used inline call msecs_to_jiffies()
->> 
->> Changes in v8:
->>  * Updated 1 second timeout instead of indefinite wait.
->> 
->> Changes in v7:
->>  *  updated the wait time to 5 ms after sending power pulses.
->> 
->> Changes in v6:
->>  * added serdev_device_write_flush() in qca_send_power_pulse
->>    instead during the power off pulse.
->> 
->> Changes in v5:
->>  * added serdev_device_write_flush() in qca_power_off().
->> ---
->>  drivers/bluetooth/hci_qca.c | 40 
->> +++++++++++++++----------------------
->>  1 file changed, 16 insertions(+), 24 deletions(-)
->> 
->> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->> index f036c8f98ea3..c08f4d105e73 100644
->> --- a/drivers/bluetooth/hci_qca.c
->> +++ b/drivers/bluetooth/hci_qca.c
->> @@ -60,6 +60,7 @@
->>  #define IBS_WAKE_RETRANS_TIMEOUT_MS	100
->>  #define IBS_TX_IDLE_TIMEOUT_MS		2000
->>  #define BAUDRATE_SETTLE_TIMEOUT_MS	300
->> +#define POWER_PULSE_TRANS_TIMEOUT_MS	1000
-> 
-> I still doubt that this mega-timeout of 1s is needed, but it shouldn't
-> do any harm either, so whatever ...
-> 
+We are attempting to trigger the EAGAIN path for the RWF_NOWAIT flag.
 
-[Bala]: for now let us have it. we can improve it in the improvement 
-patch
-         based on the results.
+In order to do so the test runs three threads:
 
->>  /* susclk rate */
->>  #define SUSCLK_RATE_32KHZ	32768
->> @@ -1013,11 +1014,10 @@ static inline void host_set_baudrate(struct 
->> hci_uart *hu, unsigned int speed)
->>  		hci_uart_set_baudrate(hu, speed);
->>  }
->> 
->> -static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
->> +static int qca_send_power_pulse(struct hci_uart *hu, u8 cmd)
->>  {
->> -	struct hci_uart *hu = hci_get_drvdata(hdev);
->> -	struct qca_data *qca = hu->priv;
->> -	struct sk_buff *skb;
->> +	int ret;
->> +	int timeout = msecs_to_jiffies(POWER_PULSE_TRANS_TIMEOUT_MS);
->> 
->>  	/* These power pulses are single byte command which are sent
->>  	 * at required baudrate to wcn3990. On wcn3990, we have an external
->> @@ -1029,21 +1029,19 @@ static int qca_send_power_pulse(struct hci_dev 
->> *hdev, u8 cmd)
->>  	 * save power. Disabling hardware flow control is mandatory while
->>  	 * sending power pulses to SoC.
->>  	 */
->> -	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
->> -
->> -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
->> -	if (!skb)
->> -		return -ENOMEM;
->> +	bt_dev_dbg(hu->hdev, "sending power pulse %02x to controller", cmd);
->> 
->> +	serdev_device_write_flush(hu->serdev);
->>  	hci_uart_set_flow_control(hu, true);
->> +	ret = serdev_device_write_buf(hu->serdev, &cmd, sizeof(cmd));
->> +	if (ret < 0) {
->> +		bt_dev_err(hu->hdev, "failed to send power pulse %02x", cmd);
->> +		return ret;
->> +	}
->> 
->> -	skb_put_u8(skb, cmd);
->> -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
->> -
->> -	skb_queue_tail(&qca->txq, skb);
->> -	hci_uart_tx_wakeup(hu);
->> +	serdev_device_wait_until_sent(hu->serdev, timeout);
->> 
->> -	/* Wait for 100 uS for SoC to settle down */
->> +	/* Wait for 100 uS for SoC to settle down for the received byte. */
-> 
-> I don't think 'for the received byte' adds much value here. If you
-> respin anyway I'd suggest to leave the comment as is.
-> 
+* nowait_reader: reads from a random offset from a random file with
+                 RWF_NOWAIT flag and expects to get EAGAIN and short
+                 read sooner or later
 
-[Bala]: will update.
+* writer_thread: rewrites random file in order to keep the underlying device
+                 bussy so that pages evicted from cache cannot be faulted
+                 immediatelly
 
->>  	usleep_range(100, 200);
->>  	hci_uart_set_flow_control(hu, false);
->> 
->> @@ -1116,7 +1114,6 @@ static int qca_set_speed(struct hci_uart *hu, 
->> enum qca_speed_type speed_type)
->> 
->>  static int qca_wcn3990_init(struct hci_uart *hu)
->>  {
->> -	struct hci_dev *hdev = hu->hdev;
->>  	struct qca_serdev *qcadev;
->>  	int ret;
->> 
->> @@ -1139,12 +1136,12 @@ static int qca_wcn3990_init(struct hci_uart 
->> *hu)
->> 
->>  	/* Forcefully enable wcn3990 to enter in to boot mode. */
->>  	host_set_baudrate(hu, 2400);
->> -	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWEROFF_PULSE);
->> +	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
->>  	if (ret)
->>  		return ret;
->> 
->>  	qca_set_speed(hu, QCA_INIT_SPEED);
->> -	ret = qca_send_power_pulse(hdev, QCA_WCN3990_POWERON_PULSE);
->> +	ret = qca_send_power_pulse(hu, QCA_WCN3990_POWERON_PULSE);
->>  	if (ret)
->>  		return ret;
->> 
->> @@ -1274,13 +1271,8 @@ static const struct qca_vreg_data qca_soc_data 
->> = {
->> 
->>  static void qca_power_shutdown(struct hci_uart *hu)
->>  {
->> -	struct serdev_device *serdev = hu->serdev;
->> -	unsigned char cmd = QCA_WCN3990_POWEROFF_PULSE;
->> -
->>  	host_set_baudrate(hu, 2400);
->> -	hci_uart_set_flow_control(hu, true);
->> -	serdev_device_write_buf(serdev, &cmd, sizeof(cmd));
->> -	hci_uart_set_flow_control(hu, false);
->> +	qca_send_power_pulse(hu, QCA_WCN3990_POWEROFF_PULSE);
->>  	qca_power_setup(hu, false);
->>  }
->> 
-> 
-> Looks good to me besides possible minor improvements:
-> 
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+* cache_dropper: attempts to evict pages from a cache in order for reader to
+                 hit evicted page sooner or later
 
+Signed-off-by: Cyril Hrubis <chrubis@suse.cz>
+CC: Jiri Kosina <jikos@kernel.org>
+CC: Linux-MM <linux-mm@kvack.org>
+CC: kernel list <linux-kernel@vger.kernel.org>
+CC: Linux API <linux-api@vger.kernel.org>
+
+---
+
+I was wondering if we can do a better job at flushing the caches. Is
+there an interface for flusing caches just for the device we are using
+for the test?
+
+Also the RWF_NOWAIT should probably be benchmarked as well but that is
+completely out of scope for LTP.
+
+ runtest/syscalls                              |   2 +
+ testcases/kernel/syscalls/preadv2/.gitignore  |   2 +
+ testcases/kernel/syscalls/preadv2/Makefile    |   4 +
+ testcases/kernel/syscalls/preadv2/preadv203.c | 266 ++++++++++++++++++
+ 4 files changed, 274 insertions(+)
+ create mode 100644 testcases/kernel/syscalls/preadv2/preadv203.c
+
+diff --git a/runtest/syscalls b/runtest/syscalls
+index 34b47f36b..a69c431f1 100644
+--- a/runtest/syscalls
++++ b/runtest/syscalls
+@@ -853,6 +853,8 @@ preadv201 preadv201
+ preadv201_64 preadv201_64
+ preadv202 preadv202
+ preadv202_64 preadv202_64
++preadv203 preadv203
++preadv203_64 preadv203_64
+ 
+ profil01 profil01
+ 
+diff --git a/testcases/kernel/syscalls/preadv2/.gitignore b/testcases/kernel/syscalls/preadv2/.gitignore
+index 759d9ef5b..98b81abea 100644
+--- a/testcases/kernel/syscalls/preadv2/.gitignore
++++ b/testcases/kernel/syscalls/preadv2/.gitignore
+@@ -2,3 +2,5 @@
+ /preadv201_64
+ /preadv202
+ /preadv202_64
++/preadv203
++/preadv203_64
+diff --git a/testcases/kernel/syscalls/preadv2/Makefile b/testcases/kernel/syscalls/preadv2/Makefile
+index fc1fbf3c7..fbedd0287 100644
+--- a/testcases/kernel/syscalls/preadv2/Makefile
++++ b/testcases/kernel/syscalls/preadv2/Makefile
+@@ -11,4 +11,8 @@ include $(abs_srcdir)/../utils/newer_64.mk
+ 
+ %_64: CPPFLAGS += -D_FILE_OFFSET_BITS=64
+ 
++preadv203: CFLAGS += -pthread
++preadv203_64: CFLAGS += -pthread
++preadv203_64: LDFLAGS += -pthread
++
+ include $(top_srcdir)/include/mk/generic_leaf_target.mk
+diff --git a/testcases/kernel/syscalls/preadv2/preadv203.c b/testcases/kernel/syscalls/preadv2/preadv203.c
+new file mode 100644
+index 000000000..a6d5300f9
+--- /dev/null
++++ b/testcases/kernel/syscalls/preadv2/preadv203.c
+@@ -0,0 +1,266 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (C) 2019 Cyril Hrubis <chrubis@suse.cz>
++ */
++
++/*
++ * This is a basic functional test for RWF_NOWAIT flag, we are attempting to
++ * force preadv2() either to return a short read or EAGAIN with three
++ * concurelntly running threads:
++ *
++ *  nowait_reader: reads from a random offset from a random file with
++ *                 RWF_NOWAIT flag and expects to get EAGAIN and short
++ *                 read sooner or later
++ *
++ *  writer_thread: rewrites random file in order to keep the underlying device
++ *                 bussy so that pages evicted from cache cannot be faulted
++ *                 immediatelly
++ *
++ *  cache_dropper: attempts to evict pages from a cache in order for reader to
++ *                 hit evicted page sooner or later
++ */
++
++/*
++ * If test fails with EOPNOTSUPP you have likely hit a glibc bug:
++ *
++ * https://sourceware.org/bugzilla/show_bug.cgi?id=23579
++ *
++ * Which can be worked around by calling preadv2() directly by syscall() such as:
++ *
++ * static ssize_t sys_preadv2(int fd, const struct iovec *iov, int iovcnt,
++ *                            off_t offset, int flags)
++ * {
++ *	return syscall(SYS_preadv2, fd, iov, iovcnt, offset, offset>>32, flags);
++ * }
++ *
++ */
++
++#define _GNU_SOURCE
++#include <string.h>
++#include <sys/uio.h>
++#include <stdio.h>
++#include <stdlib.h>
++#include <ctype.h>
++#include <pthread.h>
++
++#include "tst_test.h"
++#include "tst_safe_pthread.h"
++#include "lapi/preadv2.h"
++
++#define CHUNK_SZ 4123
++#define CHUNKS 60
++#define MNTPOINT "mntpoint"
++#define FILES 1000
++
++static int fds[FILES];
++
++static volatile int stop;
++
++static void drop_caches(void)
++{
++	SAFE_FILE_PRINTF("/proc/sys/vm/drop_caches", "3");
++}
++
++/*
++ * All files are divided in chunks each filled with the same bytes starting with
++ * '0' at offset 0 and with increasing value on each next chunk.
++ *
++ * 000....000111....111.......AAA......AAA...
++ * | chunk0 || chunk1 |  ...  |  chunk17 |
++ */
++static int verify_short_read(struct iovec *iov, size_t iov_cnt,
++		             off_t off, size_t size)
++{
++	unsigned int i;
++	size_t j, checked = 0;
++
++	for (i = 0; i < iov_cnt; i++) {
++		char *buf = iov[i].iov_base;
++		for (j = 0; j < iov[i].iov_len; j++) {
++			char exp_val = '0' + (off + checked)/CHUNK_SZ;
++
++			if (exp_val != buf[j]) {
++				tst_res(TFAIL,
++				        "Wrong value read pos %zu size %zu %c (%i) %c (%i)!",
++				        checked, size, exp_val, exp_val,
++					isprint(buf[j]) ? buf[j] : ' ', buf[j]);
++				return 1;
++			}
++
++			if (++checked >= size)
++				return 0;
++		}
++	}
++
++	return 0;
++}
++
++static void *nowait_reader(void *unused LTP_ATTRIBUTE_UNUSED)
++{
++	char buf1[CHUNK_SZ/2];
++	char buf2[CHUNK_SZ];
++	unsigned int full_read_cnt = 0, eagain_cnt = 0;
++	unsigned int short_read_cnt = 0, zero_read_cnt = 0;
++
++	struct iovec rd_iovec[] = {
++		{buf1, sizeof(buf1)},
++		{buf2, sizeof(buf2)},
++	};
++
++	while (!stop) {
++		if (eagain_cnt >= 100 && short_read_cnt >= 10)
++			stop = 1;
++
++		/* Ensure short reads doesn't happen because of tripping on EOF */
++		off_t off = random() % ((CHUNKS - 2) * CHUNK_SZ);
++		int fd = fds[random() % FILES];
++
++		TEST(preadv2(fd, rd_iovec, 2, off, RWF_NOWAIT));
++
++		if (TST_RET < 0) {
++			if (TST_ERR != EAGAIN)
++				tst_brk(TBROK | TTERRNO, "preadv2() failed");
++
++			eagain_cnt++;
++			continue;
++		}
++
++
++		if (TST_RET == 0) {
++			zero_read_cnt++;
++			continue;
++		}
++
++		if (TST_RET != CHUNK_SZ + CHUNK_SZ/2) {
++			verify_short_read(rd_iovec, 2, off, TST_RET);
++			short_read_cnt++;
++			continue;
++		}
++
++		full_read_cnt++;
++	}
++
++	tst_res(TINFO,
++	        "Number of full_reads %u, short reads %u, zero len reads %u, EAGAIN(s) %u",
++		full_read_cnt, short_read_cnt, zero_read_cnt, eagain_cnt);
++
++	return (void*)(long)eagain_cnt;
++}
++
++static void *writer_thread(void *unused)
++{
++	char buf[CHUNK_SZ];
++	unsigned int j, write_cnt = 0;
++
++	struct iovec wr_iovec[] = {
++		{buf, sizeof(buf)},
++	};
++
++	while (!stop) {
++		int fd = fds[random() % FILES];
++
++		for (j = 0; j < CHUNKS; j++) {
++			memset(buf, '0' + j, sizeof(buf));
++
++			off_t off = CHUNK_SZ * j;
++
++			if (pwritev(fd, wr_iovec, 1, off) < 0) {
++				if (errno == EBADF) {
++					tst_res(TBROK | TERRNO, "FDs closed?");
++					return unused;
++				}
++
++				tst_brk(TBROK | TERRNO, "pwritev()");
++			}
++
++			write_cnt++;
++		}
++	}
++
++	tst_res(TINFO, "Number of writes %u", write_cnt);
++
++	return unused;
++}
++
++static void *cache_dropper(void *unused)
++{
++	unsigned int drop_cnt = 0;
++
++	while (!stop) {
++		drop_caches();
++		drop_cnt++;
++	}
++
++	tst_res(TINFO, "Cache dropped %u times", drop_cnt);
++
++	return unused;
++}
++
++static void verify_preadv2(void)
++{
++	pthread_t reader, dropper, writer;
++	unsigned int max_runtime = 600;
++	void *eagains;
++
++	stop = 0;
++
++	drop_caches();
++
++	SAFE_PTHREAD_CREATE(&dropper, NULL, cache_dropper, NULL);
++	SAFE_PTHREAD_CREATE(&reader, NULL, nowait_reader, NULL);
++	SAFE_PTHREAD_CREATE(&writer, NULL, writer_thread, NULL);
++
++	while (!stop && max_runtime-- > 0)
++		usleep(100000);
++
++	stop = 1;
++
++	SAFE_PTHREAD_JOIN(reader, &eagains);
++	SAFE_PTHREAD_JOIN(dropper, NULL);
++	SAFE_PTHREAD_JOIN(writer, NULL);
++
++	if (eagains)
++		tst_res(TPASS, "Got some EAGAIN");
++	else
++		tst_res(TFAIL, "Haven't got EAGAIN");
++}
++
++static void setup(void)
++{
++	char path[1024];
++	char buf[CHUNK_SZ];
++	unsigned int i;
++	char j;
++
++	for (i = 0; i < FILES; i++) {
++		snprintf(path, sizeof(path), MNTPOINT"/file_%i", i);
++
++		fds[i] = SAFE_OPEN(path, O_RDWR | O_CREAT, 0644);
++
++		for (j = 0; j < CHUNKS; j++) {
++			memset(buf, '0' + j, sizeof(buf));
++			SAFE_WRITE(1, fds[i], buf, sizeof(buf));
++		}
++	}
++}
++
++static void do_cleanup(void)
++{
++	unsigned int i;
++
++	for (i = 0; i < FILES; i++) {
++		if (fds[i] > 0)
++			SAFE_CLOSE(fds[i]);
++	}
++}
++
++TST_DECLARE_ONCE_FN(cleanup, do_cleanup);
++
++static struct tst_test test = {
++	.setup = setup,
++	.cleanup = cleanup,
++	.test_all = verify_preadv2,
++	.mntpoint = MNTPOINT,
++	.all_filesystems = 1,
++	.needs_tmpdir = 1,
++};
 -- 
-Regards
-Balakrishna.
+2.19.2
+
