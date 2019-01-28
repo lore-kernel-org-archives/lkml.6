@@ -2,85 +2,102 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C866FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:50:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECD59C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:50:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0EC12148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:50:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BAC1B2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:50:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jSX14q4L"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfA1GuP (ORCPT
+        id S1726859AbfA1Guf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 01:50:15 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:2785 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726750AbfA1GuO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 01:50:14 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 9DA7BCAA8EE3B1E2EDCA;
-        Mon, 28 Jan 2019 14:50:11 +0800 (CST)
-Received: from localhost (10.177.31.96) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Mon, 28 Jan 2019
- 14:50:02 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     <johannes.berg@intel.com>, <emmanuel.grumbach@intel.com>,
-        <luciano.coelho@intel.com>, <linuxwifi@intel.com>,
-        <kvalo@codeaurora.org>
-CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>,
-        YueHaibing <yuehaibing@huawei.com>
-Subject: [PATCH 2/2] iwlwifi: Use struct_size() in kzalloc
-Date:   Mon, 28 Jan 2019 14:44:32 +0800
-Message-ID: <20190128064432.17576-3-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.10.2.windows.1
-In-Reply-To: <20190128064432.17576-1-yuehaibing@huawei.com>
-References: <20190128064432.17576-1-yuehaibing@huawei.com>
+        Mon, 28 Jan 2019 01:50:35 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53931 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfA1Gue (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 01:50:34 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d15so12692707wmb.3
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 22:50:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=zySYNKIWrtX4JtR2a1Sbfj1iDdBwX9NEAwr/jQmKIgw=;
+        b=jSX14q4LQDUNgdy6D6SmeOlKoRmpJ3IVq/ZYsUigD7s71RqtsLaQoY4ffuBOKAhE6n
+         NqHfbd/cYsNwtSNpzJLjqy5Ld8qHDorZ7dPd1AUx2XD3q9b6EC02ofwH/uIf0n/bTai5
+         3XVfHcugwc6b8idS+4rCWmvDWuzcorFLWnMdA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=zySYNKIWrtX4JtR2a1Sbfj1iDdBwX9NEAwr/jQmKIgw=;
+        b=Yoob9hx6pnkk6d0cFw44dqRMBA+1Bn9HTlJaL/rRqqZh5P36OycRgcJR8Yly7mWzDI
+         N+I7phkNwwxiZ5otI+hCKfUoYJNJeBAW6jqsn8aSVaIeIpo3isg64CO82rWrH2NrLUIP
+         vtWjt88LlbTiTi2hhici4vMNlNtmC9EWb7f/deyunMp9bgWnIaLV07QxUSYIlPfj8X8/
+         Lj+459edPXfaZQoNCy8HMKWMDs6Pub4/8/+ForZb30afwVjF/45GJ97ye/42rkJTw+OK
+         tPEupR+IyUS7y0DM39foGjFZVcoHskum9XPWiFaTyPogMvDLu0HCwKPmN1emI4BJdHUL
+         Z75g==
+X-Gm-Message-State: AJcUukcrprbxT8198Ty4CHaz64AlIjit3JhLdv794cWeVdNTFeTFSn/U
+        L+vVLJe02WbvpTdPZfM4Yt3E/Q==
+X-Google-Smtp-Source: ALg8bN4qY8d/xxZniatSLM1FH+OwqpO6/eihlw7eYwTWUIgkftGkwupJg4UdkOTlvO81pvzPw6rThw==
+X-Received: by 2002:a1c:4108:: with SMTP id o8mr15183969wma.91.1548658232790;
+        Sun, 27 Jan 2019 22:50:32 -0800 (PST)
+Received: from dell ([2.27.35.198])
+        by smtp.gmail.com with ESMTPSA id e17sm180988387wri.36.2019.01.27.22.50.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 27 Jan 2019 22:50:31 -0800 (PST)
+Date:   Mon, 28 Jan 2019 06:50:30 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Cheng-yi Chiang <cychiang@chromium.org>
+Cc:     Mark Brown <broonie@kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Benson Leung <bleung@chromium.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        alsa-devel@alsa-project.org, Dylan Reid <dgreid@chromium.org>,
+        tzungbi@chromium.org, Rohit kumar <rohitkr@codeaurora.org>
+Subject: Re: [PATCH v3 1/3] mfd: cros_ec: Add commands to control codec
+Message-ID: <20190128065030.GA4678@dell>
+References: <20181226070317.72022-1-cychiang@chromium.org>
+ <20190107192402.GW9570@sirena.org.uk>
+ <20190108095450.GA27286@dell>
+ <20190108161238.GG6590@sirena.org.uk>
+ <CAFv8NwK4=m1ffsyTruMPw534FVK6QBeaMKxxW461aS_yNYugNg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAFv8NwK4=m1ffsyTruMPw534FVK6QBeaMKxxW461aS_yNYugNg@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use struct_size() in kzalloc instead of the 'regd_to_copy'
+On Mon, 28 Jan 2019, Cheng-yi Chiang wrote:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+> Hi Lee,
+>   Could you please give Mark a tag so he can merge ?
+> The later patch for cros_ec_codec driver is pending on it.
 
-diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-index 569cc50..cb9e722 100644
---- a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-+++ b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
-@@ -1093,7 +1093,7 @@ iwl_parse_nvm_mcc_info(struct device *dev, const struct iwl_cfg *cfg,
- 	const u8 *nvm_chan = cfg->nvm_type == IWL_NVM_EXT ?
- 			     iwl_ext_nvm_channels : iwl_nvm_channels;
- 	struct ieee80211_regdomain *regd, *copy_rd;
--	int size_of_regd, regd_to_copy;
-+	int size_of_regd;
- 	struct ieee80211_reg_rule *rule;
- 	struct regdb_ptrs *regdb_ptrs;
- 	enum nl80211_band band;
-@@ -1193,10 +1193,8 @@ iwl_parse_nvm_mcc_info(struct device *dev, const struct iwl_cfg *cfg,
- 	 * Narrow down regdom for unused regulatory rules to prevent hole
- 	 * between reg rules to wmm rules.
- 	 */
--	regd_to_copy = sizeof(struct ieee80211_regdomain) +
--		valid_rules * sizeof(struct ieee80211_reg_rule);
--
--	copy_rd = kmemdup(regd, regd_to_copy, GFP_KERNEL);
-+	copy_rd = kmemdup(regd, struct_size(regd, reg_rules, valid_rules),
-+			  GFP_KERNEL);
- 	if (!copy_rd)
- 		copy_rd = ERR_PTR(-ENOMEM);
- 
+Apologies for not getting back to you.
+
+I was waiting to see if my late PR would be merged.
+
+It was, which means the tag you were asking for is actually upstream.
+
+Any issues, let me know.
+
 -- 
-2.7.4
-
-
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
