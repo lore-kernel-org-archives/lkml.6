@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB921C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30892C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73DC720811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00C5520811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693347;
-	bh=K+53OXBqfmYLglGWY/EjWaPSMW4nyKFKD7SDVtC97vY=;
+	s=default; t=1548693358;
+	bh=WeqnWYluWHU3Pa76Igqui7ZFu58Ji6SdNfGL43fY/I0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Qtg5DA/X8yw33Rlpz0IqUxhbn/9P83RoH8c0BUrEi6rOgRruEJB1Ol5BDSR7OXBB2
-	 Kgm0+PDAfe+xF168cj+ork4qyVtdFbnH5JyU5Z4h4X0X9x2FKjrBgsoqAGdKuy4J1F
-	 zRVg5EUHMl284FeYsP8/i0gmGbam3p5WRt8ChZsg=
+	b=rMIE94kSRhNnq6g0+3zqV4oqXEiy/fUBGjqYYx4G3npn7nAVLqXFKAiupr/0QZAxV
+	 FnavX0TrDWFFA5M3tbVwecjdpCjMje3dRRFb5fjtizzl1M0HNTFav/0iVSbSriqzWb
+	 k+FqHhefTgISzihpr0o9v//TtFTak5hjtv7D8dvI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389957AbfA1Qfp (ORCPT
+        id S2390378AbfA1Qf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:35:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34440 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:35:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34378 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389958AbfA1QZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:34 -0500
+        id S1731582AbfA1QZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 101722084A;
-        Mon, 28 Jan 2019 16:25:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 72A7D20879;
+        Mon, 28 Jan 2019 16:25:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692733;
-        bh=K+53OXBqfmYLglGWY/EjWaPSMW4nyKFKD7SDVtC97vY=;
+        s=default; t=1548692731;
+        bh=WeqnWYluWHU3Pa76Igqui7ZFu58Ji6SdNfGL43fY/I0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AuBF/5fe5SiRkSaD9pPkoyBYLEwf+SCjZ1KnEx1y82j8AZ71BjNdooqM71qmY2aSL
-         LGaYniLo+OXS3LxOPaRh3V+95gxL/nWizMR++X4F+iSRy4a+pT30tkY4GW4rd3fmQw
-         SYPAwIVSNz8dMu2Ond1CLepRQrFvIDg2gjHMolwU=
+        b=pwK8sdvvf8KkTRllospRTkvajsfi+mdyGOR7Ag8K3U92+tsryYCZUQYUgTeKU7MTT
+         8gQavVXo9qHlA17y7hAQL46D8jR02uRPAHeoXy9anTqSQLniNniEzjpD1ciNm2X5sN
+         oU/eWCMKF+vp+2kuCbPmqelA1Ib7YYIS4knn4WgY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 54/80] drbd: disconnect, if the wrong UUIDs are attached on a connected peer
-Date:   Mon, 28 Jan 2019 11:23:35 -0500
-Message-Id: <20190128162401.58841-54-sashal@kernel.org>
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 52/80] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
+Date:   Mon, 28 Jan 2019 11:23:33 -0500
+Message-Id: <20190128162401.58841-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -58,46 +59,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars Ellenberg <lars.ellenberg@linbit.com>
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-[ Upstream commit b17b59602b6dcf8f97a7dc7bc489a48388d7063a ]
+[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
 
-With "on-no-data-accessible suspend-io", DRBD requires the next attach
-or connect to be to the very same data generation uuid tag it lost last.
+The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
+concurrently executed.
+The two functions both access a possible shared variable "frame.skb".
 
-If we first lost connection to the peer,
-then later lost connection to our own disk,
-we would usually refuse to re-connect to the peer,
-because it presents the wrong data set.
+This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
+which is called by cw1200_bss_info_changed(). The free operation is
+protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
 
-However, if the peer first connects without a disk,
-and then attached its disk, we accepted that same wrong data set,
-which would be "unexpected" by any user of that DRBD
-and cause "undefined results" (read: very likely data corruption).
+In cw1200_hw_scan(), this shared variable is accessed without the
+protection of the mutex lock "priv->conf_mutex".
+Thus, concurrency use-after-free bugs may occur.
 
-The fix is to forcefully disconnect as soon as we notice that the peer
-attached to the "wrong" dataset.
+To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
+mutex_unlock(&priv->conf_mutex) are moved to the places, which can
+protect the accesses to the shared variable.
 
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_receiver.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/wireless/cw1200/scan.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 2fedab9349f6..b1ee358edd3b 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3890,7 +3890,7 @@ static int receive_uuids(struct drbd_connection *connection, struct packet_info
- 	kfree(device->p_uuid);
- 	device->p_uuid = p_uuid;
+diff --git a/drivers/net/wireless/cw1200/scan.c b/drivers/net/wireless/cw1200/scan.c
+index bff81b8d4164..9f1037e7e55c 100644
+--- a/drivers/net/wireless/cw1200/scan.c
++++ b/drivers/net/wireless/cw1200/scan.c
+@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
+ 		return -EINVAL;
  
--	if (device->state.conn < C_CONNECTED &&
-+	if ((device->state.conn < C_CONNECTED || device->state.pdsk == D_DISKLESS) &&
- 	    device->state.disk < D_INCONSISTENT &&
- 	    device->state.role == R_PRIMARY &&
- 	    (device->ed_uuid & ~((u64)1)) != (p_uuid[UI_CURRENT] & ~((u64)1))) {
++	/* will be unlocked in cw1200_scan_work() */
++	down(&priv->scan.lock);
++	mutex_lock(&priv->conf_mutex);
++
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+ 	if (!frame.skb)
+@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->ie_len)
+ 		memcpy(skb_put(frame.skb, req->ie_len), req->ie, req->ie_len);
+ 
+-	/* will be unlocked in cw1200_scan_work() */
+-	down(&priv->scan.lock);
+-	mutex_lock(&priv->conf_mutex);
+-
+ 	ret = wsm_set_template_frame(priv, &frame);
+ 	if (!ret) {
+ 		/* Host want to be the probe responder. */
+ 		ret = wsm_set_probe_responder(priv, true);
+ 	}
+ 	if (ret) {
++		dev_kfree_skb(frame.skb);
+ 		mutex_unlock(&priv->conf_mutex);
+ 		up(&priv->scan.lock);
+-		dev_kfree_skb(frame.skb);
+ 		return ret;
+ 	}
+ 
+@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 		++priv->scan.n_ssids;
+ 	}
+ 
+-	mutex_unlock(&priv->conf_mutex);
+-
+ 	if (frame.skb)
+ 		dev_kfree_skb(frame.skb);
++	mutex_unlock(&priv->conf_mutex);
+ 	queue_work(priv->workqueue, &priv->scan.work);
+ 	return 0;
+ }
 -- 
 2.19.1
 
