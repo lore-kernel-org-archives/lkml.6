@@ -2,98 +2,188 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06BA0C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:22:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3B0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:22:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C655B21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:22:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41F4F20882
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:22:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z75bsn59"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ezxuEKjC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726786AbfA1HWA (ORCPT
+        id S1726825AbfA1HWO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:22:00 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40400 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfA1HWA (ORCPT
+        Mon, 28 Jan 2019 02:22:14 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:13625 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfA1HWN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:22:00 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p4so16776682wrt.7
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 23:21:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=H8eWfSaO4Xwlzv2KBCcLMhFKoVG7eT7Nv2Cq6gg9n9g=;
-        b=Z75bsn59pHWAu+WyYp/dNmfeg5UnFzDIi5gdbs8gxvbaAEVemQejKzKi+lmTw8/5+F
-         T2xQct0eIWucru56aD9gCC3FeoLoIgY3wPk9/msegsJ+HHZTCzeuRbOS5/oLujM1eHh9
-         47Tvc4PV56bEYhI/nfoYgXcubsh0NLV/LXtIM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=H8eWfSaO4Xwlzv2KBCcLMhFKoVG7eT7Nv2Cq6gg9n9g=;
-        b=e+uNfuJUeLXwMsqzoIOp8xnHYbNhsXpcm2ooWOXyM4qcnZot+B4Awkni41AI7GpgPC
-         1ubjrrmDb6dWYyapYHAOZm6AO6LKD7/r+G6DNVMuSlOPDmnDYrQzUyOYFd2Mre/Huqqd
-         ILbLSFmrJe46miuUg10ch+XU86OuYu0B3mGA2HNdHk6ZcjqCLOBWPSKahq6X9qUuOD9t
-         CKFCMGoRrvz12Bb+Noeuwc1r/Git57fs1iApmu3fA50ApggkB2kpkyZlbFtFJn1oBsI+
-         02oPap8hr9eai+2MbQEhMUrKjltd0qY1qu1qlO0pHVXAIoDuloubi+RYuwOpVPMWVMOp
-         /xNQ==
-X-Gm-Message-State: AJcUukfv1wWranLzCsGtIQBv4w7RHCis+Q6dCYO/Ljup76ggf+pxfshG
-        vNK0MXXYDs8G0M7cOAXYGd1S6Q==
-X-Google-Smtp-Source: ALg8bN5D1tAYw3VCtjeo9PMKP7Igm4wthFOQiUMhZYV67mrDoq8FFZoF76lSnsxTskzBcsDNLDkynw==
-X-Received: by 2002:adf:d089:: with SMTP id y9mr21147633wrh.22.1548660118503;
-        Sun, 27 Jan 2019 23:21:58 -0800 (PST)
-Received: from dell ([2.27.35.198])
-        by smtp.gmail.com with ESMTPSA id a12sm100095355wrm.45.2019.01.27.23.21.57
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 27 Jan 2019 23:21:57 -0800 (PST)
-Date:   Mon, 28 Jan 2019 07:21:56 +0000
-From:   Lee Jones <lee.jones@linaro.org>
-To:     Sinan Kaya <okaya@kernel.org>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-next@vger.kernel.org, linux-acpi@vger.kernel.org,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [for next][PATCH 1/2] mfd: Fix unmet dependency warning for
- MFD_TPS68470
-Message-ID: <20190128072156.GE4678@dell>
-References: <20190121231958.28255-1-okaya@kernel.org>
- <2222147.2pZxjFhHIY@aspire.rjw.lan>
- <f4bc6037-7c0f-f053-a150-8ae6f683b1bc@kernel.org>
+        Mon, 28 Jan 2019 02:22:13 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4ead8a0000>; Sun, 27 Jan 2019 23:21:46 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Sun, 27 Jan 2019 23:22:12 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Sun, 27 Jan 2019 23:22:12 -0800
+Received: from [10.19.108.140] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
+ 2019 07:22:11 +0000
+Subject: Re: [PATCH 4/5] phy: tegra: xusb: Add support for power supplies
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+CC:     Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190125112525.10697-1-thierry.reding@gmail.com>
+ <20190125112525.10697-4-thierry.reding@gmail.com>
+From:   jckuo <jckuo@nvidia.com>
+Message-ID: <786247a4-81d1-9c2e-21b5-258dc818ccb9@nvidia.com>
+Date:   Mon, 28 Jan 2019 15:22:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <f4bc6037-7c0f-f053-a150-8ae6f683b1bc@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20190125112525.10697-4-thierry.reding@gmail.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548660106; bh=4IUek0IQQgdw6rTZsSbm84mEXbVc3FclMCl/mUw3jT0=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=ezxuEKjCrHpWfBW5mfbZ2JUPsnL+SbHaKrcbhl8MrmyLty74c6LxDiOTLWCxAtwWc
+         u6Pse+XLpL/zUxQ4dvUzoiTsFic3GK+fkGIlRUmNyBXhgVV8XQb8KotpYm02dc0SyD
+         LaJy1hZxoo4qaYKbsiDVXsD2ZcrO0N463kDCRfQbn1ixR7+jjQjotU4dat7mHLpXrO
+         I3WnsbjdgA2NOddj0f/eyXpTAaUKqbV1iM00y9ismbk0ljiT59rqT6bOsypw20SWT3
+         shzd3aKxeZV8vDuaz2XCtdOJ7fgrRRCcCXXMuBMUXIT88/XgG8rurZ8Up57eGfqKGc
+         Zpqujr8Q3auKA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019, Sinan Kaya wrote:
+Hi Thierry,
 
-> On 1/24/2019 5:51 AM, Rafael J. Wysocki wrote:
-> > Is anyone taking this or should I?
-> 
-> Nobody replied to this yet. I was hoping this series to go through acpi
-> tree like the rest of the other fixes.
+I think any non-zero return value of 
+regulator_bulk_enable()/devm_regulator_bulk_get() means error.
 
-[post-vacation reply]
+Thanks,
 
-That's not how these things are usually handled, but I taking into
-consideration the trivialises of the patch, I don't really mind.
+JC
 
-Acked-by: Lee Jones <lee.jones@linaro.org>
-
--- 
-Lee Jones [李琼斯]
-Linaro Services Technical Lead
-Linaro.org │ Open source software for ARM SoCs
-Follow Linaro: Facebook | Twitter | Blog
+On 1/25/19 7:25 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Support enabling various supplies needed to provide power to the PLLs
+> and logic used to drive the USB, PCI and SATA pads.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>   drivers/phy/tegra/xusb.c | 34 +++++++++++++++++++++++++++++++++-
+>   drivers/phy/tegra/xusb.h |  5 +++++
+>   2 files changed, 38 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index 57a2d08ef6da..e510629f4f1c 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -864,6 +864,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+>   	struct tegra_xusb_padctl *padctl;
+>   	const struct of_device_id *match;
+>   	struct resource *res;
+> +	unsigned int i;
+>   	int err;
+>   
+>   	/* for backwards compatibility with old device trees */
+> @@ -901,14 +902,38 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+>   		goto remove;
+>   	}
+>   
+> +	padctl->supplies = devm_kcalloc(&pdev->dev, padctl->soc->num_supplies,
+> +					sizeof(*padctl->supplies), GFP_KERNEL);
+> +	if (!padctl->supplies) {
+> +		err = -ENOMEM;
+> +		goto remove;
+> +	}
+> +
+> +	for (i = 0; i < padctl->soc->num_supplies; i++)
+> +		padctl->supplies[i].supply = padctl->soc->supply_names[i];
+> +
+> +	err = devm_regulator_bulk_get(&pdev->dev, padctl->soc->num_supplies,
+> +				      padctl->supplies);
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
+> +		goto remove;
+> +	}
+> +
+>   	err = reset_control_deassert(padctl->rst);
+>   	if (err < 0)
+>   		goto remove;
+>   
+> +	err = regulator_bulk_enable(padctl->soc->num_supplies,
+> +				    padctl->supplies);
+> +	if (err < 0) {
+> +		dev_err(&pdev->dev, "failed to enable supplies: %d\n", err);
+> +		goto reset;
+> +	}
+> +
+>   	err = tegra_xusb_setup_pads(padctl);
+>   	if (err < 0) {
+>   		dev_err(&pdev->dev, "failed to setup pads: %d\n", err);
+> -		goto reset;
+> +		goto power_down;
+>   	}
+>   
+>   	err = tegra_xusb_setup_ports(padctl);
+> @@ -921,6 +946,8 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
+>   
+>   remove_pads:
+>   	tegra_xusb_remove_pads(padctl);
+> +power_down:
+> +	regulator_bulk_disable(padctl->soc->num_supplies, padctl->supplies);
+>   reset:
+>   	reset_control_assert(padctl->rst);
+>   remove:
+> @@ -936,6 +963,11 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
+>   	tegra_xusb_remove_ports(padctl);
+>   	tegra_xusb_remove_pads(padctl);
+>   
+> +	err = regulator_bulk_disable(padctl->soc->num_supplies,
+> +				     padctl->supplies);
+> +	if (err < 0)
+> +		dev_err(&pdev->dev, "failed to disable supplies: %d\n", err);
+> +
+>   	err = reset_control_assert(padctl->rst);
+>   	if (err < 0)
+>   		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
+> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+> index bb60fc09c752..5d5d22f6cb41 100644
+> --- a/drivers/phy/tegra/xusb.h
+> +++ b/drivers/phy/tegra/xusb.h
+> @@ -370,6 +370,9 @@ struct tegra_xusb_padctl_soc {
+>   	} ports;
+>   
+>   	const struct tegra_xusb_padctl_ops *ops;
+> +
+> +	const char * const *supply_names;
+> +	unsigned int num_supplies;
+>   };
+>   
+>   struct tegra_xusb_padctl {
+> @@ -393,6 +396,8 @@ struct tegra_xusb_padctl {
+>   	unsigned int enable;
+>   
+>   	struct clk *clk;
+> +
+> +	struct regulator_bulk_data *supplies;
+>   };
+>   
+>   static inline void padctl_writel(struct tegra_xusb_padctl *padctl, u32 value,
