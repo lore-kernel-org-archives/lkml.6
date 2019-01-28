@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7A7C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A326C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC9512147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 687862177B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690552;
-	bh=MSvf88kmXo26yv2W6D94DPW+7n7vYDwa5+p4K7eKKb0=;
+	s=default; t=1548690558;
+	bh=Y+CFSHRoRtHzQ4xzbuBpWbcPSz206ceqE97G2Ttfbdk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2otvbS8RdNVCzkykUkqBxWSrD2Vte2v42p3y+GghVnQ9NJyPYGtIJLwo/vkaV23a5
-	 vkq8+JauJb/+315Yoafp8a82RXLUM7KcBSoCBrIUtaEEbky58MmqK4aoqiyn57l23C
-	 XqhMHEUoQ/Z+Alip7xU4+Gg/rAVSXjyu8v8yWxZc=
+	b=ZGi4HKgSD6f66L+cHuvMk5FKFGl6HRhBZ24zqUM2bNIfd1QDiMUcCY9L7HfNQYB78
+	 f5kEc3+Q8zLXtpUrfKIsPXTJJJKuri62PLs6v/lncgKpxzsgLGMGYJmP9KB+3Y00Zb
+	 7QuDR8guDeJ9A2XQ5GeNkF9QskzSo2IIlTn2jFwQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728650AbfA1PtL (ORCPT
+        id S1728668AbfA1PtQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:49:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34668 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:49:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34768 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728637AbfA1PtI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:49:08 -0500
+        id S1727875AbfA1PtO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:49:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B82C52147A;
-        Mon, 28 Jan 2019 15:49:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A9D2820880;
+        Mon, 28 Jan 2019 15:49:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690547;
-        bh=MSvf88kmXo26yv2W6D94DPW+7n7vYDwa5+p4K7eKKb0=;
+        s=default; t=1548690553;
+        bh=Y+CFSHRoRtHzQ4xzbuBpWbcPSz206ceqE97G2Ttfbdk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ft+b8B6J+76YwirVnP+DRwdeOKaV5sXX3gIJBvYd8BYFj4enMg8yzNBHHbDKIzSUt
-         1UpBFk655i6YAZO3TotV6TVy93JTKcC9yCkT5LztXsWQknnnTt4LWssgZvCAmmKH2Q
-         lc9gtM2RkSELDNktslat6SQ0sTywlnYko7LfyzQE=
+        b=HXvrKJG1Hr9FsGDU/+L1nCaX537KtwsX4Kjs7iH+F1ENsfBD0DzWQhhtQ9nlu+Bmn
+         guYwXkQmgh2qTUr1f/5zXc/+1kvL6y/S/tNRmcjqhrrxq18/Rrh1ct2xhlETu93ASC
+         KvyK8qCIJpiAUxgiQITL56X+AO/sef4yBcJ5IV24=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Long <eric.long@spreadtrum.com>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
-        dmaengine@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 120/304] dmaengine: sprd: Support DMA link-list cyclic callback
-Date:   Mon, 28 Jan 2019 10:40:37 -0500
-Message-Id: <20190128154341.47195-120-sashal@kernel.org>
+Cc:     Mathias Nyman <mathias.nyman@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 122/304] usb: hub: delay hub autosuspend if USB3 port is still link training
+Date:   Mon, 28 Jan 2019 10:40:39 -0500
+Message-Id: <20190128154341.47195-122-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,73 +58,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Long <eric.long@spreadtrum.com>
+From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
-[ Upstream commit 97dbd6ea02beb3a7027c158e0a110b5095268d59 ]
+[ Upstream commit e86108940e541febf35813402ff29fa6f4a9ac0b ]
 
-The Spreadtrum DMA link-list mode is always one cyclic transfer,
-so we should clear the SPRD_DMA_LLIST_END flag for the link-list
-configuration. Moreover add cyclic callback support for the cyclic
-transfer.
+When initializing a hub we want to give a USB3 port in link training
+the same debounce delay time before autosuspening the hub as already
+trained, connected enabled ports.
 
-Signed-off-by: Eric Long <eric.long@spreadtrum.com>
-Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
-Signed-off-by: Vinod Koul <vkoul@kernel.org>
+USB3 ports won't reach the enabled state with "current connect status" and
+"connect status change" bits set until the USB3 link training finishes.
+
+Catching the port in link training (polling) and adding the debounce delay
+prevents unnecessary failed attempts to autosuspend the hub.
+
+Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
+Acked-by: Alan Stern <stern@rowland.harvard.edu>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/dma/sprd-dma.c | 25 ++++++++++++++-----------
- 1 file changed, 14 insertions(+), 11 deletions(-)
+ drivers/usb/core/hub.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/dma/sprd-dma.c b/drivers/dma/sprd-dma.c
-index 38d4e4f07c66..f7da9ab31b7c 100644
---- a/drivers/dma/sprd-dma.c
-+++ b/drivers/dma/sprd-dma.c
-@@ -450,7 +450,7 @@ static irqreturn_t dma_irq_handle(int irq, void *dev_id)
- 	struct sprd_dma_desc *sdesc;
- 	enum sprd_dma_req_mode req_type;
- 	enum sprd_dma_int_type int_type;
--	bool trans_done = false;
-+	bool trans_done = false, cyclic = false;
- 	u32 i;
- 
- 	while (irq_status) {
-@@ -465,13 +465,19 @@ static irqreturn_t dma_irq_handle(int irq, void *dev_id)
- 
- 		sdesc = schan->cur_desc;
- 
--		/* Check if the dma request descriptor is done. */
--		trans_done = sprd_dma_check_trans_done(sdesc, int_type,
--						       req_type);
--		if (trans_done == true) {
--			vchan_cookie_complete(&sdesc->vd);
--			schan->cur_desc = NULL;
--			sprd_dma_start(schan);
-+		/* cyclic mode schedule callback */
-+		cyclic = schan->linklist.phy_addr ? true : false;
-+		if (cyclic == true) {
-+			vchan_cyclic_callback(&sdesc->vd);
-+		} else {
-+			/* Check if the dma request descriptor is done. */
-+			trans_done = sprd_dma_check_trans_done(sdesc, int_type,
-+							       req_type);
-+			if (trans_done == true) {
-+				vchan_cookie_complete(&sdesc->vd);
-+				schan->cur_desc = NULL;
-+				sprd_dma_start(schan);
-+			}
+diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
+index f76b2e0aba9d..1d1e61e980f3 100644
+--- a/drivers/usb/core/hub.c
++++ b/drivers/usb/core/hub.c
+@@ -1112,6 +1112,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
+ 						   USB_PORT_FEAT_ENABLE);
  		}
- 		spin_unlock(&schan->vc.lock);
- 	}
-@@ -674,9 +680,6 @@ static int sprd_dma_fill_desc(struct dma_chan *chan,
  
- 	/* link-list configuration */
- 	if (schan->linklist.phy_addr) {
--		if (sg_index == sglen - 1)
--			hw->frg_len |= SPRD_DMA_LLIST_END;
--
- 		hw->cfg |= SPRD_DMA_LINKLIST_EN;
- 
- 		/* link-list index */
++		/*
++		 * Add debounce if USB3 link is in polling/link training state.
++		 * Link will automatically transition to Enabled state after
++		 * link training completes.
++		 */
++		if (hub_is_superspeed(hdev) &&
++		    ((portstatus & USB_PORT_STAT_LINK_STATE) ==
++						USB_SS_PORT_LS_POLLING))
++			need_debounce_delay = true;
++
+ 		/* Clear status-change flags; we'll debounce later */
+ 		if (portchange & USB_PORT_STAT_C_CONNECTION) {
+ 			need_debounce_delay = true;
 -- 
 2.19.1
 
