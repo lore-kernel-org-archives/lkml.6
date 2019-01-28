@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0BB1C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 88460C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86B952173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A9322087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694428;
-	bh=YhiOJOKYe3ub+JmljQuy08BS5HVC90UYl3ZTT/cn7Q8=;
+	s=default; t=1548694436;
+	bh=v6iAdCezwAjleDSKqd33MoaVae+0H4VO2QBugVYRERo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=J4nOqwkamqggka5GPjeCzCaEMj/0/+l4H8gukouzeUVfUHqLEgdxuRTiGpG7bpWzN
-	 8ha1YkWcEV0ko5UfmsAXCsoqFu4JEKkk5vnSa3mOSsjTMNqZCuouWg1FkCaiQxRp5g
-	 jxf6ydJP1/DJH5n4vqk9JbK2IPlDHCNxccdFx/Hs=
+	b=PqgkSbVSylf8THFg2sDwYJAZkneOmTig6KO8xGOb6E0PrMjhK5+HkzDRZBnQB83uJ
+	 BtUOQ49ZQWXCZNAGLcbgJOt0zXg68CcLR723RSOl2F950RYMTfIjISQNRzmHtgtXPj
+	 9AKHHhB1WvcgSo5ZpogiGbD8iCOSFq0tKFS5K5ok=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388573AbfA1Qxr (ORCPT
+        id S2388662AbfA1Qxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:53:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52362 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:53:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52328 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387898AbfA1QSI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:18:08 -0500
+        id S2387641AbfA1QSG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:18:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6BE0F2184D;
-        Mon, 28 Jan 2019 16:18:06 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9044221741;
+        Mon, 28 Jan 2019 16:18:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692287;
-        bh=YhiOJOKYe3ub+JmljQuy08BS5HVC90UYl3ZTT/cn7Q8=;
+        s=default; t=1548692285;
+        bh=v6iAdCezwAjleDSKqd33MoaVae+0H4VO2QBugVYRERo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vNkdakaGc6MO0BaND1zIOqQphasEVGOk4Nd1CWck23JZlRs53Q2gTTO7qycwM5Tw0
-         hiXrbjZ2PHyJbtMpjoD9P+fySAuYmkOg0RW2qycg9SaPTZgjTcG3WMO93Kj0WhYz2P
-         M5InKd9YUTOZ/sPhncQnLLhbjV48U237X9m2vH/o=
+        b=QEP4u2fWDKl8wLDFA8UMqwch4Li04w8cb6Vo5nOJkSzWMacDz40w/fF8XCp6wqgQ/
+         +dfdF/KCZo2FhKyzdIBnWlNdCatT3cJN8s8X74K41KibrvPZQ3peUeXuXvPPC70my8
+         MIZ1OZC1bQuvRAn575NkvOVduPcgVITudHlNSutU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chris Perl <cperl@janestreet.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 140/170] NFS: nfs_compare_mount_options always compare auth flavors.
-Date:   Mon, 28 Jan 2019 11:11:30 -0500
-Message-Id: <20190128161200.55107-140-sashal@kernel.org>
+Cc:     Jim Mattson <jmattson@google.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 139/170] kvm: Change offset in kvm_write_guest_offset_cached to unsigned
+Date:   Mon, 28 Jan 2019 11:11:29 -0500
+Message-Id: <20190128161200.55107-139-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -59,52 +59,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Perl <cperl@janestreet.com>
+From: Jim Mattson <jmattson@google.com>
 
-[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
+[ Upstream commit 7a86dab8cf2f0fdf508f3555dddfc236623bff60 ]
 
-This patch removes the check from nfs_compare_mount_options to see if a
-`sec' option was passed for the current mount before comparing auth
-flavors and instead just always compares auth flavors.
+Since the offset is added directly to the hva from the
+gfn_to_hva_cache, a negative offset could result in an out of bounds
+write. The existing BUG_ON only checks for addresses beyond the end of
+the gfn_to_hva_cache, not for addresses before the start of the
+gfn_to_hva_cache.
 
-Consider the following scenario:
+Note that all current call sites have non-negative offsets.
 
-You have a server with the address 192.168.1.1 and two exports /export/a
-and /export/b.  The first export supports `sys' and `krb5' security, the
-second just `sys'.
-
-Assume you start with no mounts from the server.
-
-The following results in EIOs being returned as the kernel nfs client
-incorrectly thinks it can share the underlying `struct nfs_server's:
-
-$ mkdir /tmp/{a,b}
-$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
-$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
-$ df >/dev/null
-df: ‘/tmp/b’: Input/output error
-
-Signed-off-by: Chris Perl <cperl@janestreet.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: 4ec6e8636256 ("kvm: Introduce kvm_write_guest_offset_cached()")
+Reported-by: Cfir Cohen <cfir@google.com>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Cfir Cohen <cfir@google.com>
+Reviewed-by: Peter Shier <pshier@google.com>
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
+Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ include/linux/kvm_host.h | 3 ++-
+ virt/kvm/kvm_main.c      | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 38de09b08e96..3c4aeb83e1c4 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2401,8 +2401,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
- 		goto Ebusy;
- 	if (a->acdirmax != b->acdirmax)
- 		goto Ebusy;
--	if (b->auth_info.flavor_len > 0 &&
--	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
-+	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
- 		goto Ebusy;
- 	return 1;
- Ebusy:
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index b6962ae6237e..4f7f19c1dc0a 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -685,7 +685,8 @@ int kvm_write_guest(struct kvm *kvm, gpa_t gpa, const void *data,
+ int kvm_write_guest_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ 			   void *data, unsigned long len);
+ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+-			   void *data, int offset, unsigned long len);
++				  void *data, unsigned int offset,
++				  unsigned long len);
+ int kvm_gfn_to_hva_cache_init(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ 			      gpa_t gpa, unsigned long len);
+ int kvm_clear_guest_page(struct kvm *kvm, gfn_t gfn, int offset, int len);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 4f35f0dfe681..bbc34e87d88f 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1962,7 +1962,8 @@ int kvm_gfn_to_hva_cache_init(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ EXPORT_SYMBOL_GPL(kvm_gfn_to_hva_cache_init);
+ 
+ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+-			   void *data, int offset, unsigned long len)
++				  void *data, unsigned int offset,
++				  unsigned long len)
+ {
+ 	struct kvm_memslots *slots = kvm_memslots(kvm);
+ 	int r;
 -- 
 2.19.1
 
