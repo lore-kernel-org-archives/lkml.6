@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4590C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D71DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850A22171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA1592171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692807;
-	bh=+8i6R/gLHhBVy4d3pP7rCkMxxUJ1UAVKXF8mtTLR1n0=;
+	s=default; t=1548692811;
+	bh=CiqKSwjTSdEVf4nwWt+7r9WCXxSRaRhanlOlz/2vyUw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RnorWUhaD2YVUJXsPfY969GGYtEEgmtZG4Uw9a6UDpiFrYm5DOZHdj3Oa/HtSPYL3
-	 Q247loxbXH6tRHSPSwO2BLXqQRDG0ZDp219KdmieSTdMS/eF0M4rFKbxY3dax00uQ+
-	 RvhxXKqX/2aoclLkri2CHJf/RCTa1QkiIE3nkHDU=
+	b=j854X6PVGDYGb8FY3gCFQNBhLiqZQXp9HuS/sW3Hr3g3EtDsOu0JI6f9bi+vPQMxK
+	 enA2++5PRwTjxoUMnigO/I9lUb2WCRPsX3/exywJTnl5mtPcLov4RRRdOV3S18od83
+	 TNck/doghOqGgtnJCu6ZFzFcdQBtmhfuSthzHxic=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390277AbfA1Q0p (ORCPT
+        id S2388873AbfA1Q0t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:26:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36174 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:26:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36296 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390260AbfA1Q0m (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:42 -0500
+        id S2390284AbfA1Q0q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 45BE42171F;
-        Mon, 28 Jan 2019 16:26:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 51F1D2084A;
+        Mon, 28 Jan 2019 16:26:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692801;
-        bh=+8i6R/gLHhBVy4d3pP7rCkMxxUJ1UAVKXF8mtTLR1n0=;
+        s=default; t=1548692806;
+        bh=CiqKSwjTSdEVf4nwWt+7r9WCXxSRaRhanlOlz/2vyUw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e0+w9oKSe63WyAIUYsv0NAETexe3GZX6KT+hLLdTP346ac90HYOwbyow/K1Jt3Lms
-         V20i5JeAuzAhly0sUKJvc7u9kf/drPovIbaPaKSBmBnDGgif4hzxl8foqOykSwXzdE
-         8r+B74eRlYVzgzbf4Rb4tOzIoVQZq+03nrovVAyg=
+        b=vluAeyTLIDZYKs2O04TiuR5PdL81h2Pf9nS/vwK2UhVvG/Irs4kRGsgZkXSP992B3
+         2hHbG+/goOPYFMifTR/rrv9so5jZmXrEHfEMyGlHZF171688GbfpBdbyUkgS8MRWzH
+         ye2zscEIYBZ9s28+S/IZppwsbhf7gtwsqZ8QuwUA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sami Tolvanen <samitolvanen@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 13/61] modpost: validate symbol names also in find_elf_symbol
-Date:   Mon, 28 Jan 2019 11:25:35 -0500
-Message-Id: <20190128162623.59854-13-sashal@kernel.org>
+Cc:     Yangtao Li <tiny.windzz@gmail.com>,
+        Thierry Reding <treding@nvidia.com>,
+        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 15/61] soc/tegra: Don't leak device tree node reference
+Date:   Mon, 28 Jan 2019 11:25:37 -0500
+Message-Id: <20190128162623.59854-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -58,102 +58,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sami Tolvanen <samitolvanen@google.com>
+From: Yangtao Li <tiny.windzz@gmail.com>
 
-[ Upstream commit 5818c683a619c534c113e1f66d24f636defc29bc ]
+[ Upstream commit 9eb40fa2cd2d1f6829e7b49bb22692f754b9cfe0 ]
 
-If an ARM mapping symbol shares an address with a valid symbol,
-find_elf_symbol can currently return the mapping symbol instead, as the
-symbol is not validated. This can result in confusing warnings:
+of_find_node_by_path() acquires a reference to the node returned by it
+and that reference needs to be dropped by its caller. soc_is_tegra()
+doesn't do that, so fix it.
 
-  WARNING: vmlinux.o(.text+0x18f4028): Section mismatch in reference
-  from the function set_reset_devices() to the variable .init.text:$x.0
-
-This change adds a call to is_valid_name to find_elf_symbol, similarly
-to how it's already used in find_elf_symbol2.
-
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
+Acked-by: Jon Hunter <jonathanh@nvidia.com>
+[treding: slightly rewrite to avoid inline comparison]
+Signed-off-by: Thierry Reding <treding@nvidia.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/mod/modpost.c | 50 ++++++++++++++++++++++---------------------
- 1 file changed, 26 insertions(+), 24 deletions(-)
+ drivers/soc/tegra/common.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 9c06b5d62e90..2ff9ed878f9d 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1134,6 +1134,30 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
- 	return 1;
- }
+diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
+index a71cb74f3674..04323ade15dd 100644
+--- a/drivers/soc/tegra/common.c
++++ b/drivers/soc/tegra/common.c
+@@ -20,11 +20,15 @@ static const struct of_device_id tegra_machine_match[] = {
  
-+static inline int is_arm_mapping_symbol(const char *str)
-+{
-+	return str[0] == '$' && strchr("axtd", str[1])
-+	       && (str[2] == '\0' || str[2] == '.');
-+}
-+
-+/*
-+ * If there's no name there, ignore it; likewise, ignore it if it's
-+ * one of the magic symbols emitted used by current ARM tools.
-+ *
-+ * Otherwise if find_symbols_between() returns those symbols, they'll
-+ * fail the whitelist tests and cause lots of false alarms ... fixable
-+ * only by merging __exit and __init sections into __text, bloating
-+ * the kernel (which is especially evil on embedded platforms).
-+ */
-+static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
-+{
-+	const char *name = elf->strtab + sym->st_name;
-+
-+	if (!name || !strlen(name))
-+		return 0;
-+	return !is_arm_mapping_symbol(name);
-+}
-+
- /**
-  * Find symbol based on relocation record info.
-  * In some cases the symbol supplied is a valid symbol so
-@@ -1159,6 +1183,8 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
- 			continue;
- 		if (ELF_ST_TYPE(sym->st_info) == STT_SECTION)
- 			continue;
-+		if (!is_valid_name(elf, sym))
-+			continue;
- 		if (sym->st_value == addr)
- 			return sym;
- 		/* Find a symbol nearby - addr are maybe negative */
-@@ -1177,30 +1203,6 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
- 		return NULL;
- }
+ bool soc_is_tegra(void)
+ {
++	const struct of_device_id *match;
+ 	struct device_node *root;
  
--static inline int is_arm_mapping_symbol(const char *str)
--{
--	return str[0] == '$' && strchr("axtd", str[1])
--	       && (str[2] == '\0' || str[2] == '.');
--}
--
--/*
-- * If there's no name there, ignore it; likewise, ignore it if it's
-- * one of the magic symbols emitted used by current ARM tools.
-- *
-- * Otherwise if find_symbols_between() returns those symbols, they'll
-- * fail the whitelist tests and cause lots of false alarms ... fixable
-- * only by merging __exit and __init sections into __text, bloating
-- * the kernel (which is especially evil on embedded platforms).
-- */
--static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
--{
--	const char *name = elf->strtab + sym->st_name;
--
--	if (!name || !strlen(name))
--		return 0;
--	return !is_arm_mapping_symbol(name);
--}
--
- /*
-  * Find symbols before or equal addr and after addr - in the section sec.
-  * If we find two symbols with equal offset prefer one with a valid name.
+ 	root = of_find_node_by_path("/");
+ 	if (!root)
+ 		return false;
+ 
+-	return of_match_node(tegra_machine_match, root) != NULL;
++	match = of_match_node(tegra_machine_match, root);
++	of_node_put(root);
++
++	return match != NULL;
+ }
 -- 
 2.19.1
 
