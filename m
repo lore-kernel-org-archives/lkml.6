@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 301ADC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF14AC282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 033112175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7B0C2177B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:02:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694965;
-	bh=3UflcYX6xzicA00MPkobu64i0dS15WbeL7pzIXD4VnA=;
+	s=default; t=1548694970;
+	bh=JLr07R+BoziYrRPSUIRjw3C9xk1qhfbNLg9pQlYNJ4w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=moAgJt4yLJSDf4H9ij/AEKZZuW2ZS1BlrMal8ZFzv99S0Uy7QIxFpiOT/WMO/p6nU
-	 OU55+Lp4LDEkerXIuHBhMrAt8wP7Tq2ew/MLhyK/xPFnbhB6SZ9N8ErbvKWC6AE4M5
-	 UtErTpmOuudjiV3Sbr0BlCCV0EhuP6S77F2TxLfc=
+	b=TOkRTtJlMwcuazTDUiyfE1pvg2OFR18oa+cbvN0OE0wrmHThiT9qw9TYBwigVRk+i
+	 0pfF4B6f8muVccao5pA5uJgKZFAyWYofHSdOAPwDXXTWDCR445Tr3ItgvV4s/gcaik
+	 ReRk3Kqru1rUZ09lPp4aA3RAzAvAR+8GxZ4qYRvw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387812AbfA1RCn (ORCPT
+        id S2387567AbfA1QOG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:02:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43284 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:14:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387574AbfA1QOJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:14:09 -0500
+        id S1732767AbfA1QNz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B53E42086C;
-        Mon, 28 Jan 2019 16:14:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ABDC120879;
+        Mon, 28 Jan 2019 16:13:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692048;
-        bh=3UflcYX6xzicA00MPkobu64i0dS15WbeL7pzIXD4VnA=;
+        s=default; t=1548692034;
+        bh=JLr07R+BoziYrRPSUIRjw3C9xk1qhfbNLg9pQlYNJ4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pwDTEXHI6+B3aLWWgTIqGMHu6UwESZ6Qoqu/Z3Y1Ec1ut54kFL47baf+YPpFUwApV
-         1tadckyuBE4GsGzHr97zrZg4B2lYZZMZajFUYqzEldoN2m1ldAjrHzKUzxrmZPppY7
-         +/GX1FanOAfvG6kG+quvLMmH9SUBmQjNxpbQEgtI=
+        b=e4SJ3hmq70xKPvz+8U1j3jmT05FNB2OX6vc6VAYMPUCly2YkIBkiF6bnp7SxKyl1n
+         C8HTPg4IAOBJElOs5tXnsAkXs2ydNp21j3OoPsirDvr05+K7M8FYv00e8Q4iQQoBYC
+         0JOxVHBSrjytQUnwtem939k7JAqV56831fhcrjKg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 052/170] soc: bcm: brcmstb: Don't leak device tree node reference
-Date:   Mon, 28 Jan 2019 11:10:02 -0500
-Message-Id: <20190128161200.55107-52-sashal@kernel.org>
+Cc:     Jaegeuk Kim <jaegeuk@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.14 046/170] f2fs: avoid build warn of fall_through
+Date:   Mon, 28 Jan 2019 11:09:56 -0500
+Message-Id: <20190128161200.55107-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,47 +57,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Jaegeuk Kim <jaegeuk@kernel.org>
 
-[ Upstream commit 1861a7f07e02292830a1ca256328d370deefea30 ]
+[ Upstream commit f5d5510e7389fa264337fb524346bac9eb93adc8 ]
 
-of_find_node_by_path() acquires a reference to the node returned by it
-and that reference needs to be dropped by its caller. soc_is_brcmstb()
-doesn't do that, so fix it.
+After merging the f2fs tree, today's linux-next build
+ (x86_64_allmodconfig) produced this warning:
 
-[treding: slightly rewrite to avoid inline comparison]
+ In file included from fs/f2fs/dir.c:11:
+ fs/f2fs/f2fs.h: In function '__mark_inode_dirty_flag':
+ fs/f2fs/f2fs.h:2388:6: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    if (set)
+       ^
+ fs/f2fs/f2fs.h:2390:2: note: here
+   case FI_DATA_EXIST:
+   ^~~~
 
-Fixes: d52fad262041 ("soc: add stubs for brcmstb SoC's")
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+ Exposed by my use of -Wimplicit-fallthrough
+
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/bcm/brcmstb/common.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ fs/f2fs/f2fs.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/soc/bcm/brcmstb/common.c b/drivers/soc/bcm/brcmstb/common.c
-index 22e98a90468c..2f5ec424a390 100644
---- a/drivers/soc/bcm/brcmstb/common.c
-+++ b/drivers/soc/bcm/brcmstb/common.c
-@@ -31,13 +31,17 @@ static const struct of_device_id brcmstb_machine_match[] = {
- 
- bool soc_is_brcmstb(void)
- {
-+	const struct of_device_id *match;
- 	struct device_node *root;
- 
- 	root = of_find_node_by_path("/");
- 	if (!root)
- 		return false;
- 
--	return of_match_node(brcmstb_machine_match, root) != NULL;
-+	match = of_match_node(brcmstb_machine_match, root);
-+	of_node_put(root);
-+
-+	return match != NULL;
- }
- 
- static const struct of_device_id sun_top_ctrl_match[] = {
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 3f1a44696036..d2873f227072 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -2014,6 +2014,7 @@ static inline void __mark_inode_dirty_flag(struct inode *inode,
+ 	case FI_INLINE_DENTRY:
+ 		if (set)
+ 			return;
++		/* fall through */
+ 	case FI_DATA_EXIST:
+ 	case FI_INLINE_DOTS:
+ 		f2fs_mark_inode_dirty_sync(inode, true);
 -- 
 2.19.1
 
