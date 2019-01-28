@@ -2,112 +2,154 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA43C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E658C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E8672175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692826;
-	bh=MTqpNzwJ+nykU1cMIP3v3VrIOKhF4Ct6x2SowhBVHLg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i6awwcxpRFjDLSB0byxPdksjs/ar/h46tPj+iBfZfwJrCrzHmrVA2w27JpNbuJMf+
-	 6iR8R1ZlL2OR2khgAHLNFxg1fKvcpZ/Y7S3Pxir3Ai39q+k1dfeH2pcn6X91JeMa6V
-	 BENe0im/TRd4fzwG6+o1xOvHOFJXW4t5s+AWiftQ=
+	by mail.kernel.org (Postfix) with ESMTP id 650732175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="toTOaaMG"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390341AbfA1Q1F (ORCPT
+        id S2390352AbfA1Q1I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:27:08 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:41000 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390332AbfA1Q1F (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 11:27:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36622 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389826AbfA1Q05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:57 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E0A320879;
-        Mon, 28 Jan 2019 16:26:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692817;
-        bh=MTqpNzwJ+nykU1cMIP3v3VrIOKhF4Ct6x2SowhBVHLg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z2kEHdZbkfXqL+sFiWUiR+JV2hZPofxD/zLxu61ABWf/wLOx6wjot4AsD8HClo3/D
-         5QY4worrQKVtTC+nC/dYWQnaiFstABmu69DR8t9NIlcsmmKD7V52rcCiVfavzNbUG1
-         5MpUDxk6DqgFaM/nG3G8Vt+9epRIcw7DUM1TUm98=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
-        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 20/61] media: DaVinci-VPBE: fix error handling in vpbe_initialize()
-Date:   Mon, 28 Jan 2019 11:25:42 -0500
-Message-Id: <20190128162623.59854-20-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
-References: <20190128162623.59854-1-sashal@kernel.org>
+Received: by mail-lf1-f68.google.com with SMTP id c16so12297880lfj.8
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 08:27:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=4/eTeENllUVBor3ZLLcrRubwa9wKsC0NrA8qQ3FEFC0=;
+        b=toTOaaMGbqhZCRdddr4IFBlW5J31RE4u6kutafPsQH0xndpPadh/0T+liAlTtZHRKh
+         nRK/ECf273Qfaa5JhqFduHE4uuBO6ahx0Vudd4CbL7WWypgxCbi/DbtF1LH5rlwHy1jT
+         DIGWtmHPB8dG/H1YAXkfppclPRfcW2t2GJbUsAiEQ6N97II0/PR7bRWx/O7u6URB823T
+         lYJMuwv7bFPgU6pVeVZJ5xmO7DtafGoPvhdaKA+TZsjsFWjANhRtR8mCT/U/B71/EzNJ
+         5HRoJo/VpLLAsuCFQq4ZUHVQWFycbBqk0M02xluWKbmSlaFl4tRqw+FWM2PrGfurFsiT
+         Cn3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=4/eTeENllUVBor3ZLLcrRubwa9wKsC0NrA8qQ3FEFC0=;
+        b=AmDysdn/ulmYFLYZLrrQ5w3PscnSG7jDe+JCQ3QZmenvpPNHPskrUHD9H15ELXzf3H
+         MruyfzbVKs+ZZsEaJjIabHGZlWoixD4M+WiMENLhYsfuZ/crKTuI3UoPPOxcvSnWUE6O
+         c7DJNeX2ftacVXnF48z8sXxxOvX6JLBkOplzgrvMaf1w2XZby4b2MHBCI+QldTSUuvMf
+         PccoS+MC5J6d9i1Fzx6ABU3Yw6r5Pe/6oLBbQi2GQdXnfC409sePpP0XD/FTpmkESFjH
+         MYIUc5SC45WItF5RmFaoqPRx39zrSbt12yLkqT+ApT+LH2+iv/wno31xy7arWDCq/zs5
+         zcJQ==
+X-Gm-Message-State: AJcUukdMxcQUWoYBFMfsKfTVyZSfspPm2d1cHW6FftM5UYLvRQ5LwTf5
+        F0cgQK0VFgtkvn97pmevz5Yd1l3bZavjC6ZOC5WJ
+X-Google-Smtp-Source: ALg8bN5IUr5nBugCgdRwdtgLtxJnINE8UlGGXSRtL9hRE5XHQj1O1mic1s+QbshhF9C/VLitHyZw/NV38q/ilvTclPg=
+X-Received: by 2002:a19:ee08:: with SMTP id g8mr17084558lfb.72.1548692822794;
+ Mon, 28 Jan 2019 08:27:02 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20151208164237.15736.42955.stgit@localhost> <5490ae28-251b-bfda-38a6-5be201a4a8d8@nokia.com>
+ <CAHC9VhQsVFY1LAakAUUCBZw6nmSy0-eoFrhQgVQrkqgAsWVGhQ@mail.gmail.com>
+ <4fb6def1-a1d9-8af0-394c-f92224884d18@nokia.com> <CAHC9VhT1T4wTonW_L8CH2j1aMqSaBcUf-zH==233+ZZvSKhkwg@mail.gmail.com>
+ <8bf5d613-9b27-381d-283b-c8892483f424@nokia.com>
+In-Reply-To: <8bf5d613-9b27-381d-283b-c8892483f424@nokia.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Mon, 28 Jan 2019 11:26:51 -0500
+Message-ID: <CAHC9VhR25UdWPSRurefEX3YjM80DEh5BXETvK4na3Ym+k2=9xQ@mail.gmail.com>
+Subject: Re: [PATCH] audit: always enable syscall auditing when supported and
+ audit is enabled
+To:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+Cc:     "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        Richard Guy Briggs <rbriggs@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Khoroshilov <khoroshilov@ispras.ru>
+On Mon, Jan 28, 2019 at 10:38 AM Sverdlin, Alexander (Nokia - DE/Ulm)
+<alexander.sverdlin@nokia.com> wrote:
+> Hello Paul,
+>
+> On 28/01/2019 15:52, Paul Moore wrote:
+> >>>>> time also enables syscall auditing; this patch simplifies the Kconfig
+> >>>>> menus by removing the option to disable syscall auditing when audit
+> >>>>> is selected and the target arch supports it.
+> >>>>>
+> >>>>> Signed-off-by: Paul Moore <pmoore@redhat.com>
+> >>>> this patch is responsible for massive performance degradation for those
+> >>>> who used only CONFIG_SECURITY_APPARMOR.
+> >>>>
+> >>>> And the numbers are, take the following test for instance:
+> >>>>
+> >>>> dd if=/dev/zero of=/dev/null count=2M
+> >>>>
+> >>>> ARM64:      500MB/s -> 350MB/s
+> >>>> ARM:        400MB/s -> 300MB/s
+> >>> Hi there.
+> >>>
+> >>> Out of curiosity, what kernel/distribution are you running, or is this
+> >>> a custom kernel compile?  Can you also share the output of 'auditctl
+> >> This test was carried out with Linux 4.9. Custom built.
+> > I suspected that was the case, thanks.
+> >
+> >>> -l' from your system?  The general approach taken by everyone to
+> >>> turn-off the per-syscall audit overhead is to add the "-a never,task"
+> >>> rule to their audit configuration:
+> >>>
+> >>>  # auditctl -a never,task
+> >>>
+> >>> If you are using Fedora/CentOS/RHEL, or a similarly configured system,
+> >> This is an embedded distribution. We are not using auditctl or any other
+> >> audit-related user-space packages.
+> >>
+> >>> you can find this configuration in the /etc/audit/audit.rules file (be
+> >>> warned, that file is automatically generated based on
+> >>> /etc/audit/rules.d).
+> >> I suppose in this case rule list must be empty. Is there a way to check
+> >> this without extra user-space packages?
+> > Yes, unless you are loading rules through some other method I would
+> > expect that your audit rule list is empty.
+> >
+> > I'm not aware of any other tools besides auditctl to load audit rules
+> > into the kernel, although I haven't ever had a need for another tool
+> > so I haven't looked very hard.  If you didn't want to bring auditctl
+> > into your distribution, I expect it would be a rather trivial task to
+> > create a small tool to load a single "-a never,task" into the kernel.
+>
+> I've done a quick test on my x86_64 PC and got the following results:
 
-[ Upstream commit aa35dc3c71950e3fec3e230c06c27c0fbd0067f8 ]
+...
 
-If vpbe_set_default_output() or vpbe_set_default_mode() fails,
-vpbe_initialize() returns error code without releasing resources.
+> Which brings me to an idea, that the subject patch should have been accompanied
+> by a default "never,task" rule inside the kernel, otherwise you require an
+> extra user-space package (audit) just to bring Linux 4.5+ to 4.4 performance
+> levels.
 
-The patch adds error handling for that case.
+[NOTE: I dropped pmoore@redhat.com from the To/CC line, I left Red Hat
+for greener pastures several months ago.]
 
-Found by Linux Driver Verification project (linuxtesting.org).
+Well, it generally hasn't been an issue as 1) most people that enable
+audit also enable syscall auditing and 2) most people that enable
+audit have some sort of audit userspace tools to work with the audit
+logs (and configure audit if necessary).  I don't want to diminish
+your report, but this change was made several years ago and we really
+haven't heard of many issues surrounding the change.  If we can ever
+get all of the different arches to support syscall auditing, I'd love
+to get rid of the syscall auditing Kconfig knob entirely.
 
-Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
-Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/media/platform/davinci/vpbe.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+If you wanted to put together a patch that added a single "-a
+never,task" rule on boot I could get behind that, just make it default
+to off.
 
-diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
-index 33b9660b7f77..40d462cac5ec 100644
---- a/drivers/media/platform/davinci/vpbe.c
-+++ b/drivers/media/platform/davinci/vpbe.c
-@@ -740,7 +740,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 	if (ret) {
- 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default output %s",
- 			 def_output);
--		return ret;
-+		goto fail_kfree_amp;
- 	}
- 
- 	printk(KERN_NOTICE "Setting default mode to %s\n", def_mode);
-@@ -748,12 +748,15 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
- 	if (ret) {
- 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default mode %s",
- 			 def_mode);
--		return ret;
-+		goto fail_kfree_amp;
- 	}
- 	vpbe_dev->initialized = 1;
- 	/* TBD handling of bootargs for default output and mode */
- 	return 0;
- 
-+fail_kfree_amp:
-+	mutex_lock(&vpbe_dev->lock);
-+	kfree(vpbe_dev->amp);
- fail_kfree_encoders:
- 	kfree(vpbe_dev->encoders);
- fail_dev_unregister:
 -- 
-2.19.1
-
+paul moore
+www.paul-moore.com
