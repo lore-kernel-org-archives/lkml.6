@@ -2,98 +2,108 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C78BC282CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:09:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 070D8C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:18:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1B8F21736
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:09:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="b8CU70kt";
-	dkim=pass (1024-bit key) header.d=akkea.ca header.i=@akkea.ca header.b="AWjjoniX"
+	by mail.kernel.org (Postfix) with ESMTP id CD00F2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:18:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726872AbfA1GJL (ORCPT
+        id S1726669AbfA1GSA convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 01:09:11 -0500
-Received: from node.akkea.ca ([192.155.83.177]:59408 "EHLO node.akkea.ca"
+        Mon, 28 Jan 2019 01:18:00 -0500
+Received: from mga12.intel.com ([192.55.52.136]:56253 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725782AbfA1GIv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 01:08:51 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by node.akkea.ca (Postfix) with ESMTP id 477074E2056;
-        Mon, 28 Jan 2019 06:08:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1548655730; bh=QmIBLVdbJ3X4Zs3xnT5fPDB4oumJvEdRGSTkpTuJ1IY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=b8CU70ktiDkZpcm+wWRJIw9jpU6z7PbEOGA0NIg0BCGT6Ww1gQD5/ILOB8xbkj8qj
-         LLix5RnXTd2KCOuQq/l2Z6wLh26Hks5Rd8r+NeoifT3ktqrIGerQcc/BF1MJFeeO/S
-         MSPzVEvPWVe83MXYBbL9Nw5sggzWnXPa+1cQAKTQ=
-X-Virus-Scanned: Debian amavisd-new at mail.akkea.ca
-Received: from node.akkea.ca ([127.0.0.1])
-        by localhost (mail.akkea.ca [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id B6J09s486Qe7; Mon, 28 Jan 2019 06:08:49 +0000 (UTC)
-Received: from localhost.localdomain (198-48-167-13.cpe.pppoe.ca [198.48.167.13])
-        by node.akkea.ca (Postfix) with ESMTPSA id 36A2C4E204B;
-        Mon, 28 Jan 2019 06:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akkea.ca; s=mail;
-        t=1548655729; bh=QmIBLVdbJ3X4Zs3xnT5fPDB4oumJvEdRGSTkpTuJ1IY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=AWjjoniXOD+Z+ZSRmsENhUdOWO3cDG9GAwi9la/RH6b42yLiSxm2qL07VJz4ZQiwZ
-         W1AqqpjfBE8fbKUA0ezQwoWJm2B4wC+7mBFSTFARXChp+cnlPKejmHvFm7wE9t2a7p
-         GCwUZcsbc8M6tKyYhiqSPkJNcl0ir4m8+x39fKuc=
-From:   "Angus Ainslie (Purism)" <angus@akkea.ca>
-To:     angus@akkea.ca
-Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
-        dmaengine@vger.kernel.org, NXP Linux Team <linux-imx@nxp.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Daniel Baluta <daniel.baluta@gmail.com>
-Subject: [PATCH v5 2/5] dmaengine: imx-sdma: add imx8mq sdma compatible parts
-Date:   Sun, 27 Jan 2019 23:08:37 -0700
-Message-Id: <20190128060840.31695-3-angus@akkea.ca>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190128060840.31695-1-angus@akkea.ca>
-References: <20190120023150.17138-1-angus@akkea.ca>
- <20190128060840.31695-1-angus@akkea.ca>
+        id S1726149AbfA1GR7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 01:17:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2019 22:17:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,533,1539673200"; 
+   d="scan'208";a="314052464"
+Received: from fmsmsx103.amr.corp.intel.com ([10.18.124.201])
+  by fmsmga006.fm.intel.com with ESMTP; 27 Jan 2019 22:17:59 -0800
+Received: from shsmsx104.ccr.corp.intel.com (10.239.4.70) by
+ FMSMSX103.amr.corp.intel.com (10.18.124.201) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Sun, 27 Jan 2019 22:17:58 -0800
+Received: from shsmsx101.ccr.corp.intel.com ([169.254.1.110]) by
+ SHSMSX104.ccr.corp.intel.com ([169.254.5.102]) with mapi id 14.03.0415.000;
+ Mon, 28 Jan 2019 14:17:57 +0800
+From:   "Kang, Luwei" <luwei.kang@intel.com>
+To:     Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+CC:     "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "rkrcmar@redhat.com" <rkrcmar@redhat.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "hpa@zytor.com" <hpa@zytor.com>,
+        "x86@kernel.org" <x86@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] KVM: x86: Sync the pending Posted-Interrupts
+Thread-Topic: [PATCH] KVM: x86: Sync the pending Posted-Interrupts
+Thread-Index: AQHUrvgng1TGbq88YUCMNKU8aNpvOaW/s2MAgASOSYA=
+Date:   Mon, 28 Jan 2019 06:17:56 +0000
+Message-ID: <82D7661F83C1A047AF7DC287873BF1E172CD2616@SHSMSX101.ccr.corp.intel.com>
+References: <1547793240-9157-1-git-send-email-luwei.kang@intel.com>
+ <20190125163329.GA41385@Konrads-MacBook-Pro.local>
+In-Reply-To: <20190125163329.GA41385@Konrads-MacBook-Pro.local>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ctpclassification: CTP_NT
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMDViYzZlMTctZjE0Yi00YTQ5LWJiOTgtZDEzYTk4Y2QzMGMwIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibWtxSThNcjlENnB5dllnY2Y1ZTh3SkYwSnJPeVZRaWx4MHZcL2NEVzErbEVPYVhFVmk1ajVWZXUzK0V5bmllQmYifQ==
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.239.127.40]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is identical to the imx7d.
+> > Some Posted-Interrupts from passthrough devices may be lost or
+> > overwritten when the vCPU is in runnable state.
+> >
+> > The SN (Suppress Notification) of PID (Posted Interrupt Descriptor)
+> > will be set when the vCPU is preempted (vCPU in KVM_MP_STATE_RUNNABLE
+> > state but not running on physical CPU). If a posted interrupt coming
+> > at this time, the irq remmaping facility will set the bit of PIR
+> > (Posted Interrupt Requests) but ON (Outstanding Notification).
+> 
+> s/but ON/and ON is set too/?
 
-Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
----
- drivers/dma/imx-sdma.c | 4 ++++
- 1 file changed, 4 insertions(+)
+Sorry. If the interrupt remapping facility received a interrupt from device but the current SN bit is 1, the remapping facility will not set ON and not send notification event to CPU, just set the corresponding bit of PIR.
 
-diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-index 757fad2fbfae..c4db4fe6bcc9 100644
---- a/drivers/dma/imx-sdma.c
-+++ b/drivers/dma/imx-sdma.c
-@@ -578,6 +578,9 @@ static const struct platform_device_id sdma_devtypes[] = {
- 	}, {
- 		.name = "imx7d-sdma",
- 		.driver_data = (unsigned long)&sdma_imx7d,
-+	}, {
-+		.name = "imx8mq-sdma",
-+		.driver_data = (unsigned long)&sdma_imx7d,
- 	}, {
- 		/* sentinel */
- 	}
-@@ -592,6 +595,7 @@ static const struct of_device_id sdma_dt_ids[] = {
- 	{ .compatible = "fsl,imx31-sdma", .data = &sdma_imx31, },
- 	{ .compatible = "fsl,imx25-sdma", .data = &sdma_imx25, },
- 	{ .compatible = "fsl,imx7d-sdma", .data = &sdma_imx7d, },
-+	{ .compatible = "fsl,imx8mq-sdma", .data = &sdma_imx7d, },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sdma_dt_ids);
--- 
-2.17.1
+Thanks,
+Luwei Kang
 
+> > So this interrupt can't be sync to APIC virtualization register and
+> > will not be handled by Guest because ON is zero.
+> >
+> > Signed-off-by: Luwei Kang <luwei.kang@intel.com>
+> > ---
+> >  arch/x86/kvm/vmx/vmx.c | 2 +-
+> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> >
+> > diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c index
+> > f6915f1..820a03b 100644
+> > --- a/arch/x86/kvm/vmx/vmx.c
+> > +++ b/arch/x86/kvm/vmx/vmx.c
+> > @@ -6048,7 +6048,7 @@ static int vmx_sync_pir_to_irr(struct kvm_vcpu *vcpu)
+> >  	bool max_irr_updated;
+> >
+> >  	WARN_ON(!vcpu->arch.apicv_active);
+> > -	if (pi_test_on(&vmx->pi_desc)) {
+> > +	if (!bitmap_empty((unsigned long *)vmx->pi_desc.pir, NR_VECTORS)) {
+> >  		pi_clear_on(&vmx->pi_desc);
+> >  		/*
+> >  		 * IOMMU can write to PIR.ON, so the barrier matters even on UP.
