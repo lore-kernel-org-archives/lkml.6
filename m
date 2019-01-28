@@ -3,31 +3,31 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CB7BEC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5272C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:33:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A334E20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:32:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D51620880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:33:40 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfA1JcN (ORCPT
+        id S1726775AbfA1Jdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:32:13 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:56577 "EHLO
+        Mon, 28 Jan 2019 04:33:39 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59289 "EHLO
         metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfA1JcM (ORCPT
+        with ESMTP id S1726369AbfA1Jdi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:32:12 -0500
+        Mon, 28 Jan 2019 04:33:38 -0500
 Received: from gallifrey.ext.pengutronix.de ([2001:67c:670:201:5054:ff:fe8d:eefb] helo=localhost)
         by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <l.stach@pengutronix.de>)
-        id 1go3Gw-0007wX-09; Mon, 28 Jan 2019 10:32:06 +0100
-Message-ID: <85151aee51eca63d4a664b38837930c53cf8e7c1.camel@pengutronix.de>
-Subject: Re: [PATCH v5 2/5] dmaengine: imx-sdma: add imx8mq sdma compatible
- parts
+        id 1go3IK-00083N-2i; Mon, 28 Jan 2019 10:33:32 +0100
+Message-ID: <7a3c2f812b7529e23a0007c70949a02e86a4f4f2.camel@pengutronix.de>
+Subject: Re: [PATCH v5 4/5] dmaengine: imx-sdma: add a test for imx8mq multi
+ sdma devices
 From:   Lucas Stach <l.stach@pengutronix.de>
 To:     "Angus Ainslie (Purism)" <angus@akkea.ca>
 Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
@@ -35,11 +35,11 @@ Cc:     angus.ainslie@puri.sm, Vinod Koul <vkoul@kernel.org>,
         Pengutronix Kernel Team <kernel@pengutronix.de>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Daniel Baluta <daniel.baluta@gmail.com>
-Date:   Mon, 28 Jan 2019 10:32:04 +0100
-In-Reply-To: <20190128060840.31695-3-angus@akkea.ca>
+Date:   Mon, 28 Jan 2019 10:33:31 +0100
+In-Reply-To: <20190128060840.31695-5-angus@akkea.ca>
 References: <20190120023150.17138-1-angus@akkea.ca>
          <20190128060840.31695-1-angus@akkea.ca>
-         <20190128060840.31695-3-angus@akkea.ca>
+         <20190128060840.31695-5-angus@akkea.ca>
 Content-Type: text/plain; charset="UTF-8"
 User-Agent: Evolution 3.30.4 (3.30.4-1.fc29) 
 Mime-Version: 1.0
@@ -54,45 +54,60 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 Am Sonntag, den 27.01.2019, 23:08 -0700 schrieb Angus Ainslie (Purism):
-> This is identical to the imx7d.
-
-So it can be dropped and the i.MX8M DT should just specify the
-"fsl,imx7d-sdma" as a fallback compatible for the SDMA codes.
-
-If both the imx8m and imx7d compatible are present in the DT, we can
-introduce a more specific matchic when we actually need it. No need to
-pollute the code with this from the start.
-
-Regards,
-Lucas
-
+> On i.mx8mq, there are two sdma instances, and the common dma framework
+> will get a channel dynamically from any available sdma instance whether
+> it's the first sdma device or the second sdma device. Some IPs like
+> SAI only work with sdma2 not sdma1. To make sure the sdma channel is from
+> the correct sdma device, use the node pointer to match.
+> 
 > Signed-off-by: Angus Ainslie (Purism) <angus@akkea.ca>
+
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+
 > ---
->  drivers/dma/imx-sdma.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/dma/imx-sdma.c                | 6 ++++++
+>  include/linux/platform_data/dma-imx.h | 1 +
+>  2 files changed, 7 insertions(+)
 > 
 > diff --git a/drivers/dma/imx-sdma.c b/drivers/dma/imx-sdma.c
-> index 757fad2fbfae..c4db4fe6bcc9 100644
+> index c4db4fe6bcc9..d5f86becf59e 100644
 > --- a/drivers/dma/imx-sdma.c
 > +++ b/drivers/dma/imx-sdma.c
-> @@ -578,6 +578,9 @@ static const struct platform_device_id
-> sdma_devtypes[] = {
->  	}, {
->  		.name = "imx7d-sdma",
->  		.driver_data = (unsigned long)&sdma_imx7d,
-> +	}, {
-> +		.name = "imx8mq-sdma",
-> +		.driver_data = (unsigned long)&sdma_imx7d,
->  	}, {
->  		/* sentinel */
->  	}
-> @@ -592,6 +595,7 @@ static const struct of_device_id sdma_dt_ids[] =
-> {
->  	{ .compatible = "fsl,imx31-sdma", .data = &sdma_imx31, },
->  	{ .compatible = "fsl,imx25-sdma", .data = &sdma_imx25, },
->  	{ .compatible = "fsl,imx7d-sdma", .data = &sdma_imx7d, },
-> +	{ .compatible = "fsl,imx8mq-sdma", .data = &sdma_imx7d, },
->  	{ /* sentinel */ }
+> @@ -1918,11 +1918,16 @@ static int sdma_init(struct sdma_engine *sdma)
+>  static bool sdma_filter_fn(struct dma_chan *chan, void *fn_param)
+>  {
+>  	struct sdma_channel *sdmac = to_sdma_chan(chan);
+> +	struct sdma_engine *sdma = sdmac->sdma;
+>  	struct imx_dma_data *data = fn_param;
+>  
+>  	if (!imx_dma_is_general_purpose(chan))
+>  		return false;
+>  
+> +	/* return false if it's not the right device */
+> +	if (sdma->dev->of_node != data->of_node)
+> +		return false;
+> +
+>  	sdmac->data = *data;
+>  	chan->private = &sdmac->data;
+>  
+> @@ -1950,6 +1955,7 @@ static struct dma_chan *sdma_xlate(struct of_phandle_args *dma_spec,
+>  	 * be set to sdmac->event_id1.
+>  	 */
+>  	data.dma_request2 = 0;
+> +	data.of_node = ofdma->of_node;
+>  
+>  	return dma_request_channel(mask, sdma_filter_fn, &data);
+>  }
+> diff --git a/include/linux/platform_data/dma-imx.h b/include/linux/platform_data/dma-imx.h
+> index 7d964e787299..9daea8d42a10 100644
+> --- a/include/linux/platform_data/dma-imx.h
+> +++ b/include/linux/platform_data/dma-imx.h
+> @@ -55,6 +55,7 @@ struct imx_dma_data {
+>  	int dma_request2; /* secondary DMA request line */
+>  	enum sdma_peripheral_type peripheral_type;
+>  	int priority;
+> +	struct device_node *of_node;
 >  };
->  MODULE_DEVICE_TABLE(of, sdma_dt_ids);
+>  
+>  static inline int imx_dma_is_ipu(struct dma_chan *chan)
 
