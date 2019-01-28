@@ -2,130 +2,130 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B91BC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:59:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DE2C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E49402171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:59:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548716360;
-	bh=koVSDUKtLDXHb+0bjzz/2+sTodPZKFu/W9UG13MdJoo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=JF+QI/BdgfbSl1q87IEtqN7axSroaWh112A2mDJS+1DgFEgCBT6hOi1ijxWym9R35
-	 CwJbtiMrqxZNTF96xitoOrerOqfWuZH+rxeMuLtc7+f87RauJrZTCBJo23IEPydQM8
-	 q319qovki5zWMfw3eSxncVoCmKuekF8AKvUgfxLg=
+	by mail.kernel.org (Postfix) with ESMTP id 647862171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:59:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="kVTx/zGs"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726948AbfA1W7S (ORCPT
+        id S1726988AbfA1W7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 17:59:18 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:34717 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726752AbfA1W7R (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 17:59:17 -0500
-Received: by mail-yw1-f65.google.com with SMTP id g75so7480202ywb.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 14:59:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=hIJpW7GMeiE3B4vNTAQ6Z5XtbYmf6DLwmTjd/UWH4Co=;
-        b=XTIuEQhyPp+8X6R6TmA5450pqAEouS8UnzVO66rN8NF0wnKp/KW5pDk0RvzQkSkEmx
-         w0lbDx1jMG+qUVex8CiwMXOkOPoI9VFKwDqDTv9UNLB7MM33VCO8HZFTZnPOO9d0ZtSa
-         4Qtn+33zAXUiZlO+Srqxe4yPb/JEcuMF4Cf2cNlA9XK4bPZaIR8lyoz9l8lVpZPEUqOe
-         L8wqvTKazZKa13wyywqRhhjk0N4FQLRqL1HMzKtgh+gSvTwsIA3xospexgn0+MSQCNIk
-         9KcEb9eOud2IVukq1qYeEDJUMcCkGldhiUx8ayoE/NBjNm/2zK7vPdigmdQYFcV9dBR4
-         xlRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=hIJpW7GMeiE3B4vNTAQ6Z5XtbYmf6DLwmTjd/UWH4Co=;
-        b=FVO7+SSYBL2KazZLXYbPKnQb+1RvfN6BRNDdqG4gFsXCZJLJ/a9+eRvfA+aEouXa7n
-         B4V5z6Be8EsTixBKFdQpCJSyH3iu+jTy23noUeTvl44yw6RtxxuUlir/2107NihRaJ2U
-         YGyCQ2EN31B/DEFxNQFgsUpNzNsZkxdRH+VAqzpfMADXN/W4KkMONk1tl/9d4yt8/sca
-         Hde+o2BtlzOzdoI58iwBwPdS+NCmwpUy1Q/Sqm671OLWWOOkSf7Tr1YXXLcdBSiVxxcm
-         hlop6XsSTkC+STdX9Lqu/4b0ANhl+cyssRmKmwG5q4L1Ok2WbX7y4HZ70xCi08Avpel+
-         8giQ==
-X-Gm-Message-State: AJcUukdxm25rUdeypbc3xCYC4zblb74p3/tGcQR0mVmgG/S5oHiWhHtE
-        3ZGjBBXVnMONgIjluZWjWDc=
-X-Google-Smtp-Source: ALg8bN6DMm3zHygJtTEUx5P1qey1HbfhieULGAOMiAdyvNlcc3qUnBWb8fTgvrIwoorCY1nJXfyGPw==
-X-Received: by 2002:a81:3594:: with SMTP id c142mr23621854ywa.234.1548716356317;
-        Mon, 28 Jan 2019 14:59:16 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:31a1])
-        by smtp.gmail.com with ESMTPSA id s185sm26391177yws.69.2019.01.28.14.59.15
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 14:59:15 -0800 (PST)
-Date:   Mon, 28 Jan 2019 14:59:12 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] psi: fix aggregation idle shut-off
-Message-ID: <20190128225912.GV50184@devbig004.ftw2.facebook.com>
-References: <20190116193501.1910-1-hannes@cmpxchg.org>
- <20190128140336.25854cb97c25924f4bfc26c7@linux-foundation.org>
+        Mon, 28 Jan 2019 17:59:33 -0500
+Received: from mail-eopbgr1300125.outbound.protection.outlook.com ([40.107.130.125]:48695
+        "EHLO APC01-HK2-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726694AbfA1W7d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 17:59:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z7TqUn0cj6qot7rq5oSYt87AwEbmouHizuU6Qto9T/A=;
+ b=kVTx/zGs94Gt2d8gNFr6wyotcbc5GoLyVVbhYAm2HchfzpBrv96ImORcPrq6OTmth8SWYR4cBSPIFEgirni2BzgA7fAoaH/MmZd6t563G6Wq7X9YikPX0ddIp19mgAYNrkzggh5jAjOTYupur5526jkHbQ02nhFZBIhpTWV1et4=
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM (10.170.189.13) by
+ PU1P153MB0154.APCP153.PROD.OUTLOOK.COM (10.170.189.10) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1601.6; Mon, 28 Jan 2019 22:58:41 +0000
+Received: from PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::7822:a20:e63c:de2f]) by PU1P153MB0169.APCP153.PROD.OUTLOOK.COM
+ ([fe80::7822:a20:e63c:de2f%9]) with mapi id 15.20.1601.007; Mon, 28 Jan 2019
+ 22:58:41 +0000
+From:   Dexuan Cui <decui@microsoft.com>
+To:     Dan Williams <dan.j.williams@intel.com>
+CC:     Ross Zwisler <zwisler@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Michael Kelley <mikelley@microsoft.com>,
+        Sasha Levin <Alexander.Levin@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        KY Srinivasan <kys@microsoft.com>,
+        Josh Poulson <jopoulso@microsoft.com>,
+        "driverdev-devel@linuxdriverproject.org" 
+        <driverdev-devel@linuxdriverproject.org>
+Subject: RE: [PATCH] nfit: add Hyper-V NVDIMM DSM command set to white list
+Thread-Topic: [PATCH] nfit: add Hyper-V NVDIMM DSM command set to white list
+Thread-Index: AdSzXEwehYqXUZ6BQmeL43zJlZYVRgD8FF6AAADrNfAAAPKsAAACH5PQ
+Date:   Mon, 28 Jan 2019 22:58:41 +0000
+Message-ID: <PU1P153MB01693CEF0955362BA0AD09BCBF960@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+References: <PU1P153MB0169DF967C5BAAC8334FCC42BF990@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <CAPcyv4gnpn9VBHBoSFn_2sAdvfD85wRffvfYfuurwMxXYSBAZQ@mail.gmail.com>
+ <PU1P153MB0169CE6B02AE7D67E25DDD89BF960@PU1P153MB0169.APCP153.PROD.OUTLOOK.COM>
+ <CAPcyv4hGYFuW901KZ1xCR4TucgRTkqZ=SOsLOK0MpKq0BBCokw@mail.gmail.com>
+In-Reply-To: <CAPcyv4hGYFuW901KZ1xCR4TucgRTkqZ=SOsLOK0MpKq0BBCokw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+msip_labels: MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=True;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Owner=decui@microsoft.com;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2019-01-28T22:58:39.1053740Z;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=General;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Application=Microsoft Azure
+ Information Protection;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=758b6cbb-ae68-4505-a938-b652923e5bd2;
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Extended_MSFT_Method=Automatic
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=decui@microsoft.com; 
+x-originating-ip: [2001:4898:80e8:f:e868:ce4c:61e9:a83a]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;PU1P153MB0154;6:D/k9JGQMTHMp4sWw0he68tnI9vueOVeTb1duLni3jAsAi7u8/V8AP+pXlStaQR4wMXlkvtX/4dTUY1ZOZPG2T/cpqWP/7n7QBXu1hmEd1hDIsC605X9NBwOBn4MuJSRjZGG5W0rNfg91PcgDr045a6b6ns5NcweuWcLUk86ll/2WR8kllojI1XNErHOF7AOtHQnmTVYBSeJDhEYTX9MwvKLUQJmE6Sm8qj2tt/bANIlJw5xwnVdclYthQQruYgeKKCEFZsTzmM0rML7Fp4CIcZS+udzC6Az7g0LpVLJ4eIOFoh5/ItIFiyi9BweiC5rMqO50Yf0F5MQkhsqVFNnnydLf5sHQsdWs9DxipBeiRblPEsoj7IBth2cntpEqI2wQ+Ef2Er7QRYIrbbTy0yqDafF23O0yw/9OypsyZAK+e3IZ3FcbCu0Kcb4hLnjDCJCgJI1rZYgq31WVlLBH2aGneg==;5:9l0UOAZKpTV4Yv47dplePk2rBx2pvSc9FEXvchHA5bAWmAh5bMpZN/eyK9BdgSLETmy3svO4x0jSpBlyjQtF+l6Mx5rThk2K2EEwOmdOEOoC0hJccjuflBRUWYslmmsIn8NjnfJ2MHD7JjWpD4EUqU5gWYkmups8rjWt2AMtsJ+S5WrM8XGnkrr9h0d2EVc0OnEaP2cS85rYwmaL5XI6Dw==;7:U8tX25ZwIlgF9bPyfsytI4ZNXTpuoR+qaF2TcSxtF4HCYIVmW8I5LVRyGaRYYLXjrvSpVt/mjjNyrHkdWNOISAWJGI+V9VzulxAsvyMcNkUGHpDiwnHAvFbWEkfDAuA+n7vZGHxY/E4FGBsopK/vNQ==
+x-ms-office365-filtering-correlation-id: 6bbfb1b8-b4c7-488b-886b-08d6857425e1
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:PU1P153MB0154;
+x-ms-traffictypediagnostic: PU1P153MB0154:
+x-ms-exchange-purlcount: 2
+x-microsoft-antispam-prvs: <PU1P153MB0154865FA8E39C3819DA7CF8BF960@PU1P153MB0154.APCP153.PROD.OUTLOOK.COM>
+x-forefront-prvs: 0931CB1479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(366004)(376002)(346002)(396003)(39860400002)(199004)(189003)(53546011)(186003)(6506007)(6116002)(446003)(46003)(486006)(99286004)(966005)(97736004)(74316002)(4326008)(76176011)(106356001)(105586002)(102836004)(68736007)(7416002)(256004)(2906002)(53936002)(86612001)(217873002)(316002)(478600001)(55016002)(25786009)(71190400001)(476003)(86362001)(93886005)(7696005)(71200400001)(11346002)(8936002)(81156014)(22452003)(54906003)(8676002)(81166006)(8990500004)(6246003)(9686003)(10090500001)(6306002)(10290500003)(33656002)(305945005)(6436002)(7736002)(229853002)(6916009)(14454004);DIR:OUT;SFP:1102;SCL:1;SRVR:PU1P153MB0154;H:PU1P153MB0169.APCP153.PROD.OUTLOOK.COM;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microsoft.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: DAnMfMqg/DuS3Wey6j98kfDkmmHcyRWUpFNVkogObESEAvOkMNofE/8LDEGTc41QQ32LD9OHUmk2qftMT/DMXbTm+8zdlRqldISrhJvCvN8LIs98l+cQg0ShP0a7vmjLV1XUq9eqeDm/qffXgPCkNUav/bUW/yiP1JVZtL5EAl6J50BDzJU4gsfMMMFd+oMMsVuwvArMRFA+mufBpQcdmB6HVWtKKkmuuv+tM2Fjz8U99X1wvWrA+H25gvccy1YGqzmzQxAPupwDGQm6xZlDIZaJJw6yCbZX7ptRqeIaikiuYoS6vwQBx95PW7/kYhVb2pgzkvtA8nNA3W9wQFYuJ6C4gVz0rSi44iTdPfdrbM14tsg7EjR5u7WioGKcYeNOOlUCJWBg4jV/R4H+wV/5K0SpXE77WfNOt3Wynhinrbk=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128140336.25854cb97c25924f4bfc26c7@linux-foundation.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6bbfb1b8-b4c7-488b-886b-08d6857425e1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 22:58:41.3214
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PU1P153MB0154
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello, Andrew.
-
-On Mon, Jan 28, 2019 at 02:03:36PM -0800, Andrew Morton wrote:
-> > +#include "../workqueue_internal.h"
-> 
-> "Only to be included by workqueue and core kernel subsystems"
-> 
-> I'm not sure that psi qualifies.  Perhaps wq_worker_last_func() should
-> be declared in include/linux/workqueue.h.
->
-> And perhaps implemented there as well.  It's similar to
-> current_wq_worker(), which is inlined and wq_worker_last_func() is
-> small enough to justify inlining.
-
-workqueue_internal.h is used mostly to expose some of the internal
-details and hooks to scheduler code for concurrency management.  Most
-of PSI is tracking state transitions on scheduling events (psi.c is
-under kernel/sched/ for this reason), so it's mostly in line with how
-the file was being used.
-
-I think keeping it in workqueue_internal.h is better.  Please see
-below.
-
-> > +work_func_t wq_worker_last_func(struct task_struct *task)
-> > +{
-> > +	struct worker *worker = kthread_data(task);
-> > +
-> > +	return worker->last_func;
-> > +}
-> 
-> The semantics are troublesome.  What guarantees that worker->last_func
-> won't change under the caller's feet?  The caller should hold some lock
-> (presumably worker->pool->lock) in order to stabilize the
-> wq_worker_last_func() return value?
-> 
-> Also, the comment isn't really true - this is called from PSI, which is
-> hardly "the scheduler"?
-
-Hmm... This is the same way wq_worker_waking_up() and
-wq_worker_sleeping() are synchronized.  The task being queried is
-being scheduled in or out, so it can't change underneath and is in
-line with other stuff in kernel_internal.h.
-
-Thanks.
-
--- 
-tejun
+PiBGcm9tOiBEYW4gV2lsbGlhbXMgPGRhbi5qLndpbGxpYW1zQGludGVsLmNvbT4NCj4gU2VudDog
+TW9uZGF5LCBKYW51YXJ5IDI4LCAyMDE5IDE6NTUgUE0NCj4gDQo+IE9uIE1vbiwgSmFuIDI4LCAy
+MDE5IGF0IDE6NDAgUE0gRGV4dWFuIEN1aSA8ZGVjdWlAbWljcm9zb2Z0LmNvbT4gd3JvdGU6DQo+
+IA0KPiA+IEkgbWFkZSB0aGUgYmVsb3cgc2ltcGxlIGNoYW5nZS4gSXMgdGhpcyBlbm91Z2g/IFBs
+ZWFzZSBzdWdnZXN0IHRoZSBwcm9wZXINCj4gPiB3b3JkaW5nL3NlbnRlbmNlLCBhcyBJJ20gcmVs
+YXRpdmVseSBuZXcgdG8gTlZESU1NLCBhbmQgSSBkb24ndCByZWFsbHkga25vdw0KPiB0aGUgaGlz
+dG9yeSBvZiB0aGUgc3RhbmRhcmRpemF0aW9uIHByb2Nlc3MuDQo+IA0KPiBIb3cgYWJvdXQgc29t
+ZXRoaW5nIGEgYml0IG1vcmUgcmVsZXZhbnQgZm9yIHRoZSBjb2RlIGluIHF1ZXN0aW9uOg0KPiAN
+CiANCj4gVGhlcmUgYXJlIDQgImxlZ2FjeSIgTlZESU1NIGNvbW1hbmQgc2V0cw0KPiAoTlZESU1N
+X0ZBTUlMWV97SU5URUwsTVNGVCxIUEUxLEhQRTJ9KSB0aGF0IHdlcmUgY3JlYXRlZCBiZWZvcmUg
+YW4gRUZJDQo+IHdvcmtpbmcgZ3JvdXAgd2FzIGVzdGFibGlzaGVkIHRvIGNvbnN0cmFpbiB0aGlz
+IHByb2xpZmVyYXRpb24uIFRoZQ0KPiBuZml0IGRyaXZlciBwcm9iZXMgZm9yIHRoZSBzdXBwb3J0
+ZWQgY29tbWFuZCBzZXQgYnkgR1VJRC4gTm90ZSwgSWYNCj4geW91J3JlIGEgcGxhdGZvcm0gZGV2
+ZWxvcGVyIGxvb2tpbmcgdG8gYWRkIGEgbmV3IGNvbW1hbmQgc2V0IHRvIHRoaXMNCj4gcHJvYmUg
+Y29uc2lkZXIgdXNpbmcgYW4gZXhpc3Rpbmcgc2V0LCBvciBvdGhlcndpc2Ugc2VlayBhcHByb3Zh
+bCB0bw0KPiBwdWJsaXNoIHRoZSBjb21tYW5kIHNldCBhdA0KPiBodHRwOi8vd3d3LnVlZmkub3Jn
+L1JGSUNfTElTVA0KDQpMb29rcyBwZXJmZWN0ISBMZXQgbWUgdXNlIHRoaXMsIHJlYmFzZSB0aGUg
+cGF0Y2ggdG8gDQpodHRwczovL2dpdC5rZXJuZWwub3JnL3B1Yi9zY20vbGludXgva2VybmVsL2dp
+dC9udmRpbW0vbnZkaW1tLmdpdC90YWcvP2g9bGlibnZkaW1tLWZpeGVzLTUuMC1yYzQNCmFuZCBw
+b3N0IGEgdjIgbGF0ZXIgdG9kYXkuDQoNClRoYW5rcywNCi0tIERleHVhbg0K
