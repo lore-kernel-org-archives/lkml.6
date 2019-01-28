@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F1AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3961FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DA1C217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00B7421783
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690968;
-	bh=FV3Wnx9SgzJYhilsV10qHFxJAHbctUwBC3v7v2Jmzqs=;
+	s=default; t=1548690972;
+	bh=lLMz3wPd3HhBhwdzUjg+kMYT4fN2D2jscQXkEkV7hj8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gDzlH7G/8Uv9uFwGMhkH6qNwJpF1WIDG7f0t9GkF7dWM8Xj05GcJUPkabGonHh1PA
-	 3e0Un0rBwr5jnd+vVZhNmIGueT5Ng/eGnnigwva8qudfMRjaIvFJGs/AIpg5Dvu/iZ
-	 ue3Bn32ajxwcMD1QLNEkm3XOFppJViggH36XRRu4=
+	b=nqDQ5LkAauj7Yh9yy4ztlYg361SDj6U7N6aPEbJbCsqIj3pE34YHxj3l+DPsiLrKf
+	 DdpnjBLnSKZOMLw1Z6ZDIX6XjNgGB8+9kl3cZbIuJsT/lIrpGYuVxCGmhkneUSRWx0
+	 tSSuj3Az8mt97QlLrmtz6DhkmyxYY9qOG/0uxK9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730034AbfA1P4G (ORCPT
+        id S1730047AbfA1P4J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:56:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41840 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:56:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41888 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730008AbfA1P4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:56:02 -0500
+        id S1730018AbfA1P4F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:56:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61E0721783;
-        Mon, 28 Jan 2019 15:56:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A887F2183F;
+        Mon, 28 Jan 2019 15:56:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690962;
-        bh=FV3Wnx9SgzJYhilsV10qHFxJAHbctUwBC3v7v2Jmzqs=;
+        s=default; t=1548690964;
+        bh=lLMz3wPd3HhBhwdzUjg+kMYT4fN2D2jscQXkEkV7hj8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LHXPrwWzJikQcYonaqMdactLFouPlqV153RJbiSdTGHbzVREghu3nqBgpxrBGKQND
-         wDTY81kiwGZA9ZOz3h4R5LR6xP0BbuI+JWHtwrhZLfkiisJHAheOaKzT/uN63D7DNM
-         Mx1z5VU8a0FsxYHZERAnIHLn+2YIkg4zA/raP55A=
+        b=S3NRVPY9rWs3ZGp7w+8oEbzQKFeu62dWQw12PFbKYuBwnxODklQIv3aGW3/JkSLPh
+         ANVAv1eBbkSG4IlpGnrk4RIGbl5ApI0TJ387iuHHDO2aDOVBHb2GqGhH3LSDogJKRd
+         YAdS2ZvhtlYGvyarHw/hy2bHt/QrokABbb2eWpGg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Konstantin Khorenko <khorenko@virtuozzo.com>,
+Cc:     Young Xiao <YangX92@hotmail.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 247/304] i40e: define proper net_device::neigh_priv_len
-Date:   Mon, 28 Jan 2019 10:42:44 -0500
-Message-Id: <20190128154341.47195-247-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 248/304] ice: Do not enable NAPI on q_vectors that have no rings
+Date:   Mon, 28 Jan 2019 10:42:45 -0500
+Message-Id: <20190128154341.47195-248-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,46 +58,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khorenko <khorenko@virtuozzo.com>
+From: Young Xiao <YangX92@hotmail.com>
 
-[ Upstream commit 31389b53b3e0b535867af9090a5d19ec64768d55 ]
+[ Upstream commit eec903769b4ea476591ffff73bb7359f14f38c51 ]
 
-Out of bound read reported by KASan.
+If ice driver has q_vectors w/ active NAPI that has no rings,
+then this will result in a divide by zero error. To correct it
+I am updating the driver code so that we only support NAPI on
+q_vectors that have 1 or more rings allocated to them.
 
-i40iw_net_event() reads unconditionally 16 bytes from
-neigh->primary_key while the memory allocated for
-"neighbour" struct is evaluated in neigh_alloc() as
+See commit 13a8cd191a2b ("i40e: Do not enable NAPI on q_vectors
+that have no rings") for detail.
 
-  tbl->entry_size + dev->neigh_priv_len
-
-where "dev" is a net_device.
-
-But the driver does not setup dev->neigh_priv_len and
-we read beyond the neigh entry allocated memory,
-so the patch in the next mail fixes this.
-
-Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+Signed-off-by: Young Xiao <YangX92@hotmail.com>
+Acked-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
 Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/intel/ice/ice_main.c | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index 419cf3faada6..f97c3d5ab884 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -12339,6 +12339,9 @@ static int i40e_config_netdev(struct i40e_vsi *vsi)
- 	ether_addr_copy(netdev->dev_addr, mac_addr);
- 	ether_addr_copy(netdev->perm_addr, mac_addr);
+diff --git a/drivers/net/ethernet/intel/ice/ice_main.c b/drivers/net/ethernet/intel/ice/ice_main.c
+index 333312a1d595..945000449279 100644
+--- a/drivers/net/ethernet/intel/ice/ice_main.c
++++ b/drivers/net/ethernet/intel/ice/ice_main.c
+@@ -2563,8 +2563,12 @@ static void ice_napi_enable_all(struct ice_vsi *vsi)
+ 	if (!vsi->netdev)
+ 		return;
  
-+	/* i40iw_net_event() reads 16 bytes from neigh->primary_key */
-+	netdev->neigh_priv_len = sizeof(u32) * 4;
+-	for (q_idx = 0; q_idx < vsi->num_q_vectors; q_idx++)
+-		napi_enable(&vsi->q_vectors[q_idx]->napi);
++	for (q_idx = 0; q_idx < vsi->num_q_vectors; q_idx++) {
++		struct ice_q_vector *q_vector = vsi->q_vectors[q_idx];
 +
- 	netdev->priv_flags |= IFF_UNICAST_FLT;
- 	netdev->priv_flags |= IFF_SUPP_NOFCS;
- 	/* Setup netdev TC information */
++		if (q_vector->rx.ring || q_vector->tx.ring)
++			napi_enable(&q_vector->napi);
++	}
+ }
+ 
+ /**
+@@ -2931,8 +2935,12 @@ static void ice_napi_disable_all(struct ice_vsi *vsi)
+ 	if (!vsi->netdev)
+ 		return;
+ 
+-	for (q_idx = 0; q_idx < vsi->num_q_vectors; q_idx++)
+-		napi_disable(&vsi->q_vectors[q_idx]->napi);
++	for (q_idx = 0; q_idx < vsi->num_q_vectors; q_idx++) {
++		struct ice_q_vector *q_vector = vsi->q_vectors[q_idx];
++
++		if (q_vector->rx.ring || q_vector->tx.ring)
++			napi_disable(&q_vector->napi);
++	}
+ }
+ 
+ /**
 -- 
 2.19.1
 
