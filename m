@@ -2,122 +2,115 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 09C8EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0BE9C282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7DA82171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tMYKMnYj"
+	by mail.kernel.org (Postfix) with ESMTP id B67AC2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548692419;
+	bh=RqI/GMXfWweasWxQvUq6lJMObMV3FXbzTWsP7yCxBjc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=XXEhRkeJ+2EXOBIdE6c+UN6otlphIOzaZQ6+jQouYtLMJWHT61lCCg4UP5J/HYiej
+	 hRcT5KhtVhecb7EvGoOAFSiNRJeHfUhLGgSFOw6ltI4XnPN1aKlcuyR/DH6aFhQOjf
+	 asOA5jyyI2R/+lLxBvcj2bqQHtvPQN2ivIsNeapU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388008AbfA1QUI (ORCPT
+        id S2388769AbfA1QUR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:20:08 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:36158 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388719AbfA1QUD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:20:03 -0500
-Received: by mail-wr1-f65.google.com with SMTP id u4so18730744wrp.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 08:20:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=aNNVpLv0JwVS9DWGA8fa7Tx/+X2wOgOo7y/ry37kMuA=;
-        b=tMYKMnYjCbjNzxKj32b1azdsyGCLMGcnOlR7c0EO1Nrs8rlpTU4N9PO35L8jEzbGYA
-         C/L3PlMRpzNQ4yes52AhzBtXPLv9hXop8Y6nYaOj+2Q2yiuDG32OC41Tu/Gbr/L02NdX
-         rsRvu/OhBHfqf8j3laz9bXUGRY4GyiMrYhekaO5MCQUozuEzJuDQ581dGFs9o0WdSHIA
-         f9EFM6zRVtRygurC7WcLNbjoP+rDAcmkAL1Jztb7SQ5CVetvTP11KyPiOQnwEbv3dyi6
-         l5doqaPZpUKTbnIFsFRLtDSt5GtEVpMGpz13qE7OyWbU5T5nMEaabb2cMWrQ6fDsENM0
-         G0YA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=aNNVpLv0JwVS9DWGA8fa7Tx/+X2wOgOo7y/ry37kMuA=;
-        b=FNEyJYu1i+abKlL/az6IKzsSMc1/Fq5roHou0WVSijV9h85dBJzM2hpqCm5Fsw1829
-         jYZeppO9GdpnSlCrqEvbjdyjYEVd6zBuUjmDBfE9W8cIIcstHGRfHphNwvQZZcCoiZxS
-         HrJ57sLoFmcsI2JgMEOyxI4YznyeQUxfTqc6D5R/4Y3nRArnBVmqgeNtI8tsHBYBw7fQ
-         XxgEBwI4zdq9leFNizJEcG5JifN5Z3cyEHxgFHCc3b1y5EIylNAPh1m2AjJhJI1TmeH8
-         7uyNklMTN/paUALtdAwygSH9/T/NPztgmarylGDIWGIRn6LtY8DBO29NaBsSiet51j2w
-         IHxw==
-X-Gm-Message-State: AJcUukdIaf5kMVD1Qq0xFLPBtXktKjIGcQb0FOgF+fyqN7KdTq4mYqZ7
-        quo2KG5saLHce0lV39J/1fj0KiJEVc5UGtTUi94=
-X-Google-Smtp-Source: ALg8bN5DQKLs0BL6Vhc4Lywy6JRCXIcB9MC5EHFCtS14zxtRTtu2HvYKvN/6OnvfDviE6X01BQjIFt46sIxxEXsodlU=
-X-Received: by 2002:a5d:488f:: with SMTP id g15mr22311187wrq.15.1548692401178;
- Mon, 28 Jan 2019 08:20:01 -0800 (PST)
+        Mon, 28 Jan 2019 11:20:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55460 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388322AbfA1QUL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:20:11 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4BA5B2084A;
+        Mon, 28 Jan 2019 16:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692410;
+        bh=RqI/GMXfWweasWxQvUq6lJMObMV3FXbzTWsP7yCxBjc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=I0IpZTcqSPYCGmJ9Pmnqj+k/3CTnpgR0n5KACSz9GYOF1fZHNT//zzePUtfGSI7Tb
+         A5e8huUkgbCOCn4qPB7UIVimH6TD6QUU3gAj7gwx3PUexvaFxv93CylO2ywvstXJhQ
+         Je5i5pu92yXovjr4DUQ3VFJATtpo8XcGtvNE/AXk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Bob Peterson <rpeterso@redhat.com>,
+        David Teigland <teigland@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, cluster-devel@redhat.com
+Subject: [PATCH AUTOSEL 4.9 009/107] dlm: Don't swamp the CPU with callbacks queued during recovery
+Date:   Mon, 28 Jan 2019 11:18:09 -0500
+Message-Id: <20190128161947.57405-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
+References: <20190128161947.57405-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190125215533.GA4878@embeddedor>
-In-Reply-To: <20190125215533.GA4878@embeddedor>
-From:   Alex Deucher <alexdeucher@gmail.com>
-Date:   Mon, 28 Jan 2019 11:19:48 -0500
-Message-ID: <CADnq5_Nx1yHoANDaGs50AF5VQXWCUD8PU1YoyHAmGetHxoqiPA@mail.gmail.com>
-Subject: Re: [PATCH] drm/amd/powerplay: Fix missing break in switch
-To:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Cc:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kees Cook <keescook@chromium.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 5:31 PM Gustavo A. R. Silva
-<gustavo@embeddedor.com> wrote:
->
-> Add missing break statement in order to prevent the code from falling
-> through to the default case.
->
-> The resoning for this is that pclk_vol_table is an automatic variable.
-> So, it makes no sense to update it just before falling through to the
-> default case and return -EINVAL.
->
-> This bug was found thanks to the ongoing efforts to enabling
-> -Wimplicit-fallthrough.
->
-> Fixes: cd70f3d6e3fa ("drm/amd/powerplay: PP/DAL interface changes for dynamic clock switch")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+From: Bob Peterson <rpeterso@redhat.com>
 
-Applied.  Thanks!
+[ Upstream commit 216f0efd19b9cc32207934fd1b87a45f2c4c593e ]
 
-Alex
+Before this patch, recovery would cause all callbacks to be delayed,
+put on a queue, and afterward they were all queued to the callback
+work queue. This patch does the same thing, but occasionally takes
+a break after 25 of them so it won't swamp the CPU at the expense
+of other RT processes like corosync.
 
-> ---
->  drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> index f95c5f50eb0f..5273de3c5b98 100644
-> --- a/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> +++ b/drivers/gpu/drm/amd/powerplay/hwmgr/smu10_hwmgr.c
-> @@ -1033,6 +1033,7 @@ static int smu10_get_clock_by_type_with_latency(struct pp_hwmgr *hwmgr,
->                 break;
->         case amd_pp_dpp_clock:
->                 pclk_vol_table = pinfo->vdd_dep_on_dppclk;
-> +               break;
->         default:
->                 return -EINVAL;
->         }
-> --
-> 2.20.1
->
-> _______________________________________________
-> amd-gfx mailing list
-> amd-gfx@lists.freedesktop.org
-> https://lists.freedesktop.org/mailman/listinfo/amd-gfx
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/dlm/ast.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
+
+diff --git a/fs/dlm/ast.c b/fs/dlm/ast.c
+index dcea1e37a1b7..f18619bc2e09 100644
+--- a/fs/dlm/ast.c
++++ b/fs/dlm/ast.c
+@@ -290,6 +290,8 @@ void dlm_callback_suspend(struct dlm_ls *ls)
+ 		flush_workqueue(ls->ls_callback_wq);
+ }
+ 
++#define MAX_CB_QUEUE 25
++
+ void dlm_callback_resume(struct dlm_ls *ls)
+ {
+ 	struct dlm_lkb *lkb, *safe;
+@@ -300,15 +302,23 @@ void dlm_callback_resume(struct dlm_ls *ls)
+ 	if (!ls->ls_callback_wq)
+ 		return;
+ 
++more:
+ 	mutex_lock(&ls->ls_cb_mutex);
+ 	list_for_each_entry_safe(lkb, safe, &ls->ls_cb_delay, lkb_cb_list) {
+ 		list_del_init(&lkb->lkb_cb_list);
+ 		queue_work(ls->ls_callback_wq, &lkb->lkb_cb_work);
+ 		count++;
++		if (count == MAX_CB_QUEUE)
++			break;
+ 	}
+ 	mutex_unlock(&ls->ls_cb_mutex);
+ 
+ 	if (count)
+ 		log_rinfo(ls, "dlm_callback_resume %d", count);
++	if (count == MAX_CB_QUEUE) {
++		count = 0;
++		cond_resched();
++		goto more;
++	}
+ }
+ 
+-- 
+2.19.1
+
