@@ -2,309 +2,120 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D98C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:45:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E7C0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:47:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9094420880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:45:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 447C920880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:47:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="NNsZ0HSh"
+	dkim=pass (1024-bit key) header.d=cern.onmicrosoft.com header.i=@cern.onmicrosoft.com header.b="D2kbpFK/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726972AbfA1IpM (ORCPT
+        id S1726761AbfA1Ir4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:45:12 -0500
-Received: from mout01.posteo.de ([185.67.36.65]:38689 "EHLO mout01.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726763AbfA1IpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:45:03 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id 9497F160068
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 09:44:59 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1548665099; bh=YTDvFHiOHa9rBcgiiUydCcbY/GNbvcWh6RDXxk/umvA=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NNsZ0HShazy/W+i+yLdv2kOIbKmYtJjIAFbHoab3U6xWp+z5gx9cudUqQZOwUkwE1
-         8c25euGEwzOClY780qF8o87xTVStnZQVHu1TsQREmlHFzQRZ87qj65bsxLi7IKn4io
-         g4Bzv3Kllq1qHCSxug3HNLMhVA9KQlMj4rHhoeawe69c2RSoICi50d6y0nMKgOrMpG
-         LrNW0V29s1ysBXiYzboHXbNXcH3KtHHKwS6tKCzlBmjPpnhc1HSutAl+9WMj2nM4ic
-         sIXAf2f3T02zgbgmF5T6zU9wsqcz/OWUG1CbOgC2vP6ah5qaEocrIw17DNq4JGFKKg
-         f6I6Zh9Lj4zig==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 43p39656S4z6tmM;
-        Mon, 28 Jan 2019 09:44:58 +0100 (CET)
-From:   Martin Kepplinger <martink@posteo.de>
-To:     devicetree@vger.kernel.org, linux-input@vger.kernel.org
-Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH 2/3] Input: st1232 - add support for st1633
-Date:   Mon, 28 Jan 2019 09:44:48 +0100
-Message-Id: <20190128084449.16070-2-martink@posteo.de>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128084449.16070-1-martink@posteo.de>
-References: <20190128084449.16070-1-martink@posteo.de>
+        Mon, 28 Jan 2019 03:47:56 -0500
+Received: from mail-eopbgr60062.outbound.protection.outlook.com ([40.107.6.62]:11808
+        "EHLO EUR04-DB3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726415AbfA1Ir4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 03:47:56 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cern.onmicrosoft.com;
+ s=selector1-cern-ch;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gq0zvXEJIlFKGTZaqpfHDnDphUIkFh7Ye6QXX4/eq5U=;
+ b=D2kbpFK/aDNZd8DYLs6eftWvCpYWoNKGhgDtEHS5wZGT+Ehw7KWSuuBGMyRA49xtvqhtj7vo/flx47I9I1rOrudcwAcCpUcc1M9vUEirpKMSq1wRzuLbQohDctu9eO0FHxCPsqe68aqOd6JG6I5Z6CmbaDCS/V9QOWNjmWZpBe4=
+Received: from AM5PR0601CA0033.eurprd06.prod.outlook.com
+ (2603:10a6:203:68::19) by VI1PR0601MB2271.eurprd06.prod.outlook.com
+ (2603:10a6:801:b::14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1558.21; Mon, 28 Jan
+ 2019 08:47:51 +0000
+Received: from AM5EUR02FT031.eop-EUR02.prod.protection.outlook.com
+ (2a01:111:f400:7e1e::207) by AM5PR0601CA0033.outlook.office365.com
+ (2603:10a6:203:68::19) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1558.16 via Frontend
+ Transport; Mon, 28 Jan 2019 08:47:51 +0000
+Authentication-Results: spf=pass (sender IP is 188.184.36.46)
+ smtp.mailfrom=cern.ch; kernel.org; dkim=none (message not signed)
+ header.d=none;kernel.org; dmarc=bestguesspass action=none
+ header.from=cern.ch;
+Received-SPF: Pass (protection.outlook.com: domain of cern.ch designates
+ 188.184.36.46 as permitted sender) receiver=protection.outlook.com;
+ client-ip=188.184.36.46; helo=cernmxgwlb4.cern.ch;
+Received: from cernmxgwlb4.cern.ch (188.184.36.46) by
+ AM5EUR02FT031.mail.protection.outlook.com (10.152.8.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1580.10 via Frontend Transport; Mon, 28 Jan 2019 08:47:51 +0000
+Received: from cernfe03.cern.ch (188.184.36.39) by cernmxgwlb4.cern.ch
+ (188.184.36.46) with Microsoft SMTP Server (TLS) id 14.3.408.0; Mon, 28 Jan
+ 2019 09:47:49 +0100
+Received: from pcbe13614.localnet (2001:1458:202:121::100:40) by smtp.cern.ch
+ (2001:1458:201:66::100:14) with Microsoft SMTP Server (TLS) id 14.3.408.0;
+ Mon, 28 Jan 2019 09:47:50 +0100
+From:   Federico Vaga <federico.vaga@cern.ch>
+To:     Vinod Koul <vkoul@kernel.org>
+Reply-To: <federico.vaga@cern.ch>
+CC:     <dmaengine@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>
+Subject: DMA Engine Documentation: TX Descriptor and Submission
+Date:   Mon, 28 Jan 2019 09:47:50 +0100
+Message-ID: <1655406.8MLMLfCWyH@pcbe13614>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+X-Originating-IP: [2001:1458:202:121::100:40]
+X-EOPAttributedMessage: 0
+X-Forefront-Antispam-Report: CIP:188.184.36.46;IPV:NLI;CTRY:CH;EFV:NLI;SFV:NSPM;SFS:(10001)(10009020)(459900002);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR0601MB2271;H:cernmxgwlb4.cern.ch;FPR:;SPF:None;LANG:en;
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: 574a7355-db8f-441a-7bc6-08d684fd49a9
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4608076)(4709027)(5565046)(2017052603328)(7153060)(7193020);SRVR:VI1PR0601MB2271;
+X-MS-TrafficTypeDiagnostic: VI1PR0601MB2271:
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0601MB2271;20:4P5pLgsvW9f5EnHt8L0C7y3s2VUcqAKkez18U3n7Aieym5KrFz01VaumYGM0qNcZjG25jtq9K3rrCRtuVCiW20VjUD5LsR/MnJJqRZOcbKnhHfpfJD/JR7u12+3h9brrTjbBP20yPmfXahzP105zxGvnezl0JDm1X/x1/n/rVgcVZJn/xKHkxuUzpkKbggNEmHwkaYURfqN5Puv4NTODICGwSK0we0k1bgnUv2/CIA2O2GN7jV26F2DX/5iBpgyTA4p4fOp5F9rpwdAdyZNuOKOUCoWt3UFYDAlkaiqlhq/98iUTQu32GBhIni+Ne4ovO5Alz0l+e7Kr4xyL//nwg28U0+IAqQzLsCQRzYZYfjuA06huw6QddbVnPEr/asyn2c9XOAznDOSoSWL+MicJfKVlDfyOk9UpbqOPq9s68LiwcILTSEyeZv268CFakqhjyjr9uiJylqWJxcjZp4vc1Jv4noCD/AEUGSkLGIjtD2dG4qloylFvtudpmvkIQL5L;4:Mn3RdSp9MYMEgXDkdXDmgV50SVhrs27Vnq31v1i+yzyoG8HlLk2BxNFcC/qaNraImitXLBfZHazFxL/mf/YCrgz5y/cIhsE1gxBYK1ftJST9QJD7S6MPtaPOpbdLaxitCr+LdKpWQBUDGoBEKrbHl77Paf6sZQF9LOYnGR5qmtgW/wLjLGlqLq6iqgApipQOw1m2o/9WWk0xlVr3tsHCRgi9xPQ5dwLCb07NIiz3dx9laSEZwYKxRnYX03g5koGp5miNKRj4MRclLnftsCN+gv7YhBi94J3BKcqld8eY6ef49e1lasJCpM05LnrD2BZA
+X-Microsoft-Antispam-PRVS: <VI1PR0601MB22715DF5A500532A15147BF7EF960@VI1PR0601MB2271.eurprd06.prod.outlook.com>
+X-Forefront-PRVS: 0931CB1479
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0601MB2271;23:9uQBGjRRar1RctjJH6LQClppmK7jwkQ8wi5QjXqM20zTqeOW/D4I8qJa6CMfQucP7h0Ae704Zwh+M153VGLi5lF048Qf/CjI1hMswbDQf9Oq3UtlmWV/XewhGEwS/YYCbiK+8OrM0xneXb3O1P+h74d0y826ElFJqiv2If2tS+7sl9iVuc084d99PHnvw9Vj;6:2JiwceOyZRy7hfh3iyMlwiIO0sRbEsllxC9VSOjUnQcKNuz+v7e5FEIvXlPOk0o1eubkalCxgjL7dEntNbDIxAdyMMuuDFCZmTOlcWOytVZYDIQOnGbmzAKjt8QdA4cTYoD0hEt+vBS1b3FZkxURr5hRcFRlEoJnYR0bUTqQuItxWbr32MEtfAq7g5kLdgqQXbk2t4n2QCm8MfS63Qp0Py8gGqJ4+p0kNwHBMeHj6v7l/LScsjTqJSYnfbbbIlPUAoUTgvWWjauWNsjEXq8qBWyutjlLPqNJehGoVG0mEhgeSd2YK2EF0s6k5X8e2TLa5PbbmGgRplyLSdsQE+2IA2bNoVv1mzP4kjuP5NejmB/bH9JlzzFM4poQueVMEYkKzCQV3Y93eAuu7PoxZp7Ihlgor6ZzJPMQoNhx6HFjoTsYGjTjnle1kdvka9/vUGABpujFfLKhBm4uO9J0Sdk0qw==;5:liR/A+SLN77wrUUCyZc+Lt0d2DUGbTeE/popl4wbk0p+pZjunfr2Z8j550DXu7j5imS/DABvxf9RlT1pS9Vz1Qr3KZnND3pDxJRLab9Kx4dxzOg2C11Dpf0g/lugglufXrCNvcJJAexnn44wtVoH41u9H+t2rkRj64bh1KUWTo9NiO23OvIfC3UwnS4Qh3mpzGZYmjgF109weSmEqHfkNg==
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam-Message-Info: xK/Th0aT76rfP6uRnVjMXxbHOAIt6L+pdJ2h11rmu+7V+cOOsHCAc1e6paT9ScChr3lUvtWE3CXydALLjxQCDmwqMqJZ6ehsSVPF+P4BcyalosYvQkDuTSVzmVCN5q5ISlxc6ocMYxDCsLdTpQwUDGuDqnQls86s+stFASwap7OJHguwuyrdF1PL3G3UJB6X/yhY0gRYnFuqxN1KqEgdoKnbgrSGaxOFrqmrWBNDnVuEgW9KO3e+CcX41RDGbFqdG68o5ikQoVL+fqmQXncorAjWl7eJJV+RpVJuI4D7FHq31Dsy2jSphoe0+LK2/wgS1s57v66vriqa6mrXjhAl0ZSZpjg/E9hgO5F+cXHesXXnqfNMpZ1YcQo68WojXKqT9DwkT58xml19bAmyJ1e59uSOMXx1y3e1WJ2L4Xpga1mflUkVX+ifIKa/bXjv5stDr9oHhCq+paX23BGA5iscnEU7BolGXLryMFSgEfmKFHGgylFXMMruF/rYac9OFPaB9Aqiakv5a6ETKehBDHRIUd9dihiy4OtdeNubo3iAuz0=
+X-Microsoft-Exchange-Diagnostics: 1;VI1PR0601MB2271;7:osWSFSS+ahnAVYhyEjqObQKbmpAyomGcLrYDRCY8bqBXvkbdkT2BeAXYavDbzyBZZx3pcqolco+k4lV8jZVAcLXWq44Wvk3Rq7evCUcsi4f0Nak16XQdOmJz4xfcvl/ITvL2E0lHdpnui/KW68ZBYA==
+X-OriginatorOrg: cern.ch
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Jan 2019 08:47:51.4518
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 574a7355-db8f-441a-7bc6-08d684fd49a9
+X-MS-Exchange-CrossTenant-Id: c80d3499-4a40-4a8c-986e-abce017d6b19
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=c80d3499-4a40-4a8c-986e-abce017d6b19;Ip=[188.184.36.46];Helo=[cernmxgwlb4.cern.ch]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0601MB2271
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Hi,
 
-Add support for the Sitronix ST1633 touchscreen controller to the st1232
-driver. A protocol spec can be found here:
-www.ampdisplay.com/documents/pdf/AM-320480B6TZQW-TC0H.pdf
+I have a new question concerning documentation.
 
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
----
- drivers/input/touchscreen/Kconfig  |   6 +-
- drivers/input/touchscreen/st1232.c | 122 +++++++++++++++++++++--------
- 2 files changed, 94 insertions(+), 34 deletions(-)
+https://www.kernel.org/doc/html/latest/driver-api/dmaengine/client.html
 
-diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
-index 068dbbc610fc..7c597a49c265 100644
---- a/drivers/input/touchscreen/Kconfig
-+++ b/drivers/input/touchscreen/Kconfig
-@@ -1168,11 +1168,11 @@ config TOUCHSCREEN_SIS_I2C
- 	  module will be called sis_i2c.
- 
- config TOUCHSCREEN_ST1232
--	tristate "Sitronix ST1232 touchscreen controllers"
-+	tristate "Sitronix ST1232 or ST1633 touchscreen controllers"
- 	depends on I2C
- 	help
--	  Say Y here if you want to support Sitronix ST1232
--	  touchscreen controller.
-+	  Say Y here if you want to support the Sitronix ST1232
-+	  or ST1633 touchscreen controller.
- 
- 	  If unsure, say N.
- 
-diff --git a/drivers/input/touchscreen/st1232.c b/drivers/input/touchscreen/st1232.c
-index 11ff32c68025..19a665d48dad 100644
---- a/drivers/input/touchscreen/st1232.c
-+++ b/drivers/input/touchscreen/st1232.c
-@@ -23,13 +23,15 @@
- #include <linux/types.h>
- 
- #define ST1232_TS_NAME	"st1232-ts"
-+#define ST1633_TS_NAME	"st1633-ts"
-+
-+enum {
-+	st1232,
-+	st1633,
-+};
- 
- #define MIN_X		0x00
- #define MIN_Y		0x00
--#define MAX_X		0x31f	/* (800 - 1) */
--#define MAX_Y		0x1df	/* (480 - 1) */
--#define MAX_AREA	0xff
--#define MAX_FINGERS	2
- 
- struct st1232_ts_finger {
- 	u16 x;
-@@ -38,12 +40,24 @@ struct st1232_ts_finger {
- 	bool is_valid;
- };
- 
-+struct st_chip_info {
-+	bool	have_z;
-+	u16	max_x;
-+	u16	max_y;
-+	u16	max_area;
-+	u16	max_fingers;
-+	u8	start_reg;
-+};
-+
- struct st1232_ts_data {
- 	struct i2c_client *client;
- 	struct input_dev *input_dev;
--	struct st1232_ts_finger finger[MAX_FINGERS];
- 	struct dev_pm_qos_request low_latency_req;
- 	int reset_gpio;
-+	const struct st_chip_info *chip_info;
-+	int read_buf_len;
-+	u8 *read_buf;
-+	struct st1232_ts_finger *finger;
- };
- 
- static int st1232_ts_read_data(struct st1232_ts_data *ts)
-@@ -52,40 +66,35 @@ static int st1232_ts_read_data(struct st1232_ts_data *ts)
- 	struct i2c_client *client = ts->client;
- 	struct i2c_msg msg[2];
- 	int error;
--	u8 start_reg;
--	u8 buf[10];
-+	int i, y;
-+	u8 start_reg = ts->chip_info->start_reg;
-+	u8 *buf = ts->read_buf;
- 
--	/* read touchscreen data from ST1232 */
-+	/* read touchscreen data */
- 	msg[0].addr = client->addr;
- 	msg[0].flags = 0;
- 	msg[0].len = 1;
- 	msg[0].buf = &start_reg;
--	start_reg = 0x10;
- 
- 	msg[1].addr = ts->client->addr;
- 	msg[1].flags = I2C_M_RD;
--	msg[1].len = sizeof(buf);
-+	msg[1].len = ts->read_buf_len;
- 	msg[1].buf = buf;
- 
- 	error = i2c_transfer(client->adapter, msg, 2);
- 	if (error < 0)
- 		return error;
- 
--	/* get "valid" bits */
--	finger[0].is_valid = buf[2] >> 7;
--	finger[1].is_valid = buf[5] >> 7;
-+	for (i = 0, y = 0; i < ts->chip_info->max_fingers; i++, y += 3) {
-+		finger[i].is_valid = buf[i + y] >> 7;
-+		if (finger[i].is_valid) {
-+			finger[i].x = ((buf[i + y] & 0x0070) << 4) | buf[i + 1];
-+			finger[i].y = ((buf[i + y] & 0x0007) << 8) | buf[i + 2];
- 
--	/* get xy coordinate */
--	if (finger[0].is_valid) {
--		finger[0].x = ((buf[2] & 0x0070) << 4) | buf[3];
--		finger[0].y = ((buf[2] & 0x0007) << 8) | buf[4];
--		finger[0].t = buf[8];
--	}
--
--	if (finger[1].is_valid) {
--		finger[1].x = ((buf[5] & 0x0070) << 4) | buf[6];
--		finger[1].y = ((buf[5] & 0x0007) << 8) | buf[7];
--		finger[1].t = buf[9];
-+			/* st1232 includes a z-axis / touch strength */
-+			if (ts->chip_info->have_z)
-+				finger[i].t = buf[i + 6];
-+		}
- 	}
- 
- 	return 0;
-@@ -104,11 +113,14 @@ static irqreturn_t st1232_ts_irq_handler(int irq, void *dev_id)
- 		goto end;
- 
- 	/* multi touch protocol */
--	for (i = 0; i < MAX_FINGERS; i++) {
-+	for (i = 0; i < ts->chip_info->max_fingers; i++) {
- 		if (!finger[i].is_valid)
- 			continue;
- 
--		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, finger[i].t);
-+		if (ts->chip_info->have_z)
-+			input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR,
-+					 finger[i].t);
-+
- 		input_report_abs(input_dev, ABS_MT_POSITION_X, finger[i].x);
- 		input_report_abs(input_dev, ABS_MT_POSITION_Y, finger[i].y);
- 		input_mt_sync(input_dev);
-@@ -142,12 +154,40 @@ static void st1232_ts_power(struct st1232_ts_data *ts, bool poweron)
- 		gpio_direction_output(ts->reset_gpio, poweron);
- }
- 
-+static const struct st_chip_info st1232_chip_info = {
-+		.have_z = true,
-+		.max_x = 0x31f, /* 800 - 1 */
-+		.max_y = 0x1df, /* 480 -1 */
-+		.max_area = 0xff,
-+		.max_fingers = 2,
-+		.start_reg = 0x12,
-+};
-+
-+static const struct st_chip_info st1633_chip_info = {
-+		.have_z = false,
-+		.max_x = 0x13f, /* 320 - 1 */
-+		.max_y = 0x1df, /* 480 -1 */
-+		.max_area = 0x00,
-+		.max_fingers = 5,
-+		.start_reg = 0x12,
-+};
-+
- static int st1232_ts_probe(struct i2c_client *client,
- 			   const struct i2c_device_id *id)
- {
- 	struct st1232_ts_data *ts;
-+	struct st1232_ts_finger *finger;
- 	struct input_dev *input_dev;
- 	int error;
-+	const struct st_chip_info *match = NULL;
-+
-+	match = device_get_match_data(&client->dev);
-+	if (!match && id)
-+		match = (const void *)id->driver_data;
-+	if (!match) {
-+		dev_err(&client->dev, "unknown device model\n");
-+		return -ENODEV;
-+	}
- 
- 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
- 		dev_err(&client->dev, "need I2C_FUNC_I2C\n");
-@@ -163,6 +203,19 @@ static int st1232_ts_probe(struct i2c_client *client,
- 	if (!ts)
- 		return -ENOMEM;
- 
-+	ts->chip_info = match;
-+	ts->finger = devm_kzalloc(&client->dev,
-+				  sizeof(*finger) * ts->chip_info->max_fingers,
-+				  GFP_KERNEL);
-+	if (!ts->finger)
-+		return -ENOMEM;
-+
-+	/* allocate a buffer according to the number of registers to read */
-+	ts->read_buf_len = ts->chip_info->max_fingers * 4;
-+	ts->read_buf = devm_kzalloc(&client->dev, ts->read_buf_len, GFP_KERNEL);
-+	if (!ts->read_buf)
-+		return -ENOMEM;
-+
- 	input_dev = devm_input_allocate_device(&client->dev);
- 	if (!input_dev)
- 		return -ENOMEM;
-@@ -192,9 +245,14 @@ static int st1232_ts_probe(struct i2c_client *client,
- 	__set_bit(EV_KEY, input_dev->evbit);
- 	__set_bit(EV_ABS, input_dev->evbit);
- 
--	input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0, MAX_AREA, 0, 0);
--	input_set_abs_params(input_dev, ABS_MT_POSITION_X, MIN_X, MAX_X, 0, 0);
--	input_set_abs_params(input_dev, ABS_MT_POSITION_Y, MIN_Y, MAX_Y, 0, 0);
-+	if (ts->chip_info->have_z)
-+		input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0,
-+				     ts->chip_info->max_area, 0, 0);
-+
-+	input_set_abs_params(input_dev, ABS_MT_POSITION_X,
-+			     MIN_X, ts->chip_info->max_x, 0, 0);
-+	input_set_abs_params(input_dev, ABS_MT_POSITION_Y,
-+			     MIN_Y, ts->chip_info->max_y, 0, 0);
- 
- 	error = devm_request_threaded_irq(&client->dev, client->irq,
- 					  NULL, st1232_ts_irq_handler,
-@@ -261,13 +319,15 @@ static SIMPLE_DEV_PM_OPS(st1232_ts_pm_ops,
- 			 st1232_ts_suspend, st1232_ts_resume);
- 
- static const struct i2c_device_id st1232_ts_id[] = {
--	{ ST1232_TS_NAME, 0 },
-+	{ ST1232_TS_NAME, (unsigned long)&st1232_chip_info },
-+	{ ST1633_TS_NAME, (unsigned long)&st1633_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(i2c, st1232_ts_id);
- 
- static const struct of_device_id st1232_ts_dt_ids[] = {
--	{ .compatible = "sitronix,st1232", },
-+	{ .compatible = "sitronix,st1232", .data = &st1232_chip_info },
-+	{ .compatible = "sitronix,st1633", .data = &st1633_chip_info },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, st1232_ts_dt_ids);
--- 
-2.20.1
+From this document it is not really clear, at least to me, if clients can 
+consider valid the `struct dma_async_tx_descriptor` after submission to the 
+DMA engine.
+
+Clients get a TX descriptor from a DMA engine using things like 
+`dmaengine_prep_*`. These calls - may - allocate new descriptors and return 
+them to the caller; this may include other structures which are not visible to 
+clients. So, if my understanding is correct, this means that it's the DMA 
+engine that, on TX completion, releases any TX descriptor allocated by 
+`dmaengine_prep_*`. This implies that the pointer that the client is using 
+must be considered invalid right after `dmaengine_submit()`.
+
+If what I understood by reading the documentation and the code is correct, 
+then I think that this should be mentioned in the Documentation.
+If I'm wrong, please tell me where :)
+
+Thanks
+
+
+
 
