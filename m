@@ -2,104 +2,125 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45EA9C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:38:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D97C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1376A20811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:38:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="AvL9UiD3"
+	by mail.kernel.org (Postfix) with ESMTP id D8B4C20811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548693530;
+	bh=vozAf9uuLtgzOx1YZ7GWZTlL7G1QF5MSzZEKVuTv/BA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=PveUCj/SvWsw4Qx5+ShP9l7iF99esDR+MDnHhOY/7wEKGKoGcuNImXVr61kf0o5RK
+	 g5pYpr+ZQr0gkE8+JxddOGwapZUz8w/LSmnYYl4SChMcOIdFdfaf9SR/qml1IN8PAU
+	 MPaMUn9RysKm29NjOa7QLcoR8EyiAVjGbh67oq84=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390570AbfA1Qii (ORCPT
+        id S2389906AbfA1Qit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:38:38 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45438 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732985AbfA1QiI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:38:08 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t6so18754673wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 08:38:07 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=DwXU/DABY03ITJwoWyaouwbE8TjJuTN6E6OnLCAmCoA=;
-        b=AvL9UiD3J4AerEcQE13yxgFPcrNzEyvgVO/Oed9HUx52ap7/tMpLGzKcGWXRGxciNK
-         ZdRFq9lnPpRcfvosrhlsegfVAVUgGprCIx2a1cscd0T90+lG1RfGJ+pyg90BTmK4JXB1
-         +ifa2QS9EZd00bpcesusSxt9OZC6c6+v2Y8TlJL+ILgy2nG3wkyeVbaJZ0uV9TjxYOXS
-         DNkQCUG28w5ZJogOBquDxyApdURnAZdJpFoMcU7vt8jwxyH7Mabs6MCuA3PLNlazBkYR
-         IJVCZNnSnsei5MriMsg3c4hjn9z6IKnWjDEZ0ASkG5I9PgdHeOzA3NEHWSTyOistHo9+
-         0Now==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=DwXU/DABY03ITJwoWyaouwbE8TjJuTN6E6OnLCAmCoA=;
-        b=tvxQEk8VI4F2BXvaBQKtfozpkdS5HN//BJ1JqESbypQZKeLbVuUlv9zN1+cjbkoXfg
-         CtcfARGsSsxpIQJ6ggrumJ1lAmzGgDNHb/Mn2ZZRfjGwZ035a/UiAD+i8WJSiyiOi+/q
-         0mKvQyjHxrfZ6SVmkhHLAAWfYYG5Pd1fIeD74u+WgGidR/CSe91tMz12D2G9evJ+7+Sg
-         V0er3oJMrY7T2Gj6P9d8XI9KvMC5qAF7CoW4tcpHkdTzHY6kyX4EnPS8fQBKYee6gB/N
-         ZoSuDe5qsnQ2Rahm++J6rHPq1qPMwDYXjt9yAKUcNrPDno+kUZamxBrbvQcIk1/OpHnD
-         M76A==
-X-Gm-Message-State: AJcUukdnj3o8WCNv6QCWvIgfD2JkR25HwwB/8bv5+NDnSOpZQQcpLGeE
-        u2Sz3gaM1cuVNvCRN0nzwqXaXA==
-X-Google-Smtp-Source: ALg8bN5KMG1QHbxfXu8KVWN1cLvVGhJydZpy2RUk7wZ6NpeR6bHPzOsCNI6QCr0tfyobn6ULK0jr6g==
-X-Received: by 2002:a5d:56d2:: with SMTP id m18mr23651374wrw.113.1548693486851;
-        Mon, 28 Jan 2019 08:38:06 -0800 (PST)
-Received: from loys-ubuntu-BY1835A49200471.thefacebook.com ([2620:10d:c092:180::1:d40b])
-        by smtp.googlemail.com with ESMTPSA id s3sm52388982wmj.23.2019.01.28.08.38.05
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 08:38:06 -0800 (PST)
-From:   Loys Ollivier <lollivier@baylibre.com>
-To:     devicetree@vger.kernel.org, Johan Hovold <johan@kernel.org>
-Cc:     Loys Ollivier <lollivier@baylibre.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-kernel@vger.kernel.org, Kevin Hilman <khilman@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-mediatek@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v3 1/4] dt-bindings: Add vendor prefix for "GlobalTop Technology, Inc."
-Date:   Mon, 28 Jan 2019 17:37:58 +0100
-Message-Id: <1548693481-1162-2-git-send-email-lollivier@baylibre.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548693481-1162-1-git-send-email-lollivier@baylibre.com>
-References: <1548693481-1162-1-git-send-email-lollivier@baylibre.com>
+        Mon, 28 Jan 2019 11:38:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33546 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389285AbfA1QYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:51 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D49A321741;
+        Mon, 28 Jan 2019 16:24:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692690;
+        bh=vozAf9uuLtgzOx1YZ7GWZTlL7G1QF5MSzZEKVuTv/BA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=xWCLXXjRFbqVc6FkiibAKXYZYrMIG8ZedvPWk6MEY3hcee6/yTom4XzF4lJcgNmC1
+         pgWCsGf84yshNAtw+2TXl7EZa3+SBcWRX3kYFyRXY2GFQLS1VZ3r+OCHqqlL+J2kSK
+         /JUHulMJ3EL6xalrx9kMea9TGoPR7ly70mFyMUjQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Zoran Markovic <zmarkovic@sierrawireless.com>,
+        Casey Schaufler <casey@schaufler-ca.com>,
+        James Morris <jmorris@namei.org>,
+        "Serge E. Hallyn" <serge@hallyn.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-security-module@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 29/80] smack: fix access permissions for keyring
+Date:   Mon, 28 Jan 2019 11:23:10 -0500
+Message-Id: <20190128162401.58841-29-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
+References: <20190128162401.58841-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add globaltop vendor definition.
+From: Zoran Markovic <zmarkovic@sierrawireless.com>
 
-Signed-off-by: Loys Ollivier <lollivier@baylibre.com>
+[ Upstream commit 5b841bfab695e3b8ae793172a9ff7990f99cc3e2 ]
+
+Function smack_key_permission() only issues smack requests for the
+following operations:
+ - KEY_NEED_READ (issues MAY_READ)
+ - KEY_NEED_WRITE (issues MAY_WRITE)
+ - KEY_NEED_LINK (issues MAY_WRITE)
+ - KEY_NEED_SETATTR (issues MAY_WRITE)
+A blank smack request is issued in all other cases, resulting in
+smack access being granted if there is any rule defined between
+subject and object, or denied with -EACCES otherwise.
+
+Request MAY_READ access for KEY_NEED_SEARCH and KEY_NEED_VIEW.
+Fix the logic in the unlikely case when both MAY_READ and
+MAY_WRITE are needed. Validate access permission field for valid
+contents.
+
+Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
+Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Cc: Casey Schaufler <casey@schaufler-ca.com>
+Cc: James Morris <jmorris@namei.org>
+Cc: "Serge E. Hallyn" <serge@hallyn.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
+ security/smack/smack_lsm.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
-v3: No changes
-
-v2: Alphabetical order
-
- Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/Documentation/devicetree/bindings/vendor-prefixes.txt b/Documentation/devicetree/bindings/vendor-prefixes.txt
-index 389508584f48..d80a70343b36 100644
---- a/Documentation/devicetree/bindings/vendor-prefixes.txt
-+++ b/Documentation/devicetree/bindings/vendor-prefixes.txt
-@@ -150,6 +150,7 @@ geniatech	Geniatech, Inc.
- giantec	Giantec Semiconductor, Inc.
- giantplus	Giantplus Technology Co., Ltd.
- globalscale	Globalscale Technologies, Inc.
-+globaltop	GlobalTop Technology, Inc.
- gmt	Global Mixed-mode Technology, Inc.
- goodix	Shenzhen Huiding Technology Co., Ltd.
- google	Google, Inc.
+diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
+index c73361859d11..9db7c80a74aa 100644
+--- a/security/smack/smack_lsm.c
++++ b/security/smack/smack_lsm.c
+@@ -4311,6 +4311,12 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	int request = 0;
+ 	int rc;
+ 
++	/*
++	 * Validate requested permissions
++	 */
++	if (perm & ~KEY_NEED_ALL)
++		return -EINVAL;
++
+ 	keyp = key_ref_to_ptr(key_ref);
+ 	if (keyp == NULL)
+ 		return -EINVAL;
+@@ -4330,10 +4336,10 @@ static int smack_key_permission(key_ref_t key_ref,
+ 	ad.a.u.key_struct.key = keyp->serial;
+ 	ad.a.u.key_struct.key_desc = keyp->description;
+ #endif
+-	if (perm & KEY_NEED_READ)
+-		request = MAY_READ;
++	if (perm & (KEY_NEED_READ | KEY_NEED_SEARCH | KEY_NEED_VIEW))
++		request |= MAY_READ;
+ 	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
+-		request = MAY_WRITE;
++		request |= MAY_WRITE;
+ 	rc = smk_access(tkp, keyp->security, request, &ad);
+ 	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
+ 	return rc;
 -- 
-2.7.4
+2.19.1
 
