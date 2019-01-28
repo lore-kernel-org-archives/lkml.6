@@ -2,124 +2,117 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33709C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:18:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00A33C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:18:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECA732184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:18:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nigk6Sqs"
+	by mail.kernel.org (Postfix) with ESMTP id C741121916
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:18:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548692303;
+	bh=hdrYnzqp5HeJOjIcoKP6mksNrf1ltGg3hT2/WBSGiB0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ennYaSCYrh8iJ5ORSxlF0ZWdAbhTdP1xdqoKgSRXoHbYgrrnwaY4+hGQbf5wxml14
+	 YhoQVskHtCghxMSb0UXI9vi6xfzfofyJeDc/4lcjDTHRatFNdmSc1zYDYGnahP7AJr
+	 jhKd6VRq0VYFc5zyC9F/x/SlGrfThYobBZN59lU0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388383AbfA1QSQ (ORCPT
+        id S2388405AbfA1QSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:18:16 -0500
-Received: from mail-wm1-f42.google.com ([209.85.128.42]:50565 "EHLO
-        mail-wm1-f42.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388351AbfA1QSL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:18:11 -0500
-Received: by mail-wm1-f42.google.com with SMTP id n190so14651250wmd.0;
-        Mon, 28 Jan 2019 08:18:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=ufeu8Lz+oaM8z+oyMCQG6BYxf2o0e3Wj1J9aKIiazgg=;
-        b=nigk6SqsOR2Et16NRaPVAy4CATGAT1i5UvrYEsRDd0tT7uqbIxD9m/QkZaSWPntiGx
-         lxXP9JS2niFAhv86xUxT9i5lP7VZx9p0pqFbczcpeNpko+qZJ/8joykP6kuhdHqKCNa8
-         mxDs3WkILFFr2T+LkSvL/GFHAZuqqM7eqVgpPwtJ1orkeywWkO/y87fQ3jpWJx2+Riht
-         s4lKAvIP89XBwBvYieA4WqWHj/uM1cBBwM3rSFjbjDe4M0o2LpDOSWP86UQ9lvJ1TGFs
-         s9rxwAYmg7+jStCbzprK+skJpYtqTn6YmonfmgMTfLJi8o9Rhnl/fbi7Ash/BMea6A9S
-         H0EA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=ufeu8Lz+oaM8z+oyMCQG6BYxf2o0e3Wj1J9aKIiazgg=;
-        b=d06oX6SgBk4YgNdM0u3TsSM4NREbeXN0bzY3hUlZmT+XZCDLPgN0Ab55iRHa81GRNG
-         Is86OFBcTjr52pjPzQHwBJy4YJfvAlRfYjicjziEMwcn04Zqs8WXffJTtHbxoCfDCuuO
-         rEJR+zXyAIghZCOahLfV7h30ewvQKhcUghWEDgDy7Mtw7x5AG6XYdB3l/Id1zvDpJaQz
-         xuG6gKwSSNiq4LPHedqvl+JA1fTcSmLybp6HFtI4upEOePsrpO0uy3Gnj30qGvUWv8FD
-         m/gDZN2bM68ujczmpRUZknj0dIZqEjNjL7RmpPe2sIkrbaXUWEua5+I76ksMcXlGPXA6
-         Yn0w==
-X-Gm-Message-State: AJcUukexQycD8hH5Xj62V+RLJxuSFrMZJaYxmB9QKSZCokHa8/dZRh5J
-        KUt+St72u2+bB9uV0QFrOgQ=
-X-Google-Smtp-Source: ALg8bN4cP3PCY9aMz9TpNOUgwQkMdbpe9WzpKc2Q3lmMyNffi5HX3gnSdt9D8hJ5wLT5BZ9Fd3XB4A==
-X-Received: by 2002:a1c:a00f:: with SMTP id j15mr16989022wme.84.1548692288622;
-        Mon, 28 Jan 2019 08:18:08 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id d2sm93643621wrs.97.2019.01.28.08.18.07
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 08:18:07 -0800 (PST)
-Date:   Mon, 28 Jan 2019 17:18:07 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Eugen.Hristev@microchip.com
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, airlied@linux.ie,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, Nicolas.Ferre@microchip.com,
-        Cristian.Birsan@microchip.com
-Subject: Re: [PATCH v2 3/3] drm/panel: simple: add support for PDA
- 91-00156-A0 panel
-Message-ID: <20190128161807.GI26200@ulmo>
-References: <1547458584-29548-1-git-send-email-eugen.hristev@microchip.com>
- <1547458584-29548-4-git-send-email-eugen.hristev@microchip.com>
+        Mon, 28 Jan 2019 11:18:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52586 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388392AbfA1QSS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:18:18 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0756221741;
+        Mon, 28 Jan 2019 16:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692298;
+        bh=hdrYnzqp5HeJOjIcoKP6mksNrf1ltGg3hT2/WBSGiB0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=R6idhpSF6yk40DapcyqwpZ1x1DzAq0EIe9Ih6bxGzqP048zWZ/3bdWMDMBYCtT+Bk
+         D74+govH1XOTMsWzw6PXho2Zb54Ez02YwYfQnhbPrE+wBcfOa7Ac99okwQjk9e97ve
+         A0q7+psZlqzZQGwtVS769NH5sRyFVDdaUHth+HZ4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 144/170] crypto: ux500 - Use proper enum in cryp_set_dma_transfer
+Date:   Mon, 28 Jan 2019 11:11:34 -0500
+Message-Id: <20190128161200.55107-144-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
+References: <20190128161200.55107-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="PMULwz+zIGJzpDN9"
-Content-Disposition: inline
-In-Reply-To: <1547458584-29548-4-git-send-email-eugen.hristev@microchip.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Nathan Chancellor <natechancellor@gmail.com>
 
---PMULwz+zIGJzpDN9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[ Upstream commit 9d880c5945c748d8edcac30965f3349a602158c4 ]
 
-On Mon, Jan 14, 2019 at 09:43:31AM +0000, Eugen.Hristev@microchip.com wrote:
-> From: Eugen Hristev <eugen.hristev@microchip.com>
->=20
-> PDA 91-00156-A0 5.0 is a 5.0" WVGA TFT LCD panel.
-> This panel with backlight is found in PDA 5" LCD screen (TM5000 series or
-> AC320005-5).
->=20
-> Signed-off-by: Eugen Hristev <eugen.hristev@microchip.com>
-> ---
->  drivers/gpu/drm/panel/panel-simple.c | 27 +++++++++++++++++++++++++++
->  1 file changed, 27 insertions(+)
+Clang warns when one enumerated type is implicitly converted to another:
 
-Applied to drm-misc-next, thanks.
+drivers/crypto/ux500/cryp/cryp_core.c:559:5: warning: implicit
+conversion from enumeration type 'enum dma_data_direction' to different
+enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
+                                direction, DMA_CTRL_ACK);
+                                ^~~~~~~~~
+drivers/crypto/ux500/cryp/cryp_core.c:583:5: warning: implicit
+conversion from enumeration type 'enum dma_data_direction' to different
+enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
+                                direction,
+                                ^~~~~~~~~
+2 warnings generated.
 
-Thierry
+dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
+Because we know the value of the dma_data_direction enum from the
+switch statement, we can just use the proper value from
+dma_transfer_direction so there is no more conversion.
 
---PMULwz+zIGJzpDN9
-Content-Type: application/pgp-signature; name="signature.asc"
+DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
 
------BEGIN PGP SIGNATURE-----
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/crypto/ux500/cryp/cryp_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxPKz4ACgkQ3SOs138+
-s6GQ7A/6A40zNnOUXXz3Y+lz+5v+ncu7xHRZ6n0q11nJJ83TduEbkoCTQgLkqKy7
-makLAI2kCDJsHqW+fdxxLNPEBV2njIPhSPzwLBEdbom+bGGICO2+3aGCuXQLe7wB
-mNeTziTe529E7CCdC0SatoNzkRY1mph5jzX6mzvgLdIJ8NBrSOBJAriMc8LCi2ih
-re6hNFdF/OpVxwn8t3mwGJL4Tl6PKUf/NGkEujoxzokEAv9+5J3Jv0nYkctDVFLj
-KpkT8cAHaa2l4h+CMakmbk9kQmfr6138SSZcrH+KY2u9GihXQB1cntXnzTks/GAZ
-1yGcHPqGhlG7fn94Lbyw03AvrFPkKYi9fUQdit9X6AIHg3OUZ9atgMt85ekr7Jzm
-ZM9ohgrgAUGZ1FaGoOPAXLFE/EKFvQg6CZ3ji9eXaLceFHiisZzFu0JzfZL0YrQg
-+TmoUNF8Y7cXbKfBMXTo0vt9aJaeo4HIkDl1+uUvjYZo+a+4cHEOQkzS45k3hXnX
-Pif7g3C7fpWwF6avcPMHhZ9E8RXcaNYeisY4QiaWkNoidcZshTs1FOqVpeWm9owI
-p42ah6cQLYtMj9xsKH61a4kWi9djQ0JzicWZUWfL366thRKXv4KYQ8wYKqsYCsV+
-fxFtKD4ZHngM9siOCbWeG/wVatEx42nxF9Sl+zwf5DPtWVdX0ag=
-=e/Qf
------END PGP SIGNATURE-----
+diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
+index 790f7cadc1ed..efebc484e371 100644
+--- a/drivers/crypto/ux500/cryp/cryp_core.c
++++ b/drivers/crypto/ux500/cryp/cryp_core.c
+@@ -555,7 +555,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
+ 		desc = dmaengine_prep_slave_sg(channel,
+ 				ctx->device->dma.sg_src,
+ 				ctx->device->dma.sg_src_len,
+-				direction, DMA_CTRL_ACK);
++				DMA_MEM_TO_DEV, DMA_CTRL_ACK);
+ 		break;
+ 
+ 	case DMA_FROM_DEVICE:
+@@ -579,7 +579,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
+ 		desc = dmaengine_prep_slave_sg(channel,
+ 				ctx->device->dma.sg_dst,
+ 				ctx->device->dma.sg_dst_len,
+-				direction,
++				DMA_DEV_TO_MEM,
+ 				DMA_CTRL_ACK |
+ 				DMA_PREP_INTERRUPT);
+ 
+-- 
+2.19.1
 
---PMULwz+zIGJzpDN9--
