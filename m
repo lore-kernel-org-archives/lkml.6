@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BE06C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C46F4C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D3362177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A4192086C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692026;
-	bh=lkyY0tObXL8LZJZtu8aaksFzniZLcRHe6ULix8ZaTjQ=;
+	s=default; t=1548692032;
+	bh=2iOzjgFImtob/PdK2+l+LReU0m5O77N/5dLfDxaKJmA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qVbPr0mpcvnZN2lmAJAYxvIOS9uXEbmUKTTmdAyyDQEM64Y3nIkye50sihGBvPyPE
-	 L4YB0tEZGeXbk0b+8fVmI4cBsj0R0Mz2vL7HP62QgtCc+IyVaQqD0KuFK/22LZ7YzX
-	 psC09l8J5wQKgoym9v58UCTpkFSn/eNrejAXUHmA=
+	b=QEEMgEAPhfhKKKt52o/pWCSc4isJRa0J3YeSetpAtzWkddWHQ1xP32uJTvvAULKXT
+	 kIvJUawfyuocsAeyC8fKgDjZLaOfoVAUg+yDUVvpOna5Y3BpP6nlueZJioCdbXGpOJ
+	 7InEzBgaCo7XKrCmoW3A23VMFEBBSj9zabjO1IKE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387470AbfA1QNo (ORCPT
+        id S2387500AbfA1QNu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:13:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42352 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:13:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732873AbfA1QNj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:39 -0500
+        id S1732549AbfA1QNq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6CDDE2148E;
-        Mon, 28 Jan 2019 16:13:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3D56F2148E;
+        Mon, 28 Jan 2019 16:13:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692019;
-        bh=lkyY0tObXL8LZJZtu8aaksFzniZLcRHe6ULix8ZaTjQ=;
+        s=default; t=1548692025;
+        bh=2iOzjgFImtob/PdK2+l+LReU0m5O77N/5dLfDxaKJmA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f1XRwJU7TPEKtFxrzSIbapEF3VaBUVGfHWkdtRqqxS4cWLq85B3V8j3oZR939ctoY
-         FS117MqthBeOokCQnRDxja2Zwtv+oKj0rkdDc/3h2MXTIbyVIwIsVOV4PIGNnNlRxk
-         7+TLwsWH3XLCZo5EM3tGYL0WSJLazGK9IgWYpgeU=
+        b=az/kk8aDcsh2A2dgHKnTuCjd9vLPmMcu2hGAMZm/YQHzpYdWS7ERfy4WujH4vQdIV
+         n0/0AotKtoqQfW2MIudlTe3d/pd8aEWarLVQKa8XVoiH0dt7L3mznOVOiAF6gQuQBL
+         lOqn4lCvuJwMY+Ryn4ZnZVd9ik44P1Ts/9NM+lSw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 040/170] iio: adc: meson-saradc: fix internal clock names
-Date:   Mon, 28 Jan 2019 11:09:50 -0500
-Message-Id: <20190128161200.55107-40-sashal@kernel.org>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 042/170] media: adv*/tc358743/ths8200: fill in min width/height/pixelclock
+Date:   Mon, 28 Jan 2019 11:09:52 -0500
+Message-Id: <20190128161200.55107-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -59,63 +58,130 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-[ Upstream commit 50314f98b0ac468218e7c9af8c99f215a35436df ]
+[ Upstream commit 2912289a518077ddb8214e05336700148e97e235 ]
 
-Before this patch we are registering the internal clocks (for example on
-Meson8b, where the SAR ADC IP block implements the divider and gate
-clocks) with the following names:
-- /soc/cbus@c1100000/adc@8680#adc_div
-- /soc/cbus@c1100000/adc@8680#adc_en
+The v4l2_dv_timings_cap struct is used to do sanity checks when setting and
+enumerating DV timings, ensuring that only valid timings as per the HW
+capabilities are allowed.
 
-This is bad because the common clock framework uses the clock to create
-a directory in <debugfs>/clk. With such name, the directory creation
-(silently) fails and the debugfs entry ends up being created at the
-debugfs root.
+However, many drivers just filled in 0 for the minimum width, height or
+pixelclock frequency. This can cause timings with e.g. 0 as width and height
+to be accepted, which will in turn lead to a potential division by zero.
 
-With this change, the new clock names are:
-- c1108680.adc#adc_div
-- c1108680.adc#adc_en
+Fill in proper values are minimum boundaries. 640x350 was chosen since it is
+the smallest resolution in v4l2-dv-timings.h. Same for 13 MHz as the lowest
+pixelclock frequency (it's slightly below the minimum of 13.5 MHz in the
+v4l2-dv-timings.h header).
 
-This matches the clock naming scheme used in the PWM, Ethernet and MMC
-drivers. It also fixes the problem with debugfs.
-The idea is shamelessly taken from commit b96e9eb62841c5 ("pwm: meson:
-Fix mux clock names").
-
-Fixes: 3921db46a8c5bc ("iio: Convert to using %pOF instead of full_name")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iio/adc/meson_saradc.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/media/i2c/ad9389b.c  | 2 +-
+ drivers/media/i2c/adv7511.c  | 2 +-
+ drivers/media/i2c/adv7604.c  | 4 ++--
+ drivers/media/i2c/adv7842.c  | 4 ++--
+ drivers/media/i2c/tc358743.c | 2 +-
+ drivers/media/i2c/ths8200.c  | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/iio/adc/meson_saradc.c b/drivers/iio/adc/meson_saradc.c
-index 9a52a91166d2..2515badf8b28 100644
---- a/drivers/iio/adc/meson_saradc.c
-+++ b/drivers/iio/adc/meson_saradc.c
-@@ -583,8 +583,8 @@ static int meson_sar_adc_clk_init(struct iio_dev *indio_dev,
- 	struct clk_init_data init;
- 	const char *clk_parents[1];
- 
--	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%pOF#adc_div",
--				   indio_dev->dev.of_node);
-+	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%s#adc_div",
-+				   dev_name(indio_dev->dev.parent));
- 	if (!init.name)
- 		return -ENOMEM;
- 
-@@ -605,8 +605,8 @@ static int meson_sar_adc_clk_init(struct iio_dev *indio_dev,
- 	if (WARN_ON(IS_ERR(priv->adc_div_clk)))
- 		return PTR_ERR(priv->adc_div_clk);
- 
--	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%pOF#adc_en",
--				   indio_dev->dev.of_node);
-+	init.name = devm_kasprintf(&indio_dev->dev, GFP_KERNEL, "%s#adc_en",
-+				   dev_name(indio_dev->dev.parent));
- 	if (!init.name)
- 		return -ENOMEM;
+diff --git a/drivers/media/i2c/ad9389b.c b/drivers/media/i2c/ad9389b.c
+index a056d6cdaaaa..f0b200ae2127 100644
+--- a/drivers/media/i2c/ad9389b.c
++++ b/drivers/media/i2c/ad9389b.c
+@@ -590,7 +590,7 @@ static const struct v4l2_dv_timings_cap ad9389b_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/adv7511.c b/drivers/media/i2c/adv7511.c
+index 2817bafc67bf..80c20404334a 100644
+--- a/drivers/media/i2c/adv7511.c
++++ b/drivers/media/i2c/adv7511.c
+@@ -142,7 +142,7 @@ static const struct v4l2_dv_timings_cap adv7511_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, ADV7511_MAX_WIDTH, 0, ADV7511_MAX_HEIGHT,
++	V4L2_INIT_BT_TIMINGS(640, ADV7511_MAX_WIDTH, 350, ADV7511_MAX_HEIGHT,
+ 		ADV7511_MIN_PIXELCLOCK, ADV7511_MAX_PIXELCLOCK,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index f289b8aca1da..d2108aad3c65 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -778,7 +778,7 @@ static const struct v4l2_dv_timings_cap adv7604_timings_cap_analog = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+@@ -789,7 +789,7 @@ static const struct v4l2_dv_timings_cap adv76xx_timings_cap_digital = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index 65f34e7e146f..f9c23173c9fa 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -676,7 +676,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_analog = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+@@ -687,7 +687,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_digital = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
+index e6f5c363ccab..c9647e24a4a3 100644
+--- a/drivers/media/i2c/tc358743.c
++++ b/drivers/media/i2c/tc358743.c
+@@ -70,7 +70,7 @@ static const struct v4l2_dv_timings_cap tc358743_timings_cap = {
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+ 	/* Pixel clock from REF_01 p. 20. Min/max height/width are unknown */
+-	V4L2_INIT_BT_TIMINGS(1, 10000, 1, 10000, 0, 165000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 13000000, 165000000,
+ 			V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 			V4L2_DV_BT_CAP_PROGRESSIVE |
+diff --git a/drivers/media/i2c/ths8200.c b/drivers/media/i2c/ths8200.c
+index 498ad2368cbc..f5ee28058ea2 100644
+--- a/drivers/media/i2c/ths8200.c
++++ b/drivers/media/i2c/ths8200.c
+@@ -49,7 +49,7 @@ static const struct v4l2_dv_timings_cap ths8200_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1080, 25000000, 148500000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1080, 25000000, 148500000,
+ 		V4L2_DV_BT_STD_CEA861, V4L2_DV_BT_CAP_PROGRESSIVE)
+ };
  
 -- 
 2.19.1
