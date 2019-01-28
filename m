@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE10BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 67B01C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C39DE2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38A4D2086C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692157;
-	bh=GDTtcHgbCVDCsBvOECuZsAjSVoHVITXq5xIVXT1+abY=;
+	s=default; t=1548692169;
+	bh=bW9Mx5/dtJ5t0zcvQan9XmREg7IlVtESyzkil8bukpc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SO1h35iXFzxNVa1ehTtVoLSPoeyrXtkfJb+tgY/irR4s5ODczRkN0ywfp1n+rjPtW
-	 1BiH1Cz6yZeXBt9pxcTlFPbHhVzTVQC+uAr4WiIBVTr8x4MKf3m3g4ec5xwjDMswSI
-	 ijoS+1KiNhMulAPSIuo0Mi1dg/uI8WmwbqDRDgLs=
+	b=EFER9WaAWsniqNzQteLC78qaqhSFmy9HqwFNmiBFwFN3YI44ffikuYj/R4SJk+UuS
+	 7feDQhi8qhbnqrrin5pQG1M3dIKsEOiohj8QP+zB6QIgZ3cjLIWGRPWN4qPoQypNMX
+	 uRovDVlKnuG8i+HjJN+BSgNYSRfbj5xdzrwF+dzA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387886AbfA1QPz (ORCPT
+        id S1733190AbfA1QQH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:15:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46728 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:16:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47538 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387869AbfA1QPv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:51 -0500
+        id S2387910AbfA1QQF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:16:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7946321741;
-        Mon, 28 Jan 2019 16:15:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45F732086C;
+        Mon, 28 Jan 2019 16:16:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692150;
-        bh=GDTtcHgbCVDCsBvOECuZsAjSVoHVITXq5xIVXT1+abY=;
+        s=default; t=1548692164;
+        bh=bW9Mx5/dtJ5t0zcvQan9XmREg7IlVtESyzkil8bukpc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fAiYvnreTbrbXOcbf74ti6mSyp65q0Nz4ktj82vDSFNsp5ZqVm4KS3+/VdtM9oryi
-         6JrTDDjJiSZxq+9NRhTtDpz3v2sPKeNJwEfMjdimAEZmuerx7Y5pxxxVvkmxgv9fH5
-         tx/yUNLyzE0jvq8/ksYwGHc7ElqX2uMEVuRzt058=
+        b=XIO3mV3VEDzfmfpGzW4UT6Y0EJYeqh9aR0+cGg9oFPqJEYS4mcFRumMYks7Xn6WhH
+         jSyPaat6wrkx7y7DjHvXW6xQCewk+J9tAAp9TSJGe7ATFs9ZiyavbpHgtTi2uq55/0
+         41BLh2sFMqrfKqjWIXOUzajd24MwuwxWkbu1GmeU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
-        <krzysztof.adamski@nokia.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 090/170] i2c-axxia: check for error conditions first
-Date:   Mon, 28 Jan 2019 11:10:40 -0500
-Message-Id: <20190128161200.55107-90-sashal@kernel.org>
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 096/170] ASoC: fsl: Fix SND_SOC_EUKREA_TLV320 build error on i.MX8M
+Date:   Mon, 28 Jan 2019 11:10:46 -0500
+Message-Id: <20190128161200.55107-96-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,85 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Adamski, Krzysztof (Nokia - PL/Wroclaw)" <krzysztof.adamski@nokia.com>
+From: Fabio Estevam <festevam@gmail.com>
 
-[ Upstream commit 4f5c85fe3a60ace555d09898166af372547f97fc ]
+[ Upstream commit add6883619a9e3bf9658eaff1a547354131bbcd9 ]
 
-It was observed that when using seqentional mode contrary to the
-documentation, the SS bit (which is supposed to only be set if
-automatic/sequence command completed normally), is sometimes set
-together with NA (NAK in address phase) causing transfer to falsely be
-considered successful.
+eukrea-tlv320.c machine driver runs on non-DT platforms
+and include <asm/mach-types.h> header file in order to be able
+to use some machine_is_eukrea_xxx() macros.
 
-My assumption is that this does not happen during manual mode since the
-controller is stopping its work the moment it sets NA/ND bit in status
-register. This is not the case in Automatic/Sequentional mode where it
-is still working to send STOP condition and the actual status we get
-depends on the time when the ISR is run.
+Building it for ARM64 causes the following build error:
 
-This patch changes the order of checking status bits in ISR - error
-conditions are checked first and only if none of them occurred, the
-transfer may be considered successful. This is required to introduce
-using of sequentional mode in next patch.
+sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
 
-Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
-Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Avoid this error by not allowing to build the SND_SOC_EUKREA_TLV320
+driver when ARM64 is selected.
+
+This is needed in preparation for the i.MX8M support.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-axxia.c | 32 ++++++++++++++++----------------
- 1 file changed, 16 insertions(+), 16 deletions(-)
+ sound/soc/fsl/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
-index deea13838648..30d80ce0bde3 100644
---- a/drivers/i2c/busses/i2c-axxia.c
-+++ b/drivers/i2c/busses/i2c-axxia.c
-@@ -296,22 +296,7 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
- 			i2c_int_disable(idev, MST_STATUS_TFL);
- 	}
+diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
+index 37f9b6201918..4087deeda7cf 100644
+--- a/sound/soc/fsl/Kconfig
++++ b/sound/soc/fsl/Kconfig
+@@ -221,7 +221,7 @@ config SND_SOC_PHYCORE_AC97
  
--	if (status & MST_STATUS_SCC) {
--		/* Stop completed */
--		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		complete(&idev->msg_complete);
--	} else if (status & MST_STATUS_SNS) {
--		/* Transfer done */
--		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
--			axxia_i2c_empty_rx_fifo(idev);
--		complete(&idev->msg_complete);
--	} else if (status & MST_STATUS_TSS) {
--		/* Transfer timeout */
--		idev->msg_err = -ETIMEDOUT;
--		i2c_int_disable(idev, ~MST_STATUS_TSS);
--		complete(&idev->msg_complete);
--	} else if (unlikely(status & MST_STATUS_ERR)) {
-+	if (unlikely(status & MST_STATUS_ERR)) {
- 		/* Transfer error */
- 		i2c_int_disable(idev, ~0);
- 		if (status & MST_STATUS_AL)
-@@ -328,6 +313,21 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
- 			readl(idev->base + MST_TX_BYTES_XFRD),
- 			readl(idev->base + MST_TX_XFER));
- 		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_SCC) {
-+		/* Stop completed */
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_SNS) {
-+		/* Transfer done */
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
-+			axxia_i2c_empty_rx_fifo(idev);
-+		complete(&idev->msg_complete);
-+	} else if (status & MST_STATUS_TSS) {
-+		/* Transfer timeout */
-+		idev->msg_err = -ETIMEDOUT;
-+		i2c_int_disable(idev, ~MST_STATUS_TSS);
-+		complete(&idev->msg_complete);
- 	}
- 
- out:
+ config SND_SOC_EUKREA_TLV320
+ 	tristate "Eukrea TLV320"
+-	depends on ARCH_MXC && I2C
++	depends on ARCH_MXC && !ARM64 && I2C
+ 	select SND_SOC_TLV320AIC23_I2C
+ 	select SND_SOC_IMX_AUDMUX
+ 	select SND_SOC_IMX_SSI
 -- 
 2.19.1
 
