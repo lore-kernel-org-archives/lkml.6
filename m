@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD761C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76BBCC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0C12147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3AE3F2184D
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692120;
-	bh=rwAhjjQ25Dfht0kjHiQgliMPwf3KEIuYPmPB5Hsjvw4=;
+	s=default; t=1548692127;
+	bh=4SRlss6fatly5HveyLqaOiGw2u5XwYKvpK67wEHOumc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YJGnY2UYdN2yWx/I70fVN/zItiD1Rdp7YWFTp9egV+ulpCqKvi1CJUHfxVCNN08q+
-	 HsBHubtUL7Pt+vI1esGlJAPQsvhd4SnnMdUphV8OVppkMSNoQmGahamWkVJ8vT4nnH
-	 Dnw7DgtmvCXhUQL2c1zi+vAFfC/sBllHiAjTRRP4=
+	b=OthJjpR4XQcGkfg7fhrnZBvEGjTN7LzT59DUZk+TEfGJRCxIaAkl5uG+fEgWCKhNj
+	 lqO/unXtRKm4oOwwnWORKAmDDk+VrmGoKKe0Bv/viheABkZPFwlj+wCH6GNyNoxUFZ
+	 VZULpUCnAlkcIHgWJbpkjwqtF9uPsUwm60wY5iA4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387773AbfA1QPS (ORCPT
+        id S1733041AbfA1QPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:15:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44998 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:15:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387752AbfA1QPP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:15 -0500
+        id S2387780AbfA1QPX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1FCBE2148E;
-        Mon, 28 Jan 2019 16:15:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 56F112147A;
+        Mon, 28 Jan 2019 16:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692114;
-        bh=rwAhjjQ25Dfht0kjHiQgliMPwf3KEIuYPmPB5Hsjvw4=;
+        s=default; t=1548692122;
+        bh=4SRlss6fatly5HveyLqaOiGw2u5XwYKvpK67wEHOumc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RbQC7LNZOWgKmd/5VqZYodYy/t0Rsmg8tp7YJHb3rDvSZMLS9uUufaIxsU/8aiv1l
-         RAX7C3tPYVJqDVn0pk7gZ/DReQmCRPN5m7cp9lYUo4CZrcie4zdWdQcoVkgcR+VOcm
-         ++o7FRaNpPoTVSNvy66XUvwaLZZHUHHy6A8HAU5E=
+        b=2npydz7+H9JoJOluptBNaYe1gtuxOyVJKj8IOyEMvYDiX/547YMRC6tmfs2vQ3n2H
+         mFo0bUk4S39YDrR2bm4UYRr8pzCLDYEkbMdYqw0wgT1G1UOpEyezb757sMA6Vn6LZd
+         8+0bpDJV/DxRqdLy/cPcx4A2yscK0uKDeK3d1ano=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 074/170] pinctrl: sx150x: handle failure case of devm_kstrdup
-Date:   Mon, 28 Jan 2019 11:10:24 -0500
-Message-Id: <20190128161200.55107-74-sashal@kernel.org>
+Cc:     Jiong Wang <jiong.wang@netronome.com>,
+        Markos Chandras <markos.chandras@imgtec.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 077/170] mips: bpf: fix encoding bug for mm_srlv32_op
+Date:   Mon, 28 Jan 2019 11:10:27 -0500
+Message-Id: <20190128161200.55107-77-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,64 +59,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Jiong Wang <jiong.wang@netronome.com>
 
-[ Upstream commit a9d9f6b83f1bb05da849b3540e6d1f70ef1c2343 ]
+[ Upstream commit 17f6c83fb5ebf7db4fcc94a5be4c22d5a7bfe428 ]
 
-devm_kstrdup() may return NULL if internal allocation failed.
-Thus using  label, name  is unsafe without checking. Therefor
-in the unlikely case of allocation failure, sx150x_probe() simply
-returns -ENOMEM.
+For micro-mips, srlv inside POOL32A encoding space should use 0x50
+sub-opcode, NOT 0x90.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 9e80f9064e73 ("pinctrl: Add SX150X GPIO Extender Pinctrl Driver")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Some early version ISA doc describes the encoding as 0x90 for both srlv and
+srav, this looks to me was a typo. I checked Binutils libopcode
+implementation which is using 0x50 for srlv and 0x90 for srav.
+
+v1->v2:
+  - Keep mm_srlv32_op sorted by value.
+
+Fixes: f31318fdf324 ("MIPS: uasm: Add srlv uasm instruction")
+Cc: Markos Chandras <markos.chandras@imgtec.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/pinctrl-sx150x.c | 11 ++++++++---
- 1 file changed, 8 insertions(+), 3 deletions(-)
+ arch/mips/include/uapi/asm/inst.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/pinctrl/pinctrl-sx150x.c b/drivers/pinctrl/pinctrl-sx150x.c
-index 70a0228f4e7f..2d0f4f760326 100644
---- a/drivers/pinctrl/pinctrl-sx150x.c
-+++ b/drivers/pinctrl/pinctrl-sx150x.c
-@@ -1166,7 +1166,6 @@ static int sx150x_probe(struct i2c_client *client,
- 	}
- 
- 	/* Register GPIO controller */
--	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
- 	pctl->gpio.base = -1;
- 	pctl->gpio.ngpio = pctl->data->npins;
- 	pctl->gpio.get_direction = sx150x_gpio_get_direction;
-@@ -1180,6 +1179,10 @@ static int sx150x_probe(struct i2c_client *client,
- 	pctl->gpio.of_node = dev->of_node;
- #endif
- 	pctl->gpio.can_sleep = true;
-+	pctl->gpio.label = devm_kstrdup(dev, client->name, GFP_KERNEL);
-+	if (!pctl->gpio.label)
-+		return -ENOMEM;
-+
- 	/*
- 	 * Setting multiple pins is not safe when all pins are not
- 	 * handled by the same regmap register. The oscio pin (present
-@@ -1200,13 +1203,15 @@ static int sx150x_probe(struct i2c_client *client,
- 
- 	/* Add Interrupt support if an irq is specified */
- 	if (client->irq > 0) {
--		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
--						   GFP_KERNEL);
- 		pctl->irq_chip.irq_mask = sx150x_irq_mask;
- 		pctl->irq_chip.irq_unmask = sx150x_irq_unmask;
- 		pctl->irq_chip.irq_set_type = sx150x_irq_set_type;
- 		pctl->irq_chip.irq_bus_lock = sx150x_irq_bus_lock;
- 		pctl->irq_chip.irq_bus_sync_unlock = sx150x_irq_bus_sync_unlock;
-+		pctl->irq_chip.name = devm_kstrdup(dev, client->name,
-+						   GFP_KERNEL);
-+		if (!pctl->irq_chip.name)
-+			return -ENOMEM;
- 
- 		pctl->irq.masked = ~0;
- 		pctl->irq.sense = 0;
+diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
+index c05dcf5ab414..273ef58f4d43 100644
+--- a/arch/mips/include/uapi/asm/inst.h
++++ b/arch/mips/include/uapi/asm/inst.h
+@@ -369,8 +369,8 @@ enum mm_32a_minor_op {
+ 	mm_ext_op = 0x02c,
+ 	mm_pool32axf_op = 0x03c,
+ 	mm_srl32_op = 0x040,
++	mm_srlv32_op = 0x050,
+ 	mm_sra_op = 0x080,
+-	mm_srlv32_op = 0x090,
+ 	mm_rotr_op = 0x0c0,
+ 	mm_lwxs_op = 0x118,
+ 	mm_addu32_op = 0x150,
 -- 
 2.19.1
 
