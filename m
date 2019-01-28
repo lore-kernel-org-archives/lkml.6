@@ -2,244 +2,119 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD33C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76211C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 850A720881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:32:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46A3A20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:33:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="g6gIniAT"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfA1Ic4 (ORCPT
+        id S1726944AbfA1IdE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:32:56 -0500
-Received: from relay1-d.mail.gandi.net ([217.70.183.193]:36393 "EHLO
-        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726784AbfA1Icy (ORCPT
+        Mon, 28 Jan 2019 03:33:04 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35253 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbfA1IdD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:32:54 -0500
-X-Originating-IP: 2.224.242.101
-Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
-        (Authenticated sender: jacopo@jmondi.org)
-        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id C8806240018;
-        Mon, 28 Jan 2019 08:32:49 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 09:33:04 +0100
-From:   Jacopo Mondi <jacopo@jmondi.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Steve Longerbeam <slongerbeam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        linux-media <linux-media@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH] media: ov5640: Fix set 15fps regression
-Message-ID: <20190128083304.nxuvxecrcq63v2vn@uno.localdomain>
-References: <20190124175801.28018-1-jagan@amarulasolutions.com>
- <20190125153958.3aertsxgdzjldlzd@flea>
- <CAMty3ZCuBqiOGAixWhy5bYqUHk0_=NvX08zp2F+MT4GgVEo+Rw@mail.gmail.com>
+        Mon, 28 Jan 2019 03:33:03 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t200so12941620wmt.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:33:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=TMGf9RSmS6cVngD+QMX5KaapcUOQZokd+oMFA3JcxDY=;
+        b=g6gIniATiDadeYP0NJ6Zjei0v3/WBlJweUV6YVWgEWYMp+oNnTkcv7F7/MRGKC2spb
+         ipSgmfRnxpifxrjSyTIYJYT9hpdi+/rKts4G19Jh3F7eIIJV2VG+ofIuXA03C/tImdv5
+         MoA37gh0W0tq50j+I3ISkFpXrhadt00+G4GyU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TMGf9RSmS6cVngD+QMX5KaapcUOQZokd+oMFA3JcxDY=;
+        b=UeNTTridhZ3HCgLu/tAieTUs4+XlxrHLoSMnF8GimUjFq6YYvDSusB7w2lZsxv2Zcs
+         tgD6kGGkQJlyQ6PBTO3krtAMrIPhs2l1C0edlyLTqQt06eEHTnAUGr7DMVYlrp4+ujTv
+         YZVmE07oj3H6Fez0l1XNjBLhnz29tx4jBKUpMAOSkMcIJm9Di009L6soFtNk5qUBwuTW
+         Tv+sXJ/zi/CMElnNLPDIQcEkfywjH9O4f8D/02rtwrPzp11jtYsGB4MCeluiOMgM66Ob
+         B/mBg1WpCA3GKKi2Zc/VAUG+k/60i7b7yRJIuSkNbFl/RT3JvxYiaIKkHOZKIQTZE61y
+         DYig==
+X-Gm-Message-State: AJcUukdbHqh6EG855nKvkHnmJY69HDLBeYCCBQHVdUAyK73GgLazX6GI
+        HAMLYnl3/4hljUXDCqic1+J9YA==
+X-Google-Smtp-Source: AHgI3IZG5ofnaVURj9ZggrfGEMFTblYyfYKVuxfJ2SSPXwb6vXZabq3moeBiTEtjjqccc8z4jYjqxA==
+X-Received: by 2002:a1c:488b:: with SMTP id v133mr6524469wma.31.1548664381376;
+        Mon, 28 Jan 2019 00:33:01 -0800 (PST)
+Received: from [192.168.0.41] (20.36.129.77.rev.sfr.net. [77.129.36.20])
+        by smtp.googlemail.com with ESMTPSA id l20sm244726694wrb.93.2019.01.28.00.32.59
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 00:33:00 -0800 (PST)
+Subject: Re: [PATCH v4 3/9] cpufreq: qcom-hw: Register as a cpufreq cooling
+ device
+To:     Amit Kucheria <amit.kucheria@linaro.org>,
+        linux-kernel@vger.kernel.org
+Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
+        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
+        mka@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Taniya Das <tdas@codeaurora.org>, linux-pm@vger.kernel.org
+References: <cover.1548654899.git.amit.kucheria@linaro.org>
+ <65d7297bbf98fd525d3785f2e8eb5a412ffd3a6b.1548654899.git.amit.kucheria@linaro.org>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <36e00871-46c5-3c55-5a47-904a2796e4d4@linaro.org>
+Date:   Mon, 28 Jan 2019 09:32:59 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="y2wz7z6pl7dcejld"
-Content-Disposition: inline
-In-Reply-To: <CAMty3ZCuBqiOGAixWhy5bYqUHk0_=NvX08zp2F+MT4GgVEo+Rw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <65d7297bbf98fd525d3785f2e8eb5a412ffd3a6b.1548654899.git.amit.kucheria@linaro.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 28/01/2019 07:41, Amit Kucheria wrote:
+> Add the CPUFREQ_AUTO_REGISTER_COOLING_DEV flag to allow the cpufreq core
+> to auto-register the driver as a cooling device.
+> 
+> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
+> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
+> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
 
---y2wz7z6pl7dcejld
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 
-Hi everyone,
-
-On Mon, Jan 28, 2019 at 01:20:37PM +0530, Jagan Teki wrote:
-> On Fri, Jan 25, 2019 at 9:10 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
-> >
-> > On Thu, Jan 24, 2019 at 11:28:01PM +0530, Jagan Teki wrote:
-> > > The ov5640_try_frame_interval operation updates the FPS as per user
-> > > input based on default ov5640_frame_rate, OV5640_30_FPS which is failed
-> > > to update when user trigger 15fps.
-> > >
-> > > So, initialize the default ov5640_frame_rate to OV5640_15_FPS so-that
-> > > it can satisfy to update all fps.
-> > >
-> > > Fixes: 5a3ad937bc78 ("media: ov5640: Make the return rate type more explicit")
-> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> >
-> > I'm pretty sure I tested this and it was working fine. You're
-> > mentionning a regression, but what regression is there exactly (ie,
-> > what was working before that commit that doesn't work anymore?). What
-> > tools/commands are you using to see this behaviour?
->
-
-I think Jagan's right, here.
-
-For the 15FPS use case, the below condition in the for loop of
-ov5640_try_frame_interval() never gets satisfied (0 < 0 ?) and 'rate' retains
-its initial value of 30FPS.
-
-		if (abs(curr_fps - fps) < abs(best_fps - fps)) {
-			best_fps = curr_fps;
-			rate = i;
-		}
-
-To make more clear what's happening, I would initialize 'rate' just
-before 'best_fps' before the for loop. Anyway, please add:
-Acked-by: Jacopo Mondi <jacopo@jmondi.org>
-
-Maxime, does this make sense to you?
-
-Thanks
-   j
+> ---
+>  drivers/cpufreq/qcom-cpufreq-hw.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/qcom-cpufreq-hw.c b/drivers/cpufreq/qcom-cpufreq-hw.c
+> index d83939a1b3d4..ed32849a3d40 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-hw.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-hw.c
+> @@ -231,7 +231,8 @@ static struct freq_attr *qcom_cpufreq_hw_attr[] = {
+>  
+>  static struct cpufreq_driver cpufreq_qcom_hw_driver = {
+>  	.flags		= CPUFREQ_STICKY | CPUFREQ_NEED_INITIAL_FREQ_CHECK |
+> -			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY,
+> +			  CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
+> +			  CPUFREQ_AUTO_REGISTER_COOLING_DEV,
+>  	.verify		= cpufreq_generic_frequency_table_verify,
+>  	.target_index	= qcom_cpufreq_hw_target_index,
+>  	.get		= qcom_cpufreq_hw_get,
+> 
 
 
-> In fact I have mentioned this on your v9 [1], may be you missed it.
->
-> I have reproduced with media-ctl, below is the full log. let me know
-> if I still miss anything.
->
-> Before this change:
-> # media-ctl -p
-> Media controller API version 5.0.0
->
-> Media device information
-> ------------------------
-> driver          sun6i-csi
-> model           Allwinner Video Capture Device
-> serial
-> bus info
-> hw revision     0x0
-> driver version  5.0.0
->
-> Device topology
-> - entity 1: sun6i-csi (1 pad, 1 link)
->             type Node subtype V4L flags 0
->             device node name /dev/video0
->         pad0: Sink
->                 <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
->
-> - entity 5: ov5640 1-003c (1 pad, 1 link)
->             type V4L2 subdev subtype Sensor flags 0
->             device node name /dev/v4l-subdev0
->         pad0: Source
->                 [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb
-> xfer:srgb ycbcr:601 quantization:full-range]
->                 -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
->
-> # media-ctl --set-v4l2 "'ov5640 1-003c':0[fmt:UYVY8_2X8/640x480@1/15 field:none]
-> "
-> # media-ctl -p
-> Media controller API version 5.0.0
->
-> Media device information
-> ------------------------
-> driver          sun6i-csi
-> model           Allwinner Video Capture Device
-> serial
-> bus info
-> hw revision     0x0
-> driver version  5.0.0
->
-> Device topology
-> - entity 1: sun6i-csi (1 pad, 1 link)
->             type Node subtype V4L flags 0
->             device node name /dev/video0
->         pad0: Sink
->                 <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
->
-> - entity 5: ov5640 1-003c (1 pad, 1 link)
->             type V4L2 subdev subtype Sensor flags 0
->             device node name /dev/v4l-subdev0
->         pad0: Source
->                 [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb
-> xfer:srgb ycbcr:601 quantization:full-range]
->                 -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
->
->
-> After this change:
-> # media-ctl -p
-> Media controller API version 5.0.0
->
-> Media device information
-> ------------------------
-> driver          sun6i-csi
-> model           Allwinner Video Capture Device
-> serial
-> bus info
-> hw revision     0x0
-> driver version  5.0.0
->
-> Device topology
-> - entity 1: sun6i-csi (1 pad, 1 link)
->             type Node subtype V4L flags 0
->             device node name /dev/video0
->         pad0: Sink
->                 <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
->
-> - entity 5: ov5640 1-003c (1 pad, 1 link)
->             type V4L2 subdev subtype Sensor flags 0
->             device node name /dev/v4l-subdev0
->         pad0: Source
->                 [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb
-> xfer:srgb ycbcr:601 quantization:full-range]
->                 -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
->
-> # media-ctl --set-v4l2 "'ov5640 1-003c':0[fmt:UYVY8_2X8/640x480@1/15 field:none]
-> "
-> # media-ctl -p
-> Media controller API version 5.0.0
->
-> Media device information
-> ------------------------
-> driver          sun6i-csi
-> model           Allwinner Video Capture Device
-> serial
-> bus info
-> hw revision     0x0
-> driver version  5.0.0
->
-> Device topology
-> - entity 1: sun6i-csi (1 pad, 1 link)
->             type Node subtype V4L flags 0
->             device node name /dev/video0
->         pad0: Sink
->                 <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
->
-> - entity 5: ov5640 1-003c (1 pad, 1 link)
->             type V4L2 subdev subtype Sensor flags 0
->             device node name /dev/v4l-subdev0
->         pad0: Source
->                 [fmt:UYVY8_2X8/640x480@1/15 field:none colorspace:srgb
-> xfer:srgb ycbcr:601 quantization:full-range]
->                 -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
->
-> [1] https://patchwork.kernel.org/patch/10708931/
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
---y2wz7z6pl7dcejld
-Content-Type: application/pgp-signature; name="signature.asc"
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlxOvkAACgkQcjQGjxah
-VjxO2A//ZTZVcZ5XCBK0E8Uh5HpIR2A4IbhPl2n07Rz50EcVLqiiB0k6mwR5xNt4
-8AYqFRBFzsqSw5w6nJ7uFjIIG/REJPs7WyOpeUWHPpxAY5VOqx3b3r9yklF2ln1b
-pDUtxDjafIr5/hJPQWN56Hi8MdY2oWWb5mnaYfAqJRrtnM/92F/gFATY2JwKQKMV
-xChw2lOy6rz3Wz6+mLkeEiPpC2IH7TUtqBgAafHBYtN/cWTuztE2aalOnJd6EnLS
-RoIdAnY+SgngNcREUwq4WbDoQDN0iXIQ2q73NTUlZcNHRYsuLpahpoUOHja9lkI5
-DtJRy1CCSzPmtXWAEyf9s8Hy37HBUWvLYB9cSV1aaaDjHzzZeRrUMPBwL1yGRNl1
-02c0tYRQZdae7kINKDZ93hEu7aVIUYAHmRjoFNpxihIHcm28ErAk3eihVZXpvBe/
-iGstfOjws1o+GV7+fKQphPHkpf/r5qK9qy1dAgSsLNIouBUiUdAva4w4jU4rk98H
-t61/wJMAz25Oe4iZnLAd7tC/BoVV/pkIYZc/eG+4nXDkBzNIBYTS05nWAiUOq04x
-P+tbgcet05eNX0WkQ1v/srip0nKTVTiyYd9v6fVfCCMZRdBHfN7phgO3lduXEK4W
-d8H438kkT6Z9rzV3HQf2UOVDyvIqlBekz8hxOd1miaOIpJpIsGY=
-=iwec
------END PGP SIGNATURE-----
-
---y2wz7z6pl7dcejld--
