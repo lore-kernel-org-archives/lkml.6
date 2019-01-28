@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E801C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74B87C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE7E021741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 436BB21852
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:07:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695227;
-	bh=7N+LpQ+NxZq/CHIg4NnQJQGooRQutIYwya96um++ZJE=;
+	s=default; t=1548695234;
+	bh=2PEJvm6vMC6GcGABpMFMjpxKDGWay7fgf8Y8iLBBlQY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZNw33t2s5nzP6XMvjMIeRmalgdbrdb0KPh9WZw0Y3livoPdS50nLUUOoHz713bk9m
-	 EW5f58UtLDnnqZb2rTOXU6QqEtLr7lo1V9OvK4ZgHt5W+LKKNdBtgTZwajBSgQGizk
-	 6etpCcr2lwumLHARtizRoO3Ke0hELB/yOVj3/c0A=
+	b=zZ2A4E9OxkM1JzkpD7TbFlSOqVOL9gKnyAiaIoE96zFst0CZxI9Mc2ozsJwkp8x0o
+	 0nCFADqKQelsFS3/tZKmrOPkHvfKmhysFecPYFRh+8i0MP67g16/97d3o4BbPLs0XX
+	 riLU5U5gM2QOo3D+Ay434UCyqN1nyFZALO1TQ1cw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387865AbfA1RHF (ORCPT
+        id S2388078AbfA1RHM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:07:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41480 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:07:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732860AbfA1QM5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:12:57 -0500
+        id S1732593AbfA1QMz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:12:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2AA192148E;
-        Mon, 28 Jan 2019 16:12:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 684DE2147A;
+        Mon, 28 Jan 2019 16:12:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691976;
-        bh=7N+LpQ+NxZq/CHIg4NnQJQGooRQutIYwya96um++ZJE=;
+        s=default; t=1548691974;
+        bh=2PEJvm6vMC6GcGABpMFMjpxKDGWay7fgf8Y8iLBBlQY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oQCKRWn6BJ+dqh18WNagk8KjPAko2DbMgskeGW5b8oK4VPpQBSSns1qBePlPu/KiC
-         E5Ub+tOVMa1VhximYTbEeVb6Y7HFJCK+BZqp79LxJzVnz8o9iEcJ2U+evyMS5q2k12
-         q5HYmdG2AB33D4ZxWVAl4CiUj1V54OFxJkY25xLA=
+        b=AQlzZKJeAaT4o48QLiiCu0QTOGEF2ZsI+Kq7O9oYrHmqfjxFRPIn/94g2pCL2Ss23
+         iJev2GlZCUURim6+3oFdteFEnLA0TyEgWQlwnGFEHSVlaRfCFiViUT4bmi6bKm15bK
+         UIvuR+lxbnIgMs2hhbAvaTDLp+7AGIvRq22L/rp8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Matheus Tavares <matheus.bernardino@usp.br>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.14 024/170] staging:iio:ad2s90: Make probe handle spi_setup failure
-Date:   Mon, 28 Jan 2019 11:09:34 -0500
-Message-Id: <20190128161200.55107-24-sashal@kernel.org>
+Cc:     Paul Burton <paul.burton@mips.com>, linux-mips@linux-mips.org,
+        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 023/170] MIPS: Boston: Disable EG20T prefetch
+Date:   Mon, 28 Jan 2019 11:09:33 -0500
+Message-Id: <20190128161200.55107-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,46 +58,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matheus Tavares <matheus.bernardino@usp.br>
+From: Paul Burton <paul.burton@mips.com>
 
-[ Upstream commit b3a3eafeef769c6982e15f83631dcbf8d1794efb ]
+[ Upstream commit 5ec17af7ead09701e23d2065e16db6ce4e137289 ]
 
-Previously, ad2s90_probe ignored the return code from spi_setup, not
-handling its possible failure. This patch makes ad2s90_probe check if
-the code is an error code and, if so, do the following:
+The Intel EG20T Platform Controller Hub used on the MIPS Boston
+development board supports prefetching memory to optimize DMA transfers.
+Unfortunately for unknown reasons this doesn't work well with some MIPS
+CPUs such as the P6600, particularly when using an I/O Coherence Unit
+(IOCU) to provide cache-coherent DMA. In these systems it is common for
+DMA data to be lost, resulting in broken access to EG20T devices such as
+the MMC or SATA controllers.
 
-- Call dev_err with an appropriate error message.
-- Return the spi_setup's error code.
+Support for a DT property to configure the prefetching was added a while
+back by commit 549ce8f134bd ("misc: pch_phub: Read prefetch value from
+device tree if passed") but we never added the DT snippet to make use of
+it. Add that now in order to disable the prefetching & fix DMA on the
+affected systems.
 
-Note: The 'return ret' statement could be out of the 'if' block, but
-this whole block will be moved up in the function in the patch:
-'staging:iio:ad2s90: Move device registration to the end of probe'.
-
-Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Patchwork: https://patchwork.linux-mips.org/patch/21068/
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/resolver/ad2s90.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ arch/mips/boot/dts/img/boston.dts | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-index b2270908f26f..cbee9ad00f0d 100644
---- a/drivers/staging/iio/resolver/ad2s90.c
-+++ b/drivers/staging/iio/resolver/ad2s90.c
-@@ -86,7 +86,12 @@ static int ad2s90_probe(struct spi_device *spi)
- 	/* need 600ns between CS and the first falling edge of SCLK */
- 	spi->max_speed_hz = 830000;
- 	spi->mode = SPI_MODE_3;
--	spi_setup(spi);
-+	ret = spi_setup(spi);
-+
-+	if (ret < 0) {
-+		dev_err(&spi->dev, "spi_setup failed!\n");
-+		return ret;
-+	}
+diff --git a/arch/mips/boot/dts/img/boston.dts b/arch/mips/boot/dts/img/boston.dts
+index f7aad80c69ab..bebb0fa21369 100644
+--- a/arch/mips/boot/dts/img/boston.dts
++++ b/arch/mips/boot/dts/img/boston.dts
+@@ -141,6 +141,12 @@
+ 				#size-cells = <2>;
+ 				#interrupt-cells = <1>;
  
- 	return 0;
- }
++				eg20t_phub@2,0,0 {
++					compatible = "pci8086,8801";
++					reg = <0x00020000 0 0 0 0>;
++					intel,eg20t-prefetch = <0>;
++				};
++
+ 				eg20t_mac@2,0,1 {
+ 					compatible = "pci8086,8802";
+ 					reg = <0x00020100 0 0 0 0>;
 -- 
 2.19.1
 
