@@ -7,46 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCF31C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71E66C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2932173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4387B20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691503;
-	bh=OhWL43AS179SrHPdoU2OtfJg66jHdWNiT9plSOTdTR4=;
+	s=default; t=1548691512;
+	bh=4SRlss6fatly5HveyLqaOiGw2u5XwYKvpK67wEHOumc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JJFvoDGO+T5ZF7tt6p4LvUSdJb+K6PiWg6sTBCXC3IFlPhKQbj4+xMPUr3EUiyzO/
-	 y87JX0snePb3STiX4FBt7DkP5ASbRtLACfR7YxeGd8BeSCpXhd7DzgErMURh+MxpB3
-	 pOTmOdEG4movEgDWMOCtASPIWqadfg05mA9h6ivo=
+	b=f9GkbN2WkOk4zqb5W+mkZY0xFoSpc+sVFDtVfbH+YxJR2115qlDI+HNJ/tGvEP7QH
+	 t+vZjSv5mZK99enAyQRAafrlH3dbMJnmd3KPDNZ+VyoKQyp1Cwo6pWVjedrErxsJ73
+	 IaEAOZYyv1nDxqVjTdWkqSxSHtFknMggBGfNZ8LI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731735AbfA1QFB (ORCPT
+        id S1731303AbfA1QFK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:05:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51044 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:05:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731713AbfA1QE6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:04:58 -0500
+        id S1731750AbfA1QFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:05:06 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 85C4F2147A;
-        Mon, 28 Jan 2019 16:04:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B561C2147A;
+        Mon, 28 Jan 2019 16:05:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691497;
-        bh=OhWL43AS179SrHPdoU2OtfJg66jHdWNiT9plSOTdTR4=;
+        s=default; t=1548691506;
+        bh=4SRlss6fatly5HveyLqaOiGw2u5XwYKvpK67wEHOumc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ahwTTwtkPI13pW/SGWmcA9CHzkB0yaXfSu10cFYI60UEe0N7m6kjgc7O3DrDAEf3N
-         DO6j/V5Eh30pp7NdYVaTREwcNsgbanCDsqWairsbN1g7qssgv4cPsxvXr4z1LXOxd7
-         HWZba80KxPKaDflM9K/TWt1qmO6ZgOOMGCo+7ktY=
+        b=JpLzImGXjbck90jmIkxMoQF/6yOnnqfrqS4gfJ9Ah9aJZfxtlQZBEavLLLhcBV0zP
+         wW40E9lyTT5mWFHjO+yr77gDAGU5BfDVHrf8EGp6B5f6BkG5KjjSSVRuaONaOBcbTb
+         kns4yObCt7DKBuJSYkYL9mW1X/J0kV58dYg1ui/0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 116/258] gpio: mt7621: pass mediatek_gpio_bank_probe() failure up the stack
-Date:   Mon, 28 Jan 2019 10:57:02 -0500
-Message-Id: <20190128155924.51521-116-sashal@kernel.org>
+Cc:     Jiong Wang <jiong.wang@netronome.com>,
+        Markos Chandras <markos.chandras@imgtec.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 120/258] mips: bpf: fix encoding bug for mm_srlv32_op
+Date:   Mon, 28 Jan 2019 10:57:06 -0500
+Message-Id: <20190128155924.51521-120-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,50 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Jiong Wang <jiong.wang@netronome.com>
 
-[ Upstream commit a109c2dbb571b10bb9969285b646f57309c98251 ]
+[ Upstream commit 17f6c83fb5ebf7db4fcc94a5be4c22d5a7bfe428 ]
 
-The error cases of mediatek_gpio_bank_probe() would go unnoticed (except
-for the dev_err() messages). The probe function should return an error
-if one of the banks failed to initialize properly indicated by
-not returning non-0.
+For micro-mips, srlv inside POOL32A encoding space should use 0x50
+sub-opcode, NOT 0x90.
 
-Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Acked-by: Sean Wang <sean.wang@kernel.org>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Some early version ISA doc describes the encoding as 0x90 for both srlv and
+srav, this looks to me was a typo. I checked Binutils libopcode
+implementation which is using 0x50 for srlv and 0x90 for srav.
+
+v1->v2:
+  - Keep mm_srlv32_op sorted by value.
+
+Fixes: f31318fdf324 ("MIPS: uasm: Add srlv uasm instruction")
+Cc: Markos Chandras <markos.chandras@imgtec.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpio/gpio-mt7621.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/mips/include/uapi/asm/inst.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
-index 1ec95bc18f5b..00e954f22bc9 100644
---- a/drivers/gpio/gpio-mt7621.c
-+++ b/drivers/gpio/gpio-mt7621.c
-@@ -297,6 +297,7 @@ mediatek_gpio_probe(struct platform_device *pdev)
- 	struct device_node *np = dev->of_node;
- 	struct mtk *mtk;
- 	int i;
-+	int ret;
- 
- 	mtk = devm_kzalloc(dev, sizeof(*mtk), GFP_KERNEL);
- 	if (!mtk)
-@@ -311,8 +312,11 @@ mediatek_gpio_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, mtk);
- 	mediatek_gpio_irq_chip.name = dev_name(dev);
- 
--	for (i = 0; i < MTK_BANK_CNT; i++)
--		mediatek_gpio_bank_probe(dev, np, i);
-+	for (i = 0; i < MTK_BANK_CNT; i++) {
-+		ret = mediatek_gpio_bank_probe(dev, np, i);
-+		if (ret)
-+			return ret;
-+	}
- 
- 	return 0;
- }
+diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
+index c05dcf5ab414..273ef58f4d43 100644
+--- a/arch/mips/include/uapi/asm/inst.h
++++ b/arch/mips/include/uapi/asm/inst.h
+@@ -369,8 +369,8 @@ enum mm_32a_minor_op {
+ 	mm_ext_op = 0x02c,
+ 	mm_pool32axf_op = 0x03c,
+ 	mm_srl32_op = 0x040,
++	mm_srlv32_op = 0x050,
+ 	mm_sra_op = 0x080,
+-	mm_srlv32_op = 0x090,
+ 	mm_rotr_op = 0x0c0,
+ 	mm_lwxs_op = 0x118,
+ 	mm_addu32_op = 0x150,
 -- 
 2.19.1
 
