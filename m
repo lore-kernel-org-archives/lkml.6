@@ -2,128 +2,97 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71869C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BCFBC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3B20520857
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WW3BJnV2"
+	by mail.kernel.org (Postfix) with ESMTP id 4417420857
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:25 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730741AbfA1QAP (ORCPT
+        id S1731246AbfA1R1X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:00:15 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45160 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730720AbfA1QAL (ORCPT
+        Mon, 28 Jan 2019 12:27:23 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:43393 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730374AbfA1R1W (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:00:11 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t6so18598239wrr.12;
-        Mon, 28 Jan 2019 08:00:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rAf5KtiLxB+Y8yeddfolVuZO/p4Rej1EROwoeD/HCh4=;
-        b=WW3BJnV2TgZkYA7Mks7exD3nnMDX21lD9e0moEQJ0rTGE0ejhICthxrjfvGbf1bFwn
-         GCX4yvyczRsCz/PCafWqcLuodsrJ5bErJzoTYJMP18Yc4xw3lnU5j32ASh9rdNsQT/BP
-         YB6L6lK2DQ72feI3bHLx1Vor6dBJpMumU+IKC2DVe/ftAl48z1wva9j05QWIQTV1AERZ
-         zUPFn8WuoXzZQ/hkCs7/QQuEzHYi2FAjjW3zieQLj0lSV3038hkgt/8B+cHEZvLVEfqb
-         2n/TmTZyajLKF5ZH+D4Gf4MLNx7Hpb2rHNoETQkcLkPr40eS4NEaRZ/0sBbYsgxVZATA
-         zquw==
+        Mon, 28 Jan 2019 12:27:22 -0500
+Received: by mail-qt1-f196.google.com with SMTP id i7so19099059qtj.10;
+        Mon, 28 Jan 2019 09:27:21 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rAf5KtiLxB+Y8yeddfolVuZO/p4Rej1EROwoeD/HCh4=;
-        b=oknuuX0SGbUilcCOqbqoBPI0Njpyrg2QhLe2VBKzAsChIBDIprE+2Wk5mxhvPVWtqD
-         uclIBytEiDf/5KblorItoMgGzcIwrDjDOo5NEnW7kCgOHWMklwSPZZ5kEi1fm8JxnBVx
-         gfiOQX6Kuuh/aV5+Co3FZQppzIkY28gvywCMFZXH9rAHYV4l9tRk8X+zX9a4+UU8wzOL
-         +jp2Y8ZI4+mlmyjlmBNfeIHnvcaVYIhkPRxz7tdOmBs4OX1eamm3NMN/2gfNrY7j0AFt
-         kL8nmt1UGfbqRZOVrodsTz1QkQ+gzXMrxcMZsxI0y8ybXwk8BbZVOFgUcn6ZY09XZ+9d
-         YDLA==
-X-Gm-Message-State: AJcUukeYnTR1aint0Go3jpFcCpX1M8tL4iF2nl4MwjVZMf05WQvM2JgO
-        yhYB9BCboExjLzxTvvw55Wb9WQN57FQ=
-X-Google-Smtp-Source: ALg8bN5pWnMJYEHDDziducx0SUj6LBoU4btuuFyq0iC9SAkRJPub3QntuNyHUtWJNFfYq0n26gY3VQ==
-X-Received: by 2002:a5d:6aca:: with SMTP id u10mr21687810wrw.310.1548691209769;
-        Mon, 28 Jan 2019 08:00:09 -0800 (PST)
-Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
-        by smtp.gmail.com with ESMTPSA id b12sm88642813wrt.17.2019.01.28.08.00.08
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 08:00:08 -0800 (PST)
-Date:   Mon, 28 Jan 2019 17:00:07 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Paul Kocialkowski <contact@paulk.fr>
-Cc:     dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-sunxi@googlegroups.com,
-        Mark Van den Borre <mark@fosdem.org>,
-        Gerry Demaret <gerry@fosdem.org>,
-        Luc Verhaegen <libv@skynet.be>
-Subject: Re: [PATCH v3 4/8] dt-bindings: Add vendor prefix for LeMaker
-Message-ID: <20190128160007.GD26200@ulmo>
-References: <20181107181843.27628-1-contact@paulk.fr>
- <20181107181843.27628-5-contact@paulk.fr>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/3eq4OeQiNL7g3hPaDevVdHlvfxoXgsQ3jv6q1rW2zo=;
+        b=PJphdu0Qww5URtayjCM7Hto6N9lcv3CjW+wM4ivTqtPecdqUPm+0kYieL/JuTj8/Ux
+         9I9W5mZgdryKatQjDVyyd9ePXCshw5bVRNhSBJXge/liOUoU1BBmhBe1Ie2gLhVkZUE5
+         IrZVe+lLFAKRI/ELf3iTi9oTE4Nc6UHoIRko/9/SDnMrTMQPr7q1EZts7GGCc86usOBM
+         UfFv63z4g1v6V7ZvSryoC8CZEYiqXR3SRRBYX6gSXJFTOMF/X+YvmWrTcJ+egsOsFQfE
+         k+Wb8J7zpTwnLyNe4PJhek44zjhjx158emfpE8P/Cpp/NYsyFS28PEjYMyetBoPC5roI
+         8bpg==
+X-Gm-Message-State: AJcUukcB8A2yGz4JvmTJ9rEj6jWbmGpzp2hBgnvcZzjQV+ec+nWzTj3g
+        4q+7BNnmXl/OoPuDZ7ogJVaGRWF8j4mJzAM2z0U=
+X-Google-Smtp-Source: ALg8bN5SrsmMrjmQ9p9bl0cDHfPjup6VJ/WykMG29RJe4V66d5pzkYyoX9OKz0DL7eslgKCiJrRrPAQwjq/pgSTSqcQ=
+X-Received: by 2002:ac8:4141:: with SMTP id e1mr21272039qtm.96.1548696441239;
+ Mon, 28 Jan 2019 09:27:21 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="Qrgsu6vtpU/OV/zm"
-Content-Disposition: inline
-In-Reply-To: <20181107181843.27628-5-contact@paulk.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190128154341.47195-1-sashal@kernel.org> <20190128154341.47195-175-sashal@kernel.org>
+ <CAK8P3a3z8tOxz=Rem6N7m_0_8OaU9Sxf7yViZJP5fmYGeaxUvQ@mail.gmail.com> <20190128172111.GD3973@sasha-vm>
+In-Reply-To: <20190128172111.GD3973@sasha-vm>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 28 Jan 2019 18:27:04 +0100
+Message-ID: <CAK8P3a1GM+kdKeiidy60PugWQYHRA=JzZ22vs_mMY6LZdbBn0g@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.20 175/304] ARM: mmp: fix timer_init calls
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 28, 2019 at 6:21 PM Sasha Levin <sashal@kernel.org> wrote:
+>
+> On Mon, Jan 28, 2019 at 05:41:55PM +0100, Arnd Bergmann wrote:
+> >On Mon, Jan 28, 2019 at 4:52 PM Sasha Levin <sashal@kernel.org> wrote:
+> >>
+> >> From: Arnd Bergmann <arnd@arndb.de>
+> >>
+> >> [ Upstream commit 12d3a30db4a3b3df5fbadf5974b9cf50544a9950 ]
+> >>
+> >> The change to passing the timer frequency as a function argument
+> >> was a good idea, but caused a build failure for one user that
+> >> was missed in the update:
+> >>
+> >> arch/arm/mach-mmp/time.c: In function 'mmp_dt_init_timer':
+> >> arch/arm/mach-mmp/time.c:242:2: error: implicit declaration of function 'timer_init'; did you mean 'hrtimer_init'? [-Werror=implicit-function-declaration]
+> >>
+> >> Change that as well to fix the build error, and rename the
+> >> function to put it into a proper namespace and make it clearer
+> >> what is actually going on.
+> >>
+> >> I saw that the high 6500000 HZ frequency was previously only
+> >> set with CONFIG_MMP2, but is now also used with MMP (pxa910),
+> >> so I'm changing that back here. Please make sure that the
+> >> frequencies are all correct now.
+> >>
+> >> Fixes: f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")
+> >> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> >> Signed-off-by: Olof Johansson <olof@lixom.net>
+> >> Signed-off-by: Sasha Levin <sashal@kernel.org>
+> >
+> >I did not think that Lubumir's patch was meant for stable,
+> >but as you've picked that one already we clearly
+> >want mine as well, so this is good for all stable kernels.
+>
+> I can drop both if you'd prefer that (they're both in this series).
 
---Qrgsu6vtpU/OV/zm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I'd say let's keep them, unless Lubomir prefers to have them dropped.
 
-On Wed, Nov 07, 2018 at 07:18:39PM +0100, Paul Kocialkowski wrote:
-> This introduces a new device-tree binding vendor prefix for Shenzhen
-> LeMaker Technology Co., Ltd.
->=20
-> This vendor was already in use but it was not documented until now.
->=20
-> Signed-off-by: Paul Kocialkowski <contact@paulk.fr>
-> Reviewed-by: Rob Hering <robh@kernel.org>
-> ---
->  Documentation/devicetree/bindings/vendor-prefixes.txt | 1 +
->  1 file changed, 1 insertion(+)
-
-Applied to drm-misc-next, thanks.
-
-Thierry
-
---Qrgsu6vtpU/OV/zm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxPJwcACgkQ3SOs138+
-s6FAihAAg3SFG5bkiqSyuBFogMyx2ezKdKZLxO4g3NAM6DhO3MKV/iyCCpbcxeaT
-L0YP13yjuhvOc3JdiX9H3OInqH4pUV2ybUPZ3RoVVgB/LTWxth+m61vg4S95kLbW
-801yEJqXxqHLSNX3jzZby9n6wKC5ojCDBTa0nggFlKKL/XIkFNAWIuf9S78cUPoG
-si4+xZf6tIftd8F3YYQLsTlfA/dTqTwJ4oBYOoH+W9DhgamxRV+DwwNfRpHy4JbJ
-cVs9tce+OhdZL9W/l8aisfq2TQtbctfEbFg+NjQq3z4y2HRk2jz5mWbtkhHDn198
-5Kew52EKWfxIydnJURrPtzGjF0gn27uHZaKAxhYNW8qTRnuQjzAJSey6sopsi15h
-nElhgiLK4yW86w5CO0sxtM+4Rn7FUHfgZP2ek8Uff496goaKvdJJqaD953HPDy9V
-FGLUKkekd28xLRrkuAKGwS5oXdLisCsckQZU3Wq/7NrxziudZvE8UxqoGrriYmZd
-//QZM5BWnc1T5+9bpfGXD6XsB5mY16wCy0VZulE4tLcBsltNDCt8ywHuJFvm+Scn
-Ujih/S4DGcALpvfmGABk5nKb9n9uLP+C54N5opmvCrKbRX+2ZfY4fvppkIed+fQ6
-dRfzEEQEvKVi2zROggB+McIp9Z+UtXLsjGapHbPgRYJpZ5fTmxM=
-=U+8k
------END PGP SIGNATURE-----
-
---Qrgsu6vtpU/OV/zm--
+      Arnd
