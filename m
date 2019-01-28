@@ -4,53 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 717FBC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8238FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 301312171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5709F2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692754;
-	bh=Of0+ciTKF5ckaOvnfYQJQySgvKnLy7VhTcoGe8Ub42A=;
+	s=default; t=1548692757;
+	bh=H3w7iQyLSktoE60p0KTrHDNUT8HwwE17kKhyhZKV3TE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dlFIs4lrlOToo+7j/qllODzfqetnqlkoj9zXSHmUh4lwhYENPfSnG5SmU5wtzkIuF
-	 fy56ILxGQ1P10JHaklmVJbJAA3HU2Rwz5jJHnH4jEYxD/MRNxMrabLHA9kvWEfXCKQ
-	 3gqC4q7OyWEqSXcLMhL0hURtgNiOhpEpYfvE2IcY=
+	b=Wnpgvf4St7z/7hcfVbb1mE0MGy2SCrLw+ZRnUcxce7xCAFXhqy5V93JX3tML1RJbK
+	 nREcC2cUu6Rwmqzi5Sh2aEcKi5pqliwKccunIKbtqO2D2+Bnis4myyAPBkxojqHV9o
+	 bUHU3ctQOXXbCes/eVD7kjklJLjqnINbl72K3NK8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390069AbfA1QZw (ORCPT
+        id S2390081AbfA1QZz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34804 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:25:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34890 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390039AbfA1QZt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:49 -0500
+        id S2390060AbfA1QZw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A8432084A;
-        Mon, 28 Jan 2019 16:25:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0245C2084A;
+        Mon, 28 Jan 2019 16:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692748;
-        bh=Of0+ciTKF5ckaOvnfYQJQySgvKnLy7VhTcoGe8Ub42A=;
+        s=default; t=1548692751;
+        bh=H3w7iQyLSktoE60p0KTrHDNUT8HwwE17kKhyhZKV3TE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GLJzNo8UNamFOtRZ1JDRRqg5Um8EbhA7JiA+CY7gei5lWf9AAV7jLaZl4aKDKcrLe
-         1CdWLpMnyHdt3C7b65A2P6V+0b/Bxl4US3Hs+zATV/+RpE24Ydl6GyQdrVmTOFRGW+
-         kAM/T5Gni9dCkS7RuCB7XmtKvE8QUXjlB3cbGzxk=
+        b=fOMlWigv+3YA7nWvMtE8Mlg2QmHJzdchRaFueXh4VMVBazZaFaormY/Xdid6C3ywj
+         LVXA2KrIVR9LVLJLKNUXT7vvQfKNw0la+iGGKwM9qNBpXLqIib7GHq2ZKTz1MDYcbV
+         Lh2KejqXV4aVraIe74CZN4O74jsTl9tiacbq6uw4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 61/80] KVM: x86: svm: report MSR_IA32_MCG_EXT_CTL as unsupported
-Date:   Mon, 28 Jan 2019 11:23:42 -0500
-Message-Id: <20190128162401.58841-61-sashal@kernel.org>
+Cc:     Kangjie Lu <kjlu@umn.edu>, Guenter Roeck <linux@roeck-us.net>,
+        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 64/80] hwmon: (lm80) fix a missing check of bus read in lm80 probe
+Date:   Mon, 28 Jan 2019 11:23:45 -0500
+Message-Id: <20190128162401.58841-64-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,42 +57,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit e87555e550cef4941579cd879759a7c0dee24e68 ]
+[ Upstream commit 9aa3aa15f4c2f74f47afd6c5db4b420fadf3f315 ]
 
-AMD doesn't seem to implement MSR_IA32_MCG_EXT_CTL and svm code in kvm
-knows nothing about it, however, this MSR is among emulated_msrs and
-thus returned with KVM_GET_MSR_INDEX_LIST. The consequent KVM_GET_MSRS,
-of course, fails.
+In lm80_probe(), if lm80_read_value() fails, it returns a negative
+error number which is stored to data->fan[f_min] and will be further
+used. We should avoid using the data if the read fails.
 
-Report the MSR as unsupported to not confuse userspace.
+The fix checks if lm80_read_value() fails, and if so, returns with the
+error number.
 
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Signed-off-by: Guenter Roeck <linux@roeck-us.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/kvm/svm.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/hwmon/lm80.c | 11 +++++++++--
+ 1 file changed, 9 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index ecdf724da371..7ce1a19d9d8b 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -4156,6 +4156,13 @@ static bool svm_cpu_has_accelerated_tpr(void)
+diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
+index 47ddae6b7038..cb6606a0470d 100644
+--- a/drivers/hwmon/lm80.c
++++ b/drivers/hwmon/lm80.c
+@@ -628,6 +628,7 @@ static int lm80_probe(struct i2c_client *client,
+ 	struct device *dev = &client->dev;
+ 	struct device *hwmon_dev;
+ 	struct lm80_data *data;
++	int rv;
  
- static bool svm_has_emulated_msr(int index)
- {
-+	switch (index) {
-+	case MSR_IA32_MCG_EXT_CTL:
-+		return false;
-+	default:
-+		break;
-+	}
-+
- 	return true;
- }
+ 	data = devm_kzalloc(dev, sizeof(struct lm80_data), GFP_KERNEL);
+ 	if (!data)
+@@ -640,8 +641,14 @@ static int lm80_probe(struct i2c_client *client,
+ 	lm80_init_client(client);
  
+ 	/* A few vars need to be filled upon startup */
+-	data->fan[f_min][0] = lm80_read_value(client, LM80_REG_FAN_MIN(1));
+-	data->fan[f_min][1] = lm80_read_value(client, LM80_REG_FAN_MIN(2));
++	rv = lm80_read_value(client, LM80_REG_FAN_MIN(1));
++	if (rv < 0)
++		return rv;
++	data->fan[f_min][0] = rv;
++	rv = lm80_read_value(client, LM80_REG_FAN_MIN(2));
++	if (rv < 0)
++		return rv;
++	data->fan[f_min][1] = rv;
+ 
+ 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
+ 							   data, lm80_groups);
 -- 
 2.19.1
 
