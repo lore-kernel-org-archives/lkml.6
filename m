@@ -7,49 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F11CC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10F8CC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15A3E2084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D75A12084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692689;
-	bh=kaVyc7Qcmbnp+b5HeNTRWZk6dumTsdFyQ355WS8qJFg=;
+	s=default; t=1548692691;
+	bh=bCKzqDoi5xXat0eK0Qz+EnV6k1M7Q9l+gVPCC3ZIu7E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UqY4QwWksoRP+BxFWoZc5mjWvrE/GdpxJuO1ipAfxz9tFWYe/7HEoPJoIxDVBDWlv
-	 ZgrBdRiLmogRQJUIpw9TRwLMnAHcjR0sqYuJid6D4G0UTz/UiWWB1Fxd+ZyDiSkwIJ
-	 utGzed3V/+MDvfzw+dIZaVLa6T2XCGd1/YL41Rc8=
+	b=lkAMZReaZ5NmUDKpFns+wuxwz2oXWGLZZ3OSTueczrc96xnuoXl9cJhP/4sATiTsx
+	 AVJeR0dUkvwW09GS+IUZiRdLKC/HgsSV4J15MzqZh5iiA4wSErkHuqX0x4YRVWc/Wr
+	 TO5YPhwVG516H8L1/6l6cjCw/KqjHTXooXkqwqeQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389778AbfA1QYm (ORCPT
+        id S2389795AbfA1QYu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:24:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33238 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:24:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33382 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389734AbfA1QYi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:24:38 -0500
+        id S2389285AbfA1QYq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3CA0B2177E;
-        Mon, 28 Jan 2019 16:24:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48F722084A;
+        Mon, 28 Jan 2019 16:24:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692678;
-        bh=kaVyc7Qcmbnp+b5HeNTRWZk6dumTsdFyQ355WS8qJFg=;
+        s=default; t=1548692684;
+        bh=bCKzqDoi5xXat0eK0Qz+EnV6k1M7Q9l+gVPCC3ZIu7E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=K9eWjmLqFs4crFSc+sp2ETv9GksOrsExs0PVh2JazNlLq4buV+n5bDya8WhCx9j/O
-         M/JdaTe5ajKMtJDsFzYSWSoq76OSKWSupYBGh66hTPRbkNK6g+xhT9LCuGzt5+U/Up
-         K0DB8h9Zojfr9Z9JOm6kVsIkUwTSqs2gVF20fMCo=
+        b=H+RXuUbJcgaWQxl1HgMf/ayWX2BFYpme3lmfGZqbXa7bpfOi7X02UIQ7W9Ax+p1xL
+         64c7RZ+b/I0y4V8rFiV9bwJz/sPU+oTNLGdJhajecWAni6ypJqsynLf1bsTtxZjISf
+         VINP+AsXQMXjGCtMgirc55pQ9FCZubrrXl4ae7Eo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Torsten Duwe <duwe@suse.de>, Will Deacon <will.deacon@arm.com>,
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 24/80] arm64: ftrace: don't adjust the LR value
-Date:   Mon, 28 Jan 2019 11:23:05 -0500
-Message-Id: <20190128162401.58841-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 26/80] ARM: mmp/mmp2: dt: enable the clock
+Date:   Mon, 28 Jan 2019 11:23:07 -0500
+Message-Id: <20190128162401.58841-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -61,53 +57,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit 6e803e2e6e367db9a0d6ecae1bd24bb5752011bd ]
+[ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
 
-The core ftrace code requires that when it is handed the PC of an
-instrumented function, this PC is the address of the instrumented
-instruction. This is necessary so that the core ftrace code can identify
-the specific instrumentation site. Since the instrumented function will
-be a BL, the address of the instrumented function is LR - 4 at entry to
-the ftrace code.
+The device-tree booted MMP2 needs to enable the timer clock, otherwise
+it would stop ticking when the boot finishes.
 
-This fixup is applied in the mcount_get_pc and mcount_get_pc0 helpers,
-which acquire the PC of the instrumented function.
+It can also use the clock rate from the clk, the non-DT boards need to
+keep using the hardcoded rates.
 
-The mcount_get_lr helper is used to acquire the LR of the instrumented
-function, whose value does not require this adjustment, and cannot be
-adjusted to anything meaningful. No adjustment of this value is made on
-other architectures, including arm. However, arm64 adjusts this value by
-4.
-
-This patch brings arm64 in line with other architectures and removes the
-adjustment of the LR value.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Torsten Duwe <duwe@suse.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/entry-ftrace.S | 1 -
- 1 file changed, 1 deletion(-)
+ arch/arm/mach-mmp/common.h |  2 +-
+ arch/arm/mach-mmp/mmp2.c   |  2 +-
+ arch/arm/mach-mmp/pxa168.c |  2 +-
+ arch/arm/mach-mmp/time.c   | 32 ++++++++++++++++++++------------
+ 4 files changed, 23 insertions(+), 15 deletions(-)
 
-diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
-index 0f03a8fe2314..d18d15810d19 100644
---- a/arch/arm64/kernel/entry-ftrace.S
-+++ b/arch/arm64/kernel/entry-ftrace.S
-@@ -78,7 +78,6 @@
- 	.macro mcount_get_lr reg
- 	ldr	\reg, [x29]
- 	ldr	\reg, [\reg, #8]
--	mcount_adjust_addr	\reg, \reg
- 	.endm
+diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
+index cf445bae6d77..69c7eec6d1e0 100644
+--- a/arch/arm/mach-mmp/common.h
++++ b/arch/arm/mach-mmp/common.h
+@@ -1,7 +1,7 @@
+ #include <linux/reboot.h>
+ #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
  
- 	.macro mcount_get_lr_addr reg
+-extern void timer_init(int irq);
++extern void timer_init(int irq, unsigned long rate);
+ 
+ extern void __init mmp_map_io(void);
+ extern void mmp_restart(enum reboot_mode, const char *);
+diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
+index a70b5530bd42..90a0d8114af2 100644
+--- a/arch/arm/mach-mmp/mmp2.c
++++ b/arch/arm/mach-mmp/mmp2.c
+@@ -133,7 +133,7 @@ void __init mmp2_timer_init(void)
+ 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
+ 	__raw_writel(clk_rst, APBC_TIMERS);
+ 
+-	timer_init(IRQ_MMP2_TIMER1);
++	timer_init(IRQ_MMP2_TIMER1, 6500000);
+ }
+ 
+ /* on-chip devices */
+diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
+index 144e997624c0..5a616db7f392 100644
+--- a/arch/arm/mach-mmp/pxa168.c
++++ b/arch/arm/mach-mmp/pxa168.c
+@@ -78,7 +78,7 @@ void __init pxa168_timer_init(void)
+ 	/* 3.25MHz, bus/functional clock enabled, release reset */
+ 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
+ 
+-	timer_init(IRQ_PXA168_TIMER1);
++	timer_init(IRQ_PXA168_TIMER1, 6500000);
+ }
+ 
+ void pxa168_clear_keypad_wakeup(void)
+diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
+index dbc697b2fda1..7e7520a9eddb 100644
+--- a/arch/arm/mach-mmp/time.c
++++ b/arch/arm/mach-mmp/time.c
+@@ -22,6 +22,7 @@
+ #include <linux/kernel.h>
+ #include <linux/interrupt.h>
+ #include <linux/clockchips.h>
++#include <linux/clk.h>
+ 
+ #include <linux/io.h>
+ #include <linux/irq.h>
+@@ -39,12 +40,6 @@
+ 
+ #include "clock.h"
+ 
+-#ifdef CONFIG_CPU_MMP2
+-#define MMP_CLOCK_FREQ		6500000
+-#else
+-#define MMP_CLOCK_FREQ		3250000
+-#endif
+-
+ #define TIMERS_VIRT_BASE	TIMERS1_VIRT_BASE
+ 
+ #define MAX_DELTA		(0xfffffffe)
+@@ -190,19 +185,18 @@ static struct irqaction timer_irq = {
+ 	.dev_id		= &ckevt,
+ };
+ 
+-void __init timer_init(int irq)
++void __init timer_init(int irq, unsigned long rate)
+ {
+ 	timer_config();
+ 
+-	sched_clock_register(mmp_read_sched_clock, 32, MMP_CLOCK_FREQ);
++	sched_clock_register(mmp_read_sched_clock, 32, rate);
+ 
+ 	ckevt.cpumask = cpumask_of(0);
+ 
+ 	setup_irq(irq, &timer_irq);
+ 
+-	clocksource_register_hz(&cksrc, MMP_CLOCK_FREQ);
+-	clockevents_config_and_register(&ckevt, MMP_CLOCK_FREQ,
+-					MIN_DELTA, MAX_DELTA);
++	clocksource_register_hz(&cksrc, rate);
++	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
+ }
+ 
+ #ifdef CONFIG_OF
+@@ -214,7 +208,9 @@ static const struct of_device_id mmp_timer_dt_ids[] = {
+ void __init mmp_dt_init_timer(void)
+ {
+ 	struct device_node *np;
++	struct clk *clk;
+ 	int irq, ret;
++	unsigned long rate;
+ 
+ 	np = of_find_matching_node(NULL, mmp_timer_dt_ids);
+ 	if (!np) {
+@@ -222,6 +218,18 @@ void __init mmp_dt_init_timer(void)
+ 		goto out;
+ 	}
+ 
++	clk = of_clk_get(np, 0);
++	if (!IS_ERR(clk)) {
++		ret = clk_prepare_enable(clk);
++		if (ret)
++			goto out;
++		rate = clk_get_rate(clk) / 2;
++	} else if (cpu_is_pj4()) {
++		rate = 6500000;
++	} else {
++		rate = 3250000;
++	}
++
+ 	irq = irq_of_parse_and_map(np, 0);
+ 	if (!irq) {
+ 		ret = -EINVAL;
+@@ -232,7 +240,7 @@ void __init mmp_dt_init_timer(void)
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	timer_init(irq);
++	timer_init(irq, rate);
+ 	return;
+ out:
+ 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
 -- 
 2.19.1
 
