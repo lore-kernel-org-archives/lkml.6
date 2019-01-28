@@ -2,95 +2,113 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D7BFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:22:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFDFC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D1C5214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:22:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696160;
-	bh=JYZ9wKN3GG7XpQUG9Se5rWp0h1ZFhe21NVzsX2cQnbQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ReLZ6S2pp74cVRYMgTX/MnRWi6AHi7Vb8t4bRsRWqWvaLXxmOwLvD1XBKYyYYmv8O
-	 CQbK5eMy92I7pfMQM0vdh+gLuyDgpRLJ4oWY2dsLpKunlJnmAbx/JKrkYGnaMPTP0N
-	 LTeMeOqGNkX9DEsDvtmKHKKs2VIfLu6ZBQMcnUEg=
+	by mail.kernel.org (Postfix) with ESMTP id 1047220989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:22:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tycho-ws.20150623.gappssmtp.com header.i=@tycho-ws.20150623.gappssmtp.com header.b="eIpQPffV"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731355AbfA1QDQ (ORCPT
+        id S1731537AbfA1RWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:03:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727969AbfA1QDN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:03:13 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0411021852;
-        Mon, 28 Jan 2019 16:03:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691393;
-        bh=JYZ9wKN3GG7XpQUG9Se5rWp0h1ZFhe21NVzsX2cQnbQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=jXm24CgvQP9wwU/8xDd+RrPFGd/qCW8bZDmgpJxL1zvyMiAltm8JmAmIKQkJ3K8s6
-         trFTZZeWeL8nZ5jo4tZkNm8prDtNLymytZTDWqfbjnF2ag3/l2BBpWltdVJhtYM6cR
-         Ty/wHrDXPzpfqjocj59MzLfS+U97ciuDLz4jvl4c=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 078/258] net: aquantia: return 'err' if set MPI_DEINIT state fails
-Date:   Mon, 28 Jan 2019 10:56:24 -0500
-Message-Id: <20190128155924.51521-78-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
-References: <20190128155924.51521-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 12:22:48 -0500
+Received: from mail-yb1-f174.google.com ([209.85.219.174]:37488 "EHLO
+        mail-yb1-f174.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730145AbfA1RWq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 12:22:46 -0500
+Received: by mail-yb1-f174.google.com with SMTP id 2so6988301ybw.4
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 09:22:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tycho-ws.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=AM9RpxkGBW+7XEPrSlC6CHVHJx/N04UabApqCOfk8XQ=;
+        b=eIpQPffVfxWr8E9yEMG3n0ynn3souEVAqDMvhCDryU50yKrbIpNetlBt3VoYaoyPUk
+         LF10fkm4gH6A9Fa58g8EoXcbtB9qogyY4EVpjtPzp3kcu/yL/74AAVAx57wwPp/4/8Rn
+         UrfcMDOGHii4dtnXYeEHe8H1/i962cJG4m0+lU8R5RlzafxoaETi9fVq2xnftuf91c3m
+         WSCsCGm/WwzX/TkB32vfcjHehPm8zF01H1uJXzUcHUmTLAzfR4BMvKocYgxHmJpLHVHj
+         LntedwSFKNnehqZSLKAArolfqAehbmnZRj+Yw9TLIcY/kWajBlK6cz24rEnqBkqvJHI9
+         qcNg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=AM9RpxkGBW+7XEPrSlC6CHVHJx/N04UabApqCOfk8XQ=;
+        b=oKVbc7ceKjbbthZKMfy0H/nFsoYRthfwbrSp4yArGuxSkKX47sszE+OBDMQlGBIeXU
+         F/52DhYZQcrsm6LKGGN2RRNCys/Wkrr1NFJ/K3FYUBTCZ24oeXTINozS4XDWLeWzmDda
+         4X47TDOjnNOLRK5o99/cbX1GX5+q81Yy3NWHlsTKAAMpSNwmdZZJeK+7y/XwQ9u+FhaI
+         8uF4Ei5Da84Wt2Yxeim6xZGAiN7Bs2ROkvG84JLAlap7yXF808FOO+ksftsQSXhv7arn
+         t4wVcDWOPD4JDdxMG6OD+iYXxW/uBrCFesakuER1k1DMWD3/FaKK6nSuaK+k5x+3ox9V
+         H0yA==
+X-Gm-Message-State: AJcUukcqp7i6VFrPGRXvQo6gNY/HmPVZvvid/EEC36NpZFV5uwO5GkJw
+        atqcIDS4jmccs5qvaerCrhkzKw==
+X-Google-Smtp-Source: AHgI3IZM1o+tnMWKnNc4fk/XGgJqN4m/F5bj+p0HNH6ZsqJIhHGKhBrlICXkVaJkIlQHWg5C0p3RVQ==
+X-Received: by 2002:a25:b1a6:: with SMTP id h38mr4475201ybj.58.1548696164804;
+        Mon, 28 Jan 2019 09:22:44 -0800 (PST)
+Received: from cisco ([2601:282:901:dd7b:4cb8:dc46:1786:8038])
+        by smtp.gmail.com with ESMTPSA id f62sm14397783ywd.68.2019.01.28.09.22.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 09:22:43 -0800 (PST)
+Date:   Mon, 28 Jan 2019 10:22:42 -0700
+From:   Tycho Andersen <tycho@tycho.ws>
+To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: 4.14 revert "seccomp: add a selftest for get_metadata"
+Message-ID: <20190128172242.GA4170@cisco>
+References: <8d246df3cdf19608cb6a043bf1dabe8f0adcae6d.camel@nokia.com>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <8d246df3cdf19608cb6a043bf1dabe8f0adcae6d.camel@nokia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+On Mon, Jan 28, 2019 at 05:13:11PM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
+> Hi Greg,
+> 
+> Can you please revert this commit in 4.14?
+> 
+> commit e65cd9a20343ea90f576c24c38ee85ab6e7d5fec
+> Author: Tycho Andersen <tycho@tycho.ws>
+> Date:   Tue Feb 20 19:47:47 2018 -0700
+> 
+>     seccomp: add a selftest for get_metadata
+>     
+>     [ Upstream commit d057dc4e35e16050befa3dda943876dab39cbf80 ]
+>     
+>     Let's test that we get the flags correctly, and that we preserve
+> the filter
+>     index across the ptrace(PTRACE_SECCOMP_GET_METADATA) correctly.
+> 
+> 
+> 
+> PTRACE_SECCOMP_GET_METADATA was only added in 4.16
+> (26500475ac1b499d8636ff281311d633909f5d20)
+> 
+> 
+> And it's also breaking seccomp_bpf.c compilation for me:
+> 
+> seccomp_bpf.c: In function ‘get_metadata’:
+> seccomp_bpf.c:2878:26: error: storage size of ‘md’ isn’t known
+>   struct seccomp_metadata md;
 
-[ Upstream commit 4e3c7c00bba0636b97eb23d582c20b0f5d95ce20 ]
+Yes, agreed. The get_metadata() stuff went in for 4.16, so anything
+before that won't have the struct. Sorry if I missed the stable commit
+before.
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Cheers,
 
-drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c:260:7:
- warning: variable 'err' set but not used [-Wunused-but-set-variable]
-
-'err' should be returned while set MPI_DEINIT state fails
-in hw_atl_utils_soft_reset.
-
-Fixes: cce96d1883da ("net: aquantia: Regression on reset with 1.x firmware")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
-index c965e65d07db..9939ccaeb125 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
-@@ -262,6 +262,8 @@ int hw_atl_utils_soft_reset(struct aq_hw_s *self)
- 		AQ_HW_WAIT_FOR((aq_hw_read_reg(self, HW_ATL_MPI_STATE_ADR) &
- 			       HW_ATL_MPI_STATE_MSK) == MPI_DEINIT,
- 			       10, 1000U);
-+		if (err)
-+			return err;
- 	}
- 
- 	if (self->rbl_enabled)
--- 
-2.19.1
-
+Tycho
