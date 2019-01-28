@@ -2,117 +2,142 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72B78C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:27:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE969C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A2662148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:27:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6ACA42148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:30:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="MfHrq6bA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726820AbfA1L1w (ORCPT
+        id S1726761AbfA1LaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:27:52 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50801 "EHLO mx1.redhat.com"
+        Mon, 28 Jan 2019 06:30:16 -0500
+Received: from mout02.posteo.de ([185.67.36.66]:52501 "EHLO mout02.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbfA1L1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:27:52 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 11BE9AC5FB;
-        Mon, 28 Jan 2019 11:27:52 +0000 (UTC)
-Received: from krava (unknown [10.40.205.232])
-        by smtp.corp.redhat.com (Postfix) with SMTP id F12DB1001943;
-        Mon, 28 Jan 2019 11:27:49 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 12:27:48 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     Alexey Budankov <alexey.budankov@linux.intel.com>
-Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 0/4] Reduce NUMA related overhead in perf record
- profiling on large server systems
-Message-ID: <20190128112748.GC15461@krava>
-References: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
+        id S1726648AbfA1LaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 06:30:16 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id 6D5B62400FC
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 12:30:13 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1548675013; bh=tgu93XVYDIYuC8NSSqhHjri5VbEMB4SrBgESQDOFZG0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=MfHrq6bAaywUBGN0QcJm3Tugohv0sQchIbBdaiq1H5KRe3B5EMPNVfpMv1A8qYy1a
+         cWnvFUja6zQSM3ZCkDTuNvozEAT64g4/lDLzlZHVFC/Ng1b5s4STdoGZzKvkUK0OKQ
+         QZpNLB4DKTAYloKr9B/k8mOdpCull+XfSOdD0NyBWBz5ut+PtQAMjBHsvLmoxxYpfq
+         EJAVb6dDRab4UJIqtWkcfu1CFNAkUQJlmU1LXA4+13pwX0kQGNEcWDOpzpj0eBziAP
+         ZWKVx4iaRRnEpZ+pVXuhnAxkHUtl2rsy14rH3rlADpt9reykG9wBzU3Q78o0T9QFsr
+         1R7DAesVdx2xA==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 43p6qk4qN7z9rxT;
+        Mon, 28 Jan 2019 12:30:10 +0100 (CET)
+From:   Martin Kepplinger <martink@posteo.de>
+To:     davem@davemloft.net, kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netdev@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: [PATCH] ipconfig: make the wait for carrier timeout configurable
+Date:   Mon, 28 Jan 2019 12:30:05 +0100
+Message-Id: <20190128113005.7683-1-martink@posteo.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 28 Jan 2019 11:27:52 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 08:45:12PM +0300, Alexey Budankov wrote:
+From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 
-SNIP
+commit 3fb72f1e6e61 ("ipconfig wait for carrier") added a
+"wait for carrier" policy, with a fixed worst case maximum wait
+of two minutes.
 
-> The patch set has been validated on BT benchmark from NAS Parallel 
-> Benchmarks [2] running on dual socket, 44 cores, 88 hw threads Broadwell 
-> system with kernels v4.4-21-generic (Ubuntu 16.04) and v4.20.0-rc5 
-> (tip perf/core). 
-> 
-> The patch set is for Arnaldo's perf/core repository.
-> 
-> OVERHEAD:
-> 			       BENCH REPORT BASED   ELAPSED TIME BASED
-> 	  v4.20.0-rc5 
->           (tip perf/core):
-> 				
-> (current) SERIAL-SYS  / BASE : 1.27x (14.37/11.31), 1.29x (15.19/11.69)
-> 	  SERIAL-NODE / BASE : 1.15x (13.04/11.31), 1.17x (13.79/11.69)
-> 	  SERIAL-CPU  / BASE : 1.00x (11.32/11.31), 1.01x (11.89/11.69)
-> 	
-> 	  AIO1-SYS    / BASE : 1.29x (14.58/11.31), 1.29x (15.26/11.69)
-> 	  AIO1-NODE   / BASE : 1.08x (12.23/11.31), 1,11x (13.01/11.69)
-> 	  AIO1-CPU    / BASE : 1.07x (12.14/11.31), 1.08x (12.83/11.69)
-> 
-> 	  v4.4.0-21-generic
->           (Ubuntu 16.04 LTS):
-> 
-> (current) SERIAL-SYS  / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
-> 	  SERIAL-NODE / BASE : 1.19x (13.02/10.87), 1.23x (14.03/11.32)
-> 	  SERIAL-CPU  / BASE : 1.03x (11.21/10.87), 1.07x (12.18/11.32)
-> 	
-> 	  AIO1-SYS    / BASE : 1.26x (13.73/10.87), 1.29x (14.69/11.32)
-> 	  AIO1-NODE   / BASE : 1.10x (12.04/10.87), 1.15x (13.03/11.32)
-> 	  AIO1-CPU    / BASE : 1.12x (12.20/10.87), 1.15x (13.09/11.32)
-> 
-> ---
-> Alexey Budankov (4):
->   perf record: allocate affinity masks
->   perf record: bind the AIO user space buffers to nodes
->   perf record: apply affinity masks when reading mmap buffers
->   perf record: implement --affinity=node|cpu option
-> 
->  tools/perf/Documentation/perf-record.txt |   5 ++
->  tools/perf/builtin-record.c              |  45 +++++++++-
->  tools/perf/perf.h                        |   8 ++
->  tools/perf/util/cpumap.c                 |  10 +++
->  tools/perf/util/cpumap.h                 |   1 +
->  tools/perf/util/evlist.c                 |   6 +-
->  tools/perf/util/evlist.h                 |   2 +-
->  tools/perf/util/mmap.c                   | 105 ++++++++++++++++++++++-
->  tools/perf/util/mmap.h                   |   3 +-
->  9 files changed, 175 insertions(+), 10 deletions(-)
-> 
-> ---
-> Changes in v5:
-> - avoided multiple allocations of online cpu maps by 
->   implementing it once in cpu_map__online()
-> - reduced indentation at record__parse_affinity()
+This makes the wait for carrier timeout configurable (0 - 240 seconds).
 
-Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+The informative timeout messages introduced with
+commit 5e404cd65860 ("ipconfig: add informative timeout messages while
+waiting for carrier") were adapted. Message output is done in a fixed
+interval of 20 seconds, just like before (240/12).
 
-thanks,
-jirka
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+---
+
+This is really just something we always set shorter on embedded devices
+and don't understand why it isn't configurable :)
+
+thanks
+
+                              martin
+
+
+
+ net/ipv4/Kconfig    | 11 +++++++++++
+ net/ipv4/ipconfig.c |  7 ++++---
+ 2 files changed, 15 insertions(+), 3 deletions(-)
+
+diff --git a/net/ipv4/Kconfig b/net/ipv4/Kconfig
+index 32cae39cdff6..299c5dbbea97 100644
+--- a/net/ipv4/Kconfig
++++ b/net/ipv4/Kconfig
+@@ -113,6 +113,17 @@ config IP_PNP
+ 	  on NFS" as well), because all other machines configure the network
+ 	  in their startup scripts.
+ 
++config IP_PNP_CARRIER_TIMEOUT
++	int "Wait for carrier timeout (in seconds)"
++	default 120
++	range 0 240
++	depends on IP_PNP
++	help
++	  This defines the timeout waiting for carrier in seconds before
++	  continuing kernel startup.
++
++	  Use the default if unsure.
++
+ config IP_PNP_DHCP
+ 	bool "IP: DHCP support"
+ 	depends on IP_PNP
+diff --git a/net/ipv4/ipconfig.c b/net/ipv4/ipconfig.c
+index b9a9873c25c6..e8041c0c2b97 100644
+--- a/net/ipv4/ipconfig.c
++++ b/net/ipv4/ipconfig.c
+@@ -85,7 +85,8 @@
+ 
+ /* Define the friendly delay before and after opening net devices */
+ #define CONF_POST_OPEN		10	/* After opening: 10 msecs */
+-#define CONF_CARRIER_TIMEOUT	120000	/* Wait for carrier timeout */
++/* Wait for carrier timeout */
++#define CONF_CARRIER_TIMEOUT	(CONFIG_IP_PNP_CARRIER_TIMEOUT*1000)
+ 
+ /* Define the timeout for waiting for a DHCP/BOOTP/RARP reply */
+ #define CONF_OPEN_RETRIES 	2	/* (Re)open devices twice */
+@@ -268,7 +269,7 @@ static int __init ic_open_devs(void)
+ 
+ 	/* wait for a carrier on at least one device */
+ 	start = jiffies;
+-	next_msg = start + msecs_to_jiffies(CONF_CARRIER_TIMEOUT/12);
++	next_msg = start + msecs_to_jiffies(20000);
+ 	while (time_before(jiffies, start +
+ 			   msecs_to_jiffies(CONF_CARRIER_TIMEOUT))) {
+ 		int wait, elapsed;
+@@ -285,7 +286,7 @@ static int __init ic_open_devs(void)
+ 		elapsed = jiffies_to_msecs(jiffies - start);
+ 		wait = (CONF_CARRIER_TIMEOUT - elapsed + 500)/1000;
+ 		pr_info("Waiting up to %d more seconds for network.\n", wait);
+-		next_msg = jiffies + msecs_to_jiffies(CONF_CARRIER_TIMEOUT/12);
++		next_msg = jiffies + msecs_to_jiffies(20000);
+ 	}
+ have_carrier:
+ 	rtnl_unlock();
+-- 
+2.20.1
+
