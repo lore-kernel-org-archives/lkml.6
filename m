@@ -2,208 +2,106 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1A46C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:29:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 484CDC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:31:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73CFF2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:29:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548710968;
-	bh=WZ+sg2j0YsncyiWfA5u5oErKZvs/H/2+TwKOOAnfWyo=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=BBHn8ndeuzMQIi7BwMnWdE+kcGYNx1PD+5bK4F+t40dT9481ecpKTWd4rwYZZnNno
-	 4nDJmupCp/lYTvdb6W7SIMZfB2m/LKKA6f1j6oaKSFQJ4OCUgZwUM2wg9P3MLC5weW
-	 rDDA+/gERhsq+p5ocTYgb/cDTPf18gSs6OYr610Q=
+	by mail.kernel.org (Postfix) with ESMTP id 182DC21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:31:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20150623.gappssmtp.com header.i=@cmpxchg-org.20150623.gappssmtp.com header.b="ZEOZkIB1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbfA1V31 (ORCPT
+        id S1727394AbfA1VbV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 16:29:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34598 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726744AbfA1V30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 16:29:26 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4094A21738;
-        Mon, 28 Jan 2019 21:29:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548710964;
-        bh=WZ+sg2j0YsncyiWfA5u5oErKZvs/H/2+TwKOOAnfWyo=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=g850F9vqaxNhG/AkfdHjEfB9mNq7dfRJGDKWNHBm1c/teO8G5OR673EfauDkvUL0Q
-         P6WwRhepgvDwH9hAjQHdKnjCWMj6vhp1l/qamp0ba7dK1VJwm59zD1A+t7QzANhN8R
-         EE2rQNrg4KUfLcgr4FcReBy6J8EfzT3pwxrfCNyQ=
-Subject: Re: [PATCH] tty: Fix WARNING in tty_set_termios
-To:     Al Viro <viro@zeniv.linux.org.uk>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, w.d.hubbs@gmail.com,
-        chris@the-brannons.com, kirk@reisers.ca,
-        samuel.thibault@ens-lyon.org, gregkh@linuxfoundation.org,
-        robh@kernel.org, jslaby@suse.com, sameo@linux.intel.com,
-        davem@davemloft.net, arnd@arndb.de,
-        nishka.dasgupta_ug18@ashoka.edu.in, m.maya.nakamura@gmail.com,
-        santhameena13@gmail.com, zhongjiang@huawei.com,
-        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-        speakup@linux-speakup.org, devel@driverdev.osuosl.org,
-        linux-serial@vger.kernel.org, linux-wireless@vger.kernel.org,
-        netdev@vger.kernel.org, shuah <shuah@kernel.org>
-References: <20190125232905.21727-1-shuah@kernel.org>
- <20190126041416.GF2217@ZenIV.linux.org.uk>
-From:   shuah <shuah@kernel.org>
-Message-ID: <fe4018a7-19e4-cdd1-3095-bbe88a82788e@kernel.org>
-Date:   Mon, 28 Jan 2019 14:29:22 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 28 Jan 2019 16:31:21 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:35273 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726744AbfA1VbV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 16:31:21 -0500
+Received: by mail-yw1-f65.google.com with SMTP id h32so7374211ywk.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 13:31:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=YAmmgKNRrQc5gbyA9vCwhi1X0/D3dSvcMoWevldO61g=;
+        b=ZEOZkIB1dewlaD5Y88LebQn5HMgZEDeuALlgAC8pDnS/sfQZ8K6q8lkY836iFp/Kdw
+         1It/VXY71UBzl1Bq7uh1IQfoJmSOqpgULvqmJE3ZspNPl8BPV5sjb83Xb/fC2Mzd/yhA
+         Eu6LIMbmYraCkmEsuq7xjdLo/MM+VJPVxA/A9rZgYLOlqGTs+CVaHhBvXqOFUBWs2gES
+         +xKhaDOu2ZiqRD85iIYTWm8h0IpSudZoXEA+qxmeXddUu0fljZFnNNJvAJjk2cFervnN
+         dFRepVyf/R1qL4CFhy5JHnciEQw4kJrZvH+kb5VjmytlAglZ+q8KE0yqeQQh/uZ4s8Tv
+         og1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=YAmmgKNRrQc5gbyA9vCwhi1X0/D3dSvcMoWevldO61g=;
+        b=JPeQzUCzVqyMg6hh2LFF2iBdC8zWZn1uPFzs2Ujp+aNfoEP3byRpnHmG/pJHhHt7DM
+         a2zW+HUNoQWFUDQwpZ8Hat1D9hDmdmrK++iu3FPTGdnp5n1vfNq8D13tZZp8dbJmlVUB
+         /C37Olx3D6f+LoaDaaXsIof3iUWB4GdkXAyP0QIeylc3c8YM4KKLr+67AoGNiHzGhSkQ
+         ThoH1a/ce030phAWGTPmB7JG//7pEWIO4EULB2bu0ExsDjk5BhVkfJvZorYFoyTe7q8Q
+         yGltaL4uVLab4hejKrKp5ILVQORFQvkvohSsnksYdZ1GzJ/OZccVPbn/UptuBykN/8vC
+         oj2Q==
+X-Gm-Message-State: AJcUukeFbwOD/D1GPI8pekxlmjqIM8Fx6foyejnEdxmWaoR1wzFOlBb/
+        DM2+mY71JVndLUllW7g8PK8OBw==
+X-Google-Smtp-Source: ALg8bN7r2Al7asGW6bKrsfih1TF2sfeDStiKF6KOaXlnpYSIXwhcAGaYJxIlng3sTi0ucBCqmjkmxQ==
+X-Received: by 2002:a81:11d5:: with SMTP id 204mr22836937ywr.287.1548711079931;
+        Mon, 28 Jan 2019 13:31:19 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::5:42c8])
+        by smtp.gmail.com with ESMTPSA id p3sm12266647ywc.14.2019.01.28.13.31.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 13:31:19 -0800 (PST)
+Date:   Mon, 28 Jan 2019 16:31:18 -0500
+From:   Johannes Weiner <hannes@cmpxchg.org>
+To:     Rik van Riel <riel@surriel.com>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-team@fb.com, Chris Mason <clm@fb.com>,
+        Roman Gushchin <guro@fb.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] mm,slab,vmscan: accumulate gradual pressure on small
+ slabs
+Message-ID: <20190128213118.GE1416@cmpxchg.org>
+References: <20190128143535.7767c397@imladris.surriel.com>
 MIME-Version: 1.0
-In-Reply-To: <20190126041416.GF2217@ZenIV.linux.org.uk>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128143535.7767c397@imladris.surriel.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/25/19 9:14 PM, Al Viro wrote:
-> On Fri, Jan 25, 2019 at 04:29:05PM -0700, Shuah Khan wrote:
->> tty_set_termios() has the following WARMN_ON which can be triggered with a
->> syscall to invoke TIOCGETD __NR_ioctl.
->>
->> WARN_ON(tty->driver->type == TTY_DRIVER_TYPE_PTY &&
->>                  tty->driver->subtype == PTY_TYPE_MASTER);
->> Reference: https://syzkaller.appspot.com/bug?id=2410d22f1d8e5984217329dd0884b01d99e3e48d
->>
->> A simple change would have been to print error message instead of WARN_ON.
->> However, the callers assume that tty_set_termios() always returns 0 and
->> don't check return value. The complete solution is fixing all the callers
->> to check error and bail out to fix the WARN_ON.
->>
->> This fix changes tty_set_termios() to return error and all the callers
->> to check error and bail out. The reproducer is used to reproduce the
->> problem and verify the fix.
+On Mon, Jan 28, 2019 at 02:35:35PM -0500, Rik van Riel wrote:
+> There are a few issues with the way the number of slab objects to
+> scan is calculated in do_shrink_slab.  First, for zero-seek slabs,
+> we could leave the last object around forever. That could result
+> in pinning a dying cgroup into memory, instead of reclaiming it.
+> The fix for that is trivial.
 > 
->> --- a/drivers/bluetooth/hci_ldisc.c
->> +++ b/drivers/bluetooth/hci_ldisc.c
->> @@ -321,6 +321,8 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
->>   		status = tty_set_termios(tty, &ktermios);
->>   		BT_DBG("Disabling hardware flow control: %s",
->>   		       status ? "failed" : "success");
->> +		if (status)
->> +			return;
+> Secondly, small slabs receive much more pressure, relative to their
+> size, than larger slabs, due to "rounding up" the minimum number of
+> scanned objects to batch_size.
 > 
-> Can that ldisc end up set on pty master?  And does it make any sense there?
-
-The initial objective of the patch is to prevent the WARN_ON by making
-the change to return error instead of WARN_ON. However, without changes
-to places that don't check the return and keep making progress, there
-will be secondary problems.
-
-Without this change to return here, instead of WARN_ON, it will fail
-with the following NULL pointer dereference at the next thing 
-hci_uart_set_flow_control() attempts.
-
-status = tty->driver->ops->tiocmget(tty);
-
-kernel: [10140.649783] BUG: unable to handle kernel NULL pointer 
-dereference at 0000000000000000
-kernel: [10140.649786] #PF error: [INSTR]
-kernel: [10140.649787] PGD 0 P4D 0
-kernel: [10140.649790] Oops: 0010 [#1] SMP PTI
-Jan 24 15:33:35 deneb kernel: [10140.649793] CPU: 2 PID: 55 Comm: 
-kworker/u33:0 Tainted: G        W         5.0.0-rc3+ #5
-kernel: [10140.649794] Hardware name: Dell Inc. OptiPlex 790/0HY9JP, 
-BIOS A18 09/24/2013
-Workqueue: hci0 hci_power_on [bluetooth]
-kernel: [10140.649805] RIP: 0010:          (null)
-kernel: [10140.649809] Code: Bad RIP value.
-kernel: [10140.649810] RSP: 0018:ffffa01a8153fd28 EFLAGS: 00010282
-kernel: [10140.649812] RAX: 0000000000000000 RBX: ffff8958d6bc4800 RCX: 
-35ad8b0300000000
-kernel: [10140.649814] RDX: ffffffff00000001 RSI: 0000000000000000 RDI: 
-ffff8958d6bc4800
-kernel: [10140.649816] RBP: ffffa01a8153fd78 R08: 0000000091773f09 R09: 
-0000000000000003
-kernel: [10140.649817] R10: ffff8958d6bc4a98 R11: 0000000000000720 R12: 
-ffff895814500c00
-kernel: [10140.649819] R13: ffff8958a858e000 R14: 0000000000000000 R15: 
-ffff8958af1af440
-kernel: [10140.649821] FS:  0000000000000000(0000) 
-GS:ffff895925880000(0000) knlGS:0000000000000000
-kernel: [10140.649823] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-kernel: [10140.649824] CR2: ffffffffffffffd6 CR3: 0000000083f46002 CR4: 
-00000000000606e0
-kernel: [10140.649826] Call Trace:
-kernel: [10140.649830]  ? hci_uart_set_flow_control+0x20e/0x2c0 [hci_uart]
-kernel: [10140.649836]  mrvl_setup+0x17/0x80 [hci_uart]
-kernel: [10140.649840]  hci_uart_setup+0x56/0x160 [hci_uart]
-kernel: [10140.649850]  hci_dev_do_open+0xe6/0x630 [bluetooth]
-kernel: [10140.649860]  hci_power_on+0x52/0x220 [bluetooth]
-
+> We can keep the pressure on all slabs equal relative to their size
+> by accumulating the scan pressure on small slabs over time, resulting
+> in sometimes scanning an object, instead of always scanning several.
 > 
-> IOW, I don't believe that this patch makes any sense.  If anything,
-> we need to prevent unconditional tty_set_termios() on the path
-> that *does* lead to calling it for pty.
+> This results in lower system CPU use, and a lower major fault rate,
+> as actively used entries from smaller caches get reclaimed less
+> aggressively, and need to be reloaded/recreated less often.
 > 
+> Fixes: 4b85afbdacd2 ("mm: zero-seek shrinkers")
+> Fixes: 172b06c32b94 ("mm: slowly shrink slabs with a relatively small number of objects")
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Chris Mason <clm@fb.com>
+> Cc: Roman Gushchin <guro@fb.com>
+> Cc: kernel-team@fb.com
+> Tested-by: Chris Mason <clm@fb.com>
 
-I don't think preventing unconditional tty_set_termios() is enough to
-prevent secondary problems such as the one above.
-
-For example, the following call chain leads to the WARN_ON that was
-reported. Even if void hci_uart_set_baudrate() prevents the very first
-tty_set_termios() call, its caller hci_uart_setup() continues with
-more tty setup. It goes ahead to call driver setup callback. The
-driver callback goes on to do more setup calling tty_set_termios().
-
-WARN_ON call path:
-  hci_uart_set_baudrate+0x1cc/0x250 drivers/bluetooth/hci_ldisc.c:378
-  hci_uart_setup+0xa2/0x490 drivers/bluetooth/hci_ldisc.c:401
-  hci_dev_do_open+0x6b1/0x1920 net/bluetooth/hci_core.c:1423
-
-Once this WARN_ON is changed to return error, the following
-happens, when hci_uart_setup() does driver setup callback.
-
-kernel: [10140.649836]  mrvl_setup+0x17/0x80 [hci_uart]
-kernel: [10140.649840]  hci_uart_setup+0x56/0x160 [hci_uart]
-kernel: [10140.649850]  hci_dev_do_open+0xe6/0x630 [bluetooth]
-kernel: [10140.649860]  hci_power_on+0x52/0x220 [bluetooth]
-
-I think continuing to catch the invalid condition in tty_set_termios()
-and preventing progress by checking return value is a straight forward
-change to avoid secondary problems, and it might be difficult to catch
-all the cases where it could fail. Here is the reproducer for reference:
-
-
-#define _GNU_SOURCE
-
-#include <endian.h>
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sys/syscall.h>
-#include <sys/types.h>
-#include <unistd.h>
-
-uint64_t r[1] = {0xffffffffffffffff};
-
-int main(void)
-{
-   syscall(__NR_mmap, 0x20000000, 0x1000000, 3, 0x32, -1, 0);
-   long res = 0;
-   memcpy((void*)0x20000100, "/dev/ptmx\x00", 10);
-   res = syscall(__NR_openat, 0xffffffffffffff9c, 0x20000100, 0, 0);
-   if (res != -1)
-     r[0] = res;
-   *(uint32_t*)0x200000c0 = 0xf;
-   syscall(__NR_ioctl, r[0], 0x5423, 0x200000c0);
-   syscall(__NR_ioctl, r[0], 0x400455c8, 0xb);
-   return 0;
-}
-
-
-thanks,
--- Shuah
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
