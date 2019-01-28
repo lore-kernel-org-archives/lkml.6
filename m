@@ -2,121 +2,121 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38724C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:42:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64ED3C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05D2620881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:42:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XNt6PGm0"
+	by mail.kernel.org (Postfix) with ESMTP id 3BCEE20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728960AbfA1Rmw (ORCPT
+        id S1729080AbfA1RnA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:42:52 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:58004 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728605AbfA1Rmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:42:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=sMoY8eqIpeQH7z9JcjiW2zAEfvXKU9XUzHdDLpiU4Cc=; b=XNt6PGm0z4bKgpElM8gs0kTsi1
-        Cj+t1JcKsfKirT+hr5ih4kHPbCqrhF/XUDXl+mMKhoophGArumJ0p6qXZq7IsgjpsfCjVRcp2hbp4
-        sD/CGL2Xg5jNiujaXMcZfkPygjEgAiltNkcm5uXrw5XOFGW1YkoP6iOJ5pu3dJuXTitY=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
-        (envelope-from <andrew@lunn.ch>)
-        id 1goAvm-000142-0X; Mon, 28 Jan 2019 18:42:46 +0100
-Date:   Mon, 28 Jan 2019 18:42:46 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Miquel Raynal <miquel.raynal@bootlin.com>
-Cc:     Florian Fainelli <f.fainelli@gmail.com>,
-        Vivien Didelot <vivien.didelot@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Gregory Clement <gregory.clement@bootlin.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>,
-        Nadav Haklai <nadavh@marvell.com>
-Subject: Re: [PATCH net-next v2 1/2] net: dsa: mv88e6xxx: Save switch rules
-Message-ID: <20190128174246.GD28759@lunn.ch>
-References: <20190125095507.29334-1-miquel.raynal@bootlin.com>
- <20190125095507.29334-2-miquel.raynal@bootlin.com>
- <c1421a5d-5f92-bb86-b5cc-9fa19a1c8d9f@gmail.com>
- <20190128152456.212ae5ac@xps13>
- <20190128144417.GG4765@lunn.ch>
- <20190128165749.6abf2dc4@xps13>
+        Mon, 28 Jan 2019 12:43:00 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:60946 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728468AbfA1Rm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 12:42:58 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 3D9677F03AFBD8EF99CE;
+        Tue, 29 Jan 2019 01:42:55 +0800 (CST)
+Received: from localhost (10.202.226.61) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Tue, 29 Jan 2019
+ 01:42:52 +0800
+Date:   Mon, 28 Jan 2019 17:42:39 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Michal Hocko <mhocko@kernel.org>
+CC:     Andrea Arcangeli <aarcange@redhat.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Zhang Yi <yi.z.zhang@linux.intel.com>, <kvm@vger.kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Liu Jingqi <jingqi.liu@intel.com>, Fan Du <fan.du@intel.com>,
+        Dong Eddie <eddie.dong@intel.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        <linux-accelerators@lists.ozlabs.org>,
+        "Linux Memory Management List" <linux-mm@kvack.org>,
+        Peng Dong <dongx.peng@intel.com>,
+        Yao Yuan <yuan.yao@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Fengguang Wu <fengguang.wu@intel.com>,
+        "Dan Williams" <dan.j.williams@intel.com>,
+        Mel Gorman <mgorman@suse.de>
+Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
+ accounting/migration
+Message-ID: <20190128174239.0000636b@huawei.com>
+In-Reply-To: <20190102122110.00000206@huawei.com>
+References: <20181226131446.330864849@intel.com>
+        <20181227203158.GO16738@dhcp22.suse.cz>
+        <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
+        <20181228084105.GQ16738@dhcp22.suse.cz>
+        <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
+        <20181228121515.GS16738@dhcp22.suse.cz>
+        <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
+        <20181228195224.GY16738@dhcp22.suse.cz>
+        <20190102122110.00000206@huawei.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190128165749.6abf2dc4@xps13>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.61]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 04:57:49PM +0100, Miquel Raynal wrote:
-> Hi Andrew,
+On Wed, 2 Jan 2019 12:21:10 +0000
+Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
+
+> On Fri, 28 Dec 2018 20:52:24 +0100
+> Michal Hocko <mhocko@kernel.org> wrote:
 > 
-> Thanks for helping!
-> 
-> Andrew Lunn <andrew@lunn.ch> wrote on Mon, 28 Jan 2019 15:44:17 +0100:
-> 
-> > > I don't see where VLAN and bridge information are cached, can you point
-> > > me to the relevant locations?  
+> > [Ccing Mel and Andrea]
 > > 
-> > Miquèl
-> > 
-> > The bridge should have all that information. You need to ask it to
-> > enumerate the current configuration and replay it to the switch.
-> > 
-> > There might be something in the Mellanox driver you can copy? But i've
-> > not looked, i'm just guessing.
+
+Hi,
+
+I just wanted to highlight this section as I didn't feel we really addressed this
+in the earlier conversation.
+
+> * Hot pages may not be hot just because the host is using them a lot.  It would be
+>   very useful to have a means of adding information available from accelerators
+>   beyond simple accessed bits (dreaming ;)  One problem here is translation
+>   caches (ATCs) as they won't normally result in any updates to the page accessed
+>   bits.  The arm SMMU v3 spec for example makes it clear (though it's kind of
+>   obvious) that the ATS request is the only opportunity to update the accessed
+>   bit.  The nasty option here would be to periodically flush the ATC to force
+>   the access bit updates via repeats of the ATS request (ouch).
+>   That option only works if the iommu supports updating the accessed flag
+>   (optional on SMMU v3 for example).
 > 
-> I am still searching but so far I did not find a mechanism reading the
-> configuration of the bridge out of a 'net' object. Indeed there are
-> multiple lists with the configuration but they are all 'mellanox'
-> objects, they do not belong to the core.
 
-Hi Miquèl
+If we ignore the IOMMU hardware update issue which will simply need to be addressed
+by future hardware if these techniques become common, how do we address the
+Address Translation Cache issue without potentially causing big performance
+problems by flushing the cache just to force an accessed bit update?
 
-Look at how iproute2 works. How does the bridge command enumerate the
-fdb and mdb's? How does bridge vlan show work? bridge link show? See
-if you can use this infrastructure within the kernel.
+These devices are frequently used with PRI and Shared Virtual Addressing
+and can be accessing most of your memory without you having any visibility
+of it in the page tables (as they aren't walked if your ATC is well matched
+in size to your usecase.
 
-> > We also need to think about how we are going to test this. There is a
-> > lot of state information in a switch. So we are going to need some
-> > pretty good tests to show we have recreated all of it.
-> 
-> My understanding of all this is rather short, until know I used what
-> you proposed in the v1 of this series but I am all ears if I need to
-> add anything to my test list.
+Classic example would be accelerated DB walkers like the the CCIX demo
+Xilinx has shown at a few conferences.   The whole point of those is that
+most of the time only your large set of database walkers is using your
+memory and they have translations cached for for a good part of what
+they are accessing.  Flushing that cache could hurt a lot.
+Pinning pages hurts for all the normal flexibility reasons.
 
-What you probably need is a generic DSA test suite, with a number of
-hardware devices, with different generations of mv88e6xxx devices, and
-ideally different sf2, kzs, etc switches. Setup a configuration and
-test is works correctly. Suspend, resume, and test is still works. And
-you probably need to go through a number of cycles of suspend/resume.
-And you are going to need to maintain that for a number of years,
-testing every release, to see what breaks as we add new features and
-new devices.
+Last thing we want is to be migrating these pages that can be very hot but
+in an invisible fashion.
 
-There also needs to be some though put into what happens when the
-network changes while the switch is suspended. A port looses its link,
-a port comes up, an SFP module is ejected, and SFP module is
-inserted. The PTP grand master moves, etc. I hope the usual mechanisms
-just work, but it all needs testing.
+Thanks,
 
-S2RAM is hard for a device like this. It is not something i personally
-would want to do :-(
+Jonathan
+ 
 
-      Andrew
+
