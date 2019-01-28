@@ -4,48 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7CBEC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 419B0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F7D420811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14757204EC
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:34:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693236;
-	bh=p2kY+k1z/wTru5LpIlIQzRRmLPhnpR45rxSbIV5tulo=;
+	s=default; t=1548693253;
+	bh=Lb1hVozJak+yyTDmcqh3TuLSDcWzVySyLOtrCTRZ+Lc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Gt0eUzmfbd80CLuvL9TQuJRS72yYi8P5D70iuR1kRErerEnWs0w/lGhEyGs83FFN5
-	 yb4VgGGwfUMJdH4rHZq9d1w3qBYBy5gMSkrVYhhsA9l2yZXS/reS0PSbSpNZggpNpr
-	 ugvYwiTHNpM6qwthQ6RbSy71gGV/QsmEnyxuGN0E=
+	b=2be99csumNngMFfepE/hQB+kyM8FldvyXC6m5EVDmpMOm6+jomoZpqcuq9yB6vdrc
+	 EpGu7oCnfvG3xsmvsfe8xnbVI5U1Y6GTcwnBpLeBuUqZtFeMy/blI3U/lWGBsb5C/F
+	 foA0YdT/cFKqWVK+nKIkDtGVPrykOBqqkkJYCaL8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390362AbfA1Qdz (ORCPT
+        id S2390150AbfA1QeL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:33:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35510 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:34:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35352 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731993AbfA1Q0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:17 -0500
+        id S2389061AbfA1Q0L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 827B32084A;
-        Mon, 28 Jan 2019 16:26:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2875B2147A;
+        Mon, 28 Jan 2019 16:26:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692777;
-        bh=p2kY+k1z/wTru5LpIlIQzRRmLPhnpR45rxSbIV5tulo=;
+        s=default; t=1548692770;
+        bh=Lb1hVozJak+yyTDmcqh3TuLSDcWzVySyLOtrCTRZ+Lc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fHGNTE7k8ecgeW113fzdYFAMZW+qwS+UOH/xozb/ak31uapTCIzDJdbyn8aC0As+k
-         WTpE+y6Los+w5EIeNQEKiixRHrx8ilfsLhgjMx9l4Ho+zVv1PKXcM6Mn/dMgIXeohm
-         Lvii84MEPP/xZsXv2sQLEAK7IAqVGGYpD3ymnOfU=
+        b=NH3QfTD9zgQh8pr0nlMyINgdW08EasewUeKQ6ozjcn46AcHj1Sl3PLYK9D/hCsBP6
+         XRHL1WYjAhU3FhSFAoNwnk0D8tHu8ddj0oxnAH2JUDZHMr+juykFS++VKUKAwFdeY8
+         ZpujMjFkJSgPIbR8+fowPCFRXY/0pLag7EEc3V1c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aditya Pakki <pakki001@umn.edu>, Jiri Kosina <jkosina@suse.cz>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 77/80] HID: lenovo: Add checks to fix of_led_classdev_register
-Date:   Mon, 28 Jan 2019 11:23:58 -0500
-Message-Id: <20190128162401.58841-77-sashal@kernel.org>
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Mark Fasheh <mfasheh@versity.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 73/80] ocfs2: don't clear bh uptodate for block read
+Date:   Mon, 28 Jan 2019 11:23:54 -0500
+Message-Id: <20190128162401.58841-73-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -57,48 +63,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aditya Pakki <pakki001@umn.edu>
+From: Junxiao Bi <junxiao.bi@oracle.com>
 
-[ Upstream commit 6ae16dfb61bce538d48b7fe98160fada446056c5 ]
+[ Upstream commit 70306d9dce75abde855cefaf32b3f71eed8602a3 ]
 
-In lenovo_probe_tpkbd(), the function of_led_classdev_register() could
-return an error value that is unchecked. The fix adds these checks.
+For sync io read in ocfs2_read_blocks_sync(), first clear bh uptodate flag
+and submit the io, second wait io done, last check whether bh uptodate, if
+not return io error.
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+If two sync io for the same bh were issued, it could be the first io done
+and set uptodate flag, but just before check that flag, the second io came
+in and cleared uptodate, then ocfs2_read_blocks_sync() for the first io
+will return IO error.
+
+Indeed it's not necessary to clear uptodate flag, as the io end handler
+end_buffer_read_sync() will set or clear it based on io succeed or failed.
+
+The following message was found from a nfs server but the underlying
+storage returned no error.
+
+[4106438.567376] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2780 ERROR: read block 1238823695 failed -5
+[4106438.567569] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2812 ERROR: status = -5
+[4106438.567611] (nfsd,7146,3):ocfs2_test_inode_bit:2894 ERROR: get alloc slot and bit failed -5
+[4106438.567643] (nfsd,7146,3):ocfs2_test_inode_bit:2932 ERROR: status = -5
+[4106438.567675] (nfsd,7146,3):ocfs2_get_dentry:94 ERROR: test inode bit failed -5
+
+Same issue in non sync read ocfs2_read_blocks(), fixed it as well.
+
+Link: http://lkml.kernel.org/r/20181121020023.3034-4-junxiao.bi@oracle.com
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-lenovo.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ fs/ocfs2/buffer_head_io.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
-index 8979f1fd5208..24a4a23bdc90 100644
---- a/drivers/hid/hid-lenovo.c
-+++ b/drivers/hid/hid-lenovo.c
-@@ -703,7 +703,9 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
- 	data_pointer->led_mute.brightness_get = lenovo_led_brightness_get_tpkbd;
- 	data_pointer->led_mute.brightness_set = lenovo_led_brightness_set_tpkbd;
- 	data_pointer->led_mute.dev = dev;
--	led_classdev_register(dev, &data_pointer->led_mute);
-+	ret = led_classdev_register(dev, &data_pointer->led_mute);
-+	if (ret < 0)
-+		goto err;
+diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+index 272269f1c310..9ee8bcfbf00f 100644
+--- a/fs/ocfs2/buffer_head_io.c
++++ b/fs/ocfs2/buffer_head_io.c
+@@ -146,7 +146,6 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ 			BUG();
+ 		}
  
- 	data_pointer->led_micmute.name = name_micmute;
- 	data_pointer->led_micmute.brightness_get =
-@@ -711,7 +713,11 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
- 	data_pointer->led_micmute.brightness_set =
- 		lenovo_led_brightness_set_tpkbd;
- 	data_pointer->led_micmute.dev = dev;
--	led_classdev_register(dev, &data_pointer->led_micmute);
-+	ret = led_classdev_register(dev, &data_pointer->led_micmute);
-+	if (ret < 0) {
-+		led_classdev_unregister(&data_pointer->led_mute);
-+		goto err;
-+	}
+-		clear_buffer_uptodate(bh);
+ 		get_bh(bh); /* for end_buffer_read_sync() */
+ 		bh->b_end_io = end_buffer_read_sync;
+ 		submit_bh(READ, bh);
+@@ -300,7 +299,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 				continue;
+ 			}
  
- 	lenovo_features_set_tpkbd(hdev);
- 
+-			clear_buffer_uptodate(bh);
+ 			get_bh(bh); /* for end_buffer_read_sync() */
+ 			if (validate)
+ 				set_buffer_needs_validate(bh);
 -- 
 2.19.1
 
