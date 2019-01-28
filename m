@@ -2,243 +2,154 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
-	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96C01C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F41C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58B682148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S6Aw+hUO"
+	by mail.kernel.org (Postfix) with ESMTP id B1C322086C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548692052;
+	bh=QO0Z/ugaU9XCwato60uHHqSOeQSYOYfR4+uT1EqhkAE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=wEmbbsg3ng7FL8OLbVSl+GQgrqroDtBQ2kDSQzr58Vsi8H1GcppM/9ZYHiWx8vha5
+	 qGWRsoZpupArtV+UO48qe5qrUk6SGZGIeQdfTss7ysCULXDQbhU2LQr1g+qYaLf4YK
+	 sMdIht8E02iVqBmOMdHXtineNzQyLBSQp1lqBgbI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387555AbfA1QOE (ORCPT
+        id S2387585AbfA1QOK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:14:10 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43176 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387553AbfA1QOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 11:14:04 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45682 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387514AbfA1QNx (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:53 -0500
-Received: by mail-wr1-f65.google.com with SMTP id t6so18654622wrr.12;
-        Mon, 28 Jan 2019 08:13:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=qitsf1i7oCTC9R2MN+j37S7wP/F6/6ncV7JvZFtiRs0=;
-        b=S6Aw+hUOZLuh2alGmqkgc/KZ3j8Iij+2tYUSbQeu8EzCpnVrE6UFxP4+S1WdF4bi+t
-         7xa4jV6LlJGti+0qQlzDsJe88HUCcCb2eMxZ9TWHeMwOOP8GN/VXH+FjGbuOCQq1k7JW
-         s5YoWvuaAMFhrZOCna91FlgSltEUkWVtFCVSLx72H76ApO3QlubsxgsCu8euB2jyiMwt
-         fGULyzPH/Rk4JqSAwbcx2VMasLAAKJsTpwavSoHE0fJZAAJJjb9oox7bRdohkXuB9OXQ
-         aoZ+fq9oNhBJGOUwRFrqqrw84l7JPaPNMs1pmCpYsMNZI3i6/NA3CgKihd+P6bC6SNRO
-         RgSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
-         :in-reply-to:references;
-        bh=qitsf1i7oCTC9R2MN+j37S7wP/F6/6ncV7JvZFtiRs0=;
-        b=AAodz/oPOvx17JClHncp8wswHvihOd6oWvq/ebwby/f+dkiHl7wT/MMNeu38A8dwmY
-         REvq47pPfC9cgyqZ06RIrEQxYdd4kJTYAVOhqEd1Hkz9xrEoWyXKB8x5+iHRpzb8QCxf
-         lvCv9HFZnUhnom26g4qBMaSEinlztYADu1Bb+WQmSuPbjV2Akyi/eMDWhJ76jm0QhhrR
-         JBpKdcxOltiwqnte+/wq1n2wptQ4Wcbz2AwPmM5y9rSYpmz53EUcfj+a3QWk6OHBGJTe
-         Q1Qmnv0ywPJpO5HZ3BwDp84V64k2AyGemmpuDAhJ4EenJzcHu33hLxWVdkZ56uE17Ca6
-         x0IA==
-X-Gm-Message-State: AJcUukfYpNk6IF+XAVfxXZtL9JiT3ijNthMzk2U0KYPD+Au9u11EQmjs
-        TARNilciuH/7pbTP/oD7Ay8=
-X-Google-Smtp-Source: ALg8bN4pkUWDKjLT1mdZs6vD7FCNGq34AHvvCev201NtMwmoc7ynEWJDztO1JRXaR+jIDyZFNga7DQ==
-X-Received: by 2002:adf:bb8d:: with SMTP id q13mr22154860wrg.183.1548692031264;
-        Mon, 28 Jan 2019 08:13:51 -0800 (PST)
-Received: from Sarah.corp.lairdtech.com ([109.174.151.67])
-        by smtp.gmail.com with ESMTPSA id l20sm246445944wrb.93.2019.01.28.08.13.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 08:13:50 -0800 (PST)
-From:   Ben Whitten <ben.whitten@gmail.com>
-X-Google-Original-From: Ben Whitten <ben.whitten@lairdtech.com>
-To:     afaerber@suse.de
-Cc:     linux-lpwan@lists.infradead.org,
-        Ben Whitten <ben.whitten@gmail.com>,
-        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH lora-next 05/11] net: lora: sx130x: initialise AGC
-Date:   Mon, 28 Jan 2019 16:12:59 +0000
-Message-Id: <20190128161306.27805-6-ben.whitten@lairdtech.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20190128161306.27805-1-ben.whitten@lairdtech.com>
-References: <20190128161306.27805-1-ben.whitten@lairdtech.com>
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A8BA20879;
+        Mon, 28 Jan 2019 16:14:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692043;
+        bh=QO0Z/ugaU9XCwato60uHHqSOeQSYOYfR4+uT1EqhkAE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=kdyTeOJXWieTLhyygoX6j5bkbLuVtj23BBiMCLbHWxpw+X4xdX3VXeltcMPc3Wtxb
+         CKC0Dgs5bXkBZ0opcj8Gh+ynkmkY3uxNkS7nWzxGPheFjbyAVEI0BC9tn4WAr9tPWM
+         nd7zwc2s1xjQLPgskqrbbr3r0tFWMqzjvpRqock4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 050/170] arm64: io: Ensure calls to delay routines are ordered against prior readX()
+Date:   Mon, 28 Jan 2019 11:10:00 -0500
+Message-Id: <20190128161200.55107-50-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
+References: <20190128161200.55107-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ben Whitten <ben.whitten@gmail.com>
+From: Will Deacon <will.deacon@arm.com>
 
-Initialisation of the AGC firmware requires a couple of steps to be
-completed;
-- Loading a TX LUT
-- Loading the two MSBs for the radio tx synthesizer frequencies,
-  (Always 3 if f > 768 for SX1257 and SX1258 or f > 384 for SX1255)
-- Loading a firmware option
-- Finish initialisation by writing intended value of the radio select
-  register.
+[ Upstream commit 6460d32014717686d3b7963595950ba2c6d1bb5e ]
 
-Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
+A relatively standard idiom for ensuring that a pair of MMIO writes to a
+device arrive at that device with a specified minimum delay between them
+is as follows:
+
+	writel_relaxed(42, dev_base + CTL1);
+	readl(dev_base + CTL1);
+	udelay(10);
+	writel_relaxed(42, dev_base + CTL2);
+
+the intention being that the read-back from the device will push the
+prior write to CTL1, and the udelay will hold up the write to CTL1 until
+at least 10us have elapsed.
+
+Unfortunately, on arm64 where the underlying delay loop is implemented
+as a read of the architected counter, the CPU does not guarantee
+ordering from the readl() to the delay loop and therefore the delay loop
+could in theory be speculated and not provide the desired interval
+between the two writes.
+
+Fix this in a similar manner to PowerPC by introducing a dummy control
+dependency on the output of readX() which, combined with the ISB in the
+read of the architected counter, guarantees that a subsequent delay loop
+can not be executed until the readX() has returned its result.
+
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/lora/sx130x.c | 110 ++++++++++++++++++++++++++++++++++++++
- drivers/net/lora/sx130x.h |   7 +++
- 2 files changed, 117 insertions(+)
+ arch/arm64/include/asm/io.h | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/lora/sx130x.c b/drivers/net/lora/sx130x.c
-index 818a1c9192b3..18acfc8e934d 100644
---- a/drivers/net/lora/sx130x.c
-+++ b/drivers/net/lora/sx130x.c
-@@ -537,6 +537,111 @@ static int sx130x_load_all_firmware(struct sx130x_priv *priv)
- 	return 0;
+diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+index 35b2e50f17fb..b2bc7dbc1fa6 100644
+--- a/arch/arm64/include/asm/io.h
++++ b/arch/arm64/include/asm/io.h
+@@ -106,7 +106,22 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
  }
  
-+static int sx130x_load_tx_gain_lut(struct sx130x_priv *priv)
-+{
-+	struct net_device *netdev = dev_get_drvdata(priv->dev);
-+	struct sx130x_tx_gain_lut *lut = priv->tx_gain_lut;
-+	unsigned int status, val;
-+	int ret, i;
+ /* IO barriers */
+-#define __iormb()		rmb()
++#define __iormb(v)							\
++({									\
++	unsigned long tmp;						\
++									\
++	rmb();								\
++									\
++	/*								\
++	 * Create a dummy control dependency from the IO read to any	\
++	 * later instructions. This ensures that a subsequent call to	\
++	 * udelay() will be ordered due to the ISB in get_cycles().	\
++	 */								\
++	asm volatile("eor	%0, %1, %1\n"				\
++		     "cbnz	%0, ."					\
++		     : "=r" (tmp) : "r" (v) : "memory");		\
++})
 +
-+	for (i = 0; i < priv->tx_gain_lut_size; i++) {
-+		val = lut->pa_gain << SX1301_PA_GAIN_OFFSET;
-+		val |= lut->dac_gain << SX1301_DAC_GAIN_OFFSET;
-+		val |= lut->mix_gain;
-+
-+		netdev_info(netdev, "AGC LUT entry %d dBm: 0x%02x\n", lut->power, val);
-+		ret = sx130x_agc_transaction(priv, val, &status);
-+		if (ret) {
-+			netdev_err(netdev, "AGC LUT load failed\n");
-+			return ret;
-+		}
-+		if (status != (SX1301_AGC_STATUS_SUCCESS | i)) {
-+			netdev_err(netdev, "AGC firmware LUT init error: 0x%02x", status);
-+			return -ENXIO;
-+		}
-+		lut++;
-+	}
-+
-+	/* Abort the transaction if there are less then 16 entries */
-+	if (priv->tx_gain_lut_size < SX1301_TX_GAIN_LUT_MAX) {
-+		ret = sx130x_agc_transaction(priv, SX1301_AGC_CMD_ABORT, &status);
-+		if (ret) {
-+			netdev_err(netdev, "AGC LUT abort failed\n");
-+			return ret;
-+		}
-+		if (status != SX1301_AGC_STATUS_SUCCESS) {
-+			netdev_err(netdev, "AGC firmware LUT abort error: 0x%02x", status);
-+			return -ENXIO;
-+		}
-+	}
-+
-+	return ret;
-+};
-+
-+static int sx130x_agc_init(struct sx130x_priv *priv)
-+{
-+	struct net_device *netdev = dev_get_drvdata(priv->dev);
-+	unsigned int tx_msb;
-+	unsigned int val;
-+	int ret;
-+
-+	ret = regmap_read(priv->regmap, SX1301_AGCSTS, &val);
-+	if (ret) {
-+		netdev_err(netdev, "AGC status read failed\n");
-+		return ret;
-+	}
-+	if (val != SX1301_AGC_STATUS_READY) {
-+		netdev_err(netdev, "AGC firmware init failure: 0x%02x\n", val);
-+		return -ENXIO;
-+	}
-+
-+	ret = sx130x_load_tx_gain_lut(priv);
-+	if (ret)
-+		return ret;
-+
-+	/*
-+	 * Load Tx freq MSBs
-+	 * Always 3 if f > 768 for SX1257 and SX1258 or f > 384 for SX1255
-+	 */
-+	tx_msb = 3; /* TODO detect radio type */
-+
-+	ret = sx130x_agc_transaction(priv, tx_msb, &val);
-+	if (ret) {
-+		netdev_err(netdev, "AGC Tx MSBs load failed\n");
-+		return ret;
-+	}
-+	if (val != (SX1301_AGC_STATUS_SUCCESS | tx_msb)) {
-+		netdev_err(netdev, "AGC firmware Tx MSBs error: 0x%02x", val);
-+		return -ENXIO;
-+	}
-+
-+	/* Load chan_select firmware option */
-+	ret = sx130x_agc_transaction(priv, 0, &val);
-+	if (ret) {
-+		netdev_err(netdev, "AGC chan select failed\n");
-+		return ret;
-+	}
-+	if (val != (SX1301_AGC_STATUS_SUCCESS | 0)) {
-+		netdev_err(netdev, "AGC firmware chan select error: 0x%02x", val);
-+		return -ENXIO;
-+	}
-+
-+	/* End AGC firmware init and check status */
-+	/* TODO load the intended value of radio_select here
-+	 * LORA IF mapping to radio A/B (per bit, 0=A, 1=B) */
-+	ret = sx130x_agc_transaction(priv, 0, &val);
-+	if (ret) {
-+		netdev_err(netdev, "AGC radio select failed\n");
-+		return ret;
-+	}
-+	if (val != SX1301_AGC_STATUS_INITIALISED) {
-+		netdev_err(netdev, "AGC firmware init error: 0x%02x", val);
-+		return -ENXIO;
-+	}
-+
-+	return ret;
-+}
-+
- static netdev_tx_t sx130x_loradev_start_xmit(struct sk_buff *skb, struct net_device *netdev)
- {
- 	if (skb->protocol != htons(ETH_P_LORA)) {
-@@ -589,6 +694,11 @@ static int sx130x_loradev_open(struct net_device *netdev)
- 	if (ret)
- 		goto err_firmware;
+ #define __iowmb()		wmb()
  
-+	usleep_range(1000, 2000);
-+	ret = sx130x_agc_init(priv);
-+	if (ret)
-+		goto err_firmware;
-+
- 	ret = open_loradev(netdev);
- 	if (ret)
- 		goto err_open;
-diff --git a/drivers/net/lora/sx130x.h b/drivers/net/lora/sx130x.h
-index 69bb9cbd1aba..2878dd3cc547 100644
---- a/drivers/net/lora/sx130x.h
-+++ b/drivers/net/lora/sx130x.h
-@@ -19,8 +19,15 @@
- #define SX1301_MCU_AGC_CAL_FW_VERSION 2
+ #define mmiowb()		do { } while (0)
+@@ -131,10 +146,10 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+  * following Normal memory access. Writes are ordered relative to any prior
+  * Normal memory access.
+  */
+-#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
+-#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
+-#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
+-#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(); __v; })
++#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(__v); __v; })
++#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(__v); __v; })
++#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(__v); __v; })
++#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(__v); __v; })
  
- #define SX1301_AGC_CMD_WAIT 16
-+#define SX1301_AGC_CMD_ABORT 17
-+
-+#define SX1301_AGC_STATUS_READY 0x10
-+#define SX1301_AGC_STATUS_SUCCESS 0x30
-+#define SX1301_AGC_STATUS_INITIALISED 0x40
+ #define writeb(v,c)		({ __iowmb(); writeb_relaxed((v),(c)); })
+ #define writew(v,c)		({ __iowmb(); writew_relaxed((v),(c)); })
+@@ -185,9 +200,9 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
+ /*
+  * io{read,write}{16,32,64}be() macros
+  */
+-#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(); __v; })
+-#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(); __v; })
+-#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(); __v; })
++#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(__v); __v; })
++#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(__v); __v; })
++#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(__v); __v; })
  
- #define SX1301_TX_GAIN_LUT_MAX 16
-+#define SX1301_PA_GAIN_OFFSET 6
-+#define SX1301_DAC_GAIN_OFFSET 4
- 
- /* Page independent */
- #define SX1301_PAGE     0x00
+ #define iowrite16be(v,p)	({ __iowmb(); __raw_writew((__force __u16)cpu_to_be16(v), p); })
+ #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
 -- 
-2.17.1
+2.19.1
 
