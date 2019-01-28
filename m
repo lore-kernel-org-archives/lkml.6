@@ -2,101 +2,127 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00FBEC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:43:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C824C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B72A42171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:43:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548701011;
-	bh=hJrYZDLe+YFEGj7aoyevHKsgNVfjWv6antMiu3zBQUQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=Jo3v3CrULKKNF80Jb4JMqSoR8AhChNX8rpMC08NsHptwIz2OB/ET1cLBZoHFeH3qG
-	 5XiyDHXI7I7KI5YuMn/zSmpY1BDbUt8qprpon4FDsUhs7EuvmXq0fABSBStauSu+Ll
-	 +0jXZPWKnRgYnOtyjWOfxmjwZdsSYmHfXB9biZ/c=
+	by mail.kernel.org (Postfix) with ESMTP id 55F722085B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:43:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727878AbfA1Sna (ORCPT
+        id S1727968AbfA1Sn6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:43:30 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56232 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727246AbfA1Sn3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:43:29 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E8810B018;
-        Mon, 28 Jan 2019 18:43:27 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 19:43:26 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>, mm-commits@vger.kernel.org,
-        penguin-kernel@i-love.sakura.ne.jp, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: + memcg-do-not-report-racy-no-eligible-oom-tasks.patch added to
- -mm tree
-Message-ID: <20190128184326.GT18811@dhcp22.suse.cz>
-References: <20190109190306.rATpT%akpm@linux-foundation.org>
- <20190125165624.GA17719@cmpxchg.org>
- <20190125172416.GB20411@dhcp22.suse.cz>
- <20190128102616.d7d63f8e1ecdf176bc313f8a@linux-foundation.org>
+        Mon, 28 Jan 2019 13:43:58 -0500
+Received: from mout.kundenserver.de ([217.72.192.73]:36979 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726667AbfA1Sn5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 13:43:57 -0500
+Received: from oxbaltgw60.schlund.de ([172.19.246.147]) by
+ mrelayeu.kundenserver.de (mreue106 [213.165.67.113]) with ESMTPSA (Nemesis)
+ id 1N3sNa-1hEgyw3Ga0-00zls7; Mon, 28 Jan 2019 19:43:54 +0100
+Date:   Mon, 28 Jan 2019 19:43:54 +0100 (CET)
+From:   Stefan Wahren <stefan.wahren@i2se.com>
+To:     Ioan-Adrian Ratiu <adi@adirat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Message-ID: <1215525901.73446.1548701034611@email.ionos.de>
+In-Reply-To: <87tvhs8wh7.fsf@ni.com>
+References: <20190127202813.29493-1-adi@adirat.com>
+ <1658074547.62977.1548624393424@email.ionos.de> <87tvhs8wh7.fsf@ni.com>
+Subject: Re: [RFC][PATCH] Revert "ARM: dts: bcm2837: Fix polarity of wifi
+ reset GPIOs"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128102616.d7d63f8e1ecdf176bc313f8a@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Priority: 3
+Importance: Medium
+X-Mailer: Open-Xchange Mailer v7.8.4-Rev47
+X-Originating-Client: open-xchange-appsuite
+X-Provags-ID: V03:K1:LUS+MFTdSu4HkRnzzeIv192AHhExZCIHWyaEMckypZ9n1vf/ixW
+ kk/i/H1ttMcCK6pYc5cgNcmqZ/FMb5KrgUQof3qRTo2BTkqE+/fQcaQarl8JxfDmOOan/NG
+ XG7pWvX+VeJYxIbXbp4C/CmGv6KAHgqIRCSur5WIADYB23tyBwbURBisGYlw9YRO8dta9Fs
+ sd68Y2wa08nIW7+LLZLaA==
+X-UI-Out-Filterresults: notjunk:1;V03:K0:2KRN2xcLe/c=:95k/DRmN+Mtp234KsdpmsY
+ 7oA/kckwhh5irHw5doMNtrhTcrNsgoBUzAHrj4FvBh0KZMW3IwQE9psf7+wiRdid+CWGpNHME
+ F5IXVizvg0uu4jhIshcXX8PLnqardLXrqVxl5xy+/rzrxzMcxbJvs/vh6OIhvkRFRaB47OL70
+ q9Tq3r9c7DRvnfns8XHB0R0yk1kgpofnBjK4mv2p6o++/jlPcxeqWQdce7uFk2camm/xf8rAT
+ cLpWKry+tbtmZ4oxHQ4tBhPoDZIywUYh2phJ/Z2heiYjFt34/5c5XEI0c4Zm7iHdE+BS9AqVH
+ 6pW3DgspxDl703id+OzCfS3ruHrB+QVGRJu8+GLrDjk1oz3Rt13iSpNpXzO7hdd00ALb0bf8a
+ hgcyaLc/Qx5YnCQJixPameSXUWZiUy4nIpuoPuvRlkG7HN6XGZRTbKFscK1ptG7qakwGzVUe4
+ 8xS5J4eV1ebBybSzNljndUaxn+PQO/fLtzzmNymXhW6svPbCk3gbNssoVU5+FlTD4H1zmAN1U
+ 3zvhjiFmaEgqml4oz5Ef8MSSxALiIGZBY8q5jRsdOHVdW/YVFpkwKP0y1BRrtDcybruvUGF2l
+ joowZPvcJdB4EKVKZKleDONClAC/hHcNKrsmZxvgDgYi6Hd/CmlGuKM15MSx2efOn0bIJTEiR
+ XmAH5z0K7eanCSfWvF+8oaDLCTsMmi8mhx0TKmNUkRC0Tph4xZLKgcc4DZ/pd4O4YZKIYAFFx
+ 2OxPLbUTvAdwwqGpfcIon/oacVfHMtZgbDChskp/tPPzNn079jxMGeoLcKE=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 28-01-19 10:26:16, Andrew Morton wrote:
-> On Fri, 25 Jan 2019 18:24:16 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+Hi,
+
+> Ioan-Adrian Ratiu <adi@adirat.com> hat am 28. Januar 2019 um 19:31 geschrieben:
 > 
-> > > >     out_of_memory
-> > > >       select_bad_process # no task
-> > > > 
-> > > > If Thread1 didn't race it would bail out from try_charge and force the
-> > > > charge.  We can achieve the same by checking tsk_is_oom_victim inside the
-> > > > oom_lock and therefore close the race.
-> > > > 
-> > > > [1] http://lkml.kernel.org/r/bb2074c0-34fe-8c2c-1c7d-db71338f1e7f@i-love.sakura.ne.jp
-> > > > Link: http://lkml.kernel.org/r/20190107143802.16847-3-mhocko@kernel.org
-> > > > Signed-off-by: Michal Hocko <mhocko@suse.com>
-> > > > Cc: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-> > > > Cc: Johannes Weiner <hannes@cmpxchg.org>
-> > > > Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-> > > 
-> > > It looks like this problem is happening in production systems:
-> > > 
-> > > https://www.spinics.net/lists/cgroups/msg21268.html
-> > > 
-> > > where the threads don't exit because they are trapped writing out the
-> > > oom messages to a slow console (running the reproducer from this email
-> > > thread triggers the oom flooding).
-> > > 
-> > > So IMO we should put this into 5.0 and add:
+> 
+> Hi Stefan and thank you for looking into this,
+> 
+> On Sun, 27 Jan 2019, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> > Hi Ioan-Adrian, 
 > > 
-> > Please note that Tetsuo has found out that this will not work with the
-> > CLONE_VM without CLONE_SIGHAND cases and his http://lkml.kernel.org/r/01370f70-e1f6-ebe4-b95e-0df21a0bc15e@i-love.sakura.ne.jp
-> > should handle this case as well. I've only had objections to the
-> > changelog but other than that the patch looked sensible to me.
+> >> Ioan-Adrian Ratiu <adi@adirat.com> hat am 27. Januar 2019 um 
+> >> 21:28 geschrieben:   This reverts commit 
+> >> bea8a160c621d19f7f78b13e14e03f4b8e44cd4b.   Contrary to what 
+> >> the commit message says, on my rpi 3 b v1.2 changing the 
+> >> polarity causes the exact behaviour this commit intends to fix, 
+> >> as described at the referenced link below (wlan0 disapears). 
+> >> With reset-gpios = ... GPIO_ACTIVE_HIGH, brcmfmac errors in 
+> >> dmesg:  [    7.977512] brcmfmac: brcmf_sdio_bus_sleep: error 
+> >> while changing bus sleep state -110 [    7.977623] brcmfmac: 
+> >> brcmf_sdio_txfail: sdio error, abort command and terminate 
+> >> frame [    7.978007] brcmfmac: brcmf_sdio_txfail: sdio error, 
+> >> abort command and terminate frame [    7.978377] brcmfmac: 
+> >> brcmf_sdio_txfail: sdio error, abort command and terminate 
+> >> frame [    7.978724] brcmfmac: brcmf_sdio_dpc: failed backplane 
+> >> access over SDIO, halting operation [    7.978734] brcmfmac: 
+> >> brcmf_proto_bcdc_query_dcmd: brcmf_proto_bcdc_msg failed 
+> >> w/status -110 [    7.978747] brcmfmac: 
+> >> brcmf_cfg80211_get_channel: chanspec failed (-110) [ 
+> >> 7.982817] brcmfmac: brcmf_sdio_bus_sleep: error while changing 
+> >> bus sleep state -110 [    7.982880] brcmfmac: 
+> >> brcmf_sdio_txfail: sdio error, abort command and terminate 
+> >> frame [    7.983255] brcmfmac: brcmf_sdio_txfail: sdio error, 
+> >> abort command and terminate frame  The only solution I 
+> >> currently have is to revert and everything works as expected 
+> >> and as before changing the polarity.   Link: 
+> >> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911443 
+> >> Signed-off-by: Ioan-Adrian Ratiu <adi@adirat.com> --- 
+> > 
+> > reverting this commit will only workaround the real issue. It 
+> > lies in the sdhci-iproc driver. 
+> > 
+> > Could please try this instead patch [1]? 
 > 
-> So I think you're saying that 
+> Yes, the patch fixes the bug and it's also in Linus' master branch 
+> in v5.0-rc3 as commit 2bd44da ("mmc: sdhci-iproc: handle 
+> mmc_of_parse() errors during prob").
 > 
-> mm-oom-marks-all-killed-tasks-as-oom-victims.patch
-> and
-> memcg-do-not-report-racy-no-eligible-oom-tasks.patch
+> There was just a minor conflict cherry-picking it to 4.19.y 
+> (sdhci_get_property -> sdhci_get_of_property).
 > 
-> should be dropped and that "[PATCH v2] memcg: killed threads should not
-> invoke memcg OOM killer" should be redone with some changelog
-> alterations and should be merged instead?
+> I would really like to have 2bd44da backported to the 4.19 stable 
+> tree to have wifi working again. Please?
+> 
+> Tested-by: Ioan-Adrian Ratiu <adi@adirat.com> #4.19.18
 
-Yup.
+i wasn't aware of this conflict until sunday. Yes, i will backport it.
 
--- 
-Michal Hocko
-SUSE Labs
+Thanks
+Stefan
+
+> 
+> >
+> > [1] - https://patchwork.kernel.org/patch/10741809/
