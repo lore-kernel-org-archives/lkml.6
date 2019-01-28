@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3284EC282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB921C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0379520811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73DC720811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693339;
-	bh=YtyJIrfKpiFN0j99EjlX5b3EQe17feUeYOnB8xA5YK4=;
+	s=default; t=1548693347;
+	bh=K+53OXBqfmYLglGWY/EjWaPSMW4nyKFKD7SDVtC97vY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rj9rBff1CPYiVUoj/Tv448AJfpTIh6jczeHqjoAC8YsPD0ynF6JHPpHMfuVULCxVt
-	 8Cmgkgvln7RmgnAdXR4CyUubEiAuyXydqi77RxSai4VPEOGCRwbEoZpTfnDNsi+HdC
-	 MIYIv+JZhIngAp96fLDVy3czp42HaOmWxoXB92Wk=
+	b=Qtg5DA/X8yw33Rlpz0IqUxhbn/9P83RoH8c0BUrEi6rOgRruEJB1Ol5BDSR7OXBB2
+	 Kgm0+PDAfe+xF168cj+ork4qyVtdFbnH5JyU5Z4h4X0X9x2FKjrBgsoqAGdKuy4J1F
+	 zRVg5EUHMl284FeYsP8/i0gmGbam3p5WRt8ChZsg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389997AbfA1QZj (ORCPT
+        id S2389957AbfA1Qfp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34464 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:35:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34440 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389981AbfA1QZf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:35 -0500
+        id S2389958AbfA1QZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46BC720879;
-        Mon, 28 Jan 2019 16:25:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 101722084A;
+        Mon, 28 Jan 2019 16:25:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692735;
-        bh=YtyJIrfKpiFN0j99EjlX5b3EQe17feUeYOnB8xA5YK4=;
+        s=default; t=1548692733;
+        bh=K+53OXBqfmYLglGWY/EjWaPSMW4nyKFKD7SDVtC97vY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gtowGGrz8VEKd1kXKdYdd0ilGxNt0fqDr+DLuzcP0soS59L2iARYniyHgzxB41POZ
-         zKPaGx/QkwbkwDzzhmVFlj7Az1EIAi6xA3YuVh6h/NfplymASXvoJW7rNtCAg5JQfa
-         ZAximpUen0B40SV/WreKFb0xNhr5tx31F03Z6MxM=
+        b=AuBF/5fe5SiRkSaD9pPkoyBYLEwf+SCjZ1KnEx1y82j8AZ71BjNdooqM71qmY2aSL
+         LGaYniLo+OXS3LxOPaRh3V+95gxL/nWizMR++X4F+iSRy4a+pT30tkY4GW4rd3fmQw
+         SYPAwIVSNz8dMu2Ond1CLepRQrFvIDg2gjHMolwU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Lars Ellenberg <lars.ellenberg@linbit.com>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 55/80] drbd: skip spurious timeout (ping-timeo) when failing promote
-Date:   Mon, 28 Jan 2019 11:23:36 -0500
-Message-Id: <20190128162401.58841-55-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 54/80] drbd: disconnect, if the wrong UUIDs are attached on a connected peer
+Date:   Mon, 28 Jan 2019 11:23:35 -0500
+Message-Id: <20190128162401.58841-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -60,58 +60,44 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Lars Ellenberg <lars.ellenberg@linbit.com>
 
-[ Upstream commit 9848b6ddd8c92305252f94592c5e278574e7a6ac ]
+[ Upstream commit b17b59602b6dcf8f97a7dc7bc489a48388d7063a ]
 
-If you try to promote a Secondary while connected to a Primary
-and allow-two-primaries is NOT set, we will wait for "ping-timeout"
-to give this node a chance to detect a dead primary,
-in case the cluster manager noticed faster than we did.
+With "on-no-data-accessible suspend-io", DRBD requires the next attach
+or connect to be to the very same data generation uuid tag it lost last.
 
-But if we then are *still* connected to a Primary,
-we fail (after an additional timeout of ping-timout).
+If we first lost connection to the peer,
+then later lost connection to our own disk,
+we would usually refuse to re-connect to the peer,
+because it presents the wrong data set.
 
-This change skips the spurious second timeout.
+However, if the peer first connects without a disk,
+and then attached its disk, we accepted that same wrong data set,
+which would be "unexpected" by any user of that DRBD
+and cause "undefined results" (read: very likely data corruption).
 
-Most people won't notice really,
-since "ping-timeout" by default is half a second.
-
-But in some installations, ping-timeout may be 10 or 20 seconds or more,
-and spuriously delaying the error return becomes annoying.
+The fix is to forcefully disconnect as soon as we notice that the peer
+attached to the "wrong" dataset.
 
 Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_nl.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ drivers/block/drbd/drbd_receiver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index e80cbefbc2b5..27e1abcf5710 100644
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -632,14 +632,15 @@ drbd_set_role(struct drbd_device *const device, enum drbd_role new_role, int for
- 		if (rv == SS_TWO_PRIMARIES) {
- 			/* Maybe the peer is detected as dead very soon...
- 			   retry at most once more in this case. */
--			int timeo;
--			rcu_read_lock();
--			nc = rcu_dereference(connection->net_conf);
--			timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
--			rcu_read_unlock();
--			schedule_timeout_interruptible(timeo);
--			if (try < max_tries)
-+			if (try < max_tries) {
-+				int timeo;
- 				try = max_tries - 1;
-+				rcu_read_lock();
-+				nc = rcu_dereference(connection->net_conf);
-+				timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
-+				rcu_read_unlock();
-+				schedule_timeout_interruptible(timeo);
-+			}
- 			continue;
- 		}
- 		if (rv < SS_SUCCESS) {
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 2fedab9349f6..b1ee358edd3b 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -3890,7 +3890,7 @@ static int receive_uuids(struct drbd_connection *connection, struct packet_info
+ 	kfree(device->p_uuid);
+ 	device->p_uuid = p_uuid;
+ 
+-	if (device->state.conn < C_CONNECTED &&
++	if ((device->state.conn < C_CONNECTED || device->state.pdsk == D_DISKLESS) &&
+ 	    device->state.disk < D_INCONSISTENT &&
+ 	    device->state.role == R_PRIMARY &&
+ 	    (device->ed_uuid & ~((u64)1)) != (p_uuid[UI_CURRENT] & ~((u64)1))) {
 -- 
 2.19.1
 
