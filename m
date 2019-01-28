@@ -2,135 +2,105 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E144BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62FE9C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:01:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF22E20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697977;
-	bh=4f6PF922jSX8/OFpN44E86hy3HF0IvgZoNTBmwfcvoc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GW7gKpe2MWTFjagAoi7x3q4toYXavg4FoF+pO/mWDQiFtEZFKNxZSDAgPWtGVKW7R
-	 8FGrF8GnkiQTNhwwq/zu9Mxt09CgrDgSqt6IAz4ZAQenJ+ydbuwHPxbm4mz1Y/mCdX
-	 FlvHPF//a62c+AUCt5eiZwhyPpDBGz54iRhyRRDE=
+	by mail.kernel.org (Postfix) with ESMTP id DAB822148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:01:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="T+p09RSz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727022AbfA1Pns (ORCPT
+        id S1726888AbfA1SBb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:43:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56920 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 13:01:31 -0500
+Received: from mout01.posteo.de ([185.67.36.65]:55235 "EHLO mout01.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbfA1Pnp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:43:45 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F10CA21738;
-        Mon, 28 Jan 2019 15:43:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690224;
-        bh=4f6PF922jSX8/OFpN44E86hy3HF0IvgZoNTBmwfcvoc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C/PNiJ0e24uSHSx2/F4+nN+yxrBHMNIMgVkbslRKFjVJQbRmA6dUnsEu99jL/Mley
-         +9PhgfX+YjjApOcUtKOWnN5d69fvmcUPRaANkhXdzu7aowtFV+9szVGVTDiu5WlUVl
-         DB/r5rwfi93l/bpm05vElHX3r01eQ1seOCL9Kcsc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Anholt <eric@anholt.net>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 002/304] drm/v3d: Fix a use-after-free race accessing the scheduler's fences.
-Date:   Mon, 28 Jan 2019 10:38:39 -0500
-Message-Id: <20190128154341.47195-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+        id S1726266AbfA1SBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 13:01:30 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout01.posteo.de (Postfix) with ESMTPS id 49DBF160060
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 19:01:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1548698485; bh=n6QO8/kBOLSwDXVKRis8rB30gKt/R4phl4zvGqFALoA=;
+        h=From:To:Cc:Subject:Date:From;
+        b=T+p09RSzjJug4lGkgjDwxmryUH67+N2REZAW/mFdWvPgPYu0X8rUsFo+XMkL/pu76
+         iUnU2CzVbc1al8tJWxKLBX/hSBrjm8EoH6hefipmtcDMlUIMv39NcSoxbMQuU6Kd+Y
+         9RYno6V6PzX6u26o8ccTRNsygfSqd1WDvTuhw9q+9fUGhFHih1NSqxQbdZcdNEklWK
+         QfO7u7a5bIMP+H4CGCLiVXP0RWzmMe+TsgFDH7t9j30+fSL0aW/dGHQDNHf/sYN/5f
+         l24MgV2vqSVI2HJOwJpjMKyu3sC1LRShJmaO/pZr5rdn5/MMyUvUd/e+Wu27hYDfwx
+         EwLEXsQJiB9hA==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 43pHW82LT2z6tmG;
+        Mon, 28 Jan 2019 19:01:24 +0100 (CET)
+From:   Martin Kepplinger <martink@posteo.de>
+To:     gregkh@linuxfoundation.org, jslaby@suse.com
+Cc:     linux-kernel@vger.kernel.org,
+        Manfred Schlaegl <manfred.schlaegl@ginzinger.com>,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: [PATCH v2] tty: increase the default flip buffer limit to 2*640K
+Date:   Mon, 28 Jan 2019 19:01:10 +0100
+Message-Id: <20190128180110.14795-1-martink@posteo.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Anholt <eric@anholt.net>
+From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 
-[ Upstream commit 34c2c4f632f232ed2fdb66d4e42cc72d322273fe ]
+We increase the default limit for buffer memory allocation by a factor of
+10 to 640K to prevent data loss when using fast serial interfaces.
 
-Once we push the job, the scheduler could run it and free it.  So, if
-we want to reference their fences, we need to grab them before then.
-I haven't seen this happen in many days of conformance test runtime,
-but let's still close the race.
+For example when using RS485 without flow-control at speeds of 1Mbit/s
+an upwards we've run into problems such as applications being too slow
+to read out this buffer (on embedded devices based on imx53 or imx6).
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
-Link: https://patchwork.freedesktop.org/patch/254119/
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+If you want to write transmitted data to a slow SD card and thus have
+realtime requirements, this limit can become a problem.
+
+That shouldn't be the case and 640K buffers fix such problems for us.
+
+This value is a maximum limit for allocation only. It has no effect
+on systems that currently run fine. When transmission is slow enough
+applications and hardware can keep up and increasing this limit
+doesn't change anything.
+
+It only _allows_ to allocate more than 2*64K in cases we currently fail to
+allocate memory despite having some.
+
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 ---
- drivers/gpu/drm/v3d/v3d_drv.h | 5 +++++
- drivers/gpu/drm/v3d/v3d_gem.c | 8 ++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
-index e6fed696ad86..cbe5be0c47eb 100644
---- a/drivers/gpu/drm/v3d/v3d_drv.h
-+++ b/drivers/gpu/drm/v3d/v3d_drv.h
-@@ -198,6 +198,11 @@ struct v3d_exec_info {
- 	 */
- 	struct dma_fence *bin_done_fence;
+revision history
+----------------
+v2: more verbose commit message answering Greg's questions
+v1: initial post
+
+
+ drivers/tty/tty_buffer.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/tty/tty_buffer.c b/drivers/tty/tty_buffer.c
+index 77070c2d1240..ec145a59f199 100644
+--- a/drivers/tty/tty_buffer.c
++++ b/drivers/tty/tty_buffer.c
+@@ -26,7 +26,7 @@
+  * Byte threshold to limit memory consumption for flip buffers.
+  * The actual memory limit is > 2x this amount.
+  */
+-#define TTYB_DEFAULT_MEM_LIMIT	65536
++#define TTYB_DEFAULT_MEM_LIMIT	(640 * 1024UL)
  
-+	/* Fence for when the scheduler considers the render to be
-+	 * done, for when the BOs reservations should be complete.
-+	 */
-+	struct dma_fence *render_done_fence;
-+
- 	struct kref refcount;
- 
- 	/* This is the array of BOs that were looked up at the start of exec. */
-diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
-index 70c54774400b..2814c72cb090 100644
---- a/drivers/gpu/drm/v3d/v3d_gem.c
-+++ b/drivers/gpu/drm/v3d/v3d_gem.c
-@@ -209,7 +209,7 @@ v3d_flush_caches(struct v3d_dev *v3d)
- static void
- v3d_attach_object_fences(struct v3d_exec_info *exec)
- {
--	struct dma_fence *out_fence = &exec->render.base.s_fence->finished;
-+	struct dma_fence *out_fence = exec->render_done_fence;
- 	struct v3d_bo *bo;
- 	int i;
- 
-@@ -409,6 +409,7 @@ v3d_exec_cleanup(struct kref *ref)
- 	dma_fence_put(exec->render.done_fence);
- 
- 	dma_fence_put(exec->bin_done_fence);
-+	dma_fence_put(exec->render_done_fence);
- 
- 	for (i = 0; i < exec->bo_count; i++)
- 		drm_gem_object_put_unlocked(&exec->bo[i]->base);
-@@ -572,6 +573,9 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 	if (ret)
- 		goto fail_unreserve;
- 
-+	exec->render_done_fence =
-+		dma_fence_get(&exec->render.base.s_fence->finished);
-+
- 	kref_get(&exec->refcount); /* put by scheduler job completion */
- 	drm_sched_entity_push_job(&exec->render.base,
- 				  &v3d_priv->sched_entity[V3D_RENDER]);
-@@ -585,7 +589,7 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
- 	sync_out = drm_syncobj_find(file_priv, args->out_sync);
- 	if (sync_out) {
- 		drm_syncobj_replace_fence(sync_out, 0,
--					  &exec->render.base.s_fence->finished);
-+					  exec->render_done_fence);
- 		drm_syncobj_put(sync_out);
- 	}
- 
+ /*
+  * We default to dicing tty buffer allocations to this many characters
 -- 
-2.19.1
+2.20.1
 
