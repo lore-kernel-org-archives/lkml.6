@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92F2EC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A368C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A6A62173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED23621741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:53:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694417;
-	bh=rpGuL0U3h7Hq77TNLq8XnKd1cHGOMWFsyjr95sIHu6Y=;
+	s=default; t=1548694425;
+	bh=GM9VZ5A8t8ypWCMVnevs6jbYmqLWckDPZOCgknNAXNg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Je/UKhX5pPAGjHUpHIgIFy5OLGircpTHGGAFLYBdRgnTAoOt+LH3KCaXNuCokwwTQ
-	 mUybgHSPHJv0/5WoVhcu8na5aNjIMWr/xE18GcekNPKUioxZB6HPO8F4bKFjZ3zCbV
-	 WuvfukpvMdh1aMN7Mj95lUSyuE9TO79bNMLfNscU=
+	b=HF/vRSjpI/BQNySCC6AUR5ha1mIZ68LyKB1ApCgU0gsvPhadXlJFBi1vzzS6xxUxK
+	 uCYcEiUQkb1JeWZqOnf2LyOTtBl6teMRHu9bMRxXsgN+7aZlb0TIP19DMrbE6V9rHW
+	 98why7Y+WP7CmpSvNVasTxqImo3w2Ih9c6B+c72k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387791AbfA1QSO (ORCPT
+        id S2388347AbfA1QSJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:18:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52396 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:18:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52292 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388361AbfA1QSK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:18:10 -0500
+        id S1732683AbfA1QSF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:18:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 443572086C;
-        Mon, 28 Jan 2019 16:18:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 512E220879;
+        Mon, 28 Jan 2019 16:18:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692290;
-        bh=rpGuL0U3h7Hq77TNLq8XnKd1cHGOMWFsyjr95sIHu6Y=;
+        s=default; t=1548692284;
+        bh=GM9VZ5A8t8ypWCMVnevs6jbYmqLWckDPZOCgknNAXNg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=b98i/cJUBtzRXt9DgZsbT81ZC7TJ2nIhDCfdxhcPzis+7gtdl7sfTk9M8JX9bNSEu
-         Kfn+FTNqjMpEGaeNpizlvrFdVt7Q+Gmxb37dbbZChHRhTaydb1HybDyEazCym1yRaI
-         mCy7z+9t3eiQdHQtI1LvNK2dH6oIm/e7b65DbiwY=
+        b=DxJOrGPu/Lk0Y54WtKw2xulVT/0XN9PC6nSKOxTalp6hPZigVmfUkSgQaWWqg++Sx
+         qjDjFgQL6OZusXrWDqktM5FoHCRlXL7qFd/xS3LJiBFBaNPB6eRe6p4Qtcrw2mrjvS
+         bxF+L1R5RZwG1dHpnH7S82nnmv1pOGRhDrYcd/OE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>, Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 141/170] hwmon: (lm80) fix a missing check of the status of SMBus read
-Date:   Mon, 28 Jan 2019 11:11:31 -0500
-Message-Id: <20190128161200.55107-141-sashal@kernel.org>
+Cc:     Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.14 138/170] powerpc/fadump: Do not allow hot-remove memory from fadump reserved area.
+Date:   Mon, 28 Jan 2019 11:11:28 -0500
+Message-Id: <20190128161200.55107-138-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,58 +58,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
 
-[ Upstream commit c9c63915519b1def7043b184680f33c24cd49d7b ]
+[ Upstream commit 0db6896ff6332ba694f1e61b93ae3b2640317633 ]
 
-If lm80_read_value() fails, it returns a negative number instead of the
-correct read data. Therefore, we should avoid using the data if it
-fails.
+For fadump to work successfully there should not be any holes in reserved
+memory ranges where kernel has asked firmware to move the content of old
+kernel memory in event of crash. Now that fadump uses CMA for reserved
+area, this memory area is now not protected from hot-remove operations
+unless it is cma allocated. Hence, fadump service can fail to re-register
+after the hot-remove operation, if hot-removed memory belongs to fadump
+reserved region. To avoid this make sure that memory from fadump reserved
+area is not hot-removable if fadump is registered.
 
-The fix checks if lm80_read_value() fails, and if so, returns with the
-error number.
+However, if user still wants to remove that memory, he can do so by
+manually stopping fadump service before hot-remove operation.
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-[groeck: One variable for return values is enough]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+Signed-off-by: Mahesh Salgaonkar <mahesh@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/lm80.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ arch/powerpc/include/asm/fadump.h               |  2 +-
+ arch/powerpc/kernel/fadump.c                    | 10 ++++++++--
+ arch/powerpc/platforms/pseries/hotplug-memory.c |  7 +++++--
+ 3 files changed, 14 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
-index 08e3945a6fbf..04f9df0d2341 100644
---- a/drivers/hwmon/lm80.c
-+++ b/drivers/hwmon/lm80.c
-@@ -360,9 +360,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
- 	struct i2c_client *client = data->client;
- 	unsigned long min, val;
- 	u8 reg;
--	int err = kstrtoul(buf, 10, &val);
--	if (err < 0)
--		return err;
-+	int rv;
+diff --git a/arch/powerpc/include/asm/fadump.h b/arch/powerpc/include/asm/fadump.h
+index 1e7a33592e29..15bc07a31c46 100644
+--- a/arch/powerpc/include/asm/fadump.h
++++ b/arch/powerpc/include/asm/fadump.h
+@@ -200,7 +200,7 @@ struct fad_crash_memory_ranges {
+ 	unsigned long long	size;
+ };
+ 
+-extern int is_fadump_boot_memory_area(u64 addr, ulong size);
++extern int is_fadump_memory_area(u64 addr, ulong size);
+ extern int early_init_dt_scan_fw_dump(unsigned long node,
+ 		const char *uname, int depth, void *data);
+ extern int fadump_reserve_mem(void);
+diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+index 5a6470383ca3..62d7ef6508de 100644
+--- a/arch/powerpc/kernel/fadump.c
++++ b/arch/powerpc/kernel/fadump.c
+@@ -117,13 +117,19 @@ int __init early_init_dt_scan_fw_dump(unsigned long node,
+ 
+ /*
+  * If fadump is registered, check if the memory provided
+- * falls within boot memory area.
++ * falls within boot memory area and reserved memory area.
+  */
+-int is_fadump_boot_memory_area(u64 addr, ulong size)
++int is_fadump_memory_area(u64 addr, ulong size)
+ {
++	u64 d_start = fw_dump.reserve_dump_area_start;
++	u64 d_end = d_start + fw_dump.reserve_dump_area_size;
 +
-+	rv = kstrtoul(buf, 10, &val);
-+	if (rv < 0)
-+		return rv;
+ 	if (!fw_dump.dump_registered)
+ 		return 0;
  
- 	/* Save fan_min */
- 	mutex_lock(&data->update_lock);
-@@ -390,8 +392,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
- 		return -EINVAL;
- 	}
++	if (((addr + size) > d_start) && (addr <= d_end))
++		return 1;
++
+ 	return (addr + size) > RMA_START && addr <= fw_dump.boot_memory_size;
+ }
  
--	reg = (lm80_read_value(client, LM80_REG_FANDIV) &
--	       ~(3 << (2 * (nr + 1)))) | (data->fan_div[nr] << (2 * (nr + 1)));
-+	rv = lm80_read_value(client, LM80_REG_FANDIV);
-+	if (rv < 0)
-+		return rv;
-+	reg = (rv & ~(3 << (2 * (nr + 1))))
-+	    | (data->fan_div[nr] << (2 * (nr + 1)));
- 	lm80_write_value(client, LM80_REG_FANDIV, reg);
+diff --git a/arch/powerpc/platforms/pseries/hotplug-memory.c b/arch/powerpc/platforms/pseries/hotplug-memory.c
+index 1d48ab424bd9..93e09f108ca1 100644
+--- a/arch/powerpc/platforms/pseries/hotplug-memory.c
++++ b/arch/powerpc/platforms/pseries/hotplug-memory.c
+@@ -441,8 +441,11 @@ static bool lmb_is_removable(struct of_drconf_cell *lmb)
+ 	phys_addr = lmb->base_addr;
  
- 	/* Restore fan_min */
+ #ifdef CONFIG_FA_DUMP
+-	/* Don't hot-remove memory that falls in fadump boot memory area */
+-	if (is_fadump_boot_memory_area(phys_addr, block_sz))
++	/*
++	 * Don't hot-remove memory that falls in fadump boot memory area
++	 * and memory that is reserved for capturing old kernel memory.
++	 */
++	if (is_fadump_memory_area(phys_addr, block_sz))
+ 		return false;
+ #endif
+ 
 -- 
 2.19.1
 
