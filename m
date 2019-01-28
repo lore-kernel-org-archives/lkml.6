@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB08C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9B680C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CD012175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BE152177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691988;
-	bh=mcFzueVP0Op9KTEvURO7HhuYgT//LQ9osPGkNuGA//Y=;
+	s=default; t=1548691993;
+	bh=R3+G5dKMvtpXPJRLyhNTADcILtvX5XKy5uPUgcuUKzY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0mU4DAArEvKkfNRvmOim60WNtTs399Yzjv/gVp4P1m+NY4Ud1YozWj18q8xhayf7A
-	 0Jk/8rCiXaI78H6zvsdzLiOpJ9kS6dKx+ePJt7VaOS/I2Df04u4O9uD9CgWoFpplG8
-	 qlmsDuSjzllWsyvZrVre8QdaFv5w+cCcVpwjSv1I=
+	b=JSXA9Lu+FH07b36q3upM9MUuyXMPKVN5S0nxUkrApezjImYs7NNHRoNQFJcxqlU6X
+	 c3RFSCCtFq8T2UdiAk2tirCVWa5nW7khSxVSnic+85BKmdLUv3EkNvcLEhLlIwCVyy
+	 iE/UFbv3YuKOW7ugpyu8/93XcjFXbeYFoObnGyBo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733278AbfA1QNG (ORCPT
+        id S1733298AbfA1QNL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:13:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41624 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:13:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41750 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732720AbfA1QNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:02 -0500
+        id S1732720AbfA1QNH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A6AD22184D;
-        Mon, 28 Jan 2019 16:12:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A534A2147A;
+        Mon, 28 Jan 2019 16:13:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691981;
-        bh=mcFzueVP0Op9KTEvURO7HhuYgT//LQ9osPGkNuGA//Y=;
+        s=default; t=1548691987;
+        bh=R3+G5dKMvtpXPJRLyhNTADcILtvX5XKy5uPUgcuUKzY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FQl9JI2UBXVeKgoLhcnOBcNFTOGpuhUYvQgArNd7pfS3fpe4eXzS3Ml9GDI+WKohb
-         pH3nC2tcu11POVHF6CpQPsAkLzJa82uh8hst5aSCOXw92Cgc9FmSyuucXvMGFq13Q9
-         Sqe7YUbSSgc8l4evTHOf6gtFD0f1YjbDUjIN9yf8=
+        b=kDUImTL+jlv2c1B6Ym8AKQgT102PepTgCsUjaAHRzsXaiv8U9h8Z8/SHgnJx2ODLo
+         SHaguUJV22H4FXfODS70fPxcjvj+iCs+Tns9Tb+ukancvnAHH1afGaJ0Lu/ucfw8xz
+         x1ts/ujJWP0hxoDhmHbukQYvpvI4Z2CARO0Xgc9E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@linuxdriverproject.org
-Subject: [PATCH AUTOSEL 4.14 026/170] Tools: hv: kvp: Fix a warning of buffer overflow with gcc 8.0.1
-Date:   Mon, 28 Jan 2019 11:09:36 -0500
-Message-Id: <20190128161200.55107-26-sashal@kernel.org>
+Cc:     Ben Dooks <ben.dooks@codethink.co.uk>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 029/170] usbnet: smsc95xx: fix rx packet alignment
+Date:   Mon, 28 Jan 2019 11:09:39 -0500
+Message-Id: <20190128161200.55107-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -61,65 +59,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Ben Dooks <ben.dooks@codethink.co.uk>
 
-[ Upstream commit 4fcba7802c3e15a6e56e255871d6c72f829b9dd8 ]
+[ Upstream commit 810eeb1f41a9a272eedc94ca18c072e75678ede4 ]
 
-The patch fixes:
+The smsc95xx driver already takes into account the NET_IP_ALIGN
+parameter when setting up the receive packet data, which means
+we do not need to worry about aligning the packets in the usbnet
+driver.
 
-hv_kvp_daemon.c: In function 'kvp_set_ip_info':
-hv_kvp_daemon.c:1305:2: note: 'snprintf' output between 41 and 4136 bytes
-into a destination of size 4096
+Adding the EVENT_NO_IP_ALIGN means that the IPv4 header is now
+passed to the ip_rcv() routine with the start on an aligned address.
 
-The "(unsigned int)str_len" is to avoid:
+Tested on Raspberry Pi B3.
 
-hv_kvp_daemon.c:1309:30: warning: comparison of integer expressions of
-different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
-
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/hv/hv_kvp_daemon.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/net/usb/smsc95xx.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index 3965186b375a..62c9a503ae05 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -1172,6 +1172,7 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
- 	FILE *file;
- 	char cmd[PATH_MAX];
- 	char *mac_addr;
-+	int str_len;
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index 2f65975a121f..fc48da1c702d 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -1295,6 +1295,7 @@ static int smsc95xx_bind(struct usbnet *dev, struct usb_interface *intf)
+ 		dev->net->features |= NETIF_F_RXCSUM;
  
- 	/*
- 	 * Set the configuration for the specified interface with
-@@ -1295,8 +1296,18 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
- 	 * invoke the external script to do its magic.
- 	 */
+ 	dev->net->hw_features = NETIF_F_IP_CSUM | NETIF_F_RXCSUM;
++	set_bit(EVENT_NO_IP_ALIGN, &dev->flags);
  
--	snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
--		 "hv_set_ifconfig", if_file);
-+	str_len = snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
-+			   "hv_set_ifconfig", if_file);
-+	/*
-+	 * This is a little overcautious, but it's necessary to suppress some
-+	 * false warnings from gcc 8.0.1.
-+	 */
-+	if (str_len <= 0 || (unsigned int)str_len >= sizeof(cmd)) {
-+		syslog(LOG_ERR, "Cmd '%s' (len=%d) may be too long",
-+		       cmd, str_len);
-+		return HV_E_FAIL;
-+	}
-+
- 	if (system(cmd)) {
- 		syslog(LOG_ERR, "Failed to execute cmd '%s'; error: %d %s",
- 				cmd, errno, strerror(errno));
+ 	smsc95xx_init_mac_address(dev);
+ 
 -- 
 2.19.1
 
