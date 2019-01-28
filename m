@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FE35C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:35:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15023C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:35:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0E8F21773
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:35:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D862821741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:35:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548678942;
-	bh=DeB50/hPKxsDcgw7h6VAflp1YUZhmhl5zIYAMfSCTTQ=;
+	s=default; t=1548678944;
+	bh=9Rvxtt2EEZJhMI0ksOS8tCCBzK+/owLfoU1T7Rm6/bU=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=bslyx/aBjj1eYaL5UnVKlv02bMNyEJClkX59vVhZ70ClrUVfTnxRbEpCGw7bO8Jfi
-	 2A4Qy0JTUDfTTIGIcbmOTHAnIts2ElSnQk5K4hGjbYTCZHtgG1YOAxHoxL/vsOpVr5
-	 ejc/SucocfTs5EFk9USnF4OaTw3thjcEl3d8GpJ8=
+	b=nobOT7wu+6SujhNyEeR7tFmtuqZdpprwfwyL0bp0EaWUGQeTZX5Je1IOun0IkuG99
+	 Hp+awavsbWR4iLrT1w8cyltAuYNxr3zZ85e8joXD9EBvkgCIM53eSZRjO29nZ0e8gA
+	 oQaMFRj89u+Fl/l0pAdz0ocLE2j/WWOHEtQ+spuA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726832AbfA1Mfj (ORCPT
+        id S1726869AbfA1Mfn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:35:39 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42102 "EHLO
+        Mon, 28 Jan 2019 07:35:43 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42198 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfA1Mfi (ORCPT
+        with ESMTP id S1726661AbfA1Mfl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:35:38 -0500
+        Mon, 28 Jan 2019 07:35:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=ZAkRInmoIzrCBj5UT0SPPfdLv5fjRygzq7H3k1ReN44=; b=F/B/PAX42Kvv
-        wuKfUwCK7VkbhRAQemGCHASQ6lbLrYYzOeHDBOytY2gRO8OkvlK4HhDlA94/XzF830Gra0K26IAFs
-        zEZgWVPST+VfCHAut3K5hQ6cCQuZaajlf3RClfIA1rQao+HeXYVxGaf1EORYNkWXI/6ILo8r1Kdgf
-        zJTY8=;
+        List-Archive; bh=v/FqyBs6R5F/sRrHiEEUsiefcgg7w6S7F9/lL+NO5jk=; b=TrQ+9qHso20l
+        dJ5KA3g3wBDdlXlli9fhM9fwOC612J2inOPqes/4oj2dq4TWLjHLGeu9JGE5iObQyq86Zs8tl2OIT
+        DLALVnpCXgyCCAgq6IL7ZqjZFBA9QcbM8/ev761NSO4x77stQXQ4DF+SURvPxZe1B0SIpbb8BXAuI
+        MVwaU=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1go68W-0002Sl-IN; Mon, 28 Jan 2019 12:35:36 +0000
+        id 1go68Z-0002Sx-T3; Mon, 28 Jan 2019 12:35:39 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 384E31127D29; Mon, 28 Jan 2019 12:35:36 +0000 (GMT)
+        id 876B71127D29; Mon, 28 Jan 2019 12:35:39 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: rk808: Constify regulator_ops" to the regulator tree
+Subject: Applied "regulator: da9063: Check return value of devm_regmap_field_alloc calls" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190128123536.384E31127D29@debutante.sirena.org.uk>
-Date:   Mon, 28 Jan 2019 12:35:36 +0000 (GMT)
+Message-Id: <20190128123539.876B71127D29@debutante.sirena.org.uk>
+Date:   Mon, 28 Jan 2019 12:35:39 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: rk808: Constify regulator_ops
+   regulator: da9063: Check return value of devm_regmap_field_alloc calls
 
 has been applied to the regulator tree at
 
@@ -84,97 +84,70 @@ to this mail.
 Thanks,
 Mark
 
-From dc6f23edd702c30c403eba74eb9c7743e5392f02 Mon Sep 17 00:00:00 2001
+From 8459203940d0a46d26500f6d72ee041367ed9263 Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Sun, 27 Jan 2019 22:23:43 +0800
-Subject: [PATCH] regulator: rk808: Constify regulator_ops
+Date: Sat, 26 Jan 2019 23:22:34 +0800
+Subject: [PATCH] regulator: da9063: Check return value of
+ devm_regmap_field_alloc calls
 
-While at it, also fix indent for rk805_reg_ops and rk805_switch_ops.
+Since devm_regmap_field_alloc can fail, add error checking for it.
 
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/rk808-regulator.c | 42 ++++++++++++++---------------
- 1 file changed, 21 insertions(+), 21 deletions(-)
+ drivers/regulator/da9063-regulator.c | 29 +++++++++++++++++++++++-----
+ 1 file changed, 24 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/regulator/rk808-regulator.c b/drivers/regulator/rk808-regulator.c
-index 213b68743cc8..c18ed632c95d 100644
---- a/drivers/regulator/rk808-regulator.c
-+++ b/drivers/regulator/rk808-regulator.c
-@@ -363,28 +363,28 @@ static int rk808_set_suspend_disable(struct regulator_dev *rdev)
- 				  rdev->desc->enable_mask);
- }
+diff --git a/drivers/regulator/da9063-regulator.c b/drivers/regulator/da9063-regulator.c
+index 8cbcd2a3eb20..85c45577bad1 100644
+--- a/drivers/regulator/da9063-regulator.c
++++ b/drivers/regulator/da9063-regulator.c
+@@ -835,21 +835,40 @@ static int da9063_regulator_probe(struct platform_device *pdev)
+ 		regl->desc.type = REGULATOR_VOLTAGE;
+ 		regl->desc.owner = THIS_MODULE;
  
--static struct regulator_ops rk805_reg_ops = {
--		.list_voltage           = regulator_list_voltage_linear,
--		.map_voltage            = regulator_map_voltage_linear,
--		.get_voltage_sel        = regulator_get_voltage_sel_regmap,
--		.set_voltage_sel        = regulator_set_voltage_sel_regmap,
--		.enable                 = regulator_enable_regmap,
--		.disable                = regulator_disable_regmap,
--		.is_enabled             = regulator_is_enabled_regmap,
--		.set_suspend_voltage    = rk808_set_suspend_voltage,
--		.set_suspend_enable     = rk805_set_suspend_enable,
--		.set_suspend_disable    = rk805_set_suspend_disable,
-+static const struct regulator_ops rk805_reg_ops = {
-+	.list_voltage           = regulator_list_voltage_linear,
-+	.map_voltage            = regulator_map_voltage_linear,
-+	.get_voltage_sel        = regulator_get_voltage_sel_regmap,
-+	.set_voltage_sel        = regulator_set_voltage_sel_regmap,
-+	.enable                 = regulator_enable_regmap,
-+	.disable                = regulator_disable_regmap,
-+	.is_enabled             = regulator_is_enabled_regmap,
-+	.set_suspend_voltage    = rk808_set_suspend_voltage,
-+	.set_suspend_enable     = rk805_set_suspend_enable,
-+	.set_suspend_disable    = rk805_set_suspend_disable,
- };
+-		if (regl->info->mode.reg)
++		if (regl->info->mode.reg) {
+ 			regl->mode = devm_regmap_field_alloc(&pdev->dev,
+ 					da9063->regmap, regl->info->mode);
+-		if (regl->info->suspend.reg)
++			if (IS_ERR(regl->mode))
++				return PTR_ERR(regl->mode);
++		}
++
++		if (regl->info->suspend.reg) {
+ 			regl->suspend = devm_regmap_field_alloc(&pdev->dev,
+ 					da9063->regmap, regl->info->suspend);
+-		if (regl->info->sleep.reg)
++			if (IS_ERR(regl->suspend))
++				return PTR_ERR(regl->suspend);
++		}
++
++		if (regl->info->sleep.reg) {
+ 			regl->sleep = devm_regmap_field_alloc(&pdev->dev,
+ 					da9063->regmap, regl->info->sleep);
+-		if (regl->info->suspend_sleep.reg)
++			if (IS_ERR(regl->sleep))
++				return PTR_ERR(regl->sleep);
++		}
++
++		if (regl->info->suspend_sleep.reg) {
+ 			regl->suspend_sleep = devm_regmap_field_alloc(&pdev->dev,
+ 					da9063->regmap, regl->info->suspend_sleep);
+-		if (regl->info->ilimit.reg)
++			if (IS_ERR(regl->suspend_sleep))
++				return PTR_ERR(regl->suspend_sleep);
++		}
++
++		if (regl->info->ilimit.reg) {
+ 			regl->ilimit = devm_regmap_field_alloc(&pdev->dev,
+ 					da9063->regmap, regl->info->ilimit);
++			if (IS_ERR(regl->ilimit))
++				return PTR_ERR(regl->ilimit);
++		}
  
--static struct regulator_ops rk805_switch_ops = {
--		.enable                 = regulator_enable_regmap,
--		.disable                = regulator_disable_regmap,
--		.is_enabled             = regulator_is_enabled_regmap,
--		.set_suspend_enable     = rk805_set_suspend_enable,
--		.set_suspend_disable    = rk805_set_suspend_disable,
-+static const struct regulator_ops rk805_switch_ops = {
-+	.enable                 = regulator_enable_regmap,
-+	.disable                = regulator_disable_regmap,
-+	.is_enabled             = regulator_is_enabled_regmap,
-+	.set_suspend_enable     = rk805_set_suspend_enable,
-+	.set_suspend_disable    = rk805_set_suspend_disable,
- };
- 
--static struct regulator_ops rk808_buck1_2_ops = {
-+static const struct regulator_ops rk808_buck1_2_ops = {
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
- 	.get_voltage_sel	= rk808_buck1_2_get_voltage_sel_regmap,
-@@ -399,7 +399,7 @@ static struct regulator_ops rk808_buck1_2_ops = {
- 	.set_suspend_disable	= rk808_set_suspend_disable,
- };
- 
--static struct regulator_ops rk808_reg_ops = {
-+static const struct regulator_ops rk808_reg_ops = {
- 	.list_voltage		= regulator_list_voltage_linear,
- 	.map_voltage		= regulator_map_voltage_linear,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -412,7 +412,7 @@ static struct regulator_ops rk808_reg_ops = {
- 	.set_suspend_disable	= rk808_set_suspend_disable,
- };
- 
--static struct regulator_ops rk808_reg_ops_ranges = {
-+static const struct regulator_ops rk808_reg_ops_ranges = {
- 	.list_voltage		= regulator_list_voltage_linear_range,
- 	.map_voltage		= regulator_map_voltage_linear_range,
- 	.get_voltage_sel	= regulator_get_voltage_sel_regmap,
-@@ -425,7 +425,7 @@ static struct regulator_ops rk808_reg_ops_ranges = {
- 	.set_suspend_disable	= rk808_set_suspend_disable,
- };
- 
--static struct regulator_ops rk808_switch_ops = {
-+static const struct regulator_ops rk808_switch_ops = {
- 	.enable			= regulator_enable_regmap,
- 	.disable		= regulator_disable_regmap,
- 	.is_enabled		= regulator_is_enabled_regmap,
+ 		/* Register regulator */
+ 		memset(&config, 0, sizeof(config));
 -- 
 2.20.1
 
