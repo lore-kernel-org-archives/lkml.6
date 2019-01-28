@@ -2,50 +2,52 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38CD3C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF075C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A1742147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE08820989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691589;
-	bh=LhZjI23J8nfbElxw7IbIt11E7C9ZaPTm9xKPQvEyyLQ=;
+	s=default; t=1548691592;
+	bh=Xh9oBqZwuPzJcsNL1oJvb/evRqXbv2pdvg0Yi85km6Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tXUFFurXZk+u2rpO14lPSA4nmtKdwfTiltCgA0KRr+q/nroUBU1pi59smM988F+Ca
-	 WFwtugzI72lTB573UgWZ8qz/b+/ijW900wfwLbx+erFoX46ons9yr1ubBA62GGjAWz
-	 tRxjeb2jIhmmK/sak7monHft0Unnt090xCC40Grk=
+	b=MTT+5UwpcnzSksax0BmbQlGlShJpVSGusw54dF2Xns6CDcWfXEsYXH2LJCmq1IAMM
+	 26fJKX5acW2GWorBYKxC5zsd6ZqW0K2GAPoqgYCa/lsYkmoaDcBoXhIxeyl+sMXlMw
+	 qFM4peAPRdy7VpPDskRr9nvJe2ZEfSc6lEgeJ74U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732026AbfA1QG1 (ORCPT
+        id S1731560AbfA1QGb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:06:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55062 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:06:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55374 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731416AbfA1QGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:06:23 -0500
+        id S1727985AbfA1QG3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:06:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0829021738;
-        Mon, 28 Jan 2019 16:06:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A11821738;
+        Mon, 28 Jan 2019 16:06:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691582;
-        bh=LhZjI23J8nfbElxw7IbIt11E7C9ZaPTm9xKPQvEyyLQ=;
+        s=default; t=1548691588;
+        bh=Xh9oBqZwuPzJcsNL1oJvb/evRqXbv2pdvg0Yi85km6Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JvF6fpCVYBZ39tThDO0msSg0TONIO01QueDK6C8dYrdDej+/124x+0D78+gV7sp/d
-         rG7dUGS+cfmSpFaLixONAD35v7qy/Yrh5gIhHqaiC4kDwQRheyCcJbbA3rzfVrkgd1
-         k2q2RioEoesPXhJoD/iDljTktBgVPw5KcYC+O9ss=
+        b=azHVl2dwDd8KkVbBuWPlNtIUb3DUEFzNhF22qXudfAv/CxNTaM5flmwksEndSqa0U
+         2yBBOtwgGY78SLTDsSFmFv62pWwro4Fr7bfhb65n4mFRWi3tms5W0lhWZkR6uyNeXE
+         oQ71M0ziPqPSoFiFhZ/w2rLDYMKbxM+WNIZcgSjU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 149/258] ARM: mmp: fix timer_init calls
-Date:   Mon, 28 Jan 2019 10:57:35 -0500
-Message-Id: <20190128155924.51521-149-sashal@kernel.org>
+Cc:     Phil Elwell <phil@raspberrypi.org>,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 151/258] mmc: bcm2835: Recover from MMC_SEND_EXT_CSD
+Date:   Mon, 28 Jan 2019 10:57:37 -0500
+Message-Id: <20190128155924.51521-151-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,112 +59,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Phil Elwell <phil@raspberrypi.org>
 
-[ Upstream commit 12d3a30db4a3b3df5fbadf5974b9cf50544a9950 ]
+[ Upstream commit 07d405769afea5718529fc9e341f0b13b3189b6f ]
 
-The change to passing the timer frequency as a function argument
-was a good idea, but caused a build failure for one user that
-was missed in the update:
+If the user issues an "mmc extcsd read", the SD controller receives
+what it thinks is a SEND_IF_COND command with an unexpected data block.
+The resulting operations leave the FSM stuck in READWAIT, a state which
+persists until the MMC framework resets the controller, by which point
+the root filesystem is likely to have been unmounted.
 
-arch/arm/mach-mmp/time.c: In function 'mmp_dt_init_timer':
-arch/arm/mach-mmp/time.c:242:2: error: implicit declaration of function 'timer_init'; did you mean 'hrtimer_init'? [-Werror=implicit-function-declaration]
+A less heavyweight solution is to detect the condition and nudge the
+FSM by asserting the (self-clearing) FORCE_DATA_MODE bit.
 
-Change that as well to fix the build error, and rename the
-function to put it into a proper namespace and make it clearer
-what is actually going on.
-
-I saw that the high 6500000 HZ frequency was previously only
-set with CONFIG_MMP2, but is now also used with MMP (pxa910),
-so I'm changing that back here. Please make sure that the
-frequencies are all correct now.
-
-Fixes: f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Link: https://github.com/raspberrypi/linux/issues/2728
+Signed-off-by: Phil Elwell <phil@raspberrypi.org>
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Acked-by: Eric Anholt <eric@anholt.net>
+Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-mmp/common.h | 2 +-
- arch/arm/mach-mmp/mmp2.c   | 2 +-
- arch/arm/mach-mmp/pxa168.c | 2 +-
- arch/arm/mach-mmp/pxa910.c | 2 +-
- arch/arm/mach-mmp/time.c   | 4 ++--
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/mmc/host/bcm2835.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
-index 5ac2851ef5d3..483b8b6d3005 100644
---- a/arch/arm/mach-mmp/common.h
-+++ b/arch/arm/mach-mmp/common.h
-@@ -2,7 +2,7 @@
- #include <linux/reboot.h>
- #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+diff --git a/drivers/mmc/host/bcm2835.c b/drivers/mmc/host/bcm2835.c
+index 768972af8b85..aef40e1739ee 100644
+--- a/drivers/mmc/host/bcm2835.c
++++ b/drivers/mmc/host/bcm2835.c
+@@ -772,6 +772,8 @@ static void bcm2835_finish_command(struct bcm2835_host *host)
  
--extern void timer_init(int irq, unsigned long rate);
-+extern void mmp_timer_init(int irq, unsigned long rate);
- 
- extern void __init mmp_map_io(void);
- extern void mmp_restart(enum reboot_mode, const char *);
-diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-index fb3e7e32c882..726c1a642dea 100644
---- a/arch/arm/mach-mmp/mmp2.c
-+++ b/arch/arm/mach-mmp/mmp2.c
-@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
- 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
- 	__raw_writel(clk_rst, APBC_TIMERS);
- 
--	timer_init(IRQ_MMP2_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_MMP2_TIMER1, 6500000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
-index 77a358165a56..cdcf65ace3f9 100644
---- a/arch/arm/mach-mmp/pxa168.c
-+++ b/arch/arm/mach-mmp/pxa168.c
-@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
- 	/* 3.25MHz, bus/functional clock enabled, release reset */
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA168_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_PXA168_TIMER1, 3250000);
- }
- 
- void pxa168_clear_keypad_wakeup(void)
-diff --git a/arch/arm/mach-mmp/pxa910.c b/arch/arm/mach-mmp/pxa910.c
-index 1ccbba9ac495..d30a7d12bc98 100644
---- a/arch/arm/mach-mmp/pxa910.c
-+++ b/arch/arm/mach-mmp/pxa910.c
-@@ -116,7 +116,7 @@ void __init pxa910_timer_init(void)
- 	__raw_writel(APBC_APBCLK | APBC_RST, APBC_TIMERS);
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA910_AP1_TIMER1);
-+	mmp_timer_init(IRQ_PXA910_AP1_TIMER1, 3250000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index eab0fd8a7343..f9c295154b94 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -184,7 +184,7 @@ static struct irqaction timer_irq = {
- 	.dev_id		= &ckevt,
- };
- 
--void __init timer_init(int irq, unsigned long rate)
-+void __init mmp_timer_init(int irq, unsigned long rate)
- {
- 	timer_config();
- 
-@@ -239,7 +239,7 @@ void __init mmp_dt_init_timer(void)
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	timer_init(irq, rate);
-+	mmp_timer_init(irq, rate);
- 	return;
- out:
- 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
+ 		if (!(sdhsts & SDHSTS_CRC7_ERROR) ||
+ 		    (host->cmd->opcode != MMC_SEND_OP_COND)) {
++			u32 edm, fsm;
++
+ 			if (sdhsts & SDHSTS_CMD_TIME_OUT) {
+ 				host->cmd->error = -ETIMEDOUT;
+ 			} else {
+@@ -780,6 +782,13 @@ static void bcm2835_finish_command(struct bcm2835_host *host)
+ 				bcm2835_dumpregs(host);
+ 				host->cmd->error = -EILSEQ;
+ 			}
++			edm = readl(host->ioaddr + SDEDM);
++			fsm = edm & SDEDM_FSM_MASK;
++			if (fsm == SDEDM_FSM_READWAIT ||
++			    fsm == SDEDM_FSM_WRITESTART1)
++				/* Kick the FSM out of its wait */
++				writel(edm | SDEDM_FORCE_DATA_MODE,
++				       host->ioaddr + SDEDM);
+ 			bcm2835_finish_request(host);
+ 			return;
+ 		}
 -- 
 2.19.1
 
