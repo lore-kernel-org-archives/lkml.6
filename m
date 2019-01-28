@@ -2,110 +2,150 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E23B8C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DBEB5C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B177321741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ7ucoTF"
+	by mail.kernel.org (Postfix) with ESMTP id A3B3D20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548690597;
+	bh=UFKkK2XqrBODM0iSQQJJ9TCsOTjqMnP8f9V2pPLbPdc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=a3uI0xQAr9s1OSfsI5FEE+Tu7eU8dFMwGEBhm51XAx8uWucboMbYxQcQJnelNiyc3
+	 nm8hXrM8Yz1hQYorjpnfpEpsleZqlSNh0a/Rh08bRQ66lBbbQdg5JEaH49Ztrl3EfE
+	 kELaSXETA7NIV6mgLTHuIEtsc6pSV7eDaoSm+Zck=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728768AbfA1Ptt (ORCPT
+        id S1728811AbfA1Pt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:49:49 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36296 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727710AbfA1Ptr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:49:47 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b85so8178172pfc.3;
-        Mon, 28 Jan 2019 07:49:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=NPOXNmCc9QGZxVPGuBdj+M38qlfRDcwzHxYp1zV1Lus=;
-        b=UQ7ucoTFnThPSjvDdyZt6lwceoyLg68tkDcJK1IZiTHV432Otou6D7ou9LSbIqLz2K
-         t0HSZ+UFHzDqMVi40Sw6DAIk1B1k9/n7rcuOAA0GQ30AQK2dvdVzevTAOJ1TGlM1jZey
-         JFBOau7zoxid3Jg+UKTRn66IqbuRyEG5Cf55Wq+x91PpfGbvi8NX3O+v3aziSrTIUJY+
-         7F6ZUmAWT5yWyENgn9Sn1aUrLm8oEnHX7YXR4DO31om1HCktIhNi6usjXa3SR8RQcj6G
-         zfcXkvnbnGnjm9TTMDc2B5L4LSZ6vt2dqmxA1bF74lrsD4Bdb76R226UFgYDvPN2VWCo
-         bv4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NPOXNmCc9QGZxVPGuBdj+M38qlfRDcwzHxYp1zV1Lus=;
-        b=HdWFk9cGDKRTZWE3za8ofPAIyuen0DKyJESHQpzbf7OxqfSTruaWquq/pRNjCsDcva
-         8HrjXVTyNJN1D+CbIvHVNCpztk93oNLTQOC1JHHvu+LVYUIRr56hxXh0XjClX1iQ1Glj
-         Jd6JM5yCd9O131g2BOI8IYQmhcJFtfeEjb06p7JoIZvUw2D0WDoE4Rm8PES/QLQeAyzP
-         N2GivsLch6y9lcT4OFQg3CGqA/eDI26/Jea4K8G5pIduhpvaEElPU3beb+CjSa1FBavz
-         iUom9pXamjy8xbpeQNwwpKsz2nmsYrrIts+G3az7fOaDssi3nqTcMYb4t3hB1i4AiynY
-         vnQg==
-X-Gm-Message-State: AJcUuke5uJZndSm7w6wX/ON1GCLqC40t0sJqu1LX9bRFizB4VI4Dx3zb
-        q6nLmnZ18KkSNSaSb9U+s80CvnJBq45r9H8mla5i+1K+
-X-Google-Smtp-Source: ALg8bN7tdWq1w66B7Flm9lZQHyhX5eTOt33kUtitYuedcqS/0NErP/F3afklPsRhHu3MUqM+0Yyro7rYH5F708FgbeY=
-X-Received: by 2002:a62:34c6:: with SMTP id b189mr22914890pfa.229.1548690586251;
- Mon, 28 Jan 2019 07:49:46 -0800 (PST)
+        Mon, 28 Jan 2019 10:49:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35740 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728222AbfA1Ptx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:49:53 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 48C1B21741;
+        Mon, 28 Jan 2019 15:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690592;
+        bh=UFKkK2XqrBODM0iSQQJJ9TCsOTjqMnP8f9V2pPLbPdc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QWkeF4/kfH25ZVzhTpxY49mXQOLunWMVIzZhmYsLO7zx36hvPhxrKihkydI3681U2
+         iAQeK/ndQ3hPeCGWCmwtieWeobiBD5ntScexgCWgyOKxCqqm+pD0yxyPP5SAsfaAHF
+         UlMrnGq4nXrq7NjLi2SfpHpfxLTO29nBJu298GGI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Peter Rajnoha <prajnoha@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 133/304] kobject: return error code if writing /sys/.../uevent fails
+Date:   Mon, 28 Jan 2019 10:40:50 -0500
+Message-Id: <20190128154341.47195-133-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190122200302.19861-1-2pi@mok.nu> <CAHp75Vfv1sMyAQn=ue0hroqAnbkhQayCj64xNBHO5PRRv53GSA@mail.gmail.com>
- <20190128143845.2gneic5ip5b56mwv@mok.nu>
-In-Reply-To: <20190128143845.2gneic5ip5b56mwv@mok.nu>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 28 Jan 2019 17:49:34 +0200
-Message-ID: <CAHp75Vdjq5S3gdk7iPEsbmAvxL1nVxxNSnTQ1O0KLxZ4uTH_tw@mail.gmail.com>
-Subject: Re: [PATCH] platform/x86: wmi: fix potential null pointer dereferences
-To:     Mattias Jacobsson <2pi@mok.nu>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 4:39 PM Mattias Jacobsson <2pi@mok.nu> wrote:
-> On 2019-01-27, Andy Shevchenko wrote:
-> > On Tue, Jan 22, 2019 at 10:04 PM Mattias Jacobsson <2pi@mok.nu> wrote:
+From: Peter Rajnoha <prajnoha@redhat.com>
 
-> > > -       struct wmi_driver *wmi_driver =
-> > > -               container_of(driver, struct wmi_driver, driver);
-> >
-> > AFAIU this is just a pointer arithmetics, no need to move it.
->
-> That is my understanding too, it seamed backwards to do the NULL check
-> afterwards, but we still have access to dev and driver. So why not...
->
-> >
-> > > -       struct wmi_block *wblock = dev_to_wblock(dev);
-> >
-> > > -       const struct wmi_device_id *id = wmi_driver->id_table;
-> > > +       const struct wmi_device_id *id;
-> > > +       struct wmi_block *wblock;
-> > > +       struct wmi_driver *wmi_driver;
-> > > +
-> >
-> > > +       if (dev == NULL || driver == NULL)
-> > > +               return 0;
-> >
-> > On which circumstances this may ever happen?
->
-> Nothing in particular. If there is a bug in the caller of this function,
-> then that is when this will come into play. See my earlier mail to
-> Darren too.
+[ Upstream commit df44b479654f62b478c18ee4d8bc4e9f897a9844 ]
 
-So, I suggest in these cases do not touch existing till the actual
-problem will be discovered and proved.
-I.o.w. touch only place which you have real problem, and describe this
-issue in commit message.
+Propagate error code back to userspace if writing the /sys/.../uevent
+file fails. Before, the write operation always returned with success,
+even if we failed to recognize the input string or if we failed to
+generate the uevent itself.
 
+With the error codes properly propagated back to userspace, we are
+able to react in userspace accordingly by not assuming and awaiting
+a uevent that is not delivered.
+
+Signed-off-by: Peter Rajnoha <prajnoha@redhat.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/base/bus.c  | 12 ++++++++----
+ drivers/base/core.c |  8 +++++++-
+ kernel/module.c     |  6 ++++--
+ 3 files changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+index 585e2e1c9c8f..e06a57936cc9 100644
+--- a/drivers/base/bus.c
++++ b/drivers/base/bus.c
+@@ -614,8 +614,10 @@ static void remove_probe_files(struct bus_type *bus)
+ static ssize_t uevent_store(struct device_driver *drv, const char *buf,
+ 			    size_t count)
+ {
+-	kobject_synth_uevent(&drv->p->kobj, buf, count);
+-	return count;
++	int rc;
++
++	rc = kobject_synth_uevent(&drv->p->kobj, buf, count);
++	return rc ? rc : count;
+ }
+ static DRIVER_ATTR_WO(uevent);
+ 
+@@ -831,8 +833,10 @@ static void klist_devices_put(struct klist_node *n)
+ static ssize_t bus_uevent_store(struct bus_type *bus,
+ 				const char *buf, size_t count)
+ {
+-	kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
+-	return count;
++	int rc;
++
++	rc = kobject_synth_uevent(&bus->p->subsys.kobj, buf, count);
++	return rc ? rc : count;
+ }
+ static BUS_ATTR(uevent, S_IWUSR, NULL, bus_uevent_store);
+ 
+diff --git a/drivers/base/core.c b/drivers/base/core.c
+index 04bbcd779e11..92e2c32c2227 100644
+--- a/drivers/base/core.c
++++ b/drivers/base/core.c
+@@ -1067,8 +1067,14 @@ out:
+ static ssize_t uevent_store(struct device *dev, struct device_attribute *attr,
+ 			    const char *buf, size_t count)
+ {
+-	if (kobject_synth_uevent(&dev->kobj, buf, count))
++	int rc;
++
++	rc = kobject_synth_uevent(&dev->kobj, buf, count);
++
++	if (rc) {
+ 		dev_err(dev, "uevent: failed to send synthetic uevent\n");
++		return rc;
++	}
+ 
+ 	return count;
+ }
+diff --git a/kernel/module.c b/kernel/module.c
+index 49a405891587..0812a7f80fa7 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -1207,8 +1207,10 @@ static ssize_t store_uevent(struct module_attribute *mattr,
+ 			    struct module_kobject *mk,
+ 			    const char *buffer, size_t count)
+ {
+-	kobject_synth_uevent(&mk->kobj, buffer, count);
+-	return count;
++	int rc;
++
++	rc = kobject_synth_uevent(&mk->kobj, buffer, count);
++	return rc ? rc : count;
+ }
+ 
+ struct module_attribute module_uevent =
 -- 
-With Best Regards,
-Andy Shevchenko
+2.19.1
+
