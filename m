@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE8B2C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:49:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D82C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADF162173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:49:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 42EE42173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694188;
-	bh=65gwSfesfSfyJF/C6wfrxZjGPV4Mpw08s7RADtFNgWQ=;
+	s=default; t=1548694210;
+	bh=L5/1m/X95CcbAQso51NCqtgdeSG+iOixxSGjOyNX78s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tpyvN1fJOjF0DAXhr0hvAM52GJ0tzIE+Tx1zdXwqbsvguw8Ks8g81i8nM61NPR8/t
-	 G0Zd88tUrpfsN6v/DFEJwzxJ4gO9JNluL1sDwWziR3b0FIg7Sxr095h/OOVFWvrWsu
-	 rpstteQ/ASt4qcfMQoKzSQE9r1Jt7n0IDKVCSB6o=
+	b=dlF5fbMgWn3PkglWG2WKIZctYlApjaWuEhk5/bjx+W9zA44Lw6I7r6YzKKJgUOafT
+	 f0Mlsz08ohSE/oxP7q0O1uMvhZny1xLbBg/xuomHpn9qZFrOjsy3viKs2H/4RSgpqM
+	 aTvsW4MjK/CP8mWcnumb/9QhE13lcPYd/w3Yfzbg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388839AbfA1QUd (ORCPT
+        id S2388853AbfA1QuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:20:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55994 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:50:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388793AbfA1QUa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:20:30 -0500
+        id S2388763AbfA1QUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:20:16 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4C3792171F;
-        Mon, 28 Jan 2019 16:20:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B7242084A;
+        Mon, 28 Jan 2019 16:20:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692429;
-        bh=65gwSfesfSfyJF/C6wfrxZjGPV4Mpw08s7RADtFNgWQ=;
+        s=default; t=1548692416;
+        bh=L5/1m/X95CcbAQso51NCqtgdeSG+iOixxSGjOyNX78s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0vI/1OqZgEFX/N/QYV46p4MfZeeG1HWSIL3pvp6I8QXbKcBHFCZ4zNpTCtdt+dzqB
-         nqY6pCoruDyLom4Mdr0m6e5jOZeCkjtC3+tkRDfjITu4SnIVQBkL0zTfORttEllpxP
-         ZT0RwwkhMlF1vBRBvb0XlJUjuzHBIOySZGo4WkPA=
+        b=2GfFH5pSSCYoh6adltoUSyr/9gHhbCFB1CCWyl5gYc0STBPpm+pZLylmqihM8d35P
+         WPyLLnnk7Gebka0xrirXUUnMtUwWdEAFrmJxTi4CNjlAlbnxW7U7jq0HomVJheeD9Y
+         VYZ6OgOjLbWFCHCVCmtkcnlxRWZLDhtTed5VVxmM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Renato Lui Geh <renatogeh@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.9 017/107] staging: iio: ad7780: update voltage on read
-Date:   Mon, 28 Jan 2019 11:18:17 -0500
-Message-Id: <20190128161947.57405-17-sashal@kernel.org>
+Cc:     Frank Rowand <frank.rowand@sony.com>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.9 011/107] powerpc/pseries: add of_node_put() in dlpar_detach_node()
+Date:   Mon, 28 Jan 2019 11:18:11 -0500
+Message-Id: <20190128161947.57405-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -58,44 +57,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Renato Lui Geh <renatogeh@gmail.com>
+From: Frank Rowand <frank.rowand@sony.com>
 
-[ Upstream commit 336650c785b62c3bea7c8cf6061c933a90241f67 ]
+[ Upstream commit 5b3f5c408d8cc59b87e47f1ab9803dbd006e4a91 ]
 
-The ad7780 driver previously did not read the correct device output, as
-it read an outdated value set at initialization. It now updates its
-voltage on read.
+The previous commit, "of: overlay: add missing of_node_get() in
+__of_attach_node_sysfs" added a missing of_node_get() to
+__of_attach_node_sysfs().  This results in a refcount imbalance
+for nodes attached with dlpar_attach_node().  The calling sequence
+from dlpar_attach_node() to __of_attach_node_sysfs() is:
 
-Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
-Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+   dlpar_attach_node()
+      of_attach_node()
+         __of_attach_node_sysfs()
+
+For more detailed description of the node refcount, see
+commit 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow
+during DLPAR remove").
+
+Tested-by: Alan Tull <atull@kernel.org>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/adc/ad7780.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ arch/powerpc/platforms/pseries/dlpar.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-index c9a0c2aa602f..5d163386ab6e 100644
---- a/drivers/staging/iio/adc/ad7780.c
-+++ b/drivers/staging/iio/adc/ad7780.c
-@@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
- 			   long m)
- {
- 	struct ad7780_state *st = iio_priv(indio_dev);
-+	int voltage_uv;
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index 72ae2cdbcd6a..999b04819d69 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -288,6 +288,8 @@ int dlpar_detach_node(struct device_node *dn)
+ 	if (rc)
+ 		return rc;
  
- 	switch (m) {
- 	case IIO_CHAN_INFO_RAW:
- 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
- 	case IIO_CHAN_INFO_SCALE:
--		*val = st->int_vref_mv * st->gain;
-+		voltage_uv = regulator_get_voltage(st->reg);
-+		if (voltage_uv < 0)
-+			return voltage_uv;
-+		*val = (voltage_uv / 1000) * st->gain;
- 		*val2 = chan->scan_type.realbits - 1;
- 		return IIO_VAL_FRACTIONAL_LOG2;
- 	case IIO_CHAN_INFO_OFFSET:
++	of_node_put(dn);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
