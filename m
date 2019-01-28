@@ -6,46 +6,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2EEF4C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 129F8C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F04FD2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5C8721741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690312;
-	bh=NthfVLmFK4e51EX0vCEjH2dF1Fxphnp2dyblMH1Fims=;
+	s=default; t=1548690315;
+	bh=GyYn+I/ayuTEeEBqIWMngxUA+5RZ3EjZpdkLEnVhJGs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ziqIdjCxXE2UnFFVr2q4bptkauqMuAGlNjIWon5Vk+CVvYo+EfYWFpJILybvYV+dp
-	 tIU3Q+F7ypPi7Q5ej+SK1dhznH1+WSptnfHr6kY5wD2iB9WtE5ROGNqmxXbNP6Qr3B
-	 PDSxK8LKYEiD7qTgfoLxHAy9s4AEn1W9iR3n94aQ=
+	b=LS1QTsGaLqzw39EhLklS/ucWcQl6E/zbm6n78+OojYogrMTmiKkDYChMHIwCSifXQ
+	 R2ZeZkMDxZIH4Bpm9u56z8x/PB/465IDU+zwWK2xBSB3V6F+5yb6GGwQBsah8xXv36
+	 +YzoGpWM9o1PngkpueCLFJIxBjvvKCw+9y21COog=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfA1PpK (ORCPT
+        id S1727689AbfA1PpO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:45:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58392 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:45:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727607AbfA1PpA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:45:00 -0500
+        id S1726967AbfA1PpL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:45:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7266020880;
-        Mon, 28 Jan 2019 15:44:58 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CEBF620880;
+        Mon, 28 Jan 2019 15:45:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690300;
-        bh=NthfVLmFK4e51EX0vCEjH2dF1Fxphnp2dyblMH1Fims=;
+        s=default; t=1548690310;
+        bh=GyYn+I/ayuTEeEBqIWMngxUA+5RZ3EjZpdkLEnVhJGs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pGjbNG7PiaqvpFMZ6ZR21A20A22uSkIqus503O27anpAouj8qQfANQWFstiCXSrzq
-         2docsWCu2gga4q6IHSy0aRFDIpTAvx4fU8w6bn1slDJXXgzYdZxaUr5xoK3RsJDAXA
-         BSHITSt6uiSfKDwJpYc7icA+mDvISesEnIy1kgPY=
+        b=krD7KwdzKxNAkqtL9OGPAuBwogOzTB1IvJCJwU2f9jnIgwGbffzSd1na7Vhd0CjKq
+         YLbBhidweUd9xMfCJoNGc+qrxjqtBFL6hE9q2nJMkgftGhoehQr9zVdwmBTd+rW6U1
+         f8pcUZR8v75sYkk+s33N+Fj2sfcevuoES4L2z0yY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-sctp@vger.kernel.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 040/304] sctp: Fix SKB list traversal in sctp_intl_store_reasm().
-Date:   Mon, 28 Jan 2019 10:39:17 -0500
-Message-Id: <20190128154341.47195-40-sashal@kernel.org>
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, devel@linuxdriverproject.org
+Subject: [PATCH AUTOSEL 4.20 044/304] Tools: hv: kvp: Fix a warning of buffer overflow with gcc 8.0.1
+Date:   Mon, 28 Jan 2019 10:39:21 -0500
+Message-Id: <20190128154341.47195-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,73 +60,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "David S. Miller" <davem@davemloft.net>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit 348bbc25c40844c5efa083a3842c7f53d70a815e ]
+[ Upstream commit 4fcba7802c3e15a6e56e255871d6c72f829b9dd8 ]
 
-To be fully correct, an iterator has an undefined value when something
-like skb_queue_walk() naturally terminates.
+The patch fixes:
 
-This will actually matter when SKB queues are converted over to
-list_head.
+hv_kvp_daemon.c: In function 'kvp_set_ip_info':
+hv_kvp_daemon.c:1305:2: note: 'snprintf' output between 41 and 4136 bytes
+into a destination of size 4096
 
-Formalize what this code ends up doing with the current
-implementation.
+The "(unsigned int)str_len" is to avoid:
 
-Signed-off-by: David S. Miller <davem@davemloft.net>
+hv_kvp_daemon.c:1309:30: warning: comparison of integer expressions of
+different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/sctp/stream_interleave.c | 17 ++++++++++++-----
- 1 file changed, 12 insertions(+), 5 deletions(-)
+ tools/hv/hv_kvp_daemon.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/net/sctp/stream_interleave.c b/net/sctp/stream_interleave.c
-index 500449b72eca..2b499a85db0e 100644
---- a/net/sctp/stream_interleave.c
-+++ b/net/sctp/stream_interleave.c
-@@ -140,7 +140,7 @@ static void sctp_intl_store_reasm(struct sctp_ulpq *ulpq,
- 				  struct sctp_ulpevent *event)
- {
- 	struct sctp_ulpevent *cevent;
--	struct sk_buff *pos;
-+	struct sk_buff *pos, *loc;
+diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
+index bbb2a8ef367c..d7e06fe0270e 100644
+--- a/tools/hv/hv_kvp_daemon.c
++++ b/tools/hv/hv_kvp_daemon.c
+@@ -1178,6 +1178,7 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
+ 	FILE *file;
+ 	char cmd[PATH_MAX];
+ 	char *mac_addr;
++	int str_len;
  
- 	pos = skb_peek_tail(&ulpq->reasm);
- 	if (!pos) {
-@@ -166,23 +166,30 @@ static void sctp_intl_store_reasm(struct sctp_ulpq *ulpq,
- 		return;
- 	}
+ 	/*
+ 	 * Set the configuration for the specified interface with
+@@ -1301,8 +1302,18 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
+ 	 * invoke the external script to do its magic.
+ 	 */
  
-+	loc = NULL;
- 	skb_queue_walk(&ulpq->reasm, pos) {
- 		cevent = sctp_skb2event(pos);
- 
- 		if (event->stream < cevent->stream ||
- 		    (event->stream == cevent->stream &&
--		     MID_lt(event->mid, cevent->mid)))
-+		     MID_lt(event->mid, cevent->mid))) {
-+			loc = pos;
- 			break;
--
-+		}
- 		if (event->stream == cevent->stream &&
- 		    event->mid == cevent->mid &&
- 		    !(cevent->msg_flags & SCTP_DATA_FIRST_FRAG) &&
- 		    (event->msg_flags & SCTP_DATA_FIRST_FRAG ||
--		     event->fsn < cevent->fsn))
-+		     event->fsn < cevent->fsn)) {
-+			loc = pos;
- 			break;
-+		}
- 	}
- 
--	__skb_queue_before(&ulpq->reasm, pos, sctp_event2skb(event));
-+	if (!loc)
-+		__skb_queue_tail(&ulpq->reasm, sctp_event2skb(event));
-+	else
-+		__skb_queue_before(&ulpq->reasm, loc, sctp_event2skb(event));
- }
- 
- static struct sctp_ulpevent *sctp_intl_retrieve_partial(
+-	snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
+-		 "hv_set_ifconfig", if_file);
++	str_len = snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
++			   "hv_set_ifconfig", if_file);
++	/*
++	 * This is a little overcautious, but it's necessary to suppress some
++	 * false warnings from gcc 8.0.1.
++	 */
++	if (str_len <= 0 || (unsigned int)str_len >= sizeof(cmd)) {
++		syslog(LOG_ERR, "Cmd '%s' (len=%d) may be too long",
++		       cmd, str_len);
++		return HV_E_FAIL;
++	}
++
+ 	if (system(cmd)) {
+ 		syslog(LOG_ERR, "Failed to execute cmd '%s'; error: %d %s",
+ 				cmd, errno, strerror(errno));
 -- 
 2.19.1
 
