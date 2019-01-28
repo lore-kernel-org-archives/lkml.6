@@ -2,102 +2,100 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BAD8C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:11:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51786C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:13:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A4A521736
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:11:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="mIp0uOku"
+	by mail.kernel.org (Postfix) with ESMTP id 2153820449
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:13:51 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfA1JLi (ORCPT
+        id S1726750AbfA1JNt convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:11:38 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:39300 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbfA1JLh (ORCPT
+        Mon, 28 Jan 2019 04:13:49 -0500
+Received: from relay2-d.mail.gandi.net ([217.70.183.194]:57947 "EHLO
+        relay2-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbfA1JNt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:11:37 -0500
-Received: by mail-it1-f193.google.com with SMTP id a6so18272829itl.4
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 01:11:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=er9/I+TyhaggJajko2FO0SWawCUPwizjJ0agacJS0Pk=;
-        b=mIp0uOkuyPs9FBNfudGyqmnrOZcJ6xYYS0pLHOz5eFRNaEYAE1M+MyzJ2LYAmqB2Nn
-         NMsIzzOC9Ql5OE4IPThfq/Q3neXkAFDvJcb0hBck7hPd522Ddx4ym5GqOLija2grJhSR
-         wnQi7k3wm431IY72t5zH/wlm1IfCw3qCiVQfo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=er9/I+TyhaggJajko2FO0SWawCUPwizjJ0agacJS0Pk=;
-        b=eUvTrDsD7FNLweRUdfdWB+7eXUgQrTe1SCTAT8d6BhYgh7dDrhJZg4PfxDwGsLSl3I
-         leuE/msV1Hw7ioids716ianrfYibmdGVsmzLYwlSShwUPEIj1EJP5RxanruruH+gy85o
-         no+tQnhb5vtxTjCmA8Fe7VRuLMXPbsZMoUOqMONkUHnb2ueAg1c4qps4szvrMioe0Bn2
-         jKJ7i4ovSJxzf4n0yxSJRel3VdtU0VGVIpSue0rNpQHptJ3qpnIaODGxDEEcWi/rOBvY
-         OL5a01GT2/88amY7k3xJa4h+GK1yS//kByQvPxLd1dYnc4jAyoyDNv+5bFtRbMpICsrP
-         gDCQ==
-X-Gm-Message-State: AJcUukfPyhMiwLAF+CZzZk6cEB7Rz0YwENEjfJfQJoKOKoEo8kuBXHZX
-        Kqnb/kFek1PwnCs96b9cgBs4W6hrJyRDSno9oTz8uA==
-X-Google-Smtp-Source: ALg8bN7L6MXqfpULu9ND2ngnThuAu7s7vqf/t98FgrqZEuAOpvXA46hxZ3oPCapa8ePZHHhoOsRsQ6/yEnP0PsKF5xk=
-X-Received: by 2002:a24:385:: with SMTP id e127mr9201443ite.32.1548666697022;
- Mon, 28 Jan 2019 01:11:37 -0800 (PST)
+        Mon, 28 Jan 2019 04:13:49 -0500
+X-Originating-IP: 90.88.29.206
+Received: from xps13 (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay2-d.mail.gandi.net (Postfix) with ESMTPSA id 754C740007;
+        Mon, 28 Jan 2019 09:13:45 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 10:13:44 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Boris Brezillon <bbrezillon@kernel.org>
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Kees Cook <keescook@chromium.org>,
+        Wan ZongShun <mcuos.com@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-mtd@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] mtd: rawnand: mark expected switch fall-throughs
+Message-ID: <20190128101344.1cc03eed@xps13>
+In-Reply-To: <20190126175429.65e6bfd8@bbrezillon>
+References: <20190125210950.GA27855@embeddedor>
+        <20190126105208.221a2051@bbrezillon>
+        <853a267c-807b-c613-6662-93730a0b4c33@embeddedor.com>
+        <20190126175429.65e6bfd8@bbrezillon>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20190125032314.20915-1-wens@csie.org> <20190125032314.20915-2-wens@csie.org>
-In-Reply-To: <20190125032314.20915-2-wens@csie.org>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 28 Jan 2019 14:41:25 +0530
-Message-ID: <CAMty3ZAB99yMQj33XkBV-EXDN7RkapbOTaO0chYwaz=aFYto=w@mail.gmail.com>
-Subject: Re: [PATCH 01/11] clk: sunxi-ng: sun8i-a23: Enable PLL-MIPI LDOs when
- ungating it
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 8:54 AM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> The PLL-MIPI clock is somewhat special as it has its own LDOs which
-> need to be turned on for this PLL to actually work and output a clock
-> signal.
->
-> Add the 2 LDO enable bits to the gate bits.
->
-> Fixes: 5690879d93e8 ("clk: sunxi-ng: Add A23 CCU")
-> Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> ---
->  drivers/clk/sunxi-ng/ccu-sun8i-a23.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> index a4fa2945f230..4b5f8f4e4ab8 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-> @@ -144,7 +144,7 @@ static SUNXI_CCU_NKM_WITH_GATE_LOCK(pll_mipi_clk, "pll-mipi",
->                                     8, 4,               /* N */
->                                     4, 2,               /* K */
->                                     0, 4,               /* M */
-> -                                   BIT(31),            /* gate */
-> +                                   BIT(31) | BIT(23) | BIT(22), /* gate */
+Hi Boris,
 
-Reviewed-by: Jagan Teki <jagan@amarulasolutions.com>
+Boris Brezillon <bbrezillon@kernel.org> wrote on Sat, 26 Jan 2019
+17:54:29 +0100:
+
+> On Sat, 26 Jan 2019 07:48:50 -0600
+> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+> 
+> > Hey Boris,
+> > 
+> > On 1/26/19 3:52 AM, Boris Brezillon wrote:  
+> > > On Fri, 25 Jan 2019 15:09:50 -0600
+> > > "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+> > >     
+> > >> diff --git a/drivers/mtd/nand/raw/nandsim.c b/drivers/mtd/nand/raw/nandsim.c
+> > >> index 933d1a629c51..d33e15dc4cdc 100644
+> > >> --- a/drivers/mtd/nand/raw/nandsim.c
+> > >> +++ b/drivers/mtd/nand/raw/nandsim.c
+> > >> @@ -2251,9 +2251,10 @@ static int __init ns_init_module(void)
+> > >>  
+> > >>  	switch (bbt) {
+> > >>  	case 2:
+> > >> -		 chip->bbt_options |= NAND_BBT_NO_OOB;
+> > >> +		chip->bbt_options |= NAND_BBT_NO_OOB;
+> > >> +		/* fall through */
+> > >>  	case 1:
+> > >> -		 chip->bbt_options |= NAND_BBT_USE_FLASH;
+> > >> +		chip->bbt_options |= NAND_BBT_USE_FLASH;    
+> > > 
+> > > You miss a '/* fall through */' here.
+> > >     
+> > 
+> > Not really.  Notice that in this case the code falls through
+> > to a break statement.  
+> 
+> Still find it weird to mandate fall through comments in all cases but
+> this one...
+
+Yes please, even if there is no GCC warning I think you can add one
+here.
+
+
+Thanks,
+Miquèl
