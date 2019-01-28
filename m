@@ -2,69 +2,62 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C43EC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:46:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F302AC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A0C42175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:46:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3C7D21783
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:46:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RbD8wJ9W"
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="l/4me7O/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726887AbfA1WqA (ORCPT
+        id S1726964AbfA1WqT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 17:46:00 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:33875 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfA1Wp7 (ORCPT
+        Mon, 28 Jan 2019 17:46:19 -0500
+Received: from mail.efficios.com ([167.114.142.138]:57356 "EHLO
+        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726678AbfA1WqT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 17:45:59 -0500
-Received: by mail-oi1-f196.google.com with SMTP id r62so14584705oie.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 14:45:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RM044dE9hBEzHSiouuipjyFT4Scxv3Vo3M1SK0ouvB0=;
-        b=RbD8wJ9WL7W493DRqBL5ddDDCCj9ccp1SW35keqVE70OonSCwK4JnK9vJdmcDzKzn2
-         +Vwv/dLhexJzdjA5WE98uN+mik0u9F74m88A1nqYOY7LmzffLNmAEAX+IfwtL1zb2cY4
-         8xVolcilysuY49ReNhFKo1f7le48OjkJmf/NTdaidHDOOkTtL23xDBeNSeaMrsaVaWqo
-         CiQ2v+640biorvex6vLPN5UYotIovLfKPiuB0XH0yeMNOobcGtyjYhd7h2OAG6a4JK9V
-         aADm109aUoW2sOgkqc8T4XdFqOc+67LTDsrohjUhpQlLVZ5DsWdRpEkbgO5NEnUU5aQT
-         0Xjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RM044dE9hBEzHSiouuipjyFT4Scxv3Vo3M1SK0ouvB0=;
-        b=KcQcIubDfEAmq13vGutr39VBzsQ0Ob4eV/J4AOxs64HvcPdhq8t1N/jcnf+Skq5sAW
-         Opx+rsdeXWDPiMlV2/tZjuO1mzDJrNCaMiZYA5UolHcOGPr9mSOAcpkzpDctZB/vqO0W
-         gNi4+/RinC0Esoms8QmKgadzUD6env5vEm6CxFAQxQ0HzgU1Nuz4EWoQvMHQ7K8HjWWp
-         tm+r14udlfoRam290tmqJ7qdHNPYg0Wvl3fHv+COHOG6CnfmlJSFWi6Df90sSugoTW9F
-         CUDYUP28fnojjZx4meCdl+ldFb7hS1XCA9SiE7raOPeYrPnSi9rjPTyyevMmjDO+JFbv
-         Hu/w==
-X-Gm-Message-State: AJcUukda53F1ALl9iAkby4q8YhFwsKBFZwrdfYsiiGxKE2azDn3WgTFX
-        dfC3u3UvLuSqBKyPPE9rZBw3T+Sbe9Zv6SOv0tE0nA==
-X-Google-Smtp-Source: ALg8bN52fmpC8tAHVPZFZLQCzKAEMsDWndNjm4cF9vHAnq830uylLrAULUDHPzhVxWv4emI9IHhlZKcy+C+CupsLFpk=
-X-Received: by 2002:aca:3c06:: with SMTP id j6mr7331244oia.126.1548715558593;
- Mon, 28 Jan 2019 14:45:58 -0800 (PST)
-MIME-Version: 1.0
-References: <20190128220707.30774-1-mathieu.desnoyers@efficios.com> <20190128223948.GD4240@linux.ibm.com>
-In-Reply-To: <20190128223948.GD4240@linux.ibm.com>
-From:   Jann Horn <jannh@google.com>
-Date:   Mon, 28 Jan 2019 23:45:32 +0100
-Message-ID: <CAG48ez1+Vx7=ZqeLJ0waceSneCQhEcoS=bv9ggb3Dbveb+W6AQ@mail.gmail.com>
-Subject: Re: [PATCH] Fix: membarrier: racy access to p->mm in membarrier_global_expedited()
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Ingo Molnar <mingo@kernel.org>,
+        Mon, 28 Jan 2019 17:46:19 -0500
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id 8727DB5B44;
+        Mon, 28 Jan 2019 17:46:17 -0500 (EST)
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
+        with ESMTP id 9nPEb_SFXI2O; Mon, 28 Jan 2019 17:46:17 -0500 (EST)
+Received: from localhost (ip6-localhost [IPv6:::1])
+        by mail.efficios.com (Postfix) with ESMTP id DA414B5B31;
+        Mon, 28 Jan 2019 17:46:16 -0500 (EST)
+DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com DA414B5B31
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+        s=default; t=1548715576;
+        bh=u2ZJQSzFWWabv10A7syOIBo1KSvEdAg69/MNdXhZrmc=;
+        h=Date:From:To:Message-ID:MIME-Version;
+        b=l/4me7O/OT+/CSKcxolF+sBD73kPZmWB+C9Ow/etXBeN8cRcZY2yJTjPjCetnZKMs
+         a0O/NIjhx3Tz6NyrpRrHce9SF8p464gYGwUkQVQ+5nHEZwzFYSYX5QwAIX/75Lta8q
+         NwHmem+pdSQ86p6dnLBz6Sq5jITRNU9B3eIhaVygKVk/ow5SDaaZHp8mGFSIyePEMp
+         CK3446a6aggW/0W2NP0+DyrsElXlvkZn4sm7bLLq2Y1n0l2C6HqrspcFqU6yuX4iMR
+         E4tvOCeSF4uNN/Y7lqZd8+ImTLbcBEzT6X+nL6XrgOFtJjhm81lPZZjYE3c59GTYlK
+         TmUnGwhrJVf+w==
+X-Virus-Scanned: amavisd-new at efficios.com
+Received: from mail.efficios.com ([IPv6:::1])
+        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
+        with ESMTP id qt1L0QNMIFOA; Mon, 28 Jan 2019 17:46:16 -0500 (EST)
+Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
+        by mail.efficios.com (Postfix) with ESMTP id B095CB5B29;
+        Mon, 28 Jan 2019 17:46:16 -0500 (EST)
+Date:   Mon, 28 Jan 2019 17:46:16 -0500 (EST)
+From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+To:     paulmck <paulmck@linux.ibm.com>
+Cc:     Ingo Molnar <mingo@kernel.org>,
         Peter Zijlstra <peterz@infradead.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-api <linux-api@vger.kernel.org>,
+        Jann Horn <jannh@google.com>,
         Thomas Gleixner <tglx@linutronix.de>,
         Andrea Parri <parri.andrea@gmail.com>,
         Andy Lutomirski <luto@kernel.org>,
@@ -72,66 +65,139 @@ Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
         Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Boqun Feng <boqun.feng@gmail.com>,
         Dave Watson <davejwatson@fb.com>, David Sehr <sehr@google.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Maged Michael <maged.michael@gmail.com>,
+        maged michael <maged.michael@gmail.com>,
         Michael Ellerman <mpe@ellerman.id.au>,
         Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        "Russell King, ARM Linux" <linux@armlinux.org.uk>,
+        Will Deacon <will.deacon@arm.com>,
+        stable <stable@vger.kernel.org>
+Message-ID: <1379691574.2815.1548715576651.JavaMail.zimbra@efficios.com>
+In-Reply-To: <20190128223948.GD4240@linux.ibm.com>
+References: <20190128220707.30774-1-mathieu.desnoyers@efficios.com> <20190128223948.GD4240@linux.ibm.com>
+Subject: Re: [PATCH] Fix: membarrier: racy access to p->mm in
+ membarrier_global_expedited()
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [167.114.142.138]
+X-Mailer: Zimbra 8.8.10_GA_3716 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3745)
+Thread-Topic: membarrier: racy access to p->mm in membarrier_global_expedited()
+Thread-Index: ZfRJD31a1/45FGqSuggcx6nywDiJmA==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 11:39 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+----- On Jan 28, 2019, at 5:39 PM, paulmck paulmck@linux.ibm.com wrote:
+
 > On Mon, Jan 28, 2019 at 05:07:07PM -0500, Mathieu Desnoyers wrote:
-> > Jann Horn identified a racy access to p->mm in the global expedited
-> > command of the membarrier system call.
-> >
-> > The suggested fix is to hold the task_lock() around the accesses to
-> > p->mm and to the mm_struct membarrier_state field to guarantee the
-> > existence of the mm_struct.
-> >
-> > Link: https://lore.kernel.org/lkml/CAG48ez2G8ctF8dHS42TF37pThfr3y0RNOOYTmxvACm4u8Yu3cw@mail.gmail.com
-> > Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-[...]
-> > --- a/kernel/sched/membarrier.c
-> > +++ b/kernel/sched/membarrier.c
-> > @@ -81,12 +81,27 @@ static int membarrier_global_expedited(void)
-> >
-> >               rcu_read_lock();
-> >               p = task_rcu_dereference(&cpu_rq(cpu)->curr);
-> > -             if (p && p->mm && (atomic_read(&p->mm->membarrier_state) &
-> > -                                MEMBARRIER_STATE_GLOBAL_EXPEDITED)) {
-> > -                     if (!fallback)
-> > -                             __cpumask_set_cpu(cpu, tmpmask);
-> > -                     else
-> > -                             smp_call_function_single(cpu, ipi_mb, NULL, 1);
-> > +             /*
-> > +              * Skip this CPU if the runqueue's current task is NULL or if
-> > +              * it is a kernel thread.
-> > +              */
-> > +             if (p && READ_ONCE(p->mm)) {
-> > +                     bool mm_match;
-> > +
-> > +                     /*
-> > +                      * Read p->mm and access membarrier_state while holding
-> > +                      * the task lock to ensure existence of mm.
-> > +                      */
-> > +                     task_lock(p);
-> > +                     mm_match = p->mm && (atomic_read(&p->mm->membarrier_state) &
->
+>> Jann Horn identified a racy access to p->mm in the global expedited
+>> command of the membarrier system call.
+>> 
+>> The suggested fix is to hold the task_lock() around the accesses to
+>> p->mm and to the mm_struct membarrier_state field to guarantee the
+>> existence of the mm_struct.
+>> 
+>> Link:
+>> https://lore.kernel.org/lkml/CAG48ez2G8ctF8dHS42TF37pThfr3y0RNOOYTmxvACm4u8Yu3cw@mail.gmail.com
+>> Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+>> Tested-by: Jann Horn <jannh@google.com>
+>> CC: Jann Horn <jannh@google.com>
+>> CC: Thomas Gleixner <tglx@linutronix.de>
+>> CC: Peter Zijlstra (Intel) <peterz@infradead.org>
+>> CC: Ingo Molnar <mingo@kernel.org>
+>> CC: Andrea Parri <parri.andrea@gmail.com>
+>> CC: Andy Lutomirski <luto@kernel.org>
+>> CC: Avi Kivity <avi@scylladb.com>
+>> CC: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+>> CC: Boqun Feng <boqun.feng@gmail.com>
+>> CC: Dave Watson <davejwatson@fb.com>
+>> CC: David Sehr <sehr@google.com>
+>> CC: H. Peter Anvin <hpa@zytor.com>
+>> CC: Linus Torvalds <torvalds@linux-foundation.org>
+>> CC: Maged Michael <maged.michael@gmail.com>
+>> CC: Michael Ellerman <mpe@ellerman.id.au>
+>> CC: Paul E. McKenney <paulmck@linux.vnet.ibm.com>
+>> CC: Paul Mackerras <paulus@samba.org>
+>> CC: Russell King <linux@armlinux.org.uk>
+>> CC: Will Deacon <will.deacon@arm.com>
+>> CC: stable@vger.kernel.org # v4.16+
+>> CC: linux-api@vger.kernel.org
+>> ---
+>>  kernel/sched/membarrier.c | 27 +++++++++++++++++++++------
+>>  1 file changed, 21 insertions(+), 6 deletions(-)
+>> 
+>> diff --git a/kernel/sched/membarrier.c b/kernel/sched/membarrier.c
+>> index 76e0eaf4654e..305fdcc4c5f7 100644
+>> --- a/kernel/sched/membarrier.c
+>> +++ b/kernel/sched/membarrier.c
+>> @@ -81,12 +81,27 @@ static int membarrier_global_expedited(void)
+>> 
+>>  		rcu_read_lock();
+>>  		p = task_rcu_dereference(&cpu_rq(cpu)->curr);
+>> -		if (p && p->mm && (atomic_read(&p->mm->membarrier_state) &
+>> -				   MEMBARRIER_STATE_GLOBAL_EXPEDITED)) {
+>> -			if (!fallback)
+>> -				__cpumask_set_cpu(cpu, tmpmask);
+>> -			else
+>> -				smp_call_function_single(cpu, ipi_mb, NULL, 1);
+>> +		/*
+>> +		 * Skip this CPU if the runqueue's current task is NULL or if
+>> +		 * it is a kernel thread.
+>> +		 */
+>> +		if (p && READ_ONCE(p->mm)) {
+>> +			bool mm_match;
+>> +
+>> +			/*
+>> +			 * Read p->mm and access membarrier_state while holding
+>> +			 * the task lock to ensure existence of mm.
+>> +			 */
+>> +			task_lock(p);
+>> +			mm_match = p->mm && (atomic_read(&p->mm->membarrier_state) &
+> 
 > Are we guaranteed that this p->mm will be the same as the one loaded via
-> READ_ONCE() above?
-
-No; the way I read it, that's just an optimization and has no effect
-on correctness.
-
-> Either way, wouldn't it be better to READ_ONCE() it a
+> READ_ONCE() above?  Either way, wouldn't it be better to READ_ONCE() it a
 > single time and use the same value everywhere?
 
-No; the first READ_ONCE() returns a pointer that you can't access
-because it wasn't read under a lock. You can only use it for a NULL
-check.
+The first "READ_ONCE()" above is _outside_ of the task_lock() critical section.
+Those two accesses _can_ load two different pointers, and this is why we
+need to re-read the p->mm pointer within the task_lock() critical section to
+ensure existence of the mm_struct that we use.
+
+If we move the READ_ONCE() into the task_lock(), we need to uselessly
+take a lock before we can skip kernel threads.
+
+If we lead the READ_ONCE() outside the task_lock(), then p->mm can be updated
+between the READ_ONCE() and reference to the mm_struct content within the
+task_lock(), which is racy and does not guarantee its existence.
+
+Or am I missing your point ?
+
+Thanks,
+
+Mathieu
+
+
+> 
+>							Thanx, Paul
+> 
+>> +					     MEMBARRIER_STATE_GLOBAL_EXPEDITED);
+>> +			task_unlock(p);
+>> +			if (mm_match) {
+>> +				if (!fallback)
+>> +					__cpumask_set_cpu(cpu, tmpmask);
+>> +				else
+>> +					smp_call_function_single(cpu, ipi_mb, NULL, 1);
+>> +			}
+>>  		}
+>>  		rcu_read_unlock();
+>>  	}
+>> --
+>> 2.17.1
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+http://www.efficios.com
