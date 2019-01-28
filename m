@@ -2,224 +2,195 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E0A0C282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 02:53:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5235EC282CC
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 03:09:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B94820882
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 02:53:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2D2DF20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 03:09:26 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726735AbfA1CxQ (ORCPT
+        id S1726661AbfA1DJM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 21:53:16 -0500
-Received: from out30-132.freemail.mail.aliyun.com ([115.124.30.132]:54126 "EHLO
-        out30-132.freemail.mail.aliyun.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726566AbfA1CxQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 21:53:16 -0500
-X-Alimail-AntiSpam: AC=PASS;BC=-1|-1;BR=01201311R461e4;CH=green;FP=0|-1|-1|-1|0|-1|-1|-1;HT=e01f04391;MF=yun.wang@linux.alibaba.com;NM=1;PH=DS;RN=5;SR=0;TI=SMTPD_---0TJ7zZg4_1548643991;
-Received: from testdeMacBook-Pro.local(mailfrom:yun.wang@linux.alibaba.com fp:SMTPD_---0TJ7zZg4_1548643991)
-          by smtp.aliyun-inc.com(127.0.0.1);
-          Mon, 28 Jan 2019 10:53:12 +0800
-Subject: Re: [PATCH] sched/debug: Show intergroup and hierarchy sum wait time
- of a task group
-To:     =?UTF-8?B?56a56Iif6ZSu?= <ufo19890607@gmail.com>
-Cc:     mingo@redhat.com, Peter Zijlstra <peterz@infradead.org>,
-        Wind Yu <yuzhoujian@didichuxing.com>,
-        linux-kernel@vger.kernel.org
-References: <1548236816-18712-1-git-send-email-ufo19890607@gmail.com>
- <3680160f-a439-02a3-3d40-56de18096c4b@linux.alibaba.com>
- <CAHCio2iYoKOSgxJWFX6KcRcn7GK=aEJP7Sz0vU6SwXK2C56mew@mail.gmail.com>
-From:   =?UTF-8?B?546L6LSH?= <yun.wang@linux.alibaba.com>
-Message-ID: <6625b261-d199-6b37-de65-1b576dcbad5b@linux.alibaba.com>
-Date:   Mon, 28 Jan 2019 10:53:11 +0800
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.13; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
+        Sun, 27 Jan 2019 22:09:12 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:47516 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726575AbfA1DJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 22:09:11 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id B2F6669F368B0B1BEEDC;
+        Mon, 28 Jan 2019 11:09:08 +0800 (CST)
+Received: from localhost (10.177.19.219) by DGGEMS405-HUB.china.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Mon, 28 Jan 2019
+ 11:08:56 +0800
+From:   Yang Yingliang <yangyingliang@huawei.com>
+To:     <cminyard@mvista.com>, <arnd@arndb.de>,
+        <gregkh@linuxfoundation.org>
+CC:     <openipmi-developer@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
+        <yangyingliang@huawei.com>, <qiaonuohan@huawei.com>
+Subject: [PATCH v3] ipmi_si: fix use-after-free of resource->name
+Date:   Mon, 28 Jan 2019 11:08:54 +0800
+Message-ID: <1548644934-36452-1-git-send-email-yangyingliang@huawei.com>
+X-Mailer: git-send-email 1.9.5.msysgit.1
 MIME-Version: 1.0
-In-Reply-To: <CAHCio2iYoKOSgxJWFX6KcRcn7GK=aEJP7Sz0vU6SwXK2C56mew@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.177.19.219]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+When we excute the following commands, we got oops
+rmmod ipmi_si
+cat /proc/ioports
+
+[ 1623.482380] Unable to handle kernel paging request at virtual address ffff00000901d478
+[ 1623.482382] Mem abort info:
+[ 1623.482383]   ESR = 0x96000007
+[ 1623.482385]   Exception class = DABT (current EL), IL = 32 bits
+[ 1623.482386]   SET = 0, FnV = 0
+[ 1623.482387]   EA = 0, S1PTW = 0
+[ 1623.482388] Data abort info:
+[ 1623.482389]   ISV = 0, ISS = 0x00000007
+[ 1623.482390]   CM = 0, WnR = 0
+[ 1623.482393] swapper pgtable: 4k pages, 48-bit VAs, pgdp = 00000000d7d94a66
+[ 1623.482395] [ffff00000901d478] pgd=000000dffbfff003, pud=000000dffbffe003, pmd=0000003f5d06e003, pte=0000000000000000
+[ 1623.482399] Internal error: Oops: 96000007 [#1] SMP
+[ 1623.487407] Modules linked in: ipmi_si(E) nls_utf8 isofs rpcrdma ib_iser ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_umad rdma_cm ib_cm dm_mirror dm_region_hash dm_log iw_cm dm_mod aes_ce_blk crypto_simd cryptd aes_ce_cipher ses ghash_ce sha2_ce enclosure sha256_arm64 sg sha1_ce hisi_sas_v2_hw hibmc_drm sbsa_gwdt hisi_sas_main ip_tables mlx5_ib ib_uverbs marvell ib_core mlx5_core ixgbe mdio hns_dsaf ipmi_devintf hns_enet_drv ipmi_msghandler hns_mdio [last unloaded: ipmi_si]
+[ 1623.532410] CPU: 30 PID: 11438 Comm: cat Kdump: loaded Tainted: G            E     5.0.0-rc3+ #168
+[ 1623.541498] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.37 11/21/2017
+[ 1623.548822] pstate: a0000005 (NzCv daif -PAN -UAO)
+[ 1623.553684] pc : string+0x28/0x98
+[ 1623.557040] lr : vsnprintf+0x368/0x5e8
+[ 1623.560837] sp : ffff000013213a80
+[ 1623.564191] x29: ffff000013213a80 x28: ffff00001138abb5
+[ 1623.569577] x27: ffff000013213c18 x26: ffff805f67d06049
+[ 1623.574963] x25: 0000000000000000 x24: ffff00001138abb5
+[ 1623.580349] x23: 0000000000000fb7 x22: ffff0000117ed000
+[ 1623.585734] x21: ffff000011188fd8 x20: ffff805f67d07000
+[ 1623.591119] x19: ffff805f67d06061 x18: ffffffffffffffff
+[ 1623.596505] x17: 0000000000000200 x16: 0000000000000000
+[ 1623.601890] x15: ffff0000117ed748 x14: ffff805f67d07000
+[ 1623.607276] x13: ffff805f67d0605e x12: 0000000000000000
+[ 1623.612661] x11: 0000000000000000 x10: 0000000000000000
+[ 1623.618046] x9 : 0000000000000000 x8 : 000000000000000f
+[ 1623.623432] x7 : ffff805f67d06061 x6 : fffffffffffffffe
+[ 1623.628817] x5 : 0000000000000012 x4 : ffff00000901d478
+[ 1623.634203] x3 : ffff0a00ffffff04 x2 : ffff805f67d07000
+[ 1623.639588] x1 : ffff805f67d07000 x0 : ffffffffffffffff
+[ 1623.644974] Process cat (pid: 11438, stack limit = 0x000000008d4cbc10)
+[ 1623.651592] Call trace:
+[ 1623.654068]  string+0x28/0x98
+[ 1623.657071]  vsnprintf+0x368/0x5e8
+[ 1623.660517]  seq_vprintf+0x70/0x98
+[ 1623.668009]  seq_printf+0x7c/0xa0
+[ 1623.675530]  r_show+0xc8/0xf8
+[ 1623.682558]  seq_read+0x330/0x440
+[ 1623.689877]  proc_reg_read+0x78/0xd0
+[ 1623.697346]  __vfs_read+0x60/0x1a0
+[ 1623.704564]  vfs_read+0x94/0x150
+[ 1623.711339]  ksys_read+0x6c/0xd8
+[ 1623.717939]  __arm64_sys_read+0x24/0x30
+[ 1623.725077]  el0_svc_common+0x120/0x148
+[ 1623.732035]  el0_svc_handler+0x30/0x40
+[ 1623.738757]  el0_svc+0x8/0xc
+[ 1623.744520] Code: d1000406 aa0103e2 54000149 b4000080 (39400085)
+[ 1623.753441] ---[ end trace f91b6a4937de9835 ]---
+[ 1623.760871] Kernel panic - not syncing: Fatal exception
+[ 1623.768935] SMP: stopping secondary CPUs
+[ 1623.775718] Kernel Offset: disabled
+[ 1623.781998] CPU features: 0x002,21006008
+[ 1623.788777] Memory Limit: none
+[ 1623.798329] Starting crashdump kernel...
+[ 1623.805202] Bye!
+
+If io_setup is called successful in try_smi_init() but try_smi_init()
+goes out_err before calling ipmi_register_smi(), so ipmi_unregister_smi()
+will not be called while removing module. It leads to the resource that
+allocated in io_setup() can not be freed, but the name(DEVICE_NAME) of
+resource is freed while removing the module. It causes use-after-free
+when cat /proc/ioports.
+
+Fix this by calling io_cleanup() while try_smi_init() goes to out_err.
+and don't call io_cleanup() until io_setup() returns successful to avoid
+warning prints.
+
+Fixes: 93c303d2045b ("ipmi_si: Clean up shutdown a bit")
+Cc: stable@vger.kernel.org
+Reported-by: NuoHan Qiao <qiaonuohan@huawei.com>
+Suggested-by: Corey Minyard <cminyard@mvista.com>
+Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
+---
+ drivers/char/ipmi/ipmi_si_intf.c    | 5 +++++
+ drivers/char/ipmi/ipmi_si_mem_io.c  | 5 +++--
+ drivers/char/ipmi/ipmi_si_port_io.c | 5 +++--
+ 3 files changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
+index dc8603d..f1b9fda 100644
+--- a/drivers/char/ipmi/ipmi_si_intf.c
++++ b/drivers/char/ipmi/ipmi_si_intf.c
+@@ -2085,6 +2085,11 @@ static int try_smi_init(struct smi_info *new_smi)
+ 	WARN_ON(new_smi->io.dev->init_name != NULL);
+ 
+  out_err:
++	if (rv && new_smi->io.io_cleanup) {
++		new_smi->io.io_cleanup(&new_smi->io);
++		new_smi->io.io_cleanup = NULL;
++	}
++
+ 	kfree(init_name);
+ 	return rv;
+ }
+diff --git a/drivers/char/ipmi/ipmi_si_mem_io.c b/drivers/char/ipmi/ipmi_si_mem_io.c
+index fd0ec8d..7558361 100644
+--- a/drivers/char/ipmi/ipmi_si_mem_io.c
++++ b/drivers/char/ipmi/ipmi_si_mem_io.c
+@@ -81,8 +81,6 @@ int ipmi_si_mem_setup(struct si_sm_io *io)
+ 	if (!addr)
+ 		return -ENODEV;
+ 
+-	io->io_cleanup = mem_cleanup;
+-
+ 	/*
+ 	 * Figure out the actual readb/readw/readl/etc routine to use based
+ 	 * upon the register size.
+@@ -141,5 +139,8 @@ int ipmi_si_mem_setup(struct si_sm_io *io)
+ 		mem_region_cleanup(io, io->io_size);
+ 		return -EIO;
+ 	}
++
++	io->io_cleanup = mem_cleanup;
++
+ 	return 0;
+ }
+diff --git a/drivers/char/ipmi/ipmi_si_port_io.c b/drivers/char/ipmi/ipmi_si_port_io.c
+index ef6dffc..03924c3 100644
+--- a/drivers/char/ipmi/ipmi_si_port_io.c
++++ b/drivers/char/ipmi/ipmi_si_port_io.c
+@@ -68,8 +68,6 @@ int ipmi_si_port_setup(struct si_sm_io *io)
+ 	if (!addr)
+ 		return -ENODEV;
+ 
+-	io->io_cleanup = port_cleanup;
+-
+ 	/*
+ 	 * Figure out the actual inb/inw/inl/etc routine to use based
+ 	 * upon the register size.
+@@ -109,5 +107,8 @@ int ipmi_si_port_setup(struct si_sm_io *io)
+ 			return -EIO;
+ 		}
+ 	}
++
++	io->io_cleanup = port_cleanup;
++
+ 	return 0;
+ }
+-- 
+1.8.3
 
 
-On 2019/1/25 下午3:55, 禹舟键 wrote:
-> Hi, Michael
-> Actually, I just created a container which had just 1 CPU, and I ran two tasks(while 1 loop) in this container. Then I read cpu.stat at 1 second interval ,but the wait_sum difference is almost 0.
-
-Task competition inside a cgroup won't be considered as cgroup's
-competition, please try create another cgroup with dead loop on
-each CPU.
-
-  I check your patch and find that you just summary the task group's se wait_sum rather than tasks' se wait sum. So, we can see that the increment of 'wait_sum' will always be 0 as long as there are running tasks in this task group.
-
-Running tasks doesn't means no competition, only if that cgroup occupied
-the CPU exclusively at that moment.
-
-  Unfortunately, this is not what we want. Our expectation is to evaluate the CPU contention in a task group just as I said. We need to ensure that containers with high priority have sufficient CPU resources.
-
-No offense but I'm afraid you misunderstand the problem we try to solve
-by wait_sum, if your purpose is to have a way to tell whether there are
-sufficient CPU inside a container, please try lxcfs + top, if there are
-almost no idle and load is high, then the CPU resource is not sufficient.
-
-> 
-> I implement 'hierarchy wait_sum' referred to cpuacct.usage. The hierarchy wait_sum will summarize all the tasks' se wait_sum  within the hierarchy of this task group. We
-> can calculate the wait rate of a task group based on hierarchy wait_sum and cpuacct.usage
-Frankly speaking this sounds like a supplement rather than a missing piece,
-although we don't rely on lxcfs and modify the kernel ourselves to support
-container environment, I still don't think such kind of solutions should be
-in kernel.
-
-Regards,
-Michael Wang
-
-> 
-> The extra overhead for calculating the hierarchy wait_sum is traversing the cfs_rq's se from the target task's se to the root_task_group children's se.
-> 
-> Regartds
-> Yuzhoujian
-> 
-> 
-> 王贇 <yun.wang@linux.alibaba.com <mailto:yun.wang@linux.alibaba.com>> 于2019年1月25日周五 上午11:12写道：
-> 
-> 
-> 
->     On 2019/1/23 下午5:46, ufo19890607@gmail.com <mailto:ufo19890607@gmail.com> wrote:
->      > From: yuzhoujian <yuzhoujian@didichuxing.com <mailto:yuzhoujian@didichuxing.com>>
->      >
->      > We can monitor the sum wait time of a task group since 'commit 3d6c50c27bd6
->      > ("sched/debug: Show the sum wait time of a task group")'. However this
->      > wait_sum just represents the confilct between different task groups, since
->      > it is simply sum the wait time of task_group's cfs_rq. And we still cannot
->      > evaluate the conflict between all the tasks within hierarchy of this group,
->      > so the hierarchy wait time is still needed.
-> 
->     Could you please give us a scene that we do need this hierarchy wait_sum,
->     despite the extra overhead?
-> 
->     Regards,
->     Michael Wang
-> 
->      >
->      > Thus we introduce hierarchy wait_sum which summarizes the total wait sum of
->      > all the tasks in the hierarchy of a group.
->      >
->      > The 'cpu.stat' is modified to show the statistic, like:
->      >
->      >       nr_periods 0
->      >       nr_throttled 0
->      >       throttled_time 0
->      >       intergroup wait_sum 2842251984
->      >       hierarchy wait_sum 6389509389332798
->      >
->      >  From now on we can monitor both the wait_sum of intergroup and hierarchy,
->      > which will inevitably help a system administrator know how intense the CPU
->      > competition is within a task group and between different task groups. We
->      > can calculate the wait rate of a task group based on hierarchy wait_sum and
->      > cpuacct.usage.
->      >
->      > For example:
->      >       X% = (current_wait_sum - last_wait_sum) / ((current_usage -
->      > last_usage) + (current_wait_sum - last_wait_sum))
->      >
->      > That means the task group paid X percentage of time on runqueue waiting
->      > for the CPU.
->      >
->      > Signed-off-by: yuzhoujian <yuzhoujian@didichuxing.com <mailto:yuzhoujian@didichuxing.com>>
->      > ---
->      >   kernel/sched/core.c  | 11 +++++++----
->      >   kernel/sched/fair.c  | 17 +++++++++++++++++
->      >   kernel/sched/sched.h |  3 +++
->      >   3 files changed, 27 insertions(+), 4 deletions(-)
->      >
->      > diff --git a/kernel/sched/core.c b/kernel/sched/core.c
->      > index ee77636..172e6fb 100644
->      > --- a/kernel/sched/core.c
->      > +++ b/kernel/sched/core.c
->      > @@ -6760,13 +6760,16 @@ static int cpu_cfs_stat_show(struct seq_file *sf, void *v)
->      >       seq_printf(sf, "throttled_time %llu\n", cfs_b->throttled_time);
->      >
->      >       if (schedstat_enabled() && tg != &root_task_group) {
->      > -             u64 ws = 0;
->      > +             u64 inter_ws = 0, hierarchy_ws = 0;
->      >               int i;
->      >
->      > -             for_each_possible_cpu(i)
->      > -                     ws += schedstat_val(tg->se[i]->statistics.wait_sum);
->      > +             for_each_possible_cpu(i) {
->      > +                     inter_ws += schedstat_val(tg->se[i]->statistics.wait_sum);
->      > +                     hierarchy_ws += tg->cfs_rq[i]->hierarchy_wait_sum;
->      > +             }
->      >
->      > -             seq_printf(sf, "wait_sum %llu\n", ws);
->      > +             seq_printf(sf, "intergroup wait_sum %llu\n", inter_ws);
->      > +             seq_printf(sf, "hierarchy wait_sum %llu\n", hierarchy_ws);
->      >       }
->      >
->      >       return 0;
->      > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->      > index e2ff4b6..35e89ca 100644
->      > --- a/kernel/sched/fair.c
->      > +++ b/kernel/sched/fair.c
->      > @@ -858,6 +858,19 @@ static void update_curr_fair(struct rq *rq)
->      >   }
->      >
->      >   static inline void
->      > +update_hierarchy_wait_sum(struct sched_entity *se,
->      > +                     u64 delta_wait)
->      > +{
->      > +     for_each_sched_entity(se) {
->      > +             struct cfs_rq *cfs_rq = cfs_rq_of(se);
->      > +
->      > +             if (cfs_rq->tg != &root_task_group)
->      > +                     __schedstat_add(cfs_rq->hierarchy_wait_sum,
->      > +                                     delta_wait);
->      > +     }
->      > +}
->      > +
->      > +static inline void
->      >   update_stats_wait_end(struct cfs_rq *cfs_rq, struct sched_entity *se)
->      >   {
->      >       struct task_struct *p;
->      > @@ -880,6 +893,7 @@ static void update_curr_fair(struct rq *rq)
->      >                       return;
->      >               }
->      >               trace_sched_stat_wait(p, delta);
->      > +             update_hierarchy_wait_sum(se, delta);
->      >       }
->      >
->      >       __schedstat_set(se->statistics.wait_max,
->      > @@ -10273,6 +10287,9 @@ void init_cfs_rq(struct cfs_rq *cfs_rq)
->      >   #ifndef CONFIG_64BIT
->      >       cfs_rq->min_vruntime_copy = cfs_rq->min_vruntime;
->      >   #endif
->      > +#ifdef CONFIG_SCHEDSTATS
->      > +     cfs_rq->hierarchy_wait_sum = 0;
->      > +#endif
->      >   #ifdef CONFIG_SMP
->      >       raw_spin_lock_init(&cfs_rq->removed.lock);
->      >   #endif
->      > diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
->      > index d27c1a5..c01ab99 100644
->      > --- a/kernel/sched/sched.h
->      > +++ b/kernel/sched/sched.h
->      > @@ -496,6 +496,9 @@ struct cfs_rq {
->      >   #ifndef CONFIG_64BIT
->      >       u64                     min_vruntime_copy;
->      >   #endif
->      > +#ifdef CONFIG_SCHEDSTATS
->      > +     u64                     hierarchy_wait_sum;
->      > +#endif
->      >
->      >       struct rb_root_cached   tasks_timeline;
->      >
->      >
-> 
