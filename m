@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4B7C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:54:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AB98C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD2F2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D13272147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:54:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690886;
-	bh=2yuJoPFDlraP0ePikmMQJ7ezoOJCyfO+4uykqvk2Od8=;
+	s=default; t=1548690889;
+	bh=qDS747OEozzptACD83JjVjfghCXDLuzwxzxlB5St7dI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rwDZFxkXLV3OWpCuDDjBTNSpgGxoWBebqEVrFIvYtZsYUaOfpC09zdoQGBzFqvjPN
-	 p7nkIczbK5mvc0DFPj6jMaFhFNc7QjLiw1A4cqFzE+wjX1wIRC7bou2fFkpeb3VVS1
-	 CNyMRlVPFGtDpjvnpfgaLzCXk29kVRtB0r77NEpA=
+	b=dCcK2BwuKdQVcHbRtclZIna6fTPkdpNTiL3Ol9Dc4SI8wdtOOgvlxb0fvUqEXYJn+
+	 /p+zO45w9fznPM/34iZ8O/A4uW7W2wcUQbPhJh87nwsPomvh7ja8zeZBcuQWWeDhEc
+	 IQHAtADeeS5LSYr76WKxSzAt0EeUNe//QajxhUW4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729745AbfA1Pyo (ORCPT
+        id S1727811AbfA1Pys (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:54:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40832 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:54:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40866 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726930AbfA1Pym (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:54:42 -0500
+        id S1726930AbfA1Pyp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:54:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E939020989;
-        Mon, 28 Jan 2019 15:54:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 916D520855;
+        Mon, 28 Jan 2019 15:54:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690882;
-        bh=2yuJoPFDlraP0ePikmMQJ7ezoOJCyfO+4uykqvk2Od8=;
+        s=default; t=1548690884;
+        bh=qDS747OEozzptACD83JjVjfghCXDLuzwxzxlB5St7dI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GqKwXQWyHiObixOOXz/mhFf0bvHwlYI7Wwz45kon/+6336xZSWGjtlN14Z9yJM86g
-         bpAIgoL7af68J1VemgiGxtumF/776NLbKQONajIwJwg61Lb1onPtPE73kY5RkrBLca
-         ugnq73xxsvZM6P7Ksd3WMpsnXENivoHv2nYsS66M=
+        b=rqCNeDM47s/hjVzrikKhSQ91XnrEbQcAJKFRnlw7c6Zpn2Dn6mufG4MHDqY3XKq/P
+         nwQ5pmPp2midW8RObcIC1HMYzn6N+TXDbHTAnHsQq4Mj4rDKqJrsP0nAHEaT7anB6i
+         KiJtqD73rNwnCBRvlMJy7xlGuxfHdDKVMcVAMs7M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Yang <Eric.Yang2@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 221/304] drm/amd/display: fix YCbCr420 blank color
-Date:   Mon, 28 Jan 2019 10:42:18 -0500
-Message-Id: <20190128154341.47195-221-sashal@kernel.org>
+Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.20 222/304] powerpc/uaccess: fix warning/error with access_ok()
+Date:   Mon, 28 Jan 2019 10:42:19 -0500
+Message-Id: <20190128154341.47195-222-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,78 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Yang <Eric.Yang2@amd.com>
+From: Christophe Leroy <christophe.leroy@c-s.fr>
 
-[ Upstream commit 12750d1647f118496f1da727146f255f5e44d500 ]
+[ Upstream commit 05a4ab823983d9136a460b7b5e0d49ee709a6f86 ]
 
-[Why]
-YCbCr420 packing format uses two chanels for luma, and 1
-channel for both chroma component. Our previous implementation
-did not account for this and results in every other pixel having
-very high luma value, showing greyish color instead of black.
+With the following piece of code, the following compilation warning
+is encountered:
 
-YCbCr444 = <Y1, Cb1, Cr1>; <Y2, Cb2, Cr2> .....
-YCbCr420 = <Y1, Y2,  Cb1>; <Y3, Y4,  Cr1> .....
+	if (_IOC_DIR(ioc) != _IOC_NONE) {
+		int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
 
-[How]
-Program the second channel with the black color value for luma
-as well.
+		if (!access_ok(verify, ioarg, _IOC_SIZE(ioc))) {
 
-Signed-off-by: Eric Yang <Eric.Yang2@amd.com>
-Reviewed-by: Hugo Hu <Hugo.Hu@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+drivers/platform/test/dev.c: In function 'my_ioctl':
+drivers/platform/test/dev.c:219:7: warning: unused variable 'verify' [-Wunused-variable]
+   int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
+
+This patch fixes it by referencing 'type' in the macro allthough
+doing nothing with it.
+
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../drm/amd/display/dc/dce110/dce110_hw_sequencer.c   | 11 ++++++++++-
- .../gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c |  9 +++++++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
+ arch/powerpc/include/asm/uaccess.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-index a6bcb90e8419..4443a916a0fb 100644
---- a/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dce110/dce110_hw_sequencer.c
-@@ -1268,10 +1268,19 @@ static void program_scaler(const struct dc *dc,
- 		pipe_ctx->plane_res.scl_data.lb_params.depth,
- 		&pipe_ctx->stream->bit_depth_params);
+diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
+index 15bea9a0f260..ebc0b916dcf9 100644
+--- a/arch/powerpc/include/asm/uaccess.h
++++ b/arch/powerpc/include/asm/uaccess.h
+@@ -63,7 +63,7 @@ static inline int __access_ok(unsigned long addr, unsigned long size,
+ #endif
  
--	if (pipe_ctx->stream_res.tg->funcs->set_overscan_blank_color)
-+	if (pipe_ctx->stream_res.tg->funcs->set_overscan_blank_color) {
-+		/*
-+		 * The way 420 is packed, 2 channels carry Y component, 1 channel
-+		 * alternate between Cb and Cr, so both channels need the pixel
-+		 * value for Y
-+		 */
-+		if (pipe_ctx->stream->timing.pixel_encoding == PIXEL_ENCODING_YCBCR420)
-+			color.color_r_cr = color.color_g_y;
-+
- 		pipe_ctx->stream_res.tg->funcs->set_overscan_blank_color(
- 				pipe_ctx->stream_res.tg,
- 				&color);
-+	}
+ #define access_ok(type, addr, size)		\
+-	(__chk_user_ptr(addr),			\
++	(__chk_user_ptr(addr), (void)(type),		\
+ 	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
  
- 	pipe_ctx->plane_res.xfm->funcs->transform_set_scaler(pipe_ctx->plane_res.xfm,
- 		&pipe_ctx->plane_res.scl_data);
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index 32e4c653b1b4..220ba828748d 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -2165,6 +2165,15 @@ static void dcn10_blank_pixel_data(
- 	color_space = stream->output_color_space;
- 	color_space_to_black_color(dc, color_space, &black_color);
- 
-+	/*
-+	 * The way 420 is packed, 2 channels carry Y component, 1 channel
-+	 * alternate between Cb and Cr, so both channels need the pixel
-+	 * value for Y
-+	 */
-+	if (stream->timing.pixel_encoding == PIXEL_ENCODING_YCBCR420)
-+		black_color.color_r_cr = black_color.color_g_y;
-+
-+
- 	if (stream_res->tg->funcs->set_blank_color)
- 		stream_res->tg->funcs->set_blank_color(
- 				stream_res->tg,
+ /*
 -- 
 2.19.1
 
