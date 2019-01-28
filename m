@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 769F6C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D6DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B24A20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B3F32084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692737;
-	bh=ZTxxX16S7Mn+ir/kqYR7TzJCrp1mnuA9nyDOX7TJ+2s=;
+	s=default; t=1548692746;
+	bh=bGURXV0zuJ2AhPhy0r4SYSqQYGya5GS1PWSh5O62Q80=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i++/p9ZaoEWOKWxEsGal2HXxHBsjceXzDpENFTJbCAz9IwPmOBk89HrTjyS2UR0U9
-	 +q8DzKxt0osRcYtlPFwLljFnz8Jt+DRb5PB36dP2/SIOy1c0eJBUUtnyEIwSlRg9Nu
-	 f1hCq3eiKnSrMK9qiI0FlydmrJi+r7cu9gBV5CT4=
+	b=TPSWv9LSmE4KHDHSd/slZg0mlq4N/Ma1RKxQNdZUZ1Wne30+oimR1xug/bsjurwSl
+	 RqvvmGp34nEvtFSSSEwUXnD/eWjywseDlVW8ERnjakTN79slVVPTDMm2ksDnWS3jYO
+	 hR98Rgvzmg/p3f6pTYtmgcf/ipNm5X2ZLKRHh3S8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389204AbfA1QZg (ORCPT
+        id S2390022AbfA1QZo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34418 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:25:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34594 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389194AbfA1QZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:33 -0500
+        id S2389999AbfA1QZk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C7AEA2171F;
-        Mon, 28 Jan 2019 16:25:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F82D2084A;
+        Mon, 28 Jan 2019 16:25:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692732;
-        bh=ZTxxX16S7Mn+ir/kqYR7TzJCrp1mnuA9nyDOX7TJ+2s=;
+        s=default; t=1548692740;
+        bh=bGURXV0zuJ2AhPhy0r4SYSqQYGya5GS1PWSh5O62Q80=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YpdzGaNO8TrCIpezXD/CPlFOuByUoCuhuT5Ov7EFC9GV7CGOVO1X0rS6CXlmb5YKQ
-         o/hYfBZys3Otds1GxrQ+8FvGdpcT4SYAGObR9HOU1qzdaZnvaPa7HaXkuj2tKnOAKL
-         By0TqMLXeKZnf0AEskFRlB2TkbenOT7s2w/B/faA=
+        b=Wt9ov9yIptpEmbzTVdrra8bLl1GTMT8oTREsI+qG5DBnZtGM04cJGPVFmb7ud1SUP
+         pg4n4O5UeO81HntFzwNrqhi7iICwrQAmEBsNKoM3uXKoyMx7UKok76CX0RlQorH0La
+         1wCqxMXCKcWBgNoUu7IidKYjkZ9jJMkujk6DG0EI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roland Kammerer <roland.kammerer@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 53/80] drbd: narrow rcu_read_lock in drbd_sync_handshake
-Date:   Mon, 28 Jan 2019 11:23:34 -0500
-Message-Id: <20190128162401.58841-53-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 57/80] video: clps711x-fb: release disp device node in probe()
+Date:   Mon, 28 Jan 2019 11:23:38 -0500
+Message-Id: <20190128162401.58841-57-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -58,82 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roland Kammerer <roland.kammerer@linbit.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit d29e89e34952a9ad02c77109c71a80043544296e ]
+[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
 
-So far there was the possibility that we called
-genlmsg_new(GFP_NOIO)/mutex_lock() while holding an rcu_read_lock().
+clps711x_fb_probe() increments refcnt of disp device node by
+of_parse_phandle() and leaves it undecremented on both
+successful and error paths.
 
-This included cases like:
+Found by Linux Driver Verification project (linuxtesting.org).
 
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      drbd_bcast_event
-        genlmsg_new(GFP_NOIO) --> may sleep
-
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        genlmsg_new(GFP_NOIO) --> may sleep
-
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        mutex_lock --> may sleep
-
-While using GFP_ATOMIC whould have been possible in the first two cases,
-the real fix is to narrow the rcu_read_lock.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@163.com>
-Reviewed-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_receiver.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/video/fbdev/clps711x-fb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index b4b5680ac6ad..2fedab9349f6 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3126,7 +3126,7 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 	enum drbd_conns rv = C_MASK;
- 	enum drbd_disk_state mydisk;
- 	struct net_conf *nc;
--	int hg, rule_nr, rr_conflict, tentative;
-+	int hg, rule_nr, rr_conflict, tentative, always_asbp;
- 
- 	mydisk = device->state.disk;
- 	if (mydisk == D_NEGOTIATING)
-@@ -3168,8 +3168,12 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 
- 	rcu_read_lock();
- 	nc = rcu_dereference(peer_device->connection->net_conf);
-+	always_asbp = nc->always_asbp;
-+	rr_conflict = nc->rr_conflict;
-+	tentative = nc->tentative;
-+	rcu_read_unlock();
- 
--	if (hg == 100 || (hg == -100 && nc->always_asbp)) {
-+	if (hg == 100 || (hg == -100 && always_asbp)) {
- 		int pcount = (device->state.role == R_PRIMARY)
- 			   + (peer_role == R_PRIMARY);
- 		int forced = (hg == -100);
-@@ -3208,9 +3212,6 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 			     "Sync from %s node\n",
- 			     (hg < 0) ? "peer" : "this");
+diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
+index 649b32f78c08..c55109524fd5 100644
+--- a/drivers/video/fbdev/clps711x-fb.c
++++ b/drivers/video/fbdev/clps711x-fb.c
+@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
  	}
--	rr_conflict = nc->rr_conflict;
--	tentative = nc->tentative;
--	rcu_read_unlock();
  
- 	if (hg == -100) {
- 		/* FIXME this log message is not correct if we end up here
+ 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
+-	if (ret)
++	if (ret) {
++		of_node_put(disp);
+ 		goto out_fb_release;
++	}
+ 
+ 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
+ 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
+ 
+ 	ret = of_property_read_u32(disp, "bits-per-pixel",
+ 				   &info->var.bits_per_pixel);
++	of_node_put(disp);
+ 	if (ret)
+ 		goto out_fb_release;
+ 
 -- 
 2.19.1
 
