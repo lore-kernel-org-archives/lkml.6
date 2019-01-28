@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C16AAC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89F65C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89E1A21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5ADCE2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690657;
-	bh=Y78R8vEqZQlD+DAn50poZNsqLlkRvYVzVtoNCKKcoxU=;
+	s=default; t=1548690662;
+	bh=QQQzEWLlbCra0vUikJV/2Cu3NltPBizsUCK3zm0n99k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CNyWeQMyTUodmon4csiILzgHGevFDYlnwaYGm6KVM7mpeyod4bnhM+FBU6QXAXC8Y
-	 +uM2BhhOmeaXVOSLqZU70888PoWskCUCIAM20uPtPLwSzEg4LupO35d+GbN37i6x4U
-	 Bcd/uvnJu/jyY58/m69UnajW1BNHvGUUd0uYJbnQ=
+	b=sCaT7J64UBXl02cepi/VJJ3J9kYQmHkhjjGFCzg3A61zrx3Hku6r6jntPIF6n2Moj
+	 Zl6N6I8ZLAneEHvskz1Uu3KTW8TIfSjQUcodGyFxihyushMMwDiUqcbarINPe40vas
+	 tstnY0/Y+erqd4VJwue0VIiwT+msTgbJWlXiGMI4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729015AbfA1Pu4 (ORCPT
+        id S1729021AbfA1PvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:50:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37448 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:51:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727189AbfA1Pux (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:50:53 -0500
+        id S1726958AbfA1Pu6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:50:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BE852177E;
-        Mon, 28 Jan 2019 15:50:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 545B12147A;
+        Mon, 28 Jan 2019 15:50:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690652;
-        bh=Y78R8vEqZQlD+DAn50poZNsqLlkRvYVzVtoNCKKcoxU=;
+        s=default; t=1548690657;
+        bh=QQQzEWLlbCra0vUikJV/2Cu3NltPBizsUCK3zm0n99k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Z5byMabbZgnreagpmtPrESpO5AJOJPdegsDI7+2S9DWkVgiazct0Q97kvKAFaSDo9
-         Bs+4q7N+YYsGdxlJsIVfIqLjRczY3FVbzc9CK93f9/R9FtNb3wp+yau7pclKmAvToj
-         +k0OyV5LBLuzxe1ItJcWGN2NWqw8KUsNtpgcOX7E=
+        b=kb61NHO+Hgx6Fstit5Inq1KUjf156YiykQZdLTPM00mq7T4kYH4IGfS1qsnbeC6Jb
+         tOtoVNlGapltczQ4benlAGfKCHeWJip8aPDS9bQZr7cPApxXNJEu9FGhzSjnV5P/Rr
+         HEBmyeC2+v551QTLn/uoeEoMm/JpL2Lfend0C+h4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Robin Murphy <robin.murphy@arm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.20 154/304] iommu/arm-smmu-v3: Use explicit mb() when moving cons pointer
-Date:   Mon, 28 Jan 2019 10:41:11 -0500
-Message-Id: <20190128154341.47195-154-sashal@kernel.org>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 156/304] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
+Date:   Mon, 28 Jan 2019 10:41:13 -0500
+Message-Id: <20190128154341.47195-156-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,48 +59,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: Anson Huang <anson.huang@nxp.com>
 
-[ Upstream commit a868e8530441286342f90c1fd9c5f24de3aa2880 ]
+[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
 
-After removing an entry from a queue (e.g. reading an event in
-arm_smmu_evtq_thread()) it is necessary to advance the MMIO consumer
-pointer to free the queue slot back to the SMMU. A memory barrier is
-required here so that all reads targetting the queue entry have
-completed before the consumer pointer is updated.
+Same as other i.MX6 SoCs, ensure unused MMDC channel's
+handshake is bypassed, this is to make sure no request
+signal will be generated when periphe_clk_sel is changed
+or SRC warm reset is triggered.
 
-The implementation of queue_inc_cons() relies on a writel() to complete
-the previous reads, but this is incorrect because writel() is only
-guaranteed to complete prior writes. This patch replaces the call to
-writel() with an mb(); writel_relaxed() sequence, which gives us the
-read->write ordering which we require.
-
-Cc: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu-v3.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6sl.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
-index 62ef4afc9ee5..11f528e727a1 100644
---- a/drivers/iommu/arm-smmu-v3.c
-+++ b/drivers/iommu/arm-smmu-v3.c
-@@ -679,7 +679,13 @@ static void queue_inc_cons(struct arm_smmu_queue *q)
- 	u32 cons = (Q_WRP(q, q->cons) | Q_IDX(q, q->cons)) + 1;
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index 6fcfbbd907a5..e13d8814cfa4 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -17,6 +17,8 @@
  
- 	q->cons = Q_OVF(q, q->cons) | Q_WRP(q, cons) | Q_IDX(q, cons);
--	writel(q->cons, q->cons_reg);
+ #include "clk.h"
+ 
++#define CCDR				0x4
++#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
+ #define CCSR			0xc
+ #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
+ #define CACRR			0x10
+@@ -411,6 +413,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
+ 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
+ 
++	/* Ensure the MMDC CH0 handshake is bypassed */
++	writel_relaxed(readl_relaxed(base + CCDR) |
++		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
 +
-+	/*
-+	 * Ensure that all CPU accesses (reads and writes) to the queue
-+	 * are complete before we update the cons pointer.
-+	 */
-+	mb();
-+	writel_relaxed(q->cons, q->cons_reg);
- }
+ 	imx_check_clocks(clks, ARRAY_SIZE(clks));
  
- static int queue_sync_prod(struct arm_smmu_queue *q)
+ 	clk_data.clks = clks;
 -- 
 2.19.1
 
