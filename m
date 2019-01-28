@@ -2,108 +2,109 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60F61C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADFCC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 34DAF20811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="2R9S32R3"
+	by mail.kernel.org (Postfix) with ESMTP id 0296920811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548693320;
+	bh=g6zLky/02Slrue3L9lmQ9eYw1JR/As+2YgEmSo3Lnmc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=k9vE/+TzSuRp0hZrqt9uvCVcZK2ROuvkcl0gliXOdAiIWHkCD4MxpnB9MlkP08FIl
+	 tMzQsJI5t5jR3vPHOTgAGertHAHwapHSpfKYRJQ6zC29ucZh+Dlb0arMynoIB5ZvaL
+	 bK3kBcW2+RB3mvHcyysHHX3hXLP4UBtq2kK7y3HA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390402AbfA1QfJ (ORCPT
+        id S2390406AbfA1QfS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:35:09 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:36419 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388520AbfA1QfH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:35:07 -0500
-Received: by mail-oi1-f193.google.com with SMTP id x23so13539896oix.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 08:35:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=3RfSfUYfpAZphq/vcCmv0IEDUe5SxwKKRVSXT2VCPcU=;
-        b=2R9S32R3QbZIbFSXmkascFMRRVMAOiMqJ3qvr07hqBS1ju4LNBiYd8iN0aJlFJ/JOd
-         ElwAmIWmUZVOJZh97bQmAQNPXvf4VeX/+ilxGHTi0QIP+0rQncKNqMKRYlz+MSD4MPWe
-         7SOir2tSv8csXy26UxMYxsv2CVHTjd6wJ++zLlWA+0KqzFCGxEyu/6nu+5t98s1PMWuH
-         5zQibZ8M9eYLnxd+kpWMF/5/REPgfD5P0t+Rn9anI3+Izb4dePLt3HH+s6g9ZII/B1ph
-         ENHZXTvgfY1CqvGoI4ipoCYITGRfAZREThglH4ckIwDdQ19VSdjSvyi+R7cgPuXSRaKf
-         txJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3RfSfUYfpAZphq/vcCmv0IEDUe5SxwKKRVSXT2VCPcU=;
-        b=hgtjGQMAe6Fcs664nFGUUrwbvUbEGCxJoi1623EKmRbnvJZ4FY5bHjghyiJfP6pnit
-         rHQvS5fEsVS9Eza5otxfl89bafn4c7bgW7lAC43T2+mYl1PCQh64+O7XCoLPd4KCB1iI
-         a5mvuER+/jInCtYXHT+l/Zb4lXwRveIi679hZeZVGQw3nQqL04KxnXQAGDXz4f2G07bz
-         hItPpNHy4lEdcvYSyy1VGe+kS0nSZYsCx4WiGIGKmPu8tW31w+XAIztWLr3ZwiDz1WVO
-         khZ9dvDo/NII6nvrtbmvo4FFqrbYTLIGI7Re9Ddul4WNlMyTy0GOSngVVPLkzKBFhMna
-         mU/g==
-X-Gm-Message-State: AJcUukcfqQSxxTxOwjf6ZPH6v1RH/JNYHxJ8iG123rg9YRYWCjezaeuk
-        oBVMguz9FO8ueut7KvYkYOp6eWrBUr2JSN5/mbfIOw==
-X-Google-Smtp-Source: AHgI3IbgJFlk8tJrI0mFbIeJrfjOlDEgz5j1qQlr0yPgG1LT8xVUjEcpah7jVEe/+JNiBZ1fjnUfa6ZOjZFL+/OYxKM=
-X-Received: by 2002:aca:b804:: with SMTP id i4mr6360983oif.280.1548693306097;
- Mon, 28 Jan 2019 08:35:06 -0800 (PST)
+        Mon, 28 Jan 2019 11:35:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2390047AbfA1QZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:50 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BCE5D2175B;
+        Mon, 28 Jan 2019 16:25:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692749;
+        bh=g6zLky/02Slrue3L9lmQ9eYw1JR/As+2YgEmSo3Lnmc=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=i3gqqPxWZHYJ0Ni8trbYTLeh8lqYE9EqjlslA98Q8mGjrxnQrV+ACCqAxHr6oW17G
+         LJYbpwM8oZDEGKM+zlM9glacAqGFiRo+9UDv9m2PMFfJZEQbyfU2x2agX8lc5PhUwt
+         8qKzJ9oTwvgqCuD+DXFSKgj+vJTkMDCKu43njpiI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Chris Perl <cperl@janestreet.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 62/80] NFS: nfs_compare_mount_options always compare auth flavors.
+Date:   Mon, 28 Jan 2019 11:23:43 -0500
+Message-Id: <20190128162401.58841-62-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
+References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190124231441.37A4A305@viggo.jf.intel.com> <20190124231448.E102D18E@viggo.jf.intel.com>
- <0852310e-41dc-dc96-2da5-11350f5adce6@oracle.com> <CAPcyv4hjJhUQpMy1CVJZur0Ssr7Cr2fkcD50L5gzx6v_KY14vg@mail.gmail.com>
- <5A90DA2E42F8AE43BC4A093BF067884825733A5B@SHSMSX104.ccr.corp.intel.com>
- <CAPcyv4ikXD8rJAmV6tGNiq56m_ZXPZNrYkTwOSUJ7D1O_M5s=w@mail.gmail.com>
- <b7d45d83a314955e7dff25401dfc0d4f4247cfcd.camel@intel.com>
- <dc7d8190-2c94-9bdb-fb5b-a80a3fb55822@oracle.com> <CAPcyv4hEyG-1hC=20M7YGFG-BF7yvNcG7EkLurAfysHHB2yXBA@mail.gmail.com>
- <20190128092549.GF18811@dhcp22.suse.cz>
-In-Reply-To: <20190128092549.GF18811@dhcp22.suse.cz>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Mon, 28 Jan 2019 08:34:56 -0800
-Message-ID: <CAPcyv4j2vmWXQO0QoBU5-yXBJBaEuDrPJ0t1tWkftCbwb4rnWA@mail.gmail.com>
-Subject: Re: [PATCH 5/5] dax: "Hotplug" persistent memory for use like normal RAM
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Jane Chu <jane.chu@oracle.com>,
-        "Verma, Vishal L" <vishal.l.verma@intel.com>,
-        "Du, Fan" <fan.du@intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "bp@suse.de" <bp@suse.de>,
-        "linux-mm@kvack.org" <linux-mm@kvack.org>,
-        "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-        "tiwai@suse.de" <tiwai@suse.de>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "jglisse@redhat.com" <jglisse@redhat.com>,
-        "zwisler@kernel.org" <zwisler@kernel.org>,
-        "baiyaowei@cmss.chinamobile.com" <baiyaowei@cmss.chinamobile.com>,
-        "thomas.lendacky@amd.com" <thomas.lendacky@amd.com>,
-        "Wu, Fengguang" <fengguang.wu@intel.com>,
-        "Huang, Ying" <ying.huang@intel.com>,
-        "bhelgaas@google.com" <bhelgaas@google.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 1:26 AM Michal Hocko <mhocko@kernel.org> wrote:
->
-> On Fri 25-01-19 11:15:08, Dan Williams wrote:
-> [...]
-> > However, we should consider this along with the userspace enabling to
-> > control which device-dax instances are set aside for hotplug. It would
-> > make sense to have a "clear errors before hotplug" configuration
-> > option.
->
-> I am not sure I understand. Do you mean to clear HWPoison when the
-> memory is hotadded (add_pages) or onlined (resp. move_pfn_range_to_zone)?
+From: Chris Perl <cperl@janestreet.com>
 
-Before the memory is hot-added via the kmem driver it shows up as an
-independent persistent memory namespace. A namespace can be configured
-as a block device and errors cleared by writing to the given "bad
-block". Once all media errors are cleared the namespace can be
-assigned as volatile memory to the core-kernel mm. The memory range
-starts as a namespace each boot and must be hotplugged via startup
-scripts, those scripts can be made to handle the bad block pruning.
+[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
+
+This patch removes the check from nfs_compare_mount_options to see if a
+`sec' option was passed for the current mount before comparing auth
+flavors and instead just always compares auth flavors.
+
+Consider the following scenario:
+
+You have a server with the address 192.168.1.1 and two exports /export/a
+and /export/b.  The first export supports `sys' and `krb5' security, the
+second just `sys'.
+
+Assume you start with no mounts from the server.
+
+The following results in EIOs being returned as the kernel nfs client
+incorrectly thinks it can share the underlying `struct nfs_server's:
+
+$ mkdir /tmp/{a,b}
+$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
+$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
+$ df >/dev/null
+df: ‘/tmp/b’: Input/output error
+
+Signed-off-by: Chris Perl <cperl@janestreet.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/nfs/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index 62f358f67764..412fcfbc50e2 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -2376,8 +2376,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
+ 		goto Ebusy;
+ 	if (a->acdirmax != b->acdirmax)
+ 		goto Ebusy;
+-	if (b->auth_info.flavor_len > 0 &&
+-	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
++	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
+ 		goto Ebusy;
+ 	return 1;
+ Ebusy:
+-- 
+2.19.1
+
