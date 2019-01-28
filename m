@@ -2,151 +2,142 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC9EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D5E0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57F8B2087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:40:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 26A242087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:41:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="LL/nI9BA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726895AbfA1Okt (ORCPT
+        id S1726915AbfA1Old (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:40:49 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:39847 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbfA1Okt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:40:49 -0500
-Received: by mail-qt1-f195.google.com with SMTP id u47so18425323qtj.6
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 06:40:48 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o+Cg6LHIPRoKPYT+mmxHdwfsTOOMr4ZcNvCpfOK62+g=;
-        b=BiQEAgpnHr7dmkb4y2jDeLyfx+SrA5tbFMTRo3OTOYxVHvyNC0FjPhVDHIGtGi1w+O
-         6FPwkmfqCzFD9wlnMxlcdeYHVZAB3UwOqe7Tlg4DN8cElBwkySKAZ3sJeEb9ajOpwdic
-         i6sI+zir/NwsdtLXb5Nb+NGXrXPJUhjrRVxrnN5qwFCAvONOb+wzbloxLbd27zqgSBwS
-         HKY5t8OGbuz6Py3TD+DGsJHF1eLDJcevMNUkjhZCNT1JelM1HB2cDe44f2K3KKiZOkpj
-         P5MwGNA2L+U3gRLz3qGUMtiJFPoI7P/II3FcfGE5/ACHrsrK89zSk0ZNG4QBL4ZH5IAb
-         uRjg==
-X-Gm-Message-State: AJcUukfkHbZv+9bY60oRj/Ax3lEldr5SZMBYjxInIN7G3TnQ1lCBr+vG
-        tEfIzoBOKbcDdJARPI/9zVAfJGLvv2r/uFtYogs=
-X-Google-Smtp-Source: ALg8bN62mXzF8CreXezvMpsigikFdhs8DpXINcfVx5Zki9GNadMso/9/Y+yCy8ZLPSBrk6ukafj+dPo2se9LlV2Aa1M=
-X-Received: by 2002:ac8:4141:: with SMTP id e1mr20661832qtm.96.1548686448016;
- Mon, 28 Jan 2019 06:40:48 -0800 (PST)
+        Mon, 28 Jan 2019 09:41:33 -0500
+Received: from mout02.posteo.de ([185.67.36.66]:51841 "EHLO mout02.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726266AbfA1Olc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 09:41:32 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id 6D6BB2400FF
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 15:41:29 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1548686489; bh=78zSCAFqEXwMnvzKrGeKAP95cmc72vwf2d7Yy5hAJDg=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LL/nI9BAFu0W+CakexYe5nqPEM99XYnrcOMihXm2BrYlKz6rLGKCfVm14oczgRjPK
+         3kelN6OLAi/Jxr1O6IQMA5JFApTHSSDXI6cxZX3JhJqgyVq9B6Nt3BWhnyuj7q/SHu
+         s6por0RLnsSxVL33ivRkB+m94Bu+1xnJd9pBdv3OCqXpnk5Pki9iB/fLU/JFk1Ns2+
+         jiCp5gQJsF3ucb46WIgCdyra2U5CBgEdraKLVqoWpjmH0ubLLA0mP06HiOo6XFua9b
+         DJ22vImXreJMmV97fQ4ImvZy+9fAQd1tYTUVEmsAA/2Fz98JmZm4l8W+IJc+Cmm68T
+         Drd8vDkwhU3kg==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 43pC4R2Hpyz9rxB;
+        Mon, 28 Jan 2019 15:41:27 +0100 (CET)
+From:   Martin Kepplinger <martink@posteo.de>
+To:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        robin@protonic.nl
+Cc:     ulf.hansson@linaro.org, shawnguo@kernel.org,
+        s.hauer@pengutronix.de, linux-imx@nxp.com,
+        linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: [PATCH v4] mmc: mxs-mmc: Introduce regulator support
+Date:   Mon, 28 Jan 2019 15:41:19 +0100
+Message-Id: <20190128144119.10092-1-martink@posteo.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-References: <20190125104353.2791-1-labbott@redhat.com> <CAK8P3a0xnc7RNbGhG7-hj+ay2keR7dh7MmDiUNKxfewsnatsgA@mail.gmail.com>
- <CANiq72=nMYcohMk29fzs3bMut1PXwfqYLZdbRh_AeTN-Z4FpxQ@mail.gmail.com>
- <AM0PR07MB387404F71D25553702966E27E49B0@AM0PR07MB3874.eurprd07.prod.outlook.com>
- <VI1PR07MB486420A106A8BC85BEE9FB2AE4960@VI1PR07MB4864.eurprd07.prod.outlook.com>
-In-Reply-To: <VI1PR07MB486420A106A8BC85BEE9FB2AE4960@VI1PR07MB4864.eurprd07.prod.outlook.com>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Mon, 28 Jan 2019 15:40:31 +0100
-Message-ID: <CAK8P3a1dLz3so3Z5cypOBeQN3GB-nM-RHNaeYOTEvovMrGhBPQ@mail.gmail.com>
-Subject: Re: [RFC][PATCH] Update -Wattribute-alias for gcc9
-To:     Bernd Edlinger <bernd.edlinger@hotmail.de>
-Cc:     Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
-        Laura Abbott <labbott@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Martin Sebor <msebor@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 2:28 PM Bernd Edlinger
-<bernd.edlinger@hotmail.de> wrote:
->
-> On 1/25/19 1:24 PM, Bernd Edlinger wrote:
-> > On 1/25/19 12:39 PM, Miguel Ojeda wrote:
-> >> On Fri, Jan 25, 2019 at 11:58 AM Arnd Bergmann <arnd@arndb.de> wrote:
-> >>>
-> >>> On Fri, Jan 25, 2019 at 11:43 AM Laura Abbott <labbott@redhat.com> wrote:
-> >
-> > I believe it is not intentional to break the old syntax of the
-> > pragma.  There will be new -Wattribute-alias=1 and -Wattribute-alias=2
-> > and -Wattribute-alias is easy to retain as an alias for -Wattribute-alias=1.
-> > That is what my patch will do.
-> >
->
-> Okay, I committed the -Wattribute-alias patch to gcc trunk, now
-> as https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=268336 .
-> So there will be no need for a workaround on your side.
->
-> Also fixed a few false positive -Waddress-of-packed-member warnings with
-> https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=268118 and
-> https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=268337 .
->
-> However there remain a lot of warnings from -Waddress-of-packed-member,
-> that look more or less valid, has anybody an idea how to handle
-> these?
+From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 
-The best idea I have is "one at a time", which unfortunately
-does mean a lot of work. We can degrade the warning to the
-W=1 level in the kernel by disabling it by default and re-enabling
-it in scripts/Makefile.extrawarn, but we probably want to address
-many of them anyway. Looking at the most common examples
-(listed by number of instances in Laura's build log)
+This adds support for explicitly switching the mmc's power on and off
+which is needed for example for WL1837 WL1271 wifi controllers on imx28.
 
-     64  warning: taking address of packed member of 'struct
-scif_window' may result in an unaligned pointer value
-[-Waddress-of-packed-member]
+While the wifi's vmmc-supply regulator can be configured in devicetree,
+"ip link set wlan0 down" doesn't turn off the VMMC regulator which leads
+to hangs when loading firmware, for example.
 
-Structure should not be packed at all, it's kernel internal (I hope at least,
-since it contains pointers to kernel structures), and packing it does lead to
-unaligned accesses.
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+---
 
-     71  warning: converting a packed 'struct desc_struct' pointer
-(alignment 1) to a 'u32' {aka 'unsigned int'} pointer (alignment 4)
-may result in an unaligned pointer value [-Waddress-of-packed-member]
 
-'__packed' does not seem to be required here. This is a structure of bit
-fields, which IIRC means the layout is architecture dependent, but
-it is fully packed already.
+revision history                                                               
+----------------                                                               
+v4: re-added forgotten regulator_enable() during probe
+v3: improve API usage as suggested by Ulf
+v2: tested patch with changes suggested by Robin                               
+v1: question, why https://patchwork.kernel.org/patch/4365751/ didn't get in
 
-     76  warning: converting a packed 'struct opa_smp' pointer
-(alignment 1) to a 'struct ib_mad_hdr' pointer (alignment 8) may
-result in an unaligned pointer value [-Waddress-of-packed-member]
 
-We cast the pointers multiple times, from aligned to packed and back to aligned,
-so I assume there is no bug, but it's unclear why the structure was ever marked
-as packed.
+ drivers/mmc/host/mxs-mmc.c | 34 +++++++++++++++++++++++++---------
+ 1 file changed, 25 insertions(+), 9 deletions(-)
 
-     81  warning: taking address of packed member of 'struct
-adf_accel_dev' may result in an unaligned pointer value
-[-Waddress-of-packed-member]
+diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
+index add1e70195ea..23d275269d61 100644
+--- a/drivers/mmc/host/mxs-mmc.c
++++ b/drivers/mmc/host/mxs-mmc.c
+@@ -517,6 +517,22 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
+ 	else
+ 		host->bus_width = 0;
+ 
++	switch (ios->power_mode) {
++	case MMC_POWER_OFF:
++		if (!IS_ERR(host->mmc->supply.vmmc))
++			mmc_regulator_set_ocr(host->mmc,
++					      host->mmc->supply.vmmc, 0);
++		break;
++	case MMC_POWER_UP:
++		if (!IS_ERR(host->mmc->supply.vmmc))
++			mmc_regulator_set_ocr(host->mmc,
++					      host->mmc->supply.vmmc,
++					      ios->vdd);
++		break;
++	default:
++		break;
++	}
++
+ 	if (ios->clock)
+ 		mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
+ }
+@@ -588,7 +604,6 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+ 	struct mmc_host *mmc;
+ 	struct resource *iores;
+ 	int ret = 0, irq_err;
+-	struct regulator *reg_vmmc;
+ 	struct mxs_ssp *ssp;
+ 
+ 	irq_err = platform_get_irq(pdev, 0);
+@@ -614,14 +629,15 @@ static int mxs_mmc_probe(struct platform_device *pdev)
+ 	host->mmc = mmc;
+ 	host->sdio_irq_en = 0;
+ 
+-	reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
+-	if (!IS_ERR(reg_vmmc)) {
+-		ret = regulator_enable(reg_vmmc);
+-		if (ret) {
+-			dev_err(&pdev->dev,
+-				"Failed to enable vmmc regulator: %d\n", ret);
+-			goto out_mmc_free;
+-		}
++	ret = mmc_regulator_get_supply(mmc);
++	if (ret == -EPROBE_DEFER)
++		goto out_mmc_free;
++
++	ret = regulator_enable(mmc->supply.vmmc);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"Failed to enable vmmc regulator: %d\n", ret);
++		goto out_mmc_free;
+ 	}
+ 
+ 	ssp->clk = devm_clk_get(&pdev->dev, NULL);
+-- 
+2.20.1
 
-Should clearly not be packed.
-
-    122  warning: taking address of packed member of 'struct
-fc_els_flogi' may result in an unaligned pointer value
-[-Waddress-of-packed-member]
-
-I'd suggest changing it to only mark the unaligned members as packed,
-not the structure itself.
-
-    182  warning: taking address of packed member of 'struct
-rtl818x_csr' may result in an unaligned pointer value
-[-Waddress-of-packed-member]
-
-Cannot be packed, since this is an mmio structure, need to
-carefully rework structure layout in case there are some packed
-members we never access.
-
-   138  warning: taking address of packed member of 'struct ib_reth'
-may result in an unaligned pointer value [-Waddress-of-packed-member]
-    414  warning: taking address of packed member of 'struct
-ib_atomic_eth' may result in an unaligned pointer value
-[-Waddress-of-packed-member]
-
-I suppose ib_u64_get should take a packed argument, it already uses
-get_unaligned_be64()
-internally to avoid bugs.
-
-       Arnd
