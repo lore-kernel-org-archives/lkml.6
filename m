@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7603EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8941DC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BD0D20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54B3620881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697920;
-	bh=twewhJneHc9pXiM6RK8QVwYL+jH6hUIIMExMVqFvS34=;
+	s=default; t=1548697933;
+	bh=NRWgOEtTezcQc88knb+15/kLmDndZMMp/nlNONsW16c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uMsog4ajG40GryS4fz0Kzjhoj9PDKGr7LaYYO9U70QSsoQLteGOH0BQIL2cjRbdh1
-	 wWZTgcQA4AC1tzOOTueLv1CMzClWrP3+IU8S11SYW+G6FurB5rhpbh1QKQnx24JFTg
-	 hw/a9wIL8H2tSmM55lfKu5HEj/IXKck//yTy+hug=
+	b=f2OwJzuw4jcsP0oSn938TsLe9bHBoOEFXdEc74L4CZabsPSsTqQBvh3lARGFhV3cu
+	 v/kiTbuXnc/fX3ezV/i3oBYgKwCR/uHOGWa2yrBC5vTE6J32wk+4JnoeWVSWlTwjoN
+	 RuxVtZguHraz95zO1G5VfWZUDzwv63sjZXuDJscY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727935AbfA1Rv7 (ORCPT
+        id S1727641AbfA1RwL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:51:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57378 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:52:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57258 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727175AbfA1PoI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:44:08 -0500
+        id S1727132AbfA1PoC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:44:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1210C2147A;
-        Mon, 28 Jan 2019 15:44:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 47B2B214DA;
+        Mon, 28 Jan 2019 15:44:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690247;
-        bh=twewhJneHc9pXiM6RK8QVwYL+jH6hUIIMExMVqFvS34=;
+        s=default; t=1548690241;
+        bh=NRWgOEtTezcQc88knb+15/kLmDndZMMp/nlNONsW16c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mkz74wO1Of+MWasjHNp4CVuobhY3uIg6vx6ULBHLusaHToGRJcft/jussC46V546e
-         El1wNgpHszb2PEbis7zUBLOyaW7Ztk4ienzwl8llRyBhRHep+yU1Nx1KWDrLuoRNLV
-         Nh1USZG+FC+h6VYU5s1bBPIxnmZBLjipLrhx00RU=
+        b=wTqemF5R72ekkYEnnTxkYnWfkgveJdgasqcF9YbO28lsbtjOJ9N2tbo+9z2IO4X/1
+         heJsjXH+C8i1a+poDNWpSfPJbA3JYQwQFDlgWZmtsog6qevzTQHBUTzkV2JE9ylMUJ
+         YVffQAmwqLZX3zN4SaBFOAztNEwEyW5CiV10XIT0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexei Avshalom Lazar <ailizaro@codeaurora.org>,
-        Maya Erez <merez@codeaurora.org>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 015/304] wil6210: fix reset flow for Talyn-mb
-Date:   Mon, 28 Jan 2019 10:38:52 -0500
-Message-Id: <20190128154341.47195-15-sashal@kernel.org>
+Cc:     Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.20 013/304] drm/amd/display: Fix potential nullptr error
+Date:   Mon, 28 Jan 2019 10:38:50 -0500
+Message-Id: <20190128154341.47195-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -61,48 +58,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexei Avshalom Lazar <ailizaro@codeaurora.org>
+From: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
 
-[ Upstream commit d083b2e2b7db5cca1791643d036e6597af27f49b ]
+[ Upstream commit 4f7129112c2a30331f3045a42026fad82e6cb72b ]
 
-With current reset flow, Talyn sometimes get stuck causing PCIe
-enumeration to fail. Fix this by removing some reset flow operations
-that are not relevant for Talyn.
-Setting bit 15 in RGF_HP_CTRL is WBE specific and is not in use for
-all wil6210 devices.
-For Sparrow, BIT_HPAL_PERST_FROM_PAD and BIT_CAR_PERST_RST were set
-as a WA an HW issue.
+[Why]
+Fix surface/plane potential nullptr
 
-Signed-off-by: Alexei Avshalom Lazar <ailizaro@codeaurora.org>
-Signed-off-by: Maya Erez <merez@codeaurora.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+[How]
+add null check
+
+Signed-off-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Reviewed-by: Aric Cyr <Aric.Cyr@amd.com>
+Acked-by: Leo Li <sunpeng.li@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/wil6210/main.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/wil6210/main.c b/drivers/net/wireless/ath/wil6210/main.c
-index 398900a1c29e..c54b008996ee 100644
---- a/drivers/net/wireless/ath/wil6210/main.c
-+++ b/drivers/net/wireless/ath/wil6210/main.c
-@@ -998,10 +998,13 @@ static int wil_target_reset(struct wil6210_priv *wil, int no_flash)
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 3118ae0e7a87..315a245aedc2 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -5333,6 +5333,12 @@ enum surface_update_type dm_determine_update_type_for_commit(struct dc *dc, stru
+ 	struct dc_stream_update stream_update;
+ 	enum surface_update_type update_type = UPDATE_TYPE_FAST;
  
- 	wil_dbg_misc(wil, "Resetting \"%s\"...\n", wil->hw_name);
- 
--	/* Clear MAC link up */
--	wil_s(wil, RGF_HP_CTRL, BIT(15));
--	wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_HPAL_PERST_FROM_PAD);
--	wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_CAR_PERST_RST);
-+	if (wil->hw_version < HW_VER_TALYN) {
-+		/* Clear MAC link up */
-+		wil_s(wil, RGF_HP_CTRL, BIT(15));
-+		wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0,
-+		      BIT_HPAL_PERST_FROM_PAD);
-+		wil_s(wil, RGF_USER_CLKS_CTL_SW_RST_MASK_0, BIT_CAR_PERST_RST);
++	if (!updates || !surface) {
++		DRM_ERROR("Plane or surface update failed to allocate");
++		/* Set type to FULL to avoid crashing in DC*/
++		update_type = UPDATE_TYPE_FULL;
++		goto ret;
 +	}
  
- 	wil_halt_cpu(wil);
- 
+ 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state, new_crtc_state, i) {
+ 		new_dm_crtc_state = to_dm_crtc_state(new_crtc_state);
 -- 
 2.19.1
 
