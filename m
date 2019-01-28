@@ -6,49 +6,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47962C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:25:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CB82C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:25:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A7782171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:24:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B7832177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:25:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548710700;
-	bh=A0Fpz91ZDi5ZwvgNMdr6VsjqgfRvJnqePE1104Vbd9k=;
+	s=default; t=1548710702;
+	bh=q8lP/rRHnXTUxoIgT581gVq+PQi+1knkh1MrcgQMBQQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lgUpQeHYdTmILgQhmHsyuuo1cC31nuzwZm1+wUycb1jod4sEHM4oyLDnZsXedXnzL
-	 hlsOBXfuWqXm0l1boFXOfh71ctU4qIujr07uN8FUvhJkCNEFLrCrXbNkfDryszf41B
-	 /EtFy3FQn9ZElGvqvScor/AVPqtv6hrKQdWqK9YA=
+	b=PJkPdunUov3uXare9k5F7DwF+swot/N00VSBqSxG+wgOPo7eFwwFZz4xIoOHqJlVk
+	 In5XiHz4PnaLpifkHhuzvDHJOKXWH9Jx3s0apROKy0f6q5CjocSoi4M36KY+1LjyNz
+	 r3BKd5OCn7OrI29jXMQg+Xss6IOj+sG7DqtNWgSA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728406AbfA1VY6 (ORCPT
+        id S1728435AbfA1VZA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 16:24:58 -0500
-Received: from mail-yb1-f195.google.com ([209.85.219.195]:44720 "EHLO
-        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728368AbfA1VYz (ORCPT
+        Mon, 28 Jan 2019 16:25:00 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:36697 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728394AbfA1VY6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 16:24:55 -0500
-Received: by mail-yb1-f195.google.com with SMTP id k189so7307212yba.11;
-        Mon, 28 Jan 2019 13:24:55 -0800 (PST)
+        Mon, 28 Jan 2019 16:24:58 -0500
+Received: by mail-yw1-f66.google.com with SMTP id i73so7356243ywg.3;
+        Mon, 28 Jan 2019 13:24:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=Q0ZvSFCLiR7eTR8xTiZFKMwRMlztmOcs6W4lWC+wmE8=;
-        b=cjVhheisfakN3e9wPIk/t6uubHotDSpqs3XTvOqYpyypK18Ks1BOFZj4Is1WqQaldS
-         BAegOjlvZrsGwsF20YgDVBxCy7lGW/3b+2BDc1OEY4wUMDM9H3KMKlPzh4gMXC3slnF2
-         lalCWCLHCegQcUIBMlQfxgQJsGypv3BS6Et/5u95pkbU2FGu1ByKfAj412O9ENwSKZkm
-         1ksNjRc2X4qLRVv5e/G2SM5g67ZnicADAG/C3QfOh04W2GgxQxkirqv5uy5pzncq74Q5
-         6gDFCNGi9k2ymG/MJItm4Iw1YYGEkSlsLv4cIKgX47K5YXJ10J6/PD5N6gOfBXY+xly2
-         Kp9w==
-X-Gm-Message-State: AHQUAubgFJn+/q6hcaKGTzl9rbW95nYGBKcbqgHOti1PSxzuk/2vIHDp
-        nKol17pSYKs54LTxbBrAk+o=
-X-Google-Smtp-Source: AHgI3Ia36WbIIpamVRjNH4SkkElnXA8w6+SF1a/chvpdveen5rElxe2KQp3/mXPDdUoRY/eSluY9Yw==
-X-Received: by 2002:a25:6742:: with SMTP id b63mr9724713ybc.115.1548710694505;
-        Mon, 28 Jan 2019 13:24:54 -0800 (PST)
+        bh=wisqPDSfzfuGtfQPMvdQY71lpH/gg72mzhu83259kzY=;
+        b=jZK6tNFIYRpY+yIcfDkagJ3sEtejj63ieLD6SSHnkljUruyYwBWr70Ss6/eYXLKGxi
+         258QGiyZCIfIpOspjxWnpeqB35A91/1zHYSfckKam3yRxmWyHmQyOk2DCDxy1oPtX8PZ
+         MOFgXd0vBcixyM6/IybK3cTtYathShnG8Ek6JXPPCeY0jOjXvrB+25GUUd6rpOF9dIzw
+         3RXCqaTc/WVfAe/wVdnqI7idQhZ4QdSoXxYxNvur5yUoX+im8l9igZeDgDQ02Pm+ZWUZ
+         Frs3yipJHmTIB/iClVQ1tkoehLATNwL4S3p9Ejt7Siv7hiztNfK2UgTZoaxx+4JuRan2
+         IO/g==
+X-Gm-Message-State: AJcUukd9MVyk0S4KlqUYBNbcqWtwLqN4xgNGnSxuJjAikyJm75dM0r50
+        d55s3f3TBiaSz+bgi9/0KbI=
+X-Google-Smtp-Source: ALg8bN5UMRGWhuyjNZXutlYtAafP3bI86CSqqidL++DGdcxPR12bJhZHQ2o08FAbnjiOU8UrKsUueg==
+X-Received: by 2002:a81:c93:: with SMTP id 141mr22834674ywm.356.1548710697375;
+        Mon, 28 Jan 2019 13:24:57 -0800 (PST)
 Received: from dennisz-mbp.thefacebook.com ([199.201.65.135])
-        by smtp.gmail.com with ESMTPSA id a7sm24170415ywb.18.2019.01.28.13.24.53
+        by smtp.gmail.com with ESMTPSA id a7sm24170415ywb.18.2019.01.28.13.24.56
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 13:24:53 -0800 (PST)
+        Mon, 28 Jan 2019 13:24:56 -0800 (PST)
 From:   Dennis Zhou <dennis@kernel.org>
 To:     David Sterba <dsterba@suse.com>,
         Josef Bacik <josef@toxicpanda.com>, Chris Mason <clm@fb.com>,
@@ -56,9 +56,9 @@ To:     David Sterba <dsterba@suse.com>,
         Nick Terrell <terrelln@fb.com>
 Cc:     kernel-team@fb.com, linux-btrfs@vger.kernel.org,
         linux-kernel@vger.kernel.org, Dennis Zhou <dennis@kernel.org>
-Subject: [PATCH 07/11] btrfs: move to fn pointers for get/put workspaces
-Date:   Mon, 28 Jan 2019 16:24:33 -0500
-Message-Id: <20190128212437.11597-8-dennis@kernel.org>
+Subject: [PATCH 09/11] btrfs: change set_level() to bound the level passed in
+Date:   Mon, 28 Jan 2019 16:24:35 -0500
+Message-Id: <20190128212437.11597-10-dennis@kernel.org>
 X-Mailer: git-send-email 2.13.5
 In-Reply-To: <20190128212437.11597-1-dennis@kernel.org>
 References: <20190128212437.11597-1-dennis@kernel.org>
@@ -67,406 +67,177 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The previous patch added generic helpers for get_workspace() and
-put_workspace(). Now, we can migrate ownership of the workspace_manager
-to be in the compression type code as the compression code itself
-doesn't care beyond being able to get a workspace. The init/cleanup
-and get/put methods are abstracted so each compression algorithm can
-decide how they want to manage their workspaces.
+Currently, the only user of set_level() is zlib which sets an internal
+workspace parameter. As level is now plumbed into get_workspace(), this
+can be handled there rather than separately.
+
+This repurposes set_level() to bound the level passed in so it can be
+used when setting the mounts compression level and as well as verifying
+the level before getting a workspace. The other benefit is this divides
+the meaning of compress(0) and get_workspace(0). The former means we
+want to use the default compression level of the compression type. The
+latter means we can use any workspace available.
 
 Signed-off-by: Dennis Zhou <dennis@kernel.org>
 ---
- fs/btrfs/compression.c | 101 +++++++++++++++++++++++------------------
- fs/btrfs/compression.h |  26 +++++++++++
- fs/btrfs/lzo.c         |  26 +++++++++++
- fs/btrfs/zlib.c        |  26 +++++++++++
- fs/btrfs/zstd.c        |  26 +++++++++++
- 5 files changed, 160 insertions(+), 45 deletions(-)
+ fs/btrfs/compression.c | 23 +++++++++++++++--------
+ fs/btrfs/compression.h |  4 ++--
+ fs/btrfs/lzo.c         |  3 ++-
+ fs/btrfs/super.c       |  4 +++-
+ fs/btrfs/zlib.c        | 18 +++++++++++-------
+ fs/btrfs/zstd.c        |  3 ++-
+ 6 files changed, 35 insertions(+), 20 deletions(-)
 
 diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 2e748d8785f0..ab694760ffdb 100644
+index e509071eaa69..a552c6f61e6d 100644
 --- a/fs/btrfs/compression.c
 +++ b/fs/btrfs/compression.c
-@@ -732,6 +732,28 @@ struct heuristic_ws {
- 	struct list_head list;
- };
- 
-+static struct workspace_manager heuristic_wsm;
-+
-+static void heuristic_init_workspace_manager(void)
-+{
-+	btrfs_init_workspace_manager(&heuristic_wsm, &btrfs_heuristic_compress);
-+}
-+
-+static void heuristic_cleanup_workspace_manager(void)
-+{
-+	btrfs_cleanup_workspace_manager(&heuristic_wsm);
-+}
-+
-+static struct list_head *heuristic_get_workspace(void)
-+{
-+	return btrfs_get_workspace(&heuristic_wsm);
-+}
-+
-+static void heuristic_put_workspace(struct list_head *ws)
-+{
-+	btrfs_put_workspace(&heuristic_wsm, ws);
-+}
-+
- static void free_heuristic_ws(struct list_head *ws)
- {
- 	struct heuristic_ws *workspace;
-@@ -772,24 +794,14 @@ static struct list_head *alloc_heuristic_ws(void)
- }
- 
- const struct btrfs_compress_op btrfs_heuristic_compress = {
-+	.init_workspace_manager = heuristic_init_workspace_manager,
-+	.cleanup_workspace_manager = heuristic_cleanup_workspace_manager,
-+	.get_workspace = heuristic_get_workspace,
-+	.put_workspace = heuristic_put_workspace,
- 	.alloc_workspace = alloc_heuristic_ws,
- 	.free_workspace = free_heuristic_ws,
- };
- 
--struct workspace_manager {
--	const struct btrfs_compress_op *ops;
--	struct list_head idle_ws;
--	spinlock_t ws_lock;
--	/* Number of free workspaces */
--	int free_ws;
--	/* Total number of allocated workspaces */
--	atomic_t total_ws;
--	/* Waiters for a free workspace */
--	wait_queue_head_t ws_wait;
--};
--
--static struct workspace_manager wsm[BTRFS_COMPRESS_TYPES];
--
- static const struct btrfs_compress_op * const btrfs_compress_op[] = {
- 	&btrfs_heuristic_compress,
- 	&btrfs_zlib_compress,
-@@ -797,33 +809,33 @@ static const struct btrfs_compress_op * const btrfs_compress_op[] = {
- 	&btrfs_zstd_compress,
- };
- 
--static void btrfs_init_workspace_manager(int type)
-+void btrfs_init_workspace_manager(struct workspace_manager *wsm,
-+				  const struct btrfs_compress_op *ops)
- {
--	struct workspace_manager *wsman = &wsm[type];
+@@ -1008,9 +1008,9 @@ int btrfs_compress_pages(unsigned int type_level, struct address_space *mapping,
  	struct list_head *workspace;
+ 	int ret;
  
--	wsman->ops = btrfs_compress_op[type];
-+	wsm->ops = ops;
+-	workspace = get_workspace(type, level);
++	level = btrfs_compress_op[type]->set_level(level);
  
--	INIT_LIST_HEAD(&wsman->idle_ws);
--	spin_lock_init(&wsman->ws_lock);
--	atomic_set(&wsman->total_ws, 0);
--	init_waitqueue_head(&wsman->ws_wait);
-+	INIT_LIST_HEAD(&wsm->idle_ws);
-+	spin_lock_init(&wsm->ws_lock);
-+	atomic_set(&wsm->total_ws, 0);
-+	init_waitqueue_head(&wsm->ws_wait);
- 
- 	/*
- 	 * Preallocate one workspace for each compression type so
- 	 * we can guarantee forward progress in the worst case
- 	 */
--	workspace = wsman->ops->alloc_workspace();
-+	workspace = wsm->ops->alloc_workspace();
- 	if (IS_ERR(workspace)) {
- 		pr_warn("BTRFS: cannot preallocate compression workspace, will try later\n");
- 	} else {
--		atomic_set(&wsman->total_ws, 1);
--		wsman->free_ws = 1;
--		list_add(workspace, &wsman->idle_ws);
-+		atomic_set(&wsm->total_ws, 1);
-+		wsm->free_ws = 1;
-+		list_add(workspace, &wsm->idle_ws);
- 	}
+-	btrfs_compress_op[type]->set_level(workspace, level);
++	workspace = get_workspace(type, level);
+ 	ret = btrfs_compress_op[type]->compress_pages(workspace, mapping,
+ 						      start, pages,
+ 						      out_pages,
+@@ -1563,14 +1563,21 @@ int btrfs_compress_heuristic(struct inode *inode, u64 start, u64 end)
+ 	return ret;
  }
  
--static void btrfs_cleanup_workspace_manager(struct workspace_manager *wsman)
-+void btrfs_cleanup_workspace_manager(struct workspace_manager *wsman)
+-unsigned int btrfs_compress_str2level(const char *str)
++unsigned int btrfs_compress_str2level(unsigned int type, const char *str)
  {
- 	struct list_head *ws;
+-	if (strncmp(str, "zlib", 4) != 0)
++	unsigned int level;
++	int ret;
++
++	if (!type)
+ 		return 0;
  
-@@ -841,7 +853,7 @@ static void btrfs_cleanup_workspace_manager(struct workspace_manager *wsman)
-  * Preallocation makes a forward progress guarantees and we do not return
-  * errors.
-  */
--static struct list_head *btrfs_get_workspace(struct workspace_manager *wsman)
-+struct list_head *btrfs_get_workspace(struct workspace_manager *wsm)
- {
- 	struct list_head *workspace;
- 	int cpus = num_online_cpus();
-@@ -852,11 +864,11 @@ static struct list_head *btrfs_get_workspace(struct workspace_manager *wsman)
- 	wait_queue_head_t *ws_wait;
- 	int *free_ws;
+-	/* Accepted form: zlib:1 up to zlib:9 and nothing left after the number */
+-	if (str[4] == ':' && '1' <= str[5] && str[5] <= '9' && str[6] == 0)
+-		return str[5] - '0';
++	if (str[0] == ':') {
++		ret = kstrtouint(str + 1, 10, &level);
++		if (ret)
++			level = 0;
++	}
++
++	level = btrfs_compress_op[type]->set_level(level);
  
--	idle_ws	 = &wsman->idle_ws;
--	ws_lock	 = &wsman->ws_lock;
--	total_ws = &wsman->total_ws;
--	ws_wait	 = &wsman->ws_wait;
--	free_ws	 = &wsman->free_ws;
-+	idle_ws	 = &wsm->idle_ws;
-+	ws_lock	 = &wsm->ws_lock;
-+	total_ws = &wsm->total_ws;
-+	ws_wait	 = &wsm->ws_wait;
-+	free_ws	 = &wsm->free_ws;
- 
- again:
- 	spin_lock(ws_lock);
-@@ -887,7 +899,7 @@ static struct list_head *btrfs_get_workspace(struct workspace_manager *wsman)
- 	 * context of btrfs_compress_bio/btrfs_compress_pages
- 	 */
- 	nofs_flag = memalloc_nofs_save();
--	workspace = wsman->ops->alloc_workspace();
-+	workspace = wsm->ops->alloc_workspace();
- 	memalloc_nofs_restore(nofs_flag);
- 
- 	if (IS_ERR(workspace)) {
-@@ -920,15 +932,14 @@ static struct list_head *btrfs_get_workspace(struct workspace_manager *wsman)
- 
- static struct list_head *get_workspace(int type)
- {
--	return btrfs_get_workspace(&wsm[type]);
-+	return btrfs_compress_op[type]->get_workspace();
+-	return BTRFS_ZLIB_DEFAULT_LEVEL;
++	return level;
  }
- 
- /*
-  * put a workspace struct back on the list or free it if we have enough
-  * idle ones sitting around
-  */
--static void btrfs_put_workspace(struct workspace_manager *wsman,
--				struct list_head *ws)
-+void btrfs_put_workspace(struct workspace_manager *wsm, struct list_head *ws)
- {
- 	struct list_head *idle_ws;
- 	spinlock_t *ws_lock;
-@@ -936,11 +947,11 @@ static void btrfs_put_workspace(struct workspace_manager *wsman,
- 	wait_queue_head_t *ws_wait;
- 	int *free_ws;
- 
--	idle_ws	 = &wsman->idle_ws;
--	ws_lock	 = &wsman->ws_lock;
--	total_ws = &wsman->total_ws;
--	ws_wait	 = &wsman->ws_wait;
--	free_ws	 = &wsman->free_ws;
-+	idle_ws	 = &wsm->idle_ws;
-+	ws_lock	 = &wsm->ws_lock;
-+	total_ws = &wsm->total_ws;
-+	ws_wait	 = &wsm->ws_wait;
-+	free_ws	 = &wsm->free_ws;
- 
- 	spin_lock(ws_lock);
- 	if (*free_ws <= num_online_cpus()) {
-@@ -951,7 +962,7 @@ static void btrfs_put_workspace(struct workspace_manager *wsman,
- 	}
- 	spin_unlock(ws_lock);
- 
--	wsman->ops->free_workspace(ws);
-+	wsm->ops->free_workspace(ws);
- 	atomic_dec(total_ws);
- wake:
- 	cond_wake_up(ws_wait);
-@@ -959,7 +970,7 @@ static void btrfs_put_workspace(struct workspace_manager *wsman,
- 
- static void put_workspace(int type, struct list_head *ws)
- {
--	return btrfs_put_workspace(&wsm[type], ws);
-+	return btrfs_compress_op[type]->put_workspace(ws);
- }
- 
- /*
-@@ -1059,7 +1070,7 @@ void __init btrfs_init_compress(void)
- 	int i;
- 
- 	for (i = 0; i < BTRFS_COMPRESS_TYPES; i++)
--		btrfs_init_workspace_manager(i);
-+		btrfs_compress_op[i]->init_workspace_manager();
- }
- 
- void __cold btrfs_exit_compress(void)
-@@ -1067,7 +1078,7 @@ void __cold btrfs_exit_compress(void)
- 	int i;
- 
- 	for (i = 0; i < BTRFS_COMPRESS_TYPES; i++)
--		btrfs_cleanup_workspace_manager(&wsm[i]);
-+		btrfs_compress_op[i]->cleanup_workspace_manager();
- }
- 
- /*
 diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
-index 53a8b9e93217..05342ad081d6 100644
+index e3627139bc5c..d607be40aa0e 100644
 --- a/fs/btrfs/compression.h
 +++ b/fs/btrfs/compression.h
-@@ -100,7 +100,33 @@ enum btrfs_compression_type {
- 	BTRFS_COMPRESS_TYPES = 4,
+@@ -90,7 +90,7 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
+ blk_status_t btrfs_submit_compressed_read(struct inode *inode, struct bio *bio,
+ 				 int mirror_num, unsigned long bio_flags);
+ 
+-unsigned btrfs_compress_str2level(const char *str);
++unsigned int btrfs_compress_str2level(unsigned int type, const char *str);
+ 
+ enum btrfs_compression_type {
+ 	BTRFS_COMPRESS_NONE  = 0,
+@@ -149,7 +149,7 @@ struct btrfs_compress_op {
+ 			  unsigned long start_byte,
+ 			  size_t srclen, size_t destlen);
+ 
+-	void (*set_level)(struct list_head *ws, unsigned int type);
++	unsigned int (*set_level)(unsigned int level);
  };
  
-+struct workspace_manager {
-+	const struct btrfs_compress_op *ops;
-+	struct list_head idle_ws;
-+	spinlock_t ws_lock;
-+	/* Number of free workspaces */
-+	int free_ws;
-+	/* Total number of allocated workspaces */
-+	atomic_t total_ws;
-+	/* Waiters for a free workspace */
-+	wait_queue_head_t ws_wait;
-+};
-+
-+void btrfs_init_workspace_manager(struct workspace_manager *wsm,
-+				  const struct btrfs_compress_op *ops);
-+struct list_head *btrfs_get_workspace(struct workspace_manager *wsm);
-+void btrfs_put_workspace(struct workspace_manager *wsm, struct list_head *ws);
-+void btrfs_cleanup_workspace_manager(struct workspace_manager *wsm);
-+
- struct btrfs_compress_op {
-+	void (*init_workspace_manager)(void);
-+
-+	void (*cleanup_workspace_manager)(void);
-+
-+	struct list_head *(*get_workspace)(void);
-+
-+	void (*put_workspace)(struct list_head *ws);
-+
- 	struct list_head *(*alloc_workspace)(void);
- 
- 	void (*free_workspace)(struct list_head *workspace);
+ extern const struct btrfs_compress_op btrfs_heuristic_compress;
 diff --git a/fs/btrfs/lzo.c b/fs/btrfs/lzo.c
-index 90639140439f..f0837b2c8e94 100644
+index f132af45a924..579d53ae256f 100644
 --- a/fs/btrfs/lzo.c
 +++ b/fs/btrfs/lzo.c
-@@ -61,6 +61,28 @@ struct workspace {
- 	struct list_head list;
- };
+@@ -507,8 +507,9 @@ static int lzo_decompress(struct list_head *ws, unsigned char *data_in,
+ 	return ret;
+ }
  
-+static struct workspace_manager wsm;
-+
-+static void lzo_init_workspace_manager(void)
-+{
-+	btrfs_init_workspace_manager(&wsm, &btrfs_lzo_compress);
-+}
-+
-+static void lzo_cleanup_workspace_manager(void)
-+{
-+	btrfs_cleanup_workspace_manager(&wsm);
-+}
-+
-+static struct list_head *lzo_get_workspace(void)
-+{
-+	return btrfs_get_workspace(&wsm);
-+}
-+
-+static void lzo_put_workspace(struct list_head *ws)
-+{
-+	btrfs_put_workspace(&wsm, ws);
-+}
-+
- static void lzo_free_workspace(struct list_head *ws)
+-static void lzo_set_level(struct list_head *ws, unsigned int type)
++static unsigned int lzo_set_level(unsigned int level)
  {
- 	struct workspace *workspace = list_entry(ws, struct workspace, list);
-@@ -490,6 +512,10 @@ static void lzo_set_level(struct list_head *ws, unsigned int type)
++	return 0;
  }
  
  const struct btrfs_compress_op btrfs_lzo_compress = {
-+	.init_workspace_manager	= lzo_init_workspace_manager,
-+	.cleanup_workspace_manager = lzo_cleanup_workspace_manager,
-+	.get_workspace		= lzo_get_workspace,
-+	.put_workspace		= lzo_put_workspace,
- 	.alloc_workspace	= lzo_alloc_workspace,
- 	.free_workspace		= lzo_free_workspace,
- 	.compress_pages		= lzo_compress_pages,
+diff --git a/fs/btrfs/super.c b/fs/btrfs/super.c
+index c5586ffd1426..b28dff207383 100644
+--- a/fs/btrfs/super.c
++++ b/fs/btrfs/super.c
+@@ -529,7 +529,9 @@ int btrfs_parse_options(struct btrfs_fs_info *info, char *options,
+ 				if (token != Opt_compress &&
+ 				    token != Opt_compress_force)
+ 					info->compress_level =
+-					  btrfs_compress_str2level(args[0].from);
++					  btrfs_compress_str2level(
++							BTRFS_COMPRESS_ZLIB,
++							args[0].from + 4);
+ 				btrfs_set_opt(info->mount_opt, COMPRESS);
+ 				btrfs_clear_opt(info->mount_opt, NODATACOW);
+ 				btrfs_clear_opt(info->mount_opt, NODATASUM);
 diff --git a/fs/btrfs/zlib.c b/fs/btrfs/zlib.c
-index 1480b3eee306..04687bf692e3 100644
+index e2173d0c4fd3..388b1f000fca 100644
 --- a/fs/btrfs/zlib.c
 +++ b/fs/btrfs/zlib.c
-@@ -27,6 +27,28 @@ struct workspace {
- 	int level;
- };
+@@ -41,7 +41,12 @@ static void zlib_cleanup_workspace_manager(void)
  
-+static struct workspace_manager wsm;
-+
-+static void zlib_init_workspace_manager(void)
-+{
-+	btrfs_init_workspace_manager(&wsm, &btrfs_zlib_compress);
-+}
-+
-+static void zlib_cleanup_workspace_manager(void)
-+{
-+	btrfs_cleanup_workspace_manager(&wsm);
-+}
-+
-+static struct list_head *zlib_get_workspace(void)
-+{
-+	return btrfs_get_workspace(&wsm);
-+}
-+
-+static void zlib_put_workspace(struct list_head *ws)
-+{
-+	btrfs_put_workspace(&wsm, ws);
-+}
-+
- static void zlib_free_workspace(struct list_head *ws)
+ static struct list_head *zlib_get_workspace(unsigned int level)
  {
- 	struct workspace *workspace = list_entry(ws, struct workspace, list);
-@@ -402,6 +424,10 @@ static void zlib_set_level(struct list_head *ws, unsigned int type)
+-	return btrfs_get_workspace(&wsm, level);
++	struct list_head *ws = btrfs_get_workspace(&wsm, level);
++	struct workspace *workspace = list_entry(ws, struct workspace, list);
++
++	workspace->level = level;
++
++	return ws;
+ }
+ 
+ static void zlib_put_workspace(struct list_head *ws)
+@@ -413,15 +418,14 @@ static int zlib_decompress(struct list_head *ws, unsigned char *data_in,
+ 	return ret;
+ }
+ 
+-static void zlib_set_level(struct list_head *ws, unsigned int type)
++static unsigned int zlib_set_level(unsigned int level)
+ {
+-	struct workspace *workspace = list_entry(ws, struct workspace, list);
+-	unsigned int level = BTRFS_COMPRESS_LEVEL(type);
+-
+-	if (level > 9)
++	if (!level)
++		level = BTRFS_ZLIB_DEFAULT_LEVEL;
++	else if (level > 9)
+ 		level = 9;
+ 
+-	workspace->level = level > 0 ? level : 3;
++	return level;
  }
  
  const struct btrfs_compress_op btrfs_zlib_compress = {
-+	.init_workspace_manager	= zlib_init_workspace_manager,
-+	.cleanup_workspace_manager = zlib_cleanup_workspace_manager,
-+	.get_workspace		= zlib_get_workspace,
-+	.put_workspace		= zlib_put_workspace,
- 	.alloc_workspace	= zlib_alloc_workspace,
- 	.free_workspace		= zlib_free_workspace,
- 	.compress_pages		= zlib_compress_pages,
 diff --git a/fs/btrfs/zstd.c b/fs/btrfs/zstd.c
-index af6ec59972f5..b06eaf171be7 100644
+index 404101864220..43f3be755b8c 100644
 --- a/fs/btrfs/zstd.c
 +++ b/fs/btrfs/zstd.c
-@@ -41,6 +41,28 @@ struct workspace {
- 	ZSTD_outBuffer out_buf;
- };
+@@ -441,8 +441,9 @@ static int zstd_decompress(struct list_head *ws, unsigned char *data_in,
+ 	return ret;
+ }
  
-+static struct workspace_manager wsm;
-+
-+static void zstd_init_workspace_manager(void)
-+{
-+	btrfs_init_workspace_manager(&wsm, &btrfs_zstd_compress);
-+}
-+
-+static void zstd_cleanup_workspace_manager(void)
-+{
-+	btrfs_cleanup_workspace_manager(&wsm);
-+}
-+
-+static struct list_head *zstd_get_workspace(void)
-+{
-+	return btrfs_get_workspace(&wsm);
-+}
-+
-+static void zstd_put_workspace(struct list_head *ws)
-+{
-+	btrfs_put_workspace(&wsm, ws);
-+}
-+
- static void zstd_free_workspace(struct list_head *ws)
+-static void zstd_set_level(struct list_head *ws, unsigned int type)
++static unsigned int zstd_set_level(unsigned int level)
  {
- 	struct workspace *workspace = list_entry(ws, struct workspace, list);
-@@ -424,6 +446,10 @@ static void zstd_set_level(struct list_head *ws, unsigned int type)
++	return ZSTD_BTRFS_DEFAULT_LEVEL;
  }
  
  const struct btrfs_compress_op btrfs_zstd_compress = {
-+	.init_workspace_manager = zstd_init_workspace_manager,
-+	.cleanup_workspace_manager = zstd_cleanup_workspace_manager,
-+	.get_workspace = zstd_get_workspace,
-+	.put_workspace = zstd_put_workspace,
- 	.alloc_workspace = zstd_alloc_workspace,
- 	.free_workspace = zstd_free_workspace,
- 	.compress_pages = zstd_compress_pages,
 -- 
 2.17.1
 
