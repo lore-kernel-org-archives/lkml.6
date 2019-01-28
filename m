@@ -2,77 +2,108 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3ECBC282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:11:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 752FCC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:11:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89A3A2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:11:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="Do2gJelx"
+	by mail.kernel.org (Postfix) with ESMTP id 3521521783
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:11:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548695476;
+	bh=fMY4GZNKsagDYDKlCbu25KvJ/aQt/jgMGzkEgozac28=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=A3gLc6gZcg8erepd2xHq9DAPuKnCZIbwBDx/R2YvNct6AU/vfIiNx06YPPNzL8XHQ
+	 0YV5ZExHsEFpraeM/df3HqjgiTG0t/KMkMe5KP1ptyFKhmnFMFb7G/yh5hGIr1+el7
+	 fnBHgfdCbxYffzSlOYC4nQE3e04cuGDQPCxsnT0M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732550AbfA1RLM (ORCPT
+        id S1732757AbfA1RLO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:11:12 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:44316 "EHLO
-        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732124AbfA1QJw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:09:52 -0500
-Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id 98B735C12C0;
-        Mon, 28 Jan 2019 17:09:50 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1548691790;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:
-         content-transfer-encoding:content-transfer-encoding:in-reply-to:
-         references; bh=JkdRioVK6OjF6/3Sswhw2GXRL+dykv2ZJpvFouV70bE=;
-        b=Do2gJelxiiat7+dtdOZlSkEU3Sbrg8m6aRU3t+oNaBrZSO/zw1+xeYTUUBj5l2z+0NOkdZ
-        fgejWP+aO++/1y6m2Gziwk5a1Flfpwlai2DIkjeJKv7da6Sf9SKQhqhYBneWf9lpmwtnU4
-        q27NkCZgwgQbt3OIiif4AzY2kUIxtqc=
-From:   Stefan Agner <stefan@agner.ch>
-To:     lorenzo.pieralisi@arm.com
-Cc:     l.stach@pengutronix.de, fabio.estevam@nxp.com, linux-imx@nxp.com,
-        kernel@pengutronix.de, shawnguo@kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 3/3] PCI: controller: dwc: allow to select i.MX driver for i.MX 7D
-Date:   Mon, 28 Jan 2019 17:09:49 +0100
-Message-Id: <20190128160949.24731-1-stefan@agner.ch>
-X-Mailer: git-send-email 2.20.1
+        Mon, 28 Jan 2019 12:11:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35096 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731968AbfA1QJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:09:51 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B05C62171F;
+        Mon, 28 Jan 2019 16:09:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691791;
+        bh=fMY4GZNKsagDYDKlCbu25KvJ/aQt/jgMGzkEgozac28=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=u2i+SRxyn+jg5mUuoUDaoF02jqu5TxmR1XUH8PiYQQg0yQF8H4Pdwv4HGJ5rfh+R3
+         SbKHpOaVDWTBZM+vO0a+1nuAIoJtisKP0c8thRUQ7bCOm52pfZZwfuViXvOzsWqE2j
+         7iqmTQDH0QKYx5n3jJ1Das/uWwIXCT36Teiqvoog=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Chris Perl <cperl@janestreet.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 218/258] NFS: nfs_compare_mount_options always compare auth flavors.
+Date:   Mon, 28 Jan 2019 10:58:44 -0500
+Message-Id: <20190128155924.51521-218-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The i.MX 6 PCI driver supports the i.MX 7D SoC too. Allow to select
-the i.MX PCI driver even if only the i.MX 7D SoC has been selected.
+From: Chris Perl <cperl@janestreet.com>
 
-Signed-off-by: Stefan Agner <stefan@agner.ch>
+[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
+
+This patch removes the check from nfs_compare_mount_options to see if a
+`sec' option was passed for the current mount before comparing auth
+flavors and instead just always compares auth flavors.
+
+Consider the following scenario:
+
+You have a server with the address 192.168.1.1 and two exports /export/a
+and /export/b.  The first export supports `sys' and `krb5' security, the
+second just `sys'.
+
+Assume you start with no mounts from the server.
+
+The following results in EIOs being returned as the kernel nfs client
+incorrectly thinks it can share the underlying `struct nfs_server's:
+
+$ mkdir /tmp/{a,b}
+$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
+$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
+$ df >/dev/null
+df: ‘/tmp/b’: Input/output error
+
+Signed-off-by: Chris Perl <cperl@janestreet.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pci/controller/dwc/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/nfs/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index 91b0194240a5..aacf3297c197 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -90,7 +90,7 @@ config PCI_EXYNOS
- 
- config PCI_IMX6
- 	bool "Freescale i.MX6 PCIe controller"
--	depends on SOC_IMX6Q || (ARM && COMPILE_TEST)
-+	depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
- 	depends on PCI_MSI_IRQ_DOMAIN
- 	select PCIE_DW_HOST
- 
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index ac4b2f005778..5ef2c71348bd 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -2409,8 +2409,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
+ 		goto Ebusy;
+ 	if (a->acdirmax != b->acdirmax)
+ 		goto Ebusy;
+-	if (b->auth_info.flavor_len > 0 &&
+-	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
++	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
+ 		goto Ebusy;
+ 	return 1;
+ Ebusy:
 -- 
-2.20.1
+2.19.1
 
