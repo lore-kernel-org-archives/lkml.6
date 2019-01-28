@@ -2,118 +2,174 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E65F1C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 052A2C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB0A820989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:09:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D11ED214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:13:07 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726843AbfA1OJ1 (ORCPT
+        id S1726775AbfA1ONG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:09:27 -0500
-Received: from route-level1.fsdata.se ([89.221.252.216]:51266 "EHLO
-        route-level1.fsdata.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfA1OJ1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:09:27 -0500
-Received: from DAG01.HMC.local (192.168.46.11) by EDGE01LEVEL1.hmc.local
- (192.168.46.33) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 28 Jan
- 2019 15:09:18 +0100
-Received: from localhost (94.234.46.36) by DAG01.HMC.local (192.168.46.11)
- with Microsoft SMTP Server (TLS) id 15.0.1263.5; Mon, 28 Jan 2019 15:09:16
- +0100
-Date:   Mon, 28 Jan 2019 15:09:11 +0100
-From:   Mattias Jacobsson <2pi@mok.nu>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-CC:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        <michal.lkml@markovi.net>, Darren Hart <dvhart@infradead.org>,
-        "Andy Shevchenko" <andy@infradead.org>,
-        Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        <2pi@mok.nu>
-Subject: Re: [PATCH v2 2/3] platform/x86: wmi: add WMI support to
- MODULE_DEVICE_TABLE()
-Message-ID: <20190128140911.xsltdctpk3bya7ya@mok.nu>
-References: <cover.1548610407.git.2pi@mok.nu>
- <680df320c7263bdd35f87794ae12fb9a9ef3b71c.1548610407.git.2pi@mok.nu>
- <CAHp75VfE0g9OVeOzJ5fBj4MGL4nv=a4S-n1fD9kfP1AaniAOGw@mail.gmail.com>
+        Mon, 28 Jan 2019 09:13:06 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34096 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726647AbfA1ONG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 09:13:06 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 71B5A356F6;
+        Mon, 28 Jan 2019 14:13:05 +0000 (UTC)
+Received: from krava (unknown [10.40.205.232])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 3C63A5C22D;
+        Mon, 28 Jan 2019 14:13:02 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 15:13:01 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Andi Kleen <andi@firstfloor.org>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org,
+        Andi Kleen <ak@linux.intel.com>
+Subject: Re: [RFC] Don't print sample_type bits in non-group events not set
+ in the group's was Re: [PATCH] perf, script: Fix crash with printing mixed
+ trace point and other events
+Message-ID: <20190128141301.GA26788@krava>
+References: <20190117194834.21940-1-andi@firstfloor.org>
+ <20190118094919.GA28346@krava>
+ <20190118125920.GG5823@kernel.org>
+ <20190118130106.GH5823@kernel.org>
+ <20190118134205.GI5823@kernel.org>
+ <20190118161000.GC28346@krava>
+ <20190118161140.z45vl3milw2vk4hy@two.firstfloor.org>
+ <20190119153745.GA19542@krava>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHp75VfE0g9OVeOzJ5fBj4MGL4nv=a4S-n1fD9kfP1AaniAOGw@mail.gmail.com>
-X-Originating-IP: [94.234.46.36]
-X-ClientProxiedBy: PROXY04.HMC.local (192.168.46.54) To DAG01.HMC.local
- (192.168.46.11)
-Received-SPF: Neutral (EDGE01LEVEL1.hmc.local: 192.168.46.11 is neither
- permitted nor denied by domain of 2pi@mok.nu)
+In-Reply-To: <20190119153745.GA19542@krava>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Mon, 28 Jan 2019 14:13:05 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Sat, Jan 19, 2019 at 04:37:45PM +0100, Jiri Olsa wrote:
+> On Fri, Jan 18, 2019 at 08:11:42AM -0800, Andi Kleen wrote:
+> > > +static bool perf_evsel__should_skip(struct perf_evsel *evsel)
+> > > +{
+> > > +	struct perf_event_attr *attr = &evsel->attr;
+> > > +	struct perf_evsel *leader = evsel->leader;
+> > > +
+> > > +	return (leader != evsel) && !attr->freq && !attr->sample_freq;
+> > > +}
+> > > +
+> > >  static int process_sample_event(struct perf_tool *tool,
+> > >  				union perf_event *event,
+> > >  				struct perf_sample *sample,
+> > > @@ -1934,6 +1942,9 @@ static int process_sample_event(struct perf_tool *tool,
+> > >  	struct perf_script *scr = container_of(tool, struct perf_script, tool);
+> > >  	struct addr_location al;
+> > >  
+> > > +	if (perf_evsel__should_skip(evsel))
+> > > +		return 0;
+> > 
+> > That just skips, but surely it has to be displayed somewhere?
+> 
+> actually maybe it's better to keep the current output,
+> and sort out the output for those slave events
+> 
+> with attached patch I can do:
+> 
+>   # ./perf script -Ftrace:+period,-cpu
+>               ex  5535 546813.189028:      11069 cpu/cpu-cycles,period=10000/:  ffffffffa492ad90 _raw_spin_lock+0x10 ([kernel.kallsyms])
+>               ex  5535 546813.189028:        101                probe_ex:main: 
+>               ex  5535 546813.189034:       9074 cpu/cpu-cycles,period=10000/:  ffffffffa4928066 down_read+0x6 ([kernel.kallsyms])
+>               ex  5535 546813.189041:      10102 cpu/cpu-cycles,period=10000/:  ffffffffa492af22 _raw_spin_lock_irqsave+0x22 ([kernel.kallsyms])
+>               ex  5535 546813.189041:          1                probe_ex:main: 
+> 
+> also now it won't make sample for slave events
+> with zero value/period read
+> 
+> note the patch needs to be split into more patches,
+> sending it all together for discussion over the solution
 
-On 2019-01-27, Andy Shevchenko wrote:
-> On Sun, Jan 27, 2019 at 9:04 PM Mattias Jacobsson <2pi@mok.nu> wrote:
-> >
-> > The kernel provides the macro MODULE_DEVICE_TABLE() where driver authors
-> > can specify their device type and their array of device_ids and thereby
-> > trigger the generation of the appropriate MODULE_ALIAS() output. This is
-> > opposed to having to specify one MODULE_ALIAS() for each device. The WMI
-> > device type is currently not supported.
-> >
-> > While using MODULE_DEVICE_TABLE() does increase the complexity as well
-> > as spreading out the implementation across the kernel, it does come with
-> > some benefits too;
-> > * It makes different drivers look more similar; if you can specify the
-> >   array of device_ids any device type specific input to MODULE_ALIAS()
-> >   will automatically be generated for you.
-> > * It helps each driver avoid keeping multiple versions of the same
-> >   information in sync. That is, both the array of device_ids and the
-> >   potential multitude of MODULE_ALIAS()'s.
-> >
-> > Add WMI support to MODULE_DEVICE_TABLE() by adding info about struct
-> > wmi_device_id in devicetable-offsets.c and add a WMI entry point in
-> > file2alias.c.
-> >
-> > The type argument for MODULE_DEVICE_TABLE(type, name) is wmi.
-> 
-> > +/* Looks like: wmi:guid */
-> > +static int do_wmi_entry(const char *filename, void *symval, char *alias)
-> > +{
-> > +       DEF_FIELD_ADDR(symval, wmi_device_id, guid_string);
-> > +       if (strlen(*guid_string) != WMI_GUID_STRING_LEN) {
-> > +               warn("Invalid WMI device id 'wmi:%s' in '%s'\n",
-> > +                               *guid_string, filename);
-> > +               return 0;
-> > +       }
-> 
-> > +       if (snprintf(alias, 500, WMI_MODULE_PREFIX "%s", *guid_string) < 0) {
-> 
-> What the point to use snprintf here with arbitrary buffer size if we
-> exactly know 2 facts:
-> 1. UUID string is  36 characters
-> 2. buffer is long enough
-> 
-> ?
+any feedback on this one?
 
-As long as no one changes the code, not much.
+jirka
 
 > 
-> > +               warn("Could not generate all MODULE_ALIAS's in '%s'\n",
-> > +                               filename);
-> > +               return 0;
-> > +       }
-> > +       return 1;
-> > +}
+> thanks,
+> jirka
 > 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-
-Thanks,
-Mattias
+> 
+> ---
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index 0c5dc4a52fc0..c8791d6bdf8e 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -2726,6 +2726,10 @@ static int parse_output_fields(const struct option *opt __maybe_unused,
+>  			pr_warning("Overriding previous field request for %s events.\n",
+>  				   event_type(type));
+>  
+> +		/* Don't override defaults for +- */
+> +		if (strchr(tok, '+') || strchr(tok, '-'))
+> +			goto parse;
+> +
+>  		output[type].fields = 0;
+>  		output[type].user_set = true;
+>  		output[type].wildcard_set = false;
+> @@ -2810,6 +2814,10 @@ static int parse_output_fields(const struct option *opt __maybe_unused,
+>  				rc = -EINVAL;
+>  				goto out;
+>  			}
+> +			if (change == REMOVE)
+> +				output[type].fields &= ~all_output_options[i].field;
+> +			else
+> +				output[type].fields |= all_output_options[i].field;
+>  			output[type].user_set = true;
+>  			output[type].wildcard_set = true;
+>  		}
+> diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> index dbc0466db368..7487b8f7ff96 100644
+> --- a/tools/perf/util/evsel.c
+> +++ b/tools/perf/util/evsel.c
+> @@ -956,6 +956,15 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
+>  		attr->sample_freq    = 0;
+>  		attr->sample_period  = 0;
+>  		attr->write_backward = 0;
+> +
+> +		/*
+> +		 * We don't get sample for slave events, so let's
+> +		 * have them following the master sample_type to
+> +		 * make it easy during report.
+> +		 */
+> +		attr->sample_type |= leader->attr.sample_type;
+> +		perf_evsel__set_sample_bit(evsel, PERIOD);
+> +		perf_evsel__reset_sample_bit(evsel, READ);
+>  	}
+>  
+>  	if (opts->no_samples)
+> diff --git a/tools/perf/util/session.c b/tools/perf/util/session.c
+> index d6f41611f504..0cbb2a2fb942 100644
+> --- a/tools/perf/util/session.c
+> +++ b/tools/perf/util/session.c
+> @@ -1188,6 +1188,13 @@ static int deliver_sample_value(struct perf_evlist *evlist,
+>  		return 0;
+>  	}
+>  
+> +	/*
+> +	 * There's no reason to deliver sample
+> +	 * for zero period, bail out.
+> +	 */
+> +	if (!sample->period)
+> +		return 0;
+> +
+>  	return tool->sample(tool, event, sample, sid->evsel, machine);
+>  }
+>  
