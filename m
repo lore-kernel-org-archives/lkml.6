@@ -2,97 +2,154 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B48BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:00:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E11F7C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D2F521736
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:00:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lb4ct89m"
+	by mail.kernel.org (Postfix) with ESMTP id BA30420880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:00:45 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfA1IAf (ORCPT
+        id S1726903AbfA1IAo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:00:35 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56798 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726686AbfA1IAf (ORCPT
+        Mon, 28 Jan 2019 03:00:44 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36162 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfA1IAn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:00:35 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=NZGdrPgxkJ3GKEpUKB51umaHqCnKmWqhveXsvbsgygE=; b=lb4ct89mtlycA0t57CSkOi98e
-        /sgvI17cMHXbXpKrtNNaK1bDe16f5eRmPss/pUIPstxyUrfN2hYE219fXt0h1MbhKYw4g+OFelpMs
-        CU7Ac5KvxyKipxsqdwVNH7f+I79ezGtQa6fegSiy5tmtEAx+3AGZ6h+zY97rYlfI4IkwIQ0MbL3rJ
-        OCPGs1nSNeP/NI0tIlWGgrVLsi0UF+KAWidO2n17dhGmZSlDzFwuk48bqZsblF1DucIt4PxL/rZin
-        1GIvHY3EM1FKuM0pU+k/hQfxcW7wFqv2DZn+GwD7lTTQlT3+QuUg0o2c0xw+PypRpO/iowaoaSNcp
-        CzMgGbltA==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1go1qH-00088W-7X; Mon, 28 Jan 2019 08:00:29 +0000
-Date:   Mon, 28 Jan 2019 00:00:29 -0800
-From:   "hch@infradead.org" <hch@infradead.org>
-To:     Peng Fan <peng.fan@nxp.com>
-Cc:     "hch@infradead.org" <hch@infradead.org>,
-        Stefano Stabellini <sstabellini@kernel.org>,
-        "mst@redhat.com" <mst@redhat.com>,
-        "jasowang@redhat.com" <jasowang@redhat.com>,
-        "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
-        "linux-remoteproc@vger.kernel.org" <linux-remoteproc@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "virtualization@lists.linux-foundation.org" 
-        <virtualization@lists.linux-foundation.org>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "jgross@suse.com" <jgross@suse.com>,
-        "boris.ostrovsky@oracle.com" <boris.ostrovsky@oracle.com>,
-        Andy Duan <fugang.duan@nxp.com>
-Subject: Re: [Xen-devel] [RFC] virtio_ring: check dma_mem for xen_domain
-Message-ID: <20190128080028.GA18476@infradead.org>
-References: <20190121050056.14325-1-peng.fan@nxp.com>
- <alpine.DEB.2.10.1901221113410.17936@sstabellini-ThinkPad-X260>
- <20190123071232.GA20526@infradead.org>
- <alpine.DEB.2.10.1901230935280.17936@sstabellini-ThinkPad-X260>
- <20190123211405.GA4971@infradead.org>
- <AM0PR04MB4481F3986CFB6D1EF26FA135889B0@AM0PR04MB4481.eurprd04.prod.outlook.com>
+        Mon, 28 Jan 2019 03:00:43 -0500
+Received: by mail-lf1-f66.google.com with SMTP id a16so11108319lfg.3;
+        Mon, 28 Jan 2019 00:00:41 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=VC16U5ereJxyPItEEQ6j9mgF3VVe/205qxplcO0sYK8=;
+        b=NsRscJKtiTO3IqZCIHmmjL4QruiYZnv/AewxcDq0KFe2S5RoxkcnbEN6xwD8pj4zee
+         if/ZOmAoHf4zg45cNwMk6e3q3i1gUfqXbPtB7TUb5AdPnx/9sDuWJ096PHILJnxxdGj3
+         y7kcbUxdssedhBVhgpitZpGathbBFPPPqYufPs5kve/QZv767FucEW4+WJ2szRzJBoXl
+         mxkJgNXvshqiuguxiQR2WB9GQkPB4eWg18/V+bsEyKTCIwithfy9CvyoS+HAZO0jGnY6
+         IoEPG7s4lgA4vVl3E4wzaXfKxQPdIJsxMUjCvrabC924lvdUFEn9ig6w2041fGE0Gdov
+         tYhQ==
+X-Gm-Message-State: AJcUukcjrWWV/ot0Raeq8b8KQFeGUkGyetRa28wpQiMPuxpbj7ai8bFK
+        pzdY7QVWVZw82XKfcjl7Cp0=
+X-Google-Smtp-Source: ALg8bN7MVgutX/gx4UKOurPmykpoxo7K+ac3YiKbJ1Vbu35rcvNQ2RdQANmrOvFPBNTckg+1N4UklA==
+X-Received: by 2002:a19:d619:: with SMTP id n25mr14316637lfg.91.1548662440197;
+        Mon, 28 Jan 2019 00:00:40 -0800 (PST)
+Received: from localhost.localdomain (dytkl7s9vpj00trvf9g2y-4.rev.dnainternet.fi. [2001:14bb:410:9dbf:b161:fde8:3a24:e96c])
+        by smtp.gmail.com with ESMTPSA id h82sm2825838lfg.94.2019.01.28.00.00.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 00:00:39 -0800 (PST)
+Date:   Mon, 28 Jan 2019 10:00:35 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
+        linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v2 10/10] watchdog: bd70528: Initial support for ROHM
+ BD70528 watchdog block
+Message-ID: <20190128080035.GC2030@localhost.localdomain>
+References: <20190125110625.GA29348@localhost.localdomain>
+ <1d05ec19-daf6-f1d9-f80c-57fc92906d22@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <AM0PR04MB4481F3986CFB6D1EF26FA135889B0@AM0PR04MB4481.eurprd04.prod.outlook.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <1d05ec19-daf6-f1d9-f80c-57fc92906d22@roeck-us.net>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 09:45:26AM +0000, Peng Fan wrote:
-> Just have a question, 
+On Sat, Jan 26, 2019 at 08:36:14AM -0800, Guenter Roeck wrote:
+> On 1/25/19 3:06 AM, Matti Vaittinen wrote:
+> > +/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
+> > +#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
+> > +/* Minimum time is 1 second */
+> > +#define WDT_MIN_MS 1000
+> > +#define DEFAULT_TIMEOUT 60
+> > +
+> > +static int bd70528_wdt_probe(struct platform_device *pdev)
+> > +{
+> > +	struct bd70528 *bd70528;
+> > +	struct wdtbd70528 *w;
+> > +	int ret;
+> > +	unsigned int reg;
+> > +	struct watchdog_device *wdt;
+> > +
+> > +	bd70528 = dev_get_drvdata(pdev->dev.parent);
+> > +	if (!bd70528) {
+> > +		dev_err(&pdev->dev, "No MFD driver data\n");
+> > +		return -EINVAL;
+> > +	}
+> > +	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
+> > +	if (!w)
+> > +		return -ENOMEM;
+> > +	w->bd = bd70528;
 > 
-> Since vmalloc_to_page is ok for cma area, no need to take cma and per device
-> cma into consideration right? 
+> Unless I am missing something, only the mutex and the regmap pointer
+> are used from struct bd70528. With that in mind, it might be desirable
+> to copy those pointers to struct wdtbd70528 to avoid the additional
+> dereferencing at runtime.
 
-The CMA area itself it a physical memory region.  If it is a non-highmem
-region you can call virt_to_page on the virtual addresses for it.  If
-it is in highmem it doesn't even have a kernel virtual address by
-default.
+You are not missing anyting. If we ever add support for another PMIC
+variant we will probably be using also the chip_type. Untill then only
+the mutex and regmap. (And maybe the of_node if we have any RTC
+properties in DT). So at this point we just use regmap and mutex. I will
+change this.
 
-> we only need to implement a piece code to handle per device specific region
-> using RESERVEDMEM_OF_DECLARE, just like:
-> RESERVEDMEM_OF_DECLARE(rpmsg-dma, "rpmsg-dma-pool", 
-> rmem_rpmsg_dma_setup);
-> And implement the device_init call back and build a map between page and phys.
-> Then in rpmsg driver, scatter list could use page structure, no need vmalloc_to_page
-> for per device dma.
+> > +	w->dev = &pdev->dev;
+> > +
+> > +	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
+> > +	if (!wdt)
+> > +		return -ENOMEM;
+> > +
 > 
-> Is this the right way?
+> struct watchdog_device can be part of struct wdtbd70528. Two separate allocations
+> are not necessary.
 
-I think this should work fine.  If you have the cycles for it I'd
-actually love to be able to have generic CMA DT glue for non DMA API
-driver allocations, as there obviously is a need for it.  So basically
-the same as above, just added to kernel/cma.c as a generic API.
+Correct. Thanks for pointing that out. I'll simplify this.
+
+> > +	wdt->info = &bd70528_wdt_info;
+> > +	wdt->ops =  &bd70528_wdt_ops;
+> > +	wdt->min_hw_heartbeat_ms = WDT_MIN_MS;
+> > +	wdt->max_hw_heartbeat_ms = WDT_MAX_MS;
+> > +	wdt->parent = pdev->dev.parent;
+> > +	wdt->timeout = DEFAULT_TIMEOUT;
+> > +	watchdog_set_drvdata(wdt, w);
+> > +	watchdog_init_timeout(wdt, 0, pdev->dev.parent);
+> > +
+> > +	ret = bd70528_wdt_set_timeout(wdt, wdt->timeout);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	mutex_lock(&bd70528->rtc_timer_lock);
+> > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &reg);
+> > +	mutex_unlock(&bd70528->rtc_timer_lock);
+> > +
+> 
+> I don't see the point for the above mutex locks. This is just reading a
+> single register. regmap itself provides locking for that already.
+
+It has a purpose here - but I'd better add a comment. We want to get the
+initial state of WDG here. If the probe is executed when RTC time is being
+set we may read the state just when RTC is (temporarily) disabling WDT -
+and we might tell the WDT core that WDT is disabled - even if it is
+actually enabled. The mutex prevents us from reading the WDT state when
+RTC is being set.
+ 
+Br,
+	Matti Vaittinen
