@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39D92C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 005B9C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB0121852
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B88102175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691208;
-	bh=jAIg06w9+xR2GZDsR8qqSgBZh/2ZC/qPTVHOeoOvnJc=;
+	s=default; t=1548691212;
+	bh=0b+ftrcyhJ+qbspBUsUHlUyWlM8+aCrpoLO6m9mfkwk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IOt4bZ0oJdpZcuwX2Ykv0O0WlQstA6t5fVHommA4Z25ra0TIKaPlvNT+Y1+PyknOq
-	 4lviImO/C/OLO1fWEB7nrGFv7MPgQZ5daXCIyvRN+hfIC7SVCWx11xz+LxBJeU+4Ad
-	 d8AyHculaBxSaC6oTr3GUwCIlgkEqyIiSpFNXkCw=
+	b=ku7Gk986SVYIIA62N35knE+C7azHqgn5X0STDuVAywYDqp+gzus+9F7L4zZ8FuR2l
+	 HQttRrQ2FDte7Vp8/WJ1DUbHL88E8mJJud5VMchNM2YvoV52w/YOxzBf41/6ihPEyj
+	 52w8guMuQ8nsYmmbfFqFbP2WNK8CBz76oh0FlME4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730696AbfA1QAG (ORCPT
+        id S1730731AbfA1QAL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:00:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45338 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:00:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45396 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727858AbfA1QAD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:00:03 -0500
+        id S1727858AbfA1QAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:00:07 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 093532082E;
-        Mon, 28 Jan 2019 15:59:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DAC622082E;
+        Mon, 28 Jan 2019 16:00:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691202;
-        bh=jAIg06w9+xR2GZDsR8qqSgBZh/2ZC/qPTVHOeoOvnJc=;
+        s=default; t=1548691206;
+        bh=0b+ftrcyhJ+qbspBUsUHlUyWlM8+aCrpoLO6m9mfkwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HPKVCV7+Ae3/oeeMNUAZjSnDyPsdJBmaQwlBSfixTAfRMIW7DDkkrRYpyGELLhSn6
-         319q1cTXIiMNSdkxjl8CUltv87EZcHPSpR4ERgoIWh06YOG8HKtKUJ9iUxm9K8j3+w
-         Fgd2Q5zFw+2yeNx+7acFkw86TqP7DE8MCpYDLa58=
+        b=JeFkcA0G3ngP8Daqrfk1t8FTXEtNubtDqPJwd7MOyiANwcT93jKnm1Y3lv8y/QXAD
+         p9VN5luLKeJY0gA/Od0Raval9SJYqVSERAWWEpI7Kb15SMMsXxElOa22SEFNbqD9Tz
+         TH6o1+WGP48h8SRaorh9DwJK7bl/MdosZ+Bd4Xnw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Brian Norris <briannorris@chromium.org>,
-        Rakesh Pillai <pillair@qti.qualcomm.com>,
-        Govind Singh <govinds@qti.qualcomm.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 013/258] ath10k: assign 'n_cipher_suites' for WCN3990
-Date:   Mon, 28 Jan 2019 10:55:19 -0500
-Message-Id: <20190128155924.51521-13-sashal@kernel.org>
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 015/258] scsi: lpfc: Correct LCB RJT handling
+Date:   Mon, 28 Jan 2019 10:55:21 -0500
+Message-Id: <20190128155924.51521-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -61,42 +59,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Brian Norris <briannorris@chromium.org>
+From: James Smart <jsmart2021@gmail.com>
 
-[ Upstream commit 2bd345cd2bfc0bd44528896313c0b45f087bdf67 ]
+[ Upstream commit b114d9009d386276bfc3352289fc235781ae3353 ]
 
-Commit 2ea9f12cefe4 ("ath10k: add new cipher suite support") added a new
-n_cipher_suites HW param with a fallback value and a warning log. Commit
-03a72288c546 ("ath10k: wmi: add hw params entry for wcn3990") later
-added WCN3990 HW entries, but it missed the n_cipher_suites.
+When LCB's are rejected, if beaconing was already in progress, the
+Reason Code Explanation was not being set. Should have been set to
+command in progress.
 
-Rather than seeing this warning every boot
-
-  ath10k_snoc 18800000.wifi: invalid hw_params.n_cipher_suites 0
-
-let's provide the appropriate value.
-
-Cc: Rakesh Pillai <pillair@qti.qualcomm.com>
-Cc: Govind Singh <govinds@qti.qualcomm.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath10k/core.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/scsi/lpfc/lpfc_els.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath10k/core.c b/drivers/net/wireless/ath/ath10k/core.c
-index c40cd129afe7..5210cffb5344 100644
---- a/drivers/net/wireless/ath/ath10k/core.c
-+++ b/drivers/net/wireless/ath/ath10k/core.c
-@@ -532,6 +532,7 @@ static const struct ath10k_hw_params ath10k_hw_params_list[] = {
- 		.hw_ops = &wcn3990_ops,
- 		.decap_align_bytes = 1,
- 		.num_peers = TARGET_HL_10_TLV_NUM_PEERS,
-+		.n_cipher_suites = 8,
- 		.ast_skid_limit = TARGET_HL_10_TLV_AST_SKID_LIMIT,
- 		.num_wds_entries = TARGET_HL_10_TLV_NUM_WDS_ENTRIES,
- 		.target_64bit = true,
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index 4dda969e947c..56a4f626349c 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -5701,6 +5701,9 @@ lpfc_els_lcb_rsp(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
+ 	stat = (struct ls_rjt *)(pcmd + sizeof(uint32_t));
+ 	stat->un.b.lsRjtRsnCode = LSRJT_UNABLE_TPC;
+ 
++	if (shdr_add_status == ADD_STATUS_OPERATION_ALREADY_ACTIVE)
++		stat->un.b.lsRjtRsnCodeExp = LSEXP_CMD_IN_PROGRESS;
++
+ 	elsiocb->iocb_cmpl = lpfc_cmpl_els_rsp;
+ 	phba->fc_stat.elsXmitLSRJT++;
+ 	rc = lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0);
 -- 
 2.19.1
 
