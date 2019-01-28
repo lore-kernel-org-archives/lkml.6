@@ -2,106 +2,182 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE5BBC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CC47C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73CE82177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:14:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Zwcw3zfk"
+	by mail.kernel.org (Postfix) with ESMTP id CC9D52177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:19:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548706748;
+	bh=fwOJJyyfG7B3jNYhWhwXkha9XAPieyz387NvxVyl80g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=jW9Qytuqs4Elu+jS2Y+tZjA5/VgjSEB3uJMgg8bAopUCFo+NKYy2Ftj1UK/XAoPiO
+	 MKIcPHFICWrd1xFXXoUbS1MazDdfjO3KGm5IX0hHCKiKWLiUmTrkoW7tf0B9waaGDT
+	 dnH5r6azYEC5NJFphgQZKqn9K/GUXk+b9T8fh1SU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727093AbfA1UOT (ORCPT
+        id S1727072AbfA1UTG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 15:14:19 -0500
-Received: from mail-lj1-f193.google.com ([209.85.208.193]:46817 "EHLO
-        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726719AbfA1UOT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 15:14:19 -0500
-Received: by mail-lj1-f193.google.com with SMTP id v15-v6so15383991ljh.13
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 12:14:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i/diQOGkXR8GMA0o3Y5WRWapwL2ejQb39B0HrHbulmo=;
-        b=Zwcw3zfkxXXHlAMJBtSSPW7o9+sdXTpbHPFcTndePKBBt8G144PQA9b2V/pa0HTGFs
-         Q4s3SjTdEZFd46XyJttSZZO4LFDE2+xRcUgOXs3b3R+DDS4HAamVgGtYic0oc0SwiBms
-         FwtSE5YyOKkQn3Ffi9GGVtP7RQajqUIhxvTvI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i/diQOGkXR8GMA0o3Y5WRWapwL2ejQb39B0HrHbulmo=;
-        b=NqbArfLU1qfftL7o0PB816SIUn7bjkIFKel1Q23uGH4/9lYE5KBRVtldbVXsuGdJRe
-         UruHQNuKHmkdVc/NhU5wYEBdBgong9P57V4ndtcFClWTr1MG+WaNAmWQKlyHQoq/MRGp
-         W4LDZ1UBysAi2qz2akiXegaPkowhyZa0Rb6Iey/q/yNZnEHET2SDqlOBg03G5SdCi0vw
-         C60dMhtU6IAJIyQh0mDhwwrBA/4CqFBrulDMWXzoha/dxuksS5H0gzNHlbn6UUEIo59w
-         ia9sRmeURIE3nkNLO7qXb5McON1YBwj88rOExzOTh2zTDNU33O+FkSPnatlcASngR/CB
-         a9RA==
-X-Gm-Message-State: AJcUukfAhfFGn6SRthL2L98Fh7FVE33YTP+T61TeUiUz6PPTEmZAAJFU
-        uDeRGrNPoCs7MS7nKhTG6UFtjgfT+r8=
-X-Google-Smtp-Source: ALg8bN4lWzQZfGhs+1aYebmLIQ/kFD/EZgHnkA/+qlPmOHrhH/1rV+ezmreWXwc3XG/T7vvVGbKLrA==
-X-Received: by 2002:a2e:568d:: with SMTP id k13-v6mr19688000lje.105.1548706456561;
-        Mon, 28 Jan 2019 12:14:16 -0800 (PST)
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com. [209.85.167.44])
-        by smtp.gmail.com with ESMTPSA id c133sm3453680lfc.45.2019.01.28.12.14.15
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 12:14:15 -0800 (PST)
-Received: by mail-lf1-f44.google.com with SMTP id f5so12826119lfc.13
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 12:14:15 -0800 (PST)
-X-Received: by 2002:a19:1a14:: with SMTP id a20mr17296800lfa.1.1548706455149;
- Mon, 28 Jan 2019 12:14:15 -0800 (PST)
+        Mon, 28 Jan 2019 15:19:06 -0500
+Received: from mx2.suse.de ([195.135.220.15]:41898 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726792AbfA1UTG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 15:19:06 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0C148AF74;
+        Mon, 28 Jan 2019 20:19:04 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 21:19:02 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vratislav Bendel <vbendel@redhat.com>,
+        Rafael Aquini <aquini@redhat.com>,
+        Konstantin Khlebnikov <k.khlebnikov@samsung.com>,
+        Minchan Kim <minchan@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v1] mm: migrate: don't rely on PageMovable() of newpage
+ after unlocking it
+Message-ID: <20190128201902.GW18811@dhcp22.suse.cz>
+References: <20190128160403.16657-1-david@redhat.com>
+ <e3247625-b25c-a18a-a494-f1e9a0148932@redhat.com>
 MIME-Version: 1.0
-References: <20190110101232.9398-1-o.rempel@pengutronix.de>
- <20190110101232.9398-4-o.rempel@pengutronix.de> <CAADWXX_G7X6QkNuqnpMyr+MGP+nUhqPaifJrfC=m57mhJu2jdg@mail.gmail.com>
- <20190110151953.qpat4t7lat6plfk6@pengutronix.de> <20190110163030.GB19693@kroah.com>
- <7a593f3b-0019-c30f-30e8-34eae7b96cf0@pengutronix.de> <20190128082313.GA15182@kroah.com>
- <dedfa895-ae7e-9a64-9e89-055ca85cf2e3@pengutronix.de> <CAHk-=wjOMvFBxmBSBZPZEwSyU96L5V8Qhi6bXLqzV4Sdsb2HAg@mail.gmail.com>
-In-Reply-To: <CAHk-=wjOMvFBxmBSBZPZEwSyU96L5V8Qhi6bXLqzV4Sdsb2HAg@mail.gmail.com>
-From:   Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Mon, 28 Jan 2019 12:13:59 -0800
-X-Gmail-Original-Message-ID: <CAHk-=whe72pccEAdQsp+UpjzKxXzsHbkiyaXbhG1UHnNg6uw1g@mail.gmail.com>
-Message-ID: <CAHk-=whe72pccEAdQsp+UpjzKxXzsHbkiyaXbhG1UHnNg6uw1g@mail.gmail.com>
-Subject: Re: [PATCH v1 3/3] drivers/tty: increase priority for tty_buffer_worker
-To:     Oleksij Rempel <o.rempel@pengutronix.de>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        lkml <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e3247625-b25c-a18a-a494-f1e9a0148932@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 12:03 PM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> That's harder to do for reads - because incoming characters happen in
-> interrupt context, but shouldn't be all that hard to do for writes.
+On Mon 28-01-19 21:02:52, David Hildenbrand wrote:
+> On 28.01.19 17:04, David Hildenbrand wrote:
+> > While debugging some crashes related to virtio-balloon deflation that
+> > happened under the old balloon migration code, I stumbled over a race
+> > that still exists today.
+> > 
+> > What we experienced:
+> > 
+> > drivers/virtio/virtio_balloon.c:release_pages_balloon():
+> > - WARNING: CPU: 13 PID: 6586 at lib/list_debug.c:59 __list_del_entry+0xa1/0xd0
+> > - list_del corruption. prev->next should be ffffe253961090a0, but was dead000000000100
+> > 
+> > Turns out after having added the page to a local list when dequeuing,
+> > the page would suddenly be moved to an LRU list before we would free it
+> > via the local list, corrupting both lists. So a page we own and that is
+> > !LRU was moved to an LRU list.
+> > 
+> > In __unmap_and_move(), we lock the old and newpage and perform the
+> > migration. In case of vitio-balloon, the new page will become
+> > movable, the old page will no longer be movable.
+> > 
+> > However, after unlocking newpage, there is nothing stopping the newpage
+> > from getting dequeued and freed by virtio-balloon. This
+> > will result in the newpage
+> > 1. No longer having PageMovable()
+> > 2. Getting moved to the local list before finally freeing it (using
+> >    page->lru)
+> > 
+> > Back in the migration thread in __unmap_and_move(), we would after
+> > unlocking the newpage suddenly no longer have PageMovable(newpage) and
+> > will therefore call putback_lru_page(newpage), modifying page->lru
+> > although that list is still in use by virtio-balloon.
+> > 
+> > To summarize, we have a race between migrating the newpage and checking
+> > for PageMovable(newpage). Instead of checking PageMovable(newpage), we
+> > can simply rely on is_lru of the original page.
+> > 
+> > Looks like this was introduced by d6d86c0a7f8d ("mm/balloon_compaction:
+> > redesign ballooned pages management"), which was backported up to 3.12.
+> > Old compaction code used PageBalloon() via -_is_movable_balloon_page()
+> > instead of PageMovable(), however with the same semantics.
+> > 
+> > Cc: Andrew Morton <akpm@linux-foundation.org>
+> > Cc: Mel Gorman <mgorman@techsingularity.net>
+> > Cc: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
+> > Cc: Michal Hocko <mhocko@suse.com>
+> > Cc: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> > Cc: Jan Kara <jack@suse.cz>
+> > Cc: Andrea Arcangeli <aarcange@redhat.com>
+> > Cc: Dominik Brodowski <linux@dominikbrodowski.net>
+> > Cc: Matthew Wilcox <willy@infradead.org>
+> > Cc: Vratislav Bendel <vbendel@redhat.com>
+> > Cc: Rafael Aquini <aquini@redhat.com>
+> > Cc: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
+> > Cc: Minchan Kim <minchan@kernel.org>
+> > Cc: stable@vger.kernel.org # 3.12+
+> > Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages management")
+> > Reported-by: Vratislav Bendel <vbendel@redhat.com>
+> > Acked-by: Michal Hocko <mhocko@suse.com>
+> > Acked-by: Rafael Aquini <aquini@redhat.com>
+> > Signed-off-by: David Hildenbrand <david@redhat.com>
+> > ---
+> >  mm/migrate.c | 6 ++++--
+> >  1 file changed, 4 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/mm/migrate.c b/mm/migrate.c
+> > index 4512afab46ac..31e002270b05 100644
+> > --- a/mm/migrate.c
+> > +++ b/mm/migrate.c
+> > @@ -1135,10 +1135,12 @@ static int __unmap_and_move(struct page *page, struct page *newpage,
+> >  	 * If migration is successful, decrease refcount of the newpage
+> >  	 * which will not free the page because new page owner increased
+> >  	 * refcounter. As well, if it is LRU page, add the page to LRU
+> > -	 * list in here.
+> > +	 * list in here. Don't rely on PageMovable(newpage), as that could
+> > +	 * already have changed after unlocking newpage (e.g.
+> > +	 * virtio-balloon deflation).
+> >  	 */
+> >  	if (rc == MIGRATEPAGE_SUCCESS) {
+> > -		if (unlikely(__PageMovable(newpage)))
+> > +		if (unlikely(!is_lru))
+> >  			put_page(newpage);
+> >  		else
+> >  			putback_lru_page(newpage);
+> > 
+> 
+> Vratislav just pointed out that this issue should not happen on upstream
+> as __PageMovable(newpage) will still return true even after
+> __ClearPageMovable(newpage). Only PageMovable(newpage) would actually
+> return false.
+> 
+> (not sure if I am happy about this, this is horribly confusing and
+> complicated)
 
-Side note: the reason I mention this part is that "harder" may not
-mean "impossible".
+It is confusing as hell! __ClearPageMovable is a misnomer and I have to
+admit I have misread the implementation to actually ~PAGE_MAPPING_MOVABLE.
 
-In particular, I wonder if we could do the tty buffer flipping in the
-reader context too. Currently, what happens is that when we receive
-characters, we schedule things for flipping with the workqueues. *BUT*
-we could also just wake up any pending readers directly, and maybe
-have the *readers* do the flip if they wake up before the workqueue.
+> I am not 100% sure yet, but I guess Vratislav is right. So it was
+> effectively fixed by
+> 
+> b1123ea6d3b3 ("mm: balloon: use general non-lru movable page feature"),
+> which checks for __PageMovable(newpage) instead of
+> __is_movable_balloon_page(newpage).
 
-And that would allow you to do real-time serial work simply by marking
-the process *you* care about as RT, and not worry so much about the
-workqueue threads at all. The workqueue threads would be fallbacks for
-when there isn't an active reader at all.
+So this is not just a clean up. Sigh!
 
-I dunno. A bit handwavy, I know, but it sounds like if you care about
-the read latency, that would be a better model entirely (skipping the
-technically unnecessary kernel workqueue entirely).
+> Anybody wanting to fix stable kernels either has to backport something
+> proposed in this patch or b1123ea6d3b3.
 
-              Linus
+I think we should go with a simple patch for stable so this patch sounds
+like a good thing. *PageMovable thingy needs a much better documentation
+and ideally a cleaner implementation as well. The current state is just
+incomprehensible. 
+
+David, could you reformulate the changelog accordingly please? My ack
+still holds.
+-- 
+Michal Hocko
+SUSE Labs
