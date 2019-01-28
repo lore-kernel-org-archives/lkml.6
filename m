@@ -3,99 +3,121 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B5798C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:06:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4E76C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82FF32177B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:06:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 82093214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:06:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726746AbfA1KGq (ORCPT
+        id S1726803AbfA1KG5 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 05:06:46 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:60934 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726369AbfA1KGq (ORCPT
+        Mon, 28 Jan 2019 05:06:57 -0500
+Received: from relay4-d.mail.gandi.net ([217.70.183.196]:48419 "EHLO
+        relay4-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726749AbfA1KG5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 05:06:46 -0500
-Received: from pps.filterd (m0098396.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SA4xJ4141490
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 05:06:45 -0500
-Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2q9vhk82dm-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 05:06:45 -0500
-Received: from localhost
-        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <ravi.bangoria@linux.ibm.com>;
-        Mon, 28 Jan 2019 10:06:42 -0000
-Received: from b06cxnps4074.portsmouth.uk.ibm.com (9.149.109.196)
-        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 28 Jan 2019 10:06:39 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps4074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SA6csa64159888
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 28 Jan 2019 10:06:38 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 02CAB11C050;
-        Mon, 28 Jan 2019 10:06:38 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4C2F911C04C;
-        Mon, 28 Jan 2019 10:06:36 +0000 (GMT)
-Received: from [9.124.31.17] (unknown [9.124.31.17])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 28 Jan 2019 10:06:36 +0000 (GMT)
-Subject: Re: [PATCH] perf mem/c2c: Fix perf_mem_events to support powerpc
-To:     acme@kernel.org, Michael Ellerman <mpe@ellerman.id.au>
-Cc:     jolsa@redhat.com, namhyung@kernel.org, dzickus@redhat.com,
-        fowles@inreach.com, jmario@redhat.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        maddy@linux.vnet.ibm.com
-References: <20190114041402.14033-1-ravi.bangoria@linux.ibm.com>
-From:   Ravi Bangoria <ravi.bangoria@linux.ibm.com>
-Date:   Mon, 28 Jan 2019 15:38:15 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 28 Jan 2019 05:06:57 -0500
+X-Originating-IP: 90.88.29.206
+Received: from xps13 (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay4-d.mail.gandi.net (Postfix) with ESMTPSA id 1F277E000D;
+        Mon, 28 Jan 2019 10:06:51 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 11:06:50 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Stephen Boyd <sboyd@kernel.org>
+Cc:     Michael Turquette <mturquette@baylibre.com>,
+        Russell King <linux@armlinux.org.uk>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH v3 2/4] clk: core: link consumer with clock driver
+Message-ID: <20190128110650.76367606@xps13>
+In-Reply-To: <154845170894.136743.2408260720819956377@swboyd.mtv.corp.google.com>
+References: <20181204192440.12125-1-miquel.raynal@bootlin.com>
+        <20181204192440.12125-3-miquel.raynal@bootlin.com>
+        <154454837597.17204.11648795524314926025@swboyd.mtv.corp.google.com>
+        <20190104165406.3b52399a@xps13>
+        <154845170894.136743.2408260720819956377@swboyd.mtv.corp.google.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190114041402.14033-1-ravi.bangoria@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012810-4275-0000-0000-00000305CC31
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012810-4276-0000-0000-00003813CED7
-Message-Id: <f308ef3e-f34b-6000-8826-27bdf8c3704e@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_07:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901280082
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Stephen,
 
+Stephen Boyd <sboyd@kernel.org> wrote on Fri, 25 Jan 2019 13:28:28
+-0800:
 
-On 1/14/19 9:44 AM, Ravi Bangoria wrote:
-> Powerpc hw does not have inbuilt latency filter (--ldlat) for mem-load
-> event and, perf_mem_events by default includes ldlat=30 which is
-> causing failure on powerpc. Refactor code to support perf mem/c2c on
-> powerpc.
+> Quoting Miquel Raynal (2019-01-04 07:54:06)
+> > Hi Stephen,
+> > 
+> > Stephen Boyd <sboyd@kernel.org> wrote on Tue, 11 Dec 2018 09:12:55
+> > -0800:
+> >   
+> > > Sorry, I'm not reviewing the whole patch right now, just this one little
+> > > bit because I'm also working in the same area.
+> > > 
+> > > Quoting Miquel Raynal (2018-12-04 11:24:38)  
+> > > > diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> > > > index 60c51871b04b..721d6b55b2fa 100644
+> > > > --- a/include/linux/clk-provider.h
+> > > > +++ b/include/linux/clk-provider.h
+> > > > @@ -781,6 +781,8 @@ void devm_clk_hw_unregister(struct device *dev, struct clk_hw *hw);
+> > > >  const char *__clk_get_name(const struct clk *clk);
+> > > >  const char *clk_hw_get_name(const struct clk_hw *hw);
+> > > >  struct clk_hw *__clk_get_hw(struct clk *clk);
+> > > > +void clk_link_consumer(struct device *consumer, struct clk *clk);
+> > > > +void clk_unlink_consumer(struct clk *clk);    
+> > > 
+> > > We shouldn't need to add these functions as far as I can tell. That's
+> > > because __clk_get() has become an internal API between clkdev.c and
+> > > clk.c that does nothing now on implementations that aren't the CCF. We
+> > > can even change this API to take a clk_hw pointer instead of a clk
+> > > pointer.
+> > > 
+> > > I'd rather see us plumb a struct device and clk_hw structure down into
+> > > __clk_get() and fold it all into __clk_create_clk, possibly even
+> > > renaming __clk_create_clk to clk_hw_create_clk(). That way we can get
+> > > the calling device and clk_hw pointer in one call in the clk framework,
+> > > along with the device name and connection name, and then generate the
+> > > struct clk right there. This can simplify some code and make it easier
+> > > to extend this to associate calling devices with the clk consumer
+> > > somehow.
+> > > 
+> > > Here's the diff. With this, you should be able to add and remove device
+> > > links in clk_hw_create_clk() when dev != NULL.  
+> > 
+> > Thanks for the help; I updated my work on top of yours, it looks ok but
+> > I need to run some more tests.
+> > 
+> > However I had to tweak a parameter in one of your recent changes, you
+> > used '-1' as index in __of_clock_get() while it is not a valid value
+> > (returning an error). As in the __of_clk_get_by_name() function you
+> > removed index was just set to 0 at the top of the function, I think the
+> > below fix is valid.  
 > 
-> This patch depends on kernel side changes done my Madhavan:
-> https://lists.ozlabs.org/pipermail/linuxppc-dev/2018-December/182596.html
-> 
-> Signed-off-by: Ravi Bangoria <ravi.bangoria@linux.ibm.com>
+> Thanks. Makes sense so I folded it in.
+
+Great!
+
+Can you update me with the status of this series? Is it going in for 5.1?
+
+Lorenzo, the PCI maintainer, is waiting for this series to enter before
+accepting another series depending on it; so please do not hesitate to
+keep me updated.
 
 
-Arnaldo / Michael, Any thoughts?
-
-Thanks.
-
+Thanks,
+Miquèl
