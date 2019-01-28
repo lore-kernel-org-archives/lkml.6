@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46429C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1FDAC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14CD920989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A8A8F2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691685;
-	bh=ld7pbqgxEhgM6nFJUyr+6nZ/445YS85GwL8BJ/zm5tI=;
+	s=default; t=1548691688;
+	bh=M/L/KkkVWTaMFTlnaCMwvmp7gOGTNLIncZpVATojgJc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CQG47K5v+FeKfJpNWvNEConkgslnGmJsqWtYgs2PjfIFZ2mc/MYzxsqLk/hmgiyVN
-	 RifShj/jVOi5UT2IPrWooaCKnKi2b3OrkdocAhaAIEGOIUVODiElKg4bzkP8H3zS1l
-	 j2WUiSudIG2Wt0/Vs86b0R4s1xF64Rzm30qcVqdQ=
+	b=P113uaAnz7TUIhBcQc+1ekGB3idZwHnR7B2e0Zlgz5rBhNLl7uBuItQ18ju+cCM9m
+	 w72xHttd8404WMkbObyijAksZX4L6YfVY5YgiPh3IJEZ+qgmT8Lqj/UNAWBQPk/iaf
+	 8q32d0so4r0bLGiOfllSllh89y5shSB7fJnMQZ80=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732323AbfA1QID (ORCPT
+        id S1732333AbfA1QIH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:08:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59316 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:08:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59412 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732293AbfA1QIB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:08:01 -0500
+        id S1732316AbfA1QID (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:08:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3952520989;
-        Mon, 28 Jan 2019 16:07:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3959B2171F;
+        Mon, 28 Jan 2019 16:08:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691680;
-        bh=ld7pbqgxEhgM6nFJUyr+6nZ/445YS85GwL8BJ/zm5tI=;
+        s=default; t=1548691682;
+        bh=M/L/KkkVWTaMFTlnaCMwvmp7gOGTNLIncZpVATojgJc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=J43yEF4iCoI8FKHtX9eLLvdpbYaJ6GE4RHkIeNJmKu8ba8Y741wSXJ8ZoK+hRTfZX
-         eYIn6igwbQwKxOTYuMABz1ffRgy63qNa1YmLQUiFhRpV1BI6OPzpOssfkOKrH6q+uW
-         YVYjtl+XTq3/Z3GsyhHcq2jjWLV4rvDvTXDBOAFs=
+        b=u+mBuCvRUlbKbW8Qb5mtK8wMuQCeCN3PSG5esRkhY44tdPeMs1MZjQCQiFRfNGrca
+         azNJ0RpcXUPruPnnJEUjvfwDZNLDIM2zAKW1TdcoRAGTKvD00zZ8Zk1yaacSLHfjId
+         sj55QytWkaTIszQSEMtK8LcbKM8cevEXOfZhKV9A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Paul Hsieh <paul.hsieh@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 183/258] drm/amd/display: Add retry to read ddc_clock pin
-Date:   Mon, 28 Jan 2019 10:58:09 -0500
-Message-Id: <20190128155924.51521-183-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Marcel Holtmann <marcel@holtmann.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-bluetooth@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 184/258] Bluetooth: hci_bcm: Handle deferred probing for the clock supply
+Date:   Mon, 28 Jan 2019 10:58:10 -0500
+Message-Id: <20190128155924.51521-184-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,70 +59,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Hsieh <paul.hsieh@amd.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit bd4905a9583c760da31ded7256dca6f71483c3dc ]
+[ Upstream commit 28ac03b9ac3f784c2f048a910c8d0a7a87483b66 ]
 
-[WHY]
-On customer board, there is one pluse (1v , < 1ms) on
-DDC_CLK pin when plug / unplug DP cable. Driver will read
-it and config DP to HDMI/DVI dongle.
+On some systems that actually have the bluetooth controller wired up
+with an extra clock signal, it's possible the bluetooth controller
+probes before the clock provider. clk_get would return a defer probe
+error, which was not handled by this driver.
 
-[HOW]
-If there is a real dongle, DDC_CLK should be always pull high.
-Try to read again to recovery this special case. Retry times = 3.
-Need additional 3ms to detect DP passive dongle(3 failures)
+Handle this properly, so that these systems can work reliably.
 
-Signed-off-by: Paul Hsieh <paul.hsieh@amd.com>
-Reviewed-by: Eric Yang <eric.yang2@amd.com>
-Acked-by: Leo Li <sunpeng.li@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Tested-by: Ondrej Jirman <megous@megous.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_link.c | 23 ++++++++++++++-----
- 1 file changed, 17 insertions(+), 6 deletions(-)
+ drivers/bluetooth/hci_bcm.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_link.c b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-index 7c89785fd731..23a7ef97afdd 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_link.c
-@@ -324,7 +324,7 @@ bool dc_link_is_dp_sink_present(struct dc_link *link)
- {
- 	enum gpio_result gpio_result;
- 	uint32_t clock_pin = 0;
--
-+	uint8_t retry = 0;
- 	struct ddc *ddc;
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index ddbd8c6a0ceb..800132369134 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -907,6 +907,10 @@ static int bcm_get_resources(struct bcm_device *dev)
  
- 	enum connector_id connector_id =
-@@ -353,11 +353,22 @@ bool dc_link_is_dp_sink_present(struct dc_link *link)
- 		return present;
- 	}
+ 	dev->clk = devm_clk_get(dev->dev, NULL);
  
--	/* Read GPIO: DP sink is present if both clock and data pins are zero */
--	/* [anaumov] in DAL2, there was no check for GPIO failure */
--
--	gpio_result = dal_gpio_get_value(ddc->pin_clock, &clock_pin);
--	ASSERT(gpio_result == GPIO_RESULT_OK);
-+	/*
-+	 * Read GPIO: DP sink is present if both clock and data pins are zero
-+	 *
-+	 * [W/A] plug-unplug DP cable, sometimes customer board has
-+	 * one short pulse on clk_pin(1V, < 1ms). DP will be config to HDMI/DVI
-+	 * then monitor can't br light up. Add retry 3 times
-+	 * But in real passive dongle, it need additional 3ms to detect
-+	 */
-+	do {
-+		gpio_result = dal_gpio_get_value(ddc->pin_clock, &clock_pin);
-+		ASSERT(gpio_result == GPIO_RESULT_OK);
-+		if (clock_pin)
-+			udelay(1000);
-+		else
-+			break;
-+	} while (retry++ < 3);
- 
- 	present = (gpio_result == GPIO_RESULT_OK) && !clock_pin;
- 
++	/* Handle deferred probing */
++	if (dev->clk == ERR_PTR(-EPROBE_DEFER))
++		return PTR_ERR(dev->clk);
++
+ 	dev->device_wakeup = devm_gpiod_get_optional(dev->dev, "device-wakeup",
+ 						     GPIOD_OUT_LOW);
+ 	if (IS_ERR(dev->device_wakeup))
 -- 
 2.19.1
 
