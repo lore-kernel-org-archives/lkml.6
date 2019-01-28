@@ -2,89 +2,230 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E97C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:58:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C179C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 114BC20821
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:58:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFEDD20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:59:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DBKkPFq+"
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="DlU0sPxc"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfA1H6v (ORCPT
+        id S1726783AbfA1H7j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:58:51 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:35103 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726632AbfA1H6v (ORCPT
+        Mon, 28 Jan 2019 02:59:39 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:19017 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726630AbfA1H7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:58:51 -0500
-Received: by mail-vs1-f66.google.com with SMTP id e7so9212023vsc.2
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 23:58:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Jh2+iNxljW7Ev3ui+KtrF0KqiAMvse0LLhGqod/SUuo=;
-        b=DBKkPFq+DrY0YGtAUTJ+PlMRwsaN/EU9p/Ej4IdfO8LEL0dfXIYpGrchKf9Kj+qdRs
-         iSe3dttI2r7jhCtPVKv4qop85wx/1bmg226gpPtvc0ZRpQFA5thVe5gYTfKIcKspL5T2
-         g+0eLM2w5JO5otyAyl2+H7zXqeWXLc8Xg0Ih8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Jh2+iNxljW7Ev3ui+KtrF0KqiAMvse0LLhGqod/SUuo=;
-        b=nFpS1mk9qZerlbDXnnp7xU0hXAzMhFb/zM2s2LePIptRGQkanOUoreQF30WAhrEym5
-         0h0tfQyAY58eX/cS5s6AkEp6Nyq+bBfyBkBWJn8KqoHJx/tWFDQfT6t8xH6sF4hyDcux
-         ++XWe+AYq68Ff8ApZe0X8wpR6IlNCWvGqURLxaFiqHFJGFO5ZwJcrOjEcmH2uEA+ti3E
-         k2DiScWTjseBoy3J+XBC6+CWbioSS2vYbWDHeGk5u34v1JC92PIl8MN4MDmCfkPnBi6o
-         WI1QpDMK0jUY8yVtX3MhgG9/1BzMcBFUv21GJ73kh/KgEnT4rMRP2kR8qv1hY+DKHURf
-         2POw==
-X-Gm-Message-State: AJcUukdgDljUriy36UgV9GgaTyNh4vxpcIJCsmvTwKOw4FB8PtD0D5sy
-        Z9C1Tap3JvhZLgLRZ4510Y2sh8F4qTk=
-X-Google-Smtp-Source: ALg8bN4/DfLdMRf2L2GTOWJq1BYyzEpf3xXC/9x+X16fCcY7HZ+rIEI/Vui6G2Yh2LtG75ssZdmvig==
-X-Received: by 2002:a67:fa98:: with SMTP id f24mr9250065vsq.125.1548662329734;
-        Sun, 27 Jan 2019 23:58:49 -0800 (PST)
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
-        by smtp.gmail.com with ESMTPSA id k77sm32573588vkd.17.2019.01.27.23.58.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 23:58:48 -0800 (PST)
-Received: by mail-vs1-f47.google.com with SMTP id p74so9233093vsc.0
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 23:58:48 -0800 (PST)
-X-Received: by 2002:a67:848a:: with SMTP id g132mr8259264vsd.222.1548662328194;
- Sun, 27 Jan 2019 23:58:48 -0800 (PST)
+        Mon, 28 Jan 2019 02:59:38 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4eb6410000>; Sun, 27 Jan 2019 23:58:57 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 27 Jan 2019 23:59:36 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sun, 27 Jan 2019 23:59:36 -0800
+Received: from [10.19.108.140] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
+ 2019 07:59:34 +0000
+Subject: Re: [PATCH 4/6] arm64: tegra: Add XUSB and pad controller on Tegra186
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+CC:     Mathias Nyman <mathias.nyman@intel.com>,
+        Jon Hunter <jonathanh@nvidia.com>, <linux-usb@vger.kernel.org>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190125113013.11447-1-thierry.reding@gmail.com>
+ <20190125113013.11447-4-thierry.reding@gmail.com>
+From:   jckuo <jckuo@nvidia.com>
+Message-ID: <1a04128b-3f08-dbe1-97cc-566d7ab94240@nvidia.com>
+Date:   Mon, 28 Jan 2019 15:59:32 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190127094357.GA9436@beast> <CAKwvOdnUzTXSBPayebsy8pJGjJjPS3oi3qE8nRPtAhtv_PJ4xw@mail.gmail.com>
- <CAGXu5jKDdutht_+hVhKan6cNZ+bS7e0gom5yXmcMgKE9KuZwYg@mail.gmail.com> <CAKwvOdkvV+1qVUTz7G+nfftdzUfTGL+RnQ_8rA_RAhRrpvRLBA@mail.gmail.com>
-In-Reply-To: <CAKwvOdkvV+1qVUTz7G+nfftdzUfTGL+RnQ_8rA_RAhRrpvRLBA@mail.gmail.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Mon, 28 Jan 2019 20:58:36 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jL8GHE3XLLo36Ldej3Z6ZHg+kN5Jfq-Pepvu3hzNsf52A@mail.gmail.com>
-Message-ID: <CAGXu5jL8GHE3XLLo36Ldej3Z6ZHg+kN5Jfq-Pepvu3hzNsf52A@mail.gmail.com>
-Subject: Re: [PATCH] selftests/seccomp: Actually sleep for 1/10th second
-To:     Nick Desaulniers <ndesaulniers@google.com>
-Cc:     Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190125113013.11447-4-thierry.reding@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL101.nvidia.com (172.20.187.10) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548662337; bh=O0jmC85z8zU88Mv21jxUHA0C3v1pD7JrurBGE2Gd6Lc=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=DlU0sPxcpqNMY8ZMMFHGgk3wMjLmc/6x6RFzB0OabPys3Qsv7d8yVdtWU9NaAuA57
+         A7liT83NX5ZN4qokS3ObfHVWtn2zVgaIpCdNyk17ucGXGd8J4zVTr6EHFi8+xoOnkr
+         2G6RbYb91yVQThtD50TG54AnTTPAObamrW58/EZvBp6Ko2hepSOWNBfOyoAmljHfN5
+         gnSHfWXgiVC7aHM0Dc80HwtM8vBpXLphVUikzuvMCGqwim1hXeJmBhnr+H7GroISWj
+         lc4jDRmj4IMbS06AUDxLouJJuvoyL/sWEuU/l77bGFrFZ1MvYY2d0z2/tCKq1wQ1Cv
+         Tgj6xZfuD5S3g==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 8:37 AM Nick Desaulniers
-<ndesaulniers@google.com> wrote:
-> So this test has been broken? If so, do you know for how long? Or
-> who's monitoring them?  Either way, thanks for noticing and fixing.
+Reviewed-by: JC Kuo <jckuo@nvidia.com>
 
-No, it's been working fine. It just consumes 100% cpu during the
-spin-wait. The intention was to sleep for a little bit to avoid a
-tight loop. It was just resource-inefficient.
-
--- 
-Kees Cook
+On 1/25/19 7:30 PM, Thierry Reding wrote:
+> From: Thierry Reding <treding@nvidia.com>
+>
+> Adds the XUSB pad and XUSB controllers on Tegra186.
+>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>   arch/arm64/boot/dts/nvidia/tegra186.dtsi | 135 +++++++++++++++++++++++
+>   1 file changed, 135 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/nvidia/tegra186.dtsi b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> index 22815db4a3ed..09d3b0d60e41 100644
+> --- a/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> +++ b/arch/arm64/boot/dts/nvidia/tegra186.dtsi
+> @@ -338,6 +338,141 @@
+>   		status = "disabled";
+>   	};
+>   
+> +	padctl: padctl@3520000 {
+> +		compatible = "nvidia,tegra186-xusb-padctl";
+> +		reg = <0x0 0x03520000 0x0 0x1000>,
+> +		      <0x0 0x03540000 0x0 0x1000>;
+> +		reg-names = "padctl", "ao";
+> +
+> +		resets = <&bpmp TEGRA186_RESET_XUSB_PADCTL>;
+> +		reset-names = "padctl";
+> +
+> +		status = "disabled";
+> +
+> +		pads {
+> +			usb2 {
+> +				clocks = <&bpmp TEGRA186_CLK_USB2_TRK>;
+> +				clock-names = "trk";
+> +				status = "disabled";
+> +
+> +				lanes {
+> +					usb2-0 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +
+> +					usb2-1 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +
+> +					usb2-2 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +				};
+> +			};
+> +
+> +			hsic {
+> +				clocks = <&bpmp TEGRA186_CLK_HSIC_TRK>;
+> +				clock-names = "trk";
+> +				status = "disabled";
+> +
+> +				lanes {
+> +					hsic-0 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +				};
+> +			};
+> +
+> +			usb3 {
+> +				status = "disabled";
+> +
+> +				lanes {
+> +					usb3-0 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +
+> +					usb3-1 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +
+> +					usb3-2 {
+> +						status = "disabled";
+> +						#phy-cells = <0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		ports {
+> +			usb2-0 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb2-1 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb2-2 {
+> +				status = "disabled";
+> +			};
+> +
+> +			hsic-0 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb3-0 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb3-1 {
+> +				status = "disabled";
+> +			};
+> +
+> +			usb3-2 {
+> +				status = "disabled";
+> +			};
+> +		};
+> +	};
+> +
+> +	usb@3530000 {
+> +		compatible = "nvidia,tegra186-xusb";
+> +		reg = <0x0 0x03530000 0x0 0x8000>,
+> +		      <0x0 0x03538000 0x0 0x1000>;
+> +		reg-names = "hcd", "fpci";
+> +
+> +		interrupts = <GIC_SPI 163 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 164 IRQ_TYPE_LEVEL_HIGH>,
+> +			     <GIC_SPI 167 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +		clocks = <&bpmp TEGRA186_CLK_XUSB_HOST>,
+> +			 <&bpmp TEGRA186_CLK_XUSB_FALCON>,
+> +			 <&bpmp TEGRA186_CLK_XUSB_SS>,
+> +			 <&bpmp TEGRA186_CLK_XUSB_CORE_SS>,
+> +			 <&bpmp TEGRA186_CLK_CLK_M>,
+> +			 <&bpmp TEGRA186_CLK_XUSB_FS>,
+> +			 <&bpmp TEGRA186_CLK_PLLU>,
+> +			 <&bpmp TEGRA186_CLK_CLK_M>,
+> +			 <&bpmp TEGRA186_CLK_PLLE>;
+> +		clock-names = "xusb_host", "xusb_falcon_src", "xusb_ss",
+> +			      "xusb_ss_src", "xusb_hs_src", "xusb_fs_src",
+> +			      "pll_u_480m", "clk_m", "pll_e";
+> +
+> +		power-domains = <&bpmp TEGRA186_POWER_DOMAIN_XUSBC>,
+> +				<&bpmp TEGRA186_POWER_DOMAIN_XUSBA>;
+> +		power-domain-names = "xusb_host", "xusb_ss";
+> +		nvidia,xusb-padctl = <&padctl>;
+> +
+> +		status = "disabled";
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +	};
+> +
+>   	fuse@3820000 {
+>   		compatible = "nvidia,tegra186-efuse";
+>   		reg = <0x0 0x03820000 0x0 0x10000>;
