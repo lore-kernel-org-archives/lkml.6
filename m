@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A109C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC507C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4C3421741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98EB52175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694808;
-	bh=O+P3oojbtj9ao1YfFYme8jtLqBZCZgHbx324E+szaWQ=;
+	s=default; t=1548694824;
+	bh=fagDAzuxp4wgGsEH2MHRjPpd4d8M+KTBwQPYOQ+Ohyc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PlmTMu6aJYRh7IKMiZw6zLCbO46zmcTylv+078/mRRj0c8z8u0tCtnMVjrwBVtaex
-	 rddCs/qzSnHZWElKe8OwTOLur5e+OCEcl8Zhiw1dilIFofMgHQvFHEZXf4TdcZWpAR
-	 mraJuXvxPbW0Ns0dDqKPMSkBYLai060bFGKwT3oU=
+	b=cpzS7D0GFhcAGTwQ1tHNenUqDtcitxJl2ate3hd7RvGrvyLMWZ9uuT0b0cG5tvdjW
+	 0R/qFo1einNRVm/eSyWYk6gjIg+q7KFzp6qOiMsCXZBbBGJEn1IS3I5MYnZhZDKG9B
+	 YpdKCLQf2VvXu3cBjQf79oIrfgonf5zXawKXEWEQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388269AbfA1RAH (ORCPT
+        id S2387996AbfA1RAW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:00:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46612 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:00:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46226 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387865AbfA1QPt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:49 -0500
+        id S2387830AbfA1QPm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 065E92147A;
-        Mon, 28 Jan 2019 16:15:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5783420879;
+        Mon, 28 Jan 2019 16:15:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692149;
-        bh=O+P3oojbtj9ao1YfFYme8jtLqBZCZgHbx324E+szaWQ=;
+        s=default; t=1548692141;
+        bh=fagDAzuxp4wgGsEH2MHRjPpd4d8M+KTBwQPYOQ+Ohyc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VFGc80Ac5DNKwvXvQa5fzVDewKZs1dlFWGzTlfs54mP9u2r1uECjxfwIgr+i9ZGl9
-         Ogxiy05t/f19wREhCCT0u5KPKA/wSX/DHDIk14/qIPZSbmLlMBK98O5VaW7oh6Ib3T
-         0HwDOez8tNhY+Lbd7aEkZnwcv2vmHkQnCb1DP0KA=
+        b=HawhNBD5vwXirdIziicv0XQKoVxyancbCMyBRKKBV/WotN1dcgMdPE/2Et1AQEoQV
+         GxU061B6w71/nEBDPlexMDqKzjE8m0mQfB/JbkAp2P2kU3Z9c6TwVrRhqru36Fumqi
+         wEIk/rmQJM8bk3OJH5ifSTX0RVZ6P87t7m7NFQ7o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 089/170] OPP: Use opp_table->regulators to verify no regulator case
-Date:   Mon, 28 Jan 2019 11:10:39 -0500
-Message-Id: <20190128161200.55107-89-sashal@kernel.org>
+Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-ide@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 086/170] sata_rcar: fix deferred probing
+Date:   Mon, 28 Jan 2019 11:10:36 -0500
+Message-Id: <20190128161200.55107-86-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,65 +58,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-[ Upstream commit 90e3577b5feb42bac1269e16bb3d2bdd8f6df40f ]
+[ Upstream commit 9f83cfdb1ace3ef268ecc6fda50058d2ec37d603 ]
 
-The value of opp_table->regulator_count is not very consistent right now
-and it may end up being 0 while we do have a "opp-microvolt" property in
-the OPP table. It was kept that way as we used to check if any
-regulators are set with the OPP core for a device or not using value of
-regulator_count.
+The driver overrides the error codes returned by platform_get_irq() to
+-EINVAL, so if it returns -EPROBE_DEFER, the driver would fail the probe
+permanently instead of the deferred probing. Switch to propagating the
+error code upstream, still checking/overriding IRQ0 as libata regards it
+as "no IRQ" (thus polling) anyway...
 
-Lets use opp_table->regulators for that purpose as the meaning of
-regulator_count is going to change in the later patches.
-
-Reported-by: Quentin Perret <quentin.perret@arm.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/base/power/opp/core.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/ata/sata_rcar.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/base/power/opp/core.c b/drivers/base/power/opp/core.c
-index d4862775b9f6..d5e7e8cc4f22 100644
---- a/drivers/base/power/opp/core.c
-+++ b/drivers/base/power/opp/core.c
-@@ -192,12 +192,12 @@ unsigned long dev_pm_opp_get_max_volt_latency(struct device *dev)
- 	if (IS_ERR(opp_table))
- 		return 0;
+diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+index 537d11869069..3e82a4ac239e 100644
+--- a/drivers/ata/sata_rcar.c
++++ b/drivers/ata/sata_rcar.c
+@@ -880,7 +880,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	int ret = 0;
  
--	count = opp_table->regulator_count;
--
- 	/* Regulator may not be required for the device */
--	if (!count)
-+	if (!opp_table->regulators)
- 		goto put_opp_table;
- 
-+	count = opp_table->regulator_count;
-+
- 	uV = kmalloc_array(count, sizeof(*uV), GFP_KERNEL);
- 	if (!uV)
- 		goto put_opp_table;
-@@ -921,6 +921,9 @@ static bool _opp_supported_by_regulators(struct dev_pm_opp *opp,
- 	struct regulator *reg;
- 	int i;
- 
-+	if (!opp_table->regulators)
-+		return true;
-+
- 	for (i = 0; i < opp_table->regulator_count; i++) {
- 		reg = opp_table->regulators[i];
- 
-@@ -1226,7 +1229,7 @@ static int _allocate_set_opp_data(struct opp_table *opp_table)
- 	struct dev_pm_set_opp_data *data;
- 	int len, count = opp_table->regulator_count;
- 
--	if (WARN_ON(!count))
-+	if (WARN_ON(!opp_table->regulators))
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0)
++	if (irq < 0)
++		return irq;
++	if (!irq)
  		return -EINVAL;
  
- 	/* space for set_opp_data */
+ 	priv = devm_kzalloc(&pdev->dev, sizeof(struct sata_rcar_priv),
 -- 
 2.19.1
 
