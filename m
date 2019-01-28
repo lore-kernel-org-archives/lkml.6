@@ -2,161 +2,60 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ECD8C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3725C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:25:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2582214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:22:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C7D9214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:25:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727215AbfA1XWp (ORCPT
+        id S1727295AbfA1XZe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 18:22:45 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45598 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727136AbfA1XWo (ORCPT
+        Mon, 28 Jan 2019 18:25:34 -0500
+Received: from www62.your-server.de ([213.133.104.62]:44726 "EHLO
+        www62.your-server.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726877AbfA1XZd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 18:22:44 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SNIrjn157943
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 18:22:43 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qa817s9y9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 18:22:43 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 28 Jan 2019 23:22:43 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 28 Jan 2019 23:22:37 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SNMaO017498302
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 28 Jan 2019 23:22:36 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AF3F4B2068;
-        Mon, 28 Jan 2019 23:22:36 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 6B924B2064;
-        Mon, 28 Jan 2019 23:22:36 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.57])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 28 Jan 2019 23:22:36 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9935A16C62B9; Mon, 28 Jan 2019 15:22:36 -0800 (PST)
-Date:   Mon, 28 Jan 2019 15:22:36 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Jann Horn <jannh@google.com>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Avi Kivity <avi@scylladb.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, David Sehr <sehr@google.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Maged Michael <maged.michael@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>, stable@vger.kernel.org
-Subject: Re: [PATCH] Fix: membarrier: racy access to p->mm in
- membarrier_global_expedited()
-Reply-To: paulmck@linux.ibm.com
-References: <20190128220707.30774-1-mathieu.desnoyers@efficios.com>
- <20190128223948.GD4240@linux.ibm.com>
- <CAG48ez1+Vx7=ZqeLJ0waceSneCQhEcoS=bv9ggb3Dbveb+W6AQ@mail.gmail.com>
+        Mon, 28 Jan 2019 18:25:33 -0500
+Received: from [78.46.172.2] (helo=sslproxy05.your-server.de)
+        by www62.your-server.de with esmtpsa (TLSv1.2:DHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89_1)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1goGHQ-0007pT-Od; Tue, 29 Jan 2019 00:25:28 +0100
+Received: from [178.197.249.31] (helo=linux.home)
+        by sslproxy05.your-server.de with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.89)
+        (envelope-from <daniel@iogearbox.net>)
+        id 1goGHQ-0008Vg-Iv; Tue, 29 Jan 2019 00:25:28 +0100
+Subject: Re: [PATCH -next] selftests: bpf: remove duplicated include
+To:     YueHaibing <yuehaibing@huawei.com>, ast@kernel.org,
+        shuah@kernel.org
+Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+        netdev@vger.kernel.org
+References: <20190125024634.14580-1-yuehaibing@huawei.com>
+From:   Daniel Borkmann <daniel@iogearbox.net>
+Message-ID: <282f4bbd-1526-b266-fd4d-1266fd935037@iogearbox.net>
+Date:   Tue, 29 Jan 2019 00:25:27 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAG48ez1+Vx7=ZqeLJ0waceSneCQhEcoS=bv9ggb3Dbveb+W6AQ@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19012823-0072-0000-0000-000003F14363
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010495; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01153188; UDB=6.00601196; IPR=6.00933550;
- MB=3.00025329; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-28 23:22:42
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012823-0073-0000-0000-00004AFA88E5
-Message-Id: <20190128232236.GG4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901280171
+In-Reply-To: <20190125024634.14580-1-yuehaibing@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.100.2/25339/Mon Jan 28 19:32:47 2019)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 11:45:32PM +0100, Jann Horn wrote:
-> On Mon, Jan 28, 2019 at 11:39 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
-> > On Mon, Jan 28, 2019 at 05:07:07PM -0500, Mathieu Desnoyers wrote:
-> > > Jann Horn identified a racy access to p->mm in the global expedited
-> > > command of the membarrier system call.
-> > >
-> > > The suggested fix is to hold the task_lock() around the accesses to
-> > > p->mm and to the mm_struct membarrier_state field to guarantee the
-> > > existence of the mm_struct.
-> > >
-> > > Link: https://lore.kernel.org/lkml/CAG48ez2G8ctF8dHS42TF37pThfr3y0RNOOYTmxvACm4u8Yu3cw@mail.gmail.com
-> > > Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> [...]
-> > > --- a/kernel/sched/membarrier.c
-> > > +++ b/kernel/sched/membarrier.c
-> > > @@ -81,12 +81,27 @@ static int membarrier_global_expedited(void)
-> > >
-> > >               rcu_read_lock();
-> > >               p = task_rcu_dereference(&cpu_rq(cpu)->curr);
-> > > -             if (p && p->mm && (atomic_read(&p->mm->membarrier_state) &
-> > > -                                MEMBARRIER_STATE_GLOBAL_EXPEDITED)) {
-> > > -                     if (!fallback)
-> > > -                             __cpumask_set_cpu(cpu, tmpmask);
-> > > -                     else
-> > > -                             smp_call_function_single(cpu, ipi_mb, NULL, 1);
-> > > +             /*
-> > > +              * Skip this CPU if the runqueue's current task is NULL or if
-> > > +              * it is a kernel thread.
-> > > +              */
-> > > +             if (p && READ_ONCE(p->mm)) {
-> > > +                     bool mm_match;
-> > > +
-> > > +                     /*
-> > > +                      * Read p->mm and access membarrier_state while holding
-> > > +                      * the task lock to ensure existence of mm.
-> > > +                      */
-> > > +                     task_lock(p);
-> > > +                     mm_match = p->mm && (atomic_read(&p->mm->membarrier_state) &
-> >
-> > Are we guaranteed that this p->mm will be the same as the one loaded via
-> > READ_ONCE() above?
+On 01/25/2019 03:46 AM, YueHaibing wrote:
+> Remove duplicated include.
 > 
-> No; the way I read it, that's just an optimization and has no effect
-> on correctness.
-> 
-> > Either way, wouldn't it be better to READ_ONCE() it a
-> > single time and use the same value everywhere?
-> 
-> No; the first READ_ONCE() returns a pointer that you can't access
-> because it wasn't read under a lock. You can only use it for a NULL
-> check.
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
 
-Ah, of course!  Thank you both!
-
-							Thanx, Paul
-
+Applied, thanks!
