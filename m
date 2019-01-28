@@ -4,40 +4,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2BDCC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2D5EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF221214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B2DBB2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:24:00 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfA1OXt (ORCPT
+        id S1726951AbfA1OXt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Mon, 28 Jan 2019 09:23:49 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:59403 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726735AbfA1OXr (ORCPT
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:31567 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726689AbfA1OXr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 09:23:47 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SELTnn011304;
-        Mon, 28 Jan 2019 15:23:31 +0100
+Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
+        by mx07-00178001.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SEL2rA020037;
+        Mon, 28 Jan 2019 15:23:36 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2q8famd3m7-1
+        by mx07-00178001.pphosted.com with ESMTP id 2q8e71vvex-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Mon, 28 Jan 2019 15:23:31 +0100
+        Mon, 28 Jan 2019 15:23:36 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5BF9841;
-        Mon, 28 Jan 2019 14:23:30 +0000 (GMT)
-Received: from Webmail-eu.st.com (Safex1hubcas21.st.com [10.75.90.44])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 33BAA2D37;
-        Mon, 28 Jan 2019 14:23:30 +0000 (GMT)
-Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS21.st.com
- (10.75.90.44) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 28 Jan
- 2019 15:23:29 +0100
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AA20B3A;
+        Mon, 28 Jan 2019 14:23:35 +0000 (GMT)
+Received: from Webmail-eu.st.com (Safex1hubcas23.st.com [10.75.90.46])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6426C2D3A;
+        Mon, 28 Jan 2019 14:23:35 +0000 (GMT)
+Received: from SAFEX1HUBCAS24.st.com (10.75.90.95) by SAFEX1HUBCAS23.st.com
+ (10.75.90.46) with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 28 Jan
+ 2019 15:23:35 +0100
 Received: from localhost (10.201.20.122) by webmail-ga.st.com (10.75.90.48)
- with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 28 Jan 2019 15:23:28
+ with Microsoft SMTP Server (TLS) id 14.3.361.1; Mon, 28 Jan 2019 15:23:34
  +0100
 From:   Benjamin Gaignard <benjamin.gaignard@st.com>
 To:     <broonie@kernel.org>, <robh@kernel.org>, <arnd@arndb.de>,
@@ -47,9 +47,9 @@ CC:     <linux-kernel@vger.kernel.org>, <loic.pallardy@st.com>,
         <benjamin.gaignard@linaro.org>, <kernel@pengutronix.de>,
         <linux-imx@nxp.com>, <linux-arm-kernel@lists.infradead.org>,
         Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [RFC v2 1/7] devicetree: bindings: Document domains controller bindings
-Date:   Mon, 28 Jan 2019 15:23:07 +0100
-Message-ID: <20190128142313.17036-2-benjamin.gaignard@st.com>
+Subject: [RFC v2 6/7] ARM: dts: stm32: Add domainsctrl node for stm32mp157 SoC
+Date:   Mon, 28 Jan 2019 15:23:12 +0100
+Message-ID: <20190128142313.17036-7-benjamin.gaignard@st.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20190128142313.17036-1-benjamin.gaignard@st.com>
 References: <20190128142313.17036-1-benjamin.gaignard@st.com>
@@ -63,79 +63,31 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Document commons domains controller bindings for controller
-and client devices.
+Declare ETZPC device as a domains controller node for stm32mp157 SoC
 
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
-version 2:
-- complete rework of bindings description to try to give a better definition
-  of what bus domains could be.
- .../bindings/bus/domains/domainsctrl.txt           | 55 ++++++++++++++++++++++
- 1 file changed, 55 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/bus/domains/domainsctrl.txt
+ arch/arm/boot/dts/stm32mp157c.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/bus/domains/domainsctrl.txt b/Documentation/devicetree/bindings/bus/domains/domainsctrl.txt
-new file mode 100644
-index 000000000000..a3fced91842d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/bus/domains/domainsctrl.txt
-@@ -0,0 +1,55 @@
-+Common Domains Controller bindings properties
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 8bf1c17f8cef..d15510a78630 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -1106,6 +1106,13 @@
+ 			status = "disabled";
+ 		};
+ 
++		etzpc: etzpc@5c007000 {
++			compatible = "st,stm32-etzpc";
++			reg = <0x5c007000 0x400>;
++			#domainctrl-cells = <2>;
++			status = "okay";
++		};
 +
-+Bus domains controllers allow to divided system on chip into multiple domains
-+that can be used to select by who hardware blocks could be accessed.
-+A domain could be a cluster of CPUs (or coprocessors), a range of addresses or
-+a group of hardware blocks.
-+
-+This device tree bindings can be used to bind bus domain consumer devices with
-+their bus domains provided by bus domains controllers. A bus domain provider
-+can be represented by any node in the device tree and can provide one or more
-+bus domains. A consumer node can refer to the provider by a phandle and a set
-+of phandle arguments of length specified by the #domainctrl-cells property in
-+the bus domain provider node.
-+
-+==Bus domain provider==
-+
-+Required properties:
-+- #domainctrl-cells	: Number of cells in a bus domain specifier;
-+			  Can be any value as specified by device tree binding
-+			  documentation of a particular provider.
-+
-+==Bus domain consumer==
-+
-+Required properties:
-+- domainsctrl-X		: A list of bus domain specifiers, as defined by
-+			  bindings of the bus domain controller that is the
-+			  bus domain provider.
-+
-+Optional properties:
-+- domainsctrl-names	: A list of bus domain name string sorted in the same
-+			  order as the domainsctrl-X proprerties. Consumer
-+			  drivers will use domainsctrl-names to match bus
-+			  domains with bus domains specifiers.
-+  			  Note that "default" and "unbind" are reserved names 
-+			  used by the framework.
-+
-+Example of usage with:
-+- a domains controller with a 2 parameters cell
-+- a domains controller with a 3 parameters cell
-+- a client device node using the both controllers and 2 configurations
-+  named "default" and "unbind"
-+
-+ctrl0: ctrl@0 {
-+	#domainctrl-cells = <2>;
-+};
-+
-+ctrl1: ctrl@1 {
-+	#domainctrl-cells = <3>;
-+};
-+
-+foo@0 {
-+	domains-names = "default", "unbind";
-+	domainctrl-0 = <&ctrl0 1 2>, <&ctrl1 3 4 5>;
-+	domainctrl-1 = <&ctrl0 6 7>, <&ctrl1 8 9 0>;
-+};
+ 		i2c6: i2c@5c009000 {
+ 			compatible = "st,stm32f7-i2c";
+ 			reg = <0x5c009000 0x400>;
 -- 
 2.15.0
 
