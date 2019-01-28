@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68B12C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFF3C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 369DE20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC48B2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697785;
-	bh=diX1bXR/Pgzq6AjL+YI5dptdTs8pz+nfvR1rg8yppW0=;
+	s=default; t=1548697798;
+	bh=SE5XHf8psLDSx7qAgqaDon89x3npjd+p28AjjTYIwuk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=JCvakDc8z6qZHoeFbz6gMIxFwSB2FzLs05jPrSw63x/FfPgJUev3alcPdnnDBeV4D
-	 AZr+YjFJINmxmz3YDQHM9vzWh7KTNMBIEW9Ir5sxUGNmYuzka3IHyRyIhQRf7eY6/5
-	 X2ALFcs+R1Nis5let+rFXrjn6DDd38lgqiCBgYus=
+	b=dRRyGMSd011T+q6NWWrbTdNdk2KT7HD8karlqfMLC3tqdIM1FE8raK4rVNOzLfeye
+	 9TKpB697eD8qttc7BZM2ZPUUkvBbyIZVZ4SGw0NB52PST0RxiBMABz+VKhF1fxUJSX
+	 f6EnS0ZVrd9AV8hiS9FwUHMCS8UrSN284FbIcR9Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728103AbfA1Rtn (ORCPT
+        id S1728265AbfA1Rt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:49:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58490 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:49:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58314 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727599AbfA1PpG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:45:06 -0500
+        id S1727587AbfA1Po4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:44:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 79BF521916;
-        Mon, 28 Jan 2019 15:45:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0D2142147A;
+        Mon, 28 Jan 2019 15:44:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690305;
-        bh=diX1bXR/Pgzq6AjL+YI5dptdTs8pz+nfvR1rg8yppW0=;
+        s=default; t=1548690296;
+        bh=SE5XHf8psLDSx7qAgqaDon89x3npjd+p28AjjTYIwuk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=x0h5GizFP7UTwGnnNE2tDtt6LkUUeFJMn5aI3M/JBM6yHGAfvfQKujgzlIGhr/VVV
-         1M5FYbekm4zsbM2XPGuRALhm8Qk7BBNJRzoGZbZYTonuxp+U8Qr/FvNsgABWJWkNFj
-         tFqAl8UkG880d0eRSsNppkn3fesTRXm+VOnETMa0=
+        b=X3dbk8dYo5g+kpABB4Y/ek7aHEmXJbyh6ilQfJNbpZzTsPy33J20rI/EgQavvDlDQ
+         KkeCVtmLqsmsrnkKUkthKHlZVd8BecS5FtEFEhBvs+2leAGsv8/fXY/U4U0Zk+Kb+l
+         4eQHk2WZDHiLDQAWQ+vkyZhXd1qWV0I/niu88BrI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Matheus Tavares <matheus.bernardino@usp.br>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.20 042/304] staging:iio:ad2s90: Make probe handle spi_setup failure
-Date:   Mon, 28 Jan 2019 10:39:19 -0500
-Message-Id: <20190128154341.47195-42-sashal@kernel.org>
+Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 038/304] dpaa2-ptp: defer probe when portal allocation failed
+Date:   Mon, 28 Jan 2019 10:39:15 -0500
+Message-Id: <20190128154341.47195-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,46 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matheus Tavares <matheus.bernardino@usp.br>
+From: Ioana Ciornei <ioana.ciornei@nxp.com>
 
-[ Upstream commit b3a3eafeef769c6982e15f83631dcbf8d1794efb ]
+[ Upstream commit 5500598abbfb5b46201b9768bd9ea873a5eeaece ]
 
-Previously, ad2s90_probe ignored the return code from spi_setup, not
-handling its possible failure. This patch makes ad2s90_probe check if
-the code is an error code and, if so, do the following:
+The fsl_mc_portal_allocate can fail when the requested MC portals are
+not yet probed by the fsl_mc_allocator. In this situation, the driver
+should defer the probe.
 
-- Call dev_err with an appropriate error message.
-- Return the spi_setup's error code.
-
-Note: The 'return ret' statement could be out of the 'if' block, but
-this whole block will be moved up in the function in the patch:
-'staging:iio:ad2s90: Move device registration to the end of probe'.
-
-Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/resolver/ad2s90.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
-index 59586947a936..51cda9151412 100644
---- a/drivers/staging/iio/resolver/ad2s90.c
-+++ b/drivers/staging/iio/resolver/ad2s90.c
-@@ -85,7 +85,12 @@ static int ad2s90_probe(struct spi_device *spi)
- 	/* need 600ns between CS and the first falling edge of SCLK */
- 	spi->max_speed_hz = 830000;
- 	spi->mode = SPI_MODE_3;
--	spi_setup(spi);
-+	ret = spi_setup(spi);
-+
-+	if (ret < 0) {
-+		dev_err(&spi->dev, "spi_setup failed!\n");
-+		return ret;
-+	}
+diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
+index 84b942b1eccc..9b150db3b510 100644
+--- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
++++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
+@@ -140,7 +140,10 @@ static int dpaa2_ptp_probe(struct fsl_mc_device *mc_dev)
  
- 	return 0;
- }
+ 	err = fsl_mc_portal_allocate(mc_dev, 0, &mc_dev->mc_io);
+ 	if (err) {
+-		dev_err(dev, "fsl_mc_portal_allocate err %d\n", err);
++		if (err == -ENXIO)
++			err = -EPROBE_DEFER;
++		else
++			dev_err(dev, "fsl_mc_portal_allocate err %d\n", err);
+ 		goto err_exit;
+ 	}
+ 
 -- 
 2.19.1
 
