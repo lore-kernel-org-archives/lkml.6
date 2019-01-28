@@ -2,147 +2,78 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FC7AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C0BFC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5082421917
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691387;
-	bh=spUt8smuldx0tduaXNgijvQ2OkKzs9lQLvzP5nQRfns=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1aU/oSiNJ/rIpvaSAZ5XnhWYz6TMiGHfA+WfG+4Qrje/zD8SW2MuBBYaWgm1DoeVx
-	 PVcvXJMNdwJeMbsjncSS5hJL5GEHm6jRvai8JWIg8Y0KiQ/Cw5/ji3zU3SoiGEmrJz
-	 GlbFy5TJnkcefqSvtMs6aX/PDduvGyfVhJF1nj6Y=
+	by mail.kernel.org (Postfix) with ESMTP id DF53E2082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="oQm/bh2D"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731319AbfA1QDF (ORCPT
+        id S1731329AbfA1QDK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:03:05 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48342 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731309AbfA1QDC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:03:02 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41C5621852;
-        Mon, 28 Jan 2019 16:03:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691381;
-        bh=spUt8smuldx0tduaXNgijvQ2OkKzs9lQLvzP5nQRfns=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QHGB+Wwty4tEV5lGog2HY2TnvVgFv5xauAfq/AvlK6TUClc9D48GF1a77JZw4JXEu
-         LNrNDmGV5ZPesvKUWzE6DdRgGzbDu5K29B6FTClO2N5/o8jTTFXMHbR/JG+uaas17X
-         HmnjISy/t3NMnEQ5LzmKf5vdwdEdWSYpQZccIDGU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sheng Yong <shengyong1@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 074/258] f2fs: fix race between write_checkpoint and write_begin
-Date:   Mon, 28 Jan 2019 10:56:20 -0500
-Message-Id: <20190128155924.51521-74-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
-References: <20190128155924.51521-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 11:03:10 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:44150 "EHLO
+        mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731309AbfA1QDI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:03:08 -0500
+Received: from trochilidae.toradex.int (unknown [46.140.72.82])
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id 8D00F5C12C0;
+        Mon, 28 Jan 2019 17:03:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
+        t=1548691386;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:
+         content-transfer-encoding:content-transfer-encoding:in-reply-to:
+         references; bh=VeXmcozwECjM26oL4MDFZh+Af5qc4NALgZoHZI5oO8c=;
+        b=oQm/bh2D56XMuWq/N9YN6wJTeFzYzSfrB+Ox1fSA62ba+pEFt1zplHK63ZVYAWezYhTaG+
+        oTzWOn6TRlgD57cki8zapbkfMl8t3b0/2O/GT2BPhJuTDdPx18BfMc3efAfrSgTCHKe0vT
+        qoM0rm4ULdP4sy9Z6+bm4ZGXVDMLpTw=
+From:   Stefan Agner <stefan@agner.ch>
+To:     dmitry.torokhov@gmail.com
+Cc:     arnd@arndb.de, peng.fan@nxp.com, linux-imx@nxp.com,
+        kernel@pengutronix.de, fabio.estevam@nxp.com, shawnguo@kernel.org,
+        linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>
+Subject: [PATCH 1/3] input: keyboard: allow to select IMX SNVS Power Key driver for i.MX 7D
+Date:   Mon, 28 Jan 2019 17:03:05 +0100
+Message-Id: <20190128160305.22398-1-stefan@agner.ch>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sheng Yong <shengyong1@huawei.com>
+The i.MX SNVS Power Key driver supports the i.MX 7D SoC family too.
+Allow to enable the i.MX SNVS Power Key driver even if only i.MX 7D
+SoC is selected.
 
-[ Upstream commit 2866fb16d67992195b0526d19e65acb6640fb87f ]
-
-The following race could lead to inconsistent SIT bitmap:
-
-Task A                          Task B
-======                          ======
-f2fs_write_checkpoint
-  block_operations
-    f2fs_lock_all
-      down_write(node_change)
-      down_write(node_write)
-      ... sync ...
-      up_write(node_change)
-                                f2fs_file_write_iter
-                                  set_inode_flag(FI_NO_PREALLOC)
-                                  ......
-                                  f2fs_write_begin(index=0, has inline data)
-                                    prepare_write_begin
-                                      __do_map_lock(AIO) => down_read(node_change)
-                                      f2fs_convert_inline_page => update SIT
-                                      __do_map_lock(AIO) => up_read(node_change)
-  f2fs_flush_sit_entries <= inconsistent SIT
-  finish write checkpoint
-  sudden-power-off
-
-If SPO occurs after checkpoint is finished, SIT bitmap will be set
-incorrectly.
-
-Signed-off-by: Sheng Yong <shengyong1@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
- fs/f2fs/data.c | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+ drivers/input/keyboard/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 11f28342f641..08314fb42652 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -2259,6 +2259,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 	bool locked = false;
- 	struct extent_info ei = {0,0,0};
- 	int err = 0;
-+	int flag;
+diff --git a/drivers/input/keyboard/Kconfig b/drivers/input/keyboard/Kconfig
+index 4713957b0cbb..a878351f1643 100644
+--- a/drivers/input/keyboard/Kconfig
++++ b/drivers/input/keyboard/Kconfig
+@@ -420,7 +420,7 @@ config KEYBOARD_MPR121
  
- 	/*
- 	 * we already allocated all the blocks, so we don't need to get
-@@ -2268,9 +2269,15 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 			!is_inode_flag_set(inode, FI_NO_PREALLOC))
- 		return 0;
- 
-+	/* f2fs_lock_op avoids race between write CP and convert_inline_page */
-+	if (f2fs_has_inline_data(inode) && pos + len > MAX_INLINE_DATA(inode))
-+		flag = F2FS_GET_BLOCK_DEFAULT;
-+	else
-+		flag = F2FS_GET_BLOCK_PRE_AIO;
-+
- 	if (f2fs_has_inline_data(inode) ||
- 			(pos & PAGE_MASK) >= i_size_read(inode)) {
--		__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, true);
-+		__do_map_lock(sbi, flag, true);
- 		locked = true;
- 	}
- restart:
-@@ -2308,6 +2315,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 				f2fs_put_dnode(&dn);
- 				__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO,
- 								true);
-+				WARN_ON(flag != F2FS_GET_BLOCK_PRE_AIO);
- 				locked = true;
- 				goto restart;
- 			}
-@@ -2321,7 +2329,7 @@ static int prepare_write_begin(struct f2fs_sb_info *sbi,
- 	f2fs_put_dnode(&dn);
- unlock_out:
- 	if (locked)
--		__do_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO, false);
-+		__do_map_lock(sbi, flag, false);
- 	return err;
- }
- 
+ config KEYBOARD_SNVS_PWRKEY
+ 	tristate "IMX SNVS Power Key Driver"
+-	depends on SOC_IMX6SX
++	depends on SOC_IMX6SX || SOC_IMX7D
+ 	depends on OF
+ 	help
+ 	  This is the snvs powerkey driver for the Freescale i.MX application
 -- 
-2.19.1
+2.20.1
 
