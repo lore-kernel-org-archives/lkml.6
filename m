@@ -2,54 +2,52 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA14C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:46:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09662C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:46:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E0AA820879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:46:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D05122084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:46:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693992;
-	bh=XjyNh5xPRCDYfEdHIkcXWSvqClpqYZdxU8V+BNz71J4=;
+	s=default; t=1548694000;
+	bh=EJnd5Za51Fy9VyH8uBbAdT3IY9g5gXw27pCE0yVz3HU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1sDhpQfINvnMsJgrO0sXHPzL4ZLqmlvIynUrJtr6kb5B10DmWsYFwtYQOhbyI7c8m
-	 HiOS99F5TZ75CxwkHiVOunhEqsKy3tDoOrLyxTJbSUcExT7zdVEoZz//h8hb6N2onZ
-	 oARZQsdxiPzbpjvQZ1AOiPdDJGRtNDOYCb920tBY=
+	b=OUZet2nNQ6y8bM3y3mIDK4qgkASOShXUs9gqz3Ig25+VcovJB+FPrxfbAewaDywYs
+	 pDK9s+7BgKa+NeHSbFn2Rc0cU0EV0lbjTfw/Qp9oeeyUNdUp6tlu8Q60a8gXh59+Gw
+	 sle/cOUQVDBMx/FsFJhv7fFEmvFvrhLw7N0iHO5k=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389249AbfA1Qqa (ORCPT
+        id S2389546AbfA1Qqi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:46:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58634 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:46:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389236AbfA1QWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:36 -0500
+        id S2389222AbfA1QWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:22:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 903842084A;
-        Mon, 28 Jan 2019 16:22:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 836AB2147A;
+        Mon, 28 Jan 2019 16:22:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692556;
-        bh=XjyNh5xPRCDYfEdHIkcXWSvqClpqYZdxU8V+BNz71J4=;
+        s=default; t=1548692551;
+        bh=EJnd5Za51Fy9VyH8uBbAdT3IY9g5gXw27pCE0yVz3HU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i6Y8QBKvwKF2Fpz1xaOJx3MTU9vcl5uALqBNe4hyI37NevUI2taJ+ECRFwy24xGif
-         5wSkNPK+GvcRMq6pbsDljlYpfXhUMOUdyXQbM40oV4lV+PWo7uNl9szjr99dbqVQbP
-         FwdNQR4XsbeVu82G3NuivQDNmJBjYc/HcvHmoPF4=
+        b=Rx0ekhKzXEPYez0PbzqCTcmH1fziWcyvLZOoJsjoat5RnWGJKMXLkgTbNVw5AQWRV
+         XmeNxzgD7yLUp16cULNKu7GqDzoIVozXoLBuTrWglmwh4ph5wp9+hwzyOWoZ6HUA5z
+         OUbdG62OCmMBc4Kd/m2lUzOO97XMbsFWLlrY3Usk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 061/107] perf probe: Fix unchecked usage of strncpy()
-Date:   Mon, 28 Jan 2019 11:19:01 -0500
-Message-Id: <20190128161947.57405-61-sashal@kernel.org>
+Cc:     Beomho Seo <beomho.seo@samsung.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 059/107] tty: serial: samsung: Properly set flags in autoCTS mode
+Date:   Mon, 28 Jan 2019 11:18:59 -0500
+Message-Id: <20190128161947.57405-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -61,52 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Beomho Seo <beomho.seo@samsung.com>
 
-[ Upstream commit bef0b8970f27da5ca223e522a174d03e2587761d ]
+[ Upstream commit 31e933645742ee6719d37573a27cce0761dcf92b ]
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+Commit 391f93f2ec9f ("serial: core: Rework hw-assited flow control support")
+has changed the way the autoCTS mode is handled.
 
-In this case the 'target' buffer is coming from a list of build-ids that
-are expected to have a len of at most (SBUILD_ID_SIZE - 1) chars, so
-probably we're safe, but since we're using strncpy() here, use strlcpy()
-instead to provide the intended safety checking without the using the
-problematic strncpy() function.
+According to that change, serial drivers which enable H/W autoCTS mode must
+set UPSTAT_AUTOCTS to prevent the serial core from inadvertently disabling
+TX. This patch adds proper handling of UPSTAT_AUTOCTS flag.
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
-
-  util/probe-file.c: In function 'probe_cache__open.isra.5':
-  util/probe-file.c:427:3: error: 'strncpy' specified bound 41 equals destination size [-Werror=stringop-truncation]
-     strncpy(sbuildid, target, SBUILD_ID_SIZE);
-     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: 1f3736c9c833 ("perf probe: Show all cached probes")
-Link: https://lkml.kernel.org/n/tip-l7n8ggc9kl38qtdlouke5yp5@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
+[mszyprow: rephrased commit message]
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/probe-file.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/tty/serial/samsung.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
-index 436b64731f65..b9507a8d0e30 100644
---- a/tools/perf/util/probe-file.c
-+++ b/tools/perf/util/probe-file.c
-@@ -414,7 +414,7 @@ static int probe_cache__open(struct probe_cache *pcache, const char *target)
+diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
+index 5609305b3676..01ff8ec78023 100644
+--- a/drivers/tty/serial/samsung.c
++++ b/drivers/tty/serial/samsung.c
+@@ -1335,11 +1335,14 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
+ 	wr_regl(port, S3C2410_ULCON, ulcon);
+ 	wr_regl(port, S3C2410_UBRDIV, quot);
  
- 	if (target && build_id_cache__cached(target)) {
- 		/* This is a cached buildid */
--		strncpy(sbuildid, target, SBUILD_ID_SIZE);
-+		strlcpy(sbuildid, target, SBUILD_ID_SIZE);
- 		dir_name = build_id_cache__linkname(sbuildid, NULL, 0);
- 		goto found;
++	port->status &= ~UPSTAT_AUTOCTS;
++
+ 	umcon = rd_regl(port, S3C2410_UMCON);
+ 	if (termios->c_cflag & CRTSCTS) {
+ 		umcon |= S3C2410_UMCOM_AFC;
+ 		/* Disable RTS when RX FIFO contains 63 bytes */
+ 		umcon &= ~S3C2412_UMCON_AFC_8;
++		port->status = UPSTAT_AUTOCTS;
+ 	} else {
+ 		umcon &= ~S3C2410_UMCOM_AFC;
  	}
 -- 
 2.19.1
