@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C18DC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FD87C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F3012147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 130C42173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691769;
-	bh=hsiB9miFcVT/4ObRk5ldlA2+yT8AQ2zCQhCycgYw2Fs=;
+	s=default; t=1548691774;
+	bh=kpG2va2UuuVIoujxQaCdO0RvF2LF3QJtU3l2Y8G7nN4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=INB5ZJuAkD33TkOuAx1/+lqzxGtTYgKJYm6mzUdOQ9d5SsNylyLr9EaqMMlPErZVr
-	 NWmgz+nw1DifwKtFQ2HgL83muWr63Bo+Iiuv1+2cGFopZSbPAaDaIM4gKmbVsokKGr
-	 /pIeLq25uOA6tdA3su62tfcf37RCWvBSW/QPY9Ws=
+	b=YQrMJT81ocP/PcKJKrgO47HULxWm5NmZkX7BufFLf6slOoniYOhBU4nTLuTWPlRi4
+	 wnnIWvdq86USjwV0peO7uwcluQx8j3f2/cGm90/yXzDfWbVObvf5wvSa1QhKIDSOVk
+	 MScF8HtDMAogupPD+YMokRKPK0ZAML73M2a5HyIg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732602AbfA1QJ1 (ORCPT
+        id S1732610AbfA1QJc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:09:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34004 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:09:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731930AbfA1QJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:09:24 -0500
+        id S1732601AbfA1QJ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:09:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DF6A92147A;
-        Mon, 28 Jan 2019 16:09:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CD3502084A;
+        Mon, 28 Jan 2019 16:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691763;
-        bh=hsiB9miFcVT/4ObRk5ldlA2+yT8AQ2zCQhCycgYw2Fs=;
+        s=default; t=1548691766;
+        bh=kpG2va2UuuVIoujxQaCdO0RvF2LF3QJtU3l2Y8G7nN4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TOZyuJsesXlTRxUOxG+DmEydZOWnmroC6YRGGESo6BkFMYR0/OFkBTrZa6wJMkmay
-         SVQDY/Mg1pZMhfMp771AZMAfdXJnbZbsXwUGqIEVvQhROdTtAl33UpMZ/+wHVzNO8j
-         P+071zUqg3pB69Vbv05juZDhL5lqadAfmBTjGmP0=
+        b=wh2GzGuoHMzHLFxqdtIGFj80239s7LZGqiO0ASuKO55fRVf1+NpRpxEAUX0+ajC5k
+         tF99FmCItcxAUKd2AyuIHsxPs9qbYypwFtS6v0I83gDudhe8NK8zv3KO6qdeJ7jqJD
+         SRuCoCE/0/WK7TH+IVPmhWGPzbh0db15CawqnwLE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 209/258] igb: Fix an issue that PME is not enabled during runtime suspend
-Date:   Mon, 28 Jan 2019 10:58:35 -0500
-Message-Id: <20190128155924.51521-209-sashal@kernel.org>
+Cc:     Lenny Szubowicz <lszubowi@redhat.com>,
+        David Arcari <darcari@redhat.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 210/258] ACPI/APEI: Clear GHES block_status before panic()
+Date:   Mon, 28 Jan 2019 10:58:36 -0500
+Message-Id: <20190128155924.51521-210-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,48 +59,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Lenny Szubowicz <lszubowi@redhat.com>
 
-[ Upstream commit 1fb3a7a75e2efcc83ef21f2434069cddd6fae6f5 ]
+[ Upstream commit 98cff8b23ed1c763a029ee81ea300df0d153d07d ]
 
-I210 ethernet card doesn't wakeup when a cable gets plugged. It's
-because its PME is not set.
+In __ghes_panic() clear the block status in the APEI generic
+error status block for that generic hardware error source before
+calling panic() to prevent a second panic() in the crash kernel
+for exactly the same fatal error.
 
-Since commit 42eca2302146 ("PCI: Don't touch card regs after runtime
-suspend D3"), if the PCI state is saved, pci_pm_runtime_suspend() stops
-calling pci_finish_runtime_suspend(), which enables the PCI PME.
+Otherwise ghes_probe(), running in the crash kernel, would see
+an unhandled error in the APEI generic error status block and
+panic again, thereby precluding any crash dump.
 
-To fix the issue, let's not to save PCI states when it's runtime
-suspend, to let the PCI subsystem enables PME.
-
-Fixes: 42eca2302146 ("PCI: Don't touch card regs after runtime suspend D3")
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Aaron Brown <aaron.f.brown@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
+Signed-off-by: David Arcari <darcari@redhat.com>
+Tested-by: Tyler Baicar <baicar.tyler@gmail.com>
+Acked-by: Borislav Petkov <bp@suse.de>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/igb/igb_main.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/acpi/apei/ghes.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 0796cef96fa3..ffaa6e031632 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -8770,9 +8770,11 @@ static int __igb_shutdown(struct pci_dev *pdev, bool *enable_wake,
- 	rtnl_unlock();
+diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+index 02c6fd9caff7..f008ba7c9ced 100644
+--- a/drivers/acpi/apei/ghes.c
++++ b/drivers/acpi/apei/ghes.c
+@@ -691,6 +691,8 @@ static void __ghes_panic(struct ghes *ghes)
+ {
+ 	__ghes_print_estatus(KERN_EMERG, ghes->generic, ghes->estatus);
  
- #ifdef CONFIG_PM
--	retval = pci_save_state(pdev);
--	if (retval)
--		return retval;
-+	if (!runtime) {
-+		retval = pci_save_state(pdev);
-+		if (retval)
-+			return retval;
-+	}
- #endif
- 
- 	status = rd32(E1000_STATUS);
++	ghes_clear_estatus(ghes);
++
+ 	/* reboot to log the error! */
+ 	if (!panic_timeout)
+ 		panic_timeout = ghes_panic_timeout;
 -- 
 2.19.1
 
