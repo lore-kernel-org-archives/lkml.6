@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 693ACC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F65FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:28:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F7D2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0A4F62147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:28:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696468;
-	bh=s3dxhdB3JhZg5ETt3DbvYjSzWhCaL4XheDOipV/nq0o=;
+	s=default; t=1548696490;
+	bh=sGPrnnt4LNGpIXsfQSBa+4zvfJ8mFUE7DDbc95Ih33w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lJsVwtzjgA6Uxn9yQ3C5AWH2DVOtrTsi9QsEbvlqSRO4CF361q5Eye9BiEovBD7/Y
-	 xSvCAEd3Ny7y5nK1TvEW2XwlVI+mjx9SFI6xiHPaWCNErdrFB1yZrTPF5liikSSs4L
-	 vn1PSNlSmuiyoIpIjFvhoJ0OqOsMgUTH3A150orA=
+	b=pwfQ4ocdaNDWyZOjgUqMmjGeH3TFmWoT/zCBEpHALUuxkCtTgJp0nTS9ZoBo9jLBP
+	 B+S+9lE9CHNnlm1fK4kHrc6vKNP/6lk39SU/lA0b12rnsKE92h1sAEVn4z0ueYArkX
+	 MiM15ofjcQ4E/9smtM7HjRTyJ9I/8jIAta7XUyjA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731363AbfA1R1q (ORCPT
+        id S1730967AbfA1R2I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:27:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45440 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:28:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730714AbfA1QAJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:00:09 -0500
+        id S1730404AbfA1QAA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:00:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5E54321848;
-        Mon, 28 Jan 2019 16:00:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BB1BA2175B;
+        Mon, 28 Jan 2019 15:59:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691209;
-        bh=s3dxhdB3JhZg5ETt3DbvYjSzWhCaL4XheDOipV/nq0o=;
+        s=default; t=1548691199;
+        bh=sGPrnnt4LNGpIXsfQSBa+4zvfJ8mFUE7DDbc95Ih33w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DjIu2kHOx5PrI8UMEJIi6sAKi7+6+KEVhx1iILtmEdb7ZMGyuFjIpCTjpz8M6c9U3
-         31CcLSPXj/R8+r2OCCDuT/eRy85ANfsVd6Mg8Y8pyoS4w+utBr6MIM08pmHJdNSqQU
-         hl8cHgqCz1nCU4Pe6kv4sv+Ag8wIxbWGl639h5fc=
+        b=LocSPK7++5ywdNSRIoxwOswNcTrXx6wcod8xPKqtN0+U/OktXnRMPzbI8FQ+6S6ge
+         6Y48e3ewUxLm00rjL0uqWvyDloU7lnES4H+CfGylLoBH5vbXOxbHihE2HmfE+rLVAf
+         rrYYsGlsV09KTUqmK7c57Nr9NNiEGJM4d78JDFxg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Suganath Prabu <suganath-prabu.subramani@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
+Cc:     Lior David <liord@codeaurora.org>,
+        Maya Erez <merez@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
         Sasha Levin <sashal@kernel.org>,
-        MPT-FusionLinux.pdl@broadcom.com, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 016/258] scsi: mpt3sas: Call sas_remove_host before removing the target devices
-Date:   Mon, 28 Jan 2019 10:55:22 -0500
-Message-Id: <20190128155924.51521-16-sashal@kernel.org>
+        linux-wireless@vger.kernel.org, wil6210@qti.qualcomm.com,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 012/258] wil6210: fix memory leak in wil_find_tx_bcast_2
+Date:   Mon, 28 Jan 2019 10:55:18 -0500
+Message-Id: <20190128155924.51521-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,71 +60,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
+From: Lior David <liord@codeaurora.org>
 
-[ Upstream commit dc730212e8a378763cb182b889f90c8101331332 ]
+[ Upstream commit 664497400c89a4d40aee51bcf48bbd2e4dc71104 ]
 
-Call sas_remove_host() before removing the target devices in the driver's
-.remove() callback function(i.e. during driver unload time).  So that
-driver can provide a way to allow SYNC CACHE, START STOP unit commands
-etc. (which are issued from SML) to the target drives during driver unload
-time.
+A successful call to wil_tx_ring takes skb reference so
+it will only be freed in wil_tx_complete. Consume the skb
+in wil_find_tx_bcast_2 to prevent memory leak.
 
-Once sas_remove_host() is called before removing the target drives then
-driver can just clean up the resources allocated for target devices and no
-need to call sas_port_delete_phy(), sas_port_delete() API's as these API's
-internally called from sas_remove_host().
-
-Signed-off-by: Suganath Prabu <suganath-prabu.subramani@broadcom.com>
-Reviewed-by: Bjorn Helgaas <bhelgaas@google.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Lior David <liord@codeaurora.org>
+Signed-off-by: Maya Erez <merez@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/mpt3sas/mpt3sas_scsih.c     | 2 +-
- drivers/scsi/mpt3sas/mpt3sas_transport.c | 7 +++++--
- 2 files changed, 6 insertions(+), 3 deletions(-)
+ drivers/net/wireless/ath/wil6210/txrx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_scsih.c b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-index 53133cfd420f..622832e55211 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_scsih.c
-@@ -9809,6 +9809,7 @@ static void scsih_remove(struct pci_dev *pdev)
- 
- 	/* release all the volumes */
- 	_scsih_ir_shutdown(ioc);
-+	sas_remove_host(shost);
- 	list_for_each_entry_safe(raid_device, next, &ioc->raid_device_list,
- 	    list) {
- 		if (raid_device->starget) {
-@@ -9851,7 +9852,6 @@ static void scsih_remove(struct pci_dev *pdev)
- 		ioc->sas_hba.num_phys = 0;
- 	}
- 
--	sas_remove_host(shost);
- 	mpt3sas_base_detach(ioc);
- 	spin_lock(&gioc_lock);
- 	list_del(&ioc->list);
-diff --git a/drivers/scsi/mpt3sas/mpt3sas_transport.c b/drivers/scsi/mpt3sas/mpt3sas_transport.c
-index f8cc2677c1cd..20d36061c217 100644
---- a/drivers/scsi/mpt3sas/mpt3sas_transport.c
-+++ b/drivers/scsi/mpt3sas/mpt3sas_transport.c
-@@ -834,10 +834,13 @@ mpt3sas_transport_port_remove(struct MPT3SAS_ADAPTER *ioc, u64 sas_address,
- 			    mpt3sas_port->remote_identify.sas_address,
- 			    mpt3sas_phy->phy_id);
- 		mpt3sas_phy->phy_belongs_to_port = 0;
--		sas_port_delete_phy(mpt3sas_port->port, mpt3sas_phy->phy);
-+		if (!ioc->remove_host)
-+			sas_port_delete_phy(mpt3sas_port->port,
-+						mpt3sas_phy->phy);
- 		list_del(&mpt3sas_phy->port_siblings);
- 	}
--	sas_port_delete(mpt3sas_port->port);
-+	if (!ioc->remove_host)
-+		sas_port_delete(mpt3sas_port->port);
- 	kfree(mpt3sas_port);
- }
- 
+diff --git a/drivers/net/wireless/ath/wil6210/txrx.c b/drivers/net/wireless/ath/wil6210/txrx.c
+index 6a7943e487fb..75c8aa297107 100644
+--- a/drivers/net/wireless/ath/wil6210/txrx.c
++++ b/drivers/net/wireless/ath/wil6210/txrx.c
+@@ -1313,6 +1313,8 @@ static struct wil_ring *wil_find_tx_bcast_2(struct wil6210_priv *wil,
+ 			wil_dbg_txrx(wil, "BCAST DUP -> ring %d\n", i);
+ 			wil_set_da_for_vring(wil, skb2, i);
+ 			wil_tx_ring(wil, vif, v2, skb2);
++			/* successful call to wil_tx_ring takes skb2 ref */
++			dev_kfree_skb_any(skb2);
+ 		} else {
+ 			wil_err(wil, "skb_copy failed\n");
+ 		}
 -- 
 2.19.1
 
