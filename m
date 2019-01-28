@@ -4,53 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6EFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78F1AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A20B02177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DA1C217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690963;
-	bh=zn7B91I43BVV5kVLt1xRt4yl36bvjprGx0I21eD06hM=;
+	s=default; t=1548690968;
+	bh=FV3Wnx9SgzJYhilsV10qHFxJAHbctUwBC3v7v2Jmzqs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2H+oGa0bwgwEOAip5YFRkMO/KcFc3QLZq/ZygnspPng0xIjESMqoGRmjS81cMMSec
-	 wzA9YCNHBHZbeQ6B+q5n7cXcdDZXj1JESAjEjzBfZjRInO22YVJhr0IW4/w5PoG/gD
-	 ptX5lhH7tWKkllG4CiHwNeTkSv6rqgsiu7fkZ99I=
+	b=gDzlH7G/8Uv9uFwGMhkH6qNwJpF1WIDG7f0t9GkF7dWM8Xj05GcJUPkabGonHh1PA
+	 3e0Un0rBwr5jnd+vVZhNmIGueT5Ng/eGnnigwva8qudfMRjaIvFJGs/AIpg5Dvu/iZ
+	 ue3Bn32ajxwcMD1QLNEkm3XOFppJViggH36XRRu4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730009AbfA1P4C (ORCPT
+        id S1730034AbfA1P4G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:56:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41730 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:56:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41840 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729492AbfA1Pz4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:56 -0500
+        id S1730008AbfA1P4C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:56:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A801E2175B;
-        Mon, 28 Jan 2019 15:55:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61E0721783;
+        Mon, 28 Jan 2019 15:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690954;
-        bh=zn7B91I43BVV5kVLt1xRt4yl36bvjprGx0I21eD06hM=;
+        s=default; t=1548690962;
+        bh=FV3Wnx9SgzJYhilsV10qHFxJAHbctUwBC3v7v2Jmzqs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VDLXAeBz3iuDtW/ke5J9k4fTWlw75B2lrybt916HDqvGdJ5lLfOJoONM0xMbvQyqJ
-         l3ORvOeD1TwHpzXABowetaXWEtr8vIv4Llf33Mkbwa3QhrGKf+pSnLxYem7lzAO4C/
-         exLaF0IAsdsJPbEe8EOkOqyGnFdZBCTfZ2wVG0+M=
+        b=LHXPrwWzJikQcYonaqMdactLFouPlqV153RJbiSdTGHbzVREghu3nqBgpxrBGKQND
+         wDTY81kiwGZA9ZOz3h4R5LR6xP0BbuI+JWHtwrhZLfkiisJHAheOaKzT/uN63D7DNM
+         Mx1z5VU8a0FsxYHZERAnIHLn+2YIkg4zA/raP55A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Guoqing Jiang <gqjiang@suse.com>, Shaohua Li <shli@fb.com>,
-        Sasha Levin <sashal@kernel.org>, linux-raid@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 245/304] md: fix raid10 hang issue caused by barrier
-Date:   Mon, 28 Jan 2019 10:42:42 -0500
-Message-Id: <20190128154341.47195-245-sashal@kernel.org>
+Cc:     Konstantin Khorenko <khorenko@virtuozzo.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 247/304] i40e: define proper net_device::neigh_priv_len
+Date:   Mon, 28 Jan 2019 10:42:44 -0500
+Message-Id: <20190128154341.47195-247-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,124 +58,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Guoqing Jiang <gqjiang@suse.com>
+From: Konstantin Khorenko <khorenko@virtuozzo.com>
 
-[ Upstream commit e820d55cb99dd93ac2dc949cf486bb187e5cd70d ]
+[ Upstream commit 31389b53b3e0b535867af9090a5d19ec64768d55 ]
 
-When both regular IO and resync IO happen at the same time,
-and if we also need to split regular. Then we can see tasks
-hang due to barrier.
+Out of bound read reported by KASan.
 
-1. resync thread
-[ 1463.757205] INFO: task md1_resync:5215 blocked for more than 480 seconds.
-[ 1463.757207]       Not tainted 4.19.5-1-default #1
-[ 1463.757209] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[ 1463.757212] md1_resync      D    0  5215      2 0x80000000
-[ 1463.757216] Call Trace:
-[ 1463.757223]  ? __schedule+0x29a/0x880
-[ 1463.757231]  ? raise_barrier+0x8d/0x140 [raid10]
-[ 1463.757236]  schedule+0x78/0x110
-[ 1463.757243]  raise_barrier+0x8d/0x140 [raid10]
-[ 1463.757248]  ? wait_woken+0x80/0x80
-[ 1463.757257]  raid10_sync_request+0x1f6/0x1e30 [raid10]
-[ 1463.757265]  ? _raw_spin_unlock_irq+0x22/0x40
-[ 1463.757284]  ? is_mddev_idle+0x125/0x137 [md_mod]
-[ 1463.757302]  md_do_sync.cold.78+0x404/0x969 [md_mod]
-[ 1463.757311]  ? wait_woken+0x80/0x80
-[ 1463.757336]  ? md_rdev_init+0xb0/0xb0 [md_mod]
-[ 1463.757351]  md_thread+0xe9/0x140 [md_mod]
-[ 1463.757358]  ? _raw_spin_unlock_irqrestore+0x2e/0x60
-[ 1463.757364]  ? __kthread_parkme+0x4c/0x70
-[ 1463.757369]  kthread+0x112/0x130
-[ 1463.757374]  ? kthread_create_worker_on_cpu+0x40/0x40
-[ 1463.757380]  ret_from_fork+0x3a/0x50
+i40iw_net_event() reads unconditionally 16 bytes from
+neigh->primary_key while the memory allocated for
+"neighbour" struct is evaluated in neigh_alloc() as
 
-2. regular IO
-[ 1463.760679] INFO: task kworker/0:8:5367 blocked for more than 480 seconds.
-[ 1463.760683]       Not tainted 4.19.5-1-default #1
-[ 1463.760684] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-[ 1463.760687] kworker/0:8     D    0  5367      2 0x80000000
-[ 1463.760718] Workqueue: md submit_flushes [md_mod]
-[ 1463.760721] Call Trace:
-[ 1463.760731]  ? __schedule+0x29a/0x880
-[ 1463.760741]  ? wait_barrier+0xdd/0x170 [raid10]
-[ 1463.760746]  schedule+0x78/0x110
-[ 1463.760753]  wait_barrier+0xdd/0x170 [raid10]
-[ 1463.760761]  ? wait_woken+0x80/0x80
-[ 1463.760768]  raid10_write_request+0xf2/0x900 [raid10]
-[ 1463.760774]  ? wait_woken+0x80/0x80
-[ 1463.760778]  ? mempool_alloc+0x55/0x160
-[ 1463.760795]  ? md_write_start+0xa9/0x270 [md_mod]
-[ 1463.760801]  ? try_to_wake_up+0x44/0x470
-[ 1463.760810]  raid10_make_request+0xc1/0x120 [raid10]
-[ 1463.760816]  ? wait_woken+0x80/0x80
-[ 1463.760831]  md_handle_request+0x121/0x190 [md_mod]
-[ 1463.760851]  md_make_request+0x78/0x190 [md_mod]
-[ 1463.760860]  generic_make_request+0x1c6/0x470
-[ 1463.760870]  raid10_write_request+0x77a/0x900 [raid10]
-[ 1463.760875]  ? wait_woken+0x80/0x80
-[ 1463.760879]  ? mempool_alloc+0x55/0x160
-[ 1463.760895]  ? md_write_start+0xa9/0x270 [md_mod]
-[ 1463.760904]  raid10_make_request+0xc1/0x120 [raid10]
-[ 1463.760910]  ? wait_woken+0x80/0x80
-[ 1463.760926]  md_handle_request+0x121/0x190 [md_mod]
-[ 1463.760931]  ? _raw_spin_unlock_irq+0x22/0x40
-[ 1463.760936]  ? finish_task_switch+0x74/0x260
-[ 1463.760954]  submit_flushes+0x21/0x40 [md_mod]
+  tbl->entry_size + dev->neigh_priv_len
 
-So resync io is waiting for regular write io to complete to
-decrease nr_pending (conf->barrier++ is called before waiting).
-The regular write io splits another bio after call wait_barrier
-which call nr_pending++, then the splitted bio would continue
-with raid10_write_request -> wait_barrier, so the splitted bio
-has to wait for barrier to be zero, then deadlock happens as
-follows.
+where "dev" is a net_device.
 
-	resync io		regular io
+But the driver does not setup dev->neigh_priv_len and
+we read beyond the neigh entry allocated memory,
+so the patch in the next mail fixes this.
 
-	raise_barrier
-				wait_barrier
-				generic_make_request
-				wait_barrier
-
-To resolve the issue, we need to call allow_barrier to decrease
-nr_pending before generic_make_request since regular IO is not
-issued to underlying devices, and wait_barrier is called again
-to ensure no internal IO happening.
-
-Fixes: fc9977dd069e ("md/raid10: simplify the splitting of requests.")
-Reported-and-tested-by: Siniša Bandin <sinisa@4net.rs>
-Signed-off-by: Guoqing Jiang <gqjiang@suse.com>
-Signed-off-by: Shaohua Li <shli@fb.com>
+Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/md/raid10.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/net/ethernet/intel/i40e/i40e_main.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/md/raid10.c b/drivers/md/raid10.c
-index b98e746e7fc4..12cf8a04e839 100644
---- a/drivers/md/raid10.c
-+++ b/drivers/md/raid10.c
-@@ -1209,7 +1209,9 @@ static void raid10_read_request(struct mddev *mddev, struct bio *bio,
- 		struct bio *split = bio_split(bio, max_sectors,
- 					      gfp, &conf->bio_split);
- 		bio_chain(split, bio);
-+		allow_barrier(conf);
- 		generic_make_request(bio);
-+		wait_barrier(conf);
- 		bio = split;
- 		r10_bio->master_bio = bio;
- 		r10_bio->sectors = max_sectors;
-@@ -1514,7 +1516,9 @@ retry_write:
- 		struct bio *split = bio_split(bio, r10_bio->sectors,
- 					      GFP_NOIO, &conf->bio_split);
- 		bio_chain(split, bio);
-+		allow_barrier(conf);
- 		generic_make_request(bio);
-+		wait_barrier(conf);
- 		bio = split;
- 		r10_bio->master_bio = bio;
- 	}
+diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
+index 419cf3faada6..f97c3d5ab884 100644
+--- a/drivers/net/ethernet/intel/i40e/i40e_main.c
++++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
+@@ -12339,6 +12339,9 @@ static int i40e_config_netdev(struct i40e_vsi *vsi)
+ 	ether_addr_copy(netdev->dev_addr, mac_addr);
+ 	ether_addr_copy(netdev->perm_addr, mac_addr);
+ 
++	/* i40iw_net_event() reads 16 bytes from neigh->primary_key */
++	netdev->neigh_priv_len = sizeof(u32) * 4;
++
+ 	netdev->priv_flags |= IFF_UNICAST_FLT;
+ 	netdev->priv_flags |= IFF_SUPP_NOFCS;
+ 	/* Setup netdev TC information */
 -- 
 2.19.1
 
