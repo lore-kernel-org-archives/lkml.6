@@ -6,48 +6,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC7BC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5FEDC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92FF42147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4C432147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692906;
-	bh=K3xk+tqqjUIM3RHd+3ATXvP+pBDOiBaIXuT+vwF8KIk=;
+	s=default; t=1548692915;
+	bh=uASGG9hm5uKKwOR6CEQJx6+ENtIcjH6f9eRjOn1W8xk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zNtrC/bDb/bpZ+G6OjIA4zmyLBDncRZbwof/XYXf9AQm+Y1Z/HoCltR2cdi/mQqJE
-	 rs0uco8cEF5s9B+KhARl+dSOobyby7QwKq84sDL3/7bOUYvhylbbUN+l3jrrKRrCrV
-	 75aDR6z2gnbke415WMxEuKKDnitOd79kg788QJ3U=
+	b=c8xOgV+tPjb2gcGekt1uUYcW3FwqcbZD/9dcRrgBNRqnLtjW/Y7+pZWMP7jW1lPg2
+	 rkOugQDZx/f9WiIz81vEvA4Ek6TfifGOZpP1xMgKo1sf7+NE37Qvz+Sm3hx57CSjtA
+	 On3zYGM/+jIPjkRCTnYQ32+qvRwEjOZ0wGsqkJlU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390634AbfA1Q2Z (ORCPT
+        id S2390647AbfA1Q2d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:28:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38902 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:28:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38764 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390610AbfA1Q2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:28:14 -0500
+        id S2390595AbfA1Q2L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:28:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A731B20879;
-        Mon, 28 Jan 2019 16:28:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A161E21925;
+        Mon, 28 Jan 2019 16:28:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692893;
-        bh=K3xk+tqqjUIM3RHd+3ATXvP+pBDOiBaIXuT+vwF8KIk=;
+        s=default; t=1548692890;
+        bh=uASGG9hm5uKKwOR6CEQJx6+ENtIcjH6f9eRjOn1W8xk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AQu2/Z1Y46uyTum5K/4cdcYc2+24rhjDr5voBpbh52i8/WMz7RSCLOPjjRiOZmRoB
-         c2yk8+Ygkh7+E/InMhvN9BSKaxlvNbd+WZ2LSPCJhnKhOXOPWcl9FJ23B0KbhcS88E
-         HjoR2e9oX30wrH8eg/nAEgZoXpjGLkhKEXeItHww=
+        b=GzR9xVasjjDSaqeSNpZxHQ6TjFjM+4DfT3snGP0YpLUis+OzdZwDXd84s32/BIk9Z
+         StMBlBqsnEAOSjH4aleqFW/MxNl0VK5AO4fcoUxJwzYBG0o31exwFHcTrHoE8napAo
+         dCu7EaAu7NG5XUffgfeADE4E8JD2G+SdYlFsS+iE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oleg Nesterov <oleg@redhat.com>, Ben Woodard <woodard@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Petr Mladek <pmladek@suse.com>,
+        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 61/61] exec: load_script: don't blindly truncate shebang string
-Date:   Mon, 28 Jan 2019 11:26:23 -0500
-Message-Id: <20190128162623.59854-61-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 59/61] kernel/hung_task.c: break RCU locks based on jiffies
+Date:   Mon, 28 Jan 2019 11:26:21 -0500
+Message-Id: <20190128162623.59854-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -59,54 +63,69 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleg Nesterov <oleg@redhat.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit 8099b047ecc431518b9bb6bdbba3549bbecdc343 ]
+[ Upstream commit 304ae42739b108305f8d7b3eb3c1aec7c2b643a9 ]
 
-load_script() simply truncates bprm->buf and this is very wrong if the
-length of shebang string exceeds BINPRM_BUF_SIZE-2.  This can silently
-truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
-happens to be the valid executable path.
+check_hung_uninterruptible_tasks() is currently calling rcu_lock_break()
+for every 1024 threads.  But check_hung_task() is very slow if printk()
+was called, and is very fast otherwise.
 
-Change load_script() to return ENOEXEC if it can't find '\n' or zero in
-bprm->buf.  Note that '\0' can come from either
-prepare_binprm()->memset() or from kernel_read(), we do not care.
+If many threads within some 1024 threads called printk(), the RCU grace
+period might be extended enough to trigger RCU stall warnings.
+Therefore, calling rcu_lock_break() for every some fixed jiffies will be
+safer.
 
-Link: http://lkml.kernel.org/r/20181112160931.GA28463@redhat.com
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Ben Woodard <woodard@redhat.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Link: http://lkml.kernel.org/r/1544800658-11423-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
+Cc: Petr Mladek <pmladek@suse.com>
+Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>
+Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/binfmt_script.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ kernel/hung_task.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index 5027a3e14922..f62e45df2d38 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -33,10 +33,14 @@ static int load_script(struct linux_binprm *bprm)
- 	fput(bprm->file);
- 	bprm->file = NULL;
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 06db12434d72..eda60beeac7d 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -30,7 +30,7 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
+  * is disabled during the critical section. It also controls the size of
+  * the RCU grace period. So it needs to be upper-bound.
+  */
+-#define HUNG_TASK_BATCHING 1024
++#define HUNG_TASK_LOCK_BREAK (HZ / 10)
  
--	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
--	if ((cp = strchr(bprm->buf, '\n')) == NULL)
--		cp = bprm->buf+BINPRM_BUF_SIZE-1;
-+	for (cp = bprm->buf+2;; cp++) {
-+		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
-+			return -ENOEXEC;
-+		if (!*cp || (*cp == '\n'))
-+			break;
-+	}
- 	*cp = '\0';
-+
- 	while (cp > bprm->buf) {
- 		cp--;
- 		if ((*cp == ' ') || (*cp == '\t'))
+ /*
+  * Zero means infinite timeout - no checking done:
+@@ -158,7 +158,7 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
+ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ {
+ 	int max_count = sysctl_hung_task_check_count;
+-	int batch_count = HUNG_TASK_BATCHING;
++	unsigned long last_break = jiffies;
+ 	struct task_struct *g, *t;
+ 
+ 	/*
+@@ -172,10 +172,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
+ 	do_each_thread(g, t) {
+ 		if (!max_count--)
+ 			goto unlock;
+-		if (!--batch_count) {
+-			batch_count = HUNG_TASK_BATCHING;
++		if (time_after(jiffies, last_break + HUNG_TASK_LOCK_BREAK)) {
+ 			if (!rcu_lock_break(g, t))
+ 				goto unlock;
++			last_break = jiffies;
+ 		}
+ 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
+ 		if (t->state == TASK_UNINTERRUPTIBLE)
 -- 
 2.19.1
 
