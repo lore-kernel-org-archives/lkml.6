@@ -4,51 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3EBC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D35D3C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3220520879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 992DC21741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692642;
-	bh=sN2a7dF4IMmmCbBcQxPgTvBFPsyZE9ik8r6+4L4lcOw=;
+	s=default; t=1548692644;
+	bh=xKk2ajnw615Lc0Vmp02x7t5/cILihl9hycWyoUrHBJI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=oli+MfXeM9GFO3zSkyU/xbiLgY9yv6MPYyaibwgvgGaTy4oB85yW4Z4EevKGOLzuu
-	 vNPpu+yIhnBWHJzm9HFTgh6ns0McoAUg8/QnGYbILrEduKGaRvMOGZOTRwHRG7Zb3e
-	 WHrkHTWHqwY7+IcVhyGlfBsKkYisstRG/F9tP1Jw=
+	b=OV8QhPDowJNAIQf5w3MsJqa4yNZY2xeB+YCCXoqBo0NXRRhM8JhGgdfIe3va+IRRu
+	 bgxG98mJvayo64GEiE8RaAiX7HRgGnjGikX94tjPK8z4Tkfvk4KpOXSxNwArJpdPYv
+	 jLbocbfhiWYInamiGmcgCikPJRiQB7GxgO/lK0vc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389578AbfA1QYA (ORCPT
+        id S2389595AbfA1QYC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:24:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60406 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:24:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389554AbfA1QX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:58 -0500
+        id S2389554AbfA1QYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 805EC20879;
-        Mon, 28 Jan 2019 16:23:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 670272173C;
+        Mon, 28 Jan 2019 16:23:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692637;
-        bh=sN2a7dF4IMmmCbBcQxPgTvBFPsyZE9ik8r6+4L4lcOw=;
+        s=default; t=1548692640;
+        bh=xKk2ajnw615Lc0Vmp02x7t5/cILihl9hycWyoUrHBJI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YyKlrKEIwJiE0hEuezyOKQC/q8kjG5He/e2IgDCGAN70Kdzt09o4j6B4U0d1+30dA
-         y/wufojvxy7q3LFxbKRRzTyxpUlYuKAZMNh0ZaL617Lc3/BdbqnnN5B2AP0uaM5B9H
-         Oib0vrro7tTkcCtmXCxPSYGuaGppsRqw9PxCZt6Q=
+        b=L9zhAkarY1PfXbWgqEYvROXIqPakmAh0blGTPwUYiuicU705Zv5mb93Vrxmj6fOwi
+         msN/+FmAZo56ZC1UzdAYhK2xiwHtse66FTBoyKKLVkdD1XkVowYfnq4g6lPCiinhbb
+         IHMvjPVEypcEiJRZs84oFFX6JT1JWzq1tfxVIC3E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Cheng Lin <cheng.lin130@zte.com.cn>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+Cc:     Oleg Nesterov <oleg@redhat.com>, Ben Woodard <woodard@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 105/107] proc/sysctl: fix return error for proc_doulongvec_minmax()
-Date:   Mon, 28 Jan 2019 11:19:45 -0500
-Message-Id: <20190128161947.57405-105-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 107/107] exec: load_script: don't blindly truncate shebang string
+Date:   Mon, 28 Jan 2019 11:19:47 -0500
+Message-Id: <20190128161947.57405-107-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -60,104 +60,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cheng Lin <cheng.lin130@zte.com.cn>
+From: Oleg Nesterov <oleg@redhat.com>
 
-[ Upstream commit 09be178400829dddc1189b50a7888495dd26aa84 ]
+[ Upstream commit 8099b047ecc431518b9bb6bdbba3549bbecdc343 ]
 
-If the number of input parameters is less than the total parameters, an
-EINVAL error will be returned.
+load_script() simply truncates bprm->buf and this is very wrong if the
+length of shebang string exceeds BINPRM_BUF_SIZE-2.  This can silently
+truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
+happens to be the valid executable path.
 
-For example, we use proc_doulongvec_minmax to pass up to two parameters
-with kern_table:
+Change load_script() to return ENOEXEC if it can't find '\n' or zero in
+bprm->buf.  Note that '\0' can come from either
+prepare_binprm()->memset() or from kernel_read(), we do not care.
 
-{
-	.procname       = "monitor_signals",
-	.data           = &monitor_sigs,
-	.maxlen         = 2*sizeof(unsigned long),
-	.mode           = 0644,
-	.proc_handler   = proc_doulongvec_minmax,
-},
-
-Reproduce:
-
-When passing two parameters, it's work normal.  But passing only one
-parameter, an error "Invalid argument"(EINVAL) is returned.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  -bash: echo: write error: Invalid argument
-  [root@cl150 ~]# echo $?
-  1
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-The following is the result after apply this patch.  No error is
-returned when the number of input parameters is less than the total
-parameters.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# echo $?
-  0
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-There are three processing functions dealing with digital parameters,
-__do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
-
-This patch deals with __do_proc_doulongvec_minmax, just as
-__do_proc_dointvec does, adding a check for parameters 'left'.  In
-__do_proc_douintvec, its code implementation explicitly does not support
-multiple inputs.
-
-static int __do_proc_douintvec(...){
-         ...
-         /*
-          * Arrays are not supported, keep this simple. *Do not* add
-          * support for them.
-          */
-         if (vleft != 1) {
-                 *lenp = 0;
-                 return -EINVAL;
-         }
-         ...
-}
-
-So, just __do_proc_doulongvec_minmax has the problem.  And most use of
-proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
-parameter.
-
-Link: http://lkml.kernel.org/r/1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn
-Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Link: http://lkml.kernel.org/r/20181112160931.GA28463@redhat.com
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Ben Woodard <woodard@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sysctl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/binfmt_script.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index 23f658d311c0..93c7b02279b9 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2503,6 +2503,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 			bool neg;
+diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+index afdf4e3cafc2..634bdbb23851 100644
+--- a/fs/binfmt_script.c
++++ b/fs/binfmt_script.c
+@@ -43,10 +43,14 @@ static int load_script(struct linux_binprm *bprm)
+ 	fput(bprm->file);
+ 	bprm->file = NULL;
  
- 			left -= proc_skip_spaces(&p);
-+			if (!left)
-+				break;
- 
- 			err = proc_get_long(&p, &left, &val, &neg,
- 					     proc_wspace_sep,
+-	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
+-	if ((cp = strchr(bprm->buf, '\n')) == NULL)
+-		cp = bprm->buf+BINPRM_BUF_SIZE-1;
++	for (cp = bprm->buf+2;; cp++) {
++		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
++			return -ENOEXEC;
++		if (!*cp || (*cp == '\n'))
++			break;
++	}
+ 	*cp = '\0';
++
+ 	while (cp > bprm->buf) {
+ 		cp--;
+ 		if ((*cp == ' ') || (*cp == '\t'))
 -- 
 2.19.1
 
