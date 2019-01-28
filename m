@@ -4,50 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92D5AC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:44:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81935C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:44:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61E6C2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:44:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 513002084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:44:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693858;
-	bh=docGBKSUYjYs1fqytRBJRL043K9NsNIgwjIYItyrVOo=;
+	s=default; t=1548693867;
+	bh=5IVPJ2181u7WN/+savm7OD2JXwg7cpo1YXSi4AOzU5k=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tWGbniMVnRWbTJP8XdEooxA2DffOrxw0tMi6DEky2Oaw5jUwAGqeBuGqcWEHOg9Uc
-	 FR1bpNMmuWPiVX67G1jhDKGVCDs3HKi0ucYr+c1M0GeBh71l/g46B6LS420c3hUekc
-	 BU0i2osgTJgVSkbdzRkmWebIFQmMB0Sxi1Yksn+Y=
+	b=2u+5tSgHe1uxeLntLGvFJS1jdY78PgHQB2oUZoEyH5msVXY31MoyWLDdq+6x+pROo
+	 Pv/Nzr4yHveOqBxaqZtvlUldPSDmtx65tpWIrd5Ah54Yhl00HZT7uJpZ2XcmxTcm4R
+	 Po7n8QuHN6wa1XArvjoy4R9HrVPs7otd0riBlwng=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390026AbfA1QoQ (ORCPT
+        id S2389358AbfA1QXE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:44:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59340 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:23:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59218 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389371AbfA1QXJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:09 -0500
+        id S1730265AbfA1QXC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:23:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B1AEF2147A;
-        Mon, 28 Jan 2019 16:23:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D8EA721738;
+        Mon, 28 Jan 2019 16:22:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692588;
-        bh=docGBKSUYjYs1fqytRBJRL043K9NsNIgwjIYItyrVOo=;
+        s=default; t=1548692581;
+        bh=5IVPJ2181u7WN/+savm7OD2JXwg7cpo1YXSi4AOzU5k=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TNaqK552+9RkZSbKB9GUercQwttH+8o6+c0wUsdSst7QpkUgzgDfE5dH3uO0nvZdY
-         TPII/dzrvIqfYNc8MtCKX2xI0Q/GzVbLHc2vU4cU7V7YSAD7qsHvC2pvmUL958lHvT
-         BD02/2fIJQjPhr28sclde/s0a1zA2FIdQNndt5iA=
+        b=2SUKa6vbsK/KN+qWjS9/XTodpDVyLOMucC5wGAmIPFlz48f4n+4YbWSKXw5R9USzg
+         BEE9OCr6qOOB6mshDc9fsmeUpJZiMa6Kmr3VNfy6u/D6s6f2qNqT0pIlNzq50yEPWu
+         qUybjlnEumRvI169yIOF2z5Jde+JFzA7/vD/tm3I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
-        linux-amlogic@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 080/107] pinctrl: meson: meson8: fix the GPIO function for the GPIOAO pins
-Date:   Mon, 28 Jan 2019 11:19:20 -0500
-Message-Id: <20190128161947.57405-80-sashal@kernel.org>
+Cc:     Peter Rosin <peda@axentia.se>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Fabian Frederick <ffrederick@users.sourceforge.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Geoff Levand <geoff@infradead.org>,
+        James Simmons <jsimmons@users.sf.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 076/107] fbdev: fbmem: behave better with small rotated displays and many CPUs
+Date:   Mon, 28 Jan 2019 11:19:16 -0500
+Message-Id: <20190128161947.57405-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -59,49 +63,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Peter Rosin <peda@axentia.se>
 
-[ Upstream commit 42f9b48cc5402be11d2364275eb18c257d2a79e8 ]
+[ Upstream commit f75df8d4b4fabfad7e3cba2debfad12741c6fde7 ]
 
-The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
-only belong to the pin controller in the AO domain. With the current
-definition these pins cannot be referred to in .dts files as group
-(which is possible on GXBB and GXL for example).
+Blitting an image with "negative" offsets is not working since there
+is no clipping. It hopefully just crashes. For the bootup logo, there
+is protection so that blitting does not happen as the image is drawn
+further and further to the right (ROTATE_UR) or further and further
+down (ROTATE_CW). There is however no protection when drawing in the
+opposite directions (ROTATE_UD and ROTATE_CCW).
 
-Add a separate "gpio_aobus" function to fix the mapping between the pin
-controller and the GPIO pins in the AO domain. This is similar to how
-the GXBB and GXL drivers implement this functionality.
+Add back this protection.
 
-Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+The regression is 20-odd years old but the mindless warning-killing
+mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
+positive test on unsigned values") is also to blame, methinks.
+
+Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Fabian Frederick <ffrederick@users.sourceforge.net>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+cc: Geoff Levand <geoff@infradead.org>
+Cc: James Simmons <jsimmons@users.sf.net>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/meson/pinctrl-meson8.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/video/fbdev/core/fbmem.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/meson/pinctrl-meson8.c b/drivers/pinctrl/meson/pinctrl-meson8.c
-index 07f1cb21c1b8..0de7fa414beb 100644
---- a/drivers/pinctrl/meson/pinctrl-meson8.c
-+++ b/drivers/pinctrl/meson/pinctrl-meson8.c
-@@ -736,7 +736,9 @@ static const char * const gpio_groups[] = {
- 	"BOOT_5", "BOOT_6", "BOOT_7", "BOOT_8", "BOOT_9",
- 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
- 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
-+};
- 
-+static const char * const gpio_aobus_groups[] = {
- 	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
- 	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
- 	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
-@@ -908,6 +910,7 @@ static struct meson_pmx_func meson8_cbus_functions[] = {
- };
- 
- static struct meson_pmx_func meson8_aobus_functions[] = {
-+	FUNCTION(gpio_aobus),
- 	FUNCTION(uart_ao),
- 	FUNCTION(remote),
- 	FUNCTION(i2c_slave_ao),
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 74273bc7ca9a..a1d93151c059 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -433,7 +433,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dx += image->width + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_UD) {
+-		for (x = 0; x < num; x++) {
++		u32 dx = image->dx;
++
++		for (x = 0; x < num && image->dx <= dx; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dx -= image->width + 8;
+ 		}
+@@ -445,7 +447,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dy += image->height + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_CCW) {
+-		for (x = 0; x < num; x++) {
++		u32 dy = image->dy;
++
++		for (x = 0; x < num && image->dy <= dy; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dy -= image->height + 8;
+ 		}
 -- 
 2.19.1
 
