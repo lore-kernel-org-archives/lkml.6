@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E560FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC043C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B16B52177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DC052147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691880;
-	bh=0ieo5Dib0i5Gf3gMQ2kP4sQ1hKmfL8+L68c2DTTPqlk=;
+	s=default; t=1548691884;
+	bh=uw0z4E7PVxrvOp0CHfm/JYgC63VqKPLLD3oM5p4QVAs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ti8zhiuTKklUIU1ZNKInKJcj9DUnyTF8gTtt/v9afw+IzC7SagfqHeGtuIxgQDNEC
-	 Z82bTZ4nAnbzCst+YM8Q1c623aggMdb5aiJZ3Hyuc3kcXB3nS1DFGXdiz7Ii7fgwUV
-	 FNCiXUcCsj8vPN/mSOrSj/spc0J1JtlSBL69qovU=
+	b=sLFp6Q6D5OhsJ8XMpA6/Vstulw1FYgTxMGd4ANTWiJ2/7MJoDdLxYCDlmY5F5JP9m
+	 nlbpWnNF218Eo3XGB3MEaiF4xUt1F8ZcQauMgCjtOYKfxydhn+aMemtquEcFyQ6Uw0
+	 xTXiutJe4MDdouHTzbBN7uW51smwjj14bb89lP94=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732541AbfA1QLT (ORCPT
+        id S1732954AbfA1QLW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:11:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38182 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:11:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732523AbfA1QLS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:11:18 -0500
+        id S1732946AbfA1QLU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:11:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 319DD2175B;
-        Mon, 28 Jan 2019 16:11:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E640F21848;
+        Mon, 28 Jan 2019 16:11:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691877;
-        bh=0ieo5Dib0i5Gf3gMQ2kP4sQ1hKmfL8+L68c2DTTPqlk=;
+        s=default; t=1548691879;
+        bh=uw0z4E7PVxrvOp0CHfm/JYgC63VqKPLLD3oM5p4QVAs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cwdL14RKXTv8i7SzGu63NBEF7Gwikeqi26pj30Kcvdbg+pM9usPfwro5m52Umr6+s
-         0XLRv8T6CJFBQs3L6CjZVI/CszNDKLfcQvZx5tf4FKq9ow0lRY77myJOX1utRG5Bm6
-         z+GATysyHbBsbJaSTQmvbhICOaK98jSUoFCs4nv8=
+        b=v8WBKy8JS8lTc1sjadinweOqCX+KQOsOEd3PAQBLkL+2ScaDLxbIZA8NPvkeCbgSG
+         4YlVPwSeOopeZFVnjcoE6La/S/oy0vj1S1xniL/+xAGTfajG37hl5HVZv7C9Q+09Z/
+         imb2bT6qHC/HDmAj4xlgW03m9EeRMdA1CaEkOXD0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        kgdb-bugreport@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 245/258] kdb: Don't back trace on a cpu that didn't round up
-Date:   Mon, 28 Jan 2019 10:59:11 -0500
-Message-Id: <20190128155924.51521-245-sashal@kernel.org>
+Cc:     Richard Zhu <hongxing.zhu@nxp.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 246/258] PCI: imx: Enable MSI from downstream components
+Date:   Mon, 28 Jan 2019 10:59:12 -0500
+Message-Id: <20190128155924.51521-246-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,88 +58,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Richard Zhu <hongxing.zhu@nxp.com>
 
-[ Upstream commit 162bc7f5afd75b72acbe3c5f3488ef7e64a3fe36 ]
+[ Upstream commit 75cb8d20c112aba70f23d98e3f8d0a38ace16006 ]
 
-If you have a CPU that fails to round up and then run 'btc' you'll end
-up crashing in kdb becaue we dereferenced NULL.  Let's add a check.
-It's wise to also set the task to NULL when leaving the debugger so
-that if we fail to round up on a later entry into the debugger we
-won't backtrace a stale task.
+The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2) controls
+whether a Function can request service using MSI.
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+i.MX6 Root Ports implement the MSI Capability and may use MSI to request
+service for events like PME, hotplug, AER, etc.  In addition, on i.MX6, the
+MSI Enable bit controls delivery of MSI interrupts from components below
+the Root Port.
+
+Prior to f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of
+CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also enabled
+CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports, it set the MSI
+Enable bit so it could use PME, hotplug, AER, etc.  As a side effect, that
+also enabled delivery of MSI interrupts from downstream components.
+
+The imx6q-pcie driver itself does not depend on portdrv, so set MSI Enable
+in imx6q-pcie so MSI from downstream components works even if nobody uses
+MSI for the Root Port events.
+
+Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_PCIEPORTBUS")
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+Tested-by: Trent Piepho <tpiepho@impinj.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/debug/debug_core.c       |  4 ++++
- kernel/debug/kdb/kdb_bt.c       | 11 ++++++++++-
- kernel/debug/kdb/kdb_debugger.c |  7 -------
- 3 files changed, 14 insertions(+), 8 deletions(-)
+ drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-index 65c0f1363788..94aa9ae0007a 100644
---- a/kernel/debug/debug_core.c
-+++ b/kernel/debug/debug_core.c
-@@ -535,6 +535,8 @@ static int kgdb_cpu_enter(struct kgdb_state *ks, struct pt_regs *regs,
- 				arch_kgdb_ops.correct_hw_break();
- 			if (trace_on)
- 				tracing_on();
-+			kgdb_info[cpu].debuggerinfo = NULL;
-+			kgdb_info[cpu].task = NULL;
- 			kgdb_info[cpu].exception_state &=
- 				~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
- 			kgdb_info[cpu].enter_kgdb--;
-@@ -667,6 +669,8 @@ static int kgdb_cpu_enter(struct kgdb_state *ks, struct pt_regs *regs,
- 	if (trace_on)
- 		tracing_on();
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 975050a69494..3826b444298c 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -66,6 +66,7 @@ struct imx6_pcie {
+ #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
  
-+	kgdb_info[cpu].debuggerinfo = NULL;
-+	kgdb_info[cpu].task = NULL;
- 	kgdb_info[cpu].exception_state &=
- 		~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
- 	kgdb_info[cpu].enter_kgdb--;
-diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
-index 7921ae4fca8d..7e2379aa0a1e 100644
---- a/kernel/debug/kdb/kdb_bt.c
-+++ b/kernel/debug/kdb/kdb_bt.c
-@@ -186,7 +186,16 @@ kdb_bt(int argc, const char **argv)
- 		kdb_printf("btc: cpu status: ");
- 		kdb_parse("cpu\n");
- 		for_each_online_cpu(cpu) {
--			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
-+			void *kdb_tsk = KDB_TSK(cpu);
+ /* PCIe Root Complex registers (memory-mapped) */
++#define PCIE_RC_IMX6_MSI_CAP			0x50
+ #define PCIE_RC_LCR				0x7c
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+@@ -682,6 +683,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 	struct resource *dbi_base;
+ 	struct device_node *node = dev->of_node;
+ 	int ret;
++	u16 val;
+ 
+ 	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+ 	if (!imx6_pcie)
+@@ -816,6 +818,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	if (pci_msi_enabled()) {
++		val = dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
++					PCI_MSI_FLAGS);
++		val |= PCI_MSI_FLAGS_ENABLE;
++		dw_pcie_writew_dbi(pci, PCIE_RC_IMX6_MSI_CAP + PCI_MSI_FLAGS,
++				   val);
++	}
 +
-+			/* If a CPU failed to round up we could be here */
-+			if (!kdb_tsk) {
-+				kdb_printf("WARNING: no task for cpu %ld\n",
-+					   cpu);
-+				continue;
-+			}
-+
-+			sprintf(buf, "btt 0x%px\n", kdb_tsk);
- 			kdb_parse(buf);
- 			touch_nmi_watchdog();
- 		}
-diff --git a/kernel/debug/kdb/kdb_debugger.c b/kernel/debug/kdb/kdb_debugger.c
-index 15e1a7af5dd0..53a0df6e4d92 100644
---- a/kernel/debug/kdb/kdb_debugger.c
-+++ b/kernel/debug/kdb/kdb_debugger.c
-@@ -118,13 +118,6 @@ int kdb_stub(struct kgdb_state *ks)
- 	kdb_bp_remove();
- 	KDB_STATE_CLEAR(DOING_SS);
- 	KDB_STATE_SET(PAGER);
--	/* zero out any offline cpu data */
--	for_each_present_cpu(i) {
--		if (!cpu_online(i)) {
--			kgdb_info[i].debuggerinfo = NULL;
--			kgdb_info[i].task = NULL;
--		}
--	}
- 	if (ks->err_code == DIE_OOPS || reason == KDB_REASON_OOPS) {
- 		ks->pass_exception = 1;
- 		KDB_FLAG_SET(CATASTROPHIC);
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
