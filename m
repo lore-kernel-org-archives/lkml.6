@@ -2,118 +2,86 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7512BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:34:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC07C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:34:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45EA421741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:34:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nK+LCP7E"
+	by mail.kernel.org (Postfix) with ESMTP id 4A6EE21741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:34:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548704067;
+	bh=9iFgeScsgv8VHJu+YuxBHTUp+lUwz1ZlURXd8z9qvi0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=vXBnZB8Bdt2GTF9Wcems+eICFNhGiqF08gosW+lcgLWVdZM8l593Iwakkgu/HmCN8
+	 wWyD+GdiY6uBrSnJrYZbPMJVO+ynY9E4ZOJocO6fl71GGGk2rTHVEACWoy2k09qivc
+	 89Ud3bFuJxJpGDo+7LGHnC+lDdSRBxCqe0j3fH7U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727962AbfA1TeG (ORCPT
+        id S1728084AbfA1TeZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:34:06 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:41105 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726948AbfA1TeG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:34:06 -0500
-Received: by mail-yb1-f196.google.com with SMTP id n6so1774171ybg.8
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:34:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9P0JlK7TAlLH5SSh3b5O7nFYcPhob3t67r27vQgFQk0=;
-        b=nK+LCP7EsHUUkhSkTTSS0Cw2cLlfKSxhaWLW8bPu5pQAHdw69mtfrjEVH3Xg5pAubF
-         IINhv0geoN4pWF0NscdY+BrMSdRkBW2/IzaEsaDr0H65lVtG/cG8kCP/qi0bTbiqOFCy
-         aMsA3BoMjazhmuBxpwWkbTtrVKosJBrYwkFXRh6LjqzTrwcb6duKSAf/WrMk3b6AoUjd
-         GzirvRFTjF6v24oEbOpjIY0/iicu45/tNgiwXvaW6B7L4yDfONymrZdpUTEqX0yTdy22
-         9zh9bfj6M2kfE2vXgRc9VMngI52I4TS7WCFtTHNyIxv9Pl9aPZA9bygATQXDuMjzcSqJ
-         oxTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9P0JlK7TAlLH5SSh3b5O7nFYcPhob3t67r27vQgFQk0=;
-        b=X0s0yjJdu9LYABTJvLwxtnualgHmyrMlyeXqBDrawKhDVni77WQH/4fSoEQAsx9Ky9
-         Q02Si58OP7KGiFphr583VNkovdSxgW+7ARfLFJwhLLojzcDNvCw3ey95XS2g4rTn9U+E
-         EjAErBM3D6qNrVVvxwrV5lHHHnabCoBjYQLyfA/peTg8zodwfJkJEFX1fM8Wz5ltyMks
-         o173mPOPPwrTr0rowOOJADpBPDUAU5c5IFWOSRm1JxOBGj0YTNbAAjN8cs1/qM3dnrVX
-         r0BCej3Cdzf7VD4CNvThoTBcvPWuaO8swiTbv0zHfKkSoRtxQ0Fbk1DnVStF3H9OKP5x
-         ARLA==
-X-Gm-Message-State: AJcUukccKwRRP8ZEbfpETZjXMpPJAF0Q43yan1glL7tta2cH3iCL4lD6
-        JAeHqI8l0ADsrUDgv6HetUzdQ3S3buo98K2TKGA2jA==
-X-Google-Smtp-Source: ALg8bN4kfXZnW1H9jeqOLgZ7fZuZZ6hAjNqwuUF2ZX0XdbRBB1TMLMiR+LSPOI40WpcBu+lWG7kMyZhdJcdjA7Gnt98=
-X-Received: by 2002:a25:1006:: with SMTP id 6mr21289231ybq.151.1548704044591;
- Mon, 28 Jan 2019 11:34:04 -0800 (PST)
+        Mon, 28 Jan 2019 14:34:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41278 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726948AbfA1TeY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 14:34:24 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF8DF2171F;
+        Mon, 28 Jan 2019 19:34:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548704064;
+        bh=9iFgeScsgv8VHJu+YuxBHTUp+lUwz1ZlURXd8z9qvi0=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=H4sG9i+7iasUFt5w0dSMm52KDS5M4TwwKSn9IpOHnhXtcE4Ky3O4xhkWL+v7AJXl8
+         X49jOuWfik6iFWJsUTaUiC7Y3S3ihAZ4cCtvhJWQ7nNM7TG6wAQiL2Uy3YuElD66kP
+         43HcDm0vvCcRECF2f/kTrF+1hd2u1N4VvkS+k2O0=
+Date:   Mon, 28 Jan 2019 14:34:22 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     "Rantala, Tommi T. (Nokia - FI/Espoo)" <tommi.t.rantala@nokia.com>
+Cc:     "stable@vger.kernel.org" <stable@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "milian.wolff@kdab.com" <milian.wolff@kdab.com>,
+        "jpmv27@aim.com" <jpmv27@aim.com>
+Subject: Re: 4.14 perf unwind fixes
+Message-ID: <20190128193422.GJ3973@sasha-vm>
+References: <e975fbaa1bf8449038e422d7380abc4de4a36a8d.camel@nokia.com>
 MIME-Version: 1.0
-References: <20190126095131.4756-1-enric.balletbo@collabora.com> <20190126095131.4756-9-enric.balletbo@collabora.com>
-In-Reply-To: <20190126095131.4756-9-enric.balletbo@collabora.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Mon, 28 Jan 2019 11:33:53 -0800
-Message-ID: <CABXOdTdNGds4MbEY3hEv4zaR0NecMjJrAKhxwYuZxJewc4yC7A@mail.gmail.com>
-Subject: Re: [PATCH v2 08/12] platform/chrome: cros_ec_proto: switch to SPDX identifier
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <e975fbaa1bf8449038e422d7380abc4de4a36a8d.camel@nokia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 1:51 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
+On Mon, Jan 28, 2019 at 04:57:04PM +0000, Rantala, Tommi T. (Nokia - FI/Espoo) wrote:
+>Hi Greg,
 >
-> Adopt the SPDX license identifier headers to ease license compliance
-> management.
+>Can you please pick these two upstream patches to 4.14?
+>They fix broken perf unwinding for me.
 >
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+>
+>commit 3d20c6246690219881786de10d2dda93f616d0ac
+>Author: Martin Vuille <
+>jpmv27@aim.com>
+>Date:   Sun Feb 11 16:24:20 2018 -0500
+>
+>    perf unwind: Unwind with libdw doesn't take symfs into account
+>
+>
+>commit 1fe627da30331024f453faef04d500079b901107
+>Author: Milian Wolff <
+>milian.wolff@kdab.com>
+>Date:   Mon Oct 29 15:16:44 2018 +0100
+>
+>    perf unwind: Take pgoff into account when reporting elf to libdwfl
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
+I've queued these for 4.14 and older. Thank you.
 
-> ---
->
-> Changes in v2: None
->
->  drivers/platform/chrome/cros_ec_proto.c | 19 ++++---------------
->  1 file changed, 4 insertions(+), 15 deletions(-)
->
-> diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
-> index d2ba662fc713..d259ff264e9d 100644
-> --- a/drivers/platform/chrome/cros_ec_proto.c
-> +++ b/drivers/platform/chrome/cros_ec_proto.c
-> @@ -1,18 +1,7 @@
-> -/*
-> - * ChromeOS EC communication protocol helper functions
-> - *
-> - * Copyright (C) 2015 Google, Inc
-> - *
-> - * This software is licensed under the terms of the GNU General Public
-> - * License version 2, as published by the Free Software Foundation, and
-> - * may be copied, distributed, and modified under those terms.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - *
-> - */
-> +// SPDX-License-Identifier: GPL-2.0
-> +// ChromeOS EC communication protocol helper functions
-> +//
-> +// Copyright (C) 2015 Google, Inc
->
->  #include <linux/mfd/cros_ec.h>
->  #include <linux/delay.h>
-> --
-> 2.20.1
->
+--
+Thanks,
+Sasha
