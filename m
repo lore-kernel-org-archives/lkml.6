@@ -2,151 +2,196 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2E2C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E17C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85437207E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B4586207E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ihD3ewVr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbfA1I7e (ORCPT
+        id S1726980AbfA1I7h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:59:34 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:35222 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726919AbfA1I7a (ORCPT
+        Mon, 28 Jan 2019 03:59:37 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36730 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726952AbfA1I7e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:59:30 -0500
-Received: by mail-ua1-f67.google.com with SMTP id d2so5337047ual.2;
-        Mon, 28 Jan 2019 00:59:29 -0800 (PST)
+        Mon, 28 Jan 2019 03:59:34 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so6957476pgm.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:59:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=4/D2cAWnRzrJOJe1TanX2r7wfgl9u+SIbHxZ8xAtowY=;
+        b=ihD3ewVrAikUTwMTeUJGAJABsNnidNEbAc7zA4fsIFN3XpwNpVxlQob/e96ewu93Dr
+         27vOgzZ5846K7inWW+KCkLeBeaDVaGxoMElWx/nvJNMnP/N61ZG1wlFzIlKw7eQHSrHV
+         D/kbi2et4yXrEd6hpkP35BJJBBB+SizATlHWw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=MWXadM6v1/BrjCPM0KXC31G3yYpSsxrtCBcUvwcG1D8=;
-        b=cgsMB8MkQdWYMOWCG2xGDn9jjLp7igmdrlEmfJ6Ze0d5J7ZP9Eb9RtmS/CWuCrs8dp
-         JvwqiivF3thFSJkzbraWi0wlu2ibmv1ZE5jnNr1c4292KxXhBz4uyY96GYLhmx5OkBPF
-         RjmFdwcsK0tq6+jkK7YDdPLRhukhGKJCtDETJDik70CW4gcj42WJ4wO1Oiq6+NEWZAFs
-         bD3hWT0Mt+r7R7nzrzLlvhaenma4DGGQsso6clOfXJwL4ZkavV7t0sFVMUhFT56nRuqD
-         kZpcH47wi3+ocUzgNdqQEDaD8NEH5ywyDCaY6hY4/J7ysZXcJhn9EeB0GGRMs1RDQLsW
-         GOeg==
-X-Gm-Message-State: AJcUukfexcyxJrxkRR8CTGGPxPUjWGzDPLnlo1ZELk03IU+7uqynUx1g
-        PrwP3IZDFnRLWcb70vzsrLC4EIOKswifeLp95OE=
-X-Google-Smtp-Source: AHgI3IZCtxnlqEb43WDzFI4/ibLeSYAnaqLRjvAhFCOKh3TgiAmEZ4Zzoj0/nmPt+UCqpb2z7ffEYeRjE4eQi+VGVdo=
-X-Received: by 2002:a9f:2726:: with SMTP id a35mr4943200uaa.75.1548665968589;
- Mon, 28 Jan 2019 00:59:28 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=4/D2cAWnRzrJOJe1TanX2r7wfgl9u+SIbHxZ8xAtowY=;
+        b=kbui+rn6pp8N2QfruHgx98KPS6ltuyjZO7ACbC4r8e8vJAXj5D7TS/zJFMr2qJEapS
+         kinQ8zz0uLSMEIc3Ph3UvrA+3jpe37kWSKDLiSKov+vxSBWeSCN5vySRiLnD//0A49Rh
+         XmAgKCOV+5i8Aw22J1phzRHREyHR6+GY2+mbBRHydP5HQYDfRs88QeMsZIrFaUodF9OV
+         npjzb7C+0y+lc+Pbf70O9cAoxzrn2JDLYMIzRIMrKBzML1KBq9y7tPVqkfUxgBUgOQwW
+         9LuvPtHxHhjirZB/WYjr74TW89X5/ZXtfi6D3JPKO8zUG5V6h9BFADOQHJBZDasWb6QX
+         hkhA==
+X-Gm-Message-State: AJcUukfYKuCkbxSQc5vVLD0P50Z9n6jn9rGaD85HeTLOEn6nO7y7+sEX
+        CRhEAg0KcunRHiAiGtwp9un8cg==
+X-Google-Smtp-Source: ALg8bN6GomtSvg1HWUXrVFlC3Hci0yikM80dh/Ew8uDS1Jprxz1KlfmyABgTvhfLheNkQ5MEv6zMAw==
+X-Received: by 2002:a62:870e:: with SMTP id i14mr21554533pfe.41.1548665973235;
+        Mon, 28 Jan 2019 00:59:33 -0800 (PST)
+Received: from localhost.localdomain ([115.97.179.75])
+        by smtp.gmail.com with ESMTPSA id o189sm60746245pfg.117.2019.01.28.00.59.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 00:59:32 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, devicetree@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [DO NOT MERGE] [PATCH v8 5/5] arm64: dts: allwinner: bananapi-m64: Add HDF5640 camera module
+Date:   Mon, 28 Jan 2019 14:28:47 +0530
+Message-Id: <20190128085847.7217-6-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+In-Reply-To: <20190128085847.7217-1-jagan@amarulasolutions.com>
+References: <20190128085847.7217-1-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-References: <20181211202406.27721-1-robh@kernel.org> <CAMuHMdUZHi87Dv=m4USocfQ60s6_uHmny5DvCVm+hZ98+ROvdA@mail.gmail.com>
- <CAL_JsqJKhOmp+UKS=B-_8txHhRbqheG3GuogcZpXJ+aYcO5Oqg@mail.gmail.com>
-In-Reply-To: <CAL_JsqJKhOmp+UKS=B-_8txHhRbqheG3GuogcZpXJ+aYcO5Oqg@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 28 Jan 2019 09:59:16 +0100
-Message-ID: <CAMuHMdU3Om44R3wB69jeyHFER8syGDeJQsYd-pXqEKHBMZW2ow@mail.gmail.com>
-Subject: Re: [PATCH v4] kbuild: Add support for DT binding schema checks
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <grant.likely@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>, arm-soc <arm@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Bananapi M64 comes with an optional sensor based on the ov5640,
+add support for it with below pin information.
 
-On Sun, Jan 27, 2019 at 4:00 AM Rob Herring <robh@kernel.org> wrote:
-> On Wed, Jan 23, 2019 at 9:33 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Tue, Dec 11, 2018 at 9:24 PM Rob Herring <robh@kernel.org> wrote:
-> > > This adds the build infrastructure for checking DT binding schema
-> > > documents and validating dts files using the binding schema.
-> > >
-> > > Check DT binding schema documents:
-> > > make dt_binding_check
-> > >
-> > > Build dts files and check using DT binding schema:
-> > > make dtbs_check
-> > >
-> > > Optionally, DT_SCHEMA_FILES can be passed in with a schema file(s) to
-> > > use for validation. This makes it easier to find and fix errors
-> > > generated by a specific schema.
-> > >
-> > > Currently, the validation targets are separate from a normal build to
-> > > avoid a hard dependency on the external DT schema project and because
-> > > there are lots of warnings generated.
-> >
-> > Thanks, I'm giving this a try, and get errors like:
-> >
-> >       DTC     arch/arm/boot/dts/emev2-kzm9d.dt.yaml
-> >     FATAL ERROR: No markers present in property 'cpu0' value
-> >
-> > and
-> >
-> >       DTC     arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dt.yaml
-> >     FATAL ERROR: No markers present in property 'audio_clk_a' value
-> >
-> > Do you have a clue?
->
-> That's really strange because those aren't even properties. Are other
-> dts files okay? This is the in tree dtc?
->
-> The only time you should be missing markers is if you did a dts -> dts
-> -> dt.yaml.
+- PE13, PE12 via i2c-gpio bitbanging
+- CLK_CSI_MCLK as external clock
+- PE1 as external clock pin muxing
+- DLDO3 as AVDD supply
+- ALDO1 as DOVDD supply
+- ELDO3 as DVDD supply
+- PE16 gpio for reset pin
+- PE17 gpio for powerdown pin
 
-Found it: make dtbs_check doesn't play well with my local change to
-add symbols for DT overlays:
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+---
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 65 +++++++++++++++++++
+ 1 file changed, 65 insertions(+)
 
-    --- a/scripts/Makefile.lib
-    +++ b/scripts/Makefile.lib
-    @@ -285,6 +285,10 @@ cmd_dt_S_dtb=
-             \
-     $(obj)/%.dtb.S: $(obj)/%.dtb FORCE
-            $(call if_changed,dt_S_dtb)
+diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+index 9d0afd7d50ec..c99f66271287 100644
+--- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
++++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+@@ -60,6 +60,41 @@
+ 		stdout-path = "serial0:115200n8";
+ 	};
+ 
++	i2c-csi {
++		compatible = "i2c-gpio";
++		sda-gpios = <&pio 4 13 GPIO_ACTIVE_HIGH>; /* CSI0-SDA: PE13 */
++		scl-gpios = <&pio 4 12 GPIO_ACTIVE_HIGH>; /* CSI0-SCK: PE12 */
++		i2c-gpio,delay-us = <5>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		ov5640: camera@3c {
++			compatible = "ovti,ov5640";
++			reg = <0x3c>;
++			pinctrl-names = "default";
++			pinctrl-0 = <&csi_mclk_pin>;
++			clocks = <&ccu CLK_CSI_MCLK>;
++			clock-names = "xclk";
++
++			AVDD-supply = <&reg_dldo3>;
++			DOVDD-supply = <&reg_aldo1>;
++			DVDD-supply = <&reg_eldo3>;
++			reset-gpios = <&pio 4 16 GPIO_ACTIVE_LOW>; /* CSI0-RST: PE16 */
++			powerdown-gpios = <&pio 4 17 GPIO_ACTIVE_HIGH>; /* CSI0-PWDN: PE17 */
++
++			port {
++				ov5640_ep: endpoint {
++					remote-endpoint = <&csi_ep>;
++					bus-width = <8>;
++					hsync-active = <1>; /* Active high */
++					vsync-active = <0>; /* Active low */
++					data-active = <1>;  /* Active high */
++					pclk-sample = <1>;  /* Rising */
++				};
++			};
++		};
++	};
++
+ 	hdmi-connector {
+ 		compatible = "hdmi-connector";
+ 		type = "a";
+@@ -108,6 +143,24 @@
+ 	status = "okay";
+ };
+ 
++&csi {
++	status = "okay";
++
++	port {
++		#address-cells = <1>;
++		#size-cells = <0>;
++
++		csi_ep: endpoint {
++			remote-endpoint = <&ov5640_ep>;
++			bus-width = <8>;
++			hsync-active = <1>; /* Active high */
++			vsync-active = <0>; /* Active low */
++			data-active = <1>;  /* Active high */
++			pclk-sample = <1>;  /* Rising */
++		};
++	};
++};
++
+ &dai {
+ 	status = "okay";
+ };
+@@ -298,6 +351,12 @@
+ 	regulator-name = "vcc-wifi";
+ };
+ 
++&reg_dldo3 {
++	regulator-min-microvolt = <2800000>;
++	regulator-max-microvolt = <2800000>;
++	regulator-name = "avdd-csi";
++};
++
+ &reg_dldo4 {
+ 	regulator-min-microvolt = <1800000>;
+ 	regulator-max-microvolt = <3300000>;
+@@ -315,6 +374,12 @@
+ 	regulator-name = "cpvdd";
+ };
+ 
++&reg_eldo3 {
++	regulator-min-microvolt = <1500000>;
++	regulator-max-microvolt = <1500000>;
++	regulator-name = "dvdd-csi";
++};
++
+ &reg_fldo1 {
+ 	regulator-min-microvolt = <1200000>;
+ 	regulator-max-microvolt = <1200000>;
+-- 
+2.18.0.321.gffc6fa0e3
 
-    +ifeq ($(CONFIG_OF_OVERLAY),y)
-    +DTC_FLAGS += -@
-    +endif
-    +
-     quiet_cmd_dtc = DTC     $@
-     cmd_dtc = mkdir -p $(dir ${dtc-tmp}) ; \
-            $(HOSTCC) -E $(dtc_cpp_flags) -x assembler-with-cpp -o
-$(dtc-tmp) $< ; \
-
-Do you see a way to handle that better?
-
-Apart from a few expected issues, I'm seeing one other strange message:
-
-    arch/arm/boot/dts/sh73a0-kzm9g.dt.yaml: interrupts: [[2, 4], [3,
-4]] is too long
-
-This is the interrupts property in the adi,adxl345 node in
-arch/arm/boot/dts/sh73a0-kzm9g.dts.
-Apparently the check complains if more than one interrupt is listed here.
-Is this a known issue?
-
-Thanks!
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
