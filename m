@@ -2,124 +2,104 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E949BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DB26FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:36:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF3402171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB38D2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:36:35 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Wdh7YQog"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728194AbfA1TgO (ORCPT
+        id S1728243AbfA1Tge (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:36:14 -0500
-Received: from shelob.surriel.com ([96.67.55.147]:42906 "EHLO
-        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbfA1TgL (ORCPT
+        Mon, 28 Jan 2019 14:36:34 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:43997 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbfA1Tgd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:36:11 -0500
-Received: from [2001:470:1f07:12aa:6e0b:84ff:fee2:98bb] (helo=imladris.surriel.com)
-        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
-        (Exim 4.91)
-        (envelope-from <riel@shelob.surriel.com>)
-        id 1goChS-0006oM-NH; Mon, 28 Jan 2019 14:36:06 -0500
-Date:   Mon, 28 Jan 2019 14:35:35 -0500
-From:   Rik van Riel <riel@surriel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     linux-mm@kvack.org, kernel-team@fb.com,
-        Johannes Weiner <hannes@cmpxchg.org>, Chris Mason <clm@fb.com>,
-        Roman Gushchin <guro@fb.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] mm,slab,vmscan: accumulate gradual pressure on small slabs
-Message-ID: <20190128143535.7767c397@imladris.surriel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Mon, 28 Jan 2019 14:36:33 -0500
+Received: by mail-yw1-f68.google.com with SMTP id n21so7209769ywd.10
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:36:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7nA1rh5clpPWyjE2+QFEZW9/hzDdThSWfKGCF1muAus=;
+        b=Wdh7YQog2T/LXRedMjM3PT45gUb4rkUcWSUd2hfnbzbuSMpKuV2uRUjTSvgq6Iod9/
+         sHtP1F2y2DEE8d0PfzpxK0nWDPS896YzpF8XMVy6BWPRH9th5PV0Nbz41HRwEIsJTBB0
+         +ev7MyN4Gyqks2lk2GKz6p3dqIQVQZ1UFdxqxnWTrSKBypOvOyvHU8od2Mhz7hsJK9rb
+         yc57RjMfk6a53ail08PL0ccDPBOGVeGFQ9+wPJKhUPgnBihHJK0I6Tl4mJR1k/tJrBrD
+         TIKM+agJC8SdJqjCKFR5hadv01MQAuLW5VeUvpeohE2NVgR+YosGyueYaXqLYgF5nE92
+         JL/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7nA1rh5clpPWyjE2+QFEZW9/hzDdThSWfKGCF1muAus=;
+        b=j2smRVvuj2EC9aoXMKNMV1zfw98kWsAtp5aKldtDEUSkL5nPH2yCsE+piMmPzSmbHZ
+         MPW8w3GALHEuBbFbj6+VX5ceBaiRXy3aQ8E8MfQ9c8Ew5Y3wRObukIM5VJo7BW5g3bOt
+         jK1DGnKw7T49lLILmBT5+tcYe/yfCX4CPeU3OXizIGPcJrNI4bMcAXm6alAjDz5QEKVZ
+         jBTp1FzW9OQ98Ei3DqW8Ci8DLMsjy0ptbmY0SsbX3WMrIBRSJKKapcDGjdCQnyEC/015
+         L97DP5hes4ce/dp+MXFoTWUTxYVzQCAXKd/IUd8EZcuHYOVh7g+ne+8YIJGZcGR6BGza
+         mHuw==
+X-Gm-Message-State: AJcUukfUBeR6LJq0hIY5sgnDYOhP2/nZDSKgh+0tvMinqin/OX0bUcbs
+        Fi2I7VXiBoDwpIPMDL/ywapBhR7hogX9UYOSSXhdDQ==
+X-Google-Smtp-Source: ALg8bN7oJK0WI+M00Gb4FkOEcBA6fOxq01s9+VwoM5dAXEtsqgLAttWL146IfmCsPvm7i0m6uay8jg83nnZRC1ZfOSw=
+X-Received: by 2002:a81:ac1f:: with SMTP id k31mr22006175ywh.320.1548704192720;
+ Mon, 28 Jan 2019 11:36:32 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20190126095131.4756-1-enric.balletbo@collabora.com> <20190126095131.4756-12-enric.balletbo@collabora.com>
+In-Reply-To: <20190126095131.4756-12-enric.balletbo@collabora.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Mon, 28 Jan 2019 11:36:22 -0800
+Message-ID: <CABXOdTdcmW+VciVP_t8aa64m=_KS0zMsbObpSMpi9eWZ8_NvMw@mail.gmail.com>
+Subject: Re: [PATCH v2 11/12] platform/chrome: cros_ec_lightbar: remove
+ pr_fmt() define
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are a few issues with the way the number of slab objects to
-scan is calculated in do_shrink_slab.  First, for zero-seek slabs,
-we could leave the last object around forever. That could result
-in pinning a dying cgroup into memory, instead of reclaiming it.
-The fix for that is trivial.
+On Sat, Jan 26, 2019 at 1:51 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> This driver no longer has any pr_{level} messages. Remove the pr_fmt().
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Secondly, small slabs receive much more pressure, relative to their
-size, than larger slabs, due to "rounding up" the minimum number of
-scanned objects to batch_size.
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-We can keep the pressure on all slabs equal relative to their size
-by accumulating the scan pressure on small slabs over time, resulting
-in sometimes scanning an object, instead of always scanning several.
-
-This results in lower system CPU use, and a lower major fault rate,
-as actively used entries from smaller caches get reclaimed less
-aggressively, and need to be reloaded/recreated less often.
-
-Fixes: 4b85afbdacd2 ("mm: zero-seek shrinkers")
-Fixes: 172b06c32b94 ("mm: slowly shrink slabs with a relatively small number of objects")
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Chris Mason <clm@fb.com>
-Cc: Roman Gushchin <guro@fb.com>
-Cc: kernel-team@fb.com
-Tested-by: Chris Mason <clm@fb.com>
----
- include/linux/shrinker.h |  1 +
- mm/vmscan.c              | 16 +++++++++++++---
- 2 files changed, 14 insertions(+), 3 deletions(-)
-
-diff --git a/include/linux/shrinker.h b/include/linux/shrinker.h
-index 9443cafd1969..7a9a1a0f935c 100644
---- a/include/linux/shrinker.h
-+++ b/include/linux/shrinker.h
-@@ -65,6 +65,7 @@ struct shrinker {
- 
- 	long batch;	/* reclaim batch size, 0 = default */
- 	int seeks;	/* seeks to recreate an obj */
-+	int small_scan;	/* accumulate pressure on slabs with few objects */
- 	unsigned flags;
- 
- 	/* These are for internal use */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index a714c4f800e9..0e375bd7a8b6 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -488,18 +488,28 @@ static unsigned long do_shrink_slab(struct shrink_control *shrinkctl,
- 		 * them aggressively under memory pressure to keep
- 		 * them from causing refetches in the IO caches.
- 		 */
--		delta = freeable / 2;
-+		delta = (freeable + 1)/ 2;
- 	}
- 
- 	/*
- 	 * Make sure we apply some minimal pressure on default priority
--	 * even on small cgroups. Stale objects are not only consuming memory
-+	 * even on small cgroups, by accumulating pressure across multiple
-+	 * slab shrinker runs. Stale objects are not only consuming memory
- 	 * by themselves, but can also hold a reference to a dying cgroup,
- 	 * preventing it from being reclaimed. A dying cgroup with all
- 	 * corresponding structures like per-cpu stats and kmem caches
- 	 * can be really big, so it may lead to a significant waste of memory.
- 	 */
--	delta = max_t(unsigned long long, delta, min(freeable, batch_size));
-+	if (!delta) {
-+		shrinker->small_scan += freeable;
-+
-+		delta = shrinker->small_scan >> priority;
-+		shrinker->small_scan -= delta << priority;
-+
-+		delta *= 4;
-+		do_div(delta, shrinker->seeks);
-+
-+	}
- 
- 	total_scan += delta;
- 	if (total_scan < 0) {
-
+> ---
+>
+> Changes in v2: None
+>
+>  drivers/platform/chrome/cros_ec_lightbar.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
+> index 37689ad79544..d30a6650b0b5 100644
+> --- a/drivers/platform/chrome/cros_ec_lightbar.c
+> +++ b/drivers/platform/chrome/cros_ec_lightbar.c
+> @@ -3,8 +3,6 @@
+>  //
+>  // Copyright (C) 2014 Google, Inc.
+>
+> -#define pr_fmt(fmt) "cros_ec_lightbar: " fmt
+> -
+>  #include <linux/ctype.h>
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+> --
+> 2.20.1
+>
