@@ -2,207 +2,172 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62168C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:02:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55895C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3181621738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:02:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f38SoXvk"
+	by mail.kernel.org (Postfix) with ESMTP id 2275D20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:04:56 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726904AbfA1OCy (ORCPT
+        id S1727031AbfA1OEz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:02:54 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:45169 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbfA1OCx (ORCPT
+        Mon, 28 Jan 2019 09:04:55 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:36209 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbfA1OEx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:02:53 -0500
-Received: by mail-pf1-f193.google.com with SMTP id g62so8015808pfd.12;
-        Mon, 28 Jan 2019 06:02:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IvdgvvM1zSo9lb//eNAzGmoMv0AyVL5+L6ujVkAvDFQ=;
-        b=f38SoXvklsLBpQGbCwmRDBZujc+wQkokCfZsOemPFBM2JJM4OYHJIwp05O/Aa55TLU
-         n1wHp/bZUYl2PDsIlYjIdrr8wohZ/ho/9ZqOm90yQ21KmZBLgi9bX+wP4ba4zLFEyzCM
-         AUi/DJJZk2GSd+f/aR/t9B2804cIg0WTAjBwJ0PQwNGLRxQSyWOeG/rBxMsmNRePrLsE
-         Nivu8Rnfi+bFNEi90Q2i1k6jpT36KnokhS2A+Tk1G+E4inSLaJoKHS64gfxgIFD52BQO
-         5zR5Pl/nj/G4WxV1J6b3GP4B66yIurRfDRGHC/Q5zBLbOqOFvECS+UVc3azJanv9EbXj
-         yPKw==
+        Mon, 28 Jan 2019 09:04:53 -0500
+Received: by mail-lf1-f65.google.com with SMTP id a16so11921005lfg.3;
+        Mon, 28 Jan 2019 06:04:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IvdgvvM1zSo9lb//eNAzGmoMv0AyVL5+L6ujVkAvDFQ=;
-        b=S1ietF5f1haK3EgnxveJBwELNBsrWq175KbJtrGnPmLnp6cHns2EQvISm1mHDdVI89
-         KZZYeMb2c2i77EFYJuiM6dEie8R3GYq996l1xPBetahF9QfYKe0FDtr5JZAr3IEBAL70
-         5DEoUOUZXj6xo6YU8Baf9+0ULnro4SDQzufi/N4cfJVqLV6qBSaiYyr2BZ5M1xIeaKmg
-         7EJ3sVfLOW84lXBYX5TgYY7APlESufydUGGM4u8KnKHnMDk7benjQfGzkh6tLkrtvdj/
-         zWE+t51AXNhHVkRlq6COaRhsFTZHtgFG/c5PbhgZCWr3DZSg8W2purLWq5OICdafoYCq
-         /WKw==
-X-Gm-Message-State: AJcUukf1b5Cv4iYVB85IQLlRA0y8NIHSG/4zg41K13Z+PX2RyRhOF8lA
-        cXos7howE4LTiGW4XrzAteEew2XD
-X-Google-Smtp-Source: ALg8bN6g1EdXZPIK8zwaYk1JO0Uh7jHgtLvj8FNG/4Q6xjNRdAPfEQpFOhRiM2qT8kT+aZq5oAfLPg==
-X-Received: by 2002:a63:ce50:: with SMTP id r16mr19752271pgi.217.1548684172008;
-        Mon, 28 Jan 2019 06:02:52 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id o84sm66186036pfi.172.2019.01.28.06.02.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 06:02:50 -0800 (PST)
-Subject: Re: [RFC PATCH v2 08/10] rtc: bd70528: Initial support for ROHM
- bd70528 RTC
-To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-References: <20190125110536.GA29321@localhost.localdomain>
- <35bbc5b9-5f8c-ec80-3eaa-bb2c0e2812c9@roeck-us.net>
- <20190128074849.GB2030@localhost.localdomain>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <11ff93bf-c71f-7489-841f-09bf757a8ba7@roeck-us.net>
-Date:   Mon, 28 Jan 2019 06:02:47 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2DnoYUTPil3lnC/tr8LJXrq2BP9a/vq0o37VypGxF5o=;
+        b=e7TkWSlUzOZy0cf9HihHuhYRuDlr4OHhuhj+uPm02FiT7YGngqAYoWtjCU91gsVhmj
+         GuMEuDsu2FiT3DzNwLt5RzpOvQ2A3NOAYUbpb2dn27Got88wtoHKpuNI1/Clz5BuKinP
+         JpMsdtgBvl1SpmmLKw1NPnUQGH7d93gpEz9+dZdUy3xKWtUvxv3MnzJNoBO223r2fQWu
+         HRzqtDb0wQaAZGmWtvFib2Fst6xgKhS3uz9YsAdTOvWCWTYLQf1dajf+kk158k+BSSER
+         Sfqo9xNed1uL5jfitqi4DlYra+oy57ecMzkrUCOPTqeraOcxygS+x8FGgw0dPJG/0TKq
+         3kcg==
+X-Gm-Message-State: AJcUukdM5SkEP3f+Z2KGy088CRhXDhfDNrUCYkBU8fVFCnmAY3zI7Vbj
+        KaFK2xzVrvY5p5yXfOFttUQ=
+X-Google-Smtp-Source: ALg8bN457TwXGKT2k6IVkN+A0kr8Fz+QSImc8YOiO7nviNcYHIWxCzON9Mq8v9YidFhl3sv9v1oo+w==
+X-Received: by 2002:ac2:5382:: with SMTP id g2mr15989118lfh.159.1548684290499;
+        Mon, 28 Jan 2019 06:04:50 -0800 (PST)
+Received: from localhost.localdomain (mobile-access-bcee00-77.dhcp.inet.fi. [188.238.0.77])
+        by smtp.gmail.com with ESMTPSA id w4sm2889858lfk.83.2019.01.28.06.04.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 06:04:49 -0800 (PST)
+Date:   Mon, 28 Jan 2019 16:04:45 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Matti Vaittinen <mazziesaccount@gmail.com>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 07/10] gpio: Initial support for ROHM bd70528 GPIO
+ block
+Message-ID: <20190128140445.GB4156@localhost.localdomain>
+References: <20190125110509.GA29310@localhost.localdomain>
+ <CACRpkdYTUB8vPiCF=s5-TARhv=DsPDQHVyCwP7fMc27gyDvKSg@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20190128074849.GB2030@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdYTUB8vPiCF=s5-TARhv=DsPDQHVyCwP7fMc27gyDvKSg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/27/19 11:48 PM, Matti Vaittinen wrote:
-> Thanks again Guenter,
+On Mon, Jan 28, 2019 at 01:55:48PM +0100, Linus Walleij wrote:
+> Hi Matti!
 > 
-> On Sat, Jan 26, 2019 at 08:30:24AM -0800, Guenter Roeck wrote:
->> On 1/25/19 3:05 AM, Matti Vaittinen wrote:
->>> +/*
->>> + * We read regs RTC_SEC => RTC_YEAR
->>> + * this struct is ordered according to chip registers.
->>> + * Keep it u8 only to avoid padding issues.
->>> + */
->>> +struct bd70528_rtc_day {
->>> +	u8 sec;
->>> +	u8 min;
->>> +	u8 hour;
->>> +};
->>> +
->>> +struct bd70528_rtc_data {
->>> +	struct bd70528_rtc_day time;
->>> +	u8 week;
->>> +	u8 day;
->>> +	u8 month;
->>> +	u8 year;
->>> +};
->>> +
->>> +struct bd70528_rtc_wake {
->>> +	struct bd70528_rtc_day time;
->>> +	u8 ctrl;
->>> +};
->>> +
->>> +struct bd70528_rtc_alm {
->>> +	struct bd70528_rtc_data data;
->>> +	u8 alm_mask;
->>> +	u8 alm_repeat;
->>> +};
->>
->> At least some of the above are directly associated with chip registers.
->> I don't think this will work for all architectures without explicit packed
->> attribute.
-> 
-> Allright. I was thinking of that but thought that most of the
-> architectures using this PMIC would handle alignments fine if I used
-> only u8 members. I did consider using __attribute__((packed)) - but I'm
-> not sure if we hit into troubles with that too. I guess some people
-> would like to compile kernel with other compiler(s) but gcc - although
-> I'm not sure if this should be taken into account. I'll try doing some
-> study on this - unless someone replies to this and just tells how this
-> should be done. (I am pretty sure I can find the answer from mail
-> archives though). I'll try adding some packing hint for compiler at v3.
-> 
+> Thanks for your patch!
 
-Use __packed ?
+No, thank you for the review =)
 
->>> +		if ((!enable) == (!(*old_state & BD70528_WAKE_STATE_BIT)))
->>> +			return 0;
->>
->> I think
->> 		if (enable == !!(*old_state & BD70528_WAKE_STATE_BIT))
->> would be much better readable. Even if not, there are way too many ()
->> in the above conditional.
+> On Fri, Jan 25, 2019 at 12:05 PM Matti Vaittinen
+> <matti.vaittinen@fi.rohmeurope.com> wrote:
 > 
-> Allright. I'll fix this
->   
->>> +	if (alm.alm_mask & BD70528_MASK_ALM_EN)
->>> +		a->enabled = 0;
->>> +	else
->>> +		a->enabled = 1;
->>> +
->> Without conditional:
->> 	a->enabled = !(alm.alm_mask & BD70528_MASK_ALM_EN);
->>
+> > ROHM BD70528 PMIC has 4 GPIO pins. Allow them to be
+> > controlled by GPIO framework.
+> >
+> > IRQs are handled by regmap-irq and GPIO driver is not
+> > aware of the irq usage.
+> >
+> > Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
 > 
-> Right. Much nicer, thanks! I'll change this.
+> This is overall a very nicely written driver.
 > 
->>> +static int bd70528_set_time(struct device *dev, struct rtc_time *t)
->>> +{
->>> +	int ret, old_states;
->>> +	struct bd70528_rtc_data rtc_data;
->>> +	struct bd70528_rtc *r = dev_get_drvdata(dev);
->>> +	struct bd70528 *bd70528 = r->mfd;
->>> +
->>> +	ret = bd70528_disable_rtc_based_timers(r, &old_states);
->>> +
->>
->> AFAICS the disable/enable functions are only called once. Since they
->> also apply set / clear a mutex, I find that a bit confusing. I think
->> it would be better to fold the code into this function. If anything,
->> I could imagine something like
->>
->> 	mutex_lock();
->> 	ret = bd70528_set_time_locked();
->> 	mutex_unlock()
->>
->> to simplify error handling.
+> Just small comments:
 > 
-> Yep. Makes sense. I'll tidy this.
+> > +#include <linux/gpio/driver.h>
+> > +#include <linux/interrupt.h>
 > 
->>> +	ret = regmap_bulk_read(bd70528->chip.regmap,
->>> +			       BD70528_REG_RTC_START, &rtc_data,
->>> +			       sizeof(rtc_data));
->>> +
->>> +	tm2rtc(t, &rtc_data);
->>> +
->>> +	ret = regmap_bulk_write(bd70528->chip.regmap,
->>> +				BD70528_REG_RTC_START, &rtc_data,
->>> +				sizeof(rtc_data));
->>> +
->>> +	ret = bd70528_re_enable_rtc_based_timers(r, old_states);
->>> +
->>
->> Kind of off that all the error returns are ignored here.
-> 
-> And I'll fix this too.
-> 
-> Br,
-> 	Matti Vaittinen
-> 
+> Why interrupt? You do not use it.
 
+Right, I'd better to drop it.
+
+> 
+> > +static int bd70528_get_direction(struct gpio_chip *chip, unsigned int offset)
+> > +{
+> > +       struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
+> > +       int val, ret;
+> > +
+> > +       /* Do we need to do something to IRQs here? */
+> 
+> Well you don't support IRQs yet so no problem as long as they're masked?
+
+I may have not worded this correctly. These pins can be used for IRQs.
+HW supports it and I added the irq registers in regmap-irq controller
+(please see the MFD part). It's just that this GPIO driver is currently not
+aware of that. This comment here is a reminder for me to figure out if
+we should look whether the pin is used for I/O or for irqs here - and
+what should we return if pin is configured to be used for IRQs.
+
+> > +       ret = regmap_read(bdgpio->chip.regmap, GPIO_OUT_REG(offset), &val);
+> > +       if (ret) {
+> > +               dev_err(bdgpio->chip.dev, "Could not read gpio direction\n");
+> > +               return ret;
+> > +       }
+> > +
+> > +       return !(val & BD70528_GPIO_OUT_EN_MASK);
+> > +}
+> > +
+> > +static int bd70528_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+> > +                                  unsigned long config)
+> 
+> This is very nice. With Thomas Petazzoni's ongoing work you will be
+> able to also support pull up/down if you need it.
+> 
+> > +static int bd70528_direction_input(struct gpio_chip *chip, unsigned int offset)
+> > +{
+> > +       struct bd70528_gpio *bdgpio = gpiochip_get_data(chip);
+> > +
+> > +       /* Do we need to do something to IRQs here? */
+> 
+> Hmmm?
+
+Same thing as with the get_direction. Should we allow setting the
+direction if pin is already configured as an irq source? Should we
+somehow try to warn user if it seems the pin is tried to be used for
+both irqs and I/O?
+
+> 
+> Apart from that it looks good. Feel free to add:
+> Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+> on the next iteration.
+
+I will need to do some further testing on this before submitting next
+version. I will gladly maintain your Reviewed-by if I don't do any
+bigger changes to the driver - but if I do I'll drop your tag and ask
+for re-review :)
+
+Br,
+	Matti Vaittinen
