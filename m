@@ -4,49 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB5DFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9363CC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 960222173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6219F21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691815;
-	bh=74ShYMUvNa6XztpuXX1dwopiHNcWA5LMFoH+zlnCFH0=;
+	s=default; t=1548691819;
+	bh=eDYTTJ6p7zS48/XjJJfxWeet2C2n7NaYhdS2NEI87t0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F8xKftd/VqLaiMp8GU+N6+h0UOleJr7QXpo6OQnuuHrjAjHtaMjkz9xUYNRF2+/mF
-	 Ty/4DPYF/HD29FP5sWZHdRoSQax/Kj3s2nPgjLpXfWh1OZk/vuRNMjAOiMqBTbRgWK
-	 DinzWBdBH79yaaIagG78QkSiDizR8yIxCqyrwo5I=
+	b=P8KUNjkckYhU5u/rI5EvLYvcYO3ZfkZpt/Nab0Ml8Lu11UmDZU+H3VP8tHU5yeDXg
+	 WZVF/5xhsM7+H0VkvtSJU2KGeRfIJPOMa7gtCvTU+K0NU1qKcgbFOW6d5g+v7svjy/
+	 MM1pguuBU/yPaat5TupcBZKFvvo2X7bdgpT4XdGQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732744AbfA1QKN (ORCPT
+        id S1732758AbfA1QKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:10:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35770 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:10:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35876 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732732AbfA1QKK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:10:10 -0500
+        id S1732298AbfA1QKN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:10:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B0C8C21738;
-        Mon, 28 Jan 2019 16:10:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 781B72177E;
+        Mon, 28 Jan 2019 16:10:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691810;
-        bh=74ShYMUvNa6XztpuXX1dwopiHNcWA5LMFoH+zlnCFH0=;
+        s=default; t=1548691812;
+        bh=eDYTTJ6p7zS48/XjJJfxWeet2C2n7NaYhdS2NEI87t0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UD3crSs4blKGwJ8KUIS1MDx5yMofo14O8Xig2e5lvgTCwnimcRKPtmXWnvzlz2n5g
-         EO9mjgfkqW3HBGzB2ahUXtDEuGrFnLxztPitfuTBevofL33Sw3cX/mVPBVJcgF/DFs
-         fOxDluuQnbQbCjs1vgotIlBlzIGqjyBTcYZ3Rsn4=
+        b=qlLUh3svPIOIeYb1hEzhW/CXwSRkZeSdFIyj1qpZ/V4fE5WZlWOfg8F8bscg32Bqt
+         9wAEcEG9bdiT84y15IEGjvnT4oZleCOeNeznrdcJDxg89Mz5Qr6FSqLcLNKHliWed/
+         9iOBiKYRNyU5guQGPcdONHjn57wA+LO49kLQgriA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 224/258] crypto: ux500 - Use proper enum in hash_set_dma_transfer
-Date:   Mon, 28 Jan 2019 10:58:50 -0500
-Message-Id: <20190128155924.51521-224-sashal@kernel.org>
+Cc:     Stefan Roese <sr@denx.de>, Paul Burton <paul.burton@mips.com>,
+        John Crispin <blogic@openwrt.org>,
+        Daniel Schwierzeck <daniel.schwierzeck@gmail.com>,
+        Ralf Baechle <ralf@linux-mips.org>, linux-mips@linux-mips.org,
+        Sasha Levin <sashal@kernel.org>, linux-mips@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 225/258] MIPS: ralink: Select CONFIG_CPU_MIPSR2_IRQ_VI on MT7620/8
+Date:   Mon, 28 Jan 2019 10:58:51 -0500
+Message-Id: <20190128155924.51521-225-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,47 +60,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Stefan Roese <sr@denx.de>
 
-[ Upstream commit 5ac93f808338f4dd465402e91869702eb87db241 ]
+[ Upstream commit 0b15394475e3bcaf35ca4bf22fc55d56df67224e ]
 
-Clang warns when one enumerated type is implicitly converted to another:
+Testing has shown, that when using mainline U-Boot on MT7688 based
+boards, the system may hang or crash while mounting the root-fs. The
+main issue here is that mainline U-Boot configures EBase to a value
+near the end of system memory. And with CONFIG_CPU_MIPSR2_IRQ_VI
+disabled, trap_init() will not allocate a new area to place the
+exception handler. The original value will be used and the handler
+will be copied to this location, which might already be used by some
+userspace application.
 
-drivers/crypto/ux500/hash/hash_core.c:169:4: warning: implicit
-conversion from enumeration type 'enum dma_data_direction' to different
-enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
-                        direction, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
-                        ^~~~~~~~~
-1 warning generated.
+The MT7688 supports VI - its config3 register is 0x00002420, so VInt
+(Bit 5) is set. But without setting CONFIG_CPU_MIPSR2_IRQ_VI this
+bit will not be evaluated to result in "cpu_has_vi" being set. This
+patch now selects CONFIG_CPU_MIPSR2_IRQ_VI on MT7620/8 which results
+trap_init() to allocate some memory for the exception handler.
 
-dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
-We know that the only direction supported by this function is
-DMA_TO_DEVICE because of the check at the top of this function so we can
-just use the equivalent value from dma_transfer_direction.
+Please note that this issue was not seen with the Mediatek U-Boot
+version, as it does not touch EBase (stays at default of 0x8000.0000).
+This is strictly also not correct as the kernel (_text) resides
+here.
 
-DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Stefan Roese <sr@denx.de>
+[paul.burton@mips.com: s/beeing/being/]
+Signed-off-by: Paul Burton <paul.burton@mips.com>
+Cc: John Crispin <blogic@openwrt.org>
+Cc: Daniel Schwierzeck <daniel.schwierzeck@gmail.com>
+Cc: Ralf Baechle <ralf@linux-mips.org>
+Cc: linux-mips@linux-mips.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ux500/hash/hash_core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/mips/ralink/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/crypto/ux500/hash/hash_core.c b/drivers/crypto/ux500/hash/hash_core.c
-index 633321a8dd03..a0bb8a6eec3f 100644
---- a/drivers/crypto/ux500/hash/hash_core.c
-+++ b/drivers/crypto/ux500/hash/hash_core.c
-@@ -166,7 +166,7 @@ static int hash_set_dma_transfer(struct hash_ctx *ctx, struct scatterlist *sg,
- 		__func__);
- 	desc = dmaengine_prep_slave_sg(channel,
- 			ctx->device->dma.sg, ctx->device->dma.sg_len,
--			direction, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
-+			DMA_MEM_TO_DEV, DMA_CTRL_ACK | DMA_PREP_INTERRUPT);
- 	if (!desc) {
- 		dev_err(ctx->device->dev,
- 			"%s: dmaengine_prep_slave_sg() failed!\n", __func__);
+diff --git a/arch/mips/ralink/Kconfig b/arch/mips/ralink/Kconfig
+index 1f9cb0e3c79a..613d61763433 100644
+--- a/arch/mips/ralink/Kconfig
++++ b/arch/mips/ralink/Kconfig
+@@ -38,6 +38,7 @@ choice
+ 
+ 	config SOC_MT7620
+ 		bool "MT7620/8"
++		select CPU_MIPSR2_IRQ_VI
+ 		select HW_HAS_PCI
+ 
+ 	config SOC_MT7621
 -- 
 2.19.1
 
