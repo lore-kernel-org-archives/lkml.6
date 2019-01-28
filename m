@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12556C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B42CC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CC7632175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F54C2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691871;
-	bh=Dzb8swYORe+ZNnHtgCCCNHB/2f/v7Z28FNv+XAIXqYg=;
+	s=default; t=1548691875;
+	bh=TMdF/Bwp5vt6JiHLx0cjYJVHG1iHptdfAOotXJeltlM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=u7tknTh6SJ1lOlKNrniltwkXLR0mfaoH3IFIw7asuo+XwV/RgsohmHChQ81WuQKo5
-	 AmF6mAGncXMUxAjl4NP5oJklgSQIaM29HZC+BYbXaG4FBe3VrJPzrp93tEE7CCUi1X
-	 DFyIxSF7AbKKoEpO2a7jgWAwqZSIYqK44Gza+LZk=
+	b=c/meQzt18xNM9B9ns79jMzXd22RF6Ea1FD/2HpcoyrXaCddfaEjIo8QAHSwDIhLaJ
+	 3HUhGQ5vpkjdcMRFOL3BuEnWvpR2qO6cFns+LnAEM7i0uYoNhIA6I/qSSLxbcG9NNT
+	 hw9h9y/mO8aL8V291Zm2YOm2LcQA0IUn/I6xz1FY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732911AbfA1QLK (ORCPT
+        id S1732923AbfA1QLN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:11:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37766 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:11:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38010 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732458AbfA1QLE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:11:04 -0500
+        id S1732912AbfA1QLL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:11:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 87F332147A;
-        Mon, 28 Jan 2019 16:11:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 051892177E;
+        Mon, 28 Jan 2019 16:11:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691863;
-        bh=Dzb8swYORe+ZNnHtgCCCNHB/2f/v7Z28FNv+XAIXqYg=;
+        s=default; t=1548691870;
+        bh=TMdF/Bwp5vt6JiHLx0cjYJVHG1iHptdfAOotXJeltlM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=odDwNeIhE5we/iCSB+o825e+ed5bshTT6fBJfsbbxYZkAOsAniVqzZRfegHKdrRrG
-         uF+95ZpkelCeLXuiM3BoOiWTvvfcE3tXNiVxaBz6rttd8kUwtWFEmlC5gVFyMRe878
-         SZ3iHO5rExJJzlcTx7BzoZsfPUvaNJmcji1kbwuw=
+        b=pA3bw7D0eaCCDpYxRLS5POVOrDwiZ4l6shpAhzSclu2XqK634SZE37J3yfsPMSmsE
+         Prr+uqNnSMqSE76xn2VNO7Zb5deD1+icOUZmNFn//u6V3zfY1sF/O4txX8gPjRaZnV
+         KPHGai4Gcoma5mACwmKm4OSWsHnJXG6njzd5SFi8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 240/258] isdn: hisax: hfc_pci: Fix a possible concurrency use-after-free bug in HFCPCI_l1hw()
-Date:   Mon, 28 Jan 2019 10:59:06 -0500
-Message-Id: <20190128155924.51521-240-sashal@kernel.org>
+Cc:     Finn Thain <fthain@telegraphics.com.au>,
+        linuxppc-dev@lists.ozlabs.org, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 243/258] block/swim3: Fix -EBUSY error when re-opening device after unmount
+Date:   Mon, 28 Jan 2019 10:59:09 -0500
+Message-Id: <20190128155924.51521-243-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,52 +58,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 7418e6520f22a2e35815122fa5a53d5bbfa2c10f ]
+[ Upstream commit 296dcc40f2f2e402facf7cd26cf3f2c8f4b17d47 ]
 
-In drivers/isdn/hisax/hfc_pci.c, the functions hfcpci_interrupt() and
-HFCPCI_l1hw() may be concurrently executed.
+When the block device is opened with FMODE_EXCL, ref_count is set to -1.
+This value doesn't get reset when the device is closed which means the
+device cannot be opened again. Fix this by checking for refcount <= 0
+in the release method.
 
-HFCPCI_l1hw()
-  line 1173: if (!cs->tx_skb)
-
-hfcpci_interrupt()
-  line 942: spin_lock_irqsave();
-  line 1066: dev_kfree_skb_irq(cs->tx_skb);
-
-Thus, a possible concurrency use-after-free bug may occur
-in HFCPCI_l1hw().
-
-To fix these bugs, the calls to spin_lock_irqsave() and
-spin_unlock_irqrestore() are added in HFCPCI_l1hw(), to protect the
-access to cs->tx_skb.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/isdn/hisax/hfc_pci.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/block/swim3.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/isdn/hisax/hfc_pci.c b/drivers/isdn/hisax/hfc_pci.c
-index 8e5b03161b2f..64a63711fd95 100644
---- a/drivers/isdn/hisax/hfc_pci.c
-+++ b/drivers/isdn/hisax/hfc_pci.c
-@@ -1170,11 +1170,13 @@ HFCPCI_l1hw(struct PStack *st, int pr, void *arg)
- 		if (cs->debug & L1_DEB_LAPD)
- 			debugl1(cs, "-> PH_REQUEST_PULL");
- #endif
-+		spin_lock_irqsave(&cs->lock, flags);
- 		if (!cs->tx_skb) {
- 			test_and_clear_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
- 			st->l1.l1l2(st, PH_PULL | CONFIRM, NULL);
- 		} else
- 			test_and_set_bit(FLG_L1_PULL_REQ, &st->l1.Flags);
-+		spin_unlock_irqrestore(&cs->lock, flags);
- 		break;
- 	case (HW_RESET | REQUEST):
- 		spin_lock_irqsave(&cs->lock, flags);
+diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
+index 469541c1e51e..20907a0a043b 100644
+--- a/drivers/block/swim3.c
++++ b/drivers/block/swim3.c
+@@ -1026,7 +1026,11 @@ static void floppy_release(struct gendisk *disk, fmode_t mode)
+ 	struct swim3 __iomem *sw = fs->swim3;
+ 
+ 	mutex_lock(&swim3_mutex);
+-	if (fs->ref_count > 0 && --fs->ref_count == 0) {
++	if (fs->ref_count > 0)
++		--fs->ref_count;
++	else if (fs->ref_count == -1)
++		fs->ref_count = 0;
++	if (fs->ref_count == 0) {
+ 		swim3_action(fs, MOTOR_OFF);
+ 		out_8(&sw->control_bic, 0xff);
+ 		swim3_select(fs, RELAX);
 -- 
 2.19.1
 
