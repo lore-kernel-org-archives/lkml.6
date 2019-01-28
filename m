@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40EF6C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04E6AC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F8D720881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C465620881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:52:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697962;
-	bh=9+xFrBKnLhnCrq8hNwyS1xybdnWKmpBli2oJfvmYdHo=;
+	s=default; t=1548697968;
+	bh=NjxjvROQ2M6WJuzCBWj7pn2dCY0fijoO8Gz3EJwgdmg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IeYZ3/vOMKW9zUipSkP2IkRTjZzqujggWa6xnR3hUjfRIeTt59OKycxZU5/MzqYuS
-	 MZHX+HTZZxGlYcQXDTMcwRyhfzHAM25rWOBDyY47NpISlzv0Z/XuRbkv+mukirjnOM
-	 C/N6ptjmSdudeSCxIAHJh+o1o0iuloCv4vR9iZTU=
+	b=w1pLLNcyWwr79A4s2v0LTtKmeXntd9moxeAVl27k4jHb1WmtEXn3S+k1Y6vRH1E2n
+	 kpZUc6Wkq3CCqPCbKkxmMAaHqV4cMSa72FjOU9IrAX+zp7m4ZEbyuyu8IuIzyriios
+	 Oqfzx+Rh2Uh17ZrTWKQm8pAFctiDVCJWzgF+flqs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727280AbfA1Rwk (ORCPT
+        id S1727042AbfA1Pnt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:52:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57006 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727044AbfA1Pnt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 10:43:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726887AbfA1Pnq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:43:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 160B82171F;
-        Mon, 28 Jan 2019 15:43:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C704D21741;
+        Mon, 28 Jan 2019 15:43:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690228;
-        bh=9+xFrBKnLhnCrq8hNwyS1xybdnWKmpBli2oJfvmYdHo=;
+        s=default; t=1548690225;
+        bh=NjxjvROQ2M6WJuzCBWj7pn2dCY0fijoO8Gz3EJwgdmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i6EEbu57NY2VFeP52ZXdYAjZr1+3oSzu3Mh3K6CEgek0pfG1m5TIWCx0EzcSaHp9V
-         dNA9aR0Mjqs51a52JPMO9D6oQRlLHiEYydELps3FwNRoCPAMg3faxNt1MZesdHJX1i
-         w460FqP/WV9pRFVkJihbW00Wrk1Z1eCXVHqRfp5A=
+        b=HtBfKGNIkH2vXVjnvQvXolh9EBqIWDaQFtBgSf7dUaQOU/edvI+zVpz8GmAtmRiDr
+         WPgq0It7WGUEU3AhZMm8P12G1xoJNlIwEqdMo7X8X5mpqKJLVwW7s0dNTbHHfUazm6
+         2Cdmw4CRO0uJoVDyWC+/2AHDEKoVMdPA+6qPxgyQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jernej Skrabec <jernej.skrabec@siol.net>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
+Cc:     Slawomir Stepien <sst@poczta.fm>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 006/304] clk: sunxi-ng: h6: Set video PLLs limits
-Date:   Mon, 28 Jan 2019 10:38:43 -0500
-Message-Id: <20190128154341.47195-6-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 003/304] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
+Date:   Mon, 28 Jan 2019 10:38:40 -0500
+Message-Id: <20190128154341.47195-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,47 +58,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jernej Skrabec <jernej.skrabec@siol.net>
+From: Slawomir Stepien <sst@poczta.fm>
 
-[ Upstream commit ed4433419d45bf8b58aef34c4450a27e1c8699e8 ]
+[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
 
-Video PLL factors can be set in a way that final PLL rate is outside
-stable range. H6 user manual specifically says that N factor should not
-be below 12. While it doesn't says anything about maximum stable rate, it
-is clear that PLL doesn't work at 6.096 GHz (254 * 24 MHz).
+Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
+error code. This change will ensure that this error is being passed up
+in the call stack, so it can be handled.
 
-Set minimum allowed PLL video rate to 288 MHz (12 * 24 MHz) and maximum
-to 2.4 GHz, which is maximum in BSP driver.
-
-Signed-off-by: Jernej Skrabec <jernej.skrabec@siol.net>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index 2193e1495086..19ff09f610e4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -120,6 +120,8 @@ static struct ccu_nm pll_video0_clk = {
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
- 	.fixed_post_div	= 4,
-+	.min_rate	= 288000000,
-+	.max_rate	= 2400000000UL,
- 	.common		= {
- 		.reg		= 0x040,
- 		.features	= CCU_FEATURE_FIXED_POSTDIV,
-@@ -136,6 +138,8 @@ static struct ccu_nm pll_video1_clk = {
- 	.n		= _SUNXI_CCU_MULT_MIN(8, 8, 12),
- 	.m		= _SUNXI_CCU_DIV(1, 1), /* input divider */
- 	.fixed_post_div	= 4,
-+	.min_rate	= 288000000,
-+	.max_rate	= 2400000000UL,
- 	.common		= {
- 		.reg		= 0x048,
- 		.features	= CCU_FEATURE_FIXED_POSTDIV,
+diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
+index 58420dcb406d..cbeb52485a31 100644
+--- a/drivers/staging/iio/adc/ad7280a.c
++++ b/drivers/staging/iio/adc/ad7280a.c
+@@ -256,7 +256,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned int devaddr,
+ 	if (ret)
+ 		return ret;
+ 
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
+ 
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -294,7 +296,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned int devaddr,
+ 
+ 	ad7280_delay(st);
+ 
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
+ 
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -327,7 +331,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned int cnt,
+ 	ad7280_delay(st);
+ 
+ 	for (i = 0; i < cnt; i++) {
+-		__ad7280_read32(st, &tmp);
++		ret = __ad7280_read32(st, &tmp);
++		if (ret)
++			return ret;
+ 
+ 		if (ad7280_check_crc(st, tmp))
+ 			return -EIO;
+@@ -370,7 +376,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
+ 		return ret;
+ 
+ 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
+-		__ad7280_read32(st, &val);
++		ret = __ad7280_read32(st, &val);
++		if (ret)
++			return ret;
++
+ 		if (val == 0)
+ 			return n - 1;
+ 
 -- 
 2.19.1
 
