@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 582F8C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C18DC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1BCF02147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F3012147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691765;
-	bh=OckqL4Uw1cZI5gQjkSFf2zzFdyTsNLGfqfieTeKf6zw=;
+	s=default; t=1548691769;
+	bh=hsiB9miFcVT/4ObRk5ldlA2+yT8AQ2zCQhCycgYw2Fs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=z6SFhPSG5U+ssSxKQCUUNXhLqK3fe+RU1QWP/tkvRhyqCxvC9d7dE7hhHlkWVml8T
-	 0WQPL+eawJ9zCBGz43Snd541N+Gq2xgEU6R5aNohU4UjvcIJ+Cn11RBtEQzkxnQy1T
-	 BMKRh+/mDASZ5C7awekxP3dgshG9xhER1MBn3Z6o=
+	b=INB5ZJuAkD33TkOuAx1/+lqzxGtTYgKJYm6mzUdOQ9d5SsNylyLr9EaqMMlPErZVr
+	 NWmgz+nw1DifwKtFQ2HgL83muWr63Bo+Iiuv1+2cGFopZSbPAaDaIM4gKmbVsokKGr
+	 /pIeLq25uOA6tdA3su62tfcf37RCWvBSW/QPY9Ws=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732587AbfA1QJX (ORCPT
+        id S1732602AbfA1QJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:09:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33806 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:09:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34004 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732566AbfA1QJS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:09:18 -0500
+        id S1731930AbfA1QJY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:09:24 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1B8172147A;
-        Mon, 28 Jan 2019 16:09:15 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF6A92147A;
+        Mon, 28 Jan 2019 16:09:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691757;
-        bh=OckqL4Uw1cZI5gQjkSFf2zzFdyTsNLGfqfieTeKf6zw=;
+        s=default; t=1548691763;
+        bh=hsiB9miFcVT/4ObRk5ldlA2+yT8AQ2zCQhCycgYw2Fs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Md8e+IsZzjIMeTZ/IlLri/Mcmrz+h5ndnKilimfVwfNZtOrt0YTNERdURlIiyLeoN
-         wt5eXJJGmLHvv0bsTW4plCSC4iMdNl1vtOwmRc9IRnQ5ECyaisEi7fG4opD0q63COm
-         bm/c/PHC5CUrqTFz6+/31ilEEq7h7Q+mEoKzyMUg=
+        b=TOZyuJsesXlTRxUOxG+DmEydZOWnmroC6YRGGESo6BkFMYR0/OFkBTrZa6wJMkmay
+         SVQDY/Mg1pZMhfMp771AZMAfdXJnbZbsXwUGqIEVvQhROdTtAl33UpMZ/+wHVzNO8j
+         P+071zUqg3pB69Vbv05juZDhL5lqadAfmBTjGmP0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Konstantin Khorenko <khorenko@virtuozzo.com>,
+Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
         Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 207/258] i40e: define proper net_device::neigh_priv_len
-Date:   Mon, 28 Jan 2019 10:58:33 -0500
-Message-Id: <20190128155924.51521-207-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 209/258] igb: Fix an issue that PME is not enabled during runtime suspend
+Date:   Mon, 28 Jan 2019 10:58:35 -0500
+Message-Id: <20190128155924.51521-209-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,46 +57,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Konstantin Khorenko <khorenko@virtuozzo.com>
+From: Kai-Heng Feng <kai.heng.feng@canonical.com>
 
-[ Upstream commit 31389b53b3e0b535867af9090a5d19ec64768d55 ]
+[ Upstream commit 1fb3a7a75e2efcc83ef21f2434069cddd6fae6f5 ]
 
-Out of bound read reported by KASan.
+I210 ethernet card doesn't wakeup when a cable gets plugged. It's
+because its PME is not set.
 
-i40iw_net_event() reads unconditionally 16 bytes from
-neigh->primary_key while the memory allocated for
-"neighbour" struct is evaluated in neigh_alloc() as
+Since commit 42eca2302146 ("PCI: Don't touch card regs after runtime
+suspend D3"), if the PCI state is saved, pci_pm_runtime_suspend() stops
+calling pci_finish_runtime_suspend(), which enables the PCI PME.
 
-  tbl->entry_size + dev->neigh_priv_len
+To fix the issue, let's not to save PCI states when it's runtime
+suspend, to let the PCI subsystem enables PME.
 
-where "dev" is a net_device.
-
-But the driver does not setup dev->neigh_priv_len and
-we read beyond the neigh entry allocated memory,
-so the patch in the next mail fixes this.
-
-Signed-off-by: Konstantin Khorenko <khorenko@virtuozzo.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Fixes: 42eca2302146 ("PCI: Don't touch card regs after runtime suspend D3")
+Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Tested-by: Aaron Brown <aaron.f.brown@intel.com>
 Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/i40e/i40e_main.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/net/ethernet/intel/igb/igb_main.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/i40e/i40e_main.c b/drivers/net/ethernet/intel/i40e/i40e_main.c
-index bfa5c525cf31..41fa22c562c1 100644
---- a/drivers/net/ethernet/intel/i40e/i40e_main.c
-+++ b/drivers/net/ethernet/intel/i40e/i40e_main.c
-@@ -12016,6 +12016,9 @@ static int i40e_config_netdev(struct i40e_vsi *vsi)
- 	ether_addr_copy(netdev->dev_addr, mac_addr);
- 	ether_addr_copy(netdev->perm_addr, mac_addr);
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index 0796cef96fa3..ffaa6e031632 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -8770,9 +8770,11 @@ static int __igb_shutdown(struct pci_dev *pdev, bool *enable_wake,
+ 	rtnl_unlock();
  
-+	/* i40iw_net_event() reads 16 bytes from neigh->primary_key */
-+	netdev->neigh_priv_len = sizeof(u32) * 4;
-+
- 	netdev->priv_flags |= IFF_UNICAST_FLT;
- 	netdev->priv_flags |= IFF_SUPP_NOFCS;
- 	/* Setup netdev TC information */
+ #ifdef CONFIG_PM
+-	retval = pci_save_state(pdev);
+-	if (retval)
+-		return retval;
++	if (!runtime) {
++		retval = pci_save_state(pdev);
++		if (retval)
++			return retval;
++	}
+ #endif
+ 
+ 	status = rd32(E1000_STATUS);
 -- 
 2.19.1
 
