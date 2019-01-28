@@ -7,49 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891CEC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E18EEC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 597C52175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABFDD2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692101;
-	bh=Hfq9lfohhxRFEaFqQhiIQwfoydMry/33CK9vV5rh1OE=;
+	s=default; t=1548692105;
+	bh=TrK4TzUbEa8NHDE+3Mekqoji7J0q/eCjEvKbZwkzAg0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0zPsI1c6c3RJOsZKthB8YWN/niOXK6S2mQK54HMZjwdachYh/ocdxf160jB21Ro0b
-	 Ayaj8yeOhEqLsUQ5CtuU3u1nTB0zk+MAikrLtSr0xD4jsZh+GkFIGRGF6pwRPXyvOX
-	 TDob8wYE6CApahY0YQReoUYbDtOeXyT9a7oQ9fvI=
+	b=f6m5nOAaMtzax29WN9GzoZEzsiAitiuFL5OgEoNWRS2iJkuvBFFTlU2rBXArZuaxW
+	 H89kT5fr3U77f8wnO7Nd+UxskA226g4OMg6ICmKosyYT7IHyD+vf8AkJN87y8gQNzY
+	 mJ5SpcxBx2Bbeu+vvflftG+Yoq4CJml0S9up/ANc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732974AbfA1QPA (ORCPT
+        id S2387707AbfA1QPE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:15:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44436 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:15:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44590 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732968AbfA1QOy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:14:54 -0500
+        id S1732968AbfA1QPB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 50EB220879;
-        Mon, 28 Jan 2019 16:14:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DF18B20879;
+        Mon, 28 Jan 2019 16:14:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692093;
-        bh=Hfq9lfohhxRFEaFqQhiIQwfoydMry/33CK9vV5rh1OE=;
+        s=default; t=1548692101;
+        bh=TrK4TzUbEa8NHDE+3Mekqoji7J0q/eCjEvKbZwkzAg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Izl0UFiSFZFh4Ncpc3eBOv+5CFCHhB1LX7B39IzbHVdr7YPegvR5RlCDUQpOxh6/q
-         t1Agvh6mNDSK5vhteK1hZQ3TSdKnmhjlf42LSDK71ZP7WsVGiJVSjt9QD1UtSwyF3A
-         8joG6CuopKk7qbO0T26NbtpmIP2ao7Z8gsy+ZFmU=
+        b=xokMRaoXasnMP0OL/j/WORr2d9m8Q5ZIl8aa7sE/F+Rqrzuq0yIPujszXKtFHKDwn
+         TRnpE0S9mr97NCak8xzNjXGS6LLcb3TcDl1e9Y85YEv47rPRP2fRmLspcIKeoJGT/j
+         4BWf7d8DE3OA/m0yaEnDs6tuzBsOwaxlu4n0mfMI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Zoran Markovic <zmarkovic@sierrawireless.com>,
-        Casey Schaufler <casey@schaufler-ca.com>,
-        James Morris <jmorris@namei.org>,
-        "Serge E. Hallyn" <serge@hallyn.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-security-module@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 064/170] smack: fix access permissions for keyring
-Date:   Mon, 28 Jan 2019 11:10:14 -0500
-Message-Id: <20190128161200.55107-64-sashal@kernel.org>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
+        tj@kernel.org, johannes.berg@intel.com,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 067/170] timekeeping: Use proper seqcount initializer
+Date:   Mon, 28 Jan 2019 11:10:17 -0500
+Message-Id: <20190128161200.55107-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -61,66 +59,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Zoran Markovic <zmarkovic@sierrawireless.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 5b841bfab695e3b8ae793172a9ff7990f99cc3e2 ]
+[ Upstream commit ce10a5b3954f2514af726beb78ed8d7350c5e41c ]
 
-Function smack_key_permission() only issues smack requests for the
-following operations:
- - KEY_NEED_READ (issues MAY_READ)
- - KEY_NEED_WRITE (issues MAY_WRITE)
- - KEY_NEED_LINK (issues MAY_WRITE)
- - KEY_NEED_SETATTR (issues MAY_WRITE)
-A blank smack request is issued in all other cases, resulting in
-smack access being granted if there is any rule defined between
-subject and object, or denied with -EACCES otherwise.
+tk_core.seq is initialized open coded, but that misses to initialize the
+lockdep map when lockdep is enabled. Lockdep splats involving tk_core seq
+consequently lack a name and are hard to read.
 
-Request MAY_READ access for KEY_NEED_SEARCH and KEY_NEED_VIEW.
-Fix the logic in the unlikely case when both MAY_READ and
-MAY_WRITE are needed. Validate access permission field for valid
-contents.
+Use the proper initializer which takes care of the lockdep map
+initialization.
 
-Signed-off-by: Zoran Markovic <zmarkovic@sierrawireless.com>
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
-Cc: Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>
-Cc: "Serge E. Hallyn" <serge@hallyn.com>
+[ tglx: Massaged changelog ]
+
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: peterz@infradead.org
+Cc: tj@kernel.org
+Cc: johannes.berg@intel.com
+Link: https://lkml.kernel.org/r/20181128234325.110011-12-bvanassche@acm.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- security/smack/smack_lsm.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ kernel/time/timekeeping.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/security/smack/smack_lsm.c b/security/smack/smack_lsm.c
-index c8fd5c10b7c6..0d5ce7190b17 100644
---- a/security/smack/smack_lsm.c
-+++ b/security/smack/smack_lsm.c
-@@ -4356,6 +4356,12 @@ static int smack_key_permission(key_ref_t key_ref,
- 	int request = 0;
- 	int rc;
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 2cafb49aa65e..1ce7c404d0b0 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -41,7 +41,9 @@
+ static struct {
+ 	seqcount_t		seq;
+ 	struct timekeeper	timekeeper;
+-} tk_core ____cacheline_aligned;
++} tk_core ____cacheline_aligned = {
++	.seq = SEQCNT_ZERO(tk_core.seq),
++};
  
-+	/*
-+	 * Validate requested permissions
-+	 */
-+	if (perm & ~KEY_NEED_ALL)
-+		return -EINVAL;
-+
- 	keyp = key_ref_to_ptr(key_ref);
- 	if (keyp == NULL)
- 		return -EINVAL;
-@@ -4375,10 +4381,10 @@ static int smack_key_permission(key_ref_t key_ref,
- 	ad.a.u.key_struct.key = keyp->serial;
- 	ad.a.u.key_struct.key_desc = keyp->description;
- #endif
--	if (perm & KEY_NEED_READ)
--		request = MAY_READ;
-+	if (perm & (KEY_NEED_READ | KEY_NEED_SEARCH | KEY_NEED_VIEW))
-+		request |= MAY_READ;
- 	if (perm & (KEY_NEED_WRITE | KEY_NEED_LINK | KEY_NEED_SETATTR))
--		request = MAY_WRITE;
-+		request |= MAY_WRITE;
- 	rc = smk_access(tkp, keyp->security, request, &ad);
- 	rc = smk_bu_note("key access", tkp, keyp->security, request, rc);
- 	return rc;
+ static DEFINE_RAW_SPINLOCK(timekeeper_lock);
+ static struct timekeeper shadow_timekeeper;
 -- 
 2.19.1
 
