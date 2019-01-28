@@ -7,51 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C63DC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 167EDC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C720C20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0BC920663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692987;
-	bh=sZBgL3leavroMWhZR9KkNWedrgWFMKS2TesS6xHC8Xg=;
+	s=default; t=1548692992;
+	bh=kaaZFqU7wdDoUyTm3FnFQ/35l1oajLZmKeQswqonMmc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W/3xnELKEVCxrEgg9vcsBvUgwXCdUnDvDFGHjorXa9S7G+m8pDPrcclYWrdm5tmtH
-	 sXPZmCT+F9DC3rKGamyQdJwfEVbKb64myEY9nS2zZpvOnlljSZH89RiuzOfMt8gA1p
-	 7iPSeL1TU6gFblyqqKgarUzOhXAtruhmW0CSalMU=
+	b=DqWo8/U7UScAjTuc+fnoxj1fyiKIo5TvDEMpYYCIONfVlg061higI3aHN20SmXuJL
+	 3tq93vqyMiOLf3GIDcOHodPGqJe1aGYbzhHNnis/v8KAbaqrQUMI4PE1KD3sQ6vi3Z
+	 HCWncGLOJTiise0J5rg68/lyiIfxrQvQy83HJzRw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390161AbfA1Q3p (ORCPT
+        id S2390449AbfA1Q1m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:29:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38050 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:27:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37812 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388171AbfA1Q1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:27:46 -0500
+        id S2390438AbfA1Q1h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:27:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 090D62147A;
-        Mon, 28 Jan 2019 16:27:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E11F02171F;
+        Mon, 28 Jan 2019 16:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692865;
-        bh=sZBgL3leavroMWhZR9KkNWedrgWFMKS2TesS6xHC8Xg=;
+        s=default; t=1548692856;
+        bh=kaaZFqU7wdDoUyTm3FnFQ/35l1oajLZmKeQswqonMmc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gE/olrHdLADSMAQBDG+rhQ8VgLqdi57vE8l0k39ihbU9vKkQQiJmuN5fPv/gnl2MQ
-         txFV9WCXPVTE9BrgFMdCpYQzwxa5kgzcdVP8W7n/pC5gy5VjCmnDLfvo3E1vEbvzPl
-         JXJEti7+FUQEP9YpOeVno9KcB6Oy7UkcYqty6N/0=
+        b=0MgaaCNE32czMQhyeBfRAyke4L23yluWwp5K/y7hIbmujQ6BLtTh1alimpZHr/Vy2
+         bAvqlOs0sVT3jtcPRwoNGpwIkKk0OMpyjay4e0IyWL1iOEF+tt0LB2Ta6X92oL/bua
+         OlvNGJK/KBIGajOr0K6dYpJzWba3Mgj7FJ1r3qw0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chris Perl <cperl@janestreet.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 46/61] NFS: nfs_compare_mount_options always compare auth flavors.
-Date:   Mon, 28 Jan 2019 11:26:08 -0500
-Message-Id: <20190128162623.59854-46-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 42/61] video: clps711x-fb: release disp device node in probe()
+Date:   Mon, 28 Jan 2019 11:26:04 -0500
+Message-Id: <20190128162623.59854-42-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,52 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Perl <cperl@janestreet.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
+[ Upstream commit fdac751355cd76e049f628afe6acb8ff4b1399f7 ]
 
-This patch removes the check from nfs_compare_mount_options to see if a
-`sec' option was passed for the current mount before comparing auth
-flavors and instead just always compares auth flavors.
+clps711x_fb_probe() increments refcnt of disp device node by
+of_parse_phandle() and leaves it undecremented on both
+successful and error paths.
 
-Consider the following scenario:
+Found by Linux Driver Verification project (linuxtesting.org).
 
-You have a server with the address 192.168.1.1 and two exports /export/a
-and /export/b.  The first export supports `sys' and `krb5' security, the
-second just `sys'.
-
-Assume you start with no mounts from the server.
-
-The following results in EIOs being returned as the kernel nfs client
-incorrectly thinks it can share the underlying `struct nfs_server's:
-
-$ mkdir /tmp/{a,b}
-$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
-$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
-$ df >/dev/null
-df: ‘/tmp/b’: Input/output error
-
-Signed-off-by: Chris Perl <cperl@janestreet.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Cc: Alexander Shiyan <shc_work@mail.ru>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/video/fbdev/clps711x-fb.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index dbdc2d2f91cf..655ac3a196e4 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2376,8 +2376,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
- 		goto Ebusy;
- 	if (a->acdirmax != b->acdirmax)
- 		goto Ebusy;
--	if (b->auth_info.flavor_len > 0 &&
--	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
-+	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
- 		goto Ebusy;
- 	return 1;
- Ebusy:
+diff --git a/drivers/video/fbdev/clps711x-fb.c b/drivers/video/fbdev/clps711x-fb.c
+index 49a7bb4ef02f..dd8fd28d6132 100644
+--- a/drivers/video/fbdev/clps711x-fb.c
++++ b/drivers/video/fbdev/clps711x-fb.c
+@@ -287,14 +287,17 @@ static int clps711x_fb_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	ret = of_get_fb_videomode(disp, &cfb->mode, OF_USE_NATIVE_MODE);
+-	if (ret)
++	if (ret) {
++		of_node_put(disp);
+ 		goto out_fb_release;
++	}
+ 
+ 	of_property_read_u32(disp, "ac-prescale", &cfb->ac_prescale);
+ 	cfb->cmap_invert = of_property_read_bool(disp, "cmap-invert");
+ 
+ 	ret = of_property_read_u32(disp, "bits-per-pixel",
+ 				   &info->var.bits_per_pixel);
++	of_node_put(disp);
+ 	if (ret)
+ 		goto out_fb_release;
+ 
 -- 
 2.19.1
 
