@@ -2,181 +2,103 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F9D0C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:36:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6D4C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:37:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 288832171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:36:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 474B62171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:37:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BdaWFSuo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728264AbfA1Tgu (ORCPT
+        id S1728331AbfA1Tg7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:36:50 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:40528 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726862AbfA1Tgu (ORCPT
+        Mon, 28 Jan 2019 14:36:59 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:35814 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727929AbfA1Tg6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:36:50 -0500
-Received: from pps.filterd (m0098414.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SJZ0RL044783
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 14:36:49 -0500
-Received: from e06smtp02.uk.ibm.com (e06smtp02.uk.ibm.com [195.75.94.98])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2qa5wjxq3r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 14:36:48 -0500
-Received: from localhost
-        by e06smtp02.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <fbarrat@linux.ibm.com>;
-        Mon, 28 Jan 2019 19:36:47 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp02.uk.ibm.com (192.168.101.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 28 Jan 2019 19:36:43 -0000
-Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SJagMu44761166
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 28 Jan 2019 19:36:42 GMT
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EDA7F11C052;
-        Mon, 28 Jan 2019 19:36:41 +0000 (GMT)
-Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 7CBBB11C04C;
-        Mon, 28 Jan 2019 19:36:41 +0000 (GMT)
-Received: from [9.145.43.137] (unknown [9.145.43.137])
-        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 28 Jan 2019 19:36:41 +0000 (GMT)
-Subject: Re: [PATCH v2 1/5] drivers/accel: Introduce subsystem
-To:     Andrew Donnellan <andrew.donnellan@au1.ibm.com>,
-        Olof Johansson <olof@lixom.net>, linux-kernel@vger.kernel.org
-Cc:     linux-accelerators@lists.ozlabs.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        ogabbay@habana.ai, airlied@redhat.com, jglisse@redhat.com,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-References: <20190125211335.65783-1-olof@lixom.net>
- <e3fc7e58-4d7e-f8aa-b96c-e515deb0494e@au1.ibm.com>
-From:   Frederic Barrat <fbarrat@linux.ibm.com>
-Date:   Mon, 28 Jan 2019 20:36:41 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 28 Jan 2019 14:36:58 -0500
+Received: by mail-yw1-f66.google.com with SMTP id h32so7231794ywk.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:36:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=w7rO5313fdBvQN+kGAw2Y0koWyXo5zp8fUDFfSbKuQI=;
+        b=BdaWFSuol+OYQ62bvfcliSqWxWwNqNH9MRdNEBpdYbNkkXuE+xSl5mNNBoVKpQkSys
+         oTKohdN5zzmCc52nxmskHN9bfjzUgcQRfm/TolOfRjhkxG+dGkHnid/qq44q9YbANJtO
+         9p8o05tNBQAqJzOAvXThk/Ir3OjNcqDq3GeB8aeuPkwq8J8XLjBc35D1vrgK/KFhNU0G
+         U/mXZCT4N9zzjWk3mUdOSiaksdqurqp0yJi6z/n5xxBaTcSfCmsmMRntDte3N820BOgZ
+         wstAQmePQKdlbH+RHIpN3eyOAAwlBhDKQJORpCzWHtRPe1kamKZw5Kw+cWRJDdGglEDI
+         zJkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=w7rO5313fdBvQN+kGAw2Y0koWyXo5zp8fUDFfSbKuQI=;
+        b=hrpoYbbS8Zf9xFuJYSsGtstVI9BJSEMWt7goUu9JW3eIjnr8gAO81w45VnCwT733VW
+         rbLTZCJvwP6AztdbGRXLP1QmVi3jm+wWSZQhLEoE+NaVfigouZZhbO+0ymahOmMKcaZT
+         9+yPZXymHQXBKSuqVxLr2L9gyK4ElbhvIjXRazYd5j6JnyLfWt2a+ck8J/Gbsg/njwLT
+         v1AYj8ESQgd4RZiNrxyWmsywt8yGwX+fifPvLzbXO9QXC6qDb/IPuuy9/QeMJVRvW2JZ
+         0OLlS1E/oFq1+1/onxX1d2jjPmcVCrWNNaQye5CCxOkUaVO7pOitCSs3bDUNgWff6W9F
+         rgJA==
+X-Gm-Message-State: AJcUukdU1RCAhWsg4VEpITWXWEHrESQB9jp+Th2paFKBKv8QRNeIXfLo
+        anbEVPYDOZho/7WhRHhSrOui5xtgKOFKTA3h6T21kA==
+X-Google-Smtp-Source: ALg8bN6D327QCHlXantt6u70ySO7JYPsPlophEX3VUym5mUyA5eOXNP68po2dJWAYlr5lO7o16t1HgcHHFojLkG7hFc=
+X-Received: by 2002:a81:210b:: with SMTP id h11mr14112736ywh.299.1548704217934;
+ Mon, 28 Jan 2019 11:36:57 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <e3fc7e58-4d7e-f8aa-b96c-e515deb0494e@au1.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012819-0008-0000-0000-000002B71E17
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012819-0009-0000-0000-000022235DF7
-Message-Id: <c997299a-1f10-2465-d0c3-7b9c8fffa0f1@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_10:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901280145
+References: <20190126095131.4756-1-enric.balletbo@collabora.com> <20190126095131.4756-13-enric.balletbo@collabora.com>
+In-Reply-To: <20190126095131.4756-13-enric.balletbo@collabora.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Mon, 28 Jan 2019 11:36:47 -0800
+Message-ID: <CABXOdTfb=HMMOu5t9urwwjpT9OPVrA3noZUAyysJ-nWNK2Lnrw@mail.gmail.com>
+Subject: Re: [PATCH v2 12/12] platform/chrome: cros_ec_sysfs: remove pr_fmt() define
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Jan 26, 2019 at 1:51 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> This driver no longer has any pr_{level} messages. Remove the pr_fmt().
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-Le 27/01/2019 à 05:31, Andrew Donnellan a écrit :
-> [+ linuxppc-dev, because cxl/ocxl are handled through powerpc - please 
-> cc on future versions of this series]
-> 
-> On 26/1/19 8:13 am, Olof Johansson wrote:
->> We're starting to see more of these kind of devices, the current
->> upcoming wave will likely be around machine learning and inference
->> engines. A few drivers have been added to drivers/misc for this, but
->> it's timely to make it into a separate group of drivers/subsystem, to
->> make it easier to find them, and to encourage collaboration between
->> contributors.
->>
->> Over time, we expect to build shared frameworks that the drivers will
->> make use of, but how that framework needs to look like to fill the needs
->> is still unclear, and the best way to gain that knowledge is to give the
->> disparate implementations a shared location.
->>
->> There has been some controversy around expectations for userspace
->> stacks being open. The clear preference is to see that happen, and any
->> driver and platform stack that is delivered like that will be given
->> preferential treatment, and at some point in the future it might
->> become the requirement. Until then, the bare minimum we need is an
->> open low-level userspace such that the driver and HW interfaces can be
->> exercised if someone is modifying the driver, even if the full details
->> of the workload are not always available.
->>
->> Bootstrapping this with myself and Greg as maintainers (since the current
->> drivers will be moving out of drivers/misc). Looking forward to expanding
->> that group over time.
->>
-> 
-> [snip]
-> 
->> +
->> +Hardware offload accelerator subsystem
->> +======================================
->> +
->> +This is a brief overview of the subsystem (grouping) of hardware
->> +accelerators kept under drivers/accel
->> +
->> +Types of hardware supported
->> +---------------------------
->> +
->> +  The general types of hardware supported are hardware devices that has
->> +  general interactions of sending commands and buffers to the hardware,
->> +  returning completions and possible filled buffers back, together
->> +  with the usual driver pieces around hardware control, setup, error
->> +  handling, etc.
->> +
->> +  Drivers that fit into other subsystems are expected to be merged
->> +  there, and use the appropriate userspace interfaces of said functional
->> +  areas. We don't expect to see drivers for network, storage, graphics
->> +  and similar hardware implemented by drivers here.
->> +
->> +Expectations for contributions
->> +------------------------------
->> +
->> + - Platforms and hardware that has fully open stacks, from Firmware to
->> +   Userspace, are always going to be given preferential treatment. These
->> +   platforms give the best insight for behavior and interaction of all
->> +   layers, including ability to improve implementation across the stack
->> +   over time.
->> +
->> + - If a platform is partially proprietary, it is still expected that the
->> +   portions that interact the driver can be shared in a form that allows
->> +   for exercising the hardware/driver and evolution of the interface 
->> over
->> +   time. This could be separated into a shared library and test/sample
->> +   programs, for example.
->> +
->> + - Over time, there is an expectation to converge drivers over to shared
->> +   frameworks and interfaces. Until then, the general rule is that no
->> +   more than one driver per vendor will be acceptable. For vendors that
->> +   aren't participating in the work towards shared frameworks over time,
->> +   we reserve the right to phase out support for the hardware.
-> How exactly do generic drivers for interconnect protocols, such as 
-> cxl/ocxl, fit in here?
-> 
-> cxl and ocxl are not drivers for a specific device, they are generic 
-> drivers which can be used with any device implementing the CAPI or 
-> OpenCAPI protocol respectively - many of which will be FPGA boards 
-> flashed with customer-designed accelerator cores for specific workloads, 
-> some will be accelerators using ASICs or using FPGA images supplied by 
-> vendors, some will be driven from userspace, others using the cxl/ocxl 
-> kernel API, etc.
-
-
-I have the same reservation as Andrew. While my first reaction was to 
-think that cxl and ocxl should be part of the accel subsystem, they 
-hardly seem to fit the stated goals.
-Furthermore, there are implications there, as all the distros currently 
-shipping cxl and ocxl as modules on powerpc would need to have their 
-config modified to enable CONFIG_ACCEL.
-
-   Fred
-
+> ---
+>
+> Changes in v2: None
+>
+>  drivers/platform/chrome/cros_ec_sysfs.c | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+> index 01c420727ee1..fe0b7614ae1b 100644
+> --- a/drivers/platform/chrome/cros_ec_sysfs.c
+> +++ b/drivers/platform/chrome/cros_ec_sysfs.c
+> @@ -3,8 +3,6 @@
+>  //
+>  // Copyright (C) 2014 Google, Inc.
+>
+> -#define pr_fmt(fmt) "cros_ec_sysfs: " fmt
+> -
+>  #include <linux/ctype.h>
+>  #include <linux/delay.h>
+>  #include <linux/device.h>
+> --
+> 2.20.1
+>
