@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70983C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00188C282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 373812175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8E9D2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692016;
-	bh=Bxa89QOkNkRSADIzZ11duJ7gv7guCurt3wYLSWR4czw=;
+	s=default; t=1548692019;
+	bh=XjKOK/XWQSaDtR6zNB5hakpIdxZsodmLoIrSLFNJXGA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=C5QbdQMoPmcliFXsuLncdVCkJjw8mIDdoy3+Jt92R1IhWEfr48tde9JBAJdoeRteZ
-	 /V7zXRlTimEIFKl/IkLMKbhvlOrH9l4VCFo1ocUhZ5HZ5Nj/1e8uGKjD52tOQFduNb
-	 obKZ6pVOYvJIMiQCQG7wN7aJzfd95iA9cMEibJCU=
+	b=Fj2LgF1hTm1QU9cMnG5TljK2aYzSBpqAU6uO8ztEbZpCzwtXmF3C9MWTkQNQDUfpA
+	 vwKtB7gv7vzIKf3zL2+FGgcl5vpLvI5dS2Iw0FovVHD73D5xPp+65O1z+xZkQdmSbe
+	 4SnCLkpaaesFJ8hnuCjujTuWhtkKvH7y1+68pATs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387454AbfA1QNf (ORCPT
+        id S2387465AbfA1QNh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:13:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42172 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:13:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42214 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387423AbfA1QN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:28 -0500
+        id S2387436AbfA1QNb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8ED832147A;
-        Mon, 28 Jan 2019 16:13:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B2C62148E;
+        Mon, 28 Jan 2019 16:13:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692007;
-        bh=Bxa89QOkNkRSADIzZ11duJ7gv7guCurt3wYLSWR4czw=;
+        s=default; t=1548692010;
+        bh=XjKOK/XWQSaDtR6zNB5hakpIdxZsodmLoIrSLFNJXGA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O5W5qJsJRpd/yRvOd2ta3v2+loUYqC1cnPq6omaq5nxTbB1Ng+EYgw/o3IeeK/5nY
-         EPJj09hNc4F85TRY4LbbLVXT3GQU7E6uXzZQqNyyfTmOukAPEZCeaS7IpQzRKlmv0X
-         Q2GB5OkwwC8VxzQwq+SxTl1OVl2mQec9QE2WbnmA=
+        b=B47D4HoG/7djutPRIQM+eR26t6Kx7RQULT519RNcZ4JS+CTm655BvXw0Ooxa9YOeJ
+         K/kgxq0ZMGQBxCh+spNhODQ6iGvUXB3NLp7loiieDLuQglmfKQnu6FHgx6zf1Mnim+
+         wFDICPGbPtG00nXpTSgcM8LOphBFAEYLh1Q7q5uo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     YueHaibing <yuehaibing@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 037/170] ptp: Fix pass zero to ERR_PTR() in ptp_clock_register
-Date:   Mon, 28 Jan 2019 11:09:47 -0500
-Message-Id: <20190128161200.55107-37-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Vinod Koul <vkoul@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        dmaengine@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 038/170] dmaengine: xilinx_dma: Remove __aligned attribute on zynqmp_dma_desc_ll
+Date:   Mon, 28 Jan 2019 11:09:48 -0500
+Message-Id: <20190128161200.55107-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,51 +57,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: YueHaibing <yuehaibing@huawei.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit aea0a897af9e44c258e8ab9296fad417f1bc063a ]
+[ Upstream commit aeaebcc17cdf37065d2693865eeb1ff1c7dc5bf3 ]
 
-Fix smatch warning:
+Clang warns:
 
-drivers/ptp/ptp_clock.c:298 ptp_clock_register() warn:
- passing zero to 'ERR_PTR'
+drivers/dma/xilinx/zynqmp_dma.c:166:4: warning: attribute 'aligned' is
+ignored, place it after "struct" to apply attribute to type declaration
+[-Wignored-attributes]
+}; __aligned(64)
+   ^
+./include/linux/compiler_types.h:200:38: note: expanded from macro
+'__aligned'
+                                               ^
+1 warning generated.
 
-'err' should be set while device_create_with_groups and
-pps_register_source fails
+As Nick pointed out in the previous version of this patch, the author
+likely intended for this struct to be 8-byte (64-bit) aligned, not
+64-byte, which is the default. Remove the hanging __aligned attribute.
 
-Fixes: 85a66e550195 ("ptp: create "pins" together with the rest of attributes")
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-Acked-by: Richard Cochran <richardcochran@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: b0cc417c1637 ("dmaengine: Add Xilinx zynqmp dma engine driver support")
+Reported-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Vinod Koul <vkoul@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ptp/ptp_clock.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/dma/xilinx/zynqmp_dma.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
-index 7eacc1c4b3b1..c64903a5978f 100644
---- a/drivers/ptp/ptp_clock.c
-+++ b/drivers/ptp/ptp_clock.c
-@@ -253,8 +253,10 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
- 	ptp->dev = device_create_with_groups(ptp_class, parent, ptp->devid,
- 					     ptp, ptp->pin_attr_groups,
- 					     "ptp%d", ptp->index);
--	if (IS_ERR(ptp->dev))
-+	if (IS_ERR(ptp->dev)) {
-+		err = PTR_ERR(ptp->dev);
- 		goto no_device;
-+	}
+diff --git a/drivers/dma/xilinx/zynqmp_dma.c b/drivers/dma/xilinx/zynqmp_dma.c
+index 5cc8ed31f26b..6d86d05e53aa 100644
+--- a/drivers/dma/xilinx/zynqmp_dma.c
++++ b/drivers/dma/xilinx/zynqmp_dma.c
+@@ -159,7 +159,7 @@ struct zynqmp_dma_desc_ll {
+ 	u32 ctrl;
+ 	u64 nxtdscraddr;
+ 	u64 rsvd;
+-}; __aligned(64)
++};
  
- 	/* Register a new PPS source. */
- 	if (info->pps) {
-@@ -265,6 +267,7 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
- 		pps.owner = info->owner;
- 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
- 		if (!ptp->pps_source) {
-+			err = -EINVAL;
- 			pr_err("failed to register pps source\n");
- 			goto no_pps;
- 		}
+ /**
+  * struct zynqmp_dma_desc_sw - Per Transaction structure
 -- 
 2.19.1
 
