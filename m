@@ -6,48 +6,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26810C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F393C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A262177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1E9202177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691909;
-	bh=MIgTnXGdvwAhlNFEad+tgQmYeP2RKNUoasDWZ1D5/xY=;
+	s=default; t=1548691914;
+	bh=3s81iF9vciymf2w4xPReymvYVpe3eQAc3UABl2EwJ94=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=EPLTtK2IoyaEW8f0A0cOvJSjt0uGdez3pbqwwuUtvVVvOHvqRzKQrXYV8NaLwWRGh
-	 Yh01Sn/t18ay7pqAKJtoMKNTqfA9Wi3Foc5hh5vBnkOa7zuyCoOYbviT9bae/r/ayr
-	 B1ftc6kV8CmVI9ZKW2FiLKp9H6Fee/cqU2BQkXU4=
+	b=oIdf778ny+nk7QRfxk+9WNV6uCQTBCRYOpBy0XWsVgJrgNggtnZIqw+9lTyCY2ep2
+	 uPvjacwfubdYTkrjeWC5JcTeP6ytWag+7J8y/XHGPSQIJVRlHHYx8gP5z8R8VSYKfP
+	 kn/l1DOos6qKteOS/gKB00CwEitesBx4qCMuGU+M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733017AbfA1QLr (ORCPT
+        id S1733047AbfA1QLw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:11:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38996 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:11:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39266 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732600AbfA1QLn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:11:43 -0500
+        id S1733026AbfA1QLu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:11:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9C31B2177E;
-        Mon, 28 Jan 2019 16:11:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3AF7121848;
+        Mon, 28 Jan 2019 16:11:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691902;
-        bh=MIgTnXGdvwAhlNFEad+tgQmYeP2RKNUoasDWZ1D5/xY=;
+        s=default; t=1548691909;
+        bh=3s81iF9vciymf2w4xPReymvYVpe3eQAc3UABl2EwJ94=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vSPaXK8+jAypxU1RId/XngBneIYDM/Y2f2yiDrGjdl+IF5qyyI2ivw4fVaIIOzGGZ
-         fiRQy1oJQnYIfb5BisbhcoDiUjhY+P/5I6A2WRAZjaexT98mgie/yNwn1ZTk7C3tD7
-         rvT5BSuCOPQU3SdQeCHBItkUmeBUyWE0VV0vYhc4=
+        b=ukdxcYSEVB7Gmo/vdEdCwwmSKUTyxNy0Xp5IvuhikUJ4e+BMeHfYoDVYT/tZHPxmZ
+         MoxCB1PVjKOjCsC+zJBJkAD4VL40oZmYADJEO7i+MJDwXVly3FhZ5X9GnZPtme917+
+         tUjbtxXvVxGWFm/+ZRDF55vGZfHJTsZa95drMFRc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Cheng Lin <cheng.lin130@zte.com.cn>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+Cc:     Davidlohr Bueso <dave@stgolabs.net>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jason Baron <jbaron@akamai.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 253/258] proc/sysctl: fix return error for proc_doulongvec_minmax()
-Date:   Mon, 28 Jan 2019 10:59:19 -0500
-Message-Id: <20190128155924.51521-253-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 255/258] fs/epoll: drop ovflist branch prediction
+Date:   Mon, 28 Jan 2019 10:59:21 -0500
+Message-Id: <20190128155924.51521-255-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,104 +61,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cheng Lin <cheng.lin130@zte.com.cn>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit 09be178400829dddc1189b50a7888495dd26aa84 ]
+[ Upstream commit 76699a67f3041ff4c7af6d6ee9be2bfbf1ffb671 ]
 
-If the number of input parameters is less than the total parameters, an
-EINVAL error will be returned.
+The ep->ovflist is a secondary ready-list to temporarily store events
+that might occur when doing sproc without holding the ep->wq.lock.  This
+accounts for every time we check for ready events and also send events
+back to userspace; both callbacks, particularly the latter because of
+copy_to_user, can account for a non-trivial time.
 
-For example, we use proc_doulongvec_minmax to pass up to two parameters
-with kern_table:
+As such, the unlikely() check to see if the pointer is being used, seems
+both misleading and sub-optimal.  In fact, we go to an awful lot of
+trouble to sync both lists, and populating the ovflist is far from an
+uncommon scenario.
 
-{
-	.procname       = "monitor_signals",
-	.data           = &monitor_sigs,
-	.maxlen         = 2*sizeof(unsigned long),
-	.mode           = 0644,
-	.proc_handler   = proc_doulongvec_minmax,
-},
+For example, profiling a concurrent epoll_wait(2) benchmark, with
+CONFIG_PROFILE_ANNOTATED_BRANCHES shows that for a two threads a 33%
+incorrect rate was seen; and when incrementally increasing the number of
+epoll instances (which is used, for example for multiple queuing load
+balancing models), up to a 90% incorrect rate was seen.
 
-Reproduce:
+Similarly, by deleting the prediction, 3% throughput boost was seen
+across incremental threads.
 
-When passing two parameters, it's work normal.  But passing only one
-parameter, an error "Invalid argument"(EINVAL) is returned.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  -bash: echo: write error: Invalid argument
-  [root@cl150 ~]# echo $?
-  1
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-The following is the result after apply this patch.  No error is
-returned when the number of input parameters is less than the total
-parameters.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# echo $?
-  0
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-There are three processing functions dealing with digital parameters,
-__do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
-
-This patch deals with __do_proc_doulongvec_minmax, just as
-__do_proc_dointvec does, adding a check for parameters 'left'.  In
-__do_proc_douintvec, its code implementation explicitly does not support
-multiple inputs.
-
-static int __do_proc_douintvec(...){
-         ...
-         /*
-          * Arrays are not supported, keep this simple. *Do not* add
-          * support for them.
-          */
-         if (vleft != 1) {
-                 *lenp = 0;
-                 return -EINVAL;
-         }
-         ...
-}
-
-So, just __do_proc_doulongvec_minmax has the problem.  And most use of
-proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
-parameter.
-
-Link: http://lkml.kernel.org/r/1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn
-Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Link: http://lkml.kernel.org/r/20181108051006.18751-4-dave@stgolabs.net
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jason Baron <jbaron@akamai.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sysctl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/eventpoll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index cc02050fd0c4..32dea29d05a0 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2767,6 +2767,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 			bool neg;
- 
- 			left -= proc_skip_spaces(&p);
-+			if (!left)
-+				break;
- 
- 			err = proc_get_long(&p, &left, &val, &neg,
- 					     proc_wspace_sep,
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 42bbe6824b4b..58f48ea0db23 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1154,7 +1154,7 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+ 	 * semantics). All the events that happen during that period of time are
+ 	 * chained in ep->ovflist and requeued later on.
+ 	 */
+-	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
++	if (ep->ovflist != EP_UNACTIVE_PTR) {
+ 		if (epi->next == EP_UNACTIVE_PTR) {
+ 			epi->next = ep->ovflist;
+ 			ep->ovflist = epi;
 -- 
 2.19.1
 
