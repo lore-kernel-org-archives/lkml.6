@@ -7,46 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E976DC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB08C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE6932175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CD012175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691983;
-	bh=/IJZ9i0zLf+GsGMuJn5Zc8Z4IOSMQZej6KPMmqyIQv0=;
+	s=default; t=1548691988;
+	bh=mcFzueVP0Op9KTEvURO7HhuYgT//LQ9osPGkNuGA//Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wEz+w1BmXyYdpu4WgsattiTvm59+QjPFcTufR8tkAT4O2a6z2EDN/ab99ktHYn/nn
-	 D4ck8d0psJ/OKWOfzIV7P55iWdtX+1fBn3eHN5H//pm7gq7+cd/mTUGRXF5X2Pv2oX
-	 hkOqzHvhSI30C4Pfb40t+HzKpraUxZWcOJLnNR+U=
+	b=0mU4DAArEvKkfNRvmOim60WNtTs399Yzjv/gVp4P1m+NY4Ud1YozWj18q8xhayf7A
+	 0Jk/8rCiXaI78H6zvsdzLiOpJ9kS6dKx+ePJt7VaOS/I2Df04u4O9uD9CgWoFpplG8
+	 qlmsDuSjzllWsyvZrVre8QdaFv5w+cCcVpwjSv1I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732871AbfA1QNB (ORCPT
+        id S1733278AbfA1QNG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:13:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41528 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:13:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41624 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733252AbfA1QM6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:12:58 -0500
+        id S1732720AbfA1QNC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F05702177E;
-        Mon, 28 Jan 2019 16:12:56 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A6AD22184D;
+        Mon, 28 Jan 2019 16:12:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691978;
-        bh=/IJZ9i0zLf+GsGMuJn5Zc8Z4IOSMQZej6KPMmqyIQv0=;
+        s=default; t=1548691981;
+        bh=mcFzueVP0Op9KTEvURO7HhuYgT//LQ9osPGkNuGA//Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=d/4k2Meb+9BO9kg85dfgnxpoojjOUZlbtTdtgA2ctI0KhUv0t0OsZw7rGva1C4RAA
-         se+F3/lDZighSHBywfdfbv8u72net8HJFsANnzZF/Dc0GAm7zvH15kbNPAu/J3BMNr
-         V0w25IwG7yEw4Wvt0vOllZh27jWhrhPUKqadsqOo=
+        b=FQl9JI2UBXVeKgoLhcnOBcNFTOGpuhUYvQgArNd7pfS3fpe4eXzS3Ml9GDI+WKohb
+         pH3nC2tcu11POVHF6CpQPsAkLzJa82uh8hst5aSCOXw92Cgc9FmSyuucXvMGFq13Q9
+         Sqe7YUbSSgc8l4evTHOf6gtFD0f1YjbDUjIN9yf8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Andreas Puhm <puhm@oregano.at>, Anatolij Gustschin <agust@denx.de>,
+Cc:     Dexuan Cui <decui@microsoft.com>,
+        "K . Y . Srinivasan" <kys@microsoft.com>,
+        Haiyang Zhang <haiyangz@microsoft.com>,
+        Stephen Hemminger <sthemmin@microsoft.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fpga@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 025/170] fpga: altera-cvp: Fix registration for CvP incapable devices
-Date:   Mon, 28 Jan 2019 11:09:35 -0500
-Message-Id: <20190128161200.55107-25-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, devel@linuxdriverproject.org
+Subject: [PATCH AUTOSEL 4.14 026/170] Tools: hv: kvp: Fix a warning of buffer overflow with gcc 8.0.1
+Date:   Mon, 28 Jan 2019 11:09:36 -0500
+Message-Id: <20190128161200.55107-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,52 +61,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andreas Puhm <puhm@oregano.at>
+From: Dexuan Cui <decui@microsoft.com>
 
-[ Upstream commit 68f60538daa4bc3da5d0764d46f391916fba20fd ]
+[ Upstream commit 4fcba7802c3e15a6e56e255871d6c72f829b9dd8 ]
 
-The probe function needs to verify the CvP enable bit in order to
-properly determine if FPGA Manager functionality can be safely
-enabled.
+The patch fixes:
 
-Fixes: 34d1dc17ce97 ("fpga manager: Add Altera CvP driver")
-Signed-off-by: Andreas Puhm <puhm@oregano.at>
-Signed-off-by: Anatolij Gustschin <agust@denx.de>
-Reviewed-by: Moritz Fischer <mdf@kernel.org>
-Acked-by: Alan Tull <atull@kernel.org>
+hv_kvp_daemon.c: In function 'kvp_set_ip_info':
+hv_kvp_daemon.c:1305:2: note: 'snprintf' output between 41 and 4136 bytes
+into a destination of size 4096
+
+The "(unsigned int)str_len" is to avoid:
+
+hv_kvp_daemon.c:1309:30: warning: comparison of integer expressions of
+different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
+
+Signed-off-by: Dexuan Cui <decui@microsoft.com>
+Cc: K. Y. Srinivasan <kys@microsoft.com>
+Cc: Haiyang Zhang <haiyangz@microsoft.com>
+Cc: Stephen Hemminger <sthemmin@microsoft.com>
+Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/fpga/altera-cvp.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+ tools/hv/hv_kvp_daemon.c | 15 +++++++++++++--
+ 1 file changed, 13 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/fpga/altera-cvp.c b/drivers/fpga/altera-cvp.c
-index 00e73d28077c..b7558acd1a66 100644
---- a/drivers/fpga/altera-cvp.c
-+++ b/drivers/fpga/altera-cvp.c
-@@ -404,6 +404,7 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- {
- 	struct altera_cvp_conf *conf;
- 	u16 cmd, val;
-+	u32 regval;
- 	int ret;
+diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
+index 3965186b375a..62c9a503ae05 100644
+--- a/tools/hv/hv_kvp_daemon.c
++++ b/tools/hv/hv_kvp_daemon.c
+@@ -1172,6 +1172,7 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
+ 	FILE *file;
+ 	char cmd[PATH_MAX];
+ 	char *mac_addr;
++	int str_len;
  
  	/*
-@@ -417,6 +418,14 @@ static int altera_cvp_probe(struct pci_dev *pdev,
- 		return -ENODEV;
- 	}
+ 	 * Set the configuration for the specified interface with
+@@ -1295,8 +1296,18 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
+ 	 * invoke the external script to do its magic.
+ 	 */
  
-+	pci_read_config_dword(pdev, VSE_CVP_STATUS, &regval);
-+	if (!(regval & VSE_CVP_STATUS_CVP_EN)) {
-+		dev_err(&pdev->dev,
-+			"CVP is disabled for this device: CVP_STATUS Reg 0x%x\n",
-+			regval);
-+		return -ENODEV;
+-	snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
+-		 "hv_set_ifconfig", if_file);
++	str_len = snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
++			   "hv_set_ifconfig", if_file);
++	/*
++	 * This is a little overcautious, but it's necessary to suppress some
++	 * false warnings from gcc 8.0.1.
++	 */
++	if (str_len <= 0 || (unsigned int)str_len >= sizeof(cmd)) {
++		syslog(LOG_ERR, "Cmd '%s' (len=%d) may be too long",
++		       cmd, str_len);
++		return HV_E_FAIL;
 +	}
 +
- 	conf = devm_kzalloc(&pdev->dev, sizeof(*conf), GFP_KERNEL);
- 	if (!conf)
- 		return -ENOMEM;
+ 	if (system(cmd)) {
+ 		syslog(LOG_ERR, "Failed to execute cmd '%s'; error: %d %s",
+ 				cmd, errno, strerror(errno));
 -- 
 2.19.1
 
