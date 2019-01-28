@@ -2,80 +2,69 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18D04C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:41:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7644C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D0C66214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:41:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB43C2082F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:42:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fom5lheZ"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hBKaNdEC"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfA1NlX (ORCPT
+        id S1726786AbfA1Nmn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:41:23 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:39467 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfA1NlX (ORCPT
+        Mon, 28 Jan 2019 08:42:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57824 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfA1Nmm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:41:23 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t9-v6so14237013ljh.6
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 05:41:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=h8o4J5b7e5xMrJT7yIBgifQ6pcR7efKYk2SmD7+QxuM=;
-        b=fom5lheZ0gJF6Jy18hXb7efeqA1M5D7xdfZQfKDuvdq4kQ71XH1i69259xej+kR9/e
-         YKRaL2GS7JqWFNKbvZYvkpt/3eRK1gnFwpSptXrzoK68JF6zSUh8g1TuhKTRwO8grUvd
-         Z8I3zfVzLi6ADgUp+P/XcY1q0YsczeUCBHCL4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=h8o4J5b7e5xMrJT7yIBgifQ6pcR7efKYk2SmD7+QxuM=;
-        b=hfUSCErgeqCR3FGAaBD6jplrxD5ojodi2o9fwGnjdiVCF4FpzV941rsOlzm8AGLkiR
-         LPiSRVk3/OEjeWBuyju4osknZ23hTaAGsISe0S4pDQX+1H9rzwH5dWLOKY1xtqe/klAg
-         dK+JP8sw8DVSpfv6fXqGzZI39jc3xNXRjqHzrdce9w9uHpuWRz6HoyKT5JjBw9W9z0gM
-         /xgUgUfVPzp4BrHnS19E/BcziuHEwQgjT8XfB9jbLSbOkRKgkX826PA3prTY3Djt4owd
-         VK7yxk/KfRHaa5vh7mI6Kh7+DEPozRlHm7P2RvREEnfi76gjy3BYzqzBAiVfah1pqKdD
-         exdw==
-X-Gm-Message-State: AJcUukf1PE96eJGqg1ZF5jfMzHWtLNmd/RiHEwBzQTAinhHAnvkYpHQo
-        ev8v3jPlIM/L1zuE6wftA19EPp8MnQzEXQAcxMrjiQdi
-X-Google-Smtp-Source: ALg8bN7m/A/VFH1kOJV4RS3EC+xGWkbGJYBbc3STs3vJ11zQdiRHieNAFoWcDvsmJ13GpqNhJDw7BSnkQ2TeZ4u6aGo=
-X-Received: by 2002:a2e:7e04:: with SMTP id z4-v6mr18071005ljc.97.1548682880932;
- Mon, 28 Jan 2019 05:41:20 -0800 (PST)
+        Mon, 28 Jan 2019 08:42:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=A6LAgfPo5GkGB4QxpBbUfytfHIS3qjXW70hijo+Ppe0=; b=hBKaNdECLSXTaIvJXh/0A8YlC
+        8yk8wyD9gNLq7vyD5FHMiRV/7CikMv7jlI9+++VIN7y5Dnd+OV6eRYDYc6HcC8EOyduoi8BLyDpn2
+        gqsX7ueJb6HhoXj0iLn1tqSWELb8srEftu36iztxOYv7rkYx6Ve5K6JovquvZNaBIjfZjxY3QaB0X
+        g2hdt0UmV3lUlwb4lRw2vhB9oBIMuSE2Gcun6nvffurF4cd1QqFZiVypYr4mf1RI2DPXpdf1HuGtG
+        eU84MC4SIaf7kB5g9IHFV0Bta0raE7H44TOuUZuNqMek36QUOzzXyqmu6uZ81KGTzXwt7mfXpsiWn
+        ZPBE4pIZg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1go7BS-00049H-9V; Mon, 28 Jan 2019 13:42:42 +0000
+Date:   Mon, 28 Jan 2019 05:42:42 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Jason Gunthorpe <jgg@mellanox.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        NeilBrown <neilb@suse.com>, Jiri Kosina <trivial@kernel.org>
+Subject: Re: [PATCH trivial] kernel.h: Make container_of_safe type safe
+Message-ID: <20190128134242.GA10951@infradead.org>
+References: <20190124205451.GA19634@ziepe.ca>
 MIME-Version: 1.0
-References: <20190122211822.7016-1-vz@mleia.com>
-In-Reply-To: <20190122211822.7016-1-vz@mleia.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 28 Jan 2019 14:41:09 +0100
-Message-ID: <CACRpkdYn2dtUK5UYR7a-omkhTxavH3DUAeh4KK1y2kedstx79g@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] pinctrl: remove unused 'pinconf-config' debugfs interface
-To:     Vladimir Zapolskiy <vz@mleia.com>
-Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Laurent Meunier <laurent.meunier@st.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Russell King <linux@arm.linux.org.uk>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190124205451.GA19634@ziepe.ca>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 22, 2019 at 10:18 PM Vladimir Zapolskiy <vz@mleia.com> wrote:
+On Thu, Jan 24, 2019 at 08:55:05PM +0000, Jason Gunthorpe wrote:
+> The final ternary expression is given void * and type * as arguments, so
+> the resulting type of the macro ends up being void *.
+> 
+> container_of returns a type which maches the argument, this provides type
+> safety and allows the expression to be immediately used as the target
+> type.
+> 
+> Explicitly cast ERR_CAST() to get the correct type.
 
-> The main goal of the change is to remove .pin_config_dbg_parse_modify
-> callback before a driver with its support appears. So far the in-kernel
-> interface did not attract any users since its introduction 5 years ago.
-
-Good riddance. Both patches applied.
-Thanks for noticing this and making the world
-a better place by getting rid of this.
-
-Yours,
-Linus Walleij
+I think we should just kill off container_of_safe - it has no user
+in the tree, is grossly misnamed and not really all that useful to start
+with.
