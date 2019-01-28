@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72199C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0675C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 391922175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95CD621738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692562;
-	bh=4vqLH3eVmyamHx5S4mYkqPlhzTtouy115F+5cia/dM0=;
+	s=default; t=1548692571;
+	bh=N+r4siA4z2SNbtwwNRPacTPF4iA6QzGYt0LT/jCEt3A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BR6GT1dZM5H1F1P7qYENf+HawenzqJPRD15FI89wa9WjXJ6Wpdc3Z7CVWVt+QGF1K
-	 V5/q46xOCx6Au0i3Jw02Ll+8IjvB7MHfL+Ma/oSdo0LvqpIalleLsdlvonVyhCVLkJ
-	 lqo4s7yhvTzB7QKDvrbJW3I463b0P3/D9gHyd2W0=
+	b=g2p+aiyMH6ElXQ+5Z5A5C500z10/8wuiaMXHbo08LTz2YbS3d2qALH1c6xyKEHK1C
+	 St/gdqZrkDsmBOXq8/E7Rlsgq7nkX6qBSADaxKhz+uGDyQVS0y+xipnTH24Bm3uZz6
+	 gP1p3NUtMBvQ/z8Mp4eu8PR6O5li7cTWYgnrmWqY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388858AbfA1QWl (ORCPT
+        id S2389281AbfA1QWu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:22:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58654 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:22:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388263AbfA1QWi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:38 -0500
+        id S1728400AbfA1QWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:22:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F02BA20663;
-        Mon, 28 Jan 2019 16:22:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E69E62171F;
+        Mon, 28 Jan 2019 16:22:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692557;
-        bh=4vqLH3eVmyamHx5S4mYkqPlhzTtouy115F+5cia/dM0=;
+        s=default; t=1548692562;
+        bh=N+r4siA4z2SNbtwwNRPacTPF4iA6QzGYt0LT/jCEt3A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=T8dSQCqh5Fc1+1+4voyBHR/Gb9vtAVFK+Tx8h79oAyp3u2K0sflhJWm10Jvh9fX0N
-         yhODHFDPKD3g5vmlH/8IaYWqxWOKkRc8ZsXMdCLjML0R7Kgm8qLCNbynxsKBPh4PuD
-         M/ZduoMFx31o13R0Sj+MfrG3ChUvcfpi61wOtS+s=
+        b=tHCBTwmmeeMeUFYB1Rg0EwC9C4wR8JQxFimO+L2DdksQTUKQXcEbJq7eAtRRIdw1g
+         fd66o49eFPx8pyX4V3ZQYGty9ophGJbgUZ2LsHoGze9D6tniW+DsfPjLhMkakHtAXr
+         mItMuu6gApZ+28oBPgDfgkac0DPQORzGmFX6HDsQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Mueller <mimu@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 062/107] KVM: s390: unregister debug feature on failing arch init
-Date:   Mon, 28 Jan 2019 11:19:02 -0500
-Message-Id: <20190128161947.57405-62-sashal@kernel.org>
+Cc:     Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 065/107] mac80211: fix radiotap vendor presence bitmap handling
+Date:   Mon, 28 Jan 2019 11:19:05 -0500
+Message-Id: <20190128161947.57405-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -57,65 +59,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Mueller <mimu@linux.ibm.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 308c3e6673b012beecb96ef04cc65f4a0e7cdd99 ]
+[ Upstream commit efc38dd7d5fa5c8cdd0c917c5d00947aa0539443 ]
 
-Make sure the debug feature and its allocated resources get
-released upon unsuccessful architecture initialization.
+Due to the alignment handling, it actually matters where in the code
+we add the 4 bytes for the presence bitmap to the length; the first
+field is the timestamp with 8 byte alignment so we need to add the
+space for the extra vendor namespace presence bitmap *before* we do
+any alignment for the fields.
 
-A related indication of the issue will be reported as kernel
-message.
+Move the presence bitmap length accounting to the right place to fix
+the alignment for the data properly.
 
-Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Message-Id: <20181130143215.69496-2-mimu@linux.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kvm/kvm-s390.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ net/mac80211/rx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 2032ab81b2d7..c82b73f111b5 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -319,19 +319,30 @@ static void kvm_s390_cpu_feat_init(void)
+diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
+index 93c332737e86..af02d2136a06 100644
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -152,6 +152,9 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
+ 	/* allocate extra bitmaps */
+ 	if (status->chains)
+ 		len += 4 * hweight8(status->chains);
++	/* vendor presence bitmap */
++	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA)
++		len += 4;
  
- int kvm_arch_init(void *opaque)
- {
-+	int rc;
-+
- 	kvm_s390_dbf = debug_register("kvm-trace", 32, 1, 7 * sizeof(long));
- 	if (!kvm_s390_dbf)
- 		return -ENOMEM;
+ 	if (ieee80211_have_rx_timestamp(status)) {
+ 		len = ALIGN(len, 8);
+@@ -193,8 +196,6 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
+ 	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA) {
+ 		struct ieee80211_vendor_radiotap *rtap = (void *)skb->data;
  
- 	if (debug_register_view(kvm_s390_dbf, &debug_sprintf_view)) {
--		debug_unregister(kvm_s390_dbf);
--		return -ENOMEM;
-+		rc = -ENOMEM;
-+		goto out_debug_unreg;
- 	}
- 
- 	kvm_s390_cpu_feat_init();
- 
- 	/* Register floating interrupt controller interface. */
--	return kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
-+	rc = kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
-+	if (rc) {
-+		pr_err("Failed to register FLIC rc=%d\n", rc);
-+		goto out_debug_unreg;
-+	}
-+	return 0;
-+
-+out_debug_unreg:
-+	debug_unregister(kvm_s390_dbf);
-+	return rc;
- }
- 
- void kvm_arch_exit(void)
+-		/* vendor presence bitmap */
+-		len += 4;
+ 		/* alignment for fixed 6-byte vendor data header */
+ 		len = ALIGN(len, 2);
+ 		/* vendor data header */
 -- 
 2.19.1
 
