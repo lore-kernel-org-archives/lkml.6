@@ -2,101 +2,228 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66110C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:38:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41229C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:39:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3423720870
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:38:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gdkhnjE9"
+	by mail.kernel.org (Postfix) with ESMTP id 0F1482148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:39:21 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726852AbfA1Lix (ORCPT
+        id S1726865AbfA1LjT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:38:53 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:41233 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbfA1Liw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:38:52 -0500
-Received: by mail-vs1-f68.google.com with SMTP id t17so9516608vsc.8
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 03:38:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jrJ9A+4uQg9pZ/cAuQuFHXOTGj2SGlckdsMejCo/OQc=;
-        b=gdkhnjE9DHl+fVWdKRpIt+vKSkYWiJCvU5dNEneCkShLu45M9Rs/Re22eaD30dmTeA
-         E+n+XA13l1ou1nREQco3rjPfFeGNaMD+BDvP/LAK6Puh0fSJCZ2jNZfoT8L/LSBP60HG
-         soTAibv+8NTdkMj3huc2mphPNnkjyQsSu4lHc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jrJ9A+4uQg9pZ/cAuQuFHXOTGj2SGlckdsMejCo/OQc=;
-        b=oIssXo5cXdowvtWMv3LGi1uXoWFR5LIQGjW2vxc947AfdzSTCdfhmPJPcB6WJ3lBt9
-         an2LjM1MbLbTlbc80Nq3mtnUzbLIJ+2p1Q7I5OuWGlSxpM8pOxODBrv4uMepndHnlIqp
-         v4zW7OQt1OHhSKIIvlAA7pKxYNCDcd+C8+AC82qwAsesLIhUZ/zO2G9H0mMsD7c1OA/p
-         CE8cGZbDBP+2wH49XvTetyNoEnc4Yy0bJ9ppGJe6r3gipZYJUgaFC5MurAYcMnFeTGcv
-         VIiLZNbTYmnjMYA6FM7Hn75MgY8VzXL3LDY3FzGECg2KLd8GLh4JI09/Q2Vk+1yGwFc7
-         rSxA==
-X-Gm-Message-State: AJcUukftyJx2p0PaAbvYryNiir9KOl+p6Gb/vafAuHeN7y7Et3W3qaO+
-        aGHHl4JNPPdLeadG9FSIvEqJsaPF5mYYpJKiDdPWnQ==
-X-Google-Smtp-Source: ALg8bN4pJA9PbOf9JJmCq8c/vLBhJnTqRuXXfqeRceYFiv8QHaOjx29cLDXBV1CoOfuNHkSlz8qRtT9PzaM24CrKGUo=
-X-Received: by 2002:a67:74c2:: with SMTP id p185mr5082574vsc.34.1548675531900;
- Mon, 28 Jan 2019 03:38:51 -0800 (PST)
-MIME-Version: 1.0
-References: <20190114191724.29960-1-alamy.liu@gmail.com>
-In-Reply-To: <20190114191724.29960-1-alamy.liu@gmail.com>
-From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 28 Jan 2019 12:38:16 +0100
-Message-ID: <CAPDyKFp1fAJK3_XWcwcC4oLAJWvXnt=MvHcZz4X2PMojWPDmWg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] mmc: cqhci: replace NUM_SLOTS with cq_host->num_slots
-To:     Alamy Liu <alamy.liu@gmail.com>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc:     "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 28 Jan 2019 06:39:19 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43858 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726415AbfA1LjT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 06:39:19 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 24AE0EBD;
+        Mon, 28 Jan 2019 03:39:18 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 06CCC3F59C;
+        Mon, 28 Jan 2019 03:39:14 -0800 (PST)
+Date:   Mon, 28 Jan 2019 11:39:16 +0000
+Message-ID: <86y375ui3f.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
+        <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Jason Cooper <jason@lakedaemon.net>
+Subject: Re: [PATCH v9 19/26] irqchip/gic-v3: Detect if GIC can support pseudo-NMIs
+In-Reply-To: <1548084825-8803-20-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-20-git-send-email-julien.thierry@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Adrian (the SDHCI maintainer)
-
-On Mon, 14 Jan 2019 at 20:17, Alamy Liu <alamy.liu@gmail.com> wrote:
->
-> Prevent to use fixed value (NUM_SLOTS) after it had been determined
-> and saved in a variable (cq_host->num_slots).
->
-> Signed-off-by: Alamy Liu <alamy.liu@gmail.com>
+On Mon, 21 Jan 2019 15:33:38 +0000,
+Julien Thierry <julien.thierry@arm.com> wrote:
+> 
+> The values non secure EL1 needs to use for PMR and RPR registers depends on
+> the value of SCR_EL3.FIQ.
+> 
+> The values non secure EL1 sees from the distributor and redistributor
+> depend on whether security is enabled for the GIC or not.
+> 
+> To avoid having to deal with two sets of values for PMR
+> masking/unmasking, only enable pseudo-NMIs when GIC has non-secure view
+> of priorities.
+> 
+> Also, add firmware requirements related to SCR_EL3.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: Jonathan Corbet <corbet@lwn.net>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Jason Cooper <jason@lakedaemon.net>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
 > ---
->  drivers/mmc/host/cqhci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/mmc/host/cqhci.c b/drivers/mmc/host/cqhci.c
-> index 159270e947..26d63594b7 100644
-> --- a/drivers/mmc/host/cqhci.c
-> +++ b/drivers/mmc/host/cqhci.c
-> @@ -699,7 +699,7 @@ static void cqhci_error_irq(struct mmc_host *mmc, u32 status, int cmd_error,
->                  * The only way to guarantee forward progress is to mark at
->                  * least one task in error, so if none is indicated, pick one.
->                  */
-> -               for (tag = 0; tag < NUM_SLOTS; tag++) {
-> +               for (tag = 0; tag < cq_host->num_slots; tag++) {
->                         slot = &cq_host->slot[tag];
->                         if (!slot->mrq)
->                                 continue;
-> --
-> 2.17.1
->
+>  Documentation/arm64/booting.txt |  5 ++++
+>  drivers/irqchip/irq-gic-v3.c    | 58 ++++++++++++++++++++++++++++++++++++-----
+>  2 files changed, 57 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/arm64/booting.txt b/Documentation/arm64/booting.txt
+> index 8df9f46..fbab7e2 100644
+> --- a/Documentation/arm64/booting.txt
+> +++ b/Documentation/arm64/booting.txt
+> @@ -188,6 +188,11 @@ Before jumping into the kernel, the following conditions must be met:
+>    the kernel image will be entered must be initialised by software at a
+>    higher exception level to prevent execution in an UNKNOWN state.
+>  
+> +  - SCR_EL3.FIQ must have the same value across all CPUs the kernel is
+> +    executing on.
+> +  - The value of SCR_EL3.FIQ must be the same as the one present at boot
+> +    time whenever the kernel is executing.
+> +
+>    For systems with a GICv3 interrupt controller to be used in v3 mode:
+>    - If EL3 is present:
+>      ICC_SRE_EL3.Enable (bit 3) must be initialiased to 0b1.
+> diff --git a/drivers/irqchip/irq-gic-v3.c b/drivers/irqchip/irq-gic-v3.c
+> index 5a703ae..5374b43 100644
+> --- a/drivers/irqchip/irq-gic-v3.c
+> +++ b/drivers/irqchip/irq-gic-v3.c
+> @@ -66,6 +66,31 @@ struct gic_chip_data {
+>  static struct gic_chip_data gic_data __read_mostly;
+>  static DEFINE_STATIC_KEY_TRUE(supports_deactivate_key);
+>  
+> +/*
+> + * The behaviours of RPR and PMR registers differ depending on the value of
+> + * SCR_EL3.FIQ, and the behaviour of non-secure priority registers of the
+> + * distributor and redistributors depends on whether security is enabled in the
+> + * GIC.
+> + *
+> + * When security is enabled, non-secure priority values from the (re)distributor
+> + * are presented to the GIC CPUIF as follow:
+> + *     (GIC_(R)DIST_PRI[irq] >> 1) | 0x80;
+> + *
+> + * If SCR_EL3.FIQ == 1, the values writen to/read from PMR and RPR at non-secure
+> + * EL1 are subject to a similar operation thus matching the priorities presented
+> + * from the (re)distributor when security is enabled.
+> + *
+> + * see GICv3/GICv4 Architecture Specification (IHI0069D):
+> + * - section 4.8.1 Non-secure accesses to register fields for Secure interrupt
+> + *   priorities.
+> + * - Figure 4-7 Secure read of the priority field for a Non-secure Group 1
+> + *   interrupt.
+> + *
+> + * For now, we only support pseudo-NMIs if we have non-secure view of
+> + * priorities.
+> + */
+> +static DEFINE_STATIC_KEY_FALSE(supports_pseudo_nmis);
+> +
+>  static struct gic_kvm_info gic_v3_kvm_info;
+>  static DEFINE_PER_CPU(bool, has_rss);
+>  
+> @@ -232,6 +257,12 @@ static void gic_unmask_irq(struct irq_data *d)
+>  	gic_poke_irq(d, GICD_ISENABLER);
+>  }
+>  
+> +static inline bool gic_supports_nmi(void)
+> +{
+> +	return IS_ENABLED(CONFIG_ARM64_PSEUDO_NMI) &&
+> +	       static_branch_likely(&supports_pseudo_nmis);
+> +}
+> +
+>  static int gic_irq_set_irqchip_state(struct irq_data *d,
+>  				     enum irqchip_irq_state which, bool val)
+>  {
+> @@ -573,6 +604,12 @@ static void gic_update_vlpi_properties(void)
+>  		!gic_data.rdists.has_direct_lpi ? "no " : "");
+>  }
+>  
+> +/* Check whether it's single security state view */
+> +static inline bool gic_dist_security_disabled(void)
+> +{
+> +	return readl_relaxed(gic_data.dist_base + GICD_CTLR) & GICD_CTLR_DS;
+> +}
+> +
+>  static void gic_cpu_sys_reg_init(void)
+>  {
+>  	int i, cpu = smp_processor_id();
+> @@ -598,6 +635,9 @@ static void gic_cpu_sys_reg_init(void)
+>  	/* Set priority mask register */
+>  	if (!gic_prio_masking_enabled())
+>  		write_gicreg(DEFAULT_PMR_VALUE, ICC_PMR_EL1);
+> +	else if (gic_supports_nmi() && group0)
+> +		/* Mismatch configuration with boot CPU */
+> +		WARN_ON(!gic_dist_security_disabled());
 
-Alamy, I realized that you haven't included Adrian when posted your
-recent sdhci patches. Please re-post all of them so we can get
-Adrian's input.
+You can probably write this as a single line:
 
-Kind regards
-Uffe
+	WARN_ON(gic_supports_nmi() && group0 && !gic_dist_security_disabled());
+
+Maybe even add a comment saying that in this case, the system is
+likely to be dead, as the masking of interrupt will not work
+correctly.
+
+>  
+>  	/*
+>  	 * Some firmwares hand over to the kernel with the BPR changed from
+> @@ -852,12 +892,6 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *mask_val,
+>  #endif
+>  
+>  #ifdef CONFIG_CPU_PM
+> -/* Check whether it's single security state view */
+> -static bool gic_dist_security_disabled(void)
+> -{
+> -	return readl_relaxed(gic_data.dist_base + GICD_CTLR) & GICD_CTLR_DS;
+> -}
+> -
+>  static int gic_cpu_pm_notifier(struct notifier_block *self,
+>  			       unsigned long cmd, void *v)
+>  {
+> @@ -1110,6 +1144,11 @@ static bool gic_enable_quirk_msm8996(void *data)
+>  	return true;
+>  }
+>  
+> +static void gic_enable_nmi_support(void)
+> +{
+> +	static_branch_enable(&supports_pseudo_nmis);
+> +}
+> +
+>  static int __init gic_init_bases(void __iomem *dist_base,
+>  				 struct redist_region *rdist_regs,
+>  				 u32 nr_redist_regions,
+> @@ -1179,6 +1218,13 @@ static int __init gic_init_bases(void __iomem *dist_base,
+>  		its_cpu_init();
+>  	}
+>  
+> +	if (gic_prio_masking_enabled()) {
+> +		if (!gic_has_group0() || gic_dist_security_disabled())
+> +			gic_enable_nmi_support();
+> +		else
+> +			pr_warn("SCR_EL3.FIQ is cleared, cannot enable use of pseudo-NMIs\n");
+> +	}
+> +
+>  	return 0;
+>  
+>  out_free:
+> -- 
+> 1.9.1
+> 
+
+Otherwise:
+
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
