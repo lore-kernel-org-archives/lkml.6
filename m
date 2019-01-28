@@ -2,107 +2,113 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C983C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:35:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B66C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAAD52147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:35:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H08UXXHZ"
+	by mail.kernel.org (Postfix) with ESMTP id 4E2B22147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:35:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548696924;
+	bh=HPrJZ6s+j2bHKaGwHDUjJdNS6XxshzQA8tKCbJciw+s=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=yVGsQ5HPzVcIVUdGJWZdLHEx5XyeeEbfsmIgJsFH7hAGt4hoMrnQDfWlPxwmvjY/3
+	 wdRjcMsA5qiFytoXoXu0vJELtEGaYgAiph4idBk4FKiX+kfwV5Qr8QQ0UzcctqU2FN
+	 N/GktnE7WImnjVmnq1n+9ROcXEA22PDCVgLXMpTM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729900AbfA1Pz3 (ORCPT
+        id S1729228AbfA1RfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 12:35:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41380 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729898AbfA1Pz3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 10:55:29 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40965 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729881AbfA1PzY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:24 -0500
-Received: by mail-wr1-f68.google.com with SMTP id x10so18589966wrs.8
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:55:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lZsyg31nN3cTqKBQ+cnJv/eVAHpsVh0TDVW8eJ9YX1U=;
-        b=H08UXXHZSo6EQbLRUZaDJa+u695P9tPKYYCyWyb1Sk5F35f1SNHRnD/TEMkd0ze3iB
-         Q+/TtKyEyXXnUrRUF49uuQXdrphkZSAFqlv+xBzTC41xskHXGABFZ5woc2c03yrkoJkE
-         PLgHsylS620TRUE1dUS7QjSyaMrNx2p9fltJE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lZsyg31nN3cTqKBQ+cnJv/eVAHpsVh0TDVW8eJ9YX1U=;
-        b=PJ8YDATbTCDFrVQYrS1xGbY0PIZgx4gFVQozWsmeC2l7YFQBeTzwThi+injTdB9iBR
-         xsOjZ6kNprqxjfQODCpFmEeoaqtq5OqQ08NsPHh+TV9IIe1oqvxMfyUmLnBqvnlrhglA
-         Mc3rTcwkxeahNOJ+3ZqIhvMzaA+W1Zgfrv5stDMozfA2mGgYU04uliIoHq3u2cd30BHU
-         236VWtzj9PulLViEAOEdYcUP/Xp1aQ5HPjHkC2OJsBqW1WOSoJYsO6pYAnB2vxkb+rjo
-         9O+qJS/lTTlBddit3/vQ/2N6aQkL9384stzBpVtfqxAdcNj09xVnVX34A68AtFY+MnaF
-         Lx/A==
-X-Gm-Message-State: AJcUukexn1WXeX1QBLKjHeV2Px5SK1iJonlZZVUj3Ibu2cqfFOuFNlpI
-        08THLzjZaAx4aTdicSacBsq/jT1WILE=
-X-Google-Smtp-Source: ALg8bN6JANjddJespYCVP9WGYLzCi8HiKbRYL+/lxu3m0pyr87POj/IIXxQV0KWXwdssVGLqkLLRyA==
-X-Received: by 2002:a5d:40c1:: with SMTP id b1mr23293116wrq.133.1548690921964;
-        Mon, 28 Jan 2019 07:55:21 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id p6sm145140485wrx.50.2019.01.28.07.55.20
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 07:55:21 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 12/13] nvmem: core: Fix device reference leak
-Date:   Mon, 28 Jan 2019 15:55:05 +0000
-Message-Id: <20190128155506.25566-13-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
-References: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED3082147A;
+        Mon, 28 Jan 2019 15:55:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690928;
+        bh=HPrJZ6s+j2bHKaGwHDUjJdNS6XxshzQA8tKCbJciw+s=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=QrJxWG/D0mQV7b8/uXSZxikHMVbF1m5foBKhkeXNpr7OdkHMtVP7MJHj3FObeFqHN
+         hst15nZ0l5kjF40keilG4ff9UUimjHewfm9mVTayPz0Y0PXPIKRD/emMNWzCz2PcSY
+         QkpuNCCy8kEje8/3DeZZWMIb0fnYO31gE8lLif4w=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Miroslav Lichvar <mlichvar@redhat.com>,
+        Richard Cochran <richardcochran@gmail.com>,
+        Ariel Levkovich <lariel@mellanox.com>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 236/304] mlx5: update timecounter at least twice per counter overflow
+Date:   Mon, 28 Jan 2019 10:42:33 -0500
+Message-Id: <20190128154341.47195-236-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Bedel <albeu@free.fr>
+From: Miroslav Lichvar <mlichvar@redhat.com>
 
-__nvmem_device_get() make use of bus_find_device() to get the relevant
-device and this function increase the reference count of the device
-found, however this is not accounted for anywhere. Fix
-__nvmem_device_get() and __nvmem_device_put() to properly release this
-reference count.
+[ Upstream commit 5d8678365c90b9ce1fd2243ff5ea562609f6cec1 ]
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+The timecounter needs to be updated at least once in half of the
+cyclecounter interval to prevent timecounter_cyc2time() interpreting a
+new timestamp as an old value and causing a backward jump.
+
+This would be an issue if the timecounter multiplier was so small that
+the update interval would not be limited by the 64-bit overflow in
+multiplication.
+
+Shorten the calculated interval to make sure the timecounter is updated
+in time even when the system clock is slowed down by up to 10%, the
+multiplier is increased by up to 10%, and the scheduled overflow check
+is late by 15%.
+
+Cc: Richard Cochran <richardcochran@gmail.com>
+Cc: Ariel Levkovich <lariel@mellanox.com>
+Cc: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvmem/core.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index 1752768dd2d2..5400017ef616 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -811,6 +811,7 @@ static struct nvmem_device *__nvmem_device_get(struct device_node *np,
- 			"could not increase module refcount for cell %s\n",
- 			nvmem_dev_name(nvmem));
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
+index 0d90b1b4a3d3..2d6168ee99e8 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/clock.c
+@@ -511,14 +511,14 @@ void mlx5_init_clock(struct mlx5_core_dev *mdev)
+ 			 ktime_to_ns(ktime_get_real()));
  
-+		put_device(&nvmem->dev);
- 		return ERR_PTR(-EINVAL);
- 	}
+ 	/* Calculate period in seconds to call the overflow watchdog - to make
+-	 * sure counter is checked at least once every wrap around.
++	 * sure counter is checked at least twice every wrap around.
+ 	 * The period is calculated as the minimum between max HW cycles count
+ 	 * (The clock source mask) and max amount of cycles that can be
+ 	 * multiplied by clock multiplier where the result doesn't exceed
+ 	 * 64bits.
+ 	 */
+ 	overflow_cycles = div64_u64(~0ULL >> 1, clock->cycles.mult);
+-	overflow_cycles = min(overflow_cycles, clock->cycles.mask >> 1);
++	overflow_cycles = min(overflow_cycles, div_u64(clock->cycles.mask, 3));
  
-@@ -821,6 +822,7 @@ static struct nvmem_device *__nvmem_device_get(struct device_node *np,
- 
- static void __nvmem_device_put(struct nvmem_device *nvmem)
- {
-+	put_device(&nvmem->dev);
- 	module_put(nvmem->owner);
- 	kref_put(&nvmem->refcnt, nvmem_device_release);
- }
+ 	ns = cyclecounter_cyc2ns(&clock->cycles, overflow_cycles,
+ 				 frac, &frac);
 -- 
-2.20.1
+2.19.1
 
