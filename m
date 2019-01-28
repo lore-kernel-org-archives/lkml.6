@@ -2,96 +2,159 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B1356C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:45:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 494C0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:47:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82DA920881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:45:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="g41TqVRc"
+	by mail.kernel.org (Postfix) with ESMTP id 2295420881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:47:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfA1MpS (ORCPT
+        id S1726778AbfA1MrA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:45:18 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25470 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfA1MpR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:45:17 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548679499; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=mxMCHgiBUD3CFSKRiYarXulIpnALi2Mrl3lIlhbU8DIxYQl48Iy9sHW25GNV0+7XVPkk3C7SqRJz1s0ZF3VcJ5P/n5Lp0hrA8jhoguoReL8YNxlxtc5sLeqeebHlR7Wu/IL+uSo8NW/EaDokHgMczmYmnuerDEo2+DqLOKfHNi0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548679499; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=jqagdYoi8HFI5pRQmQKCDU+btcu8oXjva4wy+bETBqc=; 
-        b=JFZmXDeyiNEnI9H8TlPNTUkZYeAnMEueF89Rm8iRTcTgNJ6TWl66dgJJCKICV8yIzvdnbKx93LRuucT3nga32v7CGuzh6B7SRmkB/DaggtBRUT7Sr/E2130gi7rlr/bEqzioPjmeE7gl8GX1vs9LzSSegWxU5Yp8W88aFdj/7Io=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
-  b=cGU8Tn95s/QyqfPKPYwzom6WMniccEIbVF/NpJnnCV8/qD27bv0h7j87L4FL5k+duxkpE/A8HjSS
-    NzrP608Vdog8kR8C/OEJskdPiZ3mp1Lq0b01ovouUlLPsARY7LgV  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548679499;
-        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        l=617; bh=jqagdYoi8HFI5pRQmQKCDU+btcu8oXjva4wy+bETBqc=;
-        b=g41TqVRctb+dw5ICkeLKe3wo38a20gneG/uOdZefajiUirafeJFpc/Yl64hwk1HT
-        4CWjS2CTFPxNipY6nIuttXEa9c5Ih4HRZVx42X919GwnyCAtRfu9PXMaq10MYFd0vJg
-        lRqBNxiHoKkfdF55YCoevRybdYr2+DtD+dsvoiDA=
-Received: from [192.168.88.133] (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
-        with SMTPS id 1548679496087827.6429985122878; Mon, 28 Jan 2019 04:44:56 -0800 (PST)
-Subject: Re: [PATCH 1/2] Serial: Ingenic: Add support for the X1000.
-To:     Greg KH <gregkh@linuxfoundation.org>
-References: <1548667176-119830-1-git-send-email-zhouyanjie@zoho.com>
- <1548667176-119830-2-git-send-email-zhouyanjie@zoho.com>
- <20190128093059.GA31657@kroah.com>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, paul.burton@mips.com, jslaby@suse.com,
-        mark.rutland@arm.com, syq@debian.org, jiaxun.yang@flygoat.com,
-        772753199@qq.com
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-Message-ID: <5C4EF93F.9080706@zoho.com>
-Date:   Mon, 28 Jan 2019 20:44:47 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
-MIME-Version: 1.0
-In-Reply-To: <20190128093059.GA31657@kroah.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+        Mon, 28 Jan 2019 07:47:00 -0500
+Received: from foss.arm.com ([217.140.101.70]:44956 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726647AbfA1MrA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 07:47:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8EAB980D;
+        Mon, 28 Jan 2019 04:46:59 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 11BC13F59C;
+        Mon, 28 Jan 2019 04:46:56 -0800 (PST)
+Date:   Mon, 28 Jan 2019 12:47:00 +0000
+Message-ID: <86o981ueyj.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
+        <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>
+Subject: Re: [PATCH v9 26/26] arm64: Enable the support of pseudo-NMIs
+In-Reply-To: <1548084825-8803-27-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-27-git-send-email-julien.thierry@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-My fault, I will fix these in v2.
+On Mon, 21 Jan 2019 15:33:45 +0000,
+Julien Thierry <julien.thierry@arm.com> wrote:
+> 
+> Add a build option and a command line parameter to build and enable the
+> support of pseudo-NMIs.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt |  6 ++++++
+>  arch/arm64/Kconfig                              | 14 ++++++++++++++
+>  arch/arm64/kernel/cpufeature.c                  | 11 ++++++++++-
+>  3 files changed, 30 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index b799bcf..173e2cc 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -1197,6 +1197,12 @@
+>  			to discrete, to make X server driver able to add WB
+>  			entry later. This parameter enables that.
+>  
+> +	enable_pseudo_nmi [ARM64]
+> +			Enables support for pseudo-NMIs in the kernel. This
+> +			requires both the kernel to be built with
+> +			CONFIG_ARM64_PSEUDO_NMI and to be running on a
+> +			platform with GICv3.
+> +
+>  	enable_timer_pin_1 [X86]
+>  			Enable PIN 1 of APIC timer
+>  			Can be useful to work around chipset bugs
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index a4168d3..8d84bfd 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -1328,6 +1328,20 @@ config ARM64_MODULE_PLTS
+>  	bool
+>  	select HAVE_MOD_ARCH_SPECIFIC
+>  
+> +config ARM64_PSEUDO_NMI
+> +	bool "Support for NMI-like interrupts"
+> +	select CONFIG_ARM_GIC_V3
+> +	help
+> +	  Adds support for mimicking Non-Maskable Interrupts through the use of
+> +	  GIC interrupt priority. This support requires version 3 or later of
+> +	  Arm GIC.
+> +
+> +	  This high priority configuration for interrupts need to be
 
-On 2019=E5=B9=B401=E6=9C=8828=E6=97=A5 17:30, Greg KH wrote:
-> On Mon, Jan 28, 2019 at 05:19:35PM +0800, Zhou Yanjie wrote:
->> Add support for probing the 8250_ingenic driver on the
->> X1000 Soc from Ingenic.
->>
->> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
->> ---
->>   drivers/tty/serial/8250/8250_ingenic.c | 10 ++++++++++
->>   1 file changed, 10 insertions(+)
-> You sent two different patches with the same subject: line, yet they did
-> totally different things.
->
-> Please fix this up and resend with a better set of subject lines.
->
-> thanks,
->
-> greg k-h
+s/need/needs/
 
+> +	  explicitly enabled through the new kernel parameter
 
+It won't be new forever... ;-)
 
+> +	  "enable_pseudo_nmi".
+
+I'm not overly keen on this name. We already have "irqchip.gicv3_nolpi",
+so why not adopt something similar. "irqchip.gicv3_pseudo_nmi", taking a
+boolean value?
+
+> +
+> +	  If unsure, say N
+> +
+>  config RELOCATABLE
+>  	bool
+>  	help
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index b530fb24..e66d778 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -1207,10 +1207,19 @@ static void cpu_enable_address_auth(struct arm64_cpu_capabilities const *cap)
+>  #endif /* CONFIG_ARM64_PTR_AUTH */
+>  
+>  #ifdef CONFIG_ARM64_PSEUDO_NMI
+> +static bool enable_pseudo_nmi;
+> +
+> +static int __init early_enable_pseudo_nmi(char *p)
+> +{
+> +	enable_pseudo_nmi = true;
+
+And if you're happy with the above, this becomes:
+
+	return strtobool(p, &enable_pseudo_nmi);
+
+> +	return 0;
+> +}
+> +early_param("enable_pseudo_nmi", early_enable_pseudo_nmi);
+> +
+>  static bool can_use_gic_priorities(const struct arm64_cpu_capabilities *entry,
+>  				   int scope)
+>  {
+> -	return false;
+> +	return enable_pseudo_nmi && has_useable_gicv3_cpuif(entry, scope);
+>  }
+>  #endif
+>  
+> -- 
+> 1.9.1
+> 
+
+Thanks,
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
