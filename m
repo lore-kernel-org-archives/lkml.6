@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD08FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27ACFC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8067821738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4C1B2084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692628;
-	bh=CUhsIb/Rcezh3hqxk9oVOpXk6KMo5uI8+8fEERLhdw4=;
+	s=default; t=1548692631;
+	bh=nzxjFW8ut6h7MOyj/9PaFWJlbYOnygnpx8Ea/WJJ3SU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=V6wSDDL7VQo3LkSzxpLEsqbAFQISWl1Pm/J/k/UCkhma9w8BY3liG9AKzkpkYYCd1
-	 Qmz9PjlkRlxYm+JQfyLoul9QfZpFBLZBPhEbWUCbr6zMYaHR8+gw98pJWyRRKFDF0p
-	 lpOWwgfexDZgSMYmjoBzqnMP5fCQnkKMZTiNNF98=
+	b=Izq+pdYLq6iHpbN/tSVeds/t5S0i1ZX6xS46Hwx7Mb3U0Vpia7Xo802lEIH1W2Ibn
+	 qxrk/3AuL7dClC8S/DGiqqPvFJ2xHAZL8ZfhZ7tL+JaTCTP5VPGQuL5m/DTQU8zhGA
+	 XLU5jP6BShiDBznq+7JK2+foywAo61IN7qxl4z0M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389513AbfA1QXq (ORCPT
+        id S2389538AbfA1QXu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:23:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60054 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:23:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60090 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728770AbfA1QXo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:44 -0500
+        id S2389509AbfA1QXq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:23:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8F5462084A;
-        Mon, 28 Jan 2019 16:23:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A984B2171F;
+        Mon, 28 Jan 2019 16:23:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692624;
-        bh=CUhsIb/Rcezh3hqxk9oVOpXk6KMo5uI8+8fEERLhdw4=;
+        s=default; t=1548692625;
+        bh=nzxjFW8ut6h7MOyj/9PaFWJlbYOnygnpx8Ea/WJJ3SU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fdbjT0BPWUfjMkCEg46HuS9lSRuPLSwcBmMUTiGEjihoXIzCgzgrbtUWNcB6V5F6e
-         8ah99+bR7FgcWlNXLzYSrR4HbSUU/G+3Y29PK+n9UvLyzZ/eAeadKb3Uz8pOiEd3/w
-         i8vQjx2YOmooAcnPwTa04xsFJiN+6Hsh+9lCobfk=
+        b=L4eAbRa77ZrWtOr9Fy2PDKL8h6gGTrCfsfhirF82y/7MeFOVVX0KrhPIgp2lZxf3i
+         G4vYkPusLs2rYOjGg07dhPwIwySHPC3jcOHQmfxrjB8a/mEaaC3ymNOmZzUHDuxK7b
+         5Wu/a7N5d78Vu8Jcxho/+2fSfPDim3LOG9nRSqcE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wenwen Wang <wang6495@umn.edu>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 098/107] gdrom: fix a memory leak bug
-Date:   Mon, 28 Jan 2019 11:19:38 -0500
-Message-Id: <20190128161947.57405-98-sashal@kernel.org>
+Cc:     Scott Wood <oss@buserror.net>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 099/107] fsl/fman: Use GFP_ATOMIC in {memac,tgec}_add_hash_mac_address()
+Date:   Mon, 28 Jan 2019 11:19:39 -0500
+Message-Id: <20190128161947.57405-99-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -56,39 +57,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wenwen Wang <wang6495@umn.edu>
+From: Scott Wood <oss@buserror.net>
 
-[ Upstream commit 093c48213ee37c3c3ff1cf5ac1aa2a9d8bc66017 ]
+[ Upstream commit 0d9c9a238faf925823bde866182c663b6d734f2e ]
 
-In probe_gdrom(), the buffer pointed by 'gd.cd_info' is allocated through
-kzalloc() and is used to hold the information of the gdrom device. To
-register and unregister the device, the pointer 'gd.cd_info' is passed to
-the functions register_cdrom() and unregister_cdrom(), respectively.
-However, this buffer is not freed after it is used, which can cause a
-memory leak bug.
+These functions are called from atomic context:
 
-This patch simply frees the buffer 'gd.cd_info' in exit_gdrom() to fix the
-above issue.
+[    9.150239] BUG: sleeping function called from invalid context at /home/scott/git/linux/mm/slab.h:421
+[    9.158159] in_atomic(): 1, irqs_disabled(): 0, pid: 4432, name: ip
+[    9.163128] CPU: 8 PID: 4432 Comm: ip Not tainted 4.20.0-rc2-00169-g63d86876f324 #29
+[    9.163130] Call Trace:
+[    9.170701] [c0000002e899a980] [c0000000009c1068] .dump_stack+0xa8/0xec (unreliable)
+[    9.177140] [c0000002e899aa10] [c00000000007a7b4] .___might_sleep+0x138/0x164
+[    9.184440] [c0000002e899aa80] [c0000000001d5bac] .kmem_cache_alloc_trace+0x238/0x30c
+[    9.191216] [c0000002e899ab40] [c00000000065ea1c] .memac_add_hash_mac_address+0x104/0x198
+[    9.199464] [c0000002e899abd0] [c00000000065a788] .set_multi+0x1c8/0x218
+[    9.206242] [c0000002e899ac80] [c0000000006615ec] .dpaa_set_rx_mode+0xdc/0x17c
+[    9.213544] [c0000002e899ad00] [c00000000083d2b0] .__dev_set_rx_mode+0x80/0xd4
+[    9.219535] [c0000002e899ad90] [c00000000083d334] .dev_set_rx_mode+0x30/0x54
+[    9.225271] [c0000002e899ae10] [c00000000083d4a0] .__dev_open+0x148/0x1c8
+[    9.230751] [c0000002e899aeb0] [c00000000083d934] .__dev_change_flags+0x19c/0x1e0
+[    9.230755] [c0000002e899af60] [c00000000083d9a4] .dev_change_flags+0x2c/0x80
+[    9.242752] [c0000002e899aff0] [c0000000008554ec] .do_setlink+0x350/0xf08
+[    9.248228] [c0000002e899b170] [c000000000857ad0] .rtnl_newlink+0x588/0x7e0
+[    9.253965] [c0000002e899b740] [c000000000852424] .rtnetlink_rcv_msg+0x3e0/0x498
+[    9.261440] [c0000002e899b820] [c000000000884790] .netlink_rcv_skb+0x134/0x14c
+[    9.267607] [c0000002e899b8e0] [c000000000851840] .rtnetlink_rcv+0x18/0x2c
+[    9.274558] [c0000002e899b950] [c000000000883c8c] .netlink_unicast+0x214/0x318
+[    9.281163] [c0000002e899ba00] [c000000000884220] .netlink_sendmsg+0x348/0x444
+[    9.287076] [c0000002e899bae0] [c00000000080d13c] .sock_sendmsg+0x2c/0x54
+[    9.287080] [c0000002e899bb50] [c0000000008106c0] .___sys_sendmsg+0x2d0/0x2d8
+[    9.298375] [c0000002e899bd30] [c000000000811a80] .__sys_sendmsg+0x5c/0xb0
+[    9.303939] [c0000002e899be20] [c0000000000006b0] system_call+0x60/0x6c
 
-Signed-off-by: Wenwen Wang <wang6495@umn.edu>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Scott Wood <oss@buserror.net>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cdrom/gdrom.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/net/ethernet/freescale/fman/fman_memac.c | 2 +-
+ drivers/net/ethernet/freescale/fman/fman_tgec.c  | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/cdrom/gdrom.c b/drivers/cdrom/gdrom.c
-index e2808fefbb78..1852d19d0d7b 100644
---- a/drivers/cdrom/gdrom.c
-+++ b/drivers/cdrom/gdrom.c
-@@ -882,6 +882,7 @@ static void __exit exit_gdrom(void)
- 	platform_device_unregister(pd);
- 	platform_driver_unregister(&gdrom_driver);
- 	kfree(gd.toc);
-+	kfree(gd.cd_info);
- }
+diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.c b/drivers/net/ethernet/freescale/fman/fman_memac.c
+index 71a5ded9d1de..21dd5579130e 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_memac.c
++++ b/drivers/net/ethernet/freescale/fman/fman_memac.c
+@@ -923,7 +923,7 @@ int memac_add_hash_mac_address(struct fman_mac *memac, enet_addr_t *eth_addr)
+ 	hash = get_mac_addr_hash_code(addr) & HASH_CTRL_ADDR_MASK;
  
- module_init(init_gdrom);
+ 	/* Create element to be added to the driver hash table */
+-	hash_entry = kmalloc(sizeof(*hash_entry), GFP_KERNEL);
++	hash_entry = kmalloc(sizeof(*hash_entry), GFP_ATOMIC);
+ 	if (!hash_entry)
+ 		return -ENOMEM;
+ 	hash_entry->addr = addr;
+diff --git a/drivers/net/ethernet/freescale/fman/fman_tgec.c b/drivers/net/ethernet/freescale/fman/fman_tgec.c
+index 4b0f3a50b293..e575259d20f4 100644
+--- a/drivers/net/ethernet/freescale/fman/fman_tgec.c
++++ b/drivers/net/ethernet/freescale/fman/fman_tgec.c
+@@ -551,7 +551,7 @@ int tgec_add_hash_mac_address(struct fman_mac *tgec, enet_addr_t *eth_addr)
+ 	hash = (crc >> TGEC_HASH_MCAST_SHIFT) & TGEC_HASH_ADR_MSK;
+ 
+ 	/* Create element to be added to the driver hash table */
+-	hash_entry = kmalloc(sizeof(*hash_entry), GFP_KERNEL);
++	hash_entry = kmalloc(sizeof(*hash_entry), GFP_ATOMIC);
+ 	if (!hash_entry)
+ 		return -ENOMEM;
+ 	hash_entry->addr = addr;
 -- 
 2.19.1
 
