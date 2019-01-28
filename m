@@ -2,121 +2,127 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C617C282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:26:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3DF3C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:28:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 086CB2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:26:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8E5CD2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:28:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="J2S7zlBb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727786AbfA1T0W (ORCPT
+        id S1727734AbfA1T2Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:26:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:51312 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726862AbfA1T0W (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:26:22 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7058988308;
-        Mon, 28 Jan 2019 19:26:21 +0000 (UTC)
-Received: from horse.redhat.com (unknown [10.18.25.156])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F0EB61786;
-        Mon, 28 Jan 2019 19:26:21 +0000 (UTC)
-Received: by horse.redhat.com (Postfix, from userid 10451)
-        id 9094D22386D; Mon, 28 Jan 2019 14:26:20 -0500 (EST)
-Date:   Mon, 28 Jan 2019 14:26:20 -0500
-From:   Vivek Goyal <vgoyal@redhat.com>
-To:     Andrea Righi <righi.andrea@gmail.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Dennis Zhou <dennis@kernel.org>,
-        cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
-Message-ID: <20190128192620.GB10240@redhat.com>
-References: <20190118103127.325-1-righi.andrea@gmail.com>
- <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
- <20190118184403.GB1535@xps-13>
- <20190118194652.gg5j2yz3h2llecpj@macbook-pro-91.dhcp.thefacebook.com>
- <20190119100827.GA1630@xps-13>
- <20190121214715.GA27713@redhat.com>
- <20190128174129.GB8272@xps-13>
+        Mon, 28 Jan 2019 14:28:16 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:33739 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbfA1T2P (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 14:28:15 -0500
+Received: by mail-yw1-f68.google.com with SMTP id p65so7222413ywe.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:28:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=OXqys+F8VNcO6urF4x5LaRyjeKzfHx52VPwVu/rPMH4=;
+        b=J2S7zlBbMS/lJP7dE3EbZj3UvKwS66lNgsU5D9p/7yg4KDTgTfSUvrfDbO7thamxMa
+         EavbE4dlkAKWB9HSzDFql1TBzOrL1GOwFedXXbji/E3+wed4Pa1q6sT5MIApE7gD2fxs
+         c/izQCyhNc4ZbO8/dSDNFZwnm3+7AJLn1YDxDBzC+2RDgdzAgAHEIn7ZhCcu9R7MXru9
+         aC/xTOVXkdftBztxdlgNOfarMVThkxbO2vMcQWHwU8TdhEDlV7YftkncCv657/L0BfGe
+         LKZ8g0ijijH0t833jX10UmV9eE1zcVtg3hd3zjGTIxS/VXOiWpIACdbCf7Jjbu9jpZtn
+         DFvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=OXqys+F8VNcO6urF4x5LaRyjeKzfHx52VPwVu/rPMH4=;
+        b=KS7yL2YWbZvttUk/EbY3rbI9dsRU+0FLEIVzsiNdNYdiLT4QBkxkNya+c8gNVYK44j
+         poZw2bo4N3RzzSMx4Y2a3lXsInJScdVLKNr1E05IIv0InU7unosV9g8PaDWWLBwgN/ZJ
+         dHzzmXZwBWjRdq0rS4UN60maKJRSgPr5Uq7PfCs7r8yFVChKSuDTnHjid1eQz8l5Tb9X
+         Ot/tCVhbQT8CXBk+WKXfeM+LEMBo/qASL9c8VgKF/LVZMG1BCKF0r60yQQJKMu0nFzhI
+         oO7carSyHCF0rcs6VDb/p0AI6nor9s6MaKa4Rhik3gcn6kMN1FfsHbmHf0zGcOMboXTO
+         e++w==
+X-Gm-Message-State: AJcUukcXj6/XL5+Xsyylrp+WjW1GFppCPL3IpgEIZn8XTjhxTiFS6rRX
+        MqqR55j4zLnC1zBLwiXKfTsCWyIFh3zNeuvotrP9dw==
+X-Google-Smtp-Source: ALg8bN6GxxqpUoZWxmJRWVqYC3IYKjSRiIPaE1Mrb08fjS0xewEZvvRuJtz9bPGC0XjtnWtglqAaybMhF2G/MeSA1cg=
+X-Received: by 2002:a81:ec12:: with SMTP id j18mr21117867ywm.17.1548703694063;
+ Mon, 28 Jan 2019 11:28:14 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190128174129.GB8272@xps-13>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 28 Jan 2019 19:26:22 +0000 (UTC)
+References: <20190126095131.4756-1-enric.balletbo@collabora.com> <20190126095131.4756-2-enric.balletbo@collabora.com>
+In-Reply-To: <20190126095131.4756-2-enric.balletbo@collabora.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Mon, 28 Jan 2019 11:28:02 -0800
+Message-ID: <CABXOdTcY4TyiVzjaDCs4TiMpku5xF36s2B+PfY1=5tP4pWjeeQ@mail.gmail.com>
+Subject: Re: [PATCH v2 01/12] platform/chrome: cromeos_pstore: switch to SPDX identifier
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Kees Cook <keescook@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 06:41:29PM +0100, Andrea Righi wrote:
-> Hi Vivek,
-> 
-> sorry for the late reply.
-> 
-> On Mon, Jan 21, 2019 at 04:47:15PM -0500, Vivek Goyal wrote:
-> > On Sat, Jan 19, 2019 at 11:08:27AM +0100, Andrea Righi wrote:
-> > 
-> > [..]
-> > > Alright, let's skip the root cgroup for now. I think the point here is
-> > > if we want to provide sync() isolation among cgroups or not.
-> > > 
-> > > According to the manpage:
-> > > 
-> > >        sync()  causes  all  pending  modifications  to filesystem metadata and cached file data to be
-> > >        written to the underlying filesystems.
-> > > 
-> > > And:
-> > >        According to the standard specification (e.g., POSIX.1-2001), sync() schedules the writes, but
-> > >        may  return  before  the actual writing is done.  However Linux waits for I/O completions, and
-> > >        thus sync() or syncfs() provide the same guarantees as fsync called on every file in the  sys‐
-> > >        tem or filesystem respectively.
-> > > 
-> > > Excluding the root cgroup, do you think a sync() issued inside a
-> > > specific cgroup should wait for I/O completions only for the writes that
-> > > have been generated by that cgroup?
-> > 
-> > Can we account I/O towards the cgroup which issued "sync" only if write
-> > rate of sync cgroup is higher than cgroup to which page belongs to. Will
-> > that solve problem, assuming its doable?
-> 
-> Maybe this would mitigate the problem, in part, but it doesn't solve it.
-> 
-> The thing is, if a dirty page belongs to a slow cgroup and a fast cgroup
-> issues "sync", the fast cgroup needs to wait a lot, because writeback is
-> happening at the speed of the slow cgroup.
+On Sat, Jan 26, 2019 at 1:51 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> Adopt the SPDX license identifier headers to ease license compliance
+> management. Also fix the module license mismatch and change the term
+> 'Chrome OS' for 'ChromeOS' to be coherent with other drivers.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Hi Andrea,
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-But that's true only for I/O which has already been submitted to block
-layer, right? Any new I/O yet to be submitted could still be attributed
-to faster cgroup requesting sync.
-
-Until and unless cgroups limits are absurdly low, it should not take very
-long for already submitted I/O to finish. If yes, then in practice, it
-might not be a big problem?
-
-Vivek
-
-> 
-> Ideally in this case we should bump up the writeback speed, maybe even
-> temporarily inherit the write rate of the sync cgroup, similarly to a
-> priority-inversion locking scenario, but I think it's not doable at the
-> moment without applying big changes.
-> 
-> Or we could isolate the sync domain, meaning that a cgroup issuing a
-> sync will only wait for the syncing of the pages that belong to that
-> sync cgroup. But probably also this method requires big changes...
-> 
-> -Andrea
+> ---
+>
+> Changes in v2:
+> - Removed the patches that removed the unnused includes (were wrong).
+> - Add patches for all files in platform/chrome that didn't switch yet.
+>
+>  drivers/platform/chrome/chromeos_pstore.c | 17 ++++++-----------
+>  1 file changed, 6 insertions(+), 11 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/chromeos_pstore.c b/drivers/platform/chrome/chromeos_pstore.c
+> index b0693fdec8c6..d13770785fb5 100644
+> --- a/drivers/platform/chrome/chromeos_pstore.c
+> +++ b/drivers/platform/chrome/chromeos_pstore.c
+> @@ -1,12 +1,7 @@
+> -/*
+> - *  chromeos_pstore.c - Driver to instantiate Chromebook ramoops device
+> - *
+> - *  Copyright (C) 2013 Google, Inc.
+> - *
+> - *  This program is free software; you can redistribute it and/or modify
+> - *  it under the terms of the GNU General Public License as published by
+> - *  the Free Software Foundation, version 2 of the License.
+> - */
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Driver to instantiate Chromebook ramoops device.
+> +//
+> +// Copyright (C) 2013 Google, Inc.
+>
+>  #include <linux/acpi.h>
+>  #include <linux/dmi.h>
+> @@ -138,5 +133,5 @@ static void __exit chromeos_pstore_exit(void)
+>  module_init(chromeos_pstore_init);
+>  module_exit(chromeos_pstore_exit);
+>
+> -MODULE_DESCRIPTION("Chrome OS pstore module");
+> -MODULE_LICENSE("GPL");
+> +MODULE_DESCRIPTION("ChromeOS pstore module");
+> +MODULE_LICENSE("GPL v2");
+> --
+> 2.20.1
+>
