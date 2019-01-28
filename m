@@ -2,108 +2,99 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6AF53C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:04:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49692C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:04:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35BD62087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:04:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E171B2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:04:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="hxyfj+YD"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726828AbfA1KEj (ORCPT
+        id S1726862AbfA1KEn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 05:04:39 -0500
-Received: from smtp03.citrix.com ([162.221.156.55]:28666 "EHLO
-        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726719AbfA1KEf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 05:04:35 -0500
-X-IronPort-AV: E=Sophos;i="5.56,533,1539648000"; 
-   d="scan'208";a="76590249"
-From:   Ross Lagerwall <ross.lagerwall@citrix.com>
-To:     <linux-kernel@vger.kernel.org>
-CC:     <linux-acpi@vger.kernel.org>, <linux-efi@vger.kernel.org>,
-        "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
-        Borislav Petkov <bp@alien8.de>,
-        Huang Ying <ying.huang@intel.com>,
-        Ross Lagerwall <ross.lagerwall@citrix.com>
-Subject: [PATCH v2 1/2] acpi/apei: Fix possible out-of-bounds access to BERT region
-Date:   Mon, 28 Jan 2019 10:04:23 +0000
-Message-ID: <20190128100424.30278-2-ross.lagerwall@citrix.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20190128100424.30278-1-ross.lagerwall@citrix.com>
-References: <20190128100424.30278-1-ross.lagerwall@citrix.com>
+        Mon, 28 Jan 2019 05:04:43 -0500
+Received: from mout02.posteo.de ([185.67.36.66]:57467 "EHLO mout02.posteo.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726832AbfA1KEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 05:04:42 -0500
+Received: from submission (posteo.de [89.146.220.130]) 
+        by mout02.posteo.de (Postfix) with ESMTPS id A509C2400FC
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:04:40 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
+        t=1548669880; bh=qZmb/C+xRGeTA0pyxMfIlRobHToBGwXPBkxzlgge6M4=;
+        h=From:To:Cc:Subject:Date:From;
+        b=hxyfj+YD1wFDf0icZGQUC0oW9zbqtFTqvZnBgm42sdDMHkb4ECl4v2PgiTfjq8a2i
+         /nID4rxbH/21jNHFVwss/IkiIsEda3rxybYyCNuuAe5+SkNsVWDSojpepUIgbFC85A
+         cxUvQRrR7EwF8NEmdQE0WsPrX/KSmyVXvMhymyb17Jf8cqKiFBoT4cqDzkuzdUjtu9
+         kZmw8yhWP2tP5KRQzvuOxjVmdo3yMgoM7eTkCNe4oPXPnxIaXbO3DMurm2cJeESmBi
+         peuQi8fTAXYwOT++2epxlzZwyi5JGfxsSWNjGre2aH/WCAW98xJu8bvG8yUuc8+1Ba
+         1F+WxYRCfnKzg==
+Received: from customer (localhost [127.0.0.1])
+        by submission (posteo.de) with ESMTPSA id 43p4x2674wz9rxf;
+        Mon, 28 Jan 2019 11:04:38 +0100 (CET)
+From:   Martin Kepplinger <martink@posteo.de>
+To:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        b.zolnierkie@samsung.com
+Cc:     daniel.vetter@ffwll.ch, manfred.schlaegl@ginzinger.com,
+        linux-kernel@vger.kernel.org,
+        Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Subject: [PATCH] fbdev: fbmem: fix memory access if logo is bigger than the screen
+Date:   Mon, 28 Jan 2019 11:04:35 +0100
+Message-Id: <20190128100435.759-1-martink@posteo.de>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that the length recorded in the generic error status block is
-within the region before checking the contents of the region itself.
-Otherwise it may result in an out-of-bounds access if the system
-firmware has generated a status block with an invalid length (larger
-than the mapped region). Also move the block_status check so that it
-only happens after the block has been verified to be within the mapped
-region.
+From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
 
-Signed-off-by: Ross Lagerwall <ross.lagerwall@citrix.com>
+There is no clipping on the x or y axis for logos larger that the framebuffer
+size. Therefore: a logo bigger than screen size leads to invalid memory access:
+
+[    1.254664] Backtrace:
+[    1.254728] [<c02714e0>] (cfb_imageblit) from [<c026184c>] (fb_show_logo+0x620/0x684)
+[    1.254763]  r10:00000003 r9:00027fd8 r8:c6a40000 r7:c6a36e50 r6:00000000 r5:c06b81e4
+[    1.254774]  r4:c6a3e800
+[    1.254810] [<c026122c>] (fb_show_logo) from [<c026c1e4>] (fbcon_switch+0x3fc/0x46c)
+[    1.254842]  r10:c6a3e824 r9:c6a3e800 r8:00000000 r7:c6a0c000 r6:c070b014 r5:c6a3e800
+[    1.254852]  r4:c6808c00
+[    1.254889] [<c026bde8>] (fbcon_switch) from [<c029c8f8>] (redraw_screen+0xf0/0x1e8)
+[    1.254918]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:c070d5a0 r5:00000080
+[    1.254928]  r4:c6808c00
+[    1.254961] [<c029c808>] (redraw_screen) from [<c029d264>] (do_bind_con_driver+0x194/0x2e4)
+[    1.254991]  r9:00000000 r8:00000000 r7:00000014 r6:c070d5a0 r5:c070d5a0 r4:c070d5a0
+
+So prevent displaying a logo bigger than screen size and avoid invalid
+memory access.
+
+Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 ---
- drivers/acpi/apei/bert.c | 23 ++++++++++-------------
- 1 file changed, 10 insertions(+), 13 deletions(-)
+ drivers/video/fbdev/core/fbmem.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/acpi/apei/bert.c b/drivers/acpi/apei/bert.c
-index 12771fcf0417..0d948d0a41af 100644
---- a/drivers/acpi/apei/bert.c
-+++ b/drivers/acpi/apei/bert.c
-@@ -42,15 +42,7 @@ static void __init bert_print_all(struct acpi_bert_region *region,
- 	int remain = region_len;
- 	u32 estatus_len;
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index cb43a2258c51..4721491e6c8c 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -431,6 +431,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ {
+ 	unsigned int x;
  
--	if (!estatus->block_status)
--		return;
--
--	while (remain > sizeof(struct acpi_bert_region)) {
--		if (cper_estatus_check(estatus)) {
--			pr_err(FW_BUG "Invalid error record.\n");
--			return;
--		}
--
-+	while (remain >= sizeof(struct acpi_bert_region)) {
- 		estatus_len = cper_estatus_len(estatus);
- 		if (remain < estatus_len) {
- 			pr_err(FW_BUG "Truncated status block (length: %u).\n",
-@@ -58,6 +50,15 @@ static void __init bert_print_all(struct acpi_bert_region *region,
- 			return;
- 		}
- 
-+		/* No more error records. */
-+		if (!estatus->block_status)
-+			return;
++	if (image->width > info->var.xres || image->height > info->var.yres)
++		return;
 +
-+		if (cper_estatus_check(estatus)) {
-+			pr_err(FW_BUG "Invalid error record.\n");
-+			return;
-+		}
-+
- 		pr_info_once("Error records from previous boot:\n");
- 
- 		cper_estatus_print(KERN_INFO HW_ERR, estatus);
-@@ -70,10 +71,6 @@ static void __init bert_print_all(struct acpi_bert_region *region,
- 		estatus->block_status = 0;
- 
- 		estatus = (void *)estatus + estatus_len;
--		/* No more error records. */
--		if (!estatus->block_status)
--			return;
--
- 		remain -= estatus_len;
- 	}
- }
+ 	if (rotate == FB_ROTATE_UR) {
+ 		for (x = 0;
+ 		     x < num && image->dx + image->width <= info->var.xres;
 -- 
-2.17.2
+2.20.1
 
