@@ -4,48 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA6C9C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:38:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0443C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:38:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5BDA2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:38:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B58E22148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:38:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697121;
-	bh=/vRaWQKw3q55s8Tz0v2d2naK21I5seaKk7U91gRvlNw=;
+	s=default; t=1548697124;
+	bh=9tDo+KytNMo44euHDmGqM9epA/4MQGasBbMDcWQ+hmQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E49V/EaLJVDCXIy1GUrDs7tvtkcD/jkplvIdIk1f6tJviBq7pJLgKswV9CwI8AM/k
-	 Hs4f0NSInC1XYKY98hH/z7eSJntgJO5yVfzcyS1PsBz4A3kuNLJcM8u8C/e8j0D+ec
-	 pUhnjD1WAGk6lj4rKFlF+mqB47wIv9WVGGSgf11Q=
+	b=Uw2gw2V+AQ0857IWWkJd8VsWD7Hss1YZsAQg5WsddaSPWpYnmjTiBF3iMWmN74sYC
+	 C1yLWD2GDhEXXtRQA3u6QMr5h7CoPTJPSY72ihvvktSVkMM6QYCqeXn+oeod1jEJsN
+	 M8q6uOsH1ydfi47eqmGmiKUP9Xp3EewS0V0+I7Uw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729605AbfA1PyB (ORCPT
+        id S1727639AbfA1Px7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:54:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40234 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:53:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40186 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729578AbfA1Px4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:53:56 -0500
+        id S1729532AbfA1Pxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:53:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29E8E20989;
-        Mon, 28 Jan 2019 15:53:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5C88920855;
+        Mon, 28 Jan 2019 15:53:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690836;
-        bh=/vRaWQKw3q55s8Tz0v2d2naK21I5seaKk7U91gRvlNw=;
+        s=default; t=1548690833;
+        bh=9tDo+KytNMo44euHDmGqM9epA/4MQGasBbMDcWQ+hmQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZI7aeIVaE/1+QR/I7E5bxEPbDCpW0Nqary3R+ZFd6X1QvPWAldS/A8KW1l6Pt8c8b
-         CZBeNVccPMJUHsjHwa3flhNd+PF/OgMAPfx73imJJ/omp3NyDRx4wBTAnLBiP0KjKA
-         dtXGcleGSHj8pJZjvDEgLXhfZy5QGhrqLWh98bI0=
+        b=lwIpM53dZMGXHIydVY1Gbw3N7TFPi9l7gf1lEhXEwxxQ15vc4U4W3MoIwt9Cv8n8H
+         x4T5a3uc0wRixpCY3v0rSWkicurj0OdeILHwdBq5HEbT1zxySIM/Eaddl3hdPMWZ2Q
+         Io7yc/jm8RBz5euXKpO+JDF6uAPSymj0Zh37DFhw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
-        live-patching@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 208/304] livepatch: check kzalloc return values
-Date:   Mon, 28 Jan 2019 10:42:05 -0500
-Message-Id: <20190128154341.47195-208-sashal@kernel.org>
+Cc:     Ilan Peer <ilan.peer@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 207/304] mac80211: Properly handle SKB with radiotap only
+Date:   Mon, 28 Jan 2019 10:42:04 -0500
+Message-Id: <20190128154341.47195-207-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,59 +60,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Ilan Peer <ilan.peer@intel.com>
 
-[ Upstream commit 5f30b2e823484ce6a79f2b59901b6351c15effa6 ]
+[ Upstream commit 8020919a9b99d6c990dc6a50e8215e291fbbe5a6 ]
 
-kzalloc() return should always be checked - notably in example code
-where this may be seen as reference. On failure of allocation in
-livepatch_fix1_dummy_alloc() respectively dummy_alloc() previous
-allocation is freed (thanks to Petr Mladek <pmladek@suse.com> for
-catching this) and NULL returned.
+The monitor interface Rx handling of SKBs that contain only
+radiotap information was buggy as it tried to access the
+SKB assuming it contains a frame.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 439e7271dc2b ("livepatch: introduce shadow variable API")
-Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Acked-by: Miroslav Benes <mbenes@suse.cz>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+To fix this, check the RX_FLAG_NO_PSDU flag in the Rx status
+(indicting that the SKB contains only radiotap information),
+and do not perform data path specific processing when the flag
+is set.
+
+Signed-off-by: Ilan Peer <ilan.peer@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- samples/livepatch/livepatch-shadow-fix1.c | 5 +++++
- samples/livepatch/livepatch-shadow-mod.c  | 4 ++++
- 2 files changed, 9 insertions(+)
+ net/mac80211/rx.c | 26 +++++++++++++++++---------
+ 1 file changed, 17 insertions(+), 9 deletions(-)
 
-diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
-index 49b13553eaae..e8f1bd6b29b1 100644
---- a/samples/livepatch/livepatch-shadow-fix1.c
-+++ b/samples/livepatch/livepatch-shadow-fix1.c
-@@ -89,6 +89,11 @@ struct dummy *livepatch_fix1_dummy_alloc(void)
- 	 * pointer to handle resource release.
- 	 */
- 	leak = kzalloc(sizeof(int), GFP_KERNEL);
-+	if (!leak) {
-+		kfree(d);
-+		return NULL;
-+	}
+diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
+index 428f7ad5f9b5..77d996a60f12 100644
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -753,6 +753,7 @@ ieee80211_rx_monitor(struct ieee80211_local *local, struct sk_buff *origskb,
+ 	struct ieee80211_sub_if_data *monitor_sdata =
+ 		rcu_dereference(local->monitor_sdata);
+ 	bool only_monitor = false;
++	unsigned int min_head_len;
+ 
+ 	if (status->flag & RX_FLAG_RADIOTAP_HE)
+ 		rtap_space += sizeof(struct ieee80211_radiotap_he);
+@@ -766,6 +767,8 @@ ieee80211_rx_monitor(struct ieee80211_local *local, struct sk_buff *origskb,
+ 		rtap_space += sizeof(*rtap) + rtap->len + rtap->pad;
+ 	}
+ 
++	min_head_len = rtap_space;
 +
- 	klp_shadow_alloc(d, SV_LEAK, sizeof(leak), GFP_KERNEL,
- 			 shadow_leak_ctor, leak);
+ 	/*
+ 	 * First, we may need to make a copy of the skb because
+ 	 *  (1) we need to modify it for radiotap (if not present), and
+@@ -775,18 +778,23 @@ ieee80211_rx_monitor(struct ieee80211_local *local, struct sk_buff *origskb,
+ 	 * the SKB because it has a bad FCS/PLCP checksum.
+ 	 */
  
-diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
-index 4c54b250332d..4aa8a88d3cd6 100644
---- a/samples/livepatch/livepatch-shadow-mod.c
-+++ b/samples/livepatch/livepatch-shadow-mod.c
-@@ -118,6 +118,10 @@ noinline struct dummy *dummy_alloc(void)
+-	if (ieee80211_hw_check(&local->hw, RX_INCLUDES_FCS)) {
+-		if (unlikely(origskb->len <= FCS_LEN)) {
+-			/* driver bug */
+-			WARN_ON(1);
+-			dev_kfree_skb(origskb);
+-			return NULL;
++	if (!(status->flag & RX_FLAG_NO_PSDU)) {
++		if (ieee80211_hw_check(&local->hw, RX_INCLUDES_FCS)) {
++			if (unlikely(origskb->len <= FCS_LEN + rtap_space)) {
++				/* driver bug */
++				WARN_ON(1);
++				dev_kfree_skb(origskb);
++				return NULL;
++			}
++			present_fcs_len = FCS_LEN;
+ 		}
+-		present_fcs_len = FCS_LEN;
++
++		/* also consider the hdr->frame_control */
++		min_head_len += 2;
+ 	}
  
- 	/* Oops, forgot to save leak! */
- 	leak = kzalloc(sizeof(int), GFP_KERNEL);
-+	if (!leak) {
-+		kfree(d);
-+		return NULL;
-+	}
- 
- 	pr_info("%s: dummy @ %p, expires @ %lx\n",
- 		__func__, d, d->jiffies_expire);
+-	/* ensure hdr->frame_control and vendor radiotap data are in skb head */
+-	if (!pskb_may_pull(origskb, 2 + rtap_space)) {
++	/* ensure that the expected data elements are in skb head */
++	if (!pskb_may_pull(origskb, min_head_len)) {
+ 		dev_kfree_skb(origskb);
+ 		return NULL;
+ 	}
 -- 
 2.19.1
 
