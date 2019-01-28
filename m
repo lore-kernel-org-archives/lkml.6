@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE924C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4C73C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7AD092147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1DC52147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690581;
-	bh=gZa6UeXQHFwi6vSETxcA+9BdDbuST0+PhsiaVqFdxAE=;
+	s=default; t=1548690585;
+	bh=2qzd0+B6XblkdYmm48qera4WArBsBZcfgpLkVGqjXds=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=R7qxhVCo0paRlvpgEkaWTw6h0wpi7WOQbu34mw5FC0sQY95sDVlDH8bo9JQfbLWDr
-	 qX3yOB/uEeC0lUZogjhhRSdtesYyrOJvBP1azetupW2Vwseqx1zCsC65wOrhNwrFqB
-	 qXICooiZRTaYW6NoHrKL3PEDA6bwiMz/QNtNVwqM=
+	b=Pj4Y+Lf+S+AJNjKwDWY7xhBBeKm9HgGSpgyRJlDSubS4lcQqQdn0OgRuiFGlnf6cp
+	 rJJ/y5BHBq6xCKdUyrfW9iLrtukAoMIbUVJxRZU/1X2x7Qt7bgAxTV9wHpIim6PQbw
+	 D2tB4c/Le5RpmAMI4VN2K076VRZAc159JVgKx3jk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728740AbfA1Ptk (ORCPT
+        id S1728758AbfA1Ptn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:49:40 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35416 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:49:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35504 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbfA1Pth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:49:37 -0500
+        id S1727935AbfA1Ptl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:49:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2150C2147A;
-        Mon, 28 Jan 2019 15:49:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A86512175B;
+        Mon, 28 Jan 2019 15:49:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690577;
-        bh=gZa6UeXQHFwi6vSETxcA+9BdDbuST0+PhsiaVqFdxAE=;
+        s=default; t=1548690580;
+        bh=2qzd0+B6XblkdYmm48qera4WArBsBZcfgpLkVGqjXds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aj8HMnhBIl1ym9lZ9+uDPJsgZovVxy+DslzoDTCqH32g9xEnvg921efpDrk9a2sHB
-         9Awt5yt47zkha1EzifVWx4qIEz/7M3Vy8pNRCIjdotQztS2MRbl7d4uGqkD3ZlZyqE
-         spzCufNMQoVP/j/hTFz34fb0J3B8pph8vaJXMELA=
+        b=rdouvAMTgXnEQmJOCFpLwePfmFvZaE8epTSigVF8yYZJtlP5MVD5/0I9fuuNeDhI4
+         Nnh5wbuFPV5HUnx5tLgosOCP0dT97lyVH1KoN4SJFu36FGzh4bGW9Cx3OILEGNbV1i
+         ADNee+EU1BmhWSUs8j/henXAJH38u618QnzXHln8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 129/304] drm/amdgpu/powerplay: fix clock stretcher limits on polaris (v2)
-Date:   Mon, 28 Jan 2019 10:40:46 -0500
-Message-Id: <20190128154341.47195-129-sashal@kernel.org>
+Cc:     Hoang Le <hoang.h.le@dektech.com.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.20 130/304] tipc: fix node keep alive interval calculation
+Date:   Mon, 28 Jan 2019 10:40:47 -0500
+Message-Id: <20190128154341.47195-130-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,49 +58,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alex Deucher <alexander.deucher@amd.com>
+From: Hoang Le <hoang.h.le@dektech.com.au>
 
-[ Upstream commit de4aaab5cc9770a8c4dc13d9bfb6a83b06bba57e ]
+[ Upstream commit f5d6c3e5a359c0507800e7ac68d565c21de9b5a1 ]
 
-Adjust limits for newer polaris variants.
+When setting LINK tolerance, node timer interval will be calculated
+base on the LINK with lowest tolerance.
 
-v2: fix polaris11 kicker (Jerry)
+But when calculated, the old node timer interval only updated if current
+setting value (tolerance/4) less than old ones regardless of number of
+links as well as links' lowest tolerance value.
 
-Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+This caused to two cases missing if tolerance changed as following:
+Case 1:
+1.1/ There is one link (L1) available in the system
+1.2/ Set L1's tolerance from 1500ms => lower (i.e 500ms)
+1.3/ Then, fallback to default (1500ms) or higher (i.e 2000ms)
+
+Expected:
+    node timer interval is 1500/4=375ms after 1.3
+
+Result:
+node timer interval will not being updated after changing tolerance at 1.3
+since its value 1500/4=375ms is not less than 500/4=125ms at 1.2.
+
+Case 2:
+2.1/ There are two links (L1, L2) available in the system
+2.2/ L1 and L2 tolerance value are 2000ms as initial
+2.3/ Set L2's tolerance from 2000ms => lower 1500ms
+2.4/ Disable link L2 (bring down its bearer)
+
+Expected:
+    node timer interval is 2000ms/4=500ms after 2.4
+
+Result:
+node timer interval will not being updated after disabling L2 since
+its value 2000ms/4=500ms is still not less than 1500/4=375ms at 2.3
+although L2 is already not available in the system.
+
+To fix this, we start the node interval calculation by initializing it to
+a value larger than any conceivable calculated value. This way, the link
+with the lowest tolerance will always determine the calculated value.
+
+Acked-by: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Hoang Le <hoang.h.le@dektech.com.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../drm/amd/powerplay/smumgr/polaris10_smumgr.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+ net/tipc/node.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
-index a1e0ac9ae248..90c1215c6f5e 100644
---- a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
-+++ b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
-@@ -1529,8 +1529,21 @@ static int polaris10_populate_clock_stretcher_data_table(struct pp_hwmgr *hwmgr)
- 	efuse = efuse >> 24;
+diff --git a/net/tipc/node.c b/net/tipc/node.c
+index 488019766433..32556f480a60 100644
+--- a/net/tipc/node.c
++++ b/net/tipc/node.c
+@@ -624,6 +624,12 @@ static void tipc_node_timeout(struct timer_list *t)
  
- 	if (hwmgr->chip_id == CHIP_POLARIS10) {
--		min = 1000;
--		max = 2300;
-+		if (hwmgr->is_kicker) {
-+			min = 1200;
-+			max = 2500;
-+		} else {
-+			min = 1000;
-+			max = 2300;
-+		}
-+	} else if (hwmgr->chip_id == CHIP_POLARIS11) {
-+		if (hwmgr->is_kicker) {
-+			min = 900;
-+			max = 2100;
-+		} else {
-+			min = 1100;
-+			max = 2100;
-+		}
- 	} else {
- 		min = 1100;
- 		max = 2100;
+ 	__skb_queue_head_init(&xmitq);
+ 
++	/* Initial node interval to value larger (10 seconds), then it will be
++	 * recalculated with link lowest tolerance
++	 */
++	tipc_node_read_lock(n);
++	n->keepalive_intv = 10000;
++	tipc_node_read_unlock(n);
+ 	for (bearer_id = 0; remains && (bearer_id < MAX_BEARERS); bearer_id++) {
+ 		tipc_node_read_lock(n);
+ 		le = &n->links[bearer_id];
 -- 
 2.19.1
 
