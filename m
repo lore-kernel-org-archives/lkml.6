@@ -7,48 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45A37C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76DD8C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD0920663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4017720663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:33:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693205;
-	bh=V7TYxs6ppRNpsWaKFKmdNFJedr8qHqebXLghvC6EKI0=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=HtbePixOQNX2hDDXCtSXqYwoHDWMRXxh/Jd16HyA/4M8wV64WTBsKHRfor2GzFM1u
-	 hl3nsKauxERs/D4TMBk5g+7bBBxXOg/bUxfzaVz/f2UnsVcVL199p/7fsJDad/C0ut
-	 ElfucXJJKuzoV1mMiHBCtP0fRPA/Kqwbf/IrUviI=
+	s=default; t=1548693218;
+	bh=yKsmlZx/Z4GFK26nt0bFCgk8J8ErEy32WhXyNwX7F30=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=jfxKfFFLqaSn6gptkUFb5GcS85xPh9awKTG3PzMrCL1Nzs+9DYp2/63ayXcY3FP/w
+	 x6skHPZQTatAMFwQB1iMHkZ65HdsmyTiTzqAF4UOpgTdE3QvoSHnL5HCytvsUtXROF
+	 AiTL3QWNymCPoJDP8xJ2XLsUnHdPxfGgoJjBBV0M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390206AbfA1Q03 (ORCPT
+        id S2390178AbfA1Q0X (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:26:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35708 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:26:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35478 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389756AbfA1Q00 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:26 -0500
+        id S2390135AbfA1Q0R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 999E92147A;
-        Mon, 28 Jan 2019 16:26:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4F9CC2171F;
+        Mon, 28 Jan 2019 16:26:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692785;
-        bh=V7TYxs6ppRNpsWaKFKmdNFJedr8qHqebXLghvC6EKI0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=SFrhGi+ciizdz6hl5+BCsYxhOX6SALvUYrzM6uIdlxxvyGJurDenFMaKy5WoojiMJ
-         oc0GKlAiaAQ1sxoMduk9ezGJ2HBLfueTc69TaWRVal00rMDDDdGySLqHrrYzQu0SAh
-         MosNNFw+1fU+gH9GlGaef+XXiLA+7yG/yviwda40=
+        s=default; t=1548692776;
+        bh=yKsmlZx/Z4GFK26nt0bFCgk8J8ErEy32WhXyNwX7F30=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=D+NskYGXkEgOdvVnqrJSrJgvv4K1HbHzJYn+dx+yrj+NHimMyYRnGP8ba9qDw9Tk4
+         P+y3BJ7e/ICnwGlHe4EzaDU87oTIPil6X3e0SgwSenEBfl+pHPC8hFnd4d94ba6GaJ
+         blZ2T0qcW3+jQN90mBi7DTy5m+demfDPeX4N5vKA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Slawomir Stepien <sst@poczta.fm>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 3.18 01/61] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
-Date:   Mon, 28 Jan 2019 11:25:23 -0500
-Message-Id: <20190128162623.59854-1-sashal@kernel.org>
+Cc:     Finn Thain <fthain@telegraphics.com.au>,
+        linuxppc-dev@lists.ozlabs.org, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 76/80] block/swim3: Fix -EBUSY error when re-opening device after unmount
+Date:   Mon, 28 Jan 2019 11:23:57 -0500
+Message-Id: <20190128162401.58841-76-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
+References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,70 +58,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Slawomir Stepien <sst@poczta.fm>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
+[ Upstream commit 296dcc40f2f2e402facf7cd26cf3f2c8f4b17d47 ]
 
-Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
-error code. This change will ensure that this error is being passed up
-in the call stack, so it can be handled.
+When the block device is opened with FMODE_EXCL, ref_count is set to -1.
+This value doesn't get reset when the device is closed which means the
+device cannot be opened again. Fix this by checking for refcount <= 0
+in the release method.
 
-Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
+Fixes: 1da177e4c3f4 ("Linux-2.6.12-rc2")
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/block/swim3.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
-index d215edf66af2..0ad4af5d0ae4 100644
---- a/drivers/staging/iio/adc/ad7280a.c
-+++ b/drivers/staging/iio/adc/ad7280a.c
-@@ -250,7 +250,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned devaddr,
- 	if (ret)
- 		return ret;
+diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
+index c264f2d284a7..2e0a9e2531cb 100644
+--- a/drivers/block/swim3.c
++++ b/drivers/block/swim3.c
+@@ -1027,7 +1027,11 @@ static void floppy_release(struct gendisk *disk, fmode_t mode)
+ 	struct swim3 __iomem *sw = fs->swim3;
  
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
- 
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -288,7 +290,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned devaddr,
- 
- 	ad7280_delay(st);
- 
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
- 
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -321,7 +325,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned cnt,
- 	ad7280_delay(st);
- 
- 	for (i = 0; i < cnt; i++) {
--		__ad7280_read32(st, &tmp);
-+		ret = __ad7280_read32(st, &tmp);
-+		if (ret)
-+			return ret;
- 
- 		if (ad7280_check_crc(st, tmp))
- 			return -EIO;
-@@ -364,7 +370,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
- 		return ret;
- 
- 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
--		__ad7280_read32(st, &val);
-+		ret = __ad7280_read32(st, &val);
-+		if (ret)
-+			return ret;
-+
- 		if (val == 0)
- 			return n - 1;
- 
+ 	mutex_lock(&swim3_mutex);
+-	if (fs->ref_count > 0 && --fs->ref_count == 0) {
++	if (fs->ref_count > 0)
++		--fs->ref_count;
++	else if (fs->ref_count == -1)
++		fs->ref_count = 0;
++	if (fs->ref_count == 0) {
+ 		swim3_action(fs, MOTOR_OFF);
+ 		out_8(&sw->control_bic, 0xff);
+ 		swim3_select(fs, RELAX);
 -- 
 2.19.1
 
