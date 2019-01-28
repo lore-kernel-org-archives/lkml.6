@@ -3,109 +3,152 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D62C282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:12:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DAAFC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:14:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C4220880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4188120880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:14:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbfA1NMH (ORCPT
+        id S1726754AbfA1NOg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:12:07 -0500
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:41481 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726672AbfA1NMH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:12:07 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id o6hegsMrzRO5Zo6higK9LD; Mon, 28 Jan 2019 14:12:04 +0100
-Subject: Re: devicetree: media: Documentation of Bt.656 Bus DT bindings
-To:     Ken Sloat <ken.sloat@ohmlinxelectronics.com>
-Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, yong.deng@magewell.com,
-        mchehab@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        maxime.ripard@bootlin.com, wens@csie.org,
-        kieran.bingham@ideasonboard.com, laurent.pinchart@ideasonboard.com,
-        jean-michel.hautbois@vodalys.com,
-        Nate Drude <nate.drude@ohmlinxelectronics.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-References: <CAPo_4QDW0r22ZTqtS_NDFWB3NFLBx9YEGgWKb-P9A3t_TBAFMQ@mail.gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <c4d68627-b26a-6402-daf4-5cd103ec9fd0@xs4all.nl>
-Date:   Mon, 28 Jan 2019 14:11:54 +0100
+        Mon, 28 Jan 2019 08:14:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60678 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726647AbfA1NOg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 08:14:36 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id BE6371390C;
+        Mon, 28 Jan 2019 13:14:35 +0000 (UTC)
+Received: from [10.36.117.107] (ovpn-117-107.ams2.redhat.com [10.36.117.107])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id A208462662;
+        Mon, 28 Jan 2019 13:14:29 +0000 (UTC)
+Subject: Re: [PATCH RFC] mm: migrate: don't rely on PageMovable() of newpage
+ after unlocking it
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vratislav Bendel <vbendel@redhat.com>,
+        Rafael Aquini <aquini@redhat.com>
+References: <20190128121609.9528-1-david@redhat.com>
+ <20190128130709.GJ18811@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <b03cae19-d02a-0ba2-69a1-010ee76748e7@redhat.com>
+Date:   Mon, 28 Jan 2019 14:14:28 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-In-Reply-To: <CAPo_4QDW0r22ZTqtS_NDFWB3NFLBx9YEGgWKb-P9A3t_TBAFMQ@mail.gmail.com>
+In-Reply-To: <20190128130709.GJ18811@dhcp22.suse.cz>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNqOlEe9iW/LBZ3As+QKI1eqmbAhYgnj7aQy9UJibCeZDomK4hs3lamUow/ou4C+LJp80z+2fYCBabQbVAUAv0BlV1zNDbVZPHP0a7EDfxT7H+oVu7zb
- JbPry7gs/NSrDgUBsk5oGKz+/nMYbsfeN1t0LiwAJMfENvQL8hZLgdFKymxEx6nsK5VBwKQLjH3WMGTE0cWCdGx4qu8SCxVilmklgem7SwyOd4Fo8B21ISfd
- ANDhcFov1gDvDaH+6l/Hvkw/MRDda7rziExEkU5oD3j+Zbncc2x1HK1LhWr5i6QNtrTDIQ4xGn2kSEJzGLVtX0PUQwJUGT3jR9qlxV8gVjyEcXyNsBRqeE87
- F50OIAax3dlKqmXlPyuPjwpUWUS5xjuUiWVyFNX7U7bPqhteLBZRRKEFSs+A8NNSgO/NO3q9UgY6LrbcaMpRRyN464w4hIdFE0lTgIJVbSCzjyRIUkAcXcej
- Z/IYy0pFUXcQQRi0APHBfjRet/JClO7zcJapxvzwsUctvKJxZiU91+1OGLGUISHkVM+25zvXtXxlbjjS3Rot1UcCvOud+CFTTPLVk+jAjCG/vGAIgps/p6vD
- MKS84UG1kdm8iGPsBv/HyjsyQ11bk+E4EtL7SP+MIqCaeGvYzD2NFQbk1a09dMijz5w7OslhcWTJ/54mLkv0oGPaf/7PsPxyz/PGDLcOH8B/0zYso6jeHmTt
- /jrryYuQLeFuHiozNq8yzRLBuUViCo4r
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Mon, 28 Jan 2019 13:14:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+Sakari
-
-On 1/24/19 3:53 AM, Ken Sloat wrote:
-> There are a number of v4l2 subdevices in the kernel that support a
-> Bt.656 bus also known as "embedded sync." Previously in older versions
-> of the kernel (and in the current 4.14 LTS kernel), the standard way
-> to enable this in device tree on a parallel bus was to simply omit all
-> hysync and vsync flags.
+On 28.01.19 14:07, Michal Hocko wrote:
+> On Mon 28-01-19 13:16:09, David Hildenbrand wrote:
+> [...]
+>> My theory:
+>>
+>> In __unmap_and_move(), we lock the old and newpage and perform the
+>> migration. In case of vitio-balloon, the new page will become
+>> movable, the old page will no longer be movable.
+>>
+>> However, after unlocking newpage, I think there is nothing stopping
+>> the newpage from getting dequeued and freed by virtio-balloon. This
+>> will result in the newpage
+>> 1. No longer having PageMovable()
+>> 2. Getting moved to the local list before finally freeing it (using
+>>    page->lru)
 > 
-> During some other kernel development I was doing, it was brought to my
-> attention that there is now a standard defined binding in
-> "video-interfaces.txt" called "bus-type" that should be used in order
-> to enable Bt.656 mode. While omitting the flags still appears to work
-> because of other assumptions made in v4l2-fwnode driver, this method
-> is now outdated and improper.
-> 
-> However, I have noticed that several dt binding docs have not been
-> updated to reflect this change and still reference the old method:
-> 
-> Documentation/devicetree/bindings/media/sun6i-csi.txt
-> /* If hsync-active/vsync-active are missing,
->    embedded BT.656 sync is used */
-> 
-> Documentation/devicetree/bindings/media/i2c/tvp5150.txt
-> "If none of hsync-active, vsync-active and field-even-active is specified,
-> the endpoint is assumed to use embedded BT.656 synchronization."
-> 
-> Documentation/devicetree/bindings/media/i2c/adv7604.txt
-> "If none of hsync-active, vsync-active and pclk-sample is specified the
->   endpoint will use embedded BT.656 synchronization."
-> 
-> and amazingly even
-> Documentation/devicetree/bindings/media/video-interfaces.txt in one of
-> the code snippets
-> /* If hsync-active/vsync-active are missing,
->    embedded BT.656 sync is used */
-> 
-> In order to avoid future confusion in the matter and ensure that the
-> proper bindings are used, I am proposing submitting patches to update
-> these docs to at minimum remove these statements and maybe even adding
-> additional comments specifying the optional property and value for
-> Bt.656 where missing. I wanted to open a discussion here first before
-> doing this though. Thoughts?
-> 
-> Thanks,
-> Ken Sloat
+> Does that mean that the virtio-balloon can change the Movable state
+> while there are other users of the page? Can you point to the code that
+> does it? How come this can be safe at all? Or is the PageMovable stable
+> only under the page lock?
 > 
 
-I certainly agree that this should be updated to make it all consistent.
+PageMovable is stable under the lock. The relevant instructions are in
 
-Regards,
+mm/balloon_compaction.c and include/linux/balloon_compaction.h
 
-	Hans
+balloon_page_insert() and balloon_page_delete() modify PageMovable and
+are only called with both, the page locked and b_dev_info->pages_lock
+locked.
+
+Especially:
+1. balloon_page_dequeue() which tries to find an unlocked page that is
+not isolated. and deletes it via balloon_page_delete().
+
+2. balloon_page_migrate() will effectively call balloon_page_delete() on
+old page and balloon_page_insert() newpage. Both pages are locked before
+calling balloon_page_migrate() and the b_dev_info->pages_lock is taken
+internally.
+
+
+So what's left is a very small race window when migrating to a new page,
+after dropping the lock of the newpage.
+
+-- 
+
+Thanks,
+
+David / dhildenb
