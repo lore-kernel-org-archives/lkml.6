@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 870B8C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE924C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 547EC2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7AD092147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690578;
-	bh=9Xjym+iWVaamZ1j/CpphHc+tDjwCls7M2eY854r5K4k=;
+	s=default; t=1548690581;
+	bh=gZa6UeXQHFwi6vSETxcA+9BdDbuST0+PhsiaVqFdxAE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qn7Yf6BYfN0KNl3+N7yy/6maGVKQV4BA6cPbWFnnDDJdaRcbFO25wUCVGdmJkezlE
-	 MUKAVxZzDd6RN4MgwxhL1r1bbi/XQTloNXBlLZc8zVVo4rAONL07y7yXQfS+fQv66s
-	 H8XwbVc6I2473wK+JQjFACwYGNnNzi3vq2JP2RRU=
+	b=R7qxhVCo0paRlvpgEkaWTw6h0wpi7WOQbu34mw5FC0sQY95sDVlDH8bo9JQfbLWDr
+	 qX3yOB/uEeC0lUZogjhhRSdtesYyrOJvBP1azetupW2Vwseqx1zCsC65wOrhNwrFqB
+	 qXICooiZRTaYW6NoHrKL3PEDA6bwiMz/QNtNVwqM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728733AbfA1Ptg (ORCPT
+        id S1728740AbfA1Ptk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:49:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35348 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:49:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727935AbfA1Ptd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:49:33 -0500
+        id S1727935AbfA1Pth (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:49:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A31C21741;
-        Mon, 28 Jan 2019 15:49:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2150C2147A;
+        Mon, 28 Jan 2019 15:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690573;
-        bh=9Xjym+iWVaamZ1j/CpphHc+tDjwCls7M2eY854r5K4k=;
+        s=default; t=1548690577;
+        bh=gZa6UeXQHFwi6vSETxcA+9BdDbuST0+PhsiaVqFdxAE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zza0hiY2ga99N5nKtPAOsbUWYP2/IAMoH9S027XAdcdCdAlX23knQByFDwrKTqnyF
-         7B8TXB8YEmWJNQsAmcoMAamCcsdCpklFxuTYs33rKS5qJXaY8Nj4vAXqvUfSObZTZG
-         MGk9wAekIMHGXRzqH755DINY/trqfQccjKotcZHw=
+        b=aj8HMnhBIl1ym9lZ9+uDPJsgZovVxy+DslzoDTCqH32g9xEnvg921efpDrk9a2sHB
+         9Awt5yt47zkha1EzifVWx4qIEz/7M3Vy8pNRCIjdotQztS2MRbl7d4uGqkD3ZlZyqE
+         spzCufNMQoVP/j/hTFz34fb0J3B8pph8vaJXMELA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 128/304] pinctrl: nuvoton: check for devm_kasprintf() failure
-Date:   Mon, 28 Jan 2019 10:40:45 -0500
-Message-Id: <20190128154341.47195-128-sashal@kernel.org>
+Cc:     Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.20 129/304] drm/amdgpu/powerplay: fix clock stretcher limits on polaris (v2)
+Date:   Mon, 28 Jan 2019 10:40:46 -0500
+Message-Id: <20190128154341.47195-129-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,37 +57,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nicholas Mc Guire <hofrat@osadl.org>
+From: Alex Deucher <alexander.deucher@amd.com>
 
-[ Upstream commit 4be1eaf322f07bb9694618fd2763a3a1f0a3dd25 ]
+[ Upstream commit de4aaab5cc9770a8c4dc13d9bfb6a83b06bba57e ]
 
-devm_kasprintf() may return NULL on failure of internal allocation thus
-the assignment to  .label  is not safe if not checked. On error
-npcm7xx_gpio_of() returns negative values so -ENOMEM in the
-(unlikely) failure case of devm_kasprintf() should be fine here.
+Adjust limits for newer polaris variants.
 
-Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
-Fixes: 3b588e43ee5c ("pinctrl: nuvoton: add NPCM7xx pinctrl and GPIO driver")
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+v2: fix polaris11 kicker (Jerry)
+
+Reviewed-by: Junwei Zhang <Jerry.Zhang@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .../drm/amd/powerplay/smumgr/polaris10_smumgr.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-index 7ad50d9268aa..3bda620d18bb 100644
---- a/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-+++ b/drivers/pinctrl/nuvoton/pinctrl-npcm7xx.c
-@@ -1932,6 +1932,9 @@ static int npcm7xx_gpio_of(struct npcm7xx_pinctrl *pctrl)
- 			pctrl->gpio_bank[id].gc.label =
- 				devm_kasprintf(pctrl->dev, GFP_KERNEL, "%pOF",
- 					       np);
-+			if (pctrl->gpio_bank[id].gc.label == NULL)
-+				return -ENOMEM;
-+
- 			pctrl->gpio_bank[id].gc.dbg_show = npcmgpio_dbg_show;
- 			pctrl->gpio_bank[id].direction_input =
- 				pctrl->gpio_bank[id].gc.direction_input;
+diff --git a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
+index a1e0ac9ae248..90c1215c6f5e 100644
+--- a/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
++++ b/drivers/gpu/drm/amd/powerplay/smumgr/polaris10_smumgr.c
+@@ -1529,8 +1529,21 @@ static int polaris10_populate_clock_stretcher_data_table(struct pp_hwmgr *hwmgr)
+ 	efuse = efuse >> 24;
+ 
+ 	if (hwmgr->chip_id == CHIP_POLARIS10) {
+-		min = 1000;
+-		max = 2300;
++		if (hwmgr->is_kicker) {
++			min = 1200;
++			max = 2500;
++		} else {
++			min = 1000;
++			max = 2300;
++		}
++	} else if (hwmgr->chip_id == CHIP_POLARIS11) {
++		if (hwmgr->is_kicker) {
++			min = 900;
++			max = 2100;
++		} else {
++			min = 1100;
++			max = 2100;
++		}
+ 	} else {
+ 		min = 1100;
+ 		max = 2100;
 -- 
 2.19.1
 
