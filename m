@@ -2,107 +2,155 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81FE5C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:36:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC2EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20ECE20882
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:36:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 980DF2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:37:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=epam.com header.i=@epam.com header.b="VeaikcuY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HCm6NIpN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726693AbfA1GgN (ORCPT
+        id S1726765AbfA1GhM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 01:36:13 -0500
-Received: from mail-eopbgr130050.outbound.protection.outlook.com ([40.107.13.50]:4640
-        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725782AbfA1GgN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 01:36:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=epam.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NsqYq1St/JcDADIuYTPOpk9pIf+DCHgrjKl3Ssi9jek=;
- b=VeaikcuYMIiO8kQJOv4pVijUXJ0egUmib3NQwfWT1rZuvzh46Wtuqm2uxEdPowZodD1M9gaxBrfs/gfvpl2l2xUg98njgFCgEBw+FlzAj5iChmhBMQKERVT6iZDJCtxmBh+emjZNCwVq6WXdNna/LY2Ut7gRXgMSxVbQJmV6XCA=
-Received: from AM6PR03MB4327.eurprd03.prod.outlook.com (20.177.33.25) by
- AM6PR03MB4101.eurprd03.prod.outlook.com (20.177.38.154) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1558.16; Mon, 28 Jan 2019 06:36:08 +0000
-Received: from AM6PR03MB4327.eurprd03.prod.outlook.com
- ([fe80::3cc9:3b23:a872:99d7]) by AM6PR03MB4327.eurprd03.prod.outlook.com
- ([fe80::3cc9:3b23:a872:99d7%2]) with mapi id 15.20.1558.023; Mon, 28 Jan 2019
- 06:36:08 +0000
-From:   Oleksandr Andrushchenko <Oleksandr_Andrushchenko@epam.com>
-To:     YueHaibing <yuehaibing@huawei.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>
-CC:     "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "xen-devel@lists.xen.org" <xen-devel@lists.xen.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-Subject: Re: [PATCH -next] drm/xen-front: Drop pointless static qualifier in
- fb_destroy()
-Thread-Topic: [PATCH -next] drm/xen-front: Drop pointless static qualifier in
- fb_destroy()
-Thread-Index: AQHUtW60TrLIk68W5Eusgo0RNwKK2qXEPKMA
-Date:   Mon, 28 Jan 2019 06:36:08 +0000
-Message-ID: <4c371af3-8856-39a7-d06e-6b55749567e5@epam.com>
-References: <1548504338-114487-1-git-send-email-yuehaibing@huawei.com>
-In-Reply-To: <1548504338-114487-1-git-send-email-yuehaibing@huawei.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Oleksandr_Andrushchenko@epam.com; 
-x-originating-ip: [85.223.209.22]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM6PR03MB4101;6:rkCiF+iFSBHayEKPiamIdo63xz86F9HI+6U6op/x45tWJqAFs8xrGQ4dVAjDzSagopO3TptD6Y6TB+A7MX5AmqmjaxDwcVPry4rjrPwAifio2DxE3sCsKW6+JhLow9SBKwXs9cRyKN2u0UfnsDJbJWO0TLLR4jdMi0Fjd/K2XdNA6b9Jw/mnc+wy9g08YJsKbHcLjFod2kD/RQulrnkNv+ZemBC2osMF7qCtpVwC814tr5hQWV25BX7l5g4qzLWqEv5UvSHRfsH3R4greVdtINC5cJsjrmsTjt5IoTbmnJW+uPjOZqcRoeUcDHeMdPSfdW0MsFgbrHOMGz8LofD3V6G5OWTaZ588U46w7gX4CJ3J4CjiQ/479r3RpyaDEv25o2cmnT+badLQQ4m9m77dKw+GzL2XOr6N2ZJ/eVU5B/oxRkpxjpKXHVbXR6CfSy03sTKH0DmdrYWV7fPre73Kpw==;5:BDE9TAdmdkvv1H9YdrPCWtr+W1PIRvJFFJ2OFoMgRe0Hy4Q9VLlTksUBSFZGazSesN+eGA6OVFwjCgWKxPmysph7STCsj249VIQvshekbTo1bF0qLKb03qNSdw8rUgW9YTK2SNkLXScef4lLrUJseEnZ3n4rYCscy0SKT4kJ/1Gqev81jK/tz7FFm16IPikARDDgmzWeZgdLctfCNh061w==;7:t/olj9Ytz+YaZDYgpQFTzMbaaPj4kpQ+gC+FGq1O7G9JlKhTsIg6HCMTGrxTtZm7dMhGZevuKZCgqUTHMsMSNmlU/nqNhlioxR6iD97LiZ1nQwUk9SUOuoHI1TheVCqm+gILprmhg8JIHEalnfpJtg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 9ce63b53-0559-418e-b3b5-08d684eae31c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:AM6PR03MB4101;
-x-ms-traffictypediagnostic: AM6PR03MB4101:
-x-microsoft-antispam-prvs: <AM6PR03MB41019CFDDA7F893EF33E0C47E7960@AM6PR03MB4101.eurprd03.prod.outlook.com>
-x-forefront-prvs: 0931CB1479
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(346002)(396003)(376002)(189003)(199004)(8676002)(4326008)(7736002)(80792005)(6246003)(6486002)(186003)(478600001)(36756003)(31696002)(68736007)(97736004)(6512007)(256004)(14444005)(6436002)(4744005)(229853002)(8936002)(305945005)(71190400001)(71200400001)(25786009)(81156014)(81166006)(53936002)(76176011)(486006)(446003)(6506007)(476003)(86362001)(2616005)(11346002)(110136005)(54906003)(72206003)(102836004)(14454004)(105586002)(2906002)(106356001)(66066001)(99286004)(6116002)(3846002)(316002)(55236004)(31686004)(26005)(53546011);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR03MB4101;H:AM6PR03MB4327.eurprd03.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: epam.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: s7rNh5vWdOTBwh9IAK6nFaYgZgndjdP51ElGrj0CsfJZra3O6wFrpVxHJxZN3aQr+OUaAChV7ofmwEYk0yDM61OLnkiW8V14J04qEsQwJwyigJwekECiUSZcYzj5SDN3TeFHsGaBNjZuMgDeaY5rVfR7JW2NNB+7/hYFlSG7BjpmLZVY0EXSai3AmA7hOPh6QA/2zc43Xg3uf6C/E1IIVdMRt7+3/cnMWtSllZ5KhD7RTPFqa8whzCdExJeCZf6VPfEuXSk+w9ZJh7CnQEm3n4gCMIL7jcTCVqA72Cu/hRg9oLthijHnk4uN6+zNcbAm9WArT9X/0laxzCmepZ4JfEBHTv0XBwSzE+fx/oJ2PPcj1H9On+Pv/IoFK45RzVnzFbQ6xw9S8MA4aWHjx+Rhe/NG3qWxiTfkfCys+JvRoVI=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <221780DB5666A6408C5CCE91CF0BE7C5@eurprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 28 Jan 2019 01:37:12 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37391 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbfA1GhM (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 01:37:12 -0500
+Received: by mail-it1-f196.google.com with SMTP id b5so17806255iti.2
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 22:37:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=m+fgtZwQfJUOjsKuLflFh7dV5h2h2KZCLYosg+iy5eM=;
+        b=HCm6NIpNvTg6MqObHqGOITnA0E18gW4uZ/V5VUD2cBU70FSDioHBHnGyL08Mn7tBuj
+         UHuEbJKpSSNkaXnUmxn+QEPzgU0GAK3NVnYeU1CSs0Bv8u2cn0Jneeo5Uq8lIT+ZbNMa
+         tzjlT1KGu85XMwFutwExZBnXKjggzMhN4T04/7iLYVpRpJJy/5HKuu0jGQc8DMc5qMAV
+         r9yRxPyv6zNyFzMDNDzeyaCjlWO66yyU9nnM4HCpyy/ei1d7BAsdAbIWyfwm5+fc6KwO
+         47WsUzId+S8VPLidgOEUMGfZ2sFTNvT/QsgpDZ6Mrj+uH2GOmfTrigudfbVORcWW3Ph0
+         qjpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=m+fgtZwQfJUOjsKuLflFh7dV5h2h2KZCLYosg+iy5eM=;
+        b=oUA5aYh9ZAnyyyuU5XHqzgia3L1svMRFx9Zf08zSl+IUEaH/JBR/mDQBNMnpN0vQLg
+         68k+LmeDYeGcHSZafg0KI+/NrljKeg5602+zqpeKaOg+QQni4jEvTrS1XHLrUZ+HRit8
+         hjGkmHEydaOZdEVmT7GrTgY16K2Qze4F3pD7+AU6D33Y/BSE75AeEPNp7tfgH6d4KPy3
+         e5E6sIjfd9FOoVW8MKuUwKOkVcCJjKlzwDCSG9EbC1CZYuNkXfs9eb+OXHtszcCecCJq
+         2TUCyGlGanOttSNSFxzd2IVfd3dS+mH2rrMagm/QBDmHzXJGTELjAcSpaUZoyc71AoZF
+         UrpQ==
+X-Gm-Message-State: AJcUukf4J46dkjlRZ+nQ5RPbLbr2xe7S7g07N+iVVLu49yY5RfGRnIGU
+        BfK2ewKNWGvLCOGJtMkfFnAl2DNGBCX3M8x/Crk=
+X-Google-Smtp-Source: ALg8bN5wqV+NX2HuN4q0TmLGPinpAlSfO/Cb9c4SbGQ5wxXf3vP1MfVLEdxVw3Lyf1oa1Acl6tQdkXIvVls7s8+BO60=
+X-Received: by 2002:a24:d04:: with SMTP id 4mr9035526itx.19.1548657430991;
+ Sun, 27 Jan 2019 22:37:10 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: epam.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9ce63b53-0559-418e-b3b5-08d684eae31c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 06:36:08.6245
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b41b72d0-4e9f-4c26-8a69-f949f367c91d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR03MB4101
+References: <CADfvbxqC1+XoSsn0sEDqFE16tN1Pq46-QDAaCu=AXJdZeY3rDQ@mail.gmail.com>
+ <CAHk-=wh-1wB_X2MG0vW5e755rWJ5pBN8yyXLo2syOdcMV6qYoQ@mail.gmail.com>
+ <20190125073704.GC3560@dhcp22.suse.cz> <20190125081924.GF3560@dhcp22.suse.cz>
+ <20190125082952.GG3560@dhcp22.suse.cz> <CADfvbxqOOt_07hyeReEH_gCmTxxMYJr0-CSkqdX57wGTWisNTA@mail.gmail.com>
+ <20190125155810.GQ3560@dhcp22.suse.cz> <CADfvbxp8sER_Xjkm-g8+BH87Ne8oUBirSWx6mmL=Z3XwyYoQHA@mail.gmail.com>
+ <20190125163938.GA20411@dhcp22.suse.cz> <20190125173315.GC20411@dhcp22.suse.cz>
+ <20190125181549.GE20411@dhcp22.suse.cz>
+In-Reply-To: <20190125181549.GE20411@dhcp22.suse.cz>
+From:   Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date:   Mon, 28 Jan 2019 11:37:00 +0500
+Message-ID: <CABXGCsM+p5BxJ9qH8z6q9bj9EeVqLW8hauke1jahQKG=mtDvmQ@mail.gmail.com>
+Subject: Re: kernel panic due to https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2830bf6f05fb3e05bc4743274b806c821807a684
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     robert shteynfeld <robert.shteynfeld@gmail.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Bob Picco <bob.picco@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMS8yNi8xOSAyOjA1IFBNLCBZdWVIYWliaW5nIHdyb3RlOg0KPiBUaGVyZSBpcyBubyBuZWVk
-IHRvIGhhdmUgdGhlICdzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYicgdmFyaWFibGUNCj4gc3Rh
-dGljIHNpbmNlIG5ldyB2YWx1ZSBhbHdheXMgYmUgYXNzaWduZWQgYmVmb3JlIHVzZSBpdC4NCj4N
-Cj4gU2lnbmVkLW9mZi1ieTogWXVlSGFpYmluZyA8eXVlaGFpYmluZ0BodWF3ZWkuY29tPg0KR29v
-ZCBjYXRjaCwgdGhhbmsgeW91IQ0KUmV2aWV3ZWQtYnk6IE9sZWtzYW5kciBBbmRydXNoY2hlbmtv
-IDxvbGVrc2FuZHJfYW5kcnVzaGNoZW5rb0BlcGFtLmNvbT4NCj4gLS0tDQo+ICAgZHJpdmVycy9n
-cHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250X2ttcy5jIHwgMiArLQ0KPiAgIDEgZmlsZSBjaGFuZ2Vk
-LCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigtKQ0KPg0KPiBkaWZmIC0tZ2l0IGEvZHJpdmVy
-cy9ncHUvZHJtL3hlbi94ZW5fZHJtX2Zyb250X2ttcy5jIGIvZHJpdmVycy9ncHUvZHJtL3hlbi94
-ZW5fZHJtX2Zyb250X2ttcy5jDQo+IGluZGV4IDg2MGRhMDUuLmMyOTU1ZDMgMTAwNjQ0DQo+IC0t
-LSBhL2RyaXZlcnMvZ3B1L2RybS94ZW4veGVuX2RybV9mcm9udF9rbXMuYw0KPiArKysgYi9kcml2
-ZXJzL2dwdS9kcm0veGVuL3hlbl9kcm1fZnJvbnRfa21zLmMNCj4gQEAgLTU0LDcgKzU0LDcgQEAg
-c3RhdGljIHZvaWQgZmJfZGVzdHJveShzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYikNCj4gICAJ
-ICBjb25zdCBzdHJ1Y3QgZHJtX21vZGVfZmJfY21kMiAqbW9kZV9jbWQpDQo+ICAgew0KPiAgIAlz
-dHJ1Y3QgeGVuX2RybV9mcm9udF9kcm1faW5mbyAqZHJtX2luZm8gPSBkZXYtPmRldl9wcml2YXRl
-Ow0KPiAtCXN0YXRpYyBzdHJ1Y3QgZHJtX2ZyYW1lYnVmZmVyICpmYjsNCj4gKwlzdHJ1Y3QgZHJt
-X2ZyYW1lYnVmZmVyICpmYjsNCj4gICAJc3RydWN0IGRybV9nZW1fb2JqZWN0ICpnZW1fb2JqOw0K
-PiAgIAlpbnQgcmV0Ow0KPiAgIA0KPg0KPg0KPg0KPg0KPg0K
+> Linus, could you take the revert please?
+>
+> From 817b18d3db36a6900ca9043af8c1416c56358be3 Mon Sep 17 00:00:00 2001
+> From: Michal Hocko <mhocko@suse.com>
+> Date: Fri, 25 Jan 2019 19:08:58 +0100
+> Subject: [PATCH] Revert "mm, memory_hotplug: initialize struct pages for the
+>  full memory section"
+>
+> This reverts commit 2830bf6f05fb3e05bc4743274b806c821807a684.
+>
+> The underlying assumption that one sparse section belongs into a single
+> numa node doesn't hold really. Robert Shteynfeld has reported a boot
+> failure. The boot log was not captured but his memory layout is as
+> follows:
+> [    0.286954] Early memory node ranges
+> [    0.286955]   node   1: [mem 0x0000000000001000-0x0000000000090fff]
+> [    0.286955]   node   1: [mem 0x0000000000100000-0x00000000dbdf8fff]
+> [    0.286956]   node   1: [mem 0x0000000100000000-0x0000001423ffffff]
+> [    0.286956]   node   0: [mem 0x0000001424000000-0x0000002023ffffff]
+>
+> This means that node0 starts in the middle of a memory section which is
+> also in node1. memmap_init_zone tries to initialize padding of a section
+> even when it is outside of the given pfn range because there are code
+> paths (e.g. memory hotplug) which assume that the full worth of memory
+> section is always initialized. In this particular case, though, such a
+> range is already intialized and most likely already managed by the page
+> allocator. Scribbling over those pages corrupts the internal state and
+> likely blows up when any of those pages gets used.
+>
+> Reported-by: Robert Shteynfeld <robert.shteynfeld@gmail.com>
+> Fixes: 2830bf6f05fb ("mm, memory_hotplug: initialize struct pages for the full memory section")
+> Cc: stable
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  mm/page_alloc.c | 12 ------------
+>  1 file changed, 12 deletions(-)
+>
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index d295c9bc01a8..35fdde041f5c 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -5701,18 +5701,6 @@ void __meminit memmap_init_zone(unsigned long size, int nid, unsigned long zone,
+>                         cond_resched();
+>                 }
+>         }
+> -#ifdef CONFIG_SPARSEMEM
+> -       /*
+> -        * If the zone does not span the rest of the section then
+> -        * we should at least initialize those pages. Otherwise we
+> -        * could blow up on a poisoned page in some paths which depend
+> -        * on full sections being initialized (e.g. memory hotplug).
+> -        */
+> -       while (end_pfn % PAGES_PER_SECTION) {
+> -               __init_single_page(pfn_to_page(end_pfn), end_pfn, zone, nid);
+> -               end_pfn++;
+> -       }
+> -#endif
+>  }
+>
+>  #ifdef CONFIG_ZONE_DEVICE
+
+Michal, I suppose that revert the commit
+2830bf6f05fb3e05bc4743274b806c821807a68 are return my issue
+https://marc.info/?l=linux-mm&m=154499704718428
+Are any other better approach would be proposed for fixing my issue?
+
+--
+Best Regards,
+Mike Gavrilov.
