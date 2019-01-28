@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E1F3C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33C34C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20E952147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE43D2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691735;
-	bh=lW34iHSQcZJ+uNbYPwul3+/VjEc8ceDuGS7KkJJERxo=;
+	s=default; t=1548691740;
+	bh=NDeYd5wAHqGzv9cbV2K7xwrtZU8tlfGGI+8gol9aNDI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dny3wMrRkWIN/j4LaWo8mQoDWo8g8xBzbrF9vWaWPsCS3bTCMAyqEiurgSI0/mpfH
-	 qc/O3Odzsh3/UkhVJuELC7zL8y6jtc4rpNxLcrYEry1WCcNec+UoJv4QlIfdHdgBwI
-	 L8gJFiYrfJ0Dnq5SzQnsFc/LsKstHAyGyOmKNSKw=
+	b=HANxvTjKj6YtDU/C7BFMCa2/POgD2FsKtnSNH28Y8+ImluKrzqnDmEhPJL5OSUEz8
+	 TLP20+Lj+BbOFprvQHHsi6gEMUmYJAH+fWRAcPgFLY5y5OW6z+APSgwryOdQUkBEW+
+	 tEDvJrTEtLTtmaCw9BzN2lgj372+WPmHyAWL858E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732500AbfA1QIx (ORCPT
+        id S1732512AbfA1QI7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:08:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32828 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:08:59 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32922 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731323AbfA1QIw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:08:52 -0500
+        id S1731323AbfA1QIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:08:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC75E2147A;
-        Mon, 28 Jan 2019 16:08:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BACCA2084A;
+        Mon, 28 Jan 2019 16:08:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691731;
-        bh=lW34iHSQcZJ+uNbYPwul3+/VjEc8ceDuGS7KkJJERxo=;
+        s=default; t=1548691734;
+        bh=NDeYd5wAHqGzv9cbV2K7xwrtZU8tlfGGI+8gol9aNDI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TbxsSvpr/R1amX6GS8KxuTzLbzNhRPQXnG8z8Q57Sm3KCuv5SMYeUT5kQ84hb+QWa
-         wnKpN/DmuCmRXkgoMNA8dvupCAiOaKR9h/d+lD0CfMfRoMZedm2Rdo27BTGW7ZFMOr
-         1msJzbYtCd+QiS7IXCbS7E+DeQ8rPgFB8xdIpDqE=
+        b=MvrZfryNfwfKFAy5AHUqEAIcayk7I9eBOJB64JVCMAgMV+mdd3DH0gt1yR4ZsXo19
+         pgrPDuxf9int3k2ad52e72ULjsO5e9zH7Q/tzcRsYjEEvl6KeQKm9tq1/YaKwd9thY
+         szWov2hdJovm2QEpAngso3X5csxpMMCsNSMN3V6k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roland Kammerer <roland.kammerer@linbit.com>,
+Cc:     Lars Ellenberg <lars.ellenberg@linbit.com>,
         Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
         drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 199/258] drbd: narrow rcu_read_lock in drbd_sync_handshake
-Date:   Mon, 28 Jan 2019 10:58:25 -0500
-Message-Id: <20190128155924.51521-199-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 200/258] drbd: disconnect, if the wrong UUIDs are attached on a connected peer
+Date:   Mon, 28 Jan 2019 10:58:26 -0500
+Message-Id: <20190128155924.51521-200-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,82 +58,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roland Kammerer <roland.kammerer@linbit.com>
+From: Lars Ellenberg <lars.ellenberg@linbit.com>
 
-[ Upstream commit d29e89e34952a9ad02c77109c71a80043544296e ]
+[ Upstream commit b17b59602b6dcf8f97a7dc7bc489a48388d7063a ]
 
-So far there was the possibility that we called
-genlmsg_new(GFP_NOIO)/mutex_lock() while holding an rcu_read_lock().
+With "on-no-data-accessible suspend-io", DRBD requires the next attach
+or connect to be to the very same data generation uuid tag it lost last.
 
-This included cases like:
+If we first lost connection to the peer,
+then later lost connection to our own disk,
+we would usually refuse to re-connect to the peer,
+because it presents the wrong data set.
 
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      drbd_bcast_event
-        genlmsg_new(GFP_NOIO) --> may sleep
+However, if the peer first connects without a disk,
+and then attached its disk, we accepted that same wrong data set,
+which would be "unexpected" by any user of that DRBD
+and cause "undefined results" (read: very likely data corruption).
 
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        genlmsg_new(GFP_NOIO) --> may sleep
+The fix is to forcefully disconnect as soon as we notice that the peer
+attached to the "wrong" dataset.
 
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        mutex_lock --> may sleep
-
-While using GFP_ATOMIC whould have been possible in the first two cases,
-the real fix is to narrow the rcu_read_lock.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@163.com>
-Reviewed-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
+Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_receiver.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ drivers/block/drbd/drbd_receiver.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 75f6b47169e6..45ac5fe288e4 100644
+index 45ac5fe288e4..cb919b964066 100644
 --- a/drivers/block/drbd/drbd_receiver.c
 +++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3364,7 +3364,7 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 	enum drbd_conns rv = C_MASK;
- 	enum drbd_disk_state mydisk;
- 	struct net_conf *nc;
--	int hg, rule_nr, rr_conflict, tentative;
-+	int hg, rule_nr, rr_conflict, tentative, always_asbp;
+@@ -4142,7 +4142,7 @@ static int receive_uuids(struct drbd_connection *connection, struct packet_info
+ 	kfree(device->p_uuid);
+ 	device->p_uuid = p_uuid;
  
- 	mydisk = device->state.disk;
- 	if (mydisk == D_NEGOTIATING)
-@@ -3415,8 +3415,12 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 
- 	rcu_read_lock();
- 	nc = rcu_dereference(peer_device->connection->net_conf);
-+	always_asbp = nc->always_asbp;
-+	rr_conflict = nc->rr_conflict;
-+	tentative = nc->tentative;
-+	rcu_read_unlock();
- 
--	if (hg == 100 || (hg == -100 && nc->always_asbp)) {
-+	if (hg == 100 || (hg == -100 && always_asbp)) {
- 		int pcount = (device->state.role == R_PRIMARY)
- 			   + (peer_role == R_PRIMARY);
- 		int forced = (hg == -100);
-@@ -3455,9 +3459,6 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 			     "Sync from %s node\n",
- 			     (hg < 0) ? "peer" : "this");
- 	}
--	rr_conflict = nc->rr_conflict;
--	tentative = nc->tentative;
--	rcu_read_unlock();
- 
- 	if (hg == -100) {
- 		/* FIXME this log message is not correct if we end up here
+-	if (device->state.conn < C_CONNECTED &&
++	if ((device->state.conn < C_CONNECTED || device->state.pdsk == D_DISKLESS) &&
+ 	    device->state.disk < D_INCONSISTENT &&
+ 	    device->state.role == R_PRIMARY &&
+ 	    (device->ed_uuid & ~((u64)1)) != (p_uuid[UI_CURRENT] & ~((u64)1))) {
 -- 
 2.19.1
 
