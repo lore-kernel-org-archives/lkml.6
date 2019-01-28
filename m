@@ -2,106 +2,100 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FFB5C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B19C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D1D982148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TIBNIqQ+"
+	by mail.kernel.org (Postfix) with ESMTP id D76AE2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548696981;
+	bh=bsxIhv6WSxRd8h1ynzWvtplwQb6L1ku+lHK8qpuyVE8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=gp2TAQjV4oor7y72SfWk5yJFzTC9YGjwoSjlduZsObk5hhtS1pJkolrGBy3/TlbL0
+	 VsWMKFiN8K3Rbf7O80tYfP8+D3cFvKx53B75FrbQsOIRlM8MMaLeTm+iFsk0B6laJz
+	 MSONc9fntzQfIoI67KUiwsk1skHx9X4EtffbL0Oo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730412AbfA1RgM (ORCPT
+        id S1730812AbfA1RgU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:36:12 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:54628 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729299AbfA1PzQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:16 -0500
-Received: by mail-wm1-f68.google.com with SMTP id a62so14538555wmh.4
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:55:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=quTvH/8HwdVKlU+wlhb7sd6WX/yxeEDN3CSJOW9W6jU=;
-        b=TIBNIqQ+69+2A1i7ampbm8QrDAl3gLCvK9p0kFPr3ofwWum9/xG6XA5qgolMEdaJhk
-         SCkFwqV7tCpbqEBVcAY+OaqXXGHDEn2K/FgibRIx8WR2FKirLpY77lTAxBAMuijVFlXf
-         dkQZRZ9VP7G6HnBAA+Ayxw7bbOLy/xUtBG6sM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=quTvH/8HwdVKlU+wlhb7sd6WX/yxeEDN3CSJOW9W6jU=;
-        b=syH4Kb/CkjwkLODAhoP65KP8ItZ0z60jETXB8BhgUsknG3hS1cJe50m7/gi3Ws0MrS
-         sHtFhNp93luZd9EZ+NGBxc4SJwRkuu/NOXAOWqbMQscBMPDRZ7v2HcfBrK8rM+vOHCtW
-         uzsUoVgUymo8mwWu0i49cVJSsZQ/a/y59gAcSwKTt5KsaSriM1DZ+kFDPmmj0Amu3tTD
-         NHCU+z8lb9yAEtInlPEo16HPeAxEn3R/77cUwijXqgHx88ZbcrWUWZT9vue+0oXqrSnZ
-         rDMD1WvN91UKNgk0lUqF8k8pium73ITHrHM3jhorhhel3zWa2PnJlLbBoCNGQ8JZK/T1
-         Utdg==
-X-Gm-Message-State: AJcUukfFHmNHkTA+Vc3Is3ALrbyzVOxtOC/hrEtZlZqdEzFxa+c+Wb0V
-        f2OQNk/bZsvl5T2tvjh0RAY7OA==
-X-Google-Smtp-Source: ALg8bN7RfzBVxmyxCvpaLKfloMhK2qUj0FlYgdsNZGZ5YfHMe+M/vnwZw13E/jhETV4EAa36rhxE+Q==
-X-Received: by 2002:a1c:2088:: with SMTP id g130mr17284229wmg.122.1548690914001;
-        Mon, 28 Jan 2019 07:55:14 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id p6sm145140485wrx.50.2019.01.28.07.55.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 07:55:13 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 05/13] dt-bindings: imx-ocotp: Add i.MX6ULL/ULZ support
-Date:   Mon, 28 Jan 2019 15:54:58 +0000
-Message-Id: <20190128155506.25566-6-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
-References: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
+        Mon, 28 Jan 2019 12:36:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41180 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729851AbfA1PzN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:55:13 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B20920989;
+        Mon, 28 Jan 2019 15:55:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690913;
+        bh=bsxIhv6WSxRd8h1ynzWvtplwQb6L1ku+lHK8qpuyVE8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=R8l7CT3m4U/tH5jf1GTPxxScceK8KEYnT0O0xm7d7ElCDxjkGjJ9VchXUyIYSONHd
+         JorKWm4/P5K+ByfZnNihQlNTB/tQwtUC0aAL3jetsHW6jU0GZbB4fhBFJYRVdwL3fi
+         6caKeF6in/WjLUmOtTnHpy8jQAtDiOax8KXaaHcE=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Madhavan Srinivasan <maddy@linux.vnet.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.20 233/304] powerpc/perf: Fix thresholding counter data for unknown type
+Date:   Mon, 28 Jan 2019 10:42:30 -0500
+Message-Id: <20190128154341.47195-233-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
 
-Since the i.MX6ULL/ULZ only supports 8 OTP banks we need to introduce a new
-compatible.
+[ Upstream commit 17cfccc91545682513541924245abb876d296063 ]
 
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+MMCRA[34:36] and MMCRA[38:44] expose the thresholding counter value.
+Thresholding counter can be used to count latency cycles such as
+load miss to reload. But threshold counter value is not relevant
+when the sampled instruction type is unknown or reserved. Patch to
+fix the thresholding counter value to zero when sampled instruction
+type is unknown or reserved.
+
+Fixes: 170a315f41c6('powerpc/perf: Support to export MMCRA[TEC*] field to userspace')
+Signed-off-by: Madhavan Srinivasan <maddy@linux.vnet.ibm.com>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/nvmem/imx-ocotp.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/powerpc/perf/isa207-common.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-index ff389cf1606e..7a999a135e56 100644
---- a/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-+++ b/Documentation/devicetree/bindings/nvmem/imx-ocotp.txt
-@@ -1,7 +1,7 @@
- Freescale i.MX6 On-Chip OTP Controller (OCOTP) device tree bindings
+diff --git a/arch/powerpc/perf/isa207-common.c b/arch/powerpc/perf/isa207-common.c
+index 177de814286f..6a2f65d3d088 100644
+--- a/arch/powerpc/perf/isa207-common.c
++++ b/arch/powerpc/perf/isa207-common.c
+@@ -226,8 +226,13 @@ void isa207_get_mem_weight(u64 *weight)
+ 	u64 mmcra = mfspr(SPRN_MMCRA);
+ 	u64 exp = MMCRA_THR_CTR_EXP(mmcra);
+ 	u64 mantissa = MMCRA_THR_CTR_MANT(mmcra);
++	u64 sier = mfspr(SPRN_SIER);
++	u64 val = (sier & ISA207_SIER_TYPE_MASK) >> ISA207_SIER_TYPE_SHIFT;
  
- This binding represents the on-chip eFuse OTP controller found on
--i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL and i.MX6SLL SoCs.
-+i.MX6Q/D, i.MX6DL/S, i.MX6SL, i.MX6SX, i.MX6UL, i.MX6ULL/ULZ and i.MX6SLL SoCs.
+-	*weight = mantissa << (2 * exp);
++	if (val == 0 || val == 7)
++		*weight = 0;
++	else
++		*weight = mantissa << (2 * exp);
+ }
  
- Required properties:
- - compatible: should be one of
-@@ -9,6 +9,7 @@ Required properties:
- 	"fsl,imx6sl-ocotp" (i.MX6SL), or
- 	"fsl,imx6sx-ocotp" (i.MX6SX),
- 	"fsl,imx6ul-ocotp" (i.MX6UL),
-+	"fsl,imx6ull-ocotp" (i.MX6ULL/ULZ),
- 	"fsl,imx7d-ocotp" (i.MX7D/S),
- 	"fsl,imx6sll-ocotp" (i.MX6SLL),
- 	"fsl,imx7ulp-ocotp" (i.MX7ULP),
+ int isa207_get_constraint(u64 event, unsigned long *maskp, unsigned long *valp)
 -- 
-2.20.1
+2.19.1
 
