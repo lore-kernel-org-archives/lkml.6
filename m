@@ -2,103 +2,102 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B576EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A20F2C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:09:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D962148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:06:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 707372171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:09:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Zsbih5A0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sirAQja0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727630AbfA1SGK (ORCPT
+        id S1727009AbfA1SJw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:06:10 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:45164 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727030AbfA1SEq (ORCPT
+        Mon, 28 Jan 2019 13:09:52 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:45143 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbfA1SJw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:04:46 -0500
-Received: by mail-wr1-f68.google.com with SMTP id t6so19091554wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:04:45 -0800 (PST)
+        Mon, 28 Jan 2019 13:09:52 -0500
+Received: by mail-qk1-f195.google.com with SMTP id y78so9914865qka.12;
+        Mon, 28 Jan 2019 10:09:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SyqJ1ZNijojoTR5cd+qdscOqYrp/PnKLGRUwKnFmRlM=;
-        b=Zsbih5A0XT1436LqD455eX3TwHSJgdMOs5dTyer3kSmE68pxW9N/15q6Wve7hhuO58
-         4kNON7i+OYW7ZThzqCZtg8TaDJMY/Ytrp/CBCPR5GdEnv1gAsbPqnVVt7cHfFkXTST68
-         3WB5Ol7LCzQeZeLHAZ2dksmfHJu9u75BOxP4I60de9Db00O7aiJVJmQNzthFYco4EAZR
-         cM/fkxyoDEKmaLBOHxRCtoCxOk1WCUgkHdfgMh26S0iMES+syQ8ZMfjACKGGJytfg0TV
-         tzuEE0kAv/jjkY7HQHcn4pJzuRQmlpH2mmuKf1BGaFIu9dUp/Xqh8QYDgW+wfOwJfpCn
-         HUPw==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=G2M+1pmP8ilKUJ3JlBeKSrp0yTnaMWxCdRW4HecWV3Q=;
+        b=sirAQja0bDXblwCseCkseMrvlvyR+CENaSTyb/CkuynY1Brn9xxM7EuNSgS9gbOnDZ
+         3FkdxDB0faczKPna6B8LTzXD9INTGnlchJuY8CvEXDKlgpKZRYLKUXC2xNtmzGytNVZd
+         eW0TC7O/uFGU4I0y+j0BrCl11BOaxtfDNw4jGjAnwaeoWlyWwdyVsRIm1FAzKNni+cON
+         9PO/TNF9OgV9u1BDTy9sR+HA7mCVdQusnmEo2216LXcPgls2nGDc8jimtHaJ7vkVAKvS
+         gFgDnJPZC9mUtmsB8SWP/eEGUjeFfKtVDUZXMkow2/JUiCyGZoJLRR4NWYpxSXt5q24G
+         WDng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SyqJ1ZNijojoTR5cd+qdscOqYrp/PnKLGRUwKnFmRlM=;
-        b=Gski64gTDqOkXxFlN7hLEpFDpGeg5StomdYpe1zuUtSAiqXWLF6SVAhuduxiwptTcW
-         wjOTe3NipwJhwMYAAHCCeN+KDTs+G2LqQOU/CW3Y4vLnWIEu/c5X4KNKVjbuwewygO7Y
-         Jn2SkGFaylNrCbK+qXfL0Dsrm81zqv/HYleINF6kUJkQ1MeABvSrMMKiDa3KAwAWs3RS
-         s2Qx8hJ1acwyn1Sg2YkpX2/aJM0UXbuVwzwauB22M8bT+qL0ZjYCLdd+FQks6mVu+vSw
-         Ujm0qFiiL+rsB7fSAayAT5DtwXS5gju1RvW7trSUjx/sq2glELF4YcMkhNveNkgOXw+L
-         XGpQ==
-X-Gm-Message-State: AJcUukcO9SPi8uQ68LzVJzMV+9smOkuymIVug7kLtDXof2mdCCaECZ1l
-        LLMCaq+b3kuEqwFVQqPpESh4Vg==
-X-Google-Smtp-Source: ALg8bN70L5BosbEnf2iuiICAG9QvKNUPF80NJIk18dNZI4ftldt6y16V7XP2FO29oJ5/RvoO9VsXKg==
-X-Received: by 2002:a5d:40c1:: with SMTP id b1mr23743080wrq.133.1548698684743;
-        Mon, 28 Jan 2019 10:04:44 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id p6sm145548193wrx.50.2019.01.28.10.04.43
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=G2M+1pmP8ilKUJ3JlBeKSrp0yTnaMWxCdRW4HecWV3Q=;
+        b=flH5X2GeVBDY65OeqzTAuq+ia8xvYEWWfg+hSYsVL4jS9UR02RV36DAcPqsq+CmLIp
+         GJ3iSHKDfsgcqQvSBaNKdcOjmDRSAZcFBFzBGVsvoF9mdeD6ge3HzacU0+Uzb07iEtDi
+         7/3D+OtrTtkdp43gv/fAvqgLzyHyzIvVxb09p68ewsiggsUrvnGHTdxT+H1sroJqqZNZ
+         DcPelvGii9sf3alS4z4lw+PQnyORlGNXbZoCiqDoFcp87mRKVndx5Ntsa6hgof0a4BLH
+         ecA+FqhQJF8i7PSuKzhm4fCweUIS6z8k1S/rC6k47hP1hkqOeQVPYgMTfKLjxrPQfiDn
+         Cxiw==
+X-Gm-Message-State: AJcUukfrfiT/yj3eN1T8fRcMuyQ5L1kBACntXBxo3FzTF7PifcrAJnss
+        ArgJ2SgwsXw7ooqZcI1Jv3+EkcED
+X-Google-Smtp-Source: ALg8bN7sR16XJexmoA7xHKQtoVrGSgwIN87sxXbhf1iaShmxS6zhT+PmDoxnejduUh97+PehAXoqNw==
+X-Received: by 2002:a37:5dc3:: with SMTP id r186mr20582944qkb.90.1548698991186;
+        Mon, 28 Jan 2019 10:09:51 -0800 (PST)
+Received: from localhost.localdomain ([168.194.160.129])
+        by smtp.gmail.com with ESMTPSA id t40sm90873000qth.46.2019.01.28.10.09.50
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 10:04:44 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH 02/14] clk: meson: use CONFIG_ARCH_MESON to enter meson clk directory
-Date:   Mon, 28 Jan 2019 19:04:18 +0100
-Message-Id: <20190128180430.28689-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128180430.28689-1-jbrunet@baylibre.com>
-References: <20190128180430.28689-1-jbrunet@baylibre.com>
+        Mon, 28 Jan 2019 10:09:50 -0800 (PST)
+Received: by localhost.localdomain (Postfix, from userid 1000)
+        id C2510180B6A; Mon, 28 Jan 2019 16:09:47 -0200 (-02)
+Date:   Mon, 28 Jan 2019 16:09:47 -0200
+From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        "David S. Miller" <davem@davemloft.net>,
+        linux-sctp@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 033/258] sctp: Fix SKB list traversal in
+ sctp_intl_store_ordered().
+Message-ID: <20190128180947.GB10665@localhost.localdomain>
+References: <20190128155924.51521-1-sashal@kernel.org>
+ <20190128155924.51521-33-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128155924.51521-33-sashal@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use CONFIG_ARCH_MESON to let make enter the meson clock directory.
-As part of a rework, CONFIG_COMMON_CLK_AMLOGIC is about to be removed.
+On Mon, Jan 28, 2019 at 10:55:39AM -0500, Sasha Levin wrote:
+> From: "David S. Miller" <davem@davemloft.net>
+> 
+> [ Upstream commit e15e067d0656625c77c52b4e5f0cfbf0c0c3583f ]
+> 
+> Same change as made to sctp_intl_store_reasm().
+> 
+> To be fully correct, an iterator has an undefined value when something
+> like skb_queue_walk() naturally terminates.
+> 
+> This will actually matter when SKB queues are converted over to
+> list_head.
+> 
+> Formalize what this code ends up doing with the current
+> implementation.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/Makefile | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Sasha,
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 8a9440a97500..8d780c4390f1 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -78,7 +78,7 @@ obj-$(CONFIG_ARCH_K3)			+= keystone/
- obj-$(CONFIG_ARCH_KEYSTONE)		+= keystone/
- obj-$(CONFIG_MACH_LOONGSON32)		+= loongson1/
- obj-y					+= mediatek/
--obj-$(CONFIG_COMMON_CLK_AMLOGIC)	+= meson/
-+obj-$(CONFIG_ARCH_MESON)		+= meson/
- obj-$(CONFIG_MACH_PIC32)		+= microchip/
- ifeq ($(CONFIG_COMMON_CLK), y)
- obj-$(CONFIG_ARCH_MMP)			+= mmp/
--- 
-2.20.1
+This one too then.
 
+Thanks,
+Marcelo
