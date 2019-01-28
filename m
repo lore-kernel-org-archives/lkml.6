@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96AA5C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57953C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C0E620879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 264DB2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692191;
-	bh=1lo/rXqcyk+Uvm7ySNkdnHLfIbMaG7qc5NVc1MfvC7k=;
+	s=default; t=1548692196;
+	bh=v9SB+xocR2LsfzPltnP3yecD3Zv7NY+wqANdNXz8J2Q=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ar+7Pkd5VfxmZ9z374PpMPjllMkuBX9x3t/ZsSsSaeZRowz7dX8kP9PCXWQQD3MXM
-	 UPLSLz9OvQkct6SUXTHljGNEwpqoQbkWsMz9zzJRU3aN2cQttnBNNaBlAIaL/0rjfB
-	 ibs3dphhLM088JI7tqi4/W57pO7IRLg4gxyrhiN0=
+	b=hPbTXQOJeShr5S7YEDA6GG0u3URAahSybkjtxSBioJ0SI9axcEPxo+pXec8ivqiwB
+	 Mw/kLvjrNm2I7XVYHJVoc1B8GlySqKWV1XjgCw5TFVpFE9AtY6UR0q5+WhBJDPgekU
+	 vsj9hbtIFO3iAvaaW+iZwcVXTRVPTaBBP87TkJrk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387971AbfA1QQa (ORCPT
+        id S2387986AbfA1QQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:16:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48674 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:16:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733160AbfA1QQ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:16:26 -0500
+        id S1732889AbfA1QQa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:16:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C00F52147A;
-        Mon, 28 Jan 2019 16:16:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 622D420879;
+        Mon, 28 Jan 2019 16:16:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692185;
-        bh=1lo/rXqcyk+Uvm7ySNkdnHLfIbMaG7qc5NVc1MfvC7k=;
+        s=default; t=1548692189;
+        bh=v9SB+xocR2LsfzPltnP3yecD3Zv7NY+wqANdNXz8J2Q=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FS5xKRfnyXT4BNLxx0WDf4DaD+gSbGHPTJ4a6/Vt3M6PMO1cnvYNoI6WKPDeuq2tb
-         8CW51XYmwjg1N2inzwiXOfpiMHc/L9G0/y8aaOEzW5JvCUkM/ndeWuur0JhebRvWXG
-         JVtebrEWrbrbrY1ZqQAkWYM9ikD8QGs1hJm2DvKo=
+        b=DgbGRXYDG5L2/eOhENCLV4xPMq4e2Ic+VdvdCSsHzFrYgP6QU29p5fAXRigw1V+r+
+         PZZZAjlh8eTU1b3aTLq3AIW+epJozbLL66XrBwdKsob6YlKPN/Mz21OhxxIY7xyeAs
+         ms9TGAS3WrSupzCc4jE2V0sRx5llLSRW5yh6iR30=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 101/170] memstick: Prevent memstick host from getting runtime suspended during card detection
-Date:   Mon, 28 Jan 2019 11:10:51 -0500
-Message-Id: <20190128161200.55107-101-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-mmc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 103/170] mmc: sdhci-xenon: Fix timeout checks
+Date:   Mon, 28 Jan 2019 11:10:53 -0500
+Message-Id: <20190128161200.55107-103-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,56 +58,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-[ Upstream commit e03e303edf1c63e6dd455ccd568c74e93ef3ba8c ]
+[ Upstream commit 0e6e7c2ff397e1bbebc882ca3132148aaaef1ddd ]
 
-We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
-helpers to let memstick host support runtime pm.
+Always check the wait condition before returning timeout.
 
-The rpm count may go down to zero before the memstick host powers on, so
-the host can be runtime suspended.
-
-So before doing card detection, increment the rpm count to avoid the
-host gets runtime suspended. Balance the rpm count after card detection
-is done.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Reviewed-by: Zhoujie Wu <zjwu@marvell.com>
 Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memstick/core/memstick.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/mmc/host/sdhci-xenon-phy.c | 10 +++++++---
+ drivers/mmc/host/sdhci-xenon.c     | 10 +++++++---
+ 2 files changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
-index 76382c858c35..1246d69ba187 100644
---- a/drivers/memstick/core/memstick.c
-+++ b/drivers/memstick/core/memstick.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/pm_runtime.h>
+diff --git a/drivers/mmc/host/sdhci-xenon-phy.c b/drivers/mmc/host/sdhci-xenon-phy.c
+index ec8794335241..82051f2b7191 100644
+--- a/drivers/mmc/host/sdhci-xenon-phy.c
++++ b/drivers/mmc/host/sdhci-xenon-phy.c
+@@ -357,9 +357,13 @@ static int xenon_emmc_phy_enable_dll(struct sdhci_host *host)
  
- #define DRIVER_NAME "memstick"
- 
-@@ -436,6 +437,7 @@ static void memstick_check(struct work_struct *work)
- 	struct memstick_dev *card;
- 
- 	dev_dbg(&host->dev, "memstick_check started\n");
-+	pm_runtime_get_noresume(host->dev.parent);
- 	mutex_lock(&host->lock);
- 	if (!host->card) {
- 		if (memstick_power_on(host))
-@@ -479,6 +481,7 @@ static void memstick_check(struct work_struct *work)
- 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
- 
- 	mutex_unlock(&host->lock);
-+	pm_runtime_put(host->dev.parent);
- 	dev_dbg(&host->dev, "memstick_check finished\n");
- }
- 
+ 	/* Wait max 32 ms */
+ 	timeout = ktime_add_ms(ktime_get(), 32);
+-	while (!(sdhci_readw(host, XENON_SLOT_EXT_PRESENT_STATE) &
+-		XENON_DLL_LOCK_STATE)) {
+-		if (ktime_after(ktime_get(), timeout)) {
++	while (1) {
++		bool timedout = ktime_after(ktime_get(), timeout);
++
++		if (sdhci_readw(host, XENON_SLOT_EXT_PRESENT_STATE) &
++		    XENON_DLL_LOCK_STATE)
++			break;
++		if (timedout) {
+ 			dev_err(mmc_dev(host->mmc), "Wait for DLL Lock time-out\n");
+ 			return -ETIMEDOUT;
+ 		}
+diff --git a/drivers/mmc/host/sdhci-xenon.c b/drivers/mmc/host/sdhci-xenon.c
+index 4d0791f6ec23..a0b5089b3274 100644
+--- a/drivers/mmc/host/sdhci-xenon.c
++++ b/drivers/mmc/host/sdhci-xenon.c
+@@ -34,9 +34,13 @@ static int xenon_enable_internal_clk(struct sdhci_host *host)
+ 	sdhci_writel(host, reg, SDHCI_CLOCK_CONTROL);
+ 	/* Wait max 20 ms */
+ 	timeout = ktime_add_ms(ktime_get(), 20);
+-	while (!((reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL))
+-			& SDHCI_CLOCK_INT_STABLE)) {
+-		if (ktime_after(ktime_get(), timeout)) {
++	while (1) {
++		bool timedout = ktime_after(ktime_get(), timeout);
++
++		reg = sdhci_readw(host, SDHCI_CLOCK_CONTROL);
++		if (reg & SDHCI_CLOCK_INT_STABLE)
++			break;
++		if (timedout) {
+ 			dev_err(mmc_dev(host->mmc), "Internal clock never stabilised.\n");
+ 			return -ETIMEDOUT;
+ 		}
 -- 
 2.19.1
 
