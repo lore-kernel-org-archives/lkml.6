@@ -2,88 +2,102 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85009C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:19:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB26C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D3EF20856
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:19:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE36F214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:19:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548695966;
+	bh=dC+vVnH2Zgbw7ltjxFU0UuMH6kqXA+QnBRKAMIgsueQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=bv359F05+1j6+RWzIuHYbQ9/lwgzKPjCbX+itaR/cC9+mWIUD7n69Yeb05hZvzF5Z
+	 t7uJFgfJX53vlDJlyRizs0WC5PKOUGw6CmiMiAz8URG4luc6HJBtR3iLqHKcL7a+hp
+	 44PQ7PjogusBeoV7Ioj3S/HKtUf2tDUf5YYE4wEw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732242AbfA1RTH (ORCPT
+        id S1731989AbfA1RTZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:19:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36354 "EHLO mx1.redhat.com"
+        Mon, 28 Jan 2019 12:19:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732138AbfA1RTF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:19:05 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731053AbfA1QEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:04:51 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8A3BFC059B6D;
-        Mon, 28 Jan 2019 17:19:04 +0000 (UTC)
-Received: from redhat.com (ovpn-123-79.rdu2.redhat.com [10.10.123.79])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 1C4225DEB4;
-        Mon, 28 Jan 2019 17:19:03 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 12:19:02 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Joerg Roedel <joro@8bytes.org>
-Cc:     Christoph Hellwig <hch@lst.de>, Jason Wang <jasowang@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jfehlig@suse.com,
-        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
-Subject: Re: [PATCH 2/5] swiotlb: Add is_swiotlb_active() function
-Message-ID: <20190128121749-mutt-send-email-mst@kernel.org>
-References: <20190123163049.24863-1-joro@8bytes.org>
- <20190123163049.24863-3-joro@8bytes.org>
- <20190123212755.GA9032@lst.de>
- <20190124082923.GI32526@8bytes.org>
- <20190124084107.GA19441@lst.de>
- <20190124150000.GN32526@8bytes.org>
+        by mail.kernel.org (Postfix) with ESMTPSA id EC48D2147A;
+        Mon, 28 Jan 2019 16:04:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691491;
+        bh=dC+vVnH2Zgbw7ltjxFU0UuMH6kqXA+QnBRKAMIgsueQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=IzsIOQfdkxftBqOGTUHfE8KiI8sQaTePRWDM6Bh9ZGjJQZ312KWf3lA2TY40yhVAU
+         AJmfJ50rnfIc1Xp8KD0xdKL9FpBpQiBR9d28SIVybGTtlEYQU2l522H/GP/C9W14lC
+         cu9xdmoCLrDT3WSMBBdZvX86P85Tq0mTeRU63i/o=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Kaike Wan <kaike.wan@intel.com>,
+        Dennis Dalessandro <dennis.dalessandro@intel.com>,
+        Jason Gunthorpe <jgg@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 113/258] IB/hfi1: Unreserve a reserved request when it is completed
+Date:   Mon, 28 Jan 2019 10:56:59 -0500
+Message-Id: <20190128155924.51521-113-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124150000.GN32526@8bytes.org>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 28 Jan 2019 17:19:04 +0000 (UTC)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 04:00:00PM +0100, Joerg Roedel wrote:
-> On Thu, Jan 24, 2019 at 09:41:07AM +0100, Christoph Hellwig wrote:
-> > On Thu, Jan 24, 2019 at 09:29:23AM +0100, Joerg Roedel wrote:
-> > > > As I've just introduced and fixed a bug in this area in the current
-> > > > cycle - I don't think no_iotlb_memory is what your want (and maybe
-> > > > not useful at all): if the arch valls swiotlb_exit after previously
-> > > > initializing a buffer it won't be set.  You probably want to check
-> > > > for non-zero io_tlb_start and/or io_tlb_end.
-> > > 
-> > > Okay, but that requires that I also set io_tlb_start and friends back to
-> > > zero in the failure path of swiotlb_init(). Otherwise it could be left
-> > > non-zero in case swiotlb_init_with_tbl() returns an error.
-> > 
-> > Indeed, and we'll need to do that anyway as otherwise the dma mapping
-> > path might cause problems similar to the one when swiotlb_exit is
-> > called that I fixed.
-> 
-> Turns out the the error path in swiotlb_init() is redundant because it
-> will never be executed. If the function returns it will always return 0
-> because in case of failure it will just panic (through memblock_alloc).
-> 
-> I'll clean that up in a separate patch-set. There are more users of that
-> function and all of them panic when the function fails.
-> 
-> 
-> 	Joerg
+From: Kaike Wan <kaike.wan@intel.com>
 
-OK so are you going to post a new version then? Time's running out for 5.0.
-This isn't a regression so maybe we should just defer it all to 5.1.
+[ Upstream commit ca95f802ef5139722acc8d30aeaab6fe5bbe939e ]
 
+Currently, When a reserved operation is completed, its entry in the send
+queue will not be unreserved, which leads to the miscalculation of
+qp->s_avail and thus the triggering of a WARN_ON call trace. This patch
+fixes the problem by unreserving the reserved operation when it is
+completed.
+
+Fixes: 856cc4c237ad ("IB/hfi1: Add the capability for reserved operations")
+Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
+Signed-off-by: Kaike Wan <kaike.wan@intel.com>
+Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
+Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/infiniband/hw/hfi1/rc.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/drivers/infiniband/hw/hfi1/rc.c b/drivers/infiniband/hw/hfi1/rc.c
+index 9bd63abb2dfe..6f013a565353 100644
+--- a/drivers/infiniband/hw/hfi1/rc.c
++++ b/drivers/infiniband/hw/hfi1/rc.c
+@@ -1157,6 +1157,7 @@ void hfi1_rc_send_complete(struct rvt_qp *qp, struct hfi1_opa_header *opah)
+ 		if (cmp_psn(wqe->lpsn, qp->s_sending_psn) >= 0 &&
+ 		    cmp_psn(qp->s_sending_psn, qp->s_sending_hpsn) <= 0)
+ 			break;
++		rvt_qp_wqe_unreserve(qp, wqe);
+ 		s_last = qp->s_last;
+ 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
+ 		if (++s_last >= qp->s_size)
+@@ -1209,6 +1210,7 @@ static struct rvt_swqe *do_rc_completion(struct rvt_qp *qp,
+ 		u32 s_last;
+ 
+ 		rvt_put_swqe(wqe);
++		rvt_qp_wqe_unreserve(qp, wqe);
+ 		s_last = qp->s_last;
+ 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
+ 		if (++s_last >= qp->s_size)
 -- 
-MST
+2.19.1
+
