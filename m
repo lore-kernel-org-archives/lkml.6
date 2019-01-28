@@ -2,94 +2,111 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6397FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC7BC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF662147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 92FF42147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:28:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692901;
-	bh=qELQnGLLa8WB/zPJAI7lnArdb26J3dlFSSCaOgi+gqQ=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=IpyDHAj9t+c6NwhRuLHliB9CqEhw+GxK62n+T9xqbveyiTOD7yca7oBg5G003lBp9
-	 xcnfNOIowLdyVFY6uutQMiX8bohIXkewAWpvqgOySz0VQnBUxMmt2P2K4WWnRb5JJ2
-	 blwogZG7SH4Lu+CaB6g77OZslCTf0C7DiImJP39w=
+	s=default; t=1548692906;
+	bh=K3xk+tqqjUIM3RHd+3ATXvP+pBDOiBaIXuT+vwF8KIk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=zNtrC/bDb/bpZ+G6OjIA4zmyLBDncRZbwof/XYXf9AQm+Y1Z/HoCltR2cdi/mQqJE
+	 rs0uco8cEF5s9B+KhARl+dSOobyby7QwKq84sDL3/7bOUYvhylbbUN+l3jrrKRrCrV
+	 75aDR6z2gnbke415WMxEuKKDnitOd79kg788QJ3U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390620AbfA1Q2P (ORCPT
+        id S2390634AbfA1Q2Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:28:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38868 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:28:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38902 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389824AbfA1Q2M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:28:12 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        id S2390610AbfA1Q2O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:28:14 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 241912175B;
+        by mail.kernel.org (Postfix) with ESMTPSA id A731B20879;
         Mon, 28 Jan 2019 16:28:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692892;
-        bh=qELQnGLLa8WB/zPJAI7lnArdb26J3dlFSSCaOgi+gqQ=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=xEBzvdm9mX7/NlX9bFaEd/h0rGMGaBXM/NreHP+N9FXqnPYneEZszgF8veXU8bi3H
-         +yOqpE6qwz1xQoFq46/OwIdw9AJQEwlfxr34DLVntLvRFg8lndMoNU153OTV2cuwbO
-         jvtIPwlpbyJZ7FXjwTae9YXPryb4tvmro16u8dxA=
-Subject: Re: [PATCH 1/4] selftests: lib: allow to override CC in the top-level
- Makefile
-To:     Denys Dmytriyenko <denys@ti.com>
-Cc:     =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>,
-        Fathi Boudra <fathi.boudra@linaro.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        shuah <shuah@kernel.org>
-References: <20190116174320.14938-1-daniel.diaz@linaro.org>
- <7d75f420-d624-d53d-4fa1-3827c90fa608@kernel.org>
- <CAEUSe7_eYmMSovO4JAabh+83CtY2L8eeMoCVKKS5P-fs7zVhjg@mail.gmail.com>
- <a68c3fdd-081a-74ea-8d98-30eaf3d70446@kernel.org>
- <20190128154242.GB15002@beryl>
-From:   shuah <shuah@kernel.org>
-Message-ID: <4a5fc384-ee96-54ba-02f5-fc5ab7c79c47@kernel.org>
-Date:   Mon, 28 Jan 2019 09:28:11 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        s=default; t=1548692893;
+        bh=K3xk+tqqjUIM3RHd+3ATXvP+pBDOiBaIXuT+vwF8KIk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=AQu2/Z1Y46uyTum5K/4cdcYc2+24rhjDr5voBpbh52i8/WMz7RSCLOPjjRiOZmRoB
+         c2yk8+Ygkh7+E/InMhvN9BSKaxlvNbd+WZ2LSPCJhnKhOXOPWcl9FJ23B0KbhcS88E
+         HjoR2e9oX30wrH8eg/nAEgZoXpjGLkhKEXeItHww=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Oleg Nesterov <oleg@redhat.com>, Ben Woodard <woodard@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 61/61] exec: load_script: don't blindly truncate shebang string
+Date:   Mon, 28 Jan 2019 11:26:23 -0500
+Message-Id: <20190128162623.59854-61-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
+References: <20190128162623.59854-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190128154242.GB15002@beryl>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/28/19 8:42 AM, Denys Dmytriyenko wrote:
-> On Mon, Jan 28, 2019 at 08:01:15AM -0700, shuah wrote:
->> Hi Daniel,
->>
->> On 1/18/19 10:54 AM, Daniel Díaz wrote:
->>> Hello!
->>>
->>> On Wed, 16 Jan 2019 at 15:56, shuah <shuah@kernel.org> wrote:
->>>>
->>>> On 1/16/19 10:43 AM, Daniel Díaz wrote:
->>>>> From: Fathi Boudra <fathi.boudra@linaro.org>
+From: Oleg Nesterov <oleg@redhat.com>
 
-This is the problem. It says, it came from Fathi Boudra 
-<fathi.boudra@linaro.org>
+[ Upstream commit 8099b047ecc431518b9bb6bdbba3549bbecdc343 ]
 
+load_script() simply truncates bprm->buf and this is very wrong if the
+length of shebang string exceeds BINPRM_BUF_SIZE-2.  This can silently
+truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
+happens to be the valid executable path.
 
->>>>>
->>>>> Relax CC assignment to allow to override CC in the top-level Makefile.
->>>>>
->>>>> Signed-off-by: Denys Dmytriyenko <denys@ti.com>
-> 
-> ^^^ I am the original author of the patch and this is my signed-off line.
-> 
+Change load_script() to return ENOEXEC if it can't find '\n' or zero in
+bprm->buf.  Note that '\0' can come from either
+prepare_binprm()->memset() or from kernel_read(), we do not care.
 
-thanks,
--- Shuah
+Link: http://lkml.kernel.org/r/20181112160931.GA28463@redhat.com
+Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Acked-by: Kees Cook <keescook@chromium.org>
+Acked-by: Michal Hocko <mhocko@suse.com>
+Cc: Ben Woodard <woodard@redhat.com>
+Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/binfmt_script.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+index 5027a3e14922..f62e45df2d38 100644
+--- a/fs/binfmt_script.c
++++ b/fs/binfmt_script.c
+@@ -33,10 +33,14 @@ static int load_script(struct linux_binprm *bprm)
+ 	fput(bprm->file);
+ 	bprm->file = NULL;
+ 
+-	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
+-	if ((cp = strchr(bprm->buf, '\n')) == NULL)
+-		cp = bprm->buf+BINPRM_BUF_SIZE-1;
++	for (cp = bprm->buf+2;; cp++) {
++		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
++			return -ENOEXEC;
++		if (!*cp || (*cp == '\n'))
++			break;
++	}
+ 	*cp = '\0';
++
+ 	while (cp > bprm->buf) {
+ 		cp--;
+ 		if ((*cp == ' ') || (*cp == '\t'))
+-- 
+2.19.1
+
