@@ -2,156 +2,131 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDAC9C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:34:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A955C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:34:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9633220856
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:34:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1338921736
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:34:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TCwOTyue"
+	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="b+xqbem8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfA1IeM (ORCPT
+        id S1726851AbfA1Iel (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:34:12 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43895 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726681AbfA1IeL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:34:11 -0500
-Received: by mail-io1-f66.google.com with SMTP id b23so12728602ios.10
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:34:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vr/HMut0ktj2VJdSoSaKoFxNf82QpzugkR31+X8r3b0=;
-        b=TCwOTyue9xncwPQFRgJFoohPMjIj4I3l+DEbqJbO3Sn4ypiAu8x8BtTUx4tr49Ae53
-         wy2+KylCncKRfOrptootOdCfqUneP3Rxagb0XZjcDsWlOL3ku+vy9etk42oPdP/A6r9U
-         CdRbiNlP5L4JrPZmHd3MSvnKftmEcrllYpufnpx7SQ5LBgRGcsJ8QZC8vyQTFuyD1C0A
-         3aV4ZyGykREJWAtuE8+FBodCTiCLuEq7205Q3CM/My2HVL+aahVZj0dQmcl3eNy1aGFc
-         dU4obVn6HEAO90JDJ6d2XaGREphS+lHKhSgBfSutuUua954ebtsz0EcXtMWipMbm+N+3
-         o0xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vr/HMut0ktj2VJdSoSaKoFxNf82QpzugkR31+X8r3b0=;
-        b=qruLHvExMPI/7awjx9v4mBpCWGXqrpkNQ+IQIAcimlUYWZbI8egBBfsjSyTNyWmb9m
-         P1lEecAF9rK3+pewDTwXM3aDLmcm769I4pN2BdvJPYKLKIWkGCo8abRkevt6QOH+MURb
-         9R9QP6FvLT2H0wNJH3X3sWy3/N1T0Nb+g/3kmjCOiUcgZd5R1y5XC1C/farFi1CTonCs
-         g2IED8ScBDHJ8MXsD0sQhrbtjOdN0AExqpF7Fqx/wrFjimgYNwsD0z/OoJkYFDURDfc+
-         GkTJdeTuPUgKf7nN08TEx3ty28zxOB3HCt592BFkYnV6KxqPZ27oQDu2OPdbZZnQKD2P
-         aeOg==
-X-Gm-Message-State: AHQUAuZfw7ppAUMMb8qhtu4fgrZEkxYPZkH35pIbcna9rD8w8yoYtpGL
-        bxftnFDTySaK4znqKoOxQoVpdpQ/EIPCi/knpvTS8w==
-X-Google-Smtp-Source: AHgI3Ib00yTpukMMZmjPV5qmCieyffcq37ZTqf9OYvVHGCSXVrYRPt5uEaXlSP8pPk+P28smtV7QSji5md0OPUgwGzk=
-X-Received: by 2002:a5d:9456:: with SMTP id x22mr10205689ior.282.1548664450355;
- Mon, 28 Jan 2019 00:34:10 -0800 (PST)
+        Mon, 28 Jan 2019 03:34:41 -0500
+Received: from mail-eopbgr30090.outbound.protection.outlook.com ([40.107.3.90]:30976
+        "EHLO EUR03-AM5-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726648AbfA1Iel (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 03:34:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
+ s=selector1-nokia-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=wDKH4wClZPkKCLfB5zVvdTkOgLfmrW19cJKspkCPhJY=;
+ b=b+xqbem8I1+1/vcfIMPuufQ7VSVt3+kKaywdQNN2fOLu7oY2vBOfCHcBKMsUHqrxPwNYTT7wvR+5q8LcPwlc36WI7O4NB9gnBu+m5eNZbAoaLF3yo5FiR6WgkEMNCKV4CTHdj9O5FWmhZUfMcRBiNxT6AG6C6dAv2bDNN1HGY+o=
+Received: from VI1PR0702MB3710.eurprd07.prod.outlook.com (52.134.3.144) by
+ VI1PR0702MB3837.eurprd07.prod.outlook.com (52.134.1.148) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1580.13; Mon, 28 Jan 2019 08:34:35 +0000
+Received: from VI1PR0702MB3710.eurprd07.prod.outlook.com
+ ([fe80::95ff:2ede:57df:f1ba]) by VI1PR0702MB3710.eurprd07.prod.outlook.com
+ ([fe80::95ff:2ede:57df:f1ba%2]) with mapi id 15.20.1580.014; Mon, 28 Jan 2019
+ 08:34:35 +0000
+From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
+To:     Paul Moore <pmoore@redhat.com>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>,
+        Richard Guy Briggs <rbriggs@redhat.com>
+CC:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] audit: always enable syscall auditing when supported and
+ audit is enabled
+Thread-Topic: [PATCH] audit: always enable syscall auditing when supported and
+ audit is enabled
+Thread-Index: AQHUtuRMqf59sA9YxEyiYKAWmGDXiA==
+Date:   Mon, 28 Jan 2019 08:34:35 +0000
+Message-ID: <5490ae28-251b-bfda-38a6-5be201a4a8d8@nokia.com>
+References: <20151208164237.15736.42955.stgit@localhost>
+In-Reply-To: <20151208164237.15736.42955.stgit@localhost>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [131.228.32.165]
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.2
+x-clientproxiedby: HE1PR09CA0051.eurprd09.prod.outlook.com
+ (2603:10a6:7:3c::19) To VI1PR0702MB3710.eurprd07.prod.outlook.com
+ (2603:10a6:803:7::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=alexander.sverdlin@nokia.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR0702MB3837;6:hLxcFj+eo6Z8V20Q4H9UKecxVnp+urQCGi082iYMIPb3VT8FkBsmGeejeA0HL+dQXcv2Q4NW+dS9yN6H6If+5funhAUhL6jwLGcpbRbym0mYsURkZonO5sYa19yX1znd5Ndx+qxcr7YJAfHpFRqmm+XfQdH1ZK7HTqOBU62BKnSlU8ZUxGvTs2uNkly/JTCovWQx0nL4Njm8kHoEGh/hb449r/76ZfFNR4ryZUTzm3lde9lG/ofXGKURjHeCSGL4hgmmqKhDQsf/+uOPn4jW8gRwrGoRHi20HyVU1hQFi4/i3D1bLHNwrrJdySdYr7odayzrf8dBESHRXTD6BJ3rHeBGFAf300E5ud5823MlJoZDuMYbhx+GMUBWodVdTyMXBVTp5uoFXgkC3yBwK9/3ofbb79MjGBsYY3ekED2+FYNzdkhyibY2u8Uj4FOsX4Sk+FVCD9oNakHVnE1PrEf4bQ==;5:/VQnda7YWWPl2VKXaS3P8mOcl0Zygc3dKEWx2uNlF5BY+M4Kk8xpfrANIxi0CdTGBP3FgLVgp75lO/CSB1YADFGCD40VXi+q6S2iZiVl9dEUGh4G41HQq0OWOqlsQfjdO/kWZh9Pt89xlup/mytF93cyj3vZoqzYGUsIJs0SlcDkhmETfS/z0Kg0Adn5GI8oEn/+kyzhd1bamFXAc59djg==;7:Pda5td9Wj4XZEiQkk/+2emMT9nx54G5xjQJwOZKrDR1OkcT63TEJgX1Wb4dPVZ4mev5xlBb/wC4WwbT6dR1QhTGR5/cdGl68maf3JE6ly8tXc8QR6xr2OGeJb7YvQzdxzpwRHfE9rBVW/7wuKYbAZw==
+x-ms-office365-filtering-correlation-id: 5ab9ce1d-13c6-4f77-f2a7-08d684fb6ed8
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:VI1PR0702MB3837;
+x-ms-traffictypediagnostic: VI1PR0702MB3837:
+x-microsoft-antispam-prvs: <VI1PR0702MB38372A4C56E266CCE12F8AC788960@VI1PR0702MB3837.eurprd07.prod.outlook.com>
+x-forefront-prvs: 0931CB1479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(396003)(39860400002)(346002)(376002)(136003)(366004)(189003)(199004)(65826007)(31686004)(14454004)(7736002)(68736007)(305945005)(6512007)(2906002)(6246003)(6306002)(2501003)(99286004)(478600001)(476003)(966005)(11346002)(102836004)(2616005)(486006)(52116002)(76176011)(4326008)(6506007)(53546011)(386003)(26005)(54906003)(110136005)(186003)(25786009)(446003)(6436002)(64126003)(81156014)(3846002)(65806001)(36756003)(6486002)(97736004)(58126008)(8936002)(86362001)(6116002)(31696002)(14444005)(256004)(106356001)(229853002)(316002)(105586002)(8676002)(81166006)(65956001)(53936002)(66066001)(71200400001)(71190400001);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0702MB3837;H:VI1PR0702MB3710.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nokia.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: uZVrMiZXKGeHZHdRZzq1eMXd972JL7j9oUmRTgO9uuzfRZw73/a0GUXt3e7AEvwnP/22qgg7vmlyuJUjtxMdJslKigMswlt9H2mxJh6Mz2qTpfq7Ez70TJROCBPiQfcF43SGDuMRw99ADfmSXhdsk5MK+oab7uDHdKz5pI9gZWOWdKvHxAltA/cpi+POuBsIveKWYNEUhqDnhNbv4kK0IOo1rpAN4lhnpHybwjxHol/P18lCs9wsq2CdY3cGmScFXdJqwSnB1xwVymsRrJXndh/tGrUUBB6FKROW2PzsD8RkEhEfpqQ0se+Uui1N2rboyLOt/IFYwUAErZBfvwu+g8G/AdCln/B3UlKgodMeUM0UBSfykkhnLOMSWb4p26hqtcEh9Z27/w0CFJTJ5RpNCt/pecUD89aR4Of+dmEDrIs=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <2C3F08B100571341AC2A33EAD0D3C167@eurprd07.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20190121131816.GC17749@hirez.programming.kicks-ass.net>
- <Pine.LNX.4.44L0.1901211103000.24162-100000@netrider.rowland.org>
- <20190122090456.GE13777@hirez.programming.kicks-ass.net> <2236FBA76BA1254E88B949DDB74E612BA4B944B3@IRSMSX102.ger.corp.intel.com>
-In-Reply-To: <2236FBA76BA1254E88B949DDB74E612BA4B944B3@IRSMSX102.ger.corp.intel.com>
-From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Mon, 28 Jan 2019 09:33:58 +0100
-Message-ID: <CACT4Y+Zi7+6aAHf5mzjuSr4NcT+bowC8cU_DqFKwCKLh=m-tAQ@mail.gmail.com>
-Subject: Re: [PATCH] kcov: convert kcov.refcount to refcount_t
-To:     "Reshetova, Elena" <elena.reshetova@intel.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Alan Stern <stern@rowland.harvard.edu>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Kees Cook <keescook@chromium.org>,
-        "Paul E. McKenney" <paulmck@linux.ibm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: nokia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ab9ce1d-13c6-4f77-f2a7-08d684fb6ed8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 08:34:34.3217
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0702MB3837
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 27, 2019 at 7:41 PM Reshetova, Elena
-<elena.reshetova@intel.com> wrote:
->
-> > On Mon, Jan 21, 2019 at 11:05:03AM -0500, Alan Stern wrote:
-> > > On Mon, 21 Jan 2019, Peter Zijlstra wrote:
-> >
-> > > > Any additional ordering; like the one you have above; are not strictly
-> > > > required for the proper functioning of the refcount. Rather, you rely on
-> > > > additional ordering and will need to provide this explicitly:
-> > > >
-> > > >
-> > > >   if (refcount_dec_and_text(&x->rc)) {
-> > > >           /*
-> > > >            * Comment that explains what we order against....
-> > > >            */
-> > > >           smp_mb__after_atomic();
-> > > >           BUG_ON(!x->done*);
-> > > >           free(x);
-> > > >   }
-> > > >
-> > > >
-> > > > Also; these patches explicitly mention that refcount_t is weaker,
-> > > > specifically to make people aware of this difference.
-> > > >
-> > > > A full smp_mb() (or two) would also be much more expensive on a number
-> > > > of platforms and in the vast majority of the cases it is not required.
-> > >
-> > > How about adding smp_rmb() into refcount_dec_and_test()?  That would
-> > > give acq+rel semantics, which seems to be what people will expect.  And
-> > >it wouldn't be nearly as expensive as a full smp_mb().
-> >
-> > Yes, that's a very good suggestion.
-> >
-> > I suppose we can add smp_acquire__after_ctrl_dep() on the true branch.
-> > Then it reall does become rel_acq.
-> >
-> > A wee something like so (I couldn't find an arm64 refcount, even though
-> > I have distinct memories of talk about it).
-> >
-> > This isn't compiled, and obviously needs comment/documentation updates
-> > to go along with it.
-> >
-> > ---
-> >  arch/x86/include/asm/refcount.h | 9 ++++++++-
-> >  lib/refcount.c                  | 7 ++++++-
-> >  2 files changed, 14 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-> > index dbaed55c1c24..6f7a1eb345b4 100644
-> > --- a/arch/x86/include/asm/refcount.h
-> > +++ b/arch/x86/include/asm/refcount.h
-> > @@ -74,9 +74,16 @@ bool refcount_sub_and_test(unsigned int i, refcount_t *r)
-> >
-> >  static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
-> >  {
-> > -     return GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-> > +     bool ret = GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-> >
-> >       REFCOUNT_CHECK_LT_ZERO,
-> >                                       r-
-> > >refs.counter, e, "cx");
-> > +
-> > +     if (ret) {
-> > +             smp_acquire__after_ctrl_dep();
-> > +             return true;
-> > +     }
-> > +
-> > +     return false;
-> >  }
->
-> Actually as I started to do this, any reason why the change here only for dec_and_test and not
-> for sub_and _test also? Should not the arch. specific logic follow the generic?
-
-I would say these should be exactly the same wrt semantics.
-dec_and_test is just syntactic sugar for 1 decrement. If we change
-dec_and_test, we should change sub_and_test the same way.
+SGVsbG8gUGF1bCwNCg0KT24gMDgvMTIvMjAxNSAxNzo0MiwgUGF1bCBNb29yZSB3cm90ZToNCj4g
+VG8gdGhlIGJlc3Qgb2Ygb3VyIGtub3dsZWRnZSwgZXZlcnlvbmUgd2hvIGVuYWJsZXMgYXVkaXQg
+YXQgY29tcGlsZQ0KPiB0aW1lIGFsc28gZW5hYmxlcyBzeXNjYWxsIGF1ZGl0aW5nOyB0aGlzIHBh
+dGNoIHNpbXBsaWZpZXMgdGhlIEtjb25maWcNCj4gbWVudXMgYnkgcmVtb3ZpbmcgdGhlIG9wdGlv
+biB0byBkaXNhYmxlIHN5c2NhbGwgYXVkaXRpbmcgd2hlbiBhdWRpdA0KPiBpcyBzZWxlY3RlZCBh
+bmQgdGhlIHRhcmdldCBhcmNoIHN1cHBvcnRzIGl0Lg0KPiANCj4gU2lnbmVkLW9mZi1ieTogUGF1
+bCBNb29yZSA8cG1vb3JlQHJlZGhhdC5jb20+DQoNCnRoaXMgcGF0Y2ggaXMgcmVzcG9uc2libGUg
+Zm9yIG1hc3NpdmUgcGVyZm9ybWFuY2UgZGVncmFkYXRpb24gZm9yIHRob3NlDQp3aG8gdXNlZCBv
+bmx5IENPTkZJR19TRUNVUklUWV9BUFBBUk1PUi4NCg0KQW5kIHRoZSBudW1iZXJzIGFyZSwgdGFr
+ZSB0aGUgZm9sbG93aW5nIHRlc3QgZm9yIGluc3RhbmNlOg0KDQpkZCBpZj0vZGV2L3plcm8gb2Y9
+L2Rldi9udWxsIGNvdW50PTJNDQogICAgDQpBUk02NDogICAgICA1MDBNQi9zIC0+IDM1ME1CL3MN
+CkFSTTogICAgICAgIDQwME1CL3MgLT4gMzAwTUIvcw0KDQood2l0aCBzb21lIHBhcnRpY3VsYXIg
+Q1BVIGZyZXF1ZW5jaWVzKS4NCg0KU2hvdWxkIHdlIHJldmVydCB0aGlzIHBhdGNoPw0KDQo+IC0t
+LQ0KPiAgaW5pdC9LY29uZmlnIHwgICAxMSArKystLS0tLS0tLQ0KPiAgMSBmaWxlIGNoYW5nZWQs
+IDMgaW5zZXJ0aW9ucygrKSwgOCBkZWxldGlvbnMoLSkNCj4gDQo+IA0KPiAtLQ0KPiBMaW51eC1h
+dWRpdCBtYWlsaW5nIGxpc3QNCj4gTGludXgtYXVkaXRAcmVkaGF0LmNvbQ0KPiBodHRwczovL3d3
+dy5yZWRoYXQuY29tL21haWxtYW4vbGlzdGluZm8vbGludXgtYXVkaXQNCj4gDQo+IGRpZmYgLS1n
+aXQgYS9pbml0L0tjb25maWcgYi9pbml0L0tjb25maWcNCj4gaW5kZXggYzI0YjZmNy4uZDQ2NjNi
+MSAxMDA2NDQNCj4gLS0tIGEvaW5pdC9LY29uZmlnDQo+ICsrKyBiL2luaXQvS2NvbmZpZw0KPiBA
+QCAtMjk5LDIwICsyOTksMTUgQEAgY29uZmlnIEFVRElUDQo+ICAJaGVscA0KPiAgCSAgRW5hYmxl
+IGF1ZGl0aW5nIGluZnJhc3RydWN0dXJlIHRoYXQgY2FuIGJlIHVzZWQgd2l0aCBhbm90aGVyDQo+
+ICAJICBrZXJuZWwgc3Vic3lzdGVtLCBzdWNoIGFzIFNFTGludXggKHdoaWNoIHJlcXVpcmVzIHRo
+aXMgZm9yDQo+IC0JICBsb2dnaW5nIG9mIGF2YyBtZXNzYWdlcyBvdXRwdXQpLiAgRG9lcyBub3Qg
+ZG8gc3lzdGVtLWNhbGwNCj4gLQkgIGF1ZGl0aW5nIHdpdGhvdXQgQ09ORklHX0FVRElUU1lTQ0FM
+TC4NCj4gKwkgIGxvZ2dpbmcgb2YgYXZjIG1lc3NhZ2VzIG91dHB1dCkuICBTeXN0ZW0gY2FsbCBh
+dWRpdGluZyBpcyBpbmNsdWRlZA0KPiArCSAgb24gYXJjaGl0ZWN0dXJlcyB3aGljaCBzdXBwb3J0
+IGl0Lg0KPiAgDQo+ICBjb25maWcgSEFWRV9BUkNIX0FVRElUU1lTQ0FMTA0KPiAgCWJvb2wNCj4g
+IA0KPiAgY29uZmlnIEFVRElUU1lTQ0FMTA0KPiAtCWJvb2wgIkVuYWJsZSBzeXN0ZW0tY2FsbCBh
+dWRpdGluZyBzdXBwb3J0Ig0KPiArCWRlZl9ib29sIHkNCj4gIAlkZXBlbmRzIG9uIEFVRElUICYm
+IEhBVkVfQVJDSF9BVURJVFNZU0NBTEwNCj4gLQlkZWZhdWx0IHkgaWYgU0VDVVJJVFlfU0VMSU5V
+WA0KPiAtCWhlbHANCj4gLQkgIEVuYWJsZSBsb3ctb3ZlcmhlYWQgc3lzdGVtLWNhbGwgYXVkaXRp
+bmcgaW5mcmFzdHJ1Y3R1cmUgdGhhdA0KPiAtCSAgY2FuIGJlIHVzZWQgaW5kZXBlbmRlbnRseSBv
+ciB3aXRoIGFub3RoZXIga2VybmVsIHN1YnN5c3RlbSwNCj4gLQkgIHN1Y2ggYXMgU0VMaW51eC4N
+Cj4gIA0KPiAgY29uZmlnIEFVRElUX1dBVENIDQo+ICAJZGVmX2Jvb2wgeQ0KPiANCg0KLS0gDQpC
+ZXN0IHJlZ2FyZHMsDQpBbGV4YW5kZXIgU3ZlcmRsaW4uDQo=
