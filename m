@@ -2,100 +2,111 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A721DC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E28C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DC102147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RtS6o82r"
+	by mail.kernel.org (Postfix) with ESMTP id E428A2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548692686;
+	bh=hJIh8QLmnTUJg9HEZ4nA/enTyoQ3r6pXm5y59mYhCk4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ke8IkMmYjm/u804ZlVViI31puC6Kh8JE+dns29tO73DynqO080mwmLueEKsZGqJ73
+	 soLDKaKxKvMFosAOPCOd4YQ5ZhnTeKVaCaHYf5OkBrhloPAa5cACNiFw0xbyaxVU4r
+	 TCE6uZdhD8jY7n1ialOL1DvPVBMnOEvf5NYzUL8U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389764AbfA1QYi (ORCPT
+        id S2389317AbfA1QYo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:24:38 -0500
-Received: from lelv0142.ext.ti.com ([198.47.23.249]:41594 "EHLO
-        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389734AbfA1QYd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:24:33 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0SGOVHU122265;
-        Mon, 28 Jan 2019 10:24:31 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548692671;
-        bh=gQ2Cf4p3QPl3Nk5uJlrhoDkNy2iDoAO5We2h3hb7n88=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=RtS6o82rjALJNf8lTTXTFWQ1acDBLrWhc0t5v2U1sGsCRoI2BzjT/0gHSu+e2NOuP
-         XCozlrsU89KVLrNWe+pc7hWmLYgVmF5eyQ43eZ8xr10pnaq+cv8hnp9jKQXe9ZMEOi
-         KBqK45vJcGEeCxx5tT5MDn9jAI+9W+ydWFA4OHhU=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0SGOGTu108104
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 28 Jan 2019 10:24:31 -0600
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 28
- Jan 2019 09:42:42 -0600
-Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 28 Jan 2019 09:42:42 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0SFggXO009672;
-        Mon, 28 Jan 2019 09:42:42 -0600
-Date:   Mon, 28 Jan 2019 10:42:42 -0500
-From:   Denys Dmytriyenko <denys@ti.com>
-To:     shuah <shuah@kernel.org>
-CC:     Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>,
-        Fathi Boudra <fathi.boudra@linaro.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] selftests: lib: allow to override CC in the
- top-level Makefile
-Message-ID: <20190128154242.GB15002@beryl>
-References: <20190116174320.14938-1-daniel.diaz@linaro.org>
- <7d75f420-d624-d53d-4fa1-3827c90fa608@kernel.org>
- <CAEUSe7_eYmMSovO4JAabh+83CtY2L8eeMoCVKKS5P-fs7zVhjg@mail.gmail.com>
- <a68c3fdd-081a-74ea-8d98-30eaf3d70446@kernel.org>
+        Mon, 28 Jan 2019 11:24:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33260 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389769AbfA1QYk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:40 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAC4F2173C;
+        Mon, 28 Jan 2019 16:24:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692679;
+        bh=hJIh8QLmnTUJg9HEZ4nA/enTyoQ3r6pXm5y59mYhCk4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=RuQeG2DKHtga8tBTa9s8Rj404ZIg7UfWUpiEtmCRV+883b5Hg4mK3BVe/zLKkLJr+
+         N1RuA/eW/2Mn2G9QC/UrKsOqGrnOOL5PpoOdYx4yHc5KRBeI1PBFGf7JP8DSzNIiuL
+         Vm0rr7pD2EHqoDDMg2oKJ3x/CrYGoUhdyUNeU/VI=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 25/80] ARM: dts: mmp2: fix TWSI2
+Date:   Mon, 28 Jan 2019 11:23:06 -0500
+Message-Id: <20190128162401.58841-25-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
+References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Disposition: inline
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <a68c3fdd-081a-74ea-8d98-30eaf3d70446@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 08:01:15AM -0700, shuah wrote:
-> Hi Daniel,
-> 
-> On 1/18/19 10:54 AM, Daniel Díaz wrote:
-> >Hello!
-> >
-> >On Wed, 16 Jan 2019 at 15:56, shuah <shuah@kernel.org> wrote:
-> >>
-> >>On 1/16/19 10:43 AM, Daniel Díaz wrote:
-> >>>From: Fathi Boudra <fathi.boudra@linaro.org>
-> >>>
-> >>>Relax CC assignment to allow to override CC in the top-level Makefile.
-> >>>
-> >>>Signed-off-by: Denys Dmytriyenko <denys@ti.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-^^^ I am the original author of the patch and this is my signed-off line.
+[ Upstream commit 1147e05ac9fc2ef86a3691e7ca5c2db7602d81dd ]
 
+Marvell keeps their MMP2 datasheet secret, but there are good clues
+that TWSI2 is not on 0xd4025000 on that platform, not does it use
+IRQ 58. In fact, the IRQ 58 on MMP2 seems to be a signal processor:
 
-> Author signed-off missing on this patch. I am dropping this patch
-> from rc5 for now. Please fix it resend the patch. In the future,
-> I would like to see that author sends the patch.
+   arch/arm/mach-mmp/irqs.h:#define IRQ_MMP2_MSP  58
 
+I'm taking a somewhat educated guess that is probably a copy & paste
+error from PXA168 or PXA910 and that the real controller in fact hides
+at address 0xd4031000 and uses an interrupt line multiplexed via IRQ 17.
+
+I'm also copying some properties from TWSI1 that were missing or
+incorrect.
+
+Tested on a OLPC XO 1.75 machine, where the RTC is on TWSI2.
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Tested-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/mmp2.dtsi | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
+index 766bbb8495b6..47e5b63339d1 100644
+--- a/arch/arm/boot/dts/mmp2.dtsi
++++ b/arch/arm/boot/dts/mmp2.dtsi
+@@ -220,12 +220,15 @@
+ 				status = "disabled";
+ 			};
+ 
+-			twsi2: i2c@d4025000 {
++			twsi2: i2c@d4031000 {
+ 				compatible = "mrvl,mmp-twsi";
+-				reg = <0xd4025000 0x1000>;
+-				interrupts = <58>;
++				reg = <0xd4031000 0x1000>;
++				interrupt-parent = <&intcmux17>;
++				interrupts = <0>;
+ 				clocks = <&soc_clocks MMP2_CLK_TWSI1>;
+ 				resets = <&soc_clocks MMP2_CLK_TWSI1>;
++				#address-cells = <1>;
++				#size-cells = <0>;
+ 				status = "disabled";
+ 			};
+ 
 -- 
-Denys
+2.19.1
+
