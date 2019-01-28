@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96729C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9DCC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6500E2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10A3A21852
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692143;
-	bh=1WPzkXIJo/UHtywpO6WwRAycQABKZTDSqfu9uvcjk8o=;
+	s=default; t=1548692145;
+	bh=O9ITLmkqh4Q1kWhkxSW6VNYKXHbMmVMPN7N6QVIrIRE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DZck2TGKcZTR/z953uxQX8EFeHGvAHfakJi/XRZE2o1ZasqTxmWxxCIasL3joUwtt
-	 U04NO1ViDfOB80v3X+yPg2+0C1nrWxh8dCXNapKY7hQd5f0CTvWRUclds2Mhub31f4
-	 lrT7UHZAiZECtaYfXE1jspeaeEovj+ZQuPze2NdY=
+	b=XKWAbBjoM6nB/NYRrrXuDhKR+6M5dw4P00m2mDsszzJWKjtT13maBOR8sxMJM6u4w
+	 r6WnWdK/hpFIhVNcIVuRfqiXvsZYYjf2eDKaiWxchUh5EqnzD0mLvvdZBFRBfaXtLL
+	 oQOsKOQuGlF46MWGuojRB+zNMDg/m/tBOQMq0X9c=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387841AbfA1QPm (ORCPT
+        id S2387854AbfA1QPn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:15:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45996 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:15:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46108 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732532AbfA1QPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:38 -0500
+        id S2387809AbfA1QPk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:40 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8450B2175B;
-        Mon, 28 Jan 2019 16:15:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 35D4E2184D;
+        Mon, 28 Jan 2019 16:15:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692137;
-        bh=1WPzkXIJo/UHtywpO6WwRAycQABKZTDSqfu9uvcjk8o=;
+        s=default; t=1548692139;
+        bh=O9ITLmkqh4Q1kWhkxSW6VNYKXHbMmVMPN7N6QVIrIRE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C5B1czo+EqBaZ/GV7zOULu2PNy/94soclFd0SMDNilpeg1h0Xv4IajDlSIeZJ3op8
-         usW5UhULfaXBiRxy6XwaLNSvX25c+mLbOrHKYcTz3yZQ3O8n2SYlEzhFOphYSt/xw6
-         nv8XfmPVV4lLpMQllrTJgiNMoRCmwPlwR0DxXa+Y=
+        b=ZZlvHGiIfhomVH8hwTTVy//CPyhC93zhcDlQB0Z6htudYqq+fkK/Y2eW7NlG2eL7K
+         sr52rnjDG5Nyt9PMpYGB91Km+qTonbMjSRg3FppEerGaSjkxGRS58w5p00sFY4BByJ
+         kPob4cT5SaQWMCvnYOjo/3RqYWJFuGHMFiSu6wtY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Robin Murphy <robin.murphy@arm.com>,
         Sasha Levin <sashal@kernel.org>,
         iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.14 084/170] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
-Date:   Mon, 28 Jan 2019 11:10:34 -0500
-Message-Id: <20190128161200.55107-84-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 085/170] iommu/arm-smmu-v3: Use explicit mb() when moving cons pointer
+Date:   Mon, 28 Jan 2019 11:10:35 -0500
+Message-Id: <20190128161200.55107-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -59,55 +58,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 89cddc563743cb1e0068867ac97013b2a5bf86aa ]
+[ Upstream commit a868e8530441286342f90c1fd9c5f24de3aa2880 ]
 
-qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
-clock and power requirements.
-On msm8996, multiple cores, viz. mdss, video, etc. use this
-smmu. On sdm845, this smmu is used with gpu.
-Add bindings for the same.
+After removing an entry from a queue (e.g. reading an event in
+arm_smmu_evtq_thread()) it is necessary to advance the MMIO consumer
+pointer to free the queue slot back to the SMMU. A memory barrier is
+required here so that all reads targetting the queue entry have
+completed before the consumer pointer is updated.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+The implementation of queue_inc_cons() relies on a writel() to complete
+the previous reads, but this is incorrect because writel() is only
+guaranteed to complete prior writes. This patch replaces the call to
+writel() with an mb(); writel_relaxed() sequence, which gives us the
+read->write ordering which we require.
+
+Cc: Robin Murphy <robin.murphy@arm.com>
 Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/iommu/arm-smmu-v3.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 15b5856475fc..01a6a0ea2a4f 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -117,6 +117,7 @@ enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
- 	CAVIUM_SMMUV2,
-+	QCOM_SMMUV2,
- };
+diff --git a/drivers/iommu/arm-smmu-v3.c b/drivers/iommu/arm-smmu-v3.c
+index 26e99c03390f..09eb258a9a7d 100644
+--- a/drivers/iommu/arm-smmu-v3.c
++++ b/drivers/iommu/arm-smmu-v3.c
+@@ -730,7 +730,13 @@ static void queue_inc_cons(struct arm_smmu_queue *q)
+ 	u32 cons = (Q_WRP(q, q->cons) | Q_IDX(q, q->cons)) + 1;
  
- /* Until ACPICA headers cover IORT rev. C */
-@@ -1910,6 +1911,7 @@ ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
-+ARM_SMMU_MATCH_DATA(qcom_smmuv2, ARM_SMMU_V2, QCOM_SMMUV2);
+ 	q->cons = Q_OVF(q, q->cons) | Q_WRP(q, cons) | Q_IDX(q, cons);
+-	writel(q->cons, q->cons_reg);
++
++	/*
++	 * Ensure that all CPU accesses (reads and writes) to the queue
++	 * are complete before we update the cons pointer.
++	 */
++	mb();
++	writel_relaxed(q->cons, q->cons_reg);
+ }
  
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
-@@ -1918,6 +1920,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-+	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
- 	{ },
- };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+ static int queue_sync_prod(struct arm_smmu_queue *q)
 -- 
 2.19.1
 
