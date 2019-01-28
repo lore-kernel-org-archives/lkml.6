@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F7E9C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C5BC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52F9221841
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1246721916
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691105;
-	bh=KqiB6gvNbqn+PPSoljFqt6gvPdNwlItCDGyiKpEbLGw=;
+	s=default; t=1548691111;
+	bh=K4SPZ/gdmFlxYHppu8nT/DRShzbwF9jGnnrlE10MTX0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RE/2emx/COMMmRPwRMr5kb5gr3FB1vXDoe14y944ciACPQfcPxDz6iHSIVuEObokM
-	 UX9+aMzKefqcPIAVt1EWwhI6OBGC6W2oDMDvb7TfRN3paql6djgn7aOFN33njA/sWu
-	 6rangsx6mHCzcqnp/Y7CVo+BS/MSTJSTlG6O20GI=
+	b=vnoV/cCzH8tRQkbLy0eIMSIXA5SXZxnn7TyTg/qhz/JNLu6zQXnmi6Nc9vlBw8qSS
+	 b5JFs2soWAfKT0lVzz3hR90CQ5dFQ/MOAp8tuNy+nBbg5bbfhW08LXDVFlQuPfOmGp
+	 0O+EOBF+VoNiFtznDFF/P7vwH/rKIwv9FAI+wiPI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730417AbfA1P6X (ORCPT
+        id S1729876AbfA1P63 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:58:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43808 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:58:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43834 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729855AbfA1P6V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:58:21 -0500
+        id S1728755AbfA1P60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:58:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AF8632175B;
-        Mon, 28 Jan 2019 15:58:17 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B35912175B;
+        Mon, 28 Jan 2019 15:58:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691100;
-        bh=KqiB6gvNbqn+PPSoljFqt6gvPdNwlItCDGyiKpEbLGw=;
+        s=default; t=1548691104;
+        bh=K4SPZ/gdmFlxYHppu8nT/DRShzbwF9jGnnrlE10MTX0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ioTizA82IdSv3FQAjsGwc2BPqoVHOWWemCbGpAFL+mTFV1QB8AJiYGyFFMWdjfczF
-         1ZZPIS5zDmLXmQv0kTgf7MnPBDKskQd7EZmhhP+me8UDYd500yFj/38gmBH6t8VFla
-         EqJntUF98OmfAEdieUHXsmwdEGBUpfAwcQeOJo/4=
+        b=uQTX4OHmc6Mdl/7eb9duvg+dQkyeSUKqWIlvskMeg8bP1IH24MoDDSskEmV/iiSwL
+         zoRODZPB0TsoG/gmjY/hjVhlr/nK30t6WEnljLb6ovUWul7R+DEj0xtyIGW+UL+45Y
+         MochGFq7ufjtguOVDcZzGjWxYA4vNvR1AzNBiPio=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Matthias Brugger <mbrugger@suse.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 287/304] thermal: bcm2835: enable hwmon explicitly
-Date:   Mon, 28 Jan 2019 10:43:24 -0500
-Message-Id: <20190128154341.47195-287-sashal@kernel.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Sasha Levin <sashal@kernel.org>,
+        kgdb-bugreport@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.20 288/304] kdb: Don't back trace on a cpu that didn't round up
+Date:   Mon, 28 Jan 2019 10:43:25 -0500
+Message-Id: <20190128154341.47195-288-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,51 +58,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Matthias Brugger <mbrugger@suse.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit d56c19d07e0bc3ceff366a49b7d7a2440c967b1b ]
+[ Upstream commit 162bc7f5afd75b72acbe3c5f3488ef7e64a3fe36 ]
 
-By defaul of-based thermal driver do not enable hwmon.
-This patch does this explicitly, so that the temperature can be read
-through the common hwmon sysfs.
+If you have a CPU that fails to round up and then run 'btc' you'll end
+up crashing in kdb becaue we dereferenced NULL.  Let's add a check.
+It's wise to also set the task to NULL when leaving the debugger so
+that if we fail to round up on a later entry into the debugger we
+won't backtrace a stale task.
 
-Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-Acked-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
+Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/broadcom/bcm2835_thermal.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ kernel/debug/debug_core.c       |  4 ++++
+ kernel/debug/kdb/kdb_bt.c       | 11 ++++++++++-
+ kernel/debug/kdb/kdb_debugger.c |  7 -------
+ 3 files changed, 14 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/thermal/broadcom/bcm2835_thermal.c b/drivers/thermal/broadcom/bcm2835_thermal.c
-index b9d90f0ed504..720760cd493f 100644
---- a/drivers/thermal/broadcom/bcm2835_thermal.c
-+++ b/drivers/thermal/broadcom/bcm2835_thermal.c
-@@ -18,6 +18,8 @@
- #include <linux/platform_device.h>
- #include <linux/thermal.h>
+diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
+index 65c0f1363788..94aa9ae0007a 100644
+--- a/kernel/debug/debug_core.c
++++ b/kernel/debug/debug_core.c
+@@ -535,6 +535,8 @@ return_normal:
+ 				arch_kgdb_ops.correct_hw_break();
+ 			if (trace_on)
+ 				tracing_on();
++			kgdb_info[cpu].debuggerinfo = NULL;
++			kgdb_info[cpu].task = NULL;
+ 			kgdb_info[cpu].exception_state &=
+ 				~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
+ 			kgdb_info[cpu].enter_kgdb--;
+@@ -667,6 +669,8 @@ kgdb_restore:
+ 	if (trace_on)
+ 		tracing_on();
  
-+#include "../thermal_hwmon.h"
++	kgdb_info[cpu].debuggerinfo = NULL;
++	kgdb_info[cpu].task = NULL;
+ 	kgdb_info[cpu].exception_state &=
+ 		~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
+ 	kgdb_info[cpu].enter_kgdb--;
+diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
+index 7921ae4fca8d..7e2379aa0a1e 100644
+--- a/kernel/debug/kdb/kdb_bt.c
++++ b/kernel/debug/kdb/kdb_bt.c
+@@ -186,7 +186,16 @@ kdb_bt(int argc, const char **argv)
+ 		kdb_printf("btc: cpu status: ");
+ 		kdb_parse("cpu\n");
+ 		for_each_online_cpu(cpu) {
+-			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
++			void *kdb_tsk = KDB_TSK(cpu);
 +
- #define BCM2835_TS_TSENSCTL			0x00
- #define BCM2835_TS_TSENSSTAT			0x04
- 
-@@ -266,6 +268,15 @@ static int bcm2835_thermal_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, tz);
- 
-+	/*
-+	 * Thermal_zone doesn't enable hwmon as default,
-+	 * enable it here
-+	 */
-+	tz->tzp->no_hwmon = false;
-+	err = thermal_add_hwmon_sysfs(tz);
-+	if (err)
-+		goto err_tz;
++			/* If a CPU failed to round up we could be here */
++			if (!kdb_tsk) {
++				kdb_printf("WARNING: no task for cpu %ld\n",
++					   cpu);
++				continue;
++			}
 +
- 	bcm2835_thermal_debugfs(pdev);
- 
- 	return 0;
++			sprintf(buf, "btt 0x%px\n", kdb_tsk);
+ 			kdb_parse(buf);
+ 			touch_nmi_watchdog();
+ 		}
+diff --git a/kernel/debug/kdb/kdb_debugger.c b/kernel/debug/kdb/kdb_debugger.c
+index 15e1a7af5dd0..53a0df6e4d92 100644
+--- a/kernel/debug/kdb/kdb_debugger.c
++++ b/kernel/debug/kdb/kdb_debugger.c
+@@ -118,13 +118,6 @@ int kdb_stub(struct kgdb_state *ks)
+ 	kdb_bp_remove();
+ 	KDB_STATE_CLEAR(DOING_SS);
+ 	KDB_STATE_SET(PAGER);
+-	/* zero out any offline cpu data */
+-	for_each_present_cpu(i) {
+-		if (!cpu_online(i)) {
+-			kgdb_info[i].debuggerinfo = NULL;
+-			kgdb_info[i].task = NULL;
+-		}
+-	}
+ 	if (ks->err_code == DIE_OOPS || reason == KDB_REASON_OOPS) {
+ 		ks->pass_exception = 1;
+ 		KDB_FLAG_SET(CATASTROPHIC);
 -- 
 2.19.1
 
