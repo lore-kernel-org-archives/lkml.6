@@ -7,51 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 044B1C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D734C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC6552147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 52FCF2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692652;
-	bh=WPMvV1sS9XFJa3fAWJzbA/8EjmAq7Un603e2UcDxxU4=;
+	s=default; t=1548692657;
+	bh=sH53YEIHyS10Wu0pSjSlYMqSC7sEM7z9a9dPIqXtY+o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YzyB4oWRb90FjuNcjlWwB1HdLC0IX4Dyo3fj0Jd2CdpRKq3mP2nx36pxbhbFOiIaW
-	 t+3hNBtZ/nMnyJGJLBAlSN/JjTJYpp3Lbexmg/ZIuo8iZh/8FzG/HUcxULJFFckBEK
-	 zHa2bD3jqzrHg5zPJCHsaVpHhykcJ84y5QgHvJIA=
+	b=aMwRNEXop9lswhPNg3dE3842AhEYcLKYpRTtVZPBIpuMx1S4lDxEBhsgFT8bWUkW7
+	 iyMgn17u05VvKufjPw4qHslbQ7R3ArCE2ILxAsFWaxqqMfyKgIK5DtBgzKTHPiKRKv
+	 71It+qSvaZhXDFWQnHKXHqCiwjhKBuXgGF1nm+CA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389649AbfA1QYL (ORCPT
+        id S2389666AbfA1QYQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:24:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60724 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:24:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388914AbfA1QYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:24:10 -0500
+        id S2389637AbfA1QYL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9B6CA2184D;
-        Mon, 28 Jan 2019 16:24:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB30521919;
+        Mon, 28 Jan 2019 16:24:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692649;
-        bh=WPMvV1sS9XFJa3fAWJzbA/8EjmAq7Un603e2UcDxxU4=;
+        s=default; t=1548692650;
+        bh=sH53YEIHyS10Wu0pSjSlYMqSC7sEM7z9a9dPIqXtY+o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=zrBeC3Cy2SvJk4NhXUqgZ20Maywl4uef/eL9rFLlw7q4ZUPVJgBE1RXYdtUWZ538r
-         Z4iTgYQdM6CSVft0+kOlY7bQlhsskNXYx1cPSt8QTN77+Zcqyoz8NCbo3tYy4SNl6N
-         7B6KAAaOlDNlhcVVLq9dn5wNCuf8yWuR6yNlBw7k=
+        b=bYHm7c1dfLSRjG6orzjXZVNU3PVJxnQILa2eiJ1AqVretVwuxx5ColpzOD0pNlMbb
+         ZnifdzK/Qt0jiLXMk8lACK9n6H5xo8ADxm5l978CkDOV/JYJGptE2jJj6VLEB8lbSs
+         L8/L270ulYrWxj115yt3PWkEUeqDXgDX3SelT02k=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Smart <jsmart2021@gmail.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 05/80] scsi: lpfc: Correct LCB RJT handling
-Date:   Mon, 28 Jan 2019 11:22:46 -0500
-Message-Id: <20190128162401.58841-5-sashal@kernel.org>
+Cc:     =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@gmail.com>,
+        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        acpi4asus-user@lists.sourceforge.net,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 06/80] platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
+Date:   Mon, 28 Jan 2019 11:22:47 -0500
+Message-Id: <20190128162401.58841-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,37 +62,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: João Paulo Rechi Vita <jprvita@gmail.com>
 
-[ Upstream commit b114d9009d386276bfc3352289fc235781ae3353 ]
+[ Upstream commit b3f2f3799a972d3863d0fdc2ab6287aef6ca631f ]
 
-When LCB's are rejected, if beaconing was already in progress, the
-Reason Code Explanation was not being set. Should have been set to
-command in progress.
+When the OS registers to handle events from the display off hotkey the
+EC will send a notification with 0x35 for every key press, independent
+of the backlight state.
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+The behavior of this key on Windows, with the ATKACPI driver from Asus
+installed, is turning off the backlight of all connected displays with a
+fading effect, and any cursor input or key press turning the backlight
+back on. The key press or cursor input that wakes up the display is also
+passed through to the application under the cursor or under focus.
+
+The key that matches this behavior the closest is KEY_SCREENLOCK.
+
+Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_els.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/platform/x86/asus-nb-wmi.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index fd8fe1202dbe..398c9a0a5ade 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -5105,6 +5105,9 @@ lpfc_els_lcb_rsp(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
- 	stat = (struct ls_rjt *)(pcmd + sizeof(uint32_t));
- 	stat->un.b.lsRjtRsnCode = LSRJT_UNABLE_TPC;
- 
-+	if (shdr_add_status == ADD_STATUS_OPERATION_ALREADY_ACTIVE)
-+		stat->un.b.lsRjtRsnCodeExp = LSEXP_CMD_IN_PROGRESS;
-+
- 	elsiocb->iocb_cmpl = lpfc_cmpl_els_rsp;
- 	phba->fc_stat.elsXmitLSRJT++;
- 	rc = lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0);
+diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
+index 852d2de7f69f..2ee8d016fa5c 100644
+--- a/drivers/platform/x86/asus-nb-wmi.c
++++ b/drivers/platform/x86/asus-nb-wmi.c
+@@ -341,6 +341,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
+ 	{ KE_KEY, 0x32, { KEY_MUTE } },
+ 	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
+ 	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
++	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
+ 	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
+ 	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
+ 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
 -- 
 2.19.1
 
