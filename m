@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E7582C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:46:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C958C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:46:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B89052148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:46:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3C1132148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 06:46:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HUk3Secd"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ONUvgNzN"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726762AbfA1Gqd (ORCPT
+        id S1726798AbfA1Gq4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 01:46:33 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:40556 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfA1Gqc (ORCPT
+        Mon, 28 Jan 2019 01:46:56 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:35193 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726648AbfA1Gqz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 01:46:32 -0500
-Received: by mail-wr1-f67.google.com with SMTP id p4so16698777wrt.7
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 22:46:31 -0800 (PST)
+        Mon, 28 Jan 2019 01:46:55 -0500
+Received: by mail-wm1-f66.google.com with SMTP id t200so12661004wmt.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 22:46:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=xA//1FlkdsXmsx5auTFeNL+jjZLqfN7vDldrYpONvm4=;
-        b=HUk3SecdrvnJ83/Xwlvn4vLndaLEzSF546horDbu3kzayiHpAMhQUxQh8YokSO51GK
-         7zRXduNluXbueiKMdet2oOnFHJiqcONC2veU8IZoqsZG7m7eRyINj69EzaVuRX15m966
-         RP07Bw3PXe9tjtUejQGr/ESceHxIkDJ78SA38=
+        bh=lmDIKADatw1oUeQ5UHUMSZddpdBoEMSbYiY1RQRpnEA=;
+        b=ONUvgNzNgC8g3iZPKMxdM8Gx1l/rUdqraqCco0IlE7riwGoAF0KYN3xomg9e4bRUbc
+         HrWCxAbbr1zI0fmM5bLxSSgRUC6DF35LLtHeDyu7OFOpNczyaJ+/k/FusKHXx77SZQB7
+         w/TyXnnGQDgbgQSAPvzpl4DTEkTgxXwYMKnMk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=xA//1FlkdsXmsx5auTFeNL+jjZLqfN7vDldrYpONvm4=;
-        b=Jiz/5aahfvorb03mBto4sbg8jrs34wtcs2VVI112RZu/tOJ9PTYe+upE7lHgb+L/qn
-         onaw1j6Ej6nQg77IlH8kiINnw04b26SLvWDodDbo86ZO8VvgSxAeKNzQRWmawC1b/SD+
-         2MNePuRg/TWgvYnxi+8HNRqND8lReKIGBfVxal8IP33sY1Dfr0UU+T4xbCbqx5yXxFEr
-         MsDRE5c1XuCxfE5xaaIhXvY7/9gkj54SWKwreFogFMOOfYH1U/AMXXkv2p5cspyAi8IQ
-         BI3vp/GLvuIpBNudN6V7AejCaxYRSqjvMAfo/YLGsn72Dl8Vop9aN2LhfYb7SQT0X/t6
-         EvZA==
-X-Gm-Message-State: AHQUAuYVYE88pWTEXQlBgrSpBnuGXK8/1nhA8Kx4zX74jMngKafGLOYT
-        ot31hpL7cVH1tr+kUi9bOGnSB7zIzp4=
-X-Google-Smtp-Source: AHgI3IZW+2kBArB+s9SO6B1BpdG+Vt1j/1Dnfp7JT6pEHjRi2XQV0E9VRiDSM4zsTrDgFjSbzOP2sg==
-X-Received: by 2002:adf:f401:: with SMTP id g1mr15063951wro.103.1548657990362;
-        Sun, 27 Jan 2019 22:46:30 -0800 (PST)
+        bh=lmDIKADatw1oUeQ5UHUMSZddpdBoEMSbYiY1RQRpnEA=;
+        b=J0fhUfMszq/i1IOqUudrOwEPA2e1zpx/fIcZanFYVLpNfIRW/4StTBtNvDZSTniUZz
+         D8+qCfyhcEvwuNqKJxbG0duxekEWIpOlbGd/Y2t7xOKmr+yyFYb/O9t5CNhRZ7uFw0FN
+         hegg+AprFOIqIaXuN8Iry5uxFn7ikhYBK2yMzvP1xKwRCBieFoTYokDHvHkN446WUYBK
+         RCcE5oJ/nC20YdnPBWeps01Zc1zInC/V0MzFp+iuGu6sUqIU1vkAMrYjULLaEXme3flh
+         Z+jsxP8IS0ocSMgdTn4PNbD/Tqik6gmO41W0f55qZMdBwyfm2PoKHDJ0sfOF/npGR5sh
+         6CoQ==
+X-Gm-Message-State: AJcUukdqNuo0Jro+oFrm+ViwHjE2Wyzahc8ur2m93DY7Eya5QGEkrFoZ
+        7elnd1Rt1LD1stvMi2eauRkowfmoZUs=
+X-Google-Smtp-Source: ALg8bN4gtXQNUZC582Ylp64rFfoRqu9ZKTl/ASJC4Cd9V4WqkjrhJxEeJKrHyUK0Xdle75CoEeOmNg==
+X-Received: by 2002:a1c:cbcb:: with SMTP id b194mr14651461wmg.64.1548658013127;
+        Sun, 27 Jan 2019 22:46:53 -0800 (PST)
 Received: from localhost ([49.248.191.44])
-        by smtp.gmail.com with ESMTPSA id 67sm185539371wra.37.2019.01.27.22.46.28
+        by smtp.gmail.com with ESMTPSA id n5sm112413370wrr.94.2019.01.27.22.46.51
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sun, 27 Jan 2019 22:46:29 -0800 (PST)
+        Sun, 27 Jan 2019 22:46:52 -0800 (PST)
 From:   Amit Kucheria <amit.kucheria@linaro.org>
 To:     linux-kernel@vger.kernel.org
 Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
@@ -60,9 +60,9 @@ Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
         mka@chromium.org, Sudeep Holla <sudeep.holla@arm.com>,
         "Rafael J. Wysocki" <rjw@rjwysocki.net>,
         linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: [PATCH v4 8/9] cpufreq: scmi: Use auto-registration of thermal cooling device
-Date:   Mon, 28 Jan 2019 12:11:33 +0530
-Message-Id: <81d81c0016fb275728b7b604020c22d8f53991b1.1548654899.git.amit.kucheria@linaro.org>
+Subject: [PATCH v4 9/9] cpufreq: scpi: Use auto-registration of thermal cooling device
+Date:   Mon, 28 Jan 2019 12:11:34 +0530
+Message-Id: <d8626e4c69e7b33a49c1545a9b97eadc7c2b0c2e.1548654899.git.amit.kucheria@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <cover.1548654899.git.amit.kucheria@linaro.org>
 References: <cover.1548654899.git.amit.kucheria@linaro.org>
@@ -81,65 +81,63 @@ This allows removal of boiler plate code from the driver.
 Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
 Acked-by: Sudeep Holla <sudeep.holla@arm.com>
 ---
- drivers/cpufreq/scmi-cpufreq.c | 14 ++------------
+ drivers/cpufreq/scpi-cpufreq.c | 14 ++------------
  1 file changed, 2 insertions(+), 12 deletions(-)
 
-diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-index 242c3370544e..b19e9d129f8f 100644
---- a/drivers/cpufreq/scmi-cpufreq.c
-+++ b/drivers/cpufreq/scmi-cpufreq.c
-@@ -11,7 +11,6 @@
+diff --git a/drivers/cpufreq/scpi-cpufreq.c b/drivers/cpufreq/scpi-cpufreq.c
+index 99449738faa4..82420e8e5f0d 100644
+--- a/drivers/cpufreq/scpi-cpufreq.c
++++ b/drivers/cpufreq/scpi-cpufreq.c
+@@ -22,7 +22,6 @@
  #include <linux/cpu.h>
  #include <linux/cpufreq.h>
  #include <linux/cpumask.h>
 -#include <linux/cpu_cooling.h>
  #include <linux/export.h>
  #include <linux/module.h>
- #include <linux/pm_opp.h>
-@@ -22,7 +21,6 @@
- struct scmi_data {
- 	int domain_id;
+ #include <linux/of_platform.h>
+@@ -34,7 +33,6 @@
+ struct scpi_data {
+ 	struct clk *clk;
  	struct device *cpu_dev;
 -	struct thermal_cooling_device *cdev;
  };
  
- static const struct scmi_handle *handle;
-@@ -185,7 +183,6 @@ static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
+ static struct scpi_ops *scpi_ops;
+@@ -186,7 +184,6 @@ static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
  {
- 	struct scmi_data *priv = policy->driver_data;
+ 	struct scpi_data *priv = policy->driver_data;
  
 -	cpufreq_cooling_unregister(priv->cdev);
+ 	clk_put(priv->clk);
  	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
  	kfree(priv);
- 	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
-@@ -193,17 +190,11 @@ static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
+@@ -195,23 +192,16 @@ static int scpi_cpufreq_exit(struct cpufreq_policy *policy)
  	return 0;
  }
  
--static void scmi_cpufreq_ready(struct cpufreq_policy *policy)
+-static void scpi_cpufreq_ready(struct cpufreq_policy *policy)
 -{
--	struct scmi_data *priv = policy->driver_data;
+-	struct scpi_data *priv = policy->driver_data;
 -
 -	priv->cdev = of_cpufreq_cooling_register(policy);
 -}
 -
- static struct cpufreq_driver scmi_cpufreq_driver = {
- 	.name	= "scmi",
+ static struct cpufreq_driver scpi_cpufreq_driver = {
+ 	.name	= "scpi-cpufreq",
  	.flags	= CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
 -		  CPUFREQ_NEED_INITIAL_FREQ_CHECK,
 +		  CPUFREQ_NEED_INITIAL_FREQ_CHECK |
 +		  CPUFREQ_AUTO_REGISTER_COOLING_DEV,
  	.verify	= cpufreq_generic_frequency_table_verify,
  	.attr	= cpufreq_generic_attr,
- 	.target_index	= scmi_cpufreq_set_target,
-@@ -211,7 +202,6 @@ static struct cpufreq_driver scmi_cpufreq_driver = {
- 	.get	= scmi_cpufreq_get_rate,
- 	.init	= scmi_cpufreq_init,
- 	.exit	= scmi_cpufreq_exit,
--	.ready	= scmi_cpufreq_ready,
+ 	.get	= scpi_cpufreq_get_rate,
+ 	.init	= scpi_cpufreq_init,
+ 	.exit	= scpi_cpufreq_exit,
+-	.ready	= scpi_cpufreq_ready,
+ 	.target_index	= scpi_cpufreq_set_target,
  };
  
- static int scmi_cpufreq_probe(struct scmi_device *sdev)
 -- 
 2.17.1
 
