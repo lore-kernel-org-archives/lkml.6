@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36361C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70983C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED48D2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 373812175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:13:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692010;
-	bh=XMCt/Am89DSH2OqT69hpegTGT7rZbwrgd6n7iSi0E8c=;
+	s=default; t=1548692016;
+	bh=Bxa89QOkNkRSADIzZ11duJ7gv7guCurt3wYLSWR4czw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fFyyy2r3/yLYwF85VazPc4svcBF0XZGUdcGt9Pt/CfjRHZ9RhCyfaLNzqqiv9CUpK
-	 2TL81W5NoMtl9u3e9QQ3r5kBgL5ZMYe+3O8KGtdI0zskUWPlXY/TUGL6DXJLOdiU3U
-	 K+q6aIGh7k5Ho2eTQ2nItLxwDDvZrs+99sy4w1Wo=
+	b=C5QbdQMoPmcliFXsuLncdVCkJjw8mIDdoy3+Jt92R1IhWEfr48tde9JBAJdoeRteZ
+	 /V7zXRlTimEIFKl/IkLMKbhvlOrH9l4VCFo1ocUhZ5HZ5Nj/1e8uGKjD52tOQFduNb
+	 obKZ6pVOYvJIMiQCQG7wN7aJzfd95iA9cMEibJCU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387426AbfA1QN2 (ORCPT
+        id S2387454AbfA1QNf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:13:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42088 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:13:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42172 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732495AbfA1QNY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:13:24 -0500
+        id S2387423AbfA1QN2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 931652147A;
-        Mon, 28 Jan 2019 16:13:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8ED832147A;
+        Mon, 28 Jan 2019 16:13:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692003;
-        bh=XMCt/Am89DSH2OqT69hpegTGT7rZbwrgd6n7iSi0E8c=;
+        s=default; t=1548692007;
+        bh=Bxa89QOkNkRSADIzZ11duJ7gv7guCurt3wYLSWR4czw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G5ZcIfgFRyCQwgiqL3861EtJTWv7Ww9IVANO+cOQT96sqRQDwYgYNa5KCrQ6TU3ps
-         ouWPRzJnba1e2dg0LyHnRd7th+/YF9s2V0UnZiBo0KBILQXl2lMAKOycuzkDH9c5zo
-         BdDU1ml9HrKxwGXeM2KxSZLb2lOq7UPtf3sTe5bk=
+        b=O5W5qJsJRpd/yRvOd2ta3v2+loUYqC1cnPq6omaq5nxTbB1Ng+EYgw/o3IeeK/5nY
+         EPJj09hNc4F85TRY4LbbLVXT3GQU7E6uXzZQqNyyfTmOukAPEZCeaS7IpQzRKlmv0X
+         Q2GB5OkwwC8VxzQwq+SxTl1OVl2mQec9QE2WbnmA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        Thierry Reding <treding@nvidia.com>,
-        Sasha Levin <sashal@kernel.org>, linux-tegra@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 035/170] soc/tegra: Don't leak device tree node reference
-Date:   Mon, 28 Jan 2019 11:09:45 -0500
-Message-Id: <20190128161200.55107-35-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 037/170] ptp: Fix pass zero to ERR_PTR() in ptp_clock_register
+Date:   Mon, 28 Jan 2019 11:09:47 -0500
+Message-Id: <20190128161200.55107-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,44 +58,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 9eb40fa2cd2d1f6829e7b49bb22692f754b9cfe0 ]
+[ Upstream commit aea0a897af9e44c258e8ab9296fad417f1bc063a ]
 
-of_find_node_by_path() acquires a reference to the node returned by it
-and that reference needs to be dropped by its caller. soc_is_tegra()
-doesn't do that, so fix it.
+Fix smatch warning:
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
-[treding: slightly rewrite to avoid inline comparison]
-Signed-off-by: Thierry Reding <treding@nvidia.com>
+drivers/ptp/ptp_clock.c:298 ptp_clock_register() warn:
+ passing zero to 'ERR_PTR'
+
+'err' should be set while device_create_with_groups and
+pps_register_source fails
+
+Fixes: 85a66e550195 ("ptp: create "pins" together with the rest of attributes")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Acked-by: Richard Cochran <richardcochran@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/soc/tegra/common.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/ptp/ptp_clock.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/soc/tegra/common.c b/drivers/soc/tegra/common.c
-index cd8f41351add..7bfb154d6fa5 100644
---- a/drivers/soc/tegra/common.c
-+++ b/drivers/soc/tegra/common.c
-@@ -22,11 +22,15 @@ static const struct of_device_id tegra_machine_match[] = {
+diff --git a/drivers/ptp/ptp_clock.c b/drivers/ptp/ptp_clock.c
+index 7eacc1c4b3b1..c64903a5978f 100644
+--- a/drivers/ptp/ptp_clock.c
++++ b/drivers/ptp/ptp_clock.c
+@@ -253,8 +253,10 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ 	ptp->dev = device_create_with_groups(ptp_class, parent, ptp->devid,
+ 					     ptp, ptp->pin_attr_groups,
+ 					     "ptp%d", ptp->index);
+-	if (IS_ERR(ptp->dev))
++	if (IS_ERR(ptp->dev)) {
++		err = PTR_ERR(ptp->dev);
+ 		goto no_device;
++	}
  
- bool soc_is_tegra(void)
- {
-+	const struct of_device_id *match;
- 	struct device_node *root;
- 
- 	root = of_find_node_by_path("/");
- 	if (!root)
- 		return false;
- 
--	return of_match_node(tegra_machine_match, root) != NULL;
-+	match = of_match_node(tegra_machine_match, root);
-+	of_node_put(root);
-+
-+	return match != NULL;
- }
+ 	/* Register a new PPS source. */
+ 	if (info->pps) {
+@@ -265,6 +267,7 @@ struct ptp_clock *ptp_clock_register(struct ptp_clock_info *info,
+ 		pps.owner = info->owner;
+ 		ptp->pps_source = pps_register_source(&pps, PTP_PPS_DEFAULTS);
+ 		if (!ptp->pps_source) {
++			err = -EINVAL;
+ 			pr_err("failed to register pps source\n");
+ 			goto no_pps;
+ 		}
 -- 
 2.19.1
 
