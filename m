@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5FADC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4BEDC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95D5721848
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 827BC2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:11:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691887;
-	bh=Qy05m6YU7sijz9HqGN6a7TV+EUkf3eqhCrncOI/zwV4=;
+	s=default; t=1548691891;
+	bh=aHTiA+VvQMHT5liIyiq5RQlij9mEPbBTiOUj6/+qoRI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=P9fOaigudr02xjsbDd0QVohV12vIKzPtC7uFcitxHp+e6Tv2IE9gjQSqKU/BN3E7s
-	 4SD0ekttMYKsnkkazqUhFQYKPoPIG+AC08RpyNLwn6E3RHXpyu/1kMmFjW4D9zSDVq
-	 3ZcjeG8O1DcemKlQSSZPl+tJZpF4W5dJ22g0Yb2o=
+	b=MTErocecwiwo+MxgS4uQ1oBg/iwXVozik2zTKYpFBz5YRzOV8FT8UkefL/Z88XPKR
+	 xL2Tnb+e43comVgZs7VxmEtjRNKYVac3l5WZLZVL+g+wUpbMmvV2JqP3mr7hj0i1GW
+	 Wp2aeY8fmNJj7KxJ/H2zHC/QEW1riltU4hu45clM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732269AbfA1QL0 (ORCPT
+        id S1732978AbfA1QLa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:11:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38376 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:11:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38450 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732946AbfA1QLY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:11:24 -0500
+        id S1732963AbfA1QLZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:11:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E855E2177E;
-        Mon, 28 Jan 2019 16:11:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9254121848;
+        Mon, 28 Jan 2019 16:11:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691883;
-        bh=Qy05m6YU7sijz9HqGN6a7TV+EUkf3eqhCrncOI/zwV4=;
+        s=default; t=1548691884;
+        bh=aHTiA+VvQMHT5liIyiq5RQlij9mEPbBTiOUj6/+qoRI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V4Dna+OGZgCxeq1PQqr4dzFDvP1ydCjG+QQjDgetqA6kvu8zE3DiWisadq+FtVrxs
-         ibLb7btfArphUomkgHomqvUIkdoM8aG0jEOTJic9qjdV8tthHbl72/RdYOUw1j3Jfo
-         /Myye70x49gu9+YUETg/+wQzpsyBXF3AFTLWM1KM=
+        b=oY/8VXRBds3XvOQaHuwmMoW/Ir69Sw1n85/fggKdE2qAf0OfNT3BQz3umz43mYr0W
+         I7zzLUXFwuDe0xActVDIMiEkqLBotso7m+AEhp5i0YrynCWvR3CMvfjTjTN/Fh07FT
+         vidwq0N5SmYM3WZypDEp5QSDm5oUdXbxuaNQUGqQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 248/258] bpf: fix check_map_access smin_value test when pointer contains offset
-Date:   Mon, 28 Jan 2019 10:59:14 -0500
-Message-Id: <20190128155924.51521-248-sashal@kernel.org>
+Cc:     Aditya Pakki <pakki001@umn.edu>, Jiri Kosina <jkosina@suse.cz>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 249/258] HID: lenovo: Add checks to fix of_led_classdev_register
+Date:   Mon, 28 Jan 2019 10:59:15 -0500
+Message-Id: <20190128155924.51521-249-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,52 +56,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Aditya Pakki <pakki001@umn.edu>
 
-[ Upstream commit b7137c4eab85c1cf3d46acdde90ce1163b28c873 ]
+[ Upstream commit 6ae16dfb61bce538d48b7fe98160fada446056c5 ]
 
-In check_map_access() we probe actual bounds through __check_map_access()
-with offset of reg->smin_value + off for lower bound and offset of
-reg->umax_value + off for the upper bound. However, even though the
-reg->smin_value could have a negative value, the final result of the
-sum with off could be positive when pointer arithmetic with known and
-unknown scalars is combined. In this case we reject the program with
-an error such as "R<x> min value is negative, either use unsigned index
-or do a if (index >=0) check." even though the access itself would be
-fine. Therefore extend the check to probe whether the actual resulting
-reg->smin_value + off is less than zero.
+In lenovo_probe_tpkbd(), the function of_led_classdev_register() could
+return an error value that is unchecked. The fix adds these checks.
 
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/hid/hid-lenovo.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index 341806668f03..9997723038d3 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -1268,13 +1268,17 @@ static int check_map_access(struct bpf_verifier_env *env, u32 regno,
- 	 */
- 	if (env->log.level)
- 		print_verifier_state(env, state);
-+
- 	/* The minimum value is only important with signed
- 	 * comparisons where we can't assume the floor of a
- 	 * value is 0.  If we are using signed variables for our
- 	 * index'es we need to make sure that whatever we use
- 	 * will have a set floor within our range.
- 	 */
--	if (reg->smin_value < 0) {
-+	if (reg->smin_value < 0 &&
-+	    (reg->smin_value == S64_MIN ||
-+	     (off + reg->smin_value != (s64)(s32)(off + reg->smin_value)) ||
-+	      reg->smin_value + off < 0)) {
- 		verbose(env, "R%d min value is negative, either use unsigned index or do a if (index >=0) check.\n",
- 			regno);
- 		return -EACCES;
+diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
+index 643b6eb54442..eacc76d2ab96 100644
+--- a/drivers/hid/hid-lenovo.c
++++ b/drivers/hid/hid-lenovo.c
+@@ -743,7 +743,9 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
+ 	data_pointer->led_mute.brightness_get = lenovo_led_brightness_get_tpkbd;
+ 	data_pointer->led_mute.brightness_set = lenovo_led_brightness_set_tpkbd;
+ 	data_pointer->led_mute.dev = dev;
+-	led_classdev_register(dev, &data_pointer->led_mute);
++	ret = led_classdev_register(dev, &data_pointer->led_mute);
++	if (ret < 0)
++		goto err;
+ 
+ 	data_pointer->led_micmute.name = name_micmute;
+ 	data_pointer->led_micmute.brightness_get =
+@@ -751,7 +753,11 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
+ 	data_pointer->led_micmute.brightness_set =
+ 		lenovo_led_brightness_set_tpkbd;
+ 	data_pointer->led_micmute.dev = dev;
+-	led_classdev_register(dev, &data_pointer->led_micmute);
++	ret = led_classdev_register(dev, &data_pointer->led_micmute);
++	if (ret < 0) {
++		led_classdev_unregister(&data_pointer->led_mute);
++		goto err;
++	}
+ 
+ 	lenovo_features_set_tpkbd(hdev);
+ 
 -- 
 2.19.1
 
