@@ -2,177 +2,117 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC61BC282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:27:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1859FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D1521738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:27:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D7BAD21741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:31:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548678660;
+	bh=qeaxo85atsF5I/3Hpvacj/cXzBpdxjfNBhPgowTVcjY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=fkFFYL6mNkD3Vksu4iqUJNiFLY6p21xbHXTK7JceJ36CzvIGSzdNzob0SrUlgxiy7
+	 KA1foDfL4HduXkAFMJnChANNiPUCAH/h2kZncjQ52SYYUcprVQwXARIA3SxHZ9H1fg
+	 xKgUhRrsmJHYoCKFOmni14R1OoJN1pAwKxwd4Gj4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726945AbfA1M14 (ORCPT
+        id S1726754AbfA1Ma7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:27:56 -0500
-Received: from mga02.intel.com ([134.134.136.20]:21827 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbfA1M1w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:27:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 04:27:44 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,534,1539673200"; 
-   d="scan'208";a="139402570"
-Received: from elena-thinkpad-x230.fi.intel.com ([10.237.68.34])
-  by fmsmga004.fm.intel.com with ESMTP; 28 Jan 2019 04:27:42 -0800
-From:   Elena Reshetova <elena.reshetova@intel.com>
-To:     peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, alexander.shishkin@linux.intel.com,
-        jolsa@redhat.com, keescook@chromium.org, tglx@linutronix.de,
-        Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH 1/3] perf: convert perf_event_context.refcount to refcount_t
-Date:   Mon, 28 Jan 2019 14:27:26 +0200
-Message-Id: <1548678448-24458-2-git-send-email-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548678448-24458-1-git-send-email-elena.reshetova@intel.com>
-References: <1548678448-24458-1-git-send-email-elena.reshetova@intel.com>
+        Mon, 28 Jan 2019 07:30:59 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34216 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbfA1Ma6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 07:30:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cXAyeWFIpMOGgCIqLGzeDp4ajkXjIWJQ3xqRqloXnbQ=; b=UfdSblx+k6fhF5uBftq4r8EzE
+        2IAqiYQCHw+f0xizLEWqBqY5KEEkNg9bJUKQqxzLfnNpYCk4vX9TyqgH/wZ0OPbQoDkvkfEn2kygG
+        qWiePjM73nA3PL/Z6KlDqncIJ8xwLMvJrnaddOTsi694ZWbXRGlS601R5mA6cytskHLy8=;
+Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
+        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1go63u-0002RV-NE; Mon, 28 Jan 2019 12:30:50 +0000
+Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
+        id 5021F1127D29; Mon, 28 Jan 2019 12:30:50 +0000 (GMT)
+Date:   Mon, 28 Jan 2019 12:30:50 +0000
+From:   Mark Brown <broonie@kernel.org>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "vigneshr@ti.com" <vigneshr@ti.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
+        "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 4/5] spi: nxp-fspi: add octal mode flag bit for octal
+ support
+Message-ID: <20190128123050.GE11699@sirena.org.uk>
+References: <1547546584-5254-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <1547546584-5254-5-git-send-email-yogeshnarayan.gaur@nxp.com>
+ <20190128122631.GD11699@sirena.org.uk>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="r7U+bLA8boMOj+mD"
+Content-Disposition: inline
+In-Reply-To: <20190128122631.GD11699@sirena.org.uk>
+X-Cookie: I think we're in trouble.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-atomic_t variables are currently used to implement reference
-counters with the following properties:
- - counter is initialized to 1 using atomic_set()
- - a resource is freed upon counter reaching zero
- - once counter reaches zero, its further
-   increments aren't allowed
- - counter schema uses basic atomic operations
-   (set, inc, inc_not_zero, dec_and_test, etc.)
 
-Such atomic variables should be converted to a newly provided
-refcount_t type and API that prevents accidental counter overflows
-and underflows. This is important since overflows and underflows
-can lead to use-after-free situation and be exploitable.
+--r7U+bLA8boMOj+mD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The variable perf_event_context.refcount is used as pure reference counter.
-Convert it to refcount_t and fix up the operations.
+On Mon, Jan 28, 2019 at 12:26:31PM +0000, Mark Brown wrote:
+> On Tue, Jan 15, 2019 at 10:05:29AM +0000, Yogesh Narayan Gaur wrote:
 
-**Important note for maintainers:
+> > diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
+> > index e23ad9ef028e..adc3c0e14f38 100644
+> > --- a/drivers/spi/spi-nxp-fspi.c
+> > +++ b/drivers/spi/spi-nxp-fspi.c
+> > @@ -952,8 +952,8 @@ static int nxp_fspi_probe(struct platform_device *pdev)
 
-Some functions from refcount_t API defined in lib/refcount.c
-have different memory ordering guarantees than their atomic
-counterparts. Please check Documentation/core-api/refcount-vs-atomic.rst
-for more information.
+> This does not apply against current code, the above file is not present
+> upstream.  Please do not submit patches to out of tree code upstream.
 
-Normally the differences should not matter since refcount_t provides
-enough guarantees to satisfy the refcounting use cases, but in
-some rare cases it might matter.
-Please double check that you don't have some undocumented
-memory guarantees for this variable usage.
+So it turns out your other series was adding that driver.  Please if
+you're doing this make sure you call out any interdependencies in either
+the patch itself or the cover letter, if you're sending separate patch
+serieses you should expect them to be handled separately.
 
-For the perf_event_context.refcount it might make a difference
-in following places:
- - get_ctx(), perf_event_ctx_lock_nested(), perf_lock_task_context()
-   and __perf_event_ctx_lock_double(): increment in
-   refcount_inc_not_zero() only guarantees control dependency
-   on success vs. fully ordered atomic counterpart
- - put_ctx(): decrement in refcount_dec_and_test() provides
-   RELEASE ordering and ACQUIRE ordering + control dependency on success
-   vs. fully ordered atomic counterpart
+--r7U+bLA8boMOj+mD
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Suggested-by: Kees Cook <keescook@chromium.org>
-Reviewed-by: David Windsor <dwindsor@gmail.com>
-Reviewed-by: Hans Liljestrand <ishkamiel@gmail.com>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
----
- include/linux/perf_event.h |  3 ++-
- kernel/events/core.c       | 12 ++++++------
- 2 files changed, 8 insertions(+), 7 deletions(-)
+-----BEGIN PGP SIGNATURE-----
 
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index 1d5c551..6a94097 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -55,6 +55,7 @@ struct perf_guest_info_callbacks {
- #include <linux/perf_regs.h>
- #include <linux/workqueue.h>
- #include <linux/cgroup.h>
-+#include <linux/refcount.h>
- #include <asm/local.h>
- 
- struct perf_callchain_entry {
-@@ -737,7 +738,7 @@ struct perf_event_context {
- 	int				nr_stat;
- 	int				nr_freq;
- 	int				rotate_disable;
--	atomic_t			refcount;
-+	refcount_t			refcount;
- 	struct task_struct		*task;
- 
- 	/*
-diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 3cd13a3..a1e87d2 100644
---- a/kernel/events/core.c
-+++ b/kernel/events/core.c
-@@ -1171,7 +1171,7 @@ static void perf_event_ctx_deactivate(struct perf_event_context *ctx)
- 
- static void get_ctx(struct perf_event_context *ctx)
- {
--	WARN_ON(!atomic_inc_not_zero(&ctx->refcount));
-+	WARN_ON(!refcount_inc_not_zero(&ctx->refcount));
- }
- 
- static void free_ctx(struct rcu_head *head)
-@@ -1185,7 +1185,7 @@ static void free_ctx(struct rcu_head *head)
- 
- static void put_ctx(struct perf_event_context *ctx)
- {
--	if (atomic_dec_and_test(&ctx->refcount)) {
-+	if (refcount_dec_and_test(&ctx->refcount)) {
- 		if (ctx->parent_ctx)
- 			put_ctx(ctx->parent_ctx);
- 		if (ctx->task && ctx->task != TASK_TOMBSTONE)
-@@ -1267,7 +1267,7 @@ perf_event_ctx_lock_nested(struct perf_event *event, int nesting)
- again:
- 	rcu_read_lock();
- 	ctx = READ_ONCE(event->ctx);
--	if (!atomic_inc_not_zero(&ctx->refcount)) {
-+	if (!refcount_inc_not_zero(&ctx->refcount)) {
- 		rcu_read_unlock();
- 		goto again;
- 	}
-@@ -1400,7 +1400,7 @@ perf_lock_task_context(struct task_struct *task, int ctxn, unsigned long *flags)
- 		}
- 
- 		if (ctx->task == TASK_TOMBSTONE ||
--		    !atomic_inc_not_zero(&ctx->refcount)) {
-+		    !refcount_inc_not_zero(&ctx->refcount)) {
- 			raw_spin_unlock(&ctx->lock);
- 			ctx = NULL;
- 		} else {
-@@ -4056,7 +4056,7 @@ static void __perf_event_init_context(struct perf_event_context *ctx)
- 	INIT_LIST_HEAD(&ctx->event_list);
- 	INIT_LIST_HEAD(&ctx->pinned_active);
- 	INIT_LIST_HEAD(&ctx->flexible_active);
--	atomic_set(&ctx->refcount, 1);
-+	refcount_set(&ctx->refcount, 1);
- }
- 
- static struct perf_event_context *
-@@ -10391,7 +10391,7 @@ __perf_event_ctx_lock_double(struct perf_event *group_leader,
- again:
- 	rcu_read_lock();
- 	gctx = READ_ONCE(group_leader->ctx);
--	if (!atomic_inc_not_zero(&gctx->refcount)) {
-+	if (!refcount_inc_not_zero(&gctx->refcount)) {
- 		rcu_read_unlock();
- 		goto again;
- 	}
--- 
-2.7.4
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxO9fkACgkQJNaLcl1U
+h9BsYQf6A45qVJRvph5tyVH50pk3XTa/3pcow8e2pPLdqTbQDypz5tpGQaDC4jqB
+nsGIHXjKMru6xRvC49DPoKm4XGOpdHyW/qWGvaZmVnbGK2YX61L8BHQyfkN5LEGo
+NsW89904eo5ycNYgapwwDwpUoUoE8Vj/9oYI/mDpW9Nr1QqyyIOHsh7yRXrZTdEV
+S6pR/iU+KWgAFP3zrEXxkZqm8mdjwA5SEuAJ6oNl78Lz+Vtt3TleiLSnG2K+enTQ
+WJYfS3mvVCjI6XQILWXracX0HmeC9T58GiyKyr8V4l8JEJS0YJI/zqb6b9ccSjgb
+2YJA6Gp3Bh4MozVa3Dq+m2WFYN3giw==
+=llBo
+-----END PGP SIGNATURE-----
 
+--r7U+bLA8boMOj+mD--
