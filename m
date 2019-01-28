@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97E21C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:30:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 807A7C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:31:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66D842147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:30:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FE212147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:31:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696650;
-	bh=nCzpa6x/3V5yNVYO64VEm/QkGy4lEbeozjf7RD9N4O4=;
+	s=default; t=1548696661;
+	bh=yyGxmDSkJie6JVtgJ+AD43KelDs+4eJoCgN1wECwlsw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wo3U0oWN7rfZoxdX6+sIsVWNnseFpdHLzP5fpKeYoptghHPacMyK04uOwiq51cxaq
-	 ZxsmG36wFfCrOXTJhF5Hp/rO09GappfCL5sJubU15HH3qe8Jmrb8lwXUdfhbCg5uih
-	 NassSt7lrroqpZB/yA+/ta9JnFRjZtt4PauA2Brs=
+	b=0OQj3d8kj3P72TnLHQ/rvo9sIBWTviKiz5e4x4G03OSbrg8QKwHLd9+PO0DgZ69yh
+	 VnLJ5u7g0+/il0mktkskLq5LRE3WimurMCC5mVQebqL1f8uqtAaS71KQdBE06p5IAl
+	 FXj/jlIsmH/YnJ5xtgDWFjs5FIPdSOnhIQVez2JM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730829AbfA1Ras (ORCPT
+        id S1730369AbfA1RbA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:30:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43984 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:31:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43900 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728755AbfA1P6e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:58:34 -0500
+        id S1728949AbfA1P63 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:58:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D8AE321841;
-        Mon, 28 Jan 2019 15:58:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 59A9021841;
+        Mon, 28 Jan 2019 15:58:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691114;
-        bh=nCzpa6x/3V5yNVYO64VEm/QkGy4lEbeozjf7RD9N4O4=;
+        s=default; t=1548691108;
+        bh=yyGxmDSkJie6JVtgJ+AD43KelDs+4eJoCgN1wECwlsw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZPop7A97YWcRnEVe+9E101tReNdpnf3yrK2SOp4yk54YAUt29b46cwzsJR/oh+Fjs
-         tTJif2QIu3Nd1ZFaYoVEOlsQH2yEFRdjvi4UYpETNlQl0LMYqNAXrTOTG/FlqgzxBW
-         1joNNS2r3Lro8rSpFlrCHacPp3nCGvW1E2o5tKdA=
+        b=kMLZWHTZzmRovF1RUTH1kktoXUVIttQNpIj4XZNTV4AQPPYmgW3I5cfTAKmm6hd1z
+         cmcMDFb+dx1r2O5SXcJnHsWeCUR42qIeSxNTANLwveaPkYBIWyGVA3di/F6HM+DdlL
+         GctrnkiGfA/7z5mZVydzPwOFv8/5jqwr45PvHGEA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 293/304] bpf: fix check_map_access smin_value test when pointer contains offset
-Date:   Mon, 28 Jan 2019 10:43:30 -0500
-Message-Id: <20190128154341.47195-293-sashal@kernel.org>
+Cc:     Richard Zhu <hongxing.zhu@nxp.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 290/304] PCI: imx: Enable MSI from downstream components
+Date:   Mon, 28 Jan 2019 10:43:27 -0500
+Message-Id: <20190128154341.47195-290-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,52 +58,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Daniel Borkmann <daniel@iogearbox.net>
+From: Richard Zhu <hongxing.zhu@nxp.com>
 
-[ Upstream commit b7137c4eab85c1cf3d46acdde90ce1163b28c873 ]
+[ Upstream commit 75cb8d20c112aba70f23d98e3f8d0a38ace16006 ]
 
-In check_map_access() we probe actual bounds through __check_map_access()
-with offset of reg->smin_value + off for lower bound and offset of
-reg->umax_value + off for the upper bound. However, even though the
-reg->smin_value could have a negative value, the final result of the
-sum with off could be positive when pointer arithmetic with known and
-unknown scalars is combined. In this case we reject the program with
-an error such as "R<x> min value is negative, either use unsigned index
-or do a if (index >=0) check." even though the access itself would be
-fine. Therefore extend the check to probe whether the actual resulting
-reg->smin_value + off is less than zero.
+The MSI Enable bit in the MSI Capability (PCIe r4.0, sec 7.7.1.2) controls
+whether a Function can request service using MSI.
 
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+i.MX6 Root Ports implement the MSI Capability and may use MSI to request
+service for events like PME, hotplug, AER, etc.  In addition, on i.MX6, the
+MSI Enable bit controls delivery of MSI interrupts from components below
+the Root Port.
+
+Prior to f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of
+CONFIG_PCIEPORTBUS"), enabling CONFIG_PCI_IMX6 automatically also enabled
+CONFIG_PCIEPORTBUS, and when portdrv claimed the Root Ports, it set the MSI
+Enable bit so it could use PME, hotplug, AER, etc.  As a side effect, that
+also enabled delivery of MSI interrupts from downstream components.
+
+The imx6q-pcie driver itself does not depend on portdrv, so set MSI Enable
+in imx6q-pcie so MSI from downstream components works even if nobody uses
+MSI for the Root Port events.
+
+Fixes: f3fdfc4ac3a2 ("PCI: Remove host driver Kconfig selection of CONFIG_PCIEPORTBUS")
+Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Tested-by: Sven Van Asbroeck <TheSven73@googlemail.com>
+Tested-by: Trent Piepho <tpiepho@impinj.com>
+Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/bpf/verifier.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/pci/controller/dwc/pci-imx6.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
-index eedc7bd4185d..8ae4c7f8eaf6 100644
---- a/kernel/bpf/verifier.c
-+++ b/kernel/bpf/verifier.c
-@@ -1345,13 +1345,17 @@ static int check_map_access(struct bpf_verifier_env *env, u32 regno,
- 	 */
- 	if (env->log.level)
- 		print_verifier_state(env, state);
+diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+index 88af6bff945f..6b54528b5f0c 100644
+--- a/drivers/pci/controller/dwc/pci-imx6.c
++++ b/drivers/pci/controller/dwc/pci-imx6.c
+@@ -67,6 +67,7 @@ struct imx6_pcie {
+ #define PHY_PLL_LOCK_WAIT_USLEEP_MAX	200
+ 
+ /* PCIe Root Complex registers (memory-mapped) */
++#define PCIE_RC_IMX6_MSI_CAP			0x50
+ #define PCIE_RC_LCR				0x7c
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN1	0x1
+ #define PCIE_RC_LCR_MAX_LINK_SPEEDS_GEN2	0x2
+@@ -840,6 +841,7 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 	struct resource *dbi_base;
+ 	struct device_node *node = dev->of_node;
+ 	int ret;
++	u16 val;
+ 
+ 	imx6_pcie = devm_kzalloc(dev, sizeof(*imx6_pcie), GFP_KERNEL);
+ 	if (!imx6_pcie)
+@@ -981,6 +983,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+ 	if (ret < 0)
+ 		return ret;
+ 
++	if (pci_msi_enabled()) {
++		val = dw_pcie_readw_dbi(pci, PCIE_RC_IMX6_MSI_CAP +
++					PCI_MSI_FLAGS);
++		val |= PCI_MSI_FLAGS_ENABLE;
++		dw_pcie_writew_dbi(pci, PCIE_RC_IMX6_MSI_CAP + PCI_MSI_FLAGS,
++				   val);
++	}
 +
- 	/* The minimum value is only important with signed
- 	 * comparisons where we can't assume the floor of a
- 	 * value is 0.  If we are using signed variables for our
- 	 * index'es we need to make sure that whatever we use
- 	 * will have a set floor within our range.
- 	 */
--	if (reg->smin_value < 0) {
-+	if (reg->smin_value < 0 &&
-+	    (reg->smin_value == S64_MIN ||
-+	     (off + reg->smin_value != (s64)(s32)(off + reg->smin_value)) ||
-+	      reg->smin_value + off < 0)) {
- 		verbose(env, "R%d min value is negative, either use unsigned index or do a if (index >=0) check.\n",
- 			regno);
- 		return -EACCES;
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
