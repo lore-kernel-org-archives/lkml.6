@@ -2,127 +2,177 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50745C282CA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 00:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAF3CC282CA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 01:18:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1794F2085A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 00:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A86E72087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 01:18:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="rmgl+jQy"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726630AbfA1Aig (ORCPT
+        id S1726672AbfA1BR0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 19:38:36 -0500
-Received: from gateway31.websitewelcome.com ([192.185.144.97]:29967 "EHLO
-        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726519AbfA1Aig (ORCPT
+        Sun, 27 Jan 2019 20:17:26 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:28729 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726520AbfA1BR0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 19:38:36 -0500
-Received: from cm12.websitewelcome.com (cm12.websitewelcome.com [100.42.49.8])
-        by gateway31.websitewelcome.com (Postfix) with ESMTP id 756E0EDFED
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 18:38:34 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id nuwcgavFciQernuwcgtQR9; Sun, 27 Jan 2019 18:38:34 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=37032 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1gnuwc-003S36-4r; Sun, 27 Jan 2019 18:38:34 -0600
-Subject: Re: linux-next: no release today
-To:     Stephen Rothwell <sfr@canb.auug.org.au>,
-        Linux Next Mailing List <linux-next@vger.kernel.org>
-Cc:     Linux kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20190128113245.065d0d30@canb.auug.org.au>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- mQINBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
- 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
- tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
- DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
- 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
- YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
- m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
- NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
- qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
- LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABtCxHdXN0YXZvIEEu
- IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPokCPQQTAQgAJwUCWywcDAIbIwUJ
- CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
- l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
- obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
- cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
- ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
- JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
- JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
- PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
- R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
- 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
- e5YnLxF8ctRAp7K4yVlvA7kCDQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
- H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
- DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
- 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
- otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
- l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
- jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
- zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
- I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
- ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
- EQEAAYkCJQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
- UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
- XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
- WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
- imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
- fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
- 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
- ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
- YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
- GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <c48d90f8-f479-4e72-c216-c37fe3bf35a9@embeddedor.com>
-Date:   Sun, 27 Jan 2019 18:38:33 -0600
+        Sun, 27 Jan 2019 20:17:26 -0500
+Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20190128011722epoutp03094e0f58413dc04139b2bdfef4d47542~93kbUjf0E3276332763epoutp032
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 01:17:22 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20190128011722epoutp03094e0f58413dc04139b2bdfef4d47542~93kbUjf0E3276332763epoutp032
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1548638242;
+        bh=4dbqkuLrD2qHSkeaEY04pic09bbzd11BSwqiPHnj55I=;
+        h=Subject:To:Cc:From:Date:In-Reply-To:References:From;
+        b=rmgl+jQy/CG+wORrKFC6/4lWN2+/pP1TWMi0oNBBpz+0gMJmi4XOReybhP+gjjLCq
+         AF4JIWFun6nQdurWXfP/Qal1PUtUM4Vhuj5bf3lGwe954wiCUNfmaAz/+UDmT3oY5w
+         nTBlrlcKPcKcmypHNj3slXtHdK7Qf8n9TT9o0zuc=
+Received: from epsmges1p4.samsung.com (unknown [182.195.40.154]) by
+        epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20190128011718epcas1p19fabc8f3192c0326b535cccd6c8918e5~93kXTtCk92826028260epcas1p1n;
+        Mon, 28 Jan 2019 01:17:18 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+        epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+        10.B7.04288.E185E4C5; Mon, 28 Jan 2019 10:17:18 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
+        20190128011717epcas1p4640a89c2f5414bb5f0122f4143a39fcc~93kWt-3v92854728547epcas1p4U;
+        Mon, 28 Jan 2019 01:17:17 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+        epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+        20190128011717epsmtrp1523b13c4365d333646f768a1b43fa8c5~93kWoRhKW1607716077epsmtrp1b;
+        Mon, 28 Jan 2019 01:17:17 +0000 (GMT)
+X-AuditID: b6c32a38-bf7ff700000010c0-33-5c4e581eb770
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+        epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+        6E.3A.03971.D185E4C5; Mon, 28 Jan 2019 10:17:17 +0900 (KST)
+Received: from [10.113.221.102] (unknown [10.113.221.102]) by
+        epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+        20190128011717epsmtip178dba79fcf4c82620e56d08a2ac4e7ff~93kWYOUOy1072510725epsmtip1c;
+        Mon, 28 Jan 2019 01:17:17 +0000 (GMT)
+Subject: Re: [PATCH] devfreq: Suspend all devices on system shutdown
+To:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-samsung-soc@vger.kernel.org
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Lukasz Luba <l.luba@partner.samsung.com>,
+        Markus Reichl <m.reichl@fivetechno.de>
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+Message-ID: <9fbfc35c-9448-f1ae-6e47-7d5f6bba22de@samsung.com>
+Date:   Mon, 28 Jan 2019 10:17:17 +0900
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <20190128113245.065d0d30@canb.auug.org.au>
-Content-Type: text/plain; charset=windows-1252
+In-Reply-To: <20190125135403.10228-1-m.szyprowski@samsung.com>
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1gnuwc-003S36-4r
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:37032
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 3
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA01SbUhTYRTu3d3u7szVdWadpHRd6YeCHzddXSMlVGKRhVA/RIR1cTcV99W9
+        UyqjLEPLSo3MdGlKMiqjlh+VhTVyM5EoF/apiUaiZWFQKUVEbbuL/Pc8z/scznnOewhMdQMP
+        JwpNVo43sQYKD5LedkXHxkZk78hNmD0XxnQ0OGTM0NBNOTNStooZvteEM99OuxHTMPRAwnx0
+        /0DMdfeYnBk9cgXfrNCOvD2s7Ww/gWsfzvZKtNXd7Uj7rTMiS5ZTtKmAY/Ucr+ZMeWZ9oSk/
+        hdq2U5eu06xPoGPpZGYDpTaxRi6FysjMit1SaPCOQ6lLWEOxV8piBYGKT93Em4utnLrALFhT
+        KM6iN1iSLXECaxSKTflxeWbjRjohYZ3Ga9xdVNDROCG1/FHuq3uUUobuLq5CCgLIJHA5KqRV
+        KIhQkT0I3n1qwkTyFYGzuTZA5hG01XfJ/pWcn/HIxYf7CFob6nGRfEEw3/UY87lCyQyoqXzq
+        dy0jqxFcs7tlPoKREwha3nokPhdOxoDzw2vch5eSa+DFj/fIh5VkKniOTXk9BCEl18LVU/t8
+        chiZDa7TswFLCAw2Tkp9WOG1N35/6R8PI1fAyGSLRMSRUH7rgj8DkL9wqB13ScUMGXBptF8i
+        4lCYGeiWizgcPtZUBHApXB1042LxcQTdTk9gAYngtJ/1D4eR0eC4Fy82WwKzc6dkPhlIJRyv
+        UInuKBieGAu0WgltlSdwEWthuusVVovW2BbEsS2IYFsQwfa/WSuStqPlnEUw5nMCbUla+N2d
+        yH+rMUwP6n2a2YdIAlHByuzf23NVMrZE2G/sQ0Bg1DKl9o5XUurZ/Qc43qzjiw2c0Ic03mWf
+        wcLD8szeyzdZdbRmXWJiIpNEr9fQNLVC6dicnqsi81krV8RxFo7/VychFOFlKH3XytWpaS7l
+        5QcDe8c7arZafjdHRqWeXPS6egs/2ubo74maPpqd+ZyX27e2p6vtdeVvdvQFfY1bpAv+M37o
+        IUwmV/XWeT4HzR1UlOpawzIrIzZOmYTSZ09CnWkhRcNMWo7+2uTPkplgzZ09ejkTHRl50W69
+        UfPCVn+mXHtOPlVKSYUClo7BeIH9C+TIHTDBAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprGIsWRmVeSWpSXmKPExsWy7bCSnK5shF+MwdKJChYbZ6xntTh/fgO7
+        xa0GGYvLu+awWXzuPcJoMeP8PiaLl0d+MFqsPXKX3eJ24wo2B06PW3fqPTat6mTzOPhuD5NH
+        35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZWyc+YCl4D9vxZRjtg2MO7m7GDk5JARMJKa/usAO
+        YgsJ7GaUeL9NFCIuKTHt4lHmLkYOIFtY4vDhYoiSt4wS+zexgdjCAi4S/e3ngFq5OEQE+hgl
+        Xn5dwwTiMAs8YpR4ceAMmCMkMJFRomvNXbAWNgEtif0vboDZ/AKKEld/PGYEsXkF7CQutDxj
+        AtnGIqAqsbKnAiQsKhAh8fHpPiaIEkGJkzOfsIDYnEDlM79cYwWxmQXUJf7Mu8QMYYtL3Hoy
+        nwnClpdo3jqbeQKj8Cwk7bOQtMxC0jILScsCRpZVjJKpBcW56bnFhgWGeanlesWJucWleel6
+        yfm5mxjBsaWluYPx8pL4Q4wCHIxKPLwb/vvGCLEmlhVX5h5ilOBgVhLh9dgOFOJNSaysSi3K
+        jy8qzUktPsQozcGiJM77NO9YpJBAemJJanZqakFqEUyWiYNTqoHRKMP6wKOLnQ9zZzac2a2x
+        fV/D9KDvQq6uIewsqxUeFzKtuPE72FthoV34TZOuJ84sF98kWm4RvHL6cFyHnvFnU5tmv6Ox
+        j1uemMyuP79S0mdj3ZI3/nc2SZ398rUn8k3WhCTbi+L790+a8NzFQdXdYotP7uulb6PfKS/7
+        /+r7pmMyy7z/icz3VWIpzkg01GIuKk4EAD2m98ypAgAA
+X-CMS-MailID: 20190128011717epcas1p4640a89c2f5414bb5f0122f4143a39fcc
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20190125135414eucas1p2ffc71c63f1a27f67d076dec889954b40
+References: <CGME20190125135414eucas1p2ffc71c63f1a27f67d076dec889954b40@eucas1p2.samsung.com>
+        <20190125135403.10228-1-m.szyprowski@samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi,
 
-
-On 1/27/19 6:32 PM, Stephen Rothwell wrote:
-> Hi all,
+On 19. 1. 25. 오후 10:54, Marek Szyprowski wrote:
+> This way devfreq core ensures that all its devices will be set to safe
+> operation points before reboot operation. There are board on which some
+> aggressive power saving operation points are behind the capabilities of
+> the bootloader to properly reset the hardware and boot the board. This
+> way one can avoid board crash early after reboot.
 > 
-> There will be no linux-next release today, normal service will resume
-> tomorrow.
+> Similar pattern is used in CPUfreq subsystem.
+> 
+> Reported-by: Markus Reichl <m.reichl@fivetechno.de>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+>  drivers/devfreq/devfreq.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/drivers/devfreq/devfreq.c b/drivers/devfreq/devfreq.c
+> index 0ae3de76833b..f6aba8344c56 100644
+> --- a/drivers/devfreq/devfreq.c
+> +++ b/drivers/devfreq/devfreq.c
+> @@ -23,6 +23,7 @@
+>  #include <linux/devfreq.h>
+>  #include <linux/workqueue.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/syscore_ops.h>
+>  #include <linux/list.h>
+>  #include <linux/printk.h>
+>  #include <linux/hrtimer.h>
+> @@ -1422,6 +1423,10 @@ static struct attribute *devfreq_attrs[] = {
+>  };
+>  ATTRIBUTE_GROUPS(devfreq);
+>  
+> +static struct syscore_ops devfreq_syscore_ops = {
+> +	.shutdown = devfreq_suspend,
+> +};
+> +
+>  static int __init devfreq_init(void)
+>  {
+>  	devfreq_class = class_create(THIS_MODULE, "devfreq");
+> @@ -1438,6 +1443,8 @@ static int __init devfreq_init(void)
+>  	}
+>  	devfreq_class->dev_groups = devfreq_groups;
+>  
+> +	register_syscore_ops(&devfreq_syscore_ops);
+> +
+>  	return 0;
+>  }
+>  subsys_initcall(devfreq_init);
 > 
 
-Good to know.
+Looks good to me.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
 
-Thanks, Stephen.
---
-Gustavo
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
