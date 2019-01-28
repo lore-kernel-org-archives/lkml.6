@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6690C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AC556C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB4792147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DCF42147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690721;
-	bh=kp46RGjIv2Zg0nbml9IvWJ8ey7CexgAkB8yxNjuzTlQ=;
+	s=default; t=1548690727;
+	bh=LhZjI23J8nfbElxw7IbIt11E7C9ZaPTm9xKPQvEyyLQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1+ASOUYYVQlP4TpWkLDYwn1NwltdlnhPd/V9qyAZ87KPs0Bw0XUGmBtQyYVg98ZS5
-	 L1V3xc5qTxLr44LScfNNOwIW1qK6m8150owODh32Yj2aQb86dcUn+8WosodRxt7cPA
-	 S4wYv8t6V1ie1pZ4jjSjrUR00/aeTVG49qe0tNFA=
+	b=gw/tM9GL17wlOWpSRwsMYA5zeQd1icik5QkQt5lM06DsL/rQkSSCjLMUwpVy/nNWi
+	 OyKt/6D00k+0u0i3Iy1hZ1JRMPOxUGK/AD8TfA9c03IhTI+i3ulIVCYdWXAsTu+An6
+	 F52Sxf7X1LrC/Ye2P3xLy0l4BPHdAEXSI3NtNTrI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728672AbfA1PwA (ORCPT
+        id S1728509AbfA1PwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:52:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38528 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:52:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728776AbfA1Pv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:51:56 -0500
+        id S1727743AbfA1PwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:52:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A6282147A;
-        Mon, 28 Jan 2019 15:51:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0AEF92147A;
+        Mon, 28 Jan 2019 15:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690716;
-        bh=kp46RGjIv2Zg0nbml9IvWJ8ey7CexgAkB8yxNjuzTlQ=;
+        s=default; t=1548690724;
+        bh=LhZjI23J8nfbElxw7IbIt11E7C9ZaPTm9xKPQvEyyLQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p4glj1e5ZbvFH3DR+LjlugK/A71OlKsvHna7dlomjbz8WSohOx6IlIsHrJwEFBQ3r
-         Q9HAGWdP0C6zExJyXfyxXD4kVFVJSIVUX/rmvDrQYs2qBdh2fyiLARqpM8A/ivSLgG
-         G+3Rl8/9DX+CO2cglowPrxZ45365rQQ88P8fAYas=
+        b=U0+t5PI3XQXhG75scfPvrpZwPPXhgj3tgNsKE+LneicxbcH+A0bwwXzP62I51eAVj
+         e4vj52ly+MgIoqGJIehZKWoRCfxDRo7GUwSM/6S37nD1SXVQwrw+rbPmJ0G6AfmQ42
+         885ht4oFGbm1mJsdBLGsBQ/EQelevAJnIseCs/vQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Fabio Estevam <festevam@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
+Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 174/304] ASoC: fsl: Fix SND_SOC_EUKREA_TLV320 build error on i.MX8M
-Date:   Mon, 28 Jan 2019 10:41:31 -0500
-Message-Id: <20190128154341.47195-174-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 175/304] ARM: mmp: fix timer_init calls
+Date:   Mon, 28 Jan 2019 10:41:32 -0500
+Message-Id: <20190128154341.47195-175-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,45 +57,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Fabio Estevam <festevam@gmail.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit add6883619a9e3bf9658eaff1a547354131bbcd9 ]
+[ Upstream commit 12d3a30db4a3b3df5fbadf5974b9cf50544a9950 ]
 
-eukrea-tlv320.c machine driver runs on non-DT platforms
-and include <asm/mach-types.h> header file in order to be able
-to use some machine_is_eukrea_xxx() macros.
+The change to passing the timer frequency as a function argument
+was a good idea, but caused a build failure for one user that
+was missed in the update:
 
-Building it for ARM64 causes the following build error:
+arch/arm/mach-mmp/time.c: In function 'mmp_dt_init_timer':
+arch/arm/mach-mmp/time.c:242:2: error: implicit declaration of function 'timer_init'; did you mean 'hrtimer_init'? [-Werror=implicit-function-declaration]
 
-sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
+Change that as well to fix the build error, and rename the
+function to put it into a proper namespace and make it clearer
+what is actually going on.
 
-Avoid this error by not allowing to build the SND_SOC_EUKREA_TLV320
-driver when ARM64 is selected.
+I saw that the high 6500000 HZ frequency was previously only
+set with CONFIG_MMP2, but is now also used with MMP (pxa910),
+so I'm changing that back here. Please make sure that the
+frequencies are all correct now.
 
-This is needed in preparation for the i.MX8M support.
-
-Reported-by: kbuild test robot <lkp@intel.com>
-Signed-off-by: Fabio Estevam <festevam@gmail.com>
-Acked-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
+Fixes: f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- sound/soc/fsl/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/mach-mmp/common.h | 2 +-
+ arch/arm/mach-mmp/mmp2.c   | 2 +-
+ arch/arm/mach-mmp/pxa168.c | 2 +-
+ arch/arm/mach-mmp/pxa910.c | 2 +-
+ arch/arm/mach-mmp/time.c   | 4 ++--
+ 5 files changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
-index 6ec19fb4a934..2e75b5bc5f1d 100644
---- a/sound/soc/fsl/Kconfig
-+++ b/sound/soc/fsl/Kconfig
-@@ -221,7 +221,7 @@ config SND_SOC_PHYCORE_AC97
+diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
+index 5ac2851ef5d3..483b8b6d3005 100644
+--- a/arch/arm/mach-mmp/common.h
++++ b/arch/arm/mach-mmp/common.h
+@@ -2,7 +2,7 @@
+ #include <linux/reboot.h>
+ #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
  
- config SND_SOC_EUKREA_TLV320
- 	tristate "Eukrea TLV320"
--	depends on ARCH_MXC && I2C
-+	depends on ARCH_MXC && !ARM64 && I2C
- 	select SND_SOC_TLV320AIC23_I2C
- 	select SND_SOC_IMX_AUDMUX
- 	select SND_SOC_IMX_SSI
+-extern void timer_init(int irq, unsigned long rate);
++extern void mmp_timer_init(int irq, unsigned long rate);
+ 
+ extern void __init mmp_map_io(void);
+ extern void mmp_restart(enum reboot_mode, const char *);
+diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
+index fb3e7e32c882..726c1a642dea 100644
+--- a/arch/arm/mach-mmp/mmp2.c
++++ b/arch/arm/mach-mmp/mmp2.c
+@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
+ 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
+ 	__raw_writel(clk_rst, APBC_TIMERS);
+ 
+-	timer_init(IRQ_MMP2_TIMER1, 6500000);
++	mmp_timer_init(IRQ_MMP2_TIMER1, 6500000);
+ }
+ 
+ /* on-chip devices */
+diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
+index 77a358165a56..cdcf65ace3f9 100644
+--- a/arch/arm/mach-mmp/pxa168.c
++++ b/arch/arm/mach-mmp/pxa168.c
+@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
+ 	/* 3.25MHz, bus/functional clock enabled, release reset */
+ 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
+ 
+-	timer_init(IRQ_PXA168_TIMER1, 6500000);
++	mmp_timer_init(IRQ_PXA168_TIMER1, 3250000);
+ }
+ 
+ void pxa168_clear_keypad_wakeup(void)
+diff --git a/arch/arm/mach-mmp/pxa910.c b/arch/arm/mach-mmp/pxa910.c
+index 1ccbba9ac495..d30a7d12bc98 100644
+--- a/arch/arm/mach-mmp/pxa910.c
++++ b/arch/arm/mach-mmp/pxa910.c
+@@ -116,7 +116,7 @@ void __init pxa910_timer_init(void)
+ 	__raw_writel(APBC_APBCLK | APBC_RST, APBC_TIMERS);
+ 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
+ 
+-	timer_init(IRQ_PXA910_AP1_TIMER1);
++	mmp_timer_init(IRQ_PXA910_AP1_TIMER1, 3250000);
+ }
+ 
+ /* on-chip devices */
+diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
+index eab0fd8a7343..f9c295154b94 100644
+--- a/arch/arm/mach-mmp/time.c
++++ b/arch/arm/mach-mmp/time.c
+@@ -184,7 +184,7 @@ static struct irqaction timer_irq = {
+ 	.dev_id		= &ckevt,
+ };
+ 
+-void __init timer_init(int irq, unsigned long rate)
++void __init mmp_timer_init(int irq, unsigned long rate)
+ {
+ 	timer_config();
+ 
+@@ -239,7 +239,7 @@ void __init mmp_dt_init_timer(void)
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	timer_init(irq, rate);
++	mmp_timer_init(irq, rate);
+ 	return;
+ out:
+ 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
 -- 
 2.19.1
 
