@@ -2,121 +2,104 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64ED3C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B974FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BCEE20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7EC7620881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548697398;
+	bh=qVUGKLn1oZlGkSYc7fAkk1MSkxd/5KT9j5a6K6ebgIo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ELuUW6J3fsBYnq4BJ0OGmVk/L3+PaLVed02xGB2pqNZmsuoJOFPoaR6M88+BP0b8J
+	 Q1Z2+S2gdXt+G/y4X3Kd2ggVEW6sHaIaHh8A53oRjHzZAE7GvElOyvZZWsG8LM1lt+
+	 QfrPXFuJ8795GriF8HJapa+ZJK4EHwPJXuYNaJFk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729080AbfA1RnA (ORCPT
+        id S1729299AbfA1RnQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:43:00 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:60946 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728468AbfA1Rm6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:42:58 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 3D9677F03AFBD8EF99CE;
-        Tue, 29 Jan 2019 01:42:55 +0800 (CST)
-Received: from localhost (10.202.226.61) by DGGEMS402-HUB.china.huawei.com
- (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Tue, 29 Jan 2019
- 01:42:52 +0800
-Date:   Mon, 28 Jan 2019 17:42:39 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Michal Hocko <mhocko@kernel.org>
-CC:     Andrea Arcangeli <aarcange@redhat.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Zhang Yi <yi.z.zhang@linux.intel.com>, <kvm@vger.kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Liu Jingqi <jingqi.liu@intel.com>, Fan Du <fan.du@intel.com>,
-        Dong Eddie <eddie.dong@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        <linux-accelerators@lists.ozlabs.org>,
-        "Linux Memory Management List" <linux-mm@kvack.org>,
-        Peng Dong <dongx.peng@intel.com>,
-        Yao Yuan <yuan.yao@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Fengguang Wu <fengguang.wu@intel.com>,
-        "Dan Williams" <dan.j.williams@intel.com>,
-        Mel Gorman <mgorman@suse.de>
-Subject: Re: [RFC][PATCH v2 00/21] PMEM NUMA node and hotness
- accounting/migration
-Message-ID: <20190128174239.0000636b@huawei.com>
-In-Reply-To: <20190102122110.00000206@huawei.com>
-References: <20181226131446.330864849@intel.com>
-        <20181227203158.GO16738@dhcp22.suse.cz>
-        <20181228050806.ewpxtwo3fpw7h3lq@wfg-t540p.sh.intel.com>
-        <20181228084105.GQ16738@dhcp22.suse.cz>
-        <20181228094208.7lgxhha34zpqu4db@wfg-t540p.sh.intel.com>
-        <20181228121515.GS16738@dhcp22.suse.cz>
-        <20181228133111.zromvopkfcg3m5oy@wfg-t540p.sh.intel.com>
-        <20181228195224.GY16738@dhcp22.suse.cz>
-        <20190102122110.00000206@huawei.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        Mon, 28 Jan 2019 12:43:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35866 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727291AbfA1Pt6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:49:58 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B53C92147A;
+        Mon, 28 Jan 2019 15:49:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690597;
+        bh=qVUGKLn1oZlGkSYc7fAkk1MSkxd/5KT9j5a6K6ebgIo=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Iv8BpbWjslkEoD5jBVgU2bfvXPFmOBogQiwTabYdYwhnb6GWK9sAz0YLYKl/YG4Kx
+         uGVaUrTY+qHh/D3g/xKCR5txqcXEboAxtZv8DB6E2jYhFa9Wrs7dj69J5QtWNLuETb
+         +kQk9DUKOnblIQ3QNzQ3Kyo+cADDM2xCaqx6Bjt4=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Felipe Balbi <felipe.balbi@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 135/304] usb: dwc3: trace: add missing break statement to make compiler happy
+Date:   Mon, 28 Jan 2019 10:40:52 -0500
+Message-Id: <20190128154341.47195-135-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.61]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=UTF-8
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2 Jan 2019 12:21:10 +0000
-Jonathan Cameron <jonathan.cameron@huawei.com> wrote:
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-> On Fri, 28 Dec 2018 20:52:24 +0100
-> Michal Hocko <mhocko@kernel.org> wrote:
-> 
-> > [Ccing Mel and Andrea]
-> > 
+[ Upstream commit 54d48183d21e03f780053d7129312049cb5dd591 ]
 
-Hi,
+The missed break statement in the outer switch makes the code fall through
+always and thus always same value will be printed.
 
-I just wanted to highlight this section as I didn't feel we really addressed this
-in the earlier conversation.
+Besides that, compiler warns about missed fall through marker:
 
-> * Hot pages may not be hot just because the host is using them a lot.  It would be
->   very useful to have a means of adding information available from accelerators
->   beyond simple accessed bits (dreaming ;)  One problem here is translation
->   caches (ATCs) as they won't normally result in any updates to the page accessed
->   bits.  The arm SMMU v3 spec for example makes it clear (though it's kind of
->   obvious) that the ATS request is the only opportunity to update the accessed
->   bit.  The nasty option here would be to periodically flush the ATC to force
->   the access bit updates via repeats of the ATS request (ouch).
->   That option only works if the iommu supports updating the accessed flag
->   (optional on SMMU v3 for example).
-> 
+drivers/usb/dwc3/./trace.h: In function ‘trace_raw_output_dwc3_log_trb’:
+drivers/usb/dwc3/./trace.h:246:4: warning: this statement may fall through [-Wimplicit-fallthrough=]
+    switch (pcm) {
+    ^~~~~~
 
-If we ignore the IOMMU hardware update issue which will simply need to be addressed
-by future hardware if these techniques become common, how do we address the
-Address Translation Cache issue without potentially causing big performance
-problems by flushing the cache just to force an accessed bit update?
+Add the missing break statement to work correctly without compilation
+warnings.
 
-These devices are frequently used with PRI and Shared Virtual Addressing
-and can be accessing most of your memory without you having any visibility
-of it in the page tables (as they aren't walked if your ATC is well matched
-in size to your usecase.
+Fixes: fa8d965d736b ("usb: dwc3: trace: pretty print high-bandwidth transfers too")
+Cc: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/usb/dwc3/trace.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Classic example would be accelerated DB walkers like the the CCIX demo
-Xilinx has shown at a few conferences.   The whole point of those is that
-most of the time only your large set of database walkers is using your
-memory and they have translations cached for for a good part of what
-they are accessing.  Flushing that cache could hurt a lot.
-Pinning pages hurts for all the normal flexibility reasons.
-
-Last thing we want is to be migrating these pages that can be very hot but
-in an invisible fashion.
-
-Thanks,
-
-Jonathan
- 
-
+diff --git a/drivers/usb/dwc3/trace.h b/drivers/usb/dwc3/trace.h
+index f22714cce070..f27c5cbe285c 100644
+--- a/drivers/usb/dwc3/trace.h
++++ b/drivers/usb/dwc3/trace.h
+@@ -251,9 +251,11 @@ DECLARE_EVENT_CLASS(dwc3_log_trb,
+ 				s = "2x ";
+ 				break;
+ 			case 3:
++			default:
+ 				s = "3x ";
+ 				break;
+ 			}
++			break;
+ 		default:
+ 			s = "";
+ 		} s; }),
+-- 
+2.19.1
 
