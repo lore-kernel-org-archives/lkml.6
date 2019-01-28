@@ -2,209 +2,159 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203EFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1238EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFAEF2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D591D2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:09 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="p41YQ41n"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727584AbfA1SYB (ORCPT
+        id S1727656AbfA1SYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:24:01 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44764 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727557AbfA1SX6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 13:24:07 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:44124 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727035AbfA1SX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 13:23:58 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SIJW1g110663
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 13:23:57 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qa3mnudms-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 13:23:57 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
-        Mon, 28 Jan 2019 18:23:56 -0000
-Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 28 Jan 2019 18:23:54 -0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SINrxo23658702
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Jan 2019 18:23:53 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3F847124052;
-        Mon, 28 Jan 2019 18:23:53 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 96955124054;
-        Mon, 28 Jan 2019 18:23:52 +0000 (GMT)
-Received: from oc8380061452.ibm.com (unknown [9.53.179.224])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 28 Jan 2019 18:23:52 +0000 (GMT)
-Subject: Re: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific
- drc info
-To:     Tyrel Datwyler <turtle.in.the.kernel@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Cc:     Juliet Kim <minkim@us.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
-        nathanl@linux.vnet.ibm.com
-References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
- <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com>
- <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com>
- <63da6cfa-5272-0c78-ae91-0ad1130db3f1@linux.vnet.ibm.com>
-From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
- mQENBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
- lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
- DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
- t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
- AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
- AAG0LU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPokBOAQT
- AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
- CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
- 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
- QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
- AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
- oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/UrkBDQRXGOxnAQgAmJ5Y
- ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
- DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
- 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
- 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
- qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABiQEfBBgBAgAJBQJX
- GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
- efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
- ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
- yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
- IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
- 53/hcWvxHVs=
-Organization: IBM Linux Technology Center
-Date:   Mon, 28 Jan 2019 12:23:52 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+Received: from zn.tnic (p200300EC2BC5DE008821062B415D2F41.dip0.t-ipconnect.de [IPv6:2003:ec:2bc5:de00:8821:62b:415d:2f41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 735A31EC0229;
+        Mon, 28 Jan 2019 19:23:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548699836;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=GF5R7JIYQon2VlhGA1APYJi4dQvVwzwr7dXn4buTckY=;
+        b=p41YQ41nRH5JQAmekfvWolk/5vjiGuLeWKkfWH10OvWxryLbNhTVWYagtgcsbcgTdsvxkQ
+        TC+HvvZGKVNl165djusdM+gG4Alk4ANDLR2pHGviHr2asyw4GH4b91bfDKIaq48WO9OlHM
+        VH6Iz/P77rwMGCFvB/ermJLl8NaN+8U=
+Date:   Mon, 28 Jan 2019 19:23:49 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Rik van Riel <riel@surriel.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH 09/22] x86/fpu: Add (__)make_fpregs_active helpers
+Message-ID: <20190128182349.GG20487@zn.tnic>
+References: <20190109114744.10936-1-bigeasy@linutronix.de>
+ <20190109114744.10936-10-bigeasy@linutronix.de>
 MIME-Version: 1.0
-In-Reply-To: <63da6cfa-5272-0c78-ae91-0ad1130db3f1@linux.vnet.ibm.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012818-0040-0000-0000-000004B8BCB2
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010494; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01153088; UDB=6.00593882; IPR=6.00933451;
- MB=3.00025327; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-28 18:23:55
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012818-0041-0000-0000-000008C3D099
-Message-Id: <d881d17c-1157-a6a0-0784-33510a4ee674@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901280137
+Content-Disposition: inline
+In-Reply-To: <20190109114744.10936-10-bigeasy@linutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/25/19 10:09 AM, Michael Bringmann wrote:
-> Adding Nathan Lynch
+On Wed, Jan 09, 2019 at 12:47:31PM +0100, Sebastian Andrzej Siewior wrote:
+> From: Rik van Riel <riel@surriel.com>
 > 
-> On 1/24/19 6:04 PM, Tyrel Datwyler wrote:
->> On 12/14/2018 12:50 PM, Michael Bringmann wrote:
->>> Define interface to acquire arch-specific drc info to match against
->>> hotpluggable devices.  The current implementation exposes several
->>> pseries-specific dynamic memory properties in generic kernel code.
->>> This patch set provides an interface to pull that code out of the
->>> generic kernel.
->>>
->>> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
->>> ---
->>>  include/linux/topology.h |    9 +++++++++
->>>  1 file changed, 9 insertions(+)
->>>
->>> diff --git a/include/linux/topology.h b/include/linux/topology.h
->>> index cb0775e..df97f5f 100644
->>> --- a/include/linux/topology.h
->>> +++ b/include/linux/topology.h
->>> @@ -44,6 +44,15 @@
->>
->> As far as I know pseries is the only platform that uses DR connectors, and I
->> highly doubt that any other powerpc platform or arch ever will. So, I'm not sure
->> that this is really generic enough to belong in topology.h. If anything I would
->> suggest putting this in an include in arch/powerpc/include/ named something like
->> drcinfo.h or pseries-drc.h. That will make it visible to modules like rpaphp
->> that want/need to use this functionality.
-
-It looks like the 'rpaphp' and 'rpadlpar_io' modules are also dependent upon the
-powerpc platform.  Shouldn't the relevant source files be moved completely to the
-powerpc-specific directories out of drivers/pci/hotplug as well?
-
-drivers/pci/hotplug/Kconfig has:
-
-config HOTPLUG_PCI_RPA
-        tristate "RPA PCI Hotplug driver"
-        depends on PPC_PSERIES && EEH
-        help
-          Say Y here if you have a RPA system that supports PCI Hotplug.
-
-          To compile this driver as a module, choose M here: the
-          module will be called rpaphp.
-
-          When in doubt, say N.
-
-config HOTPLUG_PCI_RPA_DLPAR
-        tristate "RPA Dynamic Logical Partitioning for I/O slots"
-        depends on HOTPLUG_PCI_RPA
-        help
-          Say Y here if your system supports Dynamic Logical Partitioning
-          for I/O slots.
-
-          To compile this driver as a module, choose M here: the
-          module will be called rpadlpar_io.
-
-          When in doubt, say N.
-
-Michael
-
->>
->> -Tyrel
->>
->>>  
->>>  int arch_update_cpu_topology(void);
->>>  
->>> +int arch_find_drc_match(struct device_node *dn,
->>> +			bool (*usercb)(struct device_node *dn,
->>> +				u32 drc_index, char *drc_name,
->>> +				char *drc_type, u32 drc_power_domain,
->>> +				void *data),
->>> +			char *opt_drc_type, char *opt_drc_name,
->>> +			bool match_drc_index, bool ck_php_type,
->>> +			void *data);
->>> +
->>>  /* Conform to ACPI 2.0 SLIT distance definitions */
->>>  #define LOCAL_DISTANCE		10
->>>  #define REMOTE_DISTANCE		20
->>>
->>
->>
+> Add helper function that ensures the floating point registers for
+> the current task are active. Use with preemption disabled.
 > 
+> Signed-off-by: Rik van Riel <riel@surriel.com>
+> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> ---
+>  arch/x86/include/asm/fpu/api.h      | 11 +++++++++++
+>  arch/x86/include/asm/fpu/internal.h | 19 +++++++++++--------
+>  2 files changed, 22 insertions(+), 8 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
+> index b56d504af6545..31b66af8eb914 100644
+> --- a/arch/x86/include/asm/fpu/api.h
+> +++ b/arch/x86/include/asm/fpu/api.h
+> @@ -10,6 +10,7 @@
+>  
+>  #ifndef _ASM_X86_FPU_API_H
+>  #define _ASM_X86_FPU_API_H
+> +#include <linux/preempt.h>
+>  
+>  /*
+>   * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
+> @@ -22,6 +23,16 @@ extern void kernel_fpu_begin(void);
+>  extern void kernel_fpu_end(void);
+>  extern bool irq_fpu_usable(void);
+>  
+> +static inline void __fpregs_changes_begin(void)
+> +{
+> +	preempt_disable();
+> +}
+> +
+> +static inline void __fpregs_changes_end(void)
+
+How am I to understand that "fpregs_changes" thing? That FPU registers
+changes will begin and end respectively?
+
+I probably would call them fpregs_lock and fpregs_unlock even if
+it isn't doing any locking to denote that FPU regs are locked and
+inaccessible inside the region.
+
+And why the "__" prefix? Is there a counterpart without the "__" coming?
+
+> +{
+> +	preempt_enable();
+> +}
+> +
+>  /*
+>   * Query the presence of one or more xfeatures. Works on any legacy CPU as well.
+>   *
+> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+> index 03acb9aeb32fc..795a0a2df135e 100644
+> --- a/arch/x86/include/asm/fpu/internal.h
+> +++ b/arch/x86/include/asm/fpu/internal.h
+> @@ -515,6 +515,15 @@ static inline void fpregs_activate(struct fpu *fpu)
+>  	trace_x86_fpu_regs_activated(fpu);
+>  }
+>  
+> +static inline void __fpregs_load_activate(struct fpu *fpu, int cpu)
+> +{
+> +	if (!fpregs_state_valid(fpu, cpu)) {
+> +		if (current->mm)
+> +			copy_kernel_to_fpregs(&fpu->state);
+> +		fpregs_activate(fpu);
+> +	}
+> +}
+> +
+>  /*
+>   * FPU state switching for scheduling.
+>   *
+> @@ -550,14 +559,8 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
+>   */
+>  static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
+>  {
+> -	if (static_cpu_has(X86_FEATURE_FPU)) {
+> -		if (!fpregs_state_valid(new_fpu, cpu)) {
+> -			if (current->mm)
+> -				copy_kernel_to_fpregs(&new_fpu->state);
+> -		}
+> -
+> -		fpregs_activate(new_fpu);
+> -	}
+> +	if (static_cpu_has(X86_FEATURE_FPU))
+> +		__fpregs_load_activate(new_fpu, cpu);
+
+And that second part of a cleanup looks strange in this patch. Why isn't
+it in a separate patch or how is it related to the addition of the
+helpers?
+
+Thx.
 
 -- 
-Michael W. Bringmann
-Linux Technology Center
-IBM Corporation
-Tie-Line  363-5196
-External: (512) 286-5196
-Cell:       (512) 466-0650
-mwb@linux.vnet.ibm.com
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
