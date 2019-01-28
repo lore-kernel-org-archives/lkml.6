@@ -2,113 +2,77 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71637C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:14:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB35C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:14:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 404882177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:14:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695662;
-	bh=iSfAMUiCuC9aWufMmuPoIFfGGmQeKUJiinfqa4JLUHc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0CUhdBWapWIC/bkIq+XQGyFTXT1byZnUTNafdjNLKStW7sM28ZcOD+CWu3DSuogBj
-	 SXt+eU9lEcwS8L9fH6ZrCSJGXChr/Nr7wTqmRoTe/ZXSBUWfdXtfkHoQ+w+G/fqqGV
-	 xr9aIx/qmAAN3MDEL146GmFCp6Sg/UtU2Y4jHuJs=
+	by mail.kernel.org (Postfix) with ESMTP id 770822082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:14:39 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732218AbfA1ROV (ORCPT
+        id S1732402AbfA1ROh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:14:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58648 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:14:37 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38072 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732249AbfA1QHj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:07:39 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1728932AbfA1ROg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 12:14:36 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F13F20989;
-        Mon, 28 Jan 2019 16:07:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691659;
-        bh=iSfAMUiCuC9aWufMmuPoIFfGGmQeKUJiinfqa4JLUHc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Bb5Oq9488hGuSZn9wL70EXqgULRjJ6QuzVmZXRvxA/Jk5z/82J53KW3NHAcF3SsEc
-         t9jD36e/89uhH8Qc3HoWKL9B+YBUTD6VaUcuqDFXGPcxn349cVa32WuK2OqcXo8nGi
-         CSxqi1cuzq9eLyH7HBX9orLmVrtZPi9LMUVXHqzM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bin Liu <b-liu@ti.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 177/258] usb: musb: dsps: fix runtime pm for peripheral mode
-Date:   Mon, 28 Jan 2019 10:58:03 -0500
-Message-Id: <20190128155924.51521-177-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
-References: <20190128155924.51521-1-sashal@kernel.org>
+        by mx1.redhat.com (Postfix) with ESMTPS id B3D3658E5B;
+        Mon, 28 Jan 2019 17:14:35 +0000 (UTC)
+Received: from redhat.com (ovpn-123-79.rdu2.redhat.com [10.10.123.79])
+        by smtp.corp.redhat.com (Postfix) with SMTP id CDEC660BEC;
+        Mon, 28 Jan 2019 17:14:33 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 12:14:33 -0500
+From:   "Michael S. Tsirkin" <mst@redhat.com>
+To:     Christoph Hellwig <hch@lst.de>
+Cc:     Joerg Roedel <joro@8bytes.org>, Jason Wang <jasowang@redhat.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>,
+        virtualization@lists.linux-foundation.org,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        iommu@lists.linux-foundation.org, jfehlig@suse.com,
+        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
+Subject: Re: [PATCH 5/5] virtio-blk: Consider virtio_max_dma_size() for
+ maximum segment size
+Message-ID: <20190128121407-mutt-send-email-mst@kernel.org>
+References: <20190123163049.24863-1-joro@8bytes.org>
+ <20190123163049.24863-6-joro@8bytes.org>
+ <20190123213139.GD9032@lst.de>
+ <20190124084011.GJ32526@8bytes.org>
+ <20190124084221.GB19441@lst.de>
+ <20190124095150.GL32526@8bytes.org>
+ <20190128080526.GA3874@lst.de>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128080526.GA3874@lst.de>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 28 Jan 2019 17:14:36 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bin Liu <b-liu@ti.com>
+On Mon, Jan 28, 2019 at 09:05:26AM +0100, Christoph Hellwig wrote:
+> On Thu, Jan 24, 2019 at 10:51:51AM +0100, Joerg Roedel wrote:
+> > On Thu, Jan 24, 2019 at 09:42:21AM +0100, Christoph Hellwig wrote:
+> > > Yes.  But more importantly it would fix the limit for all other block
+> > > drivers that set large segment sizes when running over swiotlb.
+> > 
+> > True, so it would be something like the diff below? I havn't worked on
+> > the block layer, so I don't know if that needs additional checks for
+> > ->dev or anything.
+> 
+> Looks sensible.  Maybe for now we'll just do the virtio-blk case
+> that triggered it, and we'll do something like this patch for the
+> next merge window.  We'll also need to apply the same magic to the
+> DMA boundary.
 
-[ Upstream commit 54578ee883e34d2d1c518d48f1c1e2dd3f387188 ]
+So do I get an ack for this patch then?
 
-Since the runtime PM support was added in musb, dsps relies on the timer
-calling otg_timer() to activate the usb subsystem. However the driver
-doesn't enable the timer for peripheral port, then the peripheral port is
-unable to be enumerated by a host if the other usb port is disabled or in
-peripheral mode too.
-
-So let's start the timer for peripheral port too.
-
-Fixes: ea2f35c01d5e ("usb: musb: Fix sleeping function called from invalid context for hdrc glue")
-Acked-by: Tony Lindgren <tony@atomide.com>
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/usb/musb/musb_dsps.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/usb/musb/musb_dsps.c b/drivers/usb/musb/musb_dsps.c
-index 1e6d78b1334e..403eb97915f8 100644
---- a/drivers/usb/musb/musb_dsps.c
-+++ b/drivers/usb/musb/musb_dsps.c
-@@ -181,9 +181,11 @@ static void dsps_musb_enable(struct musb *musb)
- 
- 	musb_writel(reg_base, wrp->epintr_set, epmask);
- 	musb_writel(reg_base, wrp->coreintr_set, coremask);
--	/* start polling for ID change in dual-role idle mode */
--	if (musb->xceiv->otg->state == OTG_STATE_B_IDLE &&
--			musb->port_mode == MUSB_OTG)
-+	/*
-+	 * start polling for runtime PM active and idle,
-+	 * and for ID change in dual-role idle mode.
-+	 */
-+	if (musb->xceiv->otg->state == OTG_STATE_B_IDLE)
- 		dsps_mod_timer(glue, -1);
- }
- 
-@@ -254,6 +256,10 @@ static int dsps_check_status(struct musb *musb, void *unused)
- 				musb->xceiv->otg->state = OTG_STATE_A_IDLE;
- 				MUSB_HST_MODE(musb);
- 			}
-+
-+			if (musb->port_mode == MUSB_PERIPHERAL)
-+				skip_session = 1;
-+
- 			if (!(devctl & MUSB_DEVCTL_SESSION) && !skip_session)
- 				musb_writeb(mregs, MUSB_DEVCTL,
- 					    MUSB_DEVCTL_SESSION);
 -- 
-2.19.1
-
+MST
