@@ -2,31 +2,31 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 245EDC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:37:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDA0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:42:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0C0021736
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:37:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5067A20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:42:28 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726817AbfA1Jhn (ORCPT
+        id S1726719AbfA1Jm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:37:43 -0500
-Received: from foss.arm.com ([217.140.101.70]:42120 "EHLO foss.arm.com"
+        Mon, 28 Jan 2019 04:42:26 -0500
+Received: from foss.arm.com ([217.140.101.70]:42182 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726590AbfA1Jhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:37:42 -0500
+        id S1726415AbfA1Jm0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:42:26 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5DA41EBD;
-        Mon, 28 Jan 2019 01:37:42 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CB342EBD;
+        Mon, 28 Jan 2019 01:42:25 -0800 (PST)
 Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A42043F589;
-        Mon, 28 Jan 2019 01:37:39 -0800 (PST)
-Date:   Mon, 28 Jan 2019 09:37:37 +0000
-Message-ID: <86ef8xw2am.wl-marc.zyngier@arm.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DF0443F589;
+        Mon, 28 Jan 2019 01:42:22 -0800 (PST)
+Date:   Mon, 28 Jan 2019 09:42:21 +0000
+Message-ID: <86d0ohw22q.wl-marc.zyngier@arm.com>
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     Julien Thierry <julien.thierry@arm.com>
 Cc:     <linux-arm-kernel@lists.infradead.org>,
@@ -34,11 +34,12 @@ Cc:     <linux-arm-kernel@lists.infradead.org>,
         <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
         <james.morse@arm.com>, <catalin.marinas@arm.com>,
         <will.deacon@arm.com>, <mark.rutland@arm.com>,
-        Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [PATCH v9 07/26] arm64: ptrace: Provide definitions for PMR values
-In-Reply-To: <1548084825-8803-8-git-send-email-julien.thierry@arm.com>
+        Oleg Nesterov <oleg@redhat.com>,
+        Dave Martin <Dave.Martin@arm.com>
+Subject: Re: [PATCH v9 08/26] arm64: Make PMR part of task context
+In-Reply-To: <1548084825-8803-9-git-send-email-julien.thierry@arm.com>
 References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
-        <1548084825-8803-8-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-9-git-send-email-julien.thierry@arm.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -50,59 +51,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 15:33:26 +0000,
+On Mon, 21 Jan 2019 15:33:27 +0000,
 Julien Thierry <julien.thierry@arm.com> wrote:
 > 
-> Introduce fixed values for PMR that are going to be used to mask and
-> unmask interrupts by priority.
+> In order to replace PSR.I interrupt disabling/enabling with ICC_PMR_EL1
+> interrupt masking, ICC_PMR_EL1 needs to be saved/restored when
+> taking/returning from an exception. This mimics the way hardware saves
+> and restores PSR.I bit in spsr_el1 for exceptions and ERET.
 > 
-> The current priority given to GIC interrupts is 0xa0, so clearing PMR's
-> most significant bit is enough to mask interrupts.
+> Add PMR to the registers to save in the pt_regs struct upon kernel entry,
+> and restore it before ERET. Also, initialize it to a sane value when
+> creating new tasks.
 > 
 > Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-> Cc: Oleg Nesterov <oleg@redhat.com>
+> Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 > Cc: Catalin Marinas <catalin.marinas@arm.com>
 > Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  arch/arm64/include/asm/ptrace.h | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
-> 
-> diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
-> index fce22c4..05cf913 100644
-> --- a/arch/arm64/include/asm/ptrace.h
-> +++ b/arch/arm64/include/asm/ptrace.h
-> @@ -25,6 +25,18 @@
->  #define CurrentEL_EL1		(1 << 2)
->  #define CurrentEL_EL2		(2 << 2)
->  
-> +/*
-> + * PMR values used to mask/unmask interrupts.
-> + *
-> + * GIC priority masking works as follows: if an IRQ's priority is a higher value
-> + * than the value held in PMR, that interrupt is masked. A lower value of PMR
-> + * means more IRQ priorities are masked.
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Dave Martin <Dave.Martin@arm.com>
 
-Nit: It is not the priorities that are masked, but interrupts that
-have a priority higher than that of PMR.
-
-> + *
-> + * To mask priorities, we clear the most significant bit of PMR.
-> + */
-> +#define GIC_PRIO_IRQON		0xf0
-> +#define GIC_PRIO_IRQOFF		(GIC_PRIO_IRQON & ~0x80)
-> +
->  /* Additional SPSR bits not exposed in the UABI */
->  #define PSR_IL_BIT		(1 << 20)
->  
-> -- 
-> 1.9.1
-> 
-
-Otherwise:
-
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
 	M.
 
