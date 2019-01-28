@@ -2,76 +2,128 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A627C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE73C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 588A921741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=firstfloor.org header.i=@firstfloor.org header.b="qCdqiXCW"
+	by mail.kernel.org (Postfix) with ESMTP id 8EFF721741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548694852;
+	bh=BDxPlfkxPtfhCGIglgS1jBn/CEeApylcDJKiF1ddp5Y=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=mdP9Lt608kaE84XiZl4+mFY959BQrItZCbu8cWVXOopRryRTKBctKjWah9Nk8yhcY
+	 1u4SH58e0TrwS51yHpZBn2hkt8nGlYosi+Ibffd1EMDnMVYBhMGWEXyhaYq8pbVPkA
+	 4HywAOx6oOnuZ7CchNGb9wNNbO0WusNs5qlmXA6E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388352AbfA1RAp (ORCPT
+        id S2388224AbfA1RAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:00:45 -0500
-Received: from one.firstfloor.org ([193.170.194.197]:50820 "EHLO
-        one.firstfloor.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730755AbfA1RAk (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:00:40 -0500
-Received: by one.firstfloor.org (Postfix, from userid 503)
-        id 8459086858; Mon, 28 Jan 2019 18:00:37 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=firstfloor.org;
-        s=mail; t=1548694837;
-        bh=xYq4k4x/a6XRP87mvQEHdTQcZ18hEwCkIb8KHZKvcqw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=qCdqiXCWACikkdBO5qPE09/35Pe8XZVeklxMd7ortNOc/KphhUa2WbFyohGKgMJ0M
-         t1pAV6j7kvaLhWsW7NsiLmUfIV/bh2Xqkyi7xiT6yBc2YG/3uS1L4R9BW4dRH/hy2W
-         z9/BLH6HoD+4o1VRW+SypW/U15Lqh1Omw4KBc7oU=
-Date:   Mon, 28 Jan 2019 09:00:37 -0800
-From:   Andi Kleen <andi@firstfloor.org>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Andi Kleen <andi@firstfloor.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        David Ahern <dsahern@gmail.com>, linux-kernel@vger.kernel.org,
-        Andi Kleen <ak@linux.intel.com>
-Subject: Re: [RFC] Don't print sample_type bits in non-group events not set
- in the group's was Re: [PATCH] perf, script: Fix crash with printing mixed
- trace point and other events
-Message-ID: <20190128170037.sbayc3mve66krzzd@two.firstfloor.org>
-References: <20190117194834.21940-1-andi@firstfloor.org>
- <20190118094919.GA28346@krava>
- <20190118125920.GG5823@kernel.org>
- <20190118130106.GH5823@kernel.org>
- <20190118134205.GI5823@kernel.org>
- <20190118161000.GC28346@krava>
- <20190118161140.z45vl3milw2vk4hy@two.firstfloor.org>
- <20190119153745.GA19542@krava>
- <20190128141301.GA26788@krava>
+        Mon, 28 Jan 2019 12:00:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45526 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733293AbfA1QP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:27 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D34682147A;
+        Mon, 28 Jan 2019 16:15:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692127;
+        bh=BDxPlfkxPtfhCGIglgS1jBn/CEeApylcDJKiF1ddp5Y=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=qqfvsSXOXG12StxxXZ8SgkbcT5Gu+x8ud+Td09PNIcq7jpzox9lQvfZfNwla252BR
+         oSqr28oxUhnUUzHFhtpD3O1szYhoa87v7kTf6F9M6gn1NeuoleUen/4wImJjZf6hHH
+         FJSaTfzjCgqYPKmSRsuP7DeGI0I5hdg0JkOeCFsQ=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 079/170] ARM: dts: Fix up the D-Link DIR-685 MTD partition info
+Date:   Mon, 28 Jan 2019 11:10:29 -0500
+Message-Id: <20190128161200.55107-79-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
+References: <20190128161200.55107-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128141301.GA26788@krava>
-User-Agent: NeoMutt/20170113 (1.7.2)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> > also now it won't make sample for slave events
-> > with zero value/period read
-> > 
-> > note the patch needs to be split into more patches,
-> > sending it all together for discussion over the solution
-> 
-> any feedback on this one?
+From: Linus Walleij <linus.walleij@linaro.org>
 
-Looks good to me.
+[ Upstream commit 738a05e673435afb986b53da43befd83ad87ec3b ]
 
-Reviewed-by: Andi Kleen <ak@linux.intel.com>
--Andi
+The vendor firmware was analyzed to get the right idea about
+this flash layout. /proc/mtd contains:
+
+dev:    size   erasesize  name
+mtd0: 01e7ff40 00020000 "rootfs"
+mtd1: 01f40000 00020000 "upgrade"
+mtd2: 00040000 00020000 "rgdb"
+mtd3: 00020000 00020000 "nvram"
+mtd4: 00040000 00020000 "RedBoot"
+mtd5: 00020000 00020000 "LangPack"
+mtd6: 02000000 00020000 "flash"
+
+Here "flash" is obviously the whole device and we know "rootfs"
+is a bogus hack to point to a squashfs rootfs inside of the main
+"upgrade partition". We know "RedBoot" is the first 0x40000 of
+the flash and the "upgrade" partition follows from 0x40000 to
+0x1f8000. So we have mtd0, 1, 4 and 6 covered.
+
+Remains:
+mtd2: 00040000 00020000 "rgdb"
+mtd3: 00020000 00020000 "nvram"
+mtd5: 00020000 00020000 "LangPack"
+
+Inspecting the flash at 0x1f8000 and 0x1fa000 reveals each of
+these starting with "RGCFG1" so we assume 0x1f8000-1fbfff is
+"rgdb" of 0x40000.
+
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/boot/dts/gemini-dlink-dir-685.dts | 16 ++++++----------
+ 1 file changed, 6 insertions(+), 10 deletions(-)
+
+diff --git a/arch/arm/boot/dts/gemini-dlink-dir-685.dts b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
+index e75e2d44371c..d6f752ab07bb 100644
+--- a/arch/arm/boot/dts/gemini-dlink-dir-685.dts
++++ b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
+@@ -128,20 +128,16 @@
+ 				read-only;
+ 			};
+ 			/*
+-			 * Between the boot loader and the rootfs is the kernel
+-			 * in a custom Storlink format flashed from the boot
+-			 * menu. The rootfs is in squashfs format.
++			 * This firmware image contains the kernel catenated
++			 * with the squashfs root filesystem. For some reason
++			 * this is called "upgrade" on the vendor system.
+ 			 */
+-			partition@1800c0 {
+-				label = "rootfs";
+-				reg = <0x001800c0 0x01dbff40>;
+-				read-only;
+-			};
+-			partition@1f40000 {
++			partition@40000 {
+ 				label = "upgrade";
+-				reg = <0x01f40000 0x00040000>;
++				reg = <0x00040000 0x01f40000>;
+ 				read-only;
+ 			};
++			/* RGDB, Residental Gateway Database? */
+ 			partition@1f80000 {
+ 				label = "rgdb";
+ 				reg = <0x01f80000 0x00040000>;
+-- 
+2.19.1
+
