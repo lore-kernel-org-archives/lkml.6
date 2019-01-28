@@ -2,54 +2,50 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AC2C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8057BC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9B962171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 515242171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691673;
-	bh=L+U/Qe452Ci/2mkt+G6OhIBUTcJEZiJV1S+n8kYn2kQ=;
+	s=default; t=1548691676;
+	bh=Cl1eTko4iUGK2WU8wbodBAejJ2Crw/a+kDLMWX2LUgA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=umafsbwFzqutXyjayAvfytf0ikNoS44krkLUDWUQD/Docjvnrbj7C2t/RZUgi3pK8
-	 sKg0Y9QuwMTqmwrt/Y1+IKKpbUL4Ookczb0nK99vjbReMdfE+u585m/V7w6E3FZPyO
-	 LaJi2PfSiN8LeXHEHpXgwOds8ltq8wWOrF084t6o=
+	b=ABXgw3OGNYk/0tqJlJLphWV943g7B/gt+BaYo3jfA1SIhNOfw34UUxt6MVHUVWqsn
+	 mXNzpXdDvR7INz8jYMvsqC8jFmUlkYld8e9Ur7Ag/H26rwpumMeWB0JQDMhPTHBfkj
+	 CemOCh9fOjXSQw2eubyDyeeC59XVFdiAKe+t4N1Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732276AbfA1QHw (ORCPT
+        id S1732285AbfA1QHy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:07:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58906 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:07:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58980 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730554AbfA1QHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:07:49 -0500
+        id S1732274AbfA1QHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:07:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF01D2147A;
-        Mon, 28 Jan 2019 16:07:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B4B820989;
+        Mon, 28 Jan 2019 16:07:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691668;
-        bh=L+U/Qe452Ci/2mkt+G6OhIBUTcJEZiJV1S+n8kYn2kQ=;
+        s=default; t=1548691670;
+        bh=Cl1eTko4iUGK2WU8wbodBAejJ2Crw/a+kDLMWX2LUgA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vhPS5SoFUShBf1JUvdoS/2OUrdjLl/X6MTAEsc7sH4E+CMmBSOeK+j/OQePp0v7rh
-         yRmS/CbbrFkWVx8iMRd3dOaQwVxeGo0KKWcZrhC8A09q8AfdCxwac4dWvYp5f8bsAE
-         SPU8A07my9O9GTXoWW7WVpUNc5A0DEBNJhnWU7QE=
+        b=qzdgx7D4pVEDjkybXiQ7iTrAWqZpSoh4fm30/m+uuC9/hTuRr9/LCQk63b+y+sD4/
+         VQiACvV+13nUPEwTjrt5nmxnRxyXvbIePsgS9fAdIt7M+JiJrguqEGgIivp+f4oL+q
+         7dljUd4yr+IUwHwGURySH7pSU6cZPm9RX+pj5Fik=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Thomas Richter <tmricht@linux.ibm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 179/258] perf tools: Cast off_t to s64 to avoid warning on bionic libc
-Date:   Mon, 28 Jan 2019 10:58:05 -0500
-Message-Id: <20190128155924.51521-179-sashal@kernel.org>
+Cc:     Dennis Zhou <dennis@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.19 180/258] percpu: convert spin_lock_irq to spin_lock_irqsave.
+Date:   Mon, 28 Jan 2019 10:58:06 -0500
+Message-Id: <20190128155924.51521-180-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -61,47 +57,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Dennis Zhou <dennis@kernel.org>
 
-[ Upstream commit 866053bb644f754d1a93aaa9db9998fecf7a8978 ]
+[ Upstream commit 6ab7d47bcbf0144a8cb81536c2cead4cde18acfe ]
 
-To avoid this warning:
+From Michael Cree:
+  "Bisection lead to commit b38d08f3181c ("percpu: restructure
+   locking") as being the cause of lockups at initial boot on
+   the kernel built for generic Alpha.
 
-    CC       /tmp/build/perf/util/s390-cpumsf.o
-  util/s390-cpumsf.c: In function 's390_cpumsf_samples':
-  util/s390-cpumsf.c:508:3: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'off_t' [-Wformat=]
-     pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
-     ^
+   On a suggestion by Tejun Heo that:
 
-Now the various Android cross toolchains used in the perf tools
-container test builds are all clean and we can remove this:
+   So, the only thing I can think of is that it's calling
+   spin_unlock_irq() while irq handling isn't set up yet.
+   Can you please try the followings?
 
-  export EXTRA_MAKE_ARGS="WERROR=0"
+   1. Convert all spin_[un]lock_irq() to
+      spin_lock_irqsave/unlock_irqrestore()."
 
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Link: https://lkml.kernel.org/n/tip-5rav4ccyb0sjciysz2i4p3sx@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Fixes: b38d08f3181c ("percpu: restructure locking")
+Reported-and-tested-by: Michael Cree <mcree@orcon.net.nz>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/s390-cpumsf.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ mm/percpu-km.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
-index d2c78ffd9fee..aa7f8c11fbb7 100644
---- a/tools/perf/util/s390-cpumsf.c
-+++ b/tools/perf/util/s390-cpumsf.c
-@@ -499,7 +499,7 @@ static int s390_cpumsf_samples(struct s390_cpumsf_queue *sfq, u64 *ts)
- 	aux_ts = get_trailer_time(buf);
- 	if (!aux_ts) {
- 		pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
--		       sfq->buffer->data_offset);
-+		       (s64)sfq->buffer->data_offset);
- 		aux_ts = ~0ULL;
- 		goto out;
- 	}
+diff --git a/mm/percpu-km.c b/mm/percpu-km.c
+index 38de70ab1a0d..0f643dc2dc65 100644
+--- a/mm/percpu-km.c
++++ b/mm/percpu-km.c
+@@ -50,6 +50,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ 	const int nr_pages = pcpu_group_sizes[0] >> PAGE_SHIFT;
+ 	struct pcpu_chunk *chunk;
+ 	struct page *pages;
++	unsigned long flags;
+ 	int i;
+ 
+ 	chunk = pcpu_alloc_chunk(gfp);
+@@ -68,9 +69,9 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ 	chunk->data = pages;
+ 	chunk->base_addr = page_address(pages) - pcpu_group_offsets[0];
+ 
+-	spin_lock_irq(&pcpu_lock);
++	spin_lock_irqsave(&pcpu_lock, flags);
+ 	pcpu_chunk_populated(chunk, 0, nr_pages, false);
+-	spin_unlock_irq(&pcpu_lock);
++	spin_unlock_irqrestore(&pcpu_lock, flags);
+ 
+ 	pcpu_stats_chunk_alloc();
+ 	trace_percpu_create_chunk(chunk->base_addr);
 -- 
 2.19.1
 
