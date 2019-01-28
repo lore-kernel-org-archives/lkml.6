@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AC07C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B339C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:52:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 527C0217F4
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18B2C21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:52:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m/Dh0d/0"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6bNLHKB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727028AbfA1JwV (ORCPT
+        id S1727041AbfA1Jw2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:52:21 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38099 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726879AbfA1JwF (ORCPT
+        Mon, 28 Jan 2019 04:52:28 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36215 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726682AbfA1JwB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:52:05 -0500
-Received: by mail-wr1-f65.google.com with SMTP id v13so17226992wrw.5
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 01:52:04 -0800 (PST)
+        Mon, 28 Jan 2019 04:52:01 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p6so13114921wmc.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 01:52:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MLYl5jIqi53Lz9NXLUbQGYRBiUOfy6ldN7GpdUzCJOc=;
-        b=m/Dh0d/0tI1+lQIpTmj0tzJEHdp6lFzv1quy0tlSFG9HhQru4Fd+sEbf4bHmZzd4I8
-         0Ma2xV6xds/HrY7f9+/O7FhgdEH76PUGb3Htlj+APWATIbjyfv1zJp+4Dsmh743wquv6
-         49j/mkdqrb7AUMznLkWkLirrxPmuy43z8dc9vBngjgBNnJB+97NjPvoPkmYzSXnc1tle
-         458mar7FwTc+DIl+qGMKhTDIENqyo/yZmgMYL95zSIthO1mctDZq+RSQCnRm9F4FYuvr
-         3/NDBvwHk/+2hJjtE/+dtFeAG5TNKoakdg4uPWJD/MHZmMuTeN+B9P68AeC1BJdzN3Bv
-         icXw==
+        bh=ofID1CY/xaOAmY7nXMvuLJinp7l1m/0BDJWGvuIVBd4=;
+        b=d6bNLHKBR3CgP9bpO3PfBHPfMgHsnyJa28z/tqUigu1MT/pGRifjGkq7GTu9GJQSiv
+         zKtsIUAnal2Ss30qSEW1uf7K9dSl0s+pbg/bp1mwu2VX65W018y/IZvrGxchZ2wUqgM7
+         eAxehWTV/gvb+rTkh8NcZ5whP47zgoxIz8dj+vKpXm3FDvkm4XRxbqzZAyz3mfMIDdy8
+         5uSEcHVlOMMpLKHuyFyIZVqDq0SYEXXUwa/AxLNrmfwEiwqMoVFEMUWP+X/RD07DPjJq
+         aVsVtdNwi0lurHjdAjgPWcrjHfuw3uz/qx153m/ycGwsOMzJEXn2usW7EGrZxgVyB4N5
+         RY2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MLYl5jIqi53Lz9NXLUbQGYRBiUOfy6ldN7GpdUzCJOc=;
-        b=gjAMAxAj2mvLKDri5RmC4ExK7AzlEyeHs6fPHPDCE/ddOu3Zj6kJl9IiWcMMvEhAyA
-         w2oV16P8059umnT4eR0onyJFjbgyjAID+RVqQEzluBOXCWdaTb3k5joGbcyFUhUyBTdU
-         GleHLkynmkGwXqE4fgPkNtVM82SKXU/NLckGZ1PDRF2Q7xizimvBXYggZjSLsqkb3Nqc
-         slIoq8ERS8/13IoUJ9L1bNnoC4+xz6t3apKTG42tSIldDuAhu4bLeSleUB43WSZkUIiW
-         lAnWaJip/a3IEA7q1PvSpFzjAxozRgP4psRICh+snPPS1gXm9NGWmvmP8EC6XGvFlfEt
-         5RGw==
-X-Gm-Message-State: AJcUukdyO3XY/xIDDWim+8x6iYyDf1MRL4JCacrTqt+UH1BaDQemjfk+
-        mk1Khqaj0XZqi/NXviotoiY=
-X-Google-Smtp-Source: ALg8bN515IeYHLAf/QaDlfNJBbJDcyZKwe3FaT7jgGNkB2OCLVIomDk3EMaq+PAXHkFa7fre7A32NQ==
-X-Received: by 2002:adf:81c4:: with SMTP id 62mr19733530wra.266.1548669123963;
-        Mon, 28 Jan 2019 01:52:03 -0800 (PST)
+        bh=ofID1CY/xaOAmY7nXMvuLJinp7l1m/0BDJWGvuIVBd4=;
+        b=n7n6uXnQRDzwQTULzBNZ4cRB0qyPmI69GsMZbfQvH6j2fUOHLwK1Qxfs2Mt8KZeoWR
+         +jkNGW6KumDEolHEs76eDVVw7ftlriHpjeO5sgv0lPnifNjILzaH+H2wVm5kMxebWHfg
+         J0LxMNGfYnmlxWSG3vJDLtg5Im6j0ZCUbbXRjoEpZwtOPSNc104LWuMltcUI6YiFK+TL
+         tNtif2/2TgzddvrTcm7i9BIeuZdIYKOlTz0PDUL5G1Z9c5OKgzv530SrinkvZ8cOqSo/
+         YA6hAfVYZaCYywukbyIiN/r2W2VAxQTpeIPW0yaNyfPCJ+yVzyjoFtvw3AWReg1SHOFk
+         2aZA==
+X-Gm-Message-State: AJcUukd/B/H6qWdg8tGAFXrqhJr4NPoODgtB43VQGBomU5gr6886hr25
+        tAe6Xc6mrM6v6Rynpyqy6rg=
+X-Google-Smtp-Source: ALg8bN5yF4Gusgnei8eV+OPatSl35VaTHUIa+g7KEQwbaUvdWEOLHvl3lgg2AkKCNrT6Vcx19BNwyA==
+X-Received: by 2002:a1c:5f8a:: with SMTP id t132mr16791832wmb.40.1548669120104;
+        Mon, 28 Jan 2019 01:52:00 -0800 (PST)
 Received: from localhost.localdomain ([2a02:8108:96bf:e0ab:2b68:5d76:a12a:e6ba])
-        by smtp.gmail.com with ESMTPSA id a18sm139023711wrp.13.2019.01.28.01.52.02
+        by smtp.gmail.com with ESMTPSA id a18sm139023711wrp.13.2019.01.28.01.51.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 01:52:03 -0800 (PST)
+        Mon, 28 Jan 2019 01:51:59 -0800 (PST)
 From:   Michael Straube <straube.linux@gmail.com>
 To:     gregkh@linuxfoundation.org
 Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
         Michael Straube <straube.linux@gmail.com>
-Subject: [PATCH 5/6] staging: rtl8188eu: &array[0] -> array
-Date:   Mon, 28 Jan 2019 10:51:36 +0100
-Message-Id: <20190128095137.26815-5-straube.linux@gmail.com>
+Subject: [PATCH 2/6] staging: rtl8188eu: remove unnecessary initializations
+Date:   Mon, 28 Jan 2019 10:51:33 +0100
+Message-Id: <20190128095137.26815-2-straube.linux@gmail.com>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190128095137.26815-1-straube.linux@gmail.com>
 References: <20190128095137.26815-1-straube.linux@gmail.com>
@@ -73,35 +73,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change '&array[0]' to just 'array' in rtw_reset_securitypriv().
+The local variables backup_index, backup_counter and backup_time
+in rtw_reset_securitypriv() are all asigned before their uses, so
+initialization to zero is not necessary.
 
 Signed-off-by: Michael Straube <straube.linux@gmail.com>
 ---
- drivers/staging/rtl8188eu/os_dep/mlme_linux.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtl8188eu/os_dep/mlme_linux.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
-index 03d4cfefc9bc..caba3fe0250c 100644
+index 0321f1d45809..cd6298e4920d 100644
 --- a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
 +++ b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
-@@ -47,7 +47,7 @@ void rtw_reset_securitypriv(struct adapter *adapter)
- 		 * the countermeasure is trigger, the driver have to disconnect
- 		 * with AP for 60 seconds.
- 		 */
--		memcpy(&backup_pmkid[0], &adapter->securitypriv.PMKIDList[0], sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
-+		memcpy(backup_pmkid, adapter->securitypriv.PMKIDList, sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
- 		backup_index = adapter->securitypriv.PMKIDIndex;
- 		backup_counter = adapter->securitypriv.btkip_countermeasure;
- 		backup_time = adapter->securitypriv.btkip_countermeasure_time;
-@@ -56,7 +56,7 @@ void rtw_reset_securitypriv(struct adapter *adapter)
- 		/* Restore the PMK information to securitypriv structure
- 		 * for the following connection.
- 		 */
--		memcpy(&adapter->securitypriv.PMKIDList[0], &backup_pmkid[0],
-+		memcpy(adapter->securitypriv.PMKIDList, backup_pmkid,
- 		       sizeof(struct rt_pmkid_list) * NUM_PMKID_CACHE);
- 		adapter->securitypriv.PMKIDIndex = backup_index;
- 		adapter->securitypriv.btkip_countermeasure = backup_counter;
+@@ -36,9 +36,9 @@ static struct rt_pmkid_list backup_pmkid[NUM_PMKID_CACHE];
+ 
+ void rtw_reset_securitypriv(struct adapter *adapter)
+ {
+-	u8	backup_index = 0;
+-	u8	backup_counter = 0x00;
+-	u32	backup_time = 0;
++	u8 backup_index;
++	u8 backup_counter;
++	u32 backup_time;
+ 
+ 	if (adapter->securitypriv.dot11AuthAlgrthm == dot11AuthAlgrthm_8021X) {
+ 		/* 802.1x
 -- 
 2.20.1
 
