@@ -2,131 +2,346 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0254AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:33:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B72C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4DF62177B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:33:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="Vi6ujWBW"
+	by mail.kernel.org (Postfix) with ESMTP id B6EE02147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:33:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730802AbfA1RdD (ORCPT
+        id S1730904AbfA1RdF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:33:03 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25457 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729351AbfA1RdA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 12:33:05 -0500
+Received: from foss.arm.com ([217.140.101.70]:51330 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729684AbfA1RdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 12:33:00 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548696701; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=YIyjRszvDDBO4ukdquYlxg4eSL4lUQ+76YchNpOvAK1JFOZnm6wbwDSpJdjScuKtKFxJx+08SfwfzzJKmA7TredE5UoUbVFaBqab4FsxqVdfEkUXVLfn1RnqQH7IU9PVgMCuKOKJhyARdx4UWPji7HNz938ph2R2hbIVg8ah2j8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548696701; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=Hb4V+UUvIgOaR8+FOF5/tTTgrHynv8qZbzdGENKIw/Q=; 
-        b=XVM0urhhPK9ey61YhnF/MvKgX7/pwlRHfKqG5VZA8VIt3351Z/jDIOldqJQnRRVUE1a5wyrnXYrp184z7lug88ZXPltpN6bCbYJntvRjZYqdeC7R9IMOax4G9OXZ1dxxggfPSdcXY5Z1eCv3n9rQqXZ8TU9Yxx53e5wboudn7jE=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=v5YhN9/MkxYpgRBAN/Pcn302sEFc518gtDgjgI3Yv3KlJo3vpAUBUeeyMpXhg+kbqxAwH1WyVX66
-    hmiuJ2iMyHnul8UPZt3rC1L9D5Ha+H+obTusVsnFI8JfFcTinUKe  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548696701;
-        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=2150; bh=Hb4V+UUvIgOaR8+FOF5/tTTgrHynv8qZbzdGENKIw/Q=;
-        b=Vi6ujWBWAwhzv4JQ46bQVmShIvKBfISlINOq/qYfwK3TVK40ZrhgiqTd7nT2ilIx
-        ZD0qoR9iFNtNj+Z+amzYBF28PEbDVXP0nkMXEb144GAVn9GDHJidVbjDZAmo6FjSMnS
-        DssU0H/0paMQsnEYkgSlEwYQyJovt6RmAKAgxorE=
-Received: from localhost.localdomain (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
-        with SMTPS id 1548696698449303.6388026767029; Mon, 28 Jan 2019 09:31:38 -0800 (PST)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        paul.burton@mips.com, mark.rutland@arm.com, syq@debian.org,
-        jiaxun.yang@flygoat.com, 772753199@qq.com
-Subject: [PATCH 3/3] RTC: Ingenic: Replace jz47xx with XBurst.
-Date:   Tue, 29 Jan 2019 01:29:59 +0800
-Message-Id: <1548696599-53639-4-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548696599-53639-1-git-send-email-zhouyanjie@zoho.com>
-References: <1548696599-53639-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53370EBD;
+        Mon, 28 Jan 2019 09:32:59 -0800 (PST)
+Received: from [10.1.197.2] (ostrya.cambridge.arm.com [10.1.197.2])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C377E3F59C;
+        Mon, 28 Jan 2019 09:32:56 -0800 (PST)
+Subject: Re: [RFC v3 02/21] iommu: Introduce cache_invalidate API
+To:     Auger Eric <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     yi.l.liu@linux.intel.com, kevin.tian@intel.com,
+        ashok.raj@intel.com, kvm@vger.kernel.org, peter.maydell@linaro.org,
+        will.deacon@arm.com, linux-kernel@vger.kernel.org,
+        christoffer.dall@arm.com, marc.zyngier@arm.com,
+        iommu@lists.linux-foundation.org, robin.murphy@arm.com,
+        kvmarm@lists.cs.columbia.edu, eric.auger.pro@gmail.com
+References: <20190108102633.17482-1-eric.auger@redhat.com>
+ <20190108102633.17482-3-eric.auger@redhat.com>
+ <20190111143042.183a27a7@x1.home>
+ <66653430-514f-2b4b-3d93-348deb6cd490@redhat.com>
+From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
+Message-ID: <a69ab354-1742-d962-7f2a-f1266d79d060@arm.com>
+Date:   Mon, 28 Jan 2019 17:32:42 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <66653430-514f-2b4b-3d93-348deb6cd490@redhat.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Ingenic had changed their product code name.
-Latest SoCs had divided to several series such as
-T30/M200/X1000 and no longer called JZ47xx.
+Hi Eric,
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
----
- drivers/rtc/Kconfig      |  4 ++--
- drivers/rtc/rtc-jz4740.c | 15 +++------------
- 2 files changed, 5 insertions(+), 14 deletions(-)
+On 25/01/2019 16:49, Auger Eric wrote:
+[...]
+>>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
+>>> index 7a7cf7a3de7c..4605f5cfac84 100644
+>>> --- a/include/uapi/linux/iommu.h
+>>> +++ b/include/uapi/linux/iommu.h
+>>> @@ -47,4 +47,99 @@ struct iommu_pasid_table_config {
+>>>  	};
+>>>  };
+>>>  
+>>> +/**
+>>> + * enum iommu_inv_granularity - Generic invalidation granularity
+>>> + * @IOMMU_INV_GRANU_DOMAIN_ALL_PASID:	TLB entries or PASID caches of all
+>>> + *					PASIDs associated with a domain ID
+>>> + * @IOMMU_INV_GRANU_PASID_SEL:		TLB entries or PASID cache associated
+>>> + *					with a PASID and a domain
+>>> + * @IOMMU_INV_GRANU_PAGE_PASID:		TLB entries of selected page range
+>>> + *					within a PASID
+>>> + *
+>>> + * When an invalidation request is passed down to IOMMU to flush translation
+>>> + * caches, it may carry different granularity levels, which can be specific
+>>> + * to certain types of translation caches.
+>>> + * This enum is a collection of granularities for all types of translation
+>>> + * caches. The idea is to make it easy for IOMMU model specific driver to
+>>> + * convert from generic to model specific value. Each IOMMU driver
+>>> + * can enforce check based on its own conversion table. The conversion is
+>>> + * based on 2D look-up with inputs as follows:
+>>> + * - translation cache types
+>>> + * - granularity
+>>> + *
+>>> + *             type |   DTLB    |    TLB    |   PASID   |
+>>> + *  granule         |           |           |   cache   |
+>>> + * -----------------+-----------+-----------+-----------+
+>>> + *  DN_ALL_PASID    |   Y       |   Y       |   Y       |
+>>> + *  PASID_SEL       |   Y       |   Y       |   Y       |
+>>> + *  PAGE_PASID      |   Y       |   Y       |   N/A     |
+>>> + *
+>>> + */
+>>> +enum iommu_inv_granularity {
+>>> +	IOMMU_INV_GRANU_DOMAIN_ALL_PASID,
+>>> +	IOMMU_INV_GRANU_PASID_SEL,
+>>> +	IOMMU_INV_GRANU_PAGE_PASID,
+>>> +	IOMMU_INV_NR_GRANU,
+>>> +};
+>>> +
+>>> +/**
+>>> + * enum iommu_inv_type - Generic translation cache types for invalidation
+>>> + *
+>>> + * @IOMMU_INV_TYPE_DTLB:	device IOTLB
+>>> + * @IOMMU_INV_TYPE_TLB:		IOMMU paging structure cache
+>>> + * @IOMMU_INV_TYPE_PASID:	PASID cache
+>>> + * Invalidation requests sent to IOMMU for a given device need to indicate
+>>> + * which type of translation cache to be operated on. Combined with enum
+>>> + * iommu_inv_granularity, model specific driver can do a simple lookup to
+>>> + * convert from generic to model specific value.
+>>> + */
+>>> +enum iommu_inv_type {
+>>> +	IOMMU_INV_TYPE_DTLB,
+>>> +	IOMMU_INV_TYPE_TLB,
+>>> +	IOMMU_INV_TYPE_PASID,
+>>> +	IOMMU_INV_NR_TYPE
+>>> +};
+>>> +
+>>> +/**
+>>> + * Translation cache invalidation header that contains mandatory meta data.
+>>> + * @version:	info format version, expecting future extesions
+>>> + * @type:	type of translation cache to be invalidated
+>>> + */
+>>> +struct iommu_cache_invalidate_hdr {
+>>> +	__u32 version;
+>>> +#define TLB_INV_HDR_VERSION_1 1
+>>> +	enum iommu_inv_type type;
+>>> +};
+>>> +
+>>> +/**
+>>> + * Translation cache invalidation information, contains generic IOMMU
+>>> + * data which can be parsed based on model ID by model specific drivers.
+>>> + * Since the invalidation of second level page tables are included in the
+>>> + * unmap operation, this info is only applicable to the first level
+>>> + * translation caches, i.e. DMA request with PASID.
+>>> + *
+>>> + * @granularity:	requested invalidation granularity, type dependent
+>>> + * @size:		2^size of 4K pages, 0 for 4k, 9 for 2MB, etc.
+>>
+>> Why is this a 4K page centric interface?
+> This matches the vt-d Address Mask (AM) field of the IOTLB Invalidate
+> Descriptor. We can pass a log2size instead.
+>>
+>>> + * @nr_pages:		number of pages to invalidate
+>>> + * @pasid:		processor address space ID value per PCI spec.
+>>> + * @arch_id:		architecture dependent id characterizing a context
+>>> + *			and tagging the caches, ie. domain Identfier on VTD,
+>>> + *			asid on ARM SMMU
+>>> + * @addr:		page address to be invalidated
+>>> + * @flags		IOMMU_INVALIDATE_ADDR_LEAF: leaf paging entries
+>>> + *			IOMMU_INVALIDATE_GLOBAL_PAGE: global pages
+>>
+>> Shouldn't some of these be tied the the granularity of the
+>> invalidation?  It seems like this should be more similar to
+>> iommu_pasid_table_config where the granularity of the invalidation
+>> defines which entry within a union at the end of the structure is valid
+>> and populated.  Otherwise we have fields that don't make sense for
+>> certain invalidations.
+> 
+> I am a little bit embarrassed here as this API version is the outcome of
+> long discussions held by Jacob, jean-Philippe and many others. I don't
+> want to hijack that work as I am "simply" reusing this API. Nevertheless
+> I am willing to help on this. So following your recommendation above I
+> dare to propose an updated API:
 
-diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
-index 225b0b8..8b41853 100644
---- a/drivers/rtc/Kconfig
-+++ b/drivers/rtc/Kconfig
-@@ -1576,10 +1576,10 @@ config RTC_DRV_MPC5121
- 	  will be called rtc-mpc5121.
- 
- config RTC_DRV_JZ4740
--	tristate "Ingenic JZ4740 SoC"
-+	tristate "Ingenic XBurst SoC"
- 	depends on MIPS || COMPILE_TEST
- 	help
--	  If you say yes here you get support for the Ingenic JZ47xx SoCs RTC
-+	  If you say yes here you get support for the Ingenic XBurst SoCs RTC
- 	  controllers.
- 
- 	  This driver can also be built as a module. If so, the module
-diff --git a/drivers/rtc/rtc-jz4740.c b/drivers/rtc/rtc-jz4740.c
-index 0c7ae65..a262632 100644
---- a/drivers/rtc/rtc-jz4740.c
-+++ b/drivers/rtc/rtc-jz4740.c
-@@ -1,17 +1,8 @@
-+// SPDX-License-Identifier: GPL-2.0
- /*
-  *  Copyright (C) 2009-2010, Lars-Peter Clausen <lars@metafoo.de>
-  *  Copyright (C) 2010, Paul Cercueil <paul@crapouillou.net>
-- *	 JZ4740 SoC RTC driver
-- *
-- *  This program is free software; you can redistribute it and/or modify it
-- *  under  the terms of  the GNU General Public License as published by the
-- *  Free Software Foundation;  either version 2 of the License, or (at your
-- *  option) any later version.
-- *
-- *  You should have received a copy of the GNU General Public License along
-- *  with this program; if not, write to the Free Software Foundation, Inc.,
-- *  675 Mass Ave, Cambridge, MA 02139, USA.
-- *
-+ *	Ingenic XBurst platform RTC support
-  */
- 
- #include <linux/clk.h>
-@@ -450,5 +441,5 @@ module_platform_driver(jz4740_rtc_driver);
- 
- MODULE_AUTHOR("Lars-Peter Clausen <lars@metafoo.de>");
- MODULE_LICENSE("GPL");
--MODULE_DESCRIPTION("RTC driver for the JZ4740 SoC\n");
-+MODULE_DESCRIPTION("RTC driver for Ingenic XBurst platform\n");
- MODULE_ALIAS("platform:jz4740-rtc");
--- 
-2.7.4
+Discussing this again is completely fine by me. I have some concerns
+with this proposal though, some of which apply to our previous versions
+as well.
 
+> struct iommu_device_iotlb_inv_info {
+>         __u32   version;
+> #define IOMMU_DEV_IOTLB_INV_GLOBAL   0
+> #define IOMMU_DEV_IOTLB_INV_SOURCEID (1 << 0)
+> #define IOMMU_DEV_IOTLB_INV_PASID    (1 << 1)
+>         __u8    granularity;
+>         __u64   addr;
+>         __u8    log2size;
+>         __u64   sourceid;
+>         __u64   pasid;
+>         __u8    padding[2];
+> };
+> 
+> struct iommu_iotlb_inv_info {
+>         __u32   version;
+> #define IOMMU_IOTLB_INV_GLOBAL  0
+
+Using "global" for granularity=0 will be confusing, let's call this
+"domain" instead. In the SMMU and ATS specifications (and I think VT-d
+as well), the global flag is used to invalidate VA ranges that are
+cached for all PASIDs. In the Arm architecture these TLB entries are
+created from PTE entries without the "nG" bit. So "global" usually means
+granularity=IOMMU_IOTLB_INV_PAGE.
+
+> #define IOMMU_IOTLB_INV_ARCHID  (1 << 0)
+> #define IOMMU_IOTLB_INV_PASID   (1 << 1)
+> #define IOMMU_IOTLB_INV_PAGE    (1 << 2)
+
+We might as well call this bit "INV_ADDR" to make it clear that it
+describes the validity of field @addr.
+
+>         __u8    granularity;
+>         __u64   archid;
+>         __u64   pasid;
+>         __u64   addr;
+>         __u8    log2size;
+>         __u8    padding[2];
+> };
+> 
+> struct iommu_pasid_inv_info {
+>         __u32   version;
+> #define IOMMU_PASID_INV_GLOBAL     0
+> #define IOMMU_PASID_INV_ARCHID     (1 << 0)
+> #define IOMMU_PASID_INV_PASID      (1 << 1)
+> #define IOMMU_PASID_INV_SOURCEID   (1 << 2)
+>         __u8    granularity;
+>         __u64   archid;
+>         __u64   pasid;
+>         __u64   sourceid;
+>         __u8    padding[3];
+> };
+> /**
+>  * Translation cache invalidation information, contains generic IOMMU
+>  * data which can be parsed based on model ID by model specific drivers.
+>  * Since the invalidation of second level page tables are included in
+>  * the unmap operation, this info is only applicable to the first level
+>  * translation caches, i.e. DMA request with PASID.
+>  *
+>  */
+> struct iommu_cache_invalidate_info {
+> #define IOMMU_CACHE_INVALIDATE_INFO_VERSION_1 1
+>         __u32 version;
+> #define IOMMU_INV_TYPE_IOTLB        1 /* IOMMU paging structure cache */
+> #define IOMMU_INV_TYPE_DEV_IOTLB    2 /* Device IOTLB */
+> #define IOMMU_INV_TYPE_PASID        3 /* PASID cache */
+>         __u8 type;
+>         union {
+>                 struct iommu_iotlb_invalidate_info iotlb_inv_info;
+>                 struct iommu_dev_iotlb_invalidate_info dev_iotlb_inv_info;
+>                 struct iommu_pasid_inv_info pasid_inv_info;
+>         };
+> };
+
+Although I find the new structure and field names clearer in general, I
+believe we're losing something by splitting structures this way.
+
+The one concept I'd like to keep is the possibility to multiplex ATC and
+IOTLB invalidation. That is, when unmapping a range, the guest (using a
+pvIOMMU) shouldn't need to send both iotlb_inv and device_iotlb_inv to
+the host - it's completely redundant. Instead the host IOMMU driver
+should receive a single invalidation packet, and send both TLB and ATC
+invalidation to the hardware.
+
+So in my opinion the invalidation type needs to be a bitfield: userspace
+can select either TYPE_IOTLB, TYPE_DEV_IOTLB, or both. And if type is a
+bitfield, the content that follows has to be a single structure.
+
+Same for the PASID cache: when the guest changes the config for a PASID,
+it shouldn't have to also send TLB and ATC invalidations. A single
+packet should be enough. However config changes won't be a fast path, so
+optimizing the API is less important here.
+
+We could say that IOMMU_INV_TYPE_IOTLB implies IOMMU_INV_TYPE_DEV_IOTLB,
+and that IOMMU_INV_TYPE_PASID implies the others. In fact I think we do,
+in this patch. But that in turn would be suboptimal with vSMMU and other
+emulated solutions, which will receive both TLB and ATC invalidation
+from the guest, and have to signal both separately to the kernel. So for
+@type, a bitfield would be best.
+
+If we want to split the structure, I think splitting by @granularity
+might make more sense. It might require at least 4 structures:
+* domain invalidation:		granule = 0
+* pasid invalidation:		granule = pasid|archid
+* global va invalidation:	granule = addr
+* va invalidation		granule = pasid|archid|addr
+
+> At the moment I ignore the leaf bool parameter used on ARM for PASID
+> invalidation and TLB invalidation. Maybe we can just invalidate more
+> that the leaf cache structures at the moment?
+
+Sure, though we could add a flags field and leave it unused for now,
+which is easier to extend than introducing a new version. I wonder if
+Intel's Invalidation Hint (IH) does the same as Arm's leaf flag?
+
+> on ARM the PASID table can be invalidated per streamid. On vt-d, as far
+> as I understand the sourceid does not tag the entries.
+
+I don't think sourceid is the right thing to use in this interface. The
+device ID (streamid or sourceid) that the IOMMU sees in DMA transactions
+isn't really made visible to userspace. And for mdev it doesn't really
+exist, VFIO will have to pass the parent device's handle to IOMMU.
+
+To userspace a device is identified by the fd provided by VFIO. So if we
+do want to have device-scope in the invalidation (as opposed to
+the current domain-scope) I think userspace needs to provide a device fd
+to VFIO (outside the structures defined here), and then VFIO would pass
+a struct device to iommu_cache_inval().
+
+Thanks,
+Jean
+
+>>
+>>> + *
+>>> + */
+>>> +struct iommu_cache_invalidate_info {
+>>> +	struct iommu_cache_invalidate_hdr	hdr;
+>>> +	enum iommu_inv_granularity	granularity;
+>>
+>> A separate structure for hdr seems a little pointless.
+> removed
+>>
+>>> +	__u32		flags;
+>>> +#define IOMMU_INVALIDATE_ADDR_LEAF	(1 << 0)
+>>> +#define IOMMU_INVALIDATE_GLOBAL_PAGE	(1 << 1)
+>>> +	__u8		size;
+>>
+>> Really need some padding or packing here for any hope of having
+>> consistency with userspace.
+>>
+>>> +	__u64		nr_pages;
+>>> +	__u32		pasid;
+>>
+>> Sub-optimal ordering for packing/padding.  Thanks,
+> I introduced some padding above. Is that OK?
+> 
+> Again if this introduces more noise than it helps I will simply rely on
+> initial contributors for the respin of their series according to your
+> comments. Also we if can't define generic enough structures for ARM and x86
+> 
+> Thanks
+> 
+> Eric
+>>
+>> Alex
+>>
+>>> +	__u64		arch_id;
+>>> +	__u64		addr;
+>>> +};
+>>>  #endif /* _UAPI_IOMMU_H */
+>>
+> _______________________________________________
+> iommu mailing list
+> iommu@lists.linux-foundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/iommu
+> 
 
