@@ -2,153 +2,113 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9980AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:44:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 52098C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:44:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E602085B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:44:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07F202171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:44:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=Mellanox.com header.i=@Mellanox.com header.b="BlL+bhF1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728060AbfA1SoG (ORCPT
+        id S1727331AbfA1So3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:44:06 -0500
-Received: from gateway36.websitewelcome.com ([50.116.126.2]:26865 "EHLO
-        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727052AbfA1SoE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:44:04 -0500
-X-Greylist: delayed 1243 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Jan 2019 13:44:04 EST
-Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
-        by gateway36.websitewelcome.com (Postfix) with ESMTP id 3E9454013C5B9
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:36:34 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id oBZ1g1dEddnCeoBZ1g3hPW; Mon, 28 Jan 2019 12:23:19 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=42676 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1goBZ0-001QCj-0e; Mon, 28 Jan 2019 12:23:19 -0600
-Subject: Re: [PATCH] drm/amd/powerplay: Fix missing break in switch
-To:     Alex Deucher <alexdeucher@gmail.com>
-Cc:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
-        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
-        David Airlie <airlied@linux.ie>,
-        Daniel Vetter <daniel@ffwll.ch>,
-        Kees Cook <keescook@chromium.org>,
-        Maling list - DRI developers 
-        <dri-devel@lists.freedesktop.org>,
-        amd-gfx list <amd-gfx@lists.freedesktop.org>,
-        LKML <linux-kernel@vger.kernel.org>
-References: <20190125215533.GA4878@embeddedor>
- <CADnq5_Nx1yHoANDaGs50AF5VQXWCUD8PU1YoyHAmGetHxoqiPA@mail.gmail.com>
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <10cbe6a3-f06f-7443-4f99-cdc389100462@embeddedor.com>
-Date:   Mon, 28 Jan 2019 12:23:16 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CADnq5_Nx1yHoANDaGs50AF5VQXWCUD8PU1YoyHAmGetHxoqiPA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
+        Mon, 28 Jan 2019 13:44:29 -0500
+Received: from mail-eopbgr130085.outbound.protection.outlook.com ([40.107.13.85]:31488
+        "EHLO EUR01-HE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726667AbfA1So2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 13:44:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Mellanox.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YOoW34ZUW/HkZcyNY+XifJOjMMIhWScdWSUcO4yblJQ=;
+ b=BlL+bhF15M9F1+/C1Qx4qYxpeS1dg/w7mtWVhRkX5n9Tg8kvfTTc5c7Cv+l6jnjOYGS0XsHh6gGS4GA8vaW/aGvPMqa3dBaSUuVGZY64deT/6iEs/Zw0JiPJ2em9UHY8GYP9IUz7tPZgeJUE16lENXki+nxCO4aVFlbiX7aDHa0=
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com (20.179.42.80) by
+ DBBPR05MB6505.eurprd05.prod.outlook.com (20.179.43.83) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.19; Mon, 28 Jan 2019 18:44:24 +0000
+Received: from DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::60b3:74a3:818c:7a0d]) by DBBPR05MB6426.eurprd05.prod.outlook.com
+ ([fe80::60b3:74a3:818c:7a0d%3]) with mapi id 15.20.1558.023; Mon, 28 Jan 2019
+ 18:44:24 +0000
+From:   Jason Gunthorpe <jgg@mellanox.com>
+To:     Christoph Hellwig <hch@infradead.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        NeilBrown <neilb@suse.com>, Jiri Kosina <trivial@kernel.org>
+Subject: Re: [PATCH trivial] kernel.h: Make container_of_safe type safe
+Thread-Topic: [PATCH trivial] kernel.h: Make container_of_safe type safe
+Thread-Index: AQHUtCcVBuKr2t5aL0ypcH5AlR+idqXEtmAAgABUQ4A=
+Date:   Mon, 28 Jan 2019 18:44:24 +0000
+Message-ID: <20190128184417.GM25120@mellanox.com>
+References: <20190124205451.GA19634@ziepe.ca>
+ <20190128134242.GA10951@infradead.org>
+In-Reply-To: <20190128134242.GA10951@infradead.org>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1goBZ0-001QCj-0e
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:42676
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 24
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR12CA0056.namprd12.prod.outlook.com
+ (2603:10b6:300:103::18) To DBBPR05MB6426.eurprd05.prod.outlook.com
+ (2603:10a6:10:c9::16)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jgg@mellanox.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [174.3.196.123]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DBBPR05MB6505;6:0Srr9sUHHOMrfEzhvszfUpLBgmQyD42b53rarlGAw/nbwE///Owlxp3P/VcIe2Tlwn7ZFpreyTUek5QhhS8ilVjW7Y8fubt+IroIgb4JWk9TaKFXKzNxqQ4teX7qUc8Yg7defePNMnD/JG1HWYq5cw+OuJImXUAHSDWvynK1zQVfjDXEehlqHfM1inzpjllEbeNIQgT7myAjs5lm28YLFm85xnfnKBUqc1bCfHQ5rfqrD8o+jPbc9RFAWLLYxpiQW0ZRBwy25q9Lp7Rm3amqElpK6f7k9uyJ6OkcBQs1QBvIndhM5GraWG7nlGY9WEnnncET7jX7uLEoXkneelExTiKA67TMxVgJWT1H62q+DgqK53xgR1Exp3O09co4T6WmrBkpP6RAGBwdHRnrfNAjCet4l3VlFpPbkmvGiCi0G2L0bxjcJZOQioua8sthVH7dB1vJu2GaYGcblQQM7PYYpg==;5:s2tisDmANF6WQ0nu5RsEhvMqptozsVbwW9wL+H3vuIBk28OJfTRG87zBGwEC5bNYCCBr1SleLkppr/Gpea4TuYdz8bt/cfm+UZKnnL391Gv4Goye7aohkw/loYPH8/3t/oujMX2u0mi6tzz1Af/FQ+dhP/OE1/mZVZALZ49zCTMc87YIMKoKzrTUdTyIYfcoLIkH3ARuiIPrjKheJORsNQ==;7:0XHLNj6CjxTNI0adG5vCXIFp2XvknQ2k1VZ6/5lvT9+AFe+n5E73Ve6zF2JEShnZxgZXV3xmBd3+/Pf7pWPi71/45yy4OIpfb4oANqwv7e+68xVVm9gGDhibHUEsEuXG53LWVDLt51RgqoQqzeQY7A==
+x-ms-office365-filtering-correlation-id: fbba659a-c0ca-4c4d-0e11-08d685509fe2
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:DBBPR05MB6505;
+x-ms-traffictypediagnostic: DBBPR05MB6505:
+x-microsoft-antispam-prvs: <DBBPR05MB6505CACBD4F0F1B271383093CF960@DBBPR05MB6505.eurprd05.prod.outlook.com>
+x-forefront-prvs: 0931CB1479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(366004)(39860400002)(136003)(396003)(199004)(189003)(446003)(2906002)(316002)(2616005)(186003)(6246003)(66066001)(966005)(11346002)(71200400001)(71190400001)(476003)(4744005)(25786009)(97736004)(486006)(26005)(6916009)(478600001)(102836004)(4326008)(36756003)(99286004)(14454004)(8676002)(106356001)(229853002)(6512007)(33656002)(6306002)(305945005)(6436002)(68736007)(86362001)(54906003)(7736002)(81166006)(6486002)(81156014)(76176011)(8936002)(6506007)(6116002)(3846002)(52116002)(105586002)(1076003)(53936002)(256004)(386003);DIR:OUT;SFP:1101;SCL:1;SRVR:DBBPR05MB6505;H:DBBPR05MB6426.eurprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: mellanox.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: kt1cy7ELSWr8Vt1XcibTyzL7aIBUActYcKKVo7zkagZ8S5G9LecYfJCaTuOoZAMhNa5F2cSkriYPXmkJqiezv7ASQ0pER2LUMU3CEtYcLrR28MkN4Z3jNTmeEGOgT5V2J7jGP6TMtwhnGQm9M/RIpTQ/q/t01cCIvOeSj7z4B/HBChJp6mpLQ3q9tdp4IOkefu7lUbG28tF+ZiEPRGrneRPSMwp3rXpz96pqHCEl1c3dFyP7pvafmEzUE0zGGiNZvpvzUbDmZhSlkxDtgJHgTG7eJToRCBra0xlGPl4ZDcrR3DkftQNp9Sdf0WiEvVuEgm0xG0LrYI4Bhc7r4HERKF0aVnIIoXYMczYN7PMQksK7E9XQgCSoPHp48kppPen3CN/bJarwSahbDtqkHo63Ga9jvHPqN7pQkt7IuREEgUI=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <32F43EE85B48E244B4AB0C28D899E477@eurprd05.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: Mellanox.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: fbba659a-c0ca-4c4d-0e11-08d685509fe2
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 18:44:24.5773
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: a652971c-7d2e-4d9b-a6a4-d149256f461b
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR05MB6505
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 28, 2019 at 05:42:42AM -0800, Christoph Hellwig wrote:
+> On Thu, Jan 24, 2019 at 08:55:05PM +0000, Jason Gunthorpe wrote:
+> > The final ternary expression is given void * and type * as arguments, s=
+o
+> > the resulting type of the macro ends up being void *.
+> >=20
+> > container_of returns a type which maches the argument, this provides ty=
+pe
+> > safety and allows the expression to be immediately used as the target
+> > type.
+> >=20
+> > Explicitly cast ERR_CAST() to get the correct type.
+>=20
+> I think we should just kill off container_of_safe - it has no user
+> in the tree, is grossly misnamed and not really all that useful to start
+> with.
 
+I see it open coded from time to time, here someone sent a patch
+open-coding it yesterday (with the same bug even):
 
-On 1/28/19 10:19 AM, Alex Deucher wrote:
-> On Fri, Jan 25, 2019 at 5:31 PM Gustavo A. R. Silva
-> <gustavo@embeddedor.com> wrote:
->>
->> Add missing break statement in order to prevent the code from falling
->> through to the default case.
->>
->> The resoning for this is that pclk_vol_table is an automatic variable.
->> So, it makes no sense to update it just before falling through to the
->> default case and return -EINVAL.
->>
->> This bug was found thanks to the ongoing efforts to enabling
->> -Wimplicit-fallthrough.
->>
->> Fixes: cd70f3d6e3fa ("drm/amd/powerplay: PP/DAL interface changes for dynamic clock switch")
->> Cc: stable@vger.kernel.org
->> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-> 
-> Applied.  Thanks!
-> 
+https://patchwork.kernel.org/patch/10783535/
 
-Great. :)
+I noticed it didn't work right because I had a use for it..
 
-Thanks, Alex.
---
-Gustavo
+Jason
