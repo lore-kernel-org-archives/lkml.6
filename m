@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50F96C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD5EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1195E2171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD85D20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692851;
-	bh=F94zqeT9EReT6TR2XWPDHPvFwDySPNmZN6oFjLmP03M=;
+	s=default; t=1548692855;
+	bh=FQ+DFjdnQRjJcPVArBk30OJHovsD3c2fwh/NYq+8dVo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pZKRptn8PkYjP3XZudhVpaSivEKt6xb0eDTf8/HVW8Moy7aHOw/65NYfB3TyGrYTR
-	 AkeC1/ZPwZZ/3oNEOto4lhlScCxThyWRcYWDvzuiiCv3ROycXJ7lNDu1CK1ApoQmU5
-	 qWn+h3V3YvjbVP+m/idUez2VwCQU8drn9liQtVX4=
+	b=A+g45HgSMLZ7AnUxaPqvlTeUg9T75aE+kDQ487sSbkT5se/tCuZ/SmOg1gOQZBkpM
+	 /SXD0oIv0B2alR/ZI1HpppPSnqpSXaluj8Cv//ljRQ0IWYUQNpkTjXzQxiF6ImzKB9
+	 NSPvXK0tzOUKyLbKD3eK/7r2/MA/RcZvx+RZ48io=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390425AbfA1Q13 (ORCPT
+        id S2390432AbfA1Q1d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:27:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37462 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:27:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390406AbfA1Q1Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:27:25 -0500
+        id S2390423AbfA1Q13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:27:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AB0102147A;
-        Mon, 28 Jan 2019 16:27:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24A152171F;
+        Mon, 28 Jan 2019 16:27:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692844;
-        bh=F94zqeT9EReT6TR2XWPDHPvFwDySPNmZN6oFjLmP03M=;
+        s=default; t=1548692848;
+        bh=FQ+DFjdnQRjJcPVArBk30OJHovsD3c2fwh/NYq+8dVo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MzYdjsKYaum9c/yC9Y5C/UPz8ZEWMm1lZGIxDAlJCvLuxSseLxNr2HToDc+Pw06b0
-         p0Z/8V0xYDwepUclwGrdwIqBmPJ5M8YlCL2auUvmpZcYV4KcwO6BvXosvlQGyjwXrB
-         qZ/oc+nmQTDjSjQ0hjLEOt6OsT0rvjFs28r4gDnM=
+        b=IeiXNNPPtyVuOkayM61+wCPiG/Gj4Usi4s1fVB1c9wzv4yIP+ytF+MKRKf452sHoH
+         sBMMOVNO50KzK+wWXjt249R3HTYIB/ZqZXySNQdwAl1bMEjRckIFHPonYHXZLnAK4w
+         BBwoC+dUsiV5qf3/YWSO5lZy5FLHAFFvyB3y4Mmc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sasha Levin <sashal@kernel.org>, kvmarm@lists.cs.columbia.edu
-Subject: [PATCH AUTOSEL 3.18 35/61] arm64: KVM: Skip MMIO insn after emulation
-Date:   Mon, 28 Jan 2019 11:25:57 -0500
-Message-Id: <20190128162623.59854-35-sashal@kernel.org>
+Cc:     Roland Kammerer <roland.kammerer@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 38/61] drbd: narrow rcu_read_lock in drbd_sync_handshake
+Date:   Mon, 28 Jan 2019 11:26:00 -0500
+Message-Id: <20190128162623.59854-38-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,60 +58,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Roland Kammerer <roland.kammerer@linbit.com>
 
-[ Upstream commit 0d640732dbebed0f10f18526de21652931f0b2f2 ]
+[ Upstream commit d29e89e34952a9ad02c77109c71a80043544296e ]
 
-When we emulate an MMIO instruction, we advance the CPU state within
-decode_hsr(), before emulating the instruction effects.
+So far there was the possibility that we called
+genlmsg_new(GFP_NOIO)/mutex_lock() while holding an rcu_read_lock().
 
-Having this logic in decode_hsr() is opaque, and advancing the state
-before emulation is problematic. It gets in the way of applying
-consistent single-step logic, and it prevents us from being able to fail
-an MMIO instruction with a synchronous exception.
+This included cases like:
 
-Clean this up by only advancing the CPU state *after* the effects of the
-instruction are emulated.
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      drbd_bcast_event
+        genlmsg_new(GFP_NOIO) --> may sleep
 
-Cc: Peter Maydell <peter.maydell@linaro.org>
-Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      notify_helper
+        genlmsg_new(GFP_NOIO) --> may sleep
+
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      notify_helper
+        mutex_lock --> may sleep
+
+While using GFP_ATOMIC whould have been possible in the first two cases,
+the real fix is to narrow the rcu_read_lock.
+
+Reported-by: Jia-Ju Bai <baijiaju1990@163.com>
+Reviewed-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kvm/mmio.c | 11 ++++++-----
+ drivers/block/drbd/drbd_receiver.c | 11 ++++++-----
  1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm/kvm/mmio.c b/arch/arm/kvm/mmio.c
-index 4cb5a93182e9..c215bb4423ac 100644
---- a/arch/arm/kvm/mmio.c
-+++ b/arch/arm/kvm/mmio.c
-@@ -118,6 +118,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
- 		*vcpu_reg(vcpu, vcpu->arch.mmio_decode.rt) = data;
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 6960fb064731..4f18ec5198fb 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -3125,7 +3125,7 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 	enum drbd_conns rv = C_MASK;
+ 	enum drbd_disk_state mydisk;
+ 	struct net_conf *nc;
+-	int hg, rule_nr, rr_conflict, tentative;
++	int hg, rule_nr, rr_conflict, tentative, always_asbp;
+ 
+ 	mydisk = device->state.disk;
+ 	if (mydisk == D_NEGOTIATING)
+@@ -3167,8 +3167,12 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 
+ 	rcu_read_lock();
+ 	nc = rcu_dereference(peer_device->connection->net_conf);
++	always_asbp = nc->always_asbp;
++	rr_conflict = nc->rr_conflict;
++	tentative = nc->tentative;
++	rcu_read_unlock();
+ 
+-	if (hg == 100 || (hg == -100 && nc->always_asbp)) {
++	if (hg == 100 || (hg == -100 && always_asbp)) {
+ 		int pcount = (device->state.role == R_PRIMARY)
+ 			   + (peer_role == R_PRIMARY);
+ 		int forced = (hg == -100);
+@@ -3207,9 +3211,6 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 			     "Sync from %s node\n",
+ 			     (hg < 0) ? "peer" : "this");
  	}
+-	rr_conflict = nc->rr_conflict;
+-	tentative = nc->tentative;
+-	rcu_read_unlock();
  
-+	/*
-+	 * The MMIO instruction is emulated and should not be re-executed
-+	 * in the guest.
-+	 */
-+	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
-+
- 	return 0;
- }
- 
-@@ -154,11 +160,6 @@ static int decode_hsr(struct kvm_vcpu *vcpu, phys_addr_t fault_ipa,
- 	vcpu->arch.mmio_decode.sign_extend = sign_extend;
- 	vcpu->arch.mmio_decode.rt = rt;
- 
--	/*
--	 * The MMIO instruction is emulated and should not be re-executed
--	 * in the guest.
--	 */
--	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
- 	return 0;
- }
- 
+ 	if (hg == -100) {
+ 		/* FIXME this log message is not correct if we end up here
 -- 
 2.19.1
 
