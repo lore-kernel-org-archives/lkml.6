@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4175C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98444C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A8FB2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6432320881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:48:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697717;
-	bh=7i13Zz+9iuHQLVh439EvUq7Ce1S5bG7zfXTU7lEvDIc=;
+	s=default; t=1548697722;
+	bh=d/Bf4LUC8RVEHryUovEHlCKsUc+6pTOP4DFtJngc3P0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zDYrZpikeE5ag5uK5XHh74nZsPV/hR+JUwIjph0I6WSbNEOuXOAsayibKyJKcThxT
-	 sIl58eJAd5gGb9PnBPyuHiEaoKn6PeOkG2OSOhjlRwYQjnzq8Q0RqG/BUzGc3pB8U1
-	 oYp7iYgsRK4xI1efT1fVyNl4fCP4HSPNoFXE+A94=
+	b=poWVbOAOgraEhLgcL+DQgIP6GGOhepLTA2N2RGDgVBAjZpxVhUrmfbKkucnbdAC29
+	 c77o8Wrhr52PtyoNA577lN0NT0zYmAboL2Pb7L3Uw70w3OFHKPjYDjxa9mV0ZjYy5p
+	 2tT6LQF/fLhQxZ6dZGBgczqTpJ3ee2BjjPgHwfj4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727789AbfA1Pp3 (ORCPT
+        id S1728079AbfA1Rsk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:45:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58768 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:48:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58850 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727742AbfA1PpY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:45:24 -0500
+        id S1727781AbfA1Pp2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:45:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 411DA21741;
-        Mon, 28 Jan 2019 15:45:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7C062177B;
+        Mon, 28 Jan 2019 15:45:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690323;
-        bh=7i13Zz+9iuHQLVh439EvUq7Ce1S5bG7zfXTU7lEvDIc=;
+        s=default; t=1548690328;
+        bh=d/Bf4LUC8RVEHryUovEHlCKsUc+6pTOP4DFtJngc3P0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=j27Zbm6l+lyNQTfCQTrI1MYh7zr9fYlBIb1ioWBtFMlb10wpshnvhVlaGnd41uMJe
-         IjFFdHizNLi1ieYzmO1Lmo2LpyckxP73vTnLM5GUws2JqrlEp8DYQaSwR0GBVQ7Z+e
-         hoO7DjYy5P97cin216Ugp8PrERzccmJy8iRJJe2s=
+        b=Q6+egxLWLxetWGdHHRWe7i231dj9mGPpY52iShfdoko0yCGvrHrMxZ/uORojQeD/c
+         LLAp1kL9nADBr++4MijmBJkXADJ3Rr+e45HCx/JeAw6JY8fA5KMmK4qTOwqYOlVunY
+         pKJrCaZhSpeto5cccLIYLdyad6Yd7jbDIa5ZWVTY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Renato Lui Geh <renatogeh@gmail.com>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.20 051/304] staging: iio: ad7780: update voltage on read
-Date:   Mon, 28 Jan 2019 10:39:28 -0500
-Message-Id: <20190128154341.47195-51-sashal@kernel.org>
+Cc:     Damian Kos <dkos@cadence.com>, Heiko Stuebner <heiko@sntech.de>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.20 053/304] drm/rockchip: fix for mailbox read size
+Date:   Mon, 28 Jan 2019 10:39:30 -0500
+Message-Id: <20190128154341.47195-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,44 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Renato Lui Geh <renatogeh@gmail.com>
+From: Damian Kos <dkos@cadence.com>
 
-[ Upstream commit 336650c785b62c3bea7c8cf6061c933a90241f67 ]
+[ Upstream commit fa68d4f8476bea4cdf441062b614b41bb85ef1da ]
 
-The ad7780 driver previously did not read the correct device output, as
-it read an outdated value set at initialization. It now updates its
-voltage on read.
+Some of the functions (like cdn_dp_dpcd_read, cdn_dp_get_edid_block)
+allow to read 64KiB, but the cdn_dp_mailbox_read_receive, that is
+used by them, can read only up to 255 bytes at once. Normally, it's
+not a big issue as DPCD or EDID reads won't (hopefully) exceed that
+value.
+The real issue here is the revocation list read during the HDCP
+authentication process. (problematic use case:
+https://chromium.googlesource.com/chromiumos/third_party/kernel/+/chromeos-4.4/drivers/gpu/drm/rockchip/cdn-dp-reg.c#1152)
+The list can reach 127*5+4 bytes (num devs * 5 bytes per ID/Bksv +
+4 bytes of an additional info).
+In other words - CTSes with HDCP Repeater won't pass without this
+fix. Oh, and the driver will most likely stop working (best case
+scenario).
 
-Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
-Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Signed-off-by: Damian Kos <dkos@cadence.com>
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Link: https://patchwork.freedesktop.org/patch/msgid/1541518625-25984-1-git-send-email-dkos@cadence.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/adc/ad7780.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/rockchip/cdn-dp-reg.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
-index b67412db0318..c7cb05cedbbc 100644
---- a/drivers/staging/iio/adc/ad7780.c
-+++ b/drivers/staging/iio/adc/ad7780.c
-@@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
- 			   long m)
- {
- 	struct ad7780_state *st = iio_priv(indio_dev);
-+	int voltage_uv;
+diff --git a/drivers/gpu/drm/rockchip/cdn-dp-reg.c b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+index 3105965fc260..5a485489a1e2 100644
+--- a/drivers/gpu/drm/rockchip/cdn-dp-reg.c
++++ b/drivers/gpu/drm/rockchip/cdn-dp-reg.c
+@@ -147,7 +147,7 @@ static int cdn_dp_mailbox_validate_receive(struct cdn_dp_device *dp,
+ }
  
- 	switch (m) {
- 	case IIO_CHAN_INFO_RAW:
- 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
- 	case IIO_CHAN_INFO_SCALE:
--		*val = st->int_vref_mv * st->gain;
-+		voltage_uv = regulator_get_voltage(st->reg);
-+		if (voltage_uv < 0)
-+			return voltage_uv;
-+		*val = (voltage_uv / 1000) * st->gain;
- 		*val2 = chan->scan_type.realbits - 1;
- 		return IIO_VAL_FRACTIONAL_LOG2;
- 	case IIO_CHAN_INFO_OFFSET:
+ static int cdn_dp_mailbox_read_receive(struct cdn_dp_device *dp,
+-				       u8 *buff, u8 buff_size)
++				       u8 *buff, u16 buff_size)
+ {
+ 	u32 i;
+ 	int ret;
 -- 
 2.19.1
 
