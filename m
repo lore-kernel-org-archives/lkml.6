@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0ADC2C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24733C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C68D020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9B8520663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:32:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693121;
-	bh=OTZm5aMW15dmqHugRanfQjNHHFD0PtBOyhhvtZkvYTA=;
+	s=default; t=1548693128;
+	bh=Vj/IySeZbjcDTEuO9HzlyjlItraICGr0kB8gsrD5YC0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SzwNUo9q5NV/MSdNEKND5ta7ISGM1TQ/6UR7UgeMqF2SX3krVpD3hstmt2PXituIg
-	 5FHT5ntnnhRoM7udDiKee5qtC4ADyIu3Sbe+2ZgKDt+s7szcENh5pCzOMgExUfhhPp
-	 4Lc3QDkcH7PRWqcUHRtB3jQRiGxmy6SsGvdz0XL8=
+	b=zlW1m9qYvKgWxj82YS7g+chAV6Ya1hJq7EIS2sdqFUbGqSCsWJLLxLIj0PJAkXX5K
+	 3YRMB6LIFmU+T+OO0ovcS7kiNzh2MS8JAl4J0Dx7iMLe08O962EcIdgChp+iQgJ6Gq
+	 fWEiZAdM4xogt+DUjxMNfhbu5/cxU6vGhbgsFeCs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390610AbfA1QcA (ORCPT
+        id S2390318AbfA1Q1B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:32:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36770 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:27:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36582 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389396AbfA1Q1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:27:02 -0500
+        id S2388628AbfA1Q05 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6C5AD2084A;
-        Mon, 28 Jan 2019 16:27:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3EF1C2084A;
+        Mon, 28 Jan 2019 16:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692821;
-        bh=OTZm5aMW15dmqHugRanfQjNHHFD0PtBOyhhvtZkvYTA=;
+        s=default; t=1548692815;
+        bh=Vj/IySeZbjcDTEuO9HzlyjlItraICGr0kB8gsrD5YC0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GetdlWnuOBUCv9q84s24ZpuguEb5/AoPcbwSZpPvkfiHD21GaVhqx9bH0vrw7szQp
-         37TRlr3HU4LG1cNNfOuuMmPEnQK7bgk/47SzmPsNdWipAfIduGwY4VZfPgad2QtkKs
-         ZPMxOrfcNUA3+CimYoPL+M2M56Jl1QOgwhXhNhaw=
+        b=T+9pMqQfn4bdkn6+Etxy5w8MlO9BSmBT/oYbuQEdl0My3Uha7eIP3xSdVMAw6Xmu1
+         16eC0UdXZ7x8wp86HuknsuifCyairnDtc3V7qd440xHPVcK+M3xwc+n/acmXzx1yPz
+         aznGbtLnI4J4WUN+hT4cLqEjr/q1QyEEhY5LaWpk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 22/61] usb: hub: delay hub autosuspend if USB3 port is still link training
-Date:   Mon, 28 Jan 2019 11:25:44 -0500
-Message-Id: <20190128162623.59854-22-sashal@kernel.org>
+Cc:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 19/61] ARM: mmp/mmp2: dt: enable the clock
+Date:   Mon, 28 Jan 2019 11:25:41 -0500
+Message-Id: <20190128162623.59854-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -58,49 +57,153 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Lubomir Rintel <lkundrak@v3.sk>
 
-[ Upstream commit e86108940e541febf35813402ff29fa6f4a9ac0b ]
+[ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
 
-When initializing a hub we want to give a USB3 port in link training
-the same debounce delay time before autosuspening the hub as already
-trained, connected enabled ports.
+The device-tree booted MMP2 needs to enable the timer clock, otherwise
+it would stop ticking when the boot finishes.
 
-USB3 ports won't reach the enabled state with "current connect status" and
-"connect status change" bits set until the USB3 link training finishes.
+It can also use the clock rate from the clk, the non-DT boards need to
+keep using the hardcoded rates.
 
-Catching the port in link training (polling) and adding the debounce delay
-prevents unnecessary failed attempts to autosuspend the hub.
-
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/hub.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm/mach-mmp/common.h |  2 +-
+ arch/arm/mach-mmp/mmp2.c   |  2 +-
+ arch/arm/mach-mmp/pxa168.c |  2 +-
+ arch/arm/mach-mmp/time.c   | 32 ++++++++++++++++++++------------
+ 4 files changed, 23 insertions(+), 15 deletions(-)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 19cc2c03906d..adf8dea1f6f3 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -1117,6 +1117,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
- 						   USB_PORT_FEAT_ENABLE);
- 		}
+diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
+index cf445bae6d77..69c7eec6d1e0 100644
+--- a/arch/arm/mach-mmp/common.h
++++ b/arch/arm/mach-mmp/common.h
+@@ -1,7 +1,7 @@
+ #include <linux/reboot.h>
+ #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
  
-+		/*
-+		 * Add debounce if USB3 link is in polling/link training state.
-+		 * Link will automatically transition to Enabled state after
-+		 * link training completes.
-+		 */
-+		if (hub_is_superspeed(hdev) &&
-+		    ((portstatus & USB_PORT_STAT_LINK_STATE) ==
-+						USB_SS_PORT_LS_POLLING))
-+			need_debounce_delay = true;
+-extern void timer_init(int irq);
++extern void timer_init(int irq, unsigned long rate);
+ 
+ extern void __init mmp_map_io(void);
+ extern void mmp_restart(enum reboot_mode, const char *);
+diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
+index a70b5530bd42..90a0d8114af2 100644
+--- a/arch/arm/mach-mmp/mmp2.c
++++ b/arch/arm/mach-mmp/mmp2.c
+@@ -133,7 +133,7 @@ void __init mmp2_timer_init(void)
+ 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
+ 	__raw_writel(clk_rst, APBC_TIMERS);
+ 
+-	timer_init(IRQ_MMP2_TIMER1);
++	timer_init(IRQ_MMP2_TIMER1, 6500000);
+ }
+ 
+ /* on-chip devices */
+diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
+index 144e997624c0..5a616db7f392 100644
+--- a/arch/arm/mach-mmp/pxa168.c
++++ b/arch/arm/mach-mmp/pxa168.c
+@@ -78,7 +78,7 @@ void __init pxa168_timer_init(void)
+ 	/* 3.25MHz, bus/functional clock enabled, release reset */
+ 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
+ 
+-	timer_init(IRQ_PXA168_TIMER1);
++	timer_init(IRQ_PXA168_TIMER1, 6500000);
+ }
+ 
+ void pxa168_clear_keypad_wakeup(void)
+diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
+index 2756351dbb35..b66ea443f154 100644
+--- a/arch/arm/mach-mmp/time.c
++++ b/arch/arm/mach-mmp/time.c
+@@ -22,6 +22,7 @@
+ #include <linux/kernel.h>
+ #include <linux/interrupt.h>
+ #include <linux/clockchips.h>
++#include <linux/clk.h>
+ 
+ #include <linux/io.h>
+ #include <linux/irq.h>
+@@ -39,12 +40,6 @@
+ 
+ #include "clock.h"
+ 
+-#ifdef CONFIG_CPU_MMP2
+-#define MMP_CLOCK_FREQ		6500000
+-#else
+-#define MMP_CLOCK_FREQ		3250000
+-#endif
+-
+ #define TIMERS_VIRT_BASE	TIMERS1_VIRT_BASE
+ 
+ #define MAX_DELTA		(0xfffffffe)
+@@ -197,19 +192,18 @@ static struct irqaction timer_irq = {
+ 	.dev_id		= &ckevt,
+ };
+ 
+-void __init timer_init(int irq)
++void __init timer_init(int irq, unsigned long rate)
+ {
+ 	timer_config();
+ 
+-	sched_clock_register(mmp_read_sched_clock, 32, MMP_CLOCK_FREQ);
++	sched_clock_register(mmp_read_sched_clock, 32, rate);
+ 
+ 	ckevt.cpumask = cpumask_of(0);
+ 
+ 	setup_irq(irq, &timer_irq);
+ 
+-	clocksource_register_hz(&cksrc, MMP_CLOCK_FREQ);
+-	clockevents_config_and_register(&ckevt, MMP_CLOCK_FREQ,
+-					MIN_DELTA, MAX_DELTA);
++	clocksource_register_hz(&cksrc, rate);
++	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
+ }
+ 
+ #ifdef CONFIG_OF
+@@ -221,7 +215,9 @@ static struct of_device_id mmp_timer_dt_ids[] = {
+ void __init mmp_dt_init_timer(void)
+ {
+ 	struct device_node *np;
++	struct clk *clk;
+ 	int irq, ret;
++	unsigned long rate;
+ 
+ 	np = of_find_matching_node(NULL, mmp_timer_dt_ids);
+ 	if (!np) {
+@@ -229,6 +225,18 @@ void __init mmp_dt_init_timer(void)
+ 		goto out;
+ 	}
+ 
++	clk = of_clk_get(np, 0);
++	if (!IS_ERR(clk)) {
++		ret = clk_prepare_enable(clk);
++		if (ret)
++			goto out;
++		rate = clk_get_rate(clk) / 2;
++	} else if (cpu_is_pj4()) {
++		rate = 6500000;
++	} else {
++		rate = 3250000;
++	}
 +
- 		/* Clear status-change flags; we'll debounce later */
- 		if (portchange & USB_PORT_STAT_C_CONNECTION) {
- 			need_debounce_delay = true;
+ 	irq = irq_of_parse_and_map(np, 0);
+ 	if (!irq) {
+ 		ret = -EINVAL;
+@@ -239,7 +247,7 @@ void __init mmp_dt_init_timer(void)
+ 		ret = -ENOMEM;
+ 		goto out;
+ 	}
+-	timer_init(irq);
++	timer_init(irq, rate);
+ 	return;
+ out:
+ 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
 -- 
 2.19.1
 
