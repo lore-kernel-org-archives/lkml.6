@@ -6,45 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BFE73C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D23DC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8EFF721741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:00:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C639121741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:01:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694852;
-	bh=BDxPlfkxPtfhCGIglgS1jBn/CEeApylcDJKiF1ddp5Y=;
+	s=default; t=1548694861;
+	bh=wTREkN/q9OC/o0xielMClZHEc1DD2924xaQddasG0wg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=mdP9Lt608kaE84XiZl4+mFY959BQrItZCbu8cWVXOopRryRTKBctKjWah9Nk8yhcY
-	 1u4SH58e0TrwS51yHpZBn2hkt8nGlYosi+Ibffd1EMDnMVYBhMGWEXyhaYq8pbVPkA
-	 4HywAOx6oOnuZ7CchNGb9wNNbO0WusNs5qlmXA6E=
+	b=jsHf2f0r0Ywg3JAMpbQQ+xs9zjY8F8R36W6X0Tz5dxR/h90X5yfzmS7TSbw0kOxdg
+	 8HqJOyjH6ws8Zd9/DcMQK6N0/EfOIvtK7yLgrD6KFelrlxNnujt0yhENcRqk+oR+31
+	 hF1IHZg/LGSEG97WdF9ferdz9VEMigVYSDlnR+Go=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388224AbfA1RAv (ORCPT
+        id S2387781AbfA1QPX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:00:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45526 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:15:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733293AbfA1QP1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:27 -0500
+        id S2387768AbfA1QPR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D34682147A;
-        Mon, 28 Jan 2019 16:15:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 517BD2147A;
+        Mon, 28 Jan 2019 16:15:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692127;
-        bh=BDxPlfkxPtfhCGIglgS1jBn/CEeApylcDJKiF1ddp5Y=;
+        s=default; t=1548692116;
+        bh=wTREkN/q9OC/o0xielMClZHEc1DD2924xaQddasG0wg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qqfvsSXOXG12StxxXZ8SgkbcT5Gu+x8ud+Td09PNIcq7jpzox9lQvfZfNwla252BR
-         oSqr28oxUhnUUzHFhtpD3O1szYhoa87v7kTf6F9M6gn1NeuoleUen/4wImJjZf6hHH
-         FJSaTfzjCgqYPKmSRsuP7DeGI0I5hdg0JkOeCFsQ=
+        b=hU8P0IiAexkIRJEB9LgWvVgnYxe3J+yteRWImxyhB8joRS3kG5r2BAYDM2ULqo6sQ
+         FpUW9lx3svBtZpYzaIrFUmEt+DRtH1HJZk1+tksGo+TBvwzkb++xGC7RI29LbNiXLA
+         xH6kwfuyuTkhGOA8hp3vfXEbnnLjZnzhy/pNMWvE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 079/170] ARM: dts: Fix up the D-Link DIR-685 MTD partition info
-Date:   Mon, 28 Jan 2019 11:10:29 -0500
-Message-Id: <20190128161200.55107-79-sashal@kernel.org>
+Cc:     Yu Zhao <yuzhao@google.com>, Joerg Roedel <jroedel@suse.de>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.14 075/170] iommu/amd: Fix amd_iommu=force_isolation
+Date:   Mon, 28 Jan 2019 11:10:25 -0500
+Message-Id: <20190128161200.55107-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -56,74 +57,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Linus Walleij <linus.walleij@linaro.org>
+From: Yu Zhao <yuzhao@google.com>
 
-[ Upstream commit 738a05e673435afb986b53da43befd83ad87ec3b ]
+[ Upstream commit c12b08ebbe16f0d3a96a116d86709b04c1ee8e74 ]
 
-The vendor firmware was analyzed to get the right idea about
-this flash layout. /proc/mtd contains:
+The parameter is still there but it's ignored. We need to check its
+value before deciding to go into passthrough mode for AMD IOMMU v2
+capable device.
 
-dev:    size   erasesize  name
-mtd0: 01e7ff40 00020000 "rootfs"
-mtd1: 01f40000 00020000 "upgrade"
-mtd2: 00040000 00020000 "rgdb"
-mtd3: 00020000 00020000 "nvram"
-mtd4: 00040000 00020000 "RedBoot"
-mtd5: 00020000 00020000 "LangPack"
-mtd6: 02000000 00020000 "flash"
+We occasionally use this parameter to force v2 capable device into
+translation mode to debug memory corruption that we suspect is
+caused by DMA writes.
 
-Here "flash" is obviously the whole device and we know "rootfs"
-is a bogus hack to point to a squashfs rootfs inside of the main
-"upgrade partition". We know "RedBoot" is the first 0x40000 of
-the flash and the "upgrade" partition follows from 0x40000 to
-0x1f8000. So we have mtd0, 1, 4 and 6 covered.
+To address the following comment from Joerg Roedel on the first
+version, v2 capability of device is completely ignored.
+> This breaks the iommu_v2 use-case, as it needs a direct mapping for the
+> devices that support it.
 
-Remains:
-mtd2: 00040000 00020000 "rgdb"
-mtd3: 00020000 00020000 "nvram"
-mtd5: 00020000 00020000 "LangPack"
+And from Documentation/admin-guide/kernel-parameters.txt:
+  This option does not override iommu=pt
 
-Inspecting the flash at 0x1f8000 and 0x1fa000 reveals each of
-these starting with "RGCFG1" so we assume 0x1f8000-1fbfff is
-"rgdb" of 0x40000.
+Fixes: aafd8ba0ca74 ("iommu/amd: Implement add_device and remove_device")
 
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Yu Zhao <yuzhao@google.com>
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/gemini-dlink-dir-685.dts | 16 ++++++----------
- 1 file changed, 6 insertions(+), 10 deletions(-)
+ drivers/iommu/amd_iommu.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/gemini-dlink-dir-685.dts b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-index e75e2d44371c..d6f752ab07bb 100644
---- a/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-+++ b/arch/arm/boot/dts/gemini-dlink-dir-685.dts
-@@ -128,20 +128,16 @@
- 				read-only;
- 			};
- 			/*
--			 * Between the boot loader and the rootfs is the kernel
--			 * in a custom Storlink format flashed from the boot
--			 * menu. The rootfs is in squashfs format.
-+			 * This firmware image contains the kernel catenated
-+			 * with the squashfs root filesystem. For some reason
-+			 * this is called "upgrade" on the vendor system.
- 			 */
--			partition@1800c0 {
--				label = "rootfs";
--				reg = <0x001800c0 0x01dbff40>;
--				read-only;
--			};
--			partition@1f40000 {
-+			partition@40000 {
- 				label = "upgrade";
--				reg = <0x01f40000 0x00040000>;
-+				reg = <0x00040000 0x01f40000>;
- 				read-only;
- 			};
-+			/* RGDB, Residental Gateway Database? */
- 			partition@1f80000 {
- 				label = "rgdb";
- 				reg = <0x01f80000 0x00040000>;
+diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
+index efa6cd2500b9..766103ea237e 100644
+--- a/drivers/iommu/amd_iommu.c
++++ b/drivers/iommu/amd_iommu.c
+@@ -442,7 +442,14 @@ static int iommu_init_device(struct device *dev)
+ 
+ 	dev_data->alias = get_alias(dev);
+ 
+-	if (dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
++	/*
++	 * By default we use passthrough mode for IOMMUv2 capable device.
++	 * But if amd_iommu=force_isolation is set (e.g. to debug DMA to
++	 * invalid address), we ignore the capability for the device so
++	 * it'll be forced to go into translation mode.
++	 */
++	if ((iommu_pass_through || !amd_iommu_force_isolation) &&
++	    dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
+ 		struct amd_iommu *iommu;
+ 
+ 		iommu = amd_iommu_rlookup_table[dev_data->devid];
 -- 
 2.19.1
 
