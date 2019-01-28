@@ -2,50 +2,52 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75755C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:34:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 324BAC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FB622147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:34:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 00A9E2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:34:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696878;
-	bh=F95uzW5aA4HOsG1tNEdwlq3ZdENQRrRJosWhBaKlnZ0=;
+	s=default; t=1548696880;
+	bh=0FTEbij3vlI0Ld9tkenZ15MJIMaEAGc6+uJqvwYFO+A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=2KABlysYvyp4o1HdK2BFmu1u7POFkQqfivkuM/gf/M6wgkD5A+Vl8qHg6gi92ODJe
-	 2ojnSfvax9CJm6RaZqFZlhTnPXmod7oRDJKDmg2Yw0SZ+W/VNRBiYq7WvH8C1KlmBA
-	 woTcRwCB4q9lWrBVX7ib5HBcY4XgjRu1Qj7HhmiA=
+	b=UGRHy6lXIYYgPNsR6152WBV7fJx/x6tbxPkeqGawW847aC5vyJ8UEKkevrve/Q45Y
+	 WmIGMRpBYXacRx92RGNMc3VcfQWxvWK9pK/yD84s+emUHmhfNnQN1ttj4AvCvvgXsv
+	 i7Vf9at+K0w7WDOAUFMWmkPpZtA620qwJSjLpiMo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729978AbfA1Pzo (ORCPT
+        id S1730691AbfA1Rei (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:55:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41516 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:34:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41604 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729950AbfA1Pzi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:38 -0500
+        id S1729975AbfA1Pzo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:55:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BF2332175B;
-        Mon, 28 Jan 2019 15:55:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 442A72175B;
+        Mon, 28 Jan 2019 15:55:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690937;
-        bh=F95uzW5aA4HOsG1tNEdwlq3ZdENQRrRJosWhBaKlnZ0=;
+        s=default; t=1548690943;
+        bh=0FTEbij3vlI0Ld9tkenZ15MJIMaEAGc6+uJqvwYFO+A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aTB7Z96AyJnvsLzn4TjPgXsXuqpvwq+2NjSkKlUGuf6Ta6nvvTXcITh39gjd5RWF4
-         kPkpVFvG7kC5VgZSDAE9Nj/x3eG+cKECC7GEOC109YBq7e03p320VBHbek1/oTe8DD
-         VWJcA6C1Ko4gOUj0Qh+uDcvG5LIOE2VZwiDS6m/M=
+        b=PwMXcwPwte5+xycvJELgcngZHflCN1Qw1hjc/3j+r2zB8pr0M+H4JI2Pg+zj4cx0N
+         aw2i2XmJBfADjPOtoRj5yu/n6IezT0HUpEN5jE2uYlAvTrDes23ksBrVAOjuRpjEvE
+         o9sQY1dJlpO1nRh1AKJQbRYfQ9JQiH891b+bzTHs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 240/304] drbd: Avoid Clang warning about pointless switch statment
-Date:   Mon, 28 Jan 2019 10:42:37 -0500
-Message-Id: <20190128154341.47195-240-sashal@kernel.org>
+Cc:     Zhi Chen <zhichen@codeaurora.org>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>, ath10k@lists.infradead.org,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 242/304] ath10k: fix tx_stats memory leak
+Date:   Mon, 28 Jan 2019 10:42:39 -0500
+Message-Id: <20190128154341.47195-242-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,72 +59,89 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Zhi Chen <zhichen@codeaurora.org>
 
-[ Upstream commit a52c5a16cf19d8a85831bb1b915a221dd4ffae3c ]
+[ Upstream commit 386f97e3b201d18578abb0e7037b85a1ae50c0a3 ]
 
-There are several warnings from Clang about no case statement matching
-the constant 0:
+Memory of tx_stats was allocated when a STA was added. But it's not freed
+if the STA failed to be added to driver. This issue could be seen in MDK3
+attack case when STA number reached the limit.
 
-In file included from drivers/block/drbd/drbd_receiver.c:48:
-In file included from drivers/block/drbd/drbd_int.h:48:
-In file included from ./include/linux/drbd_genl_api.h:54:
-In file included from ./include/linux/genl_magic_struct.h:236:
-./include/linux/drbd_genl.h:321:1: warning: no case matching constant
-switch condition '0'
-GENL_struct(DRBD_NLA_HELPER, 24, drbd_helper_info,
-^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-./include/linux/genl_magic_struct.h:220:10: note: expanded from macro
-'GENL_struct'
-        switch (0) {
-                ^
-
-Silence this warning by adding a 'case 0:' statement. Additionally,
-adjust the alignment of the statements in the ct_assert_unique macro to
-avoid a checkpatch warning.
-
-This solution was originally sent by Arnd Bergmann with a default case
-statement: https://lore.kernel.org/patchwork/patch/756723/
-
-Link: https://github.com/ClangBuiltLinux/linux/issues/43
-Suggested-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Tested: QCA9984 with firmware ver 10.4-3.9.0.1-00005
+Signed-off-by: Zhi Chen <zhichen@codeaurora.org>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/genl_magic_struct.h | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/net/wireless/ath/ath10k/mac.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
-index 5972e4969197..eeae59d3ceb7 100644
---- a/include/linux/genl_magic_struct.h
-+++ b/include/linux/genl_magic_struct.h
-@@ -191,6 +191,7 @@ static inline void ct_assert_unique_operations(void)
- {
- 	switch (0) {
- #include GENL_MAGIC_INCLUDE_FILE
-+	case 0:
- 		;
- 	}
- }
-@@ -209,6 +210,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
- {
- 	switch (0) {
- #include GENL_MAGIC_INCLUDE_FILE
-+	case 0:
- 		;
- 	}
- }
-@@ -218,7 +220,8 @@ static inline void ct_assert_unique_top_level_attributes(void)
- static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
- {									\
- 	switch (0) {							\
--		s_fields						\
-+	s_fields							\
-+	case 0:								\
- 			;						\
- 	}								\
- }
+diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+index 6436dc229be5..400495858e4e 100644
+--- a/drivers/net/wireless/ath/ath10k/mac.c
++++ b/drivers/net/wireless/ath/ath10k/mac.c
+@@ -6293,15 +6293,6 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+ 			   ar->num_stations + 1, ar->max_num_stations,
+ 			   ar->num_peers + 1, ar->max_num_peers);
+ 
+-		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
+-			arsta->tx_stats = kzalloc(sizeof(*arsta->tx_stats),
+-						  GFP_KERNEL);
+-			if (!arsta->tx_stats) {
+-				ret = -ENOMEM;
+-				goto exit;
+-			}
+-		}
+-
+ 		num_tdls_stations = ath10k_mac_tdls_vif_stations_count(hw, vif);
+ 		num_tdls_vifs = ath10k_mac_tdls_vifs_count(hw);
+ 
+@@ -6323,12 +6314,22 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+ 			goto exit;
+ 		}
+ 
++		if (ath10k_debug_is_extd_tx_stats_enabled(ar)) {
++			arsta->tx_stats = kzalloc(sizeof(*arsta->tx_stats),
++						  GFP_KERNEL);
++			if (!arsta->tx_stats) {
++				ret = -ENOMEM;
++				goto exit;
++			}
++		}
++
+ 		ret = ath10k_peer_create(ar, vif, sta, arvif->vdev_id,
+ 					 sta->addr, peer_type);
+ 		if (ret) {
+ 			ath10k_warn(ar, "failed to add peer %pM for vdev %d when adding a new sta: %i\n",
+ 				    sta->addr, arvif->vdev_id, ret);
+ 			ath10k_mac_dec_num_stations(arvif, sta);
++			kfree(arsta->tx_stats);
+ 			goto exit;
+ 		}
+ 
+@@ -6341,6 +6342,7 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+ 			spin_unlock_bh(&ar->data_lock);
+ 			ath10k_peer_delete(ar, arvif->vdev_id, sta->addr);
+ 			ath10k_mac_dec_num_stations(arvif, sta);
++			kfree(arsta->tx_stats);
+ 			ret = -ENOENT;
+ 			goto exit;
+ 		}
+@@ -6361,6 +6363,7 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+ 			ath10k_peer_delete(ar, arvif->vdev_id,
+ 					   sta->addr);
+ 			ath10k_mac_dec_num_stations(arvif, sta);
++			kfree(arsta->tx_stats);
+ 			goto exit;
+ 		}
+ 
+@@ -6372,6 +6375,7 @@ static int ath10k_sta_state(struct ieee80211_hw *hw,
+ 				    sta->addr, arvif->vdev_id, ret);
+ 			ath10k_peer_delete(ar, arvif->vdev_id, sta->addr);
+ 			ath10k_mac_dec_num_stations(arvif, sta);
++			kfree(arsta->tx_stats);
+ 
+ 			if (num_tdls_stations != 0)
+ 				goto exit;
 -- 
 2.19.1
 
