@@ -4,52 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 317FCC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:31:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4620AC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:31:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E9FAA20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C1C220663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:31:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693110;
-	bh=kH9pAKRntDbs6L6fgNgkhboTk7TRTgNYxNpXZp7XtrU=;
+	s=default; t=1548693115;
+	bh=6LcL/jtthEO1htz0lltQFWkIkeaCdaU/lXmj/2gFvLk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=m2gvV7pgwdXVrZ460bxuV38BnPZVkn+tYfn3gJ9WZ2zrEL9n9/Yt/jRwSt3jXR9pM
-	 1QS6yxTUtyZ0HS5mnd727pa34BjrEHA19sAix6cQ16u/SU0P0cv1pQe9ucd2pb7pYj
-	 K5Svb60IVDmZximo2twxwQ265KpUL0cvMUmYtjIA=
+	b=yUNrhEximC9aIdfw/b9Ne57Jv8loWlDBCS4cQKhwXHJja9y0ji27P+GERku8QgEZG
+	 ks3tuWIDBcujx1bxynpxXMvHnZhUfw51tFm5IpQXqZUrIh17om+v4zKxQ4OUNCzAWk
+	 kJKNgBEhFep+j8dku8BfAdzXx9IUsoWTzfRkDZKE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390327AbfA1Q1D (ORCPT
+        id S2390496AbfA1Qbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:27:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36424 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:31:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36800 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388850AbfA1Q0v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:51 -0500
+        id S2390325AbfA1Q1C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:27:02 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8AA512084A;
-        Mon, 28 Jan 2019 16:26:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8342020879;
+        Mon, 28 Jan 2019 16:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692810;
-        bh=kH9pAKRntDbs6L6fgNgkhboTk7TRTgNYxNpXZp7XtrU=;
+        s=default; t=1548692822;
+        bh=6LcL/jtthEO1htz0lltQFWkIkeaCdaU/lXmj/2gFvLk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fFqKAQMTzwLH95UISPiuUOM92V7HCEGXFcULZIFlvX46HwEezl9ZaQ2gfBciWdsud
-         3Csv9lgPXkn57CMyRCzDNFb9bEdRnZ04Y6kaVuXwDal08A1Is6AIKVsBMyuDvNkU9K
-         +Vggo6OaFooI8qlL/ObzgXI3y5Z8j9UBN3L9W6bM=
+        b=UXfkk39B+3jcEmXCR+0gS51OTwSiSo4wrPyh6eQqmouQCwgfWnBxfEhyfP9sxjoUk
+         Om0rR5EvOmhJ4n30fP5/NU3zMM8Usx3Dt5ZqSlrl1PPppjz/uZFssadBIrQ5Oqas43
+         YSf4ZxSEljkVmJWPCNTpdIfi1E9zFd5xG2oeyGJk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Torsten Duwe <duwe@suse.de>, Will Deacon <will.deacon@arm.com>,
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
+        tj@kernel.org, johannes.berg@intel.com,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 18/61] arm64: ftrace: don't adjust the LR value
-Date:   Mon, 28 Jan 2019 11:25:40 -0500
-Message-Id: <20190128162623.59854-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 23/61] timekeeping: Use proper seqcount initializer
+Date:   Mon, 28 Jan 2019 11:25:45 -0500
+Message-Id: <20190128162623.59854-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -61,53 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 6e803e2e6e367db9a0d6ecae1bd24bb5752011bd ]
+[ Upstream commit ce10a5b3954f2514af726beb78ed8d7350c5e41c ]
 
-The core ftrace code requires that when it is handed the PC of an
-instrumented function, this PC is the address of the instrumented
-instruction. This is necessary so that the core ftrace code can identify
-the specific instrumentation site. Since the instrumented function will
-be a BL, the address of the instrumented function is LR - 4 at entry to
-the ftrace code.
+tk_core.seq is initialized open coded, but that misses to initialize the
+lockdep map when lockdep is enabled. Lockdep splats involving tk_core seq
+consequently lack a name and are hard to read.
 
-This fixup is applied in the mcount_get_pc and mcount_get_pc0 helpers,
-which acquire the PC of the instrumented function.
+Use the proper initializer which takes care of the lockdep map
+initialization.
 
-The mcount_get_lr helper is used to acquire the LR of the instrumented
-function, whose value does not require this adjustment, and cannot be
-adjusted to anything meaningful. No adjustment of this value is made on
-other architectures, including arm. However, arm64 adjusts this value by
-4.
+[ tglx: Massaged changelog ]
 
-This patch brings arm64 in line with other architectures and removes the
-adjustment of the LR value.
-
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Torsten Duwe <duwe@suse.de>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: peterz@infradead.org
+Cc: tj@kernel.org
+Cc: johannes.berg@intel.com
+Link: https://lkml.kernel.org/r/20181128234325.110011-12-bvanassche@acm.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/entry-ftrace.S | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/time/timekeeping.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
-index c85a02b6cca0..b3fdbba80d4b 100644
---- a/arch/arm64/kernel/entry-ftrace.S
-+++ b/arch/arm64/kernel/entry-ftrace.S
-@@ -78,7 +78,6 @@
- 	.macro mcount_get_lr reg
- 	ldr	\reg, [x29]
- 	ldr	\reg, [\reg, #8]
--	mcount_adjust_addr	\reg, \reg
- 	.endm
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index 70e3e6ae06d2..05397615d048 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -39,7 +39,9 @@
+ static struct {
+ 	seqcount_t		seq;
+ 	struct timekeeper	timekeeper;
+-} tk_core ____cacheline_aligned;
++} tk_core ____cacheline_aligned = {
++	.seq = SEQCNT_ZERO(tk_core.seq),
++};
  
- 	.macro mcount_get_lr_addr reg
+ static DEFINE_RAW_SPINLOCK(timekeeper_lock);
+ static struct timekeeper shadow_timekeeper;
 -- 
 2.19.1
 
