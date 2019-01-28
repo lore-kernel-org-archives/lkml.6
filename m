@@ -2,112 +2,104 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 958DBC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36D69C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:19:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6235320882
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:17:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 027DD21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:19:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="l5Q6HuKN"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fQk60jkq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbfA1HRD (ORCPT
+        id S1726746AbfA1HTl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:17:03 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:46324 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfA1HRA (ORCPT
+        Mon, 28 Jan 2019 02:19:41 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:33236 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726654AbfA1HTl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:17:00 -0500
-Received: by mail-io1-f66.google.com with SMTP id s8so12550293iob.13
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 23:16:59 -0800 (PST)
+        Mon, 28 Jan 2019 02:19:41 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r24so9683267wmh.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 23:19:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Ng6nuhkBLy+wUW3Z6m/MasHkhFKoXpIuQ3mfaKj7hes=;
-        b=l5Q6HuKNncZr9Ph4BaRcsiAP6adwBB40w394HuqTAbx5x6mX/Ssyf7sy6g+rio4vSP
-         B8abx15fv3aboNAYGEkM5gVIlpUAi1ZOJvHpTOfgrHlB+T6ts9pAyLoux5eUOU/3p7as
-         upFOv65/TF9RjEBv2PdSVPaHeGAi04FffGBhU=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=TXYHMJ2QbFqSZ0VMU5oqBXlbGmWhaw/EnvaZ4/gwCyc=;
+        b=fQk60jkqTWKQOZ07LChas50kmBwP0C3F6i+ED9JpOiqeo3xa5NR8UZyE0Yxw9kzPAn
+         1z+4C0lu5Z4RV7b2EvM1KzK6RfwiKRZFNhCNCEn0RgLu5VVE1uZBoU3MkH/dkDnriqmd
+         5gpzPXQw3OTNszHw6Y05EW6dvO9Kvsg7LnP/4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Ng6nuhkBLy+wUW3Z6m/MasHkhFKoXpIuQ3mfaKj7hes=;
-        b=W5lA/QC6pXT+3lkyr7zn2LlfGgxaFaxmQN4cWLb3cQWX5xM1WM9PJNP/NVX/8ffhCE
-         Ihivudt+r3nWMrZWI5cLuW0lVqZ+KYRTn9W10w87wG+CbecL9H62v8/+Q1sPmBJS7/h3
-         kbNTge469gSYQmrxov+Xkrj3dx7cXAJ9vtDyF0QYYjRlw2sSKHcvSuEGFBPvzfnXs5xy
-         Wq9dOZYXinbJXWpg6ECLSP+1rjb7IqeaHspu53trZrZmeTX1cBtcHJytNepaTveKOtNg
-         j8yg5iMAnE0VEIbgXoXL4Hhvf0m9F8XDeOIdnbAhWNzaJOjGMRE7MMAvEHr+QVXXaEbO
-         RUuA==
-X-Gm-Message-State: AHQUAuZBGPg88+WJ1ZgcF1Neq/uoCbXj5EkxrqkCMsWrY+jNryoQlEIt
-        0dUvSEASEEIRAVXVEIjgulv9DEJyJ03S4Vndj8H8yQ==
-X-Google-Smtp-Source: AHgI3IZUZI8bxhU5JvXUAFKvoHEPws/K6Cf0r2ykzUwEUXISU1nn23BIycmiFOCYykKw62EOHt12uECd0WvdAJwNgPU=
-X-Received: by 2002:a6b:1411:: with SMTP id 17mr12254209iou.252.1548659819187;
- Sun, 27 Jan 2019 23:16:59 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=TXYHMJ2QbFqSZ0VMU5oqBXlbGmWhaw/EnvaZ4/gwCyc=;
+        b=P1DNRuyeO1I3nC1jx5TVRQ/67g9W622SSDkpoAgnxu5l2SP7AjbDWbmJfBo69h6h5/
+         AP7v+VS3ZHtO+ypRPhfNqGzqRRm2I+mE20lrJmC4LDo7rAKT2eEDl6e9PF6KqJ5VAqh3
+         +MH7lwYQDdqbNkhUMeVR0g6Muc7Q5Y6CpIlQXKzrAwIjFPLfhQ1Sv8mZU35LobWBdMUI
+         3bjCMm72ck2hfgQ/XIobrIwGX/5hpL4jKbJAOXtm2C+Aee1Cj2RFww5uYKcnHwyPyEBy
+         OQo4+EgY6A9KR0GIN/JwK3kdYz2WHR2OrNUXY5R9GNRwN905sORpOtAnwk041iRVfd/Z
+         r03g==
+X-Gm-Message-State: AJcUukdXA+EuNCGmgbODelurnBQG3lUr2riSURPwciWjz/h1pZVu/pbE
+        Ja7OXipyc75OL+wJlrIzSrAo1A==
+X-Google-Smtp-Source: ALg8bN60H1UnmQzAd6CC5HV7/G5IW96x8oGqfJ7eDrkCMFPks2zRNzQpSRTHzjv3j6GgB7dcD5gFzg==
+X-Received: by 2002:a7b:ce84:: with SMTP id q4mr16649262wmj.105.1548659979125;
+        Sun, 27 Jan 2019 23:19:39 -0800 (PST)
+Received: from dell ([2.27.35.198])
+        by smtp.gmail.com with ESMTPSA id y138sm80954826wmc.16.2019.01.27.23.19.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 27 Jan 2019 23:19:38 -0800 (PST)
+Date:   Mon, 28 Jan 2019 07:19:36 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
+        mikko.mutanen@fi.rohmeurope.com, robh+dt@kernel.org,
+        mark.rutland@arm.com, broonie@kernel.org,
+        gregkh@linuxfoundation.org, rafael@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org,
+        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
+        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
+        linux@roeck-us.net, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-gpio@vger.kernel.org, linux-pm@vger.kernel.org,
+        linux-rtc@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [RFC PATCH v2 00/10] support ROHM BD70528 PMIC
+Message-ID: <20190128071936.GD4678@dell>
+References: <20190125110110.GA29171@localhost.localdomain>
 MIME-Version: 1.0
-References: <20190124175254.27650-1-jagan@amarulasolutions.com> <20190125084004.fsbxtpcesb5yaiod@flea>
-In-Reply-To: <20190125084004.fsbxtpcesb5yaiod@flea>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Mon, 28 Jan 2019 12:46:48 +0530
-Message-ID: <CAMty3ZBmHpsTRXARnT5nf1VcnCmz0QpZ5B8caHONLV0UZdXS9Q@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: allwinner: a64-amarula-relic: Add STLM75 sensor
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190125110110.GA29171@localhost.localdomain>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 2:10 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Jan 24, 2019 at 11:22:54PM +0530, Jagan Teki wrote:
-> > Amarula A64 Relic has STLM75 sensor for digital temperature
-> > and thermal watchdog.
-> >
-> > Add support for it.
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> > Note: the respective driver change is already in mainline
-> > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=2e9a41bbc1079776dabe42ed8113b086b99ae56c
-> >
-> >  .../dts/allwinner/sun50i-a64-amarula-relic.dts    | 15 +++++++++++++++
-> >  1 file changed, 15 insertions(+)
-> >
-> > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> > index 6cb2b7f0c817..5d942543d978 100644
-> > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-> > @@ -34,6 +34,21 @@
-> >       status = "okay";
-> >  };
-> >
-> > +&i2c0 {
-> > +     pinctrl-names = "default";
-> > +     pinctrl-0 = <&i2c0_pins>;
-> > +     status = "okay";
-> > +
-> > +     temp@48 {
->
-> That would be sensor@48
->
-> > +             compatible = "st,stlm75";
->
-> That compatible isn't documented.
+On Fri, 25 Jan 2019, Matti Vaittinen wrote:
 
-True, but none of the compatible strings used on the driver doesn't
-documented in binding instead there are documented in
-Documentation/hwmon/lm75.
+> Patch series introducing support for ROHM BD70528 PMIC
+> 
+> Please note that patch 1 breaks compilation without patches 2 and 3
+> 
+> ROHM BD70528 is a programmable Power Management IC for battery
+> powered 'ultra low power' systems like the pre-announced NXP
+> i.MX7 ULP. This patch series introduces support for the PMIC.
 
-Don't know the exact reason, do we need to document this in binding as well?
+It looks like you've sent this set un-threaded, which means as people
+reply to the patches, they are going to be spread out into the four
+winds (in Inbox terms).
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
