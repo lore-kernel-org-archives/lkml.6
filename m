@@ -6,47 +6,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CB26C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6E77C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:19:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE36F214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:19:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 828ED20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:19:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695966;
-	bh=dC+vVnH2Zgbw7ltjxFU0UuMH6kqXA+QnBRKAMIgsueQ=;
+	s=default; t=1548695975;
+	bh=2qzd0+B6XblkdYmm48qera4WArBsBZcfgpLkVGqjXds=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=bv359F05+1j6+RWzIuHYbQ9/lwgzKPjCbX+itaR/cC9+mWIUD7n69Yeb05hZvzF5Z
-	 t7uJFgfJX53vlDJlyRizs0WC5PKOUGw6CmiMiAz8URG4luc6HJBtR3iLqHKcL7a+hp
-	 44PQ7PjogusBeoV7Ioj3S/HKtUf2tDUf5YYE4wEw=
+	b=BCqDXsgKGFeIX+vTNHx8BPo3uKVOIqu+/RAAqAJ1MIe7IcK6ApHAikedV0RP2pPDT
+	 aq8nuDJq5b0COExY1wDmK8HHLAjXz7KcM9UNb/YMLL2m3FnPu+6nO2VRcaoQdjUhmj
+	 aNrGTevHS3cO9q3J4XMZ2ABHVLl+yZflrT/mllrY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731989AbfA1RTZ (ORCPT
+        id S1732248AbfA1RTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:19:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50816 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:19:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731053AbfA1QEv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:04:51 -0500
+        id S1731668AbfA1QEq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:04:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC48D2147A;
-        Mon, 28 Jan 2019 16:04:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7FB9E21738;
+        Mon, 28 Jan 2019 16:04:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691491;
-        bh=dC+vVnH2Zgbw7ltjxFU0UuMH6kqXA+QnBRKAMIgsueQ=;
+        s=default; t=1548691485;
+        bh=2qzd0+B6XblkdYmm48qera4WArBsBZcfgpLkVGqjXds=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IzsIOQfdkxftBqOGTUHfE8KiI8sQaTePRWDM6Bh9ZGjJQZ312KWf3lA2TY40yhVAU
-         AJmfJ50rnfIc1Xp8KD0xdKL9FpBpQiBR9d28SIVybGTtlEYQU2l522H/GP/C9W14lC
-         cu9xdmoCLrDT3WSMBBdZvX86P85Tq0mTeRU63i/o=
+        b=ejAOrdaAYr1GioeAp3LOfHwpto/YYrs9ihMDaYvU0faqgSbY+FMtK+5yTdG0p4N1L
+         UAA4bb25rhBKTWxeOdQkM1SYsbcaxdKCXbN6uCsw5ayvwvRzjCt0sqJGh58AZ4zPWX
+         Yp5NSIy0h6wv7Cw9G2xNYSkMSbS2nxia7rOHmxGg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kaike Wan <kaike.wan@intel.com>,
-        Dennis Dalessandro <dennis.dalessandro@intel.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 113/258] IB/hfi1: Unreserve a reserved request when it is completed
-Date:   Mon, 28 Jan 2019 10:56:59 -0500
-Message-Id: <20190128155924.51521-113-sashal@kernel.org>
+Cc:     Hoang Le <hoang.h.le@dektech.com.au>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        tipc-discussion@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.19 110/258] tipc: fix node keep alive interval calculation
+Date:   Mon, 28 Jan 2019 10:56:56 -0500
+Message-Id: <20190128155924.51521-110-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,46 +58,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kaike Wan <kaike.wan@intel.com>
+From: Hoang Le <hoang.h.le@dektech.com.au>
 
-[ Upstream commit ca95f802ef5139722acc8d30aeaab6fe5bbe939e ]
+[ Upstream commit f5d6c3e5a359c0507800e7ac68d565c21de9b5a1 ]
 
-Currently, When a reserved operation is completed, its entry in the send
-queue will not be unreserved, which leads to the miscalculation of
-qp->s_avail and thus the triggering of a WARN_ON call trace. This patch
-fixes the problem by unreserving the reserved operation when it is
-completed.
+When setting LINK tolerance, node timer interval will be calculated
+base on the LINK with lowest tolerance.
 
-Fixes: 856cc4c237ad ("IB/hfi1: Add the capability for reserved operations")
-Reviewed-by: Mike Marciniszyn <mike.marciniszyn@intel.com>
-Signed-off-by: Kaike Wan <kaike.wan@intel.com>
-Signed-off-by: Dennis Dalessandro <dennis.dalessandro@intel.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+But when calculated, the old node timer interval only updated if current
+setting value (tolerance/4) less than old ones regardless of number of
+links as well as links' lowest tolerance value.
+
+This caused to two cases missing if tolerance changed as following:
+Case 1:
+1.1/ There is one link (L1) available in the system
+1.2/ Set L1's tolerance from 1500ms => lower (i.e 500ms)
+1.3/ Then, fallback to default (1500ms) or higher (i.e 2000ms)
+
+Expected:
+    node timer interval is 1500/4=375ms after 1.3
+
+Result:
+node timer interval will not being updated after changing tolerance at 1.3
+since its value 1500/4=375ms is not less than 500/4=125ms at 1.2.
+
+Case 2:
+2.1/ There are two links (L1, L2) available in the system
+2.2/ L1 and L2 tolerance value are 2000ms as initial
+2.3/ Set L2's tolerance from 2000ms => lower 1500ms
+2.4/ Disable link L2 (bring down its bearer)
+
+Expected:
+    node timer interval is 2000ms/4=500ms after 2.4
+
+Result:
+node timer interval will not being updated after disabling L2 since
+its value 2000ms/4=500ms is still not less than 1500/4=375ms at 2.3
+although L2 is already not available in the system.
+
+To fix this, we start the node interval calculation by initializing it to
+a value larger than any conceivable calculated value. This way, the link
+with the lowest tolerance will always determine the calculated value.
+
+Acked-by: Jon Maloy <jon.maloy@ericsson.com>
+Signed-off-by: Hoang Le <hoang.h.le@dektech.com.au>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/hw/hfi1/rc.c | 2 ++
- 1 file changed, 2 insertions(+)
+ net/tipc/node.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/infiniband/hw/hfi1/rc.c b/drivers/infiniband/hw/hfi1/rc.c
-index 9bd63abb2dfe..6f013a565353 100644
---- a/drivers/infiniband/hw/hfi1/rc.c
-+++ b/drivers/infiniband/hw/hfi1/rc.c
-@@ -1157,6 +1157,7 @@ void hfi1_rc_send_complete(struct rvt_qp *qp, struct hfi1_opa_header *opah)
- 		if (cmp_psn(wqe->lpsn, qp->s_sending_psn) >= 0 &&
- 		    cmp_psn(qp->s_sending_psn, qp->s_sending_hpsn) <= 0)
- 			break;
-+		rvt_qp_wqe_unreserve(qp, wqe);
- 		s_last = qp->s_last;
- 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
- 		if (++s_last >= qp->s_size)
-@@ -1209,6 +1210,7 @@ static struct rvt_swqe *do_rc_completion(struct rvt_qp *qp,
- 		u32 s_last;
+diff --git a/net/tipc/node.c b/net/tipc/node.c
+index 488019766433..32556f480a60 100644
+--- a/net/tipc/node.c
++++ b/net/tipc/node.c
+@@ -624,6 +624,12 @@ static void tipc_node_timeout(struct timer_list *t)
  
- 		rvt_put_swqe(wqe);
-+		rvt_qp_wqe_unreserve(qp, wqe);
- 		s_last = qp->s_last;
- 		trace_hfi1_qp_send_completion(qp, wqe, s_last);
- 		if (++s_last >= qp->s_size)
+ 	__skb_queue_head_init(&xmitq);
+ 
++	/* Initial node interval to value larger (10 seconds), then it will be
++	 * recalculated with link lowest tolerance
++	 */
++	tipc_node_read_lock(n);
++	n->keepalive_intv = 10000;
++	tipc_node_read_unlock(n);
+ 	for (bearer_id = 0; remains && (bearer_id < MAX_BEARERS); bearer_id++) {
+ 		tipc_node_read_lock(n);
+ 		le = &n->links[bearer_id];
 -- 
 2.19.1
 
