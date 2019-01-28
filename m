@@ -2,69 +2,109 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BFE2C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:36:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 245EDC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:37:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 094ED20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548668211;
-	bh=da/vrBQ8VMJmjnf5OTI1PAGzFWvvYe0W1XicVmqsA1k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:List-ID:From;
-	b=L15rTE423iQ5YBDzN1U8iJkQUnPDOacC5ZbeQ5GLqXyX+8VNB2itm5ummBfbi0cLj
-	 7URfHhMls+9YubMk3Q2EavVzACwzZrR/rIq5y8h+8j9fKNgKMfBqc1QZ4bT9mYB9+L
-	 9PyrkrT4vTGikdV+9MZCclnvhoxOLMBQIQwROBSU=
+	by mail.kernel.org (Postfix) with ESMTP id F0C0021736
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:37:44 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbfA1Jgt (ORCPT
+        id S1726817AbfA1Jhn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:36:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35262 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 04:37:43 -0500
+Received: from foss.arm.com ([217.140.101.70]:42120 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726668AbfA1Jgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:36:49 -0500
-Received: from localhost.localdomain (91-160-177-164.subs.proxad.net [91.160.177.164])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EF9CC217D6;
-        Mon, 28 Jan 2019 09:36:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548668208;
-        bh=da/vrBQ8VMJmjnf5OTI1PAGzFWvvYe0W1XicVmqsA1k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:From;
-        b=XRSvPOMBWclX5tLlZ5TmpaXMcNb4X4aiKeE2gc8IfTYN5TKdnkLJNNLOkwpl56Bhr
-         LbduZH7TM3IPMcev5yoNZY6FxSfZWGo6mC5zR4Q+oHU67RvvLeh0tdr1ly7foGEf8n
-         bJUFy6WEi7VcbUzpGDLkVGeFuHLOLs72IihLR1SQ=
-From:   Boris Brezillon <bbrezillon@kernel.org>
-To:     YueHaibing <yuehaibing@huawei.com>, robert.jarzmik@free.fr,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        bbrezillon@kernel.org, marek.vasut@gmail.com, richard@nod.at
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [-next] mtd: docg3: Fix passing zero to 'PTR_ERR' warning in doc_probe_device
-Date:   Mon, 28 Jan 2019 10:36:43 +0100
-Message-Id: <20190128093643.18929-1-bbrezillon@kernel.org>
-X-Mailer: git-send-email 2.17.1
-X-linux-mtd-patch-notification: thanks
-X-linux-mtd-patch-commit: 05f93739cdfccb4c3d30f821b09d418dfc659997
-In-Reply-To: <20190123065827.16748-1-yuehaibing@huawei.com>
+        id S1726590AbfA1Jhm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:37:42 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5DA41EBD;
+        Mon, 28 Jan 2019 01:37:42 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A42043F589;
+        Mon, 28 Jan 2019 01:37:39 -0800 (PST)
+Date:   Mon, 28 Jan 2019 09:37:37 +0000
+Message-ID: <86ef8xw2am.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
+        <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>,
+        Oleg Nesterov <oleg@redhat.com>
+Subject: Re: [PATCH v9 07/26] arm64: ptrace: Provide definitions for PMR values
+In-Reply-To: <1548084825-8803-8-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-8-git-send-email-julien.thierry@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2019-01-23 at 06:58:27 UTC, YueHaibing wrote:
-> Fix a static code checker warning:
-> drivers/mtd/devices/docg3.c:1875
->  doc_probe_device() warn: passing zero to 'ERR_PTR'
+On Mon, 21 Jan 2019 15:33:26 +0000,
+Julien Thierry <julien.thierry@arm.com> wrote:
 > 
-> Fixes: ae9d4934b2d7 ("mtd: docg3: add multiple floor support")
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> Acked-by: Robert Jarzmik <robert.jarzmik@free.fr>
+> Introduce fixed values for PMR that are going to be used to mask and
+> unmask interrupts by priority.
+> 
+> The current priority given to GIC interrupts is 0xa0, so clearing PMR's
+> most significant bit is enough to mask interrupts.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Oleg Nesterov <oleg@redhat.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> ---
+>  arch/arm64/include/asm/ptrace.h | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/ptrace.h b/arch/arm64/include/asm/ptrace.h
+> index fce22c4..05cf913 100644
+> --- a/arch/arm64/include/asm/ptrace.h
+> +++ b/arch/arm64/include/asm/ptrace.h
+> @@ -25,6 +25,18 @@
+>  #define CurrentEL_EL1		(1 << 2)
+>  #define CurrentEL_EL2		(2 << 2)
+>  
+> +/*
+> + * PMR values used to mask/unmask interrupts.
+> + *
+> + * GIC priority masking works as follows: if an IRQ's priority is a higher value
+> + * than the value held in PMR, that interrupt is masked. A lower value of PMR
+> + * means more IRQ priorities are masked.
 
-Applied to http://git.infradead.org/linux-mtd.git mtd/next, thanks.
+Nit: It is not the priorities that are masked, but interrupts that
+have a priority higher than that of PMR.
 
-Boris
+> + *
+> + * To mask priorities, we clear the most significant bit of PMR.
+> + */
+> +#define GIC_PRIO_IRQON		0xf0
+> +#define GIC_PRIO_IRQOFF		(GIC_PRIO_IRQON & ~0x80)
+> +
+>  /* Additional SPSR bits not exposed in the UABI */
+>  #define PSR_IL_BIT		(1 << 20)
+>  
+> -- 
+> 1.9.1
+> 
+
+Otherwise:
+
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
