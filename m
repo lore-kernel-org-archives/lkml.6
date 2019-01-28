@@ -2,53 +2,51 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D59BCC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86C02C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A48820880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 58D3B21741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690823;
-	bh=q8DzAp34lYBxPSffFdjp8e5oHoVo9ZTYXiENwKbkM1w=;
+	s=default; t=1548690829;
+	bh=fL8fM8Zn9wO43EM3TUK57B/Gcf+ZpV2JMfYJADboTW8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=X59wIWizMhFDxHewvsFbcZrFH42DhY6Wb7l5CY6NfxO9XU0bmQ1Y/xFtQp83tpO18
-	 5bcjAvujFp00QAg7UD6KM5zIixaWDRiY3Bzdzr6rrIQRaAqHpNK4QO01DTmf3RZqt6
-	 52mZOtokhl3ZApi68EXGqO86E+tbwbg1GfAwNzHE=
+	b=LrxtC3adHfJF9wtwNDjCAZVr0EOeglBPzW7CD/u6U8UC18DzWr/TWac3SkuZPsy56
+	 07rhl5fLEc4qn89pGXP7OEt5RwuPLy0ikaqy0Au4Vngg5e4uAHjyJF5u6e8r4tpGPd
+	 D9x96ofVaNSLLxj9WJvcDUSpY4RTT6OYmlsbwpRI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729493AbfA1Pxm (ORCPT
+        id S1729127AbfA1Pxr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:53:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39898 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:53:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40040 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729474AbfA1Pxc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:53:32 -0500
+        id S1729474AbfA1Pxn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:53:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E9D912175B;
-        Mon, 28 Jan 2019 15:53:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41BD42147A;
+        Mon, 28 Jan 2019 15:53:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690812;
-        bh=q8DzAp34lYBxPSffFdjp8e5oHoVo9ZTYXiENwKbkM1w=;
+        s=default; t=1548690822;
+        bh=fL8fM8Zn9wO43EM3TUK57B/Gcf+ZpV2JMfYJADboTW8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sPI39HFNFsjGFmWjSYCuxFbTpQ+5OKWQGzTcKilVd/fEP3iyS/QGxf27A+pyomlD/
-         lNQV2uyo8uBaR7y4MHDAQE1m5MsbV6myBzyAgQHg5jeMVXHiDcskUfhOrW5EIOtuF9
-         3i1Clg/Kr+sPa4BbRG/H49aH/SpqaDb0qkXqJ2Ck=
+        b=giAeEXAYi3bbVoYduvf7yfZ+xU+0ApNIb4EjfNgZpEKttRBUwINfX66vbFc9MrXRg
+         FfmBvNod5OnPZDYBmy4qLeG1z2HfTq8IoSpTn32Dq7rsr0w+toMzy8hNt5eG8ebDT8
+         RKI2zR2wkkLphPEMO6j8BokoRqhz7v6CffdrsV0s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 199/304] perf header: Fix unchecked usage of strncpy()
-Date:   Mon, 28 Jan 2019 10:41:56 -0500
-Message-Id: <20190128154341.47195-199-sashal@kernel.org>
+Cc:     Michael Chan <michael.chan@broadcom.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 203/304] bnxt_en: Disable MSIX before re-reserving NQs/CMPL rings.
+Date:   Mon, 28 Jan 2019 10:42:00 -0500
+Message-Id: <20190128154341.47195-203-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -60,48 +58,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnaldo Carvalho de Melo <acme@redhat.com>
+From: Michael Chan <michael.chan@broadcom.com>
 
-[ Upstream commit 7572588085a13d5db02bf159542189f52fdb507e ]
+[ Upstream commit 36d65be9a88052cdfc8524eb591baf0e6c878408 ]
 
-The strncpy() function may leave the destination string buffer
-unterminated, better use strlcpy() that we have a __weak fallback
-implementation for systems without it.
+When bringing up a device, the code checks to see if the number of
+MSIX has changed.  pci_disable_msix() should be called first before
+changing the number of reserved NQs/CMPL rings.  This ensures that
+the MSIX vectors associated with the NQs/CMPL rings are still
+properly mapped when pci_disable_msix() masks the vectors.
 
-This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+This patch will prevent errors when RDMA support is added for the new
+57500 chips.  When the RDMA driver shuts down, the number of NQs is
+decreased and we must use the new sequence to prevent MSIX errors.
 
-  util/header.c: In function 'perf_event__synthesize_event_update_unit':
-  util/header.c:3586:2: error: 'strncpy' output truncated before terminating nul copying as many bytes from a string as its length [-Werror=stringop-truncation]
-    strncpy(ev->data, evsel->unit, size);
-    ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  util/header.c:3579:16: note: length computed here
-    size_t size = strlen(evsel->unit);
-                  ^~~~~~~~~~~~~~~~~~~
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Fixes: a6e5281780d1 ("perf tools: Add event_update event unit type")
-Link: https://lkml.kernel.org/n/tip-fiikh5nay70bv4zskw2aa858@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Michael Chan <michael.chan@broadcom.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/header.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/broadcom/bnxt/bnxt.c | 19 +++++++++++--------
+ 1 file changed, 11 insertions(+), 8 deletions(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index 4fd45be95a43..13a2251a37c5 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -3544,7 +3544,7 @@ perf_event__synthesize_event_update_unit(struct perf_tool *tool,
- 	if (ev == NULL)
- 		return -ENOMEM;
+diff --git a/drivers/net/ethernet/broadcom/bnxt/bnxt.c b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+index 5d21c14853ac..50a4c3ddf977 100644
+--- a/drivers/net/ethernet/broadcom/bnxt/bnxt.c
++++ b/drivers/net/ethernet/broadcom/bnxt/bnxt.c
+@@ -7203,23 +7203,26 @@ static void bnxt_clear_int_mode(struct bnxt *bp)
+ int bnxt_reserve_rings(struct bnxt *bp)
+ {
+ 	int tcs = netdev_get_num_tc(bp->dev);
++	bool reinit_irq = false;
+ 	int rc;
  
--	strncpy(ev->data, evsel->unit, size);
-+	strlcpy(ev->data, evsel->unit, size + 1);
- 	err = process(tool, (union perf_event *)ev, NULL, NULL);
- 	free(ev);
- 	return err;
+ 	if (!bnxt_need_reserve_rings(bp))
+ 		return 0;
+ 
+-	rc = __bnxt_reserve_rings(bp);
+-	if (rc) {
+-		netdev_err(bp->dev, "ring reservation failure rc: %d\n", rc);
+-		return rc;
+-	}
+ 	if (BNXT_NEW_RM(bp) && (bnxt_get_num_msix(bp) != bp->total_irqs)) {
+ 		bnxt_ulp_irq_stop(bp);
+ 		bnxt_clear_int_mode(bp);
+-		rc = bnxt_init_int_mode(bp);
++		reinit_irq = true;
++	}
++	rc = __bnxt_reserve_rings(bp);
++	if (reinit_irq) {
++		if (!rc)
++			rc = bnxt_init_int_mode(bp);
+ 		bnxt_ulp_irq_restart(bp, rc);
+-		if (rc)
+-			return rc;
++	}
++	if (rc) {
++		netdev_err(bp->dev, "ring reservation/IRQ init failure rc: %d\n", rc);
++		return rc;
+ 	}
+ 	if (tcs && (bp->tx_nr_rings_per_tc * tcs != bp->tx_nr_rings)) {
+ 		netdev_err(bp->dev, "tx ring reservation failure\n");
 -- 
 2.19.1
 
