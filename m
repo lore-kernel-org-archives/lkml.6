@@ -2,195 +2,167 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F7FC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:49:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E41C282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:53:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDE9E2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:49:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CAE32148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:53:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="JsV9D11I";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="K9ps7GQK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728373AbfA1Vtb (ORCPT
+        id S1727313AbfA1VxP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 16:49:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:48390 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726890AbfA1Vta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 16:49:30 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id F2DB07E9D3;
-        Mon, 28 Jan 2019 21:49:29 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-23.phx2.redhat.com [10.3.112.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0BF4E5C234;
-        Mon, 28 Jan 2019 21:49:21 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 16:49:19 -0500
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     Steve Grubb <sgrubb@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>,
-        "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mon, 28 Jan 2019 16:53:15 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:49446 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726802AbfA1VxP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 16:53:15 -0500
+Received: from pps.filterd (m0109334.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SLirqh020306;
+        Mon, 28 Jan 2019 13:53:10 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=LfhIbcF3M8aVM48F9+/YcRQvZsDVHnk6M8q59YUonQw=;
+ b=JsV9D11IV2vMLN9eMA5RW4i5XBGbxXM2QJmvzXQZ0djf9wD+glfmcQI1zeOa4PHh/LON
+ sbun26Dp8vDVdx727ngAjV4CAqjWMQqQbzWO2oxT7fR8T6raQ7yKspmrOD+PJlB209o7
+ OAKio4KU00g+zxPa7QsdN2BKNDMjWVFgR0Y= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2qa71f0nfj-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Mon, 28 Jan 2019 13:53:10 -0800
+Received: from frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) by
+ frc-hub01.TheFacebook.com (2620:10d:c021:18::171) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 28 Jan 2019 13:52:42 -0800
+Received: from frc-hub06.TheFacebook.com (2620:10d:c021:18::176) by
+ frc-mbx06.TheFacebook.com (2620:10d:c0a1:f82::30) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Mon, 28 Jan 2019 13:52:41 -0800
+Received: from NAM04-CO1-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.76) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Mon, 28 Jan 2019 13:52:41 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LfhIbcF3M8aVM48F9+/YcRQvZsDVHnk6M8q59YUonQw=;
+ b=K9ps7GQKknaMfI4k9y3HvYVKGsO2j2vURVfdPcTruD7DuAOOnPMkdPbiGSg0Ie1EWYtj3NPsTDSjI1fCFoC0J+fKiuFjDoeHoZGrm58E6Or0ibOefYQQykmh3gE7pXo7wM1sMc23lsQwPpKZXSBwYLYDxLAwRZo3B1IU9RtWb/k=
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com (20.179.156.24) by
+ BYAPR15MB3496.namprd15.prod.outlook.com (20.179.60.24) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.16; Mon, 28 Jan 2019 21:52:40 +0000
+Received: from BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::7459:36fe:91f2:8b8a]) by BYAPR15MB2631.namprd15.prod.outlook.com
+ ([fe80::7459:36fe:91f2:8b8a%6]) with mapi id 15.20.1558.023; Mon, 28 Jan 2019
+ 21:52:40 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Chris Down <chris@chrisdown.name>
+CC:     Andrew Morton <akpm@linux-foundation.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Dennis Zhou <dennis@kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>
-Subject: Re: [PATCH] audit: always enable syscall auditing when supported and
- audit is enabled
-Message-ID: <20190128214919.5nmpfns3ahuvza6f@madcap2.tricolour.ca>
-References: <20151208164237.15736.42955.stgit@localhost>
- <5490ae28-251b-bfda-38a6-5be201a4a8d8@nokia.com>
- <CAHC9VhQsVFY1LAakAUUCBZw6nmSy0-eoFrhQgVQrkqgAsWVGhQ@mail.gmail.com>
- <4fb6def1-a1d9-8af0-394c-f92224884d18@nokia.com>
- <CAHC9VhT1T4wTonW_L8CH2j1aMqSaBcUf-zH==233+ZZvSKhkwg@mail.gmail.com>
- <8bf5d613-9b27-381d-283b-c8892483f424@nokia.com>
- <CAHC9VhR25UdWPSRurefEX3YjM80DEh5BXETvK4na3Ym+k2=9xQ@mail.gmail.com>
- <20190128210328.64b7719c@ivy-bridge>
- <CAHC9VhSCFiEfzcwwkDdMsyh0xa2zh-WDTbv55tsDXYU4Td0zDQ@mail.gmail.com>
- <20190128221951.57a5e03b@ivy-bridge>
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH] mm: Proportional memory.{low,min} reclaim
+Thread-Topic: [PATCH] mm: Proportional memory.{low,min} reclaim
+Thread-Index: AQHUs4Zt38UF96mTm0amM4LuPUpLpqXEq9uAgACRwICAAALjgA==
+Date:   Mon, 28 Jan 2019 21:52:40 +0000
+Message-ID: <20190128215230.GA32069@castle.DHCP.thefacebook.com>
+References: <20190124014455.GA6396@chrisdown.name>
+ <20190128210031.GA31446@castle.DHCP.thefacebook.com>
+ <20190128214213.GB15349@chrisdown.name>
+In-Reply-To: <20190128214213.GB15349@chrisdown.name>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR21CA0055.namprd21.prod.outlook.com
+ (2603:10b6:300:db::17) To BYAPR15MB2631.namprd15.prod.outlook.com
+ (2603:10b6:a03:152::24)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:180::1:3227]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR15MB3496;20:5iA5z/Qj4nXGrh8vODal1Zj8OQgU0oX45GR2IgILXxlyNqhOEx6GYKm6K6mWG6SA8hbkXOlCAiCj0RBsPrzCBjd5Ol8N6CTQ+uPC9o3SUacEOYW5lBZYtZK7c+URsw5rew/ek61IOYph3r06kQKDBrO8WEj19K4ZqNvb17B8v9o=
+x-ms-office365-filtering-correlation-id: 5ed55505-12ca-48f2-805e-08d6856aec55
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(2017052603328)(7153060)(7193020);SRVR:BYAPR15MB3496;
+x-ms-traffictypediagnostic: BYAPR15MB3496:
+x-microsoft-antispam-prvs: <BYAPR15MB3496C403E749FA568AA7E4ABBE960@BYAPR15MB3496.namprd15.prod.outlook.com>
+x-forefront-prvs: 0931CB1479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(366004)(396003)(136003)(39860400002)(199004)(189003)(51914003)(68736007)(6512007)(54906003)(9686003)(99286004)(186003)(33656002)(25786009)(478600001)(14454004)(53936002)(6246003)(97736004)(6116002)(6916009)(316002)(4326008)(106356001)(105586002)(11346002)(476003)(14444005)(256004)(86362001)(33896004)(6486002)(229853002)(446003)(71190400001)(71200400001)(46003)(102836004)(2906002)(8936002)(81166006)(7736002)(81156014)(1076003)(305945005)(486006)(8676002)(6436002)(6506007)(386003)(76176011)(52116002)(142933001);DIR:OUT;SFP:1102;SCL:1;SRVR:BYAPR15MB3496;H:BYAPR15MB2631.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: LXMXN4eV1jOswqrPSESsADce4138v6jrblUcKdTNCllQCn32SRz7KZ66ppeBNVJHPdrP5pL8Sx1nZXw3mA8tPRieJRsvciXmcBAU31y/pNmB+ghIKDr9t3rpffdCghT4mrd0MH2Qc54ANWDavt2FVUUNEiMhxOUoyefsheN3iKqOVV3qhTu/a4OWZGqkaj+jY8B7z5WOgnDHqFpL9GnXxGKyEUqURUMTNgWXY9HOMbhnl4Mf1HUAKkJRBki3x2CG+EmugPhmLLPlhVQZFwyl9bfrrflc8T2NXBJURBJNy/5l7bUYBe+0TfQYMq6aLQkUZFHXQX6JYU/j7kcDjJQAB8Dp+kXtUiWNl8lypOac5K0FNt1PYbWZwz/uWDJTk1ymGoU7jlGB0ogrI6nE7me7tgyO8ReIBQ4bi7GYqBEW+74=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <6FEBCAB4621E644BA86E11E1DCC17B38@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128221951.57a5e03b@ivy-bridge>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 28 Jan 2019 21:49:30 +0000 (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5ed55505-12ca-48f2-805e-08d6856aec55
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 21:52:38.8621
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR15MB3496
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_12:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2019-01-28 22:19, Steve Grubb wrote:
-> On Mon, 28 Jan 2019 15:08:56 -0500
-> Paul Moore <paul@paul-moore.com> wrote:
-> 
-> > On Mon, Jan 28, 2019 at 3:03 PM Steve Grubb <sgrubb@redhat.com> wrote:
-> > > On Mon, 28 Jan 2019 11:26:51 -0500
-> > > Paul Moore <paul@paul-moore.com> wrote:
-> > >  
-> > > > On Mon, Jan 28, 2019 at 10:38 AM Sverdlin, Alexander (Nokia -
-> > > > DE/Ulm) <alexander.sverdlin@nokia.com> wrote:  
-> > > > > Hello Paul,
-> > > > >
-> > > > > On 28/01/2019 15:52, Paul Moore wrote:  
-> > > > > >>>>> time also enables syscall auditing; this patch simplifies
-> > > > > >>>>> the Kconfig menus by removing the option to disable
-> > > > > >>>>> syscall auditing when audit is selected and the target
-> > > > > >>>>> arch supports it.
-> > > > > >>>>>
-> > > > > >>>>> Signed-off-by: Paul Moore <pmoore@redhat.com>  
-> > > > > >>>> this patch is responsible for massive performance
-> > > > > >>>> degradation for those who used only
-> > > > > >>>> CONFIG_SECURITY_APPARMOR.
-> > > > > >>>>
-> > > > > >>>> And the numbers are, take the following test for instance:
-> > > > > >>>>
-> > > > > >>>> dd if=/dev/zero of=/dev/null count=2M
-> > > > > >>>>
-> > > > > >>>> ARM64:      500MB/s -> 350MB/s
-> > > > > >>>> ARM:        400MB/s -> 300MB/s  
-> > > > > >>> Hi there.
-> > > > > >>>
-> > > > > >>> Out of curiosity, what kernel/distribution are you running,
-> > > > > >>> or is this a custom kernel compile?  Can you also share the
-> > > > > >>> output of 'auditctl  
-> > > > > >> This test was carried out with Linux 4.9. Custom built.  
-> > > > > > I suspected that was the case, thanks.
-> > > > > >  
-> > > > > >>> -l' from your system?  The general approach taken by
-> > > > > >>> everyone to turn-off the per-syscall audit overhead is to
-> > > > > >>> add the "-a never,task" rule to their audit configuration:
-> > > > > >>>
-> > > > > >>>  # auditctl -a never,task
-> > > > > >>>
-> > > > > >>> If you are using Fedora/CentOS/RHEL, or a similarly
-> > > > > >>> configured system,  
-> > > > > >> This is an embedded distribution. We are not using auditctl
-> > > > > >> or any other audit-related user-space packages.
-> > > > > >>  
-> > > > > >>> you can find this configuration in
-> > > > > >>> the /etc/audit/audit.rules file (be warned, that file is
-> > > > > >>> automatically generated based on /etc/audit/rules.d).  
-> > > > > >> I suppose in this case rule list must be empty. Is there a
-> > > > > >> way to check this without extra user-space packages?  
-> > > > > > Yes, unless you are loading rules through some other method I
-> > > > > > would expect that your audit rule list is empty.
-> > > > > >
-> > > > > > I'm not aware of any other tools besides auditctl to load
-> > > > > > audit rules into the kernel, although I haven't ever had a
-> > > > > > need for another tool so I haven't looked very hard.  If you
-> > > > > > didn't want to bring auditctl into your distribution, I
-> > > > > > expect it would be a rather trivial task to create a small
-> > > > > > tool to load a single "-a never,task" into the kernel.  
-> > > > >
-> > > > > I've done a quick test on my x86_64 PC and got the following
-> > > > > results:  
-> > > >
-> > > > ...
-> > > >  
-> > > > > Which brings me to an idea, that the subject patch should have
-> > > > > been accompanied by a default "never,task" rule inside the
-> > > > > kernel, otherwise you require an extra user-space package
-> > > > > (audit) just to bring Linux 4.5+ to 4.4 performance levels.  
-> > > >
-> > > > [NOTE: I dropped pmoore@redhat.com from the To/CC line, I left
-> > > > Red Hat for greener pastures several months ago.]
-> > > >
-> > > > Well, it generally hasn't been an issue as 1) most people that
-> > > > enable audit also enable syscall auditing and 2) most people that
-> > > > enable audit have some sort of audit userspace tools to work with
-> > > > the audit logs (and configure audit if necessary).  I don't want
-> > > > to diminish your report, but this change was made several years
-> > > > ago and we really haven't heard of many issues surrounding the
-> > > > change.  If we can ever get all of the different arches to
-> > > > support syscall auditing, I'd love to get rid of the syscall
-> > > > auditing Kconfig knob entirely.
-> > > >
-> > > > If you wanted to put together a patch that added a single "-a
-> > > > never,task" rule on boot I could get behind that, just make it
-> > > > default to off.  
-> > >
-> > > That will make processes unauditable for everyone. That's how it
-> > > gets a speedup is not entering into the audit machinery.  
-> > 
-> > That is pretty much what is being asked for in this thread.  It's
-> > really no different from what Fedora/CentOS/RHEL (and who knows how
-> > many others) ship with their default audit config.  It's important to
-> > note that you could always delete this rule at runtime; all that is
-> > being proposed is to have the kernel populate the the audit ruleset
-> > with the "-a never,task" rule *IF* the proposed kernel Kconfig option
-> > is enabled (and it would default to being off, you would have to turn
-> > it on during build).
-> 
-> Yes, but you can't add the auditable flag back to the task struct
-> because syscalls never enter audit machinery where it can be added back.
-> Meaning that even if you wanted to audit, there will be processes you
-> never can audit. Whereas deciding via auditd, they become unauditable
-> only after auditd loads the rule. Prior to that they are and all
-> processes are auditable if you decide to audit. So, this is
-> fundamentally different than what fedora does.
+On Mon, Jan 28, 2019 at 04:42:13PM -0500, Chris Down wrote:
+> Roman Gushchin writes:
+> > Hm, it looks a bit suspicious to me.
+> >=20
+> > Let's say memory.low =3D 3G, memory.min =3D 1G and memory.current =3D 2=
+G.
+> > cgroup_size / protection =3D=3D 1, so scan doesn't depend on memory.min=
+ at all.
+> >=20
+> > So, we need to look directly at memory.emin in memcg_low_reclaim case, =
+and
+> > ignore memory.(e)low.
+>=20
+> Hmm, this isn't really a common situation that I'd thought about, but it
+> seems reasonable to make the boundaries when in low reclaim to be between
+> min and low, rather than 0 and low. I'll add another patch with that. Tha=
+nks
 
-I did see a patch proposed at one point that actually went through and
-checked/flipped the TIF_SYSCALL_AUDIT bit when auditing was switched
-off.
+It's not a stopper, so I'm perfectly fine with a follow-up patch.
 
-> -Steve
-> 
-> > > I suppose its possible that people may want MAC hardwired events
-> > > but no syscall events. I don't know if there are other kconfig
-> > > audit options. but maybe getting it down to audit enabled and
-> > > syscall auditing as the only choices is probably the most
-> > > performant.
-> > >
-> > > -Steve  
+>=20
+> > > +			scan =3D clamp(scan, SWAP_CLUSTER_MAX, lruvec_size);
+> >=20
+> > Idk, how much sense does it have to make it larger than SWAP_CLUSTER_MA=
+X,
+> > given that it will become 0 on default (and almost any other) priority.
+>=20
+> In my testing, setting the scan target to 0 and thus reducing scope for
+> reclaim can result in increasing the scan priority more than is desirable=
+,
+> and since we base some vm heuristics based on that, that seemed concernin=
+g.
+>=20
+> I'd rather start being a bit more cautious, erring on the side of scannin=
+g
+> at least some pages from this memcg when priority gets elevated.
+>=20
+> Thanks for the review!
 
-- RGB
+For the rest of the patch:
+Reviewed-by: Roman Gushchin <guro@fb.com>
 
---
-Richard Guy Briggs <rgb@redhat.com>
-Sr. S/W Engineer, Kernel Security, Base Operating Systems
-Remote, Ottawa, Red Hat Canada
-IRC: rgb, SunRaycer
-Voice: +1.647.777.2635, Internal: (81) 32635
+Thanks!
