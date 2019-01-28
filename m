@@ -7,51 +7,56 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ADFCC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DF5C282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0296920811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B60A20811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693320;
-	bh=g6zLky/02Slrue3L9lmQ9eYw1JR/As+2YgEmSo3Lnmc=;
+	s=default; t=1548693324;
+	bh=csh5QF1PlRbm0x5/VviROGsT/ZlIzhholKiUHN65Rnw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=k9vE/+TzSuRp0hZrqt9uvCVcZK2ROuvkcl0gliXOdAiIWHkCD4MxpnB9MlkP08FIl
-	 tMzQsJI5t5jR3vPHOTgAGertHAHwapHSpfKYRJQ6zC29ucZh+Dlb0arMynoIB5ZvaL
-	 bK3kBcW2+RB3mvHcyysHHX3hXLP4UBtq2kK7y3HA=
+	b=0kgtjvv2OApMTlZcnNncVyM3Sv2+qUjLTvl1bJ/S5GgiOchtWAUajQk+NJQeLj+EC
+	 Kw5NqGI5IGFUTXnrXeFXNwxH2k8SK+mVhqlyIZBsxRvnowYc9PNhLQWgQ/3nMzKaKX
+	 SYuwQLNNln79OA8JQ+LqZsKKzKZgo72NVNf5u0I8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390406AbfA1QfS (ORCPT
+        id S2390040AbfA1QZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:35:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34838 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:25:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34676 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390047AbfA1QZu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:50 -0500
+        id S2390014AbfA1QZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BCE5D2175B;
-        Mon, 28 Jan 2019 16:25:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E89320879;
+        Mon, 28 Jan 2019 16:25:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692749;
-        bh=g6zLky/02Slrue3L9lmQ9eYw1JR/As+2YgEmSo3Lnmc=;
+        s=default; t=1548692743;
+        bh=csh5QF1PlRbm0x5/VviROGsT/ZlIzhholKiUHN65Rnw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i3gqqPxWZHYJ0Ni8trbYTLeh8lqYE9EqjlslA98Q8mGjrxnQrV+ACCqAxHr6oW17G
-         LJYbpwM8oZDEGKM+zlM9glacAqGFiRo+9UDv9m2PMFfJZEQbyfU2x2agX8lc5PhUwt
-         8qKzJ9oTwvgqCuD+DXFSKgj+vJTkMDCKu43njpiI=
+        b=pz5McaCgT4tJ7gQ5+8K3o6OmX1i6XEjM2z1GnqfU3OUoYYAJ2N76PBmEDEz2y0Hol
+         61lXIvNopxEUWSIAy65nddtZkHDd3mjoRE+5krlkkMXIw1wCHEDrdOLe25e1cgUBsL
+         9i57b7+m/MCV0FMPdGXaBFWmAOkwtj1JOuw+X4H4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chris Perl <cperl@janestreet.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 62/80] NFS: nfs_compare_mount_options always compare auth flavors.
-Date:   Mon, 28 Jan 2019 11:23:43 -0500
-Message-Id: <20190128162401.58841-62-sashal@kernel.org>
+Cc:     Peter Rosin <peda@axentia.se>,
+        Tomi Valkeinen <tomi.valkeinen@ti.com>,
+        Fabian Frederick <ffrederick@users.sourceforge.net>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Geoff Levand <geoff@infradead.org>,
+        James Simmons <jsimmons@users.sf.net>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 58/80] fbdev: fbmem: behave better with small rotated displays and many CPUs
+Date:   Mon, 28 Jan 2019 11:23:39 -0500
+Message-Id: <20190128162401.58841-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,52 +64,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Perl <cperl@janestreet.com>
+From: Peter Rosin <peda@axentia.se>
 
-[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
+[ Upstream commit f75df8d4b4fabfad7e3cba2debfad12741c6fde7 ]
 
-This patch removes the check from nfs_compare_mount_options to see if a
-`sec' option was passed for the current mount before comparing auth
-flavors and instead just always compares auth flavors.
+Blitting an image with "negative" offsets is not working since there
+is no clipping. It hopefully just crashes. For the bootup logo, there
+is protection so that blitting does not happen as the image is drawn
+further and further to the right (ROTATE_UR) or further and further
+down (ROTATE_CW). There is however no protection when drawing in the
+opposite directions (ROTATE_UD and ROTATE_CCW).
 
-Consider the following scenario:
+Add back this protection.
 
-You have a server with the address 192.168.1.1 and two exports /export/a
-and /export/b.  The first export supports `sys' and `krb5' security, the
-second just `sys'.
+The regression is 20-odd years old but the mindless warning-killing
+mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
+positive test on unsigned values") is also to blame, methinks.
 
-Assume you start with no mounts from the server.
-
-The following results in EIOs being returned as the kernel nfs client
-incorrectly thinks it can share the underlying `struct nfs_server's:
-
-$ mkdir /tmp/{a,b}
-$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
-$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
-$ df >/dev/null
-df: ‘/tmp/b’: Input/output error
-
-Signed-off-by: Chris Perl <cperl@janestreet.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
+Signed-off-by: Peter Rosin <peda@axentia.se>
+Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
+Cc: Fabian Frederick <ffrederick@users.sourceforge.net>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>
+cc: Geoff Levand <geoff@infradead.org>
+Cc: James Simmons <jsimmons@users.sf.net>
+Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/video/fbdev/core/fbmem.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 62f358f67764..412fcfbc50e2 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2376,8 +2376,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
- 		goto Ebusy;
- 	if (a->acdirmax != b->acdirmax)
- 		goto Ebusy;
--	if (b->auth_info.flavor_len > 0 &&
--	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
-+	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
- 		goto Ebusy;
- 	return 1;
- Ebusy:
+diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
+index 8a29ec5992fd..ea2bd6208a2f 100644
+--- a/drivers/video/fbdev/core/fbmem.c
++++ b/drivers/video/fbdev/core/fbmem.c
+@@ -433,7 +433,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dx += image->width + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_UD) {
+-		for (x = 0; x < num; x++) {
++		u32 dx = image->dx;
++
++		for (x = 0; x < num && image->dx <= dx; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dx -= image->width + 8;
+ 		}
+@@ -445,7 +447,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
+ 			image->dy += image->height + 8;
+ 		}
+ 	} else if (rotate == FB_ROTATE_CCW) {
+-		for (x = 0; x < num; x++) {
++		u32 dy = image->dy;
++
++		for (x = 0; x < num && image->dy <= dy; x++) {
+ 			info->fbops->fb_imageblit(info, image);
+ 			image->dy -= image->height + 8;
+ 		}
 -- 
 2.19.1
 
