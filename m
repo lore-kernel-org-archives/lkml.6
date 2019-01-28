@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6B78C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DC3AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A0BD20844
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E83E20811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693387;
-	bh=jrZzuc4k34f+c7tBM1X+krHhiGj3GRg7G+UAWtHJPHc=;
+	s=default; t=1548693396;
+	bh=FrHqswP/UF8bZq3BmAdlhmxVsISICqWYuWkwLQ1ZQO8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rdu1f3lcdEJ0FH9NXLVGX1VSWfNai+ib+MYjQlf1SXkfklgP8y6ggA0F89/dSESs8
-	 vtsuv3yqOhDiquJsr2pp+Rbc6rxKhNcOusmB9shGsimhnSNZve79Jcm2cJ25hsuAMJ
-	 Q0DaMsOdSuTCGwMJgNQHnb/kuijg7ajdLOnnkOcc=
+	b=VRahwXMhMONWLL8H70NnEHAu3iKNVdDvSCxMYHVgpzHQJDZ+0tZhvTT5ySpW4eowf
+	 tSooTWo7IyBvz8sEzwWNI6SSOMBGUt5RVxSJGt9/8w0UvLkUdw5YCkRhZOBq2uRkVv
+	 Q8g2T3qgucEwrP8DBum9nOSFB28S7uTKVw+59Az8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389931AbfA1QZ0 (ORCPT
+        id S2389257AbfA1Qge (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34244 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:36:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34182 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388483AbfA1QZZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:25 -0500
+        id S2389902AbfA1QZW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:22 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1F0342084A;
-        Mon, 28 Jan 2019 16:25:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 990A42084A;
+        Mon, 28 Jan 2019 16:25:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692724;
-        bh=jrZzuc4k34f+c7tBM1X+krHhiGj3GRg7G+UAWtHJPHc=;
+        s=default; t=1548692721;
+        bh=FrHqswP/UF8bZq3BmAdlhmxVsISICqWYuWkwLQ1ZQO8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=XqpKJl69Sx8F/OESJN7x14QCeCvvZjgUzEnwFIfuM3dQkKWzbktsrux1ptsGbksrt
-         aJNGs28gpzn8TlWhLY6H3/WyL139Tkzu/Sgwu9IrcWf9hubuZJmfKJ+5YFk6IWQSO0
-         Guj7H1ktQel2Sv5jKH1sT+yUUMQdO+rMxC016t0Q=
+        b=qeL0mfsGGT4c9FDzuwk0kBWbqbZx4/pvT8xjOiF78/U4QXrwsKLwy+VE1CZzVPhWM
+         jyAQZ3kgIysjwWiclM17bIqlN2EaSIx0IyA6htg+dmMqYPL+hjx754uzLxwJPkF274
+         iY1/wyo72Hs0n1TkKvFauciY4EfTYedkhrYd6c68=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.4 48/80] powerpc/uaccess: fix warning/error with access_ok()
-Date:   Mon, 28 Jan 2019 11:23:29 -0500
-Message-Id: <20190128162401.58841-48-sashal@kernel.org>
+Cc:     Michael Mueller <mimu@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 46/80] KVM: s390: unregister debug feature on failing arch init
+Date:   Mon, 28 Jan 2019 11:23:27 -0500
+Message-Id: <20190128162401.58841-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -58,45 +57,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Christophe Leroy <christophe.leroy@c-s.fr>
+From: Michael Mueller <mimu@linux.ibm.com>
 
-[ Upstream commit 05a4ab823983d9136a460b7b5e0d49ee709a6f86 ]
+[ Upstream commit 308c3e6673b012beecb96ef04cc65f4a0e7cdd99 ]
 
-With the following piece of code, the following compilation warning
-is encountered:
+Make sure the debug feature and its allocated resources get
+released upon unsuccessful architecture initialization.
 
-	if (_IOC_DIR(ioc) != _IOC_NONE) {
-		int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
+A related indication of the issue will be reported as kernel
+message.
 
-		if (!access_ok(verify, ioarg, _IOC_SIZE(ioc))) {
-
-drivers/platform/test/dev.c: In function 'my_ioctl':
-drivers/platform/test/dev.c:219:7: warning: unused variable 'verify' [-Wunused-variable]
-   int verify = _IOC_DIR(ioc) & _IOC_READ ? VERIFY_WRITE : VERIFY_READ;
-
-This patch fixes it by referencing 'type' in the macro allthough
-doing nothing with it.
-
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Message-Id: <20181130143215.69496-2-mimu@linux.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/include/asm/uaccess.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/s390/kvm/kvm-s390.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/include/asm/uaccess.h b/arch/powerpc/include/asm/uaccess.h
-index a5ffe0207c16..05f1389228d2 100644
---- a/arch/powerpc/include/asm/uaccess.h
-+++ b/arch/powerpc/include/asm/uaccess.h
-@@ -59,7 +59,7 @@
- #endif
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index 5ddb1debba95..2b967f81c58e 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -185,17 +185,28 @@ void kvm_arch_hardware_unsetup(void)
  
- #define access_ok(type, addr, size)		\
--	(__chk_user_ptr(addr),			\
-+	(__chk_user_ptr(addr), (void)(type),		\
- 	 __access_ok((__force unsigned long)(addr), (size), get_fs()))
+ int kvm_arch_init(void *opaque)
+ {
++	int rc;
++
+ 	kvm_s390_dbf = debug_register("kvm-trace", 32, 1, 7 * sizeof(long));
+ 	if (!kvm_s390_dbf)
+ 		return -ENOMEM;
  
- /*
+ 	if (debug_register_view(kvm_s390_dbf, &debug_sprintf_view)) {
+-		debug_unregister(kvm_s390_dbf);
+-		return -ENOMEM;
++		rc = -ENOMEM;
++		goto out_debug_unreg;
+ 	}
+ 
+ 	/* Register floating interrupt controller interface. */
+-	return kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
++	rc = kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
++	if (rc) {
++		pr_err("Failed to register FLIC rc=%d\n", rc);
++		goto out_debug_unreg;
++	}
++	return 0;
++
++out_debug_unreg:
++	debug_unregister(kvm_s390_dbf);
++	return rc;
+ }
+ 
+ void kvm_arch_exit(void)
 -- 
 2.19.1
 
