@@ -2,194 +2,168 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13CB4C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:49:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD28EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:50:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D683521736
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:49:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 956AF20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:50:13 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfA1Itd (ORCPT
+        id S1726914AbfA1IuL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:49:33 -0500
-Received: from mx-ginzinger.sigmacloud.services ([185.154.235.147]:33155 "EHLO
-        mx-ginzinger.sigmacloud.services" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726695AbfA1Itd (ORCPT
+        Mon, 28 Jan 2019 03:50:11 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:54270 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726415AbfA1IuL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:49:33 -0500
-Received: from [31.193.165.228] (port=21024 helo=mx-ginzinger.sigmacloud.services)
-        by mx-ginzinger.sigmacloud.services with esmtps (TLSv1.2:AES256-GCM-SHA384:256)
-        (Exim 4.82_1-5b7a7c0-XX)
-        (envelope-from <Martin.Kepplinger@ginzinger.com>)
-        id 1go2be-0007aO-2I; Mon, 28 Jan 2019 09:49:26 +0100
-Received: from exc1.buero.ginzinger.com (10.1.1.204) by
- exc1.buero.ginzinger.com (10.1.1.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.1466.3; Mon, 28 Jan 2019 09:49:26 +0100
-Received: from exc1.buero.ginzinger.com ([fe80::ad39:a353:4517:a5c4]) by
- exc1.buero.ginzinger.com ([fe80::ad39:a353:4517:a5c4%3]) with mapi id
- 15.01.1466.003; Mon, 28 Jan 2019 09:49:26 +0100
-X-CTCH-RefID: str=0001.0A0B0212.5C4EC216.009A,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-From:   Kepplinger Martin <Martin.Kepplinger@ginzinger.com>
-To:     Martin Kepplinger <martink@posteo.de>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-CC:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: AW: [PATCH 2/3] Input: st1232 - add support for st1633
-Thread-Topic: [PATCH 2/3] Input: st1232 - add support for st1633
-Thread-Index: AQHUtuXDU3rnj+j6VEyd7ZA9tbnwJqXEXspM
-Date:   Mon, 28 Jan 2019 08:49:26 +0000
-Message-ID: <20ec36c93a66462e893085af9920b3a5@ginzinger.com>
-References: <20190128084449.16070-1-martink@posteo.de>,<20190128084449.16070-2-martink@posteo.de>
-In-Reply-To: <20190128084449.16070-2-martink@posteo.de>
-Accept-Language: de-AT, de-DE, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [81.10.210.238]
-x-exclaimer-md-original-subject: [NODISC][NOSIG]AW: [PATCH 2/3] Input: st1232
- - add support for st1633
-x-exclaimer-md-config: 9dd172f7-de2e-4231-b886-ec11f46e03b3
+        Mon, 28 Jan 2019 03:50:11 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id 23ABA180C0;
+        Mon, 28 Jan 2019 09:50:09 +0100 (CET)
+X-Axis-User: NO
+X-Axis-NonUser: YES
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id gby93N2I57df; Mon, 28 Jan 2019 09:50:08 +0100 (CET)
+Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
+        by bastet.se.axis.com (Postfix) with ESMTPS id 261B4183E8;
+        Mon, 28 Jan 2019 09:50:08 +0100 (CET)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B40771A069;
+        Mon, 28 Jan 2019 09:50:07 +0100 (CET)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A84031A067;
+        Mon, 28 Jan 2019 09:50:07 +0100 (CET)
+Received: from seth.se.axis.com (unknown [10.0.2.172])
+        by boulder02.se.axis.com (Postfix) with ESMTP;
+        Mon, 28 Jan 2019 09:50:07 +0100 (CET)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by seth.se.axis.com (Postfix) with ESMTP id 9BDFDF8;
+        Mon, 28 Jan 2019 09:50:07 +0100 (CET)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id 9874F80126; Mon, 28 Jan 2019 09:50:07 +0100 (CET)
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     akpm@linux-foundation.org
+Cc:     mcgrof@kernel.org, keescook@chromium.org,
+        linux-kernel@vger.kernel.org, Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH v2] sysctl: Add panic-fatal-signals
+Date:   Mon, 28 Jan 2019 09:49:59 +0100
+Message-Id: <20190128084959.13060-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.20.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----7F082D21316967F941AD2464A9530B10"
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an S/MIME signed message
+Add a sysctl which asks the kernel to panic when any userspace process
+receives a fatal signal which would trigger a core dump.  This has
+proven to be quite useful when debugging problems seen during testing of
+embedded systems:  When combined with kernel core dumps (saved due to
+the panic), it allows easier debugging of crashes which have their
+origin in system-wide problems such as buggy drivers or other kernel or
+hardware-related issues.
 
-------7F082D21316967F941AD2464A9530B10
-Content-Language: de-AT
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
+The crashing process's core dump can be extracted from the kernel core
+dump using tools such as the crash utility's gcore extension.
 
-
-________________________________________
-Von: Martin Kepplinger [martink@posteo.de]
-Gesendet: Montag, 28. J=E4nner 2019 09:44
-An: devicetree@vger.kernel.org; linux-input@vger.kernel.org
-Cc: dmitry.torokhov@gmail.com; robh+dt@kernel.org; mark.rutland@arm.com; li=
-nux-kernel@vger.kernel.org; Kepplinger Martin
-Betreff: [PATCH 2/3] Input: st1232 - add support for st1633
-
-From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
-
-Add support for the Sitronix ST1633 touchscreen controller to the st1232
-driver. A protocol spec can be found here:
-www.ampdisplay.com/documents/pdf/AM-320480B6TZQW-TC0H.pdf
-
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
 ---
+v2: Put the sysctl behind a config option
 
-sorry, this is v3 of this series.
+ include/linux/signal.h |  1 +
+ init/Kconfig           | 14 ++++++++++++++
+ kernel/signal.c        |  5 ++++-
+ kernel/sysctl.c        |  9 +++++++++
+ 4 files changed, 28 insertions(+), 1 deletion(-)
 
-anyways, the of_device.h header isn't directly need now neither. thanks Dmi=
-try!
-
-                                 martin
-
-
-revision history
-----------------
-v3: implement Dmitry's suggestion for i2c probe from v2 review
-v2: use device_get_match_data(), invent an internal "have_z" bool property
-v1: initial idea for the change
-
-
-
- drivers/input/touchscreen/Kconfig  |   6 +-
- drivers/input/touchscreen/st1232.c | 122 +++++++++++++++++++++--------
- 2 files changed, 94 insertions(+), 34 deletions(-)
-
-
-------7F082D21316967F941AD2464A9530B10
-Content-Type: application/x-pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-
-MIIOHAYJKoZIhvcNAQcCoIIODTCCDgkCAQExDzANBglghkgBZQMEAgEFADALBgkq
-hkiG9w0BBwGgggshMIIF5jCCA86gAwIBAgIQapvhODv/K2ufAdXZuKdSVjANBgkq
-hkiG9w0BAQwFADCBhTELMAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFu
-Y2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExp
-bWl0ZWQxKzApBgNVBAMTIkNPTU9ETyBSU0EgQ2VydGlmaWNhdGlvbiBBdXRob3Jp
-dHkwHhcNMTMwMTEwMDAwMDAwWhcNMjgwMTA5MjM1OTU5WjCBlzELMAkGA1UEBhMC
-R0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UEBxMHU2FsZm9y
-ZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMTNENPTU9ETyBS
-U0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1haWwgQ0EwggEi
-MA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC+s55XrCh2dUAWxzgDmNPGGHYh
-UPMleQtMtaDRfTpYPpynMS6n9jR22YRq2tA9NEjk6vW7rN/5sYFLIP1of3l0NKZ6
-fLWfF2VgJ5cijKYy/qlAckY1wgOkUMgzKlWlVJGyK+UlNEQ1/5ErCsHq9x9aU/x1
-KwTdF/LCrT03Rl/FwFrf1XTCwa2QZYL55AqLPikFlgqOtzk06kb2qvGlnHJvijjI
-03BOrNpo+kZGpcHsgyO1/u1OZTaOo8wvEU17VVeP1cHWse9tGKTDyUGg2hJZjrqc
-k39UIm/nKbpDSZ0JsMoIw/JtOOg0JC56VzQgBo7ictReTQE5LFLG3yQK+xS1AgMB
-AAGjggE8MIIBODAfBgNVHSMEGDAWgBS7r34CPfqm8TyEjq3uOJjs2TIy1DAdBgNV
-HQ4EFgQUgq9sjPjF/pZhfOgfPStxSF7Ei8AwDgYDVR0PAQH/BAQDAgGGMBIGA1Ud
-EwEB/wQIMAYBAf8CAQAwEQYDVR0gBAowCDAGBgRVHSAAMEwGA1UdHwRFMEMwQaA/
-oD2GO2h0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NPTU9ET1JTQUNlcnRpZmljYXRp
-b25BdXRob3JpdHkuY3JsMHEGCCsGAQUFBwEBBGUwYzA7BggrBgEFBQcwAoYvaHR0
-cDovL2NydC5jb21vZG9jYS5jb20vQ09NT0RPUlNBQWRkVHJ1c3RDQS5jcnQwJAYI
-KwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmNvbW9kb2NhLmNvbTANBgkqhkiG9w0BAQwF
-AAOCAgEAeFyygSg0TzzuX1bOn5dW7I+iaxf28/ZJCAbU2C81zd9A/tNx4+jsQgwR
-GiHjZrAYayZrrm78hOx7aEpkfNPQIHGG6Fvq3EzWf/Lvx7/hk6zSPwIal9v5IkDc
-ZoFD7f3iT7PdkHJY9B51csvU50rxpEg1OyOT8fk2zvvPBuM4qQNqbGWlnhMpIMwp
-WZT89RY0wpJO+2V6eXEGGHsROs3njeP9DqqqAJaBa4wBeKOdGCWn1/Jp2oY6dyNm
-NppI4ZNMUH4Tam85S1j6E95u4+1Nuru84OrMIzqvISE2HN/56ebTOWlcrurffade
-2022O/tUU1gb4jfWCcyvB8czm12FgX/y/lRjmDbEA08QJNB2729Y+io1IYO3ztve
-BdvUCIYZojTq/OCR6MvnzS6X72HP0PRLRTiOSEmIDsS5N5w/8IW1Hva5hEFy6fDA
-fd9yI+O+IMMAj1KcL/Zo9jzJ16HO5m60ttl1Enk8MQkz/W3JlHaeI5iKFn4UJu1/
-cP2YHXYPiWf2JyBzsLBrGk1II+3yL8aorYew6CQvdVifC3HtwlSam9V1niiCfOBe
-2C12TdKGu05LWIA3ZkFcWJGaNXOZ6Ggyh/TqvXG5v7zmEVDNXFnHn9tFpMpOUvxh
-csjycBtH0dZ0WrNw6gH+HF8TIhCnH3+zzWuDN0Rk6h9KVkfKehIwggUzMIIEG6AD
-AgECAhBNQrEzGzrZ6FVYh1EEYH4+MA0GCSqGSIb3DQEBCwUAMIGXMQswCQYDVQQG
-EwJHQjEbMBkGA1UECBMSR3JlYXRlciBNYW5jaGVzdGVyMRAwDgYDVQQHEwdTYWxm
-b3JkMRowGAYDVQQKExFDT01PRE8gQ0EgTGltaXRlZDE9MDsGA1UEAxM0Q09NT0RP
-IFJTQSBDbGllbnQgQXV0aGVudGljYXRpb24gYW5kIFNlY3VyZSBFbWFpbCBDQTAe
-Fw0xODA3MTgwMDAwMDBaFw0yMTA3MTcyMzU5NTlaMDAxLjAsBgkqhkiG9w0BCQEW
-H21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wggEiMA0GCSqGSIb3DQEB
-AQUAA4IBDwAwggEKAoIBAQDsMC77L0D+2D8I8X5ubnBhADLgU+HtlwMTFt/WJIhc
-kgbvnawYXWrCIpk8F6BJ0R/iFCykPdG7741EmlcHRKOJfhVxjXhwnoGFqnYmurCt
-fvZLR3+mT3FWnVv2RAdrXscXH3BpijqqWabdtTbiTvmcl86Zc6mNlVhYZSbDul/E
-voIGZotGcGIWrgZxN+8MQJQHKb0KHyWlPVPkrjvEfOJHKKLFsBNSnNMR95Ijg3Sp
-h8/8RG490/zRHflGzUlxDSlLyY9YJGzSdDzcFKoYcc4oaaUY5N3uhRna43TLUIQh
-6ybt3DKVz1Pw/ikwYJrOsulJrVr3D8KVHdGxq7HYl7jnAgMBAAGjggHfMIIB2zAf
-BgNVHSMEGDAWgBSCr2yM+MX+lmF86B89K3FIXsSLwDAdBgNVHQ4EFgQU/GtSUbHg
-14sPDlmo27eQYwtjaS0wDgYDVR0PAQH/BAQDAgWgMAwGA1UdEwEB/wQCMAAwHQYD
-VR0lBBYwFAYIKwYBBQUHAwQGCCsGAQUFBwMCMEYGA1UdIAQ/MD0wOwYMKwYBBAGy
-MQECAQMFMCswKQYIKwYBBQUHAgEWHWh0dHBzOi8vc2VjdXJlLmNvbW9kby5uZXQv
-Q1BTMFoGA1UdHwRTMFEwT6BNoEuGSWh0dHA6Ly9jcmwuY29tb2RvY2EuY29tL0NP
-TU9ET1JTQUNsaWVudEF1dGhlbnRpY2F0aW9uYW5kU2VjdXJlRW1haWxDQS5jcmww
-gYsGCCsGAQUFBwEBBH8wfTBVBggrBgEFBQcwAoZJaHR0cDovL2NydC5jb21vZG9j
-YS5jb20vQ09NT0RPUlNBQ2xpZW50QXV0aGVudGljYXRpb25hbmRTZWN1cmVFbWFp
-bENBLmNydDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuY29tb2RvY2EuY29tMCoG
-A1UdEQQjMCGBH21hcnRpbi5rZXBwbGluZ2VyQGdpbnppbmdlci5jb20wDQYJKoZI
-hvcNAQELBQADggEBAGEuG01K1tt5i3gUdQkYem/KpbJUYBZd43QwmoTa0TGXUiYq
-b+g/TeGG9QQ1yq+73xOr8fu6oT2608C7EiJc6JmjTs485/OZmTqgYkrLfs71F1kB
-3Z59WPf5aoR/pnn5vdfkkoO29V1cKPJR4z+iOG2hOlcK/dXrX8i6mnL5DGIe8l5n
-udUPvIbUhbMavrDd6kwhs0oCjylwdKGlFkCpKMn3HPflfDeHuV9Z8Nrpeq/7+Pm0
-I/fLPkaYlULASJoJCucMYcedY9rmuro9JhV+NuVXaqLIrQPc1vyKFeRuLHh84M6c
-1h1DArdGTykXZUwjXnnHtuOtzjIAzkx2Ns43vEsxggK/MIICuwIBATCBrDCBlzEL
-MAkGA1UEBhMCR0IxGzAZBgNVBAgTEkdyZWF0ZXIgTWFuY2hlc3RlcjEQMA4GA1UE
-BxMHU2FsZm9yZDEaMBgGA1UEChMRQ09NT0RPIENBIExpbWl0ZWQxPTA7BgNVBAMT
-NENPTU9ETyBSU0EgQ2xpZW50IEF1dGhlbnRpY2F0aW9uIGFuZCBTZWN1cmUgRW1h
-aWwgQ0ECEE1CsTMbOtnoVViHUQRgfj4wDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZI
-hvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMTkwMTI4MDg0OTMw
-WjAvBgkqhkiG9w0BCQQxIgQg3D58ivFGBcoGu4qkwP6L58XB7SWI7kuGQUU3d3z7
-SIsweQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsG
-CWCGSAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcN
-AwICAUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwDQYJKoZIhvcNAQEBBQAEggEA
-j60cx+2cWouASA10yfO1FcDu6vj6oKi4kjhuxNnntERrmT8eKzMKtplb8tQPBll2
-W7GE8obBV/0+xsoANHhf+X8BlEwoJbmvrF234lKyOU2Oz45Tfrs/ZcOknsym6zUQ
-Jna86zoQrMUUDERWy2kHo2ln99dJLsg6Q10JYtaGbNnC9XWTFsePeKBszWIxfLiQ
-B/lgfTk3MHcl3LxkFl58ZowpvQv38lrsJKfk/Qruz/pbn64W7BLM82ciKSZC9FAc
-8KXta5LjP4VLwfoDrHBGXt2lasYksa5uLH/nA4mGM4cALSPOUIDFbTf5+RqvITku
-UeX9Yv9G/oxvYHpIYYzF/Q==
-
-------7F082D21316967F941AD2464A9530B10--
+diff --git a/include/linux/signal.h b/include/linux/signal.h
+index cc7e2c1cd444..109efd1432e9 100644
+--- a/include/linux/signal.h
++++ b/include/linux/signal.h
+@@ -10,6 +10,7 @@ struct task_struct;
+ 
+ /* for sysctl */
+ extern int print_fatal_signals;
++extern int panic_fatal_signals;
+ 
+ static inline void copy_siginfo(kernel_siginfo_t *to,
+ 				const kernel_siginfo_t *from)
+diff --git a/init/Kconfig b/init/Kconfig
+index d47cb77a220e..875442f6ab53 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1242,6 +1242,20 @@ config SYSCTL_SYSCALL
+ 
+ 	  If unsure say N here.
+ 
++config SYSCTL_PANIC_FATAL_SIGNALS
++	bool "panic-fatal-signals sysctl" if EXPERT
++	depends on PROC_SYSCTL
++	help
++	  If you say Y here, a kernel.panic-fatal-signals sysctl will be
++	  offered.  If this sysctl is turned on, the kernel will panic if any
++	  userspace process receives a fatal signal which would trigger a core
++	  dump.
++
++	  When used together with kernel core dumps, this can be useful for
++	  debugging some system-wide problems, primarily on embedded systems.
++
++	  If unsure, say N.
++
+ config FHANDLE
+ 	bool "open by fhandle syscalls" if EXPERT
+ 	select EXPORTFS
+diff --git a/kernel/signal.c b/kernel/signal.c
+index e1d7ad8e6ab1..83c6877b0182 100644
+--- a/kernel/signal.c
++++ b/kernel/signal.c
+@@ -59,6 +59,7 @@
+ static struct kmem_cache *sigqueue_cachep;
+ 
+ int print_fatal_signals __read_mostly;
++int panic_fatal_signals __read_mostly;
+ 
+ static void __user *sig_handler(struct task_struct *t, int sig)
+ {
+@@ -2497,8 +2498,10 @@ bool get_signal(struct ksignal *ksig)
+ 		current->flags |= PF_SIGNALED;
+ 
+ 		if (sig_kernel_coredump(signr)) {
+-			if (print_fatal_signals)
++			if (print_fatal_signals || panic_fatal_signals)
+ 				print_fatal_signal(ksig->info.si_signo);
++			if (panic_fatal_signals)
++				panic("Fatal signal and panic_fatal_signals=1");
+ 			proc_coredump_connector(current);
+ 			/*
+ 			 * If it was able to dump core, this kills all
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index ba4d9e85feb8..48023bad5b08 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -557,6 +557,15 @@ static struct ctl_table kern_table[] = {
+ 		.mode		= 0644,
+ 		.proc_handler	= proc_dointvec,
+ 	},
++#ifdef CONFIG_SYSCTL_PANIC_FATAL_SIGNALS
++	{
++		.procname	= "panic-fatal-signals",
++		.data		= &panic_fatal_signals,
++		.maxlen		= sizeof(int),
++		.mode		= 0644,
++		.proc_handler	= proc_dointvec,
++	},
++#endif
+ #ifdef CONFIG_SPARC
+ 	{
+ 		.procname	= "reboot-cmd",
+-- 
+2.20.0
 
