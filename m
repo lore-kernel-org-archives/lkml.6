@@ -2,151 +2,438 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26DA9C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 04:51:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE89FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 04:52:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D49152148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 04:51:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6A96D2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 04:52:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cl8EdIBT"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PJG1KVGF"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726669AbfA1Evm (ORCPT
+        id S1726749AbfA1EwV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 23:51:42 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:43716 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726607AbfA1Evm (ORCPT
+        Sun, 27 Jan 2019 23:52:21 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:38316 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbfA1EwU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 23:51:42 -0500
-Received: by mail-ot1-f66.google.com with SMTP id a11so13556917otr.10
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 20:51:41 -0800 (PST)
+        Sun, 27 Jan 2019 23:52:20 -0500
+Received: by mail-vk1-f194.google.com with SMTP id w72so3376070vkd.5
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 20:52:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=bR08rzA7EA7sJsJgXK9I/eXr2roF79WHvtrbxmvWV/A=;
-        b=cl8EdIBTzLhhJsFrCheyz5QNufgmACGXKTnxqMUG0LBvuqKTXSI9XncypCfV4j5nXG
-         wxSczAkzU5kBA05W1vqZdPOsLo+EvZfgDEnLPcYcSJsXz/q7wbjz7VQAbEpWJ2cFc79I
-         +KW+pFW8wGKtm4DqC8pF4sXbrHN2IaVLq2OFc=
+        bh=yenhmi2j4TkGM2GINDSEMBHITUuoeZKSorinP3U+/s8=;
+        b=PJG1KVGFc1MQQuBNUyuzu4aSjR/sAeNAM1M58KMDaYGCJtlfO6iNqUis8pzIWuXkj+
+         sn/zCNgocZUrTzZtyxJxTwnbA5qljvMnxloKR6uoWyB8hrT9lXaUyoRIH0eQ50h38RgP
+         uLqTZuhv3Mq9xfRaXxitSf9yBxn7ts4qJq8V8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=bR08rzA7EA7sJsJgXK9I/eXr2roF79WHvtrbxmvWV/A=;
-        b=FXmQSQE3pxypQBgugA7Je+By0lj0RYgbjSQhpH3lE+Lo1qvIaSss7m0taSK/1aNGQc
-         QqUx0kGCGCM+w+riXgiXuY5ZmRx4VcshCjgwZrgxATtN+TSyQYwgzsSiIN6qAs2UVw4z
-         xje2tCFzPJwH0le04IrHxn/iNoWtPuUiWpEIt8pxxTrjE82AlimCH1wkOU8d6NubBxr3
-         qQy2ZiXgDH30BWU2UywIbXdDl6v8qeNZdFnikVLPhndVz+V+hG6fCixS2FPxpeAfigsH
-         9+DahfRjP+BFb5JxkSnk3tbx3wBdU5dc3RWVCCJgL7d+As3bkcJ53R0J84J/f5eVLkYk
-         YDMw==
-X-Gm-Message-State: AJcUukdq+i9LsH0WDBqOiefNt7PatecDfhR+bTJ7oUL63BmDObff41AP
-        gTcL289SWAoJbA9KzDEm0ZnJ0yatoC8=
-X-Google-Smtp-Source: ALg8bN7ekgOLwG9CgH6BGgxsA3q8l9XZlELqfhoM7TxHJ5U0FuUoMlbdhqXHS7T7pL9f6Mt0fGRalQ==
-X-Received: by 2002:a9d:1c97:: with SMTP id l23mr15901898ota.276.1548649844964;
-        Sun, 27 Jan 2019 20:30:44 -0800 (PST)
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com. [209.85.210.42])
-        by smtp.gmail.com with ESMTPSA id l6sm4254421otk.51.2019.01.27.20.30.43
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 20:30:44 -0800 (PST)
-Received: by mail-ot1-f42.google.com with SMTP id n8so13564882otl.6
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 20:30:43 -0800 (PST)
-X-Received: by 2002:a9d:1b67:: with SMTP id l94mr14351362otl.147.1548649843040;
- Sun, 27 Jan 2019 20:30:43 -0800 (PST)
+        bh=yenhmi2j4TkGM2GINDSEMBHITUuoeZKSorinP3U+/s8=;
+        b=Rs16UdCqAV83M/ukof+nMxq3Yq5+7jBWX4VJ5+BT80J4dRXViCWeQOD58qKLef2vO8
+         wl25tUSy8DW4i5P7PpRrG1hsgq6heJlc6tky8Mfnx4CWXBwrUrpkPA/AsZCOpuOVgpzW
+         S8Yu+RYT0ODZ6qtg7QX0vObxPOWfXeifcUVnuLcJk9iPHVtWJOyyN2tgwYWDkO7uHemt
+         fVc22yOC85mfyXDapW+ZjDhUuc+Jc27WQm6QR2zHKd0UsikAEEhSLfbKle+F2ykwh2zq
+         6941xgUWd9DhYbqHmhRwnWzIM+23lSEoU8URsvzzhXY1SxjGZGVEb0Jcl7zvf6Pnpvfy
+         XKdA==
+X-Gm-Message-State: AJcUukddXWVzbXjZ+kv9TZfcnK+l/8wZdplKXFyqK8mvidM/3d2WN2wW
+        5R1Q2LRj/V1Y/qUFpxMJRK4h1Aacs17iEfrwsuW+uw==
+X-Google-Smtp-Source: ALg8bN7BSKydUadcEiXgvFOwHNns+YxxsdUQKcBRIr8T66GQbWKEHr++bq6I83aIpnV3a8avNaCP0pXH+TyjHM2t7kU=
+X-Received: by 2002:a1f:95d1:: with SMTP id x200mr8039872vkd.78.1548649846121;
+ Sun, 27 Jan 2019 20:30:46 -0800 (PST)
 MIME-Version: 1.0
-References: <20190117162008.25217-1-stanimir.varbanov@linaro.org>
- <CAPBb6MVOPmRhhM=J-RqLOpc+mDbnxYdCMO3mqQfgN-F3b=kBCw@mail.gmail.com>
- <10deb3d1-2b10-43fe-bc77-4465f561c90a@linaro.org> <CAPBb6MUqi3xhgE_WPRP_7gZWcH2WGz8A7vskGGJW9zGM0=D1Sw@mail.gmail.com>
- <80b97fd8-bd3a-df74-c611-5da11bd7adc6@linaro.org> <CAPBb6MWoJ1EPFZkNtChqkzLZkzirOP1umhQa8-_vkErvWyfVFQ@mail.gmail.com>
-In-Reply-To: <CAPBb6MWoJ1EPFZkNtChqkzLZkzirOP1umhQa8-_vkErvWyfVFQ@mail.gmail.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Mon, 28 Jan 2019 13:30:32 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5Cj=xpY_seGmJ5NM2H6_Jf=5AxE6XcL3DPqRH9SnPXjhQ@mail.gmail.com>
-Message-ID: <CAAFQd5Cj=xpY_seGmJ5NM2H6_Jf=5AxE6XcL3DPqRH9SnPXjhQ@mail.gmail.com>
-Subject: Re: [PATCH 00/10] Venus stateful Codec API
-To:     Alexandre Courbot <acourbot@chromium.org>
-Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Vikash Garodia <vgarodia@codeaurora.org>,
-        Malathi Gottam <mgottam@codeaurora.org>
+References: <1548309279-5281-1-git-send-email-sumit.garg@linaro.org> <1548309279-5281-5-git-send-email-sumit.garg@linaro.org>
+In-Reply-To: <1548309279-5281-5-git-send-email-sumit.garg@linaro.org>
+From:   Sumit Garg <sumit.garg@linaro.org>
+Date:   Mon, 28 Jan 2019 10:00:34 +0530
+Message-ID: <CAFA6WYMpX7YqXqYXtKPAw52gyhgzt=RMFihyUN_gkj3b+OurPQ@mail.gmail.com>
+Subject: Re: [PATCH v5 4/4] hwrng: add OP-TEE based rng driver
+To:     Herbert Xu <herbert@gondor.apana.org.au>
+Cc:     Jens Wiklander <jens.wiklander@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        yamada.masahiro@socionext.com, michal.lkml@markovi.net,
+        mpm@selenic.com, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
+        Bhupesh Sharma <bhsharma@redhat.com>, tee-dev@lists.linaro.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 1:16 PM Alexandre Courbot <acourbot@chromium.org> wrote:
->
-> On Fri, Jan 25, 2019 at 7:35 PM Stanimir Varbanov
-> <stanimir.varbanov@linaro.org> wrote:
-> >
-> > Hi Alex,
-> >
-> > On 1/25/19 7:34 AM, Alexandre Courbot wrote:
-> > > On Thu, Jan 24, 2019 at 7:13 PM Stanimir Varbanov
-> > > <stanimir.varbanov@linaro.org> wrote:
-> > >>
-> > >> Hi Alex,
-> > >>
-> > >> Thank you for review and valuable comments!
-> > >>
-> > >> On 1/24/19 10:43 AM, Alexandre Courbot wrote:
-> > >>> Hi Stanimir,
-> > >>>
-> > >>> On Fri, Jan 18, 2019 at 1:20 AM Stanimir Varbanov
-> > >>> <stanimir.varbanov@linaro.org> wrote:
-> > >>>>
-> > >>>> Hello,
-> > >>>>
-> > >>>> This aims to make Venus decoder compliant with stateful Codec API [1].
-> > >>>> The patches 1-9 are preparation for the cherry on the cake patch 10
-> > >>>> which implements the decoder state machine similar to the one in the
-> > >>>> stateful codec API documentation.
-> > >>>
-> > >>> Thanks *a lot* for this series! I am still stress-testing it against
-> > >>> the Chromium decoder tests, but so far it has been rock-solid. I have
-> > >>> a few inline comments on some patches ; I will also want to review the
-> > >>> state machine more thoroughly after refreshing my mind on Tomasz doc,
-> > >>> but this looks pretty promising already.
-> > >>
-> > >> I'm expecting problems with ResetAfterFirstConfigInfo. I don't know why
-> > >> but this test case is very dirty. I'd appreciate any help to decipher
-> > >> what is the sequence of v4l2 calls made by this unittest case.
-> > >
-> > > I did not see any issue with ResetAfterFirstConfigInfo, however
-> > > ResourceExhaustion seems to hang once in a while. But I could already
-> > > see this behavior with the older patchset.
-> >
-> > Is it hangs badly?
->
-> It just stops processing, no crash. I need to investigate more closely.
->
-> > >
-> > > In any case I plan to thoroughly review the state machine. I agree it
-> > > is a bit complex to grasp.
-> >
-> > yes the state machine isn't simple and I blamed Tomasz many times for
-> > that :)
+Hi Herbert,
 
-Don't shoot the messenger! I'm just carrying what hardware and
-userspace made for us. ;)
-
+On Thu, 24 Jan 2019 at 11:25, Sumit Garg <sumit.garg@linaro.org> wrote:
 >
-> If I feel inspired I may try to extract the useful part of your patch
-> into a framework that we can use everywhere. :) We don't want every
-> driver to reimplement this complex state machine and introduce new
-> bugs every time.
+> On ARM SoC's with TrustZone enabled, peripherals like entropy sources
+> might not be accessible to normal world (linux in this case) and rather
+> accessible to secure world (OP-TEE in this case) only. So this driver
+> aims to provides a generic interface to OP-TEE based random number
+> generator service.
+>
+> This driver registers on TEE bus to interact with OP-TEE based rng
+> device/service.
+>
+> Signed-off-by: Sumit Garg <sumit.garg@linaro.org>
 
-Yeah, we definitely need such a framework, especially given how the
-m2m framework is overused for handling codecs.
+Do you have any comments/feedback on this patch before I send next version (v6)?
 
-Best regards,
-Tomasz
+-Sumit
+
+> ---
+>  MAINTAINERS                        |   5 +
+>  drivers/char/hw_random/Kconfig     |  15 ++
+>  drivers/char/hw_random/Makefile    |   1 +
+>  drivers/char/hw_random/optee-rng.c | 274 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 295 insertions(+)
+>  create mode 100644 drivers/char/hw_random/optee-rng.c
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 51029a4..dcef7e9 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -11262,6 +11262,11 @@ M:     Jens Wiklander <jens.wiklander@linaro.org>
+>  S:     Maintained
+>  F:     drivers/tee/optee/
+>
+> +OP-TEE RANDOM NUMBER GENERATOR (RNG) DRIVER
+> +M:     Sumit Garg <sumit.garg@linaro.org>
+> +S:     Maintained
+> +F:     drivers/char/hw_random/optee-rng.c
+> +
+>  OPA-VNIC DRIVER
+>  M:     Dennis Dalessandro <dennis.dalessandro@intel.com>
+>  M:     Niranjana Vishwanathapura <niranjana.vishwanathapura@intel.com>
+> diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
+> index dac895d..25a7d8f 100644
+> --- a/drivers/char/hw_random/Kconfig
+> +++ b/drivers/char/hw_random/Kconfig
+> @@ -424,6 +424,21 @@ config HW_RANDOM_EXYNOS
+>           will be called exynos-trng.
+>
+>           If unsure, say Y.
+> +
+> +config HW_RANDOM_OPTEE
+> +       tristate "OP-TEE based Random Number Generator support"
+> +       depends on OPTEE
+> +       default HW_RANDOM
+> +       help
+> +         This  driver provides support for OP-TEE based Random Number
+> +         Generator on ARM SoCs where hardware entropy sources are not
+> +         accessible to normal world (Linux).
+> +
+> +         To compile this driver as a module, choose M here: the module
+> +         will be called optee-rng.
+> +
+> +         If unsure, say Y.
+> +
+>  endif # HW_RANDOM
+>
+>  config UML_RANDOM
+> diff --git a/drivers/char/hw_random/Makefile b/drivers/char/hw_random/Makefile
+> index e35ec3c..7c9ef4a 100644
+> --- a/drivers/char/hw_random/Makefile
+> +++ b/drivers/char/hw_random/Makefile
+> @@ -38,3 +38,4 @@ obj-$(CONFIG_HW_RANDOM_CAVIUM) += cavium-rng.o cavium-rng-vf.o
+>  obj-$(CONFIG_HW_RANDOM_MTK)    += mtk-rng.o
+>  obj-$(CONFIG_HW_RANDOM_S390) += s390-trng.o
+>  obj-$(CONFIG_HW_RANDOM_KEYSTONE) += ks-sa-rng.o
+> +obj-$(CONFIG_HW_RANDOM_OPTEE) += optee-rng.o
+> diff --git a/drivers/char/hw_random/optee-rng.c b/drivers/char/hw_random/optee-rng.c
+> new file mode 100644
+> index 0000000..4ad0eca
+> --- /dev/null
+> +++ b/drivers/char/hw_random/optee-rng.c
+> @@ -0,0 +1,274 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2018-2019 Linaro Ltd.
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/of.h>
+> +#include <linux/hw_random.h>
+> +#include <linux/kernel.h>
+> +#include <linux/module.h>
+> +#include <linux/slab.h>
+> +#include <linux/tee_drv.h>
+> +#include <linux/uuid.h>
+> +
+> +#define DRIVER_NAME "optee-rng"
+> +
+> +#define TEE_ERROR_HEALTH_TEST_FAIL     0x00000001
+> +
+> +/*
+> + * TA_CMD_GET_ENTROPY - Get Entropy from RNG
+> + *
+> + * param[0] (inout memref) - Entropy buffer memory reference
+> + * param[1] unused
+> + * param[2] unused
+> + * param[3] unused
+> + *
+> + * Result:
+> + * TEE_SUCCESS - Invoke command success
+> + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
+> + * TEE_ERROR_NOT_SUPPORTED - Requested entropy size greater than size of pool
+> + * TEE_ERROR_HEALTH_TEST_FAIL - Continuous health testing failed
+> + */
+> +#define TA_CMD_GET_ENTROPY             0x0
+> +
+> +/*
+> + * TA_CMD_GET_RNG_INFO - Get RNG information
+> + *
+> + * param[0] (out value) - value.a: RNG data-rate in bytes per second
+> + *                        value.b: Quality/Entropy per 1024 bit of data
+> + * param[1] unused
+> + * param[2] unused
+> + * param[3] unused
+> + *
+> + * Result:
+> + * TEE_SUCCESS - Invoke command success
+> + * TEE_ERROR_BAD_PARAMETERS - Incorrect input param
+> + */
+> +#define TA_CMD_GET_RNG_INFO            0x1
+> +
+> +#define MAX_ENTROPY_REQ_SZ             (4 * 1024)
+> +
+> +static struct tee_context *ctx;
+> +static struct tee_shm *entropy_shm_pool;
+> +static u32 ta_rng_data_rate;
+> +static u32 ta_rng_session_id;
+> +
+> +static size_t get_optee_rng_data(void *buf, size_t req_size)
+> +{
+> +       u32 ret = 0;
+> +       u8 *rng_data = NULL;
+> +       size_t rng_size = 0;
+> +       struct tee_ioctl_invoke_arg inv_arg = {0};
+> +       struct tee_param param[4] = {0};
+> +
+> +       /* Invoke TA_CMD_GET_ENTROPY function of Trusted App */
+> +       inv_arg.func = TA_CMD_GET_ENTROPY;
+> +       inv_arg.session = ta_rng_session_id;
+> +       inv_arg.num_params = 4;
+> +
+> +       /* Fill invoke cmd params */
+> +       param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_MEMREF_INOUT;
+> +       param[0].u.memref.shm = entropy_shm_pool;
+> +       param[0].u.memref.size = req_size;
+> +       param[0].u.memref.shm_offs = 0;
+> +
+> +       ret = tee_client_invoke_func(ctx, &inv_arg, param);
+> +       if ((ret < 0) || (inv_arg.ret != 0)) {
+> +               pr_err("TA_CMD_GET_ENTROPY invoke function error: %x\n",
+> +                      inv_arg.ret);
+> +               return 0;
+> +       }
+> +
+> +       rng_data = tee_shm_get_va(entropy_shm_pool, 0);
+> +       if (IS_ERR(rng_data)) {
+> +               pr_err("tee_shm_get_va failed\n");
+> +               return 0;
+> +       }
+> +
+> +       rng_size = param[0].u.memref.size;
+> +       memcpy(buf, rng_data, rng_size);
+> +
+> +       return rng_size;
+> +}
+> +
+> +static int optee_rng_read(struct hwrng *rng, void *buf, size_t max, bool wait)
+> +{
+> +       u8 *data = buf;
+> +       size_t read = 0, rng_size = 0;
+> +       int timeout = 1;
+> +
+> +       if (max > MAX_ENTROPY_REQ_SZ)
+> +               max = MAX_ENTROPY_REQ_SZ;
+> +
+> +       while (read == 0) {
+> +               rng_size = get_optee_rng_data(data, (max - read));
+> +
+> +               data += rng_size;
+> +               read += rng_size;
+> +
+> +               if (wait) {
+> +                       if (timeout-- == 0)
+> +                               return read;
+> +                       msleep((1000 * (max - read)) / ta_rng_data_rate);
+> +               } else {
+> +                       return read;
+> +               }
+> +       }
+> +
+> +       return read;
+> +}
+> +
+> +static int optee_rng_init(struct hwrng *rng)
+> +{
+> +       entropy_shm_pool = tee_shm_alloc(ctx, MAX_ENTROPY_REQ_SZ,
+> +                                        TEE_SHM_MAPPED | TEE_SHM_DMA_BUF);
+> +       if (IS_ERR(entropy_shm_pool)) {
+> +               pr_err("tee_shm_alloc failed\n");
+> +               return PTR_ERR(entropy_shm_pool);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static void optee_rng_cleanup(struct hwrng *rng)
+> +{
+> +       tee_shm_free(entropy_shm_pool);
+> +}
+> +
+> +static struct hwrng optee_rng = {
+> +       .name           = DRIVER_NAME,
+> +       .init           = optee_rng_init,
+> +       .cleanup        = optee_rng_cleanup,
+> +       .read           = optee_rng_read,
+> +};
+> +
+> +static int get_optee_rng_info(struct device *dev)
+> +{
+> +       u32 ret = 0;
+> +       struct tee_ioctl_invoke_arg inv_arg = {0};
+> +       struct tee_param param[4] = {0};
+> +
+> +       /* Invoke TA_CMD_GET_RNG_INFO function of Trusted App */
+> +       inv_arg.func = TA_CMD_GET_RNG_INFO;
+> +       inv_arg.session = ta_rng_session_id;
+> +       inv_arg.num_params = 4;
+> +
+> +       /* Fill invoke cmd params */
+> +       param[0].attr = TEE_IOCTL_PARAM_ATTR_TYPE_VALUE_OUTPUT;
+> +
+> +       ret = tee_client_invoke_func(ctx, &inv_arg, param);
+> +       if ((ret < 0) || (inv_arg.ret != 0)) {
+> +               dev_err(dev, "TA_CMD_GET_RNG_INFO invoke func error: %x\n",
+> +                       inv_arg.ret);
+> +               return -EINVAL;
+> +       }
+> +
+> +       ta_rng_data_rate = param[0].u.value.a;
+> +       optee_rng.quality = param[0].u.value.b;
+> +
+> +       return 0;
+> +}
+> +
+> +static int optee_ctx_match(struct tee_ioctl_version_data *ver, const void *data)
+> +{
+> +       if (ver->impl_id == TEE_IMPL_ID_OPTEE)
+> +               return 1;
+> +       else
+> +               return 0;
+> +}
+> +
+> +static int optee_rng_probe(struct device *dev)
+> +{
+> +       struct tee_client_device *rng_device = to_tee_client_device(dev);
+> +       int ret = 0, err = -ENODEV;
+> +       struct tee_ioctl_open_session_arg sess_arg = {0};
+> +
+> +       /* Open context with TEE driver */
+> +       ctx = tee_client_open_context(NULL, optee_ctx_match, NULL, NULL);
+> +       if (IS_ERR(ctx))
+> +               return -ENODEV;
+> +
+> +       /* Open session with hwrng Trusted App */
+> +       memcpy(sess_arg.uuid, rng_device->id.uuid.b, TEE_IOCTL_UUID_LEN);
+> +       sess_arg.clnt_login = TEE_IOCTL_LOGIN_PUBLIC;
+> +       sess_arg.num_params = 0;
+> +
+> +       ret = tee_client_open_session(ctx, &sess_arg, NULL);
+> +       if ((ret < 0) || (sess_arg.ret != 0)) {
+> +               dev_err(dev, "tee_client_open_session failed, error: %x\n",
+> +                       sess_arg.ret);
+> +               err = -EINVAL;
+> +               goto out_ctx;
+> +       }
+> +       ta_rng_session_id = sess_arg.session;
+> +
+> +       err = get_optee_rng_info(dev);
+> +       if (err)
+> +               goto out_sess;
+> +
+> +       err = hwrng_register(&optee_rng);
+> +       if (err) {
+> +               dev_err(dev, "hwrng registration failed (%d)\n", err);
+> +               goto out_sess;
+> +       }
+> +
+> +       return 0;
+> +
+> +out_sess:
+> +       tee_client_close_session(ctx, ta_rng_session_id);
+> +out_ctx:
+> +       tee_client_close_context(ctx);
+> +
+> +       return err;
+> +}
+> +
+> +static int optee_rng_remove(struct device *dev)
+> +{
+> +       hwrng_unregister(&optee_rng);
+> +       tee_client_close_session(ctx, ta_rng_session_id);
+> +       tee_client_close_context(ctx);
+> +
+> +       return 0;
+> +}
+> +
+> +const struct tee_client_device_id optee_rng_id_table[] = {
+> +       {UUID_INIT(0xab7a617c, 0xb8e7, 0x4d8f,
+> +                  0x83, 0x01, 0xd0, 0x9b, 0x61, 0x03, 0x6b, 0x64)},
+> +       {}
+> +};
+> +
+> +MODULE_DEVICE_TABLE(tee, optee_rng_id_table);
+> +
+> +static struct tee_client_driver optee_rng_driver = {
+> +       .id_table       = optee_rng_id_table,
+> +       .driver         = {
+> +               .name           = DRIVER_NAME,
+> +               .bus            = &tee_bus_type,
+> +               .probe          = optee_rng_probe,
+> +               .remove         = optee_rng_remove,
+> +       },
+> +};
+> +
+> +static int __init optee_rng_mod_init(void)
+> +{
+> +       int rc;
+> +
+> +       rc = driver_register(&optee_rng_driver.driver);
+> +       if (rc)
+> +               pr_warn("driver registration failed, err: %d", rc);
+> +
+> +       return rc;
+> +}
+> +
+> +static void __exit optee_rng_mod_exit(void)
+> +{
+> +       driver_unregister(&optee_rng_driver.driver);
+> +}
+> +
+> +module_init(optee_rng_mod_init);
+> +module_exit(optee_rng_mod_exit);
+> +
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_AUTHOR("Sumit Garg <sumit.garg@linaro.org>");
+> +MODULE_DESCRIPTION("OP-TEE based random number generator driver");
+> --
+> 2.7.4
+>
