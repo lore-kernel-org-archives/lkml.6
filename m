@@ -2,77 +2,120 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DB35C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:14:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 615CEC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:14:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 770822082E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:14:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 31FF52082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:14:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548695686;
+	bh=9vapgpFrn6o4u+OBhlaTL4+Vb8wemnj2+fEbsFmsjBQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=J2nGT1EX7/Wgu6FUKqifjG5ie13dJTW6EW/h73z8jeyxRGwtHelSXOssh805t7Aow
+	 yBieB3LWS83tKR5qxh5qT3Mz7ySGUAXjvWrthB6OsdCp7DF7UzkzG4CXviFzzY7mK2
+	 Z1vHXxc6xazq+Jp/xZM1nB9XVzvs/RVOUn6L5vxU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732402AbfA1ROh (ORCPT
+        id S1732422AbfA1ROp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:14:37 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:38072 "EHLO mx1.redhat.com"
+        Mon, 28 Jan 2019 12:14:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58132 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728932AbfA1ROg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:14:36 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1731802AbfA1QH1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:07:27 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B3D3658E5B;
-        Mon, 28 Jan 2019 17:14:35 +0000 (UTC)
-Received: from redhat.com (ovpn-123-79.rdu2.redhat.com [10.10.123.79])
-        by smtp.corp.redhat.com (Postfix) with SMTP id CDEC660BEC;
-        Mon, 28 Jan 2019 17:14:33 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 12:14:33 -0500
-From:   "Michael S. Tsirkin" <mst@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Joerg Roedel <joro@8bytes.org>, Jason Wang <jasowang@redhat.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        Jens Axboe <axboe@kernel.dk>,
-        virtualization@lists.linux-foundation.org,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        iommu@lists.linux-foundation.org, jfehlig@suse.com,
-        jon.grimm@amd.com, brijesh.singh@amd.com, jroedel@suse.de
-Subject: Re: [PATCH 5/5] virtio-blk: Consider virtio_max_dma_size() for
- maximum segment size
-Message-ID: <20190128121407-mutt-send-email-mst@kernel.org>
-References: <20190123163049.24863-1-joro@8bytes.org>
- <20190123163049.24863-6-joro@8bytes.org>
- <20190123213139.GD9032@lst.de>
- <20190124084011.GJ32526@8bytes.org>
- <20190124084221.GB19441@lst.de>
- <20190124095150.GL32526@8bytes.org>
- <20190128080526.GA3874@lst.de>
+        by mail.kernel.org (Postfix) with ESMTPSA id ACE4820989;
+        Mon, 28 Jan 2019 16:07:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691646;
+        bh=9vapgpFrn6o4u+OBhlaTL4+Vb8wemnj2+fEbsFmsjBQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Icdmjwy1wkOTwn2eeWDuIScbzWA6lh8/vV/e5BvaO0A9TuorL+VN7cTopkjgrXNNb
+         QcodGaKrNOKo/hL2YopwjqQk7RS5JfJFAdScjO73n3ffWQmRaBZx++AQOZNgMmWc+8
+         hNUkHcWhK17xzk8Db89nXWnA17EibBcSC8XyQvMs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Michael Mueller <mimu@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 172/258] KVM: s390: unregister debug feature on failing arch init
+Date:   Mon, 28 Jan 2019 10:57:58 -0500
+Message-Id: <20190128155924.51521-172-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128080526.GA3874@lst.de>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 28 Jan 2019 17:14:36 +0000 (UTC)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 09:05:26AM +0100, Christoph Hellwig wrote:
-> On Thu, Jan 24, 2019 at 10:51:51AM +0100, Joerg Roedel wrote:
-> > On Thu, Jan 24, 2019 at 09:42:21AM +0100, Christoph Hellwig wrote:
-> > > Yes.  But more importantly it would fix the limit for all other block
-> > > drivers that set large segment sizes when running over swiotlb.
-> > 
-> > True, so it would be something like the diff below? I havn't worked on
-> > the block layer, so I don't know if that needs additional checks for
-> > ->dev or anything.
-> 
-> Looks sensible.  Maybe for now we'll just do the virtio-blk case
-> that triggered it, and we'll do something like this patch for the
-> next merge window.  We'll also need to apply the same magic to the
-> DMA boundary.
+From: Michael Mueller <mimu@linux.ibm.com>
 
-So do I get an ack for this patch then?
+[ Upstream commit 308c3e6673b012beecb96ef04cc65f4a0e7cdd99 ]
 
+Make sure the debug feature and its allocated resources get
+released upon unsuccessful architecture initialization.
+
+A related indication of the issue will be reported as kernel
+message.
+
+Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+Reviewed-by: Cornelia Huck <cohuck@redhat.com>
+Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
+Reviewed-by: David Hildenbrand <david@redhat.com>
+Message-Id: <20181130143215.69496-2-mimu@linux.ibm.com>
+Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/s390/kvm/kvm-s390.c | 17 ++++++++++++++---
+ 1 file changed, 14 insertions(+), 3 deletions(-)
+
+diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
+index ac5da6b0b862..6aacb8d3dd9e 100644
+--- a/arch/s390/kvm/kvm-s390.c
++++ b/arch/s390/kvm/kvm-s390.c
+@@ -416,19 +416,30 @@ static void kvm_s390_cpu_feat_init(void)
+ 
+ int kvm_arch_init(void *opaque)
+ {
++	int rc;
++
+ 	kvm_s390_dbf = debug_register("kvm-trace", 32, 1, 7 * sizeof(long));
+ 	if (!kvm_s390_dbf)
+ 		return -ENOMEM;
+ 
+ 	if (debug_register_view(kvm_s390_dbf, &debug_sprintf_view)) {
+-		debug_unregister(kvm_s390_dbf);
+-		return -ENOMEM;
++		rc = -ENOMEM;
++		goto out_debug_unreg;
+ 	}
+ 
+ 	kvm_s390_cpu_feat_init();
+ 
+ 	/* Register floating interrupt controller interface. */
+-	return kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
++	rc = kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
++	if (rc) {
++		pr_err("Failed to register FLIC rc=%d\n", rc);
++		goto out_debug_unreg;
++	}
++	return 0;
++
++out_debug_unreg:
++	debug_unregister(kvm_s390_dbf);
++	return rc;
+ }
+ 
+ void kvm_arch_exit(void)
 -- 
-MST
+2.19.1
+
