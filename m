@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9A68C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEC32C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B6602177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7FD9C20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691538;
-	bh=GQQgd1h+nu0wddck8mihkJDmglqn6sJrcIm/erF9ZRE=;
+	s=default; t=1548691542;
+	bh=mN8hK7119mhhlQEMcPoiM0hkdX0V8kwKxe9/BOuU61c=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1chuYw45YSB3ZEUo6b+90n4UELNxH5fCKSPqFV3FNHptKG7HCOaqZjpwnGje0JE7M
-	 Etk8uYyNBzo9+w897qS2EiOaEatOJk2oquMEiYxDhYABIfQ+O4tI924Mp/uNHmc/Qp
-	 gKs5MMGK52zglqAsR2Hxs0nM8zYwrnciWR1TAUf0=
+	b=o3+gIU4N6y7np8vz+wVrZlgVqA3nZEctK6hCLU3JxPwnSn+o8xieAeLutBcCynvaT
+	 Fjl/X5Xj+FLZaylSmVMgmd95O3yj5yKYrl/5C9HP+t5dmkEPKR8qRAzlU9SVeuqD30
+	 d0bkk4y5pXqR3vg58Bv1S9TVHRUIfrSG22Yu/fsk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731885AbfA1QFg (ORCPT
+        id S1731199AbfA1QFj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:05:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52470 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:05:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52602 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731858AbfA1QFd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:05:33 -0500
+        id S1731873AbfA1QFf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:05:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 889E821919;
-        Mon, 28 Jan 2019 16:05:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E10D820989;
+        Mon, 28 Jan 2019 16:05:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691532;
-        bh=GQQgd1h+nu0wddck8mihkJDmglqn6sJrcIm/erF9ZRE=;
+        s=default; t=1548691534;
+        bh=mN8hK7119mhhlQEMcPoiM0hkdX0V8kwKxe9/BOuU61c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ZnaaqakT+BAY+WaVEQ3MAsx6oknmI69Y4opFdIs+9GawjgpGft5OWkbbP0G2Kh8hF
-         YYla7DwPuC9nZR1CmT99Pik10AukKNsVsurLLORkRpdMl3nqm0QMD+Rk4EuNeevzI3
-         miQyEmhGI8s2NzqO6KxjIDZRFy1fLxXkh0jXoBIU=
+        b=Ul2TCCOs3GqjQqqnXfCnvFNiCsz986+9DXxa7Ylesp5XAyg/Ni5Y9Twv6WmdxrPIi
+         KjBaQ8WwU65kSWYNbit6XZbdzyA2mx31QiT8IURTLoOJWIy2tLmUVJSHU0SX2jnmup
+         UzwoizqyX3D8SYtExmXARU0YY2UA/0NzmRCCtiRg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anson Huang <anson.huang@nxp.com>,
-        Anson Huang <Anson.Huang@nxp.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 132/258] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
-Date:   Mon, 28 Jan 2019 10:57:18 -0500
-Message-Id: <20190128155924.51521-132-sashal@kernel.org>
+Cc:     Vadim Pasternak <vadimp@mellanox.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 133/258] platform/x86: mlx-platform: Fix tachometer registers
+Date:   Mon, 28 Jan 2019 10:57:19 -0500
+Message-Id: <20190128155924.51521-133-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,46 +59,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anson Huang <anson.huang@nxp.com>
+From: Vadim Pasternak <vadimp@mellanox.com>
 
-[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
+[ Upstream commit edd45cba5ed7f53974475ddc9a1453c2c87b3328 ]
 
-Same as other i.MX6 SoCs, ensure unused MMDC channel's
-handshake is bypassed, this is to make sure no request
-signal will be generated when periphe_clk_sel is changed
-or SRC warm reset is triggered.
+Shift by one the registers for tachometers (7 - 12).
 
-Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+This fix is relevant for the same new systems MQMB7, MSN37, MSN34,
+which are about to be released to the customers.
+At the moment, none of them is at customers sites. The customers will
+not suffer from this change.
+This fix is necessary, because register used before for tachometer 7
+has been than reserved for the second PWM for newer systems, which are
+not supported yet in mlx-platform driver. So registers of tachometers
+7-12 have been shifted by one.
+
+Fixes: 0378123c5800 ("platform/x86: mlx-platform: Add mlxreg-fan platform driver activation")
+Signed-off-by: Vadim Pasternak <vadimp@mellanox.com>
+Signed-off-by: Darren Hart (VMware) <dvhart@infradead.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/imx/clk-imx6sl.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/platform/x86/mlx-platform.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
-index eb6bcbf345a3..390e3e0ecc45 100644
---- a/drivers/clk/imx/clk-imx6sl.c
-+++ b/drivers/clk/imx/clk-imx6sl.c
-@@ -17,6 +17,8 @@
- 
- #include "clk.h"
- 
-+#define CCDR				0x4
-+#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
- #define CCSR			0xc
- #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
- #define CACRR			0x10
-@@ -409,6 +411,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
- 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
- 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
- 
-+	/* Ensure the MMDC CH0 handshake is bypassed */
-+	writel_relaxed(readl_relaxed(base + CCDR) |
-+		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
-+
- 	imx_check_clocks(clks, ARRAY_SIZE(clks));
- 
- 	clk_data.clks = clks;
+diff --git a/drivers/platform/x86/mlx-platform.c b/drivers/platform/x86/mlx-platform.c
+index d89936c93ba0..78b4aa4410fb 100644
+--- a/drivers/platform/x86/mlx-platform.c
++++ b/drivers/platform/x86/mlx-platform.c
+@@ -83,12 +83,12 @@
+ #define MLXPLAT_CPLD_LPC_REG_TACHO4_OFFSET	0xe7
+ #define MLXPLAT_CPLD_LPC_REG_TACHO5_OFFSET	0xe8
+ #define MLXPLAT_CPLD_LPC_REG_TACHO6_OFFSET	0xe9
+-#define MLXPLAT_CPLD_LPC_REG_TACHO7_OFFSET	0xea
+-#define MLXPLAT_CPLD_LPC_REG_TACHO8_OFFSET	0xeb
+-#define MLXPLAT_CPLD_LPC_REG_TACHO9_OFFSET	0xec
+-#define MLXPLAT_CPLD_LPC_REG_TACHO10_OFFSET	0xed
+-#define MLXPLAT_CPLD_LPC_REG_TACHO11_OFFSET	0xee
+-#define MLXPLAT_CPLD_LPC_REG_TACHO12_OFFSET	0xef
++#define MLXPLAT_CPLD_LPC_REG_TACHO7_OFFSET	0xeb
++#define MLXPLAT_CPLD_LPC_REG_TACHO8_OFFSET	0xec
++#define MLXPLAT_CPLD_LPC_REG_TACHO9_OFFSET	0xed
++#define MLXPLAT_CPLD_LPC_REG_TACHO10_OFFSET	0xee
++#define MLXPLAT_CPLD_LPC_REG_TACHO11_OFFSET	0xef
++#define MLXPLAT_CPLD_LPC_REG_TACHO12_OFFSET	0xf0
+ #define MLXPLAT_CPLD_LPC_IO_RANGE		0x100
+ #define MLXPLAT_CPLD_LPC_I2C_CH1_OFF		0xdb
+ #define MLXPLAT_CPLD_LPC_I2C_CH2_OFF		0xda
 -- 
 2.19.1
 
