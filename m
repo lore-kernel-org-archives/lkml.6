@@ -2,188 +2,146 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13ADCC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D95A7C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D164421738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:00:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N7+u0tsM"
+	by mail.kernel.org (Postfix) with ESMTP id B1B1A214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:03:15 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbfA1MA3 (ORCPT
+        id S1726971AbfA1MDO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:00:29 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:36429 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726648AbfA1MA3 (ORCPT
+        Mon, 28 Jan 2019 07:03:14 -0500
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:59632 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726798AbfA1MDN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:00:29 -0500
-Received: by mail-oi1-f196.google.com with SMTP id x23so12782798oix.3;
-        Mon, 28 Jan 2019 04:00:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=RS7TGw3Q7q6W0EWIJ93uDTECWNvTB7WUq0nmAIxF1CY=;
-        b=N7+u0tsMqAabw9jkYIOKKyc6MWUszmEb5C/ybwo69c8JJLBDFSir7TkkrWeMPZaugM
-         IsZmv2qpgLUTDCM0rNkp4JPbAsPRzZLRnonNni+bGwa3oafdlOVSEo4IDPeNLn4Q2X/7
-         tNRPv6JqnkXQ5YPv0RYx0aQ+j2KbOIwMjHPjTyNxtMGF69azYHIweBLQsIuCYqgQ5dwX
-         h49vXKmxgYYjUQ3BLdkhoTQb9jsd0qYtppw1miabwHm0mRTML+KYStdxz6ZggUeikDbd
-         9V2Q+GIVtfyg2YoW2b/TmIlVnOpv+7aCTEwzzZ/wBurMw01v37hlTKUtPGHT7xe4Q437
-         y0jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RS7TGw3Q7q6W0EWIJ93uDTECWNvTB7WUq0nmAIxF1CY=;
-        b=Y+0U2FWGHXlgvU67NfYT4QKWsWew/KPN4kfloNvhZXFR9pfbuyk79LTjsr/tgjHL0/
-         +RNpOsfX7SvrQfSXV+cWRKRQ6zXxIIP/2vLr7uso4YZTLreOMWcrqQPZgWL4qmY6s6W+
-         I2CutXxWzkVCdmP8rYqFClTfOnofIePd3SDUK7B6vdioSvt/g+as30mCl2LWCD1As1l3
-         o7AdTJ8f0smvnlNbC0LyBZiK6IHN+IQoh2FdAaYotj+M7/Upirx0XLOalwNEt3KKQwIC
-         QNVhMh84M3O9NAfenwVtluMFaJMx+hHlcwkigF0Kw5ZJokvEixOUGRqJ950vL+n8VEIi
-         60WQ==
-X-Gm-Message-State: AJcUukez7+LtltVIcq0QogJKcVzN3PeTuOaaeg+noXvvG/ZJGncW+d2v
-        m/zSSLzcwBQuqcEtzjfLkQ0ko2Xw7L8dVYL9BWQ=
-X-Google-Smtp-Source: ALg8bN5iNpnpcaFrHlj+NNfQ5VTJ4ghSNBkWzhQtAoi3N19JChsvR4OWHdskX/6LufsrBt/pBuW4vWa/LrpMRuPG3Kw=
-X-Received: by 2002:aca:d644:: with SMTP id n65mr5699040oig.287.1548676827827;
- Mon, 28 Jan 2019 04:00:27 -0800 (PST)
+        Mon, 28 Jan 2019 07:03:13 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id o5d4grlswRO5Zo5d7gJpuI; Mon, 28 Jan 2019 13:03:11 +0100
+Subject: Re: [PATCH v10 0/4] Media Device Allocator API
+To:     Shuah Khan <shuah@kernel.org>, mchehab@kernel.org, perex@perex.cz,
+        tiwai@suse.com
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org
+References: <cover.1548360791.git.shuah@kernel.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <e8717d11-1eff-2e07-53d5-6cd55356c66a@xs4all.nl>
+Date:   Mon, 28 Jan 2019 13:03:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190128094851.3975-1-ricardo@ribalda.com>
-In-Reply-To: <20190128094851.3975-1-ricardo@ribalda.com>
-From:   Alexandru Ardelean <ardeleanalex@gmail.com>
-Date:   Mon, 28 Jan 2019 14:00:15 +0200
-Message-ID: <CA+U=DspRfs8G7Vaa_s367Aryde8uX4ioRcWv9yFGu6hkzQKH6Q@mail.gmail.com>
-Subject: Re: [PATCH v3] iio: adc: ad7476: Add support for TI ADS786X ADCs
-To:     Ricardo Ribalda Delgado <ricardo@ribalda.com>
-Cc:     Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        alexandru.ardelean@analog.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <cover.1548360791.git.shuah@kernel.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfHBJy9HTonFoWGMJRFmLbhhYEKC8Pgal0+Y1qCk/8wfXu6KIvxhb3VGaJKwqOBpnVdvz+AaELzyuHcpEk8+LOfCmOsOGHCJvuEU+4JwSveXXLLdYcsa4
+ Np4ZNmLWANK0nC2NUrX7y0ihmQAgKRT3wibqOajCX4GHgbt0ojPNegIsJ2EoSepLEK2g0wcIlmH5YXOis35aHjnxFGYVYXL9ECKJgeY/diZgfj8V1tu75VbG
+ uub6FlLlw61ooETSzqNHPTDaQmBBmSUHThdlfapG7P5WZK+UqUreWjCjDkWGdTXNf1/kg6EOZl0x5UBNIzadstjPINf05Siv3taT+3X2apQgdXucLsfRbOBE
+ 5vI35MeM7nj/i86V5PG/g2yxbpniWw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 11:49 AM Ricardo Ribalda Delgado
-<ricardo@ribalda.com> wrote:
->
-> Add support for Texas Instruments ADS7866, ADS7867 and ADS7868
-> 8/10/12 bit Single channel ADC.
->
-> Datasheet: http://www.ti.com/lit/ds/symlink/ads7868.pdf
->
-> Cc: Alexandru Ardelean <ardeleanalex@gmail.com>
-> Signed-off-by: Ricardo Ribalda Delgado <ricardo@ribalda.com>
-> ---
-> v3: Changes by Alexandru Ardelean <ardeleanalex@gmail.com>
->
-> - Modify Kconfig to clarify that the chip is not from AD, but from TI
->
->  drivers/iio/adc/Kconfig  |  6 ++++--
->  drivers/iio/adc/ad7476.c | 20 ++++++++++++++++++++
->  2 files changed, 24 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index f9354e5ee65c..2d3442252e32 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -57,14 +57,16 @@ config AD7298
->           module will be called ad7298.
->
->  config AD7476
-> -       tristate "Analog Devices AD7476 and similar 1-channel ADCs driver"
-> +       tristate "Analog Devices AD7476 1-channel ADCs driver and other similar devices from AD an TI"
->         depends on SPI
->         select IIO_BUFFER
->         select IIO_TRIGGERED_BUFFER
->         help
->           Say yes here to build support for Analog Devices AD7273, AD7274, AD7276,
->           AD7277, AD7278, AD7475, AD7476, AD7477, AD7478, AD7466, AD7467, AD7468,
-> -         AD7495, AD7910, AD7920, AD7920 SPI analog to digital converters (ADC).
-> +         AD7495, AD7910, AD7920, AD7920. SPI analog to digital converters (ADC).
-> +         And for Texas Instrumments ADS7866, ADS7867, ADS7868. SPI analog to
-Typo: Instrumments -> Instruments
+Hi Shuah,
 
-> +         digital converters (ADC).
+On 1/24/19 9:32 PM, Shuah Khan wrote:
+> Media Device Allocator API to allows multiple drivers share a media device.
+> This API solves a very common use-case for media devices where one physical
+> device (an USB stick) provides both audio and video. When such media device
+> exposes a standard USB Audio class, a proprietary Video class, two or more
+> independent drivers will share a single physical USB bridge. In such cases,
+> it is necessary to coordinate access to the shared resource.
+> 
+> Using this API, drivers can allocate a media device with the shared struct
+> device as the key. Once the media device is allocated by a driver, other
+> drivers can get a reference to it. The media device is released when all
+> the references are released.
+> 
+> - This patch series is tested on 5.0-rc3 and addresses comments on
+>   v9 series from Hans Verkuil.
+> - v9 was tested on 4.20-rc6.
+> - Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
+>   arecord. When analog is streaming, digital and audio user-space
+>   applications detect that the tuner is busy and exit. When digital
+>   is streaming, analog and audio applications detect that the tuner is
+>   busy and exit. When arecord is owns the tuner, digital and analog
+>   detect that the tuner is busy and exit.
 
-I would break it into a table-like format.
-I didn't see if there is a common/recommended way of doing things for
-these drivers.
+I've been doing some testing with my au0828, and I am confused about one
+thing, probably because it has been too long ago since I last looked into
+this in detail:
 
-But something like:
+Why can't I change the tuner frequency if arecord (and only arecord) is
+streaming audio? If arecord is streaming, then it is recording the audio
+from the analog TV tuner, right? So changing the analog TV frequency
+should be fine.
 
-           Say yes here to build support for the following SPI analog
-to digital converters (ADCs):
-           Analog Devices:  AD7273, AD7274, AD7276, AD7277, AD7278,
-AD7475, AD7476,
-                                     AD7477, AD7478, AD7466, AD7467,
-AD7468, AD7495, AD7910,
-                                     AD7920
-           Texas Instruments:  ADS7866, ADS7867, ADS7868
+I understand why you can't switch to DVB mode, but analog TV should be OK.
+Or am I missing something?
 
-Funny thing: I just noticed that the AD7920 was listed twice.
+Regards,
 
+	Hans
 
->
->           To compile this driver as a module, choose M here: the
->           module will be called ad7476.
-> diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
-> index 0549686b9ef8..76747488044b 100644
-> --- a/drivers/iio/adc/ad7476.c
-> +++ b/drivers/iio/adc/ad7476.c
-> @@ -59,6 +59,9 @@ enum ad7476_supported_device_ids {
->         ID_ADC081S,
->         ID_ADC101S,
->         ID_ADC121S,
-> +       ID_ADS7866,
-> +       ID_ADS7867,
-> +       ID_ADS7868,
->  };
->
->  static irqreturn_t ad7476_trigger_handler(int irq, void  *p)
-> @@ -157,6 +160,8 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
->  #define AD7940_CHAN(bits) _AD7476_CHAN((bits), 15 - (bits), \
->                 BIT(IIO_CHAN_INFO_RAW))
->  #define AD7091R_CHAN(bits) _AD7476_CHAN((bits), 16 - (bits), 0)
-> +#define ADS786X_CHAN(bits) _AD7476_CHAN((bits), 12 - (bits), \
-> +               BIT(IIO_CHAN_INFO_RAW))
->
->  static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
->         [ID_AD7091R] = {
-> @@ -209,6 +214,18 @@ static const struct ad7476_chip_info ad7476_chip_info_tbl[] = {
->                 .channel[0] = ADC081S_CHAN(12),
->                 .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
->         },
-> +       [ID_ADS7866] = {
-> +               .channel[0] = ADS786X_CHAN(12),
-> +               .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
-> +       },
-> +       [ID_ADS7867] = {
-> +               .channel[0] = ADS786X_CHAN(10),
-> +               .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
-> +       },
-> +       [ID_ADS7868] = {
-> +               .channel[0] = ADS786X_CHAN(8),
-> +               .channel[1] = IIO_CHAN_SOFT_TIMESTAMP(1),
-> +       },
->  };
->
->  static const struct iio_info ad7476_info = {
-> @@ -314,6 +331,9 @@ static const struct spi_device_id ad7476_id[] = {
->         {"adc081s", ID_ADC081S},
->         {"adc101s", ID_ADC101S},
->         {"adc121s", ID_ADC121S},
-> +       {"ads7866", ID_ADS7866},
-> +       {"ads7867", ID_ADS7867},
-> +       {"ads7868", ID_ADS7868},
->         {}
->  };
->  MODULE_DEVICE_TABLE(spi, ad7476_id);
-> --
-> 2.20.1
->
+> - Tested media device allocator API with bind/unbind testing on
+>   snd-usb-audio and au0828 drivers to make sure /dev/mediaX is released
+>   only when the last driver is unbound.
+> - Addressed review comments from Hans on the RFC v8 (rebased on 4.19)
+> - Updated change log to describe the use-case more clearly.
+> - No changes to 0001,0002 code since the v7 referenced below.
+> - 0003 is a new patch to enable ALSA defines that have been
+>   disabled for kernel between 4.9 and 4.19.
+> - Minor merge conflict resolution in 0004.
+> - Added SPDX to new files.
+> 
+> Changes since v9:
+> - Patch 1: Fix mutex assert warning from find_module() calls. This
+>   code was written before the change to find_module() that requires
+>   callers to hold module_mutex. I missed this during my testing on
+>   4.20-rc6. Hans Verkuil reported the problem.
+> - Patch 4: sound/usb: Initializes all the entities it can before
+>   registering the device based on comments from Hans Verkuil
+> - Carried Reviewed-by tag from Takashi Iwai for the sound from v9.
+> - No changes to Patches 2 and 3.
+> 
+> References:
+> https://lkml.org/lkml/2018/11/2/169
+> https://www.mail-archive.com/linux-media@vger.kernel.org/msg105854.html
+> 
+> Shuah Khan (4):
+>   media: Media Device Allocator API
+>   media: change au0828 to use Media Device Allocator API
+>   media: media.h: Enable ALSA MEDIA_INTF_T* interface types
+>   sound/usb: Use Media Controller API to share media resources
+> 
+>  Documentation/media/kapi/mc-core.rst   |  41 ++++
+>  drivers/media/Makefile                 |   4 +
+>  drivers/media/media-dev-allocator.c    | 144 +++++++++++
+>  drivers/media/usb/au0828/au0828-core.c |  12 +-
+>  drivers/media/usb/au0828/au0828.h      |   1 +
+>  include/media/media-dev-allocator.h    |  53 ++++
+>  include/uapi/linux/media.h             |  25 +-
+>  sound/usb/Kconfig                      |   4 +
+>  sound/usb/Makefile                     |   2 +
+>  sound/usb/card.c                       |  14 ++
+>  sound/usb/card.h                       |   3 +
+>  sound/usb/media.c                      | 327 +++++++++++++++++++++++++
+>  sound/usb/media.h                      |  74 ++++++
+>  sound/usb/mixer.h                      |   3 +
+>  sound/usb/pcm.c                        |  29 ++-
+>  sound/usb/quirks-table.h               |   1 +
+>  sound/usb/stream.c                     |   2 +
+>  sound/usb/usbaudio.h                   |   6 +
+>  18 files changed, 723 insertions(+), 22 deletions(-)
+>  create mode 100644 drivers/media/media-dev-allocator.c
+>  create mode 100644 include/media/media-dev-allocator.h
+>  create mode 100644 sound/usb/media.c
+>  create mode 100644 sound/usb/media.h
+> 
+
