@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B283C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC1CBC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDC9D2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB0F4214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690278;
-	bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
+	s=default; t=1548690281;
+	bh=n7fK/XLRLjOw8kvnQJhYF0ngmFAyn06e19rnemAeWOw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MBts3iFQAFHHIDw0zyA+fToJpRqT0+WZuORxm9GKC65Z88qC5DRnrUXOPQpX73Yq2
-	 8hZiHN4ViB5qiEYJ90VnGgJ88cJoZELJfkRNLOZtHGpP7xoB3xjBmUcj4j2DUtx5Vh
-	 YZqYInfW7X0+FOVAVB0+kN9NQhO91nfEUfSlkuu0=
+	b=KRWXaSEaucGpVwBn8NDYlKu8+kffBSR7LFi147BYFgeqpS/6niZ/z/XbAs02T/J8A
+	 JWde+GEJMyp2siQ0vLiweCRSoNMwzr938rO7bctWgNoNk1A3yoZ1BkkEPFKDPQYjQ1
+	 EXnslGnc/fwJs2mvrkJVCkQXuSjQw2Nw+OSlUWB4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727424AbfA1Poh (ORCPT
+        id S1727446AbfA1Pok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:44:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57828 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:44:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57936 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727378AbfA1Poa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:44:30 -0500
+        id S1727425AbfA1Poh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:44:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AA01521741;
-        Mon, 28 Jan 2019 15:44:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7152E214DA;
+        Mon, 28 Jan 2019 15:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690270;
-        bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
+        s=default; t=1548690276;
+        bh=n7fK/XLRLjOw8kvnQJhYF0ngmFAyn06e19rnemAeWOw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=f06wnwTfZAMErvqdarOQeAumlvlJnMRyJDAaQmLkQ2463ZU+VMtqBC1dF16SxkFfH
-         5bxTUfH0eRIDxUuBaI2pDDAwONDdZshBr6x51AQzwsvrBJzpbdt9Oz8yaRzYiFWDQX
-         EYeuJQSt28E+aOKLpFiUMNLR1GEPswM/IDGn/PVs=
+        b=Ye/FtuCLyQXBZkje9/OxC2M047Fxf+OguW7hYV0vOeS+8fJO5rdihjHdpm3jw8H8+
+         86dAD2jtMtiS+3NyiIEwCiuO7EuqdAVf6h7nEoJ5jIR2Jn/IgtiCLOW0aFkion53O4
+         dYB2KAuj6MYP0yGgGR8Bpd7C2qE9AaPtda9l8cqY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 026/304] x86/PCI: Fix Broadcom CNB20LE unintended sign extension (redux)
-Date:   Mon, 28 Jan 2019 10:39:03 -0500
-Message-Id: <20190128154341.47195-26-sashal@kernel.org>
+Cc:     Frank Rowand <frank.rowand@sony.com>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 029/304] of: overlay: do not duplicate properties from overlay for new nodes
+Date:   Mon, 28 Jan 2019 10:39:06 -0500
+Message-Id: <20190128154341.47195-29-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,42 +56,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Frank Rowand <frank.rowand@sony.com>
 
-[ Upstream commit 53bb565fc5439f2c8c57a786feea5946804aa3e9 ]
+[ Upstream commit 8814dc46bd9e347d4de55ec5bf8f16ea54470499 ]
 
-In the expression "word1 << 16", word1 starts as u16, but is promoted to a
-signed int, then sign-extended to resource_size_t, which is probably not
-what was intended.  Cast to resource_size_t to avoid the sign extension.
+When allocating a new node, add_changeset_node() was duplicating the
+properties from the respective node in the overlay instead of
+allocating a node with no properties.
 
-This fixes an identical issue as fixed by commit 0b2d70764bb3 ("x86/PCI:
-Fix Broadcom CNB20LE unintended sign extension") back in 2014.
+When this patch is applied the errors reported by the devictree
+unittest from patch "of: overlay: add tests to validate kfrees from
+overlay removal" will no longer occur.  These error messages are of
+the form:
 
-Detected by CoverityScan, CID#138749, 138750 ("Unintended sign extension")
+   "OF: ERROR: ..."
 
-Fixes: 3f6ea84a3035 ("PCI: read memory ranges out of Broadcom CNB20LE host bridge")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
+and the unittest results will change from:
+
+   ### dt-test ### end of unittest - 203 passed, 7 failed
+
+to
+
+   ### dt-test ### end of unittest - 210 passed, 0 failed
+
+Tested-by: Alan Tull <atull@kernel.org>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/pci/broadcom_bus.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/of/overlay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/pci/broadcom_bus.c b/arch/x86/pci/broadcom_bus.c
-index 526536c81ddc..ca1e8e6dccc8 100644
---- a/arch/x86/pci/broadcom_bus.c
-+++ b/arch/x86/pci/broadcom_bus.c
-@@ -50,8 +50,8 @@ static void __init cnb20le_res(u8 bus, u8 slot, u8 func)
- 	word1 = read_pci_config_16(bus, slot, func, 0xc0);
- 	word2 = read_pci_config_16(bus, slot, func, 0xc2);
- 	if (word1 != word2) {
--		res.start = (word1 << 16) | 0x0000;
--		res.end   = (word2 << 16) | 0xffff;
-+		res.start = ((resource_size_t) word1 << 16) | 0x0000;
-+		res.end   = ((resource_size_t) word2 << 16) | 0xffff;
- 		res.flags = IORESOURCE_MEM;
- 		update_res(info, res.start, res.end, res.flags, 0);
- 	}
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index 1e058196f23f..e163343d61ec 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -368,7 +368,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 			break;
+ 
+ 	if (!tchild) {
+-		tchild = __of_node_dup(node, node_kbasename);
++		tchild = __of_node_dup(NULL, node_kbasename);
+ 		if (!tchild)
+ 			return -ENOMEM;
+ 
 -- 
 2.19.1
 
