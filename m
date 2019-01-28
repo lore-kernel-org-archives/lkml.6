@@ -2,334 +2,245 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADA88C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E597BC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 797D020857
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA2692147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548696456;
+	bh=GyHqzpKcUl3n8yVmZGH0TY+Yz9fc6vQt5v3IZv7c2iQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=dXjloyWNISR9j/lUVndz/DRjbnmfJigpL1AOGG16kIaqUcQpd5oSk4S8WlvDjZSTB
+	 BN3iqCglgu/IwHpJYGSHX3ukJCq570FYT6oiDkEJoUKaKWIqjhNWKptq5N4u0YTEo8
+	 WD6kp86j3L9JOo4336KH5rQmmbieaLnlyASBdGFo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731286AbfA1R13 (ORCPT
+        id S1731343AbfA1R1f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:27:29 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51156 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730374AbfA1R11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:27:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 995C5EBD;
-        Mon, 28 Jan 2019 09:27:26 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id AAED13F59C;
-        Mon, 28 Jan 2019 09:27:25 -0800 (PST)
-Subject: Re: [PATCH v5 2/4] genirq: Provide NMI management for percpu_devid
- interrupts
-To:     Marc Zyngier <marc.zyngier@arm.com>
-Cc:     linux-kernel@vger.kernel.org, tglx@linutronix.de,
-        peterz@infradead.org, mingo@kernel.org
-References: <1548689907-17124-1-git-send-email-julien.thierry@arm.com>
- <1548689907-17124-3-git-send-email-julien.thierry@arm.com>
- <86h8dsviny.wl-marc.zyngier@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <99113e5a-1a4b-c656-1ea6-a7cc326b77d5@arm.com>
-Date:   Mon, 28 Jan 2019 17:27:22 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 28 Jan 2019 12:27:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45476 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730733AbfA1QAM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:00:12 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9D3F221920;
+        Mon, 28 Jan 2019 16:00:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691211;
+        bh=GyHqzpKcUl3n8yVmZGH0TY+Yz9fc6vQt5v3IZv7c2iQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Y6zyKdbImtPkrQCgGEX3nnGryaBWqReU4dt1iQkdhzDYCqksbuMlztXkWBMfUVBum
+         rlQ6DLBAsK6hdVOsxajwilxIWCqVCRlfVo+6edPjwb/MwbwwgC26G3BED4/lr69xSb
+         Oo1x7tw6OR/Rjeyeu6O76wOq3jcPIKQ96sHUEH5Y=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     James Smart <jsmart2021@gmail.com>,
+        Dick Kennedy <dick.kennedy@broadcom.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 017/258] scsi: lpfc: Fix LOGO/PLOGI handling when triggerd by ABTS Timeout event
+Date:   Mon, 28 Jan 2019 10:55:23 -0500
+Message-Id: <20190128155924.51521-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <86h8dsviny.wl-marc.zyngier@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: James Smart <jsmart2021@gmail.com>
 
+[ Upstream commit 30e196cacefdd9a38c857caed23cefc9621bc5c1 ]
 
-On 28/01/2019 16:41, Marc Zyngier wrote:
-> On Mon, 28 Jan 2019 15:38:25 +0000,
-> Julien Thierry <julien.thierry@arm.com> wrote:
->>
->> Add support for percpu_devid interrupts treated as NMIs.
->>
->> Percpu_devid NMIs need to be setup/torn down on each CPU they target.
->>
->> The same restrictions as for global NMIs still apply for percpu_devid NMIs.
-> 
-> A quick overall view of the new API would be good, specially as some
-> of the bits are not 100% obvious.
-> 
->>
->> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
->> Cc: Thomas Gleixner <tglx@linutronix.de>
->> Cc: Peter Zijlstra <peterz@infradead.org>
->> Cc: Ingo Molnar <mingo@kernel.org>
->> Cc: Marc Zyngier <marc.zyngier@arm.com>
->> ---
->>  include/linux/interrupt.h |   9 +++
->>  kernel/irq/manage.c       | 148 ++++++++++++++++++++++++++++++++++++++++++++++
->>  2 files changed, 157 insertions(+)
->>
->> diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
->> index 37a4b0c6..be146bd 100644
->> --- a/include/linux/interrupt.h
->> +++ b/include/linux/interrupt.h
->> @@ -168,10 +168,15 @@ struct irqaction {
->>  				    devname, percpu_dev_id);
->>  }
->>  
->> +extern int __must_check
->> +request_percpu_nmi(unsigned int irq, irq_handler_t handler,
->> +		   const char *devname, void __percpu *dev);
->> +
->>  extern const void *free_irq(unsigned int, void *);
->>  extern void free_percpu_irq(unsigned int, void __percpu *);
->>  
->>  extern const void *free_nmi(unsigned int irq, void *dev_id);
->> +extern void free_percpu_nmi(unsigned int irq, void __percpu *percpu_dev_id);
->>  
->>  struct device;
->>  
->> @@ -224,7 +229,11 @@ struct irqaction {
->>  extern void irq_wake_thread(unsigned int irq, void *dev_id);
->>  
->>  extern void disable_nmi_nosync(unsigned int irq);
->> +extern void disable_percpu_nmi(unsigned int irq);
->>  extern void enable_nmi(unsigned int irq);
->> +extern void enable_percpu_nmi(unsigned int irq, unsigned int type);
->> +extern int ready_percpu_nmi(unsigned int irq);
-> 
-> ready_percpu_nmi seems a very bizarre name, as I cannot figure out
-> what that does. How about something along the line of
-> "setup_percpu_nmi"?
-> 
+After a LOGO in response to an ABTS timeout, a PLOGI wasn't issued to
+re-establish the login.  An nlp_type check in the LOGO completion
+handler failed to restart discovery for NVME targets.  Revised the
+nlp_type check for NVME as well as SCSI.
 
-The reason I did not go for "setup_percpu_nmi" is because I didn't want
-it to be assimilated to "setup_irq"/"__setup_irq" which sets up all the
-resources for an IRQ line.
+While reviewing the LOGO handling a few other issues were seen and
+were addressed:
 
-I guess "prepare_percpu_nmi()" could do the trick unless I come up with
-a better name.
+- Better lock synchronization around ndlp data types
 
->> +extern void teardown_percpu_nmi(unsigned int irq);
->>  
->>  /* The following three functions are for the core kernel use only. */
->>  extern void suspend_device_irqs(void);
->> diff --git a/kernel/irq/manage.c b/kernel/irq/manage.c
->> index a168b2d8f..602a622 100644
->> --- a/kernel/irq/manage.c
->> +++ b/kernel/irq/manage.c
->> @@ -2185,6 +2185,11 @@ void enable_percpu_irq(unsigned int irq, unsigned int type)
->>  }
->>  EXPORT_SYMBOL_GPL(enable_percpu_irq);
->>  
->> +void enable_percpu_nmi(unsigned int irq, unsigned int type)
->> +{
->> +	enable_percpu_irq(irq, type);
->> +}
->> +
->>  /**
->>   * irq_percpu_is_enabled - Check whether the per cpu irq is enabled
->>   * @irq:	Linux irq number to check for
->> @@ -2224,6 +2229,11 @@ void disable_percpu_irq(unsigned int irq)
->>  }
->>  EXPORT_SYMBOL_GPL(disable_percpu_irq);
->>  
->> +void disable_percpu_nmi(unsigned int irq)
->> +{
->> +	disable_percpu_irq(irq);
->> +}
->> +
->>  /*
->>   * Internal function to unregister a percpu irqaction.
->>   */
->> @@ -2255,6 +2265,8 @@ static struct irqaction *__free_percpu_irq(unsigned int irq, void __percpu *dev_
->>  	/* Found it - now remove it from the list of entries: */
->>  	desc->action = NULL;
->>  
->> +	desc->istate &= ~IRQS_NMI;
->> +
->>  	raw_spin_unlock_irqrestore(&desc->lock, flags);
->>  
->>  	unregister_handler_proc(irq, action);
->> @@ -2308,6 +2320,19 @@ void free_percpu_irq(unsigned int irq, void __percpu *dev_id)
->>  }
->>  EXPORT_SYMBOL_GPL(free_percpu_irq);
->>  
->> +void free_percpu_nmi(unsigned int irq, void __percpu *dev_id)
->> +{
->> +	struct irq_desc *desc = irq_to_desc(irq);
->> +
->> +	if (!desc || !irq_settings_is_per_cpu_devid(desc))
->> +		return;
->> +
->> +	if (WARN_ON(!(desc->istate & IRQS_NMI)))
->> +		return;
->> +
->> +	kfree(__free_percpu_irq(irq, dev_id));
->> +}
->> +
->>  /**
->>   *	setup_percpu_irq - setup a per-cpu interrupt
->>   *	@irq: Interrupt line to setup
->> @@ -2398,6 +2423,129 @@ int __request_percpu_irq(unsigned int irq, irq_handler_t handler,
->>  EXPORT_SYMBOL_GPL(__request_percpu_irq);
->>  
->>  /**
->> + *	request_percpu_nmi - allocate a percpu interrupt line for NMI delivery
->> + *	@irq: Interrupt line to allocate
->> + *	@handler: Function to be called when the IRQ occurs.
->> + *	@name: An ascii name for the claiming device
->> + *	@dev_id: A percpu cookie passed back to the handler function
->> + *
->> + *	This call allocates interrupt resources for a per CPU NMI. Per CPU NMIs
->> + *	have to be setup on each CPU by calling ready_percpu_nmi() before being
->> + *	enabled on the same CPU by using enable_percpu_nmi().
->> + *
->> + *	Dev_id must be globally unique. It is a per-cpu variable, and
->> + *	the handler gets called with the interrupted CPU's instance of
->> + *	that variable.
->> + *
->> + *	Interrupt lines requested for NMI delivering should have auto enabling
->> + *	setting disabled.
->> + *
->> + *	If the interrupt line cannot be used to deliver NMIs, function
->> + *	will fail returning a negative value.
->> + */
->> +int request_percpu_nmi(unsigned int irq, irq_handler_t handler,
->> +		       const char *name, void __percpu *dev_id)
->> +{
->> +	struct irqaction *action;
->> +	struct irq_desc *desc;
->> +	unsigned long flags;
->> +	int retval;
->> +
->> +	if (!handler)
->> +		return -EINVAL;
->> +
->> +	desc = irq_to_desc(irq);
->> +
->> +	if (!desc || !irq_settings_can_request(desc) ||
->> +	    !irq_settings_is_per_cpu_devid(desc) ||
->> +	    irq_settings_can_autoenable(desc) ||
->> +	    !irq_supports_nmi(desc))
->> +		return -EINVAL;
->> +
->> +	/* The line cannot already be NMI */
->> +	if (desc->istate & IRQS_NMI)
->> +		return -EINVAL;
->> +
->> +	action = kzalloc(sizeof(struct irqaction), GFP_KERNEL);
->> +	if (!action)
->> +		return -ENOMEM;
->> +
->> +	action->handler = handler;
->> +	action->flags = IRQF_PERCPU | IRQF_NO_SUSPEND | IRQF_NO_THREAD
->> +		| IRQF_NOBALANCING;
->> +	action->name = name;
->> +	action->percpu_dev_id = dev_id;
->> +
->> +	retval = irq_chip_pm_get(&desc->irq_data);
->> +	if (retval < 0)
->> +		goto err_out;
->> +
->> +	retval = __setup_irq(irq, desc, action);
->> +	if (retval)
->> +		goto err_irq_setup;
->> +
->> +	raw_spin_lock_irqsave(&desc->lock, flags);
->> +	desc->istate |= IRQS_NMI;
->> +	raw_spin_unlock_irqrestore(&desc->lock, flags);
->> +
->> +	return 0;
->> +
->> +err_irq_setup:
->> +	irq_chip_pm_put(&desc->irq_data);
->> +err_out:
->> +	kfree(action);
->> +
->> +	return retval;
->> +}
->> +
->> +int ready_percpu_nmi(unsigned int irq)
-> 
-> Name issue withstanding, this could do with some documentation. You
-> probably want to indicate that this is expected to be called from a
-> non-preemptible section.
-> 
+- When the ABTS times out, unregister the RPI before sending the LOGO
+  so that all local exchange contexts are cleared and nothing received
+  while awaiting LOGO/PLOGI handling will be accepted.
 
-Sure, I can elaborate a bit.
+- LOGO handling optimized to:
+   Wait only R_A_TOV for a response.
+   It doesn't need to be retried on timeout. If there wasn't a
+     response, a PLOGI will be sent, thus an implicit logout
+     applies as well when the other port sees it.
+   If there is a response, any kind of response is considered "good"
+     and the XRI quarantined for a exchange qualifier window.
 
->> +{
->> +	unsigned long flags;
->> +	struct irq_desc *desc = irq_get_desc_lock(irq, &flags,
->> +						  IRQ_GET_DESC_CHECK_PERCPU);
->> +	int ret = 0;
->> +
->> +	if (!desc) {
->> +		ret = -EINVAL;
->> +		goto out;
-> 
-> Ouch. Bad idea.
-> 
+- PLOGI is issued as soon a LOGO state is resolved.
 
-Oh yes, well spotted!
+Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
+Signed-off-by: James Smart <jsmart2021@gmail.com>
+Reviewed-by: Hannes Reinecke <hare@suse.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/scsi/lpfc/lpfc_els.c       | 49 +++++++++++++-----------------
+ drivers/scsi/lpfc/lpfc_nportdisc.c |  5 +++
+ 2 files changed, 26 insertions(+), 28 deletions(-)
 
-Thanks,
-
->> +	}
->> +
->> +	if (WARN(!(desc->istate & IRQS_NMI),
->> +		 KERN_ERR "ready_percpu_nmi called for a non-NMI interrupt: irq %u\n",
->> +		 irq)) {
->> +		ret = -EINVAL;
->> +		goto out;
->> +	}
->> +
->> +	ret = irq_nmi_setup(desc);
->> +	if (ret) {
->> +		pr_err("Failed to setup NMI delivery: irq %u\n", irq);
->> +		goto out;
->> +	}
->> +
->> +out:
->> +	irq_put_desc_unlock(desc, flags);
->> +	return ret;
->> +}
->> +
->> +void teardown_percpu_nmi(unsigned int irq)
->> +{
->> +	unsigned long flags;
->> +	struct irq_desc *desc = irq_get_desc_lock(irq, &flags,
->> +						  IRQ_GET_DESC_CHECK_PERCPU);
->> +
->> +	if (!desc)
->> +		return;
->> +
->> +	if (WARN_ON(!(desc->istate & IRQS_NMI)))
->> +		goto out;
->> +
->> +	irq_nmi_teardown(desc);
->> +out:
->> +	irq_put_desc_unlock(desc, flags);
->> +}
->> +
->> +/**
->>   *	irq_get_irqchip_state - returns the irqchip state of a interrupt.
->>   *	@irq: Interrupt line that is forwarded to a VM
->>   *	@which: One of IRQCHIP_STATE_* the caller wants to know about
->> -- 
->> 1.9.1
->>
-> 
-> Thanks,
-> 
-> 	M.
-> 
-
+diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
+index 56a4f626349c..0d214e6b8e9a 100644
+--- a/drivers/scsi/lpfc/lpfc_els.c
++++ b/drivers/scsi/lpfc/lpfc_els.c
+@@ -242,6 +242,8 @@ lpfc_prep_els_iocb(struct lpfc_vport *vport, uint8_t expectRsp,
+ 		icmd->ulpCommand = CMD_ELS_REQUEST64_CR;
+ 		if (elscmd == ELS_CMD_FLOGI)
+ 			icmd->ulpTimeout = FF_DEF_RATOV * 2;
++		else if (elscmd == ELS_CMD_LOGO)
++			icmd->ulpTimeout = phba->fc_ratov;
+ 		else
+ 			icmd->ulpTimeout = phba->fc_ratov * 2;
+ 	} else {
+@@ -2682,16 +2684,15 @@ lpfc_cmpl_els_logo(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
+ 		goto out;
+ 	}
+ 
++	/* The LOGO will not be retried on failure.  A LOGO was
++	 * issued to the remote rport and a ACC or RJT or no Answer are
++	 * all acceptable.  Note the failure and move forward with
++	 * discovery.  The PLOGI will retry.
++	 */
+ 	if (irsp->ulpStatus) {
+-		/* Check for retry */
+-		if (lpfc_els_retry(phba, cmdiocb, rspiocb)) {
+-			/* ELS command is being retried */
+-			skip_recovery = 1;
+-			goto out;
+-		}
+ 		/* LOGO failed */
+ 		lpfc_printf_vlog(vport, KERN_ERR, LOG_ELS,
+-				 "2756 LOGO failure DID:%06X Status:x%x/x%x\n",
++				 "2756 LOGO failure, No Retry DID:%06X Status:x%x/x%x\n",
+ 				 ndlp->nlp_DID, irsp->ulpStatus,
+ 				 irsp->un.ulpWord[4]);
+ 		/* Do not call DSM for lpfc_els_abort'ed ELS cmds */
+@@ -2737,7 +2738,8 @@ lpfc_cmpl_els_logo(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
+ 	 * For any other port type, the rpi is unregistered as an implicit
+ 	 * LOGO.
+ 	 */
+-	if ((ndlp->nlp_type & NLP_FCP_TARGET) && (skip_recovery == 0)) {
++	if (ndlp->nlp_type & (NLP_FCP_TARGET | NLP_NVME_TARGET) &&
++	    skip_recovery == 0) {
+ 		lpfc_cancel_retry_delay_tmo(vport, ndlp);
+ 		spin_lock_irqsave(shost->host_lock, flags);
+ 		ndlp->nlp_flag |= NLP_NPR_2B_DISC;
+@@ -2770,6 +2772,8 @@ lpfc_cmpl_els_logo(struct lpfc_hba *phba, struct lpfc_iocbq *cmdiocb,
+  * will be stored into the context1 field of the IOCB for the completion
+  * callback function to the LOGO ELS command.
+  *
++ * Callers of this routine are expected to unregister the RPI first
++ *
+  * Return code
+  *   0 - successfully issued logo
+  *   1 - failed to issue logo
+@@ -2811,22 +2815,6 @@ lpfc_issue_els_logo(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
+ 		"Issue LOGO:      did:x%x",
+ 		ndlp->nlp_DID, 0, 0);
+ 
+-	/*
+-	 * If we are issuing a LOGO, we may try to recover the remote NPort
+-	 * by issuing a PLOGI later. Even though we issue ELS cmds by the
+-	 * VPI, if we have a valid RPI, and that RPI gets unreg'ed while
+-	 * that ELS command is in-flight, the HBA returns a IOERR_INVALID_RPI
+-	 * for that ELS cmd. To avoid this situation, lets get rid of the
+-	 * RPI right now, before any ELS cmds are sent.
+-	 */
+-	spin_lock_irq(shost->host_lock);
+-	ndlp->nlp_flag |= NLP_ISSUE_LOGO;
+-	spin_unlock_irq(shost->host_lock);
+-	if (lpfc_unreg_rpi(vport, ndlp)) {
+-		lpfc_els_free_iocb(phba, elsiocb);
+-		return 0;
+-	}
+-
+ 	phba->fc_stat.elsXmitLOGO++;
+ 	elsiocb->iocb_cmpl = lpfc_cmpl_els_logo;
+ 	spin_lock_irq(shost->host_lock);
+@@ -2834,7 +2822,6 @@ lpfc_issue_els_logo(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
+ 	ndlp->nlp_flag &= ~NLP_ISSUE_LOGO;
+ 	spin_unlock_irq(shost->host_lock);
+ 	rc = lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0);
+-
+ 	if (rc == IOCB_ERROR) {
+ 		spin_lock_irq(shost->host_lock);
+ 		ndlp->nlp_flag &= ~NLP_LOGO_SND;
+@@ -2842,6 +2829,11 @@ lpfc_issue_els_logo(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp,
+ 		lpfc_els_free_iocb(phba, elsiocb);
+ 		return 1;
+ 	}
++
++	spin_lock_irq(shost->host_lock);
++	ndlp->nlp_prev_state = ndlp->nlp_state;
++	spin_unlock_irq(shost->host_lock);
++	lpfc_nlp_set_state(vport, ndlp, NLP_STE_LOGO_ISSUE);
+ 	return 0;
+ }
+ 
+@@ -9505,7 +9497,8 @@ lpfc_sli_abts_recover_port(struct lpfc_vport *vport,
+ 				"rport in state 0x%x\n", ndlp->nlp_state);
+ 		return;
+ 	}
+-	lpfc_printf_log(phba, KERN_INFO, LOG_SLI,
++	lpfc_printf_log(phba, KERN_ERR,
++			LOG_ELS | LOG_FCP_ERROR | LOG_NVME_IOERR,
+ 			"3094 Start rport recovery on shost id 0x%x "
+ 			"fc_id 0x%06x vpi 0x%x rpi 0x%x state 0x%x "
+ 			"flags 0x%x\n",
+@@ -9518,8 +9511,8 @@ lpfc_sli_abts_recover_port(struct lpfc_vport *vport,
+ 	 */
+ 	spin_lock_irqsave(shost->host_lock, flags);
+ 	ndlp->nlp_fcp_info &= ~NLP_FCP_2_DEVICE;
++	ndlp->nlp_flag |= NLP_ISSUE_LOGO;
+ 	spin_unlock_irqrestore(shost->host_lock, flags);
+-	lpfc_issue_els_logo(vport, ndlp, 0);
+-	lpfc_nlp_set_state(vport, ndlp, NLP_STE_LOGO_ISSUE);
++	lpfc_unreg_rpi(vport, ndlp);
+ }
+ 
+diff --git a/drivers/scsi/lpfc/lpfc_nportdisc.c b/drivers/scsi/lpfc/lpfc_nportdisc.c
+index bd9bce9d9974..a6619fd8238c 100644
+--- a/drivers/scsi/lpfc/lpfc_nportdisc.c
++++ b/drivers/scsi/lpfc/lpfc_nportdisc.c
+@@ -836,7 +836,9 @@ lpfc_disc_set_adisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp)
+ 	struct Scsi_Host *shost = lpfc_shost_from_vport(vport);
+ 
+ 	if (!(ndlp->nlp_flag & NLP_RPI_REGISTERED)) {
++		spin_lock_irq(shost->host_lock);
+ 		ndlp->nlp_flag &= ~NLP_NPR_ADISC;
++		spin_unlock_irq(shost->host_lock);
+ 		return 0;
+ 	}
+ 
+@@ -851,7 +853,10 @@ lpfc_disc_set_adisc(struct lpfc_vport *vport, struct lpfc_nodelist *ndlp)
+ 			return 1;
+ 		}
+ 	}
++
++	spin_lock_irq(shost->host_lock);
+ 	ndlp->nlp_flag &= ~NLP_NPR_ADISC;
++	spin_unlock_irq(shost->host_lock);
+ 	lpfc_unreg_rpi(vport, ndlp);
+ 	return 0;
+ }
 -- 
-Julien Thierry
+2.19.1
+
