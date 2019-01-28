@@ -2,57 +2,54 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5001FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB338C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 204EA20811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8CAEE20811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693327;
-	bh=cUSZ554jTVwLWBG8Ynnuel+5uzSFthPCg5PlxWNAFOI=;
+	s=default; t=1548693336;
+	bh=yUX2yPCG+mp8SRpQwUzD0cB2q5F8JsR7ka/JQo+RieM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GjPmEGbMTgv3g4Gl6mGtOyVdLf4IhO2bm8SBBUKZC6a8Dz7w+MTTDFhSXl2vFErw0
-	 wq2pmXa+FzsRLPiEB+zbOg7qZC82JdQ0nR4h5J+ycdYrohlBja5ZI+rfWVpYeU0bWQ
-	 nP7yzg+PiPLOG1BCudereTsUpp3W9R+fixJHb1pE=
+	b=XHqiKvvEP67oyXyNyvDPGo8gbCz47UwYrf0b2KJEYXdv/gdgJQAPywt9W36/D6F28
+	 81AfcnyEajlUm2sWXHd6yGFuf1LxNqWgxIYFZaIZRfjoW5aAvMCJQzIXIpmhi0FGBC
+	 OU791KoCBzjXB+I7Wly7MvPXbm8+Rrh63VKshPRw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390470AbfA1QfZ (ORCPT
+        id S2390009AbfA1QZm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:35:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34782 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:25:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34542 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390030AbfA1QZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:48 -0500
+        id S2389992AbfA1QZi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FA472147A;
-        Mon, 28 Jan 2019 16:25:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C0E052084A;
+        Mon, 28 Jan 2019 16:25:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692747;
-        bh=cUSZ554jTVwLWBG8Ynnuel+5uzSFthPCg5PlxWNAFOI=;
+        s=default; t=1548692737;
+        bh=yUX2yPCG+mp8SRpQwUzD0cB2q5F8JsR7ka/JQo+RieM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OVHqHbrVJKY5fDTWEr1USaJ9sNZykV7C+nSbKFhPX9XuTdKM2Wu1FAt5ws0ce32H2
-         p4fHhRUQQuSpJRVklIdqJi39YJO9J11ShGDi7x9x6HcVNZ7sCpHvmtBQ/IXR6q60au
-         093IMWVkaptJCFjQ6wyLsVqMy2ej2gBtpMwqInFo=
+        b=vSNkxv1gB3gWKPMGybATW5az3JIRuFf6BcGlI+Ep6/+t3K5ijzxyREbboYYfMb1KI
+         oXnXv5EM0pdUprUMQgtInMRvNIywOaKTSzLMmLw6HYIgfvUFrCPzMb9OTEeei1Phqy
+         amGSX1i9ndON1vJAY/D6pEDJeWIKF4fo2W5wPbAA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 60/80] fbdev: fbcon: Fix unregister crash when more than one framebuffer
-Date:   Mon, 28 Jan 2019 11:23:41 -0500
-Message-Id: <20190128162401.58841-60-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 56/80] drbd: Avoid Clang warning about pointless switch statment
+Date:   Mon, 28 Jan 2019 11:23:37 -0500
+Message-Id: <20190128162401.58841-56-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,81 +57,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Noralf Trønnes <noralf@tronnes.org>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 2122b40580dd9d0620398739c773d07a7b7939d0 ]
+[ Upstream commit a52c5a16cf19d8a85831bb1b915a221dd4ffae3c ]
 
-When unregistering fbdev using unregister_framebuffer(), any bound
-console will unbind automatically. This is working fine if this is the
-only framebuffer, resulting in a switch to the dummy console. However if
-there is a fb0 and I unregister fb1 having a bound console, I eventually
-get a crash. The fastest way for me to trigger the crash is to do a
-reboot, resulting in this splat:
+There are several warnings from Clang about no case statement matching
+the constant 0:
 
-[   76.478825] WARNING: CPU: 0 PID: 527 at linux/kernel/workqueue.c:1442 __queue_work+0x2d4/0x41c
-[   76.478849] Modules linked in: raspberrypi_hwmon gpio_backlight backlight bcm2835_rng rng_core [last unloaded: tinydrm]
-[   76.478916] CPU: 0 PID: 527 Comm: systemd-udevd Not tainted 4.20.0-rc4+ #4
-[   76.478933] Hardware name: BCM2835
-[   76.478949] Backtrace:
-[   76.478995] [<c010d388>] (dump_backtrace) from [<c010d670>] (show_stack+0x20/0x24)
-[   76.479022]  r6:00000000 r5:c0bc73be r4:00000000 r3:6fb5bf81
-[   76.479060] [<c010d650>] (show_stack) from [<c08e82f4>] (dump_stack+0x20/0x28)
-[   76.479102] [<c08e82d4>] (dump_stack) from [<c0120070>] (__warn+0xec/0x12c)
-[   76.479134] [<c011ff84>] (__warn) from [<c01201e4>] (warn_slowpath_null+0x4c/0x58)
-[   76.479165]  r9:c0eb6944 r8:00000001 r7:c0e927f8 r6:c0bc73be r5:000005a2 r4:c0139e84
-[   76.479197] [<c0120198>] (warn_slowpath_null) from [<c0139e84>] (__queue_work+0x2d4/0x41c)
-[   76.479222]  r6:d7666a00 r5:c0e918ee r4:dbc4e700
-[   76.479251] [<c0139bb0>] (__queue_work) from [<c013a02c>] (queue_work_on+0x60/0x88)
-[   76.479281]  r10:c0496bf8 r9:00000100 r8:c0e92ae0 r7:00000001 r6:d9403700 r5:d7666a00
-[   76.479298]  r4:20000113
-[   76.479348] [<c0139fcc>] (queue_work_on) from [<c0496c28>] (cursor_timer_handler+0x30/0x54)
-[   76.479374]  r7:d8a8fabc r6:c0e08088 r5:d8afdc5c r4:d8a8fabc
-[   76.479413] [<c0496bf8>] (cursor_timer_handler) from [<c0178744>] (call_timer_fn+0x100/0x230)
-[   76.479435]  r4:c0e9192f r3:d758a340
-[   76.479465] [<c0178644>] (call_timer_fn) from [<c0178980>] (expire_timers+0x10c/0x12c)
-[   76.479495]  r10:40000000 r9:c0e9192f r8:c0e92ae0 r7:d8afdccc r6:c0e19280 r5:c0496bf8
-[   76.479513]  r4:d8a8fabc
-[   76.479541] [<c0178874>] (expire_timers) from [<c0179630>] (run_timer_softirq+0xa8/0x184)
-[   76.479570]  r9:00000001 r8:c0e19280 r7:00000000 r6:c0e08088 r5:c0e1a3e0 r4:c0e19280
-[   76.479603] [<c0179588>] (run_timer_softirq) from [<c0102404>] (__do_softirq+0x1ac/0x3fc)
-[   76.479632]  r10:c0e91680 r9:d8afc020 r8:0000000a r7:00000100 r6:00000001 r5:00000002
-[   76.479650]  r4:c0eb65ec
-[   76.479686] [<c0102258>] (__do_softirq) from [<c0124d10>] (irq_exit+0xe8/0x168)
-[   76.479716]  r10:d8d1a9b0 r9:d8afc000 r8:00000001 r7:d949c000 r6:00000000 r5:c0e8b3f0
-[   76.479734]  r4:00000000
-[   76.479764] [<c0124c28>] (irq_exit) from [<c016b72c>] (__handle_domain_irq+0x94/0xb0)
-[   76.479793] [<c016b698>] (__handle_domain_irq) from [<c01021dc>] (bcm2835_handle_irq+0x3c/0x48)
-[   76.479823]  r8:d8afdebc r7:d8afddfc r6:ffffffff r5:c0e089f8 r4:d8afddc8 r3:d8afddc8
-[   76.479851] [<c01021a0>] (bcm2835_handle_irq) from [<c01019f0>] (__irq_svc+0x70/0x98)
+In file included from drivers/block/drbd/drbd_receiver.c:48:
+In file included from drivers/block/drbd/drbd_int.h:48:
+In file included from ./include/linux/drbd_genl_api.h:54:
+In file included from ./include/linux/genl_magic_struct.h:236:
+./include/linux/drbd_genl.h:321:1: warning: no case matching constant
+switch condition '0'
+GENL_struct(DRBD_NLA_HELPER, 24, drbd_helper_info,
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/genl_magic_struct.h:220:10: note: expanded from macro
+'GENL_struct'
+        switch (0) {
+                ^
 
-The problem is in the console rebinding in fbcon_fb_unbind(). It uses the
-virtual console index as the new framebuffer index to bind the console(s)
-to. The correct way is to use the con2fb_map lookup table to find the
-framebuffer index.
+Silence this warning by adding a 'case 0:' statement. Additionally,
+adjust the alignment of the statements in the ct_assert_unique macro to
+avoid a checkpatch warning.
 
-Fixes: cfafca8067c6 ("fbdev: fbcon: console unregistration from unregister_framebuffer")
-Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
-Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+This solution was originally sent by Arnd Bergmann with a default case
+statement: https://lore.kernel.org/patchwork/patch/756723/
+
+Link: https://github.com/ClangBuiltLinux/linux/issues/43
+Suggested-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/console/fbcon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ include/linux/genl_magic_struct.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/video/console/fbcon.c b/drivers/video/console/fbcon.c
-index 4e3c78d88832..c03c5b9602bb 100644
---- a/drivers/video/console/fbcon.c
-+++ b/drivers/video/console/fbcon.c
-@@ -3032,7 +3032,7 @@ static int fbcon_fb_unbind(int idx)
- 	for (i = first_fb_vc; i <= last_fb_vc; i++) {
- 		if (con2fb_map[i] != idx &&
- 		    con2fb_map[i] != -1) {
--			new_idx = i;
-+			new_idx = con2fb_map[i];
- 			break;
- 		}
+diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
+index eecd19b37001..250e9be65e74 100644
+--- a/include/linux/genl_magic_struct.h
++++ b/include/linux/genl_magic_struct.h
+@@ -185,6 +185,7 @@ static inline void ct_assert_unique_operations(void)
+ {
+ 	switch (0) {
+ #include GENL_MAGIC_INCLUDE_FILE
++	case 0:
+ 		;
  	}
+ }
+@@ -203,6 +204,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
+ {
+ 	switch (0) {
+ #include GENL_MAGIC_INCLUDE_FILE
++	case 0:
+ 		;
+ 	}
+ }
+@@ -212,7 +214,8 @@ static inline void ct_assert_unique_top_level_attributes(void)
+ static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
+ {									\
+ 	switch (0) {							\
+-		s_fields						\
++	s_fields							\
++	case 0:								\
+ 			;						\
+ 	}								\
+ }
 -- 
 2.19.1
 
