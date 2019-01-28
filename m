@@ -2,424 +2,612 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F0A5C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:45:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15D1FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:47:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB2E02086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:45:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBB012086C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:47:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SgIg4aNf"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Gb2bkbWv"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfA1Lpa (ORCPT
+        id S1726784AbfA1LrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:45:30 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:45554 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726865AbfA1LpT (ORCPT
+        Mon, 28 Jan 2019 06:47:06 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:42151 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbfA1LrF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:45:19 -0500
-Received: by mail-wr1-f66.google.com with SMTP id t6so17629093wrr.12
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 03:45:17 -0800 (PST)
+        Mon, 28 Jan 2019 06:47:05 -0500
+Received: by mail-ed1-f65.google.com with SMTP id y20so12727941edw.9
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 03:47:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gEin10wITYyCqicq46mLMVeg/RPtwJrVbzK6bPS5rhQ=;
-        b=SgIg4aNfIY6ktUvXinoIGmO4ZeY8EblDbNTHZpaZANAm/nn+VharupMi+feQnMaSeC
-         aCIegvxWIUBi1gjpkwgQblDuUlN/VOfNQcviFQbBIGytbly0qpeZg7G0o8ea1ufFtRri
-         +wA9DdWsFJby8DtlnbeZsFcq0QiHJ7RMH2AKQ=
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gPDuyotuXMnfhiPg48U1IKVK5dHRJyiq4frv3cac59I=;
+        b=Gb2bkbWves+WM1cx6sT7x1yBIzBiBqOABD7svwXAmexAdTiyXw15RS0Wk1VRF16Bcu
+         Vxkb3cwZgMQMKCvOFg91kWVr8RmN2m8X+NmNYXhcqhFfnU1eSTyxAnM8DpOGudEbfIxM
+         +tRpnW4aSWUGD1yg+x5dPsS3vmx3mvqDaECEw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=gEin10wITYyCqicq46mLMVeg/RPtwJrVbzK6bPS5rhQ=;
-        b=t4U7cfNNEQ9zdU4DuC2cyIutD4yTyzbX8CTO53D5iRbOBca5tJ+Jx37sRNvofz7kkD
-         YC3GhGLRufdWBMQY8Be+5DDq8MmAdvD6rAEbVIwzERalvEOVoSOH5NNmwVJ/BaxxHOlH
-         GUo84HiCD121CAOhHjNyZIcGIf3zXCkwWXa77fTzPG5/VJwmOup6pG4fzQ6yTtTGUpif
-         trj+3cgxlmHaNxZwDNYNZamq9t1ZSVHGf6GigO7Vs3pZ/N3oF+wc2aV3Uv61jmrq30hE
-         HKnnC4KniEDn1Ba9eB8MQwjYnAU73LTsFJyOYGuL74fIIuvrJAx6YBvUKr1SIkeTq8BH
-         Z21A==
-X-Gm-Message-State: AJcUukc5L5IDTSrNxQ2DrcT5fkfMo4IKDmZiTEsuEMK6pP9Fx1V5AwAd
-        cxU3h6nn162YEbZOjoxK7O8eKA==
-X-Google-Smtp-Source: ALg8bN4kjKdJv1H1If6fssP4bW5Fwr293GNNyNh9LDOrRxY3LfZjRegZzTiKWZ7lW56Vek3cKqcmuw==
-X-Received: by 2002:adf:ed46:: with SMTP id u6mr22011837wro.262.1548675916193;
-        Mon, 28 Jan 2019 03:45:16 -0800 (PST)
-Received: from localhost.localdomain (233.red-81-47-145.staticip.rima-tde.net. [81.47.145.233])
-        by smtp.gmail.com with ESMTPSA id z9sm122968775wrs.63.2019.01.28.03.45.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 03:45:15 -0800 (PST)
-From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
-To:     jorge.ramirez-ortiz@linaro.org, lgirdwood@gmail.com,
-        broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        bjorn.andersson@linaro.org, vinod.koul@linaro.org,
-        niklas.cassel@linaro.org, khasim.mohammed@linaro.org,
-        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH 2/3] drivers: regulator: qcom: add PMS405 SPMI regulator
-Date:   Mon, 28 Jan 2019 12:45:03 +0100
-Message-Id: <1548675904-18324-3-git-send-email-jorge.ramirez-ortiz@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548675904-18324-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
-References: <1548675904-18324-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gPDuyotuXMnfhiPg48U1IKVK5dHRJyiq4frv3cac59I=;
+        b=Hq/ySJv1153u/S5w1oMl/Sw7T0TAcyivLdf+hJUPjO1TxIkyt3eaZz3A/hduGb4IIY
+         l5cqvrZg77t7uoDNk9mSRo3WkWhONppRY9pNBuM+gjh3uTMIDXE/vbnCvNmoW65LrMWf
+         Stxtwj5kBT6rO1Cud5v+U4ylBgL8hE3vr+tQvhsOWrurvXTRRD+ENPuXPnWBIy78RU0i
+         Ub8Q5I5z28mNIZ7sFR4MExP+FWh+y5fri9gDuO0bwbgUGzHP9jchYDoq54BiMgC+jjJR
+         GK/hEcsk27zuajJGsJ6EZxwuoLzqCItbT3zC4JUqZM/Dhy+udINRgmxFlvT541NfgL5L
+         39wg==
+X-Gm-Message-State: AJcUukfSUmj8qJni7jb2hfiHCcQpT761jEWxtLhfYXqPcH9ZNrDvCqpW
+        1IHTEmVAFV2dzAHp4gxfsImGASMQTmsZXLXJxqZVlA==
+X-Google-Smtp-Source: ALg8bN5IQ1bLeFh56hPr6pI2jHqnIlO/2i0PtPQBU5wN21Ee5/J0ITRweYEpJ/FtytfNL5sFrtKroIDzMJEm+HXkIXU=
+X-Received: by 2002:a50:a8c3:: with SMTP id k61mr21099752edc.296.1548676022335;
+ Mon, 28 Jan 2019 03:47:02 -0800 (PST)
+MIME-Version: 1.0
+References: <20190111110851.6805-1-faiz_abbas@ti.com> <20190111110851.6805-2-faiz_abbas@ti.com>
+ <bcea7bae-41c8-358a-11c1-3886f9dc0351@intel.com> <CAG2=9p-HsbghD2-m6VPEPCQVuSWC_1mZ=GL+aKZwZTgOgSO0sQ@mail.gmail.com>
+ <a68b68f6-ea5f-2193-188f-cddeec9f6ef4@ti.com>
+In-Reply-To: <a68b68f6-ea5f-2193-188f-cddeec9f6ef4@ti.com>
+From:   Chunyan Zhang <zhang.chunyan@linaro.org>
+Date:   Mon, 28 Jan 2019 19:46:50 +0800
+Message-ID: <CAG2=9p_qU8XOtyanEPfa1CSY_X5QGgGCvBg-7dcyW-BhcBChKQ@mail.gmail.com>
+Subject: Re: [PATCH 1/7] mmc: sdhci: add support for using external DMA devices
+To:     Faiz Abbas <faiz_abbas@ti.com>
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org, linux-mmc@vger.kernel.org,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The PMS405 has 5 HFSMPS and 13 LDO regulators,
+On Mon, 28 Jan 2019 at 18:40, Faiz Abbas <faiz_abbas@ti.com> wrote:
+>
+> Hi,
+>
+> On 28/01/19 3:50 PM, Chunyan Zhang wrote:
+> > On Thu, 24 Jan 2019 at 19:41, Adrian Hunter <adrian.hunter@intel.com> wrote:
+> >>
+> >> On 11/01/19 1:08 PM, Faiz Abbas wrote:
+> >>> From: Chunyan Zhang <zhang.chunyan@linaro.org>
+> >>>
+> >>> Some standard SD host controllers can support both external dma
+> >>> controllers as well as ADMA/SDMA in which the SD host controller
+> >>> acts as DMA master. TI's omap controller is the case as an example.
+> >>>
+> >>> Currently the generic SDHCI code supports ADMA/SDMA integrated in
+> >>> the host controller but does not have any support for external DMA
+> >>> controllers implemented using dmaengine, meaning that custom code is
+> >>> needed for any systems that use an external DMA controller with SDHCI.
+> >>>
+> >>> Fixes by Faiz Abbas <faiz_abbas@ti.com>:
+> >>> 1. Map scatterlists before dmaengine_prep_slave_sg()
+> >>> 2. Use dma_async() functions inside of the send_command() path and
+> >>> synchronize once at the start of each request.
+> >>
+> >> Sorry for the slow reply, but I do have some concerns.  Please see the comments.
+> >>
+> >>>
+> >>> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
+> >>> Signed-off-by: Faiz Abbas <faiz_abbas@ti.com>
+> >>> ---
+> >>>  drivers/mmc/host/Kconfig |   3 +
+> >>>  drivers/mmc/host/sdhci.c | 266 ++++++++++++++++++++++++++++++++++++++-
+> >>>  drivers/mmc/host/sdhci.h |   8 ++
+> >>>  3 files changed, 273 insertions(+), 4 deletions(-)
+> >>>
+> >>> diff --git a/drivers/mmc/host/Kconfig b/drivers/mmc/host/Kconfig
+> >>> index e26b8145efb3..333292e8ecdd 100644
+> >>> --- a/drivers/mmc/host/Kconfig
+> >>> +++ b/drivers/mmc/host/Kconfig
+> >>> @@ -999,3 +999,6 @@ config MMC_SDHCI_AM654
+> >>>         If you have a controller with this interface, say Y or M here.
+> >>>
+> >>>         If unsure, say N.
+> >>> +
+> >>> +config MMC_SDHCI_EXTERNAL_DMA
+> >>> +        bool
+> >>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> >>> index a22e11a65658..4a9044c06e21 100644
+> >>> --- a/drivers/mmc/host/sdhci.c
+> >>> +++ b/drivers/mmc/host/sdhci.c
+> >>> @@ -14,6 +14,7 @@
+> >>>   */
+> >>>
+> >>>  #include <linux/delay.h>
+> >>> +#include <linux/dmaengine.h>
+> >>>  #include <linux/ktime.h>
+> >>>  #include <linux/highmem.h>
+> >>>  #include <linux/io.h>
+> >>> @@ -1118,6 +1119,226 @@ static void sdhci_prepare_data(struct sdhci_host *host, struct mmc_command *cmd)
+> >>>       }
+> >>>  }
+> >>>
+> >>> +#if IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> >>> +static int sdhci_external_dma_init(struct sdhci_host *host)
+> >>> +{
+> >>> +     int ret = 0;
+> >>> +     struct mmc_host *mmc = host->mmc;
+> >>> +
+> >>> +     host->tx_chan = dma_request_chan(mmc->parent, "tx");
+> >>> +     if (IS_ERR(host->tx_chan)) {
+> >>> +             ret = PTR_ERR(host->tx_chan);
+> >>> +             if (ret != -EPROBE_DEFER)
+> >>> +                     pr_warn("Failed to request TX DMA channel.\n");
+> >>> +             host->tx_chan = NULL;
+> >>> +             return ret;
+> >>> +     }
+> >>> +
+> >>> +     host->rx_chan = dma_request_chan(mmc->parent, "rx");
+> >>> +     if (IS_ERR(host->rx_chan)) {
+> >>> +             if (host->tx_chan) {
+> >>> +                     dma_release_channel(host->tx_chan);
+> >>> +                     host->tx_chan = NULL;
+> >>> +             }
+> >>> +
+> >>> +             ret = PTR_ERR(host->rx_chan);
+> >>> +             if (ret != -EPROBE_DEFER)
+> >>> +                     pr_warn("Failed to request RX DMA channel.\n");
+> >>> +             host->rx_chan = NULL;
+> >>> +     }
+> >>> +
+> >>> +     return ret;
+> >>> +}
+> >>> +
+> >>> +static inline struct dma_chan *
+> >>> +sdhci_external_dma_channel(struct sdhci_host *host, struct mmc_data *data)
+> >>> +{
+> >>> +     return data->flags & MMC_DATA_WRITE ? host->tx_chan : host->rx_chan;
+> >>> +}
+> >>> +
+> >>> +static int sdhci_external_dma_setup(struct sdhci_host *host,
+> >>> +                                 struct mmc_command *cmd)
+> >>> +{
+> >>> +     int ret, i;
+> >>> +     struct dma_async_tx_descriptor *desc;
+> >>> +     struct mmc_data *data = cmd->data;
+> >>> +     struct dma_chan *chan;
+> >>> +     struct dma_slave_config cfg;
+> >>> +     dma_cookie_t cookie;
+> >>> +     int sg_cnt;
+> >>> +
+> >>> +     if (!host->mapbase)
+> >>> +             return -EINVAL;
+> >>> +
+> >>> +     cfg.src_addr = host->mapbase + SDHCI_BUFFER;
+> >>> +     cfg.dst_addr = host->mapbase + SDHCI_BUFFER;
+> >>> +     cfg.src_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> >>> +     cfg.dst_addr_width = DMA_SLAVE_BUSWIDTH_4_BYTES;
+> >>> +     cfg.src_maxburst = data->blksz / 4;
+> >>> +     cfg.dst_maxburst = data->blksz / 4;
+> >>> +
+> >>> +     /* Sanity check: all the SG entries must be aligned by block size. */
+> >>> +     for (i = 0; i < data->sg_len; i++) {
+> >>> +             if ((data->sg + i)->length % data->blksz)
+> >>> +                     return -EINVAL;
+> >>> +     }
+> >>> +
+> >>> +     chan = sdhci_external_dma_channel(host, data);
+> >>> +
+> >>> +     ret = dmaengine_slave_config(chan, &cfg);
+> >>> +     if (ret)
+> >>> +             return ret;
+> >>> +
+> >>> +     sg_cnt = sdhci_pre_dma_transfer(host, data, COOKIE_MAPPED);
+> >>> +     if (sg_cnt <= 0)
+> >>> +             return -EINVAL;
+> >>> +
+> >>> +     desc = dmaengine_prep_slave_sg(chan, data->sg, data->sg_len,
+> >>> +                                    mmc_get_dma_dir(data),
+> >>> +                                    DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
+> >>> +     if (!desc)
+> >>> +             return -EINVAL;
+> >>> +
+> >>> +     desc->callback = NULL;
+> >>> +     desc->callback_param = NULL;
+> >>> +
+> >>> +     cookie = dmaengine_submit(desc);
+> >>> +     if (cookie < 0)
+> >>> +             ret = cookie;
+> >>> +
+> >>> +     return ret;
+> >>> +}
+> >>> +
+> >>> +static void sdhci_external_dma_release(struct sdhci_host *host)
+> >>> +{
+> >>> +     if (host->tx_chan) {
+> >>> +             dma_release_channel(host->tx_chan);
+> >>> +             host->tx_chan = NULL;
+> >>> +     }
+> >>> +
+> >>> +     if (host->rx_chan) {
+> >>> +             dma_release_channel(host->rx_chan);
+> >>> +             host->rx_chan = NULL;
+> >>> +     }
+> >>> +
+> >>> +     sdhci_switch_external_dma(host, false);
+> >>> +}
+> >>> +
+> >>> +static int __sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> >>> +                                          struct mmc_command *cmd)
+> >>> +{
+> >>> +     struct mmc_data *data = cmd->data;
+> >>> +
+> >>> +     host->data_timeout = 0;
+> >>> +
+> >>> +     if (sdhci_data_line_cmd(cmd))
+> >>> +             sdhci_set_timeout(host, cmd);
+> >>> +
+> >>> +     WARN_ON(host->data);
+> >>> +
+> >>> +     /* Sanity checks */
+> >>> +     WARN_ON(data->blksz * data->blocks > 524288);
+> >>> +     WARN_ON(data->blksz > host->mmc->max_blk_size);
+> >>> +     WARN_ON(data->blocks > 65535);
+> >>> +
+> >>> +     host->flags |= SDHCI_REQ_USE_DMA;
+> >>> +     host->data = data;
+> >>> +     host->data_early = 0;
+> >>> +     host->data->bytes_xfered = 0;
+> >>> +
+> >>> +     sdhci_set_transfer_irqs(host);
+> >>> +
+> >>> +     /*
+> >>> +      * For Version 4.10 onwards, if v4 mode is enabled, 32-bit Block Count
+> >>> +      * can be supported, in that case 16-bit block count register must be 0.
+> >>> +      */
+> >>> +     if (host->version >= SDHCI_SPEC_410 && host->v4_mode &&
+> >>> +         (host->quirks2 & SDHCI_QUIRK2_USE_32BIT_BLK_CNT)) {
+> >>> +             if (sdhci_readw(host, SDHCI_BLOCK_COUNT))
+> >>> +                     sdhci_writew(host, 0, SDHCI_BLOCK_COUNT);
+> >>> +             sdhci_writew(host, data->blocks, SDHCI_32BIT_BLK_CNT);
+> >>> +     } else {
+> >>> +             sdhci_writew(host, data->blocks, SDHCI_BLOCK_COUNT);
+> >>> +     }
+> >>
+> >> It is probably worth factoring out the code that is shared with
+> >> sdhci_prepare_data() where possible.
+> >>
+> >>> +
+> >>> +     return 0;
+> >>> +}
+> >>> +
+> >>> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> >>> +                                         struct mmc_command *cmd)
+> >>> +{
+> >>> +     struct mmc_data *data = cmd->data;
+> >>> +
+> >>> +     if (!data)
+> >>> +             return;
+> >>
+> >> Even in the !data case, we still need to set up a timeout for commands with
+> >> busy waiting.  I suggest checking the !data case before calling
+> >> sdhci_external_dma_prepare_data()
+> >
+> > Ok.
+> >
+> >>
+> >>> +
+> >>> +     if (sdhci_external_dma_setup(host, cmd) ||
+> >>> +         __sdhci_external_dma_prepare_data(host, cmd)) {
+> >>> +             sdhci_external_dma_release(host);
+> >>> +             pr_err("%s: Cannot use external DMA, switch to the DMA/PIO which standard SDHCI provides.\n",
+> >>> +                    mmc_hostname(host->mmc));
+> >>> +             sdhci_prepare_data(host, cmd);
+> >>> +     }
+> >>> +}
+> >>> +
+> >>> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+> >>> +                                         struct mmc_command *cmd)
+> >>> +{
+> >>> +     struct dma_chan *chan;
+> >>> +
+> >>> +     if (!cmd->data || cmd->opcode == MMC_SET_BLOCK_COUNT)
+> >>
+> >> MMC_SET_BLOCK_COUNT never has cmd->data and so does not need to be checked.
+> >
+> > Ok.
+> >
+> >>
+> >>> +             return;
+> >>> +
+> >>> +     sdhci_writew(host, cmd->data->blksz, SDHCI_BLOCK_SIZE);
+> >>
+> >> Block size is set in __sdhci_external_dma_prepare_data() so does it need to
+> >> be set here also.
+> >
+> > Ok.
+>
+> That is BLOCK_COUNT. This is BLOCK_SIZE.
+>
+> >
+> >>
+> >>> +     chan = sdhci_external_dma_channel(host, cmd->data);
+> >>> +     if (chan)
+> >>> +             dma_async_issue_pending(chan);
+> >>> +}
+> >>> +
+> >>> +static int sdhci_external_dma_cleanup(struct sdhci_host *host,
+> >>> +                                 struct mmc_data *data)
+> >>
+> >> Please align parameters with open parenthesis
+> >>
+> >>> +{
+> >>> +     struct dma_chan *chan = sdhci_external_dma_channel(host, data);
+> >>> +     int ret = 0;
+> >>> +
+> >>> +     if (chan)
+> >>> +             ret = dmaengine_terminate_async(chan);
+> >>> +
+> >>> +     return ret;
+> >>> +}
+> >>> +#else
+> >>> +static int sdhci_external_dma_init(struct sdhci_host *host)
+> >>> +{
+> >>> +     return -EOPNOTSUPP;
+> >>> +}
+> >>> +
+> >>> +static void sdhci_external_dma_release(struct sdhci_host *host)
+> >>> +{}
+> >>> +
+> >>> +static void sdhci_external_dma_prepare_data(struct sdhci_host *host,
+> >>> +                                         struct mmc_command *cmd)
+> >>> +{
+> >>> +     /* If MMC_SDHCI_EXTERNAL_DMA not supported, PIO will be used */
+> >>> +     sdhci_prepare_data(host, cmd);
+> >>> +}
+> >>> +
+> >>> +static void sdhci_external_dma_pre_transfer(struct sdhci_host *host,
+> >>> +                                         struct mmc_command *cmd)
+> >>> +{}
+> >>> +
+> >>> +static int sdhci_external_dma_cleanup(struct sdhci_host *host,
+> >>> +                                 struct mmc_data *data)
+> >>
+> >> Please align parameters with open parenthesis
+> >>
+> >>> +{
+> >>> +     return 0;
+> >>> +}
+> >>> +#endif
+> >>> +
+> >>> +void sdhci_switch_external_dma(struct sdhci_host *host, bool en)
+> >>> +{
+> >>> +     host->use_external_dma = en;
+> >>> +}
+> >>> +EXPORT_SYMBOL_GPL(sdhci_switch_external_dma);
+> >>> +
+> >>>  static inline bool sdhci_auto_cmd12(struct sdhci_host *host,
+> >>>                                   struct mmc_request *mrq)
+> >>>  {
+> >>> @@ -1374,7 +1595,10 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+> >>>               host->data_cmd = cmd;
+> >>>       }
+> >>>
+> >>> -     sdhci_prepare_data(host, cmd);
+> >>> +     if (host->use_external_dma)
+> >>
+> >> As mentioned above wrt sdhci_external_dma_prepare_data():
+> >>
+> >>         if (host->use_external_dma && cmd->data)
+> >>
+> >
+> > Maybe we should move checking the !data case out of both
+> > _prepare_data, and add it to sdhci_send_command() before calling
+> > _prepare_data(), that's saying we can do set up a timeout in
+> > sdhci_send_command().
+>
+> Lets just factor out everything in common as Adrian said. The !data,
+> BLOCK_COUNT writes and busy waiting.
 
-This commit adds support for one of the 5 HFSMPS regulators (s3) to
-the spmi regulator driver.
+Ok, and also BLOCK_SIZE which can be set in _prepare_data().
 
-The PMIC HFSMPS 430 regulators have 8 mV step size and a voltage
-control scheme consisting of two  8-bit registers defining a 16-bit
-voltage set point in units of millivolts
+>
+> >
+> >>> +             sdhci_external_dma_prepare_data(host, cmd);
+> >>> +     else
+> >>> +             sdhci_prepare_data(host, cmd);
+> >>>
+> >>>       sdhci_writel(host, cmd->arg, SDHCI_ARGUMENT);
+> >>>
+> >>> @@ -1416,6 +1640,9 @@ void sdhci_send_command(struct sdhci_host *host, struct mmc_command *cmd)
+> >>>               timeout += 10 * HZ;
+> >>>       sdhci_mod_timer(host, cmd->mrq, timeout);
+> >>>
+> >>> +     if (host->use_external_dma)
+> >>> +             sdhci_external_dma_pre_transfer(host, cmd);
+> >>
+> >> Why is sdhci_external_dma_pre_transfer() needed here - couldn't it be done
+> >> in sdhci_external_dma_prepare_data()?
+> >>
+> >
+> > I'm not sure dma_async_issue_pending() can be done so early in
+> > sdhci_external_dma_prepare_data().
+> >
+> >>> +
+> >>>       sdhci_writew(host, SDHCI_MAKE_CMD(cmd->opcode, flags), SDHCI_COMMAND);
+> >>>  }
+> >>>  EXPORT_SYMBOL_GPL(sdhci_send_command);
+> >>> @@ -1781,6 +2008,11 @@ void sdhci_request(struct mmc_host *mmc, struct mmc_request *mrq)
+> >>>
+> >>>       sdhci_led_activate(host);
+> >>>
+> >>> +     if (host->use_external_dma && mrq->data) {
+> >>> +             struct dma_chan *chan = sdhci_external_dma_channel(host,
+> >>> +                                                                mrq->data);
+> >>
+> >> sdhci_external_dma_channel is not declared if
+> >> !IS_ENABLED(CONFIG_MMC_SDHCI_EXTERNAL_DMA)
+> >
+> > Ok, I guess this can be moved to sdhci_external_dma_prepare_data().
+>
+> No. We have to synchronize from a guaranteed non-atomic context. Maybe
+> add another empty sdhci_external_dma_channel definition in the #else part?
+>
+> >
+> >>
+> >>> +             dmaengine_synchronize(chan);
+> >>
+> >> So this is to cover for using dmaengine_terminate_async()?
+>
+> Yes.
+>
+> >
+> > Ok.
+> >
+> >>
+> >>> +     }
+> >>>       /*
+> >>>        * Ensure we don't send the STOP for non-SET_BLOCK_COUNTED
+> >>>        * requests if Auto-CMD12 is enabled.
+> >>> @@ -2658,6 +2890,8 @@ static bool sdhci_request_done(struct sdhci_host *host)
+> >>>                               dma_unmap_sg(mmc_dev(host->mmc), data->sg,
+> >>>                                            data->sg_len,
+> >>>                                            mmc_get_dma_dir(data));
+> >>> +                             if (host->use_external_dma)
+> >>> +                                     sdhci_external_dma_cleanup(host, data);
+> >>
+> >> Is sdhci_external_dma_cleanup() only needed in the error case?
+> >>
+> >> The DMA must be stopped before the memory is unmapped and potentially freed.
+> >>
+> >> Isn't the DMA cleanup also needed in the bounce buffer case?
+> >>
+> >> Isn't the DMA cleanup also needed in the COOKIE_PRE_MAPPED case?
+> >>
+> >> dmaengine_terminate_async() doesn't stop the DMA but
+> >> dmaengine_terminate_sync() is not atomic, which looks like a problem.
+> >>
+> >> Perhaps you look at scheduling some work for the external dma error case
+> >> instead of calling __sdhci_finish_mrq()?  Then the work can do the
+> >> dmaengine_terminate_sync() and call __sdhci_finish_mrq().
+> >
+> > Ok, I will look at these issues.
+> >
+> >>
+> >>>                       }
+> >>>                       data->host_cookie = COOKIE_UNMAPPED;
+> >>>               }
+> >>> @@ -3692,12 +3926,15 @@ int sdhci_setup_host(struct sdhci_host *host)
+> >>>                      mmc_hostname(mmc), host->version);
+> >>>       }
+> >>>
+> >>> -     if (host->quirks & SDHCI_QUIRK_FORCE_DMA)
+> >>> +     if (host->quirks & SDHCI_QUIRK_FORCE_DMA) {
+> >>>               host->flags |= SDHCI_USE_SDMA;
+> >>> -     else if (!(host->caps & SDHCI_CAN_DO_SDMA))
+> >>> +     } else if (!(host->caps & SDHCI_CAN_DO_SDMA)) {
+> >>>               DBG("Controller doesn't have SDMA capability\n");
+> >>> -     else
+> >>> +     } else if (host->use_external_dma) {
+> >>> +             /* Using dma-names to detect external dma capability */
+> >>> +     } else {
+> >>>               host->flags |= SDHCI_USE_SDMA;
+> >>> +     }
+> >>
+> >> These if-statements are about setting SDHCI_USE_SDMA but why is a change
+> >> needed for the host->use_external_dma case?
+> >
+> > Yes, this is not needed, otherwise the controller cannot switch back
+> > to SDMA if it is supported in the controller.
+>
+> The else case means that the host always uses SDMA. Needed to make sure
+> this doesn't happen in the external_dma case. Its not SDHCI_CAN_DO_SDMA,
+> its SDHCI_USE_SDMA.
+>
+> >
+> >>
+> >>>
+> >>>       if ((host->quirks & SDHCI_QUIRK_BROKEN_DMA) &&
+> >>>               (host->flags & SDHCI_USE_SDMA)) {
+> >>> @@ -3785,6 +4022,19 @@ int sdhci_setup_host(struct sdhci_host *host)
+> >>>               }
+> >>>       }
+> >>>
+> >>> +     if (host->use_external_dma) {
+> >>> +             ret = sdhci_external_dma_init(host);
+> >>> +             if (ret == -EPROBE_DEFER)
+> >>> +                     goto unreg;
+> >>> +
+> >>> +             /*
+> >>> +              * Fall back to use the DMA/PIO integrated in standard SDHCI
+> >>> +              * instead of external DMA devices.
+> >>> +              */
+> >>> +             if (ret)
+> >>> +                     sdhci_switch_external_dma(host, false);
+> >>> +     }
+> >>> +
+> >>>       /*
+> >>>        * If we use DMA, then it's up to the caller to set the DMA
+> >>>        * mask, but PIO does not need the hw shim so we set a new
+> >>> @@ -4201,6 +4451,10 @@ void sdhci_cleanup_host(struct sdhci_host *host)
+> >>>               dma_free_coherent(mmc_dev(mmc), host->align_buffer_sz +
+> >>>                                 host->adma_table_sz, host->align_buffer,
+> >>>                                 host->align_addr);
+> >>> +
+> >>> +     if (host->use_external_dma)
+> >>> +             sdhci_external_dma_release(host);
+> >>> +
+> >>>       host->adma_table = NULL;
+> >>>       host->align_buffer = NULL;
+> >>>  }
+> >>> @@ -4247,6 +4501,7 @@ int __sdhci_add_host(struct sdhci_host *host)
+> >>>
+> >>>       pr_info("%s: SDHCI controller on %s [%s] using %s\n",
+> >>>               mmc_hostname(mmc), host->hw_name, dev_name(mmc_dev(mmc)),
+> >>> +             host->use_external_dma ? "External DMA" :
+> >>>               (host->flags & SDHCI_USE_ADMA) ?
+> >>>               (host->flags & SDHCI_USE_64_BIT_DMA) ? "ADMA 64-bit" : "ADMA" :
+> >>>               (host->flags & SDHCI_USE_SDMA) ? "DMA" : "PIO");
+> >>> @@ -4335,6 +4590,9 @@ void sdhci_remove_host(struct sdhci_host *host, int dead)
+> >>>                                 host->adma_table_sz, host->align_buffer,
+> >>>                                 host->align_addr);
+> >>>
+> >>> +     if (host->use_external_dma)
+> >>> +             sdhci_external_dma_release(host);
+> >>> +
+> >>>       host->adma_table = NULL;
+> >>>       host->align_buffer = NULL;
+> >>>  }
+> >>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+> >>> index 6cc9a3c2ac66..7a52823ebef4 100644
+> >>> --- a/drivers/mmc/host/sdhci.h
+> >>> +++ b/drivers/mmc/host/sdhci.h
+> >>> @@ -482,6 +482,7 @@ struct sdhci_host {
+> >>>
+> >>>       int irq;                /* Device IRQ */
+> >>>       void __iomem *ioaddr;   /* Mapped address */
+> >>> +     phys_addr_t mapbase;    /* physical address base */
+> >>>       char *bounce_buffer;    /* For packing SDMA reads/writes */
+> >>>       dma_addr_t bounce_addr;
+> >>>       unsigned int bounce_buffer_size;
+> >>> @@ -531,6 +532,7 @@ struct sdhci_host {
+> >>>       bool pending_reset;     /* Cmd/data reset is pending */
+> >>>       bool irq_wake_enabled;  /* IRQ wakeup is enabled */
+> >>>       bool v4_mode;           /* Host Version 4 Enable */
+> >>> +     bool use_external_dma; /* Host selects to use external DMA */
+> >>
+> >> Please align /**/ with above i.e. use tab
+>
+> Will fix.
 
-S3 controls the cpu voltages (s3 is a buck regulator of type HFS430);
-it is therefore required so we can enable voltage scaling for safely
-running cpufreq.
+Do you need me to address these comments and then send you a patch or
+you'd like to do instead?
 
-Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
----
- drivers/regulator/qcom_spmi-regulator.c | 197 +++++++++++++++++++++++++++++---
- 1 file changed, 180 insertions(+), 17 deletions(-)
+Thanks,
+Chunyan
 
-diff --git a/drivers/regulator/qcom_spmi-regulator.c b/drivers/regulator/qcom_spmi-regulator.c
-index 53a61fb..6b8dc9c 100644
---- a/drivers/regulator/qcom_spmi-regulator.c
-+++ b/drivers/regulator/qcom_spmi-regulator.c
-@@ -99,6 +99,7 @@ enum spmi_regulator_logical_type {
- 	SPMI_REGULATOR_LOGICAL_TYPE_VS,
- 	SPMI_REGULATOR_LOGICAL_TYPE_BOOST,
- 	SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS,
-+	SPMI_REGULATOR_LOGICAL_TYPE_HFS430,
- 	SPMI_REGULATOR_LOGICAL_TYPE_BOOST_BYP,
- 	SPMI_REGULATOR_LOGICAL_TYPE_LN_LDO,
- 	SPMI_REGULATOR_LOGICAL_TYPE_ULT_LO_SMPS,
-@@ -120,6 +121,7 @@ enum spmi_regulator_type {
- enum spmi_regulator_subtype {
- 	SPMI_REGULATOR_SUBTYPE_GP_CTL		= 0x08,
- 	SPMI_REGULATOR_SUBTYPE_RF_CTL		= 0x09,
-+	SPMI_REGULATOR_SUBTYPE_HFS430		= 0x0a,
- 	SPMI_REGULATOR_SUBTYPE_N50		= 0x01,
- 	SPMI_REGULATOR_SUBTYPE_N150		= 0x02,
- 	SPMI_REGULATOR_SUBTYPE_N300		= 0x03,
-@@ -183,6 +185,12 @@ enum spmi_boost_byp_registers {
- 	SPMI_BOOST_BYP_REG_CURRENT_LIMIT	= 0x4b,
- };
- 
-+enum spmi_hfs430_registers {
-+	SPMI_HFS430_REG_VOLTAGE_LB		= 0x40,
-+	SPMI_HFS430_REG_VOLTAGE_VALID_LB	= 0x42,
-+	SPMI_HFS430_REG_MODE			= 0x45,
-+};
-+
- enum spmi_saw3_registers {
- 	SAW3_SECURE				= 0x00,
- 	SAW3_ID					= 0x04,
-@@ -260,20 +268,61 @@ enum spmi_common_control_register_index {
- #define SPMI_FTSMPS_STEP_CTRL_DELAY_MASK	0x07
- #define SPMI_FTSMPS_STEP_CTRL_DELAY_SHIFT	0
- 
--/* Clock rate in kHz of the FTSMPS regulator reference clock. */
-+#define SPMI_HFS430_STEP_CTRL_STEP_MASK		0
-+#define SPMI_HFS430_STEP_CTRL_STEP_SHIFT	0
-+#define SPMI_HFS430_STEP_CTRL_DELAY_MASK	0x3
-+#define SPMI_HFS430_STEP_CTRL_DELAY_SHIFT	0
-+
-+/* Clock rate in kHz of the FTSMPS and HFS430 regulator reference clocks. */
- #define SPMI_FTSMPS_CLOCK_RATE		19200
-+#define SPMI_HFS430_CLOCK_RATE		1600
- 
- /* Minimum voltage stepper delay for each step. */
- #define SPMI_FTSMPS_STEP_DELAY		8
-+#define SPMI_HFS430_STEP_DELAY		2
- #define SPMI_DEFAULT_STEP_DELAY		20
- 
- /*
-- * The ratio SPMI_FTSMPS_STEP_MARGIN_NUM/SPMI_FTSMPS_STEP_MARGIN_DEN is used to
-+ * The ratio SPMI_xxxxx_STEP_MARGIN_NUM/SPMI_xxxxx_STEP_MARGIN_DEN is used to
-  * adjust the step rate in order to account for oscillator variance.
-  */
- #define SPMI_FTSMPS_STEP_MARGIN_NUM	4
- #define SPMI_FTSMPS_STEP_MARGIN_DEN	5
- 
-+#define SPMI_HFS430_STEP_MARGIN_NUM	10
-+#define SPMI_HFS430_STEP_MARGIN_DEN	11
-+
-+#define SPMI_STEP_MASK(__x)	SPMI_##__x##_STEP_CTRL_STEP_MASK
-+#define SPMI_STEP_SHIFT(__x)	SPMI_##__x##_STEP_CTRL_STEP_SHIFT
-+#define SPMI_DELAY_MASK(__x)	SPMI_##__x##_STEP_CTRL_DELAY_MASK
-+#define SPMI_DELAY_SHIFT(__x)	SPMI_##__x##_STEP_CTRL_DELAY_SHIFT
-+#define SPMI_CLOCK_RATE(__x)	SPMI_##__x##_CLOCK_RATE
-+#define SPMI_STEP_DELAY(__x)	SPMI_##__x##_STEP_DELAY
-+#define SPMI_MARGIN_NUM(__x)	SPMI_##__x##_STEP_MARGIN_NUM
-+#define SPMI_MARGIN_DEN(__x)	SPMI_##__x##_STEP_MARGIN_DEN
-+
-+struct slew_rate_config {
-+	unsigned int delay_mask;
-+	unsigned int delay_shift;
-+	unsigned int step_mask;
-+	unsigned int step_shift;
-+	unsigned int margin_num;
-+	unsigned int margin_den;
-+	unsigned int step_delay;
-+	unsigned int clock_rate;
-+};
-+
-+#define SLEW_RATE_CONFIG(x)  {			\
-+	.delay_shift = SPMI_DELAY_SHIFT(x),	\
-+	.delay_mask = SPMI_DELAY_MASK(x),	\
-+	.step_shift = SPMI_STEP_SHIFT(x),	\
-+	.step_mask = SPMI_STEP_MASK(x),		\
-+	.margin_num = SPMI_MARGIN_NUM(x),	\
-+	.margin_den = SPMI_MARGIN_DEN(x),	\
-+	.step_delay = SPMI_STEP_DELAY(x),	\
-+	.clock_rate = SPMI_CLOCK_RATE(x),	\
-+}
-+
- /* VSET value to decide the range of ULT SMPS */
- #define ULT_SMPS_RANGE_SPLIT 0x60
- 
-@@ -472,6 +521,11 @@ static struct spmi_voltage_range ult_pldo_ranges[] = {
- 	SPMI_VOLTAGE_RANGE(0, 1750000, 1750000, 3337500, 3337500, 12500),
- };
- 
-+/* must be only one range */
-+static struct spmi_voltage_range hfs430_ranges[] = {
-+	SPMI_VOLTAGE_RANGE(0, 320000, 320000, 2040000, 2040000, 8000),
-+};
-+
- static DEFINE_SPMI_SET_POINTS(pldo);
- static DEFINE_SPMI_SET_POINTS(nldo1);
- static DEFINE_SPMI_SET_POINTS(nldo2);
-@@ -486,6 +540,7 @@ static DEFINE_SPMI_SET_POINTS(ult_lo_smps);
- static DEFINE_SPMI_SET_POINTS(ult_ho_smps);
- static DEFINE_SPMI_SET_POINTS(ult_nldo);
- static DEFINE_SPMI_SET_POINTS(ult_pldo);
-+static DEFINE_SPMI_SET_POINTS(hfs430);
- 
- static inline int spmi_vreg_read(struct spmi_regulator *vreg, u16 addr, u8 *buf,
- 				 int len)
-@@ -653,6 +708,10 @@ spmi_regulator_find_range(struct spmi_regulator *vreg)
- 	range = vreg->set_points->range;
- 	end = range + vreg->set_points->count;
- 
-+	/* we know we only have one range for this type */
-+	if (vreg->logical_type == SPMI_REGULATOR_LOGICAL_TYPE_HFS430)
-+		return range;
-+
- 	spmi_vreg_read(vreg, SPMI_COMMON_REG_VOLTAGE_RANGE, &range_sel, 1);
- 
- 	for (; range < end; range++)
-@@ -1135,6 +1194,82 @@ spmi_regulator_saw_set_voltage(struct regulator_dev *rdev, unsigned selector)
- 					&voltage_sel, true);
- }
- 
-+#define SPMI_HFS430_MODE_PWM	0x07
-+#define SPMI_HFS430_MODE_AUTO	0x06
-+
-+static unsigned int spmi_regulator_hfs430_get_mode(struct regulator_dev *rdev)
-+{
-+	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
-+	u8 reg;
-+	int ret;
-+
-+	ret = spmi_vreg_read(vreg, SPMI_HFS430_REG_MODE, &reg, 1);
-+	if (ret) {
-+		dev_err(&rdev->dev, "failed to get mode");
-+		return ret;
-+	}
-+
-+	if (reg == SPMI_HFS430_MODE_PWM)
-+		return REGULATOR_MODE_NORMAL;
-+
-+	return REGULATOR_MODE_IDLE;
-+}
-+
-+static int spmi_regulator_hfs430_set_mode(struct regulator_dev *rdev,
-+					  unsigned int mode)
-+{
-+	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
-+	u8 reg = mode == REGULATOR_MODE_NORMAL ? SPMI_HFS430_MODE_PWM :
-+						 SPMI_HFS430_MODE_AUTO;
-+
-+	return spmi_vreg_write(vreg, SPMI_HFS430_REG_MODE, &reg, 1);
-+}
-+
-+int spmi_regulator_hfs430_get_voltage(struct regulator_dev *rdev)
-+{
-+	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
-+	u8 val[2];
-+	int ret, uV;
-+
-+	ret = spmi_vreg_read(vreg, SPMI_HFS430_REG_VOLTAGE_VALID_LB, val, 2);
-+	if (ret) {
-+		dev_err(&rdev->dev, "failed to get voltage");
-+		return ret;
-+	}
-+
-+	uV = 1000 * (((unsigned int) val[1] << 8) | val[0]);
-+	dev_dbg(&rdev->dev, "read = %d", uV);
-+
-+	return uV;
-+}
-+
-+static int spmi_regulator_hfs430_set_voltage(struct regulator_dev *rdev,
-+					     unsigned selector)
-+{
-+	struct spmi_regulator *vreg = rdev_get_drvdata(rdev);
-+	const struct spmi_voltage_range *range;
-+	int uV, vlevel;
-+	u8 val[2];
-+
-+	range = spmi_regulator_find_range(vreg);
-+	if (!range)
-+		return -EINVAL;
-+
-+	uV = spmi_regulator_common_list_voltage(rdev, selector);
-+	if (uV <= 0)
-+		return uV;
-+
-+	vlevel = roundup(uV, range->step_uV) / 1000;
-+
-+	dev_dbg(&rdev->dev, "write (%d, %d), mode (%d)", uV, vlevel,
-+		spmi_regulator_hfs430_get_mode(rdev));
-+
-+	val[0] = vlevel & 0xFF;
-+	val[1] = (vlevel >> 8) & 0xFF;
-+
-+	return spmi_vreg_write(vreg, SPMI_HFS430_REG_VOLTAGE_LB, val, 2);
-+}
-+
- static struct regulator_ops spmi_saw_ops = {};
- 
- static struct regulator_ops spmi_smps_ops = {
-@@ -1264,12 +1399,24 @@ static struct regulator_ops spmi_ult_ldo_ops = {
- 	.set_soft_start		= spmi_regulator_common_set_soft_start,
- };
- 
-+static struct regulator_ops spmi_hfs430_ops = {
-+	/* always on regulators */
-+	.set_voltage_sel	= spmi_regulator_hfs430_set_voltage,
-+	.set_voltage_time_sel	= spmi_regulator_set_voltage_time_sel,
-+	.get_voltage		= spmi_regulator_hfs430_get_voltage,
-+	.map_voltage		= spmi_regulator_common_map_voltage,
-+	.list_voltage		= spmi_regulator_common_list_voltage,
-+	.get_mode		= spmi_regulator_hfs430_get_mode,
-+	.set_mode		= spmi_regulator_hfs430_set_mode,
-+};
-+
- /* Maximum possible digital major revision value */
- #define INF 0xFF
- 
- static const struct spmi_regulator_mapping supported_regulators[] = {
--	/*           type subtype dig_min dig_max ltype ops setpoints hpm_min */
-+	/*        type subtype dig_min dig_max ltype ops setpoints hpm_min */
- 	SPMI_VREG(BUCK,  GP_CTL,   0, INF, SMPS,   smps,   smps,   100000),
-+	SPMI_VREG(BUCK,  HFS430,   0, INF, HFS430, hfs430, hfs430,  10000),
- 	SPMI_VREG(LDO,   N300,     0, INF, LDO,    ldo,    nldo1,   10000),
- 	SPMI_VREG(LDO,   N600,     0,   0, LDO,    ldo,    nldo2,   10000),
- 	SPMI_VREG(LDO,   N1200,    0,   0, LDO,    ldo,    nldo2,   10000),
-@@ -1396,8 +1543,12 @@ static int spmi_regulator_init_slew_rate(struct spmi_regulator *vreg)
- {
- 	int ret;
- 	u8 reg = 0;
--	int step, delay, slew_rate, step_delay;
-+	int step, delay, slew_rate;
- 	const struct spmi_voltage_range *range;
-+	struct slew_rate_config *config, configs[] = {
-+		[0] = SLEW_RATE_CONFIG(HFS430),
-+		[1] = SLEW_RATE_CONFIG(FTSMPS),
-+	};
- 
- 	ret = spmi_vreg_read(vreg, SPMI_COMMON_REG_STEP_CTRL, &reg, 1);
- 	if (ret) {
-@@ -1410,25 +1561,26 @@ static int spmi_regulator_init_slew_rate(struct spmi_regulator *vreg)
- 		return -EINVAL;
- 
- 	switch (vreg->logical_type) {
--	case SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS:
--		step_delay = SPMI_FTSMPS_STEP_DELAY;
-+	case SPMI_REGULATOR_LOGICAL_TYPE_HFS430:
-+		config = &configs[0];
- 		break;
- 	default:
--		step_delay = SPMI_DEFAULT_STEP_DELAY;
--		break;
--	}
-+		config = &configs[1];
-+		if (vreg->logical_type != SPMI_REGULATOR_LOGICAL_TYPE_FTSMPS)
-+			config->step_delay =  SPMI_STEP_DELAY(DEFAULT);
-+	};
- 
--	step = reg & SPMI_FTSMPS_STEP_CTRL_STEP_MASK;
--	step >>= SPMI_FTSMPS_STEP_CTRL_STEP_SHIFT;
-+	step = reg & config->step_mask;
-+	step >>= config->step_shift;
- 
--	delay = reg & SPMI_FTSMPS_STEP_CTRL_DELAY_MASK;
--	delay >>= SPMI_FTSMPS_STEP_CTRL_DELAY_SHIFT;
-+	delay = reg & config->delay_mask;
-+	delay >>= config->delay_shift;
- 
- 	/* slew_rate has units of uV/us */
--	slew_rate = SPMI_FTSMPS_CLOCK_RATE * range->step_uV * (1 << step);
--	slew_rate /= 1000 * (step_delay << delay);
--	slew_rate *= SPMI_FTSMPS_STEP_MARGIN_NUM;
--	slew_rate /= SPMI_FTSMPS_STEP_MARGIN_DEN;
-+	slew_rate = config->clock_rate * range->step_uV * (1 << step);
-+	slew_rate /= 1000 * (config->step_delay << delay);
-+	slew_rate *= config->margin_num;
-+	slew_rate /= config->margin_den;
- 
- 	/* Ensure that the slew rate is greater than 0 */
- 	vreg->slew_rate = max(slew_rate, 1);
-@@ -1445,6 +1597,9 @@ static int spmi_regulator_init_registers(struct spmi_regulator *vreg,
- 
- 	type = vreg->logical_type;
- 
-+	if (type == SPMI_REGULATOR_LOGICAL_TYPE_HFS430)
-+		return 0;
-+
- 	ret = spmi_vreg_read(vreg, SPMI_COMMON_REG_VOLTAGE_RANGE, ctrl_reg, 8);
- 	if (ret)
- 		return ret;
-@@ -1572,9 +1727,11 @@ static int spmi_regulator_of_parse(struct device_node *node,
- 	case SPMI_REGULATOR_LOGICAL_TYPE_ULT_LO_SMPS:
- 	case SPMI_REGULATOR_LOGICAL_TYPE_ULT_HO_SMPS:
- 	case SPMI_REGULATOR_LOGICAL_TYPE_SMPS:
-+	case SPMI_REGULATOR_LOGICAL_TYPE_HFS430:
- 		ret = spmi_regulator_init_slew_rate(vreg);
- 		if (ret)
- 			return ret;
-+
- 	default:
- 		break;
- 	}
-@@ -1731,12 +1888,18 @@ static const struct spmi_regulator_data pmi8994_regulators[] = {
- 	{ }
- };
- 
-+static const struct spmi_regulator_data pms405_regulators[] = {
-+	{ "s3", 0x1a00, }, /* supply name in the dts only */
-+	{ }
-+};
-+
- static const struct of_device_id qcom_spmi_regulator_match[] = {
- 	{ .compatible = "qcom,pm8841-regulators", .data = &pm8841_regulators },
- 	{ .compatible = "qcom,pm8916-regulators", .data = &pm8916_regulators },
- 	{ .compatible = "qcom,pm8941-regulators", .data = &pm8941_regulators },
- 	{ .compatible = "qcom,pm8994-regulators", .data = &pm8994_regulators },
- 	{ .compatible = "qcom,pmi8994-regulators", .data = &pmi8994_regulators },
-+	{ .compatible = "qcom,pms405-regulators", .data = &pms405_regulators },
- 	{ }
- };
- MODULE_DEVICE_TABLE(of, qcom_spmi_regulator_match);
--- 
-2.7.4
-
+>
+> Thanks,
+> Faiz
