@@ -4,52 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8434AC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:40:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B99FAC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:41:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4355B2082C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:40:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 862B82082C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:41:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693657;
-	bh=b2NK0nrHoQddXLFy+NtuX9y1qsBWtjGKb/nAkTVzlQ8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=loKBVK9Tx4Y5qHGt3RrmlXXqlY5DRjKb+FjU2tUWpl1bdU/LWB1X7/ePKK/2ykrd1
-	 u/5cqSuMzLRHQPYca7PihffrqAYAA8c/JS5bg4XRdREActsN536i89MdbN6g/O/bdc
-	 aI3c18gYfXI85Bs65SUxgdGgDF/dD5J9vg1tk8Zc=
+	s=default; t=1548693670;
+	bh=TrU+LYKr5NU+rGoJAdo0QQ3ER6EW5dpEs9pgHmJgLxo=;
+	h=From:To:Cc:Subject:Date:List-ID:From;
+	b=vPXY4P+kn3DFODzFBMK5fIqWlRjN4XNIusvzEgGqlCYtDPMZhCqhh/bImF2CH6IbG
+	 SVQ32BUlzWc5ql35zlE2aTdmnGxZOiyj+nrwF2c9IyEpasnmFgX+lbl2aEZYZaVQqu
+	 +wKJBK8R6HzW7wtwDYlXAhG3i3+O+xS37ftP9jCI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389157AbfA1Qkz (ORCPT
+        id S2389606AbfA1QYG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:40:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60676 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:24:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60548 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388602AbfA1QYJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:24:09 -0500
+        id S1730680AbfA1QYE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5ECAF2177E;
-        Mon, 28 Jan 2019 16:24:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9A7D120879;
+        Mon, 28 Jan 2019 16:24:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692648;
-        bh=b2NK0nrHoQddXLFy+NtuX9y1qsBWtjGKb/nAkTVzlQ8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=otEpSE0Mza8VAKJ+5vHtJKdDN8dXgO+b5PtFFgDx0cS7/5HlAzTmJUi23rQ02x0Gc
-         0ln8TpB3jUIA8qYNkj1GzRQnHnveXKBqxdlp54a4YX9xiYOgPSoQ9/0ikCw/WJ0XQY
-         2+wTD8BHWHnDjbY/vF8ef0449znFE76MldfyJaSI=
+        s=default; t=1548692643;
+        bh=TrU+LYKr5NU+rGoJAdo0QQ3ER6EW5dpEs9pgHmJgLxo=;
+        h=From:To:Cc:Subject:Date:From;
+        b=zXAlIhUJkCBoX2l9GNLtm0UEsDoJ4TSgL/NoJbglA64rUrEJ7um4rFaXa0A6JMM2U
+         +ccQVZilX8xlNNssmH4JrbjPjEdqwQtG3YSqY1ozauqQ9sHdaThBdnrd5RZQ/MNk4/
+         zlkjK5mzOCC+hooaJrBi5No8ukjWRsPEgbB7lClg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lorenzo Bianconi <lorenzo.bianconi@redhat.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
+Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
         Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 04/80] ath9k: dynack: use authentication messages for 'late' ack
-Date:   Mon, 28 Jan 2019 11:22:45 -0500
-Message-Id: <20190128162401.58841-4-sashal@kernel.org>
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.4 01/80] drm/bufs: Fix Spectre v1 vulnerability
+Date:   Mon, 28 Jan 2019 11:22:42 -0500
+Message-Id: <20190128162401.58841-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
-References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -58,39 +56,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
 
-[ Upstream commit 3831a2a0010c72e3956020cbf1057a1701a2e469 ]
+[ Upstream commit a37805098900a6e73a55b3a43b7d3bcd987bb3f4 ]
 
-In order to properly support dynack in ad-hoc mode running
-wpa_supplicant, take into account authentication frames for
-'late ack' detection. This patch has been tested on devices
-mounted on offshore high-voltage stations connected through
-~24Km link
+idx can be indirectly controlled by user-space, hence leading to a
+potential exploitation of the Spectre variant 1 vulnerability.
 
-Reported-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Tested-by: Koen Vandeputte <koen.vandeputte@ncentric.com>
-Signed-off-by: Lorenzo Bianconi <lorenzo.bianconi@redhat.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+This issue was detected with the help of Smatch:
+
+drivers/gpu/drm/drm_bufs.c:1420 drm_legacy_freebufs() warn: potential
+spectre issue 'dma->buflist' [r] (local cap)
+
+Fix this by sanitizing idx before using it to index dma->buflist
+
+Notice that given that speculation windows are large, the policy is
+to kill the speculation on the first load and not worry if it can be
+completed with a dependent load/store [1].
+
+[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
+
+Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181016095549.GA23586@embeddedor.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/ath/ath9k/dynack.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/drm_bufs.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/wireless/ath/ath9k/dynack.c b/drivers/net/wireless/ath/ath9k/dynack.c
-index 22b3cc4c27cd..64965bf9034d 100644
---- a/drivers/net/wireless/ath/ath9k/dynack.c
-+++ b/drivers/net/wireless/ath/ath9k/dynack.c
-@@ -187,7 +187,8 @@ void ath_dynack_sample_tx_ts(struct ath_hw *ah, struct sk_buff *skb,
- 	/* late ACK */
- 	if (ts->ts_status & ATH9K_TXERR_XRETRY) {
- 		if (ieee80211_is_assoc_req(hdr->frame_control) ||
--		    ieee80211_is_assoc_resp(hdr->frame_control)) {
-+		    ieee80211_is_assoc_resp(hdr->frame_control) ||
-+		    ieee80211_is_auth(hdr->frame_control)) {
- 			ath_dbg(common, DYNACK, "late ack\n");
- 			ath9k_hw_setslottime(ah, (LATEACK_TO - 3) / 2);
- 			ath9k_hw_set_ack_timeout(ah, LATEACK_TO);
+diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
+index f1a204d253cc..ac22b8d86249 100644
+--- a/drivers/gpu/drm/drm_bufs.c
++++ b/drivers/gpu/drm/drm_bufs.c
+@@ -36,6 +36,8 @@
+ #include <drm/drmP.h>
+ #include "drm_legacy.h"
+ 
++#include <linux/nospec.h>
++
+ static struct drm_map_list *drm_find_matching_map(struct drm_device *dev,
+ 						  struct drm_local_map *map)
+ {
+@@ -1332,6 +1334,7 @@ int drm_legacy_freebufs(struct drm_device *dev, void *data,
+ 				  idx, dma->buf_count - 1);
+ 			return -EINVAL;
+ 		}
++		idx = array_index_nospec(idx, dma->buf_count);
+ 		buf = dma->buflist[idx];
+ 		if (buf->file_priv != file_priv) {
+ 			DRM_ERROR("Process %d freeing buffer not owned\n",
 -- 
 2.19.1
 
