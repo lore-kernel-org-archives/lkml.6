@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CC3C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3464AC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:25:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CB1B20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02B9220855
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:25:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696290;
-	bh=Q42/dfcWUcuSnQDph101c4xf0FYsTxEP3V3rrFsJKcw=;
+	s=default; t=1548696304;
+	bh=6XmbR9o94oA3A7vxe0qFYRKgPp34Ow09bmKA7ggN0ic=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rqIvonUC0EGtP1mKnOprJdpJHXnP8/6kNnbVCbbp7UBo6bLHAnI1Jn9xJKpNvewG3
-	 k4AfT1BpZ+stFJhIJyUFcLbTHKSjmLSpYrEFlsoT72SLsPzdL9zIG8RCqXwbCC+H+c
-	 BKoU8QmhOCaWxbw+cwHQXNHsdrFTeKd1Ab5z8wbs=
+	b=qGsxaQRZAM5uuoqavTMDwCESjq6OKQopUAvMMAl90JR/msZwgQ+5yDPDbpbd22QM4
+	 e6Coq3ZpMA7YozIn7gSJyBWBKviQ9zFQXOVAiMwhbqv0XJedN6HYzgsyKIS9jgjzoX
+	 MqKfqiaJ/cKiz9FqKjE9BFPJwjRW1Fo6EI7aLXuc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730855AbfA1RYr (ORCPT
+        id S1731249AbfA1RZB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:24:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46808 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:25:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46618 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730411AbfA1QBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:01:33 -0500
+        id S1730946AbfA1QBV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:01:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AD1742082E;
-        Mon, 28 Jan 2019 16:01:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E98421848;
+        Mon, 28 Jan 2019 16:01:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691292;
-        bh=Q42/dfcWUcuSnQDph101c4xf0FYsTxEP3V3rrFsJKcw=;
+        s=default; t=1548691280;
+        bh=6XmbR9o94oA3A7vxe0qFYRKgPp34Ow09bmKA7ggN0ic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PV4Ww5CBtGVyIBRlqgsgAESCDveblDDGFo1C7lZn+JjWp9t08joudgARtZuPkhaxN
-         1HSJ1HwRy1RgW9NDjb3tbIgEt2qtP9ElA3mfY3uxH5ThMDLo9VJ2FlIUuQEgqr+PsQ
-         WdI9a4w8CpN9V02ixSjDhKGQ7SRvNXzvLuTz241I=
+        b=jzYUu9sLmAr4zSTinaLkH2l+L9reVy0r7twy74ZslNMmfISv94/WbeQq2gQp0KGx/
+         6nIrHPFdGc8fPWOGUhngSLU35lGpNo8IMCL0k1msc7GafFy0HnYpyhc4sy8N6S653K
+         kEhCTo7JVmYq1anaPw9ik8SJw2tTRjiqOf2QCNzM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Murton Liu <murton.liu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 048/258] drm/amd/display: fix gamma not being applied correctly
-Date:   Mon, 28 Jan 2019 10:55:54 -0500
-Message-Id: <20190128155924.51521-48-sashal@kernel.org>
+Cc:     Renato Lui Geh <renatogeh@gmail.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.19 044/258] staging: iio: ad7780: update voltage on read
+Date:   Mon, 28 Jan 2019 10:55:50 -0500
+Message-Id: <20190128155924.51521-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,42 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Murton Liu <murton.liu@amd.com>
+From: Renato Lui Geh <renatogeh@gmail.com>
 
-[ Upstream commit 8ce504b9389be846bcdf512ed5be8f661b3bf097 ]
+[ Upstream commit 336650c785b62c3bea7c8cf6061c933a90241f67 ]
 
-[why]
-Gamma was always being set as identity on SDR monitor,
-leading to no changes in gamma. This caused nightlight to
-not apply correctly.
+The ad7780 driver previously did not read the correct device output, as
+it read an outdated value set at initialization. It now updates its
+voltage on read.
 
-[how]
-Added a default gamma structure to compare against
-in the sdr case.
-
-Signed-off-by: Murton Liu <murton.liu@amd.com>
-Reviewed-by: Krunoslav Kovac <Krunoslav.Kovac@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
+Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/staging/iio/adc/ad7780.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-index cfcc54f2ce65..33a9d0c58966 100644
---- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-+++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
-@@ -1190,7 +1190,8 @@ static bool dcn10_set_input_transfer_func(struct pipe_ctx *pipe_ctx,
- 		tf = plane_state->in_transfer_func;
+diff --git a/drivers/staging/iio/adc/ad7780.c b/drivers/staging/iio/adc/ad7780.c
+index 16d72072c076..8bcb5d5de749 100644
+--- a/drivers/staging/iio/adc/ad7780.c
++++ b/drivers/staging/iio/adc/ad7780.c
+@@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev *indio_dev,
+ 			   long m)
+ {
+ 	struct ad7780_state *st = iio_priv(indio_dev);
++	int voltage_uv;
  
- 	if (plane_state->gamma_correction &&
--		!plane_state->gamma_correction->is_identity
-+		!dpp_base->ctx->dc->debug.always_use_regamma
-+		&& !plane_state->gamma_correction->is_identity
- 			&& dce_use_lut(plane_state->format))
- 		dpp_base->funcs->dpp_program_input_lut(dpp_base, plane_state->gamma_correction);
- 
+ 	switch (m) {
+ 	case IIO_CHAN_INFO_RAW:
+ 		return ad_sigma_delta_single_conversion(indio_dev, chan, val);
+ 	case IIO_CHAN_INFO_SCALE:
+-		*val = st->int_vref_mv * st->gain;
++		voltage_uv = regulator_get_voltage(st->reg);
++		if (voltage_uv < 0)
++			return voltage_uv;
++		*val = (voltage_uv / 1000) * st->gain;
+ 		*val2 = chan->scan_type.realbits - 1;
+ 		return IIO_VAL_FRACTIONAL_LOG2;
+ 	case IIO_CHAN_INFO_OFFSET:
 -- 
 2.19.1
 
