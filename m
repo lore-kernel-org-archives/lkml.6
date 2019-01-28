@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DACA3C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23165C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADE5121925
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E72A22175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691046;
-	bh=OamdUB2LF1RvWmsWcVhV/30DULdf/rOZsdkHV2vEGvU=;
+	s=default; t=1548691051;
+	bh=2zemEJYtsJJ7GM4i4k5tRcHzbBkjfOZWmjYdTmImLjc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qw4SsaTKy16BbFgFylfFen3VGvz52h9s1GA5LX3NccXfgSEAtNi7InPhlqFcFOmzU
-	 aibZKK/hvXb8415rNEsV38agjc1LtxsKBDH4Rz5yWN0zlzuWoc2WcLqt9a3KyLzh09
-	 NsUH2U1WwhLi3qr+rWTNDycu4DUaB2/hnaS4gmWw=
+	b=PbuYKN9QJbA/QegaDMZf4jLjeQjqrnJeJocX/Wlr5CWQJW2iHZPDVGZq6tUx1wOUp
+	 WaKgbF9Lrf7Ft8/pyuL6idd6TwlVI0miTKY4yWw2hqUeEYE6Jw4WCDaBv4qwRNFwzo
+	 JbBVGlqZQhJHpAWrfvKLThr+ISil2LMuucF+NQEg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730225AbfA1P5Y (ORCPT
+        id S1730238AbfA1P53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:57:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42816 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:57:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730202AbfA1P5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:57:19 -0500
+        id S1728776AbfA1P50 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:57:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E647321916;
-        Mon, 28 Jan 2019 15:57:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8A52021841;
+        Mon, 28 Jan 2019 15:57:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691038;
-        bh=OamdUB2LF1RvWmsWcVhV/30DULdf/rOZsdkHV2vEGvU=;
+        s=default; t=1548691045;
+        bh=2zemEJYtsJJ7GM4i4k5tRcHzbBkjfOZWmjYdTmImLjc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TXYIfEfVJc53hggcO8moj+RbCPmJwp1nC9baw1yEJyjglpmlND7dBnXf5DgMZ6FmZ
-         RgOpiIpHX2BLl579ShbHI2zIoucxaodJu1LqnYUK8n6POmmjiHiAH+mCadFrPyDinB
-         pH/8JCenTgwaXi0xFCM2xG6ftQgRrwA07XXNLyw0=
+        b=psaJmptrBlsG1bw6G29Pee3TTNuk+I/rgXzE6uUN/JH1WwZ8dQ+rHxrq5Gc1OiTOw
+         RmVP3DJZWu9k/zhHmFVa03RiTYfBsfy2UmjOzROlSMQfysfsDOPqt/d5kn9Ibun2n5
+         rSx6/it4eZFhPQzxohsl009r7q+dtyl1C1oGS9Ww=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.20 270/304] f2fs: fix use-after-free issue when accessing sbi->stat_info
-Date:   Mon, 28 Jan 2019 10:43:07 -0500
-Message-Id: <20190128154341.47195-270-sashal@kernel.org>
+Cc:     Kangjie Lu <kjlu@umn.edu>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 272/304] niu: fix missing checks of niu_pci_eeprom_read
+Date:   Mon, 28 Jan 2019 10:43:09 -0500
+Message-Id: <20190128154341.47195-272-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,120 +58,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Kangjie Lu <kjlu@umn.edu>
 
-[ Upstream commit 60aa4d5536ab7fe32433ca1173bd9d6633851f27 ]
+[ Upstream commit 26fd962bde0b15e54234fe762d86bc0349df1de4 ]
 
-iput() on sbi->node_inode can update sbi->stat_info
-in the below context, if the f2fs_write_checkpoint()
-has failed with error.
+niu_pci_eeprom_read() may fail, so we should check its return value
+before using the read data.
 
-f2fs_balance_fs_bg+0x1ac/0x1ec
-f2fs_write_node_pages+0x4c/0x260
-do_writepages+0x80/0xbc
-__writeback_single_inode+0xdc/0x4ac
-writeback_single_inode+0x9c/0x144
-write_inode_now+0xc4/0xec
-iput+0x194/0x22c
-f2fs_put_super+0x11c/0x1e8
-generic_shutdown_super+0x70/0xf4
-kill_block_super+0x2c/0x5c
-kill_f2fs_super+0x44/0x50
-deactivate_locked_super+0x60/0x8c
-deactivate_super+0x68/0x74
-cleanup_mnt+0x40/0x78
-
-Fix this by moving f2fs_destroy_stats() further below iput() in
-both f2fs_put_super() and f2fs_fill_super() paths.
-
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Kangjie Lu <kjlu@umn.edu>
+Acked-by: Shannon Nelson <shannon.lee.nelson@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/super.c | 27 +++++++++++++++------------
- 1 file changed, 15 insertions(+), 12 deletions(-)
+ drivers/net/ethernet/sun/niu.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 855a622fb052..a239472f405a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1058,9 +1058,6 @@ static void f2fs_put_super(struct super_block *sb)
- 		f2fs_write_checkpoint(sbi, &cpc);
- 	}
+diff --git a/drivers/net/ethernet/sun/niu.c b/drivers/net/ethernet/sun/niu.c
+index 9319d84bf49f..d84501441edd 100644
+--- a/drivers/net/ethernet/sun/niu.c
++++ b/drivers/net/ethernet/sun/niu.c
+@@ -8100,6 +8100,8 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
+ 		start += 3;
  
--	/* f2fs_write_checkpoint can update stat informaion */
--	f2fs_destroy_stats(sbi);
--
- 	/*
- 	 * normally superblock is clean, so we need to release this.
- 	 * In addition, EIO will skip do checkpoint, we need this as well.
-@@ -1080,6 +1077,12 @@ static void f2fs_put_super(struct super_block *sb)
- 	iput(sbi->node_inode);
- 	iput(sbi->meta_inode);
+ 		prop_len = niu_pci_eeprom_read(np, start + 4);
++		if (prop_len < 0)
++			return prop_len;
+ 		err = niu_pci_vpd_get_propname(np, start + 5, namebuf, 64);
+ 		if (err < 0)
+ 			return err;
+@@ -8144,8 +8146,12 @@ static int niu_pci_vpd_scan_props(struct niu *np, u32 start, u32 end)
+ 			netif_printk(np, probe, KERN_DEBUG, np->dev,
+ 				     "VPD_SCAN: Reading in property [%s] len[%d]\n",
+ 				     namebuf, prop_len);
+-			for (i = 0; i < prop_len; i++)
+-				*prop_buf++ = niu_pci_eeprom_read(np, off + i);
++			for (i = 0; i < prop_len; i++) {
++				err = niu_pci_eeprom_read(np, off + i);
++				if (err >= 0)
++					*prop_buf = err;
++				++prop_buf;
++			}
+ 		}
  
-+	/*
-+	 * iput() can update stat information, if f2fs_write_checkpoint()
-+	 * above failed with error.
-+	 */
-+	f2fs_destroy_stats(sbi);
-+
- 	/* destroy f2fs internal modules */
- 	f2fs_destroy_node_manager(sbi);
- 	f2fs_destroy_segment_manager(sbi);
-@@ -3256,30 +3259,30 @@ try_onemore:
- 
- 	f2fs_build_gc_manager(sbi);
- 
-+	err = f2fs_build_stats(sbi);
-+	if (err)
-+		goto free_nm;
-+
- 	/* get an inode for node space */
- 	sbi->node_inode = f2fs_iget(sb, F2FS_NODE_INO(sbi));
- 	if (IS_ERR(sbi->node_inode)) {
- 		f2fs_msg(sb, KERN_ERR, "Failed to read node inode");
- 		err = PTR_ERR(sbi->node_inode);
--		goto free_nm;
-+		goto free_stats;
- 	}
- 
--	err = f2fs_build_stats(sbi);
--	if (err)
--		goto free_node_inode;
--
- 	/* read root inode and dentry */
- 	root = f2fs_iget(sb, F2FS_ROOT_INO(sbi));
- 	if (IS_ERR(root)) {
- 		f2fs_msg(sb, KERN_ERR, "Failed to read root inode");
- 		err = PTR_ERR(root);
--		goto free_stats;
-+		goto free_node_inode;
- 	}
- 	if (!S_ISDIR(root->i_mode) || !root->i_blocks ||
- 			!root->i_size || !root->i_nlink) {
- 		iput(root);
- 		err = -EINVAL;
--		goto free_stats;
-+		goto free_node_inode;
- 	}
- 
- 	sb->s_root = d_make_root(root); /* allocate root dentry */
-@@ -3403,12 +3406,12 @@ free_meta:
- free_root_inode:
- 	dput(sb->s_root);
- 	sb->s_root = NULL;
--free_stats:
--	f2fs_destroy_stats(sbi);
- free_node_inode:
- 	f2fs_release_ino_entry(sbi, true);
- 	truncate_inode_pages_final(NODE_MAPPING(sbi));
- 	iput(sbi->node_inode);
-+free_stats:
-+	f2fs_destroy_stats(sbi);
- free_nm:
- 	f2fs_destroy_node_manager(sbi);
- free_sm:
+ 		start += len;
 -- 
 2.19.1
 
