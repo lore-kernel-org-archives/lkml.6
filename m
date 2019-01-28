@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0443C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:38:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7313C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:38:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B58E22148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:38:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C38E2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:38:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697124;
-	bh=9tDo+KytNMo44euHDmGqM9epA/4MQGasBbMDcWQ+hmQ=;
+	s=default; t=1548697127;
+	bh=81HtfFb5OqO9OhqaF5dRONV8p+/AZCBdNWkc+Yj5Gek=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Uw2gw2V+AQ0857IWWkJd8VsWD7Hss1YZsAQg5WsddaSPWpYnmjTiBF3iMWmN74sYC
-	 C1yLWD2GDhEXXtRQA3u6QMr5h7CoPTJPSY72ihvvktSVkMM6QYCqeXn+oeod1jEJsN
-	 M8q6uOsH1ydfi47eqmGmiKUP9Xp3EewS0V0+I7Uw=
+	b=eixuNsd1b85TF9WuIy2XrdnK9215OUKn4Xuf1AZ+DXR+pj5bW/Wm7S10bgIcbfpnE
+	 yai3NHcSPgxDNQIuPpGZ08yuxjJDc5ROX8R8J4rVfWyXL2wT8zfKd+6we/dWxfT88K
+	 Oz+OEfYgAYByEzeUFiT602sSJbZwVlwUp9zABcLk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727639AbfA1Px7 (ORCPT
+        id S1729585AbfA1Px5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:53:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40186 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:53:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729532AbfA1Pxy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:53:54 -0500
+        id S1729544AbfA1Pxv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:53:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5C88920855;
-        Mon, 28 Jan 2019 15:53:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 312242147A;
+        Mon, 28 Jan 2019 15:53:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690833;
-        bh=9tDo+KytNMo44euHDmGqM9epA/4MQGasBbMDcWQ+hmQ=;
+        s=default; t=1548690830;
+        bh=81HtfFb5OqO9OhqaF5dRONV8p+/AZCBdNWkc+Yj5Gek=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lwIpM53dZMGXHIydVY1Gbw3N7TFPi9l7gf1lEhXEwxxQ15vc4U4W3MoIwt9Cv8n8H
-         x4T5a3uc0wRixpCY3v0rSWkicurj0OdeILHwdBq5HEbT1zxySIM/Eaddl3hdPMWZ2Q
-         Io7yc/jm8RBz5euXKpO+JDF6uAPSymj0Zh37DFhw=
+        b=ZQWttOdJnZ+h8wIw5xEtSiQm/BMypC1L0slT4HV3sf9bFxZ7fAEGrMOMhVXpPqwAc
+         Rse1owjaeBcR7mjkzmlVN8jI16edEFDfkm169uVccoDbKfFWvMBO8PIiltuC3NRKe/
+         lrI09GGhG8i773Vr6C9R9woNGymtywo6BAWyyp5s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ilan Peer <ilan.peer@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Johannes Berg <johannes.berg@intel.com>,
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
         Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 207/304] mac80211: Properly handle SKB with radiotap only
-Date:   Mon, 28 Jan 2019 10:42:04 -0500
-Message-Id: <20190128154341.47195-207-sashal@kernel.org>
+        linux-renesas-soc@vger.kernel.org, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 206/304] pinctrl: rza1: Handle devm_kasprintf() failure cases
+Date:   Mon, 28 Jan 2019 10:42:03 -0500
+Message-Id: <20190128154341.47195-206-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -60,81 +59,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ilan Peer <ilan.peer@intel.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 8020919a9b99d6c990dc6a50e8215e291fbbe5a6 ]
+[ Upstream commit db221412cd2014506642967155698825ad80f6b6 ]
 
-The monitor interface Rx handling of SKBs that contain only
-radiotap information was buggy as it tried to access the
-SKB assuming it contains a frame.
+devm_kasprintf() may return NULL on failure of internal allocation
+thus the assignments are not safe if not checked. On error
+rza1_pinctrl_register() respectively rza1_parse_gpiochip() return
+negative values so -ENOMEM in the (unlikely) failure case of
+devm_kasprintf() should be fine here.
 
-To fix this, check the RX_FLAG_NO_PSDU flag in the Rx status
-(indicting that the SKB contains only radiotap information),
-and do not perform data path specific processing when the flag
-is set.
-
-Signed-off-by: Ilan Peer <ilan.peer@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 5a49b644b307 ("pinctrl: Renesas RZ/A1 pin and gpio controller")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rx.c | 26 +++++++++++++++++---------
- 1 file changed, 17 insertions(+), 9 deletions(-)
+ drivers/pinctrl/pinctrl-rza1.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 428f7ad5f9b5..77d996a60f12 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -753,6 +753,7 @@ ieee80211_rx_monitor(struct ieee80211_local *local, struct sk_buff *origskb,
- 	struct ieee80211_sub_if_data *monitor_sdata =
- 		rcu_dereference(local->monitor_sdata);
- 	bool only_monitor = false;
-+	unsigned int min_head_len;
- 
- 	if (status->flag & RX_FLAG_RADIOTAP_HE)
- 		rtap_space += sizeof(struct ieee80211_radiotap_he);
-@@ -766,6 +767,8 @@ ieee80211_rx_monitor(struct ieee80211_local *local, struct sk_buff *origskb,
- 		rtap_space += sizeof(*rtap) + rtap->len + rtap->pad;
- 	}
- 
-+	min_head_len = rtap_space;
+diff --git a/drivers/pinctrl/pinctrl-rza1.c b/drivers/pinctrl/pinctrl-rza1.c
+index 14eb576c04a2..9cfe9d0520ac 100644
+--- a/drivers/pinctrl/pinctrl-rza1.c
++++ b/drivers/pinctrl/pinctrl-rza1.c
+@@ -1225,6 +1225,9 @@ static int rza1_parse_gpiochip(struct rza1_pinctrl *rza1_pctl,
+ 	chip->base	= -1;
+ 	chip->label	= devm_kasprintf(rza1_pctl->dev, GFP_KERNEL, "%pOFn",
+ 					 np);
++	if (!chip->label)
++		return -ENOMEM;
 +
- 	/*
- 	 * First, we may need to make a copy of the skb because
- 	 *  (1) we need to modify it for radiotap (if not present), and
-@@ -775,18 +778,23 @@ ieee80211_rx_monitor(struct ieee80211_local *local, struct sk_buff *origskb,
- 	 * the SKB because it has a bad FCS/PLCP checksum.
- 	 */
+ 	chip->ngpio	= of_args.args[2];
+ 	chip->of_node	= np;
+ 	chip->parent	= rza1_pctl->dev;
+@@ -1326,6 +1329,8 @@ static int rza1_pinctrl_register(struct rza1_pinctrl *rza1_pctl)
+ 		pins[i].number = i;
+ 		pins[i].name = devm_kasprintf(rza1_pctl->dev, GFP_KERNEL,
+ 					      "P%u-%u", port, pin);
++		if (!pins[i].name)
++			return -ENOMEM;
  
--	if (ieee80211_hw_check(&local->hw, RX_INCLUDES_FCS)) {
--		if (unlikely(origskb->len <= FCS_LEN)) {
--			/* driver bug */
--			WARN_ON(1);
--			dev_kfree_skb(origskb);
--			return NULL;
-+	if (!(status->flag & RX_FLAG_NO_PSDU)) {
-+		if (ieee80211_hw_check(&local->hw, RX_INCLUDES_FCS)) {
-+			if (unlikely(origskb->len <= FCS_LEN + rtap_space)) {
-+				/* driver bug */
-+				WARN_ON(1);
-+				dev_kfree_skb(origskb);
-+				return NULL;
-+			}
-+			present_fcs_len = FCS_LEN;
- 		}
--		present_fcs_len = FCS_LEN;
-+
-+		/* also consider the hdr->frame_control */
-+		min_head_len += 2;
- 	}
- 
--	/* ensure hdr->frame_control and vendor radiotap data are in skb head */
--	if (!pskb_may_pull(origskb, 2 + rtap_space)) {
-+	/* ensure that the expected data elements are in skb head */
-+	if (!pskb_may_pull(origskb, min_head_len)) {
- 		dev_kfree_skb(origskb);
- 		return NULL;
- 	}
+ 		if (i % RZA1_PINS_PER_PORT == 0) {
+ 			/*
 -- 
 2.19.1
 
