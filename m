@@ -7,52 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 591A1C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A4F8C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28834207E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DDA021736
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="MOsr+9/d"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="err1Fgtm"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726845AbfA1I7M (ORCPT
+        id S1726867AbfA1I7T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:59:12 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42007 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726803AbfA1I7L (ORCPT
+        Mon, 28 Jan 2019 03:59:19 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:33512 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726683AbfA1I7R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:59:11 -0500
-Received: by mail-pl1-f196.google.com with SMTP id y1so7457791plp.9
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:59:10 -0800 (PST)
+        Mon, 28 Jan 2019 03:59:17 -0500
+Received: by mail-pg1-f193.google.com with SMTP id z11so6962765pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:59:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=R80ISGMVnhZRl2upLFe3I27brJHngys9Q8b/N3uhZ/M=;
-        b=MOsr+9/dZrj2r3qjZ81FfEyec6T5ulVkdZiXhvyLn7o0S+uiJThV3PH//yyGSA+e52
-         IcNpd4ktDhmYdArDsxD6tInv8X3YmrxCfS96jzOQFtdvOzMw5+lASERl1hnKParMz2Aj
-         jIYXZhGqD5VqMv+C6r11JdRfTYTgNuYIk1UKc=
+        bh=Z8VDizYWcDBY1PcHiFT6xo+JsUGwxuPfGjOUI9TV1l4=;
+        b=err1FgtmG1fBSLcHxlRaz6SGJImdA51wKAt1OJwEKtO4t9tJyt0upcC1WHVW/0MHzy
+         mHU7hdZ3+mNzWr3RKSL1E+xQrlxnDak4NU7bXWH2Rlf7iMBOEpQhb/rApAYPwILeQWhQ
+         4XYjp7tei45k0byTsx7cmsb/iOyUqALF3t/Nk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=R80ISGMVnhZRl2upLFe3I27brJHngys9Q8b/N3uhZ/M=;
-        b=jxmYGu3IHbAqfVyDaYe5D8D3NSlACC1OD5Jnx+AsW435+4eDa0p8/AcYgPEzaOFWmm
-         2NVdNb6dqUGMJ8WtVto2Okmy2yIAE83Ug8TqJngN7G44Ads+3EP3lVc8ry55Fn+tCnAH
-         gMazrbNa2QgGapa75Aqr3ROduWi7d0xsUwZkO81CZOEsmHmAoKpGyQ/Ni9qucyKDmfpW
-         79iOu0qq5L/MpBuicvUIKRCpWMN608LnRjf76XNNFtBOoZzpHGR6/r6Qqb/6OiPoMU6R
-         7AbWYglp/4esXNPfC6tugL/rL7gtcWtjwDGluM9PEMeQtcBfuAwYXV7i3eZ9QOL+rhcC
-         hAVw==
-X-Gm-Message-State: AJcUukfhb09dDZAaVk8LJMkc4a32OfAPiCIXFHRwiFlIflJPk+IFwYLu
-        QRoIM/NA4iRxX5wHNbfaFC74HQ==
-X-Google-Smtp-Source: ALg8bN4De1+KO0yStI4VWCLLvIMbH3xzhX2YVcCCkmA86K9Bl6JrLZrJpwhuY/2Jwjx4zZIqz22IbQ==
-X-Received: by 2002:a17:902:2a89:: with SMTP id j9mr21296667plb.296.1548665950321;
-        Mon, 28 Jan 2019 00:59:10 -0800 (PST)
+        bh=Z8VDizYWcDBY1PcHiFT6xo+JsUGwxuPfGjOUI9TV1l4=;
+        b=OtQ9hIEQWK4KbKSEQRR7uFM/CEDOYSlmpHY5gdbyQSvYdPbfK3yDQn6sUDTE2fO7sR
+         R1sCHynZRYHvcqQzmyb9W0mMI2/nZbdFwDgMM3D4x9T6bINDAEcG13tzvuhVavoOWcE2
+         UfyRxuXt7Fjbpt4AnpbILpI1XaHqtVfk2c35LfxOiLMpbEMi2iEe4zWscaivGt/IUeys
+         W8jszn53s9Bl8xyCgDp9SFq9wPL5Ec8C+B0sTbZx05xYuFjB21cDs8jLGD7d+8+qz87o
+         8INN91HlFjv0Wxkqpy7MaG0lMxXg0AcW3xll2f8Tw++obbG9tnFYX+X9JMtiPMayn/VP
+         FvAw==
+X-Gm-Message-State: AJcUukfFS/XHdAnBnCM+Lu71hch+eG5s266VUcQjpEL556FySdX7go1o
+        SxcQZj9l/a0kPpO9FXGL6t2Ufw==
+X-Google-Smtp-Source: ALg8bN5X3V3qfLnvHQjRDN0ccoS2WDEODgCbo7QWrN8XrPBc4OHQ95aJY3DFGiUhN8TOhOhbdkJ41g==
+X-Received: by 2002:a62:5658:: with SMTP id k85mr20878597pfb.231.1548665956205;
+        Mon, 28 Jan 2019 00:59:16 -0800 (PST)
 Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id o189sm60746245pfg.117.2019.01.28.00.59.04
+        by smtp.gmail.com with ESMTPSA id o189sm60746245pfg.117.2019.01.28.00.59.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 00:59:09 -0800 (PST)
+        Mon, 28 Jan 2019 00:59:15 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Yong Deng <yong.deng@magewell.com>,
         Mauro Carvalho Chehab <mchehab@kernel.org>,
@@ -65,9 +65,9 @@ Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         linux-amarula@amarulasolutions.com, devicetree@vger.kernel.org,
         linux-sunxi@googlegroups.com,
         Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v8 1/5] dt-bindings: media: sun6i: Add A64 CSI compatible
-Date:   Mon, 28 Jan 2019 14:28:43 +0530
-Message-Id: <20190128085847.7217-2-jagan@amarulasolutions.com>
+Subject: [PATCH v8 2/5] media: sun6i: Add A64 CSI block support
+Date:   Mon, 28 Jan 2019 14:28:44 +0530
+Message-Id: <20190128085847.7217-3-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20190128085847.7217-1-jagan@amarulasolutions.com>
 References: <20190128085847.7217-1-jagan@amarulasolutions.com>
@@ -78,31 +78,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allwinner A64 CSI is a single channel time-multiplexed BT.656
-protocol interface.
+CSI block in Allwinner A64 has similar features as like in H3,
+but the default CSI_SCLK rate cannot work properly to drive the
+connected sensor interface.
 
-Add separate compatible string for A64 since it require explicit
-change in sun6i_csi driver to update default CSI_SCLK rate.
+The tested mod cock rate is 300 MHz and BSP vfe media driver is also
+using the same rate. Unfortunately there is no valid information about
+clock rate in manual or any other sources except the BSP driver. so more
+faith on BSP code, because same has tested in mainline.
+
+So, add support for A64 CSI block by setting updated mod clock rate.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
 ---
- Documentation/devicetree/bindings/media/sun6i-csi.txt | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/media/sun6i-csi.txt b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-index cc37cf7fd051..0dd540bb03db 100644
---- a/Documentation/devicetree/bindings/media/sun6i-csi.txt
-+++ b/Documentation/devicetree/bindings/media/sun6i-csi.txt
-@@ -8,6 +8,7 @@ Required properties:
-     * "allwinner,sun6i-a31-csi"
-     * "allwinner,sun8i-h3-csi"
-     * "allwinner,sun8i-v3s-csi"
-+    * "allwinner,sun50i-a64-csi"
-   - reg: base address and size of the memory-mapped region.
-   - interrupts: interrupt associated to this IP
-   - clocks: phandles to the clocks feeding the CSI
+diff --git a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+index ee882b66a5ea..5ecdfbf9f6ae 100644
+--- a/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
++++ b/drivers/media/platform/sunxi/sun6i-csi/sun6i_csi.c
+@@ -15,6 +15,7 @@
+ #include <linux/ioctl.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
++#include <linux/of_device.h>
+ #include <linux/platform_device.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+@@ -154,6 +155,7 @@ bool sun6i_csi_is_format_supported(struct sun6i_csi *csi,
+ int sun6i_csi_set_power(struct sun6i_csi *csi, bool enable)
+ {
+ 	struct sun6i_csi_dev *sdev = sun6i_csi_to_dev(csi);
++	struct device *dev = sdev->dev;
+ 	struct regmap *regmap = sdev->regmap;
+ 	int ret;
+ 
+@@ -161,6 +163,9 @@ int sun6i_csi_set_power(struct sun6i_csi *csi, bool enable)
+ 		regmap_update_bits(regmap, CSI_EN_REG, CSI_EN_CSI_EN, 0);
+ 
+ 		clk_disable_unprepare(sdev->clk_ram);
++		if (of_device_is_compatible(dev->of_node,
++					    "allwinner,sun50i-a64-csi"))
++			clk_rate_exclusive_put(sdev->clk_mod);
+ 		clk_disable_unprepare(sdev->clk_mod);
+ 		reset_control_assert(sdev->rstc_bus);
+ 		return 0;
+@@ -172,6 +177,9 @@ int sun6i_csi_set_power(struct sun6i_csi *csi, bool enable)
+ 		return ret;
+ 	}
+ 
++	if (of_device_is_compatible(dev->of_node, "allwinner,sun50i-a64-csi"))
++		clk_set_rate_exclusive(sdev->clk_mod, 300000000);
++
+ 	ret = clk_prepare_enable(sdev->clk_ram);
+ 	if (ret) {
+ 		dev_err(sdev->dev, "Enable clk_dram_csi clk err %d\n", ret);
+@@ -191,6 +199,8 @@ int sun6i_csi_set_power(struct sun6i_csi *csi, bool enable)
+ clk_ram_disable:
+ 	clk_disable_unprepare(sdev->clk_ram);
+ clk_mod_disable:
++	if (of_device_is_compatible(dev->of_node, "allwinner,sun50i-a64-csi"))
++		clk_rate_exclusive_put(sdev->clk_mod);
+ 	clk_disable_unprepare(sdev->clk_mod);
+ 	return ret;
+ }
+@@ -895,6 +905,7 @@ static const struct of_device_id sun6i_csi_of_match[] = {
+ 	{ .compatible = "allwinner,sun6i-a31-csi", },
+ 	{ .compatible = "allwinner,sun8i-h3-csi", },
+ 	{ .compatible = "allwinner,sun8i-v3s-csi", },
++	{ .compatible = "allwinner,sun50i-a64-csi", },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, sun6i_csi_of_match);
 -- 
 2.18.0.321.gffc6fa0e3
 
