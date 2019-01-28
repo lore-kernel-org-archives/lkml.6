@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92E04C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:21:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08778C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:23:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 615A6214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:21:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD048214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:23:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbfA1LVX (ORCPT
+        id S1726762AbfA1LXH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:21:23 -0500
-Received: from foss.arm.com ([217.140.101.70]:43650 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726415AbfA1LVX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:21:23 -0500
+        Mon, 28 Jan 2019 06:23:07 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:43686 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726415AbfA1LXG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 06:23:06 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0B4D7EBD;
-        Mon, 28 Jan 2019 03:21:23 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 417AEEBD;
+        Mon, 28 Jan 2019 03:23:06 -0800 (PST)
 Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 823573F59C;
-        Mon, 28 Jan 2019 03:21:20 -0800 (PST)
-Date:   Mon, 28 Jan 2019 11:21:21 +0000
-Message-ID: <861s4xvxhq.wl-marc.zyngier@arm.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5429F3F59C;
+        Mon, 28 Jan 2019 03:23:03 -0800 (PST)
+Date:   Mon, 28 Jan 2019 11:23:04 +0000
+Message-ID: <86zhrluiuf.wl-marc.zyngier@arm.com>
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     Julien Thierry <julien.thierry@arm.com>
 Cc:     <linux-arm-kernel@lists.infradead.org>,
@@ -34,10 +34,10 @@ Cc:     <linux-arm-kernel@lists.infradead.org>,
         <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
         <james.morse@arm.com>, <catalin.marinas@arm.com>,
         <will.deacon@arm.com>, <mark.rutland@arm.com>
-Subject: Re: [PATCH v9 17/26] arm64: Switch to PMR masking when starting CPUs
-In-Reply-To: <1548084825-8803-18-git-send-email-julien.thierry@arm.com>
+Subject: Re: [PATCH v9 18/26] arm64: gic-v3: Implement arch support for priority masking
+In-Reply-To: <1548084825-8803-19-git-send-email-julien.thierry@arm.com>
 References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
-        <1548084825-8803-18-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-19-git-send-email-julien.thierry@arm.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -49,22 +49,17 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 15:33:36 +0000,
+On Mon, 21 Jan 2019 15:33:37 +0000,
 Julien Thierry <julien.thierry@arm.com> wrote:
 > 
-> Once the boot CPU has been prepared or a new secondary CPU has been
-> brought up, use ICC_PMR_EL1 to mask interrupts on that CPU and clear
-> PSR.I bit.
-> 
-> Since ICC_PMR_EL1 is initialized at CPU bringup, avoid overwriting
-> it in the GICv3 driver.
+> Implement architecture specific primitive allowing the GICv3 driver to
+> use priorities to mask interrupts.
 > 
 > Signed-off-by: Julien Thierry <julien.thierry@arm.com>
 > Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
 > Cc: Catalin Marinas <catalin.marinas@arm.com>
 > Cc: Will Deacon <will.deacon@arm.com>
-> Cc: James Morse <james.morse@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
 
 Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
