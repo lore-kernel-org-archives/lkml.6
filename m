@@ -2,98 +2,107 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2AC6C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF6C7C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C55AD2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:04:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dl8Nz5pb"
+	by mail.kernel.org (Postfix) with ESMTP id 8384421741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:04:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548695099;
+	bh=ajiJ1ou3XvKupkUF6ZQ+3ur2tYE1pNusbxmeztoHYC0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=WQi8F7nRWMIRyYNd+3kyqyAH2lcj9GN3pNt6tmOymDu7A3r6FotIH29o/n3JgHwPX
+	 TOMCPrc4HO7Ptzc/UHQLY66J+842GSHWnWG1wSHLvt+TjCHQkwylO49+J/RpnXpFh3
+	 g43hx3kTD3W8rwtbBWonE0y3GMKK5HoMq5brvH6w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732724AbfA1REn (ORCPT
+        id S2387736AbfA1RE5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:04:43 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:36550 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387726AbfA1REj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:04:39 -0500
-Received: by mail-qk1-f196.google.com with SMTP id o125so9804114qkf.3;
-        Mon, 28 Jan 2019 09:04:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=YqFgBFVXsqvHD2BsDExYLYwgCVPZcR0DTqRCICkXj7w=;
-        b=dl8Nz5pbvbf/HRr+O2Y8nfKZ8ulNq9wa79uGnBMsrdK2IEkw8eMhmspnXSlAMCJtET
-         l3ueDFW0ZYNKlVmbCQYu2w0gTZmfZYtf1yODfzd+bwc2v9rsDZPLvhfKRJ1beEARWft1
-         WZBRK83UB2yLkZDUKKKnUBxCiub21hGeqzotYgvpRchFG/0KpaL5Jn22R4KapVy04kCA
-         5OzsszwBo1tjyzYTYHmtvTdafJ68U8zPYaEU4ombmtO5ZJ2F2Ic+UbCKg8nyAgLM3z1O
-         msWR5AWT6yWTyNpFRLcayLFYKi49iS6m9j7SeJmlnX0kKmJNLWS384+yV25lXqmYC2J7
-         19fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=YqFgBFVXsqvHD2BsDExYLYwgCVPZcR0DTqRCICkXj7w=;
-        b=ZtDoX1kWLVULVLJkhkQaWAEVMRVE2aZr3Sb2RyWft7FDEowYqRxtYTN7sqtEkI+JDg
-         +MYRuxgsk1yoPGgmZiruzzcJ1kdf+ZRLVyBVGkwdb0oy+91yoHFrFnPlo4x72dEdc2tD
-         YpYidC7PsXPU7ZJ2+vWBWiILIHxKzHoe9d8/vOJc9dpZSvvXcY+zY2KscnwWPYKKXGl/
-         NkJSLiApcLClmpSTeZ+Atw/yWNQXz0Jm5KJU/r/+qbGVTp+ks/rvugt73gkVRvuKLWyS
-         fPIoWRAONefL6MCXm0C4RDn09p7M4//7xxn+N2E/GLylCF9vCt/dvYDZc8rpj71evscr
-         JjMw==
-X-Gm-Message-State: AJcUukfI97NEsiVTs7DHWoL2RslprD7vwBwZgUci3NxAiLYb2zS+BZbv
-        NxCTvjeEGn/u8SIecnraIpA=
-X-Google-Smtp-Source: ALg8bN7G6CVKRq6hQnYxw3MWljiE1fObulkPydNj8tvxdU0TVlQV33iPN7CeE3G2jq499XI2GND14Q==
-X-Received: by 2002:a37:b201:: with SMTP id b1mr19602375qkf.306.1548695078186;
-        Mon, 28 Jan 2019 09:04:38 -0800 (PST)
-Received: from localhost.localdomain ([168.194.160.129])
-        by smtp.gmail.com with ESMTPSA id q184sm59119244qkb.23.2019.01.28.09.04.37
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 09:04:37 -0800 (PST)
-Received: by localhost.localdomain (Postfix, from userid 1000)
-        id CFE9B180CE3; Mon, 28 Jan 2019 15:04:34 -0200 (-02)
-Date:   Mon, 28 Jan 2019 15:04:34 -0200
-From:   Marcelo Ricardo Leitner <marcelo.leitner@gmail.com>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        linux-sctp@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 034/258] sctp: Fix SKB list traversal in
- sctp_intl_store_reasm().
-Message-ID: <20190128170434.GA10665@localhost.localdomain>
-References: <20190128155924.51521-1-sashal@kernel.org>
- <20190128155924.51521-34-sashal@kernel.org>
+        Mon, 28 Jan 2019 12:04:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42612 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387477AbfA1QNs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:48 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3FA5F2175B;
+        Mon, 28 Jan 2019 16:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692028;
+        bh=ajiJ1ou3XvKupkUF6ZQ+3ur2tYE1pNusbxmeztoHYC0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=1+DqV2UQ4gqKbgqnwLG1jDKV9RrABVmfXS0N/4iJZzQWrecUakT2TaVG5LW7dyiN2
+         wJwOiUxeN26iG1oPTOAyaqu4tNjDuwHXsHZmd25ewOqZDI1Itgq4mVr5t7x6U4rStn
+         E1V337hp+mZMOXmCICr+sF7tKKZnegMXfABV//hc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 043/170] ACPI: SPCR: Consider baud rate 0 as preconfigured state
+Date:   Mon, 28 Jan 2019 11:09:53 -0500
+Message-Id: <20190128161200.55107-43-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
+References: <20190128161200.55107-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128155924.51521-34-sashal@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 10:55:40AM -0500, Sasha Levin wrote:
-> From: "David S. Miller" <davem@davemloft.net>
-> 
-> [ Upstream commit 348bbc25c40844c5efa083a3842c7f53d70a815e ]
-> 
-> To be fully correct, an iterator has an undefined value when something
-> like skb_queue_walk() naturally terminates.
-> 
-> This will actually matter when SKB queues are converted over to
-> list_head.
-> 
-> Formalize what this code ends up doing with the current
-> implementation.
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
-I don't think this patch is really needed for -stable without the SKB
-queue convertion, but okay.
+[ Upstream commit b413b1abeb21b4a152c0bf8d1379efa30759b6e3 ]
 
-  Marcelo
+Since SPCR 1.04 [1] the baud rate of 0 means a preconfigured state of UART.
+Assume firmware or bootloader configures console correctly.
+
+[1]: https://docs.microsoft.com/en-us/windows-hardware/drivers/serports/serial-port-console-redirection-table
+
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Prarit Bhargava <prarit@redhat.com>
+Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/acpi/spcr.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/drivers/acpi/spcr.c b/drivers/acpi/spcr.c
+index 324b35bfe781..f567fa5f0148 100644
+--- a/drivers/acpi/spcr.c
++++ b/drivers/acpi/spcr.c
+@@ -148,6 +148,13 @@ int __init parse_spcr(bool earlycon)
+ 	}
+ 
+ 	switch (table->baud_rate) {
++	case 0:
++		/*
++		 * SPCR 1.04 defines 0 as a preconfigured state of UART.
++		 * Assume firmware or bootloader configures console correctly.
++		 */
++		baud_rate = 0;
++		break;
+ 	case 3:
+ 		baud_rate = 9600;
+ 		break;
+@@ -196,6 +203,10 @@ int __init parse_spcr(bool earlycon)
+ 		 * UART so don't attempt to change to the baud rate state
+ 		 * in the table because driver cannot calculate the dividers
+ 		 */
++		baud_rate = 0;
++	}
++
++	if (!baud_rate) {
+ 		snprintf(opts, sizeof(opts), "%s,%s,0x%llx", uart, iotype,
+ 			 table->serial_port.address);
+ 	} else {
+-- 
+2.19.1
+
