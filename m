@@ -2,100 +2,102 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6BD9C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:10:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD0BC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B49462171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:10:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8963121738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:12:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548699045;
-	bh=F/I3aQYUgGTvQa4hixqvHE51vmgeXanls7sjrsNRZzg=;
+	s=default; t=1548699162;
+	bh=Oy2jPIu/a/Vo7qzFlpCDeeWMsi4Ipf7nWsh5hIriZhw=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=ILLsdiLWLOHiGSp6MO+j2EPdPGbl5U70NmxIpbn70N2hc5o+unXPzOR1+EO9vIT5V
-	 RS1ZBImfaoxnN7m20M/dchVOyRXcpOxsXwS2x9jIZqm1c2mRemarLtBIVjjz8mSgCG
-	 cSzaGGWkelCXwv3m/G5+eT4OSAfjwDIclVDupfus=
+	b=1qyO/FBMWv2RDuQlyYcEtvVHQ3mF0/fFkMiegp8ElHfnhaTry855Lt2Jxskmeiurq
+	 yqAluaqg3YW91sJUnlpVJzcH4nNyw11ByJYqa59bKnmf6G9dqC+y5Ub9aFQQ7Zykfy
+	 gzOl6AX57c+QAToqXvWtN/qKeowSLHdqHHSz4BCE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727090AbfA1SKo (ORCPT
+        id S1727030AbfA1SMl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:10:44 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:39840 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726813AbfA1SKn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:10:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=6rz65wMwPx6JKLj0U1uilByOkexizZwcOOx3zNkZijo=; b=q1IvTaynFHN1BL8y2u5k5Ulg4
-        NIfPexZIfLk2CmjsCKouFG2BjmaoyVvLUPjpaVPY27GByqiCQukZ+wZeIG/hoEKRNPahVlLVYT88R
-        O2bxqAxvva/7zarmzSLFl+8xoH3daRZdObubkoHdWwMISzbGlh8bcfiz7iO8plWzqMVrs=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1goBMl-00038Y-Mt; Mon, 28 Jan 2019 18:10:39 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id B1A241127D29; Mon, 28 Jan 2019 18:10:38 +0000 (GMT)
-Date:   Mon, 28 Jan 2019 18:10:38 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Jonas Bonn <jonas@norrbonn.se>
-Cc:     linux-kernel@vger.kernel.org, linux-spi@vger.kernel.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] spi: support inter-word delay requirement for
- devices
-Message-ID: <20190128181038.GF11699@sirena.org.uk>
-References: <20190126163220.26421-1-jonas@norrbonn.se>
- <20190126163220.26421-2-jonas@norrbonn.se>
+        Mon, 28 Jan 2019 13:12:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53764 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726802AbfA1SMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 13:12:40 -0500
+Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 41C3A2147A;
+        Mon, 28 Jan 2019 18:12:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548699159;
+        bh=Oy2jPIu/a/Vo7qzFlpCDeeWMsi4Ipf7nWsh5hIriZhw=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TmpVcY6wfhSgzhgR1e5Yl3JKjx0fL6mAo7jgAsOz9BvaAT4wHzWF2lby+H917rEPq
+         N6zhaBr8LtiGUuooBEbRdrMHn5O2fOBLxyiQl9vrrZCvBB3Q+N5eGQL5aiobQffSsO
+         y/5Tt9tLXh9eNcW0hdhpaCG55W+099vf6paCXqrs=
+Date:   Mon, 28 Jan 2019 13:12:38 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Miroslav Benes <mbenes@suse.cz>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Nicholas Mc Guire <hofrat@osadl.org>,
+        Jiri Kosina <jkosina@suse.cz>, live-patching@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.19 174/258] livepatch: check kzalloc return
+ values
+Message-ID: <20190128181238.GH3973@sasha-vm>
+References: <20190128155924.51521-1-sashal@kernel.org>
+ <20190128155924.51521-174-sashal@kernel.org>
+ <alpine.LSU.2.21.1901281826230.9332@pobox.suse.cz>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="uTRFFR9qmiCqR05s"
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20190126163220.26421-2-jonas@norrbonn.se>
-X-Cookie: I think we're in trouble.
+In-Reply-To: <alpine.LSU.2.21.1901281826230.9332@pobox.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 28, 2019 at 06:28:14PM +0100, Miroslav Benes wrote:
+>On Mon, 28 Jan 2019, Sasha Levin wrote:
+>
+>> From: Nicholas Mc Guire <hofrat@osadl.org>
+>>
+>> [ Upstream commit 5f30b2e823484ce6a79f2b59901b6351c15effa6 ]
+>>
+>> kzalloc() return should always be checked - notably in example code
+>> where this may be seen as reference. On failure of allocation in
+>> livepatch_fix1_dummy_alloc() respectively dummy_alloc() previous
+>> allocation is freed (thanks to Petr Mladek <pmladek@suse.com> for
+>> catching this) and NULL returned.
+>>
+>> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+>> Fixes: 439e7271dc2b ("livepatch: introduce shadow variable API")
+>> Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+>> Reviewed-by: Petr Mladek <pmladek@suse.com>
+>> Acked-by: Miroslav Benes <mbenes@suse.cz>
+>> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+>> Signed-off-by: Sasha Levin <sashal@kernel.org>
+>
+>Hi Sasha,
+>
+>I am not sure what stable policy is, but the patch is for samples/
+>directory and I do not think it is something which should necessarily go
+>to stable. It is your call though.
 
---uTRFFR9qmiCqR05s
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+The thing with samples/ is that (I'm hopefull that) the code that lives
+in there is being used as a basis for userspace code and is copy&pasted
+shamelessly.
 
-On Sat, Jan 26, 2019 at 05:32:19PM +0100, Jonas Bonn wrote:
+So on one hand, yes, samples/ isn't exactly critical code, but on the
+other hand it's also very unlikely to cause a regression, so I've been
+treating it similarily to tools/testing/.
 
-> @@ -164,6 +166,7 @@ struct spi_device {
->  	char			modalias[SPI_NAME_SIZE];
->  	const char		*driver_override;
->  	int			cs_gpio;	/* chip select gpio */
-> +	uint16_t		word_delay;	/* inter-word delay (us) */
+If anyone disagrees I'd be happy to discuss it.
 
-This needs some code in the core joining it up with the per-transfer
-word delay similar to what we have for speed_hz and bits_per_word in
-__spi_validate().  Then the controller drivers can just look at the
-per-transfer value and support both without having to duplicate logic.
-
---uTRFFR9qmiCqR05s
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxPRZ0ACgkQJNaLcl1U
-h9Ac7Qf+PnvdYqut3vqHiLuZnIkM0rUN8LzkQjuzbXAcNDhc1Mng0wacMxY8/197
-iHfg/0ZtyZGvI3LXfVstZaUtryS7tT5sUzuf7zLhUMANNTPT73J+RxabEMojYVdC
-gXAcYSvZklqJW1C8SPR+KyxvrrkVJzfTDOt1QjIP2RuKTzqqrXZMXsUyw+8ZveMP
-kfDi8HPRqFwpN3TnofAUG8pXYFWUnuBqYBZtZ1p44E741r3DXPP2aT3JMNEvl3lI
-Du0WLYv06i4T8VjinvD7aChUtWcPdBYBjh157S+/E7YExhJvqXFKav7BtPc54VJu
-Z/iGAOazu9hGpRh6EnHpkMMyFfyNqA==
-=ilNl
------END PGP SIGNATURE-----
-
---uTRFFR9qmiCqR05s--
+--
+Thanks,
+Sasha
