@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 005B9C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBEEEC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B88102175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B274221916
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691212;
-	bh=0b+ftrcyhJ+qbspBUsUHlUyWlM8+aCrpoLO6m9mfkwk=;
+	s=default; t=1548691224;
+	bh=GuOmRTVYwAQZrQq3J55a/M6SPcFuQ7wUl5h9OT9pTzo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ku7Gk986SVYIIA62N35knE+C7azHqgn5X0STDuVAywYDqp+gzus+9F7L4zZ8FuR2l
-	 HQttRrQ2FDte7Vp8/WJ1DUbHL88E8mJJud5VMchNM2YvoV52w/YOxzBf41/6ihPEyj
-	 52w8guMuQ8nsYmmbfFqFbP2WNK8CBz76oh0FlME4=
+	b=Ab1gRjOMPOwSVAhgqPvS4XO573pHQF3+xl68ZongGmTqFVHwmEC1ojdouBAm7YJNB
+	 wGt4DA9M2zGPtaNbR2hoMsz1yrsDjZS7O0QYcxoALC3HDeiSg+VKTYWAUV3gaeqYh2
+	 0Kv+1S5g/PhVqAWCVmebfEaZeQOLGWntJu+Y6d6o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730731AbfA1QAL (ORCPT
+        id S1730777AbfA1QAX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:00:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45396 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:00:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45600 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727858AbfA1QAH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:00:07 -0500
+        id S1730754AbfA1QAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:00:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DAC622082E;
-        Mon, 28 Jan 2019 16:00:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 49C752175B;
+        Mon, 28 Jan 2019 16:00:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691206;
-        bh=0b+ftrcyhJ+qbspBUsUHlUyWlM8+aCrpoLO6m9mfkwk=;
+        s=default; t=1548691218;
+        bh=GuOmRTVYwAQZrQq3J55a/M6SPcFuQ7wUl5h9OT9pTzo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=JeFkcA0G3ngP8Daqrfk1t8FTXEtNubtDqPJwd7MOyiANwcT93jKnm1Y3lv8y/QXAD
-         p9VN5luLKeJY0gA/Od0Raval9SJYqVSERAWWEpI7Kb15SMMsXxElOa22SEFNbqD9Tz
-         TH6o1+WGP48h8SRaorh9DwJK7bl/MdosZ+Bd4Xnw=
+        b=hDgRWPSro4HCppdxP4p9LVkHR1Oya5Dkv44NbKC92RlEZYhm2UIPSQYNQv9VFpOxl
+         7uUB5iuOb3/PiXuZt1/EPooRpy9xnKweKc1jdQ2G66zrJCDIZtJOKw3XgwNP1s46tn
+         QexIJoQ6c8bYUhSrAlzgDvFNQJKDNDKvFdSNdLG0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Smart <jsmart2021@gmail.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 015/258] scsi: lpfc: Correct LCB RJT handling
-Date:   Mon, 28 Jan 2019 10:55:21 -0500
-Message-Id: <20190128155924.51521-15-sashal@kernel.org>
+Cc:     Yufen Wang <wangyufen@huawei.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 019/258] ARM: 8808/1: kexec:offline panic_smp_self_stop CPU
+Date:   Mon, 28 Jan 2019 10:55:25 -0500
+Message-Id: <20190128155924.51521-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,37 +58,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+From: Yufen Wang <wangyufen@huawei.com>
 
-[ Upstream commit b114d9009d386276bfc3352289fc235781ae3353 ]
+[ Upstream commit 82c08c3e7f171aa7f579b231d0abbc1d62e91974 ]
 
-When LCB's are rejected, if beaconing was already in progress, the
-Reason Code Explanation was not being set. Should have been set to
-command in progress.
+In case panic() and panic() called at the same time on different CPUS.
+For example:
+CPU 0:
+  panic()
+     __crash_kexec
+       machine_crash_shutdown
+         crash_smp_send_stop
+       machine_kexec
+         BUG_ON(num_online_cpus() > 1);
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+CPU 1:
+  panic()
+    local_irq_disable
+    panic_smp_self_stop
+
+If CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop(), kdump
+fails. CPU1 can't receive the ipi irq, CPU1 will be always online.
+To fix this problem, this patch split out the panic_smp_self_stop()
+and add set_cpu_online(smp_processor_id(), false).
+
+Signed-off-by: Yufen Wang <wangyufen@huawei.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/lpfc/lpfc_els.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/kernel/smp.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index 4dda969e947c..56a4f626349c 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -5701,6 +5701,9 @@ lpfc_els_lcb_rsp(struct lpfc_hba *phba, LPFC_MBOXQ_t *pmb)
- 	stat = (struct ls_rjt *)(pcmd + sizeof(uint32_t));
- 	stat->un.b.lsRjtRsnCode = LSRJT_UNABLE_TPC;
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 0978282d5fc2..f574a5e0d589 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -693,6 +693,21 @@ void smp_send_stop(void)
+ 		pr_warn("SMP: failed to stop secondary CPUs\n");
+ }
  
-+	if (shdr_add_status == ADD_STATUS_OPERATION_ALREADY_ACTIVE)
-+		stat->un.b.lsRjtRsnCodeExp = LSEXP_CMD_IN_PROGRESS;
++/* In case panic() and panic() called at the same time on CPU1 and CPU2,
++ * and CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop()
++ * CPU1 can't receive the ipi irqs from CPU2, CPU1 will be always online,
++ * kdump fails. So split out the panic_smp_self_stop() and add
++ * set_cpu_online(smp_processor_id(), false).
++ */
++void panic_smp_self_stop(void)
++{
++	pr_debug("CPU %u will stop doing anything useful since another CPU has paniced\n",
++	         smp_processor_id());
++	set_cpu_online(smp_processor_id(), false);
++	while (1)
++		cpu_relax();
++}
 +
- 	elsiocb->iocb_cmpl = lpfc_cmpl_els_rsp;
- 	phba->fc_stat.elsXmitLSRJT++;
- 	rc = lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0);
+ /*
+  * not supported here
+  */
 -- 
 2.19.1
 
