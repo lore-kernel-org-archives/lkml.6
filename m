@@ -2,128 +2,102 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DFFEC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 04:57:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4F01C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 04:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2941820870
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 04:57:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 83EDD20870
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 04:59:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="FoUkvDbU"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726744AbfA1E5Z (ORCPT
+        id S1726683AbfA1E7j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 23:57:25 -0500
-Received: from mga03.intel.com ([134.134.136.65]:44741 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726607AbfA1E5Z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 23:57:25 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2019 20:57:25 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,532,1539673200"; 
-   d="scan'208";a="113155840"
-Received: from mandalpu-mobl.gar.corp.intel.com (HELO [10.66.97.14]) ([10.66.97.14])
-  by orsmga008.jf.intel.com with ESMTP; 27 Jan 2019 20:57:22 -0800
-Subject: Re: [PATCH] mtd: spi-nor: cadence-quadspi: write upto 8-bytes data in
- STIG mode
-To:     Tudor.Ambarus@microchip.com, f.blogs@napier.co.nz,
-        boris.brezillon@bootlin.com
-Cc:     linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
-        computersforpeace@gmail.com, richard@nod.at,
-        linux-mtd@lists.infradead.org, dwmw2@infradead.org, vigneshr@ti.com
-References: <20181214021516.43609-1-purna.chandra.mandal@intel.com>
- <c627314d-fdf6-7e69-7c54-03a513f563fc@microchip.com>
-From:   "Mandal, Purna Chandra" <purna.chandra.mandal@intel.com>
-Message-ID: <76066a83-1cd2-5baf-1930-c290f66e73ba@intel.com>
-Date:   Mon, 28 Jan 2019 10:27:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.3
+        Sun, 27 Jan 2019 23:59:39 -0500
+Received: from condef-05.nifty.com ([202.248.20.70]:35582 "EHLO
+        condef-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbfA1E7j (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 23:59:39 -0500
+Received: from conssluserg-06.nifty.com ([10.126.8.85])by condef-05.nifty.com with ESMTP id x0S441aC016680;
+        Mon, 28 Jan 2019 13:04:01 +0900
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174]) (authenticated)
+        by conssluserg-06.nifty.com with ESMTP id x0S43cGx007730;
+        Mon, 28 Jan 2019 13:03:39 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-06.nifty.com x0S43cGx007730
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1548648219;
+        bh=BOEIqh/RN2ZMkaNGC6ujx5fPfMNlEO00uL1qVwDyiUs=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=FoUkvDbUsiRe3XlO2oi2bDV4dsWXDmsDtaDSnFUbu1plaBSUePEV3Kb5HqHWIcT4j
+         3Vj4eP9dYv0bhYMoY5pYQ8IOtVKu/H+Okl0rGhfySFRsjkM3Asp+1Mhev/Bc/us/pG
+         d/C+63hQg58i20Ea987nV6IU1e414WGjzik6tW6NrluRa8kLw7xTtE/iJdYER/YTOz
+         nyyPEhZNe1mRNC08eAp84nSZDxMzMvlhelbO1TZjTLTMCljxxDc5Yi1xHGGVjHdvAs
+         jJwPnD2TIWYS/4aB4/lJjnOr/AerXENJHLot75PREyC+YuBS52gaj5xoLQ8TDZ9yBU
+         jFJ/4ghiyIsZg==
+X-Nifty-SrcIP: [209.85.221.174]
+Received: by mail-vk1-f174.google.com with SMTP id j23so3363407vke.13;
+        Sun, 27 Jan 2019 20:03:39 -0800 (PST)
+X-Gm-Message-State: AJcUukch9DevK7GjVUr8JZGf1BepMvqF0CYt16kW/eRuN4cdJVvQEK4I
+        L8TU6RigjCWn8vJmgX84xow1WC97AEqyZfygZJs=
+X-Google-Smtp-Source: ALg8bN76aDDU7lEkTw1Z8JOWsmbU1AYKMN2xwFQllec4h+Ts0opkIiGAPh70ACQcD/PmA+QEU7sF/rAkdrYd5jwn8Tw=
+X-Received: by 2002:a1f:91cb:: with SMTP id t194mr8058006vkd.74.1548648218173;
+ Sun, 27 Jan 2019 20:03:38 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <c627314d-fdf6-7e69-7c54-03a513f563fc@microchip.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1547765160-15502-1-git-send-email-eugene.loh@oracle.com>
+ <CAKv+Gu8BeYsq-_7KiANOjSN2fp25BP=71uLqKnkkYYJdhD2Bfw@mail.gmail.com> <CAKv+Gu_6_K0ZrRLMST6bYxqgSfhDJACoiArQg+K3pFaYjJxQsA@mail.gmail.com>
+In-Reply-To: <CAKv+Gu_6_K0ZrRLMST6bYxqgSfhDJACoiArQg+K3pFaYjJxQsA@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 28 Jan 2019 13:03:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQps9akw1z-t+zr3ZybmBX3buM1PoAVYHxmDn=U+nNhNQ@mail.gmail.com>
+Message-ID: <CAK7LNAQps9akw1z-t+zr3ZybmBX3buM1PoAVYHxmDn=U+nNhNQ@mail.gmail.com>
+Subject: Re: [PATCH] Kbuild: Handle too long symbols in kallsyms.c
+To:     Ard Biesheuvel <ard.biesheuvel@linaro.org>, eugene.loh@oracle.com
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Andi Kleen <ak@linux.intel.com>,
+        Andi Kleen <andi@firstfloor.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Fri, Jan 25, 2019 at 10:30 PM Ard Biesheuvel
+<ard.biesheuvel@linaro.org> wrote:
+>
+> (+ masahiro)
+>
+> On Fri, 25 Jan 2019 at 14:28, Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+> >
+> > On Thu, 17 Jan 2019 at 23:46, <eugene.loh@oracle.com> wrote:
+> > >
+> > > From: Eugene Loh <eugene.loh@oracle.com>
+> > >
+> > > When checking for symbols with excessively long names,
+> > > account for null terminating character.
+> > >
+> > > Fixes: f3462aa952cf ("Kbuild: Handle longer symbols in kallsyms.c")
+> > > Signed-off-by: Eugene Loh <eugene.loh@oracle.com>
+> >
+> > Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+> >
+> > > ---
+> > >  scripts/kallsyms.c | 4 ++--
+> > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/scripts/kallsyms.c b/scripts/kallsyms.c
+> > > index 77cebad..f75e7
 
-On 21-Jan-19 3:07 PM, Tudor.Ambarus@microchip.com wrote:
-> Hi, Purna,
-> 
-> On 12/14/2018 04:15 AM, Purna Chandra Mandal wrote:
->> cadence-quadspi controller allows upto eight bytes of data to be transferred
->> in software Triggered Instruction generator (STIG) mode of operation. Lower
->> 4 bytes are written through writedatalower and upper 4 bytes by
->> writedataupper register.
-> 
-> Is this supported by all versions of the IP?
-> 
-Yes, it is supported on all versions of IP.
->>
->> This patch allows all the 8 bytes to be written.
->>
->> Signed-off-by: Purna Chandra Mandal <purna.chandra.mandal@intel.com>
->> ---
->>
->>   drivers/mtd/spi-nor/cadence-quadspi.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
->> index 04cedd3a2bf6..990934387fea 100644
->> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
->> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
->> @@ -420,7 +420,7 @@ static int cqspi_command_write(struct spi_nor *nor, const u8 opcode,
->>   	unsigned int data;
-> 
-> I know that this is not your change, but data should be u32 and not unsigned
-> int. reg too ... probably one should submit a patch to change this, I see that
-> the same error is done in cqspi_command_read().
-ack. will be done in separate patch.
-> 
->>   	int ret;
->>   
->> -	if (n_tx > 4 || (n_tx && !txbuf)) {
->> +	if (n_tx > CQSPI_STIG_DATA_LEN_MAX || (n_tx && !txbuf)) {
->>   		dev_err(nor->dev,
->>   			"Invalid input argument, cmdlen %d txbuf 0x%p\n",
->>   			n_tx, txbuf);
->> @@ -435,8 +435,13 @@ static int cqspi_command_write(struct spi_nor *nor, const u8 opcode,
->>   		data = 0;>  		memcpy(&data, txbuf, n_tx);
-> 
-> You should limit what is copied in data, similar to what is done in
-> cqspi_command_read():
-> 
-> write_len = (n_tx > 4) ? 4 : n_tx;
-> memcpy(&data, txbuf, write_len);
-> txbuf += write_len;
-ack.
-> 
-> 
-> 
->>   		writel(data, reg_base + CQSPI_REG_CMDWRITEDATALOWER);
->> -	}
->>   
->> +		if (n_tx > 4) {
->> +			data = 0;
-> and then:
-> write_len = n_tx - 4;
-> memcpy(&data, txbuf, write_len);
-> 
-ack.
-> Cheers,
-> ta
-> 
->> +			memcpy(&data, txbuf + 4, n_tx - 4);
->> +			writel(data, reg_base + CQSPI_REG_CMDWRITEDATAUPPER);
->> +		}
->> +	}
->>   	ret = cqspi_exec_flash_cmd(cqspi, reg);
->>   	return ret;
->>   }
->>
+
+Applied to linux-kbuid/fixes.
+Thanks!
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
