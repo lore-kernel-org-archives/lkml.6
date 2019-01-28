@@ -2,92 +2,112 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2656AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:32:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E23DC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:32:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8E8B2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:32:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="GCe5lUSY"
+	by mail.kernel.org (Postfix) with ESMTP id 2AB522147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548696762;
+	bh=smksVjHmBgGlBWiX3aftH5cmLjUKG7JYTo/oSFQbUcM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=qJ428ieD/PpLaWZkinDQB6Ijx25m1vVrghAMNvI51vxCdK1+AlpP9TYmyFpr0NxYA
+	 oE0Ji/+iPz1fqVQALmL3nbhfQUOjcFf6qnrbLjjBRl+O0yo7+Vk+BRj2oKtrRG4S/i
+	 F2RtzrgtlvU3B4em5XOoQepo0QlvEJYQzdAXdyFQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730428AbfA1Rcc (ORCPT
+        id S1730643AbfA1Rck (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:32:32 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25445 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727075AbfA1Rca (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:32:30 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548696689; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=Ad8O/IKz6iUsuVFaGI9JxB+J2e+/sn2NZ7HxVYDaAojYNr/3NRAieVeq4jy4DFv18upWzANRIAQPUi67OhsNqZX3hjWp+fP0uDwdIU1r/mAE+QRiPSG63V9BeorDaGGSCoPSCWumLTdN3CYeWdn3rM/fgP9UPfa/1kUGPTCI4PY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548696689; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=tlUMz/9XyBzyNUGs+f98DBJkkC8vBaUq0Vz9AV1qX7c=; 
-        b=g8OT7gLFWB0ZOcszNFCk93RMtq2i8B0QlbtrBeOGVaChDLPpnSCkH7ffLtXSTyYKWjCPyApmGUDqkw8UY6PPod0cV3KfSqGIKACNzY8NQEXq7dUMoCbN4SUH+juHc6tJ/CZGZ8D3p6Aqc3U3w2hNHbCfY3kasHjkDKul9JDKhV0=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=E2FzBMcIFv28LFCXnwAIq07IcgV7B2ikVvGA8C+6zoGlYIcM01Zge9kR+IX/IaXipEwgqjRXU2lc
-    FRXdMJykMFjOLhuCNrzePSj/j66di/VE3IPsAsjEtoHqhyFqze+b  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548696689;
-        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; l=890;
-        bh=tlUMz/9XyBzyNUGs+f98DBJkkC8vBaUq0Vz9AV1qX7c=;
-        b=GCe5lUSYdsYNBZy6uoZNIXHm3YhMyWP86aiakQnjb+T1Ns47MTlNdMce/PsdgF6s
-        4N+NY8BcplIl+3Oq27WrUjsR5l+NMlHqNxTQVp5oOd96iQE5/FzCEGv3PIKRA5UerzL
-        9mFeuVHfCWCZRatHvQz1Mr41DgvkLOtDQww9ptog=
-Received: from localhost.localdomain (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
-        with SMTPS id 1548696688032977.7950250734209; Mon, 28 Jan 2019 09:31:28 -0800 (PST)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-        devicetree@vger.kernel.org, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, robh+dt@kernel.org,
-        paul.burton@mips.com, mark.rutland@arm.com, syq@debian.org,
-        jiaxun.yang@flygoat.com, 772753199@qq.com
-Subject: [PATCH 2/3] Dt-bindings: RTC: Add X1000 RTC bindings.
-Date:   Tue, 29 Jan 2019 01:29:58 +0800
-Message-Id: <1548696599-53639-3-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548696599-53639-1-git-send-email-zhouyanjie@zoho.com>
-References: <1548696599-53639-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        Mon, 28 Jan 2019 12:32:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42868 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730209AbfA1P5V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:57:21 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E6ABC20881;
+        Mon, 28 Jan 2019 15:57:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691041;
+        bh=smksVjHmBgGlBWiX3aftH5cmLjUKG7JYTo/oSFQbUcM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=Zls735vXYgZFuxsfS0UxjwvI18IhPGeVdWWvyW0RpLD32Udh5dygo667JcGeZesE0
+         tLzJV7FXw18bFKPi9crn6574F0zFDWe8VrgJmV1bHPaZOjpbfoU52ulQQgS3j81Qxg
+         7GR72EYwi3cPCIpNHJOyURTJcvch2ztPISATJmic=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Richard Weinberger <richard@nod.at>,
+        Sasha Levin <sashal@kernel.org>, linux-um@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.20 271/304] um: Avoid marking pages with "changed protection"
+Date:   Mon, 28 Jan 2019 10:43:08 -0500
+Message-Id: <20190128154341.47195-271-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the RTC bindings for the X1000 Soc from Ingenic.
+From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+[ Upstream commit 8892d8545f2d0342b9c550defbfb165db237044b ]
+
+Changing protection is a very high cost operation in UML
+because in addition to an extra syscall it also interrupts
+mmap merge sequences generated by the tlb.
+
+While the condition is not particularly common it is worth
+avoiding.
+
+Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt | 1 +
- 1 file changed, 1 insertion(+)
+ arch/um/include/asm/pgtable.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt b/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
-index 41c7ae1..7ce0018 100644
---- a/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
-+++ b/Documentation/devicetree/bindings/rtc/ingenic,jz4740-rtc.txt
-@@ -5,6 +5,7 @@ Required properties:
- - compatible: One of:
-   - "ingenic,jz4740-rtc" - for use with the JZ4740 SoC
-   - "ingenic,jz4780-rtc" - for use with the JZ4780 SoC
-+  - "ingenic,x1000-rtc" - for use with the X1000 SoC
- - reg: Address range of rtc register set
- - interrupts: IRQ number for the alarm interrupt
- - clocks: phandle to the "rtc" clock
+diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
+index 7485398d0737..9c04562310b3 100644
+--- a/arch/um/include/asm/pgtable.h
++++ b/arch/um/include/asm/pgtable.h
+@@ -197,12 +197,17 @@ static inline pte_t pte_mkold(pte_t pte)
+ 
+ static inline pte_t pte_wrprotect(pte_t pte)
+ { 
+-	pte_clear_bits(pte, _PAGE_RW);
++	if (likely(pte_get_bits(pte, _PAGE_RW)))
++		pte_clear_bits(pte, _PAGE_RW);
++	else
++		return pte;
+ 	return(pte_mknewprot(pte)); 
+ }
+ 
+ static inline pte_t pte_mkread(pte_t pte)
+ { 
++	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_USER);
+ 	return(pte_mknewprot(pte)); 
+ }
+@@ -221,6 +226,8 @@ static inline pte_t pte_mkyoung(pte_t pte)
+ 
+ static inline pte_t pte_mkwrite(pte_t pte)	
+ {
++	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_RW);
+ 	return(pte_mknewprot(pte)); 
+ }
 -- 
-2.7.4
-
+2.19.1
 
