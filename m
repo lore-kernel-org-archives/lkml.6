@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9C7EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:15:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93DDBC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:15:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94E9720844
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:15:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 56AD020844
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:15:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695730;
-	bh=9sg0RXQ+2peYOaaRG2FbiVcbSHHL7RYsBC+BOtfRIBY=;
+	s=default; t=1548695740;
+	bh=4oicLgrTCRvWVxKZpFZQWkpOdikfl/5zLPTBY1+bJ/w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0098CByQ1Hk/msT1E3JrfYIiAH/yK6lu+xVVuf5hGmHau7pvCCoCIVkdjPqXxV637
-	 WuPYsnCvK57LBXvtua9xqJuvXCQ2nvJCZgEPYY8kde4ot5abRl2QBZLEHAIS3YHTFZ
-	 cPDOsGtLzgJkpjbj/KDlQ/l4gxNaIcbJcobbuem0=
+	b=lA4RgzUbNzFv5OTVdEs7Gs6KMUgX9AAbo0hd2E9UXUniLshPVbBfLAMvHrrgkhzHb
+	 PWV9vaF+QIM/YkkH6NxHHGfrY2A0PgzSniJBY4NKFNgcjRYUQOP3YQBXz5MoO1cfKq
+	 yyeNb3S2aRZBp1/5zvNdBf34DX/2BSz3ADagFxEA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732475AbfA1RP2 (ORCPT
+        id S1732120AbfA1QHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:15:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57156 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:07:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56684 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732146AbfA1QHG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:07:06 -0500
+        id S1731125AbfA1QGz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:06:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E355D2171F;
-        Mon, 28 Jan 2019 16:07:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 91AE32147A;
+        Mon, 28 Jan 2019 16:06:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691625;
-        bh=9sg0RXQ+2peYOaaRG2FbiVcbSHHL7RYsBC+BOtfRIBY=;
+        s=default; t=1548691614;
+        bh=4oicLgrTCRvWVxKZpFZQWkpOdikfl/5zLPTBY1+bJ/w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BwBa8VdGL2wzLlRc4cJY7PrRak+ON72fKhUTt0eXva5HdTXtswwUIkWlcH8RN6kPM
-         y0VJQ3o3qu/BveJRYwDpffein34n1+344EbpIf74Si/OQO7XC6R+rlYgUi1SgBw26N
-         TDvHGiggo9dRbaC2WBce6CyQrkQXgua/mSap1gbA=
+        b=jP5LNG2gircpE75K4pU+7LEYyc1VO8jhqHjx8hf2vTjk/goItefDG+Ww0iWWSV6lR
+         Ggmge2kxOwh9SdT+7kMG9PN2uzko3+9DRFocUyrHZHjabuLhxpCppORhYiD+rN8uMJ
+         C9F3Yzlitj61xFCgXCOYehflsNp4EG7lPElP7BYE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Beomho Seo <beomho.seo@samsung.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
+Cc:     Fabrizio Castro <fabrizio.castro@bp.renesas.com>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 164/258] tty: serial: samsung: Properly set flags in autoCTS mode
-Date:   Mon, 28 Jan 2019 10:57:50 -0500
-Message-Id: <20190128155924.51521-164-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 159/258] usb: renesas_usbhs: add support for RZ/G2E
+Date:   Mon, 28 Jan 2019 10:57:45 -0500
+Message-Id: <20190128155924.51521-159-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,45 +57,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Beomho Seo <beomho.seo@samsung.com>
+From: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
 
-[ Upstream commit 31e933645742ee6719d37573a27cce0761dcf92b ]
+[ Upstream commit 1d6e81a288e28d8d0e38e0501a324216f79bba35 ]
 
-Commit 391f93f2ec9f ("serial: core: Rework hw-assited flow control support")
-has changed the way the autoCTS mode is handled.
+HS-USB found in RZ/G2E (a.k.a. r8a774c0) is very similar to the
+one found in R-Car E3 (a.k.a. r8a77990), as it needs to release
+the PLL reset by the UGCTRL register like R-Car E3, therefore add
+r8a774c0 support in a similar fashion to what was done for the
+r8a77990.
 
-According to that change, serial drivers which enable H/W autoCTS mode must
-set UPSTAT_AUTOCTS to prevent the serial core from inadvertently disabling
-TX. This patch adds proper handling of UPSTAT_AUTOCTS flag.
-
-Signed-off-by: Beomho Seo <beomho.seo@samsung.com>
-[mszyprow: rephrased commit message]
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Fabrizio Castro <fabrizio.castro@bp.renesas.com>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Acked-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/tty/serial/samsung.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/usb/renesas_usbhs/common.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/tty/serial/samsung.c b/drivers/tty/serial/samsung.c
-index 2f8fa184aafa..c6058b52d5d5 100644
---- a/drivers/tty/serial/samsung.c
-+++ b/drivers/tty/serial/samsung.c
-@@ -1365,11 +1365,14 @@ static void s3c24xx_serial_set_termios(struct uart_port *port,
- 	wr_regl(port, S3C2410_ULCON, ulcon);
- 	wr_regl(port, S3C2410_UBRDIV, quot);
- 
-+	port->status &= ~UPSTAT_AUTOCTS;
-+
- 	umcon = rd_regl(port, S3C2410_UMCON);
- 	if (termios->c_cflag & CRTSCTS) {
- 		umcon |= S3C2410_UMCOM_AFC;
- 		/* Disable RTS when RX FIFO contains 63 bytes */
- 		umcon &= ~S3C2412_UMCON_AFC_8;
-+		port->status = UPSTAT_AUTOCTS;
- 	} else {
- 		umcon &= ~S3C2410_UMCOM_AFC;
- 	}
+diff --git a/drivers/usb/renesas_usbhs/common.c b/drivers/usb/renesas_usbhs/common.c
+index 4310df46639d..b0792585d5bc 100644
+--- a/drivers/usb/renesas_usbhs/common.c
++++ b/drivers/usb/renesas_usbhs/common.c
+@@ -457,6 +457,10 @@ static int usbhsc_drvcllbck_notify_hotplug(struct platform_device *pdev)
+  *		platform functions
+  */
+ static const struct of_device_id usbhs_of_match[] = {
++	{
++		.compatible = "renesas,usbhs-r8a774c0",
++		.data = (void *)USBHS_TYPE_RCAR_GEN3_WITH_PLL,
++	},
+ 	{
+ 		.compatible = "renesas,usbhs-r8a7790",
+ 		.data = (void *)USBHS_TYPE_RCAR_GEN2,
 -- 
 2.19.1
 
