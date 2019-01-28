@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D52EFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:25:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B11C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:26:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A4DC12147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:25:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8722F21916
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:26:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548699957;
-	bh=7dwH/K/wPQ4qleb3C98ERBNisR53L4o5Vad6uVnnmC8=;
+	s=default; t=1548699963;
+	bh=7vj797Ley0NHnGl14PAXW7OVQGCuqalT1wyDZRNcqlQ=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=RE4vm1aWmYnGsws0LCTleatfgzQOiCeYV4YDLl9YSP9/W1eMwrLHDNxx3NJxqcLxY
-	 rM/4ISFH+r9ilF8A3MCGHRBWiBTxBiyqAzIjh7MZEXTJrYodla7NKQYytY6HHlW9iR
-	 YUT7ma8yFCpwhOVFwcPvxvWJS594CTNcTU7sD9N4=
+	b=Fwdascs+l9w5Bpp9HmEevYOPLZKC14JtgoNa+V8aAgYQvqruA6jrcak8m6WTnFcr3
+	 QquoqRcUaKwW7nzvQo5i9s3KBs7lxdUZRQU676WHAnzACPFiwFWO7lqeulCP1OOuMy
+	 4cDv/P8huiFIjFgoCBEomPGLu7pTqUvAAwwAIzHA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727649AbfA1SZ4 (ORCPT
+        id S1727719AbfA1S0B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:25:56 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37232 "EHLO
+        Mon, 28 Jan 2019 13:26:01 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37294 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727172AbfA1SZw (ORCPT
+        with ESMTP id S1727441AbfA1SZy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:25:52 -0500
+        Mon, 28 Jan 2019 13:25:54 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=k7QJGyGW5mCKP7O+6ErptTIVz/8EFBrfdUuhvgQ1OPg=; b=GqxY3h3KD68e
-        vF0Ffd0tOyJfS0/KVlyGmTC5HIksXvkc94q8QPpKfwZo98nsLzfwTTAgZ8zxK50Yz8rUC86HkXo3N
-        vfGd5/m/7G5uV7h3HOVC58QpWE3aJaD0W50YfWEmVzE15IVjGvLGiQV4aRX9+vRBPyHgRihhFFwvq
-        3apCg=;
+        List-Archive; bh=sV8LknuzZQHuyZIdsl2a7VWa86fI25NewOtRgMaP8EY=; b=Z+cNhDILFr9Y
+        24of+3oWY3DSqx1KXQA12WjuQ/wpBrVQ4Ifi1DU3MliAnY+sis9X7blfJapXV4eT+0m9koFP/PU6k
+        rIvZKOkkwLEB7711wMItBt8THHejnvNHsDymdG1kDw9kUo2W8B/cApStPEBqiJNuBuMj9VbSRuMql
+        AphaY=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1goBbS-0003CU-KH; Mon, 28 Jan 2019 18:25:50 +0000
+        id 1goBbU-0003CN-Bw; Mon, 28 Jan 2019 18:25:52 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 4126A1127D2D; Mon, 28 Jan 2019 18:25:50 +0000 (GMT)
+        id F0B301127D29; Mon, 28 Jan 2019 18:25:46 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: isl6271a: Remove *rdev[3] from struct isl_pmic" to the regulator tree
+Subject: Applied "regulator: axp20x: Fix incorrect vsel_mask settings" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190128182550.4126A1127D2D@debutante.sirena.org.uk>
-Date:   Mon, 28 Jan 2019 18:25:50 +0000 (GMT)
+Message-Id: <20190128182546.F0B301127D29@debutante.sirena.org.uk>
+Date:   Mon, 28 Jan 2019 18:25:46 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: isl6271a: Remove *rdev[3] from struct isl_pmic
+   regulator: axp20x: Fix incorrect vsel_mask settings
 
 has been applied to the regulator tree at
 
@@ -84,55 +84,60 @@ to this mail.
 Thanks,
 Mark
 
-From a6e58299e3dd83be71421248f268897b73666aa2 Mon Sep 17 00:00:00 2001
+From d02337709390c854186c6a21f997dc39760591e1 Mon Sep 17 00:00:00 2001
 From: Axel Lin <axel.lin@ingics.com>
-Date: Mon, 28 Jan 2019 22:19:20 +0800
-Subject: [PATCH] regulator: isl6271a: Remove *rdev[3] from struct isl_pmic
+Date: Mon, 28 Jan 2019 22:02:19 +0800
+Subject: [PATCH] regulator: axp20x: Fix incorrect vsel_mask settings
 
-This driver is using devm_regulator_register, so it's not necessary to
-store *rdev[3] in struct isl_pmic. Use a local variable instead.
+Fix copy-paste mistake while converting to use defines for masks.
 
+Fixes: db4a555f7c4cf ("regulator: axp20x: use defines for masks")
 Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/isl6271a-regulator.c | 9 ++++-----
- 1 file changed, 4 insertions(+), 5 deletions(-)
+ drivers/regulator/axp20x-regulator.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/regulator/isl6271a-regulator.c b/drivers/regulator/isl6271a-regulator.c
-index 4abd8e9c81e5..ae29c8773057 100644
---- a/drivers/regulator/isl6271a-regulator.c
-+++ b/drivers/regulator/isl6271a-regulator.c
-@@ -31,7 +31,6 @@
- /* PMIC details */
- struct isl_pmic {
- 	struct i2c_client	*client;
--	struct regulator_dev	*rdev[3];
- 	struct mutex		mtx;
- };
- 
-@@ -109,6 +108,7 @@ static const struct regulator_desc isl_rd[] = {
- static int isl6271a_probe(struct i2c_client *i2c,
- 				     const struct i2c_device_id *id)
- {
-+	struct regulator_dev *rdev;
- 	struct regulator_config config = { };
- 	struct regulator_init_data *init_data	= dev_get_platdata(&i2c->dev);
- 	struct isl_pmic *pmic;
-@@ -133,11 +133,10 @@ static int isl6271a_probe(struct i2c_client *i2c,
- 			config.init_data = NULL;
- 		config.driver_data = pmic;
- 
--		pmic->rdev[i] = devm_regulator_register(&i2c->dev, &isl_rd[i],
--							&config);
--		if (IS_ERR(pmic->rdev[i])) {
-+		rdev = devm_regulator_register(&i2c->dev, &isl_rd[i], &config);
-+		if (IS_ERR(rdev)) {
- 			dev_err(&i2c->dev, "failed to register %s\n", id->name);
--			return PTR_ERR(pmic->rdev[i]);
-+			return PTR_ERR(rdev);
- 		}
- 	}
- 
+diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
+index 48af859fd053..dd0193d77960 100644
+--- a/drivers/regulator/axp20x-regulator.c
++++ b/drivers/regulator/axp20x-regulator.c
+@@ -573,7 +573,7 @@ static const struct regulator_desc axp22x_regulators[] = {
+ 		 AXP22X_DCDC3_V_OUT, AXP22X_DCDC3_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL1, AXP22X_PWR_OUT_DCDC3_MASK),
+ 	AXP_DESC(AXP22X, DCDC4, "dcdc4", "vin4", 600, 1540, 20,
+-		 AXP22X_DCDC4_V_OUT, AXP22X_DCDC4_V_OUT,
++		 AXP22X_DCDC4_V_OUT, AXP22X_DCDC4_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL1, AXP22X_PWR_OUT_DCDC4_MASK),
+ 	AXP_DESC(AXP22X, DCDC5, "dcdc5", "vin5", 1000, 2550, 50,
+ 		 AXP22X_DCDC5_V_OUT, AXP22X_DCDC5_V_OUT_MASK,
+@@ -952,7 +952,7 @@ static const struct regulator_desc axp813_regulators[] = {
+ 		 AXP22X_ALDO1_V_OUT, AXP22X_ALDO1_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO1_MASK),
+ 	AXP_DESC(AXP813, ALDO2, "aldo2", "aldoin", 700, 3300, 100,
+-		 AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT,
++		 AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO2_MASK),
+ 	AXP_DESC(AXP813, ALDO3, "aldo3", "aldoin", 700, 3300, 100,
+ 		 AXP22X_ALDO3_V_OUT, AXP22X_ALDO3_V_OUT_MASK,
+@@ -962,7 +962,7 @@ static const struct regulator_desc axp813_regulators[] = {
+ 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO1_MASK),
+ 	AXP_DESC_RANGES(AXP813, DLDO2, "dldo2", "dldoin",
+ 			axp803_dldo2_ranges, AXP803_DLDO2_NUM_VOLTAGES,
+-			AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT,
++			AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT_MASK,
+ 			AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO2_MASK),
+ 	AXP_DESC(AXP813, DLDO3, "dldo3", "dldoin", 700, 3300, 100,
+ 		 AXP22X_DLDO3_V_OUT, AXP22X_DLDO3_V_OUT_MASK,
+@@ -977,7 +977,7 @@ static const struct regulator_desc axp813_regulators[] = {
+ 		 AXP22X_ELDO2_V_OUT, AXP22X_ELDO2_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO2_MASK),
+ 	AXP_DESC(AXP813, ELDO3, "eldo3", "eldoin", 700, 1900, 50,
+-		 AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT,
++		 AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT_MASK,
+ 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO3_MASK),
+ 	/* to do / check ... */
+ 	AXP_DESC(AXP813, FLDO1, "fldo1", "fldoin", 700, 1450, 50,
 -- 
 2.20.1
 
