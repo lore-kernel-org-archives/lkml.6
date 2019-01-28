@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A619EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3132C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 760452148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9FF922177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691970;
-	bh=oqYRu9YYe90NkDGlrxXHPbMasuf+zU2pc9P7t53fPIY=;
+	s=default; t=1548691976;
+	bh=qQAH8riXtKsnepgZvaDmn2kOb4Hopro5GkzE8YnWhE0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qUjYxLu/9i40K2YYa9Mlwzp7U9QqYFRUzmRXrsxmmpbrqrS7vqp+7WfR4Yd/ib4K7
-	 cT4XynrOWz0TAO9XEXyvPq4QRKDE3vjayTV+k63/dJUoBf+hwelgfVH+m+oQSFIhoH
-	 H5nBse+xj3zMjBbyTCzgH64Rt3apQjMbTbTKihxk=
+	b=n+nC56t4b8PTnRVnhgu70oj3itVdR/B79U70kAczh/PSMCMCHB+mb+BFYVauEHtyy
+	 ucbTcPPtItlqdhtY57cb7G5SfjzQQFUyDISlEBc6PK6F7CA8INmvQBzY/Hd5RkoYJU
+	 rdB9/Mb287OcagNEBecY6iX9pXIfIIUfJ/iDIjs0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733221AbfA1QMt (ORCPT
+        id S1733249AbfA1QMz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:12:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41194 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:12:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733203AbfA1QMq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:12:46 -0500
+        id S1733225AbfA1QMw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:12:52 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 353D92147A;
-        Mon, 28 Jan 2019 16:12:43 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 92CA92147A;
+        Mon, 28 Jan 2019 16:12:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691965;
-        bh=oqYRu9YYe90NkDGlrxXHPbMasuf+zU2pc9P7t53fPIY=;
+        s=default; t=1548691970;
+        bh=qQAH8riXtKsnepgZvaDmn2kOb4Hopro5GkzE8YnWhE0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=t8ivgNKOGwuPrgnomHFu0ti6fVoZLirChqLeIrteAH49rW/39oZ8Npkap3XrMf4sB
-         yJFLt4bkf2vI+ZKqlIThexNFIRIoDjZwQ6N/24WyHHddQyng6oRDW3N9bHx3FeyeXX
-         HDdYyphMU3rx+ysigwGsHAC1+/YYEKl+cRjnX3Tw=
+        b=uJQKuRsUvfvskQGT/7xHN2/qbXdjjuUq2usUMftkoy3tyNdwXzdrcTWAkxbFBTYQp
+         XB8qN9SMeM/k2BMxRCHeCyvJBEA/ICiacyLa6gtZpEZtGyxrPL3wGWER6XjXurb9Cs
+         jweaRsxs31PTiz7zH00l2UTuvngRJ2dO6cFJlvmo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Biggers <ebiggers@google.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 018/170] crypto: aes_ti - disable interrupts while accessing S-box
-Date:   Mon, 28 Jan 2019 11:09:28 -0500
-Message-Id: <20190128161200.55107-18-sashal@kernel.org>
+Cc:     Douglas Anderson <dianders@chromium.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 021/170] serial: core: Allow processing sysrq at port unlock time
+Date:   Mon, 28 Jan 2019 11:09:31 -0500
+Message-Id: <20190128161200.55107-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,113 +58,158 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+From: Douglas Anderson <dianders@chromium.org>
 
-[ Upstream commit 0a6a40c2a8c184a2fb467efacfb1cd338d719e0b ]
+[ Upstream commit d6e1935819db0c91ce4a5af82466f3ab50d17346 ]
 
-In the "aes-fixed-time" AES implementation, disable interrupts while
-accessing the S-box, in order to make cache-timing attacks more
-difficult.  Previously it was possible for the CPU to be interrupted
-while the S-box was loaded into L1 cache, potentially evicting the
-cachelines and causing later table lookups to be time-variant.
+Right now serial drivers process sysrq keys deep in their character
+receiving code.  This means that they've already grabbed their
+port->lock spinlock.  This can end up getting in the way if we've go
+to do serial stuff (especially kgdb) in response to the sysrq.
 
-In tests I did on x86 and ARM, this doesn't affect performance
-significantly.  Responsiveness is potentially a concern, but interrupts
-are only disabled for a single AES block.
+Serial drivers have various hacks in them to handle this.  Looking at
+'8250_port.c' you can see that the console_write() skips locking if
+we're in the sysrq handler.  Looking at 'msm_serial.c' you can see
+that the port lock is dropped around uart_handle_sysrq_char().
 
-Note that even after this change, the implementation still isn't
-necessarily guaranteed to be constant-time; see
-https://cr.yp.to/antiforgery/cachetiming-20050414.pdf for a discussion
-of the many difficulties involved in writing truly constant-time AES
-software.  But it's valuable to make such attacks more difficult.
+It turns out that these hacks aren't exactly perfect.  If you have
+lockdep turned on and use something like the 8250_port hack you'll get
+a splat that looks like:
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+  WARNING: possible circular locking dependency detected
+  [...] is trying to acquire lock:
+  ... (console_owner){-.-.}, at: console_unlock+0x2e0/0x5e4
+
+  but task is already holding lock:
+  ... (&port_lock_key){-.-.}, at: serial8250_handle_irq+0x30/0xe4
+
+  which lock already depends on the new lock.
+
+  the existing dependency chain (in reverse order) is:
+
+  -> #1 (&port_lock_key){-.-.}:
+         _raw_spin_lock_irqsave+0x58/0x70
+         serial8250_console_write+0xa8/0x250
+         univ8250_console_write+0x40/0x4c
+         console_unlock+0x528/0x5e4
+         register_console+0x2c4/0x3b0
+         uart_add_one_port+0x350/0x478
+         serial8250_register_8250_port+0x350/0x3a8
+         dw8250_probe+0x67c/0x754
+         platform_drv_probe+0x58/0xa4
+         really_probe+0x150/0x294
+         driver_probe_device+0xac/0xe8
+         __driver_attach+0x98/0xd0
+         bus_for_each_dev+0x84/0xc8
+         driver_attach+0x2c/0x34
+         bus_add_driver+0xf0/0x1ec
+         driver_register+0xb4/0x100
+         __platform_driver_register+0x60/0x6c
+         dw8250_platform_driver_init+0x20/0x28
+	 ...
+
+  -> #0 (console_owner){-.-.}:
+         lock_acquire+0x1e8/0x214
+         console_unlock+0x35c/0x5e4
+         vprintk_emit+0x230/0x274
+         vprintk_default+0x7c/0x84
+         vprintk_func+0x190/0x1bc
+         printk+0x80/0xa0
+         __handle_sysrq+0x104/0x21c
+         handle_sysrq+0x30/0x3c
+         serial8250_read_char+0x15c/0x18c
+         serial8250_rx_chars+0x34/0x74
+         serial8250_handle_irq+0x9c/0xe4
+         dw8250_handle_irq+0x98/0xcc
+         serial8250_interrupt+0x50/0xe8
+         ...
+
+  other info that might help us debug this:
+
+   Possible unsafe locking scenario:
+
+         CPU0                    CPU1
+         ----                    ----
+    lock(&port_lock_key);
+                                 lock(console_owner);
+                                 lock(&port_lock_key);
+    lock(console_owner);
+
+   *** DEADLOCK ***
+
+The hack used in 'msm_serial.c' doesn't cause the above splats but it
+seems a bit ugly to unlock / lock our spinlock deep in our irq
+handler.
+
+It seems like we could defer processing the sysrq until the end of the
+interrupt handler right after we've unlocked the port.  With this
+scheme if a whole batch of sysrq characters comes in one irq then we
+won't handle them all, but that seems like it should be a fine
+compromise.
+
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- crypto/Kconfig  |  3 ++-
- crypto/aes_ti.c | 18 ++++++++++++++++++
- 2 files changed, 20 insertions(+), 1 deletion(-)
+ include/linux/serial_core.h | 37 ++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 36 insertions(+), 1 deletion(-)
 
-diff --git a/crypto/Kconfig b/crypto/Kconfig
-index 5579eb88d460..84f99f8eca4b 100644
---- a/crypto/Kconfig
-+++ b/crypto/Kconfig
-@@ -930,7 +930,8 @@ config CRYPTO_AES_TI
- 	  8 for decryption), this implementation only uses just two S-boxes of
- 	  256 bytes each, and attempts to eliminate data dependent latencies by
- 	  prefetching the entire table into the cache at the start of each
--	  block.
-+	  block. Interrupts are also disabled to avoid races where cachelines
-+	  are evicted when the CPU is interrupted to do something else.
+diff --git a/include/linux/serial_core.h b/include/linux/serial_core.h
+index 868b60a79c0b..b2a7b7c15451 100644
+--- a/include/linux/serial_core.h
++++ b/include/linux/serial_core.h
+@@ -166,6 +166,7 @@ struct uart_port {
+ 	struct console		*cons;			/* struct console, if any */
+ #if defined(CONFIG_SERIAL_CORE_CONSOLE) || defined(SUPPORT_SYSRQ)
+ 	unsigned long		sysrq;			/* sysrq timeout */
++	unsigned int		sysrq_ch;		/* char for sysrq */
+ #endif
  
- config CRYPTO_AES_586
- 	tristate "AES cipher algorithms (i586)"
-diff --git a/crypto/aes_ti.c b/crypto/aes_ti.c
-index 03023b2290e8..1ff9785b30f5 100644
---- a/crypto/aes_ti.c
-+++ b/crypto/aes_ti.c
-@@ -269,6 +269,7 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	const u32 *rkp = ctx->key_enc + 4;
- 	int rounds = 6 + ctx->key_length / 4;
- 	u32 st0[4], st1[4];
-+	unsigned long flags;
- 	int round;
- 
- 	st0[0] = ctx->key_enc[0] ^ get_unaligned_le32(in);
-@@ -276,6 +277,12 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	st0[2] = ctx->key_enc[2] ^ get_unaligned_le32(in + 8);
- 	st0[3] = ctx->key_enc[3] ^ get_unaligned_le32(in + 12);
- 
-+	/*
-+	 * Temporarily disable interrupts to avoid races where cachelines are
-+	 * evicted when the CPU is interrupted to do something else.
-+	 */
-+	local_irq_save(flags);
-+
- 	st0[0] ^= __aesti_sbox[ 0] ^ __aesti_sbox[128];
- 	st0[1] ^= __aesti_sbox[32] ^ __aesti_sbox[160];
- 	st0[2] ^= __aesti_sbox[64] ^ __aesti_sbox[192];
-@@ -300,6 +307,8 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	put_unaligned_le32(subshift(st1, 1) ^ rkp[5], out + 4);
- 	put_unaligned_le32(subshift(st1, 2) ^ rkp[6], out + 8);
- 	put_unaligned_le32(subshift(st1, 3) ^ rkp[7], out + 12);
-+
-+	local_irq_restore(flags);
+ 	/* flags must be updated while holding port mutex */
+@@ -474,8 +475,42 @@ uart_handle_sysrq_char(struct uart_port *port, unsigned int ch)
+ 	}
+ 	return 0;
  }
- 
- static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
-@@ -308,6 +317,7 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	const u32 *rkp = ctx->key_dec + 4;
- 	int rounds = 6 + ctx->key_length / 4;
- 	u32 st0[4], st1[4];
-+	unsigned long flags;
- 	int round;
- 
- 	st0[0] = ctx->key_dec[0] ^ get_unaligned_le32(in);
-@@ -315,6 +325,12 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	st0[2] = ctx->key_dec[2] ^ get_unaligned_le32(in + 8);
- 	st0[3] = ctx->key_dec[3] ^ get_unaligned_le32(in + 12);
- 
-+	/*
-+	 * Temporarily disable interrupts to avoid races where cachelines are
-+	 * evicted when the CPU is interrupted to do something else.
-+	 */
-+	local_irq_save(flags);
++static inline int
++uart_prepare_sysrq_char(struct uart_port *port, unsigned int ch)
++{
++	if (port->sysrq) {
++		if (ch && time_before(jiffies, port->sysrq)) {
++			port->sysrq_ch = ch;
++			port->sysrq = 0;
++			return 1;
++		}
++		port->sysrq = 0;
++	}
++	return 0;
++}
++static inline void
++uart_unlock_and_check_sysrq(struct uart_port *port, unsigned long irqflags)
++{
++	int sysrq_ch;
 +
- 	st0[0] ^= __aesti_inv_sbox[ 0] ^ __aesti_inv_sbox[128];
- 	st0[1] ^= __aesti_inv_sbox[32] ^ __aesti_inv_sbox[160];
- 	st0[2] ^= __aesti_inv_sbox[64] ^ __aesti_inv_sbox[192];
-@@ -339,6 +355,8 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
- 	put_unaligned_le32(inv_subshift(st1, 1) ^ rkp[5], out + 4);
- 	put_unaligned_le32(inv_subshift(st1, 2) ^ rkp[6], out + 8);
- 	put_unaligned_le32(inv_subshift(st1, 3) ^ rkp[7], out + 12);
++	sysrq_ch = port->sysrq_ch;
++	port->sysrq_ch = 0;
 +
-+	local_irq_restore(flags);
- }
++	spin_unlock_irqrestore(&port->lock, irqflags);
++
++	if (sysrq_ch)
++		handle_sysrq(sysrq_ch);
++}
+ #else
+-#define uart_handle_sysrq_char(port,ch) ({ (void)port; 0; })
++static inline int
++uart_handle_sysrq_char(struct uart_port *port, unsigned int ch) { return 0; }
++static inline int
++uart_prepare_sysrq_char(struct uart_port *port, unsigned int ch) { return 0; }
++static inline void
++uart_unlock_and_check_sysrq(struct uart_port *port, unsigned long irqflags)
++{
++	spin_unlock_irqrestore(&port->lock, irqflags);
++}
+ #endif
  
- static struct crypto_alg aes_alg = {
+ /*
 -- 
 2.19.1
 
