@@ -4,62 +4,61 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED862C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:29:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F26FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:30:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB0682184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:29:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5C75721741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:30:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mEalu1Nb"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="au2oc9Zq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727948AbfA1T3Z (ORCPT
+        id S1727997AbfA1TaD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:29:25 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:36822 "EHLO
+        Mon, 28 Jan 2019 14:30:03 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:44046 "EHLO
         mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbfA1T3Y (ORCPT
+        with ESMTP id S1726862AbfA1TaD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:29:24 -0500
-Received: by mail-yb1-f196.google.com with SMTP id 64so2675769ybf.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:29:24 -0800 (PST)
+        Mon, 28 Jan 2019 14:30:03 -0500
+Received: by mail-yb1-f196.google.com with SMTP id k189so7160673yba.11
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:30:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=Qs77uciUloAwV2eYcIE7foyipDchuSN8Ovvux8TXo00=;
-        b=mEalu1NbEH5RS9eCAZyXen6icvvJZ6sPeUucjhW0IK/ori/uE0ttojehVJYnx2bsN3
-         byBDxTunRdvNJo4AZGqKfPV5XYLdPis/9MmNyXWGDglcGl6NTU0KCuMg9oes5wLK84jV
-         xvi3hxloPircfBnsPEpZy9cDz6PpvaH1m8LKIDYhySRkXPOxxMEI/MOO0ft65q1StVWV
-         r+MqT7pPtqeWw829TVRG9GWdPF9YhlOUghFBdcPBlzbI+nF/4zLmzouqGKCqnc2rBBDI
-         f8pBeQ6T1YAVc1NneaLD1UG8kKjKxUGe+8AD8PH+uv6GYNuyZNIF/BfPET+uB59/Uu/V
-         yCFg==
+        bh=0QHhKVMY3KHgCtlRraqAEq+184Z+ENeF3gep/l00m+E=;
+        b=au2oc9Zqc0ylZCXYZ+TQhOiNjymwRFIHWjSBklwYRLLO2yagTQ5/kmHDcunJHVsNb9
+         3GdxwqeVUJ1L/WdrEnHfQAtbsI/BXZqEuFWttqHc6YZWUHK9C9S4U9bpn+avlu+hdL0a
+         yBh/mrJsWERyTLbraZTQZ6PoTz+z9o4U/v/svnGSLP369v6ZhUW90W52bj+9vyljuszO
+         N59FvbpKDwnN+zh/QT91jnKeNHTzCg3hYKOGCpXU/qwofRNt03l1E2M1cfXBOUFDdeo1
+         yqgBpAcjC/0rvAN8lVun+1CI1qmKzIj9LGxoAIpof3iiPBnAvxzqrs8qzib5ZRYBAdxY
+         Ym4g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=Qs77uciUloAwV2eYcIE7foyipDchuSN8Ovvux8TXo00=;
-        b=eNarzi4S7Omi2ZrOekqEY8Ot9zoi6nJg91eWBUi1OW1sS1yAeZeHr1A80dhnc5219w
-         9ULp0+HbOoehKqP0T8WlZF4aE+JNd/Cj65vmzNLYQs/GbFl5EV/G3LmRM3t9n0HBtXrG
-         2Y5qQw4g/8wyp4qxYCCN97xyPfSejQtoYAoJ8+bgmEbQCCgeJgoOKIBgyw9Qk54tjzhI
-         TJxao5Gf5paOQC8jmPag4qT/+mEwknlQI/BLM2/qoxg/9l/OgBKuJYGfDEenVJYqz3QF
-         7k1TRAb4/huwu+BvrqZnfR0qC5bKJeB1dhL7pk5DzDJ7s/Cqjne3iB7azYTNKcJkxFpl
-         bwFw==
-X-Gm-Message-State: AJcUukfsKf8moVlTtVeFD3NjIvbK9czt0lsCdYw469NQ0lfLl7BAcQOg
-        K7IyVLhux3t7AqptZSr+rVKr4Zl/BYAXYskdqO1+yw==
-X-Google-Smtp-Source: ALg8bN674Ik5b0oywpDOMmayV8aWo7iV8jWq4QYtyY7JqXfPUgQ9LezDZHPuCVsFlVcfMei4n66SS1ob2W2gLL+MrWc=
-X-Received: by 2002:a25:1006:: with SMTP id 6mr21273061ybq.151.1548703763518;
- Mon, 28 Jan 2019 11:29:23 -0800 (PST)
+        bh=0QHhKVMY3KHgCtlRraqAEq+184Z+ENeF3gep/l00m+E=;
+        b=JeYnUR9ML8dMWwCdm1DJS6BWCrg3UHXSurOJEMdcPWF2z2o85SRhGLi9ubdH23h35U
+         PGJIicbV3/GbHo4AV5X4D3FXRSoLWDMkDhcJq833q0XgxWNXhpynf9yNHggsRGodp5S+
+         sHAf5YEYbD7psTmiS74w/UEKF3lF6HDWTzLxWdfBl24olt1QEJDBpRJ/Uux6kIhTx5kW
+         vBk/47tN9MJQoOIXYgk0pbZIngfm3bEHkp0UY4ZUDbPXbRNHSc4adkecagw2VHFiANU7
+         y83K9nsfYd3hWeTbn44Y/n4e31BVz1CJmOcercYLLLwEM0Cd1/rhwnOzI3hxKhl99XaJ
+         +oXQ==
+X-Gm-Message-State: AJcUukekeyYuvwBK5bpbiF8z75Xuwf1XJ/s5V+WED1s50QpIM1VjCLtI
+        z3KpdcDWmUn2qcRLdta8D/Pugim2dewaM7a0vQBMRQ==
+X-Google-Smtp-Source: ALg8bN70BjkhSPAnBiF+oiY2MOz+BVHm4GNf1CFkk1BUeM8QpDp35X76V6HoQiJyzYygVDlEumlrtl27KTriAVCWqk0=
+X-Received: by 2002:a5b:9c3:: with SMTP id y3mr21608158ybq.7.1548703802192;
+ Mon, 28 Jan 2019 11:30:02 -0800 (PST)
 MIME-Version: 1.0
-References: <20190126095131.4756-1-enric.balletbo@collabora.com> <20190126095131.4756-4-enric.balletbo@collabora.com>
-In-Reply-To: <20190126095131.4756-4-enric.balletbo@collabora.com>
+References: <20190126095131.4756-1-enric.balletbo@collabora.com> <20190126095131.4756-5-enric.balletbo@collabora.com>
+In-Reply-To: <20190126095131.4756-5-enric.balletbo@collabora.com>
 From:   Guenter Roeck <groeck@google.com>
-Date:   Mon, 28 Jan 2019 11:29:12 -0800
-Message-ID: <CABXOdTdJtVpnt88FNHCGspASOLv0sxNkyS3VqVZXcUBNC+wfng@mail.gmail.com>
-Subject: Re: [PATCH v2 03/12] platform/chrome: cros_ec_lightbar: switch to
- SPDX identifier
+Date:   Mon, 28 Jan 2019 11:29:51 -0800
+Message-ID: <CABXOdTerV4VwxfOCpupMHd=h+C4A8dyniX-uHwcNna-ms3bfRg@mail.gmail.com>
+Subject: Re: [PATCH v2 04/12] platform/chrome: cros_ec_sysfs: switch to SPDX identifier
 To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
 Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
         Guenter Roeck <groeck@chromium.org>,
@@ -75,7 +74,7 @@ On Sat, Jan 26, 2019 at 1:51 AM Enric Balletbo i Serra
 <enric.balletbo@collabora.com> wrote:
 >
 > Adopt the SPDX license identifier headers to ease license compliance
-> management.
+> management. Also change the description for one more appropriate.
 >
 > Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
@@ -85,16 +84,16 @@ Reviewed-by: Guenter Roeck <groeck@chromium.org>
 >
 > Changes in v2: None
 >
->  drivers/platform/chrome/cros_ec_lightbar.c | 22 ++++------------------
->  1 file changed, 4 insertions(+), 18 deletions(-)
+>  drivers/platform/chrome/cros_ec_sysfs.c | 24 +++++-------------------
+>  1 file changed, 5 insertions(+), 19 deletions(-)
 >
-> diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
-> index c3e4e6e5211d..37689ad79544 100644
-> --- a/drivers/platform/chrome/cros_ec_lightbar.c
-> +++ b/drivers/platform/chrome/cros_ec_lightbar.c
+> diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
+> index 0ff5aa30c070..01c420727ee1 100644
+> --- a/drivers/platform/chrome/cros_ec_sysfs.c
+> +++ b/drivers/platform/chrome/cros_ec_sysfs.c
 > @@ -1,21 +1,7 @@
 > -/*
-> - * cros_ec_lightbar - expose the Chromebook Pixel lightbar to userspace
+> - * cros_ec_sysfs - expose the Chrome OS EC through sysfs
 > - *
 > - * Copyright (C) 2014 Google, Inc.
 > - *
@@ -112,12 +111,19 @@ Reviewed-by: Guenter Roeck <groeck@chromium.org>
 > - * along with this program. If not, see <http://www.gnu.org/licenses/>.
 > - */
 > +// SPDX-License-Identifier: GPL-2.0+
-> +// Expose the Chromebook Pixel lightbar to userspace
+> +// Expose the ChromeOS EC through sysfs
 > +//
 > +// Copyright (C) 2014 Google, Inc.
 >
->  #define pr_fmt(fmt) "cros_ec_lightbar: " fmt
+>  #define pr_fmt(fmt) "cros_ec_sysfs: " fmt
 >
+> @@ -389,5 +375,5 @@ static struct platform_driver cros_ec_sysfs_driver = {
+>  module_platform_driver(cros_ec_sysfs_driver);
+>
+>  MODULE_LICENSE("GPL");
+> -MODULE_DESCRIPTION("ChromeOS EC control driver");
+> +MODULE_DESCRIPTION("Expose the ChromeOS EC through sysfs");
+>  MODULE_ALIAS("platform:" DRV_NAME);
 > --
 > 2.20.1
 >
