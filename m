@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46998C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22E2C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DFFE21841
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A251A2184D
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691030;
-	bh=vwyx7JbQxCLjaBAxrpCUsJgYcw/gILGrPJiiEeZeyJA=;
+	s=default; t=1548691034;
+	bh=U0yYD2++o2KSoLg1EAb0XjmFBMknCsYSZ/X114Occ6E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RmYgGiJ7YX20czhBzot17cOxW4X23+79V4bghk0fGSIyxiKnwAE7UJgEQnhBKZXEC
-	 3Wc+pkc7BPlvwS0+cTmW83fkswK5smfCZR8r3tYwTBqpFFz0nk6MJXQ5I239ppVXcY
-	 TByJyanzhRfTecaOtuQJuh0ZdC/E0p7oPsvr5BNo=
+	b=iS/wadenkSlideFfzUBDSUzlxmq6JU+aD6qjIHyABvhPX3B+t/7/i7YAoB7MOtqZv
+	 /ViMMl88iuR/wvUGuHlFXw+urTuByN5n3g8c+TPLvrfVeShI2G2yZ5JTMeMV5FzDqj
+	 Rkg30SeZPoIFJgBsN1TuM99v3kc2VDPNUftCMoR8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730175AbfA1P5J (ORCPT
+        id S1730188AbfA1P5M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:57:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42638 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:57:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729798AbfA1P5F (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:57:05 -0500
+        id S1728174AbfA1P5I (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:57:08 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACAF32175B;
-        Mon, 28 Jan 2019 15:57:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8518321848;
+        Mon, 28 Jan 2019 15:57:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691024;
-        bh=vwyx7JbQxCLjaBAxrpCUsJgYcw/gILGrPJiiEeZeyJA=;
+        s=default; t=1548691027;
+        bh=U0yYD2++o2KSoLg1EAb0XjmFBMknCsYSZ/X114Occ6E=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H2025rL2s0hw3J/oMr9i/Xx0iY2us0E6MRoe2aaXKRRZxb+lv9p3Y/S3IgORsbsUD
-         SDBoTmHQ6CoL/lUdGVrM03gOVhZjwVp/Twr26yB04bdSwHryGWoiMQ8fFY8bPclZ0n
-         oHJDShZq2rg8CsZol2t459VX2SxOczNW21HxHiz4=
+        b=iz3s2M9ddGwZXTG9ep8Nn0t63y3upVRdxKj1t9TOWjGUzhXPurIwDJS0iu1iXQ91B
+         5f6JbjLpH1RtEtR5Dmn4yokieoF3ivHfxLabmoLPmEJiy+l332XoP/z/59fdTA8ORn
+         94BsdxQrQ7ZDG7b9GAYOViFERNWksPN2FwHYh5hY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 265/304] seq_buf: Make seq_buf_puts() null-terminate the buffer
-Date:   Mon, 28 Jan 2019 10:43:02 -0500
-Message-Id: <20190128154341.47195-265-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 266/304] crypto: ux500 - Use proper enum in cryp_set_dma_transfer
+Date:   Mon, 28 Jan 2019 10:43:03 -0500
+Message-Id: <20190128154341.47195-266-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,66 +58,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 0464ed24380905d640030d368cd84a4e4d1e15e2 ]
+[ Upstream commit 9d880c5945c748d8edcac30965f3349a602158c4 ]
 
-Currently seq_buf_puts() will happily create a non null-terminated
-string for you in the buffer. This is particularly dangerous if the
-buffer is on the stack.
+Clang warns when one enumerated type is implicitly converted to another:
 
-For example:
+drivers/crypto/ux500/cryp/cryp_core.c:559:5: warning: implicit
+conversion from enumeration type 'enum dma_data_direction' to different
+enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
+                                direction, DMA_CTRL_ACK);
+                                ^~~~~~~~~
+drivers/crypto/ux500/cryp/cryp_core.c:583:5: warning: implicit
+conversion from enumeration type 'enum dma_data_direction' to different
+enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
+                                direction,
+                                ^~~~~~~~~
+2 warnings generated.
 
-  char buf[8];
-  char secret = "secret";
-  struct seq_buf s;
+dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
+Because we know the value of the dma_data_direction enum from the
+switch statement, we can just use the proper value from
+dma_transfer_direction so there is no more conversion.
 
-  seq_buf_init(&s, buf, sizeof(buf));
-  seq_buf_puts(&s, "foo");
-  printk("Message is %s\n", buf);
+DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
+DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
 
-Can result in:
-
-  Message is fooªªªªªsecret
-
-We could require all users to memset() their buffer to zero before
-use. But that seems likely to be forgotten and lead to bugs.
-
-Instead we can change seq_buf_puts() to always leave the buffer in a
-null-terminated state.
-
-The only downside is that this makes the buffer 1 character smaller
-for seq_buf_puts(), but that seems like a good trade off.
-
-Link: http://lkml.kernel.org/r/20181019042109.8064-1-mpe@ellerman.id.au
-
-Acked-by: Kees Cook <keescook@chromium.org>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/seq_buf.c | 6 +++++-
- 1 file changed, 5 insertions(+), 1 deletion(-)
+ drivers/crypto/ux500/cryp/cryp_core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/lib/seq_buf.c b/lib/seq_buf.c
-index 11f2ae0f9099..6aabb609dd87 100644
---- a/lib/seq_buf.c
-+++ b/lib/seq_buf.c
-@@ -144,9 +144,13 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
+diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
+index d2663a4e1f5e..a92a66b1ff46 100644
+--- a/drivers/crypto/ux500/cryp/cryp_core.c
++++ b/drivers/crypto/ux500/cryp/cryp_core.c
+@@ -556,7 +556,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
+ 		desc = dmaengine_prep_slave_sg(channel,
+ 				ctx->device->dma.sg_src,
+ 				ctx->device->dma.sg_src_len,
+-				direction, DMA_CTRL_ACK);
++				DMA_MEM_TO_DEV, DMA_CTRL_ACK);
+ 		break;
  
- 	WARN_ON(s->size == 0);
+ 	case DMA_FROM_DEVICE:
+@@ -580,7 +580,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
+ 		desc = dmaengine_prep_slave_sg(channel,
+ 				ctx->device->dma.sg_dst,
+ 				ctx->device->dma.sg_dst_len,
+-				direction,
++				DMA_DEV_TO_MEM,
+ 				DMA_CTRL_ACK |
+ 				DMA_PREP_INTERRUPT);
  
-+	/* Add 1 to len for the trailing null byte which must be there */
-+	len += 1;
-+
- 	if (seq_buf_can_fit(s, len)) {
- 		memcpy(s->buffer + s->len, str, len);
--		s->len += len;
-+		/* Don't count the trailing null byte against the capacity */
-+		s->len += len - 1;
- 		return 0;
- 	}
- 	seq_buf_set_overflow(s);
 -- 
 2.19.1
 
