@@ -2,105 +2,138 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DABCC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:55:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63C2DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:55:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F286720989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:55:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fjDvN5g9"
+	by mail.kernel.org (Postfix) with ESMTP id 3166221741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548690935;
+	bh=OlsiW8zHmCCN5goS58S0YW87RtfjyOChk7jWdaj6rfI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=VTcJ2NZCcRaXtd4JW9ADKY2gcRnCCvCBxBfv+2G1nqfK6xUzrgiifrY79kIHWks1u
+	 tqH7q9YZRY7xMgkDrY3ks8Kwr2VWkqqdLMw80ube6qeV1LK4mFARlWjZj4E0um6Lt/
+	 tbY36b1HNFFqK66bZD7ts1raUeNttaS5cz4Nzf/M=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729439AbfA1PzZ (ORCPT
+        id S1729938AbfA1Pze (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:55:25 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:40335 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728859AbfA1PzW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:22 -0500
-Received: by mail-wr1-f68.google.com with SMTP id p4so18623901wrt.7
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:55:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=e0Ha4ellaoNOp/hRaJJ64zG2xd/bafkpJFLNPc8fabM=;
-        b=fjDvN5g9fjipqa2VAqDp3/6TPI+kGIIQBdBnots0pBJug2WXIXVM5VihE4JUIxDF5U
-         mMBzLvPto83PARanyrApdIIFfNbAQxauJGfUn0j514Vpl8AF9ZlWsVHNh7l+WZc3zuVc
-         xPxdsHguQYtEQcYx6fVlSrdUsPV2mrhtoX+Cc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=e0Ha4ellaoNOp/hRaJJ64zG2xd/bafkpJFLNPc8fabM=;
-        b=Cd8Jba+WCWh+gkC4tWfq6WZQ01NTth/dSajy4zaSrqLW3PjNcMMdO1ZVQ/lik8vIyD
-         xyI8DzfqQUPsNrVguWOa7moE1LmgOorFSb2EpJruU3vlRzwf5QdymvtXRBNsITwuKFnb
-         UY5hs1v2XR7wtm3qB+7+ejKy9e3ZpXJa1w3vG8Drj159DFnHBscILqrA3tkHxCNs9UTK
-         SvZpLcCW958PUawKnELXU17zIQ3eWRKXMV5eJ/X0mWKiH4GSjFf+6eEm32cO6SNmc4Kx
-         PlPDqj2Phzg3Wp6KSy0/2x5CCKOihHWawiYDaYEqSIgot/8vxTGlXEB5qRFEIfQpKaAA
-         /YXw==
-X-Gm-Message-State: AJcUukfxJD0+ExvrGwziZq8AjRnO+v1cvLJD75mY9S7pQQNOeY5tsTvE
-        2HTLZgcMyZOQ/35d7n/rkzXDpyVhHAU=
-X-Google-Smtp-Source: ALg8bN7pVAHd9F0TreLg9Cc0Uj68w5uAduzUcUkvlnRY+tmZngsGq3ZgqIn+0L/+OdAUBYa1fIQuAw==
-X-Received: by 2002:a5d:4f10:: with SMTP id c16mr22937298wru.177.1548690920879;
-        Mon, 28 Jan 2019 07:55:20 -0800 (PST)
-Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id p6sm145140485wrx.50.2019.01.28.07.55.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 07:55:19 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     gregkh@linuxfoundation.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 11/13] nvmem: core: Always reference the device returned by nvmem_device_get()
-Date:   Mon, 28 Jan 2019 15:55:04 +0000
-Message-Id: <20190128155506.25566-12-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
-References: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
+        Mon, 28 Jan 2019 10:55:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41406 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729909AbfA1Pzb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:55:31 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B4C1620855;
+        Mon, 28 Jan 2019 15:55:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690930;
+        bh=OlsiW8zHmCCN5goS58S0YW87RtfjyOChk7jWdaj6rfI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=cSB6swBpiKCpKDw37DYfe4cZbgOm+VHovYJfPiIjx+Lest13RcK3ZpVxpIKsD0qbX
+         ySBlD7t/8sgb11iF8zywWb7OavU4dhiAP7AQHF0aB22j2h806gxJEnVXHVVZwl3/D5
+         hpToealI0ZwWQ/JSkeGddbq2/c0V+g1ABeyN1BNw=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Roland Kammerer <roland.kammerer@linbit.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 237/304] drbd: narrow rcu_read_lock in drbd_sync_handshake
+Date:   Mon, 28 Jan 2019 10:42:34 -0500
+Message-Id: <20190128154341.47195-237-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alban Bedel <albeu@free.fr>
+From: Roland Kammerer <roland.kammerer@linbit.com>
 
-In nvmem_device_get(), when the device lookup fails with DT it
-currently fallback on nvmem_find() which is wrong for two reasons.
-First nvmem_find() return NULL when nothing is found instead of an
-ERR_PTR. But nvmem_find() also just lookup the device, it doesn't
-reference the module and increment the reference count like it is done
-in the DT path.
+[ Upstream commit d29e89e34952a9ad02c77109c71a80043544296e ]
 
-To fix this we replace the call to nvmem_find() with a call to
-__nvmem_device_get() which does all the referencing and return a
-proper ERR_PTR in case of error.
+So far there was the possibility that we called
+genlmsg_new(GFP_NOIO)/mutex_lock() while holding an rcu_read_lock().
 
-Signed-off-by: Alban Bedel <albeu@free.fr>
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+This included cases like:
+
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      drbd_bcast_event
+        genlmsg_new(GFP_NOIO) --> may sleep
+
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      notify_helper
+        genlmsg_new(GFP_NOIO) --> may sleep
+
+drbd_sync_handshake (acquire the RCU lock)
+  drbd_asb_recover_1p
+    drbd_khelper
+      notify_helper
+        mutex_lock --> may sleep
+
+While using GFP_ATOMIC whould have been possible in the first two cases,
+the real fix is to narrow the rcu_read_lock.
+
+Reported-by: Jia-Ju Bai <baijiaju1990@163.com>
+Reviewed-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvmem/core.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/block/drbd/drbd_receiver.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index a749a5cb0a4e..1752768dd2d2 100644
---- a/drivers/nvmem/core.c
-+++ b/drivers/nvmem/core.c
-@@ -874,7 +874,7 @@ struct nvmem_device *nvmem_device_get(struct device *dev, const char *dev_name)
+diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
+index 61c392752fe4..1b9822f264d2 100644
+--- a/drivers/block/drbd/drbd_receiver.c
++++ b/drivers/block/drbd/drbd_receiver.c
+@@ -3364,7 +3364,7 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 	enum drbd_conns rv = C_MASK;
+ 	enum drbd_disk_state mydisk;
+ 	struct net_conf *nc;
+-	int hg, rule_nr, rr_conflict, tentative;
++	int hg, rule_nr, rr_conflict, tentative, always_asbp;
  
+ 	mydisk = device->state.disk;
+ 	if (mydisk == D_NEGOTIATING)
+@@ -3415,8 +3415,12 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 
+ 	rcu_read_lock();
+ 	nc = rcu_dereference(peer_device->connection->net_conf);
++	always_asbp = nc->always_asbp;
++	rr_conflict = nc->rr_conflict;
++	tentative = nc->tentative;
++	rcu_read_unlock();
+ 
+-	if (hg == 100 || (hg == -100 && nc->always_asbp)) {
++	if (hg == 100 || (hg == -100 && always_asbp)) {
+ 		int pcount = (device->state.role == R_PRIMARY)
+ 			   + (peer_role == R_PRIMARY);
+ 		int forced = (hg == -100);
+@@ -3455,9 +3459,6 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
+ 			     "Sync from %s node\n",
+ 			     (hg < 0) ? "peer" : "this");
  	}
+-	rr_conflict = nc->rr_conflict;
+-	tentative = nc->tentative;
+-	rcu_read_unlock();
  
--	return nvmem_find(dev_name);
-+	return __nvmem_device_get(NULL, dev_name);
- }
- EXPORT_SYMBOL_GPL(nvmem_device_get);
- 
+ 	if (hg == -100) {
+ 		/* FIXME this log message is not correct if we end up here
 -- 
-2.20.1
+2.19.1
 
