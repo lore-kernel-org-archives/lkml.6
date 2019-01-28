@@ -2,123 +2,150 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDBF1C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:31:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0628CC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:31:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A54CA2171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:31:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBBF62171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:31:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vGiZScbY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QY5Mf6e8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727837AbfA1TbB (ORCPT
+        id S1728135AbfA1TbL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:31:01 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:35295 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727000AbfA1TbA (ORCPT
+        Mon, 28 Jan 2019 14:31:11 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:39766 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727000AbfA1TbK (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:31:00 -0500
-Received: by mail-yb1-f196.google.com with SMTP id 64so2767389ybs.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:30:59 -0800 (PST)
+        Mon, 28 Jan 2019 14:31:10 -0500
+Received: by mail-pf1-f193.google.com with SMTP id r136so8465141pfc.6;
+        Mon, 28 Jan 2019 11:31:10 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6+c1DogXk+T7FScEktDNuwvUTFJdA6xbog2AVFLsN88=;
-        b=vGiZScbYZB4o1tQEmY2iPmam1/hWxe60CqPJSFXGU3vYYFl8rOc0+WPtuCP425XWvc
-         N6rXQ1YGbph1CPwi071T9KGNDkyuj5b6etxediAPMQDq40BlYZCL2NjOJwQ6+BV0zUtb
-         q9yFehym24FBY2WW1cyFyYQmR7iPj7MF5Edl8dQrz7e/dWx9iDb3AvzH1BnlumuSh9U1
-         Sqnjb5vJsdQihyeRoDOXyrWUHt3I1dJYPhzf9WpysXWZh9z8Vtnu8MdJdQjqVz+yq/Zh
-         1dro7Xqx+KzwBR7rEpXxiama47eIg4o1C1NYK+vstEb6MuB3f1TMuIHTVQyqaI2np02t
-         du+A==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YgMMV+e4v4TdansTkPGDEqka+N3nOM7KtfnA0QzqkkU=;
+        b=QY5Mf6e84IOFLWh7Rf4SEp5DEnya/lGhkQXJnrTdNOFxlQ2R9xzTEV6ydwd1ue4WEu
+         9yEQHEDKdSksVMLzjDSPeZ7Q0vtDSLs+UPp8S9rnKoYwd19eMhurFRrdNFWMVDrG7Exr
+         eQU7R2kFV0HL4o78paiV8rbLVoQlCYnVECtrk51kXllVKPAaV8bJ96L67UYlc+nE3j0z
+         cgtUuLL43UqN4mWq+xK/ArU8116GV11tQbRIv+zHxp3zrA4k8nNkArwJD9OMdfelE7HQ
+         KXimSYuVETjowkqDH7VM+u2kfJ9cS1pi9PkHZIcxSLLqBe8AeqD3sxe4iM6sVw0T+SRh
+         qzGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6+c1DogXk+T7FScEktDNuwvUTFJdA6xbog2AVFLsN88=;
-        b=Z3+atJLzKAvI3Uy7AOyqVcWRVv/BV7fqypeMaNi66gEyikMkBrojC8m/8jeSvUJsEe
-         7lY+sX1iRPiUJP5SUQ1XGEC7mvVkwUNr0v2oczDFI4W+jFBGMPC9f18QYFtisyGO80dh
-         oQxzDiPDrvlyqu7S09/BuYrp3xz2MWUQZizuUpmmAp9J4l8qPnAO0MoFP1uguhSe6vEp
-         VziQsQI+G9vzCtrFcPhfKfa9QBLddxBOziibW13x0voEHI66EdN5T5KoqkCeg1o2IwXb
-         xW1wpZMOvudCeqd58dxsrTY6g5zdjkl0pWLlPTXbXq5032T8Zev/jhBXEHaZRWmFqIrt
-         dyxw==
-X-Gm-Message-State: AJcUukeupUFndkZoYnb3vniR+sd1EYstjwj+aQayXKOprcv1Ws9CJ0Kn
-        uJ7+lAfmXJjoAwSRk8l+nn3+ujH5mWQ6Qvp3X5GKqQ==
-X-Google-Smtp-Source: ALg8bN6r3OGxLHttI9yquLaAUD/7QrANFxf8YI32CpQtdDboNXlQAvvm6lBsZhwKGcmCdYosnGmoiYPhFIC3mdQpfMQ=
-X-Received: by 2002:a25:7ec5:: with SMTP id z188mr22011871ybc.282.1548703859424;
- Mon, 28 Jan 2019 11:30:59 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YgMMV+e4v4TdansTkPGDEqka+N3nOM7KtfnA0QzqkkU=;
+        b=A8684nwOWGMtKisS0Sb/Uim92PdWGtRdA7uA790ik/5N59zEZbZQg0/8Gzgkk/ieHm
+         QOJ/iAToihXwJ55P6JiU0QjzVNv4ocnbohXL1zbNvUKwFDGu/QCPSL49Iwnu3OlIYi7G
+         b8nfIv9G+BI8FDr99r7V15wMXUmkJQNH/GxvM+qvDtBm+ILq0xMOVXkLgwkaznXrVEhU
+         LoDfNsgCt9rk53kh2h/GOfXKZ1/S1P2uHyWX3ygA6sgqb2LrjlvVU/iszUIaLM0UCiss
+         egi6tyjZPYTA7BWhNlmJwcRA+/6eAReifd1bHMCCw42Smq11glXRoFlAEcGDXPyxe9iR
+         xr6A==
+X-Gm-Message-State: AJcUukcT1Cu19z3VF95WBysAGDjrAG3hUDljlFyC0P9tQChm7cKCZqmi
+        8QaOVG5HdV3puHWspZ81fDI=
+X-Google-Smtp-Source: ALg8bN7aEuKQwSHIpK11CoXVBZ3Ydv1NncDgNdR6C8HDsLGTPmE+Lmr96+sztoMSpfDVoUYgl/+JKQ==
+X-Received: by 2002:a62:5301:: with SMTP id h1mr22947005pfb.17.1548703869450;
+        Mon, 28 Jan 2019 11:31:09 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id s2sm61444679pfa.167.2019.01.28.11.31.08
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 11:31:08 -0800 (PST)
+Date:   Mon, 28 Jan 2019 11:31:07 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Jonathan Bakker <xc-racer2@live.ca>
+Cc:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] input: dt-bindings: Add binding for bma150 sensor
+Message-ID: <20190128193107.GF34692@dtor-ws>
+References: <20190125184400.17669-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190125184400.17669-4-pawel.mikolaj.chmiel@gmail.com>
+ <20190126012802.GD212026@dtor-ws>
+ <BYAPR02MB54950EDEEE82D5F06C7131CEA3940@BYAPR02MB5495.namprd02.prod.outlook.com>
 MIME-Version: 1.0
-References: <20190126095131.4756-1-enric.balletbo@collabora.com> <20190126095131.4756-6-enric.balletbo@collabora.com>
-In-Reply-To: <20190126095131.4756-6-enric.balletbo@collabora.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Mon, 28 Jan 2019 11:30:48 -0800
-Message-ID: <CABXOdTej7tTzj0khvYmtM7Y4f+FaHrDd5xMfPTLSkWJxqsnKpg@mail.gmail.com>
-Subject: Re: [PATCH v2 05/12] platform/chrome: cros_ec_vbc: switch to SPDX identifier
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BYAPR02MB54950EDEEE82D5F06C7131CEA3940@BYAPR02MB5495.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 1:51 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Adopt the SPDX license identifier headers to ease license compliance
-> management.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+On Sat, Jan 26, 2019 at 03:39:17AM +0000, Jonathan Bakker wrote:
+> 
+> 
+> On 2019-01-25 5:28 p.m., Dmitry Torokhov wrote:
+> > On Fri, Jan 25, 2019 at 07:44:00PM +0100, Paweł Chmiel wrote:
+> >> From: Jonathan Bakker <xc-racer2@live.ca>
+> >>
+> >> Add device tree bindings for Bosch BMA150 Accelerometer Sensor
+> >>
+> >> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> >> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> >> ---
+> >>  .../bindings/input/bosch,bma150.txt           | 20 +++++++++++++++++++
+> >>  1 file changed, 20 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/input/bosch,bma150.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/input/bosch,bma150.txt b/Documentation/devicetree/bindings/input/bosch,bma150.txt
+> >> new file mode 100644
+> >> index 000000000000..290c60e38c70
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/input/bosch,bma150.txt
+> >> @@ -0,0 +1,20 @@
+> >> +* Bosch BMA150 Accelerometer Sensor
+> >> +
+> >> +Also works for the SMB380 and BMA023 accelerometers
+> >> +
+> >> +Required properties:
+> >> +- compatible : Should be "bosch,bma150"
+> >> +- reg : The I2C address of the sensor
+> >> +
+> >> +Optional properties:
+> >> +- interrupt-parent : should be the phandle for the interrupt controller
+> >> +- interrupts : Interrupt mapping for IRQ.  If not present device will be polled
+> >> +
+> >> +Example:
+> >> +
+> >> +bma150@38 {
+> >> +	compatible = "bosch,bma150";
+> >> +	reg = <0x38>;
+> >> +	interrupt-parent = <&gph0>;
+> >> +	interrupts = <1 IRQ_TYPE_LEVEL_HIGH>;
+> > 
+> > Hmm, here you say that IRQ_TYPE_LEVEL_HIGH, so it is level interrupts,
+> > but the driver overrides to rising edge unconditionally. Since you are
+> > the first to add DT support please make separate patch to driver to drop
+> > the ORQ trigger from request_theraded_irq() leaving only IRQF_ONESHOT.
+> > 
+> This was simply an oversight on my part, my device was using the the polled method as opposed to an interrupt.  I'll correct this in v2.
+> > Also please create patch removing platform data support as noone is
+> > using it upstream.
+> > 
+> Will do.
+> > What about the rest of config parameters from bma150_cfg? They should be
+> > handled as device properties too.
+> > 
+> Ok, I can add them as well.  I didn't bother as the comment in the source code says that the default values are the ones recommended by Bosch.
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
+OK, if you do not need to handle them then we can leave this task to the
+next user ;)
 
-> ---
->
-> Changes in v2: None
->
->  drivers/platform/chrome/cros_ec_vbc.c | 24 +++++-------------------
->  1 file changed, 5 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/platform/chrome/cros_ec_vbc.c b/drivers/platform/chrome/cros_ec_vbc.c
-> index af9bfe6f385c..8392a1ec33a7 100644
-> --- a/drivers/platform/chrome/cros_ec_vbc.c
-> +++ b/drivers/platform/chrome/cros_ec_vbc.c
-> @@ -1,22 +1,8 @@
-> -/*
-> - * cros_ec_vbc - Expose the vboot context nvram to userspace
-> - *
-> - * Copyright (C) 2015 Collabora Ltd.
-> - *
-> - * based on vendor driver,
-> - *
-> - * Copyright (C) 2012 The Chromium OS Authors
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-> - * GNU General Public License for more details.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +// Expose the vboot context nvram to userspace
-> +//
-> +// Copyright (C) 2012 Google, Inc.
-> +// Copyright (C) 2015 Collabora Ltd.
->
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
-> --
-> 2.20.1
->
+Thanks.
+
+-- 
+Dmitry
