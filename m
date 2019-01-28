@@ -4,52 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D96E0C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E817C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6F2C2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 23BC02084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692800;
-	bh=RqI/GMXfWweasWxQvUq6lJMObMV3FXbzTWsP7yCxBjc=;
+	s=default; t=1548692804;
+	bh=I5qzahikhdUXSAW++ei+7pd8gvPOOOKhMPaI3gQkbCU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lRcg5II0WqFDDe/uBqIdJpoh2xSGpkSmJyjqGKTCqkrZqSoqI4YEO+bAh5B4A9R4a
-	 9sUtqXz1GnxomK5s78kk8yoFrJWSOUhG0jHcEzl3mbMr/O3jD/2XHX/ao80l0X+agt
-	 0hiMrHwirHwvMp9xmpCScnyg3o3eqkwnp7S6pr0U=
+	b=iprzHpffc8/vRX65f3Ov+YL+b1QciLI1gFTzEv/m1pODoIQCvLqU8y5vdWt+LRFYX
+	 kUnXBB2Rzvz35fO19+Sz8hzJW8vwfPVsj5s0gLgw87WDJh9NE+yhbFXAD51bFIsDn4
+	 sgee4v80Af66AeQwcYcgGlF3PfGC+ssampp7pJts=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390252AbfA1Q0i (ORCPT
+        id S2390267AbfA1Q0m (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:26:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35872 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:26:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35972 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390218AbfA1Q0b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:31 -0500
+        id S2390241AbfA1Q0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 54B2F2171F;
-        Mon, 28 Jan 2019 16:26:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9761E2084A;
+        Mon, 28 Jan 2019 16:26:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692791;
-        bh=RqI/GMXfWweasWxQvUq6lJMObMV3FXbzTWsP7yCxBjc=;
+        s=default; t=1548692795;
+        bh=I5qzahikhdUXSAW++ei+7pd8gvPOOOKhMPaI3gQkbCU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GXjJJvf9DDp7gN5yKI4P8uu5mo5z2wT2Sz7OhB7HqrE6ygak3NIfpKW3UYmHD1Yp4
-         eYCYo+LoRtcbB9T378F43gZhBLmIQYgkOHHEX9Ne5XA9EubmeLOxbfn6bgmRuk65bc
-         p6ZKJhGDafwuc8P6U1AjslzMYEoA4X6Vv4uJoXfQ=
+        b=KOF8PpwqjrUy/pBrJNYqtCCMV4QfXUyh34uA9T2L/8VPGIYxg19v5H0ECb961qm+3
+         bFiDla13+dc/hEouVaZ8qAv1OUxD1d+Fkwm5d1KS9DMxfwLd2jerPuNlm4hdBPLPpY
+         mLl7MxBtJrmU6fhyxP9g8Z3qKjsaaBuHi2G2vE5w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bob Peterson <rpeterso@redhat.com>,
-        David Teigland <teigland@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, cluster-devel@redhat.com
-Subject: [PATCH AUTOSEL 3.18 05/61] dlm: Don't swamp the CPU with callbacks queued during recovery
-Date:   Mon, 28 Jan 2019 11:25:27 -0500
-Message-Id: <20190128162623.59854-5-sashal@kernel.org>
+Cc:     Andy Duan <fugang.duan@nxp.com>, Lukas Wunner <lukas@wunner.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-serial@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 08/61] serial: fsl_lpuart: clear parity enable bit when disable parity
+Date:   Mon, 28 Jan 2019 11:25:30 -0500
+Message-Id: <20190128162623.59854-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,60 +59,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Peterson <rpeterso@redhat.com>
+From: Andy Duan <fugang.duan@nxp.com>
 
-[ Upstream commit 216f0efd19b9cc32207934fd1b87a45f2c4c593e ]
+[ Upstream commit 397bd9211fe014b347ca8f95a8f4e1017bac1aeb ]
 
-Before this patch, recovery would cause all callbacks to be delayed,
-put on a queue, and afterward they were all queued to the callback
-work queue. This patch does the same thing, but occasionally takes
-a break after 25 of them so it won't swamp the CPU at the expense
-of other RT processes like corosync.
+Current driver only enable parity enable bit and never clear it
+when user set the termios. The fix clear the parity enable bit when
+PARENB flag is not set in termios->c_cflag.
 
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: David Teigland <teigland@redhat.com>
+Cc: Lukas Wunner <lukas@wunner.de>
+Signed-off-by: Andy Duan <fugang.duan@nxp.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/ast.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/tty/serial/fsl_lpuart.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/dlm/ast.c b/fs/dlm/ast.c
-index dcea1e37a1b7..f18619bc2e09 100644
---- a/fs/dlm/ast.c
-+++ b/fs/dlm/ast.c
-@@ -290,6 +290,8 @@ void dlm_callback_suspend(struct dlm_ls *ls)
- 		flush_workqueue(ls->ls_callback_wq);
- }
- 
-+#define MAX_CB_QUEUE 25
-+
- void dlm_callback_resume(struct dlm_ls *ls)
- {
- 	struct dlm_lkb *lkb, *safe;
-@@ -300,15 +302,23 @@ void dlm_callback_resume(struct dlm_ls *ls)
- 	if (!ls->ls_callback_wq)
- 		return;
- 
-+more:
- 	mutex_lock(&ls->ls_cb_mutex);
- 	list_for_each_entry_safe(lkb, safe, &ls->ls_cb_delay, lkb_cb_list) {
- 		list_del_init(&lkb->lkb_cb_list);
- 		queue_work(ls->ls_callback_wq, &lkb->lkb_cb_work);
- 		count++;
-+		if (count == MAX_CB_QUEUE)
-+			break;
+diff --git a/drivers/tty/serial/fsl_lpuart.c b/drivers/tty/serial/fsl_lpuart.c
+index 92b7a5bf7c4d..839e65da4d3f 100644
+--- a/drivers/tty/serial/fsl_lpuart.c
++++ b/drivers/tty/serial/fsl_lpuart.c
+@@ -1284,6 +1284,8 @@ lpuart_set_termios(struct uart_port *port, struct ktermios *termios,
+ 			else
+ 				cr1 &= ~UARTCR1_PT;
+ 		}
++	} else {
++		cr1 &= ~UARTCR1_PE;
  	}
- 	mutex_unlock(&ls->ls_cb_mutex);
  
- 	if (count)
- 		log_rinfo(ls, "dlm_callback_resume %d", count);
-+	if (count == MAX_CB_QUEUE) {
-+		count = 0;
-+		cond_resched();
-+		goto more;
-+	}
- }
+ 	/* ask the core to calculate the divisor */
+@@ -1419,6 +1421,8 @@ lpuart32_set_termios(struct uart_port *port, struct ktermios *termios,
+ 			else
+ 				ctrl &= ~UARTCTRL_PT;
+ 		}
++	} else {
++		ctrl &= ~UARTCTRL_PE;
+ 	}
  
+ 	/* ask the core to calculate the divisor */
 -- 
 2.19.1
 
