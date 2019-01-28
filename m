@@ -2,167 +2,101 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E22AEC282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 01:53:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A9FBC282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 02:09:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBE8F2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 01:53:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 173812084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 02:09:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="bCiJQ+bW"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726620AbfA1Bxl (ORCPT
+        id S1726681AbfA1CJz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 20:53:41 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52894 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726511AbfA1Bxl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 20:53:41 -0500
-Received: from DGGEMS410-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id EC982CF592FDD882AF67;
-        Mon, 28 Jan 2019 09:53:38 +0800 (CST)
-Received: from [127.0.0.1] (10.177.19.219) by DGGEMS410-HUB.china.huawei.com
- (10.3.19.210) with Microsoft SMTP Server id 14.3.408.0; Mon, 28 Jan 2019
- 09:53:31 +0800
-Subject: Re: [Openipmi-developer] [PATCH v2] ipmi_si: fix use-after-free of
- resource->name
-To:     <minyard@acm.org>
-References: <1548494094-14356-1-git-send-email-yangyingliang@huawei.com>
- <20190126150809.GA11354@minyard.net>
-CC:     <cminyard@mvista.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>,
-        <openipmi-developer@lists.sourceforge.net>,
-        <qiaonuohan@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>
-From:   Yang Yingliang <yangyingliang@huawei.com>
-Message-ID: <5C4E609A.7050609@huawei.com>
-Date:   Mon, 28 Jan 2019 09:53:30 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:38.0) Gecko/20100101
- Thunderbird/38.5.1
-MIME-Version: 1.0
-In-Reply-To: <20190126150809.GA11354@minyard.net>
-Content-Type: text/plain; charset="windows-1252"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.19.219]
-X-CFilter-Loop: Reflected
+        Sun, 27 Jan 2019 21:09:55 -0500
+Received: from outils.crapouillou.net ([89.234.176.41]:35540 "EHLO
+        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726602AbfA1CJz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 21:09:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
+        s=mail; t=1548641391; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:content-type:
+         content-transfer-encoding:in-reply-to:references;
+        bh=dP4bfONEBe24sSvghBGzictW5EcUL1UipMDgMUEqHUo=;
+        b=bCiJQ+bWnsyX7jms2TAg7CrOUcoSvtPB6R87Q7nde+v68B7676oab776rsroTQ+eDfRxml
+        MFfCbrYlFbg11FuGj2z1BuXkuTb0qsMmJw12ES9LLszFXrfDmflaMqXxEMcF7593PmvV/T
+        dgNZ88M1KDYKnt/7kPvYmkAkLuHV4pI=
+From:   Paul Cercueil <paul@crapouillou.net>
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Cc:     Maarten ter Huurne <maarten@treewalker.org>,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Paul Cercueil <paul@crapouillou.net>, stable@vger.kernel.org
+Subject: [PATCH 1/2] clk: ingenic: Fix round_rate misbehaving with non-integer dividers
+Date:   Sun, 27 Jan 2019 23:09:20 -0300
+Message-Id: <20190128020921.16309-1-paul@crapouillou.net>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Take a parent rate of 180 MHz, and a requested rate of 4.285715 MHz.
+This results in a theorical divider of 41.999993 which is then rounded
+up to 42. The .round_rate function would then return (180 MHz / 42) as
+the clock, rounded down, so 4.285714 MHz.
 
+Calling clk_set_rate on 4.285714 MHz would round the rate again, and
+give a theorical divider of 42,0000028, now rounded up to 43, and the
+rate returned would be (180 MHz / 43) which is 4.186046 MHz, aka. not
+what we requested.
 
-On 2019/1/26 23:08, Corey Minyard wrote:
-> On Sat, Jan 26, 2019 at 05:14:54PM +0800, Yang Yingliang wrote:
->> When we excute the following commands, we got oops
->> rmmod ipmi_si
->> cat /proc/ioports
->>
-> snip..
->
->> If io_setup is called successful in try_smi_init() but try_smi_init()
->> goes out_err before calling ipmi_register_smi(), so ipmi_unregister_smi()
->> will not be called while removing module. It leads to the resource that
->> allocated in io_setup() can not be freed, but the name(DEVICE_NAME) of
->> resource is freed while removing the module. It causes use-after-free
->> when cat /proc/ioports.
->>
->> Fix this by calling io_cleanup() while try_smi_init() goes to out_err
->> and don't call release_region() if request_region() is not called to
->> avoid error prints.
->>
->> Fixes: 93c303d2045b ("ipmi_si: Clean up shutdown a bit")
->> Cc: stable@vger.kernel.org
->> Reported-by: NuoHan Qiao <qiaonuohan@huawei.com>
->> Suggested-by: Corey Minyard <cminyard@mvista.com>
->> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
->> ---
->>   drivers/char/ipmi/ipmi_si_intf.c    | 5 +++++
->>   drivers/char/ipmi/ipmi_si_port_io.c | 3 +++
->>   2 files changed, 8 insertions(+)
->>
->> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
->> index dc8603d..f1b9fda 100644
->> --- a/drivers/char/ipmi/ipmi_si_intf.c
->> +++ b/drivers/char/ipmi/ipmi_si_intf.c
->> @@ -2085,6 +2085,11 @@ static int try_smi_init(struct smi_info *new_smi)
->>   	WARN_ON(new_smi->io.dev->init_name != NULL);
->>   
->>    out_err:
->> +	if (rv && new_smi->io.io_cleanup) {
->> +		new_smi->io.io_cleanup(&new_smi->io);
->> +		new_smi->io.io_cleanup = NULL;
->> +	}
->> +
->>   	kfree(init_name);
->>   	return rv;
->>   }
->> diff --git a/drivers/char/ipmi/ipmi_si_port_io.c b/drivers/char/ipmi/ipmi_si_port_io.c
->> index ef6dffc..0c46a3f 100644
->> --- a/drivers/char/ipmi/ipmi_si_port_io.c
->> +++ b/drivers/char/ipmi/ipmi_si_port_io.c
->> @@ -53,6 +53,9 @@ static void port_cleanup(struct si_sm_io *io)
->>   	unsigned int addr = io->addr_data;
->>   	int          idx;
->>   
->> +	if (io->regsize != 1 && io->regsize != 2 && io->regsize != 4)
->> +		return;
->> +
-> Why do you need this part?  I can't see the reason for it.  The addr
-> part below should handle that, especially with the above change.
->
-> -corey
-If ipmi_si_port_setup() returns in default case, request_region() won't 
-be called,
-so we don't need to call release_region() or it will prints some warning 
-messages like
-this "Trying to free nonexistent resource...".
+Fix this by rounding up the divisions.
 
-We don't need call io_cleanup() until the io_setup() returns successful.
-How about change this part like this:
+Signed-off-by: Paul Cercueil <paul@crapouillou.net>
+Tested-by: Maarten ter Huurne <maarten@treewalker.org>
+Cc: <stable@vger.kernel.org>
+---
+ drivers/clk/ingenic/cgu.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/char/ipmi/ipmi_si_port_io.c 
-b/drivers/char/ipmi/ipmi_si_port_io.c
-index ef6dffc..03924c3 100644
---- a/drivers/char/ipmi/ipmi_si_port_io.c
-+++ b/drivers/char/ipmi/ipmi_si_port_io.c
-@@ -68,8 +68,6 @@ int ipmi_si_port_setup(struct si_sm_io *io)
-         if (!addr)
-                 return -ENODEV;
-
--       io->io_cleanup = port_cleanup;
--
-         /*
-          * Figure out the actual inb/inw/inl/etc routine to use based
-          * upon the register size.
-@@ -109,5 +107,8 @@ int ipmi_si_port_setup(struct si_sm_io *io)
-                         return -EIO;
-                 }
-         }
-+
-+       io->io_cleanup = port_cleanup;
-+
-         return 0;
-  }
-
-Thanks,
-Yang
->
->>   	if (addr) {
->>   		for (idx = 0; idx < io->io_size; idx++)
->>   			release_region(addr + idx * io->regspacing,
->> -- 
->> 1.8.3
->>
->>
->>
->>
->> _______________________________________________
->> Openipmi-developer mailing list
->> Openipmi-developer@lists.sourceforge.net
->> https://lists.sourceforge.net/lists/listinfo/openipmi-developer
-> .
->
-
+diff --git a/drivers/clk/ingenic/cgu.c b/drivers/clk/ingenic/cgu.c
+index 5ef7d9ba2195..b40160eb3372 100644
+--- a/drivers/clk/ingenic/cgu.c
++++ b/drivers/clk/ingenic/cgu.c
+@@ -426,16 +426,16 @@ ingenic_clk_round_rate(struct clk_hw *hw, unsigned long req_rate,
+ 	struct ingenic_clk *ingenic_clk = to_ingenic_clk(hw);
+ 	struct ingenic_cgu *cgu = ingenic_clk->cgu;
+ 	const struct ingenic_cgu_clk_info *clk_info;
+-	long rate = *parent_rate;
++	unsigned int div = 1;
+ 
+ 	clk_info = &cgu->clock_info[ingenic_clk->idx];
+ 
+ 	if (clk_info->type & CGU_CLK_DIV)
+-		rate /= ingenic_clk_calc_div(clk_info, *parent_rate, req_rate);
++		div = ingenic_clk_calc_div(clk_info, *parent_rate, req_rate);
+ 	else if (clk_info->type & CGU_CLK_FIXDIV)
+-		rate /= clk_info->fixdiv.div;
++		div = clk_info->fixdiv.div;
+ 
+-	return rate;
++	return DIV_ROUND_UP(*parent_rate, div);
+ }
+ 
+ static int
+@@ -455,7 +455,7 @@ ingenic_clk_set_rate(struct clk_hw *hw, unsigned long req_rate,
+ 
+ 	if (clk_info->type & CGU_CLK_DIV) {
+ 		div = ingenic_clk_calc_div(clk_info, parent_rate, req_rate);
+-		rate = parent_rate / div;
++		rate = DIV_ROUND_UP(parent_rate, div);
+ 
+ 		if (rate != req_rate)
+ 			return -EINVAL;
+-- 
+2.20.1.495.gaa96b0ce6b
 
