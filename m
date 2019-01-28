@@ -2,87 +2,152 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8206C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CF03C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:02:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A70F520879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:01:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548687691;
-	bh=7XEjCl0KpbsI3XrFqClcn/docQTvVXDmb56gU7AkLms=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=yB7jtil9Q1AYSqQaDl+E1m0+mhlOqmzTexA207h7hf4mf8QZ25uDHMasvG4o4hNtA
-	 lj+4qJOMB0HiwLfn5uJfotFxXJwJqfK3wdfzJVuaum0h2Gxc0QHkJB9glCQDITMUqa
-	 AOU+xwe/xYN+MaTCTwsSooV8K4ZlT0q5bUaS3x5M=
+	by mail.kernel.org (Postfix) with ESMTP id EA7662171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:02:05 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfA1PB3 (ORCPT
+        id S1726829AbfA1PCE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:01:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56082 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:02:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:60810 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbfA1PB3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:01:29 -0500
-Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1726661AbfA1PCE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:02:04 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9FBCC20879;
-        Mon, 28 Jan 2019 15:01:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548687689;
-        bh=7XEjCl0KpbsI3XrFqClcn/docQTvVXDmb56gU7AkLms=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=Vlj2RDLVbjnNUO4UYJuOvI9n6txfr2EeihNEihqkYSysuRqGUCT60pHfMrWrx+y+w
-         kx+ZWTWT9UKhZoRTXJCtjpHYu0VY1dXbgXeRctKNjTXSLYM21AEo9PJxP43hA0cQF9
-         LT1gyqr4WXk47B2SSR7MktspHehWXdME1UhGbrpk=
-Subject: Re: [PATCH 1/4] selftests: lib: allow to override CC in the top-level
- Makefile
-To:     =?UTF-8?Q?Daniel_D=c3=adaz?= <daniel.diaz@linaro.org>
-Cc:     Fathi Boudra <fathi.boudra@linaro.org>,
-        Denys Dmytriyenko <denys@ti.com>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        shuah <shuah@kernel.org>
-References: <20190116174320.14938-1-daniel.diaz@linaro.org>
- <7d75f420-d624-d53d-4fa1-3827c90fa608@kernel.org>
- <CAEUSe7_eYmMSovO4JAabh+83CtY2L8eeMoCVKKS5P-fs7zVhjg@mail.gmail.com>
-From:   shuah <shuah@kernel.org>
-Message-ID: <a68c3fdd-081a-74ea-8d98-30eaf3d70446@kernel.org>
-Date:   Mon, 28 Jan 2019 08:01:15 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        by mx1.redhat.com (Postfix) with ESMTPS id 17DD29FDFC;
+        Mon, 28 Jan 2019 15:02:03 +0000 (UTC)
+Received: from xps (ovpn-116-106.phx2.redhat.com [10.3.116.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D3F8C58826;
+        Mon, 28 Jan 2019 15:01:59 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 10:01:56 -0500
+From:   Rafael Aquini <aquini@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vratislav Bendel <vbendel@redhat.com>
+Subject: Re: [PATCH RFC] mm: migrate: don't rely on PageMovable() of newpage
+ after unlocking it
+Message-ID: <20190128150156.GA10872@xps>
+References: <20190128121609.9528-1-david@redhat.com>
+ <20190128130709.GJ18811@dhcp22.suse.cz>
+ <b03cae19-d02a-0ba2-69a1-010ee76748e7@redhat.com>
+ <20190128132146.GK18811@dhcp22.suse.cz>
+ <17e7d7e4-f4ca-a681-93e5-92a0c285be14@redhat.com>
+ <20190128133514.GL18811@dhcp22.suse.cz>
+ <cb3eccaf-0fbf-f3b8-dbbe-070acb9837be@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <CAEUSe7_eYmMSovO4JAabh+83CtY2L8eeMoCVKKS5P-fs7zVhjg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb3eccaf-0fbf-f3b8-dbbe-070acb9837be@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 28 Jan 2019 15:02:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Daniel,
-
-On 1/18/19 10:54 AM, Daniel Díaz wrote:
-> Hello!
+On Mon, Jan 28, 2019 at 03:38:38PM +0100, David Hildenbrand wrote:
+> On 28.01.19 14:35, Michal Hocko wrote:
+> > On Mon 28-01-19 14:22:52, David Hildenbrand wrote:
+> >> On 28.01.19 14:21, Michal Hocko wrote:
+> >>> On Mon 28-01-19 14:14:28, David Hildenbrand wrote:
+> >>>> On 28.01.19 14:07, Michal Hocko wrote:
+> >>>>> On Mon 28-01-19 13:16:09, David Hildenbrand wrote:
+> >>>>> [...]
+> >>>>>> My theory:
+> >>>>>>
+> >>>>>> In __unmap_and_move(), we lock the old and newpage and perform the
+> >>>>>> migration. In case of vitio-balloon, the new page will become
+> >>>>>> movable, the old page will no longer be movable.
+> >>>>>>
+> >>>>>> However, after unlocking newpage, I think there is nothing stopping
+> >>>>>> the newpage from getting dequeued and freed by virtio-balloon. This
+> >>>>>> will result in the newpage
+> >>>>>> 1. No longer having PageMovable()
+> >>>>>> 2. Getting moved to the local list before finally freeing it (using
+> >>>>>>    page->lru)
+> >>>>>
+> >>>>> Does that mean that the virtio-balloon can change the Movable state
+> >>>>> while there are other users of the page? Can you point to the code that
+> >>>>> does it? How come this can be safe at all? Or is the PageMovable stable
+> >>>>> only under the page lock?
+> >>>>>
+> >>>>
+> >>>> PageMovable is stable under the lock. The relevant instructions are in
+> >>>>
+> >>>> mm/balloon_compaction.c and include/linux/balloon_compaction.h
+> >>>
+> >>> OK, I have just checked __ClearPageMovable and it indeed requires
+> >>> PageLock. Then we also have to move is_lru = __PageMovable(page) after
+> >>> the page lock.
+> >>>
+> >>
+> >> I assume that is fine as is as the page is isolated? (yes, it will be
+> >> modified later when moving but we are interested in the original state)
+> > 
+> > OK, I've missed that the page is indeed isolated. Then the patch makes
+> > sense to me.
+> > 
 > 
-> On Wed, 16 Jan 2019 at 15:56, shuah <shuah@kernel.org> wrote:
->>
->> On 1/16/19 10:43 AM, Daniel Díaz wrote:
->>> From: Fathi Boudra <fathi.boudra@linaro.org>
->>>
->>> Relax CC assignment to allow to override CC in the top-level Makefile.
->>>
->>> Signed-off-by: Denys Dmytriyenko <denys@ti.com>
+> Thanks Michal. I assume this has broken ever since balloon compaction
+> was introduced. I'll wait a little more and then resend as !RFC with a
+> cc-stable tag.
+>
 
-Author signed-off missing on this patch. I am dropping this patch
-from rc5 for now. Please fix it resend the patch. In the future,
-I would like to see that author sends the patch.
+Yes, balloon deflation could always race against migration
+This race was a problem, initially, and was dealt with, via:
 
-thanks,
--- Shuah
+commit 117aad1e9e4d97448d1df3f84b08bd65811e6d6a
+Author: Rafael Aquini <aquini@redhat.com>
+Date:   Mon Sep 30 13:45:16 2013 -0700
 
+    mm: avoid reinserting isolated balloon pages into LRU lists
+
+ 
+
+I think this upstream patch has re-introduced it, in a more subtle way,
+as we're stumbling on it now, again:
+
+commit d6d86c0a7f8ddc5b38cf089222cb1d9540762dc2
+Author: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
+Date:   Thu Oct 9 15:29:27 2014 -0700
+
+    mm/balloon_compaction: redesign ballooned pages management
+    
+
+
+On this particular race against migration case, virtio ballon deflation would 
+not see it before
+
+commit b1123ea6d3b3da25af5c8a9d843bd07ab63213f4
+Author: Minchan Kim <minchan@kernel.org>
+Date:   Tue Jul 26 15:23:09 2016 -0700
+
+    mm: balloon: use general non-lru movable page feature
+
+as the recently released balloon page would be post-processed 
+without the page->lru list handling, which for migration stability
+purposes must be done under the protection of page_lock.
+
+
+get rid of balloon reference count.
+
+
+-- Rafael
