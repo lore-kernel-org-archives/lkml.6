@@ -2,170 +2,123 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE2ABC4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:26:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496C4C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA4F821738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:26:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548699967;
-	bh=PPWxXeMCzHU0AtsfB9RPjivXaFZeXpSMMb7XNMVe3x4=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=WcdhnKqs3CzRSmlIKT0FhSwpYtdVreVSAMYQcxq9pGM7cqkGvpMVwfMlXYmOEDKxT
-	 rjydfvrC4tlgzCHzqBozul60SmC+9NMNsvMwK5AAOg9fi8ALIXAeiaxGm2cDrKXvqo
-	 MN4r864Eavx78fnihSrEl9skipVdY0q5GCJutBB4=
+	by mail.kernel.org (Postfix) with ESMTP id 0FB492147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:26:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=rajagiritech-edu-in.20150623.gappssmtp.com header.i=@rajagiritech-edu-in.20150623.gappssmtp.com header.b="CuWKsfiA"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727743AbfA1S0G (ORCPT
+        id S1727499AbfA1SZy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:26:06 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:37582 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727441AbfA1S0F (ORCPT
+        Mon, 28 Jan 2019 13:25:54 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:34869 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727100AbfA1SZw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:26:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=mfhnHH0x2E654fntPsAGavlrFArTu2BdabxZHTu/TvM=; b=V9iGdGm8ucFw
-        FOntlS62UojUqPgesp06L5J9u4hMR4wJ5bHfYxghwAFrIPpCMlzqP4KgQSIpdq3xX/fDZWGxU+IEL
-        KHslhE+BrHczLbb0XWn1dKzhkIEbQZozBgeUVjOw2deEuFU9VGdhlV/VJTAJSadriA2WnIalo645+
-        7OH60=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1goBba-0003Cf-1l; Mon, 28 Jan 2019 18:25:58 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id A0AAA1127D29; Mon, 28 Jan 2019 18:25:57 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Jiwei Sun <jiwei.sun@windriver.com>
-Cc:     Mark Brown <broonie@kernel.org>, linus.walleij@linaro.org,
-        linux-arm-kernel@lists.infradead.org, broonie@kernel.org,
-        linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-spi@vger.kernel.org
-Subject: Applied "spi: pl022: add a message state STATE_TIMEOUT for timeout transfer" to the spi tree
-In-Reply-To:  <20190118033229.22553-1-jiwei.sun@windriver.com>
-X-Patchwork-Hint: ignore
-Message-Id: <20190128182557.A0AAA1127D29@debutante.sirena.org.uk>
-Date:   Mon, 28 Jan 2019 18:25:57 +0000 (GMT)
+        Mon, 28 Jan 2019 13:25:52 -0500
+Received: by mail-qk1-f195.google.com with SMTP id w204so9990457qka.2
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:25:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rajagiritech-edu-in.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to;
+        bh=0TvI8XlvzQgp0hKNScvIv3Xp++Q8J8K9fYtVDjWpRGI=;
+        b=CuWKsfiAVbLFJGRB25A6xk0Xwh0DCYOIRXX2iV+7gAVxtwHbQrwiiMPwglQ+OQCyuz
+         trrkjXK0NU1UGrb4oU3AzHnuXhiGsMoh+dpr2RIwuDOITS1AlMYq08e3k1Le0P9XDudG
+         CRNZn4BTDofJn87AK13oANNYFjVdv/xRYOUgpuqZ+H0IB7mB1aBYi3TqXRt6oib0Wl9a
+         9gpxAvoZzjzPnblhqm7kauAanJdaYDhpN1XAFnnXunJ/I4NZEgKumxfvUjxRXlXZ2YZL
+         6AdN5/1fl1du0bTMt3nhNE8NkqIT0xDhJN3ItzQ0T2y5/Vn7I+DiI/BCJhX5RY524Rvu
+         X8Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to;
+        bh=0TvI8XlvzQgp0hKNScvIv3Xp++Q8J8K9fYtVDjWpRGI=;
+        b=R7kAk3HO6qm8U4MEgT1sMNQYHmJFEZDN0KAEoybXxz6HYZvXJCWbtEVN3aQNB5pCIu
+         9gY7AmOGcUYh3cgZisqoQw24dvzJoDkaS58+tt5uvvbJQ1eg79+jGVNV7ah22UGLi3ac
+         HOoKAZSya7JuupBBXEizOlJxO8D4pG4FSDxAeFSzAfltI63of+gnmqeooZm/5OjVMeku
+         PJtUZ6ls7h2s3LY2c5b8FDU6gP9CwrXIau4w3uVd9E9VX1rdgjzmdsM8oWPgTWkv8lil
+         YqLZpzpDLu4yJuX6HceVFCxHDM469DnpjczClotmqTbl0PvvdiMNmE2jTEErujgags/P
+         Xxrg==
+X-Gm-Message-State: AJcUukdzaah4sAdypt7ApD/0GPKiXXATzZ+WEbWeMvI2I5fly9sMGjo1
+        ybUOdSY8/0yDwUbXdxN6tcI6ahRRgaEkWIXcCDyrO6Xc
+X-Google-Smtp-Source: ALg8bN4pauox05IaU1iVGnmWFJcPISOTi2UH0mLq++ROxnB5CGLy5zgBM6V0xgLA/73JV0ICwoKHJi7ldhdNlNXfcEc=
+X-Received: by 2002:a37:97c1:: with SMTP id z184mr20393428qkd.39.1548699951675;
+ Mon, 28 Jan 2019 10:25:51 -0800 (PST)
+MIME-Version: 1.0
+References: <20190117210258.7871-1-jeffrin@rajagiritech.edu.in>
+ <20190122194352.GA11489@garbanzo.do-not-panic.com> <CAG=yYwmeGp7fT_3wPpnpHgzFUdYJuFCThUBaPL=DW9e4OZt_BA@mail.gmail.com>
+In-Reply-To: <CAG=yYwmeGp7fT_3wPpnpHgzFUdYJuFCThUBaPL=DW9e4OZt_BA@mail.gmail.com>
+From:   Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date:   Mon, 28 Jan 2019 23:55:14 +0530
+Message-ID: <CAG=yYw=t1-oZy5=E1j_=Qwx_0epmPhqQPJD2HkCYpQnxDroT2g@mail.gmail.com>
+Subject: Fwd: [PATCH] selftests: kmod: worked on errors which breaks the
+ overall execution of the test script
+To:     lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+---------- Forwarded message ---------
+From: Jeffrin Thalakkottoor <jeffrin@rajagiritech.edu.in>
+Date: Mon, Jan 28, 2019 at 11:33 PM
+Subject: Re: [PATCH] selftests: kmod: worked on errors which breaks
+the overall execution of the test script
+To: Luis Chamberlain <mcgrof@kernel.org>
+Cc: Shuah Khan <shuah@kernel.org>, lkml
+<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+Andrew Morton <akpm@linux-foundation.org>
 
-   spi: pl022: add a message state STATE_TIMEOUT for timeout transfer
 
-has been applied to the spi tree at
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
+>
+> on what
+> distribution and version of bash does this break?
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+$cat /etc/issue
+Debian GNU/Linux buster/sid \n \l
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+$
+$uname -a
+Linux debian 5.0.0-rc1+ #3 SMP Fri Jan 25 21:27:20 IST 2019 x86_64 GNU/Linux
+$echo $BASH_VERSION
+5.0.0(1)-release
+$
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+>
+> The commit log should
+> refer to this and it would help me confirm the issue.
 
-Thanks,
-Mark
+i like to send another version of patch which has things in the commit log
+>
+> > because an array is passed
+> Which is the array?
 
-From 7aef2b646b24247d880a353e09d4e10614a61cd6 Mon Sep 17 00:00:00 2001
-From: Jiwei Sun <jiwei.sun@windriver.com>
-Date: Fri, 18 Jan 2019 11:32:29 +0800
-Subject: [PATCH] spi: pl022: add a message state STATE_TIMEOUT for timeout
- transfer
+${TEST_DATA#*:*:}
+the above stuff sometimes contains array but not initially
 
-When transfer timeout, give -EAGAIN to the message's status, and it can
-make the spi device driver choose repeated transimation or not. And if
-transfer timeout, output some useful information for tracing the issue.
+>
+> get_test_enabled() is supposed to do what you do open-handed here.
+> So the better question is why are you getting an array returned
+> for your version of bash.
+>
+iam not returning an array but ${TEST_DATA#*:*:}   sometimes holds array
 
-Signed-off-by: Jiwei Sun <jiwei.sun@windriver.com>
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- drivers/spi/spi-pl022.c | 30 +++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/spi/spi-pl022.c b/drivers/spi/spi-pl022.c
-index 0c793e31d60f..26684178786f 100644
---- a/drivers/spi/spi-pl022.c
-+++ b/drivers/spi/spi-pl022.c
-@@ -253,6 +253,7 @@
- #define STATE_RUNNING			((void *) 1)
- #define STATE_DONE			((void *) 2)
- #define STATE_ERROR			((void *) -1)
-+#define STATE_TIMEOUT			((void *) -2)
- 
- /*
-  * SSP State - Whether Enabled or Disabled
-@@ -1484,6 +1485,30 @@ static void do_interrupt_dma_transfer(struct pl022 *pl022)
- 	writew(irqflags, SSP_IMSC(pl022->virtbase));
- }
- 
-+static void print_current_status(struct pl022 *pl022)
-+{
-+	u32 read_cr0;
-+	u16 read_cr1, read_dmacr, read_sr;
-+
-+	if (pl022->vendor->extended_cr)
-+		read_cr0 = readl(SSP_CR0(pl022->virtbase));
-+	else
-+		read_cr0 = readw(SSP_CR0(pl022->virtbase));
-+	read_cr1 = readw(SSP_CR1(pl022->virtbase));
-+	read_dmacr = readw(SSP_DMACR(pl022->virtbase));
-+	read_sr = readw(SSP_SR(pl022->virtbase));
-+
-+	dev_warn(&pl022->adev->dev, "spi-pl022 CR0: %x\n", read_cr0);
-+	dev_warn(&pl022->adev->dev, "spi-pl022 CR1: %x\n", read_cr1);
-+	dev_warn(&pl022->adev->dev, "spi-pl022 DMACR: %x\n", read_dmacr);
-+	dev_warn(&pl022->adev->dev, "spi-pl022 SR: %x\n", read_sr);
-+	dev_warn(&pl022->adev->dev,
-+			"spi-pl022 exp_fifo_level/fifodepth: %u/%d\n",
-+			pl022->exp_fifo_level,
-+			pl022->vendor->fifodepth);
-+
-+}
-+
- static void do_polling_transfer(struct pl022 *pl022)
- {
- 	struct spi_message *message = NULL;
-@@ -1535,7 +1560,8 @@ static void do_polling_transfer(struct pl022 *pl022)
- 			if (time_after(time, timeout)) {
- 				dev_warn(&pl022->adev->dev,
- 				"%s: timeout!\n", __func__);
--				message->state = STATE_ERROR;
-+				message->state = STATE_TIMEOUT;
-+				print_current_status(pl022);
- 				goto out;
- 			}
- 			cpu_relax();
-@@ -1553,6 +1579,8 @@ static void do_polling_transfer(struct pl022 *pl022)
- 	/* Handle end of message */
- 	if (message->state == STATE_DONE)
- 		message->status = 0;
-+	else if (message->state == STATE_TIMEOUT)
-+		message->status = -EAGAIN;
- 	else
- 		message->status = -EIO;
- 
+
 -- 
-2.20.1
+software engineer
+rajagiri school of engineering and technology
 
+
+-- 
+software engineer
+rajagiri school of engineering and technology
