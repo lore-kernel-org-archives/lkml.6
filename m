@@ -4,50 +4,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F70CC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F3EBC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41E0820879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3220520879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692636;
-	bh=vNGjbw7LC6HYlUIHZ6diKg8EF6tV4uJg2mI5GdI/Rqc=;
+	s=default; t=1548692642;
+	bh=sN2a7dF4IMmmCbBcQxPgTvBFPsyZE9ik8r6+4L4lcOw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=RCJkdydN/XfKKcW+XMor4zcJj1B7dUQRTFWXG83MAIXK7+N0sqicY4tjF7NCtHy3v
-	 oapr9USu9p2kH/JbMB4iuSUbQxyPKt/ZTh37ovaj0/69EPF7dlTm5ffcBNt6/Ali/g
-	 vPG0O+4lTi0uV+wRgEOEw5olXvil4lBLqTd6ABp4=
+	b=oli+MfXeM9GFO3zSkyU/xbiLgY9yv6MPYyaibwgvgGaTy4oB85yW4Z4EevKGOLzuu
+	 vNPpu+yIhnBWHJzm9HFTgh6ns0McoAUg8/QnGYbILrEduKGaRvMOGZOTRwHRG7Zb3e
+	 WHrkHTWHqwY7+IcVhyGlfBsKkYisstRG/F9tP1Jw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389555AbfA1QXy (ORCPT
+        id S2389578AbfA1QYA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:23:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60118 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:24:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60406 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389522AbfA1QXs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:48 -0500
+        id S2389554AbfA1QX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:23:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E4C62171F;
-        Mon, 28 Jan 2019 16:23:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 805EC20879;
+        Mon, 28 Jan 2019 16:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692628;
-        bh=vNGjbw7LC6HYlUIHZ6diKg8EF6tV4uJg2mI5GdI/Rqc=;
+        s=default; t=1548692637;
+        bh=sN2a7dF4IMmmCbBcQxPgTvBFPsyZE9ik8r6+4L4lcOw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=NqQKWIswmNLEmGhAZdKdIpQHStR99TjP4pOsHygxcwaw71ZK0d2SOAAhhsXXyLdii
-         HA59NuWkemkj8maX1XsMYH0/rbTtQQLUxhVP1MyaCnotwuOW6C8hHRqoNvL5rz9CIu
-         dCbq3a/8XDKNLZRuC/6U4ucYCAsgoMZ21ledaZkc=
+        b=YyKlrKEIwJiE0hEuezyOKQC/q8kjG5He/e2IgDCGAN70Kdzt09o4j6B4U0d1+30dA
+         y/wufojvxy7q3LFxbKRRzTyxpUlYuKAZMNh0ZaL617Lc3/BdbqnnN5B2AP0uaM5B9H
+         Oib0vrro7tTkcCtmXCxPSYGuaGppsRqw9PxCZt6Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 101/107] thermal: generic-adc: Fix adc to temp interpolation
-Date:   Mon, 28 Jan 2019 11:19:41 -0500
-Message-Id: <20190128161947.57405-101-sashal@kernel.org>
+Cc:     Cheng Lin <cheng.lin130@zte.com.cn>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 105/107] proc/sysctl: fix return error for proc_doulongvec_minmax()
+Date:   Mon, 28 Jan 2019 11:19:45 -0500
+Message-Id: <20190128161947.57405-105-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -59,63 +60,104 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Cheng Lin <cheng.lin130@zte.com.cn>
 
-[ Upstream commit 9d216211fded20fff301d0317af3238d8383634c ]
+[ Upstream commit 09be178400829dddc1189b50a7888495dd26aa84 ]
 
-First correct the edge case to return the last element if we're
-outside the range, rather than at the last element, so that
-interpolation is not omitted for points between the two last entries in
-the table.
+If the number of input parameters is less than the total parameters, an
+EINVAL error will be returned.
 
-Then correct the formula to perform linear interpolation based the two
-points surrounding the read ADC value. The indices for temp are kept as
-"hi" and "lo" to pair with the adc indices, but there's no requirement
-that the temperature is provided in descendent order. mult_frac() is
-used to prevent issues with overflowing the int.
+For example, we use proc_doulongvec_minmax to pass up to two parameters
+with kern_table:
 
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+{
+	.procname       = "monitor_signals",
+	.data           = &monitor_sigs,
+	.maxlen         = 2*sizeof(unsigned long),
+	.mode           = 0644,
+	.proc_handler   = proc_doulongvec_minmax,
+},
+
+Reproduce:
+
+When passing two parameters, it's work normal.  But passing only one
+parameter, an error "Invalid argument"(EINVAL) is returned.
+
+  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
+  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+  1       2
+  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
+  -bash: echo: write error: Invalid argument
+  [root@cl150 ~]# echo $?
+  1
+  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+  3       2
+  [root@cl150 ~]#
+
+The following is the result after apply this patch.  No error is
+returned when the number of input parameters is less than the total
+parameters.
+
+  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
+  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+  1       2
+  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
+  [root@cl150 ~]# echo $?
+  0
+  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
+  3       2
+  [root@cl150 ~]#
+
+There are three processing functions dealing with digital parameters,
+__do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
+
+This patch deals with __do_proc_doulongvec_minmax, just as
+__do_proc_dointvec does, adding a check for parameters 'left'.  In
+__do_proc_douintvec, its code implementation explicitly does not support
+multiple inputs.
+
+static int __do_proc_douintvec(...){
+         ...
+         /*
+          * Arrays are not supported, keep this simple. *Do not* add
+          * support for them.
+          */
+         if (vleft != 1) {
+                 *lenp = 0;
+                 return -EINVAL;
+         }
+         ...
+}
+
+So, just __do_proc_doulongvec_minmax has the problem.  And most use of
+proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
+parameter.
+
+Link: http://lkml.kernel.org/r/1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn
+Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
+Acked-by: Luis Chamberlain <mcgrof@kernel.org>
+Reviewed-by: Kees Cook <keescook@chromium.org>
+Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal-generic-adc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ kernel/sysctl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
-index 73f55d6a1721..ad601e5b4175 100644
---- a/drivers/thermal/thermal-generic-adc.c
-+++ b/drivers/thermal/thermal-generic-adc.c
-@@ -26,7 +26,7 @@ struct gadc_thermal_info {
+diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+index 23f658d311c0..93c7b02279b9 100644
+--- a/kernel/sysctl.c
++++ b/kernel/sysctl.c
+@@ -2503,6 +2503,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
+ 			bool neg;
  
- static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
- {
--	int temp, adc_hi, adc_lo;
-+	int temp, temp_hi, temp_lo, adc_hi, adc_lo;
- 	int i;
+ 			left -= proc_skip_spaces(&p);
++			if (!left)
++				break;
  
- 	for (i = 0; i < gti->nlookup_table; i++) {
-@@ -36,13 +36,17 @@ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
- 
- 	if (i == 0) {
- 		temp = gti->lookup_table[0];
--	} else if (i >= (gti->nlookup_table - 1)) {
-+	} else if (i >= gti->nlookup_table) {
- 		temp = gti->lookup_table[2 * (gti->nlookup_table - 1)];
- 	} else {
- 		adc_hi = gti->lookup_table[2 * i - 1];
- 		adc_lo = gti->lookup_table[2 * i + 1];
--		temp = gti->lookup_table[2 * i];
--		temp -= ((val - adc_lo) * 1000) / (adc_hi - adc_lo);
-+
-+		temp_hi = gti->lookup_table[2 * i - 2];
-+		temp_lo = gti->lookup_table[2 * i];
-+
-+		temp = temp_hi + mult_frac(temp_lo - temp_hi, val - adc_hi,
-+					   adc_lo - adc_hi);
- 	}
- 
- 	return temp;
+ 			err = proc_get_long(&p, &left, &val, &neg,
+ 					     proc_wspace_sep,
 -- 
 2.19.1
 
