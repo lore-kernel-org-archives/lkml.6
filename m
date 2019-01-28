@@ -2,210 +2,195 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF34C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:44:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25F7FC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:49:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A7652148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:44:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AXNBr/e7"
+	by mail.kernel.org (Postfix) with ESMTP id DDE9E2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 21:49:32 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbfA1Vod (ORCPT
+        id S1728373AbfA1Vtb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 16:44:33 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:39774 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726802AbfA1Voc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 16:44:32 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0SLiB2r067581;
-        Mon, 28 Jan 2019 15:44:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1548711851;
-        bh=eJYVz4EBlCraCUoDXhuuTUqA4MMStlZ+ifQ/w8CYW1U=;
-        h=From:To:CC:Subject:Date;
-        b=AXNBr/e75p2LyAqnEO+U8jcZzbvKyqr0bXHW1OIDlelahiB8ifQCokPbnQVWBRjxL
-         9UNhJ9t1h8q9s67iq04aUrQIo/uaLFd61MZ3NAvofOQEa7mZrD2ny1xb5EEK9pjx0O
-         OjIpgcaYzczFGnSckZMrXCBeJJPl92uDCGvyAm84=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0SLiB1K031955
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 28 Jan 2019 15:44:11 -0600
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 28
- Jan 2019 15:44:11 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Mon, 28 Jan 2019 15:44:11 -0600
-Received: from legion.dal.desgin.ti.com (legion.dal.design.ti.com [128.247.22.53])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0SLiBew025858;
-        Mon, 28 Jan 2019 15:44:11 -0600
-Received: from localhost (uda0226330.dhcp.ti.com [172.22.93.231])
-        by legion.dal.desgin.ti.com (8.11.7p1+Sun/8.11.7) with ESMTP id x0SLi9U02629;
-        Mon, 28 Jan 2019 15:44:09 -0600 (CST)
-From:   "Andrew F. Davis" <afd@ti.com>
-To:     Laura Abbott <labbott@redhat.com>,
-        Sumit Semwal <sumit.semwal@linaro.org>,
+        Mon, 28 Jan 2019 16:49:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48390 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726890AbfA1Vta (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 16:49:30 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F2DB07E9D3;
+        Mon, 28 Jan 2019 21:49:29 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-23.phx2.redhat.com [10.3.112.23])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0BF4E5C234;
+        Mon, 28 Jan 2019 21:49:21 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 16:49:19 -0500
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     Steve Grubb <sgrubb@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>,
+        "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
+        Daniel Borkmann <daniel@iogearbox.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?q?Arve=20Hj=C3=B8nnev=C3=A5g?= <arve@android.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Liam Mark <lmark@codeaurora.org>,
-        Brian Starkey <Brian.Starkey@arm.com>
-CC:     <devel@driverdev.osuosl.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-kernel@vger.kernel.org>, "Andrew F . Davis" <afd@ti.com>
-Subject: [PATCH v2] staging: android: ion: Allocate from heap ID directly without mask
-Date:   Mon, 28 Jan 2019 15:44:08 -0600
-Message-ID: <20190128214408.25442-1-afd@ti.com>
-X-Mailer: git-send-email 2.19.1
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Alexei Starovoitov <ast@kernel.org>,
+        "linux-audit@redhat.com" <linux-audit@redhat.com>
+Subject: Re: [PATCH] audit: always enable syscall auditing when supported and
+ audit is enabled
+Message-ID: <20190128214919.5nmpfns3ahuvza6f@madcap2.tricolour.ca>
+References: <20151208164237.15736.42955.stgit@localhost>
+ <5490ae28-251b-bfda-38a6-5be201a4a8d8@nokia.com>
+ <CAHC9VhQsVFY1LAakAUUCBZw6nmSy0-eoFrhQgVQrkqgAsWVGhQ@mail.gmail.com>
+ <4fb6def1-a1d9-8af0-394c-f92224884d18@nokia.com>
+ <CAHC9VhT1T4wTonW_L8CH2j1aMqSaBcUf-zH==233+ZZvSKhkwg@mail.gmail.com>
+ <8bf5d613-9b27-381d-283b-c8892483f424@nokia.com>
+ <CAHC9VhR25UdWPSRurefEX3YjM80DEh5BXETvK4na3Ym+k2=9xQ@mail.gmail.com>
+ <20190128210328.64b7719c@ivy-bridge>
+ <CAHC9VhSCFiEfzcwwkDdMsyh0xa2zh-WDTbv55tsDXYU4Td0zDQ@mail.gmail.com>
+ <20190128221951.57a5e03b@ivy-bridge>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128221951.57a5e03b@ivy-bridge>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 28 Jan 2019 21:49:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously the heap to allocate from was selected by a mask of allowed
-heap types. This may have been done as a primitive form of constraint
-solving, the first heap type that matched any set bit of the heap mask
-was allocated from, unless that heap was excluded by having its heap
-ID bit not set in the separate passed in heap ID mask.
+On 2019-01-28 22:19, Steve Grubb wrote:
+> On Mon, 28 Jan 2019 15:08:56 -0500
+> Paul Moore <paul@paul-moore.com> wrote:
+> 
+> > On Mon, Jan 28, 2019 at 3:03 PM Steve Grubb <sgrubb@redhat.com> wrote:
+> > > On Mon, 28 Jan 2019 11:26:51 -0500
+> > > Paul Moore <paul@paul-moore.com> wrote:
+> > >  
+> > > > On Mon, Jan 28, 2019 at 10:38 AM Sverdlin, Alexander (Nokia -
+> > > > DE/Ulm) <alexander.sverdlin@nokia.com> wrote:  
+> > > > > Hello Paul,
+> > > > >
+> > > > > On 28/01/2019 15:52, Paul Moore wrote:  
+> > > > > >>>>> time also enables syscall auditing; this patch simplifies
+> > > > > >>>>> the Kconfig menus by removing the option to disable
+> > > > > >>>>> syscall auditing when audit is selected and the target
+> > > > > >>>>> arch supports it.
+> > > > > >>>>>
+> > > > > >>>>> Signed-off-by: Paul Moore <pmoore@redhat.com>  
+> > > > > >>>> this patch is responsible for massive performance
+> > > > > >>>> degradation for those who used only
+> > > > > >>>> CONFIG_SECURITY_APPARMOR.
+> > > > > >>>>
+> > > > > >>>> And the numbers are, take the following test for instance:
+> > > > > >>>>
+> > > > > >>>> dd if=/dev/zero of=/dev/null count=2M
+> > > > > >>>>
+> > > > > >>>> ARM64:      500MB/s -> 350MB/s
+> > > > > >>>> ARM:        400MB/s -> 300MB/s  
+> > > > > >>> Hi there.
+> > > > > >>>
+> > > > > >>> Out of curiosity, what kernel/distribution are you running,
+> > > > > >>> or is this a custom kernel compile?  Can you also share the
+> > > > > >>> output of 'auditctl  
+> > > > > >> This test was carried out with Linux 4.9. Custom built.  
+> > > > > > I suspected that was the case, thanks.
+> > > > > >  
+> > > > > >>> -l' from your system?  The general approach taken by
+> > > > > >>> everyone to turn-off the per-syscall audit overhead is to
+> > > > > >>> add the "-a never,task" rule to their audit configuration:
+> > > > > >>>
+> > > > > >>>  # auditctl -a never,task
+> > > > > >>>
+> > > > > >>> If you are using Fedora/CentOS/RHEL, or a similarly
+> > > > > >>> configured system,  
+> > > > > >> This is an embedded distribution. We are not using auditctl
+> > > > > >> or any other audit-related user-space packages.
+> > > > > >>  
+> > > > > >>> you can find this configuration in
+> > > > > >>> the /etc/audit/audit.rules file (be warned, that file is
+> > > > > >>> automatically generated based on /etc/audit/rules.d).  
+> > > > > >> I suppose in this case rule list must be empty. Is there a
+> > > > > >> way to check this without extra user-space packages?  
+> > > > > > Yes, unless you are loading rules through some other method I
+> > > > > > would expect that your audit rule list is empty.
+> > > > > >
+> > > > > > I'm not aware of any other tools besides auditctl to load
+> > > > > > audit rules into the kernel, although I haven't ever had a
+> > > > > > need for another tool so I haven't looked very hard.  If you
+> > > > > > didn't want to bring auditctl into your distribution, I
+> > > > > > expect it would be a rather trivial task to create a small
+> > > > > > tool to load a single "-a never,task" into the kernel.  
+> > > > >
+> > > > > I've done a quick test on my x86_64 PC and got the following
+> > > > > results:  
+> > > >
+> > > > ...
+> > > >  
+> > > > > Which brings me to an idea, that the subject patch should have
+> > > > > been accompanied by a default "never,task" rule inside the
+> > > > > kernel, otherwise you require an extra user-space package
+> > > > > (audit) just to bring Linux 4.5+ to 4.4 performance levels.  
+> > > >
+> > > > [NOTE: I dropped pmoore@redhat.com from the To/CC line, I left
+> > > > Red Hat for greener pastures several months ago.]
+> > > >
+> > > > Well, it generally hasn't been an issue as 1) most people that
+> > > > enable audit also enable syscall auditing and 2) most people that
+> > > > enable audit have some sort of audit userspace tools to work with
+> > > > the audit logs (and configure audit if necessary).  I don't want
+> > > > to diminish your report, but this change was made several years
+> > > > ago and we really haven't heard of many issues surrounding the
+> > > > change.  If we can ever get all of the different arches to
+> > > > support syscall auditing, I'd love to get rid of the syscall
+> > > > auditing Kconfig knob entirely.
+> > > >
+> > > > If you wanted to put together a patch that added a single "-a
+> > > > never,task" rule on boot I could get behind that, just make it
+> > > > default to off.  
+> > >
+> > > That will make processes unauditable for everyone. That's how it
+> > > gets a speedup is not entering into the audit machinery.  
+> > 
+> > That is pretty much what is being asked for in this thread.  It's
+> > really no different from what Fedora/CentOS/RHEL (and who knows how
+> > many others) ship with their default audit config.  It's important to
+> > note that you could always delete this rule at runtime; all that is
+> > being proposed is to have the kernel populate the the audit ruleset
+> > with the "-a never,task" rule *IF* the proposed kernel Kconfig option
+> > is enabled (and it would default to being off, you would have to turn
+> > it on during build).
+> 
+> Yes, but you can't add the auditable flag back to the task struct
+> because syscalls never enter audit machinery where it can be added back.
+> Meaning that even if you wanted to audit, there will be processes you
+> never can audit. Whereas deciding via auditd, they become unauditable
+> only after auditd loads the rule. Prior to that they are and all
+> processes are auditable if you decide to audit. So, this is
+> fundamentally different than what fedora does.
 
-The heap type does not really represent constraints that should be
-matched against to begin with. So the patch [0] removed the the heap type
-mask matching but unfortunately left the heap ID mask check (possibly by
-mistake or to preserve API). Therefor we now only have a mask of heap
-IDs, but heap IDs are unique identifiers and have nothing to do with the
-underlying heap, so mask matching is not useful here. This also limits us
-to 32 heaps total in a system.
+I did see a patch proposed at one point that actually went through and
+checked/flipped the TIF_SYSCALL_AUDIT bit when auditing was switched
+off.
 
-With the heap query API users can find the right heap based on type or
-name themselves then just supply the ID for that heap. Remove heap ID
-mask and allow users to specify heap ID directly by its number.
+> -Steve
+> 
+> > > I suppose its possible that people may want MAC hardwired events
+> > > but no syscall events. I don't know if there are other kconfig
+> > > audit options. but maybe getting it down to audit enabled and
+> > > syscall auditing as the only choices is probably the most
+> > > performant.
+> > >
+> > > -Steve  
 
-I know this is an ABI break, but we are in staging so lets get this over
-with now rather than limit ourselves later.
+- RGB
 
-[0] commit 2bb9f5034ec7 ("gpu: ion: Remove heapmask from client")
-
-Signed-off-by: Andrew F. Davis <afd@ti.com>
----
-
-This also means we don't need to store the available heaps in a plist,
-we only operation we care about is lookup, so a better data structure
-should be chosen at some point, regular list or xarray maybe?
-
-This is base on -next as to be on top of the other taken Ion patches.
-
-Changes from v1:
- - Fix spelling in commit message
- - Cleanup logic per Brian's suggestion
-
- drivers/staging/android/ion/ion.c  | 28 +++++++++++++---------------
- drivers/staging/android/uapi/ion.h |  6 ++----
- 2 files changed, 15 insertions(+), 19 deletions(-)
-
-diff --git a/drivers/staging/android/ion/ion.c b/drivers/staging/android/ion/ion.c
-index 92c2914239e3..b0b0d0b587c2 100644
---- a/drivers/staging/android/ion/ion.c
-+++ b/drivers/staging/android/ion/ion.c
-@@ -387,7 +387,7 @@ static const struct dma_buf_ops dma_buf_ops = {
- 	.unmap = ion_dma_buf_kunmap,
- };
- 
--static int ion_alloc(size_t len, unsigned int heap_id_mask, unsigned int flags)
-+static int ion_alloc(size_t len, unsigned int heap_id, unsigned int flags)
- {
- 	struct ion_device *dev = internal_dev;
- 	struct ion_buffer *buffer = NULL;
-@@ -396,27 +396,25 @@ static int ion_alloc(size_t len, unsigned int heap_id_mask, unsigned int flags)
- 	int fd;
- 	struct dma_buf *dmabuf;
- 
--	pr_debug("%s: len %zu heap_id_mask %u flags %x\n", __func__,
--		 len, heap_id_mask, flags);
--	/*
--	 * traverse the list of heaps available in this system in priority
--	 * order.  If the heap type is supported by the client, and matches the
--	 * request of the caller allocate from it.  Repeat until allocate has
--	 * succeeded or all heaps have been tried
--	 */
-+	pr_debug("%s: len %zu heap_id %u flags %x\n", __func__,
-+		 len, heap_id, flags);
-+
- 	len = PAGE_ALIGN(len);
- 
- 	if (!len)
- 		return -EINVAL;
- 
-+	/*
-+	 * Traverse the list of heaps available in this system.  If the
-+	 * heap id matches the request of the caller allocate from it.
-+	 */
- 	down_read(&dev->lock);
- 	plist_for_each_entry(heap, &dev->heaps, node) {
--		/* if the caller didn't specify this heap id */
--		if (!((1 << heap->id) & heap_id_mask))
--			continue;
--		buffer = ion_buffer_create(heap, dev, len, flags);
--		if (!IS_ERR(buffer))
-+		/* if the caller specified this heap id */
-+		if (heap->id == heap_id) {
-+			buffer = ion_buffer_create(heap, dev, len, flags);
- 			break;
-+		}
- 	}
- 	up_read(&dev->lock);
- 
-@@ -541,7 +539,7 @@ static long ion_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
- 		int fd;
- 
- 		fd = ion_alloc(data.allocation.len,
--			       data.allocation.heap_id_mask,
-+			       data.allocation.heap_id,
- 			       data.allocation.flags);
- 		if (fd < 0)
- 			return fd;
-diff --git a/drivers/staging/android/uapi/ion.h b/drivers/staging/android/uapi/ion.h
-index 5d7009884c13..6a78a1e23251 100644
---- a/drivers/staging/android/uapi/ion.h
-+++ b/drivers/staging/android/uapi/ion.h
-@@ -35,8 +35,6 @@ enum ion_heap_type {
- 			       */
- };
- 
--#define ION_NUM_HEAP_IDS		(sizeof(unsigned int) * 8)
--
- /**
-  * allocation flags - the lower 16 bits are used by core ion, the upper 16
-  * bits are reserved for use by the heaps themselves.
-@@ -59,7 +57,7 @@ enum ion_heap_type {
- /**
-  * struct ion_allocation_data - metadata passed from userspace for allocations
-  * @len:		size of the allocation
-- * @heap_id_mask:	mask of heap ids to allocate from
-+ * @heap_id:		heap id to allocate from
-  * @flags:		flags passed to heap
-  * @handle:		pointer that will be populated with a cookie to use to
-  *			refer to this allocation
-@@ -68,7 +66,7 @@ enum ion_heap_type {
-  */
- struct ion_allocation_data {
- 	__u64 len;
--	__u32 heap_id_mask;
-+	__u32 heap_id;
- 	__u32 flags;
- 	__u32 fd;
- 	__u32 unused;
--- 
-2.19.1
-
+--
+Richard Guy Briggs <rgb@redhat.com>
+Sr. S/W Engineer, Kernel Security, Base Operating Systems
+Remote, Ottawa, Red Hat Canada
+IRC: rgb, SunRaycer
+Voice: +1.647.777.2635, Internal: (81) 32635
