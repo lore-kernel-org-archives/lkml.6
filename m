@@ -7,51 +7,59 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E53C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51710C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E4D762147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 219EB21783
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690531;
-	bh=hEWeGcNmoAXI+GIMZRtqX+cE47RhwELIaJPB4PTWdbk=;
+	s=default; t=1548690535;
+	bh=bcLKVnO4RFI2dhwpNXslmzVthU5mituxKMAvmzBMi/s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=HI9qNelABs+KHxiOJkxgsxExCS/df8ox+kf5rooi3vUPCHM6b110soIFgS11vhtEz
-	 k/38b4DVBk1z91c/QhFST4dUDUMMPEhpq+k+Nx9V1euJcZE2KA78G/MEIq0EoOfS3H
-	 +eusZ8mfkgrCDLxw5qFTUXYH3OI+E+u8tRK2VYf4=
+	b=jDUPwsBBe8bWlf/GT9i9dihyq6yW+sPQaGx9M5u5lU1TP25mx7Ff5sZ5JyBSDQAXw
+	 4s5GxIAhsXnsKkSyZH9JhKFTPKgq+ZFUscUyCPygh8KYPUIvb0xi6Td6LXkX6tNhyW
+	 fWA9UPMht1I/kmD+S0mxEQPcOPXnJfZXZ01M3AYs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728566AbfA1Psu (ORCPT
+        id S1728578AbfA1Psx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:48:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34114 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:48:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34290 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728557AbfA1Psp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:48:45 -0500
+        id S1728557AbfA1Psu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:48:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D9D2821741;
-        Mon, 28 Jan 2019 15:48:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8B20B20880;
+        Mon, 28 Jan 2019 15:48:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690524;
-        bh=hEWeGcNmoAXI+GIMZRtqX+cE47RhwELIaJPB4PTWdbk=;
+        s=default; t=1548690530;
+        bh=bcLKVnO4RFI2dhwpNXslmzVthU5mituxKMAvmzBMi/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QPYixZwDED29Jj+650I0cm8tAU72b/rgDlgWkEl7hNb62Zn2ltIu/TDBIQlN5Ui9/
-         zulPYfeqlNklXnHLHRTqzeoN4eRcYrr2wF/wr6ORxg9rQS8dAOUQ6fm40nVRfLDD0T
-         Ze5B93k/1tCZ3webyvSOJZPc3K4sB/Ct/YnOqfjo=
+        b=TZpyUPi82ZguTab8M2AsKIdZYlRybWZ1zszCNVbo9rUIxLQWC8GUM4Ty4WPYw+Ai4
+         CXp1+KcumBQtvpi0Aa55DQ87wB2BUUuoKkS8TH3BoJ7pUIkgBt8//48Pk1c5GpKWbV
+         dNudOJ47FqVzBFNmw5DWHajslMQ5d9k1pzVprawc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Radu Pirea <radu.pirea@microchip.com>,
-        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kvm ML <kvm@vger.kernel.org>, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 112/304] spi: fix spi-at91-usart.c build errors when PINCTRL is not set
-Date:   Mon, 28 Jan 2019 10:40:29 -0500
-Message-Id: <20190128154341.47195-112-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 113/304] x86/fpu: Add might_fault() to user_insn()
+Date:   Mon, 28 Jan 2019 10:40:30 -0500
+Message-Id: <20190128154341.47195-113-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,44 +67,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit c2b142cc3939e932d4fa2210c2a5155df5736590 ]
+[ Upstream commit 6637401c35b2f327a35d27f44bda05e327f2f017 ]
 
-Fix build errors when CONFIG_PINCTRL is not enabled.
-The header file <linux/pinctrl/consumer.h> handles both CONFIG_PINCTRL
-enabled and disabled cases.
+Every user of user_insn() passes an user memory pointer to this macro.
 
-  CC [M]  drivers/spi/spi-at91-usart.o
-../drivers/spi/spi-at91-usart.c: In function 'at91_usart_spi_runtime_suspend':
-../drivers/spi/spi-at91-usart.c:409:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
-  pinctrl_pm_select_sleep_state(dev);
-../drivers/spi/spi-at91-usart.c: In function 'at91_usart_spi_runtime_resume':
-../drivers/spi/spi-at91-usart.c:419:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
-  pinctrl_pm_select_default_state(dev);
+Add might_fault() to user_insn() so we can spot users which are using
+this macro in sections where page faulting is not allowed.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Cc: Radu Pirea <radu.pirea@microchip.com>
-Cc: Mark Brown <broonie@kernel.org>
-Cc: linux-spi@vger.kernel.org
-Signed-off-by: Mark Brown <broonie@kernel.org>
+ [ bp: Space it out to make it more visible. ]
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kvm ML <kvm@vger.kernel.org>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181128222035.2996-6-bigeasy@linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/spi/spi-at91-usart.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/include/asm/fpu/internal.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
-index a924657642fa..08bcbd1f9aa2 100644
---- a/drivers/spi/spi-at91-usart.c
-+++ b/drivers/spi/spi-at91-usart.c
-@@ -12,6 +12,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/of_gpio.h>
-+#include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
- 
- #include <linux/spi/spi.h>
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 69dcdf195b61..fa2c93cb42a2 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -106,6 +106,9 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
+ #define user_insn(insn, output, input...)				\
+ ({									\
+ 	int err;							\
++									\
++	might_fault();							\
++									\
+ 	asm volatile(ASM_STAC "\n"					\
+ 		     "1:" #insn "\n\t"					\
+ 		     "2: " ASM_CLAC "\n"				\
 -- 
 2.19.1
 
