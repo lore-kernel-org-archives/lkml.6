@@ -4,48 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 388B3C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41FF8C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F40272175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1314E2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691823;
-	bh=yG1I47SHAW1Y9veuNv5imVcFdG2h60Ym3uH0MJ8ZrW4=;
+	s=default; t=1548691825;
+	bh=smksVjHmBgGlBWiX3aftH5cmLjUKG7JYTo/oSFQbUcM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=uY4xYQzt2i2AIEiMSIYeHeJ2NRriQdMVu/IoLLhyi+OtZcTDfL5DZY0YNi5UrPi5n
-	 A6ez7NFGVhr7wuGhDbwrVJzfQlZGI29pFMG8GY46wdH4fiu5tl0LfZCJVqyqewJ7in
-	 8cXek+BIsiYDKOf6RZaMLiLinq8mYwuYGY+oUonE=
+	b=SBxU8F8AwER5sUbWgdZF8cknJzgwcYH8iyNKn3uY+TobOnka99dPPpbiSaiC2jTfh
+	 OOtIKc0FgoskeulHxDexRRLmE5IkzlhQNVxfkERPls1AiVfQFJeQTxb3ntZEohVgyT
+	 ILflNR1o2/bxoePaJAsOdYZmqtml1mNMSR3+/QA8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732768AbfA1QKV (ORCPT
+        id S1732779AbfA1QKX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:10:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35928 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:10:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36158 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732747AbfA1QKP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:10:15 -0500
+        id S1732766AbfA1QKV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:10:21 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5EDB62184D;
-        Mon, 28 Jan 2019 16:10:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E619E2171F;
+        Mon, 28 Jan 2019 16:10:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691814;
-        bh=yG1I47SHAW1Y9veuNv5imVcFdG2h60Ym3uH0MJ8ZrW4=;
+        s=default; t=1548691820;
+        bh=smksVjHmBgGlBWiX3aftH5cmLjUKG7JYTo/oSFQbUcM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YOYTJW+CFUAZOm4OQWpJBOpPUfdy6ph+oNPkilAYTkegamU6l+PKkhc9l8Jy051AY
-         PdZQSlA3td6DdtQva2wdWUzxYxYaZ39SHUXFjpMuKQv3jaiDnYzAW0lonWeIqcGbn6
-         1sYD2jf2DXXfQcD5+lyreYMt/+DSxc4/Pr+iWcU4=
+        b=ZBW+86b1iJYEIlz0HiRRJBOu+TZR9KboKprITniEaKqsnFrTCdgRlHiDzDIlPT7Pe
+         BNa+fRdAwsuVM6gCJ6g2shonrop5w5HXoBm4phH7MYOAjoYnb16KmwiaMsSyjRY1/O
+         NIPklgjWeVCwtXmug9F2/wFo1JowV7mx4K9lbJKk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 226/258] cifs: check ntwrk_buf_start for NULL before dereferencing it
-Date:   Mon, 28 Jan 2019 10:58:52 -0500
-Message-Id: <20190128155924.51521-226-sashal@kernel.org>
+Cc:     Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Richard Weinberger <richard@nod.at>,
+        Sasha Levin <sashal@kernel.org>, linux-um@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 228/258] um: Avoid marking pages with "changed protection"
+Date:   Mon, 28 Jan 2019 10:58:54 -0500
+Message-Id: <20190128155924.51521-228-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,48 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
 
-[ Upstream commit 59a63e479ce36a3f24444c3a36efe82b78e4a8e0 ]
+[ Upstream commit 8892d8545f2d0342b9c550defbfb165db237044b ]
 
-RHBZ: 1021460
+Changing protection is a very high cost operation in UML
+because in addition to an extra syscall it also interrupts
+mmap merge sequences generated by the tlb.
 
-There is an issue where when multiple threads open/close the same directory
-ntwrk_buf_start might end up being NULL, causing the call to smbCalcSize
-later to oops with a NULL deref.
+While the condition is not particularly common it is worth
+avoiding.
 
-The real bug is why this happens and why this can become NULL for an
-open cfile, which should not be allowed.
-This patch tries to avoid a oops until the time when we fix the underlying
-issue.
-
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/readdir.c | 9 ++++++++-
+ arch/um/include/asm/pgtable.h | 9 ++++++++-
  1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
-index e169e1a5fd35..3925a7bfc74d 100644
---- a/fs/cifs/readdir.c
-+++ b/fs/cifs/readdir.c
-@@ -655,7 +655,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
- 		/* scan and find it */
- 		int i;
- 		char *cur_ent;
--		char *end_of_smb = cfile->srch_inf.ntwrk_buf_start +
-+		char *end_of_smb;
-+
-+		if (cfile->srch_inf.ntwrk_buf_start == NULL) {
-+			cifs_dbg(VFS, "ntwrk_buf_start is NULL during readdir\n");
-+			return -EIO;
-+		}
-+
-+		end_of_smb = cfile->srch_inf.ntwrk_buf_start +
- 			server->ops->calc_smb_size(
- 					cfile->srch_inf.ntwrk_buf_start,
- 					server);
+diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
+index 7485398d0737..9c04562310b3 100644
+--- a/arch/um/include/asm/pgtable.h
++++ b/arch/um/include/asm/pgtable.h
+@@ -197,12 +197,17 @@ static inline pte_t pte_mkold(pte_t pte)
+ 
+ static inline pte_t pte_wrprotect(pte_t pte)
+ { 
+-	pte_clear_bits(pte, _PAGE_RW);
++	if (likely(pte_get_bits(pte, _PAGE_RW)))
++		pte_clear_bits(pte, _PAGE_RW);
++	else
++		return pte;
+ 	return(pte_mknewprot(pte)); 
+ }
+ 
+ static inline pte_t pte_mkread(pte_t pte)
+ { 
++	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_USER);
+ 	return(pte_mknewprot(pte)); 
+ }
+@@ -221,6 +226,8 @@ static inline pte_t pte_mkyoung(pte_t pte)
+ 
+ static inline pte_t pte_mkwrite(pte_t pte)	
+ {
++	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_RW);
+ 	return(pte_mknewprot(pte)); 
+ }
 -- 
 2.19.1
 
