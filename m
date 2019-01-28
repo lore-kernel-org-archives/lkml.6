@@ -7,56 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9DF5C282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5001FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B60A20811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 204EA20811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693324;
-	bh=csh5QF1PlRbm0x5/VviROGsT/ZlIzhholKiUHN65Rnw=;
+	s=default; t=1548693327;
+	bh=cUSZ554jTVwLWBG8Ynnuel+5uzSFthPCg5PlxWNAFOI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0kgtjvv2OApMTlZcnNncVyM3Sv2+qUjLTvl1bJ/S5GgiOchtWAUajQk+NJQeLj+EC
-	 Kw5NqGI5IGFUTXnrXeFXNwxH2k8SK+mVhqlyIZBsxRvnowYc9PNhLQWgQ/3nMzKaKX
-	 SYuwQLNNln79OA8JQ+LqZsKKzKZgo72NVNf5u0I8=
+	b=GjPmEGbMTgv3g4Gl6mGtOyVdLf4IhO2bm8SBBUKZC6a8Dz7w+MTTDFhSXl2vFErw0
+	 wq2pmXa+FzsRLPiEB+zbOg7qZC82JdQ0nR4h5J+ycdYrohlBja5ZI+rfWVpYeU0bWQ
+	 nP7yzg+PiPLOG1BCudereTsUpp3W9R+fixJHb1pE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390040AbfA1QZt (ORCPT
+        id S2390470AbfA1QfZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34676 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:35:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34782 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390014AbfA1QZn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:43 -0500
+        id S2390030AbfA1QZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E89320879;
-        Mon, 28 Jan 2019 16:25:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5FA472147A;
+        Mon, 28 Jan 2019 16:25:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692743;
-        bh=csh5QF1PlRbm0x5/VviROGsT/ZlIzhholKiUHN65Rnw=;
+        s=default; t=1548692747;
+        bh=cUSZ554jTVwLWBG8Ynnuel+5uzSFthPCg5PlxWNAFOI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pz5McaCgT4tJ7gQ5+8K3o6OmX1i6XEjM2z1GnqfU3OUoYYAJ2N76PBmEDEz2y0Hol
-         61lXIvNopxEUWSIAy65nddtZkHDd3mjoRE+5krlkkMXIw1wCHEDrdOLe25e1cgUBsL
-         9i57b7+m/MCV0FMPdGXaBFWmAOkwtj1JOuw+X4H4=
+        b=OVHqHbrVJKY5fDTWEr1USaJ9sNZykV7C+nSbKFhPX9XuTdKM2Wu1FAt5ws0ce32H2
+         p4fHhRUQQuSpJRVklIdqJi39YJO9J11ShGDi7x9x6HcVNZ7sCpHvmtBQ/IXR6q60au
+         093IMWVkaptJCFjQ6wyLsVqMy2ej2gBtpMwqInFo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peter Rosin <peda@axentia.se>,
-        Tomi Valkeinen <tomi.valkeinen@ti.com>,
-        Fabian Frederick <ffrederick@users.sourceforge.net>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Geoff Levand <geoff@infradead.org>,
-        James Simmons <jsimmons@users.sf.net>,
+Cc:     =?UTF-8?q?Noralf=20Tr=C3=B8nnes?= <noralf@tronnes.org>,
         Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 58/80] fbdev: fbmem: behave better with small rotated displays and many CPUs
-Date:   Mon, 28 Jan 2019 11:23:39 -0500
-Message-Id: <20190128162401.58841-58-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 60/80] fbdev: fbcon: Fix unregister crash when more than one framebuffer
+Date:   Mon, 28 Jan 2019 11:23:41 -0500
+Message-Id: <20190128162401.58841-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -64,62 +60,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peter Rosin <peda@axentia.se>
+From: Noralf Trønnes <noralf@tronnes.org>
 
-[ Upstream commit f75df8d4b4fabfad7e3cba2debfad12741c6fde7 ]
+[ Upstream commit 2122b40580dd9d0620398739c773d07a7b7939d0 ]
 
-Blitting an image with "negative" offsets is not working since there
-is no clipping. It hopefully just crashes. For the bootup logo, there
-is protection so that blitting does not happen as the image is drawn
-further and further to the right (ROTATE_UR) or further and further
-down (ROTATE_CW). There is however no protection when drawing in the
-opposite directions (ROTATE_UD and ROTATE_CCW).
+When unregistering fbdev using unregister_framebuffer(), any bound
+console will unbind automatically. This is working fine if this is the
+only framebuffer, resulting in a switch to the dummy console. However if
+there is a fb0 and I unregister fb1 having a bound console, I eventually
+get a crash. The fastest way for me to trigger the crash is to do a
+reboot, resulting in this splat:
 
-Add back this protection.
+[   76.478825] WARNING: CPU: 0 PID: 527 at linux/kernel/workqueue.c:1442 __queue_work+0x2d4/0x41c
+[   76.478849] Modules linked in: raspberrypi_hwmon gpio_backlight backlight bcm2835_rng rng_core [last unloaded: tinydrm]
+[   76.478916] CPU: 0 PID: 527 Comm: systemd-udevd Not tainted 4.20.0-rc4+ #4
+[   76.478933] Hardware name: BCM2835
+[   76.478949] Backtrace:
+[   76.478995] [<c010d388>] (dump_backtrace) from [<c010d670>] (show_stack+0x20/0x24)
+[   76.479022]  r6:00000000 r5:c0bc73be r4:00000000 r3:6fb5bf81
+[   76.479060] [<c010d650>] (show_stack) from [<c08e82f4>] (dump_stack+0x20/0x28)
+[   76.479102] [<c08e82d4>] (dump_stack) from [<c0120070>] (__warn+0xec/0x12c)
+[   76.479134] [<c011ff84>] (__warn) from [<c01201e4>] (warn_slowpath_null+0x4c/0x58)
+[   76.479165]  r9:c0eb6944 r8:00000001 r7:c0e927f8 r6:c0bc73be r5:000005a2 r4:c0139e84
+[   76.479197] [<c0120198>] (warn_slowpath_null) from [<c0139e84>] (__queue_work+0x2d4/0x41c)
+[   76.479222]  r6:d7666a00 r5:c0e918ee r4:dbc4e700
+[   76.479251] [<c0139bb0>] (__queue_work) from [<c013a02c>] (queue_work_on+0x60/0x88)
+[   76.479281]  r10:c0496bf8 r9:00000100 r8:c0e92ae0 r7:00000001 r6:d9403700 r5:d7666a00
+[   76.479298]  r4:20000113
+[   76.479348] [<c0139fcc>] (queue_work_on) from [<c0496c28>] (cursor_timer_handler+0x30/0x54)
+[   76.479374]  r7:d8a8fabc r6:c0e08088 r5:d8afdc5c r4:d8a8fabc
+[   76.479413] [<c0496bf8>] (cursor_timer_handler) from [<c0178744>] (call_timer_fn+0x100/0x230)
+[   76.479435]  r4:c0e9192f r3:d758a340
+[   76.479465] [<c0178644>] (call_timer_fn) from [<c0178980>] (expire_timers+0x10c/0x12c)
+[   76.479495]  r10:40000000 r9:c0e9192f r8:c0e92ae0 r7:d8afdccc r6:c0e19280 r5:c0496bf8
+[   76.479513]  r4:d8a8fabc
+[   76.479541] [<c0178874>] (expire_timers) from [<c0179630>] (run_timer_softirq+0xa8/0x184)
+[   76.479570]  r9:00000001 r8:c0e19280 r7:00000000 r6:c0e08088 r5:c0e1a3e0 r4:c0e19280
+[   76.479603] [<c0179588>] (run_timer_softirq) from [<c0102404>] (__do_softirq+0x1ac/0x3fc)
+[   76.479632]  r10:c0e91680 r9:d8afc020 r8:0000000a r7:00000100 r6:00000001 r5:00000002
+[   76.479650]  r4:c0eb65ec
+[   76.479686] [<c0102258>] (__do_softirq) from [<c0124d10>] (irq_exit+0xe8/0x168)
+[   76.479716]  r10:d8d1a9b0 r9:d8afc000 r8:00000001 r7:d949c000 r6:00000000 r5:c0e8b3f0
+[   76.479734]  r4:00000000
+[   76.479764] [<c0124c28>] (irq_exit) from [<c016b72c>] (__handle_domain_irq+0x94/0xb0)
+[   76.479793] [<c016b698>] (__handle_domain_irq) from [<c01021dc>] (bcm2835_handle_irq+0x3c/0x48)
+[   76.479823]  r8:d8afdebc r7:d8afddfc r6:ffffffff r5:c0e089f8 r4:d8afddc8 r3:d8afddc8
+[   76.479851] [<c01021a0>] (bcm2835_handle_irq) from [<c01019f0>] (__irq_svc+0x70/0x98)
 
-The regression is 20-odd years old but the mindless warning-killing
-mentality displayed in commit 34bdb666f4b2 ("fbdev: fbmem: remove
-positive test on unsigned values") is also to blame, methinks.
+The problem is in the console rebinding in fbcon_fb_unbind(). It uses the
+virtual console index as the new framebuffer index to bind the console(s)
+to. The correct way is to use the con2fb_map lookup table to find the
+framebuffer index.
 
-Fixes: 448d479747b8 ("fbdev: fb_do_show_logo() updates")
-Signed-off-by: Peter Rosin <peda@axentia.se>
-Cc: Tomi Valkeinen <tomi.valkeinen@ti.com>
-Cc: Fabian Frederick <ffrederick@users.sourceforge.net>
-Cc: Geert Uytterhoeven <geert+renesas@glider.be>
-cc: Geoff Levand <geoff@infradead.org>
-Cc: James Simmons <jsimmons@users.sf.net>
+Fixes: cfafca8067c6 ("fbdev: fbcon: console unregistration from unregister_framebuffer")
+Signed-off-by: Noralf Trønnes <noralf@tronnes.org>
+Reviewed-by: Mikulas Patocka <mpatocka@redhat.com>
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/video/fbdev/core/fbmem.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/video/console/fbcon.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index 8a29ec5992fd..ea2bd6208a2f 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -433,7 +433,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
- 			image->dx += image->width + 8;
+diff --git a/drivers/video/console/fbcon.c b/drivers/video/console/fbcon.c
+index 4e3c78d88832..c03c5b9602bb 100644
+--- a/drivers/video/console/fbcon.c
++++ b/drivers/video/console/fbcon.c
+@@ -3032,7 +3032,7 @@ static int fbcon_fb_unbind(int idx)
+ 	for (i = first_fb_vc; i <= last_fb_vc; i++) {
+ 		if (con2fb_map[i] != idx &&
+ 		    con2fb_map[i] != -1) {
+-			new_idx = i;
++			new_idx = con2fb_map[i];
+ 			break;
  		}
- 	} else if (rotate == FB_ROTATE_UD) {
--		for (x = 0; x < num; x++) {
-+		u32 dx = image->dx;
-+
-+		for (x = 0; x < num && image->dx <= dx; x++) {
- 			info->fbops->fb_imageblit(info, image);
- 			image->dx -= image->width + 8;
- 		}
-@@ -445,7 +447,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
- 			image->dy += image->height + 8;
- 		}
- 	} else if (rotate == FB_ROTATE_CCW) {
--		for (x = 0; x < num; x++) {
-+		u32 dy = image->dy;
-+
-+		for (x = 0; x < num && image->dy <= dy; x++) {
- 			info->fbops->fb_imageblit(info, image);
- 			image->dy -= image->height + 8;
- 		}
+ 	}
 -- 
 2.19.1
 
