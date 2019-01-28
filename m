@@ -4,50 +4,53 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12F35C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 530BCC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D57EF2184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 214AC2177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691929;
-	bh=xJl5F2bwNH7XkgP5o/2e/iP8gWHAfh0diVzrGf2+cnE=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=UJe1DLqyuU/eGPjzc99XfSZPKCgiPnJ018gy08JbNbQxaL0dnuo9jex3Om/JFHe8j
-	 +zEEdwC+uQlUSbwmZ+FOzmRL7fuDXFSHGZ+7RBEDdJKYY19TNOHHAxoPmmsEd5k4ay
-	 mNb2EZ5SOYOdz18ykDtcHobUf889ZJqwt2V97KXU=
+	s=default; t=1548691933;
+	bh=Y26xBcd445fIgEgbGbyQT3ofYBO+VgpnC8JSeU6/gsg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=16eRI0nrYJh09h7SZg86eBuVwXktpeIfDKc3gHAsDVv9+8r4KvJLS03c9zlq94LMI
+	 pe1GdlDv172KF0Ae1EVD9PZEP0wZO1jKT6Fkl51NbY+C7etYFOky3QZo5qQ/mw3ktj
+	 peSyRhXIyYyJ5E+SrGQo37VUYTmvJHAeSFFRwezE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733094AbfA1QMI (ORCPT
+        id S1733106AbfA1QMM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:12:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39748 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:12:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733054AbfA1QME (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:12:04 -0500
+        id S1733054AbfA1QMJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:12:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F2BEB2147A;
-        Mon, 28 Jan 2019 16:12:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 080342177E;
+        Mon, 28 Jan 2019 16:12:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691923;
-        bh=xJl5F2bwNH7XkgP5o/2e/iP8gWHAfh0diVzrGf2+cnE=;
-        h=From:To:Cc:Subject:Date:From;
-        b=qDZota6LciG/jgjr0yIQ+XMo4ezQBqaKEeqEhkM+obagwgPSchOv2DSPUgOcOwekh
-         U6ReFGZCNGpwnx91/0Z6+5CpwMWIoULs/fIWL1DtAWz1PQpf9OeI7r+e6xBIvn4kBB
-         qBsFHjXWrDpiyhry3cyhRw56Nfh4pE5dwOTON1dc=
+        s=default; t=1548691928;
+        bh=Y26xBcd445fIgEgbGbyQT3ofYBO+VgpnC8JSeU6/gsg=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=p74MgxqYXaeuVCy7hFm8Ubur7OEErV3H1Wagv+v0jmGk2iv1FLdywNfahipnKl7oJ
+         WbJWPgJcD/X2FmKt4yyZJ/yqZC54LYxlUNhAoiqq2qAXAJGbVU9ILzLSF7O7VJowqA
+         n3LhqtU1G+uwckEj388dbhOcjQCvAMGtZTrkzDOI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+Cc:     Deepak Sharma <deepak.sharma@amd.com>,
         Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Emil Velikov <emil.velikov@collabora.com>,
         Sasha Levin <sashal@kernel.org>,
         dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.14 001/170] drm/bufs: Fix Spectre v1 vulnerability
-Date:   Mon, 28 Jan 2019 11:09:11 -0500
-Message-Id: <20190128161200.55107-1-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 003/170] drm/vgem: Fix vgem_init to get drm device available.
+Date:   Mon, 28 Jan 2019 11:09:13 -0500
+Message-Id: <20190128161200.55107-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
+References: <20190128161200.55107-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -56,55 +59,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Deepak Sharma <deepak.sharma@amd.com>
 
-[ Upstream commit a37805098900a6e73a55b3a43b7d3bcd987bb3f4 ]
+[ Upstream commit d5c04dff24870ef07ce6453a3f4e1ffd9cf88d27 ]
 
-idx can be indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+Modify vgem_init to take platform dev as parent in drm_dev_init.
+This will make drm device available at "/sys/devices/platform/vgem"
+in x86 chromebook.
 
-This issue was detected with the help of Smatch:
+v2: rebase, address checkpatch typo and line over 80 characters
 
-drivers/gpu/drm/drm_bufs.c:1420 drm_legacy_freebufs() warn: potential
-spectre issue 'dma->buflist' [r] (local cap)
-
-Fix this by sanitizing idx before using it to index dma->buflist
-
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181016095549.GA23586@embeddedor.com
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Deepak Sharma <deepak.sharma@amd.com>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Emil Velikov <emil.velikov@collabora.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181023163550.15211-1-emil.l.velikov@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_bufs.c | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/vgem/vgem_drv.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-index 1ee84dd802d4..0f05b8d8fefa 100644
---- a/drivers/gpu/drm/drm_bufs.c
-+++ b/drivers/gpu/drm/drm_bufs.c
-@@ -36,6 +36,8 @@
- #include <drm/drmP.h>
- #include "drm_legacy.h"
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index 2524ff116f00..81c7ab10c083 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -472,31 +472,31 @@ static int __init vgem_init(void)
+ 	if (!vgem_device)
+ 		return -ENOMEM;
  
-+#include <linux/nospec.h>
-+
- static struct drm_map_list *drm_find_matching_map(struct drm_device *dev,
- 						  struct drm_local_map *map)
- {
-@@ -1417,6 +1419,7 @@ int drm_legacy_freebufs(struct drm_device *dev, void *data,
- 				  idx, dma->buf_count - 1);
- 			return -EINVAL;
- 		}
-+		idx = array_index_nospec(idx, dma->buf_count);
- 		buf = dma->buflist[idx];
- 		if (buf->file_priv != file_priv) {
- 			DRM_ERROR("Process %d freeing buffer not owned\n",
+-	ret = drm_dev_init(&vgem_device->drm, &vgem_driver, NULL);
+-	if (ret)
+-		goto out_free;
+-
+ 	vgem_device->platform =
+ 		platform_device_register_simple("vgem", -1, NULL, 0);
+ 	if (IS_ERR(vgem_device->platform)) {
+ 		ret = PTR_ERR(vgem_device->platform);
+-		goto out_fini;
++		goto out_free;
+ 	}
+ 
+ 	dma_coerce_mask_and_coherent(&vgem_device->platform->dev,
+ 				     DMA_BIT_MASK(64));
++	ret = drm_dev_init(&vgem_device->drm, &vgem_driver,
++			   &vgem_device->platform->dev);
++	if (ret)
++		goto out_unregister;
+ 
+ 	/* Final step: expose the device/driver to userspace */
+ 	ret  = drm_dev_register(&vgem_device->drm, 0);
+ 	if (ret)
+-		goto out_unregister;
++		goto out_fini;
+ 
+ 	return 0;
+ 
+-out_unregister:
+-	platform_device_unregister(vgem_device->platform);
+ out_fini:
+ 	drm_dev_fini(&vgem_device->drm);
++out_unregister:
++	platform_device_unregister(vgem_device->platform);
+ out_free:
+ 	kfree(vgem_device);
+ 	return ret;
 -- 
 2.19.1
 
