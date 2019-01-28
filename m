@@ -2,102 +2,143 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD0BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:12:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC10C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:12:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8963121738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:12:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548699162;
-	bh=Oy2jPIu/a/Vo7qzFlpCDeeWMsi4Ipf7nWsh5hIriZhw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=1qyO/FBMWv2RDuQlyYcEtvVHQ3mF0/fFkMiegp8ElHfnhaTry855Lt2Jxskmeiurq
-	 yqAluaqg3YW91sJUnlpVJzcH4nNyw11ByJYqa59bKnmf6G9dqC+y5Ub9aFQQ7Zykfy
-	 gzOl6AX57c+QAToqXvWtN/qKeowSLHdqHHSz4BCE=
+	by mail.kernel.org (Postfix) with ESMTP id 044922147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:12:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727030AbfA1SMl (ORCPT
+        id S1727133AbfA1SMv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:12:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53764 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726802AbfA1SMk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:12:40 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 41C3A2147A;
-        Mon, 28 Jan 2019 18:12:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548699159;
-        bh=Oy2jPIu/a/Vo7qzFlpCDeeWMsi4Ipf7nWsh5hIriZhw=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=TmpVcY6wfhSgzhgR1e5Yl3JKjx0fL6mAo7jgAsOz9BvaAT4wHzWF2lby+H917rEPq
-         N6zhaBr8LtiGUuooBEbRdrMHn5O2fOBLxyiQl9vrrZCvBB3Q+N5eGQL5aiobQffSsO
-         y/5Tt9tLXh9eNcW0hdhpaCG55W+099vf6paCXqrs=
-Date:   Mon, 28 Jan 2019 13:12:38 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Miroslav Benes <mbenes@suse.cz>
-Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        Nicholas Mc Guire <hofrat@osadl.org>,
-        Jiri Kosina <jkosina@suse.cz>, live-patching@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 4.19 174/258] livepatch: check kzalloc return
- values
-Message-ID: <20190128181238.GH3973@sasha-vm>
-References: <20190128155924.51521-1-sashal@kernel.org>
- <20190128155924.51521-174-sashal@kernel.org>
- <alpine.LSU.2.21.1901281826230.9332@pobox.suse.cz>
+        Mon, 28 Jan 2019 13:12:51 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48292 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726802AbfA1SMv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 13:12:51 -0500
+Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SI4q4K059341
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 13:12:49 -0500
+Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qa4rwxp93-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 13:12:49 -0500
+Received: from localhost
+        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Mon, 28 Jan 2019 18:12:48 -0000
+Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
+        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 28 Jan 2019 18:12:45 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SICi9a53411936
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 28 Jan 2019 18:12:44 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 200FD11C054;
+        Mon, 28 Jan 2019 18:12:44 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A458C11C04A;
+        Mon, 28 Jan 2019 18:12:43 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.97.178])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 28 Jan 2019 18:12:43 +0000 (GMT)
+Date:   Mon, 28 Jan 2019 19:12:42 +0100
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Michael Mueller <mimu@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Subject: Re: [PATCH v6 11/13] KVM: s390: add functions to (un)register GISC
+ with GISA
+In-Reply-To: <20190124125939.130763-12-mimu@linux.ibm.com>
+References: <20190124125939.130763-1-mimu@linux.ibm.com>
+        <20190124125939.130763-12-mimu@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <alpine.LSU.2.21.1901281826230.9332@pobox.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19012818-0016-0000-0000-0000024BFD5A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012818-0017-0000-0000-000032A605E9
+Message-Id: <20190128191242.0f65d82b@oc2783563651>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901280136
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 06:28:14PM +0100, Miroslav Benes wrote:
->On Mon, 28 Jan 2019, Sasha Levin wrote:
->
->> From: Nicholas Mc Guire <hofrat@osadl.org>
->>
->> [ Upstream commit 5f30b2e823484ce6a79f2b59901b6351c15effa6 ]
->>
->> kzalloc() return should always be checked - notably in example code
->> where this may be seen as reference. On failure of allocation in
->> livepatch_fix1_dummy_alloc() respectively dummy_alloc() previous
->> allocation is freed (thanks to Petr Mladek <pmladek@suse.com> for
->> catching this) and NULL returned.
->>
->> Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
->> Fixes: 439e7271dc2b ("livepatch: introduce shadow variable API")
->> Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
->> Reviewed-by: Petr Mladek <pmladek@suse.com>
->> Acked-by: Miroslav Benes <mbenes@suse.cz>
->> Signed-off-by: Jiri Kosina <jkosina@suse.cz>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->Hi Sasha,
->
->I am not sure what stable policy is, but the patch is for samples/
->directory and I do not think it is something which should necessarily go
->to stable. It is your call though.
+On Thu, 24 Jan 2019 13:59:37 +0100
+Michael Mueller <mimu@linux.ibm.com> wrote:
 
-The thing with samples/ is that (I'm hopefull that) the code that lives
-in there is being used as a basis for userspace code and is copy&pasted
-shamelessly.
+> Add the Interruption Alert Mask (IAM) to the architecture specific
+> kvm struct. This mask in the GISA is used to define for which ISC
+> a GIB alert will be issued.
+> 
+> The functions kvm_s390_gisc_register() and kvm_s390_gisc_unregister()
+> are used to (un)register a GISC (guest ISC) with a virtual machine and
+> its GISA.
+> 
+> Upon successful completion, kvm_s390_gisc_register() returns the
+> ISC to be used for GIB alert interruptions. A negative return code
+> indicates an error during registration.
+> 
+> Theses functions will be used by other adapter types like AP and PCI to
+> request pass-through interruption support.
 
-So on one hand, yes, samples/ isn't exactly critical code, but on the
-other hand it's also very unlikely to cause a regression, so I've been
-treating it similarily to tools/testing/.
 
-If anyone disagrees I'd be happy to discuss it.
+I'm not sure this interface is going to to fit PCI that well. But IMHO
+no reason to delay the whole series -- we can think about zPCI later.
+Same goes for some of the names.
 
---
-Thanks,
-Sasha
+Another idea for later would be to sanity check in gisa destroy that
+alert.mask is back to all zero -- to catch any corresponding driver
+bugs.
+
+Acked-by: Halil Pasic <pasic@linux.ibm.com>
+
+> 
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+
+[..]
+
+>  static inline void gisa_set_ipm_gisc(struct kvm_s390_gisa *gisa, u32 gisc)
+>  {
+>  	set_bit_inv(IPM_BIT_OFFSET + gisc, (unsigned long *) gisa);
+> @@ -2911,6 +2938,8 @@ void kvm_s390_gisa_init(struct kvm *kvm)
+>  	if (!css_general_characteristics.aiv)
+>  		return;
+>  	gi->origin = &kvm->arch.sie_page2->gisa;
+> +	gi->alert.mask = 0;
+
+I don't think this is necessary. Otherwise you would need to
+zero the alert.ref[] too, or?
+
+Regards,
+Halil
+
+> +	spin_lock_init(&gi->alert.ref_lock);
+>  	kvm_s390_gisa_clear(kvm);
+>  	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", gi->origin);
+>  }
+
