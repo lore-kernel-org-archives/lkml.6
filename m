@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C066C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D957EC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D7162084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA1C42173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692379;
-	bh=ebaC/Z4Q3IM5E5i8uWWEn/c3jJQU0HnyAHMDtne6u0Q=;
+	s=default; t=1548692381;
+	bh=TTuK3QqcQkUFe9aAzqj+Vy3POPJDwDhPtLu3943eglA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Hs0taYg76cNKBqxi+BbMIHAtJbG7VogiKfRjsbzSiET8JxQoindjrwsHBdKcCA/1j
-	 vw1zxnhWoBQi9NXbEpbJFkkwGlw6qzDI6wAP4Qz1psME34yWkJeoNSIVv6UINrv7q4
-	 25Rj4Ka+nlEMm7lOoE0dOMNY9eP6lbN2ywXF50Vo=
+	b=OkpDooleVhXiC/ew05nXs49SDElTNMOqiJkK0L1FkF2P6B/OZpyQhukrLqsPVcXvP
+	 Fz71UtFSJVoxfbeKznkqhI0UT9CO+YgSmbBbgb5SGw7pPfKWZ9Fx+kEDGvXGI0Vdpa
+	 huWhTv07yzBpDp8vwRHW8aEmR78hFRc2Rl3RIOss=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387800AbfA1QTh (ORCPT
+        id S2388243AbfA1QTk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:19:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54318 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:19:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54432 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388619AbfA1QTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:19:33 -0500
+        id S2388631AbfA1QTh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:19:37 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4BC52084A;
-        Mon, 28 Jan 2019 16:19:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7B53D2171F;
+        Mon, 28 Jan 2019 16:19:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692372;
-        bh=ebaC/Z4Q3IM5E5i8uWWEn/c3jJQU0HnyAHMDtne6u0Q=;
+        s=default; t=1548692376;
+        bh=TTuK3QqcQkUFe9aAzqj+Vy3POPJDwDhPtLu3943eglA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iq3y70qMYI/ipHiIGfCQrrKIuc1GriJP3r7Vin2FaaUQeZaaC2v+Wl/0+tBkfw6Nq
-         GnQxrGFO8kV6Fc9IU94m1aVAAInH9vhj2wI1P6uFCwpKnhs30LfgZWtBPTDaPTiKHi
-         oReXJpJpUfQrUlfhrLh+kD93cez+pMY99JsMmZjY=
+        b=G8GxDscAa4l//CSbyUumm3hNE0bZHEnSYuqgx6f3D+ezUIRL/OB8+MkY3xd9/6bKU
+         GbuDfhXcljdiytVlZh1pBSSroxE5AohePH3uf1svaVjnq9mdqpjXV0NT1WnbKw5Bd9
+         hEHSgfgahgN86qzN2bgXStC1DyrYmXJgUNnhgFio=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Cheng Lin <cheng.lin130@zte.com.cn>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
+Cc:     "Liu, Chuansheng" <chuansheng.liu@intel.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 166/170] proc/sysctl: fix return error for proc_doulongvec_minmax()
-Date:   Mon, 28 Jan 2019 11:11:56 -0500
-Message-Id: <20190128161200.55107-166-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 167/170] kernel/hung_task.c: force console verbose before panic
+Date:   Mon, 28 Jan 2019 11:11:57 -0500
+Message-Id: <20190128161200.55107-167-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -60,104 +60,77 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Cheng Lin <cheng.lin130@zte.com.cn>
+From: "Liu, Chuansheng" <chuansheng.liu@intel.com>
 
-[ Upstream commit 09be178400829dddc1189b50a7888495dd26aa84 ]
+[ Upstream commit 168e06f7937d96c7222037d8a05565e8a6eb00fe ]
 
-If the number of input parameters is less than the total parameters, an
-EINVAL error will be returned.
+Based on commit 401c636a0eeb ("kernel/hung_task.c: show all hung tasks
+before panic"), we could get the call stack of hung task.
 
-For example, we use proc_doulongvec_minmax to pass up to two parameters
-with kern_table:
+However, if the console loglevel is not high, we still can not see the
+useful panic information in practice, and in most cases users don't set
+console loglevel to high level.
 
-{
-	.procname       = "monitor_signals",
-	.data           = &monitor_sigs,
-	.maxlen         = 2*sizeof(unsigned long),
-	.mode           = 0644,
-	.proc_handler   = proc_doulongvec_minmax,
-},
+This patch is to force console verbose before system panic, so that the
+real useful information can be seen in the console, instead of being
+like the following, which doesn't have hung task information.
 
-Reproduce:
+  INFO: task init:1 blocked for more than 120 seconds.
+        Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
+  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+  Kernel panic - not syncing: hung_task: blocked tasks
+  CPU: 2 PID: 479 Comm: khungtaskd Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
+  Call Trace:
+   dump_stack+0x4f/0x65
+   panic+0xde/0x231
+   watchdog+0x290/0x410
+   kthread+0x12c/0x150
+   ret_from_fork+0x35/0x40
+  reboot: panic mode set: p,w
+  Kernel Offset: 0x34000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
 
-When passing two parameters, it's work normal.  But passing only one
-parameter, an error "Invalid argument"(EINVAL) is returned.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  -bash: echo: write error: Invalid argument
-  [root@cl150 ~]# echo $?
-  1
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-The following is the result after apply this patch.  No error is
-returned when the number of input parameters is less than the total
-parameters.
-
-  [root@cl150 ~]# echo 1 2 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  1       2
-  [root@cl150 ~]# echo 3 > /proc/sys/kernel/monitor_signals
-  [root@cl150 ~]# echo $?
-  0
-  [root@cl150 ~]# cat /proc/sys/kernel/monitor_signals
-  3       2
-  [root@cl150 ~]#
-
-There are three processing functions dealing with digital parameters,
-__do_proc_dointvec/__do_proc_douintvec/__do_proc_doulongvec_minmax.
-
-This patch deals with __do_proc_doulongvec_minmax, just as
-__do_proc_dointvec does, adding a check for parameters 'left'.  In
-__do_proc_douintvec, its code implementation explicitly does not support
-multiple inputs.
-
-static int __do_proc_douintvec(...){
-         ...
-         /*
-          * Arrays are not supported, keep this simple. *Do not* add
-          * support for them.
-          */
-         if (vleft != 1) {
-                 *lenp = 0;
-                 return -EINVAL;
-         }
-         ...
-}
-
-So, just __do_proc_doulongvec_minmax has the problem.  And most use of
-proc_doulongvec_minmax/proc_doulongvec_ms_jiffies_minmax just have one
-parameter.
-
-Link: http://lkml.kernel.org/r/1544081775-15720-1-git-send-email-cheng.lin130@zte.com.cn
-Signed-off-by: Cheng Lin <cheng.lin130@zte.com.cn>
-Acked-by: Luis Chamberlain <mcgrof@kernel.org>
-Reviewed-by: Kees Cook <keescook@chromium.org>
-Cc: Alexey Dobriyan <adobriyan@gmail.com>
+Link: http://lkml.kernel.org/r/27240C0AC20F114CBF8149A2696CBE4A6015B675@SHSMSX101.ccr.corp.intel.com
+Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sysctl.c | 2 ++
- 1 file changed, 2 insertions(+)
+ kernel/hung_task.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-index d330b1ce3b94..3ad00bf90b3d 100644
---- a/kernel/sysctl.c
-+++ b/kernel/sysctl.c
-@@ -2708,6 +2708,8 @@ static int __do_proc_doulongvec_minmax(void *data, struct ctl_table *table, int
- 			bool neg;
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index 0cec1241e26f..f9aaf4994062 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -103,8 +103,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
  
- 			left -= proc_skip_spaces(&p);
-+			if (!left)
-+				break;
+ 	trace_sched_process_hang(t);
  
- 			err = proc_get_long(&p, &left, &val, &neg,
- 					     proc_wspace_sep,
+-	if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
+-		return;
++	if (sysctl_hung_task_panic) {
++		console_verbose();
++		hung_task_show_lock = true;
++		hung_task_call_panic = true;
++	}
+ 
+ 	/*
+ 	 * Ok, the task did not get scheduled for more than 2 minutes,
+@@ -126,11 +129,6 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	}
+ 
+ 	touch_nmi_watchdog();
+-
+-	if (sysctl_hung_task_panic) {
+-		hung_task_show_lock = true;
+-		hung_task_call_panic = true;
+-	}
+ }
+ 
+ /*
 -- 
 2.19.1
 
