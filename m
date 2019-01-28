@@ -6,185 +6,214 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 680C0C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:05:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 353F1C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:06:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F93E20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:05:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0BCBF20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:06:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfA1HFQ (ORCPT
+        id S1726738AbfA1HGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:05:16 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34448 "EHLO mx1.redhat.com"
+        Mon, 28 Jan 2019 02:06:51 -0500
+Received: from mga02.intel.com ([134.134.136.20]:33071 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726612AbfA1HFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:05:16 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 999BC81DE3;
-        Mon, 28 Jan 2019 07:05:15 +0000 (UTC)
-Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-212.pek2.redhat.com [10.72.12.212])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EF31253B21;
-        Mon, 28 Jan 2019 07:05:07 +0000 (UTC)
-From:   Jason Wang <jasowang@redhat.com>
-To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com
-Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH net] vhost: fix OOB in get_rx_bufs()
-Date:   Mon, 28 Jan 2019 15:05:05 +0800
-Message-Id: <20190128070505.18335-1-jasowang@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 28 Jan 2019 07:05:15 +0000 (UTC)
+        id S1726647AbfA1HGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 02:06:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2019 23:06:50 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,533,1539673200"; 
+   d="scan'208";a="129414238"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga002.jf.intel.com with ESMTP; 27 Jan 2019 23:06:50 -0800
+Received: from [10.125.252.29] (abudanko-mobl.ccr.corp.intel.com [10.125.252.29])
+        by linux.intel.com (Postfix) with ESMTP id 1A80958028E;
+        Sun, 27 Jan 2019 23:06:47 -0800 (PST)
+Subject: [PATCH v2 1/4] feature: realize libzstd check, LIBZSTD_DIR and
+ NO_LIBZSTD defines
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <a3f3d50f-2ffa-b5fd-743e-dda34b79c5a7@linux.intel.com>
+Date:   Mon, 28 Jan 2019 10:06:46 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
+MIME-Version: 1.0
+In-Reply-To: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-After batched used ring updating was introduced in commit e2b3b35eb989
-("vhost_net: batch used ring update in rx"). We tend to batch heads in
-vq->heads for more than one packet. But the quota passed to
-get_rx_bufs() was not correctly limited, which can result a OOB write
-in vq->heads.
 
-        headcount = get_rx_bufs(vq, vq->heads + nvq->done_idx,
-                    vhost_len, &in, vq_log, &log,
-                    likely(mergeable) ? UIO_MAXIOV : 1);
+Implement libzstd feature check, NO_LIBZSTD and LIBZSTD_DIR defines
+to overrride Zstd library sources or disable the feature from the
+command line:
 
-UIO_MAXIOV was still used which is wrong since we could have batched
-used in vq->heads, this will cause OOB if the next buffer needs more
-than 960 (1024 (UIO_MAXIOV) - 64 (VHOST_NET_BATCH)) heads after we've
-batched 64 (VHOST_NET_BATCH) heads:
+  $ make -C tools/perf LIBZSTD_DIR=/root/abudanko/zstd-1.3.7 clean all
+  $ make -C tools/perf NO_LIBZSTD=1 clean all
 
-=============================================================================
-BUG kmalloc-8k (Tainted: G    B            ): Redzone overwritten
------------------------------------------------------------------------------
-
-INFO: 0x00000000fd93b7a2-0x00000000f0713384. First byte 0xa9 instead of 0xcc
-INFO: Allocated in alloc_pd+0x22/0x60 age=3933677 cpu=2 pid=2674
-    kmem_cache_alloc_trace+0xbb/0x140
-    alloc_pd+0x22/0x60
-    gen8_ppgtt_create+0x11d/0x5f0
-    i915_ppgtt_create+0x16/0x80
-    i915_gem_create_context+0x248/0x390
-    i915_gem_context_create_ioctl+0x4b/0xe0
-    drm_ioctl_kernel+0xa5/0xf0
-    drm_ioctl+0x2ed/0x3a0
-    do_vfs_ioctl+0x9f/0x620
-    ksys_ioctl+0x6b/0x80
-    __x64_sys_ioctl+0x11/0x20
-    do_syscall_64+0x43/0xf0
-    entry_SYSCALL_64_after_hwframe+0x44/0xa9
-INFO: Slab 0x00000000d13e87af objects=3 used=3 fp=0x          (null) flags=0x200000000010201
-INFO: Object 0x0000000003278802 @offset=17064 fp=0x00000000e2e6652b
-
-Fixing this by allocating UIO_MAXIOV + VHOST_NET_BATCH iovs for
-vhost-net. This is done through set the limitation through
-vhost_dev_init(), then set_owner can allocate the number of iov in a
-per device manner.
-
-This fixes CVE-2018-16880.
-
-Fixes: e2b3b35eb989 ("vhost_net: batch used ring update in rx")
-Signed-off-by: Jason Wang <jasowang@redhat.com>
+Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
 ---
- drivers/vhost/net.c   | 3 ++-
- drivers/vhost/scsi.c  | 2 +-
- drivers/vhost/vhost.c | 7 ++++---
- drivers/vhost/vhost.h | 4 +++-
- drivers/vhost/vsock.c | 2 +-
- 5 files changed, 11 insertions(+), 7 deletions(-)
+ tools/build/Makefile.feature       |  6 ++++--
+ tools/build/feature/Makefile       |  6 +++++-
+ tools/build/feature/test-all.c     |  5 +++++
+ tools/build/feature/test-libzstd.c | 12 ++++++++++++
+ tools/perf/Makefile.config         | 20 ++++++++++++++++++++
+ tools/perf/Makefile.perf           |  3 +++
+ 6 files changed, 49 insertions(+), 3 deletions(-)
+ create mode 100644 tools/build/feature/test-libzstd.c
 
-diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
-index bca86bf7189f..df51a35cf537 100644
---- a/drivers/vhost/net.c
-+++ b/drivers/vhost/net.c
-@@ -1337,7 +1337,8 @@ static int vhost_net_open(struct inode *inode, struct file *f)
- 		n->vqs[i].rx_ring = NULL;
- 		vhost_net_buf_init(&n->vqs[i].rxq);
- 	}
--	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX);
-+	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX,
-+		       UIO_MAXIOV + VHOST_NET_BATCH);
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index 5467c6bf9ceb..25088c8f05b2 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -71,7 +71,8 @@ FEATURE_TESTS_BASIC :=                  \
+         sdt				\
+         setns				\
+         libopencsd			\
+-        libaio
++        libaio				\
++        libzstd
  
- 	vhost_poll_init(n->poll + VHOST_NET_VQ_TX, handle_tx_net, EPOLLOUT, dev);
- 	vhost_poll_init(n->poll + VHOST_NET_VQ_RX, handle_rx_net, EPOLLIN, dev);
-diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
-index 344684f3e2e4..23593cb23dd0 100644
---- a/drivers/vhost/scsi.c
-+++ b/drivers/vhost/scsi.c
-@@ -1627,7 +1627,7 @@ static int vhost_scsi_open(struct inode *inode, struct file *f)
- 		vqs[i] = &vs->vqs[i].vq;
- 		vs->vqs[i].vq.handle_kick = vhost_scsi_handle_kick;
- 	}
--	vhost_dev_init(&vs->dev, vqs, VHOST_SCSI_MAX_VQ);
-+	vhost_dev_init(&vs->dev, vqs, VHOST_SCSI_MAX_VQ, UIO_MAXIOV);
+ # FEATURE_TESTS_BASIC + FEATURE_TESTS_EXTRA is the complete list
+ # of all feature tests
+@@ -118,7 +119,8 @@ FEATURE_DISPLAY ?=              \
+          lzma                   \
+          get_cpuid              \
+          bpf			\
+-         libaio
++         libaio			\
++         libzstd
  
- 	vhost_scsi_init_inflight(vs, NULL);
+ # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
+ # If in the future we need per-feature checks/flags for features not
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 7ceb4441b627..4b8244ee65ce 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -62,7 +62,8 @@ FILES=                                          \
+          test-clang.bin				\
+          test-llvm.bin				\
+          test-llvm-version.bin			\
+-         test-libaio.bin
++         test-libaio.bin			\
++         test-libzstd.bin
  
-diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
-index 15a216cdd507..24a129fcdd61 100644
---- a/drivers/vhost/vhost.c
-+++ b/drivers/vhost/vhost.c
-@@ -390,9 +390,9 @@ static long vhost_dev_alloc_iovecs(struct vhost_dev *dev)
- 		vq->indirect = kmalloc_array(UIO_MAXIOV,
- 					     sizeof(*vq->indirect),
- 					     GFP_KERNEL);
--		vq->log = kmalloc_array(UIO_MAXIOV, sizeof(*vq->log),
-+		vq->log = kmalloc_array(dev->iov_limit, sizeof(*vq->log),
- 					GFP_KERNEL);
--		vq->heads = kmalloc_array(UIO_MAXIOV, sizeof(*vq->heads),
-+		vq->heads = kmalloc_array(dev->iov_limit, sizeof(*vq->heads),
- 					  GFP_KERNEL);
- 		if (!vq->indirect || !vq->log || !vq->heads)
- 			goto err_nomem;
-@@ -414,7 +414,7 @@ static void vhost_dev_free_iovecs(struct vhost_dev *dev)
- }
+ FILES := $(addprefix $(OUTPUT),$(FILES))
  
- void vhost_dev_init(struct vhost_dev *dev,
--		    struct vhost_virtqueue **vqs, int nvqs)
-+		    struct vhost_virtqueue **vqs, int nvqs, int iov_limit)
+@@ -301,6 +302,9 @@ $(OUTPUT)test-clang.bin:
+ $(OUTPUT)test-libaio.bin:
+ 	$(BUILD) -lrt
+ 
++$(OUTPUT)test-libzstd.bin:
++	$(BUILD) -lzstd
++
+ ###############################
+ 
+ clean:
+diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
+index 20cdaa4fc112..5af329b6ffef 100644
+--- a/tools/build/feature/test-all.c
++++ b/tools/build/feature/test-all.c
+@@ -178,6 +178,10 @@
+ # include "test-libaio.c"
+ #undef main
+ 
++#define main main_test_zstd
++# include "test-libzstd.c"
++#undef main
++
+ int main(int argc, char *argv[])
  {
- 	struct vhost_virtqueue *vq;
- 	int i;
-@@ -427,6 +427,7 @@ void vhost_dev_init(struct vhost_dev *dev,
- 	dev->iotlb = NULL;
- 	dev->mm = NULL;
- 	dev->worker = NULL;
-+	dev->iov_limit = iov_limit;
- 	init_llist_head(&dev->work_list);
- 	init_waitqueue_head(&dev->wait);
- 	INIT_LIST_HEAD(&dev->read_list);
-diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
-index 1b675dad5e05..9490e7ddb340 100644
---- a/drivers/vhost/vhost.h
-+++ b/drivers/vhost/vhost.h
-@@ -170,9 +170,11 @@ struct vhost_dev {
- 	struct list_head read_list;
- 	struct list_head pending_list;
- 	wait_queue_head_t wait;
-+	int iov_limit;
- };
+ 	main_test_libpython();
+@@ -219,6 +223,7 @@ int main(int argc, char *argv[])
+ 	main_test_setns();
+ 	main_test_libopencsd();
+ 	main_test_libaio();
++	main_test_libzstd();
  
--void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs, int nvqs);
-+void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs,
-+		    int nvqs, int iov_limit);
- long vhost_dev_set_owner(struct vhost_dev *dev);
- bool vhost_dev_has_owner(struct vhost_dev *dev);
- long vhost_dev_check_owner(struct vhost_dev *);
-diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
-index 3fbc068eaa9b..bb5fc0e9fbc2 100644
---- a/drivers/vhost/vsock.c
-+++ b/drivers/vhost/vsock.c
-@@ -531,7 +531,7 @@ static int vhost_vsock_dev_open(struct inode *inode, struct file *file)
- 	vsock->vqs[VSOCK_VQ_TX].handle_kick = vhost_vsock_handle_tx_kick;
- 	vsock->vqs[VSOCK_VQ_RX].handle_kick = vhost_vsock_handle_rx_kick;
+ 	return 0;
+ }
+diff --git a/tools/build/feature/test-libzstd.c b/tools/build/feature/test-libzstd.c
+new file mode 100644
+index 000000000000..55268c01b84d
+--- /dev/null
++++ b/tools/build/feature/test-libzstd.c
+@@ -0,0 +1,12 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <zstd.h>
++
++int main(void)
++{
++	ZSTD_CStream	*cstream;
++
++	cstream = ZSTD_createCStream();
++	ZSTD_freeCStream(cstream);
++
++	return 0;
++}
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index b441c88cafa1..1dccd776a4aa 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -145,6 +145,13 @@ endif
+ FEATURE_CHECK_CFLAGS-libbabeltrace := $(LIBBABELTRACE_CFLAGS)
+ FEATURE_CHECK_LDFLAGS-libbabeltrace := $(LIBBABELTRACE_LDFLAGS) -lbabeltrace-ctf
  
--	vhost_dev_init(&vsock->dev, vqs, ARRAY_SIZE(vsock->vqs));
-+	vhost_dev_init(&vsock->dev, vqs, ARRAY_SIZE(vsock->vqs), UIO_MAXIOV);
++ifdef LIBZSTD_DIR
++  LIBZSTD_CFLAGS  := -I$(LIBZSTD_DIR)/lib
++  LIBZSTD_LDFLAGS := -L$(LIBZSTD_DIR)/lib
++endif
++FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
++FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
++
+ FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
+ # include ARCH specific config
+ -include $(src-perf)/arch/$(SRCARCH)/Makefile
+@@ -770,6 +777,19 @@ ifndef NO_LZMA
+   endif
+ endif
  
- 	file->private_data = vsock;
- 	spin_lock_init(&vsock->send_pkt_list_lock);
--- 
-2.17.1
-
++ifndef NO_LIBZSTD
++  ifeq ($(feature-libzstd), 1)
++    CFLAGS += -DHAVE_ZSTD_SUPPORT
++    CFLAGS += $(LIBZSTD_CFLAGS)
++    LDFLAGS += $(LIBZSTD_LDFLAGS)
++    EXTLIBS += -lzstd
++    $(call detected,CONFIG_ZSTD)
++  else
++    msg := $(warning No libzstd found, disables trace compression, please install libzstd-dev[el] and/or set LIBZSTD_DIR);
++    NO_LIBZSTD := 1
++  endif
++endif
++
+ ifndef NO_BACKTRACE
+   ifeq ($(feature-backtrace), 1)
+     CFLAGS += -DHAVE_BACKTRACE_SUPPORT
+diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
+index 09df1c8a4ec9..6e95e90a7b7b 100644
+--- a/tools/perf/Makefile.perf
++++ b/tools/perf/Makefile.perf
+@@ -108,6 +108,9 @@ include ../scripts/utilities.mak
+ # streaming for record mode. Currently Posix AIO trace streaming is
+ # supported only when linking with glibc.
+ #
++# Define NO_LIBZSTD if you do not want support of Zstandard based runtime
++# trace compression in record mode.
++#
+ 
+ # As per kernel Makefile, avoid funny character set dependencies
+ unexport LC_ALL
