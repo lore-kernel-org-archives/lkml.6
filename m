@@ -4,51 +4,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A375C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B5D9C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4698E2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3B632175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692087;
-	bh=XzU/D3sj8f8s+p3N1LB2FF8aBV2Lk8ppla6ndRpE2II=;
+	s=default; t=1548692092;
+	bh=bcLKVnO4RFI2dhwpNXslmzVthU5mituxKMAvmzBMi/s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=H1CIXdX0Ofa4gfvPsYElnTNVBPrWKy9emgvPB8BfL9QXHlI1TBSlURVLz29UpN2Mt
-	 MOxJqjxxmxE+g061OsaZhofMYrkwqkyDkbP9xlbLXMJF1JShCAIjKWBYYIogLj23ey
-	 LX2czeemQ/FTeXrqjBf3Wm66jUcIHR1e1cJ0o748=
+	b=hMVmm3zrqBg3fBxHow0kVV4d1aYI/u/Fa1/SCoD7IMA1mrLQ1XxWgsEqkJKD9cA9/
+	 HUUHR23FXovfAzFBmNGSFreXGKUTQ2JUD4RezcwKBejXa/cyxMNMbAKsYz/LQq4bip
+	 3ZYdZavIheHB6Uq6syU1bdV7x8gWWdEWmzCURQZk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733076AbfA1QOp (ORCPT
+        id S2387665AbfA1QOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:14:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44202 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:14:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44322 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729246AbfA1QOn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:14:43 -0500
+        id S1729246AbfA1QOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:14:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 42C9B2147A;
-        Mon, 28 Jan 2019 16:14:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 178C22086C;
+        Mon, 28 Jan 2019 16:14:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692082;
-        bh=XzU/D3sj8f8s+p3N1LB2FF8aBV2Lk8ppla6ndRpE2II=;
+        s=default; t=1548692088;
+        bh=bcLKVnO4RFI2dhwpNXslmzVthU5mituxKMAvmzBMi/s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O3DUt357B8ALziPxXFHtaeJLBFlR6ISq+ZzmUPDjMnRoN2c+AKXZFNWW+2OHbdra/
-         gXnBKkbSsF94EPonXGUSJYWmR58eS1nHQcnV01t7GyRGPrYrWTl4aizFRtmDE/q87d
-         9tORj2XpOI2j6QHKdCZTkX2LyBg0TrSHajVGQg6o=
+        b=YcQcskkM93ukFmWHCyRPwRhfl4em2e8KjDVQg7KBXsQXk4xr5UyI98zBNu3cRIEU8
+         9hRvE2feu+vSWA0kL7hkdMbj6NET48EFxpyqVcutb9tPdfwU1rscf3OqL7MeRVUepi
+         E5eoI7+juKV3jdn7bEw9RopyPYeFu237iUd8aF/g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>,
+Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        kvm ML <kvm@vger.kernel.org>, x86-ml <x86@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 061/170] ARM: mmp/mmp2: dt: enable the clock
-Date:   Mon, 28 Jan 2019 11:10:11 -0500
-Message-Id: <20190128161200.55107-61-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 062/170] x86/fpu: Add might_fault() to user_insn()
+Date:   Mon, 28 Jan 2019 11:10:12 -0500
+Message-Id: <20190128161200.55107-62-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,153 +67,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
 
-[ Upstream commit f36797ee43802b367e59f0f9a9805304a4ff0c98 ]
+[ Upstream commit 6637401c35b2f327a35d27f44bda05e327f2f017 ]
 
-The device-tree booted MMP2 needs to enable the timer clock, otherwise
-it would stop ticking when the boot finishes.
+Every user of user_insn() passes an user memory pointer to this macro.
 
-It can also use the clock rate from the clk, the non-DT boards need to
-keep using the hardcoded rates.
+Add might_fault() to user_insn() so we can spot users which are using
+this macro in sections where page faulting is not allowed.
 
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+ [ bp: Space it out to make it more visible. ]
+
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Reviewed-by: Rik van Riel <riel@surriel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Jann Horn <jannh@google.com>
+Cc: Paolo Bonzini <pbonzini@redhat.com>
+Cc: Radim Krčmář <rkrcmar@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: kvm ML <kvm@vger.kernel.org>
+Cc: x86-ml <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181128222035.2996-6-bigeasy@linutronix.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-mmp/common.h |  2 +-
- arch/arm/mach-mmp/mmp2.c   |  2 +-
- arch/arm/mach-mmp/pxa168.c |  2 +-
- arch/arm/mach-mmp/time.c   | 32 ++++++++++++++++++++------------
- 4 files changed, 23 insertions(+), 15 deletions(-)
+ arch/x86/include/asm/fpu/internal.h | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
-index 7e284d9c429f..5ac2851ef5d3 100644
---- a/arch/arm/mach-mmp/common.h
-+++ b/arch/arm/mach-mmp/common.h
-@@ -2,7 +2,7 @@
- #include <linux/reboot.h>
- #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
- 
--extern void timer_init(int irq);
-+extern void timer_init(int irq, unsigned long rate);
- 
- extern void __init mmp_map_io(void);
- extern void mmp_restart(enum reboot_mode, const char *);
-diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-index afba5460cdaf..fb3e7e32c882 100644
---- a/arch/arm/mach-mmp/mmp2.c
-+++ b/arch/arm/mach-mmp/mmp2.c
-@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
- 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
- 	__raw_writel(clk_rst, APBC_TIMERS);
- 
--	timer_init(IRQ_MMP2_TIMER1);
-+	timer_init(IRQ_MMP2_TIMER1, 6500000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
-index 0f5f16fb8c66..77a358165a56 100644
---- a/arch/arm/mach-mmp/pxa168.c
-+++ b/arch/arm/mach-mmp/pxa168.c
-@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
- 	/* 3.25MHz, bus/functional clock enabled, release reset */
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA168_TIMER1);
-+	timer_init(IRQ_PXA168_TIMER1, 6500000);
- }
- 
- void pxa168_clear_keypad_wakeup(void)
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index 96ad1db0b04b..eab0fd8a7343 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -22,6 +22,7 @@
- #include <linux/kernel.h>
- #include <linux/interrupt.h>
- #include <linux/clockchips.h>
-+#include <linux/clk.h>
- 
- #include <linux/io.h>
- #include <linux/irq.h>
-@@ -38,12 +39,6 @@
- #include "cputype.h"
- #include "clock.h"
- 
--#ifdef CONFIG_CPU_MMP2
--#define MMP_CLOCK_FREQ		6500000
--#else
--#define MMP_CLOCK_FREQ		3250000
--#endif
--
- #define TIMERS_VIRT_BASE	TIMERS1_VIRT_BASE
- 
- #define MAX_DELTA		(0xfffffffe)
-@@ -189,19 +184,18 @@ static struct irqaction timer_irq = {
- 	.dev_id		= &ckevt,
- };
- 
--void __init timer_init(int irq)
-+void __init timer_init(int irq, unsigned long rate)
- {
- 	timer_config();
- 
--	sched_clock_register(mmp_read_sched_clock, 32, MMP_CLOCK_FREQ);
-+	sched_clock_register(mmp_read_sched_clock, 32, rate);
- 
- 	ckevt.cpumask = cpumask_of(0);
- 
- 	setup_irq(irq, &timer_irq);
- 
--	clocksource_register_hz(&cksrc, MMP_CLOCK_FREQ);
--	clockevents_config_and_register(&ckevt, MMP_CLOCK_FREQ,
--					MIN_DELTA, MAX_DELTA);
-+	clocksource_register_hz(&cksrc, rate);
-+	clockevents_config_and_register(&ckevt, rate, MIN_DELTA, MAX_DELTA);
- }
- 
- #ifdef CONFIG_OF
-@@ -213,7 +207,9 @@ static const struct of_device_id mmp_timer_dt_ids[] = {
- void __init mmp_dt_init_timer(void)
- {
- 	struct device_node *np;
-+	struct clk *clk;
- 	int irq, ret;
-+	unsigned long rate;
- 
- 	np = of_find_matching_node(NULL, mmp_timer_dt_ids);
- 	if (!np) {
-@@ -221,6 +217,18 @@ void __init mmp_dt_init_timer(void)
- 		goto out;
- 	}
- 
-+	clk = of_clk_get(np, 0);
-+	if (!IS_ERR(clk)) {
-+		ret = clk_prepare_enable(clk);
-+		if (ret)
-+			goto out;
-+		rate = clk_get_rate(clk) / 2;
-+	} else if (cpu_is_pj4()) {
-+		rate = 6500000;
-+	} else {
-+		rate = 3250000;
-+	}
-+
- 	irq = irq_of_parse_and_map(np, 0);
- 	if (!irq) {
- 		ret = -EINVAL;
-@@ -231,7 +239,7 @@ void __init mmp_dt_init_timer(void)
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	timer_init(irq);
-+	timer_init(irq, rate);
- 	return;
- out:
- 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
+diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
+index 69dcdf195b61..fa2c93cb42a2 100644
+--- a/arch/x86/include/asm/fpu/internal.h
++++ b/arch/x86/include/asm/fpu/internal.h
+@@ -106,6 +106,9 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
+ #define user_insn(insn, output, input...)				\
+ ({									\
+ 	int err;							\
++									\
++	might_fault();							\
++									\
+ 	asm volatile(ASM_STAC "\n"					\
+ 		     "1:" #insn "\n\t"					\
+ 		     "2: " ASM_CLAC "\n"				\
 -- 
 2.19.1
 
