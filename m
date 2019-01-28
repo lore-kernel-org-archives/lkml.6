@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E821C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BE68C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5ED792086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E662620879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692176;
-	bh=LhZjI23J8nfbElxw7IbIt11E7C9ZaPTm9xKPQvEyyLQ=;
+	s=default; t=1548692180;
+	bh=pGAjK0RcMWjl1z04je7yA45W5ky3e6+MUNBieQFlWQM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1L9mb7M/6zw+ax/xNJYgJQ3z8flDGxo3uq0dag5ztYfTTrOA4iue35nhnyRaTiKn3
-	 FX9PnL4ko4URUzH0RiSsc1clzV1zEGm5iUbPp0LA+l4Ii2dZ4IUAxTfx95L6RkkUQb
-	 4dNm8EWV+Vo/YoqwK0OTt5wj2Lkc3YxE16XkshNA=
+	b=WGmA90FQ0J2nqAAuO4UbGllgJxfSb1cEZid5yequqtN+6mXuphJLBZQkB/LqeGhwK
+	 jsNWfD+dvlBy368rRpJaiYNmZhAbUtR5xceMIAJX37Lz8VPPbeKLsytKZ1Ty9KQueM
+	 ifP75ZlxZY9Hzo+R7skJDKLVqDAyu07Dcms44ETU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732836AbfA1QQO (ORCPT
+        id S1733177AbfA1QQS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:16:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47960 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:16:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48088 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730472AbfA1QQN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:16:13 -0500
+        id S1733160AbfA1QQP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:16:15 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 998352086C;
-        Mon, 28 Jan 2019 16:16:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE55920879;
+        Mon, 28 Jan 2019 16:16:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692172;
-        bh=LhZjI23J8nfbElxw7IbIt11E7C9ZaPTm9xKPQvEyyLQ=;
+        s=default; t=1548692174;
+        bh=pGAjK0RcMWjl1z04je7yA45W5ky3e6+MUNBieQFlWQM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hOHuX8gPxGzwmBK3HdIxolsWSnfkFRqi25Vcif2FK59ZL0TPrAAnzxfbSquq14Uaw
-         MUkZNGbm2s17ol3MO0wVg4n7kk1Enp0DK/0NuucBP2XKFcBYE5Dd5q4nQc5QdzkGBD
-         w48EgGTTxu36K5YZrHi/jH7qNxBHVtf/RIHRQ+7Y=
+        b=gV5Sf8cHFr0lTDqlzoacZPKuyMw3F1RlLFOlZFflDyUY/6INEO2sfOwX5k5+P7WSK
+         UU3VZBOI5NPjV1DBYZ5/jNoDFa+GUIZII+zImnp3JOsPAvHp5HifONY9O6+qcir5Pk
+         RyYt5AtLOb1tNMM2EtjzL+Ox20g7l2l5Z9GJlc38=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 097/170] ARM: mmp: fix timer_init calls
-Date:   Mon, 28 Jan 2019 11:10:47 -0500
-Message-Id: <20190128161200.55107-97-sashal@kernel.org>
+Cc:     Suraj Jitindar Singh <sjitindarsingh@gmail.com>,
+        Paul Mackerras <paulus@ozlabs.org>,
+        Sasha Levin <sashal@kernel.org>, kvm-ppc@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.14 098/170] KVM: PPC: Book3S: Only report KVM_CAP_SPAPR_TCE_VFIO on powernv machines
+Date:   Mon, 28 Jan 2019 11:10:48 -0500
+Message-Id: <20190128161200.55107-98-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,112 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
 
-[ Upstream commit 12d3a30db4a3b3df5fbadf5974b9cf50544a9950 ]
+[ Upstream commit 693ac10a88a2219bde553b2e8460dbec97e594e6 ]
 
-The change to passing the timer frequency as a function argument
-was a good idea, but caused a build failure for one user that
-was missed in the update:
+The kvm capability KVM_CAP_SPAPR_TCE_VFIO is used to indicate the
+availability of in kernel tce acceleration for vfio. However it is
+currently the case that this is only available on a powernv machine,
+not for a pseries machine.
 
-arch/arm/mach-mmp/time.c: In function 'mmp_dt_init_timer':
-arch/arm/mach-mmp/time.c:242:2: error: implicit declaration of function 'timer_init'; did you mean 'hrtimer_init'? [-Werror=implicit-function-declaration]
+Thus make this capability dependent on having the cpu feature
+CPU_FTR_HVMODE.
 
-Change that as well to fix the build error, and rename the
-function to put it into a proper namespace and make it clearer
-what is actually going on.
+[paulus@ozlabs.org - fixed compilation for Book E.]
 
-I saw that the high 6500000 HZ frequency was previously only
-set with CONFIG_MMP2, but is now also used with MMP (pxa910),
-so I'm changing that back here. Please make sure that the
-frequencies are all correct now.
-
-Fixes: f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Suraj Jitindar Singh <sjitindarsingh@gmail.com>
+Signed-off-by: Paul Mackerras <paulus@ozlabs.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-mmp/common.h | 2 +-
- arch/arm/mach-mmp/mmp2.c   | 2 +-
- arch/arm/mach-mmp/pxa168.c | 2 +-
- arch/arm/mach-mmp/pxa910.c | 2 +-
- arch/arm/mach-mmp/time.c   | 4 ++--
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ arch/powerpc/kvm/powerpc.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
-index 5ac2851ef5d3..483b8b6d3005 100644
---- a/arch/arm/mach-mmp/common.h
-+++ b/arch/arm/mach-mmp/common.h
-@@ -2,7 +2,7 @@
- #include <linux/reboot.h>
- #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
- 
--extern void timer_init(int irq, unsigned long rate);
-+extern void mmp_timer_init(int irq, unsigned long rate);
- 
- extern void __init mmp_map_io(void);
- extern void mmp_restart(enum reboot_mode, const char *);
-diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-index fb3e7e32c882..726c1a642dea 100644
---- a/arch/arm/mach-mmp/mmp2.c
-+++ b/arch/arm/mach-mmp/mmp2.c
-@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
- 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
- 	__raw_writel(clk_rst, APBC_TIMERS);
- 
--	timer_init(IRQ_MMP2_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_MMP2_TIMER1, 6500000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
-index 77a358165a56..cdcf65ace3f9 100644
---- a/arch/arm/mach-mmp/pxa168.c
-+++ b/arch/arm/mach-mmp/pxa168.c
-@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
- 	/* 3.25MHz, bus/functional clock enabled, release reset */
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA168_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_PXA168_TIMER1, 3250000);
- }
- 
- void pxa168_clear_keypad_wakeup(void)
-diff --git a/arch/arm/mach-mmp/pxa910.c b/arch/arm/mach-mmp/pxa910.c
-index 1ccbba9ac495..d30a7d12bc98 100644
---- a/arch/arm/mach-mmp/pxa910.c
-+++ b/arch/arm/mach-mmp/pxa910.c
-@@ -116,7 +116,7 @@ void __init pxa910_timer_init(void)
- 	__raw_writel(APBC_APBCLK | APBC_RST, APBC_TIMERS);
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA910_AP1_TIMER1);
-+	mmp_timer_init(IRQ_PXA910_AP1_TIMER1, 3250000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index eab0fd8a7343..f9c295154b94 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -184,7 +184,7 @@ static struct irqaction timer_irq = {
- 	.dev_id		= &ckevt,
- };
- 
--void __init timer_init(int irq, unsigned long rate)
-+void __init mmp_timer_init(int irq, unsigned long rate)
- {
- 	timer_config();
- 
-@@ -239,7 +239,7 @@ void __init mmp_dt_init_timer(void)
- 		ret = -ENOMEM;
- 		goto out;
- 	}
--	timer_init(irq, rate);
-+	mmp_timer_init(irq, rate);
- 	return;
- out:
- 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
+diff --git a/arch/powerpc/kvm/powerpc.c b/arch/powerpc/kvm/powerpc.c
+index ecb45361095b..a35995a6b34a 100644
+--- a/arch/powerpc/kvm/powerpc.c
++++ b/arch/powerpc/kvm/powerpc.c
+@@ -540,8 +540,11 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
+ #ifdef CONFIG_PPC_BOOK3S_64
+ 	case KVM_CAP_SPAPR_TCE:
+ 	case KVM_CAP_SPAPR_TCE_64:
+-		/* fallthrough */
++		r = 1;
++		break;
+ 	case KVM_CAP_SPAPR_TCE_VFIO:
++		r = !!cpu_has_feature(CPU_FTR_HVMODE);
++		break;
+ 	case KVM_CAP_PPC_RTAS:
+ 	case KVM_CAP_PPC_FIXUP_HCALL:
+ 	case KVM_CAP_PPC_ENABLE_HCALL:
 -- 
 2.19.1
 
