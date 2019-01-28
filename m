@@ -4,53 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39E1BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 935B7C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 081F72183F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6164821841
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691054;
-	bh=Kadzjn9bb003xydXr9zRcs71WLtAp47kh3NEig3YW24=;
+	s=default; t=1548691061;
+	bh=DniXUElsbbEj9+q8L011eCBt+BhAoeKelG3+2ohBsXM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FTgiqZhP9Tn+Z0uWm2bFh6g8wOqyui7VOapL4Z9uIcXKzXDngHC4+idgLuIQ5hz3U
-	 wcmtQPt9RC49087gzpik8z+oUwT7klu14Y0H4pgtZYFZlFBTtgXZAQE5xXYbhIQpc7
-	 s7G+xPSyLTYnB57tRIImQeBYvq+lNgPi3C7ZKH2I=
+	b=fk9fsUi4Ihqsfs9uvk+CaG3RG51/MAms4QfIHuhIN4g0zn5YcUjfgf6UXNOiJ6KxX
+	 P6RKLxJUSGZMSqX0cjLTF6r6sB34fLO8m9d2YqN575NKJvU1gOzqAgF9fyfY8ybvkZ
+	 +oxVBPLZ3OI4zvf10iRIwXS6k30njbOeOh30bhkk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730243AbfA1P5d (ORCPT
+        id S1730261AbfA1P5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:57:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42954 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:57:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43078 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730234AbfA1P52 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:57:28 -0500
+        id S1729956AbfA1P5g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:57:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6799D21783;
-        Mon, 28 Jan 2019 15:57:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 539E32175B;
+        Mon, 28 Jan 2019 15:57:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691048;
-        bh=Kadzjn9bb003xydXr9zRcs71WLtAp47kh3NEig3YW24=;
+        s=default; t=1548691056;
+        bh=DniXUElsbbEj9+q8L011eCBt+BhAoeKelG3+2ohBsXM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hY6OG9CXcnBW+gImDe5A9yYCKlHOz1xrZ4sJRHI3qC0WiOwyPGrdPqNYSuYejt9+a
-         z2ppLQMj/ymWKeO7rmxu/v5XwlzplJojY+Ah2TMt+gJOWkZNI4Kypod2YAP8vQw1s5
-         uVLl3lUVOMIjxQohJLGr8zLO4Nif5/JGUh/YCbZc=
+        b=zDrnQ1QrDjaP9HmNqn02Zg1sv252/ueOOW93cmkpoo7UPKgTw5GZ0gv2MYSEwBchn
+         Ma6GYn6ucoyp700wWBIKohLp/jNpdUu2KGOsUSMHtecsXCaytNEQntmNCemkFbLFHS
+         rzegnTeJjPOK/lh5/iDcE/1w7QmNrs+S4TFp34zM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.20 273/304] f2fs: fix sbi->extent_list corruption issue
-Date:   Mon, 28 Jan 2019 10:43:10 -0500
-Message-Id: <20190128154341.47195-273-sashal@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        =?UTF-8?q?Jaroslav=20=C5=A0karvada?= <jskarvad@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 275/304] perf python: Do not force closing original perf descriptor in evlist.get_pollfd()
+Date:   Mon, 28 Jan 2019 10:43:12 -0500
+Message-Id: <20190128154341.47195-275-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,92 +63,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Jiri Olsa <jolsa@kernel.org>
 
-[ Upstream commit e4589fa545e0020dbbc3c9bde35f35f949901392 ]
+[ Upstream commit a389aece97938966616ce0336466b98b0351ef10 ]
 
-When there is a failure in f2fs_fill_super() after/during
-the recovery of fsync'd nodes, it frees the current sbi and
-retries again. This time the mount is successful, but the files
-that got recovered before retry, still holds the extent tree,
-whose extent nodes list is corrupted since sbi and sbi->extent_list
-is freed up. The list_del corruption issue is observed when the
-file system is getting unmounted and when those recoverd files extent
-node is being freed up in the below context.
+Ondřej reported that when compiled with python3, the python extension
+regresses in evlist.get_pollfd function behaviour.
 
-list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
-<...>
-kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
-lr : __list_del_entry_valid+0x94/0xb4
-pc : __list_del_entry_valid+0x94/0xb4
-<...>
-Call trace:
-__list_del_entry_valid+0x94/0xb4
-__release_extent_node+0xb0/0x114
-__free_extent_tree+0x58/0x7c
-f2fs_shrink_extent_tree+0xdc/0x3b0
-f2fs_leave_shrinker+0x28/0x7c
-f2fs_put_super+0xfc/0x1e0
-generic_shutdown_super+0x70/0xf4
-kill_block_super+0x2c/0x5c
-kill_f2fs_super+0x44/0x50
-deactivate_locked_super+0x60/0x8c
-deactivate_super+0x68/0x74
-cleanup_mnt+0x40/0x78
-__cleanup_mnt+0x1c/0x28
-task_work_run+0x48/0xd0
-do_notify_resume+0x678/0xe98
-work_pending+0x8/0x14
+The evlist.get_pollfd function creates file objects from evlist's fds
+and returns them in a list. The python3 version also sets them to 'close
+the original descriptor' when the object dies (is closed), by passing
+True via the 'closefd' arg in the PyFile_FromFd call.
 
-Fix this by not creating extents for those recovered files if shrinker is
-not registered yet. Once mount is successful and shrinker is registered,
-those files can have extents again.
+The python's closefd doc says:
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+  If closefd is False, the underlying file descriptor will be kept open
+  when the file is closed.
+
+That's why the following line in python3 closes all evlist fds:
+
+  evlist.get_pollfd()
+
+the returned list is immediately destroyed and that takes down the
+original events fds.
+
+Passing closefd as False to PyFile_FromFd to fix this.
+
+Reported-by: Ondřej Lysoněk <olysonek@redhat.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jaroslav Škarvada <jskarvad@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Fixes: 66dfdff03d19 ("perf tools: Add Python 3 support")
+Link: http://lkml.kernel.org/r/20181226112121.5285-1-jolsa@kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h     | 11 ++++++++++-
- fs/f2fs/shrinker.c |  2 +-
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ tools/perf/util/python.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index ebad864c031c..6713060a59fb 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2673,10 +2673,19 @@ static inline bool is_dot_dotdot(const struct qstr *str)
+diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+index 50150dfc0cdf..4dd8fd05a260 100644
+--- a/tools/perf/util/python.c
++++ b/tools/perf/util/python.c
+@@ -939,7 +939,8 @@ static PyObject *pyrf_evlist__get_pollfd(struct pyrf_evlist *pevlist,
  
- static inline bool f2fs_may_extent_tree(struct inode *inode)
- {
--	if (!test_opt(F2FS_I_SB(inode), EXTENT_CACHE) ||
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	if (!test_opt(sbi, EXTENT_CACHE) ||
- 			is_inode_flag_set(inode, FI_NO_EXTENT))
- 		return false;
- 
-+	/*
-+	 * for recovered files during mount do not create extents
-+	 * if shrinker is not registered.
-+	 */
-+	if (list_empty(&sbi->s_list))
-+		return false;
-+
- 	return S_ISREG(inode->i_mode);
- }
- 
-diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-index 9e13db994fdf..a467aca29cfe 100644
---- a/fs/f2fs/shrinker.c
-+++ b/fs/f2fs/shrinker.c
-@@ -135,6 +135,6 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi)
- 	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
- 
- 	spin_lock(&f2fs_list_lock);
--	list_del(&sbi->s_list);
-+	list_del_init(&sbi->s_list);
- 	spin_unlock(&f2fs_list_lock);
- }
+ 		file = PyFile_FromFile(fp, "perf", "r", NULL);
+ #else
+-		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1, NULL, NULL, NULL, 1);
++		file = PyFile_FromFd(evlist->pollfd.entries[i].fd, "perf", "r", -1,
++				     NULL, NULL, NULL, 0);
+ #endif
+ 		if (file == NULL)
+ 			goto free_list;
 -- 
 2.19.1
 
