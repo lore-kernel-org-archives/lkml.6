@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF00CC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2F9C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 79EED20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A73082085B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697436;
-	bh=bZXLlLwjL/uwi+TaaSmsa69GsIDJK9MXX6dC+DPasPk=;
+	s=default; t=1548697439;
+	bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tx2agEGn6ytsltampWBokz8Q/9aJu6Ug9kz9xfVqmKD1zaSJIL70N6s3jWrC1peKm
-	 hJOrKDoRhnAtffvnc+qbp85DOr7Zp79jW0nqB4BE7IgrSIQcaRXsiCNeV/47LBQInD
-	 MFNs0w9futdUubQrO4tbQILHVdgsd5K/o8ciwKhU=
+	b=C20Ygwb2HbW6wXLDRjFHKDoX0zqIBBM1ABQXW6DeYw7ziiJE9JAxUZrf40U4NiVHS
+	 3IK+3ziqUuIzwEU1buZLnenpLOOs9I/E+uXL5aYgnPR5ZtTJheUuNPDJlqx17DVr0C
+	 0T7JM/Ua+FO+72NA7+4OOWs+rAAnQyqMnR2uiXB4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbfA1PtU (ORCPT
+        id S1728899AbfA1Rn5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:49:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34796 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:43:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35080 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728662AbfA1PtQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:49:16 -0500
+        id S1728684AbfA1PtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:49:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1D952147A;
-        Mon, 28 Jan 2019 15:49:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9A9B21741;
+        Mon, 28 Jan 2019 15:49:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690555;
-        bh=bZXLlLwjL/uwi+TaaSmsa69GsIDJK9MXX6dC+DPasPk=;
+        s=default; t=1548690559;
+        bh=NiU+fKxxjAJwJWAOHX8DOnTRU8rjh/xsh3EXRdvZyyQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1MStPgDuircg8YNvTEZmAPbVVYXgKOKXM4Gk2wRO1PF6rCoQHTHxsnnPNh17DmkkL
-         QGNkiXlVmN/RCre1E3NN9Tm6OZuLM0oK83uKkfTxcW8gEFW3D4x9NKEo8ADBh8Uwjv
-         AbSCwz45bNukVppJjWBJgNUY+CSaNOVFY8cB/PqU=
+        b=gn6mxw353x8XnvKb7fzEo6vfXfbyWQjRoL2gmoyUCVO6g3DWAwFtozcmgqyAdEzvi
+         YcOkaiEOF1J9X4HUgPTOglQyB+i5oqSv3TvOz3LvCfRH+bGgA+7iJz+7wca0obDIm4
+         A3rI7UP5xODa0YgxLPKW2eWVGj1rOHOaalBRozgg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bart Van Assche <bvanassche@acm.org>,
-        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
-        tj@kernel.org, johannes.berg@intel.com,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 123/304] timekeeping: Use proper seqcount initializer
-Date:   Mon, 28 Jan 2019 10:40:40 -0500
-Message-Id: <20190128154341.47195-123-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 125/304] clk: sunxi-ng: a33: Set CLK_SET_RATE_PARENT for all audio module clocks
+Date:   Mon, 28 Jan 2019 10:40:42 -0500
+Message-Id: <20190128154341.47195-125-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,45 +58,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bart Van Assche <bvanassche@acm.org>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit ce10a5b3954f2514af726beb78ed8d7350c5e41c ]
+[ Upstream commit 6e6da2039c82271dd873b9ad2b902a692a7dd554 ]
 
-tk_core.seq is initialized open coded, but that misses to initialize the
-lockdep map when lockdep is enabled. Lockdep splats involving tk_core seq
-consequently lack a name and are hard to read.
+All the audio interfaces on Allwinner SoCs need to change their module
+clocks during operation, to switch between support for 44.1 kHz and 48
+kHz family sample rates. The clock rate for the module clocks is
+governed by their upstream audio PLL. The module clocks themselves only
+have a gate, and sometimes a divider or mux. Thus any rate changes need
+to be propagated upstream.
 
-Use the proper initializer which takes care of the lockdep map
-initialization.
+Set the CLK_SET_RATE_PARENT flag for all audio module clocks to achieve
+this.
 
-[ tglx: Massaged changelog ]
-
-Signed-off-by: Bart Van Assche <bvanassche@acm.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Cc: peterz@infradead.org
-Cc: tj@kernel.org
-Cc: johannes.berg@intel.com
-Link: https://lkml.kernel.org/r/20181128234325.110011-12-bvanassche@acm.org
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/time/timekeeping.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun8i-a33.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
-index 2d110c948805..6c9493495538 100644
---- a/kernel/time/timekeeping.c
-+++ b/kernel/time/timekeeping.c
-@@ -50,7 +50,9 @@ enum timekeeping_adv_mode {
- static struct {
- 	seqcount_t		seq;
- 	struct timekeeper	timekeeper;
--} tk_core ____cacheline_aligned;
-+} tk_core ____cacheline_aligned = {
-+	.seq = SEQCNT_ZERO(tk_core.seq),
-+};
+diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+index 13eb5b23c5e7..c40d572a7602 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
++++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
+@@ -366,10 +366,10 @@ static SUNXI_CCU_MP_WITH_MUX_GATE(spi1_clk, "spi1", mod0_default_parents, 0x0a4,
+ static const char * const i2s_parents[] = { "pll-audio-8x", "pll-audio-4x",
+ 					    "pll-audio-2x", "pll-audio" };
+ static SUNXI_CCU_MUX_WITH_GATE(i2s0_clk, "i2s0", i2s_parents,
+-			       0x0b0, 16, 2, BIT(31), 0);
++			       0x0b0, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
  
- static DEFINE_RAW_SPINLOCK(timekeeper_lock);
- static struct timekeeper shadow_timekeeper;
+ static SUNXI_CCU_MUX_WITH_GATE(i2s1_clk, "i2s1", i2s_parents,
+-			       0x0b4, 16, 2, BIT(31), 0);
++			       0x0b4, 16, 2, BIT(31), CLK_SET_RATE_PARENT);
+ 
+ /* TODO: the parent for most of the USB clocks is not known */
+ static SUNXI_CCU_GATE(usb_phy0_clk,	"usb-phy0",	"osc24M",
+@@ -446,7 +446,7 @@ static SUNXI_CCU_M_WITH_GATE(ve_clk, "ve", "pll-ve",
+ static SUNXI_CCU_GATE(ac_dig_clk,	"ac-dig",	"pll-audio",
+ 		      0x140, BIT(31), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_GATE(ac_dig_4x_clk,	"ac-dig-4x",	"pll-audio-4x",
+-		      0x140, BIT(30), 0);
++		      0x140, BIT(30), CLK_SET_RATE_PARENT);
+ static SUNXI_CCU_GATE(avs_clk,		"avs",		"osc24M",
+ 		      0x144, BIT(31), 0);
+ 
 -- 
 2.19.1
 
