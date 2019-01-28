@@ -2,101 +2,116 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78256C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 503A1C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BB332147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696997;
-	bh=mq8NmfjqDpb5Dlu6rFELx06N7wGrH1MuDBYnCer/gVo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=hu2PBEHO9wyLGzs3oLtWideqOB3Lxwss7HA4EDA38KdyZ1+qtLfchWkTopW5J+E/s
-	 s6bAeSOT0KMAKPmuTFnvqKCCiYso+0WFLMfEB2eRUVXjAiuDwk9V5fQlaEz421YopY
-	 dXGElCnCrrQ/APtvVHvKNs5+3SugImx3fjYwqEAU=
+	by mail.kernel.org (Postfix) with ESMTP id 1B03B2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:36:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="UadlR7aQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728817AbfA1PzM (ORCPT
+        id S1730866AbfA1Rgm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:55:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41102 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728766AbfA1PzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:06 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A4E620989;
-        Mon, 28 Jan 2019 15:55:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690905;
-        bh=mq8NmfjqDpb5Dlu6rFELx06N7wGrH1MuDBYnCer/gVo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MdvtvYt4It6a6JNKQtvtAa6Ji0k7d2zlLhGkTQTCSM4Hd98WZiUkZhuIggIC1tp7p
-         NXaS0NJdu50e9tdlScQmujUhIlqkYN+23WT23H0O8uB/EmOTZ/Av1HW+QAZm6YrYI6
-         939DCXDN0+DiglZDiQEQZ9GOaJ37Ap0f8wtuCULg=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Peng Li <lipeng321@huawei.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 231/304] net: hns3: fix the descriptor index when get rss type
-Date:   Mon, 28 Jan 2019 10:42:28 -0500
-Message-Id: <20190128154341.47195-231-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 12:36:42 -0500
+Received: from mail-wr1-f48.google.com ([209.85.221.48]:41202 "EHLO
+        mail-wr1-f48.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729830AbfA1PzK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:55:10 -0500
+Received: by mail-wr1-f48.google.com with SMTP id x10so18589078wrs.8
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:55:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O0T59a439PmoM+RBgHtX80yzeydI/sVDjVRx3AEpgX0=;
+        b=UadlR7aQshABJxFPB82d1N9pB0A6NKRrPDpA5aFK6EhRHCrE4LKRVvO6zy70m/lG63
+         9ABNQj94PJd/z6cP/oIGEGeEEBeHhySS0o0i7D3TPnCh6TenfVG03B9ZAFOvpf4gOmHm
+         lxUP0trOnZrEMix0rgNnn5xGJoY1cbuuJInwQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=O0T59a439PmoM+RBgHtX80yzeydI/sVDjVRx3AEpgX0=;
+        b=cdP1lwkBOWiQEnZYbe5Y0TZ4Wm0uUiARHOzF9ciorOHh9l5JF9YcdP57RVQvwhYpcw
+         apf6d37av/mbcp/9jBg7MhceQPqFAT7S1QXlmxHxqVqeXmHhUVgzpHU/GSjC+1JKJGBe
+         HNKphcUkOFo8cfbQalJXXE4kpOR3IOHOPlpEuNDxVHpU6Gn5zcaKSgkd2l+OdU6TmSoD
+         VUhxES79nfa2O5lsFLWuQUYpE+GUZGI+D+dU3qGR2qsvfGeuVQBeZPnASi04BcDTCPds
+         +Pzax38Uf/BH/z+LO6Myzzmi1ijvqewTFi07JnOxHsIe3qfgfuX5AK2M55s5oyQyE7jV
+         iZEQ==
+X-Gm-Message-State: AJcUukfqv2mgYOil1LR7vZBHntDW3hyCYTR8oUiXvWySyz5O8q9AwMiY
+        C6wJ9/hXee/Yf+HodeVs+HrSX75xOJA=
+X-Google-Smtp-Source: ALg8bN5Je+wuGL5CiQlixta8EMw4c1Am0cwqq9YKAcc5BuQyoHgrSUH+UXDwIOPVSzoGqY0i79cSGQ==
+X-Received: by 2002:adf:f091:: with SMTP id n17mr22173594wro.292.1548690908564;
+        Mon, 28 Jan 2019 07:55:08 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id p6sm145140485wrx.50.2019.01.28.07.55.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 28 Jan 2019 07:55:07 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 00/13] nvmem: patches for 5.1
+Date:   Mon, 28 Jan 2019 15:54:53 +0000
+Message-Id: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Peng Li <lipeng321@huawei.com>
+Hi Greg,
 
-[ Upstream commit 31a16f99e02c2e0b40a5fb05d66f5e56721027e2 ]
+Here are few nvmem patches which includes
+	- some improvements to nvmem core done by Alban
+	- add support for imx MX7ULP and MX6ULL.
+	- fix block index calculation on sc27xx provider
+	- add ACPI support to BCM OCOTP provider
 
-Driver gets rss information from the last descriptor of the packet.
-When driver handle the rss type, ring->next_to_clean indicates the
-first descriptor of next packet.
+Can you please pick them up for 5.1.
 
-This patch fix the descriptor index with "ring->next_to_clean - 1".
+thanks,
+srini
 
-Fixes: 232fc64b6e62 ("net: hns3: Add HW RSS hash information to RX skb")
-Signed-off-by: Peng Li <lipeng321@huawei.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/hisilicon/hns3/hns3_enet.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index beb5dbd5e98d..d424d5bc0507 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -2332,9 +2332,16 @@ static bool hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
- static void hns3_set_rx_skb_rss_type(struct hns3_enet_ring *ring,
- 				     struct sk_buff *skb)
- {
--	struct hns3_desc *desc = &ring->desc[ring->next_to_clean];
- 	struct hnae3_handle *handle = ring->tqp->handle;
- 	enum pkt_hash_types rss_type;
-+	struct hns3_desc *desc;
-+	int last_bd;
-+
-+	/* When driver handle the rss type, ring->next_to_clean indicates the
-+	 * first descriptor of next packet, need -1 here.
-+	 */
-+	last_bd = (ring->next_to_clean - 1 + ring->desc_num) % ring->desc_num;
-+	desc = &ring->desc[last_bd];
- 
- 	if (le32_to_cpu(desc->rx.rss_hash))
- 		rss_type = handle->kinfo.rss_type;
+Alban Bedel (7):
+  nvmem: core: Set the provider read-only when no write callback is
+    given
+  nvmem: core: Fix of_nvmem_cell_get() for optional cells
+  nvmem: core: Fix cell lookup when no cell is found
+  nvmem: core: Properly handle connection ID in of_nvmem_device_get()
+  nvmem: core: Always reference the device returned by
+    nvmem_device_get()
+  nvmem: core: Fix device reference leak
+  nvmem: core: Avoid useless iterations in nvmem_cell_get_from_lookup()
+
+Anson Huang (2):
+  dt-bindings: nvmem: imx-ocotp: add compatible string for i.MX7ULP
+  nvmem: imx-ocotp: add i.MX7ULP support
+
+Freeman Liu (1):
+  nvmem: sc27xx: Convert nvmem offset to block index
+
+Srinath Mannam (1):
+  nvmem: bcm-ocotp: Add ACPI support to BCM OCOTP
+
+Stefan Wahren (2):
+  dt-bindings: imx-ocotp: Add i.MX6ULL/ULZ support
+  nvmem: imx-ocotp: Implement i.MX6ULL/ULZ support
+
+ .../devicetree/bindings/nvmem/imx-ocotp.txt   |  4 +-
+ drivers/nvmem/bcm-ocotp.c                     | 37 +++++++++---------
+ drivers/nvmem/core.c                          | 38 +++++++++++--------
+ drivers/nvmem/imx-ocotp.c                     | 13 +++++++
+ drivers/nvmem/sc27xx-efuse.c                  | 12 ++++--
+ 5 files changed, 66 insertions(+), 38 deletions(-)
+
 -- 
-2.19.1
+2.20.1
 
