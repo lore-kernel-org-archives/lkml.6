@@ -2,98 +2,177 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F288C282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:23:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B16EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:23:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D3872147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:23:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="zjHDbhlk"
+	by mail.kernel.org (Postfix) with ESMTP id DE2D32147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:23:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727366AbfA1SXJ (ORCPT
+        id S1727524AbfA1SXk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:23:09 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35301 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbfA1SXC (ORCPT
+        Mon, 28 Jan 2019 13:23:40 -0500
+Received: from gateway31.websitewelcome.com ([192.185.143.51]:38243 "EHLO
+        gateway31.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727452AbfA1SXj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:23:02 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t200so15110669wmt.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:23:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=KF36F6q9GQzGHJ20m9zEs0OSKLwz9Wn20oRSDsKSvn8=;
-        b=zjHDbhlkRCr07+TN1SMYNQ5eDsCYWPn44MbDZJoK3N4hCs0Ou/GHl8txK4GZCV/UeU
-         ONr2lwM40JdODhiJzwQquNRpyDcZ72xiI83sDVIZXMR6wOMuZMn/ikiUdeRN+eVg+kzZ
-         qaXTyLwoqZIPX5ubXieyc5QpU9CptnqN2y3RjedjkRTKD1HmroGseXq4y8G9b73VU2zF
-         +WVpb2uUJCKXn0PnQFetdRhLWU2NXrJOzcem/6s5KRrHsvzd4nEA7QADgS6rHGeb4y6S
-         6fQ7QVrnGa/TaKJmzFmdD60blf26Zwo4TlMZfHGquaTLstW96ReTPiHzAOnf7ewAYxVh
-         x8ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=KF36F6q9GQzGHJ20m9zEs0OSKLwz9Wn20oRSDsKSvn8=;
-        b=eN2sOgGDB3aaCtO7uRPJ8qqBF5etT9yyQwqwlzFEgUn1J4nh0yr+CjZCuCZoYRKF57
-         xRdW6/dAXHvJ5k+mBH+K8Q6CNyLT1xE2Th6J+0p1XPCnCf0bWcqRNEx/BizXvIKjp7uW
-         2k11BSrZO4OAmoH+rgQHM2bwmf7kcThTIfr+HK5ejRR2hm/2oguPUE0G9kMxUa5g0szy
-         7BKgU0wfuiRnNApTT0wozfw40irIpYccjOY3d9k/elkvdy/FFYgAcC+ZSeIRdJK92Y3h
-         J0nY6tJ3HEeE8QWCwD/c1akPwh08uZRtnEtdK0LdEAvXVqUFmFt/RHEfDovEX9cneptG
-         2w6Q==
-X-Gm-Message-State: AJcUukdWIZ+NEyk4uWPyelcNFAHkTno+8GOIFT0HkT1T0tTQ3jX6PiQ6
-        3f4kTYMfUZU3bZ/wmC08GFBgPw==
-X-Google-Smtp-Source: ALg8bN49XeLSs+dhj5l9IQ/0Ag8h3yAaNs1LWB9trd1NPYyBk8ti9OKURggjsFGXYvd6jAbnXkQOhA==
-X-Received: by 2002:a1c:d00d:: with SMTP id h13mr17657339wmg.13.1548699781116;
-        Mon, 28 Jan 2019 10:23:01 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id s1sm169223758wro.9.2019.01.28.10.22.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 10:23:00 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] ARM: meson: remove COMMON_CLK_AMLOGIC selection
-Date:   Mon, 28 Jan 2019 19:22:52 +0100
-Message-Id: <20190128182252.32589-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128182252.32589-1-jbrunet@baylibre.com>
-References: <20190128182252.32589-1-jbrunet@baylibre.com>
+        Mon, 28 Jan 2019 13:23:39 -0500
+Received: from cm13.websitewelcome.com (cm13.websitewelcome.com [100.42.49.6])
+        by gateway31.websitewelcome.com (Postfix) with ESMTP id 6C739115B7
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 12:23:37 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id oBZJgdoU1YTGMoBZJgLJLz; Mon, 28 Jan 2019 12:23:37 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=42680 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goBZI-001QOH-QM; Mon, 28 Jan 2019 12:23:36 -0600
+Subject: Re: [PATCH] mtd: rawnand: mark expected switch fall-throughs
+To:     Miquel Raynal <miquel.raynal@bootlin.com>,
+        Boris Brezillon <bbrezillon@kernel.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Wan ZongShun <mcuos.com@gmail.com>,
+        Richard Weinberger <richard@nod.at>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        linux-mtd@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org
+References: <20190125210950.GA27855@embeddedor>
+ <20190126105208.221a2051@bbrezillon>
+ <853a267c-807b-c613-6662-93730a0b4c33@embeddedor.com>
+ <20190126175429.65e6bfd8@bbrezillon> <20190128101344.1cc03eed@xps13>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ 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
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <c32b4041-14a6-afb1-8730-0ed9f7120592@embeddedor.com>
+Date:   Mon, 28 Jan 2019 12:23:35 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190128101344.1cc03eed@xps13>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goBZI-001QOH-QM
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:42680
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 30
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Selecting COMMON_CLK_AMLOGIC is not required as it is already selected
-by the SoC clock controller driver
+Miquel, Boris,
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- arch/arm/mach-meson/Kconfig | 1 -
- 1 file changed, 1 deletion(-)
+On 1/28/19 3:13 AM, Miquel Raynal wrote:
+> Hi Boris,
+> 
+> Boris Brezillon <bbrezillon@kernel.org> wrote on Sat, 26 Jan 2019
+> 17:54:29 +0100:
+> 
+>> On Sat, 26 Jan 2019 07:48:50 -0600
+>> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+>>
+>>> Hey Boris,
+>>>
+>>> On 1/26/19 3:52 AM, Boris Brezillon wrote:  
+>>>> On Fri, 25 Jan 2019 15:09:50 -0600
+>>>> "Gustavo A. R. Silva" <gustavo@embeddedor.com> wrote:
+>>>>     
+>>>>> diff --git a/drivers/mtd/nand/raw/nandsim.c b/drivers/mtd/nand/raw/nandsim.c
+>>>>> index 933d1a629c51..d33e15dc4cdc 100644
+>>>>> --- a/drivers/mtd/nand/raw/nandsim.c
+>>>>> +++ b/drivers/mtd/nand/raw/nandsim.c
+>>>>> @@ -2251,9 +2251,10 @@ static int __init ns_init_module(void)
+>>>>>  
+>>>>>  	switch (bbt) {
+>>>>>  	case 2:
+>>>>> -		 chip->bbt_options |= NAND_BBT_NO_OOB;
+>>>>> +		chip->bbt_options |= NAND_BBT_NO_OOB;
+>>>>> +		/* fall through */
+>>>>>  	case 1:
+>>>>> -		 chip->bbt_options |= NAND_BBT_USE_FLASH;
+>>>>> +		chip->bbt_options |= NAND_BBT_USE_FLASH;    
+>>>>
+>>>> You miss a '/* fall through */' here.
+>>>>     
+>>>
+>>> Not really.  Notice that in this case the code falls through
+>>> to a break statement.  
+>>
+>> Still find it weird to mandate fall through comments in all cases but
+>> this one...
+> 
+> Yes please, even if there is no GCC warning I think you can add one
+> here.
+> 
 
-diff --git a/arch/arm/mach-meson/Kconfig b/arch/arm/mach-meson/Kconfig
-index b16831697183..15e9cb75738e 100644
---- a/arch/arm/mach-meson/Kconfig
-+++ b/arch/arm/mach-meson/Kconfig
-@@ -9,7 +9,6 @@ menuconfig ARCH_MESON
- 	select PINCTRL
- 	select PINCTRL_MESON
- 	select COMMON_CLK
--	select COMMON_CLK_AMLOGIC
- 	select HAVE_ARM_SCU if SMP
- 	select HAVE_ARM_TWD if SMP
- 
--- 
-2.20.1
+Yep. I get your point.
 
+I've just sent v2: https://lore.kernel.org/patchwork/patch/1036251/
+
+Thanks for the feedback.
+--
+Gustavo
