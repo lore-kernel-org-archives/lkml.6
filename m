@@ -2,80 +2,89 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22E0CC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:58:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C063C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:59:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E6FD62087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:58:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E7C32087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:59:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0vM4iPq"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbfA1J6S (ORCPT
+        id S1726778AbfA1J67 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:58:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:56960 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726648AbfA1J6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:58:18 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id CE90FC02C019;
-        Mon, 28 Jan 2019 09:58:17 +0000 (UTC)
-Received: from dhcp-128-65.nay.redhat.com (ovpn-12-122.pek2.redhat.com [10.72.12.122])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 938305C234;
-        Mon, 28 Jan 2019 09:58:13 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 17:58:09 +0800
-From:   Dave Young <dyoung@redhat.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Pingfan Liu <kernelfans@gmail.com>, kexec@lists.infradead.org,
-        Baoquan He <bhe@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>, yinghai@kernel.org,
-        vgoyal@redhat.com, Randy Dunlap <rdunlap@infradead.org>,
-        x86@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv7] x86/kdump: bugfix, make the behavior of crashkernel=X
- consistent with kaslr
-Message-ID: <20190128095809.GC3732@dhcp-128-65.nay.redhat.com>
-References: <1548047768-7656-1-git-send-email-kernelfans@gmail.com>
- <20190125103924.GB27998@zn.tnic>
- <20190125134518.GA23595@dhcp-128-65.nay.redhat.com>
- <20190125140823.GC27998@zn.tnic>
+        Mon, 28 Jan 2019 04:58:59 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:38300 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726369AbfA1J67 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:58:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id e5so7524935plb.5;
+        Mon, 28 Jan 2019 01:58:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pJZh3L8iCg2l35Z7983fkXv2DOyMrKd8FNc4DrKdHO4=;
+        b=W0vM4iPq9S7ZaLoZA2fnzTJ/P0LyW517dsPf32SFFLqeYNADr6gGOx/pIOCJ/Q3THo
+         Ot6xWuHj5WhRRcNiW75aQZDRaoqeOVYZzv7CW3z6Rc8XS1ffxpRb7ibZFWdPSyAEG7dl
+         9yuMyNumqEbOWcZJFTiJvk/O69BU+2UI6arXDN+NrRC5vOGw7n2FVrz00sGe8dEKSYMS
+         4DQm40A+z9gjNkjRHCq7/0w4vaj/B6YxZGKWtxZhEfQ8ZWqz/ppPPQMtJWKsCc0bzVJO
+         6Q3QDEYDDtsOEJfJux5a13JBRPgkO+lZx7n8ik6G7BqplCudR20Pe4rQR4iWAENuE+lo
+         3a/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pJZh3L8iCg2l35Z7983fkXv2DOyMrKd8FNc4DrKdHO4=;
+        b=JFYlNUc1C3t2fEr0gA4b8imFWyJz/EytVd1TNq2gjCc6EPHTRv274uI5sNkMtckmK6
+         fAk0QNa0tEaSp17PemIiyN4xi1akpi4wEAi4JHvak7ZdOanodolZ0GARyMlQn6KVY5aw
+         AziTzZu12qV+epDyNpzsBYsm9EdxBad+SGy4ee075yAAhyojogSKIPjs+2mTSDnl2Z73
+         TY1eXZHT3RsgdFt+IWLir1I+NxLf8gH82U0XtupignJu2X4o5OVy3sjnpHumA6Ow9QoN
+         BfyOtVcBKs663pvF+NivpMKlSPPrlOADrOaMGxRGAbwa6Jo3/Dj31j0VP0TPiVCyorFr
+         5gVQ==
+X-Gm-Message-State: AJcUuke21WvvwzoNpFuPF8o5DZzeCnQx0gy2yEU9k97yEiC65xpyEZQ+
+        XrcjLpHAC9mEHpEY7+wnPHX8yoX12ULKPRW+Ufo=
+X-Google-Smtp-Source: ALg8bN4uNwWGC6JI+mSZd+WevKQvYbFh/01iZN3LNZVfJ27VxzKjbexVJt7WHIEMey8xT3dQL3CF2Ood1HXtOv+Mujs=
+X-Received: by 2002:a17:902:4081:: with SMTP id c1mr21478375pld.87.1548669538396;
+ Mon, 28 Jan 2019 01:58:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190125140823.GC27998@zn.tnic>
-User-Agent: Mutt/1.9.5 (2018-04-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 28 Jan 2019 09:58:17 +0000 (UTC)
+References: <20190125131519.88416-1-heikki.krogerus@linux.intel.com> <20190125131519.88416-9-heikki.krogerus@linux.intel.com>
+In-Reply-To: <20190125131519.88416-9-heikki.krogerus@linux.intel.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Mon, 28 Jan 2019 11:58:47 +0200
+Message-ID: <CAHp75VfQGQh4i4d42ijH2vTzrM63-Ev-BomgKP=dBSDM3vnq+w@mail.gmail.com>
+Subject: Re: [PATCH 8/8] device connection: Find device connections also from
+ device graphs
+To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        USB <linux-usb@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 01/25/19 at 03:08pm, Borislav Petkov wrote:
-> On Fri, Jan 25, 2019 at 09:45:18PM +0800, Dave Young wrote:
-> > AFAIK, some people prefer to explictly reserve crash memory at high
-> > region even if it is possible to reserve at low area.  May because
-> > <4G memory is limited on large server, they want to leave this for other
-> > use. 
-> > 
-> > Yinghai or Vivek should know more about the history, probably they can
-> > recall some initial reason.
-> 
-> Yes, just "prefer" is not good enough. There should be a technical
-> reason why that's there.
-> 
-> Also, if the user doesn't care, then the code should be free to force
-> "high" and thus probe a different range for allocation.
+On Fri, Jan 25, 2019 at 3:17 PM Heikki Krogerus
+<heikki.krogerus@linux.intel.com> wrote:
+>
+> If connections between devices are described in OF graph or
+> ACPI device graph, we can find them by using the
+> fwnode_graph_*() functions.
 
-Another reason is in case ,high we will need automatically reserve a
-region in low area for swiotlb.  So for example one use
-crashkernel=256M,high,  actual reserved memory is 256M above 4G and
-another 256M under 4G for swiotlb.  Normally it is not necessary for
-most people.  Thus we can not make ,high as default.
+> +typedef void *(*devcon_match_t)(struct device_connection *con, int ep,
+> +                               void *data);
 
-Thanks
-Dave
+devcon_match_fn ?
+_t sounds to me more like a struct or a redefined POD.
+
+-- 
+With Best Regards,
+Andy Shevchenko
