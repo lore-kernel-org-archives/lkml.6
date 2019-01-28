@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 676C0C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1646FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29F1820880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF02420880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690399;
-	bh=KBh8DvxO1NS1V2phoVe/YyBi6oBmBYZtYlPu1uhXB9M=;
+	s=default; t=1548690402;
+	bh=aA0AO3Zl9UIM0F3Fg9Ct9k9JEKpSw1WEte/Qc/6ioy0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zn0Dlrts5gg1An7YeNoCaQz3QNVZBA0PbX34zRXBu0qm9sOMKcETdxmes30K7rvfF
-	 LFYh6URXK5ZVPll1wPkXyvlqT6QjsZHjNoCQieB52ZqnE5DWbd45IqkAbm77MwxHWe
-	 vcR66GapOA+WHZ/v73J+wTucXqJtiNdepYoVlqmI=
+	b=KI8ii49+/oXzvkudr/7Sks0X3/0SbvJxCqoA07EU+uphvrkUdgi+88g3LG5CiHHXh
+	 KPPzCAVXi2dyrqftYSULoeuS0hP1weiga756Oh7YzQLrfTVic6bvEeMedu+ad67Q0q
+	 mqfTZ37gU86mnRX+9qy0WGSYf3lMWufTqJx1BjIY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727192AbfA1Pqh (ORCPT
+        id S1728052AbfA1Pql (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:46:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59964 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:46:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59984 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727162AbfA1Pqf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:46:35 -0500
+        id S1727431AbfA1Pqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:46:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C703120880;
-        Mon, 28 Jan 2019 15:46:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5126021741;
+        Mon, 28 Jan 2019 15:46:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690393;
-        bh=KBh8DvxO1NS1V2phoVe/YyBi6oBmBYZtYlPu1uhXB9M=;
+        s=default; t=1548690396;
+        bh=aA0AO3Zl9UIM0F3Fg9Ct9k9JEKpSw1WEte/Qc/6ioy0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k9IbiMJPmxQnomXJy8AQuCO2OwfTbCBLlhvlXVv+C7UjpNkb7CxRqE6FDhXzCCV4W
-         21iToTnNNajMPt2fUkfwNCxqpf0BTNmFXQu9s5/tt1a3+iKxE3KM0WxWm80qN1eRCB
-         bSUzdFINCHFvUmM7twPMaAo1ObZwxUaoVffWfWF0=
+        b=WCNgY3Ni8YjzwY9AabeJwZ+dULFOo0ssZ2wZE3z1tcKwVC0CFbEnkZBISA4FX085M
+         wY5ES5z7C2nFNVj0wuhggLygnbMTgIjI+RtAL84WDJSaakc2QqLKHsxHdn/7x48IM2
+         t20E28HK3U24GvL4bM6vqxWtgw+qSE/e+a7omC4Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Parav Pandit <parav@mellanox.com>,
-        Leon Romanovsky <leonro@mellanox.com>,
-        Jason Gunthorpe <jgg@mellanox.com>,
-        Sasha Levin <sashal@kernel.org>, linux-rdma@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 070/304] RDMA/core: Sync unregistration with netlink commands
-Date:   Mon, 28 Jan 2019 10:39:47 -0500
-Message-Id: <20190128154341.47195-70-sashal@kernel.org>
+Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 071/304] drm: rcar-du: Fix external clock error checks
+Date:   Mon, 28 Jan 2019 10:39:48 -0500
+Message-Id: <20190128154341.47195-71-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,264 +58,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Parav Pandit <parav@mellanox.com>
+From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-[ Upstream commit 01b671170d7f82b959dad6d5dbb44d7a915e647d ]
+[ Upstream commit 63a298f22a6183b5b7536a203596c6570dfcfe8e ]
 
-When the rdma device is getting removed, get resource info can race with
-device removal, as below:
+The rcar-du driver supports probe deferral for external clocks, but
+implements it badly by checking the wrong pointer due to a bad copy and
+paste. Fix it.
 
-      CPU-0                                  CPU-1
-    --------                               --------
-    rdma_nl_rcv_msg()
-       nldev_res_get_cq_dumpit()
-          mutex_lock(device_lock);
-          get device reference
-          mutex_unlock(device_lock);        [..]
-                                            ib_unregister_device()
-                                            /* Valid reference to
-                                             * device->dev exists.
-                                             */
-                                             ib_dealloc_device()
+While at it, reject invalid clocks outright for DU channels that have a
+display PLL, as the external clock is mandatory in that case. This
+avoids a WARN_ON() at runtime.
 
-          [..]
-          provider->fill_res_entry();
-
-Even though device object is not freed, fill_res_entry() can get called on
-device which doesn't have a driver anymore. Kernel core device reference
-count is not sufficient, as this only keeps the structure valid, and
-doesn't guarantee the driver is still loaded.
-
-Similar race can occur with device renaming and device removal, where
-device_rename() tries to rename a unregistered device. While this is fine
-for devices of a class which are not net namespace aware, but it is
-incorrect for net namespace aware class coming in subsequent series.  If a
-class is net namespace aware, then the below [1] call trace is observed in
-above situation.
-
-Therefore, to avoid the race, keep a reference count and let device
-unregistration wait until all netlink users drop the reference.
-
-[1] Call trace:
-kernfs: ns required in 'infiniband' for 'mlx5_0'
-WARNING: CPU: 18 PID: 44270 at fs/kernfs/dir.c:842 kernfs_find_ns+0x104/0x120
-libahci i2c_core mlxfw libata dca [last unloaded: devlink]
-RIP: 0010:kernfs_find_ns+0x104/0x120
-Call Trace:
-kernfs_find_and_get_ns+0x2e/0x50
-sysfs_rename_link_ns+0x40/0xb0
-device_rename+0xb2/0xf0
-ib_device_rename+0xb3/0x100 [ib_core]
-nldev_set_doit+0x165/0x190 [ib_core]
-rdma_nl_rcv_msg+0x249/0x250 [ib_core]
-? netlink_deliver_tap+0x8f/0x3e0
-rdma_nl_rcv+0xd6/0x120 [ib_core]
-netlink_unicast+0x17c/0x230
-netlink_sendmsg+0x2f0/0x3e0
-sock_sendmsg+0x30/0x40
-__sys_sendto+0xdc/0x160
-
-Fixes: da5c85078215 ("RDMA/nldev: add driver-specific resource tracking")
-Signed-off-by: Parav Pandit <parav@mellanox.com>
-Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
-Signed-off-by: Jason Gunthorpe <jgg@mellanox.com>
+Fixes: 1b30dbde8596 ("drm: rcar-du: Add support for external pixel clock")
+Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/infiniband/core/core_priv.h |  1 +
- drivers/infiniband/core/device.c    | 26 ++++++++++++++++++++++----
- drivers/infiniband/core/nldev.c     | 20 ++++++++++----------
- include/rdma/ib_verbs.h             |  8 +++++++-
- 4 files changed, 40 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/infiniband/core/core_priv.h b/drivers/infiniband/core/core_priv.h
-index bb9007a0cca7..d97d39a7537c 100644
---- a/drivers/infiniband/core/core_priv.h
-+++ b/drivers/infiniband/core/core_priv.h
-@@ -296,6 +296,7 @@ static inline int ib_mad_enforce_security(struct ib_mad_agent_private *map,
- #endif
+diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+index 17741843cf51..40a9afe818a8 100644
+--- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
++++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
+@@ -226,9 +226,6 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
+ 		 * system clock, and have no internal clock divider.
+ 		 */
  
- struct ib_device *ib_device_get_by_index(u32 ifindex);
-+void ib_device_put(struct ib_device *device);
- /* RDMA device netlink */
- void nldev_init(void);
- void nldev_exit(void);
-diff --git a/drivers/infiniband/core/device.c b/drivers/infiniband/core/device.c
-index 87eb4f2cdd7d..0027b0d79b09 100644
---- a/drivers/infiniband/core/device.c
-+++ b/drivers/infiniband/core/device.c
-@@ -145,7 +145,8 @@ static struct ib_device *__ib_device_get_by_index(u32 index)
- }
- 
- /*
-- * Caller is responsible to return refrerence count by calling put_device()
-+ * Caller must perform ib_device_put() to return the device reference count
-+ * when ib_device_get_by_index() returns valid device pointer.
-  */
- struct ib_device *ib_device_get_by_index(u32 index)
- {
-@@ -153,13 +154,21 @@ struct ib_device *ib_device_get_by_index(u32 index)
- 
- 	down_read(&lists_rwsem);
- 	device = __ib_device_get_by_index(index);
--	if (device)
--		get_device(&device->dev);
+-		if (WARN_ON(!rcrtc->extclock))
+-			return;
 -
-+	if (device) {
-+		/* Do not return a device if unregistration has started. */
-+		if (!refcount_inc_not_zero(&device->refcount))
-+			device = NULL;
-+	}
- 	up_read(&lists_rwsem);
- 	return device;
- }
- 
-+void ib_device_put(struct ib_device *device)
-+{
-+	if (refcount_dec_and_test(&device->refcount))
-+		complete(&device->unreg_completion);
-+}
-+
- static struct ib_device *__ib_device_get_by_name(const char *name)
- {
- 	struct ib_device *device;
-@@ -293,6 +302,8 @@ struct ib_device *ib_alloc_device(size_t size)
- 	rwlock_init(&device->client_data_lock);
- 	INIT_LIST_HEAD(&device->client_data_list);
- 	INIT_LIST_HEAD(&device->port_list);
-+	refcount_set(&device->refcount, 1);
-+	init_completion(&device->unreg_completion);
- 
- 	return device;
- }
-@@ -641,6 +652,13 @@ void ib_unregister_device(struct ib_device *device)
- 	struct ib_client_data *context, *tmp;
- 	unsigned long flags;
- 
-+	/*
-+	 * Wait for all netlink command callers to finish working on the
-+	 * device.
-+	 */
-+	ib_device_put(device);
-+	wait_for_completion(&device->unreg_completion);
-+
- 	mutex_lock(&device_mutex);
- 
- 	down_write(&lists_rwsem);
-diff --git a/drivers/infiniband/core/nldev.c b/drivers/infiniband/core/nldev.c
-index ff6468e7fe79..77a0f1e1576f 100644
---- a/drivers/infiniband/core/nldev.c
-+++ b/drivers/infiniband/core/nldev.c
-@@ -632,13 +632,13 @@ static int nldev_get_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
- 
- 	nlmsg_end(msg, nlh);
- 
--	put_device(&device->dev);
-+	ib_device_put(device);
- 	return rdma_nl_unicast(msg, NETLINK_CB(skb).portid);
- 
- err_free:
- 	nlmsg_free(msg);
- err:
--	put_device(&device->dev);
-+	ib_device_put(device);
- 	return err;
- }
- 
-@@ -668,7 +668,7 @@ static int nldev_set_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		err = ib_device_rename(device, name);
+ 		/*
+ 		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
+ 		 * We can work around them by configuring the DPLL to twice the
+@@ -1113,9 +1110,16 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
+ 	clk = devm_clk_get(rcdu->dev, clk_name);
+ 	if (!IS_ERR(clk)) {
+ 		rcrtc->extclock = clk;
+-	} else if (PTR_ERR(rcrtc->clock) == -EPROBE_DEFER) {
+-		dev_info(rcdu->dev, "can't get external clock %u\n", hwindex);
++	} else if (PTR_ERR(clk) == -EPROBE_DEFER) {
+ 		return -EPROBE_DEFER;
++	} else if (rcdu->info->dpll_mask & BIT(hwindex)) {
++		/*
++		 * DU channels that have a display PLL can't use the internal
++		 * system clock and thus require an external clock.
++		 */
++		ret = PTR_ERR(clk);
++		dev_err(rcdu->dev, "can't get dclkin.%u: %d\n", hwindex, ret);
++		return ret;
  	}
  
--	put_device(&device->dev);
-+	ib_device_put(device);
- 	return err;
- }
- 
-@@ -752,14 +752,14 @@ static int nldev_port_get_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		goto err_free;
- 
- 	nlmsg_end(msg, nlh);
--	put_device(&device->dev);
-+	ib_device_put(device);
- 
- 	return rdma_nl_unicast(msg, NETLINK_CB(skb).portid);
- 
- err_free:
- 	nlmsg_free(msg);
- err:
--	put_device(&device->dev);
-+	ib_device_put(device);
- 	return err;
- }
- 
-@@ -816,7 +816,7 @@ static int nldev_port_get_dumpit(struct sk_buff *skb,
- 	}
- 
- out:
--	put_device(&device->dev);
-+	ib_device_put(device);
- 	cb->args[0] = idx;
- 	return skb->len;
- }
-@@ -855,13 +855,13 @@ static int nldev_res_get_doit(struct sk_buff *skb, struct nlmsghdr *nlh,
- 		goto err_free;
- 
- 	nlmsg_end(msg, nlh);
--	put_device(&device->dev);
-+	ib_device_put(device);
- 	return rdma_nl_unicast(msg, NETLINK_CB(skb).portid);
- 
- err_free:
- 	nlmsg_free(msg);
- err:
--	put_device(&device->dev);
-+	ib_device_put(device);
- 	return ret;
- }
- 
-@@ -1054,7 +1054,7 @@ next:		idx++;
- 	if (!filled)
- 		goto err;
- 
--	put_device(&device->dev);
-+	ib_device_put(device);
- 	return skb->len;
- 
- res_err:
-@@ -1065,7 +1065,7 @@ err:
- 	nlmsg_cancel(skb, nlh);
- 
- err_index:
--	put_device(&device->dev);
-+	ib_device_put(device);
- 	return ret;
- }
- 
-diff --git a/include/rdma/ib_verbs.h b/include/rdma/ib_verbs.h
-index 9c0c2132a2d6..64626b32107b 100644
---- a/include/rdma/ib_verbs.h
-+++ b/include/rdma/ib_verbs.h
-@@ -56,7 +56,7 @@
- #include <linux/string.h>
- #include <linux/slab.h>
- #include <linux/netdevice.h>
--
-+#include <linux/refcount.h>
- #include <linux/if_link.h>
- #include <linux/atomic.h>
- #include <linux/mmu_notifier.h>
-@@ -2605,6 +2605,12 @@ struct ib_device {
- 
- 	const struct uverbs_object_tree_def *const *driver_specs;
- 	enum rdma_driver_id		driver_id;
-+	/*
-+	 * Provides synchronization between device unregistration and netlink
-+	 * commands on a device. To be used only by core.
-+	 */
-+	refcount_t refcount;
-+	struct completion unreg_completion;
- };
- 
- struct ib_client {
+ 	init_waitqueue_head(&rcrtc->flip_wait);
 -- 
 2.19.1
 
