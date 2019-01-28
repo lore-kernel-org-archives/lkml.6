@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 438F4C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:41:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BFCD5C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:42:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E28520881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:41:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B1DD20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697317;
-	bh=l7QRgj1IXbs+lfFxaU+g2cr8eJoIRqtm/wpQHREqObo=;
+	s=default; t=1548697324;
+	bh=Yh1Oh4urpVeTG4FhPKHdWY9w+dIxa3aZyAQjLQcZ5BI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SQwqb7fgaXJ3/WHxG/fER8aSAt8IUL+8ZdNo+FMVDBPqZ7BzuM8E39aUzEiT6Ki6t
-	 pBbCZpAhYnE+0L7v5aJKlOw2jw9Mm4jopiG/Gbg8ryjsGvfkwjxWtdVarwzkscoYkf
-	 TVJpkEPlfvd9BpNueEPJs1/LcH4Q26vJG9LMimT4=
+	b=IIOWgks+QGHyyyS9Rdiij7MwI2tEfu7dGm1ypSP8LfKDBs7Busm1T7e/he2/uHnEm
+	 SRMhO/vnTOc5+fFQYlTObfL0M7HXQ+A6Fn6UmyBv1bEx+zaTed7vMGhJlsi9txT6b1
+	 RrIpVa+DRAtrOzoCrTFmFwz9XF8ViuOQU2uGIPtE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729251AbfA1Rlz (ORCPT
+        id S1728996AbfA1Pup (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:41:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37392 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:50:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37146 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727709AbfA1Puu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:50:50 -0500
+        id S1727977AbfA1Pum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:50:42 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1A2E820880;
-        Mon, 28 Jan 2019 15:50:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C727320880;
+        Mon, 28 Jan 2019 15:50:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690650;
-        bh=l7QRgj1IXbs+lfFxaU+g2cr8eJoIRqtm/wpQHREqObo=;
+        s=default; t=1548690641;
+        bh=Yh1Oh4urpVeTG4FhPKHdWY9w+dIxa3aZyAQjLQcZ5BI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iHhzQrfKalvmQXPJ68oso9SY2Sc8mYGL/L74kXpInbzEgwMBf0kXWCP2eRvyaPzpP
-         VuG1ncZp74WrQ1tAVLc3aaLcojzwbms2+ZSPmAUahRJBm8w0DNg1nTLL8/iAj8NcVx
-         NZtr3qfA2HZU0FnGoZXA64KFx47ihenvFQrieZN8=
+        b=ikCLV9cPESDyXCzy9ALqfDEcxIuuguxPerB57PapISznIK7PkQ2lWfJ8j8zEehqmr
+         Zj2/+yP6bCti8Z9xa+uRaFmLLzC+PrKGpH7EsfUJUKu2G4PSnGGeqQgVSBwweAn9+l
+         6YaaqzPqv0VMqa73OHEZE5StIXYVuTGWdbpzfQL0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.20 153/304] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
-Date:   Mon, 28 Jan 2019 10:41:10 -0500
-Message-Id: <20190128154341.47195-153-sashal@kernel.org>
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Fabio Estevam <festevam@gmail.com>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 150/304] ARM: dts: imx51-zii-rdu1: Do not specify "power-gpio" for hpa1
+Date:   Mon, 28 Jan 2019 10:41:07 -0500
+Message-Id: <20190128154341.47195-150-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,55 +58,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vivek Gautam <vivek.gautam@codeaurora.org>
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
 
-[ Upstream commit 89cddc563743cb1e0068867ac97013b2a5bf86aa ]
+[ Upstream commit 79da07dec740a42c70963ebacbd2bf8866af9e20 ]
 
-qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
-clock and power requirements.
-On msm8996, multiple cores, viz. mdss, video, etc. use this
-smmu. On sdm845, this smmu is used with gpu.
-Add bindings for the same.
+TPA6130A2 SD pin on RDU1 is not really controlled by SoC and instead
+is only meant to notify the system that audio was "muted" by external
+actors. To accommodate that, drop "power-gpio" property of hpa1 node as
+well as specify a name for that GPIO so that userspace can access it.
 
-Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
-Reviewed-by: Rob Herring <robh@kernel.org>
-Reviewed-by: Tomasz Figa <tfiga@chromium.org>
-Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Reviewed-by: Robin Murphy <robin.murphy@arm.com>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Tested-by: Chris Healy <cphealy@gmail.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/arm-smmu.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/imx51-zii-rdu1.dts | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
-index 5a28ae892504..e23aa7f6c4ad 100644
---- a/drivers/iommu/arm-smmu.c
-+++ b/drivers/iommu/arm-smmu.c
-@@ -119,6 +119,7 @@ enum arm_smmu_implementation {
- 	GENERIC_SMMU,
- 	ARM_MMU500,
- 	CAVIUM_SMMUV2,
-+	QCOM_SMMUV2,
+diff --git a/arch/arm/boot/dts/imx51-zii-rdu1.dts b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+index 69d753cac89a..44985f61c0ba 100644
+--- a/arch/arm/boot/dts/imx51-zii-rdu1.dts
++++ b/arch/arm/boot/dts/imx51-zii-rdu1.dts
+@@ -477,6 +477,15 @@
  };
  
- struct arm_smmu_s2cr {
-@@ -1954,6 +1955,7 @@ ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
- ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
- ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
-+ARM_SMMU_MATCH_DATA(qcom_smmuv2, ARM_SMMU_V2, QCOM_SMMUV2);
+ &gpio1 {
++	gpio-line-names = "", "", "", "",
++			  "", "", "", "",
++			  "", "hp-amp-shutdown-b", "", "",
++			  "", "", "", "",
++			  "", "", "", "",
++			  "", "", "", "",
++			  "", "", "", "",
++			  "", "", "", "";
++
+ 	unused-sd3-wp-gpio {
+ 		/*
+ 		 * See pinctrl_esdhc1 below for more details on this
+@@ -495,9 +504,6 @@
+ 	hpa1: amp@60 {
+ 		compatible = "ti,tpa6130a2";
+ 		reg = <0x60>;
+-		pinctrl-names = "default";
+-		pinctrl-0 = <&pinctrl_ampgpio>;
+-		power-gpio = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+ 		Vdd-supply = <&reg_3p3v>;
+ 	};
  
- static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
-@@ -1962,6 +1964,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
- 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
- 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
- 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
-+	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
- 	{ },
+@@ -671,7 +677,10 @@
  };
- MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
+ 
+ &iomuxc {
+-	pinctrl_ampgpio: ampgpiogrp {
++	pinctrl-names = "default";
++	pinctrl-0 = <&pinctrl_hog>;
++
++	pinctrl_hog: hoggrp {
+ 		fsl,pins = <
+ 			MX51_PAD_GPIO1_9__GPIO1_9		0x5e
+ 		>;
 -- 
 2.19.1
 
