@@ -7,45 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72F61C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79AD3C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B8D20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38E9220880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690505;
-	bh=beHVS2Iu1Tzax3T2S2GlQfVdgWYSSvUUhhfJczYpivQ=;
+	s=default; t=1548690508;
+	bh=IyuBYT+o5n1tQPKvkmp596grXsQxcG0h3diz7rENV9M=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Yi7wfbamTj8NY7BTQDBZBM8PJseyfWdDkkBXMk4JhdSCKaMnlY50ziaJ/9r7+LNIQ
-	 gQg8+PzTFo1ZnRUK9hc2mtuVn3M+/rzjH86RRk96noGkzYm16c19RuSJOxZ6K7NCpe
-	 Mk+TZQVSrswj457KbgYj5Fd9CitiWgUvUmy676+I=
+	b=dgrqB/vhRXu+scLkE0f8uigtJ+D/25d7uk+26dgOM1Tf9QIgCh3LX4fb9BAflon2P
+	 KEPyqDwSDLiPr2WSQpoQgIkYsEuLGOD3dSKqlChCqaTJeNgPExx/VzDcglVnftXIko
+	 JLNqAkJkdvebeU9F5DvI87ag8ZeZa9mZm4p4qwNI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728500AbfA1PsX (ORCPT
+        id S1728511AbfA1Ps1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:48:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33764 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:48:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726919AbfA1PsW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:48:22 -0500
+        id S1727951AbfA1PsU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:48:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C19862147A;
-        Mon, 28 Jan 2019 15:48:20 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 074CE20880;
+        Mon, 28 Jan 2019 15:48:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690502;
-        bh=beHVS2Iu1Tzax3T2S2GlQfVdgWYSSvUUhhfJczYpivQ=;
+        s=default; t=1548690499;
+        bh=IyuBYT+o5n1tQPKvkmp596grXsQxcG0h3diz7rENV9M=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=l6IccMmj4J2RSMmwxX6Ac9XjFshjL2oYrrBtPO2GdXKUZfkXWxsP71Nj3f8tJ1Lqy
-         9LGHrMD4X5n33g0napBn3xhyK5Omz9v12B7DlkPP7O7ieOCffKY5bhheHQm5RWaPpK
-         CSo+5gbYJXbVUEUoFPWBq44TjIfAy8n5TAsFWb7g=
+        b=e1nmfrL/rcYuGSa66hlyb3rAN3kxYJpBE06cQtC/h0SeecmkdcguvqG9qbDUd8sL0
+         P5CQAkTVDOcBk+pkqFDZXtdZ452DvDZ12cOO93DrOfo9HeMDhkHVENuxxBxplWJvTJ
+         F+qyEzj1FARvu73JnL8u0RLtH/Os4htOfIa6bIls=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Eric Anholt <eric@anholt.net>, Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 107/304] drm/v3d: Fix prime imports of buffers from other drivers.
-Date:   Mon, 28 Jan 2019 10:40:24 -0500
-Message-Id: <20190128154341.47195-107-sashal@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Torsten Duwe <duwe@suse.de>, Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 106/304] arm64: ftrace: don't adjust the LR value
+Date:   Mon, 28 Jan 2019 10:40:23 -0500
+Message-Id: <20190128154341.47195-106-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,38 +61,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Anholt <eric@anholt.net>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit 62d1a752874962f072de8a779e960fcd2ab4847b ]
+[ Upstream commit 6e803e2e6e367db9a0d6ecae1bd24bb5752011bd ]
 
-v3d_bo_get_pages() checks this to decide to map the imported buffer
-instead of the backing shmem file.  The caller was about to set this
-value anyway, and there's no error path in between.  Ideally we
-wouldn't even allocate the shmem file for our imports, but that's a
-more invasive fix.
+The core ftrace code requires that when it is handed the PC of an
+instrumented function, this PC is the address of the instrumented
+instruction. This is necessary so that the core ftrace code can identify
+the specific instrumentation site. Since the instrumented function will
+be a BL, the address of the instrumented function is LR - 4 at entry to
+the ftrace code.
 
-Signed-off-by: Eric Anholt <eric@anholt.net>
-Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
-Link: https://patchwork.freedesktop.org/patch/msgid/20181128230927.10951-3-eric@anholt.net
-Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Reviewed-by: Dave Emett <david.emett@broadcom.com>
+This fixup is applied in the mcount_get_pc and mcount_get_pc0 helpers,
+which acquire the PC of the instrumented function.
+
+The mcount_get_lr helper is used to acquire the LR of the instrumented
+function, whose value does not require this adjustment, and cannot be
+adjusted to anything meaningful. No adjustment of this value is made on
+other architectures, including arm. However, arm64 adjusts this value by
+4.
+
+This patch brings arm64 in line with other architectures and removes the
+adjustment of the LR value.
+
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Cc: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Cc: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Torsten Duwe <duwe@suse.de>
+Cc: Will Deacon <will.deacon@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/v3d/v3d_bo.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/kernel/entry-ftrace.S | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
-index 54d96518a131..a08766d39eab 100644
---- a/drivers/gpu/drm/v3d/v3d_bo.c
-+++ b/drivers/gpu/drm/v3d/v3d_bo.c
-@@ -293,6 +293,7 @@ v3d_prime_import_sg_table(struct drm_device *dev,
- 	bo->resv = attach->dmabuf->resv;
+diff --git a/arch/arm64/kernel/entry-ftrace.S b/arch/arm64/kernel/entry-ftrace.S
+index 1175f5827ae1..295951f3172e 100644
+--- a/arch/arm64/kernel/entry-ftrace.S
++++ b/arch/arm64/kernel/entry-ftrace.S
+@@ -79,7 +79,6 @@
+ 	.macro mcount_get_lr reg
+ 	ldr	\reg, [x29]
+ 	ldr	\reg, [\reg, #8]
+-	mcount_adjust_addr	\reg, \reg
+ 	.endm
  
- 	bo->sgt = sgt;
-+	obj->import_attach = attach;
- 	v3d_bo_get_pages(bo);
- 
- 	v3d_mmu_insert_ptes(bo);
+ 	.macro mcount_get_lr_addr reg
 -- 
 2.19.1
 
