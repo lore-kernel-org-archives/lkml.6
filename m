@@ -2,97 +2,117 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B566C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:03:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14F0FC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:03:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3035D21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:03:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D03432175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:03:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548695011;
+	bh=NBRSxXW4phGoIWQoKd16+rtxTwtTsj35Ky4I37qCJpk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=NGgsQ0eD7fODIuafmLpKBoohZwQJ+P9wrBp1fNSjiPpHt648+b2I67SzgiyP+cE8o
+	 jJxiOpH3Qd74jQLKusW2Fjnqrt7SUHI9RLVQ6siE5XKJeDDHwTg9v1surzPu2JwdCp
+	 sdDqcsmNe4Bl/6gCbLQhjEC4hNckPRDNx+fsei1s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387934AbfA1RDS (ORCPT
+        id S2388321AbfA1RDa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:03:18 -0500
-Received: from honk.sigxcpu.org ([24.134.29.49]:33883 "EHLO honk.sigxcpu.org"
+        Mon, 28 Jan 2019 12:03:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42976 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388463AbfA1RDP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:03:15 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by honk.sigxcpu.org (Postfix) with ESMTP id 6BDCBFB03;
-        Mon, 28 Jan 2019 18:03:12 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at honk.sigxcpu.org
-Received: from honk.sigxcpu.org ([127.0.0.1])
-        by localhost (honk.sigxcpu.org [127.0.0.1]) (amavisd-new, port 10024)
-        with ESMTP id hvy5anzb2OWq; Mon, 28 Jan 2019 18:03:11 +0100 (CET)
-Received: by bogon.sigxcpu.org (Postfix, from userid 1000)
-        id 9A5DF4058C; Mon, 28 Jan 2019 18:03:10 +0100 (CET)
-Date:   Mon, 28 Jan 2019 18:03:10 +0100
-From:   Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Bastien Nocera <hadess@hadess.net>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
-        linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
-Subject: [PATCH] input: goodix - support Goodix gt5688
-Message-ID: <20190128170310.GA305@bogon.m.sigxcpu.org>
+        id S2387538AbfA1QN7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:59 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D422820881;
+        Mon, 28 Jan 2019 16:13:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692038;
+        bh=NBRSxXW4phGoIWQoKd16+rtxTwtTsj35Ky4I37qCJpk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=HwkDRjKfugRKz1fj0L3j8u0RHqEZjlRBRjj1BrLdaBk+EW//NcVR+Px5fcAwNxXiA
+         5Czh9A166h3H7h6ls5bRSrTs0womxUgx4kfai930JDw1d+wjhrIG3Dgol0SH6XgD0a
+         zAbIXDG2P8KphN8yyv6gjcaKdYbOvh8Ue0k05Gzk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Tiezhu Yang <kernelpatch@126.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.14 048/170] f2fs: fix wrong return value of f2fs_acl_create
+Date:   Mon, 28 Jan 2019 11:09:58 -0500
+Message-Id: <20190128161200.55107-48-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
+References: <20190128161200.55107-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From what I've seen in vendor trees it's fine to treat this as gt1x¹.
+From: Tiezhu Yang <kernelpatch@126.com>
 
-[1]: https://github.com/TadiT7/android_kernel_mtk-4.4/tree/master/drivers/input/touchscreen/mediatek/GT5688
+[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
 
-Signed-off-by: Guido Günther <agx@sigxcpu.org>
+When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
+should return -EIO instead of -ENOMEM, this patch makes it consistent
+with posix_acl_create() which has been fixed in commit beaf226b863a
+("posix_acl: don't ignore return value of posix_acl_create_masq()").
+
+Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
+Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/input/touchscreen/goodix.txt | 1 +
- drivers/input/touchscreen/goodix.c                             | 2 ++
- 2 files changed, 3 insertions(+)
+ fs/f2fs/acl.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-index f7e95c52f3c7..57d3d8870a09 100644
---- a/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-+++ b/Documentation/devicetree/bindings/input/touchscreen/goodix.txt
-@@ -3,6 +3,7 @@ Device tree bindings for Goodix GT9xx series touchscreen controller
- Required properties:
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 436b3a1464d9..5e4860b8bbfc 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -349,12 +349,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 		return PTR_ERR(p);
  
-  - compatible		: Should be "goodix,gt1151"
-+				 or "goodix,gt5688"
- 				 or "goodix,gt911"
- 				 or "goodix,gt9110"
- 				 or "goodix,gt912"
-diff --git a/drivers/input/touchscreen/goodix.c b/drivers/input/touchscreen/goodix.c
-index f2d9c2c41885..47b1ced41576 100644
---- a/drivers/input/touchscreen/goodix.c
-+++ b/drivers/input/touchscreen/goodix.c
-@@ -216,6 +216,7 @@ static const struct goodix_chip_data *goodix_get_chip_data(u16 id)
- {
- 	switch (id) {
- 	case 1151:
-+	case 5688:
- 		return &gt1x_chip_data;
+ 	clone = f2fs_acl_clone(p, GFP_NOFS);
+-	if (!clone)
+-		goto no_mem;
++	if (!clone) {
++		ret = -ENOMEM;
++		goto release_acl;
++	}
  
- 	case 911:
-@@ -942,6 +943,7 @@ MODULE_DEVICE_TABLE(acpi, goodix_acpi_match);
- #ifdef CONFIG_OF
- static const struct of_device_id goodix_of_match[] = {
- 	{ .compatible = "goodix,gt1151" },
-+	{ .compatible = "goodix,gt5688" },
- 	{ .compatible = "goodix,gt911" },
- 	{ .compatible = "goodix,gt9110" },
- 	{ .compatible = "goodix,gt912" },
+ 	ret = f2fs_acl_create_masq(clone, mode);
+ 	if (ret < 0)
+-		goto no_mem_clone;
++		goto release_clone;
+ 
+ 	if (ret == 0)
+ 		posix_acl_release(clone);
+@@ -368,11 +370,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 
+ 	return 0;
+ 
+-no_mem_clone:
++release_clone:
+ 	posix_acl_release(clone);
+-no_mem:
++release_acl:
+ 	posix_acl_release(p);
+-	return -ENOMEM;
++	return ret;
+ }
+ 
+ int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
 -- 
-2.20.1
+2.19.1
+
