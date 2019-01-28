@@ -6,97 +6,138 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 406C5C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:02:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5038C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:33:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C74F20870
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:02:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9299E2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:33:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfA1FCd (ORCPT
+        id S1726627AbfA1FY1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 00:02:33 -0500
-Received: from mga03.intel.com ([134.134.136.65]:45144 "EHLO mga03.intel.com"
+        Mon, 28 Jan 2019 00:24:27 -0500
+Received: from mga17.intel.com ([192.55.52.151]:25870 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726661AbfA1FCd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 00:02:33 -0500
+        id S1725782AbfA1FY0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 00:24:26 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2019 21:02:32 -0800
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2019 21:24:26 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,532,1539673200"; 
-   d="scan'208";a="141880827"
-Received: from unknown (HELO dev03.ndswc.sj.intel.com) ([10.233.132.114])
-  by fmsmga001.fm.intel.com with ESMTP; 27 Jan 2019 21:02:32 -0800
-From:   Purna Chandra Mandal <purna.chandra.mandal@intel.com>
-To:     Fred Bloggs <f.blogs@napier.co.nz>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Tudor Ambarus <Tudor.Ambarus@microchip.com>
-Cc:     Purna Chandra Mandal <purna.chandra.mandal@intel.com>,
-        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        linux-mtd@lists.infradead.org,
-        David Woodhouse <dwmw2@infradead.org>
-Subject: [PATCH] mtd: spi-nor: cadence-quadspi: write upto 8-bytes data in STIG mode
-Date:   Sun, 27 Jan 2019 21:02:29 -0800
-Message-Id: <20190128050229.44965-1-purna.chandra.mandal@intel.com>
-X-Mailer: git-send-email 2.13.0
+   d="scan'208";a="121814728"
+Received: from mint-dev.iind.intel.com ([10.223.25.164])
+  by orsmga003.jf.intel.com with ESMTP; 27 Jan 2019 21:24:23 -0800
+From:   Ramalingam C <ramalingam.c@intel.com>
+To:     intel-gfx-trybot@lists.freedesktop.org
+Cc:     Ramalingam C <ramalingam.c@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v10 03/42] component: alloc component_match without any comp to match
+Date:   Mon, 28 Jan 2019 10:47:48 +0530
+Message-Id: <1548652707-31113-3-git-send-email-ramalingam.c@intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1548652707-31113-1-git-send-email-ramalingam.c@intel.com>
+References: <1548652707-31113-1-git-send-email-ramalingam.c@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-cadence-quadspi controller allows upto eight bytes of data to
-be written in software Triggered Instruction generator (STIG) mode
-of operation. Lower 4 bytes are written through writedatalower and
-upper 4 bytes by writedataupper register.
+If all the components associated to a component master is not added
+to the component framework due to the HW capability or Kconfig
+selection, component_match will be NULL at
+component_master_add_with_match().
 
-This patch allows all the 8 bytes to be written.
+To avoid this, component_match_alloc() is added to the framework,
+to allcoate the struct component_match with zero associated components.
+Hence component master can be added with a component_match with zero
+associated components.
 
-Signed-off-by: Purna Chandra Mandal <purna.chandra.mandal@intel.com>
+This helps the component master bind call to get triggered,
+even if no component is registered for that particular master.
+
+This is meant for big PCI device drivers where small/optional
+features are external components, and based on usecases different
+combination of components are build as entire driver.
+
+In such PCI device driver Load, if we use the component master for
+waiting for few  components(features) availability, only if they are
+supported by the underlying HW, then we need to allocate memory for
+component_match using the API introduced in this change before
+the call to component_master_add_with_match.
+
+Signed-off-by: Ramalingam C <ramalingam.c@intel.com>
+Suggested-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: linux-kernel@vger.kernel.org
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
+ drivers/base/component.c  | 30 ++++++++++++++++++++++++++++++
+ include/linux/component.h |  2 ++
+ 2 files changed, 32 insertions(+)
 
- drivers/mtd/spi-nor/cadence-quadspi.c | 15 ++++++++++++---
- 1 file changed, 12 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index 04cedd3a2bf6..7f78f9409ddd 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -418,9 +418,10 @@ static int cqspi_command_write(struct spi_nor *nor, const u8 opcode,
- 	void __iomem *reg_base = cqspi->iobase;
- 	unsigned int reg;
- 	unsigned int data;
-+	u32 write_len;
- 	int ret;
- 
--	if (n_tx > 4 || (n_tx && !txbuf)) {
-+	if (n_tx > CQSPI_STIG_DATA_LEN_MAX || (n_tx && !txbuf)) {
- 		dev_err(nor->dev,
- 			"Invalid input argument, cmdlen %d txbuf 0x%p\n",
- 			n_tx, txbuf);
-@@ -433,10 +434,18 @@ static int cqspi_command_write(struct spi_nor *nor, const u8 opcode,
- 		reg |= ((n_tx - 1) & CQSPI_REG_CMDCTRL_WR_BYTES_MASK)
- 			<< CQSPI_REG_CMDCTRL_WR_BYTES_LSB;
- 		data = 0;
--		memcpy(&data, txbuf, n_tx);
-+		write_len = (n_tx > 4) ? 4 : n_tx;
-+		memcpy(&data, txbuf, write_len);
-+		txbuf += write_len;
- 		writel(data, reg_base + CQSPI_REG_CMDWRITEDATALOWER);
--	}
- 
-+		if (n_tx > 4) {
-+			data = 0;
-+			write_len = n_tx - 4;
-+			memcpy(&data, txbuf, write_len);
-+			writel(data, reg_base + CQSPI_REG_CMDWRITEDATAUPPER);
-+		}
-+	}
- 	ret = cqspi_exec_flash_cmd(cqspi, reg);
- 	return ret;
+diff --git a/drivers/base/component.c b/drivers/base/component.c
+index ddcea8739c12..1b8bb07c0ec7 100644
+--- a/drivers/base/component.c
++++ b/drivers/base/component.c
+@@ -302,6 +302,36 @@ static int component_match_realloc(struct device *dev,
  }
+ 
+ /*
++ * Allocate the match without any component_match_array elements.
++ *
++ * This function is useful when the component master might end up
++ * registering itself without any matching components.
++ */
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr)
++{
++	struct component_match *match = *matchptr;
++
++	if (IS_ERR(match))
++		return;
++
++	if (match)
++		return;
++
++	match = devres_alloc(devm_component_match_release,
++			     sizeof(*match), GFP_KERNEL);
++	if (!match) {
++		*matchptr = ERR_PTR(-ENOMEM);
++		return;
++	}
++
++	devres_add(master, match);
++
++	*matchptr = match;
++}
++EXPORT_SYMBOL(component_match_alloc);
++
++/*
+  * Add a component to be matched, with a release function.
+  *
+  * The match array is first created or extended if necessary.
+diff --git a/include/linux/component.h b/include/linux/component.h
+index e71fbbbc74e2..3f6b420a58f8 100644
+--- a/include/linux/component.h
++++ b/include/linux/component.h
+@@ -37,6 +37,8 @@ void component_match_add_release(struct device *master,
+ 	struct component_match **matchptr,
+ 	void (*release)(struct device *, void *),
+ 	int (*compare)(struct device *, void *), void *compare_data);
++void component_match_alloc(struct device *master,
++	struct component_match **matchptr);
+ 
+ static inline void component_match_add(struct device *master,
+ 	struct component_match **matchptr,
 -- 
-2.13.0
+2.7.4
 
