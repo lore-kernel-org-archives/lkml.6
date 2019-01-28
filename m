@@ -3,320 +3,154 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 32AA0C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:15:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6C5C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:16:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB5C620844
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:15:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4B0FD20844
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:16:14 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726779AbfA1JPI (ORCPT
+        id S1726803AbfA1JQM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:15:08 -0500
-Received: from mail-qt1-f193.google.com ([209.85.160.193]:35220 "EHLO
-        mail-qt1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfA1JPH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:15:07 -0500
-Received: by mail-qt1-f193.google.com with SMTP id v11so17462952qtc.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 01:15:05 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=hhTXY1V6bvcDd5HlB+6nsvTDf15NRQpuVdMAv2vrVyc=;
-        b=gzNozqts+uluNovgf9myNW7f7N4ryvjoliNzmlj27Cxds4IBlYp/MKK3C/wGBfyhhi
-         9Fcr+gXeYVZ1Zcj8/+WWDwt1W3nch07nbGg2OvMPrZB+YYsveG/gfnsw5Vom+URjbE1g
-         s31j5aWbOrRxPvrnCrcL/pV9aSoYTOI41fiwEEt1kJYvRKnJhJmFeJcRzADRnt80jDFq
-         dq1s26ywLEVwPsyA6ZWl0mSgI/q7Ypkxb9tHB7nvnV9cIarlXaPlj620ba1w4m884y6I
-         HuULmlSL2HvsQFRoCupAaOEGRffO0EBoL/+f8amznumBBqiIiGvaQBMEEDJ3LhD9u8GY
-         12uQ==
-X-Gm-Message-State: AJcUukeh/Z9KjFrzU7DfJSsbuMQWbqKcs68LFy0UmPEpGE27os9e43hs
-        0Vc25EcJQQYs5QVsYC3btdGJLmtgHpQoPAV8i5nsjg==
-X-Google-Smtp-Source: ALg8bN7ZjNATHHaJRUJ5plmse9Bi62t7WtPAkWVlNN2sAe4HgdKbBQaI2z/xQKmZIYAYcbkz9iO2p7G3qRgmom1Gh3E=
-X-Received: by 2002:ac8:101a:: with SMTP id z26mr21068565qti.184.1548666905503;
- Mon, 28 Jan 2019 01:15:05 -0800 (PST)
+        Mon, 28 Jan 2019 04:16:12 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49582 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbfA1JQM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:16:12 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 6F68D86677;
+        Mon, 28 Jan 2019 09:16:11 +0000 (UTC)
+Received: from [10.36.112.55] (ovpn-112-55.ams2.redhat.com [10.36.112.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 90B586116C;
+        Mon, 28 Jan 2019 09:15:58 +0000 (UTC)
+Subject: Re: [PATCH] x86/kvmclock: set offset for kvm unstable clock
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>, rkrcmar@redhat.com,
+        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+        x86@kernel.org, kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        nuxi@vault24.org, carnil@debian.org, t.glaser@tarent.de,
+        asmadeus@codewreck.org
+References: <20190126174956.22769-1-pasha.tatashin@soleen.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <90ff0ec7-7afa-d719-1b32-09e4bdaecb75@redhat.com>
+Date:   Mon, 28 Jan 2019 10:15:53 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-References: <20190126170722.8035-1-vdronov@redhat.com>
-In-Reply-To: <20190126170722.8035-1-vdronov@redhat.com>
-From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Date:   Mon, 28 Jan 2019 10:14:53 +0100
-Message-ID: <CAO-hwJJGux_5bQJmXgLrcj+v=n3n8hvqXfqPEu60aghYNJSfzw@mail.gmail.com>
-Subject: Re: [PATCH v2] HID: debug: fix the ring buffer implementation
-To:     Vladis Dronov <vdronov@redhat.com>
-Cc:     Jiri Kosina <jikos@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        "3.8+" <stable@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20190126174956.22769-1-pasha.tatashin@soleen.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 28 Jan 2019 09:16:11 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 6:07 PM Vladis Dronov <vdronov@redhat.com> wrote:
->
-> Ring buffer implementation in hid_debug_event() and hid_debug_events_read()
-> is strange allowing lost or corrupted data. After commit 717adfdaf147
-> ("HID: debug: check length before copy_to_user()") it is possible to enter
-> an infinite loop in hid_debug_events_read() by providing 0 as count, this
-> locks up a system. Fix this by rewriting the ring buffer implementation
-> with kfifo and simplify the code.
->
-> This fixes CVE-2019-3819.
->
-> v2: fix an execution logic and add a comment
-
-Thanks for the respin.
-v2 looks good to me.
-Oleg, can you provide some feedback before I push this?
-
-Cheers,
-Benjamin
-
->
-> Link: https://bugzilla.redhat.com/show_bug.cgi?id=1669187
-> Cc: stable@vger.kernel.org # v4.18+
-> Fixes: cd667ce24796 ("HID: use debugfs for events/reports dumping")
-> Fixes: 717adfdaf147 ("HID: debug: check length before copy_to_user()")
-> Signed-off-by: Vladis Dronov <vdronov@redhat.com>
+On 26/01/19 18:49, Pavel Tatashin wrote:
+> VMs may show incorrect uptime and dmesg printk offsets on hypervisors with
+> unstable clock. The problem is produced when VM is rebooted without exiting
+> from qemu.
+> 
+> The fix is to calculate clock offset not only for stable clock but for
+> unstable clock as well, and use kvm_sched_clock_read() which substracts
+> the offset for both clocks.
+> 
+> This is safe, because pvclock_clocksource_read() does the right thing and
+> makes sure that clock always goes forward, so once offset is calculated
+> with unstable clock, we won't get new reads that are smaller than offset,
+> and thus won't get negative results.
+> 
+> Thank you Jon DeVree for helping to reproduce this issue.
+> 
+> Fixes: 857baa87b642 ("sched/clock: Enable sched clock early")
+> 
+> Reported-by: Dominique Martinet <asmadeus@codewreck.org>
+> Signed-off-by: Pavel Tatashin <pasha.tatashin@soleen.com>
 > ---
->  drivers/hid/hid-debug.c   | 116 ++++++++++++++------------------------
->  include/linux/hid-debug.h |   9 ++-
->  2 files changed, 47 insertions(+), 78 deletions(-)
->
-> diff --git a/drivers/hid/hid-debug.c b/drivers/hid/hid-debug.c
-> index c530476edba6..08870c909268 100644
-> --- a/drivers/hid/hid-debug.c
-> +++ b/drivers/hid/hid-debug.c
-> @@ -30,6 +30,7 @@
->
->  #include <linux/debugfs.h>
->  #include <linux/seq_file.h>
-> +#include <linux/kfifo.h>
->  #include <linux/sched/signal.h>
->  #include <linux/export.h>
->  #include <linux/slab.h>
-> @@ -661,17 +662,12 @@ EXPORT_SYMBOL_GPL(hid_dump_device);
->  /* enqueue string to 'events' ring buffer */
->  void hid_debug_event(struct hid_device *hdev, char *buf)
+>  arch/x86/kernel/kvmclock.c | 6 +-----
+>  1 file changed, 1 insertion(+), 5 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/kvmclock.c b/arch/x86/kernel/kvmclock.c
+> index e811d4d1c824..d908a37bf3f3 100644
+> --- a/arch/x86/kernel/kvmclock.c
+> +++ b/arch/x86/kernel/kvmclock.c
+> @@ -104,12 +104,8 @@ static u64 kvm_sched_clock_read(void)
+>  
+>  static inline void kvm_sched_clock_init(bool stable)
 >  {
-> -       unsigned i;
->         struct hid_debug_list *list;
->         unsigned long flags;
->
->         spin_lock_irqsave(&hdev->debug_list_lock, flags);
-> -       list_for_each_entry(list, &hdev->debug_list, node) {
-> -               for (i = 0; buf[i]; i++)
-> -                       list->hid_debug_buf[(list->tail + i) % HID_DEBUG_BUFSIZE] =
-> -                               buf[i];
-> -               list->tail = (list->tail + i) % HID_DEBUG_BUFSIZE;
-> -        }
-> +       list_for_each_entry(list, &hdev->debug_list, node)
-> +               kfifo_in(&list->hid_debug_fifo, buf, strlen(buf));
->         spin_unlock_irqrestore(&hdev->debug_list_lock, flags);
->
->         wake_up_interruptible(&hdev->debug_wait);
-> @@ -722,8 +718,7 @@ void hid_dump_input(struct hid_device *hdev, struct hid_usage *usage, __s32 valu
->         hid_debug_event(hdev, buf);
->
->         kfree(buf);
-> -        wake_up_interruptible(&hdev->debug_wait);
+> -	if (!stable) {
+> -		pv_ops.time.sched_clock = kvm_clock_read;
+> +	if (!stable)
+>  		clear_sched_clock_stable();
+> -		return;
+> -	}
 > -
-> +       wake_up_interruptible(&hdev->debug_wait);
->  }
->  EXPORT_SYMBOL_GPL(hid_dump_input);
->
-> @@ -1083,8 +1078,8 @@ static int hid_debug_events_open(struct inode *inode, struct file *file)
->                 goto out;
->         }
->
-> -       if (!(list->hid_debug_buf = kzalloc(HID_DEBUG_BUFSIZE, GFP_KERNEL))) {
-> -               err = -ENOMEM;
-> +       err = kfifo_alloc(&list->hid_debug_fifo, HID_DEBUG_FIFOSIZE, GFP_KERNEL);
-> +       if (err) {
->                 kfree(list);
->                 goto out;
->         }
-> @@ -1104,77 +1099,57 @@ static ssize_t hid_debug_events_read(struct file *file, char __user *buffer,
->                 size_t count, loff_t *ppos)
->  {
->         struct hid_debug_list *list = file->private_data;
-> -       int ret = 0, len;
-> +       int ret = 0, copied;
->         DECLARE_WAITQUEUE(wait, current);
->
->         mutex_lock(&list->read_mutex);
-> -       while (ret == 0) {
-> -               if (list->head == list->tail) {
-> -                       add_wait_queue(&list->hdev->debug_wait, &wait);
-> -                       set_current_state(TASK_INTERRUPTIBLE);
-> -
-> -                       while (list->head == list->tail) {
-> -                               if (file->f_flags & O_NONBLOCK) {
-> -                                       ret = -EAGAIN;
-> -                                       break;
-> -                               }
-> -                               if (signal_pending(current)) {
-> -                                       ret = -ERESTARTSYS;
-> -                                       break;
-> -                               }
-> -
-> -                               if (!list->hdev || !list->hdev->debug) {
-> -                                       ret = -EIO;
-> -                                       set_current_state(TASK_RUNNING);
-> -                                       goto out;
-> -                               }
-> -
-> -                               /* allow O_NONBLOCK from other threads */
-> -                               mutex_unlock(&list->read_mutex);
-> -                               schedule();
-> -                               mutex_lock(&list->read_mutex);
-> -                               set_current_state(TASK_INTERRUPTIBLE);
-> -                       }
-> -
-> -                       set_current_state(TASK_RUNNING);
-> -                       remove_wait_queue(&list->hdev->debug_wait, &wait);
-> -               }
-> -
-> -               if (ret)
-> -                       goto out;
-> +       if (kfifo_is_empty(&list->hid_debug_fifo)) {
-> +               add_wait_queue(&list->hdev->debug_wait, &wait);
-> +               set_current_state(TASK_INTERRUPTIBLE);
-> +
-> +               while (kfifo_is_empty(&list->hid_debug_fifo)) {
-> +                       if (file->f_flags & O_NONBLOCK) {
-> +                               ret = -EAGAIN;
-> +                               break;
-> +                       }
-> +
-> +                       if (signal_pending(current)) {
-> +                               ret = -ERESTARTSYS;
-> +                               break;
-> +                       }
-> +
-> +                       /* if list->hdev is NULL we cannot remove_wait_queue().
-> +                        * if list->hdev->debug is 0 then hid_debug_unregister()
-> +                        * was already called and list->hdev is being destroyed.
-> +                        * if we add remove_wait_queue() here we can hit a race.
-> +                        */
-> +                       if (!list->hdev || !list->hdev->debug) {
-> +                               ret = -EIO;
-> +                               set_current_state(TASK_RUNNING);
-> +                               goto out;
-> +                       }
-> +
-> +                       /* allow O_NONBLOCK from other threads */
-> +                       mutex_unlock(&list->read_mutex);
-> +                       schedule();
-> +                       mutex_lock(&list->read_mutex);
-> +                       set_current_state(TASK_INTERRUPTIBLE);
-> +               }
-> +
-> +               set_current_state(TASK_RUNNING);
-> +               remove_wait_queue(&list->hdev->debug_wait, &wait);
-> +
-> +               if (ret)
-> +                       goto out;
-> +       }
->
-> -               /* pass the ringbuffer contents to userspace */
-> -copy_rest:
-> -               if (list->tail == list->head)
-> -                       goto out;
-> -               if (list->tail > list->head) {
-> -                       len = list->tail - list->head;
-> -                       if (len > count)
-> -                               len = count;
-> -
-> -                       if (copy_to_user(buffer + ret, &list->hid_debug_buf[list->head], len)) {
-> -                               ret = -EFAULT;
-> -                               goto out;
-> -                       }
-> -                       ret += len;
-> -                       list->head += len;
-> -               } else {
-> -                       len = HID_DEBUG_BUFSIZE - list->head;
-> -                       if (len > count)
-> -                               len = count;
-> -
-> -                       if (copy_to_user(buffer, &list->hid_debug_buf[list->head], len)) {
-> -                               ret = -EFAULT;
-> -                               goto out;
-> -                       }
-> -                       list->head = 0;
-> -                       ret += len;
-> -                       count -= len;
-> -                       if (count > 0)
-> -                               goto copy_rest;
-> -               }
-> -
-> -       }
-> +       /* pass the fifo content to userspace, locking is not needed with only
-> +        * one concurrent reader and one concurrent writer
-> +        */
-> +       ret = kfifo_to_user(&list->hid_debug_fifo, buffer, count, &copied);
-> +       if (ret)
-> +               goto out;
-> +       ret = copied;
->  out:
->         mutex_unlock(&list->read_mutex);
->         return ret;
-> @@ -1185,7 +1160,7 @@ static __poll_t hid_debug_events_poll(struct file *file, poll_table *wait)
->         struct hid_debug_list *list = file->private_data;
->
->         poll_wait(file, &list->hdev->debug_wait, wait);
-> -       if (list->head != list->tail)
-> +       if (!kfifo_is_empty(&list->hid_debug_fifo))
->                 return EPOLLIN | EPOLLRDNORM;
->         if (!list->hdev->debug)
->                 return EPOLLERR | EPOLLHUP;
-> @@ -1200,7 +1175,7 @@ static int hid_debug_events_release(struct inode *inode, struct file *file)
->         spin_lock_irqsave(&list->hdev->debug_list_lock, flags);
->         list_del(&list->node);
->         spin_unlock_irqrestore(&list->hdev->debug_list_lock, flags);
-> -       kfree(list->hid_debug_buf);
-> +       kfifo_free(&list->hid_debug_fifo);
->         kfree(list);
->
->         return 0;
-> @@ -1246,4 +1221,3 @@ void hid_debug_exit(void)
->  {
->         debugfs_remove_recursive(hid_debug_root);
->  }
-> -
-> diff --git a/include/linux/hid-debug.h b/include/linux/hid-debug.h
-> index 8663f216c563..e7a7c92aaf09 100644
-> --- a/include/linux/hid-debug.h
-> +++ b/include/linux/hid-debug.h
-> @@ -24,7 +24,10 @@
->
->  #ifdef CONFIG_DEBUG_FS
->
-> +#include <linux/kfifo.h>
-> +
->  #define HID_DEBUG_BUFSIZE 512
-> +#define HID_DEBUG_FIFOSIZE 512
->
->  void hid_dump_input(struct hid_device *, struct hid_usage *, __s32);
->  void hid_dump_report(struct hid_device *, int , u8 *, int);
-> @@ -38,10 +41,7 @@ void hid_debug_event(struct hid_device *, char *);
->  void hid_debug_event(struct hid_device *, char *);
->
-> -
->  struct hid_debug_list {
-> -       char *hid_debug_buf;
-> -       int head;
-> -       int tail;
-> +       DECLARE_KFIFO_PTR(hid_debug_fifo, char);
->         struct fasync_struct *fasync;
->         struct hid_device *hdev;
->         struct list_head node;
-> @@ -64,4 +64,3 @@ struct hid_debug_list {
->  #endif
->
->  #endif
-> -
+>  	kvm_sched_clock_offset = kvm_clock_read();
+>  	pv_ops.time.sched_clock = kvm_sched_clock_read;
+>  
+> 
+
+Queued, thanks.
+
+Pa
