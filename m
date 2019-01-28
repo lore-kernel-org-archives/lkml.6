@@ -4,55 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 280DDC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 743A6C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED79A20811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4604920844
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693373;
-	bh=PnIAJq4IqyyzCH9i+aU8Vdb69+81PpFcKLvwhBgwoFQ=;
+	s=default; t=1548693380;
+	bh=67710mfH2U9tHqfguSP6duIkSnxXj8I+nGiO+b/jzJg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ZNDV1OxHapwjesVACkLzD/AsmhfL9+B+2ZOpOyg4y3KHm7AQwLhLFdBpAFfz54yn7
-	 J8CApu6vWt90KqdO40RIrAFPLrpn05EIO0wOHSoZhOFnHRV1yN0nBN/H1chJeSQszN
-	 2cf71UDa/w3Px/f7cmJ4/WDVgaJoK5D/eypaL+wY=
+	b=bW9TqfzPl/sjahSQOlVhycPuLF2tR2n1E74jt6Xs8lTbSpbuYhM4KAhncUCkEQBpp
+	 wEsINHU+K1+vgeI3qEAZCDEYRnBsKxjI1sPvsVz9obrzoR+9FjffiS2FayuxwYCQgR
+	 r8ArKJH7WMvKZZVrHiotUKr41YBsXrGacv6Tpko8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389943AbfA1QZ1 (ORCPT
+        id S2390290AbfA1QgR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34204 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:36:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34284 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389909AbfA1QZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:23 -0500
+        id S2389925AbfA1QZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BFCED2147A;
-        Mon, 28 Jan 2019 16:25:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4783320879;
+        Mon, 28 Jan 2019 16:25:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692722;
-        bh=PnIAJq4IqyyzCH9i+aU8Vdb69+81PpFcKLvwhBgwoFQ=;
+        s=default; t=1548692726;
+        bh=67710mfH2U9tHqfguSP6duIkSnxXj8I+nGiO+b/jzJg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w60VWUxXsGbJtjv41pcJ045dotIsIgB59D/TjuszxrUqRSHKlcWV6mkcHWbX9oNj/
-         xOuSLAe5zeUCYMHbQMfsWyMt9CBbJ8vvnwNlntjnH9/6g4MVTtLBHBizNqSSjXACyb
-         DiTx0oBhdFx/JXtyLpIz8ZseBOWA81oZwK7B/WQ0=
+        b=qXlw3oM3jVi7couhItv2sivHRaS7RbLeZsYHE/Q3YoJKrJlezfWRdbT0kqKEyjB8I
+         W5n6rtNPqm/zrMOUpT51LkfEQa62dktLvRejmn3fp+CRyKeWati6YQ6kMH4JD7zW2Q
+         5+//7KxMBsd6Uz+R0G2dNVErso9TDtQBb1OAHw2o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        Peter Maydell <peter.maydell@linaro.org>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Sasha Levin <sashal@kernel.org>, kvmarm@lists.cs.columbia.edu
-Subject: [PATCH AUTOSEL 4.4 47/80] arm64: KVM: Skip MMIO insn after emulation
-Date:   Mon, 28 Jan 2019 11:23:28 -0500
-Message-Id: <20190128162401.58841-47-sashal@kernel.org>
+Cc:     Johannes Berg <johannes.berg@intel.com>,
+        Luca Coelho <luciano.coelho@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 49/80] mac80211: fix radiotap vendor presence bitmap handling
+Date:   Mon, 28 Jan 2019 11:23:30 -0500
+Message-Id: <20190128162401.58841-49-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,60 +59,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mark Rutland <mark.rutland@arm.com>
+From: Johannes Berg <johannes.berg@intel.com>
 
-[ Upstream commit 0d640732dbebed0f10f18526de21652931f0b2f2 ]
+[ Upstream commit efc38dd7d5fa5c8cdd0c917c5d00947aa0539443 ]
 
-When we emulate an MMIO instruction, we advance the CPU state within
-decode_hsr(), before emulating the instruction effects.
+Due to the alignment handling, it actually matters where in the code
+we add the 4 bytes for the presence bitmap to the length; the first
+field is the timestamp with 8 byte alignment so we need to add the
+space for the extra vendor namespace presence bitmap *before* we do
+any alignment for the fields.
 
-Having this logic in decode_hsr() is opaque, and advancing the state
-before emulation is problematic. It gets in the way of applying
-consistent single-step logic, and it prevents us from being able to fail
-an MMIO instruction with a synchronous exception.
+Move the presence bitmap length accounting to the right place to fix
+the alignment for the data properly.
 
-Clean this up by only advancing the CPU state *after* the effects of the
-instruction are emulated.
-
-Cc: Peter Maydell <peter.maydell@linaro.org>
-Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
-Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/kvm/mmio.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ net/mac80211/rx.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/kvm/mmio.c b/arch/arm/kvm/mmio.c
-index 387ee2a11e36..885cd0e0015b 100644
---- a/arch/arm/kvm/mmio.c
-+++ b/arch/arm/kvm/mmio.c
-@@ -118,6 +118,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
- 		vcpu_set_reg(vcpu, vcpu->arch.mmio_decode.rt, data);
- 	}
+diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
+index 64f76f88f819..acacceec8cd8 100644
+--- a/net/mac80211/rx.c
++++ b/net/mac80211/rx.c
+@@ -149,6 +149,9 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
+ 	/* allocate extra bitmaps */
+ 	if (status->chains)
+ 		len += 4 * hweight8(status->chains);
++	/* vendor presence bitmap */
++	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA)
++		len += 4;
  
-+	/*
-+	 * The MMIO instruction is emulated and should not be re-executed
-+	 * in the guest.
-+	 */
-+	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
-+
- 	return 0;
- }
+ 	if (ieee80211_have_rx_timestamp(status)) {
+ 		len = ALIGN(len, 8);
+@@ -185,8 +188,6 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
+ 	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA) {
+ 		struct ieee80211_vendor_radiotap *rtap = (void *)skb->data;
  
-@@ -151,11 +157,6 @@ static int decode_hsr(struct kvm_vcpu *vcpu, bool *is_write, int *len)
- 	vcpu->arch.mmio_decode.sign_extend = sign_extend;
- 	vcpu->arch.mmio_decode.rt = rt;
- 
--	/*
--	 * The MMIO instruction is emulated and should not be re-executed
--	 * in the guest.
--	 */
--	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
- 	return 0;
- }
- 
+-		/* vendor presence bitmap */
+-		len += 4;
+ 		/* alignment for fixed 6-byte vendor data header */
+ 		len = ALIGN(len, 2);
+ 		/* vendor data header */
 -- 
 2.19.1
 
