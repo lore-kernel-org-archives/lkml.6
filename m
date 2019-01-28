@@ -2,51 +2,50 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD5EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF66CC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD85D20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 896DB20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:27:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692855;
-	bh=FQ+DFjdnQRjJcPVArBk30OJHovsD3c2fwh/NYq+8dVo=;
+	s=default; t=1548692859;
+	bh=yUX2yPCG+mp8SRpQwUzD0cB2q5F8JsR7ka/JQo+RieM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=A+g45HgSMLZ7AnUxaPqvlTeUg9T75aE+kDQ487sSbkT5se/tCuZ/SmOg1gOQZBkpM
-	 /SXD0oIv0B2alR/ZI1HpppPSnqpSXaluj8Cv//ljRQ0IWYUQNpkTjXzQxiF6ImzKB9
-	 NSPvXK0tzOUKyLbKD3eK/7r2/MA/RcZvx+RZ48io=
+	b=oEd7Ef8CoLoIdCjCVzWIlM/00/QHUEyPQrFCpvy0OTzIhGc4yfFk4lc7g/KNyLp4d
+	 MBLILhnRf7VxvAou1DVjavkJoqa4yk5imv9uAg6SfbKaHvk2MfcyXrWHcCBLLfCwBp
+	 GTO1Q7mOPEqHdaBSQrpnTZXi2wH7FDej/Jw0AYPE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390432AbfA1Q1d (ORCPT
+        id S2390439AbfA1Q1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:27:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37602 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:27:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390423AbfA1Q13 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:27:29 -0500
+        id S2390423AbfA1Q1e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:27:34 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 24A152171F;
-        Mon, 28 Jan 2019 16:27:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BA1120879;
+        Mon, 28 Jan 2019 16:27:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692848;
-        bh=FQ+DFjdnQRjJcPVArBk30OJHovsD3c2fwh/NYq+8dVo=;
+        s=default; t=1548692853;
+        bh=yUX2yPCG+mp8SRpQwUzD0cB2q5F8JsR7ka/JQo+RieM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IeiXNNPPtyVuOkayM61+wCPiG/Gj4Usi4s1fVB1c9wzv4yIP+ytF+MKRKf452sHoH
-         sBMMOVNO50KzK+wWXjt249R3HTYIB/ZqZXySNQdwAl1bMEjRckIFHPonYHXZLnAK4w
-         BBwoC+dUsiV5qf3/YWSO5lZy5FLHAFFvyB3y4Mmc=
+        b=ivsvjTfzLv7p6JTTgdZfbHg1KH1hNIu6L0Ul9gK8Je8vEcp8L9CNSzpMK00Rh2fDm
+         992i5EKkVjc6xLnR/WRf59fPd4rLKnLd3+pc+JxVA+mczc0JpOJAYkwyyELtlxMtzF
+         XcngwWZjh/wGuD91D6s1Y+jd0f7U78ncpl8ZfvXM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Roland Kammerer <roland.kammerer@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 38/61] drbd: narrow rcu_read_lock in drbd_sync_handshake
-Date:   Mon, 28 Jan 2019 11:26:00 -0500
-Message-Id: <20190128162623.59854-38-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 41/61] drbd: Avoid Clang warning about pointless switch statment
+Date:   Mon, 28 Jan 2019 11:26:03 -0500
+Message-Id: <20190128162623.59854-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -58,82 +57,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roland Kammerer <roland.kammerer@linbit.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit d29e89e34952a9ad02c77109c71a80043544296e ]
+[ Upstream commit a52c5a16cf19d8a85831bb1b915a221dd4ffae3c ]
 
-So far there was the possibility that we called
-genlmsg_new(GFP_NOIO)/mutex_lock() while holding an rcu_read_lock().
+There are several warnings from Clang about no case statement matching
+the constant 0:
 
-This included cases like:
+In file included from drivers/block/drbd/drbd_receiver.c:48:
+In file included from drivers/block/drbd/drbd_int.h:48:
+In file included from ./include/linux/drbd_genl_api.h:54:
+In file included from ./include/linux/genl_magic_struct.h:236:
+./include/linux/drbd_genl.h:321:1: warning: no case matching constant
+switch condition '0'
+GENL_struct(DRBD_NLA_HELPER, 24, drbd_helper_info,
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/genl_magic_struct.h:220:10: note: expanded from macro
+'GENL_struct'
+        switch (0) {
+                ^
 
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      drbd_bcast_event
-        genlmsg_new(GFP_NOIO) --> may sleep
+Silence this warning by adding a 'case 0:' statement. Additionally,
+adjust the alignment of the statements in the ct_assert_unique macro to
+avoid a checkpatch warning.
 
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        genlmsg_new(GFP_NOIO) --> may sleep
+This solution was originally sent by Arnd Bergmann with a default case
+statement: https://lore.kernel.org/patchwork/patch/756723/
 
-drbd_sync_handshake (acquire the RCU lock)
-  drbd_asb_recover_1p
-    drbd_khelper
-      notify_helper
-        mutex_lock --> may sleep
-
-While using GFP_ATOMIC whould have been possible in the first two cases,
-the real fix is to narrow the rcu_read_lock.
-
-Reported-by: Jia-Ju Bai <baijiaju1990@163.com>
-Reviewed-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Roland Kammerer <roland.kammerer@linbit.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/43
+Suggested-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_receiver.c | 11 ++++++-----
- 1 file changed, 6 insertions(+), 5 deletions(-)
+ include/linux/genl_magic_struct.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_receiver.c b/drivers/block/drbd/drbd_receiver.c
-index 6960fb064731..4f18ec5198fb 100644
---- a/drivers/block/drbd/drbd_receiver.c
-+++ b/drivers/block/drbd/drbd_receiver.c
-@@ -3125,7 +3125,7 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 	enum drbd_conns rv = C_MASK;
- 	enum drbd_disk_state mydisk;
- 	struct net_conf *nc;
--	int hg, rule_nr, rr_conflict, tentative;
-+	int hg, rule_nr, rr_conflict, tentative, always_asbp;
- 
- 	mydisk = device->state.disk;
- 	if (mydisk == D_NEGOTIATING)
-@@ -3167,8 +3167,12 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 
- 	rcu_read_lock();
- 	nc = rcu_dereference(peer_device->connection->net_conf);
-+	always_asbp = nc->always_asbp;
-+	rr_conflict = nc->rr_conflict;
-+	tentative = nc->tentative;
-+	rcu_read_unlock();
- 
--	if (hg == 100 || (hg == -100 && nc->always_asbp)) {
-+	if (hg == 100 || (hg == -100 && always_asbp)) {
- 		int pcount = (device->state.role == R_PRIMARY)
- 			   + (peer_role == R_PRIMARY);
- 		int forced = (hg == -100);
-@@ -3207,9 +3211,6 @@ static enum drbd_conns drbd_sync_handshake(struct drbd_peer_device *peer_device,
- 			     "Sync from %s node\n",
- 			     (hg < 0) ? "peer" : "this");
+diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
+index eecd19b37001..250e9be65e74 100644
+--- a/include/linux/genl_magic_struct.h
++++ b/include/linux/genl_magic_struct.h
+@@ -185,6 +185,7 @@ static inline void ct_assert_unique_operations(void)
+ {
+ 	switch (0) {
+ #include GENL_MAGIC_INCLUDE_FILE
++	case 0:
+ 		;
  	}
--	rr_conflict = nc->rr_conflict;
--	tentative = nc->tentative;
--	rcu_read_unlock();
- 
- 	if (hg == -100) {
- 		/* FIXME this log message is not correct if we end up here
+ }
+@@ -203,6 +204,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
+ {
+ 	switch (0) {
+ #include GENL_MAGIC_INCLUDE_FILE
++	case 0:
+ 		;
+ 	}
+ }
+@@ -212,7 +214,8 @@ static inline void ct_assert_unique_top_level_attributes(void)
+ static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
+ {									\
+ 	switch (0) {							\
+-		s_fields						\
++	s_fields							\
++	case 0:								\
+ 			;						\
+ 	}								\
+ }
 -- 
 2.19.1
 
