@@ -2,69 +2,72 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4B70C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:21:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA812C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8599D2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:21:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="K88q506y"
+	by mail.kernel.org (Postfix) with ESMTP id A54372087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:22:04 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbfA1JVy (ORCPT
+        id S1726843AbfA1JWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:21:54 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25476 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726682AbfA1JVy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:21:54 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548667242; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=mINGlhNuJeL2m6ILcoXW5Mjrpj9nO/mZ9/c/XqhR2ejgguAmETCDtdvgllvBOHxeZnpidosS8B007R3FgjOOJZ4yI4PO554qIxHWIbXwW16JGS2Sv4P7UnpJdTPB1MZXEnt8kxgIuPqJ/mjVK8ZiqDd0txzmr5T25rzAyKzi75k=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548667242; h=Cc:Date:From:Message-ID:Subject:To:ARC-Authentication-Results; 
-        bh=qw8czypaaWe79SZeoXkLCgUeNMSIHh+oSBPU/+9dKBI=; 
-        b=bjBijhAiLJWz4rOr06qSj29HZKLKrv9JAX1scamx4KqCFBE7LJycfSN8vznd+ZX8tPe840X3xz0T9iAaMUHZv0/yIiA+kbDmXiItItw3pEbaiQLuZCq3MpT585P9IOsvzgi9JeRneSCM72ivs8xhGpRgBgekNc9kVDNMk32ZrlA=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id; 
-  b=WxVf3WUvuxn9cvCl97PDPwcfCNOneLv7Do0kTEPzNFMlrpo2xxNaVxLy37o+aGSRHZuE8AeCH7i3
-    cXzSifHokUYvX3M7BaVnBnGJajSirHpU3EDiLX5F53BEiBV4YSw8  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548667242;
-        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id; l=35;
-        bh=qw8czypaaWe79SZeoXkLCgUeNMSIHh+oSBPU/+9dKBI=;
-        b=K88q506yWMlD+n4BWAFp/VhD/VrTV5i0ouN0uhGHHvmKf6Xi9XA1RYOK0v2+C/JF
-        SNBmz9GWWaRM4GAl48mnqvvujn3UkYvL7r4nhlGUvOtg2lhOSe+zoZzog4+31DEvGAz
-        RJ0SZJ0DO9DeajFO0B7i8iIth5muQttWXUv36L+4=
-Received: from localhost.localdomain (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
-        with SMTPS id 1548667239400743.3906119745753; Mon, 28 Jan 2019 01:20:39 -0800 (PST)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        paul.burton@mips.com, gregkh@linuxfoundation.org, jslaby@suse.com,
-        mark.rutland@arm.com, syq@debian.org, jiaxun.yang@flygoat.com,
-        772753199@qq.com
-Subject: Add Ingenic X1000 serial support.
-Date:   Mon, 28 Jan 2019 17:19:34 +0800
-Message-Id: <1548667176-119830-1-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-X-ZohoMailClient: External
+        Mon, 28 Jan 2019 04:22:03 -0500
+Received: from foss.arm.com ([217.140.101.70]:41682 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726672AbfA1JWB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:22:01 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ABE9DEBD;
+        Mon, 28 Jan 2019 01:22:00 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 16E413F589;
+        Mon, 28 Jan 2019 01:21:57 -0800 (PST)
+Date:   Mon, 28 Jan 2019 09:21:56 +0000
+Message-ID: <86lg35w30r.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
+        <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>
+Subject: Re: [PATCH v9 02/26] arm64: Remove unused daif related functions/macros
+In-Reply-To: <1548084825-8803-3-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-3-git-send-email-julien.thierry@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add Ingenic X1000 serial support.
+On Mon, 21 Jan 2019 15:33:21 +0000,
+Julien Thierry <julien.thierry@arm.com> wrote:
+> 
+> There are some helpers to modify PSR.[DAIF] bits that are not referenced
+> anywhere. The less these bits are available outside of local_irq_*
+> functions the better.
+> 
+> Get rid of those unused helpers.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Reviewed-by: Mark Rutland <mark.rutland@arm.com>
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: James Morse <james.morse@arm.com>
 
+Acked-by: Marc Zyngier <marc.zyngier@arm.com>
 
+	M.
+
+-- 
+Jazz is not dead, it just smell funny.
