@@ -4,48 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A742C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DACA3C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4171C21848
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ADE5121925
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691041;
-	bh=yG1I47SHAW1Y9veuNv5imVcFdG2h60Ym3uH0MJ8ZrW4=;
+	s=default; t=1548691046;
+	bh=OamdUB2LF1RvWmsWcVhV/30DULdf/rOZsdkHV2vEGvU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=BHiZGAB0hJG9SH6XYb9WkXcMw0cdJBnoFpxItXTOId2PmGgkUPIoKmntpSB8acf4t
-	 +s0DZoBytV2JCZgDQ+B6Z/25VmY8Yur6AeCfz80tf05OZkfqJGN0C1tICP+H3YHlE4
-	 pEX7i9ObZxKy3A9k3YA8reT4PFazGzLLUaob4NEs=
+	b=qw4SsaTKy16BbFgFylfFen3VGvz52h9s1GA5LX3NccXfgSEAtNi7InPhlqFcFOmzU
+	 aibZKK/hvXb8415rNEsV38agjc1LtxsKBDH4Rz5yWN0zlzuWoc2WcLqt9a3KyLzh09
+	 NsUH2U1WwhLi3qr+rWTNDycu4DUaB2/hnaS4gmWw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730207AbfA1P5T (ORCPT
+        id S1730225AbfA1P5Y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:57:19 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42796 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:57:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730196AbfA1P5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:57:16 -0500
+        id S1730202AbfA1P5T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:57:19 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7490D21848;
-        Mon, 28 Jan 2019 15:57:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E647321916;
+        Mon, 28 Jan 2019 15:57:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691036;
-        bh=yG1I47SHAW1Y9veuNv5imVcFdG2h60Ym3uH0MJ8ZrW4=;
+        s=default; t=1548691038;
+        bh=OamdUB2LF1RvWmsWcVhV/30DULdf/rOZsdkHV2vEGvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CAu6rgnwHUZCV9OChCt1jS0IVgXJDUpsPpP0cCvisGiGaeWgNqE5Tq//k1nUu33s8
-         JW04CBpehLd5j5nM5ufJpxBrrt3YetCvPRfcB3OX+N14DOZQKOTm7qOCCNZE23Oy2g
-         3yMI6Xha90iLq1TrTW2z8ijqM5aiXokNpnwtaQy8=
+        b=TXYIfEfVJc53hggcO8moj+RbCPmJwp1nC9baw1yEJyjglpmlND7dBnXf5DgMZ6FmZ
+         RgOpiIpHX2BLl579ShbHI2zIoucxaodJu1LqnYUK8n6POmmjiHiAH+mCadFrPyDinB
+         pH/8JCenTgwaXi0xFCM2xG6ftQgRrwA07XXNLyw0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 269/304] cifs: check ntwrk_buf_start for NULL before dereferencing it
-Date:   Mon, 28 Jan 2019 10:43:06 -0500
-Message-Id: <20190128154341.47195-269-sashal@kernel.org>
+Cc:     Sahitya Tummala <stummala@codeaurora.org>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.20 270/304] f2fs: fix use-after-free issue when accessing sbi->stat_info
+Date:   Mon, 28 Jan 2019 10:43:07 -0500
+Message-Id: <20190128154341.47195-270-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,48 +59,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ronnie Sahlberg <lsahlber@redhat.com>
+From: Sahitya Tummala <stummala@codeaurora.org>
 
-[ Upstream commit 59a63e479ce36a3f24444c3a36efe82b78e4a8e0 ]
+[ Upstream commit 60aa4d5536ab7fe32433ca1173bd9d6633851f27 ]
 
-RHBZ: 1021460
+iput() on sbi->node_inode can update sbi->stat_info
+in the below context, if the f2fs_write_checkpoint()
+has failed with error.
 
-There is an issue where when multiple threads open/close the same directory
-ntwrk_buf_start might end up being NULL, causing the call to smbCalcSize
-later to oops with a NULL deref.
+f2fs_balance_fs_bg+0x1ac/0x1ec
+f2fs_write_node_pages+0x4c/0x260
+do_writepages+0x80/0xbc
+__writeback_single_inode+0xdc/0x4ac
+writeback_single_inode+0x9c/0x144
+write_inode_now+0xc4/0xec
+iput+0x194/0x22c
+f2fs_put_super+0x11c/0x1e8
+generic_shutdown_super+0x70/0xf4
+kill_block_super+0x2c/0x5c
+kill_f2fs_super+0x44/0x50
+deactivate_locked_super+0x60/0x8c
+deactivate_super+0x68/0x74
+cleanup_mnt+0x40/0x78
 
-The real bug is why this happens and why this can become NULL for an
-open cfile, which should not be allowed.
-This patch tries to avoid a oops until the time when we fix the underlying
-issue.
+Fix this by moving f2fs_destroy_stats() further below iput() in
+both f2fs_put_super() and f2fs_fill_super() paths.
 
-Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/readdir.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ fs/f2fs/super.c | 27 +++++++++++++++------------
+ 1 file changed, 15 insertions(+), 12 deletions(-)
 
-diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
-index e169e1a5fd35..3925a7bfc74d 100644
---- a/fs/cifs/readdir.c
-+++ b/fs/cifs/readdir.c
-@@ -655,7 +655,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
- 		/* scan and find it */
- 		int i;
- 		char *cur_ent;
--		char *end_of_smb = cfile->srch_inf.ntwrk_buf_start +
-+		char *end_of_smb;
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 855a622fb052..a239472f405a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1058,9 +1058,6 @@ static void f2fs_put_super(struct super_block *sb)
+ 		f2fs_write_checkpoint(sbi, &cpc);
+ 	}
+ 
+-	/* f2fs_write_checkpoint can update stat informaion */
+-	f2fs_destroy_stats(sbi);
+-
+ 	/*
+ 	 * normally superblock is clean, so we need to release this.
+ 	 * In addition, EIO will skip do checkpoint, we need this as well.
+@@ -1080,6 +1077,12 @@ static void f2fs_put_super(struct super_block *sb)
+ 	iput(sbi->node_inode);
+ 	iput(sbi->meta_inode);
+ 
++	/*
++	 * iput() can update stat information, if f2fs_write_checkpoint()
++	 * above failed with error.
++	 */
++	f2fs_destroy_stats(sbi);
 +
-+		if (cfile->srch_inf.ntwrk_buf_start == NULL) {
-+			cifs_dbg(VFS, "ntwrk_buf_start is NULL during readdir\n");
-+			return -EIO;
-+		}
+ 	/* destroy f2fs internal modules */
+ 	f2fs_destroy_node_manager(sbi);
+ 	f2fs_destroy_segment_manager(sbi);
+@@ -3256,30 +3259,30 @@ try_onemore:
+ 
+ 	f2fs_build_gc_manager(sbi);
+ 
++	err = f2fs_build_stats(sbi);
++	if (err)
++		goto free_nm;
 +
-+		end_of_smb = cfile->srch_inf.ntwrk_buf_start +
- 			server->ops->calc_smb_size(
- 					cfile->srch_inf.ntwrk_buf_start,
- 					server);
+ 	/* get an inode for node space */
+ 	sbi->node_inode = f2fs_iget(sb, F2FS_NODE_INO(sbi));
+ 	if (IS_ERR(sbi->node_inode)) {
+ 		f2fs_msg(sb, KERN_ERR, "Failed to read node inode");
+ 		err = PTR_ERR(sbi->node_inode);
+-		goto free_nm;
++		goto free_stats;
+ 	}
+ 
+-	err = f2fs_build_stats(sbi);
+-	if (err)
+-		goto free_node_inode;
+-
+ 	/* read root inode and dentry */
+ 	root = f2fs_iget(sb, F2FS_ROOT_INO(sbi));
+ 	if (IS_ERR(root)) {
+ 		f2fs_msg(sb, KERN_ERR, "Failed to read root inode");
+ 		err = PTR_ERR(root);
+-		goto free_stats;
++		goto free_node_inode;
+ 	}
+ 	if (!S_ISDIR(root->i_mode) || !root->i_blocks ||
+ 			!root->i_size || !root->i_nlink) {
+ 		iput(root);
+ 		err = -EINVAL;
+-		goto free_stats;
++		goto free_node_inode;
+ 	}
+ 
+ 	sb->s_root = d_make_root(root); /* allocate root dentry */
+@@ -3403,12 +3406,12 @@ free_meta:
+ free_root_inode:
+ 	dput(sb->s_root);
+ 	sb->s_root = NULL;
+-free_stats:
+-	f2fs_destroy_stats(sbi);
+ free_node_inode:
+ 	f2fs_release_ino_entry(sbi, true);
+ 	truncate_inode_pages_final(NODE_MAPPING(sbi));
+ 	iput(sbi->node_inode);
++free_stats:
++	f2fs_destroy_stats(sbi);
+ free_nm:
+ 	f2fs_destroy_node_manager(sbi);
+ free_sm:
 -- 
 2.19.1
 
