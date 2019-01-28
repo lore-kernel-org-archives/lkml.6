@@ -2,177 +2,136 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 653B6C282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:45:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C43EC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:46:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32F342175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:45:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A0C42175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:46:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="TPTYJCkU"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RbD8wJ9W"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbfA1Wpb (ORCPT
+        id S1726887AbfA1WqA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 17:45:31 -0500
-Received: from mail-qt1-f195.google.com ([209.85.160.195]:34182 "EHLO
-        mail-qt1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfA1Wpb (ORCPT
+        Mon, 28 Jan 2019 17:46:00 -0500
+Received: from mail-oi1-f196.google.com ([209.85.167.196]:33875 "EHLO
+        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726678AbfA1Wp7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 17:45:31 -0500
-Received: by mail-qt1-f195.google.com with SMTP id r14so20316535qtp.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 14:45:30 -0800 (PST)
+        Mon, 28 Jan 2019 17:45:59 -0500
+Received: by mail-oi1-f196.google.com with SMTP id r62so14584705oie.1
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 14:45:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=joelfernandes.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Ma4gMd+9dw3VfggiKiIwCmxrdS3+NuicG/7QTIikafw=;
-        b=TPTYJCkUhd6bgO13sc0uwD+Es+t+aRGKl+NaO029KYESxB6+O6CajTu6q6CviHuZuM
-         WShcA7pwr22DZC0S4HMGrCywnTRVy4c0oZnNIcv1Dd6CrppZHE9CpseemkMeU/245MnH
-         THoXvc8JHAb+5h52FQNDYC9tMXMByRjWmOJPs=
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RM044dE9hBEzHSiouuipjyFT4Scxv3Vo3M1SK0ouvB0=;
+        b=RbD8wJ9WL7W493DRqBL5ddDDCCj9ccp1SW35keqVE70OonSCwK4JnK9vJdmcDzKzn2
+         +Vwv/dLhexJzdjA5WE98uN+mik0u9F74m88A1nqYOY7LmzffLNmAEAX+IfwtL1zb2cY4
+         8xVolcilysuY49ReNhFKo1f7le48OjkJmf/NTdaidHDOOkTtL23xDBeNSeaMrsaVaWqo
+         CiQ2v+640biorvex6vLPN5UYotIovLfKPiuB0XH0yeMNOobcGtyjYhd7h2OAG6a4JK9V
+         aADm109aUoW2sOgkqc8T4XdFqOc+67LTDsrohjUhpQlLVZ5DsWdRpEkbgO5NEnUU5aQT
+         0Xjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Ma4gMd+9dw3VfggiKiIwCmxrdS3+NuicG/7QTIikafw=;
-        b=BVVei0DOGj5T4Y1mp2ExuRqQYlqWBn5xcXdimMI3OuOSjMySRPwDhOm7eD/Q+FwIpv
-         jqpXGBKsDXglexW7K7t9sJSH77wwaD+qLBYzWe8JM4RBkm82iOPRhChNn6ihN+8mbDe9
-         fc6sU9xuQdExeTXek134UyD5npm9394KBfHn3hjv9rzHY8+mHyQJYO6qN92AJKu+cccD
-         BELIrKnoMwYf0XasSBI5OOeoG/Ag4FDq8iQ0L2W5Lw19ygoIe//CSHXcTI4xoo1dPl/s
-         Yp9e6V0M5l+xV6d/uaZO2NfyxK5nI+Lvsh91QUo41S/QQAnrBeHC2Wg3yTc2xiIE2X4z
-         7YiA==
-X-Gm-Message-State: AJcUukfKF491IMybPrczKrfj6lSEB1yaSwoj84vWxESa5lCW3n9705U7
-        7+zb9q4jD15AKv7bnOLWJi+4+w==
-X-Google-Smtp-Source: ALg8bN6F5olPmlLpiXIP9Hb57M5Qktvq1qbb/tHKjEiaMclG8cHMr3wbSBiP/lGhmaxZmszR5x2PcQ==
-X-Received: by 2002:a0c:ae30:: with SMTP id y45mr21676404qvc.145.1548715529790;
-        Mon, 28 Jan 2019 14:45:29 -0800 (PST)
-Received: from localhost ([2620:0:1004:1100:cca9:fccc:8667:9bdc])
-        by smtp.gmail.com with ESMTPSA id n8sm90742157qtk.91.2019.01.28.14.45.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 14:45:28 -0800 (PST)
-Date:   Mon, 28 Jan 2019 17:45:28 -0500
-From:   Joel Fernandes <joel@joelfernandes.org>
-To:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Garnier <thgarnie@google.com>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@elte.hu>, Tejun Heo <tj@kernel.org>
-Subject: Re: [PATCH v1 2/2] mm: add priority threshold to
- __purge_vmap_area_lazy()
-Message-ID: <20190128224528.GB38107@google.com>
-References: <20190124115648.9433-1-urezki@gmail.com>
- <20190124115648.9433-3-urezki@gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RM044dE9hBEzHSiouuipjyFT4Scxv3Vo3M1SK0ouvB0=;
+        b=KcQcIubDfEAmq13vGutr39VBzsQ0Ob4eV/J4AOxs64HvcPdhq8t1N/jcnf+Skq5sAW
+         Opx+rsdeXWDPiMlV2/tZjuO1mzDJrNCaMiZYA5UolHcOGPr9mSOAcpkzpDctZB/vqO0W
+         gNi4+/RinC0Esoms8QmKgadzUD6env5vEm6CxFAQxQ0HzgU1Nuz4EWoQvMHQ7K8HjWWp
+         tm+r14udlfoRam290tmqJ7qdHNPYg0Wvl3fHv+COHOG6CnfmlJSFWi6Df90sSugoTW9F
+         CUDYUP28fnojjZx4meCdl+ldFb7hS1XCA9SiE7raOPeYrPnSi9rjPTyyevMmjDO+JFbv
+         Hu/w==
+X-Gm-Message-State: AJcUukda53F1ALl9iAkby4q8YhFwsKBFZwrdfYsiiGxKE2azDn3WgTFX
+        dfC3u3UvLuSqBKyPPE9rZBw3T+Sbe9Zv6SOv0tE0nA==
+X-Google-Smtp-Source: ALg8bN52fmpC8tAHVPZFZLQCzKAEMsDWndNjm4cF9vHAnq830uylLrAULUDHPzhVxWv4emI9IHhlZKcy+C+CupsLFpk=
+X-Received: by 2002:aca:3c06:: with SMTP id j6mr7331244oia.126.1548715558593;
+ Mon, 28 Jan 2019 14:45:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190124115648.9433-3-urezki@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20190128220707.30774-1-mathieu.desnoyers@efficios.com> <20190128223948.GD4240@linux.ibm.com>
+In-Reply-To: <20190128223948.GD4240@linux.ibm.com>
+From:   Jann Horn <jannh@google.com>
+Date:   Mon, 28 Jan 2019 23:45:32 +0100
+Message-ID: <CAG48ez1+Vx7=ZqeLJ0waceSneCQhEcoS=bv9ggb3Dbveb+W6AQ@mail.gmail.com>
+Subject: Re: [PATCH] Fix: membarrier: racy access to p->mm in membarrier_global_expedited()
+To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
+Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        kernel list <linux-kernel@vger.kernel.org>,
+        Linux API <linux-api@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrea Parri <parri.andrea@gmail.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Avi Kivity <avi@scylladb.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Boqun Feng <boqun.feng@gmail.com>,
+        Dave Watson <davejwatson@fb.com>, David Sehr <sehr@google.com>,
+        "H . Peter Anvin" <hpa@zytor.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Maged Michael <maged.michael@gmail.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Paul Mackerras <paulus@samba.org>,
+        Russell King <linux@armlinux.org.uk>,
+        Will Deacon <will.deacon@arm.com>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 12:56:48PM +0100, Uladzislau Rezki (Sony) wrote:
-> commit 763b218ddfaf ("mm: add preempt points into
-> __purge_vmap_area_lazy()")
-> 
-> introduced some preempt points, one of those is making an
-> allocation more prioritized over lazy free of vmap areas.
-> 
-> Prioritizing an allocation over freeing does not work well
-> all the time, i.e. it should be rather a compromise.
-> 
-> 1) Number of lazy pages directly influence on busy list length
-> thus on operations like: allocation, lookup, unmap, remove, etc.
-> 
-> 2) Under heavy stress of vmalloc subsystem i run into a situation
-> when memory usage gets increased hitting out_of_memory -> panic
-> state due to completely blocking of logic that frees vmap areas
-> in the __purge_vmap_area_lazy() function.
-> 
-> Establish a threshold passing which the freeing is prioritized
-> back over allocation creating a balance between each other.
+On Mon, Jan 28, 2019 at 11:39 PM Paul E. McKenney <paulmck@linux.ibm.com> wrote:
+> On Mon, Jan 28, 2019 at 05:07:07PM -0500, Mathieu Desnoyers wrote:
+> > Jann Horn identified a racy access to p->mm in the global expedited
+> > command of the membarrier system call.
+> >
+> > The suggested fix is to hold the task_lock() around the accesses to
+> > p->mm and to the mm_struct membarrier_state field to guarantee the
+> > existence of the mm_struct.
+> >
+> > Link: https://lore.kernel.org/lkml/CAG48ez2G8ctF8dHS42TF37pThfr3y0RNOOYTmxvACm4u8Yu3cw@mail.gmail.com
+> > Signed-off-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+[...]
+> > --- a/kernel/sched/membarrier.c
+> > +++ b/kernel/sched/membarrier.c
+> > @@ -81,12 +81,27 @@ static int membarrier_global_expedited(void)
+> >
+> >               rcu_read_lock();
+> >               p = task_rcu_dereference(&cpu_rq(cpu)->curr);
+> > -             if (p && p->mm && (atomic_read(&p->mm->membarrier_state) &
+> > -                                MEMBARRIER_STATE_GLOBAL_EXPEDITED)) {
+> > -                     if (!fallback)
+> > -                             __cpumask_set_cpu(cpu, tmpmask);
+> > -                     else
+> > -                             smp_call_function_single(cpu, ipi_mb, NULL, 1);
+> > +             /*
+> > +              * Skip this CPU if the runqueue's current task is NULL or if
+> > +              * it is a kernel thread.
+> > +              */
+> > +             if (p && READ_ONCE(p->mm)) {
+> > +                     bool mm_match;
+> > +
+> > +                     /*
+> > +                      * Read p->mm and access membarrier_state while holding
+> > +                      * the task lock to ensure existence of mm.
+> > +                      */
+> > +                     task_lock(p);
+> > +                     mm_match = p->mm && (atomic_read(&p->mm->membarrier_state) &
+>
+> Are we guaranteed that this p->mm will be the same as the one loaded via
+> READ_ONCE() above?
 
-I'm a bit concerned that this will introduce the latency back if vmap_lazy_nr
-is greater than half of lazy_max_pages(). Which IIUC will be more likely if
-the number of CPUs is large.
+No; the way I read it, that's just an optimization and has no effect
+on correctness.
 
-In fact, when vmap_lazy_nr is high, that's when the latency will be the worst
-so one could say that that's when you *should* reschedule since the frees are
-taking too long and hurting real-time tasks.
+> Either way, wouldn't it be better to READ_ONCE() it a
+> single time and use the same value everywhere?
 
-Could this be better solved by tweaking lazy_max_pages() such that purging is
-more aggressive?
-
-Another approach could be to detect the scenario you brought up (allocations
-happening faster than free), somehow, and avoid a reschedule?
-
-thanks,
-
- - Joel
-
-> 
-> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> ---
->  mm/vmalloc.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
-> 
-> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
-> index fb4fb5fcee74..abe83f885069 100644
-> --- a/mm/vmalloc.c
-> +++ b/mm/vmalloc.c
-> @@ -661,23 +661,27 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
->  	struct llist_node *valist;
->  	struct vmap_area *va;
->  	struct vmap_area *n_va;
-> -	bool do_free = false;
-> +	int resched_threshold;
->  
->  	lockdep_assert_held(&vmap_purge_lock);
->  
->  	valist = llist_del_all(&vmap_purge_list);
-> +	if (unlikely(valist == NULL))
-> +		return false;
-> +
-> +	/*
-> +	 * TODO: to calculate a flush range without looping.
-> +	 * The list can be up to lazy_max_pages() elements.
-> +	 */
->  	llist_for_each_entry(va, valist, purge_list) {
->  		if (va->va_start < start)
->  			start = va->va_start;
->  		if (va->va_end > end)
->  			end = va->va_end;
-> -		do_free = true;
->  	}
->  
-> -	if (!do_free)
-> -		return false;
-> -
->  	flush_tlb_kernel_range(start, end);
-> +	resched_threshold = (int) lazy_max_pages() << 1;
->  
->  	spin_lock(&vmap_area_lock);
->  	llist_for_each_entry_safe(va, n_va, valist, purge_list) {
-> @@ -685,7 +689,9 @@ static bool __purge_vmap_area_lazy(unsigned long start, unsigned long end)
->  
->  		__free_vmap_area(va);
->  		atomic_sub(nr, &vmap_lazy_nr);
-> -		cond_resched_lock(&vmap_area_lock);
-> +
-> +		if (atomic_read(&vmap_lazy_nr) < resched_threshold)
-> +			cond_resched_lock(&vmap_area_lock);
->  	}
->  	spin_unlock(&vmap_area_lock);
->  	return true;
-> -- 
-> 2.11.0
-> 
+No; the first READ_ONCE() returns a pointer that you can't access
+because it wasn't read under a lock. You can only use it for a NULL
+check.
