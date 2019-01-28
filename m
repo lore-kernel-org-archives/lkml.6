@@ -2,51 +2,50 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2361C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42405C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C32972147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1545B2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:09:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691742;
-	bh=kvd6SCuFjLXEg6fBXeeGAC2wwZDWOhHBApd/DZXiTJg=;
+	s=default; t=1548691746;
+	bh=F95uzW5aA4HOsG1tNEdwlq3ZdENQRrRJosWhBaKlnZ0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Iyns22sQAcJC1kQzPA5XOZPVAY240Yta4xb5648TdkWwbhzFTYPozc6z623R0D3cK
-	 GIXV2d21XbQRGBiStVBhAVGCR41MCXLrautbF4zaH0uFCjS55xzNJmF2NVgtHHA8AR
-	 kOBNs2sYTehAibpJpf1VhtoMXf5IbhcK73FwoaGo=
+	b=2l8BFRacOByqyZ5B/fvAFUHdk5aZizy7KR6JWTPat5AJ1419rnXQWv3rQJ0nc9Q3q
+	 OPJ/CWN6Uf+8xarVk1H1leoPhAkmPZEDYYuSnOUY6bo2nWNGrob6ArHB+QDLWm49LC
+	 NVcQAWjlJ1vb/CODB6Uqlp/j3t0a7RcIw+7PrGR4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732525AbfA1QJB (ORCPT
+        id S1732538AbfA1QJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:09:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33024 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:09:04 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33138 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731791AbfA1QI6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:08:58 -0500
+        id S1732523AbfA1QJB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:09:01 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B6D52171F;
-        Mon, 28 Jan 2019 16:08:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 230722084A;
+        Mon, 28 Jan 2019 16:08:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691737;
-        bh=kvd6SCuFjLXEg6fBXeeGAC2wwZDWOhHBApd/DZXiTJg=;
+        s=default; t=1548691740;
+        bh=F95uzW5aA4HOsG1tNEdwlq3ZdENQRrRJosWhBaKlnZ0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Zmc9PteGeaUrjq6X6D2TT6dl9Mg+res0O3IFFtMnAddAtKnAzOuCrYFmdce9m//Nb
-         xIZPfUCTgPjPSpLcYVSXkFo3QDBUZsj6VCDxFZCkUn3fVr3lrLLUOJ49CGMfG8SwA0
-         VUA5mdbnrU775cpKJcx2t5G1mLHG9bNegAcJxK5M=
+        b=Jg8G45MjWN9EEk5ZSTZgYcQHFtFdHoXRF8yUl/UqrtgB/czgVbv+MTFy4kz+kZOQZ
+         l95HjHJtdldDqAGJoOGSN+WGO4loVbBRDus4a21mkbiP1CBnl+zlfEmn55rMb0k14B
+         R317owoWli4BK17r0iPvkZOCH5N1rYNuHq+iTh0U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 201/258] drbd: skip spurious timeout (ping-timeo) when failing promote
-Date:   Mon, 28 Jan 2019 10:58:27 -0500
-Message-Id: <20190128155924.51521-201-sashal@kernel.org>
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 202/258] drbd: Avoid Clang warning about pointless switch statment
+Date:   Mon, 28 Jan 2019 10:58:28 -0500
+Message-Id: <20190128155924.51521-202-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,60 +57,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars Ellenberg <lars.ellenberg@linbit.com>
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-[ Upstream commit 9848b6ddd8c92305252f94592c5e278574e7a6ac ]
+[ Upstream commit a52c5a16cf19d8a85831bb1b915a221dd4ffae3c ]
 
-If you try to promote a Secondary while connected to a Primary
-and allow-two-primaries is NOT set, we will wait for "ping-timeout"
-to give this node a chance to detect a dead primary,
-in case the cluster manager noticed faster than we did.
+There are several warnings from Clang about no case statement matching
+the constant 0:
 
-But if we then are *still* connected to a Primary,
-we fail (after an additional timeout of ping-timout).
+In file included from drivers/block/drbd/drbd_receiver.c:48:
+In file included from drivers/block/drbd/drbd_int.h:48:
+In file included from ./include/linux/drbd_genl_api.h:54:
+In file included from ./include/linux/genl_magic_struct.h:236:
+./include/linux/drbd_genl.h:321:1: warning: no case matching constant
+switch condition '0'
+GENL_struct(DRBD_NLA_HELPER, 24, drbd_helper_info,
+^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+./include/linux/genl_magic_struct.h:220:10: note: expanded from macro
+'GENL_struct'
+        switch (0) {
+                ^
 
-This change skips the spurious second timeout.
+Silence this warning by adding a 'case 0:' statement. Additionally,
+adjust the alignment of the statements in the ct_assert_unique macro to
+avoid a checkpatch warning.
 
-Most people won't notice really,
-since "ping-timeout" by default is half a second.
+This solution was originally sent by Arnd Bergmann with a default case
+statement: https://lore.kernel.org/patchwork/patch/756723/
 
-But in some installations, ping-timeout may be 10 or 20 seconds or more,
-and spuriously delaying the error return becomes annoying.
-
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Link: https://github.com/ClangBuiltLinux/linux/issues/43
+Suggested-by: Lars Ellenberg <lars.ellenberg@linbit.com>
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
 Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_nl.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ include/linux/genl_magic_struct.h | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index b4f02768ba47..319fabdd63a3 100644
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -668,14 +668,15 @@ drbd_set_role(struct drbd_device *const device, enum drbd_role new_role, int for
- 		if (rv == SS_TWO_PRIMARIES) {
- 			/* Maybe the peer is detected as dead very soon...
- 			   retry at most once more in this case. */
--			int timeo;
--			rcu_read_lock();
--			nc = rcu_dereference(connection->net_conf);
--			timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
--			rcu_read_unlock();
--			schedule_timeout_interruptible(timeo);
--			if (try < max_tries)
-+			if (try < max_tries) {
-+				int timeo;
- 				try = max_tries - 1;
-+				rcu_read_lock();
-+				nc = rcu_dereference(connection->net_conf);
-+				timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
-+				rcu_read_unlock();
-+				schedule_timeout_interruptible(timeo);
-+			}
- 			continue;
- 		}
- 		if (rv < SS_SUCCESS) {
+diff --git a/include/linux/genl_magic_struct.h b/include/linux/genl_magic_struct.h
+index 5972e4969197..eeae59d3ceb7 100644
+--- a/include/linux/genl_magic_struct.h
++++ b/include/linux/genl_magic_struct.h
+@@ -191,6 +191,7 @@ static inline void ct_assert_unique_operations(void)
+ {
+ 	switch (0) {
+ #include GENL_MAGIC_INCLUDE_FILE
++	case 0:
+ 		;
+ 	}
+ }
+@@ -209,6 +210,7 @@ static inline void ct_assert_unique_top_level_attributes(void)
+ {
+ 	switch (0) {
+ #include GENL_MAGIC_INCLUDE_FILE
++	case 0:
+ 		;
+ 	}
+ }
+@@ -218,7 +220,8 @@ static inline void ct_assert_unique_top_level_attributes(void)
+ static inline void ct_assert_unique_ ## s_name ## _attributes(void)	\
+ {									\
+ 	switch (0) {							\
+-		s_fields						\
++	s_fields							\
++	case 0:								\
+ 			;						\
+ 	}								\
+ }
 -- 
 2.19.1
 
