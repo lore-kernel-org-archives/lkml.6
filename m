@@ -2,100 +2,132 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B7A3C4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:22:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7ACC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05F592148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:22:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7C26E2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:22:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtLRJh/V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728225AbfA1TWt (ORCPT
+        id S1728273AbfA1TW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:22:49 -0500
-Received: from smtprelay0008.hostedemail.com ([216.40.44.8]:50229 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727052AbfA1TWs (ORCPT
+        Mon, 28 Jan 2019 14:22:58 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36757 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727052AbfA1TW5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:22:48 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay01.hostedemail.com (Postfix) with ESMTP id B8534100E86C3;
-        Mon, 28 Jan 2019 19:22:46 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: team06_34fe5ce20c907
-X-Filterd-Recvd-Size: 2586
-Received: from XPS-9350 (unknown [172.58.30.243])
-        (Authenticated sender: joe@perches.com)
-        by omf04.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 28 Jan 2019 19:22:43 +0000 (UTC)
-Message-ID: <c6de4935a2b3acdbcc9146af702322c58707c9f5.camel@perches.com>
-Subject: Re: [PATCH RESEND 4/4] Pinctrl: Ingenic: Fix const declaration.
-From:   Joe Perches <joe@perches.com>
-To:     Paul Cercueil <paul@crapouillou.net>,
-        Zhou Yanjie <zhouyanjie@zoho.com>
-Cc:     linus.walleij@linaro.org, linux-mips@vger.kernel.org,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        paul.burton@mips.com, syq@debian.org, jiaxun.yang@flygoat.com,
-        772753199@qq.com
-Date:   Mon, 28 Jan 2019 11:22:42 -0800
-In-Reply-To: <1548439157.1804.1@crapouillou.net>
-References: <1548410393-6981-1-git-send-email-zhouyanjie@zoho.com>
-         <1548410393-6981-5-git-send-email-zhouyanjie@zoho.com>
-         <1548439157.1804.1@crapouillou.net>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        Mon, 28 Jan 2019 14:22:57 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b85so8460326pfc.3;
+        Mon, 28 Jan 2019 11:22:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=4w5GVgfSc7HDd4w82dp/ZXFLWhzvarEeSPreNtWAt24=;
+        b=YtLRJh/VTwFwZTLiBH8nhmwp9XiwpPsk/31466R4V8uL7VKH1UaBT7UHcwuVZmF7Pn
+         yi2aqKPdjxQr5JB0PEpPjVrCbcdtaSTf2+350JAfH00AvlYlUF7El8XBZ2T9NVRDRBdG
+         W0OJ87fZxqp4EB7IVz95BPOFUWc8fp1ecxSc2GrFU6nh2D0bVMvH0hP96F7db5F6HxPL
+         ztg5Oa1aak6pmGzWjXR7Zv9LupnlU/55TaYJs8D2Lh6K4IqwFipaes8z6WAtx75UEbpl
+         /U5FnoY3YPeCIDx3063c2hTT+awuZivw+RrwzBpCEmyyXQYocAUEV5KmkJ4XnID+AvjE
+         r5wQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=4w5GVgfSc7HDd4w82dp/ZXFLWhzvarEeSPreNtWAt24=;
+        b=l9PN/R9uUzeRrrS6uAKDxrOZ/aHpMKwEPVVBaN0qo3vd8okfeiqqm0+pE8B6SEfAhw
+         gEVYlXggzkYW+RcHa0MLgdKkScuHqhiSBkMKXGnflY1B/EuEOPUkxkEq3AuBzcX4Y2H+
+         1VnFHBQmN+Ud/Va9Y0iwTQvdlQPWDPBl7yOiyngVxLND5/L8XYPQBjJVxqPbyDgQDsm8
+         pSSzeezwZkaxvKavtiVZ1djI0b6R0IPKrWmeODe0N3pzPkmKK7RSWuSm4kRU6RU+iy/u
+         IFHI3K9XA9SpVQ+74iQVZkO8FEdFjWZ1AAe5SXGaJLYJheWGbiMgy7ulanxmT7EXyXcr
+         HpZg==
+X-Gm-Message-State: AJcUukco/14QzjECjx4FZHpWLAuDnqe7wRxRlXOFRHhZFwEt5OzBA+BF
+        KcXnfTpbkbVLmUh1zsAiHLQ=
+X-Google-Smtp-Source: ALg8bN4T4eNxnwW4DJ9WSVR5aF0mF+0xhZgpR38hQhbfVpKpzZWvdwCrnljPzsZxRGVtU/ygw1fwQA==
+X-Received: by 2002:a63:4e15:: with SMTP id c21mr21004600pgb.50.1548703375956;
+        Mon, 28 Jan 2019 11:22:55 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id y6sm49018429pfd.104.2019.01.28.11.22.54
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 11:22:54 -0800 (PST)
+Date:   Mon, 28 Jan 2019 11:22:53 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Bartosz Golaszewski <brgl@bgdev.pl>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+        linux-pm@vger.kernel.org,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Subject: Re: [PATCH 12/13] input: max77650: add onkey support
+Message-ID: <20190128192253.GD34692@dtor-ws>
+References: <20190118134244.22253-1-brgl@bgdev.pl>
+ <20190118134244.22253-13-brgl@bgdev.pl>
+ <20190119090318.GB187380@dtor-ws>
+ <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2019-01-25 at 14:59 -0300, Paul Cercueil wrote:
-> On Fri, Jan 25, 2019 at 6:59 AM, Zhou Yanjie <zhouyanjie@zoho.com> 
-> wrote:
-> > Warning is reported when checkpatch indicates that
-> > "static const char * array" should be changed to
-> > "static const char * const".
-[]
-> > diff --git a/drivers/pinctrl/pinctrl-ingenic.c 
-[]
-> > @@ -172,23 +172,25 @@ static const struct group_desc jz4740_groups[] 
-[]
-> > +static const char * const jz4740_mmc_groups[] = { "mmc-1bit", 
-> > "mmc-4bit", };
-> >  static const struct function_desc jz4740_functions[] = {
-> >  	{ "mmc", jz4740_mmc_groups, ARRAY_SIZE(jz4740_mmc_groups), },
+On Mon, Jan 21, 2019 at 11:52:50AM +0100, Bartosz Golaszewski wrote:
+> sob., 19 sty 2019 o 10:03 Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> napisał(a):
+> >
+> > Hi Bartosz,
+> >
+> > On Fri, Jan 18, 2019 at 02:42:43PM +0100, Bartosz Golaszewski wrote:
+> > > +     input_set_capability(onkey->input, EV_KEY, onkey->code);
+> > > +
+> > > +     rv = devm_request_threaded_irq(dev, irq_f, NULL,
+> >
+> > Why threaded interrupt with only hard interrupt handler? If parent
+> > interrupt is threaded use "any_context_irq" here.
+> >
 > 
-> With this patch applied I get this:
+> Hi Dmitry,
 > 
-> drivers/pinctrl/pinctrl-ingenic.c:196:11: attention : initialization 
-> discards
-> ‘const’ qualifier from pointer target type [-Wdiscarded-qualifiers]
->   { "mmc", jz4740_mmc_groups, ARRAY_SIZE(jz4740_mmc_groups), },
->            ^~~~~~~~~~~~~~~~~
+> actually it's the other way around. Take a look at the function
+> prototype for  devm_request_threaded_irq()[1].
+> 
+> The third parameter is the hard-irq handler (NULL in my patch), the
+> fourth is the thread function. Actually even if I did what you're
+> saying - it would never work as this is a nested irq for which the
+> hard-irq handler is never called.
 
-You could change group_names to const char * const group_names
-in pinmux.h
+Sorry, my eyes must have crossed. Still, from the driver POV the
+interrupt does not have to be threaded, this is dictated by the
+constraints beyond the driver control. For these cases we have
+devm_request_any_context_irq() that takes essentially only "hard" IRQ
+handler, but internally either does request_irq() or
+request_threaded_irq(), depending on the context (whether the interrupt
+is nested or not). Using devm_request_any_context_irq() should not have
+any behavioral changes, but documents the logic better.
 
----
- drivers/pinctrl/pinmux.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks.
 
-diff --git a/drivers/pinctrl/pinmux.h b/drivers/pinctrl/pinmux.h
-index 3319535c76cb..2b903774ba5c 100644
---- a/drivers/pinctrl/pinmux.h
-+++ b/drivers/pinctrl/pinmux.h
-@@ -122,7 +122,7 @@ static inline void pinmux_init_device_debugfs(struct dentry *devroot,
-  */
- struct function_desc {
- 	const char *name;
--	const char **group_names;
-+	const char * const *group_names;
- 	int num_group_names;
- 	void *data;
- };
-
-
+-- 
+Dmitry
