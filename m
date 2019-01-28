@@ -7,45 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D76CEC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 809C0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A57082175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 51A012171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691546;
-	bh=0GBzWdHy8yzAv7ZNOhTeeKixVeEY6VaHUb4E2ryiBZk=;
+	s=default; t=1548691552;
+	bh=erUnjmWMM4EK60WS+qexEeg+GIott08M6ICGnnF2XrM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dLY5OGI/M2LsxkFO0IFCPJh0lHS7NFiaAwuy2qaO6/dnCdlvjkfkm2lJ0dYHZK1Ex
-	 2AO8h9P/NKrOXvQgAqcffh5coaH5KJfViJs8J1sAneoeEOiaqLNo0EAnNcqXWCV88t
-	 r+VYXf7icFu3D0NNWk51HUSNgIgZ2hBLpxw7NIHo=
+	b=QstHr2dbke3yyI7mvsTe1f9D+wV60qBOAj3VlCXw9uIxNxlAfZj6wBRqrtlDKua7r
+	 Hb1OZrTjb60cAb9uegNsEPcp4Dz8SDQWetipFntduKD0sB5kvIBgplZYxBiIJXMvLC
+	 9s5dAoBGfm3ul3kdL1zpXesHZexs6S2PIhHh5oec=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731899AbfA1QFo (ORCPT
+        id S1731919AbfA1QFu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:05:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52830 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:05:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731858AbfA1QFj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:05:39 -0500
+        id S1731419AbfA1QFr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:05:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C76EA2173C;
-        Mon, 28 Jan 2019 16:05:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA21F20989;
+        Mon, 28 Jan 2019 16:05:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691538;
-        bh=0GBzWdHy8yzAv7ZNOhTeeKixVeEY6VaHUb4E2ryiBZk=;
+        s=default; t=1548691545;
+        bh=erUnjmWMM4EK60WS+qexEeg+GIott08M6ICGnnF2XrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u3qwHliXnh+fFN30hAua9ceYBGwFpr5/mETwmIGvQSTwfw2lrnSQs7bwjPOqYornA
-         zMJ4SCu0IRUR1M+1qpbL1qsX/yj0SSHUaDQqmYuV9sFueVh9XuI5XOqU+nTAH30vzX
-         7EyuThz24ykGdn0zHEXWYMXBK9uQ4JswI6SXGicI=
+        b=IzJji+dqok7vG7sueEAYUG0xtnWtj1J17siEiWMak3YTTeaC06+o7s+RiUNJZNRZC
+         7pnPHB/vjLa27mv9UhhmBJL0mUtEGRpFNYqa7w/aqi2wORminV5nZvfzUvMXRw9X1y
+         3xUBqxGSl/6e+e+P7Ldb32YGV9uU8dNzdJP2OAWc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Viresh Kumar <viresh.kumar@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 135/258] OPP: Use opp_table->regulators to verify no regulator case
-Date:   Mon, 28 Jan 2019 10:57:21 -0500
-Message-Id: <20190128155924.51521-135-sashal@kernel.org>
+Cc:     Abhinav Kumar <abhinavk@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rob Clark <robdclark@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 137/258] drm/msm/dsi: fix dsi clock names in DSI 10nm PLL driver
+Date:   Mon, 28 Jan 2019 10:57:23 -0500
+Message-Id: <20190128155924.51521-137-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,65 +60,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Viresh Kumar <viresh.kumar@linaro.org>
+From: Abhinav Kumar <abhinavk@codeaurora.org>
 
-[ Upstream commit 90e3577b5feb42bac1269e16bb3d2bdd8f6df40f ]
+[ Upstream commit c1866d44d149a1ea5c303632114fb6aa08cfd263 ]
 
-The value of opp_table->regulator_count is not very consistent right now
-and it may end up being 0 while we do have a "opp-microvolt" property in
-the OPP table. It was kept that way as we used to check if any
-regulators are set with the OPP core for a device or not using value of
-regulator_count.
+Fix the dsi clock names in the DSI 10nm PLL driver to
+match the names in the dispcc driver as those are
+according to the clock plan of the chipset.
 
-Lets use opp_table->regulators for that purpose as the meaning of
-regulator_count is going to change in the later patches.
+Changes in v2:
+- Update the clock diagram with the new clock name
 
-Reported-by: Quentin Perret <quentin.perret@arm.com>
-Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Abhinav Kumar <abhinavk@codeaurora.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Rob Clark <robdclark@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/opp/core.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/opp/core.c b/drivers/opp/core.c
-index 31ff03dbeb83..f3433bf47b10 100644
---- a/drivers/opp/core.c
-+++ b/drivers/opp/core.c
-@@ -191,12 +191,12 @@ unsigned long dev_pm_opp_get_max_volt_latency(struct device *dev)
- 	if (IS_ERR(opp_table))
- 		return 0;
+diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
+index 41bec570c518..31205625c734 100644
+--- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
++++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
+@@ -17,7 +17,7 @@
+  *                              |                |
+  *                              |                |
+  *                 +---------+  |  +----------+  |  +----+
+- *  dsi0vco_clk ---| out_div |--o--| divl_3_0 |--o--| /8 |-- dsi0pllbyte
++ *  dsi0vco_clk ---| out_div |--o--| divl_3_0 |--o--| /8 |-- dsi0_phy_pll_out_byteclk
+  *                 +---------+  |  +----------+  |  +----+
+  *                              |                |
+  *                              |                |         dsi0_pll_by_2_bit_clk
+@@ -25,7 +25,7 @@
+  *                              |                |  +----+  |  |\  dsi0_pclk_mux
+  *                              |                |--| /2 |--o--| \   |
+  *                              |                |  +----+     |  \  |  +---------+
+- *                              |                --------------|  |--o--| div_7_4 |-- dsi0pll
++ *                              |                --------------|  |--o--| div_7_4 |-- dsi0_phy_pll_out_dsiclk
+  *                              |------------------------------|  /     +---------+
+  *                              |          +-----+             | /
+  *                              -----------| /4? |--o----------|/
+@@ -690,7 +690,7 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm)
  
--	count = opp_table->regulator_count;
--
- 	/* Regulator may not be required for the device */
--	if (!count)
-+	if (!opp_table->regulators)
- 		goto put_opp_table;
+ 	hws[num++] = hw;
  
-+	count = opp_table->regulator_count;
-+
- 	uV = kmalloc_array(count, sizeof(*uV), GFP_KERNEL);
- 	if (!uV)
- 		goto put_opp_table;
-@@ -976,6 +976,9 @@ static bool _opp_supported_by_regulators(struct dev_pm_opp *opp,
- 	struct regulator *reg;
- 	int i;
+-	snprintf(clk_name, 32, "dsi%dpllbyte", pll_10nm->id);
++	snprintf(clk_name, 32, "dsi%d_phy_pll_out_byteclk", pll_10nm->id);
+ 	snprintf(parent, 32, "dsi%d_pll_bit_clk", pll_10nm->id);
  
-+	if (!opp_table->regulators)
-+		return true;
-+
- 	for (i = 0; i < opp_table->regulator_count; i++) {
- 		reg = opp_table->regulators[i];
+ 	/* DSI Byte clock = VCO_CLK / OUT_DIV / BIT_DIV / 8 */
+@@ -739,7 +739,7 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm)
  
-@@ -1263,7 +1266,7 @@ static int _allocate_set_opp_data(struct opp_table *opp_table)
- 	struct dev_pm_set_opp_data *data;
- 	int len, count = opp_table->regulator_count;
+ 	hws[num++] = hw;
  
--	if (WARN_ON(!count))
-+	if (WARN_ON(!opp_table->regulators))
- 		return -EINVAL;
+-	snprintf(clk_name, 32, "dsi%dpll", pll_10nm->id);
++	snprintf(clk_name, 32, "dsi%d_phy_pll_out_dsiclk", pll_10nm->id);
+ 	snprintf(parent, 32, "dsi%d_pclk_mux", pll_10nm->id);
  
- 	/* space for set_opp_data */
+ 	/* PIX CLK DIV : DIV_CTRL_7_4*/
 -- 
 2.19.1
 
