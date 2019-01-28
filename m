@@ -2,133 +2,97 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2C32C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9124C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:41:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67A022147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:41:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZyxCGIWI"
+	by mail.kernel.org (Postfix) with ESMTP id B5CDF2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:41:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548697300;
+	bh=pacFqHfa/WvwUPlWP3qASifptXFgX4652C3cHSLKFyk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=1sSkdgNQ3THr8nTBTlzLiHO8KXoouVVicQf7uAb7/SDafHuTVFe85vqp9eHosjeSP
+	 5jvBYRxUUGce6icI72PSVa+nI21Gl1inWkBHdBknuCGRG1Qi6wIOZlDVwzKdXPUbvC
+	 qzOlA1jbY1LjUOfWdZ3a86gVU3/fWkM6uc2ajxBs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729389AbfA1Rlg (ORCPT
+        id S1729416AbfA1Rli (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:41:36 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:36407 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728289AbfA1Rld (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:41:33 -0500
-Received: by mail-wr1-f68.google.com with SMTP id u4so19054640wrp.3;
-        Mon, 28 Jan 2019 09:41:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=5vc6fOfslJWy5sWFTwgNUTYSBoY4beFxKhyW6yNq43U=;
-        b=ZyxCGIWIFdIJwqAc909bUF8QkXU4RWeTBsXKEfjadet9jaEbPc5ELLnAcmX9vrEAoj
-         4NALy406Ap9cSMH3WTzzetUnB3aNDm26fs7+72KgYqN3ehRUkfzRcDrTD2HpEyiq+97Q
-         aY5GzdhmPxquRZJoyWusg0YoBcy1mmPFDuPq5DSci2RA7PhnMYGkJnFxQcd87rIC4hua
-         SgDz/ivjmElsUlOWHYOr2iZzmNweKeH2i3c/Gy0UpA1pOaqLg6o9hPU8W4mX2zMePGa7
-         OnW6wbTv66bqLexWwwQSWF96OlvqwOkfqd2+fzxtRPJ3QR/Df6TYjeyeyIECdD6EQ+xX
-         2Qnw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=5vc6fOfslJWy5sWFTwgNUTYSBoY4beFxKhyW6yNq43U=;
-        b=L7lGX0N6e+6nT+1PdwArT7PdMONMl6E4/V0xzf0io7M7IXPr+mPhE1c/SvmCE09PqI
-         SiMsOh68ON5pANeOpSLg2AzY175D9CdDhGDYeeE1b9xZWC42elv9QQMg4d6muPKmRw4f
-         KWYUcXoAwYHMaqJPMJLf8lNsJ73VhWLMIezFQcFjSu4AINiMYDcbEo6h90RYs7GhIZNi
-         qDE3MM5rVJG2CN+2NmRhxyQhVA72I4CvgYA9l+kjmIt806l8VRtMNEx4KUDq1etxb18W
-         kpku5ap8quzVtMk7MGZIl67HKkrjIWlLTcYDoq5NsOA+RIw95Ovt8KPBaJ6G08sHDpo1
-         De0w==
-X-Gm-Message-State: AJcUukdiwMWYZSd6vAp83O4uPQx+8zYIWvE5CgrMDLAFJBeKQEFgzfPo
-        aKY74vQCW2ejABLTRQj8wA==
-X-Google-Smtp-Source: ALg8bN4KR0SrDjNg1URWwVyddQdjpIY76qB3T6mlRAF3Q4ioCcsEbVPi/wfMFW6d+eqFkf6eLBLD7A==
-X-Received: by 2002:adf:dfd1:: with SMTP id q17mr23901214wrn.27.1548697291307;
-        Mon, 28 Jan 2019 09:41:31 -0800 (PST)
-Received: from localhost (host180-106-dynamic.51-82-r.retail.telecomitalia.it. [82.51.106.180])
-        by smtp.gmail.com with ESMTPSA id 129sm89886wmd.18.2019.01.28.09.41.30
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 09:41:30 -0800 (PST)
-Date:   Mon, 28 Jan 2019 18:41:29 +0100
-From:   Andrea Righi <righi.andrea@gmail.com>
-To:     Vivek Goyal <vgoyal@redhat.com>
-Cc:     Josef Bacik <josef@toxicpanda.com>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Jens Axboe <axboe@kernel.dk>, Dennis Zhou <dennis@kernel.org>,
-        cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 0/3] cgroup: fsio throttle controller
-Message-ID: <20190128174129.GB8272@xps-13>
-References: <20190118103127.325-1-righi.andrea@gmail.com>
- <20190118163530.w5wpzpjkcnkektsp@macbook-pro-91.dhcp.thefacebook.com>
- <20190118184403.GB1535@xps-13>
- <20190118194652.gg5j2yz3h2llecpj@macbook-pro-91.dhcp.thefacebook.com>
- <20190119100827.GA1630@xps-13>
- <20190121214715.GA27713@redhat.com>
+        Mon, 28 Jan 2019 12:41:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37514 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728327AbfA1Puz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:50:55 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5940120880;
+        Mon, 28 Jan 2019 15:50:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690654;
+        bh=pacFqHfa/WvwUPlWP3qASifptXFgX4652C3cHSLKFyk=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=WmJIcaYHSdHEemKQR/DCHBYdkuIODqXVmMvt6JbZM6dzzBQM60DK9L+gjeSmIOR2l
+         RFfUUQhZany2cSfHjZhLsMUva13pNacT/AaSl9ejH/UJeZ2RECoUDkB1T0peRVsw0w
+         gQZapvda6qHY7l1dVZqvyB4vVjOzlHn7nkho9z34=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-ide@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 155/304] sata_rcar: fix deferred probing
+Date:   Mon, 28 Jan 2019 10:41:12 -0500
+Message-Id: <20190128154341.47195-155-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20190121214715.GA27713@redhat.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vivek,
+From: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
 
-sorry for the late reply.
+[ Upstream commit 9f83cfdb1ace3ef268ecc6fda50058d2ec37d603 ]
 
-On Mon, Jan 21, 2019 at 04:47:15PM -0500, Vivek Goyal wrote:
-> On Sat, Jan 19, 2019 at 11:08:27AM +0100, Andrea Righi wrote:
-> 
-> [..]
-> > Alright, let's skip the root cgroup for now. I think the point here is
-> > if we want to provide sync() isolation among cgroups or not.
-> > 
-> > According to the manpage:
-> > 
-> >        sync()  causes  all  pending  modifications  to filesystem metadata and cached file data to be
-> >        written to the underlying filesystems.
-> > 
-> > And:
-> >        According to the standard specification (e.g., POSIX.1-2001), sync() schedules the writes, but
-> >        may  return  before  the actual writing is done.  However Linux waits for I/O completions, and
-> >        thus sync() or syncfs() provide the same guarantees as fsync called on every file in the  sys‐
-> >        tem or filesystem respectively.
-> > 
-> > Excluding the root cgroup, do you think a sync() issued inside a
-> > specific cgroup should wait for I/O completions only for the writes that
-> > have been generated by that cgroup?
-> 
-> Can we account I/O towards the cgroup which issued "sync" only if write
-> rate of sync cgroup is higher than cgroup to which page belongs to. Will
-> that solve problem, assuming its doable?
+The driver overrides the error codes returned by platform_get_irq() to
+-EINVAL, so if it returns -EPROBE_DEFER, the driver would fail the probe
+permanently instead of the deferred probing. Switch to propagating the
+error code upstream, still checking/overriding IRQ0 as libata regards it
+as "no IRQ" (thus polling) anyway...
 
-Maybe this would mitigate the problem, in part, but it doesn't solve it.
+Fixes: 9ec36cafe43b ("of/irq: do irq resolution in platform_get_irq")
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Sergei Shtylyov <sergei.shtylyov@cogentembedded.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/ata/sata_rcar.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-The thing is, if a dirty page belongs to a slow cgroup and a fast cgroup
-issues "sync", the fast cgroup needs to wait a lot, because writeback is
-happening at the speed of the slow cgroup.
+diff --git a/drivers/ata/sata_rcar.c b/drivers/ata/sata_rcar.c
+index 4b1ff5bc256a..59b2317acea9 100644
+--- a/drivers/ata/sata_rcar.c
++++ b/drivers/ata/sata_rcar.c
+@@ -891,7 +891,9 @@ static int sata_rcar_probe(struct platform_device *pdev)
+ 	int ret = 0;
+ 
+ 	irq = platform_get_irq(pdev, 0);
+-	if (irq <= 0)
++	if (irq < 0)
++		return irq;
++	if (!irq)
+ 		return -EINVAL;
+ 
+ 	priv = devm_kzalloc(dev, sizeof(struct sata_rcar_priv), GFP_KERNEL);
+-- 
+2.19.1
 
-Ideally in this case we should bump up the writeback speed, maybe even
-temporarily inherit the write rate of the sync cgroup, similarly to a
-priority-inversion locking scenario, but I think it's not doable at the
-moment without applying big changes.
-
-Or we could isolate the sync domain, meaning that a cgroup issuing a
-sync will only wait for the syncing of the pages that belong to that
-sync cgroup. But probably also this method requires big changes...
-
--Andrea
