@@ -4,49 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63804C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:21:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3489FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:21:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AE8621738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:21:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFFE520663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692507;
-	bh=RgLOyiuO0ELpebnq1JYYUYM/gwtVWipyOCKAwQ5shAo=;
+	s=default; t=1548692517;
+	bh=RftadAPnkmAl2jiqLAQSRVASnEV8lW9DX301jXrcdIQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=TAt9N9dQFQkoqfnHWjWrlVekBbpP8oO7sYFYUjgOXDGehWd61WvOii2XBSr0L/IYA
-	 kHKjkr6iHo26wFlohb+H9PoXi2rb4kGevbuxYB+/35Xp0IivxYgiVjPEx9G+g4bmuM
-	 IOGsHky3Khut2CdHOQyPiOrLk3qnomPYpJ2/EPhY=
+	b=1yN9lQGWaPKfnG/mWKAUI7FHRDIF96UDo7ns79fi+pR5HIS8ivj/dFv1Pkuhwy3lm
+	 aGjPiy59xiX5yoRfU8HmXk6lPE8tzBlSSFPDnjRWXeZsNggz1AdSWmt3AyTdI66HmF
+	 MHZzMaIbYTSUR7L4fc7s8+r8kvLeKLeUggyQ6a8A=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387907AbfA1QVp (ORCPT
+        id S2389105AbfA1QVz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:21:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57542 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:21:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732851AbfA1QVn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:21:43 -0500
+        id S2389073AbfA1QVo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:21:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3D9A2084A;
-        Mon, 28 Jan 2019 16:21:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BBBAB2147A;
+        Mon, 28 Jan 2019 16:21:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692502;
-        bh=RgLOyiuO0ELpebnq1JYYUYM/gwtVWipyOCKAwQ5shAo=;
+        s=default; t=1548692504;
+        bh=RftadAPnkmAl2jiqLAQSRVASnEV8lW9DX301jXrcdIQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IUQ7bYCmsvWP344Z1g61QdmjBaB2l0Plrl8TYg5FKzCeC5gWcoVIVOMKrq2sTXybp
-         hRLbt8xcj3OlOMs+5lXklDYDIuBPhH6m4yU8A3yK3grpDEovrkktLG8P3C7TlI2iKM
-         Q726ZXUIoMtebqsFqmy+S6bz7XkhBW42NErpVX/g=
+        b=jzwWicsquoVHla4h1QUVpoB604uVuqoTMzVMTv9gnX2E+5rZgxrX4DHFt0iYo6SCN
+         TSc4q9JaNNgxqiE7fonQdGrqcbctmckFidJhC3p+hcwJmxXwOB2WILFv/k+fj3Ste5
+         M6jP/lf9Dqm1TUVh87hedQ6i7dMYsDp2FoYnT0r4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mathias Nyman <mathias.nyman@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 040/107] usb: hub: delay hub autosuspend if USB3 port is still link training
-Date:   Mon, 28 Jan 2019 11:18:40 -0500
-Message-Id: <20190128161947.57405-40-sashal@kernel.org>
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
+        tj@kernel.org, johannes.berg@intel.com,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 041/107] timekeeping: Use proper seqcount initializer
+Date:   Mon, 28 Jan 2019 11:18:41 -0500
+Message-Id: <20190128161947.57405-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -58,49 +59,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit e86108940e541febf35813402ff29fa6f4a9ac0b ]
+[ Upstream commit ce10a5b3954f2514af726beb78ed8d7350c5e41c ]
 
-When initializing a hub we want to give a USB3 port in link training
-the same debounce delay time before autosuspening the hub as already
-trained, connected enabled ports.
+tk_core.seq is initialized open coded, but that misses to initialize the
+lockdep map when lockdep is enabled. Lockdep splats involving tk_core seq
+consequently lack a name and are hard to read.
 
-USB3 ports won't reach the enabled state with "current connect status" and
-"connect status change" bits set until the USB3 link training finishes.
+Use the proper initializer which takes care of the lockdep map
+initialization.
 
-Catching the port in link training (polling) and adding the debounce delay
-prevents unnecessary failed attempts to autosuspend the hub.
+[ tglx: Massaged changelog ]
 
-Signed-off-by: Mathias Nyman <mathias.nyman@linux.intel.com>
-Acked-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: peterz@infradead.org
+Cc: tj@kernel.org
+Cc: johannes.berg@intel.com
+Link: https://lkml.kernel.org/r/20181128234325.110011-12-bvanassche@acm.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/core/hub.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ kernel/time/timekeeping.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index 67679f619c3b..7b6919086539 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -1108,6 +1108,16 @@ static void hub_activate(struct usb_hub *hub, enum hub_activation_type type)
- 						   USB_PORT_FEAT_ENABLE);
- 		}
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index d831827d7ab0..e24e1f0c5690 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -39,7 +39,9 @@
+ static struct {
+ 	seqcount_t		seq;
+ 	struct timekeeper	timekeeper;
+-} tk_core ____cacheline_aligned;
++} tk_core ____cacheline_aligned = {
++	.seq = SEQCNT_ZERO(tk_core.seq),
++};
  
-+		/*
-+		 * Add debounce if USB3 link is in polling/link training state.
-+		 * Link will automatically transition to Enabled state after
-+		 * link training completes.
-+		 */
-+		if (hub_is_superspeed(hdev) &&
-+		    ((portstatus & USB_PORT_STAT_LINK_STATE) ==
-+						USB_SS_PORT_LS_POLLING))
-+			need_debounce_delay = true;
-+
- 		/* Clear status-change flags; we'll debounce later */
- 		if (portchange & USB_PORT_STAT_C_CONNECTION) {
- 			need_debounce_delay = true;
+ static DEFINE_RAW_SPINLOCK(timekeeper_lock);
+ static struct timekeeper shadow_timekeeper;
 -- 
 2.19.1
 
