@@ -2,205 +2,106 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66DBFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:09:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F152C282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:16:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4005021738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:09:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6F84621738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:16:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726864AbfA1MJv (ORCPT
+        id S1726888AbfA1MQp convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:09:51 -0500
-Received: from mga11.intel.com ([192.55.52.93]:39669 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726786AbfA1MJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:09:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 04:09:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,534,1539673200"; 
-   d="scan'208";a="129489662"
-Received: from elena-thinkpad-x230.fi.intel.com ([10.237.68.34])
-  by orsmga002.jf.intel.com with ESMTP; 28 Jan 2019 04:09:47 -0800
-From:   Elena Reshetova <elena.reshetova@intel.com>
-To:     peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org, keescook@chromium.org,
-        andrea.parri@amarulasolutions.com,
-        Elena Reshetova <elena.reshetova@intel.com>
-Subject: [PATCH] refcount_t: add ACQUIRE ordering on success for dec(sub)_and_test variants
-Date:   Mon, 28 Jan 2019 14:09:37 +0200
-Message-Id: <1548677377-22177-1-git-send-email-elena.reshetova@intel.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 28 Jan 2019 07:16:45 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:57437 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726802AbfA1MQo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 07:16:44 -0500
+Received: from marcel-macpro.fritz.box (p4FF9FD60.dip0.t-ipconnect.de [79.249.253.96])
+        by mail.holtmann.org (Postfix) with ESMTPSA id EB9C2CF2B6;
+        Mon, 28 Jan 2019 13:24:30 +0100 (CET)
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.2 \(3445.102.3\))
+Subject: Re: [PATCH] Bluetooth: Add NULL check for tiocmget() and tiocmset()
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20190128065910.GA14959@myunghoj-Precision-5530>
+Date:   Mon, 28 Jan 2019 13:16:42 +0100
+Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <0D7C928B-8E3E-4986-A6D2-AFCFF4F0E274@holtmann.org>
+References: <20190128065910.GA14959@myunghoj-Precision-5530>
+To:     Myungho Jung <mhjungk@gmail.com>
+X-Mailer: Apple Mail (2.3445.102.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This adds an smp_acquire__after_ctrl_dep() barrier on successful
-decrease of refcounter value from 1 to 0 for refcount_dec(sub)_and_test
-variants and therefore gives stronger memory ordering guarantees than
-prior versions of these functions.
+Hi Myungho,
 
-Co-Developed-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
----
- Documentation/core-api/refcount-vs-atomic.rst | 28 +++++++++++++++++++++++----
- arch/x86/include/asm/refcount.h               | 21 ++++++++++++++++----
- lib/refcount.c                                | 16 ++++++++++-----
- 3 files changed, 52 insertions(+), 13 deletions(-)
+> tiocmget() and tiocmset() operations are optional and some tty drivers
+> like pty miss the operations. We need NULL check before referencing
+> them.
+> 
+> Reported-by: syzbot+a950165cbb86bdd023a4@syzkaller.appspotmail.com
+> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
+> ---
+> drivers/bluetooth/hci_ath.c   | 13 ++++++++-----
+> drivers/bluetooth/hci_ldisc.c |  5 +++++
+> 2 files changed, 13 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_ath.c b/drivers/bluetooth/hci_ath.c
+> index d568fbd94d6c..076700a1e9a8 100644
+> --- a/drivers/bluetooth/hci_ath.c
+> +++ b/drivers/bluetooth/hci_ath.c
+> @@ -94,11 +94,14 @@ static void ath_hci_uart_work(struct work_struct *work)
+> 	hu = ath->hu;
+> 	tty = hu->tty;
+> 
+> -	/* verify and wake up controller */
+> -	if (ath->cur_sleep) {
+> -		status = ath_wakeup_ar3k(tty);
+> -		if (!(status & TIOCM_CTS))
+> -			return;
+> +	/* tiocmget() and tiocmset() operations are optional */
+> +	if (tty->driver->ops->tiocmget && tty->driver->ops->tiocmset) {
+> +		/* verify and wake up controller */
+> +		if (ath->cur_sleep) {
+> +			status = ath_wakeup_ar3k(tty);
+> +			if (!(status & TIOCM_CTS))
+> +				return;
+> +		}
+> 	}
 
-diff --git a/Documentation/core-api/refcount-vs-atomic.rst b/Documentation/core-api/refcount-vs-atomic.rst
-index 322851b..95d4b4e 100644
---- a/Documentation/core-api/refcount-vs-atomic.rst
-+++ b/Documentation/core-api/refcount-vs-atomic.rst
-@@ -54,6 +54,14 @@ must propagate to all other CPUs before the release operation
- (A-cumulative property). This is implemented using
- :c:func:`smp_store_release`.
- 
-+An ACQUIRE memory ordering guarantees that all post loads and
-+stores (all po-later instructions) on the same CPU are
-+completed after the acquire operation. It also guarantees that all
-+po-later stores on the same CPU and all propagated stores from other CPUs
-+must propagate to all other CPUs after the acquire operation
-+(A-cumulative property). This is implemented using
-+:c:func:`smp_acquire__after_ctrl_dep`.
-+
- A control dependency (on success) for refcounters guarantees that
- if a reference for an object was successfully obtained (reference
- counter increment or addition happened, function returned true),
-@@ -119,24 +127,36 @@ Memory ordering guarantees changes:
-    result of obtaining pointer to the object!
- 
- 
--case 5) - decrement-based RMW ops that return a value
-------------------------------------------------------
-+case 5) - generic dec/sub decrement-based RMW ops that return a value
-+---------------------------------------------------------------------
- 
- Function changes:
- 
-  * :c:func:`atomic_dec_and_test` --> :c:func:`refcount_dec_and_test`
-  * :c:func:`atomic_sub_and_test` --> :c:func:`refcount_sub_and_test`
-+
-+Memory ordering guarantees changes:
-+
-+ * fully ordered --> RELEASE ordering + ACQUIRE ordering and control dependency
-+   on success.  
-+
-+
-+case 6) other decrement-based RMW ops that return a value
-+---------------------------------------------------------
-+
-+Function changes:
-+
-  * no atomic counterpart --> :c:func:`refcount_dec_if_one`
-  * ``atomic_add_unless(&var, -1, 1)`` --> ``refcount_dec_not_one(&var)``
- 
- Memory ordering guarantees changes:
- 
-- * fully ordered --> RELEASE ordering + control dependency
-+ * fully ordered --> RELEASE ordering + control dependency 
- 
- .. note:: :c:func:`atomic_add_unless` only provides full order on success.
- 
- 
--case 6) - lock-based RMW
-+case 7) - lock-based RMW
- ------------------------
- 
- Function changes:
-diff --git a/arch/x86/include/asm/refcount.h b/arch/x86/include/asm/refcount.h
-index dbaed55..ab8f584 100644
---- a/arch/x86/include/asm/refcount.h
-+++ b/arch/x86/include/asm/refcount.h
-@@ -67,16 +67,29 @@ static __always_inline void refcount_dec(refcount_t *r)
- static __always_inline __must_check
- bool refcount_sub_and_test(unsigned int i, refcount_t *r)
- {
--	return GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
-+	bool ret = GEN_BINARY_SUFFIXED_RMWcc(LOCK_PREFIX "subl",
- 					 REFCOUNT_CHECK_LT_ZERO,
- 					 r->refs.counter, e, "er", i, "cx");
-+
-+    if (ret) {
-+               smp_acquire__after_ctrl_dep();
-+               return true;
-+    }
-+
-+    return false;
- }
- 
- static __always_inline __must_check bool refcount_dec_and_test(refcount_t *r)
- {
--	return GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
--					REFCOUNT_CHECK_LT_ZERO,
--					r->refs.counter, e, "cx");
-+	bool ret = GEN_UNARY_SUFFIXED_RMWcc(LOCK_PREFIX "decl",
-+                   REFCOUNT_CHECK_LT_ZERO,
-+                   r->refs.counter, e, "cx");
-+    if (ret) {
-+               smp_acquire__after_ctrl_dep();
-+               return true;
-+    }
-+
-+    return false;
- }
- 
- static __always_inline __must_check
-diff --git a/lib/refcount.c b/lib/refcount.c
-index ebcf8cd..732feac 100644
---- a/lib/refcount.c
-+++ b/lib/refcount.c
-@@ -33,6 +33,9 @@
-  * Note that the allocator is responsible for ordering things between free()
-  * and alloc().
-  *
-+ * The decrements dec_and_test() and sub_and_test() also provide acquire
-+ * ordering on success. 
-+ *
-  */
- 
- #include <linux/mutex.h>
-@@ -164,8 +167,7 @@ EXPORT_SYMBOL(refcount_inc_checked);
-  * at UINT_MAX.
-  *
-  * Provides release memory ordering, such that prior loads and stores are done
-- * before, and provides a control dependency such that free() must come after.
-- * See the comment on top.
-+ * before, and provides an acquire ordering on success such that free() must come after.
-  *
-  * Use of this function is not recommended for the normal reference counting
-  * use case in which references are taken and released one at a time.  In these
-@@ -190,7 +192,12 @@ bool refcount_sub_and_test_checked(unsigned int i, refcount_t *r)
- 
- 	} while (!atomic_try_cmpxchg_release(&r->refs, &val, new));
- 
--	return !new;
-+    if (!new) {
-+               smp_acquire__after_ctrl_dep();
-+               return true;
-+    }
-+    return false;
-+
- }
- EXPORT_SYMBOL(refcount_sub_and_test_checked);
- 
-@@ -202,8 +209,7 @@ EXPORT_SYMBOL(refcount_sub_and_test_checked);
-  * decrement when saturated at UINT_MAX.
-  *
-  * Provides release memory ordering, such that prior loads and stores are done
-- * before, and provides a control dependency such that free() must come after.
-- * See the comment on top.
-+ * before, and provides an acquire ordering on success such that free() must come after.
-  *
-  * Return: true if the resulting refcount is 0, false otherwise
-  */
--- 
-2.7.4
+actually in case of hci_ath.c I would prefer that the setup actually fails. There is no point in continuing here. These are vendor specific hardware routines and you will not run them over TTYs that don’t support it. So instead of ignoring the operating, fail hard and cleanly during setup.
+
+> 	/* Ready to send Data */
+> diff --git a/drivers/bluetooth/hci_ldisc.c b/drivers/bluetooth/hci_ldisc.c
+> index fbf7b4df23ab..9f88a8563cf6 100644
+> --- a/drivers/bluetooth/hci_ldisc.c
+> +++ b/drivers/bluetooth/hci_ldisc.c
+> @@ -314,6 +314,11 @@ void hci_uart_set_flow_control(struct hci_uart *hu, bool enable)
+> 		return;
+> 	}
+> 
+> +	/* tiocmget() and tiocmset() operations are optional */
+> +	if (!tty->driver->ops->tiocmget || !tty->driver->ops->tiocmset) {
+> +		return;
+> +	}
+> +
+
+No { } here please.
+
+> 	if (enable) {
+> 		/* Disable hardware flow control */
+> 		ktermios = tty->termios;
+
+Regards
+
+Marcel
 
