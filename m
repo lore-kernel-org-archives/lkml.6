@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0528BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:30:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC715C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD62520663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:30:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DE9D20879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:30:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693015;
-	bh=gzjw6YBFaw7fX65ujvdGN1dBbMmPywkSMSkzr5CMWoQ=;
+	s=default; t=1548693024;
+	bh=rn/2B/IEAWsO17j06R1zbEZEjs7ElTOiErs04wjXLlo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s8YZ06AhgSTWFE2Z81XhLpvrr3R59YnZflm9W0+XKojszsIGeGKyE2Y3cwNlkcORV
-	 1b+1dQeyc2xwlWpYcB6nyvYVUQhO5iJW/ZBjJ5Y2ZyofzS9nbbiUmDbRQlhtpgEuvc
-	 uUnN1oOESW/u9XwWQzlXMMuk12vkjpjS5Tajf7I0=
+	b=0Cdc8Qh+9A5n1pI8ijk75u7Izh7n8vNL5FVdKjb21fjXhm0oMlgWHI7SHzLvpvZKz
+	 8ANJM972VpR6U7wCMQ1JEIA4Ox76tZ2nIQysRABomiq0kQnHssuznQKcPLfHLsCfFt
+	 5mjFcqzPO2TbBT8B0WERmK4wu+fKBTvHKyY7Fwh4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389554AbfA1QaI (ORCPT
+        id S2390416AbfA1QaW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:30:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37656 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:30:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389847AbfA1Q1c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:27:32 -0500
+        id S2390420AbfA1Q12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:27:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7FEF320879;
-        Mon, 28 Jan 2019 16:27:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 120B32147A;
+        Mon, 28 Jan 2019 16:27:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692851;
-        bh=gzjw6YBFaw7fX65ujvdGN1dBbMmPywkSMSkzr5CMWoQ=;
+        s=default; t=1548692847;
+        bh=rn/2B/IEAWsO17j06R1zbEZEjs7ElTOiErs04wjXLlo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=co78abvILqK6jZCTqBBKdCgbjn7YIXKsxrqXQ3baliewKGx3zz8Pt0YkGCKJTS/e8
-         oKczLHlJlp4IAaZ1daX+J28kG/Wu/L6qiIQ7udtWU6kgoqHfkA2WSYnf09dsTYQkzo
-         0l58H7K7Lql6mbJyrCqNh7GsTbpfeyJAhUUrcG98=
+        b=GQ/yxaoremnPg+/gGoGhAAFGvFUdATbvOKa2+jkRLFPy0XKHE+LL4kUJ+mhLbCApE
+         uM4xr4OgZboxGtM54HZ3Pjkm2eGFigVHp0FU8xXixBx7L28t/xpQ0Wan8gFF/b/i42
+         U4fAXGXPArwZr3dln9G3JBblaiquN2/Gs9NxEwSQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lars Ellenberg <lars.ellenberg@linbit.com>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        drbd-dev@lists.linbit.com, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 40/61] drbd: skip spurious timeout (ping-timeo) when failing promote
-Date:   Mon, 28 Jan 2019 11:26:02 -0500
-Message-Id: <20190128162623.59854-40-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 37/61] xfrm6_tunnel: Fix spi check in __xfrm6_tunnel_alloc_spi
+Date:   Mon, 28 Jan 2019 11:25:59 -0500
+Message-Id: <20190128162623.59854-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -58,60 +58,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lars Ellenberg <lars.ellenberg@linbit.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 9848b6ddd8c92305252f94592c5e278574e7a6ac ]
+[ Upstream commit fa89a4593b927b3f59c3b69379f31d3b22272e4e ]
 
-If you try to promote a Secondary while connected to a Primary
-and allow-two-primaries is NOT set, we will wait for "ping-timeout"
-to give this node a chance to detect a dead primary,
-in case the cluster manager noticed faster than we did.
+gcc warn this:
 
-But if we then are *still* connected to a Primary,
-we fail (after an additional timeout of ping-timout).
+net/ipv6/xfrm6_tunnel.c:143 __xfrm6_tunnel_alloc_spi() warn:
+ always true condition '(spi <= 4294967295) => (0-u32max <= u32max)'
 
-This change skips the spurious second timeout.
+'spi' is u32, which always not greater than XFRM6_TUNNEL_SPI_MAX
+because of wrap around. So the second forloop will never reach.
 
-Most people won't notice really,
-since "ping-timeout" by default is half a second.
-
-But in some installations, ping-timeout may be 10 or 20 seconds or more,
-and spuriously delaying the error return becomes annoying.
-
-Signed-off-by: Lars Ellenberg <lars.ellenberg@linbit.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/drbd/drbd_nl.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ net/ipv6/xfrm6_tunnel.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/block/drbd/drbd_nl.c b/drivers/block/drbd/drbd_nl.c
-index 1cd47df44bda..591d309b005e 100644
---- a/drivers/block/drbd/drbd_nl.c
-+++ b/drivers/block/drbd/drbd_nl.c
-@@ -632,14 +632,15 @@ drbd_set_role(struct drbd_device *const device, enum drbd_role new_role, int for
- 		if (rv == SS_TWO_PRIMARIES) {
- 			/* Maybe the peer is detected as dead very soon...
- 			   retry at most once more in this case. */
--			int timeo;
--			rcu_read_lock();
--			nc = rcu_dereference(connection->net_conf);
--			timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
--			rcu_read_unlock();
--			schedule_timeout_interruptible(timeo);
--			if (try < max_tries)
-+			if (try < max_tries) {
-+				int timeo;
- 				try = max_tries - 1;
-+				rcu_read_lock();
-+				nc = rcu_dereference(connection->net_conf);
-+				timeo = nc ? (nc->ping_timeo + 1) * HZ / 10 : 1;
-+				rcu_read_unlock();
-+				schedule_timeout_interruptible(timeo);
-+			}
- 			continue;
- 		}
- 		if (rv < SS_SUCCESS) {
+diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+index 5743044cd660..56b72cada346 100644
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -144,6 +144,9 @@ static u32 __xfrm6_tunnel_alloc_spi(struct net *net, xfrm_address_t *saddr)
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
+ 		if (index >= 0)
+ 			goto alloc_spi;
++
++		if (spi == XFRM6_TUNNEL_SPI_MAX)
++			break;
+ 	}
+ 	for (spi = XFRM6_TUNNEL_SPI_MIN; spi < xfrm6_tn->spi; spi++) {
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
 -- 
 2.19.1
 
