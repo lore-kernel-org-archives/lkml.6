@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72974C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D666C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35B612147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 520ED2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691655;
-	bh=f2bfUr/EtzNT43pnnLIalrWvmm4G99uDBUZcdRjpS2I=;
+	s=default; t=1548691658;
+	bh=/vRaWQKw3q55s8Tz0v2d2naK21I5seaKk7U91gRvlNw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Vt9QU/7St99pkeHzjNpPFdZPs+ySrM00piS/BAS6C21O2nBzgjL01hWLaD9WfcHeP
-	 6kh9jwZ60uIlX0FAq2GDG67yMJ+aN4AlX9Zlv1ZCR6g25lhGuz8Dz91LXOZhY0VYm9
-	 pc/4CSsqtYnzDah5IZ+YRmxJxpcR1qUKnilmBTK4=
+	b=m3p+IEeS00UxHkv2MAAKbnblwlTHKbdQo0+81bHvuJ8h26nKz+5TjjUzlwF7nSqSI
+	 xdvr7jsrk2cEb4k2ZOj3dO3/xHeNQcO706F0Cij7i3h4xljnoECcGsgHoagUvfCiRd
+	 mwmblEMrdhbCAp26KAKFUq0ucUWu60MBAYdqhyNE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732228AbfA1QHe (ORCPT
+        id S1732240AbfA1QHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:07:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58246 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:07:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58358 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732212AbfA1QHa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:07:30 -0500
+        id S1732220AbfA1QHc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:07:32 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 758792147A;
-        Mon, 28 Jan 2019 16:07:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3BA421738;
+        Mon, 28 Jan 2019 16:07:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691650;
-        bh=f2bfUr/EtzNT43pnnLIalrWvmm4G99uDBUZcdRjpS2I=;
+        s=default; t=1548691652;
+        bh=/vRaWQKw3q55s8Tz0v2d2naK21I5seaKk7U91gRvlNw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=frp1hY/MZBNJbjKLY4RfC5gVH1SFUpvrDiFNeExyKnJXc7U93+5Wx464g7WELqPDM
-         K4S8BWgGQU4lO/maIovRPnWlZQ3lr0ir+x7bO2p3TNvr6VdWGCGU8VfozvJlZ4EFWi
-         DReLRW4icE2EbN3CPrUN6icOFKoweCrLIPPOHS4U=
+        b=DtIZi24ngf9Rk0MYsnmb/8saaeN6QmL16/CdLAqaKW29FEBZ04CwNMNlw4X/HYmOR
+         qo3qiI5hlLuNnE4BtRg2auzx5bPYmdpy7aD+U+f7HLtiQF+pKAThT3x4zFQxbkwuwO
+         O+i2Fz7O9t5+aIq70PEtWooOcKTxBPZiwtmcWw7g=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Doug Smythies <doug.smythies@gmail.com>,
-        Doug Smythies <dsmythies@telus.net>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 173/258] tools/power/x86/intel_pstate_tracer: Fix non root execution for post processing a trace file
-Date:   Mon, 28 Jan 2019 10:57:59 -0500
-Message-Id: <20190128155924.51521-173-sashal@kernel.org>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
+        live-patching@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 174/258] livepatch: check kzalloc return values
+Date:   Mon, 28 Jan 2019 10:58:00 -0500
+Message-Id: <20190128155924.51521-174-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,46 +58,59 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Smythies <doug.smythies@gmail.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit 663546903c835fe46308b1b1e53d32d1f2b33da9 ]
+[ Upstream commit 5f30b2e823484ce6a79f2b59901b6351c15effa6 ]
 
-This script is supposed to be allowed to run with regular user
-privileges if a previously captured trace is being post processed.
+kzalloc() return should always be checked - notably in example code
+where this may be seen as reference. On failure of allocation in
+livepatch_fix1_dummy_alloc() respectively dummy_alloc() previous
+allocation is freed (thanks to Petr Mladek <pmladek@suse.com> for
+catching this) and NULL returned.
 
-Commit fbe313884d7d (tools/power/x86/intel_pstate_tracer: Free the
-trace buffer memory) introduced a bug that breaks that option.
-
-Commit 35459105deb2 (tools/power/x86/intel_pstate_tracer: Add
-optional setting of trace buffer memory allocation) moved the code
-but kept the bug.
-
-This patch fixes the issue.
-
-Fixes: 35459105deb2 (tools/power/x86/intel_pstate_tracer: Add optional ...)
-Signed-off-by: Doug Smythies <dsmythies@telus.net>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Fixes: 439e7271dc2b ("livepatch: introduce shadow variable API")
+Acked-by: Joe Lawrence <joe.lawrence@redhat.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Acked-by: Miroslav Benes <mbenes@suse.cz>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ samples/livepatch/livepatch-shadow-fix1.c | 5 +++++
+ samples/livepatch/livepatch-shadow-mod.c  | 4 ++++
+ 2 files changed, 9 insertions(+)
 
-diff --git a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-index 84e2b648e622..2fa3c5757bcb 100755
---- a/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-+++ b/tools/power/x86/intel_pstate_tracer/intel_pstate_tracer.py
-@@ -585,9 +585,9 @@ current_max_cpu = 0
+diff --git a/samples/livepatch/livepatch-shadow-fix1.c b/samples/livepatch/livepatch-shadow-fix1.c
+index 49b13553eaae..e8f1bd6b29b1 100644
+--- a/samples/livepatch/livepatch-shadow-fix1.c
++++ b/samples/livepatch/livepatch-shadow-fix1.c
+@@ -89,6 +89,11 @@ struct dummy *livepatch_fix1_dummy_alloc(void)
+ 	 * pointer to handle resource release.
+ 	 */
+ 	leak = kzalloc(sizeof(int), GFP_KERNEL);
++	if (!leak) {
++		kfree(d);
++		return NULL;
++	}
++
+ 	klp_shadow_alloc(d, SV_LEAK, sizeof(leak), GFP_KERNEL,
+ 			 shadow_leak_ctor, leak);
  
- read_trace_data(filename)
+diff --git a/samples/livepatch/livepatch-shadow-mod.c b/samples/livepatch/livepatch-shadow-mod.c
+index 4c54b250332d..4aa8a88d3cd6 100644
+--- a/samples/livepatch/livepatch-shadow-mod.c
++++ b/samples/livepatch/livepatch-shadow-mod.c
+@@ -118,6 +118,10 @@ noinline struct dummy *dummy_alloc(void)
  
--clear_trace_file()
--# Free the memory
- if interval:
-+    clear_trace_file()
-+    # Free the memory
-     free_trace_buffer()
+ 	/* Oops, forgot to save leak! */
+ 	leak = kzalloc(sizeof(int), GFP_KERNEL);
++	if (!leak) {
++		kfree(d);
++		return NULL;
++	}
  
- if graph_data_present == False:
+ 	pr_info("%s: dummy @ %p, expires @ %lx\n",
+ 		__func__, d, d->jiffies_expire);
 -- 
 2.19.1
 
