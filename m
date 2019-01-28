@@ -4,51 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D41BCC4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC8DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97D002147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 28D7C2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:40:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697240;
-	bh=bnptReA3w2rTGqTSNQuY5B+bj3O5lAgQ06q5hp3VQdM=;
+	s=default; t=1548697254;
+	bh=YHLn/prnYwfXxmI6rCwxAC6wutm+yyTPQp/zrK76Z9A=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fuNscUOqgXcX0w3v3t2JVt8cyILl4OxNVhtSJ2H+vce3Gshab1+gCwYn+rpPgYk+k
-	 MTaUODd6dKUUjGRMSV3iZ1ncOCT2HY/ldPjRE+0jaiHrSFowI1mmXp5UDrbNqt/3qR
-	 HRjlhuvWNUiIqHOh30hWnVSpgVHu5yQJO1+Z4xJY=
+	b=vhA40LpfITxi13Q5BIz+RjaIBBKarUM/MLZZt5GkQzeak24lqq5OEY17IMov27LNA
+	 Po7xy6Y9EBppD4tbPBwYwcHCnHf2oeRc7OGwX2rWyPXBIlEVc2x7OqieE0buK/4A2U
+	 8tYIilEkqUyRlFNBlqfAj3nZetwv3oq0Hu+joN/o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729211AbfA1Pvy (ORCPT
+        id S1728325AbfA1Rkw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:51:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38442 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:40:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38356 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728753AbfA1Pvv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:51:51 -0500
+        id S1728286AbfA1Pvp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:51:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CAE320880;
-        Mon, 28 Jan 2019 15:51:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1FB1621741;
+        Mon, 28 Jan 2019 15:51:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690710;
-        bh=bnptReA3w2rTGqTSNQuY5B+bj3O5lAgQ06q5hp3VQdM=;
+        s=default; t=1548690705;
+        bh=YHLn/prnYwfXxmI6rCwxAC6wutm+yyTPQp/zrK76Z9A=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=RBWaolUk/Ks3l98JZOcXOyVy7mWcUWe9C7Y+E1zUW4ubc8F3z5J+6N+F6UnEtJ2qx
-         MagX2tbOILyxWRPlqDh+bbABntgdxCvwTbXHAHNZdHH9ZnoEIpdqzEpnsvj/C9lClu
-         Ee3yENWQLOyOFLhE8zvWTO/lDGK+g/+vrpGmLliU=
+        b=yGRqDTpbRGzGb10kKm1yhaqlzE/7XnGnoBmWokhYA6rW51FdbgTQMvkaH9GeffuuR
+         nOS4tdFpzjIHGTZBWaQtXffw9rQRZgkKKYNdJUmjiUQUsG8CmS1j2FJKKrzgn9dFzC
+         g34naBcEnR78s41q8fHIh8t2LWJiQVC/LEmEJpZQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 172/304] selftests/bpf: use __bpf_constant_htons in test_prog.c
-Date:   Mon, 28 Jan 2019 10:41:29 -0500
-Message-Id: <20190128154341.47195-172-sashal@kernel.org>
+Cc:     Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 170/304] udf: Fix BUG on corrupted inode
+Date:   Mon, 28 Jan 2019 10:41:27 -0500
+Message-Id: <20190128154341.47195-170-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -60,58 +56,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stanislav Fomichev <sdf@google.com>
+From: Jan Kara <jack@suse.cz>
 
-[ Upstream commit a0517a0f7ef23550b4484c37e2b9c2d32abebf64 ]
+[ Upstream commit d288d95842f1503414b7eebce3773bac3390457e ]
 
-For some reason, my older GCC (< 4.8) isn't smart enough to optimize the
-!__builtin_constant_p() branch in bpf_htons, I see:
-  error: implicit declaration of function '__builtin_bswap16'
+When inode is corrupted so that extent type is invalid, some functions
+(such as udf_truncate_extents()) will just BUG. Check that extent type
+is valid when loading the inode to memory.
 
-Let's use __bpf_constant_htons as suggested by Daniel Borkmann.
-
-I tried to use simple htons, but it produces the following:
-  test_progs.c:54:17: error: braced-group within expression allowed only
-  inside a function
-    .eth.h_proto = htons(ETH_P_IP),
-
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: Jan Kara <jack@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_progs.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ fs/udf/inode.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
-index 2d3c04f45530..6ac7232b0fde 100644
---- a/tools/testing/selftests/bpf/test_progs.c
-+++ b/tools/testing/selftests/bpf/test_progs.c
-@@ -51,10 +51,10 @@ static struct {
- 	struct iphdr iph;
- 	struct tcphdr tcp;
- } __packed pkt_v4 = {
--	.eth.h_proto = bpf_htons(ETH_P_IP),
-+	.eth.h_proto = __bpf_constant_htons(ETH_P_IP),
- 	.iph.ihl = 5,
- 	.iph.protocol = 6,
--	.iph.tot_len = bpf_htons(MAGIC_BYTES),
-+	.iph.tot_len = __bpf_constant_htons(MAGIC_BYTES),
- 	.tcp.urg_ptr = 123,
- };
+diff --git a/fs/udf/inode.c b/fs/udf/inode.c
+index 5df554a9f9c9..ae796e10f68b 100644
+--- a/fs/udf/inode.c
++++ b/fs/udf/inode.c
+@@ -1357,6 +1357,12 @@ reread:
  
-@@ -64,9 +64,9 @@ static struct {
- 	struct ipv6hdr iph;
- 	struct tcphdr tcp;
- } __packed pkt_v6 = {
--	.eth.h_proto = bpf_htons(ETH_P_IPV6),
-+	.eth.h_proto = __bpf_constant_htons(ETH_P_IPV6),
- 	.iph.nexthdr = 6,
--	.iph.payload_len = bpf_htons(MAGIC_BYTES),
-+	.iph.payload_len = __bpf_constant_htons(MAGIC_BYTES),
- 	.tcp.urg_ptr = 123,
- };
- 
+ 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
+ 							ICBTAG_FLAG_AD_MASK;
++	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
++	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
++		ret = -EIO;
++		goto out;
++	}
+ 	iinfo->i_unique = 0;
+ 	iinfo->i_lenEAttr = 0;
+ 	iinfo->i_lenExtents = 0;
 -- 
 2.19.1
 
