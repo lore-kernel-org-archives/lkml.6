@@ -2,154 +2,231 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E11F7C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:00:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 69E9EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:01:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BA30420880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:00:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B20021736
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:01:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aTFn80Qn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfA1IAo (ORCPT
+        id S1726906AbfA1IBA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:00:44 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:36162 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfA1IAn (ORCPT
+        Mon, 28 Jan 2019 03:01:00 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:51495 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbfA1IA7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:00:43 -0500
-Received: by mail-lf1-f66.google.com with SMTP id a16so11108319lfg.3;
-        Mon, 28 Jan 2019 00:00:41 -0800 (PST)
+        Mon, 28 Jan 2019 03:00:59 -0500
+Received: by mail-wm1-f65.google.com with SMTP id b11so12874842wmj.1;
+        Mon, 28 Jan 2019 00:00:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=6pqyTrqi3V/W0Zymt8LPgmSBW2gYoCLiE0KGMYFz0gM=;
+        b=aTFn80QnvISWmMJToS1DbENtnorL4p7F4DlpPhEYzsmHeYKMKYMCcPS/6RLvctAKGi
+         3BltTJm1ecyplqqVK8Fjuf9Q6/OHh7hTTTqPXwNmaNkHt3+uZAhYOV7I8Cbdd1uYCgII
+         7/XOQyfW1BaNGV0uMvUiEsrztpmm26Ff7DGBVIfy6JSoIsCo/5LACCMwfsyUk49jWfqq
+         SiQTwaZlsk0NZOSF/jfbWuaGBkilMm+0MI+MqVSO6hXIyG+w8lZtRDXZ51erBhyMPRwu
+         Zi8/LWOwfHVbJGwFg4lrc2Xns+IKXxEupFQur7yUkQeSfm/SOk/pFPwPEyBd0Ma+Xjps
+         VQGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=VC16U5ereJxyPItEEQ6j9mgF3VVe/205qxplcO0sYK8=;
-        b=NsRscJKtiTO3IqZCIHmmjL4QruiYZnv/AewxcDq0KFe2S5RoxkcnbEN6xwD8pj4zee
-         if/ZOmAoHf4zg45cNwMk6e3q3i1gUfqXbPtB7TUb5AdPnx/9sDuWJ096PHILJnxxdGj3
-         y7kcbUxdssedhBVhgpitZpGathbBFPPPqYufPs5kve/QZv767FucEW4+WJ2szRzJBoXl
-         mxkJgNXvshqiuguxiQR2WB9GQkPB4eWg18/V+bsEyKTCIwithfy9CvyoS+HAZO0jGnY6
-         IoEPG7s4lgA4vVl3E4wzaXfKxQPdIJsxMUjCvrabC924lvdUFEn9ig6w2041fGE0Gdov
-         tYhQ==
-X-Gm-Message-State: AJcUukcjrWWV/ot0Raeq8b8KQFeGUkGyetRa28wpQiMPuxpbj7ai8bFK
-        pzdY7QVWVZw82XKfcjl7Cp0=
-X-Google-Smtp-Source: ALg8bN7MVgutX/gx4UKOurPmykpoxo7K+ac3YiKbJ1Vbu35rcvNQ2RdQANmrOvFPBNTckg+1N4UklA==
-X-Received: by 2002:a19:d619:: with SMTP id n25mr14316637lfg.91.1548662440197;
-        Mon, 28 Jan 2019 00:00:40 -0800 (PST)
-Received: from localhost.localdomain (dytkl7s9vpj00trvf9g2y-4.rev.dnainternet.fi. [2001:14bb:410:9dbf:b161:fde8:3a24:e96c])
-        by smtp.gmail.com with ESMTPSA id h82sm2825838lfg.94.2019.01.28.00.00.37
+        bh=6pqyTrqi3V/W0Zymt8LPgmSBW2gYoCLiE0KGMYFz0gM=;
+        b=JORtOeJdA3cmoe1fFnq0K099qvE4L8T6EEwXKNAwG6hn/tL3gS5uAbgv++dgmg2dBZ
+         psRUpUfI4dbOK0Klhr9xxmw5NVt8sAMJu4rUkH1z9UagdUf+bFEL4UiJAkR+WyjR0U6D
+         HKtzqcosOHgjamafEJIjJB3zR1C2FmVZio2ccfWxZ0E+uAbeqrlo8uSnMRa4qETtRudc
+         /eN+IiRpeqNqXLCYWjqzWsRdheZRSNnlQ3dmtHfCBEhvdUZ9WhI8rq2e9i3mtyZ3FjnG
+         azUNLQQPZL9fjSoH3MkoqgQW2anum8W0nuJ51iC86PXLtGFV1PIaReCMEI5qC2pYaLAs
+         1VGA==
+X-Gm-Message-State: AJcUuke7yMiw8YqQjX7t2+CddNfCkjyVpmK8MdOQF03uREK+QP8aw2FY
+        AMnOolD3Kc0xWPQX0N+V+4Y=
+X-Google-Smtp-Source: ALg8bN6UCti6jKU1azpX3wExIDo9bV+yUIThcuJAel89Wss3Wr0t2patUD8+JVDSHcTY20dYWw7fqg==
+X-Received: by 2002:a1c:c64e:: with SMTP id w75mr16763413wmf.46.1548662456733;
+        Mon, 28 Jan 2019 00:00:56 -0800 (PST)
+Received: from localhost (pD9E51040.dip0.t-ipconnect.de. [217.229.16.64])
+        by smtp.gmail.com with ESMTPSA id a12sm125532695wro.18.2019.01.28.00.00.55
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 00:00:39 -0800 (PST)
-Date:   Mon, 28 Jan 2019 10:00:35 +0200
-From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     mazziesaccount@gmail.com, heikki.haikola@fi.rohmeurope.com,
-        mikko.mutanen@fi.rohmeurope.com, lee.jones@linaro.org,
-        robh+dt@kernel.org, mark.rutland@arm.com, broonie@kernel.org,
-        gregkh@linuxfoundation.org, rafael@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org,
-        linus.walleij@linaro.org, bgolaszewski@baylibre.com,
-        sre@kernel.org, lgirdwood@gmail.com, a.zummo@towertech.it,
-        alexandre.belloni@bootlin.com, wim@linux-watchdog.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-rtc@vger.kernel.org,
-        linux-watchdog@vger.kernel.org
-Subject: Re: [RFC PATCH v2 10/10] watchdog: bd70528: Initial support for ROHM
- BD70528 watchdog block
-Message-ID: <20190128080035.GC2030@localhost.localdomain>
-References: <20190125110625.GA29348@localhost.localdomain>
- <1d05ec19-daf6-f1d9-f80c-57fc92906d22@roeck-us.net>
+        Mon, 28 Jan 2019 00:00:56 -0800 (PST)
+Date:   Mon, 28 Jan 2019 09:00:54 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     jckuo <jckuo@nvidia.com>
+Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/5] phy: tegra: xusb: Add support for power supplies
+Message-ID: <20190128080054.GB18124@ulmo>
+References: <20190125112525.10697-1-thierry.reding@gmail.com>
+ <20190125112525.10697-4-thierry.reding@gmail.com>
+ <786247a4-81d1-9c2e-21b5-258dc818ccb9@nvidia.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="BwCQnh7xodEAoBMC"
 Content-Disposition: inline
-In-Reply-To: <1d05ec19-daf6-f1d9-f80c-57fc92906d22@roeck-us.net>
+In-Reply-To: <786247a4-81d1-9c2e-21b5-258dc818ccb9@nvidia.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 08:36:14AM -0800, Guenter Roeck wrote:
-> On 1/25/19 3:06 AM, Matti Vaittinen wrote:
-> > +/* Max time we can set is 1 hour, 59 minutes and 59 seconds */
-> > +#define WDT_MAX_MS ((2 * 60 * 60 - 1) * 1000)
-> > +/* Minimum time is 1 second */
-> > +#define WDT_MIN_MS 1000
-> > +#define DEFAULT_TIMEOUT 60
-> > +
-> > +static int bd70528_wdt_probe(struct platform_device *pdev)
-> > +{
-> > +	struct bd70528 *bd70528;
-> > +	struct wdtbd70528 *w;
-> > +	int ret;
-> > +	unsigned int reg;
-> > +	struct watchdog_device *wdt;
-> > +
-> > +	bd70528 = dev_get_drvdata(pdev->dev.parent);
-> > +	if (!bd70528) {
-> > +		dev_err(&pdev->dev, "No MFD driver data\n");
-> > +		return -EINVAL;
-> > +	}
-> > +	w = devm_kzalloc(&pdev->dev, sizeof(*w), GFP_KERNEL);
-> > +	if (!w)
-> > +		return -ENOMEM;
-> > +	w->bd = bd70528;
-> 
-> Unless I am missing something, only the mutex and the regmap pointer
-> are used from struct bd70528. With that in mind, it might be desirable
-> to copy those pointers to struct wdtbd70528 to avoid the additional
-> dereferencing at runtime.
 
-You are not missing anyting. If we ever add support for another PMIC
-variant we will probably be using also the chip_type. Untill then only
-the mutex and regmap. (And maybe the of_node if we have any RTC
-properties in DT). So at this point we just use regmap and mutex. I will
-change this.
+--BwCQnh7xodEAoBMC
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> > +	w->dev = &pdev->dev;
-> > +
-> > +	wdt = devm_kzalloc(&pdev->dev, sizeof(*wdt), GFP_KERNEL);
-> > +	if (!wdt)
-> > +		return -ENOMEM;
-> > +
-> 
-> struct watchdog_device can be part of struct wdtbd70528. Two separate allocations
-> are not necessary.
+On Mon, Jan 28, 2019 at 03:22:09PM +0800, jckuo wrote:
+> Hi Thierry,
+>=20
+> I think any non-zero return value of
+> regulator_bulk_enable()/devm_regulator_bulk_get() means error.
+>=20
+> Thanks,
+>=20
+> JC
 
-Correct. Thanks for pointing that out. I'll simplify this.
+Theoretically I think only regulator_bulk_enable() could return a
+positive value, but even so it never will in practice because all of the
+regulator_enable() (see _regulator_enable()) calls will only ever return
+negative error codes.
 
-> > +	wdt->info = &bd70528_wdt_info;
-> > +	wdt->ops =  &bd70528_wdt_ops;
-> > +	wdt->min_hw_heartbeat_ms = WDT_MIN_MS;
-> > +	wdt->max_hw_heartbeat_ms = WDT_MAX_MS;
-> > +	wdt->parent = pdev->dev.parent;
-> > +	wdt->timeout = DEFAULT_TIMEOUT;
-> > +	watchdog_set_drvdata(wdt, w);
-> > +	watchdog_init_timeout(wdt, 0, pdev->dev.parent);
-> > +
-> > +	ret = bd70528_wdt_set_timeout(wdt, wdt->timeout);
-> > +	if (ret) {
-> > +		dev_err(&pdev->dev, "Failed to set the watchdog timeout\n");
-> > +		return ret;
+I can change this and resend if you have strong concerns about this
+possibly missing legitimate error cases.
+
+Thierry
+
+> On 1/25/19 7:25 PM, Thierry Reding wrote:
+> > From: Thierry Reding <treding@nvidia.com>
+> >=20
+> > Support enabling various supplies needed to provide power to the PLLs
+> > and logic used to drive the USB, PCI and SATA pads.
+> >=20
+> > Signed-off-by: Thierry Reding <treding@nvidia.com>
+> > ---
+> >   drivers/phy/tegra/xusb.c | 34 +++++++++++++++++++++++++++++++++-
+> >   drivers/phy/tegra/xusb.h |  5 +++++
+> >   2 files changed, 38 insertions(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> > index 57a2d08ef6da..e510629f4f1c 100644
+> > --- a/drivers/phy/tegra/xusb.c
+> > +++ b/drivers/phy/tegra/xusb.c
+> > @@ -864,6 +864,7 @@ static int tegra_xusb_padctl_probe(struct platform_=
+device *pdev)
+> >   	struct tegra_xusb_padctl *padctl;
+> >   	const struct of_device_id *match;
+> >   	struct resource *res;
+> > +	unsigned int i;
+> >   	int err;
+> >   	/* for backwards compatibility with old device trees */
+> > @@ -901,14 +902,38 @@ static int tegra_xusb_padctl_probe(struct platfor=
+m_device *pdev)
+> >   		goto remove;
+> >   	}
+> > +	padctl->supplies =3D devm_kcalloc(&pdev->dev, padctl->soc->num_suppli=
+es,
+> > +					sizeof(*padctl->supplies), GFP_KERNEL);
+> > +	if (!padctl->supplies) {
+> > +		err =3D -ENOMEM;
+> > +		goto remove;
 > > +	}
 > > +
-> > +	mutex_lock(&bd70528->rtc_timer_lock);
-> > +	ret = regmap_read(bd70528->chip.regmap, BD70528_REG_WDT_CTRL, &reg);
-> > +	mutex_unlock(&bd70528->rtc_timer_lock);
+> > +	for (i =3D 0; i < padctl->soc->num_supplies; i++)
+> > +		padctl->supplies[i].supply =3D padctl->soc->supply_names[i];
 > > +
-> 
-> I don't see the point for the above mutex locks. This is just reading a
-> single register. regmap itself provides locking for that already.
+> > +	err =3D devm_regulator_bulk_get(&pdev->dev, padctl->soc->num_supplies,
+> > +				      padctl->supplies);
+> > +	if (err < 0) {
+> > +		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
+> > +		goto remove;
+> > +	}
+> > +
+> >   	err =3D reset_control_deassert(padctl->rst);
+> >   	if (err < 0)
+> >   		goto remove;
+> > +	err =3D regulator_bulk_enable(padctl->soc->num_supplies,
+> > +				    padctl->supplies);
+> > +	if (err < 0) {
+> > +		dev_err(&pdev->dev, "failed to enable supplies: %d\n", err);
+> > +		goto reset;
+> > +	}
+> > +
+> >   	err =3D tegra_xusb_setup_pads(padctl);
+> >   	if (err < 0) {
+> >   		dev_err(&pdev->dev, "failed to setup pads: %d\n", err);
+> > -		goto reset;
+> > +		goto power_down;
+> >   	}
+> >   	err =3D tegra_xusb_setup_ports(padctl);
+> > @@ -921,6 +946,8 @@ static int tegra_xusb_padctl_probe(struct platform_=
+device *pdev)
+> >   remove_pads:
+> >   	tegra_xusb_remove_pads(padctl);
+> > +power_down:
+> > +	regulator_bulk_disable(padctl->soc->num_supplies, padctl->supplies);
+> >   reset:
+> >   	reset_control_assert(padctl->rst);
+> >   remove:
+> > @@ -936,6 +963,11 @@ static int tegra_xusb_padctl_remove(struct platfor=
+m_device *pdev)
+> >   	tegra_xusb_remove_ports(padctl);
+> >   	tegra_xusb_remove_pads(padctl);
+> > +	err =3D regulator_bulk_disable(padctl->soc->num_supplies,
+> > +				     padctl->supplies);
+> > +	if (err < 0)
+> > +		dev_err(&pdev->dev, "failed to disable supplies: %d\n", err);
+> > +
+> >   	err =3D reset_control_assert(padctl->rst);
+> >   	if (err < 0)
+> >   		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
+> > diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
+> > index bb60fc09c752..5d5d22f6cb41 100644
+> > --- a/drivers/phy/tegra/xusb.h
+> > +++ b/drivers/phy/tegra/xusb.h
+> > @@ -370,6 +370,9 @@ struct tegra_xusb_padctl_soc {
+> >   	} ports;
+> >   	const struct tegra_xusb_padctl_ops *ops;
+> > +
+> > +	const char * const *supply_names;
+> > +	unsigned int num_supplies;
+> >   };
+> >   struct tegra_xusb_padctl {
+> > @@ -393,6 +396,8 @@ struct tegra_xusb_padctl {
+> >   	unsigned int enable;
+> >   	struct clk *clk;
+> > +
+> > +	struct regulator_bulk_data *supplies;
+> >   };
+> >   static inline void padctl_writel(struct tegra_xusb_padctl *padctl, u3=
+2 value,
 
-It has a purpose here - but I'd better add a comment. We want to get the
-initial state of WDG here. If the probe is executed when RTC time is being
-set we may read the state just when RTC is (temporarily) disabling WDT -
-and we might tell the WDT core that WDT is disabled - even if it is
-actually enabled. The mutex prevents us from reading the WDT state when
-RTC is being set.
- 
-Br,
-	Matti Vaittinen
+--BwCQnh7xodEAoBMC
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlxOtrYACgkQ3SOs138+
+s6FxYhAAqdP0tXGBSsclrtod8uASYw6KUN8jlAU1XmP8NeZMRgWAsTfXTy2UGPAP
+8ZWKwyVmmOMl3OwbmwRGZpcH5tHtoYxPF/fP6GCLnv9lJL3oj1f1JLziBZdFPXGq
+zZ7MTv4CakKrecQhGB42LKhOJscfhcHUWgRLL1PQ5/DXodB1TQmOCDkoyJu8WvOy
+RylQc6i86rgD6biZ8LNR/+2r9p8spqMew+3LjhuUICEMJ8eUwbLAq512EV5ZCPGr
+P6qs9M2RhdqLNhz1ITZhsDqUeqOkyKwvjeIyKmj7stYJPN+ElIlyym0rr9dPOXTi
+4f1iyKThxFNggn6LE8DobxMcfJyWcfD2b5X9jCdKeXPzFxlkUMGDXjl1AriPZL8d
+WNIWQlhRhvTFgkgbQcAtrnZMJ7MCv1ZV0zWN0U9M8dMfeX1gHfruhTa5zKO5B9GE
+f5dUZnJpwYF1laD17bGJiCWaIdSb6rDu2Cgb16ElB4Xkg2NTMAr5n8EKVE9pFsbA
+oRGpk2XEuiMBbXR6XoQly/iPVrN9i7mCEFnmTz3j1naJsUxVhISIfgndv7RqGmqh
+RZ+Yd0APHgcnikYD6MMzLi/e13//9FvsqLrIze9VZWk/tmiRmJfvEpBTcZ4YuKmC
+Pyrujs4yja9RYJNIhihfQGhZYNSyhFjj0yHx32idpkSSFnJsVTQ=
+=NVsY
+-----END PGP SIGNATURE-----
+
+--BwCQnh7xodEAoBMC--
