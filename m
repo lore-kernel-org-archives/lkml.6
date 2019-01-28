@@ -2,418 +2,122 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9861C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:18:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85DC2C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:19:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7869920844
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:18:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="SgBm/qI8"
+	by mail.kernel.org (Postfix) with ESMTP id 5670C2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:19:38 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726906AbfA1JSo (ORCPT
+        id S1726853AbfA1JTg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:18:44 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:4230 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726763AbfA1JSa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:18:30 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c4ec8bf0001>; Mon, 28 Jan 2019 01:17:51 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Mon, 28 Jan 2019 01:18:29 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Mon, 28 Jan 2019 01:18:29 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
- 2019 09:18:29 +0000
-Received: from HQMAIL101.nvidia.com (172.20.187.10) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
- 2019 09:18:29 +0000
-Received: from hqnvemgw01.nvidia.com (172.20.150.20) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Mon, 28 Jan 2019 09:18:29 +0000
-Received: from josephl-linux.nvidia.com (Not Verified[10.19.108.132]) by hqnvemgw01.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5c4ec8e30000>; Mon, 28 Jan 2019 01:18:28 -0800
-From:   Joseph Lo <josephl@nvidia.com>
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Joseph Lo <josephl@nvidia.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH V2 2/6] clocksource: tegra: add Tegra210 timer driver
-Date:   Mon, 28 Jan 2019 17:18:11 +0800
-Message-ID: <20190128091815.7040-3-josephl@nvidia.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128091815.7040-1-josephl@nvidia.com>
-References: <20190128091815.7040-1-josephl@nvidia.com>
+        Mon, 28 Jan 2019 04:19:36 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59226 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726415AbfA1JTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:19:36 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 80FFA81DE3;
+        Mon, 28 Jan 2019 09:19:35 +0000 (UTC)
+Received: from [10.36.112.55] (ovpn-112-55.ams2.redhat.com [10.36.112.55])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0BA6360123;
+        Mon, 28 Jan 2019 09:19:28 +0000 (UTC)
+Subject: Re: [PATCH 3/6] x86: kvm: no need to check return value of
+ debugfs_create functions
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>, kvm@vger.kernel.org
+References: <20190122143542.8816-1-gregkh@linuxfoundation.org>
+ <20190122143542.8816-4-gregkh@linuxfoundation.org>
+ <5495f33a-8d15-6f1a-36be-fa980831e830@redhat.com>
+ <20190126135336.GD23749@kroah.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ uUHgL9dKIfvpm+rNXRn9wAwGjk0X/A==
+Message-ID: <126c8941-f3b8-a4f3-6637-c6f3974d9921@redhat.com>
+Date:   Mon, 28 Jan 2019 10:19:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-NVConfidentiality: public
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548667071; bh=LQkzD4L7fxDTilbQ5fRTv11VTT0f+RHS8zQglMq5hEw=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         In-Reply-To:References:MIME-Version:X-NVConfidentiality:
-         Content-Transfer-Encoding:Content-Type;
-        b=SgBm/qI86FVDAW5FlKLNG1Jat/tsp+/E603L/skbuROx5BRaPPMIYJ71aBOnjkw7H
-         jHOa5mjwhbAi7nWk03ZOv7kIO8i++V+A/iO3DAAERB1gnQp5iExFjyUHKJQ1idzAzr
-         mzmCQPSbSL98GkLd0zs0zqUYpzK7zZcKoYzcYIuHKkKOhMCDcaIxGMTEvQERXz7pAF
-         zqOgh2tpVQCVJlAjQlKsC22pchZ5aCJ8tvNEhJu8cjNxjWCUk50oR2m41+5eR+P9XU
-         GnPRKhjee2esQ5Vd5DK7QWh+GnHWH1F+oXcM+oILg/yJ5XVXNEc8o6qd1iNcM03aLz
-         gTbECOWKHKEIA==
+In-Reply-To: <20190126135336.GD23749@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 28 Jan 2019 09:19:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for the Tegra210 timer that runs at oscillator clock
-(TMR10-TMR13). We need these timers to work as clock event device and to
-replace the ARMv8 architected timer due to it can't survive across the
-power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
-source when CPU suspends in power down state.
+On 26/01/19 14:53, Greg Kroah-Hartman wrote:
+> Ah, yes, sorry, I missed that.  I'll respin the patch with this change
+> in it in a few days.
 
-Based on the work of Antti P Miettinen <amiettinen@nvidia.com>
+Just drop this patch.  I'll post the kvm_vm_ioctl_create_vcpu patch as a
+replacement for this one and your other debugfs_create patch for virt/kvm.
 
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Joseph Lo <josephl@nvidia.com>
----
-v2:
- * add error clean-up code
----
- drivers/clocksource/Kconfig          |   3 +
- drivers/clocksource/Makefile         |   1 +
- drivers/clocksource/timer-tegra210.c | 268 +++++++++++++++++++++++++++
- include/linux/cpuhotplug.h           |   1 +
- 4 files changed, 273 insertions(+)
- create mode 100644 drivers/clocksource/timer-tegra210.c
+Thanks,
 
-diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
-index a9e26f6a81a1..e6e3e64b6320 100644
---- a/drivers/clocksource/Kconfig
-+++ b/drivers/clocksource/Kconfig
-@@ -135,6 +135,9 @@ config TEGRA_TIMER
- 	help
- 	  Enables support for the Tegra driver.
-=20
-+config TEGRA210_TIMER
-+	def_bool ARCH_TEGRA_210_SOC
-+
- config VT8500_TIMER
- 	bool "VT8500 timer driver" if COMPILE_TEST
- 	depends on HAS_IOMEM
-diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
-index cdd210ff89ea..95de59c8a47b 100644
---- a/drivers/clocksource/Makefile
-+++ b/drivers/clocksource/Makefile
-@@ -36,6 +36,7 @@ obj-$(CONFIG_SUN4I_TIMER)	+=3D timer-sun4i.o
- obj-$(CONFIG_SUN5I_HSTIMER)	+=3D timer-sun5i.o
- obj-$(CONFIG_MESON6_TIMER)	+=3D timer-meson6.o
- obj-$(CONFIG_TEGRA_TIMER)	+=3D timer-tegra20.o
-+obj-$(CONFIG_TEGRA210_TIMER)	+=3D timer-tegra210.o
- obj-$(CONFIG_VT8500_TIMER)	+=3D timer-vt8500.o
- obj-$(CONFIG_NSPIRE_TIMER)	+=3D timer-zevio.o
- obj-$(CONFIG_BCM_KONA_TIMER)	+=3D bcm_kona_timer.o
-diff --git a/drivers/clocksource/timer-tegra210.c b/drivers/clocksource/tim=
-er-tegra210.c
-new file mode 100644
-index 000000000000..477b164e540b
---- /dev/null
-+++ b/drivers/clocksource/timer-tegra210.c
-@@ -0,0 +1,268 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2014-2019, NVIDIA CORPORATION.  All rights reserved.
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clockchips.h>
-+#include <linux/cpu.h>
-+#include <linux/cpumask.h>
-+#include <linux/err.h>
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/of_address.h>
-+#include <linux/of_irq.h>
-+#include <linux/percpu.h>
-+#include <linux/syscore_ops.h>
-+
-+static u32 tegra210_timer_freq;
-+static void __iomem *tegra210_timer_reg_base;
-+static u32 usec_config;
-+
-+#define TIMER_PTV		0x0
-+#define TIMER_PTV_EN		BIT(31)
-+#define TIMER_PTV_PER		BIT(30)
-+#define TIMER_PCR		0x4
-+#define TIMER_PCR_INTR_CLR	BIT(30)
-+#define TIMERUS_CNTR_1US	0x10
-+#define TIMERUS_USEC_CFG	0x14
-+
-+#define TIMER10_OFFSET		0x90
-+#define TIMER10_IRQ_IDX		10
-+
-+#define TIMER_FOR_CPU(cpu) (TIMER10_OFFSET + (cpu) * 8)
-+#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
-+
-+struct tegra210_clockevent {
-+	struct clock_event_device evt;
-+	char name[20];
-+	void __iomem *reg_base;
-+};
-+#define to_tegra_cevt(p) (container_of(p, struct tegra210_clockevent, evt)=
-)
-+
-+static struct tegra210_clockevent __percpu *tegra210_evt;
-+
-+static int tegra210_timer_set_next_event(unsigned long cycles,
-+					 struct clock_event_device *evt)
-+{
-+	struct tegra210_clockevent *tevt;
-+
-+	tevt =3D to_tegra_cevt(evt);
-+	writel(TIMER_PTV_EN |
-+	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
-+	       tevt->reg_base + TIMER_PTV);
-+
-+	return 0;
-+}
-+
-+static inline void timer_shutdown(struct tegra210_clockevent *tevt)
-+{
-+	writel(0, tevt->reg_base + TIMER_PTV);
-+}
-+
-+static int tegra210_timer_shutdown(struct clock_event_device *evt)
-+{
-+	struct tegra210_clockevent *tevt;
-+
-+	tevt =3D to_tegra_cevt(evt);
-+	timer_shutdown(tevt);
-+
-+	return 0;
-+}
-+
-+static int tegra210_timer_set_periodic(struct clock_event_device *evt)
-+{
-+	struct tegra210_clockevent *tevt;
-+
-+	tevt =3D to_tegra_cevt(evt);
-+	writel(TIMER_PTV_EN | TIMER_PTV_PER | ((tegra210_timer_freq / HZ) - 1),
-+	       tevt->reg_base + TIMER_PTV);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t tegra210_timer_isr(int irq, void *dev_id)
-+{
-+	struct tegra210_clockevent *tevt;
-+
-+	tevt =3D dev_id;
-+	writel(TIMER_PCR_INTR_CLR, tevt->reg_base + TIMER_PCR);
-+	tevt->evt.event_handler(&tevt->evt);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int tegra210_timer_setup(unsigned int cpu)
-+{
-+	struct tegra210_clockevent *tevt =3D per_cpu_ptr(tegra210_evt, cpu);
-+
-+	irq_force_affinity(tevt->evt.irq, cpumask_of(cpu));
-+	enable_irq(tevt->evt.irq);
-+
-+	clockevents_config_and_register(&tevt->evt, tegra210_timer_freq,
-+					1, /* min */
-+					0x1fffffff); /* 29 bits */
-+
-+	return 0;
-+}
-+
-+static int tegra210_timer_stop(unsigned int cpu)
-+{
-+	struct tegra210_clockevent *tevt =3D per_cpu_ptr(tegra210_evt, cpu);
-+
-+	tevt->evt.set_state_shutdown(&tevt->evt);
-+	disable_irq_nosync(tevt->evt.irq);
-+
-+	return 0;
-+}
-+
-+static int tegra_timer_suspend(void)
-+{
-+	int cpu;
-+
-+	for_each_possible_cpu(cpu) {
-+		void __iomem *reg_base =3D tegra210_timer_reg_base +
-+					 TIMER_FOR_CPU(cpu);
-+		writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
-+	}
-+
-+	return 0;
-+}
-+
-+static void tegra_timer_resume(void)
-+{
-+	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
-+}
-+
-+static struct syscore_ops tegra_timer_syscore_ops =3D {
-+	.suspend =3D tegra_timer_suspend,
-+	.resume =3D tegra_timer_resume,
-+};
-+
-+static int __init tegra210_timer_init(struct device_node *np)
-+{
-+	int cpu, ret =3D 0;
-+	struct tegra210_clockevent *tevt;
-+	struct clk *clk;
-+
-+	tegra210_evt =3D alloc_percpu(struct tegra210_clockevent);
-+	if (!tegra210_evt) {
-+		ret =3D -ENOMEM;
-+		goto out;
-+	}
-+
-+	tegra210_timer_reg_base =3D of_iomap(np, 0);
-+	if (!tegra210_timer_reg_base) {
-+		ret =3D -ENXIO;
-+		goto out_free_mem;
-+	}
-+
-+	clk =3D of_clk_get(np, 0);
-+	if (IS_ERR(clk)) {
-+		ret =3D -EINVAL;
-+		goto out_iounmap;
-+	}
-+
-+	clk_prepare_enable(clk);
-+	tegra210_timer_freq =3D clk_get_rate(clk);
-+
-+	for_each_possible_cpu(cpu) {
-+		tevt =3D per_cpu_ptr(tegra210_evt, cpu);
-+		tevt->reg_base =3D tegra210_timer_reg_base + TIMER_FOR_CPU(cpu);
-+		tevt->evt.irq =3D irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
-+		if (!tevt->evt.irq) {
-+			pr_err("%s: can't map IRQ for CPU%d\n",
-+			       __func__, cpu);
-+			ret =3D -EINVAL;
-+			goto out_clk;
-+		}
-+
-+		snprintf(tevt->name, ARRAY_SIZE(tevt->name),
-+			 "tegra210_timer%d", cpu);
-+		tevt->evt.name =3D tevt->name;
-+		tevt->evt.cpumask =3D cpumask_of(cpu);
-+		tevt->evt.set_next_event =3D tegra210_timer_set_next_event;
-+		tevt->evt.set_state_shutdown =3D tegra210_timer_shutdown;
-+		tevt->evt.set_state_periodic =3D tegra210_timer_set_periodic;
-+		tevt->evt.set_state_oneshot =3D tegra210_timer_shutdown;
-+		tevt->evt.tick_resume =3D tegra210_timer_shutdown;
-+		tevt->evt.features =3D CLOCK_EVT_FEAT_PERIODIC |
-+			CLOCK_EVT_FEAT_ONESHOT;
-+		tevt->evt.rating =3D 460;
-+
-+		irq_set_status_flags(tevt->evt.irq, IRQ_NOAUTOEN);
-+		ret =3D request_irq(tevt->evt.irq, tegra210_timer_isr,
-+				  IRQF_TIMER | IRQF_NOBALANCING,
-+				  tevt->name, tevt);
-+		if (ret) {
-+			pr_err("%s: cannot setup irq %d for CPU%d\n",
-+				__func__, tevt->evt.irq, cpu);
-+			ret =3D -EINVAL;
-+			goto out_irq;
-+		}
-+	}
-+
-+	/*
-+	 * Configure microsecond timers to have 1MHz clock
-+	 * Config register is 0xqqww, where qq is "dividend", ww is "divisor"
-+	 * Uses n+1 scheme
-+	 */
-+	switch (tegra210_timer_freq) {
-+	case 12000000:
-+		usec_config =3D 0x000b; /* (11+1)/(0+1) */
-+		break;
-+	case 12800000:
-+		usec_config =3D 0x043f; /* (63+1)/(4+1) */
-+		break;
-+	case 13000000:
-+		usec_config =3D 0x000c; /* (12+1)/(0+1) */
-+		break;
-+	case 16800000:
-+		usec_config =3D 0x0453; /* (83+1)/(4+1) */
-+		break;
-+	case 19200000:
-+		usec_config =3D 0x045f; /* (95+1)/(4+1) */
-+		break;
-+	case 26000000:
-+		usec_config =3D 0x0019; /* (25+1)/(0+1) */
-+		break;
-+	case 38400000:
-+		usec_config =3D 0x04bf; /* (191+1)/(4+1) */
-+		break;
-+	case 48000000:
-+		usec_config =3D 0x002f; /* (47+1)/(0+1) */
-+		break;
-+	default:
-+		ret =3D -EINVAL;
-+		goto out_irq;
-+	}
-+
-+	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
-+
-+	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
-+			  "AP_TEGRA_TIMER_STARTING", tegra210_timer_setup,
-+			  tegra210_timer_stop);
-+
-+	register_syscore_ops(&tegra_timer_syscore_ops);
-+
-+	return ret;
-+
-+out_irq:
-+	for_each_possible_cpu(cpu) {
-+		tevt =3D per_cpu_ptr(tegra210_evt, cpu);
-+		if (tevt->evt.irq) {
-+			free_irq(tevt->evt.irq, tevt);
-+			irq_dispose_mapping(tevt->evt.irq);
-+		}
-+	}
-+out_clk:
-+	clk_put(clk);
-+out_iounmap:
-+	iounmap(tegra210_timer_reg_base);
-+out_free_mem:
-+	free_percpu(tegra210_evt);
-+out:
-+	return ret;
-+}
-+
-+TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_timer_i=
-nit);
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index fd586d0301e7..e78281d07b70 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -121,6 +121,7 @@ enum cpuhp_state {
- 	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
- 	CPUHP_AP_ARM_TWD_STARTING,
- 	CPUHP_AP_QCOM_TIMER_STARTING,
-+	CPUHP_AP_TEGRA_TIMER_STARTING,
- 	CPUHP_AP_ARMADA_TIMER_STARTING,
- 	CPUHP_AP_MARCO_TIMER_STARTING,
- 	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
---=20
-2.20.1
-
+Paolo
