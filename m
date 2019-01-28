@@ -2,113 +2,189 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F4113C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:04:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 680C0C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:05:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C40DD20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:04:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="F+I+Jwl+"
+	by mail.kernel.org (Postfix) with ESMTP id 3F93E20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:05:18 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726899AbfA1HEl (ORCPT
+        id S1726926AbfA1HFQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:04:41 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:12573 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbfA1HEl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:04:41 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c4ea96d0000>; Sun, 27 Jan 2019 23:04:13 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Sun, 27 Jan 2019 23:04:40 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Sun, 27 Jan 2019 23:04:40 -0800
-Received: from [10.19.108.140] (10.124.1.5) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
- 2019 07:04:38 +0000
-Subject: Re: [PATCH 1/5] dt-bindings: phy: tegra: Add Tegra186 support
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        Rob Herring <robh+dt@kernel.org>
-CC:     Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>
-References: <20190125112525.10697-1-thierry.reding@gmail.com>
-From:   jckuo <jckuo@nvidia.com>
-Message-ID: <45ab054d-674f-fcdf-85cf-b07c049f0e7d@nvidia.com>
-Date:   Mon, 28 Jan 2019 15:04:36 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
-MIME-Version: 1.0
-In-Reply-To: <20190125112525.10697-1-thierry.reding@gmail.com>
-X-Originating-IP: [10.124.1.5]
-X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548659053; bh=rayoCl61BzIwGrRGEnp5/2pChaoIExm0/6zTFGzT84I=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=F+I+Jwl+IMABc5kL+vbHVcRMZP8XSuuyg5QLBA+vYVLIzoyTt2fBo6el9/3r+I/oe
-         pGZE0CYo+1Iu94AwcwPiS02m3xYetDiM87Pve2A/LjcHSew3WtNTp+y5OxMBcEgUho
-         FYswguh9xlMlC15yMReEG0bEeXS48Pr4KGCBqXqTIXViLmipUTqXp9ud3Tglivz44k
-         gNzCsHtghEIjuSGgXzvH+MAp6JfN06gat/ecIv1cPhRQu2dvwiVu5mgGrc7Atv3wLr
-         wPv1H8nHkD99CpcFQH5LDmYe7iSipT7C/tE6JOqI5l6Aj3qCEt+4xx8mvdJWVeRhoI
-         HBTtA7t7KVhiw==
+        Mon, 28 Jan 2019 02:05:16 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34448 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726612AbfA1HFQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 02:05:16 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 999BC81DE3;
+        Mon, 28 Jan 2019 07:05:15 +0000 (UTC)
+Received: from jason-ThinkPad-T450s.redhat.com (ovpn-12-212.pek2.redhat.com [10.72.12.212])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF31253B21;
+        Mon, 28 Jan 2019 07:05:07 +0000 (UTC)
+From:   Jason Wang <jasowang@redhat.com>
+To:     mst@redhat.com, jasowang@redhat.com, stefanha@redhat.com
+Cc:     kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH net] vhost: fix OOB in get_rx_bufs()
+Date:   Mon, 28 Jan 2019 15:05:05 +0800
+Message-Id: <20190128070505.18335-1-jasowang@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 28 Jan 2019 07:05:15 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: JC Kuo <jckuo@nvidia.com>
+After batched used ring updating was introduced in commit e2b3b35eb989
+("vhost_net: batch used ring update in rx"). We tend to batch heads in
+vq->heads for more than one packet. But the quota passed to
+get_rx_bufs() was not correctly limited, which can result a OOB write
+in vq->heads.
 
-On 1/25/19 7:25 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
->
-> Extend the bindings to cover the set of features found in Tegra186. Note
-> that, technically, there are four more supplies connected to the XUSB
-> pad controller (DVDD_PEX, DVDD_PEX_PLL, HVDD_PEX and HVDD_PEX_PLL), but
-> the power sequencing requirements of Tegra186 require these to be under
-> the control of the PMIC.
->
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->   .../bindings/phy/nvidia,tegra124-xusb-padctl.txt         | 9 +++++++++
->   1 file changed, 9 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-> index 3742c152c467..daedb15f322e 100644
-> --- a/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-> +++ b/Documentation/devicetree/bindings/phy/nvidia,tegra124-xusb-padctl.txt
-> @@ -36,11 +36,20 @@ Required properties:
->     - Tegra124: "nvidia,tegra124-xusb-padctl"
->     - Tegra132: "nvidia,tegra132-xusb-padctl", "nvidia,tegra124-xusb-padctl"
->     - Tegra210: "nvidia,tegra210-xusb-padctl"
-> +  - Tegra186: "nvidia,tegra186-xusb-padctl"
->   - reg: Physical base address and length of the controller's registers.
->   - resets: Must contain an entry for each entry in reset-names.
->   - reset-names: Must include the following entries:
->     - "padctl"
->   
-> +For Tegra186:
-> +- avdd-pll-erefeut-supply: UPHY brick and reference clock as well as UTMI PHY
-> +  power supply. Must supply 1.8 V.
-> +- avdd-usb-supply: USB I/Os, VBUS, ID, REXT, D+/D- power supply. Must supply
-> +  3.3 V.
-> +- vclamp-usb-supply: Bias rail for USB pad. Must supply 1.8 V.
-> +- vddio-hsic-supply: HSIC PHY power supply. Must supply 1.2 V.
-> +
->   
->   Pad nodes:
->   ==========
+        headcount = get_rx_bufs(vq, vq->heads + nvq->done_idx,
+                    vhost_len, &in, vq_log, &log,
+                    likely(mergeable) ? UIO_MAXIOV : 1);
+
+UIO_MAXIOV was still used which is wrong since we could have batched
+used in vq->heads, this will cause OOB if the next buffer needs more
+than 960 (1024 (UIO_MAXIOV) - 64 (VHOST_NET_BATCH)) heads after we've
+batched 64 (VHOST_NET_BATCH) heads:
+
+=============================================================================
+BUG kmalloc-8k (Tainted: G    B            ): Redzone overwritten
+-----------------------------------------------------------------------------
+
+INFO: 0x00000000fd93b7a2-0x00000000f0713384. First byte 0xa9 instead of 0xcc
+INFO: Allocated in alloc_pd+0x22/0x60 age=3933677 cpu=2 pid=2674
+    kmem_cache_alloc_trace+0xbb/0x140
+    alloc_pd+0x22/0x60
+    gen8_ppgtt_create+0x11d/0x5f0
+    i915_ppgtt_create+0x16/0x80
+    i915_gem_create_context+0x248/0x390
+    i915_gem_context_create_ioctl+0x4b/0xe0
+    drm_ioctl_kernel+0xa5/0xf0
+    drm_ioctl+0x2ed/0x3a0
+    do_vfs_ioctl+0x9f/0x620
+    ksys_ioctl+0x6b/0x80
+    __x64_sys_ioctl+0x11/0x20
+    do_syscall_64+0x43/0xf0
+    entry_SYSCALL_64_after_hwframe+0x44/0xa9
+INFO: Slab 0x00000000d13e87af objects=3 used=3 fp=0x          (null) flags=0x200000000010201
+INFO: Object 0x0000000003278802 @offset=17064 fp=0x00000000e2e6652b
+
+Fixing this by allocating UIO_MAXIOV + VHOST_NET_BATCH iovs for
+vhost-net. This is done through set the limitation through
+vhost_dev_init(), then set_owner can allocate the number of iov in a
+per device manner.
+
+This fixes CVE-2018-16880.
+
+Fixes: e2b3b35eb989 ("vhost_net: batch used ring update in rx")
+Signed-off-by: Jason Wang <jasowang@redhat.com>
+---
+ drivers/vhost/net.c   | 3 ++-
+ drivers/vhost/scsi.c  | 2 +-
+ drivers/vhost/vhost.c | 7 ++++---
+ drivers/vhost/vhost.h | 4 +++-
+ drivers/vhost/vsock.c | 2 +-
+ 5 files changed, 11 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/vhost/net.c b/drivers/vhost/net.c
+index bca86bf7189f..df51a35cf537 100644
+--- a/drivers/vhost/net.c
++++ b/drivers/vhost/net.c
+@@ -1337,7 +1337,8 @@ static int vhost_net_open(struct inode *inode, struct file *f)
+ 		n->vqs[i].rx_ring = NULL;
+ 		vhost_net_buf_init(&n->vqs[i].rxq);
+ 	}
+-	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX);
++	vhost_dev_init(dev, vqs, VHOST_NET_VQ_MAX,
++		       UIO_MAXIOV + VHOST_NET_BATCH);
+ 
+ 	vhost_poll_init(n->poll + VHOST_NET_VQ_TX, handle_tx_net, EPOLLOUT, dev);
+ 	vhost_poll_init(n->poll + VHOST_NET_VQ_RX, handle_rx_net, EPOLLIN, dev);
+diff --git a/drivers/vhost/scsi.c b/drivers/vhost/scsi.c
+index 344684f3e2e4..23593cb23dd0 100644
+--- a/drivers/vhost/scsi.c
++++ b/drivers/vhost/scsi.c
+@@ -1627,7 +1627,7 @@ static int vhost_scsi_open(struct inode *inode, struct file *f)
+ 		vqs[i] = &vs->vqs[i].vq;
+ 		vs->vqs[i].vq.handle_kick = vhost_scsi_handle_kick;
+ 	}
+-	vhost_dev_init(&vs->dev, vqs, VHOST_SCSI_MAX_VQ);
++	vhost_dev_init(&vs->dev, vqs, VHOST_SCSI_MAX_VQ, UIO_MAXIOV);
+ 
+ 	vhost_scsi_init_inflight(vs, NULL);
+ 
+diff --git a/drivers/vhost/vhost.c b/drivers/vhost/vhost.c
+index 15a216cdd507..24a129fcdd61 100644
+--- a/drivers/vhost/vhost.c
++++ b/drivers/vhost/vhost.c
+@@ -390,9 +390,9 @@ static long vhost_dev_alloc_iovecs(struct vhost_dev *dev)
+ 		vq->indirect = kmalloc_array(UIO_MAXIOV,
+ 					     sizeof(*vq->indirect),
+ 					     GFP_KERNEL);
+-		vq->log = kmalloc_array(UIO_MAXIOV, sizeof(*vq->log),
++		vq->log = kmalloc_array(dev->iov_limit, sizeof(*vq->log),
+ 					GFP_KERNEL);
+-		vq->heads = kmalloc_array(UIO_MAXIOV, sizeof(*vq->heads),
++		vq->heads = kmalloc_array(dev->iov_limit, sizeof(*vq->heads),
+ 					  GFP_KERNEL);
+ 		if (!vq->indirect || !vq->log || !vq->heads)
+ 			goto err_nomem;
+@@ -414,7 +414,7 @@ static void vhost_dev_free_iovecs(struct vhost_dev *dev)
+ }
+ 
+ void vhost_dev_init(struct vhost_dev *dev,
+-		    struct vhost_virtqueue **vqs, int nvqs)
++		    struct vhost_virtqueue **vqs, int nvqs, int iov_limit)
+ {
+ 	struct vhost_virtqueue *vq;
+ 	int i;
+@@ -427,6 +427,7 @@ void vhost_dev_init(struct vhost_dev *dev,
+ 	dev->iotlb = NULL;
+ 	dev->mm = NULL;
+ 	dev->worker = NULL;
++	dev->iov_limit = iov_limit;
+ 	init_llist_head(&dev->work_list);
+ 	init_waitqueue_head(&dev->wait);
+ 	INIT_LIST_HEAD(&dev->read_list);
+diff --git a/drivers/vhost/vhost.h b/drivers/vhost/vhost.h
+index 1b675dad5e05..9490e7ddb340 100644
+--- a/drivers/vhost/vhost.h
++++ b/drivers/vhost/vhost.h
+@@ -170,9 +170,11 @@ struct vhost_dev {
+ 	struct list_head read_list;
+ 	struct list_head pending_list;
+ 	wait_queue_head_t wait;
++	int iov_limit;
+ };
+ 
+-void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs, int nvqs);
++void vhost_dev_init(struct vhost_dev *, struct vhost_virtqueue **vqs,
++		    int nvqs, int iov_limit);
+ long vhost_dev_set_owner(struct vhost_dev *dev);
+ bool vhost_dev_has_owner(struct vhost_dev *dev);
+ long vhost_dev_check_owner(struct vhost_dev *);
+diff --git a/drivers/vhost/vsock.c b/drivers/vhost/vsock.c
+index 3fbc068eaa9b..bb5fc0e9fbc2 100644
+--- a/drivers/vhost/vsock.c
++++ b/drivers/vhost/vsock.c
+@@ -531,7 +531,7 @@ static int vhost_vsock_dev_open(struct inode *inode, struct file *file)
+ 	vsock->vqs[VSOCK_VQ_TX].handle_kick = vhost_vsock_handle_tx_kick;
+ 	vsock->vqs[VSOCK_VQ_RX].handle_kick = vhost_vsock_handle_rx_kick;
+ 
+-	vhost_dev_init(&vsock->dev, vqs, ARRAY_SIZE(vsock->vqs));
++	vhost_dev_init(&vsock->dev, vqs, ARRAY_SIZE(vsock->vqs), UIO_MAXIOV);
+ 
+ 	file->private_data = vsock;
+ 	spin_lock_init(&vsock->send_pkt_list_lock);
+-- 
+2.17.1
+
