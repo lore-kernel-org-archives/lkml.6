@@ -2,81 +2,126 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE6ACC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D874FC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA9F52171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:48:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A44F7217F5
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:48:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548719333;
+	bh=T1JDq569bCa0/O5mBZjLGYp4h1D1NWq0r8sxhNDCcMA=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=pvsI/pXQQ+RuRELngInie6nqSOoIIUrLQXO64AtlcDDhZaXYPPf6TZywZVixxlgS1
+	 dduemVoIfN0YFNf+VveW6R7na9NW1CjpgmBH7XBe0L5cwJK34PsUPKmUmjGmcxIVxP
+	 TcZvNdC1DDWbkHzEKK91TuYd9TFEUN2GeP6frPVg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727964AbfA1XsZ (ORCPT
+        id S1727623AbfA1Xsw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 18:48:25 -0500
-Received: from outbound.smtp.vt.edu ([198.82.183.121]:55336 "EHLO
-        omr1.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1727074AbfA1XsW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 18:48:22 -0500
-Received: from mr2.cc.vt.edu (mr2.cc.vt.edu [IPv6:2607:b400:92:8400:0:90:e077:bf22])
-        by omr1.cc.vt.edu (8.14.4/8.14.4) with ESMTP id x0SNmLWU007503
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 18:48:21 -0500
-Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
-        by mr2.cc.vt.edu (8.14.7/8.14.7) with ESMTP id x0SNmGH1000975
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 18:48:21 -0500
-Received: by mail-qk1-f200.google.com with SMTP id z68so20058135qkb.14
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 15:48:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
-         :mime-version:date:message-id;
-        bh=uIjdwQcAPyscz2jMHxycrlbp287T3XTE7prBcZpyAxo=;
-        b=Dlz1ZVg3vAUaDm82HqbqxKDBubfl08oVH38jSyAsm5XbgtI3LhgecTwA3+mPoxfbR8
-         lreFyP67bUmVMe4HuSrla5AEOBZsfuO1rveGb/FI+emgA/h0AFaZ+/v32mCqGLLGmaei
-         QNG0FbuSJX726PAQ2vGh+ZcS8PKOKDxd6193CtiMLetjifGWnXlORdiEHCCFeJ98IEKS
-         rqo8JI7kDLC6Q5rwY6HUD7Gr7GRWayAhRHVGDcRHWOX44bAayC9fvoHpjSTt3r9wc9J6
-         zf4uzMmqv+elJMotsSEbk/Hm2ka60iC0q1qmjoUjmlNMhP80HdMwt7ps8E1Cun7XD7pZ
-         QNkA==
-X-Gm-Message-State: AJcUukf128Bd2s8xny+ah8uJwRy81WgfrrzQL1saSGG9BdBV7nTa29nu
-        mGxOW82DDmFFurRiq90z0/DJy6KWC1ZVmfYoQlit5HfG5rC3wVl34+B23tms+28Ohd0tVTd9/On
-        /GMNaCgi2px8lsRR90AmKUoSvnRHjilSIZ3k=
-X-Received: by 2002:a37:7e45:: with SMTP id z66mr21202800qkc.23.1548719296148;
-        Mon, 28 Jan 2019 15:48:16 -0800 (PST)
-X-Google-Smtp-Source: ALg8bN4qGnx2yTbCirEYAC3HpRUrRIIRjWdGHQk/IIIW9BTEFm1p8OwF31RZAvUGRNmi0GGcdzcyyg==
-X-Received: by 2002:a37:7e45:: with SMTP id z66mr21202794qkc.23.1548719295991;
-        Mon, 28 Jan 2019 15:48:15 -0800 (PST)
-Received: from turing-police.cc.vt.edu ([2601:5c0:c001:4341::936])
-        by smtp.gmail.com with ESMTPSA id v53sm78955308qtb.6.2019.01.28.15.48.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 15:48:14 -0800 (PST)
-From:   valdis.kletnieks@vt.edu
-X-Google-Original-From: Valdis.Kletnieks@vt.edu
-X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
-To:     Daniel Borkmann <daniel@iogearbox.net>
-cc:     Song Liu <liu.song.a23@gmail.com>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Networking <netdev@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] bpf/core.c - silence warning messages
-In-reply-to: <3c8c866f-c665-ff82-a0ab-a4eafd28b20f@iogearbox.net>
-References: <31468.1548648675@turing-police.cc.vt.edu> <CAPhsuW54z8ao4KOKG9ZjdXus6LTBH2qwAi8LgPFZ_qb_ObKsRg@mail.gmail.com>
- <3c8c866f-c665-ff82-a0ab-a4eafd28b20f@iogearbox.net>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Date:   Mon, 28 Jan 2019 18:48:13 -0500
-Message-ID: <10399.1548719293@turing-police.cc.vt.edu>
+        Mon, 28 Jan 2019 18:48:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40420 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726937AbfA1Xsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 18:48:51 -0500
+Received: from [192.168.1.112] (c-24-9-64-241.hsd1.co.comcast.net [24.9.64.241])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 510172171F;
+        Mon, 28 Jan 2019 23:48:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548719330;
+        bh=T1JDq569bCa0/O5mBZjLGYp4h1D1NWq0r8sxhNDCcMA=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=fXscI4SdJeERU8D6a9kuQE3hwveJK+EAuVzcTPjiEK9QLxHlmGBOJI5y4hhLK/MRQ
+         U7ZZydhToGojnem53lL8YrTJSOsYkIsHPQfJGvwFmGQtYtZ05ol/wF3ql9RqRQbmUs
+         uxl/TAicsLSlbvnmGyjO2bcnSxjQxBcoxddAJGK4=
+Subject: Re: [PATCH v10 0/4] Media Device Allocator API
+To:     Hans Verkuil <hverkuil@xs4all.nl>, mchehab@kernel.org,
+        perex@perex.cz, tiwai@suse.com
+Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+        alsa-devel@alsa-project.org, shuah <shuah@kernel.org>
+References: <cover.1548360791.git.shuah@kernel.org>
+ <e8717d11-1eff-2e07-53d5-6cd55356c66a@xs4all.nl>
+From:   shuah <shuah@kernel.org>
+Message-ID: <481787e7-112a-80dd-228c-2497a12547b9@kernel.org>
+Date:   Mon, 28 Jan 2019 16:48:49 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <e8717d11-1eff-2e07-53d5-6cd55356c66a@xs4all.nl>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 29 Jan 2019 00:22:26 +0100, Daniel Borkmann said:
-> I think moving in separate file would be overkill, imho. However, lets get
-> the kdoc and prototype warning fixed.
+Hi Hans,
 
-I have a bunch of spare time at the moment, so the kdoc and prototype
-warnings are on my to-do list.
+On 1/28/19 5:03 AM, Hans Verkuil wrote:
+> Hi Shuah,
+> 
+> On 1/24/19 9:32 PM, Shuah Khan wrote:
+>> Media Device Allocator API to allows multiple drivers share a media device.
+>> This API solves a very common use-case for media devices where one physical
+>> device (an USB stick) provides both audio and video. When such media device
+>> exposes a standard USB Audio class, a proprietary Video class, two or more
+>> independent drivers will share a single physical USB bridge. In such cases,
+>> it is necessary to coordinate access to the shared resource.
+>>
+>> Using this API, drivers can allocate a media device with the shared struct
+>> device as the key. Once the media device is allocated by a driver, other
+>> drivers can get a reference to it. The media device is released when all
+>> the references are released.
+>>
+>> - This patch series is tested on 5.0-rc3 and addresses comments on
+>>    v9 series from Hans Verkuil.
+>> - v9 was tested on 4.20-rc6.
+>> - Tested sharing resources with kaffeine, vlc, xawtv, tvtime, and
+>>    arecord. When analog is streaming, digital and audio user-space
+>>    applications detect that the tuner is busy and exit. When digital
+>>    is streaming, analog and audio applications detect that the tuner is
+>>    busy and exit. When arecord is owns the tuner, digital and analog
+>>    detect that the tuner is busy and exit.
+> 
+> I've been doing some testing with my au0828, and I am confused about one
+> thing, probably because it has been too long ago since I last looked into
+> this in detail:
+> 
+
+Great.
+
+> Why can't I change the tuner frequency if arecord (and only arecord) is
+> streaming audio? If arecord is streaming, then it is recording the audio
+> from the analog TV tuner, right? So changing the analog TV frequency
+> should be fine.
+> 
+
+Changing analog TV frequency would be s_frequency. The way it works is
+any s_* calls would require holding the pipeline. In Analog TV case, it
+would mean holding both audio and video pipelines for any changes
+including TV.
+
+As I recall, we discussed this design and the decision was to make all
+s_* calls interfaces to hold the tuner. A special exception is g_tuner
+in case of au0828. au0828 initializes the tuner from s_* interfaces and
+its g_tuner interfaces. Allowing s_frequency to proceed will disrupt the
+arecord audio stream.
+
+Query (q_*) works just fine without holding the pipeline. I limited the
+analog holds to just the ones that are required. The current set is
+required to avoid audio stream disruptions.
+
+I made sure v4l-ctl --all works when the pipeline is locked by any one
+of the 3 (audio, video, DVB).
+
+Hope this helps.
+
+thanks,
+-- Shuah
 
 
