@@ -4,51 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 11C6FC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF28C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBB9C20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D8E920663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692946;
-	bh=7PZLZgjVSqCRVMfHc9OzsSj/cbYCUwN3PwaGsx4QqZE=;
+	s=default; t=1548692960;
+	bh=gphIl0OgTGi7zwqx+lqaNLWrd+G+aKQvW6duFqpPBEg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=apmMZO5K+PHILTwXdGL1EWDmbkbUcK1EXkMLWhgOrfeTqQDoIEXaOLsV6M0RyWnah
-	 ntXR3DACR9mMHB9+Bp1+7++KdhycY3r6pF+88UNVtsRhSn02+IDJsGGvWQNba6Nekr
-	 d/cMSSZktX4cx52RbYjfre1guBkWKSGR3dzK4YXs=
+	b=KyvBQ49xrepygPrZDI5p+F6bIhrSiQ230E+I+vXbm+A4Udiueoz/M3jbAZ9jGFD6b
+	 PFIntdN4SfJ1b/zShcQNhBnwO8LxvGo/NaOfpmdWhZMdKgwggwiB9FigDV+BWNGowy
+	 xdUIxtCe5F4ho8yHA8II1tby6OyNqHzhvOonDEjA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390555AbfA1Q2E (ORCPT
+        id S2389912AbfA1Q15 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:28:04 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38486 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:27:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38286 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390544AbfA1Q2B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:28:01 -0500
+        id S2390503AbfA1Q1y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:27:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D9402177E;
-        Mon, 28 Jan 2019 16:28:00 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4E5542184D;
+        Mon, 28 Jan 2019 16:27:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692881;
-        bh=7PZLZgjVSqCRVMfHc9OzsSj/cbYCUwN3PwaGsx4QqZE=;
+        s=default; t=1548692874;
+        bh=gphIl0OgTGi7zwqx+lqaNLWrd+G+aKQvW6duFqpPBEg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VKsIxyNF+HUXDSgyBkJ6pQjrVsANldLlA8RLdMiVwJyNQ0V7Py3wSf0dgB/5dX7Nl
-         TP68hLOAPerUlIt96zVbwFPzlo4b+bQvKU7DKHbmNsju7WKLyaeYe1hBm6XLTWyoXE
-         pDUx85dAjVcAzOxc3UM/O5RZAWe8xHDerkM/+xwQ=
+        b=qD9DIAEgnCkGzOhl0666zDSi5PeXN6+HxhCf7YlXOd82VXHsQJOL7MHpcjHa04cvg
+         wJsO+lbWLUDzninKzEmWiEtVDOKUsQL4Pe8hVae/X2Qm54FBnRfjSOOzJfmuIVk/9E
+         AG3i8Z1s8/rDcmBs3UfZUNOi/TBO4HJWRijJL3ZQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 54/61] scripts/decode_stacktrace: only strip base path when a prefix of the path
-Date:   Mon, 28 Jan 2019 11:26:16 -0500
-Message-Id: <20190128162623.59854-54-sashal@kernel.org>
+Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 51/61] cifs: check ntwrk_buf_start for NULL before dereferencing it
+Date:   Mon, 28 Jan 2019 11:26:13 -0500
+Message-Id: <20190128162623.59854-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -60,47 +57,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marc Zyngier <marc.zyngier@arm.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-[ Upstream commit 67a28de47faa83585dd644bd4c31e5a1d9346c50 ]
+[ Upstream commit 59a63e479ce36a3f24444c3a36efe82b78e4a8e0 ]
 
-Running something like:
+RHBZ: 1021460
 
-	decodecode vmlinux .
+There is an issue where when multiple threads open/close the same directory
+ntwrk_buf_start might end up being NULL, causing the call to smbCalcSize
+later to oops with a NULL deref.
 
-leads to interested results where not only the leading "." gets stripped
-from the displayed paths, but also anywhere in the string, displaying
-something like:
+The real bug is why this happens and why this can become NULL for an
+open cfile, which should not be allowed.
+This patch tries to avoid a oops until the time when we fix the underlying
+issue.
 
-	kvm_vcpu_check_block (arch/arm64/kvm/virt/kvm/kvm_mainc:2141)
-
-which doesn't help further processing.
-
-Fix it by only stripping the base path if it is a prefix of the path.
-
-Link: http://lkml.kernel.org/r/20181210174659.31054-3-marc.zyngier@arm.com
-Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
-Cc: Will Deacon <will.deacon@arm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/decode_stacktrace.sh | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ fs/cifs/readdir.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
-index 515c4c00e957..aa4b57abd1b5 100755
---- a/scripts/decode_stacktrace.sh
-+++ b/scripts/decode_stacktrace.sh
-@@ -61,7 +61,7 @@ parse_symbol() {
- 	fi
+diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
+index 707d8cf95348..116985335cc1 100644
+--- a/fs/cifs/readdir.c
++++ b/fs/cifs/readdir.c
+@@ -645,7 +645,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
+ 		/* scan and find it */
+ 		int i;
+ 		char *cur_ent;
+-		char *end_of_smb = cfile->srch_inf.ntwrk_buf_start +
++		char *end_of_smb;
++
++		if (cfile->srch_inf.ntwrk_buf_start == NULL) {
++			cifs_dbg(VFS, "ntwrk_buf_start is NULL during readdir\n");
++			return -EIO;
++		}
++
++		end_of_smb = cfile->srch_inf.ntwrk_buf_start +
+ 			server->ops->calc_smb_size(
+ 					cfile->srch_inf.ntwrk_buf_start);
  
- 	# Strip out the base of the path
--	code=${code//$basepath/""}
-+	code=${code//^$basepath/""}
- 
- 	# In the case of inlines, move everything to same line
- 	code=${code//$'\n'/' '}
 -- 
 2.19.1
 
