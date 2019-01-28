@@ -4,54 +4,55 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30892C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 280DDC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00C5520811
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:35:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED79A20811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:36:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693358;
-	bh=WeqnWYluWHU3Pa76Igqui7ZFu58Ji6SdNfGL43fY/I0=;
+	s=default; t=1548693373;
+	bh=PnIAJq4IqyyzCH9i+aU8Vdb69+81PpFcKLvwhBgwoFQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rMIE94kSRhNnq6g0+3zqV4oqXEiy/fUBGjqYYx4G3npn7nAVLqXFKAiupr/0QZAxV
-	 FnavX0TrDWFFA5M3tbVwecjdpCjMje3dRRFb5fjtizzl1M0HNTFav/0iVSbSriqzWb
-	 k+FqHhefTgISzihpr0o9v//TtFTak5hjtv7D8dvI=
+	b=ZNDV1OxHapwjesVACkLzD/AsmhfL9+B+2ZOpOyg4y3KHm7AQwLhLFdBpAFfz54yn7
+	 J8CApu6vWt90KqdO40RIrAFPLrpn05EIO0wOHSoZhOFnHRV1yN0nBN/H1chJeSQszN
+	 2cf71UDa/w3Px/f7cmJ4/WDVgaJoK5D/eypaL+wY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390378AbfA1Qf4 (ORCPT
+        id S2389943AbfA1QZ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:35:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34378 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:25:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34204 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731582AbfA1QZc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:32 -0500
+        id S2389909AbfA1QZX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 72A7D20879;
-        Mon, 28 Jan 2019 16:25:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BFCED2147A;
+        Mon, 28 Jan 2019 16:25:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692731;
-        bh=WeqnWYluWHU3Pa76Igqui7ZFu58Ji6SdNfGL43fY/I0=;
+        s=default; t=1548692722;
+        bh=PnIAJq4IqyyzCH9i+aU8Vdb69+81PpFcKLvwhBgwoFQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pwK8sdvvf8KkTRllospRTkvajsfi+mdyGOR7Ag8K3U92+tsryYCZUQYUgTeKU7MTT
-         8gQavVXo9qHlA17y7hAQL46D8jR02uRPAHeoXy9anTqSQLniNniEzjpD1ciNm2X5sN
-         oU/eWCMKF+vp+2kuCbPmqelA1Ib7YYIS4knn4WgY=
+        b=w60VWUxXsGbJtjv41pcJ045dotIsIgB59D/TjuszxrUqRSHKlcWV6mkcHWbX9oNj/
+         xOuSLAe5zeUCYMHbQMfsWyMt9CBbJ8vvnwNlntjnH9/6g4MVTtLBHBizNqSSjXACyb
+         DiTx0oBhdFx/JXtyLpIz8ZseBOWA81oZwK7B/WQ0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 52/80] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
-Date:   Mon, 28 Jan 2019 11:23:33 -0500
-Message-Id: <20190128162401.58841-52-sashal@kernel.org>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Peter Maydell <peter.maydell@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Sasha Levin <sashal@kernel.org>, kvmarm@lists.cs.columbia.edu
+Subject: [PATCH AUTOSEL 4.4 47/80] arm64: KVM: Skip MMIO insn after emulation
+Date:   Mon, 28 Jan 2019 11:23:28 -0500
+Message-Id: <20190128162401.58841-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -59,81 +60,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jia-Ju Bai <baijiaju1990@gmail.com>
+From: Mark Rutland <mark.rutland@arm.com>
 
-[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
+[ Upstream commit 0d640732dbebed0f10f18526de21652931f0b2f2 ]
 
-The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
-concurrently executed.
-The two functions both access a possible shared variable "frame.skb".
+When we emulate an MMIO instruction, we advance the CPU state within
+decode_hsr(), before emulating the instruction effects.
 
-This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
-which is called by cw1200_bss_info_changed(). The free operation is
-protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
+Having this logic in decode_hsr() is opaque, and advancing the state
+before emulation is problematic. It gets in the way of applying
+consistent single-step logic, and it prevents us from being able to fail
+an MMIO instruction with a synchronous exception.
 
-In cw1200_hw_scan(), this shared variable is accessed without the
-protection of the mutex lock "priv->conf_mutex".
-Thus, concurrency use-after-free bugs may occur.
+Clean this up by only advancing the CPU state *after* the effects of the
+instruction are emulated.
 
-To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
-mutex_unlock(&priv->conf_mutex) are moved to the places, which can
-protect the accesses to the shared variable.
-
-Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
-Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Cc: Peter Maydell <peter.maydell@linaro.org>
+Reviewed-by: Alex Bennée <alex.bennee@linaro.org>
+Reviewed-by: Christoffer Dall <christoffer.dall@arm.com>
+Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+Signed-off-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/wireless/cw1200/scan.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+ arch/arm/kvm/mmio.c | 11 ++++++-----
+ 1 file changed, 6 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/wireless/cw1200/scan.c b/drivers/net/wireless/cw1200/scan.c
-index bff81b8d4164..9f1037e7e55c 100644
---- a/drivers/net/wireless/cw1200/scan.c
-+++ b/drivers/net/wireless/cw1200/scan.c
-@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
- 		return -EINVAL;
+diff --git a/arch/arm/kvm/mmio.c b/arch/arm/kvm/mmio.c
+index 387ee2a11e36..885cd0e0015b 100644
+--- a/arch/arm/kvm/mmio.c
++++ b/arch/arm/kvm/mmio.c
+@@ -118,6 +118,12 @@ int kvm_handle_mmio_return(struct kvm_vcpu *vcpu, struct kvm_run *run)
+ 		vcpu_set_reg(vcpu, vcpu->arch.mmio_decode.rt, data);
+ 	}
  
-+	/* will be unlocked in cw1200_scan_work() */
-+	down(&priv->scan.lock);
-+	mutex_lock(&priv->conf_mutex);
++	/*
++	 * The MMIO instruction is emulated and should not be re-executed
++	 * in the guest.
++	 */
++	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
 +
- 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
- 		req->ie_len);
- 	if (!frame.skb)
-@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 	if (req->ie_len)
- 		memcpy(skb_put(frame.skb, req->ie_len), req->ie, req->ie_len);
- 
--	/* will be unlocked in cw1200_scan_work() */
--	down(&priv->scan.lock);
--	mutex_lock(&priv->conf_mutex);
--
- 	ret = wsm_set_template_frame(priv, &frame);
- 	if (!ret) {
- 		/* Host want to be the probe responder. */
- 		ret = wsm_set_probe_responder(priv, true);
- 	}
- 	if (ret) {
-+		dev_kfree_skb(frame.skb);
- 		mutex_unlock(&priv->conf_mutex);
- 		up(&priv->scan.lock);
--		dev_kfree_skb(frame.skb);
- 		return ret;
- 	}
- 
-@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
- 		++priv->scan.n_ssids;
- 	}
- 
--	mutex_unlock(&priv->conf_mutex);
--
- 	if (frame.skb)
- 		dev_kfree_skb(frame.skb);
-+	mutex_unlock(&priv->conf_mutex);
- 	queue_work(priv->workqueue, &priv->scan.work);
  	return 0;
  }
+ 
+@@ -151,11 +157,6 @@ static int decode_hsr(struct kvm_vcpu *vcpu, bool *is_write, int *len)
+ 	vcpu->arch.mmio_decode.sign_extend = sign_extend;
+ 	vcpu->arch.mmio_decode.rt = rt;
+ 
+-	/*
+-	 * The MMIO instruction is emulated and should not be re-executed
+-	 * in the guest.
+-	 */
+-	kvm_skip_instr(vcpu, kvm_vcpu_trap_il_is32bit(vcpu));
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
