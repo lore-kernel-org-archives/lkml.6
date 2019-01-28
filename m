@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BE038C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41E32C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83D512082E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 131E72175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691236;
-	bh=FiUeQ9WN+QmxxHZXyoaHNstdzpqLULB+glHW3Mnej4g=;
+	s=default; t=1548691239;
+	bh=VfMUqBrIhtUz7f5JkorF4EfrldSBVxG6udWYl4O43no=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PjOm1ptBr+sXemhuOijfXgXhr3ulRr9GK1BO9cOf5yhMijmBimpJ/C3b2kayPKnI2
-	 SsKDUNnmx4Dcwch5wIbg5Kx0Ta/zCgYv2mW2CwaHpdX9ipopzuHcTVgB6pojcr2drJ
-	 zrozEe71YZbcIsTUUeCSOclqjkDepW72YPlACBnk=
+	b=d1m/xrtspcqU4WVNcye8oEdmIWDAli5s86HdUuLj/c9WOgnecF5mLx3Q1Bj3ph3kD
+	 S/KVP3XvcSPeN7r384S840dobskI7Xtr28g9GfCrzeSuH3zlgcYMJtGwBXb4LcVvy4
+	 26lrq+AznOIA3HfNaPEcDXitbNeCz6cwmDTNqBkE=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730810AbfA1QAe (ORCPT
+        id S1730819AbfA1QAh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:00:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45776 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:00:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45870 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730447AbfA1QA3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:00:29 -0500
+        id S1730274AbfA1QAd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:00:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 22D222175B;
-        Mon, 28 Jan 2019 16:00:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 343982082E;
+        Mon, 28 Jan 2019 16:00:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691229;
-        bh=FiUeQ9WN+QmxxHZXyoaHNstdzpqLULB+glHW3Mnej4g=;
+        s=default; t=1548691232;
+        bh=VfMUqBrIhtUz7f5JkorF4EfrldSBVxG6udWYl4O43no=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cZ/941Jlui3bvo+dqBNZff9N9dPXB/w4URcLIi7ovyhMX9KPOeKrXB/hBRpFSzbBE
-         /bMtbpY7daZtpQkSk6FSDr8Da/WRWEbzbYgm/NZ6vGB2aNIs/ZWd6u9uxr5wFzjgsg
-         /QUcdoZmrOZ8CzenmGMKAyutnY+knOhVWRzyVVkQ=
+        b=SB1o8OBjXphrw41EIXBlXbMsXZArLQSWGgbfw5C1G2jsxmOXhGvAKyt0QFcKQqkhi
+         iFZaf1219AJUmM9BJ7KznBE2G5xtanTP/uTt10VLjJQr8wGz9fF6VbzBeYCo30yB+G
+         1Lt8d5PKvObXQ7iMA0d49irwEpv6H31qubsEseWk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Frank Rowand <frank.rowand@sony.com>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 023/258] powerpc/pseries: add of_node_put() in dlpar_detach_node()
-Date:   Mon, 28 Jan 2019 10:55:29 -0500
-Message-Id: <20190128155924.51521-23-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 025/258] of: overlay: do not duplicate properties from overlay for new nodes
+Date:   Mon, 28 Jan 2019 10:55:31 -0500
+Message-Id: <20190128155924.51521-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,42 +59,46 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Frank Rowand <frank.rowand@sony.com>
 
-[ Upstream commit 5b3f5c408d8cc59b87e47f1ab9803dbd006e4a91 ]
+[ Upstream commit 8814dc46bd9e347d4de55ec5bf8f16ea54470499 ]
 
-The previous commit, "of: overlay: add missing of_node_get() in
-__of_attach_node_sysfs" added a missing of_node_get() to
-__of_attach_node_sysfs().  This results in a refcount imbalance
-for nodes attached with dlpar_attach_node().  The calling sequence
-from dlpar_attach_node() to __of_attach_node_sysfs() is:
+When allocating a new node, add_changeset_node() was duplicating the
+properties from the respective node in the overlay instead of
+allocating a node with no properties.
 
-   dlpar_attach_node()
-      of_attach_node()
-         __of_attach_node_sysfs()
+When this patch is applied the errors reported by the devictree
+unittest from patch "of: overlay: add tests to validate kfrees from
+overlay removal" will no longer occur.  These error messages are of
+the form:
 
-For more detailed description of the node refcount, see
-commit 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow
-during DLPAR remove").
+   "OF: ERROR: ..."
+
+and the unittest results will change from:
+
+   ### dt-test ### end of unittest - 203 passed, 7 failed
+
+to
+
+   ### dt-test ### end of unittest - 210 passed, 0 failed
 
 Tested-by: Alan Tull <atull@kernel.org>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
 Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/pseries/dlpar.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/of/overlay.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
-index a0b20c03f078..e3010b14aea5 100644
---- a/arch/powerpc/platforms/pseries/dlpar.c
-+++ b/arch/powerpc/platforms/pseries/dlpar.c
-@@ -272,6 +272,8 @@ int dlpar_detach_node(struct device_node *dn)
- 	if (rc)
- 		return rc;
+diff --git a/drivers/of/overlay.c b/drivers/of/overlay.c
+index baa9cee6fa2c..4b834518596f 100644
+--- a/drivers/of/overlay.c
++++ b/drivers/of/overlay.c
+@@ -368,7 +368,7 @@ static int add_changeset_node(struct overlay_changeset *ovcs,
+ 			break;
  
-+	of_node_put(dn);
-+
- 	return 0;
- }
+ 	if (!tchild) {
+-		tchild = __of_node_dup(node, node_kbasename);
++		tchild = __of_node_dup(NULL, node_kbasename);
+ 		if (!tchild)
+ 			return -ENOMEM;
  
 -- 
 2.19.1
