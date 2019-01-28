@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCFF3C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F170C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:50:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC48B2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E04EC20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:50:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697798;
-	bh=SE5XHf8psLDSx7qAgqaDon89x3npjd+p28AjjTYIwuk=;
+	s=default; t=1548697824;
+	bh=eizD5II0MRz8O7q9VQ1oOCuRyzcsjd88aNICZeQoZcA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dRRyGMSd011T+q6NWWrbTdNdk2KT7HD8karlqfMLC3tqdIM1FE8raK4rVNOzLfeye
-	 9TKpB697eD8qttc7BZM2ZPUUkvBbyIZVZ4SGw0NB52PST0RxiBMABz+VKhF1fxUJSX
-	 f6EnS0ZVrd9AV8hiS9FwUHMCS8UrSN284FbIcR9Y=
+	b=Y1IZT+gkAQiOt9zi5fQtkGjzeF43TZSYcoaZqe7XvhMmCy6ZcuFHkz5L1jOTXwsDg
+	 xaGnet5vhglQPDHlHZbyv5w6oXDqKWj8PDoAKQLRzlRp1SDgP3PirM60ZDOgINm3/3
+	 jVgDsBmSPJFEexRSbS4OW3Lk2ow0M5Wqo2pqQmfM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728265AbfA1Rt4 (ORCPT
+        id S1727721AbfA1RuW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:49:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58314 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:50:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58062 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727587AbfA1Po4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:44:56 -0500
+        id S1727486AbfA1Poo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:44:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0D2142147A;
-        Mon, 28 Jan 2019 15:44:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2363F214DA;
+        Mon, 28 Jan 2019 15:44:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690296;
-        bh=SE5XHf8psLDSx7qAgqaDon89x3npjd+p28AjjTYIwuk=;
+        s=default; t=1548690283;
+        bh=eizD5II0MRz8O7q9VQ1oOCuRyzcsjd88aNICZeQoZcA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=X3dbk8dYo5g+kpABB4Y/ek7aHEmXJbyh6ilQfJNbpZzTsPy33J20rI/EgQavvDlDQ
-         KkeCVtmLqsmsrnkKUkthKHlZVd8BecS5FtEFEhBvs+2leAGsv8/fXY/U4U0Zk+Kb+l
-         4eQHk2WZDHiLDQAWQ+vkyZhXd1qWV0I/niu88BrI=
+        b=T9rP/aYIdTA1M0sreVuqwBrwz438jp6+0jJMJK1bA++XXIcmExGUnY+zjFFag9mLQ
+         LTgQmdB74cw1NaDe2zjkFJamW8DLBJIQf2mfxZaAbB44wOHkQhBnTi7ymkZtFiap8v
+         mSSc5pj3a7UbzvPU6110A+esStQ4Ysk8sS9oiTrw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Ioana Ciornei <ioana.ciornei@nxp.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 038/304] dpaa2-ptp: defer probe when portal allocation failed
-Date:   Mon, 28 Jan 2019 10:39:15 -0500
-Message-Id: <20190128154341.47195-38-sashal@kernel.org>
+Cc:     Eric Biggers <ebiggers@google.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 032/304] crypto: aes_ti - disable interrupts while accessing S-box
+Date:   Mon, 28 Jan 2019 10:39:09 -0500
+Message-Id: <20190128154341.47195-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,37 +58,113 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ioana Ciornei <ioana.ciornei@nxp.com>
+From: Eric Biggers <ebiggers@google.com>
 
-[ Upstream commit 5500598abbfb5b46201b9768bd9ea873a5eeaece ]
+[ Upstream commit 0a6a40c2a8c184a2fb467efacfb1cd338d719e0b ]
 
-The fsl_mc_portal_allocate can fail when the requested MC portals are
-not yet probed by the fsl_mc_allocator. In this situation, the driver
-should defer the probe.
+In the "aes-fixed-time" AES implementation, disable interrupts while
+accessing the S-box, in order to make cache-timing attacks more
+difficult.  Previously it was possible for the CPU to be interrupted
+while the S-box was loaded into L1 cache, potentially evicting the
+cachelines and causing later table lookups to be time-variant.
 
-Signed-off-by: Ioana Ciornei <ioana.ciornei@nxp.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+In tests I did on x86 and ARM, this doesn't affect performance
+significantly.  Responsiveness is potentially a concern, but interrupts
+are only disabled for a single AES block.
+
+Note that even after this change, the implementation still isn't
+necessarily guaranteed to be constant-time; see
+https://cr.yp.to/antiforgery/cachetiming-20050414.pdf for a discussion
+of the many difficulties involved in writing truly constant-time AES
+software.  But it's valuable to make such attacks more difficult.
+
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ crypto/Kconfig  |  3 ++-
+ crypto/aes_ti.c | 18 ++++++++++++++++++
+ 2 files changed, 20 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
-index 84b942b1eccc..9b150db3b510 100644
---- a/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
-+++ b/drivers/net/ethernet/freescale/dpaa2/dpaa2-ptp.c
-@@ -140,7 +140,10 @@ static int dpaa2_ptp_probe(struct fsl_mc_device *mc_dev)
+diff --git a/crypto/Kconfig b/crypto/Kconfig
+index 05c91eb10ca1..4f24acac3d48 100644
+--- a/crypto/Kconfig
++++ b/crypto/Kconfig
+@@ -1006,7 +1006,8 @@ config CRYPTO_AES_TI
+ 	  8 for decryption), this implementation only uses just two S-boxes of
+ 	  256 bytes each, and attempts to eliminate data dependent latencies by
+ 	  prefetching the entire table into the cache at the start of each
+-	  block.
++	  block. Interrupts are also disabled to avoid races where cachelines
++	  are evicted when the CPU is interrupted to do something else.
  
- 	err = fsl_mc_portal_allocate(mc_dev, 0, &mc_dev->mc_io);
- 	if (err) {
--		dev_err(dev, "fsl_mc_portal_allocate err %d\n", err);
-+		if (err == -ENXIO)
-+			err = -EPROBE_DEFER;
-+		else
-+			dev_err(dev, "fsl_mc_portal_allocate err %d\n", err);
- 		goto err_exit;
- 	}
+ config CRYPTO_AES_586
+ 	tristate "AES cipher algorithms (i586)"
+diff --git a/crypto/aes_ti.c b/crypto/aes_ti.c
+index 03023b2290e8..1ff9785b30f5 100644
+--- a/crypto/aes_ti.c
++++ b/crypto/aes_ti.c
+@@ -269,6 +269,7 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	const u32 *rkp = ctx->key_enc + 4;
+ 	int rounds = 6 + ctx->key_length / 4;
+ 	u32 st0[4], st1[4];
++	unsigned long flags;
+ 	int round;
  
+ 	st0[0] = ctx->key_enc[0] ^ get_unaligned_le32(in);
+@@ -276,6 +277,12 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	st0[2] = ctx->key_enc[2] ^ get_unaligned_le32(in + 8);
+ 	st0[3] = ctx->key_enc[3] ^ get_unaligned_le32(in + 12);
+ 
++	/*
++	 * Temporarily disable interrupts to avoid races where cachelines are
++	 * evicted when the CPU is interrupted to do something else.
++	 */
++	local_irq_save(flags);
++
+ 	st0[0] ^= __aesti_sbox[ 0] ^ __aesti_sbox[128];
+ 	st0[1] ^= __aesti_sbox[32] ^ __aesti_sbox[160];
+ 	st0[2] ^= __aesti_sbox[64] ^ __aesti_sbox[192];
+@@ -300,6 +307,8 @@ static void aesti_encrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	put_unaligned_le32(subshift(st1, 1) ^ rkp[5], out + 4);
+ 	put_unaligned_le32(subshift(st1, 2) ^ rkp[6], out + 8);
+ 	put_unaligned_le32(subshift(st1, 3) ^ rkp[7], out + 12);
++
++	local_irq_restore(flags);
+ }
+ 
+ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+@@ -308,6 +317,7 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	const u32 *rkp = ctx->key_dec + 4;
+ 	int rounds = 6 + ctx->key_length / 4;
+ 	u32 st0[4], st1[4];
++	unsigned long flags;
+ 	int round;
+ 
+ 	st0[0] = ctx->key_dec[0] ^ get_unaligned_le32(in);
+@@ -315,6 +325,12 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	st0[2] = ctx->key_dec[2] ^ get_unaligned_le32(in + 8);
+ 	st0[3] = ctx->key_dec[3] ^ get_unaligned_le32(in + 12);
+ 
++	/*
++	 * Temporarily disable interrupts to avoid races where cachelines are
++	 * evicted when the CPU is interrupted to do something else.
++	 */
++	local_irq_save(flags);
++
+ 	st0[0] ^= __aesti_inv_sbox[ 0] ^ __aesti_inv_sbox[128];
+ 	st0[1] ^= __aesti_inv_sbox[32] ^ __aesti_inv_sbox[160];
+ 	st0[2] ^= __aesti_inv_sbox[64] ^ __aesti_inv_sbox[192];
+@@ -339,6 +355,8 @@ static void aesti_decrypt(struct crypto_tfm *tfm, u8 *out, const u8 *in)
+ 	put_unaligned_le32(inv_subshift(st1, 1) ^ rkp[5], out + 4);
+ 	put_unaligned_le32(inv_subshift(st1, 2) ^ rkp[6], out + 8);
+ 	put_unaligned_le32(inv_subshift(st1, 3) ^ rkp[7], out + 12);
++
++	local_irq_restore(flags);
+ }
+ 
+ static struct crypto_alg aes_alg = {
 -- 
 2.19.1
 
