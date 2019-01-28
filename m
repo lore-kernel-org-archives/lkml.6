@@ -6,47 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88A39C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2C62C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 566AC217F5
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ACC222175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:56:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691012;
-	bh=7/e54cZZc5BwcCOdXCHdAzgPoH2kv33q7BaBU+NbVWw=;
+	s=default; t=1548691014;
+	bh=kVXAcNbX34ZKCZ/Qbq2NoPXYvZxxHHW51Tl9wjvUbL4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=rq/67hcTQ2B11n5Yb8bthEI5KxZ0n1X2wlbup0hHYj+pAUQpuxe9Xrm3rBTse9Q/W
-	 Tj+b3ZkcDeaUSMEhzG91QN6WzlzpqN+mPzN1hltIwHgEOPImizd07cOKSl8pH/esHQ
-	 U9XDCxF01MqKnT1OJxe+OgAUyx/cXgBTOtj0nBNE=
+	b=JwjJNaHW8tDxhuF9bwcrz/MwcPj9TNnNn8blQsDmlmtB8Xlibx0FGftPK5Q/HQ7A+
+	 slQEAWGQvv07q+07qexR91LGIMvC6OGdIQIYu5UlF2k3qvUSXPQ47S/gyKFwq2pObH
+	 ROjD2OhLzrz6ETVtJSEo8f+Y6sE8w3a9HOZBMwkM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729726AbfA1P4u (ORCPT
+        id S1730143AbfA1P4x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:56:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:42422 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:56:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728827AbfA1P4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:56:48 -0500
+        id S1729724AbfA1P4u (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:56:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36AE42175B;
-        Mon, 28 Jan 2019 15:56:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5D87521783;
+        Mon, 28 Jan 2019 15:56:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691007;
-        bh=7/e54cZZc5BwcCOdXCHdAzgPoH2kv33q7BaBU+NbVWw=;
+        s=default; t=1548691010;
+        bh=kVXAcNbX34ZKCZ/Qbq2NoPXYvZxxHHW51Tl9wjvUbL4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xpp6ktUEF8ke/F/m1POtteeVeOQIeDaoV/nSW3aHY6SlrGrZcD3gz06vlkxMhUb/U
-         HO5POKf/r+kAoXAgyCerpXBcU5Wfhy+5Uy2gNLIXMgkbmRWuNojIMAJSCl70IO6PK5
-         792u2VqdHouWbYk8kGHvfFfTwodPMBM6Ybc8DE1g=
+        b=1Liemt1Xqy7gz6vb4LGFhv6BO24aBt0yNSm4fcX/R6Kzw7rMzvfDWbDxxNfC8Tw8B
+         ilsEcWGm2QtJ9vhZuv6tXJdWlZ4xMOqTRrreQ4X/7ad+8n/VHEPHKfUV4lmqEVSo1j
+         MOrJOaex8W3XlXYckSgI1WayK6GY7Zqxj8cc43yE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Vitaly Kuznetsov <vkuznets@redhat.com>,
+Cc:     Jim Mattson <jmattson@google.com>,
         =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 259/304] selftests: kvm: report failed stage when exit reason is unexpected
-Date:   Mon, 28 Jan 2019 10:42:56 -0500
-Message-Id: <20190128154341.47195-259-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, kvm@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 260/304] kvm: Change offset in kvm_write_guest_offset_cached to unsigned
+Date:   Mon, 28 Jan 2019 10:42:57 -0500
+Message-Id: <20190128154341.47195-260-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,60 +58,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vitaly Kuznetsov <vkuznets@redhat.com>
+From: Jim Mattson <jmattson@google.com>
 
-[ Upstream commit b85c32dd27495075380350fcd5d614a6b45311b8 ]
+[ Upstream commit 7a86dab8cf2f0fdf508f3555dddfc236623bff60 ]
 
-When we get a report like
+Since the offset is added directly to the hva from the
+gfn_to_hva_cache, a negative offset could result in an out of bounds
+write. The existing BUG_ON only checks for addresses beyond the end of
+the gfn_to_hva_cache, not for addresses before the start of the
+gfn_to_hva_cache.
 
-==== Test Assertion Failure ====
-  x86_64/state_test.c:157: run->exit_reason == KVM_EXIT_IO
-  pid=955 tid=955 - Success
-     1	0x0000000000401350: main at state_test.c:154
-     2	0x00007fc31c9e9412: ?? ??:0
-     3	0x000000000040159d: _start at ??:?
-  Unexpected exit reason: 8 (SHUTDOWN),
+Note that all current call sites have non-negative offsets.
 
-it is not obvious which particular stage failed. Add the info.
-
-Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+Fixes: 4ec6e8636256 ("kvm: Introduce kvm_write_guest_offset_cached()")
+Reported-by: Cfir Cohen <cfir@google.com>
+Signed-off-by: Jim Mattson <jmattson@google.com>
+Reviewed-by: Cfir Cohen <cfir@google.com>
+Reviewed-by: Peter Shier <pshier@google.com>
+Reviewed-by: Krish Sadhukhan <krish.sadhukhan@oracle.com>
+Reviewed-by: Sean Christopherson <sean.j.christopherson@intel.com>
 Signed-off-by: Radim Krčmář <rkrcmar@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/kvm/x86_64/evmcs_test.c | 4 ++--
- tools/testing/selftests/kvm/x86_64/state_test.c | 4 ++--
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ include/linux/kvm_host.h | 3 ++-
+ virt/kvm/kvm_main.c      | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/kvm/x86_64/evmcs_test.c b/tools/testing/selftests/kvm/x86_64/evmcs_test.c
-index 92c2cfd1b182..ea3c73e8f4f6 100644
---- a/tools/testing/selftests/kvm/x86_64/evmcs_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/evmcs_test.c
-@@ -113,8 +113,8 @@ int main(int argc, char *argv[])
- 	for (stage = 1;; stage++) {
- 		_vcpu_run(vm, VCPU_ID);
- 		TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
--			    "Unexpected exit reason: %u (%s),\n",
--			    run->exit_reason,
-+			    "Stage %d: unexpected exit reason: %u (%s),\n",
-+			    stage, run->exit_reason,
- 			    exit_reason_str(run->exit_reason));
+diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
+index c926698040e0..a03d5e264e5e 100644
+--- a/include/linux/kvm_host.h
++++ b/include/linux/kvm_host.h
+@@ -694,7 +694,8 @@ int kvm_write_guest(struct kvm *kvm, gpa_t gpa, const void *data,
+ int kvm_write_guest_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ 			   void *data, unsigned long len);
+ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+-			   void *data, int offset, unsigned long len);
++				  void *data, unsigned int offset,
++				  unsigned long len);
+ int kvm_gfn_to_hva_cache_init(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ 			      gpa_t gpa, unsigned long len);
+ int kvm_clear_guest_page(struct kvm *kvm, gfn_t gfn, int offset, int len);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 2679e476b6c3..065ee2fb4034 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -1965,7 +1965,8 @@ int kvm_gfn_to_hva_cache_init(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+ EXPORT_SYMBOL_GPL(kvm_gfn_to_hva_cache_init);
  
- 		memset(&regs1, 0, sizeof(regs1));
-diff --git a/tools/testing/selftests/kvm/x86_64/state_test.c b/tools/testing/selftests/kvm/x86_64/state_test.c
-index 03da41f0f736..4b3f556265f1 100644
---- a/tools/testing/selftests/kvm/x86_64/state_test.c
-+++ b/tools/testing/selftests/kvm/x86_64/state_test.c
-@@ -152,8 +152,8 @@ int main(int argc, char *argv[])
- 	for (stage = 1;; stage++) {
- 		_vcpu_run(vm, VCPU_ID);
- 		TEST_ASSERT(run->exit_reason == KVM_EXIT_IO,
--			    "Unexpected exit reason: %u (%s),\n",
--			    run->exit_reason,
-+			    "Stage %d: unexpected exit reason: %u (%s),\n",
-+			    stage, run->exit_reason,
- 			    exit_reason_str(run->exit_reason));
- 
- 		memset(&regs1, 0, sizeof(regs1));
+ int kvm_write_guest_offset_cached(struct kvm *kvm, struct gfn_to_hva_cache *ghc,
+-			   void *data, int offset, unsigned long len)
++				  void *data, unsigned int offset,
++				  unsigned long len)
+ {
+ 	struct kvm_memslots *slots = kvm_memslots(kvm);
+ 	int r;
 -- 
 2.19.1
 
