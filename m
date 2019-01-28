@@ -2,111 +2,99 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02045C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 91055C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C56532147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wOXE9mls"
+	by mail.kernel.org (Postfix) with ESMTP id 538FA20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:08:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548691728;
+	bh=JDDUV0KKYNt7q1gDb0bK78KXVMEp4pemqksnRIQr3OE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=UGmxqoTk84+FkciZEEy9B2mBkhS3vJR4GbxRTubrnbUihCnVSHtJKGVL2Y3fzn6s3
+	 s8GzzvPHtLebIWgUnZneIB5noWS1J60L8v8S2oHzTR5/k+FFUcsbqB2ArX/6bHmr7e
+	 4NBXSITTOfek/JZj3JkC/NzaHfJ2EiR7PrJWSBJA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732460AbfA1QIo (ORCPT
+        id S1731804AbfA1QIq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:08:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60838 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732461AbfA1QIo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 11:08:44 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:35377 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731771AbfA1QIj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:08:39 -0500
-Received: by mail-yw1-f67.google.com with SMTP id h32so6937724ywk.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 08:08:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=d0rb+admgqujxz8uCtJLl0Rf7qV1TQ5qEBaCJcsbcKE=;
-        b=wOXE9mlsqSzCnNKDjZ4de5VkO420siVjvekQdDBL2INCdraE6pj5XAX+vhi4jyxdXW
-         yDCJyDgEAeh+fT7R6wF1MjXjTejgF8pb5/MfAurddLddFBlZXOSuoxuE233Qi3HjVSqo
-         4GoZCjUBcPzKXWpUw1LcvBnU5kU3ubaHiZQclCUtzFKiL4hJHZ/MOAOwguW0MY2W+ZrX
-         F6zCrCUEuwRXz/80NBnkgnrbHR9sL0VgmzPbZNQjiwerNp2Q9J13nCdAoPxwwD5K51g+
-         tpnGlywKwCDWKUuQeurnWePHgElLGsMvJeWbyO0eh+ZkjFYyh1NP/o3GlX9dOCEavRlk
-         xU1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=d0rb+admgqujxz8uCtJLl0Rf7qV1TQ5qEBaCJcsbcKE=;
-        b=Ok0JRJmEs+jMKfXULIaHE5pcvWsE/v4W0xkBpwa4gAgPGqz697RxBVZCx9TzaxjlHK
-         QJ//oYlgJ7tgI5p5/E+Gz49RIbhGsI89L6H3opLg+gk4Qk7MZbWtrRsYN887KdCQ070I
-         9UTPGOQNr73VApcPs3K9mJPYIMzOVIEgrP+6D033HStu41jIY5XytCUmApKMTS6CvKjf
-         Mr1s2ldIQypG/41yvxdAPi3Yb6VhPYxqBW2/qIVC6F8pJzqxqgLJwTMUCjUaUlmtska7
-         maIANXmcfUIM8hz0Twt76hqK5kva3bsJUbvvbH9I2ZgNHJ8+1zjeUE/kOeDFrN7jdBWF
-         2HIA==
-X-Gm-Message-State: AJcUukdUVi10lbc/53+9rFHCYitYvXxf9pchZSO02tAx1WWAvFKuWj5y
-        1kSDhZC6CF9f5q/70LCXQ/tPiZhmfzdyn7esbgDeqg==
-X-Google-Smtp-Source: ALg8bN4RMJBWBGwdTY3r88jgG3etUuaEixGDkGVTMtKvivTJl1EKc4QuLJQ7/1dgTKj1KyPF3jcfX2IZmpCtemH2i6o=
-X-Received: by 2002:a81:ee07:: with SMTP id l7mr21449063ywm.489.1548691718003;
- Mon, 28 Jan 2019 08:08:38 -0800 (PST)
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A51E720989;
+        Mon, 28 Jan 2019 16:08:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691723;
+        bh=JDDUV0KKYNt7q1gDb0bK78KXVMEp4pemqksnRIQr3OE=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=APs4goYU60Atqh5WP+p1GnqCxiFhOmSptjbLjJhEdpOa2XVow/aqWZgPD9/mzPLHb
+         3uF928RQsAjccBbeV5AHnTB8EYGGfi8nhEuFWjto+sXgve62OpeBC/RIT8Rz3xHCZY
+         a3kDS9Ntn+uq9+8Ny00eJYqC4K5eG1E1tDMfounk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.19 197/258] powerpc/powernv/ioda: Allocate indirect TCE levels of cached userspace addresses on demand
+Date:   Mon, 28 Jan 2019 10:58:23 -0500
+Message-Id: <20190128155924.51521-197-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190123223144.GA10798@chrisdown.name> <20190124082252.GD4087@dhcp22.suse.cz>
- <20190124160009.GA12436@cmpxchg.org> <20190124170117.GS4087@dhcp22.suse.cz>
- <20190124182328.GA10820@cmpxchg.org> <20190125074824.GD3560@dhcp22.suse.cz>
- <20190125165152.GK50184@devbig004.ftw2.facebook.com> <20190125173713.GD20411@dhcp22.suse.cz>
- <20190125182808.GL50184@devbig004.ftw2.facebook.com> <CALvZod6LFY+FYfBcAX0kLxV5KKB1-TX2cU5EDyyyjvHOtuWWbA@mail.gmail.com>
- <20190128160512.GR50184@devbig004.ftw2.facebook.com>
-In-Reply-To: <20190128160512.GR50184@devbig004.ftw2.facebook.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Mon, 28 Jan 2019 08:08:26 -0800
-Message-ID: <CALvZod5Rrr6ENW5yLNzniFeFmGB=mDRH+guNLmcayTX-_xDAGw@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Chris Down <chris@chrisdown.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun,
+From: Alexey Kardashevskiy <aik@ozlabs.ru>
 
-On Mon, Jan 28, 2019 at 8:05 AM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello, Shakeel.
->
-> On Mon, Jan 28, 2019 at 07:59:33AM -0800, Shakeel Butt wrote:
-> > Why not make this configurable at the delegation boundary? As you
-> > mentioned, there are jobs who want centralized workload manager to
-> > watch over their subtrees while there can be jobs which want to
-> > monitor their subtree themselves. For example I can have a job which
-> > know how to act when one of the children cgroup goes OOM. However if
-> > the root of that job goes OOM then the centralized workload manager
-> > should do something about it. With this change, how to implement this
-> > scenario? How will the central manager differentiates between that a
-> > subtree of a job goes OOM or the root of that job? I guess from the
-> > discussion it seems like the centralized manager has to traverse that
-> > job's subtree to find the source of OOM.
-> >
-> > Why can't we let the implementation of centralized manager easier by
-> > allowing to configure the propagation of these notifications across
-> > delegation boundary.
->
-> I think the right way to achieve the above would be having separate
-> recursive and local counters.
->
+[ Upstream commit bdbf649efe21173cae63b4b71db84176420f9039 ]
 
-Do you envision a separate interface/file for recursive and local
-counters? That would make notifications simpler but that is an
-additional interface.
+The powernv platform maintains 2 TCE tables for VFIO - a hardware TCE
+table and a table with userspace addresses; the latter is used for
+marking pages dirty when corresponging TCEs are unmapped from
+the hardware table.
 
-Shakeel
+a68bd1267b72 ("powerpc/powernv/ioda: Allocate indirect TCE levels
+on demand") enabled on-demand allocation of the hardware table,
+however it missed the other table so it has still been fully allocated
+at the boot time. This fixes the issue by allocating a single level,
+just like we do for the hardware table.
+
+Fixes: a68bd1267b72 ("powerpc/powernv/ioda: Allocate indirect TCE levels on demand")
+Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
+Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/powerpc/platforms/powernv/pci-ioda-tce.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/powernv/pci-ioda-tce.c b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
+index fe9691040f54..7639b2168755 100644
+--- a/arch/powerpc/platforms/powernv/pci-ioda-tce.c
++++ b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
+@@ -299,7 +299,7 @@ long pnv_pci_ioda2_table_alloc_pages(int nid, __u64 bus_offset,
+ 	if (alloc_userspace_copy) {
+ 		offset = 0;
+ 		uas = pnv_pci_ioda2_table_do_alloc_pages(nid, level_shift,
+-				levels, tce_table_size, &offset,
++				tmplevels, tce_table_size, &offset,
+ 				&total_allocated_uas);
+ 		if (!uas)
+ 			goto free_tces_exit;
+-- 
+2.19.1
+
