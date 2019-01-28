@@ -6,50 +6,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8432CC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 053B6C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4ABB42147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BEE002147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692520;
-	bh=kpcclXO/6zS6iMjupsPc1yGtaZyN58PULhUhbrdfF54=;
+	s=default; t=1548692527;
+	bh=zRsqcLmafYLYhAeiJ+btxqEnr3DhVkl/NWZROylBLlk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Y0H0Q7ZJFlFH4nwYYO5KUsqCc+HiYJ7UYcZTyS/uskq5v1YYTPBExU+efJs/PgRdW
-	 lbmO6wfQ/MrHHqFGE3oXtjP8IThLI1XbT2Dia+qq7RvFTx8eDqZ8C0acnzt7hTOXnQ
-	 weUIIfmaQsmFW9ns7rjKlE7dk4BmaIZkIVrBkz+c=
+	b=uVfZ7xMPlGFFPocUbhU9eR4viXD6+bqyXzTmuam3zUnRqONf/R/21oeZoKTQArm4x
+	 lrOZGYwk+tuJoI9fMeYhgOLv2vOHhtNqt4pAEbmAB5ek3D3vZXPJsfztjkKvPEH6Rs
+	 W1o8GmoabHN6uyf08U69ejv/YRmAGy9QHiNRocK8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389112AbfA1QV7 (ORCPT
+        id S2388728AbfA1QWF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:21:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57702 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:22:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389081AbfA1QVt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:21:49 -0500
+        id S2389110AbfA1QV7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:21:59 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB99F20663;
-        Mon, 28 Jan 2019 16:21:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 154C82171F;
+        Mon, 28 Jan 2019 16:21:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692508;
-        bh=kpcclXO/6zS6iMjupsPc1yGtaZyN58PULhUhbrdfF54=;
+        s=default; t=1548692518;
+        bh=zRsqcLmafYLYhAeiJ+btxqEnr3DhVkl/NWZROylBLlk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=PT9DxkV6n1S5IyzStfpvgoyBsNPn7T73/PbKsar7g752OO5N4FlDZXykzlxuVhoWn
-         p9Djy2HyaeoLybbE+PvtwPnaJEbshPY0kklLsxMv30SMnzLaCTGtWiqiVc606+zZif
-         mh6CZ6B3DKwBd3Quzj4JGlaxw9Epmk/bn94gGY8E=
+        b=Nznb9azRKfsg+I8SMkZJACYR952vI0vVkwDQWoUMR8cvlhWfaC6Fmq6s21Vv/7aXA
+         pdcgqr01i6dyilxCvoe6EJLKiNkYjNAPoMRCO+JdyQ5Mo3hCVHiQo851MXIUmfkFDx
+         NDBo2onHq1Z9Y6irXy3szDHSvkBcKgwHIYmnxH8c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.9 043/107] iommu/amd: Fix amd_iommu=force_isolation
-Date:   Mon, 28 Jan 2019 11:18:43 -0500
-Message-Id: <20190128161947.57405-43-sashal@kernel.org>
+Cc:     =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <uwe@kleine-koenig.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 047/107] Input: rotary-encoder - don't log EPROBE_DEFER to kernel log
+Date:   Mon, 28 Jan 2019 11:18:47 -0500
+Message-Id: <20190128161947.57405-47-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,55 +58,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Uwe Kleine-König <uwe@kleine-koenig.org>
 
-[ Upstream commit c12b08ebbe16f0d3a96a116d86709b04c1ee8e74 ]
+[ Upstream commit 0832e93632c61987d504e251b927a2be769dd21a ]
 
-The parameter is still there but it's ignored. We need to check its
-value before deciding to go into passthrough mode for AMD IOMMU v2
-capable device.
+When a driver fails to bind because a resource it still missing it's not
+helpful to report this as (usually) probing is repeated later.
 
-We occasionally use this parameter to force v2 capable device into
-translation mode to debug memory corruption that we suspect is
-caused by DMA writes.
-
-To address the following comment from Joerg Roedel on the first
-version, v2 capability of device is completely ignored.
-> This breaks the iommu_v2 use-case, as it needs a direct mapping for the
-> devices that support it.
-
-And from Documentation/admin-guide/kernel-parameters.txt:
-  This option does not override iommu=pt
-
-Fixes: aafd8ba0ca74 ("iommu/amd: Implement add_device and remove_device")
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/input/misc/rotary_encoder.c | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index bba1b9f2f782..e984418ffa2a 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -464,7 +464,14 @@ static int iommu_init_device(struct device *dev)
+diff --git a/drivers/input/misc/rotary_encoder.c b/drivers/input/misc/rotary_encoder.c
+index 1588aecafff7..72eee6d55527 100644
+--- a/drivers/input/misc/rotary_encoder.c
++++ b/drivers/input/misc/rotary_encoder.c
+@@ -240,8 +240,10 @@ static int rotary_encoder_probe(struct platform_device *pdev)
  
- 	dev_data->alias = get_alias(dev);
- 
--	if (dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
-+	/*
-+	 * By default we use passthrough mode for IOMMUv2 capable device.
-+	 * But if amd_iommu=force_isolation is set (e.g. to debug DMA to
-+	 * invalid address), we ignore the capability for the device so
-+	 * it'll be forced to go into translation mode.
-+	 */
-+	if ((iommu_pass_through || !amd_iommu_force_isolation) &&
-+	    dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
- 		struct amd_iommu *iommu;
- 
- 		iommu = amd_iommu_rlookup_table[dev_data->devid];
+ 	encoder->gpios = devm_gpiod_get_array(dev, NULL, GPIOD_IN);
+ 	if (IS_ERR(encoder->gpios)) {
+-		dev_err(dev, "unable to get gpios\n");
+-		return PTR_ERR(encoder->gpios);
++		err = PTR_ERR(encoder->gpios);
++		if (err != -EPROBE_DEFER)
++			dev_err(dev, "unable to get gpios: %d\n", err);
++		return err;
+ 	}
+ 	if (encoder->gpios->ndescs < 2) {
+ 		dev_err(dev, "not enough gpios found\n");
 -- 
 2.19.1
 
