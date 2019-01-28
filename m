@@ -2,80 +2,83 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BFAC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:48:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C328AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:49:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C31120844
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:48:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9D7AA2082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:49:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726877AbfA1Osv (ORCPT
+        id S1727006AbfA1OtK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:48:51 -0500
-Received: from mx2.suse.de ([195.135.220.15]:57096 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726266AbfA1Osu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:48:50 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 9D61AAE5D;
-        Mon, 28 Jan 2019 14:48:49 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 71D281E3FEF; Mon, 28 Jan 2019 15:48:47 +0100 (CET)
-Date:   Mon, 28 Jan 2019 15:48:47 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Liu Xiang <liu.xiang6@zte.com.cn>
-Cc:     jack@suse.com, linux-ext4@vger.kernel.org,
-        linux-kernel@vger.kernel.org, liuxiang_1999@126.com
-Subject: Re: [PATCH] ext2: Remove useless reset code
-Message-ID: <20190128144847.GG27972@quack2.suse.cz>
-References: <1548424864-4647-1-git-send-email-liu.xiang6@zte.com.cn>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1548424864-4647-1-git-send-email-liu.xiang6@zte.com.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Mon, 28 Jan 2019 09:49:10 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:45784 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726925AbfA1OtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 09:49:09 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 89AC358E27;
+        Mon, 28 Jan 2019 14:49:09 +0000 (UTC)
+Received: from localhost (unknown [10.43.2.219])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 91350C95B1;
+        Mon, 28 Jan 2019 14:49:06 +0000 (UTC)
+From:   Stanislaw Gruszka <sgruszka@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Oleg Nesterov <oleg@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Brian Behlendorf <behlendorf1@llnl.gov>,
+        Siarhei Volkau <lis8215@gmail.com>
+Subject: [PATCH] lib/div64: off by one in shift
+Date:   Mon, 28 Jan 2019 15:49:04 +0100
+Message-Id: <1548686944-11891-1-git-send-email-sgruszka@redhat.com>
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Mon, 28 Jan 2019 14:49:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 25-01-19 22:01:04, Liu Xiang wrote:
-> If ((char *)de == dir_end) is true, the name_len will not be used
-> in the subsequent routine. So the reset code can be removed.
-> 
-> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+fls counts bits starting from 1 to 32 (returns 0 for zero argument).
+If we add 1 we shift right one bit more and loose precision from
+divisor, what cause function incorect results with some numbers.
 
-Thanks for the patch. I agree with your analysis but I prefer to keep the
-code as is - it prevents warnings about uninitialized variable being used
-for compilers than cannot infer that and also for humans reading the code
-is easier this way.
+Corrected code was tested in user-space, see bugzilla:
+https://bugzilla.kernel.org/show_bug.cgi?id=202391
 
-								Honza
+Fixes: 658716d19f8f ("div64_u64(): improve precision on 32bit platforms")
+Reported-and-tested-by: Siarhei Volkau <lis8215@gmail.com>
+Signed-off-by: Stanislaw Gruszka <sgruszka@redhat.com>
+---
+ lib/div64.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> ---
->  fs/ext2/dir.c | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
-> index 3b8114d..5ec497f 100644
-> --- a/fs/ext2/dir.c
-> +++ b/fs/ext2/dir.c
-> @@ -517,7 +517,6 @@ int ext2_add_link (struct dentry *dentry, struct inode *inode)
->  		while ((char *)de <= kaddr) {
->  			if ((char *)de == dir_end) {
->  				/* We hit i_size */
-> -				name_len = 0;
->  				rec_len = chunk_size;
->  				de->rec_len = ext2_rec_len_to_disk(chunk_size);
->  				de->inode = 0;
-> -- 
-> 1.9.1
-> 
-> 
+diff --git a/lib/div64.c b/lib/div64.c
+index 01c8602bb6ff..ee146bb4c558 100644
+--- a/lib/div64.c
++++ b/lib/div64.c
+@@ -109,7 +109,7 @@ u64 div64_u64_rem(u64 dividend, u64 divisor, u64 *remainder)
+ 		quot = div_u64_rem(dividend, divisor, &rem32);
+ 		*remainder = rem32;
+ 	} else {
+-		int n = 1 + fls(high);
++		int n = fls(high);
+ 		quot = div_u64(dividend >> n, divisor >> n);
+ 
+ 		if (quot != 0)
+@@ -147,7 +147,7 @@ u64 div64_u64(u64 dividend, u64 divisor)
+ 	if (high == 0) {
+ 		quot = div_u64(dividend, divisor);
+ 	} else {
+-		int n = 1 + fls(high);
++		int n = fls(high);
+ 		quot = div_u64(dividend >> n, divisor >> n);
+ 
+ 		if (quot != 0)
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+1.9.3
+
