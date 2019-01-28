@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4587C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 785ADC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 869D32082E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40C3521917
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691184;
-	bh=cu9oaL5Qh4oRfgsQ43pu620QNt3zV7o3X9rv5QO/njw=;
+	s=default; t=1548691187;
+	bh=9cbfAIXOFbbajhdQueuYHjcFXVaN7mUO0Htati8+Ipc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fFQ4eY+DpUG71iTHnsw5TFtP9/+2ThF6a1Lir4r0GQL1QWOD+FilcS7niY/77NZJv
-	 DVpOL7ZKD13JcQZd7NokYkfYYvs6+8ERTITsjv9/aVAel6pB/PCYbaB9AufZ1SIcpo
-	 N46JG4hdKfqS+CA2/3itPsLd3Zajxrb6ZUSsZdiM=
+	b=LR4pOU5/Cek+DVxO7HetXZ3a1+xi3udJbTdfCLPVL7SfYZjV3/E++iu4p0s7L/P9Q
+	 PlYhgGm/ETxEoCE2XKj9L056b+FqpJN1Poq3wtjX0NIcszZQ9KKNGijhU93M/y7Vsb
+	 ITCemKLOQXYWN+nYjC0kNLVi5z5zX/u+TYh7q19g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730603AbfA1P7m (ORCPT
+        id S1730616AbfA1P7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:59:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44918 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:59:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44970 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727158AbfA1P7l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:59:41 -0500
+        id S1730022AbfA1P7n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:59:43 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5AC642175B;
-        Mon, 28 Jan 2019 15:59:38 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E9F4221848;
+        Mon, 28 Jan 2019 15:59:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691180;
-        bh=cu9oaL5Qh4oRfgsQ43pu620QNt3zV7o3X9rv5QO/njw=;
+        s=default; t=1548691183;
+        bh=9cbfAIXOFbbajhdQueuYHjcFXVaN7mUO0Htati8+Ipc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fXiLuv8KakTsQeoNw2G9gzCeCzy7IytG6FfmqizKI4vvsn81VUbVGHX4DGitcQ7U5
-         iglIQUhr3YI2q79EsMpZw1xxf1E6OTf2GjzKi9yIxFfhLknfEQy/OE7LglYzRV6PTd
-         +a5nt852pOyJGP4pKGFP+B2zrukFKc9H4rTdSXPU=
+        b=Di9IrLSvKjIck8gNJQx6NP1p3VBRv30PEJoxhNZEV773qUYWkM/YnWNL+vow0iLkT
+         Zfh5sjiM176gb7ANxBUenUQEgp7Gkf3dEEZFqz9p2YU9aKvnMxlppdtQXNb91XuwKK
+         EBYSrDgqvrNn0Im6/EA2bXwqniPhEP45m4InDX5s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Mathias Duckeck <m.duckeck@kunbus.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 004/258] pinctrl: bcm2835: Use raw spinlock for RT compatibility
-Date:   Mon, 28 Jan 2019 10:55:10 -0500
-Message-Id: <20190128155924.51521-4-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 005/258] ASoC: Intel: mrfld: fix uninitialized variable access
+Date:   Mon, 28 Jan 2019 10:55:11 -0500
+Message-Id: <20190128155924.51521-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,102 +57,54 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 3c7b30f704b6f5e53eed6bf89cf2c8d1b38b02c0 ]
+[ Upstream commit 1539c7f23f256120f89f8b9ec53160790bce9ed2 ]
 
-The BCM2835 pinctrl driver acquires a spinlock in its ->irq_enable,
-->irq_disable and ->irq_set_type callbacks.  Spinlocks become sleeping
-locks with CONFIG_PREEMPT_RT_FULL=y, therefore invocation of one of the
-callbacks in atomic context may cause a hard lockup if at least two GPIO
-pins in the same bank are used as interrupts.  The issue doesn't occur
-with just a single interrupt pin per bank because the lock is never
-contended.  I'm experiencing such lockups with GPIO 8 and 28 used as
-level-triggered interrupts, i.e. with ->irq_disable being invoked on
-reception of every IRQ.
+Randconfig testing revealed a very old bug, with gcc-8:
 
-The critical section protected by the spinlock is very small (one bitop
-and one RMW of an MMIO register), hence converting to a raw spinlock
-seems a better trade-off than converting the driver to threaded IRQ
-handling (which would increase latency to handle an interrupt).
+sound/soc/intel/atom/sst/sst_loader.c: In function 'sst_load_fw':
+sound/soc/intel/atom/sst/sst_loader.c:357:5: error: 'fw' may be used uninitialized in this function [-Werror=maybe-uninitialized]
+  if (fw == NULL) {
+     ^
+sound/soc/intel/atom/sst/sst_loader.c:354:25: note: 'fw' was declared here
+  const struct firmware *fw;
 
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Acked-by: Julia Cartwright <julia@ni.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+We must check the return code of request_firmware() before we look at the
+pointer result that may be uninitialized when the function fails.
+
+Fixes: 9012c9544eea ("ASoC: Intel: mrfld - Add DSP load and management")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Pierre-Louis Bossart <pierre-louis.bossart@linux.intel.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ sound/soc/intel/atom/sst/sst_loader.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index fa530913a2c8..08925d24180b 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -90,7 +90,7 @@ struct bcm2835_pinctrl {
- 	struct gpio_chip gpio_chip;
- 	struct pinctrl_gpio_range gpio_range;
+diff --git a/sound/soc/intel/atom/sst/sst_loader.c b/sound/soc/intel/atom/sst/sst_loader.c
+index 27413ebae956..b8c456753f01 100644
+--- a/sound/soc/intel/atom/sst/sst_loader.c
++++ b/sound/soc/intel/atom/sst/sst_loader.c
+@@ -354,14 +354,14 @@ static int sst_request_fw(struct intel_sst_drv *sst)
+ 	const struct firmware *fw;
  
--	spinlock_t irq_lock[BCM2835_NUM_BANKS];
-+	raw_spinlock_t irq_lock[BCM2835_NUM_BANKS];
- };
- 
- /* pins are just named GPIO0..GPIO53 */
-@@ -461,10 +461,10 @@ static void bcm2835_gpio_irq_enable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	set_bit(offset, &pc->enabled_irq_map[bank]);
- 	bcm2835_gpio_irq_config(pc, gpio, true);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
- 
- static void bcm2835_gpio_irq_disable(struct irq_data *data)
-@@ -476,12 +476,12 @@ static void bcm2835_gpio_irq_disable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	bcm2835_gpio_irq_config(pc, gpio, false);
- 	/* Clear events that were latched prior to clearing event sources */
- 	bcm2835_gpio_set_bit(pc, GPEDS0, gpio);
- 	clear_bit(offset, &pc->enabled_irq_map[bank]);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
- 
- static int __bcm2835_gpio_irq_set_type_disabled(struct bcm2835_pinctrl *pc,
-@@ -584,7 +584,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 	unsigned long flags;
- 	int ret;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 
- 	if (test_bit(offset, &pc->enabled_irq_map[bank]))
- 		ret = __bcm2835_gpio_irq_set_type_enabled(pc, gpio, type);
-@@ -596,7 +596,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 	else
- 		irq_set_handler_locked(data, handle_level_irq);
- 
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- 
- 	return ret;
- }
-@@ -1047,7 +1047,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
- 		for_each_set_bit(offset, &events, 32)
- 			bcm2835_gpio_wr(pc, GPEDS0 + i * 4, BIT(offset));
- 
--		spin_lock_init(&pc->irq_lock[i]);
-+		raw_spin_lock_init(&pc->irq_lock[i]);
+ 	retval = request_firmware(&fw, sst->firmware_name, sst->dev);
+-	if (fw == NULL) {
+-		dev_err(sst->dev, "fw is returning as null\n");
+-		return -EINVAL;
+-	}
+ 	if (retval) {
+ 		dev_err(sst->dev, "request fw failed %d\n", retval);
+ 		return retval;
  	}
- 
- 	err = gpiochip_add_data(&pc->gpio_chip, pc);
++	if (fw == NULL) {
++		dev_err(sst->dev, "fw is returning as null\n");
++		return -EINVAL;
++	}
+ 	mutex_lock(&sst->sst_lock);
+ 	retval = sst_cache_and_parse_fw(sst, fw);
+ 	mutex_unlock(&sst->sst_lock);
 -- 
 2.19.1
 
