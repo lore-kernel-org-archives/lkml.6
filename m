@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06C25C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:18:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D955C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:18:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA0B32082E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:18:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1A3F520856
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:18:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695930;
-	bh=h/ShXZmUtndpFgzPk/sJLpEnNUyArze+1iQgZvXa180=;
+	s=default; t=1548695937;
+	bh=f0spF4CTYM5t033TBalzw1w3xyJzYaiO5209hAX0zS0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=etAQ/yhak88fGVhE5B/++h6FDnZOkXrPsDx74du+ccSy91xhAZIMSs6fN08zTobkC
-	 h6n7kEypSzb6AjMN59jeNCEhk+WFt6RxjH6+BgvLyzDYtItdi7LbOvIqRC4LsPXnr0
-	 jZP5KEhfTgvqoIZiXs3L3L+YbSFVAud6yOId70b8=
+	b=XpvsAqdkMBVWpwj/0AihTsosQ6Q3fCC4fVXY4oXn0tAzlN83fVZHfT7CUY6kTwvWX
+	 J0MKBYpKms0e/8PvaCa2zrCWXOYxN4L+J3SXra0jCJ4qQPk8MLcppDgRe6pZUWOuTx
+	 EMEWtsVvUai0lwM8it5k/qgbzV0S9bEUVw1GUfxU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731056AbfA1QFG (ORCPT
+        id S1730623AbfA1QFA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:05:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51180 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:05:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730962AbfA1QFB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:05:01 -0500
+        id S1731702AbfA1QEz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:04:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id AECDC2171F;
-        Mon, 28 Jan 2019 16:04:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 7955620989;
+        Mon, 28 Jan 2019 16:04:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691500;
-        bh=h/ShXZmUtndpFgzPk/sJLpEnNUyArze+1iQgZvXa180=;
+        s=default; t=1548691495;
+        bh=f0spF4CTYM5t033TBalzw1w3xyJzYaiO5209hAX0zS0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=un3gPL1vVrYpLyjj1j39wZiZ0p4qAGpHb32HJ4aKGjXPzEsKX4QebzMPa32QHgHJ8
-         3VJJ0AN2LTOLS0pKYuIA3RJ95ScQ5B9jahwuQhT4v4OJ5BBpIH4N2L6eEg+Pas9x68
-         Bb5vXgolUxlUkHN2QG/MoOUODnHQCjwP7j9qA6OI=
+        b=EWCdeLOkN8fEoFgzQD+3ajMUZD0dCD92URpBMVSu1RHUTRR8OD2i+tYkoW9D+LMn2
+         UCPJpevUWxRWOtTEeDy3XUg1dbz/pwXF8weBk9gNlrmCibcZoTMq0vGJupNyIq4kOy
+         OGgrddiV0whwf00srZIX9sgDVoWi+JtN8d8icgvw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.19 118/258] iommu/amd: Fix amd_iommu=force_isolation
-Date:   Mon, 28 Jan 2019 10:57:04 -0500
-Message-Id: <20190128155924.51521-118-sashal@kernel.org>
+Cc:     Nicholas Mc Guire <hofrat@osadl.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 115/258] gpio: mt7621: report failure of devm_kasprintf()
+Date:   Mon, 28 Jan 2019 10:57:01 -0500
+Message-Id: <20190128155924.51521-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -58,55 +58,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+From: Nicholas Mc Guire <hofrat@osadl.org>
 
-[ Upstream commit c12b08ebbe16f0d3a96a116d86709b04c1ee8e74 ]
+[ Upstream commit 59d646c775d6ae688ee90fda9f2a4270c47b7490 ]
 
-The parameter is still there but it's ignored. We need to check its
-value before deciding to go into passthrough mode for AMD IOMMU v2
-capable device.
+kasprintf() may return NULL on failure of internal allocation thus the
+assigned  label  is not safe if not explicitly checked. On error
+mediatek_gpio_bank_probe() returns negative values so -ENOMEM in the
+(unlikely) failure case should be fine here.
 
-We occasionally use this parameter to force v2 capable device into
-translation mode to debug memory corruption that we suspect is
-caused by DMA writes.
-
-To address the following comment from Joerg Roedel on the first
-version, v2 capability of device is completely ignored.
-> This breaks the iommu_v2 use-case, as it needs a direct mapping for the
-> devices that support it.
-
-And from Documentation/admin-guide/kernel-parameters.txt:
-  This option does not override iommu=pt
-
-Fixes: aafd8ba0ca74 ("iommu/amd: Implement add_device and remove_device")
-
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Fixes: 4ba9c3afda41 ("gpio: mt7621: Add a driver for MT7621")
+Signed-off-by: Nicholas Mc Guire <hofrat@osadl.org>
+Reviewed-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Acked-by: Sean Wang <sean.wang@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/iommu/amd_iommu.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/gpio/gpio-mt7621.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index bee0dfb7b93b..34c9aa76a7bd 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -438,7 +438,14 @@ static int iommu_init_device(struct device *dev)
+diff --git a/drivers/gpio/gpio-mt7621.c b/drivers/gpio/gpio-mt7621.c
+index d72af6f6cdbd..1ec95bc18f5b 100644
+--- a/drivers/gpio/gpio-mt7621.c
++++ b/drivers/gpio/gpio-mt7621.c
+@@ -244,6 +244,8 @@ mediatek_gpio_bank_probe(struct device *dev,
+ 	rg->chip.of_xlate = mediatek_gpio_xlate;
+ 	rg->chip.label = devm_kasprintf(dev, GFP_KERNEL, "%s-bank%d",
+ 					dev_name(dev), bank);
++	if (!rg->chip.label)
++		return -ENOMEM;
  
- 	dev_data->alias = get_alias(dev);
- 
--	if (dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
-+	/*
-+	 * By default we use passthrough mode for IOMMUv2 capable device.
-+	 * But if amd_iommu=force_isolation is set (e.g. to debug DMA to
-+	 * invalid address), we ignore the capability for the device so
-+	 * it'll be forced to go into translation mode.
-+	 */
-+	if ((iommu_pass_through || !amd_iommu_force_isolation) &&
-+	    dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
- 		struct amd_iommu *iommu;
- 
- 		iommu = amd_iommu_rlookup_table[dev_data->devid];
+ 	ret = devm_gpiochip_add_data(dev, &rg->chip, mtk);
+ 	if (ret < 0) {
 -- 
 2.19.1
 
