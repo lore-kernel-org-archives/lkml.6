@@ -2,218 +2,109 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 353F1C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:06:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 092A2C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:06:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BCBF20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:06:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB3E72184E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:06:57 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="XRjhuUbr"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726738AbfA1HGv (ORCPT
+        id S1726790AbfA1HG4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:06:51 -0500
-Received: from mga02.intel.com ([134.134.136.20]:33071 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726647AbfA1HGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:06:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 27 Jan 2019 23:06:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,533,1539673200"; 
-   d="scan'208";a="129414238"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga002.jf.intel.com with ESMTP; 27 Jan 2019 23:06:50 -0800
-Received: from [10.125.252.29] (abudanko-mobl.ccr.corp.intel.com [10.125.252.29])
-        by linux.intel.com (Postfix) with ESMTP id 1A80958028E;
-        Sun, 27 Jan 2019 23:06:47 -0800 (PST)
-Subject: [PATCH v2 1/4] feature: realize libzstd check, LIBZSTD_DIR and
- NO_LIBZSTD defines
-From:   Alexey Budankov <alexey.budankov@linux.intel.com>
-To:     Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>
-Cc:     Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Andi Kleen <ak@linux.intel.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-References: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
-Organization: Intel Corp.
-Message-ID: <a3f3d50f-2ffa-b5fd-743e-dda34b79c5a7@linux.intel.com>
-Date:   Mon, 28 Jan 2019 10:06:46 +0300
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+        Mon, 28 Jan 2019 02:06:56 -0500
+Received: from hqemgate15.nvidia.com ([216.228.121.64]:12676 "EHLO
+        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726612AbfA1HGz (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 02:06:55 -0500
+Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4ea9f40000>; Sun, 27 Jan 2019 23:06:28 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate102.nvidia.com (PGP Universal service);
+  Sun, 27 Jan 2019 23:06:54 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate102.nvidia.com on Sun, 27 Jan 2019 23:06:54 -0800
+Received: from [10.19.108.140] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
+ 2019 07:06:53 +0000
+Subject: Re: [PATCH 2/5] phy: tegra: xusb: Skip single function lane
+ programming
+To:     Thierry Reding <thierry.reding@gmail.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>
+CC:     Jonathan Hunter <jonathanh@nvidia.com>,
+        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20190125112525.10697-1-thierry.reding@gmail.com>
+ <20190125112525.10697-2-thierry.reding@gmail.com>
+From:   jckuo <jckuo@nvidia.com>
+Message-ID: <7afb7753-39d2-69b9-3666-e159d3e85ae0@nvidia.com>
+Date:   Mon, 28 Jan 2019 15:06:51 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <64502e28-b312-e59f-5cd7-732c4088c16b@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20190125112525.10697-2-thierry.reding@gmail.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL108.nvidia.com (172.18.146.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548659188; bh=yPcMza5oiR2ZVuvA2oPLMM45+NWW6Z0V0gb5DeuFucg=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
+         Content-Language;
+        b=XRjhuUbrwT6yQGF7k2nzfxedzZDbnrh6trwACpMqBkV6oBo+iPUoRUO85J73APWni
+         vngtpAj9Y70bQSuzeo6QyTMh+BFz8hFy1KUHrTvuzKoHm/zDa5JDPOCrdZ65Mishaz
+         3nLf+tvp8TYs8QD9tphrubIQ1+tqStFvDDeypqPB9uAGAhEoa0QZyER3Si5lrYvggo
+         Z+up/HJgbfqHlO0GNtoPRnRLrd4Jv0e3Pnkb/3SbaCgYa++E6uF4VDUgp7IAanMcku
+         c6WvpjlAOvgo+219+8zY+N3hvt6jC4IQf3UzZyGj9hWEqohMpP4mfs75IHy4oOTueE
+         Piu+CCrEXPqRw==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Reviewed-by: JC Kuo <jckuo@nvidia.com>
 
-Implement libzstd feature check, NO_LIBZSTD and LIBZSTD_DIR defines
-to overrride Zstd library sources or disable the feature from the
-command line:
-
-  $ make -C tools/perf LIBZSTD_DIR=/root/abudanko/zstd-1.3.7 clean all
-  $ make -C tools/perf NO_LIBZSTD=1 clean all
-
-Signed-off-by: Alexey Budankov <alexey.budankov@linux.intel.com>
----
- tools/build/Makefile.feature       |  6 ++++--
- tools/build/feature/Makefile       |  6 +++++-
- tools/build/feature/test-all.c     |  5 +++++
- tools/build/feature/test-libzstd.c | 12 ++++++++++++
- tools/perf/Makefile.config         | 20 ++++++++++++++++++++
- tools/perf/Makefile.perf           |  3 +++
- 6 files changed, 49 insertions(+), 3 deletions(-)
- create mode 100644 tools/build/feature/test-libzstd.c
-
-diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
-index 5467c6bf9ceb..25088c8f05b2 100644
---- a/tools/build/Makefile.feature
-+++ b/tools/build/Makefile.feature
-@@ -71,7 +71,8 @@ FEATURE_TESTS_BASIC :=                  \
-         sdt				\
-         setns				\
-         libopencsd			\
--        libaio
-+        libaio				\
-+        libzstd
- 
- # FEATURE_TESTS_BASIC + FEATURE_TESTS_EXTRA is the complete list
- # of all feature tests
-@@ -118,7 +119,8 @@ FEATURE_DISPLAY ?=              \
-          lzma                   \
-          get_cpuid              \
-          bpf			\
--         libaio
-+         libaio			\
-+         libzstd
- 
- # Set FEATURE_CHECK_(C|LD)FLAGS-all for all FEATURE_TESTS features.
- # If in the future we need per-feature checks/flags for features not
-diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
-index 7ceb4441b627..4b8244ee65ce 100644
---- a/tools/build/feature/Makefile
-+++ b/tools/build/feature/Makefile
-@@ -62,7 +62,8 @@ FILES=                                          \
-          test-clang.bin				\
-          test-llvm.bin				\
-          test-llvm-version.bin			\
--         test-libaio.bin
-+         test-libaio.bin			\
-+         test-libzstd.bin
- 
- FILES := $(addprefix $(OUTPUT),$(FILES))
- 
-@@ -301,6 +302,9 @@ $(OUTPUT)test-clang.bin:
- $(OUTPUT)test-libaio.bin:
- 	$(BUILD) -lrt
- 
-+$(OUTPUT)test-libzstd.bin:
-+	$(BUILD) -lzstd
-+
- ###############################
- 
- clean:
-diff --git a/tools/build/feature/test-all.c b/tools/build/feature/test-all.c
-index 20cdaa4fc112..5af329b6ffef 100644
---- a/tools/build/feature/test-all.c
-+++ b/tools/build/feature/test-all.c
-@@ -178,6 +178,10 @@
- # include "test-libaio.c"
- #undef main
- 
-+#define main main_test_zstd
-+# include "test-libzstd.c"
-+#undef main
-+
- int main(int argc, char *argv[])
- {
- 	main_test_libpython();
-@@ -219,6 +223,7 @@ int main(int argc, char *argv[])
- 	main_test_setns();
- 	main_test_libopencsd();
- 	main_test_libaio();
-+	main_test_libzstd();
- 
- 	return 0;
- }
-diff --git a/tools/build/feature/test-libzstd.c b/tools/build/feature/test-libzstd.c
-new file mode 100644
-index 000000000000..55268c01b84d
---- /dev/null
-+++ b/tools/build/feature/test-libzstd.c
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
-+#include <zstd.h>
-+
-+int main(void)
-+{
-+	ZSTD_CStream	*cstream;
-+
-+	cstream = ZSTD_createCStream();
-+	ZSTD_freeCStream(cstream);
-+
-+	return 0;
-+}
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index b441c88cafa1..1dccd776a4aa 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -145,6 +145,13 @@ endif
- FEATURE_CHECK_CFLAGS-libbabeltrace := $(LIBBABELTRACE_CFLAGS)
- FEATURE_CHECK_LDFLAGS-libbabeltrace := $(LIBBABELTRACE_LDFLAGS) -lbabeltrace-ctf
- 
-+ifdef LIBZSTD_DIR
-+  LIBZSTD_CFLAGS  := -I$(LIBZSTD_DIR)/lib
-+  LIBZSTD_LDFLAGS := -L$(LIBZSTD_DIR)/lib
-+endif
-+FEATURE_CHECK_CFLAGS-libzstd := $(LIBZSTD_CFLAGS)
-+FEATURE_CHECK_LDFLAGS-libzstd := $(LIBZSTD_LDFLAGS)
-+
- FEATURE_CHECK_CFLAGS-bpf = -I. -I$(srctree)/tools/include -I$(srctree)/tools/arch/$(SRCARCH)/include/uapi -I$(srctree)/tools/include/uapi
- # include ARCH specific config
- -include $(src-perf)/arch/$(SRCARCH)/Makefile
-@@ -770,6 +777,19 @@ ifndef NO_LZMA
-   endif
- endif
- 
-+ifndef NO_LIBZSTD
-+  ifeq ($(feature-libzstd), 1)
-+    CFLAGS += -DHAVE_ZSTD_SUPPORT
-+    CFLAGS += $(LIBZSTD_CFLAGS)
-+    LDFLAGS += $(LIBZSTD_LDFLAGS)
-+    EXTLIBS += -lzstd
-+    $(call detected,CONFIG_ZSTD)
-+  else
-+    msg := $(warning No libzstd found, disables trace compression, please install libzstd-dev[el] and/or set LIBZSTD_DIR);
-+    NO_LIBZSTD := 1
-+  endif
-+endif
-+
- ifndef NO_BACKTRACE
-   ifeq ($(feature-backtrace), 1)
-     CFLAGS += -DHAVE_BACKTRACE_SUPPORT
-diff --git a/tools/perf/Makefile.perf b/tools/perf/Makefile.perf
-index 09df1c8a4ec9..6e95e90a7b7b 100644
---- a/tools/perf/Makefile.perf
-+++ b/tools/perf/Makefile.perf
-@@ -108,6 +108,9 @@ include ../scripts/utilities.mak
- # streaming for record mode. Currently Posix AIO trace streaming is
- # supported only when linking with glibc.
- #
-+# Define NO_LIBZSTD if you do not want support of Zstandard based runtime
-+# trace compression in record mode.
-+#
- 
- # As per kernel Makefile, avoid funny character set dependencies
- unexport LC_ALL
+On 1/25/19 7:25 PM, Thierry Reding wrote:
+> From: JC Kuo <jckuo@nvidia.com>
+>
+> Tegra186 USB2 pads and USB3 pads do not have hardware mux for changing
+> the pad function. For such "lanes", we can skip the lane mux register
+> programming.
+>
+> Signed-off-by: JC Kuo <jckuo@nvidia.com>
+> Signed-off-by: Thierry Reding <treding@nvidia.com>
+> ---
+>   drivers/phy/tegra/xusb.c | 6 +++++-
+>   1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
+> index 5b3b8863363e..e3bc60cfe6a1 100644
+> --- a/drivers/phy/tegra/xusb.c
+> +++ b/drivers/phy/tegra/xusb.c
+> @@ -1,5 +1,5 @@
+>   /*
+> - * Copyright (c) 2014-2015, NVIDIA CORPORATION.  All rights reserved.
+> + * Copyright (c) 2014-2016, NVIDIA CORPORATION.  All rights reserved.
+>    *
+>    * This program is free software; you can redistribute it and/or modify it
+>    * under the terms and conditions of the GNU General Public License,
+> @@ -313,6 +313,10 @@ static void tegra_xusb_lane_program(struct tegra_xusb_lane *lane)
+>   	const struct tegra_xusb_lane_soc *soc = lane->soc;
+>   	u32 value;
+>   
+> +	/* skip single function lanes */
+> +	if (soc->num_funcs < 2)
+> +		return;
+> +
+>   	/* choose function */
+>   	value = padctl_readl(padctl, soc->offset);
+>   	value &= ~(soc->mask << soc->shift);
