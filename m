@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 564E2C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07851C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:49:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C192171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CA63C21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:49:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694138;
-	bh=8x07KEVdRFuH6/HSkA1AcgTqbZxpUN0O6s+0V4HljYs=;
+	s=default; t=1548694155;
+	bh=1nkspHaxVky8z8ceCMP5aZWDlCBc9CgzK9bMVMAhZzE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eQOMiEOzzuZy8gQpn4fJdu+JzGyNdoGG/ewfTi3hsVrRqGQGW75YVOYQ2t/Qi6Xgo
-	 moyzTXfUR/XSkNBCk9BbVo/Y5pq96scQih2WNHwyqAHEBvCJ5q9hfVbKq1wLJG8mC6
-	 RBZJ3NSDhoz9v/r7iIX5uLhS5YACsmLY1lSOM5U8=
+	b=KjHARnaS1NRcxyKIwpvDm7NfSlBBMvAo1KbjWyxkXUSZP5E0XBzTRCvZ1UavDdaGt
+	 6uz52y4DDBH3L0is4HuiN/13au0WXzoCsLRb9c+dqw09Sc7VDL+TW0ct184wjA0Mk4
+	 ech5kz0iLwRN8ZvgxM8P0pjqLhFS+ePKlnqVn94U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389256AbfA1Qs4 (ORCPT
+        id S2388985AbfA1QtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:48:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56880 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:49:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56642 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388513AbfA1QVL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:21:11 -0500
+        id S2387581AbfA1QU5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:20:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8D5852147A;
-        Mon, 28 Jan 2019 16:21:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 815B92147A;
+        Mon, 28 Jan 2019 16:20:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692469;
-        bh=8x07KEVdRFuH6/HSkA1AcgTqbZxpUN0O6s+0V4HljYs=;
+        s=default; t=1548692457;
+        bh=1nkspHaxVky8z8ceCMP5aZWDlCBc9CgzK9bMVMAhZzE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1TiLNcDP0ISzFpwzp8pCRKGe8kPzHSxh2NiCyWEbE9OR1tNCt8WQQEhVibbMnwJy5
-         fIUq2qvyHszA2vIJ8YfzsDBXqDgZtev4CCbIL8m9fCs1UohDTI87kgCpND5Kh8Nxf5
-         b1XQqebXtcYGQTtFu05Ln/HbklJCKuq8dNfDcPn4=
+        b=x0tc21cZBovxMxMBpHBnaojwF9EPNKln1LQJ+EvIuEOnSoVRrGw0JHEe2QLp8wU2p
+         SJbHAOaE4slprbrjybcl2lsJZ5dvOEv8fCncw9hTg3/hROruARYfj9EY56DPta4+qc
+         yaXSYznOaRa10P/i5p4PGkRSM7Y5Q0zH+Tdb2rpE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wei Wang <wvw@google.com>, Zhang Rui <rui.zhang@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 032/107] Thermal: do not clear passive state during system sleep
-Date:   Mon, 28 Jan 2019 11:18:32 -0500
-Message-Id: <20190128161947.57405-32-sashal@kernel.org>
+Cc:     Yunlei He <heyunlei@huawei.com>, Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.9 026/107] f2fs: move dir data flush to write checkpoint process
+Date:   Mon, 28 Jan 2019 11:18:26 -0500
+Message-Id: <20190128161947.57405-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -57,68 +58,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Wang <wvw@google.com>
+From: Yunlei He <heyunlei@huawei.com>
 
-[ Upstream commit 964f4843a455d2ffb199512b08be8d5f077c4cac ]
+[ Upstream commit b61ac5b720146c619c7cdf17eff2551b934399e5 ]
 
-commit ff140fea847e ("Thermal: handle thermal zone device properly
-during system sleep") added PM hook to call thermal zone reset during
-sleep. However resetting thermal zone will also clear the passive state
-and thus cancel the polling queue which leads the passive cooling device
-state not being cleared properly after sleep.
+This patch move dir data flush to write checkpoint process, by
+doing this, it may reduce some time for dir fsync.
 
-thermal_pm_notify => thermal_zone_device_reset set passive to 0
-thermal_zone_trip_update will skip update passive as `old_target ==
-instance->target'.
-monitor_thermal_zone => thermal_zone_device_set_polling will cancel
-tz->poll_queue, so the cooling device state will not be changed
-afterwards.
+pre:
+	-f2fs_do_sync_file enter
+		-file_write_and_wait_range  <- flush & wait
+		-write_checkpoint
+			-do_checkpoint	    <- wait all
+	-f2fs_do_sync_file exit
 
-Reported-by: Kame Wang <kamewang@google.com>
-Signed-off-by: Wei Wang <wvw@google.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+now:
+	-f2fs_do_sync_file enter
+		-write_checkpoint
+			-block_operations   <- flush dir & no wait
+			-do_checkpoint	    <- wait all
+	-f2fs_do_sync_file exit
+
+Signed-off-by: Yunlei He <heyunlei@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal_core.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ fs/f2fs/file.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 226b0b4aced6..cd82ae34ddfa 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -597,16 +597,20 @@ static void update_temperature(struct thermal_zone_device *tz)
- 			tz->last_temperature, tz->temperature);
- }
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index b768f495603e..f46ac1651bd5 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -198,6 +198,9 @@ static int f2fs_do_sync_file(struct file *file, loff_t start, loff_t end,
  
--static void thermal_zone_device_reset(struct thermal_zone_device *tz)
-+static void thermal_zone_device_init(struct thermal_zone_device *tz)
- {
- 	struct thermal_instance *pos;
--
- 	tz->temperature = THERMAL_TEMP_INVALID;
--	tz->passive = 0;
- 	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
- 		pos->initialized = false;
- }
+ 	trace_f2fs_sync_file_enter(inode);
  
-+static void thermal_zone_device_reset(struct thermal_zone_device *tz)
-+{
-+	tz->passive = 0;
-+	thermal_zone_device_init(tz);
-+}
++	if (S_ISDIR(inode->i_mode))
++		goto go_write;
 +
- void thermal_zone_device_update(struct thermal_zone_device *tz,
- 				enum thermal_notify_event event)
- {
-@@ -2297,7 +2301,7 @@ static int thermal_pm_notify(struct notifier_block *nb,
- 	case PM_POST_SUSPEND:
- 		atomic_set(&in_suspend, 0);
- 		list_for_each_entry(tz, &thermal_tz_list, node) {
--			thermal_zone_device_reset(tz);
-+			thermal_zone_device_init(tz);
- 			thermal_zone_device_update(tz,
- 						   THERMAL_EVENT_UNSPECIFIED);
- 		}
+ 	/* if fdatasync is triggered, let's do in-place-update */
+ 	if (datasync || get_dirty_pages(inode) <= SM_I(sbi)->min_fsync_blocks)
+ 		set_inode_flag(inode, FI_NEED_IPU);
 -- 
 2.19.1
 
