@@ -4,53 +4,59 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF804C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:44:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A96FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:44:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D68620663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:44:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D89EA20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:44:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697459;
-	bh=w3lmzu6t4FcXH2shfH3fjkdaWqFocDbP9fiMSQdK1fM=;
+	s=default; t=1548697472;
+	bh=9gVXlRq2b3eoImS84oXrM0d5o/EAxWXjFMJVyGHEcGw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xWVOLuObVOZ2fCyVyW7GKYU1Zg4UAoMwrZpSvg/sZg4lTMCfqtITdtsoNp7YR75tT
-	 mIXNNQGdunOJM5O2STZAafBamgPdX5S2Jixymph5yqE0bCAlRt84KSjfGvmHqKABi1
-	 Qqdfgb7RLFzozT2Jz8pLz7wz/gjTNTGbXc5+Nc7k=
+	b=lBiEGarducTqEyQVM1k05EEwTqcYLLU5cv7w/lhV29A0It1XlKCBbNMNmnQ6rX/Gp
+	 r0gYSCsPwApFCuT72kqUYhgn7r4OSmZ6zGa/BN68kZlL4lbBG0drVdoFFxTWKiCO/Z
+	 0krz1melWDc52jcTyw6M/FnYE+7k6ngpexDLfykk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728948AbfA1RoS (ORCPT
+        id S1728968AbfA1Roc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:44:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34624 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:44:32 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34520 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbfA1PtG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:49:06 -0500
+        id S1728557AbfA1PtA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:49:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 076F32175B;
-        Mon, 28 Jan 2019 15:49:03 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C2AD2175B;
+        Mon, 28 Jan 2019 15:48:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690545;
-        bh=w3lmzu6t4FcXH2shfH3fjkdaWqFocDbP9fiMSQdK1fM=;
+        s=default; t=1548690538;
+        bh=9gVXlRq2b3eoImS84oXrM0d5o/EAxWXjFMJVyGHEcGw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=O69tE8WpiuZRkBW82CrHdi4PJGCFwjkFZ0yHqCcOgwquSoefC9q24uKLjxBtEjoj9
-         JBfYzBTOjRWSsExS2m8/6fNNFJzCGgCOI+2rGLkp1xoba3VMmKCM0q2Ut3310BjTRk
-         0wJwEsSWACd6dUpFz6KJG7m7OaCOe9YDUb6mKlZI=
+        b=M3+npGb0SSsZ9k7rTW1fkoqqP2kb7FMWFQibY5qJLC7G5E/RvN9ISQljhJGfERfuE
+         BEIFXUzkMOJOuhv8tf+KTZEpmCNhkmL7Qfn4gX2ctmxU3qr+hoQNV7QylVCKpY9CS8
+         p4Xc6Pehhcd7UC12zqBgX+1EEf/5wb6mLj7bMV9s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 119/304] usb: dwc3: Correct the logic for checking TRB full in __dwc3_prepare_one_trb()
-Date:   Mon, 28 Jan 2019 10:40:36 -0500
-Message-Id: <20190128154341.47195-119-sashal@kernel.org>
+Cc:     =?UTF-8?q?Ville=20Syrj=C3=A4l=C3=A4?= 
+        <ville.syrjala@linux.intel.com>,
+        Hans de Goede <hdegoede@redhat.com>,
+        Alan Cox <alan@linux.intel.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 116/304] platform/x86: Fix config space access for intel_atomisp2_pm
+Date:   Mon, 28 Jan 2019 10:40:33 -0500
+Message-Id: <20190128154341.47195-116-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,71 +64,152 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+From: Ville Syrjälä <ville.syrjala@linux.intel.com>
 
-[ Upstream commit b7a4fbe2300a8965ea760c7e871507b84aea17f6 ]
+[ Upstream commit 6a31061833a52a79c99221b6251db08cf377470e ]
 
-Availability of TRB's is calculated using dwc3_calc_trbs_left(), which
-determines total available TRB's based on the HWO bit set in a TRB.
+We lose even config space access when we power gate the ISP
+via the PUNIT. That makes lspci & co. produce gibberish.
 
-In the present code, __dwc3_prepare_one_trb() is called with a TRB which
-needs to be prepared for transfer. This __dwc3_prepare_one_trb() calls
-dwc3_calc_trbs_left() to determine total available TRBs and set IOC bit
-if the total available TRBs are zero. Since the present working TRB (which
-is passed as an argument to __dwc3_prepare_one_trb() )  doesn't yet have
-the HWO bit set before calling dwc3_calc_trbs_left(), there are chances
-that dwc3_calc_trbs_left() wrongly calculates this present working TRB
-as free(since the HWO bit is not yet set) and returns the total available
-TRBs as greater than zero (including the present working TRB). This could
-be a problem.
+To fix that let's try to implement actual runtime pm hooks
+and inform the pci core that the device always goes to
+D3cold. That will cause the pci core to resume the device
+before attempting config space access.
 
-This patch corrects the above mentioned problem in __dwc3_prepare_one_trb()
-by increementing the dep->trb_enqueue at the last (after preparing the TRB)
-instead of increementing at the start and setting the IOC bit only if the
-total available TRBs returned by dwc3_calc_trbs_left() is 1 . Since we are
-increementing the dep->trb_enqueue at the last, the present working TRB is
-also considered as available by dwc3_calc_trbs_left() and non zero value is
-returned . So, according to the modified logic, when the total available
-TRBs is equal to 1 that means the total available TRBs in the pool are 0.
+This introduces another annoyance though. We get the
+following error every time we try to resume the device:
+intel_atomisp2_pm 0000:00:03.0: Refused to change power state, currently in D3
 
-Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
-Reviewed-by: Thinh Nguyen <thinhn@synopsys.com>
-Tested-by: Tejas Joglekar <tejas.joglekar@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+The reason being that the pci core tries to put the device
+back into D0 via the standard PCI PM mechanism before
+calling the driver resume hook. To fix this properly
+we'd need to infiltrate the platform pm hooks (could
+turn ugly real fast), or use pm domains (which don't
+seem to exist on x86), or some extra early resume
+hook for the driver (which doesn't exist either).
+So maybe we just choose to live with the error?
+
+Cc: Hans de Goede <hdegoede@redhat.com>
+Cc: Alan Cox <alan@linux.intel.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Darren Hart <dvhart@infradead.org>
+Signed-off-by: Ville Syrjälä <ville.syrjala@linux.intel.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/platform/x86/intel_atomisp2_pm.c | 68 +++++++++++++++++-------
+ 1 file changed, 48 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 9f92ee03dde7..c2581374f57f 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -919,8 +919,6 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *dep, struct dwc3_trb *trb,
- 	struct usb_gadget	*gadget = &dwc->gadget;
- 	enum usb_device_speed	speed = gadget->speed;
+diff --git a/drivers/platform/x86/intel_atomisp2_pm.c b/drivers/platform/x86/intel_atomisp2_pm.c
+index 9371603a0ac9..2a8c7a4cea35 100644
+--- a/drivers/platform/x86/intel_atomisp2_pm.c
++++ b/drivers/platform/x86/intel_atomisp2_pm.c
+@@ -33,46 +33,45 @@
+ #define ISPSSPM0_IUNIT_POWER_ON		0x0
+ #define ISPSSPM0_IUNIT_POWER_OFF	0x3
  
--	dwc3_ep_inc_enq(dep);
+-static int isp_probe(struct pci_dev *dev, const struct pci_device_id *id)
++static int isp_set_power(struct pci_dev *dev, bool enable)
+ {
+ 	unsigned long timeout;
+-	u32 val;
 -
- 	trb->size = DWC3_TRB_SIZE_LENGTH(length);
- 	trb->bpl = lower_32_bits(dma);
- 	trb->bph = upper_32_bits(dma);
-@@ -999,7 +997,7 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *dep, struct dwc3_trb *trb,
+-	pci_write_config_dword(dev, PCI_INTERRUPT_CTRL, 0);
+-
+-	/*
+-	 * MRFLD IUNIT DPHY is located in an always-power-on island
+-	 * MRFLD HW design need all CSI ports are disabled before
+-	 * powering down the IUNIT.
+-	 */
+-	pci_read_config_dword(dev, PCI_CSI_CONTROL, &val);
+-	val |= PCI_CSI_CONTROL_PORTS_OFF_MASK;
+-	pci_write_config_dword(dev, PCI_CSI_CONTROL, val);
++	u32 val = enable ? ISPSSPM0_IUNIT_POWER_ON :
++		ISPSSPM0_IUNIT_POWER_OFF;
+ 
+-	/* Write 0x3 to ISPSSPM0 bit[1:0] to power off the IUNIT */
++	/* Write to ISPSSPM0 bit[1:0] to power on/off the IUNIT */
+ 	iosf_mbi_modify(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0,
+-			ISPSSPM0_IUNIT_POWER_OFF, ISPSSPM0_ISPSSC_MASK);
++			val, ISPSSPM0_ISPSSC_MASK);
+ 
+ 	/*
+ 	 * There should be no IUNIT access while power-down is
+ 	 * in progress HW sighting: 4567865
+ 	 * Wait up to 50 ms for the IUNIT to shut down.
++	 * And we do the same for power on.
+ 	 */
+ 	timeout = jiffies + msecs_to_jiffies(50);
+ 	while (1) {
+-		/* Wait until ISPSSPM0 bit[25:24] shows 0x3 */
+-		iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0, &val);
+-		val = (val & ISPSSPM0_ISPSSS_MASK) >> ISPSSPM0_ISPSSS_OFFSET;
+-		if (val == ISPSSPM0_IUNIT_POWER_OFF)
++		u32 tmp;
++
++		/* Wait until ISPSSPM0 bit[25:24] shows the right value */
++		iosf_mbi_read(BT_MBI_UNIT_PMC, MBI_REG_READ, ISPSSPM0, &tmp);
++		tmp = (tmp & ISPSSPM0_ISPSSS_MASK) >> ISPSSPM0_ISPSSS_OFFSET;
++		if (tmp == val)
+ 			break;
+ 
+ 		if (time_after(jiffies, timeout)) {
+-			dev_err(&dev->dev, "IUNIT power-off timeout.\n");
++			dev_err(&dev->dev, "IUNIT power-%s timeout.\n",
++				enable ? "on" : "off");
+ 			return -EBUSY;
+ 		}
+ 		usleep_range(1000, 2000);
  	}
  
- 	if ((!no_interrupt && !chain) ||
--			(dwc3_calc_trbs_left(dep) == 0))
-+			(dwc3_calc_trbs_left(dep) == 1))
- 		trb->ctrl |= DWC3_TRB_CTRL_IOC;
- 
- 	if (chain)
-@@ -1010,6 +1008,8 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *dep, struct dwc3_trb *trb,
- 
- 	trb->ctrl |= DWC3_TRB_CTRL_HWO;
- 
-+	dwc3_ep_inc_enq(dep);
++	return 0;
++}
 +
- 	trace_dwc3_prepare_trb(dep, trb);
++static int isp_probe(struct pci_dev *dev, const struct pci_device_id *id)
++{
+ 	pm_runtime_allow(&dev->dev);
+ 	pm_runtime_put_sync_suspend(&dev->dev);
+ 
+@@ -87,11 +86,40 @@ static void isp_remove(struct pci_dev *dev)
+ 
+ static int isp_pci_suspend(struct device *dev)
+ {
++	struct pci_dev *pdev = to_pci_dev(dev);
++	u32 val;
++
++	pci_write_config_dword(pdev, PCI_INTERRUPT_CTRL, 0);
++
++	/*
++	 * MRFLD IUNIT DPHY is located in an always-power-on island
++	 * MRFLD HW design need all CSI ports are disabled before
++	 * powering down the IUNIT.
++	 */
++	pci_read_config_dword(pdev, PCI_CSI_CONTROL, &val);
++	val |= PCI_CSI_CONTROL_PORTS_OFF_MASK;
++	pci_write_config_dword(pdev, PCI_CSI_CONTROL, val);
++
++	/*
++	 * We lose config space access when punit power gates
++	 * the ISP. Can't use pci_set_power_state() because
++	 * pmcsr won't actually change when we write to it.
++	 */
++	pci_save_state(pdev);
++	pdev->current_state = PCI_D3cold;
++	isp_set_power(pdev, false);
++
+ 	return 0;
+ }
+ 
+ static int isp_pci_resume(struct device *dev)
+ {
++	struct pci_dev *pdev = to_pci_dev(dev);
++
++	isp_set_power(pdev, true);
++	pdev->current_state = PCI_D0;
++	pci_restore_state(pdev);
++
+ 	return 0;
  }
  
 -- 
