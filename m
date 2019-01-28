@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00521C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EFADC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C56FB2177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1D9222177E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:12:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691938;
-	bh=alA4iFF+u//gPFgB77uxSipfGN40Kfzvz/JNgnbnvaY=;
+	s=default; t=1548691942;
+	bh=FydyrQqS7L3pk58/TeLZwsKkPXuAF7BCmMCrNMArXMQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CS8e1t3PzCdnFRGnAoN6hy1W6aNUb/PooGvHlWiUjSxQ2Z/9BEVEeegSs2xKRyJ2z
-	 UGuNiyQ9YFoavZr+PcOytWIeoBLaTgsqYmoiiPDW5DzN90gEJsF5az1CJVVEwq7ITb
-	 QKKBZ5NTc/QOYtuO/FlN0LfRp0FK6Cq5J5H/H1TU=
+	b=n07kVT+48dU2FysngIDTO8D+aHQAaAyEUyqN3bAwGszOCI7o/ufnPqyS+CPeisb2p
+	 B1BZo/Lz49kERRMNbuu9z1u9wIQ9psB8v5HOq3PdkdQ4HsqLxzM0DjxrRNXWfeR6Fp
+	 SNdS54JPDzpvdp6Xq4kFW32Ax2GUXD8FH55LKonU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733124AbfA1QMP (ORCPT
+        id S1732465AbfA1QMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:12:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:40098 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:12:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:40238 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733101AbfA1QMM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:12:12 -0500
+        id S1732467AbfA1QMR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:12:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2C5E32148E;
-        Mon, 28 Jan 2019 16:12:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 96C4F2148E;
+        Mon, 28 Jan 2019 16:12:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691931;
-        bh=alA4iFF+u//gPFgB77uxSipfGN40Kfzvz/JNgnbnvaY=;
+        s=default; t=1548691936;
+        bh=FydyrQqS7L3pk58/TeLZwsKkPXuAF7BCmMCrNMArXMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KGYW18WdvbTueeBK0KSSLxSnqXyH9T02eEktDDnFAVbKqg2AIkWLAdr8wwf2mWl9a
-         toBBBFkrTBIzALfWTgXPBaKg2WiJn+5eEsujKS3w3jDESmSJiBGgffMOD0J9F6XIMz
-         O6+yBxy2NqCSqPhyI5IHHYNTnq/FQJgj5XnZ0a2o=
+        b=bBOC1o4D3Pg4vQ0aVZoFZcavcjvhTDBLB71uDg9iGTqPpfPBTBTuFZ5e096uHWp+t
+         v9sQpAvrIGglKXdevOga0HFdTW10JubNqBEUV7GypQcjjzc0QEKlue4tHL8GGIngAv
+         0imiZ3eC2lVJ+sv+ASd9cfkBj+WvJuGiZ/+omhJU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lukas Wunner <lukas@wunner.de>,
-        Mathias Duckeck <m.duckeck@kunbus.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 004/170] pinctrl: bcm2835: Use raw spinlock for RT compatibility
-Date:   Mon, 28 Jan 2019 11:09:14 -0500
-Message-Id: <20190128161200.55107-4-sashal@kernel.org>
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 006/170] gpu: ipu-v3: image-convert: Prevent race between run and unprepare
+Date:   Mon, 28 Jan 2019 11:09:16 -0500
+Message-Id: <20190128161200.55107-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -59,102 +58,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lukas Wunner <lukas@wunner.de>
+From: Steve Longerbeam <slongerbeam@gmail.com>
 
-[ Upstream commit 3c7b30f704b6f5e53eed6bf89cf2c8d1b38b02c0 ]
+[ Upstream commit 819bec35c8c9706185498c9222bd244e0781ad35 ]
 
-The BCM2835 pinctrl driver acquires a spinlock in its ->irq_enable,
-->irq_disable and ->irq_set_type callbacks.  Spinlocks become sleeping
-locks with CONFIG_PREEMPT_RT_FULL=y, therefore invocation of one of the
-callbacks in atomic context may cause a hard lockup if at least two GPIO
-pins in the same bank are used as interrupts.  The issue doesn't occur
-with just a single interrupt pin per bank because the lock is never
-contended.  I'm experiencing such lockups with GPIO 8 and 28 used as
-level-triggered interrupts, i.e. with ->irq_disable being invoked on
-reception of every IRQ.
+Prevent possible race by parallel threads between ipu_image_convert_run()
+and ipu_image_convert_unprepare(). This involves setting ctx->aborting
+to true unconditionally so that no new job runs can be queued during
+unprepare, and holding the ctx->aborting flag until the context is freed.
 
-The critical section protected by the spinlock is very small (one bitop
-and one RMW of an MMIO register), hence converting to a raw spinlock
-seems a better trade-off than converting the driver to threaded IRQ
-handling (which would increase latency to handle an interrupt).
+Note that the "normal" ipu_image_convert_abort() case (e.g. not during
+context unprepare) should clear the ctx->aborting flag after aborting
+any active run and clearing the context's pending queue. This is because
+it should be possible to continue to use the conversion context and queue
+more runs after an abort.
 
-Cc: Mathias Duckeck <m.duckeck@kunbus.de>
-Signed-off-by: Lukas Wunner <lukas@wunner.de>
-Acked-by: Julia Cartwright <julia@ni.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/pinctrl/bcm/pinctrl-bcm2835.c | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+ drivers/gpu/ipu-v3/ipu-image-convert.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/pinctrl/bcm/pinctrl-bcm2835.c b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-index ff782445dfb7..e72bf2502eca 100644
---- a/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-+++ b/drivers/pinctrl/bcm/pinctrl-bcm2835.c
-@@ -92,7 +92,7 @@ struct bcm2835_pinctrl {
- 	struct gpio_chip gpio_chip;
- 	struct pinctrl_gpio_range gpio_range;
+diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
+index 524a717ab28e..a5e33d58e02f 100644
+--- a/drivers/gpu/ipu-v3/ipu-image-convert.c
++++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
+@@ -1518,7 +1518,7 @@ int ipu_image_convert_queue(struct ipu_image_convert_run *run)
+ EXPORT_SYMBOL_GPL(ipu_image_convert_queue);
  
--	spinlock_t irq_lock[BCM2835_NUM_BANKS];
-+	raw_spinlock_t irq_lock[BCM2835_NUM_BANKS];
- };
+ /* Abort any active or pending conversions for this context */
+-void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
++static void __ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ {
+ 	struct ipu_image_convert_chan *chan = ctx->chan;
+ 	struct ipu_image_convert_priv *priv = chan->priv;
+@@ -1545,7 +1545,7 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
  
- /* pins are just named GPIO0..GPIO53 */
-@@ -471,10 +471,10 @@ static void bcm2835_gpio_irq_enable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
+ 	need_abort = (run_count || active_run);
  
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	set_bit(offset, &pc->enabled_irq_map[bank]);
- 	bcm2835_gpio_irq_config(pc, gpio, true);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
+-	ctx->aborting = need_abort;
++	ctx->aborting = true;
  
- static void bcm2835_gpio_irq_disable(struct irq_data *data)
-@@ -486,12 +486,12 @@ static void bcm2835_gpio_irq_disable(struct irq_data *data)
- 	unsigned bank = GPIO_REG_OFFSET(gpio);
- 	unsigned long flags;
+ 	spin_unlock_irqrestore(&chan->irqlock, flags);
  
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 	bcm2835_gpio_irq_config(pc, gpio, false);
- 	/* Clear events that were latched prior to clearing event sources */
- 	bcm2835_gpio_set_bit(pc, GPEDS0, gpio);
- 	clear_bit(offset, &pc->enabled_irq_map[bank]);
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- }
- 
- static int __bcm2835_gpio_irq_set_type_disabled(struct bcm2835_pinctrl *pc,
-@@ -594,7 +594,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 	unsigned long flags;
- 	int ret;
- 
--	spin_lock_irqsave(&pc->irq_lock[bank], flags);
-+	raw_spin_lock_irqsave(&pc->irq_lock[bank], flags);
- 
- 	if (test_bit(offset, &pc->enabled_irq_map[bank]))
- 		ret = __bcm2835_gpio_irq_set_type_enabled(pc, gpio, type);
-@@ -606,7 +606,7 @@ static int bcm2835_gpio_irq_set_type(struct irq_data *data, unsigned int type)
- 	else
- 		irq_set_handler_locked(data, handle_level_irq);
- 
--	spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
-+	raw_spin_unlock_irqrestore(&pc->irq_lock[bank], flags);
- 
- 	return ret;
- }
-@@ -1021,7 +1021,7 @@ static int bcm2835_pinctrl_probe(struct platform_device *pdev)
- 		for_each_set_bit(offset, &events, 32)
- 			bcm2835_gpio_wr(pc, GPEDS0 + i * 4, BIT(offset));
- 
--		spin_lock_init(&pc->irq_lock[i]);
-+		raw_spin_lock_init(&pc->irq_lock[i]);
+@@ -1566,7 +1566,11 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ 		dev_warn(priv->ipu->dev, "%s: timeout\n", __func__);
+ 		force_abort(ctx);
  	}
++}
  
- 	err = gpiochip_add_data(&pc->gpio_chip, pc);
++void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
++{
++	__ipu_image_convert_abort(ctx);
+ 	ctx->aborting = false;
+ }
+ EXPORT_SYMBOL_GPL(ipu_image_convert_abort);
+@@ -1580,7 +1584,7 @@ void ipu_image_convert_unprepare(struct ipu_image_convert_ctx *ctx)
+ 	bool put_res;
+ 
+ 	/* make sure no runs are hanging around */
+-	ipu_image_convert_abort(ctx);
++	__ipu_image_convert_abort(ctx);
+ 
+ 	dev_dbg(priv->ipu->dev, "%s: task %u: removing ctx %p\n", __func__,
+ 		chan->ic_task, ctx);
 -- 
 2.19.1
 
