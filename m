@@ -7,48 +7,53 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CFB9C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B25C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:30:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 595A82148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F24D2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:30:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696605;
-	bh=nTw80dbxyxLqJGQAux0HYYBdFmCk1ufKrbHClGiizjY=;
-	h=From:To:Cc:Subject:Date:List-ID:From;
-	b=k4GbCY8cecvzsoF7G7vu44YFxIG8c8K7Y+ToFrYjsUz530N9Wl9oS6hvBQZvwAWOt
-	 Zjh6/ISt0TsqCqj7KPOoUAQHYite7bbdSvT07en3VYWbgsP+AqUcz1TJQ2vhDw3bWZ
-	 kbtjm8iwV/waQxfApjvg2rOWE9nHpXzcQlm8f0p0=
+	s=default; t=1548696618;
+	bh=3s81iF9vciymf2w4xPReymvYVpe3eQAc3UABl2EwJ94=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=MPAgW1CH470y8lBOP1PkEhrNLJ/AbyiCUjeGOJfwJlSo7JHwxbTeOXZ7YHEcgUVaG
+	 ntSf81AnBd6kWTnzv1eoYsFmRHHdKmy1vPy3YN2YyE1ke6/4m/mjkb69XINhNOGSVp
+	 kmvDVRf+zMzITngnn4dWB1FCNY13bDt5HmFnJT9s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730571AbfA1P7d (ORCPT
+        id S1730530AbfA1P7H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:59:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44808 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:59:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44448 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727635AbfA1P7a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:59:30 -0500
+        id S1730514AbfA1P7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:59:03 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9EDBC2082E;
-        Mon, 28 Jan 2019 15:59:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CAD0D2082E;
+        Mon, 28 Jan 2019 15:58:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691169;
-        bh=nTw80dbxyxLqJGQAux0HYYBdFmCk1ufKrbHClGiizjY=;
-        h=From:To:Cc:Subject:Date:From;
-        b=d5OM+q3BZSf6tH9WQEU6b6CW9WrIfLNvk0BeTfBVYD7UQvR3I5h6GKITjKvC8+Rfh
-         hPTO5TaO8f2dYST3Fyt7+SeTTOeSjlZTYRUwEckLwcRz5GMFpKJgDiuvxz1edA0pgG
-         Lob7bQL1kM7MFB01DKdzCVd+l0M+OgXldElZ4k14=
+        s=default; t=1548691142;
+        bh=3s81iF9vciymf2w4xPReymvYVpe3eQAc3UABl2EwJ94=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=0Z6+Z62+VoGWLMyW/g9lG78nzubUvcvrHTJuAQOQNNIwh/rt2/45Ah4UPxG1/xZzH
+         iaNNwfGEj5LOKCb6OWmAvb8KOafwCUzqd98tApHiufBSLxeagP9xgwie0/pU1hGIQk
+         UpvPXHMQ1gCNK8cvqnRCcD7dAVZae/uicEC8M3l8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 001/258] drm/bufs: Fix Spectre v1 vulnerability
-Date:   Mon, 28 Jan 2019 10:55:07 -0500
-Message-Id: <20190128155924.51521-1-sashal@kernel.org>
+Cc:     Davidlohr Bueso <dave@stgolabs.net>,
+        Davidlohr Bueso <dbueso@suse.de>,
+        Al Viro <viro@zeniv.linux.org.uk>,
+        Jason Baron <jbaron@akamai.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 300/304] fs/epoll: drop ovflist branch prediction
+Date:   Mon, 28 Jan 2019 10:43:37 -0500
+Message-Id: <20190128154341.47195-300-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -57,55 +62,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+From: Davidlohr Bueso <dave@stgolabs.net>
 
-[ Upstream commit a37805098900a6e73a55b3a43b7d3bcd987bb3f4 ]
+[ Upstream commit 76699a67f3041ff4c7af6d6ee9be2bfbf1ffb671 ]
 
-idx can be indirectly controlled by user-space, hence leading to a
-potential exploitation of the Spectre variant 1 vulnerability.
+The ep->ovflist is a secondary ready-list to temporarily store events
+that might occur when doing sproc without holding the ep->wq.lock.  This
+accounts for every time we check for ready events and also send events
+back to userspace; both callbacks, particularly the latter because of
+copy_to_user, can account for a non-trivial time.
 
-This issue was detected with the help of Smatch:
+As such, the unlikely() check to see if the pointer is being used, seems
+both misleading and sub-optimal.  In fact, we go to an awful lot of
+trouble to sync both lists, and populating the ovflist is far from an
+uncommon scenario.
 
-drivers/gpu/drm/drm_bufs.c:1420 drm_legacy_freebufs() warn: potential
-spectre issue 'dma->buflist' [r] (local cap)
+For example, profiling a concurrent epoll_wait(2) benchmark, with
+CONFIG_PROFILE_ANNOTATED_BRANCHES shows that for a two threads a 33%
+incorrect rate was seen; and when incrementally increasing the number of
+epoll instances (which is used, for example for multiple queuing load
+balancing models), up to a 90% incorrect rate was seen.
 
-Fix this by sanitizing idx before using it to index dma->buflist
+Similarly, by deleting the prediction, 3% throughput boost was seen
+across incremental threads.
 
-Notice that given that speculation windows are large, the policy is
-to kill the speculation on the first load and not worry if it can be
-completed with a dependent load/store [1].
-
-[1] https://marc.info/?l=linux-kernel&m=152449131114778&w=2
-
-Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
-Signed-off-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181016095549.GA23586@embeddedor.com
+Link: http://lkml.kernel.org/r/20181108051006.18751-4-dave@stgolabs.net
+Signed-off-by: Davidlohr Bueso <dbueso@suse.de>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Jason Baron <jbaron@akamai.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_bufs.c | 3 +++
- 1 file changed, 3 insertions(+)
+ fs/eventpoll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_bufs.c b/drivers/gpu/drm/drm_bufs.c
-index ba8cfe65c65b..e2f775d1c112 100644
---- a/drivers/gpu/drm/drm_bufs.c
-+++ b/drivers/gpu/drm/drm_bufs.c
-@@ -36,6 +36,8 @@
- #include <drm/drmP.h>
- #include "drm_legacy.h"
- 
-+#include <linux/nospec.h>
-+
- static struct drm_map_list *drm_find_matching_map(struct drm_device *dev,
- 						  struct drm_local_map *map)
- {
-@@ -1417,6 +1419,7 @@ int drm_legacy_freebufs(struct drm_device *dev, void *data,
- 				  idx, dma->buf_count - 1);
- 			return -EINVAL;
- 		}
-+		idx = array_index_nospec(idx, dma->buf_count);
- 		buf = dma->buflist[idx];
- 		if (buf->file_priv != file_priv) {
- 			DRM_ERROR("Process %d freeing buffer not owned\n",
+diff --git a/fs/eventpoll.c b/fs/eventpoll.c
+index 42bbe6824b4b..58f48ea0db23 100644
+--- a/fs/eventpoll.c
++++ b/fs/eventpoll.c
+@@ -1154,7 +1154,7 @@ static int ep_poll_callback(wait_queue_entry_t *wait, unsigned mode, int sync, v
+ 	 * semantics). All the events that happen during that period of time are
+ 	 * chained in ep->ovflist and requeued later on.
+ 	 */
+-	if (unlikely(ep->ovflist != EP_UNACTIVE_PTR)) {
++	if (ep->ovflist != EP_UNACTIVE_PTR) {
+ 		if (epi->next == EP_UNACTIVE_PTR) {
+ 			epi->next = ep->ovflist;
+ 			ep->ovflist = epi;
 -- 
 2.19.1
 
