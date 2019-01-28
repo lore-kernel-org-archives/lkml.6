@@ -2,52 +2,53 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BE92C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF60AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0ACAF20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B76B320989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691635;
-	bh=fVQ5DIuzHOS2HNojPvjxUh3IhkOeynudRGNkP9epqcI=;
+	s=default; t=1548691639;
+	bh=Y1gVf3XEPfYUA/5LC1aBJwK7GVnbPX0rc5bztGiTDWY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=heRp7VQXIiLSuZmmRQgfTb9nU2XC+amFJmeFWTUAjhaWRfA6Wovwxhi0XAOhA8VCw
-	 CeNuvihzmWZE1FH/J3Ljv5wwAX68929fFlCQ/yEsWF1BmVktqCk9V2isO3T6eSrXnu
-	 e8SpyRlx+DLC5LProa9M16dEyQtjIyIbzDS6IU4o=
+	b=jgL56idu8V/6cvjFqEm9Mx1xUzLUU/X0H3Z5WZ6dUTB1dpqdvSeSNO6MEHTi7Y2qh
+	 SqOKINuU0XllYSpqIh9czgiE8P403FYwPJQ0QOOJHXac5Kee0pDHa6d84oJVqWJRN/
+	 VnI40K0P9s/5iwLnPxmskfp7iAO19dN5HIusXc44=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731732AbfA1QHN (ORCPT
+        id S1732171AbfA1QHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:07:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57286 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:07:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57482 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731417AbfA1QHJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:07:09 -0500
+        id S1730761AbfA1QHM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:07:12 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 253F220989;
-        Mon, 28 Jan 2019 16:07:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C9FF92147A;
+        Mon, 28 Jan 2019 16:07:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691628;
-        bh=fVQ5DIuzHOS2HNojPvjxUh3IhkOeynudRGNkP9epqcI=;
+        s=default; t=1548691632;
+        bh=Y1gVf3XEPfYUA/5LC1aBJwK7GVnbPX0rc5bztGiTDWY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fQdYgJ1g/vf6hAImV9XDnDTriA+8YNwgkQHapoq97l2GWvJdEhvIe2rckV9TQCY20
-         qBkS/V+8/7kj7i0bjC7uuix5J2V2CFsap6vnYA9l/u97zXPQwyiLF6azdPxFBBx1Be
-         c39bx5y+01yUo3cqIKPjS4350LseCuHRr36MRx54=
+        b=qnwWPfzEiAOQN30cFOQhMW1v6GEy4a/2dkOyncG09CDuB0fFgmDe9uh5faorgaYJx
+         2NSx75cKXiCYD0hJv35KdTpvNOolPHKDMDBhU1aXj912VbH1jJ6oIZaM+Kk7binIGP
+         VLxEBHHIeIduZZcxRq96iiUcYsFfx1DVyJU07pfM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Adrian Hunter <adrian.hunter@intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 165/258] perf test: Fix perf_event_attr test failure
-Date:   Mon, 28 Jan 2019 10:57:51 -0500
-Message-Id: <20190128155924.51521-165-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 166/258] perf dso: Fix unchecked usage of strncpy()
+Date:   Mon, 28 Jan 2019 10:57:52 -0500
+Message-Id: <20190128155924.51521-166-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,46 +60,49 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Adrian Hunter <adrian.hunter@intel.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 741dad88dde296999da30332157ca47f0543747d ]
+[ Upstream commit fca5085c15255bbde203b7322c15f07ebb12f63e ]
 
-Fix inconsistent use of tabs and spaces error:
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-  # perf test 16 -v
-  16: Setup struct perf_event_attr                          :
-  --- start ---
-  test child forked, pid 20224
-    File "/usr/libexec/perf-core/tests/attr.py", line 119
-      log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
-                                                                 ^
-  TabError: inconsistent use of tabs and spaces in indentation
-  test child finished with -1
-  ---- end ----
-  Setup struct perf_event_attr: FAILED!
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
 
-Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Jiri Olsa <jolsa@redhat.com>
-Link: http://lkml.kernel.org/r/20181122140456.16817-1-adrian.hunter@intel.com
+  In function 'decompress_kmodule',
+      inlined from 'dso__decompress_kmodule_fd' at util/dso.c:305:9:
+  util/dso.c:298:3: error: 'strncpy' destination unchanged after copying no bytes [-Werror=stringop-truncation]
+     strncpy(pathname, tmpbuf, len);
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    CC       /tmp/build/perf/util/values.o
+    CC       /tmp/build/perf/util/debug.o
+  cc1: all warnings being treated as errors
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: c9a8a6131fb6 ("perf tools: Move the temp file processing into decompress_kmodule")
+Link: https://lkml.kernel.org/n/tip-tl2hdxj64tt4k8btbi6a0ugw@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/attr.py | 2 +-
+ tools/perf/util/dso.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
-index ff9b60b99f52..44090a9a19f3 100644
---- a/tools/perf/tests/attr.py
-+++ b/tools/perf/tests/attr.py
-@@ -116,7 +116,7 @@ class Event(dict):
-             if not self.has_key(t) or not other.has_key(t):
-                 continue
-             if not data_equal(self[t], other[t]):
--		log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
-+                log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
+diff --git a/tools/perf/util/dso.c b/tools/perf/util/dso.c
+index bbed90e5d9bb..cee717a3794f 100644
+--- a/tools/perf/util/dso.c
++++ b/tools/perf/util/dso.c
+@@ -295,7 +295,7 @@ static int decompress_kmodule(struct dso *dso, const char *name,
+ 		unlink(tmpbuf);
  
- # Test file description needs to have following sections:
- # [config]
+ 	if (pathname && (fd >= 0))
+-		strncpy(pathname, tmpbuf, len);
++		strlcpy(pathname, tmpbuf, len);
+ 
+ 	return fd;
+ }
 -- 
 2.19.1
 
