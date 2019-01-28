@@ -7,51 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D35D3C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD20EC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 992DC21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 841A72147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692644;
-	bh=xKk2ajnw615Lc0Vmp02x7t5/cILihl9hycWyoUrHBJI=;
+	s=default; t=1548692649;
+	bh=LXvh+nRQ801EKJcNORg3YzMuQadvNSHr6iJPVOzOP5Y=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OV8QhPDowJNAIQf5w3MsJqa4yNZY2xeB+YCCXoqBo0NXRRhM8JhGgdfIe3va+IRRu
-	 bgxG98mJvayo64GEiE8RaAiX7HRgGnjGikX94tjPK8z4Tkfvk4KpOXSxNwArJpdPYv
-	 jLbocbfhiWYInamiGmcgCikPJRiQB7GxgO/lK0vc=
+	b=jfFdNWSHvFzyKzIgIdn1FFcyR5oIGMqNSzk0OPnCsN1VRDQ4E5SaJ9E9TOs4TLwdP
+	 XKiacD8kQQK6vBOxMW9f8udzLS4V7K0Sg6mQ+v7GW4GGPIJKp8jb6DLBF1yuSQ9uG4
+	 DkNZpaSuP5QMnokJ7q+Q28cOc7ljZtTTein+o61U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389595AbfA1QYC (ORCPT
+        id S2389620AbfA1QYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:24:02 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60478 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:24:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60592 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389554AbfA1QYB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:24:01 -0500
+        id S2388602AbfA1QYF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:05 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 670272173C;
-        Mon, 28 Jan 2019 16:23:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFCB72175B;
+        Mon, 28 Jan 2019 16:24:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692640;
-        bh=xKk2ajnw615Lc0Vmp02x7t5/cILihl9hycWyoUrHBJI=;
+        s=default; t=1548692644;
+        bh=LXvh+nRQ801EKJcNORg3YzMuQadvNSHr6iJPVOzOP5Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=L9zhAkarY1PfXbWgqEYvROXIqPakmAh0blGTPwUYiuicU705Zv5mb93Vrxmj6fOwi
-         msN/+FmAZo56ZC1UzdAYhK2xiwHtse66FTBoyKKLVkdD1XkVowYfnq4g6lPCiinhbb
-         IHMvjPVEypcEiJRZs84oFFX6JT1JWzq1tfxVIC3E=
+        b=vvWkcgeS0E/CBqHdkSU0TR6mGLJ5TzmKMyNE6qEAxoH0AdDGHtJbiBzbqcIb1iXPk
+         mEfmXvlP9NWYKFQl7J688+OtiLcosjR1yR0x+6G6/5qr6a/BhZtHdyRu5pJqA6EwH6
+         wEYb8giAalsaUG1NSyvR6gDgaeaWC9eEqP9ePxrw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oleg Nesterov <oleg@redhat.com>, Ben Woodard <woodard@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 107/107] exec: load_script: don't blindly truncate shebang string
-Date:   Mon, 28 Jan 2019 11:19:47 -0500
-Message-Id: <20190128161947.57405-107-sashal@kernel.org>
+Cc:     Slawomir Stepien <sst@poczta.fm>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.4 02/80] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
+Date:   Mon, 28 Jan 2019 11:22:43 -0500
+Message-Id: <20190128162401.58841-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
-References: <20190128161947.57405-1-sashal@kernel.org>
+In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
+References: <20190128162401.58841-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -60,54 +59,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleg Nesterov <oleg@redhat.com>
+From: Slawomir Stepien <sst@poczta.fm>
 
-[ Upstream commit 8099b047ecc431518b9bb6bdbba3549bbecdc343 ]
+[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
 
-load_script() simply truncates bprm->buf and this is very wrong if the
-length of shebang string exceeds BINPRM_BUF_SIZE-2.  This can silently
-truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
-happens to be the valid executable path.
+Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
+error code. This change will ensure that this error is being passed up
+in the call stack, so it can be handled.
 
-Change load_script() to return ENOEXEC if it can't find '\n' or zero in
-bprm->buf.  Note that '\0' can come from either
-prepare_binprm()->memset() or from kernel_read(), we do not care.
-
-Link: http://lkml.kernel.org/r/20181112160931.GA28463@redhat.com
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Ben Woodard <woodard@redhat.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Slawomir Stepien <sst@poczta.fm>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/binfmt_script.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
+ 1 file changed, 13 insertions(+), 4 deletions(-)
 
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index afdf4e3cafc2..634bdbb23851 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -43,10 +43,14 @@ static int load_script(struct linux_binprm *bprm)
- 	fput(bprm->file);
- 	bprm->file = NULL;
+diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
+index 35acb1a4669b..db8390022732 100644
+--- a/drivers/staging/iio/adc/ad7280a.c
++++ b/drivers/staging/iio/adc/ad7280a.c
+@@ -250,7 +250,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned devaddr,
+ 	if (ret)
+ 		return ret;
  
--	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
--	if ((cp = strchr(bprm->buf, '\n')) == NULL)
--		cp = bprm->buf+BINPRM_BUF_SIZE-1;
-+	for (cp = bprm->buf+2;; cp++) {
-+		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
-+			return -ENOEXEC;
-+		if (!*cp || (*cp == '\n'))
-+			break;
-+	}
- 	*cp = '\0';
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
+ 
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -288,7 +290,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned devaddr,
+ 
+ 	ad7280_delay(st);
+ 
+-	__ad7280_read32(st, &tmp);
++	ret = __ad7280_read32(st, &tmp);
++	if (ret)
++		return ret;
+ 
+ 	if (ad7280_check_crc(st, tmp))
+ 		return -EIO;
+@@ -321,7 +325,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned cnt,
+ 	ad7280_delay(st);
+ 
+ 	for (i = 0; i < cnt; i++) {
+-		__ad7280_read32(st, &tmp);
++		ret = __ad7280_read32(st, &tmp);
++		if (ret)
++			return ret;
+ 
+ 		if (ad7280_check_crc(st, tmp))
+ 			return -EIO;
+@@ -364,7 +370,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
+ 		return ret;
+ 
+ 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
+-		__ad7280_read32(st, &val);
++		ret = __ad7280_read32(st, &val);
++		if (ret)
++			return ret;
 +
- 	while (cp > bprm->buf) {
- 		cp--;
- 		if ((*cp == ' ') || (*cp == '\t'))
+ 		if (val == 0)
+ 			return n - 1;
+ 
 -- 
 2.19.1
 
