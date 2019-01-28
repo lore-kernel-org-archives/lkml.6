@@ -2,180 +2,114 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75052C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:20:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20E94C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:27:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 317E521738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:20:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DBF472148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 22:27:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dX/3otaT"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HJx6ZZY7"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbfA1WUk (ORCPT
+        id S1726802AbfA1W1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 17:20:40 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38486 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfA1WUk (ORCPT
+        Mon, 28 Jan 2019 17:27:15 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45018 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726668AbfA1W1O (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 17:20:40 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m22so15741231wml.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 14:20:37 -0800 (PST)
+        Mon, 28 Jan 2019 17:27:14 -0500
+Received: by mail-lj1-f194.google.com with SMTP id k19-v6so15706673lji.11;
+        Mon, 28 Jan 2019 14:27:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=4KL00Sa2jpsdtnOzo+vdaTApEMKPIHpzH6AXyKLdmUs=;
-        b=dX/3otaTF6JVUyYit9Cinh1tJMT8xRUc95pXev0rJVPoAnHUmiof8C1f6w1202apHA
-         gVFM6gVL+w70Nb1hWpEPUJCPyC25BPInQuRCwojKYrrtu+mf1bknYpSnIhaZniDORHI5
-         6VUZq0WN2LQ/O+oB+yGySavLM0sXKE6VzOxX04qpeS3C/WICKAKdYUuuuOpcENTX+Ajl
-         yE+JAstjC/5e2ncSmlioeHh6xitn6Ae6YWgxsMEt4ltGYF2TJAUqcEctw3S/TwVxweqz
-         +2qgvZUUFHFJiIsypLGufvT/FDu4cWcr3O/48hUxs2XUody1guDzaKlQBBvacQ9Kab8u
-         OAAw==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=9ZtWCkYjFys16slwcmTYDVFw0ffF3H6Epb/ByOOg9iw=;
+        b=HJx6ZZY7X0QDyo5otvUFiCScnRDehAlqthAxZ0ZO6rmKbkgk4jH7mdNkA3s1HlnwYD
+         QAjwRvnPYYFpGRcPwm+QvMzg2KUbdiZ0325kmnVJYX3VOwWpfyHHNgJslPWwutAi8nD3
+         MP3P4gOAD5M1Tf3R5ftjWgRqKzbxg0LYRT0FcBF1UmChQBVtjoiwudSdMbEgYJ6MVUS7
+         ZHWCVoYsZbYOQlEt33Qi5NOfQ7Clk4lNK2QZvhYYYbBcEcHs1Cka5r9icEiXzYOuIvN+
+         LdAohRMtiDXlsRozJdByKODNv+SZ53v4olBAcW8lB6THmQXeGEOXQ8Wr3rD7AQYpRCVY
+         6fUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=4KL00Sa2jpsdtnOzo+vdaTApEMKPIHpzH6AXyKLdmUs=;
-        b=fz9sYhPhX26CFi+cCguCFsI+GiEtKcdahwyCIHq6Vnf/8ujkCIFT5e/5mTWvNKsUXd
-         pqq7GncFj3mmgWtlOnEtCDrZ+JNOyS4HCosmmWcwEy/e9LDF1RbaFZAT1i84XWnrMBbo
-         BL/d989WnKerbWs+otO9Z3LzAsiohdpcmZX0aQ3Xw+g5sU1OHKYVeZ1HS96I2Kxkl8O6
-         u4I4+yjF0zBUtkaa+q41G0i2reSmC5Ki4vfOPu4aiu7z79CY2Fb975BoiBhKwGV9daDh
-         HpvRQCTEL6Se3r9UxgO+7+FP+RJ/BXs0Q+lNOEGDySuzESr2wUtoVQPVIpinXwmkvK/p
-         IfDw==
-X-Gm-Message-State: AJcUukcMrBDNpWFVoD2c+SLHOMTLI0mienumM1zsl6ZIhrPDd8uoFNtC
-        5zKpkwrGvUqbSmc8ekfgNm4QrQahFghheglOGbqq2g==
-X-Google-Smtp-Source: ALg8bN4XIKvq/wm++crmJSjRkvwCxeLdqzj8TrbXYZueXL0kxFV4OAJXK1Dsi55UmTYmsV7OBBDCNFPbsgMgjemBR3k=
-X-Received: by 2002:a7b:c04e:: with SMTP id u14mr17354530wmc.133.1548714036793;
- Mon, 28 Jan 2019 14:20:36 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=9ZtWCkYjFys16slwcmTYDVFw0ffF3H6Epb/ByOOg9iw=;
+        b=dvANKPIw7g98Qc+qEtv4gj+TUONL4owqvybeSgoVIDeVJVhE00cCBtAsf8g5jYkIlq
+         d0jLxuLzrb+1l5HItMeGsZo6gcnmhFz+gCTEui0G+LoFOA/d5imaVrKW8W0w7Ph3yWhq
+         WzsBCP4IyC4Uya4YBqf6JOnRCzAaTtJnCvdbu67MXikNQAzGSmZeRMdcH8ndGg0P/ufq
+         S6aeLJ5+Tdj3tMunUo1kfy/9Q5EVmc+mkxdXZr5kRrSUZalvfHRX+U+ajLqQaxzDSZ0Q
+         RHX2CE/lNs6GdrT1V2m8/Hbh1NV8zsLEWawJ8k1O2MZyYfzI1K/rMnV82qvzt2+Tko0w
+         GWAg==
+X-Gm-Message-State: AHQUAuZoux4yk9wHm7gdkliSwcYzXo1W5/bgcydCWQovO4WXZ07Z9TRg
+        +8AL0M2egwLzrrXWoBv9VS1Ioa+s
+X-Google-Smtp-Source: AHgI3IbD7swbzihmtLez53xUuQOt0dEy32mVCAi/HozkwUsKvSgTm1CUEA+l6TboGB0Z6uV1zk4YdA==
+X-Received: by 2002:a2e:1603:: with SMTP id w3-v6mr208327ljd.33.1548714432087;
+        Mon, 28 Jan 2019 14:27:12 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-79-175-49.pppoe.mtu-net.ru. [91.79.175.49])
+        by smtp.googlemail.com with ESMTPSA id q2sm3324954lfa.63.2019.01.28.14.27.10
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 14:27:11 -0800 (PST)
+Subject: Re: [PATCH V3 2/3] i2c: tegra: Update transfer timeout
+To:     Sowjanya Komatineni <skomatineni@nvidia.com>,
+        "thierry.reding@gmail.com" <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Mantravadi Karthik <mkarthik@nvidia.com>,
+        Shardar Mohammed <smohammed@nvidia.com>,
+        Timo Alho <talho@nvidia.com>
+Cc:     "linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <1548475073-12408-1-git-send-email-skomatineni@nvidia.com>
+ <1548475073-12408-2-git-send-email-skomatineni@nvidia.com>
+ <0cf91475-f77d-7453-deb6-3dd91b63aeb6@gmail.com>
+ <BYAPR12MB3398E9D32B57B0E2FC2A6466C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+ <c0b36535-6767-7327-5dc5-612e6957a769@gmail.com>
+ <BYAPR12MB339837E896774531B0D11A98C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+From:   Dmitry Osipenko <digetx@gmail.com>
+Message-ID: <2f3cab66-7424-1b33-976f-826877623726@gmail.com>
+Date:   Tue, 29 Jan 2019 01:27:09 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190116193501.1910-1-hannes@cmpxchg.org> <20190128140336.25854cb97c25924f4bfc26c7@linux-foundation.org>
-In-Reply-To: <20190128140336.25854cb97c25924f4bfc26c7@linux-foundation.org>
-From:   Suren Baghdasaryan <surenb@google.com>
-Date:   Mon, 28 Jan 2019 14:20:25 -0800
-Message-ID: <CAJuCfpFp_1O8YhEyBjg5mLeRALQDafyv0f7tfSGLxMbp-XQ6dQ@mail.gmail.com>
-Subject: Re: [PATCH] psi: fix aggregation idle shut-off
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Tejun Heo <tj@kernel.org>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <BYAPR12MB339837E896774531B0D11A98C2960@BYAPR12MB3398.namprd12.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 2:03 PM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Wed, 16 Jan 2019 14:35:01 -0500 Johannes Weiner <hannes@cmpxchg.org> wrote:
->
-> > psi has provisions to shut off the periodic aggregation worker when
-> > there is a period of no task activity - and thus no data that needs
-> > aggregating. However, while developing psi monitoring, Suren noticed
-> > that the aggregation clock currently won't stay shut off for good.
-> >
-> > Debugging this revealed a flaw in the idle design: an aggregation run
-> > will see no task activity and decide to go to sleep; shortly
-> > thereafter, the kworker thread that executed the aggregation will go
-> > idle and cause a scheduling change, during which the psi callback will
-> > kick the !pending worker again. This will ping-pong forever, and is
-> > equivalent to having no shut-off logic at all (but with more code!)
-> >
-> > Fix this by exempting aggregation workers from psi's clock waking
-> > logic when the state change is them going to sleep. To do this, tag
-> > workers with the last work function they executed, and if in psi we
-> > see a worker going to sleep after aggregating psi data, we will not
-> > reschedule the aggregation work item.
-> >
-> > What if the worker is also executing other items before or after?
-> >
-> > Any psi state times that were incurred by work items preceding the
-> > aggregation work will have been collected from the per-cpu buckets
-> > during the aggregation itself. If there are work items following the
-> > aggregation work, the worker's last_func tag will be overwritten and
-> > the aggregator will be kept alive to process this genuine new activity.
-> >
-> > If the aggregation work is the last thing the worker does, and we
-> > decide to go idle, the brief period of non-idle time incurred between
-> > the aggregation run and the kworker's dequeue will be stranded in the
-> > per-cpu buckets until the clock is woken by later activity. But that
-> > should not be a problem. The buckets can hold 4s worth of time, and
-> > future activity will wake the clock with a 2s delay, giving us 2s
-> > worth of data we can leave behind when disabling aggregation. If it
-> > takes a worker more than two seconds to go idle after it finishes its
-> > last work item, we likely have bigger problems in the system, and
-> > won't notice one sample that was averaged with a bogus per-CPU weight.
->
-> Did we ever hear back from Suren about the testing?
->
-> Some words here about the new wq_worker_last_func() would be
-> appropriate.
->
-> It's an ugly-looking thing :(  Tejun, did you check this change?
+29.01.2019 1:15, Sowjanya Komatineni пишет:
+> 
+> 
+>>>>> Update I2C transfer timeout based on transfer bytes and I2C bus rate 
+>>>>> to allow enough time during max transfer size based on the speed.
+>>>>
+>>>> Could it be that I2C device is busy and just slowly handling the transfer requests? Maybe better to leave the timeout as-is and assume the worst case scenario?
+>>>>
+>>> This change includes min transfer time out of 100ms in addition to computed timeout based on transfer bytes and speed which can account in cases of slave devices running at slower speed.
+>>> Also Tegra I2C Master supports Clock stretching by the slave.
+>>
+>> Okay, I suppose in reality this shouldn't break anything.
+>>
+>> Please explain what benefits this change brings. Does it fix or improve anything? The commit message only describes changes done in the patch and has no word on justification of those changes. Transfer timeout is an extreme case that doesn't happen often and > > when it happens, usually only the fact of timeout matters. If there is no real value in shortening of the timeout, why bother then?
+> 
+> Original transfer timeout in existing driver is 1Sec and incases of transfer size more than 10Kbytes at STD bus rate, timeout is not sufficient.
+> Also Tegra194 platform supports max of 64K bytes of transfer and to allow full transfer size at lowest bus rate it takes almost ~5.8 Sec.
+> In cases if large transfer at low bus rates 1 Sec timeout is not enough and in those cases transfers will timeout before it waits for complete transfer to happen.
+> 
+> So this patch uses transfer time based on transfer bytes and bus rate.
+> 
 
-Yes, sorry for the delay. I tried the patch as is and with some
-tweaking of my local setup was able to see the cases when this
-mechanism prevents the system from unnecessary reactivation. I
-encountered some weird things in my traces (some state transitions
-were missing in the trace) and wanted to investigate further, however
-did not get a chance to do that yet. Overall looks like the patch is
-doing what it's supposed to do. Just wanted to get the full picture
-before reporting the results.
+Please add that to the commit message.
 
-> > --- a/kernel/sched/psi.c
-> > +++ b/kernel/sched/psi.c
-> > @@ -124,6 +124,7 @@
-> >   * sampling of the aggregate task states would be.
-> >   */
-> >
-> > +#include "../workqueue_internal.h"
->
-> "Only to be included by workqueue and core kernel subsystems"
->
-> I'm not sure that psi qualifies.  Perhaps wq_worker_last_func() should
-> be declared in include/linux/workqueue.h.
->
-> And perhaps implemented there as well.  It's similar to
-> current_wq_worker(), which is inlined and wq_worker_last_func() is
-> small enough to justify inlining.
->
-> > --- a/kernel/workqueue.c
-> > +++ b/kernel/workqueue.c
-> > @@ -909,6 +909,26 @@ struct task_struct *wq_worker_sleeping(struct task_struct *task)
-> >       return to_wakeup ? to_wakeup->task : NULL;
-> >  }
-> >
-> > +/**
-> > + * wq_worker_last_func - retrieve worker's last work function
-> > + *
-> > + * Determine the last function a worker executed. This is called from
-> > + * the scheduler to get a worker's last known identity.
-> > + *
-> > + * CONTEXT:
-> > + * spin_lock_irq(rq->lock)
-> > + *
-> > + * Return:
-> > + * The last work function %current executed as a worker, NULL if it
-> > + * hasn't executed any work yet.
-> > + */
-> > +work_func_t wq_worker_last_func(struct task_struct *task)
-> > +{
-> > +     struct worker *worker = kthread_data(task);
-> > +
-> > +     return worker->last_func;
-> > +}
->
-> The semantics are troublesome.  What guarantees that worker->last_func
-> won't change under the caller's feet?  The caller should hold some lock
-> (presumably worker->pool->lock) in order to stabilize the
-> wq_worker_last_func() return value?
->
-> Also, the comment isn't really true - this is called from PSI, which is
-> hardly "the scheduler"?
->
->
+And then seems you also need to set I2C adapter timeout to a some larger value. Currently Tegra's I2C doesn't explicitly specify the "adapter.timeout" and I2C core sets it to 1 second if it is 0.
