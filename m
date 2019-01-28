@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D6B3C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:15:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63564C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:16:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D61A320881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:15:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 308D120881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:16:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oIai9uuC";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="U3g6ucIs"
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="c2q/TBqe";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Aj6Ked5V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728143AbfA1TPy (ORCPT
+        id S1728205AbfA1TQC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:15:54 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:48478 "EHLO
+        Mon, 28 Jan 2019 14:16:02 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:48718 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727128AbfA1TPw (ORCPT
+        with ESMTP id S1728152AbfA1TQA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:15:52 -0500
+        Mon, 28 Jan 2019 14:16:00 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 72B1060F91; Mon, 28 Jan 2019 19:15:32 +0000 (UTC)
+        id 115F3613E5; Mon, 28 Jan 2019 19:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548702951;
-        bh=yZSdMMQsRjd1YjqkjkSmmTSz2cf/QMQE0+Krewzebao=;
+        s=default; t=1548702959;
+        bh=G66u7F4KpeDind39w/P214KZq0uzWJ7mZXCoJhPiSBg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oIai9uuCWexslqJS299BNB0YH4vyEnPKVs7m+7XqG5jYCPFdroLbpK6u9xNsxfZuA
-         YkOyV4MCUV73lfU8/hVrJfkaFkJKv+XOVAo4H44vp8n8tBbjvpg4hNQ89XLScoVY+G
-         SkAPQVsy0keNRPiZZHvIRBYPU1tMKFdvSVVEhb5M=
+        b=c2q/TBqeQMJiBo2RcQgazWJV4nUvhArohRrjHnEvBluO2eo3P32UvLitzRQbD0Vm+
+         aCb22c4xz1HFxCKI5YYbk/4YLdefdNkIghv1TRanSR0NxC76FKy8Glxmqjfj/HlF1/
+         ahEgo16a3TTzqVn95JiQL7/cCmOQMa4rxuUMPneM=
 Received: from blr-ubuntu-253.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: saiprakash.ranjan@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 04FDC60F81;
-        Mon, 28 Jan 2019 19:15:23 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 13D7C60F90;
+        Mon, 28 Jan 2019 19:15:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1548702929;
-        bh=yZSdMMQsRjd1YjqkjkSmmTSz2cf/QMQE0+Krewzebao=;
+        s=default; t=1548702940;
+        bh=G66u7F4KpeDind39w/P214KZq0uzWJ7mZXCoJhPiSBg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U3g6ucIszJH824QzcqJhKX2TigFBUl5J1I0YXFz9GtVPX8djXcYcII4ip9+9ySaG2
-         OCnEsA5Guy8kAwotXY1pe8X40G3YbzaDNm8TVYVBdKlMigTD3l8OF7cZaoSLE9RHTC
-         Buo7yVpElwuhDGDyP81nkU/M1WYutr6gIY6QwD8I=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 04FDC60F81
+        b=Aj6Ked5VM3U6NBln0UbAvS0TmhYFl3uiiOQklcPJPezZN66cB9kisw575vOtXXQRR
+         5R8s76y4UHtASEu1KInYGJz9TYVwgAD3KoS+JCGsbUS8Cw57G9n0+1IkY6roMQwSUF
+         +QhqbO+VPS72yOufCk1ulMEOTtuA/BdY3MgkZg/g=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 13D7C60F90
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
 From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
@@ -71,9 +70,9 @@ Cc:     Rajendra Nayak <rnayak@codeaurora.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org,
         Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Subject: [PATCHv5 6/7] coresight: debug: Add Unique Component Identifier (UCI) table
-Date:   Tue, 29 Jan 2019 00:44:03 +0530
-Message-Id: <1019e6fed1ade6a580f01df9b3f70c2a9df5b3be.1548419933.git.saiprakash.ranjan@codeaurora.org>
+Subject: [PATCHv5 7/7] arm64: dts: qcom: sdm845: Remove the duplicate header inclusion
+Date:   Tue, 29 Jan 2019 00:44:04 +0530
+Message-Id: <d0370bc569491d11827a6eb12a75a236c3d60a0e.1548419933.git.saiprakash.ranjan@codeaurora.org>
 X-Mailer: git-send-email 2.19.2
 In-Reply-To: <cover.1548419933.git.saiprakash.ranjan@codeaurora.org>
 References: <cover.1548419933.git.saiprakash.ranjan@codeaurora.org>
@@ -84,90 +83,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add UCI table and a helper macro for coresight CPU debug
-module. This patch adds the UCI entries for Krypo CPUs
-found on MSM8996 which shares the same PIDs as ETMs.
-
-Without this, below error is observed on MSM8996:
-
-[    5.429867] OF: graph: no port node found in /soc/debug@3810000
-[    5.429938] coresight-etm4x: probe of 3810000.debug failed with error -22
-[    5.435415] coresight-cpu-debug 3810000.debug: Coresight debug-CPU0 initialized
-[    5.446474] OF: graph: no port node found in /soc/debug@3910000
-[    5.448927] coresight-etm4x: probe of 3910000.debug failed with error -22
-[    5.454681] coresight-cpu-debug 3910000.debug: Coresight debug-CPU1 initialized
-[    5.487765] OF: graph: no port node found in /soc/debug@3a10000
-[    5.488007] coresight-etm4x: probe of 3a10000.debug failed with error -22
-[    5.493024] coresight-cpu-debug 3a10000.debug: Coresight debug-CPU2 initialized
-[    5.501802] OF: graph: no port node found in /soc/debug@3b10000
-[    5.512901] coresight-etm4x: probe of 3b10000.debug failed with error -22
-[    5.513192] coresight-cpu-debug 3b10000.debug: Coresight debug-CPU3 initialized
-
-Also add a helper macro to make adding CPU PIDs easier
-similar to ETM4X driver.
+Remove the duplicate inclusion of qcom,gcc-sdm845.h
+mistakenly introduced by commit 6e17f8140521 ("arm64:
+dts: sdm845: add prng-ee node").
 
 Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
 ---
-This patch depends on UCI support by Mike Leach in below link:
- https://lore.kernel.org/lkml/20190121233151.13363-2-mike.leach@linaro.org/
----
- .../hwtracing/coresight/coresight-cpu-debug.c | 41 +++++++++++++------
- 1 file changed, 28 insertions(+), 13 deletions(-)
+ arch/arm64/boot/dts/qcom/sdm845.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-cpu-debug.c b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-index 45b2460f3166..a126ed0b9a76 100644
---- a/drivers/hwtracing/coresight/coresight-cpu-debug.c
-+++ b/drivers/hwtracing/coresight/coresight-cpu-debug.c
-@@ -655,20 +655,35 @@ static int debug_remove(struct amba_device *adev)
- 	return 0;
- }
+diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+index e49f71d00854..eafe8e47471e 100644
+--- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
++++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+@@ -12,7 +12,6 @@
+ #include <dt-bindings/phy/phy-qcom-qusb2.h>
+ #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+ #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+-#include <dt-bindings/clock/qcom,gcc-sdm845.h>
  
-+#define DEBUG_AMBA_ID(pid)			\
-+	{					\
-+		.id	= pid,			\
-+		.mask	= 0x000fffff,		\
-+	}
-+
-+static struct amba_cs_uci_id uci_id_debug[] = {
-+	{
-+		/*  CPU Debug UCI data */
-+		.devarch	= 0x47706a15,
-+		.devarch_mask	= 0xfff0ffff,
-+		.devtype	= 0x00000015,
-+	}
-+};
-+
-+#define DEBUG_AMBA_UCI_ID(pid)			\
-+	{					\
-+		.id	= pid,			\
-+		.mask	= 0x000fffff,		\
-+		.data	= uci_id_debug,		\
-+	}
-+
- static const struct amba_id debug_ids[] = {
--	{       /* Debug for Cortex-A53 */
--		.id	= 0x000bbd03,
--		.mask	= 0x000fffff,
--	},
--	{       /* Debug for Cortex-A57 */
--		.id	= 0x000bbd07,
--		.mask	= 0x000fffff,
--	},
--	{       /* Debug for Cortex-A72 */
--		.id	= 0x000bbd08,
--		.mask	= 0x000fffff,
--	},
--	{ 0, 0 },
-+	DEBUG_AMBA_ID(0x000bbd03),		/* Cortex-A53 */
-+	DEBUG_AMBA_ID(0x000bbd07),		/* Cortex-A57 */
-+	DEBUG_AMBA_ID(0x000bbd08),		/* Cortex-A72 */
-+	DEBUG_AMBA_UCI_ID(0x000f0205),		/* Qualcomm Kryo */
-+	DEBUG_AMBA_UCI_ID(0x000f0211),		/* Qualcomm Kryo */
-+	{},
- };
- 
- static struct amba_driver debug_driver = {
+ / {
+ 	interrupt-parent = <&intc>;
 -- 
 QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
 of Code Aurora Forum, hosted by The Linux Foundation
