@@ -2,129 +2,120 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E31DAC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73726C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE3772173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690242;
-	bh=Hdbl9KKGLFt+u7ACAyJqO03MF1R02UVt3YORmoCEymo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=F1186KGrzYD60pZN7MBhiEux3g12601GA+e8mooj77GHae68VxH5G0JUgzqspZDbA
-	 BqjbaJeJ6XugLT+gzqoOj+ZPqPb3br1gSkPncyYe8JhX2h6LAHrHsb11wY8xKAD9uf
-	 fwLn90PcY0sIvp9L39AQ7mf7UpCAhjXytjsqKdr4=
+	by mail.kernel.org (Postfix) with ESMTP id 4A488214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727150AbfA1PoB (ORCPT
+        id S1727166AbfA1PoE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 10:44:04 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:42456 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727146AbfA1PoB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 10:44:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57174 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727132AbfA1Pn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:43:58 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 732282147A;
-        Mon, 28 Jan 2019 15:43:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690237;
-        bh=Hdbl9KKGLFt+u7ACAyJqO03MF1R02UVt3YORmoCEymo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nP0JUDH/9DqGMLxQz9ji/6ak2BiNwldmDRTd0g9T8kfxEg0lC51CpsRYnMbPGvsr6
-         S3EhdxzjRkcIhlWBwrXwqQi9w9gMwtLNM2/ddcSEsLLoVaqnWNYde5YUL46iIuvtHp
-         Di9iuAKVADGAgju8/ynaYJucb5/4JsRijYKadXR4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 012/304] gpu: ipu-v3: image-convert: Prevent race between run and unprepare
-Date:   Mon, 28 Jan 2019 10:38:49 -0500
-Message-Id: <20190128154341.47195-12-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+Received: by mail-vs1-f66.google.com with SMTP id b74so9969091vsd.9;
+        Mon, 28 Jan 2019 07:44:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=x2wa+K5YNPI9+zY5xomP72xSduPXvimTTHXp1XsjO7E=;
+        b=Lcwew0REURerg7vQiHlKSAZpMK1SyOMljwGAXArOREXQHOEFDGeiV56Ypmd35wKnBN
+         yzpHg3iJ+N/lSDrkM5J5x4ClZHg6Dns5g7/blQAYkcfUoZLpiRT2vlnYz135KX7CBLv9
+         ZbJUXQ24iwW6lthTgAz65oVe4yVFiEv8zNLsPoGNGvctGaKzp7tyVE3gQHB9k0hB1QvM
+         JOVmI9vaOEpjAKxb/F1Fd6Wxp35uCg9CLz58jdVAx2HIEAXVHT7SX5K4ssdq4Q2ldOV+
+         JII1BM8lVDRee9hbYA3XpfDjEbdzQo8M2Ya/61sZoaM51VKBgJYKmUIHi8KsLBpzxm+p
+         NThg==
+X-Gm-Message-State: AHQUAuYxH0IT5vLG1UCJRQJAVTgffemxwbOSFFrrwegZ+fVca9OaAsXn
+        izSuW4c1zUfJiXZckhjm0RH6BRL3XQkEOktk1NI=
+X-Google-Smtp-Source: AHgI3IaCNqFqxYF5jcFRcCRr3F8u3p45e8vOxEGJ+OqOd1kuIKX0RovOS/tgzMJSBqB2qpmVtJ11sRlLqYSVlIaIAgE=
+X-Received: by 2002:a67:c202:: with SMTP id i2mr148070vsj.11.1548690240249;
+ Mon, 28 Jan 2019 07:44:00 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20181211202406.27721-1-robh@kernel.org> <CAMuHMdUdGvBUX7EsOrwJM4_LzR_Pe2exJ1Pfo48Vt5_scrdy0w@mail.gmail.com>
+ <CAL_JsqKG8d+yONY2ikeiCaORYBfWhLe_rAsir11R8zRAD84MmA@mail.gmail.com>
+In-Reply-To: <CAL_JsqKG8d+yONY2ikeiCaORYBfWhLe_rAsir11R8zRAD84MmA@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 28 Jan 2019 16:43:47 +0100
+Message-ID: <CAMuHMdWy2D-keyOuKtgCLe0_76qR74Jk7Aa=_FzxvEG7rfKpCA@mail.gmail.com>
+Subject: Re: [PATCH v4] kbuild: Add support for DT binding schema checks
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sean Hudson <darknighte@darknighte.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>, arm-soc <arm@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
+Hi Rob,
 
-[ Upstream commit 819bec35c8c9706185498c9222bd244e0781ad35 ]
+On Mon, Jan 28, 2019 at 4:35 PM Rob Herring <robh@kernel.org> wrote:
+> On Mon, Jan 28, 2019 at 3:43 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Tue, Dec 11, 2018 at 9:24 PM Rob Herring <robh@kernel.org> wrote:
+> > > This adds the build infrastructure for checking DT binding schema
+> > > documents and validating dts files using the binding schema.
+> > >
+> > > Check DT binding schema documents:
+> > > make dt_binding_check
+> > >
+> > > Build dts files and check using DT binding schema:
+> > > make dtbs_check
+> > >
+> > > Optionally, DT_SCHEMA_FILES can be passed in with a schema file(s) to
+> > > use for validation. This makes it easier to find and fix errors
+> > > generated by a specific schema.
+> > >
+> > > Currently, the validation targets are separate from a normal build to
+> > > avoid a hard dependency on the external DT schema project and because
+> > > there are lots of warnings generated.
 
-Prevent possible race by parallel threads between ipu_image_convert_run()
-and ipu_image_convert_unprepare(). This involves setting ctx->aborting
-to true unconditionally so that no new job runs can be queued during
-unprepare, and holding the ctx->aborting flag until the context is freed.
+> > BTW, what are the CONFIG dependencies for this to work?
+> > E.g. defconfig on x86_64 fails, even after enabling CONFIG_OF:
+>
+> I generally use allmodconfig which enables building all DTs.
+>
+> Yes, there's a dependency on CONFIG_DTC which isn't always enabled
+> with CONFIG_OF. Maybe it should be. The only other solutions I've
 
-Note that the "normal" ipu_image_convert_abort() case (e.g. not during
-context unprepare) should clear the ctx->aborting flag after aborting
-any active run and clearing the context's pending queue. This is because
-it should be possible to continue to use the conversion context and queue
-more runs after an abort.
+Oh, didn't think of CONFIG_DTC.
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/ipu-v3/ipu-image-convert.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+> thought of are either always build dtc or make the targets conditional
+> on CONFIG_DTC. The latter would only change the error message.
 
-diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
-index f4081962784c..91653adc41cc 100644
---- a/drivers/gpu/ipu-v3/ipu-image-convert.c
-+++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
-@@ -1524,7 +1524,7 @@ unlock:
- EXPORT_SYMBOL_GPL(ipu_image_convert_queue);
- 
- /* Abort any active or pending conversions for this context */
--void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
-+static void __ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- {
- 	struct ipu_image_convert_chan *chan = ctx->chan;
- 	struct ipu_image_convert_priv *priv = chan->priv;
-@@ -1551,7 +1551,7 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- 
- 	need_abort = (run_count || active_run);
- 
--	ctx->aborting = need_abort;
-+	ctx->aborting = true;
- 
- 	spin_unlock_irqrestore(&chan->irqlock, flags);
- 
-@@ -1572,7 +1572,11 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- 		dev_warn(priv->ipu->dev, "%s: timeout\n", __func__);
- 		force_abort(ctx);
- 	}
-+}
- 
-+void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
-+{
-+	__ipu_image_convert_abort(ctx);
- 	ctx->aborting = false;
- }
- EXPORT_SYMBOL_GPL(ipu_image_convert_abort);
-@@ -1586,7 +1590,7 @@ void ipu_image_convert_unprepare(struct ipu_image_convert_ctx *ctx)
- 	bool put_res;
- 
- 	/* make sure no runs are hanging around */
--	ipu_image_convert_abort(ctx);
-+	__ipu_image_convert_abort(ctx);
- 
- 	dev_dbg(priv->ipu->dev, "%s: task %u: removing ctx %p\n", __func__,
- 		chan->ic_task, ctx);
+Making the target conditional may make it more obvious to the user
+what's going on. Cfr. "make modules_install" giving a nice explanation
+when CONFIG_MODULES=n.
+
+Thanks.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.19.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
