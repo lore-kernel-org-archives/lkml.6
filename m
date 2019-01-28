@@ -2,97 +2,135 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA97C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:09:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B1FC282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:09:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDD3121741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:09:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rkC6AO6r"
+	by mail.kernel.org (Postfix) with ESMTP id B0F2421741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:09:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548695346;
+	bh=R9UjbWR42N1bMFqAXz7fxRNMKrSK7hO0KZrzRCFmMK4=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=ne9E2fOsHg12/yGop9+7O+P/1kDZtrRNSmfvEN2EniNibbz5Nbg3v8VkzX2mV7CRM
+	 ydHfqLNpl/oGU4VXW04bIqPX2VwJc3vktsI3LzVVdnD7B0XusIr8cPCH1aNts9euLC
+	 oseXvMsqNUZeoNeVAOxo44eUvdUjCk/DH+NeXYG0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733230AbfA1RJC (ORCPT
+        id S1732651AbfA1QLu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:09:02 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:44133 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733031AbfA1QLu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 11:11:50 -0500
-Received: by mail-pg1-f193.google.com with SMTP id t13so7385140pgr.11
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 08:11:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=CV388ilkjL0NcLVI0uaGKJeYDzVKBWBY5OcOpufxxPc=;
-        b=rkC6AO6rkKbgt9CB/wiM/aYiYfQuXpg0AmcKVo3Z0suKBF7QQlqbUFhNYmFmOtSDjL
-         gG9iBres8z+hERqnTMH8AB0qRmEA62RZGHi3enK2okgQZaZY8AU59Duen8DxmLRI/2qY
-         VN7QmeR4Jng7XT+7P2HRCwGAmgOn4Zzd9ZVkF9oARXn/FEif1YCtP7u9qL982S4l3zab
-         qEj9d1PP+2QqdZx2PAXOQfLLibt3DgU926iBmJN5cZQT4sS4lvSS2PD4G4qv9gsIiI4k
-         cQmdWO0ughG0V8CvBYV+UW6XuV06jp6pg6d9gMyq0TPUBAOdHbvRRhetRqwEPuBdu8FG
-         YL4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=CV388ilkjL0NcLVI0uaGKJeYDzVKBWBY5OcOpufxxPc=;
-        b=Z8xtByvQyf4WEDpq3qARh/YsNUNBXBx2uZeTOns/L5ZWkZi6bA818W877Rk+R/wVCq
-         5fSRdTMDEpSLetzA+ig75NBwTEouTwPpvo3tdrDsEAyfJZLeAL2M/X34G0UuEAJb2Sxz
-         30bPKygjw8GdWELrZFdZ+G/gMCsg2kVdCrjxHS1LcBYY8Ki2he2ucshq73z5NvdWplAE
-         kNOrXbT+OmqpFyNAJCPWZIq63PmDWw5eJbycuppLUy/lJ3GByKAPXgaD4dyUIYuWKufG
-         5uoFUc18XJxdSMDM7JidaTu6hYi1r8CXkDO/ZpYAizDK9IboDEmZf8fwnyWbvphnZulu
-         W/iA==
-X-Gm-Message-State: AJcUukfeWBV/ITSmoYOOHajJcR1AspRbMhRk/LyH0eAZQUdDYI/VNfeQ
-        rRbBVxS51sRoeKRHDi7jagk=
-X-Google-Smtp-Source: ALg8bN5oiB7c+yXgt6FEtfawuyFcw+R/BgttdHCUnb3PSB26onItgOqrnKhAkZj1bs/uAv6zqfka/Q==
-X-Received: by 2002:a63:4384:: with SMTP id q126mr20174469pga.160.1548691909813;
-        Mon, 28 Jan 2019 08:11:49 -0800 (PST)
-Received: from hp-pavilion-15-notebook-pc-brajeswar ([47.11.154.113])
-        by smtp.gmail.com with ESMTPSA id p2sm41647731pfb.28.2019.01.28.08.11.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 08:11:49 -0800 (PST)
-Date:   Mon, 28 Jan 2019 21:41:36 +0530
-From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
-To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
-        npiggin@gmail.com, christophe.leroy@c-s.fr, arnd@arndb.de,
-        anton@ozlabs.org, aneesh.kumar@linux.ibm.com
-Cc:     jrdr.linux@gmail.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com
-Subject: [PATCH] powerpc/kernel/time: Remove duplicate header
-Message-ID: <20190128161136.GA2266@hp-pavilion-15-notebook-pc-brajeswar>
+Received: from mail.kernel.org ([198.145.29.99]:39138 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1733015AbfA1QLr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:11:47 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2321C2147A;
+        Mon, 28 Jan 2019 16:11:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691906;
+        bh=R9UjbWR42N1bMFqAXz7fxRNMKrSK7hO0KZrzRCFmMK4=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=iECl/Wp8bbodenMP8msL4+ZyvtXA4zzeXmEd0yNG8hmeINFulH9dHB+qcb+DnFqjV
+         0jv5vAczz9fsXpoMevA1llssQHFvI5YMCmKDFoRk48P8+KesdIrn9lufdYaVNqZKaE
+         NoCkMuBzynPFJCoCBz5wMCpGHi8xvgSNlkb+EsWc=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     "Liu, Chuansheng" <chuansheng.liu@intel.com>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 254/258] kernel/hung_task.c: force console verbose before panic
+Date:   Mon, 28 Jan 2019 10:59:20 -0500
+Message-Id: <20190128155924.51521-254-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove linux/rtc.h which is included more than once
+From: "Liu, Chuansheng" <chuansheng.liu@intel.com>
 
-Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+[ Upstream commit 168e06f7937d96c7222037d8a05565e8a6eb00fe ]
+
+Based on commit 401c636a0eeb ("kernel/hung_task.c: show all hung tasks
+before panic"), we could get the call stack of hung task.
+
+However, if the console loglevel is not high, we still can not see the
+useful panic information in practice, and in most cases users don't set
+console loglevel to high level.
+
+This patch is to force console verbose before system panic, so that the
+real useful information can be seen in the console, instead of being
+like the following, which doesn't have hung task information.
+
+  INFO: task init:1 blocked for more than 120 seconds.
+        Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
+  "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+  Kernel panic - not syncing: hung_task: blocked tasks
+  CPU: 2 PID: 479 Comm: khungtaskd Tainted: G     U  W         4.19.0-quilt-2e5dc0ac-g51b6c21d76cc #1
+  Call Trace:
+   dump_stack+0x4f/0x65
+   panic+0xde/0x231
+   watchdog+0x290/0x410
+   kthread+0x12c/0x150
+   ret_from_fork+0x35/0x40
+  reboot: panic mode set: p,w
+  Kernel Offset: 0x34000000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+
+Link: http://lkml.kernel.org/r/27240C0AC20F114CBF8149A2696CBE4A6015B675@SHSMSX101.ccr.corp.intel.com
+Signed-off-by: Chuansheng Liu <chuansheng.liu@intel.com>
+Reviewed-by: Petr Mladek <pmladek@suse.com>
+Reviewed-by: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
+Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/kernel/time.c | 1 -
- 1 file changed, 1 deletion(-)
+ kernel/hung_task.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
-index 3646affae963..bc0503ef9c9c 100644
---- a/arch/powerpc/kernel/time.c
-+++ b/arch/powerpc/kernel/time.c
-@@ -57,7 +57,6 @@
- #include <linux/irq_work.h>
- #include <linux/clk-provider.h>
- #include <linux/suspend.h>
--#include <linux/rtc.h>
- #include <linux/sched/cputime.h>
- #include <linux/processor.h>
- #include <asm/trace.h>
+diff --git a/kernel/hung_task.c b/kernel/hung_task.c
+index aa3c51f300aa..9eca2371f189 100644
+--- a/kernel/hung_task.c
++++ b/kernel/hung_task.c
+@@ -111,8 +111,11 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 
+ 	trace_sched_process_hang(t);
+ 
+-	if (!sysctl_hung_task_warnings && !sysctl_hung_task_panic)
+-		return;
++	if (sysctl_hung_task_panic) {
++		console_verbose();
++		hung_task_show_lock = true;
++		hung_task_call_panic = true;
++	}
+ 
+ 	/*
+ 	 * Ok, the task did not get scheduled for more than 2 minutes,
+@@ -134,11 +137,6 @@ static void check_hung_task(struct task_struct *t, unsigned long timeout)
+ 	}
+ 
+ 	touch_nmi_watchdog();
+-
+-	if (sysctl_hung_task_panic) {
+-		hung_task_show_lock = true;
+-		hung_task_call_panic = true;
+-	}
+ }
+ 
+ /*
 -- 
-2.17.1
+2.19.1
 
