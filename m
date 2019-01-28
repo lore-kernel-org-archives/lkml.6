@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C9CEC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8327C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D285B2171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96E922173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692760;
-	bh=hdrYnzqp5HeJOjIcoKP6mksNrf1ltGg3hT2/WBSGiB0=;
+	s=default; t=1548692764;
+	bh=qZAjV+avWc15ndvMHzJLtXGvXNpz5AWj4Lmg63WkY38=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pT48JtspdZNK4Coh7mdpXJzF9GUCkGnTsuxwiK2XE+gpdaXm/qFRstUoFJotuRsbQ
-	 cz5fT8OSlUGlv6mOhHihepDZ7s7Q1GqT6DZSH/iPhxgkjLWjHlfjAmwTnXNV95Sgnd
-	 JyEZM3q+QAC0xlLAIlQgVxhzbixoqv2ngCfRyZ4g=
+	b=YFASNh8Uv03fo/sxy+xy5U2wmtitepxzO1YB3D6BEUGXDPJp7vtHZZtyLOUU+TD5+
+	 XVDloGnOEX9dplHObJF7fzI0SSEamMJBoeKduTjofpOvdhGR05nM63itKKNMAM5Arn
+	 sG3wBFU1s66y1qdWHmmdEIH6NzYp+ky70qKzCf6I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390092AbfA1QZ7 (ORCPT
+        id S2390104AbfA1Q0C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:59 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34982 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:26:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35066 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390060AbfA1QZ4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:56 -0500
+        id S2390093AbfA1Q0A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:00 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 59E0B2171F;
-        Mon, 28 Jan 2019 16:25:55 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C338A2173C;
+        Mon, 28 Jan 2019 16:25:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692756;
-        bh=hdrYnzqp5HeJOjIcoKP6mksNrf1ltGg3hT2/WBSGiB0=;
+        s=default; t=1548692759;
+        bh=qZAjV+avWc15ndvMHzJLtXGvXNpz5AWj4Lmg63WkY38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EcXmCnHxjqX90N5kYDp6qQYyLnvRZGVKyjjjEfL7HqbY8RvHZQrrCY2Xz9m2MxzPV
-         3P0KfnqhEEj6rX0xp4ZbhabsIfOOKWbAqIFTEav8keLFWA+2dxwWh7kDHVFtdC/xPs
-         hxAGxUwZCJlZpig3/TAnezKymWJkV1ZS65PUW980=
+        b=tfb2kwij95IZVahot8AkRo5iNUfrBIKDvYHB6zRwYKdP5mreTUBwfgNoxjuReUtTQ
+         qnG8MppkalpQhSo12PCsTd4rIVNSa/PvHhTlBBwimigFNZ5Xay64J1G0mshjRRd7Oq
+         aD8rmUlgWzMQ8yhr/A2aNWmHs4cyPGzRhPz6dR60=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Sasha Levin <sashal@kernel.org>, linux-crypto@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 66/80] crypto: ux500 - Use proper enum in cryp_set_dma_transfer
-Date:   Mon, 28 Jan 2019 11:23:47 -0500
-Message-Id: <20190128162401.58841-66-sashal@kernel.org>
+Cc:     Ronnie Sahlberg <lsahlber@redhat.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 68/80] cifs: check ntwrk_buf_start for NULL before dereferencing it
+Date:   Mon, 28 Jan 2019 11:23:49 -0500
+Message-Id: <20190128162401.58841-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -57,61 +57,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Ronnie Sahlberg <lsahlber@redhat.com>
 
-[ Upstream commit 9d880c5945c748d8edcac30965f3349a602158c4 ]
+[ Upstream commit 59a63e479ce36a3f24444c3a36efe82b78e4a8e0 ]
 
-Clang warns when one enumerated type is implicitly converted to another:
+RHBZ: 1021460
 
-drivers/crypto/ux500/cryp/cryp_core.c:559:5: warning: implicit
-conversion from enumeration type 'enum dma_data_direction' to different
-enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
-                                direction, DMA_CTRL_ACK);
-                                ^~~~~~~~~
-drivers/crypto/ux500/cryp/cryp_core.c:583:5: warning: implicit
-conversion from enumeration type 'enum dma_data_direction' to different
-enumeration type 'enum dma_transfer_direction' [-Wenum-conversion]
-                                direction,
-                                ^~~~~~~~~
-2 warnings generated.
+There is an issue where when multiple threads open/close the same directory
+ntwrk_buf_start might end up being NULL, causing the call to smbCalcSize
+later to oops with a NULL deref.
 
-dmaengine_prep_slave_sg expects an enum from dma_transfer_direction.
-Because we know the value of the dma_data_direction enum from the
-switch statement, we can just use the proper value from
-dma_transfer_direction so there is no more conversion.
+The real bug is why this happens and why this can become NULL for an
+open cfile, which should not be allowed.
+This patch tries to avoid a oops until the time when we fix the underlying
+issue.
 
-DMA_TO_DEVICE = DMA_MEM_TO_DEV = 1
-DMA_FROM_DEVICE = DMA_DEV_TO_MEM = 2
-
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Herbert Xu <herbert@gondor.apana.org.au>
+Signed-off-by: Ronnie Sahlberg <lsahlber@redhat.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/crypto/ux500/cryp/cryp_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ fs/cifs/readdir.c | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/crypto/ux500/cryp/cryp_core.c b/drivers/crypto/ux500/cryp/cryp_core.c
-index 790f7cadc1ed..efebc484e371 100644
---- a/drivers/crypto/ux500/cryp/cryp_core.c
-+++ b/drivers/crypto/ux500/cryp/cryp_core.c
-@@ -555,7 +555,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
- 		desc = dmaengine_prep_slave_sg(channel,
- 				ctx->device->dma.sg_src,
- 				ctx->device->dma.sg_src_len,
--				direction, DMA_CTRL_ACK);
-+				DMA_MEM_TO_DEV, DMA_CTRL_ACK);
- 		break;
- 
- 	case DMA_FROM_DEVICE:
-@@ -579,7 +579,7 @@ static int cryp_set_dma_transfer(struct cryp_ctx *ctx,
- 		desc = dmaengine_prep_slave_sg(channel,
- 				ctx->device->dma.sg_dst,
- 				ctx->device->dma.sg_dst_len,
--				direction,
-+				DMA_DEV_TO_MEM,
- 				DMA_CTRL_ACK |
- 				DMA_PREP_INTERRUPT);
+diff --git a/fs/cifs/readdir.c b/fs/cifs/readdir.c
+index 57b039ebfb1f..43fa471c88d7 100644
+--- a/fs/cifs/readdir.c
++++ b/fs/cifs/readdir.c
+@@ -652,7 +652,14 @@ find_cifs_entry(const unsigned int xid, struct cifs_tcon *tcon, loff_t pos,
+ 		/* scan and find it */
+ 		int i;
+ 		char *cur_ent;
+-		char *end_of_smb = cfile->srch_inf.ntwrk_buf_start +
++		char *end_of_smb;
++
++		if (cfile->srch_inf.ntwrk_buf_start == NULL) {
++			cifs_dbg(VFS, "ntwrk_buf_start is NULL during readdir\n");
++			return -EIO;
++		}
++
++		end_of_smb = cfile->srch_inf.ntwrk_buf_start +
+ 			server->ops->calc_smb_size(
+ 					cfile->srch_inf.ntwrk_buf_start);
  
 -- 
 2.19.1
