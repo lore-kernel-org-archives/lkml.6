@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2DAC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:35:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6031C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:35:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 089D320880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:35:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8520F20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:35:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548678948;
-	bh=S/e5BCrMEKAzUfpEesgQTqNzlpFPR0qzg4d0WxHHI5E=;
+	s=default; t=1548678950;
+	bh=GW5fIoTgA0KyRqVFJX2b/fGDisNRt5OpgIZcmhpCXbk=;
 	h=From:To:Cc:Subject:In-Reply-To:Date:List-ID:From;
-	b=UTdLmQpD9smddlsz794lUSc3INAOSq/vyFrDudHKhxf2lVopck9BeNnRyRl54i5iY
-	 SwWtCBxKVcvPMiOG9/vKDRZ6e3LalE341Lg6OnpnAgRZGaSZzT0LfbuSVHxScecBkB
-	 Vu13pCcgJNKRvX7ueWaxmWaSZ+HXlUoU4Mu2NDXU=
+	b=zN3bBnGm3xE4ui1Pe/JqZMUXbzJG1hXHgaJdC5gL2dFXFT49hFyMi8SmkYsQktckG
+	 I3Fa9M1N9GZ7xLOcIv6jEQStdu1rzugWC+4E35IHkzYXP4lpsGptwIWxZEr+9ESBsp
+	 zXIUqFOCTfu2C37g6sDfQC25YLbXnVMZ6a2+lLb8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726926AbfA1Mfq (ORCPT
+        id S1726960AbfA1Mft (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:35:46 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42296 "EHLO
+        Mon, 28 Jan 2019 07:35:49 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:42358 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726874AbfA1Mfp (ORCPT
+        with ESMTP id S1726893AbfA1Mfq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:35:45 -0500
+        Mon, 28 Jan 2019 07:35:46 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=rJRghv1i7F3H8YFQOcs92yfbXCg3MkZFSVFAVO/HzVE=; b=aie25hDSsym2
-        sgm3Ey/RSMNR82cmLLO1YD6lIXOU/Zklpgi3+AeJo5Jr7QYksHQWvZIEWlzl3bECYsIvu16ED2JBh
-        AAgomnNawjnY323KhPs0aFU3IkPeotogWgZOqrb8pNKkOdJ2VaxnG1xcIKojWKuLFkxKz3Iu4ttqe
-        cTTcY=;
+        List-Archive; bh=+Fj3GlAjEVlopSNXRGm5uGsZ26s/NHPN5I8RheQSZ2I=; b=vvSzLUyCfWGD
+        YOZQ6Wou5J2S2eTAUM+y3YMi+toXZAyZNkAxhdnnCBi9Y/225mX57YsttMk/Slwx0tnMYqACrqqrf
+        m4H2rHbQ9TZcSLtwkUhjHan8z73WkbeOyaj9dfmlwvL0cFiL1rtL9FSznzVRC04pyelkeGFTO/3/5
+        9iHQ4=;
 Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
         by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1go68d-0002TA-4F; Mon, 28 Jan 2019 12:35:43 +0000
+        id 1go68e-0002TG-Nm; Mon, 28 Jan 2019 12:35:44 +0000
 Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id CABAC1127D29; Mon, 28 Jan 2019 12:35:42 +0000 (GMT)
+        id 5E4D11127D29; Mon, 28 Jan 2019 12:35:44 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
-To:     Vasily Khoruzhick <anarsoul@gmail.com>
+To:     Axel Lin <axel.lin@ingics.com>
 Cc:     Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: axp20x: fix ALDO2, DLDO2 and ELDO3 definitions for AXP803" to the regulator tree
+Subject: Applied "regulator: lp8788-ldo: Constify lp8788_dldo_desc and lp8788_aldo_desc" to the regulator tree
 In-Reply-To: 
 X-Patchwork-Hint: ignore
-Message-Id: <20190128123542.CABAC1127D29@debutante.sirena.org.uk>
-Date:   Mon, 28 Jan 2019 12:35:42 +0000 (GMT)
+Message-Id: <20190128123544.5E4D11127D29@debutante.sirena.org.uk>
+Date:   Mon, 28 Jan 2019 12:35:44 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: axp20x: fix ALDO2, DLDO2 and ELDO3 definitions for AXP803
+   regulator: lp8788-ldo: Constify lp8788_dldo_desc and lp8788_aldo_desc
 
 has been applied to the regulator tree at
 
@@ -84,55 +84,40 @@ to this mail.
 Thanks,
 Mark
 
-From 252d1c20551b745f33a490892335d2b09f5d48a7 Mon Sep 17 00:00:00 2001
-From: Vasily Khoruzhick <anarsoul@gmail.com>
-Date: Fri, 25 Jan 2019 22:18:09 -0800
-Subject: [PATCH] regulator: axp20x: fix ALDO2, DLDO2 and ELDO3 definitions for
- AXP803
+From 23295d7980f7dce61f45da7fd14a19e37ef2eea1 Mon Sep 17 00:00:00 2001
+From: Axel Lin <axel.lin@ingics.com>
+Date: Sat, 26 Jan 2019 11:39:07 +0800
+Subject: [PATCH] regulator: lp8788-ldo: Constify lp8788_dldo_desc and
+ lp8788_aldo_desc
 
-Looks like refactoring didn't go well and left ALDO2, DLDO2 and ELDO3
-definitions broken for AXP803 - now they are using register address
-instead of mask. Fix it by using mask where necessary.
-
-Fixes: db4a555f7c4cf ("regulator: axp20x: use defines for masks")
-Signed-off-by: Vasily Khoruzhick <anarsoul@gmail.com>
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Axel Lin <axel.lin@ingics.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/axp20x-regulator.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/regulator/lp8788-ldo.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/regulator/axp20x-regulator.c b/drivers/regulator/axp20x-regulator.c
-index 0dfa4ea6bbdf..087cadb96fab 100644
---- a/drivers/regulator/axp20x-regulator.c
-+++ b/drivers/regulator/axp20x-regulator.c
-@@ -723,7 +723,7 @@ static const struct regulator_desc axp803_regulators[] = {
- 		 AXP22X_ALDO1_V_OUT, AXP22X_ALDO1_V_OUT_MASK,
- 		 AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO1_MASK),
- 	AXP_DESC(AXP803, ALDO2, "aldo2", "aldoin", 700, 3300, 100,
--		 AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT,
-+		 AXP22X_ALDO2_V_OUT, AXP22X_ALDO2_V_OUT_MASK,
- 		 AXP22X_PWR_OUT_CTRL3, AXP806_PWR_OUT_ALDO2_MASK),
- 	AXP_DESC(AXP803, ALDO3, "aldo3", "aldoin", 700, 3300, 100,
- 		 AXP22X_ALDO3_V_OUT, AXP22X_ALDO3_V_OUT_MASK,
-@@ -733,7 +733,7 @@ static const struct regulator_desc axp803_regulators[] = {
- 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO1_MASK),
- 	AXP_DESC_RANGES(AXP803, DLDO2, "dldo2", "dldoin",
- 			axp803_dldo2_ranges, AXP803_DLDO2_NUM_VOLTAGES,
--			AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT,
-+			AXP22X_DLDO2_V_OUT, AXP22X_DLDO2_V_OUT_MASK,
- 			AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_DLDO2_MASK),
- 	AXP_DESC(AXP803, DLDO3, "dldo3", "dldoin", 700, 3300, 100,
- 		 AXP22X_DLDO3_V_OUT, AXP22X_DLDO3_V_OUT_MASK,
-@@ -748,7 +748,7 @@ static const struct regulator_desc axp803_regulators[] = {
- 		 AXP22X_ELDO2_V_OUT, AXP22X_ELDO2_V_OUT_MASK,
- 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO2_MASK),
- 	AXP_DESC(AXP803, ELDO3, "eldo3", "eldoin", 700, 1900, 50,
--		 AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT,
-+		 AXP22X_ELDO3_V_OUT, AXP22X_ELDO3_V_OUT_MASK,
- 		 AXP22X_PWR_OUT_CTRL2, AXP22X_PWR_OUT_ELDO3_MASK),
- 	AXP_DESC(AXP803, FLDO1, "fldo1", "fldoin", 700, 1450, 50,
- 		 AXP803_FLDO1_V_OUT, AXP803_FLDO1_V_OUT_MASK,
+diff --git a/drivers/regulator/lp8788-ldo.c b/drivers/regulator/lp8788-ldo.c
+index 2ee22e7ea675..a2ef146e6b3a 100644
+--- a/drivers/regulator/lp8788-ldo.c
++++ b/drivers/regulator/lp8788-ldo.c
+@@ -186,7 +186,7 @@ static const struct regulator_ops lp8788_ldo_voltage_fixed_ops = {
+ 	.enable_time = lp8788_ldo_enable_time,
+ };
+ 
+-static struct regulator_desc lp8788_dldo_desc[] = {
++static const struct regulator_desc lp8788_dldo_desc[] = {
+ 	{
+ 		.name = "dldo1",
+ 		.id = DLDO1,
+@@ -343,7 +343,7 @@ static struct regulator_desc lp8788_dldo_desc[] = {
+ 	},
+ };
+ 
+-static struct regulator_desc lp8788_aldo_desc[] = {
++static const struct regulator_desc lp8788_aldo_desc[] = {
+ 	{
+ 		.name = "aldo1",
+ 		.id = ALDO1,
 -- 
 2.20.1
 
