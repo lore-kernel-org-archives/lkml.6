@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C6EBC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98B11C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8A2720879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5EAF72084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:25:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692725;
-	bh=weP5wNqF3syjXpJOod6mfYe7aPJClX9NCQ4XhvJVZVc=;
+	s=default; t=1548692731;
+	bh=rn/2B/IEAWsO17j06R1zbEZEjs7ElTOiErs04wjXLlo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KHMMmb3RQ9v4NQZ8NfV8J5eyAcAl5o27If/3u+SDMhmlSp9zJkV4dO5sp2xeqmLbr
-	 0B5IFbGT2CEsXWMRFBjO9gJdYdl21C4IVXPWyOwpj5acE755wf4LyJoHK++1lmy2sS
-	 JrDnkmHT+68vZTpZYY3C2LOmo8OM3p9UgRTmwlos=
+	b=GMGuSvX5q2cVjzE1GZsnQjEUplNnJszDOSXCmzo9EQeWr7SxqHXcQZYvZi9OkAzK5
+	 thEfARJiMA37qNvl33bczlS4gtQ5EdhitYyQTFAUvE/sadpIacNG+dLvYt6zMrU8fZ
+	 EUzmeWlwi0skkFdXgLnsjdsqlp9BFLwG9sr8HF6w=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389915AbfA1QZX (ORCPT
+        id S2387653AbfA1QZ3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:25:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34154 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:25:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34306 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388483AbfA1QZT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:25:19 -0500
+        id S2389939AbfA1QZ1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:25:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 421142147A;
-        Mon, 28 Jan 2019 16:25:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 816012147A;
+        Mon, 28 Jan 2019 16:25:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692719;
-        bh=weP5wNqF3syjXpJOod6mfYe7aPJClX9NCQ4XhvJVZVc=;
+        s=default; t=1548692727;
+        bh=rn/2B/IEAWsO17j06R1zbEZEjs7ElTOiErs04wjXLlo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tBWHMbukVzfODVLAFWCqG+nOjAVYYgrPoa1tU19Jsp4A11/lAgnPSagbMDmkpi68x
-         IDwOiQAmbZxF6bk9+6jEp/ujuSkb9CFICP4Ah/shsmANZpewhpTLpvFskCN012kwh5
-         bQE/lOcT+coxpuW3dkuU1iG6mY/Kq1qVC+yuv7dk=
+        b=HpZQHBR35xk6bEXMUtrX9OBI4c3s53BpshCAT/FkkOYFbdDrWZVfQZ1Bt/BAOGRtx
+         ACCPRnby6a27YI32RkvRwHaMoLdH+ilqhoLYfdx72o8EL6QbQkgk63MenG2HSav8nz
+         QKMpAcCtJuxK2KUS1diGqlKozS+zu/zElVV3Ecxk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 44/80] memstick: Prevent memstick host from getting runtime suspended during card detection
-Date:   Mon, 28 Jan 2019 11:23:25 -0500
-Message-Id: <20190128162401.58841-44-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        Steffen Klassert <steffen.klassert@secunet.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 50/80] xfrm6_tunnel: Fix spi check in __xfrm6_tunnel_alloc_spi
+Date:   Mon, 28 Jan 2019 11:23:31 -0500
+Message-Id: <20190128162401.58841-50-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -58,56 +58,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit e03e303edf1c63e6dd455ccd568c74e93ef3ba8c ]
+[ Upstream commit fa89a4593b927b3f59c3b69379f31d3b22272e4e ]
 
-We can use MEMSTICK_POWER_{ON,OFF} along with pm_runtime_{get,put}
-helpers to let memstick host support runtime pm.
+gcc warn this:
 
-The rpm count may go down to zero before the memstick host powers on, so
-the host can be runtime suspended.
+net/ipv6/xfrm6_tunnel.c:143 __xfrm6_tunnel_alloc_spi() warn:
+ always true condition '(spi <= 4294967295) => (0-u32max <= u32max)'
 
-So before doing card detection, increment the rpm count to avoid the
-host gets runtime suspended. Balance the rpm count after card detection
-is done.
+'spi' is u32, which always not greater than XFRM6_TUNNEL_SPI_MAX
+because of wrap around. So the second forloop will never reach.
 
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Tested-by: Oleksandr Natalenko <oleksandr@natalenko.name>
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: Steffen Klassert <steffen.klassert@secunet.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/memstick/core/memstick.c | 3 +++
+ net/ipv6/xfrm6_tunnel.c | 3 +++
  1 file changed, 3 insertions(+)
 
-diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
-index a0547dbf9806..4d673a626db4 100644
---- a/drivers/memstick/core/memstick.c
-+++ b/drivers/memstick/core/memstick.c
-@@ -18,6 +18,7 @@
- #include <linux/delay.h>
- #include <linux/slab.h>
- #include <linux/module.h>
-+#include <linux/pm_runtime.h>
- 
- #define DRIVER_NAME "memstick"
- 
-@@ -436,6 +437,7 @@ static void memstick_check(struct work_struct *work)
- 	struct memstick_dev *card;
- 
- 	dev_dbg(&host->dev, "memstick_check started\n");
-+	pm_runtime_get_noresume(host->dev.parent);
- 	mutex_lock(&host->lock);
- 	if (!host->card) {
- 		if (memstick_power_on(host))
-@@ -479,6 +481,7 @@ static void memstick_check(struct work_struct *work)
- 		host->set_param(host, MEMSTICK_POWER, MEMSTICK_POWER_OFF);
- 
- 	mutex_unlock(&host->lock);
-+	pm_runtime_put(host->dev.parent);
- 	dev_dbg(&host->dev, "memstick_check finished\n");
- }
- 
+diff --git a/net/ipv6/xfrm6_tunnel.c b/net/ipv6/xfrm6_tunnel.c
+index 5743044cd660..56b72cada346 100644
+--- a/net/ipv6/xfrm6_tunnel.c
++++ b/net/ipv6/xfrm6_tunnel.c
+@@ -144,6 +144,9 @@ static u32 __xfrm6_tunnel_alloc_spi(struct net *net, xfrm_address_t *saddr)
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
+ 		if (index >= 0)
+ 			goto alloc_spi;
++
++		if (spi == XFRM6_TUNNEL_SPI_MAX)
++			break;
+ 	}
+ 	for (spi = XFRM6_TUNNEL_SPI_MIN; spi < xfrm6_tn->spi; spi++) {
+ 		index = __xfrm6_tunnel_spi_check(net, spi);
 -- 
 2.19.1
 
