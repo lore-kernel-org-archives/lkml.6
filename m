@@ -4,50 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43871C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44A0CC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1897421852
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13C1821848
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691118;
-	bh=qDZbz7DAUnPmFklUjGLebSGJh3C4+5RwJy3JHN1ck8w=;
+	s=default; t=1548691123;
+	bh=aHTiA+VvQMHT5liIyiq5RQlij9mEPbBTiOUj6/+qoRI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xj/zE9MAwlKxpBqONvgCPSltFY4wcdOe1pPd40y9BYO4c+dgsdPDLVRDdy2lnfCo/
-	 lnk4Z615XRNHBgrJZ/Xul1m2qf/Jo2fyeyr+gLIuPKDPp8Ij3gDTx4mhncaKhKz/4X
-	 hnqqMtegXCCT9mmO2kuYJfTApaxYCb6dI0rimYLI=
+	b=gJCltH+suJZZZrDrWSPkoJlsz4XopzsPrLt3f7bKMD/4uii8H5XeYYixZRBnBp4lx
+	 BLH/kP2PqgVfgBWWhOUAnGC4+IJdAE+D2+yEtuTumal4SQTKHyaPymJBEgcTXAF83v
+	 T+xeWeJqLcx3t7Ex4C6+UC2Ab9uoU9LsuwEXD8/Q=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730452AbfA1P6h (ORCPT
+        id S1730464AbfA1P6l (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:58:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43968 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:58:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44032 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730430AbfA1P6c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:58:32 -0500
+        id S1730441AbfA1P6g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:58:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E724C21852;
-        Mon, 28 Jan 2019 15:58:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 969F621852;
+        Mon, 28 Jan 2019 15:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691112;
-        bh=qDZbz7DAUnPmFklUjGLebSGJh3C4+5RwJy3JHN1ck8w=;
+        s=default; t=1548691116;
+        bh=aHTiA+VvQMHT5liIyiq5RQlij9mEPbBTiOUj6/+qoRI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cV8GwmqBlW7HLqnmHEnVqvVz5IZTMBil4DOwHpBwovw1bD1CvVONOIzFIUrzh3Gza
-         UXd9BQrOZITSrAvWAyJweFsBmljzEMf8dDRiEG65e0BsvQ0aToCfkWmLOXn/kpLSQW
-         JrHa5Dit8QUoKms+FtlUrk5POPfoqgnBOHxCH02c=
+        b=exev28277203aZ0JjNg7moO+A/LKEazrfz1++ZU3P+HMgpTYJlvXx8eLzqKEXS3Mn
+         Q4hbZgnvlpTb2OkO5FtZlX/QVCGNvATvBL0sawCMtCWijXgm+GW4Ki7jiQkmvig3e1
+         fAEzTWuyDW7AcgogblDjou7LrNIH0uoyozhn20TM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Laxman Dewangan <ldewangan@nvidia.com>,
-        Eduardo Valentin <edubezval@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 292/304] thermal: generic-adc: Fix adc to temp interpolation
-Date:   Mon, 28 Jan 2019 10:43:29 -0500
-Message-Id: <20190128154341.47195-292-sashal@kernel.org>
+Cc:     Aditya Pakki <pakki001@umn.edu>, Jiri Kosina <jkosina@suse.cz>,
+        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 294/304] HID: lenovo: Add checks to fix of_led_classdev_register
+Date:   Mon, 28 Jan 2019 10:43:31 -0500
+Message-Id: <20190128154341.47195-294-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,63 +57,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bjorn Andersson <bjorn.andersson@linaro.org>
+From: Aditya Pakki <pakki001@umn.edu>
 
-[ Upstream commit 9d216211fded20fff301d0317af3238d8383634c ]
+[ Upstream commit 6ae16dfb61bce538d48b7fe98160fada446056c5 ]
 
-First correct the edge case to return the last element if we're
-outside the range, rather than at the last element, so that
-interpolation is not omitted for points between the two last entries in
-the table.
+In lenovo_probe_tpkbd(), the function of_led_classdev_register() could
+return an error value that is unchecked. The fix adds these checks.
 
-Then correct the formula to perform linear interpolation based the two
-points surrounding the read ADC value. The indices for temp are kept as
-"hi" and "lo" to pair with the adc indices, but there's no requirement
-that the temperature is provided in descendent order. mult_frac() is
-used to prevent issues with overflowing the int.
-
-Cc: Laxman Dewangan <ldewangan@nvidia.com>
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-Signed-off-by: Eduardo Valentin <edubezval@gmail.com>
+Signed-off-by: Aditya Pakki <pakki001@umn.edu>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal-generic-adc.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ drivers/hid/hid-lenovo.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
-index bf1c628d4a7a..e22fc60ad36d 100644
---- a/drivers/thermal/thermal-generic-adc.c
-+++ b/drivers/thermal/thermal-generic-adc.c
-@@ -26,7 +26,7 @@ struct gadc_thermal_info {
+diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
+index 643b6eb54442..eacc76d2ab96 100644
+--- a/drivers/hid/hid-lenovo.c
++++ b/drivers/hid/hid-lenovo.c
+@@ -743,7 +743,9 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
+ 	data_pointer->led_mute.brightness_get = lenovo_led_brightness_get_tpkbd;
+ 	data_pointer->led_mute.brightness_set = lenovo_led_brightness_set_tpkbd;
+ 	data_pointer->led_mute.dev = dev;
+-	led_classdev_register(dev, &data_pointer->led_mute);
++	ret = led_classdev_register(dev, &data_pointer->led_mute);
++	if (ret < 0)
++		goto err;
  
- static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
- {
--	int temp, adc_hi, adc_lo;
-+	int temp, temp_hi, temp_lo, adc_hi, adc_lo;
- 	int i;
+ 	data_pointer->led_micmute.name = name_micmute;
+ 	data_pointer->led_micmute.brightness_get =
+@@ -751,7 +753,11 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
+ 	data_pointer->led_micmute.brightness_set =
+ 		lenovo_led_brightness_set_tpkbd;
+ 	data_pointer->led_micmute.dev = dev;
+-	led_classdev_register(dev, &data_pointer->led_micmute);
++	ret = led_classdev_register(dev, &data_pointer->led_micmute);
++	if (ret < 0) {
++		led_classdev_unregister(&data_pointer->led_mute);
++		goto err;
++	}
  
- 	for (i = 0; i < gti->nlookup_table; i++) {
-@@ -36,13 +36,17 @@ static int gadc_thermal_adc_to_temp(struct gadc_thermal_info *gti, int val)
+ 	lenovo_features_set_tpkbd(hdev);
  
- 	if (i == 0) {
- 		temp = gti->lookup_table[0];
--	} else if (i >= (gti->nlookup_table - 1)) {
-+	} else if (i >= gti->nlookup_table) {
- 		temp = gti->lookup_table[2 * (gti->nlookup_table - 1)];
- 	} else {
- 		adc_hi = gti->lookup_table[2 * i - 1];
- 		adc_lo = gti->lookup_table[2 * i + 1];
--		temp = gti->lookup_table[2 * i];
--		temp -= ((val - adc_lo) * 1000) / (adc_hi - adc_lo);
-+
-+		temp_hi = gti->lookup_table[2 * i - 2];
-+		temp_lo = gti->lookup_table[2 * i];
-+
-+		temp = temp_hi + mult_frac(temp_lo - temp_hi, val - adc_hi,
-+					   adc_lo - adc_hi);
- 	}
- 
- 	return temp;
 -- 
 2.19.1
 
