@@ -4,51 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5C37AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16AC2C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2973E20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C9B962171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:07:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691668;
-	bh=hwCBoP3TF53Hf3L/UK+DH2PVmqFhzQfX/W+E5YP2rqQ=;
+	s=default; t=1548691673;
+	bh=L+U/Qe452Ci/2mkt+G6OhIBUTcJEZiJV1S+n8kYn2kQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=FLd6zRQlizvMU+RLPkewKMulJAGniNQI1bwUVaGsBY1QQuKH5sNyf+lpF7ZIGq6hd
-	 v65CY3mePRn/MK4dE2DbSm0vfUWWIrQkCJ+20spkqjaV6pxisI4AD4dJ9VD3ZObSxs
-	 Wq5s1oGax4ZzOn/VKrgg1rlstviQbu3FigPksx68=
+	b=umafsbwFzqutXyjayAvfytf0ikNoS44krkLUDWUQD/Docjvnrbj7C2t/RZUgi3pK8
+	 sKg0Y9QuwMTqmwrt/Y1+IKKpbUL4Ookczb0nK99vjbReMdfE+u585m/V7w6E3FZPyO
+	 LaJi2PfSiN8LeXHEHpXgwOds8ltq8wWOrF084t6o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732272AbfA1QHq (ORCPT
+        id S1732276AbfA1QHw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:07:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58784 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:07:52 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58906 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730554AbfA1QHo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:07:44 -0500
+        id S1730554AbfA1QHt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:07:49 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA76520989;
-        Mon, 28 Jan 2019 16:07:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF01D2147A;
+        Mon, 28 Jan 2019 16:07:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691663;
-        bh=hwCBoP3TF53Hf3L/UK+DH2PVmqFhzQfX/W+E5YP2rqQ=;
+        s=default; t=1548691668;
+        bh=L+U/Qe452Ci/2mkt+G6OhIBUTcJEZiJV1S+n8kYn2kQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pI6FRwGfs3PVviHZxgggzSNy7K/jrjAqa6wlX3TqPn/1w1rQtz33NPModIT/Kks3W
-         d5UK7MgrQ/xwV9V8XIdV8vuxGj4L0SuSIRfSfAupE74XL94qEcQs5U4IK2HmH8d86q
-         nGnF7nc4uGD+mCSM8ldXaOJyRonIkp8dbEDZFl0g=
+        b=vhPS5SoFUShBf1JUvdoS/2OUrdjLl/X6MTAEsc7sH4E+CMmBSOeK+j/OQePp0v7rh
+         yRmS/CbbrFkWVx8iMRd3dOaQwVxeGo0KKWcZrhC8A09q8AfdCxwac4dWvYp5f8bsAE
+         SPU8A07my9O9GTXoWW7WVpUNc5A0DEBNJhnWU7QE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
 Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
         Adrian Hunter <adrian.hunter@intel.com>,
         Jiri Olsa <jolsa@kernel.org>,
         Namhyung Kim <namhyung@kernel.org>,
+        Thomas Richter <tmricht@linux.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 178/258] perf header: Fix up argument to ctime()
-Date:   Mon, 28 Jan 2019 10:58:04 -0500
-Message-Id: <20190128155924.51521-178-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 179/258] perf tools: Cast off_t to s64 to avoid warning on bionic libc
+Date:   Mon, 28 Jan 2019 10:58:05 -0500
+Message-Id: <20190128155924.51521-179-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -62,53 +63,45 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 0afcf29bab35d3785204cd9bd51693b231ad7181 ]
+[ Upstream commit 866053bb644f754d1a93aaa9db9998fecf7a8978 ]
 
-Reducing this noise when cross building to the Android NDK:
+To avoid this warning:
 
-  util/header.c: In function 'perf_header__fprintf_info':
-  util/header.c:2710:45: warning: pointer targets in passing argument 1 of 'ctime' differ in signedness [-Wpointer-sign]
-    fprintf(fp, "# captured on    : %s", ctime(&st.st_ctime));
-                                               ^
-  In file included from util/../perf.h:5:0,
-                   from util/evlist.h:11,
-                   from util/header.c:22:
-  /opt/android-ndk-r15c/platforms/android-26/arch-arm/usr/include/time.h:81:14: note: expected 'const time_t *' but argument is of type 'long unsigned int *'
-   extern char* ctime(const time_t*) __LIBC_ABI_PUBLIC__;
-                ^
+    CC       /tmp/build/perf/util/s390-cpumsf.o
+  util/s390-cpumsf.c: In function 's390_cpumsf_samples':
+  util/s390-cpumsf.c:508:3: warning: format '%llx' expects argument of type 'long long unsigned int', but argument 4 has type 'off_t' [-Wformat=]
+     pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
+     ^
+
+Now the various Android cross toolchains used in the perf tools
+container test builds are all clean and we can remove this:
+
+  export EXTRA_MAKE_ARGS="WERROR=0"
 
 Cc: Adrian Hunter <adrian.hunter@intel.com>
 Cc: Jiri Olsa <jolsa@kernel.org>
 Cc: Namhyung Kim <namhyung@kernel.org>
-Link: https://lkml.kernel.org/n/tip-6bz74zp080yhmtiwb36enso9@git.kernel.org
+Cc: Thomas Richter <tmricht@linux.ibm.com>
+Link: https://lkml.kernel.org/n/tip-5rav4ccyb0sjciysz2i4p3sx@git.kernel.org
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/header.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ tools/perf/util/s390-cpumsf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/header.c b/tools/perf/util/header.c
-index ac3c59e7da16..bd9226bc5945 100644
---- a/tools/perf/util/header.c
-+++ b/tools/perf/util/header.c
-@@ -2636,6 +2636,7 @@ int perf_header__fprintf_info(struct perf_session *session, FILE *fp, bool full)
- 	struct perf_header *header = &session->header;
- 	int fd = perf_data__fd(session->data);
- 	struct stat st;
-+	time_t stctime;
- 	int ret, bit;
- 
- 	hd.fp = fp;
-@@ -2645,7 +2646,8 @@ int perf_header__fprintf_info(struct perf_session *session, FILE *fp, bool full)
- 	if (ret == -1)
- 		return -1;
- 
--	fprintf(fp, "# captured on    : %s", ctime(&st.st_ctime));
-+	stctime = st.st_ctime;
-+	fprintf(fp, "# captured on    : %s", ctime(&stctime));
- 
- 	fprintf(fp, "# header version : %u\n", header->version);
- 	fprintf(fp, "# data offset    : %" PRIu64 "\n", header->data_offset);
+diff --git a/tools/perf/util/s390-cpumsf.c b/tools/perf/util/s390-cpumsf.c
+index d2c78ffd9fee..aa7f8c11fbb7 100644
+--- a/tools/perf/util/s390-cpumsf.c
++++ b/tools/perf/util/s390-cpumsf.c
+@@ -499,7 +499,7 @@ static int s390_cpumsf_samples(struct s390_cpumsf_queue *sfq, u64 *ts)
+ 	aux_ts = get_trailer_time(buf);
+ 	if (!aux_ts) {
+ 		pr_err("[%#08" PRIx64 "] Invalid AUX trailer entry TOD clock base\n",
+-		       sfq->buffer->data_offset);
++		       (s64)sfq->buffer->data_offset);
+ 		aux_ts = ~0ULL;
+ 		goto out;
+ 	}
 -- 
 2.19.1
 
