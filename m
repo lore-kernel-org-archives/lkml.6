@@ -2,100 +2,209 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60243C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 203EFC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EFB22147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548699840;
-	bh=wwF4P/+YTPiLR9mrP7tHgk5BSl12r3VGfZLXwRzAEG0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:List-ID:From;
-	b=Ywu8utzl036QXUtprKy+hGOuxOiQM6mBq9k8wQUvYGGLcAcio+n+Xj6zmzj89ImGJ
-	 Rc6eyP0+m+wxsKZ3H7Yohf/yy9OS+BOT/MNAZstjHG9vqfkmXPGqZI64ZQkM7Yocod
-	 RYPnj+8/VuLce1LTZ+okCOkzISUu+5SYga+d0z88=
+	by mail.kernel.org (Postfix) with ESMTP id DFAEF2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727565AbfA1SX6 (ORCPT
+        id S1727584AbfA1SYB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 13:24:01 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44764 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727557AbfA1SX6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 13:23:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32772 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726906AbfA1SX5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:23:57 -0500
-Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CDF5321741;
-        Mon, 28 Jan 2019 18:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548699837;
-        bh=wwF4P/+YTPiLR9mrP7tHgk5BSl12r3VGfZLXwRzAEG0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=TQz4bvm0NbGm8relDCwvrm4CgO/KoYlPhpba5I9DduvPvsbl6SWQ6xQ/0G+94oP0G
-         K484Szvm1uNDL8Q4glf1KdEPh6t3DbIfh98OXrP6TMHWQ2fgR/78mIh6RQGveNuxpt
-         bXKh7S8glyHppkxeN8LUkL9901U1zmzNADFrD7IA=
-Received: by mail-qt1-f171.google.com with SMTP id e5so19293230qtr.12;
-        Mon, 28 Jan 2019 10:23:56 -0800 (PST)
-X-Gm-Message-State: AJcUukcLhChiuoMMl15XKM2MxFScbQMS6i9uT2BPws+BSGi975EdDXDl
-        Ql2PRF0LNlGvPNOKqKJeJ6yAgDFWG9ynydo1HA==
-X-Google-Smtp-Source: ALg8bN5iUeXzjuAU4AMlhWM03njPLDHd1n//0C11UtDI+Y7TNo3VijwQGkBDk9HhfhBU3dxfVO1uT5h3zsjckF+5jI0=
-X-Received: by 2002:aed:3ecf:: with SMTP id o15mr22699276qtf.26.1548699836063;
- Mon, 28 Jan 2019 10:23:56 -0800 (PST)
+Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SIJW1g110663
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 13:23:57 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qa3mnudms-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 13:23:57 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <mwb@linux.vnet.ibm.com>;
+        Mon, 28 Jan 2019 18:23:56 -0000
+Received: from b01cxnp22033.gho.pok.ibm.com (9.57.198.23)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 28 Jan 2019 18:23:54 -0000
+Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
+        by b01cxnp22033.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SINrxo23658702
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Mon, 28 Jan 2019 18:23:53 GMT
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3F847124052;
+        Mon, 28 Jan 2019 18:23:53 +0000 (GMT)
+Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 96955124054;
+        Mon, 28 Jan 2019 18:23:52 +0000 (GMT)
+Received: from oc8380061452.ibm.com (unknown [9.53.179.224])
+        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 28 Jan 2019 18:23:52 +0000 (GMT)
+Subject: Re: [RFC 1/6] powerpc:/drc Define interface to acquire arch-specific
+ drc info
+To:     Tyrel Datwyler <turtle.in.the.kernel@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Cc:     Juliet Kim <minkim@us.ibm.com>,
+        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
+        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>,
+        nathanl@linux.vnet.ibm.com
+References: <20181214204914.16435.59083.stgit@powerkvm6.aus.stglabs.ibm.com>
+ <20181214204957.16435.29255.stgit@powerkvm6.aus.stglabs.ibm.com>
+ <e7030879-59e4-88fd-3785-fdd98b7f0a3b@gmail.com>
+ <63da6cfa-5272-0c78-ae91-0ad1130db3f1@linux.vnet.ibm.com>
+From:   Michael Bringmann <mwb@linux.vnet.ibm.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=mwb@linux.vnet.ibm.com; prefer-encrypt=mutual; keydata=
+ mQENBFcY7GcBCADzw3en+yzo9ASFGCfldVkIg95SAMPK0myXp2XJYET3zT45uBsX/uj9/2nA
+ lBmXXeOSXnPfJ9V3vtiwcfATnWIsVt3tL6n1kqikzH9nXNxZT7MU/7gqzWZngMAWh/GJ9qyg
+ DTOZdjsvdUNUWxtiLvBo7y+reA4HjlQhwhYxxvCpXBeRoF0qDWfQ8DkneemqINzDZPwSQ7zY
+ t4F5iyN1I9GC5RNK8Y6jiKmm6bDkrrbtXPOtzXKs0J0FqWEIab/u3BDrRP3STDVPdXqViHua
+ AjEzthQbGZm0VCxI4a7XjMi99g614/qDcXZCs00GLZ/VYIE8hB9C5Q+l66S60PLjRrxnABEB
+ AAG0LU1pY2hhZWwgVy4gQnJpbmdtYW5uIDxtd2JAbGludXgudm5ldC5pYm0uY29tPokBOAQT
+ AQIAIgUCVxjsZwIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQSEdag3dpuTI0NAf8
+ CKYTDKQLgOSjVrU2L5rM4lXaJRmQV6oidD3vIhKSnWRvPq9C29ifRG6ri20prTHAlc0vycgm
+ 41HHg0y2vsGgNXGTWC2ObemoZBI7mySXe/7Tq5mD/semGzOp0YWZ7teqrkiSR8Bw0p+LdE7K
+ QmT7tpjjvuhrtQ3RRojUYcuy1nWUsc4D+2cxsnZslsx84FUKxPbLagDgZmgBhUw/sUi40s6S
+ AkdViVCVS0WANddLIpG0cfdsV0kCae/XdjK3mRK6drFKv1z+QFjvOhc8QIkkxFD0da9w3tJj
+ oqnqHFV5gLcHO6/wizPx/NV90y6RngeBORkQiRFWxTXS4Oj9GVI/UrkBDQRXGOxnAQgAmJ5Y
+ ikTWrMWPfiveUacETyEhWVl7u8UhZcx3yy2te8O0ay7t9fYcZgIEfQPPVVus89acIXlG3wYL
+ DDPvb21OprLxi+ZJ2a0S5we+LcSWN1jByxJlbWBq+/LcMtGAOhNLpysY1gD0Y4UW/eKS+TFZ
+ 562qKC3k1dBvnV9JXCgeS1taYFxRdVAn+2DwK3nuyG/DDq/XgJ5BtmyC3MMx8CiW3POj+O+l
+ 6SedIeAfZlZ7/xhijx82g93h07VavUQRwMZgZFsqmuxBxVGiav2HB+dNvs3PFB087Pvc9OHe
+ qhajPWOP/gNLMmvBvknn1NToM9a8/E8rzcIZXoYs4RggRRYh6wARAQABiQEfBBgBAgAJBQJX
+ GOxnAhsMAAoJEEhHWoN3abky+RUH/jE08/r5QzaNKYeVhu0uVbgXu5fsxqr2cAxhf+KuwT3T
+ efhEP2alarxzUZdEh4MsG6c+X2NYLbD3cryiXxVx/7kSAJEFQJfA5P06g8NLR25Qpq9BLsN7
+ ++dxQ+CLKzSEb1X24hYAJZpOhS8ev3ii+M/XIo+olDBKuTaTgB6elrg3CaxUsVgLBJ+jbRkW
+ yQe2S5f/Ja1ThDpSSLLWLiLK/z7+gaqwhnwjQ8Z8Y9D2itJQcj4itHilwImsqwLG7SxzC0NX
+ IQ5KaAFYdRcOgwR8VhhkOIVd70ObSZU+E4pTET1WDz4o65xZ89yfose1No0+r5ht/xWOOrh8
+ 53/hcWvxHVs=
+Organization: IBM Linux Technology Center
+Date:   Mon, 28 Jan 2019 12:23:52 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-References: <20190124145309.21698-1-ben.whitten@lairdtech.com> <20190124145309.21698-5-ben.whitten@lairdtech.com>
-In-Reply-To: <20190124145309.21698-5-ben.whitten@lairdtech.com>
-From:   Rob Herring <robh+dt@kernel.org>
-Date:   Mon, 28 Jan 2019 12:23:45 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqLczDnQis5SkmfrFie+aj9pb+UfPyF4dfiKs7aomeRPXg@mail.gmail.com>
-Message-ID: <CAL_JsqLczDnQis5SkmfrFie+aj9pb+UfPyF4dfiKs7aomeRPXg@mail.gmail.com>
-Subject: Re: [PATCH v3 lora-next 4/4] dt-bindings: lora: sx130x: add clock bindings
-To:     Ben Whitten <ben.whitten@gmail.com>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        David Miller <davem@davemloft.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        netdev <netdev@vger.kernel.org>, devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-lpwan@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <63da6cfa-5272-0c78-ae91-0ad1130db3f1@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19012818-0040-0000-0000-000004B8BCB2
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010494; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01153088; UDB=6.00593882; IPR=6.00933451;
+ MB=3.00025327; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-28 18:23:55
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012818-0041-0000-0000-000008C3D099
+Message-Id: <d881d17c-1157-a6a0-0784-33510a4ee674@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901280137
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Jan 24, 2019 at 8:54 AM Ben Whitten <ben.whitten@gmail.com> wrote:
->
-> From: Ben Whitten <ben.whitten@gmail.com>
->
-> The SX130x family consumes two clocks, a 32 MHz clock provided by a
-> connected IQ transceiver, and a 133 MHz high speed clock.
-> It also provides a 32 MHz clock out to the radio in the TX path.
->
-> In the example we connect the concentrator to a fixed clock providing
-> the 133 MHz high speed clock, and we connect to a connected transceiver
-> 32 MHz clock.
->
-> A radio in the TX path is also connected to the 32 MHz clock out from the
-> concentrator.
->
-> The connected radios are both fed from a fixed 32 MHz clock, with only
-> one being the clock source back to the SX130x concentrator.
->
-> Signed-off-by: Ben Whitten <ben.whitten@gmail.com>
-> ---
-> v2 -> v3:
-> * Name input clocks specifically
-> * Add output clock for radio in TX path
-> v1 -> v2:
-> * Fixed incorrect usage of clock cells
-> * Fixed wording in commit and descriptions
-> ---
->  .../bindings/net/lora/semtech,sx130x.yaml     | 52 ++++++++++++++++++-
->  1 file changed, 51 insertions(+), 1 deletion(-)
+On 1/25/19 10:09 AM, Michael Bringmann wrote:
+> Adding Nathan Lynch
+> 
+> On 1/24/19 6:04 PM, Tyrel Datwyler wrote:
+>> On 12/14/2018 12:50 PM, Michael Bringmann wrote:
+>>> Define interface to acquire arch-specific drc info to match against
+>>> hotpluggable devices.  The current implementation exposes several
+>>> pseries-specific dynamic memory properties in generic kernel code.
+>>> This patch set provides an interface to pull that code out of the
+>>> generic kernel.
+>>>
+>>> Signed-off-by: Michael Bringmann <mwb@linux.vnet.ibm.com>
+>>> ---
+>>>  include/linux/topology.h |    9 +++++++++
+>>>  1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/include/linux/topology.h b/include/linux/topology.h
+>>> index cb0775e..df97f5f 100644
+>>> --- a/include/linux/topology.h
+>>> +++ b/include/linux/topology.h
+>>> @@ -44,6 +44,15 @@
+>>
+>> As far as I know pseries is the only platform that uses DR connectors, and I
+>> highly doubt that any other powerpc platform or arch ever will. So, I'm not sure
+>> that this is really generic enough to belong in topology.h. If anything I would
+>> suggest putting this in an include in arch/powerpc/include/ named something like
+>> drcinfo.h or pseries-drc.h. That will make it visible to modules like rpaphp
+>> that want/need to use this functionality.
 
-Other than the issue on patch 3 that affects the example here,
+It looks like the 'rpaphp' and 'rpadlpar_io' modules are also dependent upon the
+powerpc platform.  Shouldn't the relevant source files be moved completely to the
+powerpc-specific directories out of drivers/pci/hotplug as well?
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+drivers/pci/hotplug/Kconfig has:
+
+config HOTPLUG_PCI_RPA
+        tristate "RPA PCI Hotplug driver"
+        depends on PPC_PSERIES && EEH
+        help
+          Say Y here if you have a RPA system that supports PCI Hotplug.
+
+          To compile this driver as a module, choose M here: the
+          module will be called rpaphp.
+
+          When in doubt, say N.
+
+config HOTPLUG_PCI_RPA_DLPAR
+        tristate "RPA Dynamic Logical Partitioning for I/O slots"
+        depends on HOTPLUG_PCI_RPA
+        help
+          Say Y here if your system supports Dynamic Logical Partitioning
+          for I/O slots.
+
+          To compile this driver as a module, choose M here: the
+          module will be called rpadlpar_io.
+
+          When in doubt, say N.
+
+Michael
+
+>>
+>> -Tyrel
+>>
+>>>  
+>>>  int arch_update_cpu_topology(void);
+>>>  
+>>> +int arch_find_drc_match(struct device_node *dn,
+>>> +			bool (*usercb)(struct device_node *dn,
+>>> +				u32 drc_index, char *drc_name,
+>>> +				char *drc_type, u32 drc_power_domain,
+>>> +				void *data),
+>>> +			char *opt_drc_type, char *opt_drc_name,
+>>> +			bool match_drc_index, bool ck_php_type,
+>>> +			void *data);
+>>> +
+>>>  /* Conform to ACPI 2.0 SLIT distance definitions */
+>>>  #define LOCAL_DISTANCE		10
+>>>  #define REMOTE_DISTANCE		20
+>>>
+>>
+>>
+> 
+
+-- 
+Michael W. Bringmann
+Linux Technology Center
+IBM Corporation
+Tie-Line  363-5196
+External: (512) 286-5196
+Cell:       (512) 466-0650
+mwb@linux.vnet.ibm.com
+
