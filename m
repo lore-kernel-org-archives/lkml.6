@@ -4,57 +4,52 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02513C282D0
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD1DC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5264214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 34E562173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690268;
-	bh=PBwiyGYX+rPDMsRuT34Wi4OA+PQc4NSmjZki/sCXrvc=;
+	s=default; t=1548690276;
+	bh=pDU80uKev68QP/nkK3SovFLybpwi/pkp4KcRb7JezDM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=clE1/TCPfAci8Qh+nJmuDPRsoOKQf23f7Z5UCZ/i8uAalX+gguCW4utxqnh4+0c1d
-	 JqAf4GMUHcfyttupJ5tfhtjILJ3b/9qsNUmQBgAuClMinbXcT/v2vsPM7DbZ/wmrmB
-	 8iXC46ZMvocJMSD/E79OAiYsTYbNFE19m4PQBH4Q=
+	b=HnbFPa+28IiYoKtwtorU/xiUhI23QmcSNgDhITiUBsTHjy43Kp6JfXWbLOapF3SEK
+	 pIImVKH1aN1VsiRZwoGs/vMzo4PF5QsUtb/WIgEliuvg0canCCY2mQCEIPCih+7A1J
+	 /IcQ6E03oNQSVHPLyREW/C8piQvbd1o7gUcVpHr4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727358AbfA1Po1 (ORCPT
+        id S1727403AbfA1Poe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:44:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57652 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:44:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57774 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726818AbfA1PoW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:44:22 -0500
+        id S1727365AbfA1Po2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:44:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 80625214DA;
-        Mon, 28 Jan 2019 15:44:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 835B620880;
+        Mon, 28 Jan 2019 15:44:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690261;
-        bh=PBwiyGYX+rPDMsRuT34Wi4OA+PQc4NSmjZki/sCXrvc=;
+        s=default; t=1548690268;
+        bh=pDU80uKev68QP/nkK3SovFLybpwi/pkp4KcRb7JezDM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=DDQzvHnijQQfNnXulQVyYye/QVjfrxQ8/lfxBsA5PT8o7gzGCM6D2FAL1NdO/tS8n
-         gxiPyS/8RBcq3+9mNSGEB6T7ls/UH0EnVBNrqHP9b7VchsUqpIA4AATtA3zMXFNX1D
-         R8Oqp72HGIoyT+LX1j34DFQiZ0lALBZXBhs4se1k=
+        b=Orc0y8v6IFsvjoJ4nse5ofdusJ2YQInyTkAcz8dO6Kuw0p99vMzkjV4pqfMbLD2C6
+         vv9R+BPR742pyQr7v+2jajZktWWIbTippdxoXZYar1sTM/ZFWw692JhRwd0SuvuXaJ
+         xMsy4ySsIUU684Ee9ZQPAO9LvjOBAMADoqv8oTnY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@gmail.com>,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Rechi=20Vita?= <jprvita@endlessm.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        acpi4asus-user@lists.sourceforge.net,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 022/304] platform/x86: asus-nb-wmi: Map 0x35 to KEY_SCREENLOCK
-Date:   Mon, 28 Jan 2019 10:38:59 -0500
-Message-Id: <20190128154341.47195-22-sashal@kernel.org>
+Cc:     Bob Peterson <rpeterso@redhat.com>,
+        David Teigland <teigland@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, cluster-devel@redhat.com
+Subject: [PATCH AUTOSEL 4.20 025/304] dlm: Don't swamp the CPU with callbacks queued during recovery
+Date:   Mon, 28 Jan 2019 10:39:02 -0500
+Message-Id: <20190128154341.47195-25-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -62,41 +57,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: João Paulo Rechi Vita <jprvita@gmail.com>
+From: Bob Peterson <rpeterso@redhat.com>
 
-[ Upstream commit b3f2f3799a972d3863d0fdc2ab6287aef6ca631f ]
+[ Upstream commit 216f0efd19b9cc32207934fd1b87a45f2c4c593e ]
 
-When the OS registers to handle events from the display off hotkey the
-EC will send a notification with 0x35 for every key press, independent
-of the backlight state.
+Before this patch, recovery would cause all callbacks to be delayed,
+put on a queue, and afterward they were all queued to the callback
+work queue. This patch does the same thing, but occasionally takes
+a break after 25 of them so it won't swamp the CPU at the expense
+of other RT processes like corosync.
 
-The behavior of this key on Windows, with the ATKACPI driver from Asus
-installed, is turning off the backlight of all connected displays with a
-fading effect, and any cursor input or key press turning the backlight
-back on. The key press or cursor input that wakes up the display is also
-passed through to the application under the cursor or under focus.
-
-The key that matches this behavior the closest is KEY_SCREENLOCK.
-
-Signed-off-by: João Paulo Rechi Vita <jprvita@endlessm.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Signed-off-by: Bob Peterson <rpeterso@redhat.com>
+Signed-off-by: David Teigland <teigland@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/asus-nb-wmi.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/dlm/ast.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/platform/x86/asus-nb-wmi.c b/drivers/platform/x86/asus-nb-wmi.c
-index db2af09067db..5a00a7665f9b 100644
---- a/drivers/platform/x86/asus-nb-wmi.c
-+++ b/drivers/platform/x86/asus-nb-wmi.c
-@@ -444,6 +444,7 @@ static const struct key_entry asus_nb_wmi_keymap[] = {
- 	{ KE_KEY, 0x32, { KEY_MUTE } },
- 	{ KE_KEY, 0x33, { KEY_DISPLAYTOGGLE } }, /* LCD on */
- 	{ KE_KEY, 0x34, { KEY_DISPLAY_OFF } }, /* LCD off */
-+	{ KE_KEY, 0x35, { KEY_SCREENLOCK } },
- 	{ KE_KEY, 0x40, { KEY_PREVIOUSSONG } },
- 	{ KE_KEY, 0x41, { KEY_NEXTSONG } },
- 	{ KE_KEY, 0x43, { KEY_STOPCD } }, /* Stop/Eject */
+diff --git a/fs/dlm/ast.c b/fs/dlm/ast.c
+index 562fa8c3edff..47ee66d70109 100644
+--- a/fs/dlm/ast.c
++++ b/fs/dlm/ast.c
+@@ -292,6 +292,8 @@ void dlm_callback_suspend(struct dlm_ls *ls)
+ 		flush_workqueue(ls->ls_callback_wq);
+ }
+ 
++#define MAX_CB_QUEUE 25
++
+ void dlm_callback_resume(struct dlm_ls *ls)
+ {
+ 	struct dlm_lkb *lkb, *safe;
+@@ -302,15 +304,23 @@ void dlm_callback_resume(struct dlm_ls *ls)
+ 	if (!ls->ls_callback_wq)
+ 		return;
+ 
++more:
+ 	mutex_lock(&ls->ls_cb_mutex);
+ 	list_for_each_entry_safe(lkb, safe, &ls->ls_cb_delay, lkb_cb_list) {
+ 		list_del_init(&lkb->lkb_cb_list);
+ 		queue_work(ls->ls_callback_wq, &lkb->lkb_cb_work);
+ 		count++;
++		if (count == MAX_CB_QUEUE)
++			break;
+ 	}
+ 	mutex_unlock(&ls->ls_cb_mutex);
+ 
+ 	if (count)
+ 		log_rinfo(ls, "dlm_callback_resume %d", count);
++	if (count == MAX_CB_QUEUE) {
++		count = 0;
++		cond_resched();
++		goto more;
++	}
+ }
+ 
 -- 
 2.19.1
 
