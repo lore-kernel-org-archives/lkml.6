@@ -7,51 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2D6AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC4EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C57212084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 95CA82084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693760;
-	bh=tdZvNln1laje92PT70r2gQ/R+IrNdpU7XXA4Fa2FH/E=;
+	s=default; t=1548693766;
+	bh=smksVjHmBgGlBWiX3aftH5cmLjUKG7JYTo/oSFQbUcM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gOLu11MRq7PatwK1POq5ZZ8rIDTvP75peNGfgi3OBA95+XMUhNZBgZnrVxJFNk6Bn
-	 86nQ6D6CcH6eTHxbCHcchfW7qc5D5hkL2eH1GOl9JwmfENcIbgUhcWEbneYKmivGOr
-	 Iqa85A9yx/2+ZG1LpNJ+XEqcQCd8Lnty7yrHj1/A=
+	b=12OvHGmqj/I2cC6Rj5P9pD1VawlyNNUsR9qEnZthttiTq/8WhTJ2kQaGblRtzDQgc
+	 OYTCKzOyP2GKO66xxUveqCTVU2t5E8ixNyBz6/UBqOa7zZ8WKr38NbLeAo9+5wAOms
+	 PPdHAIk0GryS9eHVjL7U5Rqabax+khO69WLT0Ckw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389687AbfA1Qmi (ORCPT
+        id S2389470AbfA1QXf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:42:38 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59920 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:23:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59712 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389079AbfA1QXj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:39 -0500
+        id S2389441AbfA1QX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:23:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A5F7A2147A;
-        Mon, 28 Jan 2019 16:23:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 092642171F;
+        Mon, 28 Jan 2019 16:23:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692618;
-        bh=tdZvNln1laje92PT70r2gQ/R+IrNdpU7XXA4Fa2FH/E=;
+        s=default; t=1548692607;
+        bh=smksVjHmBgGlBWiX3aftH5cmLjUKG7JYTo/oSFQbUcM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=awa65tc1/JZmYG88X2TjeeYi3k8dP6QA6HtQkt9wEbNoLlROv4XkZdxvR/i1gmRlK
-         e60O88JVzy9zN3bQ7ehBa/7E7ypemzSGDfvYi3sF+XANchITLr9+qP7ospbvm1wDnZ
-         dZieUUDdNPDXGTZ2CMsmsKDciour1Nn7jNULnvx0=
+        b=iQUShw1lv6SNGNxObPVAssAvsXmq3ofoA4Vg1TlUbQDCTI3k3Q9AUi6DcfPJLXFVV
+         ZptxHUw5r3b/N9ZD9OIcs9ZR1zhhYePPNns7JUKePr2A6oNY9rF6yKHXgY1G5lZGj9
+         WoOHLCHxUPSz+i8h1vGo2ARJP5MyNIWudoURDNng=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Junxiao Bi <junxiao.bi@oracle.com>,
-        Joel Becker <jlbec@evilplan.org>,
-        Joseph Qi <jiangqi903@gmail.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Mark Fasheh <mfasheh@versity.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 096/107] ocfs2: don't clear bh uptodate for block read
-Date:   Mon, 28 Jan 2019 11:19:36 -0500
-Message-Id: <20190128161947.57405-96-sashal@kernel.org>
+Cc:     Anton Ivanov <anton.ivanov@cambridgegreys.com>,
+        Richard Weinberger <richard@nod.at>,
+        Sasha Levin <sashal@kernel.org>, linux-um@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.9 091/107] um: Avoid marking pages with "changed protection"
+Date:   Mon, 28 Jan 2019 11:19:31 -0500
+Message-Id: <20190128161947.57405-91-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -63,68 +58,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junxiao Bi <junxiao.bi@oracle.com>
+From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
 
-[ Upstream commit 70306d9dce75abde855cefaf32b3f71eed8602a3 ]
+[ Upstream commit 8892d8545f2d0342b9c550defbfb165db237044b ]
 
-For sync io read in ocfs2_read_blocks_sync(), first clear bh uptodate flag
-and submit the io, second wait io done, last check whether bh uptodate, if
-not return io error.
+Changing protection is a very high cost operation in UML
+because in addition to an extra syscall it also interrupts
+mmap merge sequences generated by the tlb.
 
-If two sync io for the same bh were issued, it could be the first io done
-and set uptodate flag, but just before check that flag, the second io came
-in and cleared uptodate, then ocfs2_read_blocks_sync() for the first io
-will return IO error.
+While the condition is not particularly common it is worth
+avoiding.
 
-Indeed it's not necessary to clear uptodate flag, as the io end handler
-end_buffer_read_sync() will set or clear it based on io succeed or failed.
-
-The following message was found from a nfs server but the underlying
-storage returned no error.
-
-[4106438.567376] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2780 ERROR: read block 1238823695 failed -5
-[4106438.567569] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2812 ERROR: status = -5
-[4106438.567611] (nfsd,7146,3):ocfs2_test_inode_bit:2894 ERROR: get alloc slot and bit failed -5
-[4106438.567643] (nfsd,7146,3):ocfs2_test_inode_bit:2932 ERROR: status = -5
-[4106438.567675] (nfsd,7146,3):ocfs2_get_dentry:94 ERROR: test inode bit failed -5
-
-Same issue in non sync read ocfs2_read_blocks(), fixed it as well.
-
-Link: http://lkml.kernel.org/r/20181121020023.3034-4-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
-Cc: Joel Becker <jlbec@evilplan.org>
-Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/buffer_head_io.c | 2 --
- 1 file changed, 2 deletions(-)
+ arch/um/include/asm/pgtable.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-index 25c8b328c43d..935bac253991 100644
---- a/fs/ocfs2/buffer_head_io.c
-+++ b/fs/ocfs2/buffer_head_io.c
-@@ -151,7 +151,6 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
- #endif
- 		}
+diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
+index 7485398d0737..9c04562310b3 100644
+--- a/arch/um/include/asm/pgtable.h
++++ b/arch/um/include/asm/pgtable.h
+@@ -197,12 +197,17 @@ static inline pte_t pte_mkold(pte_t pte)
  
--		clear_buffer_uptodate(bh);
- 		get_bh(bh); /* for end_buffer_read_sync() */
- 		bh->b_end_io = end_buffer_read_sync;
- 		submit_bh(REQ_OP_READ, 0, bh);
-@@ -305,7 +304,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
- 				continue;
- 			}
+ static inline pte_t pte_wrprotect(pte_t pte)
+ { 
+-	pte_clear_bits(pte, _PAGE_RW);
++	if (likely(pte_get_bits(pte, _PAGE_RW)))
++		pte_clear_bits(pte, _PAGE_RW);
++	else
++		return pte;
+ 	return(pte_mknewprot(pte)); 
+ }
  
--			clear_buffer_uptodate(bh);
- 			get_bh(bh); /* for end_buffer_read_sync() */
- 			if (validate)
- 				set_buffer_needs_validate(bh);
+ static inline pte_t pte_mkread(pte_t pte)
+ { 
++	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_USER);
+ 	return(pte_mknewprot(pte)); 
+ }
+@@ -221,6 +226,8 @@ static inline pte_t pte_mkyoung(pte_t pte)
+ 
+ static inline pte_t pte_mkwrite(pte_t pte)	
+ {
++	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
++		return pte;
+ 	pte_set_bits(pte, _PAGE_RW);
+ 	return(pte_mknewprot(pte)); 
+ }
 -- 
 2.19.1
 
