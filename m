@@ -2,85 +2,80 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D343C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:47:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33BFAC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:48:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D2A22147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:47:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="e0EMqKDg"
+	by mail.kernel.org (Postfix) with ESMTP id 0C31120844
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:48:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbfA1Orl (ORCPT
+        id S1726877AbfA1Osv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:47:41 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34359 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfA1Orl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:47:41 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u89-v6so14502079lje.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 06:47:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=cKK4inmtsjA81xIaKjYBVKu5Y2axTkKuwPiRoIlTRSo=;
-        b=e0EMqKDglMCt+qt/WmXPBiht/hPfhoDEelzQ9KphIc6mlVevd2SIN/gDxLrClTLOgI
-         Cxilcfu4O7J7xdjJDTX/1bJ9l0myeaGsJctkM4H7hFKkg98PebpJYZK86NeuC2k9YXOY
-         P9LQwTY9073RxFXhDrbCelrxEVfmHbtlxbey8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=cKK4inmtsjA81xIaKjYBVKu5Y2axTkKuwPiRoIlTRSo=;
-        b=L0GqhImBxZLrXNmA+O9KV25NX29zfR/XTsDAKEdVReP/mnzDAffFGJ8dqPsFb5RfWk
-         1GT91j/YsZNGPSmc1YDJI+mVoqPDVezr9+bLaOpS1qhKr+CRlD3iECJ7WjokcbvWNDAC
-         HWxMBRkAmi5q3ADf1HeGJHMeHAhSArZtuCe0mhwgdoVL7L8GlDBJ/g7Li10MgnNKEJAs
-         6rwIShVTLgBmhFJBu1bBjyDgLDgna0SszV3ZFcWMVVKZEXizvikv4O3ZlT8JI1FzhFIw
-         2wfTwi1e8zG31EJXFCHgQFixHgKVDGV/r9H/mgLE6wW0C9TzbJJKVScylvQEl0atIqaI
-         puIA==
-X-Gm-Message-State: AJcUukeEJd5GkPSzTQ1HKbFKLo7bkej3dUcUbpsvX7c68Swlvrqyomzr
-        42GzuKdGhcxX96pwXUBbx1oTbS4k9mSdThohvar5iw==
-X-Google-Smtp-Source: ALg8bN5/WefJ+eUnaIJ/np0vSNkMOGqPRTIuyxooAq7rRBYCcpOPnFz4BA9Lt8nzaMnnqxR7QpkePRhnLomots64HbA=
-X-Received: by 2002:a2e:568d:: with SMTP id k13-v6mr18730616lje.105.1548686858973;
- Mon, 28 Jan 2019 06:47:38 -0800 (PST)
+        Mon, 28 Jan 2019 09:48:51 -0500
+Received: from mx2.suse.de ([195.135.220.15]:57096 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726266AbfA1Osu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 09:48:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 9D61AAE5D;
+        Mon, 28 Jan 2019 14:48:49 +0000 (UTC)
+Received: by quack2.suse.cz (Postfix, from userid 1000)
+        id 71D281E3FEF; Mon, 28 Jan 2019 15:48:47 +0100 (CET)
+Date:   Mon, 28 Jan 2019 15:48:47 +0100
+From:   Jan Kara <jack@suse.cz>
+To:     Liu Xiang <liu.xiang6@zte.com.cn>
+Cc:     jack@suse.com, linux-ext4@vger.kernel.org,
+        linux-kernel@vger.kernel.org, liuxiang_1999@126.com
+Subject: Re: [PATCH] ext2: Remove useless reset code
+Message-ID: <20190128144847.GG27972@quack2.suse.cz>
+References: <1548424864-4647-1-git-send-email-liu.xiang6@zte.com.cn>
 MIME-Version: 1.0
-References: <1548410393-6981-1-git-send-email-zhouyanjie@zoho.com>
- <1548410393-6981-2-git-send-email-zhouyanjie@zoho.com> <CACRpkdYe2NsBFC-KBQXhmsSJ-S7wN9cZZuEPKHSfQe4HZUXTPg@mail.gmail.com>
- <5C4F14E9.7030203@zoho.com>
-In-Reply-To: <5C4F14E9.7030203@zoho.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Mon, 28 Jan 2019 15:47:27 +0100
-Message-ID: <CACRpkdbG5Abcp0wzgyVpr06n-f=Djs_zzRxwgMX1xCxwEnUSog@mail.gmail.com>
-Subject: Re: [PATCH RESEND 1/4] Pinctrl: Ingenic: Fix bugs caused by
- differences between JZ4770 and JZ4780.
-To:     Zhou Yanjie <zhouyanjie@zoho.com>
-Cc:     linux-mips@vger.kernel.org,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Paul Cercueil <paul@crapouillou.net>, syq@debian.org,
-        Jiaxun Yang <jiaxun.yang@flygoat.com>, 772753199@qq.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548424864-4647-1-git-send-email-liu.xiang6@zte.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 3:43 PM Zhou Yanjie <zhouyanjie@zoho.com> wrote:
+On Fri 25-01-19 22:01:04, Liu Xiang wrote:
+> If ((char *)de == dir_end) is true, the name_len will not be used
+> in the subsequent routine. So the reset code can be removed.
+> 
+> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
 
-> Thank you for your reply. I am working on v2, and I have removed the
-> fourth patch in v2,
-> so there will be no warnings at compile time. But this will cause some
-> warning messages
-> when checkpatch, I am confused whether I can ignore these warnings.
+Thanks for the patch. I agree with your analysis but I prefer to keep the
+code as is - it prevents warnings about uninitialized variable being used
+for compilers than cannot infer that and also for humans reading the code
+is easier this way.
 
-I don't care super much about checkpatch warnings, compiler
-warnings for const correctness is more important.
+								Honza
 
-Yours,
-Linus Walleij
+> ---
+>  fs/ext2/dir.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/fs/ext2/dir.c b/fs/ext2/dir.c
+> index 3b8114d..5ec497f 100644
+> --- a/fs/ext2/dir.c
+> +++ b/fs/ext2/dir.c
+> @@ -517,7 +517,6 @@ int ext2_add_link (struct dentry *dentry, struct inode *inode)
+>  		while ((char *)de <= kaddr) {
+>  			if ((char *)de == dir_end) {
+>  				/* We hit i_size */
+> -				name_len = 0;
+>  				rec_len = chunk_size;
+>  				de->rec_len = ext2_rec_len_to_disk(chunk_size);
+>  				de->inode = 0;
+> -- 
+> 1.9.1
+> 
+> 
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
