@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D8B6C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 675A0C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 349152147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 35A712148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692150;
-	bh=DFqmGOJ3LBP+z8Wjz8u/2EGfM5QptJOFDIpszZXQ/0A=;
+	s=default; t=1548692154;
+	bh=bnfYUnXYY8e5xhnltHi/bie7DL6yVhHTZ50KQacMjLg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=V7hcGT5mOYhUJubdULBY6Sm6mpQq22bfZbSEr13AcFynqBVTNjcS3zVcQpxTE8G9V
-	 Qd3hBNc9x+inI7vBp2k8M/gah2LXktdL4+T9uGHV2/49sR2Aq7S9JAahVK4KAbqlGv
-	 H40MCcnYDM8ZlcjZvJV6p0BF5uYMZMuy5fNoVXlA=
+	b=bBg4938hoIMiBLJJUEfCZXEiAqtGTQLavs+jpb1kdNdtdlmxuHLlbsNw5KIdD3eDc
+	 bAaRsQRiY+eNm0Rk20ES0Bs1Vv/Qz+k3b0/SWLXttLF/EfnhhS+8pmuqt790BanmyM
+	 nrLErUshOVFtNV2cbNJvi1QPBAN0hhIrgz4opksQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387862AbfA1QPs (ORCPT
+        id S2387873AbfA1QPv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:15:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46488 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:15:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46364 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732776AbfA1QPr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:47 -0500
+        id S2387809AbfA1QPo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 842BF2184D;
-        Mon, 28 Jan 2019 16:15:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1389A2147A;
+        Mon, 28 Jan 2019 16:15:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692146;
-        bh=DFqmGOJ3LBP+z8Wjz8u/2EGfM5QptJOFDIpszZXQ/0A=;
+        s=default; t=1548692144;
+        bh=bnfYUnXYY8e5xhnltHi/bie7DL6yVhHTZ50KQacMjLg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lbDi7a362Dn56RM7bJUiBLCwQaMa9jl+D9jxqFgLfL9L52Zlgq7M5uMR1T0JdKXWA
-         mEyxSZ3X8OCPfyCldjRW41/Ctlw52SrFNAgUJMva8CU+S1Lxy9BoDnh0n8R73hZPNt
-         u5tSd6iHqJ/tsgZokLIfnZZCFy400sgxefNDIHW0=
+        b=DHf0i7nDk6ZEdoUMA/KoGPwEaFt7gr+x3ZYJ/VNg6Rli8BqLvHK9kVzBK6Z2SghGw
+         W9ekK/xStsLAuyam4pp6/koTr5MBsVJAX+uATg/8JuMdrzRLygiarzola8s/i1oqWJ
+         GImHPHYoAJqBptfN7BHDEDgiE6+g5vlPZgxR2nso=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.14 088/170] cpuidle: big.LITTLE: fix refcount leak
-Date:   Mon, 28 Jan 2019 11:10:38 -0500
-Message-Id: <20190128161200.55107-88-sashal@kernel.org>
+Cc:     Anson Huang <anson.huang@nxp.com>,
+        Anson Huang <Anson.Huang@nxp.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 087/170] clk: imx6sl: ensure MMDC CH0 handshake is bypassed
+Date:   Mon, 28 Jan 2019 11:10:37 -0500
+Message-Id: <20190128161200.55107-87-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -59,47 +59,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: Anson Huang <anson.huang@nxp.com>
 
-[ Upstream commit 9456823c842f346c74265fcd98d008d87a7eb6f5 ]
+[ Upstream commit 0efcc2c0fd2001a83240a8c3d71f67770484917e ]
 
-of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
-bl_idle_init() doesn't do that, so fix it.
+Same as other i.MX6 SoCs, ensure unused MMDC channel's
+handshake is bypassed, this is to make sure no request
+signal will be generated when periphe_clk_sel is changed
+or SRC warm reset is triggered.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpuidle/cpuidle-big_little.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/clk/imx/clk-imx6sl.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
-index db2ede565f1a..b44476a1b7ad 100644
---- a/drivers/cpuidle/cpuidle-big_little.c
-+++ b/drivers/cpuidle/cpuidle-big_little.c
-@@ -167,6 +167,7 @@ static int __init bl_idle_init(void)
- {
- 	int ret;
- 	struct device_node *root = of_find_node_by_path("/");
-+	const struct of_device_id *match_id;
+diff --git a/drivers/clk/imx/clk-imx6sl.c b/drivers/clk/imx/clk-imx6sl.c
+index 9642cdf0fb88..c264a744fae8 100644
+--- a/drivers/clk/imx/clk-imx6sl.c
++++ b/drivers/clk/imx/clk-imx6sl.c
+@@ -17,6 +17,8 @@
  
- 	if (!root)
- 		return -ENODEV;
-@@ -174,7 +175,11 @@ static int __init bl_idle_init(void)
- 	/*
- 	 * Initialize the driver just for a compliant set of machines
- 	 */
--	if (!of_match_node(compatible_machine_match, root))
-+	match_id = of_match_node(compatible_machine_match, root);
-+
-+	of_node_put(root);
-+
-+	if (!match_id)
- 		return -ENODEV;
+ #include "clk.h"
  
- 	if (!mcpm_is_available())
++#define CCDR				0x4
++#define BM_CCM_CCDR_MMDC_CH0_MASK	(1 << 17)
+ #define CCSR			0xc
+ #define BM_CCSR_PLL1_SW_CLK_SEL	(1 << 2)
+ #define CACRR			0x10
+@@ -414,6 +416,10 @@ static void __init imx6sl_clocks_init(struct device_node *ccm_node)
+ 	clks[IMX6SL_CLK_USDHC3]       = imx_clk_gate2("usdhc3",       "usdhc3_podf",       base + 0x80, 6);
+ 	clks[IMX6SL_CLK_USDHC4]       = imx_clk_gate2("usdhc4",       "usdhc4_podf",       base + 0x80, 8);
+ 
++	/* Ensure the MMDC CH0 handshake is bypassed */
++	writel_relaxed(readl_relaxed(base + CCDR) |
++		BM_CCM_CCDR_MMDC_CH0_MASK, base + CCDR);
++
+ 	imx_check_clocks(clks, ARRAY_SIZE(clks));
+ 
+ 	clk_data.clks = clks;
 -- 
 2.19.1
 
