@@ -7,49 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93027C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B3A01C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 621682082E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80ABB2082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691156;
-	bh=KZ51WbxuHMBDzOgtr0oM85ZM/uLWiX2hpYMI96fMqh0=;
+	s=default; t=1548691159;
+	bh=yzX3yOPfXHZAsRv4i1lqHC0NmaDrNzvgnQSWp1yz1Es=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=IDCGSUg+e/BA4Re7Rzc76pEnydFdOjFbSCTrva4DtJjtoCEnozyDKPrckuNudwOm2
-	 BcGNlS02xl2kNYNheLRywJKaC30yteJnXSKxStqC1HlUpSRqUH+sum2UuyNX3faJQs
-	 3xP+9J4HbMfl/A9IlGdlmCPrBy9gulmrellrWHP8=
+	b=krTDrbE4jnnrTBLfDWol3Jt8NXzypne6DdxVJqQfIYudPcMXjdZ5hVhFrQoi9yPzy
+	 vgOyLcxiGVEYGVDbabEjqbfktfPTShODsTf3GMeHymEJ1f0E6DNcbMnQFbJKsZfzC5
+	 Io79CbX9uVnSR0uJEzfoj648rYooDtRj3DQ2HaNQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730557AbfA1P7O (ORCPT
+        id S1730567AbfA1P7R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:59:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44560 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:59:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44608 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730546AbfA1P7K (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:59:10 -0500
+        id S1727635AbfA1P7O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:59:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8069421841;
-        Mon, 28 Jan 2019 15:59:07 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6030C21848;
+        Mon, 28 Jan 2019 15:59:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691149;
-        bh=KZ51WbxuHMBDzOgtr0oM85ZM/uLWiX2hpYMI96fMqh0=;
+        s=default; t=1548691153;
+        bh=yzX3yOPfXHZAsRv4i1lqHC0NmaDrNzvgnQSWp1yz1Es=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uy7eZXimZGJOMUoJqUbTDx6g7QCalBT8aIaRkL8FWuWJGx6xipEi/onz0JMFKOqrR
-         05ixAfQUrc8ldTpw6A7j5UnWNz9I11wXLYUmxIE5rHQg4qQlWA+gFPZoyfKiwfecvq
-         Bv1Fz68kFxbw6HEYjPObj/4C+AfzWbOHLPGJDnwk=
+        b=rVpAGAIeSmpNzdjQxtE04vD/8vmNoHChoLgDl3Q5z/7RG0tP8QJCC0fpHV0dnoI+p
+         c1UkWhj8TlSffDKcMRLN4+z5vbRw9BoU0/uHvkGlihY3jB9q3t1rOOU8hzht53e7/9
+         f4RZbBEuoReiYN0GpBMAjcHNmqx9W+aMQUIrvUCo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Will Deacon <will.deacon@arm.com>,
+Cc:     Du Changbin <changbin.du@gmail.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 302/304] kernel/kcov.c: mark write_comp_data() as notrace
-Date:   Mon, 28 Jan 2019 10:43:39 -0500
-Message-Id: <20190128154341.47195-302-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 303/304] scripts/gdb: fix lx-version string output
+Date:   Mon, 28 Jan 2019 10:43:40 -0500
+Message-Id: <20190128154341.47195-303-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -61,60 +63,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anders Roxell <anders.roxell@linaro.org>
+From: Du Changbin <changbin.du@gmail.com>
 
-[ Upstream commit 634724431607f6f46c495dfef801a1c8b44a96d9 ]
+[ Upstream commit b058809bfc8faeb7b7cae047666e23375a060059 ]
 
-Since __sanitizer_cov_trace_const_cmp4 is marked as notrace, the
-function called from __sanitizer_cov_trace_const_cmp4 shouldn't be
-traceable either.  ftrace_graph_caller() gets called every time func
-write_comp_data() gets called if it isn't marked 'notrace'.  This is the
-backtrace from gdb:
+A bug is present in GDB which causes early string termination when
+parsing variables.  This has been reported [0], but we should ensure
+that we can support at least basic printing of the core kernel strings.
 
- #0  ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:179
- #1  0xffffff8010201920 in ftrace_caller () at ../arch/arm64/kernel/entry-ftrace.S:151
- #2  0xffffff8010439714 in write_comp_data (type=5, arg1=0, arg2=0, ip=18446743524224276596) at ../kernel/kcov.c:116
- #3  0xffffff8010439894 in __sanitizer_cov_trace_const_cmp4 (arg1=<optimized out>, arg2=<optimized out>) at ../kernel/kcov.c:188
- #4  0xffffff8010201874 in prepare_ftrace_return (self_addr=18446743524226602768, parent=0xffffff801014b918, frame_pointer=18446743524223531344) at ./include/generated/atomic-instrumented.h:27
- #5  0xffffff801020194c in ftrace_graph_caller () at ../arch/arm64/kernel/entry-ftrace.S:182
+For current gdb version (has been tested with 7.3 and 8.1), 'lx-version'
+only prints one character.
 
-Rework so that write_comp_data() that are called from
-__sanitizer_cov_trace_*_cmp*() are marked as 'notrace'.
+  (gdb) lx-version
+  L(gdb)
 
-Commit 903e8ff86753 ("kernel/kcov.c: mark funcs in __sanitizer_cov_trace_pc() as notrace")
-missed to mark write_comp_data() as 'notrace'. When that patch was
-created gcc-7 was used. In lib/Kconfig.debug
-config KCOV_ENABLE_COMPARISONS
-	depends on $(cc-option,-fsanitize-coverage=trace-cmp)
+This can be fixed by casting 'linux_banner' as (char *).
 
-That code path isn't hit with gcc-7. However, it were that with gcc-8.
+  (gdb) lx-version
+  Linux version 4.19.0-rc1+ (changbin@acer) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #21 SMP Sat Sep 1 21:43:30 CST 2018
 
-Link: http://lkml.kernel.org/r/20181206143011.23719-1-anders.roxell@linaro.org
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Co-developed-by: Arnd Bergmann <arnd@arndb.de>
-Acked-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
-Cc: Will Deacon <will.deacon@arm.com>
+[0] https://sourceware.org/bugzilla/show_bug.cgi?id=20077
+
+[kbingham@kernel.org: add detail to commit message]
+Link: http://lkml.kernel.org/r/20181111162035.8356-1-kieran.bingham@ideasonboard.com
+Fixes: 2d061d999424 ("scripts/gdb: add version command")
+Signed-off-by: Du Changbin <changbin.du@gmail.com>
+Signed-off-by: Kieran Bingham <kbingham@kernel.org>
+Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/kcov.c | 2 +-
+ scripts/gdb/linux/proc.py | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/kernel/kcov.c b/kernel/kcov.c
-index 97959d7b77e2..c2277dbdbfb1 100644
---- a/kernel/kcov.c
-+++ b/kernel/kcov.c
-@@ -112,7 +112,7 @@ void notrace __sanitizer_cov_trace_pc(void)
- EXPORT_SYMBOL(__sanitizer_cov_trace_pc);
+diff --git a/scripts/gdb/linux/proc.py b/scripts/gdb/linux/proc.py
+index 086d27223c0c..0aebd7565b03 100644
+--- a/scripts/gdb/linux/proc.py
++++ b/scripts/gdb/linux/proc.py
+@@ -41,7 +41,7 @@ class LxVersion(gdb.Command):
  
- #ifdef CONFIG_KCOV_ENABLE_COMPARISONS
--static void write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
-+static void notrace write_comp_data(u64 type, u64 arg1, u64 arg2, u64 ip)
- {
- 	struct task_struct *t;
- 	u64 *area;
+     def invoke(self, arg, from_tty):
+         # linux_banner should contain a newline
+-        gdb.write(gdb.parse_and_eval("linux_banner").string())
++        gdb.write(gdb.parse_and_eval("(char *)linux_banner").string())
+ 
+ LxVersion()
+ 
 -- 
 2.19.1
 
