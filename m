@@ -2,130 +2,111 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A52F6C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:39:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD5CEC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:40:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7ACB320880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:39:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 935212087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:40:27 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbfA1OjY (ORCPT
+        id S1726878AbfA1OkZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:39:24 -0500
-Received: from route-level1.fsdata.se ([89.221.252.216]:19053 "EHLO
-        route-level1.fsdata.se" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726266AbfA1OjY (ORCPT
+        Mon, 28 Jan 2019 09:40:25 -0500
+Received: from mslow2.mail.gandi.net ([217.70.178.242]:40624 "EHLO
+        mslow2.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726266AbfA1OkZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:39:24 -0500
-Received: from DAG01.HMC.local (192.168.46.11) by EDGE01LEVEL1.hmc.local
- (192.168.46.33) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 28 Jan
- 2019 15:38:45 +0100
-Received: from localhost (94.234.46.36) by DAG01.HMC.local (192.168.46.11)
- with Microsoft SMTP Server (TLS) id 15.0.1263.5; Mon, 28 Jan 2019 15:38:48
- +0100
-Date:   Mon, 28 Jan 2019 15:38:45 +0100
-From:   Mattias Jacobsson <2pi@mok.nu>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-CC:     Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        "Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
-        <2pi@mok.nu>
-Subject: Re: [PATCH] platform/x86: wmi: fix potential null pointer
- dereferences
-Message-ID: <20190128143845.2gneic5ip5b56mwv@mok.nu>
-References: <20190122200302.19861-1-2pi@mok.nu>
- <CAHp75Vfv1sMyAQn=ue0hroqAnbkhQayCj64xNBHO5PRRv53GSA@mail.gmail.com>
+        Mon, 28 Jan 2019 09:40:25 -0500
+Received: from relay12.mail.gandi.net (unknown [217.70.178.232])
+        by mslow2.mail.gandi.net (Postfix) with ESMTP id 735FD3A98E7;
+        Mon, 28 Jan 2019 15:25:01 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        (Authenticated sender: miquel.raynal@bootlin.com)
+        by relay12.mail.gandi.net (Postfix) with ESMTPSA id A2602200011;
+        Mon, 28 Jan 2019 14:24:57 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 15:24:56 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Andrew Lunn <andrew@lunn.ch>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH net-next v2 1/2] net: dsa: mv88e6xxx: Save switch rules
+Message-ID: <20190128152456.212ae5ac@xps13>
+In-Reply-To: <c1421a5d-5f92-bb86-b5cc-9fa19a1c8d9f@gmail.com>
+References: <20190125095507.29334-1-miquel.raynal@bootlin.com>
+ <20190125095507.29334-2-miquel.raynal@bootlin.com>
+ <c1421a5d-5f92-bb86-b5cc-9fa19a1c8d9f@gmail.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CAHp75Vfv1sMyAQn=ue0hroqAnbkhQayCj64xNBHO5PRRv53GSA@mail.gmail.com>
-X-Originating-IP: [94.234.46.36]
-X-ClientProxiedBy: PROXY04.HMC.local (192.168.46.54) To DAG01.HMC.local
- (192.168.46.11)
-Received-SPF: Neutral (EDGE01LEVEL1.hmc.local: 192.168.46.11 is neither
- permitted nor denied by domain of 2pi@mok.nu)
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Florian,
 
-On 2019-01-27, Andy Shevchenko wrote:
-> On Tue, Jan 22, 2019 at 10:04 PM Mattias Jacobsson <2pi@mok.nu> wrote:
-> >
-> > In the function wmi_dev_match() there are three variables that
-> > potentially can result in a null pointer dereference. Namely:
-> > dev/wblock, driver/wmi_driver, and wmi_driver->id_table.
-> >
-> > Check for NULL and return that the driver can't handle the device if any
-> > of these variables would result in a null pointer dereference.
-> >
-> > The NULL checks are performed prior to running container_of() for the
-> > variables dev/wblock and driver/wmi_driver.
-> >
-> > Fixes: 844af950da94 ("platform/x86: wmi: Turn WMI into a bus driver")
-> > Signed-off-by: Mattias Jacobsson <2pi@mok.nu>
-> > ---
-> >  drivers/platform/x86/wmi.c | 16 ++++++++++++----
-> >  1 file changed, 12 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/drivers/platform/x86/wmi.c b/drivers/platform/x86/wmi.c
-> > index bea35be68706..c596479e8b13 100644
-> > --- a/drivers/platform/x86/wmi.c
-> > +++ b/drivers/platform/x86/wmi.c
-> > @@ -763,10 +763,18 @@ static void wmi_dev_release(struct device *dev)
-> >
-> >  static int wmi_dev_match(struct device *dev, struct device_driver *driver)
-> >  {
-> > -       struct wmi_driver *wmi_driver =
-> > -               container_of(driver, struct wmi_driver, driver);
-> 
-> AFAIU this is just a pointer arithmetics, no need to move it.
+Florian Fainelli <f.fainelli@gmail.com> wrote on Fri, 25 Jan 2019
+10:37:38 -0800:
 
-That is my understanding too, it seamed backwards to do the NULL check
-afterwards, but we still have access to dev and driver. So why not...
+> Hi Miquel,
+> 
+> On 1/25/19 1:55 AM, Miquel Raynal wrote:
+> > The user might apply a specific switch configuration, with specific
+> > forwarding rules, VLAN, bridges, etc.
+> > 
+> > During suspend to RAM the switch power will be turned off and the
+> > switch will lost its configuration. In an attempt to bring S2RAM
+> > support to the mv88e6xxx DSA, let's first save these rules in a
+> > per-chip list thanks to the mv88e6xxx_add/del_xxx_rule()
+> > helpers. These helpers are then called from various callbacks:
+> > * mv88e6xxx_port_fdb_add/del()
+> > * mv88e6xxx_port_mdb_add/del()
+> > * mv88e6xxx_port_vlan_add/del()
+> > * mv88e6xxx_port_bridge_join/leave()
+> > * mv88e6xxx_crosschip_bridge_join/leave()
+> > 
+> > To avoid recursion problems when replaying the rules, the content of
+> > the above *_add()/*_join() callbacks has been moved in separate
+> > helpers with a '_' prefix. Hence, each callback just calls the
+> > corresponding helper and the corresponding *_add_xxx_rule().  
+> 
+> None of this should be done in the driver IMHO, because this is
+> presumably applicable to all switch devices that lose their state during
+> suspend/resume, so at best, this should be moved to the core DSA layer,
+> but doing this means that we should also have a well established
+> contract between the DSA layer and individual switch drivers as far as
+> quiescing/saving/restoring state goes.
+> 
+> By moving things to the core we can also more tightly control what data
+> structures get used to represent e.g.: VLANs, FDBs, MDBs etc and
+> possibly push/utilize caching into the original subsystem. For instance
+> VLAN/bridge already do maintain caches of VLANs, so if we could somehow
+> expose those, we would not bloat the kernel's memory footprint by having
+> an additional layer to maintain with identical information.
 
-> 
-> > -       struct wmi_block *wblock = dev_to_wblock(dev);
-> 
-> > -       const struct wmi_device_id *id = wmi_driver->id_table;
-> > +       const struct wmi_device_id *id;
-> > +       struct wmi_block *wblock;
-> > +       struct wmi_driver *wmi_driver;
-> > +
-> 
-> > +       if (dev == NULL || driver == NULL)
-> > +               return 0;
-> 
-> On which circumstances this may ever happen?
+So you suggest to move the intelligence of FDBs/MDBs in net/dsa/port.c,
+is this right?
 
-Nothing in particular. If there is a bug in the caller of this function,
-then that is when this will come into play. See my earlier mail to
-Darren too.
+I don't see where VLAN and bridge information are cached, can you point
+me to the relevant locations?
 
-> 
-> > +       wblock = dev_to_wblock(dev);
-> > +       wmi_driver = container_of(driver, struct wmi_driver, driver);
-> > +
-> > +       if (wmi_driver->id_table == NULL)
-> > +               return 0;
-> > +       id = wmi_driver->id_table;
-> >
-> >         while (id->guid_string) {
-> >                 uuid_le driver_guid;
-> > --
-> > 2.20.1
-> >
-> 
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
+What about cross-chip bridges? There is nothing about them in
+net/dsa/port.c. The implementation I see in the mv88e6xxx driver
+only touches the PVT but I don't get whether we should handle this
+calls like regular bridge-join/leave events or not (maybe they are
+cached with regular bridge events?).
+
 
 Thanks,
-Mattias
+Miquèl
