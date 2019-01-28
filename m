@@ -4,49 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD07C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:04:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2893C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9177C214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:04:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8199521741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:04:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695053;
-	bh=/+9Lfm42Wehy7/fGDirhphFCn2oum2DecyRYYn9hjVE=;
+	s=default; t=1548695068;
+	bh=Jd9siYbfidK9R05xIFwqmHsl0B60h3vU3w7S5XqbY5w=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ph9qemIzP1oth/rXRn93/QYfoxi8HGrYo3DskmwshAS1hG6+pmV9KiYZA3euDg37d
-	 c6XZccfdegwAkeXB0Jdb/9/7LVSvOxgwRVjVjRO74jpfIopj0qNWhuToSxdxzKY6w6
-	 77SJcf1xzHEcjcvS7RXJqmBL+3/HpbKdKutQ/sj8=
+	b=DwXio7wm3J1AwDr3pNihCOod6/1LwWk476TRwQ4WPrOJZHXTb9i6qJXhM7c+2jdcs
+	 znax9JpE/Zse8JQVqn3dU7XU6lVMLwGjE1cW/jx6C855a/tBKtsvWnIZ4+dbOxH7ct
+	 U/qnHmJHcb0RteKrrxcxPIVKt51KXKBb+/uigL/8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387699AbfA1REM (ORCPT
+        id S2387499AbfA1RE0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:04:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43038 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:04:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387548AbfA1QOB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:14:01 -0500
+        id S1732549AbfA1QNv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E3122147A;
-        Mon, 28 Jan 2019 16:13:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E1EFD2147A;
+        Mon, 28 Jan 2019 16:13:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692040;
-        bh=/+9Lfm42Wehy7/fGDirhphFCn2oum2DecyRYYn9hjVE=;
+        s=default; t=1548692031;
+        bh=Jd9siYbfidK9R05xIFwqmHsl0B60h3vU3w7S5XqbY5w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wCUFudtaZOO7aKusq7Bzd54QkhfGsTwWFyEO49lH3z4fMJ5OCwf9R4Q5+En5XvjtX
-         HSwV+q9wwTqMCdI4SInGPVlbyT8CJEwAZTR074XOU5y7aVv2tHkYndEeira1cW6lHU
-         zBHG3x3YGQO5768fjxo/yBi2yvPlDP+I1fRKqlx4=
+        b=ahNK3dI8KaG4RgQ4D6MsUNuhevO4PBAfF/+UFcfxbf1IXMUWFw8YbuymRJhUo/te3
+         KDs2so+mSuCbHdvcHMlZx11IimY7/F9jaTxFK0bLuXqpJiaMrbf9MuqD37MQw17WTM
+         eTjksOJng8pkdGmzbtbQxaq4Xukkds845F1Gs1rk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 049/170] i2c: sh_mobile: add support for r8a77990 (R-Car E3)
-Date:   Mon, 28 Jan 2019 11:09:59 -0500
-Message-Id: <20190128161200.55107-49-sashal@kernel.org>
+Cc:     Michael Straube <straube.linux@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Sasha Levin <sashal@kernel.org>, devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.14 044/170] staging: pi433: fix potential null dereference
+Date:   Mon, 28 Jan 2019 11:09:54 -0500
+Message-Id: <20190128161200.55107-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,41 +57,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Michael Straube <straube.linux@gmail.com>
 
-[ Upstream commit 5eb316e636eb298c204f5b368526d4480b63c0ba ]
+[ Upstream commit 64c4c4ca6c129a4191e8e1e91b2d5d9b8d08c518 ]
 
-Add support for the IIC code for the r8a77990 (R-Car E3).
+Add a test for successful call to cdev_alloc() to avoid
+potential null dereference. Issue reported by smatch.
 
-It is not considered compatible with existing fallback bindings
-due to the documented absence of automatic transmission registers.
-
-These registers are currently not used by the driver and
-thus the provides the same behaviour for "renesas,iic-r8a77990" and
-"renesas,rcar-gen3-iic". The point of declaring incompatibility is
-to allow for automatic transmission register support to be added to
-"renesas,iic-r8a77990" and "renesas,rcar-gen3-iic" in future.
-
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+Fixes: 874bcba65f9a ("staging: pi433: New driver")
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/staging/pi433/pi433_if.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index 6f2aaeb7c4fa..338344e76e02 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -836,6 +836,7 @@ static const struct of_device_id sh_mobile_i2c_dt_ids[] = {
- 	{ .compatible = "renesas,rcar-gen2-iic", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-r8a7795", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,rcar-gen3-iic", .data = &fast_clock_dt_config },
-+	{ .compatible = "renesas,iic-r8a77990", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-sh73a0", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,rmobile-iic", .data = &default_dt_config },
- 	{},
+diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+index 93c01680f016..5be40bdc191b 100644
+--- a/drivers/staging/pi433/pi433_if.c
++++ b/drivers/staging/pi433/pi433_if.c
+@@ -1210,6 +1210,10 @@ static int pi433_probe(struct spi_device *spi)
+ 
+ 	/* create cdev */
+ 	device->cdev = cdev_alloc();
++	if (!device->cdev) {
++		dev_dbg(device->dev, "allocation of cdev failed");
++		goto cdev_failed;
++	}
+ 	device->cdev->owner = THIS_MODULE;
+ 	cdev_init(device->cdev, &pi433_fops);
+ 	retval = cdev_add(device->cdev, device->devt, 1);
 -- 
 2.19.1
 
