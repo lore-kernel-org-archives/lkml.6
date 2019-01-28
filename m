@@ -2,172 +2,120 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2F29C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 888B3C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B231C2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:57:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 554E2207E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/GgodD1"
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PRklDA9V"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726774AbfA1I5y (ORCPT
+        id S1726800AbfA1I7F (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:57:54 -0500
-Received: from mail-pg1-f170.google.com ([209.85.215.170]:37013 "EHLO
-        mail-pg1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfA1I5x (ORCPT
+        Mon, 28 Jan 2019 03:59:05 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44539 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbfA1I7F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:57:53 -0500
-Received: by mail-pg1-f170.google.com with SMTP id c25so6950932pgb.4
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:57:52 -0800 (PST)
+        Mon, 28 Jan 2019 03:59:05 -0500
+Received: by mail-pf1-f195.google.com with SMTP id u6so7689986pfh.11
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:59:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=uZu38z+wzt4MiIXwa4PXP7mXqfkMRkf2m6SXAtjxH5s=;
-        b=I/GgodD1p7GkwbS38CJdFZtRhnA/gQJgwEdTEX+h3v/iYnYepKNuRcEg+XuhrrlzN8
-         cWsffD/fgEI07I0vaQFPw1lIOeiLeJX2YDq/ooKsgH/fD6gtv3/IvDmyWCqGgM/UTzfx
-         ouGsHqCriBpnWVr1PXMpy0+ETvxaSgg+vBz6ffifRRaUOXIBH2Iv4I0BhEuon8drMP4N
-         hGp3HZ1jNmyn1WhWGQTLppAEKzS6UBI8vG76NY9AkpBheHXYRvpwaL1OmcXT25i5G4By
-         8ps/OGFt6cdW5qcvNGiG2q0pixCdTT6qyKgiE0w4zrZNlH2sllUjYUyfNLo3U+EjQWWd
-         k0Pw==
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=X33IfDW79s3nOzDXxSV3lkb22+AZ3LL5pvGv198VQQk=;
+        b=PRklDA9VS0uTeVg5wT18W5Ba6LAbwrQ61Ifz9LHXT2OyBnm0NHPXmN/c5YWs6/cSOq
+         0IHa5/SbJY4tikE7qWOkx+/gnqGHhm5DMc4qvYp6IEuZ6DD6zYTgTQk8RJU0i9jkMWKl
+         MRnYUUGw9cUpGfXRZliz3CRNRPRYfmHT9VPs4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=uZu38z+wzt4MiIXwa4PXP7mXqfkMRkf2m6SXAtjxH5s=;
-        b=rYQORAnBKWx8qBc1389/iLiulKWd9190FwTVzkOMdgyctpVTCe7KpGDnVrqPXn7xus
-         YZwH2KnZ78Zg8KBCG1Y6x9PqWEWqGXRarYQwHQLyzkD3m7FA5KdFO8sF74togiT8Leuy
-         X7+t/308a1DtIMTzJ0mb6UGDv7FcCckiyjZaImXdI2CL4zSOkW5bcn1AB9AZsptssAVP
-         viq7nJE9I2dYz3/yAqZA6RDGlKMpMAKOAxWof1dxnpJ6Q2apRSMLD600xnPNWv+hxpMs
-         q8VQTuD5TOrlhud/S3Nde0CCM788ucvD/B2kRc0GTmdEmlUplNVw8QanQkhWl3s/ZMrG
-         3/UA==
-X-Gm-Message-State: AJcUukemM9DV1h1T5xsbA19NdVinzkPGma6x0sYBJLaB6o/FUjomH7I0
-        tQbDLIHMlD5HeEwe+85JQMARMeGt
-X-Google-Smtp-Source: ALg8bN4dzIw3mNaJ5UhDtQ28SrDqnY80U3M444S411lQReHk+JR6PLTdbtkQSMyRrw9JqiNEw4aoEA==
-X-Received: by 2002:a63:de46:: with SMTP id y6mr19022088pgi.198.1548665872029;
-        Mon, 28 Jan 2019 00:57:52 -0800 (PST)
-Received: from localhost ([175.223.18.40])
-        by smtp.gmail.com with ESMTPSA id 202sm41945489pfy.87.2019.01.28.00.57.50
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 00:57:50 -0800 (PST)
-Date:   Mon, 28 Jan 2019 17:57:47 +0900
-From:   Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>
-To:     Michal Hocko <mhocko@kernel.org>, Vlastimil Babka <vbabka@suse.cz>
-Cc:     Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-kernel@vger.kernel.org, linux-mm <linux-mm@kvack.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Subject: [linux-next] kcompactd0 stuck in a CPU-burning loop
-Message-ID: <20190128085747.GA14454@jagdpanzerIV>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=X33IfDW79s3nOzDXxSV3lkb22+AZ3LL5pvGv198VQQk=;
+        b=a3OJYVxCs232p3LjyZtWbum5MBWA0JTO9QnG1XJYxDigc2NVfbgEuKzx7UxC5hwyHl
+         su/7rQOXJneZIkCnP+1tUDHaIOtYHNmVSZKBBGxIkxZyd72Jdxdz+XVR5sDxJ/AXCpNR
+         vuMXIr0b3UX4LUYRgiqeGVDqzaauv6Rxm37X46sgsOGKu8ox8KXkpH55yu1dDVS1AMwN
+         DZEO0jlr+gINaPT750RwDmZVYr+SuGLSbCEfA4puA/+ORoW2i/8Pj4Gy0v3bMn8qmIeg
+         /8ZCqqAIMuWTlxbXGfdABzEaqI62zQ5LGhIOdXoYem4G5wkynHXZw6fNUWRUvfeIwMuy
+         /QZQ==
+X-Gm-Message-State: AJcUukdxzn3okTk531g/QcaqkEmpJqphuEMoYAFLtYInSG3d1Hv/DD6l
+        AdrRTiuqVFwCX9Dp31CR9tYFxQ==
+X-Google-Smtp-Source: ALg8bN7qLtYj6nShO4Dp7E2LOO6H0YEdlvNE9AllOX1t+FDV0kH7vGHn2/+Q0os93guY7/AgQtb7PQ==
+X-Received: by 2002:a62:6047:: with SMTP id u68mr20753600pfb.239.1548665944199;
+        Mon, 28 Jan 2019 00:59:04 -0800 (PST)
+Received: from localhost.localdomain ([115.97.179.75])
+        by smtp.gmail.com with ESMTPSA id o189sm60746245pfg.117.2019.01.28.00.58.58
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 00:59:03 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Yong Deng <yong.deng@magewell.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>
+Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com, devicetree@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v8 0/5] media/sun6i: Allwinner A64 CSI support
+Date:   Mon, 28 Jan 2019 14:28:42 +0530
+Message-Id: <20190128085847.7217-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Add CSI support for Allwinner A64. Here is previous series[1]
 
-next-20190125
+Changes for v8:
+- update proper enable and disable sequnce for clk_mod
+- fix warning for patch "media: sun6i: Add A64 CSI block support"
+- collect Maxime Acked-by
+Changes for v7:
+- Drop quirk change, and add as suggusted by Maxime
+- Use csi instead csi0 in pinctrl function
+Changes for v6:
+- set the mod rate in seett_power instead of probe
+Changes for v5:
+- Add mod_rate quirk for better handling clk_set code
+Changes for v4:
+- update the compatible string order
+- add proper commit message
+- included BPI-M64 patch
+- skipped amarula-a64 patch
+Changes for v3:
+- update dt-bindings for A64
+- set mod clock via csi driver
+- remove assign clocks from dtsi
+- remove i2c-gpio opendrian
+- fix avdd and dovdd supplies
+- remove vcc-csi pin group supply
 
-kcompactd0 is spinning on something, burning CPUs in the meantime:
+[1] https://patchwork.kernel.org/cover/10779831/
 
- %CPU         TIME+      COMMAND
- 100.0   0.0  34:04.20 R [kcompactd0]
+Jagan Teki (5):
+  dt-bindings: media: sun6i: Add A64 CSI compatible
+  media: sun6i: Add A64 CSI block support
+  arm64: dts: allwinner: a64: Add A64 CSI controller
+  arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
+  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Add HDF5640 camera module
 
-Not sure I know how to reproduce it; so am probably not going to
-be a very helpful tester.
+ .../devicetree/bindings/media/sun6i-csi.txt   |  1 +
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 65 +++++++++++++++++++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 25 +++++++
+ .../platform/sunxi/sun6i-csi/sun6i_csi.c      | 11 ++++
+ 4 files changed, 102 insertions(+)
 
-I tried to ftrace kcompactd0 PID, and I see the same path all over
-the tracing file:
+-- 
+2.18.0.321.gffc6fa0e3
 
- 2)   0.119 us    |    unlock_page();
- 2)   0.109 us    |    unlock_page();
- 2)   0.096 us    |    compaction_free();
- 2)   0.104 us    |    ___might_sleep();
- 2)   0.121 us    |    compaction_alloc();
- 2)   0.111 us    |    page_mapped();
- 2)   0.105 us    |    page_mapped();
- 2)               |    move_to_new_page() {
- 2)   0.102 us    |      page_mapping();
- 2)               |      buffer_migrate_page_norefs() {
- 2)               |        __buffer_migrate_page() {
- 2)               |          expected_page_refs() {
- 2)   0.118 us    |            page_mapping();
- 2)   0.321 us    |          }
- 2)               |          __might_sleep() {
- 2)   0.122 us    |            ___might_sleep();
- 2)   0.332 us    |          }
- 2)               |          _raw_spin_lock() {
- 2)   0.115 us    |            preempt_count_add();
- 2)   0.321 us    |          }
- 2)               |          _raw_spin_unlock() {
- 2)   0.114 us    |            preempt_count_sub();
- 2)   0.321 us    |          }
- 2)               |          invalidate_bh_lrus() {
- 2)               |            on_each_cpu_cond() {
- 2)               |              on_each_cpu_cond_mask() {
- 2)               |                __might_sleep() {
- 2)   0.114 us    |                  ___might_sleep();
- 2)   0.316 us    |                }
- 2)   0.109 us    |                preempt_count_add();
- 2)   0.128 us    |                has_bh_in_lru();
- 2)   0.105 us    |                has_bh_in_lru();
- 2)   0.124 us    |                has_bh_in_lru();
- 2)   0.103 us    |                has_bh_in_lru();
- 2)   0.125 us    |                has_bh_in_lru();
- 2)   0.105 us    |                has_bh_in_lru();
- 2)   0.123 us    |                has_bh_in_lru();
- 2)   0.107 us    |                has_bh_in_lru();
- 2)               |                on_each_cpu_mask() {
- 2)   0.104 us    |                  preempt_count_add();
- 2)   0.110 us    |                  smp_call_function_many();
- 2)   0.105 us    |                  preempt_count_sub();
- 2)   0.764 us    |                }
- 2)   0.116 us    |                preempt_count_sub();
- 2)   3.676 us    |              }
- 2)   3.889 us    |            }
- 2)   4.087 us    |          }
- 2)               |          _raw_spin_lock() {
- 2)   0.112 us    |            preempt_count_add();
- 2)   0.315 us    |          }
- 2)               |          _raw_spin_unlock() {
- 2)   0.108 us    |            preempt_count_sub();
- 2)   0.309 us    |          }
- 2)               |          unlock_buffer() {
- 2)               |            wake_up_bit() {
- 2)   0.118 us    |              __wake_up_bit();
- 2)   0.317 us    |            }
- 2)   0.513 us    |          }
- 2)   7.440 us    |        }
- 2)   7.643 us    |      }
- 2)   8.070 us    |    }
-
-
-PG migration fails a lot:
-
-pgmigrate_success 111063
-pgmigrate_fail 269841559
-compact_migrate_scanned 536253365
-compact_free_scanned 360889
-compact_isolated 270072733
-compact_stall 0
-compact_fail 0
-compact_success 0
-compact_daemon_wake 56
-compact_daemon_migrate_scanned 536253365
-compact_daemon_free_scanned 360889
-
-Let me know if I can help with anything else. I'll keep the the box alive
-for a while, but will have to power it off eventually.
-
-	-ss
