@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0675C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A090C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95CD621738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4E81520663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692571;
-	bh=N+r4siA4z2SNbtwwNRPacTPF4iA6QzGYt0LT/jCEt3A=;
+	s=default; t=1548692576;
+	bh=WplPyyw0KekGck4mzTQDS7ucuW3EVP5MoU+JuTAi/W4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=g2p+aiyMH6ElXQ+5Z5A5C500z10/8wuiaMXHbo08LTz2YbS3d2qALH1c6xyKEHK1C
-	 St/gdqZrkDsmBOXq8/E7Rlsgq7nkX6qBSADaxKhz+uGDyQVS0y+xipnTH24Bm3uZz6
-	 gP1p3NUtMBvQ/z8Mp4eu8PR6O5li7cTWYgnrmWqY=
+	b=XzVHG1ewATtBnVV0tB2hdikqQdSJysB/HZ2rMvlDK/HV5E6txcqVupLo2eaPuBapx
+	 O60ykAq5a8gpcQ+Y3ws7xLhpkE5d3+ZytLGNJ5gnCPN6FbGGSPZiHHwX1TvplDpRXY
+	 66LoiQvzdkQsVaHM0GTdWGsXnzVoRwxEsipi/AJs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389281AbfA1QWu (ORCPT
+        id S2389320AbfA1QWy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:22:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58738 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:22:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58820 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728400AbfA1QWn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:43 -0500
+        id S2389263AbfA1QWr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:22:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E69E62171F;
-        Mon, 28 Jan 2019 16:22:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 934A420663;
+        Mon, 28 Jan 2019 16:22:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692562;
-        bh=N+r4siA4z2SNbtwwNRPacTPF4iA6QzGYt0LT/jCEt3A=;
+        s=default; t=1548692566;
+        bh=WplPyyw0KekGck4mzTQDS7ucuW3EVP5MoU+JuTAi/W4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=tHCBTwmmeeMeUFYB1Rg0EwC9C4wR8JQxFimO+L2DdksQTUKQXcEbJq7eAtRRIdw1g
-         fd66o49eFPx8pyX4V3ZQYGty9ophGJbgUZ2LsHoGze9D6tniW+DsfPjLhMkakHtAXr
-         mItMuu6gApZ+28oBPgDfgkac0DPQORzGmFX6HDsQ=
+        b=SIN2OpRe+uHfDRr6ezILnoR83ddSywC/aGBnaXmBeQxW4kML+txRyjsW7AZVgy//o
+         Ctdu8HQRIx2S/fg0aeWg4wkr/EkqrFiD045w7jny/Vkh1mSqSM9BSM5JS/+sYK00Vq
+         qZgq+lIWLn3lZ0/foMQY8vkPsiIryOFfYKZ2rwyU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johannes Berg <johannes.berg@intel.com>,
-        Luca Coelho <luciano.coelho@intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 065/107] mac80211: fix radiotap vendor presence bitmap handling
-Date:   Mon, 28 Jan 2019 11:19:05 -0500
-Message-Id: <20190128161947.57405-65-sashal@kernel.org>
+Cc:     Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
+        Don Brace <don.brace@microsemi.com>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>,
+        Sasha Levin <sashal@kernel.org>, esc.storagedev@microsemi.com,
+        linux-scsi@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 068/107] scsi: smartpqi: correct host serial num for ssa
+Date:   Mon, 28 Jan 2019 11:19:08 -0500
+Message-Id: <20190128161947.57405-68-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -59,50 +60,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johannes Berg <johannes.berg@intel.com>
+From: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
 
-[ Upstream commit efc38dd7d5fa5c8cdd0c917c5d00947aa0539443 ]
+[ Upstream commit b2346b5030cf9458f30a84028d9fe904b8c942a7 ]
 
-Due to the alignment handling, it actually matters where in the code
-we add the 4 bytes for the presence bitmap to the length; the first
-field is the timestamp with 8 byte alignment so we need to add the
-space for the extra vendor namespace presence bitmap *before* we do
-any alignment for the fields.
-
-Move the presence bitmap length accounting to the right place to fix
-the alignment for the data properly.
-
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
-Signed-off-by: Luca Coelho <luciano.coelho@intel.com>
-Signed-off-by: Johannes Berg <johannes.berg@intel.com>
+Reviewed-by: Scott Benesh <scott.benesh@microsemi.com>
+Reviewed-by: Ajish Koshy <ajish.koshy@microsemi.com>
+Reviewed-by: Murthy Bhat <murthy.bhat@microsemi.com>
+Reviewed-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
+Reviewed-by: Scott Teel <scott.teel@microsemi.com>
+Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
+Signed-off-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+Signed-off-by: Don Brace <don.brace@microsemi.com>
+Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/mac80211/rx.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/net/mac80211/rx.c b/net/mac80211/rx.c
-index 93c332737e86..af02d2136a06 100644
---- a/net/mac80211/rx.c
-+++ b/net/mac80211/rx.c
-@@ -152,6 +152,9 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
- 	/* allocate extra bitmaps */
- 	if (status->chains)
- 		len += 4 * hweight8(status->chains);
-+	/* vendor presence bitmap */
-+	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA)
-+		len += 4;
+diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
+index b2b969990a5d..9a208961cc0b 100644
+--- a/drivers/scsi/smartpqi/smartpqi_init.c
++++ b/drivers/scsi/smartpqi/smartpqi_init.c
+@@ -473,6 +473,7 @@ struct bmic_host_wellness_driver_version {
+ 	u8	driver_version_tag[2];
+ 	__le16	driver_version_length;
+ 	char	driver_version[32];
++	u8	dont_write_tag[2];
+ 	u8	end_tag[2];
+ };
  
- 	if (ieee80211_have_rx_timestamp(status)) {
- 		len = ALIGN(len, 8);
-@@ -193,8 +196,6 @@ ieee80211_rx_radiotap_hdrlen(struct ieee80211_local *local,
- 	if (status->flag & RX_FLAG_RADIOTAP_VENDOR_DATA) {
- 		struct ieee80211_vendor_radiotap *rtap = (void *)skb->data;
+@@ -502,6 +503,8 @@ static int pqi_write_driver_version_to_host_wellness(
+ 	strncpy(buffer->driver_version, DRIVER_VERSION,
+ 		sizeof(buffer->driver_version) - 1);
+ 	buffer->driver_version[sizeof(buffer->driver_version) - 1] = '\0';
++	buffer->dont_write_tag[0] = 'D';
++	buffer->dont_write_tag[1] = 'W';
+ 	buffer->end_tag[0] = 'Z';
+ 	buffer->end_tag[1] = 'Z';
  
--		/* vendor presence bitmap */
--		len += 4;
- 		/* alignment for fixed 6-byte vendor data header */
- 		len = ALIGN(len, 2);
- 		/* vendor data header */
 -- 
 2.19.1
 
