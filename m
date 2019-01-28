@@ -3,30 +3,30 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BD7D9C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:24:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D23AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:25:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7CA5B2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:24:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C0B5F2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:25:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfA1JYo (ORCPT
+        id S1726750AbfA1JZt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:24:44 -0500
-Received: from foss.arm.com ([217.140.101.70]:41794 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726369AbfA1JYn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:24:43 -0500
+        Mon, 28 Jan 2019 04:25:49 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41852 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbfA1JZs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:25:48 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4D7FBEBD;
-        Mon, 28 Jan 2019 01:24:43 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 86425EBD;
+        Mon, 28 Jan 2019 01:25:48 -0800 (PST)
 Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 937383F589;
-        Mon, 28 Jan 2019 01:24:40 -0800 (PST)
-Date:   Mon, 28 Jan 2019 09:24:38 +0000
-Message-ID: <86imy9w2w9.wl-marc.zyngier@arm.com>
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CB69A3F589;
+        Mon, 28 Jan 2019 01:25:45 -0800 (PST)
+Date:   Mon, 28 Jan 2019 09:25:43 +0000
+Message-ID: <86h8dtw2ug.wl-marc.zyngier@arm.com>
 From:   Marc Zyngier <marc.zyngier@arm.com>
 To:     Julien Thierry <julien.thierry@arm.com>
 Cc:     <linux-arm-kernel@lists.infradead.org>,
@@ -34,11 +34,11 @@ Cc:     <linux-arm-kernel@lists.infradead.org>,
         <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
         <james.morse@arm.com>, <catalin.marinas@arm.com>,
         <will.deacon@arm.com>, <mark.rutland@arm.com>,
-        Suzuki K Poulose <suzuki.poulose@arm.com>
-Subject: Re: [PATCH v9 04/26] arm64: cpufeature: Add cpufeature for IRQ priority masking
-In-Reply-To: <1548084825-8803-5-git-send-email-julien.thierry@arm.com>
+        Russell King <linux@armlinux.org.uk>
+Subject: Re: [PATCH v9 05/26] arm/arm64: gic-v3: Add PMR and RPR accessors
+In-Reply-To: <1548084825-8803-6-git-send-email-julien.thierry@arm.com>
 References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
-        <1548084825-8803-5-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-6-git-send-email-julien.thierry@arm.com>
 User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
  FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
  (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
@@ -50,24 +50,21 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 21 Jan 2019 15:33:23 +0000,
+On Mon, 21 Jan 2019 15:33:24 +0000,
 Julien Thierry <julien.thierry@arm.com> wrote:
 > 
-> Add a cpufeature indicating whether a cpu supports masking interrupts
-> by priority.
-> 
-> The feature will be properly enabled in a later patch.
+> Add helper functions to access system registers related to interrupt
+> priorities: PMR and RPR.
 > 
 > Signed-off-by: Julien Thierry <julien.thierry@arm.com>
-> Reviewed-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 > Reviewed-by: Mark Rutland <mark.rutland@arm.com>
 > Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Russell King <linux@armlinux.org.uk>
 > Cc: Catalin Marinas <catalin.marinas@arm.com>
 > Cc: Will Deacon <will.deacon@arm.com>
 > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
 
-Acked-by: Marc Zyngier <marc.zyngier@arm.com>
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
 
 	M.
 
