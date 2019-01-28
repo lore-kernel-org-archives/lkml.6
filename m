@@ -2,110 +2,151 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ACB7C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF2E2C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57C8D207E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="HjAx/yy/"
+	by mail.kernel.org (Postfix) with ESMTP id 85437207E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726930AbfA1I73 (ORCPT
+        id S1726964AbfA1I7e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:59:29 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:34966 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726895AbfA1I72 (ORCPT
+        Mon, 28 Jan 2019 03:59:34 -0500
+Received: from mail-ua1-f67.google.com ([209.85.222.67]:35222 "EHLO
+        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726919AbfA1I7a (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:59:28 -0500
-Received: by mail-pg1-f194.google.com with SMTP id s198so6957291pgs.2
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:59:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=OOQ/q0ycl2Vhbvj/n8EVpYC4IVJK5DjscGBSfNzrl+U=;
-        b=HjAx/yy/syL7k3kg3Cnf0ViKI+mtZJZM73x1heLz1ROjdadKjZTw4nvJBRyfZ/GMsg
-         8RqBV6XpoUxMvQZkXDKugOLWUpUaAq/Y6qqVLH8dD1ULvDqJTNDkuFdzFGmljTaDBr7L
-         esIrTucW7UKms99zqrPP9C4GsALhUGGoOTat4=
+        Mon, 28 Jan 2019 03:59:30 -0500
+Received: by mail-ua1-f67.google.com with SMTP id d2so5337047ual.2;
+        Mon, 28 Jan 2019 00:59:29 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=OOQ/q0ycl2Vhbvj/n8EVpYC4IVJK5DjscGBSfNzrl+U=;
-        b=GaxeBeKsL71DOfzaG+j9B4ceIqCi9BPrdrDawHBdOkAzizavPBs28T2qB2O16k5vLI
-         GMg2SFboCtxlX2aCSU1alDa6YiRmaUJQhNzEiZRHCgc7w5NvhaHo7v8hYdwp6JHdeJ39
-         SoZ6HvTPu63j86ygOUZrOwY3M0PK3sIk9n7EwwPCT8JA5e/5l6ALCDsF5XrjEHCBBa0m
-         yWpt7oQbI9krWZeCLQi9xm2yWxSy6Wiyv3Jw+kjW/Cgg9EPjDwWteFlxZYNjSQHQQXGC
-         K2Az83hMYDnWxw7vBv/YYq28qpcTQfLmbSalxAQ3HGatwPVXpw9Nex2VDEkbXKwyKX87
-         Ir/A==
-X-Gm-Message-State: AJcUukeKya57I7Cwj/ELFP0z6th/oB4wbg5IuXKxIv/n/hJsvGbE2B/O
-        YtZsbldw2phH6yKQ8BjLKcW7Zg==
-X-Google-Smtp-Source: ALg8bN5WnA8/3Gmoe64gYSZH3o3zpx1Wuy2p6tBGMQgtlL5ke5xScNqdxLBkTOUXbFArsdzOgJaWaA==
-X-Received: by 2002:a65:4646:: with SMTP id k6mr18697741pgr.153.1548665967437;
-        Mon, 28 Jan 2019 00:59:27 -0800 (PST)
-Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id o189sm60746245pfg.117.2019.01.28.00.59.22
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 00:59:26 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v8 4/5] arm64: dts: allwinner: a64: Add pinmux setting for CSI MCLK on PE1
-Date:   Mon, 28 Jan 2019 14:28:46 +0530
-Message-Id: <20190128085847.7217-5-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20190128085847.7217-1-jagan@amarulasolutions.com>
-References: <20190128085847.7217-1-jagan@amarulasolutions.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=MWXadM6v1/BrjCPM0KXC31G3yYpSsxrtCBcUvwcG1D8=;
+        b=cgsMB8MkQdWYMOWCG2xGDn9jjLp7igmdrlEmfJ6Ze0d5J7ZP9Eb9RtmS/CWuCrs8dp
+         JvwqiivF3thFSJkzbraWi0wlu2ibmv1ZE5jnNr1c4292KxXhBz4uyY96GYLhmx5OkBPF
+         RjmFdwcsK0tq6+jkK7YDdPLRhukhGKJCtDETJDik70CW4gcj42WJ4wO1Oiq6+NEWZAFs
+         bD3hWT0Mt+r7R7nzrzLlvhaenma4DGGQsso6clOfXJwL4ZkavV7t0sFVMUhFT56nRuqD
+         kZpcH47wi3+ocUzgNdqQEDaD8NEH5ywyDCaY6hY4/J7ysZXcJhn9EeB0GGRMs1RDQLsW
+         GOeg==
+X-Gm-Message-State: AJcUukfexcyxJrxkRR8CTGGPxPUjWGzDPLnlo1ZELk03IU+7uqynUx1g
+        PrwP3IZDFnRLWcb70vzsrLC4EIOKswifeLp95OE=
+X-Google-Smtp-Source: AHgI3IZCtxnlqEb43WDzFI4/ibLeSYAnaqLRjvAhFCOKh3TgiAmEZ4Zzoj0/nmPt+UCqpb2z7ffEYeRjE4eQi+VGVdo=
+X-Received: by 2002:a9f:2726:: with SMTP id a35mr4943200uaa.75.1548665968589;
+ Mon, 28 Jan 2019 00:59:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20181211202406.27721-1-robh@kernel.org> <CAMuHMdUZHi87Dv=m4USocfQ60s6_uHmny5DvCVm+hZ98+ROvdA@mail.gmail.com>
+ <CAL_JsqJKhOmp+UKS=B-_8txHhRbqheG3GuogcZpXJ+aYcO5Oqg@mail.gmail.com>
+In-Reply-To: <CAL_JsqJKhOmp+UKS=B-_8txHhRbqheG3GuogcZpXJ+aYcO5Oqg@mail.gmail.com>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Mon, 28 Jan 2019 09:59:16 +0100
+Message-ID: <CAMuHMdU3Om44R3wB69jeyHFER8syGDeJQsYd-pXqEKHBMZW2ow@mail.gmail.com>
+Subject: Re: [PATCH v4] kbuild: Add support for DT binding schema checks
+To:     Rob Herring <robh@kernel.org>
+Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Sean Hudson <darknighte@darknighte.com>,
+        Frank Rowand <frowand.list@gmail.com>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+        Grant Likely <grant.likely@arm.com>,
+        Kumar Gala <kumar.gala@linaro.org>, arm-soc <arm@kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        linux-kbuild <linux-kbuild@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Some camera modules have the SoC feeding a master clock to the sensor
-instead of having a standalone crystal. This clock signal is generated
-from the clock control unit and output from the CSI MCLK function of
-pin PE1.
+Hi Rob,
 
-Add a pinmux setting for it for camera sensors to reference.
+On Sun, Jan 27, 2019 at 4:00 AM Rob Herring <robh@kernel.org> wrote:
+> On Wed, Jan 23, 2019 at 9:33 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+> > On Tue, Dec 11, 2018 at 9:24 PM Rob Herring <robh@kernel.org> wrote:
+> > > This adds the build infrastructure for checking DT binding schema
+> > > documents and validating dts files using the binding schema.
+> > >
+> > > Check DT binding schema documents:
+> > > make dt_binding_check
+> > >
+> > > Build dts files and check using DT binding schema:
+> > > make dtbs_check
+> > >
+> > > Optionally, DT_SCHEMA_FILES can be passed in with a schema file(s) to
+> > > use for validation. This makes it easier to find and fix errors
+> > > generated by a specific schema.
+> > >
+> > > Currently, the validation targets are separate from a normal build to
+> > > avoid a hard dependency on the external DT schema project and because
+> > > there are lots of warnings generated.
+> >
+> > Thanks, I'm giving this a try, and get errors like:
+> >
+> >       DTC     arch/arm/boot/dts/emev2-kzm9d.dt.yaml
+> >     FATAL ERROR: No markers present in property 'cpu0' value
+> >
+> > and
+> >
+> >       DTC     arch/arm64/boot/dts/renesas/r8a7795-salvator-x.dt.yaml
+> >     FATAL ERROR: No markers present in property 'audio_clk_a' value
+> >
+> > Do you have a clue?
+>
+> That's really strange because those aren't even properties. Are other
+> dts files okay? This is the in tree dtc?
+>
+> The only time you should be missing markers is if you did a dts -> dts
+> -> dt.yaml.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Found it: make dtbs_check doesn't play well with my local change to
+add symbols for DT overlays:
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-index 62fdf850e9e5..6e5a608f56f2 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-@@ -564,6 +564,11 @@
- 				function = "csi";
- 			};
- 
-+			csi_mclk_pin: csi-mclk {
-+				pins = "PE1";
-+				function = "csi";
-+			};
-+
- 			i2c0_pins: i2c0_pins {
- 				pins = "PH0", "PH1";
- 				function = "i2c0";
--- 
-2.18.0.321.gffc6fa0e3
+    --- a/scripts/Makefile.lib
+    +++ b/scripts/Makefile.lib
+    @@ -285,6 +285,10 @@ cmd_dt_S_dtb=
+             \
+     $(obj)/%.dtb.S: $(obj)/%.dtb FORCE
+            $(call if_changed,dt_S_dtb)
 
+    +ifeq ($(CONFIG_OF_OVERLAY),y)
+    +DTC_FLAGS += -@
+    +endif
+    +
+     quiet_cmd_dtc = DTC     $@
+     cmd_dtc = mkdir -p $(dir ${dtc-tmp}) ; \
+            $(HOSTCC) -E $(dtc_cpp_flags) -x assembler-with-cpp -o
+$(dtc-tmp) $< ; \
+
+Do you see a way to handle that better?
+
+Apart from a few expected issues, I'm seeing one other strange message:
+
+    arch/arm/boot/dts/sh73a0-kzm9g.dt.yaml: interrupts: [[2, 4], [3,
+4]] is too long
+
+This is the interrupts property in the adi,adxl345 node in
+arch/arm/boot/dts/sh73a0-kzm9g.dts.
+Apparently the check complains if more than one interrupt is listed here.
+Is this a known issue?
+
+Thanks!
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
