@@ -4,51 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 86342C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C63DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4CD4A2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C720C20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:29:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692979;
-	bh=ZCfT/kp1TR+Xf4193Lj1qd4gG0ZZP3lhj/mphjeTJ7Q=;
+	s=default; t=1548692987;
+	bh=sZBgL3leavroMWhZR9KkNWedrgWFMKS2TesS6xHC8Xg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GIW7YHoKO0CmY2WPSFXfQaVF8batkvcSxks8nNPlcGXki3SuScXuFX27Ztsp5t92X
-	 j210yv1OSMhIuhs4nusUkwJcChMqoOG1BQuaE/Csjyt3so5PI7WYD9PAzFJYh2t7Jy
-	 GCdPqEE/ZNX/Dwr7q4rOY9AYPHaEJkfNLun3PVP0=
+	b=W/3xnELKEVCxrEgg9vcsBvUgwXCdUnDvDFGHjorXa9S7G+m8pDPrcclYWrdm5tmtH
+	 sXPZmCT+F9DC3rKGamyQdJwfEVbKb64myEY9nS2zZpvOnlljSZH89RiuzOfMt8gA1p
+	 7iPSeL1TU6gFblyqqKgarUzOhXAtruhmW0CSalMU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390099AbfA1Q3h (ORCPT
+        id S2390161AbfA1Q3p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:29:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38098 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:29:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38050 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390467AbfA1Q1r (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:27:47 -0500
+        id S2388171AbfA1Q1q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:27:46 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2670A2171F;
-        Mon, 28 Jan 2019 16:27:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 090D62147A;
+        Mon, 28 Jan 2019 16:27:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692866;
-        bh=ZCfT/kp1TR+Xf4193Lj1qd4gG0ZZP3lhj/mphjeTJ7Q=;
+        s=default; t=1548692865;
+        bh=sZBgL3leavroMWhZR9KkNWedrgWFMKS2TesS6xHC8Xg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nzDr56iYR356P712VqYVqbU3sfFEnKMGBeovscmeRBZyXq19sEdzk7q+7JL+P0YNJ
-         5AKQQcQmk6euNjKww4NsITcBSTA1SB7wQLevBRaGYhP50f3vskdwRQXPNwQXbM/csd
-         DRWYliYQONa8L38pfSYUjdQi/SKWKsuvEh7b5/KU=
+        b=gE/olrHdLADSMAQBDG+rhQ8VgLqdi57vE8l0k39ihbU9vKkQQiJmuN5fPv/gnl2MQ
+         txFV9WCXPVTE9BrgFMdCpYQzwxa5kgzcdVP8W7n/pC5gy5VjCmnDLfvo3E1vEbvzPl
+         JXJEti7+FUQEP9YpOeVno9KcB6Oy7UkcYqty6N/0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>, Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 47/61] hwmon: (lm80) fix a missing check of the status of SMBus read
-Date:   Mon, 28 Jan 2019 11:26:09 -0500
-Message-Id: <20190128162623.59854-47-sashal@kernel.org>
+Cc:     Chris Perl <cperl@janestreet.com>,
+        Anna Schumaker <Anna.Schumaker@Netapp.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 46/61] NFS: nfs_compare_mount_options always compare auth flavors.
+Date:   Mon, 28 Jan 2019 11:26:08 -0500
+Message-Id: <20190128162623.59854-46-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -56,58 +59,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Chris Perl <cperl@janestreet.com>
 
-[ Upstream commit c9c63915519b1def7043b184680f33c24cd49d7b ]
+[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
 
-If lm80_read_value() fails, it returns a negative number instead of the
-correct read data. Therefore, we should avoid using the data if it
-fails.
+This patch removes the check from nfs_compare_mount_options to see if a
+`sec' option was passed for the current mount before comparing auth
+flavors and instead just always compares auth flavors.
 
-The fix checks if lm80_read_value() fails, and if so, returns with the
-error number.
+Consider the following scenario:
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-[groeck: One variable for return values is enough]
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+You have a server with the address 192.168.1.1 and two exports /export/a
+and /export/b.  The first export supports `sys' and `krb5' security, the
+second just `sys'.
+
+Assume you start with no mounts from the server.
+
+The following results in EIOs being returned as the kernel nfs client
+incorrectly thinks it can share the underlying `struct nfs_server's:
+
+$ mkdir /tmp/{a,b}
+$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
+$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
+$ df >/dev/null
+df: ‘/tmp/b’: Input/output error
+
+Signed-off-by: Chris Perl <cperl@janestreet.com>
+Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/lm80.c | 15 ++++++++++-----
- 1 file changed, 10 insertions(+), 5 deletions(-)
+ fs/nfs/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
-index 4bcd9b882948..47ddae6b7038 100644
---- a/drivers/hwmon/lm80.c
-+++ b/drivers/hwmon/lm80.c
-@@ -360,9 +360,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
- 	struct i2c_client *client = data->client;
- 	unsigned long min, val;
- 	u8 reg;
--	int err = kstrtoul(buf, 10, &val);
--	if (err < 0)
--		return err;
-+	int rv;
-+
-+	rv = kstrtoul(buf, 10, &val);
-+	if (rv < 0)
-+		return rv;
- 
- 	/* Save fan_min */
- 	mutex_lock(&data->update_lock);
-@@ -390,8 +392,11 @@ static ssize_t set_fan_div(struct device *dev, struct device_attribute *attr,
- 		return -EINVAL;
- 	}
- 
--	reg = (lm80_read_value(client, LM80_REG_FANDIV) &
--	       ~(3 << (2 * (nr + 1)))) | (data->fan_div[nr] << (2 * (nr + 1)));
-+	rv = lm80_read_value(client, LM80_REG_FANDIV);
-+	if (rv < 0)
-+		return rv;
-+	reg = (rv & ~(3 << (2 * (nr + 1))))
-+	    | (data->fan_div[nr] << (2 * (nr + 1)));
- 	lm80_write_value(client, LM80_REG_FANDIV, reg);
- 
- 	/* Restore fan_min */
+diff --git a/fs/nfs/super.c b/fs/nfs/super.c
+index dbdc2d2f91cf..655ac3a196e4 100644
+--- a/fs/nfs/super.c
++++ b/fs/nfs/super.c
+@@ -2376,8 +2376,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
+ 		goto Ebusy;
+ 	if (a->acdirmax != b->acdirmax)
+ 		goto Ebusy;
+-	if (b->auth_info.flavor_len > 0 &&
+-	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
++	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
+ 		goto Ebusy;
+ 	return 1;
+ Ebusy:
 -- 
 2.19.1
 
