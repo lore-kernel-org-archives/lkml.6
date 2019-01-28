@@ -2,183 +2,220 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C5BC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:54:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FF7C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:54:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A3422171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:54:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QhXSymGv"
+	by mail.kernel.org (Postfix) with ESMTP id BA80C2171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:54:10 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726886AbfA1NyD (ORCPT
+        id S1726937AbfA1NyJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:54:03 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41729 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfA1NyD (ORCPT
+        Mon, 28 Jan 2019 08:54:09 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46866 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfA1NyI (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:54:03 -0500
-Received: by mail-ot1-f65.google.com with SMTP id u16so14644593otk.8;
-        Mon, 28 Jan 2019 05:54:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=dewdheXsERU+vQDnag1Ee60H9kCbIKcxr8jfS0p/Gos=;
-        b=QhXSymGvPEIkZSoixO+pwGwgH3sPWmnFs3RuKj3QdBLjiwkRaJZB+IUvRES3lqRcVS
-         cyRh0HHl3dHRmabDGroG9OEWv+brRcC986HGrxwGOhF1hrO1QPVLe2k4I7JDYHDEZaBP
-         dWU2H1rbXiUFbQ0sEP9Rq4HyCMpry4AIpzcZQ6KoL7c6wlqjiRibx/+v7lWsEet1FcJt
-         3MXSciGJyzzl5OBySKe6Ay14m/A5P1bcBAdoxOjPLzXXhyc3prixJxjrLSqytMpDFp7U
-         /YD6VplQdZWaU/GEoLhvo4v3Fi7s2GrhkGyKodPpdUf6uSetyf9pW/U6eif7UUupagFL
-         iGWw==
+        Mon, 28 Jan 2019 08:54:08 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f5so11859198lfc.13;
+        Mon, 28 Jan 2019 05:54:05 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:references:mime-version:content-disposition:in-reply-to
-         :user-agent;
-        bh=dewdheXsERU+vQDnag1Ee60H9kCbIKcxr8jfS0p/Gos=;
-        b=GEWLr0xLV4ek149M0Y1EKzfcaniHoT/GVBGDNEeBc5PL9RcIyN/hB0zO2misPDeZC5
-         SVIH7BE5xFbx2aVSY1KTOHWkkWt6JPKbYWpI+GUhXOSzxg2XVPpjl4mHWSzNL6mBtFTW
-         o/xyGaPo60DzESfbMX4IbpQjPnnCM7GB+Qh9jCtigUj9Axx+zzJjpYS19dBiy+87mpG7
-         J9uWdY43DeIfHRB3XbUxqOyb/FNDIzRM2LwPF8f3iX8wMozsNbW/WnAgmfAIVVtvBTxb
-         efm1xwE7VjcT9R1BaEWJI48SwYS0D9KLTBLfxIH3eyrEUSAPqf1F81TRQvni2gcuHL00
-         vgMg==
-X-Gm-Message-State: AJcUukc7NnEfDQ+5LDMvvi14PYJtnvpa0hu3wfI5QYkY7hZTTCsj2AgS
-        x4hj6PZ39Si+D5OPbChNgA==
-X-Google-Smtp-Source: ALg8bN74hXBX1qe8O894e3baxAlc+vuss7pEq2NDzXdj0W+B1mnXlLYWwEiy8xlirrh82VmSii0EWQ==
-X-Received: by 2002:a9d:3e84:: with SMTP id b4mr16842192otc.330.1548683642078;
-        Mon, 28 Jan 2019 05:54:02 -0800 (PST)
-Received: from serve.minyard.net ([47.184.128.64])
-        by smtp.gmail.com with ESMTPSA id w5sm4887724oif.48.2019.01.28.05.54.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 05:54:01 -0800 (PST)
-Received: from minyard.net (unknown [IPv6:2001:470:b8f6:1b:2494:1989:377c:bd77])
-        by serve.minyard.net (Postfix) with ESMTPSA id E092A54E;
-        Mon, 28 Jan 2019 07:54:00 -0600 (CST)
-Date:   Mon, 28 Jan 2019 07:53:59 -0600
-From:   Corey Minyard <minyard@acm.org>
-To:     Yang Yingliang <yangyingliang@huawei.com>
-Cc:     cminyard@mvista.com, arnd@arndb.de, gregkh@linuxfoundation.org,
-        openipmi-developer@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        qiaonuohan@huawei.com
-Subject: Re: [PATCH v3] ipmi_si: fix use-after-free of resource->name
-Message-ID: <20190128135359.GB4979@minyard.net>
-Reply-To: minyard@acm.org
-References: <1548644934-36452-1-git-send-email-yangyingliang@huawei.com>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=3GXPNUB0ozUDal+Jxt7OTbuBq7VR6b+wF2s6lC+csXY=;
+        b=QoBsaQxaDn9NVmWeMzb77ZRm6gEuwbQhsYB59RFmFZQ17wH5QElsq3+4rsogusonSr
+         +GnxUAcWnao2T9AnT9IMBF4r1TfhRzu3JxSRgm4lTVFxt5hJFk9fwbNJGUWD/j+rll+f
+         IjRqd4NbVV+HnDUaXSf4686LGS0QeR5wbCHhhNygTClGKXmfFNF0NxKYgIiuLfvIyprs
+         /4BoRgIPBg5UWLwYQoTM7O1XP6+qQzfsrOf30j98SlPhhXCPqsI9ofrE5md0PTK4VW6Q
+         gu+yxoQ+xnPJLVPy4nWFUXLNDL2k6l+w3EdXoZncL9Kg/QqhlqHFUDZA9x7rtOrov6lE
+         5vDQ==
+X-Gm-Message-State: AJcUukeEolm4wJ5+aLEidOC0I33R3SaXaDWlhc5Q0fvBGyWXUpcx3i+n
+        8m19Ldp0EKWI6oDGuxY+m3o=
+X-Google-Smtp-Source: ALg8bN6k1My3RmrCSOsLm4hX18QSx0Mh3qaZ4T+So6LMWscDSnjWEeH+Ua740F7zOTFoMjeaAWeeXw==
+X-Received: by 2002:a19:2106:: with SMTP id h6mr16373531lfh.29.1548683644758;
+        Mon, 28 Jan 2019 05:54:04 -0800 (PST)
+Received: from localhost.localdomain (mobile-access-bcee00-77.dhcp.inet.fi. [188.238.0.77])
+        by smtp.gmail.com with ESMTPSA id e14-v6sm2999756ljl.43.2019.01.28.05.54.02
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 05:54:03 -0800 (PST)
+Date:   Mon, 28 Jan 2019 15:53:54 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Baolin Wang <baolin.wang@linaro.org>,
+        Matti Vaittinen <mazziesaccount@gmail.com>,
+        heikki.haikola@fi.rohmeurope.com, mikko.mutanen@fi.rohmeurope.com,
+        Lee Jones <lee.jones@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Mark Brown <broonie@kernel.org>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        Sebastian Reichel <sre@kernel.org>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Wim Van Sebroeck <wim@linux-watchdog.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Linux PM list <linux-pm@vger.kernel.org>,
+        linux-rtc@vger.kernel.org,
+        LINUXWATCHDOG <linux-watchdog@vger.kernel.org>
+Subject: Re: [RFC PATCH v2 09/10] power: supply: Initial support for ROHM
+ BD70528 PMIC charger block
+Message-ID: <20190128135354.GA4156@localhost.localdomain>
+References: <20190125110600.GA29332@localhost.localdomain>
+ <CACRpkdYTCgXo8FeitEfRujeWdshnsR3Kn57cKUZsA3CsZ5Cnrw@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1548644934-36452-1-git-send-email-yangyingliang@huawei.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CACRpkdYTCgXo8FeitEfRujeWdshnsR3Kn57cKUZsA3CsZ5Cnrw@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 11:08:54AM +0800, Yang Yingliang wrote:
-> When we excute the following commands, we got oops
-> rmmod ipmi_si
-> cat /proc/ioports
-> 
+Hello Linus,
 
-snip..
+Big Thanks for the proper review at this early satge!
 
+On Mon, Jan 28, 2019 at 01:49:04PM +0100, Linus Walleij wrote:
+> Hi Matti!
 > 
-> If io_setup is called successful in try_smi_init() but try_smi_init()
-> goes out_err before calling ipmi_register_smi(), so ipmi_unregister_smi()
-> will not be called while removing module. It leads to the resource that
-> allocated in io_setup() can not be freed, but the name(DEVICE_NAME) of
-> resource is freed while removing the module. It causes use-after-free
-> when cat /proc/ioports.
+> Thanks for your patch.
 > 
-> Fix this by calling io_cleanup() while try_smi_init() goes to out_err.
-> and don't call io_cleanup() until io_setup() returns successful to avoid
-> warning prints.
+> We are going to have a problem with the power subsystem.
+> 
+> These charging drivers are growing wild. This is starting to get out
+> of hand, we need some more framework for properly handling charging
+> state machines the kernel. Not specifically your problem, but
+> when working on the driver try to keep generic support in mind.
 
-Thanks a bunch for working on this.  Fix is in my next tree now, if it
-is stable in there then I will send up to Linus.
+I for sure can try - but as the power subsystem is quite new to me - any
+specific items you would like me to really pay attention?
 
--corey
+> On Fri, Jan 25, 2019 at 12:06 PM Matti Vaittinen
+> <matti.vaittinen@fi.rohmeurope.com> wrote:
+> 
+> > +#define CHG_STAT_SUSPEND       0x0
+> > +#define CHG_STAT_TRICKLE       0x1
+> > +#define CHG_STAT_FAST          0x3
+> > +#define CHG_STAT_TOPOFF                0xe
+> > +#define CHG_STAT_DONE          0xf
+> > +#define CHG_STAT_OTP_TRICKLE   0x10
+> > +#define CHG_STAT_OTP_FAST      0x11
+> > +#define CHG_STAT_OTP_DONE      0x12
+> > +#define CHG_STAT_TSD_TRICKLE   0x20
+> > +#define CHG_STAT_TSD_FAST      0x21
+> > +#define CHG_STAT_TSD_TOPOFF    0x22
+> > +#define CHG_STAT_BAT_ERR       0x7f
+> 
+> So what I am seeing is that these states are starting to turn up in more
+> and more drivers, so we really need to think about a central management
+> component for charging state machines. I do not think they are all
+> that different after all.
 
+Any suggestions how I should take this into account with bd70528?
+
+> > +BD_ERR_IRQ_HND(BAT_OV_DET, "Battery overvoltage detected\n");
+> > +BD_ERR_IRQ_HND(DBAT_DET, "Dead battery detected\n");
+> > +BD_ERR_IRQ_HND(COLD_DET, "Battery cold\n");
+> > +BD_ERR_IRQ_HND(HOT_DET, "Battery hot\n");
+> > +BD_ERR_IRQ_HND(CHG_TSD, "Charger thermal shutdown\n");
+> > +BD_ERR_IRQ_HND(DCIN2_OV_DET, "DCIN2 overvoltage detected\n");
+> > +
+> > +BD_INFO_IRQ_HND(BAT_OV_RES, "Battery voltage back to normal\n");
+> > +BD_INFO_IRQ_HND(COLD_RES, "Battery temperature back to normal\n");
+> > +BD_INFO_IRQ_HND(HOT_RES, "Battery temperature back to normal\n");
+> > +BD_INFO_IRQ_HND(BAT_RMV, "Battery removed\n");
+> > +BD_INFO_IRQ_HND(BAT_DET, "Battery detected\n");
+> > +BD_INFO_IRQ_HND(DCIN2_OV_RES, "DCIN2 voltage back to normal\n");
+> > +BD_INFO_IRQ_HND(DCIN2_RMV, "DCIN2 removed\n");
+> > +BD_INFO_IRQ_HND(DCIN2_DET, "DCIN2 detected\n");
+> > +BD_INFO_IRQ_HND(DCIN1_RMV, "DCIN1 removed\n");
+> > +BD_INFO_IRQ_HND(DCIN1_DET, "DCIN1 detected\n");
 > 
-> Fixes: 93c303d2045b ("ipmi_si: Clean up shutdown a bit")
-> Cc: stable@vger.kernel.org
-> Reported-by: NuoHan Qiao <qiaonuohan@huawei.com>
-> Suggested-by: Corey Minyard <cminyard@mvista.com>
-> Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
-> ---
->  drivers/char/ipmi/ipmi_si_intf.c    | 5 +++++
->  drivers/char/ipmi/ipmi_si_mem_io.c  | 5 +++--
->  drivers/char/ipmi/ipmi_si_port_io.c | 5 +++--
->  3 files changed, 11 insertions(+), 4 deletions(-)
+> So we have states and events, and these events form edges
+> between the states, right?
+
+Right. State change causes an irq.
+
+> I am certain you must have a graphical picture of this state
+> machine somewhere, it seems to be how charging hardware people
+> do their thinking.
+
+I don't have any document I could link to yet. I can ask around if we
+can have some public doc for this :/ And as a last resort I can do some
+ASCII art in commenets - if this is seen helpfull.
+
+> > +/*
+> > + * For BD70528 voltage/current limits we happily accept any value which
+> > + * belongs the range. We could check if value matching the selector is
+> > + * desired by computing the range min + (sel - sel_low) * range step - but
+> > + * I guess it is enough if we use voltage/current which is closest (below)
+> > + * the requested?
+> > + */
+> > +static int find_selector_for_value_low(struct linear_range *r, int selectors,
+> > +                                      unsigned int val, unsigned int *sel,
+> > +                                      bool *found)
+> > +{
+> > +       int i;
+> > +       int ret = -EINVAL;
+> > +
+> > +       *found = false;
+> > +       for (i = 0; i < selectors; i++) {
+> > +               if (r[i].min <= val) {
+> > +                       if (r[i].min + r[i].step * r[i].vals >= val) {
+> > +                               *found = true;
+> > +                               *sel = r[i].low_sel + (val - r[i].min) /
+> > +                                      r[i].step;
+> > +                               ret = 0;
+> > +                               break;
+> > +                       }
+> > +                       /*
+> > +                        * If the range max is smaller than requested
+> > +                        * we can set the max supported value from range
+> > +                        */
+> > +                       *sel = r[i].low_sel + r[i].vals;
+> > +                       ret = 0;
+> > +               }
+> > +       }
+> > +       return ret;
+> > +}
 > 
-> diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-> index dc8603d..f1b9fda 100644
-> --- a/drivers/char/ipmi/ipmi_si_intf.c
-> +++ b/drivers/char/ipmi/ipmi_si_intf.c
-> @@ -2085,6 +2085,11 @@ static int try_smi_init(struct smi_info *new_smi)
->  	WARN_ON(new_smi->io.dev->init_name != NULL);
->  
->   out_err:
-> +	if (rv && new_smi->io.io_cleanup) {
-> +		new_smi->io.io_cleanup(&new_smi->io);
-> +		new_smi->io.io_cleanup = NULL;
-> +	}
-> +
->  	kfree(init_name);
->  	return rv;
->  }
-> diff --git a/drivers/char/ipmi/ipmi_si_mem_io.c b/drivers/char/ipmi/ipmi_si_mem_io.c
-> index fd0ec8d..7558361 100644
-> --- a/drivers/char/ipmi/ipmi_si_mem_io.c
-> +++ b/drivers/char/ipmi/ipmi_si_mem_io.c
-> @@ -81,8 +81,6 @@ int ipmi_si_mem_setup(struct si_sm_io *io)
->  	if (!addr)
->  		return -ENODEV;
->  
-> -	io->io_cleanup = mem_cleanup;
-> -
->  	/*
->  	 * Figure out the actual readb/readw/readl/etc routine to use based
->  	 * upon the register size.
-> @@ -141,5 +139,8 @@ int ipmi_si_mem_setup(struct si_sm_io *io)
->  		mem_region_cleanup(io, io->io_size);
->  		return -EIO;
->  	}
-> +
-> +	io->io_cleanup = mem_cleanup;
-> +
->  	return 0;
->  }
-> diff --git a/drivers/char/ipmi/ipmi_si_port_io.c b/drivers/char/ipmi/ipmi_si_port_io.c
-> index ef6dffc..03924c3 100644
-> --- a/drivers/char/ipmi/ipmi_si_port_io.c
-> +++ b/drivers/char/ipmi/ipmi_si_port_io.c
-> @@ -68,8 +68,6 @@ int ipmi_si_port_setup(struct si_sm_io *io)
->  	if (!addr)
->  		return -ENODEV;
->  
-> -	io->io_cleanup = port_cleanup;
-> -
->  	/*
->  	 * Figure out the actual inb/inw/inl/etc routine to use based
->  	 * upon the register size.
-> @@ -109,5 +107,8 @@ int ipmi_si_port_setup(struct si_sm_io *io)
->  			return -EIO;
->  		}
->  	}
-> +
-> +	io->io_cleanup = port_cleanup;
-> +
->  	return 0;
->  }
-> -- 
-> 1.8.3
+> If I'm not mistaken this is yet another instance of linear interpolation
+> from a table?
+
+"linear interpolation from a table" is really not part of my
+vocabulary :] But I guess you know the REGULATOR_LINEAR_VOLTAGE - macro?
+I borrowed the idea from there...
 > 
-> 
+> We really need to think about abstracting this. Last time this
+> duplication appeared I suggested adding linear interpolation
+> primitives to:
+> include/linux/fixp-arith.h
+
+... I really think a generic helper for this would be usefull.
+
+It will take some time untill I can send a proper (non RFC patch) for
+the charger block as I currently lack of HW I could use for testing the
+charger properly. Do you think it is better to drop the charger part
+from the series untill then and submit it only later? As I mentioned in
+cover-letter, the charger part is currently submitted more to give an
+overview of the chip than to be applied as 'finalized' version of
+driver.
+
+Br,
+	Matti Vaittinen
+
