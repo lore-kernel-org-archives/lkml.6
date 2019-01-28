@@ -2,111 +2,125 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 904B7C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:31:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41D57C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:31:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF3B20855
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:31:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F0DB20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:31:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="oPX8BF7Q"
+	dkim=pass (2048-bit key) header.d=adirat-com.20150623.gappssmtp.com header.i=@adirat-com.20150623.gappssmtp.com header.b="JZgfw99C"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727636AbfA1SbS (ORCPT
+        id S1727706AbfA1Sbw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:31:18 -0500
-Received: from aserp2130.oracle.com ([141.146.126.79]:42304 "EHLO
-        aserp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbfA1SbS (ORCPT
+        Mon, 28 Jan 2019 13:31:52 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:53920 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727227AbfA1Sbv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:31:18 -0500
-Received: from pps.filterd (aserp2130.oracle.com [127.0.0.1])
-        by aserp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id x0SIJbut140662;
-        Mon, 28 Jan 2019 18:31:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=date : from : to : cc
- : subject : message-id : references : mime-version : content-type :
- in-reply-to; s=corp-2018-07-02;
- bh=7yEd1cqnfnhYlWl35ivCdNYugR3kaUKa6YXJVPI4VGY=;
- b=oPX8BF7Q0D7D463IGl8eCmnfNYQnDlajGcD7EYWnVd8rEWLb6JaRurBvxs1aXdZOBm3w
- qbNcLmpfcyzxXYoeDKGHlWRzTzSmM425jahX36CtT30z+0ElZmrhYgync0yBITMk1Koe
- 2IKfs2TJtHV6FRWPlYYx6CqmNLeeHyWtO8UUa2EKGXdEt1D9Gvvhvse7bRA9Yj3muTeg
- gYzHreIsMs3PB6Rh+VYDVdhoJjVM+Zte5ro9wp6reMG1FaQAXOWnBYPpPArxOTOPLybF
- rvgISQz+uR70hicqYJE+bMhxKgdhxEN1p/Vr6/GN3YmpScnMrrRwXo8j/MsKdsnJ4VdN 7Q== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2130.oracle.com with ESMTP id 2q8d2e03eq-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Jan 2019 18:31:04 +0000
-Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id x0SIV3Tn025446
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Mon, 28 Jan 2019 18:31:03 GMT
-Received: from abhmp0019.oracle.com (abhmp0019.oracle.com [141.146.116.25])
-        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id x0SIV3qF023482;
-        Mon, 28 Jan 2019 18:31:03 GMT
-Received: from kadam (/197.157.0.48)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Mon, 28 Jan 2019 10:31:02 -0800
-Date:   Mon, 28 Jan 2019 21:30:53 +0300
-From:   Dan Carpenter <dan.carpenter@oracle.com>
-To:     Chao Yu <chao@kernel.org>
-Cc:     Gao Xiang <gaoxiang25@huawei.com>, Chao Yu <yuchao0@huawei.com>,
-        devel@driverdev.osuosl.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Miao Xie <miaoxie@huawei.com>,
-        LKML <linux-kernel@vger.kernel.org>, weidu.du@huawei.com,
-        Fang Wei <fangwei1@huawei.com>, linux-erofs@lists.ozlabs.org
-Subject: Re: [PATCH v2 2/2] staging: erofs: complete POSIX ACL support
-Message-ID: <20190128183053.GK1795@kadam>
-References: <20190125161007.4447-1-gaoxiang25@huawei.com>
- <20190125161007.4447-2-gaoxiang25@huawei.com>
- <94daa491-40c8-4a09-a0b5-55a7e92dc3fc@huawei.com>
- <20190128133302.GI1795@kadam>
- <f1fd2c69-0c5b-c655-3712-48169e87fff8@huawei.com>
- <1eed1e6b-f95e-aa8e-c3e7-e9870401ee23@kernel.org>
+        Mon, 28 Jan 2019 13:31:51 -0500
+Received: by mail-wm1-f68.google.com with SMTP id d15so15106477wmb.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:31:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=adirat-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=pcLlj7db3/i5EOmcIA+Dc4h4tzldBlLv0/7W946hox4=;
+        b=JZgfw99C0Gprjx12dcpDzxGlod7FAPBm454SEH57QXdfHwIuvJV3VOfFfmEZozcIeF
+         qGVymBbqWcHMX2Hn5YKEC64QUb2VIcIQuTkrnKdxHJCpysT5W7RXrjo0phRyLfzPCAM1
+         h4SHh6asY5/ukrAkS4239zVvHulWEKFkBIwVBSWbKOnstMyWcbEdPspZddu9UsX3jWvR
+         s/BbisUG4iySzzeRUGJJVbVlJnbEujhzzN9LupyoC91bRDZJDzyfD/+DJ9aHSlNrCBjs
+         vZNQE55y8RV8Q3u/PwjFaKT0XPQqHVYUGpiktqVNMd2L6uXcOnr3upMIYlg9MTsUhkUl
+         YJ6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=pcLlj7db3/i5EOmcIA+Dc4h4tzldBlLv0/7W946hox4=;
+        b=g1Iju1jpXYrJH6r9GrWSM4c4MHcojdmlWWDU0ILcuevApyfNpraKYj5Arx/OBNPOrc
+         5XS7+0//GNhudTf2HqWUjZ4C0vUWag0D48MWhf9SdibtM73m6HDCsbr/X0KMcb7IfkOE
+         RV2f2XCUhXuIKbEOX3RfkKksK36GaO6KBRFD8IT0onEOt3MU56jW/ZPdS7KmVTg5vYP2
+         WYrAZhfrxmqEpXg7BuemMQG81W5CVJI26WPQoy8wkUbN/kBVItXvTPZJcDND1T6laqod
+         2utLq5XdZoXsLwtBaQAN3UfqA4iIB3nD+X3WD1Zi7vk4g5kg2WyR+15dkUrkEZKEt3a+
+         WExg==
+X-Gm-Message-State: AJcUukcornjrJ+4grcMFdLJ2wBrAFNDojQg22j9p4k/OteNK0Rluuf+/
+        qGQR0icDqPvgz7M8EtPnzEmNEZ0ENY0Nrg==
+X-Google-Smtp-Source: ALg8bN4uSiCrSXI2Si8J2KquiG4qmWZ5pkTqmUyrjJbWUk+SNsTTZY9VPUppS/gK54Ci8a+3S2lblw==
+X-Received: by 2002:a1c:9d57:: with SMTP id g84mr18448343wme.16.1548700309307;
+        Mon, 28 Jan 2019 10:31:49 -0800 (PST)
+Received: from iwork ([188.24.59.111])
+        by smtp.gmail.com with ESMTPSA id g188sm199838wmf.32.2019.01.28.10.31.48
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 10:31:48 -0800 (PST)
+From:   Ioan-Adrian Ratiu <adi@adirat.com>
+To:     Stefan Wahren <stefan.wahren@i2se.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+Subject: Re: [RFC][PATCH] Revert "ARM: dts: bcm2837: Fix polarity of wifi reset GPIOs"
+In-Reply-To: <1658074547.62977.1548624393424@email.ionos.de>
+References: <20190127202813.29493-1-adi@adirat.com> <1658074547.62977.1548624393424@email.ionos.de>
+Date:   Mon, 28 Jan 2019 20:31:48 +0200
+Message-ID: <87tvhs8wh7.fsf@ni.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1eed1e6b-f95e-aa8e-c3e7-e9870401ee23@kernel.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9150 signatures=668682
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1901280137
+Content-Type: text/plain; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 12:41:55AM +0800, Chao Yu wrote:
-> Hi Dan and Xiang,
-> 
-> On 2019-1-28 21:48, Gao Xiang wrote:
-> > Hi Dan,
-> > 
-> > On 2019/1/28 21:33, Dan Carpenter wrote:
-> >> Hopefully, regular kmalloc() is enough.
-> >>
-> >> Do really need the erofs_kmalloc() function?  Regular kmalloc() has
-> >> fault injection already.  Have you tried to use it?
-> 
-> Yes, I think we'd better to use erofs_kmalloc(). :)
-> 
-> Actually, fault injection in erofs_kmalloc only affect erofs module, we can
-> expect that the range of fault can be limited in erofs code, rather than whole
-> kernel, so the test point can be aimed at more accurately.
-> 
+Hi Stefan and thank you for looking into this,
 
-Are you serious?  The standard fault injection doesn't do that???
+On Sun, 27 Jan 2019, Stefan Wahren <stefan.wahren@i2se.com> wrote:
+> Hi Ioan-Adrian, 
+> 
+>> Ioan-Adrian Ratiu <adi@adirat.com> hat am 27. Januar 2019 um 
+>> 21:28 geschrieben:   This reverts commit 
+>> bea8a160c621d19f7f78b13e14e03f4b8e44cd4b.   Contrary to what 
+>> the commit message says, on my rpi 3 b v1.2 changing the 
+>> polarity causes the exact behaviour this commit intends to fix, 
+>> as described at the referenced link below (wlan0 disapears). 
+>> With reset-gpios = ... GPIO_ACTIVE_HIGH, brcmfmac errors in 
+>> dmesg:  [    7.977512] brcmfmac: brcmf_sdio_bus_sleep: error 
+>> while changing bus sleep state -110 [    7.977623] brcmfmac: 
+>> brcmf_sdio_txfail: sdio error, abort command and terminate 
+>> frame [    7.978007] brcmfmac: brcmf_sdio_txfail: sdio error, 
+>> abort command and terminate frame [    7.978377] brcmfmac: 
+>> brcmf_sdio_txfail: sdio error, abort command and terminate 
+>> frame [    7.978724] brcmfmac: brcmf_sdio_dpc: failed backplane 
+>> access over SDIO, halting operation [    7.978734] brcmfmac: 
+>> brcmf_proto_bcdc_query_dcmd: brcmf_proto_bcdc_msg failed 
+>> w/status -110 [    7.978747] brcmfmac: 
+>> brcmf_cfg80211_get_channel: chanspec failed (-110) [ 
+>> 7.982817] brcmfmac: brcmf_sdio_bus_sleep: error while changing 
+>> bus sleep state -110 [    7.982880] brcmfmac: 
+>> brcmf_sdio_txfail: sdio error, abort command and terminate 
+>> frame [    7.983255] brcmfmac: brcmf_sdio_txfail: sdio error, 
+>> abort command and terminate frame  The only solution I 
+>> currently have is to revert and everything works as expected 
+>> and as before changing the polarity.   Link: 
+>> https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=911443 
+>> Signed-off-by: Ioan-Adrian Ratiu <adi@adirat.com> --- 
+> 
+> reverting this commit will only workaround the real issue. It 
+> lies in the sdhci-iproc driver. 
+> 
+> Could please try this instead patch [1]? 
 
-Please fix it instead of creating a duplicate better implementation
-which only your filesystem can use.  I would have thought that obviously
-any fault injection framework could at least be configured to test
-specific code...
+Yes, the patch fixes the bug and it's also in Linus' master branch 
+in v5.0-rc3 as commit 2bd44da ("mmc: sdhci-iproc: handle 
+mmc_of_parse() errors during prob").
 
-regards,
-dan carpenter
+There was just a minor conflict cherry-picking it to 4.19.y 
+(sdhci_get_property -> sdhci_get_of_property).
 
+I would really like to have 2bd44da backported to the 4.19 stable 
+tree to have wifi working again. Please?
+
+Tested-by: Ioan-Adrian Ratiu <adi@adirat.com> #4.19.18
+
+>
+> [1] - https://patchwork.kernel.org/patch/10741809/
