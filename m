@@ -4,50 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 995A3C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22EDCC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6A8F02147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E713E2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691830;
-	bh=8mWLSI+wfm0dnxoM2hrNW1M+E1Q2SWH6YYo900osoZA=;
+	s=default; t=1548691833;
+	bh=KOsus9xJWb51QeK4RNQD+lzR12jV4nQQJ2SBBKX/baI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i2jEgPbS4AQlX3MC+kRJDtBnTqaKf+3OluHFvNUIiiIVJHPx3bCkrTxE2m5Us48X/
-	 J/OFVxYSafMYrPGdYWne+FK6nugA1DcNQZwI0rnHfS9+5UHkJnWYEagfuz61gxJKm2
-	 4oeCZEoqFwWPXVaKpvrSzaefrcr1IfvZELa3vOc8=
+	b=PJGxvvzwtIypS9C+b9RTC6dOCOreMFYe4S7xamw/mSJyuEBG4dEtO4+FN9mj46Rlo
+	 NsoWfa1EQL+rEG7/niZTC/Bc2cgty8CyQD142EE1I3ahE13sVXrSdZ1Qaq+wnoOJQ1
+	 mJL6XoCB/jf1N/wQq8XtI7Ss/ChHWZbJPlG3No+I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732801AbfA1QK2 (ORCPT
+        id S1732815AbfA1QKb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:10:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36372 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:10:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732345AbfA1QK1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:10:27 -0500
+        id S1732345AbfA1QK3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:10:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E5362084A;
-        Mon, 28 Jan 2019 16:10:24 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 12B7921738;
+        Mon, 28 Jan 2019 16:10:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691826;
-        bh=8mWLSI+wfm0dnxoM2hrNW1M+E1Q2SWH6YYo900osoZA=;
+        s=default; t=1548691829;
+        bh=KOsus9xJWb51QeK4RNQD+lzR12jV4nQQJ2SBBKX/baI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vv89/boT3pH2ep89u90gFgqZraYWeK43K5+ijyH6zBi/aUQipQ2hlZzgZg4PK+Umu
-         1GhwzmIA6Zb5UHaHApqM1ENt87Jd1fEYnnPa6+fMYue+ii7IDcxacMPZLDw+98YBH5
-         E/7dcScuY9bteQLkqeuv14alqyFxBxPRB6rg0OvY=
+        b=eR4SnWTYuasN0EpG/SdNfGVQeJUG0hJxi4p8bASp9qtTIVOxoyOV/CC4AgLW2DoAI
+         T9P9NdYijv8kRHI21c3mKnSmqUhGf0L3HXHT50f4yrm3fk+kGjSW0fMvMsQaP/CiHq
+         /uIHN2xu0N7hsO9pi3UOHru0GMFfdVyHslkrUcH0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sahitya Tummala <stummala@codeaurora.org>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.19 230/258] f2fs: fix sbi->extent_list corruption issue
-Date:   Mon, 28 Jan 2019 10:58:56 -0500
-Message-Id: <20190128155924.51521-230-sashal@kernel.org>
+Cc:     Ondrej Mosnacek <omosnace@redhat.com>, Tejun Heo <tj@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 231/258] cgroup: fix parsing empty mount option string
+Date:   Mon, 28 Jan 2019 10:58:57 -0500
+Message-Id: <20190128155924.51521-231-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,92 +56,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sahitya Tummala <stummala@codeaurora.org>
+From: Ondrej Mosnacek <omosnace@redhat.com>
 
-[ Upstream commit e4589fa545e0020dbbc3c9bde35f35f949901392 ]
+[ Upstream commit e250d91d65750a0c0c62483ac4f9f357e7317617 ]
 
-When there is a failure in f2fs_fill_super() after/during
-the recovery of fsync'd nodes, it frees the current sbi and
-retries again. This time the mount is successful, but the files
-that got recovered before retry, still holds the extent tree,
-whose extent nodes list is corrupted since sbi and sbi->extent_list
-is freed up. The list_del corruption issue is observed when the
-file system is getting unmounted and when those recoverd files extent
-node is being freed up in the below context.
+This fixes the case where all mount options specified are consumed by an
+LSM and all that's left is an empty string. In this case cgroupfs should
+accept the string and not fail.
 
-list_del corruption. prev->next should be fffffff1e1ef5480, but was (null)
-<...>
-kernel BUG at kernel/msm-4.14/lib/list_debug.c:53!
-lr : __list_del_entry_valid+0x94/0xb4
-pc : __list_del_entry_valid+0x94/0xb4
-<...>
-Call trace:
-__list_del_entry_valid+0x94/0xb4
-__release_extent_node+0xb0/0x114
-__free_extent_tree+0x58/0x7c
-f2fs_shrink_extent_tree+0xdc/0x3b0
-f2fs_leave_shrinker+0x28/0x7c
-f2fs_put_super+0xfc/0x1e0
-generic_shutdown_super+0x70/0xf4
-kill_block_super+0x2c/0x5c
-kill_f2fs_super+0x44/0x50
-deactivate_locked_super+0x60/0x8c
-deactivate_super+0x68/0x74
-cleanup_mnt+0x40/0x78
-__cleanup_mnt+0x1c/0x28
-task_work_run+0x48/0xd0
-do_notify_resume+0x678/0xe98
-work_pending+0x8/0x14
+How to reproduce (with SELinux enabled):
 
-Fix this by not creating extents for those recovered files if shrinker is
-not registered yet. Once mount is successful and shrinker is registered,
-those files can have extents again.
+    # umount /sys/fs/cgroup/unified
+    # mount -o context=system_u:object_r:cgroup_t:s0 -t cgroup2 cgroup2 /sys/fs/cgroup/unified
+    mount: /sys/fs/cgroup/unified: wrong fs type, bad option, bad superblock on cgroup2, missing codepage or helper program, or other error.
+    # dmesg | tail -n 1
+    [   31.575952] cgroup: cgroup2: unknown option ""
 
-Signed-off-by: Sahitya Tummala <stummala@codeaurora.org>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Fixes: 67e9c74b8a87 ("cgroup: replace __DEVEL__sane_behavior with cgroup2 fs type")
+[NOTE: should apply on top of commit 5136f6365ce3 ("cgroup: implement "nsdelegate" mount option"), older versions need manual rebase]
+Suggested-by: Stephen Smalley <sds@tycho.nsa.gov>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+Signed-off-by: Tejun Heo <tj@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/f2fs.h     | 11 ++++++++++-
- fs/f2fs/shrinker.c |  2 +-
- 2 files changed, 11 insertions(+), 2 deletions(-)
+ kernel/cgroup/cgroup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index 462a2fb8aa69..eea2811dc672 100644
---- a/fs/f2fs/f2fs.h
-+++ b/fs/f2fs/f2fs.h
-@@ -2614,10 +2614,19 @@ static inline bool is_dot_dotdot(const struct qstr *str)
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 1aa517908561..e578c3999970 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1743,7 +1743,7 @@ static int parse_cgroup_root_flags(char *data, unsigned int *root_flags)
  
- static inline bool f2fs_may_extent_tree(struct inode *inode)
- {
--	if (!test_opt(F2FS_I_SB(inode), EXTENT_CACHE) ||
-+	struct f2fs_sb_info *sbi = F2FS_I_SB(inode);
-+
-+	if (!test_opt(sbi, EXTENT_CACHE) ||
- 			is_inode_flag_set(inode, FI_NO_EXTENT))
- 		return false;
+ 	*root_flags = 0;
  
-+	/*
-+	 * for recovered files during mount do not create extents
-+	 * if shrinker is not registered.
-+	 */
-+	if (list_empty(&sbi->s_list))
-+		return false;
-+
- 	return S_ISREG(inode->i_mode);
- }
+-	if (!data)
++	if (!data || *data == '\0')
+ 		return 0;
  
-diff --git a/fs/f2fs/shrinker.c b/fs/f2fs/shrinker.c
-index 36cfd816c160..29042e6d5126 100644
---- a/fs/f2fs/shrinker.c
-+++ b/fs/f2fs/shrinker.c
-@@ -138,6 +138,6 @@ void f2fs_leave_shrinker(struct f2fs_sb_info *sbi)
- 	f2fs_shrink_extent_tree(sbi, __count_extent_cache(sbi));
- 
- 	spin_lock(&f2fs_list_lock);
--	list_del(&sbi->s_list);
-+	list_del_init(&sbi->s_list);
- 	spin_unlock(&f2fs_list_lock);
- }
+ 	while ((token = strsep(&data, ",")) != NULL) {
 -- 
 2.19.1
 
