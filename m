@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C378FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28E53C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 965292147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4D762147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690527;
-	bh=148sDG9duXACtyjsI7o/I4sR9rvIi2U0xb0huy7DZns=;
+	s=default; t=1548690531;
+	bh=hEWeGcNmoAXI+GIMZRtqX+cE47RhwELIaJPB4PTWdbk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=W5EtBF0zbwE05w4JepdbXqTu9v6QSmvx8dBhJZbSF9RL6zKnVqEdJpJFASLgcgkeu
-	 OShsu77zmJouP65pI3qZ7wrM8JSl90vGviiqI2PF3N943+MC1ZM1WRPQdQhAlr2kIY
-	 pezWuK6nqBeWFTNB9lqZRfnU8Wy0voFUmW9Q4SCE=
+	b=HI9qNelABs+KHxiOJkxgsxExCS/df8ox+kf5rooi3vUPCHM6b110soIFgS11vhtEz
+	 k/38b4DVBk1z91c/QhFST4dUDUMMPEhpq+k+Nx9V1euJcZE2KA78G/MEIq0EoOfS3H
+	 +eusZ8mfkgrCDLxw5qFTUXYH3OI+E+u8tRK2VYf4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728563AbfA1Psp (ORCPT
+        id S1728566AbfA1Psu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:48:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34062 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:48:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34114 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726944AbfA1Psn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:48:43 -0500
+        id S1728557AbfA1Psp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:48:45 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EC4D920880;
-        Mon, 28 Jan 2019 15:48:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D9D2821741;
+        Mon, 28 Jan 2019 15:48:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690522;
-        bh=148sDG9duXACtyjsI7o/I4sR9rvIi2U0xb0huy7DZns=;
+        s=default; t=1548690524;
+        bh=hEWeGcNmoAXI+GIMZRtqX+cE47RhwELIaJPB4PTWdbk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UGohGytjQOOGq7c5BrEhv0al1tDpMzs5dzyU7rENWEKwd1jfRPtmQj0YmVuSnsJWI
-         WcMlOImoDEQcJeeVmaRkn9XSKsZByD4A3DnuCZHsHgCYhnwFmJNidGJKSHJgYN91xm
-         +DwIN5HO6+kl1sV5G+C0Z0D/6L5a+RORdtiexVR0=
+        b=QPYixZwDED29Jj+650I0cm8tAU72b/rgDlgWkEl7hNb62Zn2ltIu/TDBIQlN5Ui9/
+         zulPYfeqlNklXnHLHRTqzeoN4eRcYrr2wF/wr6ORxg9rQS8dAOUQ6fm40nVRfLDD0T
+         Ze5B93k/1tCZ3webyvSOJZPc3K4sB/Ct/YnOqfjo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Rob Herring <robh@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@aj.id.au>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, Olof Johansson <olof@lixom.net>,
+Cc:     Randy Dunlap <rdunlap@infradead.org>,
+        Radu Pirea <radu.pirea@microchip.com>,
+        Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 111/304] ARM: dts: aspeed: add missing memory unit-address
-Date:   Mon, 28 Jan 2019 10:40:28 -0500
-Message-Id: <20190128154341.47195-111-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 112/304] spi: fix spi-at91-usart.c build errors when PINCTRL is not set
+Date:   Mon, 28 Jan 2019 10:40:29 -0500
+Message-Id: <20190128154341.47195-112-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -60,90 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rob Herring <robh@kernel.org>
+From: Randy Dunlap <rdunlap@infradead.org>
 
-[ Upstream commit 8ef86955fe59f7912a40d57ae4c6d511f0187b4d ]
+[ Upstream commit c2b142cc3939e932d4fa2210c2a5155df5736590 ]
 
-The base aspeed-g5.dtsi already defines a '/memory@80000000' node, so
-'/memory' in the board files create a duplicate node. We're probably
-getting lucky that the bootloader fixes up the memory node that the
-kernel ends up using. Add the unit-address so it's merged with the base
-node.
+Fix build errors when CONFIG_PINCTRL is not enabled.
+The header file <linux/pinctrl/consumer.h> handles both CONFIG_PINCTRL
+enabled and disabled cases.
 
-Found with DT json-schema checks.
+  CC [M]  drivers/spi/spi-at91-usart.o
+../drivers/spi/spi-at91-usart.c: In function 'at91_usart_spi_runtime_suspend':
+../drivers/spi/spi-at91-usart.c:409:2: error: implicit declaration of function 'pinctrl_pm_select_sleep_state' [-Werror=implicit-function-declaration]
+  pinctrl_pm_select_sleep_state(dev);
+../drivers/spi/spi-at91-usart.c: In function 'at91_usart_spi_runtime_resume':
+../drivers/spi/spi-at91-usart.c:419:2: error: implicit declaration of function 'pinctrl_pm_select_default_state' [-Werror=implicit-function-declaration]
+  pinctrl_pm_select_default_state(dev);
 
-Cc: Joel Stanley <joel@jms.id.au>
-Cc: Andrew Jeffery <andrew@aj.id.au>
-Cc: devicetree@vger.kernel.org
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-aspeed@lists.ozlabs.org
-Signed-off-by: Rob Herring <robh@kernel.org>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
+Cc: Radu Pirea <radu.pirea@microchip.com>
+Cc: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts | 2 +-
- arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts       | 2 +-
- arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts         | 3 +--
- arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts    | 2 +-
- 4 files changed, 4 insertions(+), 5 deletions(-)
+ drivers/spi/spi-at91-usart.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts b/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts
-index df1227613d48..c2ece0b91885 100644
---- a/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-arm-centriq2400-rep.dts
-@@ -13,7 +13,7 @@
- 		bootargs = "console=ttyS4,115200 earlyprintk";
- 	};
+diff --git a/drivers/spi/spi-at91-usart.c b/drivers/spi/spi-at91-usart.c
+index a924657642fa..08bcbd1f9aa2 100644
+--- a/drivers/spi/spi-at91-usart.c
++++ b/drivers/spi/spi-at91-usart.c
+@@ -12,6 +12,7 @@
+ #include <linux/kernel.h>
+ #include <linux/module.h>
+ #include <linux/of_gpio.h>
++#include <linux/pinctrl/consumer.h>
+ #include <linux/platform_device.h>
  
--	memory {
-+	memory@80000000 {
- 		reg = <0x80000000 0x40000000>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts b/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts
-index 7a291de02543..22dade6393d0 100644
---- a/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-intel-s2600wf.dts
-@@ -13,7 +13,7 @@
- 		bootargs = "earlyprintk";
- 	};
- 
--	memory {
-+	memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
- 
-diff --git a/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts b/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts
-index d598b6391362..024e52a6cd0f 100644
---- a/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-opp-lanyang.dts
-@@ -14,7 +14,7 @@
- 		bootargs = "console=ttyS4,115200 earlyprintk";
- 	};
- 
--	memory {
-+	memory@80000000 {
- 		reg = <0x80000000 0x40000000>;
- 	};
- 
-@@ -322,4 +322,3 @@
- &adc {
- 	status = "okay";
- };
--
-diff --git a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
-index 43ed13963d35..33d704541de6 100644
---- a/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
-+++ b/arch/arm/boot/dts/aspeed-bmc-portwell-neptune.dts
-@@ -17,7 +17,7 @@
- 		bootargs = "console=ttyS4,115200 earlyprintk";
- 	};
- 
--	memory {
-+	memory@80000000 {
- 		reg = <0x80000000 0x20000000>;
- 	};
- 
+ #include <linux/spi/spi.h>
 -- 
 2.19.1
 
