@@ -4,52 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7D2DC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8447EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871562175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 499552184D
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:23:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692600;
-	bh=H3w7iQyLSktoE60p0KTrHDNUT8HwwE17kKhyhZKV3TE=;
+	s=default; t=1548692603;
+	bh=cQ4J1xbg+Esi8AGgUTpeMN1sN4EvAVHORdeqDmJMaNI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=XMDuzzq8ZEAW7TdMBcPGV8V/4rO/gV5413+5TCqGuj+1IaQUwV7U9c7zx9Cq1Q8Zt
-	 oDJms/W/+OoMtRGlxEqJ81UfVJonxe01YdmhQqvJ1dmvarHFd7pobiAwj5rRA0l4sN
-	 hrUYu1FbffIovXIoysS08h26k9Sf5p+ekyU+FHug=
+	b=Mdiw7vNFvAAEqNVEquHa83R2tq2d6R36ul1D5ivgPJNFWOLnPJWyotg/VpzOmzh8D
+	 uTizvlGa+lALLCtadhTpxb6f1R6JGNnmzozB5tPqwrIicwR1IVeWkL9UUNEe1rl+1N
+	 d+I46wNfd6N23gAbBEL58ZZFbkePxMg/tcXBLAig=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389414AbfA1QXS (ORCPT
+        id S2389422AbfA1QXW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:23:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59508 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:23:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389396AbfA1QXP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:15 -0500
+        id S2389407AbfA1QXR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:23:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0876E2084A;
-        Mon, 28 Jan 2019 16:23:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 883D72173C;
+        Mon, 28 Jan 2019 16:23:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692594;
-        bh=H3w7iQyLSktoE60p0KTrHDNUT8HwwE17kKhyhZKV3TE=;
+        s=default; t=1548692597;
+        bh=cQ4J1xbg+Esi8AGgUTpeMN1sN4EvAVHORdeqDmJMaNI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=dG4V5lZlK7I8P/lgoRT2EBS6jTVpBdjYvLeRw0xki1yjbGCH7nBnBbXIh7HMnidyX
-         g2CYhqTaDcESsAlsFnbnlnAs8zxG5MubhO99Xyg+glSV5uhMbTQfPaSh8CpjHHWjSk
-         +j6HUUzwCLLQ9g5Me9TWV4MW0Mzsmq1mGnI6v+Nk=
+        b=s1Xbtx4cckuj5e62PghHVIeDjTJZ9TPnuoun1IAwLOoLOU5+qFr6zZIMdFN8jrrSs
+         84qXhYnIUTQ5QJwDlYD+K1RDFcKNMBEBVAu9hmIkdg5frYvwOdLoK1NzZ+fLZq3Tp2
+         qXKZfBcHE3H3z4SaADgn+am23SuRVYRBxNMuZGxE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Kangjie Lu <kjlu@umn.edu>, Guenter Roeck <linux@roeck-us.net>,
-        Sasha Levin <sashal@kernel.org>, linux-hwmon@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 085/107] hwmon: (lm80) fix a missing check of bus read in lm80 probe
-Date:   Mon, 28 Jan 2019 11:19:25 -0500
-Message-Id: <20190128161947.57405-85-sashal@kernel.org>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 086/107] seq_buf: Make seq_buf_puts() null-terminate the buffer
+Date:   Mon, 28 Jan 2019 11:19:26 -0500
+Message-Id: <20190128161947.57405-86-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -57,53 +59,66 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kangjie Lu <kjlu@umn.edu>
+From: Michael Ellerman <mpe@ellerman.id.au>
 
-[ Upstream commit 9aa3aa15f4c2f74f47afd6c5db4b420fadf3f315 ]
+[ Upstream commit 0464ed24380905d640030d368cd84a4e4d1e15e2 ]
 
-In lm80_probe(), if lm80_read_value() fails, it returns a negative
-error number which is stored to data->fan[f_min] and will be further
-used. We should avoid using the data if the read fails.
+Currently seq_buf_puts() will happily create a non null-terminated
+string for you in the buffer. This is particularly dangerous if the
+buffer is on the stack.
 
-The fix checks if lm80_read_value() fails, and if so, returns with the
-error number.
+For example:
 
-Signed-off-by: Kangjie Lu <kjlu@umn.edu>
-Signed-off-by: Guenter Roeck <linux@roeck-us.net>
+  char buf[8];
+  char secret = "secret";
+  struct seq_buf s;
+
+  seq_buf_init(&s, buf, sizeof(buf));
+  seq_buf_puts(&s, "foo");
+  printk("Message is %s\n", buf);
+
+Can result in:
+
+  Message is fooªªªªªsecret
+
+We could require all users to memset() their buffer to zero before
+use. But that seems likely to be forgotten and lead to bugs.
+
+Instead we can change seq_buf_puts() to always leave the buffer in a
+null-terminated state.
+
+The only downside is that this makes the buffer 1 character smaller
+for seq_buf_puts(), but that seems like a good trade off.
+
+Link: http://lkml.kernel.org/r/20181019042109.8064-1-mpe@ellerman.id.au
+
+Acked-by: Kees Cook <keescook@chromium.org>
+Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hwmon/lm80.c | 11 +++++++++--
- 1 file changed, 9 insertions(+), 2 deletions(-)
+ lib/seq_buf.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/hwmon/lm80.c b/drivers/hwmon/lm80.c
-index 47ddae6b7038..cb6606a0470d 100644
---- a/drivers/hwmon/lm80.c
-+++ b/drivers/hwmon/lm80.c
-@@ -628,6 +628,7 @@ static int lm80_probe(struct i2c_client *client,
- 	struct device *dev = &client->dev;
- 	struct device *hwmon_dev;
- 	struct lm80_data *data;
-+	int rv;
+diff --git a/lib/seq_buf.c b/lib/seq_buf.c
+index cb18469e1f49..5954f9fb6675 100644
+--- a/lib/seq_buf.c
++++ b/lib/seq_buf.c
+@@ -143,9 +143,13 @@ int seq_buf_puts(struct seq_buf *s, const char *str)
  
- 	data = devm_kzalloc(dev, sizeof(struct lm80_data), GFP_KERNEL);
- 	if (!data)
-@@ -640,8 +641,14 @@ static int lm80_probe(struct i2c_client *client,
- 	lm80_init_client(client);
+ 	WARN_ON(s->size == 0);
  
- 	/* A few vars need to be filled upon startup */
--	data->fan[f_min][0] = lm80_read_value(client, LM80_REG_FAN_MIN(1));
--	data->fan[f_min][1] = lm80_read_value(client, LM80_REG_FAN_MIN(2));
-+	rv = lm80_read_value(client, LM80_REG_FAN_MIN(1));
-+	if (rv < 0)
-+		return rv;
-+	data->fan[f_min][0] = rv;
-+	rv = lm80_read_value(client, LM80_REG_FAN_MIN(2));
-+	if (rv < 0)
-+		return rv;
-+	data->fan[f_min][1] = rv;
- 
- 	hwmon_dev = devm_hwmon_device_register_with_groups(dev, client->name,
- 							   data, lm80_groups);
++	/* Add 1 to len for the trailing null byte which must be there */
++	len += 1;
++
+ 	if (seq_buf_can_fit(s, len)) {
+ 		memcpy(s->buffer + s->len, str, len);
+-		s->len += len;
++		/* Don't count the trailing null byte against the capacity */
++		s->len += len - 1;
+ 		return 0;
+ 	}
+ 	seq_buf_set_overflow(s);
 -- 
 2.19.1
 
