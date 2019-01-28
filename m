@@ -7,51 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2BA8C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85C27C282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:40:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74DE62082C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:39:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F4B820844
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693592;
-	bh=lxXm3U8MgpH0TpRFsz7deIZoDImEz8QCdQJmHWKOTtQ=;
+	s=default; t=1548693600;
+	bh=wY8+m6TGwhTaUcA1GoEaCO4baxU0BNwkyMjt3pO12lg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qLDG6CXY+JeCx+M4SLh5hveCYEkbtCaL4ff9DWVly3AZZrNkQ5epSnFWnQygBKkQf
-	 IfI2fMS3Ip+OUFgjpeW3kf8iAdD2K/ROCToFsUbHns+5N1SlvmRC/IotmBqSHB3dEL
-	 /TJT67j7DIdFoL/KHcqqlzkWZXKQfLYYk1Q2P1jo=
+	b=OUxU/EZew94pnVCdSLrh/9Sv45DAFLwtHI6p9OZwVjujbpqtN0Sf9yqZLTUR55TOs
+	 cV6fI+Cvg3ttNqEx66MpTbSkOgmOrmRL+eyN0ayNQIZFcDFzvIYf1ZHKHkg2/WB907
+	 16RYCAIe319sk6fYcXk0UnI+lhWB/t9w5BfXzZ1U=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390066AbfA1Qju (ORCPT
+        id S2389703AbfA1QY0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:39:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32978 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:24:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60930 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389677AbfA1QY3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:24:29 -0500
+        id S2389671AbfA1QYR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:17 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 895072084A;
-        Mon, 28 Jan 2019 16:24:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B2FA620879;
+        Mon, 28 Jan 2019 16:24:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692668;
-        bh=lxXm3U8MgpH0TpRFsz7deIZoDImEz8QCdQJmHWKOTtQ=;
+        s=default; t=1548692657;
+        bh=wY8+m6TGwhTaUcA1GoEaCO4baxU0BNwkyMjt3pO12lg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=KC3h6IamO9jqV1yc2reh9B0SBB8crsI5sjYRkC1oHNeo7lHlSTCvscn+Wn5AihE4W
-         xLBd4IRABazs5nkQymh7FKJ/+NxfvfXU7zP/WDfTyy6We7V66FU0+Ede1EiDIp4YQN
-         8BkiyIu+CXszGVcctZpVI9f8k2Mr0cjksCHAk2/4=
+        b=xsQSyoRrDBAmE/moEt6eVYzgL32/AGe2zpg2u/aZF8tY5qDXwpE+MF3VhSaccmb2Q
+         dmAj/Wh2tDOShhJAluq+MA5HlVaVH+rhcLTPjhsIoZnJr1tHsABg4feLGxIvfADe6v
+         5C2iRxpRggtY+0qRfC1z6nrnLL5woGMLV0nJcsIo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pu Wen <puwen@hygon.cn>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 18/80] perf tools: Add Hygon Dhyana support
-Date:   Mon, 28 Jan 2019 11:22:59 -0500
-Message-Id: <20190128162401.58841-18-sashal@kernel.org>
+Cc:     Frank Rowand <frank.rowand@sony.com>,
+        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.4 10/80] powerpc/pseries: add of_node_put() in dlpar_detach_node()
+Date:   Mon, 28 Jan 2019 11:22:51 -0500
+Message-Id: <20190128162401.58841-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -63,42 +57,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pu Wen <puwen@hygon.cn>
+From: Frank Rowand <frank.rowand@sony.com>
 
-[ Upstream commit 4787eff3fa88f62fede6ed7afa06477ae6bf984d ]
+[ Upstream commit 5b3f5c408d8cc59b87e47f1ab9803dbd006e4a91 ]
 
-The tool perf is useful for the performance analysis on the Hygon Dhyana
-platform. But right now there is no Hygon support for it to analyze the
-KVM guest os data. So add Hygon Dhyana support to it by checking vendor
-string to share the code path of AMD.
+The previous commit, "of: overlay: add missing of_node_get() in
+__of_attach_node_sysfs" added a missing of_node_get() to
+__of_attach_node_sysfs().  This results in a refcount imbalance
+for nodes attached with dlpar_attach_node().  The calling sequence
+from dlpar_attach_node() to __of_attach_node_sysfs() is:
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
-Acked-by: Borislav Petkov <bp@suse.de>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1542008451-31735-1-git-send-email-puwen@hygon.cn
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+   dlpar_attach_node()
+      of_attach_node()
+         __of_attach_node_sysfs()
+
+For more detailed description of the node refcount, see
+commit 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow
+during DLPAR remove").
+
+Tested-by: Alan Tull <atull@kernel.org>
+Acked-by: Michael Ellerman <mpe@ellerman.id.au>
+Signed-off-by: Frank Rowand <frank.rowand@sony.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/x86/util/kvm-stat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/powerpc/platforms/pseries/dlpar.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
-index 14e4e668fad7..f97696a418cc 100644
---- a/tools/perf/arch/x86/util/kvm-stat.c
-+++ b/tools/perf/arch/x86/util/kvm-stat.c
-@@ -146,7 +146,7 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
- 	if (strstr(cpuid, "Intel")) {
- 		kvm->exit_reasons = vmx_exit_reasons;
- 		kvm->exit_reasons_isa = "VMX";
--	} else if (strstr(cpuid, "AMD")) {
-+	} else if (strstr(cpuid, "AMD") || strstr(cpuid, "Hygon")) {
- 		kvm->exit_reasons = svm_exit_reasons;
- 		kvm->exit_reasons_isa = "SVM";
- 	} else
+diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
+index 96536c969c9c..a8efed3b4691 100644
+--- a/arch/powerpc/platforms/pseries/dlpar.c
++++ b/arch/powerpc/platforms/pseries/dlpar.c
+@@ -280,6 +280,8 @@ int dlpar_detach_node(struct device_node *dn)
+ 	if (rc)
+ 		return rc;
+ 
++	of_node_put(dn);
++
+ 	return 0;
+ }
+ 
 -- 
 2.19.1
 
