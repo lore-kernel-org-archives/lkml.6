@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9583FC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AEC4C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 684C720879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D0B332147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:16:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692210;
-	bh=LMYmDl+lZ/uY30dcLNpDMw5evOV2YYkYj+Tyolw2l8I=;
+	s=default; t=1548692215;
+	bh=W0QWpv4BDgJW9fxr6J15E4gpGpoSj9616cMXTiK1M78=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=A4T7ZMFzjQJDAe2fkUh7uta1iHbpB2zVya9LB7WdLw4vM4Wv7jinCCG+RWAOTNCsC
-	 Mgo0KZI4rz8gi2QFji4snHk8B3h7Rwbztlcya/IMBfSqI4crTEMCylDzOHRdx579dc
-	 prXZllIsIwq33t+IULiyoopOshVAPbcGhpvB4qCg=
+	b=QBeKMU7TfhOW3+s+jGHp7yChvSzXi1+Kh+DepCd/JpDFo8yHnXQXbv5DzV7SW2BlF
+	 KmOpSBwS8j3lQ0Wkq25Bu+R6cIHW3iBptTvQIS/X0coLwBftw4eFfEswsf/ZmQAQVU
+	 k7zWZ2mdbo+GuRLH7tcAVWAmoINDttezcpCixIjM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388047AbfA1QQs (ORCPT
+        id S1732972AbfA1QQy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:16:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49912 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:16:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50250 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732685AbfA1QQq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:16:46 -0500
+        id S2388055AbfA1QQv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:16:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B90A21741;
-        Mon, 28 Jan 2019 16:16:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5F8E2147A;
+        Mon, 28 Jan 2019 16:16:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692205;
-        bh=LMYmDl+lZ/uY30dcLNpDMw5evOV2YYkYj+Tyolw2l8I=;
+        s=default; t=1548692211;
+        bh=W0QWpv4BDgJW9fxr6J15E4gpGpoSj9616cMXTiK1M78=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HdTOWOnPHEHq1kC+XRauBSU9x4R4tnmoI8lCaLEPd/NhW0UOWXUPXTTO0CPsVnkqu
-         iEVsBgDjmnJFdbhPIt586Hh33IYslGGrr6tojHHu0KLRxqmXqZuWN3lBfKzvIGjXLO
-         bvoRIBvLXCYQSq4pqoifQ230XHT4e2JTCXr9UZc8=
+        b=DD6u3WsI+BwxdJICVybz1r+KRruw8Pz1+yeoqkd/kEV+DTROF1kCaz5wavebg4hC8
+         lydAJTNCYZFFlslEDub3+XWeBdYsbgOmUEbdz8q+lSIEC1CHiAwnfTw7tKafdPuiMI
+         zRDLiPQoJMgcNVD7yC39kiR6XYZr4RedyAPSRvQM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Michael Mueller <mimu@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 109/170] KVM: s390: unregister debug feature on failing arch init
-Date:   Mon, 28 Jan 2019 11:10:59 -0500
-Message-Id: <20190128161200.55107-109-sashal@kernel.org>
+Cc:     Dennis Zhou <dennis@kernel.org>, Sasha Levin <sashal@kernel.org>,
+        linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.14 112/170] percpu: convert spin_lock_irq to spin_lock_irqsave.
+Date:   Mon, 28 Jan 2019 11:11:02 -0500
+Message-Id: <20190128161200.55107-112-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -57,65 +56,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michael Mueller <mimu@linux.ibm.com>
+From: Dennis Zhou <dennis@kernel.org>
 
-[ Upstream commit 308c3e6673b012beecb96ef04cc65f4a0e7cdd99 ]
+[ Upstream commit 6ab7d47bcbf0144a8cb81536c2cead4cde18acfe ]
 
-Make sure the debug feature and its allocated resources get
-released upon unsuccessful architecture initialization.
+From Michael Cree:
+  "Bisection lead to commit b38d08f3181c ("percpu: restructure
+   locking") as being the cause of lockups at initial boot on
+   the kernel built for generic Alpha.
 
-A related indication of the issue will be reported as kernel
-message.
+   On a suggestion by Tejun Heo that:
 
-Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
-Reviewed-by: Cornelia Huck <cohuck@redhat.com>
-Reviewed-by: Pierre Morel <pmorel@linux.ibm.com>
-Reviewed-by: David Hildenbrand <david@redhat.com>
-Message-Id: <20181130143215.69496-2-mimu@linux.ibm.com>
-Signed-off-by: Christian Borntraeger <borntraeger@de.ibm.com>
+   So, the only thing I can think of is that it's calling
+   spin_unlock_irq() while irq handling isn't set up yet.
+   Can you please try the followings?
+
+   1. Convert all spin_[un]lock_irq() to
+      spin_lock_irqsave/unlock_irqrestore()."
+
+Fixes: b38d08f3181c ("percpu: restructure locking")
+Reported-and-tested-by: Michael Cree <mcree@orcon.net.nz>
+Acked-by: Tejun Heo <tj@kernel.org>
+Signed-off-by: Dennis Zhou <dennis@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kvm/kvm-s390.c | 17 ++++++++++++++---
- 1 file changed, 14 insertions(+), 3 deletions(-)
+ mm/percpu-km.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/arch/s390/kvm/kvm-s390.c b/arch/s390/kvm/kvm-s390.c
-index 4f6adbea592b..f674a81c8868 100644
---- a/arch/s390/kvm/kvm-s390.c
-+++ b/arch/s390/kvm/kvm-s390.c
-@@ -361,19 +361,30 @@ static void kvm_s390_cpu_feat_init(void)
+diff --git a/mm/percpu-km.c b/mm/percpu-km.c
+index 0d88d7bd5706..c22d959105b6 100644
+--- a/mm/percpu-km.c
++++ b/mm/percpu-km.c
+@@ -50,6 +50,7 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ 	const int nr_pages = pcpu_group_sizes[0] >> PAGE_SHIFT;
+ 	struct pcpu_chunk *chunk;
+ 	struct page *pages;
++	unsigned long flags;
+ 	int i;
  
- int kvm_arch_init(void *opaque)
- {
-+	int rc;
-+
- 	kvm_s390_dbf = debug_register("kvm-trace", 32, 1, 7 * sizeof(long));
- 	if (!kvm_s390_dbf)
- 		return -ENOMEM;
+ 	chunk = pcpu_alloc_chunk(gfp);
+@@ -68,9 +69,9 @@ static struct pcpu_chunk *pcpu_create_chunk(gfp_t gfp)
+ 	chunk->data = pages;
+ 	chunk->base_addr = page_address(pages) - pcpu_group_offsets[0];
  
- 	if (debug_register_view(kvm_s390_dbf, &debug_sprintf_view)) {
--		debug_unregister(kvm_s390_dbf);
--		return -ENOMEM;
-+		rc = -ENOMEM;
-+		goto out_debug_unreg;
- 	}
+-	spin_lock_irq(&pcpu_lock);
++	spin_lock_irqsave(&pcpu_lock, flags);
+ 	pcpu_chunk_populated(chunk, 0, nr_pages, false);
+-	spin_unlock_irq(&pcpu_lock);
++	spin_unlock_irqrestore(&pcpu_lock, flags);
  
- 	kvm_s390_cpu_feat_init();
- 
- 	/* Register floating interrupt controller interface. */
--	return kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
-+	rc = kvm_register_device_ops(&kvm_flic_ops, KVM_DEV_TYPE_FLIC);
-+	if (rc) {
-+		pr_err("Failed to register FLIC rc=%d\n", rc);
-+		goto out_debug_unreg;
-+	}
-+	return 0;
-+
-+out_debug_unreg:
-+	debug_unregister(kvm_s390_dbf);
-+	return rc;
- }
- 
- void kvm_arch_exit(void)
+ 	pcpu_stats_chunk_alloc();
+ 	trace_percpu_create_chunk(chunk->base_addr);
 -- 
 2.19.1
 
