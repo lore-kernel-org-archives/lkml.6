@@ -2,100 +2,154 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 963A5C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:01:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 528DAC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5559E2171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:01:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548716515;
-	bh=ebqpyxFJCfFEC5OAjn/SpAmIwxFq2i7YUX3t8E+s3XA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=apOsN5jdu305ShmqE91NjDwaYIJfi0km4jwQTaKcIIEgqPN7l5IUvl0GuSUjmek/y
-	 bAOvDBqJr4GuQocqoX+5qYRe8iKUtsm6yglzp9h4bou3tbszrG6nhOcOz0ju+E2Jdn
-	 7prBroEMzxlpyk2Rd04hkicH4BJxFFNEqcO0xL4E=
+	by mail.kernel.org (Postfix) with ESMTP id 299D92171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:03:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727017AbfA1XBx (ORCPT
+        id S1727029AbfA1XD5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 18:01:53 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:34390 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfA1XBx (ORCPT
+        Mon, 28 Jan 2019 18:03:57 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:58917 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726694AbfA1XD4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 18:01:53 -0500
-Received: by mail-yb1-f193.google.com with SMTP id k9so6917882ybg.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 15:01:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vxgoQPA6ZPYEYvlFa80nTtCjSTPua4RFULptDtxyoro=;
-        b=ffnL71qRlAnZTtFGlt0tV8/oBIKgUbazgwFjcSNAP3j3TtaFNQ31yI4TV0qI1Cgsth
-         cnjSWNDrhNzaSiRCAmKQnAp+p8r9ENst3w8mS9MyRIk47sNRKJpksXNZJTCSLBa+RvqC
-         rMQisXqBkhPPlChjyExdnINQ69derhJCtmHt4t4Dtg0jGVcShfdxwuzmLwn1oT/0w95y
-         bvfjq9tW/HVRSk3cOcPnInCl7hGYaE3pMqyctAySJ5ghakHJAK0RVt7gm5qjVIlTrncj
-         sCd+4zaVmF7QdbhIrs/k7sBgZiDKTbn2EqncBLmI2EMZrHivMjZg6CNyUsdHb4mzpdiq
-         tIGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vxgoQPA6ZPYEYvlFa80nTtCjSTPua4RFULptDtxyoro=;
-        b=DtoV1GWZPr22dQjoAoWr1VRiWSdkjm7r6hKL3j/ZKN+zIpnKbI0TDji0myxjhgRMxs
-         tAULYq+hUMYvJQNa8Cq8O/Cny1rciEdYkXEP/b2d7qlRLnB6MgI4laMCUa2jYuU4WL4o
-         Ld72GdD4tS2MJ1ANTuLZeUGmHQUAL55V29c0b+G82nO70wA/Qv/9uBHIQm7+dyKpoJDs
-         6ygRPjuwpDJGFGVnXSqVHHwcy8u7nV0gghhWRxvE0mk9mu+9P01xjGp4Kczg8jSRmSgW
-         py5oB3RDgI0NFF9RdYw4gApIYZETzfRU1sIpkijNI6u0/MRepvSNHJ+CG8pnBto/bRig
-         UzMA==
-X-Gm-Message-State: AHQUAuYPPtdNvK96pDh3d4OubwJgh1O2mMg4MzwdR2Kx8E85ZSCiizsZ
-        IjAYq12Ck1ZY1nC8R7MBk0g=
-X-Google-Smtp-Source: AHgI3IbxsjXUbjB2JBT1RbvmsvTf2kh4q2fXkI9mcGDprsh/hY3lOBEzN8q5CUcUWyCHbmiqaTpvAg==
-X-Received: by 2002:a25:bcc3:: with SMTP id l3mr1677649ybm.478.1548716512207;
-        Mon, 28 Jan 2019 15:01:52 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::7:31a1])
-        by smtp.gmail.com with ESMTPSA id m126sm14426774ywd.39.2019.01.28.15.01.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 15:01:51 -0800 (PST)
-Date:   Mon, 28 Jan 2019 15:01:49 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] psi: fix aggregation idle shut-off
-Message-ID: <20190128230149.GW50184@devbig004.ftw2.facebook.com>
-References: <20190116193501.1910-1-hannes@cmpxchg.org>
+        Mon, 28 Jan 2019 18:03:56 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id C6496801AD; Tue, 29 Jan 2019 00:03:45 +0100 (CET)
+Date:   Tue, 29 Jan 2019 00:03:51 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Dan Murphy <dmurphy@ti.com>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, dachaac@gmail.com, robh+dt@kernel.org
+Subject: Re: RGB LED class Re: [PATCH v2 2/2] leds: lp50xx: Add the LP50XX
+ family of the RGB LED driver
+Message-ID: <20190128230351.GA5728@amd>
+References: <20190114211723.11186-1-dmurphy@ti.com>
+ <20190114211723.11186-2-dmurphy@ti.com>
+ <ce911fdf-c7c2-63e8-5c7a-b0be965ab69b@gmail.com>
+ <20190115222223.GA17363@amd>
+ <79394d17-3124-75b2-ccac-dc1046499d14@ti.com>
+ <20190116105537.GA1803@amd>
+ <86299268-3202-814a-134b-04bd2170faab@ti.com>
+ <8dfa2854-2814-6874-ab8e-1858e9a18acf@gmail.com>
+ <20190118000235.GB27661@amd>
+ <b7ee7c2b-0878-962c-71ee-3ef281f6de0f@ti.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="XsQoSWH+UP9D9v3l"
 Content-Disposition: inline
-In-Reply-To: <20190116193501.1910-1-hannes@cmpxchg.org>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <b7ee7c2b-0878-962c-71ee-3ef281f6de0f@ti.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-On Wed, Jan 16, 2019 at 02:35:01PM -0500, Johannes Weiner wrote:
-> +/**
-> + * wq_worker_last_func - retrieve worker's last work function
-> + *
-> + * Determine the last function a worker executed. This is called from
-> + * the scheduler to get a worker's last known identity.
+--XsQoSWH+UP9D9v3l
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Maybe it can describe better why this is safe in this use case and
-not suitable as a generic interface but other than that,
+Hi!
 
-Acked-by: Tejun Heo <tj@kernel.org>
+> > First, I think we want to decide if RGB LED should be presented as
+> > 3 LEDs or as 1 LED... and what to do with existing RGB leds being
+> > presented as 3 LEDs.
+>=20
+> What do we do with RGBW drivers?  Like the LP5562.  RGB can be grouped as=
+ a single
+> LED but does the white LED get grouped too or should it register as a new=
+ LED?
+>=20
+> I am assuming the answer is that it would register as a new LED.
 
-Thanks.
+We could extend this to more than three channels, and specify "color"
+for each channel. We could probably specify wavelength for
+monochromatic LEDs and color temperature for white LEDs....
 
--- 
-tejun
+> >     pwm_channels -- "1000 240 300" -- "red part should be full on, green
+> >     should be pwm controlled to 240/1000, blue should be 300/1000"
+> >=20
+>=20
+> Why 1000?  Why not based on a duty cycle percentage and let the LED drive=
+r figure out
+> what that means to the device?
+>=20
+> pwm_channels -- "100 24 30" -- red part is full on 100%, green is 24% dut=
+y cycle and
+> blue is 30% duty cycle.
+
+Percentage would work, too. Having base of 1000 (not 100) gives a bit
+more precision.
+
+> >     pwm_white -- "1000 500 400" -- tells userspace what to write to PWM
+> >     channels to get approximately white color.
+> >=20
+>=20
+> Same as above on the duty cycle.
+>=20
+> But I still am in disagreement with the kernel detailing what is white or=
+ how to
+> achieve white.
+>=20
+> Based on my earlier email about light pipes and the LED vendors and aging=
+ I think product
+> developers will need to fine tune what is "white" on their product from u=
+ser space or even a DT node.
+>
+
+Yes, this needs to be in the DT and kernel needs to expose it to
+userspace in sysfs.
+
+> >     This would assume that RGB LEDs are always pwm controlled. That
+> >     seems to be true for hardware I seen.
+> >=20
+>=20
+> GPIO LEDs can be binary or use PWM depending on what is needed.
+>=20
+> >     + no complex math in kernel
+>=20
+> We can eliminate the math if we use the "color" file that was proposed an=
+d pass in absolute
+> hex/decimal numbers for color.
+
+No you can't.
+
+> >     + userspace knows enough to display arbitrary colors
+> >=20
+> >     + userspace can use full range of available PWM intensities
+> >=20
+>=20
+> Do we need a pwm_max file to indicate to the user space what the max valu=
+es of the pwm
+> is for each color?
+
+Maybe. I'd assume brightness_max would be equal to max pwm.
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--XsQoSWH+UP9D9v3l
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlxPilcACgkQMOfwapXb+vJrzACglsQtnLzislwoPMC/iz16rLlf
+xZ8AnjMk2zkKk3dfNb9eCcvZR1xQQHWg
+=9b19
+-----END PGP SIGNATURE-----
+
+--XsQoSWH+UP9D9v3l--
