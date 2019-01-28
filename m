@@ -7,45 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1553C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DCCD5C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C162E20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:45:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABC712175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697540;
-	bh=sGAeEOEyVi0+YKfusaYm6eKkz6VSBsZUlgkQg7OO0zo=;
+	s=default; t=1548697569;
+	bh=EarvCAMWQJbB6l2OnfSWyFeOMfuXJLfLTAlJwbwhjcQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MMkFqqIAdj6nYiSzIY1Z54/WRY66wDTzzuCM1JR+X8onBapyX+8xibHLppI9U4SxI
-	 Ghswvftpn3b+NaCQHsFA1mlSf2pq9iCFVSCFf5XhYZ6mK+rUVG38i3qr564c4b71vE
-	 u/w08dg/LtXo5aGDtBCxXh8WP4PJUzx179WwobY8=
+	b=Eo0JDAv5Tq5t2zzeRPNbwTT/p8140yIOcUuwC1jfkH9wVhYc+Vss4yVHNNxX5MWHX
+	 JNo3peHQeAzOIVxnHD6dfvvXqcBWMDZKIjs3fJwnkJkie65JCGYw6HNF240NNQKW+a
+	 lYzQsjTUITLEwnItBO+VJCbpA970Acq4JEApOkOY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728570AbfA1Rph (ORCPT
+        id S1728614AbfA1RqH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:45:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33094 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:46:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60926 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727823AbfA1Prl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:47:41 -0500
+        id S1728256AbfA1PrX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:47:23 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 46F3520880;
-        Mon, 28 Jan 2019 15:47:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D67E021783;
+        Mon, 28 Jan 2019 15:47:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690461;
-        bh=sGAeEOEyVi0+YKfusaYm6eKkz6VSBsZUlgkQg7OO0zo=;
+        s=default; t=1548690443;
+        bh=EarvCAMWQJbB6l2OnfSWyFeOMfuXJLfLTAlJwbwhjcQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kUwgWeSn9QuEeOUnCYsx95QovG3gQkMYrqWAe17QjtcooETij+rpjDrzNMijDutp1
-         BIAZnFWgJIdDOBPJA3XDn6W8VvtxjOp1UoV2yTWN+DUeQ9AIxi/oPU8hqLETN+dYK1
-         NW2WwfquSC+UP8dfBijN9cwG/PIc1SeQnMlyWjEc=
+        b=XV3brk2YgoCDEQOR0GGi6psU3kVakqooxeIG7PbuTEr8omi0viYjpRUsclBbXOFvR
+         4FcscPaSHhr1DIm8t3XpfLodexzB+fokxdlM/+zfntSLHMAaoAmQpqz4tWq3OvIEvt
+         Eq6/i96kyiMcnQ7upXPzTvFdrCAiwEpm25/mMJIw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sean Paul <seanpaul@chromium.org>, Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 096/304] drm: Clear state->acquire_ctx before leaving drm_atomic_helper_commit_duplicated_state()
-Date:   Mon, 28 Jan 2019 10:40:13 -0500
-Message-Id: <20190128154341.47195-96-sashal@kernel.org>
+Cc:     Tiezhu Yang <kernelpatch@126.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.20 089/304] f2fs: fix wrong return value of f2fs_acl_create
+Date:   Mon, 28 Jan 2019 10:40:06 -0500
+Message-Id: <20190128154341.47195-89-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,54 +59,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Paul <seanpaul@chromium.org>
+From: Tiezhu Yang <kernelpatch@126.com>
 
-[ Upstream commit aa394b0dd68cb00c483e151dcd84713d4d517ed1 ]
+[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
 
-drm_atomic_helper_commit_duplicated_state() sets state->acquire_ctx to
-the context given in the argument and leaves it in state after it
-quits. The lifetime of state and context are not guaranteed to be the
-same, so we shouldn't leave that pointer hanging around. This patch
-resets the context to NULL to avoid any oopses.
+When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
+should return -EIO instead of -ENOMEM, this patch makes it consistent
+with posix_acl_create() which has been fixed in commit beaf226b863a
+("posix_acl: don't ignore return value of posix_acl_create_masq()").
 
-Changes in v2:
-- Added to the set
-
-Suggested-by: Daniel Vetter <daniel@ffwll.ch>
-Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Link: https://patchwork.freedesktop.org/patch/msgid/20181129150423.239081-1-sean@poorly.run
+Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
+Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/drm_atomic_helper.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ fs/f2fs/acl.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_atomic_helper.c b/drivers/gpu/drm/drm_atomic_helper.c
-index b4e292a56046..df86c2ebfc12 100644
---- a/drivers/gpu/drm/drm_atomic_helper.c
-+++ b/drivers/gpu/drm/drm_atomic_helper.c
-@@ -3212,7 +3212,7 @@ EXPORT_SYMBOL(drm_atomic_helper_suspend);
- int drm_atomic_helper_commit_duplicated_state(struct drm_atomic_state *state,
- 					      struct drm_modeset_acquire_ctx *ctx)
- {
--	int i;
-+	int i, ret;
- 	struct drm_plane *plane;
- 	struct drm_plane_state *new_plane_state;
- 	struct drm_connector *connector;
-@@ -3231,7 +3231,11 @@ int drm_atomic_helper_commit_duplicated_state(struct drm_atomic_state *state,
- 	for_each_new_connector_in_state(state, connector, new_conn_state, i)
- 		state->connectors[i].old_state = connector->state;
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index fa707cdd4120..22f0d17cde43 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -352,12 +352,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 		return PTR_ERR(p);
  
--	return drm_atomic_commit(state);
-+	ret = drm_atomic_commit(state);
-+
-+	state->acquire_ctx = NULL;
-+
+ 	clone = f2fs_acl_clone(p, GFP_NOFS);
+-	if (!clone)
+-		goto no_mem;
++	if (!clone) {
++		ret = -ENOMEM;
++		goto release_acl;
++	}
+ 
+ 	ret = f2fs_acl_create_masq(clone, mode);
+ 	if (ret < 0)
+-		goto no_mem_clone;
++		goto release_clone;
+ 
+ 	if (ret == 0)
+ 		posix_acl_release(clone);
+@@ -371,11 +373,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 
+ 	return 0;
+ 
+-no_mem_clone:
++release_clone:
+ 	posix_acl_release(clone);
+-no_mem:
++release_acl:
+ 	posix_acl_release(p);
+-	return -ENOMEM;
 +	return ret;
  }
- EXPORT_SYMBOL(drm_atomic_helper_commit_duplicated_state);
  
+ int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
 -- 
 2.19.1
 
