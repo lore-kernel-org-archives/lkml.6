@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CAD7CC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E31DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AD972175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F67C2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691415;
-	bh=V0CaJN7T0D2iu6KZK5LLF1jwE5Bcs86VET2HD6ZUnlk=;
+	s=default; t=1548691418;
+	bh=TEkgNeXJVm2BYY9sKTJNoUkPb7TZeze7t3q2S7JhTZI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xDM/7LIbHHrFZuqS/gkFDuXwDCTjlpCeX4J022CHL2f/evcuJ7SlnQlYBAGfe3uQw
-	 CWb4KIegB70PL6kDm4HQ2Hfql7d+bpuvExv//WYk5KMX8dSRwvPM9JnRfE1cBMQx+f
-	 yo2ncXC0JzUWVnKbyEZLn/bu7t9n9OzgrbX7A/PU=
+	b=rmTb6fd2zkfJ3nPhsTti9bDjFajnnsCEdNG5uWbC16gMU7RZCh90l3r939MOSDIJm
+	 6B0JMpHF9V0qxhlutZsarwu4R1sPBlVohcFugHpFlO5Uw8x0YkuYLd/c4BIhW7WeYW
+	 NgCwUWnwtNHNT3jbNFvIAv2E5H9ojAnE3Xh30B2E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730813AbfA1QDe (ORCPT
+        id S1731413AbfA1QDb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:03:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48854 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:03:31 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48816 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730735AbfA1QDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:03:30 -0500
+        id S1728431AbfA1QD3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:03:29 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CC0B21848;
-        Mon, 28 Jan 2019 16:03:28 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B13792175B;
+        Mon, 28 Jan 2019 16:03:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691410;
-        bh=V0CaJN7T0D2iu6KZK5LLF1jwE5Bcs86VET2HD6ZUnlk=;
+        s=default; t=1548691408;
+        bh=TEkgNeXJVm2BYY9sKTJNoUkPb7TZeze7t3q2S7JhTZI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bBoFUDW6tyykwc4X9oV5jEuDRNSvxa0HMmVYfiI2SQErvpgw6qscztPXGEva+oCn9
-         GHcRzoL5/+FCkiILk7FlEVcRxIPaR2mvl88MX5b5779T0qaKVxO6FoTGcEROCE4x1U
-         poD8AM4YiZMCZVm3u6FtiKQmgfj2hKTrL4R02N+8=
+        b=wzbIkT2abSX5LelxNKLydLjeklTBQ0L6hMW4Rvu2NWfE9I4ym9g/oGXCYFCdmLpNG
+         OG49DUSVoC8plbitK56J+afYAxs2VX+yr/4vK46NzmOCCsriigHqqzaU6fGWOW5OgE
+         JOuonP6ROGFaaXiH4xt+YaZVGKYcOzCq0YDXUKu0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Wei Wang <wvw@google.com>, Zhang Rui <rui.zhang@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 086/258] Thermal: do not clear passive state during system sleep
-Date:   Mon, 28 Jan 2019 10:56:32 -0500
-Message-Id: <20190128155924.51521-86-sashal@kernel.org>
+Cc:     Will Deacon <will.deacon@arm.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 085/258] arm64: io: Ensure value passed to __iormb() is held in a 64-bit register
+Date:   Mon, 28 Jan 2019 10:56:31 -0500
+Message-Id: <20190128155924.51521-85-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,68 +56,52 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wei Wang <wvw@google.com>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 964f4843a455d2ffb199512b08be8d5f077c4cac ]
+[ Upstream commit 1b57ec8c75279b873639eb44a215479236f93481 ]
 
-commit ff140fea847e ("Thermal: handle thermal zone device properly
-during system sleep") added PM hook to call thermal zone reset during
-sleep. However resetting thermal zone will also clear the passive state
-and thus cancel the polling queue which leads the passive cooling device
-state not being cleared properly after sleep.
+As of commit 6460d3201471 ("arm64: io: Ensure calls to delay routines
+are ordered against prior readX()"), MMIO reads smaller than 64 bits
+fail to compile under clang because we end up mixing 32-bit and 64-bit
+register operands for the same data processing instruction:
 
-thermal_pm_notify => thermal_zone_device_reset set passive to 0
-thermal_zone_trip_update will skip update passive as `old_target ==
-instance->target'.
-monitor_thermal_zone => thermal_zone_device_set_polling will cancel
-tz->poll_queue, so the cooling device state will not be changed
-afterwards.
+./include/asm-generic/io.h:695:9: warning: value size does not match register size specified by the constraint and modifier [-Wasm-operand-widths]
+        return readb(addr);
+               ^
+./arch/arm64/include/asm/io.h:147:58: note: expanded from macro 'readb'
+                                                                       ^
+./include/asm-generic/io.h:695:9: note: use constraint modifier "w"
+./arch/arm64/include/asm/io.h:147:50: note: expanded from macro 'readb'
+                                                               ^
+./arch/arm64/include/asm/io.h:118:24: note: expanded from macro '__iormb'
+        asm volatile("eor       %0, %1, %1\n"                           \
+                                    ^
 
-Reported-by: Kame Wang <kamewang@google.com>
-Signed-off-by: Wei Wang <wvw@google.com>
-Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+Fix the build by casting the macro argument to 'unsigned long' when used
+as an input to the inline asm.
+
+Reported-by: Nick Desaulniers <nick.desaulniers@gmail.com>
+Reported-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/thermal/thermal_core.c | 12 ++++++++----
- 1 file changed, 8 insertions(+), 4 deletions(-)
+ arch/arm64/include/asm/io.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 441778100887..bf9721fc2824 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -451,16 +451,20 @@ static void update_temperature(struct thermal_zone_device *tz)
- 			tz->last_temperature, tz->temperature);
- }
+diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+index b2bc7dbc1fa6..49bb9a020a09 100644
+--- a/arch/arm64/include/asm/io.h
++++ b/arch/arm64/include/asm/io.h
+@@ -119,7 +119,8 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+ 	 */								\
+ 	asm volatile("eor	%0, %1, %1\n"				\
+ 		     "cbnz	%0, ."					\
+-		     : "=r" (tmp) : "r" (v) : "memory");		\
++		     : "=r" (tmp) : "r" ((unsigned long)(v))		\
++		     : "memory");					\
+ })
  
--static void thermal_zone_device_reset(struct thermal_zone_device *tz)
-+static void thermal_zone_device_init(struct thermal_zone_device *tz)
- {
- 	struct thermal_instance *pos;
--
- 	tz->temperature = THERMAL_TEMP_INVALID;
--	tz->passive = 0;
- 	list_for_each_entry(pos, &tz->thermal_instances, tz_node)
- 		pos->initialized = false;
- }
- 
-+static void thermal_zone_device_reset(struct thermal_zone_device *tz)
-+{
-+	tz->passive = 0;
-+	thermal_zone_device_init(tz);
-+}
-+
- void thermal_zone_device_update(struct thermal_zone_device *tz,
- 				enum thermal_notify_event event)
- {
-@@ -1502,7 +1506,7 @@ static int thermal_pm_notify(struct notifier_block *nb,
- 	case PM_POST_SUSPEND:
- 		atomic_set(&in_suspend, 0);
- 		list_for_each_entry(tz, &thermal_tz_list, node) {
--			thermal_zone_device_reset(tz);
-+			thermal_zone_device_init(tz);
- 			thermal_zone_device_update(tz,
- 						   THERMAL_EVENT_UNSPECIFIED);
- 		}
+ #define __iowmb()		wmb()
 -- 
 2.19.1
 
