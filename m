@@ -2,195 +2,154 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5235EC282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 03:09:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 39DBBC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 03:09:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D2DF20C01
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 03:09:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0DC1B20C01
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 03:09:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="E52NWDOP"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbfA1DJM (ORCPT
+        id S1726719AbfA1DJb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 22:09:12 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:47516 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726575AbfA1DJL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 22:09:11 -0500
-Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id B2F6669F368B0B1BEEDC;
-        Mon, 28 Jan 2019 11:09:08 +0800 (CST)
-Received: from localhost (10.177.19.219) by DGGEMS405-HUB.china.huawei.com
- (10.3.19.205) with Microsoft SMTP Server id 14.3.408.0; Mon, 28 Jan 2019
- 11:08:56 +0800
-From:   Yang Yingliang <yangyingliang@huawei.com>
-To:     <cminyard@mvista.com>, <arnd@arndb.de>,
-        <gregkh@linuxfoundation.org>
-CC:     <openipmi-developer@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>,
-        <yangyingliang@huawei.com>, <qiaonuohan@huawei.com>
-Subject: [PATCH v3] ipmi_si: fix use-after-free of resource->name
-Date:   Mon, 28 Jan 2019 11:08:54 +0800
-Message-ID: <1548644934-36452-1-git-send-email-yangyingliang@huawei.com>
-X-Mailer: git-send-email 1.9.5.msysgit.1
+        Sun, 27 Jan 2019 22:09:31 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:7099 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726575AbfA1DJa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 22:09:30 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5c4e72420000>; Sun, 27 Jan 2019 19:08:50 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Sun, 27 Jan 2019 19:09:29 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Sun, 27 Jan 2019 19:09:29 -0800
+Received: from [10.19.108.132] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
+ 2019 03:09:27 +0000
+Subject: Re: [PATCH 1/6] dt-bindings: timer: add Tegra210 timer
+To:     Jon Hunter <jonathanh@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>
+CC:     <devicetree@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        <linux-arm-kernel@lists.infradead.org>
+References: <20190107032810.13522-1-josephl@nvidia.com>
+ <20190107032810.13522-2-josephl@nvidia.com>
+ <a5fec080-d388-5362-7f44-b50f7d7e1adf@nvidia.com>
+ <285bd3f7-e1c0-0767-6381-4b1d748bd6db@nvidia.com>
+ <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
+From:   Joseph Lo <josephl@nvidia.com>
+Message-ID: <1d12f949-1a06-fd17-141d-bd04b72cda3c@nvidia.com>
+Date:   Mon, 28 Jan 2019 11:09:25 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.177.19.219]
-X-CFilter-Loop: Reflected
+In-Reply-To: <381f94c0-6c19-0f5b-df06-91353455a4c0@nvidia.com>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL104.nvidia.com (172.18.146.11) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1548644931; bh=ZpPo5gbRAe48ZjcdhkboWEuEFJTYCJUjMv/y/WLFfpE=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=E52NWDOPYlxWKd0RzsNEJnWbGEX10ni54N5WeTTPhmMtxPM068iVIdTEfrQ3bgJG/
+         R7Nu89/oesTY3SRLm9uk2nPRXy9PKuyua7mTtrNPeCwj4PgBz2MPBddRuK8dn8UsXU
+         y8pNZAAFu6Nc+AQs2nmbe/hezI95zZzb2IswoCKStWnCLS8XX7927U53HG9Dw/q0kI
+         og1e3SOoVKmRvBfE2zmKfcaTkC7sXzVPw6UorPSDA7FAVm6Uk8yB9qifBEXXlOcNBG
+         wltdX9Zm+4Y2bXD4tQQUH96J8oNbvLn3QpdnHT5wY/JCyvdea6f2LgJ4VR5HX+sVPi
+         t8LzUpb0JV6gg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When we excute the following commands, we got oops
-rmmod ipmi_si
-cat /proc/ioports
+On 1/25/19 8:01 PM, Jon Hunter wrote:
+>=20
+> On 25/01/2019 03:23, Joseph Lo wrote:
+>> Hi Jon,
+>>
+>> Thanks for reviewing.
+>>
+>> On 1/24/19 6:30 PM, Jon Hunter wrote:
+>>>
+>>> On 07/01/2019 03:28, Joseph Lo wrote:
+>>>> The Tegra210 timer provides fourteen 29-bit timer counters and one
+>>>> 32-bit
+>>>> timestamp counter. The TMRs run at either a fixed 1 MHz clock rate
+>>>> derived
+>>>> from the oscillator clock (TMR0-TMR9) or directly at the oscillator
+>>>> clock
+>>>> (TMR10-TMR13). Each TMR can be programmed to generate one-shot periodi=
+c,
+>>>> or watchdog interrupts.
+>>>>
+>>>> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>>> Cc: Thomas Gleixner <tglx@linutronix.de>
+>>>> Cc: linux-kernel@vger.kernel.org
+>>>> Cc: devicetree@vger.kernel.org
+>>>> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+>>>> ---
+>>>>  =C2=A0 .../bindings/timer/nvidia,tegra210-timer.txt=C2=A0 | 25 ++++++=
++++++++++++++
+>>>>  =C2=A0 1 file changed, 25 insertions(+)
+>>>>  =C2=A0 create mode 100644
+>>>> Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>>>>
+>>>> diff --git
+>>>> a/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>>>> b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.txt
+>>>> new file mode 100644
+>>>> index 000000000000..ba511220a669
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/timer/nvidia,tegra210-timer.tx=
+t
+>>>> @@ -0,0 +1,25 @@
+>>>> +NVIDIA Tegra210 timer
+>>>> +
+>>>> +The Tegra210 timer provides fourteen 29-bit timer counters and one
+>>>> 32-bit
+>>>> +timestamp counter. The TMRs run at either a fixed 1 MHz clock rate
+>>>> derived
+>>>> +from the oscillator clock (TMR0-TMR9) or directly at the oscillator
+>>>> clock
+>>>> +(TMR10-TMR13). Each TMR can be programmed to generate one-shot,
+>>>> periodic,
+>>>> +or watchdog interrupts.
+>>>> +
+>>>> +Required properties:
+>>>> +- compatible : "nvidia,tegra210-timer".
+>>>> +- reg : Specifies base physical address and size of the registers.
+>>>> +- interrupts : A list of 4 interrupts; one per each of TMR10 through
+>>>> TMR13.
+>>>
+[snip]
+>> And notice that only TMR10-TMR13 are running at the oscillator clock
+>> (clk_m). With the Tegra210 timer driver, we introduce in this series,
+>> which only replace the clock event device function that was originally
+>> owned by the arch timer (armv8 timer) and it also running at the
+>> oscillator clock. The sched_timer still owns by the arch timer. So the
+>> timer resolution will be the same. That's why we choose TMR10-TMR13 as
+>> the timer for Tegra210.
+>=20
+> That maybe fine, but DT should describe the hardware and so I don't see
+> why we would not list all the interrupts. We can still only use TMR10-13
+> in the driver.
+>=20
 
-[ 1623.482380] Unable to handle kernel paging request at virtual address ffff00000901d478
-[ 1623.482382] Mem abort info:
-[ 1623.482383]   ESR = 0x96000007
-[ 1623.482385]   Exception class = DABT (current EL), IL = 32 bits
-[ 1623.482386]   SET = 0, FnV = 0
-[ 1623.482387]   EA = 0, S1PTW = 0
-[ 1623.482388] Data abort info:
-[ 1623.482389]   ISV = 0, ISS = 0x00000007
-[ 1623.482390]   CM = 0, WnR = 0
-[ 1623.482393] swapper pgtable: 4k pages, 48-bit VAs, pgdp = 00000000d7d94a66
-[ 1623.482395] [ffff00000901d478] pgd=000000dffbfff003, pud=000000dffbffe003, pmd=0000003f5d06e003, pte=0000000000000000
-[ 1623.482399] Internal error: Oops: 96000007 [#1] SMP
-[ 1623.487407] Modules linked in: ipmi_si(E) nls_utf8 isofs rpcrdma ib_iser ib_srpt target_core_mod ib_srp scsi_transport_srp ib_ipoib rdma_ucm ib_umad rdma_cm ib_cm dm_mirror dm_region_hash dm_log iw_cm dm_mod aes_ce_blk crypto_simd cryptd aes_ce_cipher ses ghash_ce sha2_ce enclosure sha256_arm64 sg sha1_ce hisi_sas_v2_hw hibmc_drm sbsa_gwdt hisi_sas_main ip_tables mlx5_ib ib_uverbs marvell ib_core mlx5_core ixgbe mdio hns_dsaf ipmi_devintf hns_enet_drv ipmi_msghandler hns_mdio [last unloaded: ipmi_si]
-[ 1623.532410] CPU: 30 PID: 11438 Comm: cat Kdump: loaded Tainted: G            E     5.0.0-rc3+ #168
-[ 1623.541498] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.37 11/21/2017
-[ 1623.548822] pstate: a0000005 (NzCv daif -PAN -UAO)
-[ 1623.553684] pc : string+0x28/0x98
-[ 1623.557040] lr : vsnprintf+0x368/0x5e8
-[ 1623.560837] sp : ffff000013213a80
-[ 1623.564191] x29: ffff000013213a80 x28: ffff00001138abb5
-[ 1623.569577] x27: ffff000013213c18 x26: ffff805f67d06049
-[ 1623.574963] x25: 0000000000000000 x24: ffff00001138abb5
-[ 1623.580349] x23: 0000000000000fb7 x22: ffff0000117ed000
-[ 1623.585734] x21: ffff000011188fd8 x20: ffff805f67d07000
-[ 1623.591119] x19: ffff805f67d06061 x18: ffffffffffffffff
-[ 1623.596505] x17: 0000000000000200 x16: 0000000000000000
-[ 1623.601890] x15: ffff0000117ed748 x14: ffff805f67d07000
-[ 1623.607276] x13: ffff805f67d0605e x12: 0000000000000000
-[ 1623.612661] x11: 0000000000000000 x10: 0000000000000000
-[ 1623.618046] x9 : 0000000000000000 x8 : 000000000000000f
-[ 1623.623432] x7 : ffff805f67d06061 x6 : fffffffffffffffe
-[ 1623.628817] x5 : 0000000000000012 x4 : ffff00000901d478
-[ 1623.634203] x3 : ffff0a00ffffff04 x2 : ffff805f67d07000
-[ 1623.639588] x1 : ffff805f67d07000 x0 : ffffffffffffffff
-[ 1623.644974] Process cat (pid: 11438, stack limit = 0x000000008d4cbc10)
-[ 1623.651592] Call trace:
-[ 1623.654068]  string+0x28/0x98
-[ 1623.657071]  vsnprintf+0x368/0x5e8
-[ 1623.660517]  seq_vprintf+0x70/0x98
-[ 1623.668009]  seq_printf+0x7c/0xa0
-[ 1623.675530]  r_show+0xc8/0xf8
-[ 1623.682558]  seq_read+0x330/0x440
-[ 1623.689877]  proc_reg_read+0x78/0xd0
-[ 1623.697346]  __vfs_read+0x60/0x1a0
-[ 1623.704564]  vfs_read+0x94/0x150
-[ 1623.711339]  ksys_read+0x6c/0xd8
-[ 1623.717939]  __arm64_sys_read+0x24/0x30
-[ 1623.725077]  el0_svc_common+0x120/0x148
-[ 1623.732035]  el0_svc_handler+0x30/0x40
-[ 1623.738757]  el0_svc+0x8/0xc
-[ 1623.744520] Code: d1000406 aa0103e2 54000149 b4000080 (39400085)
-[ 1623.753441] ---[ end trace f91b6a4937de9835 ]---
-[ 1623.760871] Kernel panic - not syncing: Fatal exception
-[ 1623.768935] SMP: stopping secondary CPUs
-[ 1623.775718] Kernel Offset: disabled
-[ 1623.781998] CPU features: 0x002,21006008
-[ 1623.788777] Memory Limit: none
-[ 1623.798329] Starting crashdump kernel...
-[ 1623.805202] Bye!
+Okay, will list all the interrupts for each timer channel.
 
-If io_setup is called successful in try_smi_init() but try_smi_init()
-goes out_err before calling ipmi_register_smi(), so ipmi_unregister_smi()
-will not be called while removing module. It leads to the resource that
-allocated in io_setup() can not be freed, but the name(DEVICE_NAME) of
-resource is freed while removing the module. It causes use-after-free
-when cat /proc/ioports.
-
-Fix this by calling io_cleanup() while try_smi_init() goes to out_err.
-and don't call io_cleanup() until io_setup() returns successful to avoid
-warning prints.
-
-Fixes: 93c303d2045b ("ipmi_si: Clean up shutdown a bit")
-Cc: stable@vger.kernel.org
-Reported-by: NuoHan Qiao <qiaonuohan@huawei.com>
-Suggested-by: Corey Minyard <cminyard@mvista.com>
-Signed-off-by: Yang Yingliang <yangyingliang@huawei.com>
----
- drivers/char/ipmi/ipmi_si_intf.c    | 5 +++++
- drivers/char/ipmi/ipmi_si_mem_io.c  | 5 +++--
- drivers/char/ipmi/ipmi_si_port_io.c | 5 +++--
- 3 files changed, 11 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/char/ipmi/ipmi_si_intf.c b/drivers/char/ipmi/ipmi_si_intf.c
-index dc8603d..f1b9fda 100644
---- a/drivers/char/ipmi/ipmi_si_intf.c
-+++ b/drivers/char/ipmi/ipmi_si_intf.c
-@@ -2085,6 +2085,11 @@ static int try_smi_init(struct smi_info *new_smi)
- 	WARN_ON(new_smi->io.dev->init_name != NULL);
- 
-  out_err:
-+	if (rv && new_smi->io.io_cleanup) {
-+		new_smi->io.io_cleanup(&new_smi->io);
-+		new_smi->io.io_cleanup = NULL;
-+	}
-+
- 	kfree(init_name);
- 	return rv;
- }
-diff --git a/drivers/char/ipmi/ipmi_si_mem_io.c b/drivers/char/ipmi/ipmi_si_mem_io.c
-index fd0ec8d..7558361 100644
---- a/drivers/char/ipmi/ipmi_si_mem_io.c
-+++ b/drivers/char/ipmi/ipmi_si_mem_io.c
-@@ -81,8 +81,6 @@ int ipmi_si_mem_setup(struct si_sm_io *io)
- 	if (!addr)
- 		return -ENODEV;
- 
--	io->io_cleanup = mem_cleanup;
--
- 	/*
- 	 * Figure out the actual readb/readw/readl/etc routine to use based
- 	 * upon the register size.
-@@ -141,5 +139,8 @@ int ipmi_si_mem_setup(struct si_sm_io *io)
- 		mem_region_cleanup(io, io->io_size);
- 		return -EIO;
- 	}
-+
-+	io->io_cleanup = mem_cleanup;
-+
- 	return 0;
- }
-diff --git a/drivers/char/ipmi/ipmi_si_port_io.c b/drivers/char/ipmi/ipmi_si_port_io.c
-index ef6dffc..03924c3 100644
---- a/drivers/char/ipmi/ipmi_si_port_io.c
-+++ b/drivers/char/ipmi/ipmi_si_port_io.c
-@@ -68,8 +68,6 @@ int ipmi_si_port_setup(struct si_sm_io *io)
- 	if (!addr)
- 		return -ENODEV;
- 
--	io->io_cleanup = port_cleanup;
--
- 	/*
- 	 * Figure out the actual inb/inw/inl/etc routine to use based
- 	 * upon the register size.
-@@ -109,5 +107,8 @@ int ipmi_si_port_setup(struct si_sm_io *io)
- 			return -EIO;
- 		}
- 	}
-+
-+	io->io_cleanup = port_cleanup;
-+
- 	return 0;
- }
--- 
-1.8.3
-
-
+Thanks,
+Joseph
