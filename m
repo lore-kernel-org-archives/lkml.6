@@ -2,145 +2,136 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A40C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:57:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8187BC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:57:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8786B20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:57:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="NJR5ZwPn"
+	by mail.kernel.org (Postfix) with ESMTP id 508EB21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:57:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548683856;
+	bh=zzNDuwt38SD2wmWuak/qv+Ea6Jcf45bcbuRjWhurxFg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:List-ID:From;
+	b=s8D1sZT0woOcervwQVG/p+tN75xplAeze3qi/ZLZxU8xF0nt66JphNSAoNRZb1cVL
+	 2VoG20X02YfIc6miUqHFS6jAP9qNAFbP/9PTuzlzc/7l9gm4nbdVxCvY+jHobufbU2
+	 8rwjwBZdFKFWpMk1q9uPSb8IKk6sP+3XvAtGcDpA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726867AbfA1N5G (ORCPT
+        id S1726888AbfA1N5e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:57:06 -0500
-Received: from mout01.posteo.de ([185.67.36.65]:52572 "EHLO mout01.posteo.de"
+        Mon, 28 Jan 2019 08:57:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37072 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726695AbfA1N5G (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:57:06 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id 666D016005D
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 14:57:03 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1548683823; bh=g6yNiMWn6EjFFGIM7uaWlBOhraSmLS6EY9e6o02kLro=;
-        h=From:To:Cc:Subject:Date:From;
-        b=NJR5ZwPnwhvcne+2mzo4wqPIPdaE3etkl6NWzvprvfGlzYe/sBEI3I43U6wdSEg7+
-         SpavZhcEcZlQEU4d2GL/GFH822tBHg0cH/auRz9zk3JWtb4tyXmxAljfx1+udJJMDf
-         0pS8yW0zh+ab4UrlCMhhuRSOasD1bghlYMl2apiRRRSFhioSQDfYS18icIxnVWLQo7
-         c1hItkPbq4Yf7oErB++gtsxmWorDv48bdyzqrNqa3FQvv/Uy8i2a5eaNNZXTUwUZl8
-         hIWTM+ZpCVwa7O3ULyfs+ZPQ33E8RSXPjNy9a2wWuE9R1j5SdfWuNvaQmdRUEaNnq7
-         wfDFlZniuEoqw==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 43pB5748rCz6tmG;
-        Mon, 28 Jan 2019 14:56:59 +0100 (CET)
-From:   Martin Kepplinger <martink@posteo.de>
-To:     linux-mmc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        robin@protonic.nl, ulf.hansson@linaro.org
-Cc:     shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-        linux-imx@nxp.com, linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH v3] mmc: mxs-mmc: Introduce regulator support
-Date:   Mon, 28 Jan 2019 14:56:47 +0100
-Message-Id: <20190128135647.20121-1-martink@posteo.de>
-X-Mailer: git-send-email 2.20.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        id S1726695AbfA1N5e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 08:57:34 -0500
+Received: from devbox (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29FC520989;
+        Mon, 28 Jan 2019 13:57:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548683853;
+        bh=zzNDuwt38SD2wmWuak/qv+Ea6Jcf45bcbuRjWhurxFg=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=amYA3XQ/z6jod9YKFehszHcn4TcRuwdQ1GVL13j3Jg2RujgF1hV2LbCFAKHCvhDGL
+         TGhZ/qMmuWikZKaVOugYZ/xkBrRtASzXsvP45SEopQO7L+cYbsmjDPiCYC0gQ0EtXF
+         1pSKaJcnPxf1ppSNHV0E8+b9AkdhdSSfb0SBPKAk=
+Date:   Mon, 28 Jan 2019 22:57:30 +0900
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Frederic Weisbecker <frederic@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@redhat.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH] x86/hw_breakpoints, kprobes: Remove kprobes ifdeffery
+Message-Id: <20190128225730.557ab61746fea62d3f85f584@kernel.org>
+In-Reply-To: <20190127131237.4557-1-bp@alien8.de>
+References: <20190127131237.4557-1-bp@alien8.de>
+X-Mailer: Sylpheed 3.5.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
+On Sun, 27 Jan 2019 14:12:37 +0100
+Borislav Petkov <bp@alien8.de> wrote:
 
-This adds support for explicitly switching the mmc's power on and off
-which is needed for example for WL1837 WL1271 wifi controllers on imx28.
+> From: Borislav Petkov <bp@suse.de>
+> 
+> Remove the ifdeffery in the breakpoint parsing arch_build_bp_info() by
+> adding a within_kprobe_blacklist() stub for the !CONFIG_KPROBES case.
+> 
+> It is returning true when kprobes are not enabled to mean that any
+> address is within the kprobes blacklist on such kernels and thus not
+> allow kernel breakpoints on non-kprobes kernels.
+> 
 
-While the wifi's vmmc-supply regulator can be configured in devicetree,
-"ip link set wlan0 down" doesn't turn off the VMMC regulator which leads
-to hangs when loading firmware, for example.
+This looks good to me.
 
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
----
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
 
-Thanks Ulf for your review and keeping this up with the current API.            
-                                                                                
-                            martin                                              
-                                                                                
-                                                                                
-revision history                                                                
-----------------                                                                
-v3: improve API usage as suggested by Ulf
-v2: tested patch with changes suggested by Robin                                
-v1: question, why https://patchwork.kernel.org/patch/4365751/ didn't get in
+Thank you Borislav!!
+
+> Signed-off-by: Borislav Petkov <bp@suse.de>
+> Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: Frederic Weisbecker <frederic@kernel.org>
+> Cc: "H. Peter Anvin" <hpa@zytor.com>
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  arch/x86/kernel/hw_breakpoint.c | 4 ----
+>  include/linux/kprobes.h         | 5 +++++
+>  2 files changed, 5 insertions(+), 4 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/hw_breakpoint.c b/arch/x86/kernel/hw_breakpoint.c
+> index 7d6f91f2869a..ff9bfd40429e 100644
+> --- a/arch/x86/kernel/hw_breakpoint.c
+> +++ b/arch/x86/kernel/hw_breakpoint.c
+> @@ -261,12 +261,8 @@ static int arch_build_bp_info(struct perf_event *bp,
+>  		 * allow kernel breakpoints at all.
+>  		 */
+>  		if (attr->bp_addr >= TASK_SIZE_MAX) {
+> -#ifdef CONFIG_KPROBES
+>  			if (within_kprobe_blacklist(attr->bp_addr))
+>  				return -EINVAL;
+> -#else
+> -			return -EINVAL;
+> -#endif
+>  		}
+>  
+>  		hw->type = X86_BREAKPOINT_EXECUTE;
+> diff --git a/include/linux/kprobes.h b/include/linux/kprobes.h
+> index e07e91daaacc..201f0f2683f2 100644
+> --- a/include/linux/kprobes.h
+> +++ b/include/linux/kprobes.h
+> @@ -442,6 +442,11 @@ static inline int enable_kprobe(struct kprobe *kp)
+>  {
+>  	return -ENOSYS;
+>  }
+> +
+> +static inline bool within_kprobe_blacklist(unsigned long addr)
+> +{
+> +	return true;
+> +}
+>  #endif /* CONFIG_KPROBES */
+>  static inline int disable_kretprobe(struct kretprobe *rp)
+>  {
+> -- 
+> 2.19.1
+> 
 
 
-
- drivers/mmc/host/mxs-mmc.c | 34 ++++++++++++++++++++++++----------
- 1 file changed, 24 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/mmc/host/mxs-mmc.c b/drivers/mmc/host/mxs-mmc.c
-index add1e70195ea..af6068152929 100644
---- a/drivers/mmc/host/mxs-mmc.c
-+++ b/drivers/mmc/host/mxs-mmc.c
-@@ -517,6 +517,27 @@ static void mxs_mmc_set_ios(struct mmc_host *mmc, struct mmc_ios *ios)
- 	else
- 		host->bus_width = 0;
- 
-+	if (host->mmc->supply.vmmc &&
-+	    ios->power_mode != host->mmc->ios.power_mode) {
-+		switch (ios->power_mode) {
-+		case MMC_POWER_OFF:
-+			if (mmc_regulator_set_ocr(host->mmc,
-+						  host->mmc->supply.vmmc, 0))
-+				dev_err(mmc_dev(host->mmc),
-+					"Failed to disable vmmc regulator\n");
-+			break;
-+		case MMC_POWER_UP:
-+			if (mmc_regulator_set_ocr(host->mmc,
-+						  host->mmc->supply.vmmc,
-+						  ios->vdd))
-+				dev_err(mmc_dev(host->mmc),
-+					"Failed to enable vmmc regulator\n");
-+			break;
-+		default:
-+			break;
-+		}
-+	}
-+
- 	if (ios->clock)
- 		mxs_ssp_set_clk_rate(&host->ssp, ios->clock);
- }
-@@ -588,7 +609,6 @@ static int mxs_mmc_probe(struct platform_device *pdev)
- 	struct mmc_host *mmc;
- 	struct resource *iores;
- 	int ret = 0, irq_err;
--	struct regulator *reg_vmmc;
- 	struct mxs_ssp *ssp;
- 
- 	irq_err = platform_get_irq(pdev, 0);
-@@ -614,15 +634,9 @@ static int mxs_mmc_probe(struct platform_device *pdev)
- 	host->mmc = mmc;
- 	host->sdio_irq_en = 0;
- 
--	reg_vmmc = devm_regulator_get(&pdev->dev, "vmmc");
--	if (!IS_ERR(reg_vmmc)) {
--		ret = regulator_enable(reg_vmmc);
--		if (ret) {
--			dev_err(&pdev->dev,
--				"Failed to enable vmmc regulator: %d\n", ret);
--			goto out_mmc_free;
--		}
--	}
-+	ret = mmc_regulator_get_supply(mmc);
-+	if (ret)
-+		goto out_mmc_free;
- 
- 	ssp->clk = devm_clk_get(&pdev->dev, NULL);
- 	if (IS_ERR(ssp->clk)) {
 -- 
-2.20.1
-
+Masami Hiramatsu <mhiramat@kernel.org>
