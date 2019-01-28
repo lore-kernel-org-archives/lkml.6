@@ -2,132 +2,123 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7ACC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE94FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:25:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C26E2148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 796752148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:25:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YtLRJh/V"
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dGOTS9Qn"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728273AbfA1TW6 (ORCPT
+        id S1727658AbfA1TZH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:22:58 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:36757 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbfA1TW5 (ORCPT
+        Mon, 28 Jan 2019 14:25:07 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:38162 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbfA1TZG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:22:57 -0500
-Received: by mail-pf1-f193.google.com with SMTP id b85so8460326pfc.3;
-        Mon, 28 Jan 2019 11:22:56 -0800 (PST)
+        Mon, 28 Jan 2019 14:25:06 -0500
+Received: by mail-vs1-f65.google.com with SMTP id x64so10454392vsa.5
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:25:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=4w5GVgfSc7HDd4w82dp/ZXFLWhzvarEeSPreNtWAt24=;
-        b=YtLRJh/VTwFwZTLiBH8nhmwp9XiwpPsk/31466R4V8uL7VKH1UaBT7UHcwuVZmF7Pn
-         yi2aqKPdjxQr5JB0PEpPjVrCbcdtaSTf2+350JAfH00AvlYlUF7El8XBZ2T9NVRDRBdG
-         W0OJ87fZxqp4EB7IVz95BPOFUWc8fp1ecxSc2GrFU6nh2D0bVMvH0hP96F7db5F6HxPL
-         ztg5Oa1aak6pmGzWjXR7Zv9LupnlU/55TaYJs8D2Lh6K4IqwFipaes8z6WAtx75UEbpl
-         /U5FnoY3YPeCIDx3063c2hTT+awuZivw+RrwzBpCEmyyXQYocAUEV5KmkJ4XnID+AvjE
-         r5wQ==
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=SQY6Zal4DC++bZdpHMJ7+qGiQeQDdJgSt9Ldg8BCEd8=;
+        b=dGOTS9QnfoLXq3htIaA2MOdWKp89qLma1tYgvj6HIyPsZf4W1jCkx+tQ5ihMRiL5+z
+         JqXwHGGPw4ii0fGorBIzgldXhPBvJWppIMTCgV1PAtU6YMCXjhccosonhG/pNky/ONpV
+         UwlXnXR4Px8LDRKrJxelCejHJVQj1OotokYg4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=4w5GVgfSc7HDd4w82dp/ZXFLWhzvarEeSPreNtWAt24=;
-        b=l9PN/R9uUzeRrrS6uAKDxrOZ/aHpMKwEPVVBaN0qo3vd8okfeiqqm0+pE8B6SEfAhw
-         gEVYlXggzkYW+RcHa0MLgdKkScuHqhiSBkMKXGnflY1B/EuEOPUkxkEq3AuBzcX4Y2H+
-         1VnFHBQmN+Ud/Va9Y0iwTQvdlQPWDPBl7yOiyngVxLND5/L8XYPQBjJVxqPbyDgQDsm8
-         pSSzeezwZkaxvKavtiVZ1djI0b6R0IPKrWmeODe0N3pzPkmKK7RSWuSm4kRU6RU+iy/u
-         IFHI3K9XA9SpVQ+74iQVZkO8FEdFjWZ1AAe5SXGaJLYJheWGbiMgy7ulanxmT7EXyXcr
-         HpZg==
-X-Gm-Message-State: AJcUukco/14QzjECjx4FZHpWLAuDnqe7wRxRlXOFRHhZFwEt5OzBA+BF
-        KcXnfTpbkbVLmUh1zsAiHLQ=
-X-Google-Smtp-Source: ALg8bN4T4eNxnwW4DJ9WSVR5aF0mF+0xhZgpR38hQhbfVpKpzZWvdwCrnljPzsZxRGVtU/ygw1fwQA==
-X-Received: by 2002:a63:4e15:: with SMTP id c21mr21004600pgb.50.1548703375956;
-        Mon, 28 Jan 2019 11:22:55 -0800 (PST)
-Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
-        by smtp.gmail.com with ESMTPSA id y6sm49018429pfd.104.2019.01.28.11.22.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 11:22:54 -0800 (PST)
-Date:   Mon, 28 Jan 2019 11:22:53 -0800
-From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>, Lee Jones <lee.jones@linaro.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-        linux-pm@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: Re: [PATCH 12/13] input: max77650: add onkey support
-Message-ID: <20190128192253.GD34692@dtor-ws>
-References: <20190118134244.22253-1-brgl@bgdev.pl>
- <20190118134244.22253-13-brgl@bgdev.pl>
- <20190119090318.GB187380@dtor-ws>
- <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=SQY6Zal4DC++bZdpHMJ7+qGiQeQDdJgSt9Ldg8BCEd8=;
+        b=Zyi39w6/P+JOXd3NTYThyECInkOGk/V71AOjbvYSNq8LQkA6AuV3sbd7FEh29mfd1G
+         XjVriDFSWbFAHyTsFRk026d0Trm6jwxWUti5mKcq7foPss+AbXOId7fXP6Y2xuMcCmue
+         pT8uiYUeAhY7IiuVoALzUwERHy/6Dbn4OgEGTShSCXYPiUNYtNs6wRtFt0CoTN6ik635
+         QZMcaYJA+qP8Y3cTKs4NMR9XNy9JcIqCnzba76VQX8Gc+xjLXnGsgh7GXF7KmdVU7u5I
+         FEj4CsL19XTVNmRx+Hjdv7jtCUbz/8epRSISsaYtnpPPP7L/v4ChdZicZf9TfjI1cgMo
+         IHCw==
+X-Gm-Message-State: AJcUukc/s10pF4kabXRrKGOhEWkhR+yJDbgBDJeV6ylgbXS5mocO2F0Q
+        bgVcJW1qrYeCH7J7A9qyE1qGtUDf3M0=
+X-Google-Smtp-Source: ALg8bN7agJdLZXgTZsNlwsXWAvxZkh8DGEbpC9obG/aopDSqhzeXC3j34ZPn3eHZOIHr6ywxfJHhJg==
+X-Received: by 2002:a67:ebc3:: with SMTP id y3mr9619795vso.75.1548703505014;
+        Mon, 28 Jan 2019 11:25:05 -0800 (PST)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id j95sm51722007uad.6.2019.01.28.11.25.03
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 11:25:04 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id h78so10455010vsi.6
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:25:03 -0800 (PST)
+X-Received: by 2002:a67:dd94:: with SMTP id i20mr10141181vsk.111.1548703502172;
+ Mon, 28 Jan 2019 11:25:02 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMRc=MfOWWK+nfYLt03EFe-ekTnbDr6oCoqd=n3dpMjz1sELMQ@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1548419933.git.saiprakash.ranjan@codeaurora.org> <d0370bc569491d11827a6eb12a75a236c3d60a0e.1548419933.git.saiprakash.ranjan@codeaurora.org>
+In-Reply-To: <d0370bc569491d11827a6eb12a75a236c3d60a0e.1548419933.git.saiprakash.ranjan@codeaurora.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Mon, 28 Jan 2019 11:24:50 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=XjVU=stq9U+tBtJpAiQa+6hDKi8+F5LOX4bq68-wQNaA@mail.gmail.com>
+Message-ID: <CAD=FV=XjVU=stq9U+tBtJpAiQa+6hDKi8+F5LOX4bq68-wQNaA@mail.gmail.com>
+Subject: Re: [PATCHv5 7/7] arm64: dts: qcom: sdm845: Remove the duplicate
+ header inclusion
+To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach <mike.leach@linaro.org>,
+        Leo Yan <leo.yan@linaro.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Jeffrey Hugo <jhugo@codeaurora.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        devicetree@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+        Marc Gonzalez <marc.w.gonzalez@free.fr>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        Sibi Sankar <sibis@codeaurora.org>,
+        Tingwei Zhang <tingwei@codeaurora.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 21, 2019 at 11:52:50AM +0100, Bartosz Golaszewski wrote:
-> sob., 19 sty 2019 o 10:03 Dmitry Torokhov <dmitry.torokhov@gmail.com>
-> napisał(a):
-> >
-> > Hi Bartosz,
-> >
-> > On Fri, Jan 18, 2019 at 02:42:43PM +0100, Bartosz Golaszewski wrote:
-> > > +     input_set_capability(onkey->input, EV_KEY, onkey->code);
-> > > +
-> > > +     rv = devm_request_threaded_irq(dev, irq_f, NULL,
-> >
-> > Why threaded interrupt with only hard interrupt handler? If parent
-> > interrupt is threaded use "any_context_irq" here.
-> >
-> 
-> Hi Dmitry,
-> 
-> actually it's the other way around. Take a look at the function
-> prototype for  devm_request_threaded_irq()[1].
-> 
-> The third parameter is the hard-irq handler (NULL in my patch), the
-> fourth is the thread function. Actually even if I did what you're
-> saying - it would never work as this is a nested irq for which the
-> hard-irq handler is never called.
+Hi,
 
-Sorry, my eyes must have crossed. Still, from the driver POV the
-interrupt does not have to be threaded, this is dictated by the
-constraints beyond the driver control. For these cases we have
-devm_request_any_context_irq() that takes essentially only "hard" IRQ
-handler, but internally either does request_irq() or
-request_threaded_irq(), depending on the context (whether the interrupt
-is nested or not). Using devm_request_any_context_irq() should not have
-any behavioral changes, but documents the logic better.
+On Mon, Jan 28, 2019 at 11:16 AM Sai Prakash Ranjan
+<saiprakash.ranjan@codeaurora.org> wrote:
+>
+> Remove the duplicate inclusion of qcom,gcc-sdm845.h
+> mistakenly introduced by commit 6e17f8140521 ("arm64:
+> dts: sdm845: add prng-ee node").
+>
+> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+> Reviewed-by: Douglas Anderson <dianders@chromium.org>
+> ---
+>  arch/arm64/boot/dts/qcom/sdm845.dtsi | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/qcom/sdm845.dtsi b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> index e49f71d00854..eafe8e47471e 100644
+> --- a/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sdm845.dtsi
+> @@ -12,7 +12,6 @@
+>  #include <dt-bindings/phy/phy-qcom-qusb2.h>
+>  #include <dt-bindings/reset/qcom,sdm845-aoss.h>
+>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> -#include <dt-bindings/clock/qcom,gcc-sdm845.h>
 
-Thanks.
-
--- 
-Dmitry
+You can probably stop sending this one.  It's in Andy's tree now.  See
+commit ea0edd7e63f4 ("arm64: dts: qcom: sdm845: Remove the duplicate
+header inclusion").
