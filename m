@@ -1,171 +1,225 @@
-Return-Path: <SRS0=AJhT=QD=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A8AC282CA
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 23:53:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1858AC282CA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 00:00:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83E8720857
-	for <linux-kernel@archiver.kernel.org>; Sun, 27 Jan 2019 23:53:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y3K0apwS"
+	by mail.kernel.org (Postfix) with ESMTP id D37012148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 00:00:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726859AbfA0Xxj (ORCPT
+        id S1726840AbfA1AAw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 18:53:39 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:36400 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726511AbfA0Xxi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 18:53:38 -0500
-Received: by mail-pf1-f194.google.com with SMTP id b85so7173665pfc.3;
-        Sun, 27 Jan 2019 15:53:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=a8qdXhyWgTXnWPhZIODPClZCfoEAHYrzyBhZ6a3KE7g=;
-        b=Y3K0apwS28qIk6OhXvQtQmEdHar2ZD3/tVdMbtTcvsEWL1wVFTLxwDuBwM0wOMXTMu
-         q1tozQ2QCe4McztuyOgmDkAEwjplaaSnpUl7s9TBkAZbBkvqY8iBFEQT3cwtkvIsGPCQ
-         K+bkKlr1rCqhfO5AesuBI7C6SFg2YbYo0ClaFFHhK2pNEbtJuL1CzaZCd7T3t0C9oLzv
-         Esus130H2DYFXsA5sZV6ifX3c1o4aBpIUrlQaO69SoeoNgvvozk7Fr/EcD92lXlfuNH8
-         07hpOACsc3t+s4Dz6a8NWi6vI57RxhyGXN4xezFWHh0FAHIV/nTpY+ejUWUOnG6SlxRv
-         RlZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:subject:to:cc:references:from:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=a8qdXhyWgTXnWPhZIODPClZCfoEAHYrzyBhZ6a3KE7g=;
-        b=b+MtfR2E/nnM8Hq07Dgy7L4e1n3L8NoSOR4jkYvigFXRopkM2GXwi4IeIa7h+MKG3m
-         k5Fh2Z6BOXnlbMLxyzb5hwJZ5/UI1x/UteltEuGSRE6hDQuZp75MLPQcuiiMZV0LjpSZ
-         HgDFtLn2iYzSr6FXgHnB1etb5TjjneqP1uBUnrbU3/02K9WyhtomfvSAlbstfwmFZZvt
-         LBlJAgKyf/wWWEshecR0+FNFX5nUWv5S9ATifDl25BW1WoorOoLgH7BFbLEGqhGrLxW6
-         axNdJrhfyyPj41BQ52d80m7Cwoa8VAYCz5IwvRS76f7vAkIH7Tl0/96KvjvN6mnO+cXt
-         zRpA==
-X-Gm-Message-State: AJcUukdSzqg+197HEuWoIVE3+ACDJma9rD7A8IRyQde2lxON/kaf91nC
-        U9US+msRO/ttlZcqMhQfAFj5UIC7
-X-Google-Smtp-Source: ALg8bN64XSA7MDEa+FQhLCb0UOIXs7r++JtwIkYdjDdgZZbjvTCiNTMEECoPGUoTW3WQCbHCFHcyVA==
-X-Received: by 2002:a63:4c04:: with SMTP id z4mr17958042pga.312.1548633217245;
-        Sun, 27 Jan 2019 15:53:37 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id i184sm40256361pfc.41.2019.01.27.15.53.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 15:53:36 -0800 (PST)
-Subject: Re: [PATCH] selftests/seccomp: Actually sleep for 1/10th second
-To:     Nick Desaulniers <ndesaulniers@google.com>,
-        Kees Cook <keescook@chromium.org>
-Cc:     Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        "open list:KERNEL SELFTEST FRAMEWORK" 
-        <linux-kselftest@vger.kernel.org>
-References: <20190127094357.GA9436@beast>
- <CAKwvOdnUzTXSBPayebsy8pJGjJjPS3oi3qE8nRPtAhtv_PJ4xw@mail.gmail.com>
- <CAGXu5jKDdutht_+hVhKan6cNZ+bS7e0gom5yXmcMgKE9KuZwYg@mail.gmail.com>
- <CAKwvOdkvV+1qVUTz7G+nfftdzUfTGL+RnQ_8rA_RAhRrpvRLBA@mail.gmail.com>
-From:   Guenter Roeck <linux@roeck-us.net>
-Message-ID: <e571e536-3c27-fb47-32d0-c9e72417f888@roeck-us.net>
-Date:   Sun, 27 Jan 2019 15:53:34 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sun, 27 Jan 2019 19:00:52 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44922 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726403AbfA1AAw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 19:00:52 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D7ACBC002964;
+        Mon, 28 Jan 2019 00:00:50 +0000 (UTC)
+Received: from sandy.ghostprotocols.net (ovpn-112-13.phx2.redhat.com [10.3.112.13])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id E6E5E5C21A;
+        Mon, 28 Jan 2019 00:00:49 +0000 (UTC)
+Received: by sandy.ghostprotocols.net (Postfix, from userid 1000)
+        id BE5044AE2; Sun, 27 Jan 2019 22:00:46 -0200 (BRST)
+Date:   Sun, 27 Jan 2019 22:00:46 -0200
+From:   Arnaldo Carvalho de Melo <acme@redhat.com>
+To:     Stephane Eranian <eranian@google.com>
+Cc:     linux-kernel@vger.kernel.org, jolsa@redhat.com,
+        peterz@infradead.org, mingo@elte.hu, ak@linux.intel.com,
+        kan.liang@intel.com
+Subject: Re: [PATCH] perf tools api fs: make xxx__mountpoint() more scalable
+Message-ID: <20190128000046.GB3883@redhat.com>
+References: <1548285047-5808-1-git-send-email-eranian@google.com>
 MIME-Version: 1.0
-In-Reply-To: <CAKwvOdkvV+1qVUTz7G+nfftdzUfTGL+RnQ_8rA_RAhRrpvRLBA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1548285047-5808-1-git-send-email-eranian@google.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.5.20 (2009-12-10)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Mon, 28 Jan 2019 00:00:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/27/19 11:36 AM, Nick Desaulniers wrote:
-> On Sun, Jan 27, 2019 at 11:13 AM Kees Cook <keescook@chromium.org> wrote:
->>
->> On Sun, Jan 27, 2019 at 11:25 PM Nick Desaulniers
->> <ndesaulniers@google.com> wrote:
->>>
->>> On Sun, Jan 27, 2019 at 1:44 AM Kees Cook <keescook@chromium.org> wrote:
->>>>
->>>> Clang noticed that some none-zero sleep()s were actually using zero
->>>> anyway. This switches to nanosleep() to gain sub-second granularity.
->>>>
->>>> seccomp_bpf.c:2625:9: warning: implicit conversion from 'double' to
->>>>        'unsigned int' changes value from 0.1 to 0 [-Wliteral-conversion]
->>>>                  sleep(0.1);
->>>>                  ~~~~~ ^~~
->>>>
->>>> Signed-off-by: Kees Cook <keescook@chromium.org>
->>>> ---
->>>>   tools/testing/selftests/seccomp/seccomp_bpf.c | 5 +++--
->>>>   1 file changed, 3 insertions(+), 2 deletions(-)
->>>>
->>>> diff --git a/tools/testing/selftests/seccomp/seccomp_bpf.c b/tools/testing/selftests/seccomp/seccomp_bpf.c
->>>> index 067cb4607d6c..a9f278c13f13 100644
->>>> --- a/tools/testing/selftests/seccomp/seccomp_bpf.c
->>>> +++ b/tools/testing/selftests/seccomp/seccomp_bpf.c
->>>> @@ -2569,6 +2569,7 @@ TEST_F(TSYNC, two_siblings_not_under_filter)
->>>>   {
->>>>          long ret, sib;
->>>>          void *status;
->>>> +       struct timespec delay = { .tv_nsec = 100000000 };
->>>
->>> "Omitted fields are implicitly initialized the same as for objects
->>> that have static storage duration."
->>> https://gcc.gnu.org/onlinedocs/gcc/Designated-Inits.html
->>> https://godbolt.org/z/cuGqxM
->>> (So this wont sleep an arbitrary amount of seconds, phew)
->>
->> Yup. :) Even an empty initializer works ... = { };
->> (Except that padding bytes aren't always included in the zeroing...)
->>
->>>
->>>>
->>>>          ASSERT_EQ(0, prctl(PR_SET_NO_NEW_PRIVS, 1, 0, 0, 0)) {
->>>>                  TH_LOG("Kernel does not support PR_SET_NO_NEW_PRIVS!");
->>>> @@ -2622,7 +2623,7 @@ TEST_F(TSYNC, two_siblings_not_under_filter)
->>>>          EXPECT_EQ(SIBLING_EXIT_UNKILLED, (long)status);
->>>>          /* Poll for actual task death. pthread_join doesn't guarantee it. */
->>>>          while (!kill(self->sibling[sib].system_tid, 0))
->>>> -               sleep(0.1);
->>>> +               nanosleep(&delay, NULL);
->>>>          /* Switch to the remaining sibling */
->>>>          sib = !sib;
->>>>
->>>> @@ -2647,7 +2648,7 @@ TEST_F(TSYNC, two_siblings_not_under_filter)
->>>>          EXPECT_EQ(0, (long)status);
->>>>          /* Poll for actual task death. pthread_join doesn't guarantee it. */
->>>>          while (!kill(self->sibling[sib].system_tid, 0))
->>>> -               sleep(0.1);
->>>> +               nanosleep(&delay, NULL);
->>>
->>> Interesting bug.  If the sleeps weren't doing anything, are they even
->>> needed? Does adding the tests cause them to continue to pass, or start
->>> to fail?  If they weren't doing anything, and the tests were passing,
->>> maybe it's just better to remove them?
->>
->> It was just spinning.
+Em Wed, Jan 23, 2019 at 03:10:47PM -0800, Stephane Eranian escreveu:
+> The xxx_mountpoint() interface provided by fs.c finds
+> mount points for common pseudo filesystems. The first
+> time xxx_mountpoint() is invoked, it scans the mount
+> table (/proc/mounts) looking for a match. If found, it
+> is cached. The price to scan /proc/mounts is paid once
+> if the mount is found.
 > 
-> So this test has been broken? If so, do you know for how long? Or
-> who's monitoring them?  Either way, thanks for noticing and fixing.
+> When the mount point is not found, subsequent calls to
+> xxx_mountpoint() scan /proc/mounts over and over again.
+> There is no cacheing.
 > 
-> +Guenter; did you notice if this test was failing? Are your boot tests
-> running kselftests?
+> This causes a scaling issue in perf record with hugeltbfs__mountpoint().
+> The function is called for each process found in synthesize__mmap_events().
+> If the machine has thousands of processes and if the /proc/mounts has many
+> entries this could cause major overhead in perf record. We have observed
+> multi-second slowdowns on some configurations.
 > 
+> As an example on a laptop:
+> 
+> Before:
+> $ sudo umount /dev/hugepages
+> $ strace -etrace=open -o /tmp/tt perf record -a ls
+> $ fgrep mounts /tmp/tt
+> 285
+> 
+> After:
+> $ sudo umount /dev/hugepages
+> $ strace -etrace=open -o /tmp/tt perf record -a ls
+> $ fgrep mounts /tmp/tt
+> 1
+> 
+> One could argue that the non-cacheing in case the moint point is not found
+> is intentional. That way subsequent calls may discover a moint point if
+> the syadmin mounts the filesystem. But the same argument could be made
+> against cacheing the moint point. It could be unmounted causing errors.
+> It all depends on the intent of the interface. This patch assumes it
+> is expected to scan /proc/mounts once. The patch documents the cacheing
+> behavior in the fs.h header file.
+> 
+> An alternative would be to just fix perf record. But it would solve
+> the problem with hugetlbs__mountpoint() but there could be similar
+> issues (possibly down the line) with other xxx_mountpoint() calls
+> in perf or other tools.
+> 
+> Signed-off-by: Stephane Eranian <eranian@google.com>
+> ---
+>  tools/lib/api/fs/fs.c | 19 +++++++++++++++++++
+>  tools/lib/api/fs/fs.h | 11 +++++++++++
+>  2 files changed, 30 insertions(+)
+> 
+> diff --git a/tools/lib/api/fs/fs.c b/tools/lib/api/fs/fs.c
+> index 7aba8243a0e7..6934da54c96b 100644
+> --- a/tools/lib/api/fs/fs.c
+> +++ b/tools/lib/api/fs/fs.c
+> @@ -90,6 +90,7 @@ struct fs {
+>  	const char * const	*mounts;
+>  	char			 path[PATH_MAX];
+>  	bool			 found;
+> +	bool			 checked;
+>  	long			 magic;
+>  };
+>  
+> @@ -111,31 +112,37 @@ static struct fs fs__entries[] = {
+>  		.name	= "sysfs",
+>  		.mounts	= sysfs__fs_known_mountpoints,
+>  		.magic	= SYSFS_MAGIC,
+> +		.checked= false,
 
-No, I don't run kselftests at this time.
+No need for these initializations, 0 == false, and since we initialize
+some of the other fields, the ones that haven't are set to zero.
 
-Guenter
+>  	},
+>  	[FS__PROCFS] = {
+>  		.name	= "proc",
+>  		.mounts	= procfs__known_mountpoints,
+>  		.magic	= PROC_SUPER_MAGIC,
+> +		.checked= false,
+>  	},
+>  	[FS__DEBUGFS] = {
+>  		.name	= "debugfs",
+>  		.mounts	= debugfs__known_mountpoints,
+>  		.magic	= DEBUGFS_MAGIC,
+> +		.checked= false,
+>  	},
+>  	[FS__TRACEFS] = {
+>  		.name	= "tracefs",
+>  		.mounts	= tracefs__known_mountpoints,
+>  		.magic	= TRACEFS_MAGIC,
+> +		.checked= false,
+>  	},
+>  	[FS__HUGETLBFS] = {
+>  		.name	= "hugetlbfs",
+>  		.mounts = hugetlbfs__known_mountpoints,
+>  		.magic	= HUGETLBFS_MAGIC,
+> +		.checked= false,
+>  	},
+>  	[FS__BPF_FS] = {
+>  		.name	= "bpf",
+>  		.mounts = bpf_fs__known_mountpoints,
+>  		.magic	= BPF_FS_MAGIC,
+> +		.checked= false,
+>  	},
+>  };
+>  
+> @@ -158,6 +165,7 @@ static bool fs__read_mounts(struct fs *fs)
+>  	}
+>  
+>  	fclose(fp);
+> +	fs->checked = true;
+>  	return fs->found = found;
+>  }
+>  
+> @@ -219,6 +227,7 @@ static bool fs__env_override(struct fs *fs)
+>  		return false;
+>  
+>  	fs->found = true;
+> +	fs->checked = true;
+>  	strncpy(fs->path, override_path, sizeof(fs->path));
+>  	return true;
+>  }
+> @@ -244,6 +253,16 @@ static const char *fs__mountpoint(int idx)
+>  	if (fs->found)
+>  		return (const char *)fs->path;
+>  
+> +	/* the mount point was already checked for the mount point
 
->> This restores the intention of not being so
->> aggressive in the wait loop. While the sleep could be removed, that
->> wasn't the intention.
-> 
-> Oh, yeah I guess the comment above it about pthread_join is relevant.
-> I just get highly highly suspicious whenever I see sleeps added to any
-> code.
-> Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-> 
+Nit, we start with:
 
+   	/*
+         * The mount point was already checked for the mount point
+> +	 * but and did not exist, so return NULL to avoid scanning again.
+> +	 * This makes the found and not found paths cost equivalent
+> +	 * in case of multiple calls. This was not the case before
+> +	 * and could cause significant scaling issues with callers.
+> +	 * in case /proc/mounts need to be checked many times
+                                                             .
+> +	 */
+> +	if (fs->checked)
+> +		return NULL;
+> +
+>  	return fs__get_mountpoint(fs);
+>  }
+>  
+> diff --git a/tools/lib/api/fs/fs.h b/tools/lib/api/fs/fs.h
+> index 92d03b8396b1..00a5127b00e8 100644
+> --- a/tools/lib/api/fs/fs.h
+> +++ b/tools/lib/api/fs/fs.h
+> @@ -18,6 +18,17 @@
+>  	const char *name##__mount(void);	\
+>  	bool name##__configured(void);		\
+>  
+> +/*
+> + * The xxxx__mountpoint() entry points find the first match mount point for each
+
+Nicely written :-)
+
+> + * filesystems listed below, where xxxx is the filesystem type.
+> + *
+> + * The interface is as follows:
+> + * - If a mount point is found on first call, it is cached and used for all subsequent
+> + *   calls.
+> + *
+> + * - If a mount point is not found, NULL is returned on first call and all
+> + *   subsequent calls.
+                        Ditto.
+> + */
+>  FS(sysfs)
+>  FS(procfs)
+>  FS(debugfs)
+> -- 
+> 2.7.4
