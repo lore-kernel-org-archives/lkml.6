@@ -2,131 +2,94 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3469FC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:06:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C21F2C282D0
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:08:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 09AD12171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:06:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 869C52171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 23:08:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KCCKGmF8"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726977AbfA1XGj (ORCPT
+        id S1727043AbfA1XIQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 18:06:39 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:54998 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfA1XGj (ORCPT
+        Mon, 28 Jan 2019 18:08:16 -0500
+Received: from mail-vs1-f74.google.com ([209.85.217.74]:36873 "EHLO
+        mail-vs1-f74.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726678AbfA1XIP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 18:06:39 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 3E827192D;
-        Mon, 28 Jan 2019 23:06:37 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 15:06:35 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Johannes Weiner <hannes@cmpxchg.org>
-Cc:     Peter Zijlstra <peterz@infradead.org>, Tejun Heo <tj@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>,
-        Lai Jiangshan <jiangshanlai@gmail.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] psi: fix aggregation idle shut-off
-Message-Id: <20190128150635.c22842034ab7e271c6416d2f@linux-foundation.org>
-In-Reply-To: <20190116193501.1910-1-hannes@cmpxchg.org>
-References: <20190116193501.1910-1-hannes@cmpxchg.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Mon, 28 Jan 2019 18:08:15 -0500
+Received: by mail-vs1-f74.google.com with SMTP id c201so8494959vsd.4
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 15:08:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:message-id:mime-version:subject:from:to:cc;
+        bh=lwKhytqdSAhh74l4TzMqfP4Or8eaBXB950S9OHzkc0s=;
+        b=KCCKGmF8aO7ZSI8NwYcn68SMn1tmPlJkMkdkOmWBhHRNYZPohEgcBIyA1Ib/i0UtGA
+         kJFFzZ2yPtngF/uDbUqhe3yo/lbWag9LCDv2kt0m57hBlFM5pgLcOnQJkmnoRm4PgC+N
+         oO5Z0a/B077bI9jMIymGA9jQw6D59l0cAKMJ0He9a51yKs8EUZg7RMdLLw+enCKEwMx8
+         AQWKF3teFej6UyNRa39cJSrC3SERXSjvmVabXg18u0KErJ0A/zuIkUkn7cTOdbIRKOBY
+         kSI+LtRm/tuakDLpy4yMPZK3gcnV/m74QhoR3rH4BM5AMPCgy10+l5ZC12wIn4KCdqCg
+         0I0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:message-id:mime-version:subject:from:to:cc;
+        bh=lwKhytqdSAhh74l4TzMqfP4Or8eaBXB950S9OHzkc0s=;
+        b=GKQnnroS4EkRjLYaTdKVTvdwpMk8fAvwSW7b2ewvDK25BALV4+F/TznovbtrGizaCZ
+         5ybwumKuSX6vDAw0GpfXtqE23MVF8hYJpzXN0wOq0WrDrTIdEdB5KjVQl8mkBDtmvl+y
+         5Skd/5R0WN5Dly/F3LcvMo4Hgq2REgkcpV2zPS1WQ0n0XQ887MAlJc9WGlpvYjREt2ij
+         ZOQLoA1oC4N5dVrEv/0upAakPlYaZiy/knsR40VFMvHteJYu4mW0D2uONlyGl31+kMwU
+         ZCRmRlnPynt/R8KM7/pyr4mBsHTChWYBFH5gr1PZeYOirtOqNdxXG+yGbgrxbg3xp/HS
+         RUxg==
+X-Gm-Message-State: AHQUAuYy/e4VJKfqLXvcyNZKMtL+Itm0MvcSGH77NO5kj3FQEpaBIvz1
+        ijk6xyR4x7UuWisGh3fEZ5DJgG5sbxvL
+X-Google-Smtp-Source: AHgI3IYrVnxXbITkrAWnuXvYSKadMyXvPdeg32TMythagkg21o1nAScxOJdOPiSz+SKi5tYZk+YXbamHcF1w
+X-Received: by 2002:a67:410b:: with SMTP id o11mr1308840vsa.8.1548716894717;
+ Mon, 28 Jan 2019 15:08:14 -0800 (PST)
+Date:   Mon, 28 Jan 2019 15:08:09 -0800
+Message-Id: <20190128230809.173975-1-rajatja@google.com>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Mailer: git-send-email 2.20.1.495.gaa96b0ce6b-goog
+Subject: [PATCH] Bluetooth: btusb: btusb_intel_cmd_timeout: use sleeping functions
+From:   Rajat Jain <rajatja@google.com>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Rajat Jain <rajatja@google.com>,
+        linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     rajatxjain@gmail.com, dtor@google.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 16 Jan 2019 14:35:01 -0500 Johannes Weiner <hannes@cmpxchg.org> wrote:
+The btusb_intel_cmd_timeout() is called from workqueue contexts,
+so use the helper functions that can sleep.
 
-> psi has provisions to shut off the periodic aggregation worker when
-> there is a period of no task activity - and thus no data that needs
-> aggregating. However, while developing psi monitoring, Suren noticed
-> that the aggregation clock currently won't stay shut off for good.
-> 
-> Debugging this revealed a flaw in the idle design: an aggregation run
-> will see no task activity and decide to go to sleep; shortly
-> thereafter, the kworker thread that executed the aggregation will go
-> idle and cause a scheduling change, during which the psi callback will
-> kick the !pending worker again. This will ping-pong forever, and is
-> equivalent to having no shut-off logic at all (but with more code!)
-> 
-> Fix this by exempting aggregation workers from psi's clock waking
-> logic when the state change is them going to sleep. To do this, tag
-> workers with the last work function they executed, and if in psi we
-> see a worker going to sleep after aggregating psi data, we will not
-> reschedule the aggregation work item.
-> 
-> What if the worker is also executing other items before or after?
-> 
-> Any psi state times that were incurred by work items preceding the
-> aggregation work will have been collected from the per-cpu buckets
-> during the aggregation itself. If there are work items following the
-> aggregation work, the worker's last_func tag will be overwritten and
-> the aggregator will be kept alive to process this genuine new activity.
-> 
-> If the aggregation work is the last thing the worker does, and we
-> decide to go idle, the brief period of non-idle time incurred between
-> the aggregation run and the kworker's dequeue will be stranded in the
-> per-cpu buckets until the clock is woken by later activity. But that
-> should not be a problem. The buckets can hold 4s worth of time, and
-> future activity will wake the clock with a 2s delay, giving us 2s
-> worth of data we can leave behind when disabling aggregation. If it
-> takes a worker more than two seconds to go idle after it finishes its
-> last work item, we likely have bigger problems in the system, and
-> won't notice one sample that was averaged with a bogus per-CPU weight.
-> 
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -480,9 +481,6 @@ static void psi_group_change(struct psi_group *group, int cpu,
->  			groupc->tasks[t]++;
->  
->  	write_seqcount_end(&groupc->seq);
-> -
-> -	if (!delayed_work_pending(&group->clock_work))
-> -		schedule_delayed_work(&group->clock_work, PSI_FREQ);
->  }
->  
->  static struct psi_group *iterate_groups(struct task_struct *task, void **iter)
+Signed-off-by: Rajat Jain <rajatja@google.com>
 
-This breaks Suren's "psi: introduce psi monitor":
-
---- kernel/sched/psi.c~psi-introduce-psi-monitor
-+++ kernel/sched/psi.c
-@@ -752,8 +1012,25 @@ static void psi_group_change(struct psi_
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 5de0c2e59b97..9a890b2a7ee1 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -523,9 +523,9 @@ static void btusb_intel_cmd_timeout(struct hci_dev *hdev)
+ 	}
  
- 	write_seqcount_end(&groupc->seq);
- 
--	if (!delayed_work_pending(&group->clock_work))
--		schedule_delayed_work(&group->clock_work, PSI_FREQ);
-+	/*
-+	 * Polling flag resets to 0 at the max rate of once per update window
-+	 * (at least 500ms interval). smp_wmb is required after group->polling
-+	 * 0-to-1 transition to order groupc->times and group->polling writes
-+	 * because stall detection logic in the slowpath relies on groupc->times
-+	 * changing before group->polling. Explicit smp_wmb is missing because
-+	 * cmpxchg() implies smp_mb.
-+	 */
-+	if ((state_mask & group->trigger_mask) &&
-+		atomic_cmpxchg(&group->polling, 0, 1) == 0) {
-+		/*
-+		 * Start polling immediately even if the work is already
-+		 * scheduled
-+		 */
-+		mod_delayed_work(system_wq, &group->clock_work, 1);
-+	} else {
-+		if (!delayed_work_pending(&group->clock_work))
-+			schedule_delayed_work(&group->clock_work, PSI_FREQ);
-+	}
+ 	bt_dev_err(hdev, "Initiating HW reset via gpio");
+-	gpiod_set_value(reset_gpio, 1);
+-	mdelay(100);
+-	gpiod_set_value(reset_gpio, 0);
++	gpiod_set_value_cansleep(reset_gpio, 1);
++	msleep(100);
++	gpiod_set_value_cansleep(reset_gpio, 0);
  }
  
-and I'm too lazy to go in and figure out how to fix it.
+ static inline void btusb_free_frags(struct btusb_data *data)
+-- 
+2.20.1.495.gaa96b0ce6b-goog
 
-If we're sure about "psi: fix aggregation idle shut-off" (and I am not)
-then can I ask for a redo of "psi: introduce psi monitor"?
