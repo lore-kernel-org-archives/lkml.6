@@ -2,69 +2,119 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9234BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:51:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A731C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BB0620881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:51:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CEE932177B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:51:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548697870;
+	bh=TaSYuSI2+7FgLrf75iu9vgRaQHFZhsSSNeZtEVNqlng=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=YGAP6x1h2BIKqhrkq3C5lJLccROBARa5xR+pj7Jg42UFBzsQgzyw9E6uWcAT0/PKV
+	 MOf8BahFjBGGp5SVMfRnaWN5OOtggTnWINfWQ06vW2uMGVCK7ETr+RZINoNmTMW9Xf
+	 8IP+cpsL0j222Ei2QyGCVwZ6xGLaFTmivkNNXE38=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727862AbfA1Ru7 (ORCPT
+        id S1727913AbfA1RvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:50:59 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:53950 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726845AbfA1Ru4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:50:56 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id D08CF2541;
-        Mon, 28 Jan 2019 17:50:55 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 09:50:54 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Mikhail Zaslonko <zaslonko@linux.ibm.com>,
-        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
-        Pavel Tatashin <pasha.tatashin@soleen.com>,
-        schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
-        gerald.schaefer@de.ibm.com, <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] mm, memory_hotplug: fix uninitialized pages
- fallouts.
-Message-Id: <20190128095054.4103093dec81f1c904df7929@linux-foundation.org>
-In-Reply-To: <20190128144506.15603-1-mhocko@kernel.org>
-References: <20190128144506.15603-1-mhocko@kernel.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 28 Jan 2019 12:51:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57710 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727295AbfA1PoY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:44:24 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id D364D2147A;
+        Mon, 28 Jan 2019 15:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690264;
+        bh=TaSYuSI2+7FgLrf75iu9vgRaQHFZhsSSNeZtEVNqlng=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=oTtPFhiUGADVbcaUszcuLh/MJNIegy/G+oUWFwP+oo/LAopKolJYGIcupkx/AUciK
+         w8cughw+AtPg4zo4IeKGwTipN20XEUMgQtPBMIxrfq9OdEiGFmyYwXSjTDKi32uqQk
+         +vfVn0CIjAYuQG0y2MOjKkwQcaaP0klYpbKrprKs=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Yufen Wang <wangyufen@huawei.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 023/304] ARM: 8808/1: kexec:offline panic_smp_self_stop CPU
+Date:   Mon, 28 Jan 2019 10:39:00 -0500
+Message-Id: <20190128154341.47195-23-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Jan 2019 15:45:04 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+From: Yufen Wang <wangyufen@huawei.com>
 
-> Mikhail has posted fixes for the two bugs quite some time ago [1]. I
-> have pushed back on those fixes because I believed that it is much
-> better to plug the problem at the initialization time rather than play
-> whack-a-mole all over the hotplug code and find all the places which
-> expect the full memory section to be initialized. We have ended up with
-> 2830bf6f05fb ("mm, memory_hotplug: initialize struct pages for the full
-> memory section") merged and cause a regression [2][3]. The reason is
-> that there might be memory layouts when two NUMA nodes share the same
-> memory section so the merged fix is simply incorrect.
-> 
-> In order to plug this hole we really have to be zone range aware in
-> those handlers. I have split up the original patch into two. One is
-> unchanged (patch 2) and I took a different approach for `removable'
-> crash. It would be great if Mikhail could test it still works for his
-> memory layout.
-> 
-> [1] http://lkml.kernel.org/r/20181105150401.97287-2-zaslonko@linux.ibm.com
-> [2] https://bugzilla.redhat.com/show_bug.cgi?id=1666948
-> [3] http://lkml.kernel.org/r/20190125163938.GA20411@dhcp22.suse.cz
+[ Upstream commit 82c08c3e7f171aa7f579b231d0abbc1d62e91974 ]
 
-Any thoughts on which kernel version(s) need these patches?
+In case panic() and panic() called at the same time on different CPUS.
+For example:
+CPU 0:
+  panic()
+     __crash_kexec
+       machine_crash_shutdown
+         crash_smp_send_stop
+       machine_kexec
+         BUG_ON(num_online_cpus() > 1);
+
+CPU 1:
+  panic()
+    local_irq_disable
+    panic_smp_self_stop
+
+If CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop(), kdump
+fails. CPU1 can't receive the ipi irq, CPU1 will be always online.
+To fix this problem, this patch split out the panic_smp_self_stop()
+and add set_cpu_online(smp_processor_id(), false).
+
+Signed-off-by: Yufen Wang <wangyufen@huawei.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/arm/kernel/smp.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
+
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index 12a6172263c0..3bf82232b1be 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -724,6 +724,21 @@ void smp_send_stop(void)
+ 		pr_warn("SMP: failed to stop secondary CPUs\n");
+ }
+ 
++/* In case panic() and panic() called at the same time on CPU1 and CPU2,
++ * and CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop()
++ * CPU1 can't receive the ipi irqs from CPU2, CPU1 will be always online,
++ * kdump fails. So split out the panic_smp_self_stop() and add
++ * set_cpu_online(smp_processor_id(), false).
++ */
++void panic_smp_self_stop(void)
++{
++	pr_debug("CPU %u will stop doing anything useful since another CPU has paniced\n",
++	         smp_processor_id());
++	set_cpu_online(smp_processor_id(), false);
++	while (1)
++		cpu_relax();
++}
++
+ /*
+  * not supported here
+  */
+-- 
+2.19.1
+
