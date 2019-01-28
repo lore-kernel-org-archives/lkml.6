@@ -7,49 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1440AC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:01:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10560C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:01:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7BF42175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:01:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF59F2082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:01:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691274;
-	bh=GyYn+I/ayuTEeEBqIWMngxUA+5RZ3EjZpdkLEnVhJGs=;
+	s=default; t=1548691277;
+	bh=Z7ALoxnJg3T5Ud46HOi/UoMMW9X9EWYkhMLhDPbsEoc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=CbbLRvms429Lwc5oFPjTFaeW1L0eWhe9+a16c5f1Rl1sHC7ihKtfeEy2QDtXRpLdQ
-	 TGoAl4545cyMvoVooGvn60D1jd1DD26o71/5bOJgsrO6uWq3SQYdGRDD6qxIBQnyFu
-	 Ig3M8AF3UVCjWn60xzcf1tw8VQooyy+0StuG0e2M=
+	b=Zyhcax1pxzi29lwizeDfKo8pldv9Kvu1/poFMGI5sT467vGq7Q4qLslHcJjUgLJ9U
+	 XAks5mSopLstLOGjvCF7zoRPob592Js0eBJlUOnKUaTS+/lBEVvJIpy8qRDNCgnTyv
+	 H8gVGsAAv6yxZC928WjqRbc3y7B55U3GqKxUqhIs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730976AbfA1QBN (ORCPT
+        id S1730988AbfA1QBQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:01:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46436 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:01:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730946AbfA1QBH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:01:07 -0500
+        id S1730946AbfA1QBO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:01:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C296E21852;
-        Mon, 28 Jan 2019 16:01:04 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A7CDD2175B;
+        Mon, 28 Jan 2019 16:01:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691266;
-        bh=GyYn+I/ayuTEeEBqIWMngxUA+5RZ3EjZpdkLEnVhJGs=;
+        s=default; t=1548691273;
+        bh=Z7ALoxnJg3T5Ud46HOi/UoMMW9X9EWYkhMLhDPbsEoc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SB0hc4trPCgMwkuavBUIuwjwzBoquJlbaxv7NuKw4P4tJKKcAmKzQw5e1H3Qfol2w
-         xTFHNtR0XBAMvnFDGD8+4A4auSb+RRoaprnI1pownNVo3IybSWzbCnw77GqxnVhmCp
-         hEdKxylAPlSTUa37W16mcVLQ8s2l0p2HZcgFoRi0=
+        b=ejeB+BllC+dsFCY+Kz4l5mQMTtd9HqoA5c5jjeFEHcX1sqRUzeWlKsYzjYI5DbMZ4
+         ipuMqRGCb5CHFec4SRWAQw4DbHzDrP3dXdUzASr3OGLyGCOtJjXXimocdYuFz8vXj5
+         BRGUlyPYKrKbmhq4IDkt4NbmXjIb0exlurq1+LXM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Dexuan Cui <decui@microsoft.com>,
-        "K . Y . Srinivasan" <kys@microsoft.com>,
-        Haiyang Zhang <haiyangz@microsoft.com>,
-        Stephen Hemminger <sthemmin@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Sasha Levin <sashal@kernel.org>, devel@linuxdriverproject.org
-Subject: [PATCH AUTOSEL 4.19 038/258] Tools: hv: kvp: Fix a warning of buffer overflow with gcc 8.0.1
-Date:   Mon, 28 Jan 2019 10:55:44 -0500
-Message-Id: <20190128155924.51521-38-sashal@kernel.org>
+Cc:     Brian Norris <briannorris@chromium.org>,
+        Benson Leung <bleung@chromium.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 041/258] platform/chrome: don't report EC_MKBP_EVENT_SENSOR_FIFO as wakeup
+Date:   Mon, 28 Jan 2019 10:55:47 -0500
+Message-Id: <20190128155924.51521-41-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -61,65 +58,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dexuan Cui <decui@microsoft.com>
+From: Brian Norris <briannorris@chromium.org>
 
-[ Upstream commit 4fcba7802c3e15a6e56e255871d6c72f829b9dd8 ]
+[ Upstream commit 6ad16b78a039b45294b1ad5d69c14ac57b2fe706 ]
 
-The patch fixes:
+EC_MKBP_EVENT_SENSOR_FIFO events can be triggered for a variety of
+reasons, and there are very few cases in which they should be treated as
+wakeup interrupts (particularly, when a certain
+MOTIONSENSE_MODULE_FLAG_* is set, but this is not even supported in the
+mainline cros_ec_sensor driver yet). Most of the time, they are benign
+sensor readings. In any case, the top-level cros_ec device doesn't know
+enough to determine that they should wake the system, and so it should
+not report the event. This would be the job of the cros_ec_sensors
+driver to parse.
 
-hv_kvp_daemon.c: In function 'kvp_set_ip_info':
-hv_kvp_daemon.c:1305:2: note: 'snprintf' output between 41 and 4136 bytes
-into a destination of size 4096
+This patch adds checks to cros_ec_get_next_event() such that it doesn't
+signal 'wakeup' for events of type EC_MKBP_EVENT_SENSOR_FIFO.
 
-The "(unsigned int)str_len" is to avoid:
+This patch is particularly relevant on devices like Scarlet (Rockchip
+RK3399 tablet, known as Acer Chromebook Tab 10), where the EC firmware
+reports sensor events much more frequently. This was causing
+/sys/power/wakeup_count to increase very frequently, often needlessly
+interrupting our ability to suspend the system.
 
-hv_kvp_daemon.c:1309:30: warning: comparison of integer expressions of
-different signedness: 'int' and 'long unsigned int' [-Wsign-compare]
-
-Signed-off-by: Dexuan Cui <decui@microsoft.com>
-Cc: K. Y. Srinivasan <kys@microsoft.com>
-Cc: Haiyang Zhang <haiyangz@microsoft.com>
-Cc: Stephen Hemminger <sthemmin@microsoft.com>
-Signed-off-by: K. Y. Srinivasan <kys@microsoft.com>
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Signed-off-by: Brian Norris <briannorris@chromium.org>
+Signed-off-by: Benson Leung <bleung@chromium.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/hv/hv_kvp_daemon.c | 15 +++++++++++++--
- 1 file changed, 13 insertions(+), 2 deletions(-)
+ drivers/platform/chrome/cros_ec_proto.c | 18 +++++++++++++++---
+ 1 file changed, 15 insertions(+), 3 deletions(-)
 
-diff --git a/tools/hv/hv_kvp_daemon.c b/tools/hv/hv_kvp_daemon.c
-index bbb2a8ef367c..d7e06fe0270e 100644
---- a/tools/hv/hv_kvp_daemon.c
-+++ b/tools/hv/hv_kvp_daemon.c
-@@ -1178,6 +1178,7 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
- 	FILE *file;
- 	char cmd[PATH_MAX];
- 	char *mac_addr;
-+	int str_len;
+diff --git a/drivers/platform/chrome/cros_ec_proto.c b/drivers/platform/chrome/cros_ec_proto.c
+index b6fd4838f60f..e5d5b1adb5a9 100644
+--- a/drivers/platform/chrome/cros_ec_proto.c
++++ b/drivers/platform/chrome/cros_ec_proto.c
+@@ -575,6 +575,7 @@ static int get_keyboard_state_event(struct cros_ec_device *ec_dev)
  
- 	/*
- 	 * Set the configuration for the specified interface with
-@@ -1301,8 +1302,18 @@ static int kvp_set_ip_info(char *if_name, struct hv_kvp_ipaddr_value *new_val)
- 	 * invoke the external script to do its magic.
- 	 */
+ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
+ {
++	u8 event_type;
+ 	u32 host_event;
+ 	int ret;
  
--	snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
--		 "hv_set_ifconfig", if_file);
-+	str_len = snprintf(cmd, sizeof(cmd), KVP_SCRIPTS_PATH "%s %s",
-+			   "hv_set_ifconfig", if_file);
-+	/*
-+	 * This is a little overcautious, but it's necessary to suppress some
-+	 * false warnings from gcc 8.0.1.
-+	 */
-+	if (str_len <= 0 || (unsigned int)str_len >= sizeof(cmd)) {
-+		syslog(LOG_ERR, "Cmd '%s' (len=%d) may be too long",
-+		       cmd, str_len);
-+		return HV_E_FAIL;
-+	}
-+
- 	if (system(cmd)) {
- 		syslog(LOG_ERR, "Failed to execute cmd '%s'; error: %d %s",
- 				cmd, errno, strerror(errno));
+@@ -594,11 +595,22 @@ int cros_ec_get_next_event(struct cros_ec_device *ec_dev, bool *wake_event)
+ 		return ret;
+ 
+ 	if (wake_event) {
++		event_type = ec_dev->event_data.event_type;
+ 		host_event = cros_ec_get_host_event(ec_dev);
+ 
+-		/* Consider non-host_event as wake event */
+-		*wake_event = !host_event ||
+-			      !!(host_event & ec_dev->host_event_wake_mask);
++		/*
++		 * Sensor events need to be parsed by the sensor sub-device.
++		 * Defer them, and don't report the wakeup here.
++		 */
++		if (event_type == EC_MKBP_EVENT_SENSOR_FIFO)
++			*wake_event = false;
++		/* Masked host-events should not count as wake events. */
++		else if (host_event &&
++			 !(host_event & ec_dev->host_event_wake_mask))
++			*wake_event = false;
++		/* Consider all other events as wake events. */
++		else
++			*wake_event = true;
+ 	}
+ 
+ 	return ret;
 -- 
 2.19.1
 
