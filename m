@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99F39C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:47:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 29586C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:47:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67BD620881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:47:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EBA0520881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:47:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697634;
-	bh=W6Ee+8Na3o8JSRghgx72JSwGnzYakdYkq9XKLYI6xoQ=;
+	s=default; t=1548697661;
+	bh=khEciF1J8C5dG2EQcIl21l4X5RDmspjmIGFXJSMYwDs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=MiTALK3jEu6apnTnS/pdq0jtN7cyFfkYnoJFa1i39SB+YUfIVfoQ0yaiWlvD4jh+4
-	 gf+RGrl6dpsDV3WAI0C3hkzgcBOpXtPUJUjoMmfkPwz2FnBJuS8F/Nly6RzLW5yxsg
-	 phH5n+MroSBJRwoaOuP0vCOWOF/qPJsW8Ubb/ClM=
+	b=iyYOftG7y3W6FMWEJktpAEeUB6nsMoEUu+WF+RjwZ/nNxDqDx7ITSda2k+UeC3Iem
+	 Ydbdjlv7+p7gh+vU1fjupLP6oVH2CHiX9eUtKqyHBnTWTMDWSGoCwOsYEnBOG0b0hT
+	 q/sPDrSzTHcRcXuV4Kne3R48reWkYlqqMvYto6Tg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbfA1RrM (ORCPT
+        id S1728061AbfA1Rrj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:47:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60168 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:47:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59498 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728085AbfA1Pqr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:46:47 -0500
+        id S1727930AbfA1PqE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:46:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 570572177E;
-        Mon, 28 Jan 2019 15:46:45 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E5F6C2147A;
+        Mon, 28 Jan 2019 15:46:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690407;
-        bh=W6Ee+8Na3o8JSRghgx72JSwGnzYakdYkq9XKLYI6xoQ=;
+        s=default; t=1548690364;
+        bh=khEciF1J8C5dG2EQcIl21l4X5RDmspjmIGFXJSMYwDs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U4sPStVcwSBOBL0nR0rcp5CrzxW5RKQxgSyhVFe/Ce4l/h+WLLlhjLrJwPn+aeVFP
-         7AbydorX7SG0AdIDW2S3MfWEgm4DAvNJf9+9BZt/g+O5B945HZFgRSsVILlap1QZZU
-         xsWxIrNGkpCimzWoPYmLTzh+Q/HtQ9ctx2dYHsOU=
+        b=Tsu/tjCiNq/61ub34291Xmtpj0/Z71gMYAAWyK6GNy0osz3OWHHzElcRl0aEIcnqo
+         JHaQhXHYF+joSxC/8fiPr61io7YovOJRF0iCZE/vpO/cZhTnw7Rjk915iBZ9z20hL/
+         WQwKE5NilydDJUwW2ysmQQfxu9B9eVLkmTVSHdpY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 075/304] clk: meson: meson8b: mark the CPU clock as CLK_IS_CRITICAL
-Date:   Mon, 28 Jan 2019 10:39:52 -0500
-Message-Id: <20190128154341.47195-75-sashal@kernel.org>
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 065/304] media: mtk-vcodec: Release device nodes in mtk_vcodec_init_enc_pm()
+Date:   Mon, 28 Jan 2019 10:39:42 -0500
+Message-Id: <20190128154341.47195-65-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,51 +59,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 0dad1ec65bc30a549aba38d34a727309bbf41bc8 ]
+[ Upstream commit 8ea0f2ba0fa3f91ea1b8d823a54b042026ada6b3 ]
 
-We don't want the common clock framework to disable the "cpu_clk" if
-it's not used by any device. The cpufreq-dt driver does not enable the
-CPU clocks. However, even if it would we would still want the CPU clock
-to be enabled at all times because the CPU clock is also required even
-if we disable CPU frequency scaling on a specific board.
+of_parse_phandle() returns the device node with refcount incremented.
+There are two nodes that are used temporary in mtk_vcodec_init_enc_pm(),
+but their refcounts are not decremented.
 
-The reason why we want the CPU clock to be enabled is a clock further up
-in the tree:
-Since commit 6f888e7bc7bd58 ("clk: meson: clk-pll: add enable bit") the
-sys_pll can be disabled. However, since the CPU clock is derived from
-sys_pll we don't want sys_pll to get disabled. The common clock
-framework takes care of that for us by enabling all parent clocks of our
-CPU clock when we mark the CPU clock with CLK_IS_CRITICAL.
+The patch adds one of_node_put() and fixes returning error codes.
 
-Until now this is not a problem yet because all clocks in the CPU
-clock's tree (including sys_pll) are read-only. However, once we allow
-modifications to the clocks in that tree we will need this.
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
-Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-Link: https://lkml.kernel.org/r/20181115224048.13511-4-martin.blumenstingl@googlemail.com
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
+Signed-off-by: Hans Verkuil <hverkuil@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/meson/meson8b.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-index 9160a3b2e668..a3a826419c16 100644
---- a/drivers/clk/meson/meson8b.c
-+++ b/drivers/clk/meson/meson8b.c
-@@ -650,7 +650,8 @@ static struct clk_regmap meson8b_cpu_clk = {
- 						  "cpu_scale_out_sel" },
- 		.num_parents = 2,
- 		.flags = (CLK_SET_RATE_PARENT |
--			  CLK_SET_RATE_NO_REPARENT),
-+			  CLK_SET_RATE_NO_REPARENT |
-+			  CLK_IS_CRITICAL),
- 	},
- };
+diff --git a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+index 3e73e9db781f..7c025045ea90 100644
+--- a/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
++++ b/drivers/media/platform/mtk-vcodec/mtk_vcodec_enc_pm.c
+@@ -41,25 +41,27 @@ int mtk_vcodec_init_enc_pm(struct mtk_vcodec_dev *mtkdev)
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 0);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 	pm->larbvenc = &pdev->dev;
  
+ 	node = of_parse_phandle(dev->of_node, "mediatek,larb", 1);
+ 	if (!node) {
+ 		mtk_v4l2_err("no mediatek,larb found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 
+ 	pdev = of_find_device_by_node(node);
++	of_node_put(node);
+ 	if (!pdev) {
+ 		mtk_v4l2_err("no mediatek,larb device found");
+-		return -1;
++		return -ENODEV;
+ 	}
+ 
+ 	pm->larbvenclt = &pdev->dev;
 -- 
 2.19.1
 
