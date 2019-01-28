@@ -2,94 +2,88 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCBF0C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:51:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4142C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:51:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABB5020881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:51:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697885;
-	bh=ApqE3Olbw2PmGMrvDPb65vjQNm9rWZjkdUPQvCga/CE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=1F4Bk27RGHwlg7bSCZ0vTXncTdE/dcdET1jZz3SoYTlm7petBX8lOM4qyqBHbzXfp
-	 rEqsFitzhKu/hMW0MlICP7fDp9801AIejMJgeQASmk4sRvKT2dEUuN6ZOg/Zn5WMxh
-	 GibVdrrdjC4DURQ0Yx/C9mDinpIGKX6lfHeq7clo=
+	by mail.kernel.org (Postfix) with ESMTP id A431F2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:51:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="O0FCgJQ6"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727805AbfA1RvY (ORCPT
+        id S1728047AbfA1Rvp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:51:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57550 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:51:45 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:39194 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727271AbfA1PoP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:44:15 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727271AbfA1Rvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 12:51:40 -0500
+Received: from zn.tnic (p200300EC2BC5DE008821062B415D2F41.dip0.t-ipconnect.de [IPv6:2003:ec:2bc5:de00:8821:62b:415d:2f41])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3ACA214DA;
-        Mon, 28 Jan 2019 15:44:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690255;
-        bh=ApqE3Olbw2PmGMrvDPb65vjQNm9rWZjkdUPQvCga/CE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pYVY6JGXItj4F2vfEx9k+A2uriI5U7Fak7eBxpE+YhB7zEMxJZUAKpDfSBL+Rnt9W
-         zwK/7+lMjFTEa5DUgBRI4zRmHsjJgNv78ANqJ+dSFkv7cUvYDnGzIPnRn+Ci5G5lGu
-         Ctfh9xwkvnNMBrhtWpCqV2uy9olhBZhWyhPd6q8U=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     James Smart <jsmart2021@gmail.com>,
-        Dick Kennedy <dick.kennedy@broadcom.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 019/304] scsi: lpfc: Correct LCB RJT handling
-Date:   Mon, 28 Jan 2019 10:38:56 -0500
-Message-Id: <20190128154341.47195-19-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E28681EC0229;
+        Mon, 28 Jan 2019 18:51:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1548697899;
+        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
+        bh=c1l5yM0oYZo9rHL0q1tmYnNvCtj0Dh2bnbi2GR+39b4=;
+        b=O0FCgJQ63WC6LCvhcs3pbfoKZeea744cwK9kOh5417tKxwRxMkKUaVeoypqnxTrkphKYtj
+        ygXWR4Twnd+ccWx/A4C3VTCkh9tENSKYNSwCy/bZJi0oJVnw0L744EcK+vcQxbJNAR/nu4
+        QtwCqte024MRdU9EhXa10qhafSBTXyk=
+Date:   Mon, 28 Jan 2019 18:51:32 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, hpa@zytor.com, keescook@chromium.org,
+        bhe@redhat.com, msys.mizuma@gmail.com, indou.takao@jp.fujitsu.com,
+        caoj.fnst@cn.fujitsu.com, kasong@redhat.com
+Subject: Re: [PATCH v16 0/7] Parse ACPI table and limit KASLR to choosing
+ immovable memory
+Message-ID: <20190128175132.GE20487@zn.tnic>
+References: <20190123110850.12433-1-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20190123110850.12433-1-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: James Smart <jsmart2021@gmail.com>
+On Wed, Jan 23, 2019 at 07:08:43PM +0800, Chao Fan wrote:
+> PATCH 1/7 Copy kstrtoull() to boot/string.c to instead of using
+>           old simple_strtoull()
+> PATCH 2/7 Introduce get_acpi_rsdp() to parse RSDP in cmdline from KEXEC
+> PATCH 3/6 Introduce efi_get_rsdp_addr() to find RSDP from EFI table when
+>           booting from EFI.
+> PATCH 4/7 Introduce bios_get_rsdp_addr() to search RSDP in memory when
+>           booting from BIOS
+> PATCH 5/7 Parse RSDP and fill in boot_params->acpi_rsdp_addr before
+>           KASLR.
+> PATCH 6/7 Compute SRAT from RSDP and walk SRAT to store the immovable
+>           memory regions and store the immovable memory regions.
+> PATCH 7/7 Calculate the intersection between memory regions from e820/efi
+>           memory table and immovable memory regions. Limit KASLR to
+>           choosing these regions for randomization.
 
-[ Upstream commit b114d9009d386276bfc3352289fc235781ae3353 ]
+Ok, I've massaged the whole pile and fixed a couple of things that
+sprang at me, see each commit message for details.
 
-When LCB's are rejected, if beaconing was already in progress, the
-Reason Code Explanation was not being set. Should have been set to
-command in progress.
+Please run it and check whether I haven't broken anything:
 
-Signed-off-by: Dick Kennedy <dick.kennedy@broadcom.com>
-Signed-off-by: James Smart <jsmart2021@gmail.com>
-Reviewed-by: Hannes Reinecke <hare@suse.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/scsi/lpfc/lpfc_els.c | 3 +++
- 1 file changed, 3 insertions(+)
+https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=tip-x86-boot
 
-diff --git a/drivers/scsi/lpfc/lpfc_els.c b/drivers/scsi/lpfc/lpfc_els.c
-index f1c1faa74b46..96e2f542734a 100644
---- a/drivers/scsi/lpfc/lpfc_els.c
-+++ b/drivers/scsi/lpfc/lpfc_els.c
-@@ -5701,6 +5701,9 @@ error:
- 	stat = (struct ls_rjt *)(pcmd + sizeof(uint32_t));
- 	stat->un.b.lsRjtRsnCode = LSRJT_UNABLE_TPC;
- 
-+	if (shdr_add_status == ADD_STATUS_OPERATION_ALREADY_ACTIVE)
-+		stat->un.b.lsRjtRsnCodeExp = LSEXP_CMD_IN_PROGRESS;
-+
- 	elsiocb->iocb_cmpl = lpfc_cmpl_els_rsp;
- 	phba->fc_stat.elsXmitLSRJT++;
- 	rc = lpfc_sli_issue_iocb(phba, LPFC_ELS_RING, elsiocb, 0);
+Thx.
+
 -- 
-2.19.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
