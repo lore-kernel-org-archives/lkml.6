@@ -2,75 +2,80 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C35B6C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:37:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D0BEC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:38:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9B8FB21738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:37:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15E422173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:37:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfA1Lha (ORCPT
+        id S1726848AbfA1Lh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:37:30 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:50617 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbfA1Lh3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:37:29 -0500
-Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
-        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
-        (envelope-from <p.zabel@pengutronix.de>)
-        id 1go5EF-000643-0S; Mon, 28 Jan 2019 12:37:27 +0100
-Message-ID: <1548675446.6421.4.camel@pengutronix.de>
-Subject: Re: drivers/media/platform/imx-pxp.c:683: possible cut''n'paste
- error ?
-From:   Philipp Zabel <p.zabel@pengutronix.de>
-To:     David Binderman <dcb314@hotmail.com>,
-        "mchehab@kernel.org" <mchehab@kernel.org>,
-        "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Date:   Mon, 28 Jan 2019 12:37:26 +0100
-In-Reply-To: <AM6PR08MB38005C4E593AFF9A77FED8D89C950@AM6PR08MB3800.eurprd08.prod.outlook.com>
-References: <AM6PR08MB38005C4E593AFF9A77FED8D89C950@AM6PR08MB3800.eurprd08.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6-1+deb9u1 
-Mime-Version: 1.0
+        Mon, 28 Jan 2019 06:37:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:53830 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726415AbfA1Lh6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 06:37:58 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id F035FACAD;
+        Mon, 28 Jan 2019 11:37:56 +0000 (UTC)
+Subject: Re: [PATCH] MAINTAINERS: Move FCoE to Hannes Reinecke
+To:     Johannes Thumshirn <jthumshirn@suse.de>,
+        "Martin K . Petersen" <martin.petersen@oracle.com>
+Cc:     Linux SCSI Mailinglist <linux-scsi@vger.kernel.org>,
+        Linux Kernel Mailinglist <linux-kernel@vger.kernel.org>
+References: <20190128110634.17243-1-jthumshirn@suse.de>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <049182df-4bfa-a93f-3773-0a9789516c2b@suse.de>
+Date:   Mon, 28 Jan 2019 12:37:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20190128110634.17243-1-jthumshirn@suse.de>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
-X-SA-Exim-Mail-From: p.zabel@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2019-01-27 at 08:17 +0000, David Binderman wrote:
-> Hello there,
+On 1/28/19 12:06 PM, Johannes Thumshirn wrote:
+> I'll be moving on to different things in the storage stack and Hannes
+> agreed to take over FCoE.
 > 
-> drivers/media/platform/imx-pxp.c:683:24: warning: duplicated ‘if’ condition [-Wd
-> uplicated-cond]
+> Cc: Hannes Reinecke <hare@suse.de>
+> Signed-off-by: Johannes Thumshirn <jthumshirn@suse.de>
+> ---
+>   MAINTAINERS | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Source code is
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 9f64f8d3740e..49b829794699 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5855,7 +5855,7 @@ S:	Maintained
+>   F:	drivers/media/tuners/fc2580*
+>   
+>   FCOE SUBSYSTEM (libfc, libfcoe, fcoe)
+> -M:	Johannes Thumshirn <jth@kernel.org>
+> +M:	Hannes Reinecke <hare@suse.de>
+>   L:	linux-scsi@vger.kernel.org
+>   W:	www.Open-FCoE.org
+>   S:	Supported
 > 
->                } else if (ycbcr_enc == V4L2_YCBCR_ENC_709) {
->                         if (quantization == V4L2_QUANTIZATION_FULL_RANGE)
->                                 csc2_coef = csc2_coef_rec709_full;
->                         else
->                                 csc2_coef = csc2_coef_rec709_lim;
->                 } else if (ycbcr_enc == V4L2_YCBCR_ENC_709) {
->                         if (quantization == V4L2_QUANTIZATION_FULL_RANGE)
->                                 csc2_coef = csc2_coef_bt2020_full;
->                         else
->                                 csc2_coef = csc2_coef_bt2020_lim;
->                 } else {
-> 
-> The condition on the second if looks wrong. Suggest code rework.
+Acked-by: Hannes Reinecke <hare@suse.com>
 
-Thank you, I have sent a patch.
+Cheers,
 
-regards
-Philipp
+Hannes
+-- 
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
