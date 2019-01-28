@@ -2,119 +2,244 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 94777C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:32:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD33C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:32:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6113B20881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:32:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PWey+YGJ"
+	by mail.kernel.org (Postfix) with ESMTP id 850A720881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:32:57 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726790AbfA1Icv (ORCPT
+        id S1726887AbfA1Ic4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:32:51 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41681 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbfA1Ics (ORCPT
+        Mon, 28 Jan 2019 03:32:56 -0500
+Received: from relay1-d.mail.gandi.net ([217.70.183.193]:36393 "EHLO
+        relay1-d.mail.gandi.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726784AbfA1Icy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:32:48 -0500
-Received: by mail-wr1-f67.google.com with SMTP id x10so16944320wrs.8
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:32:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=IdLcjpt4fKK+CAzDfTMlv9oWr2wwLr24MdWR3nRxQgI=;
-        b=PWey+YGJyy1UIymK0hXujgAD1HxuLplRsJxe/HtmwI56/h33XwFrDvCs53pbek4OEO
-         B6rmeWY2ftST9iX6IijYPce4jjQnGFW8DS/Ow/ogg3vGcF3GUgEc9mdJW/RwClrB1/Hk
-         5E7/l9DhBAEIXqk6SLPX7enbUCL2CJhrYGZH4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=IdLcjpt4fKK+CAzDfTMlv9oWr2wwLr24MdWR3nRxQgI=;
-        b=n0fi0fTJAB1uEBbGyfqFVXCGXhZkwUQXuRW5LQog9WX1L9tCflNP9pwGgj4h6VNpRz
-         50RSC8ZehFaxHp9vyXbvy5HBLvZzzWXj7JTJAxKzINX66a7TJ4sOhfCwqqkEMcqA31xL
-         hXogWKTjQvSurQGDWXIupL6fIHqh+mpvzbo/Lyno6ecjjP8T8a4OpKx9mhicS4bU0QPk
-         kvaSx/chEWyQ5bEs96qj0UhQK+FdSilAMD/zGo1H9CksP23sT+us6JQznTCYD6K+ufhF
-         eSOrw28GgVWzTBtYMXudHYgzMVrd/h9ZzdC43g8kmRbZOFOdrKPSP7FBd9lf084zRtcY
-         BmqQ==
-X-Gm-Message-State: AJcUukd9ARK/RfYwRxyfwVmKqw0zJmn3AoOwCOK/j2W93E4pvqgY75oT
-        N1O3f5hxhhe3tAVls6czWP3XMg==
-X-Google-Smtp-Source: ALg8bN6T46LeuvtwUWLLJoQXPo31vBkg13ZgKeLKJbASs3u1hVmDHyJe9BSBQCzr1paiVx7tWlj3qg==
-X-Received: by 2002:adf:ecc8:: with SMTP id s8mr20126727wro.208.1548664366588;
-        Mon, 28 Jan 2019 00:32:46 -0800 (PST)
-Received: from [192.168.0.41] (20.36.129.77.rev.sfr.net. [77.129.36.20])
-        by smtp.googlemail.com with ESMTPSA id o2sm7412317wmo.33.2019.01.28.00.32.44
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 00:32:45 -0800 (PST)
-Subject: Re: [PATCH v4 2/9] cpufreq: Auto-register the driver as a thermal
- cooling device if asked
-To:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
-        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
-        mka@chromium.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        "Peter Zijlstra (Intel)" <peterz@infradead.org>,
-        Tao Wang <kevin.wangtao@hisilicon.com>,
-        Sudeep Holla <sudeep.holla@arm.com>, linux-pm@vger.kernel.org
-References: <cover.1548654899.git.amit.kucheria@linaro.org>
- <f6f09e5af6fe78fc27cbdc53a8dc688c6b4124b7.1548654899.git.amit.kucheria@linaro.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <3afd5b04-5caf-053d-48c9-f719eec58da0@linaro.org>
-Date:   Mon, 28 Jan 2019 09:32:44 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 28 Jan 2019 03:32:54 -0500
+X-Originating-IP: 2.224.242.101
+Received: from uno.localdomain (2-224-242-101.ip172.fastwebnet.it [2.224.242.101])
+        (Authenticated sender: jacopo@jmondi.org)
+        by relay1-d.mail.gandi.net (Postfix) with ESMTPSA id C8806240018;
+        Mon, 28 Jan 2019 08:32:49 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 09:33:04 +0100
+From:   Jacopo Mondi <jacopo@jmondi.org>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Steve Longerbeam <slongerbeam@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        linux-media <linux-media@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH] media: ov5640: Fix set 15fps regression
+Message-ID: <20190128083304.nxuvxecrcq63v2vn@uno.localdomain>
+References: <20190124175801.28018-1-jagan@amarulasolutions.com>
+ <20190125153958.3aertsxgdzjldlzd@flea>
+ <CAMty3ZCuBqiOGAixWhy5bYqUHk0_=NvX08zp2F+MT4GgVEo+Rw@mail.gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <f6f09e5af6fe78fc27cbdc53a8dc688c6b4124b7.1548654899.git.amit.kucheria@linaro.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="y2wz7z6pl7dcejld"
+Content-Disposition: inline
+In-Reply-To: <CAMty3ZCuBqiOGAixWhy5bYqUHk0_=NvX08zp2F+MT4GgVEo+Rw@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/01/2019 07:41, Amit Kucheria wrote:
-> All cpufreq drivers do similar things to register as a cooling device.
-> Provide a cpufreq driver flag so drivers can just ask the cpufreq core
-> to register the cooling device on their behalf. This allows us to get
-> rid of duplicated code in the drivers.
-> 
-> In order to allow this, we add a struct thermal_cooling_device pointer
-> to struct cpufreq_policy so that drivers don't need to store it in a
-> private data structure.
-> 
-> Suggested-by: Stephen Boyd <swboyd@chromium.org>
-> Suggested-by: Viresh Kumar <viresh.kumar@linaro.org>
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Reviewed-by: Matthias Kaehlcke <mka@chromium.org>
-> Tested-by: Matthias Kaehlcke <mka@chromium.org>
-> ---
 
-[ ... ]
+--y2wz7z6pl7dcejld
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 
-> +/*
-> + * Set by drivers that want the core to automatically register the cpufreq
-> + * driver as a thermal cooling device.
-> + */
-> +#define CPUFREQ_AUTO_REGISTER_COOLING_DEV	BIT(7)
-> +
+Hi everyone,
 
-Isn't the CPUFREQ_IS_COOLING_DEV more appropriate? We define a property
-of the cpufreq driver and the resulting action is to auto-register, no?
+On Mon, Jan 28, 2019 at 01:20:37PM +0530, Jagan Teki wrote:
+> On Fri, Jan 25, 2019 at 9:10 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Thu, Jan 24, 2019 at 11:28:01PM +0530, Jagan Teki wrote:
+> > > The ov5640_try_frame_interval operation updates the FPS as per user
+> > > input based on default ov5640_frame_rate, OV5640_30_FPS which is failed
+> > > to update when user trigger 15fps.
+> > >
+> > > So, initialize the default ov5640_frame_rate to OV5640_15_FPS so-that
+> > > it can satisfy to update all fps.
+> > >
+> > > Fixes: 5a3ad937bc78 ("media: ov5640: Make the return rate type more explicit")
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> >
+> > I'm pretty sure I tested this and it was working fine. You're
+> > mentionning a regression, but what regression is there exactly (ie,
+> > what was working before that commit that doesn't work anymore?). What
+> > tools/commands are you using to see this behaviour?
+>
+
+I think Jagan's right, here.
+
+For the 15FPS use case, the below condition in the for loop of
+ov5640_try_frame_interval() never gets satisfied (0 < 0 ?) and 'rate' retains
+its initial value of 30FPS.
+
+		if (abs(curr_fps - fps) < abs(best_fps - fps)) {
+			best_fps = curr_fps;
+			rate = i;
+		}
+
+To make more clear what's happening, I would initialize 'rate' just
+before 'best_fps' before the for loop. Anyway, please add:
+Acked-by: Jacopo Mondi <jacopo@jmondi.org>
+
+Maxime, does this make sense to you?
+
+Thanks
+   j
 
 
+> In fact I have mentioned this on your v9 [1], may be you missed it.
+>
+> I have reproduced with media-ctl, below is the full log. let me know
+> if I still miss anything.
+>
+> Before this change:
+> # media-ctl -p
+> Media controller API version 5.0.0
+>
+> Media device information
+> ------------------------
+> driver          sun6i-csi
+> model           Allwinner Video Capture Device
+> serial
+> bus info
+> hw revision     0x0
+> driver version  5.0.0
+>
+> Device topology
+> - entity 1: sun6i-csi (1 pad, 1 link)
+>             type Node subtype V4L flags 0
+>             device node name /dev/video0
+>         pad0: Sink
+>                 <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
+>
+> - entity 5: ov5640 1-003c (1 pad, 1 link)
+>             type V4L2 subdev subtype Sensor flags 0
+>             device node name /dev/v4l-subdev0
+>         pad0: Source
+>                 [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb
+> xfer:srgb ycbcr:601 quantization:full-range]
+>                 -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
+>
+> # media-ctl --set-v4l2 "'ov5640 1-003c':0[fmt:UYVY8_2X8/640x480@1/15 field:none]
+> "
+> # media-ctl -p
+> Media controller API version 5.0.0
+>
+> Media device information
+> ------------------------
+> driver          sun6i-csi
+> model           Allwinner Video Capture Device
+> serial
+> bus info
+> hw revision     0x0
+> driver version  5.0.0
+>
+> Device topology
+> - entity 1: sun6i-csi (1 pad, 1 link)
+>             type Node subtype V4L flags 0
+>             device node name /dev/video0
+>         pad0: Sink
+>                 <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
+>
+> - entity 5: ov5640 1-003c (1 pad, 1 link)
+>             type V4L2 subdev subtype Sensor flags 0
+>             device node name /dev/v4l-subdev0
+>         pad0: Source
+>                 [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb
+> xfer:srgb ycbcr:601 quantization:full-range]
+>                 -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
+>
+>
+> After this change:
+> # media-ctl -p
+> Media controller API version 5.0.0
+>
+> Media device information
+> ------------------------
+> driver          sun6i-csi
+> model           Allwinner Video Capture Device
+> serial
+> bus info
+> hw revision     0x0
+> driver version  5.0.0
+>
+> Device topology
+> - entity 1: sun6i-csi (1 pad, 1 link)
+>             type Node subtype V4L flags 0
+>             device node name /dev/video0
+>         pad0: Sink
+>                 <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
+>
+> - entity 5: ov5640 1-003c (1 pad, 1 link)
+>             type V4L2 subdev subtype Sensor flags 0
+>             device node name /dev/v4l-subdev0
+>         pad0: Source
+>                 [fmt:UYVY8_2X8/640x480@1/30 field:none colorspace:srgb
+> xfer:srgb ycbcr:601 quantization:full-range]
+>                 -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
+>
+> # media-ctl --set-v4l2 "'ov5640 1-003c':0[fmt:UYVY8_2X8/640x480@1/15 field:none]
+> "
+> # media-ctl -p
+> Media controller API version 5.0.0
+>
+> Media device information
+> ------------------------
+> driver          sun6i-csi
+> model           Allwinner Video Capture Device
+> serial
+> bus info
+> hw revision     0x0
+> driver version  5.0.0
+>
+> Device topology
+> - entity 1: sun6i-csi (1 pad, 1 link)
+>             type Node subtype V4L flags 0
+>             device node name /dev/video0
+>         pad0: Sink
+>                 <- "ov5640 1-003c":0 [ENABLED,IMMUTABLE]
+>
+> - entity 5: ov5640 1-003c (1 pad, 1 link)
+>             type V4L2 subdev subtype Sensor flags 0
+>             device node name /dev/v4l-subdev0
+>         pad0: Source
+>                 [fmt:UYVY8_2X8/640x480@1/15 field:none colorspace:srgb
+> xfer:srgb ycbcr:601 quantization:full-range]
+>                 -> "sun6i-csi":0 [ENABLED,IMMUTABLE]
+>
+> [1] https://patchwork.kernel.org/patch/10708931/
 
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+--y2wz7z6pl7dcejld
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+-----BEGIN PGP SIGNATURE-----
 
+iQIzBAABCAAdFiEEtcQ9SICaIIqPWDjAcjQGjxahVjwFAlxOvkAACgkQcjQGjxah
+VjxO2A//ZTZVcZ5XCBK0E8Uh5HpIR2A4IbhPl2n07Rz50EcVLqiiB0k6mwR5xNt4
+8AYqFRBFzsqSw5w6nJ7uFjIIG/REJPs7WyOpeUWHPpxAY5VOqx3b3r9yklF2ln1b
+pDUtxDjafIr5/hJPQWN56Hi8MdY2oWWb5mnaYfAqJRrtnM/92F/gFATY2JwKQKMV
+xChw2lOy6rz3Wz6+mLkeEiPpC2IH7TUtqBgAafHBYtN/cWTuztE2aalOnJd6EnLS
+RoIdAnY+SgngNcREUwq4WbDoQDN0iXIQ2q73NTUlZcNHRYsuLpahpoUOHja9lkI5
+DtJRy1CCSzPmtXWAEyf9s8Hy37HBUWvLYB9cSV1aaaDjHzzZeRrUMPBwL1yGRNl1
+02c0tYRQZdae7kINKDZ93hEu7aVIUYAHmRjoFNpxihIHcm28ErAk3eihVZXpvBe/
+iGstfOjws1o+GV7+fKQphPHkpf/r5qK9qy1dAgSsLNIouBUiUdAva4w4jU4rk98H
+t61/wJMAz25Oe4iZnLAd7tC/BoVV/pkIYZc/eG+4nXDkBzNIBYTS05nWAiUOq04x
+P+tbgcet05eNX0WkQ1v/srip0nKTVTiyYd9v6fVfCCMZRdBHfN7phgO3lduXEK4W
+d8H438kkT6Z9rzV3HQf2UOVDyvIqlBekz8hxOd1miaOIpJpIsGY=
+=iwec
+-----END PGP SIGNATURE-----
+
+--y2wz7z6pl7dcejld--
