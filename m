@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACBEC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:55:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DABCC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 38DE62147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:55:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F286720989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:55:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="f0jFbjCA"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fjDvN5g9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729879AbfA1PzW (ORCPT
+        id S1729439AbfA1PzZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:55:22 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:39805 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729434AbfA1PzR (ORCPT
+        Mon, 28 Jan 2019 10:55:25 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40335 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728859AbfA1PzW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:17 -0500
-Received: by mail-wr1-f67.google.com with SMTP id t27so18614858wra.6
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:55:16 -0800 (PST)
+        Mon, 28 Jan 2019 10:55:22 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so18623901wrt.7
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:55:21 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=EzzauLuRu7S4DI8YrZtbq8X+zovdFXkJQc9myBytVls=;
-        b=f0jFbjCA+wizq41/gotVHqLqwPq00jSl0pprOR48HBDrBkyrWDohdYSA8yFonqdbZc
-         5k3Wtpvi7daPEezkDYb242jq4esQiXyoxXKD/sFT5xCGs0ZAiS/l6Wb37bDMsuBlI7Ui
-         CIb1CIqmh5QYqFrkPXW1RqHtdz7V2Ccenz1Us=
+        bh=e0Ha4ellaoNOp/hRaJJ64zG2xd/bafkpJFLNPc8fabM=;
+        b=fjDvN5g9fjipqa2VAqDp3/6TPI+kGIIQBdBnots0pBJug2WXIXVM5VihE4JUIxDF5U
+         mMBzLvPto83PARanyrApdIIFfNbAQxauJGfUn0j514Vpl8AF9ZlWsVHNh7l+WZc3zuVc
+         xPxdsHguQYtEQcYx6fVlSrdUsPV2mrhtoX+Cc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=EzzauLuRu7S4DI8YrZtbq8X+zovdFXkJQc9myBytVls=;
-        b=rwO0ggMlcHxRiSZlzkfUHWbFHfwFEYTfd7eGlTIZNIu2QG8jwa4yDzqV+GJuCTMAE3
-         bBheEaTDj/YvtL+WQFIzIFE9krnuqRUB7AqOcvdvFqpoEkcklXoo134TaOpW2CEaCjN6
-         FsGtOiAp7Hqko65msLxdjygxkdm/z8i8lgWukIzFZ1Q6tHMoHGxaqwx0BQHgjMYw2JTX
-         rOZ+2OmVeko2dFGpp/GEWD3aRgG0xKTGQxaO2Lkb6O5x9TK7t0E+Ls5rXUHljYBY+WeE
-         1Sh/PARCn+NiySMRE0isqWrXRaTXTlg5LqMZbYWenQgeU0mQLHWcD8cpsNuM1Qm3wmvR
-         fdQw==
-X-Gm-Message-State: AJcUukfkHH5fFutD9HOxvdULQC87ZwoNIlO87MO0+/HS4CkRRZ4gIdPE
-        NO4EgYdXJRb9MnQRTAuN+zylUA==
-X-Google-Smtp-Source: ALg8bN50loEwF+Dlemb6cPfdegGkMdsmokl2U7cca/aA6XuhnbAnRfhZiyrf/x24IMacbufmk8BIfA==
-X-Received: by 2002:adf:ff09:: with SMTP id k9mr21346704wrr.97.1548690916153;
-        Mon, 28 Jan 2019 07:55:16 -0800 (PST)
+        bh=e0Ha4ellaoNOp/hRaJJ64zG2xd/bafkpJFLNPc8fabM=;
+        b=Cd8Jba+WCWh+gkC4tWfq6WZQ01NTth/dSajy4zaSrqLW3PjNcMMdO1ZVQ/lik8vIyD
+         xyI8DzfqQUPsNrVguWOa7moE1LmgOorFSb2EpJruU3vlRzwf5QdymvtXRBNsITwuKFnb
+         UY5hs1v2XR7wtm3qB+7+ejKy9e3ZpXJa1w3vG8Drj159DFnHBscILqrA3tkHxCNs9UTK
+         SvZpLcCW958PUawKnELXU17zIQ3eWRKXMV5eJ/X0mWKiH4GSjFf+6eEm32cO6SNmc4Kx
+         PlPDqj2Phzg3Wp6KSy0/2x5CCKOihHWawiYDaYEqSIgot/8vxTGlXEB5qRFEIfQpKaAA
+         /YXw==
+X-Gm-Message-State: AJcUukfxJD0+ExvrGwziZq8AjRnO+v1cvLJD75mY9S7pQQNOeY5tsTvE
+        2HTLZgcMyZOQ/35d7n/rkzXDpyVhHAU=
+X-Google-Smtp-Source: ALg8bN7pVAHd9F0TreLg9Cc0Uj68w5uAduzUcUkvlnRY+tmZngsGq3ZgqIn+0L/+OdAUBYa1fIQuAw==
+X-Received: by 2002:a5d:4f10:: with SMTP id c16mr22937298wru.177.1548690920879;
+        Mon, 28 Jan 2019 07:55:20 -0800 (PST)
 Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
-        by smtp.gmail.com with ESMTPSA id p6sm145140485wrx.50.2019.01.28.07.55.15
+        by smtp.gmail.com with ESMTPSA id p6sm145140485wrx.50.2019.01.28.07.55.19
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 07:55:15 -0800 (PST)
+        Mon, 28 Jan 2019 07:55:19 -0800 (PST)
 From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 To:     gregkh@linuxfoundation.org
 Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH 07/13] nvmem: core: Set the provider read-only when no write callback is given
-Date:   Mon, 28 Jan 2019 15:55:00 +0000
-Message-Id: <20190128155506.25566-8-srinivas.kandagatla@linaro.org>
+Subject: [PATCH 11/13] nvmem: core: Always reference the device returned by nvmem_device_get()
+Date:   Mon, 28 Jan 2019 15:55:04 +0000
+Message-Id: <20190128155506.25566-12-srinivas.kandagatla@linaro.org>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
 References: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
@@ -71,31 +71,36 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Alban Bedel <albeu@free.fr>
 
-If no write callback is given the device should be marked as read-only.
-While at it also move from a bit or to a logical or as that is a logical
-expression.
+In nvmem_device_get(), when the device lookup fails with DT it
+currently fallback on nvmem_find() which is wrong for two reasons.
+First nvmem_find() return NULL when nothing is found instead of an
+ERR_PTR. But nvmem_find() also just lookup the device, it doesn't
+reference the module and increment the reference count like it is done
+in the DT path.
+
+To fix this we replace the call to nvmem_find() with a call to
+__nvmem_device_get() which does all the referencing and return a
+proper ERR_PTR in case of error.
 
 Signed-off-by: Alban Bedel <albeu@free.fr>
 Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- drivers/nvmem/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/nvmem/core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
-index f7301bb4ef3b..cf2e1091fe89 100644
+index a749a5cb0a4e..1752768dd2d2 100644
 --- a/drivers/nvmem/core.c
 +++ b/drivers/nvmem/core.c
-@@ -646,8 +646,8 @@ struct nvmem_device *nvmem_register(const struct nvmem_config *config)
- 			     config->name ? config->id : nvmem->id);
+@@ -874,7 +874,7 @@ struct nvmem_device *nvmem_device_get(struct device *dev, const char *dev_name)
+ 
  	}
  
--	nvmem->read_only = device_property_present(config->dev, "read-only") |
--			   config->read_only;
-+	nvmem->read_only = device_property_present(config->dev, "read-only") ||
-+			   config->read_only || !nvmem->reg_write;
+-	return nvmem_find(dev_name);
++	return __nvmem_device_get(NULL, dev_name);
+ }
+ EXPORT_SYMBOL_GPL(nvmem_device_get);
  
- 	if (config->root_only)
- 		nvmem->dev.groups = nvmem->read_only ?
 -- 
 2.20.1
 
