@@ -7,51 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3230FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 085B7C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3A1921848
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CB0AD21841
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:59 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691075;
-	bh=x0Voxxt2c4FEzIU0HzbiZbOM/xj6TU5jF5ovg+pUO0g=;
+	s=default; t=1548691079;
+	bh=tNKOX75pnekJKf/gmlhYfUmfvUg4FxLKHyeykOYjtaY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=eLD9i7kpjYRHhuZC6sHxvteUi6en01VbfhZlCFHpv7XcMIMRaJBUv58+kC815HGHT
-	 IsoIi82zSW/ZCP8BK0YelehVYa/MxgYTRJ2uFOvNg0oDs+V+r8p92qiVY/RDggfes1
-	 dL7z2v73MqCc6SvsCN8ILObeOh+oC9PnegKTWY0s=
+	b=oEtAKzVSI5MOcazlsvLGpyHvjRa+xM3kHICAs9xdM/NGKgIHUce+0ALZla1SZKRKc
+	 oQYr1P7WMeN6VW9fe5BVcWIKWDQYgSrOvehmaTvXDA6HIK4cFNXWArOcjpza5JCNVc
+	 y6BZXxrtKA4pztcBttMM5oCPXUyV3L/0rofbLECc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730310AbfA1P5x (ORCPT
+        id S1730348AbfA1P56 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:57:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43282 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:57:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43372 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729597AbfA1P5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:57:51 -0500
+        id S1730316AbfA1P55 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:57:57 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 697E42183F;
-        Mon, 28 Jan 2019 15:57:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0E1F421783;
+        Mon, 28 Jan 2019 15:57:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691070;
-        bh=x0Voxxt2c4FEzIU0HzbiZbOM/xj6TU5jF5ovg+pUO0g=;
+        s=default; t=1548691076;
+        bh=tNKOX75pnekJKf/gmlhYfUmfvUg4FxLKHyeykOYjtaY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bLCfLNYfVx30cAApNOhApHWXHj9HxgbvJ3TdhHSrqlDD0mf5tMNn5QD2hx4yfIVXR
-         IVcyBqo6kQ6HAAZVTu2QogdYJ/53kxUgNzbJk3xgg0H26NavxncJgTqt8mbjxcE2nP
-         QsbHJZ5S/ZdL8nbLODoxFSAhiWI6BwXUCr6+AJyA=
+        b=uyXmcAPdQEfKf6oB5g5K+6KE6XzNBngKYxB71Gpkx3tbo13KkmGyV/8NlIjBZ3HnD
+         WLZ+PyGEcTLEXtCXT0RSlGLUuQEAeyd4wEs8GxuXpnYctNLQQrAdqNfNz6WSRXnEI2
+         kYP4BtUZ2SxQew++slCcbHphqpKkGkc1aruhYlVY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Junxiao Bi <junxiao.bi@oracle.com>,
+Cc:     Larry Chen <lchen@suse.com>, Mark Fasheh <mark@fasheh.com>,
         Joel Becker <jlbec@evilplan.org>,
+        Junxiao Bi <junxiao.bi@oracle.com>,
         Joseph Qi <jiangqi903@gmail.com>,
-        Jun Piao <piaojun@huawei.com>,
-        Mark Fasheh <mfasheh@versity.com>,
+        Changwei Ge <ge.changwei@h3c.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 279/304] ocfs2: don't clear bh uptodate for block read
-Date:   Mon, 28 Jan 2019 10:43:16 -0500
-Message-Id: <20190128154341.47195-279-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 280/304] ocfs2: improve ocfs2 Makefile
+Date:   Mon, 28 Jan 2019 10:43:17 -0500
+Message-Id: <20190128154341.47195-280-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -63,68 +63,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Junxiao Bi <junxiao.bi@oracle.com>
+From: Larry Chen <lchen@suse.com>
 
-[ Upstream commit 70306d9dce75abde855cefaf32b3f71eed8602a3 ]
+[ Upstream commit 9e6aea22802b5684c7e1d69822aeb0844dd01953 ]
 
-For sync io read in ocfs2_read_blocks_sync(), first clear bh uptodate flag
-and submit the io, second wait io done, last check whether bh uptodate, if
-not return io error.
+Included file path was hard-wired in the ocfs2 makefile, which might
+causes some confusion when compiling ocfs2 as an external module.
 
-If two sync io for the same bh were issued, it could be the first io done
-and set uptodate flag, but just before check that flag, the second io came
-in and cleared uptodate, then ocfs2_read_blocks_sync() for the first io
-will return IO error.
+Say if we compile ocfs2 module as following.
+cp -r /kernel/tree/fs/ocfs2 /other/dir/ocfs2
+cd /other/dir/ocfs2
+make -C /path/to/kernel_source M=`pwd` modules
 
-Indeed it's not necessary to clear uptodate flag, as the io end handler
-end_buffer_read_sync() will set or clear it based on io succeed or failed.
+Acutally, the compiler wil try to find included file in
+/kernel/tree/fs/ocfs2, rather than the directory /other/dir/ocfs2.
 
-The following message was found from a nfs server but the underlying
-storage returned no error.
+To fix this little bug, we introduce the var $(src) provided by kbuild.
+$(src) means the absolute path of the running kbuild file.
 
-[4106438.567376] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2780 ERROR: read block 1238823695 failed -5
-[4106438.567569] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2812 ERROR: status = -5
-[4106438.567611] (nfsd,7146,3):ocfs2_test_inode_bit:2894 ERROR: get alloc slot and bit failed -5
-[4106438.567643] (nfsd,7146,3):ocfs2_test_inode_bit:2932 ERROR: status = -5
-[4106438.567675] (nfsd,7146,3):ocfs2_get_dentry:94 ERROR: test inode bit failed -5
-
-Same issue in non sync read ocfs2_read_blocks(), fixed it as well.
-
-Link: http://lkml.kernel.org/r/20181121020023.3034-4-junxiao.bi@oracle.com
-Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
-Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
-Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Link: http://lkml.kernel.org/r/20181108085546.15149-1-lchen@suse.com
+Signed-off-by: Larry Chen <lchen@suse.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Mark Fasheh <mark@fasheh.com>
 Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Junxiao Bi <junxiao.bi@oracle.com>
 Cc: Joseph Qi <jiangqi903@gmail.com>
-Cc: Jun Piao <piaojun@huawei.com>
-Cc: Mark Fasheh <mfasheh@versity.com>
+Cc: Changwei Ge <ge.changwei@h3c.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ocfs2/buffer_head_io.c | 2 --
- 1 file changed, 2 deletions(-)
+ fs/ocfs2/Makefile       | 2 +-
+ fs/ocfs2/dlm/Makefile   | 2 +-
+ fs/ocfs2/dlmfs/Makefile | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
-index 4ebbd57cbf84..f9b84f7a3e4b 100644
---- a/fs/ocfs2/buffer_head_io.c
-+++ b/fs/ocfs2/buffer_head_io.c
-@@ -161,7 +161,6 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
- #endif
- 		}
+diff --git a/fs/ocfs2/Makefile b/fs/ocfs2/Makefile
+index 99ee093182cb..cc9b32b9db7c 100644
+--- a/fs/ocfs2/Makefile
++++ b/fs/ocfs2/Makefile
+@@ -1,5 +1,5 @@
+ # SPDX-License-Identifier: GPL-2.0
+-ccflags-y := -Ifs/ocfs2
++ccflags-y := -I$(src)
  
--		clear_buffer_uptodate(bh);
- 		get_bh(bh); /* for end_buffer_read_sync() */
- 		bh->b_end_io = end_buffer_read_sync;
- 		submit_bh(REQ_OP_READ, 0, bh);
-@@ -341,7 +340,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
- 				continue;
- 			}
+ obj-$(CONFIG_OCFS2_FS) += 	\
+ 	ocfs2.o			\
+diff --git a/fs/ocfs2/dlm/Makefile b/fs/ocfs2/dlm/Makefile
+index bd1aab1f49a4..ef2854422a6e 100644
+--- a/fs/ocfs2/dlm/Makefile
++++ b/fs/ocfs2/dlm/Makefile
+@@ -1,4 +1,4 @@
+-ccflags-y := -Ifs/ocfs2
++ccflags-y := -I$(src)/..
  
--			clear_buffer_uptodate(bh);
- 			get_bh(bh); /* for end_buffer_read_sync() */
- 			if (validate)
- 				set_buffer_needs_validate(bh);
+ obj-$(CONFIG_OCFS2_FS_O2CB) += ocfs2_dlm.o
+ 
+diff --git a/fs/ocfs2/dlmfs/Makefile b/fs/ocfs2/dlmfs/Makefile
+index eed3db8c5b49..33431a0296a3 100644
+--- a/fs/ocfs2/dlmfs/Makefile
++++ b/fs/ocfs2/dlmfs/Makefile
+@@ -1,4 +1,4 @@
+-ccflags-y := -Ifs/ocfs2
++ccflags-y := -I$(src)/..
+ 
+ obj-$(CONFIG_OCFS2_FS) += ocfs2_dlmfs.o
+ 
 -- 
 2.19.1
 
