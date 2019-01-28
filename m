@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3E71C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:45:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9D98C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:45:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9443120880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:45:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9094420880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:45:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="Sa+wbDX6"
+	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="NNsZ0HSh"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfA1IpF (ORCPT
+        id S1726972AbfA1IpM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:45:05 -0500
-Received: from mout01.posteo.de ([185.67.36.65]:35024 "EHLO mout01.posteo.de"
+        Mon, 28 Jan 2019 03:45:12 -0500
+Received: from mout01.posteo.de ([185.67.36.65]:38689 "EHLO mout01.posteo.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726695AbfA1IpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726763AbfA1IpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 03:45:03 -0500
 Received: from submission (posteo.de [89.146.220.130]) 
-        by mout01.posteo.de (Postfix) with ESMTPS id E83A0160072
+        by mout01.posteo.de (Postfix) with ESMTPS id 9497F160068
         for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 09:44:59 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1548665100; bh=9/01gG+xUer1ERxxGCbKaaEG1f3J5yEjZ+cHbq3OEKM=;
+        t=1548665099; bh=YTDvFHiOHa9rBcgiiUydCcbY/GNbvcWh6RDXxk/umvA=;
         h=From:To:Cc:Subject:Date:From;
-        b=Sa+wbDX6fKg8uEw9/GyV/dtND2chGzMoM3+/bUCdqkLjgadyX1DSDemomftwwZwIl
-         9rgVf1+IWfgbgve1yV9Ou6goZeIaYaf6pDghiVY3WsPZmYcJpQDdkP20QXvLPDtSz9
-         GRKS2O02dly/KG8S3u1hDTGaXKSMy99nj4HO6DY0arYQQRTZRfwCV+PaefGiuiUBma
-         sD5qYz3VsckhLPYkNZfckIkyRXi+Qm+dErq3JvudJkdM1NXWV85u7RY0nPn0P69b9B
-         TCaPqG+dRXLLdkDvZVPDHQ7bsehgC0ux1JgnVu0g3TiM8ZZJOt7N27KyaDvBC/bBvt
-         sK9YSon2AZCAg==
+        b=NNsZ0HShazy/W+i+yLdv2kOIbKmYtJjIAFbHoab3U6xWp+z5gx9cudUqQZOwUkwE1
+         8c25euGEwzOClY780qF8o87xTVStnZQVHu1TsQREmlHFzQRZ87qj65bsxLi7IKn4io
+         g4Bzv3Kllq1qHCSxug3HNLMhVA9KQlMj4rHhoeawe69c2RSoICi50d6y0nMKgOrMpG
+         LrNW0V29s1ysBXiYzboHXbNXcH3KtHHKwS6tKCzlBmjPpnhc1HSutAl+9WMj2nM4ic
+         sIXAf2f3T02zgbgmF5T6zU9wsqcz/OWUG1CbOgC2vP6ah5qaEocrIw17DNq4JGFKKg
+         f6I6Zh9Lj4zig==
 Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 43p3970nV8z6tm8;
-        Mon, 28 Jan 2019 09:44:59 +0100 (CET)
+        by submission (posteo.de) with ESMTPSA id 43p39656S4z6tmM;
+        Mon, 28 Jan 2019 09:44:58 +0100 (CET)
 From:   Martin Kepplinger <martink@posteo.de>
 To:     devicetree@vger.kernel.org, linux-input@vger.kernel.org
 Cc:     dmitry.torokhov@gmail.com, robh+dt@kernel.org,
         mark.rutland@arm.com, linux-kernel@vger.kernel.org,
         Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH 3/3] Input: st1232 - add Martin as module author
-Date:   Mon, 28 Jan 2019 09:44:49 +0100
-Message-Id: <20190128084449.16070-3-martink@posteo.de>
+Subject: [PATCH 2/3] Input: st1232 - add support for st1633
+Date:   Mon, 28 Jan 2019 09:44:48 +0100
+Message-Id: <20190128084449.16070-2-martink@posteo.de>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20190128084449.16070-1-martink@posteo.de>
 References: <20190128084449.16070-1-martink@posteo.de>
@@ -57,25 +57,254 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 
-This adds myself as an author of the st1232 driver module as Tony's
-email address doesn't seem to work anymore.
+Add support for the Sitronix ST1633 touchscreen controller to the st1232
+driver. A protocol spec can be found here:
+www.ampdisplay.com/documents/pdf/AM-320480B6TZQW-TC0H.pdf
 
 Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
 ---
- drivers/input/touchscreen/st1232.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/input/touchscreen/Kconfig  |   6 +-
+ drivers/input/touchscreen/st1232.c | 122 +++++++++++++++++++++--------
+ 2 files changed, 94 insertions(+), 34 deletions(-)
 
+diff --git a/drivers/input/touchscreen/Kconfig b/drivers/input/touchscreen/Kconfig
+index 068dbbc610fc..7c597a49c265 100644
+--- a/drivers/input/touchscreen/Kconfig
++++ b/drivers/input/touchscreen/Kconfig
+@@ -1168,11 +1168,11 @@ config TOUCHSCREEN_SIS_I2C
+ 	  module will be called sis_i2c.
+ 
+ config TOUCHSCREEN_ST1232
+-	tristate "Sitronix ST1232 touchscreen controllers"
++	tristate "Sitronix ST1232 or ST1633 touchscreen controllers"
+ 	depends on I2C
+ 	help
+-	  Say Y here if you want to support Sitronix ST1232
+-	  touchscreen controller.
++	  Say Y here if you want to support the Sitronix ST1232
++	  or ST1633 touchscreen controller.
+ 
+ 	  If unsure, say N.
+ 
 diff --git a/drivers/input/touchscreen/st1232.c b/drivers/input/touchscreen/st1232.c
-index 19a665d48dad..906b233970aa 100644
+index 11ff32c68025..19a665d48dad 100644
 --- a/drivers/input/touchscreen/st1232.c
 +++ b/drivers/input/touchscreen/st1232.c
-@@ -346,5 +346,6 @@ static struct i2c_driver st1232_ts_driver = {
- module_i2c_driver(st1232_ts_driver);
+@@ -23,13 +23,15 @@
+ #include <linux/types.h>
  
- MODULE_AUTHOR("Tony SIM <chinyeow.sim.xt@renesas.com>");
-+MODULE_AUTHOR("Martin Kepplinger <martin.kepplinger@ginzinger.com>");
- MODULE_DESCRIPTION("SITRONIX ST1232 Touchscreen Controller Driver");
- MODULE_LICENSE("GPL v2");
+ #define ST1232_TS_NAME	"st1232-ts"
++#define ST1633_TS_NAME	"st1633-ts"
++
++enum {
++	st1232,
++	st1633,
++};
+ 
+ #define MIN_X		0x00
+ #define MIN_Y		0x00
+-#define MAX_X		0x31f	/* (800 - 1) */
+-#define MAX_Y		0x1df	/* (480 - 1) */
+-#define MAX_AREA	0xff
+-#define MAX_FINGERS	2
+ 
+ struct st1232_ts_finger {
+ 	u16 x;
+@@ -38,12 +40,24 @@ struct st1232_ts_finger {
+ 	bool is_valid;
+ };
+ 
++struct st_chip_info {
++	bool	have_z;
++	u16	max_x;
++	u16	max_y;
++	u16	max_area;
++	u16	max_fingers;
++	u8	start_reg;
++};
++
+ struct st1232_ts_data {
+ 	struct i2c_client *client;
+ 	struct input_dev *input_dev;
+-	struct st1232_ts_finger finger[MAX_FINGERS];
+ 	struct dev_pm_qos_request low_latency_req;
+ 	int reset_gpio;
++	const struct st_chip_info *chip_info;
++	int read_buf_len;
++	u8 *read_buf;
++	struct st1232_ts_finger *finger;
+ };
+ 
+ static int st1232_ts_read_data(struct st1232_ts_data *ts)
+@@ -52,40 +66,35 @@ static int st1232_ts_read_data(struct st1232_ts_data *ts)
+ 	struct i2c_client *client = ts->client;
+ 	struct i2c_msg msg[2];
+ 	int error;
+-	u8 start_reg;
+-	u8 buf[10];
++	int i, y;
++	u8 start_reg = ts->chip_info->start_reg;
++	u8 *buf = ts->read_buf;
+ 
+-	/* read touchscreen data from ST1232 */
++	/* read touchscreen data */
+ 	msg[0].addr = client->addr;
+ 	msg[0].flags = 0;
+ 	msg[0].len = 1;
+ 	msg[0].buf = &start_reg;
+-	start_reg = 0x10;
+ 
+ 	msg[1].addr = ts->client->addr;
+ 	msg[1].flags = I2C_M_RD;
+-	msg[1].len = sizeof(buf);
++	msg[1].len = ts->read_buf_len;
+ 	msg[1].buf = buf;
+ 
+ 	error = i2c_transfer(client->adapter, msg, 2);
+ 	if (error < 0)
+ 		return error;
+ 
+-	/* get "valid" bits */
+-	finger[0].is_valid = buf[2] >> 7;
+-	finger[1].is_valid = buf[5] >> 7;
++	for (i = 0, y = 0; i < ts->chip_info->max_fingers; i++, y += 3) {
++		finger[i].is_valid = buf[i + y] >> 7;
++		if (finger[i].is_valid) {
++			finger[i].x = ((buf[i + y] & 0x0070) << 4) | buf[i + 1];
++			finger[i].y = ((buf[i + y] & 0x0007) << 8) | buf[i + 2];
+ 
+-	/* get xy coordinate */
+-	if (finger[0].is_valid) {
+-		finger[0].x = ((buf[2] & 0x0070) << 4) | buf[3];
+-		finger[0].y = ((buf[2] & 0x0007) << 8) | buf[4];
+-		finger[0].t = buf[8];
+-	}
+-
+-	if (finger[1].is_valid) {
+-		finger[1].x = ((buf[5] & 0x0070) << 4) | buf[6];
+-		finger[1].y = ((buf[5] & 0x0007) << 8) | buf[7];
+-		finger[1].t = buf[9];
++			/* st1232 includes a z-axis / touch strength */
++			if (ts->chip_info->have_z)
++				finger[i].t = buf[i + 6];
++		}
+ 	}
+ 
+ 	return 0;
+@@ -104,11 +113,14 @@ static irqreturn_t st1232_ts_irq_handler(int irq, void *dev_id)
+ 		goto end;
+ 
+ 	/* multi touch protocol */
+-	for (i = 0; i < MAX_FINGERS; i++) {
++	for (i = 0; i < ts->chip_info->max_fingers; i++) {
+ 		if (!finger[i].is_valid)
+ 			continue;
+ 
+-		input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR, finger[i].t);
++		if (ts->chip_info->have_z)
++			input_report_abs(input_dev, ABS_MT_TOUCH_MAJOR,
++					 finger[i].t);
++
+ 		input_report_abs(input_dev, ABS_MT_POSITION_X, finger[i].x);
+ 		input_report_abs(input_dev, ABS_MT_POSITION_Y, finger[i].y);
+ 		input_mt_sync(input_dev);
+@@ -142,12 +154,40 @@ static void st1232_ts_power(struct st1232_ts_data *ts, bool poweron)
+ 		gpio_direction_output(ts->reset_gpio, poweron);
+ }
+ 
++static const struct st_chip_info st1232_chip_info = {
++		.have_z = true,
++		.max_x = 0x31f, /* 800 - 1 */
++		.max_y = 0x1df, /* 480 -1 */
++		.max_area = 0xff,
++		.max_fingers = 2,
++		.start_reg = 0x12,
++};
++
++static const struct st_chip_info st1633_chip_info = {
++		.have_z = false,
++		.max_x = 0x13f, /* 320 - 1 */
++		.max_y = 0x1df, /* 480 -1 */
++		.max_area = 0x00,
++		.max_fingers = 5,
++		.start_reg = 0x12,
++};
++
+ static int st1232_ts_probe(struct i2c_client *client,
+ 			   const struct i2c_device_id *id)
+ {
+ 	struct st1232_ts_data *ts;
++	struct st1232_ts_finger *finger;
+ 	struct input_dev *input_dev;
+ 	int error;
++	const struct st_chip_info *match = NULL;
++
++	match = device_get_match_data(&client->dev);
++	if (!match && id)
++		match = (const void *)id->driver_data;
++	if (!match) {
++		dev_err(&client->dev, "unknown device model\n");
++		return -ENODEV;
++	}
+ 
+ 	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C)) {
+ 		dev_err(&client->dev, "need I2C_FUNC_I2C\n");
+@@ -163,6 +203,19 @@ static int st1232_ts_probe(struct i2c_client *client,
+ 	if (!ts)
+ 		return -ENOMEM;
+ 
++	ts->chip_info = match;
++	ts->finger = devm_kzalloc(&client->dev,
++				  sizeof(*finger) * ts->chip_info->max_fingers,
++				  GFP_KERNEL);
++	if (!ts->finger)
++		return -ENOMEM;
++
++	/* allocate a buffer according to the number of registers to read */
++	ts->read_buf_len = ts->chip_info->max_fingers * 4;
++	ts->read_buf = devm_kzalloc(&client->dev, ts->read_buf_len, GFP_KERNEL);
++	if (!ts->read_buf)
++		return -ENOMEM;
++
+ 	input_dev = devm_input_allocate_device(&client->dev);
+ 	if (!input_dev)
+ 		return -ENOMEM;
+@@ -192,9 +245,14 @@ static int st1232_ts_probe(struct i2c_client *client,
+ 	__set_bit(EV_KEY, input_dev->evbit);
+ 	__set_bit(EV_ABS, input_dev->evbit);
+ 
+-	input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0, MAX_AREA, 0, 0);
+-	input_set_abs_params(input_dev, ABS_MT_POSITION_X, MIN_X, MAX_X, 0, 0);
+-	input_set_abs_params(input_dev, ABS_MT_POSITION_Y, MIN_Y, MAX_Y, 0, 0);
++	if (ts->chip_info->have_z)
++		input_set_abs_params(input_dev, ABS_MT_TOUCH_MAJOR, 0,
++				     ts->chip_info->max_area, 0, 0);
++
++	input_set_abs_params(input_dev, ABS_MT_POSITION_X,
++			     MIN_X, ts->chip_info->max_x, 0, 0);
++	input_set_abs_params(input_dev, ABS_MT_POSITION_Y,
++			     MIN_Y, ts->chip_info->max_y, 0, 0);
+ 
+ 	error = devm_request_threaded_irq(&client->dev, client->irq,
+ 					  NULL, st1232_ts_irq_handler,
+@@ -261,13 +319,15 @@ static SIMPLE_DEV_PM_OPS(st1232_ts_pm_ops,
+ 			 st1232_ts_suspend, st1232_ts_resume);
+ 
+ static const struct i2c_device_id st1232_ts_id[] = {
+-	{ ST1232_TS_NAME, 0 },
++	{ ST1232_TS_NAME, (unsigned long)&st1232_chip_info },
++	{ ST1633_TS_NAME, (unsigned long)&st1633_chip_info },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(i2c, st1232_ts_id);
+ 
+ static const struct of_device_id st1232_ts_dt_ids[] = {
+-	{ .compatible = "sitronix,st1232", },
++	{ .compatible = "sitronix,st1232", .data = &st1232_chip_info },
++	{ .compatible = "sitronix,st1633", .data = &st1633_chip_info },
+ 	{ }
+ };
+ MODULE_DEVICE_TABLE(of, st1232_ts_dt_ids);
 -- 
 2.20.1
 
