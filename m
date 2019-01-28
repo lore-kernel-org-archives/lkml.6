@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B49C4C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12A74C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8197920881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CFD95214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:43:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697408;
-	bh=Tj6dVCLgBVfarp/190zpv/HxDdo5BFRxnYiyV7RE0P4=;
+	s=default; t=1548697425;
+	bh=eyHQhMgm0jHj8K/A97uVAsVEQfD8OFZh2k7pWtmd1Po=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=yQuPp9Oh5adT7eUoMzn13qLxOAXmOG4iXC5Z3HZoF8n9cSdDule5NacLu5GsETjjI
-	 axsJmN+Nw4SxYcqtr9peJ4kwysTdSh+03Db/eyDaDVPzEbioNEvVUz2PWWKoZUW41O
-	 xQaqITyQpGmgj8SMkT+hA2PTmyO8wVQ+IXrrrDV0=
+	b=yPxyUdUUcR5IfuWP015e2JkUtDVsmwvws0UuR0L9sXSw8NKrqhH4giYfqxNnjx6LG
+	 kqBoZPp3BV60b12MisHzRXVcu1GVZRfK2R7ZjWPfOUfJSHgUaEygEOfqOzzvuISfsz
+	 yVe1RJEdnyGv3oaiEjA+UHjTwX5Ca6Gmdkf3kXkk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728780AbfA1Ptw (ORCPT
+        id S1728918AbfA1Rnn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:49:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35648 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:43:43 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35224 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728770AbfA1Ptt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:49:49 -0500
+        id S1727875AbfA1Pt1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:49:27 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8CD402147A;
-        Mon, 28 Jan 2019 15:49:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 83BA42147A;
+        Mon, 28 Jan 2019 15:49:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690589;
-        bh=Tj6dVCLgBVfarp/190zpv/HxDdo5BFRxnYiyV7RE0P4=;
+        s=default; t=1548690566;
+        bh=eyHQhMgm0jHj8K/A97uVAsVEQfD8OFZh2k7pWtmd1Po=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CSOIrw8myzVntuhvuoHkKlyc/7aSeicU3aFPXgr62IL9D6Q/SQpSnnzU4DwWgERWw
-         wQkuXEc1m/L/g7dOEcHJWG9vjJYsQpltmwtSnGSXGPHtqv5ihrOlmllIuiYINcMDFM
-         V+h8RHmUmBEpmTBghJJYJ/zSV+xwQEdR6jhENxkw=
+        b=RFKuUYUxiJOeLfakrvpRpVolY8/BTzde3c5BAt9SiKrf1xBwtDJvngKK/XShsQKtZ
+         STIIWKE8I+fe0dm5ExpVmstcRfJ3To2k91dPetuJYacPJQb9VXqqEX+oF3EFDmvTdr
+         r2QnOymK5HhmkNtu2XsD2Y4nk/VyMvtX0FaBhfec=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oskari Lemmela <oskari@lemmela.net>,
-        Heiko Stuebner <heiko@sntech.de>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org,
-        linux-rockchip@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.20 131/304] arm64: dts: rockchip: fix rk3399-rockpro64 regulator gpios
-Date:   Mon, 28 Jan 2019 10:40:48 -0500
-Message-Id: <20190128154341.47195-131-sashal@kernel.org>
+Cc:     Emmanuel Grumbach <emmanuel.grumbach@intel.com>,
+        Johannes Berg <johannes.berg@intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 127/304] mac80211: fix deauth TX when we disconnect
+Date:   Mon, 28 Jan 2019 10:40:44 -0500
+Message-Id: <20190128154341.47195-127-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,101 +59,180 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oskari Lemmela <oskari@lemmela.net>
+From: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
 
-[ Upstream commit 690e16bada6029694740d5501025faf483d14339 ]
+[ Upstream commit f6c7f03f69f7422bc237bc79599e152d390b74e0 ]
 
-Rockpro64 is not able boot if GPIO1_C1 pin is pulled high
-before loading linux kernel.
+The iTXQs stop/wake queue mechanism involves a whole bunch
+of locks and this is probably why the call to
+ieee80211_wake_txqs is deferred to a tasklet when called from
+__ieee80211_wake_queue.
 
-In rockpro64 GPIO1_C1 pin is connected vdd_cpu_b regulator
-VSEL pin. Pin should be pulled down in normal operation and
-pulled high in suspend.
+Another advantage of that is that ieee80211_wake_txqs might
+call the wake_tx_queue() callback and then the driver may
+call mac80211 which will call it back in the same context.
 
-PMIC LDO_REG2 is connected to touch panel connector.
-Rename regulator and set it to correct voltage.
+The bug I saw is that when we send a deauth frame as a
+station we do:
 
-PCIe power is controller by GPIO1_D0.
+flush(drop=1)
+tx deauth
+flush(drop=0)
 
-Schematics can be downloaded from:
-http://files.pine64.org/doc/rockpro64/rockpro64_v21-SCH.pdf
+While we flush we stop the queues and wake them up
+immediately after we finished flushing. The problem here is
+that the tasklet that de-facto enables the queue may not have
+run until we send the deauth. Then the deauth frame is sent
+to the driver (which is surprising by itself), but the driver
+won't get anything useful from ieee80211_tx_dequeue because
+the queue is stopped (or more precisely because
+vif->txqs_stopped[0] is true).
+Then the deauth is not sent. Later on, the tasklet will run,
+but that'll be too late. We'll already have removed all the
+vif etc...
 
-Signed-off-by: Oskari Lemmela <oskari@lemmela.net>
-Acked-by: Akash Gajjar <Akash_Gajjar@mentor.com>
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+Fix this by calling ieee80211_wake_txqs synchronously if we
+are not waking up the queues from the driver (we check the
+reason to determine that). This makes the code really
+convoluted because we may call ieee80211_wake_txqs from
+__ieee80211_wake_queue. The latter assumes that
+queue_stop_reason_lock has been taken by the caller and
+ieee80211_wake_txqs may release the lock to send the frames.
+
+Signed-off-by: Emmanuel Grumbach <emmanuel.grumbach@intel.com>
+Signed-off-by: Johannes Berg <johannes.berg@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../boot/dts/rockchip/rk3399-rockpro64.dts    | 20 +++++++++++--------
- 1 file changed, 12 insertions(+), 8 deletions(-)
+ net/mac80211/util.c | 49 ++++++++++++++++++++++++++++++++-------------
+ 1 file changed, 35 insertions(+), 14 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-index 1d35f5406b5e..5bd4d69914bd 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-rockpro64.dts
-@@ -97,7 +97,7 @@
- 	vcc3v3_pcie: vcc3v3-pcie-regulator {
- 		compatible = "regulator-fixed";
- 		enable-active-high;
--		gpio = <&gpio1 RK_PC1 GPIO_ACTIVE_HIGH>;
-+		gpio = <&gpio1 RK_PD0 GPIO_ACTIVE_HIGH>;
- 		pinctrl-names = "default";
- 		pinctrl-0 = <&pcie_pwr_en>;
- 		regulator-name = "vcc3v3_pcie";
-@@ -293,12 +293,12 @@
- 				};
- 			};
+diff --git a/net/mac80211/util.c b/net/mac80211/util.c
+index bec424316ea4..dddfff7cf44f 100644
+--- a/net/mac80211/util.c
++++ b/net/mac80211/util.c
+@@ -299,16 +299,16 @@ out:
+ 	spin_unlock_bh(&fq->lock);
+ }
  
--			vcc2v8_dvp: LDO_REG2 {
--				regulator-name = "vcc2v8_dvp";
-+			vcc3v0_touch: LDO_REG2 {
-+				regulator-name = "vcc3v0_touch";
- 				regulator-always-on;
- 				regulator-boot-on;
--				regulator-min-microvolt = <2800000>;
--				regulator-max-microvolt = <2800000>;
-+				regulator-min-microvolt = <3000000>;
-+				regulator-max-microvolt = <3000000>;
- 				regulator-state-mem {
- 					regulator-off-in-suspend;
- 				};
-@@ -397,7 +397,9 @@
- 	vdd_cpu_b: regulator@40 {
- 		compatible = "silergy,syr827";
- 		reg = <0x40>;
--		fcs,suspend-voltage-selector = <0>;
-+		fcs,suspend-voltage-selector = <1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vsel1_gpio>;
- 		regulator-name = "vdd_cpu_b";
- 		regulator-min-microvolt = <712500>;
- 		regulator-max-microvolt = <1500000>;
-@@ -415,6 +417,8 @@
- 		compatible = "silergy,syr828";
- 		reg = <0x41>;
- 		fcs,suspend-voltage-selector = <1>;
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&vsel2_gpio>;
- 		regulator-name = "vdd_gpu";
- 		regulator-min-microvolt = <712500>;
- 		regulator-max-microvolt = <1500000>;
-@@ -519,7 +523,7 @@
+-void ieee80211_wake_txqs(unsigned long data)
++static void
++__releases(&local->queue_stop_reason_lock)
++__acquires(&local->queue_stop_reason_lock)
++_ieee80211_wake_txqs(struct ieee80211_local *local, unsigned long *flags)
+ {
+-	struct ieee80211_local *local = (struct ieee80211_local *)data;
+ 	struct ieee80211_sub_if_data *sdata;
+ 	int n_acs = IEEE80211_NUM_ACS;
+-	unsigned long flags;
+ 	int i;
  
- 	pcie {
- 		pcie_pwr_en: pcie-pwr-en {
--			rockchip,pins = <1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
-+			rockchip,pins = <1 RK_PD0 RK_FUNC_GPIO &pcfg_pull_none>;
- 		};
- 	};
+ 	rcu_read_lock();
+-	spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
  
-@@ -529,7 +533,7 @@
- 		};
+ 	if (local->hw.queues < IEEE80211_NUM_ACS)
+ 		n_acs = 1;
+@@ -317,7 +317,7 @@ void ieee80211_wake_txqs(unsigned long data)
+ 		if (local->queue_stop_reasons[i])
+ 			continue;
  
- 		vsel1_gpio: vsel1-gpio {
--			rockchip,pins = <1 RK_PC2 RK_FUNC_GPIO &pcfg_pull_down>;
-+			rockchip,pins = <1 RK_PC1 RK_FUNC_GPIO &pcfg_pull_down>;
- 		};
+-		spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
++		spin_unlock_irqrestore(&local->queue_stop_reason_lock, *flags);
+ 		list_for_each_entry_rcu(sdata, &local->interfaces, list) {
+ 			int ac;
  
- 		vsel2_gpio: vsel2-gpio {
+@@ -329,13 +329,22 @@ void ieee80211_wake_txqs(unsigned long data)
+ 					__ieee80211_wake_txqs(sdata, ac);
+ 			}
+ 		}
+-		spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
++		spin_lock_irqsave(&local->queue_stop_reason_lock, *flags);
+ 	}
+ 
+-	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ 	rcu_read_unlock();
+ }
+ 
++void ieee80211_wake_txqs(unsigned long data)
++{
++	struct ieee80211_local *local = (struct ieee80211_local *)data;
++	unsigned long flags;
++
++	spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
++	_ieee80211_wake_txqs(local, &flags);
++	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
++}
++
+ void ieee80211_propagate_queue_wake(struct ieee80211_local *local, int queue)
+ {
+ 	struct ieee80211_sub_if_data *sdata;
+@@ -371,7 +380,8 @@ void ieee80211_propagate_queue_wake(struct ieee80211_local *local, int queue)
+ 
+ static void __ieee80211_wake_queue(struct ieee80211_hw *hw, int queue,
+ 				   enum queue_stop_reason reason,
+-				   bool refcounted)
++				   bool refcounted,
++				   unsigned long *flags)
+ {
+ 	struct ieee80211_local *local = hw_to_local(hw);
+ 
+@@ -405,8 +415,19 @@ static void __ieee80211_wake_queue(struct ieee80211_hw *hw, int queue,
+ 	} else
+ 		tasklet_schedule(&local->tx_pending_tasklet);
+ 
+-	if (local->ops->wake_tx_queue)
+-		tasklet_schedule(&local->wake_txqs_tasklet);
++	/*
++	 * Calling _ieee80211_wake_txqs here can be a problem because it may
++	 * release queue_stop_reason_lock which has been taken by
++	 * __ieee80211_wake_queue's caller. It is certainly not very nice to
++	 * release someone's lock, but it is fine because all the callers of
++	 * __ieee80211_wake_queue call it right before releasing the lock.
++	 */
++	if (local->ops->wake_tx_queue) {
++		if (reason == IEEE80211_QUEUE_STOP_REASON_DRIVER)
++			tasklet_schedule(&local->wake_txqs_tasklet);
++		else
++			_ieee80211_wake_txqs(local, flags);
++	}
+ }
+ 
+ void ieee80211_wake_queue_by_reason(struct ieee80211_hw *hw, int queue,
+@@ -417,7 +438,7 @@ void ieee80211_wake_queue_by_reason(struct ieee80211_hw *hw, int queue,
+ 	unsigned long flags;
+ 
+ 	spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
+-	__ieee80211_wake_queue(hw, queue, reason, refcounted);
++	__ieee80211_wake_queue(hw, queue, reason, refcounted, &flags);
+ 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ }
+ 
+@@ -514,7 +535,7 @@ void ieee80211_add_pending_skb(struct ieee80211_local *local,
+ 			       false);
+ 	__skb_queue_tail(&local->pending[queue], skb);
+ 	__ieee80211_wake_queue(hw, queue, IEEE80211_QUEUE_STOP_REASON_SKB_ADD,
+-			       false);
++			       false, &flags);
+ 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ }
+ 
+@@ -547,7 +568,7 @@ void ieee80211_add_pending_skbs(struct ieee80211_local *local,
+ 	for (i = 0; i < hw->queues; i++)
+ 		__ieee80211_wake_queue(hw, i,
+ 			IEEE80211_QUEUE_STOP_REASON_SKB_ADD,
+-			false);
++			false, &flags);
+ 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ }
+ 
+@@ -605,7 +626,7 @@ void ieee80211_wake_queues_by_reason(struct ieee80211_hw *hw,
+ 	spin_lock_irqsave(&local->queue_stop_reason_lock, flags);
+ 
+ 	for_each_set_bit(i, &queues, hw->queues)
+-		__ieee80211_wake_queue(hw, i, reason, refcounted);
++		__ieee80211_wake_queue(hw, i, reason, refcounted, &flags);
+ 
+ 	spin_unlock_irqrestore(&local->queue_stop_reason_lock, flags);
+ }
 -- 
 2.19.1
 
