@@ -2,105 +2,110 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 067B6C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7550C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:56:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D63A121741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:56:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9821921741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:56:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="Jzi06Ann";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YZ/O8caE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731715AbfA1Q4X (ORCPT
+        id S1729992AbfA1Q4c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:56:23 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:49838 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387770AbfA1Qzg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:55:36 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 467A6EBD;
-        Mon, 28 Jan 2019 08:55:36 -0800 (PST)
-Received: from queper01-lin.cambridge.arm.com (queper01-lin.cambridge.arm.com [10.1.195.48])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9867B3F59C;
-        Mon, 28 Jan 2019 08:55:33 -0800 (PST)
-From:   Quentin Perret <quentin.perret@arm.com>
-To:     rjw@rjwysocki.net, viresh.kumar@linaro.org, sudeep.holla@arm.com,
-        liviu.dudau@arm.com, lorenzo.pieralisi@arm.com, robh+dt@kernel.org,
-        mark.rutland@arm.com, nm@ti.com, sboyd@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        dietmar.eggemann@arm.com, mka@chromium.org, quentin.perret@arm.com
-Subject: [PATCH 2/7] cpufreq: dt: Register an Energy Model
-Date:   Mon, 28 Jan 2019 16:55:17 +0000
-Message-Id: <20190128165522.31749-3-quentin.perret@arm.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128165522.31749-1-quentin.perret@arm.com>
-References: <20190128165522.31749-1-quentin.perret@arm.com>
+        Mon, 28 Jan 2019 11:56:32 -0500
+Received: from new1-smtp.messagingengine.com ([66.111.4.221]:33185 "EHLO
+        new1-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388236AbfA1Qz3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:55:29 -0500
+Received: from compute6.internal (compute6.nyi.internal [10.202.2.46])
+        by mailnew.nyi.internal (Postfix) with ESMTP id 2565E11169;
+        Mon, 28 Jan 2019 11:55:28 -0500 (EST)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute6.internal (MEProxy); Mon, 28 Jan 2019 11:55:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=
+        date:from:to:cc:subject:message-id:references:mime-version
+        :content-type:in-reply-to; s=fm2; bh=haZopF8nVy5HljMZVXg9juG9aGL
+        3ZbX5pWk6x4bp6Cs=; b=Jzi06Annyq6MY09iMlY9XYyy2BEhHGKcGjlB8mvF6zG
+        bxYIFWcmks812YRIBWKRZieJ9BkSvxBY/fpXM/XH0+Hzv4FiRoNo8r+ecuVu7C6n
+        IyXXIN0oX4yBOR1Ki+NMyzoJcjn/0s+b/8Jy0DkDCIsKGxxH7ZEoJ6q88UndPaGG
+        BAVkxN/79d1MaSs5sfJ/r/GegMLeqCeHcwAwn5i1nwysXsWtbbCsD77+zv4fGLcl
+        h729R3YYYoB1xv4zwdZEnxR4jOnMlaXSOJ7qyBgDlI085W20dU8sBlAZan3WQp5J
+        6yFSOkSgz/FJWumH8jkw7LbM/gJskgRrq5h6VagQM8w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+        messagingengine.com; h=cc:content-type:date:from:in-reply-to
+        :message-id:mime-version:references:subject:to:x-me-proxy
+        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=haZopF
+        8nVy5HljMZVXg9juG9aGL3ZbX5pWk6x4bp6Cs=; b=YZ/O8caEXNTawBqPDrl3kD
+        u8b1x+zrqSDvF4xALabCg2fbelXJrLxhJdsfpruM4IgfZ+Ucv3IHcUNYkZKcIp84
+        JDK0QpWcs7WHlFeR2Bh6xDtbLHdzCPBQgYjcj1yHg+61PWO01hVnSEvBOymtIkHx
+        2+fYPsp4qJbbvmUxps7W/GUonoc8W0hVM8+vDuVYlcoLyXU7KWziw7PwX7wrcP5M
+        TJdWB0i8XPBHM/UPkgVD1xxup67kCse3JJIcJPp1pPcEsQdViTwXv3cEB1L9RmQV
+        FUZtBT98l30XXsm5//tUWGme0TMe+0/YFuniGFh4GUsbV0SB4dMzukPUaKkCmAHg
+        ==
+X-ME-Sender: <xms:_zNPXDZYRaTjkAEyrC6KM2tgmIRKN6qKClE28RTLrgtPS_4K9XQtZg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedtledrjedtgddutddtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfquhhtnecuuegrihhlohhuthemucef
+    tddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenogfuphgrmhfkphculdeftd
+    dtmdenucfjughrpeffhffvuffkfhggtggujggfsehttdertddtredvnecuhfhrohhmpefi
+    rhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucfkphepkeefrdekiedrke
+    elrddutdejnecurfgrrhgrmhepmhgrihhlfhhrohhmpehgrhgvgheskhhrohgrhhdrtgho
+    mhenucevlhhushhtvghrufhiiigvpedt
+X-ME-Proxy: <xmx:_zNPXCkv5CElCJ0DxvtFpbT4FEd7DlND5IWTPIwziQttIX-ow91lfA>
+    <xmx:_zNPXIlPNsx3ThUsaW9mNyNnJ7qyYqgsN36ZQR6GjLFkMrYUYEVgBA>
+    <xmx:_zNPXFPqYDWbDPXui1EpB0IYREuGOI9-YM7LzYly-Ylyl3sS-RELJA>
+    <xmx:ADRPXIo8AfMUO2soO-r2dcjWl0C830z3LdXYjAoOS3QyuuuUzBcYzQ>
+Received: from localhost (5356596b.cm-6-7b.dynamic.ziggo.nl [83.86.89.107])
+        by mail.messagingengine.com (Postfix) with ESMTPA id 2820F1030D;
+        Mon, 28 Jan 2019 11:55:27 -0500 (EST)
+Date:   Mon, 28 Jan 2019 17:55:25 +0100
+From:   Greg KH <greg@kroah.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     stable@vger.kernel.org, daniel@ffwll.ch,
+        dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Tony McKahan <tonymckahan@gmail.com>
+Subject: Re: [PATCH v2] drm/meson: Fix atomic mode switching regression
+Message-ID: <20190128165525.GB16213@kroah.com>
+References: <20190114153118.8024-1-narmstrong@baylibre.com>
+ <2148dfd9-3263-2049-8fd8-d7a4cec97655@baylibre.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2148dfd9-3263-2049-8fd8-d7a4cec97655@baylibre.com>
+User-Agent: Mutt/1.11.2 (2019-01-07)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that PM_OPP provides a helper function to estimate the power
-consumed by CPUs, make sure to try and register an Energy Model (EM)
-from cpufreq-dt, hence ensuring interested subsystems (the task
-scheduler, for example) can make use of that information when available.
+On Mon, Jan 28, 2019 at 05:21:12PM +0100, Neil Armstrong wrote:
+> Hi Stable kernel team,
+> 
+> On 14/01/2019 16:31, Neil Armstrong wrote:
+> > Since commit 2bcd3ecab773 when switching mode from X11 (ubuntu mate for
+> > example) the display gets blurry, looking like an invalid framebuffer width.
+> > 
+> > This commit fixed atomic crtc modesetting in a totally wrong way and
+> > introduced a local unnecessary ->enabled crtc state.
+> > 
+> > This commit reverts the crctc _begin() and _enable() changes and simply
+> > adds drm_atomic_helper_commit_tail_rpm as helper.
+> > 
+> > Reported-by: Tony McKahan <tonymckahan@gmail.com>
+> > Suggested-by: Daniel Vetter <daniel@ffwll.ch>
+> > Fixes: 2bcd3ecab773 ("drm/meson: Fixes for drm_crtc_vblank_on/off support")
+> > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> This fix has landed in linus master with id ce0210c12433031aba3bbacd75f4c02ab77f2004
+> 
+> could it be applied to 4.19 and 4.20 stable trees ?
 
-Signed-off-by: Quentin Perret <quentin.perret@arm.com>
----
- drivers/cpufreq/cpufreq-dt.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+Now queued up, thanks.
 
-diff --git a/drivers/cpufreq/cpufreq-dt.c b/drivers/cpufreq/cpufreq-dt.c
-index e58bfcb1169e..7556e07e7a9f 100644
---- a/drivers/cpufreq/cpufreq-dt.c
-+++ b/drivers/cpufreq/cpufreq-dt.c
-@@ -16,6 +16,7 @@
- #include <linux/cpu_cooling.h>
- #include <linux/cpufreq.h>
- #include <linux/cpumask.h>
-+#include <linux/energy_model.h>
- #include <linux/err.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -152,6 +153,7 @@ static int resources_available(void)
- 
- static int cpufreq_init(struct cpufreq_policy *policy)
- {
-+	struct em_data_callback em_cb = EM_DATA_CB(of_dev_pm_opp_get_cpu_power);
- 	struct cpufreq_frequency_table *freq_table;
- 	struct opp_table *opp_table = NULL;
- 	struct private_data *priv;
-@@ -160,7 +162,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	unsigned int transition_latency;
- 	bool fallback = false;
- 	const char *name;
--	int ret;
-+	int ret, nr_opp;
- 
- 	cpu_dev = get_cpu_device(policy->cpu);
- 	if (!cpu_dev) {
-@@ -237,6 +239,7 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 		ret = -EPROBE_DEFER;
- 		goto out_free_opp;
- 	}
-+	nr_opp = ret;
- 
- 	if (fallback) {
- 		cpumask_setall(policy->cpus);
-@@ -280,6 +283,8 @@ static int cpufreq_init(struct cpufreq_policy *policy)
- 	policy->cpuinfo.transition_latency = transition_latency;
- 	policy->dvfs_possible_from_any_cpu = true;
- 
-+	em_register_perf_domain(policy->cpus, nr_opp, &em_cb);
-+
- 	return 0;
- 
- out_free_cpufreq_table:
--- 
-2.20.1
-
+greg k-h
