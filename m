@@ -2,187 +2,87 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D215C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:58:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D17D3C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07CF820989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:58:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9558620989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:58:53 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726672AbfA1F6A (ORCPT
+        id S1726754AbfA1F6w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 00:58:00 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:41100 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726149AbfA1F6A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 00:58:00 -0500
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 6345919D11F;
-        Mon, 28 Jan 2019 05:57:56 +0000 (UTC)
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Icenowy Zheng <icenowy@aosc.io>
-Subject: [PATCH] USB: serial: cp210x: add GPIO support for CP2104
-Date:   Mon, 28 Jan 2019 13:57:17 +0800
-Message-Id: <20190128055717.31162-1-icenowy@aosc.io>
+        Mon, 28 Jan 2019 00:58:52 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:59928 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726149AbfA1F6v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 00:58:51 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 1C516EF6C33E0F4AD4C1;
+        Mon, 28 Jan 2019 13:58:49 +0800 (CST)
+Received: from [127.0.0.1] (10.177.31.96) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Mon, 28 Jan 2019
+ 13:58:44 +0800
+Subject: Re: [PATCH] iwlwifi: Use kmemdup instead of duplicating its function
+To:     Joe Perches <joe@perches.com>, <johannes.berg@intel.com>,
+        <emmanuel.grumbach@intel.com>, <luciano.coelho@intel.com>,
+        <linuxwifi@intel.com>, <kvalo@codeaurora.org>
+References: <20190126124235.11248-1-yuehaibing@huawei.com>
+ <0c2c9ef717676371950942b08556d0e0196559de.camel@perches.com>
+CC:     <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>
+From:   YueHaibing <yuehaibing@huawei.com>
+Message-ID: <5e72a592-b795-0d88-e393-fff65126ca47@huawei.com>
+Date:   Mon, 28 Jan 2019 13:58:43 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.2.0
+MIME-Version: 1.0
+In-Reply-To: <0c2c9ef717676371950942b08556d0e0196559de.camel@perches.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.177.31.96]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The CP2104 chips feature 4 controllable GPIO pins, which are similar to
-the ones on CP2102N chip (output-only when push-pull, output or
-simulated input mode when open-drain).
+On 2019/1/27 5:24, Joe Perches wrote:
+> On Sat, 2019-01-26 at 20:42 +0800, YueHaibing wrote:
+>> Use kmemdup rather than duplicating its implementation
+> []
+>> diff --git a/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c b/drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
+> []
+>> @@ -1196,13 +1196,9 @@ iwl_parse_nvm_mcc_info(struct device *dev, const struct iwl_cfg *cfg,
+>>  	regd_to_copy = sizeof(struct ieee80211_regdomain) +
+>>  		valid_rules * sizeof(struct ieee80211_reg_rule);
+>> -	copy_rd = kzalloc(regd_to_copy, GFP_KERNEL);
+>> -	if (!copy_rd) {
+>> +	copy_rd = kmemdup(regd, regd_to_copy, GFP_KERNEL);
+> 
+> This should probably be
+> 
+> 	copy_rd = kmemdup(regd, struct_size(regd, reg_rules, valid_rules),
+> 			  GFP_KERNEL);
+> 
 
-Add support for the GPIO pins for cp210x driver. The pin get/set routine
-is shared with CP2102N, but the pinconf initialization code is not
-shared because the acquisition of GPIO configuration in OTP ROM is
-similar to CP2105, not CP2102N.
+Yes, So also can remove 'regd_to_copy', I will do it in a new patch
 
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
----
- drivers/usb/serial/cp210x.c | 82 +++++++++++++++++++++++++++++++++++--
- 1 file changed, 78 insertions(+), 4 deletions(-)
+Thanks!
 
-diff --git a/drivers/usb/serial/cp210x.c b/drivers/usb/serial/cp210x.c
-index c0777a374a88..b27cf9d00aec 100644
---- a/drivers/usb/serial/cp210x.c
-+++ b/drivers/usb/serial/cp210x.c
-@@ -443,10 +443,10 @@ struct cp210x_pin_mode {
- #define CP210X_PIN_MODE_GPIO		BIT(0)
- 
- /*
-- * CP210X_VENDOR_SPECIFIC, CP210X_GET_PORTCONFIG call reads these 0xf bytes.
-- * Structure needs padding due to unused/unspecified bytes.
-+ * CP210X_VENDOR_SPECIFIC, CP210X_GET_PORTCONFIG call reads these 0xf bytes
-+ * on a CP2105 chip. Structure needs padding due to unused/unspecified bytes.
-  */
--struct cp210x_config {
-+struct cp210x_dual_port_config {
- 	__le16	gpio_mode;
- 	u8	__pad0[2];
- 	__le16	reset_state;
-@@ -457,6 +457,19 @@ struct cp210x_config {
- 	u8	device_cfg;
- } __packed;
- 
-+/*
-+ * CP210X_VENDOR_SPECIFIC, CP210X_GET_PORTCONFIG call reads these 0xd bytes
-+ * on a CP2104 chip. Structure needs padding due to unused/unspecified bytes.
-+ */
-+struct cp210x_single_port_config {
-+	__le16	gpio_mode;
-+	u8	__pad0[2];
-+	__le16	reset_state;
-+	u8	__pad1[4];
-+	__le16	suspend_state;
-+	u8	device_cfg;
-+} __packed;
-+
- /* GPIO modes */
- #define CP210X_SCI_GPIO_MODE_OFFSET	9
- #define CP210X_SCI_GPIO_MODE_MASK	GENMASK(11, 9)
-@@ -464,11 +477,19 @@ struct cp210x_config {
- #define CP210X_ECI_GPIO_MODE_OFFSET	2
- #define CP210X_ECI_GPIO_MODE_MASK	GENMASK(3, 2)
- 
-+#define CP210X_GPIO_MODE_OFFSET		8
-+#define CP210X_GPIO_MODE_MASK		GENMASK(11, 8)
-+
- /* CP2105 port configuration values */
- #define CP2105_GPIO0_TXLED_MODE		BIT(0)
- #define CP2105_GPIO1_RXLED_MODE		BIT(1)
- #define CP2105_GPIO1_RS485_MODE		BIT(2)
- 
-+/* CP2104 port configuration values */
-+#define CP2104_GPIO0_TXLED_MODE		BIT(0)
-+#define CP2104_GPIO1_RXLED_MODE		BIT(1)
-+#define CP2104_GPIO2_RS485_MODE		BIT(2)
-+
- /* CP2102N configuration array indices */
- #define CP210X_2NCONFIG_CONFIG_VERSION_IDX	2
- #define CP210X_2NCONFIG_GPIO_MODE_IDX		581
-@@ -1470,7 +1491,7 @@ static int cp2105_gpioconf_init(struct usb_serial *serial)
- {
- 	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
- 	struct cp210x_pin_mode mode;
--	struct cp210x_config config;
-+	struct cp210x_dual_port_config config;
- 	u8 intf_num = cp210x_interface_num(serial);
- 	u8 iface_config;
- 	int result;
-@@ -1529,6 +1550,56 @@ static int cp2105_gpioconf_init(struct usb_serial *serial)
- 	return 0;
- }
- 
-+static int cp2104_gpioconf_init(struct usb_serial *serial)
-+{
-+	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
-+	struct cp210x_single_port_config config;
-+	u8 iface_config;
-+	u8 gpio_latch;
-+	int result;
-+	u8 i;
-+
-+	result = cp210x_read_vendor_block(serial, REQTYPE_DEVICE_TO_HOST,
-+					  CP210X_GET_PORTCONFIG, &config,
-+					  sizeof(config));
-+	if (result < 0)
-+		return result;
-+
-+	priv->gc.ngpio = 4;
-+
-+	iface_config = config.device_cfg;
-+	priv->gpio_pushpull = (u8)((le16_to_cpu(config.gpio_mode) &
-+					CP210X_GPIO_MODE_MASK) >>
-+					CP210X_GPIO_MODE_OFFSET);
-+	gpio_latch = (u8)((le16_to_cpu(config.reset_state) &
-+					CP210X_GPIO_MODE_MASK) >>
-+					CP210X_GPIO_MODE_OFFSET);
-+
-+	/* mark all pins which are not in GPIO mode */
-+	if (iface_config & CP2104_GPIO0_TXLED_MODE)	/* GPIO 0 */
-+		priv->gpio_altfunc |= BIT(0);
-+	if (iface_config & CP2104_GPIO1_RXLED_MODE)	/* GPIO 1 */
-+		priv->gpio_altfunc |= BIT(1);
-+	if (iface_config & CP2104_GPIO2_RS485_MODE)	/* GPIO 2 */
-+		priv->gpio_altfunc |= BIT(2);
-+
-+	/*
-+	 * Like CP2102N, CP2104 has also no strict input and output pin
-+	 * modes.
-+	 * Do the same input mode emulation as CP2102N.
-+	 */
-+	for (i = 0; i < priv->gc.ngpio; ++i) {
-+		/*
-+		 * Set direction to "input" iff pin is open-drain and reset
-+		 * value is 1.
-+		 */
-+		if (!(priv->gpio_pushpull & BIT(i)) && (gpio_latch & BIT(i)))
-+			priv->gpio_input |= BIT(i);
-+	}
-+
-+	return 0;
-+}
-+
- static int cp2102n_gpioconf_init(struct usb_serial *serial)
- {
- 	struct cp210x_serial_private *priv = usb_get_serial_data(serial);
-@@ -1620,6 +1691,9 @@ static int cp210x_gpio_init(struct usb_serial *serial)
- 	int result;
- 
- 	switch (priv->partnum) {
-+	case CP210X_PARTNUM_CP2104:
-+		result = cp2104_gpioconf_init(serial);
-+		break;
- 	case CP210X_PARTNUM_CP2105:
- 		result = cp2105_gpioconf_init(serial);
- 		break;
--- 
-2.18.1
+>> +	if (!copy_rd)
+>>  		copy_rd = ERR_PTR(-ENOMEM);
+>> -		goto out;
+>> -	}
+>> -
+>> -	memcpy(copy_rd, regd, regd_to_copy);
+>>  
+>>  out:
+>>  	kfree(regdb_ptrs);
+> 
+> 
+> .
+> 
 
