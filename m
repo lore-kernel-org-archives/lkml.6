@@ -2,89 +2,154 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C063C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:59:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8B5C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E7C32087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:59:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W0vM4iPq"
+	by mail.kernel.org (Postfix) with ESMTP id 9028A2087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:59:06 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726778AbfA1J67 (ORCPT
+        id S1726820AbfA1J7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:58:59 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:38300 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfA1J67 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:58:59 -0500
-Received: by mail-pl1-f193.google.com with SMTP id e5so7524935plb.5;
-        Mon, 28 Jan 2019 01:58:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=pJZh3L8iCg2l35Z7983fkXv2DOyMrKd8FNc4DrKdHO4=;
-        b=W0vM4iPq9S7ZaLoZA2fnzTJ/P0LyW517dsPf32SFFLqeYNADr6gGOx/pIOCJ/Q3THo
-         Ot6xWuHj5WhRRcNiW75aQZDRaoqeOVYZzv7CW3z6Rc8XS1ffxpRb7ibZFWdPSyAEG7dl
-         9yuMyNumqEbOWcZJFTiJvk/O69BU+2UI6arXDN+NrRC5vOGw7n2FVrz00sGe8dEKSYMS
-         4DQm40A+z9gjNkjRHCq7/0w4vaj/B6YxZGKWtxZhEfQ8ZWqz/ppPPQMtJWKsCc0bzVJO
-         6Q3QDEYDDtsOEJfJux5a13JBRPgkO+lZx7n8ik6G7BqplCudR20Pe4rQR4iWAENuE+lo
-         3a/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=pJZh3L8iCg2l35Z7983fkXv2DOyMrKd8FNc4DrKdHO4=;
-        b=JFYlNUc1C3t2fEr0gA4b8imFWyJz/EytVd1TNq2gjCc6EPHTRv274uI5sNkMtckmK6
-         fAk0QNa0tEaSp17PemIiyN4xi1akpi4wEAi4JHvak7ZdOanodolZ0GARyMlQn6KVY5aw
-         AziTzZu12qV+epDyNpzsBYsm9EdxBad+SGy4ee075yAAhyojogSKIPjs+2mTSDnl2Z73
-         TY1eXZHT3RsgdFt+IWLir1I+NxLf8gH82U0XtupignJu2X4o5OVy3sjnpHumA6Ow9QoN
-         BfyOtVcBKs663pvF+NivpMKlSPPrlOADrOaMGxRGAbwa6Jo3/Dj31j0VP0TPiVCyorFr
-         5gVQ==
-X-Gm-Message-State: AJcUuke21WvvwzoNpFuPF8o5DZzeCnQx0gy2yEU9k97yEiC65xpyEZQ+
-        XrcjLpHAC9mEHpEY7+wnPHX8yoX12ULKPRW+Ufo=
-X-Google-Smtp-Source: ALg8bN4uNwWGC6JI+mSZd+WevKQvYbFh/01iZN3LNZVfJ27VxzKjbexVJt7WHIEMey8xT3dQL3CF2Ood1HXtOv+Mujs=
-X-Received: by 2002:a17:902:4081:: with SMTP id c1mr21478375pld.87.1548669538396;
- Mon, 28 Jan 2019 01:58:58 -0800 (PST)
-MIME-Version: 1.0
-References: <20190125131519.88416-1-heikki.krogerus@linux.intel.com> <20190125131519.88416-9-heikki.krogerus@linux.intel.com>
-In-Reply-To: <20190125131519.88416-9-heikki.krogerus@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 28 Jan 2019 11:58:47 +0200
-Message-ID: <CAHp75VfQGQh4i4d42ijH2vTzrM63-Ev-BomgKP=dBSDM3vnq+w@mail.gmail.com>
-Subject: Re: [PATCH 8/8] device connection: Find device connections also from
- device graphs
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        USB <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 28 Jan 2019 04:59:04 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:42538 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726369AbfA1J7D (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:59:03 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4CF59EBD;
+        Mon, 28 Jan 2019 01:59:03 -0800 (PST)
+Received: from big-swifty.misterjones.org (big-swifty.cambridge.arm.com [10.1.39.122])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B0103F589;
+        Mon, 28 Jan 2019 01:59:00 -0800 (PST)
+Date:   Mon, 28 Jan 2019 09:58:59 +0000
+Message-ID: <86a7jlw1b0.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Julien Thierry <julien.thierry@arm.com>
+Cc:     <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <daniel.thompson@linaro.org>,
+        <joel@joelfernandes.org>, <christoffer.dall@arm.com>,
+        <james.morse@arm.com>, <catalin.marinas@arm.com>,
+        <will.deacon@arm.com>, <mark.rutland@arm.com>,
+        <kvmarm@lists.cs.columbia.edu>
+Subject: Re: [PATCH v9 10/26] arm64: kvm: Unmask PMR before entering guest
+In-Reply-To: <1548084825-8803-11-git-send-email-julien.thierry@arm.com>
+References: <1548084825-8803-1-git-send-email-julien.thierry@arm.com>
+        <1548084825-8803-11-git-send-email-julien.thierry@arm.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 3:17 PM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> If connections between devices are described in OF graph or
-> ACPI device graph, we can find them by using the
-> fwnode_graph_*() functions.
+On Mon, 21 Jan 2019 15:33:29 +0000,
+Julien Thierry <julien.thierry@arm.com> wrote:
+> 
+> Interrupts masked by ICC_PMR_EL1 will not be signaled to the CPU. This
+> means that hypervisor will not receive masked interrupts while running a
+> guest.
+> 
+> Avoid this by making sure ICC_PMR_EL1 is unmasked when we enter a guest.
+> 
+> Signed-off-by: Julien Thierry <julien.thierry@arm.com>
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Christoffer Dall <christoffer.dall@arm.com>
+> Cc: Marc Zyngier <marc.zyngier@arm.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will.deacon@arm.com>
+> Cc: kvmarm@lists.cs.columbia.edu
+> ---
+>  arch/arm64/include/asm/kvm_host.h | 12 ++++++++++++
+>  arch/arm64/kvm/hyp/switch.c       | 16 ++++++++++++++++
+>  2 files changed, 28 insertions(+)
+> 
+> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
+> index 7732d0b..a1f9f55 100644
+> --- a/arch/arm64/include/asm/kvm_host.h
+> +++ b/arch/arm64/include/asm/kvm_host.h
+> @@ -24,6 +24,7 @@
+>  
+>  #include <linux/types.h>
+>  #include <linux/kvm_types.h>
+> +#include <asm/arch_gicv3.h>
+>  #include <asm/cpufeature.h>
+>  #include <asm/daifflags.h>
+>  #include <asm/fpsimd.h>
+> @@ -474,6 +475,17 @@ static inline int kvm_arch_vcpu_run_pid_change(struct kvm_vcpu *vcpu)
+>  static inline void kvm_arm_vhe_guest_enter(void)
+>  {
+>  	local_daif_mask();
+> +
+> +	/*
+> +	 * Having IRQs masked via PMR when entering the guest means the GIC
+> +	 * will not signal the CPU of interrupts of lower priority, and the
+> +	 * only way to get out will be via guest exceptions.
+> +	 * Naturally, we want to avoid this.
+> +	 */
+> +	if (system_uses_irq_prio_masking()) {
+> +		gic_write_pmr(GIC_PRIO_IRQON);
+> +		dsb(sy);
+> +	}
+>  }
+>  
+>  static inline void kvm_arm_vhe_guest_exit(void)
+> diff --git a/arch/arm64/kvm/hyp/switch.c b/arch/arm64/kvm/hyp/switch.c
+> index b0b1478..6a4c2d6 100644
+> --- a/arch/arm64/kvm/hyp/switch.c
+> +++ b/arch/arm64/kvm/hyp/switch.c
+> @@ -22,6 +22,7 @@
+>  
+>  #include <kvm/arm_psci.h>
+>  
+> +#include <asm/arch_gicv3.h>
+>  #include <asm/cpufeature.h>
+>  #include <asm/kvm_asm.h>
+>  #include <asm/kvm_emulate.h>
+> @@ -521,6 +522,17 @@ int __hyp_text __kvm_vcpu_run_nvhe(struct kvm_vcpu *vcpu)
+>  	struct kvm_cpu_context *guest_ctxt;
+>  	u64 exit_code;
+>  
+> +	/*
+> +	 * Having IRQs masked via PMR when entering the guest means the GIC
+> +	 * will not signal the CPU of interrupts of lower priority, and the
+> +	 * only way to get out will be via guest exceptions.
+> +	 * Naturally, we want to avoid this.
+> +	 */
+> +	if (system_uses_irq_prio_masking()) {
+> +		gic_write_pmr(GIC_PRIO_IRQON);
+> +		dsb(sy);
+> +	}
+> +
+>  	vcpu = kern_hyp_va(vcpu);
+>  
+>  	host_ctxt = kern_hyp_va(vcpu->arch.host_cpu_context);
+> @@ -573,6 +585,10 @@ int __hyp_text __kvm_vcpu_run_nvhe(struct kvm_vcpu *vcpu)
+>  	 */
+>  	__debug_switch_to_host(vcpu);
+>  
+> +	/* Returning to host will clear PSR.I, remask PMR if needed */
+> +	if (system_uses_irq_prio_masking())
+> +		gic_write_pmr(GIC_PRIO_IRQOFF);
+> +
+>  	return exit_code;
+>  }
 
-> +typedef void *(*devcon_match_t)(struct device_connection *con, int ep,
-> +                               void *data);
+It'd be good to have helpers for these PMR manipulations, which I
+suspect you could use in other parts of the code such as patch #9.
 
-devcon_match_fn ?
-_t sounds to me more like a struct or a redefined POD.
+The logic itself seems good to me, so irrespective of the above:
+
+Reviewed-by: Marc Zyngier <marc.zyngier@arm.com>
+
+	M.
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Jazz is not dead, it just smell funny.
