@@ -2,209 +2,138 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA4BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18B98C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:35:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20D3320880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:34:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C57FD20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:35:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xi7zWxHw"
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="K6UXK+Dj"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726818AbfA1JeB (ORCPT
+        id S1726746AbfA1Jf4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:34:01 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:35277 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726369AbfA1JeB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:34:01 -0500
-Received: by mail-pl1-f195.google.com with SMTP id p8so7495559plo.2;
-        Mon, 28 Jan 2019 01:34:00 -0800 (PST)
+        Mon, 28 Jan 2019 04:35:56 -0500
+Received: from mail-eopbgr680054.outbound.protection.outlook.com ([40.107.68.54]:45165
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726415AbfA1Jfz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:35:55 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mJ5Cg8m5AuiE6k8X70rqtyhMp/Uyh1+t2vNRSuissbo=;
-        b=Xi7zWxHwv6cnMpacp6pvZLhUh+qK1vcLRE/JGPvZqU5Mcx5LC7pKRJx0z8WyMHb/Ni
-         1tbyccdU77PpePH4xN+huZm1x5HdMCI++biC5fy75SMBlPQke/H/i5Y/YVI5SjpQpVaZ
-         xzYusnQG8NrAxkMs551/a093SQaay6u0eNFqVQyCoFG6CmmI/kvifUiIK2OPR9m6wfEO
-         7LY3i59odNt38SxmmewoADXvmVBMt5e97keq/36hg+Ic6qpxUFBvYR4L5vW2wXM6WBWo
-         TqEkOGAxNMC+aUW/6cVjiVmfyfH9luQUzgDSd6Vtlxopi3UFkIu4Ma47qThqEsWFXeuO
-         +CgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=mJ5Cg8m5AuiE6k8X70rqtyhMp/Uyh1+t2vNRSuissbo=;
-        b=pAZ2BtOP/NsF1w0Ve1Kh0s25WLjnoQuQGN9hoypT/JTy/d6dlqaCiH1U+ah8YKVCQ2
-         8ZTelMZo2ZR/681REACatorAlKihIdOdrks6vZiBE7mRgY/92d1bCNKzsj4tX4S00xBX
-         j1GtO4wa3zmP78PmdI6Z3wE5/5ZKJD8Q+AZHHrxQ9DtFPY08Z1cl6hVn2glnFZtxzvsy
-         bMR1b/oWn1gJS6LhRYsn+PZRA37pU0OExZt34usR9HXuwY7Bl5mKJVfGMMsS59e9bH/q
-         4L3tKeP98S7vAf2yAcgjG4OkknSoznGS3Jc94qd2Ae3Nui5ahTWh/2g0TXeHoy+1SgCX
-         mx7w==
-X-Gm-Message-State: AJcUukc3QJS5Hnb2XFsaCUOCYiJo7I3Ps4qBtjsr5zeCFHSO7nmJmgKM
-        ZDh14+LxWRzpW64bbKaeDJ/vEovy
-X-Google-Smtp-Source: ALg8bN5OgfP3qzQAS9q/zJnfGhB0X3ocjS+9CkFLC5neOi5O9x8uhxk8zm9HuHlClGB1OsC0BfCtmg==
-X-Received: by 2002:a17:902:bf44:: with SMTP id u4mr21298557pls.5.1548668039959;
-        Mon, 28 Jan 2019 01:33:59 -0800 (PST)
-Received: from localhost.localdomain ([203.205.141.123])
-        by smtp.googlemail.com with ESMTPSA id y6sm37665727pfl.187.2019.01.28.01.33.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 01:33:59 -0800 (PST)
-From:   Wanpeng Li <kernellwp@gmail.com>
-X-Google-Original-From: Wanpeng Li <wanpengli@tencent.com>
-To:     linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>
-Subject: [PATCH RESEND] KVM: MMU: Introduce single thread to zap collapsible sptes
-Date:   Mon, 28 Jan 2019 17:33:55 +0800
-Message-Id: <1548668035-17639-1-git-send-email-wanpengli@tencent.com>
-X-Mailer: git-send-email 2.7.4
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Gg2MmZhWnDybdQpFVaBND0Ld1hkabtc06CLVh1zGRXU=;
+ b=K6UXK+Djr0aTonV848UtBQCWjyqiEh170pGefm4jHkfpSAoaJeR6I265Hub3+D95oUz1FdzO4DKRuBQykumTnkFzrJOliK949NL3xYI2arFpXX3otBj5pEkL/gW4M/VjfT29/BstcIjK1+RVgx1gZD+E1quDqx2u/o655+eQyQk=
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com (10.168.206.9) by
+ MWHPR02MB2333.namprd02.prod.outlook.com (10.168.244.11) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1558.21; Mon, 28 Jan 2019 09:35:51 +0000
+Received: from MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::d587:e08c:61f5:7aae]) by MWHPR02MB2623.namprd02.prod.outlook.com
+ ([fe80::d587:e08c:61f5:7aae%5]) with mapi id 15.20.1558.021; Mon, 28 Jan 2019
+ 09:35:51 +0000
+From:   Naga Sureshkumar Relli <nagasure@xilinx.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "martin.lund@keep-it-simple.com" <martin.lund@keep-it-simple.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "nagasuresh12@gmail.com" <nagasuresh12@gmail.com>,
+        Michal Simek <michals@xilinx.com>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>
+Subject: RE: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Thread-Topic: [LINUX PATCH v12 3/3] mtd: rawnand: arasan: Add support for
+ Arasan NAND Flash Controller
+Thread-Index: AQHUd+lSRlJXewM/lk6msOyQbhKEh6VQmgMggAVkGQCAAK7ewIAAH7YAgAFcNKCAAGhpAIAAGiwAgATHTPCAHUh8EIAAOYWAgAAN+ACAAAI3gIAAQgWwgAADhoCAB72ScIAAVsEAgADHyzCAAjdOgIACr13ggDn7tyCAAd6ZgIAAAQ/g
+Date:   Mon, 28 Jan 2019 09:35:51 +0000
+Message-ID: <MWHPR02MB262380CDFCCC382E2181BBA0AF960@MWHPR02MB2623.namprd02.prod.outlook.com>
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+        <20181120120244.7d2442b5@bbrezillon>    <20181120133624.3fa4742d@xps13>
+        <MWHPR02MB26238A2271B33470ABFA1023AFD40@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <MWHPR02MB26239C2B2A7050310BEF1E9CAFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212091135.1d0cc9a6@xps13>
+        <MWHPR02MB26236CEF8A2110B20C825198AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212100931.149b0cac@xps13>
+        <MWHPR02MB2623EDA15BE59304795F3034AFA70@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181212141825.69711c57@xps13>
+        <MWHPR02MB26235AE6567A06EF4C6362E6AFBC0@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181217174114.24196d17@xps13>
+        <MWHPR02MB26237B932D7F3CCEE0476FE0AFBD0@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <20181219152647.76f77711@xps13>
+        <MWHPR02MB262396FFF946A95D7821D61BAFB80@MWHPR02MB2623.namprd02.prod.outlook.com>
+        <MWHPR02MB262328DF62906C01DCDF18E5AF960@MWHPR02MB2623.namprd02.prod.outlook.com>
+ <20190128102720.70a52da7@xps13>
+In-Reply-To: <20190128102720.70a52da7@xps13>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=nagasure@xilinx.com; 
+x-originating-ip: [149.199.50.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;MWHPR02MB2333;6:IcS5csP87zG3T2w+bNyOKRTDYMVKIu/apKvSboNVQ+sutp0IRGcZk3Ytl7OsxlXddgqXNwQHXE2y0XxZY2xuYxZGKj8FJJRncmO7dEqqqmkKhedWZXRvQHGP3m+DY7aKjK3gnzFp6iA2K0n3cAQ8ir4XVb1Fh+oydsbRXuqLiXio7XcYhpA9pf95v9gHH/mWZcVvjMM9ryVOsdOkaCQ5myHO0DkFF3ABPnJ/OPeHBRFabA+tzEhB80PaAnCPGaYIgXYxIk6EIGf1hNCkm9+3mcz8Gwb2tPLonY9+5OufdBYZ7ptnYQsC/mKCrAxk4nI/RUvp3NkXFgikSOme+QJHMnVJQc2KPkkWI+rlK70hequ9BjP7cg2YllmYCNlAGWdWc4hOsJrT42A7UqQ3Ndv81GpGbgHDQRErHV8VT2NmPP9muDFw+zRLibBFVrvjdSIl7jXpJIyVbNgKR643JsRAQA==;5:jy96F2J4s3BfTZEv+atoR9ZO0BXLmIpVir1/5ss/7mvAo/P1Jg3EEHtgncuW+13JRGUPKt+SUYhGDD0tw0Bp8cywgBSe6SGUq1hQwXEoyq1u+3Xxn4sl3D8KE/NOYHUqSxM2jw2/5Lvmw6JWERV4m6MbtPaXXmlvvEaDqSUmnz7kK2Gp+NiEAHCO+ljqu2h9mx0L3z9jKrOpEqr+TSbxEg==;7:87LE8y9hwMYKlQAU+cN2q4KvfE9xWSiq9quTyvsx4eY9n9bJeNIijv6UHCgBi3uosJhBzR/JbVaxVYoX9pz1mBYCkQXrmfd10VotKYz6xg9CG4rF2kSnZdvGj4KdxZhOT57EWUh4+LudQxCLugBcbg==
+x-ms-office365-filtering-correlation-id: 07d7f5c0-81be-4cc5-7b90-08d68503fe34
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7153060)(7193020);SRVR:MWHPR02MB2333;
+x-ms-traffictypediagnostic: MWHPR02MB2333:
+x-microsoft-antispam-prvs: <MWHPR02MB2333FE81605FEAF193433822AF960@MWHPR02MB2333.namprd02.prod.outlook.com>
+x-forefront-prvs: 0931CB1479
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(396003)(366004)(39860400002)(136003)(13464003)(189003)(199004)(6916009)(9686003)(66066001)(345774005)(33656002)(66574012)(55016002)(71200400001)(7736002)(305945005)(486006)(476003)(97736004)(71190400001)(14444005)(256004)(39060400002)(11346002)(446003)(4326008)(217873002)(316002)(68736007)(25786009)(99286004)(86362001)(54906003)(6436002)(53936002)(6246003)(74316002)(229853002)(102836004)(2906002)(106356001)(14454004)(105586002)(3846002)(8936002)(26005)(6116002)(8676002)(93886005)(81156014)(53546011)(81166006)(6506007)(7416002)(478600001)(186003)(7696005)(76176011);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR02MB2333;H:MWHPR02MB2623.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam-message-info: R86qPZAIM0g9r4FzIIQjwyKg2JnbKOf0nexYzeGcqiRFiJ1TH9Wlnvd6I24NoNhTOI7MGqnkq1dHhJ08qO9zPbzbL1NoVrbCmoBEDyg8npp95Bj1XAy77ZTJ3b9zsH32ldFxjHTYVUH66FeHfSS1RZLri1DVgJhIoei+XfTW5oZSnSRFPIqoUr3HN7f6WgzHLT3VarFWFVihRtEkkZTRNWY/XqIZ089/jon+TjxnH5R0/cQmzQIyiGZh2YUBfLZNVYWd7+/7tUs/EdtUimx6xh4RLqVwW2dHMeHenagWio2KvpIh3uVAFWQl0Z8o7O5C1rD9yhpE67oJBikiILlRS2nVK0vidoa7VEkjYWDpZMJusjDpZSpcR0rnMfXQHRAXcQl/4vVGeA+3wYx7NN8Ae0Jl0Vl1xrVPAxAijs2rpto=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07d7f5c0-81be-4cc5-7b90-08d68503fe34
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 09:35:51.3820
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR02MB2333
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Wanpeng Li <wanpengli@tencent.com>
-
-Last year guys from huawei reported that the call of memory_global_dirty_log_start/stop() 
-takes 13s for 4T memory and cause guest freeze too long which increases the unacceptable 
-migration downtime. [1] [2]
-
-Guangrong pointed out:
-
-| collapsible_sptes zaps 4k mappings to make memory-read happy, it is not
-| required by the semanteme of KVM_SET_USER_MEMORY_REGION and it is not
-| urgent for vCPU's running, it could be done in a separate thread and use
-| lock-break technology.
-
-Several TB memory guest is common now after NVDIMM is deployed in cloud environment.
-This patch utilizes worker thread to zap collapsible sptes in order to lazy collapse 
-small sptes into large sptes during roll-back after live migration fails.
-
-[1] https://lists.gnu.org/archive/html/qemu-devel/2017-04/msg05249.html
-[2] https://www.mail-archive.com/qemu-devel@nongnu.org/msg449994.html
-
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Signed-off-by: Wanpeng Li <wanpengli@tencent.com>
----
-Note:
-I ever consider to add a list of memslots to be zapped, delete from the list
-and add in kvm_mmu_zap_collapsible_sptes(). However, i observe a lot of races 
-here, the memslot can disappear/modify underneath before the worker thread
-start to zap even if i introduce lock to protect the list. This patch delays 
-the worker thread by 60s(to assume memory_global_dirty_log_stop can absolutely 
-complete) to coalesce all the zap requirements after live migration fails.
-
- arch/x86/include/asm/kvm_host.h |  3 +++
- arch/x86/kvm/mmu.c              | 37 ++++++++++++++++++++++++++++++++-----
- arch/x86/kvm/x86.c              |  4 ++++
- 3 files changed, 39 insertions(+), 5 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index fbda5a9..dde32f9 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -892,6 +892,8 @@ struct kvm_arch {
- 	u64 master_cycle_now;
- 	struct delayed_work kvmclock_update_work;
- 	struct delayed_work kvmclock_sync_work;
-+	struct delayed_work kvm_mmu_zap_collapsible_sptes_work;
-+	bool zap_in_progress;
- 
- 	struct kvm_xen_hvm_config xen_hvm_config;
- 
-@@ -1247,6 +1249,7 @@ void kvm_mmu_zap_all(struct kvm *kvm);
- void kvm_mmu_invalidate_mmio_sptes(struct kvm *kvm, struct kvm_memslots *slots);
- unsigned int kvm_mmu_calculate_mmu_pages(struct kvm *kvm);
- void kvm_mmu_change_mmu_pages(struct kvm *kvm, unsigned int kvm_nr_mmu_pages);
-+void zap_collapsible_sptes_fn(struct work_struct *work);
- 
- int load_pdptrs(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu, unsigned long cr3);
- bool pdptrs_changed(struct kvm_vcpu *vcpu);
-diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
-index 7c03c0f..fe87dd3 100644
---- a/arch/x86/kvm/mmu.c
-+++ b/arch/x86/kvm/mmu.c
-@@ -5679,14 +5679,41 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
- 	return need_tlb_flush;
- }
- 
-+void zap_collapsible_sptes_fn(struct work_struct *work)
-+{
-+	struct kvm_memory_slot *memslot;
-+	struct kvm_memslots *slots;
-+	struct delayed_work *dwork = to_delayed_work(work);
-+	struct kvm_arch *ka = container_of(dwork, struct kvm_arch,
-+					   kvm_mmu_zap_collapsible_sptes_work);
-+	struct kvm *kvm = container_of(ka, struct kvm, arch);
-+	int i;
-+
-+	mutex_lock(&kvm->slots_lock);
-+	for (i = 0; i < KVM_ADDRESS_SPACE_NUM; i++) {
-+		spin_lock(&kvm->mmu_lock);
-+		slots = __kvm_memslots(kvm, i);
-+		kvm_for_each_memslot(memslot, slots) {
-+			slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
-+				kvm_mmu_zap_collapsible_spte, true);
-+			if (need_resched() || spin_needbreak(&kvm->mmu_lock))
-+				cond_resched_lock(&kvm->mmu_lock);
-+		}
-+		spin_unlock(&kvm->mmu_lock);
-+	}
-+	kvm->arch.zap_in_progress = false;
-+	mutex_unlock(&kvm->slots_lock);
-+}
-+
-+#define KVM_MMU_ZAP_DELAYED (60 * HZ)
- void kvm_mmu_zap_collapsible_sptes(struct kvm *kvm,
- 				   const struct kvm_memory_slot *memslot)
- {
--	/* FIXME: const-ify all uses of struct kvm_memory_slot.  */
--	spin_lock(&kvm->mmu_lock);
--	slot_handle_leaf(kvm, (struct kvm_memory_slot *)memslot,
--			 kvm_mmu_zap_collapsible_spte, true);
--	spin_unlock(&kvm->mmu_lock);
-+	if (!kvm->arch.zap_in_progress) {
-+		kvm->arch.zap_in_progress = true;
-+		schedule_delayed_work(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work,
-+			KVM_MMU_ZAP_DELAYED);
-+	}
- }
- 
- void kvm_mmu_slot_leaf_clear_dirty(struct kvm *kvm,
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d029377..c2af289 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -9019,6 +9019,9 @@ int kvm_arch_init_vm(struct kvm *kvm, unsigned long type)
- 
- 	INIT_DELAYED_WORK(&kvm->arch.kvmclock_update_work, kvmclock_update_fn);
- 	INIT_DELAYED_WORK(&kvm->arch.kvmclock_sync_work, kvmclock_sync_fn);
-+	INIT_DELAYED_WORK(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work,
-+			zap_collapsible_sptes_fn);
-+	kvm->arch.zap_in_progress = false;
- 
- 	kvm_hv_init_vm(kvm);
- 	kvm_page_track_init(kvm);
-@@ -9064,6 +9067,7 @@ void kvm_arch_sync_events(struct kvm *kvm)
- {
- 	cancel_delayed_work_sync(&kvm->arch.kvmclock_sync_work);
- 	cancel_delayed_work_sync(&kvm->arch.kvmclock_update_work);
-+	cancel_delayed_work_sync(&kvm->arch.kvm_mmu_zap_collapsible_sptes_work);
- 	kvm_free_pit(kvm);
- }
- 
--- 
-2.7.4
-
+SGkgTWlxdWVsLA0KDQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWlx
+dWVsIFJheW5hbCBbbWFpbHRvOm1pcXVlbC5yYXluYWxAYm9vdGxpbi5jb21dDQo+IFNlbnQ6IE1v
+bmRheSwgSmFudWFyeSAyOCwgMjAxOSAyOjU4IFBNDQo+IFRvOiBOYWdhIFN1cmVzaGt1bWFyIFJl
+bGxpIDxuYWdhc3VyZUB4aWxpbnguY29tPg0KPiBDYzogcm9iaEBrZXJuZWwub3JnOyBtYXJlay52
+YXN1dEBnbWFpbC5jb207IHJpY2hhcmRAbm9kLmF0OyBtYXJ0aW4ubHVuZEBrZWVwLWl0LQ0KPiBz
+aW1wbGUuY29tOyBsaW51eC1rZXJuZWxAdmdlci5rZXJuZWwub3JnOyBCb3JpcyBCcmV6aWxsb24g
+PGJvcmlzLmJyZXppbGxvbkBib290bGluLmNvbT47DQo+IGxpbnV4LW10ZEBsaXN0cy5pbmZyYWRl
+YWQub3JnOyBuYWdhc3VyZXNoMTJAZ21haWwuY29tOyBNaWNoYWwgU2ltZWsNCj4gPG1pY2hhbHNA
+eGlsaW54LmNvbT47IGNvbXB1dGVyc2ZvcnBlYWNlQGdtYWlsLmNvbTsgZHdtdzJAaW5mcmFkZWFk
+Lm9yZw0KPiBTdWJqZWN0OiBSZTogW0xJTlVYIFBBVENIIHYxMiAzLzNdIG10ZDogcmF3bmFuZDog
+YXJhc2FuOiBBZGQgc3VwcG9ydCBmb3IgQXJhc2FuDQo+IE5BTkQgRmxhc2ggQ29udHJvbGxlcg0K
+PiANCj4gSGkgTmFnYSwNCj4gDQo+IE5hZ2EgU3VyZXNoa3VtYXIgUmVsbGkgPG5hZ2FzdXJlQHhp
+bGlueC5jb20+IHdyb3RlIG9uIE1vbiwgMjggSmFuIDIwMTkNCj4gMDY6MDQ6NTMgKzAwMDA6DQo+
+IA0KPiA+IEhpIEJvcmlzICYgTWlxdWVsLA0KPiA+DQo+ID4gQ291bGQgeW91IHBsZWFzZSBwcm92
+aWRlIHlvdXIgdGhvdWdodHMgb24gdGhpcyBkcml2ZXIgdG8gc3VwcG9ydCBIVy1FQ0M/DQo+ID4g
+QXMgSSBzYWlkIHByZXZpb3VzbHksIHRoZXJlIGlzIG5vIHdheSB0byBkZXRlY3QgZXJyb3JzIGJl
+eW9uZCBOIGJpdC4NCj4gPiBJIGFtIG9rIHRvIHVwZGF0ZSB0aGUgZHJpdmVyIGJhc2VkIG9uIHlv
+dXIgaW5wdXRzLg0KPiANCj4gV2Ugd29uJ3Qgc3VwcG9ydCB0aGUgRUNDIGVuZ2luZS4gSXQgc2lt
+cGx5IGNhbm5vdCBiZSB1c2VkIHJlbGlhYmx5Lg0KPiANCj4gSSBhbSB3b3JraW5nIG9uIGEgZ2Vu
+ZXJpYyBFQ0MgZW5naW5lIG9iamVjdC4gSXQncyBnb25uYSB0YWtlIGEgZmV3IG1vbnRocyB1bnRp
+bCBpdCBnZXRzDQo+IG1lcmdlZCBidXQgYWZ0ZXIgdGhhdCB5b3UgY291bGQgdXBkYXRlIHRoZSBj
+b250cm9sbGVyIGRyaXZlciB0byBkcm9wIGFueSBFQ0MtcmVsYXRlZA0KPiBmdW5jdGlvbi4gQWx0
+aG91Z2ggdGhlIEVDQyBlbmdpbmUgcGFydCBpcyBibG9ja2luZywgcmF3IGFjY2VzcyBzdGlsbCBs
+b29rIHdyb25nIGFuZCB0aGUNCj4gZHJpdmVyIHN0aWxsIG5lZWRzIGNoYW5nZXMuDQoNClRoYW5r
+IHlvdSBmb3IgdGhlIHVwZGF0ZS4NClllcywgY3VycmVudGx5IEVDQyBlbmdpbmUgcGFydCBpcyBi
+bG9ja2luZy4NCkFsc28gd2hlbmV2ZXIgeW91IGhhdmUgdGltZSwgcGxlYXNlIHByb3ZpZGUgeW91
+ciBjb21tZW50cyB0byB0aGUgZHJpdmVyIHYxMiBwYXRjaC4NCkkgd2lsbCB1cGRhdGUgdGhvc2Uu
+DQoNClRoYW5rcywNCk5hZ2EgU3VyZXNoa3VtYXIgUmVsbGkNCj4gDQo+IA0KPiBUaGFua3MsDQo+
+IE1pcXXDqGwNCg==
