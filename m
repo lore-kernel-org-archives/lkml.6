@@ -2,152 +2,163 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B1BC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD0FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:51:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2549921741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 50CB921741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:51:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389315AbfA1Qu4 (ORCPT
+        id S2389032AbfA1QvJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:50:56 -0500
-Received: from mga03.intel.com ([134.134.136.65]:34446 "EHLO mga03.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388604AbfA1Quu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:50:50 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 08:50:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,534,1539673200"; 
-   d="scan'208";a="133807746"
-Received: from ray.jf.intel.com (HELO [10.7.201.16]) ([10.7.201.16])
-  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 08:50:49 -0800
-Subject: Re: [PATCH 0/5] [v4] Allow persistent memory to be used like normal
- RAM
-To:     Balbir Singh <bsingharora@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
-        mhocko@suse.com, linux-nvdimm@lists.01.org, tiwai@suse.de,
-        ying.huang@intel.com, linux-mm@kvack.org, jglisse@redhat.com,
-        bp@suse.de, baiyaowei@cmss.chinamobile.com, zwisler@kernel.org,
-        bhelgaas@google.com, fengguang.wu@intel.com,
-        akpm@linux-foundation.org
-References: <20190124231441.37A4A305@viggo.jf.intel.com>
- <20190128110958.GH26056@350D>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-Message-ID: <3ea28fe1-1828-1017-fa0f-da626d773440@intel.com>
-Date:   Mon, 28 Jan 2019 08:50:49 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 28 Jan 2019 11:51:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:41518 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729197AbfA1QvF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:51:05 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SGhbtc069472
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:51:03 -0500
+Received: from e06smtp03.uk.ibm.com (e06smtp03.uk.ibm.com [195.75.94.99])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2qa3ye5r17-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:51:03 -0500
+Received: from localhost
+        by e06smtp03.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Mon, 28 Jan 2019 16:51:01 -0000
+Received: from b06cxnps4076.portsmouth.uk.ibm.com (9.149.109.198)
+        by e06smtp03.uk.ibm.com (192.168.101.133) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 28 Jan 2019 16:50:58 -0000
+Received: from d06av24.portsmouth.uk.ibm.com (d06av24.portsmouth.uk.ibm.com [9.149.105.60])
+        by b06cxnps4076.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SGouVp3539248
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 28 Jan 2019 16:50:56 GMT
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A309942041;
+        Mon, 28 Jan 2019 16:50:56 +0000 (GMT)
+Received: from d06av24.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 47BE542049;
+        Mon, 28 Jan 2019 16:50:56 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.97.178])
+        by d06av24.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 28 Jan 2019 16:50:56 +0000 (GMT)
+Date:   Mon, 28 Jan 2019 17:50:54 +0100
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Michael Mueller <mimu@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Subject: Re: [PATCH v6 07/13] KVM: s390: introduce struct
+ kvm_s390_gisa_interrupt
+In-Reply-To: <20190124125939.130763-8-mimu@linux.ibm.com>
+References: <20190124125939.130763-1-mimu@linux.ibm.com>
+        <20190124125939.130763-8-mimu@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20190128110958.GH26056@350D>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19012816-0012-0000-0000-000002EE0A8A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012816-0013-0000-0000-0000212549ED
+Message-Id: <20190128175054.67979549@oc2783563651>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=644 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901280126
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/28/19 3:09 AM, Balbir Singh wrote:
->> This is intended for Intel-style NVDIMMs (aka. Intel Optane DC
->> persistent memory) NVDIMMs.  These DIMMs are physically persistent,
->> more akin to flash than traditional RAM.  They are also expected to
->> be more cost-effective than using RAM, which is why folks want this
->> set in the first place.
-> What variant of NVDIMM's F/P or both?
+On Thu, 24 Jan 2019 13:59:33 +0100
+Michael Mueller <mimu@linux.ibm.com> wrote:
 
-I'd expect this to get used in any cases where the NVDIMM is
-cost-effective vs. DRAM.  Today, I think that's only NVDIMM-P.  At least
-from what Wikipedia tells me about F vs. P vs. N:
-
-	https://en.wikipedia.org/wiki/NVDIMM
-
->> == Patch Set Overview ==
->>
->> This series adds a new "driver" to which pmem devices can be
->> attached.  Once attached, the memory "owned" by the device is
->> hot-added to the kernel and managed like any other memory.  On
->> systems with an HMAT (a new ACPI table), each socket (roughly)
->> will have a separate NUMA node for its persistent memory so
->> this newly-added memory can be selected by its unique NUMA
->> node.
+> Use this struct analog to the kvm interruption structs
+> for kvm emulated floating and local interruptions.
+> Further fields will be added with this series as
+> required.
 > 
-> NUMA is distance based topology, does HMAT solve these problems?
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
 
-NUMA is no longer just distance-based.  Any memory with different
-properties, like different memory-side caches or bandwidth properties
-can be in its own, discrete NUMA node.
+While looking at this I was asking myself what guards against invalid
+gisa pointer dereference e.g. when pending_irqs() is called (see below).
 
-> How do we prevent fallback nodes of normal nodes being pmem nodes?
+AFAIU we set up gisa_int.origin only if we have
+css_general_characteristics.aiv. Opinions?
 
-NUMA policies.
+Anyway if it is a problem, it is a pre-existing one (should be fixed
+ASAP but does not affect the validity of this patch).
 
-> On an unexpected crash/failure is there a scrubbing mechanism
-> or do we rely on the allocator to do the right thing prior to
-> reallocating any memory.
+Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
 
-Yes, but this is not unique to persistent memory.  On a kexec-based
-crash, there might be old, sensitive data in *RAM* when the kernel comes
-up.  We depend on the allocator to zero things there.  We also just
-plain depend on the allocator to zero things so we don't leak
-information when recycling pages in the first place.
+> ---
+>  arch/s390/include/asm/kvm_host.h |  6 ++++-
+>  arch/s390/kvm/interrupt.c        | 52 +++++++++++++++++++++++-----------------
+>  arch/s390/kvm/kvm-s390.c         |  2 +-
+>  3 files changed, 36 insertions(+), 24 deletions(-)
+> 
+> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+> index c259a67c4298..0941571d34eb 100644
+> --- a/arch/s390/include/asm/kvm_host.h
+> +++ b/arch/s390/include/asm/kvm_host.h
+> @@ -803,6 +803,10 @@ struct kvm_s390_vsie {
+>  	struct page *pages[KVM_MAX_VCPUS];
+>  };
+>  
 
-I can't think of a scenario where some kind of "leak" of old data
-wouldn't also be a bug with normal, volatile RAM.
+[..]
 
-> Will frequent zero'ing hurt NVDIMM/pmem's life times?
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index 942cc7d33766..ee91d1de0036 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -246,7 +246,8 @@ static inline unsigned long pending_irqs_no_gisa(struct kvm_vcpu *vcpu)
+>  static inline unsigned long pending_irqs(struct kvm_vcpu *vcpu)
+>  {
+>  	return pending_irqs_no_gisa(vcpu) |
+> -		gisa_get_ipm(vcpu->kvm->arch.gisa) << IRQ_PEND_IO_ISC_7;
+> +		gisa_get_ipm(vcpu->kvm->arch.gisa_int.origin) <<
 
-Everybody reputable that sells things with limited endurance quantifies
-the endurance.  I'd suggest that folks know what the endurance of their
-media is before enabling this.
+Unconditional call to gisa_get_ipm(), and get ipm just accesses ->ipm.
+
+> +			IRQ_PEND_IO_ISC_7;
+>  }
+>  
+
+[..]
+
+>  void kvm_s390_gisa_init(struct kvm *kvm)
+>  {
+> +	struct kvm_s390_gisa_interrupt *gi = &kvm->arch.gisa_int;
+> +
+>  	if (!css_general_characteristics.aiv)
+>  		return;
+> -	kvm->arch.gisa = &kvm->arch.sie_page2->gisa;
+> +	gi->origin = &kvm->arch.sie_page2->gisa;
+
+Should stay NULL if !css_general_characteristics.aiv.
+
+>  	kvm_s390_gisa_clear(kvm);
+> -	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", kvm->arch.gisa);
+> +	VM_EVENT(kvm, 3, "gisa 0x%pK initialized", gi->origin);
+>  }
+>  
+
