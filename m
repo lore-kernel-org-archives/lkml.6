@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E56FCC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:31:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44287C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:31:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACD9820663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:31:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 16B2A20663
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:31:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693095;
-	bh=HKmXUXuNqZr4R+sXHdfHh48vHcAW2oVGto4sC2WbHNI=;
+	s=default; t=1548693103;
+	bh=r0FekRkC2AYj1pfa6gsEL/ODYYip1miemEsB4nXR7b4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Ou4nrS1sSD43ug9LCBAibIzUHnKwoHBzLyLS/aCy5IimivmIa7uE0zZpW6H4DACcr
-	 uwkiIbujTEHsft4GEDmSRgGW+AqHvZPB224q75d8/VZxhJ9LE7d9L5+dx4y7zpsS2J
-	 Aj68NHfhcnWXn2taA8bDmySxeTvWlJICqvlPiSio=
+	b=wlXAo3Hbr657tgOOtv813HrUBgBah/xeHoQVmrQGB5Zcr7oSuryF+WHKNSxYU41/l
+	 gW833bVhERbCGv+ApVKQTuTZW3O9ZlxyfF6324+woiCKivHY3B1V/gu+JS5sULvHMc
+	 Q29znM0ho0XXXbsxyTVdvnXcuJM/lWONVnzWKtvY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390579AbfA1Qbe (ORCPT
+        id S2390498AbfA1Qbl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:31:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36898 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:31:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390344AbfA1Q1H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:27:07 -0500
+        id S2390330AbfA1Q1E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:27:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 268DD2171F;
-        Mon, 28 Jan 2019 16:27:05 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C99F32084A;
+        Mon, 28 Jan 2019 16:27:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692826;
-        bh=HKmXUXuNqZr4R+sXHdfHh48vHcAW2oVGto4sC2WbHNI=;
+        s=default; t=1548692823;
+        bh=r0FekRkC2AYj1pfa6gsEL/ODYYip1miemEsB4nXR7b4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FM91B3+cMPBQSspkMQlH52+8mmEMNei4sv5P8+IWp0bzrWp2aXXdBT+VLn3tn5gZ7
-         42Nooh/4sXrT9Mhft2mP+OjVC9CSrJj8VukA8qcVY/ZBLbrCIJLdZWbjhYZPeDn8cX
-         lUxnqAsucQMAMlwYkKBD0F7uJ2W/OQO9Zun00B9o=
+        b=bntLvk7yUtb9Cy0LcXIFXBPh5Wj25VZ3jE9PLVtWxFH+lf2ctUJABqjmOAxmRbTg7
+         NjMSwER7mtViGwd6HZzTzdRYx/mvwH9dx3MvhcF75MWCQhaQMEg5JClpA5qi32yNQ6
+         JyoKloWG7tu0Ala2bVJA299PrFYDFeRYMtyXn/ZU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jiong Wang <jiong.wang@netronome.com>,
-        Markos Chandras <markos.chandras@imgtec.com>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 3.18 25/61] mips: bpf: fix encoding bug for mm_srlv32_op
-Date:   Mon, 28 Jan 2019 11:25:47 -0500
-Message-Id: <20190128162623.59854-25-sashal@kernel.org>
+Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 24/61] ARM: dts: Fix OMAP4430 SDP Ethernet startup
+Date:   Mon, 28 Jan 2019 11:25:46 -0500
+Message-Id: <20190128162623.59854-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
 References: <20190128162623.59854-1-sashal@kernel.org>
@@ -60,47 +60,65 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiong Wang <jiong.wang@netronome.com>
+From: Russell King - ARM Linux <linux@armlinux.org.uk>
 
-[ Upstream commit 17f6c83fb5ebf7db4fcc94a5be4c22d5a7bfe428 ]
+[ Upstream commit 84fb6c7feb1494ebb7d1ec8b95cfb7ada0264465 ]
 
-For micro-mips, srlv inside POOL32A encoding space should use 0x50
-sub-opcode, NOT 0x90.
+It was noticed that unbinding and rebinding the KSZ8851 ethernet
+resulted in the driver reporting "failed to read device ID" at probe.
+Probing the reset line with a 'scope while repeatedly attempting to
+bind the driver in a shell loop revealed that the KSZ8851 RSTN pin is
+constantly held at zero, meaning the device is held in reset, and
+does not respond on the SPI bus.
 
-Some early version ISA doc describes the encoding as 0x90 for both srlv and
-srav, this looks to me was a typo. I checked Binutils libopcode
-implementation which is using 0x50 for srlv and 0x90 for srav.
+Experimentation with the startup delay on the regulator set to 50ms
+shows that the reset is positively released after 20ms.
 
-v1->v2:
-  - Keep mm_srlv32_op sorted by value.
+Schematics for this board are not available, and the traces are buried
+in the inner layers of the board which makes tracing where the RSTN pin
+extremely difficult.  We can only guess that the RSTN pin is wired to a
+reset generator chip driven off the ethernet supply, which fits the
+observed behaviour.
 
-Fixes: f31318fdf324 ("MIPS: uasm: Add srlv uasm instruction")
-Cc: Markos Chandras <markos.chandras@imgtec.com>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Include this delay in the regulator startup delay - effectively
+treating the reset as a "supply stable" indicator.
+
+This can not be modelled as a delay in the KSZ8851 driver since the
+reset generation is board specific - if the RSTN pin had been wired to
+a GPIO, reset could be released earlier via the already provided support
+in the KSZ8851 driver.
+
+This also got confirmed by Peter Ujfalusi <peter.ujfalusi@ti.com> based
+on Blaze schematics that should be very close to SDP4430:
+
+TPS22902YFPR is used as the regulator switch (gpio48 controlled):
+Convert arm boot_lock to raw The VOUT is routed to TPS3808G01DBV.
+(SCH Note: Threshold set at 90%. Vsense: 0.405V).
+
+According to the TPS3808 data sheet the RESET delay time when Ct is
+open (this is the case in the schema): MIN/TYP/MAX: 12/20/28 ms.
+
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
+Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
+[tony@atomide.com: updated with notes from schematics from Peter]
+Signed-off-by: Tony Lindgren <tony@atomide.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/uapi/asm/inst.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/omap4-sdp.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
-index 4bfdb9d4c186..3eb4d6177266 100644
---- a/arch/mips/include/uapi/asm/inst.h
-+++ b/arch/mips/include/uapi/asm/inst.h
-@@ -262,8 +262,8 @@ enum mm_32a_minor_op {
- 	mm_ext_op = 0x02c,
- 	mm_pool32axf_op = 0x03c,
- 	mm_srl32_op = 0x040,
-+	mm_srlv32_op = 0x050,
- 	mm_sra_op = 0x080,
--	mm_srlv32_op = 0x090,
- 	mm_rotr_op = 0x0c0,
- 	mm_lwxs_op = 0x118,
- 	mm_addu32_op = 0x150,
+diff --git a/arch/arm/boot/dts/omap4-sdp.dts b/arch/arm/boot/dts/omap4-sdp.dts
+index 3e1da43068f6..4669854614c3 100644
+--- a/arch/arm/boot/dts/omap4-sdp.dts
++++ b/arch/arm/boot/dts/omap4-sdp.dts
+@@ -33,6 +33,7 @@
+ 		gpio = <&gpio2 16 0>;  /* gpio line 48 */
+ 		enable-active-high;
+ 		regulator-boot-on;
++		startup-delay-us = <25000>;
+ 	};
+ 
+ 	vbat: fixedregulator-vbat {
 -- 
 2.19.1
 
