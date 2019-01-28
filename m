@@ -7,48 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25098C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:13:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4ED4C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:13:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E8BE52082C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:13:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 72F242082C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:13:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695616;
-	bh=ByU0CnYWWvm0zjYZEkLcAN626c3YTu+/Pgl6NTi/sJI=;
+	s=default; t=1548695622;
+	bh=+Bbr9dE8vhv6Yz/kM/KgY8bsmY8DWJN9zSexGBQ19tY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=E2RlwVIpbALtnc+vzTao0qC/4Jk8xHrGvzv4z3gNk6Wy/CN3+FZCj5Nrhpkpp/FmC
-	 gxwxUeiou6YB0UTCHKAxMrYls9PSL6mnFwZ3k0XtuWxpQGFCMdeb5T1ty5cbZyYy82
-	 ZiB+MXLwDDDzzLU8DKEddFSJ14y3kctwzXkGnHX0=
+	b=fKAaxCpvuPMdUGzKrCT85sD75vlGwTgBhoZvENx7Dww5lzQKvyuRzm//cVonRMC5K
+	 u64NwAiZ2cQzidIGrpfq4i+9HXq2GXkWPlCV3Zd5zAP2qW98ZudoJGhwJ5ubiKwJm/
+	 KgiqVeg8bj97QvHVSSZIzOylsGQM6o2IhesgkglM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732109AbfA1RNd (ORCPT
+        id S1732556AbfA1RNl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:13:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60104 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:13:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60016 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732381AbfA1QIW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:08:22 -0500
+        id S1732372AbfA1QIU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:08:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1069520989;
-        Mon, 28 Jan 2019 16:08:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3F3D621738;
+        Mon, 28 Jan 2019 16:08:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691702;
-        bh=ByU0CnYWWvm0zjYZEkLcAN626c3YTu+/Pgl6NTi/sJI=;
+        s=default; t=1548691699;
+        bh=+Bbr9dE8vhv6Yz/kM/KgY8bsmY8DWJN9zSexGBQ19tY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VQB9jatcPwu5ddVi/Xk43XGzfwZv+tk6YdZ8L6M3MoJSter9tgjYTZYQT00NFLObc
-         HlAvIl43NNNdm7C2Z36LpvTGueWAX2IwAoVYs4vPejLu/EgOg7edt2jYeCoykixPhY
-         LPuilJYXe0OyHQbqRWOE1xJhZFg+xNGog26+OhPI=
+        b=2r/4hTd07uDSZifiNBCnNceQjAJ7S56wd0vU3PjfXeF72ziOveTG2jv1sLbp6JosH
+         fus8YSHgGkrqMS6mVW4fkWCXef2WC5Dlutylq2GTaBxTwKt5D5IyP6kSdsXTOrnTp2
+         edhRsVnKox6HPnisphb6hzJi3ZzNcloranVjfRHg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>,
-        Don Brace <don.brace@microsemi.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, esc.storagedev@microsemi.com,
-        linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 190/258] scsi: smartpqi: correct host serial num for ssa
-Date:   Mon, 28 Jan 2019 10:58:16 -0500
-Message-Id: <20190128155924.51521-190-sashal@kernel.org>
+Cc:     Ido Schimmel <idosch@mellanox.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 189/258] mlxsw: spectrum: Properly cleanup LAG uppers when removing port from LAG
+Date:   Mon, 28 Jan 2019 10:58:15 -0500
+Message-Id: <20190128155924.51521-189-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -60,46 +58,126 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
+From: Ido Schimmel <idosch@mellanox.com>
 
-[ Upstream commit b2346b5030cf9458f30a84028d9fe904b8c942a7 ]
+[ Upstream commit be2d6f421f680e01d58f7cd452646e0d8586d49b ]
 
-Reviewed-by: Scott Benesh <scott.benesh@microsemi.com>
-Reviewed-by: Ajish Koshy <ajish.koshy@microsemi.com>
-Reviewed-by: Murthy Bhat <murthy.bhat@microsemi.com>
-Reviewed-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
-Reviewed-by: Dave Carroll <david.carroll@microsemi.com>
-Reviewed-by: Scott Teel <scott.teel@microsemi.com>
-Reviewed-by: Kevin Barnett <kevin.barnett@microsemi.com>
-Signed-off-by: Mahesh Rajashekhara <mahesh.rajashekhara@microsemi.com>
-Signed-off-by: Don Brace <don.brace@microsemi.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
+When a LAG device or a VLAN device on top of it is enslaved to a bridge,
+the driver propagates the CHANGEUPPER event to the LAG's slaves.
+
+This causes each physical port to increase the reference count of the
+internal representation of the bridge port by calling
+mlxsw_sp_port_bridge_join().
+
+However, when a port is removed from a LAG, the corresponding leave()
+function is not called and the reference count is not decremented. This
+leads to ugly hacks such as mlxsw_sp_bridge_port_should_destroy() that
+try to understand if the bridge port should be destroyed even when its
+reference count is not 0.
+
+Instead, make sure that when a port is unlinked from a LAG it would see
+the same events as if the LAG (or its uppers) were unlinked from a
+bridge.
+
+The above is achieved by walking the LAG's uppers when a port is
+unlinked and calling mlxsw_sp_port_bridge_leave() for each upper that is
+enslaved to a bridge.
+
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
+Reviewed-by: Petr Machata <petrm@mellanox.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/scsi/smartpqi/smartpqi_init.c | 3 +++
- 1 file changed, 3 insertions(+)
+ .../net/ethernet/mellanox/mlxsw/spectrum.c    | 23 ++++++++++++++++
+ .../mellanox/mlxsw/spectrum_switchdev.c       | 27 +------------------
+ 2 files changed, 24 insertions(+), 26 deletions(-)
 
-diff --git a/drivers/scsi/smartpqi/smartpqi_init.c b/drivers/scsi/smartpqi/smartpqi_init.c
-index 8c1a232ac6bf..58eb0d31d8d9 100644
---- a/drivers/scsi/smartpqi/smartpqi_init.c
-+++ b/drivers/scsi/smartpqi/smartpqi_init.c
-@@ -653,6 +653,7 @@ struct bmic_host_wellness_driver_version {
- 	u8	driver_version_tag[2];
- 	__le16	driver_version_length;
- 	char	driver_version[32];
-+	u8	dont_write_tag[2];
- 	u8	end_tag[2];
- };
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index de821a9fdfaf..d64cd8d44d83 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -4235,6 +4235,25 @@ void mlxsw_sp_port_dev_put(struct mlxsw_sp_port *mlxsw_sp_port)
+ 	dev_put(mlxsw_sp_port->dev);
+ }
  
-@@ -682,6 +683,8 @@ static int pqi_write_driver_version_to_host_wellness(
- 	strncpy(buffer->driver_version, "Linux " DRIVER_VERSION,
- 		sizeof(buffer->driver_version) - 1);
- 	buffer->driver_version[sizeof(buffer->driver_version) - 1] = '\0';
-+	buffer->dont_write_tag[0] = 'D';
-+	buffer->dont_write_tag[1] = 'W';
- 	buffer->end_tag[0] = 'Z';
- 	buffer->end_tag[1] = 'Z';
++static void
++mlxsw_sp_port_lag_uppers_cleanup(struct mlxsw_sp_port *mlxsw_sp_port,
++				 struct net_device *lag_dev)
++{
++	struct net_device *br_dev = netdev_master_upper_dev_get(lag_dev);
++	struct net_device *upper_dev;
++	struct list_head *iter;
++
++	if (netif_is_bridge_port(lag_dev))
++		mlxsw_sp_port_bridge_leave(mlxsw_sp_port, lag_dev, br_dev);
++
++	netdev_for_each_upper_dev_rcu(lag_dev, upper_dev, iter) {
++		if (!netif_is_bridge_port(upper_dev))
++			continue;
++		br_dev = netdev_master_upper_dev_get(upper_dev);
++		mlxsw_sp_port_bridge_leave(mlxsw_sp_port, upper_dev, br_dev);
++	}
++}
++
+ static int mlxsw_sp_lag_create(struct mlxsw_sp *mlxsw_sp, u16 lag_id)
+ {
+ 	char sldr_pl[MLXSW_REG_SLDR_LEN];
+@@ -4427,6 +4446,10 @@ static void mlxsw_sp_port_lag_leave(struct mlxsw_sp_port *mlxsw_sp_port,
  
+ 	/* Any VLANs configured on the port are no longer valid */
+ 	mlxsw_sp_port_vlan_flush(mlxsw_sp_port);
++	/* Make the LAG and its directly linked uppers leave bridges they
++	 * are memeber in
++	 */
++	mlxsw_sp_port_lag_uppers_cleanup(mlxsw_sp_port, lag_dev);
+ 
+ 	if (lag->ref_count == 1)
+ 		mlxsw_sp_lag_destroy(mlxsw_sp, lag_id);
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+index 0d9ea37c5d21..cdec48bcc6ad 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_switchdev.c
+@@ -282,30 +282,6 @@ mlxsw_sp_bridge_port_destroy(struct mlxsw_sp_bridge_port *bridge_port)
+ 	kfree(bridge_port);
+ }
+ 
+-static bool
+-mlxsw_sp_bridge_port_should_destroy(const struct mlxsw_sp_bridge_port *
+-				    bridge_port)
+-{
+-	struct net_device *dev = bridge_port->dev;
+-	struct mlxsw_sp *mlxsw_sp;
+-
+-	if (is_vlan_dev(dev))
+-		mlxsw_sp = mlxsw_sp_lower_get(vlan_dev_real_dev(dev));
+-	else
+-		mlxsw_sp = mlxsw_sp_lower_get(dev);
+-
+-	/* In case ports were pulled from out of a bridged LAG, then
+-	 * it's possible the reference count isn't zero, yet the bridge
+-	 * port should be destroyed, as it's no longer an upper of ours.
+-	 */
+-	if (!mlxsw_sp && list_empty(&bridge_port->vlans_list))
+-		return true;
+-	else if (bridge_port->ref_count == 0)
+-		return true;
+-	else
+-		return false;
+-}
+-
+ static struct mlxsw_sp_bridge_port *
+ mlxsw_sp_bridge_port_get(struct mlxsw_sp_bridge *bridge,
+ 			 struct net_device *brport_dev)
+@@ -343,8 +319,7 @@ static void mlxsw_sp_bridge_port_put(struct mlxsw_sp_bridge *bridge,
+ {
+ 	struct mlxsw_sp_bridge_device *bridge_device;
+ 
+-	bridge_port->ref_count--;
+-	if (!mlxsw_sp_bridge_port_should_destroy(bridge_port))
++	if (--bridge_port->ref_count != 0)
+ 		return;
+ 	bridge_device = bridge_port->bridge_device;
+ 	mlxsw_sp_bridge_port_destroy(bridge_port);
 -- 
 2.19.1
 
