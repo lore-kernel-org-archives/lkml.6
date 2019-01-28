@@ -2,105 +2,89 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2EFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA6EC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AAB72087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693725;
-	bh=cTgZSq7YM09igmDrjLSy1ExfkAoV9Df20sz6sc1jlKc=;
-	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
-	b=vWUreEQBZI/fHjhNDcEgnjsaydIVttG0GHzXpDIP1KH/4YfdXa5PWeR+XJM/BU4qj
-	 5pD6Z7DHAD/IADUVS7Yfk03uFvuat5rDGZ/Wi73heXauoz7D+H4CnD6RlRqoQfzxFN
-	 BL7Cp1eKhEIm/KGvdK07VO5jo9sJzYYdezlbecVc=
+	by mail.kernel.org (Postfix) with ESMTP id 6797720879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390113AbfA1QmD (ORCPT
+        id S2390124AbfA1QmP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:42:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389529AbfA1QmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:42:00 -0500
-Received: from [192.168.0.101] (unknown [49.65.250.93])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9428120879;
-        Mon, 28 Jan 2019 16:41:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548693719;
-        bh=cTgZSq7YM09igmDrjLSy1ExfkAoV9Df20sz6sc1jlKc=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=JldJbK2vS/5o8Z9YboqYnylD3TQ/jcMM5QIgfeVPDyHL8aB/R/JCdKnSTG7cStO8V
-         NdfjbCQ8YU5NSi+ah6WZ1jYapPHrAfn8iiWYWOdD2iCmzaowuwlTqgZSliaq6OcPbv
-         +0VKhN9OeFbu96V7Eoojlb6nMELtdPbEiczVk2AY=
-Subject: Re: [PATCH v2 2/2] staging: erofs: complete POSIX ACL support
-To:     Gao Xiang <gaoxiang25@huawei.com>,
-        Dan Carpenter <dan.carpenter@oracle.com>,
-        Chao Yu <yuchao0@huawei.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
-        LKML <linux-kernel@vger.kernel.org>, weidu.du@huawei.com,
-        Fang Wei <fangwei1@huawei.com>, Miao Xie <miaoxie@huawei.com>
-References: <20190125161007.4447-1-gaoxiang25@huawei.com>
- <20190125161007.4447-2-gaoxiang25@huawei.com>
- <94daa491-40c8-4a09-a0b5-55a7e92dc3fc@huawei.com>
- <20190128133302.GI1795@kadam>
- <f1fd2c69-0c5b-c655-3712-48169e87fff8@huawei.com>
-From:   Chao Yu <chao@kernel.org>
-Message-ID: <1eed1e6b-f95e-aa8e-c3e7-e9870401ee23@kernel.org>
-Date:   Tue, 29 Jan 2019 00:41:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Mon, 28 Jan 2019 11:42:15 -0500
+Received: from mail-qt1-f196.google.com ([209.85.160.196]:33047 "EHLO
+        mail-qt1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388926AbfA1QmN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:42:13 -0500
+Received: by mail-qt1-f196.google.com with SMTP id l11so18984456qtp.0;
+        Mon, 28 Jan 2019 08:42:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Seb+vsjeDDo4nWRYcSrSTH7YxWGTcZxRanKkOKBpbKA=;
+        b=oyqX8ipmqWxYAmQhHE2jkN38hVPn4UK1KfvsiS1OwifzSvIh1AoDf5Gt0+PHRO2QsI
+         rfNHjVwKgr0mKbgt7eyvlc+/pDjnov9WYEPZz3nENwLM5wcMUSav2wHLkYS/v+TRMjC8
+         suGRTfvdGOclPsTIVTIqkDkMO37V9OCJLYly+PsX6i+eI5DsM0FjioOp/4tca//d/Kya
+         icKNbgYu9AQibh7V4uFolz72lGIr5rGE60Y/Hwn4Ge83Dgv57dpdqmXXx5Yc5HzWnnsW
+         umYm/2DywhHZH6ylc3KFH106s/4ZcaNMLWMx6LWtpHrh+uZdhYxpDnbOcCHGHHt7/HCK
+         vsEg==
+X-Gm-Message-State: AJcUukeDI3EJCjL7yw7880NhOOjYuEnnBbZb7Z8h63tmBUv/At2qE82s
+        lXqW+tY6EkLNrAwmcGbwCk9fPCRYejpIBVYpUDE=
+X-Google-Smtp-Source: AHgI3Ib9npUIcSYDhZQbOSwoOisbzGQ5ZhH5Pf28jelh3gdFMe/ui1A65deoFjBDFll2IC2RKshrTOja4jA60zXeEuA=
+X-Received: by 2002:ac8:1d12:: with SMTP id d18mr10791584qtl.343.1548693732472;
+ Mon, 28 Jan 2019 08:42:12 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <f1fd2c69-0c5b-c655-3712-48169e87fff8@huawei.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20190128154341.47195-1-sashal@kernel.org> <20190128154341.47195-175-sashal@kernel.org>
+In-Reply-To: <20190128154341.47195-175-sashal@kernel.org>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Mon, 28 Jan 2019 17:41:55 +0100
+Message-ID: <CAK8P3a3z8tOxz=Rem6N7m_0_8OaU9Sxf7yViZJP5fmYGeaxUvQ@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 4.20 175/304] ARM: mmp: fix timer_init calls
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "# 3.4.x" <stable@vger.kernel.org>,
+        Olof Johansson <olof@lixom.net>,
+        Lubomir Rintel <lkundrak@v3.sk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dan and Xiang,
+On Mon, Jan 28, 2019 at 4:52 PM Sasha Levin <sashal@kernel.org> wrote:
+>
+> From: Arnd Bergmann <arnd@arndb.de>
+>
+> [ Upstream commit 12d3a30db4a3b3df5fbadf5974b9cf50544a9950 ]
+>
+> The change to passing the timer frequency as a function argument
+> was a good idea, but caused a build failure for one user that
+> was missed in the update:
+>
+> arch/arm/mach-mmp/time.c: In function 'mmp_dt_init_timer':
+> arch/arm/mach-mmp/time.c:242:2: error: implicit declaration of function 'timer_init'; did you mean 'hrtimer_init'? [-Werror=implicit-function-declaration]
+>
+> Change that as well to fix the build error, and rename the
+> function to put it into a proper namespace and make it clearer
+> what is actually going on.
+>
+> I saw that the high 6500000 HZ frequency was previously only
+> set with CONFIG_MMP2, but is now also used with MMP (pxa910),
+> so I'm changing that back here. Please make sure that the
+> frequencies are all correct now.
+>
+> Fixes: f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Olof Johansson <olof@lixom.net>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-On 2019-1-28 21:48, Gao Xiang wrote:
-> Hi Dan,
-> 
-> On 2019/1/28 21:33, Dan Carpenter wrote:
->> Hopefully, regular kmalloc() is enough.
->>
->> Do really need the erofs_kmalloc() function?  Regular kmalloc() has
->> fault injection already.  Have you tried to use it?
+I did not think that Lubumir's patch was meant for stable,
+but as you've picked that one already we clearly
+want mine as well, so this is good for all stable kernels.
 
-Yes, I think we'd better to use erofs_kmalloc(). :)
-
-Actually, fault injection in erofs_kmalloc only affect erofs module, we can
-expect that the range of fault can be limited in erofs code, rather than whole
-kernel, so the test point can be aimed at more accurately.
-
-> 
-> The fault injection subsystem was introduced in the initial upstreamed
-> EROFS version, which is taken from f2fs by Chao Yu.
-> 
-> Fault injection is important to test fs.. However, I have no more idea
-> about the future plan of this feature...Follow f2fs or use the general
-> fault injection...
-
-I guess following f2fs is not bad.
-
-Thanks,
-
-> 
-> There already exists erofs_kmalloc, thus I think it's both ok to use
-> erofs_kmalloc or kmalloc for this patch at least.
-> 
-> Chao, any idea about this?
-> 
-> Thanks,
-> Gao Xiang
-> 
+     Arnd
