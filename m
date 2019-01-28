@@ -4,51 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 456D7C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE5DFC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DD1121738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 954A92173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:20:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692430;
-	bh=52WIR35QiUgQA1IQdVVDR3Kk8OLiKLRjOtHUbmMO080=;
+	s=default; t=1548692436;
+	bh=SMCabk13T9+0o1E2xt/iWrrLggH23f1PRMvFQLe2z9s=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=tOlIU07qGKIgaocO3Meqsi6lAHMZTywi9bXSzIcB5gLvtjHM+P+maxU04UQylJOm8
-	 hCwSfeWkq2yy6VGPEKoZBpC+GebVhHM2/30+zdFz4j+a/tczGSG4NDSr1EJpaFPrEJ
-	 pEBE1ZEtwtj2L6RwjIx2D4/VtTGInnITVKcvbv38=
+	b=im4YxkZ1JP6WWWklSAvdwEAiXuVoFSWzriKHWDwls5LBdPv90HZSevRYxvDdSCsXT
+	 zjzWATYnB7auK85PgRKh4kKFI+4495HyNMvNEasUq1o8d3JQN4KqZcdIrKBGLk+96k
+	 0ZmCTY7uJRcz8U2gKJIIwnsESJsPlYc3NZO5Lx78=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388825AbfA1QU2 (ORCPT
+        id S2388848AbfA1QUe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:20:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55896 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:20:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55944 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388793AbfA1QU0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:20:26 -0500
+        id S2388815AbfA1QU2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:20:28 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E49C521738;
-        Mon, 28 Jan 2019 16:20:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D896B2084A;
+        Mon, 28 Jan 2019 16:20:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692426;
-        bh=52WIR35QiUgQA1IQdVVDR3Kk8OLiKLRjOtHUbmMO080=;
+        s=default; t=1548692427;
+        bh=SMCabk13T9+0o1E2xt/iWrrLggH23f1PRMvFQLe2z9s=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pmLqPB/H/1UbzjYlAkK+PcD1SdTxbwFwT3LgaJuzFo283buuioHF2JBUZL4/hXJt4
-         qa8d3qQ2IrB81EEytfs3Ps8FwLXL8PGM9c9Ex927dQNSRCmfNvJr+yxv5o5fv97rnL
-         eepoTBw+b/GlsqeHBoeKqvljWG3xQxCF6zEVcJRo=
+        b=wEn/UR8lIYTMsHo2pTQqCSDazzeH2AsamRCyxWxIWxITSpduZAsTzeK40dYG/t932
+         IkkQQ2NLqxDXvr7MsCWdjEYewK+5mU3C/0/QV4OY9iPuT1vpLj1+gmkWe5GnaeSbnV
+         nrmT4bI83V5sabJAiJky7ZR/eS47/EYoCqC56yH4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miroslav Lichvar <mlichvar@redhat.com>,
-        Richard Cochran <richardcochran@gmail.com>,
-        Jacob Keller <jacob.e.keller@intel.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 015/107] ptp: check gettime64 return code in PTP_SYS_OFFSET ioctl
-Date:   Mon, 28 Jan 2019 11:18:15 -0500
-Message-Id: <20190128161947.57405-15-sashal@kernel.org>
+Cc:     Matheus Tavares <matheus.bernardino@usp.br>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Subject: [PATCH AUTOSEL 4.9 016/107] staging:iio:ad2s90: Make probe handle spi_setup failure
+Date:   Mon, 28 Jan 2019 11:18:16 -0500
+Message-Id: <20190128161947.57405-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -60,44 +59,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miroslav Lichvar <mlichvar@redhat.com>
+From: Matheus Tavares <matheus.bernardino@usp.br>
 
-[ Upstream commit 83d0bdc7390b890905634186baaa294475cd6a06 ]
+[ Upstream commit b3a3eafeef769c6982e15f83631dcbf8d1794efb ]
 
-If a gettime64 call fails, return the error and avoid copying data back
-to user.
+Previously, ad2s90_probe ignored the return code from spi_setup, not
+handling its possible failure. This patch makes ad2s90_probe check if
+the code is an error code and, if so, do the following:
 
-Cc: Richard Cochran <richardcochran@gmail.com>
-Cc: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Miroslav Lichvar <mlichvar@redhat.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+- Call dev_err with an appropriate error message.
+- Return the spi_setup's error code.
+
+Note: The 'return ret' statement could be out of the 'if' block, but
+this whole block will be moved up in the function in the patch:
+'staging:iio:ad2s90: Move device registration to the end of probe'.
+
+Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>
+Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/ptp/ptp_chardev.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/staging/iio/resolver/ad2s90.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/ptp/ptp_chardev.c b/drivers/ptp/ptp_chardev.c
-index a421d6c551b6..ecb41eacd74b 100644
---- a/drivers/ptp/ptp_chardev.c
-+++ b/drivers/ptp/ptp_chardev.c
-@@ -228,7 +228,9 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
- 			pct->sec = ts.tv_sec;
- 			pct->nsec = ts.tv_nsec;
- 			pct++;
--			ptp->info->gettime64(ptp->info, &ts);
-+			err = ptp->info->gettime64(ptp->info, &ts);
-+			if (err)
-+				goto out;
- 			pct->sec = ts.tv_sec;
- 			pct->nsec = ts.tv_nsec;
- 			pct++;
-@@ -281,6 +283,7 @@ long ptp_ioctl(struct posix_clock *pc, unsigned int cmd, unsigned long arg)
- 		break;
- 	}
+diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+index 5b1c0db33e7f..b44253eb62ec 100644
+--- a/drivers/staging/iio/resolver/ad2s90.c
++++ b/drivers/staging/iio/resolver/ad2s90.c
+@@ -86,7 +86,12 @@ static int ad2s90_probe(struct spi_device *spi)
+ 	/* need 600ns between CS and the first falling edge of SCLK */
+ 	spi->max_speed_hz = 830000;
+ 	spi->mode = SPI_MODE_3;
+-	spi_setup(spi);
++	ret = spi_setup(spi);
++
++	if (ret < 0) {
++		dev_err(&spi->dev, "spi_setup failed!\n");
++		return ret;
++	}
  
-+out:
- 	kfree(sysoff);
- 	return err;
+ 	return 0;
  }
 -- 
 2.19.1
