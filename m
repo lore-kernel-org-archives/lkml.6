@@ -2,127 +2,160 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6857BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:36:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 13698C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22E192173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:36:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="SC7ZF59m"
+	by mail.kernel.org (Postfix) with ESMTP id E11562085B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:38:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726869AbfA1Ogz (ORCPT
+        id S1726813AbfA1Oiv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:36:55 -0500
-Received: from mail-eopbgr150100.outbound.protection.outlook.com ([40.107.15.100]:57824
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbfA1Ogw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:36:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lJVpUuptmZGqG/S6GtVjuIEAvSEjzU8LT+9n7VZr01w=;
- b=SC7ZF59maMSGTagyh71kFJSHy3KIFOEwlXYMkHwy0jLti9tYmL1EOc/P7swv9QJVVuG/3M8iBybKvUXXIESJFHJEqiYOc4Bq1Mmz4DrKgwEWY2M3WvMxir/shwiftkS1Rq76q3t6czv6ZSd/oXioQMbkLwVVsgEmOX54XIIF3LE=
-Received: from VI1PR0702MB3710.eurprd07.prod.outlook.com (52.134.3.144) by
- VI1PR0702MB3629.eurprd07.prod.outlook.com (52.134.1.142) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.5; Mon, 28 Jan 2019 14:36:50 +0000
-Received: from VI1PR0702MB3710.eurprd07.prod.outlook.com
- ([fe80::95ff:2ede:57df:f1ba]) by VI1PR0702MB3710.eurprd07.prod.outlook.com
- ([fe80::95ff:2ede:57df:f1ba%2]) with mapi id 15.20.1580.014; Mon, 28 Jan 2019
- 14:36:50 +0000
-From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-To:     Paul Moore <paul@paul-moore.com>
-CC:     Paul Moore <pmoore@redhat.com>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        Richard Guy Briggs <rbriggs@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] audit: always enable syscall auditing when supported and
- audit is enabled
-Thread-Topic: [PATCH] audit: always enable syscall auditing when supported and
- audit is enabled
-Thread-Index: AQHUtuRMqf59sA9YxEyiYKAWmGDXiKXEuzUAgAAEzAA=
-Date:   Mon, 28 Jan 2019 14:36:49 +0000
-Message-ID: <4fb6def1-a1d9-8af0-394c-f92224884d18@nokia.com>
-References: <20151208164237.15736.42955.stgit@localhost>
- <5490ae28-251b-bfda-38a6-5be201a4a8d8@nokia.com>
- <CAHC9VhQsVFY1LAakAUUCBZw6nmSy0-eoFrhQgVQrkqgAsWVGhQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQsVFY1LAakAUUCBZw6nmSy0-eoFrhQgVQrkqgAsWVGhQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [131.228.32.165]
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-x-clientproxiedby: HE1PR09CA0078.eurprd09.prod.outlook.com
- (2603:10a6:7:3d::22) To VI1PR0702MB3710.eurprd07.prod.outlook.com
- (2603:10a6:803:7::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0702MB3629;6:FDvqjMEU3uFLmQp1n8g02wHFVHs+DdctepAP6wTJZ1RA0jWMehQ9ZftWEfNnvcZI9VbjenzbMW04HeEO7wh4AY6WQjLtjr7tNqf418EjtUMdDWYxYHTTHPISZThUNBy72lIzs3fbCKDilnBHROBN5eks7d8Sl3/PnGCytryt11x06T+2NAlzJrFNEj7dT/nbddhUtCFuZv+Ym8mpCzB2WINFCqfj6LT3jLqvREP+Tj/veoYsB+hq/yL0FVvp5ZbNqQ9D0S5mNXuAhpUs3vqcHDkg3BV/zOZk64vjGMfLHzVAgUUs4Eq7OkNYrjNOoC5n5jCtGVQn8HKhgdUcvjps5YKhMvYb5OnkV8BRpNrdh5k63rzpIoxDGHH9fd0BsW0YWtqJSPCQrnjCekxXxCVZMYuWs6m3H7M75iveSybMNXBd92ibo+XpY27jtc4B/1+gGHhRGjz86c1ZhGgXQMQL5g==;5:FWVsXjtGqMReN57I7VIcC9ZnBZ+SYUTyW9Abd96gA36tipLkbFG5uYSNiMutiMq1NNjmxltXhY5c3+thkmvIOBmSRav5OvBXN4QM1/VBhnXBpnDhHkUrWduJP7/ZtqpNf3PGNnJkiuax4YKg83yrw5462YDTk/y9qCHhZeFDhlooRNcXajnRkVV6Bzr3/RMP6Pl0C/aCHalM87TnLqw3xA==;7:Y9Qb66OGP/F1UD6yUNQ2w5Dnr9hXYZKkCj1lkdUas7BrPaqEAwf34GxHioht1+/XKvMKS3eP24Vbpa8pFwsW9ZsXfMuZk26lOt5EOzjmmQSYDWfwQ0fT0eS3wWzp//Us90T4a0HS/D9WCugKQoPf3Q==
-x-ms-office365-filtering-correlation-id: 3dcbb810-d3b7-457f-07d2-08d6852e099f
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:VI1PR0702MB3629;
-x-ms-traffictypediagnostic: VI1PR0702MB3629:
-x-microsoft-antispam-prvs: <VI1PR0702MB3629D86AC8EDE4634F75890D88960@VI1PR0702MB3629.eurprd07.prod.outlook.com>
-x-forefront-prvs: 0931CB1479
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(366004)(136003)(346002)(39860400002)(376002)(396003)(199004)(189003)(2906002)(6246003)(478600001)(4326008)(58126008)(68736007)(52116002)(54906003)(105586002)(316002)(106356001)(65956001)(66066001)(53936002)(486006)(31686004)(65806001)(6506007)(386003)(53546011)(102836004)(76176011)(6512007)(186003)(26005)(305945005)(7736002)(3846002)(6116002)(446003)(71190400001)(71200400001)(86362001)(25786009)(8676002)(11346002)(99286004)(229853002)(14454004)(31696002)(6486002)(36756003)(81156014)(6436002)(81166006)(6916009)(8936002)(14444005)(256004)(97736004)(64126003)(65826007)(476003)(2616005);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0702MB3629;H:VI1PR0702MB3710.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: KedWexE69fpCHkf5rAYHY3zozSNnCitmUrUv85kEal1d9ZMqbOMyImdV9/SblOe5N6goiiJzBG0KIll8EmOtzzF3GJ+YhOcBzbcTt84+qfS+AjmplsnSNSmhdFbDa0NWxepwM0V7th0FQErghyF49Z+xdZ4/JHDhdB/MQjNvjASwOrAgvL2IYp4z7yBzgBpRhFVe4BOvzZ35rBq0TMWtj64tFSonFB/htiVmYeKO/VrESEDXGbBjPGWGFmeqPCOJ/C1HVYa/DiAoR+DyJBHNhuUICqaapTTUndKUVme+T751O4dysw1wJmmD+hE+ijZVZOVQmUsbb5VjsYu10r5ZYCKlsy7gLIAJl7KKgaYbWuYqt7WeHE2CXDoKPpdQL38mOZH6QCD4Q3OBOaUSnFTQjlBmb/tuiTNQ+IdA0KGxhTQ=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A3E955090B485642AD790503C3C35D2F@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Mon, 28 Jan 2019 09:38:51 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53862 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726266AbfA1Oiu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 09:38:50 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4843187623;
+        Mon, 28 Jan 2019 14:38:50 +0000 (UTC)
+Received: from [10.36.117.107] (ovpn-117-107.ams2.redhat.com [10.36.117.107])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 07CC74F9A1;
+        Mon, 28 Jan 2019 14:38:39 +0000 (UTC)
+Subject: Re: [PATCH RFC] mm: migrate: don't rely on PageMovable() of newpage
+ after unlocking it
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vratislav Bendel <vbendel@redhat.com>,
+        Rafael Aquini <aquini@redhat.com>
+References: <20190128121609.9528-1-david@redhat.com>
+ <20190128130709.GJ18811@dhcp22.suse.cz>
+ <b03cae19-d02a-0ba2-69a1-010ee76748e7@redhat.com>
+ <20190128132146.GK18811@dhcp22.suse.cz>
+ <17e7d7e4-f4ca-a681-93e5-92a0c285be14@redhat.com>
+ <20190128133514.GL18811@dhcp22.suse.cz>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <cb3eccaf-0fbf-f3b8-dbbe-070acb9837be@redhat.com>
+Date:   Mon, 28 Jan 2019 15:38:38 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
 MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3dcbb810-d3b7-457f-07d2-08d6852e099f
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 14:36:48.4542
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0702MB3629
+In-Reply-To: <20190128133514.GL18811@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 28 Jan 2019 14:38:50 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gUGF1bCwNCg0KT24gMjgvMDEvMjAxOSAxNToxOSwgUGF1bCBNb29yZSB3cm90ZToNCj4+
-PiB0aW1lIGFsc28gZW5hYmxlcyBzeXNjYWxsIGF1ZGl0aW5nOyB0aGlzIHBhdGNoIHNpbXBsaWZp
-ZXMgdGhlIEtjb25maWcNCj4+PiBtZW51cyBieSByZW1vdmluZyB0aGUgb3B0aW9uIHRvIGRpc2Fi
-bGUgc3lzY2FsbCBhdWRpdGluZyB3aGVuIGF1ZGl0DQo+Pj4gaXMgc2VsZWN0ZWQgYW5kIHRoZSB0
-YXJnZXQgYXJjaCBzdXBwb3J0cyBpdC4NCj4+Pg0KPj4+IFNpZ25lZC1vZmYtYnk6IFBhdWwgTW9v
-cmUgPHBtb29yZUByZWRoYXQuY29tPg0KPj4gdGhpcyBwYXRjaCBpcyByZXNwb25zaWJsZSBmb3Ig
-bWFzc2l2ZSBwZXJmb3JtYW5jZSBkZWdyYWRhdGlvbiBmb3IgdGhvc2UNCj4+IHdobyB1c2VkIG9u
-bHkgQ09ORklHX1NFQ1VSSVRZX0FQUEFSTU9SLg0KPj4NCj4+IEFuZCB0aGUgbnVtYmVycyBhcmUs
-IHRha2UgdGhlIGZvbGxvd2luZyB0ZXN0IGZvciBpbnN0YW5jZToNCj4+DQo+PiBkZCBpZj0vZGV2
-L3plcm8gb2Y9L2Rldi9udWxsIGNvdW50PTJNDQo+Pg0KPj4gQVJNNjQ6ICAgICAgNTAwTUIvcyAt
-PiAzNTBNQi9zDQo+PiBBUk06ICAgICAgICA0MDBNQi9zIC0+IDMwME1CL3MNCj4gSGkgdGhlcmUu
-DQo+IA0KPiBPdXQgb2YgY3VyaW9zaXR5LCB3aGF0IGtlcm5lbC9kaXN0cmlidXRpb24gYXJlIHlv
-dSBydW5uaW5nLCBvciBpcyB0aGlzDQo+IGEgY3VzdG9tIGtlcm5lbCBjb21waWxlPyAgQ2FuIHlv
-dSBhbHNvIHNoYXJlIHRoZSBvdXRwdXQgb2YgJ2F1ZGl0Y3RsDQoNClRoaXMgdGVzdCB3YXMgY2Fy
-cmllZCBvdXQgd2l0aCBMaW51eCA0LjkuIEN1c3RvbSBidWlsdC4NCg0KPiAtbCcgZnJvbSB5b3Vy
-IHN5c3RlbT8gIFRoZSBnZW5lcmFsIGFwcHJvYWNoIHRha2VuIGJ5IGV2ZXJ5b25lIHRvDQo+IHR1
-cm4tb2ZmIHRoZSBwZXItc3lzY2FsbCBhdWRpdCBvdmVyaGVhZCBpcyB0byBhZGQgdGhlICItYSBu
-ZXZlcix0YXNrIg0KPiBydWxlIHRvIHRoZWlyIGF1ZGl0IGNvbmZpZ3VyYXRpb246DQo+IA0KPiAg
-IyBhdWRpdGN0bCAtYSBuZXZlcix0YXNrDQo+IA0KPiBJZiB5b3UgYXJlIHVzaW5nIEZlZG9yYS9D
-ZW50T1MvUkhFTCwgb3IgYSBzaW1pbGFybHkgY29uZmlndXJlZCBzeXN0ZW0sDQoNClRoaXMgaXMg
-YW4gZW1iZWRkZWQgZGlzdHJpYnV0aW9uLiBXZSBhcmUgbm90IHVzaW5nIGF1ZGl0Y3RsIG9yIGFu
-eSBvdGhlcg0KYXVkaXQtcmVsYXRlZCB1c2VyLXNwYWNlIHBhY2thZ2VzLg0KDQo+IHlvdSBjYW4g
-ZmluZCB0aGlzIGNvbmZpZ3VyYXRpb24gaW4gdGhlIC9ldGMvYXVkaXQvYXVkaXQucnVsZXMgZmls
-ZSAoYmUNCj4gd2FybmVkLCB0aGF0IGZpbGUgaXMgYXV0b21hdGljYWxseSBnZW5lcmF0ZWQgYmFz
-ZWQgb24NCj4gL2V0Yy9hdWRpdC9ydWxlcy5kKS4NCg0KSSBzdXBwb3NlIGluIHRoaXMgY2FzZSBy
-dWxlIGxpc3QgbXVzdCBiZSBlbXB0eS4gSXMgdGhlcmUgYSB3YXkgdG8gY2hlY2sNCnRoaXMgd2l0
-aG91dCBleHRyYSB1c2VyLXNwYWNlIHBhY2thZ2VzPw0KDQotLSANCkJlc3QgcmVnYXJkcywNCkFs
-ZXhhbmRlciBTdmVyZGxpbi4NCg==
+On 28.01.19 14:35, Michal Hocko wrote:
+> On Mon 28-01-19 14:22:52, David Hildenbrand wrote:
+>> On 28.01.19 14:21, Michal Hocko wrote:
+>>> On Mon 28-01-19 14:14:28, David Hildenbrand wrote:
+>>>> On 28.01.19 14:07, Michal Hocko wrote:
+>>>>> On Mon 28-01-19 13:16:09, David Hildenbrand wrote:
+>>>>> [...]
+>>>>>> My theory:
+>>>>>>
+>>>>>> In __unmap_and_move(), we lock the old and newpage and perform the
+>>>>>> migration. In case of vitio-balloon, the new page will become
+>>>>>> movable, the old page will no longer be movable.
+>>>>>>
+>>>>>> However, after unlocking newpage, I think there is nothing stopping
+>>>>>> the newpage from getting dequeued and freed by virtio-balloon. This
+>>>>>> will result in the newpage
+>>>>>> 1. No longer having PageMovable()
+>>>>>> 2. Getting moved to the local list before finally freeing it (using
+>>>>>>    page->lru)
+>>>>>
+>>>>> Does that mean that the virtio-balloon can change the Movable state
+>>>>> while there are other users of the page? Can you point to the code that
+>>>>> does it? How come this can be safe at all? Or is the PageMovable stable
+>>>>> only under the page lock?
+>>>>>
+>>>>
+>>>> PageMovable is stable under the lock. The relevant instructions are in
+>>>>
+>>>> mm/balloon_compaction.c and include/linux/balloon_compaction.h
+>>>
+>>> OK, I have just checked __ClearPageMovable and it indeed requires
+>>> PageLock. Then we also have to move is_lru = __PageMovable(page) after
+>>> the page lock.
+>>>
+>>
+>> I assume that is fine as is as the page is isolated? (yes, it will be
+>> modified later when moving but we are interested in the original state)
+> 
+> OK, I've missed that the page is indeed isolated. Then the patch makes
+> sense to me.
+> 
+
+Thanks Michal. I assume this has broken ever since balloon compaction
+was introduced. I'll wait a little more and then resend as !RFC with a
+cc-stable tag.
+
+-- 
+
+Thanks,
+
+David / dhildenb
