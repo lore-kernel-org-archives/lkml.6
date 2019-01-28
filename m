@@ -7,50 +7,52 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1808C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A955C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 919A22147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:05:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08ED62171F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691557;
-	bh=nqgrXLaJEHrhcbL9D8uQmAp7BxY5tKdpYBY8bZh4r2E=;
+	s=default; t=1548691563;
+	bh=+FFnbIwCVDM4EzW0SOOkVepLIL3Hqi0vdNuDwfwCKHs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=znbxD1BfrcimiL/GYojfivAOnZJXoQQASan4MNDoKYgOGEnq7QkkhzmJjvooagsL0
-	 NLa3eGOwXKog8Ow8cchNDE24GNgshp0MUN3wpI1oExJGiwP9HxBEBv3cxoeZ+fbqgO
-	 wrtTuTGqJn3xuf021VBWZK/bp/BPq/iGFsVdV/cI=
+	b=2Du88xoqn4q6SsiqgPnzLoS8sJPgg+bvB62S77WYtez2GBobhHykLz3ISTU3gYRzn
+	 cf30obX4FM1vKDur1Z4mTJT6ubodoAWZkQjK6/pTt7hzz5CHQwyPrRo1MAJ84WjgjB
+	 zDmzTY1MApplIO4PUJsyyrFCbUNLzLW0bHyAqw30=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730551AbfA1QFz (ORCPT
+        id S1731935AbfA1QGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:05:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53470 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:06:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731102AbfA1QFx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:05:53 -0500
+        id S1731428AbfA1QFz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:05:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6FC2C20989;
-        Mon, 28 Jan 2019 16:05:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B6A6A2147A;
+        Mon, 28 Jan 2019 16:05:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691552;
-        bh=nqgrXLaJEHrhcbL9D8uQmAp7BxY5tKdpYBY8bZh4r2E=;
+        s=default; t=1548691554;
+        bh=+FFnbIwCVDM4EzW0SOOkVepLIL3Hqi0vdNuDwfwCKHs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iuWvQafKIVFAXlWCvpLvJ/8AsXwBAZ99sTYZ1e0Dsd5xVnoJ2igZw85XVnCvAKHdl
-         uxAemXnDj1WqOVozaIbbe7g57QEjEznefxmWHpH56de0yoGhBZmO9VvgfDBmXgAgSY
-         T2D8w1OkANVgBroEL64J43ScoD3NKtVOEZ6g2Roc=
+        b=uJkT0lPqgHWcFyfzuV6xOh3vNcghg5Cx1kRDmdWhg1717htUjklb2R4ja5gFvcgeQ
+         zNNUhhZ91WqmovUK4inClEmPJty/IWRViJAtmFgCsYJVfYsANbyPUKTlzcGwOL+0R/
+         58gdA/zrwZo2BM2YG//fo5Mh2+eGEosvzku+ktE4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sean Paul <seanpaul@chromium.org>, Rob Clark <robdclark@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.19 138/258] drm/msm: dpu: Only check flush register against pending flushes
-Date:   Mon, 28 Jan 2019 10:57:24 -0500
-Message-Id: <20190128155924.51521-138-sashal@kernel.org>
+Cc:     Hans Holmberg <hans.holmberg@cnexlabs.com>,
+        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
+        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
+        linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 139/258] lightnvm: pblk: fix resubmission of overwritten write err lbas
+Date:   Mon, 28 Jan 2019 10:57:25 -0500
+Message-Id: <20190128155924.51521-139-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,44 +60,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sean Paul <seanpaul@chromium.org>
+From: Hans Holmberg <hans.holmberg@cnexlabs.com>
 
-[ Upstream commit 5f79e03b1f7c1b2cf0019ce6365fe5d52629813d ]
+[ Upstream commit c12fa401ac8c94a74aff68bb5736b3f1dc695fa8 ]
 
-There exists a case where a flush of a plane/dma may have been triggered
-& started from an async commit. If that plane/dma is subsequently disabled
-by the next commit, the flush register will continue to hold the flush
-bit for the disabled plane. Since the bit remains active,
-pending_kickoff_cnt will never decrement and we'll miss frame_done
-events.
+Make sure we only look up valid lba addresses on the resubmission path.
 
-This patch limits the check of flush_register to include only those bits
-which have been updated with the latest commit.
+If an lba is invalidated in the write buffer, that sector will be
+submitted to disk (as it is already mapped to a ppa), and that write
+might fail, resulting in a crash when trying to look up the lba in the
+mapping table (as the lba is marked as invalid).
 
-Changes in v2:
-- None
-
-Reviewed-by: Jeykumar Sankaran <jsanka@codeaurora.org>
-Signed-off-by: Sean Paul <seanpaul@chromium.org>
-Signed-off-by: Rob Clark <robdclark@gmail.com>
+Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
+Reviewed-by: Javier González <javier@javigon.com>
+Signed-off-by: Matias Bjørling <mb@lightnvm.io>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/lightnvm/pblk-write.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-index 14fc7c2a6bb7..c9962a36b86b 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-@@ -331,7 +331,7 @@ static void dpu_encoder_phys_vid_vblank_irq(void *arg, int irq_idx)
- 	if (hw_ctl && hw_ctl->ops.get_flush_register)
- 		flush_register = hw_ctl->ops.get_flush_register(hw_ctl);
+diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
+index 879227d584e7..c3e038d4b22e 100644
+--- a/drivers/lightnvm/pblk-write.c
++++ b/drivers/lightnvm/pblk-write.c
+@@ -158,9 +158,11 @@ static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
+ 		w_ctx = &entry->w_ctx;
  
--	if (flush_register == 0)
-+	if (!(flush_register & hw_ctl->ops.get_pending_flush(hw_ctl)))
- 		new_cnt = atomic_add_unless(&phys_enc->pending_kickoff_cnt,
- 				-1, 0);
- 	spin_unlock_irqrestore(phys_enc->enc_spinlock, lock_flags);
+ 		/* Check if the lba has been overwritten */
+-		ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
+-		if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
+-			w_ctx->lba = ADDR_EMPTY;
++		if (w_ctx->lba != ADDR_EMPTY) {
++			ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
++			if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
++				w_ctx->lba = ADDR_EMPTY;
++		}
+ 
+ 		/* Mark up the entry as submittable again */
+ 		flags = READ_ONCE(w_ctx->flags);
 -- 
 2.19.1
 
