@@ -4,52 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50258C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04FACC282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 22C632084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CBA4821738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:10:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691847;
-	bh=iMPET4x1Ri3FMmeFZ87YAw+rJQU9OwKtkcfiyE1nWo8=;
+	s=default; t=1548691850;
+	bh=y95Y1KI/N6rLEgcyNmQg1RV/Fg270A1Ccq0dvxxyCGI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nSbuKdsQeSUwga6H+PkiC6x7qdXfEGweDQPkDOS1jwdd4y8MPNvR2368V83DQbMw4
-	 9uQfk2TTaXT17X06Vrb3Uo0IBdFipwsUkhUW0I8wQi/xzQPYUo4ZhDKXhCiYy8PvSg
-	 ibVlRNNag6GFwbjR8P/ygK610HZvvI5FEXtojSgg=
+	b=M+u7vmPbUzOMGNJ9oWN/fGlkOW3AoLpmRLEhW/LEBgLyMCWrVvbrD/rX7V0xUfHs3
+	 vgbkJJhLSQGv9vsqhVG5NYbHepkwrs3Yyy8VdREw6im0y/Nl1Xc9a9Or740DvvXZV6
+	 TWdtzXyQJ6mUF5YOXxJniKnMH2MdpmopDQgGwXMY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732866AbfA1QKp (ORCPT
+        id S1732877AbfA1QKt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:10:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37022 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:10:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37140 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731666AbfA1QKo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:10:44 -0500
+        id S1731666AbfA1QKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:10:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DF8A2084A;
-        Mon, 28 Jan 2019 16:10:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4DD202171F;
+        Mon, 28 Jan 2019 16:10:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691843;
-        bh=iMPET4x1Ri3FMmeFZ87YAw+rJQU9OwKtkcfiyE1nWo8=;
+        s=default; t=1548691846;
+        bh=y95Y1KI/N6rLEgcyNmQg1RV/Fg270A1Ccq0dvxxyCGI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FC+tjslzyI5EGb9RLk2BMcsJ16icWWiZPVjxrPaypOhQUTQEQD8FCx7QeLTnqmhi4
-         T4RD5T+kKtrclpPuoFGhSOmlRYGHh90nG1A+dQVvknFB4RO7Uyi2G1nTdhQnuu/lS4
-         nKHAcgeU4lMQH1K0WqMqpWDiWI1FIh/BYXKUD80Y=
+        b=I7e4l+yXfF49U2JscNTFxSBdJ2KotDB+DfEgIv7e2GfJUmtVt8RSjXCAgu2bP3jw7
+         F+mnF8SAetRTW5SjpKOHInx5GOWfu8U304PNwFfp97uSNg3YOXfTdPn7EpyUha7Xnw
+         Jx+rXPQ9yuR94b8EgRRc9lX8QXgu12Teis/hH40Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Miles Chen <miles.chen@mediatek.com>,
-        Joe Perches <joe@perches.com>,
-        Matthew Wilcox <willy@infradead.org>,
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Mark Fasheh <mfasheh@versity.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 235/258] mm/page_owner: clamp read count to PAGE_SIZE
-Date:   Mon, 28 Jan 2019 10:59:01 -0500
-Message-Id: <20190128155924.51521-235-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 236/258] ocfs2: don't clear bh uptodate for block read
+Date:   Mon, 28 Jan 2019 10:59:02 -0500
+Message-Id: <20190128155924.51521-236-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -61,42 +63,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Miles Chen <miles.chen@mediatek.com>
+From: Junxiao Bi <junxiao.bi@oracle.com>
 
-[ Upstream commit c8f61cfc871fadfb73ad3eacd64fda457279e911 ]
+[ Upstream commit 70306d9dce75abde855cefaf32b3f71eed8602a3 ]
 
-The (root-only) page owner read might allocate a large size of memory with
-a large read count.  Allocation fails can easily occur when doing high
-order allocations.
+For sync io read in ocfs2_read_blocks_sync(), first clear bh uptodate flag
+and submit the io, second wait io done, last check whether bh uptodate, if
+not return io error.
 
-Clamp buffer size to PAGE_SIZE to avoid arbitrary size allocation
-and avoid allocation fails due to high order allocation.
+If two sync io for the same bh were issued, it could be the first io done
+and set uptodate flag, but just before check that flag, the second io came
+in and cleared uptodate, then ocfs2_read_blocks_sync() for the first io
+will return IO error.
 
-[akpm@linux-foundation.org: use min_t()]
-Link: http://lkml.kernel.org/r/1541091607-27402-1-git-send-email-miles.chen@mediatek.com
-Signed-off-by: Miles Chen <miles.chen@mediatek.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Joe Perches <joe@perches.com>
-Cc: Matthew Wilcox <willy@infradead.org>
+Indeed it's not necessary to clear uptodate flag, as the io end handler
+end_buffer_read_sync() will set or clear it based on io succeed or failed.
+
+The following message was found from a nfs server but the underlying
+storage returned no error.
+
+[4106438.567376] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2780 ERROR: read block 1238823695 failed -5
+[4106438.567569] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2812 ERROR: status = -5
+[4106438.567611] (nfsd,7146,3):ocfs2_test_inode_bit:2894 ERROR: get alloc slot and bit failed -5
+[4106438.567643] (nfsd,7146,3):ocfs2_test_inode_bit:2932 ERROR: status = -5
+[4106438.567675] (nfsd,7146,3):ocfs2_get_dentry:94 ERROR: test inode bit failed -5
+
+Same issue in non sync read ocfs2_read_blocks(), fixed it as well.
+
+Link: http://lkml.kernel.org/r/20181121020023.3034-4-junxiao.bi@oracle.com
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/page_owner.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/ocfs2/buffer_head_io.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/mm/page_owner.c b/mm/page_owner.c
-index d80adfe702d3..9ad588444671 100644
---- a/mm/page_owner.c
-+++ b/mm/page_owner.c
-@@ -351,6 +351,7 @@ print_page_owner(char __user *buf, size_t count, unsigned long pfn,
- 		.skip = 0
- 	};
+diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+index 1d098c3c00e0..9f8250df99f1 100644
+--- a/fs/ocfs2/buffer_head_io.c
++++ b/fs/ocfs2/buffer_head_io.c
+@@ -152,7 +152,6 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ #endif
+ 		}
  
-+	count = min_t(size_t, count, PAGE_SIZE);
- 	kbuf = kmalloc(count, GFP_KERNEL);
- 	if (!kbuf)
- 		return -ENOMEM;
+-		clear_buffer_uptodate(bh);
+ 		get_bh(bh); /* for end_buffer_read_sync() */
+ 		bh->b_end_io = end_buffer_read_sync;
+ 		submit_bh(REQ_OP_READ, 0, bh);
+@@ -306,7 +305,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 				continue;
+ 			}
+ 
+-			clear_buffer_uptodate(bh);
+ 			get_bh(bh); /* for end_buffer_read_sync() */
+ 			if (validate)
+ 				set_buffer_needs_validate(bh);
 -- 
 2.19.1
 
