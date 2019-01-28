@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82845C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21351C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4956F2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E9E312175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:45:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690344;
-	bh=W8tcpiDPkLw1Y6TcS9TQUa3cX/RYD3g2gB7DXexROUc=;
+	s=default; t=1548690349;
+	bh=Y9+3cvLAcP94C/jHGHeoWt85uu3nn3+9PQvNbLtybvA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=qEHBixrUloXeEGIrUDS6Rd8XvNEtBly84RWwwBY5JSzucg7pQa5mTiwH2vvhyn5RO
-	 /kjUYno+YLYCHLZEAlT7tpaA1lXC2Hp9D+7HQ/JAQ/PSOfRhnj3WY3ZjE9QQ47o41f
-	 J+MwjiAg/6QI+T+MdgT1D4MRiDBeKA4wem0VGmcg=
+	b=pKhrlZVzau8OGKMfEB7u+13ahEscLqa/5L8pO5f+aQcJnqOBNbL7Xvx9ViQVQyTKY
+	 m24hR9UqC6tDB5xLkw1QKPo6bIc5Mq0SffHrUF4KbUJolZ1yft2FNkwyy1/SnbXT9T
+	 CBaLOx30Hf2AhRpzl2dckYYrbOV0lmk7A7NXQ4ew=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727839AbfA1Ppm (ORCPT
+        id S1726879AbfA1Ppr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:45:42 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59026 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:45:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59124 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727797AbfA1Ppj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:45:39 -0500
+        id S1727029AbfA1Ppo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:45:44 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0E05420880;
-        Mon, 28 Jan 2019 15:45:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EF16920880;
+        Mon, 28 Jan 2019 15:45:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690338;
-        bh=W8tcpiDPkLw1Y6TcS9TQUa3cX/RYD3g2gB7DXexROUc=;
+        s=default; t=1548690343;
+        bh=Y9+3cvLAcP94C/jHGHeoWt85uu3nn3+9PQvNbLtybvA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xMHV5RzqNIue0CrylLVSjOUYJ0vYX457Wec9i2xmdpzioPAdJYChdwCyu7wq0L9ll
-         9YJZS/qsaxrtqSJ3tyTBvI7ALbGUFrZtY7FRanG44DBit4qmnX4n1SciUHnhMfQVZY
-         IPnmaTfyVV2NgyNeCc2koblbWUJCwosedTUw/xfQ=
+        b=wTiNjx8lZxjQnAH2SHG3S8hj7veT9FQEFChMNjnzaWxalkYMRTfTkOfJQHRQraKyA
+         22HAKZdXWdBcObkSGJ5k5VX5PPyRlqqW2Uv4Si2FQujMQXGqtvQROsrLfVfb7YW1e6
+         J0xMzOBn0ovTprFmKB4gL2zfE3RWC5jq8mTe3qtg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yogesh Mohan Marimuthu <yogesh.mohanmarimuthu@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.20 056/304] drm/amd/display: calculate stream->phy_pix_clk before clock mapping
-Date:   Mon, 28 Jan 2019 10:39:33 -0500
-Message-Id: <20190128154341.47195-56-sashal@kernel.org>
+Cc:     Saeed Mahameed <saeedm@mellanox.com>,
+        Leon Romanovsky <leonro@mellanox.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linux-rdma@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 058/304] net/mlx5: EQ, Use the right place to store/read IRQ affinity hint
+Date:   Mon, 28 Jan 2019 10:39:35 -0500
+Message-Id: <20190128154341.47195-58-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,48 +58,97 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yogesh Mohan Marimuthu <yogesh.mohanmarimuthu@amd.com>
+From: Saeed Mahameed <saeedm@mellanox.com>
 
-[ Upstream commit 08e1c28dd521c7b08d1b0af0bae9fb22ccc012a4 ]
+[ Upstream commit 1e86ace4c140fd5a693e266c9b23409358f25381 ]
 
-[why]
-phy_pix_clk is one of the variable used to check if one PLL can be shared
-with displays having common mode set configuration. As of now
-phy_pix_clock varialbe is calculated in function dc_validate_stream().
-dc_validate_stream() function is called after clocks are assigned for the
-new display. Due to this during hotplug, when PLL sharing conditions are
-checked for new display phy_pix_clk variable will be 0 and for displays
-that are already enabled phy_pix_clk will have some value. Hence PLL will
-not be shared and if the display hardware doesn't have any more PLL to
-assign, mode set will fail due to resource unavailability.
+Currently the cpu affinity hint mask for completion EQs is stored and
+read from the wrong place, since reading and storing is done from the
+same index, there is no actual issue with that, but internal irq_info
+for completion EQs stars at MLX5_EQ_VEC_COMP_BASE offset in irq_info
+array, this patch changes the code to use the correct offset to store
+and read the IRQ affinity hint.
 
-[how]
-Instead of only calculating the phy_pix_clk variable after the PLL is
-assigned for new display, this patch calculates phy_pix_clk also during
-the before assigning the PLL for new display.
-
-Signed-off-by: Yogesh Mohan Marimuthu <yogesh.mohanmarimuthu@amd.com>
-Reviewed-by: Harry Wentland <Harry.Wentland@amd.com>
-Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Saeed Mahameed <saeedm@mellanox.com>
+Reviewed-by: Leon Romanovsky <leonro@mellanox.com>
+Reviewed-by: Tariq Toukan <tariqt@mellanox.com>
+Signed-off-by: Leon Romanovsky <leonro@mellanox.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/dc/core/dc_resource.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/mellanox/mlx5/core/en_main.c |  2 +-
+ drivers/net/ethernet/mellanox/mlx5/core/main.c    | 14 ++++++++------
+ include/linux/mlx5/driver.h                       |  2 +-
+ 3 files changed, 10 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-index b6fe29b9fb65..8bd8f34b979c 100644
---- a/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-+++ b/drivers/gpu/drm/amd/display/dc/core/dc_resource.c
-@@ -2002,6 +2002,8 @@ enum dc_status resource_map_pool_resources(
- 		}
- 	*/
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+index b70cb6fd164c..9577d0657839 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/en_main.c
+@@ -1771,7 +1771,7 @@ static void mlx5e_close_cq(struct mlx5e_cq *cq)
  
-+	calculate_phy_pix_clks(stream);
-+
- 	/* acquire new resources */
- 	pipe_idx = acquire_first_free_pipe(&context->res_ctx, pool, stream);
+ static int mlx5e_get_cpu(struct mlx5e_priv *priv, int ix)
+ {
+-	return cpumask_first(priv->mdev->priv.irq_info[ix].mask);
++	return cpumask_first(priv->mdev->priv.irq_info[ix + MLX5_EQ_VEC_COMP_BASE].mask);
+ }
  
+ static int mlx5e_open_tx_cqs(struct mlx5e_channel *c,
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/main.c b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+index 28132c7dc05f..d5cea0a36e6a 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/main.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/main.c
+@@ -640,18 +640,19 @@ u64 mlx5_read_internal_timer(struct mlx5_core_dev *dev)
+ static int mlx5_irq_set_affinity_hint(struct mlx5_core_dev *mdev, int i)
+ {
+ 	struct mlx5_priv *priv  = &mdev->priv;
+-	int irq = pci_irq_vector(mdev->pdev, MLX5_EQ_VEC_COMP_BASE + i);
++	int vecidx = MLX5_EQ_VEC_COMP_BASE + i;
++	int irq = pci_irq_vector(mdev->pdev, vecidx);
+ 
+-	if (!zalloc_cpumask_var(&priv->irq_info[i].mask, GFP_KERNEL)) {
++	if (!zalloc_cpumask_var(&priv->irq_info[vecidx].mask, GFP_KERNEL)) {
+ 		mlx5_core_warn(mdev, "zalloc_cpumask_var failed");
+ 		return -ENOMEM;
+ 	}
+ 
+ 	cpumask_set_cpu(cpumask_local_spread(i, priv->numa_node),
+-			priv->irq_info[i].mask);
++			priv->irq_info[vecidx].mask);
+ 
+ 	if (IS_ENABLED(CONFIG_SMP) &&
+-	    irq_set_affinity_hint(irq, priv->irq_info[i].mask))
++	    irq_set_affinity_hint(irq, priv->irq_info[vecidx].mask))
+ 		mlx5_core_warn(mdev, "irq_set_affinity_hint failed, irq 0x%.4x", irq);
+ 
+ 	return 0;
+@@ -659,11 +660,12 @@ static int mlx5_irq_set_affinity_hint(struct mlx5_core_dev *mdev, int i)
+ 
+ static void mlx5_irq_clear_affinity_hint(struct mlx5_core_dev *mdev, int i)
+ {
++	int vecidx = MLX5_EQ_VEC_COMP_BASE + i;
+ 	struct mlx5_priv *priv  = &mdev->priv;
+-	int irq = pci_irq_vector(mdev->pdev, MLX5_EQ_VEC_COMP_BASE + i);
++	int irq = pci_irq_vector(mdev->pdev, vecidx);
+ 
+ 	irq_set_affinity_hint(irq, NULL);
+-	free_cpumask_var(priv->irq_info[i].mask);
++	free_cpumask_var(priv->irq_info[vecidx].mask);
+ }
+ 
+ static int mlx5_irq_set_affinity_hints(struct mlx5_core_dev *mdev)
+diff --git a/include/linux/mlx5/driver.h b/include/linux/mlx5/driver.h
+index aa5963b5d38e..7d4ed995b4ce 100644
+--- a/include/linux/mlx5/driver.h
++++ b/include/linux/mlx5/driver.h
+@@ -1309,7 +1309,7 @@ enum {
+ static inline const struct cpumask *
+ mlx5_get_vector_affinity_hint(struct mlx5_core_dev *dev, int vector)
+ {
+-	return dev->priv.irq_info[vector].mask;
++	return dev->priv.irq_info[vector + MLX5_EQ_VEC_COMP_BASE].mask;
+ }
+ 
+ #endif /* MLX5_DRIVER_H */
 -- 
 2.19.1
 
