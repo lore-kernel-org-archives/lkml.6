@@ -2,94 +2,119 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D68CCC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4686EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A55A320856
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1627720881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697743;
-	bh=Z8TiEyP7Fvh64SgbnroFeoKgPByJoeBc6HLA7pfB/6k=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=fYbCDO6GPTarYTLBO3tarYHLOyCXfecNt0m7ZpWdXTwP2UDyVKaI+tQgBpwKFJkLf
-	 JfyI196A89Tjg1Zfnhwj30vLGaWmwG/mEvaEISyZkx9RDfFSDi1SzRfvxNt1aHMlzG
-	 ZIOKDRKByFeS7B9ES9uTwFRxvpTLe05veIz1c31I=
+	s=default; t=1548697754;
+	bh=6ydOhUsDpV1LdG++aP5SfzE4SgNMmGiNosPiiUPvAo0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=DjzQfT0HvhBC7m5mMdO+55wDNqobYUkJG8e2MQTUoxq/iJrdemFhWLWs7gCUToMHE
+	 w8hwjLTs+pp1y/D8+Q4tuZBs7hUx6ahGNjsBkVs+QrzHzuI5dXDUxQ1pZzRIVZLGcI
+	 vEBwHv+fdq3wDPK18STUHMFNobSDZ7UmEUQdRa6o=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727918AbfA1RtB (ORCPT
+        id S1728081AbfA1RtL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:49:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727719AbfA1PpW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:45:22 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 43B1920880;
-        Mon, 28 Jan 2019 15:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690321;
-        bh=Z8TiEyP7Fvh64SgbnroFeoKgPByJoeBc6HLA7pfB/6k=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bJuCaA0P9Wu0wk4cscso3LjG0qBpOFAO2sADN+kf/XM6OlBm3O6/tNWAB/IcjCvgG
-         VmvPw+shOqXhl1yQjfgu4LJ8hw4PTIql/MveoMOwCsNdPPE/2cVzIxJGwuScVPUr7V
-         g6vAwj3Wap9xt0IKGyJYtpKMEK8HGyfVmqvkOHFU=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Xiang Chen <chenxiang66@hisilicon.com>,
-        John Garry <john.garry@huawei.com>,
-        "Martin K . Petersen" <martin.petersen@oracle.com>,
-        Sasha Levin <sashal@kernel.org>, linux-scsi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 050/304] scsi: hisi_sas: change the time of SAS SSP connection
-Date:   Mon, 28 Jan 2019 10:39:27 -0500
-Message-Id: <20190128154341.47195-50-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 12:49:11 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:45718 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727730AbfA1RtJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 12:49:09 -0500
+Received: by mail-yw1-f65.google.com with SMTP id d190so7052525ywd.12;
+        Mon, 28 Jan 2019 09:49:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=RDoi/eLjxnbObU8/lFllv41Z8VtANrIPfKdXbpygwCE=;
+        b=lVQH1nAeTUapo+A78necDxJ89EsWzDvsbvfeD3DQE7e36L5IebWuxztHjBVoiEnB3H
+         JeYQjUy2zp7nWDkKEDHWbhMsmEV1MFDjEeVeJ8VygkmA3LoR71R+X5dLBG4+lqqUOaWi
+         02xvs+8jBWBa+6eYq8LBoIGsolX6zO1GdwGD3IFAMWM8PbB4KrSsY+KxY9yeJ7jCBhY1
+         0UCJptuXx2QuyCQjU/AzkD5lNtgIKEWL2Qosqrg5N6HL8+iL2cLg8oWv6QbP1rznpvTm
+         cFlCvSg7b/VQb0x4QHr+rmpIWzqsN5L/045u6n82TWmN4rcvRTAXhNjm1X1Hcwgj+I2M
+         YJUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=RDoi/eLjxnbObU8/lFllv41Z8VtANrIPfKdXbpygwCE=;
+        b=n7kqH0rdb55gBN9ZzxWeMbGjcq9Mn1MvPOtBZIqJNWMZ96IAfLemzAjFT9Y813aC4B
+         yV783bzl+z/uyuKQ0g+iXb+GtetqdqxLRa0zlYq1+Qzm2fhaoeCj8Y/Z6SWM/rqxaF9w
+         luKkAdTK3mdcl+4T+kaGgIQxyYe6WQSJDKf2qCCvRYxSXfVpvOEWXimd8iOb0BXVYw5f
+         4Vn0207B1BoTn2PP7VLr5FLkEovBTf95mwezYRxooj63U1EAqK7e7Voj8ZEbalBiun5R
+         LeDMgvzPUl6zVzBIyYdQgbsIAaSTubEPVHWYdGhSGoLHOKL0+qmd85I8TJ+kDHMkFicr
+         +v/g==
+X-Gm-Message-State: AJcUukdmRng0+AXTxSdE1A6rNd4aNAv779/yg2Y4HHcbT5qtGQZ4UFT2
+        bV4mo2HRCA4m7sabolLs3M0=
+X-Google-Smtp-Source: ALg8bN4UwYkLurYiTtunS7LxeB7dpx1z6ERbMLfdg4VnL53YCm4TRhvjnIQJ3e8G5n+bKLi2/RRHFA==
+X-Received: by 2002:a81:4f97:: with SMTP id d145mr21795942ywb.198.1548697748275;
+        Mon, 28 Jan 2019 09:49:08 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::7:31a1])
+        by smtp.gmail.com with ESMTPSA id n16sm15879617ywn.31.2019.01.28.09.49.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 09:49:07 -0800 (PST)
+Date:   Mon, 28 Jan 2019 09:49:05 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190128174905.GU50184@devbig004.ftw2.facebook.com>
+References: <20190125165152.GK50184@devbig004.ftw2.facebook.com>
+ <20190125173713.GD20411@dhcp22.suse.cz>
+ <20190125182808.GL50184@devbig004.ftw2.facebook.com>
+ <20190128125151.GI18811@dhcp22.suse.cz>
+ <20190128142816.GM50184@devbig004.ftw2.facebook.com>
+ <20190128145210.GM18811@dhcp22.suse.cz>
+ <20190128145407.GP50184@devbig004.ftw2.facebook.com>
+ <20190128151859.GO18811@dhcp22.suse.cz>
+ <20190128154150.GQ50184@devbig004.ftw2.facebook.com>
+ <20190128170526.GQ18811@dhcp22.suse.cz>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128170526.GQ18811@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Xiang Chen <chenxiang66@hisilicon.com>
+Hello, Michal.
 
-[ Upstream commit 15bc43f31a074076f114e0b87931e3b220b7bff1 ]
+On Mon, Jan 28, 2019 at 06:05:26PM +0100, Michal Hocko wrote:
+> Yeah, that is quite clear. But it also assumes that the hierarchy is
+> pretty stable but cgroups might go away at any time. I am not saying
+> that the aggregated events are not useful I am just saying that it is
+> quite non-trivial to use and catch all potential corner cases. Maybe I
 
-Currently the time of SAS SSP connection is 1ms, which means the link
-connection will fail if no IO response after this period.
+It really isn't complicated and doesn't require stable subtree.
 
-For some disks handling large IO (such as 512k), 1ms is not enough, so
-change it to 5ms.
+> am overcomplicating it but one thing is quite clear to me. The existing
+> semantic is really useful to watch for the reclaim behavior at the
+> current level of the tree. You really do not have to care what is
+> happening in the subtree when it is clear that the workload itself
+> is underprovisioned etc. Considering that such a semantic already
+> existis, somebody might depend on it and we likely want also aggregated
+> semantic then I really do not see why to risk regressions rather than
+> add a new memory.hierarchy_events and have both.
 
-Signed-off-by: Xiang Chen <chenxiang66@hisilicon.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
-Signed-off-by: Martin K. Petersen <martin.petersen@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/scsi/hisi_sas/hisi_sas_v3_hw.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The problem then is that most other things are hierarchical including
+some fields in .events files, so if we try to add local stats and
+events, there's no good way to add them.
 
-diff --git a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-index a369450a1fa7..c3e0be90e19f 100644
---- a/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-+++ b/drivers/scsi/hisi_sas/hisi_sas_v3_hw.c
-@@ -494,7 +494,7 @@ static void init_reg_v3_hw(struct hisi_hba *hisi_hba)
- 		hisi_sas_phy_write32(hisi_hba, i, PHYCTRL_OOB_RESTART_MSK, 0x1);
- 		hisi_sas_phy_write32(hisi_hba, i, STP_LINK_TIMER, 0x7f7a120);
- 		hisi_sas_phy_write32(hisi_hba, i, CON_CFG_DRIVER, 0x2a0a01);
--
-+		hisi_sas_phy_write32(hisi_hba, i, SAS_SSP_CON_TIMER_CFG, 0x32);
- 		/* used for 12G negotiate */
- 		hisi_sas_phy_write32(hisi_hba, i, COARSETUNE_TIME, 0x1e);
- 		hisi_sas_phy_write32(hisi_hba, i, AIP_LIMIT, 0x2ffff);
+Thanks.
+
 -- 
-2.19.1
-
+tejun
