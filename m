@@ -2,50 +2,67 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9446C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:35:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E5CBC282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:35:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93A3120880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:35:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AC1320880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:35:31 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726750AbfA1OfY (ORCPT
+        id S1726786AbfA1Of3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:35:24 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:46328 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726266AbfA1OfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:35:23 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3232180D;
-        Mon, 28 Jan 2019 06:35:23 -0800 (PST)
-Received: from [10.1.197.45] (e112298-lin.cambridge.arm.com [10.1.197.45])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 866533F589;
-        Mon, 28 Jan 2019 06:35:21 -0800 (PST)
-Subject: Re: [PATCH v5 4/5] arm64/kvm: add a userspace option to enable
- pointer authentication
-To:     Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Cc:     Marc Zyngier <marc.zyngier@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>, linux-kernel@vger.kernel.org
-References: <1548658727-14271-1-git-send-email-amit.kachhap@arm.com>
- <1548658727-14271-5-git-send-email-amit.kachhap@arm.com>
-From:   Julien Thierry <julien.thierry@arm.com>
-Message-ID: <f26304fc-3da7-d0a5-5469-4b2f44d8b996@arm.com>
-Date:   Mon, 28 Jan 2019 14:35:19 +0000
+        Mon, 28 Jan 2019 09:35:29 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:50916 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726266AbfA1Of3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 09:35:29 -0500
+Received: by mail-wm1-f66.google.com with SMTP id n190so14261407wmd.0
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 06:35:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=rv77hy44p2sg3gTb2aSW49HJj4gb22gH1G7PbZ/cG/A=;
+        b=VqPfA0NuXpFPchfzn1fAfD1CiyM8whMKwFjzCYIEMXUhEtSZCKPjBbDR9+FBEnmcw7
+         wQVuX3IgEJDh63SFuJUWzk7zmjFaMeHXLizIoKtPJD6pLIdpGTozcPLMjhffrrTpIsSi
+         6si5Ww3pxPlLpj8k9WO9ltX59sW4nQnfDyzYEpLMjG6vF8I+MqH9g4H4LjvBnjnt3+bF
+         gwUck0i6qGOnu2BhWr/ea0wKYyDtfF3blqrbBZYbrKixwus9lIF7wAj8HnK6FA1Teo8G
+         Qpfoh/A493DXsS5JnvIGTvh6iI8PxZIHee/PA5s8hyIxmqBsmhHWLjes9Y/NxCAZorfH
+         q78g==
+X-Gm-Message-State: AJcUukc6tfx0ParqawRasXzTNGDUkv2Qfgn1wALi/HGRq24eCT174KWT
+        sZYGNiUYQLJtOYGPB+kQk7tF+Q==
+X-Google-Smtp-Source: AHgI3IZp4B88R+u7zY0SAQ54TWu6mqxtk41L1ifg6Ox8EvLfZHBDrgBoUWFjOo57WK4ETScvWkQ3Pg==
+X-Received: by 2002:a1c:c1c9:: with SMTP id r192mr6444912wmf.146.1548686126410;
+        Mon, 28 Jan 2019 06:35:26 -0800 (PST)
+Received: from [10.200.137.150] (ovpn-brq.redhat.com. [213.175.37.11])
+        by smtp.gmail.com with ESMTPSA id n15sm88633065wrt.21.2019.01.28.06.35.25
+        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 06:35:25 -0800 (PST)
+Subject: Re: [RFC][PATCH] Update -Wattribute-alias for gcc9
+To:     Bernd Edlinger <bernd.edlinger@hotmail.de>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        Arnd Bergmann <arnd@arndb.de>
+Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Martin Sebor <msebor@gmail.com>
+References: <20190125104353.2791-1-labbott@redhat.com>
+ <CAK8P3a0xnc7RNbGhG7-hj+ay2keR7dh7MmDiUNKxfewsnatsgA@mail.gmail.com>
+ <CANiq72=nMYcohMk29fzs3bMut1PXwfqYLZdbRh_AeTN-Z4FpxQ@mail.gmail.com>
+ <AM0PR07MB387404F71D25553702966E27E49B0@AM0PR07MB3874.eurprd07.prod.outlook.com>
+ <VI1PR07MB486420A106A8BC85BEE9FB2AE4960@VI1PR07MB4864.eurprd07.prod.outlook.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <2ffaeb04-3d51-fe9b-84b7-e009cb1dffeb@redhat.com>
+Date:   Mon, 28 Jan 2019 15:35:24 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <1548658727-14271-5-git-send-email-amit.kachhap@arm.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <VI1PR07MB486420A106A8BC85BEE9FB2AE4960@VI1PR07MB4864.eurprd07.prod.outlook.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,191 +70,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Amit,
-
-On 28/01/2019 06:58, Amit Daniel Kachhap wrote:
-> This feature will allow the KVM guest to allow the handling of
-> pointer authentication instructions or to treat them as undefined
-> if not set. It uses the existing vcpu API KVM_ARM_VCPU_INIT to
-> supply this parameter instead of creating a new API.
+On 1/28/19 5:28 AM, Bernd Edlinger wrote:
+> On 1/25/19 1:24 PM, Bernd Edlinger wrote:
+>> On 1/25/19 12:39 PM, Miguel Ojeda wrote:
+>>> On Fri, Jan 25, 2019 at 11:58 AM Arnd Bergmann <arnd@arndb.de> wrote:
+>>>>
+>>>> On Fri, Jan 25, 2019 at 11:43 AM Laura Abbott <labbott@redhat.com> wrote:
+>>>>>
+>>>>> Commit bee20031772a ("disable -Wattribute-alias warning for
+>>>>> SYSCALL_DEFINEx()") disabled -Wattribute-alias with gcc8.
+>>>>> gcc9 changed the format of -Wattribute-alias to take a parameter.
+>>>>> This doesn't quite match with the existing disabling mechanism
+>>>>> so update for gcc9 to match with the default (-Wattribute-alias=1).
+>>>>>
+>>>>> Signed-off-by: Laura Abbott <labbott@redhat.com>
+>>>>> ---
+>>>>> This is RFC because it feels ugly. I went ahead and did the obvious fixup
+>>>>> but it's worth discussing if we're going to end up with an explosion or
+>>>>> if there's a better way to handle this in one macro.
+>>>>
+>>>> Bernd Edlinger has sent a patch to gcc for this:
+>>>> https://gcc.gnu.org/ml/gcc-patches/2019-01/msg01120.html
+>>>>
+>>>> and Miguel Ojeda said he wanted to send a patch for it to the
+>>>> kernel as well, not sure if he wanted to take a different
+>>>> approach there, so adding both to Cc here.
+>>>
+>>> Thanks Arnd (I was working with Martin on the expanded
+>>> -Wmissing-attribute warnings, not on this, but thanks nevertheless :).
+>>>
+>>> Martin/Bernd: from the GCC mailing list I am not sure if we should
+>>> expect the old behavior to be maintained or not.
+>>>
+>>
+>> I believe it is not intentional to break the old syntax of the
+>> pragma.  There will be new -Wattribute-alias=1 and -Wattribute-alias=2
+>> and -Wattribute-alias is easy to retain as an alias for -Wattribute-alias=1.
+>> That is what my patch will do.
+>>
 > 
-> A new register is not created to pass this parameter via
-> SET/GET_ONE_REG interface as just a flag (KVM_ARM_VCPU_PTRAUTH)
-> supplied is enough to enable this feature.
+> Okay, I committed the -Wattribute-alias patch to gcc trunk, now
+> as https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=268336 .
+> So there will be no need for a workaround on your side.
+> 
+> Also fixed a few false positive -Waddress-of-packed-member warnings with
+> https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=268118 and
+> https://gcc.gnu.org/viewcvs/gcc?view=revision&revision=268337 .
+> 
+> However there remain a lot of warnings from -Waddress-of-packed-member,
+> that look more or less valid, has anybody an idea how to handle
+> these?
+> 
+> 
+> Bernd.
 > 
 
-I had a bit of trouble parsing this last sentence. I'd suggest rewording
-it as "No additional register is created for the SET/GET_ONE_REG API,
-instead just pass this parameter as a flag".
+Thanks, I'll keep an eye out when this lands in Fedora gcc.
+I think once everything lands it will be easier to work on
+the remaining -Waddress-of-packed-member.
 
-> Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Marc Zyngier <marc.zyngier@arm.com>
-> Cc: Christoffer Dall <christoffer.dall@arm.com>
-> Cc: Kristina Martsenko <kristina.martsenko@arm.com>
-> Cc: kvmarm@lists.cs.columbia.edu
-> Cc: Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>
-> Cc: Will Deacon <will.deacon@arm.com>
-> ---
->  Documentation/arm64/pointer-authentication.txt |  9 +++++----
->  Documentation/virtual/kvm/api.txt              |  4 ++++
->  arch/arm/include/asm/kvm_host.h                |  4 ++++
->  arch/arm64/include/asm/kvm_host.h              |  7 ++++---
->  arch/arm64/include/uapi/asm/kvm.h              |  1 +
->  arch/arm64/kvm/handle_exit.c                   |  3 ++-
->  arch/arm64/kvm/hyp/ptrauth-sr.c                | 13 +++++++++++++
->  arch/arm64/kvm/reset.c                         |  3 +++
->  include/uapi/linux/kvm.h                       |  1 +
->  9 files changed, 37 insertions(+), 8 deletions(-)
-> 
-> diff --git a/Documentation/arm64/pointer-authentication.txt b/Documentation/arm64/pointer-authentication.txt
-> index a25cd21..0529a7d 100644
-> --- a/Documentation/arm64/pointer-authentication.txt
-> +++ b/Documentation/arm64/pointer-authentication.txt
-> @@ -82,7 +82,8 @@ pointers).
->  Virtualization
->  --------------
->  
-> -Pointer authentication is not currently supported in KVM guests. KVM
-> -will mask the feature bits from ID_AA64ISAR1_EL1, and attempted use of
-> -the feature will result in an UNDEFINED exception being injected into
-> -the guest.
-> +Pointer authentication is enabled in KVM guest when virtual machine is
-> +created by passing a flag (KVM_ARM_VCPU_PTRAUTH) requesting this feature
-> +to be enabled. Without this flag, pointer authentication is not enabled
-> +in KVM guests and attempted use of the feature will result in an UNDEFINED
-> +exception being injected into the guest.
-> diff --git a/Documentation/virtual/kvm/api.txt b/Documentation/virtual/kvm/api.txt
-> index 356156f..1e646fb 100644
-> --- a/Documentation/virtual/kvm/api.txt
-> +++ b/Documentation/virtual/kvm/api.txt
-> @@ -2642,6 +2642,10 @@ Possible features:
->  	  Depends on KVM_CAP_ARM_PSCI_0_2.
->  	- KVM_ARM_VCPU_PMU_V3: Emulate PMUv3 for the CPU.
->  	  Depends on KVM_CAP_ARM_PMU_V3.
-> +	- KVM_ARM_VCPU_PTRAUTH: Emulate Pointer authentication for the CPU.
-> +	  Depends on KVM_CAP_ARM_PTRAUTH and only on arm64 architecture. If
-> +	  set, then the KVM guest allows the execution of pointer authentication
-> +	  instructions or treats them as undefined if not set.
-
-I'd suggest "then the KVM guest allows the execution of pointer
-authentication instructions. Otherwise, KVM treats these instructions as
-undefined."
-
->  
->  
->  4.83 KVM_ARM_PREFERRED_TARGET
-> diff --git a/arch/arm/include/asm/kvm_host.h b/arch/arm/include/asm/kvm_host.h
-> index b200c14..b6950df 100644
-> --- a/arch/arm/include/asm/kvm_host.h
-> +++ b/arch/arm/include/asm/kvm_host.h
-> @@ -346,6 +346,10 @@ static inline int kvm_arm_have_ssbd(void)
->  static inline void kvm_vcpu_load_sysregs(struct kvm_vcpu *vcpu) {}
->  static inline void kvm_vcpu_put_sysregs(struct kvm_vcpu *vcpu) {}
->  static inline void kvm_arm_vcpu_ptrauth_reset(struct kvm_vcpu *vcpu) {}
-> +static inline bool kvm_arm_vcpu_ptrauth_allowed(struct kvm_vcpu *vcpu)
-> +{
-> +	return false;
-> +}
->  
->  #define __KVM_HAVE_ARCH_VM_ALLOC
->  struct kvm *kvm_arch_alloc_vm(void);
-> diff --git a/arch/arm64/include/asm/kvm_host.h b/arch/arm64/include/asm/kvm_host.h
-> index c798d0c..4a6ec40 100644
-> --- a/arch/arm64/include/asm/kvm_host.h
-> +++ b/arch/arm64/include/asm/kvm_host.h
-> @@ -43,7 +43,7 @@
->  
->  #define KVM_MAX_VCPUS VGIC_V3_MAX_CPUS
->  
-> -#define KVM_VCPU_MAX_FEATURES 4
-> +#define KVM_VCPU_MAX_FEATURES 5
->  
->  #define KVM_REQ_SLEEP \
->  	KVM_ARCH_REQ_FLAGS(0, KVM_REQUEST_WAIT | KVM_REQUEST_NO_WAKEUP)
-> @@ -453,14 +453,15 @@ static inline bool kvm_arch_requires_vhe(void)
->  
->  void kvm_arm_vcpu_ptrauth_enable(struct kvm_vcpu *vcpu);
->  void kvm_arm_vcpu_ptrauth_disable(struct kvm_vcpu *vcpu);
-> +bool kvm_arm_vcpu_ptrauth_allowed(struct kvm_vcpu *vcpu);
->  
->  static inline void kvm_arm_vcpu_ptrauth_reset(struct kvm_vcpu *vcpu)
->  {
->  	/* Disable ptrauth and use it in a lazy context via traps */
-> -	if (has_vhe() && kvm_supports_ptrauth())
-> +	if (has_vhe() && kvm_supports_ptrauth()
-> +			&& kvm_arm_vcpu_ptrauth_allowed(vcpu))
->  		kvm_arm_vcpu_ptrauth_disable(vcpu);
->  }
-> -
->  void kvm_arm_vcpu_ptrauth_trap(struct kvm_vcpu *vcpu);
->  
->  static inline void kvm_arch_hardware_unsetup(void) {}
-> diff --git a/arch/arm64/include/uapi/asm/kvm.h b/arch/arm64/include/uapi/asm/kvm.h
-> index 97c3478..5f82ca1 100644
-> --- a/arch/arm64/include/uapi/asm/kvm.h
-> +++ b/arch/arm64/include/uapi/asm/kvm.h
-> @@ -102,6 +102,7 @@ struct kvm_regs {
->  #define KVM_ARM_VCPU_EL1_32BIT		1 /* CPU running a 32bit VM */
->  #define KVM_ARM_VCPU_PSCI_0_2		2 /* CPU uses PSCI v0.2 */
->  #define KVM_ARM_VCPU_PMU_V3		3 /* Support guest PMUv3 */
-> +#define KVM_ARM_VCPU_PTRAUTH		4 /* VCPU uses address authentication */
->  
->  struct kvm_vcpu_init {
->  	__u32 target;
-> diff --git a/arch/arm64/kvm/handle_exit.c b/arch/arm64/kvm/handle_exit.c
-> index 5b980e7..c0e5dcd 100644
-> --- a/arch/arm64/kvm/handle_exit.c
-> +++ b/arch/arm64/kvm/handle_exit.c
-> @@ -179,7 +179,8 @@ static int handle_sve(struct kvm_vcpu *vcpu, struct kvm_run *run)
->   */
->  void kvm_arm_vcpu_ptrauth_trap(struct kvm_vcpu *vcpu)
->  {
-> -	if (has_vhe() && kvm_supports_ptrauth())
-> +	if (has_vhe() && kvm_supports_ptrauth()
-> +			&& kvm_arm_vcpu_ptrauth_allowed(vcpu))
->  		kvm_arm_vcpu_ptrauth_enable(vcpu);
->  	else
->  		kvm_inject_undefined(vcpu);
-> diff --git a/arch/arm64/kvm/hyp/ptrauth-sr.c b/arch/arm64/kvm/hyp/ptrauth-sr.c
-> index 0576c01..369624f 100644
-> --- a/arch/arm64/kvm/hyp/ptrauth-sr.c
-> +++ b/arch/arm64/kvm/hyp/ptrauth-sr.c
-> @@ -42,3 +42,16 @@ void __no_ptrauth __hyp_text __ptrauth_switch_to_host(struct kvm_vcpu *vcpu,
->  	ptrauth_keys_store((struct ptrauth_keys *) &guest_ctxt->sys_regs[APIAKEYLO_EL1]);
->  	ptrauth_keys_switch((struct ptrauth_keys *) &host_ctxt->sys_regs[APIAKEYLO_EL1]);
->  }
-> +
-> +/**
-> + * kvm_arm_vcpu_ptrauth_allowed - checks if ptrauth feature is present in vcpu
-> + *
-> + * @vcpu: The VCPU pointer
-> + *
-> + * This function will be used to enable/disable ptrauth in guest as configured
-> + * by the KVM userspace API.
-> + */
-> +bool kvm_arm_vcpu_ptrauth_allowed(struct kvm_vcpu *vcpu)
-
-Nit: I find the "allowed" a bit strange. Maybe something like
-"kvm_arm_vcpu_has_ptrauth()" ?
-
-> +{
-> +	return test_bit(KVM_ARM_VCPU_PTRAUTH, vcpu->arch.features);
-> +}
-> diff --git a/arch/arm64/kvm/reset.c b/arch/arm64/kvm/reset.c
-> index b72a3dd..987e0c3c 100644
-> --- a/arch/arm64/kvm/reset.c
-> +++ b/arch/arm64/kvm/reset.c
-> @@ -91,6 +91,9 @@ int kvm_arch_vm_ioctl_check_extension(struct kvm *kvm, long ext)
->  	case KVM_CAP_ARM_VM_IPA_SIZE:
->  		r = kvm_ipa_limit;
->  		break;
-> +	case KVM_CAP_ARM_PTRAUTH:
-> +		r = kvm_supports_ptrauth();
-
-Even if we don't have VHE?
-
-Cheers,
-
--- 
-Julien Thierry
+Laura
