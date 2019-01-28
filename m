@@ -2,186 +2,122 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B5AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:29:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED862C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B20E120882
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:29:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BB0682184D
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:29:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mEalu1Nb"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727894AbfA1T3Q (ORCPT
+        id S1727948AbfA1T3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:29:16 -0500
-Received: from gateway32.websitewelcome.com ([192.185.145.123]:39274 "EHLO
-        gateway32.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726862AbfA1T3P (ORCPT
+        Mon, 28 Jan 2019 14:29:25 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:36822 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbfA1T3Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:29:15 -0500
-Received: from cm16.websitewelcome.com (cm16.websitewelcome.com [100.42.49.19])
-        by gateway32.websitewelcome.com (Postfix) with ESMTP id 59E573B794F
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 13:29:14 -0600 (CST)
-Received: from gator4166.hostgator.com ([108.167.133.22])
-        by cmsmtp with SMTP
-        id oCaogSKVz4FKpoCaogpwod; Mon, 28 Jan 2019 13:29:14 -0600
-X-Authority-Reason: nr=8
-Received: from [189.250.130.205] (port=45542 helo=[192.168.1.76])
-        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <gustavo@embeddedor.com>)
-        id 1goCan-00286o-Ls; Mon, 28 Jan 2019 13:29:14 -0600
-Subject: Re: [PATCH] perf tests: evsel-tp-sched: Fix bitwise operator
-From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        linux-kernel@vger.kernel.org
-References: <20190122233439.GA5868@embeddedor> <20190123083338.GK27625@krava>
- <7b2a7cad-3feb-fe79-04aa-31d53de19fa7@embeddedor.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=gustavo@embeddedor.com; keydata=
- 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
- VtSixD1uOgytAP7RWS474w==
-Message-ID: <fd2ec854-cf99-9584-3f7e-07d5a47352ee@embeddedor.com>
-Date:   Mon, 28 Jan 2019 13:29:12 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 28 Jan 2019 14:29:24 -0500
+Received: by mail-yb1-f196.google.com with SMTP id 64so2675769ybf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:29:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Qs77uciUloAwV2eYcIE7foyipDchuSN8Ovvux8TXo00=;
+        b=mEalu1NbEH5RS9eCAZyXen6icvvJZ6sPeUucjhW0IK/ori/uE0ttojehVJYnx2bsN3
+         byBDxTunRdvNJo4AZGqKfPV5XYLdPis/9MmNyXWGDglcGl6NTU0KCuMg9oes5wLK84jV
+         xvi3hxloPircfBnsPEpZy9cDz6PpvaH1m8LKIDYhySRkXPOxxMEI/MOO0ft65q1StVWV
+         r+MqT7pPtqeWw829TVRG9GWdPF9YhlOUghFBdcPBlzbI+nF/4zLmzouqGKCqnc2rBBDI
+         f8pBeQ6T1YAVc1NneaLD1UG8kKjKxUGe+8AD8PH+uv6GYNuyZNIF/BfPET+uB59/Uu/V
+         yCFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Qs77uciUloAwV2eYcIE7foyipDchuSN8Ovvux8TXo00=;
+        b=eNarzi4S7Omi2ZrOekqEY8Ot9zoi6nJg91eWBUi1OW1sS1yAeZeHr1A80dhnc5219w
+         9ULp0+HbOoehKqP0T8WlZF4aE+JNd/Cj65vmzNLYQs/GbFl5EV/G3LmRM3t9n0HBtXrG
+         2Y5qQw4g/8wyp4qxYCCN97xyPfSejQtoYAoJ8+bgmEbQCCgeJgoOKIBgyw9Qk54tjzhI
+         TJxao5Gf5paOQC8jmPag4qT/+mEwknlQI/BLM2/qoxg/9l/OgBKuJYGfDEenVJYqz3QF
+         7k1TRAb4/huwu+BvrqZnfR0qC5bKJeB1dhL7pk5DzDJ7s/Cqjne3iB7azYTNKcJkxFpl
+         bwFw==
+X-Gm-Message-State: AJcUukfsKf8moVlTtVeFD3NjIvbK9czt0lsCdYw469NQ0lfLl7BAcQOg
+        K7IyVLhux3t7AqptZSr+rVKr4Zl/BYAXYskdqO1+yw==
+X-Google-Smtp-Source: ALg8bN674Ik5b0oywpDOMmayV8aWo7iV8jWq4QYtyY7JqXfPUgQ9LezDZHPuCVsFlVcfMei4n66SS1ob2W2gLL+MrWc=
+X-Received: by 2002:a25:1006:: with SMTP id 6mr21273061ybq.151.1548703763518;
+ Mon, 28 Jan 2019 11:29:23 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <7b2a7cad-3feb-fe79-04aa-31d53de19fa7@embeddedor.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - embeddedor.com
-X-BWhitelist: no
-X-Source-IP: 189.250.130.205
-X-Source-L: No
-X-Exim-ID: 1goCan-00286o-Ls
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:45542
-X-Source-Auth: gustavo@embeddedor.com
-X-Email-Count: 7
-X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
-X-Local-Domain: yes
+References: <20190126095131.4756-1-enric.balletbo@collabora.com> <20190126095131.4756-4-enric.balletbo@collabora.com>
+In-Reply-To: <20190126095131.4756-4-enric.balletbo@collabora.com>
+From:   Guenter Roeck <groeck@google.com>
+Date:   Mon, 28 Jan 2019 11:29:12 -0800
+Message-ID: <CABXOdTdJtVpnt88FNHCGspASOLv0sxNkyS3VqVZXcUBNC+wfng@mail.gmail.com>
+Subject: Re: [PATCH v2 03/12] platform/chrome: cros_ec_lightbar: switch to
+ SPDX identifier
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Guenter Roeck <groeck@chromium.org>,
+        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
+        Benson Leung <bleung@chromium.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Sat, Jan 26, 2019 at 1:51 AM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> Adopt the SPDX license identifier headers to ease license compliance
+> management.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
 
-Friendly ping:
+Reviewed-by: Guenter Roeck <groeck@chromium.org>
 
-Who can take this?
-
-Thanks
---
-Gustavo
-
-On 1/23/19 2:40 AM, Gustavo A. R. Silva wrote:
-> 
-> 
-> On 1/23/19 2:33 AM, Jiri Olsa wrote:
->> On Tue, Jan 22, 2019 at 05:34:39PM -0600, Gustavo A. R. Silva wrote:
->>> Notice that the use of the bitwise OR operator '|' always leads to
->>> true in this particular case, which seems a bit suspicious due to
->>> the context in which this expression is being used.
->>>
->>> Fix this by using bitwise AND operator '&' instead.
->>>
->>> This bug was detected with the help of Coccinelle.
->>>
->>> Fixes: 6a6cd11d4e57 ("perf test: Add test for the sched tracepoint format fields")
->>> Cc: stable@vger.kernel.org
->>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
->>
->> nice catch
->>
-> 
-> Glad to help. :)
-> 
->> Acked-by: Jiri Olsa <jolsa@kernel.org>
->>
-> 
-> Thanks
+> ---
+>
+> Changes in v2: None
+>
+>  drivers/platform/chrome/cros_ec_lightbar.c | 22 ++++------------------
+>  1 file changed, 4 insertions(+), 18 deletions(-)
+>
+> diff --git a/drivers/platform/chrome/cros_ec_lightbar.c b/drivers/platform/chrome/cros_ec_lightbar.c
+> index c3e4e6e5211d..37689ad79544 100644
+> --- a/drivers/platform/chrome/cros_ec_lightbar.c
+> +++ b/drivers/platform/chrome/cros_ec_lightbar.c
+> @@ -1,21 +1,7 @@
+> -/*
+> - * cros_ec_lightbar - expose the Chromebook Pixel lightbar to userspace
+> - *
+> - * Copyright (C) 2014 Google, Inc.
+> - *
+> - * This program is free software; you can redistribute it and/or modify
+> - * it under the terms of the GNU General Public License as published by
+> - * the Free Software Foundation; either version 2 of the License, or
+> - * (at your option) any later version.
+> - *
+> - * This program is distributed in the hope that it will be useful,
+> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
+> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+> - * GNU General Public License for more details.
+> - *
+> - * You should have received a copy of the GNU General Public License
+> - * along with this program. If not, see <http://www.gnu.org/licenses/>.
+> - */
+> +// SPDX-License-Identifier: GPL-2.0+
+> +// Expose the Chromebook Pixel lightbar to userspace
+> +//
+> +// Copyright (C) 2014 Google, Inc.
+>
+>  #define pr_fmt(fmt) "cros_ec_lightbar: " fmt
+>
 > --
-> Gustavo
-> 
->> thanks,
->> jirka
->>
->>
->>> ---
->>>
->>> NOTE: Notice that this code has been there since 2012. So, it would
->>>       be helpful if someone can double-check this. Thanks.
->>>
->>>  tools/perf/tests/evsel-tp-sched.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/tools/perf/tests/evsel-tp-sched.c b/tools/perf/tests/evsel-tp-sched.c
->>> index 5f8501c68da4..5cbba70bcdd0 100644
->>> --- a/tools/perf/tests/evsel-tp-sched.c
->>> +++ b/tools/perf/tests/evsel-tp-sched.c
->>> @@ -17,7 +17,7 @@ static int perf_evsel__test_field(struct perf_evsel *evsel, const char *name,
->>>  		return -1;
->>>  	}
->>>  
->>> -	is_signed = !!(field->flags | TEP_FIELD_IS_SIGNED);
->>> +	is_signed = !!(field->flags & TEP_FIELD_IS_SIGNED);
->>>  	if (should_be_signed && !is_signed) {
->>>  		pr_debug("%s: \"%s\" signedness(%d) is wrong, should be %d\n",
->>>  			 evsel->name, name, is_signed, should_be_signed);
->>> -- 
->>> 2.20.1
->>>
+> 2.20.1
+>
