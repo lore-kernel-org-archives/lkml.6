@@ -7,55 +7,49 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0914FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6095DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE9CE2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EB6121741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:26:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692786;
-	bh=IlzvApaPnI9hHmS0btNgT0ReY1au1QD7DmJ3NqSFxzg=;
+	s=default; t=1548692797;
+	bh=Zr/Zu9tTKJUjOd7Sax502vO0bsN8fOdNGPaoAvAg8fI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OI+Om5xTiilm2aI7xz6W4Hqu4bSm1EkrhkQkHr81MiiGvHjwktWqXy8vmTzNBE110
-	 e/mYMYluoRvdleUyK4aA8mO54JCj/oRzdlU6pUj1MEA40bzsg4dbVmR5VR5UAd4Zq1
-	 nUFRZwElQyF6ObVDBRT9HqOLEiztkX4qNezDATuk=
+	b=zSjS9uDghcG9WBnrAW7/zU/ZtW1T4xoSHSFbGXjwektP3va1Sjphy+V/YoJL0p+x2
+	 rqt5fCTTlSneNzFBkTul/B6qYVmupLQH5vXFLp1Yvd3LDBtTW7ERdQKQEC5uVq+TwQ
+	 QehmKHBqJO/6WRTEiQEbFKXVTzrrFnjgr11XG05Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390185AbfA1Q0Z (ORCPT
+        id S2390239AbfA1Q0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:26:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35554 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:26:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35844 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389735AbfA1Q0U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:26:20 -0500
+        id S2390211AbfA1Q0a (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:26:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A8EFB2147A;
-        Mon, 28 Jan 2019 16:26:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54D722084A;
+        Mon, 28 Jan 2019 16:26:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692779;
-        bh=IlzvApaPnI9hHmS0btNgT0ReY1au1QD7DmJ3NqSFxzg=;
+        s=default; t=1548692790;
+        bh=Zr/Zu9tTKJUjOd7Sax502vO0bsN8fOdNGPaoAvAg8fI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1+AnnAemTe2Lq9qke0t7ySBQbm2lWtWQlf07aLpknbUjoh9JU+O3i6aO8PrBAQEsm
-         wwKfXY2Q1roR+ZaxLsQvlbzgEC6e8er/3FxgOrqf9UGNAne7ZS5aHkooVzEM9ZJKk6
-         TNwSronr29drKkPtUVYGtfGCSoTYMqMJ5KjL+j6E=
+        b=BDFlCArCTGbMnqhFBEjf2tE9oM0CO/eCNP01MwNpnGFSanc9JhwsLpMfeHEgiKE4U
+         AGf1i1+AWqBT+7jWx9ro6nnOq01l0B7QWUVQ4e2nIV2S0w/vZlSPf3VBLnep5E+Pcb
+         L7a+0dVjozCbUN5MWEyN2W1hPxAFn5zZG12TtO0U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Petr Mladek <pmladek@suse.com>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
+Cc:     Yufen Wang <wangyufen@huawei.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 78/80] kernel/hung_task.c: break RCU locks based on jiffies
-Date:   Mon, 28 Jan 2019 11:23:59 -0500
-Message-Id: <20190128162401.58841-78-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 3.18 04/61] ARM: 8808/1: kexec:offline panic_smp_self_stop CPU
+Date:   Mon, 28 Jan 2019 11:25:26 -0500
+Message-Id: <20190128162623.59854-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
-References: <20190128162401.58841-1-sashal@kernel.org>
+In-Reply-To: <20190128162623.59854-1-sashal@kernel.org>
+References: <20190128162623.59854-1-sashal@kernel.org>
 MIME-Version: 1.0
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
@@ -64,69 +58,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Yufen Wang <wangyufen@huawei.com>
 
-[ Upstream commit 304ae42739b108305f8d7b3eb3c1aec7c2b643a9 ]
+[ Upstream commit 82c08c3e7f171aa7f579b231d0abbc1d62e91974 ]
 
-check_hung_uninterruptible_tasks() is currently calling rcu_lock_break()
-for every 1024 threads.  But check_hung_task() is very slow if printk()
-was called, and is very fast otherwise.
+In case panic() and panic() called at the same time on different CPUS.
+For example:
+CPU 0:
+  panic()
+     __crash_kexec
+       machine_crash_shutdown
+         crash_smp_send_stop
+       machine_kexec
+         BUG_ON(num_online_cpus() > 1);
 
-If many threads within some 1024 threads called printk(), the RCU grace
-period might be extended enough to trigger RCU stall warnings.
-Therefore, calling rcu_lock_break() for every some fixed jiffies will be
-safer.
+CPU 1:
+  panic()
+    local_irq_disable
+    panic_smp_self_stop
 
-Link: http://lkml.kernel.org/r/1544800658-11423-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Acked-by: Paul E. McKenney <paulmck@linux.ibm.com>
-Cc: Petr Mladek <pmladek@suse.com>
-Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
-Cc: Vitaly Kuznetsov <vkuznets@redhat.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+If CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop(), kdump
+fails. CPU1 can't receive the ipi irq, CPU1 will be always online.
+To fix this problem, this patch split out the panic_smp_self_stop()
+and add set_cpu_online(smp_processor_id(), false).
+
+Signed-off-by: Yufen Wang <wangyufen@huawei.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/hung_task.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/kernel/smp.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/kernel/hung_task.c b/kernel/hung_task.c
-index e0f90c2b57aa..cc05b97ba569 100644
---- a/kernel/hung_task.c
-+++ b/kernel/hung_task.c
-@@ -30,7 +30,7 @@ int __read_mostly sysctl_hung_task_check_count = PID_MAX_LIMIT;
-  * is disabled during the critical section. It also controls the size of
-  * the RCU grace period. So it needs to be upper-bound.
-  */
--#define HUNG_TASK_BATCHING 1024
-+#define HUNG_TASK_LOCK_BREAK (HZ / 10)
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index a8e32aaf0383..bae65844ff03 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -658,6 +658,21 @@ void smp_send_stop(void)
+ 		pr_warn("SMP: failed to stop secondary CPUs\n");
+ }
  
++/* In case panic() and panic() called at the same time on CPU1 and CPU2,
++ * and CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop()
++ * CPU1 can't receive the ipi irqs from CPU2, CPU1 will be always online,
++ * kdump fails. So split out the panic_smp_self_stop() and add
++ * set_cpu_online(smp_processor_id(), false).
++ */
++void panic_smp_self_stop(void)
++{
++	pr_debug("CPU %u will stop doing anything useful since another CPU has paniced\n",
++	         smp_processor_id());
++	set_cpu_online(smp_processor_id(), false);
++	while (1)
++		cpu_relax();
++}
++
  /*
-  * Zero means infinite timeout - no checking done:
-@@ -158,7 +158,7 @@ static bool rcu_lock_break(struct task_struct *g, struct task_struct *t)
- static void check_hung_uninterruptible_tasks(unsigned long timeout)
- {
- 	int max_count = sysctl_hung_task_check_count;
--	int batch_count = HUNG_TASK_BATCHING;
-+	unsigned long last_break = jiffies;
- 	struct task_struct *g, *t;
- 
- 	/*
-@@ -172,10 +172,10 @@ static void check_hung_uninterruptible_tasks(unsigned long timeout)
- 	for_each_process_thread(g, t) {
- 		if (!max_count--)
- 			goto unlock;
--		if (!--batch_count) {
--			batch_count = HUNG_TASK_BATCHING;
-+		if (time_after(jiffies, last_break + HUNG_TASK_LOCK_BREAK)) {
- 			if (!rcu_lock_break(g, t))
- 				goto unlock;
-+			last_break = jiffies;
- 		}
- 		/* use "==" to skip the TASK_KILLABLE tasks waiting on NFS */
- 		if (t->state == TASK_UNINTERRUPTIBLE)
+  * not supported here
+  */
 -- 
 2.19.1
 
