@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8967DC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 883E2C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 592CF20880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5942F21741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:49:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690538;
-	bh=ARWhCgiLxU6b5lsqz6SZZqHwIxGmYrxl+8tjNX4iXwk=;
+	s=default; t=1548690542;
+	bh=GimJwDBZPDcf6I0LyCLPvuyGUj5ppxJl4VF6fyJOwPY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=omKWLtGd36ndTd1aF46HwqrG//vrU2snteBEm8G5e4jJtb1ObIXaI5u/cDtYA9DEM
-	 hdlCtQJXxoi64jQaHpUwnObO+kGxuzaQgvV68ipTvwgXXmhvjQTVRnU2OVcgnRFoXD
-	 F05WbpxBlotZby9op5Bp6FOT4wmFFTSfeJTlUE5E=
+	b=QJC2Vki62DswX9jSLfonJjr+5xbufKw0BvmZtzUkRcAc1vtLR1cDEsVBViD5NFQhl
+	 Nq2l7CrJrJFxK8v/hDDXm25l845uoCEj6bGotkE03SLaPKdnZGwQsAWE9jevDSdQK2
+	 MqI7J4irLN+B4e6lXZs8Kv8kgf8j2N+U+OgTGWuA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728596AbfA1Ps5 (ORCPT
+        id S1728619AbfA1PtB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:48:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34390 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:49:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34442 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728557AbfA1Psy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:48:54 -0500
+        id S1728589AbfA1Ps4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:48:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 29C3021741;
-        Mon, 28 Jan 2019 15:48:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 393DC2147A;
+        Mon, 28 Jan 2019 15:48:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690533;
-        bh=ARWhCgiLxU6b5lsqz6SZZqHwIxGmYrxl+8tjNX4iXwk=;
+        s=default; t=1548690536;
+        bh=GimJwDBZPDcf6I0LyCLPvuyGUj5ppxJl4VF6fyJOwPY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cg/kW1a6qGKqlfRUjb+iObTNoR/Ajz1mbROzWwyIdfQJpNkoWrJOThR8wU07jmnvU
-         4cdw+N1Voh5qL4Ci/Ng8JT9nyFjjqW2pBURQqA8i9BnKFxsf0LKKEEzDwFy8+pF1wZ
-         yMac7igVHegd4pNBLuTeUg+8AcHMzx/lVRKKCN+o=
+        b=lCzCj8cqLIIYZ7sx1B02IZMvUmoJUbLHyzuHcqvcPvcYjoRRN0MeAsbv70jIfm/l3
+         DplAnxUfAXE69BdsuziqbWGx06prHpn3asQj9fYh4Zmt07QXpXxmnYRRSMFyDnznqe
+         4BugiQ+cUjC8R/nhi3DNgqHT5vahsBF4aNMI/NSU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>,
+Cc:     Alexey Khoroshilov <khoroshilov@ispras.ru>,
         Hans Verkuil <hverkuil-cisco@xs4all.nl>,
         Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
         Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 114/304] media: i2c: TDA1997x: select CONFIG_HDMI
-Date:   Mon, 28 Jan 2019 10:40:31 -0500
-Message-Id: <20190128154341.47195-114-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 115/304] media: DaVinci-VPBE: fix error handling in vpbe_initialize()
+Date:   Mon, 28 Jan 2019 10:40:32 -0500
+Message-Id: <20190128154341.47195-115-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,44 +59,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Alexey Khoroshilov <khoroshilov@ispras.ru>
 
-[ Upstream commit 79e89e36dc8a47ef965a35b484d737a5227feed1 ]
+[ Upstream commit aa35dc3c71950e3fec3e230c06c27c0fbd0067f8 ]
 
-Without CONFIG_HDMI, we get a link error for this driver:
+If vpbe_set_default_output() or vpbe_set_default_mode() fails,
+vpbe_initialize() returns error code without releasing resources.
 
-drivers/media/i2c/tda1997x.o: In function `tda1997x_parse_infoframe':
-tda1997x.c:(.text+0x2195): undefined reference to `hdmi_infoframe_unpack'
-tda1997x.c:(.text+0x21b6): undefined reference to `hdmi_infoframe_log'
-drivers/media/i2c/tda1997x.o: In function `tda1997x_log_infoframe':
-tda1997x.c:(.text.unlikely+0x13d3): undefined reference to `hdmi_infoframe_unpack'
-tda1997x.c:(.text.unlikely+0x1426): undefined reference to `hdmi_infoframe_log'
+The patch adds error handling for that case.
 
-All other drivers in this directory that use HDMI select CONFIG_HDMI,
-so do the same here:
+Found by Linux Driver Verification project (linuxtesting.org).
 
-Fixes: 9ac0038db9a7 ("media: i2c: Add TDA1997x HDMI receiver driver")
-
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Alexey Khoroshilov <khoroshilov@ispras.ru>
 Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/media/i2c/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/media/platform/davinci/vpbe.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 704af210e270..f4714bd6fef0 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -61,6 +61,7 @@ config VIDEO_TDA1997X
- 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
- 	depends on SND_SOC
- 	select SND_PCM
-+	select HDMI
- 	---help---
- 	  V4L2 subdevice driver for the NXP TDA1997x HDMI receivers.
+diff --git a/drivers/media/platform/davinci/vpbe.c b/drivers/media/platform/davinci/vpbe.c
+index 18c035ef84cf..df1ae6b5c854 100644
+--- a/drivers/media/platform/davinci/vpbe.c
++++ b/drivers/media/platform/davinci/vpbe.c
+@@ -740,7 +740,7 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	if (ret) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default output %s",
+ 			 def_output);
+-		return ret;
++		goto fail_kfree_amp;
+ 	}
  
+ 	printk(KERN_NOTICE "Setting default mode to %s\n", def_mode);
+@@ -748,12 +748,15 @@ static int vpbe_initialize(struct device *dev, struct vpbe_device *vpbe_dev)
+ 	if (ret) {
+ 		v4l2_err(&vpbe_dev->v4l2_dev, "Failed to set default mode %s",
+ 			 def_mode);
+-		return ret;
++		goto fail_kfree_amp;
+ 	}
+ 	vpbe_dev->initialized = 1;
+ 	/* TBD handling of bootargs for default output and mode */
+ 	return 0;
+ 
++fail_kfree_amp:
++	mutex_lock(&vpbe_dev->lock);
++	kfree(vpbe_dev->amp);
+ fail_kfree_encoders:
+ 	kfree(vpbe_dev->encoders);
+ fail_dev_unregister:
 -- 
 2.19.1
 
