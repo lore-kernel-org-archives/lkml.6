@@ -2,117 +2,107 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1859FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:31:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 812ABC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:33:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D7BAD21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:31:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548678660;
-	bh=qeaxo85atsF5I/3Hpvacj/cXzBpdxjfNBhPgowTVcjY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=fkFFYL6mNkD3Vksu4iqUJNiFLY6p21xbHXTK7JceJ36CzvIGSzdNzob0SrUlgxiy7
-	 KA1foDfL4HduXkAFMJnChANNiPUCAH/h2kZncjQ52SYYUcprVQwXARIA3SxHZ9H1fg
-	 xKgUhRrsmJHYoCKFOmni14R1OoJN1pAwKxwd4Gj4=
+	by mail.kernel.org (Postfix) with ESMTP id 51C7620880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:33:58 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726754AbfA1Ma7 (ORCPT
+        id S1726735AbfA1Md4 convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:30:59 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34216 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfA1Ma6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:30:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cXAyeWFIpMOGgCIqLGzeDp4ajkXjIWJQ3xqRqloXnbQ=; b=UfdSblx+k6fhF5uBftq4r8EzE
-        2IAqiYQCHw+f0xizLEWqBqY5KEEkNg9bJUKQqxzLfnNpYCk4vX9TyqgH/wZ0OPbQoDkvkfEn2kygG
-        qWiePjM73nA3PL/Z6KlDqncIJ8xwLMvJrnaddOTsi694ZWbXRGlS601R5mA6cytskHLy8=;
-Received: from cpc102320-sgyl38-2-0-cust46.18-2.cable.virginm.net ([82.37.168.47] helo=debutante.sirena.org.uk)
-        by heliosphere.sirena.org.uk with esmtpa (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1go63u-0002RV-NE; Mon, 28 Jan 2019 12:30:50 +0000
-Received: by debutante.sirena.org.uk (Postfix, from userid 1000)
-        id 5021F1127D29; Mon, 28 Jan 2019 12:30:50 +0000 (GMT)
-Date:   Mon, 28 Jan 2019 12:30:50 +0000
-From:   Mark Brown <broonie@kernel.org>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-Cc:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "vigneshr@ti.com" <vigneshr@ti.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "tudor.ambarus@microchip.com" <tudor.ambarus@microchip.com>,
-        "robh@kernel.org" <robh@kernel.org>,
-        "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 4/5] spi: nxp-fspi: add octal mode flag bit for octal
- support
-Message-ID: <20190128123050.GE11699@sirena.org.uk>
-References: <1547546584-5254-1-git-send-email-yogeshnarayan.gaur@nxp.com>
- <1547546584-5254-5-git-send-email-yogeshnarayan.gaur@nxp.com>
- <20190128122631.GD11699@sirena.org.uk>
+        Mon, 28 Jan 2019 07:33:56 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51382 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726611AbfA1Md4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 07:33:56 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id E7CDD2078C; Mon, 28 Jan 2019 13:33:52 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-87-206.w90-88.abo.wanadoo.fr [90.88.29.206])
+        by mail.bootlin.com (Postfix) with ESMTPSA id B875C20742;
+        Mon, 28 Jan 2019 13:33:52 +0100 (CET)
+Date:   Mon, 28 Jan 2019 13:33:53 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-amarula@amarulasolutions.com,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] arm64: dts: allwinner: a64-amarula-relic: Add STLM75
+ sensor
+Message-ID: <20190128123353.zgvrepgqvvselwzb@flea>
+References: <20190124175254.27650-1-jagan@amarulasolutions.com>
+ <20190125084004.fsbxtpcesb5yaiod@flea>
+ <CAMty3ZBmHpsTRXARnT5nf1VcnCmz0QpZ5B8caHONLV0UZdXS9Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="r7U+bLA8boMOj+mD"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20190128122631.GD11699@sirena.org.uk>
-X-Cookie: I think we're in trouble.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8BIT
+In-Reply-To: <CAMty3ZBmHpsTRXARnT5nf1VcnCmz0QpZ5B8caHONLV0UZdXS9Q@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Jan 28, 2019 at 12:46:48PM +0530, Jagan Teki wrote:
+> On Fri, Jan 25, 2019 at 2:10 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> >
+> > On Thu, Jan 24, 2019 at 11:22:54PM +0530, Jagan Teki wrote:
+> > > Amarula A64 Relic has STLM75 sensor for digital temperature
+> > > and thermal watchdog.
+> > >
+> > > Add support for it.
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > > Note: the respective driver change is already in mainline
+> > > https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?id=2e9a41bbc1079776dabe42ed8113b086b99ae56c
+> > >
+> > >  .../dts/allwinner/sun50i-a64-amarula-relic.dts    | 15 +++++++++++++++
+> > >  1 file changed, 15 insertions(+)
+> > >
+> > > diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> > > index 6cb2b7f0c817..5d942543d978 100644
+> > > --- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> > > +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
+> > > @@ -34,6 +34,21 @@
+> > >       status = "okay";
+> > >  };
+> > >
+> > > +&i2c0 {
+> > > +     pinctrl-names = "default";
+> > > +     pinctrl-0 = <&i2c0_pins>;
+> > > +     status = "okay";
+> > > +
+> > > +     temp@48 {
+> >
+> > That would be sensor@48
+> >
+> > > +             compatible = "st,stlm75";
+> >
+> > That compatible isn't documented.
+> 
+> True, but none of the compatible strings used on the driver doesn't
+> documented in binding instead there are documented in
+> Documentation/hwmon/lm75.
 
---r7U+bLA8boMOj+mD
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+It doesn't look like a DT binding documentation.
 
-On Mon, Jan 28, 2019 at 12:26:31PM +0000, Mark Brown wrote:
-> On Tue, Jan 15, 2019 at 10:05:29AM +0000, Yogesh Narayan Gaur wrote:
+> Don't know the exact reason, do we need to document this in binding
+> as well?
 
-> > diff --git a/drivers/spi/spi-nxp-fspi.c b/drivers/spi/spi-nxp-fspi.c
-> > index e23ad9ef028e..adc3c0e14f38 100644
-> > --- a/drivers/spi/spi-nxp-fspi.c
-> > +++ b/drivers/spi/spi-nxp-fspi.c
-> > @@ -952,8 +952,8 @@ static int nxp_fspi_probe(struct platform_device *pdev)
+Yep
 
-> This does not apply against current code, the above file is not present
-> upstream.  Please do not submit patches to out of tree code upstream.
+Maxime
 
-So it turns out your other series was adding that driver.  Please if
-you're doing this make sure you call out any interdependencies in either
-the patch itself or the cover letter, if you're sending separate patch
-serieses you should expect them to be handled separately.
-
---r7U+bLA8boMOj+mD
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlxO9fkACgkQJNaLcl1U
-h9BsYQf6A45qVJRvph5tyVH50pk3XTa/3pcow8e2pPLdqTbQDypz5tpGQaDC4jqB
-nsGIHXjKMru6xRvC49DPoKm4XGOpdHyW/qWGvaZmVnbGK2YX61L8BHQyfkN5LEGo
-NsW89904eo5ycNYgapwwDwpUoUoE8Vj/9oYI/mDpW9Nr1QqyyIOHsh7yRXrZTdEV
-S6pR/iU+KWgAFP3zrEXxkZqm8mdjwA5SEuAJ6oNl78Lz+Vtt3TleiLSnG2K+enTQ
-WJYfS3mvVCjI6XQILWXracX0HmeC9T58GiyKyr8V4l8JEJS0YJI/zqb6b9ccSjgb
-2YJA6Gp3Bh4MozVa3Dq+m2WFYN3giw==
-=llBo
------END PGP SIGNATURE-----
-
---r7U+bLA8boMOj+mD--
+-- 
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
