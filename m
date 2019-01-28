@@ -2,99 +2,112 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 908C3C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:35:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0123EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:35:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C2912148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:35:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696907;
-	bh=JDDUV0KKYNt7q1gDb0bK78KXVMEp4pemqksnRIQr3OE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Rm6zbg1UWfhw66n1ZhlQSFGd01iba73k1+gPiggC0HEbpDWEd0vYcsawYluMkg7aq
-	 HUUQT7CKqm1HSsfHLnkas3JadNW2slfL/p7FQnZ7b2C+uECGu5IdzdIA6WerpJTyey
-	 nsruJv2m1v5bJfYLXMdfGfCa4/niTwwnagr5ezLo=
+	by mail.kernel.org (Postfix) with ESMTP id C0E6E2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:35:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="VF77ai8z"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729925AbfA1Pzc (ORCPT
+        id S1729910AbfA1Pzb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:55:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41316 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729883AbfA1PzY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:55:24 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 744B820855;
-        Mon, 28 Jan 2019 15:55:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690924;
-        bh=JDDUV0KKYNt7q1gDb0bK78KXVMEp4pemqksnRIQr3OE=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Xt7T8OCtNL8so9xliaTaxtCtfVrPWpAnjLQCJxImfFx1Kujk4lohOAN3RWog+oPyT
-         CDlxLVF0l/5QxCyNCj1j/gPrPEdhgdzfajAFsAkuxpkmSm9izG1xISRvFQA1Jsxvvu
-         mQ1Ldn8jsXRT7rH5Ky/UBxqJn77ZVIUf0Qnhc/z0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Alexey Kardashevskiy <aik@ozlabs.ru>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.20 235/304] powerpc/powernv/ioda: Allocate indirect TCE levels of cached userspace addresses on demand
-Date:   Mon, 28 Jan 2019 10:42:32 -0500
-Message-Id: <20190128154341.47195-235-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 10:55:31 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:36371 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729434AbfA1PzZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:55:25 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u4so18632232wrp.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:55:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=slmqeLOsa8d5rsqPApJzFEU02ClYEPT68CCNN/PckQ4=;
+        b=VF77ai8zHtPKwML6aprf3N7NLb5YqyWZv6bQ/tnh93JpldM6Zrmc67BYxkg5nWwt6O
+         t+IDXf39LvwmLE5l26SuQ48Gcf+C2NHUNboRbelNGTjQPdNPLsICqCsmqZC2wBFOjjy7
+         Vla2rE2ojk0JDI6juZ7osloJP2gnADIrWd/Ik=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=slmqeLOsa8d5rsqPApJzFEU02ClYEPT68CCNN/PckQ4=;
+        b=l6k1t7gnCbM+jEqNyeR+514C8/maC3edo0NXjD2zn4lQHYeP2fWp13Cq8D+gu1k3oe
+         FEKRldpq3IE3njZASEqlhtp0GHbrIJUV9Jf3H0p145KY6H6VsoUNwiznH5bC7nVjGgsz
+         TVCJxTtVE3qDiz78RwKuhtZ0k1Q9CwyIrHxVXuiX9DCtX2RryRmnt6Ee291oPF9o4ul1
+         fCxOL3bcFzjn1E/WW3PPUg88Pd9pV48BZDgt6qEkwHsKXTWscP8795Ihz2ZB1g+vzz49
+         nF/odAqqMXjFdbmoIc7/SuVAIlDitkzYz6VhmXNPi3qY03i1j8UG17ARKOEdx6+u0TfX
+         xH8w==
+X-Gm-Message-State: AJcUukcRYwTxjWpS+B9uYBYM04IcJkUpU7uw9F2xIaNEPJ+7lUF60pqB
+        cBcnNHFu9KvmTPFgaiwpRuIJeQ==
+X-Google-Smtp-Source: ALg8bN6f6pDlyJZzHXuw0J9nANXB//iC5Qtxik3yB2TYVr/9DBhxILxKnwAct60K+9FB+iAD99VebQ==
+X-Received: by 2002:a5d:678b:: with SMTP id v11mr23905340wru.245.1548690923025;
+        Mon, 28 Jan 2019 07:55:23 -0800 (PST)
+Received: from srini-hackbox.lan (cpc89974-aztw32-2-0-cust43.18-1.cable.virginm.net. [86.30.250.44])
+        by smtp.gmail.com with ESMTPSA id p6sm145140485wrx.50.2019.01.28.07.55.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 28 Jan 2019 07:55:22 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     gregkh@linuxfoundation.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH 13/13] nvmem: core: Avoid useless iterations in nvmem_cell_get_from_lookup()
+Date:   Mon, 28 Jan 2019 15:55:06 +0000
+Message-Id: <20190128155506.25566-14-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
+References: <20190128155506.25566-1-srinivas.kandagatla@linaro.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexey Kardashevskiy <aik@ozlabs.ru>
+From: Alban Bedel <albeu@free.fr>
 
-[ Upstream commit bdbf649efe21173cae63b4b71db84176420f9039 ]
+Once the correct cell has been found there is no need to continue
+iterating, just stop there. While at it replace the goto used to leave
+the loop with simple break statements.
 
-The powernv platform maintains 2 TCE tables for VFIO - a hardware TCE
-table and a table with userspace addresses; the latter is used for
-marking pages dirty when corresponging TCEs are unmapped from
-the hardware table.
-
-a68bd1267b72 ("powerpc/powernv/ioda: Allocate indirect TCE levels
-on demand") enabled on-demand allocation of the hardware table,
-however it missed the other table so it has still been fully allocated
-at the boot time. This fixes the issue by allocating a single level,
-just like we do for the hardware table.
-
-Fixes: a68bd1267b72 ("powerpc/powernv/ioda: Allocate indirect TCE levels on demand")
-Signed-off-by: Alexey Kardashevskiy <aik@ozlabs.ru>
-Reviewed-by: David Gibson <david@gibson.dropbear.id.au>
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Alban Bedel <albeu@free.fr>
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 ---
- arch/powerpc/platforms/powernv/pci-ioda-tce.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/nvmem/core.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
-diff --git a/arch/powerpc/platforms/powernv/pci-ioda-tce.c b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
-index fe9691040f54..7639b2168755 100644
---- a/arch/powerpc/platforms/powernv/pci-ioda-tce.c
-+++ b/arch/powerpc/platforms/powernv/pci-ioda-tce.c
-@@ -299,7 +299,7 @@ long pnv_pci_ioda2_table_alloc_pages(int nid, __u64 bus_offset,
- 	if (alloc_userspace_copy) {
- 		offset = 0;
- 		uas = pnv_pci_ioda2_table_do_alloc_pages(nid, level_shift,
--				levels, tce_table_size, &offset,
-+				tmplevels, tce_table_size, &offset,
- 				&total_allocated_uas);
- 		if (!uas)
- 			goto free_tces_exit;
+diff --git a/drivers/nvmem/core.c b/drivers/nvmem/core.c
+index 5400017ef616..9dd07eae1f3e 100644
+--- a/drivers/nvmem/core.c
++++ b/drivers/nvmem/core.c
+@@ -977,7 +977,7 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+ 			if (IS_ERR(nvmem)) {
+ 				/* Provider may not be registered yet. */
+ 				cell = ERR_CAST(nvmem);
+-				goto out;
++				break;
+ 			}
+ 
+ 			cell = nvmem_find_cell_by_name(nvmem,
+@@ -985,12 +985,11 @@ nvmem_cell_get_from_lookup(struct device *dev, const char *con_id)
+ 			if (!cell) {
+ 				__nvmem_device_put(nvmem);
+ 				cell = ERR_PTR(-ENOENT);
+-				goto out;
+ 			}
++			break;
+ 		}
+ 	}
+ 
+-out:
+ 	mutex_unlock(&nvmem_lookup_mutex);
+ 	return cell;
+ }
 -- 
-2.19.1
+2.20.1
 
