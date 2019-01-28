@@ -2,162 +2,103 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5D9FFC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD64DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:39:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BF6620881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:39:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="B723pNcz"
+	by mail.kernel.org (Postfix) with ESMTP id AD9C820881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:39:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbfA1IjX (ORCPT
+        id S1726861AbfA1Ijx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:39:23 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:44296 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726661AbfA1IjX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:39:23 -0500
-Received: by mail-wr1-f66.google.com with SMTP id z5so16959442wrt.11
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:39:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=HvCmuadj0C3VfhNvieaFfPciyvU0URb0jZw5i6fE1eQ=;
-        b=B723pNczchkl703bz0+GZNNPX2lJFzG8gZsIagGCv3zYMg3H/R9MEc43d/KYfhl0mr
-         JPEsFKac5+VoU4GB5GerekvdiXsOGHBTzSRk++ZDcIFHzH1uGtDgwYp0lSZt79KqqcwN
-         AjLdtThJWUCe+y7CxqyhUZm/OyYkhjskKfNaA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=HvCmuadj0C3VfhNvieaFfPciyvU0URb0jZw5i6fE1eQ=;
-        b=qkC2D+loApULcXOIXxTYf+xDtiODWhRJN4x5sLlcS6TEm+OAuKsuFN12B3ZnrYnFfd
-         cVPGZh9SziAmLgEO1/4QQr93rB54AB/4noG7evfGPyaf69OBOzwgiaF8qjBfp2ofNmZ8
-         XjFJOu822ZovrLc4kNCOpbpmzpyangH4ygAgf/hnz95x8/2DB2NifbgTRa4q85cxlK2B
-         4kh0Xzdlod65ydyyi9ErbpHgb7BbZskm8Oi0NAQy1B4UT6rusjToBH8KQ7Dilxb1bVCT
-         YTL1JD3oV43BBa+8ruLSX+GQ0xUKCSFzCp/PjrJnKaq+psZDTIKR6WWFpu+YYiwtBr6Z
-         5Qkg==
-X-Gm-Message-State: AJcUukfSdyldDe+IOLG2qd7x0KZb66cMmpUpNisxVQBRK8Nt5x4m2Dj9
-        th1/1AaPyv2vbPkZG8PeQZftZg==
-X-Google-Smtp-Source: ALg8bN4GsfEOEZMdbH2rQdepzEv/eAgIC8pJQISLyRASTjC6hqDe5KIKs9lW02JxCDrBkpqRJidnwQ==
-X-Received: by 2002:adf:f1cb:: with SMTP id z11mr20530227wro.35.1548664761341;
-        Mon, 28 Jan 2019 00:39:21 -0800 (PST)
-Received: from [192.168.0.41] (20.36.129.77.rev.sfr.net. [77.129.36.20])
-        by smtp.googlemail.com with ESMTPSA id h2sm128227075wrv.87.2019.01.28.00.39.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 00:39:20 -0800 (PST)
-Subject: Re: [PATCH v4 8/9] cpufreq: scmi: Use auto-registration of thermal
- cooling device
-To:     Amit Kucheria <amit.kucheria@linaro.org>,
-        linux-kernel@vger.kernel.org
-Cc:     linux-arm-msm@vger.kernel.org, viresh.kumar@linaro.org,
-        edubezval@gmail.com, swboyd@chromium.org, dianders@chromium.org,
-        mka@chromium.org, Sudeep Holla <sudeep.holla@arm.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org
-References: <cover.1548654899.git.amit.kucheria@linaro.org>
- <81d81c0016fb275728b7b604020c22d8f53991b1.1548654899.git.amit.kucheria@linaro.org>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <49b6cb24-6f38-750d-e652-cc4e47f96db0@linaro.org>
-Date:   Mon, 28 Jan 2019 09:39:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Mon, 28 Jan 2019 03:39:53 -0500
+Received: from mga14.intel.com ([192.55.52.115]:55387 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726654AbfA1Ijx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 03:39:53 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 00:39:52 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,533,1539673200"; 
+   d="scan'208";a="133693789"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 00:39:51 -0800
+Received: from [10.125.252.29] (abudanko-mobl.ccr.corp.intel.com [10.125.252.29])
+        by linux.intel.com (Postfix) with ESMTP id 3838C58028E;
+        Mon, 28 Jan 2019 00:39:49 -0800 (PST)
+Subject: Re: [PATCH v5 0/4] Reduce NUMA related overhead in perf record
+ profiling on large server systems
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Andi Kleen <ak@linux.intel.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+References: <af72a20b-117c-ec65-5fc9-35f4e81b26bd@linux.intel.com>
+ <27127a53-4393-ab69-ff61-0d0a36a629a0@linux.intel.com>
+ <20190128082023.GA15461@krava>
+From:   Alexey Budankov <alexey.budankov@linux.intel.com>
+Organization: Intel Corp.
+Message-ID: <28a1a12f-f3a0-d8cc-7312-435d19b49e65@linux.intel.com>
+Date:   Mon, 28 Jan 2019 11:39:49 +0300
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-In-Reply-To: <81d81c0016fb275728b7b604020c22d8f53991b1.1548654899.git.amit.kucheria@linaro.org>
+In-Reply-To: <20190128082023.GA15461@krava>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28/01/2019 07:41, Amit Kucheria wrote:
-> Use the CPUFREQ_AUTO_REGISTER_COOLING_DEV flag to allow cpufreq core to
-> automatically register as a thermal cooling device.
+On 28.01.2019 11:20, Jiri Olsa wrote:
+> On Mon, Jan 28, 2019 at 10:13:20AM +0300, Alexey Budankov wrote:
 > 
-> This allows removal of boiler plate code from the driver.
+> SNIP
 > 
-> Signed-off-by: Amit Kucheria <amit.kucheria@linaro.org>
-> Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-
-Reviewed-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-
-> ---
->  drivers/cpufreq/scmi-cpufreq.c | 14 ++------------
->  1 file changed, 2 insertions(+), 12 deletions(-)
+>>> ---
+>>> Alexey Budankov (4):
+>>>   perf record: allocate affinity masks
+>>>   perf record: bind the AIO user space buffers to nodes
+>>>   perf record: apply affinity masks when reading mmap buffers
+>>>   perf record: implement --affinity=node|cpu option
+>>>
+>>>  tools/perf/Documentation/perf-record.txt |   5 ++
+>>>  tools/perf/builtin-record.c              |  45 +++++++++-
+>>>  tools/perf/perf.h                        |   8 ++
+>>>  tools/perf/util/cpumap.c                 |  10 +++
+>>>  tools/perf/util/cpumap.h                 |   1 +
+>>>  tools/perf/util/evlist.c                 |   6 +-
+>>>  tools/perf/util/evlist.h                 |   2 +-
+>>>  tools/perf/util/mmap.c                   | 105 ++++++++++++++++++++++-
+>>>  tools/perf/util/mmap.h                   |   3 +-
+>>>  9 files changed, 175 insertions(+), 10 deletions(-)
+>>>
+>>> ---
+>>> Changes in v5:
+>>> - avoided multiple allocations of online cpu maps by 
+>>>   implementing it once in cpu_map__online()
+>>> - reduced indentation at record__parse_affinity()
+>>
+>> Are there any more comments on this patch set?
 > 
-> diff --git a/drivers/cpufreq/scmi-cpufreq.c b/drivers/cpufreq/scmi-cpufreq.c
-> index 242c3370544e..b19e9d129f8f 100644
-> --- a/drivers/cpufreq/scmi-cpufreq.c
-> +++ b/drivers/cpufreq/scmi-cpufreq.c
-> @@ -11,7 +11,6 @@
->  #include <linux/cpu.h>
->  #include <linux/cpufreq.h>
->  #include <linux/cpumask.h>
-> -#include <linux/cpu_cooling.h>
->  #include <linux/export.h>
->  #include <linux/module.h>
->  #include <linux/pm_opp.h>
-> @@ -22,7 +21,6 @@
->  struct scmi_data {
->  	int domain_id;
->  	struct device *cpu_dev;
-> -	struct thermal_cooling_device *cdev;
->  };
->  
->  static const struct scmi_handle *handle;
-> @@ -185,7 +183,6 @@ static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
->  {
->  	struct scmi_data *priv = policy->driver_data;
->  
-> -	cpufreq_cooling_unregister(priv->cdev);
->  	dev_pm_opp_free_cpufreq_table(priv->cpu_dev, &policy->freq_table);
->  	kfree(priv);
->  	dev_pm_opp_remove_all_dynamic(priv->cpu_dev);
-> @@ -193,17 +190,11 @@ static int scmi_cpufreq_exit(struct cpufreq_policy *policy)
->  	return 0;
->  }
->  
-> -static void scmi_cpufreq_ready(struct cpufreq_policy *policy)
-> -{
-> -	struct scmi_data *priv = policy->driver_data;
-> -
-> -	priv->cdev = of_cpufreq_cooling_register(policy);
-> -}
-> -
->  static struct cpufreq_driver scmi_cpufreq_driver = {
->  	.name	= "scmi",
->  	.flags	= CPUFREQ_STICKY | CPUFREQ_HAVE_GOVERNOR_PER_POLICY |
-> -		  CPUFREQ_NEED_INITIAL_FREQ_CHECK,
-> +		  CPUFREQ_NEED_INITIAL_FREQ_CHECK |
-> +		  CPUFREQ_AUTO_REGISTER_COOLING_DEV,
->  	.verify	= cpufreq_generic_frequency_table_verify,
->  	.attr	= cpufreq_generic_attr,
->  	.target_index	= scmi_cpufreq_set_target,
-> @@ -211,7 +202,6 @@ static struct cpufreq_driver scmi_cpufreq_driver = {
->  	.get	= scmi_cpufreq_get_rate,
->  	.init	= scmi_cpufreq_init,
->  	.exit	= scmi_cpufreq_exit,
-> -	.ready	= scmi_cpufreq_ready,
->  };
->  
->  static int scmi_cpufreq_probe(struct scmi_device *sdev)
+> sry for late reply.. there was a mayhem in here
+> last week because of the devconf ;-)
+
+Aww, I see. Thanks for update.
+
+-Alexey
+
 > 
-
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+> I'll review it today, but I think there were no more issues
+> 
+> jirka
+> 
