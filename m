@@ -4,48 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9268CC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2052C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62DD820855
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:03:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B1F2F20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:04:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691437;
-	bh=hJIh8QLmnTUJg9HEZ4nA/enTyoQ3r6pXm5y59mYhCk4=;
+	s=default; t=1548691442;
+	bh=beHVS2Iu1Tzax3T2S2GlQfVdgWYSSvUUhhfJczYpivQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=YEALV7vMKdhUU4LljxwWYGcjg8AvNCGN+tTtED3NHZigVn6jEpQe6ZN4k9Z5cOFQ4
-	 +j78t8yPnxsY/v9BnXy4fi/0oJU9UvPMJbDF9Qas8mOSImEXJEjdaQGYytK58dQ1iJ
-	 JgoR1Ft5MG8Pf3nBzIw+OcVMrTHzxoEkAUJFqxgU=
+	b=IRghzji45mfAxP3j6ZpoUvirxwQhDQlSHrxCX1Y5G6WjivGYl7Qm++nXEqOctOMfh
+	 PqshXjl5tO7giYaNSQgl0JJtcT3WcmRHmA6Z1I1fSyfqmngxQ+rFSBdx3b7ggrrxgm
+	 4tQKAdY0IIEJg42awUQUcHXIZNe+RMXG7fj+JnLc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731488AbfA1QDy (ORCPT
+        id S1731500AbfA1QEB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:03:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:49212 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:04:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:49178 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731445AbfA1QDv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:03:51 -0500
+        id S1731467AbfA1QDu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:03:50 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0A8A32175B;
-        Mon, 28 Jan 2019 16:03:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6159421852;
+        Mon, 28 Jan 2019 16:03:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691431;
-        bh=hJIh8QLmnTUJg9HEZ4nA/enTyoQ3r6pXm5y59mYhCk4=;
+        s=default; t=1548691429;
+        bh=beHVS2Iu1Tzax3T2S2GlQfVdgWYSSvUUhhfJczYpivQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xbwumTNzRlHdqgNUglzns0M9b9BAqNN7MCbMNurnIvkG+ysffQUE7jjWT82ePfz9g
-         ZBhr/Cy5paLMWpieYgSkemkUgQOEjvN3zk+fqnEdY4QcLCjJYqq5ZR3cttCjxGPVvq
-         Qs9Bthd27IfzbabsfMyJilIIT3A8JoyCQSDK1bUE=
+        b=MCSlqaYBqbov/M+ozi7idtf+K/o5zisO6lZt/aeyDMYmiTwPD3KdPQ3lS6sTC5vOf
+         wlnCrEmoDVlIs+/s+994BJj7mGGCDp4pBtalGjuqYrSetJvzk2K5XsXlWCjesO8Cju
+         djhgPVJXaKz4cURnoEDrZCPpdUh2s70rEq536X1A=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lubomir Rintel <lkundrak@v3.sk>, Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 093/258] ARM: dts: mmp2: fix TWSI2
-Date:   Mon, 28 Jan 2019 10:56:39 -0500
-Message-Id: <20190128155924.51521-93-sashal@kernel.org>
+Cc:     Eric Anholt <eric@anholt.net>, Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 092/258] drm/v3d: Fix prime imports of buffers from other drivers.
+Date:   Mon, 28 Jan 2019 10:56:38 -0500
+Message-Id: <20190128155924.51521-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,56 +56,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lubomir Rintel <lkundrak@v3.sk>
+From: Eric Anholt <eric@anholt.net>
 
-[ Upstream commit 1147e05ac9fc2ef86a3691e7ca5c2db7602d81dd ]
+[ Upstream commit 62d1a752874962f072de8a779e960fcd2ab4847b ]
 
-Marvell keeps their MMP2 datasheet secret, but there are good clues
-that TWSI2 is not on 0xd4025000 on that platform, not does it use
-IRQ 58. In fact, the IRQ 58 on MMP2 seems to be a signal processor:
+v3d_bo_get_pages() checks this to decide to map the imported buffer
+instead of the backing shmem file.  The caller was about to set this
+value anyway, and there's no error path in between.  Ideally we
+wouldn't even allocate the shmem file for our imports, but that's a
+more invasive fix.
 
-   arch/arm/mach-mmp/irqs.h:#define IRQ_MMP2_MSP  58
-
-I'm taking a somewhat educated guess that is probably a copy & paste
-error from PXA168 or PXA910 and that the real controller in fact hides
-at address 0xd4031000 and uses an interrupt line multiplexed via IRQ 17.
-
-I'm also copying some properties from TWSI1 that were missing or
-incorrect.
-
-Tested on a OLPC XO 1.75 machine, where the RTC is on TWSI2.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Tested-by: Pavel Machek <pavel@ucw.cz>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Eric Anholt <eric@anholt.net>
+Fixes: 57692c94dcbe ("drm/v3d: Introduce a new DRM driver for Broadcom V3D V3.x+")
+Link: https://patchwork.freedesktop.org/patch/msgid/20181128230927.10951-3-eric@anholt.net
+Acked-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Reviewed-by: Dave Emett <david.emett@broadcom.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/mmp2.dtsi | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/gpu/drm/v3d/v3d_bo.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/boot/dts/mmp2.dtsi b/arch/arm/boot/dts/mmp2.dtsi
-index 766bbb8495b6..47e5b63339d1 100644
---- a/arch/arm/boot/dts/mmp2.dtsi
-+++ b/arch/arm/boot/dts/mmp2.dtsi
-@@ -220,12 +220,15 @@
- 				status = "disabled";
- 			};
+diff --git a/drivers/gpu/drm/v3d/v3d_bo.c b/drivers/gpu/drm/v3d/v3d_bo.c
+index 54d96518a131..a08766d39eab 100644
+--- a/drivers/gpu/drm/v3d/v3d_bo.c
++++ b/drivers/gpu/drm/v3d/v3d_bo.c
+@@ -293,6 +293,7 @@ v3d_prime_import_sg_table(struct drm_device *dev,
+ 	bo->resv = attach->dmabuf->resv;
  
--			twsi2: i2c@d4025000 {
-+			twsi2: i2c@d4031000 {
- 				compatible = "mrvl,mmp-twsi";
--				reg = <0xd4025000 0x1000>;
--				interrupts = <58>;
-+				reg = <0xd4031000 0x1000>;
-+				interrupt-parent = <&intcmux17>;
-+				interrupts = <0>;
- 				clocks = <&soc_clocks MMP2_CLK_TWSI1>;
- 				resets = <&soc_clocks MMP2_CLK_TWSI1>;
-+				#address-cells = <1>;
-+				#size-cells = <0>;
- 				status = "disabled";
- 			};
+ 	bo->sgt = sgt;
++	obj->import_attach = attach;
+ 	v3d_bo_get_pages(bo);
  
+ 	v3d_mmu_insert_ptes(bo);
 -- 
 2.19.1
 
