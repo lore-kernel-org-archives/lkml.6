@@ -7,52 +7,50 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA22AC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D208FC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A41B21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A7E072175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690694;
-	bh=ShO2F7v2De67keKmnKDGW2gEBG+MtPGyLlZIxx2pAWw=;
+	s=default; t=1548690699;
+	bh=IYFWtsPiA/H/kYCsgZU763bveExVKt/n42NU/WHNgd8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Tme+mgkZjkrrwA9jQ5t6EEcKroIC8BDDyN80xMpL82wjLmu7sGr94HOK1NCcF0ArS
-	 Lrt6jWNcEqP1dhSgVrXPkeBwtyD3AV9ea3jlb1LEd4hYmefhOjke+isLpf5zrmkcSV
-	 FLR4ClkvyWnkMMsY6zRnlAg1ldrPq1EBNqOQvviY=
+	b=iH0m9WySS3Ko4HORA3vqKd1v5CD5XuUwJwJ2IuK92x2b72AX+NLV4ObLo429pqYX+
+	 Mim428+SHDIujDYdMvFIlVlLX9WP85/KEeNhYLgJgLKzstMFv+U7HpgmlC2D/0acK9
+	 r6hoM3lQXk7Hrh5hIKJObYQ5XsaYHHLkLmSSs1/I=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729098AbfA1Pvc (ORCPT
+        id S1729123AbfA1Pvh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:51:32 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38150 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:51:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729080AbfA1Pv3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:51:29 -0500
+        id S1728718AbfA1Pvf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:51:35 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 636E320880;
-        Mon, 28 Jan 2019 15:51:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id ED19320880;
+        Mon, 28 Jan 2019 15:51:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690688;
-        bh=ShO2F7v2De67keKmnKDGW2gEBG+MtPGyLlZIxx2pAWw=;
+        s=default; t=1548690694;
+        bh=IYFWtsPiA/H/kYCsgZU763bveExVKt/n42NU/WHNgd8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mxUzOMxMtJPVgklWRcoBNS7wugRkleN0cYVY8mZ8IEHarpjhaF3JNkZk4Uo4m6qiI
-         st59vQHDQNC+p0fjaTO28jPAjJmG5hTV0CkMcq0r7X+qlX3wxnPAATiqFeTYSABsBq
-         BWUfAXhAMIP9ceY0fNwI0ciXttZZE9CmTJlW7xnk=
+        b=G561HPsbqCGxwySHrNdJbhmhGi+haM6s3/rUQpV1fFmGjVLpCDi7vwKk64yMVsQRg
+         2oss8wLSGXIa6Wuzt1FDwXVuH5rOrPFb3UiwW5sU3oWGrBp17IpFvH5lyE5dYIrWmj
+         Bcczxk0H/ZB8/kTujFYivoC06BM9WHNEjzt0waE0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Hans Holmberg <hans.holmberg@cnexlabs.com>,
-        =?UTF-8?q?Matias=20Bj=C3=B8rling?= <mb@lightnvm.io>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 164/304] lightnvm: pblk: fix resubmission of overwritten write err lbas
-Date:   Mon, 28 Jan 2019 10:41:21 -0500
-Message-Id: <20190128154341.47195-164-sashal@kernel.org>
+Cc:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>, Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 166/304] i2c-axxia: check for error conditions first
+Date:   Mon, 28 Jan 2019 10:41:23 -0500
+Message-Id: <20190128154341.47195-166-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,45 +58,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Hans Holmberg <hans.holmberg@cnexlabs.com>
+From: "Adamski, Krzysztof (Nokia - PL/Wroclaw)" <krzysztof.adamski@nokia.com>
 
-[ Upstream commit c12fa401ac8c94a74aff68bb5736b3f1dc695fa8 ]
+[ Upstream commit 4f5c85fe3a60ace555d09898166af372547f97fc ]
 
-Make sure we only look up valid lba addresses on the resubmission path.
+It was observed that when using seqentional mode contrary to the
+documentation, the SS bit (which is supposed to only be set if
+automatic/sequence command completed normally), is sometimes set
+together with NA (NAK in address phase) causing transfer to falsely be
+considered successful.
 
-If an lba is invalidated in the write buffer, that sector will be
-submitted to disk (as it is already mapped to a ppa), and that write
-might fail, resulting in a crash when trying to look up the lba in the
-mapping table (as the lba is marked as invalid).
+My assumption is that this does not happen during manual mode since the
+controller is stopping its work the moment it sets NA/ND bit in status
+register. This is not the case in Automatic/Sequentional mode where it
+is still working to send STOP condition and the actual status we get
+depends on the time when the ISR is run.
 
-Signed-off-by: Hans Holmberg <hans.holmberg@cnexlabs.com>
-Reviewed-by: Javier González <javier@javigon.com>
-Signed-off-by: Matias Bjørling <mb@lightnvm.io>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+This patch changes the order of checking status bits in ISR - error
+conditions are checked first and only if none of them occurred, the
+transfer may be considered successful. This is required to introduce
+using of sequentional mode in next patch.
+
+Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/lightnvm/pblk-write.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/i2c/busses/i2c-axxia.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/lightnvm/pblk-write.c b/drivers/lightnvm/pblk-write.c
-index fa8726493b39..3ddd16f47106 100644
---- a/drivers/lightnvm/pblk-write.c
-+++ b/drivers/lightnvm/pblk-write.c
-@@ -148,9 +148,11 @@ static void pblk_prepare_resubmit(struct pblk *pblk, unsigned int sentry,
- 		w_ctx = &entry->w_ctx;
+diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
+index 51d34959709b..fb5bac079e83 100644
+--- a/drivers/i2c/busses/i2c-axxia.c
++++ b/drivers/i2c/busses/i2c-axxia.c
+@@ -296,22 +296,7 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
+ 			i2c_int_disable(idev, MST_STATUS_TFL);
+ 	}
  
- 		/* Check if the lba has been overwritten */
--		ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
--		if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
--			w_ctx->lba = ADDR_EMPTY;
-+		if (w_ctx->lba != ADDR_EMPTY) {
-+			ppa_l2p = pblk_trans_map_get(pblk, w_ctx->lba);
-+			if (!pblk_ppa_comp(ppa_l2p, entry->cacheline))
-+				w_ctx->lba = ADDR_EMPTY;
-+		}
+-	if (status & MST_STATUS_SCC) {
+-		/* Stop completed */
+-		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		complete(&idev->msg_complete);
+-	} else if (status & MST_STATUS_SNS) {
+-		/* Transfer done */
+-		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
+-			axxia_i2c_empty_rx_fifo(idev);
+-		complete(&idev->msg_complete);
+-	} else if (status & MST_STATUS_TSS) {
+-		/* Transfer timeout */
+-		idev->msg_err = -ETIMEDOUT;
+-		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		complete(&idev->msg_complete);
+-	} else if (unlikely(status & MST_STATUS_ERR)) {
++	if (unlikely(status & MST_STATUS_ERR)) {
+ 		/* Transfer error */
+ 		i2c_int_disable(idev, ~0);
+ 		if (status & MST_STATUS_AL)
+@@ -328,6 +313,21 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
+ 			readl(idev->base + MST_TX_BYTES_XFRD),
+ 			readl(idev->base + MST_TX_XFER));
+ 		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_SCC) {
++		/* Stop completed */
++		i2c_int_disable(idev, ~MST_STATUS_TSS);
++		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_SNS) {
++		/* Transfer done */
++		i2c_int_disable(idev, ~MST_STATUS_TSS);
++		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
++			axxia_i2c_empty_rx_fifo(idev);
++		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_TSS) {
++		/* Transfer timeout */
++		idev->msg_err = -ETIMEDOUT;
++		i2c_int_disable(idev, ~MST_STATUS_TSS);
++		complete(&idev->msg_complete);
+ 	}
  
- 		/* Mark up the entry as submittable again */
- 		flags = READ_ONCE(w_ctx->flags);
+ out:
 -- 
 2.19.1
 
