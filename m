@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E948EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 81F31C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:47:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B879120880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:47:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 47A0220880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:47:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690454;
-	bh=rhsYchHFzanvGrqr281E0S9EwGpP43AtQJlVBxAqPcI=;
+	s=default; t=1548690456;
+	bh=8hSr7uKIGw7BsUzmOtpeDeOWGfuUUBzgz9AkBBaa1GA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PRabyIq3X9TQG/HJCThqglgPYjiEVFLPMe6XG3j7AqwAJq7gLtjrUwaoGLfsBFg4h
-	 4KqZFQEXrNqHP2NrZwJ5wZk4xwT50+MOX5Fja5MrbLc7uZdFwv6JGnJQGNYEiKE4Fy
-	 d+FrwnRLeTLL9EKKvWZfEEfkcoc+yvl6CMPeN1Iw=
+	b=MQpuVmPpkRcWD2cKiClzsUTu1ydvWRn4g9w2z7LfJCv/OOULKoslZ754xJNPhplNf
+	 gCDJiWWdOzVz7iRaH83VHiF+RbTn/DeZNje7YKHSCHfiBUv7SNwWcMUgTtlc96jHGE
+	 7caBhpEkeev5tjD5ym8LO+t+pcqfcaxMDr+unh3Y=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727283AbfA1Prd (ORCPT
+        id S1728353AbfA1Prf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:47:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32808 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:47:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728311AbfA1Pra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:47:30 -0500
+        id S1728334AbfA1Prd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:47:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D6F1320880;
-        Mon, 28 Jan 2019 15:47:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3644E2177E;
+        Mon, 28 Jan 2019 15:47:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690449;
-        bh=rhsYchHFzanvGrqr281E0S9EwGpP43AtQJlVBxAqPcI=;
+        s=default; t=1548690452;
+        bh=8hSr7uKIGw7BsUzmOtpeDeOWGfuUUBzgz9AkBBaa1GA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=gs7vL06MSxazKyYAx/063TRXOcMIsNefgzvctmbAc+OkdplLpNRFuw8elWz5fQuHG
-         mRosNhTYH/9TmGEepqVciIkGwOhwIFDArkRzdwKCVArfTWLd0XtrjXLQSBJ9yI1iFH
-         mZBH3K2gtd++dWi7sHETl9qJC5O4UEj3VwuN4dZU=
+        b=k3lbKVgm6/3gzI0xf5Ckx8ohZ8f2NKbZn9xi9/CmeTJ8jzRZXl7duBZgsZC+IhEdt
+         NyPDgjYoewdJLG8Ac36LpXQc4uCCiDvQmrq3iJqZuvV4d0NNVLVlsbR/yJYRIXeKk3
+         +Yc++VKu3VwjlGaVdG3N/Ham78EnF8V6govHl0nY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 091/304] arm64: io: Ensure calls to delay routines are ordered against prior readX()
-Date:   Mon, 28 Jan 2019 10:40:08 -0500
-Message-Id: <20190128154341.47195-91-sashal@kernel.org>
+Cc:     YueHaibing <yuehaibing@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 092/304] net: aquantia: return 'err' if set MPI_DEINIT state fails
+Date:   Mon, 28 Jan 2019 10:40:09 -0500
+Message-Id: <20190128154341.47195-92-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,98 +58,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: YueHaibing <yuehaibing@huawei.com>
 
-[ Upstream commit 6460d32014717686d3b7963595950ba2c6d1bb5e ]
+[ Upstream commit 4e3c7c00bba0636b97eb23d582c20b0f5d95ce20 ]
 
-A relatively standard idiom for ensuring that a pair of MMIO writes to a
-device arrive at that device with a specified minimum delay between them
-is as follows:
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-	writel_relaxed(42, dev_base + CTL1);
-	readl(dev_base + CTL1);
-	udelay(10);
-	writel_relaxed(42, dev_base + CTL2);
+drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c:260:7:
+ warning: variable 'err' set but not used [-Wunused-but-set-variable]
 
-the intention being that the read-back from the device will push the
-prior write to CTL1, and the udelay will hold up the write to CTL1 until
-at least 10us have elapsed.
+'err' should be returned while set MPI_DEINIT state fails
+in hw_atl_utils_soft_reset.
 
-Unfortunately, on arm64 where the underlying delay loop is implemented
-as a read of the architected counter, the CPU does not guarantee
-ordering from the readl() to the delay loop and therefore the delay loop
-could in theory be speculated and not provide the desired interval
-between the two writes.
-
-Fix this in a similar manner to PowerPC by introducing a dummy control
-dependency on the output of readX() which, combined with the ISB in the
-read of the architected counter, guarantees that a subsequent delay loop
-can not be executed until the readX() has returned its result.
-
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: cce96d1883da ("net: aquantia: Regression on reset with 1.x firmware")
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/io.h | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index 9f8b915af3a7..d42d00d8d5b6 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -104,7 +104,22 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
- }
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+index 7def1cb8ab9d..22cbf8dc6fa9 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_utils.c
+@@ -263,6 +263,8 @@ int hw_atl_utils_soft_reset(struct aq_hw_s *self)
+ 		AQ_HW_WAIT_FOR((aq_hw_read_reg(self, HW_ATL_MPI_STATE_ADR) &
+ 				HW_ATL_MPI_STATE_MSK) == MPI_DEINIT,
+ 			       10, 1000U);
++		if (err)
++			return err;
+ 	}
  
- /* IO barriers */
--#define __iormb()		rmb()
-+#define __iormb(v)							\
-+({									\
-+	unsigned long tmp;						\
-+									\
-+	rmb();								\
-+									\
-+	/*								\
-+	 * Create a dummy control dependency from the IO read to any	\
-+	 * later instructions. This ensures that a subsequent call to	\
-+	 * udelay() will be ordered due to the ISB in get_cycles().	\
-+	 */								\
-+	asm volatile("eor	%0, %1, %1\n"				\
-+		     "cbnz	%0, ."					\
-+		     : "=r" (tmp) : "r" (v) : "memory");		\
-+})
-+
- #define __iowmb()		wmb()
- 
- #define mmiowb()		do { } while (0)
-@@ -129,10 +144,10 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
-  * following Normal memory access. Writes are ordered relative to any prior
-  * Normal memory access.
-  */
--#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
--#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
--#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
--#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(); __v; })
-+#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(__v); __v; })
-+#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(__v); __v; })
-+#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(__v); __v; })
-+#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(__v); __v; })
- 
- #define writeb(v,c)		({ __iowmb(); writeb_relaxed((v),(c)); })
- #define writew(v,c)		({ __iowmb(); writew_relaxed((v),(c)); })
-@@ -183,9 +198,9 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
- /*
-  * io{read,write}{16,32,64}be() macros
-  */
--#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(); __v; })
--#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(); __v; })
--#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(); __v; })
-+#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(__v); __v; })
-+#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(__v); __v; })
-+#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(__v); __v; })
- 
- #define iowrite16be(v,p)	({ __iowmb(); __raw_writew((__force __u16)cpu_to_be16(v), p); })
- #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
+ 	if (self->rbl_enabled)
 -- 
 2.19.1
 
