@@ -2,149 +2,105 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192CBC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:03:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BC5CC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:04:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA5AC2171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:03:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h1Khu1pJ"
+	by mail.kernel.org (Postfix) with ESMTP id 5025121736
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:04:01 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726893AbfA1LDI (ORCPT
+        id S1726913AbfA1LD7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:03:08 -0500
-Received: from mail-wm1-f54.google.com ([209.85.128.54]:52577 "EHLO
-        mail-wm1-f54.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726744AbfA1LDF (ORCPT
+        Mon, 28 Jan 2019 06:03:59 -0500
+Received: from outbound-smtp02.blacknight.com ([81.17.249.8]:33025 "EHLO
+        outbound-smtp02.blacknight.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726654AbfA1LD7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:03:05 -0500
-Received: by mail-wm1-f54.google.com with SMTP id m1so13497104wml.2;
-        Mon, 28 Jan 2019 03:03:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:openpgp:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Ma7NQbkbV4EGaErq9ddefJ4LlNDNE6uhJ0aUoGK6ZdY=;
-        b=h1Khu1pJLfcdo2+V/iSq7JAd6lkHG4X+CN+7oQ9Noy6Y1Efr/kQrTcWPAZcdmGL0jE
-         a3bWJ5j8OlXQa4eR1eDXgPvqNofPhr0jLs9KlveYmqEEW8fnTRM4vX8LUH38EvLA0HS+
-         qtq51jbPXNFoTPzsO5hXa0JyYRhrUW0ArPoS0Q4faDXzI0Lsb2/FZFD0OcHUBzI9CsCZ
-         OlE4yLzi3i0Dt8u52Iq9Xeo9v7x4zIwgRvWiBDV/URp3Z9dJXynyAAj8vmzx1FuwKQk6
-         syo+OlWDJQSDY3tehfGN4a4hNMV3dBwhnUDpDIehdg5NmWvMcvvzHluwzcKmHslHxD7Q
-         oKcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:message-id
-         :date:user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Ma7NQbkbV4EGaErq9ddefJ4LlNDNE6uhJ0aUoGK6ZdY=;
-        b=N8DxmAn5qub6m0ytnM9rI3r7H4bUsJCgLogXgQvkJe1Ejln3A8uYGC5SPhMsqy6HDu
-         9eO/FCN0sMuFWnJpCyn+ry1xSq8r9zQtjqCBjQahDe/HbH51vQYzgdqnL+y9it8iQ3jf
-         tvAQBWhgidpYkbqiZ8zgYyBj1BojLxo0Vos+OnYt+4WTcCipHPvdiORvj+xS/rKzrEoe
-         L+hLjtWTznIGAJiNXyTqDRRxUPw3GwHnO/fCkfwb/ux7CrLzO03JSoSCU60fudAaC9Rm
-         1BCGH5L/Nsiv+vyKD6cMoWbTiYPvcv8eRLCpUlvgnRT3I14nlBjU9Ew6ewwyf+7gWcWa
-         vxHQ==
-X-Gm-Message-State: AJcUukcT42oSM4jZCqv7bqvXsupA66iKuTTTeh9a9uW7J/Xzr28QtJ48
-        DUUh5ziEyf3Fnkyf9JKTfkIqpXc5HD4=
-X-Google-Smtp-Source: ALg8bN5mlROxV7Sx1l3o5yf6hicxZFu3JHkpZEjedVFk72pFBQMZrkyhnsiseIumUpZoTxcHwyRckA==
-X-Received: by 2002:a1c:7e56:: with SMTP id z83mr7406162wmc.100.1548673383117;
-        Mon, 28 Jan 2019 03:03:03 -0800 (PST)
-Received: from [192.168.1.4] (ip-86-49-110-70.net.upcbroadband.cz. [86.49.110.70])
-        by smtp.gmail.com with ESMTPSA id v8sm132964293wrq.53.2019.01.28.03.03.01
-        (version=TLS1_3 cipher=AEAD-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 03:03:02 -0800 (PST)
-Subject: Re: [PATCH v7 1/2] spi: Add Renesas R-Car Gen3 RPC-IF SPI controller
- driver
-To:     masonccyang@mxic.com.tw
-Cc:     bbrezillon@kernel.org, broonie@kernel.org,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Simon Horman <horms@verge.net.au>, juliensu@mxic.com.tw,
-        linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-spi@vger.kernel.org, sergei.shtylyov@cogentembedded.com,
-        zhengxunli@mxic.com.tw
-References: <1548227352-14910-1-git-send-email-masonccyang@mxic.com.tw>
- <1548227352-14910-2-git-send-email-masonccyang@mxic.com.tw>
- <bb63b646-b549-dc3b-a604-17ba156e735c@gmail.com>
- <OF767ACC95.EECC73BE-ON4825838C.000BD6A3-4825838C.000D23A6@mxic.com.tw>
- <67fa5f94-886b-f09c-c93d-832e427ffec8@gmail.com>
- <OF891E176A.614DBEEF-ON4825838C.0022D454-4825838C.002396ED@mxic.com.tw>
- <0b3ea94f-a4f3-0780-301b-f88ff2ad2fb1@gmail.com>
- <OFEAAE10B4.20C3E45D-ON48258390.0007CD37-48258390.0009066E@mxic.com.tw>
-From:   Marek Vasut <marek.vasut@gmail.com>
-Openpgp: preference=signencrypt
-Message-ID: <2d762c16-d714-9171-9450-b6adf1a6509c@gmail.com>
-Date:   Mon, 28 Jan 2019 12:03:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 28 Jan 2019 06:03:59 -0500
+Received: from mail.blacknight.com (pemlinmail05.blacknight.ie [81.17.254.26])
+        by outbound-smtp02.blacknight.com (Postfix) with ESMTPS id DB1CF98B0D
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:03:56 +0000 (UTC)
+Received: (qmail 32514 invoked from network); 28 Jan 2019 11:03:56 -0000
+Received: from unknown (HELO techsingularity.net) (mgorman@techsingularity.net@[37.228.225.79])
+  by 81.17.254.9 with ESMTPSA (AES256-SHA encrypted, authenticated); 28 Jan 2019 11:03:56 -0000
+Date:   Mon, 28 Jan 2019 11:03:55 +0000
+From:   Mel Gorman <mgorman@techsingularity.net>
+To:     valdis.kletnieks@vt.edu, Pavel Machek <pavel@ucw.cz>
+Cc:     kernel list <linux-kernel@vger.kernel.org>,
+        Andrew Morton <akpm@osdl.org>, vbabka@suse.cz,
+        aarcange@redhat.com, rientjes@google.com, mhocko@kernel.org,
+        zi.yan@cs.rutgers.edu, hannes@cmpxchg.org, Jan Kara <jack@suse.cz>
+Subject: Re: [regression -next0117] What is kcompactd and why is he eating
+ 100% of my cpu?
+Message-ID: <20190128110355.GC9565@techsingularity.net>
+References: <20190126200005.GB27513@amd>
+ <12171.1548557813@turing-police.cc.vt.edu>
+ <20190127141556.GB9565@techsingularity.net>
+ <20190127160027.GA9340@amd>
+ <13417.1548624994@turing-police.cc.vt.edu>
+ <20190128091627.GA27972@quack2.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <OFEAAE10B4.20C3E45D-ON48258390.0007CD37-48258390.0009066E@mxic.com.tw>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=iso-8859-15
+Content-Disposition: inline
+In-Reply-To: <20190128091627.GA27972@quack2.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 1/28/19 2:38 AM, masonccyang@mxic.com.tw wrote:
-> Hi Marek,
-
-Hi,
-
->> "Marek Vasut" <marek.vasut@gmail.com>
->> >> >> > +module_platform_driver(rpc_spi_driver);
->> >> >>
->> >> >> RPC is not a SPI controller, it's a SPI and HF controller.
->> >> >>
->> >> >> Also, how difficult will it be to add the HF support ?
->> >> >
->> >> > One of my customers needs RPC SPI driver for our company's
->> >> > Octal-Flash,MX25UW51245G.
->> >> > We don't have HF product and hope you could understanding.
->> >>
->> >> I am worried that when we need to add RPC HF support (which is what all
->> >> boards but the D3 Draak use), we will have to rewrite the entire driver
->> >> and/or convert it to MFD and that would be a tremendous
-> undertaking. I'd
->> >> prefer to have the driver ready for the HF addition before it's
-> accepted
->> >> upstream.
->> >>
->> >
->> > I think maybe your concerned would be happened only if HF driver
-> goes with
->> > spi-mem layer.
->> >
->> > A comment for HF from Daniel Fishman. FYR.
->> >
->> > https://www.quora.com/What-is-a-hyper-flash-memory-and-how-is-it-
->> different-from-normal-flash-memory
->>
->> I have a decent idea what HF and SPI NOR are, since I wrote the RPC
->> driver for both HF and SPI mode for U-Boot (as I mentioned earlier).
->>
->> The HF in Linux would use the CFI NOR part of MTD framework. My concern
->> is that when we need to add HF support into this driver, this driver
->> will have to be basically rewritten, since the architecture won't allow
->> for that. I'd like to avoid that, since the majority of Gen3 boards,
->> expect for the D3 Draak, use RPC in HF mode.
+On Mon, Jan 28, 2019 at 10:16:27AM +0100, Jan Kara wrote:
+> On Sun 27-01-19 16:36:34, valdis.kletnieks@vt.edu wrote:
+> > On Sun, 27 Jan 2019 17:00:27 +0100, Pavel Machek said:
+> > > > > I've noticed this as well on earlier kernels (next-20181224 to 20190115)
+> > > > > Some more info:
+> > > > > 1) echo 3 > /proc/sys/vm/drop_caches  unwedges kcompactd in 1-3 seconds.
+> > > > This aspect is curious as it indicates that kcompactd could potentially
+> > > > be infinite looping but it's not something I've experienced myself. By
+> > > > any chance is there a preditable reproduction case for this?
+> > >
+> > > I seen it exactly once, so not sure how reproducible this is. x86-32
+> > > machine, running chromium browser, so yes, there was some swapping
+> > > involved.
+> > 
+> > I don't have a surefire replicator, but my laptop (x86_64, so it's not a 32-bit
+> > only issue) triggers it fairly often, up to multiple times a day. Doesn't seem to
+> > be just the Chrome browser that triggers it - usually I'm doing other stuff as
+> > well, like a compile or similar.  The fact that 'drop_caches' clears it  makes me
+> > wonder if we're hitting a corner case where cache data isn't being automatically
+> > cleared and clogging something up.
 > 
-> FYI~
+> So my buffer_migrate_page_norefs() is certainly buggy in its current
+> incarnation (as a result block device page cache is not migratable at all).
+> I've sent Andrew a patch over week ago but so far it got ignored. The patch
+> is attached, can you give it a try whether it changes something for you?
+> Thanks!
 > 
-> MX25UW51245g(64MByte Octa)                      S26KL512S(64MByte HF)
->    8 IO                                                  8 IO
-> 200MHz DDR@1.8v                                   166MHz DDR@1.8v
-> 
-> support Read-while-write                       Not support
-> good for OTA,etc
-> powerful application
 
-What does that mean ?
+Definetly worth trying and hopefully both the migration and compaction
+patches sync up soon. In the event this patch does not help, I would
+appreciate the following
+
+1) A trace while kcompactd is pegged at 100%
+
+	trace-cmd record -a -e compaction -e migrate -e kmem:mm_page_alloc -e vmscan:mm_vmscan_kswapd_wake -e vmscan:mm_vmscan_kswapd_sleep sleep 10
+
+   Compress the resulting trace.dat and email it to me. If it's too big
+   for a reasonable email, drop "-e kmem:mm_page_alloc" from the command
+   line and it should be a more reasonable size. If not, reduce the sleep
+   time to gather a shorter inverval.
+
+2) Sample stack traces of kcompact while pegged at 100%
+
+   echo -n > /tmp/kcompactd-stack; for i in `seq 1 100`; do echo sample $i >> /tmp/kcompactd-stack; cat /proc/`pidof kcompactd0`/stack >> /tmp/kcompactd-stack; done; gzip -f /tmp/kcompactd-stack
+
+   And mail me the resulting /tmp/kcompactd-stack.gz
+
+Thanks.
 
 -- 
-Best regards,
-Marek Vasut
+Mel Gorman
+SUSE Labs
