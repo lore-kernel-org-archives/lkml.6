@@ -2,188 +2,153 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A3B0C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58A96C282CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:23:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41F4F20882
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:22:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F8FC217FA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:23:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="ezxuEKjC"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OshT1GdS"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726825AbfA1HWO (ORCPT
+        id S1726714AbfA1HXz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:22:14 -0500
-Received: from hqemgate15.nvidia.com ([216.228.121.64]:13625 "EHLO
-        hqemgate15.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726647AbfA1HWN (ORCPT
+        Mon, 28 Jan 2019 02:23:55 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34387 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726647AbfA1HXy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:22:13 -0500
-Received: from hqpgpgate102.nvidia.com (Not Verified[216.228.121.13]) by hqemgate15.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5c4ead8a0000>; Sun, 27 Jan 2019 23:21:46 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate102.nvidia.com (PGP Universal service);
-  Sun, 27 Jan 2019 23:22:12 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate102.nvidia.com on Sun, 27 Jan 2019 23:22:12 -0800
-Received: from [10.19.108.140] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Mon, 28 Jan
- 2019 07:22:11 +0000
-Subject: Re: [PATCH 4/5] phy: tegra: xusb: Add support for power supplies
-To:     Thierry Reding <thierry.reding@gmail.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>
-CC:     Jonathan Hunter <jonathanh@nvidia.com>,
-        <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20190125112525.10697-1-thierry.reding@gmail.com>
- <20190125112525.10697-4-thierry.reding@gmail.com>
-From:   jckuo <jckuo@nvidia.com>
-Message-ID: <786247a4-81d1-9c2e-21b5-258dc818ccb9@nvidia.com>
-Date:   Mon, 28 Jan 2019 15:22:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        Mon, 28 Jan 2019 02:23:54 -0500
+Received: by mail-ot1-f68.google.com with SMTP id t5so13842444otk.1;
+        Sun, 27 Jan 2019 23:23:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PpKSzmaRDODSwUyXeKk+KgJ41/j+0HcFQypPO2rAs+Q=;
+        b=OshT1GdSwOflU25jR1S7/3xOtf7JR3ZxE2II8swufQF+Jtt7qtLkNbWpc2epL8Koyu
+         00WWFMOiNvxyZjUqYu/0E7T8EBKaQ3z9pxXJSuGnbrxwsJFB/ioOA2Eq1kxHpGsTr7E+
+         ZDpLE9DMrEJmff2KB696Y8mPx0rARM+IQFuj72ttpUg/dm2Qp3L1eg4FhjeG6//cQANZ
+         mDGHggfQRGAkFFIWEHd0PEunDF518COsFHcGQCfI92ja/aQIcRZbgwBZ3F/upDeczLJZ
+         UbpAG1j6PE2rMWpZjzbD1qhmxyha/jXwVh8KJIPGzR9OURciY5IEUhbUBqERFKj2UXRG
+         QrHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PpKSzmaRDODSwUyXeKk+KgJ41/j+0HcFQypPO2rAs+Q=;
+        b=PhAZNInB0KlfQ4b5UVy/10Lj7vFTa8vZk5T7bg9bHTnPPKdCG8YCZMgI6xRgKxJ6Lb
+         4RRST2SH8HLp8HvvvI/hnHttULoZlr2owfv1PKQQBlXN3cN9RcrNs5OHgAv7mdEsSlE8
+         TdkmEh2wd2ezvLPnId8PjrpL4YbtCk7gG8RkgR08FWaFeUAqa4np9zYjdf8/cAJP/Z2Q
+         lgBTgkgMXPnLBRwBOPnjRzYJTY7m3U40aP2oPB2e7JimA1DoUGqBAg3hJ/OjaIbkGbHC
+         qsCgEL+gKqlFFgnGU4HEXoV7YxSwHlM54s8Ci+DneWkPRr9hxvKaouOtVyth8CMzo5Jl
+         VXLw==
+X-Gm-Message-State: AJcUukdExuTd6m46ommPPT9c1cJn8SyvL3QavUdfnECRgp4E7K8M9PD5
+        e3NOEqEdhafEyyfIULoJnHvDSARog1CYCUxbAbY=
+X-Google-Smtp-Source: ALg8bN5GYj+D2d1PwenZBAQlNLo2jXh5vwhReZROXmsIQQG3xD0BB4Pj7RHT7/kp2xDwszHAli5WBoubnmssumiA+6s=
+X-Received: by 2002:a9d:6d95:: with SMTP id x21mr14470233otp.99.1548660233519;
+ Sun, 27 Jan 2019 23:23:53 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20190125112525.10697-4-thierry.reding@gmail.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1548660106; bh=4IUek0IQQgdw6rTZsSbm84mEXbVc3FclMCl/mUw3jT0=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Transfer-Encoding:
-         Content-Language;
-        b=ezxuEKjCrHpWfBW5mfbZ2JUPsnL+SbHaKrcbhl8MrmyLty74c6LxDiOTLWCxAtwWc
-         u6Pse+XLpL/zUxQ4dvUzoiTsFic3GK+fkGIlRUmNyBXhgVV8XQb8KotpYm02dc0SyD
-         LaJy1hZxoo4qaYKbsiDVXsD2ZcrO0N463kDCRfQbn1ixR7+jjQjotU4dat7mHLpXrO
-         I3WnsbjdgA2NOddj0f/eyXpTAaUKqbV1iM00y9ismbk0ljiT59rqT6bOsypw20SWT3
-         shzd3aKxeZV8vDuaz2XCtdOJ7fgrRRCcCXXMuBMUXIT88/XgG8rurZ8Up57eGfqKGc
-         Zpqujr8Q3auKA==
+References: <1548358316-8062-1-git-send-email-rodrigorsdc@gmail.com>
+ <CA+U=DsqG6PKs1Off9QP_3_q+c5=uzRypHCs+O6iur=NC5QdDdQ@mail.gmail.com> <20190126180909.38380f05@archlinux>
+In-Reply-To: <20190126180909.38380f05@archlinux>
+From:   Alexandru Ardelean <ardeleanalex@gmail.com>
+Date:   Mon, 28 Jan 2019 09:23:41 +0200
+Message-ID: <CA+U=DsoP_Y62ONbb5OmU3r=0UFihDT0GC3ur4i_bHFjBMAeWpw@mail.gmail.com>
+Subject: Re: [PATCH] staging:iio:ad7152: Rename misspelled RESEVERD -> RESERVED
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     Rodrigo Ribeiro <rodrigorsdc@gmail.com>, lars@metafoo.de,
+        Michael.Hennerich@analog.com, knaack.h@gmx.de,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        kernel-usp@googlegroups.com, Rafael Tsuha <rafael.tsuha@usp.br>,
+        alexandru.ardelean@analog.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Thierry,
-
-I think any non-zero return value of 
-regulator_bulk_enable()/devm_regulator_bulk_get() means error.
-
-Thanks,
-
-JC
-
-On 1/25/19 7:25 PM, Thierry Reding wrote:
-> From: Thierry Reding <treding@nvidia.com>
+On Sat, Jan 26, 2019 at 8:09 PM Jonathan Cameron <jic23@kernel.org> wrote:
 >
-> Support enabling various supplies needed to provide power to the PLLs
-> and logic used to drive the USB, PCI and SATA pads.
+> On Fri, 25 Jan 2019 10:19:54 +0200
+> Alexandru Ardelean <ardeleanalex@gmail.com> wrote:
 >
-> Signed-off-by: Thierry Reding <treding@nvidia.com>
-> ---
->   drivers/phy/tegra/xusb.c | 34 +++++++++++++++++++++++++++++++++-
->   drivers/phy/tegra/xusb.h |  5 +++++
->   2 files changed, 38 insertions(+), 1 deletion(-)
+> > On Thu, Jan 24, 2019 at 9:35 PM Rodrigo Ribeiro <rodrigorsdc@gmail.com> wrote:
+> > >
+> > > Remove the checkpatch.pl check:
+> > >
+> > > CHECK: 'RESEVERD' may be misspelled - perhaps 'RESERVED'?
+> >
+> > Hey,
+> >
+> > A bit curios about this one.
+> > Are you using this chip/driver ?
+> >
+> > Thing is: the part is nearing EOL, and it could be an idea to be
+> > marked for removal (since it's still in staging).
+> > But if there are users for this driver, it could be left around for a while.
 >
-> diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> index 57a2d08ef6da..e510629f4f1c 100644
-> --- a/drivers/phy/tegra/xusb.c
-> +++ b/drivers/phy/tegra/xusb.c
-> @@ -864,6 +864,7 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
->   	struct tegra_xusb_padctl *padctl;
->   	const struct of_device_id *match;
->   	struct resource *res;
-> +	unsigned int i;
->   	int err;
->   
->   	/* for backwards compatibility with old device trees */
-> @@ -901,14 +902,38 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
->   		goto remove;
->   	}
->   
-> +	padctl->supplies = devm_kcalloc(&pdev->dev, padctl->soc->num_supplies,
-> +					sizeof(*padctl->supplies), GFP_KERNEL);
-> +	if (!padctl->supplies) {
-> +		err = -ENOMEM;
-> +		goto remove;
-> +	}
-> +
-> +	for (i = 0; i < padctl->soc->num_supplies; i++)
-> +		padctl->supplies[i].supply = padctl->soc->supply_names[i];
-> +
-> +	err = devm_regulator_bulk_get(&pdev->dev, padctl->soc->num_supplies,
-> +				      padctl->supplies);
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev, "failed to get regulators: %d\n", err);
-> +		goto remove;
-> +	}
-> +
->   	err = reset_control_deassert(padctl->rst);
->   	if (err < 0)
->   		goto remove;
->   
-> +	err = regulator_bulk_enable(padctl->soc->num_supplies,
-> +				    padctl->supplies);
-> +	if (err < 0) {
-> +		dev_err(&pdev->dev, "failed to enable supplies: %d\n", err);
-> +		goto reset;
-> +	}
-> +
->   	err = tegra_xusb_setup_pads(padctl);
->   	if (err < 0) {
->   		dev_err(&pdev->dev, "failed to setup pads: %d\n", err);
-> -		goto reset;
-> +		goto power_down;
->   	}
->   
->   	err = tegra_xusb_setup_ports(padctl);
-> @@ -921,6 +946,8 @@ static int tegra_xusb_padctl_probe(struct platform_device *pdev)
->   
->   remove_pads:
->   	tegra_xusb_remove_pads(padctl);
-> +power_down:
-> +	regulator_bulk_disable(padctl->soc->num_supplies, padctl->supplies);
->   reset:
->   	reset_control_assert(padctl->rst);
->   remove:
-> @@ -936,6 +963,11 @@ static int tegra_xusb_padctl_remove(struct platform_device *pdev)
->   	tegra_xusb_remove_ports(padctl);
->   	tegra_xusb_remove_pads(padctl);
->   
-> +	err = regulator_bulk_disable(padctl->soc->num_supplies,
-> +				     padctl->supplies);
-> +	if (err < 0)
-> +		dev_err(&pdev->dev, "failed to disable supplies: %d\n", err);
-> +
->   	err = reset_control_assert(padctl->rst);
->   	if (err < 0)
->   		dev_err(&pdev->dev, "failed to assert reset: %d\n", err);
-> diff --git a/drivers/phy/tegra/xusb.h b/drivers/phy/tegra/xusb.h
-> index bb60fc09c752..5d5d22f6cb41 100644
-> --- a/drivers/phy/tegra/xusb.h
-> +++ b/drivers/phy/tegra/xusb.h
-> @@ -370,6 +370,9 @@ struct tegra_xusb_padctl_soc {
->   	} ports;
->   
->   	const struct tegra_xusb_padctl_ops *ops;
-> +
-> +	const char * const *supply_names;
-> +	unsigned int num_supplies;
->   };
->   
->   struct tegra_xusb_padctl {
-> @@ -393,6 +396,8 @@ struct tegra_xusb_padctl {
->   	unsigned int enable;
->   
->   	struct clk *clk;
-> +
-> +	struct regulator_bulk_data *supplies;
->   };
->   
->   static inline void padctl_writel(struct tegra_xusb_padctl *padctl, u32 value,
+> While it might be going away soon, I'm also not that bothered about
+> the small amount of churn that a tidy up patch like this causes,
+> and it might not go away ;)
+>
+> However it is rather odd to have a 'reserved' entry for a register.
+> can't see that providing any useful information.  Normally I'm
+> happy to have complete register sets as a form of documentation
+> if the author wants to do it that way.  This however seems silly.
+>
+> Alex, we haven't really gone with marking things as 'going away'
+> before.  I'd suggest we take a guess and remove it if you and the
+> team an analog don't think it's in use.  Happy to get a patch for
+> that if you want to send one.  Of course, Rodrigo could do that
+> patch to get started if that works for everyone? :)
+>
+
+We'll also start a discussion about this particular driver internally.
+And maybe a procedure for removing drivers that become obsolete [or
+come close to it].
+We also don't/didn't have one for removing "going away" drivers; I
+just remembered that we took a look over this one and decided not to
+invest time into it as it's close to being obsolete.
+
+Thanks
+Alex
+
+> Jonathan
+> >
+> > Thanks
+> > Alex
+> >
+> > >
+> > > Signed-off-by: Rodrigo Ribeiro <rodrigorsdc@gmail.com>
+> > > Signed-off-by: Rafael Tsuha <rafael.tsuha@usp.br>
+> > > ---
+> > > This macro is not used anywhere. Should we just correct the
+> > > spelling or remove the macro?
+> > >
+> > >  drivers/staging/iio/cdc/ad7152.c | 2 +-
+> > >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/staging/iio/cdc/ad7152.c b/drivers/staging/iio/cdc/ad7152.c
+> > > index 25f51db..c9da6d4 100644
+> > > --- a/drivers/staging/iio/cdc/ad7152.c
+> > > +++ b/drivers/staging/iio/cdc/ad7152.c
+> > > @@ -35,7 +35,7 @@
+> > >  #define AD7152_REG_CH2_GAIN_HIGH       12
+> > >  #define AD7152_REG_CH2_SETUP           14
+> > >  #define AD7152_REG_CFG                 15
+> > > -#define AD7152_REG_RESEVERD            16
+> > > +#define AD7152_REG_RESERVED            16
+> > >  #define AD7152_REG_CAPDAC_POS          17
+> > >  #define AD7152_REG_CAPDAC_NEG          18
+> > >  #define AD7152_REG_CFG2                        26
+> > > --
+> > > 2.7.4
+> > >
+>
