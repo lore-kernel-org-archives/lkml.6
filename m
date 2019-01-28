@@ -4,49 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43C5BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EA493C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1246721916
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC58421916
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:58:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691111;
-	bh=K4SPZ/gdmFlxYHppu8nT/DRShzbwF9jGnnrlE10MTX0=;
+	s=default; t=1548691114;
+	bh=afROL465m57qOLdQnxGVj8vcRB42rGOPL162CAI4uAU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vnoV/cCzH8tRQkbLy0eIMSIXA5SXZxnn7TyTg/qhz/JNLu6zQXnmi6Nc9vlBw8qSS
-	 b5JFs2soWAfKT0lVzz3hR90CQ5dFQ/MOAp8tuNy+nBbg5bbfhW08LXDVFlQuPfOmGp
-	 0O+EOBF+VoNiFtznDFF/P7vwH/rKIwv9FAI+wiPI=
+	b=DukZkaNBZ5o02lIGftcUj+bHPUPoCzcQRqkRdRrBQnWut8n+myqCx2j7V1sJ1LecZ
+	 yEwrk4EuaKK22Of8K25/foyHuPSUm390qi3AbSr91MObAIHLIE5Gz20Rr/nqTY3Ebb
+	 i5a8P7TWW1D/ZNTExFNan0FQslKMEYUKHSQpjaPY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729876AbfA1P63 (ORCPT
+        id S1727973AbfA1P6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:58:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43834 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:58:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43916 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728755AbfA1P60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:58:26 -0500
+        id S1728755AbfA1P6b (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:58:31 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B35912175B;
-        Mon, 28 Jan 2019 15:58:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 146B321848;
+        Mon, 28 Jan 2019 15:58:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691104;
-        bh=K4SPZ/gdmFlxYHppu8nT/DRShzbwF9jGnnrlE10MTX0=;
+        s=default; t=1548691110;
+        bh=afROL465m57qOLdQnxGVj8vcRB42rGOPL162CAI4uAU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=uQTX4OHmc6Mdl/7eb9duvg+dQkyeSUKqWIlvskMeg8bP1IH24MoDDSskEmV/iiSwL
-         zoRODZPB0TsoG/gmjY/hjVhlr/nK30t6WEnljLb6ovUWul7R+DEj0xtyIGW+UL+45Y
-         MochGFq7ufjtguOVDcZzGjWxYA4vNvR1AzNBiPio=
+        b=bZz95AW2f7hTH0ZCb4+XX/nk3dvygu5yZye77yy1lVmGjpUj7pcLgPk557VgOPVnX
+         +7vNj87dqpIhtC2jjIROBnARBxhrwV96H3aHEy0hXVoso2DsCriFtIEBJnbpZZNTNX
+         efJ5YeN2G59XcCfj7xy+lGrfhniY6VmLHqdqpsRw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Douglas Anderson <dianders@chromium.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Sasha Levin <sashal@kernel.org>,
-        kgdb-bugreport@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.20 288/304] kdb: Don't back trace on a cpu that didn't round up
-Date:   Mon, 28 Jan 2019 10:43:25 -0500
-Message-Id: <20190128154341.47195-288-sashal@kernel.org>
+Cc:     Finn Thain <fthain@telegraphics.com.au>,
+        linuxppc-dev@lists.ozlabs.org, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 291/304] block/swim3: Fix regression on PowerBook G3
+Date:   Mon, 28 Jan 2019 10:43:28 -0500
+Message-Id: <20190128154341.47195-291-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,88 +58,128 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Douglas Anderson <dianders@chromium.org>
+From: Finn Thain <fthain@telegraphics.com.au>
 
-[ Upstream commit 162bc7f5afd75b72acbe3c5f3488ef7e64a3fe36 ]
+[ Upstream commit 427c5ce4417cba0801fbf79c8525d1330704759c ]
 
-If you have a CPU that fails to round up and then run 'btc' you'll end
-up crashing in kdb becaue we dereferenced NULL.  Let's add a check.
-It's wise to also set the task to NULL when leaving the debugger so
-that if we fail to round up on a later entry into the debugger we
-won't backtrace a stale task.
+As of v4.20, the swim3 driver crashes when loaded on a PowerBook G3
+(Wallstreet).
 
-Signed-off-by: Douglas Anderson <dianders@chromium.org>
-Acked-by: Daniel Thompson <daniel.thompson@linaro.org>
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
+MacIO PCI driver attached to Gatwick chipset
+MacIO PCI driver attached to Heathrow chipset
+swim3 0.00015000:floppy: [fd0] SWIM3 floppy controller in media bay
+0.00013020:ch-a: ttyS0 at MMIO 0xf3013020 (irq = 16, base_baud = 230400) is a Z85c30 ESCC - Serial port
+0.00013000:ch-b: ttyS1 at MMIO 0xf3013000 (irq = 17, base_baud = 230400) is a Z85c30 ESCC - Infrared port
+macio: fixed media-bay irq on gatwick
+macio: fixed left floppy irqs
+swim3 1.00015000:floppy: [fd1] Couldn't request interrupt
+Unable to handle kernel paging request for data at address 0x00000024
+Faulting instruction address: 0xc02652f8
+Oops: Kernel access of bad area, sig: 11 [#1]
+BE SMP NR_CPUS=2 PowerMac
+Modules linked in:
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.20.0 #2
+NIP:  c02652f8 LR: c026915c CTR: c0276d1c
+REGS: df43ba10 TRAP: 0300   Not tainted  (4.20.0)
+MSR:  00009032 <EE,ME,IR,DR,RI>  CR: 28228288  XER: 00000100
+DAR: 00000024 DSISR: 40000000
+GPR00: c026915c df43bac0 df439060 c0731524 df494700 00000000 c06e1c08 00000001
+GPR08: 00000001 00000000 df5ff220 00001032 28228282 00000000 c0004ca4 00000000
+GPR16: 00000000 00000000 00000000 c073144c dfffe064 c0731524 00000120 c0586108
+GPR24: c073132c c073143c c073143c 00000000 c0731524 df67cd70 df494700 00000001
+NIP [c02652f8] blk_mq_free_rqs+0x28/0xf8
+LR [c026915c] blk_mq_sched_tags_teardown+0x58/0x84
+Call Trace:
+[df43bac0] [c0045f50] flush_workqueue_prep_pwqs+0x178/0x1c4 (unreliable)
+[df43bae0] [c026915c] blk_mq_sched_tags_teardown+0x58/0x84
+[df43bb00] [c02697f0] blk_mq_exit_sched+0x9c/0xb8
+[df43bb20] [c0252794] elevator_exit+0x84/0xa4
+[df43bb40] [c0256538] blk_exit_queue+0x30/0x50
+[df43bb50] [c0256640] blk_cleanup_queue+0xe8/0x184
+[df43bb70] [c034732c] swim3_attach+0x330/0x5f0
+[df43bbb0] [c034fb24] macio_device_probe+0x58/0xec
+[df43bbd0] [c032ba88] really_probe+0x1e4/0x2f4
+[df43bc00] [c032bd28] driver_probe_device+0x64/0x204
+[df43bc20] [c0329ac4] bus_for_each_drv+0x60/0xac
+[df43bc50] [c032b824] __device_attach+0xe8/0x160
+[df43bc80] [c032ab38] bus_probe_device+0xa0/0xbc
+[df43bca0] [c0327338] device_add+0x3d8/0x630
+[df43bcf0] [c0350848] macio_add_one_device+0x444/0x48c
+[df43bd50] [c03509f8] macio_pci_add_devices+0x168/0x1bc
+[df43bd90] [c03500ec] macio_pci_probe+0xc0/0x10c
+[df43bda0] [c02ad884] pci_device_probe+0xd4/0x184
+[df43bdd0] [c032ba88] really_probe+0x1e4/0x2f4
+[df43be00] [c032bd28] driver_probe_device+0x64/0x204
+[df43be20] [c032bfcc] __driver_attach+0x104/0x108
+[df43be40] [c0329a00] bus_for_each_dev+0x64/0xb4
+[df43be70] [c032add8] bus_add_driver+0x154/0x238
+[df43be90] [c032ca24] driver_register+0x84/0x148
+[df43bea0] [c0004aa0] do_one_initcall+0x40/0x188
+[df43bf00] [c0690100] kernel_init_freeable+0x138/0x1d4
+[df43bf30] [c0004cbc] kernel_init+0x18/0x10c
+[df43bf40] [c00121e4] ret_from_kernel_thread+0x14/0x1c
+Instruction dump:
+5484d97e 4bfff4f4 9421ffe0 7c0802a6 bf410008 7c9e2378 90010024 8124005c
+2f890000 419e0078 81230004 7c7c1b78 <81290024> 2f890000 419e0064 81440000
+---[ end trace 12025ab921a9784c ]---
+
+Reverting commit 8ccb8cb1892b ("swim3: convert to blk-mq") resolves the
+problem.
+
+That commit added a struct blk_mq_tag_set to struct floppy_state and
+initialized it with a blk_mq_init_sq_queue() call. Unfortunately, there
+is a memset() in swim3_add_device() that subsequently clears the
+floppy_state struct. That means fs->tag_set->ops is a NULL pointer, and
+it gets dereferenced by blk_mq_free_rqs() which gets called in the
+request_irq() error path. Move the memset() to fix this bug.
+
+BTW, the request_irq() failure for the left mediabay floppy (fd1) is not
+a regression. I don't know why it happens. The right media bay floppy
+(fd0) works fine however.
+
+Reported-and-tested-by: Stan Johnson <userm57@yahoo.com>
+Fixes: 8ccb8cb1892b ("swim3: convert to blk-mq")
+Cc: linuxppc-dev@lists.ozlabs.org
+Signed-off-by: Finn Thain <fthain@telegraphics.com.au>
+
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/debug/debug_core.c       |  4 ++++
- kernel/debug/kdb/kdb_bt.c       | 11 ++++++++++-
- kernel/debug/kdb/kdb_debugger.c |  7 -------
- 3 files changed, 14 insertions(+), 8 deletions(-)
+ drivers/block/swim3.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-index 65c0f1363788..94aa9ae0007a 100644
---- a/kernel/debug/debug_core.c
-+++ b/kernel/debug/debug_core.c
-@@ -535,6 +535,8 @@ return_normal:
- 				arch_kgdb_ops.correct_hw_break();
- 			if (trace_on)
- 				tracing_on();
-+			kgdb_info[cpu].debuggerinfo = NULL;
-+			kgdb_info[cpu].task = NULL;
- 			kgdb_info[cpu].exception_state &=
- 				~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
- 			kgdb_info[cpu].enter_kgdb--;
-@@ -667,6 +669,8 @@ kgdb_restore:
- 	if (trace_on)
- 		tracing_on();
+diff --git a/drivers/block/swim3.c b/drivers/block/swim3.c
+index 3f6df3f1f5d9..1046459f172b 100644
+--- a/drivers/block/swim3.c
++++ b/drivers/block/swim3.c
+@@ -1091,8 +1091,6 @@ static int swim3_add_device(struct macio_dev *mdev, int index)
+ 	struct floppy_state *fs = &floppy_states[index];
+ 	int rc = -EBUSY;
  
-+	kgdb_info[cpu].debuggerinfo = NULL;
-+	kgdb_info[cpu].task = NULL;
- 	kgdb_info[cpu].exception_state &=
- 		~(DCPU_WANT_MASTER | DCPU_IS_SLAVE);
- 	kgdb_info[cpu].enter_kgdb--;
-diff --git a/kernel/debug/kdb/kdb_bt.c b/kernel/debug/kdb/kdb_bt.c
-index 7921ae4fca8d..7e2379aa0a1e 100644
---- a/kernel/debug/kdb/kdb_bt.c
-+++ b/kernel/debug/kdb/kdb_bt.c
-@@ -186,7 +186,16 @@ kdb_bt(int argc, const char **argv)
- 		kdb_printf("btc: cpu status: ");
- 		kdb_parse("cpu\n");
- 		for_each_online_cpu(cpu) {
--			sprintf(buf, "btt 0x%px\n", KDB_TSK(cpu));
-+			void *kdb_tsk = KDB_TSK(cpu);
+-	/* Do this first for message macros */
+-	memset(fs, 0, sizeof(*fs));
+ 	fs->mdev = mdev;
+ 	fs->index = index;
+ 
+@@ -1192,14 +1190,15 @@ static int swim3_attach(struct macio_dev *mdev,
+ 			return rc;
+ 	}
+ 
+-	fs = &floppy_states[floppy_count];
+-
+ 	disk = alloc_disk(1);
+ 	if (disk == NULL) {
+ 		rc = -ENOMEM;
+ 		goto out_unregister;
+ 	}
+ 
++	fs = &floppy_states[floppy_count];
++	memset(fs, 0, sizeof(*fs));
 +
-+			/* If a CPU failed to round up we could be here */
-+			if (!kdb_tsk) {
-+				kdb_printf("WARNING: no task for cpu %ld\n",
-+					   cpu);
-+				continue;
-+			}
-+
-+			sprintf(buf, "btt 0x%px\n", kdb_tsk);
- 			kdb_parse(buf);
- 			touch_nmi_watchdog();
- 		}
-diff --git a/kernel/debug/kdb/kdb_debugger.c b/kernel/debug/kdb/kdb_debugger.c
-index 15e1a7af5dd0..53a0df6e4d92 100644
---- a/kernel/debug/kdb/kdb_debugger.c
-+++ b/kernel/debug/kdb/kdb_debugger.c
-@@ -118,13 +118,6 @@ int kdb_stub(struct kgdb_state *ks)
- 	kdb_bp_remove();
- 	KDB_STATE_CLEAR(DOING_SS);
- 	KDB_STATE_SET(PAGER);
--	/* zero out any offline cpu data */
--	for_each_present_cpu(i) {
--		if (!cpu_online(i)) {
--			kgdb_info[i].debuggerinfo = NULL;
--			kgdb_info[i].task = NULL;
--		}
--	}
- 	if (ks->err_code == DIE_OOPS || reason == KDB_REASON_OOPS) {
- 		ks->pass_exception = 1;
- 		KDB_FLAG_SET(CATASTROPHIC);
+ 	disk->queue = blk_mq_init_sq_queue(&fs->tag_set, &swim3_mq_ops, 2,
+ 						BLK_MQ_F_SHOULD_MERGE);
+ 	if (IS_ERR(disk->queue)) {
 -- 
 2.19.1
 
