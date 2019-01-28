@@ -2,102 +2,105 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1BEEC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2EFC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BDCC42087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1AAB72087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693720;
-	bh=WJsU1MnbQNDmxZxTnp/bb6H3l/XkJWnLbjTSfk6N/38=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=f1SIZzm4bDBwe1iAcTb8WLm7ZEBERdM3KM4Dg0ERVkh8ftWGdRbwZTWdy4Unja0IB
-	 Z/9B7PAiK6Nn/4M2Fl+kikNXJ+hySNSw7uF3hc1Bpr5C9t31SZ0+1XpTf1+6ywrg63
-	 ePN9qnXFNOjqMozugZCfXAPT2AZ2zqk7Gpw9DDsY=
+	s=default; t=1548693725;
+	bh=cTgZSq7YM09igmDrjLSy1ExfkAoV9Df20sz6sc1jlKc=;
+	h=Subject:To:Cc:References:From:Date:In-Reply-To:List-ID:From;
+	b=vWUreEQBZI/fHjhNDcEgnjsaydIVttG0GHzXpDIP1KH/4YfdXa5PWeR+XJM/BU4qj
+	 5pD6Z7DHAD/IADUVS7Yfk03uFvuat5rDGZ/Wi73heXauoz7D+H4CnD6RlRqoQfzxFN
+	 BL7Cp1eKhEIm/KGvdK07VO5jo9sJzYYdezlbecVc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389865AbfA1Ql6 (ORCPT
+        id S2390113AbfA1QmD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:41:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60162 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:42:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52394 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389529AbfA1QXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:49 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        id S2389529AbfA1QmA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:42:00 -0500
+Received: from [192.168.0.101] (unknown [49.65.250.93])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 57F062147A;
-        Mon, 28 Jan 2019 16:23:48 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9428120879;
+        Mon, 28 Jan 2019 16:41:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692629;
-        bh=WJsU1MnbQNDmxZxTnp/bb6H3l/XkJWnLbjTSfk6N/38=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CKZRZgutzy+2t82E7STBsWqnUPBHclucznzllcsO/i30qo4ANlrZr3z0mrWH6F+1K
-         mRjzQkgAG/kaAYoagTad7GxeP1Gc3mgIToOT5Ta28E9VUpGw54Qe4A9uy2fue75oeI
-         W2PWPC+LWvpSWi1EkJLLy0oEVdoQH0TCSMF5seF8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Aditya Pakki <pakki001@umn.edu>, Jiri Kosina <jkosina@suse.cz>,
-        Sasha Levin <sashal@kernel.org>, linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 102/107] HID: lenovo: Add checks to fix of_led_classdev_register
-Date:   Mon, 28 Jan 2019 11:19:42 -0500
-Message-Id: <20190128161947.57405-102-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
-References: <20190128161947.57405-1-sashal@kernel.org>
+        s=default; t=1548693719;
+        bh=cTgZSq7YM09igmDrjLSy1ExfkAoV9Df20sz6sc1jlKc=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=JldJbK2vS/5o8Z9YboqYnylD3TQ/jcMM5QIgfeVPDyHL8aB/R/JCdKnSTG7cStO8V
+         NdfjbCQ8YU5NSi+ah6WZ1jYapPHrAfn8iiWYWOdD2iCmzaowuwlTqgZSliaq6OcPbv
+         +0VKhN9OeFbu96V7Eoojlb6nMELtdPbEiczVk2AY=
+Subject: Re: [PATCH v2 2/2] staging: erofs: complete POSIX ACL support
+To:     Gao Xiang <gaoxiang25@huawei.com>,
+        Dan Carpenter <dan.carpenter@oracle.com>,
+        Chao Yu <yuchao0@huawei.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-erofs@lists.ozlabs.org,
+        LKML <linux-kernel@vger.kernel.org>, weidu.du@huawei.com,
+        Fang Wei <fangwei1@huawei.com>, Miao Xie <miaoxie@huawei.com>
+References: <20190125161007.4447-1-gaoxiang25@huawei.com>
+ <20190125161007.4447-2-gaoxiang25@huawei.com>
+ <94daa491-40c8-4a09-a0b5-55a7e92dc3fc@huawei.com>
+ <20190128133302.GI1795@kadam>
+ <f1fd2c69-0c5b-c655-3712-48169e87fff8@huawei.com>
+From:   Chao Yu <chao@kernel.org>
+Message-ID: <1eed1e6b-f95e-aa8e-c3e7-e9870401ee23@kernel.org>
+Date:   Tue, 29 Jan 2019 00:41:55 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <f1fd2c69-0c5b-c655-3712-48169e87fff8@huawei.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Aditya Pakki <pakki001@umn.edu>
+Hi Dan and Xiang,
 
-[ Upstream commit 6ae16dfb61bce538d48b7fe98160fada446056c5 ]
+On 2019-1-28 21:48, Gao Xiang wrote:
+> Hi Dan,
+> 
+> On 2019/1/28 21:33, Dan Carpenter wrote:
+>> Hopefully, regular kmalloc() is enough.
+>>
+>> Do really need the erofs_kmalloc() function?  Regular kmalloc() has
+>> fault injection already.  Have you tried to use it?
 
-In lenovo_probe_tpkbd(), the function of_led_classdev_register() could
-return an error value that is unchecked. The fix adds these checks.
+Yes, I think we'd better to use erofs_kmalloc(). :)
 
-Signed-off-by: Aditya Pakki <pakki001@umn.edu>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/hid/hid-lenovo.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+Actually, fault injection in erofs_kmalloc only affect erofs module, we can
+expect that the range of fault can be limited in erofs code, rather than whole
+kernel, so the test point can be aimed at more accurately.
 
-diff --git a/drivers/hid/hid-lenovo.c b/drivers/hid/hid-lenovo.c
-index 1ac4ff4d57a6..d409cc8759fc 100644
---- a/drivers/hid/hid-lenovo.c
-+++ b/drivers/hid/hid-lenovo.c
-@@ -713,7 +713,9 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
- 	data_pointer->led_mute.brightness_get = lenovo_led_brightness_get_tpkbd;
- 	data_pointer->led_mute.brightness_set = lenovo_led_brightness_set_tpkbd;
- 	data_pointer->led_mute.dev = dev;
--	led_classdev_register(dev, &data_pointer->led_mute);
-+	ret = led_classdev_register(dev, &data_pointer->led_mute);
-+	if (ret < 0)
-+		goto err;
- 
- 	data_pointer->led_micmute.name = name_micmute;
- 	data_pointer->led_micmute.brightness_get =
-@@ -721,7 +723,11 @@ static int lenovo_probe_tpkbd(struct hid_device *hdev)
- 	data_pointer->led_micmute.brightness_set =
- 		lenovo_led_brightness_set_tpkbd;
- 	data_pointer->led_micmute.dev = dev;
--	led_classdev_register(dev, &data_pointer->led_micmute);
-+	ret = led_classdev_register(dev, &data_pointer->led_micmute);
-+	if (ret < 0) {
-+		led_classdev_unregister(&data_pointer->led_mute);
-+		goto err;
-+	}
- 
- 	lenovo_features_set_tpkbd(hdev);
- 
--- 
-2.19.1
+> 
+> The fault injection subsystem was introduced in the initial upstreamed
+> EROFS version, which is taken from f2fs by Chao Yu.
+> 
+> Fault injection is important to test fs.. However, I have no more idea
+> about the future plan of this feature...Follow f2fs or use the general
+> fault injection...
 
+I guess following f2fs is not bad.
+
+Thanks,
+
+> 
+> There already exists erofs_kmalloc, thus I think it's both ok to use
+> erofs_kmalloc or kmalloc for this patch at least.
+> 
+> Chao, any idea about this?
+> 
+> Thanks,
+> Gao Xiang
+> 
