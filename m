@@ -2,91 +2,138 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C8D6C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:45:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DC39C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:45:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2AAA20879
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:45:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="QkwceJg2"
+	by mail.kernel.org (Postfix) with ESMTP id 5E9932084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:45:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548693951;
+	bh=dl0Hkh+OOsyXw4u45jUUr7o9bMJs4jNgPgeXYpVFA2E=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=moKJFjkGWho2ShtUfZzqGIL0n0DsBhOl4qGb91O8tow9Pn5Ha1G/xalfMewcPFyoA
+	 8AMLwlp6BgG/GL8VrNsP3BDxV+kCLJwFXQ4Mrmw+GUV215/ks98Zwc9MbQI1rUeNbp
+	 FXGxuhBj8XLKJ2D0Qyzkt/vyCBsbsWJ/cB5pEMUk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389921AbfA1Qph (ORCPT
+        id S2390698AbfA1Qpt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:45:37 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25306 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389463AbfA1Qpc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:45:32 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548693911; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=LuxZqiAhTmrEGYf100dkixk9HR9OLtx3zxJFF8Mes8uIiFheGfzaavoIf1ef+Ou1+XNGPXxWgAOoM4NMjpLP+z1R5xxZfCPYaubNCoPcOej7iUKp07epDoYjBzhfHDmGkG7bn8UZHjkHq968wa8FYpnYMq62L7+a19zZKe0R4nY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548693911; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=/ocmoCVAUwgmUREFsy+ld0mubWacyF6BNsUB4nzEnmM=; 
-        b=PaYDgHQg03751fxq+BzUdH3Rptrp4MXFeziU4giLy0wboiFdEm1NvaO8IjsE8azPLGHsHJpd6QMxYqqmJyi/CCnJv+K17x2jOtqbrk9G7/dFWDkZt6xNNcfsSUnzKc7SmYXPZH38R1hSUmBb6EWDxNBVoCkhnMSjkdQh8cMOlIY=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=subject:to:references:cc:from:message-id:date:user-agent:mime-version:in-reply-to:content-type; 
-  b=a++7rL1uovTb5js/K0Vwmq202gyHEmGuXNbVbFeNAN1AJYqTum1+f4gZ2zkYL7ZmU0Pgq2eMV9/f
-    aSdk2DyxYhMuj/hd/dS0ZRvw3dmiN3XUihTmdfmlJoxnrUQO/oyQ  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548693911;
-        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-        l=501; bh=/ocmoCVAUwgmUREFsy+ld0mubWacyF6BNsUB4nzEnmM=;
-        b=QkwceJg2FNzhMKqiRe39Tk3If49ThFr4cKHl29IqkzHx329ZvhNq4Lsw6ZJDLV4/
-        G8qyGwW1LZkg+XnMu74hAZseH20FKIML+NCUGHlULX+5rG/UHsVFpg40BshZ3PNeCh/
-        HhprqXdPx5WcMw0/mOotpa7S9vOS3oACQ+7I++34=
-Received: from [192.168.88.133] (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
-        with SMTPS id 1548693909299708.5010229795901; Mon, 28 Jan 2019 08:45:09 -0800 (PST)
-Subject: Re: [PATCH v2 1/2] Serial: Ingenic: Add X1000 suppor for the UART
- driver.
-To:     Greg KH <gregkh@linuxfoundation.org>
-References: <1548667176-119830-1-git-send-email-zhouyanjie@zoho.com>
- <1548683821-120924-1-git-send-email-zhouyanjie@zoho.com>
- <1548683821-120924-2-git-send-email-zhouyanjie@zoho.com>
- <20190128162245.GA25853@kroah.com>
-Cc:     linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-serial@vger.kernel.org, devicetree@vger.kernel.org,
-        robh+dt@kernel.org, paul.burton@mips.com, jslaby@suse.com,
-        mark.rutland@arm.com, syq@debian.org, jiaxun.yang@flygoat.com,
-        772753199@qq.com
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-Message-ID: <5C4F318C.20505@zoho.com>
-Date:   Tue, 29 Jan 2019 00:45:00 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:38.0) Gecko/20100101
- Thunderbird/38.8.0
+        Mon, 28 Jan 2019 11:45:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58908 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388853AbfA1QWu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:22:50 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4B0E02171F;
+        Mon, 28 Jan 2019 16:22:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548692569;
+        bh=dl0Hkh+OOsyXw4u45jUUr7o9bMJs4jNgPgeXYpVFA2E=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sa+b8x6k5HidH3M3Bi4hEj6sYH5LpBp5imRsdS4mpz6y2p4+t8TyED3odmOKGBAfg
+         F0aGPNtxApoTVyCnG4dpAeu3LrNN/+LTs2p6fjhzvvJ0IeDqwj3n9kPI31pk7mrdbL
+         PB7Kv+36QC1A3hV24FQWwMNxi2ImSoxiBF0+z+K0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-wireless@vger.kernel.org, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 070/107] cw1200: Fix concurrency use-after-free bugs in cw1200_hw_scan()
+Date:   Mon, 28 Jan 2019 11:19:10 -0500
+Message-Id: <20190128161947.57405-70-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
+References: <20190128161947.57405-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20190128162245.GA25853@kroah.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-I am very sorry, I understood wrong before.
+From: Jia-Ju Bai <baijiaju1990@gmail.com>
 
-On 2019=E5=B9=B401=E6=9C=8829=E6=97=A5 00:22, Greg KH wrote:
-> On Mon, Jan 28, 2019 at 09:57:00PM +0800, Zhou Yanjie wrote:
->> Add support for probing the 8250_ingenic driver on the
->> X1000 Soc from Ingenic.
->>
->> Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
->> ---
->>   drivers/tty/serial/8250/8250_ingenic.c | 13 +++++++++----
->>   1 file changed, 9 insertions(+), 4 deletions(-)
-> Your subject lines are still identical for both patches :(
+[ Upstream commit 4f68ef64cd7feb1220232bd8f501d8aad340a099 ]
 
+The function cw1200_bss_info_changed() and cw1200_hw_scan() can be
+concurrently executed.
+The two functions both access a possible shared variable "frame.skb".
 
+This shared variable is freed by dev_kfree_skb() in cw1200_upload_beacon(),
+which is called by cw1200_bss_info_changed(). The free operation is
+protected by a mutex lock "priv->conf_mutex" in cw1200_bss_info_changed().
+
+In cw1200_hw_scan(), this shared variable is accessed without the
+protection of the mutex lock "priv->conf_mutex".
+Thus, concurrency use-after-free bugs may occur.
+
+To fix these bugs, the original calls to mutex_lock(&priv->conf_mutex) and
+mutex_unlock(&priv->conf_mutex) are moved to the places, which can
+protect the accesses to the shared variable.
+
+Signed-off-by: Jia-Ju Bai <baijiaju1990@gmail.com>
+Signed-off-by: Kalle Valo <kvalo@codeaurora.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/wireless/st/cw1200/scan.c | 13 ++++++-------
+ 1 file changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/drivers/net/wireless/st/cw1200/scan.c b/drivers/net/wireless/st/cw1200/scan.c
+index 0a0ff7e31f5b..c5492d792f43 100644
+--- a/drivers/net/wireless/st/cw1200/scan.c
++++ b/drivers/net/wireless/st/cw1200/scan.c
+@@ -78,6 +78,10 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->n_ssids > WSM_SCAN_MAX_NUM_OF_SSIDS)
+ 		return -EINVAL;
+ 
++	/* will be unlocked in cw1200_scan_work() */
++	down(&priv->scan.lock);
++	mutex_lock(&priv->conf_mutex);
++
+ 	frame.skb = ieee80211_probereq_get(hw, priv->vif->addr, NULL, 0,
+ 		req->ie_len);
+ 	if (!frame.skb)
+@@ -86,19 +90,15 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 	if (req->ie_len)
+ 		memcpy(skb_put(frame.skb, req->ie_len), req->ie, req->ie_len);
+ 
+-	/* will be unlocked in cw1200_scan_work() */
+-	down(&priv->scan.lock);
+-	mutex_lock(&priv->conf_mutex);
+-
+ 	ret = wsm_set_template_frame(priv, &frame);
+ 	if (!ret) {
+ 		/* Host want to be the probe responder. */
+ 		ret = wsm_set_probe_responder(priv, true);
+ 	}
+ 	if (ret) {
++		dev_kfree_skb(frame.skb);
+ 		mutex_unlock(&priv->conf_mutex);
+ 		up(&priv->scan.lock);
+-		dev_kfree_skb(frame.skb);
+ 		return ret;
+ 	}
+ 
+@@ -120,10 +120,9 @@ int cw1200_hw_scan(struct ieee80211_hw *hw,
+ 		++priv->scan.n_ssids;
+ 	}
+ 
+-	mutex_unlock(&priv->conf_mutex);
+-
+ 	if (frame.skb)
+ 		dev_kfree_skb(frame.skb);
++	mutex_unlock(&priv->conf_mutex);
+ 	queue_work(priv->workqueue, &priv->scan.work);
+ 	return 0;
+ }
+-- 
+2.19.1
 
