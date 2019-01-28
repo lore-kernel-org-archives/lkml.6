@@ -2,122 +2,92 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 518E1C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:51:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 41C36C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:53:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2256E214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:51:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548679917;
-	bh=ya2u3y20UCipfj7wruYu3vAMWhRAs3dbQVbq0grBMvY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=gjSz6yniq+Ghvox9H0nZYxI8n9qDC0o/DtIed64ia0iIiQb7RlS6te5zwVi0UwPsa
-	 CKS0i5BWGFhBubLOiIbuXUXZ2A2m755g7Pkynhhk2phGCsdwGF75gSDNErtYgGcjwF
-	 +lAxdnqBiVrRh8r9qqOZP0azGn2ctKH2EE8Py9Pg=
+	by mail.kernel.org (Postfix) with ESMTP id 1B9BD21738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:53:02 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726853AbfA1Mvz (ORCPT
+        id S1726775AbfA1MxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:51:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37136 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726647AbfA1Mvz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:51:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DBF96AD76;
-        Mon, 28 Jan 2019 12:51:52 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 13:51:51 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Johannes Weiner <hannes@cmpxchg.org>,
-        Chris Down <chris@chrisdown.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
-        linux-mm@kvack.org, kernel-team@fb.com
-Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
-Message-ID: <20190128125151.GI18811@dhcp22.suse.cz>
-References: <20190123223144.GA10798@chrisdown.name>
- <20190124082252.GD4087@dhcp22.suse.cz>
- <20190124160009.GA12436@cmpxchg.org>
- <20190124170117.GS4087@dhcp22.suse.cz>
- <20190124182328.GA10820@cmpxchg.org>
- <20190125074824.GD3560@dhcp22.suse.cz>
- <20190125165152.GK50184@devbig004.ftw2.facebook.com>
- <20190125173713.GD20411@dhcp22.suse.cz>
- <20190125182808.GL50184@devbig004.ftw2.facebook.com>
+        Mon, 28 Jan 2019 07:53:00 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44026 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726611AbfA1MxA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 07:53:00 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B985B4E92B;
+        Mon, 28 Jan 2019 12:52:59 +0000 (UTC)
+Received: from treble (ovpn-120-147.rdu2.redhat.com [10.10.120.147])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id EF5BE600D7;
+        Mon, 28 Jan 2019 12:52:58 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 06:52:52 -0600
+From:   Josh Poimboeuf <jpoimboe@redhat.com>
+To:     Igor Mammedov <imammedo@redhat.com>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Joe Mario <jmario@redhat.com>, Jiri Kosina <jkosina@suse.cz>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: cpu/hotplug: broken sibling thread hotplug
+Message-ID: <20190128125252.6xf4bulvd7ni4mi4@treble>
+References: <20190124165713.2b0b37ed@redhat.com>
+ <20190125163657.rqbykfn7ebpclc2z@treble>
+ <20190125170203.2o2l27d2sytw44nl@treble>
+ <20190128111304.0df37a8a@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20190125182808.GL50184@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20190128111304.0df37a8a@redhat.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Mon, 28 Jan 2019 12:52:59 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 25-01-19 10:28:08, Tejun Heo wrote:
-> Hello, Michal.
+On Mon, Jan 28, 2019 at 11:13:04AM +0100, Igor Mammedov wrote:
+> On Fri, 25 Jan 2019 11:02:03 -0600
+> Josh Poimboeuf <jpoimboe@redhat.com> wrote:
 > 
-> On Fri, Jan 25, 2019 at 06:37:13PM +0100, Michal Hocko wrote:
-> > > What if a user wants to monitor any ooms in the subtree tho, which is
-> > > a valid use case?
+> > On Fri, Jan 25, 2019 at 10:36:57AM -0600, Josh Poimboeuf wrote:
+> > > How about this patch?  It's just a revert of 73d5e2b47264 and
+> > > bc2d8d262cba, plus the 1-line vmx_vm_init() change.  If it looks ok to
+> > > you, I can clean it up and submit an official version.  
 > > 
-> > How is that information useful without know which memcg the oom applies
-> > to?
+> > This one actually compiles...
 > 
-> For example, a workload manager watching over a subtree for a job with
-> nested memory limits set by the job itself.  It wants to take action
-> (reporting and possibly other remediative actions) when something goes
-> wrong in the delegated subtree but isn't involved in how the subtree
-> is configured inside.
-
-Yes, I understand this part, but it is not clear to me, _how_ to report
-anything sensible without knowing _what_ has caused the event. You can
-walk the cgroup hierarchy and compare cached results with new ones but
-this is a) racy and b) clumsy.
-
-> > > If local event monitoring is useful and it can be,
-> > > let's add separate events which are clearly identifiable to be local.
-> > > Right now, it's confusing like hell.
-> > 
-> > From a backward compatible POV it should be a new interface added.
+> Looks good to me,
+> (one small question below)
 > 
-> That sure is an option for use cases like above but it has the
-> downside of carrying over the confusing interface into the indefinite
-> future.
+>  
+> [...]
+> >  static inline bool cpu_smt_allowed(unsigned int cpu)
+> >  {
+> > -	if (topology_is_primary_thread(cpu))
+> > +	if (cpu_smt_control == CPU_SMT_ENABLED)
+> >  		return true;
+> >  
+> > -	/*
+> > -	 * If the CPU is not a 'primary' thread and the booted_once bit is
+> > -	 * set then the processor has SMT support. Store this information
+> > -	 * for the late check of SMT support in cpu_smt_check_topology().
+> > -	 */
+> > -	if (per_cpu(cpuhp_state, cpu).booted_once)
+> > -		cpu_smt_available = true;
+> > -
+> > -	if (cpu_smt_control == CPU_SMT_ENABLED)
+> > +	if (topology_is_primary_thread(cpu))
+> >  		return true;
+> why did you swap cpu_smt_control and topology_is_primary_thread checks?
 
-I actually believe that this is not such a big deal. For one thing the
-current events are actually helpful to watch the reclaim/setup behavior.
+That's just the revert of bc2d8d262cba5.
 
-> Again, I'd like to point back at how we changed the
-> accounting write and trim accounting because the benefits outweighted
-> the risks.
-> 
-> > Please note that I understand that this might be confusing with the rest
-> > of the cgroup APIs but considering that this is the first time somebody
-> > is actually complaining and the interface is "production ready" for more
-> > than three years I am not really sure the situation is all that bad.
-> 
-> cgroup2 uptake hasn't progressed that fast.  None of the major distros
-> or container frameworks are currently shipping with it although many
-> are evaluating switching.  I don't think I'm too mistaken in that we
-> (FB) are at the bleeding edge in terms of adopting cgroup2 and its
-> various new features and are hitting these corner cases and oversights
-> in the process.  If there are noticeable breakages arising from this
-> change, we sure can backpaddle but I think the better course of action
-> is fixing them up while we can.
-
-I do not really think you can go back. You cannot simply change semantic
-back and forth because you just break new users.
-
-Really, I do not see the semantic changing after more than 3 years of
-production ready interface. If you really believe we need a hierarchical
-notification mechanism for the reclaim activity then add a new one.
 -- 
-Michal Hocko
-SUSE Labs
+Josh
