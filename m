@@ -2,99 +2,85 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 76957C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:17:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D81AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:18:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 480042175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:17:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692277;
-	bh=23Bs3OEWO07nuGLtd8xOUw84hR/iKgs3D+IwmJnj9Zg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pBZtu4Fw0P9U9BL/bMA2RSTIsBhBx4wS7ZwgIPiGL2ts6m4XfnZYGfQPCbahfswUr
-	 TQ7m123F5w3z+kmNMAzjc9xO7BGdd4/xVJPgB1R3RdPgkbtWNkWmxH+ChLhuqotwh8
-	 jZn41ixjhEeIoZzT6k+DD8tuf+MuRi8A+ZJjFfCQ=
+	by mail.kernel.org (Postfix) with ESMTP id 08A3321741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:18:03 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388315AbfA1QRz (ORCPT
+        id S2388343AbfA1QSA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:17:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51912 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:18:00 -0500
+Received: from shell.v3.sk ([90.176.6.54]:52687 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387658AbfA1QRq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:17:46 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6E7192175B;
-        Mon, 28 Jan 2019 16:17:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692265;
-        bh=23Bs3OEWO07nuGLtd8xOUw84hR/iKgs3D+IwmJnj9Zg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oOf/3aXFxXqGanTTi+sBaVBg4ytlcNgI7MQd3bj+XbDG69DlHI9VDI9jh3hb1XRzn
-         ACdPfAEk+2oemqWSWLNdDWw3Uai0gcu049TIrotQ8dT7F9Ex8SpMyBPc1mP+W+e+PR
-         YLnptx1bgIDIXuS65ZglKnmDrh62sbBoarXELjMw=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Lenny Szubowicz <lszubowi@redhat.com>,
-        David Arcari <darcari@redhat.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-acpi@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 132/170] ACPI/APEI: Clear GHES block_status before panic()
-Date:   Mon, 28 Jan 2019 11:11:22 -0500
-Message-Id: <20190128161200.55107-132-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
-References: <20190128161200.55107-1-sashal@kernel.org>
+        id S2388316AbfA1QR5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:17:57 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 1FFFFCCC91;
+        Mon, 28 Jan 2019 17:17:55 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 2PIk7i8RiCyM; Mon, 28 Jan 2019 17:17:52 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id C558DCCC92;
+        Mon, 28 Jan 2019 17:17:51 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id cfMs2DyEIc94; Mon, 28 Jan 2019 17:17:51 +0100 (CET)
+Received: from nedofet.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id C532ECCC91;
+        Mon, 28 Jan 2019 17:17:50 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     "David S. Miller" <davem@davemloft.net>
+Cc:     Sathya Perla <sathya.perla@broadcom.com>,
+        Ajit Khaparde <ajit.khaparde@broadcom.com>,
+        Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+        Somnath Kotur <somnath.kotur@broadcom.com>,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] benet: remove broken and unused macro
+Date:   Mon, 28 Jan 2019 17:17:40 +0100
+Message-Id: <20190128161740.16129-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lenny Szubowicz <lszubowi@redhat.com>
+is_broadcast_packet() expands to compare_ether_addr() which doesn't
+exist since commit 7367d0b573d1 ("drivers/net: Convert uses of
+compare_ether_addr to ether_addr_equal"). It turns out it's actually not
+used.
 
-[ Upstream commit 98cff8b23ed1c763a029ee81ea300df0d153d07d ]
-
-In __ghes_panic() clear the block status in the APEI generic
-error status block for that generic hardware error source before
-calling panic() to prevent a second panic() in the crash kernel
-for exactly the same fatal error.
-
-Otherwise ghes_probe(), running in the crash kernel, would see
-an unhandled error in the APEI generic error status block and
-panic again, thereby precluding any crash dump.
-
-Signed-off-by: Lenny Szubowicz <lszubowi@redhat.com>
-Signed-off-by: David Arcari <darcari@redhat.com>
-Tested-by: Tyler Baicar <baicar.tyler@gmail.com>
-Acked-by: Borislav Petkov <bp@suse.de>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 ---
- drivers/acpi/apei/ghes.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/net/ethernet/emulex/benet/be_main.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index f14695e744d0..5889f6407fea 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -675,6 +675,8 @@ static void __ghes_panic(struct ghes *ghes)
- {
- 	__ghes_print_estatus(KERN_EMERG, ghes->generic, ghes->estatus);
- 
-+	ghes_clear_estatus(ghes);
-+
- 	/* reboot to log the error! */
- 	if (!panic_timeout)
- 		panic_timeout = ghes_panic_timeout;
--- 
-2.19.1
+diff --git a/drivers/net/ethernet/emulex/benet/be_main.c b/drivers/net/et=
+hernet/emulex/benet/be_main.c
+index d5026909dec5..3c7c04406a2b 100644
+--- a/drivers/net/ethernet/emulex/benet/be_main.c
++++ b/drivers/net/ethernet/emulex/benet/be_main.c
+@@ -1270,10 +1270,6 @@ static void be_xmit_flush(struct be_adapter *adapt=
+er, struct be_tx_obj *txo)
+ #define is_arp_allowed_on_bmc(adapter, skb)	\
+ 	(is_arp(skb) && is_arp_filt_enabled(adapter))
+=20
+-#define is_broadcast_packet(eh, adapter)	\
+-		(is_multicast_ether_addr(eh->h_dest) && \
+-		!compare_ether_addr(eh->h_dest, adapter->netdev->broadcast))
+-
+ #define is_arp(skb)	(skb->protocol =3D=3D htons(ETH_P_ARP))
+=20
+ #define is_arp_filt_enabled(adapter)	\
+--=20
+2.20.1
 
