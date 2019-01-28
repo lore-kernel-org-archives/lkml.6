@@ -2,112 +2,101 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFC4EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC5ACC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95CA82084A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693766;
-	bh=smksVjHmBgGlBWiX3aftH5cmLjUKG7JYTo/oSFQbUcM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=12OvHGmqj/I2cC6Rj5P9pD1VawlyNNUsR9qEnZthttiTq/8WhTJ2kQaGblRtzDQgc
-	 OYTCKzOyP2GKO66xxUveqCTVU2t5E8ixNyBz6/UBqOa7zZ8WKr38NbLeAo9+5wAOms
-	 PPdHAIk0GryS9eHVjL7U5Rqabax+khO69WLT0Ckw=
+	by mail.kernel.org (Postfix) with ESMTP id A46292084A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:42:50 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389470AbfA1QXf (ORCPT
+        id S2389860AbfA1Qms (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:42:48 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37638 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S2389468AbfA1QXf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 11:23:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59712 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389441AbfA1QX2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:23:28 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 092642171F;
-        Mon, 28 Jan 2019 16:23:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692607;
-        bh=smksVjHmBgGlBWiX3aftH5cmLjUKG7JYTo/oSFQbUcM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iQUShw1lv6SNGNxObPVAssAvsXmq3ofoA4Vg1TlUbQDCTI3k3Q9AUi6DcfPJLXFVV
-         ZptxHUw5r3b/N9ZD9OIcs9ZR1zhhYePPNns7JUKePr2A6oNY9rF6yKHXgY1G5lZGj9
-         WoOHLCHxUPSz+i8h1vGo2ARJP5MyNIWudoURDNng=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-        Richard Weinberger <richard@nod.at>,
-        Sasha Levin <sashal@kernel.org>, linux-um@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 091/107] um: Avoid marking pages with "changed protection"
-Date:   Mon, 28 Jan 2019 11:19:31 -0500
-Message-Id: <20190128161947.57405-91-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
-References: <20190128161947.57405-1-sashal@kernel.org>
-MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Received: from pps.filterd (m0098413.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SGJPw3110032
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:23:35 -0500
+Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qa49ab8vq-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:23:34 -0500
+Received: from localhost
+        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <eajames@linux.ibm.com>;
+        Mon, 28 Jan 2019 16:23:34 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 28 Jan 2019 16:23:31 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SGNU1724576250
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 28 Jan 2019 16:23:30 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B3A0DB2064;
+        Mon, 28 Jan 2019 16:23:30 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 288D6B2068;
+        Mon, 28 Jan 2019 16:23:30 +0000 (GMT)
+Received: from talon7.ibm.com (unknown [9.41.179.222])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Mon, 28 Jan 2019 16:23:30 +0000 (GMT)
+From:   Eddie James <eajames@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-hwmon@vger.kernel.org, linux@roeck-us.net, joel@jms.id.au,
+        jdelvare@suse.com, tglx@linutronix.de,
+        Eddie James <eajames@linux.ibm.com>
+Subject: [PATCH v2 2/2] fsi: occ: Fix license header
+Date:   Mon, 28 Jan 2019 10:23:24 -0600
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <1548692604-9899-1-git-send-email-eajames@linux.ibm.com>
+References: <1548692604-9899-1-git-send-email-eajames@linux.ibm.com>
+X-TM-AS-GCONF: 00
+x-cbid: 19012816-0052-0000-0000-0000037F700C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010493; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000277; SDB=6.01153048; UDB=6.00601113; IPR=6.00933410;
+ MB=3.00025324; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-28 16:23:33
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012816-0053-0000-0000-00005FA1EBCD
+Message-Id: <1548692604-9899-3-git-send-email-eajames@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_09:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=1 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=752 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901280123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anton Ivanov <anton.ivanov@cambridgegreys.com>
+OCC driver source is missing the IBM Copyright
 
-[ Upstream commit 8892d8545f2d0342b9c550defbfb165db237044b ]
-
-Changing protection is a very high cost operation in UML
-because in addition to an extra syscall it also interrupts
-mmap merge sequences generated by the tlb.
-
-While the condition is not particularly common it is worth
-avoiding.
-
-Signed-off-by: Anton Ivanov <anton.ivanov@cambridgegreys.com>
-Signed-off-by: Richard Weinberger <richard@nod.at>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Eddie James <eajames@linux.ibm.com>
 ---
- arch/um/include/asm/pgtable.h | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
+ drivers/fsi/fsi-occ.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
-index 7485398d0737..9c04562310b3 100644
---- a/arch/um/include/asm/pgtable.h
-+++ b/arch/um/include/asm/pgtable.h
-@@ -197,12 +197,17 @@ static inline pte_t pte_mkold(pte_t pte)
+diff --git a/drivers/fsi/fsi-occ.c b/drivers/fsi/fsi-occ.c
+index a2301ce..d75038f 100644
+--- a/drivers/fsi/fsi-occ.c
++++ b/drivers/fsi/fsi-occ.c
+@@ -1,4 +1,5 @@
+-// SPDX-License-Identifier: GPL-2.0
++// SPDX-License-Identifier: GPL-2.0+
++// Copyright IBM Corp 2019
  
- static inline pte_t pte_wrprotect(pte_t pte)
- { 
--	pte_clear_bits(pte, _PAGE_RW);
-+	if (likely(pte_get_bits(pte, _PAGE_RW)))
-+		pte_clear_bits(pte, _PAGE_RW);
-+	else
-+		return pte;
- 	return(pte_mknewprot(pte)); 
- }
- 
- static inline pte_t pte_mkread(pte_t pte)
- { 
-+	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
-+		return pte;
- 	pte_set_bits(pte, _PAGE_USER);
- 	return(pte_mknewprot(pte)); 
- }
-@@ -221,6 +226,8 @@ static inline pte_t pte_mkyoung(pte_t pte)
- 
- static inline pte_t pte_mkwrite(pte_t pte)	
- {
-+	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
-+		return pte;
- 	pte_set_bits(pte, _PAGE_RW);
- 	return(pte_mknewprot(pte)); 
- }
+ #include <linux/device.h>
+ #include <linux/err.h>
 -- 
-2.19.1
+1.8.3.1
 
