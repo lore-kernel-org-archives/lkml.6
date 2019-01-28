@@ -2,205 +2,99 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44228C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CAFBC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFE702148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:38:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nokia.onmicrosoft.com header.i=@nokia.onmicrosoft.com header.b="BmDCwkEF"
+	by mail.kernel.org (Postfix) with ESMTP id 747AB2148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:38:36 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726903AbfA1PiS (ORCPT
+        id S1726923AbfA1Pie (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:38:18 -0500
-Received: from mail-eopbgr140097.outbound.protection.outlook.com ([40.107.14.97]:33602
-        "EHLO EUR01-VE1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726775AbfA1PiR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:38:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nokia.onmicrosoft.com;
- s=selector1-nokia-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LuPrA6Q/EvwsQrIw1slPZQDqw4ikWUxaKGtqW8UwPo0=;
- b=BmDCwkEFMGdL81+lvuy9XWKaBjjcum7Qw/0DWj/gzu8BmWH5GuZFPYQN6jjUIzhpJHHHg5MeAGaIXLSfLXsD3ot5eGHP3WBy7i95n9a7CYO+p6UU3FTbPeDY1BMLwR0+Tm8KbD6Bui3yfAOCd9ffY50NJBFlf9IxI9KK/FS6iZY=
-Received: from VI1PR0702MB3710.eurprd07.prod.outlook.com (52.134.3.144) by
- VI1PR0702MB3789.eurprd07.prod.outlook.com (52.134.2.10) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1580.13; Mon, 28 Jan 2019 15:38:12 +0000
-Received: from VI1PR0702MB3710.eurprd07.prod.outlook.com
- ([fe80::95ff:2ede:57df:f1ba]) by VI1PR0702MB3710.eurprd07.prod.outlook.com
- ([fe80::95ff:2ede:57df:f1ba%2]) with mapi id 15.20.1580.014; Mon, 28 Jan 2019
- 15:38:12 +0000
-From:   "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>
-To:     Paul Moore <paul@paul-moore.com>
-CC:     Paul Moore <pmoore@redhat.com>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        Richard Guy Briggs <rbriggs@redhat.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] audit: always enable syscall auditing when supported and
- audit is enabled
-Thread-Topic: [PATCH] audit: always enable syscall auditing when supported and
- audit is enabled
-Thread-Index: AQHUtuRMqf59sA9YxEyiYKAWmGDXiKXEuzUAgAAEzACAAARqAIAADLyA
-Date:   Mon, 28 Jan 2019 15:38:12 +0000
-Message-ID: <8bf5d613-9b27-381d-283b-c8892483f424@nokia.com>
-References: <20151208164237.15736.42955.stgit@localhost>
- <5490ae28-251b-bfda-38a6-5be201a4a8d8@nokia.com>
- <CAHC9VhQsVFY1LAakAUUCBZw6nmSy0-eoFrhQgVQrkqgAsWVGhQ@mail.gmail.com>
- <4fb6def1-a1d9-8af0-394c-f92224884d18@nokia.com>
- <CAHC9VhT1T4wTonW_L8CH2j1aMqSaBcUf-zH==233+ZZvSKhkwg@mail.gmail.com>
-In-Reply-To: <CAHC9VhT1T4wTonW_L8CH2j1aMqSaBcUf-zH==233+ZZvSKhkwg@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [131.228.32.165]
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.2
-x-clientproxiedby: HE1PR07CA0028.eurprd07.prod.outlook.com
- (2603:10a6:7:66::14) To VI1PR0702MB3710.eurprd07.prod.outlook.com
- (2603:10a6:803:7::16)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=alexander.sverdlin@nokia.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR0702MB3789;6:RxBPSTLlN9DZCfzwKxk7VDlukmqfQjfzgNQZz+vgMgl1x/GGKeBwFBGoc0j6bRuhlNkHNvXmzqjAugLYOHArrWyfZty7ruKkE5CJSS6ogzcoL+PO4Kox4njNGLJvJl+4xFyXDewk80NSFF3/SjxmArT+6g9OUJDXUC5wln5PxJG5qq++Hr/tXCHyOCr7g9YdLY3ST2y0AL2JqfrLn1QbHcMVkAKPwy4OeQ00tsBAIK+0s9A/x5AZdHITj5OHTrc3+A2eymtodlxhuWPUZd4LRXg4sACofIicgMIwlmrAstSZvSBAK2EPlVBMu7VXP7IpJbOr9IiKJfN/MN7TptFF8x4+s43uINgtI9IWI0+kzhMztcaTUJ+KnWf+XKy90iOSkD+FUa26qcOpFaBDc7piNWw4dsC2owNMfOJGJDcBBs9K2WsQm5kj8htMj723NgM0dE8ZFrFs4aqPA72VNIY3cw==;5:VQ3hnptPxB2jBk4AQalxJhMTezTNYqSwWsYTktkJhPQFXh2XJzusnbxCLYjP6Ns5F0lanM9wHNAnwPtqavEK3f5EIs7P9gEGzh2nwT01nbuiXXnNEDsMFvjXH+I1s/+0KvO7wR8TCrWZOhOKjtzTUg5e3QBSL/LLSqcf5CSBlS84WODm/rUlnIAn9s60nrI0mDREmxYjZWdcAaS8vSO3sA==;7:zJCQohWLEZTfhVLfZR9XdeSgOI8EIaEgiA3gDKIFOknrw/4hemXAqoOPIXe5nVGhBiF2w/SBZxgmHCNvmcpBx09vGgVNKK4lpFARaAvNGA1CKzPOWdLtuxOGquctSivVZnJ9x22zokr5Ut4WZfW78w==
-x-ms-office365-filtering-correlation-id: 8a64891d-9481-45f9-7b90-08d685369cb0
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390118)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600110)(711020)(4605077)(4618075)(2017052603328)(7193020);SRVR:VI1PR0702MB3789;
-x-ms-traffictypediagnostic: VI1PR0702MB3789:
-x-microsoft-antispam-prvs: <VI1PR0702MB378913FC1BFC202477C95F6F88960@VI1PR0702MB3789.eurprd07.prod.outlook.com>
-x-forefront-prvs: 0931CB1479
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(39860400002)(396003)(376002)(366004)(346002)(136003)(189003)(199004)(305945005)(229853002)(14454004)(7736002)(93886005)(81166006)(81156014)(31696002)(53936002)(6512007)(14444005)(6246003)(256004)(65826007)(97736004)(8676002)(86362001)(54906003)(316002)(6916009)(64126003)(4326008)(99286004)(8936002)(478600001)(25786009)(65806001)(66066001)(65956001)(36756003)(31686004)(186003)(2616005)(476003)(11346002)(446003)(68736007)(53546011)(105586002)(106356001)(2906002)(6116002)(3846002)(486006)(76176011)(6436002)(71200400001)(71190400001)(6486002)(52116002)(58126008)(102836004)(6506007)(386003)(26005);DIR:OUT;SFP:1102;SCL:1;SRVR:VI1PR0702MB3789;H:VI1PR0702MB3710.eurprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nokia.com does not designate
- permitted sender hosts)
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam-message-info: S9HkUVABneiuPpmrz6SFRbqe68o2szpEh44hhV1Y9u5DyxbSjh7g2X2rxY+U5q9jrMdh67STDUO7kcd8w5rfpQ/NVyJDPDKKv57hefdHR5pR1B79jpeM4B9f3rc26YVKRSaq3zRz8gUKinbRb/EvQRKZA+oIAWOYWrkfhKHAieZxdG9zT3VPvVcj9beJghEIAkUeg0ZfPxjlUnrWoWDOQ7Ilo3WKTSwHj4sYH47gi9CMO3LEgYAjQBFjZFhz13ujRivoHBnpVQjvZrz6GDN9HJX2tO5oMxw5KcP5z+05RZsVjiyAK/YtYbCA4oeQNK/n7HE3B3HzRnsYIfcqh2+YyGRCG2DY66eeSUlc6as5oB5HZB4mnJMIsCDAtqYTzNZOnXcaZG2YmmHpe0zzED56TRJCTeBFI5iXA9gN8SGFg8U=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <69EF7DAF3C209A418798C56E686D8F6D@eurprd07.prod.outlook.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-OriginatorOrg: nokia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8a64891d-9481-45f9-7b90-08d685369cb0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jan 2019 15:38:11.1375
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-id: 5d471751-9675-428d-917b-70f44f9630b0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR0702MB3789
+        Mon, 28 Jan 2019 10:38:34 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:47222 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726761AbfA1Pie (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:38:34 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19F3180D;
+        Mon, 28 Jan 2019 07:38:34 -0800 (PST)
+Received: from e112298-lin.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id CF4D53F589;
+        Mon, 28 Jan 2019 07:38:32 -0800 (PST)
+From:   Julien Thierry <julien.thierry@arm.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     tglx@linutronix.de, peterz@infradead.org, marc.zyngier@arm.com,
+        mingo@kernel.org, Julien Thierry <julien.thierry@arm.com>
+Subject: [PATCH v5 0/4] Provide core API for NMIs
+Date:   Mon, 28 Jan 2019 15:38:23 +0000
+Message-Id: <1548689907-17124-1-git-send-email-julien.thierry@arm.com>
+X-Mailer: git-send-email 1.9.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGVsbG8gUGF1bCwNCg0KT24gMjgvMDEvMjAxOSAxNTo1MiwgUGF1bCBNb29yZSB3cm90ZToNCj4+
-Pj4+IHRpbWUgYWxzbyBlbmFibGVzIHN5c2NhbGwgYXVkaXRpbmc7IHRoaXMgcGF0Y2ggc2ltcGxp
-ZmllcyB0aGUgS2NvbmZpZw0KPj4+Pj4gbWVudXMgYnkgcmVtb3ZpbmcgdGhlIG9wdGlvbiB0byBk
-aXNhYmxlIHN5c2NhbGwgYXVkaXRpbmcgd2hlbiBhdWRpdA0KPj4+Pj4gaXMgc2VsZWN0ZWQgYW5k
-IHRoZSB0YXJnZXQgYXJjaCBzdXBwb3J0cyBpdC4NCj4+Pj4+DQo+Pj4+PiBTaWduZWQtb2ZmLWJ5
-OiBQYXVsIE1vb3JlIDxwbW9vcmVAcmVkaGF0LmNvbT4NCj4+Pj4gdGhpcyBwYXRjaCBpcyByZXNw
-b25zaWJsZSBmb3IgbWFzc2l2ZSBwZXJmb3JtYW5jZSBkZWdyYWRhdGlvbiBmb3IgdGhvc2UNCj4+
-Pj4gd2hvIHVzZWQgb25seSBDT05GSUdfU0VDVVJJVFlfQVBQQVJNT1IuDQo+Pj4+DQo+Pj4+IEFu
-ZCB0aGUgbnVtYmVycyBhcmUsIHRha2UgdGhlIGZvbGxvd2luZyB0ZXN0IGZvciBpbnN0YW5jZToN
-Cj4+Pj4NCj4+Pj4gZGQgaWY9L2Rldi96ZXJvIG9mPS9kZXYvbnVsbCBjb3VudD0yTQ0KPj4+Pg0K
-Pj4+PiBBUk02NDogICAgICA1MDBNQi9zIC0+IDM1ME1CL3MNCj4+Pj4gQVJNOiAgICAgICAgNDAw
-TUIvcyAtPiAzMDBNQi9zDQo+Pj4gSGkgdGhlcmUuDQo+Pj4NCj4+PiBPdXQgb2YgY3VyaW9zaXR5
-LCB3aGF0IGtlcm5lbC9kaXN0cmlidXRpb24gYXJlIHlvdSBydW5uaW5nLCBvciBpcyB0aGlzDQo+
-Pj4gYSBjdXN0b20ga2VybmVsIGNvbXBpbGU/ICBDYW4geW91IGFsc28gc2hhcmUgdGhlIG91dHB1
-dCBvZiAnYXVkaXRjdGwNCj4+IFRoaXMgdGVzdCB3YXMgY2FycmllZCBvdXQgd2l0aCBMaW51eCA0
-LjkuIEN1c3RvbSBidWlsdC4NCj4gSSBzdXNwZWN0ZWQgdGhhdCB3YXMgdGhlIGNhc2UsIHRoYW5r
-cy4NCj4gDQo+Pj4gLWwnIGZyb20geW91ciBzeXN0ZW0/ICBUaGUgZ2VuZXJhbCBhcHByb2FjaCB0
-YWtlbiBieSBldmVyeW9uZSB0bw0KPj4+IHR1cm4tb2ZmIHRoZSBwZXItc3lzY2FsbCBhdWRpdCBv
-dmVyaGVhZCBpcyB0byBhZGQgdGhlICItYSBuZXZlcix0YXNrIg0KPj4+IHJ1bGUgdG8gdGhlaXIg
-YXVkaXQgY29uZmlndXJhdGlvbjoNCj4+Pg0KPj4+ICAjIGF1ZGl0Y3RsIC1hIG5ldmVyLHRhc2sN
-Cj4+Pg0KPj4+IElmIHlvdSBhcmUgdXNpbmcgRmVkb3JhL0NlbnRPUy9SSEVMLCBvciBhIHNpbWls
-YXJseSBjb25maWd1cmVkIHN5c3RlbSwNCj4+IFRoaXMgaXMgYW4gZW1iZWRkZWQgZGlzdHJpYnV0
-aW9uLiBXZSBhcmUgbm90IHVzaW5nIGF1ZGl0Y3RsIG9yIGFueSBvdGhlcg0KPj4gYXVkaXQtcmVs
-YXRlZCB1c2VyLXNwYWNlIHBhY2thZ2VzLg0KPj4NCj4+PiB5b3UgY2FuIGZpbmQgdGhpcyBjb25m
-aWd1cmF0aW9uIGluIHRoZSAvZXRjL2F1ZGl0L2F1ZGl0LnJ1bGVzIGZpbGUgKGJlDQo+Pj4gd2Fy
-bmVkLCB0aGF0IGZpbGUgaXMgYXV0b21hdGljYWxseSBnZW5lcmF0ZWQgYmFzZWQgb24NCj4+PiAv
-ZXRjL2F1ZGl0L3J1bGVzLmQpLg0KPj4gSSBzdXBwb3NlIGluIHRoaXMgY2FzZSBydWxlIGxpc3Qg
-bXVzdCBiZSBlbXB0eS4gSXMgdGhlcmUgYSB3YXkgdG8gY2hlY2sNCj4+IHRoaXMgd2l0aG91dCBl
-eHRyYSB1c2VyLXNwYWNlIHBhY2thZ2VzPw0KPiBZZXMsIHVubGVzcyB5b3UgYXJlIGxvYWRpbmcg
-cnVsZXMgdGhyb3VnaCBzb21lIG90aGVyIG1ldGhvZCBJIHdvdWxkDQo+IGV4cGVjdCB0aGF0IHlv
-dXIgYXVkaXQgcnVsZSBsaXN0IGlzIGVtcHR5Lg0KPiANCj4gSSdtIG5vdCBhd2FyZSBvZiBhbnkg
-b3RoZXIgdG9vbHMgYmVzaWRlcyBhdWRpdGN0bCB0byBsb2FkIGF1ZGl0IHJ1bGVzDQo+IGludG8g
-dGhlIGtlcm5lbCwgYWx0aG91Z2ggSSBoYXZlbid0IGV2ZXIgaGFkIGEgbmVlZCBmb3IgYW5vdGhl
-ciB0b29sDQo+IHNvIEkgaGF2ZW4ndCBsb29rZWQgdmVyeSBoYXJkLiAgSWYgeW91IGRpZG4ndCB3
-YW50IHRvIGJyaW5nIGF1ZGl0Y3RsDQo+IGludG8geW91ciBkaXN0cmlidXRpb24sIEkgZXhwZWN0
-IGl0IHdvdWxkIGJlIGEgcmF0aGVyIHRyaXZpYWwgdGFzayB0bw0KPiBjcmVhdGUgYSBzbWFsbCB0
-b29sIHRvIGxvYWQgYSBzaW5nbGUgIi1hIG5ldmVyLHRhc2siIGludG8gdGhlIGtlcm5lbC4NCg0K
-SSd2ZSBkb25lIGEgcXVpY2sgdGVzdCBvbiBteSB4ODZfNjQgUEMgYW5kIGdvdCB0aGUgZm9sbG93
-aW5nIHJlc3VsdHM6DQoNCjEuIGVtcHR5IHJ1bGVzIGxpc3Q6DQoNCnBlcmYgcmVjb3JkIGRkIGlm
-PS9kZXYvemVybyBvZj0vZGV2L251bGwgY291bnQ9Mk0NCjIwOTcxNTIrMCByZWNvcmRzIGluDQoy
-MDk3MTUyKzAgcmVjb3JkcyBvdXQNCjEwNzM3NDE4MjQgYnl0ZXMgKDEuMSBHQiwgMS4wIEdpQikg
-Y29waWVkLCAxLjY5Njg1IHMsIDYzMyBNQi9zDQoNCnBlcmYgcmVwb3J0Og0KDQojIE92ZXJoZWFk
-ICBDb21tYW5kICBTaGFyZWQgT2JqZWN0ICAgICAgU3ltYm9sICAgICAgICAgICAgICAgICAgICAg
-ICAgICAgIA0KIyAuLi4uLi4uLiAgLi4uLi4uLiAgLi4uLi4uLi4uLi4uLi4uLi4gIC4uLi4uLi4u
-Li4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4NCiMNCiAgICAxNC4yNiUgIGRkICAgICAgIFtrZXJu
-ZWwua2FsbHN5bXNdICBba10gZW50cnlfU1lTQ0FMTF82NA0KICAgIDExLjMzJSAgZGQgICAgICAg
-W2tlcm5lbC5rYWxsc3ltc10gIFtrXSBfX2NsZWFyX3VzZXINCiAgICAgNS4wMCUgIGRkICAgICAg
-IFtrZXJuZWwua2FsbHN5bXNdICBba10gZnNub3RpZnkNCiAgICAgNC45MiUgIGRkICAgICAgIGxp
-YmMtMi4yOC5zbyAgICAgICBbLl0gcmVhZA0KICAgICA0LjgwJSAgZGQgICAgICAgW2tlcm5lbC5r
-YWxsc3ltc10gIFtrXSBfX2F1ZGl0X3N5c2NhbGxfZXhpdA0KICAgICA0LjYwJSAgZGQgICAgICAg
-W2tlcm5lbC5rYWxsc3ltc10gIFtrXSBzeXNjYWxsX3JldHVybl92aWFfc3lzcmV0DQogICAgIDQu
-MjQlICBkZCAgICAgICBsaWJjLTIuMjguc28gICAgICAgWy5dIF9fR0lfX19saWJjX3dyaXRlDQog
-ICAgIDMuODQlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIF9faW5kaXJlY3RfdGh1
-bmtfc3RhcnQNCiAgICAgMy44MiUgIGRkICAgICAgIGxpYmMtMi4yOC5zbyAgICAgICBbLl0gX19t
-ZW1jcHlfc3NzZTNfYmFjaw0KICAgICAzLjA0JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10g
-IFtrXSBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUNCiAgICAgMi45OCUgIGRkICAgICAg
-IFtrZXJuZWwua2FsbHN5bXNdICBba10gX19mZ2V0X2xpZ2h0DQogICAgIDIuOTclICBkZCAgICAg
-ICBba2VybmVsLmthbGxzeW1zXSAgW2tdIGRvX3N5c2NhbGxfNjQNCiAgICAgMi4zMyUgIGRkICAg
-ICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gdmZzX3dyaXRlDQogICAgIDIuMzIlICBkZCAgICAg
-ICBba2VybmVsLmthbGxzeW1zXSAgW2tdIF9fYXVkaXRfc3lzY2FsbF9lbnRyeQ0KICAgICAyLjMx
-JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBpb3ZfaXRlcl96ZXJvDQogICAgIDIu
-MjIlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIHN5c2NhbGxfdHJhY2VfZW50ZXIN
-CiAgICAgMS44OSUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gc3lzY2FsbF9zbG93
-X2V4aXRfd29yaw0KICAgICAxLjU2JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBf
-X2Zzbm90aWZ5X3BhcmVudA0KICAgICAxLjUyJSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10g
-IFtrXSBfX3g2NF9zeXNfd3JpdGUNCiAgICAgMS40MiUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5
-bXNdICBba10gX192ZnNfcmVhZA0KICAgICAxLjM0JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3lt
-c10gIFtrXSBfX3g2NF9zeXNfcmVhZA0KICAgICAxLjMwJSAgZGQgICAgICAgW2tlcm5lbC5rYWxs
-c3ltc10gIFtrXSB2ZnNfcmVhZA0KICAgICAxLjE2JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3lt
-c10gIFtrXSBrc3lzX3dyaXRlDQogICAgIDEuMDUlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1z
-XSAgW2tdIHNlY3VyaXR5X2ZpbGVfcGVybWlzc2lvbg0KDQoyLiBhdWRpdGN0bCAtYSBuZXZlcix0
-YXNrDQoNCnBlcmYgcmVjb3JkIGRkIGlmPS9kZXYvemVybyBvZj0vZGV2L251bGwgY291bnQ9Mk0N
-CjIwOTcxNTIrMCByZWNvcmRzIGluDQoyMDk3MTUyKzAgcmVjb3JkcyBvdXQNCjEwNzM3NDE4MjQg
-Ynl0ZXMgKDEuMSBHQiwgMS4wIEdpQikgY29waWVkLCAxLjI5Mzg0IHMsIDgzMCBNQi9zDQoNCnBl
-cmYgcmVwb3J0Og0KDQojIE92ZXJoZWFkICBDb21tYW5kICBTaGFyZWQgT2JqZWN0ICAgICAgU3lt
-Ym9sICAgICAgICAgICAgICAgICAgICAgICAgICAgICANCiMgLi4uLi4uLi4gIC4uLi4uLi4gIC4u
-Li4uLi4uLi4uLi4uLi4uICAuLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLi4uLg0KIw0K
-ICAgIDE2LjkwJSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBlbnRyeV9TWVNDQUxM
-XzY0DQogICAgMTQuMjQlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIF9fY2xlYXJf
-dXNlcg0KICAgICA2LjAwJSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBmc25vdGlm
-eQ0KICAgICA1LjM1JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBzeXNjYWxsX3Jl
-dHVybl92aWFfc3lzcmV0DQogICAgIDUuMjYlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAg
-W2tdIF9faW5kaXJlY3RfdGh1bmtfc3RhcnQNCiAgICAgNC44NSUgIGRkICAgICAgIGxpYmMtMi4y
-OC5zbyAgICAgICBbLl0gcmVhZA0KICAgICA0LjgxJSAgZGQgICAgICAgbGliYy0yLjI4LnNvICAg
-ICAgIFsuXSBfX0dJX19fbGliY193cml0ZQ0KICAgICA0LjA5JSAgZGQgICAgICAgbGliYy0yLjI4
-LnNvICAgICAgIFsuXSBfX21lbWNweV9zc3NlM19iYWNrDQogICAgIDMuOTIlICBkZCAgICAgICBb
-a2VybmVsLmthbGxzeW1zXSAgW2tdIF9fZmdldF9saWdodA0KICAgICAzLjQzJSAgZGQgICAgICAg
-W2tlcm5lbC5rYWxsc3ltc10gIFtrXSBlbnRyeV9TWVNDQUxMXzY0X2FmdGVyX2h3ZnJhbWUNCiAg
-ICAgMy4wNyUgIGRkICAgICAgIFtrZXJuZWwua2FsbHN5bXNdICBba10gaW92X2l0ZXJfemVybw0K
-ICAgICAyLjkzJSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBkb19zeXNjYWxsXzY0
-DQogICAgIDIuNDUlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIHZmc193cml0ZQ0K
-ICAgICAyLjA3JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBfX3Zmc19yZWFkDQog
-ICAgIDIuMDIlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIF9fZnNub3RpZnlfcGFy
-ZW50DQogICAgIDEuNDIlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIHZmc19yZWFk
-DQogICAgIDEuMzQlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIGtzeXNfcmVhZA0K
-ICAgICAxLjE4JSAgZGQgICAgICAgW2tlcm5lbC5rYWxsc3ltc10gIFtrXSBrc3lzX3dyaXRlDQog
-ICAgIDEuMTglICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIHJlYWRfaXRlcl96ZXJv
-DQogICAgIDEuMTAlICBkZCAgICAgICBba2VybmVsLmthbGxzeW1zXSAgW2tdIF9fdmZzX3dyaXRl
-DQoNCldoaWNoIGJyaW5ncyBtZSB0byBhbiBpZGVhLCB0aGF0IHRoZSBzdWJqZWN0IHBhdGNoIHNo
-b3VsZCBoYXZlIGJlZW4gYWNjb21wYW5pZWQNCmJ5IGEgZGVmYXVsdCAibmV2ZXIsdGFzayIgcnVs
-ZSBpbnNpZGUgdGhlIGtlcm5lbCwgb3RoZXJ3aXNlIHlvdSByZXF1aXJlIGFuDQpleHRyYSB1c2Vy
-LXNwYWNlIHBhY2thZ2UgKGF1ZGl0KSBqdXN0IHRvIGJyaW5nIExpbnV4IDQuNSsgdG8gNC40IHBl
-cmZvcm1hbmNlDQpsZXZlbHMuDQoNCi0tIA0KQmVzdCByZWdhcmRzLA0KQWxleGFuZGVyIFN2ZXJk
-bGluLg0K
+Hi,
+
+This patch series provides a way for irqchips to define some IRQs as NMIs.
+
+Updating this series as it is needed for the arm64 pseudo-NMI[1] which we
+are considering to merge.
+
+Changes since v4[2]:
+- Rebased on v5.0-rc4
+- Modified comment for request_percpu_nmi() to detail
+  the use of per CPU NMIs a bit more
+
+Changes since v3[3]:
+- Rebased on v4.20-rc2
+
+Changes since v2[4]:
+- Fix ARM build error reported by kbuild bot
+- Fix documentation warnings reported by kbuild bot
+
+Changes since v1[5]:
+- Rebased to v4.19-rc1
+- Fix some coding style issues
+
+Changes since RFC[6]:
+- Rebased to v4.18-rc6
+- Remove disable_nmi, one should call disable_nmi_nosync instead
+- Remove code related to affinity balancing from NMI functions
+- Require PERCPU configuration for NMIs
+
+[1] https://lkml.org/lkml/2019/1/21/1060
+[2] https://lkml.org/lkml/2018/11/12/2113
+[3] https://lkml.org/lkml/2018/8/31/173
+[4] https://lkml.org/lkml/2018/8/28/661
+[5] https://lkml.org/lkml/2018/7/24/321
+[6] https://lkml.org/lkml/2018/7/9/768
+
+Cheers,
+
+Julien
+
+-->
+
+Julien Thierry (4):
+  genirq: Provide basic NMI management for interrupt lines
+  genirq: Provide NMI management for percpu_devid interrupts
+  genirq: Provide NMI handlers
+  irqdesc: Add domain handler for NMIs
+
+ include/linux/interrupt.h |  18 +++
+ include/linux/irq.h       |  10 ++
+ include/linux/irqdesc.h   |   5 +
+ kernel/irq/chip.c         |  54 +++++++
+ kernel/irq/debugfs.c      |   6 +-
+ kernel/irq/internals.h    |   2 +
+ kernel/irq/irqdesc.c      |  35 +++++
+ kernel/irq/manage.c       | 376 +++++++++++++++++++++++++++++++++++++++++++++-
+ 8 files changed, 503 insertions(+), 3 deletions(-)
+
+--
+1.9.1
