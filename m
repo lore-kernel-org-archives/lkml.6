@@ -2,250 +2,443 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBD99C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:58:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4CFAC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:00:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DF8F2171F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 12:58:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DE412173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:00:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=crapouillou.net header.i=@crapouillou.net header.b="UH4cRTRR"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SiE0cST9"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbfA1M6a (ORCPT
+        id S1726784AbfA1NAH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 07:58:30 -0500
-Received: from outils.crapouillou.net ([89.234.176.41]:39362 "EHLO
-        crapouillou.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726672AbfA1M6a (ORCPT
+        Mon, 28 Jan 2019 08:00:07 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:42417 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726672AbfA1NAH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 07:58:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=crapouillou.net;
-        s=mail; t=1548680307; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:
-         content-transfer-encoding:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=RbmYErF/pq7+kSxpPmh0eNdtHkh8mAfzRGe8tgKGoxE=;
-        b=UH4cRTRRSnjErmi1Uh237WBz6ZYQkQLRNoKQ0+AI5z1l1zGsXjNQ8yZ8VipfeI/PQGIUoZ
-        52M6pMW7iDfQYxjKqAYnoue9WyWHfpr/q0oenP5FLgdXHSwmvnlDvzsH+DzE3if1Xq14Yc
-        033sQ9vTxiyLtYpBKBEzz3OmgFaemFw=
-Date:   Mon, 28 Jan 2019 09:58:13 -0300
-From:   Paul Cercueil <paul@crapouillou.net>
-Subject: Re: [PATCH 1/3] mmc: jz4740: Remove platform data and use standard
- APIs
-To:     Ulf Hansson <ulf.hansson@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        James Hogan <jhogan@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        DTML <devicetree@vger.kernel.org>, linux-mips@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>
-Message-Id: <1548680293.3021.0@crapouillou.net>
-In-Reply-To: <CAPDyKFrkq4GQbCbcJFqeERt3y41VJ7we+eL9NziPf2Obe+yGkg@mail.gmail.com>
-References: <20190125200927.21045-1-paul@crapouillou.net>
-        <CAPDyKFrkq4GQbCbcJFqeERt3y41VJ7we+eL9NziPf2Obe+yGkg@mail.gmail.com>
+        Mon, 28 Jan 2019 08:00:07 -0500
+Received: by mail-wr1-f68.google.com with SMTP id q18so17926906wrx.9
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 05:00:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=F1kXDxN9SgU3Gy4DpvLOYRSgLn1+0pgCe+JxFuZTAzk=;
+        b=SiE0cST9qoxXY5YKpQ6cO8bV6ODwDGRiLjNJEnhvZJxiqu/Ft/HeClD9KhraxlGhbu
+         QSbqe9MRVhSd5WFqy9JzoZkfFF65PR5c5cairH9vzuwuvjSvkwnqR8jHoE/55XsW1LcD
+         yNwa16sSzcNcox+giTRIcNM2sUXda2EMvD5aA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=F1kXDxN9SgU3Gy4DpvLOYRSgLn1+0pgCe+JxFuZTAzk=;
+        b=D2JLgHoIUkjN9nK4JvxlPIXDwyxN9XX9VfM3ceAVn4lx8dpRVq0MvmYnoMRo9Gj6NX
+         nk2rtkw+406vD/tFrHCcFtBiyOVVncMpIs/5fV53p/WhI0oMuaQZJn/Kxbv26BC/ZRi+
+         ZorCnRHbDoWxQtDbFnIB8XGBnQu73xaBhvkmFGH88VdoDb+d90Y0hYCEHkfbEIKyPU3H
+         xiyZ7O36sFqiwD8d86rt/sxSC5mMvQbzbFYKLyVAWf8LjYtVw3ob+SELLHLJU/r8egCG
+         4zR0lUON4hwhFlom1gDYlc09mz+K6bIlzqwBPQWaWs+Vq6s16FzEYZREW+WYxOtyfN2F
+         OJ2w==
+X-Gm-Message-State: AJcUukeAqHw9yNiH40lSogiRtJG59V0TOpfkRzGoWMmke/iovsJyx1B+
+        7vD5hOhKcbYWmbSUnJJVwOQyNf7zv9E=
+X-Google-Smtp-Source: ALg8bN4XBjVrB//fIVFuVbWckoJGAy2w/hd17ldlqpu2pOneY0eXBBXvevDsijvTJ8yr0RQ73GwW2Q==
+X-Received: by 2002:adf:92a4:: with SMTP id 33mr21532140wrn.11.1548680403537;
+        Mon, 28 Jan 2019 05:00:03 -0800 (PST)
+Received: from [192.168.0.41] (167.126.130.77.rev.sfr.net. [77.130.126.167])
+        by smtp.googlemail.com with ESMTPSA id r200sm6317760wmb.36.2019.01.28.05.00.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 28 Jan 2019 05:00:02 -0800 (PST)
+Subject: Re: [PATCH V2 2/6] clocksource: tegra: add Tegra210 timer driver
+To:     Joseph Lo <josephl@nvidia.com>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>
+Cc:     linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Thomas Gleixner <tglx@linutronix.de>,
+        linux-kernel@vger.kernel.org
+References: <20190128091815.7040-1-josephl@nvidia.com>
+ <20190128091815.7040-3-josephl@nvidia.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <fa03140e-4f7f-ac9a-bb54-26b1efe2dc3d@linaro.org>
+Date:   Mon, 28 Jan 2019 14:00:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1; format=flowed
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20190128091815.7040-3-josephl@nvidia.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On 28/01/2019 10:18, Joseph Lo wrote:
+> Add support for the Tegra210 timer that runs at oscillator clock
+> (TMR10-TMR13). We need these timers to work as clock event device and to
+> replace the ARMv8 architected timer due to it can't survive across the
+> power cycle of the CPU core or CPUPORESET signal. So it can't be a wake-up
+> source when CPU suspends in power down state.
+> 
+> Based on the work of Antti P Miettinen <amiettinen@nvidia.com>
+> 
+> Cc: Daniel Lezcano <daniel.lezcano@linaro.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Joseph Lo <josephl@nvidia.com>
+> ---
+> v2:
+>  * add error clean-up code
+> ---
+>  drivers/clocksource/Kconfig          |   3 +
+>  drivers/clocksource/Makefile         |   1 +
+>  drivers/clocksource/timer-tegra210.c | 268 +++++++++++++++++++++++++++
+>  include/linux/cpuhotplug.h           |   1 +
+>  4 files changed, 273 insertions(+)
+>  create mode 100644 drivers/clocksource/timer-tegra210.c
+> 
+> diff --git a/drivers/clocksource/Kconfig b/drivers/clocksource/Kconfig
+> index a9e26f6a81a1..e6e3e64b6320 100644
+> --- a/drivers/clocksource/Kconfig
+> +++ b/drivers/clocksource/Kconfig
+> @@ -135,6 +135,9 @@ config TEGRA_TIMER
+>  	help
+>  	  Enables support for the Tegra driver.
+>  
+> +config TEGRA210_TIMER
+> +	def_bool ARCH_TEGRA_210_SOC
+> +
 
-Le lun. 28 janv. 2019 =E0 9:02, Ulf Hansson <ulf.hansson@linaro.org> a=20
-=E9crit :
-> On Fri, 25 Jan 2019 at 21:09, Paul Cercueil <paul@crapouillou.net>=20
-> wrote:
->>=20
->>  Drop the custom code to get the 'cd' and 'wp' GPIOs. The driver now
->>  calls mmc_of_parse() which will init these from devicetree or
->>  device properties.
->>=20
->>  Also drop the custom code to get the 'power' GPIO. The MMC core
->>  provides us with the means to power the MMC card through an external
->>  regulator.
->>=20
->>  Signed-off-by: Paul Cercueil <paul@crapouillou.net>
->=20
-> Applied for next, thanks!
->=20
-> Should I also pick up the other two MIPS patches or you want to funnel
-> those through the MIPS soc tree?
+Please make the option consistent with the option below (VT8500_TIMER or
+similar).
 
-I'd prefer through the MIPS tree, then I can still push some other=20
-patches
-on top of these in the 5.1 dev window.
+>  config VT8500_TIMER
+>  	bool "VT8500 timer driver" if COMPILE_TEST
+>  	depends on HAS_IOMEM
+> diff --git a/drivers/clocksource/Makefile b/drivers/clocksource/Makefile
+> index cdd210ff89ea..95de59c8a47b 100644
+> --- a/drivers/clocksource/Makefile
+> +++ b/drivers/clocksource/Makefile
+> @@ -36,6 +36,7 @@ obj-$(CONFIG_SUN4I_TIMER)	+= timer-sun4i.o
+>  obj-$(CONFIG_SUN5I_HSTIMER)	+= timer-sun5i.o
+>  obj-$(CONFIG_MESON6_TIMER)	+= timer-meson6.o
+>  obj-$(CONFIG_TEGRA_TIMER)	+= timer-tegra20.o
+> +obj-$(CONFIG_TEGRA210_TIMER)	+= timer-tegra210.o
+>  obj-$(CONFIG_VT8500_TIMER)	+= timer-vt8500.o
+>  obj-$(CONFIG_NSPIRE_TIMER)	+= timer-zevio.o
+>  obj-$(CONFIG_BCM_KONA_TIMER)	+= bcm_kona_timer.o
+> diff --git a/drivers/clocksource/timer-tegra210.c b/drivers/clocksource/timer-tegra210.c
+> new file mode 100644
+> index 000000000000..477b164e540b
+> --- /dev/null
+> +++ b/drivers/clocksource/timer-tegra210.c
+> @@ -0,0 +1,268 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2014-2019, NVIDIA CORPORATION.  All rights reserved.
+> + */
+> +
+> +#include <linux/clk.h>
+> +#include <linux/clockchips.h>
+> +#include <linux/cpu.h>
+> +#include <linux/cpumask.h>
+> +#include <linux/err.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/io.h>
+> +#include <linux/of_address.h>
+> +#include <linux/of_irq.h>
+> +#include <linux/percpu.h>
+> +#include <linux/syscore_ops.h>
+> +
+> +static u32 tegra210_timer_freq;
+> +static void __iomem *tegra210_timer_reg_base;
+> +static u32 usec_config;
+> +
+> +#define TIMER_PTV		0x0
+> +#define TIMER_PTV_EN		BIT(31)
+> +#define TIMER_PTV_PER		BIT(30)
+> +#define TIMER_PCR		0x4
+> +#define TIMER_PCR_INTR_CLR	BIT(30)
+> +#define TIMERUS_CNTR_1US	0x10
+> +#define TIMERUS_USEC_CFG	0x14
+> +
+> +#define TIMER10_OFFSET		0x90
+> +#define TIMER10_IRQ_IDX		10
+> +
+> +#define TIMER_FOR_CPU(cpu) (TIMER10_OFFSET + (cpu) * 8)
+> +#define IRQ_IDX_FOR_CPU(cpu)	(TIMER10_IRQ_IDX + cpu)
+> +
+> +struct tegra210_clockevent {
+> +	struct clock_event_device evt;
+> +	char name[20];
+> +	void __iomem *reg_base;
+> +};
+> +#define to_tegra_cevt(p) (container_of(p, struct tegra210_clockevent, evt))
+> +
+> +static struct tegra210_clockevent __percpu *tegra210_evt;
+> +
+> +static int tegra210_timer_set_next_event(unsigned long cycles,
+> +					 struct clock_event_device *evt)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt = to_tegra_cevt(evt);
+> +	writel(TIMER_PTV_EN |
+> +	       ((cycles > 1) ? (cycles - 1) : 0), /* n+1 scheme */
+> +	       tevt->reg_base + TIMER_PTV);
+> +
+> +	return 0;
+> +}
+> +
+> +static inline void timer_shutdown(struct tegra210_clockevent *tevt)
+> +{
+> +	writel(0, tevt->reg_base + TIMER_PTV);
+> +}
+> +
+> +static int tegra210_timer_shutdown(struct clock_event_device *evt)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt = to_tegra_cevt(evt);
+> +	timer_shutdown(tevt);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra210_timer_set_periodic(struct clock_event_device *evt)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt = to_tegra_cevt(evt);
+> +	writel(TIMER_PTV_EN | TIMER_PTV_PER | ((tegra210_timer_freq / HZ) - 1),
+> +	       tevt->reg_base + TIMER_PTV);
+> +
+> +	return 0;
+> +}
+> +
+> +static irqreturn_t tegra210_timer_isr(int irq, void *dev_id)
+> +{
+> +	struct tegra210_clockevent *tevt;
+> +
+> +	tevt = dev_id;
+> +	writel(TIMER_PCR_INTR_CLR, tevt->reg_base + TIMER_PCR);
+> +	tevt->evt.event_handler(&tevt->evt);
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
+> +static int tegra210_timer_setup(unsigned int cpu)
+> +{
+> +	struct tegra210_clockevent *tevt = per_cpu_ptr(tegra210_evt, cpu);
+> +
+> +	irq_force_affinity(tevt->evt.irq, cpumask_of(cpu));
+> +	enable_irq(tevt->evt.irq);
+> +
+> +	clockevents_config_and_register(&tevt->evt, tegra210_timer_freq,
+> +					1, /* min */
+> +					0x1fffffff); /* 29 bits */
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra210_timer_stop(unsigned int cpu)
+> +{
+> +	struct tegra210_clockevent *tevt = per_cpu_ptr(tegra210_evt, cpu);
+> +
+> +	tevt->evt.set_state_shutdown(&tevt->evt);
+> +	disable_irq_nosync(tevt->evt.irq);
+> +
+> +	return 0;
+> +}
+> +
+> +static int tegra_timer_suspend(void)
+> +{
+> +	int cpu;
+> +
+> +	for_each_possible_cpu(cpu) {
+> +		void __iomem *reg_base = tegra210_timer_reg_base +
+> +					 TIMER_FOR_CPU(cpu);
+> +		writel(TIMER_PCR_INTR_CLR, reg_base + TIMER_PCR);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void tegra_timer_resume(void)
+> +{
+> +	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
+> +}
+> +
+> +static struct syscore_ops tegra_timer_syscore_ops = {
+> +	.suspend = tegra_timer_suspend,
+> +	.resume = tegra_timer_resume,
+> +};
+> +
+> +static int __init tegra210_timer_init(struct device_node *np)
+> +{
+> +	int cpu, ret = 0;
+> +	struct tegra210_clockevent *tevt;
+> +	struct clk *clk;
+> +
+> +	tegra210_evt = alloc_percpu(struct tegra210_clockevent);
+> +	if (!tegra210_evt) {
+> +		ret = -ENOMEM;
+> +		goto out;
+> +	}
+> +
+> +	tegra210_timer_reg_base = of_iomap(np, 0);
+> +	if (!tegra210_timer_reg_base) {
+> +		ret = -ENXIO;
+> +		goto out_free_mem;
+> +	}
+> +
+> +	clk = of_clk_get(np, 0);
+> +	if (IS_ERR(clk)) {
+> +		ret = -EINVAL;
+> +		goto out_iounmap;
+> +	}
+> +
+> +	clk_prepare_enable(clk);
+> +	tegra210_timer_freq = clk_get_rate(clk);
 
->>  ---
->>   drivers/mmc/host/jz4740_mmc.c | 71=20
->> +++++++++----------------------------------
->>   1 file changed, 14 insertions(+), 57 deletions(-)
->>=20
->>  diff --git a/drivers/mmc/host/jz4740_mmc.c=20
->> b/drivers/mmc/host/jz4740_mmc.c
->>  index 33215d66afa2..e41c7230815f 100644
->>  --- a/drivers/mmc/host/jz4740_mmc.c
->>  +++ b/drivers/mmc/host/jz4740_mmc.c
->>  @@ -21,7 +21,6 @@
->>   #include <linux/dmaengine.h>
->>   #include <linux/dma-mapping.h>
->>   #include <linux/err.h>
->>  -#include <linux/gpio/consumer.h>
->>   #include <linux/interrupt.h>
->>   #include <linux/io.h>
->>   #include <linux/irq.h>
->>  @@ -36,7 +35,6 @@
->>   #include <asm/cacheflush.h>
->>=20
->>   #include <asm/mach-jz4740/dma.h>
->>  -#include <asm/mach-jz4740/jz4740_mmc.h>
->>=20
->>   #define JZ_REG_MMC_STRPCL      0x00
->>   #define JZ_REG_MMC_STATUS      0x04
->>  @@ -148,9 +146,7 @@ enum jz4780_cookie {
->>   struct jz4740_mmc_host {
->>          struct mmc_host *mmc;
->>          struct platform_device *pdev;
->>  -       struct jz4740_mmc_platform_data *pdata;
->>          struct clk *clk;
->>  -       struct gpio_desc *power;
->>=20
->>          enum jz4740_mmc_version version;
->>=20
->>  @@ -894,16 +890,16 @@ static void jz4740_mmc_set_ios(struct=20
->> mmc_host *mmc, struct mmc_ios *ios)
->>          switch (ios->power_mode) {
->>          case MMC_POWER_UP:
->>                  jz4740_mmc_reset(host);
->>  -               if (host->power)
->>  -                       gpiod_set_value(host->power, 1);
->>  +               if (!IS_ERR(mmc->supply.vmmc))
->>  +                       mmc_regulator_set_ocr(mmc,=20
->> mmc->supply.vmmc, ios->vdd);
->>                  host->cmdat |=3D JZ_MMC_CMDAT_INIT;
->>                  clk_prepare_enable(host->clk);
->>                  break;
->>          case MMC_POWER_ON:
->>                  break;
->>          default:
->>  -               if (host->power)
->>  -                       gpiod_set_value(host->power, 0);
->>  +               if (!IS_ERR(mmc->supply.vmmc))
->>  +                       mmc_regulator_set_ocr(mmc,=20
->> mmc->supply.vmmc, 0);
->>                  clk_disable_unprepare(host->clk);
->>                  break;
->>          }
->>  @@ -936,38 +932,6 @@ static const struct mmc_host_ops=20
->> jz4740_mmc_ops =3D {
->>          .enable_sdio_irq =3D jz4740_mmc_enable_sdio_irq,
->>   };
->>=20
->>  -static int jz4740_mmc_request_gpios(struct jz4740_mmc_host *host,
->>  -                                   struct mmc_host *mmc,
->>  -                                   struct platform_device *pdev)
->>  -{
->>  -       struct jz4740_mmc_platform_data *pdata =3D=20
->> dev_get_platdata(&pdev->dev);
->>  -       int ret =3D 0;
->>  -
->>  -       if (!pdata)
->>  -               return 0;
->>  -
->>  -       if (!pdata->card_detect_active_low)
->>  -               mmc->caps2 |=3D MMC_CAP2_CD_ACTIVE_HIGH;
->>  -       if (!pdata->read_only_active_low)
->>  -               mmc->caps2 |=3D MMC_CAP2_RO_ACTIVE_HIGH;
->>  -
->>  -       /*
->>  -        * Get optional card detect and write protect GPIOs,
->>  -        * only back out on probe deferral.
->>  -        */
->>  -       ret =3D mmc_gpiod_request_cd(mmc, "cd", 0, false, 0, NULL);
->>  -       if (ret =3D=3D -EPROBE_DEFER)
->>  -               return ret;
->>  -
->>  -       ret =3D mmc_gpiod_request_ro(mmc, "wp", 0, false, 0, NULL);
->>  -       if (ret =3D=3D -EPROBE_DEFER)
->>  -               return ret;
->>  -
->>  -       host->power =3D devm_gpiod_get_optional(&pdev->dev, "power",
->>  -                                             GPIOD_OUT_HIGH);
->>  -       return PTR_ERR_OR_ZERO(host->power);
->>  -}
->>  -
->>   static const struct of_device_id jz4740_mmc_of_match[] =3D {
->>          { .compatible =3D "ingenic,jz4740-mmc", .data =3D (void *)=20
->> JZ_MMC_JZ4740 },
->>          { .compatible =3D "ingenic,jz4725b-mmc", .data =3D (void=20
->> *)JZ_MMC_JZ4725B },
->>  @@ -982,9 +946,6 @@ static int jz4740_mmc_probe(struct=20
->> platform_device* pdev)
->>          struct mmc_host *mmc;
->>          struct jz4740_mmc_host *host;
->>          const struct of_device_id *match;
->>  -       struct jz4740_mmc_platform_data *pdata;
->>  -
->>  -       pdata =3D dev_get_platdata(&pdev->dev);
->>=20
->>          mmc =3D mmc_alloc_host(sizeof(struct jz4740_mmc_host),=20
->> &pdev->dev);
->>          if (!mmc) {
->>  @@ -993,29 +954,25 @@ static int jz4740_mmc_probe(struct=20
->> platform_device* pdev)
->>          }
->>=20
->>          host =3D mmc_priv(mmc);
->>  -       host->pdata =3D pdata;
->>=20
->>          match =3D of_match_device(jz4740_mmc_of_match, &pdev->dev);
->>          if (match) {
->>                  host->version =3D (enum=20
->> jz4740_mmc_version)match->data;
->>  -               ret =3D mmc_of_parse(mmc);
->>  -               if (ret) {
->>  -                       if (ret !=3D -EPROBE_DEFER)
->>  -                               dev_err(&pdev->dev,
->>  -                                       "could not parse of data:=20
->> %d\n", ret);
->>  -                       goto err_free_host;
->>  -               }
->>          } else {
->>                  /* JZ4740 should be the only one using legacy probe=20
->> */
->>                  host->version =3D JZ_MMC_JZ4740;
->>  -               mmc->caps |=3D MMC_CAP_SDIO_IRQ;
->>  -               if (!(pdata && pdata->data_1bit))
->>  -                       mmc->caps |=3D MMC_CAP_4_BIT_DATA;
->>  -               ret =3D jz4740_mmc_request_gpios(host, mmc, pdev);
->>  -               if (ret)
->>  -                       goto err_free_host;
->>          }
->>=20
->>  +       ret =3D mmc_of_parse(mmc);
->>  +       if (ret) {
->>  +               if (ret !=3D -EPROBE_DEFER)
->>  +                       dev_err(&pdev->dev,
->>  +                               "could not parse device properties:=20
->> %d\n", ret);
->>  +               goto err_free_host;
->>  +       }
->>  +
->>  +       mmc_regulator_get_supply(mmc);
->>  +
->>          host->irq =3D platform_get_irq(pdev, 0);
->>          if (host->irq < 0) {
->>                  ret =3D host->irq;
->>  --
->>  2.11.0
->>=20
-=
+
+Use the timer-of API for each CPU.
+
+> +	for_each_possible_cpu(cpu) {
+
+
+No cpu loop for the initialization, use the tegra210_timer_setup for
+this (cf. armada 370 timer).
+
+> +		tevt = per_cpu_ptr(tegra210_evt, cpu);
+> +		tevt->reg_base = tegra210_timer_reg_base + TIMER_FOR_CPU(cpu);
+> +		tevt->evt.irq = irq_of_parse_and_map(np, IRQ_IDX_FOR_CPU(cpu));
+> +		if (!tevt->evt.irq) {
+> +			pr_err("%s: can't map IRQ for CPU%d\n",
+> +			       __func__, cpu);
+> +			ret = -EINVAL;
+> +			goto out_clk;
+> +		}
+> +
+> +		snprintf(tevt->name, ARRAY_SIZE(tevt->name),
+> +			 "tegra210_timer%d", cpu);
+> +		tevt->evt.name = tevt->name;
+> +		tevt->evt.cpumask = cpumask_of(cpu);
+> +		tevt->evt.set_next_event = tegra210_timer_set_next_event;
+> +		tevt->evt.set_state_shutdown = tegra210_timer_shutdown;
+> +		tevt->evt.set_state_periodic = tegra210_timer_set_periodic;
+> +		tevt->evt.set_state_oneshot = tegra210_timer_shutdown;
+> +		tevt->evt.tick_resume = tegra210_timer_shutdown;
+> +		tevt->evt.features = CLOCK_EVT_FEAT_PERIODIC |
+> +			CLOCK_EVT_FEAT_ONESHOT;
+> +		tevt->evt.rating = 460;
+> +		irq_set_status_flags(tevt->evt.irq, IRQ_NOAUTOEN);
+
+Why do you need to prevent the interrupt to be enabled ? If the timer is
+stopped and cleared, no spurious interrupt will occur no ?
+
+> +		ret = request_irq(tevt->evt.irq, tegra210_timer_isr,
+> +				  IRQF_TIMER | IRQF_NOBALANCING,
+> +				  tevt->name, tevt);
+> +		if (ret) {
+> +			pr_err("%s: cannot setup irq %d for CPU%d\n",
+> +				__func__, tevt->evt.irq, cpu);
+> +			ret = -EINVAL;
+> +			goto out_irq;
+> +		}
+> +	}
+> +
+> +	/*
+> +	 * Configure microsecond timers to have 1MHz clock
+> +	 * Config register is 0xqqww, where qq is "dividend", ww is "divisor"
+
+Did you mean 0xwwqq ?
+
+> +	 * Uses n+1 scheme
+> +	 */
+> +	switch (tegra210_timer_freq) {
+> +	case 12000000:
+> +		usec_config = 0x000b; /* (11+1)/(0+1) */
+> +		break;
+> +	case 12800000:
+> +		usec_config = 0x043f; /* (63+1)/(4+1) */
+> +		break;
+> +	case 13000000:
+> +		usec_config = 0x000c; /* (12+1)/(0+1) */
+> +		break;
+> +	case 16800000:
+> +		usec_config = 0x0453; /* (83+1)/(4+1) */
+> +		break;
+> +	case 19200000:
+> +		usec_config = 0x045f; /* (95+1)/(4+1) */
+> +		break;
+> +	case 26000000:
+> +		usec_config = 0x0019; /* (25+1)/(0+1) */
+> +		break;
+> +	case 38400000:
+> +		usec_config = 0x04bf; /* (191+1)/(4+1) */
+> +		break;
+> +	case 48000000:
+> +		usec_config = 0x002f; /* (47+1)/(0+1) */
+> +		break;
+> +	default:
+> +		ret = -EINVAL;
+> +		goto out_irq;
+> +	}
+> +
+> +	writel(usec_config, tegra210_timer_reg_base + TIMERUS_USEC_CFG);
+> +
+> +	cpuhp_setup_state(CPUHP_AP_TEGRA_TIMER_STARTING,
+> +			  "AP_TEGRA_TIMER_STARTING", tegra210_timer_setup,
+> +			  tegra210_timer_stop);
+> +
+> +	register_syscore_ops(&tegra_timer_syscore_ops);
+> +
+> +	return ret;
+> +
+> +out_irq:
+> +	for_each_possible_cpu(cpu) {
+> +		tevt = per_cpu_ptr(tegra210_evt, cpu);
+> +		if (tevt->evt.irq) {
+> +			free_irq(tevt->evt.irq, tevt);
+> +			irq_dispose_mapping(tevt->evt.irq);
+> +		}
+> +	}
+> +out_clk:
+> +	clk_put(clk);
+> +out_iounmap:
+> +	iounmap(tegra210_timer_reg_base);
+> +out_free_mem:
+> +	free_percpu(tegra210_evt);
+> +out:
+> +	return ret;
+> +}
+> +
+> +TIMER_OF_DECLARE(tegra210_timer, "nvidia,tegra210-timer", tegra210_timer_init);
+> diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
+> index fd586d0301e7..e78281d07b70 100644
+> --- a/include/linux/cpuhotplug.h
+> +++ b/include/linux/cpuhotplug.h
+> @@ -121,6 +121,7 @@ enum cpuhp_state {
+>  	CPUHP_AP_EXYNOS4_MCT_TIMER_STARTING,
+>  	CPUHP_AP_ARM_TWD_STARTING,
+>  	CPUHP_AP_QCOM_TIMER_STARTING,
+> +	CPUHP_AP_TEGRA_TIMER_STARTING,
+>  	CPUHP_AP_ARMADA_TIMER_STARTING,
+>  	CPUHP_AP_MARCO_TIMER_STARTING,
+>  	CPUHP_AP_MIPS_GIC_TIMER_STARTING,
+> 
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
