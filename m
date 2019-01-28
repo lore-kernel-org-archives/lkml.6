@@ -2,136 +2,114 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E924CC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:46:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 861A1C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:46:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF3FE214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:46:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54177214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:46:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFeiHduz"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727730AbfA1UqY (ORCPT
+        id S1727868AbfA1Uq2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 15:46:24 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:42058 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726979AbfA1UqX (ORCPT
+        Mon, 28 Jan 2019 15:46:28 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:36148 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726992AbfA1UqY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 15:46:23 -0500
-Received: from pps.filterd (m0098404.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SKhql5138492
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 15:46:22 -0500
-Received: from e14.ny.us.ibm.com (e14.ny.us.ibm.com [129.33.205.204])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qa7ydk4gn-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 15:46:22 -0500
-Received: from localhost
-        by e14.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 28 Jan 2019 20:46:20 -0000
-Received: from b01cxnp22034.gho.pok.ibm.com (9.57.198.24)
-        by e14.ny.us.ibm.com (146.89.104.201) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 28 Jan 2019 20:46:13 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SKkBPq24576028
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 28 Jan 2019 20:46:12 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BB299B205F;
-        Mon, 28 Jan 2019 20:46:11 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 9921CB206E;
-        Mon, 28 Jan 2019 20:46:11 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.70.82.57])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 28 Jan 2019 20:46:11 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 9FCD816C62B9; Mon, 28 Jan 2019 12:46:11 -0800 (PST)
-Date:   Mon, 28 Jan 2019 12:46:11 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>,
-        Jann Horn <jannh@google.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrea Parri <parri.andrea@gmail.com>,
-        Andrew Hunter <ahh@google.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Avi Kivity <avi@scylladb.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Dave Watson <davejwatson@fb.com>, David Sehr <sehr@google.com>,
-        Greg Hackmann <ghackmann@google.com>,
-        "H . Peter Anvin" <hpa@zytor.com>,
-        Maged Michael <maged.michael@gmail.com>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Will Deacon <will.deacon@arm.com>, stable@vger.kernel.org
-Subject: Re: [RFC PATCH] Fix: membarrier: racy access to p->mm in
- membarrier_global_expedited()
-Reply-To: paulmck@linux.ibm.com
-References: <20190128182636.18420-1-mathieu.desnoyers@efficios.com>
- <CAHk-=wjmpfXak0pQVu8dZrk2Oma3OxtEoBHfwCAruu0xpSMN4A@mail.gmail.com>
+        Mon, 28 Jan 2019 15:46:24 -0500
+Received: by mail-oi1-f194.google.com with SMTP id x23so14264926oix.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 12:46:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=JZijaVUG5xxd/yGw2txPDnmNMWdCgsYETQ39uaT3Gdk=;
+        b=WFeiHduzIoByhkJ11zfVgyxt3DVBSYMU7ue+AUBvCy/yD+z4VJlnWwkzKFFqlPme+j
+         fn3f6DHfjnZ6DeX8hgf1e84B9YulW7pr4rgAmprh335d2092E/IEr7u+WGIOScMgwRaQ
+         9uQKzSWxQB2Ew9SJgVLZXTHz8W5gHS0VSifyxkWt9P6H8pa9JDcTmnP+xObnVwY11UNC
+         pGE30iea3reBw0m2saIs9GsPenaKAvv8BJdeOOsaA/6rzBDZn5afidpOxidPRuQK625B
+         SN29aVVtZstur31MFe0sgo+N3f9gEZRid13Ja3jAx8WVbnbtt7+10drx1xgeRp50EGSj
+         sDXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=JZijaVUG5xxd/yGw2txPDnmNMWdCgsYETQ39uaT3Gdk=;
+        b=eYFVlNj1D87dpxTgnm5lmQn818LYDI+1IeP08q5H67OREC8ELxE7LFxp1Esj2b9GDy
+         hLXjT0hRGCtUbsPZEjoCgnBKUwPiEDUGqKTWwJBPgr+3VvMpryptN+FGOLxwmHakJX5B
+         c77br9l/3UesVp/+OZODGJkNRMzOIIfyLLwBLtFiJ6VTDSHr+wU8iG3SuXKslX1Ft85Z
+         9AejknqbTlvUBD7gi/MfEeAV32wAZx7nMVWV9P2fWeScfl5W2Z1ShGsdIZ0eAqNP3FAI
+         W+OnCwyaK8N0vxy9U1fAw5ZAtREN/vYdMehIJ3Lv8alvJz8RX5zmFsbEa7cQN+LujkVm
+         RocA==
+X-Gm-Message-State: AHQUAuacaMEb29Z2ucPMcEpSdfmdL/YFl4mf8vyVTVVNde9aJXlvrfCh
+        lUiLlUiZbe5PChXFI8S2xXh2g4t7OoUvbdkM6TRlnUSw
+X-Google-Smtp-Source: ALg8bN4aQ4dT3F264GlL4mkF1l79TgWzaiWMfxdKpGN3sNyzldvFLRLFE1uCMzPCyXrK0qcZUCvw3howoY550GCy0k0=
+X-Received: by 2002:aca:3345:: with SMTP id z66mr7302111oiz.91.1548708383255;
+ Mon, 28 Jan 2019 12:46:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wjmpfXak0pQVu8dZrk2Oma3OxtEoBHfwCAruu0xpSMN4A@mail.gmail.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 19012820-0052-0000-0000-0000037F8D57
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010494; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000277; SDB=6.01153136; UDB=6.00601166; IPR=6.00933498;
- MB=3.00025328; MTD=3.00000008; XFM=3.00000015; UTC=2019-01-28 20:46:18
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012820-0053-0000-0000-00005FA2856E
-Message-Id: <20190128204611.GB4240@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_11:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901280153
+References: <20190122150344.8072-1-qiaochong@loongson.cn>
+In-Reply-To: <20190122150344.8072-1-qiaochong@loongson.cn>
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Date:   Mon, 28 Jan 2019 20:45:46 +0000
+Message-ID: <CADVatmPj=11jTZGVUijuxSYzt57cMh5mqzD+Q1400iWK-W8dNQ@mail.gmail.com>
+Subject: Re: [PATCH] parport_pc: fix find_superio io compare code, should use
+ equal test.
+To:     qiaochong <qiaochong@loongson.cn>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 12:27:03PM -0800, Linus Torvalds wrote:
-> On Mon, Jan 28, 2019 at 10:27 AM Mathieu Desnoyers
-> <mathieu.desnoyers@efficios.com> wrote:
-> >
-> > Jann Horn identified a racy access to p->mm in the global expedited
-> > command of the membarrier system call.
-> >
-> > The suggested fix is to hold the task_lock() around the accesses to
-> > p->mm and to the mm_struct membarrier_state field to guarantee the
-> > existence of the mm_struct.
-> 
-> Hmm. I think this is right. You shouldn't access another threads mm
-> pointer without proper locking.
-> 
-> That said, we *could* make the mm_cachep be SLAB_TYPESAFE_BY_RCU,
-> which would allow speculatively reading data off the mm pointer under
-> RCU. It might not be the *right* mm if somebody just did an exit, but
-> for things like this it shouldn't matter.
+Hi QiaoChong,
 
-That sounds much simpler and more effective than the contention-reduction
-approach that I suggested.  ;-)
+On Tue, Jan 22, 2019 at 3:04 PM qiaochong <qiaochong@loongson.cn> wrote:
+>
+> From: QiaoChong <qiaochong@loongson.cn>
+>
+> git blame drivers/parport/parport_pc.c
+>
+> 181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1376) static struct superio_struct *find_superio(struct parport *p)
+> ^1da177e4c3f4 (Linus Torvalds            2005-04-16 15:20:36 -0700 1377) {
+> 181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1378)        int i;
+> 181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1379)        for (i = 0; i < NR_SUPERIOS; i++)
+> 181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1380)                if (superios[i].io != p->base)
+> 181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1381)                        return &superios[i];
+> 181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1382)        return NULL;
+> 181bf1e815a2a (Alan Cox                  2009-06-11 13:08:10 +0100 1383) }
+> 73e0d48b8c28f (Michael Buesch            2009-06-11 13:06:31 +0100 1384)
+>
+> git log -1 -p 181bf1e815a2a
+>
+> -static int get_superio_dma(struct parport *p)
+> +static struct superio_struct *find_superio(struct parport *p)
+>  {
+> -       int i = 0;
+> +       int i;
+> +       for (i = 0; i < NR_SUPERIOS; i++)
+> +               if (superios[i].io != p->base)
+> +                       return &superios[i];
+> +       return NULL;
+> +}
+>
+> -       while ((i < NR_SUPERIOS) && (superios[i].io != p->base))
+> -               i++;
+> -       if (i != NR_SUPERIOS)
+> -               return superios[i].dma;
+>
+> the code before 181bf1e815a2a  also mean superio[i].io == p->base, fixup it.
 
-							Thanx, Paul
+So, this means the Super-IO chips irq and dma has not worked since 2009. :(
+Can you please resend this with a proper commit message..
 
-> But if this is the only case that might care, it sounds like just
-> doing the proper locking is the right approach.
-> 
->            Linus
-> 
 
+-- 
+Regards
+Sudip
