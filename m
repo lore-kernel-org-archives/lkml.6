@@ -7,47 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC167C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6163BC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C92B2175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2E74021916
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691175;
-	bh=t5Tx9wOUdjwV1AZezCkGQiVXL1YLa/2ZDs3LGxniwpM=;
+	s=default; t=1548691180;
+	bh=qjkEd0R7IuLFs4bm2TXYBEjhSS1ckwJx6qRYyOhQ+Go=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=SVnAPEfzXMOs4deojoBlp2KaurYMQIroqtxQ7JiEzjBcCVW1SVDJA9qwHjpsCL03H
-	 BVD/za3hmYSrwfrKHJDZbO8zWnk1DMtBuF1B4M1o+EVRSgfDZPIJMbaHlKg3laK0Wx
-	 6/Mz9r7t6YnrxhrJBzr/YrNrBsRLSk8lioASPzrY=
+	b=aBR1C1oSN1iY48BABKp56mEHXobtsy9lyxNuLub/EnxoB5gCrBW5BoPvvbWMAgPAY
+	 VoPAFO9zg0oyKu2Wc0WopfTKD7Ct1i25SZD4JBq02PRKcVaYJJnMquMRczReIhEN0G
+	 YTLwk3ZvmVEXK7fbT0lHVywDIrGRvI4nlijFFzkQ=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730583AbfA1P7e (ORCPT
+        id S1730589AbfA1P7i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:59:34 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44820 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:59:38 -0500
+Received: from mail.kernel.org ([198.145.29.99]:44880 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728987AbfA1P7c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:59:32 -0500
+        id S1728987AbfA1P7g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:59:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3F772175B;
-        Mon, 28 Jan 2019 15:59:29 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1B5B921848;
+        Mon, 28 Jan 2019 15:59:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691171;
-        bh=t5Tx9wOUdjwV1AZezCkGQiVXL1YLa/2ZDs3LGxniwpM=;
+        s=default; t=1548691176;
+        bh=qjkEd0R7IuLFs4bm2TXYBEjhSS1ckwJx6qRYyOhQ+Go=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SivOAHz5ESyl1lEDcyb9QSLDnj7eXCWQWt14kv9ep4kBAEml4KQTaXRolJqqKXhxU
-         usYUKpRPzPq/ux+kUwvxQrvj7PIdqBhNdqstjroRvHIiGDDI5GFiA4Rc2or4/JfKlE
-         CnKeLbZKEjlQSxptUXCoq12ofyeB0Zaph6rnHdJY=
+        b=Bk34DOeEfC1231s6SfelU6slhAKCX/hvj1KCbH0KKBNSR5T8hM6XM6T2wz0zBDyDt
+         fNCSK8LLwid0rhJqK2PytbAm/40k4X1lELskXy+igwLLKcRYxHZbEtU1yIoVi0bGJ4
+         7t1IkFJRhvY9l8VF3VIxCMtRTLDA1OjvX8pO0UWs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Slawomir Stepien <sst@poczta.fm>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.19 002/258] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
-Date:   Mon, 28 Jan 2019 10:55:08 -0500
-Message-Id: <20190128155924.51521-2-sashal@kernel.org>
+Cc:     Deepak Sharma <deepak.sharma@amd.com>,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Emil Velikov <emil.velikov@collabora.com>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 003/258] drm/vgem: Fix vgem_init to get drm device available.
+Date:   Mon, 28 Jan 2019 10:55:09 -0500
+Message-Id: <20190128155924.51521-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -59,70 +60,71 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Slawomir Stepien <sst@poczta.fm>
+From: Deepak Sharma <deepak.sharma@amd.com>
 
-[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
+[ Upstream commit d5c04dff24870ef07ce6453a3f4e1ffd9cf88d27 ]
 
-Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
-error code. This change will ensure that this error is being passed up
-in the call stack, so it can be handled.
+Modify vgem_init to take platform dev as parent in drm_dev_init.
+This will make drm device available at "/sys/devices/platform/vgem"
+in x86 chromebook.
 
-Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+v2: rebase, address checkpatch typo and line over 80 characters
+
+Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
+Signed-off-by: Deepak Sharma <deepak.sharma@amd.com>
+Reviewed-by: Sean Paul <seanpaul@chromium.org>
+Signed-off-by: Emil Velikov <emil.velikov@collabora.com>
+Reviewed-by: Daniel Vetter <daniel.vetter@ffwll.ch>
+Link: https://patchwork.freedesktop.org/patch/msgid/20181023163550.15211-1-emil.l.velikov@gmail.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/vgem/vgem_drv.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
-index b736275c10f5..6a48ad067a8b 100644
---- a/drivers/staging/iio/adc/ad7280a.c
-+++ b/drivers/staging/iio/adc/ad7280a.c
-@@ -256,7 +256,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned int devaddr,
+diff --git a/drivers/gpu/drm/vgem/vgem_drv.c b/drivers/gpu/drm/vgem/vgem_drv.c
+index 0e5620f76ee0..6887db878b38 100644
+--- a/drivers/gpu/drm/vgem/vgem_drv.c
++++ b/drivers/gpu/drm/vgem/vgem_drv.c
+@@ -471,31 +471,31 @@ static int __init vgem_init(void)
+ 	if (!vgem_device)
+ 		return -ENOMEM;
+ 
+-	ret = drm_dev_init(&vgem_device->drm, &vgem_driver, NULL);
+-	if (ret)
+-		goto out_free;
+-
+ 	vgem_device->platform =
+ 		platform_device_register_simple("vgem", -1, NULL, 0);
+ 	if (IS_ERR(vgem_device->platform)) {
+ 		ret = PTR_ERR(vgem_device->platform);
+-		goto out_fini;
++		goto out_free;
+ 	}
+ 
+ 	dma_coerce_mask_and_coherent(&vgem_device->platform->dev,
+ 				     DMA_BIT_MASK(64));
++	ret = drm_dev_init(&vgem_device->drm, &vgem_driver,
++			   &vgem_device->platform->dev);
++	if (ret)
++		goto out_unregister;
+ 
+ 	/* Final step: expose the device/driver to userspace */
+ 	ret  = drm_dev_register(&vgem_device->drm, 0);
  	if (ret)
- 		return ret;
+-		goto out_unregister;
++		goto out_fini;
  
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
+ 	return 0;
  
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -294,7 +296,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned int devaddr,
- 
- 	ad7280_delay(st);
- 
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
- 
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -327,7 +331,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned int cnt,
- 	ad7280_delay(st);
- 
- 	for (i = 0; i < cnt; i++) {
--		__ad7280_read32(st, &tmp);
-+		ret = __ad7280_read32(st, &tmp);
-+		if (ret)
-+			return ret;
- 
- 		if (ad7280_check_crc(st, tmp))
- 			return -EIO;
-@@ -370,7 +376,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
- 		return ret;
- 
- 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
--		__ad7280_read32(st, &val);
-+		ret = __ad7280_read32(st, &val);
-+		if (ret)
-+			return ret;
-+
- 		if (val == 0)
- 			return n - 1;
- 
+-out_unregister:
+-	platform_device_unregister(vgem_device->platform);
+ out_fini:
+ 	drm_dev_fini(&vgem_device->drm);
++out_unregister:
++	platform_device_unregister(vgem_device->platform);
+ out_free:
+ 	kfree(vgem_device);
+ 	return ret;
 -- 
 2.19.1
 
