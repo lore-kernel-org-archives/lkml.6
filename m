@@ -2,193 +2,154 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AF6C282CF
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CBF6C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:04:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 944362148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:04:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548698649;
-	bh=7qV054TafpO/A6Qe11Oo4BSboYCEjbTaPer/LE6GUIE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=nUEidz+6byCAAqWneCK4eLGW8ebhvP+EgZoy6RDjCHyR3yLiE5X2nYmxSggv2tpqz
-	 huQDKpIV0ztfAIkmm/VZ396GN/yGqruoyvb8moC1MKkPY60nXETmw66RXml19gfevu
-	 oWP8TFGHot1B8Q4ZCg7GOhMEmSCcRU2fRy1mXwfs=
+	by mail.kernel.org (Postfix) with ESMTP id 51AB42175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:04:46 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ywwqSiGB"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726973AbfA1SEI (ORCPT
+        id S1727016AbfA1SEo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:04:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46530 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726266AbfA1SEH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:04:07 -0500
-Received: from localhost (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D74C82148E;
-        Mon, 28 Jan 2019 18:04:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548698646;
-        bh=7qV054TafpO/A6Qe11Oo4BSboYCEjbTaPer/LE6GUIE=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=X4lV/k+P0GunH1mhv4tY2qnjVdMN9EhSFtwVj4ZWINZF4blcOCXrcyCn1/L9HA/xU
-         fh2PTi5ASDEV6C7sScF7Iu0qn31nBrsF8i4KcETMyjRkv/zDddFd9f3fudULEO+6S9
-         tYWzZlvQYl8QyVB9vMdQW0aQl4js9MXjI9BFA3+k=
-Date:   Mon, 28 Jan 2019 13:04:04 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH AUTOSEL 4.20 035/304] serial: core: Allow processing
- sysrq at port unlock time
-Message-ID: <20190128180404.GF3973@sasha-vm>
-References: <20190128154341.47195-1-sashal@kernel.org>
- <20190128154341.47195-35-sashal@kernel.org>
- <CAD=FV=Xm-3wAoQwnKkKNKFxcPgUsYUXHAqonv_BjPSrggkakbA@mail.gmail.com>
- <20190128171614.GB3973@sasha-vm>
- <CAD=FV=UMhtZddyUQ53=JvzsYVNL7XriyE17mC7NVW-XwOh6-Xg@mail.gmail.com>
+        Mon, 28 Jan 2019 13:04:44 -0500
+Received: from mail-wr1-f44.google.com ([209.85.221.44]:45778 "EHLO
+        mail-wr1-f44.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726266AbfA1SEo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 13:04:44 -0500
+Received: by mail-wr1-f44.google.com with SMTP id t6so19091381wrr.12
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:04:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KzNtDTjaKqI9Jv9d2VdDxDqv10i26x5+1d6Xbas7BmE=;
+        b=ywwqSiGBHHAMtivWCMTz63VvsWcJkDVuOu444eYcJxyOXM6l7QHo7SR0kZ7trWAw6Z
+         Dj+uUKwJJYCkvtwYvdKlcUFcjXLd8ZJHirfZvJ20LLdIRLoRguGYDzffDF6jEPbTpAdS
+         44eKxUr14k4zPQvaIRaxfZ5RlmPFKRRGN4fNvKm/yCykYiQVFaRV/xE8y6RPmD3W8v44
+         ABgsKWTucN4WWa6OJ2zAdIQDoM8vlHhGRGz43uto4bpMR23FOJDYEyH5PGHxJ8BrsSUW
+         RhgTq0yp9jCpYnJlUVLULFDJg3ruabzynNmIK3cYV6WTUO1Y7y68QcEq4YwdyZyIm1P1
+         wT8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=KzNtDTjaKqI9Jv9d2VdDxDqv10i26x5+1d6Xbas7BmE=;
+        b=qG+Qn3438DqERfOXqNIPGwBjq1Dw904G/H5L63MQUB3POvHixNkkoJmiUgJ/PhUnRF
+         wV3LsVaiZs09io0mk+vhI1h+W/TYvU7bg0P8QV7prkvIUWM6lj7K/40lsklT23vzZSik
+         A+l0Wb3By2xrh4s5qbk58ZdWOoOrV0Lh3UIUhYY24jKfvfOZFhMsVk58conRmZT0rArg
+         hnTzyKDNoFHNBHn2o6TcXKAfxdLtxCF5pzcjpEPmvPDDRaJAIJ4mfZKgXK/BtrWL2VY2
+         k7jiy2ZTIX5PBaGafwmmhmaUw++/9JQTmXWaSS+f4bpJ9NTPxZ6FMp9tBozVLIbfpkyN
+         SAEw==
+X-Gm-Message-State: AJcUukctkj63aFk4ikRmPfACWYu8VlUT1g1YPXuKnjjWmlmQFWIp8FA3
+        fyVGbyUovzKHnBv0o/OZY+aOmQ==
+X-Google-Smtp-Source: ALg8bN6zuRuRmfEXj8PNM1eMQnbaZgjGdXS3lvonydlFr2RVbkqMa03NB99Vho7Hoz7TdM3JKkCmpw==
+X-Received: by 2002:a5d:6647:: with SMTP id f7mr22600477wrw.225.1548698681545;
+        Mon, 28 Jan 2019 10:04:41 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id p6sm145548193wrx.50.2019.01.28.10.04.40
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 10:04:40 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Neil Armstrong <narmstrong@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        Kevin Hilman <khilman@baylibre.com>,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+        linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 00/14] clk: meson: rework drivers dependencies
+Date:   Mon, 28 Jan 2019 19:04:16 +0100
+Message-Id: <20190128180430.28689-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.20.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=UMhtZddyUQ53=JvzsYVNL7XriyE17mC7NVW-XwOh6-Xg@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 09:21:31AM -0800, Doug Anderson wrote:
->Hi,
->
->On Mon, Jan 28, 2019 at 9:16 AM Sasha Levin <sashal@kernel.org> wrote:
->>
->> On Mon, Jan 28, 2019 at 08:05:13AM -0800, Doug Anderson wrote:
->> >Hi,
->> >
->> >On Mon, Jan 28, 2019 at 7:44 AM Sasha Levin <sashal@kernel.org> wrote:
->> >>
->> >> From: Douglas Anderson <dianders@chromium.org>
->> >>
->> >> [ Upstream commit d6e1935819db0c91ce4a5af82466f3ab50d17346 ]
->> >>
->> >> Right now serial drivers process sysrq keys deep in their character
->> >> receiving code.  This means that they've already grabbed their
->> >> port->lock spinlock.  This can end up getting in the way if we've go
->> >> to do serial stuff (especially kgdb) in response to the sysrq.
->> >>
->> >> Serial drivers have various hacks in them to handle this.  Looking at
->> >> '8250_port.c' you can see that the console_write() skips locking if
->> >> we're in the sysrq handler.  Looking at 'msm_serial.c' you can see
->> >> that the port lock is dropped around uart_handle_sysrq_char().
->> >>
->> >> It turns out that these hacks aren't exactly perfect.  If you have
->> >> lockdep turned on and use something like the 8250_port hack you'll get
->> >> a splat that looks like:
->> >>
->> >>   WARNING: possible circular locking dependency detected
->> >>   [...] is trying to acquire lock:
->> >>   ... (console_owner){-.-.}, at: console_unlock+0x2e0/0x5e4
->> >>
->> >>   but task is already holding lock:
->> >>   ... (&port_lock_key){-.-.}, at: serial8250_handle_irq+0x30/0xe4
->> >>
->> >>   which lock already depends on the new lock.
->> >>
->> >>   the existing dependency chain (in reverse order) is:
->> >>
->> >>   -> #1 (&port_lock_key){-.-.}:
->> >>          _raw_spin_lock_irqsave+0x58/0x70
->> >>          serial8250_console_write+0xa8/0x250
->> >>          univ8250_console_write+0x40/0x4c
->> >>          console_unlock+0x528/0x5e4
->> >>          register_console+0x2c4/0x3b0
->> >>          uart_add_one_port+0x350/0x478
->> >>          serial8250_register_8250_port+0x350/0x3a8
->> >>          dw8250_probe+0x67c/0x754
->> >>          platform_drv_probe+0x58/0xa4
->> >>          really_probe+0x150/0x294
->> >>          driver_probe_device+0xac/0xe8
->> >>          __driver_attach+0x98/0xd0
->> >>          bus_for_each_dev+0x84/0xc8
->> >>          driver_attach+0x2c/0x34
->> >>          bus_add_driver+0xf0/0x1ec
->> >>          driver_register+0xb4/0x100
->> >>          __platform_driver_register+0x60/0x6c
->> >>          dw8250_platform_driver_init+0x20/0x28
->> >>          ...
->> >>
->> >>   -> #0 (console_owner){-.-.}:
->> >>          lock_acquire+0x1e8/0x214
->> >>          console_unlock+0x35c/0x5e4
->> >>          vprintk_emit+0x230/0x274
->> >>          vprintk_default+0x7c/0x84
->> >>          vprintk_func+0x190/0x1bc
->> >>          printk+0x80/0xa0
->> >>          __handle_sysrq+0x104/0x21c
->> >>          handle_sysrq+0x30/0x3c
->> >>          serial8250_read_char+0x15c/0x18c
->> >>          serial8250_rx_chars+0x34/0x74
->> >>          serial8250_handle_irq+0x9c/0xe4
->> >>          dw8250_handle_irq+0x98/0xcc
->> >>          serial8250_interrupt+0x50/0xe8
->> >>          ...
->> >>
->> >>   other info that might help us debug this:
->> >>
->> >>    Possible unsafe locking scenario:
->> >>
->> >>          CPU0                    CPU1
->> >>          ----                    ----
->> >>     lock(&port_lock_key);
->> >>                                  lock(console_owner);
->> >>                                  lock(&port_lock_key);
->> >>     lock(console_owner);
->> >>
->> >>    *** DEADLOCK ***
->> >>
->> >> The hack used in 'msm_serial.c' doesn't cause the above splats but it
->> >> seems a bit ugly to unlock / lock our spinlock deep in our irq
->> >> handler.
->> >>
->> >> It seems like we could defer processing the sysrq until the end of the
->> >> interrupt handler right after we've unlocked the port.  With this
->> >> scheme if a whole batch of sysrq characters comes in one irq then we
->> >> won't handle them all, but that seems like it should be a fine
->> >> compromise.
->> >>
->> >> Signed-off-by: Douglas Anderson <dianders@chromium.org>
->> >> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> >> Signed-off-by: Sasha Levin <sashal@kernel.org>
->> >> ---
->> >>  include/linux/serial_core.h | 37 ++++++++++++++++++++++++++++++++++++-
->> >>  1 file changed, 36 insertions(+), 1 deletion(-)
->> >
->> >FWIW this patch shouldn't hurt to be backported (I haven't heard any
->> >problems report with it), but it is effectively a no-op unless you
->> >also pick a patch that uses the new API.  For instance commit
->> >596f63da42b9 ("serial: 8250: Process sysrq at port unlock time").
->> >...and if you want that patch I think you also need commit
->> >3e6f88068314 ("serial: core: Include console.h from serial_core.h").
->> >
->> >In theory you could think about adding the "qcom_geni_serial" patches
->> >related to sysrq processing too--dunno if anyone really cares about
->> >those on 4.20 stable...
->>
->> Since no one actually tagged it for stable, probably not... I'll drop
->> it, thanks!
->
->OK.  Whatever behavior you decide on, please apply it across the
->board.  I got pings that this same patch was being picked to lots and
->lots of different stable kernels and it is equally a no-op (without
->the followup patches) everywhere.
+The goal of this patchset to clean-up the dependencies between
+the controllers and the different clock drivers provided in the meson
+directory. The expected result is that each controllers can pick the
+the clock drivers they need, without necessarily pulling everything.
 
-Yup, I send a mail for each branch it was added on. It was now dropped
-from all of them.
+This is becoming important as we are adding more and more controllers
+to support new amlogic SoC.
 
---
-Thanks,
-Sasha
+Patch 1 and 2 are out of the meson directory, so we need an Ack from
+Stephen or Mike on this.
+
+Patch 4 to 14 is the actual rework. The intermediate state are provided
+to make it a little less painful to review. In the end, Patch 4 to 14
+should be squashed, keeping the commit message of patch 14.
+
+
+Jerome Brunet (14):
+  clk: export some clk_hw function symbols for module drivers
+  clk: meson: use CONFIG_ARCH_MESON to enter meson clk directory
+  clk: meson: axg-audio does not require syscon
+  clk: meson: move MESON_GATE to clk-regmap.h
+  clk: meson: move parm out of clkc
+  clk: meson: take the pll driver out of clkc
+  clk: meson: take the mpll driver out of clkc
+  clk: meson: merge phase driver and remove from clkc
+  clk: meson: take vid-pll-div out of clkc
+  clk: meson: take dualdiv out of clkc
+  clk: meson: take clk-input out of clkc
+  clk: meson: clkc must die
+  clk: meson: move sclk-div out of clkc-audio
+  clk: meson: rework and clean drivers dependencies
+
+ drivers/clk/Makefile                          |   2 +-
+ drivers/clk/clk.c                             |   3 +
+ drivers/clk/meson/Kconfig                     |  84 +++++++---
+ drivers/clk/meson/Makefile                    |  21 ++-
+ drivers/clk/meson/axg-aoclk.c                 |   4 +-
+ drivers/clk/meson/axg-audio.c                 |   5 +-
+ drivers/clk/meson/axg.c                       |   5 +-
+ drivers/clk/meson/clk-dualdiv.c               |  10 +-
+ drivers/clk/meson/clk-dualdiv.h               |  33 ++++
+ drivers/clk/meson/clk-input.c                 |   7 +-
+ drivers/clk/meson/clk-input.h                 |  19 +++
+ drivers/clk/meson/clk-mpll.c                  |  12 +-
+ drivers/clk/meson/clk-mpll.h                  |  30 ++++
+ drivers/clk/meson/clk-phase.c                 |  75 ++++++++-
+ drivers/clk/meson/clk-phase.h                 |  26 ++++
+ drivers/clk/meson/clk-pll.c                   |  13 +-
+ drivers/clk/meson/clk-pll.h                   |  43 ++++++
+ drivers/clk/meson/clk-regmap.c                |   5 +
+ drivers/clk/meson/clk-regmap.h                |  15 ++
+ drivers/clk/meson/clk-triphase.c              |  68 --------
+ drivers/clk/meson/clkc.h                      | 146 ------------------
+ drivers/clk/meson/gxbb-aoclk.c                |   4 +-
+ drivers/clk/meson/gxbb.c                      |   5 +-
+ drivers/clk/meson/meson-aoclk.c               |   2 +
+ drivers/clk/meson/meson-aoclk.h               |   5 +-
+ drivers/clk/meson/meson8b.c                   |   3 +-
+ drivers/clk/meson/parm.h                      |  46 ++++++
+ drivers/clk/meson/sclk-div.c                  |  10 +-
+ .../clk/meson/{clkc-audio.h => sclk-div.h}    |  16 +-
+ drivers/clk/meson/vid-pll-div.c               |  10 +-
+ drivers/clk/meson/vid-pll-div.h               |  20 +++
+ 31 files changed, 467 insertions(+), 280 deletions(-)
+ create mode 100644 drivers/clk/meson/clk-dualdiv.h
+ create mode 100644 drivers/clk/meson/clk-input.h
+ create mode 100644 drivers/clk/meson/clk-mpll.h
+ create mode 100644 drivers/clk/meson/clk-phase.h
+ create mode 100644 drivers/clk/meson/clk-pll.h
+ delete mode 100644 drivers/clk/meson/clk-triphase.c
+ delete mode 100644 drivers/clk/meson/clkc.h
+ create mode 100644 drivers/clk/meson/parm.h
+ rename drivers/clk/meson/{clkc-audio.h => sclk-div.h} (54%)
+ create mode 100644 drivers/clk/meson/vid-pll-div.h
+
+-- 
+2.20.1
+
