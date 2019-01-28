@@ -4,53 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 752FCC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:11:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28276C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3521521783
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:11:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E32E02175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:11:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695476;
-	bh=fMY4GZNKsagDYDKlCbu25KvJ/aQt/jgMGzkEgozac28=;
+	s=default; t=1548695491;
+	bh=fDc2F4IluctCFREreD9HEoOujKnzfNxxqkUVymgUkME=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=A3gLc6gZcg8erepd2xHq9DAPuKnCZIbwBDx/R2YvNct6AU/vfIiNx06YPPNzL8XHQ
-	 0YV5ZExHsEFpraeM/df3HqjgiTG0t/KMkMe5KP1ptyFKhmnFMFb7G/yh5hGIr1+el7
-	 fnBHgfdCbxYffzSlOYC4nQE3e04cuGDQPCxsnT0M=
+	b=FMPPe/an75mjOJQsHfs9yOTME1FOcpiABtTcsRsTi3cCeqzoDCfLMfcGBRAk+iS+y
+	 udBHMVStVr644LTdHU6sbtXByabMt1y6Z4wDjPAgP2cwaGt0/DGB+q1OvIHbPTSXx9
+	 dcUV93K0dmBdLHEuP5w6+3RMeq5TZTjhZEoU8rSw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732757AbfA1RLO (ORCPT
+        id S1732654AbfA1QJo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:11:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35096 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:09:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34646 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731968AbfA1QJv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:09:51 -0500
+        id S1732634AbfA1QJj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:09:39 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B05C62171F;
-        Mon, 28 Jan 2019 16:09:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 24FEE2173C;
+        Mon, 28 Jan 2019 16:09:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691791;
-        bh=fMY4GZNKsagDYDKlCbu25KvJ/aQt/jgMGzkEgozac28=;
+        s=default; t=1548691778;
+        bh=fDc2F4IluctCFREreD9HEoOujKnzfNxxqkUVymgUkME=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=u2i+SRxyn+jg5mUuoUDaoF02jqu5TxmR1XUH8PiYQQg0yQF8H4Pdwv4HGJ5rfh+R3
-         SbKHpOaVDWTBZM+vO0a+1nuAIoJtisKP0c8thRUQ7bCOm52pfZZwfuViXvOzsWqE2j
-         7iqmTQDH0QKYx5n3jJ1Das/uWwIXCT36Teiqvoog=
+        b=In8P6Z/lKAr6o2LscDamn3jOfaYEsGLeblKW0TGaqvBQX72SIiB+em81BQ2Uki5Mz
+         wWaW+Ra+l92AtBEBBqQ+paa+bo4lOrNcATiukVkSFMmrCJWCknqYixiWxMHk4Zv8nO
+         fuYse/gsFfQ6RVY9LomqfCnKhYCbjlYsOlXLUT4Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Chris Perl <cperl@janestreet.com>,
-        Anna Schumaker <Anna.Schumaker@Netapp.com>,
-        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 218/258] NFS: nfs_compare_mount_options always compare auth flavors.
-Date:   Mon, 28 Jan 2019 10:58:44 -0500
-Message-Id: <20190128155924.51521-218-sashal@kernel.org>
+Cc:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org,
+        linux-amlogic@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 214/258] pinctrl: meson: meson8b: fix the GPIO function for the GPIOAO pins
+Date:   Mon, 28 Jan 2019 10:58:40 -0500
+Message-Id: <20190128155924.51521-214-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -58,52 +59,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Chris Perl <cperl@janestreet.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
-[ Upstream commit 594d1644cd59447f4fceb592448d5cd09eb09b5e ]
+[ Upstream commit 2b745ac3cceb8fc1d9985990c8241a821ea97e53 ]
 
-This patch removes the check from nfs_compare_mount_options to see if a
-`sec' option was passed for the current mount before comparing auth
-flavors and instead just always compares auth flavors.
+The GPIOAO pins (as well as the two exotic GPIO_BSD_EN and GPIO_TEST_N)
+only belong to the pin controller in the AO domain. With the current
+definition these pins cannot be referred to in .dts files as group
+(which is possible on GXBB and GXL for example).
 
-Consider the following scenario:
+Add a separate "gpio_aobus" function to fix the mapping between the pin
+controller and the GPIO pins in the AO domain. This is similar to how
+the GXBB and GXL drivers implement this functionality.
 
-You have a server with the address 192.168.1.1 and two exports /export/a
-and /export/b.  The first export supports `sys' and `krb5' security, the
-second just `sys'.
-
-Assume you start with no mounts from the server.
-
-The following results in EIOs being returned as the kernel nfs client
-incorrectly thinks it can share the underlying `struct nfs_server's:
-
-$ mkdir /tmp/{a,b}
-$ sudo mount -t nfs -o vers=3,sec=krb5 192.168.1.1:/export/a /tmp/a
-$ sudo mount -t nfs -o vers=3          192.168.1.1:/export/b /tmp/b
-$ df >/dev/null
-df: ‘/tmp/b’: Input/output error
-
-Signed-off-by: Chris Perl <cperl@janestreet.com>
-Signed-off-by: Anna Schumaker <Anna.Schumaker@Netapp.com>
+Fixes: 9dab1868ec0db4 ("pinctrl: amlogic: Make driver independent from two-domain configuration")
+Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/nfs/super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+ drivers/pinctrl/meson/pinctrl-meson8b.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index ac4b2f005778..5ef2c71348bd 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -2409,8 +2409,7 @@ static int nfs_compare_mount_options(const struct super_block *s, const struct n
- 		goto Ebusy;
- 	if (a->acdirmax != b->acdirmax)
- 		goto Ebusy;
--	if (b->auth_info.flavor_len > 0 &&
--	   clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
-+	if (clnt_a->cl_auth->au_flavor != clnt_b->cl_auth->au_flavor)
- 		goto Ebusy;
- 	return 1;
- Ebusy:
+diff --git a/drivers/pinctrl/meson/pinctrl-meson8b.c b/drivers/pinctrl/meson/pinctrl-meson8b.c
+index 647ad15d5c3c..91cffc051055 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson8b.c
++++ b/drivers/pinctrl/meson/pinctrl-meson8b.c
+@@ -646,16 +646,18 @@ static const char * const gpio_groups[] = {
+ 	"BOOT_10", "BOOT_11", "BOOT_12", "BOOT_13", "BOOT_14",
+ 	"BOOT_15", "BOOT_16", "BOOT_17", "BOOT_18",
+ 
+-	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
+-	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
+-	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
+-	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N",
+-
+ 	"DIF_0_P", "DIF_0_N", "DIF_1_P", "DIF_1_N",
+ 	"DIF_2_P", "DIF_2_N", "DIF_3_P", "DIF_3_N",
+ 	"DIF_4_P", "DIF_4_N"
+ };
+ 
++static const char * const gpio_aobus_groups[] = {
++	"GPIOAO_0", "GPIOAO_1", "GPIOAO_2", "GPIOAO_3",
++	"GPIOAO_4", "GPIOAO_5", "GPIOAO_6", "GPIOAO_7",
++	"GPIOAO_8", "GPIOAO_9", "GPIOAO_10", "GPIOAO_11",
++	"GPIOAO_12", "GPIOAO_13", "GPIO_BSD_EN", "GPIO_TEST_N"
++};
++
+ static const char * const sd_a_groups[] = {
+ 	"sd_d0_a", "sd_d1_a", "sd_d2_a", "sd_d3_a", "sd_clk_a",
+ 	"sd_cmd_a"
+@@ -871,6 +873,7 @@ static struct meson_pmx_func meson8b_cbus_functions[] = {
+ };
+ 
+ static struct meson_pmx_func meson8b_aobus_functions[] = {
++	FUNCTION(gpio_aobus),
+ 	FUNCTION(uart_ao),
+ 	FUNCTION(uart_ao_b),
+ 	FUNCTION(i2c_slave_ao),
 -- 
 2.19.1
 
