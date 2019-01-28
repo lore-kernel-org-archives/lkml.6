@@ -2,52 +2,54 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A26EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AA14C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:46:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFB6E2084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:46:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E0AA820879
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:46:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693976;
-	bh=wxeDGADoFZZd3VTSMTWBsiWLEuaKFPm74dbAzbdBlzc=;
+	s=default; t=1548693992;
+	bh=XjyNh5xPRCDYfEdHIkcXWSvqClpqYZdxU8V+BNz71J4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=s1ube/pLdVjABEB3fuXt428o0XDZWfea4dQEiVSChmVH9W/9ynbfSNT5uRGoLqAVU
-	 sbELUUapa1bjXJKhEuWzKK7iUtyNAC9MUYvPkaKh9yAHQA10vtCL38g6UGmTwufLDp
-	 ygqsQ21LTDd3nwMV/ulSu8PBRE6+op+RVjc3njB0=
+	b=1sDhpQfINvnMsJgrO0sXHPzL4ZLqmlvIynUrJtr6kb5B10DmWsYFwtYQOhbyI7c8m
+	 HiOS99F5TZ75CxwkHiVOunhEqsKy3tDoOrLyxTJbSUcExT7zdVEoZz//h8hb6N2onZ
+	 oARZQsdxiPzbpjvQZ1AOiPdDJGRtNDOYCb920tBY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390027AbfA1QqO (ORCPT
+        id S2389249AbfA1Qqa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:46:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58778 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:46:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58634 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388600AbfA1QWq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:46 -0500
+        id S2389236AbfA1QWg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:22:36 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B82A21738;
-        Mon, 28 Jan 2019 16:22:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 903842084A;
+        Mon, 28 Jan 2019 16:22:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692565;
-        bh=wxeDGADoFZZd3VTSMTWBsiWLEuaKFPm74dbAzbdBlzc=;
+        s=default; t=1548692556;
+        bh=XjyNh5xPRCDYfEdHIkcXWSvqClpqYZdxU8V+BNz71J4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=W/xed3Pr24AeiSUG+vHF0/OsYUivU0jtOjt9c7mqD8Z6p8ji1iE9CV0YS/yuaICoG
-         QnM5aLF6jm7dYni5L63311YFLXYVoGidEE6Tfbub3TRMMrGQQ6BdQALgG0wkVrW4/J
-         LEt1iewtQtMzvS/SDGg4Az+V/5p3qWdZX3/kjvrY=
+        b=i6Y8QBKvwKF2Fpz1xaOJx3MTU9vcl5uALqBNe4hyI37NevUI2taJ+ECRFwy24xGif
+         5wSkNPK+GvcRMq6pbsDljlYpfXhUMOUdyXQbM40oV4lV+PWo7uNl9szjr99dbqVQbP
+         FwdNQR4XsbeVu82G3NuivQDNmJBjYc/HcvHmoPF4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Johan Hedberg <johan.hedberg@intel.com>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-bluetooth@vger.kernel.org, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 067/107] Bluetooth: Fix unnecessary error message for HCI request completion
-Date:   Mon, 28 Jan 2019 11:19:07 -0500
-Message-Id: <20190128161947.57405-67-sashal@kernel.org>
+Cc:     Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@kernel.org>,
+        Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 061/107] perf probe: Fix unchecked usage of strncpy()
+Date:   Mon, 28 Jan 2019 11:19:01 -0500
+Message-Id: <20190128161947.57405-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -59,43 +61,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Johan Hedberg <johan.hedberg@intel.com>
+From: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-[ Upstream commit 1629db9c75342325868243d6bca5853017d91cf8 ]
+[ Upstream commit bef0b8970f27da5ca223e522a174d03e2587761d ]
 
-In case a command which completes in Command Status was sent using the
-hci_cmd_send-family of APIs there would be a misleading error in the
-hci_get_cmd_complete function, since the code would be trying to fetch
-the Command Complete parameters when there are none.
+The strncpy() function may leave the destination string buffer
+unterminated, better use strlcpy() that we have a __weak fallback
+implementation for systems without it.
 
-Avoid the misleading error and silently bail out from the function in
-case the received event is a command status.
+In this case the 'target' buffer is coming from a list of build-ids that
+are expected to have a len of at most (SBUILD_ID_SIZE - 1) chars, so
+probably we're safe, but since we're using strncpy() here, use strlcpy()
+instead to provide the intended safety checking without the using the
+problematic strncpy() function.
 
-Signed-off-by: Johan Hedberg <johan.hedberg@intel.com>
-Acked-by: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>
-Signed-off-by: Marcel Holtmann <marcel@holtmann.org>
+This fixes this warning on an Alpine Linux Edge system with gcc 8.2:
+
+  util/probe-file.c: In function 'probe_cache__open.isra.5':
+  util/probe-file.c:427:3: error: 'strncpy' specified bound 41 equals destination size [-Werror=stringop-truncation]
+     strncpy(sbuildid, target, SBUILD_ID_SIZE);
+     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+  cc1: all warnings being treated as errors
+
+Cc: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <masami.hiramatsu.pt@hitachi.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Fixes: 1f3736c9c833 ("perf probe: Show all cached probes")
+Link: https://lkml.kernel.org/n/tip-l7n8ggc9kl38qtdlouke5yp5@git.kernel.org
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/bluetooth/hci_event.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/util/probe-file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/bluetooth/hci_event.c b/net/bluetooth/hci_event.c
-index d2f9eb169ba8..6f78489fdb13 100644
---- a/net/bluetooth/hci_event.c
-+++ b/net/bluetooth/hci_event.c
-@@ -5212,6 +5212,12 @@ static bool hci_get_cmd_complete(struct hci_dev *hdev, u16 opcode,
- 		return true;
- 	}
+diff --git a/tools/perf/util/probe-file.c b/tools/perf/util/probe-file.c
+index 436b64731f65..b9507a8d0e30 100644
+--- a/tools/perf/util/probe-file.c
++++ b/tools/perf/util/probe-file.c
+@@ -414,7 +414,7 @@ static int probe_cache__open(struct probe_cache *pcache, const char *target)
  
-+	/* Check if request ended in Command Status - no way to retreive
-+	 * any extra parameters in this case.
-+	 */
-+	if (hdr->evt == HCI_EV_CMD_STATUS)
-+		return false;
-+
- 	if (hdr->evt != HCI_EV_CMD_COMPLETE) {
- 		BT_DBG("Last event is not cmd complete (0x%2.2x)", hdr->evt);
- 		return false;
+ 	if (target && build_id_cache__cached(target)) {
+ 		/* This is a cached buildid */
+-		strncpy(sbuildid, target, SBUILD_ID_SIZE);
++		strlcpy(sbuildid, target, SBUILD_ID_SIZE);
+ 		dir_name = build_id_cache__linkname(sbuildid, NULL, 0);
+ 		goto found;
+ 	}
 -- 
 2.19.1
 
