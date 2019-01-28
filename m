@@ -2,105 +2,97 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46494C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:48:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E53C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:48:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1274620870
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:48:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 73DF72148E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 05:48:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MIbJ5ch7"
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="c3FlwHjK"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726792AbfA1Fsh (ORCPT
+        id S1726832AbfA1Fsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 00:48:37 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:45846 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfA1Fsg (ORCPT
+        Mon, 28 Jan 2019 00:48:47 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:44600 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726627AbfA1Fsr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 00:48:36 -0500
-Received: by mail-lf1-f66.google.com with SMTP id b20so10887140lfa.12
-        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 21:48:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=PNa/AKfePOVHK9K7W4j/u7n0HfgDZMiX/6VClOrFgmg=;
-        b=MIbJ5ch7Tkn32fh4s3dVhXJP47vG0N3140zk5hgRAOsWD+yOAR5xrgM0QPfUeAydQg
-         Bphr+l4YgsSgArm3pC8zN2t0YLrJZGfVO7WgKRU60B0g6Ki23LJ5NvI3O6lKMjbQ9EEp
-         JCA7w68Sh8tyGrVxBTKLsUpcF68+6shRX0G4E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=PNa/AKfePOVHK9K7W4j/u7n0HfgDZMiX/6VClOrFgmg=;
-        b=iHTc7LxURSKJXVvi4k9nNzPcPJHfywacqvDazmBl8Z8U3ovFfakIpfzp/ho7SYBNW7
-         XTKnlK/9+JdwkrM5tGj21qL4268VKgQMBu/JNMm7+64JghfnD/IbrvJumprYRzmiPt+1
-         E5uVkd2O8777FcoENw4TkA3MKqOhwbI/BZgyxq7hCYZEtRhs1203LxGQz9vgd06kTLkK
-         J88Rg8WSqfPDCXJLbG/ipzDsu/W/e78yeQK5wL/L72RNyXvSGp8kOSWYy+ajEqVCqheN
-         VjFYyMhb5+Z3V29lqSBF/BLAkJr9TPjxTLfkDjXwinTli0PDDwUz/0oIlTgU61QqIXYg
-         8UCg==
-X-Gm-Message-State: AJcUukecd/YSeDGPj4IHq3y+F7jOXJ/S+QCnyzMReTWeFifWBHxfJorw
-        kwzwD0oSAnXsUG7hCdfFE1O/KAOgXX8eGbyjJf9lVw==
-X-Google-Smtp-Source: ALg8bN6onPtAmIp6B46J6+oAxs5RuHGEg2kayoumohnGb/TC/Na2jK7vnzs337YWkWO3FgGLb/Eg2/KSLI3pB2h6ONc=
-X-Received: by 2002:a19:40cc:: with SMTP id n195mr15046378lfa.40.1548654514545;
- Sun, 27 Jan 2019 21:48:34 -0800 (PST)
+        Mon, 28 Jan 2019 00:48:47 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0S5mcG8110597;
+        Sun, 27 Jan 2019 23:48:38 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548654518;
+        bh=adRR1iCfSNDZCPjl4/RF28bmWBZdlI3oGkRQIDXzX9U=;
+        h=From:To:CC:Subject:Date:In-Reply-To:References;
+        b=c3FlwHjKtwga1o2L1HZUS9aeDDusoN3GnMcUE8ffJF6apu03qShNK7ppow5rYFevr
+         bplhBf3k/GyDqOs5sOHsxHFUQJVWn24wcSFGQzkjH/+dVJ+mCDDXYuqDlPz4spSlW3
+         hu1HYu+L+vrr09hOc19pJBUiBud5Upce55fVruWk=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0S5mcU0025823
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Sun, 27 Jan 2019 23:48:38 -0600
+Received: from DFLE110.ent.ti.com (10.64.6.31) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sun, 27
+ Jan 2019 23:48:38 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DFLE110.ent.ti.com
+ (10.64.6.31) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Sun, 27 Jan 2019 23:48:38 -0600
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0S5mW5P020800;
+        Sun, 27 Jan 2019 23:48:36 -0600
+From:   Vignesh R <vigneshr@ti.com>
+To:     Boris Brezillon <bbrezillon@kernel.org>,
+        <Tudor.Ambarus@microchip.com>
+CC:     Marek Vasut <marek.vasut@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        <linux-mtd@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Vignesh R <vigneshr@ti.com>
+Subject: [PATCH v5 1/2] dt-bindings: cadence-quadspi: Add new compatible for AM654 SoC
+Date:   Mon, 28 Jan 2019 11:19:34 +0530
+Message-ID: <20190128054935.4972-2-vigneshr@ti.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20190128054935.4972-1-vigneshr@ti.com>
+References: <20190128054935.4972-1-vigneshr@ti.com>
 MIME-Version: 1.0
-References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
- <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz> <20190118190805.GF6260@sirena.org.uk>
- <s5hzhrxzrez.wl-tiwai@suse.de> <20190121124053.GA12679@sirena.org.uk>
- <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz> <20190122202535.GK7579@sirena.org.uk>
- <s5h4l9z4mbo.wl-tiwai@suse.de> <20190123124658.GE15906@leoy-ThinkPad-X240s>
- <3962daba-f6ed-d706-c618-b791a1ba6b59@perex.cz> <CAMz4kuK5JgfZF7uXa83xC3eVCrZ8+wkZRdKq2s71o_QjT=OhGg@mail.gmail.com>
- <s5h1s51120e.wl-tiwai@suse.de> <s5hwomtyr6o.wl-tiwai@suse.de>
- <CAMz4kuKZOpAXG=Lwii5Cb6q2EKoMUJOEmDz8X=dmVv+JivWf=w@mail.gmail.com> <s5hk1iszy4o.wl-tiwai@suse.de>
-In-Reply-To: <s5hk1iszy4o.wl-tiwai@suse.de>
-From:   Baolin Wang <baolin.wang@linaro.org>
-Date:   Mon, 28 Jan 2019 13:48:22 +0800
-Message-ID: <CAMz4ku+eiqPAETMhGJ3=fQKfzJEORvjmr+51-oJZ5B5AyQcvkw@mail.gmail.com>
-Subject: Re: [RFC PATCH] ALSA: core: Add DMA share buffer support
-To:     Takashi Iwai <tiwai@suse.de>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Leo Yan <leo.yan@linaro.org>,
-        Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Kees Cook <keescook@chromium.org>, bgoswami@codeaurora.org,
-        sr@denx.de, gustavo@embeddedor.com,
-        Phil Burk <philburk@google.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        mchehab+samsung@kernel.org, sboyd@kernel.org,
-        Vinod Koul <vkoul@kernel.org>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        anna-maria@linutronix.de, Jon Corbet <corbet@lwn.net>,
-        Jeffery Miller <jmiller@neverware.com>,
-        Charles Keepax <ckeepax@opensource.wolfsonmicro.com>,
-        joe@perches.com, Takashi Sakamoto <o-takashi@sakamocchi.jp>,
-        colyli@suse.de, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 25 Jan 2019 at 21:04, Takashi Iwai <tiwai@suse.de> wrote:
-> > >
-> > > Erm, obviously it's not enough.  Each attach / detach needs to manage
-> > > the refcount, too, for covering the cases above.  It can re-use the
-> > > PCM mmap_refount, though.
-> >
-> > But we've used the DMA buffer file's refcounting to manage the DMA
-> > buffer. So is this not enough?
->
-> Unless you manage the PCM substream refcount (or block the state
-> change), the PCM stream itself can be released (or re-setup) freely.
->
+AM654 SoC has Cadence Octal SPI controller, which is similar to Cadence
+QSPI controller but supports Octal IO(x8 data lines) and Double Data
+Rate(DDR) mode. Add new compatible to support OSPI controller on TI's
+AM654 SoCs.
 
-OK. Thanks for your comments.
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
+---
+ Documentation/devicetree/bindings/mtd/cadence-quadspi.txt | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt b/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
+index bb2075df9b38..4345c3a6f530 100644
+--- a/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
++++ b/Documentation/devicetree/bindings/mtd/cadence-quadspi.txt
+@@ -4,6 +4,7 @@ Required properties:
+ - compatible : should be one of the following:
+ 	Generic default - "cdns,qspi-nor".
+ 	For TI 66AK2G SoC - "ti,k2g-qspi", "cdns,qspi-nor".
++	For TI AM654 SoC  - "ti,am654-ospi", "cdns,qspi-nor".
+ - reg : Contains two entries, each of which is a tuple consisting of a
+ 	physical address and length. The first entry is the address and
+ 	length of the controller register set. The second entry is the
 -- 
-Baolin Wang
-Best Regards
+2.20.1
+
