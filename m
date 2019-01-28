@@ -2,120 +2,94 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73726C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7777AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A488214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 48183214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548690250;
+	bh=HjyI+ZYByPbAcYVUfAbbI5+uQjoPQ7YlKhMHTBRD8u8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=rRQtORZwkj/4ve5aw3xC2OuvQtyENrij6YgCbQwGp2W3nDG1eXy3YTXipIMg+ZapP
+	 kyiXTTUKOP1nOwM4CabP6Nhwb2jZmktm9OYT8iaywAQZLLsnRB9aN6SkXiu5bOJXpk
+	 dRQdGeBfWCpsYlK4Ra8en84NzpQnDTK7i2yzTXsM=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbfA1PoE (ORCPT
+        id S1727191AbfA1PoI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:44:04 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:42456 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727146AbfA1PoB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:44:01 -0500
-Received: by mail-vs1-f66.google.com with SMTP id b74so9969091vsd.9;
-        Mon, 28 Jan 2019 07:44:00 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=x2wa+K5YNPI9+zY5xomP72xSduPXvimTTHXp1XsjO7E=;
-        b=Lcwew0REURerg7vQiHlKSAZpMK1SyOMljwGAXArOREXQHOEFDGeiV56Ypmd35wKnBN
-         yzpHg3iJ+N/lSDrkM5J5x4ClZHg6Dns5g7/blQAYkcfUoZLpiRT2vlnYz135KX7CBLv9
-         ZbJUXQ24iwW6lthTgAz65oVe4yVFiEv8zNLsPoGNGvctGaKzp7tyVE3gQHB9k0hB1QvM
-         JOVmI9vaOEpjAKxb/F1Fd6Wxp35uCg9CLz58jdVAx2HIEAXVHT7SX5K4ssdq4Q2ldOV+
-         JII1BM8lVDRee9hbYA3XpfDjEbdzQo8M2Ya/61sZoaM51VKBgJYKmUIHi8KsLBpzxm+p
-         NThg==
-X-Gm-Message-State: AHQUAuYxH0IT5vLG1UCJRQJAVTgffemxwbOSFFrrwegZ+fVca9OaAsXn
-        izSuW4c1zUfJiXZckhjm0RH6BRL3XQkEOktk1NI=
-X-Google-Smtp-Source: AHgI3IaCNqFqxYF5jcFRcCRr3F8u3p45e8vOxEGJ+OqOd1kuIKX0RovOS/tgzMJSBqB2qpmVtJ11sRlLqYSVlIaIAgE=
-X-Received: by 2002:a67:c202:: with SMTP id i2mr148070vsj.11.1548690240249;
- Mon, 28 Jan 2019 07:44:00 -0800 (PST)
+        Mon, 28 Jan 2019 10:44:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57332 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727146AbfA1PoF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:44:05 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id AE54720880;
+        Mon, 28 Jan 2019 15:44:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690245;
+        bh=HjyI+ZYByPbAcYVUfAbbI5+uQjoPQ7YlKhMHTBRD8u8=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=EkMYJODeBjdVzBnvPyzkeHHZpML7QAVvfXONGQNm7vIqhy4Mk1u0Nbosye1B+I0A3
+         nqMhwYf9+6jsgOLBCr9uEKC6dVZ10Yl/oUT2lXbzjmF3mtkKoHnHgJW98BT+Pp8E6c
+         C8kV47tpBRhJoRX/aAc3HRwVnB9ViMe4sEhRTqF0=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nickhu <nickhu@andestech.com>, Zong Li <zong@andestech.com>,
+        Greentime Hu <greentime@andestech.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 014/304] nds32: Fix gcc 8.0 compiler option incompatible.
+Date:   Mon, 28 Jan 2019 10:38:51 -0500
+Message-Id: <20190128154341.47195-14-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20181211202406.27721-1-robh@kernel.org> <CAMuHMdUdGvBUX7EsOrwJM4_LzR_Pe2exJ1Pfo48Vt5_scrdy0w@mail.gmail.com>
- <CAL_JsqKG8d+yONY2ikeiCaORYBfWhLe_rAsir11R8zRAD84MmA@mail.gmail.com>
-In-Reply-To: <CAL_JsqKG8d+yONY2ikeiCaORYBfWhLe_rAsir11R8zRAD84MmA@mail.gmail.com>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 28 Jan 2019 16:43:47 +0100
-Message-ID: <CAMuHMdWy2D-keyOuKtgCLe0_76qR74Jk7Aa=_FzxvEG7rfKpCA@mail.gmail.com>
-Subject: Re: [PATCH v4] kbuild: Add support for DT binding schema checks
-To:     Rob Herring <robh@kernel.org>
-Cc:     "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sean Hudson <darknighte@darknighte.com>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
-        Grant Likely <grant.likely@arm.com>,
-        Kumar Gala <kumar.gala@linaro.org>, arm-soc <arm@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        linux-kbuild <linux-kbuild@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+From: Nickhu <nickhu@andestech.com>
 
-On Mon, Jan 28, 2019 at 4:35 PM Rob Herring <robh@kernel.org> wrote:
-> On Mon, Jan 28, 2019 at 3:43 AM Geert Uytterhoeven <geert@linux-m68k.org> wrote:
-> > On Tue, Dec 11, 2018 at 9:24 PM Rob Herring <robh@kernel.org> wrote:
-> > > This adds the build infrastructure for checking DT binding schema
-> > > documents and validating dts files using the binding schema.
-> > >
-> > > Check DT binding schema documents:
-> > > make dt_binding_check
-> > >
-> > > Build dts files and check using DT binding schema:
-> > > make dtbs_check
-> > >
-> > > Optionally, DT_SCHEMA_FILES can be passed in with a schema file(s) to
-> > > use for validation. This makes it easier to find and fix errors
-> > > generated by a specific schema.
-> > >
-> > > Currently, the validation targets are separate from a normal build to
-> > > avoid a hard dependency on the external DT schema project and because
-> > > there are lots of warnings generated.
+[ Upstream commit 4c3d6174e0e17599549f636ec48ddf78627a17fe ]
 
-> > BTW, what are the CONFIG dependencies for this to work?
-> > E.g. defconfig on x86_64 fails, even after enabling CONFIG_OF:
->
-> I generally use allmodconfig which enables building all DTs.
->
-> Yes, there's a dependency on CONFIG_DTC which isn't always enabled
-> with CONFIG_OF. Maybe it should be. The only other solutions I've
+When the kernel configs of ftrace and frame pointer options are
+choosed, the compiler option of kernel will incompatible.
+	Error message:
+		nds32le-linux-gcc: error: -pg and -fomit-frame-pointer are incompatible
 
-Oh, didn't think of CONFIG_DTC.
+Signed-off-by: Nickhu <nickhu@andestech.com>
+Signed-off-by: Zong Li <zong@andestech.com>
+Acked-by: Greentime Hu <greentime@andestech.com>
+Signed-off-by: Greentime Hu <greentime@andestech.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ arch/nds32/mm/Makefile | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
-> thought of are either always build dtc or make the targets conditional
-> on CONFIG_DTC. The latter would only change the error message.
-
-Making the target conditional may make it more obvious to the user
-what's going on. Cfr. "make modules_install" giving a nice explanation
-when CONFIG_MODULES=n.
-
-Thanks.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
+diff --git a/arch/nds32/mm/Makefile b/arch/nds32/mm/Makefile
+index 6b6855852223..7c5c15ad854a 100644
+--- a/arch/nds32/mm/Makefile
++++ b/arch/nds32/mm/Makefile
+@@ -4,4 +4,8 @@ obj-y				:= extable.o tlb.o \
+ 
+ obj-$(CONFIG_ALIGNMENT_TRAP)	+= alignment.o
+ obj-$(CONFIG_HIGHMEM)           += highmem.o
+-CFLAGS_proc-n13.o		+= -fomit-frame-pointer
++
++ifdef CONFIG_FUNCTION_TRACER
++CFLAGS_REMOVE_proc.o     = $(CC_FLAGS_FTRACE)
++endif
++CFLAGS_proc.o              += -fomit-frame-pointer
 -- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+2.19.1
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
