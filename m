@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75D82C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16994C282CF
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42EE42173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CED3E2173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694210;
-	bh=L5/1m/X95CcbAQso51NCqtgdeSG+iOixxSGjOyNX78s=;
+	s=default; t=1548694214;
+	bh=ASDMg/4epFmYnhML5aDcH927KPsDPUNDWyQNH9oXQr4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=dlF5fbMgWn3PkglWG2WKIZctYlApjaWuEhk5/bjx+W9zA44Lw6I7r6YzKKJgUOafT
-	 f0Mlsz08ohSE/oxP7q0O1uMvhZny1xLbBg/xuomHpn9qZFrOjsy3viKs2H/4RSgpqM
-	 aTvsW4MjK/CP8mWcnumb/9QhE13lcPYd/w3Yfzbg=
+	b=b+UxLVRoe8AaT03pS3t5N3klyQ5dwTdFKS9UCzHTl7sRpIBqACBHCwUASJhsawG87
+	 HlSet3PwqUi3biELbdV8yIqTQUZWNOnDZwj41tarxqo3EzaZKvfjw+HE/mTw0+VZjS
+	 jcWbXo0a+yB1mlLolWEnbSOBJ4aj3/g5P14TykOg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388853AbfA1QuI (ORCPT
+        id S2387730AbfA1QUN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:50:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55582 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:20:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:55414 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388763AbfA1QUQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:20:16 -0500
+        id S2388735AbfA1QUJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:20:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B7242084A;
-        Mon, 28 Jan 2019 16:20:14 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D53C2147A;
+        Mon, 28 Jan 2019 16:20:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692416;
-        bh=L5/1m/X95CcbAQso51NCqtgdeSG+iOixxSGjOyNX78s=;
+        s=default; t=1548692408;
+        bh=ASDMg/4epFmYnhML5aDcH927KPsDPUNDWyQNH9oXQr4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2GfFH5pSSCYoh6adltoUSyr/9gHhbCFB1CCWyl5gYc0STBPpm+pZLylmqihM8d35P
-         WPyLLnnk7Gebka0xrirXUUnMtUwWdEAFrmJxTi4CNjlAlbnxW7U7jq0HomVJheeD9Y
-         VYZ6OgOjLbWFCHCVCmtkcnlxRWZLDhtTed5VVxmM=
+        b=SbwMBheWxRejZNGHgNqsiSBoNqIjfCF2n0YvFZdM6VJbuOentKIARv4BW6UHT9m4h
+         G/MYmox7tTkuiIcABwRLz0LhAv8n3kiRlTbQqRAs5XnDKnaQm1WDJDepVoeAtaTrpU
+         vzl1FYyzg8p3OvmQQ6KqU5u5Wu8w9/5pW6d+w/lA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Frank Rowand <frank.rowand@sony.com>,
-        Sasha Levin <sashal@kernel.org>, linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.9 011/107] powerpc/pseries: add of_node_put() in dlpar_detach_node()
-Date:   Mon, 28 Jan 2019 11:18:11 -0500
-Message-Id: <20190128161947.57405-11-sashal@kernel.org>
+Cc:     Yufen Wang <wangyufen@huawei.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 008/107] ARM: 8808/1: kexec:offline panic_smp_self_stop CPU
+Date:   Mon, 28 Jan 2019 11:18:08 -0500
+Message-Id: <20190128161947.57405-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -57,45 +58,63 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frank Rowand <frank.rowand@sony.com>
+From: Yufen Wang <wangyufen@huawei.com>
 
-[ Upstream commit 5b3f5c408d8cc59b87e47f1ab9803dbd006e4a91 ]
+[ Upstream commit 82c08c3e7f171aa7f579b231d0abbc1d62e91974 ]
 
-The previous commit, "of: overlay: add missing of_node_get() in
-__of_attach_node_sysfs" added a missing of_node_get() to
-__of_attach_node_sysfs().  This results in a refcount imbalance
-for nodes attached with dlpar_attach_node().  The calling sequence
-from dlpar_attach_node() to __of_attach_node_sysfs() is:
+In case panic() and panic() called at the same time on different CPUS.
+For example:
+CPU 0:
+  panic()
+     __crash_kexec
+       machine_crash_shutdown
+         crash_smp_send_stop
+       machine_kexec
+         BUG_ON(num_online_cpus() > 1);
 
-   dlpar_attach_node()
-      of_attach_node()
-         __of_attach_node_sysfs()
+CPU 1:
+  panic()
+    local_irq_disable
+    panic_smp_self_stop
 
-For more detailed description of the node refcount, see
-commit 68baf692c435 ("powerpc/pseries: Fix of_node_put() underflow
-during DLPAR remove").
+If CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop(), kdump
+fails. CPU1 can't receive the ipi irq, CPU1 will be always online.
+To fix this problem, this patch split out the panic_smp_self_stop()
+and add set_cpu_online(smp_processor_id(), false).
 
-Tested-by: Alan Tull <atull@kernel.org>
-Acked-by: Michael Ellerman <mpe@ellerman.id.au>
-Signed-off-by: Frank Rowand <frank.rowand@sony.com>
+Signed-off-by: Yufen Wang <wangyufen@huawei.com>
+Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/powerpc/platforms/pseries/dlpar.c | 2 ++
- 1 file changed, 2 insertions(+)
+ arch/arm/kernel/smp.c | 15 +++++++++++++++
+ 1 file changed, 15 insertions(+)
 
-diff --git a/arch/powerpc/platforms/pseries/dlpar.c b/arch/powerpc/platforms/pseries/dlpar.c
-index 72ae2cdbcd6a..999b04819d69 100644
---- a/arch/powerpc/platforms/pseries/dlpar.c
-+++ b/arch/powerpc/platforms/pseries/dlpar.c
-@@ -288,6 +288,8 @@ int dlpar_detach_node(struct device_node *dn)
- 	if (rc)
- 		return rc;
- 
-+	of_node_put(dn);
-+
- 	return 0;
+diff --git a/arch/arm/kernel/smp.c b/arch/arm/kernel/smp.c
+index d2ce37da87d8..4b129aac7233 100644
+--- a/arch/arm/kernel/smp.c
++++ b/arch/arm/kernel/smp.c
+@@ -690,6 +690,21 @@ void smp_send_stop(void)
+ 		pr_warn("SMP: failed to stop secondary CPUs\n");
  }
  
++/* In case panic() and panic() called at the same time on CPU1 and CPU2,
++ * and CPU 1 calls panic_smp_self_stop() before crash_smp_send_stop()
++ * CPU1 can't receive the ipi irqs from CPU2, CPU1 will be always online,
++ * kdump fails. So split out the panic_smp_self_stop() and add
++ * set_cpu_online(smp_processor_id(), false).
++ */
++void panic_smp_self_stop(void)
++{
++	pr_debug("CPU %u will stop doing anything useful since another CPU has paniced\n",
++	         smp_processor_id());
++	set_cpu_online(smp_processor_id(), false);
++	while (1)
++		cpu_relax();
++}
++
+ /*
+  * not supported here
+  */
 -- 
 2.19.1
 
