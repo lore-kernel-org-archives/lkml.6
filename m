@@ -7,46 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9419BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5330C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 641042147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 680E92175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690709;
-	bh=RoBQAU8TVZYQgxtYRK5Pzr23g+VjWa5ktoRyXdwpbTk=;
+	s=default; t=1548690711;
+	bh=TxB9m43FZ8LrvCUf0ywSNbFnMvsOpUJCKQVR5eeEn0o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0AM8jJ/BFVrd2R5uaUdFxfMd8mXL1gG738/wSAX/gv6FjczcJeOQy3YhhmIIdxugr
-	 H/Nyg/yQ+ilcbEJTkQts9mK+ISbG2662Zzok0stb9toM42hccL8i48f7lUjH95kfIN
-	 tCGy/cFpZR8cotcDPEIYEKAOEx1HT4dddDB2kXAk=
+	b=F1hTLPxJrIiJ6XEcmb5TZCt7aoJ/9TssrmtwSfwDcBYRSRrGapuJq65Pw+o5ZDr7o
+	 0eWSAkabULuAL7q6IJWYJJVjyLr0E81/YBvmb9/vFM27Qgzu4+55t/c5VI+LdG3ilc
+	 z0leB5WDI9cJ74HQ3vt1ThWNYUqpj4nZ3hSleDoI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729180AbfA1Pvr (ORCPT
+        id S1729196AbfA1Pvu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:51:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38320 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:51:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38400 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729155AbfA1Pvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:51:43 -0500
+        id S1729175AbfA1Pvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:51:48 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E3AB32175B;
-        Mon, 28 Jan 2019 15:51:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id EE2FF2175B;
+        Mon, 28 Jan 2019 15:51:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690702;
-        bh=RoBQAU8TVZYQgxtYRK5Pzr23g+VjWa5ktoRyXdwpbTk=;
+        s=default; t=1548690707;
+        bh=TxB9m43FZ8LrvCUf0ywSNbFnMvsOpUJCKQVR5eeEn0o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0TwwwapsXE4puloRGgcsiUEc5xrw+z2EESGFMNK3VBvrsoPUMAPYORlXUH2sdx6P2
-         LrGRXzGBErJx05yJY8pdPrheEeshPFMz4rZV5uVt7oBuMWU2VFPsVP1HqIfetOXMxE
-         AYfAt8h1v5T0BhuU4+j4+j+whs3XPFAmjCTnANk0=
+        b=S+OHgXsfjvYnAQo6BaQpLA0VDwJ8oyBJ6KfN86KJ4GSzepwrBMCTpxuKp95uT3RJR
+         /oFmPlhp6KMIgmL9eQ9TzHuzpylwXbyIykUuY/IDmXM8u/xGyLlCK1yqeiheKc+43o
+         2EGhN13L2CnXjQQSGWJAiooo+el5yg8/FVa1NFIQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Nir Dotan <nird@mellanox.com>, Ido Schimmel <idosch@mellanox.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 169/304] mlxsw: spectrum_acl: Limit priority value
-Date:   Mon, 28 Jan 2019 10:41:26 -0500
-Message-Id: <20190128154341.47195-169-sashal@kernel.org>
+Cc:     Joey Zhang <joey.zhang@microchip.com>,
+        Wesley Sheng <wesley.sheng@microchip.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 171/304] switchtec: Fix SWITCHTEC_IOCTL_EVENT_IDX_ALL flags overwrite
+Date:   Mon, 28 Jan 2019 10:41:28 -0500
+Message-Id: <20190128154341.47195-171-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,45 +59,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nir Dotan <nird@mellanox.com>
+From: Joey Zhang <joey.zhang@microchip.com>
 
-[ Upstream commit d7263ab35be25505ab57ebecd93cbc5dba8be717 ]
+[ Upstream commit e4a7dca5de625018b29417ecc39dc5037d9a5a36 ]
 
-In Spectrum-2, higher priority value wins and priority valid values are in
-the range of {1,cap_kvd_size-1}. mlxsw_sp_acl_tcam_priority_get converts
-from lower-bound priorities alike tc flower to Spectrum-2 HW range. Up
-until now tc flower did not provide priority 0 or reached the maximal
-value, however multicast routing does provide priority 0.
+In the ioctl_event_ctl() SWITCHTEC_IOCTL_EVENT_IDX_ALL case, we call
+event_ctl() several times with the same "ctl" struct.  Each call clobbers
+ctl.flags, which leads to the problem that we may not actually enable or
+disable all events as the user requested.
 
-Therefore, Change mlxsw_sp_acl_tcam_priority_get to verify priority is in
-the correct range. Make sure priority is never set to zero and never
-exceeds the maximal allowed value.
+Preserve the event flag value with a temporary variable.
 
-Signed-off-by: Nir Dotan <nird@mellanox.com>
-Reviewed-by: Jiri Pirko <jiri@mellanox.com>
-Signed-off-by: Ido Schimmel <idosch@mellanox.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: 52eabba5bcdb ("switchtec: Add IOCTLs to the Switchtec driver")
+Signed-off-by: Joey Zhang <joey.zhang@microchip.com>
+Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
+[bhelgaas: changelog]
+Signed-off-by: Bjorn Helgaas <bhelgaas@google.com>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/pci/switch/switchtec.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-index e171513bb32a..30931a2c025b 100644
---- a/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-+++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum_acl_tcam.c
-@@ -95,8 +95,9 @@ int mlxsw_sp_acl_tcam_priority_get(struct mlxsw_sp *mlxsw_sp,
- 	if (!MLXSW_CORE_RES_VALID(mlxsw_sp->core, KVD_SIZE))
- 		return -EIO;
+diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+index 54a8b30dda38..37d0c15c9eeb 100644
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -800,6 +800,7 @@ static int ioctl_event_ctl(struct switchtec_dev *stdev,
+ {
+ 	int ret;
+ 	int nr_idxs;
++	unsigned int event_flags;
+ 	struct switchtec_ioctl_event_ctl ctl;
  
--	max_priority = MLXSW_CORE_RES_GET(mlxsw_sp->core, KVD_SIZE);
--	if (rulei->priority > max_priority)
-+	/* Priority range is 1..cap_kvd_size-1. */
-+	max_priority = MLXSW_CORE_RES_GET(mlxsw_sp->core, KVD_SIZE) - 1;
-+	if (rulei->priority >= max_priority)
- 		return -EINVAL;
+ 	if (copy_from_user(&ctl, uctl, sizeof(ctl)))
+@@ -821,7 +822,9 @@ static int ioctl_event_ctl(struct switchtec_dev *stdev,
+ 		else
+ 			return -EINVAL;
  
- 	/* Unlike in TC, in HW, higher number means higher priority. */
++		event_flags = ctl.flags;
+ 		for (ctl.index = 0; ctl.index < nr_idxs; ctl.index++) {
++			ctl.flags = event_flags;
+ 			ret = event_ctl(stdev, &ctl);
+ 			if (ret < 0)
+ 				return ret;
 -- 
 2.19.1
 
