@@ -4,54 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55D23C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51CC3C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F9F820855
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1CB1B20855
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:24:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696261;
-	bh=NpBzhb76FkwGomBDiLGlWepY8ZCWLmsM6eCJLDiXKvk=;
+	s=default; t=1548696290;
+	bh=Q42/dfcWUcuSnQDph101c4xf0FYsTxEP3V3rrFsJKcw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=L/Nl7S0/8M9nfCuX94blHO2RuhqtQit/hMqQmifQeEI/W9aVraZ2fWNmRpzlhoEW1
-	 HLMCrNY66nszYirdEYD1MNb5JMI2Q6UZA0tfl2XrOXhdzTvUyMy2+McN5mvynz30o6
-	 vETVGQJ0rAAm/cbU5kW1AYFGItJexWHLm6LTON20=
+	b=rqIvonUC0EGtP1mKnOprJdpJHXnP8/6kNnbVCbbp7UBo6bLHAnI1Jn9xJKpNvewG3
+	 k4AfT1BpZ+stFJhIJyUFcLbTHKSjmLSpYrEFlsoT72SLsPzdL9zIG8RCqXwbCC+H+c
+	 BKoU8QmhOCaWxbw+cwHQXNHsdrFTeKd1Ab5z8wbs=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731117AbfA1QBt (ORCPT
+        id S1730855AbfA1RYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:01:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47022 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:24:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:46808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729271AbfA1QBr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:01:47 -0500
+        id S1730411AbfA1QBd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:01:33 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8A76921848;
-        Mon, 28 Jan 2019 16:01:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD1742082E;
+        Mon, 28 Jan 2019 16:01:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691306;
-        bh=NpBzhb76FkwGomBDiLGlWepY8ZCWLmsM6eCJLDiXKvk=;
+        s=default; t=1548691292;
+        bh=Q42/dfcWUcuSnQDph101c4xf0FYsTxEP3V3rrFsJKcw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mbXtrHgFZ4vC9x01JWu4eeExAXYyPxRgRuuLXa2Dxd1rItqrif7DJSN+OtgLvJv6K
-         BT5c2EMjIy1I/Vye5NrrJjJWrCG9UFHQ+wf77rqDhtPreRjcQ44jrvjIq8HuXdmJpW
-         h2N6T3zHDqsYfrq3VkbliKISPVbJP6dimKgqiu/Y=
+        b=PV4Ww5CBtGVyIBRlqgsgAESCDveblDDGFo1C7lZn+JjWp9t08joudgARtZuPkhaxN
+         1HSJ1HwRy1RgW9NDjb3tbIgEt2qtP9ElA3mfY3uxH5ThMDLo9VJ2FlIUuQEgqr+PsQ
+         WdI9a4w8CpN9V02ixSjDhKGQ7SRvNXzvLuTz241I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Pu Wen <puwen@hygon.cn>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 053/258] perf tools: Add Hygon Dhyana support
-Date:   Mon, 28 Jan 2019 10:55:59 -0500
-Message-Id: <20190128155924.51521-53-sashal@kernel.org>
+Cc:     Murton Liu <murton.liu@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 048/258] drm/amd/display: fix gamma not being applied correctly
+Date:   Mon, 28 Jan 2019 10:55:54 -0500
+Message-Id: <20190128155924.51521-48-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -63,42 +58,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pu Wen <puwen@hygon.cn>
+From: Murton Liu <murton.liu@amd.com>
 
-[ Upstream commit 4787eff3fa88f62fede6ed7afa06477ae6bf984d ]
+[ Upstream commit 8ce504b9389be846bcdf512ed5be8f661b3bf097 ]
 
-The tool perf is useful for the performance analysis on the Hygon Dhyana
-platform. But right now there is no Hygon support for it to analyze the
-KVM guest os data. So add Hygon Dhyana support to it by checking vendor
-string to share the code path of AMD.
+[why]
+Gamma was always being set as identity on SDR monitor,
+leading to no changes in gamma. This caused nightlight to
+not apply correctly.
 
-Signed-off-by: Pu Wen <puwen@hygon.cn>
-Acked-by: Borislav Petkov <bp@suse.de>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Link: http://lkml.kernel.org/r/1542008451-31735-1-git-send-email-puwen@hygon.cn
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+[how]
+Added a default gamma structure to compare against
+in the sdr case.
+
+Signed-off-by: Murton Liu <murton.liu@amd.com>
+Reviewed-by: Krunoslav Kovac <Krunoslav.Kovac@amd.com>
+Acked-by: Bhawanpreet Lakha <Bhawanpreet.Lakha@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/arch/x86/util/kvm-stat.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/arch/x86/util/kvm-stat.c b/tools/perf/arch/x86/util/kvm-stat.c
-index b32409a0e546..081353d7b095 100644
---- a/tools/perf/arch/x86/util/kvm-stat.c
-+++ b/tools/perf/arch/x86/util/kvm-stat.c
-@@ -156,7 +156,7 @@ int cpu_isa_init(struct perf_kvm_stat *kvm, const char *cpuid)
- 	if (strstr(cpuid, "Intel")) {
- 		kvm->exit_reasons = vmx_exit_reasons;
- 		kvm->exit_reasons_isa = "VMX";
--	} else if (strstr(cpuid, "AMD")) {
-+	} else if (strstr(cpuid, "AMD") || strstr(cpuid, "Hygon")) {
- 		kvm->exit_reasons = svm_exit_reasons;
- 		kvm->exit_reasons_isa = "SVM";
- 	} else
+diff --git a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+index cfcc54f2ce65..33a9d0c58966 100644
+--- a/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
++++ b/drivers/gpu/drm/amd/display/dc/dcn10/dcn10_hw_sequencer.c
+@@ -1190,7 +1190,8 @@ static bool dcn10_set_input_transfer_func(struct pipe_ctx *pipe_ctx,
+ 		tf = plane_state->in_transfer_func;
+ 
+ 	if (plane_state->gamma_correction &&
+-		!plane_state->gamma_correction->is_identity
++		!dpp_base->ctx->dc->debug.always_use_regamma
++		&& !plane_state->gamma_correction->is_identity
+ 			&& dce_use_lut(plane_state->format))
+ 		dpp_base->funcs->dpp_program_input_lut(dpp_base, plane_state->gamma_correction);
+ 
 -- 
 2.19.1
 
