@@ -2,111 +2,121 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 058F7C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:42:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38724C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:42:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7D4020881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:42:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697366;
-	bh=zGj4mqbhI2bQvT+5dfmKnN+ngpGDNUsPAWejhNZV8hs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=i1AvL/Gjioi07ME9kaReIhs+hMUm2wgVrr+qM/vXdjxbfZanGvPnn0IsA4BXaewmc
-	 66esY+iMv29QIOYJu7bDBB2x7dsjEm03t52RRrLyNMlfnBnEbeo6qZ0Lq0iwBcwYOe
-	 qGDD3Q3FyyGtOBnM7MrnlO0eMqsCiEjlHwYP5VBA=
+	by mail.kernel.org (Postfix) with ESMTP id 05D2620881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:42:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="XNt6PGm0"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728646AbfA1Rmo (ORCPT
+        id S1728960AbfA1Rmw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:42:44 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36172 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:42:52 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:58004 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728040AbfA1PuH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:50:07 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 392C521783;
-        Mon, 28 Jan 2019 15:50:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690606;
-        bh=zGj4mqbhI2bQvT+5dfmKnN+ngpGDNUsPAWejhNZV8hs=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bDEfwOd0za8cVEIe2alGj567pSnt0/Hf5mbk3VvBT0CGWeZ90bkDzDwgUl5m7NwPF
-         dyavao8mx6y22ASlKtiBCA+y7FuPDmJ3njYtc+Mk+TelzLgqzne47gGxYETEelgqow
-         RJ1vhVU4uiZFSRgsFH1sFjOcUmPsGtzZOORVG7Qs=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yu Zhao <yuzhao@google.com>, Joerg Roedel <jroedel@suse.de>,
-        Sasha Levin <sashal@kernel.org>,
-        iommu@lists.linux-foundation.org
-Subject: [PATCH AUTOSEL 4.20 139/304] iommu/amd: Fix amd_iommu=force_isolation
-Date:   Mon, 28 Jan 2019 10:40:56 -0500
-Message-Id: <20190128154341.47195-139-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
-References: <20190128154341.47195-1-sashal@kernel.org>
+        id S1728605AbfA1Rmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 12:42:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+        s=20171124; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=sMoY8eqIpeQH7z9JcjiW2zAEfvXKU9XUzHdDLpiU4Cc=; b=XNt6PGm0z4bKgpElM8gs0kTsi1
+        Cj+t1JcKsfKirT+hr5ih4kHPbCqrhF/XUDXl+mMKhoophGArumJ0p6qXZq7IsgjpsfCjVRcp2hbp4
+        sD/CGL2Xg5jNiujaXMcZfkPygjEgAiltNkcm5uXrw5XOFGW1YkoP6iOJ5pu3dJuXTitY=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.89)
+        (envelope-from <andrew@lunn.ch>)
+        id 1goAvm-000142-0X; Mon, 28 Jan 2019 18:42:46 +0100
+Date:   Mon, 28 Jan 2019 18:42:46 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
+        Vivien Didelot <vivien.didelot@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Gregory Clement <gregory.clement@bootlin.com>,
+        Antoine Tenart <antoine.tenart@bootlin.com>,
+        Maxime Chevallier <maxime.chevallier@bootlin.com>,
+        Nadav Haklai <nadavh@marvell.com>
+Subject: Re: [PATCH net-next v2 1/2] net: dsa: mv88e6xxx: Save switch rules
+Message-ID: <20190128174246.GD28759@lunn.ch>
+References: <20190125095507.29334-1-miquel.raynal@bootlin.com>
+ <20190125095507.29334-2-miquel.raynal@bootlin.com>
+ <c1421a5d-5f92-bb86-b5cc-9fa19a1c8d9f@gmail.com>
+ <20190128152456.212ae5ac@xps13>
+ <20190128144417.GG4765@lunn.ch>
+ <20190128165749.6abf2dc4@xps13>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190128165749.6abf2dc4@xps13>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yu Zhao <yuzhao@google.com>
+On Mon, Jan 28, 2019 at 04:57:49PM +0100, Miquel Raynal wrote:
+> Hi Andrew,
+> 
+> Thanks for helping!
+> 
+> Andrew Lunn <andrew@lunn.ch> wrote on Mon, 28 Jan 2019 15:44:17 +0100:
+> 
+> > > I don't see where VLAN and bridge information are cached, can you point
+> > > me to the relevant locations?  
+> > 
+> > Miquèl
+> > 
+> > The bridge should have all that information. You need to ask it to
+> > enumerate the current configuration and replay it to the switch.
+> > 
+> > There might be something in the Mellanox driver you can copy? But i've
+> > not looked, i'm just guessing.
+> 
+> I am still searching but so far I did not find a mechanism reading the
+> configuration of the bridge out of a 'net' object. Indeed there are
+> multiple lists with the configuration but they are all 'mellanox'
+> objects, they do not belong to the core.
 
-[ Upstream commit c12b08ebbe16f0d3a96a116d86709b04c1ee8e74 ]
+Hi Miquèl
 
-The parameter is still there but it's ignored. We need to check its
-value before deciding to go into passthrough mode for AMD IOMMU v2
-capable device.
+Look at how iproute2 works. How does the bridge command enumerate the
+fdb and mdb's? How does bridge vlan show work? bridge link show? See
+if you can use this infrastructure within the kernel.
 
-We occasionally use this parameter to force v2 capable device into
-translation mode to debug memory corruption that we suspect is
-caused by DMA writes.
+> > We also need to think about how we are going to test this. There is a
+> > lot of state information in a switch. So we are going to need some
+> > pretty good tests to show we have recreated all of it.
+> 
+> My understanding of all this is rather short, until know I used what
+> you proposed in the v1 of this series but I am all ears if I need to
+> add anything to my test list.
 
-To address the following comment from Joerg Roedel on the first
-version, v2 capability of device is completely ignored.
-> This breaks the iommu_v2 use-case, as it needs a direct mapping for the
-> devices that support it.
+What you probably need is a generic DSA test suite, with a number of
+hardware devices, with different generations of mv88e6xxx devices, and
+ideally different sf2, kzs, etc switches. Setup a configuration and
+test is works correctly. Suspend, resume, and test is still works. And
+you probably need to go through a number of cycles of suspend/resume.
+And you are going to need to maintain that for a number of years,
+testing every release, to see what breaks as we add new features and
+new devices.
 
-And from Documentation/admin-guide/kernel-parameters.txt:
-  This option does not override iommu=pt
+There also needs to be some though put into what happens when the
+network changes while the switch is suspended. A port looses its link,
+a port comes up, an SFP module is ejected, and SFP module is
+inserted. The PTP grand master moves, etc. I hope the usual mechanisms
+just work, but it all needs testing.
 
-Fixes: aafd8ba0ca74 ("iommu/amd: Implement add_device and remove_device")
+S2RAM is hard for a device like this. It is not something i personally
+would want to do :-(
 
-Signed-off-by: Yu Zhao <yuzhao@google.com>
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/iommu/amd_iommu.c | 9 ++++++++-
- 1 file changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/amd_iommu.c b/drivers/iommu/amd_iommu.c
-index 1167ff0416cf..325f3bad118b 100644
---- a/drivers/iommu/amd_iommu.c
-+++ b/drivers/iommu/amd_iommu.c
-@@ -438,7 +438,14 @@ static int iommu_init_device(struct device *dev)
- 
- 	dev_data->alias = get_alias(dev);
- 
--	if (dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
-+	/*
-+	 * By default we use passthrough mode for IOMMUv2 capable device.
-+	 * But if amd_iommu=force_isolation is set (e.g. to debug DMA to
-+	 * invalid address), we ignore the capability for the device so
-+	 * it'll be forced to go into translation mode.
-+	 */
-+	if ((iommu_pass_through || !amd_iommu_force_isolation) &&
-+	    dev_is_pci(dev) && pci_iommuv2_capable(to_pci_dev(dev))) {
- 		struct amd_iommu *iommu;
- 
- 		iommu = amd_iommu_rlookup_table[dev_data->devid];
--- 
-2.19.1
-
+      Andrew
