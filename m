@@ -2,133 +2,153 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2F77C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:44:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9980AC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:44:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1CD42086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:44:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hzW+8hMc"
+	by mail.kernel.org (Postfix) with ESMTP id 66E602085B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:44:08 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728017AbfA1SoC (ORCPT
+        id S1728060AbfA1SoG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:44:02 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:38220 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727052AbfA1Sn6 (ORCPT
+        Mon, 28 Jan 2019 13:44:06 -0500
+Received: from gateway36.websitewelcome.com ([50.116.126.2]:26865 "EHLO
+        gateway36.websitewelcome.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727052AbfA1SoE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:43:58 -0500
-Received: by mail-lf1-f68.google.com with SMTP id a8so12658878lfk.5;
-        Mon, 28 Jan 2019 10:43:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=r4zUJqc+m8YUpL+Cj3RgPHO6l7vNeVHz7qug0AjpLNg=;
-        b=hzW+8hMcGt7yih5v+ybRWRdyH/RAOBtryHacUjmSVEY+NLLg03U312TiA7Y0avdRvf
-         RJu6hremQOcG0oZKxit32pgXu9ADBr9QS/C8MHJ8IKp7WQsYD6qBqfFAkXLvzZSWBHOv
-         oGmkDLaDEyEEK3SVM4qZaQHRTOSzLynxJidgsNeQBmCW+p1QD0evHcI9bTPp32GJY8gS
-         Rl2kxM/MNleLaR46mK+bK7IDFdb+hFrfJ9Ou38yfM2aGqVEqePScmHdJewegAFuENjej
-         8nnYJzB7nUfV/GaHuf7fni40Z5sDVRSKDif07PixNKgg5xh/bvnBSRsbK51amj7TMasI
-         pEQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=r4zUJqc+m8YUpL+Cj3RgPHO6l7vNeVHz7qug0AjpLNg=;
-        b=Lf2hbdVvJ1PNmXt/qaYjr430i7KzVI8XipgDcwm9SYbVD2kJ2TGg0K6+KGtvbOa4fj
-         8J9CL2Hdm2XAwfCMQ6KiarGR9UfuXmVR63k/M6iRO8AMT10Czpe9SKOrkcoEuYAWa70U
-         Qj77IRLAvWLE3Lj/cnXeDB95vcCsAEFPiPgwSb4pKndquIJPlSEJ7u6uJngI8fjgJC/P
-         hCDJ6ryjD2DHyJj936dfPRNSFqWgfTB5Lq4uPhzXpvw+eRH99mYVBzcRI6Jjr4SBvu6l
-         ARVN9aiVnImdMvSYfUO74xK3C9R3Kt863eQ0i3FT/0IFdrx9xYBC79Cl3oFZgDAqC+Mt
-         O0DQ==
-X-Gm-Message-State: AJcUukcogbvu9XdqriNwtQ3TcnSOJyL2K++0NG3oWJM09bCUfCD7X3nl
-        C0LWNPKfWzPO714ZjzhNpCBd/ajAM1w=
-X-Google-Smtp-Source: ALg8bN6eV1Hh6O9iFZz/iIVUKoWXyuk09HDxPWZ+V6gVBZ1yCwDcgxistt27slDBWruFX/Svlb4v2A==
-X-Received: by 2002:a19:9e11:: with SMTP id h17mr17219797lfe.73.1548701035998;
-        Mon, 28 Jan 2019 10:43:55 -0800 (PST)
-Received: from localhost (89-70-37-207.dynamic.chello.pl. [89.70.37.207])
-        by smtp.gmail.com with ESMTPSA id s17sm3430994lfk.9.2019.01.28.10.43.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 10:43:55 -0800 (PST)
-Date:   Mon, 28 Jan 2019 19:43:33 +0100
-From:   Tomasz Duszynski <tduszyns@gmail.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Tomasz Duszynski <tduszyns@gmail.com>, linux-iio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        robh@kernel.org, jic23@jic23.retrosnub.co.uk
-Subject: Re: [PATCH v2 3/3] dt-bindings: iio: chemical: pms7003: add device
- tree support
-Message-ID: <20190128184332.GA25627@arch>
-References: <20190127181916.19948-1-tduszyns@gmail.com>
- <20190127181916.19948-4-tduszyns@gmail.com>
- <20190128075819.GK3691@localhost>
+        Mon, 28 Jan 2019 13:44:04 -0500
+X-Greylist: delayed 1243 seconds by postgrey-1.27 at vger.kernel.org; Mon, 28 Jan 2019 13:44:04 EST
+Received: from cm11.websitewelcome.com (cm11.websitewelcome.com [100.42.49.5])
+        by gateway36.websitewelcome.com (Postfix) with ESMTP id 3E9454013C5B9
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:36:34 -0600 (CST)
+Received: from gator4166.hostgator.com ([108.167.133.22])
+        by cmsmtp with SMTP
+        id oBZ1g1dEddnCeoBZ1g3hPW; Mon, 28 Jan 2019 12:23:19 -0600
+X-Authority-Reason: nr=8
+Received: from [189.250.130.205] (port=42676 helo=[192.168.1.76])
+        by gator4166.hostgator.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <gustavo@embeddedor.com>)
+        id 1goBZ0-001QCj-0e; Mon, 28 Jan 2019 12:23:19 -0600
+Subject: Re: [PATCH] drm/amd/powerplay: Fix missing break in switch
+To:     Alex Deucher <alexdeucher@gmail.com>
+Cc:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        =?UTF-8?Q?Christian_K=c3=b6nig?= <christian.koenig@amd.com>,
+        "David (ChunMing) Zhou" <David1.Zhou@amd.com>,
+        David Airlie <airlied@linux.ie>,
+        Daniel Vetter <daniel@ffwll.ch>,
+        Kees Cook <keescook@chromium.org>,
+        Maling list - DRI developers 
+        <dri-devel@lists.freedesktop.org>,
+        amd-gfx list <amd-gfx@lists.freedesktop.org>,
+        LKML <linux-kernel@vger.kernel.org>
+References: <20190125215533.GA4878@embeddedor>
+ <CADnq5_Nx1yHoANDaGs50AF5VQXWCUD8PU1YoyHAmGetHxoqiPA@mail.gmail.com>
+From:   "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=gustavo@embeddedor.com; keydata=
+ mQINBFssHAwBEADIy3ZoPq3z5UpsUknd2v+IQud4TMJnJLTeXgTf4biSDSrXn73JQgsISBwG
+ 2Pm4wnOyEgYUyJd5tRWcIbsURAgei918mck3tugT7AQiTUN3/5aAzqe/4ApDUC+uWNkpNnSV
+ tjOx1hBpla0ifywy4bvFobwSh5/I3qohxDx+c1obd8Bp/B/iaOtnq0inli/8rlvKO9hp6Z4e
+ DXL3PlD0QsLSc27AkwzLEc/D3ZaqBq7ItvT9Pyg0z3Q+2dtLF00f9+663HVC2EUgP25J3xDd
+ 496SIeYDTkEgbJ7WYR0HYm9uirSET3lDqOVh1xPqoy+U9zTtuA9NQHVGk+hPcoazSqEtLGBk
+ YE2mm2wzX5q2uoyptseSNceJ+HE9L+z1KlWW63HhddgtRGhbP8pj42bKaUSrrfDUsicfeJf6
+ m1iJRu0SXYVlMruGUB1PvZQ3O7TsVfAGCv85pFipdgk8KQnlRFkYhUjLft0u7CL1rDGZWDDr
+ NaNj54q2CX9zuSxBn9XDXvGKyzKEZ4NY1Jfw+TAMPCp4buawuOsjONi2X0DfivFY+ZsjAIcx
+ qQMglPtKk/wBs7q2lvJ+pHpgvLhLZyGqzAvKM1sVtRJ5j+ARKA0w4pYs5a5ufqcfT7dN6TBk
+ LXZeD9xlVic93Ju08JSUx2ozlcfxq+BVNyA+dtv7elXUZ2DrYwARAQABtCxHdXN0YXZvIEEu
+ IFIuIFNpbHZhIDxndXN0YXZvQGVtYmVkZGVkb3IuY29tPokCPQQTAQgAJwUCWywcDAIbIwUJ
+ CWYBgAULCQgHAgYVCAkKCwIEFgIDAQIeAQIXgAAKCRBHBbTLRwbbMZ6tEACk0hmmZ2FWL1Xi
+ l/bPqDGFhzzexrdkXSfTTZjBV3a+4hIOe+jl6Rci/CvRicNW4H9yJHKBrqwwWm9fvKqOBAg9
+ obq753jydVmLwlXO7xjcfyfcMWyx9QdYLERTeQfDAfRqxir3xMeOiZwgQ6dzX3JjOXs6jHBP
+ cgry90aWbaMpQRRhaAKeAS14EEe9TSIly5JepaHoVdASuxklvOC0VB0OwNblVSR2S5i5hSsh
+ ewbOJtwSlonsYEj4EW1noQNSxnN/vKuvUNegMe+LTtnbbocFQ7dGMsT3kbYNIyIsp42B5eCu
+ JXnyKLih7rSGBtPgJ540CjoPBkw2mCfhj2p5fElRJn1tcX2McsjzLFY5jK9RYFDavez5w3lx
+ JFgFkla6sQHcrxH62gTkb9sUtNfXKucAfjjCMJ0iuQIHRbMYCa9v2YEymc0k0RvYr43GkA3N
+ PJYd/vf9vU7VtZXaY4a/dz1d9dwIpyQARFQpSyvt++R74S78eY/+lX8wEznQdmRQ27kq7BJS
+ R20KI/8knhUNUJR3epJu2YFT/JwHbRYC4BoIqWl+uNvDf+lUlI/D1wP+lCBSGr2LTkQRoU8U
+ 64iK28BmjJh2K3WHmInC1hbUucWT7Swz/+6+FCuHzap/cjuzRN04Z3Fdj084oeUNpP6+b9yW
+ e5YnLxF8ctRAp7K4yVlvA7kCDQRbLBwMARAAsHCE31Ffrm6uig1BQplxMV8WnRBiZqbbsVJB
+ H1AAh8tq2ULl7udfQo1bsPLGGQboJSVN9rckQQNahvHAIK8ZGfU4Qj8+CER+fYPp/MDZj+t0
+ DbnWSOrG7z9HIZo6PR9z4JZza3Hn/35jFggaqBtuydHwwBANZ7A6DVY+W0COEU4of7CAahQo
+ 5NwYiwS0lGisLTqks5R0Vh+QpvDVfuaF6I8LUgQR/cSgLkR//V1uCEQYzhsoiJ3zc1HSRyOP
+ otJTApqGBq80X0aCVj1LOiOF4rrdvQnj6iIlXQssdb+WhSYHeuJj1wD0ZlC7ds5zovXh+FfF
+ l5qH5RFY/qVn3mNIVxeO987WSF0jh+T5ZlvUNdhedGndRmwFTxq2Li6GNMaolgnpO/CPcFpD
+ jKxY/HBUSmaE9rNdAa1fCd4RsKLlhXda+IWpJZMHlmIKY8dlUybP+2qDzP2lY7kdFgPZRU+e
+ zS/pzC/YTzAvCWM3tDgwoSl17vnZCr8wn2/1rKkcLvTDgiJLPCevqpTb6KFtZosQ02EGMuHQ
+ I6Zk91jbx96nrdsSdBLGH3hbvLvjZm3C+fNlVb9uvWbdznObqcJxSH3SGOZ7kCHuVmXUcqoz
+ ol6ioMHMb+InrHPP16aVDTBTPEGwgxXI38f7SUEn+NpbizWdLNz2hc907DvoPm6HEGCanpcA
+ EQEAAYkCJQQYAQgADwUCWywcDAIbDAUJCWYBgAAKCRBHBbTLRwbbMdsZEACUjmsJx2CAY+QS
+ UMebQRFjKavwXB/xE7fTt2ahuhHT8qQ/lWuRQedg4baInw9nhoPE+VenOzhGeGlsJ0Ys52sd
+ XvUjUocKgUQq6ekOHbcw919nO5L9J2ejMf/VC/quN3r3xijgRtmuuwZjmmi8ct24TpGeoBK4
+ WrZGh/1hAYw4ieARvKvgjXRstcEqM5thUNkOOIheud/VpY+48QcccPKbngy//zNJWKbRbeVn
+ imua0OpqRXhCrEVm/xomeOvl1WK1BVO7z8DjSdEBGzbV76sPDJb/fw+y+VWrkEiddD/9CSfg
+ fBNOb1p1jVnT2mFgGneIWbU0zdDGhleI9UoQTr0e0b/7TU+Jo6TqwosP9nbk5hXw6uR5k5PF
+ 8ieyHVq3qatJ9K1jPkBr8YWtI5uNwJJjTKIA1jHlj8McROroxMdI6qZ/wZ1ImuylpJuJwCDC
+ ORYf5kW61fcrHEDlIvGc371OOvw6ejF8ksX5+L2zwh43l/pKkSVGFpxtMV6d6J3eqwTafL86
+ YJWH93PN+ZUh6i6Rd2U/i8jH5WvzR57UeWxE4P8bQc0hNGrUsHQH6bpHV2lbuhDdqo+cM9eh
+ GZEO3+gCDFmKrjspZjkJbB5Gadzvts5fcWGOXEvuT8uQSvl+vEL0g6vczsyPBtqoBLa9SNrS
+ VtSixD1uOgytAP7RWS474w==
+Message-ID: <10cbe6a3-f06f-7443-4f99-cdc389100462@embeddedor.com>
+Date:   Mon, 28 Jan 2019 12:23:16 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <CADnq5_Nx1yHoANDaGs50AF5VQXWCUD8PU1YoyHAmGetHxoqiPA@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20190128075819.GK3691@localhost>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 189.250.130.205
+X-Source-L: No
+X-Exim-ID: 1goBZ0-001QCj-0e
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.1.76]) [189.250.130.205]:42676
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 24
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 08:58:19AM +0100, Johan Hovold wrote:
-> On Sun, Jan 27, 2019 at 07:19:16PM +0100, Tomasz Duszynski wrote:
-> > Add device tree support for Plantower PMS7003 particulate matter sensor.
-> >
-> > Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-> > ---
-> >  .../iio/chemical/plantower,pms7003.txt        | 19 +++++++++++++++++++
-> >  1 file changed, 19 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
-> >
-> > diff --git a/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
-> > new file mode 100644
-> > index 000000000000..e4c7f2fb1e30
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
-> > @@ -0,0 +1,19 @@
-> > +* Plantower PMS7003 particulate matter sensor
-> > +
-> > +Required properties:
-> > +- compatible: must be "plantower,pms7003"
-> > +
-> > +Optional properties:
-> > +- vcc-supply: phandle to the regulator that provides power to the sensor
->
-> Shouldn't this one be a required property?
->
 
-Driver does not use regulator framework hence to me this property fits
-here better.
 
-> > +- set-gpios: phandle to the GPIO connected to the SET line
-> > +- reset-gpios: phandle to the GPIO connected to the RESET line
-> > +
-> > +Refer to serial/slave-device.txt for generic serial attached device bindings.
-> > +
-> > +Example:
-> > +
-> > +&uart0 {
-> > +	pms7003 {
->
-> The node name should be generic and reflect the functionality rather
-> than model. Perhaps "pms" will do here.
->
+On 1/28/19 10:19 AM, Alex Deucher wrote:
+> On Fri, Jan 25, 2019 at 5:31 PM Gustavo A. R. Silva
+> <gustavo@embeddedor.com> wrote:
+>>
+>> Add missing break statement in order to prevent the code from falling
+>> through to the default case.
+>>
+>> The resoning for this is that pclk_vol_table is an automatic variable.
+>> So, it makes no sense to update it just before falling through to the
+>> default case and return -EINVAL.
+>>
+>> This bug was found thanks to the ongoing efforts to enabling
+>> -Wimplicit-fallthrough.
+>>
+>> Fixes: cd70f3d6e3fa ("drm/amd/powerplay: PP/DAL interface changes for dynamic clock switch")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Gustavo A. R. Silva <gustavo@embeddedor.com>
+> 
+> Applied.  Thanks!
+> 
 
-Agree, ideally we should have a generic dt name for this kind of sensors
-(something like air-pollution-sensor perhaps?). But unfortunately there isn't
-anything available now so I guess compatible part name should be okay
-(besides this is the type of naming commonly used in other iio bindings).
+Great. :)
 
-> > +		compatible = "plantower,pms7003";
-> > +	};
-> > +};
->
-> Johan
+Thanks, Alex.
+--
+Gustavo
