@@ -6,46 +6,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FF5CC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 74387C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A9B020989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4348320989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:23:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548696180;
-	bh=QO0Z/ugaU9XCwato60uHHqSOeQSYOYfR4+uT1EqhkAE=;
+	s=default; t=1548696188;
+	bh=SMSRi0Noe/4iDDh2D+49mXP4SZN1ulcyXleky9Ic7fc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=pHL+EaBBsdtEURJV6WJb2XHEtOCuO0iKhq5lZl/SCCfJM6o0/vKpLY45C7y0dWhNV
-	 CV3kddkJJIcs9HHBjn4ajNqpvYxWrn7FOYbtBSpl1hAFcmasPyohnXhFXMwOxdEr4W
-	 vEpl8ZKGFdCXr4PGaJLUAn4OBd8mX3p2BdI/4Mi4=
+	b=Awfg2fD31Okf/bIIdkGwNoPFT5m5eQJZehmWfqr/RqirN56rWA/yh0EojCsM2lC/g
+	 A7FN5uR1WqvgOQNEF5IuKdPsknc7xFuzwEyQXivuIAMT3+cXo0UsmGNt8xGUa+oIyR
+	 LK5A4TVQstSIfEwU0Dr7orMTLScm6dm4OU+aWd8g=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731555AbfA1RW6 (ORCPT
+        id S1731571AbfA1RXG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:22:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:48470 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 12:23:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:48386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731322AbfA1QDK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:03:10 -0500
+        id S1730552AbfA1QDE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:03:04 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E14821916;
-        Mon, 28 Jan 2019 16:03:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2C6052175B;
+        Mon, 28 Jan 2019 16:03:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691389;
-        bh=QO0Z/ugaU9XCwato60uHHqSOeQSYOYfR4+uT1EqhkAE=;
+        s=default; t=1548691383;
+        bh=SMSRi0Noe/4iDDh2D+49mXP4SZN1ulcyXleky9Ic7fc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vs55CTczDUyEYtt+ljqGKHYcLWD1nuzNNCz7E/lAKUjZ2ia7YoX8uinpqmJMsM0UE
-         e6Kx/HvttimreOdoh67MRda7JJ08r+ZAWd//UT93UKNeqTqJeOvxBmyeKb7rg7e/lG
-         BLpyBpVgwavlUmsAKuYbJo3h/mXyjRc7qBwIPJek=
+        b=AstEmFeJFqPbI4tLbFTnn4c9R6uum3iW1SJ+rGtISjXo7kn5muZcmZKpY0ey2T4S4
+         8I6SFKId5RI8R0Yehzm5BWJ3SoDBXXj8gZq5zdNdNLwfC+mSKaII8DHzG7lY+gPwqC
+         vxYF5ZhUvXbP2O0wsJ9IIU7kjUhtEa7Y183FJRLw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 077/258] arm64: io: Ensure calls to delay routines are ordered against prior readX()
-Date:   Mon, 28 Jan 2019 10:56:23 -0500
-Message-Id: <20190128155924.51521-77-sashal@kernel.org>
+Cc:     Tiezhu Yang <kernelpatch@126.com>,
+        Jaegeuk Kim <jaegeuk@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-f2fs-devel@lists.sourceforge.net
+Subject: [PATCH AUTOSEL 4.19 075/258] f2fs: fix wrong return value of f2fs_acl_create
+Date:   Mon, 28 Jan 2019 10:56:21 -0500
+Message-Id: <20190128155924.51521-75-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,98 +58,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: Tiezhu Yang <kernelpatch@126.com>
 
-[ Upstream commit 6460d32014717686d3b7963595950ba2c6d1bb5e ]
+[ Upstream commit f6176473a0c7472380eef72ebeb330cf9485bf0a ]
 
-A relatively standard idiom for ensuring that a pair of MMIO writes to a
-device arrive at that device with a specified minimum delay between them
-is as follows:
+When call f2fs_acl_create_masq() failed, the caller f2fs_acl_create()
+should return -EIO instead of -ENOMEM, this patch makes it consistent
+with posix_acl_create() which has been fixed in commit beaf226b863a
+("posix_acl: don't ignore return value of posix_acl_create_masq()").
 
-	writel_relaxed(42, dev_base + CTL1);
-	readl(dev_base + CTL1);
-	udelay(10);
-	writel_relaxed(42, dev_base + CTL2);
-
-the intention being that the read-back from the device will push the
-prior write to CTL1, and the udelay will hold up the write to CTL1 until
-at least 10us have elapsed.
-
-Unfortunately, on arm64 where the underlying delay loop is implemented
-as a read of the architected counter, the CPU does not guarantee
-ordering from the readl() to the delay loop and therefore the delay loop
-could in theory be speculated and not provide the desired interval
-between the two writes.
-
-Fix this in a similar manner to PowerPC by introducing a dummy control
-dependency on the output of readX() which, combined with the ISB in the
-read of the architected counter, guarantees that a subsequent delay loop
-can not be executed until the readX() has returned its result.
-
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Fixes: 83dfe53c185e ("f2fs: fix reference leaks in f2fs_acl_create")
+Signed-off-by: Tiezhu Yang <kernelpatch@126.com>
+Reviewed-by: Chao Yu <yuchao0@huawei.com>
+Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/io.h | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ fs/f2fs/acl.c | 14 ++++++++------
+ 1 file changed, 8 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index 35b2e50f17fb..b2bc7dbc1fa6 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -106,7 +106,22 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+diff --git a/fs/f2fs/acl.c b/fs/f2fs/acl.c
+index 111824199a88..b9fe937a3c70 100644
+--- a/fs/f2fs/acl.c
++++ b/fs/f2fs/acl.c
+@@ -352,12 +352,14 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 		return PTR_ERR(p);
+ 
+ 	clone = f2fs_acl_clone(p, GFP_NOFS);
+-	if (!clone)
+-		goto no_mem;
++	if (!clone) {
++		ret = -ENOMEM;
++		goto release_acl;
++	}
+ 
+ 	ret = f2fs_acl_create_masq(clone, mode);
+ 	if (ret < 0)
+-		goto no_mem_clone;
++		goto release_clone;
+ 
+ 	if (ret == 0)
+ 		posix_acl_release(clone);
+@@ -371,11 +373,11 @@ static int f2fs_acl_create(struct inode *dir, umode_t *mode,
+ 
+ 	return 0;
+ 
+-no_mem_clone:
++release_clone:
+ 	posix_acl_release(clone);
+-no_mem:
++release_acl:
+ 	posix_acl_release(p);
+-	return -ENOMEM;
++	return ret;
  }
  
- /* IO barriers */
--#define __iormb()		rmb()
-+#define __iormb(v)							\
-+({									\
-+	unsigned long tmp;						\
-+									\
-+	rmb();								\
-+									\
-+	/*								\
-+	 * Create a dummy control dependency from the IO read to any	\
-+	 * later instructions. This ensures that a subsequent call to	\
-+	 * udelay() will be ordered due to the ISB in get_cycles().	\
-+	 */								\
-+	asm volatile("eor	%0, %1, %1\n"				\
-+		     "cbnz	%0, ."					\
-+		     : "=r" (tmp) : "r" (v) : "memory");		\
-+})
-+
- #define __iowmb()		wmb()
- 
- #define mmiowb()		do { } while (0)
-@@ -131,10 +146,10 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
-  * following Normal memory access. Writes are ordered relative to any prior
-  * Normal memory access.
-  */
--#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
--#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
--#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
--#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(); __v; })
-+#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(__v); __v; })
-+#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(__v); __v; })
-+#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(__v); __v; })
-+#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(__v); __v; })
- 
- #define writeb(v,c)		({ __iowmb(); writeb_relaxed((v),(c)); })
- #define writew(v,c)		({ __iowmb(); writew_relaxed((v),(c)); })
-@@ -185,9 +200,9 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
- /*
-  * io{read,write}{16,32,64}be() macros
-  */
--#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(); __v; })
--#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(); __v; })
--#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(); __v; })
-+#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(__v); __v; })
-+#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(__v); __v; })
-+#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(__v); __v; })
- 
- #define iowrite16be(v,p)	({ __iowmb(); __raw_writew((__force __u16)cpu_to_be16(v), p); })
- #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
+ int f2fs_init_acl(struct inode *inode, struct inode *dir, struct page *ipage,
 -- 
 2.19.1
 
