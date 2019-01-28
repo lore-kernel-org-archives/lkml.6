@@ -3,158 +3,127 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1238EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C85FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D591D2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4C3972147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:24:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="p41YQ41n"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="exLkt2+Q"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727656AbfA1SYH (ORCPT
+        id S1727691AbfA1SYM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:24:07 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44124 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727035AbfA1SX6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:23:58 -0500
-Received: from zn.tnic (p200300EC2BC5DE008821062B415D2F41.dip0.t-ipconnect.de [IPv6:2003:ec:2bc5:de00:8821:62b:415d:2f41])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 735A31EC0229;
-        Mon, 28 Jan 2019 19:23:56 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1548699836;
-        h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-         to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-         content-transfer-encoding:in-reply-to:in-reply-to:  references:references;
-        bh=GF5R7JIYQon2VlhGA1APYJi4dQvVwzwr7dXn4buTckY=;
-        b=p41YQ41nRH5JQAmekfvWolk/5vjiGuLeWKkfWH10OvWxryLbNhTVWYagtgcsbcgTdsvxkQ
-        TC+HvvZGKVNl165djusdM+gG4Alk4ANDLR2pHGviHr2asyw4GH4b91bfDKIaq48WO9OlHM
-        VH6Iz/P77rwMGCFvB/ermJLl8NaN+8U=
-Date:   Mon, 28 Jan 2019 19:23:49 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        Andy Lutomirski <luto@kernel.org>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        kvm@vger.kernel.org, "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Rik van Riel <riel@surriel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH 09/22] x86/fpu: Add (__)make_fpregs_active helpers
-Message-ID: <20190128182349.GG20487@zn.tnic>
-References: <20190109114744.10936-1-bigeasy@linutronix.de>
- <20190109114744.10936-10-bigeasy@linutronix.de>
+        Mon, 28 Jan 2019 13:24:12 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42358 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727035AbfA1SYJ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 13:24:09 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 64so8364750pfr.9;
+        Mon, 28 Jan 2019 10:24:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=1RA36miYBXMiHkO56Tit33gKqdto2/u99xV4L9uWAfk=;
+        b=exLkt2+QdsKCYUS0eNKJWsLvkNdluZYWvhreWC58XcCj9An9yIsgWuLSYp3QoeTA45
+         it3JMu6rnXQ8i142dbP5wfLXij2SzLPyn/7FMB9bly/I3FnPro7VuzEg8rNRaCmaw9Hj
+         NETklKeqLYl2daDmygOwdgEaLA/kaiHnhP48Kb7VmGXlq2HKXgYopOQMfjbonF6fPiha
+         J7X7DcT3y44nPPINLJYIULzrXoq0NQxNrzYvgWcWQLyoFa6ggPsmzPkx512LFOaCQQTb
+         BoTAPMg3aS53UAw4LNFCazwI+pjPP0weoJJkTm7Hmd3rrPkU3n5z4p9yLoe9fELBETpp
+         scdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=1RA36miYBXMiHkO56Tit33gKqdto2/u99xV4L9uWAfk=;
+        b=kPcXnVrAkWyj1fbjJuodjbEyp7Q66fbNE5/G3TW16HdHPVW93WgiJzwMbYAmjG6qP+
+         ULKPBvbT8+QrixbYagUHhtyRWRI4uL0hCgANg8Qmw3tZTBf9qbJynrUROC5uGx9gRLvT
+         korGuD6O3Ezg44YQEsLRCTqGDNVMUTeegjC+AaKrdVDHymTK+qRhyUmaB8Vku0FRDNWv
+         OOaYmkXQiol9F1TNuutrJpsR14pxxNkletQZGXxoEgT2ZxNswzoZI5kZV42jWPmj8oq5
+         vlb0+4MSnCVIPjM6vYySE5QghwQDtLxpsScUy9R7rKZotN/JFe+34WkWa52Z/QCenV4W
+         nqMg==
+X-Gm-Message-State: AJcUukfgiK3KxkXY4ABr5M6B4RH9UweFM3bQRJErYpZh2IARZQzhBojg
+        kq6WE1YhGE9xqefLyy+dSMk=
+X-Google-Smtp-Source: ALg8bN698DF8D2UtfKH2CEgdB++Ykpsu0DF0madLD5AuXilcVrIsdhEAGk24pEeNiYiEPClm7VBvOA==
+X-Received: by 2002:a63:4e15:: with SMTP id c21mr20818287pgb.50.1548699848119;
+        Mon, 28 Jan 2019 10:24:08 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id r76sm47784775pfb.69.2019.01.28.10.24.07
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 10:24:07 -0800 (PST)
+Date:   Mon, 28 Jan 2019 10:24:05 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <uwe@kleine-koenig.org>,
+        linux-input@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 4.20 148/304] Input: rotary-encoder - don't log
+ EPROBE_DEFER to kernel log
+Message-ID: <20190128182405.GA30191@dtor-ws>
+References: <20190128154341.47195-1-sashal@kernel.org>
+ <20190128154341.47195-148-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20190109114744.10936-10-bigeasy@linutronix.de>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190128154341.47195-148-sashal@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Jan 09, 2019 at 12:47:31PM +0100, Sebastian Andrzej Siewior wrote:
-> From: Rik van Riel <riel@surriel.com>
+Hi Sasha,
+
+On Mon, Jan 28, 2019 at 10:41:05AM -0500, Sasha Levin wrote:
+> From: Uwe Kleine-König <uwe@kleine-koenig.org>
 > 
-> Add helper function that ensures the floating point registers for
-> the current task are active. Use with preemption disabled.
+> [ Upstream commit 0832e93632c61987d504e251b927a2be769dd21a ]
 > 
-> Signed-off-by: Rik van Riel <riel@surriel.com>
-> Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> When a driver fails to bind because a resource it still missing it's not
+> helpful to report this as (usually) probing is repeated later.
+
+I do not think that patch that merely suppresses a harmless warning in
+dmesg belongs in stable.
+
+> 
+> Signed-off-by: Uwe Kleine-König <uwe@kleine-koenig.org>
+> Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 > ---
->  arch/x86/include/asm/fpu/api.h      | 11 +++++++++++
->  arch/x86/include/asm/fpu/internal.h | 19 +++++++++++--------
->  2 files changed, 22 insertions(+), 8 deletions(-)
+>  drivers/input/misc/rotary_encoder.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 > 
-> diff --git a/arch/x86/include/asm/fpu/api.h b/arch/x86/include/asm/fpu/api.h
-> index b56d504af6545..31b66af8eb914 100644
-> --- a/arch/x86/include/asm/fpu/api.h
-> +++ b/arch/x86/include/asm/fpu/api.h
-> @@ -10,6 +10,7 @@
+> diff --git a/drivers/input/misc/rotary_encoder.c b/drivers/input/misc/rotary_encoder.c
+> index 30ec77ad32c6..d748897bf5e9 100644
+> --- a/drivers/input/misc/rotary_encoder.c
+> +++ b/drivers/input/misc/rotary_encoder.c
+> @@ -240,8 +240,10 @@ static int rotary_encoder_probe(struct platform_device *pdev)
 >  
->  #ifndef _ASM_X86_FPU_API_H
->  #define _ASM_X86_FPU_API_H
-> +#include <linux/preempt.h>
->  
->  /*
->   * Use kernel_fpu_begin/end() if you intend to use FPU in kernel context. It
-> @@ -22,6 +23,16 @@ extern void kernel_fpu_begin(void);
->  extern void kernel_fpu_end(void);
->  extern bool irq_fpu_usable(void);
->  
-> +static inline void __fpregs_changes_begin(void)
-> +{
-> +	preempt_disable();
-> +}
-> +
-> +static inline void __fpregs_changes_end(void)
+>  	encoder->gpios = devm_gpiod_get_array(dev, NULL, GPIOD_IN);
+>  	if (IS_ERR(encoder->gpios)) {
+> -		dev_err(dev, "unable to get gpios\n");
+> -		return PTR_ERR(encoder->gpios);
+> +		err = PTR_ERR(encoder->gpios);
+> +		if (err != -EPROBE_DEFER)
+> +			dev_err(dev, "unable to get gpios: %d\n", err);
+> +		return err;
+>  	}
+>  	if (encoder->gpios->ndescs < 2) {
+>  		dev_err(dev, "not enough gpios found\n");
+> -- 
+> 2.19.1
+> 
 
-How am I to understand that "fpregs_changes" thing? That FPU registers
-changes will begin and end respectively?
-
-I probably would call them fpregs_lock and fpregs_unlock even if
-it isn't doing any locking to denote that FPU regs are locked and
-inaccessible inside the region.
-
-And why the "__" prefix? Is there a counterpart without the "__" coming?
-
-> +{
-> +	preempt_enable();
-> +}
-> +
->  /*
->   * Query the presence of one or more xfeatures. Works on any legacy CPU as well.
->   *
-> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> index 03acb9aeb32fc..795a0a2df135e 100644
-> --- a/arch/x86/include/asm/fpu/internal.h
-> +++ b/arch/x86/include/asm/fpu/internal.h
-> @@ -515,6 +515,15 @@ static inline void fpregs_activate(struct fpu *fpu)
->  	trace_x86_fpu_regs_activated(fpu);
->  }
->  
-> +static inline void __fpregs_load_activate(struct fpu *fpu, int cpu)
-> +{
-> +	if (!fpregs_state_valid(fpu, cpu)) {
-> +		if (current->mm)
-> +			copy_kernel_to_fpregs(&fpu->state);
-> +		fpregs_activate(fpu);
-> +	}
-> +}
-> +
->  /*
->   * FPU state switching for scheduling.
->   *
-> @@ -550,14 +559,8 @@ switch_fpu_prepare(struct fpu *old_fpu, int cpu)
->   */
->  static inline void switch_fpu_finish(struct fpu *new_fpu, int cpu)
->  {
-> -	if (static_cpu_has(X86_FEATURE_FPU)) {
-> -		if (!fpregs_state_valid(new_fpu, cpu)) {
-> -			if (current->mm)
-> -				copy_kernel_to_fpregs(&new_fpu->state);
-> -		}
-> -
-> -		fpregs_activate(new_fpu);
-> -	}
-> +	if (static_cpu_has(X86_FEATURE_FPU))
-> +		__fpregs_load_activate(new_fpu, cpu);
-
-And that second part of a cleanup looks strange in this patch. Why isn't
-it in a separate patch or how is it related to the addition of the
-helpers?
-
-Thx.
+Thanks.
 
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Dmitry
