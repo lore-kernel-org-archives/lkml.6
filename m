@@ -2,103 +2,100 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3332C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:00:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54B99C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:02:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A134E20989
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:00:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kfKH+nma"
+	by mail.kernel.org (Postfix) with ESMTP id 1D9CE20989
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:02:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548702170;
+	bh=9nuDj/uoQASX0069rt6dOkWWxTK0AR4ep7ETcGNRHu8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=YavOGpiclpTZNsA0NSpSt7ER3KxWlbynZiiQxjN91/Zynw2bqGyAQAMLX1RHHDNHk
+	 sFkbmBmhHQlOpWUklPg88BNRzaIsmRoCdTko0xOu0JcZAke9rAZ3KcQLssTdGX58R/
+	 tTBkIDWRMCJc8zFp1VwInlODD4A2WIR8s+AviVgg=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727225AbfA1TAc (ORCPT
+        id S1727065AbfA1TCs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:00:32 -0500
-Received: from mail-vk1-f194.google.com ([209.85.221.194]:37958 "EHLO
-        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726678AbfA1TAb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:00:31 -0500
-Received: by mail-vk1-f194.google.com with SMTP id w72so3914469vkd.5
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:00:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=HW28ls7Wx+igmjl+yu70fqcBEBBFWWC4XR6jh21UZYg=;
-        b=kfKH+nmaemVN1YLHaFgCdpR8oIM1Il/wC44Xsc3dCbL7K7GWHY/x23uRnB+zY2JwO9
-         0goxzN28D1fXTVU7AgBKBinIv1rd824L7tNtIe/DlAN6O4P8Sil7cwq77F0jP6G83wJ7
-         6/t4SE/k8w1Hl1+2IJGM1jRzyCkgua/nCMkPQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=HW28ls7Wx+igmjl+yu70fqcBEBBFWWC4XR6jh21UZYg=;
-        b=gC23AxRXPcF+lkbzEDk7GdRIo1jQIEqu69jxvuXB/4ewcVpK7Dg6F3fBEMXVZuFoi1
-         BTf671U1HAYTWqYHet5RpYMXovVAEDkOzcBNx/+LXAHYt56a7s7fBVb7WeUyG+KcdAJR
-         ySgJsqC1OsEuzYDjX8A7HViShsCXwAZhsEsmHAxzfpxHJHpG7BdKkUJdl7kdRJNn3CPn
-         8YMnEGk75R3yhcPAkZVg892T1cPiLDtwMshhfU5kteW0l2sHAEkJRRBujCRX4D4RzH8C
-         lI2mQTSNo7HfNHsZOaoTr7YlgdeDHXOaASBhM0I+EpSGbvf7ETUQMhSYpsZNIu6eAnYa
-         gigQ==
-X-Gm-Message-State: AJcUukf1wJBdp0c2Hv/PRT3HDteLaEYPpVLh0ecv4wyKCtFj4Lt3mUn+
-        vXm9Y8IrpsaAbbDJ/x/Eh/Z8jozpwcc=
-X-Google-Smtp-Source: ALg8bN7F4r3zsttfF3aFXO3YOSO/dLOfZrLFVcC1OLwG16JPdZSOidSpl0eZsq7lYBf12BnlMCnbUA==
-X-Received: by 2002:a1f:2d89:: with SMTP id t131mr8843622vkt.27.1548702030160;
-        Mon, 28 Jan 2019 11:00:30 -0800 (PST)
-Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com. [209.85.222.52])
-        by smtp.gmail.com with ESMTPSA id t133sm35056961vsc.8.2019.01.28.11.00.26
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 11:00:27 -0800 (PST)
-Received: by mail-ua1-f52.google.com with SMTP id t8so6002853uap.0
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:00:26 -0800 (PST)
-X-Received: by 2002:ab0:740a:: with SMTP id r10mr9002232uap.14.1548702026118;
- Mon, 28 Jan 2019 11:00:26 -0800 (PST)
+        Mon, 28 Jan 2019 14:02:48 -0500
+Received: from mx2.suse.de ([195.135.220.15]:58850 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726661AbfA1TCs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 14:02:48 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id DB829B01A;
+        Mon, 28 Jan 2019 19:02:46 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 20:02:45 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     robert shteynfeld <robert.shteynfeld@gmail.com>,
+        Mikhail Zaslonko <zaslonko@linux.ibm.com>,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>,
+        Gerald Schaefer <gerald.schaefer@de.ibm.com>,
+        Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Steven Sistare <steven.sistare@oracle.com>,
+        Daniel Jordan <daniel.m.jordan@oracle.com>,
+        Bob Picco <bob.picco@oracle.com>
+Subject: Re: kernel panic due to
+ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=2830bf6f05fb3e05bc4743274b806c821807a684
+Message-ID: <20190128190245.GV18811@dhcp22.suse.cz>
+References: <20190125081924.GF3560@dhcp22.suse.cz>
+ <20190125082952.GG3560@dhcp22.suse.cz>
+ <CADfvbxqOOt_07hyeReEH_gCmTxxMYJr0-CSkqdX57wGTWisNTA@mail.gmail.com>
+ <20190125155810.GQ3560@dhcp22.suse.cz>
+ <CADfvbxp8sER_Xjkm-g8+BH87Ne8oUBirSWx6mmL=Z3XwyYoQHA@mail.gmail.com>
+ <20190125163938.GA20411@dhcp22.suse.cz>
+ <20190125173315.GC20411@dhcp22.suse.cz>
+ <20190125181549.GE20411@dhcp22.suse.cz>
+ <20190128114358.GH18811@dhcp22.suse.cz>
+ <CAHk-=wh3iWk6nu1u2OZ9JeyM-aJ_nCm1tMihPir8Yu3Q08f4aA@mail.gmail.com>
 MIME-Version: 1.0
-References: <20190125173827.2658-1-willy@infradead.org> <20190128102055.5b0790549542891c4dca47a3@linux-foundation.org>
-In-Reply-To: <20190128102055.5b0790549542891c4dca47a3@linux-foundation.org>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 29 Jan 2019 08:00:14 +1300
-X-Gmail-Original-Message-ID: <CAGXu5jJkf4pKr0WVUcFitZnnUbq3annautZxzYPC0TQaB5HaGA@mail.gmail.com>
-Message-ID: <CAGXu5jJkf4pKr0WVUcFitZnnUbq3annautZxzYPC0TQaB5HaGA@mail.gmail.com>
-Subject: Re: [PATCH] mm: Prevent mapping slab pages to userspace
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Matthew Wilcox <willy@infradead.org>,
-        Linux-MM <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Christoph Lameter <cl@linux.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wh3iWk6nu1u2OZ9JeyM-aJ_nCm1tMihPir8Yu3Q08f4aA@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Jan 29, 2019 at 7:21 AM Andrew Morton <akpm@linux-foundation.org> wrote:
->
-> On Fri, 25 Jan 2019 09:38:27 -0800 Matthew Wilcox <willy@infradead.org> wrote:
->
-> > It's never appropriate to map a page allocated by SLAB into userspace.
-> > A buggy device driver might try this, or an attacker might be able to
-> > find a way to make it happen.
->
-> It wouldn't surprise me if someone somewhere is doing this.  Rather
-> than mysteriously breaking their code, how about we emit a warning and
-> still permit it to proceed, for a while?
+On Mon 28-01-19 10:42:25, Linus Torvalds wrote:
+> On Mon, Jan 28, 2019 at 3:44 AM Michal Hocko <mhocko@kernel.org> wrote:
+> >
+> > >
+> > > Linus, could you take the revert please?
+> >
+> > or should I post the patch as a reply to make your life easier?
+> 
+> I've taken that revert now, but yes, in general, it's much better if a
+> patch is sent separately from the discussion as a very explicit patch
+> (ie subject line has that usual "[PATCH] ..." format etc) simply
+> because I get too much email and I can often miss things otherwise.
+> Particularly inside a thread where the developers are discussing
+> things, I go "ah, good, things are still being discussed" without
+> looking any closer into the details.
 
-It seems like a fatal condition to me? There's nothing to check that
-such a page wouldn't get freed by the slab while still mapped to
-userspace, right?
+Sure, I usually do it that way. I was just awaiting some review feedback
+on the changelog first.
 
-But I'll take warning over not checking. :)
+> That's particularly true when traveling - I only noticed this one on
+> this second reminder email.. I'm home now, but Friday, when you sent
+> it originally, was 45 hours long for me with 24 hours on airplanes and
+> airports, so I had entirely missed the original email back then.
 
+No problem. Andrew has already queued it as well so I guess he simply
+drops it when it reaches your tree.
+
+Thanks!
 -- 
-Kees Cook
+Michal Hocko
+SUSE Labs
