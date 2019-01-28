@@ -2,224 +2,89 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A486FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:13:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86073C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76F792087E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:13:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 417572087E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:19:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548688744;
+	bh=y8P8bwOTH8kvOBmJ5irwyyJZdV58iQeeh8wC3JmhpXo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
+	b=eRNKw02hEZH8HnzBF6qLns/qgLnqr8r/ZqKK3PHzqzTZa5LWVmRQZP4YRQyoUIvVs
+	 Nu6iI+6CZn9Y/ePHPnT/vUmnPDmTP8ms/iWBHRMkB0KhjSOpCfqkNkVU/KUFkLxyoR
+	 svHiAfgB3cdw5RpGWky9JEYQ4O6SaiXV9snvymUo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726763AbfA1PNI (ORCPT
+        id S1726763AbfA1PTC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:13:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:54192 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbfA1PNI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:13:08 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 41ED1C0669AC;
-        Mon, 28 Jan 2019 15:13:07 +0000 (UTC)
-Received: from [10.36.117.107] (ovpn-117-107.ams2.redhat.com [10.36.117.107])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id D894D19745;
-        Mon, 28 Jan 2019 15:13:00 +0000 (UTC)
-Subject: Re: [PATCH RFC] mm: migrate: don't rely on PageMovable() of newpage
- after unlocking it
-To:     Rafael Aquini <aquini@redhat.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
+        Mon, 28 Jan 2019 10:19:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:33786 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726266AbfA1PTC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:19:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id A6432AE41;
+        Mon, 28 Jan 2019 15:19:00 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 16:18:59 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Johannes Weiner <hannes@cmpxchg.org>,
+        Chris Down <chris@chrisdown.name>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vratislav Bendel <vbendel@redhat.com>
-References: <20190128121609.9528-1-david@redhat.com>
- <20190128130709.GJ18811@dhcp22.suse.cz>
- <b03cae19-d02a-0ba2-69a1-010ee76748e7@redhat.com>
- <20190128132146.GK18811@dhcp22.suse.cz>
- <17e7d7e4-f4ca-a681-93e5-92a0c285be14@redhat.com>
- <20190128133514.GL18811@dhcp22.suse.cz>
- <cb3eccaf-0fbf-f3b8-dbbe-070acb9837be@redhat.com>
- <20190128150156.GA10872@xps> <20190128150420.GB10872@xps>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <a81e9bf4-0ac9-7d85-5d20-9ebfd401dec8@redhat.com>
-Date:   Mon, 28 Jan 2019 16:13:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        linux-kernel@vger.kernel.org, cgroups@vger.kernel.org,
+        linux-mm@kvack.org, kernel-team@fb.com
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+Message-ID: <20190128151859.GO18811@dhcp22.suse.cz>
+References: <20190124170117.GS4087@dhcp22.suse.cz>
+ <20190124182328.GA10820@cmpxchg.org>
+ <20190125074824.GD3560@dhcp22.suse.cz>
+ <20190125165152.GK50184@devbig004.ftw2.facebook.com>
+ <20190125173713.GD20411@dhcp22.suse.cz>
+ <20190125182808.GL50184@devbig004.ftw2.facebook.com>
+ <20190128125151.GI18811@dhcp22.suse.cz>
+ <20190128142816.GM50184@devbig004.ftw2.facebook.com>
+ <20190128145210.GM18811@dhcp22.suse.cz>
+ <20190128145407.GP50184@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-In-Reply-To: <20190128150420.GB10872@xps>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 28 Jan 2019 15:13:07 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128145407.GP50184@devbig004.ftw2.facebook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 28.01.19 16:04, Rafael Aquini wrote:
-> On Mon, Jan 28, 2019 at 10:01:56AM -0500, Rafael Aquini wrote:
->> On Mon, Jan 28, 2019 at 03:38:38PM +0100, David Hildenbrand wrote:
->>> On 28.01.19 14:35, Michal Hocko wrote:
->>>> On Mon 28-01-19 14:22:52, David Hildenbrand wrote:
->>>>> On 28.01.19 14:21, Michal Hocko wrote:
->>>>>> On Mon 28-01-19 14:14:28, David Hildenbrand wrote:
->>>>>>> On 28.01.19 14:07, Michal Hocko wrote:
->>>>>>>> On Mon 28-01-19 13:16:09, David Hildenbrand wrote:
->>>>>>>> [...]
->>>>>>>>> My theory:
->>>>>>>>>
->>>>>>>>> In __unmap_and_move(), we lock the old and newpage and perform the
->>>>>>>>> migration. In case of vitio-balloon, the new page will become
->>>>>>>>> movable, the old page will no longer be movable.
->>>>>>>>>
->>>>>>>>> However, after unlocking newpage, I think there is nothing stopping
->>>>>>>>> the newpage from getting dequeued and freed by virtio-balloon. This
->>>>>>>>> will result in the newpage
->>>>>>>>> 1. No longer having PageMovable()
->>>>>>>>> 2. Getting moved to the local list before finally freeing it (using
->>>>>>>>>    page->lru)
->>>>>>>>
->>>>>>>> Does that mean that the virtio-balloon can change the Movable state
->>>>>>>> while there are other users of the page? Can you point to the code that
->>>>>>>> does it? How come this can be safe at all? Or is the PageMovable stable
->>>>>>>> only under the page lock?
->>>>>>>>
->>>>>>>
->>>>>>> PageMovable is stable under the lock. The relevant instructions are in
->>>>>>>
->>>>>>> mm/balloon_compaction.c and include/linux/balloon_compaction.h
->>>>>>
->>>>>> OK, I have just checked __ClearPageMovable and it indeed requires
->>>>>> PageLock. Then we also have to move is_lru = __PageMovable(page) after
->>>>>> the page lock.
->>>>>>
->>>>>
->>>>> I assume that is fine as is as the page is isolated? (yes, it will be
->>>>> modified later when moving but we are interested in the original state)
->>>>
->>>> OK, I've missed that the page is indeed isolated. Then the patch makes
->>>> sense to me.
->>>>
->>>
->>> Thanks Michal. I assume this has broken ever since balloon compaction
->>> was introduced. I'll wait a little more and then resend as !RFC with a
->>> cc-stable tag.
->>>
->>
->> Yes, balloon deflation could always race against migration
->> This race was a problem, initially, and was dealt with, via:
->>
->> commit 117aad1e9e4d97448d1df3f84b08bd65811e6d6a
->> Author: Rafael Aquini <aquini@redhat.com>
->> Date:   Mon Sep 30 13:45:16 2013 -0700
->>
->>     mm: avoid reinserting isolated balloon pages into LRU lists
->>
->>  
->>
->> I think this upstream patch has re-introduced it, in a more subtle way,
->> as we're stumbling on it now, again:
->>
->> commit d6d86c0a7f8ddc5b38cf089222cb1d9540762dc2
->> Author: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
->> Date:   Thu Oct 9 15:29:27 2014 -0700
->>
->>     mm/balloon_compaction: redesign ballooned pages management
->>     
->>
->>
->> On this particular race against migration case, virtio ballon deflation would 
->> not see it before
->>
->> commit b1123ea6d3b3da25af5c8a9d843bd07ab63213f4
->> Author: Minchan Kim <minchan@kernel.org>
->> Date:   Tue Jul 26 15:23:09 2016 -0700
->>
->>     mm: balloon: use general non-lru movable page feature
->>
->> as the recently released balloon page would be post-processed 
->> without the page->lru list handling, which for migration stability
->> purposes must be done under the protection of page_lock.
->>
->>
+On Mon 28-01-19 06:54:07, Tejun Heo wrote:
+> Hello,
 > 
-> missing part here:
+> On Mon, Jan 28, 2019 at 03:52:10PM +0100, Michal Hocko wrote:
+> > > All .events files generate aggregated stateful notifications.  For
+> > > anyone to do anything, they'd have to remember the previous state to
+> > > identify what actually happened.  Being hierarchical, it'd of course
+> > > need to walk down when an event triggers.
+> > 
+> > And how do you do that in a raceless fashion?
 > 
-> I think your patch adresses this new case.
-> 
-> 
-> Acked-by: Rafael Aquini <aquini@redhat.com>
-> 
-> 
->> get rid of balloon reference count.
-> 
-> ^^ this was a left over (sorry about my fat-fingers)
+> Hmm... I'm having trouble imagining why this would be a problem.  How
+> would it race?
 
-:D
+How do you make an atomic snapshot of the hierarchy state? Or you do
+not need it because event counters are monotonic and you are willing to
+sacrifice some lost or misinterpreted events? For example, you receive
+an oom event while the two children increase the oom event counter. How
+do you tell which one was the source of the event and which one is still
+pending? Or is the ordering unimportant in general?
 
-Thanks! I'll resend with
-
-Cc: stable@vger.kernel.org # 3.12+
-Fixes: d6d86c0a7f8d ("mm/balloon_compaction: redesign ballooned pages
-management")
-
+I can imagine you can live with this model, but having a hierarchical
+reporting without a source of the event just sounds too clumsy from my
+POV. But I guess this is getting tangent to the original patch.
 -- 
-
-Thanks,
-
-David / dhildenb
+Michal Hocko
+SUSE Labs
