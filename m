@@ -7,48 +7,48 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C00C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A25A6C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A1C62147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 701392175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690621;
-	bh=+ESr3YzHU75iNoAECia5QDRpd+aO21K7llA4fSG/Tmc=;
+	s=default; t=1548690625;
+	bh=4SRlss6fatly5HveyLqaOiGw2u5XwYKvpK67wEHOumc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=DEzH4Th4qoP4bropv7AfTz2mjYu0yjVkI9pcBlZkDCx88GlTxORLh3p4RYk6rPG7W
-	 sTn3iEcAmtGPSgcS552ESFWEVM8tPmOdzS3WEinTBoiwug7sQR2LTSxM/YDKNsb+A3
-	 pLandWXRgWmce2RpWTHhq6EQO1xlieZh4pEloUk4=
+	b=FF1gaa32pIhfujCUckJtB6FPArglc5vEeyB0CkyUZOreMvvBKNYsVflGI/TIgMhzO
+	 gf0qSLzckZ2qHmCWWo6Nj+nGFIOCJn7sxC7xTGyH22bKSi7A3yh0UtMxvdicvuJJQU
+	 lXpFJ7XBGd3K5IiWGfYTMihojpYD0JXPiYb+vysU=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbfA1PuU (ORCPT
+        id S1728912AbfA1PuX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:50:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36472 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:50:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36570 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728887AbfA1PuQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:50:16 -0500
+        id S1728906AbfA1PuU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:50:20 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1ECA52147A;
-        Mon, 28 Jan 2019 15:50:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9361C2177E;
+        Mon, 28 Jan 2019 15:50:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690616;
-        bh=+ESr3YzHU75iNoAECia5QDRpd+aO21K7llA4fSG/Tmc=;
+        s=default; t=1548690619;
+        bh=4SRlss6fatly5HveyLqaOiGw2u5XwYKvpK67wEHOumc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pUu0/Q2Vavz1Er8VK6vT105n4mYEfIfTPmJl3TrLQDgC78QK6DxmREvjN6i7WiNRn
-         W6rJrkZ8du1kj4MjpsdoI5vbxqsDNE4aACNFjl0tmWUguUZB9ZuLfGvpXV1Q5RXSa/
-         5jQc0KXxyarvWcBwLZXjhHkK8rAw7C6aSVPp/xkM=
+        b=SUygakIbxPtE8v24dXIcXcdKyqNtKHpMe7mN1y64ZQoijgImSAGjRNjCSgejaJb/+
+         /WhVgmenbng4anqPHfuLPT83+7dyLrfH1ecZad+ntsY/5P3oum0rHm2c72BALv8ECC
+         xCJDRBnNxhTtaPwVH1c+yfxMJTYqiGhKQerC+ejg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Russell King - ARM Linux <linux@armlinux.org.uk>,
-        Russell King <rmk+kernel@armlinux.org.uk>,
-        Tony Lindgren <tony@atomide.com>,
-        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 142/304] ARM: dts: Fix OMAP4430 SDP Ethernet startup
-Date:   Mon, 28 Jan 2019 10:40:59 -0500
-Message-Id: <20190128154341.47195-142-sashal@kernel.org>
+Cc:     Jiong Wang <jiong.wang@netronome.com>,
+        Markos Chandras <markos.chandras@imgtec.com>,
+        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 143/304] mips: bpf: fix encoding bug for mm_srlv32_op
+Date:   Mon, 28 Jan 2019 10:41:00 -0500
+Message-Id: <20190128154341.47195-143-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -60,65 +60,47 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Russell King - ARM Linux <linux@armlinux.org.uk>
+From: Jiong Wang <jiong.wang@netronome.com>
 
-[ Upstream commit 84fb6c7feb1494ebb7d1ec8b95cfb7ada0264465 ]
+[ Upstream commit 17f6c83fb5ebf7db4fcc94a5be4c22d5a7bfe428 ]
 
-It was noticed that unbinding and rebinding the KSZ8851 ethernet
-resulted in the driver reporting "failed to read device ID" at probe.
-Probing the reset line with a 'scope while repeatedly attempting to
-bind the driver in a shell loop revealed that the KSZ8851 RSTN pin is
-constantly held at zero, meaning the device is held in reset, and
-does not respond on the SPI bus.
+For micro-mips, srlv inside POOL32A encoding space should use 0x50
+sub-opcode, NOT 0x90.
 
-Experimentation with the startup delay on the regulator set to 50ms
-shows that the reset is positively released after 20ms.
+Some early version ISA doc describes the encoding as 0x90 for both srlv and
+srav, this looks to me was a typo. I checked Binutils libopcode
+implementation which is using 0x50 for srlv and 0x90 for srav.
 
-Schematics for this board are not available, and the traces are buried
-in the inner layers of the board which makes tracing where the RSTN pin
-extremely difficult.  We can only guess that the RSTN pin is wired to a
-reset generator chip driven off the ethernet supply, which fits the
-observed behaviour.
+v1->v2:
+  - Keep mm_srlv32_op sorted by value.
 
-Include this delay in the regulator startup delay - effectively
-treating the reset as a "supply stable" indicator.
-
-This can not be modelled as a delay in the KSZ8851 driver since the
-reset generation is board specific - if the RSTN pin had been wired to
-a GPIO, reset could be released earlier via the already provided support
-in the KSZ8851 driver.
-
-This also got confirmed by Peter Ujfalusi <peter.ujfalusi@ti.com> based
-on Blaze schematics that should be very close to SDP4430:
-
-TPS22902YFPR is used as the regulator switch (gpio48 controlled):
-Convert arm boot_lock to raw The VOUT is routed to TPS3808G01DBV.
-(SCH Note: Threshold set at 90%. Vsense: 0.405V).
-
-According to the TPS3808 data sheet the RESET delay time when Ct is
-open (this is the case in the schema): MIN/TYP/MAX: 12/20/28 ms.
-
-Signed-off-by: Russell King <rmk+kernel@armlinux.org.uk>
-Reviewed-by: Peter Ujfalusi <peter.ujfalusi@ti.com>
-[tony@atomide.com: updated with notes from schematics from Peter]
-Signed-off-by: Tony Lindgren <tony@atomide.com>
+Fixes: f31318fdf324 ("MIPS: uasm: Add srlv uasm instruction")
+Cc: Markos Chandras <markos.chandras@imgtec.com>
+Cc: Paul Burton <paul.burton@mips.com>
+Cc: linux-mips@vger.kernel.org
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
+Acked-by: Song Liu <songliubraving@fb.com>
+Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/boot/dts/omap4-sdp.dts | 1 +
- 1 file changed, 1 insertion(+)
+ arch/mips/include/uapi/asm/inst.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/boot/dts/omap4-sdp.dts b/arch/arm/boot/dts/omap4-sdp.dts
-index 490726b52216..9dc7ec7655cb 100644
---- a/arch/arm/boot/dts/omap4-sdp.dts
-+++ b/arch/arm/boot/dts/omap4-sdp.dts
-@@ -33,6 +33,7 @@
- 		gpio = <&gpio2 16 GPIO_ACTIVE_HIGH>;  /* gpio line 48 */
- 		enable-active-high;
- 		regulator-boot-on;
-+		startup-delay-us = <25000>;
- 	};
- 
- 	vbat: fixedregulator-vbat {
+diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
+index c05dcf5ab414..273ef58f4d43 100644
+--- a/arch/mips/include/uapi/asm/inst.h
++++ b/arch/mips/include/uapi/asm/inst.h
+@@ -369,8 +369,8 @@ enum mm_32a_minor_op {
+ 	mm_ext_op = 0x02c,
+ 	mm_pool32axf_op = 0x03c,
+ 	mm_srl32_op = 0x040,
++	mm_srlv32_op = 0x050,
+ 	mm_sra_op = 0x080,
+-	mm_srlv32_op = 0x090,
+ 	mm_rotr_op = 0x0c0,
+ 	mm_lwxs_op = 0x118,
+ 	mm_addu32_op = 0x150,
 -- 
 2.19.1
 
