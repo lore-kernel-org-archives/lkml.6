@@ -2,130 +2,129 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A4A6EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:59:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5AC91C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:59:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7035621738
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:59:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="LISdFH1y"
+	by mail.kernel.org (Postfix) with ESMTP id 335A420881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 13:59:11 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726984AbfA1N7F (ORCPT
+        id S1727004AbfA1N7J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 08:59:05 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25443 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726668AbfA1N7F (ORCPT
+        Mon, 28 Jan 2019 08:59:09 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:51204 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726840AbfA1N7H (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 08:59:05 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548683917; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=PNAP2jLXt9jNS935+PCaZd+6CdV6tG4ME7sCvt82UTq5lE2N8r/yFg5QPpuYjrSamxIDJ3LFno9pSDaN2/JuWRnWLqv+BUbsurpduynXR6r122l+jNQNkqVigOLlM0oalrFFfoFlI2g81eSVrFksCCaJNroh2Fwh93S2Dlq6ycw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548683917; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=dQN977S+lDsYB9BjnWvbv9MJFFPhQi+c6BVXKsopk+4=; 
-        b=btMv7sdXj7Q7EQOQ1V48WONSzjhd2SlTkmhgvImoPFkfue8AN3mGHCS3euQFPsT79opsyaa4nDId4X7yL693yOJSGr6+3KIR5HEi3ryEwU6GLZRQQhBcedjP1vM3fRpGEznOXqJq/RcOX19rF5gFiYAalNhcBeDQsQxT7yqyZv0=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=QnpX+pur8On02DmIlzisoCkrZeSggZk5lvf5AyMxD5lkrcHm4GLJSwpzhd4XaHlYuC0RbwuKxuFW
-    zF3KVqPuahu56zbFC9hfmlxgBr+iBrJez1a+EYHm158PhVrRKLdR  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548683917;
-        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References;
-        l=2165; bh=dQN977S+lDsYB9BjnWvbv9MJFFPhQi+c6BVXKsopk+4=;
-        b=LISdFH1yMU0kJITi6RQDHndfRSYHm1juu+BJMXHgrR+wTfZlG4XzPYYAfrCwvHdW
-        rJeqHib75uU9gmEoX5OdP9QjCjynA41tGv58oedWXYRWSq0+gyintm/2NIkB5UN9Byz
-        QGQCpskvL34uYwLHmhu67h3RoYrUxyGhmEDjC//c=
-Received: from localhost.localdomain (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
-        with SMTPS id 1548683916866927.3160733463246; Mon, 28 Jan 2019 05:58:36 -0800 (PST)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        paul.burton@mips.com, gregkh@linuxfoundation.org, jslaby@suse.com,
-        mark.rutland@arm.com, syq@debian.org, jiaxun.yang@flygoat.com,
-        772753199@qq.com
-Subject: [PATCH v2 1/2] Serial: Ingenic: Add X1000 suppor for the UART driver.
-Date:   Mon, 28 Jan 2019 21:57:00 +0800
-Message-Id: <1548683821-120924-2-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548683821-120924-1-git-send-email-zhouyanjie@zoho.com>
-References: <1548667176-119830-1-git-send-email-zhouyanjie@zoho.com>
- <1548683821-120924-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        Mon, 28 Jan 2019 08:59:07 -0500
+Received: from pps.filterd (m0098419.ppops.net [127.0.0.1])
+        by mx0b-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SDrFG5098645
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 08:59:06 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0b-001b2d01.pphosted.com with ESMTP id 2qa312081m-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 08:59:06 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
+        Mon, 28 Jan 2019 13:59:04 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Mon, 28 Jan 2019 13:59:01 -0000
+Received: from d06av25.portsmouth.uk.ibm.com (d06av25.portsmouth.uk.ibm.com [9.149.105.61])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SDx0WG131508
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 28 Jan 2019 13:59:00 GMT
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 1460C11C04A;
+        Mon, 28 Jan 2019 13:59:00 +0000 (GMT)
+Received: from d06av25.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id A763711C050;
+        Mon, 28 Jan 2019 13:58:59 +0000 (GMT)
+Received: from oc2783563651 (unknown [9.152.97.178])
+        by d06av25.portsmouth.uk.ibm.com (Postfix) with ESMTP;
+        Mon, 28 Jan 2019 13:58:59 +0000 (GMT)
+Date:   Mon, 28 Jan 2019 14:58:58 +0100
+From:   Halil Pasic <pasic@linux.ibm.com>
+To:     Michael Mueller <mimu@linux.ibm.com>
+Cc:     KVM Mailing List <kvm@vger.kernel.org>,
+        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        linux-kernel@vger.kernel.org,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Christian Borntraeger <borntraeger@de.ibm.com>,
+        Janosch Frank <frankja@linux.ibm.com>,
+        David Hildenbrand <david@redhat.com>,
+        Cornelia Huck <cohuck@redhat.com>,
+        Pierre Morel <pmorel@linux.ibm.com>
+Subject: Re: [PATCH v6 02/13] KVM: s390: make bitmap declaration consitent
+In-Reply-To: <20190124125939.130763-3-mimu@linux.ibm.com>
+References: <20190124125939.130763-1-mimu@linux.ibm.com>
+        <20190124125939.130763-3-mimu@linux.ibm.com>
+Organization: IBM
+X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 19012813-4275-0000-0000-00000305E5A1
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 19012813-4276-0000-0000-00003813E95D
+Message-Id: <20190128145858.3ec14567@oc2783563651>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_08:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1901280108
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for probing the 8250_ingenic driver on the
-X1000 Soc from Ingenic.
+On Thu, 24 Jan 2019 13:59:28 +0100
+Michael Mueller <mimu@linux.ibm.com> wrote:
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
----
- drivers/tty/serial/8250/8250_ingenic.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+> Use a consistent bitmap declaration throughout the code.
+> 
+> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
 
-diff --git a/drivers/tty/serial/8250/8250_ingenic.c b/drivers/tty/serial/8250/8250_ingenic.c
-index 15a8c8d..424c07c 100644
---- a/drivers/tty/serial/8250/8250_ingenic.c
-+++ b/drivers/tty/serial/8250/8250_ingenic.c
-@@ -129,22 +129,21 @@ static int __init ingenic_early_console_setup(struct earlycon_device *dev,
- 	return 0;
- }
- 
--EARLYCON_DECLARE(jz4740_uart, ingenic_early_console_setup);
- OF_EARLYCON_DECLARE(jz4740_uart, "ingenic,jz4740-uart",
- 		    ingenic_early_console_setup);
- 
--EARLYCON_DECLARE(jz4770_uart, ingenic_early_console_setup);
- OF_EARLYCON_DECLARE(jz4770_uart, "ingenic,jz4770-uart",
- 		    ingenic_early_console_setup);
- 
--EARLYCON_DECLARE(jz4775_uart, ingenic_early_console_setup);
- OF_EARLYCON_DECLARE(jz4775_uart, "ingenic,jz4775-uart",
- 		    ingenic_early_console_setup);
- 
--EARLYCON_DECLARE(jz4780_uart, ingenic_early_console_setup);
- OF_EARLYCON_DECLARE(jz4780_uart, "ingenic,jz4780-uart",
- 		    ingenic_early_console_setup);
- 
-+OF_EARLYCON_DECLARE(x1000_uart, "ingenic,x1000-uart",
-+		    ingenic_early_console_setup);
-+
- static void ingenic_uart_serial_out(struct uart_port *p, int offset, int value)
- {
- 	int ier;
-@@ -328,12 +327,18 @@ static const struct ingenic_uart_config jz4780_uart_config = {
- 	.fifosize = 64,
- };
- 
-+static const struct ingenic_uart_config x1000_uart_config = {
-+	.tx_loadsz = 32,
-+	.fifosize = 64,
-+};
-+
- static const struct of_device_id of_match[] = {
- 	{ .compatible = "ingenic,jz4740-uart", .data = &jz4740_uart_config },
- 	{ .compatible = "ingenic,jz4760-uart", .data = &jz4760_uart_config },
- 	{ .compatible = "ingenic,jz4770-uart", .data = &jz4760_uart_config },
- 	{ .compatible = "ingenic,jz4775-uart", .data = &jz4760_uart_config },
- 	{ .compatible = "ingenic,jz4780-uart", .data = &jz4780_uart_config },
-+	{ .compatible = "ingenic,x1000-uart", .data = &x1000_uart_config },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, of_match);
--- 
-2.7.4
+Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
 
+> ---
+>  arch/s390/include/asm/kvm_host.h | 2 +-
+>  arch/s390/kvm/interrupt.c        | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/s390/include/asm/kvm_host.h b/arch/s390/include/asm/kvm_host.h
+> index d5d24889c3bc..3cba08f73dc6 100644
+> --- a/arch/s390/include/asm/kvm_host.h
+> +++ b/arch/s390/include/asm/kvm_host.h
+> @@ -591,7 +591,7 @@ struct kvm_s390_float_interrupt {
+>  	struct kvm_s390_mchk_info mchk;
+>  	struct kvm_s390_ext_info srv_signal;
+>  	int next_rr_cpu;
+> -	unsigned long idle_mask[BITS_TO_LONGS(KVM_MAX_VCPUS)];
+> +	DECLARE_BITMAP(idle_mask, KVM_MAX_VCPUS);
+>  	struct mutex ais_lock;
+>  	u8 simm;
+>  	u8 nimm;
+> diff --git a/arch/s390/kvm/interrupt.c b/arch/s390/kvm/interrupt.c
+> index 19d556512452..167a3068ef84 100644
+> --- a/arch/s390/kvm/interrupt.c
+> +++ b/arch/s390/kvm/interrupt.c
+> @@ -2831,7 +2831,7 @@ static void store_local_irq(struct kvm_s390_local_interrupt *li,
+>  int kvm_s390_get_irq_state(struct kvm_vcpu *vcpu, __u8 __user *buf, int len)
+>  {
+>  	int scn;
+> -	unsigned long sigp_emerg_pending[BITS_TO_LONGS(KVM_MAX_VCPUS)];
+> +	DECLARE_BITMAP(sigp_emerg_pending, KVM_MAX_VCPUS);
+>  	struct kvm_s390_local_interrupt *li = &vcpu->arch.local_int;
+>  	unsigned long pending_irqs;
+>  	struct kvm_s390_irq irq;
 
