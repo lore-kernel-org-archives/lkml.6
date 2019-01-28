@@ -2,196 +2,113 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4E17C282CB
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CF42C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4586207E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="ihD3ewVr"
+	by mail.kernel.org (Postfix) with ESMTP id 57EB9207E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 08:59:54 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726980AbfA1I7h (ORCPT
+        id S1726999AbfA1I7x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 03:59:37 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36730 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726952AbfA1I7e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 03:59:34 -0500
-Received: by mail-pg1-f195.google.com with SMTP id n2so6957476pgm.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 00:59:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=4/D2cAWnRzrJOJe1TanX2r7wfgl9u+SIbHxZ8xAtowY=;
-        b=ihD3ewVrAikUTwMTeUJGAJABsNnidNEbAc7zA4fsIFN3XpwNpVxlQob/e96ewu93Dr
-         27vOgzZ5846K7inWW+KCkLeBeaDVaGxoMElWx/nvJNMnP/N61ZG1wlFzIlKw7eQHSrHV
-         D/kbi2et4yXrEd6hpkP35BJJBBB+SizATlHWw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=4/D2cAWnRzrJOJe1TanX2r7wfgl9u+SIbHxZ8xAtowY=;
-        b=kbui+rn6pp8N2QfruHgx98KPS6ltuyjZO7ACbC4r8e8vJAXj5D7TS/zJFMr2qJEapS
-         kinQ8zz0uLSMEIc3Ph3UvrA+3jpe37kWSKDLiSKov+vxSBWeSCN5vySRiLnD//0A49Rh
-         XmAgKCOV+5i8Aw22J1phzRHREyHR6+GY2+mbBRHydP5HQYDfRs88QeMsZIrFaUodF9OV
-         npjzb7C+0y+lc+Pbf70O9cAoxzrn2JDLYMIzRIMrKBzML1KBq9y7tPVqkfUxgBUgOQwW
-         9LuvPtHxHhjirZB/WYjr74TW89X5/ZXtfi6D3JPKO8zUG5V6h9BFADOQHJBZDasWb6QX
-         hkhA==
-X-Gm-Message-State: AJcUukfYKuCkbxSQc5vVLD0P50Z9n6jn9rGaD85HeTLOEn6nO7y7+sEX
-        CRhEAg0KcunRHiAiGtwp9un8cg==
-X-Google-Smtp-Source: ALg8bN6GomtSvg1HWUXrVFlC3Hci0yikM80dh/Ew8uDS1Jprxz1KlfmyABgTvhfLheNkQ5MEv6zMAw==
-X-Received: by 2002:a62:870e:: with SMTP id i14mr21554533pfe.41.1548665973235;
-        Mon, 28 Jan 2019 00:59:33 -0800 (PST)
-Received: from localhost.localdomain ([115.97.179.75])
-        by smtp.gmail.com with ESMTPSA id o189sm60746245pfg.117.2019.01.28.00.59.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 28 Jan 2019 00:59:32 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Yong Deng <yong.deng@magewell.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-amarula@amarulasolutions.com, devicetree@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: [DO NOT MERGE] [PATCH v8 5/5] arm64: dts: allwinner: bananapi-m64: Add HDF5640 camera module
-Date:   Mon, 28 Jan 2019 14:28:47 +0530
-Message-Id: <20190128085847.7217-6-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20190128085847.7217-1-jagan@amarulasolutions.com>
-References: <20190128085847.7217-1-jagan@amarulasolutions.com>
+        Mon, 28 Jan 2019 03:59:53 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38956 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726713AbfA1I7w (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 03:59:52 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4C3038666E;
+        Mon, 28 Jan 2019 08:59:52 +0000 (UTC)
+Received: from sirius.home.kraxel.org (ovpn-116-116.ams2.redhat.com [10.36.116.116])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EF0A660123;
+        Mon, 28 Jan 2019 08:59:51 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id 25CE9A1E7; Mon, 28 Jan 2019 09:59:51 +0100 (CET)
+Date:   Mon, 28 Jan 2019 09:59:51 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Noralf =?utf-8?Q?Tr=C3=B8nnes?= <noralf@tronnes.org>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <virtualization@lists.linux-foundation.org>,
+        "open list:DRM DRIVER FOR QXL VIRTUAL GPU" 
+        <spice-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@redhat.com>
+Subject: Re: [PATCH v3 17/23] drm/qxl: use generic fbdev emulation
+Message-ID: <20190128085951.gkap3by26xgkbwaa@sirius.home.kraxel.org>
+References: <20190118122020.27596-1-kraxel@redhat.com>
+ <20190118122020.27596-18-kraxel@redhat.com>
+ <e31c0fdd-315a-59cf-e7fe-dfd6a064f6ee@tronnes.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <e31c0fdd-315a-59cf-e7fe-dfd6a064f6ee@tronnes.org>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Mon, 28 Jan 2019 08:59:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Bananapi M64 comes with an optional sensor based on the ov5640,
-add support for it with below pin information.
+On Fri, Jan 25, 2019 at 06:25:27PM +0100, Noralf Trønnes wrote:
+> 
+> 
+> Den 18.01.2019 13.20, skrev Gerd Hoffmann:
+> > Switch qxl over to the new generic fbdev emulation.
+> > 
+> > Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+> > ---
+> >  drivers/gpu/drm/qxl/qxl_display.c | 7 -------
+> >  drivers/gpu/drm/qxl/qxl_drv.c     | 2 ++
+> >  2 files changed, 2 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/drivers/gpu/drm/qxl/qxl_display.c b/drivers/gpu/drm/qxl/qxl_display.c
+> > index ef832f98ab..9c751f01e3 100644
+> > --- a/drivers/gpu/drm/qxl/qxl_display.c
+> > +++ b/drivers/gpu/drm/qxl/qxl_display.c
+> > @@ -1221,18 +1221,11 @@ int qxl_modeset_init(struct qxl_device *qdev)
+> >  	qxl_display_read_client_monitors_config(qdev);
+> >  
+> >  	drm_mode_config_reset(&qdev->ddev);
+> > -
+> > -	/* primary surface must be created by this point, to allow
+> > -	 * issuing command queue commands and having them read by
+> > -	 * spice server. */
+> > -	qxl_fbdev_init(qdev);
+> >  	return 0;
+> >  }
+> >  
+> >  void qxl_modeset_fini(struct qxl_device *qdev)
+> >  {
+> > -	qxl_fbdev_fini(qdev);
+> > -
+> >  	qxl_destroy_monitors_object(qdev);
+> >  	drm_mode_config_cleanup(&qdev->ddev);
+> >  }
+> > diff --git a/drivers/gpu/drm/qxl/qxl_drv.c b/drivers/gpu/drm/qxl/qxl_drv.c
+> > index 13c8a662f9..3fce7d16df 100644
+> > --- a/drivers/gpu/drm/qxl/qxl_drv.c
+> > +++ b/drivers/gpu/drm/qxl/qxl_drv.c
+> > @@ -93,6 +93,8 @@ qxl_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+> >  	if (ret)
+> >  		goto modeset_cleanup;
+> >  
+> > +	drm_fb_helper_remove_conflicting_pci_framebuffers(pdev, 0, "qxl");
+> 
+> I couldn't find that this was part of old fbdev code, so it would be
+> nice to mention it in the commit message.
 
-- PE13, PE12 via i2c-gpio bitbanging
-- CLK_CSI_MCLK as external clock
-- PE1 as external clock pin muxing
-- DLDO3 as AVDD supply
-- ALDO1 as DOVDD supply
-- ELDO3 as DVDD supply
-- PE16 gpio for reset pin
-- PE17 gpio for powerdown pin
+It actually is, but a bit hidden because it doesn't use a helper you can
+easily grep for.  Instead sets fb_info->apertures->ranges[0] in
+qxlfb_create(), which has the same effect.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 65 +++++++++++++++++++
- 1 file changed, 65 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-index 9d0afd7d50ec..c99f66271287 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-@@ -60,6 +60,41 @@
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	i2c-csi {
-+		compatible = "i2c-gpio";
-+		sda-gpios = <&pio 4 13 GPIO_ACTIVE_HIGH>; /* CSI0-SDA: PE13 */
-+		scl-gpios = <&pio 4 12 GPIO_ACTIVE_HIGH>; /* CSI0-SCK: PE12 */
-+		i2c-gpio,delay-us = <5>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		ov5640: camera@3c {
-+			compatible = "ovti,ov5640";
-+			reg = <0x3c>;
-+			pinctrl-names = "default";
-+			pinctrl-0 = <&csi_mclk_pin>;
-+			clocks = <&ccu CLK_CSI_MCLK>;
-+			clock-names = "xclk";
-+
-+			AVDD-supply = <&reg_dldo3>;
-+			DOVDD-supply = <&reg_aldo1>;
-+			DVDD-supply = <&reg_eldo3>;
-+			reset-gpios = <&pio 4 16 GPIO_ACTIVE_LOW>; /* CSI0-RST: PE16 */
-+			powerdown-gpios = <&pio 4 17 GPIO_ACTIVE_HIGH>; /* CSI0-PWDN: PE17 */
-+
-+			port {
-+				ov5640_ep: endpoint {
-+					remote-endpoint = <&csi_ep>;
-+					bus-width = <8>;
-+					hsync-active = <1>; /* Active high */
-+					vsync-active = <0>; /* Active low */
-+					data-active = <1>;  /* Active high */
-+					pclk-sample = <1>;  /* Rising */
-+				};
-+			};
-+		};
-+	};
-+
- 	hdmi-connector {
- 		compatible = "hdmi-connector";
- 		type = "a";
-@@ -108,6 +143,24 @@
- 	status = "okay";
- };
- 
-+&csi {
-+	status = "okay";
-+
-+	port {
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		csi_ep: endpoint {
-+			remote-endpoint = <&ov5640_ep>;
-+			bus-width = <8>;
-+			hsync-active = <1>; /* Active high */
-+			vsync-active = <0>; /* Active low */
-+			data-active = <1>;  /* Active high */
-+			pclk-sample = <1>;  /* Rising */
-+		};
-+	};
-+};
-+
- &dai {
- 	status = "okay";
- };
-@@ -298,6 +351,12 @@
- 	regulator-name = "vcc-wifi";
- };
- 
-+&reg_dldo3 {
-+	regulator-min-microvolt = <2800000>;
-+	regulator-max-microvolt = <2800000>;
-+	regulator-name = "avdd-csi";
-+};
-+
- &reg_dldo4 {
- 	regulator-min-microvolt = <1800000>;
- 	regulator-max-microvolt = <3300000>;
-@@ -315,6 +374,12 @@
- 	regulator-name = "cpvdd";
- };
- 
-+&reg_eldo3 {
-+	regulator-min-microvolt = <1500000>;
-+	regulator-max-microvolt = <1500000>;
-+	regulator-name = "dvdd-csi";
-+};
-+
- &reg_fldo1 {
- 	regulator-min-microvolt = <1200000>;
- 	regulator-max-microvolt = <1200000>;
--- 
-2.18.0.321.gffc6fa0e3
+cheers,
+  Gerd
 
