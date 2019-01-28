@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54646C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96729C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE012147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6500E2175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:15:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692140;
-	bh=bdLB6HXXaTV8zJHwoWxHcU4rKgcvEzCVdN8CBtMPEG0=;
+	s=default; t=1548692143;
+	bh=1WPzkXIJo/UHtywpO6WwRAycQABKZTDSqfu9uvcjk8o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Fz902rEAjVT9cDDGy+LswPnFC6n8V7ZDJOegqS1Le8K4weXrx3U/UmLGHcOUwt0+J
-	 UhupXDV40bF+e+brXulyaDJauP38XP5VF7SWvQhshIRDEMfrdm25INF7PZKaU7sqer
-	 A0PFDe84qPFVLWwho+1SKLMPtUZ6hvCbP3jUaBe8=
+	b=DZck2TGKcZTR/z953uxQX8EFeHGvAHfakJi/XRZE2o1ZasqTxmWxxCIasL3joUwtt
+	 U04NO1ViDfOB80v3X+yPg2+0C1nrWxh8dCXNapKY7hQd5f0CTvWRUclds2Mhub31f4
+	 lrT7UHZAiZECtaYfXE1jspeaeEovj+ZQuPze2NdY=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387434AbfA1QPj (ORCPT
+        id S2387841AbfA1QPm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:15:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45896 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:15:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45996 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387809AbfA1QPg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:15:36 -0500
+        id S1732532AbfA1QPi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:15:38 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A33EC2147A;
-        Mon, 28 Jan 2019 16:15:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8450B2175B;
+        Mon, 28 Jan 2019 16:15:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692136;
-        bh=bdLB6HXXaTV8zJHwoWxHcU4rKgcvEzCVdN8CBtMPEG0=;
+        s=default; t=1548692137;
+        bh=1WPzkXIJo/UHtywpO6WwRAycQABKZTDSqfu9uvcjk8o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UOjEDpfQxDDhDgBpvk/GyJIUVUiLQ0AfHWxSuUI4I2nxXLsTwdfZ7oJ+V+3PM00Wd
-         /wAn6WVeq1c0eyGhs9jtrs1CCegH637w4ly30ZyMy7yjdJobpddvU8JX561BElK+4/
-         5YOfbKnBVXF7OMFK2ZCsfYt7ccsS/gsF1olhG5hM=
+        b=C5B1czo+EqBaZ/GV7zOULu2PNy/94soclFd0SMDNilpeg1h0Xv4IajDlSIeZJ3op8
+         usW5UhULfaXBiRxy6XwaLNSvX25c+mLbOrHKYcTz3yZQ3O8n2SYlEzhFOphYSt/xw6
+         nv8XfmPVV4lLpMQllrTJgiNMoRCmwPlwR0DxXa+Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Tejas Joglekar <tejas.joglekar@synopsys.com>,
-        Tejas Joglekar <joglekar@synopsys.com>,
-        Felipe Balbi <felipe.balbi@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 083/170] usb: dwc3: gadget: Disable CSP for stream OUT ep
-Date:   Mon, 28 Jan 2019 11:10:33 -0500
-Message-Id: <20190128161200.55107-83-sashal@kernel.org>
+Cc:     Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Sasha Levin <sashal@kernel.org>,
+        iommu@lists.linux-foundation.org
+Subject: [PATCH AUTOSEL 4.14 084/170] iommu/arm-smmu: Add support for qcom,smmu-v2 variant
+Date:   Mon, 28 Jan 2019 11:10:34 -0500
+Message-Id: <20190128161200.55107-84-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -59,50 +59,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tejas Joglekar <tejas.joglekar@synopsys.com>
+From: Vivek Gautam <vivek.gautam@codeaurora.org>
 
-[ Upstream commit 244add8ebfb231c39db9e33b204bd0ce8f24f782 ]
+[ Upstream commit 89cddc563743cb1e0068867ac97013b2a5bf86aa ]
 
-In stream mode, when fast-forwarding TRBs, the stream number
-is not cleared causing the new stream to not get assigned. So
-we don't want controller to carry on transfers when short packet
-is received. So disable the CSP for stream capable endpoint.
+qcom,smmu-v2 is an arm,smmu-v2 implementation with specific
+clock and power requirements.
+On msm8996, multiple cores, viz. mdss, video, etc. use this
+smmu. On sdm845, this smmu is used with gpu.
+Add bindings for the same.
 
-This is based on the 3.30a Programming guide, where table 3-1
-device descriptor structure field definitions says for CSP bit
-If this bit is 0, the controller generates an XferComplete event
-and remove the stream. So if we keep CSP as 1 then switching between
-streams would not happen as in stream mode, when fast-forwarding
-TRBs, the stream number is not cleared causing the new stream to not get
-assigned.
-
-Signed-off-by: Tejas Joglekar <joglekar@synopsys.com>
-Signed-off-by: Felipe Balbi <felipe.balbi@linux.intel.com>
+Signed-off-by: Vivek Gautam <vivek.gautam@codeaurora.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Reviewed-by: Tomasz Figa <tfiga@chromium.org>
+Tested-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Reviewed-by: Robin Murphy <robin.murphy@arm.com>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/usb/dwc3/gadget.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ drivers/iommu/arm-smmu.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/drivers/usb/dwc3/gadget.c b/drivers/usb/dwc3/gadget.c
-index 59284acd8013..2f2e69233db0 100644
---- a/drivers/usb/dwc3/gadget.c
-+++ b/drivers/usb/dwc3/gadget.c
-@@ -957,9 +957,13 @@ static void __dwc3_prepare_one_trb(struct dwc3_ep *dep, struct dwc3_trb *trb,
- 				usb_endpoint_type(dep->endpoint.desc));
- 	}
+diff --git a/drivers/iommu/arm-smmu.c b/drivers/iommu/arm-smmu.c
+index 15b5856475fc..01a6a0ea2a4f 100644
+--- a/drivers/iommu/arm-smmu.c
++++ b/drivers/iommu/arm-smmu.c
+@@ -117,6 +117,7 @@ enum arm_smmu_implementation {
+ 	GENERIC_SMMU,
+ 	ARM_MMU500,
+ 	CAVIUM_SMMUV2,
++	QCOM_SMMUV2,
+ };
  
--	/* always enable Continue on Short Packet */
-+	/*
-+	 * Enable Continue on Short Packet
-+	 * when endpoint is not a stream capable
-+	 */
- 	if (usb_endpoint_dir_out(dep->endpoint.desc)) {
--		trb->ctrl |= DWC3_TRB_CTRL_CSP;
-+		if (!dep->stream_capable)
-+			trb->ctrl |= DWC3_TRB_CTRL_CSP;
+ /* Until ACPICA headers cover IORT rev. C */
+@@ -1910,6 +1911,7 @@ ARM_SMMU_MATCH_DATA(smmu_generic_v2, ARM_SMMU_V2, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(arm_mmu401, ARM_SMMU_V1_64K, GENERIC_SMMU);
+ ARM_SMMU_MATCH_DATA(arm_mmu500, ARM_SMMU_V2, ARM_MMU500);
+ ARM_SMMU_MATCH_DATA(cavium_smmuv2, ARM_SMMU_V2, CAVIUM_SMMUV2);
++ARM_SMMU_MATCH_DATA(qcom_smmuv2, ARM_SMMU_V2, QCOM_SMMUV2);
  
- 		if (short_not_ok)
- 			trb->ctrl |= DWC3_TRB_CTRL_ISP_IMI;
+ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,smmu-v1", .data = &smmu_generic_v1 },
+@@ -1918,6 +1920,7 @@ static const struct of_device_id arm_smmu_of_match[] = {
+ 	{ .compatible = "arm,mmu-401", .data = &arm_mmu401 },
+ 	{ .compatible = "arm,mmu-500", .data = &arm_mmu500 },
+ 	{ .compatible = "cavium,smmu-v2", .data = &cavium_smmuv2 },
++	{ .compatible = "qcom,smmu-v2", .data = &qcom_smmuv2 },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(of, arm_smmu_of_match);
 -- 
 2.19.1
 
