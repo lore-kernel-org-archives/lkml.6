@@ -2,92 +2,101 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBE9BC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:47:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F04DFC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:47:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D6962084C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:47:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694031;
-	bh=9Hfrc5kZMZs0UTMQamKKcJjeiMqvj9g5rKjZPhdb+wY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=aOcjn4vO8tKmskfWzI+9+gFtgOyabsvCJgi1vmxBUoLnFw4MBsbGz6bEDrFH6UnpQ
-	 TNBkrRzfsoaXEh2FFXRA7I78cGTvgiUf/X3Xtt51G0WKKOOi3/b2pxkUsajieYz0HM
-	 siyhrUbu1IZ9KrXXGt9ttKlX6er8lIFGXWWtbmLY=
+	by mail.kernel.org (Postfix) with ESMTP id CA3732084C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:47:17 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389696AbfA1QrJ (ORCPT
+        id S2389956AbfA1QrP convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:47:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58252 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389169AbfA1QWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:15 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A62332147A;
-        Mon, 28 Jan 2019 16:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692534;
-        bh=9Hfrc5kZMZs0UTMQamKKcJjeiMqvj9g5rKjZPhdb+wY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=i9zZgh+Z6V943/SSGOJHz6ubYgFDS9dgC8f+f631MqB0EhgLZDEqg8hzC16riwImT
-         K0dithx+QIB5OKUv/J+jbfabc0uyJQ3/BTuFNX6069OJDIxEIzdkC5z/3Htol1+dRS
-         g3kLI14xblhmaVgmOxMAy6DOYkmCRBaTGKUtg9VE=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jan Kara <jack@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.9 054/107] udf: Fix BUG on corrupted inode
-Date:   Mon, 28 Jan 2019 11:18:54 -0500
-Message-Id: <20190128161947.57405-54-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
-References: <20190128161947.57405-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 11:47:15 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32846 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727951AbfA1QrI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:47:08 -0500
+Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id C800430B2AE1E291356C;
+        Mon, 28 Jan 2019 16:47:06 +0000 (GMT)
+Received: from lhreml703-chm.china.huawei.com (10.201.108.52) by
+ lhreml705-cah.china.huawei.com (10.201.108.46) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 28 Jan 2019 16:47:06 +0000
+Received: from lhreml702-chm.china.huawei.com (10.201.108.51) by
+ lhreml703-chm.china.huawei.com (10.201.108.52) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id
+ 15.1.1591.10; Mon, 28 Jan 2019 16:47:06 +0000
+Received: from lhreml702-chm.china.huawei.com ([10.201.68.197]) by
+ lhreml702-chm.china.huawei.com ([10.201.68.197]) with mapi id 15.01.1591.008;
+ Mon, 28 Jan 2019 16:47:06 +0000
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     yuehaibing <yuehaibing@huawei.com>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
+        "lipeng (Y)" <lipeng321@huawei.com>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: RE: [PATCH net-next] net: hns3: Fix potential NULL dereference on
+ allocation error
+Thread-Topic: [PATCH net-next] net: hns3: Fix potential NULL dereference on
+ allocation error
+Thread-Index: AQHUtFwEh/NZp5kVnESnQKcS0Nfs4qXE6BVg
+Date:   Mon, 28 Jan 2019 16:47:06 +0000
+Message-ID: <2ac4844616c6490284e91a0317e807a6@huawei.com>
+References: <20190125031333.17196-1-yuehaibing@huawei.com>
+In-Reply-To: <20190125031333.17196-1-yuehaibing@huawei.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.226.60]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jan Kara <jack@suse.cz>
+> From: yuehaibing
+> Sent: Friday, January 25, 2019 3:14 AM
+> To: davem@davemloft.net; Zhuangyuzeng (Yisen) <yisen.zhuang@huawei.com>;
+> Salil Mehta <salil.mehta@huawei.com>; lipeng (Y) <lipeng321@huawei.com>
+> Cc: linux-kernel@vger.kernel.org; netdev@vger.kernel.org; yuehaibing <yuehaibing@huawei.com>
+> Subject: [PATCH net-next] net: hns3: Fix potential NULL dereference on
+> allocation error
+> 
+> hclge_mac_update_stats_complete doesn't check for NULL
+> returns of kcalloc, it may result in an Oops.
+> 
+> Fixes: d174ea75c96a ("net: hns3: add statistics for PFC frames and MAC
+> control frames")
+> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+> ---
+>  drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+> b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+> index 64b1589..7971606 100644
+> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+> @@ -343,6 +343,9 @@ static int hclge_mac_update_stats_complete(struct
+> hclge_dev *hdev, u32 desc_num)
+>  	int ret;
+> 
+>  	desc = kcalloc(desc_num, sizeof(struct hclge_desc), GFP_KERNEL);
+> +	if (!desc)
+> +		return -ENOMEM;
+> +
 
-[ Upstream commit d288d95842f1503414b7eebce3773bac3390457e ]
 
-When inode is corrupted so that extent type is invalid, some functions
-(such as udf_truncate_extents()) will just BUG. Check that extent type
-is valid when loading the inode to memory.
+looks good to me.
 
-Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- fs/udf/inode.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Reviewed-by: Salil Mehta <salil.mehta@huawei.com>
 
-diff --git a/fs/udf/inode.c b/fs/udf/inode.c
-index 035943501b9f..fd817022cb9b 100644
---- a/fs/udf/inode.c
-+++ b/fs/udf/inode.c
-@@ -1372,6 +1372,12 @@ static int udf_read_inode(struct inode *inode, bool hidden_inode)
- 
- 	iinfo->i_alloc_type = le16_to_cpu(fe->icbTag.flags) &
- 							ICBTAG_FLAG_AD_MASK;
-+	if (iinfo->i_alloc_type != ICBTAG_FLAG_AD_SHORT &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_LONG &&
-+	    iinfo->i_alloc_type != ICBTAG_FLAG_AD_IN_ICB) {
-+		ret = -EIO;
-+		goto out;
-+	}
- 	iinfo->i_unique = 0;
- 	iinfo->i_lenEAttr = 0;
- 	iinfo->i_lenExtents = 0;
--- 
-2.19.1
 
