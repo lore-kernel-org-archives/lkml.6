@@ -4,50 +4,50 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD54C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78853C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FE2921741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40E192175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:53:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690806;
-	bh=KC2WmEV4HNOHHEXOGcNXWYyJyrnuzOeIg/6xMIbGzlA=;
+	s=default; t=1548690809;
+	bh=fVQ5DIuzHOS2HNojPvjxUh3IhkOeynudRGNkP9epqcI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=p+50KSieupDja8GwhOFwzjlH3B2fIFIHyCpKEJRlNL9VOxDJ0ELkp5zpNEw21g+hF
-	 h9sy64bIpC/mwOBA9a6jwfNq6cycUtOs+M5HwCbs7JofG+xX5dQ/FmAMYoESymWQoe
-	 Yv+5I3XsffKwrFD7f9p+j0RzeBpNVs0SahWCjV5c=
+	b=hGc7dhVDDkHQBiiOcvDbuCua9sieOOrmOZ6HdXYqHC86K89WlumzOUtYuOSlPnxRX
+	 SGUWW/k/r7OgmRBQiE1PrySuXdK4+cCk21suHSg5irReGHkUTje5iMALHqzVsy9Q8M
+	 h4mI8v07E4AMY8rgEoTnmN7lulxoQZ5DT/b3blMk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729077AbfA1PxY (ORCPT
+        id S1729466AbfA1Px2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:53:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39690 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:53:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39740 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729430AbfA1PxW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:53:22 -0500
+        id S1729075AbfA1PxZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:53:25 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2D3FE20880;
-        Mon, 28 Jan 2019 15:53:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 048552147A;
+        Mon, 28 Jan 2019 15:53:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690801;
-        bh=KC2WmEV4HNOHHEXOGcNXWYyJyrnuzOeIg/6xMIbGzlA=;
+        s=default; t=1548690804;
+        bh=fVQ5DIuzHOS2HNojPvjxUh3IhkOeynudRGNkP9epqcI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AwfNpuTZW0r1XTcoxvkQWnhvIzZgIFysBClVsvjSnQSNriv0CwR6WOKRI21A60Ztg
-         ogi9uFOAuWVffYicR2buRsCQsTkLrxy2sg60v7cHxeapojl0BpEuGAQVbVNcQM1uRr
-         BFYb/RcL2f+ulA6JPLefnUREj9l26xq4mqnMernM=
+        b=FPGEDDpuQ8ZX8ajq+4d93qFZ7hlU+WBarnhX1hX06EHg3SxyPAY1bbyQJOmd3bXMy
+         734/pXp/bPsQiF+Q2GstStqMO6ss1CsEv3D6Q7orOP+yPTk1fXnD9/FtQATR2GVMRP
+         WUjhbHbvbTzRrc3SdfwVBpSdfvYNdufk4jxGdmmU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stephane Eranian <eranian@google.com>,
-        Peter Zijlstra <peterz@infradead.org>,
+Cc:     Adrian Hunter <adrian.hunter@intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
         Arnaldo Carvalho de Melo <acme@redhat.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 196/304] perf stat: Fix CSV mode column output for non-cgroup events
-Date:   Mon, 28 Jan 2019 10:41:53 -0500
-Message-Id: <20190128154341.47195-196-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 197/304] perf test: Fix perf_event_attr test failure
+Date:   Mon, 28 Jan 2019 10:41:54 -0500
+Message-Id: <20190128154341.47195-197-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,97 +59,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephane Eranian <eranian@google.com>
+From: Adrian Hunter <adrian.hunter@intel.com>
 
-[ Upstream commit bc4da38a4789e7819fca4c7723ded0b86aea27c0 ]
+[ Upstream commit 741dad88dde296999da30332157ca47f0543747d ]
 
-When using the -x option, perf stat prints CSV-style output with one
-event per line.  For each event, it prints the count, the unit, the
-event name, the cgroup, and a bunch of other event specific fields (such
-as insn per cycles).
+Fix inconsistent use of tabs and spaces error:
 
-When you use CSV-style mode, you expect a normalized output where each
-event is printed with the same number of fields regardless of what it is
-so it can easily be imported into a spreadsheet or parsed.
+  # perf test 16 -v
+  16: Setup struct perf_event_attr                          :
+  --- start ---
+  test child forked, pid 20224
+    File "/usr/libexec/perf-core/tests/attr.py", line 119
+      log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
+                                                                 ^
+  TabError: inconsistent use of tabs and spaces in indentation
+  test child finished with -1
+  ---- end ----
+  Setup struct perf_event_attr: FAILED!
 
-For instance, if an event does not have a unit, then print an empty
-field for it.
-
-Although this approach was implemented for the unit, it was not for the
-cgroup.
-
-When mixing cgroup and non-cgroup events, then non-cgroup events would
-not show an empty field, instead the next field was printed, make
-columns not line up correctly.
-
-This patch fixes the cgroup output issues by forcing an empty field
-for non-cgroup events as soon as one event has cgroup.
-
-Before:
-
-  <not counted> @ @cycles @foo    @ 0    @100.00@@
-  2531614       @ @cycles @6420922@100.00@    @
-
-foo cgroup lines up with time_running!
-
-After:
-
-  <not counted> @ @cycles @foo @0       @100.00@@
-  2594834       @ @cycles @    @5287372 @100.00@@
-
-Fields line up.
-
-Signed-off-by: Stephane Eranian <eranian@google.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/1541587845-9150-1-git-send-email-eranian@google.com
+Signed-off-by: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Link: http://lkml.kernel.org/r/20181122140456.16817-1-adrian.hunter@intel.com
 Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/util/stat-display.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ tools/perf/tests/attr.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/stat-display.c b/tools/perf/util/stat-display.c
-index e7b4c44ebb62..665ee374fc01 100644
---- a/tools/perf/util/stat-display.c
-+++ b/tools/perf/util/stat-display.c
-@@ -59,6 +59,15 @@ static void print_noise(struct perf_stat_config *config,
- 	print_noise_pct(config, stddev_stats(&ps->res_stats[0]), avg);
- }
+diff --git a/tools/perf/tests/attr.py b/tools/perf/tests/attr.py
+index ff9b60b99f52..44090a9a19f3 100644
+--- a/tools/perf/tests/attr.py
++++ b/tools/perf/tests/attr.py
+@@ -116,7 +116,7 @@ class Event(dict):
+             if not self.has_key(t) or not other.has_key(t):
+                 continue
+             if not data_equal(self[t], other[t]):
+-		log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
++                log.warning("expected %s=%s, got %s" % (t, self[t], other[t]))
  
-+static void print_cgroup(struct perf_stat_config *config, struct perf_evsel *evsel)
-+{
-+	if (nr_cgroups) {
-+		const char *cgrp_name = evsel->cgrp ? evsel->cgrp->name  : "";
-+		fprintf(config->output, "%s%s", config->csv_sep, cgrp_name);
-+	}
-+}
-+
-+
- static void aggr_printout(struct perf_stat_config *config,
- 			  struct perf_evsel *evsel, int id, int nr)
- {
-@@ -336,8 +345,7 @@ static void abs_printout(struct perf_stat_config *config,
- 
- 	fprintf(output, "%-*s", config->csv_output ? 0 : 25, perf_evsel__name(evsel));
- 
--	if (evsel->cgrp)
--		fprintf(output, "%s%s", config->csv_sep, evsel->cgrp->name);
-+	print_cgroup(config, evsel);
- }
- 
- static bool is_mixed_hw_group(struct perf_evsel *counter)
-@@ -431,9 +439,7 @@ static void printout(struct perf_stat_config *config, int id, int nr,
- 			config->csv_output ? 0 : -25,
- 			perf_evsel__name(counter));
- 
--		if (counter->cgrp)
--			fprintf(config->output, "%s%s",
--				config->csv_sep, counter->cgrp->name);
-+		print_cgroup(config, counter);
- 
- 		if (!config->csv_output)
- 			pm(config, &os, NULL, NULL, "", 0);
+ # Test file description needs to have following sections:
+ # [config]
 -- 
 2.19.1
 
