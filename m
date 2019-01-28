@@ -2,126 +2,97 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D0933C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:08:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEA97C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:09:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED7421741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:08:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548695332;
-	bh=eeJkX3MlOaYG2SFXfVVq2C8vQUYeLfSYpfRI94OOgBg=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=UFG4UI6W7fvXdBt9J72rIXJ9PkGMZXBb3SkgMk+ChSYlQXOS+UJkq95xcVvrFRzVM
-	 MY+7Pe+r9bLkBt7KwEPIjqh+VQtwBYq6GE7gqu+Zxhq/trB2KG+tbAtalwlVPoCLuT
-	 p1J3j5F+lzU5MR5GhH2zaLLvx5WkiZsV0kNvsRVU=
+	by mail.kernel.org (Postfix) with ESMTP id BDD3121741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:09:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rkC6AO6r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387538AbfA1RIq (ORCPT
+        id S1733230AbfA1RJC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:08:46 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39852 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733070AbfA1QMF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:12:05 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 054B82175B;
-        Mon, 28 Jan 2019 16:12:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691925;
-        bh=eeJkX3MlOaYG2SFXfVVq2C8vQUYeLfSYpfRI94OOgBg=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wUbQcNXc4m7Jq9cgxKeOIWHyuVUG5MoMCHksVionAadlYexomfEDYH6NotmenSLsy
-         LGhf8n0biiBJK0YnDPh0FSAqoWrqeH7NqzfAAC2eU/vkVabpSWeiHCdhm391CUQiFJ
-         miSnRUEzNY2d4fpn9fLCOBiM6mK/N0fag1P0JDFk=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Slawomir Stepien <sst@poczta.fm>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Sasha Levin <sashal@kernel.org>, linux-iio@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Subject: [PATCH AUTOSEL 4.14 002/170] staging: iio: adc: ad7280a: handle error from __ad7280_read32()
-Date:   Mon, 28 Jan 2019 11:09:12 -0500
-Message-Id: <20190128161200.55107-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
-References: <20190128161200.55107-1-sashal@kernel.org>
+        Mon, 28 Jan 2019 12:09:02 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:44133 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733031AbfA1QLu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:11:50 -0500
+Received: by mail-pg1-f193.google.com with SMTP id t13so7385140pgr.11
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 08:11:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=CV388ilkjL0NcLVI0uaGKJeYDzVKBWBY5OcOpufxxPc=;
+        b=rkC6AO6rkKbgt9CB/wiM/aYiYfQuXpg0AmcKVo3Z0suKBF7QQlqbUFhNYmFmOtSDjL
+         gG9iBres8z+hERqnTMH8AB0qRmEA62RZGHi3enK2okgQZaZY8AU59Duen8DxmLRI/2qY
+         VN7QmeR4Jng7XT+7P2HRCwGAmgOn4Zzd9ZVkF9oARXn/FEif1YCtP7u9qL982S4l3zab
+         qEj9d1PP+2QqdZx2PAXOQfLLibt3DgU926iBmJN5cZQT4sS4lvSS2PD4G4qv9gsIiI4k
+         cQmdWO0ughG0V8CvBYV+UW6XuV06jp6pg6d9gMyq0TPUBAOdHbvRRhetRqwEPuBdu8FG
+         YL4w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=CV388ilkjL0NcLVI0uaGKJeYDzVKBWBY5OcOpufxxPc=;
+        b=Z8xtByvQyf4WEDpq3qARh/YsNUNBXBx2uZeTOns/L5ZWkZi6bA818W877Rk+R/wVCq
+         5fSRdTMDEpSLetzA+ig75NBwTEouTwPpvo3tdrDsEAyfJZLeAL2M/X34G0UuEAJb2Sxz
+         30bPKygjw8GdWELrZFdZ+G/gMCsg2kVdCrjxHS1LcBYY8Ki2he2ucshq73z5NvdWplAE
+         kNOrXbT+OmqpFyNAJCPWZIq63PmDWw5eJbycuppLUy/lJ3GByKAPXgaD4dyUIYuWKufG
+         5uoFUc18XJxdSMDM7JidaTu6hYi1r8CXkDO/ZpYAizDK9IboDEmZf8fwnyWbvphnZulu
+         W/iA==
+X-Gm-Message-State: AJcUukfeWBV/ITSmoYOOHajJcR1AspRbMhRk/LyH0eAZQUdDYI/VNfeQ
+        rRbBVxS51sRoeKRHDi7jagk=
+X-Google-Smtp-Source: ALg8bN5oiB7c+yXgt6FEtfawuyFcw+R/BgttdHCUnb3PSB26onItgOqrnKhAkZj1bs/uAv6zqfka/Q==
+X-Received: by 2002:a63:4384:: with SMTP id q126mr20174469pga.160.1548691909813;
+        Mon, 28 Jan 2019 08:11:49 -0800 (PST)
+Received: from hp-pavilion-15-notebook-pc-brajeswar ([47.11.154.113])
+        by smtp.gmail.com with ESMTPSA id p2sm41647731pfb.28.2019.01.28.08.11.45
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 08:11:49 -0800 (PST)
+Date:   Mon, 28 Jan 2019 21:41:36 +0530
+From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
+To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au,
+        npiggin@gmail.com, christophe.leroy@c-s.fr, arnd@arndb.de,
+        anton@ozlabs.org, aneesh.kumar@linux.ibm.com
+Cc:     jrdr.linux@gmail.com, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com
+Subject: [PATCH] powerpc/kernel/time: Remove duplicate header
+Message-ID: <20190128161136.GA2266@hp-pavilion-15-notebook-pc-brajeswar>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Slawomir Stepien <sst@poczta.fm>
+Remove linux/rtc.h which is included more than once
 
-[ Upstream commit 0559ef7fde67bc6c83c6eb6329dbd6649528263e ]
-
-Inside __ad7280_read32(), the spi_sync_transfer() can fail with negative
-error code. This change will ensure that this error is being passed up
-in the call stack, so it can be handled.
-
-Signed-off-by: Slawomir Stepien <sst@poczta.fm>
-Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
 ---
- drivers/staging/iio/adc/ad7280a.c | 17 +++++++++++++----
- 1 file changed, 13 insertions(+), 4 deletions(-)
+ arch/powerpc/kernel/time.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/staging/iio/adc/ad7280a.c b/drivers/staging/iio/adc/ad7280a.c
-index f85dde9805e0..f17f700ea04f 100644
---- a/drivers/staging/iio/adc/ad7280a.c
-+++ b/drivers/staging/iio/adc/ad7280a.c
-@@ -256,7 +256,9 @@ static int ad7280_read(struct ad7280_state *st, unsigned int devaddr,
- 	if (ret)
- 		return ret;
- 
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
- 
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -294,7 +296,9 @@ static int ad7280_read_channel(struct ad7280_state *st, unsigned int devaddr,
- 
- 	ad7280_delay(st);
- 
--	__ad7280_read32(st, &tmp);
-+	ret = __ad7280_read32(st, &tmp);
-+	if (ret)
-+		return ret;
- 
- 	if (ad7280_check_crc(st, tmp))
- 		return -EIO;
-@@ -327,7 +331,9 @@ static int ad7280_read_all_channels(struct ad7280_state *st, unsigned int cnt,
- 	ad7280_delay(st);
- 
- 	for (i = 0; i < cnt; i++) {
--		__ad7280_read32(st, &tmp);
-+		ret = __ad7280_read32(st, &tmp);
-+		if (ret)
-+			return ret;
- 
- 		if (ad7280_check_crc(st, tmp))
- 			return -EIO;
-@@ -370,7 +376,10 @@ static int ad7280_chain_setup(struct ad7280_state *st)
- 		return ret;
- 
- 	for (n = 0; n <= AD7280A_MAX_CHAIN; n++) {
--		__ad7280_read32(st, &val);
-+		ret = __ad7280_read32(st, &val);
-+		if (ret)
-+			return ret;
-+
- 		if (val == 0)
- 			return n - 1;
- 
+diff --git a/arch/powerpc/kernel/time.c b/arch/powerpc/kernel/time.c
+index 3646affae963..bc0503ef9c9c 100644
+--- a/arch/powerpc/kernel/time.c
++++ b/arch/powerpc/kernel/time.c
+@@ -57,7 +57,6 @@
+ #include <linux/irq_work.h>
+ #include <linux/clk-provider.h>
+ #include <linux/suspend.h>
+-#include <linux/rtc.h>
+ #include <linux/sched/cputime.h>
+ #include <linux/processor.h>
+ #include <asm/trace.h>
 -- 
-2.19.1
+2.17.1
 
