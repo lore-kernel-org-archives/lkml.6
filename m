@@ -4,48 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC556C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C5F6C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DCF42147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F017A20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690727;
-	bh=LhZjI23J8nfbElxw7IbIt11E7C9ZaPTm9xKPQvEyyLQ=;
+	s=default; t=1548690735;
+	bh=DvUyKWnTWKSkTCcHgqPaGrG5pkyZcljY0OEYlqP3RKE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=gw/tM9GL17wlOWpSRwsMYA5zeQd1icik5QkQt5lM06DsL/rQkSSCjLMUwpVy/nNWi
-	 OyKt/6D00k+0u0i3Iy1hZ1JRMPOxUGK/AD8TfA9c03IhTI+i3ulIVCYdWXAsTu+An6
-	 F52Sxf7X1LrC/Ye2P3xLy0l4BPHdAEXSI3NtNTrI=
+	b=pDIsjR7c2U+1bTmJiyhvtn24Kvghpj9t/pabHK2Rv1DMYLos9jhWXCPK5VWjZLnNB
+	 v5mKjmAlN6NFA8aNY2YINvRauxdxvjYhEU7pNNrZhjL/Mb/l77LqqjZ4Jq22SegY8C
+	 dxkf6lkkE+e10wUFFuQI5tdLlW3iIUWHDI/m1Gw4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728509AbfA1PwG (ORCPT
+        id S1729230AbfA1PwN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:52:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38632 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:52:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38714 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727743AbfA1PwF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:52:05 -0500
+        id S1727929AbfA1PwL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:52:11 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AEF92147A;
-        Mon, 28 Jan 2019 15:52:01 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DFE32147A;
+        Mon, 28 Jan 2019 15:52:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690724;
-        bh=LhZjI23J8nfbElxw7IbIt11E7C9ZaPTm9xKPQvEyyLQ=;
+        s=default; t=1548690730;
+        bh=DvUyKWnTWKSkTCcHgqPaGrG5pkyZcljY0OEYlqP3RKE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=U0+t5PI3XQXhG75scfPvrpZwPPXhgj3tgNsKE+LneicxbcH+A0bwwXzP62I51eAVj
-         e4vj52ly+MgIoqGJIehZKWoRCfxDRo7GUwSM/6S37nD1SXVQwrw+rbPmJ0G6AfmQ42
-         885ht4oFGbm1mJsdBLGsBQ/EQelevAJnIseCs/vQ=
+        b=mUhvRi7ovXaOiK/+bEAOvhOR/iI23HwEYwaCbMuhRVucJ0qC+9WLnr9lDDZUkco0P
+         WRLEpSF1NpgyzM0K0D9CskrL4p1ONzngkIulIjvhb/WN/EsLrX5uSpgOeUhP6QKGSi
+         jT9be2I6aZwH33gAhhVBFV510n+myH52AD3eo548=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 175/304] ARM: mmp: fix timer_init calls
-Date:   Mon, 28 Jan 2019 10:41:32 -0500
-Message-Id: <20190128154341.47195-175-sashal@kernel.org>
+Cc:     Tom Murphy <murphyt7@tcd.ie>, Shuah Khan <shuah@kernel.org>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-kselftest@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 176/304] fix dma-buf/udmabuf selftest
+Date:   Mon, 28 Jan 2019 10:41:33 -0500
+Message-Id: <20190128154341.47195-176-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,112 +57,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Tom Murphy <murphyt7@tcd.ie>
 
-[ Upstream commit 12d3a30db4a3b3df5fbadf5974b9cf50544a9950 ]
+[ Upstream commit 6edf2e3710f4ef2555ad7a2681dbeb4a69092b2d ]
 
-The change to passing the timer frequency as a function argument
-was a good idea, but caused a build failure for one user that
-was missed in the update:
+This patch fixes the udmabuf selftest. Currently the selftest is broken.
+I fixed the selftest by setting the F_SEAL_SHRINK seal on the memfd
+file descriptor which is required by udmabuf and added the test to
+the selftest Makefile.
 
-arch/arm/mach-mmp/time.c: In function 'mmp_dt_init_timer':
-arch/arm/mach-mmp/time.c:242:2: error: implicit declaration of function 'timer_init'; did you mean 'hrtimer_init'? [-Werror=implicit-function-declaration]
-
-Change that as well to fix the build error, and rename the
-function to put it into a proper namespace and make it clearer
-what is actually going on.
-
-I saw that the high 6500000 HZ frequency was previously only
-set with CONFIG_MMP2, but is now also used with MMP (pxa910),
-so I'm changing that back here. Please make sure that the
-frequencies are all correct now.
-
-Fixes: f36797ee4380 ("ARM: mmp/mmp2: dt: enable the clock")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Signed-off-by: Tom Murphy <murphyt7@tcd.ie>
+Reviewed-by: Gerd Hoffmann <kraxel@redhat.com>
+Signed-off-by: Shuah Khan <shuah@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-mmp/common.h | 2 +-
- arch/arm/mach-mmp/mmp2.c   | 2 +-
- arch/arm/mach-mmp/pxa168.c | 2 +-
- arch/arm/mach-mmp/pxa910.c | 2 +-
- arch/arm/mach-mmp/time.c   | 4 ++--
- 5 files changed, 6 insertions(+), 6 deletions(-)
+ tools/testing/selftests/Makefile                  |  1 +
+ tools/testing/selftests/drivers/dma-buf/Makefile  |  2 ++
+ tools/testing/selftests/drivers/dma-buf/udmabuf.c | 11 +++++++++--
+ 3 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/mach-mmp/common.h b/arch/arm/mach-mmp/common.h
-index 5ac2851ef5d3..483b8b6d3005 100644
---- a/arch/arm/mach-mmp/common.h
-+++ b/arch/arm/mach-mmp/common.h
-@@ -2,7 +2,7 @@
- #include <linux/reboot.h>
- #define ARRAY_AND_SIZE(x)	(x), ARRAY_SIZE(x)
+diff --git a/tools/testing/selftests/Makefile b/tools/testing/selftests/Makefile
+index f0017c831e57..a43a07a09a98 100644
+--- a/tools/testing/selftests/Makefile
++++ b/tools/testing/selftests/Makefile
+@@ -6,6 +6,7 @@ TARGETS += capabilities
+ TARGETS += cgroup
+ TARGETS += cpufreq
+ TARGETS += cpu-hotplug
++TARGETS += drivers/dma-buf
+ TARGETS += efivarfs
+ TARGETS += exec
+ TARGETS += filesystems
+diff --git a/tools/testing/selftests/drivers/dma-buf/Makefile b/tools/testing/selftests/drivers/dma-buf/Makefile
+index 4154c3d7aa58..f22c3f7cf612 100644
+--- a/tools/testing/selftests/drivers/dma-buf/Makefile
++++ b/tools/testing/selftests/drivers/dma-buf/Makefile
+@@ -2,4 +2,6 @@ CFLAGS += -I../../../../../usr/include/
  
--extern void timer_init(int irq, unsigned long rate);
-+extern void mmp_timer_init(int irq, unsigned long rate);
+ TEST_GEN_PROGS := udmabuf
  
- extern void __init mmp_map_io(void);
- extern void mmp_restart(enum reboot_mode, const char *);
-diff --git a/arch/arm/mach-mmp/mmp2.c b/arch/arm/mach-mmp/mmp2.c
-index fb3e7e32c882..726c1a642dea 100644
---- a/arch/arm/mach-mmp/mmp2.c
-+++ b/arch/arm/mach-mmp/mmp2.c
-@@ -134,7 +134,7 @@ void __init mmp2_timer_init(void)
- 	clk_rst = APBC_APBCLK | APBC_FNCLK | APBC_FNCLKSEL(1);
- 	__raw_writel(clk_rst, APBC_TIMERS);
++top_srcdir ?=../../../../..
++
+ include ../../lib.mk
+diff --git a/tools/testing/selftests/drivers/dma-buf/udmabuf.c b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
+index 376b1d6730bd..4de902ea14d8 100644
+--- a/tools/testing/selftests/drivers/dma-buf/udmabuf.c
++++ b/tools/testing/selftests/drivers/dma-buf/udmabuf.c
+@@ -4,7 +4,7 @@
+ #include <unistd.h>
+ #include <string.h>
+ #include <errno.h>
+-#include <fcntl.h>
++#include <linux/fcntl.h>
+ #include <malloc.h>
  
--	timer_init(IRQ_MMP2_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_MMP2_TIMER1, 6500000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/pxa168.c b/arch/arm/mach-mmp/pxa168.c
-index 77a358165a56..cdcf65ace3f9 100644
---- a/arch/arm/mach-mmp/pxa168.c
-+++ b/arch/arm/mach-mmp/pxa168.c
-@@ -79,7 +79,7 @@ void __init pxa168_timer_init(void)
- 	/* 3.25MHz, bus/functional clock enabled, release reset */
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA168_TIMER1, 6500000);
-+	mmp_timer_init(IRQ_PXA168_TIMER1, 3250000);
- }
- 
- void pxa168_clear_keypad_wakeup(void)
-diff --git a/arch/arm/mach-mmp/pxa910.c b/arch/arm/mach-mmp/pxa910.c
-index 1ccbba9ac495..d30a7d12bc98 100644
---- a/arch/arm/mach-mmp/pxa910.c
-+++ b/arch/arm/mach-mmp/pxa910.c
-@@ -116,7 +116,7 @@ void __init pxa910_timer_init(void)
- 	__raw_writel(APBC_APBCLK | APBC_RST, APBC_TIMERS);
- 	__raw_writel(TIMER_CLK_RST, APBC_TIMERS);
- 
--	timer_init(IRQ_PXA910_AP1_TIMER1);
-+	mmp_timer_init(IRQ_PXA910_AP1_TIMER1, 3250000);
- }
- 
- /* on-chip devices */
-diff --git a/arch/arm/mach-mmp/time.c b/arch/arm/mach-mmp/time.c
-index eab0fd8a7343..f9c295154b94 100644
---- a/arch/arm/mach-mmp/time.c
-+++ b/arch/arm/mach-mmp/time.c
-@@ -184,7 +184,7 @@ static struct irqaction timer_irq = {
- 	.dev_id		= &ckevt,
- };
- 
--void __init timer_init(int irq, unsigned long rate)
-+void __init mmp_timer_init(int irq, unsigned long rate)
- {
- 	timer_config();
- 
-@@ -239,7 +239,7 @@ void __init mmp_dt_init_timer(void)
- 		ret = -ENOMEM;
- 		goto out;
+ #include <sys/ioctl.h>
+@@ -33,12 +33,19 @@ int main(int argc, char *argv[])
+ 		exit(77);
  	}
--	timer_init(irq, rate);
-+	mmp_timer_init(irq, rate);
- 	return;
- out:
- 	pr_err("Failed to get timer from device tree with error:%d\n", ret);
+ 
+-	memfd = memfd_create("udmabuf-test", MFD_CLOEXEC);
++	memfd = memfd_create("udmabuf-test", MFD_ALLOW_SEALING);
+ 	if (memfd < 0) {
+ 		printf("%s: [skip,no-memfd]\n", TEST_PREFIX);
+ 		exit(77);
+ 	}
+ 
++	ret = fcntl(memfd, F_ADD_SEALS, F_SEAL_SHRINK);
++	if (ret < 0) {
++		printf("%s: [skip,fcntl-add-seals]\n", TEST_PREFIX);
++		exit(77);
++	}
++
++
+ 	size = getpagesize() * NUM_PAGES;
+ 	ret = ftruncate(memfd, size);
+ 	if (ret == -1) {
 -- 
 2.19.1
 
