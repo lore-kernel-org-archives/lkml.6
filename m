@@ -2,151 +2,119 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F622C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70024C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:03:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A2B12147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 46ECD2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 20:03:35 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727428AbfA1UD1 (ORCPT
+        id S1727771AbfA1UDd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 15:03:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49594 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726661AbfA1UD1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 15:03:27 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B593A88E70;
-        Mon, 28 Jan 2019 20:03:26 +0000 (UTC)
-Received: from ivy-bridge (ovpn-204-44.brq.redhat.com [10.40.204.44])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 983071001943;
-        Mon, 28 Jan 2019 20:03:21 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 21:03:28 +0100
-From:   Steve Grubb <sgrubb@redhat.com>
-To:     Paul Moore <paul@paul-moore.com>
-Cc:     "Sverdlin, Alexander (Nokia - DE/Ulm)" <alexander.sverdlin@nokia.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        "linux-audit@redhat.com" <linux-audit@redhat.com>,
-        Richard Guy Briggs <rbriggs@redhat.com>
-Subject: Re: [PATCH] audit: always enable syscall auditing when supported
- and audit is enabled
-Message-ID: <20190128210328.64b7719c@ivy-bridge>
-In-Reply-To: <CAHC9VhR25UdWPSRurefEX3YjM80DEh5BXETvK4na3Ym+k2=9xQ@mail.gmail.com>
-References: <20151208164237.15736.42955.stgit@localhost>
-        <5490ae28-251b-bfda-38a6-5be201a4a8d8@nokia.com>
-        <CAHC9VhQsVFY1LAakAUUCBZw6nmSy0-eoFrhQgVQrkqgAsWVGhQ@mail.gmail.com>
-        <4fb6def1-a1d9-8af0-394c-f92224884d18@nokia.com>
-        <CAHC9VhT1T4wTonW_L8CH2j1aMqSaBcUf-zH==233+ZZvSKhkwg@mail.gmail.com>
-        <8bf5d613-9b27-381d-283b-c8892483f424@nokia.com>
-        <CAHC9VhR25UdWPSRurefEX3YjM80DEh5BXETvK4na3Ym+k2=9xQ@mail.gmail.com>
-Organization: Red Hat
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 28 Jan 2019 20:03:26 +0000 (UTC)
+        Mon, 28 Jan 2019 15:03:33 -0500
+Received: from shelob.surriel.com ([96.67.55.147]:42936 "EHLO
+        shelob.surriel.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726661AbfA1UDd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 15:03:33 -0500
+Received: from imladris.surriel.com ([96.67.55.152])
+        by shelob.surriel.com with esmtpsa (TLSv1.2:ECDHE-RSA-AES256-GCM-SHA384:256)
+        (Exim 4.91)
+        (envelope-from <riel@shelob.surriel.com>)
+        id 1goD7w-0006yz-Lt; Mon, 28 Jan 2019 15:03:28 -0500
+Message-ID: <8ddf2ea674711f373062f4e056dd14fb81c5a2fe.camel@surriel.com>
+Subject: Re: [PATCH] mm,slab,vmscan: accumulate gradual pressure on small
+ slabs
+From:   Rik van Riel <riel@surriel.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        kernel-team@fb.com, Johannes Weiner <hannes@cmpxchg.org>,
+        Chris Mason <clm@fb.com>, Roman Gushchin <guro@fb.com>,
+        Michal Hocko <mhocko@suse.com>
+Date:   Mon, 28 Jan 2019 15:03:28 -0500
+In-Reply-To: <20190128115424.df3f4647023e9e43e75afe67@linux-foundation.org>
+References: <20190128143535.7767c397@imladris.surriel.com>
+         <20190128115424.df3f4647023e9e43e75afe67@linux-foundation.org>
+Content-Type: multipart/signed; micalg="pgp-sha256";
+        protocol="application/pgp-signature"; boundary="=-nGE8UQknFPEiL8nfsYnb"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 28 Jan 2019 11:26:51 -0500
-Paul Moore <paul@paul-moore.com> wrote:
 
-> On Mon, Jan 28, 2019 at 10:38 AM Sverdlin, Alexander (Nokia - DE/Ulm)
-> <alexander.sverdlin@nokia.com> wrote:
-> > Hello Paul,
-> >
-> > On 28/01/2019 15:52, Paul Moore wrote:  
-> > >>>>> time also enables syscall auditing; this patch simplifies the
-> > >>>>> Kconfig menus by removing the option to disable syscall
-> > >>>>> auditing when audit is selected and the target arch supports
-> > >>>>> it.
-> > >>>>>
-> > >>>>> Signed-off-by: Paul Moore <pmoore@redhat.com>  
-> > >>>> this patch is responsible for massive performance degradation
-> > >>>> for those who used only CONFIG_SECURITY_APPARMOR.
-> > >>>>
-> > >>>> And the numbers are, take the following test for instance:
-> > >>>>
-> > >>>> dd if=/dev/zero of=/dev/null count=2M
-> > >>>>
-> > >>>> ARM64:      500MB/s -> 350MB/s
-> > >>>> ARM:        400MB/s -> 300MB/s  
-> > >>> Hi there.
-> > >>>
-> > >>> Out of curiosity, what kernel/distribution are you running, or
-> > >>> is this a custom kernel compile?  Can you also share the output
-> > >>> of 'auditctl  
-> > >> This test was carried out with Linux 4.9. Custom built.  
-> > > I suspected that was the case, thanks.
-> > >  
-> > >>> -l' from your system?  The general approach taken by everyone to
-> > >>> turn-off the per-syscall audit overhead is to add the "-a
-> > >>> never,task" rule to their audit configuration:
-> > >>>
-> > >>>  # auditctl -a never,task
-> > >>>
-> > >>> If you are using Fedora/CentOS/RHEL, or a similarly configured
-> > >>> system,  
-> > >> This is an embedded distribution. We are not using auditctl or
-> > >> any other audit-related user-space packages.
-> > >>  
-> > >>> you can find this configuration in the /etc/audit/audit.rules
-> > >>> file (be warned, that file is automatically generated based on
-> > >>> /etc/audit/rules.d).  
-> > >> I suppose in this case rule list must be empty. Is there a way
-> > >> to check this without extra user-space packages?  
-> > > Yes, unless you are loading rules through some other method I
-> > > would expect that your audit rule list is empty.
-> > >
-> > > I'm not aware of any other tools besides auditctl to load audit
-> > > rules into the kernel, although I haven't ever had a need for
-> > > another tool so I haven't looked very hard.  If you didn't want
-> > > to bring auditctl into your distribution, I expect it would be a
-> > > rather trivial task to create a small tool to load a single "-a
-> > > never,task" into the kernel.  
-> >
-> > I've done a quick test on my x86_64 PC and got the following
-> > results:  
-> 
-> ...
-> 
-> > Which brings me to an idea, that the subject patch should have been
-> > accompanied by a default "never,task" rule inside the kernel,
-> > otherwise you require an extra user-space package (audit) just to
-> > bring Linux 4.5+ to 4.4 performance levels.  
-> 
-> [NOTE: I dropped pmoore@redhat.com from the To/CC line, I left Red Hat
-> for greener pastures several months ago.]
-> 
-> Well, it generally hasn't been an issue as 1) most people that enable
-> audit also enable syscall auditing and 2) most people that enable
-> audit have some sort of audit userspace tools to work with the audit
-> logs (and configure audit if necessary).  I don't want to diminish
-> your report, but this change was made several years ago and we really
-> haven't heard of many issues surrounding the change.  If we can ever
-> get all of the different arches to support syscall auditing, I'd love
-> to get rid of the syscall auditing Kconfig knob entirely.
-> 
-> If you wanted to put together a patch that added a single "-a
-> never,task" rule on boot I could get behind that, just make it default
-> to off.
+--=-nGE8UQknFPEiL8nfsYnb
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-That will make processes unauditable for everyone. That's how it gets a
-speedup is not entering into the audit machinery. I suppose its
-possible that people may want MAC hardwired events but no syscall
-events. I don't know if there are other kconfig audit options. but
-maybe getting it down to audit enabled and syscall auditing as the only
-choices is probably the most performant.
+On Mon, 2019-01-28 at 11:54 -0800, Andrew Morton wrote:
+> On Mon, 28 Jan 2019 14:35:35 -0500 Rik van Riel <riel@surriel.com>
+> wrote:
+>=20
+> >  	/*
+> >  	 * Make sure we apply some minimal pressure on default priority
+> > -	 * even on small cgroups. Stale objects are not only consuming
+> > memory
+> > +	 * even on small cgroups, by accumulating pressure across
+> > multiple
+> > +	 * slab shrinker runs. Stale objects are not only consuming
+> > memory
+> >  	 * by themselves, but can also hold a reference to a dying
+> > cgroup,
+> >  	 * preventing it from being reclaimed. A dying cgroup with all
+> >  	 * corresponding structures like per-cpu stats and kmem caches
+> >  	 * can be really big, so it may lead to a significant waste of
+> > memory.
+> >  	 */
+> > -	delta =3D max_t(unsigned long long, delta, min(freeable,
+> > batch_size));
+> > +	if (!delta) {
+> > +		shrinker->small_scan +=3D freeable;
+> > +
+> > +		delta =3D shrinker->small_scan >> priority;
+> > +		shrinker->small_scan -=3D delta << priority;
+> > +
+> > +		delta *=3D 4;
+> > +		do_div(delta, shrinker->seeks);
+>=20
+> What prevents shrinker->small_scan from over- or underflowing over
+> time?
 
--Steve
+We only go into this code path if
+delta >> DEF_PRIORITY is zero.
+
+That is, freeable is smaller than 4096.
+
+> I'll add this:
+
+> whitespace fixes, per Roman
+
+Awesome, thank you!
+
+--=20
+All Rights Reversed.
+
+--=-nGE8UQknFPEiL8nfsYnb
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part
+Content-Transfer-Encoding: 7bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCAAdFiEEKR73pCCtJ5Xj3yADznnekoTE3oMFAlxPYBAACgkQznnekoTE
+3oN05AgAngaeuhkjCHuyhq8zG04YT0jvQFZoWcNexTYi/rVLmxraUqdOJhpgIvFl
+YMidQJwFi1448jznIdXf3/dgyvbu5JI+JoyhwlfmLv8wyHGWo59AfSkCT8bAPKR5
+qHFY0TQCoOM/QyIW5Qeew5iHjNxceZfLvXNQVlt02jPoR5ysBWC9mudPYHAcTggZ
+4fH8MkS8ukd8ykvx+WbEoO8GzTQrqwcc8bvPsl+mq7I+H2V6J1JhzQON3BSYZnNG
+1SWKuzYdAYP6pxUXYweEl2YkTm4KtNgcxLPF3T8h99Gwa1/Nb9SvWSp6oZB4s9UD
+SWeY7MLKfnBK5aox7F+ilHrcYJrMfw==
+=O2ss
+-----END PGP SIGNATURE-----
+
+--=-nGE8UQknFPEiL8nfsYnb--
+
