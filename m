@@ -7,47 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF74CC4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:43:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E31DAC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE63A214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:43:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE3772173C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:44:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690238;
-	bh=pKKn77FAk7lTGPblNWGmJvw2sy1EhkiAlcakvIk0S2g=;
+	s=default; t=1548690242;
+	bh=Hdbl9KKGLFt+u7ACAyJqO03MF1R02UVt3YORmoCEymo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=vhenaHHfkNggBp4iO2WATR9rAeKZLfI9AlZO3Ij2VffKcQk2NflIvlMycIhwsTGMJ
-	 45hJlP7MK4N/3SbbR7JVHH1w4bhcKwlqCHfrCrACeyJsh0CZ+t8PU6Op/YOGy5UeGn
-	 5tBw+xkR3g26AmckU6A8rLuuvy2lRWu0AbLrDRPw=
+	b=F1186KGrzYD60pZN7MBhiEux3g12601GA+e8mooj77GHae68VxH5G0JUgzqspZDbA
+	 BqjbaJeJ6XugLT+gzqoOj+ZPqPb3br1gSkPncyYe8JhX2h6LAHrHsb11wY8xKAD9uf
+	 fwLn90PcY0sIvp9L39AQ7mf7UpCAhjXytjsqKdr4=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727129AbfA1Pn5 (ORCPT
+        id S1727150AbfA1PoB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:43:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:57148 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:44:01 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57174 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727100AbfA1Pn4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:43:56 -0500
+        id S1727132AbfA1Pn6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:43:58 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E25020880;
-        Mon, 28 Jan 2019 15:43:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 732282147A;
+        Mon, 28 Jan 2019 15:43:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690236;
-        bh=pKKn77FAk7lTGPblNWGmJvw2sy1EhkiAlcakvIk0S2g=;
+        s=default; t=1548690237;
+        bh=Hdbl9KKGLFt+u7ACAyJqO03MF1R02UVt3YORmoCEymo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GRW09mAfiomGAb3xJynshiB6YekZsHAT+H+VzbCLcy6aE9lb9cdLr1UUJ9MZOLThD
-         1Pr+AhYktC5tuDP/PdYA8sM0yATCgKrkIx2S7nqY99oigNU2JU6ozNy4ZG3HubLgIY
-         Rt4L7Ni6qPbdWalw+ECI8Lwsv3XDCz8SwNeSLAYw=
+        b=nP0JUDH/9DqGMLxQz9ji/6ak2BiNwldmDRTd0g9T8kfxEg0lC51CpsRYnMbPGvsr6
+         S3EhdxzjRkcIhlWBwrXwqQi9w9gMwtLNM2/ddcSEsLLoVaqnWNYde5YUL46iIuvtHp
+         Di9iuAKVADGAgju8/ynaYJucb5/4JsRijYKadXR4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Long Li <longli@microsoft.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Michael Kelley <mikelley@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 011/304] genirq/affinity: Spread IRQs to all available NUMA nodes
-Date:   Mon, 28 Jan 2019 10:38:48 -0500
-Message-Id: <20190128154341.47195-11-sashal@kernel.org>
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.20 012/304] gpu: ipu-v3: image-convert: Prevent race between run and unprepare
+Date:   Mon, 28 Jan 2019 10:38:49 -0500
+Message-Id: <20190128154341.47195-12-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,59 +59,72 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Long Li <longli@microsoft.com>
+From: Steve Longerbeam <slongerbeam@gmail.com>
 
-[ Upstream commit b82592199032bf7c778f861b936287e37ebc9f62 ]
+[ Upstream commit 819bec35c8c9706185498c9222bd244e0781ad35 ]
 
-If the number of NUMA nodes exceeds the number of MSI/MSI-X interrupts
-which are allocated for a device, the interrupt affinity spreading code
-fails to spread them across all nodes.
+Prevent possible race by parallel threads between ipu_image_convert_run()
+and ipu_image_convert_unprepare(). This involves setting ctx->aborting
+to true unconditionally so that no new job runs can be queued during
+unprepare, and holding the ctx->aborting flag until the context is freed.
 
-The reason is, that the spreading code starts from node 0 and continues up
-to the number of interrupts requested for allocation. This leaves the nodes
-past the last interrupt unused.
+Note that the "normal" ipu_image_convert_abort() case (e.g. not during
+context unprepare) should clear the ctx->aborting flag after aborting
+any active run and clearing the context's pending queue. This is because
+it should be possible to continue to use the conversion context and queue
+more runs after an abort.
 
-This results in interrupt concentration on the first nodes which violates
-the assumption of the block layer that all nodes are covered evenly. As a
-consequence the NUMA nodes above the number of interrupts are all assigned
-to hardware queue 0 and therefore NUMA node 0, which results in bad
-performance and has CPU hotplug implications, because queue 0 gets shut
-down when the last CPU of node 0 is offlined.
-
-Go over all NUMA nodes and assign them round-robin to all requested
-interrupts to solve this.
-
-[ tglx: Massaged changelog ]
-
-Signed-off-by: Long Li <longli@microsoft.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Ming Lei <ming.lei@redhat.com>
-Cc: Michael Kelley <mikelley@microsoft.com>
-Link: https://lkml.kernel.org/r/20181102180248.13583-1-longli@linuxonhyperv.com
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/irq/affinity.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ drivers/gpu/ipu-v3/ipu-image-convert.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-diff --git a/kernel/irq/affinity.c b/kernel/irq/affinity.c
-index f4f29b9d90ee..e12cdf637c71 100644
---- a/kernel/irq/affinity.c
-+++ b/kernel/irq/affinity.c
-@@ -117,12 +117,11 @@ static int irq_build_affinity_masks(const struct irq_affinity *affd,
- 	 */
- 	if (numvecs <= nodes) {
- 		for_each_node_mask(n, nodemsk) {
--			cpumask_copy(masks + curvec, node_to_cpumask[n]);
--			if (++done == numvecs)
--				break;
-+			cpumask_or(masks + curvec, masks + curvec, node_to_cpumask[n]);
- 			if (++curvec == last_affv)
- 				curvec = affd->pre_vectors;
- 		}
-+		done = numvecs;
- 		goto out;
- 	}
+diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
+index f4081962784c..91653adc41cc 100644
+--- a/drivers/gpu/ipu-v3/ipu-image-convert.c
++++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
+@@ -1524,7 +1524,7 @@ unlock:
+ EXPORT_SYMBOL_GPL(ipu_image_convert_queue);
  
+ /* Abort any active or pending conversions for this context */
+-void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
++static void __ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ {
+ 	struct ipu_image_convert_chan *chan = ctx->chan;
+ 	struct ipu_image_convert_priv *priv = chan->priv;
+@@ -1551,7 +1551,7 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ 
+ 	need_abort = (run_count || active_run);
+ 
+-	ctx->aborting = need_abort;
++	ctx->aborting = true;
+ 
+ 	spin_unlock_irqrestore(&chan->irqlock, flags);
+ 
+@@ -1572,7 +1572,11 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ 		dev_warn(priv->ipu->dev, "%s: timeout\n", __func__);
+ 		force_abort(ctx);
+ 	}
++}
+ 
++void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
++{
++	__ipu_image_convert_abort(ctx);
+ 	ctx->aborting = false;
+ }
+ EXPORT_SYMBOL_GPL(ipu_image_convert_abort);
+@@ -1586,7 +1590,7 @@ void ipu_image_convert_unprepare(struct ipu_image_convert_ctx *ctx)
+ 	bool put_res;
+ 
+ 	/* make sure no runs are hanging around */
+-	ipu_image_convert_abort(ctx);
++	__ipu_image_convert_abort(ctx);
+ 
+ 	dev_dbg(priv->ipu->dev, "%s: task %u: removing ctx %p\n", __func__,
+ 		chan->ic_task, ctx);
 -- 
 2.19.1
 
