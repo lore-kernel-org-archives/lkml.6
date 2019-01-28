@@ -2,99 +2,94 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49692C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:04:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 879F5C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:04:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E171B2087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:04:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=posteo.de header.i=@posteo.de header.b="hxyfj+YD"
+	by mail.kernel.org (Postfix) with ESMTP id 54A662087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 10:04:52 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726862AbfA1KEn (ORCPT
+        id S1726888AbfA1KEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 05:04:43 -0500
-Received: from mout02.posteo.de ([185.67.36.66]:57467 "EHLO mout02.posteo.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726832AbfA1KEm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 05:04:42 -0500
-Received: from submission (posteo.de [89.146.220.130]) 
-        by mout02.posteo.de (Postfix) with ESMTPS id A509C2400FC
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:04:40 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=posteo.de; s=2017;
-        t=1548669880; bh=qZmb/C+xRGeTA0pyxMfIlRobHToBGwXPBkxzlgge6M4=;
-        h=From:To:Cc:Subject:Date:From;
-        b=hxyfj+YD1wFDf0icZGQUC0oW9zbqtFTqvZnBgm42sdDMHkb4ECl4v2PgiTfjq8a2i
-         /nID4rxbH/21jNHFVwss/IkiIsEda3rxybYyCNuuAe5+SkNsVWDSojpepUIgbFC85A
-         cxUvQRrR7EwF8NEmdQE0WsPrX/KSmyVXvMhymyb17Jf8cqKiFBoT4cqDzkuzdUjtu9
-         kZmw8yhWP2tP5KRQzvuOxjVmdo3yMgoM7eTkCNe4oPXPnxIaXbO3DMurm2cJeESmBi
-         peuQi8fTAXYwOT++2epxlzZwyi5JGfxsSWNjGre2aH/WCAW98xJu8bvG8yUuc8+1Ba
-         1F+WxYRCfnKzg==
-Received: from customer (localhost [127.0.0.1])
-        by submission (posteo.de) with ESMTPSA id 43p4x2674wz9rxf;
-        Mon, 28 Jan 2019 11:04:38 +0100 (CET)
-From:   Martin Kepplinger <martink@posteo.de>
-To:     linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        b.zolnierkie@samsung.com
-Cc:     daniel.vetter@ffwll.ch, manfred.schlaegl@ginzinger.com,
-        linux-kernel@vger.kernel.org,
-        Martin Kepplinger <martin.kepplinger@ginzinger.com>
-Subject: [PATCH] fbdev: fbmem: fix memory access if logo is bigger than the screen
-Date:   Mon, 28 Jan 2019 11:04:35 +0100
-Message-Id: <20190128100435.759-1-martink@posteo.de>
-X-Mailer: git-send-email 2.20.1
+        Mon, 28 Jan 2019 05:04:51 -0500
+Received: from smtp03.citrix.com ([162.221.156.55]:28677 "EHLO
+        SMTP03.CITRIX.COM" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726832AbfA1KEt (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 05:04:49 -0500
+X-IronPort-AV: E=Sophos;i="5.56,533,1539648000"; 
+   d="scan'208";a="76590264"
+Subject: Re: [PATCH 2/2] efi/cper: Avoid possible OOB when checking generic
+ data block
+To:     Borislav Petkov <bp@alien8.de>
+CC:     <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-efi@vger.kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, Tony Luck <tony.luck@intel.com>,
+        Huang Ying <ying.huang@intel.com>
+References: <20190122160912.27312-1-ross.lagerwall@citrix.com>
+ <20190122160912.27312-3-ross.lagerwall@citrix.com>
+ <20190123115402.GB3227@zn.tnic>
+From:   Ross Lagerwall <ross.lagerwall@citrix.com>
+Message-ID: <d0a78e2a-7114-de25-4515-01844087ddbb@citrix.com>
+Date:   Mon, 28 Jan 2019 10:04:46 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190123115402.GB3227@zn.tnic>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
+On 1/23/19 11:54 AM, Borislav Petkov wrote:
+> On Tue, Jan 22, 2019 at 04:09:12PM +0000, Ross Lagerwall wrote:
+>> When checking a generic status block, we iterate over all the generic
+>> data blocks. The loop condition only checks that the start of the
+>> generic data block is valid (within estatus->data_length) but not the
+>> whole block. Because the size of data blocks (excluding error data) may
+>> vary depending on the revision and the revision is contained within the
+>> data block, ensure that enough of the current data block is valid before
+>> dereferencing any members otherwise an OOB access may occur if
+snip
+>> -		data_len -= acpi_hest_get_record_size(gdata);
+>> +		record_len = acpi_hest_get_record_size(gdata);
+> 
+> record_size so that it matches the function name it is used to compute
+> this.
+> 
+> Btw, trying to grok this code is making my head spin.
+> 
+>> +		if (record_len > data_len)
+>> +			return -EINVAL;
+> 
+> <---- newline here.
+> 
+> Btw, those checks in the loop you can abstract away into a separate
+> function so that you end up with something more readable like:
+> 
+>          apei_estatus_for_each_section(estatus, gdata) {
+>                  record_size = check_hest_record_size(gdata, data_len);
+>                  if (!record_size)
+>                          return -EINVAL;
+> 
+>                  data_len -= record_size;
+>          }
+> 
+> for example.
+> 
 
-There is no clipping on the x or y axis for logos larger that the framebuffer
-size. Therefore: a logo bigger than screen size leads to invalid memory access:
+There are only two if statements in the loop body -- I don't think it is 
+necessary to abstract this into a separate function (which still 
+requires having one if statement in the loop body).
 
-[    1.254664] Backtrace:
-[    1.254728] [<c02714e0>] (cfb_imageblit) from [<c026184c>] (fb_show_logo+0x620/0x684)
-[    1.254763]  r10:00000003 r9:00027fd8 r8:c6a40000 r7:c6a36e50 r6:00000000 r5:c06b81e4
-[    1.254774]  r4:c6a3e800
-[    1.254810] [<c026122c>] (fb_show_logo) from [<c026c1e4>] (fbcon_switch+0x3fc/0x46c)
-[    1.254842]  r10:c6a3e824 r9:c6a3e800 r8:00000000 r7:c6a0c000 r6:c070b014 r5:c6a3e800
-[    1.254852]  r4:c6808c00
-[    1.254889] [<c026bde8>] (fbcon_switch) from [<c029c8f8>] (redraw_screen+0xf0/0x1e8)
-[    1.254918]  r10:00000000 r9:00000000 r8:00000000 r7:00000000 r6:c070d5a0 r5:00000080
-[    1.254928]  r4:c6808c00
-[    1.254961] [<c029c808>] (redraw_screen) from [<c029d264>] (do_bind_con_driver+0x194/0x2e4)
-[    1.254991]  r9:00000000 r8:00000000 r7:00000014 r6:c070d5a0 r5:c070d5a0 r4:c070d5a0
+I've made the other changes you suggested and sent a V2.
 
-So prevent displaying a logo bigger than screen size and avoid invalid
-memory access.
-
-Signed-off-by: Manfred Schlaegl <manfred.schlaegl@ginzinger.com>
-Signed-off-by: Martin Kepplinger <martin.kepplinger@ginzinger.com>
----
- drivers/video/fbdev/core/fbmem.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/video/fbdev/core/fbmem.c b/drivers/video/fbdev/core/fbmem.c
-index cb43a2258c51..4721491e6c8c 100644
---- a/drivers/video/fbdev/core/fbmem.c
-+++ b/drivers/video/fbdev/core/fbmem.c
-@@ -431,6 +431,9 @@ static void fb_do_show_logo(struct fb_info *info, struct fb_image *image,
- {
- 	unsigned int x;
- 
-+	if (image->width > info->var.xres || image->height > info->var.yres)
-+		return;
-+
- 	if (rotate == FB_ROTATE_UR) {
- 		for (x = 0;
- 		     x < num && image->dx + image->width <= info->var.xres;
+Thanks,
 -- 
-2.20.1
-
+Ross Lagerwall
