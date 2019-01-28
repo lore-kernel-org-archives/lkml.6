@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30D52C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3230FC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EDC732184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3A1921848
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:57:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691070;
-	bh=J7awTv4PeS1XC2RfXErFy6KB3u756blQbjFvWInqLNk=;
+	s=default; t=1548691075;
+	bh=x0Voxxt2c4FEzIU0HzbiZbOM/xj6TU5jF5ovg+pUO0g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=xlwPG5cwgfpYzoxYy28jRcWxNMWz2wWNRQSFe3f1s6JsQseaYpybUv5lwQ14mI3p/
-	 sgc+4iSFMyt5FxaxIcICLckj6avvsCEL49Z8lKCeX/J2+3IfFuLi19NmBwNwRBbDvH
-	 viAWMs7E5oaUEp2JxIkTiAKTr95xoTfru9k6lFvA=
+	b=eLD9i7kpjYRHhuZC6sHxvteUi6en01VbfhZlCFHpv7XcMIMRaJBUv58+kC815HGHT
+	 IsoIi82zSW/ZCP8BK0YelehVYa/MxgYTRJ2uFOvNg0oDs+V+r8p92qiVY/RDggfes1
+	 dL7z2v73MqCc6SvsCN8ILObeOh+oC9PnegKTWY0s=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730285AbfA1P5s (ORCPT
+        id S1730310AbfA1P5x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:57:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43162 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:57:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43282 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729597AbfA1P5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:57:44 -0500
+        id S1729597AbfA1P5v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:57:51 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C85F52175B;
-        Mon, 28 Jan 2019 15:57:40 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 697E42183F;
+        Mon, 28 Jan 2019 15:57:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691064;
-        bh=J7awTv4PeS1XC2RfXErFy6KB3u756blQbjFvWInqLNk=;
+        s=default; t=1548691070;
+        bh=x0Voxxt2c4FEzIU0HzbiZbOM/xj6TU5jF5ovg+pUO0g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ztXhvHa+ODh8f2Xjq2NBgQi+xJ7GEIkujQzdFT/NhR95EGMaOcT2+zJR6t5fG9r1w
-         4Y/G0MQ9vPH4ds+rx4PkJSHDx80f6tltTFAV8IUl7feHDz8l8TeLLEsOX7zTIZwnL4
-         i+kBWbVMz8aLIAKwDlCr7iFHP5CFoRXxpawdEe/s=
+        b=bLCfLNYfVx30cAApNOhApHWXHj9HxgbvJ3TdhHSrqlDD0mf5tMNn5QD2hx4yfIVXR
+         IVcyBqo6kQ6HAAZVTu2QogdYJ/53kxUgNzbJk3xgg0H26NavxncJgTqt8mbjxcE2nP
+         QsbHJZ5S/ZdL8nbLODoxFSAhiWI6BwXUCr6+AJyA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Randy Dunlap <rdunlap@infradead.org>,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Magnus Damm <magnus.damm@gmail.com>,
+Cc:     Junxiao Bi <junxiao.bi@oracle.com>,
+        Joel Becker <jlbec@evilplan.org>,
+        Joseph Qi <jiangqi903@gmail.com>,
+        Jun Piao <piaojun@huawei.com>,
+        Mark Fasheh <mfasheh@versity.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-sh@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 277/304] arch/sh/boards/mach-kfr2r09/setup.c: fix struct mtd_oob_ops build warning
-Date:   Mon, 28 Jan 2019 10:43:14 -0500
-Message-Id: <20190128154341.47195-277-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 279/304] ocfs2: don't clear bh uptodate for block read
+Date:   Mon, 28 Jan 2019 10:43:16 -0500
+Message-Id: <20190128154341.47195-279-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -63,48 +63,68 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Randy Dunlap <rdunlap@infradead.org>
+From: Junxiao Bi <junxiao.bi@oracle.com>
 
-[ Upstream commit 440e7b379f91acd245d5c8de94d533f40f5dffb3 ]
+[ Upstream commit 70306d9dce75abde855cefaf32b3f71eed8602a3 ]
 
-arch/sh/boards/mach-kfr2r09/setup.c does not need to #include
-<mtd/onenand.h>, and doing so causes a build warning, so drop that header
-file.
+For sync io read in ocfs2_read_blocks_sync(), first clear bh uptodate flag
+and submit the io, second wait io done, last check whether bh uptodate, if
+not return io error.
 
-In file included from ../arch/sh/boards/mach-kfr2r09/setup.c:28:
-../include/linux/mtd/onenand.h:225:12: warning: 'struct mtd_oob_ops' declared inside parameter list will not be visible outside of this definition or declaration
-     struct mtd_oob_ops *ops);
+If two sync io for the same bh were issued, it could be the first io done
+and set uptodate flag, but just before check that flag, the second io came
+in and cleared uptodate, then ocfs2_read_blocks_sync() for the first io
+will return IO error.
 
-Link: http://lkml.kernel.org/r/702f0a25-c63e-6912-4640-6ab0f00afbc7@infradead.org
-Fixes: f3590dc32974 ("media: arch: sh: kfr2r09: Use new renesas-ceu camera driver")
+Indeed it's not necessary to clear uptodate flag, as the io end handler
+end_buffer_read_sync() will set or clear it based on io succeed or failed.
 
-Signed-off-by: Randy Dunlap <rdunlap@infradead.org>
-Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-Suggested-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: Rich Felker <dalias@libc.org>
-Cc: Jacopo Mondi <jacopo+renesas@jmondi.org>
-Cc: Magnus Damm <magnus.damm@gmail.com>
+The following message was found from a nfs server but the underlying
+storage returned no error.
+
+[4106438.567376] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2780 ERROR: read block 1238823695 failed -5
+[4106438.567569] (nfsd,7146,3):ocfs2_get_suballoc_slot_bit:2812 ERROR: status = -5
+[4106438.567611] (nfsd,7146,3):ocfs2_test_inode_bit:2894 ERROR: get alloc slot and bit failed -5
+[4106438.567643] (nfsd,7146,3):ocfs2_test_inode_bit:2932 ERROR: status = -5
+[4106438.567675] (nfsd,7146,3):ocfs2_get_dentry:94 ERROR: test inode bit failed -5
+
+Same issue in non sync read ocfs2_read_blocks(), fixed it as well.
+
+Link: http://lkml.kernel.org/r/20181121020023.3034-4-junxiao.bi@oracle.com
+Signed-off-by: Junxiao Bi <junxiao.bi@oracle.com>
+Reviewed-by: Changwei Ge <ge.changwei@h3c.com>
+Reviewed-by: Yiwen Jiang <jiangyiwen@huawei.com>
+Cc: Joel Becker <jlbec@evilplan.org>
+Cc: Joseph Qi <jiangqi903@gmail.com>
+Cc: Jun Piao <piaojun@huawei.com>
+Cc: Mark Fasheh <mfasheh@versity.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/sh/boards/mach-kfr2r09/setup.c | 1 -
- 1 file changed, 1 deletion(-)
+ fs/ocfs2/buffer_head_io.c | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/arch/sh/boards/mach-kfr2r09/setup.c b/arch/sh/boards/mach-kfr2r09/setup.c
-index e59c577ed871..c70bc7809dda 100644
---- a/arch/sh/boards/mach-kfr2r09/setup.c
-+++ b/arch/sh/boards/mach-kfr2r09/setup.c
-@@ -25,7 +25,6 @@
- #include <linux/memblock.h>
- #include <linux/mfd/tmio.h>
- #include <linux/mmc/host.h>
--#include <linux/mtd/onenand.h>
- #include <linux/mtd/physmap.h>
- #include <linux/platform_data/lv5207lp.h>
- #include <linux/platform_device.h>
+diff --git a/fs/ocfs2/buffer_head_io.c b/fs/ocfs2/buffer_head_io.c
+index 4ebbd57cbf84..f9b84f7a3e4b 100644
+--- a/fs/ocfs2/buffer_head_io.c
++++ b/fs/ocfs2/buffer_head_io.c
+@@ -161,7 +161,6 @@ int ocfs2_read_blocks_sync(struct ocfs2_super *osb, u64 block,
+ #endif
+ 		}
+ 
+-		clear_buffer_uptodate(bh);
+ 		get_bh(bh); /* for end_buffer_read_sync() */
+ 		bh->b_end_io = end_buffer_read_sync;
+ 		submit_bh(REQ_OP_READ, 0, bh);
+@@ -341,7 +340,6 @@ int ocfs2_read_blocks(struct ocfs2_caching_info *ci, u64 block, int nr,
+ 				continue;
+ 			}
+ 
+-			clear_buffer_uptodate(bh);
+ 			get_bh(bh); /* for end_buffer_read_sync() */
+ 			if (validate)
+ 				set_buffer_needs_validate(bh);
 -- 
 2.19.1
 
