@@ -2,94 +2,131 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56337C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:06:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AE686C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:06:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18E3A21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:06:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=zoho.com header.i=zhouyanjie@zoho.com header.b="JyxWGiII"
+	by mail.kernel.org (Postfix) with ESMTP id 7BE6A21852
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:06:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548695179;
+	bh=2dBUbzRCNu7ziaW6+x0V5IHP8hiFeX1h45E3Zpk5uUQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=Ri00Mq54WGESIZZ2VLBQZ80E1qCfpQPOkxf7fQwdvhsliUTlrGdsjIer74ZiP69RX
+	 B7cOcbnhNcvoh4Yc3Ab3J+q9G+UpYudmOfOtjKbigihKlyj0PwE/G8Rxa944+jv8t+
+	 X3k2YrzmJv38lsq11SQGAl5w4420DbqV2+CO0AGo=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387561AbfA1RGH (ORCPT
+        id S1733308AbfA1QNT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:06:07 -0500
-Received: from sender-pp-092.zoho.com ([135.84.80.237]:25454 "EHLO
-        sender-pp-092.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730676AbfA1RGD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:06:03 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1548695124; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=alEQ4zJfeCZ4UQqw9v1lK4JV0M3TTw2Oinbo8pa6lSerJxzJ8AFRUU6dPM5nk2Xja8dNZJ1qcaV9Zn9wyYxMO1XAqURkCQFMwLawnPrdDEnQ6Ntd+kak1fD+2OPfR+ex/jpZJBMb0KIagHsHozNihRidCk92gz0gV2s2mQ01yxk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1548695124; h=Cc:Date:From:In-Reply-To:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=oZgIgn9QDXAw5zWal5B3+Omj25n3YyuTlmq33EDirhU=; 
-        b=I6n81v1TpvSRt0EUPusMlvd/QrhaGahaJyEYN9nau+E0aWFmh5DHocejpArw85/SpFCj+a8fqdFBJCA+6NArpzoHU+RMt+5tfBpnCkfeLiM3q9J76VdeOOQSclttaay3ZIXplDFq73R338yHZA4OlLz5qJYlPdWXY8Vu8NY2oxM=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=zoho.com;
-        spf=pass  smtp.mailfrom=zhouyanjie@zoho.com;
-        dmarc=pass header.from=<zhouyanjie@zoho.com> header.from=<zhouyanjie@zoho.com>
-DomainKey-Signature: a=rsa-sha1; q=dns; c=nofws; 
-  s=zapps768; d=zoho.com; 
-  h=from:to:cc:subject:date:message-id:in-reply-to:references; 
-  b=m25kjzoxgfOpxboCYf0lxp300Htui+2QOSqzYtBh0mD/JRhh/7HDPAYDicT5WvX4FsoRIS49Sdr8
-    2tJLSWAidiLDawUM+1lar++RyFLAb4SzsCMcZ9mbPeXnTtNnBCbZ  
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1548695124;
-        s=default; d=zoho.com; i=zhouyanjie@zoho.com;
-        h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; l=902;
-        bh=oZgIgn9QDXAw5zWal5B3+Omj25n3YyuTlmq33EDirhU=;
-        b=JyxWGiIIslx3y9Dw307AwaZDr+IjvcfkXgM63z7Kbsx66nSnbEIfryco2hLfZ7t0
-        wsRYUuugJ4QPNhuKNY6w7LwlU009TOAvjaO4yAeh4+wsbBO7qPFFi11V2muaOxOHiwv
-        w/Qp2G6jCuVjnK4CTfFFTU1XF72YTe8omDvUSwms=
-Received: from localhost.localdomain (171.221.112.7 [171.221.112.7]) by mx.zohomail.com
-        with SMTPS id 1548695122662237.8915911120481; Mon, 28 Jan 2019 09:05:22 -0800 (PST)
-From:   Zhou Yanjie <zhouyanjie@zoho.com>
-To:     linux-mips@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, robh+dt@kernel.org,
-        paul.burton@mips.com, gregkh@linuxfoundation.org, jslaby@suse.com,
-        mark.rutland@arm.com, syq@debian.org, jiaxun.yang@flygoat.com,
-        772753199@qq.com
-Subject: [PATCH v3 2/2] Dt-bindings: Serial: Add X1000 serial bindings.
-Date:   Tue, 29 Jan 2019 01:03:49 +0800
-Message-Id: <1548695029-11900-3-git-send-email-zhouyanjie@zoho.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1548695029-11900-1-git-send-email-zhouyanjie@zoho.com>
-References: <1548667176-119830-1-git-send-email-zhouyanjie@zoho.com>
- <1548695029-11900-1-git-send-email-zhouyanjie@zoho.com>
-X-ZohoMailClient: External
+        Mon, 28 Jan 2019 11:13:19 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41864 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732720AbfA1QNN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:13:13 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CA8092175B;
+        Mon, 28 Jan 2019 16:13:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691992;
+        bh=2dBUbzRCNu7ziaW6+x0V5IHP8hiFeX1h45E3Zpk5uUQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=S1A5lcfwtm4av6HTDd3l0DT9sHCH4da1et0YITyb6w3tRegbH5b8KG7jkquK+GLYl
+         7BdR2Bb24Fu2PdupeHGT8P7QyzRP+lYU4XGnt0QxIYRjG0GZ8fJTEVYel3ClpXrBus
+         SuOEYfKdftEJYZSfcwJG7KC0Sm+iD80C+Z1lUfVg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Nathan Chancellor <natechancellor@gmail.com>,
+        Tony Lindgren <tony@atomide.com>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 031/170] ARM: OMAP2+: hwmod: Fix some section annotations
+Date:   Mon, 28 Jan 2019 11:09:41 -0500
+Message-Id: <20190128161200.55107-31-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
+References: <20190128161200.55107-1-sashal@kernel.org>
+MIME-Version: 1.0
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the serial bindings for the X1000 Soc from Ingenic.
+From: Nathan Chancellor <natechancellor@gmail.com>
 
-Signed-off-by: Zhou Yanjie <zhouyanjie@zoho.com>
+[ Upstream commit c10b26abeb53cabc1e6271a167d3f3d396ce0218 ]
+
+When building the kernel with Clang, the following section mismatch
+warnings appears:
+
+WARNING: vmlinux.o(.text+0x2d398): Section mismatch in reference from
+the function _setup() to the function .init.text:_setup_iclk_autoidle()
+The function _setup() references
+the function __init _setup_iclk_autoidle().
+This is often because _setup lacks a __init
+annotation or the annotation of _setup_iclk_autoidle is wrong.
+
+WARNING: vmlinux.o(.text+0x2d3a0): Section mismatch in reference from
+the function _setup() to the function .init.text:_setup_reset()
+The function _setup() references
+the function __init _setup_reset().
+This is often because _setup lacks a __init
+annotation or the annotation of _setup_reset is wrong.
+
+WARNING: vmlinux.o(.text+0x2d408): Section mismatch in reference from
+the function _setup() to the function .init.text:_setup_postsetup()
+The function _setup() references
+the function __init _setup_postsetup().
+This is often because _setup lacks a __init
+annotation or the annotation of _setup_postsetup is wrong.
+
+_setup is used in omap_hwmod_allocate_module, which isn't marked __init
+and looks like it shouldn't be, meaning to fix these warnings, those
+functions must be moved out of the init section, which this patch does.
+
+Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
+Signed-off-by: Tony Lindgren <tony@atomide.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- Documentation/devicetree/bindings/serial/ingenic,uart.txt | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ arch/arm/mach-omap2/omap_hwmod.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/serial/ingenic,uart.txt b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
-index c3c6406..24ed876 100644
---- a/Documentation/devicetree/bindings/serial/ingenic,uart.txt
-+++ b/Documentation/devicetree/bindings/serial/ingenic,uart.txt
-@@ -6,7 +6,8 @@ Required properties:
-   - "ingenic,jz4760-uart",
-   - "ingenic,jz4770-uart",
-   - "ingenic,jz4775-uart",
--  - "ingenic,jz4780-uart".
-+  - "ingenic,jz4780-uart",
-+  - "ingenic,x1000-uart".
- - reg : offset and length of the register set for the device.
- - interrupts : should contain uart interrupt.
- - clocks : phandles to the module & baud clocks.
+diff --git a/arch/arm/mach-omap2/omap_hwmod.c b/arch/arm/mach-omap2/omap_hwmod.c
+index 2dbd63239c54..45c8f2ef4e23 100644
+--- a/arch/arm/mach-omap2/omap_hwmod.c
++++ b/arch/arm/mach-omap2/omap_hwmod.c
+@@ -2497,7 +2497,7 @@ static int __init _init(struct omap_hwmod *oh, void *data)
+  * a stub; implementing this properly requires iclk autoidle usecounting in
+  * the clock code.   No return value.
+  */
+-static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
++static void _setup_iclk_autoidle(struct omap_hwmod *oh)
+ {
+ 	struct omap_hwmod_ocp_if *os;
+ 
+@@ -2528,7 +2528,7 @@ static void __init _setup_iclk_autoidle(struct omap_hwmod *oh)
+  * reset.  Returns 0 upon success or a negative error code upon
+  * failure.
+  */
+-static int __init _setup_reset(struct omap_hwmod *oh)
++static int _setup_reset(struct omap_hwmod *oh)
+ {
+ 	int r;
+ 
+@@ -2589,7 +2589,7 @@ static int __init _setup_reset(struct omap_hwmod *oh)
+  *
+  * No return value.
+  */
+-static void __init _setup_postsetup(struct omap_hwmod *oh)
++static void _setup_postsetup(struct omap_hwmod *oh)
+ {
+ 	u8 postsetup_state;
+ 
 -- 
-2.7.4
-
+2.19.1
 
