@@ -2,158 +2,100 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F94EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A721DC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 518F92184D
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692675;
-	bh=LZYyRLUD02dVomKKyaMn7gl0vWPbqDX0T1GV/8Q6y/g=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=soqzoWqH1ntpAbGeNN+qIOKmd8hSG+DsDJKIZFszmpbCJ1xjQ3v/K+QP6KhYGlyM8
-	 L7HIXAFNM01bVCZOYzPqUqaZX592oNNBKyElpZ96jc5w2V5qWRCgfPbK8uat+0XsW7
-	 kicXLHWJPj/AAafCgBxsFwCiUYkowdbOXEDEk4p0=
+	by mail.kernel.org (Postfix) with ESMTP id 6DC102147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:24:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="RtS6o82r"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389737AbfA1QYd (ORCPT
+        id S2389764AbfA1QYi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Mon, 28 Jan 2019 11:24:38 -0500
+Received: from lelv0142.ext.ti.com ([198.47.23.249]:41594 "EHLO
+        lelv0142.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389734AbfA1QYd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 11:24:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32930 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389235AbfA1QY1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:24:27 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2E7752171F;
-        Mon, 28 Jan 2019 16:24:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692666;
-        bh=LZYyRLUD02dVomKKyaMn7gl0vWPbqDX0T1GV/8Q6y/g=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SYeBSPr8bQCR50Q52rZJYpsMCSEJbpv/9t/X3pK4tdDE/atVMdonZGVsp52gvnUTh
-         06OViL+Vca6QJR3O5QOONc+la1UXpHmnYiSdA8Cj8E0yAfMgoowpm+nec9gBqZeXgO
-         mXHkME+kuxAISRmBPFx0pvcD7QxuUF90RULVQiYM=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sami Tolvanen <samitolvanen@google.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Sasha Levin <sashal@kernel.org>, linux-kbuild@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 17/80] modpost: validate symbol names also in find_elf_symbol
-Date:   Mon, 28 Jan 2019 11:22:58 -0500
-Message-Id: <20190128162401.58841-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
-References: <20190128162401.58841-1-sashal@kernel.org>
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id x0SGOVHU122265;
+        Mon, 28 Jan 2019 10:24:31 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+        s=ti-com-17Q1; t=1548692671;
+        bh=gQ2Cf4p3QPl3Nk5uJlrhoDkNy2iDoAO5We2h3hb7n88=;
+        h=Date:From:To:CC:Subject:References:In-Reply-To;
+        b=RtS6o82rjALJNf8lTTXTFWQ1acDBLrWhc0t5v2U1sGsCRoI2BzjT/0gHSu+e2NOuP
+         XCozlrsU89KVLrNWe+pc7hWmLYgVmF5eyQ43eZ8xr10pnaq+cv8hnp9jKQXe9ZMEOi
+         KBqK45vJcGEeCxx5tT5MDn9jAI+9W+ydWFA4OHhU=
+Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id x0SGOGTu108104
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Mon, 28 Jan 2019 10:24:31 -0600
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE109.ent.ti.com
+ (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Mon, 28
+ Jan 2019 09:42:42 -0600
+Received: from dflp33.itg.ti.com (10.64.6.16) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
+ Mon, 28 Jan 2019 09:42:42 -0600
+Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dflp33.itg.ti.com (8.14.3/8.13.8) with ESMTP id x0SFggXO009672;
+        Mon, 28 Jan 2019 09:42:42 -0600
+Date:   Mon, 28 Jan 2019 10:42:42 -0500
+From:   Denys Dmytriyenko <denys@ti.com>
+To:     shuah <shuah@kernel.org>
+CC:     Daniel =?iso-8859-1?Q?D=EDaz?= <daniel.diaz@linaro.org>,
+        Fathi Boudra <fathi.boudra@linaro.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] selftests: lib: allow to override CC in the
+ top-level Makefile
+Message-ID: <20190128154242.GB15002@beryl>
+References: <20190116174320.14938-1-daniel.diaz@linaro.org>
+ <7d75f420-d624-d53d-4fa1-3827c90fa608@kernel.org>
+ <CAEUSe7_eYmMSovO4JAabh+83CtY2L8eeMoCVKKS5P-fs7zVhjg@mail.gmail.com>
+ <a68c3fdd-081a-74ea-8d98-30eaf3d70446@kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <a68c3fdd-081a-74ea-8d98-30eaf3d70446@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sami Tolvanen <samitolvanen@google.com>
+On Mon, Jan 28, 2019 at 08:01:15AM -0700, shuah wrote:
+> Hi Daniel,
+> 
+> On 1/18/19 10:54 AM, Daniel Díaz wrote:
+> >Hello!
+> >
+> >On Wed, 16 Jan 2019 at 15:56, shuah <shuah@kernel.org> wrote:
+> >>
+> >>On 1/16/19 10:43 AM, Daniel Díaz wrote:
+> >>>From: Fathi Boudra <fathi.boudra@linaro.org>
+> >>>
+> >>>Relax CC assignment to allow to override CC in the top-level Makefile.
+> >>>
+> >>>Signed-off-by: Denys Dmytriyenko <denys@ti.com>
 
-[ Upstream commit 5818c683a619c534c113e1f66d24f636defc29bc ]
+^^^ I am the original author of the patch and this is my signed-off line.
 
-If an ARM mapping symbol shares an address with a valid symbol,
-find_elf_symbol can currently return the mapping symbol instead, as the
-symbol is not validated. This can result in confusing warnings:
 
-  WARNING: vmlinux.o(.text+0x18f4028): Section mismatch in reference
-  from the function set_reset_devices() to the variable .init.text:$x.0
+> Author signed-off missing on this patch. I am dropping this patch
+> from rc5 for now. Please fix it resend the patch. In the future,
+> I would like to see that author sends the patch.
 
-This change adds a call to is_valid_name to find_elf_symbol, similarly
-to how it's already used in find_elf_symbol2.
-
-Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- scripts/mod/modpost.c | 50 ++++++++++++++++++++++---------------------
- 1 file changed, 26 insertions(+), 24 deletions(-)
-
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 064fbfbbb22c..81b1c02a76fa 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1197,6 +1197,30 @@ static int secref_whitelist(const struct sectioncheck *mismatch,
- 	return 1;
- }
- 
-+static inline int is_arm_mapping_symbol(const char *str)
-+{
-+	return str[0] == '$' && strchr("axtd", str[1])
-+	       && (str[2] == '\0' || str[2] == '.');
-+}
-+
-+/*
-+ * If there's no name there, ignore it; likewise, ignore it if it's
-+ * one of the magic symbols emitted used by current ARM tools.
-+ *
-+ * Otherwise if find_symbols_between() returns those symbols, they'll
-+ * fail the whitelist tests and cause lots of false alarms ... fixable
-+ * only by merging __exit and __init sections into __text, bloating
-+ * the kernel (which is especially evil on embedded platforms).
-+ */
-+static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
-+{
-+	const char *name = elf->strtab + sym->st_name;
-+
-+	if (!name || !strlen(name))
-+		return 0;
-+	return !is_arm_mapping_symbol(name);
-+}
-+
- /**
-  * Find symbol based on relocation record info.
-  * In some cases the symbol supplied is a valid symbol so
-@@ -1222,6 +1246,8 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
- 			continue;
- 		if (ELF_ST_TYPE(sym->st_info) == STT_SECTION)
- 			continue;
-+		if (!is_valid_name(elf, sym))
-+			continue;
- 		if (sym->st_value == addr)
- 			return sym;
- 		/* Find a symbol nearby - addr are maybe negative */
-@@ -1240,30 +1266,6 @@ static Elf_Sym *find_elf_symbol(struct elf_info *elf, Elf64_Sword addr,
- 		return NULL;
- }
- 
--static inline int is_arm_mapping_symbol(const char *str)
--{
--	return str[0] == '$' && strchr("axtd", str[1])
--	       && (str[2] == '\0' || str[2] == '.');
--}
--
--/*
-- * If there's no name there, ignore it; likewise, ignore it if it's
-- * one of the magic symbols emitted used by current ARM tools.
-- *
-- * Otherwise if find_symbols_between() returns those symbols, they'll
-- * fail the whitelist tests and cause lots of false alarms ... fixable
-- * only by merging __exit and __init sections into __text, bloating
-- * the kernel (which is especially evil on embedded platforms).
-- */
--static inline int is_valid_name(struct elf_info *elf, Elf_Sym *sym)
--{
--	const char *name = elf->strtab + sym->st_name;
--
--	if (!name || !strlen(name))
--		return 0;
--	return !is_arm_mapping_symbol(name);
--}
--
- /*
-  * Find symbols before or equal addr and after addr - in the section sec.
-  * If we find two symbols with equal offset prefer one with a valid name.
 -- 
-2.19.1
-
+Denys
