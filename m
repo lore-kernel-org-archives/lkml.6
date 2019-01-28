@@ -2,90 +2,88 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 926BBC4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:44:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C702C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:45:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E1DF2086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:44:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5BE8321773
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:45:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QST1QHTo"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726802AbfA1LoY (ORCPT
+        id S1726861AbfA1LpQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:44:24 -0500
-Received: from m97179.mail.qiye.163.com ([220.181.97.179]:32235 "EHLO
-        m97179.mail.qiye.163.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbfA1LoY (ORCPT
+        Mon, 28 Jan 2019 06:45:16 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43774 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726611AbfA1LpP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:44:24 -0500
-Received: from kernel_test2.localdomain (unknown [120.132.1.243])
-        by m97179.mail.qiye.163.com (Hmail) with ESMTPA id 63EAAE01276;
-        Mon, 28 Jan 2019 19:44:20 +0800 (CST)
-From:   Yao Liu <yotta.liu@ucloud.cn>
-To:     trond.myklebust@hammerspace.com, anna.schumaker@netapp.com
-Cc:     linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yao Liu <yotta.liu@ucloud.cn>
-Subject: [PATCH] nfs: Fix NULL pointer dereference of dev_name
-Date:   Mon, 28 Jan 2019 19:44:14 +0800
-Message-Id: <1548675854-19556-1-git-send-email-yotta.liu@ucloud.cn>
-X-Mailer: git-send-email 1.8.3.1
-X-HM-Spam-Status: e1kIGBQJHllBS1VLV1koWUFJQjdXWS1ZQUlXWQkOFx4IWUFZMjUtOjcyP0
-        FLVUtZBg++
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OD46AQw*DzlCNxdJEikDTDlW
-        CQ0wFEJVSlVKTk9DTUxOQ01LTUhLVTMWGhIXVQIUDw8aVRcSDjsOGBcUDh9VGBVFWVdZEgtZQVlK
-        SUtVSkhJVUpVSU9IWVdZCAFZQUlLSUk3Bg++
-X-HM-Tid: 0a689446484720bdkuqy63eaae01276
+        Mon, 28 Jan 2019 06:45:15 -0500
+Received: by mail-wr1-f67.google.com with SMTP id r10so17642754wrs.10
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 03:45:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=XXP3hIFo09qbYxDEZ84UjroMfNXRwbZdmDEOnudwpmA=;
+        b=QST1QHTo+SnjfGWbtje9MmvxvXe4/o/N50DokM5mJxKpXFb63tUU1x/mmlOjswaquL
+         x/B9ltLTidkjQvB8ltU33qlfqwIxGvVVLsfIHFn55bKZF287AeDlb6uuaC5f7M+g6XBd
+         0wU+H6OCt7OAaazBWp9kitFWKCJEp6s4QFmzA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=XXP3hIFo09qbYxDEZ84UjroMfNXRwbZdmDEOnudwpmA=;
+        b=SABz6wIx8h5vSLG8+BWZo82wLXeKS3837dTAXGxX2nodAnCkWQwS0eabwMXDJgDLNq
+         USSCvYAeJmRBG+h/1GSitay8jM63C6eibhP9LT0U5B2h2rjq85GG6qdH4Z9RhqYYZVk5
+         0HB3+ghNCjMCnGmQk8oUSWQ3ajCrA5ywkM6lkFz/K+1uWZvzysJWy8N9uIPXH8o1m6cg
+         KtI/57U8+f6MkBa0+HsQ0xqyar6ybWc0WNKL+vhhHZBX75uQjmrcve26UXO9m5SSpVlO
+         AC8/e0B4MINrDKnHv/P7N/hUw2PwxBfaqw/Sb2H6fdaZ9+w/J9d5qemZUHNWYK/Byufj
+         vZ2g==
+X-Gm-Message-State: AJcUukfLWWumAMn7ll6VItDmLQIZpDmFcb6iDCjAqGVA9JeiQxOmN/EE
+        g35KoTewrwj6OQ6qsJT4MyJvWQ==
+X-Google-Smtp-Source: ALg8bN4EHw6SpI3q7wRaHuK0UXmG8c7NqpCc59mw5ZFdAx5u6QilmJUB2vTbnMbhKqBMYELKaKRDdA==
+X-Received: by 2002:a5d:6b09:: with SMTP id v9mr22526419wrw.304.1548675913628;
+        Mon, 28 Jan 2019 03:45:13 -0800 (PST)
+Received: from localhost.localdomain (233.red-81-47-145.staticip.rima-tde.net. [81.47.145.233])
+        by smtp.gmail.com with ESMTPSA id z9sm122968775wrs.63.2019.01.28.03.45.12
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 28 Jan 2019 03:45:13 -0800 (PST)
+From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
+To:     jorge.ramirez-ortiz@linaro.org, lgirdwood@gmail.com,
+        broonie@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        bjorn.andersson@linaro.org, vinod.koul@linaro.org,
+        niklas.cassel@linaro.org, khasim.mohammed@linaro.org,
+        linux-arm-kernel@lists.infradead.org, linux-arm-msm@vger.kernel.org
+Subject: [PATCH 0/3] qcom: add PMS405 SPMI regulator
+Date:   Mon, 28 Jan 2019 12:45:01 +0100
+Message-Id: <1548675904-18324-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There is a NULL pointer dereference of dev_name in nfs_parse_devname()
+The following patchset applies cleanly on linux 5.0-rc2.
 
-The oops looks something like:
+It adds support for the pms405 spmi regulators and configures s3 as a
+supply.
 
-  BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-  ...
-  RIP: 0010:nfs_fs_mount+0x3b6/0xc20 [nfs]
-  ...
-  Call Trace:
-   ? ida_alloc_range+0x34b/0x3d0
-   ? nfs_clone_super+0x80/0x80 [nfs]
-   ? nfs_free_parsed_mount_data+0x60/0x60 [nfs]
-   mount_fs+0x52/0x170
-   ? __init_waitqueue_head+0x3b/0x50
-   vfs_kern_mount+0x6b/0x170
-   do_mount+0x216/0xdc0
-   ksys_mount+0x83/0xd0
-   __x64_sys_mount+0x25/0x30
-   do_syscall_64+0x65/0x220
-   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+The dts modifications required to enable voltage scaling will be
+posted after the currently pending cpufreq patches are merged.
 
-Fix this by adding a NULL check on dev_name
+Jorge Ramirez-Ortiz (3):
+  dt-bindings: qcom_spmi: Document pms405 support
+  drivers: regulator: qcom: add PMS405 SPMI regulator
+  arm64: dts: qcom: pms405: add spmi regulators
 
-Signed-off-by: Yao Liu <yotta.liu@ucloud.cn>
----
- fs/nfs/super.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ .../bindings/regulator/qcom,spmi-regulator.txt     |  24 +++
+ arch/arm64/boot/dts/qcom/pms405.dtsi               |  20 +++
+ drivers/regulator/qcom_spmi-regulator.c            | 197 +++++++++++++++++++--
+ 3 files changed, 224 insertions(+), 17 deletions(-)
 
-diff --git a/fs/nfs/super.c b/fs/nfs/super.c
-index 22ce3c8..0570391 100644
---- a/fs/nfs/super.c
-+++ b/fs/nfs/super.c
-@@ -1895,6 +1895,11 @@ static int nfs_parse_devname(const char *dev_name,
- 	size_t len;
- 	char *end;
- 
-+	if (unlikely(!dev_name || !*dev_name)) {
-+		dfprintk(MOUNT, "NFS: device name not specified\n");
-+		return -EINVAL;
-+	}
-+
- 	/* Is the host name protected with square brakcets? */
- 	if (*dev_name == '[') {
- 		end = strchr(++dev_name, ']');
 -- 
-1.8.3.1
+2.7.4
 
