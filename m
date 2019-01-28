@@ -7,45 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 886F5C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6690C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A4F32147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:51:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB4792147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:52:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690719;
-	bh=e9/c6A7PIyvAymmZxpbMq3tCY1Ai/E2lqcATqD7TE6k=;
+	s=default; t=1548690721;
+	bh=kp46RGjIv2Zg0nbml9IvWJ8ey7CexgAkB8yxNjuzTlQ=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0UtU9rb2mRhsV5jBJJCdBDDVq9DTOa2OwBZm8alAzbBknqr1xQhDrJMO0RvoTm/iQ
-	 LMS5KzWovTSQyZrZ2rq76yXgsPWxgTrVoXqyyZK6/zMbGS3of6V1/LBYnVp69ziMi1
-	 dDGFKdb7Uo9z4AywveIZONXVudqkGTEZ21Iq/uVE=
+	b=1+ASOUYYVQlP4TpWkLDYwn1NwltdlnhPd/V9qyAZ87KPs0Bw0XUGmBtQyYVg98ZS5
+	 L1V3xc5qTxLr44LScfNNOwIW1qK6m8150owODh32Yj2aQb86dcUn+8WosodRxt7cPA
+	 S4wYv8t6V1ie1pZ4jjSjrUR00/aeTVG49qe0tNFA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728798AbfA1Pv5 (ORCPT
+        id S1728672AbfA1PwA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:51:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38476 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:52:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38528 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729203AbfA1Pvx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:51:53 -0500
+        id S1728776AbfA1Pv4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:51:56 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CE72821741;
-        Mon, 28 Jan 2019 15:51:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A6282147A;
+        Mon, 28 Jan 2019 15:51:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690712;
-        bh=e9/c6A7PIyvAymmZxpbMq3tCY1Ai/E2lqcATqD7TE6k=;
+        s=default; t=1548690716;
+        bh=kp46RGjIv2Zg0nbml9IvWJ8ey7CexgAkB8yxNjuzTlQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2IQ0FSR+suErfynj9wi9g441DaRRF7QegjSo1nw2UVnomuSoYkyalVaHeJAloOM1S
-         ObW2TgN/PdwDX5vkZtyrTGsF8omRnyaChSS6OV7HOmNAGYV1xkIBjJOh0FvxCIhVAe
-         3VLizuhGFahqejGTcT8FRKoNcv3PUB6ulX7beJFg=
+        b=p4glj1e5ZbvFH3DR+LjlugK/A71OlKsvHna7dlomjbz8WSohOx6IlIsHrJwEFBQ3r
+         Q9HAGWdP0C6zExJyXfyxXD4kVFVJSIVUX/rmvDrQYs2qBdh2fyiLARqpM8A/ivSLgG
+         G+3Rl8/9DX+CO2cglowPrxZ45365rQQ88P8fAYas=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+Cc:     Fabio Estevam <festevam@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 173/304] ARM: pxa: avoid section mismatch warning
-Date:   Mon, 28 Jan 2019 10:41:30 -0500
-Message-Id: <20190128154341.47195-173-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 174/304] ASoC: fsl: Fix SND_SOC_EUKREA_TLV320 build error on i.MX8M
+Date:   Mon, 28 Jan 2019 10:41:31 -0500
+Message-Id: <20190128154341.47195-174-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -57,76 +58,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Arnd Bergmann <arnd@arndb.de>
+From: Fabio Estevam <festevam@gmail.com>
 
-[ Upstream commit 88af3209aa0881aa5ffd99664b6080a4be5f24e5 ]
+[ Upstream commit add6883619a9e3bf9658eaff1a547354131bbcd9 ]
 
-WARNING: vmlinux.o(.text+0x19f90): Section mismatch in reference from the function littleton_init_lcd() to the function .init.text:pxa_set_fb_info()
-The function littleton_init_lcd() references
-the function __init pxa_set_fb_info().
-This is often because littleton_init_lcd lacks a __init
-annotation or the annotation of pxa_set_fb_info is wrong.
+eukrea-tlv320.c machine driver runs on non-DT platforms
+and include <asm/mach-types.h> header file in order to be able
+to use some machine_is_eukrea_xxx() macros.
 
-WARNING: vmlinux.o(.text+0xf824): Section mismatch in reference from the function zeus_register_ohci() to the function .init.text:pxa_set_ohci_info()
-The function zeus_register_ohci() references
-the function __init pxa_set_ohci_info().
-This is often because zeus_register_ohci lacks a __init
-annotation or the annotation of pxa_set_ohci_info is wrong.
+Building it for ARM64 causes the following build error:
 
-WARNING: vmlinux.o(.text+0xf95c): Section mismatch in reference from the function cm_x300_init_u2d() to the function .init.text:pxa3xx_set_u2d_info()
-The function cm_x300_init_u2d() references
-the function __init pxa3xx_set_u2d_info().
-This is often because cm_x300_init_u2d lacks a __init
-annotation or the annotation of pxa3xx_set_u2d_info is wrong.
+sound/soc/fsl/eukrea-tlv320.c:28:10: fatal error: asm/mach-types.h: No such file or directory
 
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Olof Johansson <olof@lixom.net>
+Avoid this error by not allowing to build the SND_SOC_EUKREA_TLV320
+driver when ARM64 is selected.
+
+This is needed in preparation for the i.MX8M support.
+
+Reported-by: kbuild test robot <lkp@intel.com>
+Signed-off-by: Fabio Estevam <festevam@gmail.com>
+Acked-by: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm/mach-pxa/cm-x300.c   | 2 +-
- arch/arm/mach-pxa/littleton.c | 2 +-
- arch/arm/mach-pxa/zeus.c      | 2 +-
- 3 files changed, 3 insertions(+), 3 deletions(-)
+ sound/soc/fsl/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
-index c5c0ab8ac9f9..024c1fbcc55a 100644
---- a/arch/arm/mach-pxa/cm-x300.c
-+++ b/arch/arm/mach-pxa/cm-x300.c
-@@ -558,7 +558,7 @@ static struct pxa3xx_u2d_platform_data cm_x300_u2d_platform_data = {
- 	.exit		= cm_x300_u2d_exit,
- };
+diff --git a/sound/soc/fsl/Kconfig b/sound/soc/fsl/Kconfig
+index 6ec19fb4a934..2e75b5bc5f1d 100644
+--- a/sound/soc/fsl/Kconfig
++++ b/sound/soc/fsl/Kconfig
+@@ -221,7 +221,7 @@ config SND_SOC_PHYCORE_AC97
  
--static void cm_x300_init_u2d(void)
-+static void __init cm_x300_init_u2d(void)
- {
- 	pxa3xx_set_u2d_info(&cm_x300_u2d_platform_data);
- }
-diff --git a/arch/arm/mach-pxa/littleton.c b/arch/arm/mach-pxa/littleton.c
-index 9e132b3e48c6..9960ea158829 100644
---- a/arch/arm/mach-pxa/littleton.c
-+++ b/arch/arm/mach-pxa/littleton.c
-@@ -184,7 +184,7 @@ static struct pxafb_mach_info littleton_lcd_info = {
- 	.lcd_conn		= LCD_COLOR_TFT_16BPP,
- };
- 
--static void littleton_init_lcd(void)
-+static void __init littleton_init_lcd(void)
- {
- 	pxa_set_fb_info(NULL, &littleton_lcd_info);
- }
-diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
-index d53ea12fc766..54a32f0433a2 100644
---- a/arch/arm/mach-pxa/zeus.c
-+++ b/arch/arm/mach-pxa/zeus.c
-@@ -576,7 +576,7 @@ static struct pxaohci_platform_data zeus_ohci_platform_data = {
- 	.flags		= ENABLE_PORT_ALL | POWER_SENSE_LOW,
- };
- 
--static void zeus_register_ohci(void)
-+static void __init zeus_register_ohci(void)
- {
- 	/* Port 2 is shared between host and client interface. */
- 	UP2OCR = UP2OCR_HXOE | UP2OCR_HXS | UP2OCR_DMPDE | UP2OCR_DPPDE;
+ config SND_SOC_EUKREA_TLV320
+ 	tristate "Eukrea TLV320"
+-	depends on ARCH_MXC && I2C
++	depends on ARCH_MXC && !ARM64 && I2C
+ 	select SND_SOC_TLV320AIC23_I2C
+ 	select SND_SOC_IMX_AUDMUX
+ 	select SND_SOC_IMX_SSI
 -- 
 2.19.1
 
