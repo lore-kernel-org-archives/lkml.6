@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E1A2C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:47:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E948EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:47:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 022BF21741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:47:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B879120880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:47:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690452;
-	bh=CA+QPLjO++aOy0VzhAoNLdz9etZq3KqzIzVQv1s4p4s=;
+	s=default; t=1548690454;
+	bh=rhsYchHFzanvGrqr281E0S9EwGpP43AtQJlVBxAqPcI=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=PXFlfx9bsEy4aGhowbMpWlJg5b24w7aQIC2fIdWp5akzHVFDF5ISj0mt4zYk57gpP
-	 l87a5a2+Fpv/Hi0q/Va34ccQX6wS2g/wCAFYNDzivlPOuBQPt4N8HRQ8wTutL2TahC
-	 SYXhxfcieO9X8bfLqQWsvfMngggghNkPRPL5CuI8=
+	b=PRabyIq3X9TQG/HJCThqglgPYjiEVFLPMe6XG3j7AqwAJq7gLtjrUwaoGLfsBFg4h
+	 4KqZFQEXrNqHP2NrZwJ5wZk4xwT50+MOX5Fja5MrbLc7uZdFwv6JGnJQGNYEiKE4Fy
+	 d+FrwnRLeTLL9EKKvWZfEEfkcoc+yvl6CMPeN1Iw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728323AbfA1Pra (ORCPT
+        id S1727283AbfA1Prd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:47:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60976 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:47:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32808 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728299AbfA1PrZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:47:25 -0500
+        id S1728311AbfA1Pra (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:47:30 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CC0062175B;
-        Mon, 28 Jan 2019 15:47:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D6F1320880;
+        Mon, 28 Jan 2019 15:47:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690445;
-        bh=CA+QPLjO++aOy0VzhAoNLdz9etZq3KqzIzVQv1s4p4s=;
+        s=default; t=1548690449;
+        bh=rhsYchHFzanvGrqr281E0S9EwGpP43AtQJlVBxAqPcI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=lMCzjXQ2BSPBcDe8vty3SV1yS220+FFfZ4PghUhQyuIrDuL9w7GXwnM8hnQ/OdbXV
-         8HEROUm32jiY9jZWddKwSRH7BuG+S3h8qQveaa40ZmPVt5lBeJaeX4OnvqTddANJk6
-         REgrZhWYEwPmpL2jNHZx0dAeLllP23T/T0qhWfmg=
+        b=gs7vL06MSxazKyYAx/063TRXOcMIsNefgzvctmbAc+OkdplLpNRFuw8elWz5fQuHG
+         mRosNhTYH/9TmGEepqVciIkGwOhwIFDArkRzdwKCVArfTWLd0XtrjXLQSBJ9yI1iFH
+         mZBH3K2gtd++dWi7sHETl9qJC5O4UEj3VwuN4dZU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Simon Horman <horms+renesas@verge.net.au>,
-        Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 090/304] i2c: sh_mobile: add support for r8a77990 (R-Car E3)
-Date:   Mon, 28 Jan 2019 10:40:07 -0500
-Message-Id: <20190128154341.47195-90-sashal@kernel.org>
+Cc:     Will Deacon <will.deacon@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 091/304] arm64: io: Ensure calls to delay routines are ordered against prior readX()
+Date:   Mon, 28 Jan 2019 10:40:08 -0500
+Message-Id: <20190128154341.47195-91-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,41 +58,98 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Simon Horman <horms+renesas@verge.net.au>
+From: Will Deacon <will.deacon@arm.com>
 
-[ Upstream commit 5eb316e636eb298c204f5b368526d4480b63c0ba ]
+[ Upstream commit 6460d32014717686d3b7963595950ba2c6d1bb5e ]
 
-Add support for the IIC code for the r8a77990 (R-Car E3).
+A relatively standard idiom for ensuring that a pair of MMIO writes to a
+device arrive at that device with a specified minimum delay between them
+is as follows:
 
-It is not considered compatible with existing fallback bindings
-due to the documented absence of automatic transmission registers.
+	writel_relaxed(42, dev_base + CTL1);
+	readl(dev_base + CTL1);
+	udelay(10);
+	writel_relaxed(42, dev_base + CTL2);
 
-These registers are currently not used by the driver and
-thus the provides the same behaviour for "renesas,iic-r8a77990" and
-"renesas,rcar-gen3-iic". The point of declaring incompatibility is
-to allow for automatic transmission register support to be added to
-"renesas,iic-r8a77990" and "renesas,rcar-gen3-iic" in future.
+the intention being that the read-back from the device will push the
+prior write to CTL1, and the udelay will hold up the write to CTL1 until
+at least 10us have elapsed.
 
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Unfortunately, on arm64 where the underlying delay loop is implemented
+as a read of the architected counter, the CPU does not guarantee
+ordering from the readl() to the delay loop and therefore the delay loop
+could in theory be speculated and not provide the desired interval
+between the two writes.
+
+Fix this in a similar manner to PowerPC by introducing a dummy control
+dependency on the output of readX() which, combined with the ISB in the
+read of the architected counter, guarantees that a subsequent delay loop
+can not be executed until the readX() has returned its result.
+
+Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
+Cc: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Will Deacon <will.deacon@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-sh_mobile.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/include/asm/io.h | 31 +++++++++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/i2c/busses/i2c-sh_mobile.c b/drivers/i2c/busses/i2c-sh_mobile.c
-index a7a7a9c3bc7c..28db6b59c4ca 100644
---- a/drivers/i2c/busses/i2c-sh_mobile.c
-+++ b/drivers/i2c/busses/i2c-sh_mobile.c
-@@ -808,6 +808,7 @@ static const struct of_device_id sh_mobile_i2c_dt_ids[] = {
- 	{ .compatible = "renesas,rcar-gen2-iic", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-r8a7795", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,rcar-gen3-iic", .data = &fast_clock_dt_config },
-+	{ .compatible = "renesas,iic-r8a77990", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,iic-sh73a0", .data = &fast_clock_dt_config },
- 	{ .compatible = "renesas,rmobile-iic", .data = &default_dt_config },
- 	{},
+diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
+index 9f8b915af3a7..d42d00d8d5b6 100644
+--- a/arch/arm64/include/asm/io.h
++++ b/arch/arm64/include/asm/io.h
+@@ -104,7 +104,22 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+ }
+ 
+ /* IO barriers */
+-#define __iormb()		rmb()
++#define __iormb(v)							\
++({									\
++	unsigned long tmp;						\
++									\
++	rmb();								\
++									\
++	/*								\
++	 * Create a dummy control dependency from the IO read to any	\
++	 * later instructions. This ensures that a subsequent call to	\
++	 * udelay() will be ordered due to the ISB in get_cycles().	\
++	 */								\
++	asm volatile("eor	%0, %1, %1\n"				\
++		     "cbnz	%0, ."					\
++		     : "=r" (tmp) : "r" (v) : "memory");		\
++})
++
+ #define __iowmb()		wmb()
+ 
+ #define mmiowb()		do { } while (0)
+@@ -129,10 +144,10 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
+  * following Normal memory access. Writes are ordered relative to any prior
+  * Normal memory access.
+  */
+-#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
+-#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
+-#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
+-#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(); __v; })
++#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(__v); __v; })
++#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(__v); __v; })
++#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(__v); __v; })
++#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(__v); __v; })
+ 
+ #define writeb(v,c)		({ __iowmb(); writeb_relaxed((v),(c)); })
+ #define writew(v,c)		({ __iowmb(); writew_relaxed((v),(c)); })
+@@ -183,9 +198,9 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
+ /*
+  * io{read,write}{16,32,64}be() macros
+  */
+-#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(); __v; })
+-#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(); __v; })
+-#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(); __v; })
++#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(__v); __v; })
++#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(__v); __v; })
++#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(__v); __v; })
+ 
+ #define iowrite16be(v,p)	({ __iowmb(); __raw_writew((__force __u16)cpu_to_be16(v), p); })
+ #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
 -- 
 2.19.1
 
