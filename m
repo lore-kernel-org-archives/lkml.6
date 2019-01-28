@@ -2,165 +2,122 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F075C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:04:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48496C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:05:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15FA82087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:04:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 17EBF2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:05:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=aol.com header.i=@aol.com header.b="o1/GRy4/"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726947AbfA1PEb (ORCPT
+        id S1726950AbfA1PFI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:04:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53982 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726738AbfA1PEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:04:31 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 82BF07F6CB;
-        Mon, 28 Jan 2019 15:04:30 +0000 (UTC)
-Received: from xps (ovpn-116-106.phx2.redhat.com [10.3.116.106])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47ADA6247D;
-        Mon, 28 Jan 2019 15:04:24 +0000 (UTC)
-Date:   Mon, 28 Jan 2019 10:04:20 -0500
-From:   Rafael Aquini <aquini@redhat.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Jan Kara <jack@suse.cz>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        Matthew Wilcox <willy@infradead.org>,
-        Vratislav Bendel <vbendel@redhat.com>
-Subject: Re: [PATCH RFC] mm: migrate: don't rely on PageMovable() of newpage
- after unlocking it
-Message-ID: <20190128150420.GB10872@xps>
-References: <20190128121609.9528-1-david@redhat.com>
- <20190128130709.GJ18811@dhcp22.suse.cz>
- <b03cae19-d02a-0ba2-69a1-010ee76748e7@redhat.com>
- <20190128132146.GK18811@dhcp22.suse.cz>
- <17e7d7e4-f4ca-a681-93e5-92a0c285be14@redhat.com>
- <20190128133514.GL18811@dhcp22.suse.cz>
- <cb3eccaf-0fbf-f3b8-dbbe-070acb9837be@redhat.com>
- <20190128150156.GA10872@xps>
+        Mon, 28 Jan 2019 10:05:08 -0500
+Received: from sonic312-21.consmr.mail.gq1.yahoo.com ([98.137.69.202]:39338
+        "EHLO sonic312-21.consmr.mail.gq1.yahoo.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726647AbfA1PFI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:05:08 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aol.com; s=a2048; t=1548687906; bh=nZUNF3cU75QWmp9Uw4woUYCRRu05eEtx6Z2y/lc0jzA=; h=From:Subject:To:Cc:References:Date:In-Reply-To:From:Subject; b=o1/GRy4/yjnTSoGsoTcv+noLnHJMpphFNfHhpT4GLZZ8zdClG0DDA0jrMRpDdza5va2Wk/LHfkzLjMymDtHl2pBUV7lNzRoyOQJV6kxlh4R6FY1QGLq1maAZ/qjKfr/8yeYwxGdWs765Vo8f/RWwBqHMhJlp9Jv8DC+3Tn1JOe7y9KTgu+rETeIX6OhXu2/t+18cEo03uMJaK0Od/qBPPMReFCClKNZor9R3JQ8Iv501U8W3XK0dBELdXHlt28ZBJQgVcRn4ptsHp9ke5bk5J8evskpyTEwrKYLq2u1v4GFCK2WUiHxeq5gGfnv2Lhr8mTYmoelm//pqvhMtLxbNpw==
+X-YMail-OSG: IJKEsC4VM1kqfGWOFm3ku9a7.HqyKKeORHkw53eCn5c6p_b_QurHyDuSyojwVoy
+ oaePkaG_Un63goP49I35MJAFExOTpEUlFnM9cScZeS_2h6m.jX2Y7Fag4tlK5_JIsB_DVHGzXbK_
+ k763eqz1d7EbiNDyRoe8SFm8i89fvMk_TbhRv.udrCj8O3kGj1ygEsJPdgTVxY7gXdtduKjB5pFg
+ uxU3SfObuRoITw4KonIvWoWuHFnzMIWFoiFHB6PimUMRvoVBSIGzQw4Ziih1V6zuxP6TcvSKyNsr
+ eiUNAjB64SrIbSYJjR4FbOBhDOGtNY51_BrGe4X4ILE8oz7L6KJp3hc7yKLLQ08fmJ3_zgvmd02a
+ o_DpM_U02lH3sjm6yntOw0dycUXj_1cUQ7y9BPmBH.jRdzsT9oN7ptYY22cnWMjbfWyHE33A0OxC
+ MGOh8wiq82ELfoUHxg8scDWtIKcjQUC.Ya6SutETuyJUK4zPnQ9W7E06VUyAX9K8WffQKHHWHUPK
+ 3ym9t50_1pO4OaYR7ASV1ywewY7ncyqcmYBFcgM4z53VMT1.akoKDfEn4UxskIUyqarhJwm9a2ON
+ VrKjXWkSxffjrxHyk6XIankROnEnRcWzpHApGQXrYLl5vOE.cDZGvkvG0.GUNniMCrr9v5Zrgk.S
+ D6skL8cREgBHTdKaKc7KGQaMXRRRaSw8_Iu5BP384dtb9.p9rsu3xnctM44keniG_Cjd9n3zHptl
+ cVvjVXWKnY5YUg_5JEOdHn7xfSnv1O05ZszwcwuCh96zGwjKd35NQXBGW3xtc9Dd9IEuHRXUPn2B
+ OFc.yRcw1V1wICyaqejG.51.lc45KyDoSCiH7h0oIBWEInO31bRCe0YK3TR2sdczrZ0Plj9ndvkK
+ mtNmGlv_XZOAguucehS8VObXg58yi_VrGGiMo6uWiLwQzUnkwDVGA47IuqZuWAFNuzrvl37cYUZn
+ mYEDZxD2mgSLUXlKCjCuk2ex3yLqRdMYxIZmCyPAUmCa65MJcZkMwks7a_zQ4lEC7RtVnots9cdH
+ 5mCYnHoQBgp40X9ACX8JCD.q2DoAGvYTNZzoWj.mLKVjQiyFqBX73UC88ZOrGU4jgIw--
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.gq1.yahoo.com with HTTP; Mon, 28 Jan 2019 15:05:06 +0000
+Received: from 125.122.220.11 (EHLO [10.1.1.220]) ([125.122.220.11])
+          by smtp414.mail.gq1.yahoo.com (Oath Hermes SMTP Server) with ESMTPA ID 691e274c8b474b426f4c730eecab875f;
+          Mon, 28 Jan 2019 15:05:01 +0000 (UTC)
+From:   Gao Xiang <hsiangkao@aol.com>
+Subject: Re: [PATCH v2 2/2] staging: erofs: complete POSIX ACL support
+To:     Dan Carpenter <dan.carpenter@oracle.com>,
+        Gao Xiang <gaoxiang25@huawei.com>,
+        Chao Yu <yuchao0@huawei.com>, Chao Yu <chao@kernel.org>
+Cc:     devel@driverdev.osuosl.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+        weidu.du@huawei.com, Miao Xie <miaoxie@huawei.com>
+References: <20190125161007.4447-1-gaoxiang25@huawei.com>
+ <20190125161007.4447-2-gaoxiang25@huawei.com>
+ <94daa491-40c8-4a09-a0b5-55a7e92dc3fc@huawei.com>
+ <20190128133302.GI1795@kadam>
+ <f1fd2c69-0c5b-c655-3712-48169e87fff8@huawei.com>
+ <20190128142837.GJ1795@kadam>
+Message-ID: <3a304a58-2ba3-b452-53ba-8286b1707795@aol.com>
+Date:   Mon, 28 Jan 2019 23:04:33 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.4.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190128150156.GA10872@xps>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 28 Jan 2019 15:04:30 +0000 (UTC)
+In-Reply-To: <20190128142837.GJ1795@kadam>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 10:01:56AM -0500, Rafael Aquini wrote:
-> On Mon, Jan 28, 2019 at 03:38:38PM +0100, David Hildenbrand wrote:
-> > On 28.01.19 14:35, Michal Hocko wrote:
-> > > On Mon 28-01-19 14:22:52, David Hildenbrand wrote:
-> > >> On 28.01.19 14:21, Michal Hocko wrote:
-> > >>> On Mon 28-01-19 14:14:28, David Hildenbrand wrote:
-> > >>>> On 28.01.19 14:07, Michal Hocko wrote:
-> > >>>>> On Mon 28-01-19 13:16:09, David Hildenbrand wrote:
-> > >>>>> [...]
-> > >>>>>> My theory:
-> > >>>>>>
-> > >>>>>> In __unmap_and_move(), we lock the old and newpage and perform the
-> > >>>>>> migration. In case of vitio-balloon, the new page will become
-> > >>>>>> movable, the old page will no longer be movable.
-> > >>>>>>
-> > >>>>>> However, after unlocking newpage, I think there is nothing stopping
-> > >>>>>> the newpage from getting dequeued and freed by virtio-balloon. This
-> > >>>>>> will result in the newpage
-> > >>>>>> 1. No longer having PageMovable()
-> > >>>>>> 2. Getting moved to the local list before finally freeing it (using
-> > >>>>>>    page->lru)
-> > >>>>>
-> > >>>>> Does that mean that the virtio-balloon can change the Movable state
-> > >>>>> while there are other users of the page? Can you point to the code that
-> > >>>>> does it? How come this can be safe at all? Or is the PageMovable stable
-> > >>>>> only under the page lock?
-> > >>>>>
-> > >>>>
-> > >>>> PageMovable is stable under the lock. The relevant instructions are in
-> > >>>>
-> > >>>> mm/balloon_compaction.c and include/linux/balloon_compaction.h
-> > >>>
-> > >>> OK, I have just checked __ClearPageMovable and it indeed requires
-> > >>> PageLock. Then we also have to move is_lru = __PageMovable(page) after
-> > >>> the page lock.
-> > >>>
-> > >>
-> > >> I assume that is fine as is as the page is isolated? (yes, it will be
-> > >> modified later when moving but we are interested in the original state)
-> > > 
-> > > OK, I've missed that the page is indeed isolated. Then the patch makes
-> > > sense to me.
-> > > 
-> > 
-> > Thanks Michal. I assume this has broken ever since balloon compaction
-> > was introduced. I'll wait a little more and then resend as !RFC with a
-> > cc-stable tag.
-> >
-> 
-> Yes, balloon deflation could always race against migration
-> This race was a problem, initially, and was dealt with, via:
-> 
-> commit 117aad1e9e4d97448d1df3f84b08bd65811e6d6a
-> Author: Rafael Aquini <aquini@redhat.com>
-> Date:   Mon Sep 30 13:45:16 2013 -0700
-> 
->     mm: avoid reinserting isolated balloon pages into LRU lists
-> 
->  
-> 
-> I think this upstream patch has re-introduced it, in a more subtle way,
-> as we're stumbling on it now, again:
-> 
-> commit d6d86c0a7f8ddc5b38cf089222cb1d9540762dc2
-> Author: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
-> Date:   Thu Oct 9 15:29:27 2014 -0700
-> 
->     mm/balloon_compaction: redesign ballooned pages management
->     
-> 
-> 
-> On this particular race against migration case, virtio ballon deflation would 
-> not see it before
-> 
-> commit b1123ea6d3b3da25af5c8a9d843bd07ab63213f4
-> Author: Minchan Kim <minchan@kernel.org>
-> Date:   Tue Jul 26 15:23:09 2016 -0700
-> 
->     mm: balloon: use general non-lru movable page feature
-> 
-> as the recently released balloon page would be post-processed 
-> without the page->lru list handling, which for migration stability
-> purposes must be done under the protection of page_lock.
-> 
-> 
-
-missing part here:
-
-I think your patch adresses this new case.
 
 
-Acked-by: Rafael Aquini <aquini@redhat.com>
-
-
-> get rid of balloon reference count.
-
-^^ this was a left over (sorry about my fat-fingers)
+On 2019/1/28 22:28, Dan Carpenter wrote:
+> The point is, that people shouldn't recreate core code that already
+> exists.  At least try it out and have an explanation why the other code
+> doesn't work.
 > 
+> In other projects, the default is to keep code around once it has been
+> written but in staging the default choice is to delete the code unless
+> there is an explanation.
+
+That is why I need Chao's idea about the future of EROFS fault injection.
+
+As far as I know, the fault injection of f2fs also introduces after
+the general fault injection, and the original reason is to test separated
+partitions with different fault injection rate/type simultaneously, as follows:
+
+commit 1ecc0c5c50ce8834f7e35b63be7480bf1aaa4155
+Author: Chao Yu <yuchao0@huawei.com>
+Date:   Fri Sep 23 21:30:09 2016 +0800
+
+    f2fs: support configuring fault injection per superblock
+
+    Previously, we only support global fault injection configuration, so that
+    when we configure type/rate of fault injection through sysfs, mount
+    option, it will influence all f2fs partition which is being used.
+
+    It is not make sence, since it will be not convenient if developer want
+    to test separated partitions with different fault injection rate/type
+    simultaneously, also it's not possible to enable fault injection in one
+    partition and disable fault injection in other one.
+
+    >From now on, we move global configuration of fault injection in module
+    into per-superblock, hence injection testing can be more flexible.
+
+    Signed-off-by: Chao Yu <yuchao0@huawei.com>
+    Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+
+For this patch, I could resend v4 to change erofs_kmalloc->kmalloc
+if you like, it isn't an important stuff for this patch. However,
+I'd like to get more ideas about the fault injection.
+
+Thanks,
+Gao Xiang
+
 > 
-> -- Rafael
+> regards,
+> dan carpenter
+> 
