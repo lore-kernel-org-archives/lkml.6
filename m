@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 401A7C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:37:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 679ADC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:38:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12E7220844
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:37:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3456920811
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:38:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548693471;
-	bh=7Xl9785Ooo3tc69cLRHlbmgfz8adtXgl//L6MK5SQog=;
+	s=default; t=1548693482;
+	bh=d6/2CRYWQRHrKOvR0f+eSCXKHwSSwmBbLWQ2SX5eomc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=OWwq3zvYEPtOI/DFLtdgwyz4mYQfgi68q2YmoMuZMOxi+yHp/rqFPIH7vucKnB39Q
-	 b0vyqQn+rUy6GIEK3dS0XhZJoXEHWTSxrtBeCqh1S8CVeKFzhnPoCjMIqy+tNxGkzc
-	 MkTN0I617AgffiugrY3A/0WElChOl9wOU+p/2JFY=
+	b=S4/VJkSIGPwjzTJFWwXePrsK31mZvbSYdOhCSC3taWb6S6a9fmS22EGWI3iNie8FQ
+	 v9zHELHW04pUFXHJI3wlGEIYpVMNRIifXKV4eK9u1GtKpESgZ8wJCInBxe8p3cDY0W
+	 lZLD6lV+VfENbuNuJRGiabL4DId04xqT1fWOFfzc=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390485AbfA1Qht (ORCPT
+        id S2390494AbfA1QiA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:37:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33740 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:38:00 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33658 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389827AbfA1QY7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:24:59 -0500
+        id S2389808AbfA1QYz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:24:55 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 99AF92147A;
-        Mon, 28 Jan 2019 16:24:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id DB9D420879;
+        Mon, 28 Jan 2019 16:24:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692698;
-        bh=7Xl9785Ooo3tc69cLRHlbmgfz8adtXgl//L6MK5SQog=;
+        s=default; t=1548692694;
+        bh=d6/2CRYWQRHrKOvR0f+eSCXKHwSSwmBbLWQ2SX5eomc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=wWZG4VOxz+gjgTZMbOALx5E5mD8a9bcuFDuDasqXP1usiGV0NfFYa/64lGTOlUuhU
-         iK+dSTX3DNksVv7hI42bldhhCw7OXESXz0nxFcIVJoNJH2akaWSLbh0RJuhSlzQvtg
-         U+N6sVZce9WMrqvdG+bxOGAGn7JWtAnXRYDxUhbc=
+        b=uRkIgt8+UOVrqN/Fxy2mwRj1JEtRCCDrT/NRYjq90nmVwI9QZxXqLYtjiCSuPBSn9
+         2YH4GzIRAD/LuyGTZ0FeewdI2ERby/9Zk2esj5/2CByfHQ43CyK9aIezvIuD9dYWA2
+         IyFgxEnqU4PThQyV5LQyinbmEmF6XWRtqTrDtz1o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Jiong Wang <jiong.wang@netronome.com>,
-        Markos Chandras <markos.chandras@imgtec.com>,
-        Paul Burton <paul.burton@mips.com>, linux-mips@vger.kernel.org,
-        Alexei Starovoitov <ast@kernel.org>,
+Cc:     Bart Van Assche <bvanassche@acm.org>,
+        Thomas Gleixner <tglx@linutronix.de>, peterz@infradead.org,
+        tj@kernel.org, johannes.berg@intel.com,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 33/80] mips: bpf: fix encoding bug for mm_srlv32_op
-Date:   Mon, 28 Jan 2019 11:23:14 -0500
-Message-Id: <20190128162401.58841-33-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.4 31/80] timekeeping: Use proper seqcount initializer
+Date:   Mon, 28 Jan 2019 11:23:12 -0500
+Message-Id: <20190128162401.58841-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128162401.58841-1-sashal@kernel.org>
 References: <20190128162401.58841-1-sashal@kernel.org>
@@ -60,47 +59,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiong Wang <jiong.wang@netronome.com>
+From: Bart Van Assche <bvanassche@acm.org>
 
-[ Upstream commit 17f6c83fb5ebf7db4fcc94a5be4c22d5a7bfe428 ]
+[ Upstream commit ce10a5b3954f2514af726beb78ed8d7350c5e41c ]
 
-For micro-mips, srlv inside POOL32A encoding space should use 0x50
-sub-opcode, NOT 0x90.
+tk_core.seq is initialized open coded, but that misses to initialize the
+lockdep map when lockdep is enabled. Lockdep splats involving tk_core seq
+consequently lack a name and are hard to read.
 
-Some early version ISA doc describes the encoding as 0x90 for both srlv and
-srav, this looks to me was a typo. I checked Binutils libopcode
-implementation which is using 0x50 for srlv and 0x90 for srav.
+Use the proper initializer which takes care of the lockdep map
+initialization.
 
-v1->v2:
-  - Keep mm_srlv32_op sorted by value.
+[ tglx: Massaged changelog ]
 
-Fixes: f31318fdf324 ("MIPS: uasm: Add srlv uasm instruction")
-Cc: Markos Chandras <markos.chandras@imgtec.com>
-Cc: Paul Burton <paul.burton@mips.com>
-Cc: linux-mips@vger.kernel.org
-Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
-Acked-by: Song Liu <songliubraving@fb.com>
-Signed-off-by: Jiong Wang <jiong.wang@netronome.com>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Bart Van Assche <bvanassche@acm.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Cc: peterz@infradead.org
+Cc: tj@kernel.org
+Cc: johannes.berg@intel.com
+Link: https://lkml.kernel.org/r/20181128234325.110011-12-bvanassche@acm.org
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/mips/include/uapi/asm/inst.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ kernel/time/timekeeping.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/mips/include/uapi/asm/inst.h b/arch/mips/include/uapi/asm/inst.h
-index 1b6f2f219298..9db764b51ffe 100644
---- a/arch/mips/include/uapi/asm/inst.h
-+++ b/arch/mips/include/uapi/asm/inst.h
-@@ -290,8 +290,8 @@ enum mm_32a_minor_op {
- 	mm_ext_op = 0x02c,
- 	mm_pool32axf_op = 0x03c,
- 	mm_srl32_op = 0x040,
-+	mm_srlv32_op = 0x050,
- 	mm_sra_op = 0x080,
--	mm_srlv32_op = 0x090,
- 	mm_rotr_op = 0x0c0,
- 	mm_lwxs_op = 0x118,
- 	mm_addu32_op = 0x150,
+diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+index fed86b2dfc89..d9837d25dfe0 100644
+--- a/kernel/time/timekeeping.c
++++ b/kernel/time/timekeeping.c
+@@ -39,7 +39,9 @@
+ static struct {
+ 	seqcount_t		seq;
+ 	struct timekeeper	timekeeper;
+-} tk_core ____cacheline_aligned;
++} tk_core ____cacheline_aligned = {
++	.seq = SEQCNT_ZERO(tk_core.seq),
++};
+ 
+ static DEFINE_RAW_SPINLOCK(timekeeper_lock);
+ static struct timekeeper shadow_timekeeper;
 -- 
 2.19.1
 
