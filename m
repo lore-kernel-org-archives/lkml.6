@@ -7,48 +7,51 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC772C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B78DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B340020663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0FD021738
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:19:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692387;
-	bh=INfw3x0PEw8wjZIATFrl5hYnvIK3kjLWHAWkKeZkh2M=;
+	s=default; t=1548692390;
+	bh=yzX3yOPfXHZAsRv4i1lqHC0NmaDrNzvgnQSWp1yz1Es=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=nJ5M6MHSd2BQNR+VGul22xUFzkCmNyEYipPTc8Uu6kVjkw6ftbYD7j7aLZL9nXAAI
-	 /6N4Wa5kPxbbtxaizLXxNiMqPZTYAq9cgoD1RWsxzQxXEdqBj1axr0j0N4ohpnWFuh
-	 rm6DTo47WIp2w1oMDhnVd8+M6X8UVx35Rlur+9wE=
+	b=iuzUaaD2YhJdVooi24YPi5iVDkPq7TXcOArwTc/D3g7qLGDG4nBDbpqEtmJUjvfln
+	 Zy/zkhbSzUF76dSruiPmCEZPQVY90pPNLSX70j2Jdxp9V2o6558/kBDsvkpAR3tDaX
+	 Jsk2IqO1bAbdlIgEhKZVlWCoPagfvuV88IiPcZC8=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388666AbfA1QTp (ORCPT
+        id S2388677AbfA1QTt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:19:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54630 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:19:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388650AbfA1QTn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:19:43 -0500
+        id S2387965AbfA1QTr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:19:47 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 02B5F2171F;
-        Mon, 28 Jan 2019 16:19:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4EF5D2084A;
+        Mon, 28 Jan 2019 16:19:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692382;
-        bh=INfw3x0PEw8wjZIATFrl5hYnvIK3kjLWHAWkKeZkh2M=;
+        s=default; t=1548692386;
+        bh=yzX3yOPfXHZAsRv4i1lqHC0NmaDrNzvgnQSWp1yz1Es=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=aSpqWJ128+Vhzc4WTX1UFWB/M9Pz1X3qhOEQbJsh+34IL2V1V/BxiXWEzk4M6ftnV
-         sgHHNz9f9/xnPCs4ESeAgDOmEV/gX0QmV9uQazLuoyNOCjaBRto5EElKcdlgBG/U5u
-         i4m9gw5wOUoZ8BHPFYBjvghqjXQkxckrWhjAM0Mk=
+        b=s/4jh3hLXOK8Zb3ggKhfYSe0s35CVgIR0xHyKTl4h2HBidKlU+RRyKaUaEOJ7TqfX
+         W6aHsjcMKt/xhAfiyCr9PFqHXV3XEfkSUPgRH3It5ukFuVHEyEOSCcSpGpzvPh1OKP
+         uCeRSOjSOhEZUnbpD1jLa7tTO4DM8xtpo/qv6jNw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Oleg Nesterov <oleg@redhat.com>, Ben Woodard <woodard@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
+Cc:     Du Changbin <changbin.du@gmail.com>,
+        Kieran Bingham <kbingham@kernel.org>,
+        Jan Kiszka <jan.kiszka@siemens.com>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Daniel Thompson <daniel.thompson@linaro.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 169/170] exec: load_script: don't blindly truncate shebang string
-Date:   Mon, 28 Jan 2019 11:11:59 -0500
-Message-Id: <20190128161200.55107-169-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 170/170] scripts/gdb: fix lx-version string output
+Date:   Mon, 28 Jan 2019 11:12:00 -0500
+Message-Id: <20190128161200.55107-170-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -60,54 +63,56 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Oleg Nesterov <oleg@redhat.com>
+From: Du Changbin <changbin.du@gmail.com>
 
-[ Upstream commit 8099b047ecc431518b9bb6bdbba3549bbecdc343 ]
+[ Upstream commit b058809bfc8faeb7b7cae047666e23375a060059 ]
 
-load_script() simply truncates bprm->buf and this is very wrong if the
-length of shebang string exceeds BINPRM_BUF_SIZE-2.  This can silently
-truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
-happens to be the valid executable path.
+A bug is present in GDB which causes early string termination when
+parsing variables.  This has been reported [0], but we should ensure
+that we can support at least basic printing of the core kernel strings.
 
-Change load_script() to return ENOEXEC if it can't find '\n' or zero in
-bprm->buf.  Note that '\0' can come from either
-prepare_binprm()->memset() or from kernel_read(), we do not care.
+For current gdb version (has been tested with 7.3 and 8.1), 'lx-version'
+only prints one character.
 
-Link: http://lkml.kernel.org/r/20181112160931.GA28463@redhat.com
-Signed-off-by: Oleg Nesterov <oleg@redhat.com>
-Acked-by: Kees Cook <keescook@chromium.org>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Ben Woodard <woodard@redhat.com>
-Cc: "Eric W. Biederman" <ebiederm@xmission.com>
+  (gdb) lx-version
+  L(gdb)
+
+This can be fixed by casting 'linux_banner' as (char *).
+
+  (gdb) lx-version
+  Linux version 4.19.0-rc1+ (changbin@acer) (gcc version 7.3.0 (Ubuntu 7.3.0-16ubuntu3)) #21 SMP Sat Sep 1 21:43:30 CST 2018
+
+[0] https://sourceware.org/bugzilla/show_bug.cgi?id=20077
+
+[kbingham@kernel.org: add detail to commit message]
+Link: http://lkml.kernel.org/r/20181111162035.8356-1-kieran.bingham@ideasonboard.com
+Fixes: 2d061d999424 ("scripts/gdb: add version command")
+Signed-off-by: Du Changbin <changbin.du@gmail.com>
+Signed-off-by: Kieran Bingham <kbingham@kernel.org>
+Acked-by: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Jason Wessel <jason.wessel@windriver.com>
+Cc: Daniel Thompson <daniel.thompson@linaro.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/binfmt_script.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ scripts/gdb/linux/proc.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
-index 7cde3f46ad26..d0078cbb718b 100644
---- a/fs/binfmt_script.c
-+++ b/fs/binfmt_script.c
-@@ -42,10 +42,14 @@ static int load_script(struct linux_binprm *bprm)
- 	fput(bprm->file);
- 	bprm->file = NULL;
+diff --git a/scripts/gdb/linux/proc.py b/scripts/gdb/linux/proc.py
+index 086d27223c0c..0aebd7565b03 100644
+--- a/scripts/gdb/linux/proc.py
++++ b/scripts/gdb/linux/proc.py
+@@ -41,7 +41,7 @@ class LxVersion(gdb.Command):
  
--	bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
--	if ((cp = strchr(bprm->buf, '\n')) == NULL)
--		cp = bprm->buf+BINPRM_BUF_SIZE-1;
-+	for (cp = bprm->buf+2;; cp++) {
-+		if (cp >= bprm->buf + BINPRM_BUF_SIZE)
-+			return -ENOEXEC;
-+		if (!*cp || (*cp == '\n'))
-+			break;
-+	}
- 	*cp = '\0';
-+
- 	while (cp > bprm->buf) {
- 		cp--;
- 		if ((*cp == ' ') || (*cp == '\t'))
+     def invoke(self, arg, from_tty):
+         # linux_banner should contain a newline
+-        gdb.write(gdb.parse_and_eval("linux_banner").string())
++        gdb.write(gdb.parse_and_eval("(char *)linux_banner").string())
+ 
+ LxVersion()
+ 
 -- 
 2.19.1
 
