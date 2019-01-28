@@ -2,97 +2,100 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A880C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:54:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4A6A6C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:54:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FA0B2086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:54:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1C9392086C
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 11:54:41 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726752AbfA1LyU (ORCPT
+        id S1726818AbfA1Lyj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 06:54:20 -0500
-Received: from mail-ua1-f67.google.com ([209.85.222.67]:38147 "EHLO
-        mail-ua1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726611AbfA1LyU (ORCPT
+        Mon, 28 Jan 2019 06:54:39 -0500
+Received: from smtprelay0139.hostedemail.com ([216.40.44.139]:58866 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726611AbfA1Lyj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 06:54:20 -0500
-Received: by mail-ua1-f67.google.com with SMTP id p9so5480483uaa.5;
-        Mon, 28 Jan 2019 03:54:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=zBK/T64ixR5DtwckaexWOZMCICtbVoglbmytCfsmntA=;
-        b=KcQE6qS1KFCHhz5DFlh7osKeOC/eAyUDP1voIvQtrnNjeMiZkbAikhH7xHW6K0CptB
-         kriH2gs3UkJEfm1X5i5XvAYEsVrXD/dNgZuO5VTFwNPV4Y4153XwGRZYjxFIWxhm2DtS
-         4k1puM7tEMIY/NlHZ23XvMcpCuIgfLtfD1IqKlk9Zyws+XoQi5/04ifsfsDvy/v0QiQB
-         N+3dBPAL18m50rwWiaA/InM2/xtgjf+WOzVLbHzJAcQ0B83osHqv0fEl+nQapPc5iJqM
-         oadrqmT+g35vU7grwBt6pfPSvELVwd6likkYb67UHUR6d4rrUtt0elZ9/0STcmPLKbR0
-         WlMQ==
-X-Gm-Message-State: AJcUukfGoo5LagGgmFefenXyvtxOazUgUV0hY/n8vW6n5dmYyg+b3YbH
-        CJsDqtZV3LmIzK86ZKZu5umfj5mynV+ZZsuua0Q=
-X-Google-Smtp-Source: ALg8bN45afQ1wNT+QpDS3x3GHPrguf+O5YB9XQmwTwHEMX0mSwg6lwb+zGVehJzLQdPke75fNGoTA2uJAN/mmsHWcn4=
-X-Received: by 2002:a9f:364a:: with SMTP id s10mr8475366uad.78.1548676459070;
- Mon, 28 Jan 2019 03:54:19 -0800 (PST)
-MIME-Version: 1.0
-References: <20190125114429.20066-1-jonas@norrbonn.se> <20190125114429.20066-2-jonas@norrbonn.se>
- <CAMz4ku+sqzK19994BpdSfaDjNdXW_-gnCutr_fYQiv5ynxOq2g@mail.gmail.com>
- <f34151c8-28a3-3d53-a27e-b5ff512d9c94@norrbonn.se> <20190125174713.GA6939@sirena.org.uk>
- <20190125175031.GA25898@sirena.org.uk> <84d6c40f-62bb-fd00-0dcb-d2f390b136c1@norrbonn.se>
- <CAMuHMdUyt=DDMwDZA-TB0Yac13NJQCo2LxzvqnRzvn6LZ5F98w@mail.gmail.com>
- <ed62564f-d36b-1492-8e65-60166c0aa4a6@norrbonn.se> <CAMuHMdXQONq1UFuFHwny_xfAtxY7sOv2K3yi2i9T22OovMqFhw@mail.gmail.com>
- <20190128114757.GA11699@sirena.org.uk> <94c7514c-de1f-ff70-d2b7-6394f9747942@norrbonn.se>
-In-Reply-To: <94c7514c-de1f-ff70-d2b7-6394f9747942@norrbonn.se>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Mon, 28 Jan 2019 12:54:06 +0100
-Message-ID: <CAMuHMdVzstrjbKvNr8mbW_XLH6sYE+Asd=St-bZKt+rKjJhd+g@mail.gmail.com>
-Subject: Re: [PATCH 1/2] spi: support inter-word delay requirement for devices
-To:     Jonas Bonn <jonas@norrbonn.se>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-spi <linux-spi@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        DTML <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 28 Jan 2019 06:54:39 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 919D9837F24A;
+        Mon, 28 Jan 2019 11:54:37 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: bell21_4557232275915
+X-Filterd-Recvd-Size: 2372
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf02.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 28 Jan 2019 11:54:36 +0000 (UTC)
+Message-ID: <bbf2f5f03f9813f1bbab23ea36c17f38600432e7.camel@perches.com>
+Subject: Re: [PATCH 4/6] staging: rtl8188eu: remove unncessary asignment to
+ cleanup long line
+From:   Joe Perches <joe@perches.com>
+To:     Michael Straube <straube.linux@gmail.com>,
+        gregkh@linuxfoundation.org,
+        Larry Finger <Larry.Finger@lwfinger.net>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Mon, 28 Jan 2019 03:54:34 -0800
+In-Reply-To: <20190128095137.26815-4-straube.linux@gmail.com>
+References: <20190128095137.26815-1-straube.linux@gmail.com>
+         <20190128095137.26815-4-straube.linux@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jonas,
+On Mon, 2019-01-28 at 10:51 +0100, Michael Straube wrote:
+> Instead of first asign 'wrqu.data.length = p - buff' use 'p - buff'
+> directly in min_t() in the subsequent asignment. Clears a line over
+> 80 characters checkpatch warning.
 
-On Mon, Jan 28, 2019 at 12:51 PM Jonas Bonn <jonas@norrbonn.se> wrote:
-> On 28/01/2019 12:47, Mark Brown wrote:
-> > On Mon, Jan 28, 2019 at 08:41:05AM +0100, Geert Uytterhoeven wrote:
-> >> On Sat, Jan 26, 2019 at 4:40 PM Jonas Bonn <jonas@norrbonn.se> wrote:
-> >
-> >>> spi-3wire: again, only set by MAXIM DS-1302 which always needs this
-> >>> setting; driver could set this
-> >
-> >> For DS1302, this is probable true.
-> >> Some devices may support both 4-wire or 3-wire mode?
-> >
-> > IIRC yes.
->
-> Just for the record, the datasheet says it's exclusively 3-wire.  But
-> it's not important...
+Thank you.  I believe you should include Larry Finger
+in the cc list for this driver
 
-With "some devices" I meant "some other non-DS1302 devices supporting
-3-wire mode". Sorry for being unclear.
+Using scripts/get_maintainer.pl should tell you that.
 
-Gr{oetje,eeting}s,
+And while this is true, another way to reduce line length
+is to reduce indentation.
 
-                        Geert
+In this function, it is reasonable to change the
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+	if (authmode == _WPA_IE_ID_) {
+		...
+	}
+}
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+to
+
+	if (authmode != _WPA_IE_ID_)
+		return;
+	...
+}
+
+Another issue with this code is the sprintf.
+
+It expands a u8 buffer of a maximum of IW_CUSTOM_MAX size
+into an allocated buffer of IW_CUSTOM_MAX size with %02x;
+
+That could overflow the allocated buffer.
+
+> diff --git a/drivers/staging/rtl8188eu/os_dep/mlme_linux.c b/drivers/staging/rtl8188eu/os_dep/mlme_linux.c
+[]
+> @@ -109,8 +109,7 @@ void rtw_report_sec_ie(struct adapter *adapter, u8 authmode, u8 *sec_ie)
+>  			p += sprintf(p, "%02x", sec_ie[i]);
+>  		p += sprintf(p, ")");
+>  		memset(&wrqu, 0, sizeof(wrqu));
+> -		wrqu.data.length = p - buff;
+> -		wrqu.data.length = min_t(__u16, wrqu.data.length, IW_CUSTOM_MAX);
+> +		wrqu.data.length = min_t(__u16, p - buff, IW_CUSTOM_MAX);
+>  		wireless_send_event(adapter->pnetdev, IWEVCUSTOM, &wrqu, buff);
+>  		kfree(buff);
+>  	}
+
+
