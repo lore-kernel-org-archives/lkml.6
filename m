@@ -4,49 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0F41C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 660B9C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1C322086C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C23421741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:14:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692052;
-	bh=QO0Z/ugaU9XCwato60uHHqSOeQSYOYfR4+uT1EqhkAE=;
+	s=default; t=1548692056;
+	bh=4XSvo/1exxtw/Vykv7ljN8jvyJpyeLsXHEWoBA5LyBs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=wEmbbsg3ng7FL8OLbVSl+GQgrqroDtBQ2kDSQzr58Vsi8H1GcppM/9ZYHiWx8vha5
-	 qGWRsoZpupArtV+UO48qe5qrUk6SGZGIeQdfTss7ysCULXDQbhU2LQr1g+qYaLf4YK
-	 sMdIht8E02iVqBmOMdHXtineNzQyLBSQp1lqBgbI=
+	b=MCzJ1jOv8YhfYdICDE7mRSb4i69nMOuQVlu2ENdQxOdNFOlvly7fSMU02FYLJ3Gj7
+	 +qAYAgToxRMfxv7e1oppAW0Ww/5PZPbDmw+CoM4VZLgwWoOWSQjGh6WCyP1WiBnF/u
+	 mtikDXHcjCIoc3WL1z95Ko94xbrne9cphxS79ZIk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387585AbfA1QOK (ORCPT
+        id S2387595AbfA1QOO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:14:10 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43176 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:14:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:43332 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387553AbfA1QOE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:14:04 -0500
+        id S1732851AbfA1QOK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:14:10 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9A8BA20879;
-        Mon, 28 Jan 2019 16:14:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 459D02086C;
+        Mon, 28 Jan 2019 16:14:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692043;
-        bh=QO0Z/ugaU9XCwato60uHHqSOeQSYOYfR4+uT1EqhkAE=;
+        s=default; t=1548692050;
+        bh=4XSvo/1exxtw/Vykv7ljN8jvyJpyeLsXHEWoBA5LyBs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kdyTeOJXWieTLhyygoX6j5bkbLuVtj23BBiMCLbHWxpw+X4xdX3VXeltcMPc3Wtxb
-         CKC0Dgs5bXkBZ0opcj8Gh+ynkmkY3uxNkS7nWzxGPheFjbyAVEI0BC9tn4WAr9tPWM
-         nd7zwc2s1xjQLPgskqrbbr3r0tFWMqzjvpRqock4=
+        b=teZuAvdxKXV0ZsG8JCicGUXKLhvR3RTUJtx8nB69sG1+suBh0s7yKd0T4P6/pTp1y
+         RVMDyiPSIySFGqeIweylR54OxOSAOcexnqHKTxepbhrOtjW3XsvBmtSyUlqAYDZHmB
+         ovqhI5k6Ok66zmLfznljmoKxGO4M/uZqOJVAf098=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Will Deacon <will.deacon@arm.com>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Arnd Bergmann <arnd@arndb.de>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 050/170] arm64: io: Ensure calls to delay routines are ordered against prior readX()
-Date:   Mon, 28 Jan 2019 11:10:00 -0500
-Message-Id: <20190128161200.55107-50-sashal@kernel.org>
+Cc:     "J. Bruce Fields" <bfields@redhat.com>,
+        Sasha Levin <sashal@kernel.org>, linux-nfs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 053/170] nfsd4: fix crash on writing v4_end_grace before nfsd startup
+Date:   Mon, 28 Jan 2019 11:10:03 -0500
+Message-Id: <20190128161200.55107-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161200.55107-1-sashal@kernel.org>
 References: <20190128161200.55107-1-sashal@kernel.org>
@@ -58,98 +56,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Will Deacon <will.deacon@arm.com>
+From: "J. Bruce Fields" <bfields@redhat.com>
 
-[ Upstream commit 6460d32014717686d3b7963595950ba2c6d1bb5e ]
+[ Upstream commit 62a063b8e7d1db684db3f207261a466fa3194e72 ]
 
-A relatively standard idiom for ensuring that a pair of MMIO writes to a
-device arrive at that device with a specified minimum delay between them
-is as follows:
+Anatoly Trosinenko reports that this:
 
-	writel_relaxed(42, dev_base + CTL1);
-	readl(dev_base + CTL1);
-	udelay(10);
-	writel_relaxed(42, dev_base + CTL2);
+1) Checkout fresh master Linux branch (tested with commit e195ca6cb)
+2) Copy x84_64-config-4.14 to .config, then enable NFS server v4 and build
+3) From `kvm-xfstests shell`:
 
-the intention being that the read-back from the device will push the
-prior write to CTL1, and the udelay will hold up the write to CTL1 until
-at least 10us have elapsed.
+results in NULL dereference in locks_end_grace.
 
-Unfortunately, on arm64 where the underlying delay loop is implemented
-as a read of the architected counter, the CPU does not guarantee
-ordering from the readl() to the delay loop and therefore the delay loop
-could in theory be speculated and not provide the desired interval
-between the two writes.
+Check that nfsd has been started before trying to end the grace period.
 
-Fix this in a similar manner to PowerPC by introducing a dummy control
-dependency on the output of readX() which, combined with the ISB in the
-read of the architected counter, guarantees that a subsequent delay loop
-can not be executed until the readX() has returned its result.
-
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: Arnd Bergmann <arnd@arndb.de>
-Signed-off-by: Will Deacon <will.deacon@arm.com>
+Reported-by: Anatoly Trosinenko <anatoly.trosinenko@gmail.com>
+Signed-off-by: J. Bruce Fields <bfields@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/io.h | 31 +++++++++++++++++++++++--------
- 1 file changed, 23 insertions(+), 8 deletions(-)
+ fs/nfsd/nfsctl.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index 35b2e50f17fb..b2bc7dbc1fa6 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -106,7 +106,22 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
- }
- 
- /* IO barriers */
--#define __iormb()		rmb()
-+#define __iormb(v)							\
-+({									\
-+	unsigned long tmp;						\
-+									\
-+	rmb();								\
-+									\
-+	/*								\
-+	 * Create a dummy control dependency from the IO read to any	\
-+	 * later instructions. This ensures that a subsequent call to	\
-+	 * udelay() will be ordered due to the ISB in get_cycles().	\
-+	 */								\
-+	asm volatile("eor	%0, %1, %1\n"				\
-+		     "cbnz	%0, ."					\
-+		     : "=r" (tmp) : "r" (v) : "memory");		\
-+})
-+
- #define __iowmb()		wmb()
- 
- #define mmiowb()		do { } while (0)
-@@ -131,10 +146,10 @@ static inline u64 __raw_readq(const volatile void __iomem *addr)
-  * following Normal memory access. Writes are ordered relative to any prior
-  * Normal memory access.
-  */
--#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(); __v; })
--#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(); __v; })
--#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(); __v; })
--#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(); __v; })
-+#define readb(c)		({ u8  __v = readb_relaxed(c); __iormb(__v); __v; })
-+#define readw(c)		({ u16 __v = readw_relaxed(c); __iormb(__v); __v; })
-+#define readl(c)		({ u32 __v = readl_relaxed(c); __iormb(__v); __v; })
-+#define readq(c)		({ u64 __v = readq_relaxed(c); __iormb(__v); __v; })
- 
- #define writeb(v,c)		({ __iowmb(); writeb_relaxed((v),(c)); })
- #define writew(v,c)		({ __iowmb(); writew_relaxed((v),(c)); })
-@@ -185,9 +200,9 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
- /*
-  * io{read,write}{16,32,64}be() macros
-  */
--#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(); __v; })
--#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(); __v; })
--#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(); __v; })
-+#define ioread16be(p)		({ __u16 __v = be16_to_cpu((__force __be16)__raw_readw(p)); __iormb(__v); __v; })
-+#define ioread32be(p)		({ __u32 __v = be32_to_cpu((__force __be32)__raw_readl(p)); __iormb(__v); __v; })
-+#define ioread64be(p)		({ __u64 __v = be64_to_cpu((__force __be64)__raw_readq(p)); __iormb(__v); __v; })
- 
- #define iowrite16be(v,p)	({ __iowmb(); __raw_writew((__force __u16)cpu_to_be16(v), p); })
- #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
+diff --git a/fs/nfsd/nfsctl.c b/fs/nfsd/nfsctl.c
+index 6493df6b1bd5..4b8ebcc6b183 100644
+--- a/fs/nfsd/nfsctl.c
++++ b/fs/nfsd/nfsctl.c
+@@ -1126,6 +1126,8 @@ static ssize_t write_v4_end_grace(struct file *file, char *buf, size_t size)
+ 		case 'Y':
+ 		case 'y':
+ 		case '1':
++			if (nn->nfsd_serv)
++				return -EBUSY;
+ 			nfsd4_end_grace(nn);
+ 			break;
+ 		default:
 -- 
 2.19.1
 
