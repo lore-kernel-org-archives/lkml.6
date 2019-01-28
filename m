@@ -6,46 +6,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B254C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C936C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D612121852
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 163FE21852
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:00:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691228;
-	bh=pDU80uKev68QP/nkK3SovFLybpwi/pkp4KcRb7JezDM=;
+	s=default; t=1548691232;
+	bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=GcoCAstAE+gUP/h+jEdlD+OxbraKhk8kd1hDfDqCl+c/iwvukNLmOO17yGIkdPZVR
-	 htDeKtNVZaSdA5LUqMJZe2fMvifwySXsKL7+/ik4rtl0p1yu14G0bdvBG7jzemgSWK
-	 KV4m+eh6aZKAq9t5cB25ji9yjm5YSEa3hP9SLavs=
+	b=ypszUctjfC8L6WLU/KMCuS54ovaQsdlk/A7KmVsXzuxCuyLsdgygXUDpk+bUI9I3j
+	 nYD5pXCUPlUhllepCJGb4pU6DjCf99zrf/4IA4Ir6az7V3y9+wYH/UYCw8RYt2CCbR
+	 79920i7sovlu1TBo0q60urBpycyIJjpuX4rv5udA=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730790AbfA1QA0 (ORCPT
+        id S1730800AbfA1QA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:00:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45646 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:00:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45688 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730754AbfA1QAY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:00:24 -0500
+        id S1730754AbfA1QA0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:00:26 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 84FBA21848;
-        Mon, 28 Jan 2019 16:00:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 856872175B;
+        Mon, 28 Jan 2019 16:00:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691224;
-        bh=pDU80uKev68QP/nkK3SovFLybpwi/pkp4KcRb7JezDM=;
+        s=default; t=1548691226;
+        bh=hIsqLgJIVecRCPkiS/x7U8wfvg+g3uWTtxMvbTqZBms=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Hjgoanzj3O5mnvvbU+7EG7nLDEJkI9HTJrKRhE48/o+urH4il9A16qitOe7fgbs6N
-         IcRNl9lYtFpf+62NbIHIZNwBIQg3MSEVMtUQSbjJjFMVbEI0gqhPHQZtiI0uX05tGC
-         CzYzt5pq9u4+Qc2IHMjYp2235BhaTZ7kEbXRgpgE=
+        b=P3PJGx6c6K065jiagpFpMA2mEaBHRSnEv/p7XDlXG9cm5aODwykF0C047a66yiFSm
+         pFecePzz0cb9e8vTjhjGYwwitoipeBxxhmnG7SNXgW4RlN/b5pTAufRXOx0w1gH/EG
+         kwXJSxWJO2B0mIUR+ItdTYtsWT0GzsTdnuuUSxRs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Bob Peterson <rpeterso@redhat.com>,
-        David Teigland <teigland@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, cluster-devel@redhat.com
-Subject: [PATCH AUTOSEL 4.19 021/258] dlm: Don't swamp the CPU with callbacks queued during recovery
-Date:   Mon, 28 Jan 2019 10:55:27 -0500
-Message-Id: <20190128155924.51521-21-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Bjorn Helgaas <helgaas@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-pci@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 022/258] x86/PCI: Fix Broadcom CNB20LE unintended sign extension (redux)
+Date:   Mon, 28 Jan 2019 10:55:28 -0500
+Message-Id: <20190128155924.51521-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -57,60 +57,42 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bob Peterson <rpeterso@redhat.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 216f0efd19b9cc32207934fd1b87a45f2c4c593e ]
+[ Upstream commit 53bb565fc5439f2c8c57a786feea5946804aa3e9 ]
 
-Before this patch, recovery would cause all callbacks to be delayed,
-put on a queue, and afterward they were all queued to the callback
-work queue. This patch does the same thing, but occasionally takes
-a break after 25 of them so it won't swamp the CPU at the expense
-of other RT processes like corosync.
+In the expression "word1 << 16", word1 starts as u16, but is promoted to a
+signed int, then sign-extended to resource_size_t, which is probably not
+what was intended.  Cast to resource_size_t to avoid the sign extension.
 
-Signed-off-by: Bob Peterson <rpeterso@redhat.com>
-Signed-off-by: David Teigland <teigland@redhat.com>
+This fixes an identical issue as fixed by commit 0b2d70764bb3 ("x86/PCI:
+Fix Broadcom CNB20LE unintended sign extension") back in 2014.
+
+Detected by CoverityScan, CID#138749, 138750 ("Unintended sign extension")
+
+Fixes: 3f6ea84a3035 ("PCI: read memory ranges out of Broadcom CNB20LE host bridge")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Bjorn Helgaas <helgaas@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/dlm/ast.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/x86/pci/broadcom_bus.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/fs/dlm/ast.c b/fs/dlm/ast.c
-index 562fa8c3edff..47ee66d70109 100644
---- a/fs/dlm/ast.c
-+++ b/fs/dlm/ast.c
-@@ -292,6 +292,8 @@ void dlm_callback_suspend(struct dlm_ls *ls)
- 		flush_workqueue(ls->ls_callback_wq);
- }
- 
-+#define MAX_CB_QUEUE 25
-+
- void dlm_callback_resume(struct dlm_ls *ls)
- {
- 	struct dlm_lkb *lkb, *safe;
-@@ -302,15 +304,23 @@ void dlm_callback_resume(struct dlm_ls *ls)
- 	if (!ls->ls_callback_wq)
- 		return;
- 
-+more:
- 	mutex_lock(&ls->ls_cb_mutex);
- 	list_for_each_entry_safe(lkb, safe, &ls->ls_cb_delay, lkb_cb_list) {
- 		list_del_init(&lkb->lkb_cb_list);
- 		queue_work(ls->ls_callback_wq, &lkb->lkb_cb_work);
- 		count++;
-+		if (count == MAX_CB_QUEUE)
-+			break;
+diff --git a/arch/x86/pci/broadcom_bus.c b/arch/x86/pci/broadcom_bus.c
+index 526536c81ddc..ca1e8e6dccc8 100644
+--- a/arch/x86/pci/broadcom_bus.c
++++ b/arch/x86/pci/broadcom_bus.c
+@@ -50,8 +50,8 @@ static void __init cnb20le_res(u8 bus, u8 slot, u8 func)
+ 	word1 = read_pci_config_16(bus, slot, func, 0xc0);
+ 	word2 = read_pci_config_16(bus, slot, func, 0xc2);
+ 	if (word1 != word2) {
+-		res.start = (word1 << 16) | 0x0000;
+-		res.end   = (word2 << 16) | 0xffff;
++		res.start = ((resource_size_t) word1 << 16) | 0x0000;
++		res.end   = ((resource_size_t) word2 << 16) | 0xffff;
+ 		res.flags = IORESOURCE_MEM;
+ 		update_res(info, res.start, res.end, res.flags, 0);
  	}
- 	mutex_unlock(&ls->ls_cb_mutex);
- 
- 	if (count)
- 		log_rinfo(ls, "dlm_callback_resume %d", count);
-+	if (count == MAX_CB_QUEUE) {
-+		count = 0;
-+		cond_resched();
-+		goto more;
-+	}
- }
- 
 -- 
 2.19.1
 
