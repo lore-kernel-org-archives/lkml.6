@@ -4,62 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51710C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8967DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 219EB21783
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 592CF20880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:48:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690535;
-	bh=bcLKVnO4RFI2dhwpNXslmzVthU5mituxKMAvmzBMi/s=;
+	s=default; t=1548690538;
+	bh=ARWhCgiLxU6b5lsqz6SZZqHwIxGmYrxl+8tjNX4iXwk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=jDUPwsBBe8bWlf/GT9i9dihyq6yW+sPQaGx9M5u5lU1TP25mx7Ff5sZ5JyBSDQAXw
-	 4s5GxIAhsXnsKkSyZH9JhKFTPKgq+ZFUscUyCPygh8KYPUIvb0xi6Td6LXkX6tNhyW
-	 fWA9UPMht1I/kmD+S0mxEQPcOPXnJfZXZ01M3AYs=
+	b=omKWLtGd36ndTd1aF46HwqrG//vrU2snteBEm8G5e4jJtb1ObIXaI5u/cDtYA9DEM
+	 hdlCtQJXxoi64jQaHpUwnObO+kGxuzaQgvV68ipTvwgXXmhvjQTVRnU2OVcgnRFoXD
+	 F05WbpxBlotZby9op5Bp6FOT4wmFFTSfeJTlUE5E=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728578AbfA1Psx (ORCPT
+        id S1728596AbfA1Ps5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:48:53 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34290 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:48:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34390 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728557AbfA1Psu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:48:50 -0500
+        id S1728557AbfA1Psy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:48:54 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B20B20880;
-        Mon, 28 Jan 2019 15:48:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 29C3021741;
+        Mon, 28 Jan 2019 15:48:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690530;
-        bh=bcLKVnO4RFI2dhwpNXslmzVthU5mituxKMAvmzBMi/s=;
+        s=default; t=1548690533;
+        bh=ARWhCgiLxU6b5lsqz6SZZqHwIxGmYrxl+8tjNX4iXwk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=TZpyUPi82ZguTab8M2AsKIdZYlRybWZ1zszCNVbo9rUIxLQWC8GUM4Ty4WPYw+Ai4
-         CXp1+KcumBQtvpi0Aa55DQ87wB2BUUuoKkS8TH3BoJ7pUIkgBt8//48Pk1c5GpKWbV
-         dNudOJ47FqVzBFNmw5DWHajslMQ5d9k1pzVprawc=
+        b=cg/kW1a6qGKqlfRUjb+iObTNoR/Ajz1mbROzWwyIdfQJpNkoWrJOThR8wU07jmnvU
+         4cdw+N1Voh5qL4Ci/Ng8JT9nyFjjqW2pBURQqA8i9BnKFxsf0LKKEEzDwFy8+pF1wZ
+         yMac7igVHegd4pNBLuTeUg+8AcHMzx/lVRKKCN+o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Borislav Petkov <bp@suse.de>, "H. Peter Anvin" <hpa@zytor.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        kvm ML <kvm@vger.kernel.org>, x86-ml <x86@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.20 113/304] x86/fpu: Add might_fault() to user_insn()
-Date:   Mon, 28 Jan 2019 10:40:30 -0500
-Message-Id: <20190128154341.47195-113-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 114/304] media: i2c: TDA1997x: select CONFIG_HDMI
+Date:   Mon, 28 Jan 2019 10:40:31 -0500
+Message-Id: <20190128154341.47195-114-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 X-Patchwork-Hint: Ignore
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -67,51 +59,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit 6637401c35b2f327a35d27f44bda05e327f2f017 ]
+[ Upstream commit 79e89e36dc8a47ef965a35b484d737a5227feed1 ]
 
-Every user of user_insn() passes an user memory pointer to this macro.
+Without CONFIG_HDMI, we get a link error for this driver:
 
-Add might_fault() to user_insn() so we can spot users which are using
-this macro in sections where page faulting is not allowed.
+drivers/media/i2c/tda1997x.o: In function `tda1997x_parse_infoframe':
+tda1997x.c:(.text+0x2195): undefined reference to `hdmi_infoframe_unpack'
+tda1997x.c:(.text+0x21b6): undefined reference to `hdmi_infoframe_log'
+drivers/media/i2c/tda1997x.o: In function `tda1997x_log_infoframe':
+tda1997x.c:(.text.unlikely+0x13d3): undefined reference to `hdmi_infoframe_unpack'
+tda1997x.c:(.text.unlikely+0x1426): undefined reference to `hdmi_infoframe_log'
 
- [ bp: Space it out to make it more visible. ]
+All other drivers in this directory that use HDMI select CONFIG_HDMI,
+so do the same here:
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Reviewed-by: Rik van Riel <riel@surriel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Jann Horn <jannh@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>
-Cc: Radim Krčmář <rkrcmar@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: kvm ML <kvm@vger.kernel.org>
-Cc: x86-ml <x86@kernel.org>
-Link: https://lkml.kernel.org/r/20181128222035.2996-6-bigeasy@linutronix.de
+Fixes: 9ac0038db9a7 ("media: i2c: Add TDA1997x HDMI receiver driver")
+
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/x86/include/asm/fpu/internal.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/media/i2c/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-index 69dcdf195b61..fa2c93cb42a2 100644
---- a/arch/x86/include/asm/fpu/internal.h
-+++ b/arch/x86/include/asm/fpu/internal.h
-@@ -106,6 +106,9 @@ extern void fpstate_sanitize_xstate(struct fpu *fpu);
- #define user_insn(insn, output, input...)				\
- ({									\
- 	int err;							\
-+									\
-+	might_fault();							\
-+									\
- 	asm volatile(ASM_STAC "\n"					\
- 		     "1:" #insn "\n\t"					\
- 		     "2: " ASM_CLAC "\n"				\
+diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
+index 704af210e270..f4714bd6fef0 100644
+--- a/drivers/media/i2c/Kconfig
++++ b/drivers/media/i2c/Kconfig
+@@ -61,6 +61,7 @@ config VIDEO_TDA1997X
+ 	depends on VIDEO_V4L2 && I2C && VIDEO_V4L2_SUBDEV_API
+ 	depends on SND_SOC
+ 	select SND_PCM
++	select HDMI
+ 	---help---
+ 	  V4L2 subdevice driver for the NXP TDA1997x HDMI receivers.
+ 
 -- 
 2.19.1
 
