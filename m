@@ -2,128 +2,140 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F26FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:30:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DF17C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:30:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C75721741
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:30:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D453721741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 19:30:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="au2oc9Zq"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NZcEj/Qa"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727997AbfA1TaD (ORCPT
+        id S1727310AbfA1TaI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 14:30:03 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:44046 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726862AbfA1TaD (ORCPT
+        Mon, 28 Jan 2019 14:30:08 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:41160 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbfA1TaF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 14:30:03 -0500
-Received: by mail-yb1-f196.google.com with SMTP id k189so7160673yba.11
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 11:30:02 -0800 (PST)
+        Mon, 28 Jan 2019 14:30:05 -0500
+Received: by mail-pg1-f194.google.com with SMTP id m1so7632459pgq.8;
+        Mon, 28 Jan 2019 11:30:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=0QHhKVMY3KHgCtlRraqAEq+184Z+ENeF3gep/l00m+E=;
-        b=au2oc9Zqc0ylZCXYZ+TQhOiNjymwRFIHWjSBklwYRLLO2yagTQ5/kmHDcunJHVsNb9
-         3GdxwqeVUJ1L/WdrEnHfQAtbsI/BXZqEuFWttqHc6YZWUHK9C9S4U9bpn+avlu+hdL0a
-         yBh/mrJsWERyTLbraZTQZ6PoTz+z9o4U/v/svnGSLP369v6ZhUW90W52bj+9vyljuszO
-         N59FvbpKDwnN+zh/QT91jnKeNHTzCg3hYKOGCpXU/qwofRNt03l1E2M1cfXBOUFDdeo1
-         yqgBpAcjC/0rvAN8lVun+1CI1qmKzIj9LGxoAIpof3iiPBnAvxzqrs8qzib5ZRYBAdxY
-         Ym4g==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=gNih+kGXsY02yGlMFspxrtQWhmYIiMEFH/7OeSdZ1fM=;
+        b=NZcEj/Qaa2hGJoUeXyh4r9timoiJ7QcNCGfKBZBp+gt7ZNs2tp/aNe8bcXTugXtCRj
+         6iMTv0Zdq7g23k+NE6dr0DA4213i+bg8B5hLxS/jeDEBOZ/kQgaL5GlUGPTfAvrjx9lf
+         uo+gheZlU11FYVIto2rEvaJpFMzEh6N4+K9LLMVX6sN7U86ouyXSeOT6HJEtSbz7dpsP
+         k5somAVoILwh1gBslPFkaXSOZLrh74pEXEvXu/Lqi0x9rXWQD94je3vqse/mOsWe191u
+         1eyuQZQwbeUs/W2krdQDSp1UnVBRg5TqpKspZu6y4FL2VB3dU8fef06o7h+aOKOjlpo/
+         yZKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=0QHhKVMY3KHgCtlRraqAEq+184Z+ENeF3gep/l00m+E=;
-        b=JeYnUR9ML8dMWwCdm1DJS6BWCrg3UHXSurOJEMdcPWF2z2o85SRhGLi9ubdH23h35U
-         PGJIicbV3/GbHo4AV5X4D3FXRSoLWDMkDhcJq833q0XgxWNXhpynf9yNHggsRGodp5S+
-         sHAf5YEYbD7psTmiS74w/UEKF3lF6HDWTzLxWdfBl24olt1QEJDBpRJ/Uux6kIhTx5kW
-         vBk/47tN9MJQoOIXYgk0pbZIngfm3bEHkp0UY4ZUDbPXbRNHSc4adkecagw2VHFiANU7
-         y83K9nsfYd3hWeTbn44Y/n4e31BVz1CJmOcercYLLLwEM0Cd1/rhwnOzI3hxKhl99XaJ
-         +oXQ==
-X-Gm-Message-State: AJcUukekeyYuvwBK5bpbiF8z75Xuwf1XJ/s5V+WED1s50QpIM1VjCLtI
-        z3KpdcDWmUn2qcRLdta8D/Pugim2dewaM7a0vQBMRQ==
-X-Google-Smtp-Source: ALg8bN70BjkhSPAnBiF+oiY2MOz+BVHm4GNf1CFkk1BUeM8QpDp35X76V6HoQiJyzYygVDlEumlrtl27KTriAVCWqk0=
-X-Received: by 2002:a5b:9c3:: with SMTP id y3mr21608158ybq.7.1548703802192;
- Mon, 28 Jan 2019 11:30:02 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=gNih+kGXsY02yGlMFspxrtQWhmYIiMEFH/7OeSdZ1fM=;
+        b=YejsB0pz6YgxrO/Zg9DGwGIMJY9wPYMSpeXz9JOoM2jsdDshzEs8IIrvail7wN03gF
+         osmp7dsZM/fcEmvtDzqGxtIPOfpu6J4/8y8nG/JudoPCqzguDlN4DuHmxstVhvoIwyhx
+         i3+aURjryo7JIrx3mmstj3j++siLgyci/MFo7iccMYNibKlRJ7pmK3vORCkrdwfuFVP4
+         Ho5Lxqg93kb+DJnLF6nBevtL+hlunN8RsBhodu4IN7L01SDYd3+lfUgwbah8EAnmcwvk
+         Dkrg90+aDfvoFGngr/RYW5r4dVcdaPkM+imo9VbVoEC+1UThKgJCiaS6aAOQLYWte5BM
+         PdTQ==
+X-Gm-Message-State: AJcUukfYrZ2kwqgfTS3GD3dkTvlvi143MJ/BuF6obUGWyMmilv0jVsWI
+        sGCSYD2TEfZGxQYvK2huuqPzRXwv
+X-Google-Smtp-Source: ALg8bN4DeTvski8L5NJ175au0AKTV/AlxG1vWWZQVzCXdCqK1rohZwW/5YLgkVEeNUh9KIthj4q2TQ==
+X-Received: by 2002:a62:2606:: with SMTP id m6mr22549508pfm.133.1548703804786;
+        Mon, 28 Jan 2019 11:30:04 -0800 (PST)
+Received: from dtor-ws ([2620:15c:202:201:3adc:b08c:7acc:b325])
+        by smtp.gmail.com with ESMTPSA id b7sm45385896pfa.52.2019.01.28.11.30.03
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 28 Jan 2019 11:30:04 -0800 (PST)
+Date:   Mon, 28 Jan 2019 11:30:02 -0800
+From:   Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To:     Jonathan Bakker <xc-racer2@live.ca>
+Cc:     =?utf-8?B?UGF3ZcWC?= Chmiel <pawel.mikolaj.chmiel@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "colyli@suse.de" <colyli@suse.de>,
+        "ckeepax@opensource.wolfsonmicro.com" 
+        <ckeepax@opensource.wolfsonmicro.com>,
+        "andrew.smirnov@gmail.com" <andrew.smirnov@gmail.com>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "xiaotong.lu@spreadtrum.com" <xiaotong.lu@spreadtrum.com>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH 4/4] dt-bindings: input: Add documentation for gp2a sensor
+Message-ID: <20190128193002.GE34692@dtor-ws>
+References: <20190125175045.22576-1-pawel.mikolaj.chmiel@gmail.com>
+ <20190125175045.22576-5-pawel.mikolaj.chmiel@gmail.com>
+ <20190126013237.GF212026@dtor-ws>
+ <BYAPR02MB54959FD8A7CF5977B0D4B5B7A3940@BYAPR02MB5495.namprd02.prod.outlook.com>
 MIME-Version: 1.0
-References: <20190126095131.4756-1-enric.balletbo@collabora.com> <20190126095131.4756-5-enric.balletbo@collabora.com>
-In-Reply-To: <20190126095131.4756-5-enric.balletbo@collabora.com>
-From:   Guenter Roeck <groeck@google.com>
-Date:   Mon, 28 Jan 2019 11:29:51 -0800
-Message-ID: <CABXOdTerV4VwxfOCpupMHd=h+C4A8dyniX-uHwcNna-ms3bfRg@mail.gmail.com>
-Subject: Re: [PATCH v2 04/12] platform/chrome: cros_ec_sysfs: switch to SPDX identifier
-To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        Guenter Roeck <groeck@chromium.org>,
-        Gwendal Grignou <gwendal@chromium.org>, kernel@collabora.com,
-        Benson Leung <bleung@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <BYAPR02MB54959FD8A7CF5977B0D4B5B7A3940@BYAPR02MB5495.namprd02.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Jan 26, 2019 at 1:51 AM Enric Balletbo i Serra
-<enric.balletbo@collabora.com> wrote:
->
-> Adopt the SPDX license identifier headers to ease license compliance
-> management. Also change the description for one more appropriate.
->
-> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+On Sat, Jan 26, 2019 at 03:14:14AM +0000, Jonathan Bakker wrote:
+> Hi Dmitry,
+> 
+> Thanks for your review of the patches.
+> 
+> Considering that the light sensor part should be in IIO, should the entire driver be rewritten as an IIO driver?  There's already the driver for gp2ap020a00f there which is presumably the gp2ap002a00f's successor and does the same functions.
 
-Reviewed-by: Guenter Roeck <groeck@chromium.org>
+I'd be fine with that.
 
-> ---
->
-> Changes in v2: None
->
->  drivers/platform/chrome/cros_ec_sysfs.c | 24 +++++-------------------
->  1 file changed, 5 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/platform/chrome/cros_ec_sysfs.c b/drivers/platform/chrome/cros_ec_sysfs.c
-> index 0ff5aa30c070..01c420727ee1 100644
-> --- a/drivers/platform/chrome/cros_ec_sysfs.c
-> +++ b/drivers/platform/chrome/cros_ec_sysfs.c
-> @@ -1,21 +1,7 @@
-> -/*
-> - * cros_ec_sysfs - expose the Chrome OS EC through sysfs
-> - *
-> - * Copyright (C) 2014 Google, Inc.
-> - *
-> - * This program is free software; you can redistribute it and/or modify
-> - * it under the terms of the GNU General Public License as published by
-> - * the Free Software Foundation; either version 2 of the License, or
-> - * (at your option) any later version.
-> - *
-> - * This program is distributed in the hope that it will be useful,
-> - * but WITHOUT ANY WARRANTY; without even the implied warranty of
-> - * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-> - * GNU General Public License for more details.
-> - *
-> - * You should have received a copy of the GNU General Public License
-> - * along with this program. If not, see <http://www.gnu.org/licenses/>.
-> - */
-> +// SPDX-License-Identifier: GPL-2.0+
-> +// Expose the ChromeOS EC through sysfs
-> +//
-> +// Copyright (C) 2014 Google, Inc.
->
->  #define pr_fmt(fmt) "cros_ec_sysfs: " fmt
->
-> @@ -389,5 +375,5 @@ static struct platform_driver cros_ec_sysfs_driver = {
->  module_platform_driver(cros_ec_sysfs_driver);
->
->  MODULE_LICENSE("GPL");
-> -MODULE_DESCRIPTION("ChromeOS EC control driver");
-> +MODULE_DESCRIPTION("Expose the ChromeOS EC through sysfs");
->  MODULE_ALIAS("platform:" DRV_NAME);
-> --
-> 2.20.1
->
+> 
+> On 2019-01-25 5:32 p.m., Dmitry Torokhov wrote:
+> > On Fri, Jan 25, 2019 at 06:50:45PM +0100, Paweł Chmiel wrote:
+> >> From: Jonathan Bakker <xc-racer2@live.ca>
+> >>
+> >> This commit adds documentation for Sharp GP2AP002A00F.
+> >> It's Proximity/Opto Sensor connected over i2c.
+> >>
+> >> Signed-off-by: Jonathan Bakker <xc-racer2@live.ca>
+> >> Signed-off-by: Paweł Chmiel <pawel.mikolaj.chmiel@gmail.com>
+> >> ---
+> >>  .../bindings/input/sharp,gp2ap002a00f.txt     | 29 +++++++++++++++++++
+> >>  1 file changed, 29 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/input/sharp,gp2ap002a00f.txt
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/input/sharp,gp2ap002a00f.txt b/Documentation/devicetree/bindings/input/sharp,gp2ap002a00f.txt
+> >> new file mode 100644
+> >> index 000000000000..c524eb7d3d60
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/input/sharp,gp2ap002a00f.txt
+> >> @@ -0,0 +1,29 @@
+> >> +* Sharp GP2AP002A00F I2C Proximity/Opto Sensor
+> >> +
+> >> +Required properties:
+> >> +- compatible : Should be "sharp,gp2ap002a00f"
+> >> +- reg : The I2C address of the sensor
+> >> +- vout-gpio : The gpio connected to the vout pin
+> > 
+> > Do you know what it is for?
+> > 
+> It's the control of the main power supply to the chip.
+
+In this case it should be a power supply (regulator), not gpio.
+
+Thanks.
+
+-- 
+Dmitry
