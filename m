@@ -2,346 +2,232 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B72C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:33:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49F4EC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6EE02147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:33:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E0BD2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:33:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548696799;
+	bh=Y8sFZ/VXFhWfpaTKxEyl0hZMo8cjMyW3z9wZoXsaY+A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=vnZiB5p3zb0SYV1pc13KJkoRWkK4aOfns+UVFARQX1bBCqsgsEOufbd+/MagpWtol
+	 ZlM6L6tvbJB9jE3Sg6XacxVhsiO6gwEttBimW6bi2tnbxyGDZ5DusfGzZnQ8ZesFAf
+	 z3bUAzhxRvN0/ajkpDvS0DkTgh/UeCFY+S7ULLlw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730904AbfA1RdF (ORCPT
+        id S1730164AbfA1P5C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:33:05 -0500
-Received: from foss.arm.com ([217.140.101.70]:51330 "EHLO foss.arm.com"
+        Mon, 28 Jan 2019 10:57:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42560 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729684AbfA1RdA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 12:33:00 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 53370EBD;
-        Mon, 28 Jan 2019 09:32:59 -0800 (PST)
-Received: from [10.1.197.2] (ostrya.cambridge.arm.com [10.1.197.2])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C377E3F59C;
-        Mon, 28 Jan 2019 09:32:56 -0800 (PST)
-Subject: Re: [RFC v3 02/21] iommu: Introduce cache_invalidate API
-To:     Auger Eric <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>
-Cc:     yi.l.liu@linux.intel.com, kevin.tian@intel.com,
-        ashok.raj@intel.com, kvm@vger.kernel.org, peter.maydell@linaro.org,
-        will.deacon@arm.com, linux-kernel@vger.kernel.org,
-        christoffer.dall@arm.com, marc.zyngier@arm.com,
-        iommu@lists.linux-foundation.org, robin.murphy@arm.com,
-        kvmarm@lists.cs.columbia.edu, eric.auger.pro@gmail.com
-References: <20190108102633.17482-1-eric.auger@redhat.com>
- <20190108102633.17482-3-eric.auger@redhat.com>
- <20190111143042.183a27a7@x1.home>
- <66653430-514f-2b4b-3d93-348deb6cd490@redhat.com>
-From:   Jean-Philippe Brucker <jean-philippe.brucker@arm.com>
-Message-ID: <a69ab354-1742-d962-7f2a-f1266d79d060@arm.com>
-Date:   Mon, 28 Jan 2019 17:32:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.4.0
+        id S1729809AbfA1P47 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:56:59 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 04C332175B;
+        Mon, 28 Jan 2019 15:56:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691017;
+        bh=Y8sFZ/VXFhWfpaTKxEyl0hZMo8cjMyW3z9wZoXsaY+A=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=pJ6x9+oBT0XwjlDD84RT1KK5Xi0zEX9VOFs8upUXK9Pslf4m5/6R3kKRIK+XqryDx
+         PkBpX/epV7aIEJZhD/kRc4fetnmXaUAWXcpIBPc1CnrxW+lbyo4e+t1AhI78/y5L3P
+         owwItrFj2cELQJYUR8npCcrWDK2PzFhq6tG3FDNg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Stanislav Fomichev <sdf@google.com>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 262/304] perf build: Don't unconditionally link the libbfd feature test to -liberty and -lz
+Date:   Mon, 28 Jan 2019 10:42:59 -0500
+Message-Id: <20190128154341.47195-262-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <66653430-514f-2b4b-3d93-348deb6cd490@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Eric,
+From: Stanislav Fomichev <sdf@google.com>
 
-On 25/01/2019 16:49, Auger Eric wrote:
-[...]
->>> diff --git a/include/uapi/linux/iommu.h b/include/uapi/linux/iommu.h
->>> index 7a7cf7a3de7c..4605f5cfac84 100644
->>> --- a/include/uapi/linux/iommu.h
->>> +++ b/include/uapi/linux/iommu.h
->>> @@ -47,4 +47,99 @@ struct iommu_pasid_table_config {
->>>  	};
->>>  };
->>>  
->>> +/**
->>> + * enum iommu_inv_granularity - Generic invalidation granularity
->>> + * @IOMMU_INV_GRANU_DOMAIN_ALL_PASID:	TLB entries or PASID caches of all
->>> + *					PASIDs associated with a domain ID
->>> + * @IOMMU_INV_GRANU_PASID_SEL:		TLB entries or PASID cache associated
->>> + *					with a PASID and a domain
->>> + * @IOMMU_INV_GRANU_PAGE_PASID:		TLB entries of selected page range
->>> + *					within a PASID
->>> + *
->>> + * When an invalidation request is passed down to IOMMU to flush translation
->>> + * caches, it may carry different granularity levels, which can be specific
->>> + * to certain types of translation caches.
->>> + * This enum is a collection of granularities for all types of translation
->>> + * caches. The idea is to make it easy for IOMMU model specific driver to
->>> + * convert from generic to model specific value. Each IOMMU driver
->>> + * can enforce check based on its own conversion table. The conversion is
->>> + * based on 2D look-up with inputs as follows:
->>> + * - translation cache types
->>> + * - granularity
->>> + *
->>> + *             type |   DTLB    |    TLB    |   PASID   |
->>> + *  granule         |           |           |   cache   |
->>> + * -----------------+-----------+-----------+-----------+
->>> + *  DN_ALL_PASID    |   Y       |   Y       |   Y       |
->>> + *  PASID_SEL       |   Y       |   Y       |   Y       |
->>> + *  PAGE_PASID      |   Y       |   Y       |   N/A     |
->>> + *
->>> + */
->>> +enum iommu_inv_granularity {
->>> +	IOMMU_INV_GRANU_DOMAIN_ALL_PASID,
->>> +	IOMMU_INV_GRANU_PASID_SEL,
->>> +	IOMMU_INV_GRANU_PAGE_PASID,
->>> +	IOMMU_INV_NR_GRANU,
->>> +};
->>> +
->>> +/**
->>> + * enum iommu_inv_type - Generic translation cache types for invalidation
->>> + *
->>> + * @IOMMU_INV_TYPE_DTLB:	device IOTLB
->>> + * @IOMMU_INV_TYPE_TLB:		IOMMU paging structure cache
->>> + * @IOMMU_INV_TYPE_PASID:	PASID cache
->>> + * Invalidation requests sent to IOMMU for a given device need to indicate
->>> + * which type of translation cache to be operated on. Combined with enum
->>> + * iommu_inv_granularity, model specific driver can do a simple lookup to
->>> + * convert from generic to model specific value.
->>> + */
->>> +enum iommu_inv_type {
->>> +	IOMMU_INV_TYPE_DTLB,
->>> +	IOMMU_INV_TYPE_TLB,
->>> +	IOMMU_INV_TYPE_PASID,
->>> +	IOMMU_INV_NR_TYPE
->>> +};
->>> +
->>> +/**
->>> + * Translation cache invalidation header that contains mandatory meta data.
->>> + * @version:	info format version, expecting future extesions
->>> + * @type:	type of translation cache to be invalidated
->>> + */
->>> +struct iommu_cache_invalidate_hdr {
->>> +	__u32 version;
->>> +#define TLB_INV_HDR_VERSION_1 1
->>> +	enum iommu_inv_type type;
->>> +};
->>> +
->>> +/**
->>> + * Translation cache invalidation information, contains generic IOMMU
->>> + * data which can be parsed based on model ID by model specific drivers.
->>> + * Since the invalidation of second level page tables are included in the
->>> + * unmap operation, this info is only applicable to the first level
->>> + * translation caches, i.e. DMA request with PASID.
->>> + *
->>> + * @granularity:	requested invalidation granularity, type dependent
->>> + * @size:		2^size of 4K pages, 0 for 4k, 9 for 2MB, etc.
->>
->> Why is this a 4K page centric interface?
-> This matches the vt-d Address Mask (AM) field of the IOTLB Invalidate
-> Descriptor. We can pass a log2size instead.
->>
->>> + * @nr_pages:		number of pages to invalidate
->>> + * @pasid:		processor address space ID value per PCI spec.
->>> + * @arch_id:		architecture dependent id characterizing a context
->>> + *			and tagging the caches, ie. domain Identfier on VTD,
->>> + *			asid on ARM SMMU
->>> + * @addr:		page address to be invalidated
->>> + * @flags		IOMMU_INVALIDATE_ADDR_LEAF: leaf paging entries
->>> + *			IOMMU_INVALIDATE_GLOBAL_PAGE: global pages
->>
->> Shouldn't some of these be tied the the granularity of the
->> invalidation?  It seems like this should be more similar to
->> iommu_pasid_table_config where the granularity of the invalidation
->> defines which entry within a union at the end of the structure is valid
->> and populated.  Otherwise we have fields that don't make sense for
->> certain invalidations.
-> 
-> I am a little bit embarrassed here as this API version is the outcome of
-> long discussions held by Jacob, jean-Philippe and many others. I don't
-> want to hijack that work as I am "simply" reusing this API. Nevertheless
-> I am willing to help on this. So following your recommendation above I
-> dare to propose an updated API:
+[ Upstream commit 14541b1e7e723859ff2c75c6fc10cdbbec6b8c34 ]
 
-Discussing this again is completely fine by me. I have some concerns
-with this proposal though, some of which apply to our previous versions
-as well.
+Current libbfd feature test unconditionally links against -liberty and -lz.
+While it's required on some systems (e.g. opensuse), it's completely
+unnecessary on the others, where only -lbdf is sufficient (debian).
+This patch streamlines (and renames) the following feature checks:
 
-> struct iommu_device_iotlb_inv_info {
->         __u32   version;
-> #define IOMMU_DEV_IOTLB_INV_GLOBAL   0
-> #define IOMMU_DEV_IOTLB_INV_SOURCEID (1 << 0)
-> #define IOMMU_DEV_IOTLB_INV_PASID    (1 << 1)
->         __u8    granularity;
->         __u64   addr;
->         __u8    log2size;
->         __u64   sourceid;
->         __u64   pasid;
->         __u8    padding[2];
-> };
-> 
-> struct iommu_iotlb_inv_info {
->         __u32   version;
-> #define IOMMU_IOTLB_INV_GLOBAL  0
+feature-libbfd           - only link against -lbfd (debian),
+                           see commit 2cf9040714f3 ("perf tools: Fix bfd
+			   dependency libraries detection")
+feature-libbfd-liberty   - link against -lbfd and -liberty
+feature-libbfd-liberty-z - link against -lbfd, -liberty and -lz (opensuse),
+                           see commit 280e7c48c3b8 ("perf tools: fix BFD
+			   detection on opensuse")
 
-Using "global" for granularity=0 will be confusing, let's call this
-"domain" instead. In the SMMU and ATS specifications (and I think VT-d
-as well), the global flag is used to invalidate VA ranges that are
-cached for all PASIDs. In the Arm architecture these TLB entries are
-created from PTE entries without the "nG" bit. So "global" usually means
-granularity=IOMMU_IOTLB_INV_PAGE.
+(feature-liberty{,-z} were renamed to feature-libbfd-liberty{,z}
+for clarity)
 
-> #define IOMMU_IOTLB_INV_ARCHID  (1 << 0)
-> #define IOMMU_IOTLB_INV_PASID   (1 << 1)
-> #define IOMMU_IOTLB_INV_PAGE    (1 << 2)
+The main motivation is to fix this feature test for bpftool which is
+currently broken on debian (libbfd feature shows OFF, but we still
+unconditionally link against -lbfd and it works).
 
-We might as well call this bit "INV_ADDR" to make it clear that it
-describes the validity of field @addr.
+Tested on debian with only -lbfd installed (without -liberty); I'd
+appreciate if somebody on the other systems can test this new detection
+method.
 
->         __u8    granularity;
->         __u64   archid;
->         __u64   pasid;
->         __u64   addr;
->         __u8    log2size;
->         __u8    padding[2];
-> };
-> 
-> struct iommu_pasid_inv_info {
->         __u32   version;
-> #define IOMMU_PASID_INV_GLOBAL     0
-> #define IOMMU_PASID_INV_ARCHID     (1 << 0)
-> #define IOMMU_PASID_INV_PASID      (1 << 1)
-> #define IOMMU_PASID_INV_SOURCEID   (1 << 2)
->         __u8    granularity;
->         __u64   archid;
->         __u64   pasid;
->         __u64   sourceid;
->         __u8    padding[3];
-> };
-> /**
->  * Translation cache invalidation information, contains generic IOMMU
->  * data which can be parsed based on model ID by model specific drivers.
->  * Since the invalidation of second level page tables are included in
->  * the unmap operation, this info is only applicable to the first level
->  * translation caches, i.e. DMA request with PASID.
->  *
->  */
-> struct iommu_cache_invalidate_info {
-> #define IOMMU_CACHE_INVALIDATE_INFO_VERSION_1 1
->         __u32 version;
-> #define IOMMU_INV_TYPE_IOTLB        1 /* IOMMU paging structure cache */
-> #define IOMMU_INV_TYPE_DEV_IOTLB    2 /* Device IOTLB */
-> #define IOMMU_INV_TYPE_PASID        3 /* PASID cache */
->         __u8 type;
->         union {
->                 struct iommu_iotlb_invalidate_info iotlb_inv_info;
->                 struct iommu_dev_iotlb_invalidate_info dev_iotlb_inv_info;
->                 struct iommu_pasid_inv_info pasid_inv_info;
->         };
-> };
+Signed-off-by: Stanislav Fomichev <sdf@google.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: http://lkml.kernel.org/r/4dfc634cfcfb236883971b5107cf3c28ec8a31be.1542328222.git.sdf@google.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ tools/build/Makefile.feature |  4 ++--
+ tools/build/feature/Makefile | 10 ++++----
+ tools/perf/Makefile.config   | 44 +++++++++++++++++++-----------------
+ 3 files changed, 30 insertions(+), 28 deletions(-)
 
-Although I find the new structure and field names clearer in general, I
-believe we're losing something by splitting structures this way.
-
-The one concept I'd like to keep is the possibility to multiplex ATC and
-IOTLB invalidation. That is, when unmapping a range, the guest (using a
-pvIOMMU) shouldn't need to send both iotlb_inv and device_iotlb_inv to
-the host - it's completely redundant. Instead the host IOMMU driver
-should receive a single invalidation packet, and send both TLB and ATC
-invalidation to the hardware.
-
-So in my opinion the invalidation type needs to be a bitfield: userspace
-can select either TYPE_IOTLB, TYPE_DEV_IOTLB, or both. And if type is a
-bitfield, the content that follows has to be a single structure.
-
-Same for the PASID cache: when the guest changes the config for a PASID,
-it shouldn't have to also send TLB and ATC invalidations. A single
-packet should be enough. However config changes won't be a fast path, so
-optimizing the API is less important here.
-
-We could say that IOMMU_INV_TYPE_IOTLB implies IOMMU_INV_TYPE_DEV_IOTLB,
-and that IOMMU_INV_TYPE_PASID implies the others. In fact I think we do,
-in this patch. But that in turn would be suboptimal with vSMMU and other
-emulated solutions, which will receive both TLB and ATC invalidation
-from the guest, and have to signal both separately to the kernel. So for
-@type, a bitfield would be best.
-
-If we want to split the structure, I think splitting by @granularity
-might make more sense. It might require at least 4 structures:
-* domain invalidation:		granule = 0
-* pasid invalidation:		granule = pasid|archid
-* global va invalidation:	granule = addr
-* va invalidation		granule = pasid|archid|addr
-
-> At the moment I ignore the leaf bool parameter used on ARM for PASID
-> invalidation and TLB invalidation. Maybe we can just invalidate more
-> that the leaf cache structures at the moment?
-
-Sure, though we could add a flags field and leave it unused for now,
-which is easier to extend than introducing a new version. I wonder if
-Intel's Invalidation Hint (IH) does the same as Arm's leaf flag?
-
-> on ARM the PASID table can be invalidated per streamid. On vt-d, as far
-> as I understand the sourceid does not tag the entries.
-
-I don't think sourceid is the right thing to use in this interface. The
-device ID (streamid or sourceid) that the IOMMU sees in DMA transactions
-isn't really made visible to userspace. And for mdev it doesn't really
-exist, VFIO will have to pass the parent device's handle to IOMMU.
-
-To userspace a device is identified by the fd provided by VFIO. So if we
-do want to have device-scope in the invalidation (as opposed to
-the current domain-scope) I think userspace needs to provide a device fd
-to VFIO (outside the structures defined here), and then VFIO would pass
-a struct device to iommu_cache_inval().
-
-Thanks,
-Jean
-
->>
->>> + *
->>> + */
->>> +struct iommu_cache_invalidate_info {
->>> +	struct iommu_cache_invalidate_hdr	hdr;
->>> +	enum iommu_inv_granularity	granularity;
->>
->> A separate structure for hdr seems a little pointless.
-> removed
->>
->>> +	__u32		flags;
->>> +#define IOMMU_INVALIDATE_ADDR_LEAF	(1 << 0)
->>> +#define IOMMU_INVALIDATE_GLOBAL_PAGE	(1 << 1)
->>> +	__u8		size;
->>
->> Really need some padding or packing here for any hope of having
->> consistency with userspace.
->>
->>> +	__u64		nr_pages;
->>> +	__u32		pasid;
->>
->> Sub-optimal ordering for packing/padding.  Thanks,
-> I introduced some padding above. Is that OK?
-> 
-> Again if this introduces more noise than it helps I will simply rely on
-> initial contributors for the respin of their series according to your
-> comments. Also we if can't define generic enough structures for ARM and x86
-> 
-> Thanks
-> 
-> Eric
->>
->> Alex
->>
->>> +	__u64		arch_id;
->>> +	__u64		addr;
->>> +};
->>>  #endif /* _UAPI_IOMMU_H */
->>
-> _______________________________________________
-> iommu mailing list
-> iommu@lists.linux-foundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/iommu
-> 
+diff --git a/tools/build/Makefile.feature b/tools/build/Makefile.feature
+index d74bb9414d7c..81dda411e9d3 100644
+--- a/tools/build/Makefile.feature
++++ b/tools/build/Makefile.feature
+@@ -80,8 +80,8 @@ FEATURE_TESTS_EXTRA :=                  \
+          cplus-demangle                 \
+          hello                          \
+          libbabeltrace                  \
+-         liberty                        \
+-         liberty-z                      \
++         libbfd-liberty                 \
++         libbfd-liberty-z               \
+          libunwind-debug-frame          \
+          libunwind-debug-frame-arm      \
+          libunwind-debug-frame-aarch64  \
+diff --git a/tools/build/feature/Makefile b/tools/build/feature/Makefile
+index 304b984f11b9..912b82d4b70a 100644
+--- a/tools/build/feature/Makefile
++++ b/tools/build/feature/Makefile
+@@ -16,8 +16,8 @@ FILES=                                          \
+          test-libbfd.bin                        \
+          test-disassembler-four-args.bin        \
+          test-reallocarray.bin			\
+-         test-liberty.bin                       \
+-         test-liberty-z.bin                     \
++         test-libbfd-liberty.bin                \
++         test-libbfd-liberty-z.bin              \
+          test-cplus-demangle.bin                \
+          test-libelf.bin                        \
+          test-libelf-getphdrnum.bin             \
+@@ -204,7 +204,7 @@ $(OUTPUT)test-libpython-version.bin:
+ 	$(BUILD)
+ 
+ $(OUTPUT)test-libbfd.bin:
+-	$(BUILD) -DPACKAGE='"perf"' -lbfd -lz -liberty -ldl
++	$(BUILD) -DPACKAGE='"perf"' -lbfd -ldl
+ 
+ $(OUTPUT)test-disassembler-four-args.bin:
+ 	$(BUILD) -DPACKAGE='"perf"' -lbfd -lopcodes
+@@ -212,10 +212,10 @@ $(OUTPUT)test-disassembler-four-args.bin:
+ $(OUTPUT)test-reallocarray.bin:
+ 	$(BUILD)
+ 
+-$(OUTPUT)test-liberty.bin:
++$(OUTPUT)test-libbfd-liberty.bin:
+ 	$(CC) $(CFLAGS) -Wall -Werror -o $@ test-libbfd.c -DPACKAGE='"perf"' $(LDFLAGS) -lbfd -ldl -liberty
+ 
+-$(OUTPUT)test-liberty-z.bin:
++$(OUTPUT)test-libbfd-liberty-z.bin:
+ 	$(CC) $(CFLAGS) -Wall -Werror -o $@ test-libbfd.c -DPACKAGE='"perf"' $(LDFLAGS) -lbfd -ldl -liberty -lz
+ 
+ $(OUTPUT)test-cplus-demangle.bin:
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index acbb657f7ce2..a0f366c7a318 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -693,18 +693,20 @@ endif
+ 
+ ifeq ($(feature-libbfd), 1)
+   EXTLIBS += -lbfd
++else
++  # we are on a system that requires -liberty and (maybe) -lz
++  # to link against -lbfd; test each case individually here
+ 
+   # call all detections now so we get correct
+   # status in VF output
+-  $(call feature_check,liberty)
+-  $(call feature_check,liberty-z)
+-  $(call feature_check,cplus-demangle)
++  $(call feature_check,libbfd-liberty)
++  $(call feature_check,libbfd-liberty-z)
+ 
+-  ifeq ($(feature-liberty), 1)
+-    EXTLIBS += -liberty
++  ifeq ($(feature-libbfd-liberty), 1)
++    EXTLIBS += -lbfd -liberty
+   else
+-    ifeq ($(feature-liberty-z), 1)
+-      EXTLIBS += -liberty -lz
++    ifeq ($(feature-libbfd-liberty-z), 1)
++      EXTLIBS += -lbfd -liberty -lz
+     endif
+   endif
+ endif
+@@ -714,24 +716,24 @@ ifdef NO_DEMANGLE
+ else
+   ifdef HAVE_CPLUS_DEMANGLE_SUPPORT
+     EXTLIBS += -liberty
+-    CFLAGS += -DHAVE_CPLUS_DEMANGLE_SUPPORT
+   else
+-    ifneq ($(feature-libbfd), 1)
+-      ifneq ($(feature-liberty), 1)
+-        ifneq ($(feature-liberty-z), 1)
+-          # we dont have neither HAVE_CPLUS_DEMANGLE_SUPPORT
+-          # or any of 'bfd iberty z' trinity
+-          ifeq ($(feature-cplus-demangle), 1)
+-            EXTLIBS += -liberty
+-            CFLAGS += -DHAVE_CPLUS_DEMANGLE_SUPPORT
+-          else
+-            msg := $(warning No bfd.h/libbfd found, please install binutils-dev[el]/zlib-static/libiberty-dev to gain symbol demangling)
+-            CFLAGS += -DNO_DEMANGLE
+-          endif
+-        endif
++    ifeq ($(filter -liberty,$(EXTLIBS)),)
++      $(call feature_check,cplus-demangle)
++
++      # we dont have neither HAVE_CPLUS_DEMANGLE_SUPPORT
++      # or any of 'bfd iberty z' trinity
++      ifeq ($(feature-cplus-demangle), 1)
++        EXTLIBS += -liberty
++      else
++        msg := $(warning No bfd.h/libbfd found, please install binutils-dev[el]/zlib-static/libiberty-dev to gain symbol demangling)
++        CFLAGS += -DNO_DEMANGLE
+       endif
+     endif
+   endif
++
++  ifneq ($(filter -liberty,$(EXTLIBS)),)
++    CFLAGS += -DHAVE_CPLUS_DEMANGLE_SUPPORT
++  endif
+ endif
+ 
+ ifneq ($(filter -lbfd,$(EXTLIBS)),)
+-- 
+2.19.1
 
