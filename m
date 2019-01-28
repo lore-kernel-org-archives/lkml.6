@@ -2,116 +2,128 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75431C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 327C1C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 45E7C2082E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y2Nu9OJQ"
+	by mail.kernel.org (Postfix) with ESMTP id 037452175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548691195;
+	bh=1uMWs1PJfJtH4xyUfZyBSupDsuVE092Sz9H+aaRFgeQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=yUV6KSCgehfKtiRBp08EqGd++tpnF0MCKe2bcnqDJZ2R0dvAiZ0NQ7HjVeMHfOqDO
+	 69kk7vGN+ssbQEGMMl0VZ8XC/R+Jg8RGnPJrhKrt/3+zd5T1/i9cNchrChY6Z2NgEA
+	 0lvXr5tJqhWG2bo0/IVAkqGd4x1iWOb8iasN6FCk=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730639AbfA1P7u (ORCPT
+        id S1730651AbfA1P7x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:59:50 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:46988 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730609AbfA1P7q (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:59:46 -0500
-Received: by mail-yw1-f65.google.com with SMTP id t13so6885875ywe.13
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:59:45 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=yG+IPoHDMDTax/O7ZuXb5W3f6MupuLya0ZnIkWYX/6w=;
-        b=Y2Nu9OJQzhF0nbbJyWful5kNWyBwddZ1f1VkAn29tp8WPoA3LQEpNLrXI0kn9uVKgy
-         OlGZ5zSDZ626uxv8mP78Rj7AY2v4WkaCfuHsdJlBn+xXi/4FgKXoDRlJQ+mYBvaUcEBs
-         /SM7LUD6MvsgbB1WryhJ8dhabqGvs4Z7Y6u8y+ALxnGe8PYsUrAJJ5Y/szN5wT1FRpNF
-         mB6Q3M2uWHzBMJQYukDpHZlc+LY9Usy04PZ+TuJ6YRjmujaKDcTm2vvts6QrF8UMvKSD
-         nwJH1risZ+AEEBgV+6YVoz9pRI6Oquh247133FVA/eaZMzmKJy+IaVYXqtOvdwRjrchm
-         ysOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=yG+IPoHDMDTax/O7ZuXb5W3f6MupuLya0ZnIkWYX/6w=;
-        b=Ig7Rxo0x7XCO7P6JhVqoquyn4zRx/7TYqf3KYE296Jd1UVIFu/fbKCep7u/glvBAw9
-         mDM6jP9PZLpVgBslqOWAo4eud6p2jGUjsrGjY8DfjJL/vjLzVCFY3iLGl5TiGbfNPtxN
-         FZpwU9aay+OVRAPYqPsKwDiBhiW7dftG4XBeAvLF1QX4RYnCk5MDY210t7rEA12vGk0e
-         LKHQnah2yxQjdfAfB7OvowrMG4e6sX9ocQcRpt/FgEKmZW3eruyclmWJIK9C1nds4SaT
-         cbuAu/S398G5YEYaFg9I8jXumd4hCdqJuOeDO+nLM52UmrgpcCqnzM9ZzM2n//AO38uc
-         folw==
-X-Gm-Message-State: AJcUukfRJmuxuS2y3W21YYjLuh+4MkVQuPETu68hBDDa1BXbI/eC0Kpv
-        JOKYl0KeowyHpKNS/7mgeuPXwzN6Km8p8ToUu9D65A==
-X-Google-Smtp-Source: ALg8bN7fCDdqmT/Poi2kifvBPpqajT1d4G+DhyRvU7E2FrC8gKAWDBqOykP3e9SscAD5+1zazZ4ERAHo037J/PrOYpg=
-X-Received: by 2002:a81:ee07:: with SMTP id l7mr21402528ywm.489.1548691184840;
- Mon, 28 Jan 2019 07:59:44 -0800 (PST)
+        Mon, 28 Jan 2019 10:59:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45160 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1730638AbfA1P7v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:59:51 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0B2372175B;
+        Mon, 28 Jan 2019 15:59:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548691190;
+        bh=1uMWs1PJfJtH4xyUfZyBSupDsuVE092Sz9H+aaRFgeQ=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=dSP4NiJAgH7Z7/NZIbWwHGqP09yIWgadE+RbOTGNDS9np2SwrKLfx7ydZzx9Sv8qv
+         G7vgxlZkmYke2/0sYUy8hWOugyBITPA3jhwTLakVdOFu8IQ23cIzLt4fB7s0JVbBdZ
+         HWkug4Qtht4dNB6/Lxh9gvLm3h1jqQqIDlYmlk0o=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.19 009/258] gpu: ipu-v3: image-convert: Prevent race between run and unprepare
+Date:   Mon, 28 Jan 2019 10:55:15 -0500
+Message-Id: <20190128155924.51521-9-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
+References: <20190128155924.51521-1-sashal@kernel.org>
 MIME-Version: 1.0
-References: <20190123223144.GA10798@chrisdown.name> <20190124082252.GD4087@dhcp22.suse.cz>
- <20190124160009.GA12436@cmpxchg.org> <20190124170117.GS4087@dhcp22.suse.cz>
- <20190124182328.GA10820@cmpxchg.org> <20190125074824.GD3560@dhcp22.suse.cz>
- <20190125165152.GK50184@devbig004.ftw2.facebook.com> <20190125173713.GD20411@dhcp22.suse.cz>
- <20190125182808.GL50184@devbig004.ftw2.facebook.com>
-In-Reply-To: <20190125182808.GL50184@devbig004.ftw2.facebook.com>
-From:   Shakeel Butt <shakeelb@google.com>
-Date:   Mon, 28 Jan 2019 07:59:33 -0800
-Message-ID: <CALvZod6LFY+FYfBcAX0kLxV5KKB1-TX2cU5EDyyyjvHOtuWWbA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Michal Hocko <mhocko@kernel.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        Chris Down <chris@chrisdown.name>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
-        kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Tejun,
+From: Steve Longerbeam <slongerbeam@gmail.com>
 
-On Fri, Jan 25, 2019 at 10:28 AM Tejun Heo <tj@kernel.org> wrote:
->
-> Hello, Michal.
->
-> On Fri, Jan 25, 2019 at 06:37:13PM +0100, Michal Hocko wrote:
-> > > What if a user wants to monitor any ooms in the subtree tho, which is
-> > > a valid use case?
-> >
-> > How is that information useful without know which memcg the oom applies
-> > to?
->
-> For example, a workload manager watching over a subtree for a job with
-> nested memory limits set by the job itself.  It wants to take action
-> (reporting and possibly other remediative actions) when something goes
-> wrong in the delegated subtree but isn't involved in how the subtree
-> is configured inside.
->
+[ Upstream commit 819bec35c8c9706185498c9222bd244e0781ad35 ]
 
-Why not make this configurable at the delegation boundary? As you
-mentioned, there are jobs who want centralized workload manager to
-watch over their subtrees while there can be jobs which want to
-monitor their subtree themselves. For example I can have a job which
-know how to act when one of the children cgroup goes OOM. However if
-the root of that job goes OOM then the centralized workload manager
-should do something about it. With this change, how to implement this
-scenario? How will the central manager differentiates between that a
-subtree of a job goes OOM or the root of that job? I guess from the
-discussion it seems like the centralized manager has to traverse that
-job's subtree to find the source of OOM.
+Prevent possible race by parallel threads between ipu_image_convert_run()
+and ipu_image_convert_unprepare(). This involves setting ctx->aborting
+to true unconditionally so that no new job runs can be queued during
+unprepare, and holding the ctx->aborting flag until the context is freed.
 
-Why can't we let the implementation of centralized manager easier by
-allowing to configure the propagation of these notifications across
-delegation boundary.
+Note that the "normal" ipu_image_convert_abort() case (e.g. not during
+context unprepare) should clear the ctx->aborting flag after aborting
+any active run and clearing the context's pending queue. This is because
+it should be possible to continue to use the conversion context and queue
+more runs after an abort.
 
-thanks,
-Shakeel
+Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
+Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/ipu-v3/ipu-image-convert.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
+index f4081962784c..91653adc41cc 100644
+--- a/drivers/gpu/ipu-v3/ipu-image-convert.c
++++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
+@@ -1524,7 +1524,7 @@ int ipu_image_convert_queue(struct ipu_image_convert_run *run)
+ EXPORT_SYMBOL_GPL(ipu_image_convert_queue);
+ 
+ /* Abort any active or pending conversions for this context */
+-void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
++static void __ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ {
+ 	struct ipu_image_convert_chan *chan = ctx->chan;
+ 	struct ipu_image_convert_priv *priv = chan->priv;
+@@ -1551,7 +1551,7 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ 
+ 	need_abort = (run_count || active_run);
+ 
+-	ctx->aborting = need_abort;
++	ctx->aborting = true;
+ 
+ 	spin_unlock_irqrestore(&chan->irqlock, flags);
+ 
+@@ -1572,7 +1572,11 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
+ 		dev_warn(priv->ipu->dev, "%s: timeout\n", __func__);
+ 		force_abort(ctx);
+ 	}
++}
+ 
++void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
++{
++	__ipu_image_convert_abort(ctx);
+ 	ctx->aborting = false;
+ }
+ EXPORT_SYMBOL_GPL(ipu_image_convert_abort);
+@@ -1586,7 +1590,7 @@ void ipu_image_convert_unprepare(struct ipu_image_convert_ctx *ctx)
+ 	bool put_res;
+ 
+ 	/* make sure no runs are hanging around */
+-	ipu_image_convert_abort(ctx);
++	__ipu_image_convert_abort(ctx);
+ 
+ 	dev_dbg(priv->ipu->dev, "%s: task %u: removing ctx %p\n", __func__,
+ 		chan->ic_task, ctx);
+-- 
+2.19.1
+
