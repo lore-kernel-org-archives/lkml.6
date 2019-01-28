@@ -7,48 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC98AC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 287DDC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEE2F2147A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EDD982147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:06:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691578;
-	bh=TX2RVyBpNtJhgxBzPH4bVXlcdgCrdL+sNEHjEdklIHM=;
+	s=default; t=1548691582;
+	bh=gbcbOYRtO5DZ7jvNHZVuBbq046JoeM/+uEe08Z85EZA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=Oe0m9X8uRXQxg+Z7d7ESN1jGAWmveWsa4/TzLT9ypdvd4dEIzQyd86Ln6nMOYv3lB
-	 fiQY7mqA+vGj1Uqx7mSF469uDQTnQJ21jiH6gUrOIHUE8RKmu4bWcmRnyI0E3WLZzI
-	 4LfjgrESD/6A06K/+3dPSP1Mt7O0md11zEIkSqrc=
+	b=AYs4yRGnscdnU0nGoBqKWEjlHSyEF+k35JKvWjlL9Qp2A8lb4jZWXolHcsXtyScPb
+	 B6CqyUr03Y1uvSm2HBeoXQprCLkmsnQzxxatx4b24jL8u3Tfgusd9YL9n9cUhehdWC
+	 I1Ri4JI60HKvnSj8KZPOcZ5WuQQHvSbBHI8xHrmI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732008AbfA1QGR (ORCPT
+        id S1731996AbfA1QGP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:06:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54498 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:06:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54588 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731969AbfA1QGL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:06:11 -0500
+        id S1731973AbfA1QGN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:06:13 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 533D620989;
-        Mon, 28 Jan 2019 16:06:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 825372147A;
+        Mon, 28 Jan 2019 16:06:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691570;
-        bh=TX2RVyBpNtJhgxBzPH4bVXlcdgCrdL+sNEHjEdklIHM=;
+        s=default; t=1548691572;
+        bh=gbcbOYRtO5DZ7jvNHZVuBbq046JoeM/+uEe08Z85EZA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SzLjUxEsnW2+O47copvfaD6p4z29J3VbWAR4iE6o3FUgrnRlNeEgEbI329N4p172+
-         yMHOIn9T1eogZSL6Ep3MPKnyA78pCidO4gf3VWsxm+HSXu3LBphcPW0SlMQqVxav3C
-         jvCfFHaTRR7ccTgPMhDV3d/tkU4RM0OepwwPDoXk=
+        b=zgu1gRSbOdOFX940S0S75G2Gngidmjo8zHtJFoWq6ENlvBOnt6cfS/DUK+ceYGmxE
+         LZodWiHc1jZMCsz9QpVRNNz0d/bpHuzy48ppT/eOoC2tv56tCnq5cOiIAneQEYlUah
+         Ov32BDZpiKnD1ai55hYkk5IcVr4Ml25JMAm1FlZ0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Stanislav Fomichev <sdf@google.com>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 146/258] selftests/bpf: use __bpf_constant_htons in test_prog.c
-Date:   Mon, 28 Jan 2019 10:57:32 -0500
-Message-Id: <20190128155924.51521-146-sashal@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Olof Johansson <olof@lixom.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 147/258] ARM: pxa: avoid section mismatch warning
+Date:   Mon, 28 Jan 2019 10:57:33 -0500
+Message-Id: <20190128155924.51521-147-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
 References: <20190128155924.51521-1-sashal@kernel.org>
@@ -60,58 +57,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stanislav Fomichev <sdf@google.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-[ Upstream commit a0517a0f7ef23550b4484c37e2b9c2d32abebf64 ]
+[ Upstream commit 88af3209aa0881aa5ffd99664b6080a4be5f24e5 ]
 
-For some reason, my older GCC (< 4.8) isn't smart enough to optimize the
-!__builtin_constant_p() branch in bpf_htons, I see:
-  error: implicit declaration of function '__builtin_bswap16'
+WARNING: vmlinux.o(.text+0x19f90): Section mismatch in reference from the function littleton_init_lcd() to the function .init.text:pxa_set_fb_info()
+The function littleton_init_lcd() references
+the function __init pxa_set_fb_info().
+This is often because littleton_init_lcd lacks a __init
+annotation or the annotation of pxa_set_fb_info is wrong.
 
-Let's use __bpf_constant_htons as suggested by Daniel Borkmann.
+WARNING: vmlinux.o(.text+0xf824): Section mismatch in reference from the function zeus_register_ohci() to the function .init.text:pxa_set_ohci_info()
+The function zeus_register_ohci() references
+the function __init pxa_set_ohci_info().
+This is often because zeus_register_ohci lacks a __init
+annotation or the annotation of pxa_set_ohci_info is wrong.
 
-I tried to use simple htons, but it produces the following:
-  test_progs.c:54:17: error: braced-group within expression allowed only
-  inside a function
-    .eth.h_proto = htons(ETH_P_IP),
+WARNING: vmlinux.o(.text+0xf95c): Section mismatch in reference from the function cm_x300_init_u2d() to the function .init.text:pxa3xx_set_u2d_info()
+The function cm_x300_init_u2d() references
+the function __init pxa3xx_set_u2d_info().
+This is often because cm_x300_init_u2d lacks a __init
+annotation or the annotation of pxa3xx_set_u2d_info is wrong.
 
-Signed-off-by: Stanislav Fomichev <sdf@google.com>
-Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
-Signed-off-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Signed-off-by: Olof Johansson <olof@lixom.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/testing/selftests/bpf/test_progs.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/arm/mach-pxa/cm-x300.c   | 2 +-
+ arch/arm/mach-pxa/littleton.c | 2 +-
+ arch/arm/mach-pxa/zeus.c      | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/tools/testing/selftests/bpf/test_progs.c b/tools/testing/selftests/bpf/test_progs.c
-index 0ef68204c84b..d029cad08cbd 100644
---- a/tools/testing/selftests/bpf/test_progs.c
-+++ b/tools/testing/selftests/bpf/test_progs.c
-@@ -51,10 +51,10 @@ static struct {
- 	struct iphdr iph;
- 	struct tcphdr tcp;
- } __packed pkt_v4 = {
--	.eth.h_proto = bpf_htons(ETH_P_IP),
-+	.eth.h_proto = __bpf_constant_htons(ETH_P_IP),
- 	.iph.ihl = 5,
- 	.iph.protocol = 6,
--	.iph.tot_len = bpf_htons(MAGIC_BYTES),
-+	.iph.tot_len = __bpf_constant_htons(MAGIC_BYTES),
- 	.tcp.urg_ptr = 123,
+diff --git a/arch/arm/mach-pxa/cm-x300.c b/arch/arm/mach-pxa/cm-x300.c
+index c5c0ab8ac9f9..024c1fbcc55a 100644
+--- a/arch/arm/mach-pxa/cm-x300.c
++++ b/arch/arm/mach-pxa/cm-x300.c
+@@ -558,7 +558,7 @@ static struct pxa3xx_u2d_platform_data cm_x300_u2d_platform_data = {
+ 	.exit		= cm_x300_u2d_exit,
  };
  
-@@ -64,9 +64,9 @@ static struct {
- 	struct ipv6hdr iph;
- 	struct tcphdr tcp;
- } __packed pkt_v6 = {
--	.eth.h_proto = bpf_htons(ETH_P_IPV6),
-+	.eth.h_proto = __bpf_constant_htons(ETH_P_IPV6),
- 	.iph.nexthdr = 6,
--	.iph.payload_len = bpf_htons(MAGIC_BYTES),
-+	.iph.payload_len = __bpf_constant_htons(MAGIC_BYTES),
- 	.tcp.urg_ptr = 123,
+-static void cm_x300_init_u2d(void)
++static void __init cm_x300_init_u2d(void)
+ {
+ 	pxa3xx_set_u2d_info(&cm_x300_u2d_platform_data);
+ }
+diff --git a/arch/arm/mach-pxa/littleton.c b/arch/arm/mach-pxa/littleton.c
+index 9e132b3e48c6..9960ea158829 100644
+--- a/arch/arm/mach-pxa/littleton.c
++++ b/arch/arm/mach-pxa/littleton.c
+@@ -184,7 +184,7 @@ static struct pxafb_mach_info littleton_lcd_info = {
+ 	.lcd_conn		= LCD_COLOR_TFT_16BPP,
  };
  
+-static void littleton_init_lcd(void)
++static void __init littleton_init_lcd(void)
+ {
+ 	pxa_set_fb_info(NULL, &littleton_lcd_info);
+ }
+diff --git a/arch/arm/mach-pxa/zeus.c b/arch/arm/mach-pxa/zeus.c
+index e3851795d6d7..68a536de542d 100644
+--- a/arch/arm/mach-pxa/zeus.c
++++ b/arch/arm/mach-pxa/zeus.c
+@@ -559,7 +559,7 @@ static struct pxaohci_platform_data zeus_ohci_platform_data = {
+ 	.flags		= ENABLE_PORT_ALL | POWER_SENSE_LOW,
+ };
+ 
+-static void zeus_register_ohci(void)
++static void __init zeus_register_ohci(void)
+ {
+ 	/* Port 2 is shared between host and client interface. */
+ 	UP2OCR = UP2OCR_HXOE | UP2OCR_HXS | UP2OCR_DMPDE | UP2OCR_DPPDE;
 -- 
 2.19.1
 
