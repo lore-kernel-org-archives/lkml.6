@@ -2,118 +2,90 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DACAC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7EE52C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 786C32177E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D96620880
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=default; t=1548690391;
+	bh=TAmGb1Xgkz1iCflV6tbClJSsCWqJ1LRWmLtsCjC2ULA=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
+	b=sHQAWky0M+yfRuV5UyJazYxNRC3joKNzXzguWH0Oxk8zqAoeKCQIxf2yBHv5OPilH
+	 e7FVrxtX1JrWHSYzQ1irNqGWC0PyAVdvjf1coP8ZzTarj+yBCubDYYdvosga8fKsNg
+	 OR7VI+gPNvgFeFDFsaOxa1Bs0KEiUB3gvH0Zt0f0=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727334AbfA1PqY (ORCPT
+        id S1727391AbfA1Pq3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:46:24 -0500
-Received: from mga03.intel.com ([134.134.136.65]:28750 "EHLO mga03.intel.com"
+        Mon, 28 Jan 2019 10:46:29 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59868 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726546AbfA1PqX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:46:23 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 07:46:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,534,1539673200"; 
-   d="scan'208";a="142045620"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 28 Jan 2019 07:46:18 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 28 Jan 2019 17:46:18 +0200
-Date:   Mon, 28 Jan 2019 17:46:18 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        USB <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 4/8] usb: typec: mux: Find the muxes by also matching
- against the device node
-Message-ID: <20190128154618.GI7262@kuha.fi.intel.com>
-References: <20190125131519.88416-1-heikki.krogerus@linux.intel.com>
- <20190125131519.88416-5-heikki.krogerus@linux.intel.com>
- <CAHp75VfG9LDOfz9K0jYvGOK=j1uDmyg=eeRMur7hnw2rF9qx+Q@mail.gmail.com>
+        id S1727371AbfA1Pq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:46:27 -0500
+Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4E6820880;
+        Mon, 28 Jan 2019 15:46:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1548690387;
+        bh=TAmGb1Xgkz1iCflV6tbClJSsCWqJ1LRWmLtsCjC2ULA=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=aEBy9wAAwCEbJMLcz6r+oWZG1zewRL+BIAqvOJxK/U7DP5GsKdcp+NsOksewxyR2y
+         pa/Z/asoNNOzbNQsRitq1AXCvwKGH9yOPX01UAU1VTvt19ZvmLVV10I6/C2qdMBd2l
+         44TZ536MM+yNT5b1e+fKuvHR25N11K9lS9X2hbuw=
+From:   Sasha Levin <sashal@kernel.org>
+To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 069/304] media: vivid: fill in media_device bus_info
+Date:   Mon, 28 Jan 2019 10:39:46 -0500
+Message-Id: <20190128154341.47195-69-sashal@kernel.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
+References: <20190128154341.47195-1-sashal@kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHp75VfG9LDOfz9K0jYvGOK=j1uDmyg=eeRMur7hnw2rF9qx+Q@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Patchwork-Hint: Ignore
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Jan 28, 2019 at 11:53:54AM +0200, Andy Shevchenko wrote:
-> On Fri, Jan 25, 2019 at 3:17 PM Heikki Krogerus
-> <heikki.krogerus@linux.intel.com> wrote:
-> >
-> > When the connections are defined in firmware, struct
-> > device_connection will have the fwnode member pointing to
-> > the device node (struct fwnode_handle) of the requested
-> > device, and the endpoint will not be used at all in that
-> > case.
-> 
-> >  static void *typec_mux_match(struct device_connection *con, int ep, void *data)
-> >  {
-> > +       const struct typec_altmode_desc *desc = data;
-> >         struct typec_mux *mux;
-> 
-> > +       bool match = !con->id;
-> 
-> I don't see how this assignment is used.
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-That definitely deserves a comment at least.
+[ Upstream commit e10b40f3304360d3a2d07d690ff12197f828f2c8 ]
 
-This series adds support for the "device graph" to the device
-connection API, but it is also possible to describe connections with
-normal references (fwnode_property_get_reference_args()). With normal
-references we don't need to do any extra identification like we do
-with device graph.
+If you create multiple vivid instances, each with their own media
+device, then there was no way to tell them apart.
 
-The idea is to supply the connection id only if it has not been
-"consumed" already (device graph case). If it has been "consumed", we
-know there is no need for any extra connection identification (normal
-references), and we can jump straight to the next stage -> find the
-mux..
+Fill in the bus_info so each instance has a unique bus_info string.
 
-> > +       size_t nval;
-> > +       u16 *val;
-> > +       int i;
-> > +
-> > +       if (!con->fwnode) {
-> > +               list_for_each_entry(mux, &mux_list, entry)
-> > +                       if (!strcmp(con->endpoint[ep], dev_name(mux->dev)))
-> > +                               return mux;
-> > +               return ERR_PTR(-EPROBE_DEFER);
-> > +       }
-> > +
-> > +       if (match)
-> > +               goto find_mux;
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/media/platform/vivid/vivid-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-..here.
-
-I'll change this so that the match variable is introduced without
-setting default value. Instead, how about this:
-
-        /*
-         * Check has the identifier already been "consumed". If it
-         * has, no need to do any extra connection identification.
-         */
-        match = !con->id;
-        if (match)
-                goto find_mux;
-
-thanks,
-
+diff --git a/drivers/media/platform/vivid/vivid-core.c b/drivers/media/platform/vivid/vivid-core.c
+index 626e2b24a403..ec1b1a8ea775 100644
+--- a/drivers/media/platform/vivid/vivid-core.c
++++ b/drivers/media/platform/vivid/vivid-core.c
+@@ -669,6 +669,8 @@ static int vivid_create_instance(struct platform_device *pdev, int inst)
+ 
+ 	/* Initialize media device */
+ 	strlcpy(dev->mdev.model, VIVID_MODULE_NAME, sizeof(dev->mdev.model));
++	snprintf(dev->mdev.bus_info, sizeof(dev->mdev.bus_info),
++		 "platform:%s-%03d", VIVID_MODULE_NAME, inst);
+ 	dev->mdev.dev = &pdev->dev;
+ 	media_device_init(&dev->mdev);
+ 	dev->mdev.ops = &vivid_media_ops;
 -- 
-heikki
+2.19.1
+
