@@ -7,47 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6FDC282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD1DC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FC9F20663
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD68A2147A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:22:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548692537;
-	bh=DFqmGOJ3LBP+z8Wjz8u/2EGfM5QptJOFDIpszZXQ/0A=;
+	s=default; t=1548692540;
+	bh=IawHeZjjal36HBwzWOA0amz5n/IYwdeiG9U1KKzO4WU=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=0scQvX9kd79qIvY9UF3d7+NmfZGxzAOBleIu9btBaWGut541gjwFLGPyHUaIt0XgH
-	 iR+ssBAB7B6iMdeCiVS4OJ/RUvJK/S0jx83csTyAJaFB+dAfYnvhQWFX2LztRdcnbu
-	 YJK7o0rMKazVzx8rT2bJkFHGwdgFH8DsMTlO71hw=
+	b=0xl93POf+umjb53Q32LWzi8tEJ+fmVMBnc7F+nv1G0n/+PTXf6nUOMYVdXb5Oa1Fl
+	 t3QnPQcPtnYzn6ZKfVY8dSad30WzoxalmxuGufZKdxeBzSN8HR3xf+LjCn7lkX0u2n
+	 2bMRFfmK4G024NEc9GSjyqjqpExai+kQq74pf5Yw=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389178AbfA1QWQ (ORCPT
+        id S2389189AbfA1QWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:22:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58164 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:22:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58198 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388760AbfA1QWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:22:12 -0500
+        id S2388113AbfA1QWO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:22:14 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3E55C21738;
-        Mon, 28 Jan 2019 16:22:09 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C3A5620663;
+        Mon, 28 Jan 2019 16:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692531;
-        bh=DFqmGOJ3LBP+z8Wjz8u/2EGfM5QptJOFDIpszZXQ/0A=;
+        s=default; t=1548692533;
+        bh=IawHeZjjal36HBwzWOA0amz5n/IYwdeiG9U1KKzO4WU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=iysBATRrxopHgj7/MN8wvdTFwRvs9oBagv5XlaTVcNe/z16UJgWqDH6ZliQ9k63zo
-         tXkRuLT6pdDG3yR0MVTfs+t6iiVaN0qqqxq86Hm4egh6XyUmfK3vY8JgcSMfQkFOml
-         eAJ9sc0U81KpWIqh9MiFQ9c7C8OO03lT+fIhxcSg=
+        b=tAc8xMi+r2M5nIRh1OtjY/bjc2/kzRma9y0Cx0lLL57W/0ln042F9pj3K+PTREU+l
+         gHMPwTPIKTgbtToDvcZues9GeUIu1UL0hZyn//W2KGW8iM6Cp8OIO8g076v5Bcaq/m
+         UUc6G3mvJFhuMriVAdU7potDnlyHWE9qV/71hVDA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yangtao Li <tiny.windzz@gmail.com>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Sasha Levin <sashal@kernel.org>, linux-pm@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.9 052/107] cpuidle: big.LITTLE: fix refcount leak
-Date:   Mon, 28 Jan 2019 11:18:52 -0500
-Message-Id: <20190128161947.57405-52-sashal@kernel.org>
+Cc:     "Adamski, Krzysztof (Nokia - PL/Wroclaw)" 
+        <krzysztof.adamski@nokia.com>, Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 053/107] i2c-axxia: check for error conditions first
+Date:   Mon, 28 Jan 2019 11:18:53 -0500
+Message-Id: <20190128161947.57405-53-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
 References: <20190128161947.57405-1-sashal@kernel.org>
@@ -59,47 +58,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yangtao Li <tiny.windzz@gmail.com>
+From: "Adamski, Krzysztof (Nokia - PL/Wroclaw)" <krzysztof.adamski@nokia.com>
 
-[ Upstream commit 9456823c842f346c74265fcd98d008d87a7eb6f5 ]
+[ Upstream commit 4f5c85fe3a60ace555d09898166af372547f97fc ]
 
-of_find_node_by_path() acquires a reference to the node
-returned by it and that reference needs to be dropped by its caller.
-bl_idle_init() doesn't do that, so fix it.
+It was observed that when using seqentional mode contrary to the
+documentation, the SS bit (which is supposed to only be set if
+automatic/sequence command completed normally), is sometimes set
+together with NA (NAK in address phase) causing transfer to falsely be
+considered successful.
 
-Signed-off-by: Yangtao Li <tiny.windzz@gmail.com>
-Acked-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+My assumption is that this does not happen during manual mode since the
+controller is stopping its work the moment it sets NA/ND bit in status
+register. This is not the case in Automatic/Sequentional mode where it
+is still working to send STOP condition and the actual status we get
+depends on the time when the ISR is run.
+
+This patch changes the order of checking status bits in ISR - error
+conditions are checked first and only if none of them occurred, the
+transfer may be considered successful. This is required to introduce
+using of sequentional mode in next patch.
+
+Signed-off-by: Krzysztof Adamski <krzysztof.adamski@nokia.com>
+Reviewed-by: Alexander Sverdlin <alexander.sverdlin@nokia.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/cpuidle/cpuidle-big_little.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/i2c-axxia.c | 32 ++++++++++++++++----------------
+ 1 file changed, 16 insertions(+), 16 deletions(-)
 
-diff --git a/drivers/cpuidle/cpuidle-big_little.c b/drivers/cpuidle/cpuidle-big_little.c
-index db2ede565f1a..b44476a1b7ad 100644
---- a/drivers/cpuidle/cpuidle-big_little.c
-+++ b/drivers/cpuidle/cpuidle-big_little.c
-@@ -167,6 +167,7 @@ static int __init bl_idle_init(void)
- {
- 	int ret;
- 	struct device_node *root = of_find_node_by_path("/");
-+	const struct of_device_id *match_id;
+diff --git a/drivers/i2c/busses/i2c-axxia.c b/drivers/i2c/busses/i2c-axxia.c
+index 96a6d5df9b26..b0962897bc45 100644
+--- a/drivers/i2c/busses/i2c-axxia.c
++++ b/drivers/i2c/busses/i2c-axxia.c
+@@ -296,22 +296,7 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
+ 			i2c_int_disable(idev, MST_STATUS_TFL);
+ 	}
  
- 	if (!root)
- 		return -ENODEV;
-@@ -174,7 +175,11 @@ static int __init bl_idle_init(void)
- 	/*
- 	 * Initialize the driver just for a compliant set of machines
- 	 */
--	if (!of_match_node(compatible_machine_match, root))
-+	match_id = of_match_node(compatible_machine_match, root);
-+
-+	of_node_put(root);
-+
-+	if (!match_id)
- 		return -ENODEV;
+-	if (status & MST_STATUS_SCC) {
+-		/* Stop completed */
+-		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		complete(&idev->msg_complete);
+-	} else if (status & MST_STATUS_SNS) {
+-		/* Transfer done */
+-		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
+-			axxia_i2c_empty_rx_fifo(idev);
+-		complete(&idev->msg_complete);
+-	} else if (status & MST_STATUS_TSS) {
+-		/* Transfer timeout */
+-		idev->msg_err = -ETIMEDOUT;
+-		i2c_int_disable(idev, ~MST_STATUS_TSS);
+-		complete(&idev->msg_complete);
+-	} else if (unlikely(status & MST_STATUS_ERR)) {
++	if (unlikely(status & MST_STATUS_ERR)) {
+ 		/* Transfer error */
+ 		i2c_int_disable(idev, ~0);
+ 		if (status & MST_STATUS_AL)
+@@ -328,6 +313,21 @@ static irqreturn_t axxia_i2c_isr(int irq, void *_dev)
+ 			readl(idev->base + MST_TX_BYTES_XFRD),
+ 			readl(idev->base + MST_TX_XFER));
+ 		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_SCC) {
++		/* Stop completed */
++		i2c_int_disable(idev, ~MST_STATUS_TSS);
++		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_SNS) {
++		/* Transfer done */
++		i2c_int_disable(idev, ~MST_STATUS_TSS);
++		if (i2c_m_rd(idev->msg) && idev->msg_xfrd < idev->msg->len)
++			axxia_i2c_empty_rx_fifo(idev);
++		complete(&idev->msg_complete);
++	} else if (status & MST_STATUS_TSS) {
++		/* Transfer timeout */
++		idev->msg_err = -ETIMEDOUT;
++		i2c_int_disable(idev, ~MST_STATUS_TSS);
++		complete(&idev->msg_complete);
+ 	}
  
- 	if (!mcpm_is_available())
+ out:
 -- 
 2.19.1
 
