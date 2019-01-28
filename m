@@ -2,117 +2,89 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99F3C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:58:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42E97C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AE0D20882
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:58:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548662311;
-	bh=+9Q7ezDpx6kMr43h4c4CTUe+4tLiKv4QfZ4uxKhM4wM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:List-ID:From;
-	b=qjJFRnnguD0t/07szE/TW+BhM9z2wYDZxuZRkocCti4TutD/vXnGSV6r6HIFfj+j7
-	 XwNlqH1xKtSOUeeZzHrjuimgEc9gRpr3sWXRz980gRb3dTddqXDu1Ulbz81h4R5XJg
-	 QaNy+ppIeCJSuzTQjG/zOnZOJss1XpYdsqUd0vlQ=
+	by mail.kernel.org (Postfix) with ESMTP id 114BC20821
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 07:58:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DBKkPFq+"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726851AbfA1H6a (ORCPT
+        id S1726879AbfA1H6v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 02:58:30 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:34051 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726627AbfA1H62 (ORCPT
+        Mon, 28 Jan 2019 02:58:51 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:35103 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726632AbfA1H6v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 02:58:28 -0500
-Received: by mail-lj1-f195.google.com with SMTP id u89-v6so13401595lje.1;
-        Sun, 27 Jan 2019 23:58:27 -0800 (PST)
+        Mon, 28 Jan 2019 02:58:51 -0500
+Received: by mail-vs1-f66.google.com with SMTP id e7so9212023vsc.2
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 23:58:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Jh2+iNxljW7Ev3ui+KtrF0KqiAMvse0LLhGqod/SUuo=;
+        b=DBKkPFq+DrY0YGtAUTJ+PlMRwsaN/EU9p/Ej4IdfO8LEL0dfXIYpGrchKf9Kj+qdRs
+         iSe3dttI2r7jhCtPVKv4qop85wx/1bmg226gpPtvc0ZRpQFA5thVe5gYTfKIcKspL5T2
+         g+0eLM2w5JO5otyAyl2+H7zXqeWXLc8Xg0Ih8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uX4EWl+872Z83SHKtTPVAAO1e9XNAnakGSaGM3zqyVY=;
-        b=TowfRVOa4u4eikpTYZYpMO50+dCm5ur0fKYBeEw24xqYv0nM53NE6yG20Pd3hxoK7R
-         CJ2irbZ+PaxQRFkn9BeuYMsBs9YVUN/TWlA2+fHvxyZlRrkEdbKHc6jPlTSEUL3Sq50L
-         W3czxVUcVw+IMnMu/YREGcnXufqVNtsuKbCXtefmh544BeE+12dNSu3remmmXqIC42Xc
-         bzBiWD/GHjYHBUPJcAxhSjHxZOSDIwxuUQjgssfSiFqgPidni+545luMD4O7LO9sDgK/
-         D17MkoAoCCO0WQQ5xhWcr5snB8JUaf7+Y/OUzis4NIK+STSYPuQzcdOa6IGWmeLJJu7d
-         t9zw==
-X-Gm-Message-State: AJcUukf6AJFH0B75gkeqfYTVvc/o5btgLIst/36ScxEnnJclmPaeLO1y
-        5dltTOZC86fg97y828Hxt/s=
-X-Google-Smtp-Source: ALg8bN54kxMDhxn7/V+/4QYFNuMpaDXkPqz/pe+5yXkSoxMbvC4Ly5x2lVQHNQgFd4bWUZv+BTdhWA==
-X-Received: by 2002:a2e:310a:: with SMTP id x10-v6mr16006353ljx.6.1548662306567;
-        Sun, 27 Jan 2019 23:58:26 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id y23-v6sm2904753ljk.95.2019.01.27.23.58.25
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Jh2+iNxljW7Ev3ui+KtrF0KqiAMvse0LLhGqod/SUuo=;
+        b=nFpS1mk9qZerlbDXnnp7xU0hXAzMhFb/zM2s2LePIptRGQkanOUoreQF30WAhrEym5
+         0h0tfQyAY58eX/cS5s6AkEp6Nyq+bBfyBkBWJn8KqoHJx/tWFDQfT6t8xH6sF4hyDcux
+         ++XWe+AYq68Ff8ApZe0X8wpR6IlNCWvGqURLxaFiqHFJGFO5ZwJcrOjEcmH2uEA+ti3E
+         k2DiScWTjseBoy3J+XBC6+CWbioSS2vYbWDHeGk5u34v1JC92PIl8MN4MDmCfkPnBi6o
+         WI1QpDMK0jUY8yVtX3MhgG9/1BzMcBFUv21GJ73kh/KgEnT4rMRP2kR8qv1hY+DKHURf
+         2POw==
+X-Gm-Message-State: AJcUukdgDljUriy36UgV9GgaTyNh4vxpcIJCsmvTwKOw4FB8PtD0D5sy
+        Z9C1Tap3JvhZLgLRZ4510Y2sh8F4qTk=
+X-Google-Smtp-Source: ALg8bN4/DfLdMRf2L2GTOWJq1BYyzEpf3xXC/9x+X16fCcY7HZ+rIEI/Vui6G2Yh2LtG75ssZdmvig==
+X-Received: by 2002:a67:fa98:: with SMTP id f24mr9250065vsq.125.1548662329734;
+        Sun, 27 Jan 2019 23:58:49 -0800 (PST)
+Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com. [209.85.217.47])
+        by smtp.gmail.com with ESMTPSA id k77sm32573588vkd.17.2019.01.27.23.58.48
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sun, 27 Jan 2019 23:58:25 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1go1oB-0000R0-UG; Mon, 28 Jan 2019 08:58:19 +0100
-Date:   Mon, 28 Jan 2019 08:58:19 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Tomasz Duszynski <tduszyns@gmail.com>
-Cc:     linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, johan@kernel.org, robh@kernel.org,
-        jic23@jic23.retrosnub.co.uk
-Subject: Re: [PATCH v2 3/3] dt-bindings: iio: chemical: pms7003: add device
- tree support
-Message-ID: <20190128075819.GK3691@localhost>
-References: <20190127181916.19948-1-tduszyns@gmail.com>
- <20190127181916.19948-4-tduszyns@gmail.com>
+        Sun, 27 Jan 2019 23:58:48 -0800 (PST)
+Received: by mail-vs1-f47.google.com with SMTP id p74so9233093vsc.0
+        for <linux-kernel@vger.kernel.org>; Sun, 27 Jan 2019 23:58:48 -0800 (PST)
+X-Received: by 2002:a67:848a:: with SMTP id g132mr8259264vsd.222.1548662328194;
+ Sun, 27 Jan 2019 23:58:48 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20190127181916.19948-4-tduszyns@gmail.com>
-User-Agent: Mutt/1.11.2 (2019-01-07)
+References: <20190127094357.GA9436@beast> <CAKwvOdnUzTXSBPayebsy8pJGjJjPS3oi3qE8nRPtAhtv_PJ4xw@mail.gmail.com>
+ <CAGXu5jKDdutht_+hVhKan6cNZ+bS7e0gom5yXmcMgKE9KuZwYg@mail.gmail.com> <CAKwvOdkvV+1qVUTz7G+nfftdzUfTGL+RnQ_8rA_RAhRrpvRLBA@mail.gmail.com>
+In-Reply-To: <CAKwvOdkvV+1qVUTz7G+nfftdzUfTGL+RnQ_8rA_RAhRrpvRLBA@mail.gmail.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Mon, 28 Jan 2019 20:58:36 +1300
+X-Gmail-Original-Message-ID: <CAGXu5jL8GHE3XLLo36Ldej3Z6ZHg+kN5Jfq-Pepvu3hzNsf52A@mail.gmail.com>
+Message-ID: <CAGXu5jL8GHE3XLLo36Ldej3Z6ZHg+kN5Jfq-Pepvu3hzNsf52A@mail.gmail.com>
+Subject: Re: [PATCH] selftests/seccomp: Actually sleep for 1/10th second
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Shuah Khan <shuah@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Jan 27, 2019 at 07:19:16PM +0100, Tomasz Duszynski wrote:
-> Add device tree support for Plantower PMS7003 particulate matter sensor.
-> 
-> Signed-off-by: Tomasz Duszynski <tduszyns@gmail.com>
-> ---
->  .../iio/chemical/plantower,pms7003.txt        | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
-> new file mode 100644
-> index 000000000000..e4c7f2fb1e30
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/chemical/plantower,pms7003.txt
-> @@ -0,0 +1,19 @@
-> +* Plantower PMS7003 particulate matter sensor
-> +
-> +Required properties:
-> +- compatible: must be "plantower,pms7003"
-> +
-> +Optional properties:
-> +- vcc-supply: phandle to the regulator that provides power to the sensor
+On Mon, Jan 28, 2019 at 8:37 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+> So this test has been broken? If so, do you know for how long? Or
+> who's monitoring them?  Either way, thanks for noticing and fixing.
 
-Shouldn't this one be a required property?
+No, it's been working fine. It just consumes 100% cpu during the
+spin-wait. The intention was to sleep for a little bit to avoid a
+tight loop. It was just resource-inefficient.
 
-> +- set-gpios: phandle to the GPIO connected to the SET line
-> +- reset-gpios: phandle to the GPIO connected to the RESET line
-> +
-> +Refer to serial/slave-device.txt for generic serial attached device bindings.
-> +
-> +Example:
-> +
-> +&uart0 {
-> +	pms7003 {
-
-The node name should be generic and reflect the functionality rather
-than model. Perhaps "pms" will do here.
-
-> +		compatible = "plantower,pms7003";
-> +	};
-> +};
-
-Johan
+-- 
+Kees Cook
