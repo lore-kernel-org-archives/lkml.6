@@ -2,101 +2,165 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 389C6C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:04:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F075C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:04:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 148B62087F
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:04:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15FA82087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:04:33 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726923AbfA1PER (ORCPT
+        id S1726947AbfA1PEb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:04:17 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:40462 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726738AbfA1PEQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:04:16 -0500
-Received: from pps.filterd (m0098393.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id x0SF3kRw015416
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:04:15 -0500
-Received: from e06smtp04.uk.ibm.com (e06smtp04.uk.ibm.com [195.75.94.100])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2qa3mnhnqe-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:04:15 -0500
-Received: from localhost
-        by e06smtp04.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <pasic@linux.ibm.com>;
-        Mon, 28 Jan 2019 15:04:12 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp04.uk.ibm.com (192.168.101.134) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 28 Jan 2019 15:04:09 -0000
-Received: from d06av22.portsmouth.uk.ibm.com (d06av22.portsmouth.uk.ibm.com [9.149.105.58])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id x0SF47AQ55247040
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 28 Jan 2019 15:04:07 GMT
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 915604C052;
-        Mon, 28 Jan 2019 15:04:07 +0000 (GMT)
-Received: from d06av22.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 264D44C046;
-        Mon, 28 Jan 2019 15:04:07 +0000 (GMT)
-Received: from oc2783563651 (unknown [9.152.97.178])
-        by d06av22.portsmouth.uk.ibm.com (Postfix) with ESMTP;
-        Mon, 28 Jan 2019 15:04:07 +0000 (GMT)
-Date:   Mon, 28 Jan 2019 16:04:06 +0100
-From:   Halil Pasic <pasic@linux.ibm.com>
-To:     Michael Mueller <mimu@linux.ibm.com>
-Cc:     KVM Mailing List <kvm@vger.kernel.org>,
-        Linux-S390 Mailing List <linux-s390@vger.kernel.org>,
+        Mon, 28 Jan 2019 10:04:31 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53982 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726738AbfA1PEb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:04:31 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 82BF07F6CB;
+        Mon, 28 Jan 2019 15:04:30 +0000 (UTC)
+Received: from xps (ovpn-116-106.phx2.redhat.com [10.3.116.106])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 47ADA6247D;
+        Mon, 28 Jan 2019 15:04:24 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 10:04:20 -0500
+From:   Rafael Aquini <aquini@redhat.com>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
         linux-kernel@vger.kernel.org,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Heiko Carstens <heiko.carstens@de.ibm.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        David Hildenbrand <david@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Pierre Morel <pmorel@linux.ibm.com>
-Subject: Re: [PATCH v6 06/13] KVM: s390: remove kvm_s390_ from gisa static
- inline functions
-In-Reply-To: <20190124125939.130763-7-mimu@linux.ibm.com>
-References: <20190124125939.130763-1-mimu@linux.ibm.com>
-        <20190124125939.130763-7-mimu@linux.ibm.com>
-Organization: IBM
-X-Mailer: Claws Mail 3.11.1 (GTK+ 2.24.31; x86_64-redhat-linux-gnu)
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Jan Kara <jack@suse.cz>,
+        Andrea Arcangeli <aarcange@redhat.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Matthew Wilcox <willy@infradead.org>,
+        Vratislav Bendel <vbendel@redhat.com>
+Subject: Re: [PATCH RFC] mm: migrate: don't rely on PageMovable() of newpage
+ after unlocking it
+Message-ID: <20190128150420.GB10872@xps>
+References: <20190128121609.9528-1-david@redhat.com>
+ <20190128130709.GJ18811@dhcp22.suse.cz>
+ <b03cae19-d02a-0ba2-69a1-010ee76748e7@redhat.com>
+ <20190128132146.GK18811@dhcp22.suse.cz>
+ <17e7d7e4-f4ca-a681-93e5-92a0c285be14@redhat.com>
+ <20190128133514.GL18811@dhcp22.suse.cz>
+ <cb3eccaf-0fbf-f3b8-dbbe-070acb9837be@redhat.com>
+ <20190128150156.GA10872@xps>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-x-cbid: 19012815-0016-0000-0000-0000024BEA94
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 19012815-0017-0000-0000-000032A5F249
-Message-Id: <20190128160406.38d21416@oc2783563651>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2019-01-28_08:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=802 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1901280116
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20190128150156.GA10872@xps>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Mon, 28 Jan 2019 15:04:30 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 24 Jan 2019 13:59:32 +0100
-Michael Mueller <mimu@linux.ibm.com> wrote:
-
-> This will shorten the length of code lines. All GISA related
-> static inline functions are local to interrupt.c.
+On Mon, Jan 28, 2019 at 10:01:56AM -0500, Rafael Aquini wrote:
+> On Mon, Jan 28, 2019 at 03:38:38PM +0100, David Hildenbrand wrote:
+> > On 28.01.19 14:35, Michal Hocko wrote:
+> > > On Mon 28-01-19 14:22:52, David Hildenbrand wrote:
+> > >> On 28.01.19 14:21, Michal Hocko wrote:
+> > >>> On Mon 28-01-19 14:14:28, David Hildenbrand wrote:
+> > >>>> On 28.01.19 14:07, Michal Hocko wrote:
+> > >>>>> On Mon 28-01-19 13:16:09, David Hildenbrand wrote:
+> > >>>>> [...]
+> > >>>>>> My theory:
+> > >>>>>>
+> > >>>>>> In __unmap_and_move(), we lock the old and newpage and perform the
+> > >>>>>> migration. In case of vitio-balloon, the new page will become
+> > >>>>>> movable, the old page will no longer be movable.
+> > >>>>>>
+> > >>>>>> However, after unlocking newpage, I think there is nothing stopping
+> > >>>>>> the newpage from getting dequeued and freed by virtio-balloon. This
+> > >>>>>> will result in the newpage
+> > >>>>>> 1. No longer having PageMovable()
+> > >>>>>> 2. Getting moved to the local list before finally freeing it (using
+> > >>>>>>    page->lru)
+> > >>>>>
+> > >>>>> Does that mean that the virtio-balloon can change the Movable state
+> > >>>>> while there are other users of the page? Can you point to the code that
+> > >>>>> does it? How come this can be safe at all? Or is the PageMovable stable
+> > >>>>> only under the page lock?
+> > >>>>>
+> > >>>>
+> > >>>> PageMovable is stable under the lock. The relevant instructions are in
+> > >>>>
+> > >>>> mm/balloon_compaction.c and include/linux/balloon_compaction.h
+> > >>>
+> > >>> OK, I have just checked __ClearPageMovable and it indeed requires
+> > >>> PageLock. Then we also have to move is_lru = __PageMovable(page) after
+> > >>> the page lock.
+> > >>>
+> > >>
+> > >> I assume that is fine as is as the page is isolated? (yes, it will be
+> > >> modified later when moving but we are interested in the original state)
+> > > 
+> > > OK, I've missed that the page is indeed isolated. Then the patch makes
+> > > sense to me.
+> > > 
+> > 
+> > Thanks Michal. I assume this has broken ever since balloon compaction
+> > was introduced. I'll wait a little more and then resend as !RFC with a
+> > cc-stable tag.
+> >
 > 
-> Signed-off-by: Michael Mueller <mimu@linux.ibm.com>
+> Yes, balloon deflation could always race against migration
+> This race was a problem, initially, and was dealt with, via:
+> 
+> commit 117aad1e9e4d97448d1df3f84b08bd65811e6d6a
+> Author: Rafael Aquini <aquini@redhat.com>
+> Date:   Mon Sep 30 13:45:16 2013 -0700
+> 
+>     mm: avoid reinserting isolated balloon pages into LRU lists
+> 
+>  
+> 
+> I think this upstream patch has re-introduced it, in a more subtle way,
+> as we're stumbling on it now, again:
+> 
+> commit d6d86c0a7f8ddc5b38cf089222cb1d9540762dc2
+> Author: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
+> Date:   Thu Oct 9 15:29:27 2014 -0700
+> 
+>     mm/balloon_compaction: redesign ballooned pages management
+>     
+> 
+> 
+> On this particular race against migration case, virtio ballon deflation would 
+> not see it before
+> 
+> commit b1123ea6d3b3da25af5c8a9d843bd07ab63213f4
+> Author: Minchan Kim <minchan@kernel.org>
+> Date:   Tue Jul 26 15:23:09 2016 -0700
+> 
+>     mm: balloon: use general non-lru movable page feature
+> 
+> as the recently released balloon page would be post-processed 
+> without the page->lru list handling, which for migration stability
+> purposes must be done under the protection of page_lock.
+> 
+> 
 
-Reviewed-by: Halil Pasic <pasic@linux.ibm.com>
+missing part here:
 
-[..]
+I think your patch adresses this new case.
 
+
+Acked-by: Rafael Aquini <aquini@redhat.com>
+
+
+> get rid of balloon reference count.
+
+^^ this was a left over (sorry about my fat-fingers)
+> 
+> 
+> -- Rafael
