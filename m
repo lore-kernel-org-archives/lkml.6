@@ -2,101 +2,75 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD1EAC282CC
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:50:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1DD44C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:51:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9802321736
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:50:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o3xgZtyT"
+	by mail.kernel.org (Postfix) with ESMTP id E316A21736
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 09:51:49 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726957AbfA1Juo (ORCPT
+        id S1726784AbfA1Jvs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 04:50:44 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:45655 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726415AbfA1Jun (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 04:50:43 -0500
-Received: by mail-pl1-f193.google.com with SMTP id a14so7487765plm.12;
-        Mon, 28 Jan 2019 01:50:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=8vqIFNWGxmEi02L7rnJUgrqlsCWbtVks6SuyByrmTAI=;
-        b=o3xgZtyTKSowEuLdwHnFFO4+MKnr1gD0gn7/c8oh6KyM7YHvEphY7ObAt2uiL9hndC
-         1onq2ZDM+HdcY8lLQx0GW/wL3/yn0/YqBbbp86+J8Q6d9DsHJYzHbrT+fTwmWgJnN7RA
-         np7Er+etjf2gQZ0/7YbBw/1Sk6rAwUUuX+DQl8BDdp9CUKLzuEZKVxDmCGXaGpRBZq1T
-         9I14nVlzsIaCR+vK5EyX0Ej6IOlY9D2+JUvYO9wxKdoeAx3w8l4oi5EX/LOdGSvy6ky+
-         piq/9o58iwsGONnFEaL1+Yiqt3h6xGoLHJDRICFnQpKcc5oCyQW/avVLihGaAvzYggn0
-         fsRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=8vqIFNWGxmEi02L7rnJUgrqlsCWbtVks6SuyByrmTAI=;
-        b=Km2NnLAwNJS72NuFiUlRXdMdUgqvMNLYS+Us5iNq0Leo1rH95eVNy9oNOZMIq5Tiez
-         +rkllC3K3HQA0yFb/L1BxyaschmvA3xNbgXaaxidPGe8WORKNKHpH6VfXP/O0NENRy2A
-         3WsJ6516YV4fR1aBO7uVl6DhxR4WmLfvDp4NPdiLrZZwblLanjoMqaNSPTsvJjuOFBy2
-         foB9tIlDr/y+ZCMlRv/BnGiw59bzcODjgdQSft1OsVOcMUhawv9pfL+UcvJRnbMtVkcC
-         hmLTvjJrD1ROvpdM1b3mxYCURTKuWoXeCOH475xosm+Jpc2gpOaqK53jyFKF2JZgx7Yn
-         sjQA==
-X-Gm-Message-State: AJcUukf4Nea0zmXi4nOzG3We1Zr04lf6TojN7RC2+zW1IrGWObA8Sz6F
-        K9vLbIONUrMBa6O6lqBt8aT4Z0rg2MKx9xBfiCo=
-X-Google-Smtp-Source: ALg8bN4c9YbGtJ4EAKEdu8RfHw85P3QTwVwj2kI/dvMLuuLYKWBJcNG6fCKGvJLS4Scl9DfHmJKK7RHf0KdWwjPxD44=
-X-Received: by 2002:a17:902:e28e:: with SMTP id cf14mr21500664plb.311.1548669042992;
- Mon, 28 Jan 2019 01:50:42 -0800 (PST)
+        Mon, 28 Jan 2019 04:51:48 -0500
+Received: from mail.us.es ([193.147.175.20]:58124 "EHLO mail.us.es"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726590AbfA1Jvs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 04:51:48 -0500
+Received: from antivirus1-rhel7.int (unknown [192.168.2.11])
+        by mail.us.es (Postfix) with ESMTP id 4BBCF2325C8
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:51:46 +0100 (CET)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 3B40ADA86E
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:51:46 +0100 (CET)
+Received: by antivirus1-rhel7.int (Postfix, from userid 99)
+        id 216A1DA87B; Mon, 28 Jan 2019 10:51:46 +0100 (CET)
+Received: from antivirus1-rhel7.int (localhost [127.0.0.1])
+        by antivirus1-rhel7.int (Postfix) with ESMTP id 11A33DA796;
+        Mon, 28 Jan 2019 10:51:44 +0100 (CET)
+Received: from 192.168.1.97 (192.168.1.97)
+ by antivirus1-rhel7.int (F-Secure/fsigk_smtp/550/antivirus1-rhel7.int);
+ Mon, 28 Jan 2019 10:51:44 +0100 (CET)
+X-Virus-Status: clean(F-Secure/fsigk_smtp/550/antivirus1-rhel7.int)
+Received: from us.es (sys.soleta.eu [212.170.55.40])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        (Authenticated sender: 1984lsi)
+        by entrada.int (Postfix) with ESMTPSA id D36034265A4E;
+        Mon, 28 Jan 2019 10:51:43 +0100 (CET)
+Date:   Mon, 28 Jan 2019 10:51:43 +0100
+X-SMTPAUTHUS: auth mail.us.es
+From:   Pablo Neira Ayuso <pablo@netfilter.org>
+To:     Anders Roxell <anders.roxell@linaro.org>
+Cc:     kadlec@blackhole.kfki.hu, fw@strlen.de, davem@davemloft.net,
+        kuznet@ms2.inr.ac.ru, yoshfuji@linux-ipv6.org,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: ipt_CLUSTERIP: fix warning unused variable cn
+Message-ID: <20190128095143.5yxst4dn7pvodqwn@salvia>
+References: <20190123114811.25388-1-anders.roxell@linaro.org>
 MIME-Version: 1.0
-References: <20190125131519.88416-1-heikki.krogerus@linux.intel.com> <20190125131519.88416-3-heikki.krogerus@linux.intel.com>
-In-Reply-To: <20190125131519.88416-3-heikki.krogerus@linux.intel.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Mon, 28 Jan 2019 11:50:31 +0200
-Message-ID: <CAHp75VctbnJcLdTrGfPju708StpNPzmzTCBb-B-gmKZzOQwteg@mail.gmail.com>
-Subject: Re: [PATCH 2/8] usb: typec: Rationalize the API for the muxes
-To:     Heikki Krogerus <heikki.krogerus@linux.intel.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chen Yu <chenyu56@huawei.com>, Jun Li <jun.li@nxp.com>,
-        Hans de Goede <hdegoede@redhat.com>,
-        USB <linux-usb@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20190123114811.25388-1-anders.roxell@linaro.org>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-Virus-Scanned: ClamAV using ClamSMTP
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Jan 25, 2019 at 3:18 PM Heikki Krogerus
-<heikki.krogerus@linux.intel.com> wrote:
->
-> We can replace the second parameter that is passed to the
-> typec_mux_get() function with alt mode description
-> structure, and simply pass NULL with accessory modes.
->
-> With accessory modes there is no need for additional
-> identification (in practice the accessory mode can only be
-> Audio Accessory if muxing is needed), only with alternate
-> modes we need to identify the exact alternate mode.
+On Wed, Jan 23, 2019 at 12:48:11PM +0100, Anders Roxell wrote:
+> When CONFIG_PROC_FS isn't set the variable cn isn't used.
+> 
+> net/ipv4/netfilter/ipt_CLUSTERIP.c: In function ‘clusterip_net_exit’:
+> net/ipv4/netfilter/ipt_CLUSTERIP.c:849:24: warning: unused variable ‘cn’ [-Wunused-variable]
+>   struct clusterip_net *cn = clusterip_pernet(net);
+>                         ^~
+> 
+> Rework so the variable 'cn' is declared inside "#ifdef CONFIG_PROC_FS".
 
-> +struct typec_mux *typec_mux_get(struct device *dev,
-> +                               const struct typec_altmode_desc *desc)
->  {
->         struct typec_mux *mux;
->
->         mutex_lock(&mux_lock);
-> -       mux = device_connection_find_match(dev, name, NULL, typec_mux_match);
-> +       mux = device_connection_find_match(dev, "typec-mux", (void *)desc,
-> +                                          typec_mux_match);
-
-Not related to this series, but shouldn't
-device_connection_find_match() be improved to avoid dropping const
-qualifier?
-
--- 
-With Best Regards,
-Andy Shevchenko
+Applied, thanks.
