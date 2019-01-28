@@ -2,177 +2,116 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C20D1C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75431C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9456D21852
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548691189;
-	bh=/JrAKsrg05cIvttoBtj8rTTn1mP0fD6dta6sRwdJnj4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=ekcL7xUBuJxAJiMtoTKnDM1r/ivvBwRZJG3rStSiaJXWFXyODSGskWm15KLmuNa0T
-	 5dmGudaPiTuwVdRTrTq+V48v1QoVsR1CL7JycSZzRgzCfnOiQ9tcIj1aicwNdDATtX
-	 799h6FKBLoXMmB/BnZS++BTpge1YcsywtyZwJqe8=
+	by mail.kernel.org (Postfix) with ESMTP id 45E7C2082E
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:59:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Y2Nu9OJQ"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730627AbfA1P7s (ORCPT
+        id S1730639AbfA1P7u (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:59:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45018 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728320AbfA1P7q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:59:50 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:46988 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730609AbfA1P7q (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Mon, 28 Jan 2019 10:59:46 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A02AF21916;
-        Mon, 28 Jan 2019 15:59:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548691184;
-        bh=/JrAKsrg05cIvttoBtj8rTTn1mP0fD6dta6sRwdJnj4=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=P8GTgRD0PCZSzB3oItrqt+IhNwX7kPnFreRRaD4OdEKygrA8EYRurg3Li9jREAxua
-         oDRRFaEIWKfzPvh0R3BJux3tSdPTxinNyi1YkdmDhHXQbNPuoOdZ+V80Sgi72gjLZM
-         fzJAph/WGof2uSERRADxL2QvjRPN6uL9fT73gNA0=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Muchun Song <smuchun@gmail.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Sasha Levin <sashal@kernel.org>, linux-gpio@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 006/258] gpiolib: Fix possible use after free on label
-Date:   Mon, 28 Jan 2019 10:55:12 -0500
-Message-Id: <20190128155924.51521-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128155924.51521-1-sashal@kernel.org>
-References: <20190128155924.51521-1-sashal@kernel.org>
+Received: by mail-yw1-f65.google.com with SMTP id t13so6885875ywe.13
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 07:59:45 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=yG+IPoHDMDTax/O7ZuXb5W3f6MupuLya0ZnIkWYX/6w=;
+        b=Y2Nu9OJQzhF0nbbJyWful5kNWyBwddZ1f1VkAn29tp8WPoA3LQEpNLrXI0kn9uVKgy
+         OlGZ5zSDZ626uxv8mP78Rj7AY2v4WkaCfuHsdJlBn+xXi/4FgKXoDRlJQ+mYBvaUcEBs
+         /SM7LUD6MvsgbB1WryhJ8dhabqGvs4Z7Y6u8y+ALxnGe8PYsUrAJJ5Y/szN5wT1FRpNF
+         mB6Q3M2uWHzBMJQYukDpHZlc+LY9Usy04PZ+TuJ6YRjmujaKDcTm2vvts6QrF8UMvKSD
+         nwJH1risZ+AEEBgV+6YVoz9pRI6Oquh247133FVA/eaZMzmKJy+IaVYXqtOvdwRjrchm
+         ysOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=yG+IPoHDMDTax/O7ZuXb5W3f6MupuLya0ZnIkWYX/6w=;
+        b=Ig7Rxo0x7XCO7P6JhVqoquyn4zRx/7TYqf3KYE296Jd1UVIFu/fbKCep7u/glvBAw9
+         mDM6jP9PZLpVgBslqOWAo4eud6p2jGUjsrGjY8DfjJL/vjLzVCFY3iLGl5TiGbfNPtxN
+         FZpwU9aay+OVRAPYqPsKwDiBhiW7dftG4XBeAvLF1QX4RYnCk5MDY210t7rEA12vGk0e
+         LKHQnah2yxQjdfAfB7OvowrMG4e6sX9ocQcRpt/FgEKmZW3eruyclmWJIK9C1nds4SaT
+         cbuAu/S398G5YEYaFg9I8jXumd4hCdqJuOeDO+nLM52UmrgpcCqnzM9ZzM2n//AO38uc
+         folw==
+X-Gm-Message-State: AJcUukfRJmuxuS2y3W21YYjLuh+4MkVQuPETu68hBDDa1BXbI/eC0Kpv
+        JOKYl0KeowyHpKNS/7mgeuPXwzN6Km8p8ToUu9D65A==
+X-Google-Smtp-Source: ALg8bN7fCDdqmT/Poi2kifvBPpqajT1d4G+DhyRvU7E2FrC8gKAWDBqOykP3e9SscAD5+1zazZ4ERAHo037J/PrOYpg=
+X-Received: by 2002:a81:ee07:: with SMTP id l7mr21402528ywm.489.1548691184840;
+ Mon, 28 Jan 2019 07:59:44 -0800 (PST)
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
-Content-Transfer-Encoding: 8bit
+References: <20190123223144.GA10798@chrisdown.name> <20190124082252.GD4087@dhcp22.suse.cz>
+ <20190124160009.GA12436@cmpxchg.org> <20190124170117.GS4087@dhcp22.suse.cz>
+ <20190124182328.GA10820@cmpxchg.org> <20190125074824.GD3560@dhcp22.suse.cz>
+ <20190125165152.GK50184@devbig004.ftw2.facebook.com> <20190125173713.GD20411@dhcp22.suse.cz>
+ <20190125182808.GL50184@devbig004.ftw2.facebook.com>
+In-Reply-To: <20190125182808.GL50184@devbig004.ftw2.facebook.com>
+From:   Shakeel Butt <shakeelb@google.com>
+Date:   Mon, 28 Jan 2019 07:59:33 -0800
+Message-ID: <CALvZod6LFY+FYfBcAX0kLxV5KKB1-TX2cU5EDyyyjvHOtuWWbA@mail.gmail.com>
+Subject: Re: [PATCH 2/2] mm: Consider subtrees in memory.events
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Michal Hocko <mhocko@kernel.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Chris Down <chris@chrisdown.name>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Roman Gushchin <guro@fb.com>, Dennis Zhou <dennis@kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Cgroups <cgroups@vger.kernel.org>, Linux MM <linux-mm@kvack.org>,
+        kernel-team@fb.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Muchun Song <smuchun@gmail.com>
+Hi Tejun,
 
-[ Upstream commit 18534df419041e6c1f4b41af56ee7d41f757815c ]
+On Fri, Jan 25, 2019 at 10:28 AM Tejun Heo <tj@kernel.org> wrote:
+>
+> Hello, Michal.
+>
+> On Fri, Jan 25, 2019 at 06:37:13PM +0100, Michal Hocko wrote:
+> > > What if a user wants to monitor any ooms in the subtree tho, which is
+> > > a valid use case?
+> >
+> > How is that information useful without know which memcg the oom applies
+> > to?
+>
+> For example, a workload manager watching over a subtree for a job with
+> nested memory limits set by the job itself.  It wants to take action
+> (reporting and possibly other remediative actions) when something goes
+> wrong in the delegated subtree but isn't involved in how the subtree
+> is configured inside.
+>
 
-gpiod_request_commit() copies the pointer to the label passed as
-an argument only to be used later. But there's a chance the caller
-could immediately free the passed string(e.g., local variable).
-This could trigger a use after free when we use gpio label(e.g.,
-gpiochip_unlock_as_irq(), gpiochip_is_requested()).
+Why not make this configurable at the delegation boundary? As you
+mentioned, there are jobs who want centralized workload manager to
+watch over their subtrees while there can be jobs which want to
+monitor their subtree themselves. For example I can have a job which
+know how to act when one of the children cgroup goes OOM. However if
+the root of that job goes OOM then the centralized workload manager
+should do something about it. With this change, how to implement this
+scenario? How will the central manager differentiates between that a
+subtree of a job goes OOM or the root of that job? I guess from the
+discussion it seems like the centralized manager has to traverse that
+job's subtree to find the source of OOM.
 
-To be on the safe side: duplicate the string with kstrdup_const()
-so that if an unaware user passes an address to a stack-allocated
-buffer, we won't get the arbitrary label.
+Why can't we let the implementation of centralized manager easier by
+allowing to configure the propagation of these notifications across
+delegation boundary.
 
-Also fix gpiod_set_consumer_name().
-
-Signed-off-by: Muchun Song <smuchun@gmail.com>
-Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpio/gpiolib.c        | 25 +++++++++++++++++++++----
- include/linux/gpio/consumer.h |  6 ++++--
- 2 files changed, 25 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index a8e01d99919c..647da2649c91 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -2271,6 +2271,12 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
- 	unsigned long		flags;
- 	unsigned		offset;
- 
-+	if (label) {
-+		label = kstrdup_const(label, GFP_KERNEL);
-+		if (!label)
-+			return -ENOMEM;
-+	}
-+
- 	spin_lock_irqsave(&gpio_lock, flags);
- 
- 	/* NOTE:  gpio_request() can be called in early boot,
-@@ -2281,6 +2287,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
- 		desc_set_label(desc, label ? : "?");
- 		status = 0;
- 	} else {
-+		kfree_const(label);
- 		status = -EBUSY;
- 		goto done;
- 	}
-@@ -2297,6 +2304,7 @@ static int gpiod_request_commit(struct gpio_desc *desc, const char *label)
- 
- 		if (status < 0) {
- 			desc_set_label(desc, NULL);
-+			kfree_const(label);
- 			clear_bit(FLAG_REQUESTED, &desc->flags);
- 			goto done;
- 		}
-@@ -2392,6 +2400,7 @@ static bool gpiod_free_commit(struct gpio_desc *desc)
- 			chip->free(chip, gpio_chip_hwgpio(desc));
- 			spin_lock_irqsave(&gpio_lock, flags);
- 		}
-+		kfree_const(desc->label);
- 		desc_set_label(desc, NULL);
- 		clear_bit(FLAG_ACTIVE_LOW, &desc->flags);
- 		clear_bit(FLAG_REQUESTED, &desc->flags);
-@@ -3213,11 +3222,19 @@ EXPORT_SYMBOL_GPL(gpiod_cansleep);
-  * @desc: gpio to set the consumer name on
-  * @name: the new consumer name
-  */
--void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
-+int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
- {
--	VALIDATE_DESC_VOID(desc);
--	/* Just overwrite whatever the previous name was */
--	desc->label = name;
-+	VALIDATE_DESC(desc);
-+	if (name) {
-+		name = kstrdup_const(name, GFP_KERNEL);
-+		if (!name)
-+			return -ENOMEM;
-+	}
-+
-+	kfree_const(desc->label);
-+	desc_set_label(desc, name);
-+
-+	return 0;
- }
- EXPORT_SYMBOL_GPL(gpiod_set_consumer_name);
- 
-diff --git a/include/linux/gpio/consumer.h b/include/linux/gpio/consumer.h
-index 21ddbe440030..acc4279ad5e3 100644
---- a/include/linux/gpio/consumer.h
-+++ b/include/linux/gpio/consumer.h
-@@ -142,7 +142,7 @@ int gpiod_is_active_low(const struct gpio_desc *desc);
- int gpiod_cansleep(const struct gpio_desc *desc);
- 
- int gpiod_to_irq(const struct gpio_desc *desc);
--void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
-+int gpiod_set_consumer_name(struct gpio_desc *desc, const char *name);
- 
- /* Convert between the old gpio_ and new gpiod_ interfaces */
- struct gpio_desc *gpio_to_desc(unsigned gpio);
-@@ -465,10 +465,12 @@ static inline int gpiod_to_irq(const struct gpio_desc *desc)
- 	return -EINVAL;
- }
- 
--static inline void gpiod_set_consumer_name(struct gpio_desc *desc, const char *name)
-+static inline int gpiod_set_consumer_name(struct gpio_desc *desc,
-+					  const char *name)
- {
- 	/* GPIO can never have been requested */
- 	WARN_ON(1);
-+	return -EINVAL;
- }
- 
- static inline struct gpio_desc *gpio_to_desc(unsigned gpio)
--- 
-2.19.1
-
+thanks,
+Shakeel
