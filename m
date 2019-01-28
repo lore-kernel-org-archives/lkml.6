@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1646FC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C96CC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF02420880
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4424521741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 15:46:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548690402;
-	bh=aA0AO3Zl9UIM0F3Fg9Ct9k9JEKpSw1WEte/Qc/6ioy0=;
+	s=default; t=1548690405;
+	bh=m3O+OByYLW8Xxzhxm158rMBPnh4EMaIxK/bSnOi7Gx4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=KI8ii49+/oXzvkudr/7Sks0X3/0SbvJxCqoA07EU+uphvrkUdgi+88g3LG5CiHHXh
-	 KPPzCAVXi2dyrqftYSULoeuS0hP1weiga756Oh7YzQLrfTVic6bvEeMedu+ad67Q0q
-	 mqfTZ37gU86mnRX+9qy0WGSYf3lMWufTqJx1BjIY=
+	b=hOYs7QqPq9E8g/njJrDG6RddJLQkeYQyjbQ9oCTzLbEexugP6a4rm7xB8eMII3LXs
+	 4gphS1NQ9ULiEub54pmtBBqcFwsbUzj1mC2BPi8qjtl3fTTUAMA6qAH/WxFqHV5CJb
+	 9Q2RYCWVZg0J9CgoSp3RcosS+JXBXHzri0eP8sto=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728052AbfA1Pql (ORCPT
+        id S1728075AbfA1Pqo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 10:46:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59984 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:46:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60068 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727431AbfA1Pqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:46:36 -0500
+        id S1728056AbfA1Pql (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:46:41 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5126021741;
-        Mon, 28 Jan 2019 15:46:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 03A7521741;
+        Mon, 28 Jan 2019 15:46:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690396;
-        bh=aA0AO3Zl9UIM0F3Fg9Ct9k9JEKpSw1WEte/Qc/6ioy0=;
+        s=default; t=1548690401;
+        bh=m3O+OByYLW8Xxzhxm158rMBPnh4EMaIxK/bSnOi7Gx4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WCNgY3Ni8YjzwY9AabeJwZ+dULFOo0ssZ2wZE3z1tcKwVC0CFbEnkZBISA4FX085M
-         wY5ES5z7C2nFNVj0wuhggLygnbMTgIjI+RtAL84WDJSaakc2QqLKHsxHdn/7x48IM2
-         t20E28HK3U24GvL4bM6vqxWtgw+qSE/e+a7omC4Y=
+        b=pYaRGicvuEbSd7pKGrw5yY3CFVro11PwuM2Hsfy8lUuM6A4LLnHdCn5kBH1DjFysL
+         N3uvy/csdqgQBWmz/B1aXCR45SZcpXVovpKAfIfRtxdL8gMcQLerGD9UO+wa1d6Tun
+         d/1/hxZX91WMR5wiImAloDNCcqfB8i3lEgP5GUGg=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.20 071/304] drm: rcar-du: Fix external clock error checks
-Date:   Mon, 28 Jan 2019 10:39:48 -0500
-Message-Id: <20190128154341.47195-71-sashal@kernel.org>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Mark Brown <broonie@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.20 072/304] ASoC: sunxi: sun50i-codec-analog: Add support for cpvdd regulator supply
+Date:   Mon, 28 Jan 2019 10:39:49 -0500
+Message-Id: <20190128154341.47195-72-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -58,60 +57,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+From: Chen-Yu Tsai <wens@csie.org>
 
-[ Upstream commit 63a298f22a6183b5b7536a203596c6570dfcfe8e ]
+[ Upstream commit ca0412a05756cd0b94751ca4d54fe6522f00b1f4 ]
 
-The rcar-du driver supports probe deferral for external clocks, but
-implements it badly by checking the wrong pointer due to a bad copy and
-paste. Fix it.
+On the Allwinner A64 SoCs, the audio codec has a built-in headphone
+amplifier. This amplifier has a power supply separate from the rest of
+the analog audio circuitry, labeled cpvdd.
 
-While at it, reject invalid clocks outright for DU channels that have a
-display PLL, as the external clock is mandatory in that case. This
-avoids a WARN_ON() at runtime.
+This patch adds a DAPM widget for this supply, and ties it to the
+headphone amp widget.
 
-Fixes: 1b30dbde8596 ("drm: rcar-du: Add support for external pixel clock")
-Reported-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Reviewed-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Acked-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/rcar-du/rcar_du_crtc.c | 14 +++++++++-----
- 1 file changed, 9 insertions(+), 5 deletions(-)
+ sound/soc/sunxi/sun50i-codec-analog.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-index 17741843cf51..40a9afe818a8 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_crtc.c
-@@ -226,9 +226,6 @@ static void rcar_du_crtc_set_display_timing(struct rcar_du_crtc *rcrtc)
- 		 * system clock, and have no internal clock divider.
- 		 */
+diff --git a/sound/soc/sunxi/sun50i-codec-analog.c b/sound/soc/sunxi/sun50i-codec-analog.c
+index 8f5f999df631..df1fed0aa001 100644
+--- a/sound/soc/sunxi/sun50i-codec-analog.c
++++ b/sound/soc/sunxi/sun50i-codec-analog.c
+@@ -274,6 +274,7 @@ static const struct snd_soc_dapm_widget sun50i_a64_codec_widgets[] = {
+ 	 * stream widgets at the card level.
+ 	 */
  
--		if (WARN_ON(!rcrtc->extclock))
--			return;
--
- 		/*
- 		 * The H3 ES1.x exhibits dot clock duty cycle stability issues.
- 		 * We can work around them by configuring the DPLL to twice the
-@@ -1113,9 +1110,16 @@ int rcar_du_crtc_create(struct rcar_du_group *rgrp, unsigned int swindex,
- 	clk = devm_clk_get(rcdu->dev, clk_name);
- 	if (!IS_ERR(clk)) {
- 		rcrtc->extclock = clk;
--	} else if (PTR_ERR(rcrtc->clock) == -EPROBE_DEFER) {
--		dev_info(rcdu->dev, "can't get external clock %u\n", hwindex);
-+	} else if (PTR_ERR(clk) == -EPROBE_DEFER) {
- 		return -EPROBE_DEFER;
-+	} else if (rcdu->info->dpll_mask & BIT(hwindex)) {
-+		/*
-+		 * DU channels that have a display PLL can't use the internal
-+		 * system clock and thus require an external clock.
-+		 */
-+		ret = PTR_ERR(clk);
-+		dev_err(rcdu->dev, "can't get dclkin.%u: %d\n", hwindex, ret);
-+		return ret;
- 	}
++	SND_SOC_DAPM_REGULATOR_SUPPLY("hpvcc", 0, 0),
+ 	SND_SOC_DAPM_MUX("Headphone Source Playback Route",
+ 			 SND_SOC_NOPM, 0, 0, sun50i_codec_hp_src),
+ 	SND_SOC_DAPM_OUT_DRV("Headphone Amp", SUN50I_ADDA_HP_CTRL,
+@@ -361,6 +362,7 @@ static const struct snd_soc_dapm_route sun50i_a64_codec_routes[] = {
+ 	{ "Headphone Source Playback Route", "Mixer", "Left Mixer" },
+ 	{ "Headphone Source Playback Route", "Mixer", "Right Mixer" },
+ 	{ "Headphone Amp", NULL, "Headphone Source Playback Route" },
++	{ "Headphone Amp", NULL, "hpvcc" },
+ 	{ "HP", NULL, "Headphone Amp" },
  
- 	init_waitqueue_head(&rcrtc->flip_wait);
+ 	/* Microphone Routes */
 -- 
 2.19.1
 
