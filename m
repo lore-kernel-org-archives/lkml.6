@@ -2,129 +2,152 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E28EC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49B1BC282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E3ED2173C
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548694253;
-	bh=Y8XsaOzz3oAFD7NnGbBrb4qaGH+Q+M1wZ/BK/0GALX8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=zsOuNDA0qzqK9lg5M5cQz+gzm8Yx4hLkZKoPwqSuLML7xTzxNlbgCEu1SVi6zXP0k
-	 YoLELgkfZeSly9q+42+Fh+xmTRaZHTeXVCGXrczLDtX9jyPJLY+J2E2UrjDxRMvUn+
-	 1S8xeLNnSrHYa66xrYCGqZtonrHSbCn4HjiU0Scs=
+	by mail.kernel.org (Postfix) with ESMTP id 2549921741
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 16:50:59 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389039AbfA1Quv (ORCPT
+        id S2389315AbfA1Qu4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 11:50:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55170 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 11:50:56 -0500
+Received: from mga03.intel.com ([134.134.136.65]:34446 "EHLO mga03.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388696AbfA1QT6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 11:19:58 -0500
-Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 935A72173C;
-        Mon, 28 Jan 2019 16:19:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548692397;
-        bh=Y8XsaOzz3oAFD7NnGbBrb4qaGH+Q+M1wZ/BK/0GALX8=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WBmyVtifuEqSTTwoddMSEbj7K2Mkpam4yR5XXSXjSfyZZQvx1yyARPi8IGP0gibul
-         CJJPH0hg2wfb/aPkdijD6X7fS8lANwTFlcYKwZd+W/rsQDxu+avlv/H4Q/KtmgZ8Mv
-         hQPi5cH80SNGgyqY8yv18EHeMTSf1dr9xIsgM2y8=
-From:   Sasha Levin <sashal@kernel.org>
-To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Steve Longerbeam <slongerbeam@gmail.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.9 004/107] gpu: ipu-v3: image-convert: Prevent race between run and unprepare
-Date:   Mon, 28 Jan 2019 11:18:04 -0500
-Message-Id: <20190128161947.57405-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20190128161947.57405-1-sashal@kernel.org>
-References: <20190128161947.57405-1-sashal@kernel.org>
+        id S2388604AbfA1Quu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 11:50:50 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 28 Jan 2019 08:50:49 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,534,1539673200"; 
+   d="scan'208";a="133807746"
+Received: from ray.jf.intel.com (HELO [10.7.201.16]) ([10.7.201.16])
+  by orsmga001.jf.intel.com with ESMTP; 28 Jan 2019 08:50:49 -0800
+Subject: Re: [PATCH 0/5] [v4] Allow persistent memory to be used like normal
+ RAM
+To:     Balbir Singh <bsingharora@gmail.com>,
+        Dave Hansen <dave.hansen@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, thomas.lendacky@amd.com,
+        mhocko@suse.com, linux-nvdimm@lists.01.org, tiwai@suse.de,
+        ying.huang@intel.com, linux-mm@kvack.org, jglisse@redhat.com,
+        bp@suse.de, baiyaowei@cmss.chinamobile.com, zwisler@kernel.org,
+        bhelgaas@google.com, fengguang.wu@intel.com,
+        akpm@linux-foundation.org
+References: <20190124231441.37A4A305@viggo.jf.intel.com>
+ <20190128110958.GH26056@350D>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+Message-ID: <3ea28fe1-1828-1017-fa0f-da626d773440@intel.com>
+Date:   Mon, 28 Jan 2019 08:50:49 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-Patchwork-Hint: Ignore
+In-Reply-To: <20190128110958.GH26056@350D>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Steve Longerbeam <slongerbeam@gmail.com>
+On 1/28/19 3:09 AM, Balbir Singh wrote:
+>> This is intended for Intel-style NVDIMMs (aka. Intel Optane DC
+>> persistent memory) NVDIMMs.  These DIMMs are physically persistent,
+>> more akin to flash than traditional RAM.  They are also expected to
+>> be more cost-effective than using RAM, which is why folks want this
+>> set in the first place.
+> What variant of NVDIMM's F/P or both?
 
-[ Upstream commit 819bec35c8c9706185498c9222bd244e0781ad35 ]
+I'd expect this to get used in any cases where the NVDIMM is
+cost-effective vs. DRAM.  Today, I think that's only NVDIMM-P.  At least
+from what Wikipedia tells me about F vs. P vs. N:
 
-Prevent possible race by parallel threads between ipu_image_convert_run()
-and ipu_image_convert_unprepare(). This involves setting ctx->aborting
-to true unconditionally so that no new job runs can be queued during
-unprepare, and holding the ctx->aborting flag until the context is freed.
+	https://en.wikipedia.org/wiki/NVDIMM
 
-Note that the "normal" ipu_image_convert_abort() case (e.g. not during
-context unprepare) should clear the ctx->aborting flag after aborting
-any active run and clearing the context's pending queue. This is because
-it should be possible to continue to use the conversion context and queue
-more runs after an abort.
+>> == Patch Set Overview ==
+>>
+>> This series adds a new "driver" to which pmem devices can be
+>> attached.  Once attached, the memory "owned" by the device is
+>> hot-added to the kernel and managed like any other memory.  On
+>> systems with an HMAT (a new ACPI table), each socket (roughly)
+>> will have a separate NUMA node for its persistent memory so
+>> this newly-added memory can be selected by its unique NUMA
+>> node.
+> 
+> NUMA is distance based topology, does HMAT solve these problems?
 
-Signed-off-by: Steve Longerbeam <slongerbeam@gmail.com>
-Tested-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Philipp Zabel <p.zabel@pengutronix.de>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/gpu/ipu-v3/ipu-image-convert.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+NUMA is no longer just distance-based.  Any memory with different
+properties, like different memory-side caches or bandwidth properties
+can be in its own, discrete NUMA node.
 
-diff --git a/drivers/gpu/ipu-v3/ipu-image-convert.c b/drivers/gpu/ipu-v3/ipu-image-convert.c
-index 805b6fa7b5f4..50b73f3876fb 100644
---- a/drivers/gpu/ipu-v3/ipu-image-convert.c
-+++ b/drivers/gpu/ipu-v3/ipu-image-convert.c
-@@ -1513,7 +1513,7 @@ int ipu_image_convert_queue(struct ipu_image_convert_run *run)
- EXPORT_SYMBOL_GPL(ipu_image_convert_queue);
- 
- /* Abort any active or pending conversions for this context */
--void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
-+static void __ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- {
- 	struct ipu_image_convert_chan *chan = ctx->chan;
- 	struct ipu_image_convert_priv *priv = chan->priv;
-@@ -1540,7 +1540,7 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- 
- 	need_abort = (run_count || active_run);
- 
--	ctx->aborting = need_abort;
-+	ctx->aborting = true;
- 
- 	spin_unlock_irqrestore(&chan->irqlock, flags);
- 
-@@ -1561,7 +1561,11 @@ void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
- 		dev_warn(priv->ipu->dev, "%s: timeout\n", __func__);
- 		force_abort(ctx);
- 	}
-+}
- 
-+void ipu_image_convert_abort(struct ipu_image_convert_ctx *ctx)
-+{
-+	__ipu_image_convert_abort(ctx);
- 	ctx->aborting = false;
- }
- EXPORT_SYMBOL_GPL(ipu_image_convert_abort);
-@@ -1575,7 +1579,7 @@ void ipu_image_convert_unprepare(struct ipu_image_convert_ctx *ctx)
- 	bool put_res;
- 
- 	/* make sure no runs are hanging around */
--	ipu_image_convert_abort(ctx);
-+	__ipu_image_convert_abort(ctx);
- 
- 	dev_dbg(priv->ipu->dev, "%s: task %u: removing ctx %p\n", __func__,
- 		chan->ic_task, ctx);
--- 
-2.19.1
+> How do we prevent fallback nodes of normal nodes being pmem nodes?
 
+NUMA policies.
+
+> On an unexpected crash/failure is there a scrubbing mechanism
+> or do we rely on the allocator to do the right thing prior to
+> reallocating any memory.
+
+Yes, but this is not unique to persistent memory.  On a kexec-based
+crash, there might be old, sensitive data in *RAM* when the kernel comes
+up.  We depend on the allocator to zero things there.  We also just
+plain depend on the allocator to zero things so we don't leak
+information when recycling pages in the first place.
+
+I can't think of a scenario where some kind of "leak" of old data
+wouldn't also be a bug with normal, volatile RAM.
+
+> Will frequent zero'ing hurt NVDIMM/pmem's life times?
+
+Everybody reputable that sells things with limited endurance quantifies
+the endurance.  I'd suggest that folks know what the endurance of their
+media is before enabling this.
