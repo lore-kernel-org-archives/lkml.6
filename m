@@ -2,64 +2,82 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,LOCALPART_IN_SUBJECT,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EA6BC4151A
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 00:06:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9788CC282CA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 00:33:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AA892148E
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 00:06:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 607482085A
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 00:33:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="BPSmgpQ1"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726879AbfA1AGF (ORCPT
+        id S1726626AbfA1Act (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 27 Jan 2019 19:06:05 -0500
-Received: from nautica.notk.org ([91.121.71.147]:49494 "EHLO nautica.notk.org"
+        Sun, 27 Jan 2019 19:32:49 -0500
+Received: from ozlabs.org ([203.11.71.1]:46283 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726403AbfA1AGF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 27 Jan 2019 19:06:05 -0500
-Received: by nautica.notk.org (Postfix, from userid 1001)
-        id 0B2E6C009; Mon, 28 Jan 2019 01:06:03 +0100 (CET)
-Date:   Mon, 28 Jan 2019 01:05:48 +0100
-From:   Dominique Martinet <asmadeus@codewreck.org>
-To:     Jiri Kosina <jikos@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Josh Snyder <joshs@netflix.com>,
-        Dave Chinner <david@fromorbit.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Jann Horn <jannh@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Michal Hocko <mhocko@suse.com>, Linux-MM <linux-mm@kvack.org>,
-        kernel list <linux-kernel@vger.kernel.org>,
-        Linux API <linux-api@vger.kernel.org>
-Subject: Re: [PATCH] mm/mincore: allow for making sys_mincore() privileged
-Message-ID: <20190128000547.GA25155@nautica>
-References: <nycvar.YFH.7.76.1901240009560.6626@cbobk.fhfr.pm>
- <CAHk-=wg+C65FJHB=Jx1OvuJP4kvpWdw+5G=XOXB6X_KB2XuofA@mail.gmail.com>
- <20190124002455.GA23181@nautica>
- <20190124124501.GA18012@nautica>
- <nycvar.YFH.7.76.1901241523500.6626@cbobk.fhfr.pm>
- <nycvar.YFH.7.76.1901272335040.6626@cbobk.fhfr.pm>
+        id S1726511AbfA1Act (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 27 Jan 2019 19:32:49 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+         key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 43nrFB471pz9s7T;
+        Mon, 28 Jan 2019 11:32:46 +1100 (AEDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1548635566;
+        bh=yyQ1dBWkV/kYuEOxdIuweNAiIjbAhs5KTZLFb0pxTSk=;
+        h=Date:From:To:Cc:Subject:From;
+        b=BPSmgpQ11MMAoccmsvg8re/+Yx1fBGaw+wbaHw4mHDn4ncFijvVl25BuzOq7pumeH
+         2oLkT6398lBCvEUU32DfIKo5e/j5UjD7Z2gR2vTIR6F25M36zD3hGTzjvirO0pnBQt
+         hdzwJL6hnxvLfjJSnoQc7JpAPpM6b7fE0d9lLqaxgMzNsH7S2noMXVNxETC2swLt9i
+         l/GpyuEZELjDCOw0s4hYZcvVfHo5JRBsM6hM+ERvdti8HCd2iY7kySj6MVaN/BBmbH
+         qG6ndcrQuYe9mHuOovEW7t/6gQei4DqRV2jrcr39NIjwyGHw8mIq6QQCOD/uzxXxWn
+         brQDnkhsVwuBA==
+Date:   Mon, 28 Jan 2019 11:32:45 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Linux Next Mailing List <linux-next@vger.kernel.org>
+Cc:     Linux kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: linux-next: no release today
+Message-ID: <20190128113245.065d0d30@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <nycvar.YFH.7.76.1901272335040.6626@cbobk.fhfr.pm>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/iLM.VuBMHTjN.g3=3ElLo6M"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Jiri Kosina wrote on Sun, Jan 27, 2019:
-> So, any objections to aproaching it this way?
+--Sig_/iLM.VuBMHTjN.g3=3ElLo6M
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I'm not sure why I'm the main recipient of that mail but answering
-because I am -- let's get these patches in through the regular -mm tree
-though
+Hi all,
 
--- 
-Dominique
+There will be no linux-next release today, normal service will resume
+tomorrow.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/iLM.VuBMHTjN.g3=3ElLo6M
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlxOTa0ACgkQAVBC80lX
+0GxdMwf/WNQf6UqUdruN21domcy0XqIESEzf/OmDSqqwF3fyXU8277CH5BhfCYFr
+8cXAny56TbntUiRCe4hF80MEGuNrE9na/JBKUSm3YCH2XOYrSDLnSnuOFI+HvjUe
+TwQ132dqNPDwTzQNgpP6JhfrvCnKJQYZo/N3yHv882YcUwO1HEWqm7oldA8r9juW
+9/Ox4vV6Utr6JrO3RuofDyYUw17Un9Y0H9GhZbp/36Dd4w0/Zg1wDO+bNaO2Iycq
+FyDOQlsnuM508kMM3zfdJ+JLVctRSi3IDll1uz8iYAyy6scWQ6El0Ji+Iskxki8A
+qtI9W7A9X5YfAMHuF85hK+uWYhS2EA==
+=3USI
+-----END PGP SIGNATURE-----
+
+--Sig_/iLM.VuBMHTjN.g3=3ElLo6M--
