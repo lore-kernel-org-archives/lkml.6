@@ -4,54 +4,54 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 146BAC282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:34:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F7ADC282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:34:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA2D120881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:34:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4F1F120881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 18:34:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jSm1rIGl"
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AuLKGXTE"
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728267AbfA1SeN (ORCPT
+        id S1728289AbfA1SeU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 13:34:13 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:34671 "EHLO
+        Mon, 28 Jan 2019 13:34:20 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:36001 "EHLO
         mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727966AbfA1Sdc (ORCPT
+        with ESMTP id S1727931AbfA1Sda (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 13:33:32 -0500
-Received: by mail-wr1-f68.google.com with SMTP id f7so19308335wrp.1
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:33:31 -0800 (PST)
+        Mon, 28 Jan 2019 13:33:30 -0500
+Received: by mail-wr1-f68.google.com with SMTP id u4so19239163wrp.3
+        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 10:33:29 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=+HV8Nby8D/Sn6SAvkoxC802zTo0ynRqZ7bbip7gTvlU=;
-        b=jSm1rIGlQyTPja2+ldYbXDr+A1YqBNWmTeaDsPGMl7TadS2uye65vk+lYjGr8Yox3F
-         80uPZnH1mldfRsnbu+xQwdKYVWUR16/oHBEGlzc1Ck4LcODmicjYbz0BPrPxx7pAYW7i
-         UdjwgF9oGxKzZb573jtPHKtsEE2WYnR1uGpxs=
+        bh=jVpmDAqKxQ/sn4lpMw47fV7HcMyJcxjw7jbklh3qbPU=;
+        b=AuLKGXTEF/zJmA5NsI2ZU/MrY8PjDijYbEC7ayTof56dDleGQHTG8AdDA26ctjQtFa
+         H9vffH4TsWwAOXxxxd05+mUnTuz6FxQttOEvnrvbsi+ho4z7s4/hiM7CyWgAvuJUThDt
+         o1WXVLwa8xB2zcnkoJhZfw3cjiaNoa1Da+AD0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=+HV8Nby8D/Sn6SAvkoxC802zTo0ynRqZ7bbip7gTvlU=;
-        b=YicE8+GuqgpUy4yu3OMnZApWiCIC0EBkcAADlT2qIRpS0/kcUtZ0w7sT2BEyOZznYM
-         b7xSfCWkagY2uasXZVorpDeb+Php9D0ohKBgyWt8OQlo59soh+T6oLj+xUzWW6F/Fu+V
-         WXbb8UbkgpNh4iOkkSnkJvXDdtooTiACisHk1CA6WGSRm8Dq9BSq4ZlH/ziMxSJSN8D8
-         CiDvLF5iRSS/S/bgoJQj8wVgfnRyeBLAR5L4VxYthqacLh3DkdmPAvV+ypY1p7ektfZb
-         KQjjYRxV64x1xNyCKcWIsP/OizNUiFgmkDdRqursJSSIuNTWnwwdnm2d0r26SlV2Gb2C
-         qGbw==
-X-Gm-Message-State: AJcUukcD0/B+oOdrdNqBBtB04YXyNNaBOrfC/zmM1xF7mN0XdD3G0pJF
-        F47vfDgC9wIPAphg5rfbS7+ctw==
-X-Google-Smtp-Source: ALg8bN56Btc4EmKhRmzfolsJuEPhFqCUgA9Tle2qQgKO/izjpdp9h32ZsM+121WwJEPOwl4jYwVVBQ==
-X-Received: by 2002:a5d:6808:: with SMTP id w8mr22035898wru.270.1548700410592;
-        Mon, 28 Jan 2019 10:33:30 -0800 (PST)
+        bh=jVpmDAqKxQ/sn4lpMw47fV7HcMyJcxjw7jbklh3qbPU=;
+        b=QIfpsrCZ0KVa2jDgjJ/OZw1XTFEtsDUleiG44M1blCb72elNoBap1isrLDqQ3H9xc2
+         BfS/T1gtNUEso5WRqFaZZWvgxFaSLt0MCLMvurmYz65chmixIGzKEJExxA6Ej7INdvVD
+         Uvs1+B4Tb4x1ZvTAolpSftvOtUgZUx/PIzPG/u/AOJ+UozKZvIsg/hSj9Sl7oyP4qf83
+         qlTavukaG0OVciZkTgKGmPRMFvo1a2CX20W6U7+JJa69fEKRIHPeeTzJhtNbiW/fj2Za
+         1nqYxiNC/cpaM3OIAJPjxikAdlJcNpU0g3uGJWYUd7hCLh4netMmQfx4ZUMmXUvNSFb7
+         ThPA==
+X-Gm-Message-State: AJcUukcC1XSMtRmciFw5t3XF4p0/1lDmuMt/Ubr+WvxvKBnS01NKac6N
+        XDDkuqBYCQEQB/oCX4MvWZ6Q3A==
+X-Google-Smtp-Source: ALg8bN4DPSWSntfVf4nxRbsKw8kQvIawgC5fRMRsITJxa8keGe+bq96fbP/BtZDbVmU0kxACokb9wA==
+X-Received: by 2002:adf:9b11:: with SMTP id b17mr23059241wrc.168.1548700408757;
+        Mon, 28 Jan 2019 10:33:28 -0800 (PST)
 Received: from localhost.localdomain (233.red-81-47-145.staticip.rima-tde.net. [81.47.145.233])
-        by smtp.gmail.com with ESMTPSA id l19sm270082wme.21.2019.01.28.10.33.28
+        by smtp.gmail.com with ESMTPSA id l19sm270082wme.21.2019.01.28.10.33.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 28 Jan 2019 10:33:29 -0800 (PST)
+        Mon, 28 Jan 2019 10:33:28 -0800 (PST)
 From:   Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 To:     jorge.ramirez-ortiz@linaro.org, sboyd@kernel.org,
         bjorn.andersson@linaro.org, andy.gross@linaro.org,
@@ -66,9 +66,9 @@ Cc:     vkoul@kernel.org, niklas.cassel@linaro.org,
         devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
         linux-arm-msm@vger.kernel.org, khasim.mohammed@linaro.org
-Subject: [PATCH v2 08/14] clk: qcom: hfpll: CLK_IGNORE_UNUSED
-Date:   Mon, 28 Jan 2019 19:32:55 +0100
-Message-Id: <1548700381-22376-9-git-send-email-jorge.ramirez-ortiz@linaro.org>
+Subject: [PATCH v2 07/14] clk: qcom: hfpll: register as clock provider
+Date:   Mon, 28 Jan 2019 19:32:54 +0100
+Message-Id: <1548700381-22376-8-git-send-email-jorge.ramirez-ortiz@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
 References: <1548700381-22376-1-git-send-email-jorge.ramirez-ortiz@linaro.org>
@@ -77,47 +77,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When COMMON_CLK_DISABLED_UNUSED is set, in an effort to save power and
-to keep the software model of the clock in line with reality, the
-framework transverses the clock tree and disables those clocks that
-were enabled by the firmware but have not been enabled by any device
-driver.
-
-If CPUFREQ is enabled, early during the system boot, it might attempt
-to change the CPU frequency ("set_rate"). If the HFPLL is selected as
-a provider, it will then change the rate for this clock.
-
-As boot continues, clk_disable_unused_subtree will run. Since it wont
-find a valid counter (enable_count) for a clock that is actually
-enabled it will attempt to disable it which will cause the CPU to
-stop. Notice that in this driver, calls to check whether the clock is
-enabled are routed via the is_enabled callback which queries the
-hardware.
-
-The following commit, rather than marking the clock critical and
-forcing the clock to be always enabled, addresses the above scenario
-making sure the clock is not disabled but it continues to rely on the
-firmware to enable the clock.
+Make the output of the high frequency pll a clock provider.
+On the QCS404 this PLL controls cpu frequency scaling.
 
 Co-developed-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Niklas Cassel <niklas.cassel@linaro.org>
 Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez-ortiz@linaro.org>
 ---
- drivers/clk/qcom/hfpll.c | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/qcom/hfpll.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/clk/qcom/hfpll.c b/drivers/clk/qcom/hfpll.c
-index 0ffed0d..9d92f5d 100644
+index 87b7f46..0ffed0d 100644
 --- a/drivers/clk/qcom/hfpll.c
 +++ b/drivers/clk/qcom/hfpll.c
-@@ -58,6 +58,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+@@ -53,6 +53,7 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+ 	struct regmap *regmap;
+ 	struct clk_hfpll *h;
+ 	struct clk *pclk;
++	int ret;
+ 	struct clk_init_data init = {
  		.parent_names = (const char *[]){ "xo" },
  		.num_parents = 1,
- 		.ops = &clk_ops_hfpll,
-+		.flags = CLK_IGNORE_UNUSED,
- 	};
+@@ -87,7 +88,14 @@ static int qcom_hfpll_probe(struct platform_device *pdev)
+ 	h->clkr.hw.init = &init;
+ 	spin_lock_init(&h->lock);
  
- 	h = devm_kzalloc(dev, sizeof(*h), GFP_KERNEL);
+-	return devm_clk_register_regmap(&pdev->dev, &h->clkr);
++	ret = devm_clk_register_regmap(dev, &h->clkr);
++	if (ret) {
++		dev_err(dev, "failed to register regmap clock: %d\n", ret);
++		return ret;
++	}
++
++	return devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
++					   &h->clkr.hw);
+ }
+ 
+ static struct platform_driver qcom_hfpll_driver = {
 -- 
 2.7.4
 
