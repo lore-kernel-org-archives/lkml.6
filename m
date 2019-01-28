@@ -4,50 +4,49 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CBB99C282C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C5990C282C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AC0520881
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8B9CB20881
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 17:46:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=default; t=1548697585;
-	bh=8y57kNr7hTFcVKtpwIZUf9EX/+x04QxM+Ab3q3pbpWg=;
+	s=default; t=1548697590;
+	bh=JVbbfiWDmRrs+1tO/jdSQ76P8oueVRu1G1kwkvPiM7U=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:List-ID:From;
-	b=lMsNxXjFn3BTNkHazqV1avQZscOU+xI6EdTzTtM946kchFeQ9j7o211fJA3OXSMYf
-	 4tCU75y9ywoVVfef7R7YrR+aMxAvhJyT1P9gKjKBJny4lQYCjHjzcVrCdXsYfdb8h9
-	 i/PlNGHhrhrazxziTzofi5nq9miT5O8ZaA9q2k7s=
+	b=zlkFWaKtHHPW4C0aIQ5fUHjXR5WIuzb0p2dnBK4WL8c9nRR5g9o7lh1QEe4+jWOkh
+	 7IaQ0TmqD5FJHn7SbFLq3FK5qW97AqD62m2YUuqZ2/FP/7yQkb6sOhNJFTvW22SRZx
+	 6dBSPnLJ/UD9abT6tca5/zgYb24erUARwIuDLRZI=
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728538AbfA1RqX (ORCPT
+        id S1728246AbfA1PrM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 12:46:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60730 "EHLO mail.kernel.org"
+        Mon, 28 Jan 2019 10:47:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60576 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726914AbfA1PrQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 10:47:16 -0500
+        id S1728223AbfA1PrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 10:47:09 -0500
 Received: from sasha-vm.mshome.net (c-73-47-72-35.hsd1.nh.comcast.net [73.47.72.35])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1D6E62175B;
-        Mon, 28 Jan 2019 15:47:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CBC0A20880;
+        Mon, 28 Jan 2019 15:47:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1548690435;
-        bh=8y57kNr7hTFcVKtpwIZUf9EX/+x04QxM+Ab3q3pbpWg=;
+        s=default; t=1548690428;
+        bh=JVbbfiWDmRrs+1tO/jdSQ76P8oueVRu1G1kwkvPiM7U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=AlC5pR4SrzvYeUqiSpw2QeHpw2lZupVIrjUt6Qth9/uFm1HaIPR37xd3pqEzy+csj
-         yQFH+MlS6r2XcMbIiGBzg3bPRdHRwGJLcMWEvuLTK9K+tK41UcHVM084YxhDCQADPq
-         Yr/4JenPM9HmnRkd48J3cDa5ujLOqsD53VZBDD+M=
+        b=Bcc2KA5jK6k1rykZMWlyIlbHQSBYy+jzMWBFmbrtgw+u+l7gvBsAm4HJH/NBsDWjZ
+         ZnHGJJRTaVRUpqKN7G8Pei5geO4RdaKdudn3ppW0YnmC0Y1ZIikq9ScbbwV6/va0VN
+         36KBNznf4E3DcYGQfkc4eIl65M2fR7m4bADH+vQA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Cc:     Yunlong Song <yunlong.song@huawei.com>,
-        Jaegeuk Kim <jaegeuk@kernel.org>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-f2fs-devel@lists.sourceforge.net
-Subject: [PATCH AUTOSEL 4.20 085/304] f2fs: avoid GC causing encrypted file corrupted
-Date:   Mon, 28 Jan 2019 10:40:02 -0500
-Message-Id: <20190128154341.47195-85-sashal@kernel.org>
+Cc:     Hans Verkuil <hverkuil-cisco@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-media@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.20 082/304] media: adv*/tc358743/ths8200: fill in min width/height/pixelclock
+Date:   Mon, 28 Jan 2019 10:39:59 -0500
+Message-Id: <20190128154341.47195-82-sashal@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20190128154341.47195-1-sashal@kernel.org>
 References: <20190128154341.47195-1-sashal@kernel.org>
@@ -59,64 +58,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Yunlong Song <yunlong.song@huawei.com>
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
 
-[ Upstream commit 9bf1a3f73927492c8be127b642197125e9d52be8 ]
+[ Upstream commit 2912289a518077ddb8214e05336700148e97e235 ]
 
-The encrypted file may be corrupted by GC in following case:
+The v4l2_dv_timings_cap struct is used to do sanity checks when setting and
+enumerating DV timings, ensuring that only valid timings as per the HW
+capabilities are allowed.
 
-Time 1: | segment 1 blkaddr = A |  GC -> | segment 2 blkaddr = B |
-Encrypted block 1 is moved from blkaddr A of segment 1 to blkaddr B of
-segment 2,
+However, many drivers just filled in 0 for the minimum width, height or
+pixelclock frequency. This can cause timings with e.g. 0 as width and height
+to be accepted, which will in turn lead to a potential division by zero.
 
-Time 2: | segment 1 blkaddr = B |  GC -> | segment 3 blkaddr = C |
+Fill in proper values are minimum boundaries. 640x350 was chosen since it is
+the smallest resolution in v4l2-dv-timings.h. Same for 13 MHz as the lowest
+pixelclock frequency (it's slightly below the minimum of 13.5 MHz in the
+v4l2-dv-timings.h header).
 
-Before page 1 is written back and if segment 2 become a victim, then
-page 1 is moved from blkaddr B of segment 2 to blkaddr Cof segment 3,
-during the GC process of Time 2, f2fs should wait for page 1 written back
-before reading it, or move_data_block will read a garbage block from
-blkaddr B since page is not written back to blkaddr B yet.
-
-Commit 6aa58d8a ("f2fs: readahead encrypted block during GC") introduce
-ra_data_block to read encrypted block, but it forgets to add
-f2fs_wait_on_page_writeback to avoid racing between GC and flush.
-
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-Reviewed-by: Chao Yu <yuchao0@huawei.com>
-Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
+Signed-off-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/f2fs/gc.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ drivers/media/i2c/ad9389b.c  | 2 +-
+ drivers/media/i2c/adv7511.c  | 2 +-
+ drivers/media/i2c/adv7604.c  | 4 ++--
+ drivers/media/i2c/adv7842.c  | 4 ++--
+ drivers/media/i2c/tc358743.c | 2 +-
+ drivers/media/i2c/ths8200.c  | 2 +-
+ 6 files changed, 8 insertions(+), 8 deletions(-)
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index a07241fb8537..c96e7c6354ef 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -658,6 +658,14 @@ got_it:
- 	fio.page = page;
- 	fio.new_blkaddr = fio.old_blkaddr = dn.data_blkaddr;
+diff --git a/drivers/media/i2c/ad9389b.c b/drivers/media/i2c/ad9389b.c
+index 5b008b0002c0..aa8b04cfed0f 100644
+--- a/drivers/media/i2c/ad9389b.c
++++ b/drivers/media/i2c/ad9389b.c
+@@ -578,7 +578,7 @@ static const struct v4l2_dv_timings_cap ad9389b_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/adv7511.c b/drivers/media/i2c/adv7511.c
+index f3899cc84e27..88349b5053cc 100644
+--- a/drivers/media/i2c/adv7511.c
++++ b/drivers/media/i2c/adv7511.c
+@@ -130,7 +130,7 @@ static const struct v4l2_dv_timings_cap adv7511_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, ADV7511_MAX_WIDTH, 0, ADV7511_MAX_HEIGHT,
++	V4L2_INIT_BT_TIMINGS(640, ADV7511_MAX_WIDTH, 350, ADV7511_MAX_HEIGHT,
+ 		ADV7511_MIN_PIXELCLOCK, ADV7511_MAX_PIXELCLOCK,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+diff --git a/drivers/media/i2c/adv7604.c b/drivers/media/i2c/adv7604.c
+index 9eb7c70a7712..ff28f5692986 100644
+--- a/drivers/media/i2c/adv7604.c
++++ b/drivers/media/i2c/adv7604.c
+@@ -766,7 +766,7 @@ static const struct v4l2_dv_timings_cap adv7604_timings_cap_analog = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+@@ -777,7 +777,7 @@ static const struct v4l2_dv_timings_cap adv76xx_timings_cap_digital = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/adv7842.c b/drivers/media/i2c/adv7842.c
+index 4721d49dcf0f..5305c3ad80e6 100644
+--- a/drivers/media/i2c/adv7842.c
++++ b/drivers/media/i2c/adv7842.c
+@@ -663,7 +663,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_analog = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 170000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 170000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+@@ -674,7 +674,7 @@ static const struct v4l2_dv_timings_cap adv7842_timings_cap_digital = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1200, 25000000, 225000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 25000000, 225000000,
+ 		V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 		V4L2_DV_BT_CAP_PROGRESSIVE | V4L2_DV_BT_CAP_REDUCED_BLANKING |
+diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc358743.c
+index 41d470d9ca94..00dc930e049f 100644
+--- a/drivers/media/i2c/tc358743.c
++++ b/drivers/media/i2c/tc358743.c
+@@ -59,7 +59,7 @@ static const struct v4l2_dv_timings_cap tc358743_timings_cap = {
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+ 	/* Pixel clock from REF_01 p. 20. Min/max height/width are unknown */
+-	V4L2_INIT_BT_TIMINGS(1, 10000, 1, 10000, 0, 165000000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1200, 13000000, 165000000,
+ 			V4L2_DV_BT_STD_CEA861 | V4L2_DV_BT_STD_DMT |
+ 			V4L2_DV_BT_STD_GTF | V4L2_DV_BT_STD_CVT,
+ 			V4L2_DV_BT_CAP_PROGRESSIVE |
+diff --git a/drivers/media/i2c/ths8200.c b/drivers/media/i2c/ths8200.c
+index 498ad2368cbc..f5ee28058ea2 100644
+--- a/drivers/media/i2c/ths8200.c
++++ b/drivers/media/i2c/ths8200.c
+@@ -49,7 +49,7 @@ static const struct v4l2_dv_timings_cap ths8200_timings_cap = {
+ 	.type = V4L2_DV_BT_656_1120,
+ 	/* keep this initialization for compatibility with GCC < 4.4.6 */
+ 	.reserved = { 0 },
+-	V4L2_INIT_BT_TIMINGS(0, 1920, 0, 1080, 25000000, 148500000,
++	V4L2_INIT_BT_TIMINGS(640, 1920, 350, 1080, 25000000, 148500000,
+ 		V4L2_DV_BT_STD_CEA861, V4L2_DV_BT_CAP_PROGRESSIVE)
+ };
  
-+	/*
-+	 * don't cache encrypted data into meta inode until previous dirty
-+	 * data were writebacked to avoid racing between GC and flush.
-+	 */
-+	f2fs_wait_on_page_writeback(page, DATA, true);
-+
-+	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-+
- 	fio.encrypted_page = f2fs_pagecache_get_page(META_MAPPING(sbi),
- 					dn.data_blkaddr,
- 					FGP_LOCK | FGP_CREAT, GFP_NOFS);
-@@ -745,6 +753,8 @@ static int move_data_block(struct inode *inode, block_t bidx,
- 	 */
- 	f2fs_wait_on_page_writeback(page, DATA, true);
- 
-+	f2fs_wait_on_block_writeback(inode, dn.data_blkaddr);
-+
- 	err = f2fs_get_node_info(fio.sbi, dn.nid, &ni);
- 	if (err)
- 		goto put_out;
 -- 
 2.19.1
 
