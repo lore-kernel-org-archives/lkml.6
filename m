@@ -2,98 +2,239 @@ Return-Path: <SRS0=I/I1=QE=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18FD5C282CD
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:13:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 65083C282CD
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9EA4214DA
-	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:13:54 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="nN/k7Fbp"
+	by mail.kernel.org (Postfix) with ESMTP id 36379214DA
+	for <linux-kernel@archiver.kernel.org>; Mon, 28 Jan 2019 14:14:48 +0000 (UTC)
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726954AbfA1ONx (ORCPT
+        id S1726964AbfA1OOq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 28 Jan 2019 09:13:53 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38536 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbfA1ONr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 28 Jan 2019 09:13:47 -0500
-Received: by mail-wm1-f67.google.com with SMTP id m22so14133156wml.3
-        for <linux-kernel@vger.kernel.org>; Mon, 28 Jan 2019 06:13:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=i34Wa4ADtzVgCnN+6BAW5HuYsfawNRONPMGoZ75cMs4=;
-        b=nN/k7FbpAUE64ZJ4WR6w9uRIWEkLkPoZ+cVxUdGEEuOmK94KEmUGLC84+KILKRJPOb
-         HRBp4DT7CjxeTrk7isZqx2BxmpcppcUHhHOsXZ3/YYL168nJCUUcU5A1ZyVGzU6eGC09
-         Yq6QN1mgdUeYHLQ/xoGF0n0TeRh17I+zodvtbvK1VEs6pWxDQiC716qgs4katlAPZQvp
-         z65Lu1sU+jqc7VF9cuhvXp7vMuLPWmKZcwgbpK5QmifC8cgcW5tZmVY3mewtdr4TQjzz
-         nmEQLVVvnEnEfkkW/xbOfi0Kmm6bBahqaa5xlYPECTpVWJhRmxFvPwVquAJ5ztd0n2aZ
-         jSIA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=i34Wa4ADtzVgCnN+6BAW5HuYsfawNRONPMGoZ75cMs4=;
-        b=lF2zwdVT/oaVK86osjzM9PLR/4Y0mhMTq9WmSP6fV+zTqwr0WGntJmfZNq7HTvz7DK
-         mEyspkgowu4xgrZ1oh3tXObS3aiMXrNCkQvazKyDZbM6eIkHyx4/IS1A8GbF5Qsph/FY
-         OVtcBePkOatA3S3mMskbr/7X3J8z4EwDqQJW296/X70cz6Nyhpzb5aKTvJ0Uj2neTmjP
-         YkwXfPfLeOTbV3KnbrxpVAKFup1AWRCUr66KFd5h2qkX0xkDf5mH4VFFEBJD9jNZdp05
-         a/xTvhhfCu/iYgenm6PDJx4vQgm9DA+UXtF8zRi7aa0aCtLStg8j4r++9DrsbWSQ3+5O
-         Sz3w==
-X-Gm-Message-State: AJcUukfUGdCNlzhpVp4BKPipgwsIWAOdhnZdgFbqkh0l5xbtZzQmxJlq
-        KWx+OsMJeX9xVCMHJ0k99yLpTQ==
-X-Google-Smtp-Source: ALg8bN4tpAILmud2M1w3bNvNLvOKtgMuuj4xC5W/XQizrhj0boUG9X/8cHDti63hP7KY/pygefsRxw==
-X-Received: by 2002:a1c:650b:: with SMTP id z11mr17348894wmb.23.1548684825650;
-        Mon, 28 Jan 2019 06:13:45 -0800 (PST)
-Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.googlemail.com with ESMTPSA id o9sm44131913wmh.3.2019.01.28.06.13.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 28 Jan 2019 06:13:45 -0800 (PST)
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Philipp Zabel <p.zabel@pengutronix.de>,
-        Kevin Hilman <khilman@baylibre.com>
-Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] reset: meson: add g12a and generic compatible string
-Date:   Mon, 28 Jan 2019 15:13:30 +0100
-Message-Id: <20190128141330.21927-3-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20190128141330.21927-1-jbrunet@baylibre.com>
-References: <20190128141330.21927-1-jbrunet@baylibre.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Mon, 28 Jan 2019 09:14:46 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51458 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726682AbfA1OOq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 28 Jan 2019 09:14:46 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D67E9ACB5;
+        Mon, 28 Jan 2019 14:14:43 +0000 (UTC)
+Date:   Mon, 28 Jan 2019 15:14:42 +0100
+Message-ID: <s5hbm40yilp.wl-tiwai@suse.de>
+From:   Takashi Iwai <tiwai@suse.de>
+To:     Jaroslav Kysela <perex@perex.cz>
+Cc:     Mark Brown <broonie@kernel.org>, alsa-devel@alsa-project.org,
+        bgoswami@codeaurora.org, gustavo@embeddedor.com,
+        srinivas.kandagatla@linaro.org, mchehab+samsung@kernel.org,
+        sr@denx.de, daniel.thompson@linaro.org, corbet@lwn.net,
+        philburk@google.com, willy@infradead.org, jmiller@neverware.com,
+        keescook@chromium.org, arnd@arndb.de, colyli@suse.de,
+        ckeepax@opensource.wolfsonmicro.com, anna-maria@linutronix.de,
+        mathieu.poirier@linaro.org, Baolin Wang <baolin.wang@linaro.org>,
+        sboyd@kernel.org, linux-kernel@vger.kernel.org, vkoul@kernel.org,
+        Leo Yan <leo.yan@linaro.org>, joe@perches.com
+Subject: Re: [alsa-devel] [RFC PATCH] ALSA: core: Add DMA share buffer support
+In-Reply-To: <b8750850-17c4-9ced-06e5-6d957d953b5f@perex.cz>
+References: <290f6d3a5fe288b87480cc5fa12c5139728daeca.1547787189.git.baolin.wang@linaro.org>
+        <81e894ba-acad-2fd4-996d-8d35edd8825a@perex.cz>
+        <20190118190805.GF6260@sirena.org.uk>
+        <s5hzhrxzrez.wl-tiwai@suse.de>
+        <20190121124053.GA12679@sirena.org.uk>
+        <f278bb69-7df0-4d14-5e4f-9bcb57d7f2b6@perex.cz>
+        <20190122202535.GK7579@sirena.org.uk>
+        <s5h4l9z4mbo.wl-tiwai@suse.de>
+        <20190123124658.GE15906@leoy-ThinkPad-X240s>
+        <s5himyczxgl.wl-tiwai@suse.de>
+        <20190125182515.GD6939@sirena.org.uk>
+        <b8750850-17c4-9ced-06e5-6d957d953b5f@perex.cz>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI/1.14.6 (Maruoka)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 Emacs/25.3
+ (x86_64-suse-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+MIME-Version: 1.0 (generated by SEMI 1.14.6 - "Maruoka")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a compatible for the new g12a SoC family.
+On Mon, 28 Jan 2019 14:31:23 +0100,
+Jaroslav Kysela wrote:
+> 
+> Dne 25.1.2019 v 19:25 Mark Brown napsal(a):
+> > On Fri, Jan 25, 2019 at 02:19:22PM +0100, Takashi Iwai wrote:
+> >> Leo Yan wrote:
+> > 
+> >>> If we directly use the device node /dev/snd/ as file descriptor, even
+> >>> though we specify flag O_EXCL when open it, but it still is not an
+> >>> anon inode file descriptor.  Thus this is not safe enough and will be
+> >>> blocked by SELinux.  On the other hand, this patch wants to use
+> >>> dma-buf framework to provide file descriptor for the audio buffer, and
+> >>> this audio buffer can be one of mutiple audio buffers in the system
+> >>> and it can be shared to any audio client program.
+> > 
+> >> Hrm, it sounds like a workaround just to bypass SELinux check...
+> > 
+> >> The sound server can open another PCM stream with O_APPEND, and pass
+> >> that fd to the client, too?
+> > 
+> > So long as we can teach SELinux that they're safe to export, yeah.
+> 
+> It seems that SELinux works with the file, so the SELinux will block the
+> fd pass, because the file descriptor (through standard dup()) continues
+> to use the /dev/snd inode.
+>
+> I would propose to implement a dup ioctl to return a new
+> anon_inode:snd-pcm file descriptor (see bellow).
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/reset/reset-meson.c | 1 +
- 1 file changed, 1 insertion(+)
+I like the idea.  This would work around the messy issues gracefully,
+and more importantly, it's easier to maintain for us.
 
-diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-index 5242e0679df7..a8f6549b3af4 100644
---- a/drivers/reset/reset-meson.c
-+++ b/drivers/reset/reset-meson.c
-@@ -134,6 +134,7 @@ static const struct of_device_id meson_reset_dt_ids[] = {
- 	 { .compatible = "amlogic,meson8b-reset" },
- 	 { .compatible = "amlogic,meson-gxbb-reset" },
- 	 { .compatible = "amlogic,meson-axg-reset" },
-+	 { .compatible = "amlogic,meson-g12a-reset" },
- 	 { /* sentinel */ },
- };
- 
--- 
-2.20.1
+And the restriction of ioctls for anon dup should be fairly easy to
+implement on top of this.
 
+
+Thanks!
+
+Takashi
+
+> If we agree on this, I can propose the full solution.
+> 
+> --
+> Subject: [PATCH] ALSA: pcm: implement the anonymous dup (inode file
+>  descriptor)
+> 
+> This patch implements new SNDRV_PCM_IOCTL_ANONYMOUS_DUP ioctl which
+> returns the new duplicated anonymous inode file descriptor
+> (anon_inode:snd-pcm) which can be passed to the restricted clients.
+> 
+> This implementation is just a concept for comments - it does not contain
+> the additional restriction control.
+> 
+> TODO: The clients might be restricted to disallow a set of
+> controls (ioctls) for the audio stream.
+> 
+> This patch is meant to be the alternative for the dma-buf interface. Both
+> implementation have some pros and cons:
+> 
+> anon_inode:dmabuf
+> 
+> - a bit standard export API for the DMA buffers
+> - fencing for the concurrent access [1]
+> - driver/kernel interface for the DMA buffer [1]
+> - multiple attach/detach scheme [1]
+> 
+> [1] the real usage for the sound PCM is unknown at the moment for this feature
+> 
+> anon_inode:snd-pcm
+> 
+> - simple (no problem with ref-counting, non-standard mmap implementation etc.)
+> - allow to use more sound interfaces for the file descriptor like status ioctls
+> - more fine grained security policies (another anon_inode name unshared with
+>   other drivers)
+> ---
+>  include/uapi/sound/asound.h |  1 +
+>  sound/core/pcm_compat.c     |  1 +
+>  sound/core/pcm_native.c     | 40 ++++++++++++++++++++++++++++++++++++++++
+>  3 files changed, 42 insertions(+)
+> 
+> diff --git a/include/uapi/sound/asound.h b/include/uapi/sound/asound.h
+> index 404d4b9ffe76..ad821a52f970 100644
+> --- a/include/uapi/sound/asound.h
+> +++ b/include/uapi/sound/asound.h
+> @@ -576,6 +576,7 @@ enum {
+>  #define SNDRV_PCM_IOCTL_TSTAMP		_IOW('A', 0x02, int)
+>  #define SNDRV_PCM_IOCTL_TTSTAMP		_IOW('A', 0x03, int)
+>  #define SNDRV_PCM_IOCTL_USER_PVERSION	_IOW('A', 0x04, int)
+> +#define SNDRV_PCM_IOCTL_ANONYMOUS_DUP   _IOW('A', 0x05, int)
+>  #define SNDRV_PCM_IOCTL_HW_REFINE	_IOWR('A', 0x10, struct snd_pcm_hw_params)
+>  #define SNDRV_PCM_IOCTL_HW_PARAMS	_IOWR('A', 0x11, struct snd_pcm_hw_params)
+>  #define SNDRV_PCM_IOCTL_HW_FREE		_IO('A', 0x12)
+> diff --git a/sound/core/pcm_compat.c b/sound/core/pcm_compat.c
+> index 946ab080ac00..22446cd574ee 100644
+> --- a/sound/core/pcm_compat.c
+> +++ b/sound/core/pcm_compat.c
+> @@ -675,6 +675,7 @@ static long snd_pcm_ioctl_compat(struct file *file, unsigned int cmd, unsigned l
+>  	case SNDRV_PCM_IOCTL_TSTAMP:
+>  	case SNDRV_PCM_IOCTL_TTSTAMP:
+>  	case SNDRV_PCM_IOCTL_USER_PVERSION:
+> +	case SNDRV_PCM_IOCTL_ANONYMOUS_DUP:
+>  	case SNDRV_PCM_IOCTL_HWSYNC:
+>  	case SNDRV_PCM_IOCTL_PREPARE:
+>  	case SNDRV_PCM_IOCTL_RESET:
+> diff --git a/sound/core/pcm_native.c b/sound/core/pcm_native.c
+> index 26afb6b0889a..a21bb482b4b0 100644
+> --- a/sound/core/pcm_native.c
+> +++ b/sound/core/pcm_native.c
+> @@ -37,6 +37,8 @@
+>  #include <sound/minors.h>
+>  #include <linux/uio.h>
+>  #include <linux/delay.h>
+> +#include <linux/anon_inodes.h>
+> +#include <linux/syscalls.h>
+> 
+>  #include "pcm_local.h"
+> 
+> @@ -2836,6 +2838,42 @@ static int snd_pcm_forward_ioctl(struct snd_pcm_substream *substream,
+>  	return result < 0 ? result : 0;
+>  }
+> 
+> +static int snd_pcm_anonymous_dup(struct file *file,
+> +				 struct snd_pcm_substream *substream,
+> +				 int __user *arg)
+> +{
+> +	int fd;
+> +	int res;
+> +	int dup_mode;
+> +	int flags;
+> +	struct file *nfile;
+> +	struct snd_pcm_substream *rsubstream;
+> +
+> +	if (get_user(dup_mode, (int __user *)arg))
+> +		return -EFAULT;
+> +	if (dup_mode != 0)
+> +		return -ENOSYS;
+> +	flags = file->f_flags & (O_RDWR|O_NONBLOCK);
+> +	flags |= O_APPEND | O_CLOEXEC;
+> +	fd = get_unused_fd_flags(flags);
+> +	if (fd < 0)
+> +		return fd;
+> +	nfile = anon_inode_getfile("snd-pcm", file->f_op, NULL, flags);
+> +	if (IS_ERR(nfile)) {
+> +		put_unused_fd(fd);
+> +		return PTR_ERR(nfile);
+> +	}
+> +	fd_install(fd, nfile);
+> +	res = snd_pcm_open_substream(substream->pcm, substream->number,
+> +				     nfile, &rsubstream);
+> +	if (res < 0) {
+> +		ksys_close(fd);
+> +		return res;
+> +	}
+> +	put_user(fd, (int __user *)arg);
+> +	return 0;
+> +}
+> +
+>  static int snd_pcm_common_ioctl(struct file *file,
+>  				 struct snd_pcm_substream *substream,
+>  				 unsigned int cmd, void __user *arg)
+> @@ -2864,6 +2902,8 @@ static int snd_pcm_common_ioctl(struct file *file,
+>  			     (unsigned int __user *)arg))
+>  			return -EFAULT;
+>  		return 0;
+> +	case SNDRV_PCM_IOCTL_ANONYMOUS_DUP:
+> +		return snd_pcm_anonymous_dup(file, substream, (int __user *)arg);
+>  	case SNDRV_PCM_IOCTL_HW_REFINE:
+>  		return snd_pcm_hw_refine_user(substream, arg);
+>  	case SNDRV_PCM_IOCTL_HW_PARAMS:
+> -- 
+> 
+> 						Jaroslav
+> 
+> -- 
+> Jaroslav Kysela <perex@perex.cz>
+> Linux Sound Maintainer; ALSA Project; Red Hat, Inc.
+> 
